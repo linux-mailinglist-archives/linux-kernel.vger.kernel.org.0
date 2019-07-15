@@ -2,66 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B7D369BB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:54:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B74C69BB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:50:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731962AbfGOTx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 15:53:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42206 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729525AbfGOTx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 15:53:59 -0400
-Received: from localhost (unknown [88.128.80.139])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C605620659;
-        Mon, 15 Jul 2019 19:53:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563220438;
-        bh=n6cm3L6dN1BEISYwsj9HOpKQvIB6z17LN6vs4l7AxGY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0PchMxTgtkRsW4x6czb9dBemK3Z58TGgPvh0urhrrgA0x/DmNEyoBH99H4kzujGoG
-         A5S0u/VnIw8SvygmxhZ8SJYnHJsOwF+wuM7HXWCJeqfhNeJNx0GnaAk6BBYaSmn3uw
-         L4qRV56lYNs46CCNW0GnW2gcJz7KB9hamUEWKaPk=
-Date:   Mon, 15 Jul 2019 21:37:31 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Emanuel Bennici <benniciemanuel78@gmail.com>
-Cc:     Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        Vatsala Narang <vatsalanarang@gmail.com>,
-        Nishka Dasgupta <nishkadg.linux@gmail.com>,
-        Hardik Singh Rathore <hardiksingh.k@gmail.com>,
-        Madhumitha Prabakaran <madhumithabiw@gmail.com>,
-        Michael Straube <straube.linux@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        Larry.Finger@lwfinger.net
-Subject: Re: [PATCH] staging: rtl8723bs: core: Remove code valid only for 5GHz
-Message-ID: <20190715193731.GB27406@kroah.com>
-References: <20190714172826.GA6950@hari-Inspiron-1545>
- <CA+d=JG=Zyy_azX2eENRBa366TV3GppNBmZ+r8CggM+YGqVY9aQ@mail.gmail.com>
+        id S1732145AbfGOTuj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 15:50:39 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39614 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730918AbfGOTui (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 15:50:38 -0400
+Received: by mail-pf1-f194.google.com with SMTP id f17so3925228pfn.6
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 12:50:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lQwGFBSJrHwE56v+sMPF66PmP6cnKf9PXAh7/ixpFm8=;
+        b=kvofDYs+CxOi4c6fxfaQSVUUMlY8Kie3qdAMQOhymbNdqrVlywpHwjG4tRgJE/LmHg
+         zSn3iji6OYuYG5lYDY6q8aKvPyEfsXmeDDExSU01MwqkdAU3a4Pu0ketbzDOFszRfI+h
+         yQtf0Vx3mZL2dySLvv0O4yVYJXK20aAu20fBo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lQwGFBSJrHwE56v+sMPF66PmP6cnKf9PXAh7/ixpFm8=;
+        b=fiKkLWgeRl21+xtTk+xNsehDepo+Tjkf9uMahJ60b63jrZ59+xJ5MceJmpcVuItNXW
+         pXCN4bh4afEX7PBpSe1IaBzPiqRiO0wFd6g7DdycRtekFei1g7TkKh5trJqeVzhO8FW4
+         XKboMZ8Z646QXhyt6LEO+homXfOnvX+4rGuO7Wo5aMvsu98VpYwjHRzQHTehmagZLbjb
+         nADjaTmf30Lh/9Xy4LXY3jh5/ggF6gbZ/CCIkXo5AJicrbaeeCLtSFzd+AJCAZNDRxpy
+         50hA43lU7qhIRYYjFLnBUGotc5D2pv0e948hJ6dM9oi72MWqbVxTZ3IC8CRyvDaTKd1T
+         KBtw==
+X-Gm-Message-State: APjAAAU0Yv1sAIz1ynkubUSdRkkvx75Eko4SbkusRpI/0H7hC4MB/tTb
+        sM/CNEMlvsKHi+1wsHQlSUqGunphoI4=
+X-Google-Smtp-Source: APXvYqz4l02Bj/OF1K57cTxt0+V+l7ssKwbhcEzYZrCJfJvHbS1Dg7KWSl0MzEx8ubXag1rcxlgaAA==
+X-Received: by 2002:a17:90a:d151:: with SMTP id t17mr30870146pjw.60.1563220238045;
+        Mon, 15 Jul 2019 12:50:38 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id k22sm18338251pfk.157.2019.07.15.12.50.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Jul 2019 12:50:37 -0700 (PDT)
+Date:   Mon, 15 Jul 2019 12:50:23 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Gwendal Grignou <gwendal@chromium.org>
+Subject: Re: [PATCH] iio: cros_ec_accel_legacy: Always release lock when
+ returning from _read()
+Message-ID: <20190715195023.GS250418@google.com>
+References: <20190715191017.98488-1-mka@chromium.org>
+ <CAD=FV=WT6TT+iyGVNUhNcmAsVJip6X4mytuNJPGwMkk4F4i75g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CA+d=JG=Zyy_azX2eENRBa366TV3GppNBmZ+r8CggM+YGqVY9aQ@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAD=FV=WT6TT+iyGVNUhNcmAsVJip6X4mytuNJPGwMkk4F4i75g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 08:51:30AM +0200, Emanuel Bennici wrote:
->  As per TODO ,remove code valid only for 5 GHz(channel > 14).
+On Mon, Jul 15, 2019 at 12:40:42PM -0700, Doug Anderson wrote:
+> Hi,
 > 
-> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
-> Reviewed-by: Emanuel Bennici <benniciemanuel78@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
+> On Mon, Jul 15, 2019 at 12:10 PM Matthias Kaehlcke <mka@chromium.org> wrote:
+> >
+> > Before doing any actual work cros_ec_accel_legacy_read() acquires
+> > a mutex, which is released at the end of the function. However for
+> > 'calibbias' channels the function returns directly, without releasing
+> > the lock. The next attempt to acquire the lock blocks forever. Instead
+> > of an explicit return statement use the common return path, which
+> > releases the lock.
+> >
+> > Fixes: 11b86c7004ef1 ("platform/chrome: Add cros_ec_accel_legacy driver")
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> >  drivers/iio/accel/cros_ec_accel_legacy.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> See also <https://lkml.kernel.org/r/39403a4c-bf7f-6a98-890c-57397fa66493@collabora.com>
+> 
+> Actually, the "Fixes" tag is wrong here, though.  The problem only
+> exists because we have <https://crrev.com/c/1632659> in our tree, AKA
+> ("FROMLIST: iio: cros_ec : Extend legacy support to ARM device").
+> Before that there was no mutex.  For upstream purposes this could
+> probably be squashed into the original patch.
 
-Please do not send html email to a kernel mailing list :(
-
-Also, what did you do here?  Why resend the whole thing?
-
-confused,
-
-greg k-h
+Oops, I didn't realize that upstream doesn't have the mutex. In this
+case the entire patch as is with it's commit message doesn't make much
+sense.
