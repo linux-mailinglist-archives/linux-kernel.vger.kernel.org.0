@@ -2,36 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B707694D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:54:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21232694D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:54:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391307AbfGOO2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:28:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39296 "EHLO mail.kernel.org"
+        id S2391103AbfGOO3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:29:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390220AbfGOO2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:28:49 -0400
+        id S2391352AbfGOO3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:29:01 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1190420868;
-        Mon, 15 Jul 2019 14:28:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D129E205ED;
+        Mon, 15 Jul 2019 14:28:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200929;
-        bh=8MFIeyxHNO4CRPVVo0iFOLtHIhxgcEGt+NoS7XE7A2k=;
+        s=default; t=1563200940;
+        bh=b1Y+crLIupnKdPdr4Pb5xyOYNAThR80bJwy00lLS0EA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MCE2tF6qomxwX9HwQtgDA0cT2ZYYE9KO9nYrV7BN/17qgkG4PGzQOs3Ru1dm45obk
-         gpbqacXNBX31Q1UJRPHNwAlL212FyOsJdqtbNjVggVHwBWnIklirc+FVACXoS/5p6l
-         GmjeS+DGW0uxb+tOboWxOsMMv8LmVTlwv2mxHxSU=
+        b=WB4SxJv8wuE9IvjpbPr5gOmtn1zp76MlcqI+eg+AMX9GwzWeKCUaoQtvq6UBFRZWk
+         TGegEIaRUW8rIWalJ4N11TT17M9yhQZ3EFfJhrV1not7jZ5zjLgTTjORY7ZqWNIuOR
+         gX/jp5P0E+5G/eRbxu/mYWmGRpVuyzpPKxNBZIu8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Surabhi Vishnoi <svishnoi@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 002/105] ath10k: Do not send probe response template for mesh
-Date:   Mon, 15 Jul 2019 10:26:56 -0400
-Message-Id: <20190715142839.9896-2-sashal@kernel.org>
+Cc:     Daniel Drake <drake@endlessm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, len.brown@intel.com,
+        linux@endlessm.com, rafael.j.wysocki@intel.com,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 005/105] x86/tsc: Use CPUID.0x16 to calculate missing crystal frequency
+Date:   Mon, 15 Jul 2019 10:26:59 -0400
+Message-Id: <20190715142839.9896-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715142839.9896-1-sashal@kernel.org>
 References: <20190715142839.9896-1-sashal@kernel.org>
@@ -44,43 +49,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Surabhi Vishnoi <svishnoi@codeaurora.org>
+From: Daniel Drake <drake@endlessm.com>
 
-[ Upstream commit 97354f2c432788e3163134df6bb144f4b6289d87 ]
+[ Upstream commit 604dc9170f2435d27da5039a3efd757dceadc684 ]
 
-Currently mac80211 do not support probe response template for
-mesh point. When WMI_SERVICE_BEACON_OFFLOAD is enabled, host
-driver tries to configure probe response template for mesh, but
-it fails because the interface type is not NL80211_IFTYPE_AP but
-NL80211_IFTYPE_MESH_POINT.
+native_calibrate_tsc() had a data mapping Intel CPU families
+and crystal clock speed, but hardcoded tables are not ideal, and this
+approach was already problematic at least in the Skylake X case, as
+seen in commit:
 
-To avoid this failure, skip sending probe response template to
-firmware for mesh point.
+  b51120309348 ("x86/tsc: Fix erroneous TSC rate on Skylake Xeon")
 
-Tested HW: WCN3990/QCA6174/QCA9984
+By examining CPUID data from http://instlatx64.atw.hu/ and units
+in the lab, we have found that 3 different scenarios need to be dealt
+with, and we can eliminate most of the hardcoded data using an approach a
+little more advanced than before:
 
-Signed-off-by: Surabhi Vishnoi <svishnoi@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+ 1. ApolloLake, GeminiLake, CannonLake (and presumably all new chipsets
+    from this point) report the crystal frequency directly via CPUID.0x15.
+    That's definitive data that we can rely upon.
+
+ 2. Skylake, Kabylake and all variants of those two chipsets report a
+    crystal frequency of zero, however we can calculate the crystal clock
+    speed by condidering data from CPUID.0x16.
+
+    This method correctly distinguishes between the two crystal clock
+    frequencies present on different Skylake X variants that caused
+    headaches before.
+
+    As the calculations do not quite match the previously-hardcoded values
+    in some cases (e.g. 23913043Hz instead of 24MHz), TSC refinement is
+    enabled on all platforms where we had to calculate the crystal
+    frequency in this way.
+
+ 3. Denverton (GOLDMONT_X) reports a crystal frequency of zero and does
+    not support CPUID.0x16, so we leave this entry hardcoded.
+
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: len.brown@intel.com
+Cc: linux@endlessm.com
+Cc: rafael.j.wysocki@intel.com
+Link: http://lkml.kernel.org/r/20190509055417.13152-1-drake@endlessm.com
+Link: https://lkml.kernel.org/r/20190419083533.32388-1-drake@endlessm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/mac.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/kernel/tsc.c | 47 +++++++++++++++++++++++++------------------
+ 1 file changed, 27 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
-index cdcfb175ad9b..58a3c42c4aed 100644
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -1611,6 +1611,10 @@ static int ath10k_mac_setup_prb_tmpl(struct ath10k_vif *arvif)
- 	if (arvif->vdev_type != WMI_VDEV_TYPE_AP)
- 		return 0;
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 5d681fe6d352..e501bd7f39fc 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -612,31 +612,38 @@ unsigned long native_calibrate_tsc(void)
  
-+	 /* For mesh, probe response and beacon share the same template */
-+	if (ieee80211_vif_is_mesh(vif))
-+		return 0;
+ 	crystal_khz = ecx_hz / 1000;
+ 
+-	if (crystal_khz == 0) {
+-		switch (boot_cpu_data.x86_model) {
+-		case INTEL_FAM6_SKYLAKE_MOBILE:
+-		case INTEL_FAM6_SKYLAKE_DESKTOP:
+-		case INTEL_FAM6_KABYLAKE_MOBILE:
+-		case INTEL_FAM6_KABYLAKE_DESKTOP:
+-			crystal_khz = 24000;	/* 24.0 MHz */
+-			break;
+-		case INTEL_FAM6_ATOM_GOLDMONT_X:
+-			crystal_khz = 25000;	/* 25.0 MHz */
+-			break;
+-		case INTEL_FAM6_ATOM_GOLDMONT:
+-			crystal_khz = 19200;	/* 19.2 MHz */
+-			break;
+-		}
+-	}
++	/*
++	 * Denverton SoCs don't report crystal clock, and also don't support
++	 * CPUID.0x16 for the calculation below, so hardcode the 25MHz crystal
++	 * clock.
++	 */
++	if (crystal_khz == 0 &&
++			boot_cpu_data.x86_model == INTEL_FAM6_ATOM_GOLDMONT_X)
++		crystal_khz = 25000;
+ 
+-	if (crystal_khz == 0)
+-		return 0;
+ 	/*
+-	 * TSC frequency determined by CPUID is a "hardware reported"
++	 * TSC frequency reported directly by CPUID is a "hardware reported"
+ 	 * frequency and is the most accurate one so far we have. This
+ 	 * is considered a known frequency.
+ 	 */
+-	setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
++	if (crystal_khz != 0)
++		setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
 +
- 	prb = ieee80211_proberesp_get(hw, vif);
- 	if (!prb) {
- 		ath10k_warn(ar, "failed to get probe resp template from mac80211\n");
++	/*
++	 * Some Intel SoCs like Skylake and Kabylake don't report the crystal
++	 * clock, but we can easily calculate it to a high degree of accuracy
++	 * by considering the crystal ratio and the CPU speed.
++	 */
++	if (crystal_khz == 0 && boot_cpu_data.cpuid_level >= 0x16) {
++		unsigned int eax_base_mhz, ebx, ecx, edx;
++
++		cpuid(0x16, &eax_base_mhz, &ebx, &ecx, &edx);
++		crystal_khz = eax_base_mhz * 1000 *
++			eax_denominator / ebx_numerator;
++	}
++
++	if (crystal_khz == 0)
++		return 0;
+ 
+ 	/*
+ 	 * For Atom SoCs TSC is the only reliable clocksource.
 -- 
 2.20.1
 
