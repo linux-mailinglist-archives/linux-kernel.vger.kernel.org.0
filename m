@@ -2,79 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB5F468B27
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:40:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFDDA68AA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:36:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731150AbfGONjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:39:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40088 "EHLO mail.kernel.org"
+        id S1730277AbfGONfg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 09:35:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:22039 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731113AbfGONi6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:38:58 -0400
-Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1730172AbfGONfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:35:36 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5996620C01;
-        Mon, 15 Jul 2019 13:38:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563197937;
-        bh=sdE4boDjVaUMIjTlvIuSSQG68cEy/8u4cYX8/mB3o7I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LdWwl3iu6MbQpEod9UfZ/BJBP7tL5OB31Tg2FxHK55d3aIbUqgI1MNtKEwIr7KDZj
-         BiIYOrC566IYdv1RSUicqGZDDBZ733nLChzobAYIkm/0NUHsF2wSlJD76WPx6qSF+s
-         vDn3tDdwNkjNLbolddi1wiK7Bpgch9uV9UnNNv9g=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeremy Sowden <jeremy@azazel.net>,
-        syzbot+d454a826e670502484b8@syzkaller.appspotmail.com,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 018/219] batman-adv: fix for leaked TVLV handler.
-Date:   Mon, 15 Jul 2019 09:34:50 -0400
-Message-Id: <20190715133811.2441-18-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190715133811.2441-1-sashal@kernel.org>
-References: <20190715133811.2441-1-sashal@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id EF02F85546;
+        Mon, 15 Jul 2019 13:35:35 +0000 (UTC)
+Received: from treble (ovpn-120-170.rdu2.redhat.com [10.10.120.170])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D28C47E23;
+        Mon, 15 Jul 2019 13:35:32 +0000 (UTC)
+Date:   Mon, 15 Jul 2019 08:35:25 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH 03/22] x86/kvm: Fix frame pointer usage in vmx_vmenter()
+Message-ID: <20190715133525.gr4wvnd4kxwtv63o@treble>
+References: <cover.1563150885.git.jpoimboe@redhat.com>
+ <299fe4adb78cff0a182f8376c23a445b94d7c782.1563150885.git.jpoimboe@redhat.com>
+ <0b37031b-1043-8274-a086-2b5d0b02b5ef@redhat.com>
+ <20190715123704.oke4pd4wguj5a7i3@treble>
+ <2172ac52-899b-a32a-cba7-c2e5f2bb784e@redhat.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2172ac52-899b-a32a-cba7-c2e5f2bb784e@redhat.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 15 Jul 2019 13:35:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Sowden <jeremy@azazel.net>
+On Mon, Jul 15, 2019 at 03:03:23PM +0200, Paolo Bonzini wrote:
+> On 15/07/19 14:37, Josh Poimboeuf wrote:
+> > On Mon, Jul 15, 2019 at 11:04:03AM +0200, Paolo Bonzini wrote:
+> >> On 15/07/19 02:36, Josh Poimboeuf wrote:
+> >>> With CONFIG_FRAME_POINTER, vmx_vmenter() needs to do frame pointer setup
+> >>> before calling kvm_spurious_fault().
+> >>>
+> >>> Fixes the following warning:
+> >>>
+> >>>   arch/x86/kvm/vmx/vmenter.o: warning: objtool: vmx_vmenter()+0x14: call without frame pointer save/setup
+> >>>
+> >>> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> >>
+> >> This is not enough, because the RSP value must match what is computed at
+> >> this place:
+> >>
+> >>         /* Adjust RSP to account for the CALL to vmx_vmenter(). */
+> >>         lea -WORD_SIZE(%_ASM_SP), %_ASM_ARG2
+> >>         call vmx_update_host_rsp
+> > 
+> > Ah, that is surprising :-)
+> > 
+> > And then there's this, which overwrites the frame pointer anyway:
+> > 
+> > 	mov VCPU_RBP(%_ASM_AX), %_ASM_BP
+> > 
+> > Would it make sense to remove the call to vmx_vmenter() altogether, and
+> > just either embed it in __vmx_vcpu_run(), or jmp back and forth to it
+> > from __vmx_vcpu_run()?
+> 
+> Unfortunately there's another use of it in nested_vmx_check_vmentry_hw.
 
-[ Upstream commit 17f78dd1bd624a4dd78ed5db3284a63ee807fcc3 ]
+Ah, I missed that too (failed by cscope).  Is this ok?
 
-A handler for BATADV_TVLV_ROAM was being registered when the
-translation-table was initialized, but not unregistered when the
-translation-table was freed.  Unregister it.
-
-Fixes: 122edaa05940 ("batman-adv: tvlv - convert roaming adv packet to use tvlv unicast packets")
-Reported-by: syzbot+d454a826e670502484b8@syzkaller.appspotmail.com
-Signed-off-by: Jeremy Sowden <jeremy@azazel.net>
-Signed-off-by: Sven Eckelmann <sven@narfation.org
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/batman-adv/translation-table.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
-index 26c4e2493ddf..abad64eb7dc4 100644
---- a/net/batman-adv/translation-table.c
-+++ b/net/batman-adv/translation-table.c
-@@ -3826,6 +3826,8 @@ static void batadv_tt_purge(struct work_struct *work)
-  */
- void batadv_tt_free(struct batadv_priv *bat_priv)
- {
-+	batadv_tvlv_handler_unregister(bat_priv, BATADV_TVLV_ROAM, 1);
-+
- 	batadv_tvlv_container_unregister(bat_priv, BATADV_TVLV_TT, 1);
- 	batadv_tvlv_handler_unregister(bat_priv, BATADV_TVLV_TT, 1);
+diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
+index d4cb1945b2e3..4010d519eb8c 100644
+--- a/arch/x86/kvm/vmx/vmenter.S
++++ b/arch/x86/kvm/vmx/vmenter.S
+@@ -54,9 +54,9 @@ ENTRY(vmx_vmenter)
+ 	ret
  
--- 
-2.20.1
-
+ 3:	cmpb $0, kvm_rebooting
+-	jne 4f
+-	call kvm_spurious_fault
+-4:	ret
++	je 4f
++	ret
++4:	ud2
+ 
+ 	.pushsection .fixup, "ax"
+ 5:	jmp 3b
