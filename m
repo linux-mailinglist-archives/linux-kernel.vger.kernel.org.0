@@ -2,93 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 955FE69BB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:52:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B7D369BB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:54:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731374AbfGOTwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 15:52:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40092 "EHLO mail.kernel.org"
+        id S1731962AbfGOTx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 15:53:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729525AbfGOTwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 15:52:38 -0400
+        id S1729525AbfGOTx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 15:53:59 -0400
 Received: from localhost (unknown [88.128.80.139])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5000F20659;
-        Mon, 15 Jul 2019 19:52:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C605620659;
+        Mon, 15 Jul 2019 19:53:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563220358;
-        bh=gxWfqk2TgbmVUUJUbnwv6soEpFM9DgBPHEioAh21gCU=;
+        s=default; t=1563220438;
+        bh=n6cm3L6dN1BEISYwsj9HOpKQvIB6z17LN6vs4l7AxGY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rpm/P1/+QZgp5xABfY/e94F1TRKCO0D/4+v7mXye5cSZ3f108oeue9Is7DpS1bo2j
-         fxZO+NtV/xf2MvTOM+Yop4499twk2oq8D0sG4N6WUdkoGierOw8ibXamvsZL1fy3Jr
-         OfI7eqSZHL4S9ah/EPmWsc4r7lYMg4ayi+6r1g74=
-Date:   Mon, 15 Jul 2019 21:34:31 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc:     linux-kernel@vger.kernel.org, ruxandra.radulescu@nxp.com,
-        Razvan Stefanescu <razvan.stefanescu@nxp.com>
-Subject: Re: [PATCH v2 5/6] staging: fsl-dpaa2/ethsw: Add switch driver
- documentation
-Message-ID: <20190715193431.GA15581@kroah.com>
-References: <1562336836-17119-1-git-send-email-ioana.ciornei@nxp.com>
- <1562336836-17119-6-git-send-email-ioana.ciornei@nxp.com>
+        b=0PchMxTgtkRsW4x6czb9dBemK3Z58TGgPvh0urhrrgA0x/DmNEyoBH99H4kzujGoG
+         A5S0u/VnIw8SvygmxhZ8SJYnHJsOwF+wuM7HXWCJeqfhNeJNx0GnaAk6BBYaSmn3uw
+         L4qRV56lYNs46CCNW0GnW2gcJz7KB9hamUEWKaPk=
+Date:   Mon, 15 Jul 2019 21:37:31 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Emanuel Bennici <benniciemanuel78@gmail.com>
+Cc:     Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        Vatsala Narang <vatsalanarang@gmail.com>,
+        Nishka Dasgupta <nishkadg.linux@gmail.com>,
+        Hardik Singh Rathore <hardiksingh.k@gmail.com>,
+        Madhumitha Prabakaran <madhumithabiw@gmail.com>,
+        Michael Straube <straube.linux@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        Larry.Finger@lwfinger.net
+Subject: Re: [PATCH] staging: rtl8723bs: core: Remove code valid only for 5GHz
+Message-ID: <20190715193731.GB27406@kroah.com>
+References: <20190714172826.GA6950@hari-Inspiron-1545>
+ <CA+d=JG=Zyy_azX2eENRBa366TV3GppNBmZ+r8CggM+YGqVY9aQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1562336836-17119-6-git-send-email-ioana.ciornei@nxp.com>
+In-Reply-To: <CA+d=JG=Zyy_azX2eENRBa366TV3GppNBmZ+r8CggM+YGqVY9aQ@mail.gmail.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 05, 2019 at 05:27:15PM +0300, Ioana Ciornei wrote:
-> From: Razvan Stefanescu <razvan.stefanescu@nxp.com>
+On Mon, Jul 15, 2019 at 08:51:30AM +0200, Emanuel Bennici wrote:
+>  As per TODO ,remove code valid only for 5 GHz(channel > 14).
 > 
-> Add a switch driver entry in the dpaa2 overview documentation.
-> 
-> Signed-off-by: Razvan Stefanescu <razvan.stefanescu@nxp.com>
-> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> Reviewed-by: Emanuel Bennici <benniciemanuel78@gmail.com>
 > ---
-> Changes in v2:
->  - none
-> 
->  .../networking/device_drivers/freescale/dpaa2/overview.rst          | 6 ++++++
->  MAINTAINERS                                                         | 1 +
->  2 files changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/networking/device_drivers/freescale/dpaa2/overview.rst b/Documentation/networking/device_drivers/freescale/dpaa2/overview.rst
-> index d638b5a8aadd..7b7f35908890 100644
-> --- a/Documentation/networking/device_drivers/freescale/dpaa2/overview.rst
-> +++ b/Documentation/networking/device_drivers/freescale/dpaa2/overview.rst
-> @@ -393,6 +393,12 @@ interfaces needed to connect the DPAA2 network interface to
->  the network stack.
->  Each DPNI corresponds to a Linux network interface.
->  
-> +Ethernet L2 Switch driver
-> +-------------------------
-> +The Ethernet L2 Switch driver is bound to a DPSW and makes use of the
-> +switchdev support in kernel.
-> +Each switch port has a corresponding Linux network interface.
-> +
->  MAC driver
->  ----------
->  An Ethernet PHY is an off-chip, board specific component and is managed
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c0a02dccc869..5c51be8e281c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4938,6 +4938,7 @@ M:	Ioana Ciornei <ioana.ciornei@nxp.com>
->  L:	linux-kernel@vger.kernel.org
->  S:	Maintained
->  F:	drivers/staging/fsl-dpaa2/ethsw
-> +F:	Documentation/networking/device_drivers/freescale/dpaa2/overview.rst
->  
->  DPAA2 PTP CLOCK DRIVER
->  M:	Yangbo Lu <yangbo.lu@nxp.com>
-> -- 
-> 1.9.1
-> 
+>  drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
 
-This patch did not apply :(
+Please do not send html email to a kernel mailing list :(
+
+Also, what did you do here?  Why resend the whole thing?
+
+confused,
+
+greg k-h
