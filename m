@@ -2,110 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B856E6960F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:02:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1420696D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:07:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390473AbfGOPCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 11:02:06 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43696 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389254AbfGOPCD (ORCPT
+        id S2388799AbfGOPFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:05:44 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:49465 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732946AbfGOPFn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 11:02:03 -0400
-Received: by mail-io1-f66.google.com with SMTP id k20so34528369ios.10
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 08:02:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+kIXA8GU85p3Yokp73M6SuuvQd6PpNvvlT7z0N2F4io=;
-        b=uwOKluNFh794Wb7BC3FTX0afdBMT1OJ6kZ7FACFrFkihCtoLPhrfNIgoArARcCPDoC
-         B7SsB+3pXOpcJNCX5VZFyh7ssMJLqdrKjI4z/4SL/JNj4id4zVwuQA0/OPDFcXc+SVC6
-         CcXxEqZce5f7qQkJnzx4Z4rxuJ1phGq1YbxhwUPnIrO3PfJlF9iaPS7dgpegpkJZ6+Sn
-         U2nrDtUxdhBMhUX7ejnCMJRIbEefmz8JIfWoMbxZzEusfuYZNCLygcBGtVCeFwqZhg2Y
-         yI+NHqRKLMZBLE6Isp5g8Eh0PrCBT01MCHMONSs+p/5ECGqihpPOenvXW6wYUIlU7xen
-         +BYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+kIXA8GU85p3Yokp73M6SuuvQd6PpNvvlT7z0N2F4io=;
-        b=CsTReTCkLtJH1tYKD6ORYPv/U8gFuY1bRhR9F6r1la/15nRX0AjTY79bnitSePU0bV
-         7rgspOKXgGKuRLfT7NRMNlXqQxQSqw83rBCkC/1biYrclALr32e2falGWda/zbzAWL5T
-         QNRCJJuqERZnICx4U4pfQueHRRLYDNynyCV2AqtykLR8g/J05Y5lNx++M3snmL6rxET4
-         KDz6gP3gjZJCz68blTrRw4ZoIPg2wDfQHKVlpPjkaYPy/B2Zc9CmdERdU28CKYSgrk9i
-         0I8c3weMnRuQNXJhK7lFErX/zaOq/CGBt7zc2M2fdP41QN2f8ifZE62D3g2r//CCCL8+
-         As0Q==
-X-Gm-Message-State: APjAAAXvHiETZExde9UhumDRGJUDFEn1uTUYpoheH9NbWis4RzcSESMm
-        gjG2lZSyCILppGhCb8WZYovFrWeVXxqKW7xV3A==
-X-Google-Smtp-Source: APXvYqyMX9ckVpVhNYM/AuXYFCF+2UwsWazz6PKm86ZZd+MuqhjC0agMegN0ch2fUPa5Yx29/GiwkCPyBstMZuWFB2M=
-X-Received: by 2002:a6b:b756:: with SMTP id h83mr25547012iof.147.1563202922237;
- Mon, 15 Jul 2019 08:02:02 -0700 (PDT)
+        Mon, 15 Jul 2019 11:05:43 -0400
+Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
+        (Authenticated sender: gregory.clement@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 9E46124000F;
+        Mon, 15 Jul 2019 15:03:00 +0000 (UTC)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Auger Eric <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH] vfio: platform: reset: add support for XHCI reset hook
+In-Reply-To: <c152f211-0757-521e-64ea-543f6c89d9b2@redhat.com>
+References: <20190711143159.21961-1-gregory.clement@bootlin.com> <c152f211-0757-521e-64ea-543f6c89d9b2@redhat.com>
+Date:   Mon, 15 Jul 2019 17:03:00 +0200
+Message-ID: <87d0ib732z.fsf@FE-laptop>
 MIME-Version: 1.0
-References: <CAKKbWA6S7KotAFtLO=ow=XYnLL2Ny5Mz2kcgM1cs+j=5mHQNmw@mail.gmail.com>
- <alpine.DEB.2.21.1907151435080.1722@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1907151435080.1722@nanos.tec.linutronix.de>
-From:   Avi Fishman <avifishman70@gmail.com>
-Date:   Mon, 15 Jul 2019 18:01:15 +0300
-Message-ID: <CAKKbWA4jBMG8v4unqWEpGWgRm9CH+EJvojsOwMWTvnQH15HWdQ@mail.gmail.com>
-Subject: Re: [PATCH] clocksource/drivers/npcm: fix GENMASK and timer operation
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+Hi Eric,
+
+> Hi Gregory,
+>
+> On 7/11/19 4:31 PM, Gregory CLEMENT wrote:
+>> The VFIO reset hook is called every time a platform device is passed
+>> to a guest or removed from a guest.
+>> 
+>> When the XHCI device is unbound from the host, the host driver
+>> disables the XHCI clocks/phys/regulators so when the device is passed
+>> to the guest it becomes dis-functional.
+>> 
+>> This initial implementation uses the VFIO reset hook to enable the
+>> XHCI clocks/phys on behalf of the guest.
+>
+> the platform reset module must also make sure there are no more DMA
+> requests and interrupts that can be sent by the device anymore.
+
+OK I will take care of it too.
+
+
+>> 
+>> Ported from Marvell LSP code originally written by Yehuda Yitschak
+>> 
+>> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+>> ---
+>>  drivers/vfio/platform/reset/Kconfig           |  8 +++
+>>  drivers/vfio/platform/reset/Makefile          |  2 +
+>>  .../vfio/platform/reset/vfio_platform_xhci.c  | 60 +++++++++++++++++++
+>>  3 files changed, 70 insertions(+)
+>>  create mode 100644 drivers/vfio/platform/reset/vfio_platform_xhci.c
+>> 
+>> diff --git a/drivers/vfio/platform/reset/Kconfig b/drivers/vfio/platform/reset/Kconfig
+>> index 392e3c09def0..14f620fd250d 100644
+>> --- a/drivers/vfio/platform/reset/Kconfig
+>> +++ b/drivers/vfio/platform/reset/Kconfig
+>> @@ -22,3 +22,11 @@ config VFIO_PLATFORM_BCMFLEXRM_RESET
+>>  	  Enables the VFIO platform driver to handle reset for Broadcom FlexRM
+>>  
+>>  	  If you don't know what to do here, say N.
+>> +
+>> +config VFIO_PLATFORM_XHCI_RESET
+>> +	tristate "VFIO support for USB XHCI reset"
+>> +	depends on VFIO_PLATFORM
+>> +	help
+>> +	  Enables the VFIO platform driver to handle reset for USB XHCI
+>> +
+>> +	  If you don't know what to do here, say N.
+>> diff --git a/drivers/vfio/platform/reset/Makefile b/drivers/vfio/platform/reset/Makefile
+>> index 7294c5ea122e..d84c4d3dc041 100644
+>> --- a/drivers/vfio/platform/reset/Makefile
+>> +++ b/drivers/vfio/platform/reset/Makefile
+>> @@ -1,7 +1,9 @@
+>>  # SPDX-License-Identifier: GPL-2.0
+>>  vfio-platform-calxedaxgmac-y := vfio_platform_calxedaxgmac.o
+>>  vfio-platform-amdxgbe-y := vfio_platform_amdxgbe.o
+>> +vfio-platform-xhci-y := vfio_platform_xhci.o
+>>  
+>>  obj-$(CONFIG_VFIO_PLATFORM_CALXEDAXGMAC_RESET) += vfio-platform-calxedaxgmac.o
+>>  obj-$(CONFIG_VFIO_PLATFORM_AMDXGBE_RESET) += vfio-platform-amdxgbe.o
+>>  obj-$(CONFIG_VFIO_PLATFORM_BCMFLEXRM_RESET) += vfio_platform_bcmflexrm.o
+>> +obj-$(CONFIG_VFIO_PLATFORM_XHCI_RESET) += vfio-platform-xhci.o
+>> diff --git a/drivers/vfio/platform/reset/vfio_platform_xhci.c b/drivers/vfio/platform/reset/vfio_platform_xhci.c
+>> new file mode 100644
+>> index 000000000000..7b75a04402ee
+>> --- /dev/null
+>> +++ b/drivers/vfio/platform/reset/vfio_platform_xhci.c
+>> @@ -0,0 +1,60 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +/*
+>> + * VFIO platform driver specialized for XHCI reset
+>> + *
+>> + * Copyright 2016 Marvell Semiconductors, Inc.
+>> + *
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>> +#include <linux/device.h>
+>> +#include <linux/init.h>
+>> +#include <linux/io.h>
+>> +#include <linux/kernel.h>
+> io, init, kernel should be removable (noticed init and kernel.h also are
+> in other reset modules though)
+
+OK
+
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/phy/phy.h>
+>> +#include <linux/usb/phy.h>
+>> +
+>> +#include "../vfio_platform_private.h"
+>> +
+>> +#define MAX_XHCI_CLOCKS		4
+> Where does this number come from?
+>
+> From Documentation/devicetree/bindings/usb/usb-xhci.txt I understand
+> there are max 2 clocks, "core" and "reg" (I don't have any specific
+> knowledge on the device though).
+
+Right, I guess the intent was to be future proof if there is more clocks
+needed, but as we don't know, it's better to use the number of clokck we
+know.
+
+>
+>> +#define MAX_XHCI_PHYS		2
+> not used
+
+Right!
+
+>> +
+>> +int vfio_platform_xhci_reset(struct vfio_platform_device *vdev)
+>> +{
+>> +	struct device *dev = vdev->device;
+>> +	struct device_node *np = dev->of_node;
+>> +	struct usb_phy *usb_phy;
+>> +	struct clk *clk;
+>> +	int ret, i;
+>> +
+>> +	/*
+>> +	 * Compared to the native driver, no need to handle the
+>> +	 * deferred case, because the resources are already
+>> +	 * there
+>> +	 */
+>> +	for (i = 0; i < MAX_XHCI_CLOCKS; i++) {
+>> +		clk = of_clk_get(np, i);
+>> +		if (!IS_ERR(clk)) {
+>> +			ret = clk_prepare_enable(clk);
+>> +			if (ret)
+>> +				return -ENODEV;
+> return ret?
+
+OK
+
+>> +		}
+>> +	}
+>> +
+>> +	usb_phy = devm_usb_get_phy_by_phandle(dev, "usb-phy", 0);
+>> +	if (!IS_ERR(usb_phy)) {
+>> +		ret = usb_phy_init(usb_phy);
+>> +		if (ret)
+>> +			return -ENODEV;
+> return ret?
+
+OK
 
 Thanks,
-Avi
 
-On Mon, Jul 15, 2019 at 3:37 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> Avi,
->
-> On Mon, 15 Jul 2019, Avi Fishman wrote:
->
-> > NPCM7XX_Tx_OPER GENMASK was wrong,
->
-> That part is already fixed upstream:
->
->   9bdd7bb3a844 ("clocksource/drivers/npcm: Fix misuse of GENMASK macro")
+Gregory
 
-The automatic fix changed from
-GENMASK(3, 27) to
-GENMASK(27, 3)
-I reviewd again the code to check how it worked so far and saw that it
-should have been
-GENMASK(28, 27) - this is a different value than 9bdd7bb3a844
-For our fortune this wrong value didn't effect the our final write to
-the register.
-But still this should be fixed.
-
+>> +	}
 >
-> > npcm7xx_timer_oneshot() did wrong calculation
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +module_vfio_reset_handler("generic-xhci", vfio_platform_xhci_reset);
+>> +
+>> +MODULE_AUTHOR("Yehuda Yitschak");
+>> +MODULE_DESCRIPTION("Reset support for XHCI vfio platform device");
+>> +MODULE_LICENSE("GPL");
+>> 
+> Thanks
 >
-> That changelog is pretty unspecific. It does not tell what is wrong and
-> which consequences that has. Please be a bit more specific.
-
-OK I will fix
-
->
-> Thanks,
->
->         tglx
-
-
+> Eric
 
 -- 
-Regards,
-Avi
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
