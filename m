@@ -2,122 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 604C669C8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:20:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8472B69C88
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:19:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732616AbfGOUUB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 16:20:01 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33613 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732433AbfGOUT6 (ORCPT
+        id S1731543AbfGOUTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 16:19:48 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38709 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729844AbfGOUTr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 16:19:58 -0400
-Received: by mail-pl1-f194.google.com with SMTP id c14so8846722plo.0;
-        Mon, 15 Jul 2019 13:19:57 -0700 (PDT)
+        Mon, 15 Jul 2019 16:19:47 -0400
+Received: by mail-io1-f66.google.com with SMTP id j6so3959766ioa.5;
+        Mon, 15 Jul 2019 13:19:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HCmJmyzmQT4Pt6JaXDG9/uRNYLrXoyYw1jAGneb5HzY=;
-        b=IG0eJCAewoTOUUun5M223/wriO6b/gqFNT4s5JM0mJa0WMVKNrVZuOqL3Vgi7KSJrw
-         nMf/PpaIILxsdr0egGzS4cVomYL71GQll6c5diQUMXMWb/8kVrRW0YK5I0cJJTSYa9Em
-         5cotH+WKbXrnjzUC+joeRCF7rw1ikvZExSbkYeVGmSUpeR1cWAjkSEqnh/EOMhdsLa2a
-         r0rYezOJkHQosNrsKAhjGpEeIgz9zEYNfYP6hZa2va7TON3spuM/EHjRODT1dm7LVtry
-         HsLlHUQe9/Ieu5xo066q8aefcaIlytdl9LR3oyboS7hV7dKLMp88yvu6jd33Zua6h5+X
-         4HhA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TkjE725QSqZ4dkFuLoG+vA0yMkAoWN7O9RSUdzsebsc=;
+        b=h8MO4MUVIlQqTnfR5Og+DaigKE2QgHB8OsqEZw8GjXFMzJ/FJQCV+1xWDxZ2LZRMzo
+         2T1jGJBMnmVUK38ku38iUns/aLbXXSTtIHZom49OfBN/8dnw1dITnpC1OozlyJcY81WA
+         BLthifxP3ltY85Zu8uJQ+h/quShsxKtyqlo8T2pOzIQa0sn46Ac66NZVMiwmecH7zLez
+         Moh0xTGk/ZaFP711woaccognXfrXgd/9pov2cdIHEA9Wh5GsEFRBhCwNgguytGKVFYJ8
+         klQsX0w5fpXTUHx7gmbpvAp1uZdr2y0Z8PS6MG2a0DPsArDmVPwqJHX0Csq2Z7h08mF/
+         +Ktw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HCmJmyzmQT4Pt6JaXDG9/uRNYLrXoyYw1jAGneb5HzY=;
-        b=tOMg5ieJAWutYuEinykiqArUFmcM4p7U2Grbem7b9o4Iif8l84qAtlgqv1073X/2g+
-         wZR49mU4K4p2+Orna4jIgG9OrmNMhOdqowxNQsf0BSvRfE/EdyAFtFJR92k9JdtfpwO+
-         CxqBnCdnqNuH5ReaZa3X5GGSZ0flS5R9z0DsSrqGL8ExdXzt06s6/h8KBwL4F0QTKLDf
-         goE8wTsjJ+F/4iP8EjkjnRM3Iq9HLZzugrP77sAZNn8ASdEPHuguXD5Q5PHVZxLPV9DJ
-         9h8/9WFe6lfDnVMmb3nTy6y/02YA1SSUUlQtYH71wk9Fq60LU2djcochh8MbggPuJ5B9
-         UEbg==
-X-Gm-Message-State: APjAAAUQSfgd+1/igvY1SddudJSu8JKX1ThMLa0wC/uRI3Yte7XSrtr5
-        smE1qSxeEU9AC2MwPmPKUTg8nWBs
-X-Google-Smtp-Source: APXvYqzuZFmnL21xc52ZR0xZ1bcEaMitMJRytGnBbBqVRgJOi1ZXa2aW9OfTase4gHR+xcTL8irvXQ==
-X-Received: by 2002:a17:902:2808:: with SMTP id e8mr29329615plb.317.1563221997173;
-        Mon, 15 Jul 2019 13:19:57 -0700 (PDT)
-Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
-        by smtp.gmail.com with ESMTPSA id h1sm22730534pfg.55.2019.07.15.13.19.55
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TkjE725QSqZ4dkFuLoG+vA0yMkAoWN7O9RSUdzsebsc=;
+        b=agu2IlEDcK56PMqXIxdJxRzOPVYsDpO1AGX/rrXPQEhQ1CKZ8weSwu5tf2JDfAtKuC
+         lOaRR2+JeHlXRcEuplwUXbKFkCyh9FR8zH70JexhNbh9vD1aHiUy1yBpFAki4COOHO5P
+         G1m1pFZ22IzG0nhNEZ8NF2ZqREMbjFvK05nXby0XsWJ/uT2CktyNSz1FeDhqDy3oLHNB
+         gJ96KZmlQV51PR1hjjo3fnB7eWbufcA4nTKijxvwiSd9e2NxOdmqH1g+Uo0s4cNEWO4k
+         iaEfsccWylciI+YOEx7CXW+1F91a2jLO32WMJPKDJTCeGn6ct4m8s2/hs8KkuKF3n/Xi
+         WGmA==
+X-Gm-Message-State: APjAAAWjDnAiqadNuL5E7v+aBT08kPxP63OBTwwCvMDUJ+EYDPbGHSMt
+        tAuA4azn13wmQdLI+Xa8V5I=
+X-Google-Smtp-Source: APXvYqy2BPjk2wmAORUmSWSTU02Mv8tX0obRF21Uk45mkpTezjtN1swrS8vDTh6dSs3jRqMqxp5rQg==
+X-Received: by 2002:a05:6638:52:: with SMTP id a18mr30286329jap.75.1563221986160;
+        Mon, 15 Jul 2019 13:19:46 -0700 (PDT)
+Received: from JATN (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
+        by smtp.gmail.com with ESMTPSA id d25sm17710468iom.52.2019.07.15.13.19.44
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 15 Jul 2019 13:19:56 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-crypto@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Spencer <christopher.spencer@sea.co.uk>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 06/14] crypto: caam - use ioread64*_hi_lo in rd_reg64
-Date:   Mon, 15 Jul 2019 13:19:34 -0700
-Message-Id: <20190715201942.17309-7-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190715201942.17309-1-andrew.smirnov@gmail.com>
-References: <20190715201942.17309-1-andrew.smirnov@gmail.com>
+        Mon, 15 Jul 2019 13:19:45 -0700 (PDT)
+Date:   Mon, 15 Jul 2019 14:19:44 -0600
+From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [Linux-kernel-mentees] [PATCH v2] PCI: Remove functions not
+ called in include/linux/pci.h
+Message-ID: <20190715201944.GA36316@JATN>
+References: <20190715175658.29605-1-skunberg.kelsey@gmail.com>
+ <20190715181312.31403-1-skunberg.kelsey@gmail.com>
+ <alpine.DEB.2.21.1907152138120.2564@felia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1907152138120.2564@felia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Following the same transformation logic as outlined in previous commit
-converting wr_reg64, convert rd_reg64 to use helpers from
-<linux/io-64-nonatomic-hi-lo.h> first. No functional change intended.
-
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Chris Spencer <christopher.spencer@sea.co.uk>
-Cc: Cory Tusar <cory.tusar@zii.aero>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Horia Geantă <horia.geanta@nxp.com>
-Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/crypto/caam/regs.h | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/crypto/caam/regs.h b/drivers/crypto/caam/regs.h
-index 6e8352ac0d92..afdc0d1aa338 100644
---- a/drivers/crypto/caam/regs.h
-+++ b/drivers/crypto/caam/regs.h
-@@ -172,12 +172,20 @@ static inline void wr_reg64(void __iomem *reg, u64 data)
+On Mon, Jul 15, 2019 at 09:42:47PM +0200, Lukas Bulwahn wrote:
+> 
+> 
+> On Mon, 15 Jul 2019, Kelsey Skunberg wrote:
+> 
+> > Remove the following uncalled functions from include/linux/pci.h:
+> > 
+> >         pci_block_cfg_access()
+> >         pci_block_cfg_access_in_atomic()
+> >         pci_unblock_cfg_access()
+> > 
+> > Functions were added in patch fb51ccbf217c "PCI: Rework config space
+> > blocking services", though no callers were added. Code continues to be
+> > unused and should be removed.
+> > 
+> > Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
+> > ---
+> > 
+> 
+> Nice finding. How did you discover this issue? Did you use a tool to find 
+> this ununsed code or stumble over it during your code review?
+>
+Stumbled upon it while reviewing include/linux/pci.h to see what
+could be moved to drivers/pci/pci.h.
  
- static inline u64 rd_reg64(void __iomem *reg)
- {
--	if (!caam_imx && caam_little_end)
--		return ((u64)rd_reg32((u32 __iomem *)(reg) + 1) << 32 |
--			(u64)rd_reg32((u32 __iomem *)(reg)));
-+	if (caam_little_end) {
-+		if (caam_imx) {
-+			u32 low, high;
- 
--	return ((u64)rd_reg32((u32 __iomem *)(reg)) << 32 |
--		(u64)rd_reg32((u32 __iomem *)(reg) + 1));
-+			high = ioread32(reg);
-+			low  = ioread32(reg + sizeof(u32));
-+
-+			return low + ((u64)high << 32);
-+		} else {
-+			return ioread64(reg);
-+		}
-+	} else {
-+		return ioread64be(reg);
-+	}
- }
- #endif /* CONFIG_64BIT  */
- 
--- 
-2.21.0
+> Also note that commits are referred to with this format:
+> 
+> commit <12-character sha prefix> ("<commit message>")
+>
+> So, you need to change patch to commit and include brackets around your
+> quoted commit message.
+> 
+> Lukas
 
+Thank you for letting me know and reviewing! I will update this now.
+
+-Kelsey
+
+> 
+> > Changes since v1:
+> >   - Fixed Signed-off-by line to show full name
+> > 
+> >  include/linux/pci.h | 5 -----
+> >  1 file changed, 5 deletions(-)
+> > 
+> > diff --git a/include/linux/pci.h b/include/linux/pci.h
+> > index cf380544c700..3c9ba6133bea 100644
+> > --- a/include/linux/pci.h
+> > +++ b/include/linux/pci.h
+> > @@ -1656,11 +1656,6 @@ static inline void pci_release_regions(struct pci_dev *dev) { }
+> >  
+> >  static inline unsigned long pci_address_to_pio(phys_addr_t addr) { return -1; }
+> >  
+> > -static inline void pci_block_cfg_access(struct pci_dev *dev) { }
+> > -static inline int pci_block_cfg_access_in_atomic(struct pci_dev *dev)
+> > -{ return 0; }
+> > -static inline void pci_unblock_cfg_access(struct pci_dev *dev) { }
+> > -
+> >  static inline struct pci_bus *pci_find_next_bus(const struct pci_bus *from)
+> >  { return NULL; }
+> >  static inline struct pci_dev *pci_get_slot(struct pci_bus *bus,
+> > -- 
+> > 2.20.1
+> > 
+> > _______________________________________________
+> > Linux-kernel-mentees mailing list
+> > Linux-kernel-mentees@lists.linuxfoundation.org
+> > https://lists.linuxfoundation.org/mailman/listinfo/linux-kernel-mentees
+> > 
