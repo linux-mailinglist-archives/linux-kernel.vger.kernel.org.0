@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D72669CA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:20:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC97969CA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:20:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732393AbfGOUUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 16:20:49 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44451 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732345AbfGOUT4 (ORCPT
+        id S1732925AbfGOUUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 16:20:37 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44453 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732579AbfGOUT7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 16:19:56 -0400
-Received: by mail-pl1-f194.google.com with SMTP id t14so8839337plr.11;
-        Mon, 15 Jul 2019 13:19:56 -0700 (PDT)
+        Mon, 15 Jul 2019 16:19:59 -0400
+Received: by mail-pl1-f193.google.com with SMTP id t14so8839384plr.11;
+        Mon, 15 Jul 2019 13:19:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=E8M9KHyXwUEtFUyzJoarpboyeyNZ234MBzkiPCu7LgU=;
-        b=M8m4xEDxFSk3AAVK7Tb8g7sErDBrr36LF612LBy/6zaglybPFpL+zx57YdNLqazxsr
-         Odelmrk8QR/AlWkeEzkIhcnARFCv/Z3KtRFGkkfDpMYmVFdUz1l99um3FXCoJtHk5dn+
-         lgLxFKiw998gc08YRXs4AcS160HUEYYF+a77D1p5bbGvem7Jm+34/WuEMflATKIzB+Zp
-         rleCzLh0JQt5qS6Ijz6vDxhVDnG6Ay002+lxZ6sB8zKyO8bj92P4UVRmmLe0gU2Xa7qg
-         hMDK7ULumjhd0sF1F5gV4khOtfxbjCr8Rgdpmt5CcYy2FrcXnq5wCUlxHAV7eDHxynUJ
-         pRBw==
+        bh=xMpnTuEF4VNlabdEsAMZ4XSxyFLWi8ZClVXNYx4KkpU=;
+        b=nYnrXgNDJRzJvvudON5spq8E5oh3ibpAXyesmbha1xhT6KkuSgFXF3/lBz3gCl9HH+
+         9JOOGqMqBhSTUvfcAmkmtBHk6JAAPPxB/rLsiJi7jzBNONfBXBspe7f1l12Zpiq4f0a+
+         +kxRO3qHkoTSxyQ/a0nuXrI6Z7eG5OF5vF4HoXpeeNrmIynLi11LgL3B8y/T83NrZrbU
+         kZwy7ZZzRT+kDsZnyPlbCx7lD7p9/pYPgexKzgmXHPD4AjSjbVxUlpncTe09TIdRkEMN
+         075reux+keO0U0IBkEU+q/X2+yvkOLvRDSpmbc7gZqls0nBIDe96edvW47jchbpT/9HZ
+         Xx7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=E8M9KHyXwUEtFUyzJoarpboyeyNZ234MBzkiPCu7LgU=;
-        b=dpyaAFqUhL0mp1Lua0l/NX7V/ZLS7YmLrqOTtOpHxf6hp2ZzKUrDJMXe9SihEOsgSs
-         BvXK1MP1yQzqsmEyeZpifEr7Kf6xfvzBbxxqkdt6zFMQi1LHeRAWNNudqilXD+r+fQUI
-         XXyCrfSqkKdC5b5Xg5owhV2aq/hSb9yMPZ16LIFETHRd9H72/MS3X4yV0efBFVM/2gN2
-         sTvGHxI6Otca6eQRwWddBIxrzPm7l4c56Nomb+gd2aSbUB8aQiln63Iznpxg8p1X646V
-         VRuZoRJj57IDX38QCevVXsW7j2OksIIUQakRXxMWVINSbK86FWQVRA3bYGnTcSeXp9b8
-         DXcg==
-X-Gm-Message-State: APjAAAVpukUGBd6TLW2Y0VjqyRJSVWAzy+ee7/6kxSCZxky/W/iV6pn0
-        BdycJ3UpxBHK7h5Ne977fhcRnMFI
-X-Google-Smtp-Source: APXvYqxVLS8fmp4gV0hei+kLDX9RxMLr/CFRZrWvMkEIaI2ro8oJwirU2M5sBvBph8vw5eB3bHR5hA==
-X-Received: by 2002:a17:902:aa41:: with SMTP id c1mr30171698plr.201.1563221995743;
-        Mon, 15 Jul 2019 13:19:55 -0700 (PDT)
+        bh=xMpnTuEF4VNlabdEsAMZ4XSxyFLWi8ZClVXNYx4KkpU=;
+        b=M/oRe6f74vrjBC+zr80DHjTB1m1GbSe3ocZROR37K3RPVFhUzPCRB0e2CE6Lsj1Ary
+         OrRO+RSVUUQJD0W61Qfbj5ef9qAfiYXDPOyxu8L/OdZZuKmyLgF1i81SqTOKNjEiaRRU
+         zFPqBICVvN11JdonR97hNEqPXZ/Meit3NB397b683X+craLxQ+8hRxghR2PWLa1HckRS
+         L8GiZd1S42BheLHm03/NxX4NJKCC3xWQekNTYUGvRw8iVyyGYiW+OqQymwXt33Ar/jhF
+         oDN7RSHSCODEAWABNwwlLKk/y0LY+ts56whySNzQu9BNWQvKVp40TFRgIbNvCjOZSFoc
+         77EA==
+X-Gm-Message-State: APjAAAWd8LOsby8M1MIMb6/ikZ5KI1DmCn9ny5YD3EB0qTJwDXq+gV4y
+        U2/D0WBag4VyQA4YaWnRnAAg12kT
+X-Google-Smtp-Source: APXvYqypby16eKXvH/qaLMf1LUL7itrmuQKnNqxwXcPFbsdNMJa0QDpZvb3toJOTbqQuQr+tXdPhyw==
+X-Received: by 2002:a17:902:4aa3:: with SMTP id x32mr29148400pld.119.1563221998397;
+        Mon, 15 Jul 2019 13:19:58 -0700 (PDT)
 Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
-        by smtp.gmail.com with ESMTPSA id h1sm22730534pfg.55.2019.07.15.13.19.54
+        by smtp.gmail.com with ESMTPSA id h1sm22730534pfg.55.2019.07.15.13.19.57
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 15 Jul 2019 13:19:55 -0700 (PDT)
+        Mon, 15 Jul 2019 13:19:57 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     linux-crypto@vger.kernel.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -56,9 +56,9 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Aymen Sghaier <aymen.sghaier@nxp.com>,
         Leonard Crestez <leonard.crestez@nxp.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 05/14] crytpo: caam - make use of iowrite64*_hi_lo in wr_reg64
-Date:   Mon, 15 Jul 2019 13:19:33 -0700
-Message-Id: <20190715201942.17309-6-andrew.smirnov@gmail.com>
+Subject: [PATCH v5 07/14] crypto: caam - drop 64-bit only wr/rd_reg64()
+Date:   Mon, 15 Jul 2019 13:19:35 -0700
+Message-Id: <20190715201942.17309-8-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190715201942.17309-1-andrew.smirnov@gmail.com>
 References: <20190715201942.17309-1-andrew.smirnov@gmail.com>
@@ -70,76 +70,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to be able to unify 64 and 32 bit implementations of
-wr_reg64, let's convert it to use helpers from
-<linux/io-64-nonatomic-hi-lo.h> first. Here are the steps of the
-transformation:
-
-1. Inline wr_reg32 helpers:
-
-	if (!caam_imx && caam_little_end) {
-		if (caam_little_end) {
-			iowrite32(data >> 32, (u32 __iomem *)(reg) + 1);
-			iowrite32(data, (u32 __iomem *)(reg));
-		} else {
-			iowrite32be(data >> 32, (u32 __iomem *)(reg) + 1);
-			iowrite32be(data, (u32 __iomem *)(reg));
-		}
-	} else {
-		if (caam_little_end) {
-			iowrite32(data >> 32, (u32 __iomem *)(reg));
-			iowrite32(data, (u32 __iomem *)(reg) + 1);
-		} else {
-			iowrite32be(data >> 32, (u32 __iomem *)(reg));
-			iowrite32be(data, (u32 __iomem *)(reg) + 1);
-		}
-	}
-
-2. Transfrom the conditionals such that the check for
-'caam_little_end' is at the top level:
-
-	if (caam_little_end) {
-		if (!caam_imx) {
-			iowrite32(data >> 32, (u32 __iomem *)(reg) + 1);
-			iowrite32(data, (u32 __iomem *)(reg));
-		} else {
-			iowrite32(data >> 32, (u32 __iomem *)(reg));
-			iowrite32(data, (u32 __iomem *)(reg) + 1);
-		}
-	} else {
-		iowrite32be(data >> 32, (u32 __iomem *)(reg));
-		iowrite32be(data, (u32 __iomem *)(reg) + 1);
-	}
-
-3. Invert the check for !caam_imx:
-
-	if (caam_little_end) {
-		if (caam_imx) {
-			iowrite32(data >> 32, (u32 __iomem *)(reg));
-			iowrite32(data, (u32 __iomem *)(reg) + 1);
-		} else {
-			iowrite32(data >> 32, (u32 __iomem *)(reg) + 1);
-			iowrite32(data, (u32 __iomem *)(reg));
-		}
-	} else {
-		iowrite32be(data >> 32, (u32 __iomem *)(reg));
-		iowrite32be(data, (u32 __iomem *)(reg) + 1);
-	}
-
-4. Make use of iowrite64* helpers from <linux/io-64-nonatomic-hi-lo.h>
-
-	if (caam_little_end) {
-		if (caam_imx) {
-			iowrite32(data >> 32, (u32 __iomem *)(reg));
-			iowrite32(data, (u32 __iomem *)(reg) + 1);
-		} else {
-			iowrite64(data, reg);
-		}
-	} else {
-		iowrite64be(data, reg);
-	}
-
-No functional change intended.
+Since 32-bit of both wr_reg64 and rd_reg64 now use 64-bit IO helpers,
+these functions should no longer be necessary. No functional change intended.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc: Chris Spencer <christopher.spencer@sea.co.uk>
@@ -152,42 +84,46 @@ Cc: Leonard Crestez <leonard.crestez@nxp.com>
 Cc: linux-crypto@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- drivers/crypto/caam/regs.h | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/crypto/caam/regs.h | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
 diff --git a/drivers/crypto/caam/regs.h b/drivers/crypto/caam/regs.h
-index 8591914d5c51..6e8352ac0d92 100644
+index afdc0d1aa338..fb494d14f262 100644
 --- a/drivers/crypto/caam/regs.h
 +++ b/drivers/crypto/caam/regs.h
-@@ -12,6 +12,7 @@
- #include <linux/types.h>
- #include <linux/bitops.h>
- #include <linux/io.h>
-+#include <linux/io-64-nonatomic-hi-lo.h>
- 
- /*
-  * Architecture-specific register access methods
-@@ -157,12 +158,15 @@ static inline u64 rd_reg64(void __iomem *reg)
- #else /* CONFIG_64BIT */
+@@ -138,24 +138,6 @@ static inline void clrsetbits_32(void __iomem *reg, u32 clear, u32 set)
+  *    base + 0x0000 : least-significant 32 bits
+  *    base + 0x0004 : most-significant 32 bits
+  */
+-#ifdef CONFIG_64BIT
+-static inline void wr_reg64(void __iomem *reg, u64 data)
+-{
+-	if (caam_little_end)
+-		iowrite64(data, reg);
+-	else
+-		iowrite64be(data, reg);
+-}
+-
+-static inline u64 rd_reg64(void __iomem *reg)
+-{
+-	if (caam_little_end)
+-		return ioread64(reg);
+-	else
+-		return ioread64be(reg);
+-}
+-
+-#else /* CONFIG_64BIT */
  static inline void wr_reg64(void __iomem *reg, u64 data)
  {
--	if (!caam_imx && caam_little_end) {
--		wr_reg32((u32 __iomem *)(reg) + 1, data >> 32);
--		wr_reg32((u32 __iomem *)(reg), data);
-+	if (caam_little_end) {
-+		if (caam_imx) {
-+			iowrite32(data >> 32, (u32 __iomem *)(reg));
-+			iowrite32(data, (u32 __iomem *)(reg) + 1);
-+		} else {
-+			iowrite64(data, reg);
-+		}
- 	} else {
--		wr_reg32((u32 __iomem *)(reg), data >> 32);
--		wr_reg32((u32 __iomem *)(reg) + 1, data);
-+		iowrite64be(data, reg);
+ 	if (caam_little_end) {
+@@ -187,7 +169,6 @@ static inline u64 rd_reg64(void __iomem *reg)
+ 		return ioread64be(reg);
  	}
  }
+-#endif /* CONFIG_64BIT  */
  
+ static inline u64 cpu_to_caam_dma64(dma_addr_t value)
+ {
 -- 
 2.21.0
 
