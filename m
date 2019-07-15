@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D2CC69125
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:27:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42C4D6912C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:27:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390974AbfGOO07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:26:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35518 "EHLO mail.kernel.org"
+        id S1732052AbfGOO1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:27:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391393AbfGOO0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:26:52 -0400
+        id S2391405AbfGOO05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:26:57 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C311A206B8;
-        Mon, 15 Jul 2019 14:26:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2746C217F4;
+        Mon, 15 Jul 2019 14:26:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200811;
-        bh=ipCcHjIhlJAKSpf0KtDgEtW1PuWtCoxSDhCf9IAkvUM=;
+        s=default; t=1563200816;
+        bh=uEd4RMlBGLZfv+5gwz+0HEb65orRakvh7qOgGFD5TAU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K83LbY+cJCSDQ1+4tWvcLsYHpvRNsA3HaT32mjfdNutJ+qSwA2V5/1FAC5P9ZGl9A
-         GvpASQttmmjMNKx3zTjJHISCAcJxycni1IiLK3MRmrPhw5z+fuLY70kIeNbOduSYWU
-         gcIh5huOCItGSqD70+qJ2iyzkSLdDvwWyMSLM/wM=
+        b=INvu7uQiheyE17R1/S5/nhyI2KzJW/vEZDabNJcvRCagkWGPIOiHfW3op7b4IX5Cm
+         2UIG1XayDVLWoO7go7jilkb1x893sf2qeX9ZBTpHFclp2f9NVHJ0AR/N4oOH08dSww
+         g1SQ9L5FenLXhInbnfw09rYzfO+3i2cHf9w1enMw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Baruch Siach <baruch@tkos.co.il>, Song Liu <songliubraving@fb.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 135/158] bpf: fix uapi bpf_prog_info fields alignment
-Date:   Mon, 15 Jul 2019 10:17:46 -0400
-Message-Id: <20190715141809.8445-135-sashal@kernel.org>
+Cc:     Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 136/158] perf stat: Make metric event lookup more robust
+Date:   Mon, 15 Jul 2019 10:17:47 -0400
+Message-Id: <20190715141809.8445-136-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715141809.8445-1-sashal@kernel.org>
 References: <20190715141809.8445-1-sashal@kernel.org>
@@ -47,58 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Baruch Siach <baruch@tkos.co.il>
+From: Andi Kleen <ak@linux.intel.com>
 
-[ Upstream commit 0472301a28f6cf53a6bc5783e48a2d0bbff4682f ]
+[ Upstream commit 145c407c808352acd625be793396fd4f33c794f8 ]
 
-Merge commit 1c8c5a9d38f60 ("Merge
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next") undid the
-fix from commit 36f9814a494 ("bpf: fix uapi hole for 32 bit compat
-applications") by taking the gpl_compatible 1-bit field definition from
-commit b85fab0e67b162 ("bpf: Add gpl_compatible flag to struct
-bpf_prog_info") as is. That breaks architectures with 16-bit alignment
-like m68k. Add 31-bit pad after gpl_compatible to restore alignment of
-following fields.
+After setting up metric groups through the event parser, the metricgroup
+code looks them up again in the event list.
 
-Thanks to Dmitry V. Levin his analysis of this bug history.
+Make sure we only look up events that haven't been used by some other
+metric. The data structures currently cannot handle more than one metric
+per event. This avoids problems with multiple events partially
+overlapping.
 
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
-Acked-by: Song Liu <songliubraving@fb.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Link: http://lkml.kernel.org/r/20190624193711.35241-2-andi@firstfloor.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/uapi/linux/bpf.h       | 1 +
- tools/include/uapi/linux/bpf.h | 1 +
- 2 files changed, 2 insertions(+)
+ tools/perf/util/stat-shadow.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index 2932600ce271..d143e277cdaf 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -2486,6 +2486,7 @@ struct bpf_prog_info {
- 	char name[BPF_OBJ_NAME_LEN];
- 	__u32 ifindex;
- 	__u32 gpl_compatible:1;
-+	__u32 :31; /* alignment pad */
- 	__u64 netns_dev;
- 	__u64 netns_ino;
- 	__u32 nr_jited_ksyms;
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-index 66917a4eba27..bf4cd924aed5 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@ -2484,6 +2484,7 @@ struct bpf_prog_info {
- 	char name[BPF_OBJ_NAME_LEN];
- 	__u32 ifindex;
- 	__u32 gpl_compatible:1;
-+	__u32 :31; /* alignment pad */
- 	__u64 netns_dev;
- 	__u64 netns_ino;
- 	__u32 nr_jited_ksyms;
+diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
+index 99990f5f2512..bbb0e042d8e5 100644
+--- a/tools/perf/util/stat-shadow.c
++++ b/tools/perf/util/stat-shadow.c
+@@ -303,7 +303,7 @@ static struct perf_evsel *perf_stat__find_event(struct perf_evlist *evsel_list,
+ 	struct perf_evsel *c2;
+ 
+ 	evlist__for_each_entry (evsel_list, c2) {
+-		if (!strcasecmp(c2->name, name))
++		if (!strcasecmp(c2->name, name) && !c2->collect_stat)
+ 			return c2;
+ 	}
+ 	return NULL;
+@@ -342,7 +342,8 @@ void perf_stat__collect_metric_expr(struct perf_evlist *evsel_list)
+ 			if (leader) {
+ 				/* Search in group */
+ 				for_each_group_member (oc, leader) {
+-					if (!strcasecmp(oc->name, metric_names[i])) {
++					if (!strcasecmp(oc->name, metric_names[i]) &&
++						!oc->collect_stat) {
+ 						found = true;
+ 						break;
+ 					}
 -- 
 2.20.1
 
