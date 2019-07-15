@@ -2,107 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0274B69C57
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:08:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0061269C5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:09:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731218AbfGOUHk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 16:07:40 -0400
-Received: from mail-lf1-f54.google.com ([209.85.167.54]:37917 "EHLO
-        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729793AbfGOUHj (ORCPT
+        id S1731117AbfGOUJt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 16:09:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:15208 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729793AbfGOUJt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 16:07:39 -0400
-Received: by mail-lf1-f54.google.com with SMTP id h28so11900593lfj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 13:07:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=eixaqw4rkktSrGNopKKbb/e4i5OCHkekMi3cawhMjd0=;
-        b=P2iRueoZZZolheElzwSTwYwc4RL+cazdVv/CsaDqThr07wrKc70nMd66dNr+4RJgdC
-         BvRP6r9qDsoTmR2kyUtGbeyA8kOaLPvgB2B6eZHY99jN0c+s0VmexvYTt39LILXFaAJR
-         8isLgd729Gom3bcquhSVnuvvT3p838Xh7cOZk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=eixaqw4rkktSrGNopKKbb/e4i5OCHkekMi3cawhMjd0=;
-        b=aNcibE012uXOQhJP/vd7krRd2X5JAu+IyyIdCXTSyAhYo2a7smTgA8ON1NsXalrgCv
-         97nMDNYK+fWtRqVN0OjAnYU+JGyMoZS8EebfJONrl1HHMyilpGyDc5bxHOAA68oI0EmZ
-         BLucBBaj4WoKpScSxhQ2XIr8ZVw2/lDfx0Op/4pzqJkrl7Z+qwGZAhk/+FCT1mu6Vyat
-         CC78qVkeJaK0ywI18gVcpJ1cmmXa0d3ZbbXAXEkP97HTgJ1SS1y9PD4qP1mS0fgTEjfD
-         c/IER/UyxeBJExtLSDrn28UsiPPWqLhe0nnvZzkVVM3SlV8E0neBceqK780yIR4Sq6PN
-         vJmg==
-X-Gm-Message-State: APjAAAX2sGIrqEZmCwhwzOD/LZLWBL7abCiuhbprusePiyu/vUXhPJM0
-        5qIFF11e3f6M4o3DRwhap6CY4BvrK1c=
-X-Google-Smtp-Source: APXvYqy7QVUVPK6J0Zo17ZfhgQTASls/a/h0/eebvZRytnswCiwMYWYssVDjFLWl3YSamToOo56+Zw==
-X-Received: by 2002:ac2:455a:: with SMTP id j26mr12181452lfm.18.1563221257191;
-        Mon, 15 Jul 2019 13:07:37 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id p9sm3337827lji.107.2019.07.15.13.07.35
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jul 2019 13:07:36 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id i21so17559738ljj.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 13:07:35 -0700 (PDT)
-X-Received: by 2002:a2e:9b83:: with SMTP id z3mr14547098lji.84.1563221255694;
- Mon, 15 Jul 2019 13:07:35 -0700 (PDT)
+        Mon, 15 Jul 2019 16:09:49 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6FK7nOw017252;
+        Mon, 15 Jul 2019 16:09:04 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2trw8kg5n3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 Jul 2019 16:09:03 -0400
+Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x6FK93io021161;
+        Mon, 15 Jul 2019 16:09:03 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2trw8kg5mg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 Jul 2019 16:09:03 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x6FK56fD017550;
+        Mon, 15 Jul 2019 20:09:02 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma01wdc.us.ibm.com with ESMTP id 2tq6x5ssvs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 Jul 2019 20:09:02 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6FK91Zb51314950
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Jul 2019 20:09:01 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B69D0B2065;
+        Mon, 15 Jul 2019 20:09:01 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 767E8B2064;
+        Mon, 15 Jul 2019 20:09:01 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.187.221])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 15 Jul 2019 20:09:01 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 2796216C8F40; Mon, 15 Jul 2019 13:09:01 -0700 (PDT)
+Date:   Mon, 15 Jul 2019 13:09:01 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Byungchul Park <max.byungchul.park@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        kernel-team@lge.com
+Subject: Re: [PATCH] rcu: Make jiffies_till_sched_qs writable
+Message-ID: <20190715200901.GW26519@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190712063240.GD7702@X58A-UD3R>
+ <20190712125116.GB92297@google.com>
+ <CANrsvRMh6L_sEmoF_K3Mx=1VcuGSwQAT8CZHep69aSZUTBvwpA@mail.gmail.com>
+ <CAEXW_YTeAUuVqViBfiOTQhckMDH229oQdPXG6SNqGK0xYm-yzA@mail.gmail.com>
+ <20190713151330.GE26519@linux.ibm.com>
+ <20190713154257.GE133650@google.com>
+ <20190713174111.GG26519@linux.ibm.com>
+ <CANrsvRNK=+SKHJNLmwNjp2tnjacJpqwFVQH9aRCj2E1L10GHDQ@mail.gmail.com>
+ <20190714135610.GJ26519@linux.ibm.com>
+ <20190715173924.GA2494@google.com>
 MIME-Version: 1.0
-References: <CAPM=9tzJQ+26n_Df1eBPG1A=tXf4xNuVEjbG3aZj-aqYQ9nnAg@mail.gmail.com>
- <CAPM=9twvwhm318btWy_WkQxOcpRCzjpok52R8zPQxQrnQ8QzwQ@mail.gmail.com>
- <CAHk-=wjC3VX5hSeGRA1SCLjT+hewPbbG4vSJPFK7iy26z4QAyw@mail.gmail.com>
- <CAHk-=wiD6a189CXj-ugRzCxA9r1+siSCA0eP_eoZ_bk_bLTRMw@mail.gmail.com> <48890b55-afc5-ced8-5913-5a755ce6c1ab@shipmail.org>
-In-Reply-To: <48890b55-afc5-ced8-5913-5a755ce6c1ab@shipmail.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 15 Jul 2019 13:07:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whwcMLwcQZTmWgCnSn=LHpQG+EBbWevJEj5YTKMiE_-oQ@mail.gmail.com>
-Message-ID: <CAHk-=whwcMLwcQZTmWgCnSn=LHpQG+EBbWevJEj5YTKMiE_-oQ@mail.gmail.com>
-Subject: Re: drm pull for v5.3-rc1
-To:     =?UTF-8?Q?Thomas_Hellstr=C3=B6m_=28VMware=29?= 
-        <thomas@shipmail.org>
-Cc:     Dave Airlie <airlied@gmail.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190715173924.GA2494@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-15_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907150230
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 12:36 PM Thomas Hellstr=C3=B6m (VMware)
-<thomas@shipmail.org> wrote:
->
-> - I've never had any kernel code more reviewed than this.
+On Mon, Jul 15, 2019 at 01:39:24PM -0400, Joel Fernandes wrote:
+> On Sun, Jul 14, 2019 at 06:56:10AM -0700, Paul E. McKenney wrote:
+> [snip]
+> > > > > > > > > >
+> > > > > > > > > >       commit ae91aa0adb14dc33114d566feca2f7cb7a96b8b7
+> > > > > > > > > >       rcu: Remove debugfs tracing
+> > > > > > > > > >
+> > > > > > > > > > removed all debugfs tracing, gp_max also included.
+> > > > > > > > > >
+> > > > > > > > > > And you sounds great. And even looks not that hard to add it like,
+> > > > > > > > > >
+> > > > > > > > > > :)
+> > > > > > > > > >
+> > > > > > > > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > > > > > > > > index ad9dc86..86095ff 100644
+> > > > > > > > > > --- a/kernel/rcu/tree.c
+> > > > > > > > > > +++ b/kernel/rcu/tree.c
+> > > > > > > > > > @@ -1658,8 +1658,10 @@ static void rcu_gp_cleanup(void)
+> > > > > > > > > >       raw_spin_lock_irq_rcu_node(rnp);
+> > > > > > > > > >       rcu_state.gp_end = jiffies;
+> > > > > > > > > >       gp_duration = rcu_state.gp_end - rcu_state.gp_start;
+> > > > > > > > > > -     if (gp_duration > rcu_state.gp_max)
+> > > > > > > > > > +     if (gp_duration > rcu_state.gp_max) {
+> > > > > > > > > >               rcu_state.gp_max = gp_duration;
+> > > > > > > > > > +             trace_rcu_grace_period(something something);
+> > > > > > > > > > +     }
+> > > > > > > > >
+> > > > > > > > > Yes, that makes sense. But I think it is much better off as a readable value
+> > > > > > > > > from a virtual fs. The drawback of tracing for this sort of thing are:
+> > > > > > > > >  - Tracing will only catch it if tracing is on
+> > > > > > > > >  - Tracing data can be lost if too many events, then no one has a clue what
+> > > > > > > > >    the max gp time is.
+> > > > > > > > >  - The data is already available in rcu_state::gp_max so copying it into the
+> > > > > > > > >    trace buffer seems a bit pointless IMHO
+> > > > > > > > >  - It is a lot easier on ones eyes to process a single counter than process
+> > > > > > > > >    heaps of traces.
+> > > > > > > > >
+> > > > > > > > > I think a minimal set of RCU counters exposed to /proc or /sys should not
+> > > > > > > > > hurt and could do more good than not. The scheduler already does this for
+> > > > > > > > > scheduler statistics. I have seen Peter complain a lot about new tracepoints
+> > > > > > > > > but not much (or never) about new statistics.
+> > > > > > > > >
+> > > > > > > > > Tracing has its strengths but may not apply well here IMO. I think a counter
+> > > > > > > > > like this could be useful for tuning of things like the jiffies_*_sched_qs,
+> > > > > > > > > the stall timeouts and also any other RCU knobs. What do you think?
+> > > > > > > >
+> > > > > > > > I prefer proc/sys knob for it to tracepoint. Why I've considered it is just it
+> > > > > > > > looks like undoing what Paul did at ae91aa0ad.
+> > > > > > > >
+> > > > > > > > I think you're rational enough. I just wondered how Paul think of it.
+> > > > > > >
+> > > > > > > I believe at least initially, a set of statistics can be made
+> > > > > > > available only when rcutorture or rcuperf module is loaded. That way
+> > > > > > > they are purely only for debugging and nothing needs to be exposed to
+> > > > > > > normal kernels distributed thus reducing testability concerns.
+> > > > > > >
+> > > > > > > rcu_state::gp_max would be trivial to expose through this, but for
+> > > > > > > other statistics that are more complicated - perhaps
+> > > > > > > tracepoint_probe_register can be used to add hooks on to the
+> > > > > > > tracepoints and generate statistics from them. Again the registration
+> > > > > > > of the probe and the probe handler itself would all be in
+> > > > > > > rcutorture/rcuperf test code and not a part of the kernel proper.
+> > > > > > > Thoughts?
+> > > > > >
+> > > > > > It still feels like you guys are hyperfocusing on this one particular
+> > > > > > knob.  I instead need you to look at the interrelating knobs as a group.
+> > > > >
+> > > > > Thanks for the hints, we'll do that.
+> > > > >
+> > > > > > On the debugging side, suppose someone gives you an RCU bug report.
+> > > > > > What information will you need?  How can you best get that information
+> > > > > > without excessive numbers of over-and-back interactions with the guy
+> > > > > > reporting the bug?  As part of this last question, what information is
+> > > > > > normally supplied with the bug?  Alternatively, what information are
+> > > > > > bug reporters normally expected to provide when asked?
+> > > > >
+> > > > > I suppose I could dig out some of our Android bug reports of the past where
+> > > > > there were RCU issues but if there's any fires you are currently fighting do
+> > > > > send it our way as debugging homework ;-)
+> > > >
+> > > > Evading the questions, are we?
+> 
+> Sorry if I sounded like evading, I was just saying that it would be nice to
+> work on some specific issue or bug report and then figure out what is needed
+> from there, instead of trying to predict what data is useful. Of course, I
+> think predicting and dumping data is also useful, but I was just wondering if
+> you had some specific issue in mind that we could work off of (you did
+> mention the CPU stopper below so thank you!)
 
-Hmm. It may have been reviewed, but that wasn't visible in the commits
-themselves, so when I look at the pull request, I don't see that.
+No worries, and fair enough!
 
-> - The combined callback / argument struct: It was strongly inspired by
-> the struct mm_walk (mm.h), the page walk code being quite similar in
-> functionality.
+> > > > OK, I can be flexible.  Suppose that you were getting RCU CPU stall
+> > > > warnings featuring multi_cpu_stop() called from cpu_stopper_thread().
+> > > > Of course, this really means that some other CPU/task is holding up
+> > > > multi_cpu_stop() without also blocking the current grace period.
+> > > >
+> > > > What is the best way to work out what is really holding things up?
+> > > 
+> > > Either the stopper preempted another being in a critical section and
+> > > has something wrong itself in case of PREEMPT or mechanisms for
+> > > urgent control doesn't work correctly.
+> > > 
+> > > I don't know what exactly you intended but I would check things like
+> > > (1) irq disable / eqs / tick / scheduler events and (2) whether special
+> > > handling for each level of qs urgency has started correctly. For that
+> > > purpose all the history of those events would be more useful.
+> 
+> Agreed, these are all good.
 
-The mm_walk struct is indeed a bit similar, and is in fact a bit
-problematic exactly because it mixes function pointers with non-const
-data.
+Just to reiterate -- it would be good if multi_cpu_stop() could
+automatically dump out useful information when it has been delayed too
+long, where "too long" is probably a bit shorter than the RCU CPU stall
+warning timeout.  Useful information would include the stack of the task
+impeding multi_cpu_stop().
 
-I wish it had been a 'const struct mm_walk *" that only passed in the
-stuff that describes what to do on the walk itself.  Or separated into
-two different pointers - one for the "this is what to do for the walk"
-and one for "this is the walking data".
+> > > And with thinking it more, we could come up with a good way to
+> > > make use of those data to identify what the problem is. Do I catch
+> > > the point correctly? If so, me and Joel can start to work on it.
+> > > Otherwise, please correct me.
+> > 
+> > I believe you are on the right track.  In short, it would be great if
+> > the kernel would automatically dump out the needed information when
+> > cpu_stopper gets stalled, sort of like RCU does (much of the time,
+> > anyway) in its CPU stall warnings.  Given a patch that did this, I would
+> > be quite happy to help advocate for it!
+> 
+> In case you have a LKML link to a thread or bug report to this specific
+> cpu_stopper issue, please do pass it along.
 
-In fact, I think tight now that is actually _almost_ the case and we
-could make them const, except for "walk->vma" which is updated
-dynamically as we walk.  Oh well.
+I hope to have an rcutorture-based repeat-by in a few days, give or take.
+(Famous last words!)
 
-And for all I know, some of the walkers may be modifying their
-"private" field too, since that's left to the walkers.
+> Happy to work on this with Byungchul, thanks,
 
-So yes, that one also has some problems, I agree.
+Thank you both!
 
-               Linus
+							Thanx, Paul
