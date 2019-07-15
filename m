@@ -2,115 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6879681E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 02:39:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A71F681F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 02:40:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729266AbfGOAiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 14 Jul 2019 20:38:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34882 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729211AbfGOAhz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 14 Jul 2019 20:37:55 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BA47A3086272;
-        Mon, 15 Jul 2019 00:37:55 +0000 (UTC)
-Received: from treble.redhat.com (ovpn-120-170.rdu2.redhat.com [10.10.120.170])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AF8565D9D2;
-        Mon, 15 Jul 2019 00:37:54 +0000 (UTC)
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH 22/22] objtool: Support conditional retpolines
-Date:   Sun, 14 Jul 2019 19:37:17 -0500
-Message-Id: <4db0cb4d1065c8714ee64f0bfc9fc8b7d6331124.1563150885.git.jpoimboe@redhat.com>
-In-Reply-To: <cover.1563150885.git.jpoimboe@redhat.com>
-References: <cover.1563150885.git.jpoimboe@redhat.com>
+        id S1729021AbfGOAkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 14 Jul 2019 20:40:01 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46885 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728997AbfGOAkA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 14 Jul 2019 20:40:00 -0400
+Received: by mail-wr1-f67.google.com with SMTP id z1so15182549wru.13
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Jul 2019 17:39:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
+        b=hhEoiGFqVtqimvpJuyj1EbEX4DfbGhbQvq8njm/v6eFi+XvarC8aUrUP5igj/qXzqW
+         CfvzM3A0u5yGko7wbXAKXpaR9YsAi8Hqy8QSvpyaSPfCgC1FRjbWE3l/RS5x93Dj6XsM
+         VsllFeDtatqUwVvpeIR8KbJRh79rwenN2aCVhvKffhpCAJG368k0s/AqfUK+263lgpKY
+         Dbsr9/r6nk1Fgzh5wv7dlyyDS8yxSjjCoSjzXX27h5vxLXCUFy6dMDBXJ6iRnV4WpX+6
+         7S2GlXlHIm3D/Dd7jip3c8eyKj6NPPdWh1yq0uVS6wbWztgEmS8yqNP1mHcTAv5+bP+Q
+         ICcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
+        b=dTnmDhfho/4fqgONlnMqmPTf/GzcW/rtk2wOUJp/0h2DFJp01F0P+rsbOUROeXXkIF
+         1w5fyJF0OXUtJkI4jbZa+wb7CGWW5dQAR/70EPXUGkWlt9AsbM7Yu3m+ysU+r9tbhUPg
+         WEbCrkRBf53GXl0092DppN7NlEf2JGKNsD5Llfbxee7kHYlxpTQwtrmmAx1/cjxOouhv
+         KvdoL7+mqNvyKGQMuNlinDycsMdQF6t9NnsjKsZl3Behb8xrOZUkePiarKHGCK3FdmJ3
+         oBLzLuC4rbFOU3SzJ62xa3U2Mnc/yj1l58ytMr3AxeS/iy4DZFikM98hVG8Y5/fNbhtl
+         B7Xg==
+X-Gm-Message-State: APjAAAWjro3hjR5JFcTfAkXbZ5LQHjomp898HxMpDmPC+MlPya+waFPt
+        N1hqmQBAUa8KFL49q5TRl8ro7D/x8TtujRE7LE4=
+X-Google-Smtp-Source: APXvYqy5oGOZ+mfDYXqgYvlIzvFtpyI0rJ29XthOUYtzbQGjNGHljWsirnpUjEv+GyGmZko3ZZEuYxBPjHUxMAZsH1k=
+X-Received: by 2002:a5d:564e:: with SMTP id j14mr24243874wrw.1.1563151198518;
+ Sun, 14 Jul 2019 17:39:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 15 Jul 2019 00:37:55 +0000 (UTC)
+Received: by 2002:a5d:69cf:0:0:0:0:0 with HTTP; Sun, 14 Jul 2019 17:39:58
+ -0700 (PDT)
+Reply-To: ayishagddafio@mail.com
+From:   AISHA GADDAFI <ayishagadafi1@gmail.com>
+Date:   Sun, 14 Jul 2019 17:39:58 -0700
+Message-ID: <CAKmdXwsE33L0SSGvsb7bxapnkZikxpz94CGSzPqkUcoPzXMJpA@mail.gmail.com>
+Subject: Dear Friend (Assalamu Alaikum),
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A Clang-built kernel is showing the following warning:
-
-  arch/x86/kernel/platform-quirks.o: warning: objtool: x86_early_init_platform_quirks()+0x84: unreachable instruction
-
-That corresponds to this code:
-
-  7e:   0f 85 00 00 00 00       jne    84 <x86_early_init_platform_quirks+0x84>
-                        80: R_X86_64_PC32       __x86_indirect_thunk_r11-0x4
-  84:   c3                      retq
-
-This is a conditional retpoline sibling call, which is now possible
-thanks to retpolines.  Objtool hasn't seen that before.  It's
-incorrectly interpreting the conditional jump as an unconditional
-dynamic jump.
-
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
----
- tools/objtool/arch.h  |  1 +
- tools/objtool/check.c | 12 ++++++++++--
- 2 files changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/tools/objtool/arch.h b/tools/objtool/arch.h
-index 50448c0c4bca..ced3765c4f44 100644
---- a/tools/objtool/arch.h
-+++ b/tools/objtool/arch.h
-@@ -15,6 +15,7 @@ enum insn_type {
- 	INSN_JUMP_CONDITIONAL,
- 	INSN_JUMP_UNCONDITIONAL,
- 	INSN_JUMP_DYNAMIC,
-+	INSN_JUMP_DYNAMIC_CONDITIONAL,
- 	INSN_CALL,
- 	INSN_CALL_DYNAMIC,
- 	INSN_RETURN,
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 5a237fc05cdc..a8411355a80d 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -575,7 +575,11 @@ static int add_jump_destinations(struct objtool_file *file)
- 			 * Retpoline jumps are really dynamic jumps in
- 			 * disguise, so convert them accordingly.
- 			 */
--			insn->type = INSN_JUMP_DYNAMIC;
-+			if (insn->type == INSN_JUMP_UNCONDITIONAL)
-+				insn->type = INSN_JUMP_DYNAMIC;
-+			else
-+				insn->type = INSN_JUMP_DYNAMIC_CONDITIONAL;
-+
- 			insn->retpoline_safe = true;
- 			continue;
- 		} else {
-@@ -2114,13 +2118,17 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
- 			break;
- 
- 		case INSN_JUMP_DYNAMIC:
-+		case INSN_JUMP_DYNAMIC_CONDITIONAL:
- 			if (func && is_sibling_call(insn)) {
- 				ret = validate_sibling_call(insn, &state);
- 				if (ret)
- 					return ret;
- 			}
- 
--			return 0;
-+			if (insn->type == INSN_JUMP_DYNAMIC)
-+				return 0;
-+
-+			break;
- 
- 		case INSN_CONTEXT_SWITCH:
- 			if (func && (!next_insn || !next_insn->hint)) {
 -- 
-2.20.1
+Dear Friend (Assalamu Alaikum),
 
+I came across your e-mail contact prior a private search while in need of
+your assistance. My name is Aisha  Al-Qaddafi a single Mother and a Widow
+with three Children. I am the only biological Daughter of late Libyan
+President (Late Colonel Muammar Gaddafi).
+
+I have investment funds worth Twenty Seven Million Five Hundred Thousand
+United State Dollar ($27.500.000.00 ) and i need a trusted investment
+Manager/Partner because of my current refugee status, however, I am
+interested in you for investment project assistance in your country, may be
+from there, we can build business relationship in the nearest future.
+
+I am willing to negotiate investment/business profit sharing ratio with you
+base on the future investment earning profits.
+
+If you are willing to handle this project on my behalf kindly reply urgent
+to enable me provide you more information about the investment funds.
+
+Your Urgent Reply Will Be Appreciated. write me at this email address(
+ayishagddafio@mail.com ) for further discussion.
+
+Best Regards
+Mrs Aisha Al-Qaddafi
+Reply to: ayishagddafio@mail.com
