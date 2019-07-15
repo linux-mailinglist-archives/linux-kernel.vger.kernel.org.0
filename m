@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDB6D6943D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:50:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B36269435
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:50:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405057AbfGOOq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:46:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36706 "EHLO mail.kernel.org"
+        id S2405088AbfGOOuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:50:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405036AbfGOOqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:46:24 -0400
+        id S2405169AbfGOOrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:47:06 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D59FA21537;
-        Mon, 15 Jul 2019 14:46:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0F4C20861;
+        Mon, 15 Jul 2019 14:47:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563201983;
-        bh=rjXIrPC/VKGuER3lh7qxRBpyvcqcxN4Tu6CvnCk5rEU=;
+        s=default; t=1563202026;
+        bh=V4R1L9a5YNbGviYLLm60M4YAyK7BBIasy/uKmjh7m9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i/jjxjXSxd28MroyR1NAKD2oENc+KV4AeaSPCYBpZhaw4psrCknWKeGGmm6vm/vXQ
-         O9+EpZeyDbgwWDaooj4o4dp2i0s/+CPFHwR5y+4I1WEu35Rsb0yxvRKSYPjRSFyI7V
-         owFiWjjiUUFG/obqs4FiRWIjeTcWLEJ2OAskg5QA=
+        b=IZf1CIJi6b7u1Xqvq9CqcLMCHb/tWwpUJdCj5/cLXUscdCrp0PONDXtJvRiJ2jgwn
+         eIaPb6acM+NDJ5bPxY/QVaY5LnrTLeGQw5ixN4ob7Zdky6/Q/RjI6pHJIJow/5a1Kf
+         SkpNSwN+i6jXJXHY1Mcp0D5nB0xeVEH0EBMx0f0M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anirudh Gupta <anirudhrudr@gmail.com>,
-        Anirudh Gupta <anirudh.gupta@sophos.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 14/53] xfrm: Fix xfrm sel prefix length validation
-Date:   Mon, 15 Jul 2019 10:44:56 -0400
-Message-Id: <20190715144535.11636-14-sashal@kernel.org>
+Cc:     Thomas Richter <tmricht@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 25/53] perf test 6: Fix missing kvm module load for s390
+Date:   Mon, 15 Jul 2019 10:45:07 -0400
+Message-Id: <20190715144535.11636-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715144535.11636-1-sashal@kernel.org>
 References: <20190715144535.11636-1-sashal@kernel.org>
@@ -45,56 +46,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anirudh Gupta <anirudhrudr@gmail.com>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-[ Upstream commit b38ff4075a80b4da5cb2202d7965332ca0efb213 ]
+[ Upstream commit 53fe307dfd309e425b171f6272d64296a54f4dff ]
 
-Family of src/dst can be different from family of selector src/dst.
-Use xfrm selector family to validate address prefix length,
-while verifying new sa from userspace.
+Command
 
-Validated patch with this command:
-ip xfrm state add src 1.1.6.1 dst 1.1.6.2 proto esp spi 4260196 \
-reqid 20004 mode tunnel aead "rfc4106(gcm(aes))" \
-0x1111016400000000000000000000000044440001 128 \
-sel src 1011:1:4::2/128 sel dst 1021:1:4::2/128 dev Port5
+   # perf test -Fv 6
 
-Fixes: 07bf7908950a ("xfrm: Validate address prefix lengths in the xfrm selector.")
-Signed-off-by: Anirudh Gupta <anirudh.gupta@sophos.com>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+fails with error
+
+   running test 100 'kvm-s390:kvm_s390_create_vm' failed to parse
+    event 'kvm-s390:kvm_s390_create_vm', err -1, str 'unknown tracepoint'
+    event syntax error: 'kvm-s390:kvm_s390_create_vm'
+                         \___ unknown tracepoint
+
+when the kvm module is not loaded or not built in.
+
+Fix this by adding a valid function which tests if the module
+is loaded. Loaded modules (or builtin KVM support) have a
+directory named
+  /sys/kernel/debug/tracing/events/kvm-s390
+for this tracepoint.
+
+Check for existence of this directory.
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Link: http://lkml.kernel.org/r/20190604053504.43073-1-tmricht@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_user.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ tools/perf/tests/parse-events.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index b04c03043976..10fda9a39cc2 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -150,6 +150,22 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
+diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
+index 54af2f2e2ee4..1a35ab044c11 100644
+--- a/tools/perf/tests/parse-events.c
++++ b/tools/perf/tests/parse-events.c
+@@ -12,6 +12,32 @@
+ #define PERF_TP_SAMPLE_TYPE (PERF_SAMPLE_RAW | PERF_SAMPLE_TIME | \
+ 			     PERF_SAMPLE_CPU | PERF_SAMPLE_PERIOD)
  
- 	err = -EINVAL;
- 	switch (p->family) {
-+	case AF_INET:
-+		break;
++#if defined(__s390x__)
++/* Return true if kvm module is available and loaded. Test this
++ * and retun success when trace point kvm_s390_create_vm
++ * exists. Otherwise this test always fails.
++ */
++static bool kvm_s390_create_vm_valid(void)
++{
++	char *eventfile;
++	bool rc = false;
 +
-+	case AF_INET6:
-+#if IS_ENABLED(CONFIG_IPV6)
-+		break;
-+#else
-+		err = -EAFNOSUPPORT;
-+		goto out;
-+#endif
++	eventfile = get_events_file("kvm-s390");
 +
-+	default:
-+		goto out;
++	if (eventfile) {
++		DIR *mydir = opendir(eventfile);
++
++		if (mydir) {
++			rc = true;
++			closedir(mydir);
++		}
++		put_events_file(eventfile);
 +	}
 +
-+	switch (p->sel.family) {
- 	case AF_INET:
- 		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
- 			goto out;
++	return rc;
++}
++#endif
++
+ static int test__checkevent_tracepoint(struct perf_evlist *evlist)
+ {
+ 	struct perf_evsel *evsel = perf_evlist__first(evlist);
+@@ -1561,6 +1587,7 @@ static struct evlist_test test__events[] = {
+ 	{
+ 		.name  = "kvm-s390:kvm_s390_create_vm",
+ 		.check = test__checkevent_tracepoint,
++		.valid = kvm_s390_create_vm_valid,
+ 		.id    = 100,
+ 	},
+ #endif
 -- 
 2.20.1
 
