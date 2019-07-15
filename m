@@ -2,46 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5663694F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:55:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FA59694F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:55:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390171AbfGOO1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:27:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59768 "EHLO mail.kernel.org"
+        id S2391667AbfGOOzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:55:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391030AbfGOOZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:25:05 -0400
+        id S2390774AbfGOO1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:27:02 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0BF9206B8;
-        Mon, 15 Jul 2019 14:24:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1901320896;
+        Mon, 15 Jul 2019 14:26:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200703;
-        bh=oRRZGUkIuPvHBH6aKfmz3V1QKESktJkD4PpLZ+lWzDs=;
+        s=default; t=1563200821;
+        bh=NxLJdjlbJ4kp+I870Br+d1UIqe1sq9tV5ZYemn48wn0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GfFJOCAVbeV9Wg5ejppUT9pRFYQEUXAwDqzxOlgxF2TWZ5L03L+QLENKxHfb3AIME
-         UOrnFaHdsL39u+cebn+NJ9Fw2Y1a7djFzkYczLq1Dg9fczWt+7ad88z073TG5h7pv1
-         HwFPgxrKtYPoEM2lLqPIY2imci9RRIyMjkWhTqSA=
+        b=udAOdSx3KLlVUPq7diUMqepml1mINRlXkUQNdLfLhllo0o3dj/KfPG91ZmEF6VNw/
+         XrYNYt2iYePf1jC8YRkP//3ABG5ARHd2lUZaO51yq6oEGkOzT/9adjd40xjdAijrn0
+         yFd2uhy/YJO6cofrpH/1myDcLeKZT9dN26yB8pks=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, xdp-newbies@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 114/158] xsk: Properly terminate assignment in xskq_produce_flush_desc
-Date:   Mon, 15 Jul 2019 10:17:25 -0400
-Message-Id: <20190715141809.8445-114-sashal@kernel.org>
+Cc:     Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 137/158] perf stat: Fix group lookup for metric group
+Date:   Mon, 15 Jul 2019 10:17:48 -0400
+Message-Id: <20190715141809.8445-137-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715141809.8445-1-sashal@kernel.org>
 References: <20190715141809.8445-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -50,51 +44,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Andi Kleen <ak@linux.intel.com>
 
-[ Upstream commit f7019b7b0ad14bde732b8953161994edfc384953 ]
+[ Upstream commit 2f87f33f4226523df9c9cc28f9874ea02fcc3d3f ]
 
-Clang warns:
+The metric group code tries to find a group it added earlier in the
+evlist. Fix the lookup to handle groups with partially overlaps
+correctly. When a sub string match fails and we reset the match, we have
+to compare the first element again.
 
-In file included from net/xdp/xsk_queue.c:10:
-net/xdp/xsk_queue.h:292:2: warning: expression result unused
-[-Wunused-value]
-        WRITE_ONCE(q->ring->producer, q->prod_tail);
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/compiler.h:284:6: note: expanded from macro 'WRITE_ONCE'
-        __u.__val;                                      \
-        ~~~ ^~~~~
-1 warning generated.
+I also renamed the find_evsel function to find_evsel_group to make its
+purpose clearer.
 
-The q->prod_tail assignment has a comma at the end, not a semi-colon.
-Fix that so clang no longer warns and everything works as expected.
+With the earlier changes this fixes:
 
-Fixes: c497176cb2e4 ("xsk: add Rx receive functions and poll support")
-Link: https://github.com/ClangBuiltLinux/linux/issues/544
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Acked-by: Nick Desaulniers <ndesaulniers@google.com>
-Acked-by: Jonathan Lemon <jonathan.lemon@gmail.com>
-Acked-by: Björn Töpel <bjorn.topel@intel.com>
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Before:
+
+  % perf stat -M UPI,IPC sleep 1
+  ...
+         1,032,922      uops_retired.retire_slots #      1.1 UPI
+         1,896,096      inst_retired.any
+         1,896,096      inst_retired.any
+         1,177,254      cpu_clk_unhalted.thread
+
+After:
+
+  % perf stat -M UPI,IPC sleep 1
+  ...
+        1,013,193      uops_retired.retire_slots #      1.1 UPI
+           932,033      inst_retired.any
+           932,033      inst_retired.any          #      0.9 IPC
+         1,091,245      cpu_clk_unhalted.thread
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Fixes: b18f3e365019 ("perf stat: Support JSON metrics in perf stat")
+Link: http://lkml.kernel.org/r/20190624193711.35241-4-andi@firstfloor.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xdp/xsk_queue.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/metricgroup.c | 47 ++++++++++++++++++++++++++---------
+ 1 file changed, 35 insertions(+), 12 deletions(-)
 
-diff --git a/net/xdp/xsk_queue.h b/net/xdp/xsk_queue.h
-index 8a64b150be54..fe96c0d039f2 100644
---- a/net/xdp/xsk_queue.h
-+++ b/net/xdp/xsk_queue.h
-@@ -239,7 +239,7 @@ static inline void xskq_produce_flush_desc(struct xsk_queue *q)
- 	/* Order producer and data */
- 	smp_wmb();
+diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
+index a28f9b5cc4ff..8b3dafe3fac3 100644
+--- a/tools/perf/util/metricgroup.c
++++ b/tools/perf/util/metricgroup.c
+@@ -94,26 +94,49 @@ struct egroup {
+ 	const char *metric_expr;
+ };
  
--	q->prod_tail = q->prod_head,
-+	q->prod_tail = q->prod_head;
- 	WRITE_ONCE(q->ring->producer, q->prod_tail);
- }
+-static struct perf_evsel *find_evsel(struct perf_evlist *perf_evlist,
+-				     const char **ids,
+-				     int idnum,
+-				     struct perf_evsel **metric_events)
++static bool record_evsel(int *ind, struct perf_evsel **start,
++			 int idnum,
++			 struct perf_evsel **metric_events,
++			 struct perf_evsel *ev)
++{
++	metric_events[*ind] = ev;
++	if (*ind == 0)
++		*start = ev;
++	if (++*ind == idnum) {
++		metric_events[*ind] = NULL;
++		return true;
++	}
++	return false;
++}
++
++static struct perf_evsel *find_evsel_group(struct perf_evlist *perf_evlist,
++					   const char **ids,
++					   int idnum,
++					   struct perf_evsel **metric_events)
+ {
+ 	struct perf_evsel *ev, *start = NULL;
+ 	int ind = 0;
  
+ 	evlist__for_each_entry (perf_evlist, ev) {
++		if (ev->collect_stat)
++			continue;
+ 		if (!strcmp(ev->name, ids[ind])) {
+-			metric_events[ind] = ev;
+-			if (ind == 0)
+-				start = ev;
+-			if (++ind == idnum) {
+-				metric_events[ind] = NULL;
++			if (record_evsel(&ind, &start, idnum,
++					 metric_events, ev))
+ 				return start;
+-			}
+ 		} else {
++			/*
++			 * We saw some other event that is not
++			 * in our list of events. Discard
++			 * the whole match and start again.
++			 */
+ 			ind = 0;
+ 			start = NULL;
++			if (!strcmp(ev->name, ids[ind])) {
++				if (record_evsel(&ind, &start, idnum,
++						 metric_events, ev))
++					return start;
++			}
+ 		}
+ 	}
+ 	/*
+@@ -143,8 +166,8 @@ static int metricgroup__setup_events(struct list_head *groups,
+ 			ret = -ENOMEM;
+ 			break;
+ 		}
+-		evsel = find_evsel(perf_evlist, eg->ids, eg->idnum,
+-				   metric_events);
++		evsel = find_evsel_group(perf_evlist, eg->ids, eg->idnum,
++					 metric_events);
+ 		if (!evsel) {
+ 			pr_debug("Cannot resolve %s: %s\n",
+ 					eg->metric_name, eg->metric_expr);
 -- 
 2.20.1
 
