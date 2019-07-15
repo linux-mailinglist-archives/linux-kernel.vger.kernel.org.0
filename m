@@ -2,257 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23277685FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 11:08:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D94CF68609
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 11:10:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729607AbfGOJIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 05:08:04 -0400
-Received: from foss.arm.com ([217.140.110.172]:46190 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729245AbfGOJID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 05:08:03 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59E4D2B;
-        Mon, 15 Jul 2019 02:08:02 -0700 (PDT)
-Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A145B3F59C;
-        Mon, 15 Jul 2019 02:08:01 -0700 (PDT)
-Subject: Re: ARM/gic-v4: deadlock occurred
-To:     Guoheyi <guoheyi@huawei.com>
-Cc:     linux-kernel@vger.kernel.org,
-        wanghaibin 00208455 <wanghaibin.wang@huawei.com>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>
-References: <9efe0260-4a84-7489-ecdd-2e9561599320@huawei.com>
- <86lfzl9ofe.wl-marc.zyngier@arm.com>
- <0b413592-7d98-ebe8-35c5-da330f800326@huawei.com>
- <86a7fx9lg8.wl-marc.zyngier@arm.com>
- <4d60d130-b7ce-96cb-5f8a-11e83329601a@huawei.com>
- <868svg9igl.wl-marc.zyngier@arm.com>
- <dbbf516d-3326-a948-8617-db6b6ec0ceed@huawei.com>
- <20190713123704.2d8a308c@why>
- <2697d96e-8f84-6a45-521a-d2270b6be1eb@huawei.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
+        id S1729523AbfGOJJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 05:09:48 -0400
+Received: from esa4.hc3370-68.iphmx.com ([216.71.155.144]:38252 "EHLO
+        esa4.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729427AbfGOJJr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 05:09:47 -0400
+Authentication-Results: esa4.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=andrew.cooper3@citrix.com; spf=Pass smtp.mailfrom=Andrew.Cooper3@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa4.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  andrew.cooper3@citrix.com) identity=pra;
+  client-ip=162.221.158.21; receiver=esa4.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="andrew.cooper3@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa4.hc3370-68.iphmx.com: domain of
+  Andrew.Cooper3@citrix.com designates 162.221.158.21 as
+  permitted sender) identity=mailfrom;
+  client-ip=162.221.158.21; receiver=esa4.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="Andrew.Cooper3@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83 ~all"
+Received-SPF: None (esa4.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa4.hc3370-68.iphmx.com;
+  envelope-from="Andrew.Cooper3@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: xg4CgYAsXM5agBOKtFytyGo/Fzv179UDZbcs/wfMk16ELc4/e8qhLlqYAyvQI3WvPcrIWJsYFy
+ XmYG1/nEk7B79YtZcmoZvRI/DFaKgzBVgVCqtQpvzph2pKDBTr2qy3TPmKYPLN/e/ZXRai1lzS
+ a9wMup7nt6KXqSwCQs2adWfVP0e+SR+EKRO+gy66KD2EZhqlB6DSO+J2jpsFy2PMl3u+yPvrGk
+ MvudkMo+/C/SHCD5tkTP7BJDwdZrN+34g6sJ55BrDwl09K5k3LbD8OLEnvEKwc+XHdKR1+w5R/
+ lmA=
+X-SBRS: 2.7
+X-MesageID: 3036269
+X-Ironport-Server: esa4.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.63,493,1557201600"; 
+   d="scan'208";a="3036269"
+Subject: Re: [Xen-devel] [PATCH v2] xen/pv: Fix a boot up hang revealed by
+ int3 self test
+To:     Jan Beulich <JBeulich@suse.com>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>
+CC:     Juergen Gross <JGross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "srinivas.eeda@oracle.com" <srinivas.eeda@oracle.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+References: <1562832921-20831-1-git-send-email-zhenzhong.duan@oracle.com>
+ <ebf9657b-7d97-87a0-e32e-af8453ee7bba@citrix.com>
+ <b9702975-dd2d-cf0b-e47f-a1c4361db18f@oracle.com>
+ <18619ecb-108a-0d89-812c-7525a566e805@suse.com>
+From:   Andrew Cooper <andrew.cooper3@citrix.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
- Z46HaNmN2hZS/oJ69c1DI5Rcww==
-Organization: ARM Ltd
-Message-ID: <a2f51bcf-3a31-7b60-6790-78bf3fa940b2@arm.com>
-Date:   Mon, 15 Jul 2019 10:07:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
+ 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
+ 6+ahAA==
+Message-ID: <654b7299-8fbf-168f-a9e3-f9ea6369d38a@citrix.com>
+Date:   Mon, 15 Jul 2019 10:09:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <2697d96e-8f84-6a45-521a-d2270b6be1eb@huawei.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <18619ecb-108a-0d89-812c-7525a566e805@suse.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/07/2019 07:32, Guoheyi wrote:
-> Hi Marc,
-> 
-> The issue only occurs after applying the vlpi_map_rework patches, and we 
-> can see the patches only affect VM; it changes its_create_device() a 
-> little so it may affect host booting in some ways, so I took the lazy 
-> way to send it out for some insights.
-> 
-> I am suspecting below code; if alloc_lpis == false, what will happen? 
-
-If !alloc_lpis, then we don't allocate the lpi_map, which is the
-intended effect.
-
-> Anyway, I will investigate more on this.
-> 
-> 
-> 	if  (alloc_lpis)  {
-> 		lpi_map  =  its_lpi_alloc(nvecs,  &lpi_base,  &nr_lpis);
-> 		if  (lpi_map)
-> 			col_map  =  kcalloc(nr_lpis,  sizeof(*col_map),
-> 					GFP_KERNEL);
-> 	}  else  {
-> 		col_map  =  kcalloc(nr_ites,  sizeof(*col_map),  GFP_KERNEL);
-> 		nr_lpis  =  0;
-> 		lpi_base  =  0;
-> 	}
-> 	if  (its->is_v4)
-> 		vlpi_map  =  kcalloc(nr_lpis,  sizeof(*vlpi_map),  GFP_KERNEL);
-> 
-> 	if  (!dev  ||  !itt  ||   !col_map  ||  (!lpi_map  &&  alloc_lpis)  ||
-> 	(!vlpi_map  &&  its->is_v4))  {
-> 		kfree(dev);
-> 		kfree(itt);
-> 		kfree(lpi_map);
-> 		kfree(col_map);
-> 		kfree(vlpi_map);
-> 		return  NULL;
-> 	}
-
-How does this relate to the patch posted in this discussion? The
-proposed changes turn the locking from a mutex into a raw_spinlock.
-
-That's not to say there is no bug in the GICv4 code, but I'd expect a
-bit more analysis before you start pointing at random pieces of code
-without establishing any link between effects and possible causes.
-
-Thanks,
-
-	M.
-> 
-> 
-> Thanks,
-> 
-> Heyi
-> 
-> 
-> On 2019/7/13 19:37, Marc Zyngier wrote:
->> On Sat, 13 Jul 2019 19:08:57 +0800
->> Guoheyi <guoheyi@huawei.com> wrote:
->>
->> Hi Heyi,
->>
->>> Hi Marc,
+On 15/07/2019 07:54, Jan Beulich wrote:
+> On 15.07.2019 07:05, Zhenzhong Duan wrote:
+>> On 2019/7/12 22:06, Andrew Cooper wrote:
+>>> On 11/07/2019 03:15, Zhenzhong Duan wrote:
+>>>> Commit 7457c0da024b ("x86/alternatives: Add int3_emulate_call()
+>>>> selftest") is used to ensure there is a gap setup in exception stack
+>>>> which could be used for inserting call return address.
+>>>>
+>>>> This gap is missed in XEN PV int3 exception entry path, then below panic
+>>>> triggered:
+>>>>
+>>>> [    0.772876] general protection fault: 0000 [#1] SMP NOPTI
+>>>> [    0.772886] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.2.0+ #11
+>>>> [    0.772893] RIP: e030:int3_magic+0x0/0x7
+>>>> [    0.772905] RSP: 3507:ffffffff82203e98 EFLAGS: 00000246
+>>>> [    0.773334] Call Trace:
+>>>> [    0.773334]  alternative_instructions+0x3d/0x12e
+>>>> [    0.773334]  check_bugs+0x7c9/0x887
+>>>> [    0.773334]  ? __get_locked_pte+0x178/0x1f0
+>>>> [    0.773334]  start_kernel+0x4ff/0x535
+>>>> [    0.773334]  ? set_init_arg+0x55/0x55
+>>>> [    0.773334]  xen_start_kernel+0x571/0x57a
+>>>>
+>>>> As xenint3 and int3 entry code are same except xenint3 doesn't generate
+>>>> a gap, we can fix it by using int3 and drop useless xenint3.
+>>> For 64bit PV guests, Xen's ABI enters the kernel with using SYSRET, with
+>>> %rcx/%r11 on the stack.
 >>>
->>> Really sorry for the delay of testing the rework patches. I picked up
->>> the work these days and applied the patches to our 4.19.36 stable
->>> branch. However, I got below panic during the boot process of host
->>> (not yet to boot guests).
->>>
->>> I supposed the result was not related with my testing kernel version,
->>> for we don't have many differences in ITS driver; I can test against
->>> mainline if you think it is necessary.
->> In general, please report bugs against mainline. There isn't much I can
->> do about your private tree...
+>>> To convert back to "normal" looking exceptions, the xen thunks do `pop
+>>> %rcx; pop %r11; jmp do_*`...
+>> I will add this to commit message.
+>>>> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+>>>> index 0ea4831..35a66fc 100644
+>>>> --- a/arch/x86/entry/entry_64.S
+>>>> +++ b/arch/x86/entry/entry_64.S
+>>>> @@ -1176,7 +1176,6 @@ idtentry stack_segment        do_stack_segment    has_error_code=1
+>>>>   #ifdef CONFIG_XEN_PV
+>>>>   idtentry xennmi            do_nmi            has_error_code=0
+>>>>   idtentry xendebug        do_debug        has_error_code=0
+>>>> -idtentry xenint3        do_int3            has_error_code=0
+>>>>   #endif
+>>> What is confusing is why there are 3 extra magic versions here.  At a
+>>> guess, I'd say something to do with IST settings (given the vectors),
+>>> but I don't see why #DB/#BP would need to be different in the first
+>>> place.  (NMI sure, but that is more to do with the crazy hoops needing
+>>> to be jumped through to keep native functioning safely.)
+>> xenint3 will be removed in this patch safely as it don't use IST now.
 >>
->> That being said, a couple of comments below.
+>> But debug and nmi need paranoid_entry which will read MSR_GS_BASE to determine
 >>
->>> Thanks,
->>>
->>> Heyi
->>>
->>>
->>> [   16.990413] iommu: Adding device 0000:00:00.0 to group 6
->>> [   17.000691] pcieport 0000:00:00.0: Signaling PME with IRQ 133
->>> [   17.006456] pcieport 0000:00:00.0: AER enabled with IRQ 134
->>> [   17.012151] iommu: Adding device 0000:00:08.0 to group 7
->>> [   17.018575] Unable to handle kernel paging request at virtual address 00686361635f746f
->>> [   17.026467] Mem abort info:
->>> [   17.029251]   ESR = 0x96000004
->>> [   17.032313]   Exception class = DABT (current EL), IL = 32 bits
->>> [   17.038207]   SET = 0, FnV = 0
->>> [   17.041258]   EA = 0, S1PTW = 0
->>> [   17.044391] Data abort info:
->>> [   17.047260]   ISV = 0, ISS = 0x00000004
->>> [   17.051081]   CM = 0, WnR = 0
->>> [   17.054035] [00686361635f746f] address between user and kernel address ranges
->>> [   17.061140] Internal error: Oops: 96000004 [#1] SMP
->>> [   17.065997] Process kworker/0:4 (pid: 889, stack limit = 0x(____ptrval____))
->>> [   17.073013] CPU: 0 PID: 889 Comm: kworker/0:4 Not tainted 4.19.36+ #8
->>> [   17.079422] Hardware name: Huawei TaiShan 2280 V2/BC82AMDC, BIOS 0.52 06/20/2019
->>> [   17.086788] Workqueue: events work_for_cpu_fn
->>> [   17.091126] pstate: 20c00009 (nzCv daif +PAN +UAO)
->>> [   17.095895] pc : __kmalloc_track_caller+0xb0/0x2a0
->>> [   17.100662] lr : __kmalloc_track_caller+0x64/0x2a0
->>> [   17.105429] sp : ffff00002920ba00
->>> [   17.108728] x29: ffff00002920ba00 x28: ffff802cb6792780
->>> [   17.114015] x27: 00000000006080c0 x26: 00000000006000c0
->>> [   17.119302] x25: ffff0000084c8a00 x24: ffff802cbfc0fc00
->>> [   17.124588] x23: ffff802cbfc0fc00 x22: ffff0000084c8a00
->>> [   17.129875] x21: 0000000000000004 x20: 00000000006000c0
->>> [   17.135161] x19: 65686361635f746f x18: ffffffffffffffff
->>> [   17.140448] x17: 000000000000000e x16: 0000000000000007
->>> [   17.145734] x15: ffff000009119708 x14: 0000000000000000
->>> [   17.151021] x13: 0000000000000003 x12: 0000000000000000
->>> [   17.156307] x11: 0000000005f5e0ff x10: ffff00002920bb80
->>> [   17.161594] x9 : 00000000ffffffd0 x8 : 0000000000000098
->>> [   17.166880] x7 : ffff00002920bb80 x6 : ffff000008a8cb98
->>> [   17.172167] x5 : 000000000000a705 x4 : ffff803f802d22e0
->>> [   17.177453] x3 : ffff00002920b990 x2 : ffff7e00b2dafd00
->>> [   17.182740] x1 : 0000803f77476000 x0 : 0000000000000000
->>> [   17.188027] Call trace:
->>> [   17.190461]  __kmalloc_track_caller+0xb0/0x2a0
->>> [   17.194886]  kvasprintf+0x7c/0x108
->>> [   17.198271]  kasprintf+0x60/0x80
->>> [   17.201488]  populate_msi_sysfs+0xe4/0x250
->>> [   17.205564]  __pci_enable_msi_range+0x278/0x450
->>> [   17.210073]  pci_alloc_irq_vectors_affinity+0xd4/0x110
->>> [   17.215188]  pcie_port_device_register+0x134/0x558
->>> [   17.219955]  pcie_portdrv_probe+0x3c/0xf0
->>> [   17.223947]  local_pci_probe+0x44/0xa8
->>> [   17.227679]  work_for_cpu_fn+0x20/0x30
->>> [   17.231411]  process_one_work+0x1b4/0x3f8
->>> [   17.235401]  worker_thread+0x210/0x470
->>> [   17.239134]  kthread+0x134/0x138
->>> [   17.242348]  ret_from_fork+0x10/0x18
->>> [   17.245907] Code: f100005f fa401a64 54000bc0 b9402300 (f8606a66)
->>> [   17.251970] kernel fault(0x1) notification starting on CPU 0
->>> [   17.257602] kernel fault(0x1) notification finished on CPU 0
->>> [   17.263234] Modules linked in:
->>> [   17.266277] ---[ end trace 023e6b19cb68b94f ]---
->> What in this trace makes you think that this has anything to do with an
->> ITS change? The system crashes in a completely unrelated piece of code.
->> Also, if you look at the VA that indicates the crash, it should be
->> obvious that this isn't a kernel address. Worse, this is a piece of
->> ASCII text:
->>
->> $ echo 00686361635f746f | xxd -r -p
->> hcac_to
->>
->> This tends to indicate some memory form of corruption ("hcac_to" looks
->> like the begining of a symbol), and I'm not sure how the ITS would be
->> involved in this... Furthermore, this happens on the host at boot time,
->> while the patch you suspect only affects VMs...
->>
->> I think you need to spend more time analysing this issue.
->>
->> Thanks,
->>
->> 	M.
-> 
-> 
+>> if swapgs is needed. I guess PV guesting running in ring3 will #GP with swapgs?
+> Not only that (Xen could trap and emulate swapgs if that was needed) - 64-bit
+> PV kernel mode always gets entered with kernel GS base already set. Hence
+> finding out whether to switch the GS base is specifically not something that
+> any exception entry point would need to do (and it should actively try to
+> avoid it, for performance reasons).
 
+Indeed.  The SWAPGS PVOP is implemented as a nop for x86 PV, to simply
+the entry assembly (rather than doubling up all entry vectors).
 
--- 
-Jazz is not dead. It just smells funny...
+~Andrew
