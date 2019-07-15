@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3974B68E69
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:06:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 224EC68E6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:06:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388270AbfGOOGY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:06:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53748 "EHLO mail.kernel.org"
+        id S2388274AbfGOOG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:06:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388249AbfGOOGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:06:19 -0400
+        id S2388261AbfGOOGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:06:23 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D41D2081C;
-        Mon, 15 Jul 2019 14:06:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 979332086C;
+        Mon, 15 Jul 2019 14:06:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199578;
-        bh=c1Hu+BADztoE3TsovwgrW6FVJZ+9nDZP0DHc4V8kDog=;
+        s=default; t=1563199581;
+        bh=fvWvnH2X8v2u7UuJzqFvZ743uC76lrfXz508zJ0VKoQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MMu+vG5/vGwQ97ZVuCTKVTfSC7dUYJG9qzA2n3IcLviW7TfcXZuq9yrHfi9ffCrTy
-         VdAmx5v/PZVOZMFOp36oOxcpYHpSe6aSPre83HWJphAd+FR+2Hp8dOcgGEBmA2o1e0
-         ChivjW7owWb59R+1+T4Phs+Wa6dzV+HPHX56uvGw=
+        b=eFFPlgU2vnJRsrD2Zpqg7x4Ed1RD2n2CTvanvABacT+hDwhm1xGC//fblg56BrrCv
+         BJnqs1jZOEBAlcWhOePWxfIqViB9vNTfoZJUTjpT4fhUwlcUIBd18gsJem46ywHYX4
+         nVmIRQ4HPh38nRApFvsa8SsNih7rmbUUvw3faDfI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 047/219] net: phy: Check against net_device being NULL
-Date:   Mon, 15 Jul 2019 10:00:48 -0400
-Message-Id: <20190715140341.6443-47-sashal@kernel.org>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 048/219] crypto: talitos - properly handle split ICV.
+Date:   Mon, 15 Jul 2019 10:00:49 -0400
+Message-Id: <20190715140341.6443-48-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -45,48 +43,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit 82c76aca81187b3d28a6fb3062f6916450ce955e ]
+[ Upstream commit eae55a586c3c8b50982bad3c3426e9c9dd7a0075 ]
 
-In general, we don't want MAC drivers calling phy_attach_direct with the
-net_device being NULL. Add checks against this in all the functions
-calling it: phy_attach() and phy_connect_direct().
+The driver assumes that the ICV is as a single piece in the last
+element of the scatterlist. This assumption is wrong.
 
-Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This patch ensures that the ICV is properly handled regardless of
+the scatterlist layout.
+
+Fixes: 9c4a79653b35 ("crypto: talitos - Freescale integrated security engine (SEC) driver")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/phy_device.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/crypto/talitos.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index f6a6cc5bf118..e748aee82033 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -948,6 +948,9 @@ int phy_connect_direct(struct net_device *dev, struct phy_device *phydev,
- {
- 	int rc;
+diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
+index 83883438d134..3bf727c89647 100644
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -1015,7 +1015,6 @@ static void ipsec_esp_encrypt_done(struct device *dev,
+ 	unsigned int authsize = crypto_aead_authsize(authenc);
+ 	unsigned int ivsize = crypto_aead_ivsize(authenc);
+ 	struct talitos_edesc *edesc;
+-	struct scatterlist *sg;
+ 	void *icvdata;
  
-+	if (!dev)
-+		return -EINVAL;
-+
- 	rc = phy_attach_direct(dev, phydev, phydev->dev_flags, interface);
- 	if (rc)
- 		return rc;
-@@ -1290,6 +1293,9 @@ struct phy_device *phy_attach(struct net_device *dev, const char *bus_id,
- 	struct device *d;
- 	int rc;
+ 	edesc = container_of(desc, struct talitos_edesc, desc);
+@@ -1029,9 +1028,8 @@ static void ipsec_esp_encrypt_done(struct device *dev,
+ 		else
+ 			icvdata = &edesc->link_tbl[edesc->src_nents +
+ 						   edesc->dst_nents + 2];
+-		sg = sg_last(areq->dst, edesc->dst_nents);
+-		memcpy((char *)sg_virt(sg) + sg->length - authsize,
+-		       icvdata, authsize);
++		sg_pcopy_from_buffer(areq->dst, edesc->dst_nents ? : 1, icvdata,
++				     authsize, areq->assoclen + areq->cryptlen);
+ 	}
  
-+	if (!dev)
-+		return ERR_PTR(-EINVAL);
+ 	dma_unmap_single(dev, edesc->iv_dma, ivsize, DMA_TO_DEVICE);
+@@ -1049,7 +1047,6 @@ static void ipsec_esp_decrypt_swauth_done(struct device *dev,
+ 	struct crypto_aead *authenc = crypto_aead_reqtfm(req);
+ 	unsigned int authsize = crypto_aead_authsize(authenc);
+ 	struct talitos_edesc *edesc;
+-	struct scatterlist *sg;
+ 	char *oicv, *icv;
+ 	struct talitos_private *priv = dev_get_drvdata(dev);
+ 	bool is_sec1 = has_ftr_sec1(priv);
+@@ -1059,9 +1056,18 @@ static void ipsec_esp_decrypt_swauth_done(struct device *dev,
+ 	ipsec_esp_unmap(dev, edesc, req);
+ 
+ 	if (!err) {
++		char icvdata[SHA512_DIGEST_SIZE];
++		int nents = edesc->dst_nents ? : 1;
++		unsigned int len = req->assoclen + req->cryptlen;
 +
- 	/* Search the list of PHY devices on the mdio bus for the
- 	 * PHY with the requested name
- 	 */
+ 		/* auth check */
+-		sg = sg_last(req->dst, edesc->dst_nents ? : 1);
+-		icv = (char *)sg_virt(sg) + sg->length - authsize;
++		if (nents > 1) {
++			sg_pcopy_to_buffer(req->dst, nents, icvdata, authsize,
++					   len - authsize);
++			icv = icvdata;
++		} else {
++			icv = (char *)sg_virt(req->dst) + len - authsize;
++		}
+ 
+ 		if (edesc->dma_len) {
+ 			if (is_sec1)
+@@ -1481,7 +1487,6 @@ static int aead_decrypt(struct aead_request *req)
+ 	struct talitos_ctx *ctx = crypto_aead_ctx(authenc);
+ 	struct talitos_private *priv = dev_get_drvdata(ctx->dev);
+ 	struct talitos_edesc *edesc;
+-	struct scatterlist *sg;
+ 	void *icvdata;
+ 
+ 	req->cryptlen -= authsize;
+@@ -1515,9 +1520,8 @@ static int aead_decrypt(struct aead_request *req)
+ 	else
+ 		icvdata = &edesc->link_tbl[0];
+ 
+-	sg = sg_last(req->src, edesc->src_nents ? : 1);
+-
+-	memcpy(icvdata, (char *)sg_virt(sg) + sg->length - authsize, authsize);
++	sg_pcopy_to_buffer(req->src, edesc->src_nents ? : 1, icvdata, authsize,
++			   req->assoclen + req->cryptlen - authsize);
+ 
+ 	return ipsec_esp(edesc, req, ipsec_esp_decrypt_swauth_done);
+ }
 -- 
 2.20.1
 
