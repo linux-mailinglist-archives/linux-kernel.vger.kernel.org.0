@@ -2,65 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42BE969B98
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:45:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AD6069B9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 21:47:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731791AbfGOTo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 15:44:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48424 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729598AbfGOTo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 15:44:57 -0400
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D9952173B
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 19:44:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563219896;
-        bh=eR7tQFCtsIZZKhV6oeIXYXLEwaZdSRmOV4XGxmJFXSY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=IXBGoqnwfx6gH4+R7zihNHPWlDyRp6A32ettpPl9uP5usiof27oZQ2CZTffpc8DgE
-         WJLmcCzB4jdBz7uCznSI3hSGpm4GXMCCLdxwc7G96S7l2UzUK65oDwiATwlm2Mx8/3
-         nGODe1obul03Hj2tDBIR0Yk36jMpDI4ihpjRLNc4=
-Received: by mail-wr1-f43.google.com with SMTP id n9so18390121wrr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 12:44:56 -0700 (PDT)
-X-Gm-Message-State: APjAAAXfZvARqqSDCZLiKS/5Pkw+QJvcVvmwKCDAUrrP7q6OLlNMTnCA
-        sn/Vji8AuGAmfz4Oh74gY5+0fVvV8GmjefclKVwEkg==
-X-Google-Smtp-Source: APXvYqyP5Axlqzykr7dAlNKuZWGUt5mky/R05HlYWR+XEesdGn3879zXtuswSqnZK2d5yZmvNBT76Mxtb4pzaacfFAs=
-X-Received: by 2002:a5d:4309:: with SMTP id h9mr29584933wrq.221.1563219894946;
- Mon, 15 Jul 2019 12:44:54 -0700 (PDT)
+        id S1731790AbfGOTrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 15:47:08 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41865 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729598AbfGOTrH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 15:47:07 -0400
+Received: by mail-lf1-f65.google.com with SMTP id 62so6992175lfa.8;
+        Mon, 15 Jul 2019 12:47:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bONjuUbtQQH5jLsZ8thDiBK4rEqYehcmK7UxMShUto4=;
+        b=NlSh31vIROppItWXnHjJbFVJkxD0AyWAFmCqzruwRZ0IJ0IIUT9f+vJ2FWeoA9zJCH
+         iwhFAxyaXpVwchzAxpBrrn1eactGWwmJHI+kFbz223SobJ59kOPKbO7iqbfBuk6lgVCB
+         5Ght/sub9vvB3wavpA2f8t8Xci4Vs5H8BN3jJPsqsllE+mfkEb68N/vTIbLXqF179Y8v
+         a6cckuF6i5JwzsS+3Wwb00Esr1iw4Zcg2jclRTVI2QpKmL4bhEopcHokISUbL+uCkiCr
+         nOFM/lO7KhMumApjyG84oxTsbq+CXcTPTVNyazExbnxLcoe82uepb4KnRiMVw1gUFOr0
+         4ycA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bONjuUbtQQH5jLsZ8thDiBK4rEqYehcmK7UxMShUto4=;
+        b=Qo8e4BIO3KGOI/gIf5WQya3h4366wz3JYb/j1H0+9TttFXDA/x/GAka2SuMVAO+1v7
+         HO45gRrXBjd4sDjCaTRBv6VpEdlPBy7ALssFzcwZrNBd1lU/aTnn65c/8ND+fHDUrwuf
+         vJa7v8GJZHq5ufNT7VgNIqvEuDPf69Z+oY587JnWXg741eHrt9N53J1SoOODuYu5c6nE
+         zPHbOSFzogmFMJK5/aHeHSxAOBaKBMLfpAhpE6XLlnzKDQ4VXzYgfFAK9XBjgU/ovVPT
+         Nkc0cLCmnN8FCYFUM3QXHapuYP+SK56/vR8xbSajTNmjtDLP0WLyXTkwB3Obd6Ra8RZl
+         u2FA==
+X-Gm-Message-State: APjAAAVNftvl5GhBFk5A9cSVWe3YelDkh4pZ5z8A1txhlGC+UwjPWYZq
+        h6C3DEdD5KChAolmZRip+OY=
+X-Google-Smtp-Source: APXvYqyrz4QTINSJX7yp2FooeWd7UWe+hqpIkShSDQICtMxLsN4gtSA8RJfqmLLZDps8UTQsPb21Zw==
+X-Received: by 2002:a19:c1cc:: with SMTP id r195mr12068899lff.95.1563220024867;
+        Mon, 15 Jul 2019 12:47:04 -0700 (PDT)
+Received: from localhost.localdomain (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.gmail.com with ESMTPSA id y15sm2457311lfg.43.2019.07.15.12.47.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Jul 2019 12:47:04 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/3] Support regulators coupling on NVIDIA Tegra20/30
+Date:   Mon, 15 Jul 2019 22:45:00 +0300
+Message-Id: <20190715194503.19100-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <CAFULd4b=5-=WfF9OPCX+H9VDnsgbN7OBFj-XP=MZ0QqF5WpvQA@mail.gmail.com>
- <8736j7gsza.fsf@linux.intel.com> <alpine.DEB.2.21.1907152033020.1767@nanos.tec.linutronix.de>
- <20190715193938.GG32439@tassilo.jf.intel.com>
-In-Reply-To: <20190715193938.GG32439@tassilo.jf.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 15 Jul 2019 12:44:42 -0700
-X-Gmail-Original-Message-ID: <CALCETrW1VobMKcDU_zbvgy1DBe5j=iZUp165_q_NHS7+ZffG4g@mail.gmail.com>
-Message-ID: <CALCETrW1VobMKcDU_zbvgy1DBe5j=iZUp165_q_NHS7+ZffG4g@mail.gmail.com>
-Subject: Re: [RFC PATCH, x86]: Disable CPA cache flush for selfsnoop targets
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Uros Bizjak <ubizjak@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 12:39 PM Andi Kleen <ak@linux.intel.com> wrote:
->
-> > Right, we don't know where the PAT invocation comes from and whether they
-> > are safe to omit flushing the cache. The module load code would be one
-> > obvious candidate.
->
-> Module load just changes the writable/executable status, right? That shouldn't
-> need to flush in any case because it doesn't change the caching attributes.
->
+Hello,
 
-Indeed.  module load should require a single TLB flush and no cache
-flushes.  I don't think we're currently efficient enough to do it with
-a single TLB flush, but we should be able to...
+The voltage regulators need to be coupled on NVIDIA Tegra20 and Tegra30
+SoCs in order to provide voltage scaling functionality in a generic way.
+All necessary regulator-core patches that added support for the regulators
+coupling are already have been merge into mainline kernel. This series
+adds customized voltage couplers for Tegra20/30 SoCs, paving the way for
+a refined CPUFreq driver that will utilize voltage scaling and other neat
+features. This is a resend of a leftover patches from a previous series
+[1] that was partially applied by Mark Brown. Please review, thanks in
+advance!
+
+[1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=115626
+
+Dmitry Osipenko (3):
+  dt-bindings: regulator: Document regulators coupling of NVIDIA
+    Tegra20/30 SoCs
+  soc/tegra: regulators: Add regulators coupler for Tegra20
+  soc/tegra: regulators: Add regulators coupler for Tegra30
+
+ .../nvidia,tegra-regulators-coupling.txt      |  65 ++++
+ drivers/soc/tegra/Kconfig                     |  10 +
+ drivers/soc/tegra/Makefile                    |   2 +
+ drivers/soc/tegra/regulators-tegra20.c        | 350 ++++++++++++++++++
+ drivers/soc/tegra/regulators-tegra30.c        | 302 +++++++++++++++
+ 5 files changed, 729 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/nvidia,tegra-regulators-coupling.txt
+ create mode 100644 drivers/soc/tegra/regulators-tegra20.c
+ create mode 100644 drivers/soc/tegra/regulators-tegra30.c
+
+-- 
+2.22.0
+
