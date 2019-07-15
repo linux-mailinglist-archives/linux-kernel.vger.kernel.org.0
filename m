@@ -2,126 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F1E369036
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:21:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6259269065
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:21:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389276AbfGOOTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:19:42 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43071 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389784AbfGOOTj (ORCPT
+        id S2390283AbfGOOVX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:21:23 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42221 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390004AbfGOOVS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:19:39 -0400
-Received: by mail-oi1-f194.google.com with SMTP id w79so12754180oif.10
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 07:19:39 -0700 (PDT)
+        Mon, 15 Jul 2019 10:21:18 -0400
+Received: by mail-wr1-f68.google.com with SMTP id x1so2308776wrr.9
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 07:21:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=74LWTKonskxRfxiDYwVD7OpNsKbfOfYFfTZAvmrPFJg=;
-        b=kiTItl6xyrG9FywIDRfcy4DIFgA9n5FQMjm2wL9mdgzuKSnbt3nESPsNKfqPBueZBs
-         RaocmVPDYXFtDrI4ysRzoObj0qDrpjOvB+wDyHYfLEV64FkHNR3uH95XLhXfJ6ufu+HZ
-         p8X+m5T0N8pujQ2DcVZL1lXs5oJQY92Qy3HYA=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wP59Gx3m7Jou+yXtjCzXvgdV35CA8Lfqjz/4jKFq3O4=;
+        b=pCEYP/PvfZqosCmkP7JoAmOtLKbETj/1CU/2OxY7E/V6SyHtYpTGre2MQHMm7D4dmb
+         7cVZllfkUiXxDvsjyyJLbkiH30aJzUdCYTni2ka/NVOm+TH22/U3EbR0cEtT/a5DqnWp
+         m076BIqncH37M37LT84LcisvJJYkklw8N2F1Ql2F9MIc9SLe6zgF3DqjXIooeBfQRt2j
+         qG7O+Tw7C7gn0in0Ac4pYb+Wrqa7ZmFIRN8QeQHru9ruLEuQcnTC1Bj7+fdf31KUZ774
+         855dHOt/2hp4gueVyvNC42RE+SIIVxeRkWFu5/6tWnRchaj1H0VYVGlcDg0pyXMpiNCd
+         Edyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=74LWTKonskxRfxiDYwVD7OpNsKbfOfYFfTZAvmrPFJg=;
-        b=ilJaMVzI9jgIXqMFOcJLKFQwIoHJabfQuvSz+3vc6RkV8//+oTMXaRLVolFeYnfl2t
-         DngMgk1zxQ8MhXa/W8Et9hVMzZbSpvp++9lp976v4QiaB6HQBJq7r+z/uLjPmI/+O/nm
-         wWnaJ6uqpaEiXJThHUt7A4pcBKE1Afd/fWx4q+jBhLZ2m3fX39BuDUc6d8D3T2HyuASm
-         /giisC9JJghyCTvu11wr6/j1hYnoUxlvnpdr2x+y4VdUpNqxBWrw/upjk9n7LhztOWFJ
-         Jw95csgmB1z8TPnEjB3SipRjBFY2O2pZRqEy5epULY9xOW8BofrFyZsUPqc4fAXd7dZv
-         evdw==
-X-Gm-Message-State: APjAAAWr3DmI5+PMw5M7FWybZo1p11wJkPp9A0P5C0MNvBo4wLr9X7kR
-        1E28jNX/MnrtLwlaUDB91vYzPvVYEDzfGkNqh70=
-X-Google-Smtp-Source: APXvYqx9+tVgh5v+w5/XYZec+gr4t4ZX0LQfnl+mzXMZ66oi07oxVvsNmRa3kHVSBsjT45GtQ+mVBCop0D+NIq3ehcA=
-X-Received: by 2002:aca:b2d5:: with SMTP id b204mr11927663oif.101.1563200378969;
- Mon, 15 Jul 2019 07:19:38 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wP59Gx3m7Jou+yXtjCzXvgdV35CA8Lfqjz/4jKFq3O4=;
+        b=MT0+j9ARdoVFsKLF+5JDBEij6ggUBZmXT+1eh+qxyYdKfzIzCqFvV9+m6Sxnexf3ZL
+         cGTWyvNjce370hgPC6Nn/6PX2/Ar8i40Lh/kHJOgNNR7XY6aVxpM9BA4h302Px/5aZbl
+         CSeCiXXkcHnSjRdhu7+hNTJcoL/We34DeeSIuk3Wq4UqgULXwgKeN1TwJBrqCXUetkiA
+         HLOa0omQgD1aYKtsjCyUJR/I27UDSbUuqpgUtLk3Z1EAkcaP5uXdMAFLxlN8R8xf5uf4
+         lD4TpcU1XB7rbTHgoju+CLO8getn815zIdUSLof77YLpMqbwA8AWiJLmzoh8gRX1GD02
+         4ngw==
+X-Gm-Message-State: APjAAAVFBAUKeBty/lNaqS0CIJK0xnB45VcBEHGHKPfFr/qVrlWU6hPQ
+        I6eStn95FIrXNsD2eHI40fQ=
+X-Google-Smtp-Source: APXvYqz72sz0aUW74u06qoXBxafELDcjaFP4f7IgKBlvWIkJvCMqUbPEdmj93TOma02OuZWVJHfTbQ==
+X-Received: by 2002:adf:db8e:: with SMTP id u14mr5420843wri.314.1563200476039;
+        Mon, 15 Jul 2019 07:21:16 -0700 (PDT)
+Received: from localhost.localdomain.com (93-103-18-160.static.t-2.net. [93.103.18.160])
+        by smtp.gmail.com with ESMTPSA id i18sm19986388wrp.91.2019.07.15.07.21.15
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 15 Jul 2019 07:21:15 -0700 (PDT)
+From:   Uros Bizjak <ubizjak@gmail.com>
+To:     tglx@linutronix.de, luto@amacapital.net, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Uros Bizjak <ubizjak@gmail.com>
+Subject: [PATCH] x86/cpu/intel: Skip CPA cache flush on CPUs with cache self-snooping
+Date:   Mon, 15 Jul 2019 16:21:09 +0200
+Message-Id: <20190715142109.3063-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <CAPM=9tzJQ+26n_Df1eBPG1A=tXf4xNuVEjbG3aZj-aqYQ9nnAg@mail.gmail.com>
- <CAPM=9tx+CEkzmLZ-93GZmde9xzJ_rw3PJZxFu_pjZJc7KM5f-w@mail.gmail.com> <20190715122924.GA15202@mellanox.com>
-In-Reply-To: <20190715122924.GA15202@mellanox.com>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Mon, 15 Jul 2019 16:19:26 +0200
-Message-ID: <CAKMK7uHvjuQ5Dqm0LPrtQxdHh5Z6Pt2mg4AnpRRR0gWb1Wp05g@mail.gmail.com>
-Subject: Re: DRM pull for v5.3-rc1
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Dave Airlie <airlied@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 2:29 PM Jason Gunthorpe <jgg@mellanox.com> wrote:
->
-> [urk, html email.. forgive the mess]
->
-> On Mon, Jul 15, 2019 at 04:59:39PM +1000, Dave Airlie wrote:
->
-> >      VMware had some mm helpers go in via my tree (looking back I'm
-> >      not sure Thomas really secured enough acks on these, but I'm
->
-> I saw those patches, honestly I couldn't entirely understand what
-> problem they were trying to address..
->
-> >      going with it for now until I get push back). They conflicted
-> >      with one of the mm cleanups in the hmm tree, I've pushed a
-> >      patch to the top of my next to fix most of the fallout in my
-> >      tree, and the resulting fixup is to pick the closure->ptefn
-> >      hunk and apply something like in mm/memory.c
->
-> Did I mess a notification from StephenR in linux-next? I was unwaware
-> of this conflict?
->
-> The 'hmm' tree is something I ran to try and help workflow issues like
-> this, as it could be merged to DRM as a topic branch - maybe consider
-> this flow in future?
->
-> Linus, do you have any advice on how best to handle sharing mm
-> patches? The hmm.git was mildly painful as it sits between quilt on
-> the -mm side and what seems like 'a world of interesting git things'
-> on the DRM side (but maybe I just don't know enough about DRM).
+CPUs which have self-snooping capability can handle conflicting
+memory type across CPUs by snooping its own cache. Commit #fd329f276ecaa
+("x86/mtrr: Skip cache flushes on CPUs with cache self-snooping")
+avoids cache flushes when MTRR registers are programmed. The Page
+Attribute Table (PAT) is a companion feature to the MTRRs, and according
+to section 11.12.4 of the Intel 64 and IA 32 Architectures Software
+Developer's Manual, if the CPU supports cache self-snooping, it is not
+necessary to flush caches when remapping a page that was previously
+mapped as a different memory type.
 
-I think the approach in this merge window worked fairly well:
-- refactor/rework core mm stuff in (h)mm.git
-- handle all the gpu stuff in drm.git
-- make the clashes workable through some clever prep patches like
-we've done this time around
+Note that commit #1e03bff360010
+("x86/cpu/intel: Clear cache self-snoop capability in CPUs with known errata")
+cleared cache self-snoop capability for CPUs where conflicting memory types
+lead to unpredictable behavior, machine check errors, or hangs.
 
-I think Linus wants to be able to look through core mm stuff quite
-closely, so not a good idea if we deeply intertwin it with one of the
-biggest subsystems there is. And I don't think there will be a real
-conflict like this every merge window, this should be the exception.
-Worst case we have to stage some work 1 release cycle apart, i.e.
-merge mm stuff first, then drm 3 months later. Usually that's not
-going to slow things down noticeable given average merge latency for
-core mm features :-)
--Daniel
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+---
+ arch/x86/mm/pageattr.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> > @@ -2201,7 +2162,7 @@ static int apply_to_page_range_wrapper(pte_t
-> >      *pte,
-> >              struct page_range_apply *pra =
-> >                      container_of(pter, typeof(*pra), pter);
-> >      -       return pra->fn(pte, NULL, addr, pra->data);
-> >      +       return pra->fn(pte, addr, pra->data);
-> >       }
->
-> I looked through this and it looks OK to me, thanks
->
-> Jason
-
-
-
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 6a9a77a403c9..e2704996f9c5 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -1725,10 +1725,11 @@ static int change_page_attr_set_clr(unsigned long *addr, int numpages,
+ 		goto out;
+ 
+ 	/*
+-	 * No need to flush, when we did not set any of the caching
+-	 * attributes:
++	 * No need to flush when CPU supports self-snoop or
++	 * when we did not set any of the caching attributes:
+ 	 */
+-	cache = !!pgprot2cachemode(mask_set);
++	cache = !static_cpu_has(X86_FEATURE_SELFSNOOP) &&
++		pgprot2cachemode(mask_set);
+ 
+ 	/*
+ 	 * On error; flush everything to be sure.
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+2.21.0
+
