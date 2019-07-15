@@ -2,72 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50ECD69760
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:10:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95BCC6975C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:10:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388228AbfGOPKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 11:10:09 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43826 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732698AbfGONz5 (ORCPT
+        id S2387561AbfGOPJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:09:54 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35749 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732784AbfGON4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:55:57 -0400
-Received: by mail-pf1-f196.google.com with SMTP id i189so7452592pfg.10;
-        Mon, 15 Jul 2019 06:55:55 -0700 (PDT)
+        Mon, 15 Jul 2019 09:56:08 -0400
+Received: by mail-lf1-f68.google.com with SMTP id p197so11060527lfa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 06:56:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AY/nB4f3mWLEDWoqoDEwhnoOsZXC8d+VvPhR/4MeddE=;
-        b=AOPeN0JYvr+d//PyK+JaN17bbM8Mb9TlH61mKJRLsChN+2WBgy7HnmpamI3KC/Mjua
-         sp6s2J48btOOXPoHMTUGo5weCEK1mlZ/u4MewkIY4LbE+GxBT6Ht20khYLY0UVO8FDcv
-         7SsfnFkGXOX0PQgc7dh9tbk2zutUqmo6RpHdIRR2brINRZ7aAvVBapRORZiKwHbPePbo
-         06JTwHoVTUDw9YB0Uuktm97RxmNxqYhBV6PBJTxXYW6VwNdxbe1FCaUU505hwsHEGXmv
-         wqtGt83tpCa+7i/KXJf+XqKRt3HZzfjSHK/g5jIFT6xgNoADKnRMU31kZWJdKuXyBXtX
-         Mxtg==
+        bh=AQA3rAirNvZxKwlWUk/9YJ/2ZCXTfP6FUgOkw0oiaHo=;
+        b=rGQho+rAvF5bf8OQFUILTdrWAvao0/A+FK6CXAY2yvsdgYrKy+o8nMLBDh9RN2Tevr
+         1xRWj8rhRcsS0gq5Zlv7P8XA5QHzfc7F3K2SiQjiWOG6h+0kyBDTYKrFyJJhArNqUVOu
+         OG61/tmFoHYXOxampkVklYiAjeyYqd1nj1hnUQCXAr1RydqNqEM5yRUDTrqHIDEgMeAH
+         J9WAEx8jxt/aA912sTTzAl+VZ4gal6o7aFFQiHgtu6eNBbdBri1k0RAGP69gZ/zNSV2W
+         0iG17lVk5T6lb6YdXLY5RCF1xsMI+HNFEmj1fF/6MkTcgurPNXV9im8PtM8/sPEY9hYW
+         9zyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=AY/nB4f3mWLEDWoqoDEwhnoOsZXC8d+VvPhR/4MeddE=;
-        b=Hgyvuw5fFvk3BK+VdgwR6LOvIFPmQ1MU6qGCyb7zYlx9aUm+BE8ty0a6T0g6/Kp/5Q
-         lNapz/H6H4eZ6RzUCdzNR0jDuJdkz6NKISjLhQLjM4seRrHh1gD8gZW3rtlqZX3HOPXA
-         KFDFTCzVIKaOEPRD5yh059ROH+mPe5N6ToFA5wvXpru8bY1Q+NqLROSoKg1ePhKdVPyL
-         KKTxzg1VCHxIZgKMbF4Tdwwb0YqOBdL7g1Hlvefuf8FCF2IiaovqDUMsQyGtnnMDcK4l
-         n0a5wkGUE1GP7jKXbe7cfZQMcJr7rSBPJkCb9xTRl4iVh2d2EETxCAOaTvApCBSDlP6g
-         148A==
-X-Gm-Message-State: APjAAAUz2nsIX6q77oVjWy22YsQgWb392UjZ2nqyQpGFmmg7U5687ke7
-        7fA3DY3WOZ077gSNUC8UHEQ=
-X-Google-Smtp-Source: APXvYqzlXOtDMsIBvJ+VV4Ay1OOpQjT5v+LEIb4LHx6uSBdytpLJfnNixgukI5DBL48PSIUzcMfYnA==
-X-Received: by 2002:a17:90a:2567:: with SMTP id j94mr29623552pje.121.1563198955184;
-        Mon, 15 Jul 2019 06:55:55 -0700 (PDT)
-Received: from [10.231.110.95] ([125.29.25.186])
-        by smtp.gmail.com with ESMTPSA id p27sm29427517pfq.136.2019.07.15.06.55.52
+        bh=AQA3rAirNvZxKwlWUk/9YJ/2ZCXTfP6FUgOkw0oiaHo=;
+        b=otlMiU9HJimWSnMC+vnBXBuwQOKBCTPBVIdj5bKD0VeBbrSXPH08tlCho7rp2MgU1E
+         ujIkRXWIsTC9ixZn6ssxaxOpPjMWeT2qZhE48xNgy/HBn6XesGAF2y5h6Rhu3l/uyKnS
+         pObeqtj8PBCWiFtxSGTM+MyXbsmv7SqvuRvOegRrHaaKWHGY/tFLRd3Tg6fvCQLZN9OT
+         13r50p9T8hckulCh13QRRaYcJazpvQM5qzjCtJ+M/53ssbpuBC/wI1ktgkdWJfyipZxy
+         SaiWiTQejNJC/pBDQgchxQZvCwtSC9qrYqaWhPKJ3ZTAimxzRG9+vQOo+w06mhsMGHjn
+         9OwA==
+X-Gm-Message-State: APjAAAUTYXLMjueDTrHA/3cYef0Q6jQy/6znBz3NfRgbxOwwGoF6UYoE
+        bh1ZTmIZZS9tbyiZmOgJbdZawA==
+X-Google-Smtp-Source: APXvYqxZy3BoIX10RJa/RUMuP0u5tclVeATru2EcWC7Od37yBECo/4x7WFtFMx+OnSoOCEC3OblWZA==
+X-Received: by 2002:ac2:568e:: with SMTP id 14mr11820863lfr.189.1563198964973;
+        Mon, 15 Jul 2019 06:56:04 -0700 (PDT)
+Received: from [10.44.66.8] ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id d16sm3155336ljc.96.2019.07.15.06.56.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jul 2019 06:55:54 -0700 (PDT)
-Subject: Re: [RFC PATCH 00/11] tracing: of: Boot time tracing using devicetree
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <156113387975.28344.16009584175308192243.stgit@devnote2>
- <f0cee7b6-b83b-b74c-82f5-f43e39bd391a@gmail.com>
- <20190624115223.db1e53549a15c6548bfa1fa1@kernel.org>
- <e5e3f55b-095b-e6fc-8734-d888ba5c87f3@gmail.com>
- <20190625140004.a74443238596b297a558a66f@kernel.org>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <c01bd567-0c8b-ec32-773b-fb95bfcdcd50@gmail.com>
-Date:   Mon, 15 Jul 2019 06:55:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Mon, 15 Jul 2019 06:56:04 -0700 (PDT)
+Subject: Re: [PATCH v4 1/5] dt-bindings: interconnect: Add Qualcomm QCS404 DT
+ bindings
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     robh+dt@kernel.org, agross@kernel.org, vkoul@kernel.org,
+        evgreen@chromium.org, daidavid1@codeaurora.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20190613151323.10850-1-georgi.djakov@linaro.org>
+ <20190613151323.10850-2-georgi.djakov@linaro.org>
+ <20190708192612.GE30636@minitux>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+ KEmKjLDvB0pePJkdTw==
+Message-ID: <70982f11-792e-6c02-056d-47582708be4f@linaro.org>
+Date:   Mon, 15 Jul 2019 16:56:03 +0300
 MIME-Version: 1.0
-In-Reply-To: <20190625140004.a74443238596b297a558a66f@kernel.org>
+In-Reply-To: <20190708192612.GE30636@minitux>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -76,162 +113,209 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masami,
+Hi Bjorn,
 
-Note that Masami has submitted v2 of the patch with further discussion.  I
-noticed that I had left some comments unanswered in this thread, so I am
-doing this reply before moving on to reply to the v2 thread.
-
-Feel free to move the discussion to v2 instead of replying to this email
-if you find that easier.
-
-On 6/24/19 10:00 PM, Masami Hiramatsu wrote:
-> Hi Frank,
+On 7/8/19 22:26, Bjorn Andersson wrote:
+> On Thu 13 Jun 08:13 PDT 2019, Georgi Djakov wrote:
 > 
-> On Mon, 24 Jun 2019 15:31:07 -0700
-> Frank Rowand <frowand.list@gmail.com> wrote:
->>>>> Currently, kernel support boot-time tracing using kernel command-line
->>>>> parameters. But that is very limited because of limited expressions
->>>>> and limited length of command line. Recently, useful features like
->>>>> histogram, synthetic events, etc. are being added to ftrace, but it is
->>>>> clear that we can not expand command-line options to support these
->>>>> features.
->>>>
->>>> "it is clear that we can not expand command-line options" needs a fuller
->>>> explanation.  And maybe further exploration.
->>>
->>> Indeed. As an example of tracing settings in the first mail, even for simple
->>> use-case,  the trace command is long and complicated. I think it is hard to
->>> express that as 1-liner kernel command line. But devicetree looks very good
->>> for expressing structured data. That is great and I like it :)
+>> The Qualcomm QCS404 platform has several buses that could be controlled
+>> and tuned according to the bandwidth demand.
 >>
->> But you could extend the command line paradigm to meet your needs.
-> 
-> But the kernel command line is a command line. Would you mean encoding the 
-> structured setting in binary format with base64 and pass it? :(
-
-If you want to put structured data in the command line, then yes, you could use
-an ascii safe form, such as base64, to contain it.  If that is what you want.
-
-
-> 
->>>> Devicetree is NOT for configuration information.  This has been discussed
->>>> over and over again in mail lists, at various conferences, and was also an
->>>> entire session at plumbers a few years ago:
->>>>
->>>>    https://elinux.org/Device_tree_future#Linux_Plumbers_2016_Device_Tree_Track
->>>
->>> Thanks, I'll check that.
-> 
-> I found following discussion in etherpad log, https://elinux.org/Device_tree_plumbers_2016_etherpad
-> ----
-> If you have data that the kernel does not have a good way to get, that's OK to put into DT.
-> 
->     Operating points are OK - but should still be structured well.
-> ----
-> 
-> This sounds like if it is structured well, and there are no other way,
-> we will be able to use DT as a channel.
-> 
->>>>
->>>> There is one part of device tree that does allow non-hardware description,
->>>> which is the "chosen" node which is provided to allow communication between
->>>> the bootloader and the kernel.
->>>
->>> Ah, "chosen" will be suit for me :)
+>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>> ---
 >>
->> No.  This is not communicating boot loader information.
-> 
-> Hmm, it's a kind of communication with the operator of the boot loader, since there
-> is an admin or developer behind it. I think the comminication is to communicate
-> with that human. Then if they intend to trace boot process, that is a kind of
-> communication.
-
-The quote from the plumbers 2016 devicetree etherpad ("Operating points are OK ...)
-conveniently ignores a sentence just a few lines later:
-
-   "If firmware is deciding the operating point, then it's OK to convey it via DT."
-
-The operating points example is clearly communicating boot loader information to
-the kernel.
-
-Something the admin or developer wants to communicate is not boot loader
-information.
-
-
-> 
-> [...]
->>>>> - Can we use devicetree for configuring kernel dynamically?
->>>>
->>>> No.  Sorry.
->>>>
->>>> My understanding of this proposal is that it is intended to better
->>>> support boot time kernel and driver debugging.  As an alternate
->>>> implementation, could you compile the ftrace configuration information
->>>> directly into a kernel data structure?  It seems like it would not be
->>>> very difficult to populate the data structure data via a few macros.
->>>
->>> No, that is not what I intended. My intention was to trace boot up
->>> process "without recompiling kernel", but with a structured data.
+>> v4:
+>> - Add the DT header into this patch.
+>> - Pick Bjorn's r-b.
 >>
->> That is debugging.  Or if you want to be pedantic, a complex performance
->> measurement of the boot process (more than holding a stopwatch in your
->> hand).
-> 
-> Yeah, that's right.
-> 
->> Recompiling a single object file (containing the ftrace command data)
->> and re-linking the kernel is not a big price in that context).
-> 
-> No, if I can use DT, I can choose one of them while boot up.
-> That will be a big difference.
-> (Of course for that purpose, I should work on boot loader to support
-> DT overlay)
-
-This is debugging kernel drivers.  I do not think that it is a big cost for
-a kernel developer to re-link the kernel.  On any reasonable modern
-development system this should be a matter of seconds, not minutes.
-
-Compiling a devicetree source is not significantly less time.  (To be
-fair, you imply that you would have various compiled devicetrees to
-choose from at boot time.  It may be realistic to have a library of
-ftrace commands, or it may be more realistic that someone debugging
-a kernel driver will create a unique ftrace command set for the
-particular case they are debugging.)
-
-> 
->>  Or if
->> you create a new communication channel, you will have the cost of
->> creating that data object (certainly not much different than compiling
->> a devicetree) and have the bootloader provide the ftrace data object
->> to the kernel.
-> 
-> Yes, and for me, that sounds like just a reinvention of the wheel.
-> If I can reuse devicetree infrastructure, it is easily done (as I
-> implemented in this series. It's just about 500LOC (and YAML document)
-
-Or you can just use the existing ftrace boot command line syntax.
-
-
-> 
-> I can clone drivers/of/ code only for that new communication channel,
-> but that makes no one happy. :(
-> 
->>> For such purpose, we have to implement a tool to parse and pack the
->>> data and a channel to load it at earlier stage in bootloader. And
->>> those are already done by devicetree. Thus I thought I could get a
->>> piggyback on devicetree.
+>> v3:
+>> - Add a reg property and move the interconnect nodes under the "soc" node.
 >>
->> Devicetree is not the universal dumping ground for communicating
->> information to a booting kernel.  Please create another communication
->> channel.
+>> v2:
+>> - No changes.
+>>
+>>  .../bindings/interconnect/qcom,qcs404.txt     | 46 ++++++++++
+>>  .../dt-bindings/interconnect/qcom,qcs404.h    | 88 +++++++++++++++++++
+>>  2 files changed, 134 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,qcs404.txt
+>>  create mode 100644 include/dt-bindings/interconnect/qcom,qcs404.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,qcs404.txt b/Documentation/devicetree/bindings/interconnect/qcom,qcs404.txt
+>> new file mode 100644
+>> index 000000000000..14a827268dda
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/interconnect/qcom,qcs404.txt
+>> @@ -0,0 +1,46 @@
+>> +Qualcomm QCS404 Network-On-Chip interconnect driver binding
+>> +-----------------------------------------------------------
+>> +
+>> +Required properties :
+>> +- compatible : shall contain only one of the following:
+>> +			"qcom,qcs404-bimc"
+>> +			"qcom,qcs404-pcnoc"
+>> +			"qcom,qcs404-snoc"
+>> +- #interconnect-cells : should contain 1
+>> +
+>> +Optional properties :
+>> +reg : specifies the physical base address and size of registers
+>> +clocks : list of phandles and specifiers to all interconnect bus clocks
+>> +clock-names : clock names should include both "bus_clk" and "bus_a_clk"
 > 
-> Why should we so limit the availability of even a small corner of existing
-> open source software...?
+> Spoke to Rob about this patch, and I don't think these properties should
+> not be described as optional.
+> 
+> The reg isn't used unless we're implementing support for QoS, but let's
+> include them in the binding as required anyways.
 
-Because the proposal is a mis-use of devicetree.
+Ok, will do it!
 
 > 
-> Thank you,
-> 
+> Iirc the two clocks are required with the current implementation, but
+> shouldn't there be an iface clock as well, for accessing the QoS
+> register space?
 
+Actually i expect this to be a list of AXI clocks of the IP blocks, whose QoS
+ports we configure. For this platform, according to downstream, it would be just
+<&gcc GCC_SYS_NOC_USB3_CLK>. For other platforms i see these are a few usb/ufs
+clocks that should be enabled while we set QoS for usb/ufs.
+
+> 
+> PS. As I read this again, please drop _clk from the two clocks names -
+> we know they are clocks...
+
+Sure, will do it!
+
+Thanks,
+Georgi
+
+> 
+> Regards,
+> Bjorn
+> 
+>> +
+>> +Example:
+>> +
+>> +soc {
+>> +	...
+>> +	bimc: interconnect@400000 {
+>> +		reg = <0x00400000 0x80000>;
+>> +		compatible = "qcom,qcs404-bimc";
+>> +		#interconnect-cells = <1>;
+>> +		clock-names = "bus_clk", "bus_a_clk";
+>> +		clocks = <&rpmcc RPM_SMD_BIMC_CLK>,
+>> +			<&rpmcc RPM_SMD_BIMC_A_CLK>;
+>> +	};
+>> +
+>> +	pnoc: interconnect@500000 {
+>> +		reg = <0x00500000 0x15080>;
+>> +		compatible = "qcom,qcs404-pcnoc";
+>> +		#interconnect-cells = <1>;
+>> +		clock-names = "bus_clk", "bus_a_clk";
+>> +		clocks = <&rpmcc RPM_SMD_PNOC_CLK>,
+>> +			<&rpmcc RPM_SMD_PNOC_A_CLK>;
+>> +	};
+>> +
+>> +	snoc: interconnect@580000 {
+>> +		reg = <0x00580000 0x23080>;
+>> +		compatible = "qcom,qcs404-snoc";
+>> +		#interconnect-cells = <1>;
+>> +		clock-names = "bus_clk", "bus_a_clk";
+>> +		clocks = <&rpmcc RPM_SMD_SNOC_CLK>,
+>> +			<&rpmcc RPM_SMD_SNOC_A_CLK>;
+>> +	};
+>> +};
+>> diff --git a/include/dt-bindings/interconnect/qcom,qcs404.h b/include/dt-bindings/interconnect/qcom,qcs404.h
+>> new file mode 100644
+>> index 000000000000..960f6e39c5f2
+>> --- /dev/null
+>> +++ b/include/dt-bindings/interconnect/qcom,qcs404.h
+>> @@ -0,0 +1,88 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Qualcomm interconnect IDs
+>> + *
+>> + * Copyright (c) 2019, Linaro Ltd.
+>> + * Author: Georgi Djakov <georgi.djakov@linaro.org>
+>> + */
+>> +
+>> +#ifndef __DT_BINDINGS_INTERCONNECT_QCOM_QCS404_H
+>> +#define __DT_BINDINGS_INTERCONNECT_QCOM_QCS404_H
+>> +
+>> +#define MASTER_AMPSS_M0			0
+>> +#define MASTER_OXILI			1
+>> +#define MASTER_MDP_PORT0		2
+>> +#define MASTER_SNOC_BIMC_1		3
+>> +#define MASTER_TCU_0			4
+>> +#define SLAVE_EBI_CH0			5
+>> +#define SLAVE_BIMC_SNOC			6
+>> +
+>> +#define MASTER_SPDM			0
+>> +#define MASTER_BLSP_1			1
+>> +#define MASTER_BLSP_2			2
+>> +#define MASTER_XI_USB_HS1		3
+>> +#define MASTER_CRYPT0			4
+>> +#define MASTER_SDCC_1			5
+>> +#define MASTER_SDCC_2			6
+>> +#define MASTER_SNOC_PCNOC		7
+>> +#define MASTER_QPIC			8
+>> +#define PCNOC_INT_0			9
+>> +#define PCNOC_INT_2			10
+>> +#define PCNOC_INT_3			11
+>> +#define PCNOC_S_0			12
+>> +#define PCNOC_S_1			13
+>> +#define PCNOC_S_2			14
+>> +#define PCNOC_S_3			15
+>> +#define PCNOC_S_4			16
+>> +#define PCNOC_S_6			17
+>> +#define PCNOC_S_7			18
+>> +#define PCNOC_S_8			19
+>> +#define PCNOC_S_9			20
+>> +#define PCNOC_S_10			21
+>> +#define PCNOC_S_11			22
+>> +#define SLAVE_SPDM			23
+>> +#define SLAVE_PDM			24
+>> +#define SLAVE_PRNG			25
+>> +#define SLAVE_TCSR			26
+>> +#define SLAVE_SNOC_CFG			27
+>> +#define SLAVE_MESSAGE_RAM		28
+>> +#define SLAVE_DISP_SS_CFG		29
+>> +#define SLAVE_GPU_CFG			30
+>> +#define SLAVE_BLSP_1			31
+>> +#define SLAVE_BLSP_2			32
+>> +#define SLAVE_TLMM_NORTH		33
+>> +#define SLAVE_PCIE			34
+>> +#define SLAVE_ETHERNET			35
+>> +#define SLAVE_TLMM_EAST			36
+>> +#define SLAVE_TCU			37
+>> +#define SLAVE_PMIC_ARB			38
+>> +#define SLAVE_SDCC_1			39
+>> +#define SLAVE_SDCC_2			40
+>> +#define SLAVE_TLMM_SOUTH		41
+>> +#define SLAVE_USB_HS			42
+>> +#define SLAVE_USB3			43
+>> +#define SLAVE_CRYPTO_0_CFG		44
+>> +#define SLAVE_PCNOC_SNOC		45
+>> +
+>> +#define MASTER_QDSS_BAM			0
+>> +#define MASTER_BIMC_SNOC		1
+>> +#define MASTER_PCNOC_SNOC		2
+>> +#define MASTER_QDSS_ETR			3
+>> +#define MASTER_EMAC			4
+>> +#define MASTER_PCIE			5
+>> +#define MASTER_USB3			6
+>> +#define QDSS_INT			7
+>> +#define SNOC_INT_0			8
+>> +#define SNOC_INT_1			9
+>> +#define SNOC_INT_2			10
+>> +#define SLAVE_KPSS_AHB			11
+>> +#define SLAVE_WCSS			12
+>> +#define SLAVE_SNOC_BIMC_1		13
+>> +#define SLAVE_IMEM			14
+>> +#define SLAVE_SNOC_PCNOC		15
+>> +#define SLAVE_QDSS_STM			16
+>> +#define SLAVE_CATS_0			17
+>> +#define SLAVE_CATS_1			18
+>> +#define SLAVE_LPASS			19
+>> +
+>> +#endif
