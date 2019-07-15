@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26C8568ED6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:10:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8054C68EF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:11:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388761AbfGOOJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:09:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33642 "EHLO mail.kernel.org"
+        id S2388950AbfGOOLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:11:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387983AbfGOOJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:09:44 -0400
+        id S2388774AbfGOOJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:09:53 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A77920868;
-        Mon, 15 Jul 2019 14:09:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6054A20868;
+        Mon, 15 Jul 2019 14:09:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199783;
-        bh=+/9SYzl146a33Wt7TxYvMzKsaEVFbWXSOpC8p8whxwM=;
+        s=default; t=1563199793;
+        bh=e6jWqEeEv1aQrTQ5oESajo6naB0+APSVXMatpHaJegg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0gEaS9Y54bSgYAkdkK4Itn7pevzfhVD4srfaE5L7bcZqegNjf5cnDJZFmBB4RW5Yo
-         KMuRXteA5woyOBtbkj6dcVOereL49AfwJ0vYeGLoZBskbfqQ07AqSm1l8gtcCPu9tl
-         bGo2pA9lIicjPPnsnsSmuA0GXemS36DaIPWzfz1E=
+        b=QDwliex7Ga8dmGpGzIqCkmH/hu/VFkKzvKz3ua19lcO/MexSBY/cGsiy7ZC15LtNa
+         PG1Nd6/cBOeSi/mn9wyiGL9kSBInsCAWsk8XVOSxPPRdsl6Cy8ErVoR2nKlPNYmmCL
+         XWB6LHt1sSGifZ4JiYPkCCZvMZ1qNeZo7s+0CF60=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Leo Yan <leo.yan@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 104/219] perf evsel: Make perf_evsel__name() accept a NULL argument
-Date:   Mon, 15 Jul 2019 10:01:45 -0400
-Message-Id: <20190715140341.6443-104-sashal@kernel.org>
+Cc:     Denis Kirjanov <kda@linux-powerpc.org>,
+        Doug Ledford <dledford@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 107/219] ipoib: correcly show a VF hardware address
+Date:   Mon, 15 Jul 2019 10:01:48 -0400
+Message-Id: <20190715140341.6443-107-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -46,54 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Denis Kirjanov <kda@linux-powerpc.org>
 
-[ Upstream commit fdbdd7e8580eac9bdafa532746c865644d125e34 ]
+[ Upstream commit 64d701c608fea362881e823b666327f5d28d7ffd ]
 
-In which case it simply returns "unknown", like when it can't figure out
-the evsel->name value.
+in the case of IPoIB with SRIOV enabled hardware
+ip link show command incorrecly prints
+0 instead of a VF hardware address.
 
-This makes this code more robust and fixes a problem in 'perf trace'
-where a NULL evsel was being passed to a routine that only used the
-evsel for printing its name when a invalid syscall id was passed.
+Before:
+11: ib1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 2044 qdisc pfifo_fast
+state UP mode DEFAULT group default qlen 256
+    link/infiniband
+80:00:00:66:fe:80:00:00:00:00:00:00:24:8a:07:03:00:a4:3e:7c brd
+00:ff:ff:ff:ff:12:40:1b:ff:ff:00:00:00:00:00:00:ff:ff:ff:ff
+    vf 0 MAC 00:00:00:00:00:00, spoof checking off, link-state disable,
+trust off, query_rss off
+...
+After:
+11: ib1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 2044 qdisc pfifo_fast
+state UP mode DEFAULT group default qlen 256
+    link/infiniband
+80:00:00:66:fe:80:00:00:00:00:00:00:24:8a:07:03:00:a4:3e:7c brd
+00:ff:ff:ff:ff:12:40:1b:ff:ff:00:00:00:00:00:00:ff:ff:ff:ff
+    vf 0     link/infiniband
+80:00:00:66:fe:80:00:00:00:00:00:00:24:8a:07:03:00:a4:3e:7c brd
+00:ff:ff:ff:ff:12:40:1b:ff:ff:00:00:00:00:00:00:ff:ff:ff:ff, spoof
+checking off, link-state disable, trust off, query_rss off
 
-Reported-by: Leo Yan <leo.yan@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-f30ztaasku3z935cn3ak3h53@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+v1->v2: just copy an address without modifing ifla_vf_mac
+v2->v3: update the changelog
+
+Signed-off-by: Denis Kirjanov <kda@linux-powerpc.org>
+Acked-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/evsel.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/infiniband/ulp/ipoib/ipoib_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 966360844fff..7ca79cfe1aea 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -584,6 +584,9 @@ const char *perf_evsel__name(struct perf_evsel *evsel)
- {
- 	char bf[128];
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+index 9b5e11d3fb85..04ea7db08e87 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -1998,6 +1998,7 @@ static int ipoib_get_vf_config(struct net_device *dev, int vf,
+ 		return err;
  
-+	if (!evsel)
-+		goto out_unknown;
-+
- 	if (evsel->name)
- 		return evsel->name;
+ 	ivf->vf = vf;
++	memcpy(ivf->mac, dev->dev_addr, dev->addr_len);
  
-@@ -620,7 +623,10 @@ const char *perf_evsel__name(struct perf_evsel *evsel)
- 
- 	evsel->name = strdup(bf);
- 
--	return evsel->name ?: "unknown";
-+	if (evsel->name)
-+		return evsel->name;
-+out_unknown:
-+	return "unknown";
+ 	return 0;
  }
- 
- const char *perf_evsel__group_name(struct perf_evsel *evsel)
 -- 
 2.20.1
 
