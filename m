@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C4D8697D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DE69697D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:13:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731917AbfGONt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:49:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36928 "EHLO mail.kernel.org"
+        id S1732399AbfGOPN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:13:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731886AbfGONty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:49:54 -0400
+        id S1730194AbfGONuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:50:10 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 167F020651;
-        Mon, 15 Jul 2019 13:49:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9215B20651;
+        Mon, 15 Jul 2019 13:50:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563198593;
-        bh=lGlfXHAiLZJovgA4DCHybcCib4O3ArvHEh86TD1QZiY=;
+        s=default; t=1563198609;
+        bh=hcMl2YPfauI6ZMmDQXFz1o+UHw+RIaonRYschVyOPec=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Iiz1ZY4rp3N898lKSS/Xd5wM0eXzeeuYmhtTHK2+5CF5/5xU80Q1SwvtsLLjFbghG
-         Y2WII6iAsH6S9FJ+rd9UUR2vAtk5SK/adeSa3AzOk+9mT32kmXUQUuNtUH0LNsXkho
-         QTeH6T8M/8Lvr0ryDaUqFDZPIbrU4zyYkIqD1KhY=
+        b=0v3H0FS4thFK0AANa3WoTWMhjpX/i9Klu/xLvXkUx/wBdjDTxOHErfWi0nDo9d68N
+         wi5uQ8msuCv2zd1U8KdnTmZNLeaj/vMJc38I/34dEH6eRkAtcEo9SqQtxwR+DyiIBa
+         G39deF0En+V1l+Nh2QdCscaz6dBd4BlvsoqKZUa0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Shailendra Verma <shailendra.v@samsung.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 5.2 053/249] media: staging: media: davinci_vpfe: - Fix for memory leak if decoder initialization fails.
-Date:   Mon, 15 Jul 2019 09:43:38 -0400
-Message-Id: <20190715134655.4076-53-sashal@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 058/249] tua6100: Avoid build warnings.
+Date:   Mon, 15 Jul 2019 09:43:43 -0400
+Message-Id: <20190715134655.4076-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
 References: <20190715134655.4076-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,35 +43,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shailendra Verma <shailendra.v@samsung.com>
+From: "David S. Miller" <davem@davemloft.net>
 
-[ Upstream commit 6995a659101bd4effa41cebb067f9dc18d77520d ]
+[ Upstream commit 621ccc6cc5f8d6730b740d31d4818227866c93c9 ]
 
-Fix to avoid possible memory leak if the decoder initialization
-got failed.Free the allocated memory for file handle object
-before return in case decoder initialization fails.
+Rename _P to _P_VAL and _R to _R_VAL to avoid global
+namespace conflicts:
 
-Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+drivers/media/dvb-frontends/tua6100.c: In function ‘tua6100_set_params’:
+drivers/media/dvb-frontends/tua6100.c:79: warning: "_P" redefined
+ #define _P 32
+
+In file included from ./include/acpi/platform/aclinux.h:54,
+                 from ./include/acpi/platform/acenv.h:152,
+                 from ./include/acpi/acpi.h:22,
+                 from ./include/linux/acpi.h:34,
+                 from ./include/linux/i2c.h:17,
+                 from drivers/media/dvb-frontends/tua6100.h:30,
+                 from drivers/media/dvb-frontends/tua6100.c:32:
+./include/linux/ctype.h:14: note: this is the location of the previous definition
+ #define _P 0x10 /* punct */
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/media/davinci_vpfe/vpfe_video.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/dvb-frontends/tua6100.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/staging/media/davinci_vpfe/vpfe_video.c b/drivers/staging/media/davinci_vpfe/vpfe_video.c
-index 510202a3b091..84cca18e3e9d 100644
---- a/drivers/staging/media/davinci_vpfe/vpfe_video.c
-+++ b/drivers/staging/media/davinci_vpfe/vpfe_video.c
-@@ -419,6 +419,9 @@ static int vpfe_open(struct file *file)
- 	/* If decoder is not initialized. initialize it */
- 	if (!video->initialized && vpfe_update_pipe_state(video)) {
- 		mutex_unlock(&video->lock);
-+		v4l2_fh_del(&handle->vfh);
-+		v4l2_fh_exit(&handle->vfh);
-+		kfree(handle);
- 		return -ENODEV;
- 	}
- 	/* Increment device users counter */
+diff --git a/drivers/media/dvb-frontends/tua6100.c b/drivers/media/dvb-frontends/tua6100.c
+index f7c3e6be8e4d..2483f614d0e7 100644
+--- a/drivers/media/dvb-frontends/tua6100.c
++++ b/drivers/media/dvb-frontends/tua6100.c
+@@ -67,8 +67,8 @@ static int tua6100_set_params(struct dvb_frontend *fe)
+ 	struct i2c_msg msg1 = { .addr = priv->i2c_address, .flags = 0, .buf = reg1, .len = 4 };
+ 	struct i2c_msg msg2 = { .addr = priv->i2c_address, .flags = 0, .buf = reg2, .len = 3 };
+ 
+-#define _R 4
+-#define _P 32
++#define _R_VAL 4
++#define _P_VAL 32
+ #define _ri 4000000
+ 
+ 	// setup register 0
+@@ -83,14 +83,14 @@ static int tua6100_set_params(struct dvb_frontend *fe)
+ 	else
+ 		reg1[1] = 0x0c;
+ 
+-	if (_P == 64)
++	if (_P_VAL == 64)
+ 		reg1[1] |= 0x40;
+ 	if (c->frequency >= 1525000)
+ 		reg1[1] |= 0x80;
+ 
+ 	// register 2
+-	reg2[1] = (_R >> 8) & 0x03;
+-	reg2[2] = _R;
++	reg2[1] = (_R_VAL >> 8) & 0x03;
++	reg2[2] = _R_VAL;
+ 	if (c->frequency < 1455000)
+ 		reg2[1] |= 0x1c;
+ 	else if (c->frequency < 1630000)
+@@ -102,18 +102,18 @@ static int tua6100_set_params(struct dvb_frontend *fe)
+ 	 * The N divisor ratio (note: c->frequency is in kHz, but we
+ 	 * need it in Hz)
+ 	 */
+-	prediv = (c->frequency * _R) / (_ri / 1000);
+-	div = prediv / _P;
++	prediv = (c->frequency * _R_VAL) / (_ri / 1000);
++	div = prediv / _P_VAL;
+ 	reg1[1] |= (div >> 9) & 0x03;
+ 	reg1[2] = div >> 1;
+ 	reg1[3] = (div << 7);
+-	priv->frequency = ((div * _P) * (_ri / 1000)) / _R;
++	priv->frequency = ((div * _P_VAL) * (_ri / 1000)) / _R_VAL;
+ 
+ 	// Finally, calculate and store the value for A
+-	reg1[3] |= (prediv - (div*_P)) & 0x7f;
++	reg1[3] |= (prediv - (div*_P_VAL)) & 0x7f;
+ 
+-#undef _R
+-#undef _P
++#undef _R_VAL
++#undef _P_VAL
+ #undef _ri
+ 
+ 	if (fe->ops.i2c_gate_ctrl)
 -- 
 2.20.1
 
