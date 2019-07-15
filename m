@@ -2,121 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7691C69078
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:22:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC8B86911C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:27:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390557AbfGOOV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:21:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48476 "EHLO mail.kernel.org"
+        id S2391325AbfGOO0m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:26:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390004AbfGOOVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:21:51 -0400
-Received: from localhost (d192-24-91-215.try.wideopenwest.com [24.192.215.91])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2390462AbfGOO0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:26:39 -0400
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5D342184C;
-        Mon, 15 Jul 2019 14:21:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E1C021897
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 14:26:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200510;
-        bh=8aMhZObp+OV6R+0Pf2IC4tAtq3tomyGvUrXruWhPUoI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=CHG6tDR6ScJFj8bAHpOx7eMShmwPYizVnXpdP8cPQMLJgnbg+mW0KuTbNiAWfnT4D
-         ypqe+rM31ZHkrPTu5UGXO42Ag5E2swcKWLFQ4/gguFge9pwJ8TGdHCEfZ40jFmPore
-         8RXk3um9of4WsBsU6mrxx7af7igpveBwmmqRQaag=
-From:   Andy Lutomirski <luto@kernel.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, "Bae, Chang Seok" <chang.seok.bae@intel.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH] Revert "x86/ptrace: Prevent ptrace from clearing the FS/GS selector" and fix the test
-Date:   Mon, 15 Jul 2019 07:21:44 -0700
-Message-Id: <fca39c478ea7fb15bc76fe8a36bd180810a067f6.1563200250.git.luto@kernel.org>
-X-Mailer: git-send-email 2.21.0
+        s=default; t=1563200798;
+        bh=DNqlzREK4dV/aPzROroMGAgiODE6UVu/9+MH9locEQ4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=SabY96C/POfFbxV/Umsy2WGXdijJG7KF8f3Ysqqdifd7WqBbEJx+xG8P7Mmx5WDBz
+         q3jA6uUizcJUa+q10TuC7UrMWVr4NRyvH6PaW3VSAzRFj033Puah609iqGVB5ULYFh
+         WWDH1OLKrjzSjdlcJvmRoz/+0x0+44lupFxtDxGM=
+Received: by mail-wr1-f41.google.com with SMTP id p17so17309328wrf.11
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 07:26:38 -0700 (PDT)
+X-Gm-Message-State: APjAAAUmT7CkchuRovuWrwd0s4r31JPTt3bNV/jt7JQDcIToouuGDwfq
+        xLPG+TVxXXUB8QciTIo458bgOVDQrishDYyZrqrRow==
+X-Google-Smtp-Source: APXvYqww0AN3+Pb54VR+Bz/+6fgGsdMSZEJs1XScvHSY8TTgNMqkXTS8y1miAw5Idq1Dc5EeFC1Tkcu7M/Wx0leEMSw=
+X-Received: by 2002:adf:dd0f:: with SMTP id a15mr27817870wrm.265.1563200796986;
+ Mon, 15 Jul 2019 07:26:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190715130056.10627-1-andrew.cooper3@citrix.com> <a04918d1-975e-5869-1ecd-c9df4ae5b1c1@suse.com>
+In-Reply-To: <a04918d1-975e-5869-1ecd-c9df4ae5b1c1@suse.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 15 Jul 2019 07:26:25 -0700
+X-Gmail-Original-Message-ID: <CALCETrX0T=vzyN8gqoBmA72xwzS45d5bDTfcZQJayht9n9ijPA@mail.gmail.com>
+Message-ID: <CALCETrX0T=vzyN8gqoBmA72xwzS45d5bDTfcZQJayht9n9ijPA@mail.gmail.com>
+Subject: Re: [PATCH] x86/paravirt: Drop {read,write}_cr8() hooks
+To:     Juergen Gross <jgross@suse.com>
+Cc:     Andrew Cooper <andrew.cooper3@citrix.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Stephane Eranian <eranian@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        FengTang <feng.tang@intel.com>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "Rafael J.Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>,
+        Alok Kataria <akataria@vmware.com>,
+        Nadav Amit <namit@vmware.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 48f5e52e916b55fb73754833efbacc7f8081a159.
+On Mon, Jul 15, 2019 at 6:23 AM Juergen Gross <jgross@suse.com> wrote:
+>
+> On 15.07.19 15:00, Andrew Cooper wrote:
+> > There is a lot of infrastructure for functionality which is used
+> > exclusively in __{save,restore}_processor_state() on the suspend/resume
+> > path.
+> >
+> > cr8 is an alias of APIC_TASKPRI, and APIC_TASKPRI is saved/restored
+> > independently by lapic_{suspend,resume}().
+>
+> Aren't those called only with CONFIG_PM set?
+>
 
-The ptrace ABI change was a prerequisite to the proposed design for
-FSGSBASE.  Since FSGSBASE support has been reverted, and since I'm
-not convinced that the ABI was ever adequately tested, revert the
-ABI change as well.
 
-This also modifies the test case so that it tests the preexisting
-behavior.
-
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
----
- arch/x86/kernel/ptrace.c               | 14 ++++++++++++--
- tools/testing/selftests/x86/fsgsbase.c | 22 ++++------------------
- 2 files changed, 16 insertions(+), 20 deletions(-)
-
-diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
-index 3108cdc00b29..a166c960bc9e 100644
---- a/arch/x86/kernel/ptrace.c
-+++ b/arch/x86/kernel/ptrace.c
-@@ -397,12 +397,22 @@ static int putreg(struct task_struct *child,
- 	case offsetof(struct user_regs_struct,fs_base):
- 		if (value >= TASK_SIZE_MAX)
- 			return -EIO;
--		x86_fsbase_write_task(child, value);
-+		/*
-+		 * When changing the FS base, use do_arch_prctl_64()
-+		 * to set the index to zero and to set the base
-+		 * as requested.
-+		 */
-+		if (child->thread.fsbase != value)
-+			return do_arch_prctl_64(child, ARCH_SET_FS, value);
- 		return 0;
- 	case offsetof(struct user_regs_struct,gs_base):
-+		/*
-+		 * Exactly the same here as the %fs handling above.
-+		 */
- 		if (value >= TASK_SIZE_MAX)
- 			return -EIO;
--		x86_gsbase_write_task(child, value);
-+		if (child->thread.gsbase != value)
-+			return do_arch_prctl_64(child, ARCH_SET_GS, value);
- 		return 0;
- #endif
- 	}
-diff --git a/tools/testing/selftests/x86/fsgsbase.c b/tools/testing/selftests/x86/fsgsbase.c
-index 5ab4c60c100e..15a329da59fa 100644
---- a/tools/testing/selftests/x86/fsgsbase.c
-+++ b/tools/testing/selftests/x86/fsgsbase.c
-@@ -489,25 +489,11 @@ static void test_ptrace_write_gsbase(void)
- 		 * selector value is changed or not by the GSBASE write in
- 		 * a ptracer.
- 		 */
--		if (gs != *shared_scratch) {
--			nerrs++;
--			printf("[FAIL]\tGS changed to %lx\n", gs);
--
--			/*
--			 * On older kernels, poking a nonzero value into the
--			 * base would zero the selector.  On newer kernels,
--			 * this behavior has changed -- poking the base
--			 * changes only the base and, if FSGSBASE is not
--			 * available, this may have no effect.
--			 */
--			if (gs == 0)
--				printf("\tNote: this is expected behavior on older kernels.\n");
--		} else if (have_fsgsbase && (base != 0xFF)) {
--			nerrs++;
--			printf("[FAIL]\tGSBASE changed to %lx\n", base);
-+		if (gs == 0 && base == 0xFF) {
-+			printf("[OK]\tGS was reset as expected\n");
- 		} else {
--			printf("[OK]\tGS remained 0x%hx%s", *shared_scratch, have_fsgsbase ? " and GSBASE changed to 0xFF" : "");
--			printf("\n");
-+			nerrs++;
-+			printf("[FAIL]\tGS=0x%lx, GSBASE=0x%lx (should be 0, 0xFF)\n", gs, base);
- 		}
- 	}
- 
--- 
-2.21.0
-
+Unless I'm missing something, we only build any of the restore code
+(including the write_cr8() call) if CONFIG_PM_SLEEP is set, and that
+selects CONFIG_PM, so we should be fine, I think.
