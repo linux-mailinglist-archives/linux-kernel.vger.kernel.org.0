@@ -2,177 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1766F69C7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:14:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BE3269C85
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:17:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732453AbfGOUOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 16:14:16 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:3041 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730937AbfGOUOQ (ORCPT
+        id S1731484AbfGOUR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 16:17:26 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:39584 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729844AbfGOURZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 16:14:16 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d2cde9c0000>; Mon, 15 Jul 2019 13:14:20 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 15 Jul 2019 13:14:14 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 15 Jul 2019 13:14:14 -0700
-Received: from [10.110.48.28] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 15 Jul
- 2019 20:14:13 +0000
-Subject: Re: [PATCH] staging: kpc2000: Convert put_page() to put_user_page*()
-To:     Bharath Vedartham <linux.bhar@gmail.com>, <ira.weiny@intel.com>,
-        <gregkh@linuxfoundation.org>, <Matt.Sickler@daktronics.com>,
-        <jglisse@redhat.com>
-CC:     <devel@driverdev.osuosl.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190715195248.GA22495@bharath12345-Inspiron-5559>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <2604fcd1-4829-d77e-9f7c-d4b731782ff9@nvidia.com>
-Date:   Mon, 15 Jul 2019 13:14:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Mon, 15 Jul 2019 16:17:25 -0400
+Received: by mail-oi1-f196.google.com with SMTP id m202so13719643oig.6
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 13:17:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XyAbd1BySBBCgH8Ay3NolC8f63BojC2gvrmUxKLo0R0=;
+        b=c+cgEQh8jwM3YFAX0xOAib02DehoaJUvmYAHOQnQ6wVRWMla8ygCLoLaFlpk6W+Hix
+         UFJC9YA0ujjg8pyEwqzJujHrmhpSfr2Wy0bX4/N/DBo6ATdVB9XkMtdXCbfyos98Qqpe
+         C5S/PKMwaUInixcBHib3fysQeefvf/3OXFaUOMz4JFWc+or5Kp7rD2+xX7nEm8L26J50
+         XkIkWCqYWfwGfY3HmxcQ0FquKMwrvAOxlmNgthExgivKB77ybsd7ZE8UNRSCpTwrnNlS
+         r7IUAh9xzliUzuvune7USKc5BlKWFNGNwadDB3fjkz0QRyvCbElim38sMgI+pSH5wm8L
+         LO6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XyAbd1BySBBCgH8Ay3NolC8f63BojC2gvrmUxKLo0R0=;
+        b=QvNyVmEhmQEBizFGUSb05axZorsfKKnDvI3fOByWMsELfMtWLjDkeuC+pVITmFGyWB
+         3lD1oFK5moF5M3a95/j/b1U1SjhCATiWvkUrfZhYVk8pNUASoJqHajgQ0dZDg5mUixOf
+         1mDePvDXkMt13qlbkt7DhKd/+4Lx9jWLSKu7Wbq7rRikejf7rLcPuEQGoXsAasrQg2xi
+         Xh2XLk6eRlGXPS//hfzzNYYiOHscV/gdQulWRBw+WzdrERhVkwydCEvGCfwjeQTT/403
+         Kf1Oz6s8qJ7Cd5sd1KK7ZH4811Q1wpWQyRRfIz079+XcEbUUDQZU+COb2Aeofnpnv2Wd
+         PVZA==
+X-Gm-Message-State: APjAAAWbBAgedUSh4Wot3r2rFQcQh1WcO/qq4iWus+CwJLFmBoLMxidb
+        jODtFQ6Vg3ps8IHFveX6k0wF1NejGczC/Vt5Dbw=
+X-Google-Smtp-Source: APXvYqxOc28x9Lo0Bz4UjDEyqQTrxzWFN/t3iDIB4AuDixWXTXJwH/cpztZ2BeWV5la6UoGmdS8L9+nonwBOCBFcBys=
+X-Received: by 2002:aca:fc8e:: with SMTP id a136mr14867080oii.104.1563221844553;
+ Mon, 15 Jul 2019 13:17:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190715195248.GA22495@bharath12345-Inspiron-5559>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1563221660; bh=BMxYmaxLZP+7xtagiq4XdrfPFrAjpdxkuCAPEb6M/YE=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=WAapHeWXmLTyRYz3wNyClC6+13efTzwE10OPt/TU6UzVEhQ95SBC2gyGzhQSq8HzY
-         jif7L106RMFBSUgWWTTOtKHY++BEoNDNqfzgiSakBgXQz7mrzurCeo5LnBL3cdHTdW
-         9UQh4CqliZkdYkplEcYXuJba0rR+7so4j/xBe+8jAIUwoYBK4II+W8f3W9W3kmLAMs
-         r7cbHtFee6QReJJdSABcP7vtaZ2aA/L9fceZ+vtVh/8yr0Q/NujtUzQQnfJB33iZWA
-         VUOTM6zOa03ibnytuPQvgFn80smv0LT15Q3+mUhiPpZjESiU6lD7H4cdBJJjkE2sEO
-         ovaCokkakfJiQ==
+References: <7db7da45b435f8477f25e66f292631ff766a844c.1560969363.git.thomas.lendacky@amd.com>
+ <20190713145909.30749-1-mike@fireburn.co.uk> <alpine.DEB.2.21.1907141215350.1669@nanos.tec.linutronix.de>
+ <CAHbf0-EPfgyKinFuOP7AtgTJWVSVqPmWwMSxzaH=Xg-xUUVWCA@mail.gmail.com>
+ <alpine.DEB.2.21.1907151011590.1669@nanos.tec.linutronix.de>
+ <CAHbf0-F9yUDJ=DKug+MZqsjW+zPgwWaLUC40BLOsr5+t4kYOLQ@mail.gmail.com>
+ <alpine.DEB.2.21.1907151118570.1669@nanos.tec.linutronix.de> <alpine.DEB.2.21.1907151140080.1669@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1907151140080.1669@nanos.tec.linutronix.de>
+From:   "H.J. Lu" <hjl.tools@gmail.com>
+Date:   Mon, 15 Jul 2019 13:16:48 -0700
+Message-ID: <CAMe9rOqMqkQ0LNpm25yE_Yt0FKp05WmHOrwc0aRDb53miFKM+w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] x86/mm: Identify the end of the kernel area to be reserved
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Mike Lothian <mike@fireburn.co.uk>,
+        Tom Lendacky <thomas.lendacky@amd.com>, bhe@redhat.com,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, lijiang@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/15/19 12:52 PM, Bharath Vedartham wrote:
-> There have been issues with get_user_pages and filesystem writeback.
-> The issues are better described in [1].
->=20
-> The solution being proposed wants to keep track of gup_pinned pages which=
- will allow to take furthur steps to coordinate between subsystems using gu=
-p.
->=20
-> put_user_page() simply calls put_page inside for now. But the implementat=
-ion will change once all call sites of put_page() are converted.
->=20
-> I currently do not have the driver to test. Could I have some suggestions=
- to test this code? The solution is currently implemented in [2] and
-> it would be great if we could apply the patch on top of [2] and run some =
-tests to check if any regressions occur.
+On Mon, Jul 15, 2019 at 3:35 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> On Mon, 15 Jul 2019, Thomas Gleixner wrote:
+> > On Mon, 15 Jul 2019, Mike Lothian wrote:
+> > > That build failure is from the current tip of Linus's tree
+> > > If the fix is in, then it hasn't fixed the issue
+> >
+> > The reverted commit caused a build fail with gold as well. Let me stare at
+> > your issue.
+>
+> So with gold the build fails in the reloc tool complaining about that
+> relocation:
+>
+>   Invalid absolute R_X86_64_32S relocation: __end_of_kernel_reserve
+>
+> The commit does:
+>
+> +extern char __end_of_kernel_reserve[];
+> +
+>
+>  void __init setup_arch(char **cmdline_p)
+>  {
+> +       /*
+> +        * Reserve the memory occupied by the kernel between _text and
+> +        * __end_of_kernel_reserve symbols. Any kernel sections after the
+> +        * __end_of_kernel_reserve symbol must be explicitly reserved with a
+> +        * separate memblock_reserve() or they will be discarded.
+> +        */
+>         memblock_reserve(__pa_symbol(_text),
+> -                        (unsigned long)__bss_stop - (unsigned long)_text);
+> +                        (unsigned long)__end_of_kernel_reserve - (unsigned long)_text);
+>
+> So it replaces __bss_stop with __end_of_kernel_reserve here.
+>
+> --- a/arch/x86/kernel/vmlinux.lds.S
+> +++ b/arch/x86/kernel/vmlinux.lds.S
+> @@ -368,6 +368,14 @@ SECTIONS
+>                 __bss_stop = .;
+>         }
+>
+> +       /*
+> +        * The memory occupied from _text to here, __end_of_kernel_reserve, is
+> +        * automatically reserved in setup_arch(). Anything after here must be
+> +        * explicitly reserved using memblock_reserve() or it will be discarded
+> +        * and treated as available memory.
+> +        */
+> +       __end_of_kernel_reserve = .;
+>
+> And from the linker script __bss_stop and __end_of_kernel_reserve are
+> exactly the same. From System.map (of a successful ld build):
+>
+> ffffffff82c00000 B __brk_base
+> ffffffff82c00000 B __bss_stop
+> ffffffff82c00000 B __end_bss_decrypted
+> ffffffff82c00000 B __end_of_kernel_reserve
+> ffffffff82c00000 B __start_bss_decrypted
+> ffffffff82c00000 B __start_bss_decrypted_unused
+>
+> So how on earth can gold fail with that __end_of_kernel_reserve change?
+>
+> For some unknown reason it turns that relocation into an absolute
+> one. That's clearly a gold bug^Wfeature and TBH, I'm more than concerned
+> about that kind of behaviour.
+>
+> If we just revert that commit, then what do we achieve? We paper over the
+> underlying problem, which is not really helping anything.
+>
+> Aside of that gold still fails to build the X32 VDSO and it does so for a
+> very long time....
+>
+> Until we really understand what the problem is, this stays as is.
+>
+> @H.J.: Any insight on that?
+>
 
-Hi Bharath,
+Since building a workable kernel for different kernel configurations isn't a
+requirement for gold, I don't recommend gold for kernel.
 
-Process point: the above paragraph, and other meta-questions (about the pat=
-ch, rather than part of the patch) should be placed either after the "---",=
- or in a cover letter (git-send-email --cover-letter). That way, the patch =
-itself is in a commit-able state.
-
-One more below:
-
->=20
-> [1] https://lwn.net/Articles/753027/
-> [2] https://github.com/johnhubbard/linux/tree/gup_dma_core
->=20
-> Cc: Matt Sickler <Matt.Sickler@daktronics.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: linux-mm@kvack.org
-> Cc: devel@driverdev.osuosl.org
->=20
-> Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
-> ---
->  drivers/staging/kpc2000/kpc_dma/fileops.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/staging/kpc2000/kpc_dma/fileops.c b/drivers/staging/=
-kpc2000/kpc_dma/fileops.c
-> index 6166587..82c70e6 100644
-> --- a/drivers/staging/kpc2000/kpc_dma/fileops.c
-> +++ b/drivers/staging/kpc2000/kpc_dma/fileops.c
-> @@ -198,9 +198,7 @@ int  kpc_dma_transfer(struct dev_private_data *priv, =
-struct kiocb *kcb, unsigned
->  	sg_free_table(&acd->sgt);
->   err_dma_map_sg:
->   err_alloc_sg_table:
-> -	for (i =3D 0 ; i < acd->page_count ; i++){
-> -		put_page(acd->user_pages[i]);
-> -	}
-> +	put_user_pages(acd->user_pages, acd->page_count);
->   err_get_user_pages:
->  	kfree(acd->user_pages);
->   err_alloc_userpages:
-> @@ -229,9 +227,7 @@ void  transfer_complete_cb(struct aio_cb_data *acd, s=
-ize_t xfr_count, u32 flags)
->  =09
->  	dma_unmap_sg(&acd->ldev->pldev->dev, acd->sgt.sgl, acd->sgt.nents, acd-=
->ldev->dir);
->  =09
-> -	for (i =3D 0 ; i < acd->page_count ; i++){
-> -		put_page(acd->user_pages[i]);
-> -	}
-> +	put_user_pages(acd->user_pages, acd->page_count);
->  =09
->  	sg_free_table(&acd->sgt);
->  =09
->=20
-
-Because this is a common pattern, and because the code here doesn't likely =
-need to set page dirty before the dma_unmap_sg call, I think the following =
-would be better (it's untested), instead of the above diff hunk:
-
-diff --git a/drivers/staging/kpc2000/kpc_dma/fileops.c b/drivers/staging/kp=
-c2000/kpc_dma/fileops.c
-index 48ca88bc6b0b..d486f9866449 100644
---- a/drivers/staging/kpc2000/kpc_dma/fileops.c
-+++ b/drivers/staging/kpc2000/kpc_dma/fileops.c
-@@ -211,16 +211,13 @@ void  transfer_complete_cb(struct aio_cb_data *acd, s=
-ize_t xfr_count, u32 flags)
-        BUG_ON(acd->ldev =3D=3D NULL);
-        BUG_ON(acd->ldev->pldev =3D=3D NULL);
-=20
--       for (i =3D 0 ; i < acd->page_count ; i++) {
--               if (!PageReserved(acd->user_pages[i])) {
--                       set_page_dirty(acd->user_pages[i]);
--               }
--       }
--
-        dma_unmap_sg(&acd->ldev->pldev->dev, acd->sgt.sgl, acd->sgt.nents, =
-acd->ldev->dir);
-=20
-        for (i =3D 0 ; i < acd->page_count ; i++) {
--               put_page(acd->user_pages[i]);
-+               if (!PageReserved(acd->user_pages[i])) {
-+                       put_user_pages_dirty(&acd->user_pages[i], 1);
-+               else
-+                       put_user_page(acd->user_pages[i]);
-        }
-=20
-        sg_free_table(&acd->sgt);
-
-Assuming that you make those two changes, you can add:
-
-    Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-
-
-thanks,
---=20
-John Hubbard
-NVIDIA
+-- 
+H.J.
