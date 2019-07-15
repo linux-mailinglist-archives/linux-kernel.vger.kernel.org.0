@@ -2,131 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B36269435
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:50:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C2A869433
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:50:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405088AbfGOOuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:50:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41024 "EHLO mail.kernel.org"
+        id S2392156AbfGOOts (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:49:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405169AbfGOOrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:47:06 -0400
+        id S2392128AbfGOOrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:47:19 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0F4C20861;
-        Mon, 15 Jul 2019 14:47:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD2DC21537;
+        Mon, 15 Jul 2019 14:47:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563202026;
-        bh=V4R1L9a5YNbGviYLLm60M4YAyK7BBIasy/uKmjh7m9k=;
+        s=default; t=1563202038;
+        bh=S2eBUgf9xGvZ/9aLduwJ89yzz6C+jZsDnJr7fwmIXMY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IZf1CIJi6b7u1Xqvq9CqcLMCHb/tWwpUJdCj5/cLXUscdCrp0PONDXtJvRiJ2jgwn
-         eIaPb6acM+NDJ5bPxY/QVaY5LnrTLeGQw5ixN4ob7Zdky6/Q/RjI6pHJIJow/5a1Kf
-         SkpNSwN+i6jXJXHY1Mcp0D5nB0xeVEH0EBMx0f0M=
+        b=vjUM1EAVz07mfiUuAtCYQEq7xj2mRMOoUPvmhxyyrpkMfBFkDPm7kf7NeA+cjXefO
+         FhzIJdgPWCD6y3eK4XRHrd6tKPUCDs7NdIFJYsioRjjukG+Xl5F9O4xN+KCgfDUjDc
+         w206pOK+Yh1/fKIHd6+7rY7JGA7hmtiaSUMntUy0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Richter <tmricht@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 25/53] perf test 6: Fix missing kvm module load for s390
-Date:   Mon, 15 Jul 2019 10:45:07 -0400
-Message-Id: <20190715144535.11636-25-sashal@kernel.org>
+Cc:     =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 29/53] bpf: silence warning messages in core
+Date:   Mon, 15 Jul 2019 10:45:11 -0400
+Message-Id: <20190715144535.11636-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715144535.11636-1-sashal@kernel.org>
 References: <20190715144535.11636-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Valdis Klētnieks <valdis.kletnieks@vt.edu>
 
-[ Upstream commit 53fe307dfd309e425b171f6272d64296a54f4dff ]
+[ Upstream commit aee450cbe482a8c2f6fa5b05b178ef8b8ff107ca ]
 
-Command
+Compiling kernel/bpf/core.c with W=1 causes a flood of warnings:
 
-   # perf test -Fv 6
+kernel/bpf/core.c:1198:65: warning: initialized field overwritten [-Woverride-init]
+ 1198 | #define BPF_INSN_3_TBL(x, y, z) [BPF_##x | BPF_##y | BPF_##z] = true
+      |                                                                 ^~~~
+kernel/bpf/core.c:1087:2: note: in expansion of macro 'BPF_INSN_3_TBL'
+ 1087 |  INSN_3(ALU, ADD,  X),   \
+      |  ^~~~~~
+kernel/bpf/core.c:1202:3: note: in expansion of macro 'BPF_INSN_MAP'
+ 1202 |   BPF_INSN_MAP(BPF_INSN_2_TBL, BPF_INSN_3_TBL),
+      |   ^~~~~~~~~~~~
+kernel/bpf/core.c:1198:65: note: (near initialization for 'public_insntable[12]')
+ 1198 | #define BPF_INSN_3_TBL(x, y, z) [BPF_##x | BPF_##y | BPF_##z] = true
+      |                                                                 ^~~~
+kernel/bpf/core.c:1087:2: note: in expansion of macro 'BPF_INSN_3_TBL'
+ 1087 |  INSN_3(ALU, ADD,  X),   \
+      |  ^~~~~~
+kernel/bpf/core.c:1202:3: note: in expansion of macro 'BPF_INSN_MAP'
+ 1202 |   BPF_INSN_MAP(BPF_INSN_2_TBL, BPF_INSN_3_TBL),
+      |   ^~~~~~~~~~~~
 
-fails with error
+98 copies of the above.
 
-   running test 100 'kvm-s390:kvm_s390_create_vm' failed to parse
-    event 'kvm-s390:kvm_s390_create_vm', err -1, str 'unknown tracepoint'
-    event syntax error: 'kvm-s390:kvm_s390_create_vm'
-                         \___ unknown tracepoint
+The attached patch silences the warnings, because we *know* we're overwriting
+the default initializer. That leaves bpf/core.c with only 6 other warnings,
+which become more visible in comparison.
 
-when the kvm module is not loaded or not built in.
-
-Fix this by adding a valid function which tests if the module
-is loaded. Loaded modules (or builtin KVM support) have a
-directory named
-  /sys/kernel/debug/tracing/events/kvm-s390
-for this tracepoint.
-
-Check for existence of this directory.
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/20190604053504.43073-1-tmricht@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Acked-by: Andrii Nakryiko <andriin@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/parse-events.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ kernel/bpf/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index 54af2f2e2ee4..1a35ab044c11 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -12,6 +12,32 @@
- #define PERF_TP_SAMPLE_TYPE (PERF_SAMPLE_RAW | PERF_SAMPLE_TIME | \
- 			     PERF_SAMPLE_CPU | PERF_SAMPLE_PERIOD)
+diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+index 13272582eee0..677991f29d66 100644
+--- a/kernel/bpf/Makefile
++++ b/kernel/bpf/Makefile
+@@ -1,4 +1,5 @@
+ obj-y := core.o
++CFLAGS_core.o += $(call cc-disable-warning, override-init)
  
-+#if defined(__s390x__)
-+/* Return true if kvm module is available and loaded. Test this
-+ * and retun success when trace point kvm_s390_create_vm
-+ * exists. Otherwise this test always fails.
-+ */
-+static bool kvm_s390_create_vm_valid(void)
-+{
-+	char *eventfile;
-+	bool rc = false;
-+
-+	eventfile = get_events_file("kvm-s390");
-+
-+	if (eventfile) {
-+		DIR *mydir = opendir(eventfile);
-+
-+		if (mydir) {
-+			rc = true;
-+			closedir(mydir);
-+		}
-+		put_events_file(eventfile);
-+	}
-+
-+	return rc;
-+}
-+#endif
-+
- static int test__checkevent_tracepoint(struct perf_evlist *evlist)
- {
- 	struct perf_evsel *evsel = perf_evlist__first(evlist);
-@@ -1561,6 +1587,7 @@ static struct evlist_test test__events[] = {
- 	{
- 		.name  = "kvm-s390:kvm_s390_create_vm",
- 		.check = test__checkevent_tracepoint,
-+		.valid = kvm_s390_create_vm_valid,
- 		.id    = 100,
- 	},
- #endif
+ obj-$(CONFIG_BPF_SYSCALL) += syscall.o verifier.o inode.o helpers.o
+ obj-$(CONFIG_BPF_SYSCALL) += hashtab.o arraymap.o
 -- 
 2.20.1
 
