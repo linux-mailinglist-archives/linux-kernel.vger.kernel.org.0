@@ -2,148 +2,378 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15FAE694ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:54:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7432F6953E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:57:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391469AbfGOO1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:27:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36402 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391448AbfGOO1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:27:15 -0400
-Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B72D21537;
-        Mon, 15 Jul 2019 14:27:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200834;
-        bh=+l+RU1EN+SlH9uWGDITQYS+b2sZ/zrMGsEGFPYX/EXc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dlq5t2jV5oaDcgL1vhUfyrWSi+7MG68ZRZ6nj1HKNwT07j4DbcIMalQZVyslNQq8f
-         XXaMnd8Nf0eFURpd2ColMadyFg4d00P1Ugz+0/cpDesZux9ptY718aLZjeUNCaF4Hv
-         3kyR83QXFYVGKsKLbjXKYd+IjRm/gprWtyPzrkLM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-afs@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 140/158] rxrpc: Fix oops in tracepoint
-Date:   Mon, 15 Jul 2019 10:17:51 -0400
-Message-Id: <20190715141809.8445-140-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190715141809.8445-1-sashal@kernel.org>
-References: <20190715141809.8445-1-sashal@kernel.org>
+        id S2389335AbfGOOVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:21:38 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33646 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389825AbfGOOVe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:21:34 -0400
+Received: by mail-pg1-f196.google.com with SMTP id m4so7799031pgk.0;
+        Mon, 15 Jul 2019 07:21:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oHXaKImUv1rfiZBAiugAe6lIvXbPxoVio6W2zNf9umg=;
+        b=JmqfT6AN3NLjmChT/67LF7RE13MEG3EfSs23XmRAERMGHwD/l+qqD74Z6K/mYdbFea
+         cZZM3IpiuZsGorEYgIi8fZlZjmcxdvkW4VYA+Jme+gYmVrHtVlRYYduFwyoG3dRZ4Orv
+         q2QwQEiLnjeKhP6GJOtRnoMtC5SEv56sUdussNB3Qqw6urwiOkmhF/6w7+nXQA7eMQ8m
+         cd2cghs7rKZWeX72pyj5HBo29bDtGiJv4U0UQwePZ2vbS3BnIBDdLmdGdyvYpiVQ6g45
+         FQXUrBq5y22XOvnSr3wiZnNgeA3GCOrtNmjj8dXWaRCM8bpc6oIBDvg6IiSdU6miNkmr
+         rKjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oHXaKImUv1rfiZBAiugAe6lIvXbPxoVio6W2zNf9umg=;
+        b=qxSFeXBdzwipNU4bi23kdCDcwwy+85v5GI9lapN1I4iXIYwnjBnRK65vaWztZ08kWV
+         DQo03Eq8XkeaPponIpAqTjwJk77nrC42UQDq1aZjjIrjF6IlD/2YtQ4oxyWMFMUd0sX3
+         dwqw1zMWMlKPSzjHR75y0IhLYJcpWayBjf3ldS4uyGbzY/6WHnBCUH1w+KgI75640Sve
+         AkCv2JU+oby7OMbU1XMhDXZJFXjx1d8kV4plhlW0X/MMOa+pdTQ9e8MbbVI/BMlfaOq1
+         bXUygA5cHRvKqu5/0FEfeKuBDnCFv94/+9mGeo0TckuehxJ7zz6Ay49xKhOYplRcahMT
+         GepQ==
+X-Gm-Message-State: APjAAAXqaN6EY7oGLUTq5zLjOZWf5TWmWR4Jy14ZDVx+3tT6KLEe7xkl
+        cT/1WLVUfOtHOPj/eS2vipI=
+X-Google-Smtp-Source: APXvYqz4iAMwoHY4Ihx3e/Y8s0V8+rINaatjbsoQMS7jJ1KTpBy3qjhLfRuUr0nPSvoIZ0HvcHxXVA==
+X-Received: by 2002:a63:60c1:: with SMTP id u184mr23776856pgb.275.1563200493722;
+        Mon, 15 Jul 2019 07:21:33 -0700 (PDT)
+Received: from [10.231.110.95] ([125.29.25.186])
+        by smtp.gmail.com with ESMTPSA id i137sm10976242pgc.4.2019.07.15.07.21.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Jul 2019 07:21:33 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 00/15] tracing: of: Boot time tracing using
+ devicetree
+To:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Rob Herring <robh+dt@kernel.org>, Tim Bird <Tim.Bird@sony.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <156316746861.23477.5815110570539190650.stgit@devnote2>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <488a65e6-1d80-0acb-5092-80c18b7ff447@gmail.com>
+Date:   Mon, 15 Jul 2019 07:21:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <156316746861.23477.5815110570539190650.stgit@devnote2>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+Hi Masami,
 
-[ Upstream commit 99f0eae653b2db64917d0b58099eb51e300b311d ]
+After receiving this email, I replied to one email on the v1 thread,
+so there will be a little bit of overlap in the ordering of the two
+threads.  Feel free to reply to my comments in the v1 thread in this
+thread instead.
 
-If the rxrpc_eproto tracepoint is enabled, an oops will be cause by the
-trace line that rxrpc_extract_header() tries to emit when a protocol error
-occurs (typically because the packet is short) because the call argument is
-NULL.
+More comments below.
 
-Fix this by using ?: to assume 0 as the debug_id if call is NULL.
+On 7/14/19 10:11 PM, Masami Hiramatsu wrote:> Hello,
+> 
+> Here is the 2nd version of RFC series to add boot-time tracing using
+> devicetree. Previous thread is here.
+> 
+> https://lkml.kernel.org/r/156113387975.28344.16009584175308192243.stgit@devnote2
+> 
+> In this version, I moved the ftrace node under /chosen/linux,ftrace
+> and remove compatible property, because it must be in fixed place.
+> Also this version has following features;
+> 
+>  - Introduce "instance" node, which can have events nodes for setting
+>    events filters and actions for the trace instance.
+>  - Introduce "cpumask" property
+>  - Introduce "ftrace-filters" and "ftrace-notraces"
+>  - Introduce "fgraph-filters", "fgraph-notraces" and "fgraph-max-depth"
+> 
+> At this moment, this feature is only available on the architecutre which
+> supports devicetree. For x86, we can use it on qemu with --dtb option,
+> or apply below patch on grub to add devicetree support on grub-x86.
+> 
+> https://github.com/mhiramat/grub/commit/644c35bfd2d18c772cc353b74215344f8264923a
+> 
+> Note that the devicetree for x86 must contain the nodes only under
+> /chosen/, or it may cause a problem if it conflicts with ACPI.
+> (Maybe we need to disable the FDT nodes except for nodes under /chosen
+>  on boot if ACPI exists.)
+> 
+> This series can be applied on Steve's tracing tree (ftrace/core) or
+> available on below
+> 
+> https://github.com/mhiramat/linux.git ftrace-devicetree-v2
+> 
+> Usage
+> ======
+> With this series, we can setup new kprobe and synthetic events, more
+> complicated event filters and trigger actions including histogram
+> via devicetree.
+> 
+> For example, following kernel parameters
+> 
+> trace_options=sym-addr trace_event=initcall:* tp_printk trace_buf_size=1M ftrace=function ftrace_filter="vfs*"
+> 
+> it can be written in devicetree like below.
+> 
+> /{
+> chosen {
+> 	...
+> 	ftrace {
+> 		options = "sym-addr";
+> 		events = "initcall:*";
+> 		tp-printk;
+> 		buffer-size-kb = <0x400>;	// 1024KB == 1MB
+> 		ftrace-filters = "vfs*";
+> 	};
+> 
+> Moreover, now we can expand it to add filters for events, kprobe events,
+> and synthetic events with histogram like below.
+> 
+> 	ftrace {
+> 		...
+> 		event0 {
+> 			event = "task:task_newtask";
+> 			filter = "pid < 128";	// adding filters
+> 			enable;
+> 		};
+> 		event1 {
+> 			event = "kprobes:vfs_read";
+> 			probes = "vfs_read $arg1 $arg2"; // add kprobes
+> 			filter = "common_pid < 200";
+> 			enable;
+> 		};
+> 		event2 {
+> 			event = "initcall_latency";	// add synth event
+> 			fields = "unsigned long func", "u64 lat";
+> 			// with histogram
+> 			actions = "hist:keys=func.sym,lat:vals=lat:sort=lat";
+> 		};
+> 		// and synthetic event callers
+> 		event3 {
+> 			event = "initcall:initcall_start";
+> 			actions = "hist:keys=func:ts0=common_timestamp.usecs";
+> 		};
+> 		event4 {
+> 			event = "initcall:initcall_finish";
+> 			actions = "hist:keys=func:lat=common_timestamp.usecs-$ts0:onmatch(initcall.initcall_start).initcall_latency(func,$lat)";
+> 		};
+> 	};
+> 
+> Also, this version supports "instance" node, which allows us to
+> run several tracers for different purpose at once. For example,
+> one tracer is for tracing functions in module alpha, and others
+> tracing module beta, you can write followings.
+> 
+> 	ftrace {
+> 		instance0 {
+> 			instance = "foo";
+> 			tracer = "function";
+> 			ftrace-filters = "*:mod:alpha";
+> 		};
+> 		instance1 {
+> 			instance = "bar";
+> 			tracer = "function";
+> 			ftrace-filters = "*:mod:beta";
+> 			
+> 		};
+> 	};
+> 
+> The instance node also accepts event nodes so that each instance
+> can customize its event tracing.
+> 
+> Discussion
+> =====
+> On the previous thread, we discussed that the this devicetree usage
+> itself was acceptable or not. Fortunately, I had a chance to discuss
+> it in a F2F meeting with Frank and Tim last week.
 
-This can then be induced by:
+Thanks for writing up some of what we discussed.
 
-	echo -e '\0\0\0\0\0\0\0\0' | ncat -4u --send-only <addr> 20001
+Let me add a problem statement and use case.  I'll probably get it at least
+a little bit wrong, so please update as needed.
 
-where addr has the following program running on it:
+(1) You feel the ftrace kernel command line syntax is not sufficiently user
+    friendly.
 
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <string.h>
-	#include <unistd.h>
-	#include <sys/socket.h>
-	#include <arpa/inet.h>
-	#include <linux/rxrpc.h>
-	int main(void)
-	{
-		struct sockaddr_rxrpc srx;
-		int fd;
-		memset(&srx, 0, sizeof(srx));
-		srx.srx_family			= AF_RXRPC;
-		srx.srx_service			= 0;
-		srx.transport_type		= AF_INET;
-		srx.transport_len		= sizeof(srx.transport.sin);
-		srx.transport.sin.sin_family	= AF_INET;
-		srx.transport.sin.sin_port	= htons(0x4e21);
-		fd = socket(AF_RXRPC, SOCK_DGRAM, AF_INET6);
-		bind(fd, (struct sockaddr *)&srx, sizeof(srx));
-		sleep(20);
-		return 0;
-	}
+(2) The kernel command line is too small to contain the full set of desired
+    ftrace commands and options.
 
-It results in the following oops.
+(3) There is a desire to change the boot time ftrace commands and options
+    without re-compiling or re-linking the Linux kernel.
 
-	BUG: kernel NULL pointer dereference, address: 0000000000000340
-	#PF: supervisor read access in kernel mode
-	#PF: error_code(0x0000) - not-present page
-	...
-	RIP: 0010:trace_event_raw_event_rxrpc_rx_eproto+0x47/0xac
-	...
-	Call Trace:
-	 <IRQ>
-	 rxrpc_extract_header+0x86/0x171
-	 ? rcu_read_lock_sched_held+0x5d/0x63
-	 ? rxrpc_new_skb+0xd4/0x109
-	 rxrpc_input_packet+0xef/0x14fc
-	 ? rxrpc_input_data+0x986/0x986
-	 udp_queue_rcv_one_skb+0xbf/0x3d0
-	 udp_unicast_rcv_skb.isra.8+0x64/0x71
-	 ip_protocol_deliver_rcu+0xe4/0x1b4
-	 ip_local_deliver+0xf0/0x154
-	 __netif_receive_skb_one_core+0x50/0x6c
-	 netif_receive_skb_internal+0x26b/0x2e9
-	 napi_gro_receive+0xf8/0x1da
-	 rtl8169_poll+0x303/0x4c4
-	 net_rx_action+0x10e/0x333
-	 __do_softirq+0x1a5/0x38f
-	 irq_exit+0x54/0xc4
-	 do_IRQ+0xda/0xf8
-	 common_interrupt+0xf/0xf
-	 </IRQ>
-	 ...
-	 ? cpuidle_enter_state+0x23c/0x34d
-	 cpuidle_enter+0x2a/0x36
-	 do_idle+0x163/0x1ea
-	 cpu_startup_entry+0x1d/0x1f
-	 start_secondary+0x157/0x172
-	 secondary_startup_64+0xa4/0xb0
 
-Fixes: a25e21f0bcd2 ("rxrpc, afs: Use debug_ids rather than pointers in traces")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- include/trace/events/rxrpc.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> I think the advantages of using devicetree are,
+> 
+> - reuse devicetree's structured syntax for complicated tracefs settings
+> - reuse OF-APIs in linux kernel to accept and parse it
+> - reuse dtc complier to compile it and validate syntax. (with yaml schema,
+>   we can enhance it)
+> - reuse current bootloader (and qemu) to load it
 
-diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
-index 6d182746afab..147546e0c11b 100644
---- a/include/trace/events/rxrpc.h
-+++ b/include/trace/events/rxrpc.h
-@@ -1381,7 +1381,7 @@ TRACE_EVENT(rxrpc_rx_eproto,
- 			     ),
+Devicetree is not a universal data structure and communication channel.
+
+Devicetree is a description of the hardware and also conveys bootloader
+specific information that is need by the kernel to boot.
+
+
+> And we talked about some other ideas to avoid using devicetree.
+> 
+> - expand kernel command line (ascii command strings)
+> - expand kernel command line with base64 encoded comressed ascii command 
+>    strings
+
+Base64 being one of possibly many ways to convert arbitrary binary data to
+ascii safe data _if_ you want to transfer the ftrace options and commands
+in a binary format.
+
+
+> - load (compressed) ascii command strings to somewhere on memory and pass
+>    the address via kernel cmdline
+
+Similar to the way initrd is handled, if I understand correctly.  (I am not
+up to date on how initrd location is passed to the kernel for a non-devicetree
+kernel.)
+
+Compressed or not compressed would be an ftrace design choice.
+
+
+> - load (compressed) ascii command strings to somewhere on memory and pass
+>    the address via /chosen node (as same as initrd)
+
+Compressed or not compressed would be an ftrace design choice.
+
+
+> - load binary C data and point it from kernel cmdline
+> - load binary C data and point it from /chosen node (as same as initrd)
+> - load binary C data as a section of kernel image
+
+For the three options above:
+
+Binary data if ftrace prefers structured data.
+A list of strings if ftrace wants to use the existing kernel command line
+syntax.
+
+For the third of the above three options, the linker would provide the start
+and end address of the ftrace options and commands section.
+
+
+> The first 2 ideas expand the kernel's cmdline to pass some "magic" command
+> to setup ftrace. In both case, the problems are the maximal size of cmdline
+> and the issues related to the complexity of commands.
+
+Not a "magic" command.  Either continue using the existing ftrace syntax or
+add something like: ftrace_cmd="whatever format ftrace desires".
+
+Why can the maximum size of the cmdline not be increased?
+
+
+> My example showed that the ftrace settings becomes long even if making one
+> histogram, which can be longer than 256 bytes. The long and complex data
+> can easily lead mis-typing, but cmdline has no syntax validator, it just
+> ignores the mis-typed commands.
+
+Hand typing a kernel command line is already not a fun exercise, even
+before adding ftrace commands.  If you are hand typing kernel command
+lines then I suggest you improve your tools (eg bootloader or whatever
+is not allowing you to edit and store command lines).
+
+
+> (Of course even with the devicetree, it must be smaller than 2 pages)
+> 
+> Next 2 ideas are similar, but load the commands on some other memory area
+> and pass only address via cmdline. This solves the size limitation issue,
+> but still no syntax validation. Of course we can make a new structured
+> syntax validator similar to (or just forked from) dt-validate.
+> The problem (or disadvantage) of these (and following) ideas, is to change
+> the kernel and boot loaders to load another binary blobs on memory.
+> 
+> Maybe if we introduce a generic structured kernel boot arguments, which is
+> a kind of /chosen node of devicetree. (But if there is already such hook,
+> why we make another one...?)
+
+I got lost in the next sentence, so for my benefit:
+GSKBA == generic structured kernel boot arguments
+
+> Also, this "GSKBA" may introduce a parser and access APIs which will be
+> very similar to OF-APIs. This also seems redundant to me.
  
- 	    TP_fast_assign(
--		    __entry->call = call->debug_id;
-+		    __entry->call = call ? call->debug_id : 0;
- 		    __entry->serial = serial;
- 		    __entry->why = why;
- 			   ),
--- 
-2.20.1
+
+> So the last 3 ideas will avoid introducing new parser and APIs, we just
+> compile the data as C data and point it from cmdline or somewhere else.
+
+Or if in a kernel data section then the linker can provide the begin and
+end address of the blob.  This is already implemented for some other data
+structures.
+
+> With these ideas, we still need to expand boot loaders to support
+> loading new binary blobs. (And the last one requires to add elf header
+> parser/modifier to boot loader too)
+
+Why would the boot loader need to access the elf header?  The linker
+can provide the location of the new kernel data section via kernel
+variables.
+
+> 
+>>From the above reasons, I think using devicetree's /chosen node is 
+> the least intrusive way to introduce this boot-time tracing feature.
+
+This is still mis-use of the devicetree data structure.  This data
+does not belong in the devicetree.
+
+
+> 
+> Any suggestions, thoughts?
+> 
+> Thank you,
+> 
+> ---
+> 
+> Masami Hiramatsu (15):
+>       tracing: Apply soft-disabled and filter to tracepoints printk
+>       tracing: kprobes: Output kprobe event to printk buffer
+>       tracing: Expose EXPORT_SYMBOL_GPL symbol
+>       tracing: kprobes: Register to dynevent earlier stage
+>       tracing: Accept different type for synthetic event fields
+>       tracing: Add NULL trace-array check in print_synth_event()
+>       dt-bindings: tracing: Add ftrace binding document
+>       tracing: of: Add setup tracing by devicetree support
+>       tracing: of: Add trace event settings
+>       tracing: of: Add kprobe event support
+>       tracing: of: Add synthetic event support
+>       tracing: of: Add instance node support
+>       tracing: of: Add cpumask property support
+>       tracing: of: Add function tracer filter properties
+>       tracing: of: Add function-graph tracer option properties
+> 
+> 
+>  .../devicetree/bindings/chosen/linux,ftrace.yaml   |  306 ++++++++++++
+>  include/linux/trace_events.h                       |    1 
+>  kernel/trace/Kconfig                               |   10 
+>  kernel/trace/Makefile                              |    1 
+>  kernel/trace/ftrace.c                              |   85 ++-
+>  kernel/trace/trace.c                               |   90 ++--
+>  kernel/trace/trace_events.c                        |    3 
+>  kernel/trace/trace_events_hist.c                   |   14 -
+>  kernel/trace/trace_events_trigger.c                |    2 
+>  kernel/trace/trace_kprobe.c                        |   81 ++-
+>  kernel/trace/trace_of.c                            |  507 ++++++++++++++++++++
+>  11 files changed, 1004 insertions(+), 96 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/chosen/linux,ftrace.yaml
+>  create mode 100644 kernel/trace/trace_of.c
+> 
+> --
+> Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
+> 
 
