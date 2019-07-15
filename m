@@ -2,91 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2373A695D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:01:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 510AE696E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:07:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389671AbfGOPA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 11:00:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58862 "EHLO mail.kernel.org"
+        id S2388241AbfGOPGr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:06:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46294 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387719AbfGOOPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:15:08 -0400
-Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2387723AbfGOOE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:04:29 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF5E721530;
-        Mon, 15 Jul 2019 14:15:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200107;
-        bh=BjOl+J090RIzEtaT3kR8G4TlYxlA1Brk2oMem9nGmQs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IMRRODilxg5QzSqMGoqYyvYnLPipHfXpO6Rcvz68qlrSmP0Ggal9Irs/y6x2j9EF5
-         +n/5Iv+VMIDKD4T5pk4JPO1U1domJPvZImsmql9kcaCHI3X0LzZ0fHb9ue1rcULOLd
-         Es83e3P+v4AZ2fJBq1X5EtjzuWhCFcn0XAXwiUV4=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michael Chan <michael.chan@broadcom.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 185/219] bnxt_en: Disable bus master during PCI shutdown and driver unload.
-Date:   Mon, 15 Jul 2019 10:03:06 -0400
-Message-Id: <20190715140341.6443-185-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
-References: <20190715140341.6443-1-sashal@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id A6D3759440;
+        Mon, 15 Jul 2019 14:04:29 +0000 (UTC)
+Received: from krava.redhat.com (unknown [10.40.205.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B45B6085B;
+        Mon, 15 Jul 2019 14:04:26 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     David Carrillo-Cisneros <davidcc@google.com>,
+        Song Liu <songliubraving@fb.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH] perf tools: Fix proper buffer size for feature processing
+Date:   Mon, 15 Jul 2019 16:04:26 +0200
+Message-Id: <20190715140426.32509-1-jolsa@kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 15 Jul 2019 14:04:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Chan <michael.chan@broadcom.com>
+After Song Liu's segfault fix for pipe mode, Arnaldo reported
+following error:
 
-[ Upstream commit c20dc142dd7b2884b8570eeab323bcd4a84294fa ]
+  # perf record -o - | perf script
+  0x514 [0x1ac]: failed to process type: 80
 
-Some chips with older firmware can continue to perform DMA read from
-context memory even after the memory has been freed.  In the PCI shutdown
-method, we need to call pci_disable_device() to shutdown DMA to prevent
-this DMA before we put the device into D3hot.  DMA memory request in
-D3hot state will generate PCI fatal error.  Similarly, in the driver
-remove method, the context memory should only be freed after DMA has
-been shutdown for correctness.
+It's caused by wrong buffer size setup in feature processing,
+which makes cpu topology feature fail, because it's using
+buffer size to recognize its header version.
 
-Fixes: 98f04cf0f1fc ("bnxt_en: Check context memory requirements from firmware.")
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: David Carrillo-Cisneros <davidcc@google.com>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: e9def1b2e74e ("perf tools: Add feature header record to pipe-mode")
+Link: http://lkml.kernel.org/n/tip-2lj87zz8tq9ye1ntax3ulw0n@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/util/header.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 30cafe4cdb6e..bf1fd513fa02 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -10165,10 +10165,10 @@ static void bnxt_remove_one(struct pci_dev *pdev)
- 	bnxt_dcb_free(bp);
- 	kfree(bp->edev);
- 	bp->edev = NULL;
-+	bnxt_cleanup_pci(bp);
- 	bnxt_free_ctx_mem(bp);
- 	kfree(bp->ctx);
- 	bp->ctx = NULL;
--	bnxt_cleanup_pci(bp);
- 	bnxt_free_port_stats(bp);
- 	free_netdev(dev);
- }
-@@ -10730,6 +10730,7 @@ static void bnxt_shutdown(struct pci_dev *pdev)
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index c24db7f4909c..20111f8da5cb 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -3747,7 +3747,7 @@ int perf_event__process_feature(struct perf_session *session,
+ 		return 0;
  
- 	if (system_state == SYSTEM_POWER_OFF) {
- 		bnxt_clear_int_mode(bp);
-+		pci_disable_device(pdev);
- 		pci_wake_from_d3(pdev, bp->wol);
- 		pci_set_power_state(pdev, PCI_D3hot);
- 	}
+ 	ff.buf  = (void *)fe->data;
+-	ff.size = event->header.size - sizeof(event->header);
++	ff.size = event->header.size - sizeof(*fe);
+ 	ff.ph = &session->header;
+ 
+ 	if (feat_ops[feat].process(&ff, NULL))
 -- 
-2.20.1
+2.21.0
 
