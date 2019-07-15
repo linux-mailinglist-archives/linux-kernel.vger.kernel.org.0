@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 614F86956F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:58:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 772CA6952F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:57:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391104AbfGOO5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:57:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44564 "EHLO mail.kernel.org"
+        id S2390372AbfGOOUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:20:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389330AbfGOOUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:20:30 -0400
+        id S2390270AbfGOOUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:20:35 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6EB420651;
-        Mon, 15 Jul 2019 14:20:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80EB6206B8;
+        Mon, 15 Jul 2019 14:20:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200430;
-        bh=vhmKp3aKuQEd8ZMj/JyL4uUeXtbyVAxmL2QRhcu2wLI=;
+        s=default; t=1563200434;
+        bh=oPD6bOUlXEdTcnSJVgy5DPQWInMIKIvhk3WyIgRbzfs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LjLD+M4V5BDXHdS4Oh9wggrI6xT2zhsj9ZiauVxLMjESSLhSUMUo/wpO+YpVEzU0j
-         ZK/CiyQRIV11M7spmw5EW7QP/hszGkUOMk3GNpKuNp/uzpFqros6bzdoAPd5tRGYEa
-         HAfLqNG341IRnIMZ8ONCWQa3LJNil3VJMkNZdY78=
+        b=a4d834uNMEexN0EPLNlV+D2e9PPp/LcJwGvzVhZR9lNiiBSoClHSnvy9x3kpzV2VG
+         rbmOvJT1P4kWroe9TWG8AIxnSOOTNLybXhWWh8KCnOjBIOsf3AdQ6ivBsuTzr7Ipbg
+         hpHZxJWY8DBSn0tKq9u09sV0YJ8rEiIZh8pNBYaQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 046/158] net: fec: Do not use netdev messages too early
-Date:   Mon, 15 Jul 2019 10:16:17 -0400
-Message-Id: <20190715141809.8445-46-sashal@kernel.org>
+Cc:     Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 049/158] RAS/CEC: Fix pfn insertion
+Date:   Mon, 15 Jul 2019 10:16:20 -0400
+Message-Id: <20190715141809.8445-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715141809.8445-1-sashal@kernel.org>
 References: <20190715141809.8445-1-sashal@kernel.org>
@@ -43,50 +43,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabio Estevam <festevam@gmail.com>
+From: Borislav Petkov <bp@suse.de>
 
-[ Upstream commit a19a0582363b9a5f8ba812f34f1b8df394898780 ]
+[ Upstream commit 6d8e294bf5f0e85c34e8b14b064e2965f53f38b0 ]
 
-When a valid MAC address is not found the current messages
-are shown:
+When inserting random PFNs for debugging the CEC through
+(debugfs)/ras/cec/pfn, depending on the return value of pfn_set(),
+multiple values get inserted per a single write.
 
-fec 2188000.ethernet (unnamed net_device) (uninitialized): Invalid MAC address: 00:00:00:00:00:00
-fec 2188000.ethernet (unnamed net_device) (uninitialized): Using random MAC address: aa:9f:25:eb:7e:aa
+That is because simple_attr_write() interprets a retval of 0 as
+success and claims the whole input. However, pfn_set() returns the
+cec_add_elem() value, which, if > 0 and smaller than the whole input
+length, makes glibc continue issuing the write syscall until there's
+input left:
 
-Since the network device has not been registered at this point, it is better
-to use dev_err()/dev_info() instead, which will provide cleaner log
-messages like these:
+  pfn_set
+  simple_attr_write
+  debugfs_attr_write
+  full_proxy_write
+  vfs_write
+  ksys_write
+  do_syscall_64
+  entry_SYSCALL_64_after_hwframe
 
-fec 2188000.ethernet: Invalid MAC address: 00:00:00:00:00:00
-fec 2188000.ethernet: Using random MAC address: aa:9f:25:eb:7e:aa
+leading to those repeated calls.
 
-Tested on a imx6dl-pico-pi board.
+Return 0 to fix that.
 
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/freescale/fec_main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/ras/cec.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index bf715a367273..4cf80de4c471 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -1689,10 +1689,10 @@ static void fec_get_mac(struct net_device *ndev)
- 	 */
- 	if (!is_valid_ether_addr(iap)) {
- 		/* Report it and use a random ethernet address instead */
--		netdev_err(ndev, "Invalid MAC address: %pM\n", iap);
-+		dev_err(&fep->pdev->dev, "Invalid MAC address: %pM\n", iap);
- 		eth_hw_addr_random(ndev);
--		netdev_info(ndev, "Using random MAC address: %pM\n",
--			    ndev->dev_addr);
-+		dev_info(&fep->pdev->dev, "Using random MAC address: %pM\n",
-+			 ndev->dev_addr);
- 		return;
- 	}
+diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
+index f85d6b7a1984..5d2b2c02cbbe 100644
+--- a/drivers/ras/cec.c
++++ b/drivers/ras/cec.c
+@@ -369,7 +369,9 @@ static int pfn_set(void *data, u64 val)
+ {
+ 	*(u64 *)data = val;
  
+-	return cec_add_elem(val);
++	cec_add_elem(val);
++
++	return 0;
+ }
+ 
+ DEFINE_DEBUGFS_ATTRIBUTE(pfn_ops, u64_get, pfn_set, "0x%llx\n");
 -- 
 2.20.1
 
