@@ -2,129 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DCFD68959
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 14:47:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DAAB68994
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 14:47:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730494AbfGOMpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 08:45:22 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:50020 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730465AbfGOMpT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 08:45:19 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190715124517euoutp0219540eb3f5c4cd91a3db6684c8fa6809~xlVBFgmWY0763707637euoutp02R
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 12:45:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190715124517euoutp0219540eb3f5c4cd91a3db6684c8fa6809~xlVBFgmWY0763707637euoutp02R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1563194717;
-        bh=SlSGrP0biJS3zDm28jQoSzzy5NHzoOLSngg63Rw4Q50=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uLg4LNhYLTRONvtmFq2gVSn98R37ztNRtB5hBMiD8+aSo/HugLjgJLfqKxlo074/J
-         w5YbGS22ldqFt7VRFsTZFCe8hPQEOkGiSjaXk/8Ca+f3meLOZhncl7C4u0gl/tR17I
-         gX05uQ7TMo7qpIe/jqT0hEwucXSDzPTYOFvstwF8=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190715124516eucas1p1c35ae1baf457096ce1dfb6d2cf4014bb~xlVADe4cT3144231442eucas1p16;
-        Mon, 15 Jul 2019 12:45:16 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 0D.F1.04377.C557C2D5; Mon, 15
-        Jul 2019 13:45:16 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190715124515eucas1p240a8c61dd62d56cbbd0e4d313be2273e~xlU-K-MxC0240802408eucas1p2O;
-        Mon, 15 Jul 2019 12:45:15 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190715124515eusmtrp12a318e65182f0b206d6366f52c851fbd~xlU_81_CM0524305243eusmtrp1f;
-        Mon, 15 Jul 2019 12:45:15 +0000 (GMT)
-X-AuditID: cbfec7f4-5632c9c000001119-51-5d2c755cd02f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id EB.27.04140.B557C2D5; Mon, 15
-        Jul 2019 13:45:15 +0100 (BST)
-Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190715124514eusmtip21d70cd0d4c02b38744c66ad59139b0f8~xlU_KG5Bs1184611846eusmtip2d;
-        Mon, 15 Jul 2019 12:45:14 +0000 (GMT)
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        id S1730115AbfGOMqw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 08:46:52 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:44187 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730058AbfGOMqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 08:46:50 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45nNZW3J9cz9sNH;
+        Mon, 15 Jul 2019 22:46:43 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1563194807;
+        bh=9/SEqZnJa8WoQp6beYVP7szEyuuyjE3Y8ntjl4h2KtE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=LLFjAfK2CqalVVY8KQGJjBSinznGfUiSl0AuPSDhysPtbyMOH7VJEg7rXy/PMtFok
+         /6nPDrPxjA0qU5PKTKaO/ixBTVxTd/Q/1UtHvKFeikvLMitX0q5h1DskvbQAgRdC7f
+         U8N2hVoK1mRqx/vwuh0MXs3xIStXJQZQQNyx6NeBNuxzw/55NTQcwuE0SFXeuJ1T84
+         APmjuvTLLJHUqux1wq4QMQdqT0XOX4rzMHiRaza3Tn1kQjWIB2Qok7mvvQ3Vl0/sEu
+         ewMdWJBb+86pwUO5nEPU0NDQtQ+eQJRnX5iAdIqbgXfI5jsXy5FCTH9dg8hd/i7WLP
+         dNrTyrueUm5MQ==
+Date:   Mon, 15 Jul 2019 22:46:40 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Crispin <john@phrozen.org>,
+        Matthias Schiffer <mschiffer@universe-factory.net>,
+        "Petr =?UTF-8?B?xaB0ZXRpYXI=?=" <ynezz@true.cz>,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
-        mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com,
-        kyungmin.park@samsung.com, a.hajda@samsung.com,
-        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
-        myungjoo.ham@samsung.com, Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v1 50/50] ARM: dts: exynos: change MMC0 clock parent in
- Exynos5800 Peach Pi
-Date:   Mon, 15 Jul 2019 14:44:17 +0200
-Message-Id: <20190715124417.4787-51-l.luba@partner.samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190715124417.4787-1-l.luba@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0WSe0gUURTGvTM7D6WNaQ29vrIWBM3UCpErlZkUDAU9CAoq0zUntXS1HbW0
-        xE0yTXyVpmIPFRRt87mJj8EiHykmtamUr5LSUDNNwi1YMmtnx+i/3/m+75xzOVwaV3QQjnSU
-        Op7TqFXRStJG1tJreu11JmFb8PbOR3I0Xv+aQE0lDQQaMc4SqKzHXOZNf8WRwdBIoVdpCxQa
-        1zoj/fQ7An3PniTQsHCfRCWGZxiq6/lAoaqRQQwNvjyAJq7XkCj9aQ+FuhcyCLT6rkkWaMvW
-        PqwF7NJoOsXqdbdI9kllKtv5rQNjc5t1gF3WbzpKnbLZHc5FRyVyGp+AUJvIuvkVEKcjr9xb
-        egq0oIXIAjQNGV9YXBqRBWxoBVMD4JxxkZIKI4Bv36eRUrEMoPCiEM8C1pYO3XATJhnVAD7K
-        12KiYWnpE/zFsSTjDdt0l0R5I1MJYI8pTMzjzBgGOz63E6JhywTDn38eUyLLGDeYuZRDiixn
-        9sKCuklSWuYKHzc+tyy2NuumojeWF0FmiILTptW10H44m/twjW3hfF8zJbEzHCjIlknMQ21O
-        BZD4GpzOe7CW2QW7+wYtt8AZD9gg+EjyPjhjFMeIJ1oPRxc3iDJuxjstxbgky2HmTYWUdofN
-        2W8wie1gdW3R2nAWztzuB9Kp7gD4STDg+cC19P+ycgB0wJ5L4GMiOH6nmrvszati+AR1hPe5
-        2Bg9MP+pgdU+YxsQVsK6AEMD5Tp5YLhnsIJQJfJJMV0A0rhyo3zPD7MkD1clJXOa2BBNQjTH
-        dwEnWqa0l1+1+nhawUSo4rmLHBfHaf65GG3tqAVlBn11SnfTChaa435y8IKTnfK815GquxV+
-        Qb75h4oFT//yqmO7yyb0LYLg1nowoCNOvaGRZVLak9CJ1s0rU5EOh7dYBfz2uEFPmhyY0N7b
-        vcbVwmWXvP7lKzUBlc4uZ+X1QWNz9ou/pqIr/dmsgWS/ECfNl9SljKGU3K7jnbtUShkfqdqx
-        Fdfwqr9BJaHWTwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsVy+t/xe7rRpTqxBlNPiFjcWneO1WLjjPWs
-        Fte/PGe1mH8EyO1//JrZ4vz5DewWZ5vesFvcapCx2PT4GqvFx557rBaXd81hs5hxfh+Txdoj
-        d9ktll6/yGRx8ZSrxe3GFWwWrXuPsFscftPOavHv2kYWB2GPNfPWMHq8v9HK7rFpVSebx+Yl
-        9R4H3+1h8ujbsorR4/MmuQD2KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1Ml
-        fTublNSczLLUIn27BL2Mta/+MBasYquY/X4vYwPjNtYuRk4OCQETiVWXNzJ1MXJxCAksZZR4
-        P2kiVEJMYtK+7ewQtrDEn2tdbBBFnxglrv/+BpTg4GAT0JPYsaoQpEZEYAWjxOQT3iA1zAKv
-        mSSOHH0HNkhYIFpiy5cZbCA2i4CqRMf7XjCbV8BeYvLae2wQC+QlVm84wAxicwLFf067ABYX
-        ErCTWHz0J9MERr4FjAyrGEVSS4tz03OLjfSKE3OLS/PS9ZLzczcxAmNn27GfW3Ywdr0LPsQo
-        wMGoxMPrkKIdK8SaWFZcmXuIUYKDWUmE1/YrUIg3JbGyKrUoP76oNCe1+BCjKdBRE5mlRJPz
-        gXGdVxJvaGpobmFpaG5sbmxmoSTO2yFwMEZIID2xJDU7NbUgtQimj4mDU6qB0di6xtz3YEuF
-        ZUuYyDmNuWYbu+/v/ury0/38B6vVaVPvfF13TSjp66RPmwV6KgvezlCe+EVK90OqvXeJpcse
-        34RO1QW/P8/4uuPp4a7rWT7cj/bMYMwp3Hijsev+gVv1KfzTtzXcUclMePfHVGvJdM1HE10W
-        lk/y3btA6k8A58YjV08GXbq7hF2JpTgj0VCLuag4EQAozPNCswIAAA==
-X-CMS-MailID: 20190715124515eucas1p240a8c61dd62d56cbbd0e4d313be2273e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190715124515eucas1p240a8c61dd62d56cbbd0e4d313be2273e
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190715124515eucas1p240a8c61dd62d56cbbd0e4d313be2273e
-References: <20190715124417.4787-1-l.luba@partner.samsung.com>
-        <CGME20190715124515eucas1p240a8c61dd62d56cbbd0e4d313be2273e@eucas1p2.samsung.com>
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] MIPS: fix some more fall through errors in arch/mips
+Message-ID: <20190715224640.5e086766@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/pMnJdw90F43e.iCCqsGhjyR"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change MMC0 clock settings and set parent to MOUT_SPLL with proper rate.
+--Sig_/pMnJdw90F43e.iCCqsGhjyR
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+Fix these errors:
+
+ arch/mips/cavium-octeon/executive/cvmx-pko.c:489:7: error: this statement =
+may fall through [-Werror=3Dimplicit-fallthrough=3D]
+ arch/mips/bcm63xx/dev-flash.c:89:3: error: this statement may fall through=
+ [-Werror=3Dimplicit-fallthrough=3D]
+ arch/mips/ath79/setup.c:155:17: error: this statement may fall through [-W=
+error=3Dimplicit-fallthrough=3D]
+ arch/mips/ar7/setup.c:50:3: error: this statement may fall through [-Werro=
+r=3Dimplicit-fallthrough=3D]
+
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Crispin <john@phrozen.org>
+Cc: Matthias Schiffer <mschiffer@universe-factory.net>
+Cc: "Petr =C5=A0tetiar" <ynezz@true.cz>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- arch/arm/boot/dts/exynos5800-peach-pi.dts | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/mips/ar7/setup.c                        | 1 +
+ arch/mips/ath79/setup.c                      | 2 +-
+ arch/mips/bcm63xx/dev-flash.c                | 1 +
+ arch/mips/cavium-octeon/executive/cvmx-pko.c | 2 +-
+ 4 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 38edb00c7f1b..c8e02ecc6627 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -891,6 +891,9 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
- 	bus-width = <4>;
-+	assigned-clocks = <&clock CLK_MOUT_MMC0>, <&clock CLK_FOUT_SPLL>;
-+	assigned-clock-parents = <&clock CLK_MOUT_SCLK_SPLL>;
-+	assigned-clock-rates = <0>, <800000000>;
- };
- 
- &nocp_mem0_0 {
--- 
-2.17.1
+These are the remaining errors in Linus' tree.
 
+Again, not even tested, but pretty straight forward.
+
+diff --git a/arch/mips/ar7/setup.c b/arch/mips/ar7/setup.c
+index ba32825ae58a..b3ffe7c898eb 100644
+--- a/arch/mips/ar7/setup.c
++++ b/arch/mips/ar7/setup.c
+@@ -57,6 +57,7 @@ const char *get_system_type(void)
+ 		case TITAN_CHIP_1060:
+ 			return "TI AR7 (TNETV1060)";
+ 		}
++		/* fall through */
+ 	default:
+ 		return "TI AR7 (unknown)";
+ 	}
+diff --git a/arch/mips/ath79/setup.c b/arch/mips/ath79/setup.c
+index f22538cae0ab..ea385a865781 100644
+--- a/arch/mips/ath79/setup.c
++++ b/arch/mips/ath79/setup.c
+@@ -153,7 +153,7 @@ static void __init ath79_detect_sys_type(void)
+ 	case REV_ID_MAJOR_QCA9533_V2:
+ 		ver =3D 2;
+ 		ath79_soc_rev =3D 2;
+-		/* drop through */
++		/* fall through */
+=20
+ 	case REV_ID_MAJOR_QCA9533:
+ 		ath79_soc =3D ATH79_SOC_QCA9533;
+diff --git a/arch/mips/bcm63xx/dev-flash.c b/arch/mips/bcm63xx/dev-flash.c
+index 172dd8397178..a1093934c616 100644
+--- a/arch/mips/bcm63xx/dev-flash.c
++++ b/arch/mips/bcm63xx/dev-flash.c
+@@ -94,6 +94,7 @@ static int __init bcm63xx_detect_flash_type(void)
+ 		case STRAPBUS_6368_BOOT_SEL_PARALLEL:
+ 			return BCM63XX_FLASH_TYPE_PARALLEL;
+ 		}
++		/* fall through */
+ 	default:
+ 		return -EINVAL;
+ 	}
+diff --git a/arch/mips/cavium-octeon/executive/cvmx-pko.c b/arch/mips/caviu=
+m-octeon/executive/cvmx-pko.c
+index 676fab50dd2b..b077597c668a 100644
+--- a/arch/mips/cavium-octeon/executive/cvmx-pko.c
++++ b/arch/mips/cavium-octeon/executive/cvmx-pko.c
+@@ -485,11 +485,11 @@ cvmx_pko_status_t cvmx_pko_config_port(uint64_t port,=
+ uint64_t base_queue,
+ 			config.s.qos_mask =3D 0xff;
+ 			break;
+ 		case CVMX_PKO_QUEUE_STATIC_PRIORITY:
+-			/* Pass 1 will fall through to the error case */
+ 			if (!cvmx_octeon_is_pass1()) {
+ 				config.s.qos_mask =3D 0xff;
+ 				break;
+ 			}
++			/* fall through - to the error case, when Pass 1 */
+ 		default:
+ 			cvmx_dprintf("ERROR: cvmx_pko_config_port: Invalid "
+ 				     "priority %llu\n",
+--=20
+2.22.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/pMnJdw90F43e.iCCqsGhjyR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0sdbAACgkQAVBC80lX
+0GxnxAf/Y/vbLCgdaHACQGiUcRHlAcCMd13g9hqlAh9eU1fluJFLVY8M/QdvSAVw
+3Dzmhz02BwkWLf4UiOuL5vid2lq0ABcT04CW+m9DPjk/SZneYnd73F36MQNqvf5E
+11tsZbdKBJxte8U4VJhaVp5t4jn0LseZFeXr57e2KWsTaGAMgIEcI1RvJz/LsPyP
+x8/gBr6kc6AT5bofCDhRpUJBEF9nQFxfb2wZ3uobq2wvSMNc948vyxlIJffMlzoL
+3a8o6qg6AGfJ8TUpNwviDbPvxpcaUdJNwoUMhpWCOCpMI6Gi0kUIt7vUMfNqY0VS
+YUmp2jpDjQo8goRClJyFtsuYnjtOBg==
+=k1ct
+-----END PGP SIGNATURE-----
+
+--Sig_/pMnJdw90F43e.iCCqsGhjyR--
