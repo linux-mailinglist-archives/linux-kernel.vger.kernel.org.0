@@ -2,148 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E6CA69757
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:10:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50ECD69760
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 17:10:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732530AbfGON4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:56:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60776 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732313AbfGON4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:56:13 -0400
-Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D16420C01;
-        Mon, 15 Jul 2019 13:56:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563198972;
-        bh=A/XpATUw5mCYjSAZ+Cg8opTeNa6c0gK1Fk1eGEFeR5Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z5fqqcP1VnSYsLMhTp393nIH9CPipiQTOHP7PjW4uNMorrqIvj69kbhhoQjKgCsuL
-         bnZqT08sSNwhBfOqBxXkRIGHraLVraJauOLW1PudkTNoNTPUC7Ee8Euw/aws6j5aaS
-         W2m4jXmwWAyiLgtGK5WU2xLi0MBAbcPIjDhiG5mw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ping-Ke Shih <pkshih@realtek.com>,
-        syzbot+1fcc5ef45175fc774231@syzkaller.appspotmail.com,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 157/249] rtlwifi: rtl8192cu: fix error handle when usb probe failed
-Date:   Mon, 15 Jul 2019 09:45:22 -0400
-Message-Id: <20190715134655.4076-157-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
-References: <20190715134655.4076-1-sashal@kernel.org>
+        id S2388228AbfGOPKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 11:10:09 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43826 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732698AbfGONz5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:55:57 -0400
+Received: by mail-pf1-f196.google.com with SMTP id i189so7452592pfg.10;
+        Mon, 15 Jul 2019 06:55:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=AY/nB4f3mWLEDWoqoDEwhnoOsZXC8d+VvPhR/4MeddE=;
+        b=AOPeN0JYvr+d//PyK+JaN17bbM8Mb9TlH61mKJRLsChN+2WBgy7HnmpamI3KC/Mjua
+         sp6s2J48btOOXPoHMTUGo5weCEK1mlZ/u4MewkIY4LbE+GxBT6Ht20khYLY0UVO8FDcv
+         7SsfnFkGXOX0PQgc7dh9tbk2zutUqmo6RpHdIRR2brINRZ7aAvVBapRORZiKwHbPePbo
+         06JTwHoVTUDw9YB0Uuktm97RxmNxqYhBV6PBJTxXYW6VwNdxbe1FCaUU505hwsHEGXmv
+         wqtGt83tpCa+7i/KXJf+XqKRt3HZzfjSHK/g5jIFT6xgNoADKnRMU31kZWJdKuXyBXtX
+         Mxtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AY/nB4f3mWLEDWoqoDEwhnoOsZXC8d+VvPhR/4MeddE=;
+        b=Hgyvuw5fFvk3BK+VdgwR6LOvIFPmQ1MU6qGCyb7zYlx9aUm+BE8ty0a6T0g6/Kp/5Q
+         lNapz/H6H4eZ6RzUCdzNR0jDuJdkz6NKISjLhQLjM4seRrHh1gD8gZW3rtlqZX3HOPXA
+         KFDFTCzVIKaOEPRD5yh059ROH+mPe5N6ToFA5wvXpru8bY1Q+NqLROSoKg1ePhKdVPyL
+         KKTxzg1VCHxIZgKMbF4Tdwwb0YqOBdL7g1Hlvefuf8FCF2IiaovqDUMsQyGtnnMDcK4l
+         n0a5wkGUE1GP7jKXbe7cfZQMcJr7rSBPJkCb9xTRl4iVh2d2EETxCAOaTvApCBSDlP6g
+         148A==
+X-Gm-Message-State: APjAAAUz2nsIX6q77oVjWy22YsQgWb392UjZ2nqyQpGFmmg7U5687ke7
+        7fA3DY3WOZ077gSNUC8UHEQ=
+X-Google-Smtp-Source: APXvYqzlXOtDMsIBvJ+VV4Ay1OOpQjT5v+LEIb4LHx6uSBdytpLJfnNixgukI5DBL48PSIUzcMfYnA==
+X-Received: by 2002:a17:90a:2567:: with SMTP id j94mr29623552pje.121.1563198955184;
+        Mon, 15 Jul 2019 06:55:55 -0700 (PDT)
+Received: from [10.231.110.95] ([125.29.25.186])
+        by smtp.gmail.com with ESMTPSA id p27sm29427517pfq.136.2019.07.15.06.55.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Jul 2019 06:55:54 -0700 (PDT)
+Subject: Re: [RFC PATCH 00/11] tracing: of: Boot time tracing using devicetree
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <156113387975.28344.16009584175308192243.stgit@devnote2>
+ <f0cee7b6-b83b-b74c-82f5-f43e39bd391a@gmail.com>
+ <20190624115223.db1e53549a15c6548bfa1fa1@kernel.org>
+ <e5e3f55b-095b-e6fc-8734-d888ba5c87f3@gmail.com>
+ <20190625140004.a74443238596b297a558a66f@kernel.org>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <c01bd567-0c8b-ec32-773b-fb95bfcdcd50@gmail.com>
+Date:   Mon, 15 Jul 2019 06:55:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190625140004.a74443238596b297a558a66f@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ping-Ke Shih <pkshih@realtek.com>
+Hi Masami,
 
-[ Upstream commit 6c0ed66f1a5b84e2a812c7c2d6571a5621bf3396 ]
+Note that Masami has submitted v2 of the patch with further discussion.  I
+noticed that I had left some comments unanswered in this thread, so I am
+doing this reply before moving on to reply to the v2 thread.
 
-rtl_usb_probe() must do error handle rtl_deinit_core() only if
-rtl_init_core() is done, otherwise goto error_out2.
+Feel free to move the discussion to v2 instead of replying to this email
+if you find that easier.
 
-| usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-| rtl_usb: reg 0xf0, usbctrl_vendorreq TimeOut! status:0xffffffb9 value=0x0
-| rtl8192cu: Chip version 0x10
-| rtl_usb: reg 0xa, usbctrl_vendorreq TimeOut! status:0xffffffb9 value=0x0
-| rtl_usb: Too few input end points found
-| INFO: trying to register non-static key.
-| the code is fine but needs lockdep annotation.
-| turning off the locking correctness validator.
-| CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.1.0-rc4-319354-g9a33b36 #3
-| Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-| Google 01/01/2011
-| Workqueue: usb_hub_wq hub_event
-| Call Trace:
-|   __dump_stack lib/dump_stack.c:77 [inline]
-|   dump_stack+0xe8/0x16e lib/dump_stack.c:113
-|   assign_lock_key kernel/locking/lockdep.c:786 [inline]
-|   register_lock_class+0x11b8/0x1250 kernel/locking/lockdep.c:1095
-|   __lock_acquire+0xfb/0x37c0 kernel/locking/lockdep.c:3582
-|   lock_acquire+0x10d/0x2f0 kernel/locking/lockdep.c:4211
-|   __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-|   _raw_spin_lock_irqsave+0x44/0x60 kernel/locking/spinlock.c:152
-|   rtl_c2hcmd_launcher+0xd1/0x390
-| drivers/net/wireless/realtek/rtlwifi/base.c:2344
-|   rtl_deinit_core+0x25/0x2d0 drivers/net/wireless/realtek/rtlwifi/base.c:574
-|   rtl_usb_probe.cold+0x861/0xa70
-| drivers/net/wireless/realtek/rtlwifi/usb.c:1093
-|   usb_probe_interface+0x31d/0x820 drivers/usb/core/driver.c:361
-|   really_probe+0x2da/0xb10 drivers/base/dd.c:509
-|   driver_probe_device+0x21d/0x350 drivers/base/dd.c:671
-|   __device_attach_driver+0x1d8/0x290 drivers/base/dd.c:778
-|   bus_for_each_drv+0x163/0x1e0 drivers/base/bus.c:454
-|   __device_attach+0x223/0x3a0 drivers/base/dd.c:844
-|   bus_probe_device+0x1f1/0x2a0 drivers/base/bus.c:514
-|   device_add+0xad2/0x16e0 drivers/base/core.c:2106
-|   usb_set_configuration+0xdf7/0x1740 drivers/usb/core/message.c:2021
-|   generic_probe+0xa2/0xda drivers/usb/core/generic.c:210
-|   usb_probe_device+0xc0/0x150 drivers/usb/core/driver.c:266
-|   really_probe+0x2da/0xb10 drivers/base/dd.c:509
-|   driver_probe_device+0x21d/0x350 drivers/base/dd.c:671
-|   __device_attach_driver+0x1d8/0x290 drivers/base/dd.c:778
-|   bus_for_each_drv+0x163/0x1e0 drivers/base/bus.c:454
-|   __device_attach+0x223/0x3a0 drivers/base/dd.c:844
-|   bus_probe_device+0x1f1/0x2a0 drivers/base/bus.c:514
-|   device_add+0xad2/0x16e0 drivers/base/core.c:2106
-|   usb_new_device.cold+0x537/0xccf drivers/usb/core/hub.c:2534
-|   hub_port_connect drivers/usb/core/hub.c:5089 [inline]
-|   hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
-|   port_event drivers/usb/core/hub.c:5350 [inline]
-|   hub_event+0x138e/0x3b00 drivers/usb/core/hub.c:5432
-|   process_one_work+0x90f/0x1580 kernel/workqueue.c:2269
-|   worker_thread+0x9b/0xe20 kernel/workqueue.c:2415
-|   kthread+0x313/0x420 kernel/kthread.c:253
-|   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+On 6/24/19 10:00 PM, Masami Hiramatsu wrote:
+> Hi Frank,
+> 
+> On Mon, 24 Jun 2019 15:31:07 -0700
+> Frank Rowand <frowand.list@gmail.com> wrote:
+>>>>> Currently, kernel support boot-time tracing using kernel command-line
+>>>>> parameters. But that is very limited because of limited expressions
+>>>>> and limited length of command line. Recently, useful features like
+>>>>> histogram, synthetic events, etc. are being added to ftrace, but it is
+>>>>> clear that we can not expand command-line options to support these
+>>>>> features.
+>>>>
+>>>> "it is clear that we can not expand command-line options" needs a fuller
+>>>> explanation.  And maybe further exploration.
+>>>
+>>> Indeed. As an example of tracing settings in the first mail, even for simple
+>>> use-case,  the trace command is long and complicated. I think it is hard to
+>>> express that as 1-liner kernel command line. But devicetree looks very good
+>>> for expressing structured data. That is great and I like it :)
+>>
+>> But you could extend the command line paradigm to meet your needs.
+> 
+> But the kernel command line is a command line. Would you mean encoding the 
+> structured setting in binary format with base64 and pass it? :(
 
-Reported-by: syzbot+1fcc5ef45175fc774231@syzkaller.appspotmail.com
-Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/wireless/realtek/rtlwifi/usb.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+If you want to put structured data in the command line, then yes, you could use
+an ascii safe form, such as base64, to contain it.  If that is what you want.
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/usb.c b/drivers/net/wireless/realtek/rtlwifi/usb.c
-index e24fda5e9087..34d68dbf4b4c 100644
---- a/drivers/net/wireless/realtek/rtlwifi/usb.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/usb.c
-@@ -1064,13 +1064,13 @@ int rtl_usb_probe(struct usb_interface *intf,
- 	rtlpriv->cfg->ops->read_eeprom_info(hw);
- 	err = _rtl_usb_init(hw);
- 	if (err)
--		goto error_out;
-+		goto error_out2;
- 	rtl_usb_init_sw(hw);
- 	/* Init mac80211 sw */
- 	err = rtl_init_core(hw);
- 	if (err) {
- 		pr_err("Can't allocate sw for mac80211\n");
--		goto error_out;
-+		goto error_out2;
- 	}
- 	if (rtlpriv->cfg->ops->init_sw_vars(hw)) {
- 		pr_err("Can't init_sw_vars\n");
-@@ -1091,6 +1091,7 @@ int rtl_usb_probe(struct usb_interface *intf,
- 
- error_out:
- 	rtl_deinit_core(hw);
-+error_out2:
- 	_rtl_usb_io_handler_release(hw);
- 	usb_put_dev(udev);
- 	complete(&rtlpriv->firmware_loading_complete);
--- 
-2.20.1
+
+> 
+>>>> Devicetree is NOT for configuration information.  This has been discussed
+>>>> over and over again in mail lists, at various conferences, and was also an
+>>>> entire session at plumbers a few years ago:
+>>>>
+>>>>    https://elinux.org/Device_tree_future#Linux_Plumbers_2016_Device_Tree_Track
+>>>
+>>> Thanks, I'll check that.
+> 
+> I found following discussion in etherpad log, https://elinux.org/Device_tree_plumbers_2016_etherpad
+> ----
+> If you have data that the kernel does not have a good way to get, that's OK to put into DT.
+> 
+>     Operating points are OK - but should still be structured well.
+> ----
+> 
+> This sounds like if it is structured well, and there are no other way,
+> we will be able to use DT as a channel.
+> 
+>>>>
+>>>> There is one part of device tree that does allow non-hardware description,
+>>>> which is the "chosen" node which is provided to allow communication between
+>>>> the bootloader and the kernel.
+>>>
+>>> Ah, "chosen" will be suit for me :)
+>>
+>> No.  This is not communicating boot loader information.
+> 
+> Hmm, it's a kind of communication with the operator of the boot loader, since there
+> is an admin or developer behind it. I think the comminication is to communicate
+> with that human. Then if they intend to trace boot process, that is a kind of
+> communication.
+
+The quote from the plumbers 2016 devicetree etherpad ("Operating points are OK ...)
+conveniently ignores a sentence just a few lines later:
+
+   "If firmware is deciding the operating point, then it's OK to convey it via DT."
+
+The operating points example is clearly communicating boot loader information to
+the kernel.
+
+Something the admin or developer wants to communicate is not boot loader
+information.
+
+
+> 
+> [...]
+>>>>> - Can we use devicetree for configuring kernel dynamically?
+>>>>
+>>>> No.  Sorry.
+>>>>
+>>>> My understanding of this proposal is that it is intended to better
+>>>> support boot time kernel and driver debugging.  As an alternate
+>>>> implementation, could you compile the ftrace configuration information
+>>>> directly into a kernel data structure?  It seems like it would not be
+>>>> very difficult to populate the data structure data via a few macros.
+>>>
+>>> No, that is not what I intended. My intention was to trace boot up
+>>> process "without recompiling kernel", but with a structured data.
+>>
+>> That is debugging.  Or if you want to be pedantic, a complex performance
+>> measurement of the boot process (more than holding a stopwatch in your
+>> hand).
+> 
+> Yeah, that's right.
+> 
+>> Recompiling a single object file (containing the ftrace command data)
+>> and re-linking the kernel is not a big price in that context).
+> 
+> No, if I can use DT, I can choose one of them while boot up.
+> That will be a big difference.
+> (Of course for that purpose, I should work on boot loader to support
+> DT overlay)
+
+This is debugging kernel drivers.  I do not think that it is a big cost for
+a kernel developer to re-link the kernel.  On any reasonable modern
+development system this should be a matter of seconds, not minutes.
+
+Compiling a devicetree source is not significantly less time.  (To be
+fair, you imply that you would have various compiled devicetrees to
+choose from at boot time.  It may be realistic to have a library of
+ftrace commands, or it may be more realistic that someone debugging
+a kernel driver will create a unique ftrace command set for the
+particular case they are debugging.)
+
+> 
+>>  Or if
+>> you create a new communication channel, you will have the cost of
+>> creating that data object (certainly not much different than compiling
+>> a devicetree) and have the bootloader provide the ftrace data object
+>> to the kernel.
+> 
+> Yes, and for me, that sounds like just a reinvention of the wheel.
+> If I can reuse devicetree infrastructure, it is easily done (as I
+> implemented in this series. It's just about 500LOC (and YAML document)
+
+Or you can just use the existing ftrace boot command line syntax.
+
+
+> 
+> I can clone drivers/of/ code only for that new communication channel,
+> but that makes no one happy. :(
+> 
+>>> For such purpose, we have to implement a tool to parse and pack the
+>>> data and a channel to load it at earlier stage in bootloader. And
+>>> those are already done by devicetree. Thus I thought I could get a
+>>> piggyback on devicetree.
+>>
+>> Devicetree is not the universal dumping ground for communicating
+>> information to a booting kernel.  Please create another communication
+>> channel.
+> 
+> Why should we so limit the availability of even a small corner of existing
+> open source software...?
+
+Because the proposal is a mis-use of devicetree.
+
+> 
+> Thank you,
+> 
 
