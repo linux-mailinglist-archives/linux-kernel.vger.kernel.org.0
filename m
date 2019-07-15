@@ -2,90 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7196A699E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 19:32:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34CF3699F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 19:33:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732117AbfGORa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 13:30:29 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38938 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731881AbfGOR37 (ORCPT
+        id S1731696AbfGORdj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 13:33:39 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:37574 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731574AbfGORdj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 13:29:59 -0400
-Received: by mail-lf1-f65.google.com with SMTP id v85so11565319lfa.6;
-        Mon, 15 Jul 2019 10:29:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9sbsaF7E0TrDeiv6pReKgq+pMBX4p8SmM9uYJr655g4=;
-        b=cfsQfLg6uXhCsDhKrfTKfo6Sq0gES7tIIKRYeUMeQPc11O2FFfbXTX6aotF8r2KSpj
-         bQGuzhwGyMU7Klx8gsdATDAqcdQjnAAhfH0hkhBOwHt75sD9G+l41xQkUfmBLkrH2o9V
-         7n+UNcnfa82X9rlHaRJTdDOZvrNPMv0ov6LNFSCRcqWNyYuYq+sDQ35md1Ra551cVtld
-         yNGxmdoZTQFGxBEfRFvXBBN+Egl1SIDZJ1Jub+HSvJ/qRyHcpU8uWAltA2ZvO/k6ZpFV
-         QgVWeT2LsIMU3PRFU1KXgIVrQOI3bnbuZDYTtEl0Km55ppFLwKHsHN+Nv6H/GTFGdxRv
-         jmkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9sbsaF7E0TrDeiv6pReKgq+pMBX4p8SmM9uYJr655g4=;
-        b=ucLLKEDi/icdTPqUXXMdwE+kUc/Ll3XPXhgasOll6fnHUyfvs1QrF8SSaI7NVX4dBc
-         NhJAKca9rUorbK0tves36h2TKhEI5rM+mKaNrJqKSdcEXEmfUI0Sy/NnmMSIlbaTxeIN
-         zhsGIB/nPRfhthn7t8XNhApPNmaxNhtXJW34bv7aqOevcnVera3a8+3rFAU2XkxYIil/
-         WmKkNumEG6n7RiQAlLVQkoO0mDz6/GMltlMvXuxWeQ2QFq03pu5UmzbinPY7vTK8Ag8L
-         2NArSZW5X1/yeVg63ZDeu5zwZBlXySrYb89Ghm8cxrp3LUWz7iiOs8cK0KP2YirE3qC2
-         sG/Q==
-X-Gm-Message-State: APjAAAVPOZzOfRFO4jTo1IdQDQYOxwCVp7x/Ldo417DX4gJGKJIyNvco
-        1Hb+gWQfFj+Yu8mQg1UCpXA=
-X-Google-Smtp-Source: APXvYqzh4mCzsVutjVh3P6kwpNAC6f14uhzoqQsZ8erj79ZbfueASsY+KQ7A1LZug29vsoABB/S3DA==
-X-Received: by 2002:a19:8c08:: with SMTP id o8mr11940682lfd.57.1563211797598;
-        Mon, 15 Jul 2019 10:29:57 -0700 (PDT)
-Received: from localhost.localdomain (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.gmail.com with ESMTPSA id b17sm3248765ljf.34.2019.07.15.10.29.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Jul 2019 10:29:57 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 13/13] ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
-Date:   Mon, 15 Jul 2019 20:26:29 +0300
-Message-Id: <20190715172629.4437-14-digetx@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190715172629.4437-1-digetx@gmail.com>
-References: <20190715172629.4437-1-digetx@gmail.com>
+        Mon, 15 Jul 2019 13:33:39 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6FHXN4s121134;
+        Mon, 15 Jul 2019 17:33:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=gexxm3URun3t6lGz43qhoYeB1J6VhTPrI1NDhmfisns=;
+ b=H7jvnJXUCnBQ32KffKAvXVMToEYJwjQAZixNdxTyXrDMOihdVbRb+DCoVORek7Rj3PC6
+ 2a2O65v8hb1g6t90c5HrTn4e3nkm3sp597K55lcbE0uoP+BoQrXg0W0/WX9nrhvtwhLj
+ 2MvO/N7DBu+HzmwwZi7owCKRPHuPrgAVvaOOoMLD6UE7sup5T4lbJoMVnxTVWmWpj94X
+ Y4CDslnc3t2B2KkoR2A1H/99fLCNBUb2e5sz7H45KvT0RTZ8uLLcZbW0CxmtLI1rcrSO
+ rxJ1hKdelcuXw7h/yNWeCBqhjU/3zcCuJ/q7uJ59n6L1BElAT62+sbYySFSC6lPx+s+p fw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2tq6qtg0hh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Jul 2019 17:33:23 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6FHSSqb120414;
+        Mon, 15 Jul 2019 17:33:20 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2tq4dten0h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Jul 2019 17:33:19 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6FHXEOP025118;
+        Mon, 15 Jul 2019 17:33:14 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 15 Jul 2019 10:33:14 -0700
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
+        megaraidlinux.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: properly communicate queue limits to the DMA layer v2
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190617122000.22181-1-hch@lst.de>
+        <20190715165823.GA10029@lst.de>
+Date:   Mon, 15 Jul 2019 13:33:11 -0400
+In-Reply-To: <20190715165823.GA10029@lst.de> (Christoph Hellwig's message of
+        "Mon, 15 Jul 2019 18:58:23 +0200")
+Message-ID: <yq1tvbn2ofc.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9319 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=619
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907150204
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9319 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=686 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907150204
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Tegra CPU Idle driver was moved out into driver/cpuidle/ directory and
-it is now a proper platform driver.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/configs/tegra_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Christoph,
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 8f5c6a5b444c..9a2f11a780a8 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -25,6 +25,7 @@ CONFIG_CPU_FREQ=y
- CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
- CONFIG_CPUFREQ_DT=y
- CONFIG_CPU_IDLE=y
-+CONFIG_ARM_TEGRA_CPUIDLE=y
- CONFIG_VFP=y
- CONFIG_NEON=y
- CONFIG_TRUSTED_FOUNDATIONS=y
+> Ping?  What happened to this set of bug fixes?
+
+I thought they depended on Jens' tree?
+
 -- 
-2.22.0
-
+Martin K. Petersen	Oracle Linux Engineering
