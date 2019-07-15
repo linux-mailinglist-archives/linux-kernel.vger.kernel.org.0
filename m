@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20B6068EE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1924168EEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:11:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388906AbfGOOKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:10:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40862 "EHLO mail.kernel.org"
+        id S2388424AbfGOOKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:10:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388669AbfGOOKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:10:42 -0400
+        id S1731456AbfGOOKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:10:48 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72E1B206B8;
-        Mon, 15 Jul 2019 14:10:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2E9C21530;
+        Mon, 15 Jul 2019 14:10:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563199841;
-        bh=Aa20z2hwguTgvagup2iWVwNzGjHe3N1ptoZOEn/D3nE=;
+        s=default; t=1563199847;
+        bh=k/xVOyM0I0xVwuzQ+tzfU7zBmoYP57drWfdquu2hkQU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u6G3VUywn3FXENppq/8p4kRqs/auIIwkjX25Mxawbp9Wv88YUomG9yLa44SVueUEm
-         7Ot70YWJiLXZJtazdhthlvzEPdrytFcTzhXyExJ0uJ+4gwyyLQ/CSqKPtmLm1zQ9MO
-         EuvwJkEupQLOQf9mZrcNP5AFR8p+S6mYgPXpmDVg=
+        b=Nffz52FeHCmmZEGJUmVn0BkjZPjMYKYtb+VPNwgo8H8cZ9H8GzTU6syt+k8BJHKWm
+         0E2y70V4gsTkWK6XsH0RhTIN8ezJAvkv6tqZgVbMnxfqmya86lfSNUvnInMaEdlw0R
+         zw58VP2bqHWmLEqf2vv8xF4yfFn/D9w8yddI3Sng=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Julien Thierry <julien.thierry@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 123/219] arm64: Do not enable IRQs for ct_user_exit
-Date:   Mon, 15 Jul 2019 10:02:04 -0400
-Message-Id: <20190715140341.6443-123-sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.1 124/219] ipsec: select crypto ciphers for xfrm_algo
+Date:   Mon, 15 Jul 2019 10:02:05 -0400
+Message-Id: <20190715140341.6443-124-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715140341.6443-1-sashal@kernel.org>
 References: <20190715140341.6443-1-sashal@kernel.org>
@@ -47,56 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julien Thierry <julien.thierry@arm.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 9034f6251572a4744597c51dea5ab73a55f2b938 ]
+[ Upstream commit 597179b0ba550bd83fab1a9d57c42a9343c58514 ]
 
-For el0_dbg and el0_error, DAIF bits get explicitly cleared before
-calling ct_user_exit.
+kernelci.org reports failed builds on arc because of what looks
+like an old missed 'select' statement:
 
-When context tracking is disabled, DAIF gets set (almost) immediately
-after. When context tracking is enabled, among the first things done
-is disabling IRQs.
+net/xfrm/xfrm_algo.o: In function `xfrm_probe_algs':
+xfrm_algo.c:(.text+0x1e8): undefined reference to `crypto_has_ahash'
 
-What is actually needed is:
-- PSR.D = 0 so the system can be debugged (should be already the case)
-- PSR.A = 0 so async error can be handled during context tracking
+I don't see this in randconfig builds on other architectures, but
+it's fairly clear we want to select the hash code for it, like we
+do for all its other users. As Herbert points out, CRYPTO_BLKCIPHER
+is also required even though it has not popped up in build tests.
 
-Do not clear PSR.I in those two locations.
-
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: James Morse <james.morse@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: 17bc19702221 ("ipsec: Use skcipher and ahash when probing algorithms")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/entry.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/xfrm/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index c50a7a75f2e0..6a3890393963 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -855,7 +855,7 @@ el0_dbg:
- 	mov	x1, x25
- 	mov	x2, sp
- 	bl	do_debug_exception
--	enable_daif
-+	enable_da_f
- 	ct_user_exit
- 	b	ret_to_user
- el0_inv:
-@@ -907,7 +907,7 @@ el0_error_naked:
- 	enable_dbg
- 	mov	x0, sp
- 	bl	do_serror
--	enable_daif
-+	enable_da_f
- 	ct_user_exit
- 	b	ret_to_user
- ENDPROC(el0_error)
+diff --git a/net/xfrm/Kconfig b/net/xfrm/Kconfig
+index 5d43aaa17027..831668ee8229 100644
+--- a/net/xfrm/Kconfig
++++ b/net/xfrm/Kconfig
+@@ -14,6 +14,8 @@ config XFRM_ALGO
+ 	tristate
+ 	select XFRM
+ 	select CRYPTO
++	select CRYPTO_HASH
++	select CRYPTO_BLKCIPHER
+ 
+ config XFRM_USER
+ 	tristate "Transformation user configuration interface"
 -- 
 2.20.1
 
