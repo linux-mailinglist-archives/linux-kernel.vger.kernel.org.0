@@ -2,88 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D04D068E0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:03:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4573468E0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:03:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732884AbfGOOD3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:03:29 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54796 "EHLO
+        id S2387771AbfGOODc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:03:32 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:13252 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732949AbfGOOD2 (ORCPT
+        by vger.kernel.org with ESMTP id S1732949AbfGOODa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:03:28 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6FDvYOL133994
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 10:03:25 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2trt84b0j5-1
+        Mon, 15 Jul 2019 10:03:30 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6FDvW7i046302
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 10:03:28 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2trsecddva-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 10:03:24 -0400
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 10:03:28 -0400
 Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 15 Jul 2019 15:03:23 +0100
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Mon, 15 Jul 2019 15:03:25 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 15 Jul 2019 15:03:18 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6FE3HgH24969604
+        Mon, 15 Jul 2019 15:03:20 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6FE3JR555574606
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 15 Jul 2019 14:03:17 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 15BAAB2068;
-        Mon, 15 Jul 2019 14:03:17 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E1686B2067;
-        Mon, 15 Jul 2019 14:03:16 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.164.210])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 15 Jul 2019 14:03:16 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 988F216C3641; Mon, 15 Jul 2019 07:03:16 -0700 (PDT)
-Date:   Mon, 15 Jul 2019 07:03:16 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+4bfbbf28a2e50ab07368@syzkaller.appspotmail.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        David Miller <davem@davemloft.net>, eladr@mellanox.com,
-        Ido Schimmel <idosch@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Mon, 15 Jul 2019 14:03:19 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1F3BCA4053;
+        Mon, 15 Jul 2019 14:03:19 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8BB8AA404D;
+        Mon, 15 Jul 2019 14:03:18 +0000 (GMT)
+Received: from oc2783563651 (unknown [9.152.224.43])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 15 Jul 2019 14:03:18 +0000 (GMT)
+Date:   Mon, 15 Jul 2019 16:03:17 +0200
+From:   Halil Pasic <pasic@linux.ibm.com>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>
+Cc:     x86@kernel.org, iommu@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: INFO: rcu detected stall in ext4_write_checks
-Reply-To: paulmck@linux.ibm.com
-References: <20190706061631.GV26519@linux.ibm.com>
- <20190706150226.GG11665@mit.edu>
- <20190706180311.GW26519@linux.ibm.com>
- <20190707011655.GA22081@linux.ibm.com>
- <CACT4Y+asYe-uH9OV5R0Nkb-JKP4erYUZ68S9gYNnGg6v+fD20w@mail.gmail.com>
- <20190714190522.GA24049@mit.edu>
- <20190714192951.GM26519@linux.ibm.com>
- <20190715031027.GA3336@linux.ibm.com>
- <20190715130101.GA5527@linux.ibm.com>
- <20190715133938.GH3419@hirez.programming.kicks-ass.net>
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Mike Anderson <andmike@linux.ibm.com>,
+        Ram Pai <linuxram@us.ibm.com>,
+        "Lendacky\, Thomas" <thomas.lendacky@amd.com>
+Subject: Re: [PATCH 3/3] fs/core/vmcore: Move sev_active() reference to x86
+ arch code
+In-Reply-To: <87tvbqgboc.fsf@morokweng.localdomain>
+References: <20190712053631.9814-1-bauerman@linux.ibm.com>
+        <20190712053631.9814-4-bauerman@linux.ibm.com>
+        <20190712150912.3097215e.pasic@linux.ibm.com>
+        <87tvbqgboc.fsf@morokweng.localdomain>
+Organization: IBM
+X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190715133938.GH3419@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 19071514-2213-0000-0000-000003AF0900
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011432; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01232545; UDB=6.00649377; IPR=6.01013847;
- MB=3.00027724; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-15 14:03:21
+x-cbid: 19071514-4275-0000-0000-0000034D26BA
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19071514-2214-0000-0000-00005F3E4521
-Message-Id: <20190715140316.GR26519@linux.ibm.com>
+x-cbparentid: 19071514-4276-0000-0000-0000385D35C5
+Message-Id: <20190715160317.7e3dfb33.pasic@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-15_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -96,48 +86,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 03:39:38PM +0200, Peter Zijlstra wrote:
-> On Mon, Jul 15, 2019 at 06:01:01AM -0700, Paul E. McKenney wrote:
-> > Title: Making SCHED_DEADLINE safe for kernel kthreads
-> > 
-> > Abstract:
-> > 
-> > Dmitry Vyukov's testing work identified some (ab)uses of sched_setattr()
-> > that can result in SCHED_DEADLINE tasks starving RCU's kthreads for
-> > extended time periods, not millisecond, not seconds, not minutes, not even
-> > hours, but days. Given that RCU CPU stall warnings are issued whenever
-> > an RCU grace period fails to complete within a few tens of seconds,
-> > the system did not suffer silently. Although one could argue that people
-> > should avoid abusing sched_setattr(), people are human and humans make
-> > mistakes. Responding to simple mistakes with RCU CPU stall warnings is
-> > all well and good, but a more severe case could OOM the system, which
-> > is a particularly unhelpful error message.
-> > 
-> > It would be better if the system were capable of operating reasonably
-> > despite such abuse. Several approaches have been suggested.
-> > 
-> > First, sched_setattr() could recognize parameter settings that put
-> > kthreads at risk and refuse to honor those settings. This approach
-> > of course requires that we identify precisely what combinations of
-> > sched_setattr() parameters settings are risky, especially given that there
-> > are likely to be parameter settings that are both risky and highly useful.
-> 
-> So we (the people poking at the DEADLINE code) are all aware of this,
-> and on the TODO list for making DEADLINE available for !priv users is
-> the item:
-> 
->   - put limits on deadline/period
-> 
-> And note that that is both an upper and lower limit. The upper limit
-> you've just found why we need it, the lower limit is required because
-> you can DoS the hardware by causing deadlines/periods that are equal (or
-> shorter) than the time it takes to program the hardware.
-> 
-> There might have even been some patches that do some of this, but I've
-> held off because we have bigger problems and they would've established
-> an ABI while it wasn't clear it was sufficient or the right form.
+On Fri, 12 Jul 2019 18:55:47 -0300
+Thiago Jung Bauermann <bauerman@linux.ibm.com> wrote:
 
-So I should withdraw the proposal?
+> 
+> [ Cc'ing Tom Lendacky which I forgot to do earlier. Sorry about that. ]
+> 
+> Hello Halil,
+> 
+> Thanks for the quick review.
+> 
+> Halil Pasic <pasic@linux.ibm.com> writes:
+> 
+> > On Fri, 12 Jul 2019 02:36:31 -0300
+> > Thiago Jung Bauermann <bauerman@linux.ibm.com> wrote:
+> >
+> >> Secure Encrypted Virtualization is an x86-specific feature, so it shouldn't
+> >> appear in generic kernel code because it forces non-x86 architectures to
+> >> define the sev_active() function, which doesn't make a lot of sense.
+> >
+> > sev_active() might be just bad (too specific) name for a general
+> > concept. s390 code defines it drives the right behavior in
+> > kernel/dma/direct.c (which uses it).
+> 
+> I thought about that but couldn't put my finger on a general concept.
+> Is it "guest with memory inaccessible to the host"?
+> 
 
-							Thanx, Paul
+Well, force_dma_unencrypted() is a much better name thatn sev_active():
+s390 has no AMD SEV, that is sure, but for virtio to work we do need to
+make our dma accessible to the hypervisor. Yes, your "guest with memory
+inaccessible to the host" shows into the right direction IMHO.
+Unfortunately I don't have too many cycles to spend on this right now.
+
+> Since your proposed definiton for force_dma_unencrypted() is simply to
+> make it equivalent to sev_active(), I thought it was more
+> straightforward to make each arch define force_dma_unencrypted()
+> directly.
+
+I did not mean to propose equivalence. I intended to say the name
+sev_active() is not suitable for a common concept. On the other hand
+we do have a common concept -- as common code needs to do or not do
+things depending on whether "memory is protected/encrypted" or not. I'm
+fine with the name force_dma_unencrypted(), especially because I don't
+have a better name.
+
+> 
+> Also, does sev_active() drive the right behavior for s390 in
+> elfcorehdr_read() as well?
+> 
+
+AFAIU, since s390 does not override it boils down to the same, whether
+sev_active() returns true or false. I'm no expert in that area, but I
+strongly hope that is the right behavior. @Janosch: can you help me
+out with this one?
+
+> >> To solve this problem, add an x86 elfcorehdr_read() function to override
+> >> the generic weak implementation. To do that, it's necessary to make
+> >> read_from_oldmem() public so that it can be used outside of vmcore.c.
+> >>
+> >> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+> >> ---
+> >>  arch/x86/kernel/crash_dump_64.c |  5 +++++
+> >>  fs/proc/vmcore.c                |  8 ++++----
+> >>  include/linux/crash_dump.h      | 14 ++++++++++++++
+> >>  include/linux/mem_encrypt.h     |  1 -
+> >>  4 files changed, 23 insertions(+), 5 deletions(-)
+> >
+> > Does not seem to apply to today's or yesterdays master.
+> 
+> It assumes the presence of the two patches I mentioned in the cover
+> letter. Only one of them is in master.
+> 
+> I hadn't realized the s390 virtio patches were on their way to upstream.
+> I was keeping an eye on the email thread but didn't see they were picked
+> up in the s390 pull request. I'll add a new patch to this series making
+> the corresponding changes to s390's <asm/mem_encrypt.h> as well.
+> 
+
+Being on cc for your patch made me realize that things got broken on
+s390. Thanks! I've sent out a patch that fixes protvirt, but we are going
+to benefit from your cleanups. I think with your cleanups and that patch
+of mine both sev_active() and sme_active() can be removed. Feel free to
+do so. If not, I can attend to it as well.
+
+Regards,
+Halil
 
