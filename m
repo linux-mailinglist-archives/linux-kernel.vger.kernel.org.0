@@ -2,133 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CB6B69E7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 23:45:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 207DD69E81
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 23:46:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732726AbfGOVoq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 17:44:46 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41953 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731858AbfGOVop (ORCPT
+        id S1732864AbfGOVpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 17:45:52 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46884 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732820AbfGOVpv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 17:44:45 -0400
-Received: by mail-ot1-f68.google.com with SMTP id o101so18695714ota.8;
-        Mon, 15 Jul 2019 14:44:44 -0700 (PDT)
+        Mon, 15 Jul 2019 17:45:51 -0400
+Received: by mail-pl1-f195.google.com with SMTP id c2so8939925plz.13
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 14:45:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hqueIpy9HKyEPPNOnbRMjYrxKpy7dIPibRkspPVD1Rk=;
+        b=M2BUBHzkDMP+Fy0+hAqanjqz5peT9rQY0H9qyM3J2LD51m7Bpo/2ZpzIwYdkvHeuQs
+         o6WkGGlypNVXtnfgchnLzMiinYbp56C6ft1FyrillW63+TdkQ6uGKiJpfILS8Yivy9AA
+         iTYbSo2RISTDu4EWRziBkqro4i5Bf+/aVf8ijSAhzTe/M72rWB83jL1DSS8OkUeMTRoA
+         sdXLfXDYTjBkOC3OD9ZaPM5Ezju0iAH7aVsVy9bUgfCj6sg7J++Y7JwyL8ZAU5FDkMsx
+         G5AwWrwj9tknul1EfiWQYPWB8ie70eHNgvoSqCT4oGhATRbPdNEURhGhwiLXuBgKC7A9
+         paqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hO2lc5/RCrOfroO8+pzsn6ZrqRVw3tFQDoLgNfzmBUQ=;
-        b=QxXDGZ3v64gyAMTDqUN0aDnOZUEUriuNBjPSYo18FhopZ8P0hjPzAG+ZIKn7zH4gUi
-         QQfKwc35vqrWxz9Pdos45CbPkxluZAY+xJxiCUnS/c8V3irYv3sVlFOGVsI03FOmIaXv
-         1EW+EKfby2IgVifnLuY8yMlV3B9g9zSRWk+MkjD42FojhmDrPbL1Gj05OvCQfmBMrtVC
-         H2sgMK8MwEiq61UuGNkJPV+VQ+plnLtUXI5O8yARGzjtU/JH3OxAdhS+CBaJnz7jEarF
-         rKc52Lygct/0tLMNo/N1pP0Qx0Vim/zzGg889XPO1TWBw/bRbhAqCy7vbi3fogYK9Wkn
-         2OSA==
-X-Gm-Message-State: APjAAAUsAOkRYO87kbLMCwaOxid9BCDbmnB2OvJG6nh20Bt2jxK632To
-        Re3Z9R3uMSLoWgU/fV0rp3nL8QXeSGq3NMcP2Ik=
-X-Google-Smtp-Source: APXvYqxeBU+lL3PSYmxhb7JppIVz9aT6KKyGzUIDEJ8gGEzipFV4PQx8sL/9KU3ERl8XEJvsrjqZy4/vHGyUSxfUvR0=
-X-Received: by 2002:a05:6830:1516:: with SMTP id k22mr18941426otp.189.1563227084317;
- Mon, 15 Jul 2019 14:44:44 -0700 (PDT)
+        bh=hqueIpy9HKyEPPNOnbRMjYrxKpy7dIPibRkspPVD1Rk=;
+        b=lPEz0mLsFJvGoef3aAy+Kf3EFzNcymdb0ws7ddCFk83n5T6rnlidGhTlFc43OOPnGT
+         YSJDCH8tZAozFz/RzCei5C7yPygmcEw4jd0DTs7zZrwdeW1CsvidOtqbi7ZQUj7FbM1C
+         Mtosxq6h3cKknmxDp4SUAXUZ2zFP7KAFlqCe0dDHVoxpPSM6wKahODvuW7qUtcmPary0
+         DL6kJjF4/Rzz7ryPBn31MMIDxmUGzfs3sQfQI1sOM/VS7jkkOsM+gX1T57BTjNLggYuv
+         +LQWUHqzFqpgjW8REDuMgd8F4iq8jgn5jkuJPVnCd9Fw33hk9ays+6aDJ18Bi/9KTNfE
+         66xw==
+X-Gm-Message-State: APjAAAXT8K4Ujmd0gv3nA3oHsou8uDjHptu7bRlMyZC1FSiqXJyW3DHw
+        9ieNPpNF7rLgvxgcnKKTOa8Xb2MYEjKnosq7+iC6/g==
+X-Google-Smtp-Source: APXvYqx3+5tO30WhO0nchpxkml29BpDJYkg5+1AHx+oFnyVETCA/qhmD8kPKKgIFqPFtjwzExPGYOtJkbl5s58En02Y=
+X-Received: by 2002:a17:902:4aa3:: with SMTP id x32mr29488310pld.119.1563227150812;
+ Mon, 15 Jul 2019 14:45:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190715143705.117908-1-joel@joelfernandes.org> <20190715143705.117908-9-joel@joelfernandes.org>
-In-Reply-To: <20190715143705.117908-9-joel@joelfernandes.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 15 Jul 2019 23:44:31 +0200
-Message-ID: <CAJZ5v0jdx1dgBZLyH_Loj1XVuLCV+HMHjk8r_n8xG7qmoH_z3A@mail.gmail.com>
-Subject: Re: [PATCH 8/9] acpi: Use built-in RCU list checking for
- acpi_ioremaps list (v1)
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Borislav Petkov <bp@alien8.de>, c0d1n61at3@gmail.com,
-        "David S. Miller" <davem@davemloft.net>, edumazet@google.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Kees Cook <keescook@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        NeilBrown <neilb@suse.com>, netdev <netdev@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Pavel Machek <pavel@ucw.cz>,
+References: <cover.1563150885.git.jpoimboe@redhat.com> <20190715193834.5tvzukcwq735ufgb@treble>
+In-Reply-To: <20190715193834.5tvzukcwq735ufgb@treble>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 15 Jul 2019 14:45:39 -0700
+Message-ID: <CAKwvOdnXt=_NVjK7+RjuxeyESytO6ra769i4qjSwt1Gd1G22dA@mail.gmail.com>
+Subject: Re: [PATCH 00/22] x86, objtool: several fixes/improvements
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Tejun Heo <tj@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 4:43 PM Joel Fernandes (Google)
-<joel@joelfernandes.org> wrote:
+On Mon, Jul 15, 2019 at 12:38 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 >
-> list_for_each_entry_rcu has built-in RCU and lock checking. Make use of
-> it for acpi_ioremaps list traversal.
->
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> On Sun, Jul 14, 2019 at 07:36:55PM -0500, Josh Poimboeuf wrote:
+> > There have been a lot of objtool bug reports lately, mainly related to
+> > Clang and BPF.  As part of fixing those bugs, I added some improvements
+> > to objtool which uncovered yet more bugs (some kernel, some objtool).
+> >
+> > I've given these patches a lot of testing with both GCC and Clang.  More
+> > compile testing of objtool would be appreciated, as the kbuild test
+> > robot doesn't seem to be paying much attention to my branches lately.
+> >
+> > There are still at least three outstanding issues:
+> >
+> > 1) With clang I see:
+> >
+> >      drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: .altinstr_replacement+0x88: redundant UACCESS disable
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+For a defconfig, that's the only issue I see.
+(Note that I just landed https://reviews.llvm.org/rL366130 for fixing
+up bugs from loop unrolling loops containing asm goto with Clang, so
+anyone else testing w/ clang will see fewer objtool warnings with that
+patch applied.  A follow up is being worked on in
+https://reviews.llvm.org/D64101).
 
-> ---
->  drivers/acpi/osl.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-> index 9c0edf2fc0dd..2f9d0d20b836 100644
-> --- a/drivers/acpi/osl.c
-> +++ b/drivers/acpi/osl.c
-> @@ -14,6 +14,7 @@
->  #include <linux/slab.h>
->  #include <linux/mm.h>
->  #include <linux/highmem.h>
-> +#include <linux/lockdep.h>
->  #include <linux/pci.h>
->  #include <linux/interrupt.h>
->  #include <linux/kmod.h>
-> @@ -80,6 +81,7 @@ struct acpi_ioremap {
->
->  static LIST_HEAD(acpi_ioremaps);
->  static DEFINE_MUTEX(acpi_ioremap_lock);
-> +#define acpi_ioremap_lock_held() lock_is_held(&acpi_ioremap_lock.dep_map)
->
->  static void __init acpi_request_region (struct acpi_generic_address *gas,
->         unsigned int length, char *desc)
-> @@ -206,7 +208,7 @@ acpi_map_lookup(acpi_physical_address phys, acpi_size size)
->  {
->         struct acpi_ioremap *map;
->
-> -       list_for_each_entry_rcu(map, &acpi_ioremaps, list)
-> +       list_for_each_entry_rcu(map, &acpi_ioremaps, list, acpi_ioremap_lock_held())
->                 if (map->phys <= phys &&
->                     phys + size <= map->phys + map->size)
->                         return map;
-> @@ -249,7 +251,7 @@ acpi_map_lookup_virt(void __iomem *virt, acpi_size size)
->  {
->         struct acpi_ioremap *map;
->
-> -       list_for_each_entry_rcu(map, &acpi_ioremaps, list)
-> +       list_for_each_entry_rcu(map, &acpi_ioremaps, list, acpi_ioremap_lock_held())
->                 if (map->virt <= virt &&
->                     virt + size <= map->virt + map->size)
->                         return map;
-> --
-> 2.22.0.510.g264f2c817a-goog
->
+For allmodconfig:
+arch/x86/ia32/ia32_signal.o: warning: objtool:
+ia32_setup_rt_frame()+0x247: call to memset() with UACCESS enabled
+mm/kasan/common.o: warning: objtool: kasan_report()+0x52: call to
+__stack_chk_fail() with UACCESS enabled
+arch/x86/kernel/signal.o: warning: objtool:
+x32_setup_rt_frame()+0x255: call to memset() with UACCESS enabled
+arch/x86/kernel/signal.o: warning: objtool: __setup_rt_frame()+0x254:
+call to memset() with UACCESS enabled
+drivers/ata/sata_dwc_460ex.o: warning: objtool:
+sata_dwc_bmdma_start_by_tag()+0x3a0: can't find switch jump table
+lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch()+0x88:
+call to memset() with UACCESS enabled
+lib/ubsan.o: warning: objtool: ubsan_type_mismatch_common()+0x610:
+call to __stack_chk_fail() with UACCESS enabled
+lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch_v1()+0x88:
+call to memset() with UACCESS enabled
+drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool:
+.altinstr_replacement+0x56: redundant UACCESS disable
+
+Without your series, I see them anyways, so I don't consider them
+regressions added by this series.  Let's follow up on these maybe in a
+new thread?  (Shall I send you these object files?)
+
+So for the series:
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+
+> >
+> >    I haven't dug into it yet.
+> >
+> > 2) There's also an issue in clang where a large switch table had a bunch
+> >    of unused (bad) entries.  It's not a code correctness issue, but
+> >    hopefully it can get fixed in clang anyway.  See patch 20/22 for more
+> >    details.
+
+Thanks for the report, let's follow up on steps for me to reproduce.
+
+> > These patches are also at:
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git objtool-many-fixes
+
+Are these the same patches? Some of the commit messages look different, like:
+https://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git/commit/?h=objtool-many-fixes&id=3e39561c52c4f0062207d604c972148b7b60c341
+
+
+--
+Thanks,
+~Nick Desaulniers
