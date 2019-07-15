@@ -2,247 +2,373 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4E4E68B0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD95368AD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 15:37:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730527AbfGONiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 09:38:12 -0400
-Received: from foss.arm.com ([217.140.110.172]:49202 "EHLO foss.arm.com"
+        id S1730780AbfGONhP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 09:37:15 -0400
+Received: from mga02.intel.com ([134.134.136.20]:59240 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730879AbfGONiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:38:10 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 28ED228;
-        Mon, 15 Jul 2019 06:38:09 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC13F3F71F;
-        Mon, 15 Jul 2019 06:38:06 -0700 (PDT)
-Date:   Mon, 15 Jul 2019 14:38:01 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Quentin Perret <quentin.perret@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alessio Balsini <balsini@android.com>
-Subject: Re: [PATCH v11 1/5] sched/core: uclamp: Extend CPU's cgroup
- controller
-Message-ID: <20190715133801.yohhd2hywzsv3uyf@e110439-lin>
-References: <20190708084357.12944-1-patrick.bellasi@arm.com>
- <20190708084357.12944-2-patrick.bellasi@arm.com>
- <20190708110838.4ohd7pqx5ngkzcsu@queper01-lin>
+        id S1730745AbfGONhI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 09:37:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jul 2019 06:37:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,493,1557212400"; 
+   d="scan'208";a="178222157"
+Received: from tthayer-hp-z620.an.intel.com (HELO [10.122.105.146]) ([10.122.105.146])
+  by orsmga002.jf.intel.com with ESMTP; 15 Jul 2019 06:37:06 -0700
+Reply-To: thor.thayer@linux.intel.com
+Subject: Re: [PATCH 1/3] fpga: altera-cvp: Discover Vendor Specific offset
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     richard.gong@intel.com, agust@denx.de, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1562877170-23931-1-git-send-email-thor.thayer@linux.intel.com>
+ <1562877170-23931-2-git-send-email-thor.thayer@linux.intel.com>
+ <20190714184019.GA9048@archbook>
+From:   Thor Thayer <thor.thayer@linux.intel.com>
+Message-ID: <8c17e787-3548-b057-0f5d-5646a0fa80a2@linux.intel.com>
+Date:   Mon, 15 Jul 2019 08:39:09 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190708110838.4ohd7pqx5ngkzcsu@queper01-lin>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190714184019.GA9048@archbook>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08-Jul 12:08, Quentin Perret wrote:
-> Hi Patrick,
+Hi Moritz,
 
-Hi Quentin!
-
-> On Monday 08 Jul 2019 at 09:43:53 (+0100), Patrick Bellasi wrote:
-> > +static inline int uclamp_scale_from_percent(char *buf, u64 *value)
-> > +{
-> > +	*value = SCHED_CAPACITY_SCALE;
-> > +
-> > +	buf = strim(buf);
-> > +	if (strncmp("max", buf, 4)) {
-> > +		s64 percent;
-> > +		int ret;
-> > +
-> > +		ret = cgroup_parse_float(buf, 2, &percent);
-> > +		if (ret)
-> > +			return ret;
-> > +
-> > +		percent <<= SCHED_CAPACITY_SHIFT;
-> > +		*value = DIV_ROUND_CLOSEST_ULL(percent, 10000);
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static inline u64 uclamp_percent_from_scale(u64 value)
-> > +{
-> > +	return DIV_ROUND_CLOSEST_ULL(value * 10000, SCHED_CAPACITY_SCALE);
-> > +}
+On 7/14/19 1:40 PM, Moritz Fischer wrote:
+> On Thu, Jul 11, 2019 at 03:32:48PM -0500, thor.thayer@linux.intel.com wrote:
+>> From: Thor Thayer <thor.thayer@linux.intel.com>
+>>
+>> Newer Intel FPGAs have different Vendor Specific offsets than
+>> legacy parts. Use PCI discovery to find the CvP registers.
+>> Since the register positions remain the same, change the hard
+>> coded address to a more flexible way of indexing registers
+>> from the offset.
+>> Adding new PCI read and write abstraction functions to
+>> handle the offset (altera_read_config_dword() and
+>> altera_write_config_dword()).
+>>
+>> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+>> ---
+>>   drivers/fpga/altera-cvp.c | 91 +++++++++++++++++++++++++++++------------------
+>>   1 file changed, 56 insertions(+), 35 deletions(-)
+>>
+>> diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+>> index 770915fb97f9..04f2b2a072a7 100644
+>> --- a/drivers/fpga/altera-cvp.c
+>> +++ b/drivers/fpga/altera-cvp.c
+>> @@ -22,10 +22,10 @@
+>>   #define TIMEOUT_US	2000	/* CVP STATUS timeout for USERMODE polling */
+>>   
+>>   /* Vendor Specific Extended Capability Registers */
+>> -#define VSE_PCIE_EXT_CAP_ID		0x200
+>> +#define VSE_PCIE_EXT_CAP_ID		0x0
+>>   #define VSE_PCIE_EXT_CAP_ID_VAL		0x000b	/* 16bit */
+>>   
+>> -#define VSE_CVP_STATUS			0x21c	/* 32bit */
+>> +#define VSE_CVP_STATUS			0x1c	/* 32bit */
+>>   #define VSE_CVP_STATUS_CFG_RDY		BIT(18)	/* CVP_CONFIG_READY */
+>>   #define VSE_CVP_STATUS_CFG_ERR		BIT(19)	/* CVP_CONFIG_ERROR */
+>>   #define VSE_CVP_STATUS_CVP_EN		BIT(20)	/* ctrl block is enabling CVP */
+>> @@ -33,18 +33,18 @@
+>>   #define VSE_CVP_STATUS_CFG_DONE		BIT(23)	/* CVP_CONFIG_DONE */
+>>   #define VSE_CVP_STATUS_PLD_CLK_IN_USE	BIT(24)	/* PLD_CLK_IN_USE */
+>>   
+>> -#define VSE_CVP_MODE_CTRL		0x220	/* 32bit */
+>> +#define VSE_CVP_MODE_CTRL		0x20	/* 32bit */
+>>   #define VSE_CVP_MODE_CTRL_CVP_MODE	BIT(0)	/* CVP (1) or normal mode (0) */
+>>   #define VSE_CVP_MODE_CTRL_HIP_CLK_SEL	BIT(1) /* PMA (1) or fabric clock (0) */
+>>   #define VSE_CVP_MODE_CTRL_NUMCLKS_OFF	8	/* NUMCLKS bits offset */
+>>   #define VSE_CVP_MODE_CTRL_NUMCLKS_MASK	GENMASK(15, 8)
+>>   
+>> -#define VSE_CVP_DATA			0x228	/* 32bit */
+>> -#define VSE_CVP_PROG_CTRL		0x22c	/* 32bit */
+>> +#define VSE_CVP_DATA			0x28	/* 32bit */
+>> +#define VSE_CVP_PROG_CTRL		0x2c	/* 32bit */
+>>   #define VSE_CVP_PROG_CTRL_CONFIG	BIT(0)
+>>   #define VSE_CVP_PROG_CTRL_START_XFER	BIT(1)
+>>   
+>> -#define VSE_UNCOR_ERR_STATUS		0x234	/* 32bit */
+>> +#define VSE_UNCOR_ERR_STATUS		0x34	/* 32bit */
+>>   #define VSE_UNCOR_ERR_CVP_CFG_ERR	BIT(5)	/* CVP_CONFIG_ERROR_LATCHED */
+>>   
+>>   #define DRV_NAME		"altera-cvp"
+>> @@ -60,14 +60,27 @@ struct altera_cvp_conf {
+>>   	void			(*write_data)(struct altera_cvp_conf *, u32);
+>>   	char			mgr_name[64];
+>>   	u8			numclks;
+>> +	u32			vsec_offset;
+>>   };
+>>   
+>> +static inline void altera_read_config_dword(struct altera_cvp_conf *conf,
+>> +					    int where, u32 *val)
+>> +{
+>> +	pci_read_config_dword(conf->pci_dev, conf->vsec_offset + where, val);
+>> +}
 > 
-> FWIW, I tried the patches and realized these conversions result in a
-> 'funny' behaviour from a user's perspective. Things like this happen:
+> I think the compiler would inline those anyway.
+
+OK. I will take both of these out.
+
+>> +
+>> +static inline void altera_write_config_dword(struct altera_cvp_conf *conf,
+>> +					     int where, u32 val)
+>> +{
+>> +	pci_write_config_dword(conf->pci_dev, conf->vsec_offset + where, val);
+>> +}
 > 
->    $ echo 20 > cpu.uclamp.min
->    $ cat cpu.uclamp.min
->    20.2
->    $ echo 20.2 > cpu.uclamp.min
->    $ cat cpu.uclamp.min
->    20.21
+> I think the compiler would inline those anyway.
+>> +
+>>   static enum fpga_mgr_states altera_cvp_state(struct fpga_manager *mgr)
+>>   {
+>>   	struct altera_cvp_conf *conf = mgr->priv;
+>>   	u32 status;
+>>   
+>> -	pci_read_config_dword(conf->pci_dev, VSE_CVP_STATUS, &status);
+>> +	altera_read_config_dword(conf, VSE_CVP_STATUS, &status);
+>>   
+>>   	if (status & VSE_CVP_STATUS_CFG_DONE)
+>>   		return FPGA_MGR_STATE_OPERATING;
+>> @@ -85,7 +98,8 @@ static void altera_cvp_write_data_iomem(struct altera_cvp_conf *conf, u32 val)
+>>   
+>>   static void altera_cvp_write_data_config(struct altera_cvp_conf *conf, u32 val)
+>>   {
+>> -	pci_write_config_dword(conf->pci_dev, VSE_CVP_DATA, val);
+>> +	pci_write_config_dword(conf->pci_dev, conf->vsec_offset + VSE_CVP_DATA,
+>> +			       val);
+>>   }
+>>   
+>>   /* switches between CvP clock and internal clock */
+>> @@ -95,10 +109,10 @@ static void altera_cvp_dummy_write(struct altera_cvp_conf *conf)
+>>   	u32 val;
+>>   
+>>   	/* set 1 CVP clock cycle for every CVP Data Register Write */
+>> -	pci_read_config_dword(conf->pci_dev, VSE_CVP_MODE_CTRL, &val);
+>> +	altera_read_config_dword(conf, VSE_CVP_MODE_CTRL, &val);
+>>   	val &= ~VSE_CVP_MODE_CTRL_NUMCLKS_MASK;
+>>   	val |= 1 << VSE_CVP_MODE_CTRL_NUMCLKS_OFF;
+>> -	pci_write_config_dword(conf->pci_dev, VSE_CVP_MODE_CTRL, val);
+>> +	altera_write_config_dword(conf, VSE_CVP_MODE_CTRL, val);
+>>   
+>>   	for (i = 0; i < CVP_DUMMY_WR; i++)
+>>   		conf->write_data(conf, 0); /* dummy data, could be any value */
+>> @@ -115,7 +129,7 @@ static int altera_cvp_wait_status(struct altera_cvp_conf *conf, u32 status_mask,
+>>   		retries++;
+>>   
+>>   	do {
+>> -		pci_read_config_dword(conf->pci_dev, VSE_CVP_STATUS, &val);
+>> +		altera_read_config_dword(conf, VSE_CVP_STATUS, &val);
+>>   		if ((val & status_mask) == status_val)
+>>   			return 0;
+>>   
+>> @@ -130,18 +144,17 @@ static int altera_cvp_teardown(struct fpga_manager *mgr,
+>>   			       struct fpga_image_info *info)
+>>   {
+>>   	struct altera_cvp_conf *conf = mgr->priv;
+>> -	struct pci_dev *pdev = conf->pci_dev;
+>>   	int ret;
+>>   	u32 val;
+>>   
+>>   	/* STEP 12 - reset START_XFER bit */
+>> -	pci_read_config_dword(pdev, VSE_CVP_PROG_CTRL, &val);
+>> +	altera_read_config_dword(conf, VSE_CVP_PROG_CTRL, &val);
+>>   	val &= ~VSE_CVP_PROG_CTRL_START_XFER;
+>> -	pci_write_config_dword(pdev, VSE_CVP_PROG_CTRL, val);
+>> +	altera_write_config_dword(conf, VSE_CVP_PROG_CTRL, val);
+>>   
+>>   	/* STEP 13 - reset CVP_CONFIG bit */
+>>   	val &= ~VSE_CVP_PROG_CTRL_CONFIG;
+>> -	pci_write_config_dword(pdev, VSE_CVP_PROG_CTRL, val);
+>> +	altera_write_config_dword(conf, VSE_CVP_PROG_CTRL, val);
+>>   
+>>   	/*
+>>   	 * STEP 14
+>> @@ -163,7 +176,6 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
+>>   				 const char *buf, size_t count)
+>>   {
+>>   	struct altera_cvp_conf *conf = mgr->priv;
+>> -	struct pci_dev *pdev = conf->pci_dev;
+>>   	u32 iflags, val;
+>>   	int ret;
+>>   
+>> @@ -183,7 +195,7 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
+>>   		conf->numclks = 1; /* for uncompressed and unencrypted images */
+>>   
+>>   	/* STEP 1 - read CVP status and check CVP_EN flag */
+>> -	pci_read_config_dword(pdev, VSE_CVP_STATUS, &val);
+>> +	altera_read_config_dword(conf, VSE_CVP_STATUS, &val);
+>>   	if (!(val & VSE_CVP_STATUS_CVP_EN)) {
+>>   		dev_err(&mgr->dev, "CVP mode off: 0x%04x\n", val);
+>>   		return -ENODEV;
+>> @@ -201,14 +213,14 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
+>>   	 * - set HIP_CLK_SEL and CVP_MODE (must be set in the order mentioned)
+>>   	 */
+>>   	/* switch from fabric to PMA clock */
+>> -	pci_read_config_dword(pdev, VSE_CVP_MODE_CTRL, &val);
+>> +	altera_read_config_dword(conf, VSE_CVP_MODE_CTRL, &val);
+>>   	val |= VSE_CVP_MODE_CTRL_HIP_CLK_SEL;
+>> -	pci_write_config_dword(pdev, VSE_CVP_MODE_CTRL, val);
+>> +	altera_write_config_dword(conf, VSE_CVP_MODE_CTRL, val);
+>>   
+>>   	/* set CVP mode */
+>> -	pci_read_config_dword(pdev, VSE_CVP_MODE_CTRL, &val);
+>> +	altera_read_config_dword(conf, VSE_CVP_MODE_CTRL, &val);
+>>   	val |= VSE_CVP_MODE_CTRL_CVP_MODE;
+>> -	pci_write_config_dword(pdev, VSE_CVP_MODE_CTRL, val);
+>> +	altera_write_config_dword(conf, VSE_CVP_MODE_CTRL, val);
+>>   
+>>   	/*
+>>   	 * STEP 3
+>> @@ -217,10 +229,10 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
+>>   	altera_cvp_dummy_write(conf);
+>>   
+>>   	/* STEP 4 - set CVP_CONFIG bit */
+>> -	pci_read_config_dword(pdev, VSE_CVP_PROG_CTRL, &val);
+>> +	altera_read_config_dword(conf, VSE_CVP_PROG_CTRL, &val);
+>>   	/* request control block to begin transfer using CVP */
+>>   	val |= VSE_CVP_PROG_CTRL_CONFIG;
+>> -	pci_write_config_dword(pdev, VSE_CVP_PROG_CTRL, val);
+>> +	altera_write_config_dword(conf, VSE_CVP_PROG_CTRL, val);
+>>   
+>>   	/* STEP 5 - poll CVP_CONFIG READY for 1 with 10us timeout */
+>>   	ret = altera_cvp_wait_status(conf, VSE_CVP_STATUS_CFG_RDY,
+>> @@ -237,15 +249,15 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
+>>   	altera_cvp_dummy_write(conf);
+>>   
+>>   	/* STEP 7 - set START_XFER */
+>> -	pci_read_config_dword(pdev, VSE_CVP_PROG_CTRL, &val);
+>> +	altera_read_config_dword(conf, VSE_CVP_PROG_CTRL, &val);
+>>   	val |= VSE_CVP_PROG_CTRL_START_XFER;
+>> -	pci_write_config_dword(pdev, VSE_CVP_PROG_CTRL, val);
+>> +	altera_write_config_dword(conf, VSE_CVP_PROG_CTRL, val);
+>>   
+>>   	/* STEP 8 - start transfer (set CVP_NUMCLKS for bitstream) */
+>> -	pci_read_config_dword(pdev, VSE_CVP_MODE_CTRL, &val);
+>> +	altera_read_config_dword(conf, VSE_CVP_MODE_CTRL, &val);
+>>   	val &= ~VSE_CVP_MODE_CTRL_NUMCLKS_MASK;
+>>   	val |= conf->numclks << VSE_CVP_MODE_CTRL_NUMCLKS_OFF;
+>> -	pci_write_config_dword(pdev, VSE_CVP_MODE_CTRL, val);
+>> +	altera_write_config_dword(conf, VSE_CVP_MODE_CTRL, val);
+>>   
+>>   	return 0;
+>>   }
+>> @@ -256,7 +268,7 @@ static inline int altera_cvp_chk_error(struct fpga_manager *mgr, size_t bytes)
+>>   	u32 val;
+>>   
+>>   	/* STEP 10 (optional) - check CVP_CONFIG_ERROR flag */
+>> -	pci_read_config_dword(conf->pci_dev, VSE_CVP_STATUS, &val);
+>> +	altera_read_config_dword(conf, VSE_CVP_STATUS, &val);
+>>   	if (val & VSE_CVP_STATUS_CFG_ERR) {
+>>   		dev_err(&mgr->dev, "CVP_CONFIG_ERROR after %zu bytes!\n",
+>>   			bytes);
+>> @@ -315,7 +327,6 @@ static int altera_cvp_write_complete(struct fpga_manager *mgr,
+>>   				     struct fpga_image_info *info)
+>>   {
+>>   	struct altera_cvp_conf *conf = mgr->priv;
+>> -	struct pci_dev *pdev = conf->pci_dev;
+>>   	int ret;
+>>   	u32 mask;
+>>   	u32 val;
+>> @@ -325,17 +336,17 @@ static int altera_cvp_write_complete(struct fpga_manager *mgr,
+>>   		return ret;
+>>   
+>>   	/* STEP 16 - check CVP_CONFIG_ERROR_LATCHED bit */
+>> -	pci_read_config_dword(pdev, VSE_UNCOR_ERR_STATUS, &val);
+>> +	altera_read_config_dword(conf, VSE_UNCOR_ERR_STATUS, &val);
+>>   	if (val & VSE_UNCOR_ERR_CVP_CFG_ERR) {
+>>   		dev_err(&mgr->dev, "detected CVP_CONFIG_ERROR_LATCHED!\n");
+>>   		return -EPROTO;
+>>   	}
+>>   
+>>   	/* STEP 17 - reset CVP_MODE and HIP_CLK_SEL bit */
+>> -	pci_read_config_dword(pdev, VSE_CVP_MODE_CTRL, &val);
+>> +	altera_read_config_dword(conf, VSE_CVP_MODE_CTRL, &val);
+>>   	val &= ~VSE_CVP_MODE_CTRL_HIP_CLK_SEL;
+>>   	val &= ~VSE_CVP_MODE_CTRL_CVP_MODE;
+>> -	pci_write_config_dword(pdev, VSE_CVP_MODE_CTRL, val);
+>> +	altera_write_config_dword(conf, VSE_CVP_MODE_CTRL, val);
+>>   
+>>   	/* STEP 18 - poll PLD_CLK_IN_USE and USER_MODE bits */
+>>   	mask = VSE_CVP_STATUS_PLD_CLK_IN_USE | VSE_CVP_STATUS_USERMODE;
+>> @@ -396,20 +407,27 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+>>   	struct fpga_manager *mgr;
+>>   	u16 cmd, val;
+>>   	u32 regval;
+>> -	int ret;
+>> +	int ret, offset;
 > 
-> Having looked at the code, I get why this is happening, but I'm not sure
-> if a random user will. It's not an issue per se, but it's just a bit
-> weird.
+> Reverse tree, please:
+>    	struct fpga_manager *mgr;
+>   +	int ret, offset;
+>    	u16 cmd, val;
+>    	u32 regval;
+>   -	int ret;
+> 
+OK. I'll make the change. I'll also move regval above the u16 line.
 
-Yes, that's what we get if we need to use a "two decimal digit
-precision percentage" to represent a 1024 range in kernel space.
+>> +
+>> +	/* Discover the Vendor Specific Offset for this device */
+>> +	offset = pci_find_next_ext_capability(pdev, 0, PCI_EXT_CAP_ID_VNDR);
+>> +	if (!offset) {
+>> +		dev_err(&pdev->dev, "No Vendor Specific Offset.\n");
+>> +		return -ENODEV;
+>> +	}
+>>   
+>>   	/*
+>>   	 * First check if this is the expected FPGA device. PCI config
+>>   	 * space access works without enabling the PCI device, memory
+>>   	 * space access is enabled further down.
+>>   	 */
+>> -	pci_read_config_word(pdev, VSE_PCIE_EXT_CAP_ID, &val);
+>> +	pci_read_config_word(pdev, offset + VSE_PCIE_EXT_CAP_ID, &val);
+>>   	if (val != VSE_PCIE_EXT_CAP_ID_VAL) {
+>>   		dev_err(&pdev->dev, "Wrong EXT_CAP_ID value 0x%x\n", val);
+>>   		return -ENODEV;
+>>   	}
+>>   
+>> -	pci_read_config_dword(pdev, VSE_CVP_STATUS, &regval);
+>> +	pci_read_config_dword(pdev, offset + VSE_CVP_STATUS, &regval);
+>>   	if (!(regval & VSE_CVP_STATUS_CVP_EN)) {
+>>   		dev_err(&pdev->dev,
+>>   			"CVP is disabled for this device: CVP_STATUS Reg 0x%x\n",
+>> @@ -421,6 +439,9 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+>>   	if (!conf)
+>>   		return -ENOMEM;
+>>   
+>> +	conf->vsec_offset = offset;
+> 
+> If you'd swap the order you could use your new helper earlier, right?
+> not sure if that saves you some code. Your call.
+> 
+Yes. However, I figured it was cleaner to perform the 2 extra checks 
+before commiting to the allocation of the altera_cvp_conf struct.
 
-I don't think the "percent <=> utilization" conversion code can be
-made more robust. The only possible alternative I see to get back
-exactly what we write in, is to store the actual request in kernel
-space, alongside its conversion to the SCHED_CAPACITY_SCALE required by the
-actual scheduler code.
+If you would prefer the move, I can do that in the next version.
 
-Something along these lines (on top of what we have in this series):
+Thanks for reviewing!
 
----8<---
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index ddc5fcd4b9cf..82b28cfa5c3f 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7148,40 +7148,35 @@ static void cpu_util_update_eff(struct cgroup_subsys_state *css)
- 	}
- }
+Thor
 
--static inline int uclamp_scale_from_percent(char *buf, u64 *value)
-+static inline int uclamp_scale_from_percent(char *buf, s64 *percent, u64 *scale)
- {
--	*value = SCHED_CAPACITY_SCALE;
-+	*scale = SCHED_CAPACITY_SCALE;
-
- 	buf = strim(buf);
- 	if (strncmp("max", buf, 4)) {
--		s64 percent;
- 		int ret;
-
--		ret = cgroup_parse_float(buf, 2, &percent);
-+		ret = cgroup_parse_float(buf, 2, percent);
- 		if (ret)
- 			return ret;
-
--		percent <<= SCHED_CAPACITY_SHIFT;
--		*value = DIV_ROUND_CLOSEST_ULL(percent, 10000);
-+		*scale = *percent << SCHED_CAPACITY_SHIFT;
-+		*scale = DIV_ROUND_CLOSEST_ULL(*scale, 10000);
- 	}
-
- 	return 0;
- }
-
--static inline u64 uclamp_percent_from_scale(u64 value)
--{
--	return DIV_ROUND_CLOSEST_ULL(value * 10000, SCHED_CAPACITY_SCALE);
--}
--
- static ssize_t cpu_uclamp_min_write(struct kernfs_open_file *of,
- 				    char *buf, size_t nbytes,
- 				    loff_t off)
- {
- 	struct task_group *tg;
- 	u64 min_value;
-+	s64 percent;
- 	int ret;
-
--	ret = uclamp_scale_from_percent(buf, &min_value);
-+	ret = uclamp_scale_from_percent(buf, &percent, &min_value);
- 	if (ret)
- 		return ret;
- 	if (min_value > SCHED_CAPACITY_SCALE)
-@@ -7197,6 +7192,9 @@ static ssize_t cpu_uclamp_min_write(struct kernfs_open_file *of,
- 	/* Update effective clamps to track the most restrictive value */
- 	cpu_util_update_eff(of_css(of));
-
-+	/* Keep track of the actual requested value */
-+	tg->uclamp_pct[UCLAMP_MIN] = percent;
-+
- 	rcu_read_unlock();
- 	mutex_unlock(&uclamp_mutex);
-
-@@ -7209,9 +7207,10 @@ static ssize_t cpu_uclamp_max_write(struct kernfs_open_file *of,
- {
- 	struct task_group *tg;
- 	u64 max_value;
-+	s64 percent;
- 	int ret;
-
--	ret = uclamp_scale_from_percent(buf, &max_value);
-+	ret = uclamp_scale_from_percent(buf, &percent, &max_value);
- 	if (ret)
- 		return ret;
- 	if (max_value > SCHED_CAPACITY_SCALE)
-@@ -7227,6 +7226,9 @@ static ssize_t cpu_uclamp_max_write(struct kernfs_open_file *of,
- 	/* Update effective clamps to track the most restrictive value */
- 	cpu_util_update_eff(of_css(of));
-
-+	/* Keep track of the actual requested value */
-+	tg->uclamp_pct[UCLAMP_MAX] = percent;
-+
- 	rcu_read_unlock();
- 	mutex_unlock(&uclamp_mutex);
-
-@@ -7251,7 +7253,7 @@ static inline void cpu_uclamp_print(struct seq_file *sf,
- 		return;
- 	}
-
--	percent = uclamp_percent_from_scale(util_clamp);
-+	percent = tg->uclamp_pct[clamp_id];
- 	percent = div_u64_rem(percent, 100, &rem);
- 	seq_printf(sf, "%llu.%u\n", percent, rem);
- }
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 0e37f4a4e536..4f9b0c660310 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -395,6 +395,8 @@ struct task_group {
- 	struct cfs_bandwidth	cfs_bandwidth;
-
- #ifdef CONFIG_UCLAMP_TASK_GROUP
-+	/* The two decimal precision [%] value requested from user-space */
-+	unsigned int		uclamp_pct[UCLAMP_CNT];
- 	/* Clamp values requested for a task group */
- 	struct uclamp_se	uclamp_req[UCLAMP_CNT];
- 	/* Effective clamp values used for a task group */
----8<---
-
-> I guess one way to fix this would be to revert back to having a
-> 1024-scale for the cgroup interface too ... Though I understand Tejun
-> wanted % for consistency with other things.
-
-Yes that would be another option, which will also keep aligned the per-task
-and system-wide APIs with the CGroups one. Although, AFAIU, having two
-different APIs is not considered a major issue.
-
-> So, I'm not sure if this is still up for discussion, but in any case I
-> wanted to say I support your original idea of using a 1024-scale for the
-> cgroups interface, since that would solve the 'issue' above and keeps
-> things consistent with the per-task API too.
-
-
-Right, I'm personally more leaning toward either going back to use
-SCHED_CAPACITY_SCALE or the add the small change I suggested above.
-
-Tejun, Peter: any preference? Alternative suggestions?
-
+>> +	dev_dbg(&pdev->dev, "Vendor Specific Data Offset at 0x%x\n", offset);
+>> +
+>>   	/*
+>>   	 * Enable memory BAR access. We cannot use pci_enable_device() here
+>>   	 * because it will make the driver unusable with FPGA devices that
+>> -- 
+>> 2.7.4
+>>
+> 
 > Thanks,
-> Quentin
+> Moritz
+> 
 
-Cheers,
-Patrick
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
