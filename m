@@ -2,100 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E4EC69EB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 00:06:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BEB169EB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 00:06:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732973AbfGOWEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 18:04:15 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:4949 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730647AbfGOWEN (ORCPT
+        id S1732801AbfGOWFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 18:05:42 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:17492 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731717AbfGOWFl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 18:04:13 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d2cf85a0000>; Mon, 15 Jul 2019 15:04:10 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 15 Jul 2019 15:04:12 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 15 Jul 2019 15:04:12 -0700
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 15 Jul
- 2019 22:04:11 +0000
-Subject: Re: [PATCH] staging: kpc2000: Convert put_page() to put_user_page*()
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Matt Sickler <Matt.Sickler@daktronics.com>,
-        Bharath Vedartham <linux.bhar@gmail.com>,
-        "ira.weiny@intel.com" <ira.weiny@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "jglisse@redhat.com" <jglisse@redhat.com>
-CC:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190715195248.GA22495@bharath12345-Inspiron-5559>
- <2604fcd1-4829-d77e-9f7c-d4b731782ff9@nvidia.com>
- <SN6PR02MB4016687B605E3D97D699956EEECF0@SN6PR02MB4016.namprd02.prod.outlook.com>
- <82441723-f30e-5811-ab1c-dd9a4993d7df@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <2278975b-6ea5-5417-eb0c-9d7debdf68ce@nvidia.com>
-Date:   Mon, 15 Jul 2019 15:04:11 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Mon, 15 Jul 2019 18:05:41 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6FLwjbc073885
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 18:05:40 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2trxmdfxbb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 18:05:40 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <gor@linux.ibm.com>;
+        Mon, 15 Jul 2019 23:05:38 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 15 Jul 2019 23:05:34 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6FM5XAa48103650
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 15 Jul 2019 22:05:33 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1BAE142045;
+        Mon, 15 Jul 2019 22:05:33 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5B3034204C;
+        Mon, 15 Jul 2019 22:05:32 +0000 (GMT)
+Received: from localhost (unknown [9.145.71.68])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 15 Jul 2019 22:05:32 +0000 (GMT)
+Date:   Tue, 16 Jul 2019 00:05:30 +0200
+From:   Vasily Gorbik <gor@linux.ibm.com>
+To:     Petr Tesarik <PTesarik@suse.com>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philipp Rudo <prudo@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        Raymund Will <rw@suse.com>
+Subject: Re: [PATCH 2/2] s390: add Linux banner to the compressed image
+References: <cover.1562950641.git.ptesarik@suse.com>
+ <aa477dd145aa2beb37fe813619b0723744a22a0a.1562950641.git.ptesarik@suse.com>
+ <your-ad-here.call-01563114933-ext-9422@work.hours>
+ <20190714175041.194c98be@ezekiel.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <82441723-f30e-5811-ab1c-dd9a4993d7df@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1563228250; bh=7F+lrioE5/qbngjXwfnCWvzn3KWHU4WQV3R2Uk1MWm8=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=THHxjtsgf8LosY3HKog1RQ/BDV+9F/bTT64YX2I6T2AHWxoBAi0RLmklmhwM3ewuk
-         OX2zlNOoGNrmox7hKvIBOIFmnJslo5CUp7RmxvNgFJCavNuCywtZwx9qel9OqBItAE
-         P+rc1zZKXVbY8PZlPHkgV6xctZUI4ye2lqS+p5KgZRSDRw5AD1lZR4UfhS+ZKvl/jS
-         hMQKOx3zzmXt5XuNUXh7mBFZcc4Z8kxcr7xPK49Hx+ate4QIV3mr/eky3l1SzDrtKS
-         KSOMqk9cAXNlVUBhj/Q6LAOAOQVrgKk0xs5pROzdtxNCjzIBEvMLG7MeGOuyRaGQVd
-         RMPff+4MqyInQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190714175041.194c98be@ezekiel.suse.cz>
+X-TM-AS-GCONF: 00
+x-cbid: 19071522-0008-0000-0000-000002FD7B28
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19071522-0009-0000-0000-0000226AEED9
+Message-Id: <your-ad-here.call-01563228330-ext-8076@work.hours>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-15_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907150246
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/15/19 3:01 PM, John Hubbard wrote:
-> On 7/15/19 2:47 PM, Matt Sickler wrote:
-...
-> I agree: the PageReserved check looks unnecessary here, from my outside-the-kpc_2000-team
-> perspective, anyway. Assuming that your analysis above is correct, you could collapse that
-> whole think into just:
+On Sun, Jul 14, 2019 at 03:52:52PM +0000, Petr Tesarik wrote:
+> On Sun, 14 Jul 2019 16:35:33 +0200
+> Vasily Gorbik <gor@linux.ibm.com> wrote:
 > 
-> @@ -211,17 +209,8 @@ void  transfer_complete_cb(struct aio_cb_data *acd, size_t xfr_count, u32 flags)
->         BUG_ON(acd->ldev == NULL);
->         BUG_ON(acd->ldev->pldev == NULL);
->  
-> -       for (i = 0 ; i < acd->page_count ; i++) {
-> -               if (!PageReserved(acd->user_pages[i])) {
-> -                       set_page_dirty(acd->user_pages[i]);
-> -               }
-> -       }
-> -
->         dma_unmap_sg(&acd->ldev->pldev->dev, acd->sgt.sgl, acd->sgt.nents, acd->ldev->dir);
-> -
-> -       for (i = 0 ; i < acd->page_count ; i++) {
-> -               put_page(acd->user_pages[i]);
-> -       }
-> +       put_user_pages_dirty(&acd->user_pages[i], acd->page_count);
+> > On Fri, Jul 12, 2019 at 07:21:01PM +0200, Petr Tesarik wrote:
+> > > Various tools determine the kernel version from a given binary by
+> > > scanning for the Linux banner string. This does not work if the
+> > > banner string is compressed, but we can link it once more into the
+> > > uncompressed portion of bzImage.
+> 
+> > But even before discussing solutions I would like to understand the
+> > problem first. Which specific tools are you referring to? What are they
+> > good for? And how do they get the kernel version from other architectures
+> > compressed images?
+> 
+> The tool I'm aware of is called get_kernel_version. It's built as part
+> of openSUSE aaa_base and is used at install time. I'm not quite sure
+> how it is used, but I have added Raymund Will to Cc; he can provide
+> more information. There's also an open bug for it:
+> 
+>   https://bugzilla.opensuse.org/show_bug.cgi?id=1139939
 
-Ahem, I typed too quickly. :) Please make that:
+Oh, I see, found it, thanks. Very interesting tool.
+https://github.com/openSUSE/aaa_base/blob/master/get_kernel_version.c
 
-    put_user_pages_dirty(acd->user_pages, acd->page_count);
+And the only usage of this tool I found is to get the kernel version of
+/boot/image (on s390) to run depmod during
+yast-installation/src/clients/network_finish.rb
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+I also see that queries to rpm are already done from
+yast-yast2/library/system/src/modules/Kernel.rb
+Wouldn't it be more reliable (and portable) to just get the kernel
+version from rpm metadata? Without using unreliable tools? Or find some
+other solution, since this is the only use case for the tool?
+$ rpm -qf --qf '%{VERSION}-%{RELEASE}.%{ARCH}\n' /boot/vmlinuz-5.1.17-300.fc30.x86_64
+5.1.17-300.fc30.x86_64
+[it looks like openSUSE kernel rpms don't have metadata to reconstruct
+full kernel version currently, but that could be improved?]
+
+Anyhow, I'm not opposed to an idea to make it possible to detect the
+kernel version from bzImage. But it should be reliable. So, see the
+follow on patch I'm sending.
 
