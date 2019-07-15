@@ -2,150 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BE3269C85
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:17:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA14D69C8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 22:20:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731484AbfGOUR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 16:17:26 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:39584 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729844AbfGOURZ (ORCPT
+        id S1732196AbfGOUTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 16:19:52 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45012 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729844AbfGOUTu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 16:17:25 -0400
-Received: by mail-oi1-f196.google.com with SMTP id m202so13719643oig.6
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 13:17:25 -0700 (PDT)
+        Mon, 15 Jul 2019 16:19:50 -0400
+Received: by mail-pg1-f194.google.com with SMTP id i18so8241636pgl.11;
+        Mon, 15 Jul 2019 13:19:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XyAbd1BySBBCgH8Ay3NolC8f63BojC2gvrmUxKLo0R0=;
-        b=c+cgEQh8jwM3YFAX0xOAib02DehoaJUvmYAHOQnQ6wVRWMla8ygCLoLaFlpk6W+Hix
-         UFJC9YA0ujjg8pyEwqzJujHrmhpSfr2Wy0bX4/N/DBo6ATdVB9XkMtdXCbfyos98Qqpe
-         C5S/PKMwaUInixcBHib3fysQeefvf/3OXFaUOMz4JFWc+or5Kp7rD2+xX7nEm8L26J50
-         XkIkWCqYWfwGfY3HmxcQ0FquKMwrvAOxlmNgthExgivKB77ybsd7ZE8UNRSCpTwrnNlS
-         r7IUAh9xzliUzuvune7USKc5BlKWFNGNwadDB3fjkz0QRyvCbElim38sMgI+pSH5wm8L
-         LO6A==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VwVZhf3FGp8Bt78SUPmSIUX1Y2n1U1qykgwrt3l8ads=;
+        b=Pn4hZfwTFRycrCV2z94gxgkFSz5XkJ6yPfiYtZLkTN2uCO3RIeZCZytqJ7Rpr3rKTI
+         r04HdhXREE6pMFFoKTTFieTDZ2xw2ybalxCez+307rae/7FgDJY6V6RntseHSwBYa2xm
+         uc+j13X3Jrm6NOciiM2Ngj2gm7+rM07qs/UYa9Wt5v36VyVdwUTcyxAOFkImu91TyDQe
+         nVueeO+zFNFgndd0T1x2gCs9PoXdVaumpiMd44y7h1h3vP4AP9tzUI1+G4wS4095UnU5
+         /poLqIajRGwKJh98dNZLjmFAceoaLUL/LitB1VJ3gdH51W3zn7XK3wi/1dVxtNjgEf1Q
+         VFew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XyAbd1BySBBCgH8Ay3NolC8f63BojC2gvrmUxKLo0R0=;
-        b=QvNyVmEhmQEBizFGUSb05axZorsfKKnDvI3fOByWMsELfMtWLjDkeuC+pVITmFGyWB
-         3lD1oFK5moF5M3a95/j/b1U1SjhCATiWvkUrfZhYVk8pNUASoJqHajgQ0dZDg5mUixOf
-         1mDePvDXkMt13qlbkt7DhKd/+4Lx9jWLSKu7Wbq7rRikejf7rLcPuEQGoXsAasrQg2xi
-         Xh2XLk6eRlGXPS//hfzzNYYiOHscV/gdQulWRBw+WzdrERhVkwydCEvGCfwjeQTT/403
-         Kf1Oz6s8qJ7Cd5sd1KK7ZH4811Q1wpWQyRRfIz079+XcEbUUDQZU+COb2Aeofnpnv2Wd
-         PVZA==
-X-Gm-Message-State: APjAAAWbBAgedUSh4Wot3r2rFQcQh1WcO/qq4iWus+CwJLFmBoLMxidb
-        jODtFQ6Vg3ps8IHFveX6k0wF1NejGczC/Vt5Dbw=
-X-Google-Smtp-Source: APXvYqxOc28x9Lo0Bz4UjDEyqQTrxzWFN/t3iDIB4AuDixWXTXJwH/cpztZ2BeWV5la6UoGmdS8L9+nonwBOCBFcBys=
-X-Received: by 2002:aca:fc8e:: with SMTP id a136mr14867080oii.104.1563221844553;
- Mon, 15 Jul 2019 13:17:24 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VwVZhf3FGp8Bt78SUPmSIUX1Y2n1U1qykgwrt3l8ads=;
+        b=igeoiEnmWsDgPKcY4irSG6mu7gpeKqPNKZJZsk4GnnK/XUbHtNhjREnCV3TeSwVjGk
+         ZwxUlWg+qpGEjno0egXQoHHWBiE20PlHFw8/w8qFidUsY4aoeiI7X36QDYYbGzu0QkxY
+         2HH8PlYp18Aad2Vd3jnxbwuU44dgfyxu349nBmARjCkrgyneJ11uIcx2Nmntr7ORVqkZ
+         fhlPj+xUyKRDgb6ZXrsv4BmFeK2bu+qt7sisUqo/CFU7V7p4oRD6jtWfNFG5vg6g0xwj
+         zoxcYRjiEkwWxOGGxSdVswYaAmk5fRnOgvgoGiH/QSAM0lzjdYzf2oi1CO1zKji4Pbuh
+         KjMA==
+X-Gm-Message-State: APjAAAXziITsPC8nmOVeEBb9bOI0DRuTOfvSIIuJyPB2WhRwCU2FJHWV
+        KuibqWdT2BuV2nab8qSuwtTje6gA
+X-Google-Smtp-Source: APXvYqzR6mDqGeTrVGHyF4Lakpv8XKdXKMk51OnIdeO23HuZFz9V6ShQvEQ5DUhEIa2ZMK6m4FdYGg==
+X-Received: by 2002:a17:90a:b00b:: with SMTP id x11mr31496957pjq.120.1563221989251;
+        Mon, 15 Jul 2019 13:19:49 -0700 (PDT)
+Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
+        by smtp.gmail.com with ESMTPSA id h1sm22730534pfg.55.2019.07.15.13.19.48
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 15 Jul 2019 13:19:48 -0700 (PDT)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-crypto@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Chris Spencer <christopher.spencer@sea.co.uk>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 00/14] crypto: caam - Add i.MX8MQ support
+Date:   Mon, 15 Jul 2019 13:19:28 -0700
+Message-Id: <20190715201942.17309-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <7db7da45b435f8477f25e66f292631ff766a844c.1560969363.git.thomas.lendacky@amd.com>
- <20190713145909.30749-1-mike@fireburn.co.uk> <alpine.DEB.2.21.1907141215350.1669@nanos.tec.linutronix.de>
- <CAHbf0-EPfgyKinFuOP7AtgTJWVSVqPmWwMSxzaH=Xg-xUUVWCA@mail.gmail.com>
- <alpine.DEB.2.21.1907151011590.1669@nanos.tec.linutronix.de>
- <CAHbf0-F9yUDJ=DKug+MZqsjW+zPgwWaLUC40BLOsr5+t4kYOLQ@mail.gmail.com>
- <alpine.DEB.2.21.1907151118570.1669@nanos.tec.linutronix.de> <alpine.DEB.2.21.1907151140080.1669@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1907151140080.1669@nanos.tec.linutronix.de>
-From:   "H.J. Lu" <hjl.tools@gmail.com>
-Date:   Mon, 15 Jul 2019 13:16:48 -0700
-Message-ID: <CAMe9rOqMqkQ0LNpm25yE_Yt0FKp05WmHOrwc0aRDb53miFKM+w@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] x86/mm: Identify the end of the kernel area to be reserved
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Mike Lothian <mike@fireburn.co.uk>,
-        Tom Lendacky <thomas.lendacky@amd.com>, bhe@redhat.com,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, lijiang@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 3:35 AM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> On Mon, 15 Jul 2019, Thomas Gleixner wrote:
-> > On Mon, 15 Jul 2019, Mike Lothian wrote:
-> > > That build failure is from the current tip of Linus's tree
-> > > If the fix is in, then it hasn't fixed the issue
-> >
-> > The reverted commit caused a build fail with gold as well. Let me stare at
-> > your issue.
->
-> So with gold the build fails in the reloc tool complaining about that
-> relocation:
->
->   Invalid absolute R_X86_64_32S relocation: __end_of_kernel_reserve
->
-> The commit does:
->
-> +extern char __end_of_kernel_reserve[];
-> +
->
->  void __init setup_arch(char **cmdline_p)
->  {
-> +       /*
-> +        * Reserve the memory occupied by the kernel between _text and
-> +        * __end_of_kernel_reserve symbols. Any kernel sections after the
-> +        * __end_of_kernel_reserve symbol must be explicitly reserved with a
-> +        * separate memblock_reserve() or they will be discarded.
-> +        */
->         memblock_reserve(__pa_symbol(_text),
-> -                        (unsigned long)__bss_stop - (unsigned long)_text);
-> +                        (unsigned long)__end_of_kernel_reserve - (unsigned long)_text);
->
-> So it replaces __bss_stop with __end_of_kernel_reserve here.
->
-> --- a/arch/x86/kernel/vmlinux.lds.S
-> +++ b/arch/x86/kernel/vmlinux.lds.S
-> @@ -368,6 +368,14 @@ SECTIONS
->                 __bss_stop = .;
->         }
->
-> +       /*
-> +        * The memory occupied from _text to here, __end_of_kernel_reserve, is
-> +        * automatically reserved in setup_arch(). Anything after here must be
-> +        * explicitly reserved using memblock_reserve() or it will be discarded
-> +        * and treated as available memory.
-> +        */
-> +       __end_of_kernel_reserve = .;
->
-> And from the linker script __bss_stop and __end_of_kernel_reserve are
-> exactly the same. From System.map (of a successful ld build):
->
-> ffffffff82c00000 B __brk_base
-> ffffffff82c00000 B __bss_stop
-> ffffffff82c00000 B __end_bss_decrypted
-> ffffffff82c00000 B __end_of_kernel_reserve
-> ffffffff82c00000 B __start_bss_decrypted
-> ffffffff82c00000 B __start_bss_decrypted_unused
->
-> So how on earth can gold fail with that __end_of_kernel_reserve change?
->
-> For some unknown reason it turns that relocation into an absolute
-> one. That's clearly a gold bug^Wfeature and TBH, I'm more than concerned
-> about that kind of behaviour.
->
-> If we just revert that commit, then what do we achieve? We paper over the
-> underlying problem, which is not really helping anything.
->
-> Aside of that gold still fails to build the X32 VDSO and it does so for a
-> very long time....
->
-> Until we really understand what the problem is, this stays as is.
->
-> @H.J.: Any insight on that?
->
+Everyone:
 
-Since building a workable kernel for different kernel configurations isn't a
-requirement for gold, I don't recommend gold for kernel.
+Picking up where Chris left off (I chatted with him privately
+beforehead), this series adds support for i.MX8MQ to CAAM driver. Just
+like [v1], this series is i.MX8MQ only.
+
+Feedback is welcome!
+Thanks,
+Andrey Smirnov
+
+Changes since [v4]:
+
+  - Fixed missing sentinel element in "crypto: caam - simplfy clock
+    initialization"
+    
+  - Squashed all of the devers related patches into a single one and
+    converted IRQ allocation to use devres while at it
+
+  - Added "crypto: caam - request JR IRQ as the last step" as
+    discussed
+
+Changes since [v3]:
+
+  - Patchset changed to select DMA size at runtime in order to enable
+    support for both i.MX8MQ and Layerscape at the same time. I only
+    tested the patches on i.MX6,7 and 8MQ, since I don't have access
+    to any of the Layerscape HW. Any help in that regard would be
+    appareciated.
+
+  - Bulk clocks and their number are now stored as a part of struct
+    caam_drv_private to simplify allocation and cleanup code (no
+    special context needed)
+    
+  - Renamed 'soc_attr' -> 'imx_soc_match' for clarity
+
+Changes since [v2]:
+
+  - Dropped "crypto: caam - do not initialise clocks on the i.MX8" and
+    replaced it with "crypto: caam - simplfy clock initialization" and 
+    "crypto: caam - add clock entry for i.MX8MQ"
+
+
+Changes since [v1]
+
+  - Series reworked to continue using register based interface for
+    queueing RNG initialization job, dropping "crypto: caam - use job
+    ring for RNG instantiation instead of DECO"
+
+  - Added a patch to share DMA mask selection code
+
+  - Added missing Signed-off-by for authors of original NXP tree
+    commits that this sereis is based on
+
+[v4] lore.kernel.org/r/20190703081327.17505-1-andrew.smirnov@gmail.com
+[v3] lore.kernel.org/r/20190617160339.29179-1-andrew.smirnov@gmail.com
+[v2] lore.kernel.org/r/20190607200225.21419-1-andrew.smirnov@gmail.com
+[v1] https://patchwork.kernel.org/cover/10825625/
+
+Andrey Smirnov (14):
+  crypto: caam - move DMA mask selection into a function
+  crypto: caam - simplfy clock initialization
+  crypto: caam - convert caam_jr_init() to use devres
+  crypto: caam - request JR IRQ as the last step
+  crytpo: caam - make use of iowrite64*_hi_lo in wr_reg64
+  crypto: caam - use ioread64*_hi_lo in rd_reg64
+  crypto: caam - drop 64-bit only wr/rd_reg64()
+  crypto: caam - make CAAM_PTR_SZ dynamic
+  crypto: caam - move cpu_to_caam_dma() selection to runtime
+  crypto: caam - drop explicit usage of struct jr_outentry
+  crypto: caam - don't hardcode inpentry size
+  crypto: caam - force DMA address to 32-bit on 64-bit i.MX SoCs
+  crypto: caam - always select job ring via RSR on i.MX8MQ
+  crypto: caam - add clock entry for i.MX8MQ
+
+ drivers/crypto/caam/caamalg.c     |   2 +-
+ drivers/crypto/caam/caamhash.c    |   2 +-
+ drivers/crypto/caam/caampkc.c     |   8 +-
+ drivers/crypto/caam/caamrng.c     |   2 +-
+ drivers/crypto/caam/ctrl.c        | 225 ++++++++++++++----------------
+ drivers/crypto/caam/desc_constr.h |  20 ++-
+ drivers/crypto/caam/error.c       |   3 +
+ drivers/crypto/caam/intern.h      |  32 ++++-
+ drivers/crypto/caam/jr.c          |  95 ++++---------
+ drivers/crypto/caam/pdb.h         |  16 ++-
+ drivers/crypto/caam/pkc_desc.c    |   8 +-
+ drivers/crypto/caam/regs.h        | 139 ++++++++++++------
+ 12 files changed, 306 insertions(+), 246 deletions(-)
 
 -- 
-H.J.
+2.21.0
+
