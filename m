@@ -2,68 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0526E684D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 10:04:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AEAF684BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 10:01:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729418AbfGOIEE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 04:04:04 -0400
-Received: from mail133-22.atl131.mandrillapp.com ([198.2.133.22]:45299 "EHLO
-        mail133-22.atl131.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726948AbfGOIED (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 04:04:03 -0400
-X-Greylist: delayed 1802 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Jul 2019 04:04:02 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
- h=From:Subject:To:Cc:Message-Id:References:In-Reply-To:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
- bh=VSAtOYjdYu8frJkKtKcesmwi099NUTNw9EPSls9KEqE=;
- b=Qje8yuJEAOPMnooCIuzdlHgbQUXjOSAHS8foR5fAiNyk7VWw+/31NN+fCVLP0JQNrdvQibrYPP1m
-   8CSrODdkc2lyYFuqDW+aQUVZHoY2pVZNv0Fd+2YM1/9dqoVCSmky+LQI8aH7j80kxdi1I12uleoz
-   8c25ErP+0TqOJo6+dts=
-Received: from pmta02.mandrill.prod.atl01.rsglab.com (127.0.0.1) by mail133-22.atl131.mandrillapp.com id h5gpn41sar8a for <linux-kernel@vger.kernel.org>; Mon, 15 Jul 2019 07:34:00 +0000 (envelope-from <bounce-md_31050260.5d2c2c68.v1-4ccc0776e7e2486a9dc65af352f7e433@mandrillapp.com>)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
- i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1563176040; h=From : 
- Subject : To : Cc : Message-Id : References : In-Reply-To : Date : 
- MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
- Subject : Date : X-Mandrill-User : List-Unsubscribe; 
- bh=VSAtOYjdYu8frJkKtKcesmwi099NUTNw9EPSls9KEqE=; 
- b=MXbQgaMoFwCtCJFbT3o9tHW964D7Knmy+23oA8VGCv9hisOeiWcpONv8vpVGq8oFWVqGx9
- AS65MHygR/VLujAjU6q7n0Fio8e3F8h3/a03mtFe3L+mpxGSJ7lsqVG8ppOwbT6MIOyc7WaY
- /w7tRMQjsaUaQJs22RNWNlzCAZeOA=
-From:   Kirill Smelkov <kirr@nexedi.com>
-Subject: Re: [PULL] stream_open bits for Linux 5.3
-Received: from [87.98.221.171] by mandrillapp.com id 4ccc0776e7e2486a9dc65af352f7e433; Mon, 15 Jul 2019 07:34:00 +0000
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Julia Lawall <Julia.Lawall@lip6.fr>, Jan Blunck <jblunck@suse.de>,
-        Arnd Bergmann <arnd@arndb.de>, Jiri Kosina <jikos@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        <cocci@systeme.lip6.fr>, <linux-input@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <pr-tracker-bot@kernel.org>
-Message-Id: <20190715073353.GA3208@deco.navytux.spb.ru>
-References: <20190714141317.GA20277@deco.navytux.spb.ru> <156315060268.32091.6748401501797941411.pr-tracker-bot@kernel.org>
-In-Reply-To: <156315060268.32091.6748401501797941411.pr-tracker-bot@kernel.org>
-X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
-X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.4ccc0776e7e2486a9dc65af352f7e433
-X-Mandrill-User: md_31050260
-Date:   Mon, 15 Jul 2019 07:34:00 +0000
+        id S1729308AbfGOH7R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 03:59:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39580 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726170AbfGOH7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 03:59:17 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8893D3DD47;
+        Mon, 15 Jul 2019 07:59:16 +0000 (UTC)
+Received: from krava (unknown [10.40.205.8])
+        by smtp.corp.redhat.com (Postfix) with SMTP id D441E6090E;
+        Mon, 15 Jul 2019 07:59:13 +0000 (UTC)
+Date:   Mon, 15 Jul 2019 09:59:12 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Stephane Eranian <eranian@google.com>
+Cc:     Numfor Mbiziwo-Tiapo <nums@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Song Liu <songliubraving@fb.com>, mbd@fb.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ian Rogers <irogers@google.com>
+Subject: Re: [PATCH] Fix perf stat repeat segfault
+Message-ID: <20190715075912.GA2821@krava>
+References: <20190710204540.176495-1-nums@google.com>
+ <20190714204432.GA8120@krava>
+ <20190714205505.GB8120@krava>
+ <CABPqkBSq35HZVk2CNi8xy9j7eb3EWRXSdgPKd+fmv2XaKPjOqA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABPqkBSq35HZVk2CNi8xy9j7eb3EWRXSdgPKd+fmv2XaKPjOqA@mail.gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 15 Jul 2019 07:59:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 12:30:02AM +0000, pr-tracker-bot@kernel.org wrote:
-> The pull request you sent on Sun, 14 Jul 2019 14:13:45 +0000:
-> 
-> > https://lab.nexedi.com/kirr/linux.git stream_open-5.3
-> 
-> has been merged into torvalds/linux.git:
-> https://git.kernel.org/torvalds/c/fcd98147ac71f35b69e2f50b5fddc5524dd2dfa8
+On Sun, Jul 14, 2019 at 02:36:42PM -0700, Stephane Eranian wrote:
+> On Sun, Jul 14, 2019 at 1:55 PM Jiri Olsa <jolsa@redhat.com> wrote:
+> >
+> > On Sun, Jul 14, 2019 at 10:44:36PM +0200, Jiri Olsa wrote:
+> > > On Wed, Jul 10, 2019 at 01:45:40PM -0700, Numfor Mbiziwo-Tiapo wrote:
+> > > > When perf stat is called with event groups and the repeat option,
+> > > > a segfault occurs because the cpu ids are stored on each iteration
+> > > > of the repeat, when they should only be stored on the first iteration,
+> > > > which causes a buffer overflow.
+> > > >
+> > > > This can be replicated by running (from the tip directory):
+> > > >
+> > > > make -C tools/perf
+> > > >
+> > > > then running:
+> > > >
+> > > > tools/perf/perf stat -e '{cycles,instructions}' -r 10 ls
+> > > >
+> > > > Since run_idx keeps track of the current iteration of the repeat,
+> > > > only storing the cpu ids on the first iteration (when run_idx < 1)
+> > > > fixes this issue.
+> > > >
+> > > > Signed-off-by: Numfor Mbiziwo-Tiapo <nums@google.com>
+> > > > ---
+> > > >  tools/perf/builtin-stat.c | 7 ++++---
+> > > >  1 file changed, 4 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> > > > index 63a3afc7f32b..92d6694367e4 100644
+> > > > --- a/tools/perf/builtin-stat.c
+> > > > +++ b/tools/perf/builtin-stat.c
+> > > > @@ -378,9 +378,10 @@ static void workload_exec_failed_signal(int signo __maybe_unused, siginfo_t *inf
+> > > >     workload_exec_errno = info->si_value.sival_int;
+> > > >  }
+> > > >
+> > > > -static bool perf_evsel__should_store_id(struct perf_evsel *counter)
+> > > > +static bool perf_evsel__should_store_id(struct perf_evsel *counter, int run_idx)
+> > > >  {
+> > > > -   return STAT_RECORD || counter->attr.read_format & PERF_FORMAT_ID;
+> > > > +   return STAT_RECORD || counter->attr.read_format & PERF_FORMAT_ID
+> > > > +           && run_idx < 1;
+> > >
+> > > we create counters for every iteration, so this can't be
+> > > based on iteration
+> > >
+> > > I think that's just a workaround for memory corruption,
+> > > that's happening for repeating groupped events stats,
+> > > I'll check on this
+> >
+> > how about something like this? we did not cleanup
+> > ids on evlist close, so it kept on raising and
+> > causing corruption in next iterations
+> >
+> not sure, that would realloc on each iteration of the repeats.
 
-Thanks.
+well, we need new ids, because we create new events every iteration
+
+jirka
+
+> 
+> >
+> > jirka
+> >
+> >
+> > ---
+> > diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> > index ebb46da4dfe5..52459dd5ad0c 100644
+> > --- a/tools/perf/util/evsel.c
+> > +++ b/tools/perf/util/evsel.c
+> > @@ -1291,6 +1291,7 @@ static void perf_evsel__free_id(struct perf_evsel *evsel)
+> >         xyarray__delete(evsel->sample_id);
+> >         evsel->sample_id = NULL;
+> >         zfree(&evsel->id);
+> > +       evsel->ids = 0;
+> >  }
+> >
+> >  static void perf_evsel__free_config_terms(struct perf_evsel *evsel)
+> > @@ -2077,6 +2078,7 @@ void perf_evsel__close(struct perf_evsel *evsel)
+> >
+> >         perf_evsel__close_fd(evsel);
+> >         perf_evsel__free_fd(evsel);
+> > +       perf_evsel__free_id(evsel);
+> >  }
+> >
+> >  int perf_evsel__open_per_cpu(struct perf_evsel *evsel,
