@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E93D69177
+	by mail.lfdr.de (Postfix) with ESMTP id C89F869178
 	for <lists+linux-kernel@lfdr.de>; Mon, 15 Jul 2019 16:29:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390823AbfGOO3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 10:29:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40778 "EHLO mail.kernel.org"
+        id S2390955AbfGOO3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 10:29:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391562AbfGOO30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 10:29:26 -0400
+        id S1731218AbfGOO3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 10:29:32 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF07C2086C;
-        Mon, 15 Jul 2019 14:29:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F850216C4;
+        Mon, 15 Jul 2019 14:29:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563200965;
-        bh=Iq2MVgDBEOPDBq7cDTEbott7DsiTI6HNodn/CS9cxWE=;
+        s=default; t=1563200971;
+        bh=DreiOdjm8WobQPPBowLREl4dmfasObT6DeaO0QurAKU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Il0ZOHKjjubM5MsZ4eNiq1ye0gMdLEjT8ZEAOciujbIuLHb/cO/daho0nFnDOoR9N
-         YIbwO0UYcIOTyd//GkK4vVjyx75nyajuapQA82XKm0b+ePD1/MdFs8E3yV4l65WGlk
-         3iZtdrS10bJ9xqYUlMFXQ9LQ0fD6SSZsNDCwXnJA=
+        b=DM/VxyJZslaNb6+KIKXq3zR5LydyUSe2ovfZ+R/ukW2Eyo6ti5xPq+XCyjZihhAv4
+         xmgzN206+pSC1US7Rhe2linc1lbdNLOiXcP8WBsoeclg7sPMMutkdBVK9y4WjxnMqr
+         8Apt4OxMQvhHRrm5lUVrKvR36MclWx8rlsh0XZHg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kangjie Lu <kjlu@umn.edu>, Mukesh Ojha <mojha@codeaurora.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 012/105] media: vpss: fix a potential NULL pointer dereference
-Date:   Mon, 15 Jul 2019 10:27:06 -0400
-Message-Id: <20190715142839.9896-12-sashal@kernel.org>
+Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Joao Pinto <jpinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 014/105] net: stmmac: dwmac1000: Clear unused address entries
+Date:   Mon, 15 Jul 2019 10:27:08 -0400
+Message-Id: <20190715142839.9896-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190715142839.9896-1-sashal@kernel.org>
 References: <20190715142839.9896-1-sashal@kernel.org>
@@ -43,37 +47,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
 
-[ Upstream commit e08f0761234def47961d3252eac09ccedfe4c6a0 ]
+[ Upstream commit 9463c445590091202659cdfdd44b236acadfbd84 ]
 
-In case ioremap fails, the fix returns -ENOMEM to avoid NULL
-pointer dereference.
+In case we don't use a given address entry we need to clear it because
+it could contain previous values that are no longer valid.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Found out while running stmmac selftests.
+
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/davinci/vpss.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/media/platform/davinci/vpss.c b/drivers/media/platform/davinci/vpss.c
-index f2d27b932999..2ee4cd9e6d80 100644
---- a/drivers/media/platform/davinci/vpss.c
-+++ b/drivers/media/platform/davinci/vpss.c
-@@ -518,6 +518,11 @@ static int __init vpss_init(void)
- 		return -EBUSY;
- 
- 	oper_cfg.vpss_regs_base2 = ioremap(VPSS_CLK_CTRL, 4);
-+	if (unlikely(!oper_cfg.vpss_regs_base2)) {
-+		release_mem_region(VPSS_CLK_CTRL, 4);
-+		return -ENOMEM;
-+	}
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
+index 540d21786a43..08dd6a06ac58 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
+@@ -217,6 +217,12 @@ static void dwmac1000_set_filter(struct mac_device_info *hw,
+ 					    GMAC_ADDR_LOW(reg));
+ 			reg++;
+ 		}
 +
- 	writel(VPSS_CLK_CTRL_VENCCLKEN |
- 		     VPSS_CLK_CTRL_DACCLKEN, oper_cfg.vpss_regs_base2);
++		while (reg <= perfect_addr_number) {
++			writel(0, ioaddr + GMAC_ADDR_HIGH(reg));
++			writel(0, ioaddr + GMAC_ADDR_LOW(reg));
++			reg++;
++		}
+ 	}
  
+ #ifdef FRAME_FILTER_DEBUG
 -- 
 2.20.1
 
