@@ -2,339 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6524A6B216
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 00:48:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15C306B21D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 00:55:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389177AbfGPWqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 18:46:25 -0400
-Received: from mga12.intel.com ([192.55.52.136]:57961 "EHLO mga12.intel.com"
+        id S2388711AbfGPWzN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 18:55:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37280 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389090AbfGPWqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 18:46:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2019 15:46:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,271,1559545200"; 
-   d="scan'208";a="158276151"
-Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
-  by orsmga007.jf.intel.com with ESMTP; 16 Jul 2019 15:46:08 -0700
-From:   thor.thayer@linux.intel.com
-To:     mdf@kernel.org, richard.gong@linux.intel.com, agust@denx.de
-Cc:     linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thor Thayer <thor.thayer@linux.intel.com>
-Subject: [PATCHv2 3/3] fpga: altera-cvp: Add Stratix10 (V2) Support
-Date:   Tue, 16 Jul 2019 17:48:07 -0500
-Message-Id: <1563317287-18834-4-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1563317287-18834-1-git-send-email-thor.thayer@linux.intel.com>
-References: <1563317287-18834-1-git-send-email-thor.thayer@linux.intel.com>
+        id S1728414AbfGPWzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 18:55:13 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 508DB81F0E;
+        Tue, 16 Jul 2019 22:55:12 +0000 (UTC)
+Received: from torg (ovpn-122-28.rdu2.redhat.com [10.10.122.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 75942611DB;
+        Tue, 16 Jul 2019 22:55:11 +0000 (UTC)
+Date:   Tue, 16 Jul 2019 17:55:09 -0500
+From:   Clark Williams <williams@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        RT <linux-rt-users@vger.kernel.org>
+Subject: [PREEMPT_RT]  splat in v5.2-rt1:   r t_mutex_owner(lock) != current
+Message-ID: <20190716175509.17b03f1e@torg>
+Organization: Red Hat, Inc
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 16 Jul 2019 22:55:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+Saw this after applying my thermal lock to raw patch and the change in i915 for lockdep. The 
+splat occurred on boot when creating the kdump initramfs. System is an Intel NUC i7 with 32GB ram
+and 256GB SSD for rootfs. 
 
-Add Stratix10 specific functions that use a credit mechanism
-to throttle data to the CvP FIFOs. Add a private structure
-with function pointers for V1 vs V2 functions.
+The booting kernel has rt_mutex debugging turned on as well as lockdep and lockup configs. 
 
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
----
-v2 Remove inline function declaration
-   Reverse Christmas Tree format for local variables
-   Remove mask from credit calculation
-   Add commment for the delay(1) function in wait_for_credit()
----
- drivers/fpga/altera-cvp.c | 174 ++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 159 insertions(+), 15 deletions(-)
+Jul 16 14:41:48 theseus dracut[3082]: *** Creating initramfs image file '/boot/initramfs-5.2.0-rt1.fixes+kdump.img' done ***
+Jul 16 14:41:48 theseus kernel: ------------[ cut here ]------------
+Jul 16 14:41:48 theseus kernel: DEBUG_LOCKS_WARN_ON(rt_mutex_owner(lock) != current)
+Jul 16 14:41:48 theseus kernel: WARNING: CPU: 1 PID: 8349 at kernel/locking/rtmutex-debug.c:145 debug_rt_mutex_unlock+0x47/0x50
+Jul 16 14:41:48 theseus kernel: Modules linked in: rfcomm xt_CHECKSUM xt_MASQUERADE tun bridge stp llc fuse nf_conntrack_netbios_ns nf_conntrack_broadcast xt_CT ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat ip6table_nat ip6table_mangle ip6table_raw>
+Jul 16 14:41:48 theseus kernel:  snd_rawmidi snd_hda_core media snd_hwdep snd_seq btusb wmi_bmof snd_seq_device iwlwifi btrtl intel_wmi_thunderbolt btbcm snd_pcm iTCO_wdt btintel iTCO_vendor_support pcspkr bluetooth snd_timer rtsx_pci_ms cfg80211 snd memstick ecdh_generic i2c_i801 soundcore ec>
+Jul 16 14:41:48 theseus kernel: CPU: 1 PID: 8349 Comm: fsfreeze Not tainted 5.2.0-rt1.fixes+ #16
+Jul 16 14:41:48 theseus kernel: Hardware name: Intel Corporation NUC7i7BNH/NUC7i7BNB, BIOS BNKBL357.86A.0054.2017.1025.1822 10/25/2017
+Jul 16 14:41:48 theseus kernel: RIP: 0010:debug_rt_mutex_unlock+0x47/0x50
+Jul 16 14:41:48 theseus kernel: Code: c2 75 01 c3 e8 6a c1 3e 00 85 c0 74 f6 8b 05 30 3c 66 01 85 c0 75 ec 48 c7 c6 a0 b3 2e b1 48 c7 c7 48 bf 2c b1 e8 42 7d f8 ff <0f> 0b c3 66 0f 1f 44 00 00 c3 66 66 2e 0f 1f 84 00 00 00 00 00 0f
+Jul 16 14:41:48 theseus kernel: RSP: 0018:ffffc03c5b607dd0 EFLAGS: 00010086
+Jul 16 14:41:48 theseus kernel: RAX: 0000000000000000 RBX: ffff9a7d6deb0d98 RCX: 0000000000000000
+Jul 16 14:41:48 theseus kernel: RDX: ffffffffb167ce50 RSI: 00000000ffffffff RDI: 00000000ffffffff
+Jul 16 14:41:48 theseus kernel: RBP: ffff9a7d6deb0ab0 R08: 0000000000000000 R09: ffffffffb167cd20
+Jul 16 14:41:48 theseus kernel: R10: ffffc03c5b607d10 R11: ffffffffb2aa38eb R12: 0000000000000246
+Jul 16 14:41:48 theseus kernel: R13: ffffc03c5b607e00 R14: ffffc03c5b607e10 R15: ffffffffb034c53f
+Jul 16 14:41:48 theseus kernel: FS:  00007fd6e2f0e540(0000) GS:ffff9a7d9e600000(0000) knlGS:0000000000000000
+Jul 16 14:41:48 theseus kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Jul 16 14:41:48 theseus kernel: CR2: 0000563557bc0178 CR3: 0000000792188006 CR4: 00000000003606e0
+Jul 16 14:41:48 theseus kernel: Call Trace:
+Jul 16 14:41:48 theseus kernel:  rt_mutex_slowunlock+0x25/0x80
+Jul 16 14:41:48 theseus kernel:  __rt_mutex_unlock+0x45/0x80
+Jul 16 14:41:48 theseus kernel:  percpu_up_write+0x1f/0x30
+Jul 16 14:41:48 theseus kernel:  thaw_super_locked+0xde/0x110
+Jul 16 14:41:48 theseus kernel:  do_vfs_ioctl+0x5de/0x720
+Jul 16 14:41:48 theseus kernel:  ksys_ioctl+0x5e/0x90
+Jul 16 14:41:48 theseus kernel:  __x64_sys_ioctl+0x16/0x20
+Jul 16 14:41:48 theseus kernel:  do_syscall_64+0x66/0xb0
+Jul 16 14:41:48 theseus kernel:  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Jul 16 14:41:48 theseus kernel: RIP: 0033:0x7fd6e2e391fb
+Jul 16 14:41:48 theseus kernel: Code: 0f 1e fa 48 8b 05 8d dc 0c 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 5d dc 0c 00 f7 d8 64 89 01 48
+Jul 16 14:41:48 theseus kernel: RSP: 002b:00007ffe61e2f498 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+Jul 16 14:41:48 theseus kernel: RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fd6e2e391fb
+Jul 16 14:41:48 theseus kernel: RDX: 0000000000000000 RSI: 00000000c0045878 RDI: 0000000000000003
+Jul 16 14:41:48 theseus kernel: RBP: 0000000000000003 R08: 0000000000000001 R09: 0000000000000000
+Jul 16 14:41:48 theseus kernel: R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
+Jul 16 14:41:48 theseus kernel: R13: 00007ffe61e309fa R14: 0000000000000000 R15: 0000000000000000
+Jul 16 14:41:48 theseus kernel: irq event stamp: 6254
+Jul 16 14:41:48 theseus kernel: hardirqs last  enabled at (6253): [<ffffffffb0ac8590>] _raw_spin_unlock_irqrestore+0x60/0x90
+Jul 16 14:41:48 theseus kernel: hardirqs last disabled at (6254): [<ffffffffb0ac8713>] _raw_spin_lock_irqsave+0x23/0x90
+Jul 16 14:41:48 theseus kernel: softirqs last  enabled at (3330): [<ffffffffb003e4a8>] fpu__clear+0x88/0x200
+Jul 16 14:41:48 theseus kernel: softirqs last disabled at (3327): [<ffffffffb003e46b>] fpu__clear+0x4b/0x200
+Jul 16 14:41:48 theseus kernel: ---[ end trace 0000000000000002 ]---
+Jul 16 14:41:49 theseus kdumpctl[1500]: kexec: loaded kdump kernel
+Jul 16 14:41:49 theseus kdumpctl[1500]: Starting kdump: [OK]
 
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 37419d6b9915..b4aa973ea046 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -43,16 +43,32 @@
- #define VSE_CVP_PROG_CTRL		0x2c	/* 32bit */
- #define VSE_CVP_PROG_CTRL_CONFIG	BIT(0)
- #define VSE_CVP_PROG_CTRL_START_XFER	BIT(1)
-+#define VSE_CVP_PROG_CTRL_MASK		GENMASK(1, 0)
- 
- #define VSE_UNCOR_ERR_STATUS		0x34	/* 32bit */
- #define VSE_UNCOR_ERR_CVP_CFG_ERR	BIT(5)	/* CVP_CONFIG_ERROR_LATCHED */
- 
-+/* V2 Defines */
-+#define VSE_CVP_TX_CREDITS		0x49	/* 8bit */
-+
-+#define CREDIT_TIMEOUT_US		20000
-+#define V2_POLL_TIMEOUT_US		1000000
-+#define V2_USER_TIMEOUT_US		500000
-+
-+#define V1_POLL_TIMEOUT_US		10
-+
- #define DRV_NAME		"altera-cvp"
- #define ALTERA_CVP_MGR_NAME	"Altera CvP FPGA Manager"
- 
-+/* Write block sizes */
-+#define ALTERA_CVP_V1_SIZE	4
-+#define ALTERA_CVP_V2_SIZE	4096
-+
- /* Optional CvP config error status check for debugging */
- static bool altera_cvp_chkcfg;
- 
-+struct cvp_priv;
-+
- struct altera_cvp_conf {
- 	struct fpga_manager	*mgr;
- 	struct pci_dev		*pci_dev;
-@@ -60,9 +76,26 @@ struct altera_cvp_conf {
- 	void			(*write_data)(struct altera_cvp_conf *, u32);
- 	char			mgr_name[64];
- 	u8			numclks;
-+	u8			current_credit_byte;
- 	u32			vsec_offset;
-+	const struct cvp_priv	*priv;
-+};
-+
-+struct cvp_priv {
-+	void	(*switch_clk)(struct altera_cvp_conf *conf);
-+	int	(*clear_state)(struct altera_cvp_conf *conf);
-+	int	(*wait_credit)(struct fpga_manager *mgr, u32 blocks);
-+	int	block_size;
-+	int	poll_time_us;
-+	int	user_time_us;
- };
- 
-+static void altera_read_config_byte(struct altera_cvp_conf *conf,
-+				    int where, u8 *val)
-+{
-+	pci_read_config_byte(conf->pci_dev, conf->vsec_offset + where, val);
-+}
-+
- static void altera_read_config_dword(struct altera_cvp_conf *conf,
- 				     int where, u32 *val)
- {
-@@ -155,6 +188,58 @@ static int altera_cvp_chk_error(struct fpga_manager *mgr, size_t bytes)
- 	return 0;
- }
- 
-+/*
-+ * CvP Version2 Functions
-+ * Recent Intel FPGAs use a credit mechanism to throttle incoming
-+ * bitstreams and a different method of clearing the state.
-+ */
-+
-+static int altera_cvp_v2_clear_state(struct altera_cvp_conf *conf)
-+{
-+	u32 val;
-+
-+	/* Clear the START_XFER and CVP_CONFIG bits */
-+	altera_read_config_dword(conf, VSE_CVP_PROG_CTRL, &val);
-+	val &= ~VSE_CVP_PROG_CTRL_MASK;
-+	altera_write_config_dword(conf, VSE_CVP_PROG_CTRL, val);
-+
-+	return altera_cvp_wait_status(conf, VSE_CVP_STATUS_CFG_RDY, 0,
-+				      conf->priv->poll_time_us);
-+}
-+
-+static int altera_cvp_v2_wait_for_credit(struct fpga_manager *mgr,
-+					 u32 blocks)
-+{
-+	struct altera_cvp_conf *conf = mgr->priv;
-+	u8 val, delta_credit;
-+	u32 count = 0;
-+	int ret;
-+
-+	do {
-+		altera_read_config_byte(conf, VSE_CVP_TX_CREDITS, &val);
-+		delta_credit = val - conf->current_credit_byte;
-+
-+		ret = altera_cvp_chk_error(mgr, blocks * ALTERA_CVP_V2_SIZE);
-+		if (ret) {
-+			dev_err(&conf->pci_dev->dev,
-+				"CE Bit error credits host[0x%x]:dev[0x%x]\n",
-+				conf->current_credit_byte, val);
-+			return -EAGAIN;
-+		}
-+
-+		if (count++ >= CREDIT_TIMEOUT_US) {
-+			dev_err(&conf->pci_dev->dev,
-+				"Timeout waiting for credit\n");
-+			return -ETIMEDOUT;
-+		}
-+
-+		/* Limit the traffic & ensure a timeout in usec */
-+		udelay(1);
-+	} while (!delta_credit);
-+
-+	return 0;
-+}
-+
- static int altera_cvp_send_block(struct altera_cvp_conf *conf,
- 				 const u32 *data, size_t len)
- {
-@@ -196,10 +281,12 @@ static int altera_cvp_teardown(struct fpga_manager *mgr,
- 	 * - set CVP_NUMCLKS to 1 and then issue CVP_DUMMY_WR dummy
- 	 *   writes to the HIP
- 	 */
--	altera_cvp_dummy_write(conf); /* from CVP clock to internal clock */
-+	if (conf->priv->switch_clk)
-+		conf->priv->switch_clk(conf);
- 
- 	/* STEP 15 - poll CVP_CONFIG_READY bit for 0 with 10us timeout */
--	ret = altera_cvp_wait_status(conf, VSE_CVP_STATUS_CFG_RDY, 0, 10);
-+	ret = altera_cvp_wait_status(conf, VSE_CVP_STATUS_CFG_RDY, 0,
-+				     conf->priv->poll_time_us);
- 	if (ret)
- 		dev_err(&mgr->dev, "CFG_RDY == 0 timeout\n");
- 
-@@ -261,7 +348,16 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
- 	 * STEP 3
- 	 * - set CVP_NUMCLKS to 1 and issue CVP_DUMMY_WR dummy writes to the HIP
- 	 */
--	altera_cvp_dummy_write(conf);
-+	if (conf->priv->switch_clk)
-+		conf->priv->switch_clk(conf);
-+
-+	if (conf->priv->clear_state) {
-+		ret = conf->priv->clear_state(conf);
-+		if (ret) {
-+			dev_err(&mgr->dev, "Problem clearing out state\n");
-+			return ret;
-+		}
-+	}
- 
- 	/* STEP 4 - set CVP_CONFIG bit */
- 	altera_read_config_dword(conf, VSE_CVP_PROG_CTRL, &val);
-@@ -269,9 +365,10 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
- 	val |= VSE_CVP_PROG_CTRL_CONFIG;
- 	altera_write_config_dword(conf, VSE_CVP_PROG_CTRL, val);
- 
--	/* STEP 5 - poll CVP_CONFIG READY for 1 with 10us timeout */
-+	/* STEP 5 - poll CVP_CONFIG READY for 1 with timeout */
- 	ret = altera_cvp_wait_status(conf, VSE_CVP_STATUS_CFG_RDY,
--				     VSE_CVP_STATUS_CFG_RDY, 10);
-+				     VSE_CVP_STATUS_CFG_RDY,
-+				     conf->priv->poll_time_us);
- 	if (ret) {
- 		dev_warn(&mgr->dev, "CFG_RDY == 1 timeout\n");
- 		return ret;
-@@ -281,7 +378,16 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
- 	 * STEP 6
- 	 * - set CVP_NUMCLKS to 1 and issue CVP_DUMMY_WR dummy writes to the HIP
- 	 */
--	altera_cvp_dummy_write(conf);
-+	if (conf->priv->switch_clk)
-+		conf->priv->switch_clk(conf);
-+
-+	if (altera_cvp_chkcfg) {
-+		ret = altera_cvp_chk_error(mgr, 0);
-+		if (ret) {
-+			dev_warn(&mgr->dev, "CFG_RDY == 1 timeout\n");
-+			return ret;
-+		}
-+	}
- 
- 	/* STEP 7 - set START_XFER */
- 	altera_read_config_dword(conf, VSE_CVP_PROG_CTRL, &val);
-@@ -289,11 +395,12 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
- 	altera_write_config_dword(conf, VSE_CVP_PROG_CTRL, val);
- 
- 	/* STEP 8 - start transfer (set CVP_NUMCLKS for bitstream) */
--	altera_read_config_dword(conf, VSE_CVP_MODE_CTRL, &val);
--	val &= ~VSE_CVP_MODE_CTRL_NUMCLKS_MASK;
--	val |= conf->numclks << VSE_CVP_MODE_CTRL_NUMCLKS_OFF;
--	altera_write_config_dword(conf, VSE_CVP_MODE_CTRL, val);
--
-+	if (conf->priv->switch_clk) {
-+		altera_read_config_dword(conf, VSE_CVP_MODE_CTRL, &val);
-+		val &= ~VSE_CVP_MODE_CTRL_NUMCLKS_MASK;
-+		val |= conf->numclks << VSE_CVP_MODE_CTRL_NUMCLKS_OFF;
-+		altera_write_config_dword(conf, VSE_CVP_MODE_CTRL, val);
-+	}
- 	return 0;
- }
- 
-@@ -311,15 +418,26 @@ static int altera_cvp_write(struct fpga_manager *mgr, const char *buf,
- 	done = 0;
- 
- 	while (remaining) {
--		if (remaining >= sizeof(u32))
--			len = sizeof(u32);
-+		/* Use credit throttling if available */
-+		if (conf->priv->wait_credit) {
-+			status = conf->priv->wait_credit(mgr, done);
-+			if (status) {
-+				dev_err(&conf->pci_dev->dev,
-+					"Wait Credit ERR: 0x%x\n", status);
-+				return status;
-+			}
-+		}
-+
-+		if (remaining >= conf->priv->block_size)
-+			len = conf->priv->block_size;
- 		else
- 			len = remaining;
- 
- 		altera_cvp_send_block(conf, data, len);
--		data++;
-+		data += len / sizeof(u32);
- 		done += len;
- 		remaining -= len;
-+		conf->current_credit_byte++;
- 
- 		/*
- 		 * STEP 10 (optional) and STEP 11
-@@ -369,7 +487,8 @@ static int altera_cvp_write_complete(struct fpga_manager *mgr,
- 
- 	/* STEP 18 - poll PLD_CLK_IN_USE and USER_MODE bits */
- 	mask = VSE_CVP_STATUS_PLD_CLK_IN_USE | VSE_CVP_STATUS_USERMODE;
--	ret = altera_cvp_wait_status(conf, mask, mask, TIMEOUT_US);
-+	ret = altera_cvp_wait_status(conf, mask, mask,
-+				     conf->priv->user_time_us);
- 	if (ret)
- 		dev_err(&mgr->dev, "PLD_CLK_IN_USE|USERMODE timeout\n");
- 
-@@ -383,6 +502,24 @@ static const struct fpga_manager_ops altera_cvp_ops = {
- 	.write_complete	= altera_cvp_write_complete,
- };
- 
-+static const struct cvp_priv cvp_priv_v1 = {
-+	.switch_clk	= altera_cvp_dummy_write,
-+	.clear_state	= NULL,
-+	.wait_credit	= NULL,
-+	.block_size	= ALTERA_CVP_V1_SIZE,
-+	.poll_time_us	= V1_POLL_TIMEOUT_US,
-+	.user_time_us	= TIMEOUT_US,
-+};
-+
-+static const struct cvp_priv cvp_priv_v2 = {
-+	.switch_clk	= NULL,
-+	.clear_state	= altera_cvp_v2_clear_state,
-+	.wait_credit	= altera_cvp_v2_wait_for_credit,
-+	.block_size	= ALTERA_CVP_V2_SIZE,
-+	.poll_time_us	= V2_POLL_TIMEOUT_US,
-+	.user_time_us	= V2_USER_TIMEOUT_US,
-+};
-+
- static ssize_t chkcfg_show(struct device_driver *dev, char *buf)
- {
- 	return snprintf(buf, 3, "%d\n", altera_cvp_chkcfg);
-@@ -485,6 +622,13 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- 	conf->pci_dev = pdev;
- 	conf->write_data = altera_cvp_write_data_iomem;
- 
-+	if (conf->vsec_offset == 0x200)
-+		conf->priv = &cvp_priv_v1;
-+	else
-+		conf->priv = &cvp_priv_v2;
-+
-+	conf->current_credit_byte = 0;
-+
- 	conf->map = pci_iomap(pdev, CVP_BAR, 0);
- 	if (!conf->map) {
- 		dev_warn(&pdev->dev, "Mapping CVP BAR failed\n");
 -- 
-2.7.4
-
+The United States Coast Guard
+Ruining Natural Selection since 1790
