@@ -2,97 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0CF76A503
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 11:35:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B9F36A4F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 11:33:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732389AbfGPJei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 05:34:38 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2231 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726536AbfGPJei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 05:34:38 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D5EECC6AC6050D760B87;
-        Tue, 16 Jul 2019 17:34:36 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 16 Jul 2019 17:34:26 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <devel@driverdev.osuosl.org>
-CC:     Chao Yu <yuchao0@huawei.com>, <linux-erofs@lists.ozlabs.org>,
-        <linux-kernel@vger.kernel.org>, <gaoxiang25@huawei.com>,
-        <chao@kernel.org>
-Subject: [PATCH v3] staging: erofs: support bmap
-Date:   Tue, 16 Jul 2019 17:32:56 +0800
-Message-ID: <20190716093256.108791-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        id S1731463AbfGPJdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 05:33:04 -0400
+Received: from verein.lst.de ([213.95.11.211]:40185 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726997AbfGPJdE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 05:33:04 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 3360468B05; Tue, 16 Jul 2019 11:33:02 +0200 (CEST)
+Date:   Tue, 16 Jul 2019 11:33:01 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Jens Axboe <axboe@fb.com>,
+        Keith Busch <kbusch@kernel.org>, Paul Pawlowski <paul@mrarm.io>
+Subject: Re: [PATCH 2/3] nvme: Retrieve the required IO queue entry size
+ from the controller
+Message-ID: <20190716093301.GA32562@lst.de>
+References: <20190716004649.17799-1-benh@kernel.crashing.org> <20190716004649.17799-2-benh@kernel.crashing.org> <20190716060430.GB29414@lst.de> <ad18ff8d004225e102076f8e1fb617916617f337.camel@kernel.crashing.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ad18ff8d004225e102076f8e1fb617916617f337.camel@kernel.crashing.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add erofs_bmap() to support FIBMAP ioctl on flatmode inode.
+On Tue, Jul 16, 2019 at 04:21:14PM +1000, Benjamin Herrenschmidt wrote:
+> > Actually, this doesn't work on a "real" nvme controller, to change CC
+> > values the controller needs to be disabled.
+> 
+> Not really. The specs says that MPS, AMD and CSS need to be set before
+> enabling, but IOCQES and IOSQES can be modified later as long as there
+> is no IO queue created yet.
 
-Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v3:
-- use erofs_blk_t instead of unsigned int.
-- simply judgment condition.
- drivers/staging/erofs/data.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+I guess that is true based on the spec.
 
-diff --git a/drivers/staging/erofs/data.c b/drivers/staging/erofs/data.c
-index cc31c3e5984c..f73e4720cd3e 100644
---- a/drivers/staging/erofs/data.c
-+++ b/drivers/staging/erofs/data.c
-@@ -392,9 +392,42 @@ static int erofs_raw_access_readpages(struct file *filp,
- 	return 0;
- }
- 
-+static int erofs_get_block(struct inode *inode, sector_t iblock,
-+			   struct buffer_head *bh, int create)
-+{
-+	struct erofs_map_blocks map = {
-+		.m_la = iblock << 9,
-+	};
-+	int err;
-+
-+	err = erofs_map_blocks(inode, &map, EROFS_GET_BLOCKS_RAW);
-+	if (err)
-+		return err;
-+
-+	if (map.m_flags & EROFS_MAP_MAPPED)
-+		bh->b_blocknr = erofs_blknr(map.m_pa);
-+
-+	return err;
-+}
-+
-+static sector_t erofs_bmap(struct address_space *mapping, sector_t block)
-+{
-+	struct inode *inode = mapping->host;
-+
-+	if (is_inode_flat_inline(inode)) {
-+		erofs_blk_t blks = i_size_read(inode) >> LOG_BLOCK_SIZE;
-+
-+		if (block >> LOG_SECTORS_PER_BLOCK >= blks)
-+			return 0;
-+	}
-+
-+	return generic_block_bmap(mapping, block, erofs_get_block);
-+}
-+
- /* for uncompressed (aligned) files and raw access for other files */
- const struct address_space_operations erofs_raw_access_aops = {
- 	.readpage = erofs_raw_access_readpage,
- 	.readpages = erofs_raw_access_readpages,
-+	.bmap = erofs_bmap,
- };
- 
--- 
-2.18.0.rc1
+> This is necessary otherwise there's a chicken and egg problem. You need
+> the admin queue to do the controller id in order to get the sizes and
+> for that you need the controller to be enabled.
+> 
+> Note: This is not a huge issue anyway since I only update the register
+> if the required size isn't 6 which is probably never going to be the
+> case on non-Apple HW.
 
+Yes, but the whole point of making you go down the route is so that
+we can share the code with eventual real nvme controllers that can
+support a larger SQE size.
+
+> >   So back to the version
+> > you circulated to me in private mail that just sets q->sqes and has a
+> > comment that this is magic for The Apple controller.  If/when we get
+> > standardized large SQE support we'll need to discover that earlier or
+> > do a disable/enable dance.  Sorry for misleading you down this road and
+> > creating the extra work.  
+> 
+> I think it's still ok, let me know...
+
+Ok, let's go with this series then unless the other maintainers have
+objections.
+
+I'm still not sure if we want to queue this up for 5.3 (new hardware
+enablement) or wait a bit, though.
