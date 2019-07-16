@@ -2,249 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC57A6AB46
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 17:02:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 232FB6AB55
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 17:05:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388049AbfGPPCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 11:02:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55612 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388009AbfGPPCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 11:02:42 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA08D20693;
-        Tue, 16 Jul 2019 15:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563289361;
-        bh=UKqLUL0iFkw5NKdAQPkNvKrr+HrW0INlyWXqa+xDVL4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=138gRvkM/+FBSswU+kekPztTXCd/UiX6GMW0JsTOutz3ThFhjT3gupFb3hoVICc8M
-         yHHInoWbr0YHO6PKLhEdn1LmUFFitj5uT56YQMnjfkwVAwNahnQRWF1kjz8Xp7cph4
-         ESWHJT021rXQEgH5jvZ5G5UKYrw9AaasnQmIA1wo=
-Date:   Wed, 17 Jul 2019 00:02:35 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Rob Herring <robh+dt@kernel.org>, Tim Bird <Tim.Bird@sony.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [RFC PATCH v2 00/15] tracing: of: Boot time tracing using
- devicetree
-Message-Id: <20190717000235.9ab100f0dac4af797a0fb76a@kernel.org>
-In-Reply-To: <488a65e6-1d80-0acb-5092-80c18b7ff447@gmail.com>
-References: <156316746861.23477.5815110570539190650.stgit@devnote2>
-        <488a65e6-1d80-0acb-5092-80c18b7ff447@gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2387999AbfGPPE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 11:04:59 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:41359 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728513AbfGPPE7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 11:04:59 -0400
+Received: by mail-ed1-f68.google.com with SMTP id p15so20521097eds.8;
+        Tue, 16 Jul 2019 08:04:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rLKY158y7o9w0mksAJ+3djh07wVS+19os39rfVhg5lg=;
+        b=J/O/qFcuyIvs6g/T4tYkcPanE4wXRHutSu7Cz2V3e0tuGetbFqGJgzdVQciBkvoCjD
+         W9si1HT8ydCMwlpeql2StLdH1Bbsl6B4u6aguIf27YBBOCuhWP79vGaxUS/BimHgardh
+         TJjXzRt8tdlynwNo5tmpRpstDTlg7f5UyA77zOxIzNWFE7eIp31gwHu8wNh2lK2RfHzF
+         RXh1kShvcwBpOGKjXoma6xoGUDqiXN92GfLcAjcTCa/1rQaRUWCdmrBYR9F5qbXG1i+/
+         4nP84yFQEBCzOyp4OV8l1bRRHB39HoGXNxEaYriBBYnyjZQJmVUGHUyz4n9wREGOdlMy
+         J9pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rLKY158y7o9w0mksAJ+3djh07wVS+19os39rfVhg5lg=;
+        b=YlOuDDf3b+wZfu4CFgfWMTTxRbEgGPwjY/7yBBTwjlpKsutmM+PgH/ytmApM2YPlb2
+         KsGK52ccOIpRWGn3PiPAiHSj/7ZbwnvWkcN3VY3HQcWn+ULBbyIIH42vpu3o+SOZpq6e
+         riEpDJW3gAAUwiZ/6me9Jt4TzqXsCH1g9VdKDHIpsChSTuw/3dR7ccMWN9wXiKpGLuVE
+         69yTfIJxCGIWETaQM5dtAtbVwfX4ko201ta6GUWQ+z2tYs3aQ/P1M+FyP+gAODmqxcCk
+         ACc11l8pvDTS6lO0fPkdkn+sAwq/smxEUSpRzg6eT2/Zn4lbeylEK/JOj6WTLUUGDOh9
+         Gx0Q==
+X-Gm-Message-State: APjAAAXpIxZkUMHlX8BzyU8MYJljwpAXFvHuIY0D0ygsmaeHB8QvI66W
+        Ws4gRLwXCpRxpMqiXa807o01gFoJI/UGBRTTHsc=
+X-Google-Smtp-Source: APXvYqz/bxWcm/h7JRe26DoT0RVddByJPiMQ5+4n35GneGsifipYzAOgkR7VE2fbyqNRGuZASkHFaUgQ+vauKMSvNwA=
+X-Received: by 2002:aa7:d30b:: with SMTP id p11mr30420633edq.23.1563289497311;
+ Tue, 16 Jul 2019 08:04:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <1563288840-1913-1-git-send-email-cai@lca.pw>
+In-Reply-To: <1563288840-1913-1-git-send-email-cai@lca.pw>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Tue, 16 Jul 2019 17:04:19 +0200
+Message-ID: <CAF=yD-KW-XnDvD0i8VbzrkLGNWEY6cPoaEcHy40hbghGXTo+kA@mail.gmail.com>
+Subject: Re: [PATCH] skbuff: fix compilation warnings in skb_dump()
+To:     Qian Cai <cai@lca.pw>
+Cc:     David Miller <davem@davemloft.net>,
+        Willem de Bruijn <willemb@google.com>,
+        clang-built-linux@googlegroups.com,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Frank,
+On Tue, Jul 16, 2019 at 4:56 PM Qian Cai <cai@lca.pw> wrote:
+>
+> The commit 6413139dfc64 ("skbuff: increase verbosity when dumping skb
+> data") introduced a few compilation warnings.
+>
+> net/core/skbuff.c:766:32: warning: format specifies type 'unsigned
+> short' but the argument has type 'unsigned int' [-Wformat]
+>                        level, sk->sk_family, sk->sk_type,
+> sk->sk_protocol);
+>                                              ^~~~~~~~~~~
+> net/core/skbuff.c:766:45: warning: format specifies type 'unsigned
+> short' but the argument has type 'unsigned int' [-Wformat]
+>                        level, sk->sk_family, sk->sk_type,
+> sk->sk_protocol);
+> ^~~~~~~~~~~~~~~
 
-On Mon, 15 Jul 2019 07:21:27 -0700
-Frank Rowand <frowand.list@gmail.com> wrote:
+Ah, I looked at sk_family (skc_family), which is type unsigned short.
 
-> Hi Masami,
-> 
-> After receiving this email, I replied to one email on the v1 thread,
-> so there will be a little bit of overlap in the ordering of the two
-> threads.  Feel free to reply to my comments in the v1 thread in this
-> thread instead.
+But sk_type and sk_protocol are defined as
 
-OK, thanks for the notice :)
+ unsigned int            sk_padding : 1,
+                                sk_kern_sock : 1,
+                                sk_no_check_tx : 1,
+                                sk_no_check_rx : 1,
+                                sk_userlocks : 4,
+                                sk_protocol  : 8,
+                                sk_type      : 16;
 
-> 
-> More comments below.
-> 
-> On 7/14/19 10:11 PM, Masami Hiramatsu wrote:> Hello,
-[...]
-> > 
-> > Discussion
-> > =====
-> > On the previous thread, we discussed that the this devicetree usage
-> > itself was acceptable or not. Fortunately, I had a chance to discuss
-> > it in a F2F meeting with Frank and Tim last week.
-> 
-> Thanks for writing up some of what we discussed.
-> 
-> Let me add a problem statement and use case.  I'll probably get it at least
-> a little bit wrong, so please update as needed.
-> 
-> (1) You feel the ftrace kernel command line syntax is not sufficiently user
->     friendly.
-> 
-> (2) The kernel command line is too small to contain the full set of desired
->     ftrace commands and options.
-> 
-> (3) There is a desire to change the boot time ftrace commands and options
->     without re-compiling or re-linking the Linux kernel.
+So %u is indeed needed instead of %hu.
 
-Thank you for covering these items :) Yes, these are what I'm thinking.
+> Fix them by using the proper types, and also fix some checkpatch
+> warnings by using pr_info().
+>
+> WARNING: printk() should include KERN_<LEVEL> facility level
+> +               printk("%ssk family=%hu type=%u proto=%u\n",
 
-> > 
-> > I think the advantages of using devicetree are,
-> > 
-> > - reuse devicetree's structured syntax for complicated tracefs settings
-> > - reuse OF-APIs in linux kernel to accept and parse it
-> > - reuse dtc complier to compile it and validate syntax. (with yaml schema,
-> >   we can enhance it)
-> > - reuse current bootloader (and qemu) to load it
-> 
-> Devicetree is not a universal data structure and communication channel.
-> 
-> Devicetree is a description of the hardware and also conveys bootloader
-> specific information that is need by the kernel to boot.
+Converting printk to pr_info lowers all levels to KERN_INFO.
 
-Yes, I see. But I think there is a room to contain a small communication
-channel under /chosen, from bootloader.
+skb_dump takes an explicit parameter level to be able to log at
+KERN_ERR or KERN_WARNING
 
-> 
-> > And we talked about some other ideas to avoid using devicetree.
-> > 
-> > - expand kernel command line (ascii command strings)
-> > - expand kernel command line with base64 encoded comressed ascii command 
-> >    strings
-> 
-> Base64 being one of possibly many ways to convert arbitrary binary data to
-> ascii safe data _if_ you want to transfer the ftrace options and commands
-> in a binary format.
+I would like to avoid those checkpatch warnings, but this is not the
+right approach.
 
-I actually don't want it :( but if the ascii commands can be compressed
-(maybe not so efficient), it is a possible way. 
+> Fixes: 6413139dfc64 ("skbuff: increase verbosity when dumping skb data")
 
-> > - load (compressed) ascii command strings to somewhere on memory and pass
-> >    the address via kernel cmdline
-> 
-> Similar to the way initrd is handled, if I understand correctly.  (I am not
-> up to date on how initrd location is passed to the kernel for a non-devicetree
-> kernel.)
-
-Initrd is not passed via kernel cmdline, it is loaded and passed via architecture
-dependent way. As far as I know, x86 and arm (without DT) uses own data structure,
-arm64 (and arm with DT) uses devicetree /chosen node.
-
-> Compressed or not compressed would be an ftrace design choice.
-> 
-> 
-> > - load (compressed) ascii command strings to somewhere on memory and pass
-> >    the address via /chosen node (as same as initrd)
-> 
-> Compressed or not compressed would be an ftrace design choice.
-> 
-
-Yes, it is optional.
-
-> 
-> > - load binary C data and point it from kernel cmdline
-> > - load binary C data and point it from /chosen node (as same as initrd)
-> > - load binary C data as a section of kernel image
-> 
-> For the three options above:
-> 
-> Binary data if ftrace prefers structured data.
-> A list of strings if ftrace wants to use the existing kernel command line
-> syntax.
-
-Yes, any data which doesn't need complex parser is OK.
-
-> 
-> For the third of the above three options, the linker would provide the start
-> and end address of the ftrace options and commands section.
-
-But that means we need to fill the data structure when we build the kernel,
-isn't it?
-
-> > The first 2 ideas expand the kernel's cmdline to pass some "magic" command
-> > to setup ftrace. In both case, the problems are the maximal size of cmdline
-> > and the issues related to the complexity of commands.
-> 
-> Not a "magic" command.  Either continue using the existing ftrace syntax or
-> add something like: ftrace_cmd="whatever format ftrace desires".
-> 
-> Why can the maximum size of the cmdline not be increased?
-
-We can, but we also has to change bootloaders.
-
-> > My example showed that the ftrace settings becomes long even if making one
-> > histogram, which can be longer than 256 bytes. The long and complex data
-> > can easily lead mis-typing, but cmdline has no syntax validator, it just
-> > ignores the mis-typed commands.
-> 
-> Hand typing a kernel command line is already not a fun exercise, even
-> before adding ftrace commands.  If you are hand typing kernel command
-> lines then I suggest you improve your tools (eg bootloader or whatever
-> is not allowing you to edit and store command lines).
-
-Indeed, if we extend kernel cmdline to support it, such tool we have to
-introduce (like dtc)
-
-> > (Of course even with the devicetree, it must be smaller than 2 pages)
-> > 
-> > Next 2 ideas are similar, but load the commands on some other memory area
-> > and pass only address via cmdline. This solves the size limitation issue,
-> > but still no syntax validation. Of course we can make a new structured
-> > syntax validator similar to (or just forked from) dt-validate.
-> > The problem (or disadvantage) of these (and following) ideas, is to change
-> > the kernel and boot loaders to load another binary blobs on memory.
-> > 
-> > Maybe if we introduce a generic structured kernel boot arguments, which is
-> > a kind of /chosen node of devicetree. (But if there is already such hook,
-> > why we make another one...?)
-> 
-> I got lost in the next sentence, so for my benefit:
-> GSKBA == generic structured kernel boot arguments
-
-Oh, sorry, that's my bad.
-
-> > Also, this "GSKBA" may introduce a parser and access APIs which will be
-> > very similar to OF-APIs. This also seems redundant to me.
->  
-> 
-> > So the last 3 ideas will avoid introducing new parser and APIs, we just
-> > compile the data as C data and point it from cmdline or somewhere else.
-> 
-> Or if in a kernel data section then the linker can provide the begin and
-> end address of the blob.  This is already implemented for some other data
-> structures.
-
-Yeah, but does that mean we have to rebuild kernel image?
-In some cases, (e.g. debugging distro kernel) we can not modify kernel image
-also, I don't like to replace entire image. I would like to choose a tracing
-command file from boot loader.
-
-> > With these ideas, we still need to expand boot loaders to support
-> > loading new binary blobs. (And the last one requires to add elf header
-> > parser/modifier to boot loader too)
-> 
-> Why would the boot loader need to access the elf header?  The linker
-> can provide the location of the new kernel data section via kernel
-> variables.
-
-Oh, I thought you meant that the new data was added boot time by
-boot loader.
-
-> >>From the above reasons, I think using devicetree's /chosen node is 
-> > the least intrusive way to introduce this boot-time tracing feature.
-> 
-> This is still mis-use of the devicetree data structure.  This data
-> does not belong in the devicetree.
-
-I think if the boot loader supports overlay file, we can choose
-the overlay file when booting for /chosen node. That can be a
-part of boot loader choice, isn't it? :)
-
-Thank you,
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Thanks. For a v2, please mark the target branch, as [PATCH net v2].
