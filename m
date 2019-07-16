@@ -2,154 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B15E6A5E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 11:55:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5330B6A5F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 11:55:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732240AbfGPJwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 05:52:34 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35950 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726536AbfGPJwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 05:52:34 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9201D3081244;
-        Tue, 16 Jul 2019 09:52:33 +0000 (UTC)
-Received: from [10.36.116.32] (ovpn-116-32.ams2.redhat.com [10.36.116.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3EB0F611DE;
-        Tue, 16 Jul 2019 09:52:28 +0000 (UTC)
-Subject: Re: [PATCH v4 17/22] iommu/vt-d: Avoid duplicated code for PASID
- setup
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Cc:     Yi Liu <yi.l.liu@intel.com>, "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1560087862-57608-18-git-send-email-jacob.jun.pan@linux.intel.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <798650b7-4187-4a44-152a-b0d99be55c6c@redhat.com>
-Date:   Tue, 16 Jul 2019 11:52:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1733175AbfGPJzV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 05:55:21 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:34307 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732923AbfGPJzT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 05:55:19 -0400
+X-Originating-IP: 92.137.69.152
+Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 13B4224001C;
+        Tue, 16 Jul 2019 09:54:06 +0000 (UTC)
+Date:   Tue, 16 Jul 2019 11:54:05 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] RTC for 5.3
+Message-ID: <20190716095405.GA2449@piout.net>
 MIME-Version: 1.0
-In-Reply-To: <1560087862-57608-18-git-send-email-jacob.jun.pan@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 16 Jul 2019 09:52:33 +0000 (UTC)
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacob,
+Hello Linus,
 
-On 6/9/19 3:44 PM, Jacob Pan wrote:
-> After each setup for PASID entry, related translation caches must be flushed.
-> We can combine duplicated code into one function which is less error prone.
-> 
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> ---
->  drivers/iommu/intel-pasid.c | 48 +++++++++++++++++----------------------------
->  1 file changed, 18 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
-> index 1e25539..1ff2ecc 100644
-> --- a/drivers/iommu/intel-pasid.c
-> +++ b/drivers/iommu/intel-pasid.c
-> @@ -522,6 +522,21 @@ void intel_pasid_tear_down_entry(struct intel_iommu *iommu,
->  		devtlb_invalidation_with_pasid(iommu, dev, pasid);
->  }
->  
-> +static inline void pasid_flush_caches(struct intel_iommu *iommu,
-> +				struct pasid_entry *pte,
-> +				int pasid, u16 did)
-> +{
-> +	if (!ecap_coherent(iommu->ecap))
-> +		clflush_cache_range(pte, sizeof(*pte));
-> +
-> +	if (cap_caching_mode(iommu->cap)) {
-> +		pasid_cache_invalidation_with_pasid(iommu, did, pasid);
-> +		iotlb_invalidation_with_pasid(iommu, did, pasid);
-> +	} else
-> +		iommu_flush_write_buffer(iommu);
-Besides the style issue reported by Jonathan and the fact this function
-may not deserve the inline (chapt 15 of
-https://www.kernel.org/doc/html/v5.1/process/coding-style.html),
+A quiet cycle this time. I'm a bit late for this PR but I threw in a few
+fixes instead of waiting for -rc1.
 
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
-Thanks
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 
-Eric
-> +
-> +}
-> +
->  /*
->   * Set up the scalable mode pasid table entry for first only
->   * translation type.
-> @@ -567,16 +582,7 @@ int intel_pasid_setup_first_level(struct intel_iommu *iommu,
->  	/* Setup Present and PASID Granular Transfer Type: */
->  	pasid_set_translation_type(pte, 1);
->  	pasid_set_present(pte);
-> -
-> -	if (!ecap_coherent(iommu->ecap))
-> -		clflush_cache_range(pte, sizeof(*pte));
-> -
-> -	if (cap_caching_mode(iommu->cap)) {
-> -		pasid_cache_invalidation_with_pasid(iommu, did, pasid);
-> -		iotlb_invalidation_with_pasid(iommu, did, pasid);
-> -	} else {
-> -		iommu_flush_write_buffer(iommu);
-> -	}
-> +	pasid_flush_caches(iommu, pte, pasid, did);
->  
->  	return 0;
->  }
-> @@ -640,16 +646,7 @@ int intel_pasid_setup_second_level(struct intel_iommu *iommu,
->  	 */
->  	pasid_set_sre(pte);
->  	pasid_set_present(pte);
-> -
-> -	if (!ecap_coherent(iommu->ecap))
-> -		clflush_cache_range(pte, sizeof(*pte));
-> -
-> -	if (cap_caching_mode(iommu->cap)) {
-> -		pasid_cache_invalidation_with_pasid(iommu, did, pasid);
-> -		iotlb_invalidation_with_pasid(iommu, did, pasid);
-> -	} else {
-> -		iommu_flush_write_buffer(iommu);
-> -	}
-> +	pasid_flush_caches(iommu, pte, pasid, did);
->  
->  	return 0;
->  }
-> @@ -683,16 +680,7 @@ int intel_pasid_setup_pass_through(struct intel_iommu *iommu,
->  	 */
->  	pasid_set_sre(pte);
->  	pasid_set_present(pte);
-> -
-> -	if (!ecap_coherent(iommu->ecap))
-> -		clflush_cache_range(pte, sizeof(*pte));
-> -
-> -	if (cap_caching_mode(iommu->cap)) {
-> -		pasid_cache_invalidation_with_pasid(iommu, did, pasid);
-> -		iotlb_invalidation_with_pasid(iommu, did, pasid);
-> -	} else {
-> -		iommu_flush_write_buffer(iommu);
-> -	}
-> +	pasid_flush_caches(iommu, pte, pasid, did);
->  
->  	return 0;
->  }
-> 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git tags/rtc-5.3
+
+for you to fetch changes up to f0162d21cc8025c828fafe56ee25801f770f41da:
+
+  rtc: wm831x: Add IRQF_ONESHOT flag (2019-07-13 21:39:51 +0200)
+
+----------------------------------------------------------------
+RTC for 5.3
+
+Drivers:
+ - ds1307: properly handle oscillator failure flags
+ - imx-sc: alarm support
+ - pcf2123: alarm support, correct offset handling
+ - sun6i: add R40 support
+ - simplify getting the adapter of an i2c client
+
+----------------------------------------------------------------
+Alexandre Belloni (3):
+      rtc: ds1307: properly handle oscillator failure flags
+      rtc: st-lpc: remove unnecessary check
+      rtc: pcf2123: fix negative offset rounding
+
+Anson Huang (1):
+      rtc: imx-sc: add rtc alarm support
+
+Chen-Yu Tsai (2):
+      rtc: pcf8563: Fix interrupt trigger method
+      rtc: pcf8563: Clear event flags and disable interrupts before requesting irq
+
+Dmitry Osipenko (1):
+      rtc: tegra: Drop MODULE_ALIAS
+
+Dylan Howey (4):
+      rtc: pcf2123: remove sysfs register view
+      rtc: pcf2123: port to regmap
+      rtc: pcf2123: use %ptR
+      rtc: pcf2123: add alarm support
+
+Hariprasad Kelam (1):
+      rtc: wm831x: Add IRQF_ONESHOT flag
+
+Markus Elfring (1):
+      rtc: stm32: remove one condition check in stm32_rtc_set_alarm()
+
+Maxime Ripard (6):
+      dt-bindings: rtc: Add YAML schemas for the generic RTC bindings
+      dt-bindings: rtc: Move trivial RTC over to a schemas of their own
+      dt-bindings: rtc: Convert Allwinner A10 RTC to a schema
+      dt-bindings: rtc: Convert Allwinner A31 RTC to a schema
+      dt-bindings: rtc: sun6i: Add the R40 RTC compatible
+      rtc: sun6i: Add R40 compatible
+
+Michał Mirosław (2):
+      rtc: tps65910: remove superfluous Kconfig dependency
+      rtc: tps65910: fix typo in register name in read_alarm()
+
+Nicholas Mc Guire (1):
+      rtc: ds2404: use hw endiannes variable
+
+Puranjay Mohan (1):
+      rtc: interface: Change type of 'count' from int to u64
+
+Richard Leitner (4):
+      rtc: s35390a: clarify INT2 pin output modes
+      rtc: s35390a: set uie_unsupported
+      rtc: s35390a: introduce struct device in probe
+      rtc: s35390a: change FLAG defines to use BIT macro
+
+Roman Stratiienko (1):
+      rtc: test: enable wakeup flags
+
+Thierry Reding (3):
+      rtc: tegra: checkpatch and miscellaneous cleanups
+      rtc: tegra: Use consistent variable names and types
+      rtc: tegra: Turn into regular driver
+
+Wolfram Sang (5):
+      rtc: fm3130: simplify getting the adapter of a client
+      rtc: m41t80: simplify getting the adapter of a client
+      rtc: rv8803: simplify getting the adapter of a client
+      rtc: rx8010: simplify getting the adapter of a client
+      rtc: rx8025: simplify getting the adapter of a client
+
+YueHaibing (1):
+      rtc: pcf2123: Fix build error
+
+ .../bindings/rtc/allwinner,sun4i-a10-rtc.yaml      |  43 +++
+ .../bindings/rtc/allwinner,sun6i-a31-rtc.yaml      | 134 ++++++++
+ Documentation/devicetree/bindings/rtc/rtc.txt      |  73 +----
+ Documentation/devicetree/bindings/rtc/rtc.yaml     |  50 +++
+ .../devicetree/bindings/rtc/sun6i-rtc.txt          |  46 ---
+ .../devicetree/bindings/rtc/sunxi-rtc.txt          |  17 -
+ .../devicetree/bindings/rtc/trivial-rtc.yaml       |  92 ++++++
+ drivers/rtc/Kconfig                                |   3 +-
+ drivers/rtc/interface.c                            |   2 +-
+ drivers/rtc/rtc-ds1307.c                           | 129 ++++----
+ drivers/rtc/rtc-ds2404.c                           |   5 +-
+ drivers/rtc/rtc-fm3130.c                           |   8 +-
+ drivers/rtc/rtc-imx-sc.c                           |  87 +++++
+ drivers/rtc/rtc-m41t80.c                           |   2 +-
+ drivers/rtc/rtc-pcf2123.c                          | 354 ++++++++++-----------
+ drivers/rtc/rtc-pcf8563.c                          |  13 +-
+ drivers/rtc/rtc-rv8803.c                           |   2 +-
+ drivers/rtc/rtc-rx8010.c                           |   2 +-
+ drivers/rtc/rtc-rx8025.c                           |   2 +-
+ drivers/rtc/rtc-s35390a.c                          |  55 ++--
+ drivers/rtc/rtc-st-lpc.c                           |   4 -
+ drivers/rtc/rtc-stm32.c                            |   6 +-
+ drivers/rtc/rtc-sun6i.c                            |   1 +
+ drivers/rtc/rtc-tegra.c                            | 253 +++++++--------
+ drivers/rtc/rtc-test.c                             |   1 +
+ drivers/rtc/rtc-tps65910.c                         |   2 +-
+ drivers/rtc/rtc-wm831x.c                           |   3 +-
+ 27 files changed, 821 insertions(+), 568 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/rtc/allwinner,sun4i-a10-rtc.yaml
+ create mode 100644 Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+ create mode 100644 Documentation/devicetree/bindings/rtc/rtc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/rtc/sun6i-rtc.txt
+ delete mode 100644 Documentation/devicetree/bindings/rtc/sunxi-rtc.txt
+ create mode 100644 Documentation/devicetree/bindings/rtc/trivial-rtc.yaml
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
