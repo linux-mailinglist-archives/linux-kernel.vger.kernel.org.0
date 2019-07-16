@@ -2,246 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBFD26A4A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 11:11:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C48166A499
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 11:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732047AbfGPJLd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 05:11:33 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58784 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727889AbfGPJLd (ORCPT
+        id S1731517AbfGPJK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 05:10:28 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:22876 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731006AbfGPJK1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 05:11:33 -0400
-Received: from laptop.home (unknown [IPv6:2a01:cb19:8da1:9c00:f43f:8285:c795:bffa])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: aragua)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id B4BD828B84E;
-        Tue, 16 Jul 2019 10:11:30 +0100 (BST)
-From:   Fabien Lahoudere <fabien.lahoudere@collabora.com>
-Cc:     kernel@collabora.com,
-        Fabien Lahoudere <fabien.lahoudere@collabora.com>,
-        Nick Vaccaro <nvaccaro@chromium.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 1/1] iio: common: cros_ec_sensors: Expose cros_ec_sensors frequency range via iio sysfs
-Date:   Tue, 16 Jul 2019 11:11:06 +0200
-Message-Id: <36eda13de50426c1b5e46a201e17122f9d899f1a.1563268064.git.fabien.lahoudere@collabora.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1563268064.git.fabien.lahoudere@collabora.com>
-References: <cover.1563268064.git.fabien.lahoudere@collabora.com>
+        Tue, 16 Jul 2019 05:10:27 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190716091025epoutp0328d684174569c44f24c5904b50e233ff~x2CsL2ghl0476704767epoutp03E
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 09:10:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190716091025epoutp0328d684174569c44f24c5904b50e233ff~x2CsL2ghl0476704767epoutp03E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1563268225;
+        bh=P4u5h85CFzOB9l4bM0VuyGV6wejNo+c68JCtJ/yWYn0=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=EUYjhMJw564H5OeNj+YfIPF1e4OZLpuY/6Gm57bQjniI5ceUcJ3RPAtGF0uJ33rjs
+         52eLLhAP8YQu6rsNtIXCYVXDh8J/LWuixoRuj+bV9y1xWDfiS56n//2yRzBWcBk8Z2
+         uolK4wB41Q1GBfdDEYfTrvd24zEPZklZFKRLbwRs=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190716091024epcas1p2c7ba029d12e0577ee127fb8474c81887~x2Crnmc0x1582915829epcas1p2s;
+        Tue, 16 Jul 2019 09:10:24 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.154]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 45nvkN3VBNzMqYkd; Tue, 16 Jul
+        2019 09:10:20 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        73.85.04066.C749D2D5; Tue, 16 Jul 2019 18:10:20 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190716091019epcas1p3b3d7a6a80b958ec361e4f21f0baa65bd~x2CnafxxN0663706637epcas1p32;
+        Tue, 16 Jul 2019 09:10:19 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190716091019epsmtrp1e7487c448d28a6b99e4169f88cae82c9~x2CnZc0C52476524765epsmtrp1o;
+        Tue, 16 Jul 2019 09:10:19 +0000 (GMT)
+X-AuditID: b6c32a37-e27ff70000000fe2-77-5d2d947c79f1
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        3B.D4.03706.B749D2D5; Tue, 16 Jul 2019 18:10:19 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190716091019epsmtip2d1ac0b25c7a2b174b117498e68f3c51f~x2Cm5kB5d2306223062epsmtip2-;
+        Tue, 16 Jul 2019 09:10:19 +0000 (GMT)
+Subject: Re: [PATCH v1 03/50] clk: samsung: change parent of
+ dout_aclk400_wcore in Exynos5420
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
+        mark.rutland@arm.com, robh+dt@kernel.org,
+        kyungmin.park@samsung.com, a.hajda@samsung.com,
+        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
+        myungjoo.ham@samsung.com
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <6d3361b5-9e1f-eb1a-aaa9-3ca15ed5ad1d@samsung.com>
+Date:   Tue, 16 Jul 2019 18:13:25 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <20190715124417.4787-4-l.luba@partner.samsung.com>
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEJsWRmVeSWpSXmKPExsWy7bCmvm7NFN1Yg13vpS1urTvHarFxxnpW
+        i/lHgKz+x6+ZLc6f38BucbbpDbvFrQYZi02Pr7FafOy5x2pxedccNosZ5/cxWaw9cpfdYun1
+        i0wWF0+5WtxuXMFm0br3CLvF4TftrBb/rm1kcRDyWDNvDaPH+xut7B6bVnWyeWxeUu9x8N0e
+        Jo++LasYPT5vkgtgj8q2yUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVV
+        cvEJ0HXLzAF6QkmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYFmgV5yYW1yal66X
+        nJ9rZWhgYGQKVJiQnfH9+HGmggWcFYcPJjQwPmDvYuTkkBAwkXh45TdrFyMXh5DADkaJxj8X
+        GSGcT4wS+/a3QGW+MUo877wN1/J443l2iMReRon//48ygySEBN4zSnw7xwJiCwvES/z+Ng2s
+        QUTgHKNEx1NpEJtZYBqTxKx5oiA2m4CWxP4XN9hAbH4BRYmrPx4zgti8AnYSG57uB5vDIqAq
+        MfXxFrD5ogIREqeOzGOBqBGUODnzCZjNKWAv0dzRzQoxX1zi1pP5TBC2vETz1tnMIIdKCBxj
+        l/ixdTIzxAcuEleOtELZwhKvjm+B+kxK4mV/G5RdLbHy5BE2iOYORokt+y+wQiSMJfYvnQy0
+        gQNog6bE+l36EGFFiZ2/5zJCLOaTePe1hxWkREKAV6KjTQiiRFni8oO7TBC2pMTi9k62CYxK
+        s5C8MwvJC7OQvDALYdkCRpZVjGKpBcW56anFhgXGyJG9iRGcvrXMdzBuOOdziFGAg1GJh/fE
+        Hp1YIdbEsuLK3EOMEhzMSiK8tl+1Y4V4UxIrq1KL8uOLSnNSiw8xmgJDeyKzlGhyPjC35JXE
+        G5oaGRsbW5gYmpkaGiqJ8877oxkrJJCeWJKanZpakFoE08fEwSnVwMgvx5UwRdpmUda3PfMk
+        A+fe37zb6EuR2PW/eWKBxRNSPy3ItLsySWFS3V5pjWs2049tqJ2oumRVYv65HWl+yW2pp+Q/
+        nGFJOLp4tvyelJf8k39erDohxaFkFqn2c6lHt/+6rTx93yW5OvsTDDw5NQ7mGbjM0um0V9+X
+        8Dljpr38YQeLfWGr65VYijMSDbWYi4oTAbZNqaH1AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHIsWRmVeSWpSXmKPExsWy7bCSvG71FN1Yg9X39CxurTvHarFxxnpW
+        i/lHgKz+x6+ZLc6f38BucbbpDbvFrQYZi02Pr7FafOy5x2pxedccNosZ5/cxWaw9cpfdYun1
+        i0wWF0+5WtxuXMFm0br3CLvF4TftrBb/rm1kcRDyWDNvDaPH+xut7B6bVnWyeWxeUu9x8N0e
+        Jo++LasYPT5vkgtgj+KySUnNySxLLdK3S+DK+H78OFPBAs6KwwcTGhgfsHcxcnJICJhIPN54
+        Hsjm4hAS2M0o8aR1JwtEQlJi2sWjzF2MHEC2sMThw8UQNW8ZJVrPXmMGqREWiJf4/W0aWLOI
+        wDlGib6/Z8GmMgtMY5I4sZ4ZouM4o8Tz5w/BEmwCWhL7X9xgA7H5BRQlrv54zAhi8wrYSWx4
+        uh9sM4uAqsTUx1vANogKREhMugZxEa+AoMTJmU/AbE4Be4nmjm5WiGXqEn/mXWKGsMUlbj2Z
+        zwRhy0s0b53NPIFReBaS9llIWmYhaZmFpGUBI8sqRsnUguLc9NxiwwLDvNRyveLE3OLSvHS9
+        5PzcTYzgWNbS3MF4eUn8IUYBDkYlHt4Te3RihVgTy4orcw8xSnAwK4nw2n7VjhXiTUmsrEot
+        yo8vKs1JLT7EKM3BoiTO+zTvWKSQQHpiSWp2ampBahFMlomDU6qBMb9B9U/wm2AxiYNbTyfN
+        EagKromu23X+0b/tu27MYHxW90I2oNMjMre1kfuYdzDHlUXhO3s8Q+XPHWlvPmJ/5pH1VreZ
+        1/NStfMcJ1SI9is+P6tUUaGSlPT30/vZmvOeih39dsbAPDM5xKvHJneOrkr2LIHuSXkKCrON
+        uP/M26e8/oBPQ+ZBJZbijERDLeai4kQA/nCKoOECAAA=
+X-CMS-MailID: 20190716091019epcas1p3b3d7a6a80b958ec361e4f21f0baa65bd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190715124436eucas1p28a581bc25f6dae52a5b9b1af26d26368
+References: <20190715124417.4787-1-l.luba@partner.samsung.com>
+        <CGME20190715124436eucas1p28a581bc25f6dae52a5b9b1af26d26368@eucas1p2.samsung.com>
+        <20190715124417.4787-4-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Embedded controller return minimum and maximum frequencies, unfortunately
-we have no way to know the step for all available frequencies.
-Even if not complete, we can return a list of known values using the
-standard read_avail callback (IIO_CHAN_INFO_SAMP_FREQ) to provide them to
-userland.
+On 19. 7. 15. 오후 9:43, Lukasz Luba wrote:
+> Change parent of dout_aclk400_wcore to mout_aclk400_wcore which reflects
+> topology described in the RM.
+> 
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index d353870e7fda..361ee53fc9fc 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -577,7 +577,7 @@ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+>  
+>  static const struct samsung_div_clock exynos5420_div_clks[] __initconst = {
+>  	DIV(CLK_DOUT_ACLK400_WCORE, "dout_aclk400_wcore",
+> -			"mout_aclk400_wcore_bpll", DIV_TOP0, 16, 3),
+> +			"mout_aclk400_wcore", DIV_TOP0, 16, 3),
+>  };
+>  
+>  static const struct samsung_gate_clock exynos5420_gate_clks[] __initconst = {
+> 
 
-Now cros_ec_* sensors provides frequencies values in sysfs like this:
-"0 min max". 0 is always true to disable the sensor.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Default frequencies are provided for earlier protocol.
+If possible, you better to send it to stable mailing list
+with Fixes information.
 
-Signed-off-by: Nick Vaccaro <nvaccaro@chromium.org>
-Signed-off-by: Fabien Lahoudere <fabien.lahoudere@collabora.com>
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
- .../common/cros_ec_sensors/cros_ec_sensors.c  |  3 +
- .../cros_ec_sensors/cros_ec_sensors_core.c    | 65 +++++++++++++++++++
- drivers/iio/light/cros_ec_light_prox.c        |  3 +
- .../linux/iio/common/cros_ec_sensors_core.h   | 21 ++++++
- 4 files changed, 92 insertions(+)
-
-diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-index 17af4e0fd5f8..dbca02688c4f 100644
---- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-+++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-@@ -175,6 +175,7 @@ static int cros_ec_sensors_write(struct iio_dev *indio_dev,
- static const struct iio_info ec_sensors_info = {
- 	.read_raw = &cros_ec_sensors_read,
- 	.write_raw = &cros_ec_sensors_write,
-+	.read_avail = &cros_ec_sensors_core_read_avail,
- };
- 
- static int cros_ec_sensors_probe(struct platform_device *pdev)
-@@ -211,6 +212,8 @@ static int cros_ec_sensors_probe(struct platform_device *pdev)
- 			BIT(IIO_CHAN_INFO_SCALE) |
- 			BIT(IIO_CHAN_INFO_FREQUENCY) |
- 			BIT(IIO_CHAN_INFO_SAMP_FREQ);
-+		channel->info_mask_shared_by_all_available =
-+			BIT(IIO_CHAN_INFO_SAMP_FREQ);
- 		channel->scan_type.realbits = CROS_EC_SENSOR_BITS;
- 		channel->scan_type.storagebits = CROS_EC_SENSOR_BITS;
- 		channel->scan_index = i;
-diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-index 81111af8a167..805652250960 100644
---- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-+++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-@@ -50,6 +50,37 @@ static int cros_ec_get_host_cmd_version_mask(struct cros_ec_device *ec_dev,
- 	return ret;
- }
- 
-+static void get_default_min_max_freq(enum motionsensor_type type,
-+				     u32 *min_freq,
-+				     u32 *max_freq)
-+{
-+	switch (type) {
-+	case MOTIONSENSE_TYPE_ACCEL:
-+	case MOTIONSENSE_TYPE_GYRO:
-+		*min_freq = 12500;
-+		*max_freq = 100000;
-+		break;
-+	case MOTIONSENSE_TYPE_MAG:
-+		*min_freq = 5000;
-+		*max_freq = 25000;
-+		break;
-+	case MOTIONSENSE_TYPE_PROX:
-+	case MOTIONSENSE_TYPE_LIGHT:
-+		*min_freq = 100;
-+		*max_freq = 50000;
-+		break;
-+	case MOTIONSENSE_TYPE_BARO:
-+		*min_freq = 250;
-+		*max_freq = 20000;
-+		break;
-+	case MOTIONSENSE_TYPE_ACTIVITY:
-+	default:
-+		*min_freq = 0;
-+		*max_freq = 0;
-+		break;
-+	}
-+}
-+
- int cros_ec_sensors_core_init(struct platform_device *pdev,
- 			      struct iio_dev *indio_dev,
- 			      bool physical_device)
-@@ -100,6 +131,19 @@ int cros_ec_sensors_core_init(struct platform_device *pdev,
- 		}
- 		state->type = state->resp->info.type;
- 		state->loc = state->resp->info.location;
-+
-+		/* 0 is a correct value used to stop the device */
-+		state->frequencies[0] = 0;
-+		if (state->msg->version < 3) {
-+			get_default_min_max_freq(state->resp->info.type,
-+						 &state->frequencies[1],
-+						 &state->frequencies[2]);
-+		} else {
-+			state->frequencies[1] =
-+			    state->resp->info_3.min_frequency;
-+			state->frequencies[2] =
-+			    state->resp->info_3.max_frequency;
-+		}
- 	}
- 
- 	return 0;
-@@ -461,6 +505,27 @@ int cros_ec_sensors_core_read(struct cros_ec_sensors_core_state *st,
- }
- EXPORT_SYMBOL_GPL(cros_ec_sensors_core_read);
- 
-+int cros_ec_sensors_core_read_avail(struct iio_dev *indio_dev,
-+				    struct iio_chan_spec const *chan,
-+				    const int **vals,
-+				    int *type,
-+				    int *length,
-+				    long mask)
-+{
-+	struct cros_ec_sensors_core_state *state = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		*length = ARRAY_SIZE(state->frequencies);
-+		*vals = (const int *)&state->frequencies;
-+		*type = IIO_VAL_INT;
-+		return IIO_AVAIL_LIST;
-+	}
-+
-+	return -EINVAL;
-+}
-+EXPORT_SYMBOL_GPL(cros_ec_sensors_core_read_avail);
-+
- int cros_ec_sensors_core_write(struct cros_ec_sensors_core_state *st,
- 			       struct iio_chan_spec const *chan,
- 			       int val, int val2, long mask)
-diff --git a/drivers/iio/light/cros_ec_light_prox.c b/drivers/iio/light/cros_ec_light_prox.c
-index 308ee6ff2e22..b9838bf25248 100644
---- a/drivers/iio/light/cros_ec_light_prox.c
-+++ b/drivers/iio/light/cros_ec_light_prox.c
-@@ -164,6 +164,7 @@ static int cros_ec_light_prox_write(struct iio_dev *indio_dev,
- static const struct iio_info cros_ec_light_prox_info = {
- 	.read_raw = &cros_ec_light_prox_read,
- 	.write_raw = &cros_ec_light_prox_write,
-+	.read_avail = &cros_ec_sensors_core_read_avail,
- };
- 
- static int cros_ec_light_prox_probe(struct platform_device *pdev)
-@@ -198,6 +199,8 @@ static int cros_ec_light_prox_probe(struct platform_device *pdev)
- 	channel->info_mask_shared_by_all =
- 		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
- 		BIT(IIO_CHAN_INFO_FREQUENCY);
-+	channel->info_mask_shared_by_all_available =
-+		BIT(IIO_CHAN_INFO_SAMP_FREQ);
- 	channel->scan_type.realbits = CROS_EC_SENSOR_BITS;
- 	channel->scan_type.storagebits = CROS_EC_SENSOR_BITS;
- 	channel->scan_type.shift = 0;
-diff --git a/include/linux/iio/common/cros_ec_sensors_core.h b/include/linux/iio/common/cros_ec_sensors_core.h
-index 0c636b9fe8d7..a9623111f7c9 100644
---- a/include/linux/iio/common/cros_ec_sensors_core.h
-+++ b/include/linux/iio/common/cros_ec_sensors_core.h
-@@ -70,6 +70,9 @@ struct cros_ec_sensors_core_state {
- 				    unsigned long scan_mask, s16 *data);
- 
- 	int curr_sampl_freq;
-+
-+	/* Table of known available frequencies : 0, Min and Max in mHz */
-+	int frequencies[3];
- };
- 
- /**
-@@ -150,6 +153,24 @@ int cros_ec_sensors_core_read(struct cros_ec_sensors_core_state *st,
- 			      struct iio_chan_spec const *chan,
- 			      int *val, int *val2, long mask);
- 
-+/**
-+ * cros_ec_sensors_core_read_avail() - get available values
-+ * @indio_dev:		pointer to state information for device
-+ * @chan:	channel specification structure table
-+ * @vals:	list of available values
-+ * @type:	type of data returned
-+ * @length:	number of data returned in the array
-+ * @mask:	specifies which values to be requested
-+ *
-+ * Return:	an error code, IIO_AVAIL_RANGE or IIO_AVAIL_LIST
-+ */
-+int cros_ec_sensors_core_read_avail(struct iio_dev *indio_dev,
-+				    struct iio_chan_spec const *chan,
-+				    const int **vals,
-+				    int *type,
-+				    int *length,
-+				    long mask);
-+
- /**
-  * cros_ec_sensors_core_write() - function to write a value to the sensor
-  * @st:		pointer to state information for device
 -- 
-2.20.1
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
