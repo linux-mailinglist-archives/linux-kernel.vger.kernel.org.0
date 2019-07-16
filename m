@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3A626A18B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 06:35:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB8A36A18D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 06:35:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733252AbfGPEfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 00:35:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33288 "EHLO mail.kernel.org"
+        id S1733283AbfGPEfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 00:35:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733210AbfGPEfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 00:35:20 -0400
-Subject: Re: [GIT PULL] PCI changes for v5.3
+        id S1733198AbfGPEfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 00:35:21 -0400
+Subject: Re: [GIT PULL] power-supply changes for 5.3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563251719;
-        bh=mfxJ4d3y7uYpSeVw0+B7MAFW2eHJDgfnJz3zbdiPcSA=;
+        s=default; t=1563251720;
+        bh=bKqdpHWxT+TiiJERtZ0YmKsF4JvnVD0uSemmkoI7PHk=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=2UtKKDXhBqMKPjvhlelVjoVxjdUYjnFrn1Z7vT0uGxlAzN/rIRCc3BgljlLVODInk
-         EF5UKm9sMonr5ZZyXApbppLBjlYHLxyKb/n5YhRbEey1kAM4wSBxEHtffbP5Nipxys
-         ixdYuKYMl01pklqn9D2KP/7OQq5F1q8KHVyqgprw=
+        b=n0j236Wzz7J9ywFaPQ0reAQ0ts019voK6JgarR/Epc4s9cauN17NL1++riw7l10cw
+         EDlGUoGAp3Tuv3aBkkc9c5Gn9pxX9qQm5g719UL7BGURHV5NZ9IK/8M3Wfeyg8D+Nf
+         fIl42ILEueRQckjS7dFG6EIQUlUQqtTzRyDqhRJY=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190715192702.GF46935@google.com>
-References: <20190715192702.GF46935@google.com>
+In-Reply-To: <20190715194933.cq3cfz7g6j3mnbmc@earth.universe>
+References: <20190715194933.cq3cfz7g6j3mnbmc@earth.universe>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190715192702.GF46935@google.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git
- tags/pci-v5.3-changes
-X-PR-Tracked-Commit-Id: 7b4b0f6b34d893be569da81ffad865a9d3a7d014
+X-PR-Tracked-Message-Id: <20190715194933.cq3cfz7g6j3mnbmc@earth.universe>
+X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git
+ tags/for-v5.3
+X-PR-Tracked-Commit-Id: caa2b557841c8cedc1d4862cd31cf76ee940d105
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: fb4da215ed92f564f7ca090bb81a199b0d6cab8a
-Message-Id: <156325171965.15429.6001801198442486414.pr-tracker-bot@kernel.org>
-Date:   Tue, 16 Jul 2019 04:35:19 +0000
-To:     Bjorn Helgaas <helgaas@kernel.org>
+X-PR-Merge-Commit-Id: 5fe7b600a116187e10317d83fb56922c4ef6b76d
+Message-Id: <156325172073.15429.16126501134617667212.pr-tracker-bot@kernel.org>
+Date:   Tue, 16 Jul 2019 04:35:20 +0000
+To:     Sebastian Reichel <sre@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Bjorn Helgaas <helgaas@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 15 Jul 2019 14:27:02 -0500:
+The pull request you sent on Mon, 15 Jul 2019 21:49:33 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v5.3-changes
+> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git tags/for-v5.3
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/fb4da215ed92f564f7ca090bb81a199b0d6cab8a
+https://git.kernel.org/torvalds/c/5fe7b600a116187e10317d83fb56922c4ef6b76d
 
 Thank you!
 
