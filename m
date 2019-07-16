@@ -2,226 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7276B6A99D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 15:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A16A16A999
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 15:27:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387678AbfGPN05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 09:26:57 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40130 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726039AbfGPN05 (ORCPT
+        id S2387400AbfGPN0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 09:26:34 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39258 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726039AbfGPN0e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 09:26:57 -0400
-Received: by mail-pl1-f196.google.com with SMTP id a93so10112394pla.7
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 06:26:56 -0700 (PDT)
+        Tue, 16 Jul 2019 09:26:34 -0400
+Received: by mail-lj1-f194.google.com with SMTP id v18so19919397ljh.6;
+        Tue, 16 Jul 2019 06:26:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2FLMt1biejUADnaZS+D7n9SrnPK40F0jXQ5om7TEM0E=;
-        b=R46pC3b7xctfYiDbpcjsza4HTmNx/760I2ZaF5EDledhg5vHet72yrOirw34e4/Hwj
-         a9XoTMetn8gr04TAIhE2LlWxSqPKgOVdS86OM+fcojB7GI2ad77E+i1jpeqKV1+2cEXe
-         2cnBZvd8RrCgjlzvvKJMItIGEgUzHUMwqJ08iwCMu+urNd/gsaxKdt4ji6oD/yqJ9OIH
-         iA7wIo+ojN1xpialB5aVNj6g/NfG5lUi4MGaFRthczcja3mE2vVQnE/lPC/wRJoliTKR
-         cdRyNH5A1gPD9fXBd/AjwTF+98c6JPOq0uOF0Ht1KinYxfj2YU02TOo6Oqg1Dy5trgYY
-         UGYg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=i5eernLBaFGhyCIFa6yPKjvfBtf5hN1/5FhaLw6hzyI=;
+        b=gvXucYZhO534m2RGH5gg/cG8eTfj3B6c32P1G69Wvuwp3O4k6rQrig+mRIYeJDgjlt
+         Y7n0Ac1HxHnFYP09tfX6fnZe87kRm54UNadKFlRUThjA+VVJe6+1Ts/QXts++fWrfRp/
+         iSb+ix8YNxR5z3Q0ivKHsxy8yAIxZ1xsdGm09CwPiKtbGBYudXbGdfKaKP5lHzttrFE+
+         tblVAZazjR2NlOx5AMobqN8ypsbwbQi09AonLgfv91fBCrEAi4lJUjWKwUb/+cNzbYef
+         9ZaX4dLpBtAh5MLT7nd15kmFr/Y9oFQ+SKszMJiaVaqNoCHkFCQ2SXYttJwQjbGIy7x+
+         ovnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2FLMt1biejUADnaZS+D7n9SrnPK40F0jXQ5om7TEM0E=;
-        b=ZhZgR/PDGEBZCAdAnhBKNYs6cmDUAtS2ZdOAn6XAMqxo7n3fxOI8RmPVEUKwU6LOGc
-         kY/8CRVO0CKXPN/oMZ8Tc8ab6xIIT+ForfSWkLBDYCbuYQuJD4/QxhMo8n3IdO8HWqM8
-         s8h2kAf8psYLdwqVFfIoTPcgv66K2O4eqVtozMFN4OR7sEDvG8cF00nBtx5LKiqUsWLe
-         ctg+JPOPO1m80CR6hoXBIHU485+MsC9+3Xgex211BSBKjxp2PqyAI6PLG+6VmBiYYNfr
-         1Pm0JZV3GpVqNE880mwHo6PTNBI7NpYl2ZrpBJHYotsMafMeVuas+S8aqjQtlXDkwBu4
-         6pGQ==
-X-Gm-Message-State: APjAAAUIP5cqZ53yGe3Ho1mKMNZcvLmGnjKSNAdGhUXR3gt/vgoITa4u
-        jaiXcFjZw0YI28P8tDmbQhw=
-X-Google-Smtp-Source: APXvYqwLdB8Cef6LQ3pqCCQ0P7hsVjjgWF54ZHRKloxBfozTuaD/IY5JZ7PR7zFLuVVRnsib5VBBgA==
-X-Received: by 2002:a17:902:7448:: with SMTP id e8mr35514887plt.85.1563283615828;
-        Tue, 16 Jul 2019 06:26:55 -0700 (PDT)
-Received: from localhost.localdomain.localdomain ([2408:823c:c11:bf0:b8c3:8577:bf2f:2])
-        by smtp.gmail.com with ESMTPSA id q1sm21472311pfg.84.2019.07.16.06.26.48
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 16 Jul 2019 06:26:55 -0700 (PDT)
-From:   Pengfei Li <lpf.vector@gmail.com>
-To:     akpm@linux-foundation.org, willy@infradead.org
-Cc:     urezki@gmail.com, rpenyaev@suse.de, peterz@infradead.org,
-        guro@fb.com, rick.p.edgecombe@intel.com, rppt@linux.ibm.com,
-        aryabinin@virtuozzo.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Pengfei Li <lpf.vector@gmail.com>
-Subject: [PATCH v5 2/2] mm/vmalloc: modify struct vmap_area to reduce its size
-Date:   Tue, 16 Jul 2019 21:26:04 +0800
-Message-Id: <20190716132604.28289-3-lpf.vector@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190716132604.28289-1-lpf.vector@gmail.com>
-References: <20190716132604.28289-1-lpf.vector@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=i5eernLBaFGhyCIFa6yPKjvfBtf5hN1/5FhaLw6hzyI=;
+        b=pA5LNGK5Tg9DwmwkOcQwoAbyyZjDGQDi80Hse6Qdu8RcODLl5YvVYONtRqVOBEWfv7
+         ExgGQBCzCxPoD9x3qH1IcdqY7Wv2IQY+iY0iHMRQH6WWp3ZKdQEgvlPb1FdU508ZJ125
+         AToIsb9tzzJbuv4qHwfWtypdeJhuAP6eBBaMQyza+6jcfd22MqXr4DSSeehFtZYqQ/RO
+         VIdUmiO/E/AgW0my2TnYOEAk6UREyl8Z+pW7h0LDT8g+uLvEI2MCTJG8JTbcTHtgGgK+
+         KzT+otKuTRSzKnp4RZnCKsSl7L4o+Cyzj2ZrL1fQucSiW7cHktMbIY9sidlLVIkR74qm
+         wCRA==
+X-Gm-Message-State: APjAAAX9Tzqg4Qkp/D/Y/gCDsRNaV9sBWx8cdi2pd0l0HoC38EwwWar+
+        SIaND9Yq5G5vpTBR8DHB87+19SxL
+X-Google-Smtp-Source: APXvYqyW3ijl5BFSBz50w1dNQBMhm3ZSISRMKPZBneOo4V473+dhc7T7buMTUwKZAtM9Ljhj8oObHA==
+X-Received: by 2002:a2e:96d5:: with SMTP id d21mr17883568ljj.170.1563283591701;
+        Tue, 16 Jul 2019 06:26:31 -0700 (PDT)
+Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.googlemail.com with ESMTPSA id a13sm2855146lfi.57.2019.07.16.06.26.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Jul 2019 06:26:31 -0700 (PDT)
+Subject: Re: [PATCH v4 11/24] PM / devfreq: tegra30: Add debug messages
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190707223303.6755-1-digetx@gmail.com>
+ <CGME20190707223640epcas4p15337f40466342832b731ad6a53be946e@epcas4p1.samsung.com>
+ <20190707223303.6755-12-digetx@gmail.com>
+ <c883bdbe-427f-35a1-9e63-5e4953a84286@samsung.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <53cd0ba5-f814-cd9b-19c5-1d42717ca58c@gmail.com>
+Date:   Tue, 16 Jul 2019 16:26:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <c883bdbe-427f-35a1-9e63-5e4953a84286@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Objective
----------
-The current implementation of struct vmap_area wasted space.
+16.07.2019 15:23, Chanwoo Choi пишет:
+> Hi Dmitry,
+> 
+> Usually, the kernel log print for all users
+> such as changing the frequency, fail or success.
+> 
+> But, if the log just show the register dump,
+> it is not useful for all users. It is just used
+> for only specific developer.
+> 
+> I recommend that you better to add more exception handling
+> code on many points instead of just showing the register dump.
 
-After applying this commit, sizeof(struct vmap_area) has been
-reduced from 11 words to 8 words.
-
-Description
------------
-1) Pack "subtree_max_size", "vm" and "purge_list".
-This is no problem because
-    A) "subtree_max_size" is only used when vmap_area is in
-       "free" tree
-    B) "vm" is only used when vmap_area is in "busy" tree
-    C) "purge_list" is only used when vmap_area is in
-       vmap_purge_list
-
-2) Eliminate "flags".
-Since only one flag VM_VM_AREA is being used, and the same
-thing can be done by judging whether "vm" is NULL, then the
-"flags" can be eliminated.
-
-Signed-off-by: Pengfei Li <lpf.vector@gmail.com>
-Suggested-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- include/linux/vmalloc.h | 20 +++++++++++++-------
- mm/vmalloc.c            | 24 ++++++++++--------------
- 2 files changed, 23 insertions(+), 21 deletions(-)
-
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index 9b21d0047710..a1334bd18ef1 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -51,15 +51,21 @@ struct vmap_area {
- 	unsigned long va_start;
- 	unsigned long va_end;
- 
--	/*
--	 * Largest available free size in subtree.
--	 */
--	unsigned long subtree_max_size;
--	unsigned long flags;
- 	struct rb_node rb_node;         /* address sorted rbtree */
- 	struct list_head list;          /* address sorted list */
--	struct llist_node purge_list;    /* "lazy purge" list */
--	struct vm_struct *vm;
-+
-+	/*
-+	 * The following three variables can be packed, because
-+	 * a vmap_area object is always one of the three states:
-+	 *    1) in "free" tree (root is vmap_area_root)
-+	 *    2) in "busy" tree (root is free_vmap_area_root)
-+	 *    3) in purge list  (head is vmap_purge_list)
-+	 */
-+	union {
-+		unsigned long subtree_max_size; /* in "free" tree */
-+		struct vm_struct *vm;           /* in "busy" tree */
-+		struct llist_node purge_list;   /* in purge list */
-+	};
- };
- 
- /*
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 71d8040a8a0b..39bf9cf4175a 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -329,7 +329,6 @@ EXPORT_SYMBOL(vmalloc_to_pfn);
- #define DEBUG_AUGMENT_PROPAGATE_CHECK 0
- #define DEBUG_AUGMENT_LOWEST_MATCH_CHECK 0
- 
--#define VM_VM_AREA	0x04
- 
- static DEFINE_SPINLOCK(vmap_area_lock);
- /* Export for kexec only */
-@@ -1115,7 +1114,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
- 
- 	va->va_start = addr;
- 	va->va_end = addr + size;
--	va->flags = 0;
-+	va->vm = NULL;
- 	insert_vmap_area(va, &vmap_area_root, &vmap_area_list);
- 
- 	spin_unlock(&vmap_area_lock);
-@@ -1922,7 +1921,6 @@ void __init vmalloc_init(void)
- 		if (WARN_ON_ONCE(!va))
- 			continue;
- 
--		va->flags = VM_VM_AREA;
- 		va->va_start = (unsigned long)tmp->addr;
- 		va->va_end = va->va_start + tmp->size;
- 		va->vm = tmp;
-@@ -2020,7 +2018,6 @@ static void setup_vmalloc_vm(struct vm_struct *vm, struct vmap_area *va,
- 	vm->size = va->va_end - va->va_start;
- 	vm->caller = caller;
- 	va->vm = vm;
--	va->flags |= VM_VM_AREA;
- 	spin_unlock(&vmap_area_lock);
- }
- 
-@@ -2125,10 +2122,10 @@ struct vm_struct *find_vm_area(const void *addr)
- 	struct vmap_area *va;
- 
- 	va = find_vmap_area((unsigned long)addr);
--	if (va && va->flags & VM_VM_AREA)
--		return va->vm;
-+	if (!va)
-+		return NULL;
- 
--	return NULL;
-+	return va->vm;
- }
- 
- /**
-@@ -2149,11 +2146,10 @@ struct vm_struct *remove_vm_area(const void *addr)
- 
- 	spin_lock(&vmap_area_lock);
- 	va = __find_vmap_area((unsigned long)addr);
--	if (va && va->flags & VM_VM_AREA) {
-+	if (va && va->vm) {
- 		struct vm_struct *vm = va->vm;
- 
- 		va->vm = NULL;
--		va->flags &= ~VM_VM_AREA;
- 		spin_unlock(&vmap_area_lock);
- 
- 		kasan_free_shadow(vm);
-@@ -2856,7 +2852,7 @@ long vread(char *buf, char *addr, unsigned long count)
- 		if (!count)
- 			break;
- 
--		if (!(va->flags & VM_VM_AREA))
-+		if (!va->vm)
- 			continue;
- 
- 		vm = va->vm;
-@@ -2936,7 +2932,7 @@ long vwrite(char *buf, char *addr, unsigned long count)
- 		if (!count)
- 			break;
- 
--		if (!(va->flags & VM_VM_AREA))
-+		if (!va->vm)
- 			continue;
- 
- 		vm = va->vm;
-@@ -3466,10 +3462,10 @@ static int s_show(struct seq_file *m, void *p)
- 	va = list_entry(p, struct vmap_area, list);
- 
- 	/*
--	 * s_show can encounter race with remove_vm_area, !VM_VM_AREA on
--	 * behalf of vmap area is being tear down or vm_map_ram allocation.
-+	 * If !va->vm then this vmap_area object is allocated
-+	 * by vm_map_ram.
- 	 */
--	if (!(va->flags & VM_VM_AREA)) {
-+	if (!va->vm) {
- 		seq_printf(m, "0x%pK-0x%pK %7ld vm_map_ram\n",
- 			(void *)va->va_start, (void *)va->va_end,
- 			va->va_end - va->va_start);
--- 
-2.21.0
-
+The debug messages are not users, but for developers. Yes, I primarily
+made the debugging to be useful for myself and will be happy to change
+the way debugging is done if there will be any other active developer
+for this driver. The registers dump is more than enough in order to
+understand what's going on, I don't see any real need to change anything
+here for now.
