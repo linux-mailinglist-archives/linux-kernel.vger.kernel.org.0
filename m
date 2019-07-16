@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E73776A6F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 13:09:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A86E6A701
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 13:09:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387500AbfGPLJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 07:09:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57686 "EHLO mx1.redhat.com"
+        id S2387585AbfGPLJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 07:09:15 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45548 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733200AbfGPLJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 07:09:04 -0400
+        id S1733200AbfGPLJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 07:09:14 -0400
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E40DD30832E9;
-        Tue, 16 Jul 2019 11:09:02 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 623062BE9A;
+        Tue, 16 Jul 2019 11:09:13 +0000 (UTC)
 Received: from [10.36.116.218] (ovpn-116-218.ams2.redhat.com [10.36.116.218])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8BC1419C59;
-        Tue, 16 Jul 2019 11:08:57 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6DC9519C68;
+        Tue, 16 Jul 2019 11:09:07 +0000 (UTC)
 Subject: Re: [PATCH v3 10/11] mm/memory_hotplug: Make
  unregister_memory_block_under_nodes() never fail
 To:     Oscar Salvador <osalvador@suse.de>
@@ -88,8 +88,8 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
  SE+xAvmumFBY
 Organization: Red Hat GmbH
-Message-ID: <d9e63646-f81d-c349-a54c-e17cdccb0760@redhat.com>
-Date:   Tue, 16 Jul 2019 13:08:56 +0200
+Message-ID: <eb51f770-b0a3-f50c-daa4-babe6e8d3fc4@redhat.com>
+Date:   Tue, 16 Jul 2019 13:09:06 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
@@ -98,7 +98,7 @@ Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 16 Jul 2019 11:09:03 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 16 Jul 2019 11:09:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -148,7 +148,7 @@ On 16.07.19 10:46, Oscar Salvador wrote:
 As far as I can tell we
 
 a) don't allow offlining of memory that belongs to multiple nodes
-already (as pointed out by Michael recently)
+already (as pointed out by Michal recently)
 
 b) users cannot add memory blocks that belong to multiple nodes via
 add_memory()
