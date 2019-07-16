@@ -2,135 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25A636A4C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 11:22:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50E436A4D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 11:24:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731706AbfGPJWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 05:22:47 -0400
-Received: from mga06.intel.com ([134.134.136.31]:63355 "EHLO mga06.intel.com"
+        id S1727105AbfGPJXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 05:23:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727849AbfGPJWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 05:22:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2019 02:22:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,497,1557212400"; 
-   d="scan'208";a="172490270"
-Received: from rjwysock-mobl1.ger.corp.intel.com (HELO [10.249.128.254]) ([10.249.128.254])
-  by orsmga006.jf.intel.com with ESMTP; 16 Jul 2019 02:22:44 -0700
-Subject: Re: [PATCH AUTOSEL 4.14 086/105] PCI / ACPI: Use cached ACPI device
- state to get PCI device power state
-To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20190715142839.9896-1-sashal@kernel.org>
- <20190715142839.9896-86-sashal@kernel.org>
-From:   "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Organization: Intel Technology Poland Sp. z o. o., KRS 101882, ul. Slowackiego
- 173, 80-298 Gdansk
-Message-ID: <01d729e3-9778-9e4f-84d2-16b7353eeee1@intel.com>
-Date:   Tue, 16 Jul 2019 11:22:44 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1731006AbfGPJXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 05:23:08 -0400
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 502BC2184B;
+        Tue, 16 Jul 2019 09:23:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563268987;
+        bh=PamZH0A4WsEwIpGHaPzQA18kP5r8wzqlzFCVBoiw//U=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xaoSJGSp/bSa/YG2kHH4N9lDRwqjYMC15hNuRbpfjt1PL27vfozjZpg2y/f1MVaI4
+         KoAqZb3ZvVgbb8Rp3lw+u9OBakMWl0TGyeWR7cToC8Ox2gZ7KeRpqxi9qjZw1Sdni0
+         ZEfrxc+ivfEK4XLVW+v2JaQaFsv4vMjqSN/V1bV8=
+Received: by mail-lf1-f54.google.com with SMTP id p197so13144142lfa.2;
+        Tue, 16 Jul 2019 02:23:07 -0700 (PDT)
+X-Gm-Message-State: APjAAAUpRG9BFc6zTcL9dNiHGAizB/GsFybWEHn8Dr8GHNazjbokwmBL
+        a9frjrIOgAzCoPzra7F0uYXMoPoZ4m8/5ayc8QU=
+X-Google-Smtp-Source: APXvYqwMDnsmib1AtItDB/KKKIU5Xhb3gP22wpBTO6Xd7+TU89iu7Eafe6jZHcILHZmz92UTgmXNMvLw4jIxyvWAj04=
+X-Received: by 2002:ac2:4d1c:: with SMTP id r28mr13598688lfi.159.1563268985590;
+ Tue, 16 Jul 2019 02:23:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190715142839.9896-86-sashal@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <CGME20190715120432eucas1p1b32d72d239420b861bf8596d4e8a053d@eucas1p1.samsung.com>
+ <20190715120416.3561-1-k.konieczny@partner.samsung.com> <20190715120416.3561-4-k.konieczny@partner.samsung.com>
+In-Reply-To: <20190715120416.3561-4-k.konieczny@partner.samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 16 Jul 2019 11:22:54 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPd6a5aLf1CEhx9m7khPQOwruSuA22efkJb41BsaWXjM3A@mail.gmail.com>
+Message-ID: <CAJKOXPd6a5aLf1CEhx9m7khPQOwruSuA22efkJb41BsaWXjM3A@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] ARM: dts: exynos: add initial data for coupled
+ regulators for Exynos5422/5800
+To:     Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/15/2019 4:28 PM, Sasha Levin wrote:
-> From: Mika Westerberg <mika.westerberg@linux.intel.com>
+On Mon, 15 Jul 2019 at 14:04, Kamil Konieczny
+<k.konieczny@partner.samsung.com> wrote:
 >
-> [ Upstream commit 83a16e3f6d70da99896c7a2639c0b60fff13afb8 ]
+> Declare Exynos5422/5800 voltage ranges for opp points for big cpu core and
+> bus wcore and couple their voltage supllies as vdd_arm and vdd_int should
+> be in 300mV range.
 >
-> The ACPI power state returned by acpi_device_get_power() may depend on
-> the configuration of ACPI power resources in the system which may change
-> any time after acpi_device_get_power() has returned, unless the
-> reference counters of the ACPI power resources in question are set to
-> prevent that from happening. Thus it is invalid to use acpi_device_get_power()
-> in acpi_pci_get_power_state() the way it is done now and the value of
-> the ->power.state field in the corresponding struct acpi_device objects
-> (which reflects the ACPI power resources reference counting, among other
-> things) should be used instead.
->
-> As an example where this becomes an issue is Intel Ice Lake where the
-> Thunderbolt controller (NHI), two PCIe root ports (RP0 and RP1) and xHCI
-> all share the same power resources. The following picture with power
-> resources marked with [] shows the topology:
->
->    Host bridge
->      |
->      +- RP0 ---\
->      +- RP1 ---|--+--> [TBT]
->      +- NHI --/   |
->      |            |
->      |            v
->      +- xHCI --> [D3C]
->
-> Here TBT and D3C are the shared ACPI power resources. ACPI _PR3() method
-> of the devices in question returns either TBT or D3C or both.
->
-> Say we runtime suspend first the root ports RP0 and RP1, then NHI. Now
-> since the TBT power resource is still on when the root ports are runtime
-> suspended their dev->current_state is set to D3hot. When NHI is runtime
-> suspended TBT is finally turned off but state of the root ports remain
-> to be D3hot. Now when the xHCI is runtime suspended D3C gets also turned
-> off. PCI core thus has power states of these devices cached in their
-> dev->current_state as follows:
->
->    RP0 -> D3hot
->    RP1 -> D3hot
->    NHI -> D3cold
->    xHCI -> D3cold
->
-> If the user now runs lspci for instance, the result is all 1's like in
-> the below output (00:07.0 is the first root port, RP0):
->
-> 00:07.0 PCI bridge: Intel Corporation Device 8a1d (rev ff) (prog-if ff)
->      !!! Unknown header type 7f
->      Kernel driver in use: pcieport
->
-> In short the hardware state is not in sync with the software state
-> anymore. The exact same thing happens with the PME polling thread which
-> ends up bringing the root ports back into D0 after they are runtime
-> suspended.
->
-> For this reason, modify acpi_pci_get_power_state() so that it uses the
-> ACPI device power state that was cached by the ACPI core. This makes the
-> PCI device power state match the ACPI device power state regardless of
-> state of the shared power resources which may still be on at this point.
->
-> Link: https://lore.kernel.org/r/20190618161858.77834-2-mika.westerberg@linux.intel.com
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->   drivers/pci/pci-acpi.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-> index a3cedf8de863..688e195e85b4 100644
-> --- a/drivers/pci/pci-acpi.c
-> +++ b/drivers/pci/pci-acpi.c
-> @@ -563,7 +563,8 @@ static pci_power_t acpi_pci_get_power_state(struct pci_dev *dev)
->   	if (!adev || !acpi_device_power_manageable(adev))
->   		return PCI_UNKNOWN;
->   
-> -	if (acpi_device_get_power(adev, &state) || state == ACPI_STATE_UNKNOWN)
-> +	state = adev->power.state;
-> +	if (state == ACPI_STATE_UNKNOWN)
->   		return PCI_UNKNOWN;
->   
->   	return state_conv[state];
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
 
-This requires additional changes to really work in all cases, please do 
-not include it alone into -stable.
+This one was previously from Marek, now it is from you. Any changes here?
 
-
+Best regards,
+Krzysztof
