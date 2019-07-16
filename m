@@ -2,116 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2FAC6A6A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 12:34:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB7D6A6A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 12:38:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733177AbfGPKek (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 06:34:40 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38847 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732081AbfGPKej (ORCPT
+        id S1733236AbfGPKiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 06:38:07 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:36028 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732524AbfGPKiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 06:34:39 -0400
-Received: by mail-pg1-f195.google.com with SMTP id f5so399650pgu.5
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 03:34:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QxxqH1klgQB/FyA39Y7OEvDvoonTizxWFfioa8D1t40=;
-        b=xf2P5LIO9hWNbapEX+fdvUfYtiVCakX+hLWMydt2yN3Vw7xSuw4LTrhAOlE9eHGkXV
-         ZXri5YpyaLoSXmY3UhvAza2hQiH7V5aDWUQJKmWcA3fL9aIk8wGtUJWMjmj1He+Qg6ge
-         Zs5cM3BcdYG/rKHm6etKXh3v7rMY5IVnEKdAmdggYSVhm7n52YYFfuzU/PLKuyvfq/GN
-         LVL0VYRUrdcsrZYUUn/E58oa3rUTCBl/BofHy4fSy/2EEXbk74k0yPXKUHP281Ya0kzR
-         +7SDzP1LeZzrJ/b4YlJfzNH02EC6UxB27fLNrLdUoLkwksGoT8hJSJByjJ9vuDxqP19B
-         YeaA==
+        Tue, 16 Jul 2019 06:38:06 -0400
+Received: by mail-io1-f69.google.com with SMTP id k21so22985679ioj.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 03:38:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QxxqH1klgQB/FyA39Y7OEvDvoonTizxWFfioa8D1t40=;
-        b=qzJTk6gbBR5qEhhL64+MWsDpiVOxds0wSLASX6G0eDYb89btcbU4SsvOtTZo9pAjtV
-         K+uLfYipWv/hmbTweHALpIXPzjAfjqNZz+UvKT+hSJLsD63Gmo1x1+N6A9Q22w1uqKsj
-         epNr8+59HPiF1910XHd6Lj3xCCcqTLEfIuPiKyTEfjdtmC9fvhlDrROh3CsaKqTtzMIn
-         uvEkJzgiLByT/M4bzsQI4r6zLe5stbHs/blYAzVp4sZehfumD9C7p7Z+S/yEX8EkMtMA
-         qQFEzZeC2jje0E0ROCvuOF8ZyqeGFgUmPURqGF+q8yI+UmidTBR2kq+mVptIbpyS8uQj
-         LWUQ==
-X-Gm-Message-State: APjAAAWsJNuoevzv0I/+iDgT5kCe7hlmVHIKnDsH/hT4a2b3B7VakG1I
-        NaRoRbUtqc41cai6p+tKyZ/qEg==
-X-Google-Smtp-Source: APXvYqw3Z2+vS2tUbGWfRTc7j//TaXFA8aoy7O2ZbYIm/MymR8ofJtuyFD8Y0klG0kA/ujSeBRNV/w==
-X-Received: by 2002:a63:5045:: with SMTP id q5mr24596211pgl.380.1563273279071;
-        Tue, 16 Jul 2019 03:34:39 -0700 (PDT)
-Received: from localhost ([122.172.28.117])
-        by smtp.gmail.com with ESMTPSA id d14sm27437543pfo.154.2019.07.16.03.34.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Jul 2019 03:34:38 -0700 (PDT)
-Date:   Tue, 16 Jul 2019 16:04:36 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
-        vireshk@kernel.org, bjorn.andersson@linaro.org,
-        ulf.hansson@linaro.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/13] arm64: dts: qcom: qcs404: Add CPR and populate OPP
- table
-Message-ID: <20190716103436.az5rdk6f3yoa3apz@vireshk-i7>
-References: <20190705095726.21433-1-niklas.cassel@linaro.org>
- <20190705095726.21433-12-niklas.cassel@linaro.org>
- <20190710090303.tb5ue3wq6r7ofyev@vireshk-i7>
- <20190715132405.GA5040@centauri>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=oW/HWWjjYHHi5wFF5o9/pG7QsieQMhoWbLKzyHk0u8o=;
+        b=D3Tssp9EQzrF3TkDANV9v01OZH+8Q90Y68LT0vrUFs2mNhsLezdiMFZJgeM7HbKsnM
+         SImFtL3buzaRXvMn8cShGb0RFOe/1RD2ZQFnFOSBCTrs6CzQqD5fLLKFuVhDHrw4Bgpq
+         qTd3N8em+uP5G5kDg7TZNbBfVAtlj7FVlPpKH6XfXSNF6LbIZcUsOyp5KJunvaThMCXM
+         kFO9cXKDe2G0olJofG1fHvFmbQXO7YylpW+xioMdBL2CliBDBpJXVRGvlUXP3KnrNhJu
+         HzC4wPc2XmMkJjsjGY7ymBJdLjhYeKtfozc5Pcwrop7fM5eCZp+4NbbZvlLJf1Uk01Yi
+         1bAw==
+X-Gm-Message-State: APjAAAXFpYNGwbJgGVhlw0vefEhb1JoUiCtvPkgV1MtUAkBYkvb6gA2W
+        /p58VMdLg+3L20HD89FanDd8eUFxkMKqY81QsartJFUiDyjj
+X-Google-Smtp-Source: APXvYqyqmz3/2jnkLJY2+Cc9UahCylxmUvu5/sL8Jh+77UHF8agMxF5fOSvKau9bcWkyeTZ/7TWyPfLGMoHKsrO//vFLTwUHnmzm
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190715132405.GA5040@centauri>
-User-Agent: NeoMutt/20180716-391-311a52
+X-Received: by 2002:a02:9a03:: with SMTP id b3mr34355376jal.0.1563273485901;
+ Tue, 16 Jul 2019 03:38:05 -0700 (PDT)
+Date:   Tue, 16 Jul 2019 03:38:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d06dc2058dc9f8f2@google.com>
+Subject: WARNING in shark_write_reg/usb_submit_urb
+From:   syzbot <syzbot+4b3f8190f6e13b3efd74@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15-07-19, 15:24, Niklas Cassel wrote:
-> This was actually my initial thought when talking to you 6+ months ago.
-> However, the problem was that, from the CPR drivers' perspective, it
-> only sees the CPR OPP table.
-> 
-> 
-> So this is the order things are called,
-> from qcom-cpufreq-nvmem.c perspective:
-> 
-> 1) dev_pm_opp_set_supported_hw()
-> 
-> 2) dev_pm_opp_attach_genpd() ->
-> which results in
-> int cpr_pd_attach_dev(struct generic_pm_domain *domain,
-> 		      struct device *dev)
-> being called.
-> This callback is inside the CPR driver, and here we have the
-> CPU's (genpd virtual) struct device, and this is where we would like to
-> know the opp-hz.
-> The problem here is that:
-> [    3.114979] cpr_pd_attach_dev: dev_pm_opp_get_opp_count for dev: genpd:0:cpu0: -19
-> [    3.119610] cpr_pd_attach_dev: dev_pm_opp_get_opp_count for dev: cpu0: 0
-> [    3.126489] cpr_pd_attach_dev: dev_pm_opp_get_opp_count for dev: cpr@b018000: 3
-> 
-> While we have the CPR OPP table in the attach callback, we don't
-> have the CPU OPP table, neither in the CPU struct device or the genpd virtual
-> struct device.
+Hello,
 
-If you can find CPU's physical number from the virtual device, then
-you can do get_cpu_device(X) and then life will be easy ?
+syzbot found the following crash on:
 
-> Since we have called dev_pm_opp_attach_genpd(.., .., &virt_devs) which
-> attaches an OPP table to the CPU, I would have expected one of them to
-> be >= 0.
-> Especially since dev_name(virt_devs[0]) == genpd:0:cpu0
-> 
-> I guess it should still be possible to parse the required-opps manually here,
-> by iterating the OF nodes, however, we won't be able to use the CPU's struct
-> opp_table (which is the nice representation of the OF nodes).
-> 
-> Any suggestions?
+HEAD commit:    6a3599ce usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=111fc400600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d90745bdf884fc0a
+dashboard link: https://syzkaller.appspot.com/bug?extid=4b3f8190f6e13b3efd74
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10784148600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10d826a4600000
 
--- 
-viresh
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+4b3f8190f6e13b3efd74@syzkaller.appspotmail.com
+
+usb 1-1: string descriptor 0 read error: -22
+usb 1-1: New USB device found, idVendor=077d, idProduct=627a, bcdDevice=  
+0.10
+usb 1-1: New USB device strings: Mfr=63, Product=5, SerialNumber=1
+------------[ cut here ]------------
+usb 1-1: BOGUS urb xfer, pipe 1 != type 3
+WARNING: CPU: 1 PID: 22 at drivers/usb/core/urb.c:477  
+usb_submit_urb+0x1188/0x13b0 drivers/usb/core/urb.c:477
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 22 Comm: kworker/1:1 Not tainted 5.2.0-rc6+ #14
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  panic+0x292/0x6c9 kernel/panic.c:219
+  __warn.cold+0x20/0x4b kernel/panic.c:576
+  report_bug+0x262/0x2a0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:291
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:986
+RIP: 0010:usb_submit_urb+0x1188/0x13b0 drivers/usb/core/urb.c:477
+Code: 4d 85 ed 74 2c e8 c8 69 e8 fd 4c 89 f7 e8 f0 c4 12 ff 41 89 d8 44 89  
+e1 4c 89 ea 48 89 c6 48 c7 c7 60 3a 1a 86 e8 53 2e be fd <0f> 0b e9 20 f4  
+ff ff e8 9c 69 e8 fd 4c 89 f2 48 b8 00 00 00 00 00
+RSP: 0018:ffff8881d9f96f58 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8127ef3d RDI: ffffed103b3f2ddd
+RBP: ffff8881cf557590 R08: ffff8881d9f88000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
+R13: ffff8881d0c77000 R14: ffff8881d553cd20 R15: ffff8881d5123b00
+  usb_start_wait_urb+0x108/0x2b0 drivers/usb/core/message.c:57
+  usb_bulk_msg+0x228/0x550 drivers/usb/core/message.c:253
+  shark_write_reg+0x1ef/0x2b0 drivers/media/radio/radio-shark2.c:88
+  radio_tea5777_set_freq+0x1ed/0x470 drivers/media/radio/radio-tea5777.c:213
+  radio_tea5777_init+0xb7/0x600 drivers/media/radio/radio-tea5777.c:544
+  usb_shark_probe+0x5b9/0x740 drivers/media/radio/radio-shark2.c:318
+  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+  really_probe+0x281/0x660 drivers/base/dd.c:509
+  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:843
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2111
+  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+  really_probe+0x281/0x660 drivers/base/dd.c:509
+  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:843
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2111
+  usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2536
+  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+  port_event drivers/usb/core/hub.c:5359 [inline]
+  hub_event+0x1b3d/0x35f0 drivers/usb/core/hub.c:5441
+  process_one_work+0x905/0x1570 kernel/workqueue.c:2269
+  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+  kthread+0x30b/0x410 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
