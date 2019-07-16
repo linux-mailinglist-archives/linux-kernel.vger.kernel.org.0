@@ -2,299 +2,319 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E98F26AD8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 19:19:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 843A56AD93
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 19:20:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388217AbfGPRSg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 13:18:36 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:54995 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728695AbfGPRSf (ORCPT
+        id S2388165AbfGPRUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 13:20:49 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:53276 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728248AbfGPRUt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 13:18:35 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TX46jml_1563297508;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TX46jml_1563297508)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 17 Jul 2019 01:18:30 +0800
-Subject: Re: [v2 PATCH 1/2] mm: mempolicy: make the behavior consistent when
- MPOL_MF_MOVE* and MPOL_MF_STRICT were specified
-To:     Vlastimil Babka <vbabka@suse.cz>, mhocko@kernel.org,
-        mgorman@techsingularity.net, akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1561162809-59140-1-git-send-email-yang.shi@linux.alibaba.com>
- <1561162809-59140-2-git-send-email-yang.shi@linux.alibaba.com>
- <fb74d657-90cd-6667-f253-162c951f1b05@suse.cz>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <efe90132-6832-d61a-5d55-d2cc134c7087@linux.alibaba.com>
-Date:   Tue, 16 Jul 2019 10:18:26 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <fb74d657-90cd-6667-f253-162c951f1b05@suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Tue, 16 Jul 2019 13:20:49 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6GHIks5065487;
+        Tue, 16 Jul 2019 17:19:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=sCf21UOaOAUhlxqHIiC1lJ6uDmpf3G/KNigZLTzyEQY=;
+ b=Y+wovuD8ba5GmLeCjQ76Ub931WhVRNEyB0QWQ8dfFFQ5vjNjJKN32LrjhL+fLpd7XHF3
+ Ks6bHzq5JtNXUSgJ324OyzvbngcDDjatj3xymMsZgCFbPwUcg4QeGe9ICgilVlXLVR3D
+ a180gWa0kd8xyHILI8eumul9YGHIiTi7d+d3jxoWB4sEUIisy+/fOILEh7RzQg/lBx8l
+ 85RFkyFjd0gqo6M6HdQZ5nS2g8LPXYDsVe9LPtOiHY/jIaBUI8oDrec+ruaMYi/sikK4
+ EjedNAKNT1+UQozA/4Nn0qNK46jxLRgfD+a+dpA6ceyMW5IG5kqaXNBkoRhaUkH+nd7H 3Q== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2tq6qtnyxv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Jul 2019 17:19:37 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6GHHhnC184904;
+        Tue, 16 Jul 2019 17:19:37 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2tq6mn0us3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Jul 2019 17:19:37 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6GHJJ0u030134;
+        Tue, 16 Jul 2019 17:19:20 GMT
+Received: from [10.39.235.122] (/10.39.235.122)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 16 Jul 2019 17:19:19 +0000
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 10.2 \(3259\))
+Subject: Re: [PATCH v3 3/5] locking/qspinlock: Introduce CNA into the slow
+ path of qspinlock
+From:   Alex Kogan <alex.kogan@oracle.com>
+In-Reply-To: <20190716155022.GR3419@hirez.programming.kicks-ass.net>
+Date:   Tue, 16 Jul 2019 13:19:16 -0400
+Cc:     linux@armlinux.org.uk, mingo@redhat.com, will.deacon@arm.com,
+        arnd@arndb.de, longman@redhat.com, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        guohanjun@huawei.com, jglauber@marvell.com,
+        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        dave.dice@oracle.com, rahul.x.yadav@oracle.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <193BBB31-F376-451F-BDE1-D4807140EB51@oracle.com>
+References: <20190715192536.104548-1-alex.kogan@oracle.com>
+ <20190715192536.104548-4-alex.kogan@oracle.com>
+ <20190716155022.GR3419@hirez.programming.kicks-ass.net>
+To:     Peter Zijlstra <peterz@infradead.org>
+X-Mailer: Apple Mail (2.3259)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=860
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907160213
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=914 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907160213
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, Peter.
 
+Thanks for the review and all the suggestions!
 
-On 7/16/19 1:12 AM, Vlastimil Babka wrote:
-> On 6/22/19 2:20 AM, Yang Shi wrote:
->> When both MPOL_MF_MOVE* and MPOL_MF_STRICT was specified, mbind() should
->> try best to migrate misplaced pages, if some of the pages could not be
->> migrated, then return -EIO.
->>
->> There are three different sub-cases:
->> 1. vma is not migratable
->> 2. vma is migratable, but there are unmovable pages
->> 3. vma is migratable, pages are movable, but migrate_pages() fails
->>
->> If #1 happens, kernel would just abort immediately, then return -EIO,
->> after the commit a7f40cfe3b7ada57af9b62fd28430eeb4a7cfcb7 ("mm:
->> mempolicy: make mbind() return -EIO when MPOL_MF_STRICT is specified").
->>
->> If #3 happens, kernel would set policy and migrate pages with best-effort,
->> but won't rollback the migrated pages and reset the policy back.
->>
->> Before that commit, they behaves in the same way.  It'd better to keep
->> their behavior consistent.  But, rolling back the migrated pages and
->> resetting the policy back sounds not feasible, so just make #1 behave as
->> same as #3.
->>
->> Userspace will know that not everything was successfully migrated (via
->> -EIO), and can take whatever steps it deems necessary - attempt rollback,
->> determine which exact page(s) are violating the policy, etc.
->>
->> Make queue_pages_range() return 1 to indicate there are unmovable pages
->> or vma is not migratable.
->>
->> The #2 is not handled correctly in the current kernel, the following
->> patch will fix it.
->>
->> Cc: Vlastimil Babka <vbabka@suse.cz>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: Mel Gorman <mgorman@techsingularity.net>
->> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> Agreed with the goal, but I think there's a bug, and room for improvement.
->
->> ---
->>   mm/mempolicy.c | 86 +++++++++++++++++++++++++++++++++++++++++-----------------
->>   1 file changed, 61 insertions(+), 25 deletions(-)
->>
->> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
->> index 01600d8..b50039c 100644
->> --- a/mm/mempolicy.c
->> +++ b/mm/mempolicy.c
->> @@ -429,11 +429,14 @@ static inline bool queue_pages_required(struct page *page,
->>   }
->>   
->>   /*
->> - * queue_pages_pmd() has three possible return values:
->> + * queue_pages_pmd() has four possible return values:
->> + * 2 - there is unmovable page, and MPOL_MF_MOVE* & MPOL_MF_STRICT were
->> + *     specified.
->>    * 1 - pages are placed on the right node or queued successfully.
->>    * 0 - THP was split.
-> I think if you renumbered these, it would be more consistent with
-> queue_pages_pte_range() and simplify the code there.
-> 0 - pages on right node/queued
-> 1 - unmovable page with right flags specified
-> 2 - THP split
->
->> - * -EIO - is migration entry or MPOL_MF_STRICT was specified and an existing
->> - *        page was already on a node that does not follow the policy.
->> + * -EIO - is migration entry or only MPOL_MF_STRICT was specified and an
->> + *        existing page was already on a node that does not follow the
->> + *        policy.
->>    */
->>   static int queue_pages_pmd(pmd_t *pmd, spinlock_t *ptl, unsigned long addr,
->>   				unsigned long end, struct mm_walk *walk)
->> @@ -463,7 +466,7 @@ static int queue_pages_pmd(pmd_t *pmd, spinlock_t *ptl, unsigned long addr,
->>   	/* go to thp migration */
->>   	if (flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)) {
->>   		if (!vma_migratable(walk->vma)) {
->> -			ret = -EIO;
->> +			ret = 2;
->>   			goto unlock;
->>   		}
->>   
->> @@ -488,16 +491,29 @@ static int queue_pages_pte_range(pmd_t *pmd, unsigned long addr,
-> Perhaps this function now also deserves a list of possible return values.
+A couple of comments are inlined below.
 
-Sure, will add some comments to elaborate the return values.
-
->
->>   	struct queue_pages *qp = walk->private;
->>   	unsigned long flags = qp->flags;
->>   	int ret;
->> +	bool has_unmovable = false;
->>   	pte_t *pte;
->>   	spinlock_t *ptl;
->>   
->>   	ptl = pmd_trans_huge_lock(pmd, vma);
->>   	if (ptl) {
->>   		ret = queue_pages_pmd(pmd, ptl, addr, end, walk);
->> -		if (ret > 0)
->> +		switch (ret) {
-> With renumbering suggested above, this could be:
-> if (ret != 2)
->      return ret;
->
->> +		/* THP was split, fall through to pte walk */
->> +		case 0:
->> +			break;
->> +		/* Pages are placed on the right node or queued successfully */
->> +		case 1:
->>   			return 0;
->> -		else if (ret < 0)
->> +		/*
->> +		 * Met unmovable pages, MPOL_MF_MOVE* & MPOL_MF_STRICT
->> +		 * were specified.
->> +		 */
->> +		case 2:
->> +			return 1;
->> +		case -EIO:
->>   			return ret;
+> On Jul 16, 2019, at 11:50 AM, Peter Zijlstra <peterz@infradead.org> =
+wrote:
+>=20
+> On Mon, Jul 15, 2019 at 03:25:34PM -0400, Alex Kogan wrote:
+>> +static struct cna_node *find_successor(struct mcs_spinlock *me)
+>> +{
+>> +	struct cna_node *me_cna =3D CNA_NODE(me);
+>> +	struct cna_node *head_other, *tail_other, *cur;
+>> +	struct cna_node *next =3D CNA_NODE(READ_ONCE(me->next));
+>> +	int my_node;
+>> +
+>> +	/* @next should be set, else we would not be calling this =
+function. */
+>> +	WARN_ON_ONCE(next =3D=3D NULL);
+>> +
+>> +	my_node =3D me_cna->numa_node;
+>> +
+>> +	/*
+>> +	 * Fast path - check whether the immediate successor runs on
+>> +	 * the same node.
+>> +	 */
+>> +	if (next->numa_node =3D=3D my_node)
+>> +		return next;
+>> +
+>> +	head_other =3D next;
+>> +	tail_other =3D next;
+>> +
+>> +	/*
+>> +	 * Traverse the main waiting queue starting from the successor =
+of my
+>> +	 * successor, and look for a thread running on the same node.
+>> +	 */
+>> +	cur =3D CNA_NODE(READ_ONCE(next->mcs.next));
+>> +	while (cur) {
+>> +		if (cur->numa_node =3D=3D my_node) {
+>> +			/*
+>> +			 * Found a thread on the same node. Move threads
+>> +			 * between me and that node into the secondary =
+queue.
+>> +			 */
+>> +			if (me->locked > 1)
+>> +				CNA_NODE(me->locked)->tail->mcs.next =3D
+>> +					(struct mcs_spinlock =
+*)head_other;
+>> +			else
+>> +				me->locked =3D (uintptr_t)head_other;
+>> +			tail_other->mcs.next =3D NULL;
+>> +			CNA_NODE(me->locked)->tail =3D tail_other;
+>> +			return cur;
 >> +		}
->>   	}
->>   
->>   	if (pmd_trans_unstable(pmd))
->> @@ -519,14 +535,21 @@ static int queue_pages_pte_range(pmd_t *pmd, unsigned long addr,
->>   		if (!queue_pages_required(page, qp))
->>   			continue;
->>   		if (flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)) {
->> -			if (!vma_migratable(vma))
->> +			/* MPOL_MF_STRICT must be specified if we get here */
->> +			if (!vma_migratable(vma)) {
->> +				has_unmovable |= true;
->>   				break;
->> +			}
->>   			migrate_page_add(page, qp->pagelist, flags);
->>   		} else
->>   			break;
->>   	}
->>   	pte_unmap_unlock(pte - 1, ptl);
->>   	cond_resched();
+>> +		tail_other =3D cur;
+>> +		cur =3D CNA_NODE(READ_ONCE(cur->mcs.next));
+>> +	}
+>> +	return NULL;
+>> +}
+>=20
+> static void cna_move(struct cna_node *cn, struct cna_node *cni)
+> {
+> 	struct cna_node *head, *tail;
+>=20
+> 	/* remove @cni */
+> 	WRITE_ONCE(cn->mcs.next, cni->mcs.next);
+>=20
+> 	/* stick @cni on the 'other' list tail */
+> 	cni->mcs.next =3D NULL;
+>=20
+> 	if (cn->mcs.locked <=3D 1) {
+> 		/* head =3D tail =3D cni */
+> 		head =3D cni;
+> 		head->tail =3D cni;
+> 		cn->mcs.locked =3D head->encoded_tail;
+> 	} else {
+> 		/* add to tail */
+> 		head =3D (struct cna_node *)decode_tail(cn->mcs.locked);
+> 		tail =3D tail->tail;
+> 		tail->next =3D cni;
+> 	}
+> }
+>=20
+> static struct cna_node *cna_find_next(struct mcs_spinlock *node)
+> {
+> 	struct cna_node *cni, *cn =3D (struct cna_node *)node;
+>=20
+> 	while ((cni =3D (struct cna_node *)READ_ONCE(cn->mcs.next))) {
+> 		if (likely(cni->node =3D=3D cn->node))
+> 			break;
+>=20
+> 		cna_move(cn, cni);
+> 	}
+>=20
+> 	return cni;
+> }
+But then you move nodes from the main list to the =E2=80=98other=E2=80=99 =
+list one-by-one.
+I=E2=80=99m afraid this would be unnecessary expensive.
+Plus, all this extra work is wasted if you do not find a thread on the =
+same=20
+NUMA node (you move everyone to the =E2=80=98other=E2=80=99 list only to =
+move them back in=20
+cna_mcs_pass_lock()).
+
+>=20
+>> +static inline bool cna_set_locked_empty_mcs(struct qspinlock *lock, =
+u32 val,
+>> +					struct mcs_spinlock *node)
+>> +{
+>> +	/* Check whether the secondary queue is empty. */
+>> +	if (node->locked <=3D 1) {
+>> +		if (atomic_try_cmpxchg_relaxed(&lock->val, &val,
+>> +				_Q_LOCKED_VAL))
+>> +			return true; /* No contention */
+>> +	} else {
+>> +		/*
+>> +		 * Pass the lock to the first thread in the secondary
+>> +		 * queue, but first try to update the queue's tail to
+>> +		 * point to the last node in the secondary queue.
+>=20
+>=20
+> That comment doesn't make sense; there's at least one conditional
+> missing.
+In CNA, we cannot just clear the tail when the MCS chain is empty, as=20
+there might be nodes in the =E2=80=98other=E2=80=99 chain. In that case =
+(this is the =E2=80=9Celse=E2=80=9D part),
+we want to pass the lock to the first node in the =E2=80=98other=E2=80=99 =
+chain, but=20
+first we need to put the last node from that chain into the tail. =
+Perhaps the
+comment should read =E2=80=9C=E2=80=A6  but first try to update the =
+*primary* queue's tail =E2=80=A6=E2=80=9D,=20
+if that makes more sense.
+
+>=20
+>> +		 */
+>> +		struct cna_node *succ =3D CNA_NODE(node->locked);
+>> +		u32 new =3D succ->tail->encoded_tail + _Q_LOCKED_VAL;
 >> +
->> +	if (has_unmovable)
->> +		return 1;
+>> +		if (atomic_try_cmpxchg_relaxed(&lock->val, &val, new)) {
+>> +			=
+arch_mcs_spin_unlock_contended(&succ->mcs.locked, 1);
+>> +			return true;
+>> +		}
+>> +	}
 >> +
->>   	return addr != end ? -EIO : 0;
->>   }
->>   
->> @@ -639,7 +662,13 @@ static int queue_pages_test_walk(unsigned long start, unsigned long end,
->>    *
->>    * If pages found in a given range are on a set of nodes (determined by
->>    * @nodes and @flags,) it's isolated and queued to the pagelist which is
->> - * passed via @private.)
->> + * passed via @private.
->> + *
->> + * queue_pages_range() has three possible return values:
->> + * 1 - there is unmovable page, but MPOL_MF_MOVE* & MPOL_MF_STRICT were
->> + *     specified.
->> + * 0 - queue pages successfully or no misplaced page.
->> + * -EIO - there is misplaced page and only MPOL_MF_STRICT was specified.
->>    */
->>   static int
->>   queue_pages_range(struct mm_struct *mm, unsigned long start, unsigned long end,
->> @@ -1182,6 +1211,7 @@ static long do_mbind(unsigned long start, unsigned long len,
->>   	struct mempolicy *new;
->>   	unsigned long end;
->>   	int err;
->> +	int ret;
->>   	LIST_HEAD(pagelist);
->>   
->>   	if (flags & ~(unsigned long)MPOL_MF_VALID)
->> @@ -1243,26 +1273,32 @@ static long do_mbind(unsigned long start, unsigned long len,
->>   	if (err)
->>   		goto mpol_out;
->>   
->> -	err = queue_pages_range(mm, start, end, nmask,
->> +	ret = queue_pages_range(mm, start, end, nmask,
->>   			  flags | MPOL_MF_INVERT, &pagelist);
->> -	if (!err)
->> -		err = mbind_range(mm, start, end, new);
->> -
->> -	if (!err) {
->> -		int nr_failed = 0;
->>   
->> -		if (!list_empty(&pagelist)) {
->> -			WARN_ON_ONCE(flags & MPOL_MF_LAZY);
->> -			nr_failed = migrate_pages(&pagelist, new_page, NULL,
->> -				start, MIGRATE_SYNC, MR_MEMPOLICY_MBIND);
->> -			if (nr_failed)
->> -				putback_movable_pages(&pagelist);
->> -		}
->> +	if (ret < 0)
->> +		err = -EIO;
-> I think after your patch, you miss putback_movable_pages() in cases
-> where some were queued, and later the walk returned -EIO. The previous
-> code doesn't miss it, but it's also not obvious due to the multiple if
-> (!err) checks. I would rewrite it some thing like this:
->
-> if (ret < 0) {
->      putback_movable_pages(&pagelist);
->      err = ret;
->      goto mmap_out; // a new label above up_write()
+>> +	return false;
+>> +}
+>=20
+> static cna_try_clear_tail(struct qspinlock *lock, u32 val, struct =
+mcs_spinlock *node)
+> {
+> 	if (node->locked <=3D 1)
+> 		return __try_clear_tail(lock, val, node);
+>=20
+> 	/* the other case */
+> }
+Good point, thanks.
+
+>=20
+>> +static inline void cna_pass_mcs_lock(struct mcs_spinlock *node,
+>> +				     struct mcs_spinlock *next)
+>> +{
+>> +	struct cna_node *succ =3D NULL;
+>> +	u64 *var =3D &next->locked;
+>> +	u64 val =3D 1;
+>> +
+>> +	succ =3D find_successor(node);
+>=20
+> This makes unlock O(n), which is 'funneh' and undocumented.
+I will add a comment above the call to find_successor() / =
+cna_find_next().
+
+>=20
+>> +
+>> +	if (succ) {
+>> +		var =3D &succ->mcs.locked;
+>> +		/*
+>> +		 * We unlock a successor by passing a non-zero value,
+>> +		 * so set @val to 1 iff @locked is 0, which will happen
+>> +		 * if we acquired the MCS lock when its queue was empty
+>> +		 */
+>> +		val =3D node->locked + (node->locked =3D=3D 0);
+>> +	} else if (node->locked > 1) { /* if the secondary queue is not =
+empty */
+>> +		/* pass the lock to the first node in that queue */
+>> +		succ =3D CNA_NODE(node->locked);
+>> +		succ->tail->mcs.next =3D next;
+>> +		var =3D &succ->mcs.locked;
+>=20
+>> +	}	/*
+>> +		 * Otherwise, pass the lock to the immediate successor
+>> +		 * in the main queue.
+>> +		 */
+>=20
+> I don't think this mis-indented comment can happen. The call-site
+> guarantees @next is non-null.
+>=20
+> Therefore, cna_find_next() will either return it, or place it on the
+> secondary list. If it (cna_find_next) returns NULL, we must have a
+> non-empty secondary list.
+>=20
+> In no case do I see this tertiary condition being possible.
+find_successor() will return NULL if it does not find a thread running =
+on the=20
+same NUMA node. And the secondary queue might be empty at that time.
+
+>=20
+>> +
+>> +	arch_mcs_spin_unlock_contended(var, val);
+>> +}
+>=20
+> This also renders this @next argument superfluous.
+>=20
+> static cna_mcs_pass_lock(struct mcs_spinlock *node, struct =
+mcs_spinlock *next)
+> {
+> 	next =3D cna_find_next(node);
+> 	if (!next) {
+> 		BUG_ON(node->locked <=3D 1);
+> 		next =3D (struct cna_node *)decode_tail(node->locked);
+> 		node->locked =3D 1;
+> 	}
+>=20
+> 	arch_mcs_pass_lock(&next->mcs.locked, node->locked);
 > }
 
-Yes, the old code had putback_movable_pages called when !err. But, I 
-think that is for error handling of mbind_range() if I understand it 
-correctly since if queue_pages_range() returns -EIO (only MPOL_MF_STRICT 
-was specified and there was misplaced page) that page list should be 
-empty . The old code should checked whether that list is empty or not.
+@next is passed to save the load from @node.
+This is probably most important for the native code (__pass_mcs_lock()).
+That function should be inlined, however, and that load should not =
+matter.
+Bottom line, I agree that we can remove the @next argument.
 
-So, in the new code I just removed that.
+Best regards,
+=E2=80=94 Alex
 
->
-> The rest can have reduced identation now.
-
-Yes, the goto does eliminate the extra indentation.
-
->
->> +	else {
->> +		err = mbind_range(mm, start, end, new);
->>   
->> -		if (nr_failed && (flags & MPOL_MF_STRICT))
->> -			err = -EIO;
->> -	} else
->> -		putback_movable_pages(&pagelist);
->> +		if (!err) {
->> +			int nr_failed = 0;
->> +
->> +			if (!list_empty(&pagelist)) {
->> +				WARN_ON_ONCE(flags & MPOL_MF_LAZY);
->> +				nr_failed = migrate_pages(&pagelist, new_page,
->> +					NULL, start, MIGRATE_SYNC,
->> +					MR_MEMPOLICY_MBIND);
->> +				if (nr_failed)
->> +					putback_movable_pages(&pagelist);
->> +			}
->> +
->> +			if ((ret > 0) ||
->> +			    (nr_failed && (flags & MPOL_MF_STRICT)))
->> +				err = -EIO;
->> +		} else
->> +			putback_movable_pages(&pagelist);
-> While at it, IIRC the kernel style says that when the 'if' part uses
-> '{ }' then the 'else' part should as well, and it shouldn't be mixed.
-
-Really? The old code doesn't have '{ }' for else, and checkpatch doesn't 
-report any error or warning.
-
-Thanks,
-Yang
-
->
-> Thanks,
-> Vlastimil
->
->> +	}
->>   
->>   	up_write(&mm->mmap_sem);
->>    mpol_out:
->>
 
