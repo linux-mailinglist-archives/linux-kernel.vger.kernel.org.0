@@ -2,32 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD71C6AF79
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 21:01:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 302266AF7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 21:01:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388670AbfGPTA7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 15:00:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37912 "EHLO mail.kernel.org"
+        id S2388639AbfGPTA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 15:00:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388448AbfGPTA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388480AbfGPTA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 16 Jul 2019 15:00:58 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2344217F9;
-        Tue, 16 Jul 2019 19:00:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B32721841;
+        Tue, 16 Jul 2019 19:00:58 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1hnSh6-0006Cv-V6; Tue, 16 Jul 2019 15:00:56 -0400
-Message-Id: <20190716190056.854959986@goodmis.org>
+        id 1hnSh7-0006DP-3t; Tue, 16 Jul 2019 15:00:57 -0400
+Message-Id: <20190716190057.005853795@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Tue, 16 Jul 2019 15:00:16 -0400
+Date:   Tue, 16 Jul 2019 15:00:17 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [for-next][PATCH 2/5] ftrace/selftest: Test if set_event/ftrace_pid exists before writing
+        Ingo Molnar <mingo@redhat.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>
+Subject: [for-next][PATCH 3/5] tracing: Pass type into tracing_generic_entry_update()
 References: <20190716190014.840939538@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -36,36 +37,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-While testing on a very old kernel (3.5), the tests failed because the write
-to set_event_pid in the setup code, did not exist. The tests themselves
-could pass, but the setup failed causing an error.
+All callers of tracing_generic_entry_update() have to initialize
+entry->type, so let's just simply move it inside.
+Link: http://lkml.kernel.org/r/20190525165802.25944-2-xiyou.wangcong@gmail.com
 
-Other files test for existance before writing to them. Do the same for
-set_event_pid and set_ftrace_pid.
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- tools/testing/selftests/ftrace/test.d/functions | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/trace_events.h    | 1 +
+ kernel/trace/trace.c            | 8 ++++----
+ kernel/trace/trace_event_perf.c | 3 +--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/functions b/tools/testing/selftests/ftrace/test.d/functions
-index 779ec11f61bd..1d96c5f7e402 100644
---- a/tools/testing/selftests/ftrace/test.d/functions
-+++ b/tools/testing/selftests/ftrace/test.d/functions
-@@ -91,8 +91,8 @@ initialize_ftrace() { # Reset ftrace to initial-state
-     reset_events_filter
-     reset_ftrace_filter
-     disable_events
--    echo > set_event_pid	# event tracer is always on
--    echo > set_ftrace_pid
-+    [ -f set_event_pid ] && echo > set_event_pid
-+    [ -f set_ftrace_pid ] && echo > set_ftrace_pid
-     [ -f set_ftrace_filter ] && echo | tee set_ftrace_*
-     [ -f set_graph_function ] && echo | tee set_graph_*
-     [ -f stack_trace_filter ] && echo > stack_trace_filter
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 8a62731673f7..5c6f2a6c8cd2 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -142,6 +142,7 @@ enum print_line_t {
+ enum print_line_t trace_handle_return(struct trace_seq *s);
+ 
+ void tracing_generic_entry_update(struct trace_entry *entry,
++				  unsigned short type,
+ 				  unsigned long flags,
+ 				  int pc);
+ struct trace_event_file;
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 77b9c4ca5faa..6b62e1718548 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -743,8 +743,7 @@ trace_event_setup(struct ring_buffer_event *event,
+ {
+ 	struct trace_entry *ent = ring_buffer_event_data(event);
+ 
+-	tracing_generic_entry_update(ent, flags, pc);
+-	ent->type = type;
++	tracing_generic_entry_update(ent, type, flags, pc);
+ }
+ 
+ static __always_inline struct ring_buffer_event *
+@@ -2312,13 +2311,14 @@ enum print_line_t trace_handle_return(struct trace_seq *s)
+ EXPORT_SYMBOL_GPL(trace_handle_return);
+ 
+ void
+-tracing_generic_entry_update(struct trace_entry *entry, unsigned long flags,
+-			     int pc)
++tracing_generic_entry_update(struct trace_entry *entry, unsigned short type,
++			     unsigned long flags, int pc)
+ {
+ 	struct task_struct *tsk = current;
+ 
+ 	entry->preempt_count		= pc & 0xff;
+ 	entry->pid			= (tsk) ? tsk->pid : 0;
++	entry->type			= type;
+ 	entry->flags =
+ #ifdef CONFIG_TRACE_IRQFLAGS_SUPPORT
+ 		(irqs_disabled_flags(flags) ? TRACE_FLAG_IRQS_OFF : 0) |
+diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
+index 4629a6104474..0892e38ed6fb 100644
+--- a/kernel/trace/trace_event_perf.c
++++ b/kernel/trace/trace_event_perf.c
+@@ -416,8 +416,7 @@ void perf_trace_buf_update(void *record, u16 type)
+ 	unsigned long flags;
+ 
+ 	local_save_flags(flags);
+-	tracing_generic_entry_update(entry, flags, pc);
+-	entry->type = type;
++	tracing_generic_entry_update(entry, type, flags, pc);
+ }
+ NOKPROBE_SYMBOL(perf_trace_buf_update);
+ 
 -- 
 2.20.1
 
