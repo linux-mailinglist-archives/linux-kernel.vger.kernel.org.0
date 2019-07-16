@@ -2,55 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3515D6A077
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 04:11:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66C886A07D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 04:15:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730023AbfGPCKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 15 Jul 2019 22:10:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43506 "EHLO mail.kernel.org"
+        id S1733256AbfGPCNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 15 Jul 2019 22:13:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728256AbfGPCKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 15 Jul 2019 22:10:14 -0400
-Subject: Re: [git pull] drm pull for 5.3-rc1
+        id S1733236AbfGPCNr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 15 Jul 2019 22:13:47 -0400
+Received: from localhost (unknown [88.128.80.36])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2689120880;
+        Tue, 16 Jul 2019 02:13:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563243013;
-        bh=J9n5L+Q9IHtkAgIPApZEMaLKERyM/6PXykpKL5+3IR4=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=l/P9CG4A4RkaLs1tzSJFDI8ecyOMsaiS511OOZYoMhv2Ut7aimVhTl5QoR1opxR4G
-         1Jeo61atge01iugYaRUXtTlQGWbS+/KbNbp/KdOacvcyulXHGgFeXgBz4qc4IH1lkg
-         HS7E6/QJnARPqgyVDZbXycsjYQ5dv83yfsA8D35w=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAPM=9txxWeKW1VLWNzLEykELmSCqo_kOHBDdJH-cJfAJXZnnuw@mail.gmail.com>
-References: <CAPM=9txxWeKW1VLWNzLEykELmSCqo_kOHBDdJH-cJfAJXZnnuw@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAPM=9txxWeKW1VLWNzLEykELmSCqo_kOHBDdJH-cJfAJXZnnuw@mail.gmail.com>
-X-PR-Tracked-Remote: git://anongit.freedesktop.org/drm/drm
- drm-next-5.3-backmerge-conflicts
-X-PR-Tracked-Commit-Id: 3729fe2bc2a01f4cc1aa88be8f64af06084c87d6
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: be8454afc50f43016ca8b6130d9673bdd0bd56ec
-Message-Id: <156324301374.8427.15937802000299539468.pr-tracker-bot@kernel.org>
-Date:   Tue, 16 Jul 2019 02:10:13 +0000
-To:     Dave Airlie <airlied@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        s=default; t=1563243227;
+        bh=/wHJ0nCPXO0BilnRARhdb/iE/cpLJmGu45X/cl8c/O8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DZ8fUBFwHQmGnYcYxJHWoYssyCF88SMmYhSjv0LjpjnW7U5WRTe5FmP+wgnqkSUMj
+         jyMlCH9HScwnW0XtdhbHXoRqNv0gWNLD3mD6qGDUrn81qbenTPZWwA29tV5QBqR7wj
+         +ZtwX/18Szq4fduukhl5QsmjQjCRO7N78CMHgJpg=
+Date:   Tue, 16 Jul 2019 04:11:02 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Tri Vo <trong@android.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Hridya Valsaraju <hridya@google.com>, sspatil@google.com,
+        kaleshsingh@google.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>
+Subject: Re: [PATCH v4] PM / wakeup: show wakeup sources stats in sysfs
+Message-ID: <20190716021102.GA8310@kroah.com>
+References: <20190715203651.GA7513@kroah.com>
+ <20190715214348.81865-1-trong@android.com>
+ <CAJZ5v0gEzZkbeLFtW5yadwxBryvL3vWcUoQTkUy3VkxiTV+UrA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0gEzZkbeLFtW5yadwxBryvL3vWcUoQTkUy3VkxiTV+UrA@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 16 Jul 2019 04:37:38 +1000:
+On Mon, Jul 15, 2019 at 11:48:27PM +0200, Rafael J. Wysocki wrote:
+> On Mon, Jul 15, 2019 at 11:44 PM Tri Vo <trong@android.com> wrote:
+> >
+> > Userspace can use wakeup_sources debugfs node to plot history of suspend
+> > blocking wakeup sources over device's boot cycle. This information can
+> > then be used (1) for power-specific bug reporting and (2) towards
+> > attributing battery consumption to specific processes over a period of
+> > time.
+> >
+> > However, debugfs doesn't have stable ABI. For this reason, create a
+> > 'struct device' to expose wakeup sources statistics in sysfs under
+> > /sys/class/wakeup/<name>/.
+> >
+> > Introduce CONFIG_PM_SLEEP_STATS that enables/disables showing wakeup
+> > source statistics in sysfs.
+> 
+> I'm not sure if this is really needed, but I'll let Greg decide.
 
-> git://anongit.freedesktop.org/drm/drm drm-next-5.3-backmerge-conflicts
+You are right.  Having zillions of config options is a pain, who is
+going to turn this off?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/be8454afc50f43016ca8b6130d9673bdd0bd56ec
+But we can always remove the option before 5.4-rc1, so I'll take this
+as-is for now :)
 
-Thank you!
+> Apart from this
+> 
+> Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+thanks for the review!  I'll wait for 5.3-rc1 to come out before adding
+this to my tree.
+
+greg k-h
