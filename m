@@ -2,83 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 270086A332
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 09:47:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C3806A31C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 09:41:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730271AbfGPHrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 03:47:08 -0400
-Received: from orion.archlinux.org ([88.198.91.70]:47572 "EHLO
-        orion.archlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbfGPHrI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 03:47:08 -0400
-Received: from orion.archlinux.org (localhost [127.0.0.1])
-        by orion.archlinux.org (Postfix) with ESMTP id B9F3C13D9582B4;
-        Tue, 16 Jul 2019 07:37:51 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on orion
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=5.0 tests=ALL_TRUSTED=-1,BAYES_00=-1,
-        DMARC_FAIL_NONE=0.25,T_DMARC_POLICY_NONE=0.01,T_DMARC_TESTS_FAIL=0.01
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-BL-Results: 
-Received: from saetre.corp.logitech.com?044 (unknown [154.53.1.40])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: ffy00)
-        by orion.archlinux.org (Postfix) with ESMTPSA;
-        Tue, 16 Jul 2019 07:37:51 +0000 (UTC)
-From:   =?UTF-8?q?Filipe=20La=C3=ADns?= <lains@archlinux.org>
-Cc:     nlopezcasad@logitech.com,
-        =?UTF-8?q?Filipe=20La=C3=ADns?= <lains@archlinux.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] hid-logitech-dj: add the Powerplay receiver
-Date:   Tue, 16 Jul 2019 08:37:47 +0100
-Message-Id: <20190716073747.7616-1-lains@archlinux.org>
-X-Mailer: git-send-email 2.22.0
+        id S1729534AbfGPHlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 03:41:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37304 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726536AbfGPHlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 03:41:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 79244AF3F;
+        Tue, 16 Jul 2019 07:41:05 +0000 (UTC)
+Date:   Tue, 16 Jul 2019 09:41:04 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kernel/printk: prevent deadlock at unexpected call
+ kmsg_dump in NMI context
+Message-ID: <20190716074104.jeagfyr4k57lranz@pathway.suse.cz>
+References: <156317789553.326.15952579019338825022.stgit@buzz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <156317789553.326.15952579019338825022.stgit@buzz>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Filipe Laíns <lains@archlinux.org>
----
- drivers/hid/hid-ids.h         | 1 +
- drivers/hid/hid-logitech-dj.c | 4 ++++
- 2 files changed, 5 insertions(+)
+On Mon 2019-07-15 11:04:55, Konstantin Khlebnikov wrote:
+> Kernel message dumper - function kmsg_dump() is called on various oops or
+> panic paths which could happen in unpredictable context including NMI.
+> 
+> Panic in NMI is handled especially by stopping all other cpus with
+> smp_send_stop() and busting locks in printk_safe_flush_on_panic().
+> 
+> Other less-fatal cases shouldn't happen in NMI and cannot be handled.
+> But this might happen for example on oops in nmi context. In this case
+> dumper could deadlock on lockbuf_lock or break internal structures.
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index ab9d382b067d..884356feb016 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -769,6 +769,7 @@
- #define USB_DEVICE_ID_LOGITECH_UNIFYING_RECEIVER_2	0xc532
- #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_2		0xc534
- #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED	0xc539
-+#define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_POWERPLAY	0xc53a
- #define USB_DEVICE_ID_SPACETRAVELLER	0xc623
- #define USB_DEVICE_ID_SPACENAVIGATOR	0xc626
- #define USB_DEVICE_ID_DINOVO_DESKTOP	0xc704
-diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
-index 4334acb49129..d5b47ec1510c 100644
---- a/drivers/hid/hid-logitech-dj.c
-+++ b/drivers/hid/hid-logitech-dj.c
-@@ -1839,6 +1839,10 @@ static const struct hid_device_id logi_dj_receivers[] = {
- 	{ /* Logitech 27 MHz HID++ 1.0 receiver (0xc513) */
- 	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_MX3000_RECEIVER),
- 	 .driver_data = recvr_type_27mhz},
-+	{ /* Logitech powerplay receiver (0xc53a) */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
-+		USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_POWERPLAY),
-+	 .driver_data = recvr_type_gaming_hidpp},
- 	{ /* Logitech 27 MHz HID++ 1.0 receiver (0xc517) */
- 	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
- 		USB_DEVICE_ID_S510_RECEIVER_2),
--- 
-2.22.0
+If I get it correctly than this patch could really prevent a deadlock
+in at least:
+
+  + oops_end()
+    + oops_exit()
+      + kmsg_dump(KMSG_DUMP_OOPS)
+
+If it is called in NMI, it should end up with panic(). Then the dump
+will be called later after stopping CPUs...
+
+Or am I wrong?
+
+Otherwise, the patch looks good to me. I would just mention
+the above scenario if it is correct.
+
+Best Regards,
+Petr
+
+> This patch catches kmsg_dump() called in NMI context except panic and
+> prints warning once.
+> 
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> Link: https://lore.kernel.org/lkml/156294329676.1745.2620297516210526183.stgit@buzz/ (v1)
+> ---
+>  kernel/printk/printk.c |    7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 1888f6a3b694..e711f64a1843 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -3104,6 +3104,13 @@ void kmsg_dump(enum kmsg_dump_reason reason)
+>  	struct kmsg_dumper *dumper;
+>  	unsigned long flags;
+>  
+> +	/*
+> +	 * In NMI context only panic could be handled safely:
+> +	 * it stops other cpus and busts logbuf lock.
+> +	 */
+> +	if (WARN_ON_ONCE(reason != KMSG_DUMP_PANIC && in_nmi()))
+> +		return;
+> +
+>  	if ((reason > KMSG_DUMP_OOPS) && !always_kmsg_dump)
+>  		return;
+>  
+> 
