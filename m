@@ -2,90 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AD096A708
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 13:10:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3763E6A711
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 13:13:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387607AbfGPLJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 07:09:55 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45160 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733200AbfGPLJz (ORCPT
+        id S2387471AbfGPLLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 07:11:21 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43793 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733200AbfGPLLU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 07:09:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GTNttLKfykU0fMB8TWGXww71EUURBDV6zbj9y9y9CVY=; b=Stdaqrb4Nzvjz4Bj7OxsqHHhD
-        +Td7CdZOlzO+ek+Wlj1/FC/WJHeQ9gSPUYQBkEz/5sipVYr/hPyWPqlS7cSDQnO+iL3ns21zEDaGi
-        3VvzwyAvDJ+Chvj8tqRy5yeKmx6ZrWTp1EMApgzMNqNyFnCUcN19Mpy6CuXjZ4JswoqRQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hnLKz-0004Sl-R4; Tue, 16 Jul 2019 11:09:37 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 9164A2742C01; Tue, 16 Jul 2019 12:09:36 +0100 (BST)
-Date:   Tue, 16 Jul 2019 12:09:36 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        linux-mtd@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, linux-spi@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Ensure child nodes are of type 'object'
-Message-ID: <20190716110936.GA5428@sirena.org.uk>
-References: <20190715230457.3901-1-robh@kernel.org>
+        Tue, 16 Jul 2019 07:11:20 -0400
+Received: by mail-lf1-f66.google.com with SMTP id c19so13396684lfm.10
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 04:11:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=De8/nFrlZkmJ1Y3LPB15A9cMZ47Zx0HgH86pautMcVU=;
+        b=MhfVgsHKsWQWV+8Cx6DkHX920ij+HAPhqcs/LrfxSWnmUhcZwwObqzXGuH2sYRl9AN
+         iwPdTxgDU9BNifyfjbzo6FeK/XCISN8ezsTqNs3u+GIJ3lhKG+pQTJmQuOD83xC4g0Ic
+         lLW+8JbnEAHxIKLzKd2ifrwLiko0942eLh4/D5+V5u4nf2DHsjtiGII+6s8AA9vCq1YZ
+         5xhMqY8nftd9xW7FikIn+LRybyEglGiHdlkPwuKOmaS9kE2uxv312YGl9Y8dzzmC9TRf
+         YJQ9y8PNnM0Nh8pMom8u5ubKRutmYrih0UEOweKK6LfRjVtpvK4OqKR8HkFLMPoKr9Al
+         8pJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=De8/nFrlZkmJ1Y3LPB15A9cMZ47Zx0HgH86pautMcVU=;
+        b=PAFELwj+kIFXZE9OX9gTcjRZOUSi29e8//65uBwXj7gZkmPqpqR7wU0KifmUNuRa5h
+         rF9unTZ9hqPVNy1zori1hrWDSXIu8u2LzcQaaNTb/WesAVZV7Prwxz7e9G5uAJQ//Li8
+         ddk2r//DFCRPlSOZHcmO4E0dBlZGlEjB/yhGLHRKUkrS9XiPdptzZac9HLvyTSorcgXl
+         FgfNTj+pN6Z3tSZFMs41yUo2p+EjKCNl6eeb48P5jAEPr6AdDBq4nz5QSmQ9kmKlQC/d
+         jeFlLkZo/djhl9mbAjSzjsg7baTAH39Q62TodapcYAtM9wcPdpusVZylZEVleoT5iOaJ
+         KuiA==
+X-Gm-Message-State: APjAAAUBNKFO+iDq14Jrjr/7CYkcOi4ejIKqW0qAzIkp01L+5ovhrE/c
+        mdZlIKdzwxmaoLsUYiAuZKwL4A==
+X-Google-Smtp-Source: APXvYqwF1gNN2bVBA6LW6EiKcvNJYhEY68/e2UyoWg9xYJmBg2oHpiJsfK0RzoLVmYtiAgpJogVh+g==
+X-Received: by 2002:ac2:528e:: with SMTP id q14mr13449179lfm.17.1563275478425;
+        Tue, 16 Jul 2019 04:11:18 -0700 (PDT)
+Received: from centauri (ua-83-226-229-61.bbcust.telenor.se. [83.226.229.61])
+        by smtp.gmail.com with ESMTPSA id t25sm2793658lfg.7.2019.07.16.04.11.17
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 16 Jul 2019 04:11:17 -0700 (PDT)
+Date:   Tue, 16 Jul 2019 13:11:15 +0200
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Ilia Lin <ilia.lin@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-arm-msm@vger.kernel.org, jorge.ramirez-ortiz@linaro.org,
+        sboyd@kernel.org, vireshk@kernel.org, bjorn.andersson@linaro.org,
+        ulf.hansson@linaro.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/13] cpufreq: qcom: Refactor the driver to make it
+ easier to extend
+Message-ID: <20190716111115.GA13918@centauri>
+References: <20190705095726.21433-1-niklas.cassel@linaro.org>
+ <20190705095726.21433-5-niklas.cassel@linaro.org>
+ <20190710063026.7yyoxjsqp2ck3z6n@vireshk-i7>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190715230457.3901-1-robh@kernel.org>
-X-Cookie: May be too intense for some viewers.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190710063026.7yyoxjsqp2ck3z6n@vireshk-i7>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jul 10, 2019 at 12:00:26PM +0530, Viresh Kumar wrote:
+> On 05-07-19, 11:57, Niklas Cassel wrote:
+> > +	drv->opp_tables = kcalloc(num_possible_cpus(), sizeof(*drv->opp_tables),
+> > +				  GFP_KERNEL);
+> > +	if (!drv->opp_tables) {
+> > +		ret = -ENOMEM;
+> > +		goto free_drv;
+> > +	}
+> >  
+> >  	for_each_possible_cpu(cpu) {
+> >  		cpu_dev = get_cpu_device(cpu);
+> > @@ -166,19 +195,23 @@ static int qcom_cpufreq_probe(struct platform_device *pdev)
+> >  			goto free_opp;
+> >  		}
+> >  
+> > -		opp_tables[cpu] = dev_pm_opp_set_supported_hw(cpu_dev,
+> > -							      &versions, 1);
+> > -		if (IS_ERR(opp_tables[cpu])) {
+> > -			ret = PTR_ERR(opp_tables[cpu]);
+> > -			dev_err(cpu_dev, "Failed to set supported hardware\n");
+> > -			goto free_opp;
+> > +		if (drv->data->get_version) {
+> 
+> Why depend on get_version here ? The OPP table is already allocated
+> unconditionally.
 
---UugvWAfsgieZRqgk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Since the reading of the speedbin efuse is now optional,
+it is now inside "if (drv->data->get_version)".
 
-On Mon, Jul 15, 2019 at 05:04:57PM -0600, Rob Herring wrote:
-> Properties which are child node definitions need to have an explict
-> type. Otherwise, a matching (DT) property can silently match when an
-> error is desired. Fix this up tree-wide. Once this is fixed, the
-> meta-schema will enforce this on any child node definitions.
+So if I don't also protect "dev_pm_opp_set_supported_hw()"
+with "if (drv->data->get_version)" I get:
 
-Acked-by: Mark Brown <broonie@kernel.org>
+[    3.135092] cpu cpu0: _opp_is_supported: failed to read opp-supported-hw property at index 0: -22
+[    3.139364] cpu cpu0: _opp_is_supported: failed to read opp-supported-hw property at index 0: -22
+[    3.148330] cpu cpu0: _opp_is_supported: failed to read opp-supported-hw property at index 0: -22
 
---UugvWAfsgieZRqgk
-Content-Type: application/pgp-signature; name="signature.asc"
+Probably since drv->versions is initialized to 0,
+and if there is no opp-supported-hw in device tree,
+OPP framework prints failures.
 
------BEGIN PGP SIGNATURE-----
+So it feels safest to only call dev_pm_opp_set_supported_hw()
+if we know that we are supposed to parse the speedbin efuse.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0tsG0ACgkQJNaLcl1U
-h9DgRwf/RVQwM4uJZfc77Bg1QUPRV93uCJ6maAGlUjFImP1U0fpoRuD/zNm5kiIp
-hJhe5TMTX5ua+ajO5DV9S4HD4tRJBv5imHYgx7edGX0XnD6uBhO/Fx91okJhKb54
-hmWEPpZyjursasR/A6HjQi6+OYEnCqrMoTenaZQZ/R7MlS8Z57C5m8slR9m1tSBp
-xam5qvxG3pn5oNarJlCWF9VcVmZckekdU+qutRLVc3xH8bCF6pjfyR5E1M+qRJV6
-av5KFLsTopgBECl4QPHGqIXqhegIjWyeqeMC69s7Nh8pDFpLIwFJfXd7x7UGStgS
-RrPGZDcB2vfMfsXwQAGfu5lyMqkYJA==
-=IEmg
------END PGP SIGNATURE-----
 
---UugvWAfsgieZRqgk--
+Kind regards,
+Niklas
+
+> 
+> > +			drv->opp_tables[cpu] =
+> > +				dev_pm_opp_set_supported_hw(cpu_dev,
+> > +							    &drv->versions, 1);
+> > +			if (IS_ERR(drv->opp_tables[cpu])) {
+> > +				ret = PTR_ERR(drv->opp_tables[cpu]);
+> > +				dev_err(cpu_dev,
+> > +					"Failed to set supported hardware\n");
+> > +				goto free_opp;
+> > +			}
+> >  		}
+> >  	}
+> 
+> -- 
+> viresh
