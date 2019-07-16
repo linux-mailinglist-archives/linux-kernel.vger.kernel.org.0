@@ -2,104 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22D8F6AF56
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 20:56:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C34D6AF63
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 20:56:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388467AbfGPS4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 14:56:00 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37804 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388294AbfGPSz7 (ORCPT
+        id S2388548AbfGPS4v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 14:56:51 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46498 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728137AbfGPS4v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 14:55:59 -0400
-Received: by mail-wr1-f67.google.com with SMTP id n9so22099147wrr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 11:55:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HII1jGmOqJ+ZHDKFI1WGLRVkv6rLuJXcbXOQGuTO2qs=;
-        b=fLx81Axc7fZXcKYyn4FdWmT0VEDGlHROQXan6kCDS1lBwXYOSOZICuwNpupEPxZ1KA
-         wYSXFaoVOjGfUCkS+d8cHlAhu3M2pxovWkqnQFOwALA9QBVmnRkxZxo8H9luuiBMYElW
-         teY5CswjSiHPAphop6UNge3b8FVvFOdl6ZPhV/lGeX4EdVgwNRrnGQgmpMB8qwN4h6Vz
-         CUQTMLSjShRSEkdrxPF+i2v0KnEMWmD2NuZDGJaVq93w9O/93sXEJ13J+BUqFv+mqIR0
-         a2nSPFa0W7ZgTdiFK5BAgfXI4EwftEfi8ScyprvmIm71SEiMx2Gq30N3zYyTNzblFVBj
-         IDqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HII1jGmOqJ+ZHDKFI1WGLRVkv6rLuJXcbXOQGuTO2qs=;
-        b=bjmIWIVfLbeSlLTuKe9w4PgLlgNWgFFkPaYLwUTgeUoaKeboPnqPJA7bJGrrvMF4BC
-         OGxVdERKt+Ab8RmJw+0RHH+cLKraBcBudSM6p+nyOaOjNX0qn9AoGQ8DJz4kqvNlsoGj
-         k+Zk1AEQag365+NBJrlPgDbBwNFEXK+uxptNYsDHxSO3WuFXRkpRNjZlHdhgD7qYUXvd
-         Bwdiq1S8Wj05FT0M3i3+2tHR4Y4bA57p8oAZhUh1MVFOszjlijzuEkR4qupVhzqdLvYu
-         XUWRdLsEXZA/sZPkE0euYYid20wb0y2lRoZx1vH797GVqy2pxKWLk1MTfLkBzTGqpO18
-         34pQ==
-X-Gm-Message-State: APjAAAVBqh9bLBCPTh6h3QsML5LWdvj76licx1Tokgeq8nSpm+YXnpD4
-        MwKT4VcTu9h1JI0AsRkdFnU=
-X-Google-Smtp-Source: APXvYqxjOiZ+/ZmqnAl0iYfzzo4MAVdDizISydYdFT08PVtYYgV0sowV+fqLU0s1PX6fcTCrkIj0Fw==
-X-Received: by 2002:adf:f8cf:: with SMTP id f15mr36779432wrq.333.1563303357931;
-        Tue, 16 Jul 2019 11:55:57 -0700 (PDT)
-Received: from brauner.io ([213.220.153.21])
-        by smtp.gmail.com with ESMTPSA id j33sm48044545wre.42.2019.07.16.11.55.56
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 16 Jul 2019 11:55:57 -0700 (PDT)
-Date:   Tue, 16 Jul 2019 20:55:55 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Sven Schnelle <svens@stackframe.org>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-kernel@vger.kernel.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>, mpe@ellerman.id.au
-Subject: Re: [PATCH 1/2] arch: mark syscall number 435 reserved for clone3
-Message-ID: <20190716185554.gwpppirvmxgvnkgb@brauner.io>
-References: <20190714192205.27190-1-christian@brauner.io>
- <20190714192205.27190-2-christian@brauner.io>
- <e14eb2f9-43cb-0b9d-dec4-b7e7dcd62091@de.ibm.com>
- <20190716130631.tohj4ub54md25dys@brauner.io>
- <20190716185310.GA12537@t470p.stackframe.org>
+        Tue, 16 Jul 2019 14:56:51 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 304EA80593; Tue, 16 Jul 2019 20:56:38 +0200 (CEST)
+Date:   Tue, 16 Jul 2019 20:56:48 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2] PM: QoS: Get rid of unused flags
+Message-ID: <20190716185648.GA10400@amd>
+References: <cover.1562854650.git.amit.kucheria@linaro.org>
+ <e9e7bc3be3b51e68ae1a0f934c3724bd86f5f9af.1562854650.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
 Content-Disposition: inline
-In-Reply-To: <20190716185310.GA12537@t470p.stackframe.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <e9e7bc3be3b51e68ae1a0f934c3724bd86f5f9af.1562854650.git.amit.kucheria@linaro.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 08:53:10PM +0200, Sven Schnelle wrote:
-> Hi,
-> 
-> [Adding Helge to CC list]
-> 
-> On Tue, Jul 16, 2019 at 03:06:33PM +0200, Christian Brauner wrote:
-> > On Mon, Jul 15, 2019 at 03:56:04PM +0200, Christian Borntraeger wrote:
-> > > I think Vasily already has a clone3 patch for s390x with 435. 
-> > 
-> > A quick follow-up on this. Helge and Michael have asked whether there
-> > are any tests for clone3. Yes, there will be and I try to have them
-> > ready by the end of the this or next week for review. In the meantime I
-> > hope the following minimalistic test program that just verifies very
-> > very basic functionality (It's not pretty.) will help you test:
-> > [..]
-> 
-> On PA-RISC this seems to work fine with Helge's patch to wire up the
-> clone3 syscall.
 
-I think I already responded to Helge before and yes, I think that parisc
-doesn't do anything special for fork, vfork, clone, and by extension
-also probably doesn't need to for clone3.
-It should only be a problem for arches that require mucking explicitly
-with arguments of clone-like syscalls.
-In any case, I saw Helge's patch and I think I might've missed to add an
-Acked-by but feel free to add it.
+--uAKRQypu60I7Lcqm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for testing it and sorry that I couldn't test!
-Christian
+On Thu 2019-07-11 19:51:25, Amit Kucheria wrote:
+> The network_latency and network_throughput flags for PM-QoS have not
+> found much use in drivers or in userspace since they were introduced.
+>=20
+> Commit 4a733ef1bea7 ("mac80211: remove PM-QoS listener") removed the
+> only user PM_QOS_NETWORK_LATENCY in the kernel a while ago and there
+> don't seem to be any userspace tools using the character device files
+> either.
+>=20
+> PM_QOS_MEMORY_BANDWIDTH was never even added to the trace events.
+>=20
+> Remove all the flags except cpu_dma_latency.
+>=20
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--uAKRQypu60I7Lcqm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl0uHfAACgkQMOfwapXb+vJRpgCcCE9t/fdfV6fpDv/gchk5E7g9
+qhwAoKUmdMWsShK2uX5HYwRgtGCfzlTu
+=IZXP
+-----END PGP SIGNATURE-----
+
+--uAKRQypu60I7Lcqm--
