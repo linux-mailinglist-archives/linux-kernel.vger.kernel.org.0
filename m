@@ -2,118 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20A0E6B245
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 01:18:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C5E96B24A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 01:18:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388674AbfGPXRW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 19:17:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60014 "EHLO mx1.redhat.com"
+        id S2388964AbfGPXSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 19:18:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728414AbfGPXRV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 19:17:21 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728601AbfGPXSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 19:18:46 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9475F85376;
-        Tue, 16 Jul 2019 23:17:21 +0000 (UTC)
-Received: from treble (ovpn-123-204.rdu2.redhat.com [10.10.123.204])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 798865D71D;
-        Tue, 16 Jul 2019 23:17:20 +0000 (UTC)
-Date:   Tue, 16 Jul 2019 18:17:18 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 00/22] x86, objtool: several fixes/improvements
-Message-ID: <20190716231718.flutou25wemgsfju@treble>
-References: <cover.1563150885.git.jpoimboe@redhat.com>
- <20190715193834.5tvzukcwq735ufgb@treble>
- <CAKwvOdnXt=_NVjK7+RjuxeyESytO6ra769i4qjSwt1Gd1G22dA@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 832F82064B;
+        Tue, 16 Jul 2019 23:18:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563319125;
+        bh=bt/kquVRbmO2GdQ9F5nXR6q9+yLEuka/yn5OH7SMF80=;
+        h=In-Reply-To:References:Subject:To:Cc:From:Date:From;
+        b=HG2p46BK1C5Ih5QfKs7B8lVXyXG8Z3a98L4jsSHdZKcVZoaFYZjJGCMwQKBhpa0vR
+         fn0NuA86U8EQl/oQaBDTe40SovpeknPcr9oCnIqXPShpQIpFNDb4mKqvPm+d2DwHW2
+         S0jJVHF6t7ALux1pN9WXM5XkWIsHi0JjekAAyO0U=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdnXt=_NVjK7+RjuxeyESytO6ra769i4qjSwt1Gd1G22dA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 16 Jul 2019 23:17:21 +0000 (UTC)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <916e2fb3-98b9-c4e3-50e0-3581a41609d6@codeaurora.org>
+References: <1557339895-21952-1-git-send-email-tdas@codeaurora.org> <1557339895-21952-3-git-send-email-tdas@codeaurora.org> <20190715225219.B684820665@mail.kernel.org> <916e2fb3-98b9-c4e3-50e0-3581a41609d6@codeaurora.org>
+Subject: Re: [PATCH v1 2/3] clk: qcom: rcg2: Add support for hardware control mode
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Tue, 16 Jul 2019 16:18:44 -0700
+Message-Id: <20190716231845.832F82064B@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 02:45:39PM -0700, Nick Desaulniers wrote:
-> For a defconfig, that's the only issue I see.
-> (Note that I just landed https://reviews.llvm.org/rL366130 for fixing
-> up bugs from loop unrolling loops containing asm goto with Clang, so
-> anyone else testing w/ clang will see fewer objtool warnings with that
-> patch applied.  A follow up is being worked on in
-> https://reviews.llvm.org/D64101).
-> 
-> For allmodconfig:
-> arch/x86/ia32/ia32_signal.o: warning: objtool:
-> ia32_setup_rt_frame()+0x247: call to memset() with UACCESS enabled
-> mm/kasan/common.o: warning: objtool: kasan_report()+0x52: call to
-> __stack_chk_fail() with UACCESS enabled
-> arch/x86/kernel/signal.o: warning: objtool:
-> x32_setup_rt_frame()+0x255: call to memset() with UACCESS enabled
-> arch/x86/kernel/signal.o: warning: objtool: __setup_rt_frame()+0x254:
-> call to memset() with UACCESS enabled
-> drivers/ata/sata_dwc_460ex.o: warning: objtool:
-> sata_dwc_bmdma_start_by_tag()+0x3a0: can't find switch jump table
-> lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch()+0x88:
-> call to memset() with UACCESS enabled
-> lib/ubsan.o: warning: objtool: ubsan_type_mismatch_common()+0x610:
-> call to __stack_chk_fail() with UACCESS enabled
-> lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch_v1()+0x88:
-> call to memset() with UACCESS enabled
-> drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool:
-> .altinstr_replacement+0x56: redundant UACCESS disable
-> 
-> Without your series, I see them anyways, so I don't consider them
-> regressions added by this series.  Let's follow up on these maybe in a
-> new thread?  (Shall I send you these object files?)
+Quoting Taniya Das (2019-07-15 21:19:02)
+> Hello Stephen,
+>=20
+> Thanks for your review.
+>=20
+> On 7/16/2019 4:22 AM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2019-05-08 11:24:54)
+> >> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> >> index 57dbac9..5bb6d45 100644
+> >> --- a/drivers/clk/qcom/clk-rcg2.c
+> >> +++ b/drivers/clk/qcom/clk-rcg2.c
+> >> @@ -289,6 +289,9 @@ static int __clk_rcg2_configure(struct clk_rcg2 *r=
+cg, const struct freq_tbl *f)
+> >>          cfg |=3D rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+> >>          if (rcg->mnd_width && f->n && (f->m !=3D f->n))
+> >>                  cfg |=3D CFG_MODE_DUAL_EDGE;
+> >> +       if (rcg->flags & HW_CLK_CTRL_MODE)
+> >> +               cfg |=3D CFG_HW_CLK_CTRL_MASK;
+> >> +
+> >=20
+> > Above this we have commit bdc3bbdd40ba ("clk: qcom: Clear hardware clock
+> > control bit of RCG") that clears this bit. Is it possible to always set
+> > this bit and then have an override flag used in sdm845 that says to
+> > _not_ set this bit? Presumably on earlier platforms writing the bit is a
+> > no-op so it's safe to write the bit on those platforms.
+> >=20
+> > This way, if it's going to be the default we can avoid setting the flag
+> > and only set the flag on older platforms where it shouldn't be done for
+> > some reason.
+> >=20
+>=20
+> Not all the subsystem clock controllers might have this hardware control
+> bit set from design. Thus we want to set them based on the flag.
 
-Yes, maybe open a new thread and be sure to copy PeterZ.  He loves those
-warnings ;-)  Object files are definitely needed.
+Yes but what's the percentage of clks that are going to set this flag
+vs. not set this flag? If that is low right now then it's fine but if it
+eventually becomes the standard mechanism it will be easier to opt-out
+of the feature if necessary instead of opt-in.
 
-> So for the series:
-> Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-
-Thanks!
-
-> 
-> > >
-> > >    I haven't dug into it yet.
-> > >
-> > > 2) There's also an issue in clang where a large switch table had a bunch
-> > >    of unused (bad) entries.  It's not a code correctness issue, but
-> > >    hopefully it can get fixed in clang anyway.  See patch 20/22 for more
-> > >    details.
-> 
-> Thanks for the report, let's follow up on steps for me to reproduce.
-
-Just to clarify, there are two clang issues.  Both of them were reported
-originally by Arnd, IIRC.
-
-1) The one described above and in patch 20, where the switch table is
-   mostly unused entries.  Not a real bug, but it's a bit sloppy and
-   wasteful, and objtool doesn't know how to interpret it.
-
-2) The bug with the noreturn call site having a different stack size
-   depending on which code path was taken.
-
-> > > These patches are also at:
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git objtool-many-fixes
-> 
-> Are these the same patches? Some of the commit messages look different, like:
-> https://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git/commit/?h=objtool-many-fixes&id=3e39561c52c4f0062207d604c972148b7b60c341
-
-Oops, those extra 3 commits weren't supposed to be there.  That's future
-work.  I dropped them from the branch.
-
--- 
-Josh
