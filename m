@@ -2,180 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74F8F6ACD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 18:33:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE1A36ACE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 18:39:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731743AbfGPQdA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 12:33:00 -0400
-Received: from mga14.intel.com ([192.55.52.115]:21042 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726722AbfGPQdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 12:33:00 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2019 09:32:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,498,1557212400"; 
-   d="scan'208,223";a="366717660"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by fmsmga006.fm.intel.com with ESMTP; 16 Jul 2019 09:32:59 -0700
-Received: from fmsmsx113.amr.corp.intel.com (10.18.116.7) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 16 Jul 2019 09:32:58 -0700
-Received: from fmsmsx117.amr.corp.intel.com ([169.254.3.206]) by
- FMSMSX113.amr.corp.intel.com ([169.254.13.252]) with mapi id 14.03.0439.000;
- Tue, 16 Jul 2019 09:32:58 -0700
-From:   "Souza, Jose" <jose.souza@intel.com>
-To:     "pebolle@tiscali.nl" <pebolle@tiscali.nl>,
-        "James.Bottomley@HansenPartnership.com" 
-        <James.Bottomley@HansenPartnership.com>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "chris@chris-wilson.co.uk" <chris@chris-wilson.co.uk>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [Intel-gfx] screen freeze with 5.2-rc6 Dell XPS-13 skylake i915
-Thread-Topic: [Intel-gfx] screen freeze with 5.2-rc6 Dell XPS-13 skylake i915
-Thread-Index: AQHVN8s6u18XhfEo0kuWcj/kjNqW06bGT1sAgAAD6QCAAADBAIAAGPCAgAAIRACAAANRAIAABuIAgAAHAoCAAANkgIAA9aWAgAACeQCABSUwAIAACPCAgAE98wA=
-Date:   Tue, 16 Jul 2019 16:32:58 +0000
-Message-ID: <a10f009fc160f05077760ff59cd86a9c99006b39.camel@intel.com>
-References: <1561834612.3071.6.camel@HansenPartnership.com>
-         <156283735757.12757.8954391372130933707@skylake-alporthouse-com>
-         <1562875878.2840.0.camel@HansenPartnership.com>
-         <27a5b2ca8cfc79bf617387a363ea7192acc4e1f0.camel@intel.com>
-         <1562876880.2840.12.camel@HansenPartnership.com>
-         <1562882235.13723.1.camel@HansenPartnership.com>
-         <dad073fb4b06cf0abb7ab702a9474b9c443186eb.camel@intel.com>
-         <1562884722.15001.3.camel@HansenPartnership.com>
-         <2c4edfabf49998eb5da3a6adcabc006eb64bfe90.camel@tiscali.nl>
-         <55f4d1c242d684ca2742e8c14613d810a9ee9504.camel@intel.com>
-         <1562888433.2915.0.camel@HansenPartnership.com>
-         <1562941185.3398.1.camel@HansenPartnership.com>
-         <68472c5f390731e170221809a12d88cb3bc6460e.camel@tiscali.nl>
-         <143142cad4a946361a0bf285b6f1701c81096c7b.camel@intel.com>
-         <595d9bc87bf47717c8675eb5b1a1cbb2bc463752.camel@tiscali.nl>
-In-Reply-To: <595d9bc87bf47717c8675eb5b1a1cbb2bc463752.camel@tiscali.nl>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.193.213]
-Content-Type: multipart/mixed;
-        boundary="_002_a10f009fc160f05077760ff59cd86a9c99006b39camelintelcom_"
+        id S2387851AbfGPQjb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 12:39:31 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38249 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725926AbfGPQjb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 12:39:31 -0400
+Received: by mail-pl1-f195.google.com with SMTP id az7so10389196plb.5;
+        Tue, 16 Jul 2019 09:39:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eh3K6XRA6WufDmkE5JaSlW3TwpIe3cmqxYTGyNYioEE=;
+        b=YLtmR67XmuYZj2OiXKDBRsAFqlIMaPbmOTs3SahTnDigrncU8/MtxPMn5+0Q5hlXRE
+         kxImrFZp/UnBQym84YtUc/ee/reaZ/0leUMfYPKowlzgHF7i7rgTPhob52y2+YZQj2ET
+         V1ov5BkonwjyZ42E/qCmZ77o6LJDT7A3mGdHvg7Ca7wvHbEaoZH51ECqyC+uDRXJUxUo
+         h0ATuO6zopu+7FJ0Cr4Vnkwe6UQqXK+F1fv+lSKXSD6FG+OoQiyx6bZIIhRuAxrZ+gZF
+         v9lip/pX0IYr7guDOPJPqcx0KXsFWtM9Nx5Pur6OmqsMrmFMLj1NLMsvU+JvTj4YtaQw
+         DzyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eh3K6XRA6WufDmkE5JaSlW3TwpIe3cmqxYTGyNYioEE=;
+        b=aAMBq8WuMWmsXXk1a4z6xvIzbqX2E2nAWsx+8pNF3/E0SnMnvhovVavi4N0Q9agyci
+         Ru3AgDXfYdG4G6htQL5tW16zVhA9xuvXl1V0vuEUS9jObiF1OGaKqih4l5nPtKqMZkwq
+         8vY5TDewG1t6KCSCT8L08qswd1lVoqyu0SzMe5GLZHtY3eVbU5GfzWP3He1Yos5gr3SE
+         A9D4GG7aqZf+kyAhmuUHd+kZ1HKc8ySyH7s1U1oT63AbRcoulY51+E3RbYB0uC8RAenM
+         /TQCxr0i4XeGl12NYLNgMSB0j6v0PJ0o3eqnOSoG7oi01UxIL5vJphE/gfpJ3dkEuYmS
+         0ahg==
+X-Gm-Message-State: APjAAAWZF/A3raQoBZZ/KmYxPQ/gNkxMklF01NyS4xyyNVu+etXqKwvG
+        5anpYhA4O95cl2Tr55ot54BTPhR/
+X-Google-Smtp-Source: APXvYqw7014vqzLIZT3xw5eCSHaFAh1/PAq9IDU3t8K7iVAGQuIo6zBkmC021Ffkd4b76fSVJ2Wbjg==
+X-Received: by 2002:a17:902:968d:: with SMTP id n13mr37325139plp.257.1563295170321;
+        Tue, 16 Jul 2019 09:39:30 -0700 (PDT)
+Received: from localhost (c-73-222-71-142.hsd1.ca.comcast.net. [73.222.71.142])
+        by smtp.gmail.com with ESMTPSA id f20sm6764584pgg.56.2019.07.16.09.39.28
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 16 Jul 2019 09:39:29 -0700 (PDT)
+Date:   Tue, 16 Jul 2019 09:39:27 -0700
+From:   Richard Cochran <richardcochran@gmail.com>
+To:     Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc:     netdev@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Christopher S . Hall" <christopher.s.hall@intel.com>
+Subject: Re: [RFC PATCH 4/5] PTP: Add flag for non-periodic output
+Message-ID: <20190716163927.GA2125@localhost>
+References: <20190716072038.8408-1-felipe.balbi@linux.intel.com>
+ <20190716072038.8408-5-felipe.balbi@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190716072038.8408-5-felipe.balbi@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---_002_a10f009fc160f05077760ff59cd86a9c99006b39camelintelcom_
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <793D261D8F404740BBFC76C2818EB76A@intel.com>
-Content-Transfer-Encoding: base64
+On Tue, Jul 16, 2019 at 10:20:37AM +0300, Felipe Balbi wrote:
+> When this new flag is set, we can use single-shot output.
+> 
+> Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+> ---
+>  include/uapi/linux/ptp_clock.h | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/uapi/linux/ptp_clock.h b/include/uapi/linux/ptp_clock.h
+> index 674db7de64f3..439cbdfc3d9b 100644
+> --- a/include/uapi/linux/ptp_clock.h
+> +++ b/include/uapi/linux/ptp_clock.h
+> @@ -67,7 +67,9 @@ struct ptp_perout_request {
+>  	struct ptp_clock_time start;  /* Absolute start time. */
+>  	struct ptp_clock_time period; /* Desired period, zero means disable. */
+>  	unsigned int index;           /* Which channel to configure. */
+> -	unsigned int flags;           /* Reserved for future use. */
+> +
+> +#define PTP_PEROUT_ONE_SHOT BIT(0)
+> +	unsigned int flags;           /* Bit 0 -> oneshot output. */
+>  	unsigned int rsv[4];          /* Reserved for future use. */
 
-VGhhbmtzIFBhdWwNCg0KUGF1bCBhbmQgSmFtZXMgY291bGQgeW91IHRlc3QgdGhpcyBmaW5hbCBz
-b2x1dGlvbihhdCBsZWFzdCBmb3IgNS4yKT8NClBsZWFzZSByZXZlcnQgdGhlIGhhY2sgcGF0Y2gg
-YW5kIGFwcGx5IHRoaXMgb25lLg0KDQpUaGFua3MNCg0KDQpPbiBNb24sIDIwMTktMDctMTUgYXQg
-MjM6MzQgKzAyMDAsIFBhdWwgQm9sbGUgd3JvdGU6DQo+IEhpIEpvc2UsDQo+IA0KPiBTb3V6YSwg
-Sm9zZSBzY2hyZWVmIG9wIG1hIDE1LTA3LTIwMTkgb20gMjE6MDMgWyswMDAwXToNCj4gPiBTbyB0
-aGUgaXNzdWUgZGlkIG5vdCBoYXBwZW5lZCBhZ2FpbiB3aXRoIHRoZSBwYXRjaCBhcHBsaWVkPw0K
-PiANCj4gTm90IGluIHRoZSB0aHJlZSBkYXlzIHRoYXQgSSd2ZSBiZWVuIHJ1bm5pbmcgNS4yIGtl
-cm5lbHMgd2l0aCB0aGUNCj4gaGFjayBhcHBsaWVkDQo+IChzbyB0aGF0IHNob3VsZCBiZSBhYm91
-dCB0d2VsdmUgaG91cnMgb2YgcHJvcGVyIHVwdGltZSkuDQo+IA0KPiA+IElmIHlvdSBzdGlsbCBo
-YXZlIHRoZSBrZXJuZWwgNS4xIGluc3RhbGxlZCBjb3VsZCB5b3Ugc2hhcmUgeW91cg0KPiA+IC9z
-eXMva2VybmVsL2RlYnVnL2RyaS8wL2k5MTVfZWRwX3Bzcl9zdGF0dXMgd2l0aCB0aGUgb2xkZXIg
-a2VybmVsPw0KPiA+IFdlIHdhbnQgdG8gY2hlY2sgaWYgdHJhaW5pbmcgdmFsdWVzIGNoYW5nZWQg
-YmV0d2VlbiBrZXJuZWwNCj4gPiB2ZXJzaW9ucy4NCj4gDQo+IFN1cmUuIE9uIDUuMS4xNyBJIGdl
-dDoNCj4gICAgIFNpbmsgc3VwcG9ydDogeWVzIFsweDAxXQ0KPiAgICAgUFNSIG1vZGU6IFBTUjEg
-ZW5hYmxlZA0KPiAgICAgU291cmNlIFBTUiBjdGw6IGVuYWJsZWQgWzB4ODFmMDA2MjZdDQo+ICAg
-ICBTb3VyY2UgUFNSIHN0YXR1czogSURMRSBbMHgwNDBiMDAwMV0NCj4gICAgIEJ1c3kgZnJvbnRi
-dWZmZXIgYml0czogMHgwMDAwMDAwMA0KPiANCj4gQW5kLCBpbiBjYXNlIHlvdSBuZWVkIGl0LCBv
-biA1LjIuMStoYWNrIEkgZ2V0Og0KPiAgICAgU2luayBzdXBwb3J0OiB5ZXMgWzB4MDFdDQo+ICAg
-ICBQU1IgbW9kZTogUFNSMSBlbmFibGVkDQo+ICAgICBTb3VyY2UgUFNSIGN0bDogZW5hYmxlZCBb
-MHg4MWYwMDYyNl0NCj4gICAgIFNvdXJjZSBQU1Igc3RhdHVzOiBJRExFIFsweDA0MDMwMDA2XQ0K
-PiAgICAgQnVzeSBmcm9udGJ1ZmZlciBiaXRzOiAweDAwMDAwMDAwDQo+IA0KPiBIb3BlIHRoaXMg
-aGVscHMsDQo+IA0KPiANCj4gUGF1bA0KPiANCg==
+Unfortunately, the code never checked that .flags and .rsv are zero,
+and so the de-facto ABI makes extending these fields impossible.  That
+was my mistake from the beginning.
 
---_002_a10f009fc160f05077760ff59cd86a9c99006b39camelintelcom_
-Content-Type: text/x-patch;
-	name="0001-Revert-drm-i915-vbt-Parse-and-use-the-new-field-with.patch"
-Content-Description: 0001-Revert-drm-i915-vbt-Parse-and-use-the-new-field-with.patch
-Content-Disposition: attachment;
-	filename="0001-Revert-drm-i915-vbt-Parse-and-use-the-new-field-with.patch";
-	size=3981; creation-date="Tue, 16 Jul 2019 16:32:58 GMT";
-	modification-date="Tue, 16 Jul 2019 16:32:58 GMT"
-Content-ID: <9145BE30AE8B9A40BD9D0576B6BAA0B6@intel.com>
-Content-Transfer-Encoding: base64
+In order to actually support extensions, you will first have to
+introduce a new ioctl.
 
-RnJvbSA1ZDRmY2U5ODg5ZTI1ODI4ZWUzNTQ4MWEwOTkyOWU4ZWU2MTZjOTMzIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiA9P1VURi04P3E/Sm9zPUMzPUE5PTIwUm9iZXJ0bz0yMGRlPTIw
-U291emE/PSA8am9zZS5zb3V6YUBpbnRlbC5jb20+CkRhdGU6IFR1ZSwgMTYgSnVsIDIwMTkgMDk6
-MjY6MDggLTA3MDAKU3ViamVjdDogW1BBVENIXSBSZXZlcnQgImRybS9pOTE1L3ZidDogUGFyc2Ug
-YW5kIHVzZSB0aGUgbmV3IGZpZWxkIHdpdGggUFNSMgogVFAyLzMgd2FrZXVwIHRpbWUiCk1JTUUt
-VmVyc2lvbjogMS4wCkNvbnRlbnQtVHlwZTogdGV4dC9wbGFpbjsgY2hhcnNldD1VVEYtOApDb250
-ZW50LVRyYW5zZmVyLUVuY29kaW5nOiA4Yml0CgpUaGlzIHBhdGNoIGlzIGNhdXNpbmcgUFNSX0NU
-TF9UUDJfVFAzIHRvIGJlIHNldCB0bwpQU1JfVFAyX1RQM19USU1FXzB1cyB3aGlsZSBWQlQgaGF2
-ZSBhIGRpZmZlcmVudCB2YWx1ZSBjYXVzaW5nIHNjcmVlbgpmcmVlemluZyBhZnRlciBleGl0aW5n
-IFBTUi4KCkZvciBub3cgbGV0cyBqdXN0IHJldmVydCBpdCBhbmQgbGF0ZXIgSSB3aWxsIGJyaW5n
-IGl0IGJhY2sgZml4ZWQuCgpUaGlzIHJldmVydHMgY29tbWl0IDg4YTBkOTYwNmFmZjA5ZDJiMWM1
-ZGJlOTVhOWRmOWRhYzQ0ZTc5YjYuCgpTaWduZWQtb2ZmLWJ5OiBKb3PDqSBSb2JlcnRvIGRlIFNv
-dXphIDxqb3NlLnNvdXphQGludGVsLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1
-X2Rydi5oICAgICAgIHwgIDEgLQogZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfYmlvcy5jICAg
-ICB8IDI1IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2lu
-dGVsX3Bzci5jICAgICAgfCAgOCArKysrLS0tLQogZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxf
-dmJ0X2RlZnMuaCB8ICAzIC0tLQogNCBmaWxlcyBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDMz
-IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfZHJ2
-LmggYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2Rydi5oCmluZGV4IDA2NmZkMmExMjg1MS4u
-ZDM3MjYyYWExNmNhIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2Rydi5o
-CisrKyBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfZHJ2LmgKQEAgLTEwMTMsNyArMTAxMyw2
-IEBAIHN0cnVjdCBpbnRlbF92YnRfZGF0YSB7CiAJCWVudW0gcHNyX2xpbmVzX3RvX3dhaXQgbGlu
-ZXNfdG9fd2FpdDsKIAkJaW50IHRwMV93YWtldXBfdGltZV91czsKIAkJaW50IHRwMl90cDNfd2Fr
-ZXVwX3RpbWVfdXM7Ci0JCWludCBwc3IyX3RwMl90cDNfd2FrZXVwX3RpbWVfdXM7CiAJfSBwc3I7
-CiAKIAlzdHJ1Y3QgewpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfYmlv
-cy5jIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfYmlvcy5jCmluZGV4IDFkYzhkMDNmZjEy
-Ny4uNDU1Y2MwNzM5MmFmIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9i
-aW9zLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfYmlvcy5jCkBAIC03NjAsMzEg
-Kzc2MCw2IEBAIHBhcnNlX3BzcihzdHJ1Y3QgZHJtX2k5MTVfcHJpdmF0ZSAqZGV2X3ByaXYsIGNv
-bnN0IHN0cnVjdCBiZGJfaGVhZGVyICpiZGIpCiAJCWRldl9wcml2LT52YnQucHNyLnRwMV93YWtl
-dXBfdGltZV91cyA9IHBzcl90YWJsZS0+dHAxX3dha2V1cF90aW1lICogMTAwOwogCQlkZXZfcHJp
-di0+dmJ0LnBzci50cDJfdHAzX3dha2V1cF90aW1lX3VzID0gcHNyX3RhYmxlLT50cDJfdHAzX3dh
-a2V1cF90aW1lICogMTAwOwogCX0KLQotCWlmIChiZGItPnZlcnNpb24gPj0gMjI2KSB7Ci0JCXUz
-MiB3YWtldXBfdGltZSA9IHBzcl90YWJsZS0+cHNyMl90cDJfdHAzX3dha2V1cF90aW1lOwotCi0J
-CXdha2V1cF90aW1lID0gKHdha2V1cF90aW1lID4+ICgyICogcGFuZWxfdHlwZSkpICYgMHgzOwot
-CQlzd2l0Y2ggKHdha2V1cF90aW1lKSB7Ci0JCWNhc2UgMDoKLQkJCXdha2V1cF90aW1lID0gNTAw
-OwotCQkJYnJlYWs7Ci0JCWNhc2UgMToKLQkJCXdha2V1cF90aW1lID0gMTAwOwotCQkJYnJlYWs7
-Ci0JCWNhc2UgMzoKLQkJCXdha2V1cF90aW1lID0gNTA7Ci0JCQlicmVhazsKLQkJZGVmYXVsdDoK
-LQkJY2FzZSAyOgotCQkJd2FrZXVwX3RpbWUgPSAyNTAwOwotCQkJYnJlYWs7Ci0JCX0KLQkJZGV2
-X3ByaXYtPnZidC5wc3IucHNyMl90cDJfdHAzX3dha2V1cF90aW1lX3VzID0gd2FrZXVwX3RpbWU7
-Ci0JfSBlbHNlIHsKLQkJLyogUmV1c2luZyBQU1IxIHdha2V1cCB0aW1lIGZvciBQU1IyIGluIG9s
-ZGVyIFZCVHMgKi8KLQkJZGV2X3ByaXYtPnZidC5wc3IucHNyMl90cDJfdHAzX3dha2V1cF90aW1l
-X3VzID0gZGV2X3ByaXYtPnZidC5wc3IudHAyX3RwM193YWtldXBfdGltZV91czsKLQl9CiB9CiAK
-IHN0YXRpYyB2b2lkIHBhcnNlX2RzaV9iYWNrbGlnaHRfcG9ydHMoc3RydWN0IGRybV9pOTE1X3By
-aXZhdGUgKmRldl9wcml2LApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxf
-cHNyLmMgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9wc3IuYwppbmRleCA5NjM2NjNiYTBl
-ZGYuLjM5MjZmNGJmMDVmNiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxf
-cHNyLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfcHNyLmMKQEAgLTUyMywxMiAr
-NTIzLDEyIEBAIHN0YXRpYyB2b2lkIGhzd19hY3RpdmF0ZV9wc3IyKHN0cnVjdCBpbnRlbF9kcCAq
-aW50ZWxfZHApCiAKIAl2YWwgfD0gRURQX1BTUjJfRlJBTUVfQkVGT1JFX1NVKGRldl9wcml2LT5w
-c3Iuc2lua19zeW5jX2xhdGVuY3kgKyAxKTsKIAotCWlmIChkZXZfcHJpdi0+dmJ0LnBzci5wc3Iy
-X3RwMl90cDNfd2FrZXVwX3RpbWVfdXMgPj0gMCAmJgotCSAgICBkZXZfcHJpdi0+dmJ0LnBzci5w
-c3IyX3RwMl90cDNfd2FrZXVwX3RpbWVfdXMgPD0gNTApCisJaWYgKGRldl9wcml2LT52YnQucHNy
-LnRwMl90cDNfd2FrZXVwX3RpbWVfdXMgPj0gMCAmJgorCSAgICBkZXZfcHJpdi0+dmJ0LnBzci50
-cDJfdHAzX3dha2V1cF90aW1lX3VzIDw9IDUwKQogCQl2YWwgfD0gRURQX1BTUjJfVFAyX1RJTUVf
-NTB1czsKLQllbHNlIGlmIChkZXZfcHJpdi0+dmJ0LnBzci5wc3IyX3RwMl90cDNfd2FrZXVwX3Rp
-bWVfdXMgPD0gMTAwKQorCWVsc2UgaWYgKGRldl9wcml2LT52YnQucHNyLnRwMl90cDNfd2FrZXVw
-X3RpbWVfdXMgPD0gMTAwKQogCQl2YWwgfD0gRURQX1BTUjJfVFAyX1RJTUVfMTAwdXM7Ci0JZWxz
-ZSBpZiAoZGV2X3ByaXYtPnZidC5wc3IucHNyMl90cDJfdHAzX3dha2V1cF90aW1lX3VzIDw9IDUw
-MCkKKwllbHNlIGlmIChkZXZfcHJpdi0+dmJ0LnBzci50cDJfdHAzX3dha2V1cF90aW1lX3VzIDw9
-IDUwMCkKIAkJdmFsIHw9IEVEUF9QU1IyX1RQMl9USU1FXzUwMHVzOwogCWVsc2UKIAkJdmFsIHw9
-IEVEUF9QU1IyX1RQMl9USU1FXzI1MDB1czsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9p
-OTE1L2ludGVsX3ZidF9kZWZzLmggYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF92YnRfZGVm
-cy5oCmluZGV4IGZkYmJiOWE1MzgwNC4uYmYzNjYyYWQ1ZmVkIDEwMDY0NAotLS0gYS9kcml2ZXJz
-L2dwdS9kcm0vaTkxNS9pbnRlbF92YnRfZGVmcy5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1
-L2ludGVsX3ZidF9kZWZzLmgKQEAgLTc3Miw5ICs3NzIsNiBAQCBzdHJ1Y3QgcHNyX3RhYmxlIHsK
-IAkvKiBUUCB3YWtlIHVwIHRpbWUgaW4gbXVsdGlwbGUgb2YgMTAwICovCiAJdTE2IHRwMV93YWtl
-dXBfdGltZTsKIAl1MTYgdHAyX3RwM193YWtldXBfdGltZTsKLQotCS8qIFBTUjIgVFAyL1RQMyB3
-YWtldXAgdGltZSBmb3IgMTYgcGFuZWxzICovCi0JdTMyIHBzcjJfdHAyX3RwM193YWtldXBfdGlt
-ZTsKIH0gX19wYWNrZWQ7CiAKIHN0cnVjdCBiZGJfcHNyIHsKLS0gCjIuMjIuMAoK
+Sorry,
+Richard
 
---_002_a10f009fc160f05077760ff59cd86a9c99006b39camelintelcom_--
+>  };
+>  
+> -- 
+> 2.22.0
+> 
