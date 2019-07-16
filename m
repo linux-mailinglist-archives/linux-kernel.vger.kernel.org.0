@@ -2,80 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A46016A9F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 15:59:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7C8E6A9EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 15:59:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387805AbfGPN7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 09:59:54 -0400
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:39016 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387782AbfGPN7x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 09:59:53 -0400
-Received: from cpe-2606-a000-111b-405a-0-0-0-162e.dyn6.twc.com ([2606:a000:111b:405a::162e] helo=localhost)
-        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
-        (Exim 4.63)
-        (envelope-from <nhorman@tuxdriver.com>)
-        id 1hnNzg-0000nK-29; Tue, 16 Jul 2019 09:59:50 -0400
-From:   Neil Horman <nhorman@tuxdriver.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Neil Horman <nhorman@tuxdriver.com>, djuran@redhat.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [PATCH] x86: Add irq spillover warning
-Date:   Tue, 16 Jul 2019 09:59:17 -0400
-Message-Id: <20190716135917.15525-1-nhorman@tuxdriver.com>
-X-Mailer: git-send-email 2.21.0
+        id S2387524AbfGPN70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 09:59:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726997AbfGPN7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 09:59:25 -0400
+Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5341020880;
+        Tue, 16 Jul 2019 13:59:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563285564;
+        bh=axm9oREaOJv1cVVP68RVtcE55RfxdvIVdg8ysfbSH3Y=;
+        h=Date:From:To:Cc:Subject:From;
+        b=k7xbINaffR/KPZSMMRTCcPaMdONAeBGql3Q1D9AmKlfzx2nzngqR5fRSZyQBTypu4
+         QJTMMOrnAwL6xTb9RWTrZdJcY4q6qPjfxGe6tGrGmd2b4ecEIGzgLaUNqHrmTo5aD5
+         Ab10fEFBa1/A5oF1pjGB3KBd9mqZhDuerxgfsNJg=
+Date:   Tue, 16 Jul 2019 08:59:23 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: PCI: dra7xx: PCI_EXP_LNKCTL2 usage
+Message-ID: <20190716135923.GA4470@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.9 (--)
-X-Spam-Status: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Intel hardware, cpus are limited in the number of irqs they can
-have affined to them (currently 240), based on section 10.5.2 of:
-https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-vol-3a-part-1-manual.pdf
+ab5fe4f4d31e ("PCI: dra7xx: Add support to force RC to work in GEN1 mode")
+added this:
 
-If a cpu has more than this number of interrupts affined to it, they
-will spill over to other cpus, which potentially may be outside of their
-affinity mask.  Given that this might cause unexpected behavior on
-performance sensitive systems, warn the user should this condition occur
-so that corrective action can be taken
+  +       dw_pcie_cfg_read(pp->dbi_base + exp_cap_off + PCI_EXP_LNKCTL2,
+  +                        2, &reg);
+  +       if ((reg & PCI_EXP_LNKCAP_SLS) != PCI_EXP_LNKCAP_SLS_2_5GB) {
+  +               reg &= ~((u32)PCI_EXP_LNKCAP_SLS);
+  +               reg |= PCI_EXP_LNKCAP_SLS_2_5GB;
+  +               dw_pcie_cfg_write(pp->dbi_base + exp_cap_off +
+  +                                 PCI_EXP_LNKCTL2, 2, reg);
+  +       }
 
-Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
-Reported-by: djuran@redhat.com
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: Borislav Petkov <bp@alien8.de>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: x86@kernel.org
----
- arch/x86/kernel/irq.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+This probably works as intended, but it *looks* wrong because it uses
+LNKCAP_* symbols on LNKCTL2 register values.  We do have
+PCI_EXP_LNKCTL2_* symbols, so I think it would be better if we used
+used those.
 
-diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-index 9b68b5b00ac9..ac7ed32de3d5 100644
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -244,6 +244,14 @@ __visible unsigned int __irq_entry do_IRQ(struct pt_regs *regs)
- 
- 	desc = __this_cpu_read(vector_irq[vector]);
- 
-+	/*
-+	 * Intel processors are limited in the number of irqs they can address. If we affine
-+	 * too many irqs to a given cpu, they can silently spill to another cpu outside of
-+	 * their affinity mask. Warn the user when this occurs
-+	 */
-+	if (unlikely(!cpumask_test_cpu(smp_processor_id(), &desc->irq_common_data.affinity)))
-+		pr_emerg_ratelimited("%s: %d.%d handled outside of affinity mask\n");
-+
- 	if (!handle_irq(desc, regs)) {
- 		ack_APIC_irq();
- 
--- 
-2.21.0
-
+Bjorn
