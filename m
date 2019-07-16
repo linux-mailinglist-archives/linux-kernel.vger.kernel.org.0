@@ -2,57 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D25C86B006
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 21:43:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7141B6B00C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 21:47:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388932AbfGPTkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 15:40:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35990 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388901AbfGPTkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 15:40:20 -0400
-Subject: Re: [GIT PULL for v5.3-rc1] docs: addition of a large set of files to
- the documentation body
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563306020;
-        bh=LnphcGj+XDdWqFhpZythH4qtCoyKQNlrP3cFlv6jdtk=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=cWzojXD4MbadwjebxlskJocU4iq2EX9URFJ0t/oA4OE2lN1jRq/51VwXtNZxhlQg7
-         DepSA7o/e9IlvlmKiva9ecq54cmJJC2AJQ5WNgHlhNOgGLGzj16c7N2Atqy0AYfDLU
-         hcD9A8rWlgw4tvGavL7RC6D55UOUNDghqYVUw4vQ=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190716080122.28a17014@coco.lan>
-References: <20190716080122.28a17014@coco.lan>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190716080122.28a17014@coco.lan>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media.git
- tags/docs/v5.3-1
-X-PR-Tracked-Commit-Id: 168869492e7009b6861b615f1d030c99bc805e83
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c309b6f24222246c18a8b65d3950e6e755440865
-Message-Id: <156330602041.24987.8495566131446582190.pr-tracker-bot@kernel.org>
-Date:   Tue, 16 Jul 2019 19:40:20 +0000
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Documentation Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        id S2388480AbfGPTpj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 15:45:39 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46715 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbfGPTph (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 15:45:37 -0400
+Received: by mail-pf1-f196.google.com with SMTP id c73so9594229pfb.13
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 12:45:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3AgUbM0e5/92Cpo+sVKZd+RAcuqfF3u7zDN3lIzhJzQ=;
+        b=Dbvb6XCqTipqnHRs6g4Di/rpUpD0ZwaKrdunT90pIH/J/v/8eHGkSWCWBIVL9M8pUH
+         1HNlccZCrpxwvgw2uwBMO8yuz8B8ZKg4n1tKHnthtWL/OUmZ/t54+mhbn2I/UPjb/u2o
+         ajj/c72so+iOxoDOVMq97sa/RldaeLd5MFpezcmglVVXI0g8G5KbuDB48TQItpfdvQRa
+         d5JOB1mqnpUigRMITdFSWKLudZL0AJJEbLjrVsnfWfnlshTraD4BNQN61G95MeO3mGz3
+         +gHAfTxJyAZ9UW4v/pdPO9OzYftmqIRpjJH3Y2v1AF/pfVdiO1JPjLwPLZxBuj9AVAQ5
+         uQRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3AgUbM0e5/92Cpo+sVKZd+RAcuqfF3u7zDN3lIzhJzQ=;
+        b=fd7jyL4c1vKJYXhviUL6Spwe22DSQUIKbYM04HmdhKzGR1y29yx3hsbgKslxpj/5d5
+         9XWgVzVVLChzsapYV8JUZgP5MtX9iOydOdGgw+WFn0OxRj/RHLuAn1itkRx6Y8OcBJMw
+         l6/H1+Wkscmnbi2SFmGnO+wvqaY5kocCFGsFFn5cR8qTtS2BeCZcjae0QfjZI1K84Wi+
+         VXK0hTboqLzzqegpZiZHkKPJcO5SPHPhy3NVq7tGmbMSG9y4uV1PBmfU7CQmz0FJpG3n
+         coKGIzZ96uht7fr8Usi6x3qe1JO1ARMpq2uczmrS4rSsPnhnpPnEHvqUJzzOTWJBIcN0
+         wKXg==
+X-Gm-Message-State: APjAAAVgrECy7QwnauJkz7F7H5Lu11CVB6vvb7QLeqlQ8SSmSIWDhAwH
+        1IXaSdz4NYOhrqiiivNsFi6tcRsnr37cVN8DSr7YKQ==
+X-Google-Smtp-Source: APXvYqyQKTKN3LsCMk/VwuKF6YRJV3ojfFHsMtv6uUYsfbcNay4GyBwJMDnmsNxhh6+sFg8wjrhNvKwav8fgfbdT5Jc=
+X-Received: by 2002:a17:90a:bf02:: with SMTP id c2mr39169049pjs.73.1563306336472;
+ Tue, 16 Jul 2019 12:45:36 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAG=yYw=S197+2TzdPaiEaz-9MRuVtd+Q_L9W8GOf4jKwyppNjQ@mail.gmail.com>
+ <CAKwvOdmg2b2PMzuzNmutacFArBNagjtwG=_VZvKhb4okzSkdiA@mail.gmail.com> <20190716145716.6b081bdc@gandalf.local.home>
+In-Reply-To: <20190716145716.6b081bdc@gandalf.local.home>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 16 Jul 2019 12:45:25 -0700
+Message-ID: <CAKwvOd=r3xh+yxCgFqQObwi=sMb9oqG0UcTvNJQ4KWKvN82g8A@mail.gmail.com>
+Subject: Re: BUG: KASAN: global-out-of-bounds in ata_exec_internal_sg+0x50f/0xc70
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        tobin@kernel.org, lkml <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 16 Jul 2019 08:01:22 -0300:
+On Tue, Jul 16, 2019 at 11:57 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Tue, 16 Jul 2019 11:28:29 -0700
+> Nick Desaulniers <ndesaulniers@google.com> wrote:
+>
+> > The cited code looks like a check comparing that the pointer distance
+> > is greater than the size of bytes being passed in.  I'd wager
+> > someone's calling memmove with overlapping memory regions when they
+> > really wanted memcpy.  Maybe a better question, is why was memmove
+> > ever used; if there was some invariant that the memory regions
+> > overlapped, why is that invariant no longer holding.
+>
+> I'm confused by the above statement as memmove() allows overlapping of
+> src and dest, where as memcpy() does not.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media.git tags/docs/v5.3-1
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c309b6f24222246c18a8b65d3950e6e755440865
-
-Thank you!
-
+Yes you're right; I confused the two.  From the snippet in the
+original email, it looks like the body of a fortified memcpy was
+provided, and a memmove declaration was below it.  So replace my
+assumption of a bad call to memmove with a bad call to memcpy (which
+should then make more sense, hopefully).
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Thanks,
+~Nick Desaulniers
