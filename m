@@ -2,155 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC7C16A3D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 10:30:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AA8E6A3E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 10:31:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731153AbfGPI3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 04:29:05 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39919 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbfGPI3F (ORCPT
+        id S1731382AbfGPIbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 04:31:03 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:40371 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730984AbfGPIbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 04:29:05 -0400
-Received: by mail-ot1-f65.google.com with SMTP id r21so14097477otq.6
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 01:29:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dAReaf3rIK7cjdNG/p1sH0aoz/zivoXItfETtanUzFI=;
-        b=GylbGvQjevcMby7m1jmxXgt1he2d3TdFGOKlC06/ZL0yKsesMNofyKRjxUxvWLUZrH
-         qoPnchqDL4UcXwmvCgWl0MFjV7GpoDwC4zhscGHO+rdLBaWWgGkTkOzO5I2jtBqxk+lu
-         O9OFwwOPRUV1NmfFUF4GpPLHOmIbrFHiVrCpRtzMBz9oI1NY1o+OPOOACxr1sVGwwYIS
-         jJNsQh/9iledp8Q9bKjwBsyYR5fY62KqMp/1C450DFk/E1zDnpm47uYafb5S/f5ig2dz
-         yuSKAIIVlXcg4aZeuwrRn6JZoRYFX+LtibHW3LRdID+XlyTnVXhgVkwlHkV883zyWJHA
-         SoLg==
+        Tue, 16 Jul 2019 04:31:02 -0400
+Received: by mail-oi1-f196.google.com with SMTP id w196so14900102oie.7;
+        Tue, 16 Jul 2019 01:31:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dAReaf3rIK7cjdNG/p1sH0aoz/zivoXItfETtanUzFI=;
-        b=WKg/UxuaCLKwtQsdLFL13F1DicdD71S+grz8nf3vS+XTd04LdDB/PIeHlfcjuaehtb
-         559Rqro/4XO90mmcKfWnQhoKdLZ0WUgNeOBGROD33HmobAYK8wG9xrGB1lYROjEjsfFl
-         woff+fT6LeZpv9isPzYLJY/h89DMPmp2e6g4b4A9RtW3hpSAD8rBdWOltucGm+/MMnUa
-         lmMWnXqNgMXhCaO8Hiyy5gizi38cE2Jd2AirddSrKeNFT7qTbJMCwYujTkyZRPjF0SVB
-         BxUVYNzCVK4olYOfESfA6e58RjtGHuG/AAEnSO08itWbycQpeLv/qjIHpkLuEv+7FOV0
-         5Dgw==
-X-Gm-Message-State: APjAAAVMpBAB8c0bq8RfC7MtqjHN2AXMM3D46IoNfRT1YW+9rWtYrOF9
-        xhr8m6dJGcJ5bIUvo+pQh2V+rZDrDw64vMnGLuXVTA==
-X-Google-Smtp-Source: APXvYqwuE4Wv2qF5DOBIyEzsKs55PgVwR5k1JI/tCcs06wJPbl14TlMa31Fvb0G8Jz64wW5exSFXZgiJbN/qQOS+IFs=
-X-Received: by 2002:a9d:7a8b:: with SMTP id l11mr15513286otn.247.1563265744191;
- Tue, 16 Jul 2019 01:29:04 -0700 (PDT)
+        bh=dabMYehwAIOMgEox85e65RbhyQ/W0kLnSfW8PvyFA3o=;
+        b=eHf8/UFhq1zrW/GQXHa1Yi1GYxobGWDocrxbrhw9YnX1BSvRF2h5Kb8zoJEkaNnJkD
+         WU1awxn1Neb8h9hHV6KKAh2TyC+tPzwFmtS5T5yAUlFiRr4CzM7imiNurbD/hbQ6x4aR
+         4aYjgnqCypx7JdVc7wTGj8Ud8kqyE/kG3g8q2neAfX1U+ea18wrB0K6uVi3V/8/YqAGx
+         2YeOwC19RE/TUfOIQ8hmxd/dgyX26SXtc0NgUiS1kr5zU8S9WVF+oKQkf8BdiuOxGzTm
+         OSsP9tWKOfx/VfswKOZbkOO5XGvSKt37GQpFkP8MMHfALLl0hNB8cfV8YSEX925IQZLQ
+         iQlQ==
+X-Gm-Message-State: APjAAAX1unlcL5zr6WSf0o+lXSaJLE1B28uq1zakBjjRwzKsRzphSahi
+        /fhs7DwVjQPEj+8ilVxbTo42u+s0xldUhoc2zTo=
+X-Google-Smtp-Source: APXvYqyuzj1SaChLyQaD7xBMjz+TklVFyF4Zmw85XHl+XoWQwfWrnpe0CXQlWQlqx4KzBi2CrYtJcPKqoCYEVRjUbKU=
+X-Received: by 2002:aca:4e89:: with SMTP id c131mr15794912oib.57.1563265861459;
+ Tue, 16 Jul 2019 01:31:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <b9cba2452c0166ef2fa69514d6ac8fbe7ee02883.1563259454.git.baolin.wang@linaro.org>
- <987d226b-5906-f403-d641-3c54430f1c9b@intel.com>
-In-Reply-To: <987d226b-5906-f403-d641-3c54430f1c9b@intel.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Tue, 16 Jul 2019 16:28:52 +0800
-Message-ID: <CAMz4kuL0-2MNsU74b6gNaBA-mkfMOFGCdiffGc_GJiD4Xzzvdg@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: host: sdhci-sprd: Fix the incorrect soft reset
- operation when runtime resuming
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20190715203651.GA7513@kroah.com> <20190715214348.81865-1-trong@android.com>
+ <CAJZ5v0gEzZkbeLFtW5yadwxBryvL3vWcUoQTkUy3VkxiTV+UrA@mail.gmail.com> <20190716021102.GA8310@kroah.com>
+In-Reply-To: <20190716021102.GA8310@kroah.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 16 Jul 2019 10:30:48 +0200
+Message-ID: <CAJZ5v0hxKeK-eDEs1rGP0ZYbbCHa0q5=ZPMVCemYVHGL48Q=pg@mail.gmail.com>
+Subject: Re: [PATCH v4] PM / wakeup: show wakeup sources stats in sysfs
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Tri Vo <trong@android.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Hridya Valsaraju <hridya@google.com>, sspatil@google.com,
+        kaleshsingh@google.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 16 Jul 2019 at 16:24, Adrian Hunter <adrian.hunter@intel.com> wrote:
+On Tue, Jul 16, 2019 at 4:13 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> On 16/07/19 10:31 AM, Baolin Wang wrote:
-> > In sdhci_runtime_resume_host() function, we will always do software reset
-> > for all, which will cause Spreadtrum host controller work abnormally after
-> > resuming.
+> On Mon, Jul 15, 2019 at 11:48:27PM +0200, Rafael J. Wysocki wrote:
+> > On Mon, Jul 15, 2019 at 11:44 PM Tri Vo <trong@android.com> wrote:
+> > >
+> > > Userspace can use wakeup_sources debugfs node to plot history of suspend
+> > > blocking wakeup sources over device's boot cycle. This information can
+> > > then be used (1) for power-specific bug reporting and (2) towards
+> > > attributing battery consumption to specific processes over a period of
+> > > time.
+> > >
+> > > However, debugfs doesn't have stable ABI. For this reason, create a
+> > > 'struct device' to expose wakeup sources statistics in sysfs under
+> > > /sys/class/wakeup/<name>/.
+> > >
+> > > Introduce CONFIG_PM_SLEEP_STATS that enables/disables showing wakeup
+> > > source statistics in sysfs.
 > >
-> > Thus for Spreadtrum platform that do not power down the SD/eMMC card during
-> > runtime suspend, we should not do software reset for all. To fix this
-> > issue, adding a specific reset operation that add one condition to validate
-> > the MMC_CAP_AGGRESSIVE_PM to decide if we can do software reset for all or
-> > just reset command and data lines.
-> >
-> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> > ---
-> > Changes from v1:
-> >  - Add a specific reset operation instead of changing the core to avoid
-> >  affecting other hardware.
-> > ---
-> >  drivers/mmc/host/sdhci-sprd.c |   38 +++++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 37 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-> > index 603a5d9..174b566 100644
-> > --- a/drivers/mmc/host/sdhci-sprd.c
-> > +++ b/drivers/mmc/host/sdhci-sprd.c
-> > @@ -373,6 +373,42 @@ static unsigned int sdhci_sprd_get_max_timeout_count(struct sdhci_host *host)
-> >       return 1 << 31;
-> >  }
-> >
-> > +static void sdhci_sprd_reset(struct sdhci_host *host, u8 mask)
-> > +{
-> > +     struct mmc_host *mmc = host->mmc;
-> > +     ktime_t timeout;
-> > +
-> > +     /*
-> > +      * When try to reset controller after runtime suspend, we should not
-> > +      * reset for all if the SD/eMMC card is not power down, just reset
-> > +      * command and data lines instead. Otherwise will meet some strange
-> > +      * behaviors for Spreadtrum host controller.
-> > +      */
-> > +     if (host->runtime_suspended && (mask & SDHCI_RESET_ALL) &&
-> > +         !(mmc->caps & MMC_CAP_AGGRESSIVE_PM))
-> > +             mask = SDHCI_RESET_CMD | SDHCI_RESET_DATA;
-> > +
+> > I'm not sure if this is really needed, but I'll let Greg decide.
 >
-> Here you could just call sdhci_reset(host, mask) instead of below.
-
-Ah, right. Thanks for your comment.
-
+> You are right.  Having zillions of config options is a pain, who is
+> going to turn this off?
 >
-> > +     sdhci_writeb(host, mask, SDHCI_SOFTWARE_RESET);
-> > +
-> > +     /* Wait max 100 ms */
-> > +     timeout = ktime_add_ms(ktime_get(), 100);
-> > +
-> > +     /* hw clears the bit when it's done */
-> > +     while (1) {
-> > +             bool timedout = ktime_after(ktime_get(), timeout);
-> > +
-> > +             if (!(sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask))
-> > +                     break;
-> > +             if (timedout) {
-> > +                     pr_err("%s: Reset 0x%x never completed.\n",
-> > +                             mmc_hostname(host->mmc), (int)mask);
-> > +                     sdhci_dumpregs(host);
-> > +                     return;
-> > +             }
-> > +             udelay(10);
-> > +     }
-> > +}
-> > +
-> >  static struct sdhci_ops sdhci_sprd_ops = {
-> >       .read_l = sdhci_sprd_readl,
-> >       .write_l = sdhci_sprd_writel,
-> > @@ -381,7 +417,7 @@ static unsigned int sdhci_sprd_get_max_timeout_count(struct sdhci_host *host)
-> >       .get_max_clock = sdhci_sprd_get_max_clock,
-> >       .get_min_clock = sdhci_sprd_get_min_clock,
-> >       .set_bus_width = sdhci_set_bus_width,
-> > -     .reset = sdhci_reset,
-> > +     .reset = sdhci_sprd_reset,
-> >       .set_uhs_signaling = sdhci_sprd_set_uhs_signaling,
-> >       .hw_reset = sdhci_sprd_hw_reset,
-> >       .get_max_timeout_count = sdhci_sprd_get_max_timeout_count,
+> But we can always remove the option before 5.4-rc1, so I'll take this
+> as-is for now :)
+>
+> > Apart from this
 > >
+> > Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 >
+> thanks for the review!  I'll wait for 5.3-rc1 to come out before adding
+> this to my tree.
 
+So it occurred to me that maybe it's better if I apply it?  After all,
+this is PM material. :-)
 
--- 
-Baolin Wang
-Best Regards
+It is fine by me either way, but then I'm not sure if you want to get
+future bug reports related to this if any ...
