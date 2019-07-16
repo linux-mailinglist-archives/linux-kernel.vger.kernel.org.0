@@ -2,160 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D2896A89D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 14:23:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E25226A8B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 14:26:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732659AbfGPMXc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 08:23:32 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:37748 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfGPMXc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 08:23:32 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190716122330epoutp020d110875b7aaaa21b9fee38cbfb37723~x4rRs3gYg1559815598epoutp02f
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 12:23:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190716122330epoutp020d110875b7aaaa21b9fee38cbfb37723~x4rRs3gYg1559815598epoutp02f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1563279810;
-        bh=MjpXzluys5pJrbN9UUwkqRdKLhXnJW/pzhYrTp2wnAg=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=deMcgvKvvciwzIfLbITxdATZez1/sn/vfjz8I0lMz/84aaWIB3KKK4K7uQzQ+9SQV
-         MJD1TDlu5BFZEQLzCuudZRYk7aqjI8iujHQ4G4P5bgGSfgKobtrjs91cDRpdnbc7i9
-         CnT+AmeMsxmP5/LUgBLnQcspruotoFiaVhYKJ8Bo=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20190716122329epcas1p352f0c248de2c0d65ebae9e6638681f2c~x4rRS4GZ32472024720epcas1p3H;
-        Tue, 16 Jul 2019 12:23:29 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.156]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 45p01D39s1zMqYkR; Tue, 16 Jul
-        2019 12:23:28 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0F.4F.04085.0C1CD2D5; Tue, 16 Jul 2019 21:23:28 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20190716122327epcas1p40cbcdaec8eedf94a7e17bb1e71743038~x4rPmA2Ej0941309413epcas1p47;
-        Tue, 16 Jul 2019 12:23:27 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190716122327epsmtrp1c0d40bfdf956e3f0bd596a5fc02230f6~x4rPlJvXw0818508185epsmtrp1G;
-        Tue, 16 Jul 2019 12:23:27 +0000 (GMT)
-X-AuditID: b6c32a39-d03ff70000000ff5-4e-5d2dc1c03403
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3F.3E.03706.FB1CD2D5; Tue, 16 Jul 2019 21:23:27 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190716122327epsmtip1a900aa861bf3835f30f41c64a21e28ba~x4rPXqTME1145611456epsmtip1w;
-        Tue, 16 Jul 2019 12:23:27 +0000 (GMT)
-Subject: Re: [PATCH v4 13/24] PM / devfreq: tegra30: Constify structs
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <e53762a4-3637-b667-ad7d-e078a2284cac@samsung.com>
-Date:   Tue, 16 Jul 2019 21:26:34 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20190707223303.6755-14-digetx@gmail.com>
+        id S1733186AbfGPM0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 08:26:45 -0400
+Received: from mail-eopbgr80072.outbound.protection.outlook.com ([40.107.8.72]:51494
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728121AbfGPM0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 08:26:45 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UJcaSurSLZ8e5hyP/Ux6k3qtFtIEZFtiXs9SjlU1rDc+jwwkYNrgUYuz4GF4RmOQFBSCyxhqKZPyj/n2g1hG0ocdp6kJOCYwcdkCqF6GPqmPLVsXRZxN5+74ajMPPLq8ajy6xJFbww4fB+oHIYihPNJrUMx6PhG7vLBcjjo/ftXjnN00wRUzp3Mc8ObdKhqwXTUpQexyRMywugo7AUCERPNx8Q2tGQ2mYvij8BXq+4PtmyfkTjAUMcLdteG2QnddM4ksg6HIABtAAJb0t0YaXP7UIzUwURiu0hTlXX1WYh/IeIxyn/WId6OMJ27JzY84pxHJ+Mzs8ShWyqQpwpLnrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BMH+GrufTBUitMHTytEFLheaMf0/0DfQy/UYM/WwNDk=;
+ b=Z6N4YGye76OfFTU+mG55Urm2m7F1LTLS5EmkQ8y+f2EoAZZD0YbStUg0MtM2Kc+uxui5lsWkSBOJ5HHXJSbCmLxk0MwPv1KSX8put6jojFZkahoVqYMsSw31BhAgFf3zEbvdz6odlzhY7EiWtaJhSROiiVLVMOccMC2K9OpoAoO48kerX7CgAQMs+pBIGIpPrmO8z1vtfCfWhzzWU6G+27+JLnJqYreuxTssc6zKUx+MZTSbASMVrXrFnYc9D7XwiP7mjO7Yb2WCyXjNTqLo1zH4+j9WxEHioNW14iGak3YNCOIT/EvBCgOUnKLPY5KDpoIXh39I+hK98YuLT8sSIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=mellanox.com;dmarc=pass action=none
+ header.from=mellanox.com;dkim=pass header.d=mellanox.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BMH+GrufTBUitMHTytEFLheaMf0/0DfQy/UYM/WwNDk=;
+ b=DaEnJlnrvs2xHmDayvx27rDqyYyjXonWkTPtPcR2SpHPE8xqb1A2aLI7krulS/KI//YmLsvehWUn2Nfwqel8JF1WE42TjD91SwtQMkq0XexKUPH6TvfM4WmtXjNOssZn2qQn5Xsu32GcV++D2BalXPzmC8D9LQBnvn0VbtsV9lM=
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
+ VI1PR05MB6112.eurprd05.prod.outlook.com (20.178.204.214) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2073.11; Tue, 16 Jul 2019 12:26:41 +0000
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::f5d8:df9:731:682e]) by VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::f5d8:df9:731:682e%5]) with mapi id 15.20.2073.012; Tue, 16 Jul 2019
+ 12:26:41 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+CC:     Doug Ledford <dledford@redhat.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the rdma tree with the v4l-dvb-next
+ tree
+Thread-Topic: linux-next: manual merge of the rdma tree with the v4l-dvb-next
+ tree
+Thread-Index: AQHVO2/tbODbR7FZn0qQzE55M1UGyabNLIyA
+Date:   Tue, 16 Jul 2019 12:26:40 +0000
+Message-ID: <20190716122637.GA29741@mellanox.com>
+References: <20190716104614.2ec8b57c@canb.auug.org.au>
+In-Reply-To: <20190716104614.2ec8b57c@canb.auug.org.au>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURTNa6fDQKyOFfTaD4UxRkCBjlgcjCUmbjWQ2EQ/XFJxAi9Q6Wan
-        NaCJokU2BRc+1EERBSKCipKiLBq0EBEXXNC4AhqNQWM0ihqJC7YdjPyde+85997z3qXkqgZS
-        TZmsTuyw8maGDCEudkRpYq5eizFqfg+EcvWfXyMuTzxJcHd2fQjieluPktxQSSfiir6KJPd8
-        Zy3JDbdWEFzp2QfkomB9c1810reIfUH6EvdHUl/qqUP6ocZpBsW6rIWZmE/HjnBsTbOlm6wZ
-        OiZ5VeriVG2Cho1hE7n5TLiVt2AdsyTFELPMZPYtxIRv4c0uX8rACwITl7TQYXM5cXimTXDq
-        GGxPN9sT7bECbxFc1ozYNJtlAavRzNX6iBuzMn969sjt/eOyu4dic1FjSDEKpoCeB8fbfsuK
-        UQilopsR3O19GyQFXxB4a+4TUvAdgfvzAPlP8vVmHikVriB47K1FUvAJQcenUoWfNYleCrfe
-        vwjIQ+k/CIqG3QG5nF4LHS31Mj8m6WhoH3wSyE+gI+DRj9fIj5V0EnS33Qpggp4JuQUDgaZh
-        9Bq42VlBSJyJ0H3kjQ9TVDCdAM8O6aT2U+DZm+MyCU8Hd1O53L8D0CMknKluk0kWlsBBb9uo
-        nUnwvssTJGE1vNuXP4q3wenuTlISFyLwtN9TSIV4aK8pk/kHy+koaGiNk9IR0PLzGJIGj4eP
-        3/Yq/BSglVCYr5IoM6D3Zd/oClOhqqCI3I8YcYwbcYwFcYwF8f+wSkTUocnYLlgysMDatWN/
-        uxEFjjU6sRld70nxIppCzDjljctzjCoFv0XIsXgRUHImVKn7NtuoUqbzOVuxw5bqcJmx4EVa
-        32MfkKvD0my+07c6U1nt3Pj4eG4em6BlWWaKsuJXlFFFZ/BOnIWxHTv+6WRUsDoXeWYZTXUp
-        e4rX5R2oLljx6m3+vuVfJoSMPFQtbkyq6+rrGelxN+XEESUX3hlOlB2uqsS964e3J244l3ep
-        Ul1ye5Np8FD9SvN5w4b+lZ6IQUv5fXE3zo60tkS294vlGxsq7iWnTUNrdqzuT17alP10V+Hm
-        gw0vXWuVRTZU9uLM+c2nrjGEkMmz0XKHwP8FcuVyLMIDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsWy7bCSnO7+g7qxBitbjS1Wf3zMaNEyaxGL
-        xdmmN+wWl3fNYbP43HuE0aLzyyw2i9uNK9gsfu6ax2LRt/YSmwOnx467Sxg9ds66y+7R2/yO
-        zaNvyypGj8+b5AJYo7hsUlJzMstSi/TtErgyfm/pZi64x1Nx8rNeA+Mmri5GTg4JAROJL6da
-        2LoYuTiEBHYzSrQfuckKkZCUmHbxKHMXIweQLSxx+HAxRM1bRol1jY0sIDXCAq4Sp1/dYQFJ
-        iAg0MUls6r3ADpJgFoiU6Jm7BWrqFkaJ+f9Xg01lE9CS2P/iBhuIzS+gKHH1x2NGEJtXwE7i
-        5O7TYDaLgKpEQ/t9sHpRgQiJSdd2skDUCEqcnPmEBeQiTgEziVvTbSF2qUv8mXeJGcIWl7j1
-        ZD4ThC0v0bx1NvMERuFZSLpnIWmZhaRlFpKWBYwsqxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS
-        9ZLzczcxgiNMS3MH4+Ul8YcYBTgYlXh4PxzQjRViTSwrrsw9xCjBwawkwmv7VTtWiDclsbIq
-        tSg/vqg0J7X4EKM0B4uSOO/TvGORQgLpiSWp2ampBalFMFkmDk6pBsb4pgD3zW87HqbuXnB4
-        24U/1uemsU0UcxK4uKJg54c9GeuKf3DYqly9knxPYq/N74Ki8BO9x9l6BA/fb/j9a3fH+rmX
-        VaauubJux/I5CmvfinA7bzly8dXXhfXK/+WubdjpnHMg2t0kRk67U887w0JYWso89rKMVdqM
-        u2cepV7kmsHP+9aDXa9DiaU4I9FQi7moOBEA0YUSK6wCAAA=
-X-CMS-MailID: 20190716122327epcas1p40cbcdaec8eedf94a7e17bb1e71743038
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190707223543epcas1p359a8a56ca04649c2b5f064c639246694
-References: <20190707223303.6755-1-digetx@gmail.com>
-        <CGME20190707223543epcas1p359a8a56ca04649c2b5f064c639246694@epcas1p3.samsung.com>
-        <20190707223303.6755-14-digetx@gmail.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BL0PR1501CA0009.namprd15.prod.outlook.com
+ (2603:10b6:207:17::22) To VI1PR05MB4141.eurprd05.prod.outlook.com
+ (2603:10a6:803:4d::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [156.34.55.100]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 77e3bfae-ff06-466d-97d9-08d709e8dae5
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB6112;
+x-ms-traffictypediagnostic: VI1PR05MB6112:
+x-microsoft-antispam-prvs: <VI1PR05MB6112DDD8787817F7D992B4D7CFCE0@VI1PR05MB6112.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 0100732B76
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(39860400002)(366004)(396003)(376002)(53754006)(199004)(189003)(6436002)(81156014)(68736007)(99286004)(66066001)(102836004)(81166006)(8936002)(66476007)(26005)(6246003)(6506007)(66556008)(186003)(2616005)(4326008)(6486002)(386003)(486006)(86362001)(76176011)(8676002)(2906002)(14454004)(229853002)(33656002)(52116002)(1076003)(6916009)(25786009)(71190400001)(446003)(71200400001)(305945005)(6116002)(3846002)(6512007)(478600001)(476003)(54906003)(5660300002)(256004)(66446008)(64756008)(53936002)(11346002)(7736002)(316002)(36756003)(66946007);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB6112;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: TQlTMkHG0dClFP89G8wPu+eTMvfvNyVty3PWKGjVm7O51NtNOTFTZ/Lrnq1f6AOEGDNmq90iop0rtXPtqmDBHEYbYiiuDMr2+XipwzZqM8eVXAjH3GSOFHaSvSGPpk8lAOvY6fjSh27txS6ZHCKKRa6ZV0ToyyJB40gLOKVavkPJLUgvjrQZiq6K092PORhgnNRjRGQZXPwRJWn3tk8XLkZM6V8HNGmI6I0YDn1SQFuUZwBeOJngcfwsLw2OxoY7005EQVAbyW1iH3N/r7v3vnbtE5DsQ8OGpix2kE0MHycJfmykuZtxifW+PHeOJP0h7f/Q1/fBoJjoDXkNFPNAHgEXH84CaWDOZHxv2ddffswpC31hXJpNcrsSiaAPGA9k0Unvo164lVETRKLZZxdVOH9N/lfltb5ZRVWlaUaMOOM=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <EE73668CC7A2B942820EAE89573B18B5@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77e3bfae-ff06-466d-97d9-08d709e8dae5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2019 12:26:41.0144
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB6112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19. 7. 8. 오전 7:32, Dmitry Osipenko wrote:
-> Constify unmodifiable structs for consistency.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra30-devfreq.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 1a10df5dbbed..2f59c78930bd 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -106,7 +106,7 @@ enum tegra_actmon_device {
->  	MCCPU,
->  };
->  
-> -static struct tegra_devfreq_device_config actmon_device_configs[] = {
-> +static const struct tegra_devfreq_device_config actmon_device_configs[] = {
->  	{
->  		/* MCALL: All memory accesses (including from the CPUs) */
->  		.offset = 0x1c0,
-> @@ -171,7 +171,7 @@ struct tegra_actmon_emc_ratio {
->  	unsigned long emc_freq;
->  };
->  
-> -static struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
-> +static const struct tegra_actmon_emc_ratio actmon_emc_ratios[] = {
->  	{ 1400000, ULONG_MAX },
->  	{ 1200000,    750000 },
->  	{ 1100000,    600000 },
-> @@ -210,7 +210,7 @@ static inline unsigned long do_percent(unsigned long val, unsigned int pct)
->  
->  static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra)
->  {
-> -	struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
-> +	const struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
->  	unsigned int cpu_freq = cpufreq_get(0);
->  	unsigned int i;
->  
-> 
+On Tue, Jul 16, 2019 at 10:46:14AM +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the rdma tree got a conflict in:
+>=20
+>   Documentation/index.rst
+>=20
+> between commit:
+>=20
+>   09fdc957ad0d ("docs: leds: add it to the driver-api book")
+> (and others following)
+>=20
+> from the v4l-dvb-next tree and commit:
+>=20
+>   a3a400da206b ("docs: infiniband: add it to the driver-api bookset")
+>=20
+> from the rdma tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+I'm surprised this is coming from a v4l tree..
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+> diff --cc Documentation/index.rst
+> index f379e43fcda0,869616b57aa8..000000000000
+> --- a/Documentation/index.rst
+> +++ b/Documentation/index.rst
+> @@@ -96,23 -90,9 +96,24 @@@ needed)
+>  =20
+>      driver-api/index
+>      core-api/index
+>  +   locking/index
+>  +   accounting/index
+>  +   block/index
+>  +   cdrom/index
+>  +   ide/index
+>  +   fb/index
+>  +   fpga/index
+>  +   hid/index
+>  +   iio/index
+>  +   leds/index
+> +    infiniband/index
+
+This should be kept sorted, Mauro rdma is already merged you'll need
+to tell Linus about this trivial conflict when you send your patches.
+
+Thanks,
+Jason
