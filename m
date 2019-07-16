@@ -2,81 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 012FC6AC75
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 18:07:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABB2D6AC7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 18:08:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729966AbfGPQG5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 12:06:57 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34819 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728004AbfGPQG5 (ORCPT
+        id S2387937AbfGPQIY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 12:08:24 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:40117 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728004AbfGPQIY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 12:06:57 -0400
-Received: by mail-pf1-f194.google.com with SMTP id u14so9347564pfn.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 09:06:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=u7Jne9Q47nVrWz4TP/HRx+zyw2bqjnPLiRJA58wxBSc=;
-        b=j6LlEfPlZaJkswdh3CNoocUKsHhBuzharTmPy44mXWvswWx0VUz0t3ModwJHkAo5ZC
-         dGAYrqYLOLEeNs3wmlVg7GguiDrX1hvqg/y14nxQRK+GGCvoG+VzDtZ2hwOs5y2ZgwaO
-         rBxu07ZfqHMYAYy9RAWbNdTnOYb5t2Za/6LjhUkA4J/utbO6b6wTRWIYmkeOWI1lDbKF
-         tLXIVPHqGyKT6SpjusWHSMMWd2Fkle/H2BkwplrFF3DBk21ngqvwZ3joiBZhys96spbB
-         nA79zopXpJx9ow8Cg1H6OZNtKcnoC/nJsaD6z6diVmdVGB35IBs2oivnHBcjRTje3Rft
-         eF0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=u7Jne9Q47nVrWz4TP/HRx+zyw2bqjnPLiRJA58wxBSc=;
-        b=mkpOFzsAW3oiQ4+JLIHX1Gfegpj38idc0OUOp3lT8zeGVovCuURSFN/py7wPPE8d4r
-         W0gR/a1DoSn9tE/Vi20nr4ckffXReQ3+6OaJ5woOdZCVvE4OKCTDE+BdlcHimr0+6pgl
-         szgI/3vStnhetLSVF4rQBaj2vma2/3H6GdOUdlvLK3yeIcrP1xQrRuHDRfdPXm7uLLhM
-         ApgWV6eBWNS/YsRng4hAt0rcha2wblNrwl6c1fFLg0qC8h2SqM4CbEKlTAGELnouflFE
-         G/5F/m7yBGwh/4FIHznf1T831FtcAmjJLTulZLUOiRaw1+0QDMEckC9Y60MWEri7T7gP
-         2kng==
-X-Gm-Message-State: APjAAAVRUj3KCbiOravVZE+2ihlFb1PvRh51guUyV88n/+GDHJD62F+t
-        +bYSYaaTkVUiB1vTalG42Ei3KB9hkKs=
-X-Google-Smtp-Source: APXvYqzZEHBcJBQImE+MN8epzusmvGWxzBljoySzUhUhW3SvZz6HFxvRHP4sC8GOmqWanvyI9qT+TQ==
-X-Received: by 2002:a63:d756:: with SMTP id w22mr34233100pgi.156.1563293215324;
-        Tue, 16 Jul 2019 09:06:55 -0700 (PDT)
-Received: from [192.168.1.121] (66.29.164.166.static.utbb.net. [66.29.164.166])
-        by smtp.gmail.com with ESMTPSA id q13sm20170598pgq.90.2019.07.16.09.06.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Jul 2019 09:06:54 -0700 (PDT)
-Subject: Re: [PATCH block/for-linus] blkcg: allow blkcg_policy->pd_stat() to
- print non-debug info too
-To:     Tejun Heo <tj@kernel.org>
-Cc:     linux-block@vger.kernel.org, kernel-team@fb.com,
-        Josef Bacik <josef@toxicpanda.com>,
-        linux-kernel@vger.kernel.org
-References: <20190716145749.GB680549@devbig004.ftw2.facebook.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5f0b11b1-275f-fdc8-51c6-452a727d5885@kernel.dk>
-Date:   Tue, 16 Jul 2019 10:06:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Tue, 16 Jul 2019 12:08:24 -0400
+Received: from cpe-2606-a000-111b-405a-0-0-0-162e.dyn6.twc.com ([2606:a000:111b:405a::162e] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1hnPzz-0001za-Tr; Tue, 16 Jul 2019 12:08:22 -0400
+Date:   Tue, 16 Jul 2019 12:07:45 -0400
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, djuran@redhat.com,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: Re: [PATCH] x86: Add irq spillover warning
+Message-ID: <20190716160745.GB1498@hmswarspite.think-freely.org>
+References: <20190716135917.15525-1-nhorman@tuxdriver.com>
+ <alpine.DEB.2.21.1907161735090.1767@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20190716145749.GB680549@devbig004.ftw2.facebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1907161735090.1767@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Spam-Score: -2.9 (--)
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/16/19 8:58 AM, Tejun Heo wrote:
-> Currently, ->pd_stat() is called only when moduleparam
-> blkcg_debug_stats is set which prevents it from printing non-debug
-> policy-specific statistics.  Let's move debug testing down so that
-> ->pd_stat() can print non-debug stat too.  This patch doesn't cause
-> any visible behavior change.
+On Tue, Jul 16, 2019 at 05:57:31PM +0200, Thomas Gleixner wrote:
+> Neil,
+> 
+> On Tue, 16 Jul 2019, Neil Horman wrote:
+> 
+> > On Intel hardware, cpus are limited in the number of irqs they can
+> > have affined to them (currently 240), based on section 10.5.2 of:
+> > https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-vol-3a-part-1-manual.pdf
+> 
+> That reference is really not useful to explain the problem and the number
+> of vectors is neither. Please explain the conceptual issue.
+>  
+You seem to have already done that below.  Not really sure what more you are
+asking for here.
 
-Applied, thanks Tejun.
+> > If a cpu has more than this number of interrupts affined to it, they
+> > will spill over to other cpus, which potentially may be outside of their
+> > affinity mask.
+> 
+> Spill over?
+> 
+> The kernel decides to pick a vector on a CPU outside of the affinity when
+> it runs out of vectors on the CPUs in the affinity mask.
+> 
+Yes.
 
--- 
-Jens Axboe
+> Please explain issues technically correct.
+> 
+I don't know what you mean by this.  I explained it above, and you clearly
+understood it.
 
+> > Given that this might cause unexpected behavior on
+> > performance sensitive systems, warn the user should this condition occur
+> > so that corrective action can be taken
+> 
+> > @@ -244,6 +244,14 @@ __visible unsigned int __irq_entry do_IRQ(struct pt_regs *regs)
+> 
+> Why on earth warn in the interrupt delivery hotpath? Just because it's the
+> place which really needs extra instructions and extra cache lines on
+> performance sensitive systems, right?
+> 
+Because theres already a check of the same variety in do_IRQ, but if the
+information is available outside the hotpath, I was unaware, and am happy to
+update this patch to refelct that.
+
+> The fact that the kernel ran out of vectors for the CPUs in the affinity
+> mask is already known when the vector is allocated in activate_reserved().
+> 
+> So there is an obvious place to put such a warning and it's certainly not
+> do_IRQ().
+> 
+Sure
+
+Thanks
+Neil
+
+> Thanks,
+> 
+> 	tglx
+> 
