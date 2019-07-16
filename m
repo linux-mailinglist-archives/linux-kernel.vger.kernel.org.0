@@ -2,301 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90D816A82B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 14:05:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F140C6A832
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 14:06:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731969AbfGPME5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 08:04:57 -0400
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:41750 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbfGPME4 (ORCPT
+        id S1732509AbfGPMF2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 08:05:28 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41228 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732081AbfGPMF2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 08:04:56 -0400
-Received: by mail-vk1-f193.google.com with SMTP id u64so4101975vku.8
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 05:04:55 -0700 (PDT)
+        Tue, 16 Jul 2019 08:05:28 -0400
+Received: by mail-lf1-f66.google.com with SMTP id 62so8635815lfa.8
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 05:05:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P7ULxAuKEaSYzWYdGTr4IlP25QOrvD8KBofH6zWNyzQ=;
-        b=mkw993/neQKAw2c2FfYVkxn+sOjDePcI0SFBqSo2uQ9XgxU7qFjPiY3YH5IUddHb1f
-         0Zi+0q7QkAQBUfFLrw7PZjyy/zDoBIwIax+0NNKvtUxDk8C+SkzNSpFCXzQ0EZg4L/nh
-         NgyhuIC9Ws15LrFjfBQKOKwslddMzuYtVkZiU=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Ftt1779R51gta0ONtQpJxcZlohE8KMN91kUXHGSN1G8=;
+        b=OCSDzRUYihs3uGng7Kzdsuxey5RVjgG88OT9erKMhdNE3sOyD4A2P8nnnPSC7Dm1R+
+         5fkyGF8HSWIoWXxvgj57ekP/cnqTXWUUFHwgPaAoeRvymD4g9FW+NHks2dO8V5pokzBs
+         y4SuwipG3n7rtiZGNd66qz5NHAyFTNEVqyDUYDjphzMWCFmjoQc6GrVWV6Yy3OcCf69V
+         ao+48jEl4Y+c87PS377+nI5FyuNwWnUSQRIxdWGTUT1dp81b0E5QAbXHcYIHlQ3h7ftU
+         /+U2gNjwb0Y6iJGJrd7lYw6sHI26WBV0qThyk8GIHz87vo8EmXeEk7O/cKxT9+HkGmwW
+         MmAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P7ULxAuKEaSYzWYdGTr4IlP25QOrvD8KBofH6zWNyzQ=;
-        b=l2IV6ZDV5uDHgbPZV/IiWH4pGkAMg28Ke8eXvWNAQessxkz+rVPJVr1Nt2AVy3mona
-         q9Ih2irgP3DgZvADgLXKhHmEd65OCntVlEo/HXvHJbT3VmbkxKxQ6r2YzT3vUJNYclGX
-         2prbWxOqTgkWO1KgpxMDrsqrBvCpkhEwamjMhRMGek2X4O6lCH5/dvMYIbGtQIwG5KkZ
-         S0/3sNxhOinReb7D+xPZzlI5w/rJE9qJcynLZ6jzvMzu0OZalfrm6fJVxlPLOHCoHeHK
-         yi7juEGUAWM5r1dh79DlNPwGL/siDyhKY3SwQNNdOd8jPDUZ+Uie/hOyTI2XdnlhVbfo
-         jYmw==
-X-Gm-Message-State: APjAAAVUa+ArHe6rZOQnrEIXUL4BCoDtnHSev3HKn0TsEobt99rHkfvT
-        5Et/1qQZC1VDQf6i51IK3IfV6aNJ/b7MFpDeJo2lfKDEvtU=
-X-Google-Smtp-Source: APXvYqyV5nIBgRiOBlht43v8TH2KL+F06jklrgKSVXF6ezSHVkI2KPhvG8Y407cVFJ0e5gFjSSA+0asgnIsC1+p+aiY=
-X-Received: by 2002:a1f:3692:: with SMTP id d140mr11929548vka.88.1563278694560;
- Tue, 16 Jul 2019 05:04:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190712100443.221322-1-cychiang@chromium.org>
- <20190712100443.221322-3-cychiang@chromium.org> <20190712104748.zlgxgdjbtj2gw4yz@shell.armlinux.org.uk>
-In-Reply-To: <20190712104748.zlgxgdjbtj2gw4yz@shell.armlinux.org.uk>
-From:   Cheng-yi Chiang <cychiang@chromium.org>
-Date:   Tue, 16 Jul 2019 20:04:28 +0800
-Message-ID: <CAFv8NwLBr+USzOJvSZzMt_EzxA=07-NTGzuKdusaMxbFyrBjFQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] drm: bridge: dw-hdmi: Report connector status
- using callback
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, tzungbi@chromium.org,
-        Jaroslav Kysela <perex@perex.cz>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Mark Brown <broonie@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dylan Reid <dgreid@chromium.org>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Ftt1779R51gta0ONtQpJxcZlohE8KMN91kUXHGSN1G8=;
+        b=ey1JpnT45wQUK4TEND5VocL4yLahKyc30p3NRbxUG/v/Q6+JlN70WE0otyOdmbk+kN
+         Oe+YeSUawdbZaKKVeVqgjdiJX/NjScCqmVFNALJLmleruPwUnGXu2et9q+FB1bJ/1j6i
+         lbriAVkJWsap2/93Pa1g5exFQU4Sj74BZxp4ajocha4A2VPd6KnLs2iT9tTLkxlFXxpc
+         GcUmSfB/MK1L95dDv8qtz33rbqj2CqJMvyZD0mjWSNJS1swxs0pRENsiYO9IhxuU+Ydk
+         Yi71QvwfEJEPmSjtQXlQfFp+LIKhOooasXCOOD0iJqROz7fKugQAzmYLIiT1Py/bohMz
+         amxA==
+X-Gm-Message-State: APjAAAWiUshnPvWBgzKZ/aGX+G/V6ZqupApBn32MtBon8PPTkmcB8RPm
+        NGmdl562Im3jG5w1moNjgAgcx0DH8wC0pg==
+X-Google-Smtp-Source: APXvYqzmBP2Yrflx/y4/1oJ33vbI3SI1S9SGmHyT5/NPrhg5FX/1X78drUf1FNH6z/oAP67epWO3Fg==
+X-Received: by 2002:ac2:5231:: with SMTP id i17mr14619779lfl.39.1563278725971;
+        Tue, 16 Jul 2019 05:05:25 -0700 (PDT)
+Received: from pc636.semobile.internal ([37.139.158.167])
+        by smtp.gmail.com with ESMTPSA id t23sm3686410ljd.98.2019.07.16.05.05.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Jul 2019 05:05:25 -0700 (PDT)
+From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Roman Gushchin <guro@fb.com>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Pengfei Li <lpf.vector@gmail.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH v2 0/1] do not keep unpurged areas in the busy tree
+Date:   Tue, 16 Jul 2019 14:05:16 +0200
+Message-Id: <20190716120517.10305-1-urezki@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 6:48 PM Russell King - ARM Linux admin
-<linux@armlinux.org.uk> wrote:
->
-> On Fri, Jul 12, 2019 at 06:04:40PM +0800, Cheng-Yi Chiang wrote:
-> > Allow codec driver register callback function for plug event.
-> >
-> > The callback registration flow:
-> > dw-hdmi <--- hw-hdmi-i2s-audio <--- hdmi-codec
-> >
-> > dw-hdmi-i2s-audio implements hook_plugged_cb op
-> > so codec driver can register the callback.
-> >
-> > dw-hdmi implements set_plugged_cb op so platform device can register the
-> > callback.
-> >
-> > When connector plug/unplug event happens, report this event using the
-> > callback.
-> >
-> > Make sure that audio and drm are using the single source of truth for
-> > connector status.
-> >
-> > Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
-> > ---
-> >  .../gpu/drm/bridge/synopsys/dw-hdmi-audio.h   |  3 +
-> >  .../drm/bridge/synopsys/dw-hdmi-i2s-audio.c   | 10 ++++
-> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     | 55 ++++++++++++++++++-
-> >  3 files changed, 67 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-audio.h b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-audio.h
-> > index 63b5756f463b..f523c590984e 100644
-> > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-audio.h
-> > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-audio.h
-> > @@ -2,6 +2,8 @@
-> >  #ifndef DW_HDMI_AUDIO_H
-> >  #define DW_HDMI_AUDIO_H
-> >
-> > +#include <sound/hdmi-codec.h>
-> > +
-> >  struct dw_hdmi;
-> >
-> >  struct dw_hdmi_audio_data {
-> > @@ -17,6 +19,7 @@ struct dw_hdmi_i2s_audio_data {
-> >
-> >       void (*write)(struct dw_hdmi *hdmi, u8 val, int offset);
-> >       u8 (*read)(struct dw_hdmi *hdmi, int offset);
-> > +     int (*set_plugged_cb)(struct dw_hdmi *hdmi, hdmi_codec_plugged_cb fn);
-> >  };
-> >
-> >  #endif
-> > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-> > index 5cbb71a866d5..7b93cf05c985 100644
-> > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-> > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-> > @@ -104,10 +104,20 @@ static int dw_hdmi_i2s_get_dai_id(struct snd_soc_component *component,
-> >       return -EINVAL;
-> >  }
-> >
-> > +static int dw_hdmi_i2s_hook_plugged_cb(struct device *dev, void *data,
-> > +                                    hdmi_codec_plugged_cb fn)
-> > +{
-> > +     struct dw_hdmi_i2s_audio_data *audio = data;
-> > +     struct dw_hdmi *hdmi = audio->hdmi;
-> > +
-> > +     return audio->set_plugged_cb(hdmi, fn);
-> > +}
-> > +
-> >  static struct hdmi_codec_ops dw_hdmi_i2s_ops = {
-> >       .hw_params      = dw_hdmi_i2s_hw_params,
-> >       .audio_shutdown = dw_hdmi_i2s_audio_shutdown,
-> >       .get_dai_id     = dw_hdmi_i2s_get_dai_id,
-> > +     .hook_plugged_cb = dw_hdmi_i2s_hook_plugged_cb,
-> >  };
-> >
-> >  static int snd_dw_hdmi_probe(struct platform_device *pdev)
-> > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > index 045b1b13fd0e..ce6646067472 100644
-> > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > @@ -26,6 +26,8 @@
-> >  #include <drm/drm_probe_helper.h>
-> >  #include <drm/bridge/dw_hdmi.h>
-> >
-> > +#include <sound/hdmi-codec.h>
-> > +
-> >  #include <uapi/linux/media-bus-format.h>
-> >  #include <uapi/linux/videodev2.h>
-> >
-> > @@ -185,6 +187,9 @@ struct dw_hdmi {
-> >       void (*disable_audio)(struct dw_hdmi *hdmi);
-> >
-> >       struct cec_notifier *cec_notifier;
-> > +
-> > +     hdmi_codec_plugged_cb plugged_cb;
-> > +     enum drm_connector_status last_connector_result;
-> >  };
-> >
-> >  #define HDMI_IH_PHY_STAT0_RX_SENSE \
-> > @@ -209,6 +214,40 @@ static inline u8 hdmi_readb(struct dw_hdmi *hdmi, int offset)
-> >       return val;
-> >  }
-> >
-> > +static void handle_plugged_change(struct dw_hdmi *hdmi, bool plugged)
-> > +{
-> > +     struct platform_device *codec_pdev;
-> > +
-> > +     if (!hdmi->audio || IS_ERR(hdmi->audio))
-> > +             return;
-> > +     codec_pdev = platform_get_drvdata(hdmi->audio);
-> > +     if (!codec_pdev || IS_ERR(codec_pdev))
-> > +             return;
->
-> This looks fragile to me, poking about in another device's driver data
-> from another driver is really not a good design decision.  I think this
-> can be simplified if the registration function took the function
-> pointer and the struct device pointer, and then you only need one test
-> below:
->
-Hi Russell, Thank you for the detailed review.
-ACK to this suggestion.
-I have updated the registration function following your suggestion in v4.
-It looks much cleaner.
+The aim of this patch is to split "unpurged" objects and allocated
+ones, that gives us some boost in performance, because of less number
+of objects in the "busy" tree, i.e. insert/lookup/remove operations
+become faster, what is obvious. The splitting is possible because
+"purge list", "busy tree" and "free tree" are three separate entities.
 
-> > +     if (!hdmi->plugged_cb)
-> > +             return;
-> > +
-> > +     hdmi->plugged_cb(&codec_pdev->dev, plugged);
-> > +}
-> > +
-> > +static int hdmi_set_plugged_cb(struct dw_hdmi *hdmi, hdmi_codec_plugged_cb fn)
-> > +{
-> > +     bool plugged;
-> > +     struct platform_device *codec_pdev;
-> > +
-> > +     if (!hdmi->audio || IS_ERR(hdmi->audio))
-> > +             return -EINVAL;
->
-> Given the current code structure, how can this ever be true when the
-> function is called?
->
-ACK
-Removed in v4.
-> > +     codec_pdev = platform_get_drvdata(hdmi->audio);
-> > +     if (!codec_pdev || IS_ERR(codec_pdev))
-> > +             return -EINVAL;
->
-> This doesn't seem like a good idea as I've pointed out above.
->
-ACK
-Fixed in v4.
-> > +
-> > +     mutex_lock(&hdmi->mutex);
-> > +     hdmi->plugged_cb = fn;
-> > +     plugged = hdmi->last_connector_result == connector_status_connected;
-> > +     handle_plugged_change(hdmi, plugged);
-> > +     mutex_unlock(&hdmi->mutex);
->
-> Should be a blank line here for readability.
->
-ACK
-Fixed in v4.
-> > +     return 0;
-> > +}
-> > +
-> >  static void hdmi_modb(struct dw_hdmi *hdmi, u8 data, u8 mask, unsigned reg)
-> >  {
-> >       regmap_update_bits(hdmi->regm, reg << hdmi->reg_shift, mask, data);
-> > @@ -2044,6 +2083,7 @@ dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
-> >  {
-> >       struct dw_hdmi *hdmi = container_of(connector, struct dw_hdmi,
-> >                                            connector);
-> > +     enum drm_connector_status result;
-> >
-> >       mutex_lock(&hdmi->mutex);
-> >       hdmi->force = DRM_FORCE_UNSPECIFIED;
-> > @@ -2051,7 +2091,18 @@ dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
-> >       dw_hdmi_update_phy_mask(hdmi);
-> >       mutex_unlock(&hdmi->mutex);
-> >
-> > -     return hdmi->phy.ops->read_hpd(hdmi, hdmi->phy.data);
-> > +     result = hdmi->phy.ops->read_hpd(hdmi, hdmi->phy.data);
-> > +
-> > +     mutex_lock(&hdmi->mutex);
-> > +     if (result != hdmi->last_connector_result) {
-> > +             dev_dbg(hdmi->dev, "read_hpd result: %d", result);
-> > +             handle_plugged_change(hdmi,
-> > +                                   result == connector_status_connected);
-> > +             hdmi->last_connector_result = result;
-> > +     }
-> > +     mutex_unlock(&hdmi->mutex);
-> > +
-> > +     return result;
-> >  }
-> >
-> >  static int dw_hdmi_connector_get_modes(struct drm_connector *connector)
-> > @@ -2460,6 +2511,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
-> >       hdmi->rxsense = true;
-> >       hdmi->phy_mask = (u8)~(HDMI_PHY_HPD | HDMI_PHY_RX_SENSE);
-> >       hdmi->mc_clkdis = 0x7f;
-> > +     hdmi->last_connector_result = connector_status_disconnected;
-> >
-> >       mutex_init(&hdmi->mutex);
-> >       mutex_init(&hdmi->audio_mutex);
-> > @@ -2653,6 +2705,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
-> >               audio.hdmi      = hdmi;
-> >               audio.write     = hdmi_writeb;
-> >               audio.read      = hdmi_readb;
-> > +             audio.set_plugged_cb = hdmi_set_plugged_cb;
->
-> Why is this necessary?
->
-> The I2S audio driver already depends on the dw-hdmi module through its
-> use of functions already exported.  Indirecting this through the
-> platform data makes no sense.
->
-> Just rename hdmi_set_plugged_cb to dw_hdmi_set_plugged_cb() and export
-> it for dw-hdmi-i2s-audio.c to use.
-ACK.
-Your suggestion makes sense.
-Removed in v4.
+Number of "unpurged" objects depends on num_online_cpus() and how many
+pages each objects holds. For example on my 4xCPUs system the value
+of lazy_max_pages() is 24576, i.e. in case of one object per one page
+we get 24576 "unpurged" nodes in the rb-tree. 
 
->
-> Thanks.
-Thanks so much!
+v1 -> v2:
+a) directly use merge_or_add_vmap_area() function in  __purge_vmap_area_lazy(),
+   because VA is detached, i.e. there is no need to "unlink" it;
 
->
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-> According to speedtest.net: 11.9Mbps down 500kbps up
+b) because of (a), we can avoid of modifying unlink_va() and keep
+   WARN_ON(RB_EMPTY_NODE(&va->rb_node) in place as it used to be.
+
+Appreciate for any comments and review.
+
+Uladzislau Rezki (Sony) (1):
+  mm/vmalloc: do not keep unpurged areas in the busy tree
+
+ mm/vmalloc.c | 52 ++++++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 44 insertions(+), 8 deletions(-)
+
+-- 
+2.11.0
+
