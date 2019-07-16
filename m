@@ -2,160 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69F346B14F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 23:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 369DC6B134
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 23:40:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730932AbfGPVpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 17:45:00 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45380 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726794AbfGPVpA (ORCPT
+        id S2388182AbfGPVjd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 17:39:33 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:37947 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728235AbfGPVjd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 17:45:00 -0400
-Received: by mail-pg1-f194.google.com with SMTP id o13so10061286pgp.12
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 14:45:00 -0700 (PDT)
+        Tue, 16 Jul 2019 17:39:33 -0400
+Received: by mail-lf1-f67.google.com with SMTP id h28so14805601lfj.5
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 14:39:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4drR0FDgR1qKvDPf6ArOgp5GWnRtGoeeH0ezG721TC0=;
-        b=d0XRWLafSldOVujZRpCkAu9+YwaiUggcPzRRQGuqpuKlW6jllCs6aNRjoFTQhxg4W6
-         z7ImjRNh5QmIhLrvG3LhZo0PIw8SLsbPLLxFxaZOy4h7hkmlvhGkc1vtL4Gsa4mkCHz1
-         zJ+OWNjBPEuKNabEYJEFz46fx9LgdzRJWPcElIRSmJJG5lufLlzetP7GPCAmZHS6V2xl
-         2mxK1+ye+N5ayG7/d9N0ag+WZAL7AAonPq26ki8Ch07dIWP/z73zocHpTVI4WSb32Wj/
-         4Wly/viUTLx9SnnoMfTR1xsYZJ0YcZ3G/B7jx6HPwUu0T3GhkwGGo8T1bQV9zgTEmpzR
-         PxIA==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UEoPNCG4kcJsbXvvedTVI/oUGPgfgDGC69R8YkpN0Ls=;
+        b=E/8ikrwAfufbeGPzCfXxpn5EWxAfgLdy6LHVoRbFXYE9RhSrT+fCW/Ym0WBFnLVgpW
+         6eknLnGyCQrub7C+oH2iB/3f89aqw/gEyuWoo9sMXXD1lgoKI/evg2UIhXk69H2wbB8W
+         gBxoGQuij1gb1iyR95rQw/C8tqo7SbwCJcSPs2g6BA53k9qfo3IoqUoApxcsPMMsLYs+
+         fbB5qmrjBhLFCO4IrMKKA++ei7tfjIrtjqwlLB9q9YGyuC3urVN/8I/CF1zxnWHvLmkT
+         JHSkdhSFe+zled5GOpaKiAju6oSKwU0EPnFIWV879EhYNYZt26KZKzjjM+atv4cMxtPQ
+         ZcJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4drR0FDgR1qKvDPf6ArOgp5GWnRtGoeeH0ezG721TC0=;
-        b=GkLdWQ+9PlYWKwIUMSKBuGyX4ndPaGsZLjiO6yh11XdlPXiBhTvG+VtG1CJ7NE4igk
-         4Wsoa0rd9ArwtUpJq4HeBu12EB3YkjghHD4q9fEz9D0x7Ht76Au/Pn/ikDni7josRik7
-         obxRoHZoT9IuDmybm3EZZg/8H1EtEJU7LpApvHB8UoENRg+nzfskgr76GkMiQ79nF39c
-         LwjdILSoP0FCZPxHso24R7h+HfI3wPegF/kcFKELqjMgjkH7Q6jdoB7LiD5GbREvB4uM
-         y6M2PLwlsIuPzVRT9C7kgpNngoGGEHpNJmdWR8Rv/yP6MblHrIZvUZM4wjssX+AI586e
-         6dzw==
-X-Gm-Message-State: APjAAAUAEzGNvrKn6JhP7VYel+uuhB/yqkCcEuvecSIiChn6gZ4XO1eZ
-        D0NR7Ieqb6HMj+plbpHtfcs1pXIKtVg=
-X-Google-Smtp-Source: APXvYqxiDio1TWrmNR0NEynX+8QmbTFyvAzkbSoW72UZvLkMfedCjFiKOzRrZlV77GO0V2OJitoyeQ==
-X-Received: by 2002:a17:90a:5887:: with SMTP id j7mr39000839pji.136.1563313499680;
-        Tue, 16 Jul 2019 14:44:59 -0700 (PDT)
-Received: from localhost ([100.118.89.203])
-        by smtp.gmail.com with ESMTPSA id 135sm20978687pfb.137.2019.07.16.14.44.58
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 16 Jul 2019 14:44:59 -0700 (PDT)
-From:   Rob Clark <robdclark@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Rob Clark <robdclark@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Eric Anholt <eric@anholt.net>,
-        Eric Biggers <ebiggers@google.com>,
-        Deepak Sharma <deepak.sharma@amd.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] drm/vgem: use normal cached mmap'ings
-Date:   Tue, 16 Jul 2019 14:37:42 -0700
-Message-Id: <20190716213746.4670-3-robdclark@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190716213746.4670-1-robdclark@gmail.com>
-References: <20190716213746.4670-1-robdclark@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UEoPNCG4kcJsbXvvedTVI/oUGPgfgDGC69R8YkpN0Ls=;
+        b=i2/4cAYImNKB+TeeycDlzpwpYLqEx38iO9Nfbis1eHGppXxtclSL5mw06g60C0IQZm
+         58gcUzNxU8w6FM67KjhK6t0F8cKUYY10Ouj3f7z9URlMh76nNHJpFsFs0eMWLC6oaYMc
+         TIbwlLytnkpgHCxNTBCPtZrD/kIaLvPwZSaGkAMBZR37jH/bV3wgDL+ZY5HCGEUcmZF1
+         mgOYn5q2JPPDKdP7DxK04PnisxzGcOxEi88LGy+L/XYx0cRm44ztdnpynO+hm78jAC2k
+         rT6+5c0lfePn9CnJ2VUib3MqACeRnpR2OYJeiMpdJscGiRHgi03RNvm3wbf6uYxdhzIp
+         t7tg==
+X-Gm-Message-State: APjAAAU4+AsiYnxtO+PPrTqh/3eZ0REtFiT7MWxrcNKqReM/BUKdDrV2
+        qjM9aP7jmHmnYfCgu8tH0kud+h/x+LYdnRnRSw==
+X-Google-Smtp-Source: APXvYqxVWwwG619v+YKQRDGT+YX+qm23m31n4KUpCUeLscpXJaA+UAUtNCEiDZTilTsw6kcSugeGwveeG28ePWlfYQw=
+X-Received: by 2002:a19:8093:: with SMTP id b141mr16328818lfd.137.1563313170619;
+ Tue, 16 Jul 2019 14:39:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1554732921.git.rgb@redhat.com> <9edad39c40671fb53f28d76862304cc2647029c6.1554732921.git.rgb@redhat.com>
+ <20190529145742.GA8959@cisco> <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
+ <20190708175105.7zb6mikjw2wmnwln@madcap2.tricolour.ca> <CAHC9VhRFeCFSCn=m6wgDK2tXBN1euc2+bw8o=CfNwptk8t=j7A@mail.gmail.com>
+ <20190716193828.xvm67iv5jyypvvxp@madcap2.tricolour.ca>
+In-Reply-To: <20190716193828.xvm67iv5jyypvvxp@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 16 Jul 2019 17:39:19 -0400
+Message-ID: <CAHC9VhTFW44gMMey8NnJzAeVxObwKhTgXcnt09q-7DtkFUiMCA@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Clark <robdclark@chromium.org>
+On Tue, Jul 16, 2019 at 3:38 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2019-07-15 16:38, Paul Moore wrote:
+> > On Mon, Jul 8, 2019 at 1:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > On 2019-05-29 11:29, Paul Moore wrote:
+> >
+> > ...
+> >
+> > > > The idea is that only container orchestrators should be able to
+> > > > set/modify the audit container ID, and since setting the audit
+> > > > container ID can have a significant effect on the records captured
+> > > > (and their routing to multiple daemons when we get there) modifying
+> > > > the audit container ID is akin to modifying the audit configuration
+> > > > which is why it is gated by CAP_AUDIT_CONTROL.  The current thinking
+> > > > is that you would only change the audit container ID from one
+> > > > set/inherited value to another if you were nesting containers, in
+> > > > which case the nested container orchestrator would need to be granted
+> > > > CAP_AUDIT_CONTROL (which everyone to date seems to agree is a workable
+> > > > compromise).  We did consider allowing for a chain of nested audit
+> > > > container IDs, but the implications of doing so are significant
+> > > > (implementation mess, runtime cost, etc.) so we are leaving that out
+> > > > of this effort.
+> > >
+> > > We had previously discussed the idea of restricting
+> > > orchestrators/engines from only being able to set the audit container
+> > > identifier on their own descendants, but it was discarded.  I've added a
+> > > check to ensure this is now enforced.
+> >
+> > When we weren't allowing nested orchestrators it wasn't necessary, but
+> > with the move to support nesting I believe this will be a requirement.
+> > We might also need/want to restrict audit container ID changes if a
+> > descendant is acting as a container orchestrator and managing one or
+> > more audit container IDs; although I'm less certain of the need for
+> > this.
+>
+> I was of the opinion it was necessary before with single-layer parallel
+> orchestrators/engines.
 
-Since there is no real device associated with VGEM, it is impossible to
-end up with appropriate dev->dma_ops, meaning that we have no way to
-invalidate the shmem pages allocated by VGEM.  So, at least on platforms
-without drm_cflush_pages(), we end up with corruption when cache lines
-from previous usage of VGEM bo pages get evicted to memory.
+One of the many things we've disagreed on, but it doesn't really
+matter at this point.
 
-The only sane option is to use cached mappings.
+> > > I've also added a check to ensure that a process can't set its own audit
+> > > container identifier ...
+> >
+> > What does this protect against, or what problem does this solve?
+> > Considering how easy it is to fork/exec, it seems like this could be
+> > trivially bypassed.
+>
+> Well, for starters, it would remove one layer of nesting.  It would
+> separate the functional layers of processes.
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
-v3: rebased on drm-tip
+This doesn't seem like something we need to protect against, what's
+the harm?  My opinion at this point is that we should only add
+restrictions to protect against problematic or dangerous situations; I
+don't believe one extra layer of nesting counts as either.
 
- drivers/gpu/drm/vgem/vgem_drv.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+Perhaps the container folks on the To/CC line can comment on this?  If
+there is a valid reason for this restriction, great, let's do it,
+otherwise it seems like an unnecessary hard coded policy to me.
 
-diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-index e7d12e93b1f0..84262e2bd7f7 100644
---- a/drivers/gpu/drm/vgem/vgem_drv.c
-+++ b/drivers/gpu/drm/vgem/vgem_drv.c
-@@ -259,9 +259,6 @@ static int vgem_mmap(struct file *filp, struct vm_area_struct *vma)
- 	if (ret)
- 		return ret;
- 
--	/* Keep the WC mmaping set by drm_gem_mmap() but our pages
--	 * are ordinary and not special.
--	 */
- 	vma->vm_flags = flags | VM_DONTEXPAND | VM_DONTDUMP;
- 	return 0;
- }
-@@ -310,17 +307,17 @@ static void vgem_unpin_pages(struct drm_vgem_gem_object *bo)
- static int vgem_prime_pin(struct drm_gem_object *obj, struct device *dev)
- {
- 	struct drm_vgem_gem_object *bo = to_vgem_bo(obj);
--	long n_pages = obj->size >> PAGE_SHIFT;
-+	long i, n_pages = obj->size >> PAGE_SHIFT;
- 	struct page **pages;
- 
- 	pages = vgem_pin_pages(bo);
- 	if (IS_ERR(pages))
- 		return PTR_ERR(pages);
- 
--	/* Flush the object from the CPU cache so that importers can rely
--	 * on coherent indirect access via the exported dma-address.
--	 */
--	drm_clflush_pages(pages, n_pages);
-+	for (i = 0; i < n_pages; i++) {
-+		dma_sync_single_for_device(dev, page_to_phys(pages[i]),
-+					   PAGE_SIZE, DMA_BIDIRECTIONAL);
-+	}
- 
- 	return 0;
- }
-@@ -328,6 +325,13 @@ static int vgem_prime_pin(struct drm_gem_object *obj, struct device *dev)
- static void vgem_prime_unpin(struct drm_gem_object *obj, struct device *dev)
- {
- 	struct drm_vgem_gem_object *bo = to_vgem_bo(obj);
-+	long i, n_pages = obj->size >> PAGE_SHIFT;
-+	struct page **pages = bo->pages;
-+
-+	for (i = 0; i < n_pages; i++) {
-+		dma_sync_single_for_cpu(dev, page_to_phys(pages[i]),
-+					PAGE_SIZE, DMA_BIDIRECTIONAL);
-+	}
- 
- 	vgem_unpin_pages(bo);
- }
-@@ -382,7 +386,7 @@ static void *vgem_prime_vmap(struct drm_gem_object *obj)
- 	if (IS_ERR(pages))
- 		return NULL;
- 
--	return vmap(pages, n_pages, 0, pgprot_writecombine(PAGE_KERNEL));
-+	return vmap(pages, n_pages, 0, PAGE_KERNEL);
- }
- 
- static void vgem_prime_vunmap(struct drm_gem_object *obj, void *vaddr)
-@@ -411,7 +415,7 @@ static int vgem_prime_mmap(struct drm_gem_object *obj,
- 	fput(vma->vm_file);
- 	vma->vm_file = get_file(obj->filp);
- 	vma->vm_flags |= VM_DONTEXPAND | VM_DONTDUMP;
--	vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
-+	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
- 
- 	return 0;
- }
+> Other than that, it seems
+> like a gut feeling that it is just wrong to allow it.  It seems like a
+> layer violation that one container orchestrator/engine could set its own
+> audit container identifier and then set its children as well.  It would
+> be its own parent.
+
+I suspect you are right that the current crop of container engines
+won't do this, but who knows what we'll be doing with "containers" 5,
+or even 10, years from now.  With that in mind, let me ask the
+question again: is allowing an orchestrator the ability to set its own
+audit container ID problematic and/or dangerous?
+
+> It would make it harder to verify adherance to descendancy and inheritance rules.
+
+The audit log should contain all the information needed to track that,
+right?  If it doesn't, then I think we have a problem with the
+information we are logging.  Right?
+
+> > > ... and that if the identifier is already set, then the
+> > > orchestrator/engine must be in a descendant user namespace from the
+> > > orchestrator that set the previously inherited audit container
+> > > identifier.
+> >
+> > You lost me here ... although I don't like the idea of relying on X
+> > namespace inheritance for a hard coded policy on setting the audit
+> > container ID; we've worked hard to keep this independent of any
+> > definition of a "container" and it would sadden me greatly if we had
+> > to go back on that.
+>
+> This would seem to be the one concession I'm reluctantly making to try
+> to solve this nested container orchestrator/engine challenge.
+
+As I said, you lost me on this - how does this help?  A more detailed
+explanation of how this helps resolve the nesting problem would be
+useful.
+
+> Would backing off on that descendant user namespace requirement and only
+> require that a nested audit container identifier only be permitted on a
+> descendant task be sufficient?  It may for this use case, but I suspect
+> not for additional audit daemons (we're not there yet) and message
+> routing to those daemons.
+>
+> The one difference here is that it does not depend on this if the audit
+> container identifier has not already been set.
+
 -- 
-2.21.0
-
+paul moore
+www.paul-moore.com
