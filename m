@@ -2,91 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6F7A6AF6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 20:59:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E37A6AF74
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 21:00:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388414AbfGPS7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 14:59:39 -0400
-Received: from mail-pl1-f177.google.com ([209.85.214.177]:46851 "EHLO
-        mail-pl1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728438AbfGPS7j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 14:59:39 -0400
-Received: by mail-pl1-f177.google.com with SMTP id c2so10556070plz.13
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 11:59:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=hBJsfG+kxvEykqFUPJPZgqlmTa9miwWtUSC2L+vLfP0=;
-        b=rTafQ1i3JELdrOWJ5WSPdSQQwWR9tojAgsl4geqBK2ZdDVwUPVO5YBRRdmHlAMJj8h
-         T3cIKg3ivUvNYeW+SQt5fcjPlhM6xsK84xL1NqIhkBoSy2h6a2RNvC4KTsY5ruB+TJPh
-         a6fSWDYUwWmjaJI+265DFaBcq14FLWh3XyX7CzhJ8qsiTs4K2qNpwP9B4/CX+HDSNua2
-         t+cuf4OmTC6gFXaAnM/QAwdfKPK8ire8G6YjF3jHdzA9TUSIrU3A/AcXiM9voIVS78Hn
-         t81Odf6StdnitZCOEhpJsq24DvZVwpJ99em5+JTs748nSoL1O4trtGWXzdZHhmi8nmkl
-         NE2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=hBJsfG+kxvEykqFUPJPZgqlmTa9miwWtUSC2L+vLfP0=;
-        b=gMJYKn0ceacw8zw5uABi1fsAP68oNCv/lUT/acjSM3TPrjVd8v29AxwRyhho+zza9Y
-         OghOef3WmcWlZI/uVgI7aAM+AG8zNCIf2xVoZ71PUQsJMaazO04RJQEt9maoOrGa4u6K
-         c6ovpYdlo4SSyZYF6lzCpvICvpLXRdJhNY8lJkwWKBg6GdOKhcLymhy9mpxSAU8zEx9z
-         bbVMElyu0RdDlo+aziPOUchLSn/oG9Ij9hIdSmrQIOw1Ull5Ju7/4hLdSidLau6mzVJu
-         1F8xAIJNGiokoirfN6Jcbz1zTdNgX/XTsLC/ZR0D+mbFi4M5TICGT7As2WTbCvcbkrF+
-         z+tQ==
-X-Gm-Message-State: APjAAAV7xL1uCtCKhV45a4MpRV/g3pT2o04xPwMy7wlvi456btwRnADZ
-        30CMYkfEpv5fw2uNzejC6PPKWg==
-X-Google-Smtp-Source: APXvYqxJBz67JnnuTcUz76s83oxJjhlbQ27GD9dFu8zmDsc8MA6X4i+IL4StramzuJafjdqHNn3w2Q==
-X-Received: by 2002:a17:902:2862:: with SMTP id e89mr38000072plb.258.1563303578543;
-        Tue, 16 Jul 2019 11:59:38 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id i124sm42317997pfe.61.2019.07.16.11.59.37
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 16 Jul 2019 11:59:37 -0700 (PDT)
-Date:   Tue, 16 Jul 2019 12:00:57 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Pi-Hsun Shih <pihsun@chromium.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [GIT PULL] rpmsg updates for v5.3
-Message-ID: <20190716190057.GA8572@tuxbook-pro>
+        id S2388606AbfGPTAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 15:00:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37336 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728438AbfGPTAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 15:00:18 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 205B620665;
+        Tue, 16 Jul 2019 19:00:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563303617;
+        bh=PcKLpA+pS1VyNuIrEf+5mScc/jl5xMwC/Ln9VrThiwM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ds6GCOFDWGbqaeNEXsfyh5tTrSYmUSx2y6p+eKtWUUz6ysDpx1PT+fCUkaFwglGSE
+         t11NOTkWtJPELCIfTSIY/hr7rfCOG445Vc4M6SbnWLkvumfjge1koPnOC50gsqRC4K
+         jj3+9KVPYqnbOCetP8iEXNID4IrEyoeh5AeMtseM=
+Date:   Tue, 16 Jul 2019 14:00:13 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Vidya Sagar <vidyas@nvidia.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, digetx@gmail.com,
+        mperttunen@nvidia.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V13 12/12] PCI: tegra: Add Tegra194 PCIe support
+Message-ID: <20190716190013.GB4470@google.com>
+References: <20190710062212.1745-1-vidyas@nvidia.com>
+ <20190710062212.1745-13-vidyas@nvidia.com>
+ <20190711125433.GB26088@e121166-lin.cambridge.arm.com>
+ <986d0b1a-666a-7b05-a9f3-e761518bdc92@nvidia.com>
+ <20190712160754.GA24285@e121166-lin.cambridge.arm.com>
+ <a5f8689b-1358-dd2d-4f54-7e68a6ab158b@nvidia.com>
+ <20190716112225.GA24335@e121166-lin.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190716112225.GA24335@e121166-lin.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+On Tue, Jul 16, 2019 at 12:22:25PM +0100, Lorenzo Pieralisi wrote:
+> On Sat, Jul 13, 2019 at 12:34:34PM +0530, Vidya Sagar wrote:
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+> > > > > So if the link is not up we still go ahead and make probe
+> > > > > succeed. What for ?
+> > > > We may need root port to be available to support hot-plugging of
+> > > > endpoint devices, so, we don't fail the probe.
+> > > 
+> > > We need it or we don't. If you do support hotplugging of endpoint
+> > > devices point me at the code, otherwise link up failure means
+> > > failure to probe.
+> > Currently hotplugging of endpoint is not supported, but it is one of
+> > the use cases that we may add support for in future. 
+> 
+> You should elaborate on this, I do not understand what you mean,
+> either the root port(s) supports hotplug or it does not.
+> 
+> > But, why should we fail probe if link up doesn't happen? As such,
+> > nothing went wrong in terms of root port initialization right?  I
+> > checked other DWC based implementations and following are not failing
+> > the probe pci-dra7xx.c, pcie-armada8k.c, pcie-artpec6.c, pcie-histb.c,
+> > pcie-kirin.c, pcie-spear13xx.c, pci-exynos.c, pci-imx6.c,
+> > pci-keystone.c, pci-layerscape.c
+> > 
+> > Although following do fail the probe if link is not up.  pcie-qcom.c,
+> > pcie-uniphier.c, pci-meson.c
+> > 
+> > So, to me, it looks more like a choice we can make whether to fail the
+> > probe or not and in this case we are choosing not to fail.
+> 
+> I disagree. I had an offline chat with Bjorn and whether link-up should
+> fail the probe or not depends on whether the root port(s) is hotplug
+> capable or not and this in turn relies on the root port "Slot
+> implemented" bit in the PCI Express capabilities register.
 
-are available in the Git repository at:
+There might be a little more we can talk about in this regard.  I did
+bring up the "Slot implemented" bit, but after thinking about it more,
+I don't really think the host bridge driver should be looking at that.
+That's a PCIe concept, and it's really *downstream* from the host
+bridge itself.  The host bridge is logically a device on the CPU bus,
+not the PCI bus.
 
-  git://github.com/andersson/remoteproc tags/rpmsg-v5.3
+I'm starting to think that the host bridge driver probe should be
+disconnected from question of whether the root port links are up.
 
-for you to fetch changes up to 54119bc1110dab2fa389f45c73a0787b8e037e8b:
+Logically, the host bridge driver connects the CPU bus to a PCI root
+bus, so it converts CPU-side accesses to PCI config, memory, or I/O
+port transactions.  Given that, the PCI core can enumerate devices on
+the root bus and downstream buses.
 
-  rpmsg: core: Make remove handler for rpmsg driver optional. (2019-05-21 23:54:06 -0700)
+Devices on the root bus typically include Root Ports, but might also
+include endpoints, Root Complex Integrated Endpoints, Root Complex
+Event Collectors, etc.  I think in principle, we would want the host
+bridge probe to succeed so we can use these devices even if none of
+the Root Ports have a link.
 
-----------------------------------------------------------------
-rpmsg updates for v5.3
+If a Root Port is present, I think users will expect to see it in the
+"lspci" output, even if its downstream link is not up.  That will
+enable things like manually poking the Root Port via "setpci" for
+debug.  And if it has a connector, the generic pciehp should be able
+to handle hot-add events without any special help from the host bridge
+driver.
 
-This contains a DT binding update and a change to make the remote
-function of rpmsg_devices optional.
+On ACPI systems there is no concept of the host bridge driver probe
+failing because of lack of link on a Root Port.  If a Root Port
+doesn't have an operational link, we still keep the pci_root.c driver,
+and we'll enumerate the Root Port itself.  So I tend to think DT
+systems should behave the same way, i.e., the driver probe should
+succeed unless it fails to allocate resources or something similar.  I
+think this is analogous to a NIC or USB adapter driver, where the
+probe succeeds even if there's no network cable or USB device
+attached.
 
-----------------------------------------------------------------
-Pi-Hsun Shih (1):
-      rpmsg: core: Make remove handler for rpmsg driver optional.
-
-Sibi Sankar (1):
-      dt-bindings: soc: qcom: Add remote-pid binding for GLINK SMEM
-
- Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt | 5 +++++
- drivers/rpmsg/rpmsg_core.c                                | 3 ++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+Bjorn
