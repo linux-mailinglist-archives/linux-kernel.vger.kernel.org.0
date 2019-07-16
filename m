@@ -2,60 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63E566AF78
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 21:01:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ED186AF7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 21:01:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388655AbfGPTA7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 15:00:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37870 "EHLO mail.kernel.org"
+        id S2388683AbfGPTBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 15:01:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728484AbfGPTA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 15:00:58 -0400
+        id S1728575AbfGPTA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 15:00:59 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9B4720693;
+        by mail.kernel.org (Postfix) with ESMTPSA id CB61D21743;
         Tue, 16 Jul 2019 19:00:57 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1hnSh6-0006Bu-Kg; Tue, 16 Jul 2019 15:00:56 -0400
-Message-Id: <20190716190014.840939538@goodmis.org>
+        id 1hnSh6-0006CQ-QA; Tue, 16 Jul 2019 15:00:56 -0400
+Message-Id: <20190716190056.701096978@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Tue, 16 Jul 2019 15:00:14 -0400
+Date:   Tue, 16 Jul 2019 15:00:15 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 0/5] tracing: last minute changes before pushing
+        Andrew Morton <akpm@linux-foundation.org>,
+        Po-Hsu Lin <po-hsu.lin@canonical.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [for-next][PATCH 1/5] ftrace/selftests: Return the skip code when tracing directory not
+ configured in kernel
+References: <20190716190014.840939538@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bah, I had this tested last week before going on PTO and forgot to push
-it to my for-next branch. But it's for this merge window.
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-for-next
+If the kernel is not configured with ftrace enabled, the ftracetest
+selftests should return the error code of "4" as that is the kselftests
+"skip" code, and not "1" which means an error.
 
-Head SHA1: f86a1152e15c6b5913f9ec03a2bd97ca70c1ed82
+To determine if ftrace is enabled, first the newer "tracefs" is searched for
+in /proc/mounts. If it is not found, then "debugfs" is searched for (as old
+kernels do not have tracefs). If that is not found, an attempt to mount the
+tracefs or debugfs is performed. This is done by seeing first if the
+/sys/kernel/tracing directory exists. If it does than tracefs is configured
+in the kernel and an attempt to mount it is performed.
+
+If /sys/kernel/tracing does not exist, then /sys/kernel/debug is tested to
+see if that directory exists. If it does, then an attempt to mount debugfs
+on that directory is performed. If it does not exist, then debugfs is not
+configured in the running kernel and the test exits with the skip code.
+
+If either mount fails, then a normal error is returned as they do exist in
+the kernel but something went wrong to mount them.
+
+This changes the test to always try the tracefs file system first as it has
+been in the kernel for some time now and it is better to test it if it is
+available instead of always testing debugfs.
+
+Link: http://lkml.kernel.org/r/20190702062358.7330-1-po-hsu.lin@canonical.com
+
+Reported-by: Po-Hsu Lin <po-hsu.lin@canonical.com>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ tools/testing/selftests/ftrace/ftracetest | 38 +++++++++++++++++++----
+ 1 file changed, 32 insertions(+), 6 deletions(-)
+
+diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
+index 136387422b00..edf5ea35d2a7 100755
+--- a/tools/testing/selftests/ftrace/ftracetest
++++ b/tools/testing/selftests/ftrace/ftracetest
+@@ -23,9 +23,15 @@ echo "		            If <dir> is -, all logs output in console only"
+ exit $1
+ }
+ 
++# default error
++err_ret=1
++
++# kselftest skip code is 4
++err_skip=4
++
+ errexit() { # message
+   echo "Error: $1" 1>&2
+-  exit 1
++  exit $err_ret
+ }
+ 
+ # Ensuring user privilege
+@@ -116,11 +122,31 @@ parse_opts() { # opts
+ }
+ 
+ # Parameters
+-DEBUGFS_DIR=`grep debugfs /proc/mounts | cut -f2 -d' ' | head -1`
+-if [ -z "$DEBUGFS_DIR" ]; then
+-    TRACING_DIR=`grep tracefs /proc/mounts | cut -f2 -d' ' | head -1`
+-else
+-    TRACING_DIR=$DEBUGFS_DIR/tracing
++TRACING_DIR=`grep tracefs /proc/mounts | cut -f2 -d' ' | head -1`
++if [ -z "$TRACING_DIR" ]; then
++    DEBUGFS_DIR=`grep debugfs /proc/mounts | cut -f2 -d' ' | head -1`
++    if [ -z "$DEBUGFS_DIR" ]; then
++	# If tracefs exists, then so does /sys/kernel/tracing
++	if [ -d "/sys/kernel/tracing" ]; then
++	    mount -t tracefs nodev /sys/kernel/tracing ||
++	      errexit "Failed to mount /sys/kernel/tracing"
++	    TRACING_DIR="/sys/kernel/tracing"
++	# If debugfs exists, then so does /sys/kernel/debug
++	elif [ -d "/sys/kernel/debug" ]; then
++	    mount -t debugfs nodev /sys/kernel/debug ||
++	      errexit "Failed to mount /sys/kernel/debug"
++	    TRACING_DIR="/sys/kernel/debug/tracing"
++	else
++	    err_ret=$err_skip
++	    errexit "debugfs and tracefs are not configured in this kernel"
++	fi
++    else
++	TRACING_DIR="$DEBUGFS_DIR/tracing"
++    fi
++fi
++if [ ! -d "$TRACING_DIR" ]; then
++    err_ret=$err_skip
++    errexit "ftrace is not configured in this kernel"
+ fi
+ 
+ TOP_DIR=`absdir $0`
+-- 
+2.20.1
 
 
-Cong Wang (3):
-      tracing: Pass type into tracing_generic_entry_update()
-      tracing: Let filter_assign_type() detect FILTER_PTR_STRING
-      tracing: Make trace_get_fields() global
-
-Steven Rostedt (VMware) (2):
-      ftrace/selftests: Return the skip code when tracing directory not configured in kernel
-      ftrace/selftest: Test if set_event/ftrace_pid exists before writing
-
-----
- include/linux/trace_events.h                    |  9 ++++++
- kernel/trace/trace.c                            |  8 +++---
- kernel/trace/trace_event_perf.c                 |  3 +-
- kernel/trace/trace_events.c                     |  8 ------
- kernel/trace/trace_events_filter.c              |  3 ++
- tools/testing/selftests/ftrace/ftracetest       | 38 +++++++++++++++++++++----
- tools/testing/selftests/ftrace/test.d/functions |  4 +--
- 7 files changed, 51 insertions(+), 22 deletions(-)
