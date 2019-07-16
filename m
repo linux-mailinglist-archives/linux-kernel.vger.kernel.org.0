@@ -2,175 +2,351 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 369DC6B134
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 23:40:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD1116B13E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 23:40:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388182AbfGPVjd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 17:39:33 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37947 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728235AbfGPVjd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 17:39:33 -0400
-Received: by mail-lf1-f67.google.com with SMTP id h28so14805601lfj.5
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 14:39:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UEoPNCG4kcJsbXvvedTVI/oUGPgfgDGC69R8YkpN0Ls=;
-        b=E/8ikrwAfufbeGPzCfXxpn5EWxAfgLdy6LHVoRbFXYE9RhSrT+fCW/Ym0WBFnLVgpW
-         6eknLnGyCQrub7C+oH2iB/3f89aqw/gEyuWoo9sMXXD1lgoKI/evg2UIhXk69H2wbB8W
-         gBxoGQuij1gb1iyR95rQw/C8tqo7SbwCJcSPs2g6BA53k9qfo3IoqUoApxcsPMMsLYs+
-         fbB5qmrjBhLFCO4IrMKKA++ei7tfjIrtjqwlLB9q9YGyuC3urVN/8I/CF1zxnWHvLmkT
-         JHSkdhSFe+zled5GOpaKiAju6oSKwU0EPnFIWV879EhYNYZt26KZKzjjM+atv4cMxtPQ
-         ZcJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UEoPNCG4kcJsbXvvedTVI/oUGPgfgDGC69R8YkpN0Ls=;
-        b=i2/4cAYImNKB+TeeycDlzpwpYLqEx38iO9Nfbis1eHGppXxtclSL5mw06g60C0IQZm
-         58gcUzNxU8w6FM67KjhK6t0F8cKUYY10Ouj3f7z9URlMh76nNHJpFsFs0eMWLC6oaYMc
-         TIbwlLytnkpgHCxNTBCPtZrD/kIaLvPwZSaGkAMBZR37jH/bV3wgDL+ZY5HCGEUcmZF1
-         mgOYn5q2JPPDKdP7DxK04PnisxzGcOxEi88LGy+L/XYx0cRm44ztdnpynO+hm78jAC2k
-         rT6+5c0lfePn9CnJ2VUib3MqACeRnpR2OYJeiMpdJscGiRHgi03RNvm3wbf6uYxdhzIp
-         t7tg==
-X-Gm-Message-State: APjAAAU4+AsiYnxtO+PPrTqh/3eZ0REtFiT7MWxrcNKqReM/BUKdDrV2
-        qjM9aP7jmHmnYfCgu8tH0kud+h/x+LYdnRnRSw==
-X-Google-Smtp-Source: APXvYqxVWwwG619v+YKQRDGT+YX+qm23m31n4KUpCUeLscpXJaA+UAUtNCEiDZTilTsw6kcSugeGwveeG28ePWlfYQw=
-X-Received: by 2002:a19:8093:: with SMTP id b141mr16328818lfd.137.1563313170619;
- Tue, 16 Jul 2019 14:39:30 -0700 (PDT)
+        id S2388576AbfGPVkc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 17:40:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44926 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728235AbfGPVk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 17:40:29 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C82DD3022462;
+        Tue, 16 Jul 2019 21:40:28 +0000 (UTC)
+Received: from redhat.com (dhcp-17-153.bos.redhat.com [10.18.17.153])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C5B905DAAC;
+        Tue, 16 Jul 2019 21:40:24 +0000 (UTC)
+Date:   Tue, 16 Jul 2019 17:40:23 -0400
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>,
+        Nicolas Pitre <nico@fluxnic.net>, linux-doc@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        Joe Lawrence <joe.lawrence@redhat.com>
+Subject: Re: [PATCH v2 08/11] kbuild: create *.mod with full directory path
+ and remove MODVERDIR
+Message-ID: <20190716214023.GA15159@redhat.com>
+References: <20190711054434.1177-1-yamada.masahiro@socionext.com>
+ <20190711054434.1177-9-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-References: <cover.1554732921.git.rgb@redhat.com> <9edad39c40671fb53f28d76862304cc2647029c6.1554732921.git.rgb@redhat.com>
- <20190529145742.GA8959@cisco> <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
- <20190708175105.7zb6mikjw2wmnwln@madcap2.tricolour.ca> <CAHC9VhRFeCFSCn=m6wgDK2tXBN1euc2+bw8o=CfNwptk8t=j7A@mail.gmail.com>
- <20190716193828.xvm67iv5jyypvvxp@madcap2.tricolour.ca>
-In-Reply-To: <20190716193828.xvm67iv5jyypvvxp@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 16 Jul 2019 17:39:19 -0400
-Message-ID: <CAHC9VhTFW44gMMey8NnJzAeVxObwKhTgXcnt09q-7DtkFUiMCA@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Tycho Andersen <tycho@tycho.ws>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190711054434.1177-9-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 16 Jul 2019 21:40:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 3:38 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2019-07-15 16:38, Paul Moore wrote:
-> > On Mon, Jul 8, 2019 at 1:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > On 2019-05-29 11:29, Paul Moore wrote:
-> >
-> > ...
-> >
-> > > > The idea is that only container orchestrators should be able to
-> > > > set/modify the audit container ID, and since setting the audit
-> > > > container ID can have a significant effect on the records captured
-> > > > (and their routing to multiple daemons when we get there) modifying
-> > > > the audit container ID is akin to modifying the audit configuration
-> > > > which is why it is gated by CAP_AUDIT_CONTROL.  The current thinking
-> > > > is that you would only change the audit container ID from one
-> > > > set/inherited value to another if you were nesting containers, in
-> > > > which case the nested container orchestrator would need to be granted
-> > > > CAP_AUDIT_CONTROL (which everyone to date seems to agree is a workable
-> > > > compromise).  We did consider allowing for a chain of nested audit
-> > > > container IDs, but the implications of doing so are significant
-> > > > (implementation mess, runtime cost, etc.) so we are leaving that out
-> > > > of this effort.
-> > >
-> > > We had previously discussed the idea of restricting
-> > > orchestrators/engines from only being able to set the audit container
-> > > identifier on their own descendants, but it was discarded.  I've added a
-> > > check to ensure this is now enforced.
-> >
-> > When we weren't allowing nested orchestrators it wasn't necessary, but
-> > with the move to support nesting I believe this will be a requirement.
-> > We might also need/want to restrict audit container ID changes if a
-> > descendant is acting as a container orchestrator and managing one or
-> > more audit container IDs; although I'm less certain of the need for
-> > this.
->
-> I was of the opinion it was necessary before with single-layer parallel
-> orchestrators/engines.
+On Thu, Jul 11, 2019 at 02:44:31PM +0900, Masahiro Yamada wrote:
+> While descending directories, Kbuild produces objects for modules,
+> but do not link final *.ko files; it is done in the modpost.
+> 
+> To keep track of modules, Kbuild creates a *.mod file in $(MODVERDIR)
+> for every module it is building. Some post-processing steps read the
+> necessary information from *.mod files. This avoids descending into
+> directories again. This mechanism was introduced in 2003 or so.
+> 
+> Later, commit 551559e13af1 ("kbuild: implement modules.order") added
+> modules.order. So, we can simply read it out to know all the modules
+> with directory paths. This is easier than parsing the first line of
+> *.mod files.
+> 
+> $(MODVERDIR) has a flat directory structure, that is, *.mod files
+> are named only with base names. This is based on the assumption that
+> the module name is unique across the tree. This assumption is really
+> fragile.
+> 
+> Stephen Rothwell reported a race condition caused by a module name
+> conflict:
+> 
+>   https://lkml.org/lkml/2019/5/13/991
+> 
+> In parallel building, two different threads could write to the same
+> $(MODVERDIR)/*.mod simultaneously.
+> 
+> Non-unique module names are the source of all kind of troubles, hence
+> commit 3a48a91901c5 ("kbuild: check uniqueness of module names")
+> introduced a new checker script.
+> 
+> However, it is still fragile in the build system point of view because
+> this race happens before scripts/modules-check.sh is invoked. If it
+> happens again, the modpost will emit unclear error messages.
+> 
+> To fix this issue completely, create *.mod in the same directory as
+> *.ko so that two threads never attempt to write to the same file.
+> $(MODVERDIR) is no longer needed.
+> 
+> Since modules with directory paths are listed in modules.order, Kbuild
+> is still able to find *.mod files without additional descending.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Acked-by: Nicolas Pitre <nico@fluxnic.net>
+> ---
+> 
+> Changes in v2:
+>  - Remove -r of xargs, which is a GNU extension
+>  - Add '--' for extra safety
+> 
+>  .gitignore                  |  1 +
+>  Documentation/dontdiff      |  1 +
+>  Makefile                    | 20 +++-----------------
+>  scripts/Makefile.build      |  8 ++------
+>  scripts/Makefile.modpost    |  4 ++--
+>  scripts/adjust_autoksyms.sh | 11 ++++-------
+>  scripts/mod/sumversion.c    | 16 +++-------------
+>  scripts/package/mkspec      |  2 +-
+>  8 files changed, 17 insertions(+), 46 deletions(-)
+> 
+> diff --git a/.gitignore b/.gitignore
+> index 7587ef56b92d..8f5422cba6e2 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -30,6 +30,7 @@
+>  *.lz4
+>  *.lzma
+>  *.lzo
+> +*.mod
+>  *.mod.c
+>  *.o
+>  *.o.*
+> diff --git a/Documentation/dontdiff b/Documentation/dontdiff
+> index 5eba889ea84d..9f4392876099 100644
+> --- a/Documentation/dontdiff
+> +++ b/Documentation/dontdiff
+> @@ -30,6 +30,7 @@
+>  *.lzo
+>  *.mo
+>  *.moc
+> +*.mod
+>  *.mod.c
+>  *.o
+>  *.o.*
+> diff --git a/Makefile b/Makefile
+> index b5e21d676ee2..4243b6daffcf 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -488,11 +488,6 @@ export KBUILD_AFLAGS_MODULE KBUILD_CFLAGS_MODULE KBUILD_LDFLAGS_MODULE
+>  export KBUILD_AFLAGS_KERNEL KBUILD_CFLAGS_KERNEL
+>  export KBUILD_ARFLAGS
+>  
+> -# When compiling out-of-tree modules, put MODVERDIR in the module
+> -# tree rather than in the kernel tree. The kernel tree might
+> -# even be read-only.
+> -export MODVERDIR := $(if $(KBUILD_EXTMOD),$(firstword $(KBUILD_EXTMOD))/).tmp_versions
+> -
+>  # Files to ignore in find ... statements
+>  
+>  export RCS_FIND_IGNORE := \( -name SCCS -o -name BitKeeper -o -name .svn -o    \
+> @@ -1033,7 +1028,7 @@ vmlinux-deps := $(KBUILD_LDS) $(KBUILD_VMLINUX_OBJS) $(KBUILD_VMLINUX_LIBS)
+>  
+>  # Recurse until adjust_autoksyms.sh is satisfied
+>  PHONY += autoksyms_recursive
+> -autoksyms_recursive: $(vmlinux-deps)
+> +autoksyms_recursive: $(vmlinux-deps) modules.order
+>  ifdef CONFIG_TRIM_UNUSED_KSYMS
+>  	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/adjust_autoksyms.sh \
+>  	  "$(MAKE) -f $(srctree)/Makefile vmlinux"
+> @@ -1117,7 +1112,6 @@ endif
+>  
+>  prepare1: prepare3 outputmakefile asm-generic $(version_h) $(autoksyms_h) \
+>  						include/generated/utsrelease.h
+> -	$(cmd_crmodverdir)
+>  
+>  archprepare: archheaders archscripts prepare1 scripts
+>  
+> @@ -1375,7 +1369,7 @@ endif # CONFIG_MODULES
+>  # make distclean Remove editor backup files, patch leftover files and the like
+>  
+>  # Directories & files removed with 'make clean'
+> -CLEAN_DIRS  += $(MODVERDIR) include/ksym
+> +CLEAN_DIRS  += include/ksym
+>  CLEAN_FILES += modules.builtin.modinfo
+>  
+>  # Directories & files removed with 'make mrproper'
+> @@ -1636,7 +1630,6 @@ PHONY += $(clean-dirs) clean
+>  $(clean-dirs):
+>  	$(Q)$(MAKE) $(clean)=$(patsubst _clean_%,%,$@)
+>  
+> -clean:	rm-dirs := $(MODVERDIR)
+>  clean: rm-files := $(KBUILD_EXTMOD)/Module.symvers
+>  
+>  PHONY += help
+> @@ -1650,8 +1643,6 @@ help:
+>  	@echo  ''
+>  
+>  PHONY += prepare
+> -prepare:
+> -	$(cmd_crmodverdir)
+>  endif # KBUILD_EXTMOD
+>  
+>  clean: $(clean-dirs)
+> @@ -1662,7 +1653,7 @@ clean: $(clean-dirs)
+>  		-o -name '*.ko.*' \
+>  		-o -name '*.dtb' -o -name '*.dtb.S' -o -name '*.dt.yaml' \
+>  		-o -name '*.dwo' -o -name '*.lst' \
+> -		-o -name '*.su'  \
+> +		-o -name '*.su' -o -name '*.mod' \
+>  		-o -name '.*.d' -o -name '.*.tmp' -o -name '*.mod.c' \
+>  		-o -name '*.lex.c' -o -name '*.tab.[ch]' \
+>  		-o -name '*.asn1.[ch]' \
+> @@ -1791,11 +1782,6 @@ quiet_cmd_depmod = DEPMOD  $(KERNELRELEASE)
+>        cmd_depmod = $(CONFIG_SHELL) $(srctree)/scripts/depmod.sh $(DEPMOD) \
+>                     $(KERNELRELEASE)
+>  
+> -# Create temporary dir for module support files
+> -# clean it up only when building all modules
+> -cmd_crmodverdir = $(Q)mkdir -p $(MODVERDIR) \
+> -                  $(if $(KBUILD_MODULES),; rm -f $(MODVERDIR)/*)
+> -
+>  # read saved command lines for existing targets
+>  existing-targets := $(wildcard $(sort $(targets)))
+>  
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index 98dede0b2ca8..9fb30633acd2 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -67,8 +67,6 @@ ifeq ($(CONFIG_MODULES)$(need-modorder),y1)
+>  modorder-target := $(obj)/modules.order
+>  endif
+>  
+> -# We keep a list of all modules in $(MODVERDIR)
+> -
+>  __build: $(if $(KBUILD_BUILTIN),$(builtin-target) $(lib-target) $(extra-y)) \
+>  	 $(if $(KBUILD_MODULES),$(obj-m) $(modorder-target)) \
+>  	 $(subdir-ym) $(always)
+> @@ -278,13 +276,11 @@ $(obj)/%.o: $(src)/%.c $(recordmcount_source) $(objtool_dep) FORCE
+>  	$(call cmd,force_checksrc)
+>  	$(call if_changed_rule,cc_o_c)
+>  
+> -# Single-part modules are special since we need to mark them in $(MODVERDIR)
+> -
+>  $(single-used-m): $(obj)/%.o: $(src)/%.c $(recordmcount_source) $(objtool_dep) FORCE
+>  	$(call cmd,force_checksrc)
+>  	$(call if_changed_rule,cc_o_c)
+>  	@{ echo $(@:.o=.ko); echo $@; \
+> -	   $(cmd_undef_syms); } > $(MODVERDIR)/$(@F:.o=.mod)
+> +	   $(cmd_undef_syms); } > $(patsubst %.o,%.mod,$@)
+>  
+>  quiet_cmd_cc_lst_c = MKLST   $@
+>        cmd_cc_lst_c = $(CC) $(c_flags) -g -c -o $*.o $< && \
+> @@ -466,7 +462,7 @@ cmd_link_multi-m = $(LD) $(ld_flags) -r -o $@ $(filter %.o,$^) $(cmd_secanalysis
+>  $(multi-used-m): FORCE
+>  	$(call if_changed,link_multi-m)
+>  	@{ echo $(@:.o=.ko); echo $(filter %.o,$^); \
+> -	   $(cmd_undef_syms); } > $(MODVERDIR)/$(@F:.o=.mod)
+> +	   $(cmd_undef_syms); } > $(patsubst %.o,%.mod,$@)
+>  $(call multi_depend, $(multi-used-m), .o, -objs -y -m)
+>  
+>  targets += $(multi-used-m)
+> diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
+> index 2ab1694a7df3..3e229d4f4d72 100644
+> --- a/scripts/Makefile.modpost
+> +++ b/scripts/Makefile.modpost
+> @@ -6,8 +6,8 @@
+>  # Stage one of module building created the following:
+>  # a) The individual .o files used for the module
+>  # b) A <module>.o file which is the .o files above linked together
+> -# c) A <module>.mod file in $(MODVERDIR)/, listing the name of the
+> -#    the preliminary <module>.o file, plus all .o files
+> +# c) A <module>.mod file, listing the name of the preliminary <module>.o file,
+> +#    plus all .o files
+>  # d) modules.order, which lists all the modules
+>  
+>  # Stage 2 is handled by this file and does the following
+> diff --git a/scripts/adjust_autoksyms.sh b/scripts/adjust_autoksyms.sh
+> index aab4e299d7a2..8b44bb80a451 100755
+> --- a/scripts/adjust_autoksyms.sh
+> +++ b/scripts/adjust_autoksyms.sh
+> @@ -47,13 +47,10 @@ cat > "$new_ksyms_file" << EOT
+>   */
+>  
+>  EOT
+> -[ "$(ls -A "$MODVERDIR")" ] &&
+> -for mod in "$MODVERDIR"/*.mod; do
+> -	sed -n -e '3{s/ /\n/g;/^$/!p;}' "$mod"
+> -done | sort -u |
+> -while read sym; do
+> -	echo "#define __KSYM_${sym} 1"
+> -done >> "$new_ksyms_file"
+> +sed 's/ko$/mod/' modules.order |
+> +xargs -n1 sed -n -e '3{s/ /\n/g;/^$/!p;}' -- |
+> +sort -u |
+> +sed -e 's/\(.*\)/#define __KSYM_\1 1/' >> "$new_ksyms_file"
+>  
+>  # Special case for modversions (see modpost.c)
+>  if [ -n "$CONFIG_MODVERSIONS" ]; then
+> diff --git a/scripts/mod/sumversion.c b/scripts/mod/sumversion.c
+> index 0f6dcb4011a8..166f3fa247a9 100644
+> --- a/scripts/mod/sumversion.c
+> +++ b/scripts/mod/sumversion.c
+> @@ -396,21 +396,11 @@ void get_src_version(const char *modname, char sum[], unsigned sumlen)
+>  	unsigned long len;
+>  	struct md4_ctx md;
+>  	char *sources, *end, *fname;
+> -	const char *basename;
+>  	char filelist[PATH_MAX + 1];
+> -	char *modverdir = getenv("MODVERDIR");
+>  
+> -	if (!modverdir)
+> -		modverdir = ".";
+> -
+> -	/* Source files for module are in .tmp_versions/modname.mod,
+> -	   after the first line. */
+> -	if (strrchr(modname, '/'))
+> -		basename = strrchr(modname, '/') + 1;
+> -	else
+> -		basename = modname;
+> -	snprintf(filelist, sizeof(filelist), "%s/%.*s.mod", modverdir,
+> -		(int) strlen(basename) - 2, basename);
+> +	/* objects for a module are listed in the second line of *.mod file. */
+> +	snprintf(filelist, sizeof(filelist), "%.*smod",
+> +		 (int)strlen(modname) - 1, modname);
+>  
+>  	file = grab_file(filelist, &len);
+>  	if (!file)
+> diff --git a/scripts/package/mkspec b/scripts/package/mkspec
+> index 2d29df4a0a53..8640c278f1aa 100755
+> --- a/scripts/package/mkspec
+> +++ b/scripts/package/mkspec
+> @@ -29,7 +29,7 @@ fi
+>  
+>  PROVIDES="$PROVIDES kernel-$KERNELRELEASE"
+>  __KERNELRELEASE=$(echo $KERNELRELEASE | sed -e "s/-/_/g")
+> -EXCLUDES="$RCS_TAR_IGNORE --exclude=.tmp_versions --exclude=*vmlinux* \
+> +EXCLUDES="$RCS_TAR_IGNORE --exclude=*vmlinux* --exclude=*.mod \
+>  --exclude=*.o --exclude=*.ko --exclude=*.cmd --exclude=Documentation \
+>  --exclude=.config.old --exclude=.missing-syscalls.d --exclude=*.s"
+>  
+> -- 
+> 2.17.1
+> 
 
-One of the many things we've disagreed on, but it doesn't really
-matter at this point.
+Hi Masahiro,
 
-> > > I've also added a check to ensure that a process can't set its own audit
-> > > container identifier ...
-> >
-> > What does this protect against, or what problem does this solve?
-> > Considering how easy it is to fork/exec, it seems like this could be
-> > trivially bypassed.
->
-> Well, for starters, it would remove one layer of nesting.  It would
-> separate the functional layers of processes.
+I'm following this patchset changes as they will affect the klp-convert
+series [1] that the livepatching folks have been working on...
 
-This doesn't seem like something we need to protect against, what's
-the harm?  My opinion at this point is that we should only add
-restrictions to protect against problematic or dangerous situations; I
-don't believe one extra layer of nesting counts as either.
+Just wondering if these other files should be checked for more MODVERDIR
+fallout:
 
-Perhaps the container folks on the To/CC line can comment on this?  If
-there is a valid reason for this restriction, great, let's do it,
-otherwise it seems like an unnecessary hard coded policy to me.
+  % grep -R 'tmp_versions'
+  tools/power/cpupower/debug/kernel/Makefile:     - rm -rf .tmp_versions* Module.symvers modules.order
+  scripts/export_report.pl:    while (<.tmp_versions/*.mod>) {
+  scripts/adjust_autoksyms.sh:# .tmp_versions/*.mod files.
 
-> Other than that, it seems
-> like a gut feeling that it is just wrong to allow it.  It seems like a
-> layer violation that one container orchestrator/engine could set its own
-> audit container identifier and then set its children as well.  It would
-> be its own parent.
+export_report.pl is probably the only interesting one on this list.
 
-I suspect you are right that the current crop of container engines
-won't do this, but who knows what we'll be doing with "containers" 5,
-or even 10, years from now.  With that in mind, let me ask the
-question again: is allowing an orchestrator the ability to set its own
-audit container ID problematic and/or dangerous?
+Also, can you cc me on subsequent patchset versions?
 
-> It would make it harder to verify adherance to descendancy and inheritance rules.
+Thanks,
 
-The audit log should contain all the information needed to track that,
-right?  If it doesn't, then I think we have a problem with the
-information we are logging.  Right?
+-- Joe
 
-> > > ... and that if the identifier is already set, then the
-> > > orchestrator/engine must be in a descendant user namespace from the
-> > > orchestrator that set the previously inherited audit container
-> > > identifier.
-> >
-> > You lost me here ... although I don't like the idea of relying on X
-> > namespace inheritance for a hard coded policy on setting the audit
-> > container ID; we've worked hard to keep this independent of any
-> > definition of a "container" and it would sadden me greatly if we had
-> > to go back on that.
->
-> This would seem to be the one concession I'm reluctantly making to try
-> to solve this nested container orchestrator/engine challenge.
-
-As I said, you lost me on this - how does this help?  A more detailed
-explanation of how this helps resolve the nesting problem would be
-useful.
-
-> Would backing off on that descendant user namespace requirement and only
-> require that a nested audit container identifier only be permitted on a
-> descendant task be sufficient?  It may for this use case, but I suspect
-> not for additional audit daemons (we're not there yet) and message
-> routing to those daemons.
->
-> The one difference here is that it does not depend on this if the audit
-> container identifier has not already been set.
-
--- 
-paul moore
-www.paul-moore.com
+[1] https://lore.kernel.org/lkml/20190509143859.9050-1-joe.lawrence@redhat.com/
