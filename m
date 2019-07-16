@@ -2,130 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E8E46A27A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 08:56:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B9516A281
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 08:59:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbfGPGyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 02:54:52 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:45611 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbfGPGyw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 02:54:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1563260188; x=1594796188;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=rRzCzyAdwIVEYaPofBz/AKCwP5dKJ4/z4zeuDl6Ssig=;
-  b=fvXgqrS6GNMqBPh7l1cf8/iD+h6h5c2bUbrvdf0XB7BdRtUa0T4B7ji4
-   GK1lps4t1ul3J4/IGtrFCH/1t+8FNUK9rIq/oYusBhOinWsJpd7T5ZQuf
-   NenvF58Ax3EM2hVoQM2fVV+DsL6y1OxG1wCRnRPl/BueL9GpHUzwGsGhW
-   PqK8bWFLyrhlEF83Yhx8Ix5tPKIyUp/W9qrs0NY1rfkdHy2U+aLtaQ5Rv
-   fdCe+iXqg0vwe04OvdP0wPP7sP9E7S5mNYiFK+1VA5fm9K+Clu2+hYzWu
-   zFqtT/uuVpTDRDQGVpk0165+IP9IH2wcJfCk2NcWN9gDEX2qB6W5TAVkX
-   g==;
-IronPort-SDR: gANFz2MgvQQsZbT9zGy6SJN4vrZLUfkXdO1JJobpj2eD8aKu/c0F6EJffXyTdYrwNdgkklmgG1
- rghk5Rswq0Lp/n58CDhNzM/wLsg0QR6/QRX5sAeKc0+iR2nYkfWJqgVbYfAmXsAQIlDRvr8l7S
- 5844G6ikL09HyHmtSS65neXjrOLzqdcaLM+4kl1tDw/J6RBm6kkfPT7Z0Uyag7FcCorNpgr2f2
- kEGRL0fNgZRzPH2FyiSHaWDaZe7sjDguLF8u+3GAH20iB82KtdSHyuuWb4oxXZ9SuDoXdPCW8z
- Et4=
-X-IronPort-AV: E=Sophos;i="5.63,496,1557158400"; 
-   d="scan'208";a="213125947"
-Received: from mail-sn1nam02lp2050.outbound.protection.outlook.com (HELO NAM02-SN1-obe.outbound.protection.outlook.com) ([104.47.36.50])
-  by ob1.hgst.iphmx.com with ESMTP; 16 Jul 2019 14:56:26 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=f92c4zncoRTlnZVplbrjfKtGPw/+sVld/y8c+o4XQNFqcHojb3jD/OQK4B16oHKXy0kDoibU7CYkQdXZi0qYPTkseAWErT6fuY/HljFGCYItZAzVtAw6BS0sA4gDKqq/NuFSpIGBxLQ31Ah0uNsWRuc7n6Dkc8kMxkWCwM4g3ztZ8zK5mJfQqJotYaEnCfSt3rmLqCUcg8bFSPsdJteKV7udJPwCGkVfCywS5ijG4lHCS5O1undcVvJl/VZiDq6+iPsFmcTQkLEiNG7fmqnmXaGNMvP5v4cdHoS+a47wChraWMIkr5oFtNRrBGRgAT/WNVV4c+yOf6eU5SJ+5oCVkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rRzCzyAdwIVEYaPofBz/AKCwP5dKJ4/z4zeuDl6Ssig=;
- b=V1ZZOjMnuqH0s19TBAUkoAqL08tqfozfIPIH5NEs9uKCCOJUthNRKHRGZX757F5Amn0kyAg7FY8gbM+3OZPLG65SAexHwYxbFl7QF2m8PkjH+u/y18Nblb1HYux06tSw5L9QRJDDWOTJM+7oCIFCoswlyPxmeGevXwETtLHX+FSr9+S2jqi5CVl7cTEceHrNC1iNRTwWRPJbyVLpqk4BujaaVU6Boq3WLU1/wq1nzb0eX9pJegqLgbAEfOeoCN0R8E8HgtCFtHHZMDsrvxjsio6I2kJVOlacMIAse/+OTg71u+Kk1csb2vpWlLdnJUYtM+V71fm7ywT2Zzsh76SlkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=wdc.com;dmarc=pass action=none header.from=wdc.com;dkim=pass
- header.d=wdc.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rRzCzyAdwIVEYaPofBz/AKCwP5dKJ4/z4zeuDl6Ssig=;
- b=E1iJ/GCcS2I/wJrtaQX1ndBzOCHEoRhlZe7lefeHe/PrgnoxKjsTIpt1RGv9nJ+Z5+Kz5lQLkz8LTa2XRbesv/d2yB7X5c4c9BQOBfi5KH6eSwrCJRR6cd9epb8wEFh3nwlXiibYS44iPkihF2wueNV3bYrBWJa7LqeuVBslxzs=
-Received: from SN6PR04MB4925.namprd04.prod.outlook.com (52.135.114.82) by
- SN6PR04MB4112.namprd04.prod.outlook.com (52.135.82.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.13; Tue, 16 Jul 2019 06:54:50 +0000
-Received: from SN6PR04MB4925.namprd04.prod.outlook.com
- ([fe80::541e:d74b:98bf:c319]) by SN6PR04MB4925.namprd04.prod.outlook.com
- ([fe80::541e:d74b:98bf:c319%5]) with mapi id 15.20.2073.008; Tue, 16 Jul 2019
- 06:54:50 +0000
-From:   Avri Altman <Avri.Altman@wdc.com>
-To:     "Bean Huo (beanhuo)" <beanhuo@micron.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-CC:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Evan Green <evgreen@chromium.org>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Subject: RE: [PATCH v1] scsi: ufs: change msleep to usleep_range
-Thread-Topic: [PATCH v1] scsi: ufs: change msleep to usleep_range
-Thread-Index: AdU6/zmiJJopDFlPQEeuzjc9BNSdLAApAIHw
-Date:   Tue, 16 Jul 2019 06:54:50 +0000
-Message-ID: <SN6PR04MB492511AE7841BD4C84205218FCCE0@SN6PR04MB4925.namprd04.prod.outlook.com>
-References: <BN7PR08MB5684BBB44FD0E43501558A20DBCF0@BN7PR08MB5684.namprd08.prod.outlook.com>
-In-Reply-To: <BN7PR08MB5684BBB44FD0E43501558A20DBCF0@BN7PR08MB5684.namprd08.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Avri.Altman@wdc.com; 
-x-originating-ip: [212.25.79.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d76c0bdd-44c6-48eb-71c6-08d709ba7f8e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:SN6PR04MB4112;
-x-ms-traffictypediagnostic: SN6PR04MB4112:
-x-microsoft-antispam-prvs: <SN6PR04MB4112E51AAD7C324A7E7BF750FCCE0@SN6PR04MB4112.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 0100732B76
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(366004)(346002)(376002)(39860400002)(396003)(199004)(189003)(6116002)(86362001)(25786009)(478600001)(3846002)(446003)(68736007)(6436002)(8936002)(102836004)(6506007)(186003)(74316002)(26005)(33656002)(8676002)(76176011)(14454004)(229853002)(476003)(110136005)(71200400001)(11346002)(305945005)(54906003)(2906002)(71190400001)(81166006)(9686003)(52536014)(66446008)(66556008)(4326008)(53936002)(256004)(4744005)(7736002)(6246003)(81156014)(64756008)(7696005)(486006)(76116006)(55016002)(99286004)(66946007)(66476007)(66066001)(5660300002)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB4112;H:SN6PR04MB4925.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: sHaEGOuDHhogjSLr1qTFA+S9rFQM0xALbsFneNIy018ppmuJTRfQQIcj9XpHhhTOk2Bt5gNoYxDG3nB9FivrrQh9XNIXqndNFqOwWrQegpFV/Xu/MAWVVO3hKJRqYrTUkTrmliVpkfqMXm6AY1CtJPvQqYyt6ZiP1baWsinv5RJyZJKvwRSs+wbANEB7PbmkvwwMijrLDGig0tzninmteeMFc9vZS01lk/Yw9xM8WvyDykkg3LYAGpBYfoE1kQ2VI6xZNvOE2sKnMJEVfDyYLLb59o54/5U8OtsW/Eb+IPw8fgcryPWYCh11Cz1hFX4guN3m8aZ8faCfjjmByc4ruhZPM5rc/sc8uesNO1XQm+bxdKWQjtAVgLKbMD7jN4Q2oUDRe8UYyqJXGyaeiJQHAYD7yu3uoziYBM3BvFvy5S4=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1729535AbfGPG6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 02:58:41 -0400
+Received: from mga12.intel.com ([192.55.52.136]:51761 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726603AbfGPG6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 02:58:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jul 2019 23:58:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,496,1557212400"; 
+   d="scan'208";a="366116039"
+Received: from tao-optiplex-7060.sh.intel.com ([10.239.13.104])
+  by fmsmga005.fm.intel.com with ESMTP; 15 Jul 2019 23:58:38 -0700
+From:   Tao Xu <tao3.xu@intel.com>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com,
+        sean.j.christopherson@intel.com, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        fenghua.yu@intel.com, xiaoyao.li@linux.intel.com,
+        jingqi.liu@intel.com, tao3.xu@intel.com
+Subject: [PATCH v8 0/3] KVM: x86: Enable user wait instructions
+Date:   Tue, 16 Jul 2019 14:55:48 +0800
+Message-Id: <20190716065551.27264-1-tao3.xu@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d76c0bdd-44c6-48eb-71c6-08d709ba7f8e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2019 06:54:50.3174
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Avri.Altman@wdc.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4112
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->=20
-> From: Bean Huo <beanhuo@micron.com>
->=20
-> This patch is to change msleep() to usleep_range() based on
-> Documentation/timers/timers-howto.txt. It suggests using
-> usleep_range() for small msec(1ms - 20ms) since msleep()
-> will often sleep longer than desired value.
->=20
-> After changing, booting time will be 5ms-10ms faster than before.
-> I tested this change on two different platforms, one has 5ms faster,
-> another one is about 10ms. I think this is different on different
-> platform.
->=20
-> Actually, from UFS host side, 1ms-5ms delay is already sufficient for
-> its initialization of the local UIC layer.
->=20
-> Fixes: 7a3e97b0dc4b ([SCSI] ufshcd: UFS Host controller driver)
-> Signed-off-by: Bean Huo <beanhuo@micron.com>
-Reviewed-by: Avri Altman <avri.altman@wdc.com>
+UMONITOR, UMWAIT and TPAUSE are a set of user wait instructions.
+
+UMONITOR arms address monitoring hardware using an address. A store
+to an address within the specified address range triggers the
+monitoring hardware to wake up the processor waiting in umwait.
+
+UMWAIT instructs the processor to enter an implementation-dependent
+optimized state while monitoring a range of addresses. The optimized
+state may be either a light-weight power/performance optimized state
+(c0.1 state) or an improved power/performance optimized state
+(c0.2 state).
+
+TPAUSE instructs the processor to enter an implementation-dependent
+optimized state c0.1 or c0.2 state and wake up when time-stamp counter
+reaches specified timeout.
+
+Availability of the user wait instructions is indicated by the presence
+of the CPUID feature flag WAITPKG CPUID.0x07.0x0:ECX[5].
+
+The patches enable the umonitor, umwait and tpause features in KVM.
+Because umwait and tpause can put a (psysical) CPU into a power saving
+state, by default we dont't expose it to kvm and enable it only when
+guest CPUID has it. If the instruction causes a delay, the amount
+of time delayed is called here the physical delay. The physical delay is
+first computed by determining the virtual delay (the time to delay
+relative to the VM’s timestamp counter). 
+
+The release document ref below link:
+Intel 64 and IA-32 Architectures Software Developer's Manual,
+https://software.intel.com/sites/default/files/\
+managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf
+
+Changelog:
+v8:
+	Add vmx_waitpkg_supported() helper (Sean)
+	Add an accessor to expose umwait_control_cached (Sean)
+	Set msr_ia32_umwait_control in vcpu_vmx u32 and raise #GP when
+	[63:32] is set when rdmsr. (Sean)
+	Introduce a common exit helper handle_unexpected_vmexit (Sean)
+v7:
+	Add nested support for user wait instructions (Paolo)
+	Use the test on vmx->secondary_exec_control to replace
+	guest_cpuid_has (Paolo)
+v6:
+	add check msr_info->host_initiated in get/set msr(Xiaoyao)
+	restore the atomic_switch_umwait_control_msr()(Xiaoyao)
+
+Tao Xu (3):
+  KVM: x86: Add support for user wait instructions
+  KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
+  KVM: vmx: Introduce handle_unexpected_vmexit and handle WAITPKG vmexit
+
+ arch/x86/include/asm/vmx.h      |  1 +
+ arch/x86/include/uapi/asm/vmx.h |  6 ++-
+ arch/x86/kernel/cpu/umwait.c    |  6 +++
+ arch/x86/kvm/cpuid.c            |  2 +-
+ arch/x86/kvm/vmx/capabilities.h |  6 +++
+ arch/x86/kvm/vmx/nested.c       |  5 ++
+ arch/x86/kvm/vmx/vmx.c          | 83 ++++++++++++++++++++++++++-------
+ arch/x86/kvm/vmx/vmx.h          |  9 ++++
+ arch/x86/kvm/x86.c              |  1 +
+ 9 files changed, 101 insertions(+), 18 deletions(-)
+
+-- 
+2.20.1
+
