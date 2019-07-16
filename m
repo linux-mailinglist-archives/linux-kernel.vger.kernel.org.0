@@ -2,144 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E809F6AF7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 21:01:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D8EB6AF71
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 21:00:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388729AbfGPTBb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 15:01:31 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:44176 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728573AbfGPTBb (ORCPT
+        id S2388321AbfGPTAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 15:00:12 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40458 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728438AbfGPTAL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 15:01:31 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TX4SjWv_1563303683;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TX4SjWv_1563303683)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 17 Jul 2019 03:01:26 +0800
-Subject: Re: [PATCH] Revert "kmemleak: allow to coexist with fault injection"
-To:     Qian Cai <cai@lca.pw>, catalin.marinas@arm.com, mhocko@suse.com,
-        dvyukov@google.com, rientjes@google.com, willy@infradead.org,
-        akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1563299431-111710-1-git-send-email-yang.shi@linux.alibaba.com>
- <1563301410.4610.8.camel@lca.pw>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <a198d00d-d1f4-0d73-8eb8-6667c0bdac04@linux.alibaba.com>
-Date:   Tue, 16 Jul 2019 12:01:22 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Tue, 16 Jul 2019 15:00:11 -0400
+Received: by mail-pf1-f196.google.com with SMTP id p184so9546281pfp.7
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 12:00:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=La5gz3+AtRfpUH2XciZ9aSKb6yl6cJgz60szKVT/YX8=;
+        b=ozODvfRC1f9Sl5vdvKpXE0U6s04L6lG8ZUMXvfwKAuaVZedPcyhNqWOXnhx2SQQWK4
+         jE+D72JmHSV+8OcuA9bRc3/d+FKO2V56aAcIg1EmdTFQS7nejCu1L1LNdP3Qh39dG1v+
+         V9M9b1kC83q0/zZqBSyBLaSDQJolmnweTXjllg/G7LXwqvZX30KLVQORxiwXUsbH04Wu
+         1JGeqVk5rf8AaHGt8xvCkAzSEx13c4/v7GEuwVqOzQz9NPRySgKE5KUzOx64ZJdOjPND
+         rgclpykxjjW22U3ZskJP01M9ov+J3zpnU7u8SQGImUYEt+qmvNU24h530hg0TtDPRzs0
+         NKyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=La5gz3+AtRfpUH2XciZ9aSKb6yl6cJgz60szKVT/YX8=;
+        b=LJ/+7p9h0/aI3z80+3XH/UzaU4fhxUKZCkrGc9EYWsAMUzolHoH11MCP60vZRUkvay
+         mmaLa5zVJXesOXvHrcFuHlZEeVyD8qyOFaTHz96HN1MhIuDLF9F8tUdKKySdQ/rTHI0E
+         vzdTVC/+quInDZcyi3sZgX+9ppMoQH3SAVD0Hf4PzF+xCgJ4A4zLpoYU82hEKpggdE8w
+         YrCBt/AAm56X4VJyMnBEut0OZujYXMy/CKEl/4akQ1K5z6wpvyDH/+sDVx7yx2ko+ps0
+         X1seh9sYk+DQ9DIMl/+JeZk/9L5bo/iYSSTFwY9cl2xN0fvGoiUOuVCJAmroDRgBb6LV
+         6RtA==
+X-Gm-Message-State: APjAAAVsZUytfdGc2zi+pZebieluyWScB7WeB6efdRyI0Dksr4HSmRa/
+        4jIFtWdsQsWzOctwd/RMJ2yoSQ==
+X-Google-Smtp-Source: APXvYqzZncw8p1MU9FAK8cWlOPodS3hvcazMdYBofmnWJWczxl1JROF9sl3p9rY1LB/d4jGNZdq4MQ==
+X-Received: by 2002:a17:90a:d791:: with SMTP id z17mr36806013pju.40.1563303610687;
+        Tue, 16 Jul 2019 12:00:10 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 196sm23865267pfy.167.2019.07.16.12.00.09
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 16 Jul 2019 12:00:10 -0700 (PDT)
+Date:   Tue, 16 Jul 2019 12:01:29 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Fabien Dessenne <fabien.dessenne@st.com>,
+        Clement Leger <cleger@kalray.eu>,
+        Fabio Estevam <festevam@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "Robert P. J. Day" <rpjday@crashcourse.ca>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [GIT PULL] remoteproc updates for v5.3
+Message-ID: <20190716190129.GB8572@tuxbook-pro>
 MIME-Version: 1.0
-In-Reply-To: <1563301410.4610.8.camel@lca.pw>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 
-On 7/16/19 11:23 AM, Qian Cai wrote:
-> On Wed, 2019-07-17 at 01:50 +0800, Yang Shi wrote:
->> When running ltp's oom test with kmemleak enabled, the below warning was
->> triggerred since kernel detects __GFP_NOFAIL & ~__GFP_DIRECT_RECLAIM is
->> passed in:
->>
->> WARNING: CPU: 105 PID: 2138 at mm/page_alloc.c:4608
->> __alloc_pages_nodemask+0x1c31/0x1d50
->> Modules linked in: loop dax_pmem dax_pmem_core ip_tables x_tables xfs
->> virtio_net net_failover virtio_blk failover ata_generic virtio_pci virtio_ring
->> virtio libata
->> CPU: 105 PID: 2138 Comm: oom01 Not tainted 5.2.0-next-20190710+ #7
->> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.10.2-0-
->> g5f4c7b1-prebuilt.qemu-project.org 04/01/2014
->> RIP: 0010:__alloc_pages_nodemask+0x1c31/0x1d50
->> ...
->>   kmemleak_alloc+0x4e/0xb0
->>   kmem_cache_alloc+0x2a7/0x3e0
->>   ? __kmalloc+0x1d6/0x470
->>   ? ___might_sleep+0x9c/0x170
->>   ? mempool_alloc+0x2b0/0x2b0
->>   mempool_alloc_slab+0x2d/0x40
->>   mempool_alloc+0x118/0x2b0
->>   ? __kasan_check_read+0x11/0x20
->>   ? mempool_resize+0x390/0x390
->>   ? lock_downgrade+0x3c0/0x3c0
->>   bio_alloc_bioset+0x19d/0x350
->>   ? __swap_duplicate+0x161/0x240
->>   ? bvec_alloc+0x1b0/0x1b0
->>   ? do_raw_spin_unlock+0xa8/0x140
->>   ? _raw_spin_unlock+0x27/0x40
->>   get_swap_bio+0x80/0x230
->>   ? __x64_sys_madvise+0x50/0x50
->>   ? end_swap_bio_read+0x310/0x310
->>   ? __kasan_check_read+0x11/0x20
->>   ? check_chain_key+0x24e/0x300
->>   ? bdev_write_page+0x55/0x130
->>   __swap_writepage+0x5ff/0xb20
->>
->> The mempool_alloc_slab() clears __GFP_DIRECT_RECLAIM, however kmemleak has
->> __GFP_NOFAIL set all the time due to commit
->> d9570ee3bd1d4f20ce63485f5ef05663866fe6c0 ("kmemleak: allow to coexist
->> with fault injection").  But, it doesn't make any sense to have
->> __GFP_NOFAIL and ~__GFP_DIRECT_RECLAIM specified at the same time.
->>
->> According to the discussion on the mailing list, the commit should be
->> reverted for short term solution.  Catalin Marinas would follow up with a
->> better
->> solution for longer term.
->>
->> The failure rate of kmemleak metadata allocation may increase in some
->> circumstances, but this should be expected side effect.
-> As mentioned in anther thread, the situation for kmemleak under memory pressure
-> has already been unhealthy. I don't feel comfortable to make it even worse by
-> reverting this commit alone. This could potentially make kmemleak kill itself
-> easier and miss some more real memory leak later.
->
-> To make it really a short-term solution before the reverting, I think someone
-> needs to follow up with the mempool solution with tunable pool size mentioned
-> in,
->
-> https://lore.kernel.org/linux-mm/20190328145917.GC10283@arrakis.emea.arm.com/
->
-> I personally not very confident that Catalin will find some time soon to
-> implement embedding kmemleak metadata into the slab. Even he or someone does
-> eventually, it probably need quite some time to test and edge out many of corner
-> cases that kmemleak could have by its natural.
+are available in the Git repository at:
 
-Thanks for sharing some background. I didn't notice this topic had been 
-discussed. I'm not sure if this revert would make things worse since I'm 
-supposed real memory leak would be detected sooner before oom kicks in, 
-and kmemleak is already broken with __GFP_NOFAIL.
+  git://github.com/andersson/remoteproc tags/rproc-v5.3
 
-It seems everyone agree __GFP_NPFAIL should be removed? Anyway, I would 
-like leave the decision to Catalin.
+for you to fetch changes up to 93f1d3e4b59cf2e7ef31eaf1131480897b040e97:
 
->
->> Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: Dmitry Vyukov <dvyukov@google.com>
->> Cc: David Rientjes <rientjes@google.com>
->> Cc: Matthew Wilcox <willy@infradead.org>
->> Cc: Qian Cai <cai@lca.pw>
->> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
->> ---
->>   mm/kmemleak.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
->> index 9dd581d..884a5e3 100644
->> --- a/mm/kmemleak.c
->> +++ b/mm/kmemleak.c
->> @@ -114,7 +114,7 @@
->>   /* GFP bitmask for kmemleak internal allocations */
->>   #define gfp_kmemleak_mask(gfp)	(((gfp) & (GFP_KERNEL | GFP_ATOMIC)) |
->> \
->>   				 __GFP_NORETRY | __GFP_NOMEMALLOC | \
->> -				 __GFP_NOWARN | __GFP_NOFAIL)
->> +				 __GFP_NOWARN)
->>   
->>   /* scanning area inside a memory block */
->>   struct kmemleak_scan_area {
+  remoteproc: stm32: fix building without ARM SMCC (2019-07-08 07:05:50 -0700)
 
+----------------------------------------------------------------
+remoteproc updates for v5.3
+
+This adds support for the STM32 remoteproc, additional i.MX platforms
+with Cortex M4 remoteprocs and Qualcomm's QCS404 Compute DSP. Initial
+support for vendor specific resource table entries and support for
+unprocessed Qualcomm firmware files.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      remoteproc: stm32: fix building without ARM SMCC
+
+Bjorn Andersson (4):
+      dt-bindings: remoteproc: Rename and amend Hexagon v56 binding
+      remoteproc: qcom: qdsp6-adsp: Add support for QCS404 CDSP
+      soc: qcom: mdt_loader: Support loading non-split images
+      remoteproc: qcom: q6v5-mss: Support loading non-split images
+
+Clement Leger (2):
+      remoteproc: add vendor resources handling
+      remoteproc: copy parent dma_pfn_offset for vdev
+
+Fabien Dessenne (3):
+      dt-bindings: stm32: add bindings for ML-AHB interconnect
+      dt-bindings: remoteproc: add bindings for stm32 remote processor driver
+      remoteproc: stm32: add an ST stm32_rproc driver
+
+Fabio Estevam (2):
+      remoteproc: imx: Broaden the Kconfig selection logic
+      remoteproc: imx: Fix typo in "failed"
+
+Gustavo A. R. Silva (1):
+      remoteproc: Use struct_size() helper
+
+Robert P. J. Day (1):
+      remoteproc,rpmsg: add missing MAINTAINERS file entries
+
+YueHaibing (1):
+      remoteproc: qcom: q6v5-mss: Fix build error without QCOM_MDT_LOADER
+
+ .../devicetree/bindings/arm/stm32/mlahb.txt        |  37 ++
+ .../{qcom,adsp-pil.txt => qcom,hexagon-v56.txt}    |  35 +-
+ .../devicetree/bindings/remoteproc/stm32-rproc.txt |  63 +++
+ Documentation/remoteproc.txt                       |  14 +-
+ MAINTAINERS                                        |   5 +
+ drivers/remoteproc/Kconfig                         |  18 +-
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/imx_rproc.c                     |   8 +-
+ drivers/remoteproc/qcom_q6v5_adsp.c                |  73 ++-
+ drivers/remoteproc/qcom_q6v5_mss.c                 |  33 +-
+ drivers/remoteproc/remoteproc_core.c               |  15 +
+ drivers/remoteproc/remoteproc_elf_loader.c         |   3 +-
+ drivers/remoteproc/remoteproc_internal.h           |  11 +
+ drivers/remoteproc/stm32_rproc.c                   | 628 +++++++++++++++++++++
+ drivers/soc/qcom/mdt_loader.c                      |  88 ++-
+ include/linux/remoteproc.h                         |  32 +-
+ include/linux/soc/qcom/mdt_loader.h                |   2 +
+ 17 files changed, 1009 insertions(+), 57 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/stm32/mlahb.txt
+ rename Documentation/devicetree/bindings/remoteproc/{qcom,adsp-pil.txt => qcom,hexagon-v56.txt} (74%)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/stm32-rproc.txt
+ create mode 100644 drivers/remoteproc/stm32_rproc.c
