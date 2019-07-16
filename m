@@ -2,227 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65DD16A833
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 14:06:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 479F26A83C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 14:07:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732685AbfGPMFb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 08:05:31 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42898 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732524AbfGPMFa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 08:05:30 -0400
-Received: by mail-lf1-f68.google.com with SMTP id s19so13516902lfb.9
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 05:05:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IM4QT1Xngs9kyBKOtJG5O0RoRFoqAxD/pjBzsYQqx9U=;
-        b=o/fOET0RjizpnND00mTrql/ioFq1730YOuiSDU3Jev4noFPbrX8FuzixDifpLib9qn
-         JTE96ZG2D1yauwu1k/xP72pDs/rIjC8Y3m6OUxJzzshYC/vL5T4pbTJQQY6iyyeyw28u
-         9CGMoh934ABOncl2zdfXpTGNC8S/2mfKNy+dG81gJvRKFacndBhRjET745HQNW24OZRL
-         zJL9Qez6LO4NBAwnJsPzPq9J7Aqmi39hXwsoT8oibqZD9V+eU8q8IrOgqD6jHnxRXVIG
-         UjwcgGZ6WKap82LxdwR5PvOvw4Ytf996o9skNbDXwCMD8Zd2DU6jF1VMmz/EHgfHLo0o
-         3iYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=IM4QT1Xngs9kyBKOtJG5O0RoRFoqAxD/pjBzsYQqx9U=;
-        b=gs61snuZ+7CBtWiNNdfpBYialosy2Ip46p4bu07tSA6hbsC1GzS+cxM0Lki1+wF1hO
-         9tIJ5DrgPT2Pz9t2dXU1V29P5OQhUyTIiPJXpTuUIBx1bZ04kKFJXruAGd6FdqPsS9Ay
-         2j9KcEv9c+KIo4dgCHqDlkZiEgF+S/FqS6aDwk8dhiarvjsCSIZ0oNkdtSUGf3pHi4Vz
-         gcTSSaPewrrO7YkwAcUJoihqJ3/3G4KovK+wZE3YWJG/VFZ8Cmdsd+pKprDJxV3G/mPM
-         tsh+vl1KSg5wry24dXo9kNOI2s/eh9cenncW7caDAAvFlfb48J6ohNO7CfXCrli5gLtg
-         zbWQ==
-X-Gm-Message-State: APjAAAXFUjtt+rTTd0MCAxpyuaEGy29eUXstIt9YlPeBXlWbkq5SQFsP
-        uL5pUGpQig8gBlhBbficMC0=
-X-Google-Smtp-Source: APXvYqzhFNS83alo8YNYqfvdQn3zmSRYYawYWvmFRyUDi/eUzwiHW2Llamiru/wzvN1leVS05P1tEA==
-X-Received: by 2002:ac2:514b:: with SMTP id q11mr14799941lfd.33.1563278727704;
-        Tue, 16 Jul 2019 05:05:27 -0700 (PDT)
-Received: from pc636.semobile.internal ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id t23sm3686410ljd.98.2019.07.16.05.05.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Jul 2019 05:05:27 -0700 (PDT)
-From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Roman Gushchin <guro@fb.com>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Pengfei Li <lpf.vector@gmail.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH v2 1/1] mm/vmalloc: do not keep unpurged areas in the busy tree
-Date:   Tue, 16 Jul 2019 14:05:17 +0200
-Message-Id: <20190716120517.10305-2-urezki@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190716120517.10305-1-urezki@gmail.com>
-References: <20190716120517.10305-1-urezki@gmail.com>
+        id S1733096AbfGPMGK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 08:06:10 -0400
+Received: from mout.web.de ([212.227.15.3]:50655 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728137AbfGPMGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 08:06:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1563278745;
+        bh=fQ2avAzYiPevEbhCwSjxbKxm382jCizRyfFyZNtG3Ek=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=Ew94lgP5Zie6bRKv5mnw5smaZfl5NLJo5yPIugbQ5UwzOP2NRAV4+IJFD8GwbsAqq
+         u8tpoAbUCysFlijuxgQpUV7lVLZjgzzOwAOS7L5gxqzTfKZOX1J2JRe4QSiyBsMiii
+         7JqLKWRzm1NQnxp/nArhri7X/TxMLSK0TBr3Ihco=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.131.184.87]) by smtp.web.de (mrweb001
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MfqSa-1i8IsG3Rrg-00NBrF; Tue, 16
+ Jul 2019 14:05:44 +0200
+Subject: Re: [v3] coccinelle: semantic code search for missing of_node_put
+To:     Julia Lawall <julia.lawall@lip6.fr>, cocci@systeme.lip6.fr,
+        kernel-janitors@vger.kernel.org
+Cc:     Wen Yang <wen.yang99@zte.com.cn>, linux-kernel@vger.kernel.org,
+        Xue Zhihong <xue.zhihong@zte.com.cn>,
+        Yi Wang <wang.yi59@zte.com.cn>,
+        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wen Yang <yellowriver2010@hotmail.com>
+References: <1563246347-7803-1-git-send-email-wen.yang99@zte.com.cn>
+ <663d8141-5740-a452-1f4a-8335203e65ba@web.de>
+ <alpine.DEB.2.21.1907161307550.2885@hadrien>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <14f4d5dc-f3b1-5cfa-4a2b-046516369fc4@web.de>
+Date:   Tue, 16 Jul 2019 14:05:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1907161307550.2885@hadrien>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:O/J7dleIdBQm+2ZfcOfG6bx3mi+ociPJMh8sAXQfCyvBCXRTt5Y
+ uDTfuPQ/T4DjZo/SvY/mq+TaPA7lV5M0qD9XtSXpWtXQ+KSVX63cW+91xr0i4N8iQxli+V0
+ rwz9lMKebC5/dK9ot+VmMI6RXZMiL9zLVXj/urtnTx599ZsxldhnoWpl4J8E9zJuDU4Z6iK
+ AKJupp5LNyG8tlIGEy5KQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:lcmMCWpnpeA=:XoxIpEl4FyIuuAcWkc7eCb
+ K+mza35OOW3CzmQYaoUEStfrO88bCc8Abxe7bdWxi8bUSSVAqaQkdZyuskNe8bgmwhY7uY2hz
+ 2MbfwB/6SzNwpvQ4KmK4KWN9lNWMaOeu4YL69elM+jRQkjaXmdF13M/w1OQATm2sucXZzdCZu
+ E5925xPbT956Pi/Z/BZ7WfX1C1Wb8A5Ux9LshK8vN3Z4ArFQLO5z+kEZHX6hvzPEDZwdxjGFU
+ xyJoqbPycO1TAg6sQn5dFF+gVZ6t8DVAPB0OTb5jvxEJ2DXyKl+sGQx9FThmE+RSmeVXTqnCz
+ wLAhTDSWwGZuR2bEvrzosfAhVsWt8ojdwyIN1514yJehGN90W6fbNkcAvw4HQofH4trz5iI+E
+ 6DV2/TjwF6ZqIl0TdGeYlElCLPHvCPUJ+/jtc1TkNtDhQ/dRYxeUsTCYBf15bVvrZ14r+vZ6t
+ OQ6kiMhTd42JIWCWgVTsvojYjEwkXmLl8rSd1oU0fXgUnF7fCWaJnL8dl0HtAGkxMSM7yz0eY
+ GSOcfp+rL7xnkfxJdQkKE+ff7ex+cuErrGK/w+9pC7t2B+7nVfMNb3R+XAryBsQCuHSfwwGZo
+ sxf9X8X6/QMJrEZd/P6y+XWkzEsO8gQiDonw3GeXw45FFpliJcy+QhDp7jkgoHZO7/U6H1PzP
+ Fo6Tfp91nkRMEE1OlqQUjC0YlwElZJc6HysQ21iDknsJyvCjTv9G7Gcy3yE3718jCOZ91v06u
+ cC6Com5AR5kGoH9Tk63S5IE7N1rQtTN+3iD7GBHftBDPFEtDJa6+qPfsCpj0OJhwkYXl/8Vbv
+ RGFvKulA6B3KRlwkTkUQSe1qRpy/A4Ri7g67SRDl1QJNodZ5vTOcp20FYCxrWLP3bcMbJeSwM
+ Ojgr3+2Lnr11PVzGUS9K+wXC3KZyJnHja+rQg98iOOSxzy1yQ5T0lKwpknTQugl1jjVavQN9N
+ r45clvIHDw+omB5ubbEXU0ymxo+BcWqg6w2rbnjwRZM76phXzcWmJ6UQ49sfTqIpOl+AaYxAo
+ TkN70hm23ViFjX7tcHF76/jcCvabvfjGgleu/CqTyNF6AbjW51fgdwbT9knVpkbYcwu6MSa3Z
+ Z/CzIKyTaL8UXD0FP/6lXTc/XCxd6I22pS5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The busy tree can be quite big, even though the area is freed
-or unmapped it still stays there until "purge" logic removes
-it.
+>> Why would you like to keep this SmPL code in the commit description?
+>
+> I don't know indetail what you are proposing,
 
-1) Optimize and reduce the size of "busy" tree by removing a
-node from it right away as soon as user triggers free paths.
-It is possible to do so, because the allocation is done using
-another augmented tree.
+I imagine that you can get more interesting software development ideas
+from links to previous messages.
+I hope that the desired clarification can become more constructive.
 
-The vmalloc test driver shows the difference, for example the
-"fix_size_alloc_test" is ~11% better comparing with default
-configuration:
+How are the chances to move such code into SmPL script files?
 
-sudo ./test_vmalloc.sh performance
 
-<default>
-Summary: fix_size_alloc_test loops: 1000000 avg: 993985 usec
-Summary: full_fit_alloc_test loops: 1000000 avg: 973554 usec
-Summary: long_busy_list_alloc_test loops: 1000000 avg: 12617652 usec
-<default>
+> but I would prefer not to put semantic patches that involve iteration
+> into the kernel, for simplicity.
 
-<this patch>
-Summary: fix_size_alloc_test loops: 1000000 avg: 882263 usec
-Summary: full_fit_alloc_test loops: 1000000 avg: 973407 usec
-Summary: long_busy_list_alloc_test loops: 1000000 avg: 12593929 usec
-<this patch>
+This view is also interesting.
 
-2) Since the busy tree now contains allocated areas only and does
-not interfere with lazily free nodes, introduce the new function
-show_purge_info() that dumps "unpurged" areas that is propagated
-through "/proc/vmallocinfo".
+But I hope that this functionality will become more helpful
+if we can agree on value combinations which should be iterated
+for powerful source code analysis.
 
-3) Eliminate VM_LAZY_FREE flag.
 
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- mm/vmalloc.c | 52 ++++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 44 insertions(+), 8 deletions(-)
+>> I would prefer software evolution in an other direction.
+>> https://lore.kernel.org/lkml/44be5924-26ca-5106-aa25-3cbc3343aa2c@web.d=
+e/
+>> https://lkml.org/lkml/2019/7/4/21
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 534d6628924e..e4f3f093484f 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -329,7 +329,6 @@ EXPORT_SYMBOL(vmalloc_to_pfn);
- #define DEBUG_AUGMENT_PROPAGATE_CHECK 0
- #define DEBUG_AUGMENT_LOWEST_MATCH_CHECK 0
- 
--#define VM_LAZY_FREE	0x02
- #define VM_VM_AREA	0x04
- 
- static DEFINE_SPINLOCK(vmap_area_lock);
-@@ -1269,7 +1268,14 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
- 	llist_for_each_entry_safe(va, n_va, valist, purge_list) {
- 		unsigned long nr = (va->va_end - va->va_start) >> PAGE_SHIFT;
- 
--		__free_vmap_area(va);
-+		/*
-+		 * Finally insert or merge lazily-freed area. It is
-+		 * detached and there is no need to "unlink" it from
-+		 * anything.
-+		 */
-+		merge_or_add_vmap_area(va,
-+			&free_vmap_area_root, &free_vmap_area_list);
-+
- 		atomic_long_sub(nr, &vmap_lazy_nr);
- 
- 		if (atomic_long_read(&vmap_lazy_nr) < resched_threshold)
-@@ -1311,6 +1317,10 @@ static void free_vmap_area_noflush(struct vmap_area *va)
- {
- 	unsigned long nr_lazy;
- 
-+	spin_lock(&vmap_area_lock);
-+	unlink_va(va, &vmap_area_root);
-+	spin_unlock(&vmap_area_lock);
-+
- 	nr_lazy = atomic_long_add_return((va->va_end - va->va_start) >>
- 				PAGE_SHIFT, &vmap_lazy_nr);
- 
-@@ -2130,14 +2140,13 @@ struct vm_struct *remove_vm_area(const void *addr)
- 
- 	might_sleep();
- 
--	va = find_vmap_area((unsigned long)addr);
-+	spin_lock(&vmap_area_lock);
-+	va = __find_vmap_area((unsigned long)addr);
- 	if (va && va->flags & VM_VM_AREA) {
- 		struct vm_struct *vm = va->vm;
- 
--		spin_lock(&vmap_area_lock);
- 		va->vm = NULL;
- 		va->flags &= ~VM_VM_AREA;
--		va->flags |= VM_LAZY_FREE;
- 		spin_unlock(&vmap_area_lock);
- 
- 		kasan_free_shadow(vm);
-@@ -2145,6 +2154,8 @@ struct vm_struct *remove_vm_area(const void *addr)
- 
- 		return vm;
- 	}
-+
-+	spin_unlock(&vmap_area_lock);
- 	return NULL;
- }
- 
-@@ -3432,6 +3443,22 @@ static void show_numa_info(struct seq_file *m, struct vm_struct *v)
- 	}
- }
- 
-+static void show_purge_info(struct seq_file *m)
-+{
-+	struct llist_node *head;
-+	struct vmap_area *va;
-+
-+	head = READ_ONCE(vmap_purge_list.first);
-+	if (head == NULL)
-+		return;
-+
-+	llist_for_each_entry(va, head, purge_list) {
-+		seq_printf(m, "0x%pK-0x%pK %7ld unpurged vm_area\n",
-+			(void *)va->va_start, (void *)va->va_end,
-+			va->va_end - va->va_start);
-+	}
-+}
-+
- static int s_show(struct seq_file *m, void *p)
- {
- 	struct vmap_area *va;
-@@ -3444,10 +3471,9 @@ static int s_show(struct seq_file *m, void *p)
- 	 * behalf of vmap area is being tear down or vm_map_ram allocation.
- 	 */
- 	if (!(va->flags & VM_VM_AREA)) {
--		seq_printf(m, "0x%pK-0x%pK %7ld %s\n",
-+		seq_printf(m, "0x%pK-0x%pK %7ld vm_map_ram\n",
- 			(void *)va->va_start, (void *)va->va_end,
--			va->va_end - va->va_start,
--			va->flags & VM_LAZY_FREE ? "unpurged vm_area" : "vm_map_ram");
-+			va->va_end - va->va_start);
- 
- 		return 0;
- 	}
-@@ -3483,6 +3509,16 @@ static int s_show(struct seq_file *m, void *p)
- 
- 	show_numa_info(m, v);
- 	seq_putc(m, '\n');
-+
-+	/*
-+	 * As a final step, dump "unpurged" areas. Note,
-+	 * that entire "/proc/vmallocinfo" output will not
-+	 * be address sorted, because the purge list is not
-+	 * sorted.
-+	 */
-+	if (list_is_last(&va->list, &vmap_area_list))
-+		show_purge_info(m);
-+
- 	return 0;
- }
- 
--- 
-2.11.0
+Would you like to add any more advices for affected software components?
 
+Regards,
+Markus
