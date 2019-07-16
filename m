@@ -2,188 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82BEA6A415
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 10:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 739046A430
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 10:49:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731478AbfGPIoX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 04:44:23 -0400
-Received: from mga17.intel.com ([192.55.52.151]:24132 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726536AbfGPIoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 04:44:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2019 01:44:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,497,1557212400"; 
-   d="scan'208";a="167588676"
-Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
-  by fmsmga008.fm.intel.com with ESMTP; 16 Jul 2019 01:44:21 -0700
-Message-ID: <5D2D8FB4.3020505@intel.com>
-Date:   Tue, 16 Jul 2019 16:49:56 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1731590AbfGPIsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 04:48:47 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:49040 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726465AbfGPIsr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 04:48:47 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 99B11168B1921582D608;
+        Tue, 16 Jul 2019 16:48:44 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 16 Jul 2019 16:48:38 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <dmitry.torokhov@gmail.com>
+CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Mao Wenan <maowenan@huawei.com>
+Subject: [PATCH -next] keyboard: remove set but not used variables 'sts'
+Date:   Tue, 16 Jul 2019 16:54:23 +0800
+Message-ID: <20190716085423.19443-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-To:     Eric Hankland <ehankland@google.com>
-CC:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
-        linux-kernel@vger.kernel.org,
-        Stephane Eranian <eranian@google.com>, kvm@vger.kernel.org
-Subject: Re: [PATCH v2] KVM: x86: PMU Event Filter
-References: <CAOyeoRUUK+T_71J=+zcToyL93LkpARpsuWSfZS7jbJq=wd1rQg@mail.gmail.com> <5D27FE26.1050002@intel.com> <CAOyeoRV5=6pR7=sFZ+gU68L4rORjRaYDLxQrZb1enaWO=d_zpA@mail.gmail.com>
-In-Reply-To: <CAOyeoRV5=6pR7=sFZ+gU68L4rORjRaYDLxQrZb1enaWO=d_zpA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/16/2019 08:10 AM, Eric Hankland wrote:
->> I think just disabling guest cpuid might not be enough, since guest
->> could write to the msr without checking the cpuid.
->>
->> Why not just add a bitmap for fixed counter?
->> e.g. fixed_counter_reject_bitmap
->>
->> At the beginning of reprogram_fixed_counter, we could add the check:
->>
->> if (test_bit(idx, &kvm->arch.fixed_counter_reject_bitmap))
->>       return -EACCES;
->>
->> (Please test with your old guest and see if they have issues if we
->> inject #GP when
->> they try to set the fixed_ctrl msr. If there is, we could drop -EACCESS
->> above)
->>
->> The bitmap could be set at kvm_vm_ioctl_set_pmu_event_filter.
-> intel_pmu_refresh() checks the guest cpuid and sets the number of
-> fixed counters according to that:
-> pmu->nr_arch_fixed_counters = min_t(int, edx.split.num_counters_fixed,
-> INTEL_PMC_MAX_FIXED);
->
-> and reprogram_fixed_counters()/get_fixed_pmc() respect this so the
-> guest can't just ignore the cpuid.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Yes, but as you noticed, we couldn't disable fixed counter 2 while keeping
-counter 3 running via that.
+drivers/input/keyboard/applespi.c: In function applespi_set_bl_level:
+drivers/input/keyboard/applespi.c:902:6: warning: variable sts set but not used [-Wunused-but-set-variable]
 
+Fixes: b426ac0452093d ("Input: add Apple SPI keyboard and trackpad driver")
 
-> Adding a bitmap does let you do things like disable the first counter
-> but keep the second and third, but given that there are only three and
-> the events are likely to be on a whitelist anyway, it seemed like
-> adding the bitmap wasn't worth it. If you still feel the same way even
-> though we can disable them via the cpuid, I can add this in.
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/input/keyboard/applespi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-We need the design to be architecturally clean. For example, if the 
-hardware later
-comes up with fixed counter 5 and 6.
-5 is something we really want to expose to the guest to use while 6 isn't,
-can our design here (further) support that?
-
-We don't want to re-design this at that time. However, extending what we 
-have would
-be acceptable. So, if you hesitate to add the bitmap method that I 
-described, please
-add GP tags to the ACTIONs defined, e.g.
-
-enum kvm_pmu_action_type
-{
-   KVM_PMU_EVENT_ACTION_GP_NONE = 0,
-   KVM_PMU_EVENT_ACTION_GP_ACCEPT = 1,
-   KVM_PMU_EVENT_ACTION_GP_REJECT = 2,
-   KVM_PMU_EVENT_ACTION_MAX
-};
-
-and add comments to explain something like below:
-
-Those GP actions are for the filtering of guest events running on the 
-virtual general
-purpose counters. The actions to filter guest events running on the 
-virtual fixed
-function counters are not added currently as they all seem fine to be 
-used by the
-guest so far, but that could be supported on demand in the future via 
-adding new
-actions.
-
-
->> I think it would be better to add more, please see below:
->>
->> enum kvm_pmu_action_type {
->>       KVM_PMU_EVENT_ACTION_NONE = 0,
->>       KVM_PMU_EVENT_ACTION_ACCEPT = 1,
->>       KVM_PMU_EVENT_ACTION_REJECT = 2,
->>       KVM_PMU_EVENT_ACTION_MAX
->> };
->>
->> and do a check in kvm_vm_ioctl_set_pmu_event_filter()
->>       if (filter->action >= KVM_PMU_EVENT_ACTION_MAX)
->>           return -EINVAL;
->>
->> This is for detecting the case that we add a new action in
->> userspace, while the kvm hasn't been updated to support that.
->>
->> KVM_PMU_EVENT_ACTION_NONE is for userspace to remove
->> the filter after they set it.
-> We can achieve the same result by using a reject action with an empty
-> set of events - is there some advantage to "none" over that? I can add
-> that check for valid actions.
-
-Yes, we could also make it work via passing nevents=0.
-
-I slightly prefer the use of the NONE action here. The advantage is
-simpler (less) userspace command. For QEMU, people could
-disable the filter list via qmp command, e.g. pmu-filter=none,
-instead of pmu-filter=accept,nevents=0.
-It also seems more straightforward when people read the usage
-manual - a NONE command to cancel the filtering, instead of
-"first setting this, then setting that.."
-I don't see advantages of using nevents over NONE action.
-
-Anyway, this one isn't a critical issue, and it's up to you here.
-
-
->
->>> +#define KVM_PMU_EVENT_FILTER_MAX_EVENTS 63
->> Why is this limit needed?
-> Serves to keep the filters on the smaller side and ensures the size
-> calculation can't overflow if users attempt to. Keeping the filter
-> under 4k is nicer for allocation - also, if we want really large
-> filters we might want to do something smarter than a linear traversal
-> of the filter when guests program counters.
-
-I think 63 is too small, and it looks like a random number being put here.
- From the SDM table 19-3, it seems there are roughly 300 events. 
-Functionally,
-the design should support to filter most of them.
-(optimization with smarter traversal is another story that could be done 
-later)
-
-Maybe
-#define KVM_PMU_EVENT_FILTER_MAX_EVENTS (PAGE_SIZE - sizeof(struct 
-kvm_pmu_event_filter)) / sizeof (__u64)
-?
-
-and please add some comments above about the consideration that we set 
-this number.
-
-
->>> +       kvfree(filter);
->> Probably better to have it conditionally?
->>
->> if (filter) {
->>       synchronize_srcu();
->>       kfree(filter)
->> }
->>
->> You may want to factor it out, so that kvm_pmu_destroy could reuse.
-> Do you mean kvm_arch_destroy_vm? It looks like that's where kvm_arch
-> members are freed. I can do that.
-
-Sounds good.
-
-Best,
-Wei
-
+diff --git a/drivers/input/keyboard/applespi.c b/drivers/input/keyboard/applespi.c
+index c1a6843..548737e 100644
+--- a/drivers/input/keyboard/applespi.c
++++ b/drivers/input/keyboard/applespi.c
+@@ -899,7 +899,6 @@ static void applespi_set_bl_level(struct led_classdev *led_cdev,
+ 	struct applespi_data *applespi =
+ 		container_of(led_cdev, struct applespi_data, backlight_info);
+ 	unsigned long flags;
+-	int sts;
+ 
+ 	spin_lock_irqsave(&applespi->cmd_msg_lock, flags);
+ 
+@@ -916,7 +915,7 @@ static void applespi_set_bl_level(struct led_classdev *led_cdev,
+ 			 KBD_BL_LEVEL_MIN);
+ 	}
+ 
+-	sts = applespi_send_cmd_msg(applespi);
++	applespi_send_cmd_msg(applespi);
+ 
+ 	spin_unlock_irqrestore(&applespi->cmd_msg_lock, flags);
+ }
+-- 
+2.7.4
 
