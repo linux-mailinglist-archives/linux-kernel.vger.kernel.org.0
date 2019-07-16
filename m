@@ -2,144 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 971CB6B295
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 01:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EEAB6B29F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 02:03:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388992AbfGPX6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 19:58:07 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:42383 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728235AbfGPX6H (ORCPT
+        id S1730462AbfGQAD0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 20:03:26 -0400
+Received: from mx0b-00010702.pphosted.com ([148.163.158.57]:19046 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728699AbfGQAD0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 19:58:07 -0400
-Received: by mail-io1-f71.google.com with SMTP id f22so25130747ioj.9
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 16:58:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=04Wvxtoj12TF+6z0qf7a2JYPiNoTFIelyWa5q9OcB9o=;
-        b=AiTvLMEN9RxUc7eStDMa0y4Y/2TAvfv7vojf7EL4FA5Zc92yYOJ/XDgbyW352i071t
-         o3q6jwy/xkR5e5rd6xgXLxoo/Gu5wyqT5np3qWvq+vm7BdRPUgCR8O1LGQXaAiOmnFbq
-         wUkQjlFfLA3TedqavBfKrSDxn1x1gVNrRGr7I7Skqojj2PMZGq2r1Hb674yYBrzjCfdj
-         2gCLPYuOFAaX1PW8d17MlgLv+xveQpz3YMr5MI78NiLvV64h80HHLpQsJgRlr9xvWhj+
-         RPXhfgommXJhODWD5VWsg8wim4Nnn/guwt69YKxRgd0PwnxiH3r/TtD1bUJc9oHL00ej
-         QDhQ==
-X-Gm-Message-State: APjAAAVWjMJYVmf20Xfe/AUL7gZ7Mot7nh2kiky0VpJrP3axbAhVF6wX
-        6joMqzC5b8su50ZiQU61E5vNG48NwTi/gO6wxO2OSvFPdYmr
-X-Google-Smtp-Source: APXvYqw6MgjkP1Q8lzpCier7Y6bbnZmvhg7ZXpdamqk8o0lRzBL5g64lhJuw4rb4lHslSmi5QKmbMocp+2fQuPy7mw0MK4ok9G8w
+        Tue, 16 Jul 2019 20:03:26 -0400
+X-Greylist: delayed 1695 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Jul 2019 20:03:24 EDT
+Received: from pps.filterd (m0098779.ppops.net [127.0.0.1])
+        by mx0b-00010702.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x6GMbY8G005262;
+        Tue, 16 Jul 2019 18:34:14 -0500
+Received: from nam05-co1-obe.outbound.protection.outlook.com (mail-co1nam05lp2050.outbound.protection.outlook.com [104.47.48.50])
+        by mx0b-00010702.pphosted.com with ESMTP id 2ts0cd3v49-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 16 Jul 2019 18:34:14 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EAGQv87Dx4Ud/TGryXvggybSN5yBeYusBrUqlX8pYmceCE/kAEIT+3cfZ/suhnc77J7FDFzOgjyYSo6BIDsCB8ldhgE5fvWazFq1Tz7f0XdnsviEeIZOE6FzjtiO3ueRQhpi4b95NKM2Klj/w1WM9cHH0Uf8s7q1nvvt53bQk/G6DtzwNshQazAZAMH81kveeI0SJgTWGj8KocmYpj57twmJ/Wzx6Sw+UNsPKQRvV9eX5pYn6x6OYDhdhVQIjRTnNFoQ2VvuVS1WKc+oGff2fq0oOyOl8S8c2L6hVfCH2KTSIWgWWczixsK3I940cJCrPuO5TnWSDQ5acU5iiZiLqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ACKA5QUMgMdi9bEg3iKpoIBw867sr9JynpVCEAzBrHs=;
+ b=Jm8XtaDJHpJCynXBEkmOEakgfVjnj6P03hx0+Qw2zHPUoOZoW2c5/33SF8eDAQHYVjl+UdzVNs0U1Y5hAf6h7GPzQfOmQoyD/UIQKW09gp1p2/Qp/TiAy506at3phCvHv7EfldluytkW9WpiBIu1uAhe+cNspH2xtGulMpKlL3Z6F5/ZQrUG38I/gkIvXmcJKG2y7GW4HpA9Lh1DRsJa/B9Ts1lhLM0cOfxNmBS2KNYySEZ91nJBnwnzgSpNtGmG+8KZGmn4weHbk9a50XiDkyBu9SjTs4FI2TM0waBYBFQ6Csu/pBYi+5YzWFtjsosbA/UVbD0TDnyrGPUYV8axaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=ni.com;dmarc=pass action=none header.from=ni.com;dkim=pass
+ header.d=ni.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=nio365.onmicrosoft.com; s=selector1-nio365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ACKA5QUMgMdi9bEg3iKpoIBw867sr9JynpVCEAzBrHs=;
+ b=KprtMxnbWxgEKBup0iD+26VkMqSFaEgwNBOnGfbqe3UQ5yRDQDRllssmE4aDkFYnboSqxuil8LPZJq8kW06LnwBu/olMkEbj/8L9htchGnD2AC2WijkeRimWMtkQtBcfql6IsTYCkzwW7nONs1FTUfqmjU6Ji/2iOAD4+2XBZ/E=
+Received: from CY4PR04MB1174.namprd04.prod.outlook.com (10.173.193.141) by
+ CY4PR04MB0391.namprd04.prod.outlook.com (10.173.195.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2073.14; Tue, 16 Jul 2019 23:34:11 +0000
+Received: from CY4PR04MB1174.namprd04.prod.outlook.com
+ ([fe80::3965:b673:6fe2:ec65]) by CY4PR04MB1174.namprd04.prod.outlook.com
+ ([fe80::3965:b673:6fe2:ec65%11]) with mapi id 15.20.2073.012; Tue, 16 Jul
+ 2019 23:34:11 +0000
+From:   Gratian Crisan <gratian.crisan@ni.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Linus Torvalds <torvalds@linuxfoundation.org>,
+        Andrew Morton <akpm@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Christoph Hellwig <hch@lst.de>, Tejun Heo <tj@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Daniel Wagner <wagi@monom.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Clark Williams <clark.williams@gmail.com>,
+        Julia Cartwright <julia.cartwright@ni.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [patch 1/1] Kconfig: Introduce CONFIG_PREEMPT_RT
+Thread-Topic: [patch 1/1] Kconfig: Introduce CONFIG_PREEMPT_RT
+Thread-Index: AQHVPCxqjN1gTw20x0CHnz8f0oe2E6bN5ZQA
+Date:   Tue, 16 Jul 2019 23:34:11 +0000
+Message-ID: <87tvblr1u7.fsf@ni.com>
+References: <20190715150402.798499167@linutronix.de>
+ <20190715150601.205143057@linutronix.de>
+In-Reply-To: <20190715150601.205143057@linutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN2PR01CA0046.prod.exchangelabs.com (2603:10b6:800::14) To
+ CY4PR04MB1174.namprd04.prod.outlook.com (2603:10b6:903:bb::13)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [130.164.62.201]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9e148b2d-19c5-4851-5d9d-08d70a461afe
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:CY4PR04MB0391;
+x-ms-traffictypediagnostic: CY4PR04MB0391:
+x-microsoft-antispam-prvs: <CY4PR04MB0391625C1136820E8C6BFCCFFECE0@CY4PR04MB0391.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 0100732B76
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(396003)(136003)(346002)(376002)(199004)(189003)(86362001)(256004)(5640700003)(6916009)(6486002)(486006)(478600001)(2906002)(3846002)(6116002)(36756003)(25786009)(6246003)(4326008)(71200400001)(476003)(229853002)(66476007)(71190400001)(81156014)(2351001)(5660300002)(76176011)(6506007)(316002)(44832011)(8676002)(11346002)(386003)(52116002)(2616005)(446003)(26005)(102836004)(54906003)(7736002)(305945005)(2501003)(68736007)(186003)(8936002)(7416002)(99286004)(66066001)(66446008)(6512007)(6436002)(53936002)(81166006)(66556008)(66946007)(14454004)(64756008);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR04MB0391;H:CY4PR04MB1174.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: ni.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: hti5y4FSAnckhHxTlcKjcrmB+pMPRvj8MTOZP1wR/r/zMDu2aDqmz1dnWP1yCZ2u92THpWCBrjkA7ZQh+1X6uSDzB+XhPznU0cbTozViJiAHQypG/f81M5mfcps0hM6KBzrWKGsKsn7fQF3GxUb9G0pSOGHRNZ2punyM97XftlDliO59iqfHrg/pw/t9lk9A+dUpNLpsHXMp54iFQHOHj27v+IAszyvOPPKwT2pd3AZf+M7xV5DjSmdMgwzW0qKXFYaMpBCPg/B3pI6YrKjRZAjNhTcAna25ic5tURQBESxEHpKXRWVNjOneK/k13cSrscl/IiyTodadgpQntJauMS2mt50XxjPR+2gb2XECxzCpdE2ILEAMHpBIJzstOBtR174fMg3JRFnGznSWMGkvQqPpxjQJUhuK0oOoZ9X/aAI=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9957:: with SMTP id v23mr32648760ios.117.1563321486085;
- Tue, 16 Jul 2019 16:58:06 -0700 (PDT)
-Date:   Tue, 16 Jul 2019 16:58:06 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d917f4058dd525cf@google.com>
-Subject: general protection fault in tls_setsockopt
-From:   syzbot <syzbot+23d9570edec63669d890@syzkaller.appspotmail.com>
-To:     ast@kernel.org, aviadye@mellanox.com,
-        bhole_prashant_q7@lab.ntt.co.jp, borisp@mellanox.com,
-        daniel@iogearbox.net, davejwatson@fb.com, davem@davemloft.net,
-        john.fastabend@gmail.com, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-        shuah@kernel.org, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-OriginatorOrg: ni.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e148b2d-19c5-4851-5d9d-08d70a461afe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2019 23:34:11.5069
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gratian.crisan@ni.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR04MB0391
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:5.22.84,1.0.8
+ definitions=2019-07-16_06:2019-07-16,2019-07-16 signatures=0
+X-Proofpoint-Spam-Details: rule=inbound_policy_notspam policy=inbound_policy score=30 malwarescore=0
+ clxscore=1011 bulkscore=0 impostorscore=0 phishscore=0 mlxscore=0
+ spamscore=0 lowpriorityscore=0 mlxlogscore=999 priorityscore=1501
+ adultscore=0 suspectscore=0 classifier=spam adjust=30 reason=mlx
+ scancount=1 engine=8.12.0-1904300001 definitions=main-1907160261
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+Thomas Gleixner writes:
 
-HEAD commit:    a131c2bf Merge tag 'acpi-5.3-rc1-2' of git://git.kernel.or..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1603e9c0600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8bff73c5ba9e876
-dashboard link: https://syzkaller.appspot.com/bug?extid=23d9570edec63669d890
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13560870600000
+> Add a new entry to the preemption menu which enables the real-time suppor=
+t
+> for the kernel. The choice is only enabled when an architecture supports
+> it.
+>
+> It selects PREEMPT as the RT features depend on it. To achieve that the
+> existing PREEMPT choice is renamed to PREEMPT_LL which select PREEMPT as
+> well.
+>
+> No functional change.
+>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-The bug was bisected to:
++1 from National Instruments. We have a vested interest in preempt_rt
+and we're committed in helping support, maintain, and test it. Glad to
+see this happening.
 
-commit 7c85c448e7d74c4ddd759440a2141eab663567cf
-Author: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
-Date:   Tue Oct 9 01:04:54 2018 +0000
+Acked-by: Gratian Crisan <gratian.crisan@ni.com>
 
-     selftests/bpf: test_verifier, check bpf_map_lookup_elem access in bpf  
-prog
+Thanks,
+    Gratian
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17000114600000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=14800114600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10800114600000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+23d9570edec63669d890@syzkaller.appspotmail.com
-Fixes: 7c85c448e7d7 ("selftests/bpf: test_verifier, check  
-bpf_map_lookup_elem access in bpf prog")
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 9098 Comm: syz-executor.2 Not tainted 5.2.0+ #65
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:tls_setsockopt+0x87/0x8c0 net/tls/tls_main.c:592
-Code: 80 3c 02 00 0f 85 a5 07 00 00 49 8b 84 24 b0 06 00 00 48 ba 00 00 00  
-00 00 fc ff df 48 8d b8 88 00 00 00 48 89 f9 48 c1 e9 03 <80> 3c 11 00 0f  
-85 85 07 00 00 41 89 d8 4c 89 f1 44 89 ea 44 89 fe
-RSP: 0018:ffff88809b2e7d30 EFLAGS: 00010206
-RAX: 0000000000000000 RBX: 0000000000000004 RCX: 0000000000000011
-RDX: dffffc0000000000 RSI: ffffffff86186a84 RDI: 0000000000000088
-RBP: ffff88809b2e7d80 R08: ffff888098896480 R09: ffff888098896d08
-R10: ffffed1015d06c83 R11: ffff8880ae83641b R12: ffff888099d86d00
-R13: 000000000000001f R14: 0000000020000340 R15: 0000000000000006
-FS:  00007f29b1f6b700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffb5492d518 CR3: 00000000a49ea000 CR4: 00000000001406f0
-Call Trace:
-  sock_common_setsockopt+0x94/0xd0 net/core/sock.c:3130
-  __sys_setsockopt+0x253/0x4b0 net/socket.c:2080
-  __do_sys_setsockopt net/socket.c:2096 [inline]
-  __se_sys_setsockopt net/socket.c:2093 [inline]
-  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:2093
-  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x459819
-Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f29b1f6ac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000459819
-RDX: 000000000000001f RSI: 0000000000000006 RDI: 0000000000000005
-RBP: 000000000075bf20 R08: 0000000000000004 R09: 0000000000000000
-R10: 0000000020000340 R11: 0000000000000246 R12: 00007f29b1f6b6d4
-R13: 00000000004c7cb9 R14: 00000000004dd878 R15: 00000000ffffffff
-Modules linked in:
----[ end trace 1e30f09ab6b57d8c ]---
-RIP: 0010:tls_setsockopt+0x87/0x8c0 net/tls/tls_main.c:592
-Code: 80 3c 02 00 0f 85 a5 07 00 00 49 8b 84 24 b0 06 00 00 48 ba 00 00 00  
-00 00 fc ff df 48 8d b8 88 00 00 00 48 89 f9 48 c1 e9 03 <80> 3c 11 00 0f  
-85 85 07 00 00 41 89 d8 4c 89 f1 44 89 ea 44 89 fe
-RSP: 0018:ffff88809b2e7d30 EFLAGS: 00010206
-RAX: 0000000000000000 RBX: 0000000000000004 RCX: 0000000000000011
-RDX: dffffc0000000000 RSI: ffffffff86186a84 RDI: 0000000000000088
-RBP: ffff88809b2e7d80 R08: ffff888098896480 R09: ffff888098896d08
-R10: ffffed1015d06c83 R11: ffff8880ae83641b R12: ffff888099d86d00
-R13: 000000000000001f R14: 0000000020000340 R15: 0000000000000006
-FS:  00007f29b1f6b700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000007126b4 CR3: 00000000a49ea000 CR4: 00000000001406f0
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> ---
+>  arch/Kconfig           |    3 +++
+>  kernel/Kconfig.preempt |   25 +++++++++++++++++++++++--
+>  2 files changed, 26 insertions(+), 2 deletions(-)
+>
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -809,6 +809,9 @@ config ARCH_NO_COHERENT_DMA_MMAP
+>  config ARCH_NO_PREEMPT
+>  	bool
+>
+> +config ARCH_SUPPORTS_RT
+> +	bool
+> +
+>  config CPU_NO_EFFICIENT_FFS
+>  	def_bool n
+>
+> --- a/kernel/Kconfig.preempt
+> +++ b/kernel/Kconfig.preempt
+> @@ -35,10 +35,10 @@ config PREEMPT_VOLUNTARY
+>
+>  	  Select this if you are building a kernel for a desktop system.
+>
+> -config PREEMPT
+> +config PREEMPT_LL
+>  	bool "Preemptible Kernel (Low-Latency Desktop)"
+>  	depends on !ARCH_NO_PREEMPT
+> -	select PREEMPT_COUNT
+> +	select PREEMPT
+>  	select UNINLINE_SPIN_UNLOCK if !ARCH_INLINE_SPIN_UNLOCK
+>  	help
+>  	  This option reduces the latency of the kernel by making
+> @@ -55,7 +55,28 @@ config PREEMPT
+>  	  embedded system with latency requirements in the milliseconds
+>  	  range.
+>
+> +config PREEMPT_RT
+> +	bool "Fully Preemptible Kernel (Real-Time)"
+> +	depends on EXPERT && ARCH_SUPPORTS_RT
+> +	select PREEMPT
+> +	help
+> +	  This option turns the kernel into a real-time kernel by replacing
+> +	  various locking primitives (spinlocks, rwlocks, etc) with
+> +	  preemptible priority-inheritance aware variants, enforcing
+> +	  interrupt threading and introducing mechanisms to break up long
+> +	  non-preemtible sections. This makes the kernel, except for very
+> +	  low level and critical code pathes (entry code, scheduler, low
+> +	  level interrupt handling) fully preemtible and brings most
+> +	  execution contexts under scheduler control.
+> +
+> +	  Select this if you are building a kernel for systems which
+> +	  require real-time guarantees.
+> +
+>  endchoice
+>
+>  config PREEMPT_COUNT
+>         bool
+> +
+> +config PREEMPT
+> +       bool
+> +       select PREEMPT_COUNT
