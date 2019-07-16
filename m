@@ -2,142 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57A816B264
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 01:31:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF1776B26C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 01:36:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389154AbfGPXa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 19:30:29 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37138 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389115AbfGPXa3 (ORCPT
+        id S2388133AbfGPXgb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 19:36:31 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:42764 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbfGPXga (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 19:30:29 -0400
-Received: by mail-lf1-f68.google.com with SMTP id c9so14952353lfh.4
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 16:30:27 -0700 (PDT)
+        Tue, 16 Jul 2019 19:36:30 -0400
+Received: by mail-yb1-f194.google.com with SMTP id f195so8621248ybg.9
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 16:36:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YWcpEc5FvGUxMrkeRiB0cnwgYS5TPs4Urt5+gPVZDh8=;
-        b=kfuVXg1GBNwcOoznZPvryqh6/i2XrbBE6hkmVUMgSZi+LTGFCMeiia9P0u53fqR03S
-         Db8ww5cz17ZFCZKlTuva1FUSo3Y2oMZofZ8fP/h1fLivURlC81chU7PWbmPju7Admx1Z
-         0vNl1Znw/JxnQbaEB3qodZy91u3UJcA/kBkF3/fop+D+uNxeIU9ClEdXjFRvVywlejx8
-         DnAqQwuvXO4VpPWfxjCThhbeKljqILhPjFnODqbpRq1N11o4FSdml1BI7L1b7dz9y+YP
-         fYw1lfsvEQejaiRHp3kfd9vzzpXxhC6v4ipIrx4uMBDRiXoRA77MJ55m7j30qsm5olyc
-         8AKg==
+         :cc:content-transfer-encoding;
+        bh=3DvRpKoCvAYwziHYtBccHcC1dSVXuaUnbOKo+S/X11k=;
+        b=lpuf1b2gx/aUfClr5+KNJP5DLR09tUGD2JrJWQQtk8qjh12G0y4YpXbKoYRphoyu36
+         T6b27L37CHAQK6fO5kxUwb9DSyp6FRLDUAgcYc1myXa5RLsmBiz8Iq+cuZz+5n5DSeIa
+         1NhF8rvjEFLKh76hIYXvkjknfOOfyvH+9ruEq7cQYoWanb76cFT5gWr5Octl5yMn8zsD
+         45n92fDTMCSLUJwho4HP0+o6zXY55O+Dm1bmEGxjUp/6W7hu2CwOKIuYddkzVdLlB1TX
+         XlCETh/NQ1NUAJ2QRCdYkgn9O25OGAe/dzSemA+2ln0Cssb+Dd/NLofB0g87ivWA8XJv
+         RdAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YWcpEc5FvGUxMrkeRiB0cnwgYS5TPs4Urt5+gPVZDh8=;
-        b=Cob2kiRlxZG7mGteiVNjPtnS89WPiGbUJnmsVbPOP5oEeVWZvnyjjVWSov+2jaELA9
-         nb+CxcMc0Usx7ifEyVJ6CcII1htkcIZcOAZm5PxKio9MPaRGTG+KJ7X7aePuE1/9WqNp
-         nv6LRaGbvVmvKy+uM47BZsJ4yeihAp1cGjswj6D4LvBtNG47ar1He9gVMvJ3e5tjmcMI
-         7IwqaRKUXAJhovvtWfaMFu87v7JxdxDV9KjK/dvCkaxOBkU6/dk6FxbQ7UJrx/uGvcHs
-         ThKQWqkJpPt8WbHkeYfODaZe2x001jJEDWakQrSAIXnvol1H1plhR8Skl9S3FVRtVrfJ
-         0pUA==
-X-Gm-Message-State: APjAAAVkD33bUAFNQfNONi5Mv+VZkke7er61Y8qJc1ErsVIe6SFt6OpP
-        BnYEuiGBLPUEusNhAFez+v1f8qpxB7mtBfUp+g==
-X-Google-Smtp-Source: APXvYqxz39ngK72ytLQXqEXgHBnS7WXBpZpi6vOwRoyqlsR7YPmTcb6oeRneK/RtXK9BLw25UxnyGGXWi29uMJ0dI9o=
-X-Received: by 2002:ac2:4109:: with SMTP id b9mr14480083lfi.31.1563319826317;
- Tue, 16 Jul 2019 16:30:26 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=3DvRpKoCvAYwziHYtBccHcC1dSVXuaUnbOKo+S/X11k=;
+        b=fTQnONvrz0nwdSsyd4PZbJlQIvSIWxmm9LuOHrs8A2ZMqQ5a5chUi5pfS8WBxKqq89
+         QuwEeDHw4db+ULvd7gN7lA3cSvlPjjnC6h7OTaH5ZKmYU/c/GvIDLydqr6XJE/hx2gMP
+         kUo623xZrb5Tg1SohWtA4srrrAPwhw8B5OptZdwuIxC7YB7WkpFMvztXP6dhF9azG7C1
+         iPB+NIra9mST4anZYTTS5SLielbUjYRViNAWVtu4BxbSLVo5sCh2H7rjCQhnnC4IBoBQ
+         QXp9yutLBcNqX6fobcAu1jzK0AvrBKs42EvDiX11Ay0fhjcc/Nl+lY7BieEqzoeoOu5F
+         8Rlw==
+X-Gm-Message-State: APjAAAVOlBAqhPx+LJkN2LmB4eGs8m0g8M9epQen0zpGsrkSOsqyExeE
+        daGs5nhcUvQZT/kAVpmZ0512ArZfoNWIcROJ+rDTRg==
+X-Google-Smtp-Source: APXvYqyEqS+8CgKjlAnskwqJ647ZLgnRuugIZRb3TtL/lsuMBFVBrm2lRsHmMt27Q2DG8Rz4wuaf7udpSd7BK3zcw4M=
+X-Received: by 2002:a25:9903:: with SMTP id z3mr22033869ybn.293.1563320189587;
+ Tue, 16 Jul 2019 16:36:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190529145742.GA8959@cisco> <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
- <20190529153427.GB8959@cisco> <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
- <20190529222835.GD8959@cisco> <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
- <20190530170913.GA16722@mail.hallyn.com> <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
- <20190708180558.5bar6ripag3sdadl@madcap2.tricolour.ca> <CAHC9VhRTT7JWqNnynvK04wKerjc-3UJ6R1uPtjCAPVr_tW-7MA@mail.gmail.com>
- <20190716220320.sotbfqplgdructg7@madcap2.tricolour.ca>
-In-Reply-To: <20190716220320.sotbfqplgdructg7@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 16 Jul 2019 19:30:15 -0400
-Message-ID: <CAHC9VhScHizB2r5q3T5s0P3jkYdvzBPPudDksosYFp_TO7W9-Q@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        ebiederm@xmission.com, nhorman@tuxdriver.com
+References: <1562795006.8510.19.camel@lca.pw> <cd6e10bc-cb79-65c5-ff2b-4c244ae5eb1c@linux.alibaba.com>
+ <1562879229.8510.24.camel@lca.pw> <b38ee633-f8e0-00ee-55ee-2f0aaea9ed6b@linux.alibaba.com>
+ <1563225798.4610.5.camel@lca.pw> <5c853e6e-6367-d83c-bb97-97cd67320126@linux.alibaba.com>
+ <8A64D551-FF5B-4068-853E-9E31AF323517@lca.pw> <e5aa1f5b-b955-5b8e-f502-7ac5deb141a7@linux.alibaba.com>
+In-Reply-To: <e5aa1f5b-b955-5b8e-f502-7ac5deb141a7@linux.alibaba.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Tue, 16 Jul 2019 16:36:18 -0700
+Message-ID: <CALvZod7+ComCUROSBaj==r0VmCczs=npP4u6C9LuJWNWdfB0Pg@mail.gmail.com>
+Subject: Re: list corruption in deferred_split_scan()
+To:     Yang Shi <yang.shi@linux.alibaba.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Hugh Dickins <hughd@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <guro@fb.com>
+Cc:     Qian Cai <cai@lca.pw>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 6:03 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2019-07-15 17:04, Paul Moore wrote:
-> > On Mon, Jul 8, 2019 at 2:06 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+Adding related people.
 
-...
+The thread starts at:
+http://lkml.kernel.org/r/1562795006.8510.19.camel@lca.pw
 
-> > > If we can't trust ns_capable() then why are we passing on
-> > > CAP_AUDIT_CONTROL?  It is being passed down and not stripped purposely
-> > > by the orchestrator/engine.  If ns_capable() isn't inherited how is it
-> > > gained otherwise?  Can it be inserted by cotainer image?  I think the
-> > > answer is "no".  Either we trust ns_capable() or we have audit
-> > > namespaces (recommend based on user namespace) (or both).
-> >
-> > My thinking is that since ns_capable() checks the credentials with
-> > respect to the current user namespace we can't rely on it to control
-> > access since it would be possible for a privileged process running
-> > inside an unprivileged container to manipulate the audit container ID
-> > (containerized process has CAP_AUDIT_CONTROL, e.g. running as root in
-> > the container, while the container itself does not).
+On Mon, Jul 15, 2019 at 8:01 PM Yang Shi <yang.shi@linux.alibaba.com> wrote=
+:
 >
-> What makes an unprivileged container unprivileged?  "root", or "CAP_*"?
-
-My understanding is that when most people refer to an unprivileged
-container they are referring to a container run without capabilities
-or a container run by a user other than root.  I'm sure there are
-better definitions out there, by folks much smarter than me on these
-things, but that's my working definition.
-
-> If CAP_AUDIT_CONTROL is granted, does "root" matter?
-
-Our discussions here have been about capabilities, not UIDs.  The only
-reason root might matter is that it generally has the full capability
-set.
-
-> Does it matter what user namespace it is in?
-
-What likely matters is what check is called: capable() or
-ns_capable().  Those can yield very different results.
-
-> I understand that root is *gained* in an
-> unprivileged user namespace, but capabilities are inherited or permitted
-> and that process either has it or it doesn't and an unprivileged user
-> namespace can't gain a capability that has been rescinded.  Different
-> subsystems use the userid or capabilities or both to determine
-> privileges.
-
-Once again, I believe the important thing to focus on here is
-capable() vs ns_capable().  We can't safely rely on ns_capable() for
-the audit container ID policy since that is easily met inside the
-container regardless of the process' creds which started the
-container.
-
-> In this case, is the userid relevant?
-
-We don't do UID checks, we do capability checks, so yes, the UID is irrelevant.
-
-> > > At this point I would say we are at an impasse unless we trust
-> > > ns_capable() or we implement audit namespaces.
-> >
-> > I'm not sure how we can trust ns_capable(), but if you can think of a
-> > way I would love to hear it.  I'm also not sure how namespacing audit
-> > is helpful (see my above comments), but if you think it is please
-> > explain.
 >
-> So if we are not namespacing, why do we not trust capabilities?
+>
+> On 7/15/19 6:36 PM, Qian Cai wrote:
+> >
+> >> On Jul 15, 2019, at 8:22 PM, Yang Shi <yang.shi@linux.alibaba.com> wro=
+te:
+> >>
+> >>
+> >>
+> >> On 7/15/19 2:23 PM, Qian Cai wrote:
+> >>> On Fri, 2019-07-12 at 12:12 -0700, Yang Shi wrote:
+> >>>>> Another possible lead is that without reverting the those commits b=
+elow,
+> >>>>> kdump
+> >>>>> kernel would always also crash in shrink_slab_memcg() at this line,
+> >>>>>
+> >>>>> map =3D rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_ma=
+p, true);
+> >>>> This looks a little bit weird. It seems nodeinfo[nid] is NULL? I did=
+n't
+> >>>> think of where nodeinfo was freed but memcg was still online. Maybe =
+a
+> >>>> check is needed:
+> >>> Actually, "memcg" is NULL.
+> >> It sounds weird. shrink_slab() is called in mem_cgroup_iter which does=
+ pin the memcg. So, the memcg should not go away.
+> > Well, the commit =E2=80=9Cmm: shrinker: make shrinker not depend on mem=
+cg kmem=E2=80=9D changed this line in shrink_slab_memcg(),
+> >
+> > -     if (!memcg_kmem_enabled() || !mem_cgroup_online(memcg))
+> > +     if (!mem_cgroup_online(memcg))
+> >               return 0;
+> >
+> > Since the kdump kernel has the parameter =E2=80=9Ccgroup_disable=3Dmemo=
+ry=E2=80=9D, shrink_slab_memcg() will no longer be able to handle NULL memc=
+g from mem_cgroup_iter() as,
+> >
+> > if (mem_cgroup_disabled())
+> >       return NULL;
+>
+> Aha, yes. memcg_kmem_enabled() implicitly checks !mem_cgroup_disabled().
+> Thanks for figuring this out. I think we need add mem_cgroup_dsiabled()
+> check before calling shrink_slab_memcg() as below:
+>
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index a0301ed..2f03c61 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -701,7 +701,7 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int
+> nid,
+>          unsigned long ret, freed =3D 0;
+>          struct shrinker *shrinker;
+>
+> -       if (!mem_cgroup_is_root(memcg))
+> +       if (!mem_cgroup_disabled() && !mem_cgroup_is_root(memcg))
+>                  return shrink_slab_memcg(gfp_mask, nid, memcg, priority)=
+;
+>
+>          if (!down_read_trylock(&shrinker_rwsem))
+>
 
-We can trust capable(CAP_AUDIT_CONTROL) for enforcing audit container
-ID policy, we can not trust ns_capable(CAP_AUDIT_CONTROL).
+We were seeing unneeded oom-kills on kernels with
+"cgroup_disabled=3Dmemory" and Yang's patch series basically expose the
+bug to crash. I think the commit aeed1d325d42 ("mm/vmscan.c:
+generalize shrink_slab() calls in shrink_node()") missed the case for
+"cgroup_disabled=3Dmemory". However I am surprised that root_mem_cgroup
+is allocated even for "cgroup_disabled=3Dmemory" and it seems like
+css_alloc() is called even before checking if the corresponding
+controller is disabled.
 
--- 
-paul moore
-www.paul-moore.com
+Yang, can you please send the above change with signed-off and CC to
+stable as well?
+
+thanks,
+Shakeel
