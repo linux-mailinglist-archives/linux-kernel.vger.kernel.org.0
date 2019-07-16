@@ -2,104 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 129386AC2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 17:46:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E6546AC37
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 17:52:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387536AbfGPPqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 11:46:31 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44311 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbfGPPqb (ORCPT
+        id S2387896AbfGPPwq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 11:52:46 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43241 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728121AbfGPPwp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 11:46:31 -0400
-Received: by mail-qt1-f193.google.com with SMTP id 44so19997440qtg.11
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 08:46:30 -0700 (PDT)
+        Tue, 16 Jul 2019 11:52:45 -0400
+Received: by mail-wr1-f66.google.com with SMTP id p13so21499754wru.10;
+        Tue, 16 Jul 2019 08:52:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ARwvly3xwsWlnW4nq8Tw39sGQhiStpDzdFKHa3jqRs8=;
-        b=egoUIDoKaQ93O5g9QejhvqI+xj0QAvO5onVphqrCu4SMfp8U3Sr27VVDTyRAwcR6ld
-         3FQZj0AoySjmNrVQ/PD1ImxXC5uaUR5OtDSQIOjt48tVwbeyGUBseT565/CduKweSiEo
-         6UQjdoxM23yWidB52wzrkA+XIqoGJk138512dI3P9yiPq3qbMW2ujFo840r2cch6OoTK
-         VUVdzt3qQiyQwrw5G1zl6Mq0pTz6ufM+NzClNaVD7lmwH/FDMf9bjUe3vUtbUJGiNQUd
-         fBBs6UpGGJjClHsVxrfguvJFVGG0aA392M0qyVUlPEwANAwOGWOxjh+AcI/Cq0rueOyw
-         sKFQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CTuBz10dpzRMw27jIFDD0GAWYqxmo2+HWztpyEtT7Cs=;
+        b=IE3R3vaJgsC2kQ7mm/cWs5nW1v35kWOV4hUVTPQuXIE+d4R5Sf5WrORLqxvflpIBFn
+         mNwrHBBDTbNEwN6JHlCWfnoYR/6XIGeiFaQ5Tnradm0ED1R2+uzVYf9lrz28VXsx4QOl
+         56EL6P0C0h4bvC/AZ/J7lfqkcvct94pYaa4qChhAEIMkOdLEMp9KgndoHVCpg/MQrfh5
+         P0vm1ZSkOmLR+P/RCbDTkshtwkxp+/SiZKx+V9Gp5+hM+LQdngEiScjqVLog/RnLm2Va
+         vgoeR05abVUglf4g4GfQB/IgrpD8bumaaH15aJYroTe3dihe/9QZLcm26qLUav54DmxY
+         WA8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ARwvly3xwsWlnW4nq8Tw39sGQhiStpDzdFKHa3jqRs8=;
-        b=o4YH7fpPcdVdecSxVrt6HSIfqOIoe9IDuKVw1foX+Y8ZHsTCX/bvwZ7DMHVbKlW5gE
-         obQHZxzB9+NCI0FYt+tb3w6IaYtt3Jed5TMAkvLEYyeMV11pHS/TqWs446ygGAErsCbs
-         edR97OdCH4R8XTbHBIMi+TgU+fW2Bme4EpQgFZyrx+UXbRS8GXgeK7X+IvYV5t1Lbt0y
-         ps8RT8L90T0xVNgh4RUKZv2L49Nca59YG2RYabJN/qDWU95GDHLv8yvc5HofdB/rhazF
-         /qf09UWCCmqOM53LS5hka7Wf9zzskYbt9Svz57gk3x/W7VwtxoorOAXZPXSsa3IYX6sV
-         Hckw==
-X-Gm-Message-State: APjAAAVlMe9uJUxvXe5kYxYc0kN/1AEl0DRvU4kGBEFh5PJTpjLX0CrW
-        Xo8OsikqtCtGQTDJvllqrQFmBDK676J817FmWt1S8g==
-X-Google-Smtp-Source: APXvYqx7ncg9fJXPFvCeBrUIgiO59CEIH6MvSOVe7zAEsTSMKRSqHsewoTSZmKg5qnQAdnwIQVmfxPBSZYFysY0IEDo=
-X-Received: by 2002:aed:21f0:: with SMTP id m45mr23344348qtc.391.1563291989631;
- Tue, 16 Jul 2019 08:46:29 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CTuBz10dpzRMw27jIFDD0GAWYqxmo2+HWztpyEtT7Cs=;
+        b=ItoP2UiEwydoYVzcT5nwHzDoLSbBJzkfyp7t690e+HIOLAFmrvFRP5O0UpAYPKp7dT
+         G1/pm+m7lcexJS9ivhvWgjG3Grq0Uq9pJfuccwq6gGvKjAW6wESyOL0EYiOrIEXYt/c5
+         r7gx6vNdzf3+oVzo4220iaNa6UUMX/09lAfkfb37c7pO1AicwU0GiJGqYYFBqPh7S4Z8
+         iQMcBl5o6p7YQSBzyvUwBZE3KSrY9cVBwGh5uHUCL2QkOIWXemcj7tV3uzl8+eauhKKK
+         9/gs03oKgex2Mm++o4VJ7mGnvKSoY5ncvRXOvC8lqEcAHQIJZbQhLmwucbqnmxm8mlpC
+         GX2g==
+X-Gm-Message-State: APjAAAVZYoPmctMRNeGQH9txFVsqfcjuV+Rro7YX2OL1SxyS4fWAB9Gq
+        uqoY9GaVpL+Z/+ocOCJc0RA=
+X-Google-Smtp-Source: APXvYqwOW/1KCVV68x0nxArTP1dMeAYuDwBqKnARPWDMyfmR+OUSyJXxI0kWG6Ige26KulgfzygtZA==
+X-Received: by 2002:adf:ea4c:: with SMTP id j12mr38408437wrn.75.1563292363565;
+        Tue, 16 Jul 2019 08:52:43 -0700 (PDT)
+Received: from localhost (smbhubinfra01.hotspot.hub-one.net. [213.174.99.146])
+        by smtp.gmail.com with ESMTPSA id e7sm19973280wmd.0.2019.07.16.08.52.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Jul 2019 08:52:42 -0700 (PDT)
+Date:   Tue, 16 Jul 2019 09:21:35 +0200
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Maximilian Luz <luzmaximilian@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: Re: [PATCH v2 2/2] input: soc_button_array for newer surface devices
+Message-ID: <20190716072135.GA806@penguin>
+References: <20190702003740.75970-1-luzmaximilian@gmail.com>
+ <20190702003740.75970-3-luzmaximilian@gmail.com>
 MIME-Version: 1.0
-References: <20190708084357.12944-1-patrick.bellasi@arm.com>
- <20190708084357.12944-4-patrick.bellasi@arm.com> <20190715164226.GA30262@blackbody.suse.cz>
- <20190716143417.us3xhksrsaxsl2ok@e110439-lin>
-In-Reply-To: <20190716143417.us3xhksrsaxsl2ok@e110439-lin>
-From:   Joel Fernandes <joelaf@google.com>
-Date:   Tue, 16 Jul 2019 11:46:18 -0400
-Message-ID: <CAJWu+opGqXG0shybpLvt5fXOe_UdoiXU-tNWjkWSrHmO+wtavw@mail.gmail.com>
-Subject: Re: [PATCH v11 3/5] sched/core: uclamp: Propagate system defaults to
- root group
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alessio Balsini <balsini@android.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190702003740.75970-3-luzmaximilian@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 10:34 AM Patrick Bellasi
-<patrick.bellasi@arm.com> wrote:
->
-> On 15-Jul 18:42, Michal Koutn=C3=BD wrote:
-> > On Mon, Jul 08, 2019 at 09:43:55AM +0100, Patrick Bellasi <patrick.bell=
-asi@arm.com> wrote:
-> > > +static void uclamp_update_root_tg(void)
-> > > +{
-> > > +   struct task_group *tg =3D &root_task_group;
-> > > +
-> > > +   uclamp_se_set(&tg->uclamp_req[UCLAMP_MIN],
-> > > +                 sysctl_sched_uclamp_util_min, false);
-> > > +   uclamp_se_set(&tg->uclamp_req[UCLAMP_MAX],
-> > > +                 sysctl_sched_uclamp_util_max, false);
-> > > +
-> > > +   cpu_util_update_eff(&root_task_group.css);
-> > > +}
-> > cpu_util_update_eff internally calls css_for_each_descendant_pre() so
-> > this should be protected with rcu_read_lock().
->
-> Right, good catch! Will add in v12.
->
+Hi Maximilian,
 
-Hopefully these can catch it in the near future!
-https://lore.kernel.org/rcu/20190715143705.117908-1-joel@joelfernandes.org/=
-T/#t
+On Tue, Jul 02, 2019 at 02:37:40AM +0200, Maximilian Luz wrote:
+> Power and volume button support for 5th and 6th genration Microsoft
+> Surface devices via soc_button_array.
+> 
+> Note that these devices use the same MSHW0040 device as on the Surface
+> Pro 4, however the implementation is different (GPIOs vs. ACPI
+> notifications). Thus some checking is required to ensure we only load
+> this driver on the correct devices.
+
+When you are saying that Pro 4 and later models use different
+notifications, does this mean that Pro 4 does not define any GPIOs? If
+so can we use their presence as indicator whether we should be using
+this driver or not. I would like to avoid repeating the ACPI parsing
+code that you have in the platform driver.
+
+> +static int soc_device_check_MSHW0040(struct device *dev)
+> +{
+> +	acpi_handle handle = ACPI_HANDLE(dev);
+> +	union acpi_object *result;
+> +	u64 oem_platform_rev = 0;
+> +	int gpios;
+> +
+> +	// get OEM platform revision
+> +	result = acpi_evaluate_dsm_typed(handle, &MSHW0040_DSM_UUID,
+> +					 MSHW0040_DSM_REVISION,
+> +					 MSHW0040_DSM_GET_OMPR, NULL,
+> +					 ACPI_TYPE_INTEGER);
+> +
+> +	if (result) {
+> +		oem_platform_rev = result->integer.value;
+> +		ACPI_FREE(result);
+> +	}
+> +
+> +	if (oem_platform_rev == 0)
+> +		return -ENODEV;
+> +
+> +	dev_dbg(dev, "OEM Platform Revision %llu\n", oem_platform_rev);
+> +
+> +	/*
+> +	 * We are _really_ expecting GPIOs here. If we do not get any, this
+> +	 * means the GPIO driver has not been loaded yet (which can happen).
+> +	 * Try again later.
+> +	 */
+> +	gpios = gpiod_count(dev, NULL);
+> +	if (gpios < 0)
+> +		return -EAGAIN;
+
+I do not believe -EAGAIN has any special meaning in the driver core;
+also when the GPIO controller is not ready gpiod_get() will return
+-EPROBE_DEFER, which is the prober way if signalling that some resource
+is not yet available and probe should be retries at a later time.
+
+Moreover, I do not believe that gpiod_count() needs GPIO controller to
+be ready, the count is taken from board firmware or static board file
+definition, so if gpiod_count() returns 0 it should be clear indication
+that the driver should not be used with the device.
+
+Thanks.
+
+-- 
+Dmitry
