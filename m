@@ -2,164 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A061A6B1FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 00:45:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 834F06B1FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 00:47:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388862AbfGPWpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 18:45:21 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:42807 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728235AbfGPWpV (ORCPT
+        id S2388927AbfGPWpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 18:45:22 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42864 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728681AbfGPWpV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 16 Jul 2019 18:45:21 -0400
-Received: by mail-oi1-f193.google.com with SMTP id s184so16925123oie.9
+Received: by mail-pl1-f193.google.com with SMTP id ay6so10855674plb.9
         for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 15:45:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=CHc4daItHr047JAX6t6Ygj5bjbut9nVoR+XN5tnnFNU=;
-        b=yWuFBwvCVvk0bqJ1fWzLXH2rBWx/FNnUSgVei/R5Ar5PeDVXdMfiBgNSwKyI2Ht2KZ
-         LSrvS9RJI96GzWauHQwqt67UNiuc2qCaC5rLLu6VZcHDrxOGzslnCjT2e2qxZ0rFt5D4
-         luQB1aPKdURv5/cdrcPuQsK1PnBOYpNB/+lfGAI9usbEIeg8N60a+THwW7+dR+yaHIDL
-         ato8gF15L0hsZsqQcCS1O9DFzP76Yf4sNul3sgeiMgJbsOvPqk8MtpsdKqkkgbtDZvw8
-         qR3YWl8qz/lq/e01gxS90t01/VluVPvoDRQc40zDNvxww8+mVVmAAURMrK3hbtUWN65F
-         /Jgw==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dmlUiz5MsLUASaCZMmjAe5Nq25BIWTu0nIyWKoUI4ls=;
+        b=d9ye7oSxzBqYGdQCWjx3eR4Fyl6C15u7RitgZrZD/iXkRtQtT+Z0Rt9BZQTaI/aFok
+         UTImGu1WaCEkeRWjY2h3axeBkKknI70MK2jnBH8sQcDqtZKCIn67xsizSU6cQjz/a9pM
+         sQT2nHbXtCBHL+8nQmAyck5ee7/uJtKaL0mQQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=CHc4daItHr047JAX6t6Ygj5bjbut9nVoR+XN5tnnFNU=;
-        b=QEpqzosLTgz4ZX13fcM6aPwvy2+Nwgu7nvtweOZcnon0sYphW9qtlBLcM+W9j6cKYL
-         TnoBRQYADv4h9duZyCyg69oqXi4Vza2DShfPp6nsvJLz/5rDDgb/6/7+aOKSdY+dFRxI
-         T/Fmr9Y9Yj9wymQnFay5bS3WXpUcJzt+drXpj0/0W8JbVa+iNM2JFkpgl5HiEx6LpZt6
-         DqfGe2qXU81UGZ5CstNc5OWr9Kt2EALffmomWCvNA7JhgAFLhG90O5pACUMTZjjg4cA8
-         aEDH15v73i2NT//GNvr5z/E/MB7hwzecojDXFz/wNinN+nietavHuL/cKgL/3eDoQbRS
-         w5uA==
-X-Gm-Message-State: APjAAAXoianEMcf8CjCdWtMwd7+i2h/mOdRXDnNdWqp9hxtu+un79kUK
-        xoc4+qlv/8cYV8Egdd9GCdrFzyJbX2ZI7+6O55pSu1vO
-X-Google-Smtp-Source: APXvYqwATpjKwXHNrTFAzooQoGXlc0BH9RXXaDSu7AI1VaKpd0PA2MG4OY2F2Xuo3BJH3fT51VRssHd8KgiBQhs9XeY=
-X-Received: by 2002:aca:1304:: with SMTP id e4mr17392219oii.149.1563317119863;
- Tue, 16 Jul 2019 15:45:19 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dmlUiz5MsLUASaCZMmjAe5Nq25BIWTu0nIyWKoUI4ls=;
+        b=QklBL3tcGep7yObcMZOY63M0fuBynQdfvZlYThAo4Hfs+X3DCAqsCrQFL8CBGM+z77
+         uuDYzJyDtitq8QYsbVtPfB57KBmnP1wRMi3St0HKURFExIAP+pyEeVERZDN+sqD9lCgU
+         ucgeAWBBSyIMfhP1+X/e972kxRD2PSs9PIdAOIHggl0lwNH8Rje2e1NfekMghHpGf/w1
+         ELsQIS3/ZutB4FEASCqMZgEFgVQJ8n+C5PRhtN6R9EVbujL3+9pYxGvHj4DEBjaGviQ5
+         BUFiGFHNXEj8YhuT0FYSMY02GLaoEvLKabchdTIIE8qNj7KXOOKv5TKe24iLjy9kZGwr
+         naiA==
+X-Gm-Message-State: APjAAAWjU1o1sCp0MOrWwhBvpSKbsAj4Iipb7GwwcZhz50m5NfSuFZ0V
+        i2PNGQAFFuqSZFVZKf9mq1WWKg==
+X-Google-Smtp-Source: APXvYqzU5gux6ISRcXCpIgf4jpzMJipCJqvczwYbpekKH6PlWvdVfY1o60VXcLz8sbKM8Y64Kyiejw==
+X-Received: by 2002:a17:902:8d97:: with SMTP id v23mr37704806plo.157.1563317120399;
+        Tue, 16 Jul 2019 15:45:20 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id 64sm22182562pfe.128.2019.07.16.15.45.19
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 16 Jul 2019 15:45:19 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-integrity@vger.kernel.org,
+        Andrey Pronin <apronin@chromium.org>,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>
+Subject: [PATCH v2 0/6] tpm: Add driver for cr50
+Date:   Tue, 16 Jul 2019 15:45:12 -0700
+Message-Id: <20190716224518.62556-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
 MIME-Version: 1.0
-References: <20190613045903.4922-1-namit@vmware.com> <CAPcyv4hpWg5DWRhazS-ftyghiZP-J_M-7Vd5tiUd5UKONOib8g@mail.gmail.com>
- <9387A285-B768-4B58-B91B-61B70D964E6E@vmware.com> <CAPcyv4hstt+0teXPtAq2nwFQaNb9TujgetgWPVMOnYH8JwqGeA@mail.gmail.com>
- <19C3DCA0-823E-46CB-A758-D5F82C5FA3C8@vmware.com> <20190716150047.3c13945decc052c077e9ee1e@linux-foundation.org>
- <CAPcyv4iqNHBy-_WbH9XBg5hSqxa=qnkc88EW5=g=-5845jNzsg@mail.gmail.com>
- <D463DD43-C09F-4B6E-B1BC-7E1CA5C8A9C4@vmware.com> <CAPcyv4gGkgCsf4NtDPj7FNcTMO6o+fUYgfq8AP_pLkqDSbxjzA@mail.gmail.com>
- <39E58DBC-C13E-429C-A5FC-8FD80ABBBF55@vmware.com>
-In-Reply-To: <39E58DBC-C13E-429C-A5FC-8FD80ABBBF55@vmware.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 16 Jul 2019 15:45:08 -0700
-Message-ID: <CAPcyv4g4Qv-1eEcVxfr4gnTngprtn1DdwXBgRQ3T_-9Kr0vKDw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] resource: find_next_iomem_res() improvements
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, Borislav Petkov <bp@suse.de>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 3:29 PM Nadav Amit <namit@vmware.com> wrote:
->
-> > On Jul 16, 2019, at 3:20 PM, Dan Williams <dan.j.williams@intel.com> wr=
-ote:
-> >
-> > On Tue, Jul 16, 2019 at 3:13 PM Nadav Amit <namit@vmware.com> wrote:
-> >>> On Jul 16, 2019, at 3:07 PM, Dan Williams <dan.j.williams@intel.com> =
-wrote:
-> >>>
-> >>> On Tue, Jul 16, 2019 at 3:01 PM Andrew Morton <akpm@linux-foundation.=
-org> wrote:
-> >>>> On Tue, 18 Jun 2019 21:56:43 +0000 Nadav Amit <namit@vmware.com> wro=
-te:
-> >>>>
-> >>>>>> ...and is constant for the life of the device and all subsequent m=
-appings.
-> >>>>>>
-> >>>>>>> Perhaps you want to cache the cachability-mode in vma->vm_page_pr=
-ot (which I
-> >>>>>>> see being done in quite a few cases), but I don=E2=80=99t know th=
-e code well enough
-> >>>>>>> to be certain that every vma should have a single protection and =
-that it
-> >>>>>>> should not change afterwards.
-> >>>>>>
-> >>>>>> No, I'm thinking this would naturally fit as a property hanging of=
-f a
-> >>>>>> 'struct dax_device', and then create a version of vmf_insert_mixed=
-()
-> >>>>>> and vmf_insert_pfn_pmd() that bypass track_pfn_insert() to insert =
-that
-> >>>>>> saved value.
-> >>>>>
-> >>>>> Thanks for the detailed explanation. I=E2=80=99ll give it a try (th=
-e moment I find
-> >>>>> some free time). I still think that patch 2/3 is beneficial, but ba=
-sed on
-> >>>>> your feedback, patch 3/3 should be dropped.
-> >>>>
-> >>>> It has been a while.  What should we do with
-> >>>>
-> >>>> resource-fix-locking-in-find_next_iomem_res.patch
-> >>>
-> >>> This one looks obviously correct to me, you can add:
-> >>>
-> >>> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> >>>
-> >>>> resource-avoid-unnecessary-lookups-in-find_next_iomem_res.patch
-> >>>
-> >>> This one is a good bug report that we need to go fix pgprot lookups
-> >>> for dax, but I don't think we need to increase the trickiness of the
-> >>> core resource lookup code in the meantime.
-> >>
-> >> I think that traversing big parts of the tree that are known to be
-> >> irrelevant is wasteful no matter what, and this code is used in other =
-cases.
-> >>
-> >> I don=E2=80=99t think the new code is so tricky - can you point to the=
- part of the
-> >> code that you find tricky?
-> >
-> > Given dax can be updated to avoid this abuse of find_next_iomem_res(),
-> > it was a general observation that the patch adds more lines than it
-> > removes and is not strictly necessary. I'm ambivalent as to whether it
-> > is worth pushing upstream. If anything the changelog is going to be
-> > invalidated by a change to dax to avoid find_next_iomem_res(). Can you
-> > update the changelog to be relevant outside of the dax case?
->
-> Well, 8 lines are comments, 4 are empty lines, so it adds 3 lines of code
-> according to my calculations. :)
->
-> Having said that, if you think I might have made a mistake, or you are
-> concerned with some bug I might have caused, please let me know. I
-> understand that this logic might have been lying around for some time.
+This patch series adds support for the the H1 secure microcontroller
+running cr50 firmware found on various recent Chromebooks. This driver
+is necessary to boot into a ChromeOS userspace environment. It
+implements support for several functions, including TPM-like
+functionality, and supports SPI and I2C interfaces.
 
-Like I said, I'm ambivalent and not NAK'ing it. It looks ok, but at
-the same time something is wrong if a hot path is constantly
-re-looking up a resource. The fact that it shows up in profiles when
-that happens could be considered useful.
+The last time this was series sent looks to be [1]. I've looked over the
+patches and review comments and tried to address any feedback that
+Andrey didn't address (really minor things like newlines). The first
+three patches add a couple pre-requisite core changes so that the
+drivers can be merged. The last three patches add the SPI and i2c drivers
+along with the DT binding.
 
-> I can update the commit log, emphasizing the redundant search operations =
-as
-> motivation and then mentioning dax as an instance that induces overheads =
-due
-> to this overhead, and say it should be handled regardless to this patch-s=
-et.
-> Once I find time, I am going to deal with DAX, unless you beat me to it.
+[1] https://lkml.kernel.org/r/1469757314-116169-1-git-send-email-apronin@chromium.org
 
-It turns out that the ability to ask the driver for pgprot bits is
-useful above and beyond this performance optimization. For example I'm
-looking to use it to support disabling speculation into pages with
-known  media errors by letting the driver consult its 'badblock' list.
-There are also usages for passing the key-id for persistent memory
-encrypted by MKTME.
+Changes from v1:
+ * Dropped symlink and sysfs patches
+ * Removed 'is_suspended' bits
+ * Added new patch to freeze khwrng thread
+ * Moved binding to google,cr50.txt and added Reviewed-by tag from Rob
+
+Andrey Pronin (4):
+  tpm_tis_core: add optional max xfer size check
+  tpm_tis_spi: add max xfer size
+  dt-bindings: tpm: document properties for cr50
+  tpm: add driver for cr50 on SPI
+
+Duncan Laurie (1):
+  tpm: Add driver for cr50 on I2C
+
+Stephen Boyd (1):
+  hwrng: core: Freeze khwrng thread during suspend
+
+ .../bindings/security/tpm/google,cr50.txt     |  19 +
+ drivers/char/hw_random/core.c                 |   5 +-
+ drivers/char/tpm/Kconfig                      |  26 +
+ drivers/char/tpm/Makefile                     |   3 +
+ drivers/char/tpm/cr50.c                       |  33 +
+ drivers/char/tpm/cr50.h                       |  15 +
+ drivers/char/tpm/cr50_i2c.c                   | 705 ++++++++++++++++++
+ drivers/char/tpm/cr50_spi.c                   | 450 +++++++++++
+ drivers/char/tpm/tpm_tis_core.c               |   9 +-
+ drivers/char/tpm/tpm_tis_core.h               |   1 +
+ drivers/char/tpm/tpm_tis_spi.c                |   1 +
+ 11 files changed, 1265 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/security/tpm/google,cr50.txt
+ create mode 100644 drivers/char/tpm/cr50.c
+ create mode 100644 drivers/char/tpm/cr50.h
+ create mode 100644 drivers/char/tpm/cr50_i2c.c
+ create mode 100644 drivers/char/tpm/cr50_spi.c
+
+
+base-commit: 0ecfebd2b52404ae0c54a878c872bb93363ada36
+-- 
+Sent by a computer through tubes
+
