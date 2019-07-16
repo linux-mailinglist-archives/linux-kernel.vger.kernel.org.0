@@ -2,172 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 530E96A4E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 11:28:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B5E46A4F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 11:33:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731877AbfGPJ2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 05:28:04 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:31300 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727922AbfGPJ2E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 05:28:04 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190716092801epoutp03ef0de2fa612301c76c42e6d8ab352a4f~x2SDm6FkB1981419814epoutp03o
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 09:28:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190716092801epoutp03ef0de2fa612301c76c42e6d8ab352a4f~x2SDm6FkB1981419814epoutp03o
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1563269281;
-        bh=Q5UakLD205wShaSTG+f5fz7cKkprRmkmPhAwjsEjUTQ=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=lD9Ldx/Y/mMBR6ZW5ZHRuPU029wHqBo5B/Gl632i5MyX61PfexMubcmbwALkSoSXF
-         bMUaWrk6L5MI7X4zizajHkZaqJuc/lwWvz5AaitelfHSGjh3q9G18uBMSIboLgv8ri
-         AjvWAfk5SYzD9z6Ei09a+KshrpFR+GFr6o89xhPA=
-Received: from epsnrtp6.localdomain (unknown [182.195.42.167]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190716092800epcas1p10e3eab11167bd1f10ed9e92473413872~x2SDGgeD02702727027epcas1p1Q;
-        Tue, 16 Jul 2019 09:28:00 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp6.localdomain (Postfix) with ESMTP id 45nw6j5K5rzMqYkc; Tue, 16 Jul
-        2019 09:27:57 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7C.09.04160.D989D2D5; Tue, 16 Jul 2019 18:27:57 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20190716092757epcas1p3f1040feadd8e767b7861cf8d6e95a9fe~x2SAMdMTR2981129811epcas1p3N;
-        Tue, 16 Jul 2019 09:27:57 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190716092757epsmtrp2d3d0ada13ab4e98b5376d63895727349~x2SALa3b22184421844epsmtrp2k;
-        Tue, 16 Jul 2019 09:27:57 +0000 (GMT)
-X-AuditID: b6c32a38-b33ff70000001040-a1-5d2d989dcd69
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C6.B5.03638.D989D2D5; Tue, 16 Jul 2019 18:27:57 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190716092756epsmtip14e25281fc922a010605e07c6c892694b~x2R-xBEP41188811888epsmtip1n;
-        Tue, 16 Jul 2019 09:27:56 +0000 (GMT)
-Subject: Re: [PATCH v1 13/50] clk: samsung: add DPLL rate table in
- Exynos5420
-To:     Lukasz Luba <l.luba@partner.samsung.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
-        mark.rutland@arm.com, robh+dt@kernel.org,
-        kyungmin.park@samsung.com, a.hajda@samsung.com,
-        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
-        myungjoo.ham@samsung.com
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <9095a5be-3002-93c6-9d08-92eb84f5c103@samsung.com>
-Date:   Tue, 16 Jul 2019 18:31:03 +0900
+        id S1732173AbfGPJaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 05:30:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43470 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727849AbfGPJaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 05:30:21 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2F953550CF;
+        Tue, 16 Jul 2019 09:30:21 +0000 (UTC)
+Received: from [10.36.116.32] (ovpn-116-32.ams2.redhat.com [10.36.116.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CF9375D71B;
+        Tue, 16 Jul 2019 09:30:15 +0000 (UTC)
+Subject: Re: [PATCH v4 14/22] iommu/vt-d: Add custom allocator for IOASID
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc:     Yi Liu <yi.l.liu@intel.com>, "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1560087862-57608-15-git-send-email-jacob.jun.pan@linux.intel.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <2f2ba561-793f-a6a0-5765-ef8e9a5a3ab6@redhat.com>
+Date:   Tue, 16 Jul 2019 11:30:14 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.7.2
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190715124417.4787-14-l.luba@partner.samsung.com>
+In-Reply-To: <1560087862-57608-15-git-send-email-jacob.jun.pan@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEJsWRmVeSWpSXmKPExsWy7bCmnu7cGbqxBs+vq1ncWneO1WLjjPWs
-        FvOPAFn9j18zW5w/v4Hd4mzTG3aLWw0yFpseX2O1+Nhzj9Xi8q45bBYzzu9jslh75C67xdLr
-        F5ksLp5ytbjduILNonXvEXaLw2/aWS3+XdvI4iDksWbeGkaP9zda2T02repk89i8pN7j4Ls9
-        TB59W1YxenzeJBfAHpVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr
-        5OIToOuWmQP0hJJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwLJArzgxt7g0L10v
-        OT/XytDAwMgUqDAhO2PJit+sBcuFKg4uaGJtYJzI38XIySEhYCKx71ojYxcjF4eQwA5GiXXT
-        LrJCOJ8YJWZPWwOV+cYo8fXsS/YuRg6wlgOXrSHie4Hij3+wQzjvGSWmvTvJDDJXWMBfYsHl
-        fYwgtojAOUaJjqfSIDazwDQmiVnzREFsNgEtif0vbrCB2PwCihJXfzwGq+cVsJM4sPAh2BwW
-        AVWJC99awGpEBSIkTh2ZxwJRIyhxcuYTFpCDOAUcJN6eEoAYLy5x68l8JghbXqJ562xmkNsk
-        BE6xS7SsfsIG8bOLxK+V/1kgbGGJV8e3sEPYUhKf3+2FqqmWWHnyCBtEcwejxJb9F1ghEsYS
-        +5dOZgJZzCygKbF+lz5EWFFi5++5jBCL+STefe1hhQQWr0RHmxBEibLE5Qd3mSBsSYnF7Z1s
-        ExiVZiH5ZhaSF2YheWEWwrIFjCyrGMVSC4pz01OLDQtMkCN7EyM4fWtZ7GDcc87nEKMAB6MS
-        D++JPTqxQqyJZcWVuYcYJTiYlUR4bb9qxwrxpiRWVqUW5ccXleakFh9iNAUG9kRmKdHkfGBu
-        ySuJNzQ1MjY2tjAxNDM1NFQS5533RzNWSCA9sSQ1OzW1ILUIpo+Jg1OqgdH4s3D9tuJtB1qv
-        R93Sd3zMyu76VLQn1SP9acF20/BL+juXuH94vSjoj+Ph6q/VIVqTfpmt6/7CszA52+rgrvQF
-        1Ybcp29vPX9rWkWGc9MfufCn4j2lVrW5Lf26rwL4Aqo+JuopG62ubF0nKq3GZGvde0B2wbwd
-        m0zn+roWtRlFdJ47pNdbrcRSnJFoqMVcVJwIABIUyHT1AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Ra0hTUQDHOfexXafD22Z5fKC4iGLT5aIPJywRenAhgj5aMeySFzXdg101
-        jSKzNBJRM/AxSw2sRNS5aeJqpnMma+FjaiaTnpMIXxWyiB6S2wj27Qf/3++cA4fCJa+IWCpP
-        W8gZtGyBTCAiBh2yhJT7TSnq1KX+SOTpnSKRuclEorbxbar1ruJoerpPiCbL14TIUxaPLN4F
-        En2vfkeiuaf3BKhp+jmGesbfCtHDN24MuV3H0dL1TgGqGB4XIsfaLRJtLZiJDAnT3doNmK+L
-        FULG0nVbwPR3XGPsGzaMqRnoAsymJeG08KzocDZXkFfMGfannxfldnT+JvWPJSX29nKyDNyJ
-        rAIUBemDcHQurQqEURL6GYAt9n1+hnQMbHC/wIOKFDocfBUQbSvrALorTQK/I6VPwcHJ98A/
-        RNFTANb8nRT6B5xuwKDThAcPdQLY2XjIzwJaDke+LAbiSDoJvv7pBX4W0+lw9MHHgE/Qe+DM
-        j5sBZyedCesXrETQ2QFfNi8T/geF0Rlw3UUHr9oL/7TO4kGOhp7lNizIifDGkxa8DkiNIbUx
-        JDGGJMaQpB0QXSCG0/OaHA2v0h/QcpeUPKvhi7Q5ygs6jQUEvlguHwJOZ9YYoCkgixA7bclq
-        CckW86WaMQApXBYlPuJTqCXibLb0MmfQZRmKCjh+DMRRhCxanKibOCOhc9hCLp/j9Jzh/4pR
-        YbFlgBlumEnivFm9qQrz7jjTmqfomzJNcwK3dobXXe3ZtKrO/RqaT8ddZl1+ychK8tS8KyK8
-        /mj8AP6pBqu9i/s+9CtVmvoIpBY/Emdi1ZTONHtyKxe1snE2naLxmC/Rro3yWVfVldI+x/rE
-        Y5+CihY098pXFq/kf7Zd3LUhI/hcViXHDTz7D0D1eH7eAgAA
-X-CMS-MailID: 20190716092757epcas1p3f1040feadd8e767b7861cf8d6e95a9fe
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190715124444eucas1p2683c9896e8be45d6a0cd4afeb681a2ea
-References: <20190715124417.4787-1-l.luba@partner.samsung.com>
-        <CGME20190715124444eucas1p2683c9896e8be45d6a0cd4afeb681a2ea@eucas1p2.samsung.com>
-        <20190715124417.4787-14-l.luba@partner.samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 16 Jul 2019 09:30:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Jacob,
 
-Also, you better to merge patch13/patch15/patch16 to one patch
-in order to add the PLL table for DPLL/MPLL/SPLL.
-
-And I have a question. Are there any use-case to change
-the PLL frequency for DPLL/MPLL/SPLL?
-
-On 19. 7. 15. 오후 9:43, Lukasz Luba wrote:
-> The DPLL has fixed frequency left by the bootloader and it is not possible
-> to change it. With this patch the DPLL gets rate table the same for the
-> whole  PLL family (similar as APLL, KPLL according to RM) so the frequency
-> might be changed to one of the values defined there.
-> It is needed for further patches which change the DPLL frequency to feed
-> the clocks with proper base.
-> It also sets CLK_IS_CRITICAL for SCLK_DPLL due to some drivers which could
-> disable master clock, which is then populated higher and tries to disable
-> PLL, which casues system crash. The flag is needed for this kind of use
-> cases.
+On 6/9/19 3:44 PM, Jacob Pan wrote:
+> When VT-d driver runs in the guest, PASID allocation must be
+> performed via virtual command interface. This patch registers a
+> custom IOASID allocator which takes precedence over the default
+> XArray based allocator. The resulting IOASID allocation will always
+> come from the host. This ensures that PASID namespace is system-
+> wide.
 > 
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Signed-off-by: Liu, Yi L <yi.l.liu@intel.com>
+> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 > ---
->  drivers/clk/samsung/clk-exynos5420.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  drivers/iommu/Kconfig       |  1 +
+>  drivers/iommu/intel-iommu.c | 60 +++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/intel-iommu.h |  2 ++
+>  3 files changed, 63 insertions(+)
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 7f8221527633..2395b02ce8c5 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -694,7 +694,8 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
->  	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
->  	MUX_F(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1,
->  			CLK_SET_RATE_PARENT, 0),
-> -	MUX(0, "mout_sclk_dpll", mout_dpll_p, SRC_TOP6, 24, 1),
-> +	MUX_F(CLK_MOUT_SCLK_DPLL, "mout_sclk_dpll", mout_dpll_p,
-> +			SRC_TOP6, 24, 1, CLK_IS_CRITICAL, 0),
->  	MUX(0, "mout_sclk_cpll", mout_cpll_p, SRC_TOP6, 28, 1),
->  
->  	MUX(CLK_MOUT_SW_ACLK400_ISP, "mout_sw_aclk400_isp",
-> @@ -1514,6 +1515,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
->  
->  	if (_get_rate("fin_pll") == 24 * MHZ) {
->  		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
-> +		exynos5x_plls[dpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
->  		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
->  		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> index c40c4b5..5d1bc2a 100644
+> --- a/drivers/iommu/Kconfig
+> +++ b/drivers/iommu/Kconfig
+> @@ -213,6 +213,7 @@ config INTEL_IOMMU_SVM
+>  	bool "Support for Shared Virtual Memory with Intel IOMMU"
+>  	depends on INTEL_IOMMU && X86
+>  	select PCI_PASID
+> +	select IOASID
+>  	select MMU_NOTIFIER
+>  	select IOASID
+>  	help
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index 09b8ff0..5b84994 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -1711,6 +1711,8 @@ static void free_dmar_iommu(struct intel_iommu *iommu)
+>  		if (ecap_prs(iommu->ecap))
+>  			intel_svm_finish_prq(iommu);
 >  	}
+> +	ioasid_unregister_allocator(&iommu->pasid_allocator);
+> +
+>  #endif
+>  }
+>  
+> @@ -4820,6 +4822,46 @@ static int __init platform_optin_force_iommu(void)
+>  	return 1;
+>  }
+>  
+> +#ifdef CONFIG_INTEL_IOMMU_SVM
+> +static ioasid_t intel_ioasid_alloc(ioasid_t min, ioasid_t max, void *data)
+> +{
+> +	struct intel_iommu *iommu = data;
+> +	ioasid_t ioasid;
+> +
+> +	/*
+> +	 * VT-d virtual command interface always uses the full 20 bit
+> +	 * PASID range. Host can partition guest PASID range based on
+> +	 * policies but it is out of guest's control.
+> +	 */
+> +	if (min < PASID_MIN || max > PASID_MAX)
+> +		return -EINVAL;
+ioasid_alloc() does not handle that error value, use INVALID_IOASID?
+> +
+> +	if (vcmd_alloc_pasid(iommu, &ioasid))
+> +		return INVALID_IOASID;
+> +
+> +	return ioasid;
+> +}
+> +
+> +static void intel_ioasid_free(ioasid_t ioasid, void *data)
+> +{
+> +	struct iommu_pasid_alloc_info *svm;
+> +	struct intel_iommu *iommu = data;
+> +
+> +	if (!iommu)
+> +		return;
+> +	/*
+> +	 * Sanity check the ioasid owner is done at upper layer, e.g. VFIO
+> +	 * We can only free the PASID when all the devices are unbond.
+> +	 */
+> +	svm = ioasid_find(NULL, ioasid, NULL);
+> +	if (!svm) {
+> +		pr_warn("Freeing unbond IOASID %d\n", ioasid);
+> +		return;
+> +	}
+> +	vcmd_free_pasid(iommu, ioasid);
+> +}
+> +#endif
+> +
+>  int __init intel_iommu_init(void)
+>  {
+>  	int ret = -ENODEV;
+> @@ -4924,6 +4966,24 @@ int __init intel_iommu_init(void)
+>  				       "%s", iommu->name);
+>  		iommu_device_set_ops(&iommu->iommu, &intel_iommu_ops);
+>  		iommu_device_register(&iommu->iommu);
+> +#ifdef CONFIG_INTEL_IOMMU_SVM
+> +		if (cap_caching_mode(iommu->cap) && sm_supported(iommu)) {
+> +			/*
+> +			 * Register a custom ASID allocator if we are running
+> +			 * in a guest, the purpose is to have a system wide PASID
+> +			 * namespace among all PASID users.
+> +			 * There can be multiple vIOMMUs in each guest but only
+> +			 * one allocator is active. All vIOMMU allocators will
+> +			 * eventually be calling the same host allocator.
+> +			 */
+> +			iommu->pasid_allocator.alloc = intel_ioasid_alloc;
+> +			iommu->pasid_allocator.free = intel_ioasid_free;
+> +			iommu->pasid_allocator.pdata = (void *)iommu;
+> +			ret = ioasid_register_allocator(&iommu->pasid_allocator);
+> +			if (ret)
+> +				pr_warn("Custom PASID allocator registeration failed\n");
+what if it fails, don't you want a tear down path?
+
+Thanks
+
+Eric
+> +		}
+> +#endif
+>  	}
+>  
+>  	bus_set_iommu(&pci_bus_type, &intel_iommu_ops);
+> diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+> index bff907b..8605c74 100644
+> --- a/include/linux/intel-iommu.h
+> +++ b/include/linux/intel-iommu.h
+> @@ -31,6 +31,7 @@
+>  #include <linux/iommu.h>
+>  #include <linux/io-64-nonatomic-lo-hi.h>
+>  #include <linux/dmar.h>
+> +#include <linux/ioasid.h>
+>  
+>  #include <asm/cacheflush.h>
+>  #include <asm/iommu.h>
+> @@ -549,6 +550,7 @@ struct intel_iommu {
+>  #ifdef CONFIG_INTEL_IOMMU_SVM
+>  	struct page_req_dsc *prq;
+>  	unsigned char prq_name[16];    /* Name for PRQ interrupt */
+> +	struct ioasid_allocator_ops pasid_allocator; /* Custom allocator for PASIDs */
+>  #endif
+>  	struct q_inval  *qi;            /* Queued invalidation info */
+>  	u32 *iommu_state; /* Store iommu states between suspend and resume.*/
 > 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
