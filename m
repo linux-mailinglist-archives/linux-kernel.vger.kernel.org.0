@@ -2,81 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 403866A2EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 09:28:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0B426A2C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 09:20:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729430AbfGPH2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 03:28:13 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:51142 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbfGPH2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 03:28:13 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D2C5F1A0007;
-        Tue, 16 Jul 2019 09:28:11 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D12D81A00F6;
-        Tue, 16 Jul 2019 09:28:08 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C2A4240293;
-        Tue, 16 Jul 2019 15:28:04 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] rtc: snvs: fix possible race condition
-Date:   Tue, 16 Jul 2019 15:18:58 +0800
-Message-Id: <20190716071858.36750-1-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729918AbfGPHTs convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 16 Jul 2019 03:19:48 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:50989 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbfGPHTs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 03:19:48 -0400
+X-Originating-IP: 86.250.200.211
+Received: from xps13 (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 4582860017;
+        Tue, 16 Jul 2019 07:19:34 +0000 (UTC)
+Date:   Tue, 16 Jul 2019 09:19:33 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Mark Brown <broonie@kernel.org>, linux-mtd@lists.infradead.org,
+        linux-gpio@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com, linux-spi@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Ensure child nodes are of type 'object'
+Message-ID: <20190716091933.39db956e@xps13>
+In-Reply-To: <20190715230457.3901-1-robh@kernel.org>
+References: <20190715230457.3901-1-robh@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+Hi Rob,
 
-The RTC IRQ is requested before the struct rtc_device is allocated,
-this may lead to a NULL pointer dereference in IRQ handler.
+Rob Herring <robh@kernel.org> wrote on Mon, 15 Jul 2019 17:04:57 -0600:
 
-To fix this issue, allocating the rtc_device struct before requesting
-the RTC IRQ using devm_rtc_allocate_device, and use rtc_register_device
-to register the RTC device.
+> Properties which are child node definitions need to have an explict
+> type. Otherwise, a matching (DT) property can silently match when an
+> error is desired. Fix this up tree-wide. Once this is fixed, the
+> meta-schema will enforce this on any child node definitions.
+> 
+> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Brian Norris <computersforpeace@gmail.com>
+> Cc: Marek Vasut <marek.vasut@gmail.com>
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: Vignesh Raghavendra <vigneshr@ti.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> Cc: Alexandre Torgue <alexandre.torgue@st.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: linux-mtd@lists.infradead.org
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-stm32@st-md-mailman.stormreply.com
+> Cc: linux-spi@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> Please ack. I will take this via the DT tree.
+> 
+> Rob
+> 
+>  .../devicetree/bindings/bus/allwinner,sun8i-a23-rsb.yaml       | 1 +
+>  .../devicetree/bindings/mtd/allwinner,sun4i-a10-nand.yaml      | 1 +
+>  Documentation/devicetree/bindings/mtd/nand-controller.yaml     | 1 +
+>  .../devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml          | 3 +++
+>  .../devicetree/bindings/spi/allwinner,sun4i-a10-spi.yaml       | 1 +
+>  .../devicetree/bindings/spi/allwinner,sun6i-a31-spi.yaml       | 1 +
+>  6 files changed, 8 insertions(+)
+> 
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/rtc/rtc-snvs.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+[...]
 
-diff --git a/drivers/rtc/rtc-snvs.c b/drivers/rtc/rtc-snvs.c
-index 7ee673a2..4f9a107 100644
---- a/drivers/rtc/rtc-snvs.c
-+++ b/drivers/rtc/rtc-snvs.c
-@@ -279,6 +279,10 @@ static int snvs_rtc_probe(struct platform_device *pdev)
- 	if (!data)
- 		return -ENOMEM;
- 
-+	data->rtc = devm_rtc_allocate_device(&pdev->dev);
-+	if (IS_ERR(data->rtc))
-+		return PTR_ERR(data->rtc);
-+
- 	data->regmap = syscon_regmap_lookup_by_phandle(pdev->dev.of_node, "regmap");
- 
- 	if (IS_ERR(data->regmap)) {
-@@ -343,10 +347,9 @@ static int snvs_rtc_probe(struct platform_device *pdev)
- 		goto error_rtc_device_register;
- 	}
- 
--	data->rtc = devm_rtc_device_register(&pdev->dev, pdev->name,
--					&snvs_rtc_ops, THIS_MODULE);
--	if (IS_ERR(data->rtc)) {
--		ret = PTR_ERR(data->rtc);
-+	data->rtc->ops = &snvs_rtc_ops;
-+	ret = rtc_register_device(data->rtc);
-+	if (ret) {
- 		dev_err(&pdev->dev, "failed to register rtc: %d\n", ret);
- 		goto error_rtc_device_register;
- 	}
--- 
-2.7.4
+> diff --git a/Documentation/devicetree/bindings/mtd/nand-controller.yaml b/Documentation/devicetree/bindings/mtd/nand-controller.yaml
+> index 199ba5ac2a06..d261b7096c69 100644
+> --- a/Documentation/devicetree/bindings/mtd/nand-controller.yaml
+> +++ b/Documentation/devicetree/bindings/mtd/nand-controller.yaml
+> @@ -40,6 +40,7 @@ properties:
+>  
+>  patternProperties:
+>    "^nand@[a-f0-9]$":
+> +    type: object
+>      properties:
+>        reg:
+>          description:
 
+For the mtd .yaml:
+
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+
+
+Thanks,
+Miquèl
