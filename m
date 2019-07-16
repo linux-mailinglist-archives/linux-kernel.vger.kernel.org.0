@@ -2,107 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A3E96AF67
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 20:58:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFFEC6AF6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 20:59:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388385AbfGPS6Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 14:58:16 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:59766 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728137AbfGPS6Q (ORCPT
+        id S2388539AbfGPS7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 14:59:52 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50978 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728438AbfGPS7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 14:58:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NQzPm2qSJHyNNPNoCIrDmmIjlWz77+rLZs+LoDSCCnc=; b=mCAefUio78c06/zAfjCgyR/l1
-        US4MU1Rihn1Wf7CcksM3U2gEr9nyYf9bQ+2J2KEVqOQ8H8JagVJxlOoTIUgifAtPBiIgKr/QCL7td
-        Yo8Mfogwya+jaUhJpuVcG2kudW6OQGxAXjJCXH7yy/MQv3fFKq1scWavZRygdyVs+CP/8m0OHSOSp
-        Heev3pTb+bPb/pDzRfP3i+V5L50n5HZhJTvOxi0WxiOcblN//8+9Om5JaX4/QXzD6TFc6jDVDEz7/
-        oDVPmYvo9c8D8faZsBOZgM9wFOpkuIf6dvJQTQxnjqkByy4O8XNn0P4Yqvzop/M17vxidI8EQSSjT
-        P26KH8Hag==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hnSeR-0002qo-9I; Tue, 16 Jul 2019 18:58:11 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0A12220B15D60; Tue, 16 Jul 2019 20:58:08 +0200 (CEST)
-Date:   Tue, 16 Jul 2019 20:58:08 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Jan Stancek <jstancek@redhat.com>, linux-kernel@vger.kernel.org,
-        dbueso@suse.de, will@kernel.org, mingo@redhat.com
-Subject: Re: [PATCH] locking/rwsem: use read_acquire in read_slowpath exit
- when queue is empty
-Message-ID: <20190716185807.GJ3402@hirez.programming.kicks-ass.net>
-References: <ea7ef295bc438c9d403087943c82ced56730e6e0.1563292737.git.jstancek@redhat.com>
- <4ef66a01-7937-1eb7-c58b-0992a0142c92@redhat.com>
+        Tue, 16 Jul 2019 14:59:51 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hnSfy-0008Cc-3y; Tue, 16 Jul 2019 20:59:46 +0200
+Date:   Tue, 16 Jul 2019 20:59:45 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org
+Subject: Re: kbuild: Fail if gold linker is detected
+In-Reply-To: <20190716170606.GA38406@archlinux-threadripper>
+Message-ID: <alpine.DEB.2.21.1907162059200.1767@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1907161434260.1767@nanos.tec.linutronix.de> <20190716170606.GA38406@archlinux-threadripper>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ef66a01-7937-1eb7-c58b-0992a0142c92@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 12:53:14PM -0400, Waiman Long wrote:
-> On 7/16/19 12:04 PM, Jan Stancek wrote:
-
-> > Suspected problem here is that last *_acquire on down_read() side
-> > happens before write side issues *_release:
-> >   1. writer: has the lock
-> >   2. reader: down_read() issues *read_acquire on entry
-> >   3. writer: mm->vmacache_seqnum++; downgrades lock (*fetch_add_release)
-> >   4. reader: __rwsem_down_read_failed_common() finds it can take lock and returns
-> >   5. reader: observes stale mm->vmacache_seqnum
-> >
-> > I can reproduce the problem by running LTP mtest06 in a loop and building
-> > kernel (-j $NCPUS) in parallel. It does reproduce since v4.20 up to v5.2
-> > on arm64 HPE Apollo 70 (224 CPUs, 256GB RAM, 2 nodes). It triggers reliably
-> > within ~hour. Patched kernel ran fine for 5+ hours with clean dmesg.
-> > Tests were done against v5.2, since commit cf69482d62d9 ("locking/rwsem:
-> > Enable readers spinning on writer") makes it much harder to reproduce.
-
-> > Fixes: 4b486b535c33 ("locking/rwsem: Exit read lock slowpath if queue empty & no writer")
-> > Signed-off-by: Jan Stancek <jstancek@redhat.com>
-> > Cc: Waiman Long <longman@redhat.com>
-> > Cc: Davidlohr Bueso <dbueso@suse.de>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Ingo Molnar <mingo@redhat.com>
+On Tue, 16 Jul 2019, Nathan Chancellor wrote:
+> On Tue, Jul 16, 2019 at 02:47:56PM +0200, Thomas Gleixner wrote:
+> > The gold linker has known issues of failing the build in random and
+> > predictible ways. H.J. stated:
+> > 
+> >   "Since building a workable kernel for different kernel configurations
+> >    isn't a requirement for gold, I don't recommend gold for kernel."
+> > 
+> > So instead of dealing with attempts to duct tape gold support without
+> > understanding the root cause, fail the build when gold is detected.
+> > 
+> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> > Link: https://lore.kernel.org/r/CAMe9rOqMqkQ0LNpm25yE_Yt0FKp05WmHOrwc0aRDb53miFKM+w@mail.gmail.com
 > > ---
-> >  kernel/locking/rwsem.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-> > index 37524a47f002..757b198d7a5b 100644
-> > --- a/kernel/locking/rwsem.c
-> > +++ b/kernel/locking/rwsem.c
-> > @@ -1030,7 +1030,7 @@ static inline bool rwsem_reader_phase_trylock(struct rw_semaphore *sem,
-> >  		 * exit the slowpath and return immediately as its
-> >  		 * RWSEM_READER_BIAS has already been set in the count.
-> >  		 */
-> > -		if (adjustment && !(atomic_long_read(&sem->count) &
-> > +		if (adjustment && !(atomic_long_read_acquire(&sem->count) &
-> >  		     (RWSEM_WRITER_MASK | RWSEM_FLAG_HANDOFF))) {
-> >  			raw_spin_unlock_irq(&sem->wait_lock);
-> >  			rwsem_set_reader_owned(sem);
+> >  scripts/Kconfig.include |    3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > --- a/scripts/Kconfig.include
+> > +++ b/scripts/Kconfig.include
+> > @@ -35,5 +35,8 @@ ld-option = $(success,$(LD) -v $(1))
+> >  $(error-if,$(failure,command -v $(CC)),compiler '$(CC)' not found)
+> >  $(error-if,$(failure,command -v $(LD)),linker '$(LD)' not found)
+> >  
+> > +# Fail if the linker is gold as it's not capable of linking the kernel proper
+> > +$(error-if,$(success, command -v $(LD) -v | grep -q gold), gold linker '$(LD)' not supported)
 > 
-> The chance of taking this path is not that high. So instead of
-> increasing the cost of the test by adding an acquire barrier, how about
-> just adding smp_mb__after_spinlock() before spin_unlock_irq(). This
-> should have the same effect of making sure that no stale data will be
-> used in the read-lock critical section.
+> Why are there two '-v' flags here? The second one is ignored since
+> command -v just prints out the path of the binary that is being used,
+> which would work in most cases but not if gold is the default system
+> linker.
+> 
+> $ command -v ld.gold -v
+> /usr/bin/ld.gold
+> 
+> $ command -v ld.gold
+> /usr/bin/ld.gold
+> 
+> $ command ld.gold -v
+> GNU gold (GNU Binutils 2.32) 1.16
+> 
+> Thus, wouldn't it be better to just call $(LD) directly, like
+> CC_IS_GCC and CC_IS_CLANG in init/Kconfig?
+> 
+> $(success, $(LD) -v | grep -q gold)
 
-That's actually more expensive on something like ARM64 I expect.
-
-The far cheaper alternative is smp_acquire__after_ctrl_dep(), however in
-general Will seems to prefer using load-acquire over separate barriers,
-and for x86 it doesn't matter anyway. For PowerPC these two are a wash,
-both end up with LWSYNC (over SYNC for your alternative).
-
-
+Right you are. Copy and paste without brain ....
