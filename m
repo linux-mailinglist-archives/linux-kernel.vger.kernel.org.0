@@ -2,196 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC2FF6A6A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 12:34:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E47D76A694
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 12:31:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733251AbfGPKev convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 16 Jul 2019 06:34:51 -0400
-Received: from m9a0002g.houston.softwaregrp.com ([15.124.64.67]:50158 "EHLO
-        m9a0002g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732081AbfGPKeu (ORCPT
+        id S1733249AbfGPKbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 06:31:04 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:36864 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732336AbfGPKbD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 06:34:50 -0400
-Received: FROM m9a0002g.houston.softwaregrp.com (15.121.0.191) BY m9a0002g.houston.softwaregrp.com WITH ESMTP;
- Tue, 16 Jul 2019 10:34:49 +0000
-Received: from M9W0068.microfocus.com (2002:f79:bf::f79:bf) by
- M9W0068.microfocus.com (2002:f79:bf::f79:bf) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Tue, 16 Jul 2019 10:30:17 +0000
-Received: from NAM02-CY1-obe.outbound.protection.outlook.com (15.124.72.13) by
- M9W0068.microfocus.com (15.121.0.191) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10 via Frontend Transport; Tue, 16 Jul 2019 10:30:17 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XtWv4bxbPByek5BHArgVOCxiCoKYox+xSqLUn/SQZUdZc33fWyCljHgAXeQwRRxFM30ggzHGm9GL4fe4hw3UFnTBpCemmeHQbUTYDlKAkIUx4gtl0AGUpAp1X4o04ayWLdAYQDnBehsAtdtW9RdGO+pVsJxcKer14ughx59pU329k9LM/BxM3AbgK3W14H86z98dFs1kVZq26yn3/x310WROMezR7joKI9rwBUebIkrc+PohRSqptZbQpsJ40SKvIox+02Al9YykXrDwroqaOFKD+j5+Do9vey77c5uhqGKHmwQI5m1d26kKeCUXvQnUYkfGXn/vrdAej1xDNbYr+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xmQebN4IJL+xyMpPlM20V2y0XhtweywPn16eYPskVsU=;
- b=NQEuXTX4ksCBhIlq9h4HzlQOlPPW/5wMCC3If5oaoZ5J2F4G1Ci8rGFBED4OomfljaIMW1CA3HWcXBn8KUcZTIqhfKhT02SLYHycNqaOLYJkTNG4ITQbHnqmO1qZ7U8lS1Syz/aJoZbMt/IpG/si6XgNLMdL2VmrGTilrSyvUy4mwyfCR6c8u9aE++3b8XJ3LJ/payTFQqpfhgOjtb9CGErRUC95vcUZkpcqAUWh6Rd8RupCi6PosFufdJG7kZoga0DxfRKd3Fyd4G+61I3vxfRKVvR53FgTqac8LxtHMitn2yyYk8Lkwc4781U98/Nroj80W+Zx/hzk1UJzkGP6MQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=suse.com;dmarc=pass action=none header.from=suse.com;dkim=pass
- header.d=suse.com;arc=none
-Received: from MN2PR18MB2846.namprd18.prod.outlook.com (20.179.21.147) by
- MN2PR18MB3039.namprd18.prod.outlook.com (20.179.83.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.10; Tue, 16 Jul 2019 10:30:14 +0000
-Received: from MN2PR18MB2846.namprd18.prod.outlook.com
- ([fe80::307c:8422:7d8c:8ac6]) by MN2PR18MB2846.namprd18.prod.outlook.com
- ([fe80::307c:8422:7d8c:8ac6%3]) with mapi id 15.20.2073.012; Tue, 16 Jul 2019
- 10:30:14 +0000
-From:   Petr Tesarik <PTesarik@suse.com>
-To:     Vasily Gorbik <gor@linux.ibm.com>
-CC:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philipp Rudo <prudo@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Laura Abbott" <labbott@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        Raymund Will <rw@suse.com>
-Subject: Re: [PATCH] s390: enable detection of kernel version from bzImage
-Thread-Topic: [PATCH] s390: enable detection of kernel version from bzImage
-Thread-Index: AQHVO1p2NdiEYNQpfUiSTDvrwXSeS6bNDCkA
-Date:   Tue, 16 Jul 2019 10:30:14 +0000
-Message-ID: <20190716123006.2d426ec8@ezekiel.suse.cz>
-References: <your-ad-here.call-01563228330-ext-8076@work.hours>
-        <patch.git-94e9726bbfe5.your-ad-here.call-01563228538-ext-5706@work.hours>
-In-Reply-To: <patch.git-94e9726bbfe5.your-ad-here.call-01563228538-ext-5706@work.hours>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P265CA0382.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a3::34) To MN2PR18MB2846.namprd18.prod.outlook.com
- (2603:10b6:208:3e::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=PTesarik@suse.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
-x-originating-ip: [213.151.95.130]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 0c2c75df-6128-4ed3-d6f4-08d709d896c7
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR18MB3039;
-x-ms-traffictypediagnostic: MN2PR18MB3039:
-x-microsoft-antispam-prvs: <MN2PR18MB3039010D62B48E96A8D97C25A6CE0@MN2PR18MB3039.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4714;
-x-forefront-prvs: 0100732B76
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(396003)(39860400002)(376002)(346002)(136003)(189003)(199004)(7736002)(52116002)(76176011)(316002)(186003)(66066001)(25786009)(102836004)(2906002)(386003)(6116002)(6506007)(54906003)(7416002)(3846002)(5660300002)(305945005)(446003)(66946007)(26005)(8676002)(11346002)(53936002)(6916009)(66476007)(486006)(9686003)(4326008)(229853002)(66446008)(50226002)(478600001)(81166006)(6246003)(1076003)(81156014)(8936002)(6486002)(256004)(66556008)(476003)(64756008)(14444005)(86362001)(71190400001)(6436002)(71200400001)(14454004)(68736007)(99286004)(107886003)(80792005)(6512007)(39210200001);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR18MB3039;H:MN2PR18MB2846.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: suse.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: nNcnW5B18SYC5zjfgw3VdMqLxNpcbP8s1VSqz0MKEpHy2RLSKx84lKR8VdnxjcqqjhABxoM3t7rB33uC6mItIWenPmhYyi1xs+/8BqNgWpEfZQXrZ9GhA42QdmoegVC++mXbiop7NknlnRRGZp4R62hddt+ipWYwkR+buxeN5zKuL23z6E6SKJ2zUQOG1i1fmGYatbTGaS/zgRdR0DM8PlqmM7zmQC+qAS+ERx/T84cqN7FRnp28MZ/Fw2Kprwb+iRQet8S0T+y/waXx9zxAQ7GbX7jpsJCz/MCzPw80BFwQU4iNetLp7dlYnHFRJb3JBvOrrsetPhMdp0KAVyAtXPmHuCJNBre1jxJYQVU93rCOhUVv9NJoODnuTy+Yw832NPtLAEFDx2dIYd5KkvxqX4UXpGG1vHCXE7gjYZymMrs=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <D0754DD86212944AAEE431760676B286@namprd18.prod.outlook.com>
-Content-Transfer-Encoding: 8BIT
+        Tue, 16 Jul 2019 06:31:03 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190716103101euoutp024de55fecfd5fe03f07243b00d537c02b~x3JEivqZI0774407744euoutp02h
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 10:31:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190716103101euoutp024de55fecfd5fe03f07243b00d537c02b~x3JEivqZI0774407744euoutp02h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1563273061;
+        bh=bZZxZCyhxAVzmhSXV960m/wLED7nviTr1nkJGmytIj4=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=YbVCKtcL04AWRY+XP+wuGqGwxrC+m9ZulNENobhhD3N45jdiWkJ3gd9utAcmm5Z+o
+         DW12J2UxA2u4wcuKIT2ykG33CDyqly406VwCw19YfWSWL/d0JPS7MiCOlPlIEeEzJx
+         K9Cg+/eGVRlRk987fFauh4IltDhZcon+F/HYm6gM=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190716103100eucas1p1fcb43b18b58217c7c91a3b4488ffc20b~x3JDsgA-90955209552eucas1p17;
+        Tue, 16 Jul 2019 10:31:00 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 82.9B.04325.467AD2D5; Tue, 16
+        Jul 2019 11:31:00 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190716103059eucas1p2149817c499508faaa13e0f7c0872ca69~x3JC1QQVU1338713387eucas1p2F;
+        Tue, 16 Jul 2019 10:30:59 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190716103059eusmtrp13fc92bd699a23773714f623dfb2ab27d~x3JCm47gD0523505235eusmtrp1O;
+        Tue, 16 Jul 2019 10:30:59 +0000 (GMT)
+X-AuditID: cbfec7f5-b8fff700000010e5-e6-5d2da764d71a
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 4C.F5.04146.367AD2D5; Tue, 16
+        Jul 2019 11:30:59 +0100 (BST)
+Received: from [106.120.51.71] (unknown [106.120.51.71]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190716103058eusmtip22a164f096ec4b1a1d8f06d1752a43ec1~x3JB6Kcqn0340503405eusmtip2l;
+        Tue, 16 Jul 2019 10:30:58 +0000 (GMT)
+Subject: Re: [PATCH v2 3/4] ARM: dts: exynos: add initial data for coupled
+ regulators for Exynos5422/5800
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <0d31e847-b490-2c0f-abf8-db37b881cb6d@samsung.com>
+Date:   Tue, 16 Jul 2019 12:30:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.6.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c2c75df-6128-4ed3-d6f4-08d709d896c7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2019 10:30:14.5798
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: PTesarik@suse.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB3039
-X-OriginatorOrg: suse.com
+In-Reply-To: <CAJKOXPd6a5aLf1CEhx9m7khPQOwruSuA22efkJb41BsaWXjM3A@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTURzu3NfuVpPrXHiwKBplT7Uo6PQkIepC/VH0TyRLp142y03ZTXuT
+        2stMe+0Pa2iKmY+puaZsZjZpDZfIGpEteyppD3IqYVLDWm27Sv73fb/f953vfIdD47LPZAyd
+        oTvC6XWqTAUlIaxdfk9cem2ccrXJJ0evfnwhUYXzGYmu2P8CdHVwGEcej1mE3AU+EbIMekn0
+        or2MQuMlToBueuwYanK+F6G7r55j6G1+HYV8v9wYOv/IKUIB730CtQx0Udsi2cbbjYC1mC5R
+        bEv1GfbxaAfGXmk1AdbVZ8PYccuCPaIDks3pXGZGLqdP2Joi0djtEdnF9LFPTh/IA/1UERDT
+        kFkHe4z1RBGQ0DKmDsDJD28ogfwA0NDmwAUyDuCvKj82bXnpbp5a1AKYX2zBBDISVF22kyFV
+        FHMYmu648RCWMwfh2M+CsANnHAQ8d+5qOJ1iNsLrF00ghKXMVlg+MBo2E8wS6OutIkJ4LrMf
+        9neZSUETCbtvDYXnYmYv7H74LhyAM9HwzVAFJuCF0DZSFg6DTAkNL3obg2F0kGyHJVZCqBAF
+        v7laRQKeD3sMxYSgvwfgn8KvU2YbgLWGwNQ7bYJPXM/J0EE4sxw2tycI40RYd6cUE86PgH0j
+        kcIdIuANaykujKWw8IJMUMdCc42Zmo4telCPXwMK44xmxhltjDPaGP/nVgLCBKK5HF6r5vi1
+        Ou5oPK/S8jk6dXxaltYCgr+vJ+CaaAP236kOwNBAMUf6tGOVUkaqcvnjWgeANK6QS7dMrFTK
+        pOmq4yc4fVayPieT4x1gHk0ooqUnZw0kyRi16gh3mOOyOf30FqPFMXnAwXLcbr/sVLV27Ofp
+        RAOxKD9Do7nWluTHkquV9IvRQ5V89wTfOdlJ1Yv9FexrLT78ZSeWm5K3uGlDwd1DN84HrJJN
+        fcMfNGuPci37FOvfly+7V5PdMLs5dleqpYafd5agq/TfvQt09h0f1UxD0ue0yaUxco5o6LUu
+        S7T1jykIXqNaswLX86p/ZNOK63kDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBIsWRmVeSWpSXmKPExsVy+t/xe7rJy3VjDdYfkLK4/uU5q8X8I+dY
+        Lfr2/We06H/8mtni/PkN7BZnm96wW2x6fI3V4vKuOWwWn3uPMFrMOL+PyWLtkbvsFkuvX2Sy
+        uN24gs3izY+zTBate4+wW/y7tpHFYvODY2wOgh5r5q1h9Ni0qpPNY/OSeo+D7/YwefRtWcXo
+        cfzGdiaPz5vkAtij9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMy
+        y1KL9O0S9DL27eMr6OGoeHrkDWMD4322LkZODgkBE4mrZ9czdzFycQgJLGWUeLANxOEASshI
+        HF9fBlEjLPHnWhcbRM1rRokvZ/cwgSSEBbIlVi0+ywxiiwjESXxvXMcKUsQscIRF4tWT61Ad
+        M5gkfj5/AraOTcBKYmL7KkYQm1fATmLug3esIDaLgKrEmyuLWEBsUYEIiTPvV7BA1AhKnJz5
+        BMzmFAiUOLn7Dtg2ZgF1iT/zLkHZ4hK3nsxngrDlJba/ncM8gVFoFpL2WUhaZiFpmYWkZQEj
+        yypGkdTS4tz03GJDveLE3OLSvHS95PzcTYzAWN927OfmHYyXNgYfYhTgYFTi4T2xRydWiDWx
+        rLgy9xCjBAezkgiv7VftWCHelMTKqtSi/Pii0pzU4kOMpkDPTWSWEk3OB6ahvJJ4Q1NDcwtL
+        Q3Njc2MzCyVx3g6BgzFCAumJJanZqakFqUUwfUwcnFINjM3LRdJEm1Z+OGnjfeY2Yw7zs+5l
+        8wwPf5gk0i5Ze+SyxHlXgcYDx4oYPCz+iomvibC8sOeKk8f2qW9eXrm+rEd3lv2J3edYmbY+
+        2+fZN8/o3a2OVCkLH1PtpdOP6a2+9PLPzVjTk47eN+8b7ZD6vKhq2yvuDa4ZTzlfpVbWvNJt
+        2/dKWOb4mttKLMUZiYZazEXFiQD5QKtXCwMAAA==
+X-CMS-MailID: 20190716103059eucas1p2149817c499508faaa13e0f7c0872ca69
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190715120432eucas1p1b32d72d239420b861bf8596d4e8a053d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190715120432eucas1p1b32d72d239420b861bf8596d4e8a053d
+References: <CGME20190715120432eucas1p1b32d72d239420b861bf8596d4e8a053d@eucas1p1.samsung.com>
+        <20190715120416.3561-1-k.konieczny@partner.samsung.com>
+        <20190715120416.3561-4-k.konieczny@partner.samsung.com>
+        <CAJKOXPd6a5aLf1CEhx9m7khPQOwruSuA22efkJb41BsaWXjM3A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 16 Jul 2019 00:12:19 +0200
-Vasily Gorbik <gor@linux.ibm.com> wrote:
 
-> Extend "parmarea" to include an offset of the version string, which is
-> stored as 8-byte big endian value.
+On 7/16/19 11:22 AM, Krzysztof Kozlowski wrote:
+> On Mon, 15 Jul 2019 at 14:04, Kamil Konieczny
+> <k.konieczny@partner.samsung.com> wrote:
+>>
+>> Declare Exynos5422/5800 voltage ranges for opp points for big cpu core and
+>> bus wcore and couple their voltage supllies as vdd_arm and vdd_int should
+>> be in 300mV range.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
 > 
-> To retrieve version string from bzImage reliably, one should check the
-> presence of "S390EP" ascii string at 0x10008 (available since v3.2),
-> then read the version string offset from 0x10428 (which has been 0
-> since v3.2 up to now). The string is null terminated.
-> 
-> Could be retrieved with the following "file" command magic (requires
-> file v5.34):
-> 8 string \x02\x00\x00\x18\x60\x00\x00\x50\x02\x00\x00\x68\x60\x00\x00\x50\x40\x40\x40\x40\x40\x40\x40\x40 Linux S390
-> >0x10008       string          S390EP  
-> >>0x10428      bequad          >0  
-> >>>(0x10428.Q) string          >\0             \b, version %s  
-> 
-> Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+> This one was previously from Marek, now it is from you. Any changes here?
 
-This looks great! Much cleaner than the original approach.
+Hmmm, it seems that "From:" tag somehow got lost in v2 compared to v1?
 
-Thank you,
-Petr T
+Also the note about adding patch description (which was the only update to
+original Marek's patch IIRC) should be added, something like:
 
-> ---
->  arch/s390/boot/Makefile       | 2 +-
->  arch/s390/boot/head.S         | 1 +
->  arch/s390/boot/version.c      | 6 ++++++
->  arch/s390/include/asm/setup.h | 4 +++-
->  4 files changed, 11 insertions(+), 2 deletions(-)
->  create mode 100644 arch/s390/boot/version.c
-> 
-> diff --git a/arch/s390/boot/Makefile b/arch/s390/boot/Makefile
-> index 7cba96e7587b..4cf0bddb7d92 100644
-> --- a/arch/s390/boot/Makefile
-> +++ b/arch/s390/boot/Makefile
-> @@ -36,7 +36,7 @@ CFLAGS_sclp_early_core.o += -I$(srctree)/drivers/s390/char
->  
->  obj-y	:= head.o als.o startup.o mem_detect.o ipl_parm.o ipl_report.o
->  obj-y	+= string.o ebcdic.o sclp_early_core.o mem.o ipl_vmparm.o cmdline.o
-> -obj-y	+= ctype.o text_dma.o
-> +obj-y	+= version.o ctype.o text_dma.o
->  obj-$(CONFIG_PROTECTED_VIRTUALIZATION_GUEST)	+= uv.o
->  obj-$(CONFIG_RELOCATABLE)	+= machine_kexec_reloc.o
->  obj-$(CONFIG_RANDOMIZE_BASE)	+= kaslr.o
-> diff --git a/arch/s390/boot/head.S b/arch/s390/boot/head.S
-> index 028aab03a9e7..2087bed6e60f 100644
-> --- a/arch/s390/boot/head.S
-> +++ b/arch/s390/boot/head.S
-> @@ -361,6 +361,7 @@ ENTRY(startup_kdump)
->  	.quad	0			# INITRD_SIZE
->  	.quad	0			# OLDMEM_BASE
->  	.quad	0			# OLDMEM_SIZE
-> +	.quad	kernel_version		# points to kernel version string
->  
->  	.org	COMMAND_LINE
->  	.byte	"root=/dev/ram0 ro"
-> diff --git a/arch/s390/boot/version.c b/arch/s390/boot/version.c
-> new file mode 100644
-> index 000000000000..ea5e49651931
-> --- /dev/null
-> +++ b/arch/s390/boot/version.c
-> @@ -0,0 +1,6 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <generated/utsrelease.h>
-> +#include <generated/compile.h>
-> +
-> +const char kernel_version[] = UTS_RELEASE
-> +	" (" LINUX_COMPILE_BY "@" LINUX_COMPILE_HOST ") " UTS_VERSION;
-> diff --git a/arch/s390/include/asm/setup.h b/arch/s390/include/asm/setup.h
-> index 925889d360c1..e5d28a475f76 100644
-> --- a/arch/s390/include/asm/setup.h
-> +++ b/arch/s390/include/asm/setup.h
-> @@ -54,6 +54,7 @@
->  #define INITRD_SIZE_OFFSET	0x10410
->  #define OLDMEM_BASE_OFFSET	0x10418
->  #define OLDMEM_SIZE_OFFSET	0x10420
-> +#define KERNEL_VERSION_OFFSET	0x10428
->  #define COMMAND_LINE_OFFSET	0x10480
->  
->  #ifndef __ASSEMBLY__
-> @@ -74,7 +75,8 @@ struct parmarea {
->  	unsigned long initrd_size;			/* 0x10410 */
->  	unsigned long oldmem_base;			/* 0x10418 */
->  	unsigned long oldmem_size;			/* 0x10420 */
-> -	char pad1[0x10480 - 0x10428];			/* 0x10428 - 0x10480 */
-> +	unsigned long kernel_version;			/* 0x10428 */
-> +	char pad1[0x10480 - 0x10430];			/* 0x10430 - 0x10480 */
->  	char command_line[ARCH_COMMAND_LINE_SIZE];	/* 0x10480 */
->  };
->  
+...
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+[k.konieczny: add missing patch description]
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
 
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
