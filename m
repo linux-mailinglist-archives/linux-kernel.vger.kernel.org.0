@@ -2,22 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA8B76B03B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 22:08:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE0936B040
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 22:12:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388650AbfGPUHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 16:07:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51254 "EHLO mail.kernel.org"
+        id S2388696AbfGPUKt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 16:10:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59722 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728366AbfGPUHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 16:07:42 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728575AbfGPUKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 16:10:48 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31F4E20659;
-        Tue, 16 Jul 2019 20:07:40 +0000 (UTC)
-Date:   Tue, 16 Jul 2019 16:07:38 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 361C13082B6D;
+        Tue, 16 Jul 2019 20:10:48 +0000 (UTC)
+Received: from torg (ovpn-122-28.rdu2.redhat.com [10.10.122.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 76D2C60C44;
+        Tue, 16 Jul 2019 20:10:42 +0000 (UTC)
+Date:   Tue, 16 Jul 2019 15:10:40 -0500
+From:   Clark Williams <williams@redhat.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
@@ -25,6 +28,7 @@ Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Sebastian Siewior <bigeasy@linutronix.de>,
         Paul McKenney <paulmck@linux.vnet.ibm.com>,
         Christoph Hellwig <hch@lst.de>, Tejun Heo <tj@kernel.org>,
@@ -37,14 +41,16 @@ Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
         Marc Zyngier <marc.zyngier@arm.com>,
         Frederic Weisbecker <frederic@kernel.org>
 Subject: Re: [patch 1/1] Kconfig: Introduce CONFIG_PREEMPT_RT
-Message-ID: <20190716160738.1ccfc018@gandalf.local.home>
+Message-ID: <20190716151040.04ef9122@torg>
 In-Reply-To: <20190715150601.205143057@linutronix.de>
 References: <20190715150402.798499167@linutronix.de>
         <20190715150601.205143057@linutronix.de>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Organization: Red Hat, Inc
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 16 Jul 2019 20:10:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,6 +70,12 @@ Thomas Gleixner <tglx@linutronix.de> wrote:
 > No functional change.
 > 
 > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+
+Excited to see this Thomas. Now I can start planning to build from a single tree
+rather than an RT tree off to the side of RHEL :)
+
+Acked-by: Clark Williams <williams@redhat.com>
+
 > ---
 >  arch/Kconfig           |    3 +++
 >  kernel/Kconfig.preempt |   25 +++++++++++++++++++++++--
@@ -103,14 +115,6 @@ Thomas Gleixner <tglx@linutronix.de> wrote:
 > +config PREEMPT_RT
 > +	bool "Fully Preemptible Kernel (Real-Time)"
 > +	depends on EXPERT && ARCH_SUPPORTS_RT
-
-I can't wait to see the CONFIG_ARCH_SUPPORTS_RT added!
-
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
-
 > +	select PREEMPT
 > +	help
 > +	  This option turns the kernel into a real-time kernel by replacing
@@ -134,4 +138,9 @@ Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 > +       bool
 > +       select PREEMPT_COUNT
 > 
+> 
 
+
+-- 
+The United States Coast Guard
+Ruining Natural Selection since 1790
