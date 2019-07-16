@@ -2,161 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E9106A689
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 12:28:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC2FF6A6A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 12:34:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733211AbfGPK2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 06:28:25 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44826 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733151AbfGPK2Y (ORCPT
+        id S1733251AbfGPKev convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 16 Jul 2019 06:34:51 -0400
+Received: from m9a0002g.houston.softwaregrp.com ([15.124.64.67]:50158 "EHLO
+        m9a0002g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732081AbfGPKeu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 06:28:24 -0400
-Received: by mail-pg1-f194.google.com with SMTP id i18so9217276pgl.11
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 03:28:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Y9oHIuUnvA5xAOt2sG5I7PMnR70HX2a42btCOmZ0knc=;
-        b=M1ei1CGtQUJ5wTz3qfdFMu+ibfhjsSqHNuABQXK+2mW2UaYsiKQmVgHImwaupyK1SJ
-         WUzRu+v5p7JsCmFBucUUvbohrtTGD97XSBRI1dYMytdItzK17BNlRGMrQA+h/ELLHQzR
-         LcE41K2Ds0I3L3RXd98KR7nMiZM5xKj7ndtMxKrcP1qX3ePptWLdDV5OTMPXyB0+JtMw
-         Cm18CJIz9Z36j842xjw/5DYVtYdMGcg49LjUOFevHhJuhtJBtgUmsfxOJ7eJ7+mCIqIH
-         DsxwZZcDk5a35gmc2Q+XPfARfNueBwJWzGiKzPi7CoLDdEWoaNtwPS7kePJcxf00Wcuc
-         8yZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Y9oHIuUnvA5xAOt2sG5I7PMnR70HX2a42btCOmZ0knc=;
-        b=NycRN7QzcXnsAhmtKs4OriuqvGWjlYrf8qKEJcu++2gQEtyqXWuv0HQDe32dIKukOQ
-         /si2fTKEKuyLL0SMdy7HS/5GkuLd14jgH0B9xwp/xOARDVDATVIstTBsNJMY9/da9Kpo
-         fqnEpskKNsRZloJ7ERHcGIzUs4wl63ri8HuUJcyqAww4GSUwUPH76KRKKu9UfvXtiNR7
-         WAKe92uB+9GqwZaDZJl7mjFCYKos9ZyT+p/CM9zFXfyi6lY0si1G19Ll6A4GW5nBJivn
-         FFhTOVLc77+peL+nDo9AkzfwrmOf4B+pxyVsLe1NGRkjmqsvIgL0NSpEifBrIKdr683A
-         SyeQ==
-X-Gm-Message-State: APjAAAV79KDNFdhPMfDOJON+GStk60xtVcNmdWfoA8RxjZoM0CLF8i8E
-        6k9xZ73mvBhrXSmOnQmzMIHZSaLmWyo=
-X-Google-Smtp-Source: APXvYqzOWjwHADtg0IeTrZRs0dD/whTFszTRqY/XHlwCOHIyoUAXjjxmcFPlmNZSWKUocUa8VGy4Bw==
-X-Received: by 2002:a63:494d:: with SMTP id y13mr33092205pgk.109.1563272903599;
-        Tue, 16 Jul 2019 03:28:23 -0700 (PDT)
-Received: from bharath12345-Inspiron-5559 ([103.110.42.34])
-        by smtp.gmail.com with ESMTPSA id p27sm33040074pfq.136.2019.07.16.03.28.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Jul 2019 03:28:23 -0700 (PDT)
-Date:   Tue, 16 Jul 2019 15:58:14 +0530
-From:   Bharath Vedartham <linux.bhar@gmail.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Matt Sickler <Matt.Sickler@daktronics.com>,
-        "ira.weiny@intel.com" <ira.weiny@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "jglisse@redhat.com" <jglisse@redhat.com>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] staging: kpc2000: Convert put_page() to put_user_page*()
-Message-ID: <20190716102814.GA8715@bharath12345-Inspiron-5559>
-References: <20190715195248.GA22495@bharath12345-Inspiron-5559>
- <2604fcd1-4829-d77e-9f7c-d4b731782ff9@nvidia.com>
- <SN6PR02MB4016687B605E3D97D699956EEECF0@SN6PR02MB4016.namprd02.prod.outlook.com>
- <82441723-f30e-5811-ab1c-dd9a4993d7df@nvidia.com>
+        Tue, 16 Jul 2019 06:34:50 -0400
+Received: FROM m9a0002g.houston.softwaregrp.com (15.121.0.191) BY m9a0002g.houston.softwaregrp.com WITH ESMTP;
+ Tue, 16 Jul 2019 10:34:49 +0000
+Received: from M9W0068.microfocus.com (2002:f79:bf::f79:bf) by
+ M9W0068.microfocus.com (2002:f79:bf::f79:bf) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Tue, 16 Jul 2019 10:30:17 +0000
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (15.124.72.13) by
+ M9W0068.microfocus.com (15.121.0.191) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Tue, 16 Jul 2019 10:30:17 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XtWv4bxbPByek5BHArgVOCxiCoKYox+xSqLUn/SQZUdZc33fWyCljHgAXeQwRRxFM30ggzHGm9GL4fe4hw3UFnTBpCemmeHQbUTYDlKAkIUx4gtl0AGUpAp1X4o04ayWLdAYQDnBehsAtdtW9RdGO+pVsJxcKer14ughx59pU329k9LM/BxM3AbgK3W14H86z98dFs1kVZq26yn3/x310WROMezR7joKI9rwBUebIkrc+PohRSqptZbQpsJ40SKvIox+02Al9YykXrDwroqaOFKD+j5+Do9vey77c5uhqGKHmwQI5m1d26kKeCUXvQnUYkfGXn/vrdAej1xDNbYr+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xmQebN4IJL+xyMpPlM20V2y0XhtweywPn16eYPskVsU=;
+ b=NQEuXTX4ksCBhIlq9h4HzlQOlPPW/5wMCC3If5oaoZ5J2F4G1Ci8rGFBED4OomfljaIMW1CA3HWcXBn8KUcZTIqhfKhT02SLYHycNqaOLYJkTNG4ITQbHnqmO1qZ7U8lS1Syz/aJoZbMt/IpG/si6XgNLMdL2VmrGTilrSyvUy4mwyfCR6c8u9aE++3b8XJ3LJ/payTFQqpfhgOjtb9CGErRUC95vcUZkpcqAUWh6Rd8RupCi6PosFufdJG7kZoga0DxfRKd3Fyd4G+61I3vxfRKVvR53FgTqac8LxtHMitn2yyYk8Lkwc4781U98/Nroj80W+Zx/hzk1UJzkGP6MQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=suse.com;dmarc=pass action=none header.from=suse.com;dkim=pass
+ header.d=suse.com;arc=none
+Received: from MN2PR18MB2846.namprd18.prod.outlook.com (20.179.21.147) by
+ MN2PR18MB3039.namprd18.prod.outlook.com (20.179.83.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2073.10; Tue, 16 Jul 2019 10:30:14 +0000
+Received: from MN2PR18MB2846.namprd18.prod.outlook.com
+ ([fe80::307c:8422:7d8c:8ac6]) by MN2PR18MB2846.namprd18.prod.outlook.com
+ ([fe80::307c:8422:7d8c:8ac6%3]) with mapi id 15.20.2073.012; Tue, 16 Jul 2019
+ 10:30:14 +0000
+From:   Petr Tesarik <PTesarik@suse.com>
+To:     Vasily Gorbik <gor@linux.ibm.com>
+CC:     Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philipp Rudo <prudo@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Laura Abbott" <labbott@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        Raymund Will <rw@suse.com>
+Subject: Re: [PATCH] s390: enable detection of kernel version from bzImage
+Thread-Topic: [PATCH] s390: enable detection of kernel version from bzImage
+Thread-Index: AQHVO1p2NdiEYNQpfUiSTDvrwXSeS6bNDCkA
+Date:   Tue, 16 Jul 2019 10:30:14 +0000
+Message-ID: <20190716123006.2d426ec8@ezekiel.suse.cz>
+References: <your-ad-here.call-01563228330-ext-8076@work.hours>
+        <patch.git-94e9726bbfe5.your-ad-here.call-01563228538-ext-5706@work.hours>
+In-Reply-To: <patch.git-94e9726bbfe5.your-ad-here.call-01563228538-ext-5706@work.hours>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P265CA0382.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a3::34) To MN2PR18MB2846.namprd18.prod.outlook.com
+ (2603:10b6:208:3e::19)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=PTesarik@suse.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+x-originating-ip: [213.151.95.130]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0c2c75df-6128-4ed3-d6f4-08d709d896c7
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR18MB3039;
+x-ms-traffictypediagnostic: MN2PR18MB3039:
+x-microsoft-antispam-prvs: <MN2PR18MB3039010D62B48E96A8D97C25A6CE0@MN2PR18MB3039.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4714;
+x-forefront-prvs: 0100732B76
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(396003)(39860400002)(376002)(346002)(136003)(189003)(199004)(7736002)(52116002)(76176011)(316002)(186003)(66066001)(25786009)(102836004)(2906002)(386003)(6116002)(6506007)(54906003)(7416002)(3846002)(5660300002)(305945005)(446003)(66946007)(26005)(8676002)(11346002)(53936002)(6916009)(66476007)(486006)(9686003)(4326008)(229853002)(66446008)(50226002)(478600001)(81166006)(6246003)(1076003)(81156014)(8936002)(6486002)(256004)(66556008)(476003)(64756008)(14444005)(86362001)(71190400001)(6436002)(71200400001)(14454004)(68736007)(99286004)(107886003)(80792005)(6512007)(39210200001);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR18MB3039;H:MN2PR18MB2846.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: suse.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: nNcnW5B18SYC5zjfgw3VdMqLxNpcbP8s1VSqz0MKEpHy2RLSKx84lKR8VdnxjcqqjhABxoM3t7rB33uC6mItIWenPmhYyi1xs+/8BqNgWpEfZQXrZ9GhA42QdmoegVC++mXbiop7NknlnRRGZp4R62hddt+ipWYwkR+buxeN5zKuL23z6E6SKJ2zUQOG1i1fmGYatbTGaS/zgRdR0DM8PlqmM7zmQC+qAS+ERx/T84cqN7FRnp28MZ/Fw2Kprwb+iRQet8S0T+y/waXx9zxAQ7GbX7jpsJCz/MCzPw80BFwQU4iNetLp7dlYnHFRJb3JBvOrrsetPhMdp0KAVyAtXPmHuCJNBre1jxJYQVU93rCOhUVv9NJoODnuTy+Yw832NPtLAEFDx2dIYd5KkvxqX4UXpGG1vHCXE7gjYZymMrs=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <D0754DD86212944AAEE431760676B286@namprd18.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <82441723-f30e-5811-ab1c-dd9a4993d7df@nvidia.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c2c75df-6128-4ed3-d6f4-08d709d896c7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2019 10:30:14.5798
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: PTesarik@suse.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB3039
+X-OriginatorOrg: suse.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 15, 2019 at 03:01:43PM -0700, John Hubbard wrote:
-> On 7/15/19 2:47 PM, Matt Sickler wrote:
-> > It looks like Outlook is going to absolutely trash this email.  Hopefully it comes through okay.
-> > 
-> ...
-> >>
-> >> Because this is a common pattern, and because the code here doesn't likely
-> >> need to set page dirty before the dma_unmap_sg call, I think the following
-> >> would be better (it's untested), instead of the above diff hunk:
-> >>
-> >> diff --git a/drivers/staging/kpc2000/kpc_dma/fileops.c
-> >> b/drivers/staging/kpc2000/kpc_dma/fileops.c
-> >> index 48ca88bc6b0b..d486f9866449 100644
-> >> --- a/drivers/staging/kpc2000/kpc_dma/fileops.c
-> >> +++ b/drivers/staging/kpc2000/kpc_dma/fileops.c
-> >> @@ -211,16 +211,13 @@ void  transfer_complete_cb(struct aio_cb_data
-> >> *acd, size_t xfr_count, u32 flags)
-> >>        BUG_ON(acd->ldev == NULL);
-> >>        BUG_ON(acd->ldev->pldev == NULL);
-> >>
-> >> -       for (i = 0 ; i < acd->page_count ; i++) {
-> >> -               if (!PageReserved(acd->user_pages[i])) {
-> >> -                       set_page_dirty(acd->user_pages[i]);
-> >> -               }
-> >> -       }
-> >> -
-> >>        dma_unmap_sg(&acd->ldev->pldev->dev, acd->sgt.sgl, acd->sgt.nents, acd->ldev->dir);
-> >>
-> >>        for (i = 0 ; i < acd->page_count ; i++) {
-> >> -               put_page(acd->user_pages[i]);
-> >> +               if (!PageReserved(acd->user_pages[i])) {
-> >> +                       put_user_pages_dirty(&acd->user_pages[i], 1);
-> >> +               else
-> >> +                       put_user_page(acd->user_pages[i]);
-> >>        }
-> >>
-> >>        sg_free_table(&acd->sgt);
-> > 
-> > I don't think I ever really knew the right way to do this. 
-> > 
-> > The changes Bharath suggested look okay to me.  I'm not sure about the check for PageReserved(), though.  At first glance it appears to be equivalent to what was there before, but maybe I should learn what that Reserved page flag really means.
-> > From [1], the only comment that seems applicable is
-> > * - MMIO/DMA pages. Some architectures don't allow to ioremap pages that are
-> >  *   not marked PG_reserved (as they might be in use by somebody else who does
-> >  *   not respect the caching strategy).
-> > 
-> > These pages should be coming from anonymous (RAM, not file backed) memory in userspace.  Sometimes it comes from hugepage backed memory, though I don't think that makes a difference.  I should note that transfer_complete_cb handles both RAM to device and device to RAM DMAs, if that matters.
-Yes. file_operations->read passes a userspace buffer which AFAIK is
-anonymous memory.
-> > [1] https://elixir.bootlin.com/linux/v5.2/source/include/linux/page-flags.h#L17
-> > 
+On Tue, 16 Jul 2019 00:12:19 +0200
+Vasily Gorbik <gor@linux.ibm.com> wrote:
+
+> Extend "parmarea" to include an offset of the version string, which is
+> stored as 8-byte big endian value.
 > 
-> I agree: the PageReserved check looks unnecessary here, from my outside-the-kpc_2000-team
-> perspective, anyway. Assuming that your analysis above is correct, you could collapse that
-> whole think into just:
-Since the file_operations->read passes a userspace buffer, I doubt that
-the pages of the userspace buffer will be reserved.
-> @@ -211,17 +209,8 @@ void  transfer_complete_cb(struct aio_cb_data *acd, size_t xfr_count, u32 flags)
->         BUG_ON(acd->ldev == NULL);
->         BUG_ON(acd->ldev->pldev == NULL);
->  
-> -       for (i = 0 ; i < acd->page_count ; i++) {
-> -               if (!PageReserved(acd->user_pages[i])) {
-> -                       set_page_dirty(acd->user_pages[i]);
-> -               }
-> -       }
-> -
->         dma_unmap_sg(&acd->ldev->pldev->dev, acd->sgt.sgl, acd->sgt.nents, acd->ldev->dir);
-> -
-> -       for (i = 0 ; i < acd->page_count ; i++) {
-> -               put_page(acd->user_pages[i]);
-> -       }
-> +       put_user_pages_dirty(&acd->user_pages[i], acd->page_count);
->  
->         sg_free_table(&acd->sgt);
->  
-> (Also, Matt, I failed to Cc: you on a semi-related cleanup that I just sent out for this
-> driver, as long as I have your attention:
+> To retrieve version string from bzImage reliably, one should check the
+> presence of "S390EP" ascii string at 0x10008 (available since v3.2),
+> then read the version string offset from 0x10428 (which has been 0
+> since v3.2 up to now). The string is null terminated.
 > 
->    https://lore.kernel.org/r/20190715212123.432-1-jhubbard@nvidia.com
-> )
-Matt will you be willing to pick this up for testing or do you want a
-different patch?
-> thanks,
-> -- 
-> John Hubbard
-> NVIDIA
-Thank you
-Bharath
+> Could be retrieved with the following "file" command magic (requires
+> file v5.34):
+> 8 string \x02\x00\x00\x18\x60\x00\x00\x50\x02\x00\x00\x68\x60\x00\x00\x50\x40\x40\x40\x40\x40\x40\x40\x40 Linux S390
+> >0x10008       string          S390EP  
+> >>0x10428      bequad          >0  
+> >>>(0x10428.Q) string          >\0             \b, version %s  
+> 
+> Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+
+This looks great! Much cleaner than the original approach.
+
+Thank you,
+Petr T
+
+> ---
+>  arch/s390/boot/Makefile       | 2 +-
+>  arch/s390/boot/head.S         | 1 +
+>  arch/s390/boot/version.c      | 6 ++++++
+>  arch/s390/include/asm/setup.h | 4 +++-
+>  4 files changed, 11 insertions(+), 2 deletions(-)
+>  create mode 100644 arch/s390/boot/version.c
+> 
+> diff --git a/arch/s390/boot/Makefile b/arch/s390/boot/Makefile
+> index 7cba96e7587b..4cf0bddb7d92 100644
+> --- a/arch/s390/boot/Makefile
+> +++ b/arch/s390/boot/Makefile
+> @@ -36,7 +36,7 @@ CFLAGS_sclp_early_core.o += -I$(srctree)/drivers/s390/char
+>  
+>  obj-y	:= head.o als.o startup.o mem_detect.o ipl_parm.o ipl_report.o
+>  obj-y	+= string.o ebcdic.o sclp_early_core.o mem.o ipl_vmparm.o cmdline.o
+> -obj-y	+= ctype.o text_dma.o
+> +obj-y	+= version.o ctype.o text_dma.o
+>  obj-$(CONFIG_PROTECTED_VIRTUALIZATION_GUEST)	+= uv.o
+>  obj-$(CONFIG_RELOCATABLE)	+= machine_kexec_reloc.o
+>  obj-$(CONFIG_RANDOMIZE_BASE)	+= kaslr.o
+> diff --git a/arch/s390/boot/head.S b/arch/s390/boot/head.S
+> index 028aab03a9e7..2087bed6e60f 100644
+> --- a/arch/s390/boot/head.S
+> +++ b/arch/s390/boot/head.S
+> @@ -361,6 +361,7 @@ ENTRY(startup_kdump)
+>  	.quad	0			# INITRD_SIZE
+>  	.quad	0			# OLDMEM_BASE
+>  	.quad	0			# OLDMEM_SIZE
+> +	.quad	kernel_version		# points to kernel version string
+>  
+>  	.org	COMMAND_LINE
+>  	.byte	"root=/dev/ram0 ro"
+> diff --git a/arch/s390/boot/version.c b/arch/s390/boot/version.c
+> new file mode 100644
+> index 000000000000..ea5e49651931
+> --- /dev/null
+> +++ b/arch/s390/boot/version.c
+> @@ -0,0 +1,6 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <generated/utsrelease.h>
+> +#include <generated/compile.h>
+> +
+> +const char kernel_version[] = UTS_RELEASE
+> +	" (" LINUX_COMPILE_BY "@" LINUX_COMPILE_HOST ") " UTS_VERSION;
+> diff --git a/arch/s390/include/asm/setup.h b/arch/s390/include/asm/setup.h
+> index 925889d360c1..e5d28a475f76 100644
+> --- a/arch/s390/include/asm/setup.h
+> +++ b/arch/s390/include/asm/setup.h
+> @@ -54,6 +54,7 @@
+>  #define INITRD_SIZE_OFFSET	0x10410
+>  #define OLDMEM_BASE_OFFSET	0x10418
+>  #define OLDMEM_SIZE_OFFSET	0x10420
+> +#define KERNEL_VERSION_OFFSET	0x10428
+>  #define COMMAND_LINE_OFFSET	0x10480
+>  
+>  #ifndef __ASSEMBLY__
+> @@ -74,7 +75,8 @@ struct parmarea {
+>  	unsigned long initrd_size;			/* 0x10410 */
+>  	unsigned long oldmem_base;			/* 0x10418 */
+>  	unsigned long oldmem_size;			/* 0x10420 */
+> -	char pad1[0x10480 - 0x10428];			/* 0x10428 - 0x10480 */
+> +	unsigned long kernel_version;			/* 0x10428 */
+> +	char pad1[0x10480 - 0x10430];			/* 0x10430 - 0x10480 */
+>  	char command_line[ARCH_COMMAND_LINE_SIZE];	/* 0x10480 */
+>  };
+>  
+
