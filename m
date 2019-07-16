@@ -2,68 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02A7A6AC5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 17:59:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC3F96AC63
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 17:59:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388062AbfGPP64 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 11:58:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52420 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728121AbfGPP64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 11:58:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2639DAD05;
-        Tue, 16 Jul 2019 15:58:54 +0000 (UTC)
-Date:   Tue, 16 Jul 2019 17:58:52 +0200
-From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     Alessio Balsini <balsini@android.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Paul Turner <pjt@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Todd Kjos <tkjos@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Tejun Heo <tj@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v11 4/5] sched/core: uclamp: Use TG's clamps to restrict
- TASK's clamps
-Message-ID: <20190716155852.GF32540@blackbody.suse.cz>
-References: <20190708084357.12944-1-patrick.bellasi@arm.com>
- <20190708084357.12944-5-patrick.bellasi@arm.com>
- <20190715164248.GA21982@blackbody.suse.cz>
- <20190716143435.iwwd6fjr3udlqol4@e110439-lin>
+        id S2388108AbfGPP7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 11:59:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34340 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732614AbfGPP7Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 11:59:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=HKURHM7m5zXsi/GOJrSkjBrQT5KBLSbh/yuqng7TVWQ=; b=FZ2B+Fcqy5zrXkeMmMwqudKix
+        0MId/49v5zj7hvExkwzR406w9qiPdWWNN8orfzbsU2+IvDK5dUb6AVNQr9RbtfbmLJE1iNFTgA/N3
+        lgVh2CR+iocUKXmxSyJm93Fw9p0m8+L5OAuKoXp/gn5R1iDQOWybaJpWKjBFxSES9APhYZ+h09hOO
+        d0UoLArUQk6RZQgNkISbxzZZqQYTr/YTiCc5gEo658bZfh8IIs6cdggGTBbfpvsKhjPMD2qCCRtzV
+        RG+EM/IvdXAWSKosY1wbLpsfnSdSU+S/nuMhbs6htPFUw8AbyNSYU5xJn/VrzYla7hqJVbpqGfG9Q
+        d/pDbtEcw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hnPr4-00015I-B2; Tue, 16 Jul 2019 15:59:02 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B55F12059DEA3; Tue, 16 Jul 2019 17:59:00 +0200 (CEST)
+Date:   Tue, 16 Jul 2019 17:59:00 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alex Kogan <alex.kogan@oracle.com>
+Cc:     linux@armlinux.org.uk, mingo@redhat.com, will.deacon@arm.com,
+        arnd@arndb.de, longman@redhat.com, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        guohanjun@huawei.com, jglauber@marvell.com,
+        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        dave.dice@oracle.com, rahul.x.yadav@oracle.com
+Subject: Re: [PATCH v3 4/5] locking/qspinlock: Introduce starvation avoidance
+ into CNA
+Message-ID: <20190716155900.GS3419@hirez.programming.kicks-ass.net>
+References: <20190715192536.104548-1-alex.kogan@oracle.com>
+ <20190715192536.104548-5-alex.kogan@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190716143435.iwwd6fjr3udlqol4@e110439-lin>
+In-Reply-To: <20190715192536.104548-5-alex.kogan@oracle.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 03:34:35PM +0100, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> Am I missing something?
-No, it's rather my misinterpretation of the syscall semantics.
+On Mon, Jul 15, 2019 at 03:25:35PM -0400, Alex Kogan wrote:
 
-> Otherwise, I think the changelog sentence you quoted is just
-> misleading.
-It certainly mislead me to thinking about the sched_setattr calls as
-requests of utilization being in the given interval (substituting 0 or 1 when
-only one boundary is given, and further constrained by tg's interval).
+> @@ -36,6 +37,33 @@ struct cna_node {
+>  
+>  #define CNA_NODE(ptr) ((struct cna_node *)(ptr))
+>  
+> +/* Per-CPU pseudo-random number seed */
+> +static DEFINE_PER_CPU(u32, seed);
+> +
+> +/*
+> + * Controls the probability for intra-node lock hand-off. It can be
+> + * tuned and depend, e.g., on the number of CPUs per node. For now,
+> + * choose a value that provides reasonable long-term fairness without
+> + * sacrificing performance compared to a version that does not have any
+> + * fairness guarantees.
+> + */
+> +#define INTRA_NODE_HANDOFF_PROB_ARG 0x10000
+> +
+> +/*
+> + * Return false with probability 1 / @range.
+> + * @range must be a power of 2.
+> + */
+> +static bool probably(unsigned int range)
+> +{
+> +	u32 s;
+> +
+> +	s = this_cpu_read(seed);
+> +	s = next_pseudo_random32(s);
+> +	this_cpu_write(seed, s);
+> +
+> +	return s & (range - 1);
 
-I see your point, those are actually two (mostly) independent controls.
-Makes sense now.
+This is fragile, better to take a number of bits as argument.
 
-Thanks,
-Michal
+> +}
+> +
+>  static void cna_init_node(struct mcs_spinlock *node)
+>  {
+>  	struct cna_node *cn = CNA_NODE(node);
+> @@ -140,7 +168,13 @@ static inline void cna_pass_mcs_lock(struct mcs_spinlock *node,
+>  	u64 *var = &next->locked;
+>  	u64 val = 1;
+>  
+> -	succ = find_successor(node);
+> +	/*
+> +	 * Try to pass the lock to a thread running on the same node.
+> +	 * For long-term fairness, search for such a thread with high
+> +	 * probability rather than always.
+> +	 */
+> +	if (probably(INTRA_NODE_HANDOFF_PROB_ARG))
+> +		succ = find_successor(node);
+>  
+>  	if (succ) {
+>  		var = &succ->mcs.locked;
+
+And this is where that tertiary condition comes from.. I think.
+
