@@ -2,91 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CF346B13C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 23:40:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 747AE6B146
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 23:43:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388386AbfGPVk2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 17:40:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54172 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728235AbfGPVk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 17:40:28 -0400
-Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17637206C2;
-        Tue, 16 Jul 2019 21:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563313227;
-        bh=DsJllMIph7rrpdefmAd2AzgdJy2cvJ1qoXgL7T7usRc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gT69QE+d5wzTTSXhV5hoXTFHOiN0EX47IbcE2DOtxiYNQReYbvTY8CGgt6YS2Vyq6
-         ugXB91GW9ykT//bPrcIOC4Q1Fg6oRQPe9cc2ML0j83sGuS/5J6mgbtHUj764WNdyXN
-         r36J7y+AZ0/tB0Q7l8Fmf7XENBtk0t6WMHFTbnK0=
-Date:   Tue, 16 Jul 2019 23:40:25 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        Thomas Lindroth <thomas.lindroth@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] cpuidle: Always stop scheduler tick on adaptive-tick CPUs
-Message-ID: <20190716214024.GA8345@lenoir>
-References: <6254683.2O5gIZElE2@kreacher>
+        id S1731819AbfGPVm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 17:42:29 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42150 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726794AbfGPVm3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 17:42:29 -0400
+Received: by mail-lj1-f194.google.com with SMTP id t28so21457196lje.9
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 14:42:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qWj58+e/GjA5oMIqEIz1bPYBPJn9YmCmo/2qZtRrpEc=;
+        b=w024gHcn0gesOXAZgGhjMOSeHWAdbhYgBj5nJQy3TyzpuVcOUB0dpA/Rf+UZfQe+Us
+         uqcVDbPLMYbUQ2+IC4rDAMPid53e8k9hw46TcnYvmJsMsfwuPR4zZtE0wKslCRXWiUFo
+         eyGgE8NxI9ZDEjDa3FEgobW/1xAd2/6zVSEUhlKRFj0X0t4/y8oqu3t6JeZdywvWDXUB
+         dqwzq/TlOoNUg/8u8ngdBqU+p6P+ury1IzDezKULQRL83FnNEoTqvGnA+45ZMnZrygfu
+         U5me3APF1mYNJAIDdQIblqKtCYqI9xHeo9W/Onltp52RLoPO+0aXdYUCiImmanz0nOmK
+         tUTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qWj58+e/GjA5oMIqEIz1bPYBPJn9YmCmo/2qZtRrpEc=;
+        b=bFtvaRJEx3xYPyZ1N8mWeAUuQi2Yn7C/cMBleqBqhSzHTsqCZXMFeP+RfZm3WS6i3g
+         sN7wMIg/fGU7jRMCusnm6GBIAi0MMpY33c/IsyhWIF/HPbOm0EYCWhTnN220x5Yn/m/H
+         zge2DUrxcNtS9rG6jlhVA8PSHoR6Mm92DPocwErblbVaAwSzq25YWfTBXyoNMorjiVCG
+         cRErqtU/IFAk3cf6J83vn0SgB5Eomg/c3l9Svw46aP6Ym0notYCBe0GTwaRn7wQafQp/
+         Dyd6auJgwdmWxGbAuF+Yx4QBCUx/7RRV+CHQxO6YY0PD6AcuI50b4nkwhT0l9n1bTYJ3
+         UkQg==
+X-Gm-Message-State: APjAAAX0MiLHyFiTtTxrj8pJo/J9mI9M0DEq7P/vuxLY2+Xik/5NDJNE
+        /7hK6kLZn4dnIQl/VoJf1RiqsAIIurlhWdKXBPJWsw==
+X-Google-Smtp-Source: APXvYqzBU+OF8WyuGSMhycQxTCXJMVlzUxq526tx+EUSt2YvSRHnOvaDWvH6LAh9iDOjQgOm1Pk2VmywMwT+wLy2Fvk=
+X-Received: by 2002:a2e:8195:: with SMTP id e21mr18010935ljg.62.1563313347087;
+ Tue, 16 Jul 2019 14:42:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6254683.2O5gIZElE2@kreacher>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190710121518.GR17490@shao2-debian>
+In-Reply-To: <20190710121518.GR17490@shao2-debian>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 16 Jul 2019 23:42:15 +0200
+Message-ID: <CACRpkdYmtgO_E-KKE8zjA04POawJ=4RN3xFUPY__7GF+gSNbNQ@mail.gmail.com>
+Subject: Re: [gpio] f69e00bd21: unixbench.score -24.2% regression
+To:     kernel test robot <rong.a.chen@intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     David Woods <dwoods@mellanox.com>,
+        Shravan Kumar Ramani <sramani@mellanox.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKP <lkp@01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 05:25:10PM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Running the scheduler tick on idle adaptive-tick CPUs is not useful
+On Wed, Jul 10, 2019 at 2:15 PM kernel test robot <rong.a.chen@intel.com> wrote:
 
-Judging by the below change, you mean full dynticks, right?
+> FYI, we noticed a -24.2% regression of unixbench.score due to commit:
+> commit: f69e00bd21aa6a1961c521b6eb199137fcb8a76a ("gpio: mmio: Support two direction registers")
+> https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-> and it may also be not expected by users (as reported by Thomas), so
-> add a check to cpuidle_idle_call() to always stop the tick on them
-> regardless of the idle duration predicted by the governor.
-> 
-> Fixes: 554c8aa8ecad ("sched: idle: Select idle state before stopping the tick")
-> Reported-by: Thomas Lindroth <thomas.lindroth@gmail.com>
-> Tested-by: Thomas Lindroth <thomas.lindroth@gmail.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  kernel/sched/idle.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> Index: linux-pm/kernel/sched/idle.c
-> ===================================================================
-> --- linux-pm.orig/kernel/sched/idle.c
-> +++ linux-pm/kernel/sched/idle.c
-> @@ -191,7 +191,8 @@ static void cpuidle_idle_call(void)
->  		 */
->  		next_state = cpuidle_select(drv, dev, &stop_tick);
->  
-> -		if (stop_tick || tick_nohz_tick_stopped())
-> +		if (stop_tick || tick_nohz_tick_stopped() ||
-> +		    !housekeeping_cpu(dev->cpu, HK_FLAG_TICK))
+That's pretty bogus since the test doesn't even seem to be using GPIO.
+Further AFAIK Intel chips don't even use that driver.
 
-But tick_nohz_tick_stopped() also works on full dynticks CPUs. If the
-tick isn't stopped on a full dynticks CPU by the time we reach this path,
-it means that the conditions for the tick to be stopped are not met anyway
-(eg: more than one task and sched tick is needed, perf event requires the tick,
-posix CPU timer, etc...)
+Can you provide some rootcausing?
 
-Or am I missing something else?
+If you are using GPIOs from userspace in the test somehow I am
+sure both me and Bartosz would be interested to hear how.
 
-Thanks.
-
->  			tick_nohz_idle_stop_tick();
->  		else
->  			tick_nohz_idle_retain_tick();
-> 
-> 
-> 
+Yours,
+Linus Walleij
