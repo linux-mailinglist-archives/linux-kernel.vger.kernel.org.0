@@ -2,248 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 884B06A4DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 11:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53B696A4CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 11:24:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731702AbfGPJ00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 05:26:26 -0400
-Received: from mout.web.de ([212.227.15.3]:35017 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726997AbfGPJ0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 05:26:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1563269162;
-        bh=ZuaXQvRTOC5ngjHr5YqwjZJIMDEoZHlEwgiQPlvoALE=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=Z4GOSLSiYuih1O+FCoo5v8zGB7aWkeUoAcFArhJVZp0ijEv6ZGgZpAiZo03Urb5+Y
-         sL8j8vQ/8WiH6uugqu44RfzGsPzprlGIl2APwswdHhykAmtSW1h42j/JawO+OtPwbO
-         aSpqPz9cTS2MUDeVbyBKovOBTlbQ97eGt1l+Wtlw=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.131.184.87]) by smtp.web.de (mrweb002
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MIvFp-1hkpoR1b21-002W5N; Tue, 16
- Jul 2019 11:26:02 +0200
-Subject: Re: [PATCH v3] coccinelle: semantic code search for missing
- of_node_put
-To:     Wen Yang <wen.yang99@zte.com.cn>, cocci@systeme.lip6.fr,
-        kernel-janitors@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Xue Zhihong <xue.zhihong@zte.com.cn>,
-        Yi Wang <wang.yi59@zte.com.cn>,
-        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wen Yang <yellowriver2010@hotmail.com>
-References: <1563246347-7803-1-git-send-email-wen.yang99@zte.com.cn>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <663d8141-5740-a452-1f4a-8335203e65ba@web.de>
-Date:   Tue, 16 Jul 2019 11:25:48 +0200
+        id S1731940AbfGPJXI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 05:23:08 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:38655 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727105AbfGPJXH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 05:23:07 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190716092304epoutp04a8455ba09ded902e06ab0c0a216e6e45~x2NvnzPKR0652806528epoutp04Y
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 09:23:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190716092304epoutp04a8455ba09ded902e06ab0c0a216e6e45~x2NvnzPKR0652806528epoutp04Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1563268984;
+        bh=0F9bzj/24+LD+R/SMr1QYOgsuPHsRGm2VoKUJPK2MS0=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=K0ucOrWwS8yeG6z5eShzbw04ie4Ai5M6WJNpQILAAuYR1Dgm47S18Gy7oTwrCAuAI
+         dKZQkRjeqvY9Ol6pYu3lv44lvRfEsTmOC1A7uDe4NFZOvedBJDkDxWmxcdOpAg1Ru2
+         uzsWfYWNAXsDBk80Os6R4F0sBzDwL6UZXDzrCS4c=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190716092303epcas1p2f805b1e6ddd363aa2796ee334f7e644a~x2Nu6wfO43199531995epcas1p25;
+        Tue, 16 Jul 2019 09:23:03 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 45nw110r4xzMqYlt; Tue, 16 Jul
+        2019 09:23:01 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        65.09.04066.5779D2D5; Tue, 16 Jul 2019 18:23:01 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20190716092300epcas1p480da14cd60097e8628f6d8e13b5ea488~x2NrqlzeJ0540705407epcas1p4X;
+        Tue, 16 Jul 2019 09:23:00 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190716092300epsmtrp242e8f5f4d884e75645c8ffe5a553434c~x2NrptIYc2069720697epsmtrp2P;
+        Tue, 16 Jul 2019 09:23:00 +0000 (GMT)
+X-AuditID: b6c32a37-e27ff70000000fe2-f1-5d2d9775e082
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        12.85.03706.4779D2D5; Tue, 16 Jul 2019 18:23:00 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190716092259epsmtip13ac67680cae8023e5b2bdb44e9c6238e~x2NrPLPqR1303213032epsmtip1N;
+        Tue, 16 Jul 2019 09:22:59 +0000 (GMT)
+Subject: Re: [PATCH v1 02/50] clk: samsung: add IDs for Exynos5420 NoC
+ clocks
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
+        mark.rutland@arm.com, robh+dt@kernel.org,
+        kyungmin.park@samsung.com, a.hajda@samsung.com,
+        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
+        myungjoo.ham@samsung.com
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <b8503015-732f-7ac5-1b25-50e943d27e55@samsung.com>
+Date:   Tue, 16 Jul 2019 18:26:06 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <1563246347-7803-1-git-send-email-wen.yang99@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:XK9D1PFNNMyl4nlD0+NxHKnMhOQeaBK8wKSQIwqo7a45ayY3MBv
- j5nRSu+2FWzA74daBtHepyB1XbMzrA8aM+BbqGrQ9ZUV1cSISTyN/MDUQfeqGrWa7C0/cDL
- xfA5to6PwTLiujSn80lxRgM4LXhf9Sy9+UHJklJv926YV6S/BaEfH9k7MNm92NI/SeQuN3j
- jHfGHw/gf+gpWSX9LkF2g==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:5bFm/zMmyF0=:THKKaLLZuQ5vLb/pBare1g
- 5Qm4UI1Nq5Uyh3HrJt6mpq2DUMJtYy/DdEMfpTfb3SmX805xfjyc/9qLafQOWgHgX9hD93D/f
- 8Bg7nE9MZqdBPelDKvDDVGUUOfpKHZ4gT/f7Vifj/v4AW9kAHlBykXl6hq6GfsW9zgOsXVhRx
- QNLMm2EpjOCcDSNwQluqH0ZY100TbXSz6Kj+udeoo1SbMfOTC+ldAJiPUC2IKWxrC6W9yzZpP
- YFy+sAIBvoR9SznY/LILq0Qat8TBfX41ciT2W2erLkgwE+FZhkS98YvN51yMqy9dQ12pVwbd3
- TAk2RDDCvjdlnamcMD57K3zZv1qL6i+0nEGK2g9zfPiOjNVX7Es9cak354dzyBTkNqQBqVMPc
- GC8+Zv8geu3zOcLNJTd9i7U0O546uFehwTCR0tTNIa0CwaLPb1T9yb/M4HEg+AeBZQIgkTuRc
- N1syKm1FUFS9GTtnHmfOQaNWsv1Ylkb0Zb55f1W8dxcSF9u1bH2Qj8SUKNt6Z4M3ilMXchloz
- Dc2rjhWIPJ4fVTdidwdpVmQU5dck7zJTpHLyw7RuQxSaY6z5W6hji8IgEzW7Tax8tLdw/iegG
- s2LYqSTBgWOAQTlbx7C/eYui7yPNdvjoWY9NmvAImZdm6Xgt8PMmlL3d8CDeYYl6exJavB7Of
- UKfMy2W3ibIT+bJmUu5fCZPb+RN4LepbKqFwFCiHp5jH/7AftS4yJALIDSfG8vqzvqykNorNY
- O4ynFbOeLCln/tZG/t/O9x9CEdGw5LSx0C4kxMF+6DJN5o7S91Xt3vmeRio/iJtQL1vZGamwJ
- odbWbh502C77Xu2vQjwfAPE4uNeRRjveT6tRugBIgVaLqtOyOuIwG8iNHZPLeNUElZVrrsXA1
- ooTZS4PSpiexzWKCJY96+4RuTwQ+SydFjVD0aXRYkovbmn+dRnlY4kmjdGbLtdmIXXS5KKkCH
- itnrw/XPMv5ClElSRhq6wNKIxH91kiwNpqpexaYZf1ZGsPP/N2pY7HwQLFeM0aA68Uf+l9+Eh
- 6HqbjbKcd9XPG3QZnTs4G08a5+PeNa2eqjvlJU9G8On6krK2OW77EJfg2/vFIHKi1GOuQ0bQn
- z5DVTQINJt1KBmKxDnIWVICvbsYWEuRELCQ
+In-Reply-To: <20190715124417.4787-3-l.luba@partner.samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAJsWRmVeSWpSXmKPExsWy7bCmgW7pdN1YgxdzWS1urTvHarFxxnpW
+        i/lHgKz+x6+ZLc6f38BucbbpDbvFrQYZi02Pr7FafOy5x2pxedccNosZ5/cxWaw9cpfdYun1
+        i0wWF0+5WtxuXMFm0br3CLvF4TftrBb/rm1kcRDyWDNvDaPH+xut7B6bVnWyeWxeUu9x8N0e
+        Jo++LasYPT5vkgtgj8q2yUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVV
+        cvEJ0HXLzAF6QkmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYFmgV5yYW1yal66X
+        nJ9rZWhgYGQKVJiQndHf/Zmt4IVIxd9DT9gbGLcIdjFyckgImEicnvSZrYuRi0NIYAejxLLX
+        z1khnE+MEm+urGQGqRIS+MYocecGXMeKXdPYIYr2MkpMmrgFquM9o8ShN+/AOoQF/CVW3DnN
+        BmKLCJxjlOh4Kg1iMwtMY5KYNU8UxGYT0JLY/+IGWA2/gKLE1R+PGbsYOTh4BewkVm7QATFZ
+        BFQlrk72AKkQFYiQOHVkHguIzSsgKHFy5hMWkBJOAXuJ5uMSEMPFJW49mc8EYctLNG+dzQxy
+        mYTAOXaJaa3HWCHud5E49vYjE4QtLPHq+BZ2CFtK4vO7vWwQdrXEypNH2CCaOxgltuy/ANVs
+        LLF/6WQmkMXMApoS63fpQ4QVJXb+nssIsZhP4t3XHlaQEgkBXomONiGIEmWJyw/uQq2VlFjc
+        3sk2gVFpFpJvZiF5YRaSF2YhLFvAyLKKUSy1oDg3PbXYsMAYOao3MYJTt5b5DsYN53wOMQpw
+        MCrx8J7YoxMrxJpYVlyZe4hRgoNZSYTX9qt2rBBvSmJlVWpRfnxRaU5q8SFGU2BYT2SWEk3O
+        B+aVvJJ4Q1MjY2NjCxNDM1NDQyVx3nl/NGOFBNITS1KzU1MLUotg+pg4OKUaGO1f6Ex4Ja9h
+        Ylyaqnna7Wa6steduA86Dxe4M/HNNA56rK9q7GiTrb5n3o4wqd8SE0p5I5jnsdoxejf1Xs18
+        HvJNoSPmu+xjpXDtZSfSL248f6x4rn91R3paJItilrPidW/J2durz0vZnxXinRldMaHndpma
+        h7pFm+ENz+/WKiIxQjf6G14rsRRnJBpqMRcVJwIAFuvaXfMDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsWy7bCSnG7JdN1Yg0+bRCxurTvHarFxxnpW
+        i/lHgKz+x6+ZLc6f38BucbbpDbvFrQYZi02Pr7FafOy5x2pxedccNosZ5/cxWaw9cpfdYun1
+        i0wWF0+5WtxuXMFm0br3CLvF4TftrBb/rm1kcRDyWDNvDaPH+xut7B6bVnWyeWxeUu9x8N0e
+        Jo++LasYPT5vkgtgj+KySUnNySxLLdK3S+DK6O/+zFbwQqTi76En7A2MWwS7GDk5JARMJFbs
+        msbexcjFISSwm1Hi7J/3zBAJSYlpF48C2RxAtrDE4cPFEDVvGSUWnr/MClIjLOAr8eHmHFaQ
+        hIjAOUaJvr9n2UESzALTmCROrGeG6DjOKPFg3hw2kASbgJbE/hc3wGx+AUWJqz8eM4Js4BWw
+        k1i5QQfEZBFQlbg62QOkQlQgQmLStZ0sIDavgKDEyZlPWEBKOAXsJZqPS0BsUpf4M+8SM4Qt
+        LnHryXwmCFteonnrbOYJjMKzkHTPQtIyC0nLLCQtCxhZVjFKphYU56bnFhsWGOallusVJ+YW
+        l+al6yXn525iBMexluYOxstL4g8xCnAwKvHwntijEyvEmlhWXJl7iFGCg1lJhNf2q3asEG9K
+        YmVValF+fFFpTmrxIUZpDhYlcd6neccihQTSE0tSs1NTC1KLYLJMHJxSDYwSLHs2fL/257sN
+        1yblSdO+NSVOUhfbqZE4TW7LlszYSPd3If5mNqdSv5cv/fY+SUo9wdLAd/6X3u4Jl3fUmbw2
+        /ffXKGPN8/5KjvefDFTOieyzO+naobzPzznoueGx7TWxbiohOqbRv261rJR9pqt5MeW6e9I5
+        x7VOM/syI4/ktbN6zovqnabEUpyRaKjFXFScCABX7fED3wIAAA==
+X-CMS-MailID: 20190716092300epcas1p480da14cd60097e8628f6d8e13b5ea488
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190715124435eucas1p2099cd7670a3d85d9b11eb0ff86041a2a
+References: <20190715124417.4787-1-l.luba@partner.samsung.com>
+        <CGME20190715124435eucas1p2099cd7670a3d85d9b11eb0ff86041a2a@eucas1p2.samsung.com>
+        <20190715124417.4787-3-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> We find these functions by using the following script:
+Hi,
 
-Why would you like to keep this SmPL code in the commit description?
+You don't need to make the separate patches according to
+the type of clock just in order to add the ID by handling them
+from devicetree.
 
-I would prefer software evolution in an other direction.
-https://lore.kernel.org/lkml/44be5924-26ca-5106-aa25-3cbc3343aa2c@web.de/
-https://lkml.org/lkml/2019/7/4/21
-
-
-> @initialize:ocaml@
-> @@
->
-> let relevant_str =3D "use of_node_put() on it when done"
-
-I see further possibilities to improve this data processing approach.
-https://lore.kernel.org/lkml/904b9362-cd01-ffc9-600b-0c48848617a0@web.de/
-https://lore.kernel.org/patchwork/patch/1095169/#1291378
-https://lkml.org/lkml/2019/6/28/326
+Please merge following patches to one patch 
+- patch2, patch4~patch7, patch9, patch11, patch12, patch14, patch17
+and separate from patch13, patch15, patch16 for adding the ID
 
 
-I am missing more constructive answers for mentioned development concerns.
+On 19. 7. 15. 오후 9:43, Lukasz Luba wrote:
+> The patch adds NoC WCORE clock IDs needed used for changing parent of the
+> main NoC clock from the DT device.
+> 
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 16ad498e3f3f..d353870e7fda 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -463,7 +463,8 @@ static const struct samsung_fixed_factor_clock
+>  static const struct samsung_mux_clock exynos5800_mux_clks[] __initconst = {
+>  	MUX(0, "mout_aclk400_isp", mout_group3_5800_p, SRC_TOP0, 0, 3),
+>  	MUX(0, "mout_aclk400_mscl", mout_group3_5800_p, SRC_TOP0, 4, 3),
+> -	MUX(0, "mout_aclk400_wcore", mout_group2_5800_p, SRC_TOP0, 16, 3),
+> +	MUX(CLK_MOUT_ACLK400_WCORE, "mout_aclk400_wcore", mout_group2_5800_p,
+> +			SRC_TOP0, 16, 3),
+>  	MUX(0, "mout_aclk100_noc", mout_group1_5800_p, SRC_TOP0, 20, 2),
+>  
+>  	MUX(0, "mout_aclk333_432_gscl", mout_group6_5800_p, SRC_TOP1, 0, 2),
+> @@ -548,7 +549,8 @@ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+>  
+>  	MUX(0, "mout_aclk400_isp", mout_group1_p, SRC_TOP0, 0, 2),
+>  	MUX(0, "mout_aclk400_mscl", mout_group1_p, SRC_TOP0, 4, 2),
+> -	MUX(0, "mout_aclk400_wcore", mout_group1_p, SRC_TOP0, 16, 2),
+> +	MUX(CLK_MOUT_ACLK400_WCORE, "mout_aclk400_wcore", mout_group1_p,
+> +			SRC_TOP0, 16, 2),
+>  	MUX(0, "mout_aclk100_noc", mout_group1_p, SRC_TOP0, 20, 2),
+>  
+>  	MUX(0, "mout_aclk333_432_gscl", mout_group4_p, SRC_TOP1, 0, 2),
+> @@ -674,8 +676,8 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+>  			SRC_TOP10, 8, 1),
+>  	MUX(0, "mout_sw_aclk200_fsys2", mout_sw_aclk200_fsys2_p,
+>  			SRC_TOP10, 12, 1),
+> -	MUX(0, "mout_sw_aclk400_wcore", mout_sw_aclk400_wcore_p,
+> -			SRC_TOP10, 16, 1),
+> +	MUX(CLK_MOUT_SW_ACLK400_WCORE, "mout_sw_aclk400_wcore",
+> +			mout_sw_aclk400_wcore_p, SRC_TOP10, 16, 1),
+>  	MUX(0, "mout_sw_aclk100_noc", mout_sw_aclk100_noc_p,
+>  			SRC_TOP10, 20, 1),
+>  	MUX(0, "mout_sw_pclk200_fsys", mout_sw_pclk200_fsys_p,
+> 
 
 
-> And this patch also looks for places =E2=80=A6
-
-Does a SmPL script perform an action?
-
-
-> Finally, this patch finds use-after-free issues for a node.
-> (implemented by the r_use_after_put rule)
-
-This software extension is another interesting contribution.
-But I imagine that a separate SmPL script can be more helpful for
-this source code search pattern.
-
-
-> v3: delete the global set, =E2=80=A6
-
-To which previous implementation detail do you refer here?
-
-
-> +virtual report
-> +virtual org
-> +
-> +@initialize:python@
-> +@@
-> +
-> +report_miss_prefix =3D "ERROR: missing of_node_put; acquired a node poi=
-nter with refcount incremented on line "
-> +report_miss_suffix =3D ", but without a corresponding object release wi=
-thin this function."
-> +org_miss_main =3D "acquired a node pointer with refcount incremented"
-> +org_miss_sec =3D "needed of_node_put"
-> +report_use_after_put =3D "ERROR: use-after-free; reference preceded by =
-of_node_put on line "
-> +org_use_after_put_main =3D "of_node_put"
-> +org_use_after_put_sec =3D "reference"
-
-If you would insist on the usage of these variables, they should be applie=
-d
-only for the selected analysis operation mode.
-I would expect corresponding SmPL dependency specifications.
-https://github.com/coccinelle/coccinelle/blob/b4509f6e7fb06d5616bb19dd5a11=
-0b203fd0e566/docs/manual/cocci_syntax.tex#L559
-
-
-> +@r_miss_put exists@
-> +local idexpression struct device_node *x;
-> +expression e, e1;
-> +position p1, p2;
-> +statement S;
-> +type T, T1;
-> +@@
-> +
-> +* x =3D @p1\(of_find_all_nodes\|
-
-The usage of the SmPL asterisk functionality can fit to the operation mode=
- =E2=80=9Ccontext=E2=80=9D.
-https://bottest.wiki.kernel.org/coccicheck#modes
-Would you like to add any corresponding SmPL details?
-
-Under which circumstances will remaining programming concerns be clarified
-for such SmPL disjunctions?
-
-
-> +... when !=3D e =3D (T)x
-> +    when !=3D true x =3D=3D NULL
-
-Will assignment exclusions get any more software development attention?
-https://lore.kernel.org/lkml/03cc4df5-ce7f-ba91-36b5-687fec8c7297@web.de/
-https://lore.kernel.org/patchwork/patch/1095169/#1291892
-https://lkml.org/lkml/2019/6/29/193
-
-
-> +    when !=3D of_node_put(x)
-=E2=80=A6
-> +)
-> +&
-> +x =3D f(...)
-> +...
-> +if (<+...x...+>) S
-> +...
-> +of_node_put(x);
-> +)
-
-You propose once more to use a SmPL conjunction in the rule =E2=80=9Cr_mis=
-s_put_ext=E2=80=9D.
-I am also still waiting for a definitive explanation on the applicability
-of this combination.
-
-
-> +@r_put@
-> +expression E;
-> +position p1;
-> +@@
-> +
-> +* of_node_put@p1(E)
-
-I guess that this SmPL code will need further adjustments.
-
-
-> +@r_use_after_put exists@
-> +expression r_put.E, subE<=3Dr_put.E;
-
-I have got an understanding difficulty around the interpretation
-of the shown SmPL constraint.
-How will the clarification be continued?
-
-Regards,
-Markus
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
