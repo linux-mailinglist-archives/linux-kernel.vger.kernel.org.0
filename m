@@ -2,303 +2,252 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 692906B124
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 23:35:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C795B6B12F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 23:39:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732327AbfGPVfu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 17:35:50 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:9317 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728294AbfGPVfu (ORCPT
+        id S1731058AbfGPViM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 17:38:12 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37192 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728310AbfGPViL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 17:35:50 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d2e43330002>; Tue, 16 Jul 2019 14:35:47 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 16 Jul 2019 14:35:47 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 16 Jul 2019 14:35:47 -0700
-Received: from [10.2.164.12] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 16 Jul
- 2019 21:35:45 +0000
-Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Joseph Lo <josephl@nvidia.com>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
-        <stefan@agner.ch>, <mark.rutland@arm.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <talho@nvidia.com>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mperttunen@nvidia.com>,
-        <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <a5e1a6df-dff7-9e0c-9551-f78103a5462f@gmail.com>
- <e9d4bc0e-fd5d-ae02-2d67-86c7f7c9620f@gmail.com>
- <3938092a-bbc7-b304-641d-31677539598d@nvidia.com>
- <932d4d50-120c-9191-6a9a-23bf9c96633b@nvidia.com>
- <0ee055ad-d397-32e5-60ee-d62c14c6f77b@gmail.com>
- <86fc07d5-ab2e-a52a-a570-b1dfff4c20fe@nvidia.com>
- <20190716083701.225f0fd9@dimatab>
- <21266e4f-16b1-4c87-067a-16c07c803b6e@nvidia.com>
- <c5853e1a-d812-2dbd-3bec-0a9b0b0f6f3e@nvidia.com>
- <20190716080610.GE12715@pdeschrijver-desktop.Nvidia.com>
- <d908d3a2-3013-7f92-0852-115f428d1c5f@gmail.com>
- <72b5df8c-8acb-d0d0-ebcf-b406e8404973@nvidia.com>
- <2b701832-5548-7c83-7c17-05cc2f1470c8@nvidia.com>
- <76e341be-6f38-2bc1-048e-1aa6883f9b88@gmail.com>
- <0706576a-ce61-1cf3-bed1-05f54a1e2489@nvidia.com>
- <5b2945c5-fcb2-2ac0-2bf2-df869dc9c713@gmail.com>
- <ef63f72a-db03-ef28-a371-e578f351c713@nvidia.com>
- <27641e30-fdd1-e53a-206d-71e1f23343fd@gmail.com>
- <10c4b9a2-a857-d124-c22d-7fd71a473079@nvidia.com>
- <fd8bad73-464b-54f1-be94-fe3ac8b23e6e@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <0ee06d1a-310d-59f7-0aa6-b688b33447f5@nvidia.com>
-Date:   Tue, 16 Jul 2019 14:35:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Tue, 16 Jul 2019 17:38:11 -0400
+Received: by mail-wm1-f67.google.com with SMTP id f17so20061295wme.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 14:38:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=H3eudHJjvbxuD13KwrHicc1JmjafoBpBMmTNZ/oegRQ=;
+        b=ey5VfHNmGSlDC0DDsLvbGKRYgHwTGQongQ0lo1Eno08EJte+AeeVZINJzftxHNlaaD
+         4rGzTknZ7V8vQ7ix8TDmzSgCTNm8iwN5UX7mKGWK7ZLHAdhReZEUbDoLtnIAKtsslGbw
+         G319+d3jMGLrvMAZW260knyuGk1Bk/qlEPT0u8GbTd9MO8XUzpc1y/Va6/xZUOQY+Vnx
+         5PI2y1J5Ogny9caIbWPP2NOPgLZ80bO0IraxKIb29SFvZdb/aINmJolUkFe0c/XpILld
+         QwAaf+lVKVbjmWyl9ASqw77DybybNHx7Ek8r/fdpRWfo10dy83jRv1DzlCJxPTgzjxX/
+         ouUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=H3eudHJjvbxuD13KwrHicc1JmjafoBpBMmTNZ/oegRQ=;
+        b=iiuaSTTZLgfc9NahfWeASUcx35muzGeJOLDbGdkfXlsRQO7fcm57EPryBVsbqWOg1Q
+         j00LfmNcTmwap3FitFCNEyDEKwsPh92icejcZmQ6G/YAoM3WRDq6DxD1MKkzjm1NXFSf
+         RvMUavKlzlTnhUdTaGY8bEU+BC1NXpnYzvv15RBBHbZJteZF43tXBBqDrvkOWhM0fNxC
+         0gd+fFXVwzxDKgCnam0aRTlUR/ozJ2cwN07tWyRXH94UNmhe8foyvUqc71RTBJaOIGI2
+         eubrvyPPXomYxm0ARXww2HbDe8bTDHoPzjiq52wszJZhnH4mlkyWAmR37wcrkG1uXmXF
+         AU+Q==
+X-Gm-Message-State: APjAAAVYxugAmw5MCTluVgm4IbYTBQ4kleB3GY7MeWn95yMQAGPE8/ol
+        uidGYwbQar09DcQkj8t/gGkIlrxelJ2PsD31aZuisb9hxSdojZ2sqYMJEMJOzIy5FtfigBoOkli
+        TvltZAMlBcT9txtsMiHxGFJJz28RoM4XUbJFNj5gRHT5lWHGITSoTIo9ReTx0Crntm5BPiZTwWA
+        b5ucIyHag2IJz6HHg4s4ZJdTJ/3qniNZFCf01Fqjo=
+X-Google-Smtp-Source: APXvYqzXAPiCfMPhiPEqldBeMIFt/Ky+9UheM3jiHmtKkPgTcsW5NgbqIexEnJGUe2DVQhGoXCYKNg==
+X-Received: by 2002:a05:600c:118a:: with SMTP id i10mr31601585wmf.162.1563313088482;
+        Tue, 16 Jul 2019 14:38:08 -0700 (PDT)
+Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id v5sm22496878wre.50.2019.07.16.14.38.07
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 16 Jul 2019 14:38:07 -0700 (PDT)
+From:   Dmitry Safonov <dima@arista.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Dmitry Safonov <dima@arista.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        iommu@lists.linux-foundation.org, stable@vger.kernel.org
+Subject: [PATCH 1/2] iommu/vt-d: Don't queue_iova() if there is no flush queue
+Date:   Tue, 16 Jul 2019 22:38:05 +0100
+Message-Id: <20190716213806.20456-1-dima@arista.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <fd8bad73-464b-54f1-be94-fe3ac8b23e6e@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1563312947; bh=TbH2Sg2RNKnHnNv+Rv8LAiRrZ+5qlm8tym2Z+em68No=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=sPS3ZCw9ZW36xlabFWZcP8L6TfefysKXaizPB6uxMqp55Nk+E4Wn7DvnxKFooHJX1
-         FDbrk/u4Bpz/FbjVC4vOiYEeGipjRiUjF2RLovABxGwrleviWIIV1qGDmuOLdKjbvC
-         AJkE97wzUikXteaT1ZaG3d6Ub53OUWUCj4F504eBaY+AZ7Fjbp7ANqgOQe6/86AYT9
-         vD7MfGQxeuosWV61QEhPrFlEr1TlBs9zVdRhB2wFSgZ0a6GWsncmLFQQQHkcz+w7Zg
-         DSlm/a0aY4nfm2ahz1XI9VrDEUSuD53YqtVICPcGty7xbFxd+WuOjvNo5lXdRGPCcE
-         xAoFea1rMDwXA==
+Content-Transfer-Encoding: 8bit
+X-CLOUD-SEC-AV-Info: arista,google_mail,monitor
+X-CLOUD-SEC-AV-Sent: true
+X-Gm-Spam: 0
+X-Gm-Phishy: 0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Intel VT-d driver was reworked to use common deferred flushing
+implementation. Previously there was one global per-cpu flush queue,
+afterwards - one per domain.
 
-On 7/16/19 2:21 PM, Dmitry Osipenko wrote:
-> 17.07.2019 0:12, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 7/16/19 1:47 PM, Dmitry Osipenko wrote:
->>> 16.07.2019 22:26, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> On 7/16/19 11:43 AM, Dmitry Osipenko wrote:
->>>>> 16.07.2019 21:30, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>> On 7/16/19 11:25 AM, Dmitry Osipenko wrote:
->>>>>>> 16.07.2019 21:19, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=
-=82:
->>>>>>>> On 7/16/19 9:50 AM, Sowjanya Komatineni wrote:
->>>>>>>>> On 7/16/19 8:00 AM, Dmitry Osipenko wrote:
->>>>>>>>>> 16.07.2019 11:06, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=
-=82:
->>>>>>>>>>> On Tue, Jul 16, 2019 at 03:24:26PM +0800, Joseph Lo wrote:
->>>>>>>>>>>>> OK, Will add to CPUFreq driver...
->>>>>>>>>>>>>> The other thing that also need attention is that T124 CPUFre=
-q
->>>>>>>>>>>>>> driver
->>>>>>>>>>>>>> implicitly relies on DFLL driver to be probed first, which i=
-s
->>>>>>>>>>>>>> icky.
->>>>>>>>>>>>>>
->>>>>>>>>>>>> Should I add check for successful dfll clk register
->>>>>>>>>>>>> explicitly in
->>>>>>>>>>>>> CPUFreq driver probe and defer till dfll clk registers?
->>>>>>>>>> Probably you should use the "device links". See [1][2] for the
->>>>>>>>>> example.
->>>>>>>>>>
->>>>>>>>>> [1]
->>>>>>>>>> https://elixir.bootlin.com/linux/v5.2.1/source/drivers/gpu/drm/t=
-egra/dc.c#L2383
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> [2]
->>>>>>>>>> https://www.kernel.org/doc/html/latest/driver-api/device_link.ht=
-ml
->>>>>>>>>>
->>>>>>>>>> Return EPROBE_DEFER instead of EINVAL if device_link_add() fails=
-.
->>>>>>>>>> And
->>>>>>>>>> use of_find_device_by_node() to get the DFLL's device, see [3].
->>>>>>>>>>
->>>>>>>>>> [3]
->>>>>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.=
-git/tree/drivers/devfreq/tegra20-devfreq.c#n100
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>> Will go thru and add...
->>>>>>> Looks like I initially confused this case with getting orphaned
->>>>>>> clock.
->>>>>>> I'm now seeing that the DFLL driver registers the clock and then
->>>>>>> clk_get(dfll) should be returning EPROBE_DEFER until DFLL driver is
->>>>>>> probed, hence everything should be fine as-is and there is no real
->>>>>>> need
->>>>>>> for the 'device link'. Sorry for the confusion!
->>>>>>>
->>>>>>>>>>>> Sorry, I didn't follow the mail thread. Just regarding the DFL=
-L
->>>>>>>>>>>> part.
->>>>>>>>>>>>
->>>>>>>>>>>> As you know it, the DFLL clock is one of the CPU clock
->>>>>>>>>>>> sources and
->>>>>>>>>>>> integrated with DVFS control logic with the regulator. We
->>>>>>>>>>>> will not
->>>>>>>>>>>> switch
->>>>>>>>>>>> CPU to other clock sources once we switched to DFLL. Because t=
-he
->>>>>>>>>>>> CPU has
->>>>>>>>>>>> been regulated by the DFLL HW with the DVFS table (CVB or OPP
->>>>>>>>>>>> table
->>>>>>>>>>>> you see
->>>>>>>>>>>> in the driver.). We shouldn't reparent it to other sources wit=
-h
->>>>>>>>>>>> unknew
->>>>>>>>>>>> freq/volt pair. That's not guaranteed to work. We allow
->>>>>>>>>>>> switching to
->>>>>>>>>>>> open-loop mode but different sources.
->>>>>>>>>> Okay, then the CPUFreq driver will have to enforce DFLL freq to
->>>>>>>>>> PLLP's
->>>>>>>>>> rate before switching to PLLP in order to have a proper CPU
->>>>>>>>>> voltage.
->>>>>>>>> PLLP freq is safe to work for any CPU voltage. So no need to
->>>>>>>>> enforce
->>>>>>>>> DFLL freq to PLLP rate before changing CCLK_G source to PLLP duri=
-ng
->>>>>>>>> suspend
->>>>>>>>>
->>>>>>>> Sorry, please ignore my above comment. During suspend, need to
->>>>>>>> change
->>>>>>>> CCLK_G source to PLLP when dfll is in closed loop mode first and
->>>>>>>> then
->>>>>>>> dfll need to be set to open loop.
->>>>>>> Okay.
->>>>>>>
->>>>>>>>>>>> And I don't exactly understand why we need to switch to PLLP i=
-n
->>>>>>>>>>>> CPU
->>>>>>>>>>>> idle
->>>>>>>>>>>> driver. Just keep it on CL-DVFS mode all the time.
->>>>>>>>>>>>
->>>>>>>>>>>> In SC7 entry, the dfll suspend function moves it the open-loop
->>>>>>>>>>>> mode. That's
->>>>>>>>>>>> all. The sc7-entryfirmware will handle the rest of the
->>>>>>>>>>>> sequence to
->>>>>>>>>>>> turn off
->>>>>>>>>>>> the CPU power.
->>>>>>>>>>>>
->>>>>>>>>>>> In SC7 resume, the warmboot code will handle the sequence to
->>>>>>>>>>>> turn on
->>>>>>>>>>>> regulator and power up the CPU cluster. And leave it on PLL_P.
->>>>>>>>>>>> After
->>>>>>>>>>>> resuming to the kernel, we re-init DFLL, restore the CPU clock
->>>>>>>>>>>> policy (CPU
->>>>>>>>>>>> runs on DFLL open-loop mode) and then moving to close-loop mod=
-e.
->>>>>>>>>> The DFLL is re-inited after switching CCLK to DFLL parent
->>>>>>>>>> during of
->>>>>>>>>> the
->>>>>>>>>> early clocks-state restoring by CaR driver. Hence instead of
->>>>>>>>>> having
->>>>>>>>>> odd
->>>>>>>>>> hacks in the CaR driver, it is much nicer to have a proper
->>>>>>>>>> suspend-resume sequencing of the device drivers. In this case
->>>>>>>>>> CPUFreq
->>>>>>>>>> driver is the driver that enables DFLL and switches CPU to that
->>>>>>>>>> clock
->>>>>>>>>> source, which means that this driver is also should be
->>>>>>>>>> responsible for
->>>>>>>>>> management of the DFLL's state during of suspend/resume
->>>>>>>>>> process. If
->>>>>>>>>> CPUFreq driver disables DFLL during suspend and re-enables it
->>>>>>>>>> during
->>>>>>>>>> resume, then looks like the CaR driver hacks around DFLL are not
->>>>>>>>>> needed.
->>>>>>>>>>
->>>>>>>>>>>> The DFLL part looks good to me. BTW, change the patch subject =
-to
->>>>>>>>>>>> "Add
->>>>>>>>>>>> suspend-resume support" seems more appropriate to me.
->>>>>>>>>>>>
->>>>>>>>>>> To clarify this, the sequences for DFLL use are as follows
->>>>>>>>>>> (assuming
->>>>>>>>>>> all
->>>>>>>>>>> required DFLL hw configuration has been done)
->>>>>>>>>>>
->>>>>>>>>>> Switch to DFLL:
->>>>>>>>>>> 0) Save current parent and frequency
->>>>>>>>>>> 1) Program DFLL to open loop mode
->>>>>>>>>>> 2) Enable DFLL
->>>>>>>>>>> 3) Change cclk_g parent to DFLL
->>>>>>>>>>> For OVR regulator:
->>>>>>>>>>> 4) Change PWM output pin from tristate to output
->>>>>>>>>>> 5) Enable DFLL PWM output
->>>>>>>>>>> For I2C regulator:
->>>>>>>>>>> 4) Enable DFLL I2C output
->>>>>>>>>>> 6) Program DFLL to closed loop mode
->>>>>>>>>>>
->>>>>>>>>>> Switch away from DFLL:
->>>>>>>>>>> 0) Change cclk_g parent to PLLP so the CPU frequency is ok for
->>>>>>>>>>> any
->>>>>>>>>>> vdd_cpu voltage
->>>>>>>>>>> 1) Program DFLL to open loop mode
->>>>>>>>>>>
->>>>>>>> I see during switch away from DFLL (suspend), cclk_g parent is not
->>>>>>>> changed to PLLP before changing dfll to open loop mode.
->>>>>>>>
->>>>>>>> Will add this ...
->>>>>>> The CPUFreq driver switches parent to PLLP during the probe, simila=
-r
->>>>>>> should be done on suspend.
->>>>>>>
->>>>>>> I'm also wondering if it's always safe to switch to PLLP in the
->>>>>>> probe.
->>>>>>> If CPU is running on a lower freq than PLLP, then some other more
->>>>>>> appropriate intermediate parent should be selected.
->>>>>>>
->>>>>> CPU parents are PLL_X, PLL_P, and dfll. PLL_X always runs at higher
->>>>>> rate
->>>>>> so switching to PLL_P during CPUFreq probe prior to dfll clock enabl=
-e
->>>>>> should be safe.
->>>>> AFAIK, PLLX could run at ~200MHz. There is also a divided output of
->>>>> PLLP
->>>>> which CCLKG supports, the PLLP_OUT4.
->>>>>
->>>>> Probably, realistically, CPU is always running off a fast PLLX during
->>>>> boot, but I'm wondering what may happen on KEXEC. I guess ideally
->>>>> CPUFreq driver should also have a 'shutdown' callback to teardown DFL=
-L
->>>>> on a reboot, but likely that there are other clock-related problems a=
-s
->>>>> well that may break KEXEC and thus it is not very important at the
->>>>> moment.
->>>>>
->>>>> [snip]
->>>> During bootup CPUG sources from PLL_X. By PLL_P source above I meant
->>>> PLL_P_OUT4.
->>>>
->>>> As per clock policies, PLL_X is always used for high freq like >800Mhz
->>>> and for low frequency it will be sourced from PLLP.
->>> Alright, then please don't forget to pre-initialize PLLP_OUT4 rate to a
->>> reasonable value using tegra_clk_init_table or assigned-clocks.
->> PLLP_OUT4 rate update is not needed as it is safe to run at 408Mhz
->> because it is below fmax @ Vmin
-> So even 204MHz CVB entries are having the same voltage as 408MHz,
-> correct? It's not instantly obvious to me from the DFLL driver's code
-> where the fmax @ Vmin is defined, I see that there is the min_millivolts
-> and frequency entries starting from 204MHZ defined per-table.
-Yes at Vmin CPU Fmax is ~800Mhz. So anything below that will work at=20
-Vmin voltage and PLLP max is 408Mhz.
+Before deferring a flush, the queue should be allocated and initialized.
+
+Currently only domains with IOMMU_DOMAIN_DMA type initialize their flush
+queue. It's probably worth to init it for static or unmanaged domains
+too, but it may be arguable - I'm leaving it to iommu folks.
+
+Prevent queuing an iova flush if the domain doesn't have a queue.
+The defensive check seems to be worth to keep even if queue would be
+initialized for all kinds of domains. And is easy backportable.
+
+On 4.19.43 stable kernel it has a user-visible effect: previously for
+devices in si domain there were crashes, on sata devices:
+
+ BUG: spinlock bad magic on CPU#6, swapper/0/1
+  lock: 0xffff88844f582008, .magic: 00000000, .owner: <none>/-1, .owner_cpu: 0
+ CPU: 6 PID: 1 Comm: swapper/0 Not tainted 4.19.43 #1
+ Call Trace:
+  <IRQ>
+  dump_stack+0x61/0x7e
+  spin_bug+0x9d/0xa3
+  do_raw_spin_lock+0x22/0x8e
+  _raw_spin_lock_irqsave+0x32/0x3a
+  queue_iova+0x45/0x115
+  intel_unmap+0x107/0x113
+  intel_unmap_sg+0x6b/0x76
+  __ata_qc_complete+0x7f/0x103
+  ata_qc_complete+0x9b/0x26a
+  ata_qc_complete_multiple+0xd0/0xe3
+  ahci_handle_port_interrupt+0x3ee/0x48a
+  ahci_handle_port_intr+0x73/0xa9
+  ahci_single_level_irq_intr+0x40/0x60
+  __handle_irq_event_percpu+0x7f/0x19a
+  handle_irq_event_percpu+0x32/0x72
+  handle_irq_event+0x38/0x56
+  handle_edge_irq+0x102/0x121
+  handle_irq+0x147/0x15c
+  do_IRQ+0x66/0xf2
+  common_interrupt+0xf/0xf
+ RIP: 0010:__do_softirq+0x8c/0x2df
+
+The same for usb devices that use ehci-pci:
+ BUG: spinlock bad magic on CPU#0, swapper/0/1
+  lock: 0xffff88844f402008, .magic: 00000000, .owner: <none>/-1, .owner_cpu: 0
+ CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.43 #4
+ Call Trace:
+  <IRQ>
+  dump_stack+0x61/0x7e
+  spin_bug+0x9d/0xa3
+  do_raw_spin_lock+0x22/0x8e
+  _raw_spin_lock_irqsave+0x32/0x3a
+  queue_iova+0x77/0x145
+  intel_unmap+0x107/0x113
+  intel_unmap_page+0xe/0x10
+  usb_hcd_unmap_urb_setup_for_dma+0x53/0x9d
+  usb_hcd_unmap_urb_for_dma+0x17/0x100
+  unmap_urb_for_dma+0x22/0x24
+  __usb_hcd_giveback_urb+0x51/0xc3
+  usb_giveback_urb_bh+0x97/0xde
+  tasklet_action_common.isra.4+0x5f/0xa1
+  tasklet_action+0x2d/0x30
+  __do_softirq+0x138/0x2df
+  irq_exit+0x7d/0x8b
+  smp_apic_timer_interrupt+0x10f/0x151
+  apic_timer_interrupt+0xf/0x20
+  </IRQ>
+ RIP: 0010:_raw_spin_unlock_irqrestore+0x17/0x39
+
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: iommu@lists.linux-foundation.org
+Cc: <stable@vger.kernel.org> # 4.14+
+Fixes: 13cf01744608 ("iommu/vt-d: Make use of iova deferred flushing")
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+---
+ drivers/iommu/intel-iommu.c |  3 ++-
+ drivers/iommu/iova.c        | 18 ++++++++++++++----
+ include/linux/iova.h        |  6 ++++++
+ 3 files changed, 22 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index ac4172c02244..6d1510284d21 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -3564,7 +3564,8 @@ static void intel_unmap(struct device *dev, dma_addr_t dev_addr, size_t size)
+ 
+ 	freelist = domain_unmap(domain, start_pfn, last_pfn);
+ 
+-	if (intel_iommu_strict || (pdev && pdev->untrusted)) {
++	if (intel_iommu_strict || (pdev && pdev->untrusted) ||
++			!has_iova_flush_queue(&domain->iovad)) {
+ 		iommu_flush_iotlb_psi(iommu, domain, start_pfn,
+ 				      nrpages, !freelist, 0);
+ 		/* free iova */
+diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+index d499b2621239..8413ae54904a 100644
+--- a/drivers/iommu/iova.c
++++ b/drivers/iommu/iova.c
+@@ -54,9 +54,14 @@ init_iova_domain(struct iova_domain *iovad, unsigned long granule,
+ }
+ EXPORT_SYMBOL_GPL(init_iova_domain);
+ 
++bool has_iova_flush_queue(struct iova_domain *iovad)
++{
++	return !!iovad->fq;
++}
++
+ static void free_iova_flush_queue(struct iova_domain *iovad)
+ {
+-	if (!iovad->fq)
++	if (!has_iova_flush_queue(iovad))
+ 		return;
+ 
+ 	if (timer_pending(&iovad->fq_timer))
+@@ -74,13 +79,14 @@ static void free_iova_flush_queue(struct iova_domain *iovad)
+ int init_iova_flush_queue(struct iova_domain *iovad,
+ 			  iova_flush_cb flush_cb, iova_entry_dtor entry_dtor)
+ {
++	struct iova_fq __percpu *queue;
+ 	int cpu;
+ 
+ 	atomic64_set(&iovad->fq_flush_start_cnt,  0);
+ 	atomic64_set(&iovad->fq_flush_finish_cnt, 0);
+ 
+-	iovad->fq = alloc_percpu(struct iova_fq);
+-	if (!iovad->fq)
++	queue = alloc_percpu(struct iova_fq);
++	if (!queue)
+ 		return -ENOMEM;
+ 
+ 	iovad->flush_cb   = flush_cb;
+@@ -89,13 +95,17 @@ int init_iova_flush_queue(struct iova_domain *iovad,
+ 	for_each_possible_cpu(cpu) {
+ 		struct iova_fq *fq;
+ 
+-		fq = per_cpu_ptr(iovad->fq, cpu);
++		fq = per_cpu_ptr(queue, cpu);
+ 		fq->head = 0;
+ 		fq->tail = 0;
+ 
+ 		spin_lock_init(&fq->lock);
+ 	}
+ 
++	smp_wmb();
++
++	iovad->fq = queue;
++
+ 	timer_setup(&iovad->fq_timer, fq_flush_timeout, 0);
+ 	atomic_set(&iovad->fq_timer_on, 0);
+ 
+diff --git a/include/linux/iova.h b/include/linux/iova.h
+index 781b96ac706f..cd0f1de901a8 100644
+--- a/include/linux/iova.h
++++ b/include/linux/iova.h
+@@ -155,6 +155,7 @@ struct iova *reserve_iova(struct iova_domain *iovad, unsigned long pfn_lo,
+ void copy_reserved_iova(struct iova_domain *from, struct iova_domain *to);
+ void init_iova_domain(struct iova_domain *iovad, unsigned long granule,
+ 	unsigned long start_pfn);
++bool has_iova_flush_queue(struct iova_domain *iovad);
+ int init_iova_flush_queue(struct iova_domain *iovad,
+ 			  iova_flush_cb flush_cb, iova_entry_dtor entry_dtor);
+ struct iova *find_iova(struct iova_domain *iovad, unsigned long pfn);
+@@ -235,6 +236,11 @@ static inline void init_iova_domain(struct iova_domain *iovad,
+ {
+ }
+ 
++bool has_iova_flush_queue(struct iova_domain *iovad)
++{
++	return false;
++}
++
+ static inline int init_iova_flush_queue(struct iova_domain *iovad,
+ 					iova_flush_cb flush_cb,
+ 					iova_entry_dtor entry_dtor)
+-- 
+2.22.0
+
