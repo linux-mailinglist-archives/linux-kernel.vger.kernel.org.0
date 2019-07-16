@@ -2,288 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 246FC6ACBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 18:29:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42BF66AC99
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 18:20:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388226AbfGPQ1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 12:27:37 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:42392 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbfGPQ1T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 12:27:19 -0400
-Received: from 79.184.255.39.ipv4.supernova.orange.pl (79.184.255.39) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
- id 1fd2e9c27e1a2ddf; Tue, 16 Jul 2019 18:27:14 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     Linux ACPI <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        "David E. Box" <david.e.box@linux.intel.com>
-Subject: [PATCH 6/8] PM: sleep: Simplify suspend-to-idle control flow
-Date:   Tue, 16 Jul 2019 18:17:18 +0200
-Message-ID: <4108141.QW3IihsyBS@kreacher>
-In-Reply-To: <71085220.z6FKkvYQPX@kreacher>
-References: <71085220.z6FKkvYQPX@kreacher>
+        id S1731746AbfGPQUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 12:20:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55570 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727796AbfGPQUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 12:20:17 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 328AB308FBAF;
+        Tue, 16 Jul 2019 16:20:17 +0000 (UTC)
+Received: from treble (ovpn-123-204.rdu2.redhat.com [10.10.123.204])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6181260A9F;
+        Tue, 16 Jul 2019 16:20:16 +0000 (UTC)
+Date:   Tue, 16 Jul 2019 11:20:14 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Seth Forshee <seth.forshee@canonical.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>, kbuild-all@01.org,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kbuild test robot <lkp@intel.com>
+Subject: Re: [kbuild:kbuild 5/19] drivers/atm/eni.o: warning: objtool:
+ eni_init_one()+0xe42: indirect call found in RETPOLINE build
+Message-ID: <20190716162014.iu47g6o7ralxhcf5@treble>
+References: <201907160706.9xUSQ36X%lkp@intel.com>
+ <CAK7LNATqxQnen2Tzcici8GnJuc-qNeCYcCYisKM2OkNow1FDnQ@mail.gmail.com>
+ <20190716124249.GP5418@ubuntu-xps13>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190716124249.GP5418@ubuntu-xps13>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 16 Jul 2019 16:20:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, Jul 16, 2019 at 07:42:49AM -0500, Seth Forshee wrote:
+> On Tue, Jul 16, 2019 at 03:57:24PM +0900, Masahiro Yamada wrote:
+> > (+ Josh Poimboeuf)
+> > 
+> > On Tue, Jul 16, 2019 at 8:44 AM kbuild test robot <lkp@intel.com> wrote:
+> > >
+> > > tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git kbuild
+> > > head:   0ff0c3753e06c0420c80dac1b0187a442b372acb
+> > > commit: 2eaf4e87ba258cc3f27e486cdf32d5ba76303c6f [5/19] kbuild: add -fcf-protection=none to retpoline flags
+> > > config: x86_64-randconfig-s2-07160214 (attached as .config)
+> > > compiler: gcc-4.9 (Debian 4.9.4-2) 4.9.4
+> > > reproduce:
+> > >         git checkout 2eaf4e87ba258cc3f27e486cdf32d5ba76303c6f
+> > >         # save the attached .config to linux build tree
+> > >         make ARCH=x86_64
+> > 
+> > 0-day bot reports objtool warnings with the following applied:
+> > https://patchwork.kernel.org/patch/11037379/
+> > 
+> > I have no idea about objtool.
+> > 
+> > Is it better to drop this patch for now?
+> 
+> I'm surprised that the change would have any impact on a build with
+> gcc-4.9, since -fcf-protection seems to have been introduced in gcc-8. I
+> guess there's no full build log that would let us see the actual flags
+> passed to the compiler.
+> 
+> I'll try to reproduce this result. If you think the patch should be
+> dropped in the meantime, that's fine.
 
-After commit 33e4f80ee69b ("ACPI / PM: Ignore spurious SCI wakeups
-from suspend-to-idle") the "noirq" phases of device suspend and
-resume may run for multiple times during suspend-to-idle, if there
-are spurious system wakeup events while suspended.  However, this
-is complicated and fragile and actually unnecessary.
+The problem with this patch is that it's breaking the following check in
+arch/x86/Makefile.  GCC 4.9 doesn't support retpolines, so it's supposed
+to fail with the below error.
 
-The main reason for doing this is that on some systems the EC may
-signal system wakeup events (power button events, for example) as
-well as events that should not cause the system to resume (spurious
-system wakeup events).  Thus, in order to determine whether or not
-a given event signaled by the EC while suspended is a proper system
-wakeup one, the EC GPE needs to be dispatched and to start with that
-was achieved by allowing the ACPI SCI action handler to run, which
-was only possible after calling resume_device_irqs().
+ifdef CONFIG_RETPOLINE
+ifeq ($(RETPOLINE_CFLAGS),)
+	@echo "You are building kernel with non-retpoline compiler." >&2
+	@echo "Please update your compiler." >&2
+	@false
+endif
+endif
 
-However, dispatching the EC GPE this way turned out to take too much
-time in some cases and some EC events might be missed due to that, so
-commit 68e22011856f ("ACPI: EC: Dispatch the EC GPE directly on
-s2idle wake") started to dispatch the EC GPE right after a wakeup
-event has been detected, so in fact the full ACPI SCI action handler
-doesn't need to run any more to deal with the wakeups coming from the
-EC.
+Maybe the flags should be placed in another variable other than
+RETPOLINE_CFLAGS.
 
-Use this observation to simplify the suspend-to-idle control flow
-so that the "noirq" phases of device suspend and resume are each
-run only once in every suspend-to-idle cycle, which is reported to
-significantly reduce power drawn by some systems when suspended to
-idle (by allowing them to reach a deep platform-wide low-power state
-through the suspend-to-idle flow).  [What appears to happen is that
-the "noirq" resume of devices after a spurious EC wakeup brings some
-devices into a state in which they prevent the platform from reaching
-the deep low-power state going forward, even after a subsequent
-"noirq" suspend phase, and on some systems the EC triggers such
-wakeups already when the "noirq" suspend of devices is running for
-the first time in the given suspend/resume cycle, so the platform
-cannot reach the deep low-power state at all.]
-
-First, make acpi_s2idle_wake() use the acpi_ec_dispatch_gpe() return
-value to determine whether or not the wakeup may have been triggered
-by the EC (in which case the system wakeup is canceled and ACPI
-events are processed in order to determine whether or not the event
-is a proper system wakeup one) and use rearm_wake_irq() (introduced
-by a previous change) in it to rearm the ACPI SCI for system wakeup
-detection in case the system will remain suspended.
-
-Second, drop acpi_s2idle_sync(), which is not needed any more, and
-the corresponding global platform suspend-to-idle callback.
-
-Next, drop the pm_wakeup_pending() check (which is an optimization
-only) from __device_suspend_noirq() to prevent it from returning
-errors on system wakeups occurring before the "noirq" phase of
-device suspend is complete (as in the case of suspend-to-idle it is
-not known whether or not these wakeups are suprious at that point),
-in order to avoid having to carry out a "noirq" resume of devices
-on a spurious system wakeup.
-
-Finally, change the code flow in s2idle_loop() to (1) run the
-"noirq" suspend of devices once before starting the loop, (2) check
-for spurious EC wakeups (via the platform ->wake callback) for the
-first time before calling s2idle_enter(), and (3) run the "noirq"
-resume of devices once after leaving the loop.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/sleep.c      |   47 +++++++++++++++++++++-------------------
- drivers/base/power/main.c |    5 ----
- include/linux/suspend.h   |    1 
- kernel/power/suspend.c    |   53 +++++++++++++++++++---------------------------
- 4 files changed, 48 insertions(+), 58 deletions(-)
-
-Index: linux-pm/drivers/acpi/sleep.c
-===================================================================
---- linux-pm.orig/drivers/acpi/sleep.c
-+++ linux-pm/drivers/acpi/sleep.c
-@@ -986,33 +986,37 @@ static void acpi_s2idle_wake(void)
- 		lpi_check_constraints();
- 
- 	/*
--	 * If IRQD_WAKEUP_ARMED is not set for the SCI at this point, it means
--	 * that the SCI has triggered while suspended, so cancel the wakeup in
--	 * case it has not been a wakeup event (the GPEs will be checked later).
-+	 * If IRQD_WAKEUP_ARMED is set for the SCI at this point, the SCI has
-+	 * not triggered while suspended, so bail out.
- 	 */
--	if (acpi_sci_irq_valid() &&
--	    !irqd_is_wakeup_armed(irq_get_irq_data(acpi_sci_irq))) {
-+	if (!acpi_sci_irq_valid() ||
-+	    irqd_is_wakeup_armed(irq_get_irq_data(acpi_sci_irq)))
-+		return;
-+
-+	/*
-+	 * If there are EC events to process, the wakeup may be a spurious one
-+	 * coming from the EC.
-+	 */
-+	if (acpi_ec_dispatch_gpe()) {
-+		/*
-+		 * Cancel the wakeup and process all pending events in case
-+		 * there are any wakeup ones in there.
-+		 *
-+		 * Note that if any non-EC GPEs are active at this point, the
-+		 * SCI will retrigger after the rearming below, so no events
-+		 * should be missed by canceling the wakeup here.
-+		 */
- 		pm_system_cancel_wakeup();
- 		/*
--		 * On some platforms with the LPS0 _DSM device noirq resume
--		 * takes too much time for EC wakeup events to survive, so look
--		 * for them now.
-+		 * The EC driver uses the system workqueue and an additional
-+		 * special one, so those need to be flushed too.
- 		 */
--		acpi_ec_dispatch_gpe();
-+		acpi_os_wait_events_complete(); /* synchronize EC GPE processing */
-+		acpi_ec_flush_work();
-+		acpi_os_wait_events_complete(); /* synchronize Notify handling */
- 	}
--}
- 
--static void acpi_s2idle_sync(void)
--{
--	/*
--	 * Process all pending events in case there are any wakeup ones.
--	 *
--	 * The EC driver uses the system workqueue and an additional special
--	 * one, so those need to be flushed too.
--	 */
--	acpi_os_wait_events_complete();	/* synchronize SCI IRQ handling */
--	acpi_ec_flush_work();
--	acpi_os_wait_events_complete();	/* synchronize Notify handling */
-+	rearm_wake_irq(acpi_sci_irq);
- }
- 
- static void acpi_s2idle_restore(void)
-@@ -1044,7 +1048,6 @@ static const struct platform_s2idle_ops
- 	.begin = acpi_s2idle_begin,
- 	.prepare = acpi_s2idle_prepare,
- 	.wake = acpi_s2idle_wake,
--	.sync = acpi_s2idle_sync,
- 	.restore = acpi_s2idle_restore,
- 	.end = acpi_s2idle_end,
- };
-Index: linux-pm/include/linux/suspend.h
-===================================================================
---- linux-pm.orig/include/linux/suspend.h
-+++ linux-pm/include/linux/suspend.h
-@@ -191,7 +191,6 @@ struct platform_s2idle_ops {
- 	int (*begin)(void);
- 	int (*prepare)(void);
- 	void (*wake)(void);
--	void (*sync)(void);
- 	void (*restore)(void);
- 	void (*end)(void);
- };
-Index: linux-pm/drivers/base/power/main.c
-===================================================================
---- linux-pm.orig/drivers/base/power/main.c
-+++ linux-pm/drivers/base/power/main.c
-@@ -1291,11 +1291,6 @@ static int __device_suspend_noirq(struct
- 	if (async_error)
- 		goto Complete;
- 
--	if (pm_wakeup_pending()) {
--		async_error = -EBUSY;
--		goto Complete;
--	}
--
- 	if (dev->power.syscore || dev->power.direct_complete)
- 		goto Complete;
- 
-Index: linux-pm/kernel/power/suspend.c
-===================================================================
---- linux-pm.orig/kernel/power/suspend.c
-+++ linux-pm/kernel/power/suspend.c
-@@ -119,48 +119,41 @@ static void s2idle_enter(void)
- 
- static void s2idle_loop(void)
- {
--	pm_pr_dbg("suspend-to-idle\n");
--
--	for (;;) {
--		int error;
-+	int error;
- 
--		dpm_noirq_begin();
-+	dpm_noirq_begin();
-+	error = dpm_noirq_suspend_devices(PMSG_SUSPEND);
-+	if (error)
-+		goto resume;
- 
--		/*
--		 * Suspend-to-idle equals
--		 * frozen processes + suspended devices + idle processors.
--		 * Thus s2idle_enter() should be called right after
--		 * all devices have been suspended.
--		 *
--		 * Wakeups during the noirq suspend of devices may be spurious,
--		 * so prevent them from terminating the loop right away.
--		 */
--		error = dpm_noirq_suspend_devices(PMSG_SUSPEND);
--		if (!error)
--			s2idle_enter();
--		else if (error == -EBUSY && pm_wakeup_pending())
--			error = 0;
-+	pm_pr_dbg("suspend-to-idle\n");
- 
--		if (!error && s2idle_ops && s2idle_ops->wake)
-+	/*
-+	 * Suspend-to-idle equals:
-+	 * frozen processes + suspended devices + idle processors.
-+	 * Thus s2idle_enter() should be called right after all devices have
-+	 * been suspended.
-+	 *
-+	 * Wakeups during the noirq suspend of devices may be spurious, so try
-+	 * to avoid them upfront.
-+	 */
-+	for (;;) {
-+		if (s2idle_ops && s2idle_ops->wake)
- 			s2idle_ops->wake();
- 
--		dpm_noirq_resume_devices(PMSG_RESUME);
--
--		dpm_noirq_end();
--
--		if (error)
--			break;
--
--		if (s2idle_ops && s2idle_ops->sync)
--			s2idle_ops->sync();
--
- 		if (pm_wakeup_pending())
- 			break;
- 
- 		pm_wakeup_clear(false);
-+
-+		s2idle_enter();
- 	}
- 
- 	pm_pr_dbg("resume from suspend-to-idle\n");
-+
-+resume:
-+	dpm_noirq_resume_devices(PMSG_RESUME);
-+	dpm_noirq_end();
- }
- 
- void s2idle_wake(void)
-
-
-
+-- 
+Josh
