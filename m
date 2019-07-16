@@ -2,119 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 012916AF98
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 21:13:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 508946AF9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 21:14:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388107AbfGPTM5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 15:12:57 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41025 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728137AbfGPTM5 (ORCPT
+        id S2388526AbfGPTOU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 15:14:20 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45773 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728137AbfGPTOT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 15:12:57 -0400
-Received: by mail-oi1-f196.google.com with SMTP id g7so16472409oia.8
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 12:12:56 -0700 (PDT)
+        Tue, 16 Jul 2019 15:14:19 -0400
+Received: by mail-lj1-f195.google.com with SMTP id m23so21036057lje.12
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 12:14:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=EokRdVtnqINNMeRei8g3SJejrlpwhuP/sBz4PdO769o=;
-        b=kkXFYQ4BGd2rPaOJss3nxEly+aTRCXPtLhXjo2jX0eHJ0gYk/NfDhYxZt2dbZDt7V/
-         Ht9777mnN/JK5uMBe+N50bVXOZEgNz70p1lOWFa86DgeLODas1wW/TEAgBZ+10rmXVg7
-         Wl/NA9vC9K+q6hvr5XobK72vptUqBgmytGGAd428TKu6DfFHTGZayCL78o9cxwCMcMZf
-         KlCGJ1JfJ09UmfweNDAr/6G8rs5OsBrYixKRVgQE6fURLsnUsOOcZ3iNAIAdA6EnsXeL
-         /QkLWj8uHiKK+O5D8RMtOmWM36Sm6GFsXhUA4HhPQWKV57lR6L3ki6Dt26//2+TGwB1i
-         g6ew==
+        bh=rzi+JrWYOGsut3jRglpj5XGk5dwbip2b5zr2IEOORsQ=;
+        b=NDP+AiRbqFoE4Bm5bbT/neoI5d4JAEi6PzptAWbUc53rXNNZVneAKqYHClpnBnf9HW
+         tLNwRGBOa4ywIBb+yKxs/Nq5Jvc/V3ekIE62VXA2NnPUnWJBJz1u5qBjSMBZ7AKObDZc
+         KEv2XwVHDbea6qyaoed63pZMua/dqh/CKoKTc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=EokRdVtnqINNMeRei8g3SJejrlpwhuP/sBz4PdO769o=;
-        b=KOz5RxwWkvXIBuKylTLMgf5DYObG3sZ5trWrmz1iF1Ek1ze6cV1Jun8OUV9tjJQqzN
-         4Xev09ie2CJkyJVWXrkwi/LPcJngvM96q+s6et5SAjPyob9enlMZIRRyl7LZFgJV7ahH
-         9ZcShz+5+hhlUpl3hMm0nbmtYlJGvZQ674Bna8XZ/JlEe5qnZh1WgNYM6nMAFvLdae5C
-         UvXBt/XJDcXRKXxjQcj3TOfssCFiGi9WuVvk+MOt608z7ra8x1gN4N2Uk47++5WfL7GI
-         u+GebFGPIkhMpAiY8eitGqBnoXYyU4fHgmyNer7YInW6VuXRC/DbMBLkS7MkD2s4Pm5x
-         ySOw==
-X-Gm-Message-State: APjAAAWgooBpz0HcdnfFQ2Gro4tMZcGQ5F6VTU8cToP88PxQOAncVbVW
-        mhR8xz8iYLPPl51cCdtbOx3z+6LcKoTKbYd7VHyCfw==
-X-Google-Smtp-Source: APXvYqzvI0Zhyn3SPjXH+FWy4nFoerSYx7E3aeJUm3+PDLU+ilI3ejmzk8U7vgvbRvDquPXrT1qJZqgYVUwbzn5z0iI=
-X-Received: by 2002:aca:e641:: with SMTP id d62mr17288062oih.24.1563304376244;
- Tue, 16 Jul 2019 12:12:56 -0700 (PDT)
+        bh=rzi+JrWYOGsut3jRglpj5XGk5dwbip2b5zr2IEOORsQ=;
+        b=fAcjY5V2QaCnEJJlWq6+gDPkuL36wkgjImETuxxM+BvUDXvQbX9j6+TJ0jJ4oUkjQg
+         +RZroWeV1PAqlZfKgh0EXXciQOJOVxK5lkt3aUqZDhl0TZFCBFN2C1VLziN9BpYhNRWi
+         0Kxv/AWY1vqAUNHXpn9v3PS3qNxSYQITx1vT7IcxSjNm+RX9P48Musw3D1UKutI6OR9r
+         GiLWcaqhyScH1PONj/LxoSOrucc3YjJWkkcnCBkHFFnRygB8vyELygRZ4ooMCmI28vgz
+         igUsCvHSNnv9sWQx36lY4Qpu4O+52JI+4VUtQ86xgaCRYRlUgrQfsNYXDwTDLYlAEibS
+         o6jg==
+X-Gm-Message-State: APjAAAWaKe9q+UFWxUOysE5fmaFVQns99+VkxB7DTOZDxVtHSQCZzGqA
+        3lKzmMeV6wDc8Mn9C1wg/w0vzcbvxNk=
+X-Google-Smtp-Source: APXvYqxo6whTS/ieaB6JTvsoc6uJKDMymqTF/duGXalDSxoE7SzJK2HmAwjPvEXU7YZM0+rdauOOyw==
+X-Received: by 2002:a2e:720b:: with SMTP id n11mr18919355ljc.213.1563304457173;
+        Tue, 16 Jul 2019 12:14:17 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id t1sm3928235lji.52.2019.07.16.12.14.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Jul 2019 12:14:16 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id b29so7305513lfq.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 12:14:16 -0700 (PDT)
+X-Received: by 2002:ac2:4839:: with SMTP id 25mr15611221lft.79.1563304456035;
+ Tue, 16 Jul 2019 12:14:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190625213337.157525-1-saravanak@google.com> <20190625213337.157525-4-saravanak@google.com>
- <e9c9b150-43a6-dc6b-5d88-21608120e940@codeaurora.org>
-In-Reply-To: <e9c9b150-43a6-dc6b-5d88-21608120e940@codeaurora.org>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Tue, 16 Jul 2019 12:12:20 -0700
-Message-ID: <CAGETcx8K3Z65Ru6dytbaJUm3xfWT8RxjKy788BAmksxS50YZqw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] PM / devfreq: Cache OPP table reference in devfreq
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, adharmap@codeaurora.org
+References: <CAJ-EccPGqp4PmRkFk505QhDKHWn-ajxS0__Nk9VS32jV_+3Y2A@mail.gmail.com>
+ <CAHk-=whY1J-LFvTa8ihiPNRSv1dwxPk9ycPCEhdcjsk7c=tGAw@mail.gmail.com>
+In-Reply-To: <CAHk-=whY1J-LFvTa8ihiPNRSv1dwxPk9ycPCEhdcjsk7c=tGAw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 16 Jul 2019 12:13:58 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wip4gKuWrh-1Dj-B-t5V5uGLj4NRCgHtVGJ0A9DOaDCNw@mail.gmail.com>
+Message-ID: <CAHk-=wip4gKuWrh-1Dj-B-t5V5uGLj4NRCgHtVGJ0A9DOaDCNw@mail.gmail.com>
+Subject: Re: [GIT PULL] SafeSetID LSM changes for 5.3
+To:     Micah Morton <mortonm@chromium.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 10:36 AM Sibi Sankar <sibis@codeaurora.org> wrote:
+On Tue, Jul 16, 2019 at 12:06 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> Hey Saravana,
+>  - Please use the "git pull-request" format and then add any extra
+> notes you feel are necessary
 >
-> On 6/26/19 3:03 AM, Saravana Kannan wrote:
-> > The OPP table can be used often in devfreq. Trying to get it each time can
-> > be expensive, so cache it in the devfreq struct.
-> >
-> > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > ---
-> >   drivers/devfreq/devfreq.c | 6 ++++++
-> >   include/linux/devfreq.h   | 1 +
-> >   2 files changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> > index 6b6991f0e873..ac62b78dc035 100644
-> > --- a/drivers/devfreq/devfreq.c
-> > +++ b/drivers/devfreq/devfreq.c
-> > @@ -597,6 +597,8 @@ static void devfreq_dev_release(struct device *dev)
-> >       if (devfreq->profile->exit)
-> >               devfreq->profile->exit(devfreq->dev.parent);
-> >
-> > +     if (devfreq->opp_table)
-> > +             dev_pm_opp_put_opp_table(devfreq->opp_table);
-> >       mutex_destroy(&devfreq->lock);
-> >       kfree(devfreq);
-> >   }
-> > @@ -677,6 +679,10 @@ struct devfreq *devfreq_add_device(struct device *dev,
-> >       devfreq->max_freq = devfreq->scaling_max_freq;
-> >
-> >       devfreq->suspend_freq = dev_pm_opp_get_suspend_opp_freq(dev);
-> > +     devfreq->opp_table = dev_pm_opp_get_opp_table(dev);
-> > +     if (IS_ERR(devfreq->opp_table))
-> > +             devfreq->opp_table = NULL;
-> > +
-> >       atomic_set(&devfreq->suspend_count, 0);
-> >
-> >       dev_set_name(&devfreq->dev, "devfreq%d",
-> > diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
-> > index fbffa74bfc1b..0d877c9513d7 100644
-> > --- a/include/linux/devfreq.h
-> > +++ b/include/linux/devfreq.h
-> > @@ -156,6 +156,7 @@ struct devfreq {
-> >       struct devfreq_dev_profile *profile;
-> >       const struct devfreq_governor *governor;
-> >       char governor_name[DEVFREQ_NAME_LEN];
-> > +     struct opp_table *opp_table;
->
-> please add it to the function docs as well
+>    Yes, your pull request is *almost* git pull-request, but you seem
+> to have actively removed whitespace making it almost illegible. It's
+> really hard to pick out the line that has the actual git repository
+> address, because it's basically hidden inside one big blob of text.
 
-Will do.
+Extra note on this: you seem to have done "git pull-request" in a wide
+window, and then copied-and-pasted it into your MUA.
 
--Saravana
+So the diffstat lines are also very long, and then they line-wrap and
+it all looks nasty.
+
+Avoid this by either using a file for the output (that you then edit
+for your own added messages), or using a normal 80x25 terminal or
+something.
+
+I guess I should ask Junio to add a "--stat=80" to the upstream git
+request-pull script.
+
+                   Linus
