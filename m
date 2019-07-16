@@ -2,71 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C76706A72C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 13:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BC3F6A739
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 13:21:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387681AbfGPLQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 07:16:42 -0400
-Received: from mail.us.es ([193.147.175.20]:41814 "EHLO mail.us.es"
+        id S2387666AbfGPLUb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 07:20:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387619AbfGPLQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 07:16:41 -0400
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id CBE8B20A52D
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 13:16:39 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id BB8CB1150CC
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 13:16:39 +0200 (CEST)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id B01F2A59B; Tue, 16 Jul 2019 13:16:39 +0200 (CEST)
-X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on antivirus1-rhel7.int
-X-Spam-Level: 
-X-Spam-Status: No, score=-108.2 required=7.5 tests=ALL_TRUSTED,BAYES_50,
-        SMTPAUTH_US2,USER_IN_WHITELIST autolearn=disabled version=3.4.1
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id B31C0A6DA;
-        Tue, 16 Jul 2019 13:16:37 +0200 (CEST)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Tue, 16 Jul 2019 13:16:37 +0200 (CEST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (sys.soleta.eu [212.170.55.40])
+        id S1733200AbfGPLUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 07:20:30 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id 82CC84265A2F;
-        Tue, 16 Jul 2019 13:16:37 +0200 (CEST)
-Date:   Tue, 16 Jul 2019 13:16:37 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Miaohe Lin <linmiaohe@huawei.com>
-Cc:     kadlec@blackhole.kfki.hu, fw@strlen.de, davem@davemloft.net,
-        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingfangsen@huawei.com
-Subject: Re: [PATCH v5] net: netfilter: Fix rpfilter dropping vrf packets by
- mistake
-Message-ID: <20190716111637.s24hwb6a6bjlhdiq@salvia>
-References: <1562039976-203880-1-git-send-email-linmiaohe@huawei.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id A894E2145D;
+        Tue, 16 Jul 2019 11:20:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563276029;
+        bh=bnpXBU4Yq9kKluhQK3Hp1VvBLpzztc6o65vObC/VtAo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WOnVscWaXeYhdQZNolzlwB3m9fuV9CTAUc9padYnC7oeFAKDS8N3quknwdXmu4o8g
+         lKIH/EzwHKG8vKcD2TRsc033SI/vWUWOmX0guE/hH4qwOE9OerXUzz5dINK4z0dTuZ
+         gwc2ZQT3pWwrHtFiD2jbM5mhVN0wfkDZTouFyfT8=
+Date:   Tue, 16 Jul 2019 07:20:28 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the hyperv-fixes tree
+Message-ID: <20190716112028.GC1943@sasha-vm>
+References: <20190714225534.1dc093ad@canb.auug.org.au>
+ <44b7e61d-438d-e906-57fd-b1182bf6f6c6@infradead.org>
+ <20190715080159.318b4edf@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <1562039976-203880-1-git-send-email-linmiaohe@huawei.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <20190715080159.318b4edf@canb.auug.org.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 02, 2019 at 03:59:36AM +0000, Miaohe Lin wrote:
-> When firewalld is enabled with ipv4/ipv6 rpfilter, vrf
-> ipv4/ipv6 packets will be dropped. Vrf device will pass
-> through netfilter hook twice. One with enslaved device
-> and another one with l3 master device. So in device may
-> dismatch witch out device because out device is always
-> enslaved device.So failed with the check of the rpfilter
-> and drop the packets by mistake.
+On Mon, Jul 15, 2019 at 08:01:59AM +1000, Stephen Rothwell wrote:
+>Hi Randy,
+>
+>On Sun, 14 Jul 2019 08:02:11 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>> > Please do not split Fixes tags over more than one line.  Also do not
+>> > include blank lines among the tag lines.
+>>
+>> Hm, so you are saying that the Fixes: line should not be separated from the
+>> other tag lines?  That's news to me...
+>
+>see "git interpret-trailers".
 
-Applied to nf.git, thanks.
+Stephen,
+
+Thanks for pointing it out, I've fixed it up. And thanks for pointing
+out git-interpret-trailers, I wasn't familiar with that.
+
+--
+Thanks,
+Sasha
