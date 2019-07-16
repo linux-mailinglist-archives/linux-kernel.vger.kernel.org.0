@@ -2,96 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFC176B275
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 01:39:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB0256B27C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 01:47:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730212AbfGPXjO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 19:39:14 -0400
-Received: from anholt.net ([50.246.234.109]:54008 "EHLO anholt.net"
+        id S2388917AbfGPXrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 19:47:09 -0400
+Received: from msa507.odn.ne.jp ([210.134.90.7]:37071 "EHLO cmsa507.odn.ne.jp"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726446AbfGPXjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 19:39:14 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 9682C10A264A;
-        Tue, 16 Jul 2019 16:39:13 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id 12F3ajGnutvd; Tue, 16 Jul 2019 16:39:12 -0700 (PDT)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 61F0710A1AE9;
-        Tue, 16 Jul 2019 16:39:12 -0700 (PDT)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 600D12FE2547; Tue, 16 Jul 2019 16:39:13 -0700 (PDT)
-From:   Eric Anholt <eric@anholt.net>
-To:     Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org
-Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Rob Clark <robdclark@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Deepak Sharma <deepak.sharma@amd.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] drm/vgem: use normal cached mmap'ings
-In-Reply-To: <20190716213746.4670-3-robdclark@gmail.com>
-References: <20190716213746.4670-1-robdclark@gmail.com> <20190716213746.4670-3-robdclark@gmail.com>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/26.1 (x86_64-pc-linux-gnu)
-Date:   Tue, 16 Jul 2019 16:39:11 -0700
-Message-ID: <87lfwxh7mo.fsf@anholt.net>
+        id S1728681AbfGPXrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 19:47:08 -0400
+X-Greylist: delayed 603 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Jul 2019 19:47:08 EDT
+Received: from vmsa502.odn.ne.jp by cmsa502.odn.ne.jp with ESMTP
+          id <20190716233703557.ZSBN.4247.cmsa502.odn.ne.jp@msa502.odn.ne.jp>
+          for <linux-kernel@vger.kernel.org>;
+          Wed, 17 Jul 2019 08:37:03 +0900
+Received: from msrg5021.rgserv.odn.ne.jp by vmsa502.odn.ne.jp with ESMTP
+          id <20190716233703407.EYPO.110056.vmsa502.odn.ne.jp@msa502.odn.ne.jp>;
+          Wed, 17 Jul 2019 08:37:03 +0900
+Received: from wem501 (210.134.90.71) by msrg5021.rgserv.odn.ne.jp (9.0.018.07.06)
+        id 5D234F690013EB7F; Wed, 17 Jul 2019 08:37:03 +0900
+Message-ID: <5D234F690013EB7F@msrg5021.rgserv.odn.ne.jp> (added by
+            postmaster@msrg5021.rgserv.odn.ne.jp)
+Date:   Wed, 17 Jul 2019 8:37:03 +0900
+From:   Salif Mohammed <aap70820@hkg.odn.ne.jp>
+Reply-To: mohmm54765@gmail.com
+Subject: Dear Friend,
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Transfer-Encoding: 7bit
+X-Priority: 3 (Normal)
+Sensitivity: Normal
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+Dear Friend,
+I am delighted to get across to you for a confidential private business “ investment proposal” worth of US$ 22 Million in which your partnership and trust is highly required.
 
-Rob Clark <robdclark@gmail.com> writes:
+For more details and the procedure, kindly provide me with your following information:
 
-> From: Rob Clark <robdclark@chromium.org>
->
-> Since there is no real device associated with VGEM, it is impossible to
-> end up with appropriate dev->dma_ops, meaning that we have no way to
-> invalidate the shmem pages allocated by VGEM.  So, at least on platforms
-> without drm_cflush_pages(), we end up with corruption when cache lines
-> from previous usage of VGEM bo pages get evicted to memory.
->
-> The only sane option is to use cached mappings.
+1) Your Full name
 
-This may be an improvement, but...
+2) Occupation
 
-pin/unpin is only on attaching/closing the dma-buf, right?  So, great,
-you flushed the cached map once after exporting the vgem dma-buf to the
-actual GPU device, but from then on you still have no interface for
-getting coherent access through VGEM's mapping again, which still
-exists.
+3) Full contact address with your direct mobile phone number.
 
-I feel like this is papering over something that's really just broken,
-and we should stop providing VGEM just because someone wants to write
-dma-buf test code without driver-specific BO alloc ioctl code.
+4) Marital status
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+5) Copy of your International passport/National ID card.
 
------BEGIN PGP SIGNATURE-----
+Shortly after receiving all the above listed information from you as the affirmation of your total interest, I shall email you with every details that you need for us to proceed.
 
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAl0uYB8ACgkQtdYpNtH8
-nugJRw/9EiWQGRfpgMVOaSPrCIjAmsQZR/yI4mMxq6i3W567axR5MUXdes8PKkJW
-5LDqVM4OBs7GY/Rl76LiSO+LeMXuUH57MYAhsvzeweB4vkuPibrFjPLhzHdRz5/P
-augC8mcdlSuP7xZKKGlMuOHfNsMipAZR0lOT+yiVfZ+UfWLNXTky5moA33yyPT1n
-d3YuPIYFWUrZxwGlEQocBJUE6Us5lMieNWdfuAFk9Uhqtz47N8KwbnKPW0FkVKuF
-E3oedpmxIyySwWF16gJn0jwy9gYtnmxyFmSk57V2F8fNvnwGP9JWkpAZEEqv4NMy
-vhWf+lUHxSVj48oWg0B7jXliFA50qjeJA3cQWujXyaKusV99ujoQzWzxAWCWhDCG
-K/kSMHgkLTbz+hOSXfOupKLV7I0aysXZB/USQOln/wSk6AajkEzYMr6l2BxZWuko
-BcGoBCmt6z77yqyAbQOPWuP0LivFore0bLQyXauOSOV8fkUpmx8gNXtkUPy9drCs
-axR3qVp0pfLItCdFTUXhV594hX3J4aN9SMojcAW+Lfmw8/3xDwEPWM5eAR10b2uo
-QioDDThXBXTrc6Vx/NEIouY9zMPuD/mWknuS06x84HmLmFNj0MaD96CQU4yjy5he
-eg2k8an5SqjXoSVC2Pk3Cm3A3Yq4P9FHMiUh9wWtj78r0yIO9j8=
-=koaP
------END PGP SIGNATURE-----
---=-=-=--
+Sincerely,
+
+Salif Mohammed.
+
+Senior Auditor
+
+Dubai Islamic Bank,
+
+Abu Dhabi, U.A.E
+my email [ mohmm54765@gmail.com ]
+
+
