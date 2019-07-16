@@ -2,161 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32D5E6AF4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 20:55:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13F286AF58
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 20:56:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388172AbfGPSz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 14:55:27 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:36386 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728366AbfGPSz1 (ORCPT
+        id S2388541AbfGPS4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 14:56:07 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40579 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388494AbfGPS4H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 14:55:27 -0400
-Received: by mail-oi1-f193.google.com with SMTP id w7so16424563oic.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 11:55:27 -0700 (PDT)
+        Tue, 16 Jul 2019 14:56:07 -0400
+Received: by mail-pg1-f196.google.com with SMTP id w10so9882579pgj.7
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 11:56:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=v2qNIAYunawQIOohUStC2uepdglhwjwNOkwTkSmuqwA=;
-        b=DeeInblYehK96jBMO3XTQUdyzYaeEVHMZgQIndRYrUd9D1cOKxD8eTfnqmgOSgcWy6
-         hitcxSyOWzAU8UsMCUrjhnTI7MRbGSyXY690citOC32HcgrbvpSF5TcgLApM7Cc8CGIx
-         SJCkuTpkpVX5wAE6kht0Q+nou/kd5HugDoIUXHr59eCA16ydTVoQ/cjxSjPZ7KIsrgGi
-         CPNWtPYU+XGPiIrUdQyYcumIPK8ai++jlqHQIhkqPXF9+HPAZT0jODNb9EW6lShGkCun
-         auq/F5854ub9jzRFf+PRksDCB06DskHTntI609gpESvV2yCam3ieYSRYrzkKzpHOeVjZ
-         6W5w==
+        bh=ZybekRt/woJPUqImfzbAl3ncwjUgoXdjZVOXaEHk8I8=;
+        b=j9eLSBzu7vGeOp+9v4PjjMY8Y60gIHirQjt/95JgwPIeMch+f2SZ4m2BcsmqzLNPnA
+         y6mKbUvfRgB58Dd24aP06L/LHkjitHNk2jtHnbwOvIcJMeUwKyAY7Zj3rZzVz85nZG+R
+         H6nYqq0HtuMcKgj4ph8KvSOJ57XFS8xQJyN4O9EfZBueGH2zgw2CSiJKxHwffHaRiCZU
+         F2ZM5rxXlitmIEXm2ndwKKQaLdsI3EeFpaR3+KwtG2rjkMO/QifOGpG1dhcUu5Cz8T3g
+         tXwTsXzmF1fc22PaEHeit7cbJ2ZXrz0nkagsUOfmTF+46/GQqdl6HnMMZCq90oDQiUGy
+         RAXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=v2qNIAYunawQIOohUStC2uepdglhwjwNOkwTkSmuqwA=;
-        b=mbeZmLUWb+5I/oZnrk4baDLETbbF/sztzoXr7hTB94SG1FABB48qDNb764mTObVtPv
-         OqO68LrWBohmPcd5u6FShNuenep51OodQAqsZU+JAwFjyjgpo5nwxx2M/DhyPqc4GnsT
-         vgD2c6pY39HG5PzBgmvlF83oZl14H+Ysaga2cKqkmvWRW2Tpqnq/JM9ou4iOqUBNmobE
-         dz5VaxSEuEVOfztTjBK1UQPvDUbSaW7O8FWtJaufDWw9NBc8KBWR8JsUpl/OpLZE2K7C
-         zgRzczrW15gEHo0zqHP7k1zzdXv/XbGOaPpuUyMiIy0824WyYbtEm3YLAg/TG2jckhQq
-         Mb1g==
-X-Gm-Message-State: APjAAAWpSsFpe/QFUrnCygs7HU+4ZArmxfJhf/eeBF6bssVfCN6JlnXT
-        nmJF/2W4M5N4zMn0IdIhPmSiIaexBKffZAOc4j8Mtw==
-X-Google-Smtp-Source: APXvYqyZHRObC1IQXBl7JWeBwdhhIJvZKAUPMDYyGOaNWtOTh51kTOUJLNL2kGv1V4wKcLNIT7kbgrPtItAfztGuAbs=
-X-Received: by 2002:aca:5106:: with SMTP id f6mr18146549oib.69.1563303326562;
- Tue, 16 Jul 2019 11:55:26 -0700 (PDT)
+        bh=ZybekRt/woJPUqImfzbAl3ncwjUgoXdjZVOXaEHk8I8=;
+        b=XRW99dkCO7ZZgKtC5d0C6fH3PWb938soJSr/uPAFuV2rTTkRMdEuaEifBRVF/PJPoZ
+         mHBJbTmZtoakdUYg+Vp3UptcSaC/JQw0/CIy++mBRbueCkNsAaNkEYu+zGzWeKGchfn0
+         z4G+R5S61rc9z9IuB6xY0Hak8S8rWHFfYeETEr9n/Om5TlrALShAmK6BU8yHdRQ9FwNp
+         Oy/plGHWV7LUCXZQRXJxX5E/kTvQcXEvf0NTLjkdtTD7Bygyiu5FVZC62fHxeutTtid4
+         Sr3sTaYZ2ErffXhjBO+EcJak5WMpNf7hSE207Dm32GY0jE5ZIXeOE7giCQ5fA4JAycgT
+         etqg==
+X-Gm-Message-State: APjAAAXb9F6hPmwoPMlcmMWfHvd26Z1ynMCX4jtXgUl4P/0ANBgBjrD4
+        L7TjoGA14bsNJQe+fkBjqTbSs3Hk+nKL3hWPP8qLUQ==
+X-Google-Smtp-Source: APXvYqwkl9ifterOK2ove6KXh9jZEcTxm4XlxkMBt5KD+9P3zl/wFtgkQs2T9gGivENnFOevPZS3P3oa9+3ivqemHYQ=
+X-Received: by 2002:a63:205f:: with SMTP id r31mr35946123pgm.159.1563303365863;
+ Tue, 16 Jul 2019 11:56:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190625213337.157525-1-saravanak@google.com> <20190625213337.157525-2-saravanak@google.com>
- <e7a5b387-fa85-15a8-8d79-fbc441c36293@codeaurora.org>
-In-Reply-To: <e7a5b387-fa85-15a8-8d79-fbc441c36293@codeaurora.org>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Tue, 16 Jul 2019 11:54:50 -0700
-Message-ID: <CAGETcx_LLj0Kd_1STijmPm+BbOK4UoY=qQ5Ruhjei3JCoOGhFw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] OPP: Allow required-opps even if the device
- doesn't have power-domains
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20190712081744.87097-1-brendanhiggins@google.com>
+ <20190712081744.87097-4-brendanhiggins@google.com> <20190715204356.4E3F92145D@mail.kernel.org>
+ <CAFd5g47481sRaez=yEJN4_ghiXZbxayk1Y04tAZpuzPLsmnhKg@mail.gmail.com>
+ <20190715220407.0030420665@mail.kernel.org> <CAFd5g44bE0F=wq_fOAnxFTtoOyx1dUshhDAkKWr5hX9ipJ4Sxw@mail.gmail.com>
+ <CAFd5g47y4vDB2P=EsGN8305LGeQPCTveNs-Jd5-=6K-XKY==CA@mail.gmail.com> <20190716153400.5CB182054F@mail.kernel.org>
+In-Reply-To: <20190716153400.5CB182054F@mail.kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 16 Jul 2019 11:55:54 -0700
+Message-ID: <CAFd5g47Nawp7V8=hetgBQWzWqmEyAz1GtWWwMrb9k=CCR33inQ@mail.gmail.com>
+Subject: Re: [PATCH v9 03/18] kunit: test: add string_stream a std::stream
+ like string builder
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 10:18 AM Sibi Sankar <sibis@codeaurora.org> wrote:
+On Tue, Jul 16, 2019 at 8:34 AM Stephen Boyd <sboyd@kernel.org> wrote:
 >
-> Hey Saravana,
-> Thanks for taking time to post out this series.
+> Quoting Brendan Higgins (2019-07-15 15:43:20)
+> > On Mon, Jul 15, 2019 at 3:11 PM Brendan Higgins
+> > <brendanhiggins@google.com> wrote:
+> > >
+> > > On Mon, Jul 15, 2019 at 3:04 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > > >
+> > > > Quoting Brendan Higgins (2019-07-15 14:11:50)
+> > > > > On Mon, Jul 15, 2019 at 1:43 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > > > > >
+> > > > > > I also wonder if it would be better to just have a big slop buffer of a
+> > > > > > 4K page or something so that we almost never have to allocate anything
+> > > > > > with a string_stream and we can just rely on a reader consuming data
+> > > > > > while writers are writing. That might work out better, but I don't quite
+> > > > > > understand the use case for the string stream.
+> > > > >
+> > > > > That makes sense, but might that also waste memory since we will
+> > > > > almost never need that much memory?
+> > > >
+> > > > Why do we care? These are unit tests.
+> > >
+> > > Agreed.
+> > >
+> > > > Having allocations in here makes
+> > > > things more complicated, whereas it would be simpler to have a pointer
+> > > > and a spinlock operating on a chunk of memory that gets flushed out
+> > > > periodically.
+> > >
+> > > I am not so sure. I have to have the logic to allocate memory in some
+> > > case no matter what (what if I need more memory that my preallocated
+> > > chuck?). I think it is simpler to always request an allocation than to
+> > > only sometimes request an allocation.
+> >
+> > Another even simpler alternative might be to just allocate memory
+> > using kunit_kmalloc as we need it and just let the kunit_resource code
+> > handle cleaning it all up when the test case finishes.
 >
-> On 6/26/19 3:03 AM, Saravana Kannan wrote:
-> > A Device-A can have a (minimum) performance requirement on another
-> > Device-B to be able to function correctly. This performance requirement
-> > on Device-B can also change based on the current performance level of
-> > Device-A.
-> >
-> > The existing required-opps feature fits well to describe this need. So,
-> > instead of limiting required-opps to point to only PM-domain devices,
-> > allow it to point to any device.
-> >
-> > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > ---
-> >   drivers/opp/core.c |  2 +-
-> >   drivers/opp/of.c   | 14 --------------
-> >   2 files changed, 1 insertion(+), 15 deletions(-)
-> >
-> > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> > index 0e7703fe733f..74c7bdc6f463 100644
-> > --- a/drivers/opp/core.c
-> > +++ b/drivers/opp/core.c
-> > @@ -710,7 +710,7 @@ static int _set_required_opps(struct device *dev,
-> >               return 0;
-> >
-> >       /* Single genpd case */
-> > -     if (!genpd_virt_devs) {
-> > +     if (!genpd_virt_devs && required_opp_tables[0]->is_genpd) {
-> https://patchwork.kernel.org/patch/10940671/
-> This was already removed as a part of ^^ and is in linux-next.
+> Sure, sounds like a nice way to avoid duplicating similar logic to
+> maintain a list of things to free later.
 
-Thanks for the heads up.
+I think I will go that route for now.
 
->
-> >               pstate = opp->required_opps[0]->pstate;
-> >               ret = dev_pm_genpd_set_performance_state(dev, pstate);
-> >               if (ret) {
-> > diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-> > index c10c782d15aa..7c8336e94aff 100644
-> > --- a/drivers/opp/of.c
-> > +++ b/drivers/opp/of.c
-> > @@ -195,9 +195,6 @@ static void _opp_table_alloc_required_tables(struct opp_table *opp_table,
-> >        */
-> >       count_pd = of_count_phandle_with_args(dev->of_node, "power-domains",
-> >                                             "#power-domain-cells");
-> > -     if (!count_pd)
-> > -             goto put_np;
-> > -
-> >       if (count_pd > 1) {
-> >               genpd_virt_devs = kcalloc(count, sizeof(*genpd_virt_devs),
-> >                                       GFP_KERNEL);
-> > @@ -226,17 +223,6 @@ static void _opp_table_alloc_required_tables(struct opp_table *opp_table,
 > >
-> >               if (IS_ERR(required_opp_tables[i]))
-> >                       goto free_required_tables;
-> > -
-> > -             /*
-> > -              * We only support genpd's OPPs in the "required-opps" for now,
-> > -              * as we don't know how much about other cases. Error out if the
-> > -              * required OPP doesn't belong to a genpd.
-> > -              */
-> > -             if (!required_opp_tables[i]->is_genpd) {
-> > -                     dev_err(dev, "required-opp doesn't belong to genpd: %pOF\n",
-> > -                             required_np);
-> > -                     goto free_required_tables;
-> > -             }
+> > What do you think?
 >
-> I expect the series to not work as is in its current state since I
-> see a circular dependency here. The required-opp tables of the parent
-> devfreq won't be populated until we add the opp-table of the child
-> devfreq node while the child devfreq using passive governor would
-> return -EPROBE_DEFER until the parent devfreq probes.
+> If you go the allocation route then you'll need to have the flags to
+> know what context you're in to allocate appropriately. Does that mean
+> all the string operations will now take GFP flags?
 
-I looked into this when I wrote the patches. I thought I handled it
-correctly. Let me take another look.
+We could set the GFP flags in the constructor, store them in a field,
+and then just reuse them.
 
--Saravana
-
-> The same applies to this patch -> https://patchwork.kernel.org/patch
-> /11046147/ I posted out based on your series. So we would probably have
-> to address the dependency here.
->
-> >       }
-> >
-> >       goto put_np;
-> >
->
-> --
-> Qualcomm Innovation Center, Inc.
-> Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+Thanks!
