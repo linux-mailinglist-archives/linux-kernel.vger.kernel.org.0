@@ -2,127 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D2EC6AF23
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 20:50:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E71B86AF2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 20:52:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388525AbfGPSuH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 14:50:07 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36636 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388432AbfGPSuH (ORCPT
+        id S2388505AbfGPSwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 14:52:00 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33422 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728190AbfGPSv7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 14:50:07 -0400
-Received: by mail-qt1-f194.google.com with SMTP id z4so20716882qtc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 11:50:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=I3eRYibeoQehmMKtTdehZx5shEh6xz2X8+qA77bSphY=;
-        b=tQVTe9x86Mh+zED3O2osHru75jkgx3tW0LvGAKXT5kFmAzrkF4A/ZQRpK2Qf2v4YRM
-         KqxA73e6Dklm4xOehNmekawW6aXvPU6JAKdKWVIjslixy6zmZ54kIFC4MAm+1nSGcH/8
-         mdeCK5yz/VSzRgY19RDZuGMXLqe+/7eAFw9wM4AUOCjQkzj85WUIjH+4ZSmF3TeN2vGD
-         Pp8mEi0IAv28uU108mkGpoP4B1j3z5A0+SNm8IgPR9xtFl3cEQV+raMEk7irrjXqDy/U
-         YExXR0xm5sAyhYxLFS1634VHFiaPSP9E0DS/rA1a6G2giEF7iNAXncAGRc9OtnTCGQ/8
-         2TbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=I3eRYibeoQehmMKtTdehZx5shEh6xz2X8+qA77bSphY=;
-        b=Oh+MBQC/ZtnskIqYLuTTgTyZmgw1OBzkfogINdlH30WVDUKeky4plVnn3dErez9fRv
-         mCK5TA26l5mf+6708J0qbBkvIYxQwlxANiBfnxziH7nGlDDEhj4k8mWB9qE2MI2CiTny
-         p4LtKjRtR3/6ZMukC2cB+Hlw4iYuDRKOl6bbbVxLCAGfT1wALONo3xsSmAWUZ9hnBx2U
-         uG/5CXaviCBlvhDHvzdqa5lrwIa1FOrHshSTDgaDEPn6cVr8ggkv58xsZil5xOrDDzE/
-         HOl7HkHkvrU0VqZ5xVwlRVZTwlmQJPg+E8ehEN35n5wbifHpGXu6PdSHxWODs57Mt9Cv
-         8vjg==
-X-Gm-Message-State: APjAAAUyyKMYIbncBiEAsi7oFl5esPB/F0oUAlXUWtxl2WHiG/9k4SC6
-        PfEtZgbP3RpzplX910ZVYzcJLSlp
-X-Google-Smtp-Source: APXvYqxZz/ZeVjEJGaKCK1pOJFJCAx4vqTOyA3B98fcafLavE6BBQQ1vjx7fKmDb7B3klOYf1Hl1IQ==
-X-Received: by 2002:ac8:5297:: with SMTP id s23mr24649595qtn.230.1563303006084;
-        Tue, 16 Jul 2019 11:50:06 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([190.15.121.82])
-        by smtp.gmail.com with ESMTPSA id c74sm10313485qke.128.2019.07.16.11.50.04
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 16 Jul 2019 11:50:05 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 79EA440340; Tue, 16 Jul 2019 15:49:59 -0300 (-03)
-Date:   Tue, 16 Jul 2019 15:49:59 -0300
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>
-Cc:     Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] perf session: fix loading of compressed data split
- across adjacent records
-Message-ID: <20190716184959.GG3624@kernel.org>
-References: <4d839e1b-9c48-89c4-9702-a12217420611@linux.intel.com>
- <20190714154932.GC16802@krava>
- <389a8b98-1d53-6fe3-ff56-0789c0841292@linux.intel.com>
+        Tue, 16 Jul 2019 14:51:59 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6GIlNTt044569;
+        Tue, 16 Jul 2019 14:50:20 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tshucnx7j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 Jul 2019 14:50:20 -0400
+Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x6GIlOPo044688;
+        Tue, 16 Jul 2019 14:50:19 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tshucnx60-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 Jul 2019 14:50:19 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x6GIoFHR005702;
+        Tue, 16 Jul 2019 18:50:17 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma01wdc.us.ibm.com with ESMTP id 2tq6x61abh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 Jul 2019 18:50:17 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6GIoHCZ52494808
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Jul 2019 18:50:17 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E16E7B206E;
+        Tue, 16 Jul 2019 18:50:16 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A925BB2075;
+        Tue, 16 Jul 2019 18:50:01 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.225.134])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 16 Jul 2019 18:50:01 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 9820C16C905B; Tue, 16 Jul 2019 11:50:01 -0700 (PDT)
+Date:   Tue, 16 Jul 2019 11:50:01 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Borislav Petkov <bp@alien8.de>, c0d1n61at3@gmail.com,
+        "David S. Miller" <davem@davemloft.net>, edumazet@google.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
+        kernel-hardening@lists.openwall.com, kernel-team@android.com,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        neilb@suse.com, netdev@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        peterz@infradead.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Tejun Heo <tj@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, will@kernel.org,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
+Subject: Re: [PATCH v2 2/9] rcu: Add support for consolidated-RCU reader
+ checking
+Message-ID: <20190716185001.GL14271@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190712170024.111093-1-joel@joelfernandes.org>
+ <20190712170024.111093-3-joel@joelfernandes.org>
+ <20190716182237.GA22819@linux.ibm.com>
+ <20190716183517.GA129705@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <389a8b98-1d53-6fe3-ff56-0789c0841292@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190716183517.GA129705@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-16_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907160230
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Jul 15, 2019 at 03:30:24PM +0300, Alexey Budankov escreveu:
-> On 14.07.2019 18:49, Jiri Olsa wrote:
-> > On Tue, Jul 09, 2019 at 05:48:14PM +0300, Alexey Budankov wrote:
+On Tue, Jul 16, 2019 at 02:35:17PM -0400, Joel Fernandes wrote:
+> On Tue, Jul 16, 2019 at 11:22:37AM -0700, Paul E. McKenney wrote:
+> > On Fri, Jul 12, 2019 at 01:00:17PM -0400, Joel Fernandes (Google) wrote:
+> > > This patch adds support for checking RCU reader sections in list
+> > > traversal macros. Optionally, if the list macro is called under SRCU or
+> > > other lock/mutex protection, then appropriate lockdep expressions can be
+> > > passed to make the checks pass.
+> > > 
+> > > Existing list_for_each_entry_rcu() invocations don't need to pass the
+> > > optional fourth argument (cond) unless they are under some non-RCU
+> > > protection and needs to make lockdep check pass.
+> > > 
+> > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 > > 
-> > SNIP
-> > 
-> >>  	decomp->file_pos = file_offset;
-> >> +	decomp->mmap_len = mmap_len;
-> >>  	decomp->head = 0;
-> >>  
-> >> -	if (decomp_last) {
-> >> -		decomp_last_rem = decomp_last->size - decomp_last->head;
-> >> +	if (decomp_last_rem) {
-> >>  		memcpy(decomp->data, &(decomp_last->data[decomp_last->head]), decomp_last_rem);
-> >>  		decomp->size = decomp_last_rem;
-> >>  	}
-> >> @@ -61,7 +67,7 @@ static int perf_session__process_compressed_event(struct perf_session *session,
-> >>  	decomp_size = zstd_decompress_stream(&(session->zstd_data), src, src_size,
-> >>  				&(decomp->data[decomp_last_rem]), decomp_len - decomp_last_rem);
-> >>  	if (!decomp_size) {
-> >> -		munmap(decomp, sizeof(struct decomp) + decomp_len);
-> >> +		munmap(decomp, mmap_len);
-> >>  		pr_err("Couldn't decompress data\n");
-> >>  		return -1;
-> >>  	}
-> >> @@ -255,15 +261,15 @@ static void perf_session__delete_threads(struct perf_session *session)
-> >>  static void perf_session__release_decomp_events(struct perf_session *session)
-> >>  {
-> >>  	struct decomp *next, *decomp;
-> >> -	size_t decomp_len;
-> >> +	size_t mmap_len;
-> >>  	next = session->decomp;
-> >> -	decomp_len = session->header.env.comp_mmap_len;
-> >>  	do {
-> >>  		decomp = next;
-> >>  		if (decomp == NULL)
-> >>  			break;
-> >>  		next = decomp->next;
-> >> -		munmap(decomp, decomp_len + sizeof(struct decomp));
-> >> +		mmap_len = decomp->mmap_len;
-> >> +		munmap(decomp, mmap_len);
-> > 
-> > what's the need for extra mmap_len variable in here?
-> > could you just use decomp->mmap_len directly?
+> > If you fold in the checks for extra parameters, I will take this
+> > one and also 1/9.
 > 
-> To avoid reference to the object being deallocated.
-> Plain munmap(), yes - :)
+> I folded the checks in and also threw in the rcu-sync with Oleg's ack:
+> 
+> Could you pull into /dev branch?
+> 
+> git pull https://github.com/joelagnel/linux-kernel.git list-first-three
+> (Based on your dev branch)
 
-So, Jiri, Acked-by?
+Given that I am going to have to rebase these a few times, please
+email a v4.
 
-- Arnaldo
+							Thanx, Paul
