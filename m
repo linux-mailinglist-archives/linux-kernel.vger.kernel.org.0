@@ -2,137 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 933E86ACA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 18:26:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2AA56ACDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 18:36:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387886AbfGPQ0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 12:26:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34184 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725926AbfGPQ0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 12:26:31 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 18AB887620;
-        Tue, 16 Jul 2019 16:26:30 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-14.phx2.redhat.com [10.3.112.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A40625C28D;
-        Tue, 16 Jul 2019 16:26:19 +0000 (UTC)
-Date:   Tue, 16 Jul 2019 12:26:16 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Tycho Andersen <tycho@tycho.ws>, nhorman@tuxdriver.com,
-        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
-Message-ID: <20190716162616.7kgvqbqxn4icqyb3@madcap2.tricolour.ca>
-References: <20190529222835.GD8959@cisco>
- <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
- <20190530170913.GA16722@mail.hallyn.com>
- <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
- <20190530212900.GC5739@cisco>
- <CAHC9VhT5HPt9rCJoDutdvA3r1Y1GOHfpXe2eJ54atNC1=Vd8LA@mail.gmail.com>
- <20190708181237.5poheliito7zpvmc@madcap2.tricolour.ca>
- <CAHC9VhT0V+xi_6nAR5TsM2vs34LbgMeO=-W+MS_kqiXRRzneZQ@mail.gmail.com>
- <20190716153705.xx7dwrhliny5amut@madcap2.tricolour.ca>
- <CAHC9VhTaLqCo8rmAaySJQB+Pf-580=3mvX1rPmtEeb9o5Uy9Qg@mail.gmail.com>
+        id S2387959AbfGPQdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 12:33:35 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:40912 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725926AbfGPQdf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 12:33:35 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6GGSrPT022215;
+        Tue, 16 Jul 2019 16:33:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=DjgqWqMR/0L7+yTOWg47+RG4y5Wc7SVUF1gML+2WuCE=;
+ b=ngcD639Q89hovprhRfWyJ24KTIfCG58fXJKbXhci9SoWgMk/O/DjKMB3ieHqSVNDeHiU
+ 7amod2NsYNIFasielCNsqRFnuXODQeKRf2Br0bBcj7C1DEHbGuONcU9sX3wiJV5IzzU7
+ aChX04mIbrNwzkkcUHKJ0Ne0C8rPoidnWNm3yABogs7YIweHM9BJJ2hRpDoyJ8vqXKmI
+ eWtwn6G3YFh6ExuT3G5kf7DILQ6OXLaVuZ7IDQaAjVeBAwtLkZ70QMQTuhHj8iFI4TC0
+ cbuSLvionZEI2USsh+3tyJO6vfQMF3gi2NyVwMB445MXV5gwSRzXB0TQYEYWjIRpajr4 Ag== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2tq6qtnr7c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Jul 2019 16:33:09 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6GGSSVx068352;
+        Tue, 16 Jul 2019 16:33:08 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2tq6mn057m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Jul 2019 16:33:08 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6GGWxbD026732;
+        Tue, 16 Jul 2019 16:33:05 GMT
+Received: from localhost.localdomain (/73.60.114.248)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 16 Jul 2019 16:32:59 +0000
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Steffen Klassert <steffen.klassert@secunet.com>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] padata: use smp_mb in padata_reorder to avoid orphaned padata jobs
+Date:   Tue, 16 Jul 2019 12:32:53 -0400
+Message-Id: <20190716163253.24377-1-daniel.m.jordan@oracle.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <c1bbbe94-dbdc-da14-e0c3-850c965d8b5d@oracle.com>
+References: <c1bbbe94-dbdc-da14-e0c3-850c965d8b5d@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhTaLqCo8rmAaySJQB+Pf-580=3mvX1rPmtEeb9o5Uy9Qg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 16 Jul 2019 16:26:30 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907160203
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907160203
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-07-16 12:08, Paul Moore wrote:
-> On Tue, Jul 16, 2019 at 11:37 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2019-07-15 17:09, Paul Moore wrote:
-> > > On Mon, Jul 8, 2019 at 2:12 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > On 2019-05-30 19:26, Paul Moore wrote:
-> > >
-> > > ...
-> > >
-> > > > > I like the creativity, but I worry that at some point these
-> > > > > limitations are going to be raised (limits have a funny way of doing
-> > > > > that over time) and we will be in trouble.  I say "trouble" because I
-> > > > > want to be able to quickly do an audit container ID comparison and
-> > > > > we're going to pay a penalty for these larger values (we'll need this
-> > > > > when we add multiple auditd support and the requisite record routing).
-> > > > >
-> > > > > Thinking about this makes me also realize we probably need to think a
-> > > > > bit longer about audit container ID conflicts between orchestrators.
-> > > > > Right now we just take the value that is given to us by the
-> > > > > orchestrator, but if we want to allow multiple container orchestrators
-> > > > > to work without some form of cooperation in userspace (I think we have
-> > > > > to assume the orchestrators will not talk to each other) we likely
-> > > > > need to have some way to block reuse of an audit container ID.  We
-> > > > > would either need to prevent the orchestrator from explicitly setting
-> > > > > an audit container ID to a currently in use value, or instead generate
-> > > > > the audit container ID in the kernel upon an event triggered by the
-> > > > > orchestrator (e.g. a write to a /proc file).  I suspect we should
-> > > > > start looking at the idr code, I think we will need to make use of it.
-> > > >
-> > > > To address this, I'd suggest that it is enforced to only allow the
-> > > > setting of descendants and to maintain a master list of audit container
-> > > > identifiers (with a hash table if necessary later) that includes the
-> > > > container owner.
-> > >
-> > > We're discussing the audit container ID management policy elsewhere in
-> > > this thread so I won't comment on that here, but I did want to say
-> > > that we will likely need something better than a simple list of audit
-> > > container IDs from the start.  It's common for systems to have
-> > > thousands of containers now (or multiple thousands), which tells me
-> > > that a list is a poor choice.  You mentioned a hash table, so I would
-> > > suggest starting with that over the list for the initial patchset.
-> >
-> > I saw that as an internal incremental improvement that did not affect
-> > the API, so I wanted to keep things a bit simpler (as you've requested
-> > in the past) to get this going, and add that enhancement later.
-> 
-> In general a simple approach is a good way to start when the
-> problem/use-case is not very well understood; in other words, don't
-> spend a lot of time/effort optimizing something you don't yet
-> understand.  In this case we know that people want to deploy a *lot*
-> of containers on a single system so we should design the data
-> structures appropriately.  A list is simply not a good fit here, I
-> believe/hope you know that too.
+Testing padata with the tcrypt module on a 5.2 kernel...
 
-Yes, I knew that, which is why I alluded to a hash table...
+    # modprobe tcrypt alg="pcrypt(rfc4106(gcm(aes)))" type=3
+    # modprobe tcrypt mode=211 sec=1
 
-> > I'll start working on it now.  The hash table would simply point to
-> > lists anyways unless you can recommend a better approach.
-> 
-> I assume when you say "point to lists" you are talking about using
-> lists for the hash buckets?  If so, yes that should be fine at this
-> point.  In general if the per-bucket lists become a bottleneck we can
-> look at the size of the table (or make it tunable) or even use a
-> different approach entirely.  Ultimately the data store is an
-> implementation detail private to the audit subsystem in the kernel so
-> we should be able to change it as necessary without breaking anything.
+...produces this splat:
 
-Yes, this is what I had in mind.  It would be tunable either by a macro
-or a config option, so the exact value isn't a critical implementation
-detail that can be easily tuned as we gain experience with it.  And yes,
-the intent was that it was a non-user-perceivable implementation choice
-other than performace metrics.
+    INFO: task modprobe:10075 blocked for more than 120 seconds.
+          Not tainted 5.2.0-base+ #16
+    modprobe        D    0 10075  10064 0x80004080
+    Call Trace:
+     ? __schedule+0x4dd/0x610
+     ? ring_buffer_unlock_commit+0x23/0x100
+     schedule+0x6c/0x90
+     schedule_timeout+0x3b/0x320
+     ? trace_buffer_unlock_commit_regs+0x4f/0x1f0
+     wait_for_common+0x160/0x1a0
+     ? wake_up_q+0x80/0x80
+     { crypto_wait_req }             # entries in braces added by hand
+     { do_one_aead_op }
+     { test_aead_jiffies }
+     test_aead_speed.constprop.17+0x681/0xf30 [tcrypt]
+     do_test+0x4053/0x6a2b [tcrypt]
+     ? 0xffffffffa00f4000
+     tcrypt_mod_init+0x50/0x1000 [tcrypt]
+     ...
 
-> paul moore
+The second modprobe command never finishes because in padata_reorder,
+CPU0's load of reorder_objects is executed before the unlocking store in
+spin_unlock_bh(pd->lock), causing CPU0 to miss CPU1's increment:
 
-- RGB
+CPU0                                 CPU1
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+padata_reorder                       padata_do_serial
+  LOAD reorder_objects  // 0
+                                       INC reorder_objects  // 1
+                                       padata_reorder
+                                         TRYLOCK pd->lock   // failed
+  UNLOCK pd->lock
+
+CPU0 deletes the timer before returning from padata_reorder and since no
+other job is submitted to padata, modprobe waits indefinitely.
+
+Add a pair of full barriers to guarantee proper ordering:
+
+CPU0                                 CPU1
+
+padata_reorder                       padata_do_serial
+  UNLOCK pd->lock
+  smp_mb()
+  LOAD reorder_objects
+                                       INC reorder_objects
+                                       smp_mb__after_atomic()
+                                       padata_reorder
+                                         TRYLOCK pd->lock
+
+smp_mb__after_atomic is needed so the read part of the trylock operation
+comes after the INC, as Andrea points out.   Thanks also to Andrea for
+help with writing a litmus test.
+
+Fixes: 16295bec6398 ("padata: Generic parallelization/serialization interface")
+Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Paul E. McKenney <paulmck@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: linux-arch@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ kernel/padata.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/kernel/padata.c b/kernel/padata.c
+index 2d2fddbb7a4c..15a8ad63f4ff 100644
+--- a/kernel/padata.c
++++ b/kernel/padata.c
+@@ -267,7 +267,12 @@ static void padata_reorder(struct parallel_data *pd)
+ 	 * The next object that needs serialization might have arrived to
+ 	 * the reorder queues in the meantime, we will be called again
+ 	 * from the timer function if no one else cares for it.
++	 *
++	 * Ensure reorder_objects is read after pd->lock is dropped so we see
++	 * an increment from another task in padata_do_serial.  Pairs with
++	 * smp_mb__after_atomic in padata_do_serial.
+ 	 */
++	smp_mb();
+ 	if (atomic_read(&pd->reorder_objects)
+ 			&& !(pinst->flags & PADATA_RESET))
+ 		mod_timer(&pd->timer, jiffies + HZ);
+@@ -387,6 +392,13 @@ void padata_do_serial(struct padata_priv *padata)
+ 	list_add_tail(&padata->list, &pqueue->reorder.list);
+ 	spin_unlock(&pqueue->reorder.lock);
+ 
++	/*
++	 * Ensure the atomic_inc of reorder_objects above is ordered correctly
++	 * with the trylock of pd->lock in padata_reorder.  Pairs with smp_mb
++	 * in padata_reorder.
++	 */
++	smp_mb__after_atomic();
++
+ 	put_cpu();
+ 
+ 	/* If we're running on the wrong CPU, call padata_reorder() via a
+
+base-commit: 0ecfebd2b52404ae0c54a878c872bb93363ada36
+-- 
+2.22.0
+
