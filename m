@@ -2,60 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC0B16AD10
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 18:45:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D995E6AD17
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 18:47:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388038AbfGPQog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 12:44:36 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45920 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728563AbfGPQof (ORCPT
+        id S2388124AbfGPQrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 12:47:16 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38881 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728124AbfGPQrP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 12:44:35 -0400
-Received: by mail-pl1-f196.google.com with SMTP id y8so10385291plr.12
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 09:44:35 -0700 (PDT)
+        Tue, 16 Jul 2019 12:47:15 -0400
+Received: by mail-pl1-f194.google.com with SMTP id az7so10399057plb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 09:47:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=rb6z0J3PnQNVPmOTs37Tflmgb6ZXxYF+gFUGTKgihdQ=;
-        b=KIfFA/lE08lYJlpZaOeKEpNHMdJmBcI/Rdit44CXjk9OkyMhhGLdG5UBq8epzlm8bj
-         ptjHK+IPA2iaF0Hr1jGnU6aMHQtkoZ1q15W6sTsheinHenMfRYr2W9LO5EoBUeVSd7pj
-         0Ug7z9PwL9TZQRvfXf2okOT4CBOvHsjgRKlV9byJ6PUBqKj/D4p2jkpmPquO2U1jh/IF
-         cxU9LZQ0pPRF7COOUriw86shNoalNtUJDqa0VICFYSF59B4XuaHdn2f24Dy9OjlUfV+L
-         byEfj4ULxRNvtLBtRz4r5VsPWHMV21S0nzNajZ+/kRX1pwECo3ZmIKfRpf6723slxf3F
-         f8LQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=AsJY7Tj55Ay2SJtdNoNPmO3/SlrZD7SizoCm9UXpp50=;
+        b=ZJgOo0aPZ5O0N0+21Je0obxlaf1FaJT3cv7gM8x1kbGuErDXE66IS718/79YsniIMC
+         JkD/a0C49E5DiaULB8NAGz4S8hPSyLvlkfCyBR7L5Xdq9pKY3cfBJvxR5rQdH8CN4jfd
+         096nCgykKR1hJHdZbXuaIiOxaH27fAm8d/X9StbT12ZzEGLrr0xKC8aASBB96Bhognyl
+         bDN4tz6wkQGm8j6sSVSyUXAscYYPe1TAr3OLWP86ylZATpU/Tpg4DrRWGW9MWZvLCPwf
+         oix5USpYNgIvTdqTjiHeFgb0dy1CSLYzgmAFpEKV0mYWVBjVSG9xTZFdFU6t78mAMUeL
+         JpBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=rb6z0J3PnQNVPmOTs37Tflmgb6ZXxYF+gFUGTKgihdQ=;
-        b=Anvp4qGF2MRtU9x0ZzSKdz23Yvspvuh4XDTk0A1FfkL9PbQd8e09EuV7lbq+kR+N3q
-         ADUdl+Te5BRwAhrCBnJoFdAdt/v+UCQytfgAU00NoH4O+LfA/1ryRWe8VwHiONCCqG49
-         UYZjxVPuAflUL8GBcvicLLAcrHtMl2h2TmikkHibtHreC6eqa+pr+Bd5+Cs5I5eTFIKz
-         3QEpJg/cbHS1NbbobJfwnARA+Nfnxz2N7YQzjhwFpAC03yDcxtBarIS9VTGiLwT16pE5
-         h/D1nSNrkv3OfYbBAHlF3XWXFfw6lRC+1arnYJcDq8K3Y6TczzLj0NHuxBBa2BjXH6ub
-         qRxQ==
-X-Gm-Message-State: APjAAAV3Dz/mLhlpx9w0ox0PdN2S3TgRHAhkJ0fSx/tYvKbVDVf1VLpk
-        4JvE5qTFias/lZ0L/pIJhks=
-X-Google-Smtp-Source: APXvYqxTAsYzSCitipMj3Cnq0cvgAncM8UVtX6Ejrg+BX45WfDVl8GCsx0zL734z9ppZ7Wol6eewNA==
-X-Received: by 2002:a17:902:2865:: with SMTP id e92mr36404429plb.264.1563295475103;
-        Tue, 16 Jul 2019 09:44:35 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=AsJY7Tj55Ay2SJtdNoNPmO3/SlrZD7SizoCm9UXpp50=;
+        b=XPozc3lBxdlW9WVfmqpWczS5DbX1jF4AeOmWgd30w3IfmO80+/aOkR27OwtPezpbbW
+         DmkmmqBG9yfVOX9KHkZ6m1j4pcqUyIrihznL6iwCWN6j5nPLrkTCNa403qVHM9XRrCeX
+         P79AFYLRiLhemQI7HzB8iCUTE4e2xYTXW5nS1E2qtvjB2zVzMoxKkSBMCWPmR9k+vQD0
+         zW1zZQiDRXkg1NAAdsykB+WOVyM4zNswER4elhikeueZZEbG9sOMg42gJf1VNgRIDgql
+         YVkZ3EdKfWsT7UrSLH8SAd8glkV/lnS6ZbXxlCRc6FXMpZRG4Ol2f5Syh5JEfnyC6NPs
+         qVvg==
+X-Gm-Message-State: APjAAAWBXgCe3n4CLulBJPuadQkG2laK5pmbbSUwRnRALtzTqBuKrYCF
+        GKB6T/5t+UKBSlZg7dhr7xU=
+X-Google-Smtp-Source: APXvYqxx58u4o7rwwUHy17q7VwUZtLQpEcWyLBBigW/uYXoO5pGow+PXNKPST0LfhDn2AXvduU0srQ==
+X-Received: by 2002:a17:902:4c88:: with SMTP id b8mr38198430ple.29.1563295634805;
+        Tue, 16 Jul 2019 09:47:14 -0700 (PDT)
 Received: from localhost ([100.118.89.203])
-        by smtp.gmail.com with ESMTPSA id s66sm22096485pfs.8.2019.07.16.09.44.34
+        by smtp.gmail.com with ESMTPSA id r18sm5762642pfg.77.2019.07.16.09.47.13
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 16 Jul 2019 09:44:34 -0700 (PDT)
+        Tue, 16 Jul 2019 09:47:14 -0700 (PDT)
 From:   Rob Clark <robdclark@gmail.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Rob Clark <robdclark@chromium.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] drm/gem: don't force writecombine mmap'ing
-Date:   Tue, 16 Jul 2019 09:42:14 -0700
-Message-Id: <20190716164221.15436-1-robdclark@gmail.com>
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Deepak Sharma <deepak.sharma@amd.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] drm/vgem: use normal cached mmap'ings
+Date:   Tue, 16 Jul 2019 09:42:15 -0700
+Message-Id: <20190716164221.15436-2-robdclark@gmail.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190716164221.15436-1-robdclark@gmail.com>
+References: <20190716164221.15436-1-robdclark@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,34 +72,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rob Clark <robdclark@chromium.org>
 
-The driver should be in control of this.
+Since there is no real device associated with vgem, it is impossible to
+end up with appropriate dev->dma_ops, meaning that we have no way to
+invalidate the shmem pages allocated by vgem.  So, at least on platforms
+without drm_cflush_pages(), we end up with corruption when cache lines
+from previous usage of vgem bo pages get evicted to memory.
+
+The only sane option is to use cached mappings.
 
 Signed-off-by: Rob Clark <robdclark@chromium.org>
 ---
-It is possible that this was masking bugs (ie. not setting appropriate
-pgprot) in drivers.  I don't have a particularly good idea for tracking
-those down (since I don't have the hw for most drivers).  Unless someone
-has a better idea, maybe land this and let driver maintainers fix any
-potential fallout in their drivers?
+Possibly we could dma_sync_*_for_{device,cpu}() on dmabuf attach/detach,
+although the ->gem_prime_{pin,unpin}() API isn't quite ideal for that as
+it is.  And that doesn't really help for drivers that don't attach/
+detach for each use.
 
-This is necessary for the next patch to fix VGEM brokenness on arm.
+But AFAICT vgem is mainly used for dmabuf testing, so maybe we don't
+need to care too much about use of cached mmap'ings.
 
- drivers/gpu/drm/drm_gem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/vgem/vgem_drv.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-index 8a55f71325b1..7d6242cc69f2 100644
---- a/drivers/gpu/drm/drm_gem.c
-+++ b/drivers/gpu/drm/drm_gem.c
-@@ -1110,7 +1110,7 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj, unsigned long obj_size,
+diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+index 11a8f99ba18c..ccf0c3fbd586 100644
+--- a/drivers/gpu/drm/vgem/vgem_drv.c
++++ b/drivers/gpu/drm/vgem/vgem_drv.c
+@@ -259,9 +259,6 @@ static int vgem_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	if (ret)
+ 		return ret;
  
- 	vma->vm_flags |= VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP;
- 	vma->vm_private_data = obj;
+-	/* Keep the WC mmaping set by drm_gem_mmap() but our pages
+-	 * are ordinary and not special.
+-	 */
+ 	vma->vm_flags = flags | VM_DONTEXPAND | VM_DONTDUMP;
+ 	return 0;
+ }
+@@ -382,7 +379,7 @@ static void *vgem_prime_vmap(struct drm_gem_object *obj)
+ 	if (IS_ERR(pages))
+ 		return NULL;
+ 
+-	return vmap(pages, n_pages, 0, pgprot_writecombine(PAGE_KERNEL));
++	return vmap(pages, n_pages, 0, PAGE_KERNEL);
+ }
+ 
+ static void vgem_prime_vunmap(struct drm_gem_object *obj, void *vaddr)
+@@ -411,7 +408,7 @@ static int vgem_prime_mmap(struct drm_gem_object *obj,
+ 	fput(vma->vm_file);
+ 	vma->vm_file = get_file(obj->filp);
+ 	vma->vm_flags |= VM_DONTEXPAND | VM_DONTDUMP;
 -	vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
 +	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
- 	vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
  
- 	/* Take a ref for this mapping of the object, so that the fault
+ 	return 0;
+ }
 -- 
 2.21.0
 
