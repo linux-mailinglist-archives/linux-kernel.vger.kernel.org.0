@@ -2,93 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C3806A31C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 09:41:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF0CC6A32A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 09:44:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729534AbfGPHlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 03:41:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37304 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726536AbfGPHlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 03:41:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 79244AF3F;
-        Tue, 16 Jul 2019 07:41:05 +0000 (UTC)
-Date:   Tue, 16 Jul 2019 09:41:04 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kernel/printk: prevent deadlock at unexpected call
- kmsg_dump in NMI context
-Message-ID: <20190716074104.jeagfyr4k57lranz@pathway.suse.cz>
-References: <156317789553.326.15952579019338825022.stgit@buzz>
+        id S1729502AbfGPHoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 03:44:55 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57888 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbfGPHoy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 03:44:54 -0400
+Received: from pc-375.home (2a01cb0c88d94a005820d607da339aae.ipv6.abo.wanadoo.fr [IPv6:2a01:cb0c:88d9:4a00:5820:d607:da33:9aae])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 645C928B69A;
+        Tue, 16 Jul 2019 08:44:53 +0100 (BST)
+Date:   Tue, 16 Jul 2019 09:44:50 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+Cc:     miquel.raynal@bootlin.com, bbrezillon@kernel.org, richard@nod.at,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, vigneshr@ti.com,
+        yamada.masahiro@socionext.com, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, michal.simek@xilinx.com,
+        svemula@xilinx.com, nagasuresh12@gmail.com
+Subject: Re: [LINUX PATCH v18 1/2] mtd: rawnand: nand_micron: Do not over
+ write driver's read_page()/write_page()
+Message-ID: <20190716094450.122ba6e7@pc-375.home>
+In-Reply-To: <20190716093137.3d8e8c1f@pc-375.home>
+References: <20190716053051.11282-1-naga.sureshkumar.relli@xilinx.com>
+        <20190716093137.3d8e8c1f@pc-375.home>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <156317789553.326.15952579019338825022.stgit@buzz>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2019-07-15 11:04:55, Konstantin Khlebnikov wrote:
-> Kernel message dumper - function kmsg_dump() is called on various oops or
-> panic paths which could happen in unpredictable context including NMI.
+On Tue, 16 Jul 2019 09:31:37 +0200
+Boris Brezillon <boris.brezillon@collabora.com> wrote:
+
+> On Mon, 15 Jul 2019 23:30:51 -0600
+> Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com> wrote:
 > 
-> Panic in NMI is handled especially by stopping all other cpus with
-> smp_send_stop() and busting locks in printk_safe_flush_on_panic().
+> > Add check before assigning chip->ecc.read_page() and chip->ecc.write_page()
+> > 
+> > Signed-off-by: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+> > ---
+> > Changes in v18
+> >  - None
+> > ---
+> >  drivers/mtd/nand/raw/nand_micron.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/mtd/nand/raw/nand_micron.c b/drivers/mtd/nand/raw/nand_micron.c
+> > index cbd4f09ac178..565f2696c747 100644
+> > --- a/drivers/mtd/nand/raw/nand_micron.c
+> > +++ b/drivers/mtd/nand/raw/nand_micron.c
+> > @@ -500,8 +500,11 @@ static int micron_nand_init(struct nand_chip *chip)
+> >  		chip->ecc.size = 512;
+> >  		chip->ecc.strength = chip->base.eccreq.strength;
+> >  		chip->ecc.algo = NAND_ECC_BCH;
+> > -		chip->ecc.read_page = micron_nand_read_page_on_die_ecc;
+> > -		chip->ecc.write_page = micron_nand_write_page_on_die_ecc;
+> > +		if (!chip->ecc.read_page)
+> > +			chip->ecc.read_page = micron_nand_read_page_on_die_ecc;
+> > +
+> > +		if (!chip->ecc.write_page)
+> > +			chip->ecc.write_page = micron_nand_write_page_on_die_ecc;
+> >    
 > 
-> Other less-fatal cases shouldn't happen in NMI and cannot be handled.
-> But this might happen for example on oops in nmi context. In this case
-> dumper could deadlock on lockbuf_lock or break internal structures.
-
-If I get it correctly than this patch could really prevent a deadlock
-in at least:
-
-  + oops_end()
-    + oops_exit()
-      + kmsg_dump(KMSG_DUMP_OOPS)
-
-If it is called in NMI, it should end up with panic(). Then the dump
-will be called later after stopping CPUs...
-
-Or am I wrong?
-
-Otherwise, the patch looks good to me. I would just mention
-the above scenario if it is correct.
-
-Best Regards,
-Petr
-
-> This patch catches kmsg_dump() called in NMI context except panic and
-> prints warning once.
+> Seriously?! I told you this was inappropriate and you keep sending this
+> patch. So let's make it clear:
 > 
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> Link: https://lore.kernel.org/lkml/156294329676.1745.2620297516210526183.stgit@buzz/ (v1)
-> ---
->  kernel/printk/printk.c |    7 +++++++
->  1 file changed, 7 insertions(+)
+> Nacked-by: Boris Brezillon <boris.brezillon@collabora.com>
 > 
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index 1888f6a3b694..e711f64a1843 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -3104,6 +3104,13 @@ void kmsg_dump(enum kmsg_dump_reason reason)
->  	struct kmsg_dumper *dumper;
->  	unsigned long flags;
->  
-> +	/*
-> +	 * In NMI context only panic could be handled safely:
-> +	 * it stops other cpus and busts logbuf lock.
-> +	 */
-> +	if (WARN_ON_ONCE(reason != KMSG_DUMP_PANIC && in_nmi()))
-> +		return;
-> +
->  	if ((reason > KMSG_DUMP_OOPS) && !always_kmsg_dump)
->  		return;
->  
-> 
+> Fix your controller driver instead of adding hacks to the Micron logic!
+
+Not even going to review the other patch: if you have to do that, that
+means the driver is broken. On a side note, this patch series is still
+not threaded as it should be and it's a v18 for a damn NAND controller
+driver! Sorry but you reached the limit of my patience. Please find
+someone to help you with that task.
