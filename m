@@ -2,69 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20B5A6A2B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 09:16:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 403866A2EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 09:28:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729635AbfGPHQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 03:16:31 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2269 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726385AbfGPHQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 03:16:30 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 053F02014B24A30DB212;
-        Tue, 16 Jul 2019 15:16:28 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 16 Jul 2019
- 15:16:21 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <jhs@mojatatu.com>, <xiyou.wangcong@gmail.com>, <jiri@resnulli.us>,
-        <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] net/sched: Make NET_ACT_CT depends on NF_NAT
-Date:   Tue, 16 Jul 2019 15:16:02 +0800
-Message-ID: <20190716071602.27276-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+        id S1729430AbfGPH2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 03:28:13 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:51142 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726463AbfGPH2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 03:28:13 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D2C5F1A0007;
+        Tue, 16 Jul 2019 09:28:11 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D12D81A00F6;
+        Tue, 16 Jul 2019 09:28:08 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C2A4240293;
+        Tue, 16 Jul 2019 15:28:04 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] rtc: snvs: fix possible race condition
+Date:   Tue, 16 Jul 2019 15:18:58 +0800
+Message-Id: <20190716071858.36750-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If NF_NAT is m and NET_ACT_CT is y, build fails:
+From: Anson Huang <Anson.Huang@nxp.com>
 
-net/sched/act_ct.o: In function `tcf_ct_act':
-act_ct.c:(.text+0x21ac): undefined reference to `nf_ct_nat_ext_add'
-act_ct.c:(.text+0x229a): undefined reference to `nf_nat_icmp_reply_translation'
-act_ct.c:(.text+0x233a): undefined reference to `nf_nat_setup_info'
-act_ct.c:(.text+0x234a): undefined reference to `nf_nat_alloc_null_binding'
-act_ct.c:(.text+0x237c): undefined reference to `nf_nat_packet'
+The RTC IRQ is requested before the struct rtc_device is allocated,
+this may lead to a NULL pointer dereference in IRQ handler.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: b57dc7c13ea9 ("net/sched: Introduce action ct")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+To fix this issue, allocating the rtc_device struct before requesting
+the RTC IRQ using devm_rtc_allocate_device, and use rtc_register_device
+to register the RTC device.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- net/sched/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rtc/rtc-snvs.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/net/sched/Kconfig b/net/sched/Kconfig
-index dd55b9a..afd2ba1 100644
---- a/net/sched/Kconfig
-+++ b/net/sched/Kconfig
-@@ -942,7 +942,7 @@ config NET_ACT_TUNNEL_KEY
+diff --git a/drivers/rtc/rtc-snvs.c b/drivers/rtc/rtc-snvs.c
+index 7ee673a2..4f9a107 100644
+--- a/drivers/rtc/rtc-snvs.c
++++ b/drivers/rtc/rtc-snvs.c
+@@ -279,6 +279,10 @@ static int snvs_rtc_probe(struct platform_device *pdev)
+ 	if (!data)
+ 		return -ENOMEM;
  
- config NET_ACT_CT
-         tristate "connection tracking tc action"
--        depends on NET_CLS_ACT && NF_CONNTRACK
-+        depends on NET_CLS_ACT && NF_CONNTRACK && NF_NAT
-         help
- 	  Say Y here to allow sending the packets to conntrack module.
++	data->rtc = devm_rtc_allocate_device(&pdev->dev);
++	if (IS_ERR(data->rtc))
++		return PTR_ERR(data->rtc);
++
+ 	data->regmap = syscon_regmap_lookup_by_phandle(pdev->dev.of_node, "regmap");
  
+ 	if (IS_ERR(data->regmap)) {
+@@ -343,10 +347,9 @@ static int snvs_rtc_probe(struct platform_device *pdev)
+ 		goto error_rtc_device_register;
+ 	}
+ 
+-	data->rtc = devm_rtc_device_register(&pdev->dev, pdev->name,
+-					&snvs_rtc_ops, THIS_MODULE);
+-	if (IS_ERR(data->rtc)) {
+-		ret = PTR_ERR(data->rtc);
++	data->rtc->ops = &snvs_rtc_ops;
++	ret = rtc_register_device(data->rtc);
++	if (ret) {
+ 		dev_err(&pdev->dev, "failed to register rtc: %d\n", ret);
+ 		goto error_rtc_device_register;
+ 	}
 -- 
 2.7.4
-
 
