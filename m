@@ -2,221 +2,277 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 564AD6B159
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 23:49:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 520C36B166
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 23:54:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732084AbfGPVsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 17:48:45 -0400
-Received: from atlmailgw2.ami.com ([63.147.10.42]:65255 "EHLO
-        atlmailgw2.ami.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728235AbfGPVsp (ORCPT
+        id S1731322AbfGPVyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 17:54:05 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:41166 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726555AbfGPVyF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 17:48:45 -0400
-X-AuditID: ac10606f-d11ff70000003324-70-5d2e463cf93b
-Received: from atlms1.us.megatrends.com (atlms1.us.megatrends.com [172.16.96.144])
-        (using TLS with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by atlmailgw2.ami.com (Symantec Messaging Gateway) with SMTP id 38.D3.13092.C364E2D5; Tue, 16 Jul 2019 17:48:44 -0400 (EDT)
-Received: from hongweiz-Ubuntu-AMI.us.megatrends.com (172.16.98.93) by
- atlms1.us.megatrends.com (172.16.96.144) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Tue, 16 Jul 2019 17:48:43 -0400
-From:   Hongwei Zhang <hongweiz@ami.com>
-To:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        <devicetree@vger.kernel.org>
-CC:     Hongwei Zhang <hongweiz@ami.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>
-Subject: [PATCH 2/3 v3] dt-bindings: gpio: aspeed: Add SGPIO support
-Date:   Tue, 16 Jul 2019 17:48:31 -0400
-Message-ID: <1563313711-17961-1-git-send-email-hongweiz@ami.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 16 Jul 2019 17:54:05 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6GL9BqI057881;
+        Tue, 16 Jul 2019 21:52:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=GhKB1nnxMUgPdfaQmokZ35zm3j1TuKb+1GyYdjVaC38=;
+ b=RdOyLv9AMoYSwfFK98/rrL7ysYefjMMgMYrN8M9MqTU+DnhRPx/4tyRRbth2o6uB98L4
+ cf2yWCtECWwDMw3T7NZz+RLmovslxd1GlH+AJdNg8WKQ/I8xzDB+CoCrXmikCAJQMHDY
+ 5nh882TPRXdzMAp4Z/P4J1tSXmB6LF2rB3wY6lelJ9euGCBesdc0RuPaBYfAl6pDiklX
+ vpn0hjH5kEa3+Dehb0GdLv2mRfAfLj4Fv66mfYwhwxXK8hj1Ry2oEw892zrZPqsGSKKN
+ ApSe/RXpK8i0y2+swAKcbCGoW37CnZE/k0/VaprJbNGsX/XrrtaQGrQwPdfzi1MNf2VX rw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2tq6qtq617-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Jul 2019 21:52:47 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6GL8LDc121996;
+        Tue, 16 Jul 2019 21:52:46 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2tq5bcn8aw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Jul 2019 21:52:46 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6GLqgoK031735;
+        Tue, 16 Jul 2019 21:52:43 GMT
+Received: from [10.175.27.185] (/10.175.27.185)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 16 Jul 2019 21:52:42 +0000
+Subject: Re: [PATCH v3 0/6] Tracing vs CR2
+To:     Peter Zijlstra <peterz@infradead.org>, tglx@linutronix.de,
+        bp@alien8.de, mingo@kernel.org, rostedt@goodmis.org,
+        luto@kernel.org, torvalds@linux-foundation.org,
+        linux_lkml_grp@oracle.com
+Cc:     hpa@zytor.com, dave.hansen@linux.intel.com, jgross@suse.com,
+        linux-kernel@vger.kernel.org, zhe.he@windriver.com,
+        joel@joelfernandes.org, devel@etsukata.com
+References: <20190711114054.406765395@infradead.org>
+ <4c71e14d-3a32-c3bb-8e3b-6e5100853192@oracle.com>
+From:   Vegard Nossum <vegard.nossum@oracle.com>
+Message-ID: <97cdd0af-95cc-2583-dc19-129b20809110@oracle.com>
+Date:   Tue, 16 Jul 2019 23:51:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.16.98.93]
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPLMWRmVeSWpSXmKPExsWyRiBhgq6Nm16swedDqha7LnNYfJl7isVi
-        /pFzrBa/z/9ltpjyZzmTxabH11gtmlefY7bYPP8Po8XlXXPYLJZev8hk0br3CLsDt8fV9l3s
-        HmvmrWH0eH+jld3j4sdjzB6bVnWyedy5tofNY/OSeo/zMxYyenzeJBfAGcVlk5Kak1mWWqRv
-        l8CVcWbCO6aCVWYVPRfaWRoYj2p3MXJySAiYSNy48pali5GLQ0hgF5PE75nNTBDOYUaJnh1b
-        GUGq2ATUJPZungOWEBHoZZRY+HUxmMMssJpJon3DcXaQKmEBF4kvbafYQGwWAVWJ/7OPMYPY
-        vAIOErMbX7BD7JOTuHmuEyouKHFy5hMWEJtZQELi4IsXYHEhAVmJW4ceM0HUK0g873vMMoGR
-        bxaSlllIWhYwMq1iFEosyclNzMxJLzfSS8zN1EvOz93ECAn0/B2MHz+aH2Jk4mA8xCjBwawk
-        wmv7VTtWiDclsbIqtSg/vqg0J7X4EKM0B4uSOO+qNd9ihATSE0tSs1NTC1KLYLJMHJxSDYxR
-        Hr4sTptep+9/slP0i0fML4fZx3/FO2t6t8sZG9R8mvEtmfmXi4bFmolRT8sM1A0kfgd2Shu6
-        7jCuThO3udZmculNxF3OPa8jlSvX+b09eviN367wFbzbPyQvXFtxa/639zU7P/0/XpbnySE9
-        JXyGv5Ty4tyM97N9424c1ml7UFu5ZNpDnVAlluKMREMt5qLiRADOyDkEYgIAAA==
+In-Reply-To: <4c71e14d-3a32-c3bb-8e3b-6e5100853192@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907160259
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907160259
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bindings to support SGPIO on AST2400 or AST2500.
 
-Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
----
- .../devicetree/bindings/gpio/sgpio-aspeed.txt      | 55 ++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
+On 7/16/19 9:33 PM, Vegard Nossum wrote:
+> 
+> On 7/11/19 1:40 PM, Peter Zijlstra wrote:
+>> Hi,
+>>
+>> Here's the latest (and hopefully final) set of tracing vs CR2 patches.
+>>
+>> They are basically the same as v2, with only minor edits and tags 
+>> collected
+>> from the last review.
+>>
+>> Please consider.
+>>
+> 
+> Hi,
+> 
+> I ran my own battery of tests on your patch set on top of 
+> 5ad18b2e60b75c7297a998dea702451d33a052ed and ran into this:
+> 
+> ------------[ cut here ]------------
+> General protection fault in user access. Non-canonical address?
+> WARNING: CPU: 0 PID: 5039 at arch/x86/mm/extable.c:126 
+> ex_handler_uaccess+0x5d/0x70
 
-diff --git a/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt b/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
-new file mode 100644
-index 0000000..8c3a747
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
-@@ -0,0 +1,55 @@
-+Aspeed SGPIO controller Device Tree Bindings
-+-------------------------------------------
-+
-+This SGPIO controller is for ASPEED AST2500 SoC, it supports up to 80 full 
-+featured Serial GPIOs. Each of the Serial GPIO pins can be programmed to 
-+support the following options:
-+- Support interrupt option for each input port and various interrupt 
-+  sensitivity option (level-high, level-low, edge-high, edge-low)
-+- Support reset tolerance option for each output port
-+- Directly connected to APB bus and its shift clock is from APB bus clock
-+  divided by a programmable value.
-+- Co-work with external signal-chained TTL components (74LV165/74LV595)
-+
-+
-+Required properties:
-+
-+- compatible		: Either "aspeed,ast2400-sgpio" or "aspeed,ast2500-sgpio"
-+
-+- #gpio-cells 		: Should be two
-+			  - First cell is the GPIO line number
-+			  - Second cell is used to specify optional
-+			    parameters (unused)
-+
-+- reg			: Address and length of the register set for the device
-+- gpio-controller	: Marks the device node as a GPIO controller.
-+- interrupts		: Interrupt specifier (see interrupt bindings for
-+			  details)
-+
-+- interrupt-controller	: Mark the GPIO controller as an interrupt-controller
-+
-+- nr-gpios		: number of GPIO pins to serialise. 
-+			  (should be multiple of 8, up to 80 pins; 0 if not used)
-+
-+- clocks               : A phandle to the APB clock for SGPM clock division
-+
-+- bus-frequency	: SGPM CLK frequency, derived from APB bus clock by a programmable devisor
-+
-+
-+The sgpio and interrupt properties are further described in their respective bindings documentation:
-+
-+- Documentation/devicetree/bindings/sgpio/gpio.txt
-+- Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-+
-+  Example:
-+	sgpio@1e780200 {
-+		#gpio-cells = <2>;
-+		compatible = "aspeed,ast2500-sgpio";
-+		gpio-controller;
-+		interrupts = <40>;
-+		reg = <0x1e780200 0x0100>;
-+		clocks = <&syscon ASPEED_CLK_APB>;
-+		interrupt-controller;
-+		nr-gpios = <8>;
-+		bus-frequency = <12000000>;
-+	};
--- 
-2.7.4
+Got a different one:
+
+WARNING: CPU: 0 PID: 2150 at arch/x86/kernel/traps.c:791 do_debug+0xfe/0x240
+CPU: 0 PID: 2150 Comm: init Not tainted 5.2.0+ #124
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 
+Ubuntu-1.8.2-1ubuntu1 04/01/2014
+RIP: 0010:do_debug+0xfe/0x240
+Code: 05 07 3d f3 7e f6 85 91 00 00 00 02 0f 85 d8 00 00 00 49 8b 84 24 
+18 0b 00 00 f6 44 24 01 40 74 2f f6 85 88 00 00 00 03 75 26 <0f> 0b 80 
+e4 bf 49 89 84 24 18 0b 00 00 f0 41 80 0c 24 10 48 81 a5
+RSP: 0000:fffffe000000ff20 EFLAGS: 00010046
+RAX: 0000000000004002 RBX: 0000000000000000 RCX: ffffffff810e2f72
+RDX: 0000000000000000 RSI: 0000000000000003 RDI: ffffffff8201f090
+RBP: fffffe000000ff58 R08: 0000000000000000 R09: 0000000000000005
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff88803e0df040
+R13: 0000000000000000 R14: 000000003d376001 R15: 0000000000000000
+FS:  0000555556dbc8c0(0000) GS:ffff88803ec00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000041f38010 CR3: 000000003d376001 CR4: 00000000003606f0
+DR0: 0000000000000001 DR1: 0000000041a4f070 DR2: 00007fff959ff000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000003b3062a
+Call Trace:
+  <#DB>
+  debug+0x2d/0x70
+RIP: 0010:arch_stack_walk_user+0x74/0x100
+Code: e8 10 49 39 c4 77 45 4c 8b 04 24 4c 89 e3 4d 89 fd 4c 89 fd 41 83 
+87 98 0a 00 00 01 0f 01 cb 0f ae e8 31 c0 4c 89 e2 4c 8b 33 <4d> 89 f4 
+85 c0 75 7a 48 8b 73 08 0f 01 ca 85 c0 74 1f 65 48 8b 04
+RSP: 0000:ffffc900030dbd68 EFLAGS: 00040046
+RAX: 0000000000000000 RBX: 0000000041a4f073 RCX: ffffffff811ca27b
+RDX: 0000000041a4f073 RSI: 0000000041a4f0dd RDI: ffffc900030dbdb8
+RBP: ffff88803e0df040 R08: ffffc900030dbf58 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000041a4f073
+R13: ffff88803e0df040 R14: 0041281000bf4800 R15: ffff88803e0df040
+  ? stack_trace_consume_entry+0x4b/0x80
+  </#DB>
+  ? profile_setup.cold+0xc1/0xc1
+  stack_trace_save_user+0x71/0x9c
+  trace_buffer_unlock_commit_regs+0x1ae/0x270
+  trace_event_buffer_commit+0x90/0x240
+  trace_event_raw_event_preemptirq_template+0x9a/0x100
+  ? debug+0x49/0x70
+  ? perf_trace_preemptirq_template+0x120/0x120
+  ? trace_hardirqs_off_thunk+0x1a/0x1c
+  trace_hardirqs_off_caller+0xf4/0x150
+  ? debug+0x44/0x70
+  trace_hardirqs_off_thunk+0x1a/0x1c
+  debug+0x49/0x70
+RIP: 0033:0x41a4f0dd
+Code: 47 11 b7 d2 36 45 6c 49 be 00 f0 9f 95 ff 7f 00 00 49 bf de a7 b3 
+e8 d7 21 3c 15 9c 48 81 0c 24 00 01 00 00 9d b8 62 00 00 00 <8e> c0 0f 
+05 66 8c c8 9c 48 81 24 24 ff fe ff ff 9d 48 89 04 25 40
+RSP: 002b:0000000040901ea0 EFLAGS: 00000317
+RAX: 0000000000000062 RBX: 0000000041281000 RCX: ffffffffffffffff
+RDX: 00000000401c0000 RSI: 0000000041892000 RDI: 0000000041281000
+RBP: 0000000041a4f073 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff917d7748 R11: 1000000000000000 R12: fdffffffffffffff
+R13: 6c4536d2b71147a5 R14: 00007fff959ff000 R15: 153c21d7e8b3a7de
+---[ end trace 0cd51ba690f12b47 ]---
+
+The warning is this:
+
+         if (WARN_ON_ONCE((dr6 & DR_STEP) && !user_mode(regs))) {
+                 /*
+                  * Historical junk that used to handle SYSENTER 
+single-stepping.
+                  * This should be unreachable now.  If we survive for a 
+while
+                  * without anyone hitting this warning, we'll turn this 
+into
+                  * an oops.
+                  */
+                 tsk->thread.debugreg6 &= ~DR_STEP;
+                 set_tsk_thread_flag(tsk, TIF_SINGLESTEP);
+                 regs->flags &= ~X86_EFLAGS_TF;
+         }
+
+Unfortunately DR6 from the register dump has already been cleared at the
+top of do_debug() and the local variable dr6 is on the stack and not
+loaded into any of the registers AFAICT.
+
+ From the userspace Code: line you can clearly see it setting EFLAGS_TF,
+then it seems to be trapping on the next instruction:
+
+   1b:   9c                      pushfq
+   1c:   48 81 0c 24 00 01 00    orq    $0x100,(%rsp)
+   23:   00
+   24:   9d                      popfq
+   25:   b8 62 00 00 00          mov    $0x62,%eax
+   2a:*  8e c0                   mov    %eax,%es         <-- trapping 
+instruction
+
+You can see that DR1 points to 41a4f070, which is close to userspace RBP
+(41a4f073), which is perhaps being accessed by stack_trace_save_user()
+and causing the debug exception on a data breakpoint?
+
+The Code: line from stack_trace_save_user() is:
+
+   27:   4c 8b 33                mov    (%rbx),%r14
+   2a:*  4d 89 f4                mov    %r14,%r12                <-- 
+trapping instruction
+
+with RBX == 41a4f073 so that seems to fit the theory, except I'd have
+expected the "trapping instruction" to point at the memory dereference.
+(But maybe it's one of those "points to return address" kind of things?)
+
+DR7 is 03b3062a, which is..
+  - DR0, DR1, DR2 global breakpoints
+  - DR0 reads + writes
+  - DR1 reads + writes
+  - DR2 reads + writes
+
+A second instance of the same warning:
+
+WARNING: CPU: 0 PID: 601 at arch/x86/kernel/traps.c:791 do_debug+0xfe/0x240
+CPU: 0 PID: 601 Comm: init Not tainted 5.2.0+ #124
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 
+Ubuntu-1.8.2-1ubuntu1 04/01/2014
+RIP: 0010:do_debug+0xfe/0x240
+Code: 05 07 3d f3 7e f6 85 91 00 00 00 02 0f 85 d8 00 00 00 49 8b 84 24 
+18 0b 00 00 f6 44 24 01 40 74 2f f6 85 88 00 00 00 03 75 26 <0f> 0b 80 
+41 80 0c 24 10 48 81 a5
+RSP: 0000:fffffe000000ff20 EFLAGS: 00010046
+RAX: 0000000000004002 RBX: 0000000000000000 RCX: ffffffff810e2f72
+RDX: 0000000000000000 RSI: 0000000000000003 RDI: ffffffff8201f090
+RBP: fffffe000000ff58 R08: 0000000000000000 R09: 0000000000000005
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff88803e0bd040
+R13: 0000000000000000 R14: 000000003d3c6001 R15: 0000000000000000
+FS:  0000555556efb8c0(0000) GS:ffff88803ec00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000041686010 CR3: 000000003d3c6001 CR4: 00000000003606f0
+DR0: 0000000000000001 DR1: 00000000400be070 DR2: 00007ffd20c67000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000003b3062a
+Call Trace:
+  <#DB>
+  debug+0x2d/0x70
+RIP: 0010:arch_stack_walk_user+0x74/0x100
+Code: e8 10 49 39 c4 77 45 4c 8b 04 24 4c 89 e3 4d 89 fd 4c 89 fd 41 83 
+87 98 0a 00 00 01 0f 01 cb 0f ae e8 31 c0 4c 89 e2 4c 8b 33 <4d> 89 f4 
+85 c0 74 1f 65 48 8b 04
+RSP: 0000:ffffc900024f3d68 EFLAGS: 00040046
+RAX: 0000000000000000 RBX: 00000000400be073 RCX: ffffffff811ca27b
+RDX: 00000000400be073 RSI: 00000000400be0dd RDI: ffffc900024f3db8
+RBP: ffff88803e0bd040 R08: ffffc900024f3f58 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 00000000400be073
+R13: ffff88803e0bd040 R14: 00404e4000bf4800 R15: ffff88803e0bd040
+  ? stack_trace_consume_entry+0x4b/0x80
+  </#DB>
+  ? profile_setup.cold+0xc1/0xc1
+  stack_trace_save_user+0x71/0x9c
+  trace_buffer_unlock_commit_regs+0x1ae/0x270
+  trace_event_buffer_commit+0x90/0x240
+  trace_event_raw_event_preemptirq_template+0x9a/0x100
+  ? debug+0x49/0x70
+  ? perf_trace_preemptirq_template+0x120/0x120
+  ? trace_hardirqs_off_thunk+0x1a/0x1c
+  trace_hardirqs_off_caller+0xf4/0x150
+  ? debug+0x44/0x70
+  trace_hardirqs_off_thunk+0x1a/0x1c
+  debug+0x49/0x70
+RIP: 0033:0x400be0dd
+Code: 3a 51 3e 59 a9 b2 e3 49 be 00 70 c6 20 fd 7f 00 00 49 bf de a7 b3 
+e8 d7 21 3c 15 9c 48 81 0c 24 00 01 00 00 9d b8 62 00 00 00 <8e> c0 0f 
+ff ff 9d 48 89 04 25 40
+RSP: 002b:00000000417d0ea0 EFLAGS: 00000317
+RAX: 0000000000000062 RBX: 00000000404e4000 RCX: ffffffffffffffff
+RDX: 0000000041da4000 RSI: 0000000040bb0000 RDI: 00000000404e4000
+RBP: 00000000400be073 R08: 0000000000000001 R09: 0000000000000001
+R10: 9c7fa8aa10386cdb R11: 1000000000000000 R12: fdffffffffffffff
+R13: e3b2a9593e513a6b R14: 00007ffd20c67000 R15: 153c21d7e8b3a7de
+---[ end trace beb9776710443227 ]---
 
 
-Thanks Andrew, please see above v3 and inline comments at below.
---Hongwei
-
-> From:	Andrew Jeffery <andrew@aj.id.au>
-> Sent:	Sunday, July 14, 2019 10:25 PM
-> To:	Hongwei Zhang; Joel Stanley; Linus Walleij; devicetree@vger.kernel.org
-> Cc:	Rob Herring; Mark Rutland; Bartosz Golaszewski; linux-aspeed@lists.ozlabs.org; linux-
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-gpio@vger.kernel.org
-> Subject:	Re: [PATCH 2/3 v2] dt-bindings: gpio: aspeed: Add SGPIO support
-> 
-> Hello Hongwei,
-> 
-> On Sat, 13 Jul 2019, at 05:44, Hongwei Zhang wrote:
-> > Add bindings to support SGPIO on AST2400 or AST2500.
-> > 
-> > Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
-> > ---
-> >  .../devicetree/bindings/gpio/sgpio-aspeed.txt      | 43 ++++++++++++++++++++++
-> >  1 file changed, 43 insertions(+)
-> >  create mode 100755 
-> > Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
-> > b/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
-> > new file mode 100755
-> > index 0000000..3ae2b79
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
-> > @@ -0,0 +1,43 @@
-> > +Aspeed SGPIO controller Device Tree Bindings
-> > +-------------------------------------------
-> > +
-> > +Required properties:
-> > +- compatible		: Either "aspeed,ast2400-sgpio" or "aspeed,ast2500-sgpio"
-> > +
-> > +- #gpio-cells 		: Should be two
-> > +			  - First cell is the GPIO line number
-> > +			  - Second cell is used to specify optional
-> > +			    parameters (unused)
-> > +
-> > +- reg			: Address and length of the register set for the device
-> > +- gpio-controller	: Marks the device node as a GPIO controller.
-> > +- interrupts		: Interrupt specifier (see interrupt bindings for
-> > +			  details)
-> > +
-> > +- interrupt-controller	: Mark the GPIO controller as an 
-> > interrupt-controller
-> > +
-> > +- nr-gpios		: number of GPIO pins to serialise. (should be multiple of 
-> > 8, up to 80 pins)
-> > +			  if not specified, defaults to 80.
-> 
-> This appears to be a statement about the driver implementation, but bindings documents are about 
-> describing hardware. Reading the datasheet it actually appears the ASPEED SGPIO hardware comes up 
-> in what is "technically" a forbidden state (equivalent to `nr-gpios = <0>;`), though the device is also 
-> disabled at this point, so it's probably moot. The point is the true default value from a hardware 
-> perspective is 0, not 80, so if we're going to talk about default values, 0 would be more appropriate. 
-> However:
-> 
-> You've also listed nr-gpios under the "Required properties" header, but the description suggests it's 
-> optional. It's either one or the other, please lets be clear about it. On that front, lets make it nr-gpios 
-> *not* optional (i.e. make it
-> required) thus force the specification of how many SGPIOs we want to emit on the bus. This value is 
-> coupled to the platform design, so I don't think there's ever a scenario where we want nr-gpios to take a 
-> default value.
-> 
-
-Added some descriptions and updated nr-gpios, please see v3.
-
-> > +
-> > +- clocks               : A phandle to the APB clock for SGPM clock 
-> > division
-> > +
-> > +- bus-frequency	: SGPM CLK frequency, if not specified defaults to 1 
-> > MHz
-> 
-> Again here with the default value - SGPM CLK period is derived from PCLK by the expression `period = 
-> PCLK * 2 *(GPIO254[31:16] + 1)`, where GPIO254's initialisation state is `GPIO254[31:16] = 0`, which 
-> gives a default SGPM bus frequency of PCLK / 2. This is likely not going to be 1MHz (more like ~12MHz).
-> 
-> Lets just make the property required. That way we avoid any ambiguity about the bus frequency and 
-> thus don't need words about defaults that turn out to be about the driver, not about the hardware.
-> 
-
-updated, please see v3.
-
-> Finally, when updating patches in response to feedback, please send the full series again, and bump the 
-> series version number. That way people can review a coherent set of patches and not have to hunt 
-> around and (fail to) collate the correct combination. It makes it easier to say "Reviewed-by:" on your 
-> patches :)
-> 
-> Cheers,
-> 
-> Andrew
+Vegard
