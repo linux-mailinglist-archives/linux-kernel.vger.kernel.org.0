@@ -2,83 +2,233 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 144FF6AE7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 20:24:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 553876AE84
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 20:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388360AbfGPSYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 14:24:12 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:58277 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725926AbfGPSYM (ORCPT
+        id S2388395AbfGPSZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 14:25:50 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36490 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728121AbfGPSZt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 14:24:12 -0400
-Received: from [192.168.1.110] ([77.9.100.150]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1McpeM-1iMEhl1qug-00ZySm; Tue, 16 Jul 2019 20:24:03 +0200
-Subject: Re: [PATCH 1/3] platform/x86/pcengines-apuv2: add mpcie reset gpio
- export
-To:     Florian Eckert <fe@dev.tdt.de>
-Cc:     Eckert.Florian@googlemail.com, info@metux.net,
-        dvhart@infradead.org, andy@infradead.org,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190704090205.19400-1-fe@dev.tdt.de>
- <20190704090205.19400-2-fe@dev.tdt.de>
- <3e98bbd8-c051-4996-fc5a-88a58a2fa2d4@metux.net>
- <10c574cd0dfb1c607536c68fc1c60c06@dev.tdt.de>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <83ada4a1-c18b-95b4-0891-62ba3f3aa276@metux.net>
-Date:   Tue, 16 Jul 2019 20:23:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 16 Jul 2019 14:25:49 -0400
+Received: by mail-lj1-f195.google.com with SMTP id i21so20958025ljj.3;
+        Tue, 16 Jul 2019 11:25:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dzpCNoG2ecZyjqfMDdyuZcENn8NrTEOFK08CpMGbvNk=;
+        b=f2CD1akNpWD4M95i5XFUstpraEgED6ua7PGVAKs7UR0lWfH/T5653gz/gUX29znlB7
+         rGDKbloSwq0s8CadV9xzfGAirF8n0X04P6vIFfq/WjQx7+w3p+xzGTA2ifknVzwY3h6j
+         oiKBBILmd6GkDHkKs2oG7nPibb/J+h5yJThjZijgxbF4Sw8VGL4JWupo7VW/xWGGgEv7
+         oL2TJtsCjSqQTM4t8V9LFzw7XecXcLyLvFGsPPUYFxsxUJehxTUWJTqto6IUEpbIHw+U
+         bkd6U8Xt2nDMC6yJ2o9QObmP+hVZ5UP+tQA5DqMmFNz/P/CT60CV2Ub8KNGApoEEmbKa
+         Wwpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dzpCNoG2ecZyjqfMDdyuZcENn8NrTEOFK08CpMGbvNk=;
+        b=Xwfbd+qXu5+tgOr50ytc6+THV3H4aatDvyZCssT0DvDqBXLYPMmPYk5n78/buNSuaO
+         KCXa11ZpTXiybbIc4cJA4MQY6PkZ+qEO86+ytwlVTNq7IXCJArsHXnNbQd06yBIjrKjZ
+         NJ/cBrF0bcoVhTrmOI+2XX2loak/Edq/mLeECFtzvJTVmwFbyARp/adUlL6Eh8l26xQq
+         d84CUiuXw2b+86OuPdL9sJn0/mz+n0awu0rYOfSV69vd+PHos2EQu4lnRxcMO2X4fG7d
+         cnCLPPZSFWJSapXst4VDlRcoDb7Lzyk/4i4esFth279SgkXUMqBs2nXN3dmIIdmNvzxk
+         MLCA==
+X-Gm-Message-State: APjAAAX6efjoDXK6e7CRmtW/lXufXxMCo9DQ14g0f1It6UumPzQy9dJI
+        lvSUMYoXqfvfp5/nTa3FpqpHipJF
+X-Google-Smtp-Source: APXvYqwOE1NBW5Zq1L9LiV/JN0r6gZRvQoR56JkIdauJQ78fpUGBQFQB1UFIHFMHjl0kB2J8ADadJA==
+X-Received: by 2002:a2e:2c14:: with SMTP id s20mr1359792ljs.54.1563301545821;
+        Tue, 16 Jul 2019 11:25:45 -0700 (PDT)
+Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.googlemail.com with ESMTPSA id t3sm2943552lfk.59.2019.07.16.11.25.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Jul 2019 11:25:45 -0700 (PDT)
+Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Joseph Lo <josephl@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com,
+        pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, jckuo@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <a5e1a6df-dff7-9e0c-9551-f78103a5462f@gmail.com>
+ <a9b5c364-52b4-bee1-5881-47197f043950@nvidia.com>
+ <e9d4bc0e-fd5d-ae02-2d67-86c7f7c9620f@gmail.com>
+ <3938092a-bbc7-b304-641d-31677539598d@nvidia.com>
+ <932d4d50-120c-9191-6a9a-23bf9c96633b@nvidia.com>
+ <0ee055ad-d397-32e5-60ee-d62c14c6f77b@gmail.com>
+ <86fc07d5-ab2e-a52a-a570-b1dfff4c20fe@nvidia.com>
+ <20190716083701.225f0fd9@dimatab>
+ <21266e4f-16b1-4c87-067a-16c07c803b6e@nvidia.com>
+ <c5853e1a-d812-2dbd-3bec-0a9b0b0f6f3e@nvidia.com>
+ <20190716080610.GE12715@pdeschrijver-desktop.Nvidia.com>
+ <d908d3a2-3013-7f92-0852-115f428d1c5f@gmail.com>
+ <72b5df8c-8acb-d0d0-ebcf-b406e8404973@nvidia.com>
+ <2b701832-5548-7c83-7c17-05cc2f1470c8@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <76e341be-6f38-2bc1-048e-1aa6883f9b88@gmail.com>
+Date:   Tue, 16 Jul 2019 21:25:43 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <10c574cd0dfb1c607536c68fc1c60c06@dev.tdt.de>
+In-Reply-To: <2b701832-5548-7c83-7c17-05cc2f1470c8@nvidia.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Y97lrr/VHMzPf29e+iDjUnnzt47qhyaSLt2xnZhzvB5BKT5Jx+d
- Tmqamh/dLY+Y+DZW2Qh8Lhc1YrxATtbDZmaufhUuApSZIfkEIT8PWMLKUljjky6xxqPZ3wE
- mSTS3vVyW6cGNUKzQtFwd2KONMqPCkQMl9F4vvJYH+2dzW2YsGBP5fi8qQ0tovErCCIQqAB
- 1VbTn0qZXbhwlYxmwFEZg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Y79y7TtvziE=:EbXoie/iMrI3/4PCV93mHC
- /Wn+8ZvCCk0C+OenRACTSIg+nRWnYq4T4GhEyFJTLEctaydFyyqL6JXvPeeb6Xk5FAwIEmzAi
- iiknRTSWwWw2josYVlkWNLDiFGik33nMjvhDCfTNM/WhQfdnCpDkQ+HxLmGRSX3thd2AuN4Wq
- KWSxyGGUChM6xX+UMcdM8vxymeeHMUCvBmKwcnaSQpHAoAc1VxdCthRCPjAk4NyQowqz0+721
- 6reUuwgWtLwJ3tWJKYZfMXJK2dOJt9xUIURaUS1jdHY4S24Kcy0ux+0NGQJeVSH8Zu6kEh+pi
- f6AIvV5ddPeTlKb72y6PX5yAbQkYwWaWTdCqgZnj8Ila9KFOoUIbOK+/gwkwEpZM9tVllYoTD
- 7k5Lx4/yWbGINZ6b2qkAseLs14UlKxtxm+BY3+ZO7Ms8rtybtLNe2ksKIBfryeqfNgCK2+ym0
- 8YRnQHn6xSuLlOQMhNteX8/QEmpAba9PHdtXYqY/qw33ry2J7tHXj2gR82Q4P8ib0kmkS6Cdu
- bBloPTmfd4jniXGMhA4hyL1aUwCw2NC6i7Hj8pYTbs5GeSuCRuCEMr/Q3ROCZ2wVZgL9+rxGt
- WGukwzduD62LXr8BN6lA2kGsiB23EvQYpDONPVDKJuF2v69UXlzYjrACJabS8XAkQWwEHWqA5
- /3NgUUReA55pIi8oXVBAK6OouXxEOlBDoHeNmvKJgVAhsNFazJ2RzWltuCKoMOZ6DjRYgYJiM
- ukFOUEC9Zea0Z5uP5iDilBOyWo8twH8j7ek0HD629o+QfYLQMK4H4IyZ1Ok=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.07.19 16:38, Florian Eckert wrote:
+16.07.2019 21:19, Sowjanya Komatineni пишет:
+> 
+> On 7/16/19 9:50 AM, Sowjanya Komatineni wrote:
+>>
+>> On 7/16/19 8:00 AM, Dmitry Osipenko wrote:
+>>> 16.07.2019 11:06, Peter De Schrijver пишет:
+>>>> On Tue, Jul 16, 2019 at 03:24:26PM +0800, Joseph Lo wrote:
+>>>>>> OK, Will add to CPUFreq driver...
+>>>>>>> The other thing that also need attention is that T124 CPUFreq driver
+>>>>>>> implicitly relies on DFLL driver to be probed first, which is icky.
+>>>>>>>
+>>>>>> Should I add check for successful dfll clk register explicitly in
+>>>>>> CPUFreq driver probe and defer till dfll clk registers?
+>>> Probably you should use the "device links". See [1][2] for the example.
+>>>
+>>> [1]
+>>> https://elixir.bootlin.com/linux/v5.2.1/source/drivers/gpu/drm/tegra/dc.c#L2383
+>>>
+>>>
+>>> [2] https://www.kernel.org/doc/html/latest/driver-api/device_link.html
+>>>
+>>> Return EPROBE_DEFER instead of EINVAL if device_link_add() fails. And
+>>> use of_find_device_by_node() to get the DFLL's device, see [3].
+>>>
+>>> [3]
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100
+>>>
+>> Will go thru and add...
 
-> I plugged in a mpcie  usb modem.
-> In my test case it was a EC25 from Quectel in mpcie2 port.
-> After that I did a reboot and exported the gpio via "/sys/class/gpio"
-> Then I executed the command "echo 0 > /sys/class/gpio/<name>/value" and
-> "echo 1 > /sys/class/gpio/<name>/value".
-> Then I have seen the log message in the kernel that the device did an
-> unregistration/registration
+Looks like I initially confused this case with getting orphaned clock.
+I'm now seeing that the DFLL driver registers the clock and then
+clk_get(dfll) should be returning EPROBE_DEFER until DFLL driver is
+probed, hence everything should be fine as-is and there is no real need
+for the 'device link'. Sorry for the confusion!
 
-hmm, did the same, tried both gpios (mpcie2_reset, mpcie3_reset), but
-nothin happened.
+>>>>> Sorry, I didn't follow the mail thread. Just regarding the DFLL part.
+>>>>>
+>>>>> As you know it, the DFLL clock is one of the CPU clock sources and
+>>>>> integrated with DVFS control logic with the regulator. We will not
+>>>>> switch
+>>>>> CPU to other clock sources once we switched to DFLL. Because the
+>>>>> CPU has
+>>>>> been regulated by the DFLL HW with the DVFS table (CVB or OPP table
+>>>>> you see
+>>>>> in the driver.). We shouldn't reparent it to other sources with unknew
+>>>>> freq/volt pair. That's not guaranteed to work. We allow switching to
+>>>>> open-loop mode but different sources.
+>>> Okay, then the CPUFreq driver will have to enforce DFLL freq to PLLP's
+>>> rate before switching to PLLP in order to have a proper CPU voltage.
+>>
+>> PLLP freq is safe to work for any CPU voltage. So no need to enforce
+>> DFLL freq to PLLP rate before changing CCLK_G source to PLLP during
+>> suspend
+>>
+> Sorry, please ignore my above comment. During suspend, need to change
+> CCLK_G source to PLLP when dfll is in closed loop mode first and then
+> dfll need to be set to open loop.
 
-But strange: I'm missing some hw, modem doesn't appear ... I'll have to
-check again whether i've got unstable hw or missing some kernel config.
+Okay.
 
+>>>>> And I don't exactly understand why we need to switch to PLLP in CPU
+>>>>> idle
+>>>>> driver. Just keep it on CL-DVFS mode all the time.
+>>>>>
+>>>>> In SC7 entry, the dfll suspend function moves it the open-loop
+>>>>> mode. That's
+>>>>> all. The sc7-entryfirmware will handle the rest of the sequence to
+>>>>> turn off
+>>>>> the CPU power.
+>>>>>
+>>>>> In SC7 resume, the warmboot code will handle the sequence to turn on
+>>>>> regulator and power up the CPU cluster. And leave it on PLL_P. After
+>>>>> resuming to the kernel, we re-init DFLL, restore the CPU clock
+>>>>> policy (CPU
+>>>>> runs on DFLL open-loop mode) and then moving to close-loop mode.
+>>> The DFLL is re-inited after switching CCLK to DFLL parent during of the
+>>> early clocks-state restoring by CaR driver. Hence instead of having odd
+>>> hacks in the CaR driver, it is much nicer to have a proper
+>>> suspend-resume sequencing of the device drivers. In this case CPUFreq
+>>> driver is the driver that enables DFLL and switches CPU to that clock
+>>> source, which means that this driver is also should be responsible for
+>>> management of the DFLL's state during of suspend/resume process. If
+>>> CPUFreq driver disables DFLL during suspend and re-enables it during
+>>> resume, then looks like the CaR driver hacks around DFLL are not needed.
+>>>
+>>>>> The DFLL part looks good to me. BTW, change the patch subject to "Add
+>>>>> suspend-resume support" seems more appropriate to me.
+>>>>>
+>>>> To clarify this, the sequences for DFLL use are as follows (assuming
+>>>> all
+>>>> required DFLL hw configuration has been done)
+>>>>
+>>>> Switch to DFLL:
+>>>> 0) Save current parent and frequency
+>>>> 1) Program DFLL to open loop mode
+>>>> 2) Enable DFLL
+>>>> 3) Change cclk_g parent to DFLL
+>>>> For OVR regulator:
+>>>> 4) Change PWM output pin from tristate to output
+>>>> 5) Enable DFLL PWM output
+>>>> For I2C regulator:
+>>>> 4) Enable DFLL I2C output
+>>>> 6) Program DFLL to closed loop mode
+>>>>
+>>>> Switch away from DFLL:
+>>>> 0) Change cclk_g parent to PLLP so the CPU frequency is ok for any
+>>>> vdd_cpu voltage
+>>>> 1) Program DFLL to open loop mode
+>>>>
+> I see during switch away from DFLL (suspend), cclk_g parent is not
+> changed to PLLP before changing dfll to open loop mode.
+> 
+> Will add this ...
 
---mtx
+The CPUFreq driver switches parent to PLLP during the probe, similar
+should be done on suspend.
 
+I'm also wondering if it's always safe to switch to PLLP in the probe.
+If CPU is running on a lower freq than PLLP, then some other more
+appropriate intermediate parent should be selected.
 
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+>>>> For OVR regulator:
+>>>> 2) Change PWM output pin from output to tristate: vdd_cpu will go back
+>>>>     to hardwired boot voltage.
+>>>> 3) Disable DFLL PWM output
+>>>>
+>>>> For I2C regulator:
+>>>> 2) Program vdd_cpu regulator voltage to the boot voltage
+>>>> 3) Disable DFLL I2C output
+>>>>
+>>>> 4) Reprogram parent saved in step 0 of 'Switch to DFLL' to the saved
+>>>>     frequency
+>>>> 5) Change cclk_g parent to saved parent
+>>>> 6) Disable DFLL
+>>
+>> This is the same sequence currently implemented. But dfll
+>> suspend/resume calls are thru Tegra210 clock driver.
+>>
+>> Dmitry wants to have dfll suspend/resume along with CCLK_G restore to
+>> happen from CPUFreq driver pm_ops rather than tegra210 clock driver or
+>> tegra dfll driver.
+>>
+>> Will move it to CPUFreq driver...
+>>
+> Thanks!
