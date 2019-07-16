@@ -2,130 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39ED86AB04
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 16:53:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7638D6AB16
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 16:56:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387838AbfGPOxm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 10:53:42 -0400
-Received: from foss.arm.com ([217.140.110.172]:36078 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728137AbfGPOxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 10:53:42 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 54E0A337;
-        Tue, 16 Jul 2019 07:53:41 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A28203F59C;
-        Tue, 16 Jul 2019 07:53:38 -0700 (PDT)
-Date:   Tue, 16 Jul 2019 15:53:36 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Souvik Chakravarty <souvik.chakravarty@arm.com>,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lina Iyer <lina.iyer@linaro.org>
-Subject: Re: [PATCH 07/18] drivers: firmware: psci: Prepare to use OS
- initiated suspend mode
-Message-ID: <20190716145336.GC7250@e107155-lin>
-References: <20190513192300.653-1-ulf.hansson@linaro.org>
- <20190513192300.653-8-ulf.hansson@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190513192300.653-8-ulf.hansson@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S2387929AbfGPOy0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 10:54:26 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:35977 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728137AbfGPOyZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 10:54:25 -0400
+Received: by mail-qk1-f195.google.com with SMTP id g18so14803647qkl.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 07:54:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=efDi+xP5INucJ72Ory5WSWKAWY28AH8aBSxZ1vzGwHc=;
+        b=p755n/nX6bwjJSrkylNF7fxrv7W5hZtw60PSVXeEzFLHxFrCisrMxGiEhVcH3gcTw7
+         D9Wp5C6bJCEpR7BikI2qJRDyevOQhEHxMYcUc3K6+L0cQC2ItC8kd3Hvv3Hq+ljT5XZZ
+         fcRqbPLBZTW1fBCWoT+tsoJ/oggL/hODGz194O1f/5Ww/DwSflLKIjPOA35by1UsTLEL
+         CHPlkXAlPZMhJ47v4xCBp60T6JMkX4wZGEvHJ0OmoXlh9NPOjOzDx3DAHTA3Kps4z+P9
+         MohtuefQXjnTNkyJ+5vqfMh9+EMzA6tzPpek1Y3IEk2rfTDB5GVHRN6FcLm/vnc87Um7
+         V7YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=efDi+xP5INucJ72Ory5WSWKAWY28AH8aBSxZ1vzGwHc=;
+        b=f1m+GQkEEOCehFQKqbDKaCLMB+JA7N0NRefGLlyMwPEky+627misEOWbghScE42Zqx
+         PoucHvF98d2yIUZX1bkC1FuSr36s6xpnWItiztxcGVDoZL33x9UoxPkB7jfFaKE8V8HT
+         MO9Hc1kQc49AIeaKIfdlDXDKT+Sy/O5gkZaYUdMLgfiPFybXFaqu/5NpkQjsBJArZkex
+         LyrGaEUglEK9pCPQirPYblS8dvJ6JuW+bQws56riE87Iqk+9LvQshHBm2ibdOO8CrZdU
+         3B94anLcvLyo7UYnhcKTisnrVb33/2P4E3H1O1j18+c6p8UBg6XDbonkV6htjxxLwsmp
+         W3Ew==
+X-Gm-Message-State: APjAAAV1O6d7C4siSoV8Y8WsI67tnH7xyaWGdZjYcE3xTPWDw/Y3BNfI
+        9C1XjdBu2AEHTpQd9kUbSbAJBg==
+X-Google-Smtp-Source: APXvYqxZ2/YvnzkZrvDp1LDwL2lt/6YOXxw8yEnn6sCMwbhbfEHB6Z4LVFHdxZwD2Fb46MvBFSpUBg==
+X-Received: by 2002:a37:dc42:: with SMTP id v63mr8083647qki.488.1563288864804;
+        Tue, 16 Jul 2019 07:54:24 -0700 (PDT)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id p13sm8008218qkj.4.2019.07.16.07.54.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Jul 2019 07:54:24 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     davem@davemloft.net
+Cc:     willemb@google.com, clang-built-linux@googlegroups.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH] skbuff: fix compilation warnings in skb_dump()
+Date:   Tue, 16 Jul 2019 10:54:00 -0400
+Message-Id: <1563288840-1913-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 09:22:49PM +0200, Ulf Hansson wrote:
-> The per CPU variable psci_power_state, contains an array of fixed values,
-> which reflects the corresponding arm,psci-suspend-param parsed from DT, for
-> each of the available CPU idle states.
->
-> This isn't sufficient when using the hierarchical CPU topology in DT in
-> combination with having PSCI OS initiated (OSI) mode enabled. More
-> precisely, in OSI mode, Linux is responsible of telling the PSCI FW what
-> idle state the cluster (a group of CPUs) should enter, while in PSCI
-> Platform Coordinated (PC) mode, each CPU independently votes for an idle
-> state of the cluster.
->
-> For this reason, let's introduce an additional per CPU variable called
-> domain_state and implement two helper functions to read/write its values.
-> Following patches, which implements PM domain support for PSCI, will use
-> the domain_state variable and set it to corresponding bits that represents
-> the selected idle state for the cluster.
->
-> Finally, in psci_cpu_suspend_enter() and psci_suspend_finisher(), let's
-> take into account the values in the domain_state, as to get the complete
-> suspend parameter.
->
-> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
-> Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->
-> Changes:
-> 	- Clarify changelog.
-> 	- Drop changes in psci_cpu_on() as it belongs in the patch for hotplug.
-> 	- Move some code inside "#ifdef CONFIG_CPU_IDLE".
->
-> ---
->  drivers/firmware/psci/psci.c | 24 ++++++++++++++++++++----
->  1 file changed, 20 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-> index b11560f7c4b9..4aec513136e4 100644
-> --- a/drivers/firmware/psci/psci.c
-> +++ b/drivers/firmware/psci/psci.c
-> @@ -285,6 +285,17 @@ static int __init psci_features(u32 psci_func_id)
->
->  #ifdef CONFIG_CPU_IDLE
->  static DEFINE_PER_CPU_READ_MOSTLY(u32 *, psci_power_state);
-> +static DEFINE_PER_CPU(u32, domain_state);
-> +
-> +static inline u32 psci_get_domain_state(void)
-> +{
-> +	return __this_cpu_read(domain_state);
-> +}
-> +
-> +static inline void psci_set_domain_state(u32 state)
-> +{
-> +	__this_cpu_write(domain_state, state);
-> +}
->
->  static int psci_dt_parse_state_node(struct device_node *np, u32 *state)
->  {
-> @@ -420,15 +431,17 @@ int psci_cpu_init_idle(struct cpuidle_driver *drv, unsigned int cpu)
->  static int psci_suspend_finisher(unsigned long index)
->  {
->  	u32 *state = __this_cpu_read(psci_power_state);
-> +	u32 composite_state = state[index - 1] | psci_get_domain_state();
->
+The commit 6413139dfc64 ("skbuff: increase verbosity when dumping skb
+data") introduced a few compilation warnings.
 
-The more I read this code and PSCI spec, I think it's not simple OR here
-unless the specification states that. ACPI LPI explicitly stated that as
-it was generic and PSCI doesn't. It can be made workable for original
-format, but I think it's not that simple for extended format unless the
-suspend parameters are carefully designed to achieve that, so we can't
-just convert existing platforms the way it's shown on HiKey in this series.
+net/core/skbuff.c:766:32: warning: format specifies type 'unsigned
+short' but the argument has type 'unsigned int' [-Wformat]
+                       level, sk->sk_family, sk->sk_type,
+sk->sk_protocol);
+                                             ^~~~~~~~~~~
+net/core/skbuff.c:766:45: warning: format specifies type 'unsigned
+short' but the argument has type 'unsigned int' [-Wformat]
+                       level, sk->sk_family, sk->sk_type,
+sk->sk_protocol);
+^~~~~~~~~~~~~~~
 
---
-Regards,
-Sudeep
+Fix them by using the proper types, and also fix some checkpatch
+warnings by using pr_info().
+
+WARNING: printk() should include KERN_<LEVEL> facility level
++		printk("%ssk family=%hu type=%u proto=%u\n",
+
+Fixes: 6413139dfc64 ("skbuff: increase verbosity when dumping skb data")
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ net/core/skbuff.c | 44 ++++++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
+
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 6f1e31f674a3..fa1e78f7bb96 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -740,30 +740,30 @@ void skb_dump(const char *level, const struct sk_buff *skb, bool full_pkt)
+ 	has_mac = skb_mac_header_was_set(skb);
+ 	has_trans = skb_transport_header_was_set(skb);
+ 
+-	printk("%sskb len=%u headroom=%u headlen=%u tailroom=%u\n"
+-	       "mac=(%d,%d) net=(%d,%d) trans=%d\n"
+-	       "shinfo(txflags=%u nr_frags=%u gso(size=%hu type=%u segs=%hu))\n"
+-	       "csum(0x%x ip_summed=%u complete_sw=%u valid=%u level=%u)\n"
+-	       "hash(0x%x sw=%u l4=%u) proto=0x%04x pkttype=%u iif=%d\n",
+-	       level, skb->len, headroom, skb_headlen(skb), tailroom,
+-	       has_mac ? skb->mac_header : -1,
+-	       has_mac ? skb_mac_header_len(skb) : -1,
+-	       skb->network_header,
+-	       has_trans ? skb_network_header_len(skb) : -1,
+-	       has_trans ? skb->transport_header : -1,
+-	       sh->tx_flags, sh->nr_frags,
+-	       sh->gso_size, sh->gso_type, sh->gso_segs,
+-	       skb->csum, skb->ip_summed, skb->csum_complete_sw,
+-	       skb->csum_valid, skb->csum_level,
+-	       skb->hash, skb->sw_hash, skb->l4_hash,
+-	       ntohs(skb->protocol), skb->pkt_type, skb->skb_iif);
++	pr_info("%sskb len=%u headroom=%u headlen=%u tailroom=%u\n"
++		"mac=(%d,%d) net=(%d,%d) trans=%d\n"
++		"shinfo(txflags=%u nr_frags=%u gso(size=%hu type=%u segs=%hu))\n"
++		"csum(0x%x ip_summed=%u complete_sw=%u valid=%u level=%u)\n"
++		"hash(0x%x sw=%u l4=%u) proto=0x%04x pkttype=%u iif=%d\n",
++		level, skb->len, headroom, skb_headlen(skb), tailroom,
++		has_mac ? skb->mac_header : -1,
++		has_mac ? skb_mac_header_len(skb) : -1,
++		skb->network_header,
++		has_trans ? skb_network_header_len(skb) : -1,
++		has_trans ? skb->transport_header : -1,
++		sh->tx_flags, sh->nr_frags,
++		sh->gso_size, sh->gso_type, sh->gso_segs,
++		skb->csum, skb->ip_summed, skb->csum_complete_sw,
++		skb->csum_valid, skb->csum_level,
++		skb->hash, skb->sw_hash, skb->l4_hash,
++		ntohs(skb->protocol), skb->pkt_type, skb->skb_iif);
+ 
+ 	if (dev)
+-		printk("%sdev name=%s feat=0x%pNF\n",
+-		       level, dev->name, &dev->features);
++		pr_info("%sdev name=%s feat=0x%pNF\n",
++			level, dev->name, &dev->features);
+ 	if (sk)
+-		printk("%ssk family=%hu type=%hu proto=%hu\n",
+-		       level, sk->sk_family, sk->sk_type, sk->sk_protocol);
++		pr_info("%ssk family=%hu type=%u proto=%u\n",
++			level, sk->sk_family, sk->sk_type, sk->sk_protocol);
+ 
+ 	if (full_pkt && headroom)
+ 		print_hex_dump(level, "skb headroom: ", DUMP_PREFIX_OFFSET,
+@@ -801,7 +801,7 @@ void skb_dump(const char *level, const struct sk_buff *skb, bool full_pkt)
+ 	}
+ 
+ 	if (full_pkt && skb_has_frag_list(skb)) {
+-		printk("skb fraglist:\n");
++		pr_info("skb fraglist:\n");
+ 		skb_walk_frags(skb, list_skb)
+ 			skb_dump(level, list_skb, true);
+ 	}
+-- 
+1.8.3.1
+
