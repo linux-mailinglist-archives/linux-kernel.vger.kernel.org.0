@@ -2,100 +2,262 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC9BB6AE9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 20:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CC6D6AEA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 20:30:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388482AbfGPS2z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 14:28:55 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38867 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbfGPS2y (ORCPT
+        id S2388409AbfGPSad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 14:30:33 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:9014 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725926AbfGPSac (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 14:28:54 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y15so9520637pfn.5
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 11:28:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:from:to:subject:cc:user-agent:date;
-        bh=zvGcK+VeZ8cxUQUUb/Ziua1dyjBrgzj1NF9vZ94FkTY=;
-        b=HaFxzYUquBICo8Qa2dhDAMayVb4+B8XnoZq6FveM6TFEZ4xttZwMrCmGGANC/QGVlw
-         u+Q8JPimlFkaChFUdUbnRKD6m1PJup0MyZsBkdRyVka7yI9ODuShs0+cBre686lEzvVj
-         jGQyqpkhbiFKGwnAmGCcyqaMlrf7d6Hd+QgwM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:from:to:subject:cc
-         :user-agent:date;
-        bh=zvGcK+VeZ8cxUQUUb/Ziua1dyjBrgzj1NF9vZ94FkTY=;
-        b=JX/AjggZ5h6dZRo0JF9noDQNxKn6ggZ1wLEKgp7ezTU0CnynXP7ZO56ggS1dK/vlgs
-         9/kpmehPf7jRTmUOeIYH/o3bTURo7G8gwk/tHKFOT+HvtG0GsL4tBRq7feJFCP3vhekR
-         HmVCpblpgZzs/Z0fbQGPCbuwfsaw3x5MWWlvPd5KaxaxZsC29DRtSidZy1+8MtShx9xJ
-         ZPpaVyYSboNi0MqkeIKyGPmnZx2i5adWcZIMKpg+cuBHZMd/6j9Bpc3b8+CT9hJtXSLC
-         5EmM5aNdsPGQyrabQs4TBazI+18x2/ru6RXEqGDi94i2BbEWJWL5YrS1tRs/LB8btwDm
-         e+9A==
-X-Gm-Message-State: APjAAAVyEOcsW/kWEoDUE36sTXcgcLZ7keRjVXwOLY2LNUGzLDYjgeOg
-        F6eNtcSXNyl727x4BLTwKGLqoQ==
-X-Google-Smtp-Source: APXvYqz4qZBoRB6OmcdQOJn/RkfEoww9MxRhFBGtRytBBWzy2H7BHROzWqtrB66vhSitRPsWPlDCmg==
-X-Received: by 2002:a63:5550:: with SMTP id f16mr17160524pgm.426.1563301733618;
-        Tue, 16 Jul 2019 11:28:53 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id x8sm18949101pfa.46.2019.07.16.11.28.52
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 16 Jul 2019 11:28:52 -0700 (PDT)
-Message-ID: <5d2e1764.1c69fb81.448bb.65c0@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190624142654.zprcpz42hivuyrjq@gondor.apana.org.au>
-References: <20190613180931.65445-1-swboyd@chromium.org> <20190613180931.65445-2-swboyd@chromium.org> <20190613232613.GH22901@ziepe.ca> <5d03e394.1c69fb81.f028c.bffb@mx.google.com> <20190617225134.GA30762@ziepe.ca> <5d0c2cd6.1c69fb81.e66af.32bf@mx.google.com> <20190624142654.zprcpz42hivuyrjq@gondor.apana.org.au>
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH 1/8] tpm: block messages while suspended
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andrey Pronin <apronin@chromium.org>,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Tue, 16 Jul 2019 14:30:32 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6GIM497023335;
+        Tue, 16 Jul 2019 14:22:42 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tsjhm3684-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 Jul 2019 14:22:42 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x6GIMfN2024987;
+        Tue, 16 Jul 2019 14:22:41 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tsjhm366p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 Jul 2019 14:22:41 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x6GIEnSN000902;
+        Tue, 16 Jul 2019 18:22:39 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma01wdc.us.ibm.com with ESMTP id 2tq6x614my-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 Jul 2019 18:22:39 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6GIMcsr49807648
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Jul 2019 18:22:38 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1EC40B206C;
+        Tue, 16 Jul 2019 18:22:38 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AF59AB2067;
+        Tue, 16 Jul 2019 18:22:37 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.225.134])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 16 Jul 2019 18:22:37 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id B6C1816C8F09; Tue, 16 Jul 2019 11:22:37 -0700 (PDT)
+Date:   Tue, 16 Jul 2019 11:22:37 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Borislav Petkov <bp@alien8.de>, c0d1n61at3@gmail.com,
+        "David S. Miller" <davem@davemloft.net>, edumazet@google.com,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, devicetree@vger.kernel.org,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Matt Mackall <mpm@selenic.com>, linux-crypto@vger.kernel.org
-User-Agent: alot/0.8.1
-Date:   Tue, 16 Jul 2019 11:28:51 -0700
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
+        kernel-hardening@lists.openwall.com, kernel-team@android.com,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        neilb@suse.com, netdev@vger.kernel.org,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        peterz@infradead.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Tejun Heo <tj@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, will@kernel.org,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
+Subject: Re: [PATCH v2 2/9] rcu: Add support for consolidated-RCU reader
+ checking
+Message-ID: <20190716182237.GA22819@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190712170024.111093-1-joel@joelfernandes.org>
+ <20190712170024.111093-3-joel@joelfernandes.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190712170024.111093-3-joel@joelfernandes.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-16_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907160225
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Herbert Xu (2019-06-24 07:26:54)
-> On Thu, Jun 20, 2019 at 06:03:17PM -0700, Stephen Boyd wrote:
-> >
-> > What do you think of the attached patch? I haven't tested it, but it
-> > would make sure that the kthread is frozen so that the hardware can be
-> > resumed before the kthread is thawed and tries to go touch the hardware.
->=20
-> Looks good to me.
->=20
+On Fri, Jul 12, 2019 at 01:00:17PM -0400, Joel Fernandes (Google) wrote:
+> This patch adds support for checking RCU reader sections in list
+> traversal macros. Optionally, if the list macro is called under SRCU or
+> other lock/mutex protection, then appropriate lockdep expressions can be
+> passed to make the checks pass.
+> 
+> Existing list_for_each_entry_rcu() invocations don't need to pass the
+> optional fourth argument (cond) unless they are under some non-RCU
+> protection and needs to make lockdep check pass.
+> 
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-Thanks for checking. I haven't been able to reproduce the problem yet to
-confirm this is actually fixing anything, even after tweaking the sysctl
-values for khwrng to try and force the thread to run continuously.
+If you fold in the checks for extra parameters, I will take this
+one and also 1/9.
 
-From reading the bug report that caused this 'is_suspended' code to be
-added to the driver I'm fairly convinced this is the right solution. To
-give some more background, it looks like we use s2idle suspend (i.e.
-all CPUs are idle across suspend) and then we have the kthread running
-to ask the hardware for some more random numbers. The i2c transaction
-fails when asking the hwrng for data, and we see these messages printed
-on the resume path:
+							Thanx, Paul
 
-	i2c_designware i2c_designware.2: i2c_dw_handle_tx_abort: lost arbitration
-	tpm tpm0: i2c transfer failed (attempt 3/3): -11
-	tpm0: tpm_transmit: tpm_send: error -11
-	hwrng: no data available
-
-Userspace tasks are thawed after this failure so it looks like something
-in the kernel kicks khwrng to grab more data before the i2c bus can be
-resumed.
-
+> ---
+>  include/linux/rculist.h  | 28 +++++++++++++++++++++++-----
+>  include/linux/rcupdate.h |  7 +++++++
+>  kernel/rcu/Kconfig.debug | 11 +++++++++++
+>  kernel/rcu/update.c      | 14 ++++++++++++++
+>  4 files changed, 55 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+> index e91ec9ddcd30..1048160625bb 100644
+> --- a/include/linux/rculist.h
+> +++ b/include/linux/rculist.h
+> @@ -40,6 +40,20 @@ static inline void INIT_LIST_HEAD_RCU(struct list_head *list)
+>   */
+>  #define list_next_rcu(list)	(*((struct list_head __rcu **)(&(list)->next)))
+>  
+> +/*
+> + * Check during list traversal that we are within an RCU reader
+> + */
+> +
+> +#ifdef CONFIG_PROVE_RCU_LIST
+> +#define __list_check_rcu(dummy, cond, ...)				\
+> +	({								\
+> +	RCU_LOCKDEP_WARN(!cond && !rcu_read_lock_any_held(),		\
+> +			 "RCU-list traversed in non-reader section!");	\
+> +	 })
+> +#else
+> +#define __list_check_rcu(dummy, cond, ...) ({})
+> +#endif
+> +
+>  /*
+>   * Insert a new entry between two known consecutive entries.
+>   *
+> @@ -343,14 +357,16 @@ static inline void list_splice_tail_init_rcu(struct list_head *list,
+>   * @pos:	the type * to use as a loop cursor.
+>   * @head:	the head for your list.
+>   * @member:	the name of the list_head within the struct.
+> + * @cond:	optional lockdep expression if called from non-RCU protection.
+>   *
+>   * This list-traversal primitive may safely run concurrently with
+>   * the _rcu list-mutation primitives such as list_add_rcu()
+>   * as long as the traversal is guarded by rcu_read_lock().
+>   */
+> -#define list_for_each_entry_rcu(pos, head, member) \
+> -	for (pos = list_entry_rcu((head)->next, typeof(*pos), member); \
+> -		&pos->member != (head); \
+> +#define list_for_each_entry_rcu(pos, head, member, cond...)		\
+> +	for (__list_check_rcu(dummy, ## cond, 0),			\
+> +	     pos = list_entry_rcu((head)->next, typeof(*pos), member);	\
+> +		&pos->member != (head);					\
+>  		pos = list_entry_rcu(pos->member.next, typeof(*pos), member))
+>  
+>  /**
+> @@ -616,13 +632,15 @@ static inline void hlist_add_behind_rcu(struct hlist_node *n,
+>   * @pos:	the type * to use as a loop cursor.
+>   * @head:	the head for your list.
+>   * @member:	the name of the hlist_node within the struct.
+> + * @cond:	optional lockdep expression if called from non-RCU protection.
+>   *
+>   * This list-traversal primitive may safely run concurrently with
+>   * the _rcu list-mutation primitives such as hlist_add_head_rcu()
+>   * as long as the traversal is guarded by rcu_read_lock().
+>   */
+> -#define hlist_for_each_entry_rcu(pos, head, member)			\
+> -	for (pos = hlist_entry_safe (rcu_dereference_raw(hlist_first_rcu(head)),\
+> +#define hlist_for_each_entry_rcu(pos, head, member, cond...)		\
+> +	for (__list_check_rcu(dummy, ## cond, 0),			\
+> +	     pos = hlist_entry_safe (rcu_dereference_raw(hlist_first_rcu(head)),\
+>  			typeof(*(pos)), member);			\
+>  		pos;							\
+>  		pos = hlist_entry_safe(rcu_dereference_raw(hlist_next_rcu(\
+> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> index 922bb6848813..712b464ab960 100644
+> --- a/include/linux/rcupdate.h
+> +++ b/include/linux/rcupdate.h
+> @@ -223,6 +223,7 @@ int debug_lockdep_rcu_enabled(void);
+>  int rcu_read_lock_held(void);
+>  int rcu_read_lock_bh_held(void);
+>  int rcu_read_lock_sched_held(void);
+> +int rcu_read_lock_any_held(void);
+>  
+>  #else /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
+>  
+> @@ -243,6 +244,12 @@ static inline int rcu_read_lock_sched_held(void)
+>  {
+>  	return !preemptible();
+>  }
+> +
+> +static inline int rcu_read_lock_any_held(void)
+> +{
+> +	return !preemptible();
+> +}
+> +
+>  #endif /* #else #ifdef CONFIG_DEBUG_LOCK_ALLOC */
+>  
+>  #ifdef CONFIG_PROVE_RCU
+> diff --git a/kernel/rcu/Kconfig.debug b/kernel/rcu/Kconfig.debug
+> index 0ec7d1d33a14..b20d0e2903d1 100644
+> --- a/kernel/rcu/Kconfig.debug
+> +++ b/kernel/rcu/Kconfig.debug
+> @@ -7,6 +7,17 @@ menu "RCU Debugging"
+>  config PROVE_RCU
+>  	def_bool PROVE_LOCKING
+>  
+> +config PROVE_RCU_LIST
+> +	bool "RCU list lockdep debugging"
+> +	depends on PROVE_RCU
+> +	default n
+> +	help
+> +	  Enable RCU lockdep checking for list usages. By default it is
+> +	  turned off since there are several list RCU users that still
+> +	  need to be converted to pass a lockdep expression. To prevent
+> +	  false-positive splats, we keep it default disabled but once all
+> +	  users are converted, we can remove this config option.
+> +
+>  config TORTURE_TEST
+>  	tristate
+>  	default n
+> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> index bb961cd89e76..0cc7be0fb6b5 100644
+> --- a/kernel/rcu/update.c
+> +++ b/kernel/rcu/update.c
+> @@ -294,6 +294,20 @@ int rcu_read_lock_bh_held(void)
+>  }
+>  EXPORT_SYMBOL_GPL(rcu_read_lock_bh_held);
+>  
+> +int rcu_read_lock_any_held(void)
+> +{
+> +	if (!debug_lockdep_rcu_enabled())
+> +		return 1;
+> +	if (!rcu_is_watching())
+> +		return 0;
+> +	if (!rcu_lockdep_current_cpu_online())
+> +		return 0;
+> +	if (lock_is_held(&rcu_lock_map) || lock_is_held(&rcu_sched_lock_map))
+> +		return 1;
+> +	return !preemptible();
+> +}
+> +EXPORT_SYMBOL_GPL(rcu_read_lock_any_held);
+> +
+>  #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
+>  
+>  /**
+> -- 
+> 2.22.0.510.g264f2c817a-goog
+> 
