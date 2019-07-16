@@ -2,116 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 540F66A9F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 15:59:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80EE36A9FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 16:00:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387774AbfGPN7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 09:59:48 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38448 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726997AbfGPN7r (ORCPT
+        id S2387840AbfGPOAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 10:00:35 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:25048 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfGPOAe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 09:59:47 -0400
-Received: by mail-lj1-f196.google.com with SMTP id r9so20055681ljg.5;
-        Tue, 16 Jul 2019 06:59:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7H6i1LxDmB04ycY5ef1F3c/qYaMlYDDIBcVi4+5VGZs=;
-        b=MArk12hyaMeQaUedo0Zo3ngitcjN1CJN65igxLVq6n3lA6NpZVHcxE5KbtO3ipqBaU
-         uMl0q8Xw2v68Ha5HDdDRadjG0sJ/YvgCISRQEME+xeCFgMkfZBwNOrsOg1CTdQ463hOp
-         6w1Xr4LCn8iBjCustjV/j8mdtYdO15qVJOngV8yUkJt7Iv9zkeCRJA6QjtC7ni9HM+ru
-         lO94WMul5YG495bgeYL/rjCKxCxQAJZnxUBQzRZcPs5R5n0+xjrGh5s4h4DlvSjD1WsO
-         O/lDua85p4zwLhMVssZIttrcs2YEOKbYWr7WpRDaqXx4ABYbjRfZFZWm0uYIYh0Z4pVE
-         bmWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7H6i1LxDmB04ycY5ef1F3c/qYaMlYDDIBcVi4+5VGZs=;
-        b=A6VRIXR6eTgygpDpucFUjvj9vJClGu/R0x+zKL/Q+Qa6dN55CZv8cEqtSdnF/eQSUF
-         OPIgjSoc9U9XkEQkPKlylTtueoKcl5uHOj8EqVrBXfHNBdsCFvQoKsW0+Qc7RzAFvGLb
-         FlJ0NyqdYVnkAi7VgGglYpOgeDHW+hYHkOo7fpTvVxu2rviR2Ft0CIt+1ggD977/DlNb
-         SL5PJdxOdPpNhc5IWEUzfbn4lm6VeGYeDCPy+ASI0Bdf8ozTqLkYYzh45X9OcX/AU+Cc
-         j3wyDPzeawr8Ipi7FcDeXN4KkhuvY9U9eZBB7tLbxltdAnkymGSxj5nk+/fyiDYd387Y
-         dl2g==
-X-Gm-Message-State: APjAAAWypjzlY9ZVfurN0YHNmzu7Tv5snuleWIx+ADdva4iKb13EaufQ
-        DvPOcZkxir6rJsx6tAuUVdeND4TJ
-X-Google-Smtp-Source: APXvYqxQNH0L/ucC++0xm+Z0K2Lj8uPYP4FhAVzja+WgJC3TQm7601IQXRAm96Z0eFCAtgaG5+P1vw==
-X-Received: by 2002:a2e:2b01:: with SMTP id q1mr17270563lje.27.1563285584512;
-        Tue, 16 Jul 2019 06:59:44 -0700 (PDT)
-Received: from [192.168.2.145] (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.googlemail.com with ESMTPSA id r24sm4176544ljb.72.2019.07.16.06.59.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Jul 2019 06:59:43 -0700 (PDT)
-Subject: Re: [PATCH v4 14/24] PM / devfreq: tegra30: Ensure that target freq
- won't overflow
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190707223303.6755-1-digetx@gmail.com>
- <CGME20190707223631epcas4p42012d0364a4c952d90f078fb45982722@epcas4p4.samsung.com>
- <20190707223303.6755-15-digetx@gmail.com>
- <e6b53ba0-ac98-bda6-b087-553088a43d9f@samsung.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <14115aa7-ed40-2775-9b0b-a2bf6ca9d47e@gmail.com>
-Date:   Tue, 16 Jul 2019 16:59:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Tue, 16 Jul 2019 10:00:34 -0400
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x6GE07F6004768;
+        Tue, 16 Jul 2019 23:00:08 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x6GE07F6004768
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1563285608;
+        bh=17EXgbDG+FKzhJ6mf7iS/6cZE4J0a/HBc40gJ8UDRJc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GvAs+RtgAEUCREMWDOUlA+oz2hXY9gVNv4s+5RK6aebOjta6duG3RlW8+KWFJIeed
+         Be/fmvnbjnqY0sQw14tuoMAdTOaK0NbrjQMTKT9+fQpDPDzjkGqOrC9cGqOv9QvIgo
+         6TuvblrO/Gw/DjKGmn5ioCw2erzV5Tg0XaNlGqY6/LLmU0wAiGNJck3u5JyPASUlqb
+         0ZviQks7w1ofPbLr2hYvrGoJz0Em2SSC/qSczLPudgEykXHnusQp+bmyUATGp7EoYl
+         iM9f3EYWzAZia5AKKh6Zsx2ytUcoQnSwmLm/JhfjQh3Dbfx2pzWH3skwgWw4vHCZif
+         0vzXxtJUq+aBw==
+X-Nifty-SrcIP: [209.85.217.41]
+Received: by mail-vs1-f41.google.com with SMTP id v6so13987855vsq.4;
+        Tue, 16 Jul 2019 07:00:08 -0700 (PDT)
+X-Gm-Message-State: APjAAAUhH+HHh8TBPP3ElVkbuIksfnNlkOIFVarq+/JfhNBuG/S4U0eO
+        Euf9qmCPbmS95ReVBF0PN58/jLwDwjVeXS3c2zE=
+X-Google-Smtp-Source: APXvYqzvMEy8fZNv6UB2oKKUYxxkbEpHi5QKtGfbHhPeitQzInE0Pg9qezW5fEKvogiTzQiQ9hzkE61TlQi3ugWH0FA=
+X-Received: by 2002:a67:8e0a:: with SMTP id q10mr19966577vsd.215.1563285607104;
+ Tue, 16 Jul 2019 07:00:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <e6b53ba0-ac98-bda6-b087-553088a43d9f@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <201907160706.9xUSQ36X%lkp@intel.com> <CAK7LNATqxQnen2Tzcici8GnJuc-qNeCYcCYisKM2OkNow1FDnQ@mail.gmail.com>
+ <20190716124249.GP5418@ubuntu-xps13>
+In-Reply-To: <20190716124249.GP5418@ubuntu-xps13>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 16 Jul 2019 22:59:31 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATJNC3xaBbZBROEgggop41fUFBMA56_+aX3Xt=g7FGd_A@mail.gmail.com>
+Message-ID: <CAK7LNATJNC3xaBbZBROEgggop41fUFBMA56_+aX3Xt=g7FGd_A@mail.gmail.com>
+Subject: Re: [kbuild:kbuild 5/19] drivers/atm/eni.o: warning: objtool:
+ eni_init_one()+0xe42: indirect call found in RETPOLINE build
+To:     Seth Forshee <seth.forshee@canonical.com>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>, kbuild-all@01.org,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kbuild test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-16.07.2019 15:30, Chanwoo Choi пишет:
-> On 19. 7. 8. 오전 7:32, Dmitry Osipenko wrote:
->> Potentially very high boosting could cause an integer overflow for a
->> highly clocked memory after conversion to MHz.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/devfreq/tegra30-devfreq.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
->> index 2f59c78930bd..0de1efdaabf4 100644
->> --- a/drivers/devfreq/tegra30-devfreq.c
->> +++ b/drivers/devfreq/tegra30-devfreq.c
->> @@ -460,6 +460,7 @@ static unsigned long actmon_update_target(struct tegra_devfreq *tegra,
->>  	unsigned long target_freq;
->>  
->>  	target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD + dev->boost_freq;
->> +	target_freq = min(target_freq, ULONG_MAX / KHZ);
-> 
-> Did you meet this corner case?
+On Tue, Jul 16, 2019 at 9:42 PM Seth Forshee <seth.forshee@canonical.com> wrote:
+>
+> On Tue, Jul 16, 2019 at 03:57:24PM +0900, Masahiro Yamada wrote:
+> > (+ Josh Poimboeuf)
+> >
+> > On Tue, Jul 16, 2019 at 8:44 AM kbuild test robot <lkp@intel.com> wrote:
+> > >
+> > > tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git kbuild
+> > > head:   0ff0c3753e06c0420c80dac1b0187a442b372acb
+> > > commit: 2eaf4e87ba258cc3f27e486cdf32d5ba76303c6f [5/19] kbuild: add -fcf-protection=none to retpoline flags
+> > > config: x86_64-randconfig-s2-07160214 (attached as .config)
+> > > compiler: gcc-4.9 (Debian 4.9.4-2) 4.9.4
+> > > reproduce:
+> > >         git checkout 2eaf4e87ba258cc3f27e486cdf32d5ba76303c6f
+> > >         # save the attached .config to linux build tree
+> > >         make ARCH=x86_64
+> >
+> > 0-day bot reports objtool warnings with the following applied:
+> > https://patchwork.kernel.org/patch/11037379/
+> >
+> > I have no idea about objtool.
+> >
+> > Is it better to drop this patch for now?
+>
+> I'm surprised that the change would have any impact on a build with
+> gcc-4.9, since -fcf-protection seems to have been introduced in gcc-8. I
+> guess there's no full build log that would let us see the actual flags
+> passed to the compiler.
+>
+> I'll try to reproduce this result. If you think the patch should be
+> dropped in the meantime, that's fine.
 
-I can't recall that, technically it could happen and I don't feel
-comfortable by having potential integer overflows anyway.
+Dropped now.
 
-> If have to change it, you better to use 'tegra->max_freq' as following:
-> 	min(target_freq, tegra->max_freq);
+Thanks.
 
-The 'tegra->max_freq' will work here, but 'ULONG_MAX / KHZ' is a
-constant value which is also correct and doesn't case any harm.
-
-Probably will be even more expressive to write this as:
-
-	target_freq = dev->avg_freq + dev->boost_freq;
-	target_freq = tegra_actmon_account_cpu_freq(tegra, dev, target_freq);
-
-	return min(target_freq, tegra->max_freq);
-
-
-Thank you very much for the reviews!
+-- 
+Best Regards
+Masahiro Yamada
