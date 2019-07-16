@@ -2,144 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC4A16A995
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 15:25:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BD586A979
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 15:20:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387590AbfGPNYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 09:24:32 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.169]:33272 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726997AbfGPNYb (ORCPT
+        id S2387554AbfGPNTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 09:19:41 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45776 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726997AbfGPNTl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 09:24:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1563283469;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Vbkrp6w7m4D6pHF3/AKyST3n0EHCDNA9AqE+moGYREY=;
-        b=gzjz7PnKJCwPNyS3onMlyFrexdC+kKgtwyNcVptNh7PY25uuL2naIBp6noDqoXoHPk
-        5vsQibyyNIKFnZKLCgUu+tqpvlG/3arrx7t5fFJpuQEMeLFv5t7h/6aFEDYBcLdUMKyu
-        PT4wB2iBA2P83tKCldixyYn5C6PLatzI6x2K4Zi14Z288mENZUJHxpeM4X9GiIoUJL5m
-        7QQOHXkiVTV6CJ8N4I/8F3KKIF3jOEesH/IHK3kZ+xlMUdfiOL4q5odq6GSI9ZAFY+rG
-        07C+u65AwidsP3y10unOWZna1blAY/Jp7RbqixBw0sIuJ8YbW4+u0xPPc/kBt3nDowYe
-        HPtg==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
-X-RZG-CLASS-ID: mo00
-Received: from oxapp06-01.back.ox.d0m.de
-        by smtp-ox.front (RZmta 44.24 AUTH)
-        with ESMTPSA id h0a328v6GDITcPy
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Tue, 16 Jul 2019 15:18:29 +0200 (CEST)
-Date:   Tue, 16 Jul 2019 15:18:29 +0200 (CEST)
-From:   Ulrich Hecht <uli@fpond.eu>
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
-        VenkataRajesh.Kalakodima@in.bosch.com,
-        Harsha.ManjulaMallikarjun@in.bosch.com,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Message-ID: <1992958141.61517.1563283109549@webmail.strato.com>
-In-Reply-To: <20190706140746.29132-16-jacopo+renesas@jmondi.org>
-References: <20190706140746.29132-1-jacopo+renesas@jmondi.org>
- <20190706140746.29132-16-jacopo+renesas@jmondi.org>
-Subject: Re: [PATCH v2 15/19] drm: rcar-du: Claim CMM support for Gen3 SoCs
+        Tue, 16 Jul 2019 09:19:41 -0400
+Received: by mail-ot1-f68.google.com with SMTP id x21so20978617otq.12;
+        Tue, 16 Jul 2019 06:19:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ft5bVu4GiOzMOquID2tug9HMlwO64i/k54DzeQayFVQ=;
+        b=nHLDI7quoPcaMtrmsotzJJ0RhZI4lMAAKzNdjVA1dW0tRsKNbS9jZMpaNr/R4QO9fM
+         QeNs5dxk8ed6yV+0A9NeusIEZCTmEugmItmX/KJ9ysUhwubCoFc1Yp0HfZTnSbk7QDLt
+         M+qQdkKjxNt9AjOydda2zTshLmnFr2j4KUGnd1G8iTiSl973P21KAhU6zEPB1yEwW897
+         GtvP3zMFVELpPYakN6p2NH++nwMyoZeldSTwZGTe5BNdEhZmnRaSPeUto0qlG3P6DbRQ
+         lYqAkNDcT43appzuNFPM5WNTbA+wPyumQebOKeIWrVqWaQXt62ynSx/lOgxNdxAca6Gm
+         BfXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ft5bVu4GiOzMOquID2tug9HMlwO64i/k54DzeQayFVQ=;
+        b=E/4Qn8Xtx3fvUs/otgZwNGa3ruLTi0cdXX7KT8jYotIiHzfEjHHZarktu0e4P++7V3
+         CcdZLrGS8kQfcDCX1wrAUPyETRUHo6VO4Fgi2+bO+ZcKcTVJvK8opwL73hiBuEdi1MMf
+         5BYMa1QIWCRAzX80z2fg9iZDx6iMDO53ZUseRgFTB30itX8Z44v3Tz7EVfQygxl9Xgkf
+         ESg1/mremBnIAPC9tt01AFb+MQcOtuSsL0NWIr9FgGopl/W1MJh1hZYU91KIr5TR4ILu
+         4FIa/ARQi98lEBGTuoxqijcAjncxZZ6vVn/SaqRGj+TdLrMASPGni0ecpVV4/4NITw9l
+         CQVA==
+X-Gm-Message-State: APjAAAVGQ8FlFv1tRA0cEpcR/4iy4FQu4PrJrKdnZW6Z1/Pc85qA2OM1
+        QKVp4OgjwPjZipzs+id4awsk3a1u4omDrv6+VAdgvw==
+X-Google-Smtp-Source: APXvYqzA6XiP/kuy0DMZBzETMQWyESn5f0PKeKhfmMMib8v9R3xOk+yf0LOZdoUZA+PDnLIAU/yLYAhJo1JSp2dBxAE=
+X-Received: by 2002:a05:6830:1319:: with SMTP id p25mr25455046otq.224.1563283180146;
+ Tue, 16 Jul 2019 06:19:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev59
-X-Originating-IP: 85.212.152.154
-X-Originating-Client: open-xchange-appsuite
+References: <20190715210512.15823-1-TheSven73@gmail.com> <VI1PR0402MB36009E99D7361583702B84DDFFCE0@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR0402MB36009E99D7361583702B84DDFFCE0@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Tue, 16 Jul 2019 09:19:29 -0400
+Message-ID: <CAGngYiUb5==QSM1-oa4bSeqhGyoaTw_dWjygLo=0X60eX=wQhQ@mail.gmail.com>
+Subject: Re: [EXT] [PATCH v1] net: fec: optionally reset PHY via a reset-controller
+To:     Andy Duan <fugang.duan@nxp.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Andy,
 
-> On July 6, 2019 at 4:07 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> 
-> 
-> Add CMM to the list of supported features for Gen3 SoCs that provide it:
-> - R8A7795
-> - R8A7796
-> - R8A77965
-> - R8A7799x
-> 
-> Leave R8A77970 out as V3M and V3H are the only Gen3 SoCs that do not
-> support CMM.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 12 ++++++++----
->  drivers/gpu/drm/rcar-du/rcar_du_drv.h |  1 +
->  2 files changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> index 75ab17af13a9..1e69cfa11798 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> @@ -247,7 +247,8 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
->  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
->  		  | RCAR_DU_FEATURE_VSP1_SOURCE
->  		  | RCAR_DU_FEATURE_INTERLACED
-> -		  | RCAR_DU_FEATURE_TVM_SYNC,
-> +		  | RCAR_DU_FEATURE_TVM_SYNC
-> +		  | RCAR_DU_FEATURE_CMM,
->  	.channels_mask = BIT(3) | BIT(2) | BIT(1) | BIT(0),
->  	.routes = {
->  		/*
-> @@ -280,7 +281,8 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
->  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
->  		  | RCAR_DU_FEATURE_VSP1_SOURCE
->  		  | RCAR_DU_FEATURE_INTERLACED
-> -		  | RCAR_DU_FEATURE_TVM_SYNC,
-> +		  | RCAR_DU_FEATURE_TVM_SYNC
-> +		  | RCAR_DU_FEATURE_CMM,
->  	.channels_mask = BIT(2) | BIT(1) | BIT(0),
->  	.routes = {
->  		/*
-> @@ -309,7 +311,8 @@ static const struct rcar_du_device_info rcar_du_r8a77965_info = {
->  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
->  		  | RCAR_DU_FEATURE_VSP1_SOURCE
->  		  | RCAR_DU_FEATURE_INTERLACED
-> -		  | RCAR_DU_FEATURE_TVM_SYNC,
-> +		  | RCAR_DU_FEATURE_TVM_SYNC
-> +		  | RCAR_DU_FEATURE_CMM,
->  	.channels_mask = BIT(3) | BIT(1) | BIT(0),
->  	.routes = {
->  		/*
-> @@ -357,7 +360,8 @@ static const struct rcar_du_device_info rcar_du_r8a77970_info = {
->  static const struct rcar_du_device_info rcar_du_r8a7799x_info = {
->  	.gen = 3,
->  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
-> -		  | RCAR_DU_FEATURE_VSP1_SOURCE,
-> +		  | RCAR_DU_FEATURE_VSP1_SOURCE
-> +		  | RCAR_DU_FEATURE_CMM,
->  	.channels_mask = BIT(1) | BIT(0),
->  	.routes = {
->  		/*
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> index 1327cd0df90a..a00dccc447aa 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> @@ -28,6 +28,7 @@ struct rcar_du_encoder;
->  #define RCAR_DU_FEATURE_VSP1_SOURCE	BIT(1)	/* Has inputs from VSP1 */
->  #define RCAR_DU_FEATURE_INTERLACED	BIT(2)	/* HW supports interlaced */
->  #define RCAR_DU_FEATURE_TVM_SYNC	BIT(3)	/* Has TV switch/sync modes */
-> +#define RCAR_DU_FEATURE_CMM		BIT(4)	/* Has CMM */
->  
->  #define RCAR_DU_QUIRK_ALIGN_128B	BIT(0)	/* Align pitches to 128 bytes */
->  
-> -- 
-> 2.21.0
+On Mon, Jul 15, 2019 at 10:02 PM Andy Duan <fugang.duan@nxp.com> wrote:
 >
+> the phylib already can handle mii bus reset and phy device reset
 
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
-
-CU
-Uli
+That's a great suggestion, thank you !! I completely overlooked that code.
+What will happen to the legacy phy reset code in fec? Are there many users left?
