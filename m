@@ -2,159 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F26D6AE7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 20:23:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 230006AE80
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Jul 2019 20:24:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388184AbfGPSXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 14:23:36 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33219 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbfGPSXg (ORCPT
+        id S2388411AbfGPSYN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 14:24:13 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:46010 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388358AbfGPSYM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 14:23:36 -0400
-Received: by mail-qt1-f193.google.com with SMTP id r6so16411330qtt.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 11:23:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9PXyjImG+E2TkTA05zWl+KvbpavQKqjXD6/g7c5TTGc=;
-        b=IhLxXmaA7lR5yGh01DUyd6sYT6E6n/2RktpucRSVoywo/da4UJzZVb+36q4q9LQiBA
-         nQl1A096NEc6LX/dIxZIyjWD/viMWA9keetJjhAfeSgudlVR3654CZqnAMrI3Ak53cti
-         1la2hb6mTk05I+FnisbYcZ0W9myAguoW3dCElTpW0rDs84LUZAE13bz0LdigEwOCKHvu
-         RyHcXhqu67ObXKD+rH6ivxLHutxFVFcv3S5V5poRAtqA0ye+SSH1DkNGj/wWAY7Z53cg
-         r1ogSUE4y7itkqz3hpwRgZaCjLxac5lr0NVU1//eO1X9i3NZ2RYQAOQgeFCLFNgcsv3y
-         XjdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9PXyjImG+E2TkTA05zWl+KvbpavQKqjXD6/g7c5TTGc=;
-        b=p381zEtmAZ1lE4neImxkPxn77p6fJo00NjhQQfif/WylmZYADYYa9uzw9Tu5f22WSX
-         9jO3VzwMAkiyardR7Kiuwnxtuq6haqErQ1o5rxrMDwIQeeFNcUtYGgTE9I7reqfdM7f+
-         9BbsBsiKSPAxT41EPuNo5Atj51RJ6pb1IP7cuGQNPlwreK0ruAJPy7hIkyyg+w6jR37K
-         l05908O89Yhhk5VP6Egcnu/lbcTuWEdlouUEHSqa/YQHP5bqRljs6DDl/jOOzXRj9bv3
-         pWO06zzL/zarTVpKTdfDTt2AD/pMGj8eFiQJDYEOe1z3eK9Hp/NAzGiYknxtYnBtu+gR
-         yL4w==
-X-Gm-Message-State: APjAAAVzLURXqeLdqmz1DGVSGh04kCcIsnvFn6kWAOnnPCaOXZsx2Hpk
-        NKr/4MmO25cp6EMAQgtdN+Aai6NU2NiLow==
-X-Google-Smtp-Source: APXvYqwDiPkO01x0v4gYkA8ROVKOZtnYbXXoSXCZbHBDGqMxSo60v4pBhZjuyNrG/7jica7ztAWnyg==
-X-Received: by 2002:ac8:877:: with SMTP id x52mr24045228qth.328.1563301414529;
-        Tue, 16 Jul 2019 11:23:34 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id r40sm11907517qtr.57.2019.07.16.11.23.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 16 Jul 2019 11:23:33 -0700 (PDT)
-Message-ID: <1563301410.4610.8.camel@lca.pw>
-Subject: Re: [PATCH] Revert "kmemleak: allow to coexist with fault injection"
-From:   Qian Cai <cai@lca.pw>
-To:     Yang Shi <yang.shi@linux.alibaba.com>, catalin.marinas@arm.com,
-        mhocko@suse.com, dvyukov@google.com, rientjes@google.com,
-        willy@infradead.org, akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Date:   Tue, 16 Jul 2019 14:23:30 -0400
-In-Reply-To: <1563299431-111710-1-git-send-email-yang.shi@linux.alibaba.com>
-References: <1563299431-111710-1-git-send-email-yang.shi@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 16 Jul 2019 14:24:12 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6GINxjj086845;
+        Tue, 16 Jul 2019 13:23:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1563301439;
+        bh=vgEMom0MOTUH3LQO90CcdLSOmSDPgRDrlS4ZgPOl7iA=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=butCZrEiOvRaX0N37+9UocADFRMjBdNCGxEaCtHC4iD3CJkNkULNNi3R/RFWpUjOt
+         Tz4YHV7Fia/sJaOeB07TDua6QTJmhYjw08gTXWi61sXX82W8+AtU0lY+yw39COsLVm
+         +NDIyCK6rfncdhpjCG8XI1wQufRagRLLxxn8BAtc=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6GINx47037084
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 16 Jul 2019 13:23:59 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 16
+ Jul 2019 13:23:59 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 16 Jul 2019 13:23:59 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6GINxHA084472;
+        Tue, 16 Jul 2019 13:23:59 -0500
+Subject: Re: [PATCH v12 1/5] can: m_can: Create a m_can platform framework
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <wg@grandegger.com>, <mkl@pengutronix.de>, <davem@davemloft.net>
+CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190509161109.10499-1-dmurphy@ti.com>
+ <dbb7bdef-820d-5dcc-d7b5-a82bc1b076fb@ti.com>
+Message-ID: <c7547c28-6d6c-daf6-e8a2-822dcfbb1150@ti.com>
+Date:   Tue, 16 Jul 2019 13:23:58 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <dbb7bdef-820d-5dcc-d7b5-a82bc1b076fb@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-07-17 at 01:50 +0800, Yang Shi wrote:
-> When running ltp's oom test with kmemleak enabled, the below warning was
-> triggerred since kernel detects __GFP_NOFAIL & ~__GFP_DIRECT_RECLAIM is
-> passed in:
-> 
-> WARNING: CPU: 105 PID: 2138 at mm/page_alloc.c:4608
-> __alloc_pages_nodemask+0x1c31/0x1d50
-> Modules linked in: loop dax_pmem dax_pmem_core ip_tables x_tables xfs
-> virtio_net net_failover virtio_blk failover ata_generic virtio_pci virtio_ring
-> virtio libata
-> CPU: 105 PID: 2138 Comm: oom01 Not tainted 5.2.0-next-20190710+ #7
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.10.2-0-
-> g5f4c7b1-prebuilt.qemu-project.org 04/01/2014
-> RIP: 0010:__alloc_pages_nodemask+0x1c31/0x1d50
-> ...
->  kmemleak_alloc+0x4e/0xb0
->  kmem_cache_alloc+0x2a7/0x3e0
->  ? __kmalloc+0x1d6/0x470
->  ? ___might_sleep+0x9c/0x170
->  ? mempool_alloc+0x2b0/0x2b0
->  mempool_alloc_slab+0x2d/0x40
->  mempool_alloc+0x118/0x2b0
->  ? __kasan_check_read+0x11/0x20
->  ? mempool_resize+0x390/0x390
->  ? lock_downgrade+0x3c0/0x3c0
->  bio_alloc_bioset+0x19d/0x350
->  ? __swap_duplicate+0x161/0x240
->  ? bvec_alloc+0x1b0/0x1b0
->  ? do_raw_spin_unlock+0xa8/0x140
->  ? _raw_spin_unlock+0x27/0x40
->  get_swap_bio+0x80/0x230
->  ? __x64_sys_madvise+0x50/0x50
->  ? end_swap_bio_read+0x310/0x310
->  ? __kasan_check_read+0x11/0x20
->  ? check_chain_key+0x24e/0x300
->  ? bdev_write_page+0x55/0x130
->  __swap_writepage+0x5ff/0xb20
-> 
-> The mempool_alloc_slab() clears __GFP_DIRECT_RECLAIM, however kmemleak has
-> __GFP_NOFAIL set all the time due to commit
-> d9570ee3bd1d4f20ce63485f5ef05663866fe6c0 ("kmemleak: allow to coexist
-> with fault injection").  But, it doesn't make any sense to have
-> __GFP_NOFAIL and ~__GFP_DIRECT_RECLAIM specified at the same time.
-> 
-> According to the discussion on the mailing list, the commit should be
-> reverted for short term solution.  Catalin Marinas would follow up with a
-> better
-> solution for longer term.
-> 
-> The failure rate of kmemleak metadata allocation may increase in some
-> circumstances, but this should be expected side effect.
+Hello
 
-As mentioned in anther thread, the situation for kmemleak under memory pressure
-has already been unhealthy. I don't feel comfortable to make it even worse by
-reverting this commit alone. This could potentially make kmemleak kill itself
-easier and miss some more real memory leak later.
+On 5/15/19 3:54 PM, Dan Murphy wrote:
+> Marc
+>
+> On 5/9/19 11:11 AM, Dan Murphy wrote:
+>> Create a m_can platform framework that peripheral
+>> devices can register to and use common code and register sets.
+>> The peripheral devices may provide read/write and configuration
+>> support of the IP.
+>>
+>> Acked-by: Wolfgang Grandegger <wg@grandegger.com>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>>
+>> v12 - Update the m_can_read/write functions to create a backtrace if the callback
+>> pointer is NULL. - https://lore.kernel.org/patchwork/patch/1052302/
+>>
+> Is this able to be merged now?
 
-To make it really a short-term solution before the reverting, I think someone
-needs to follow up with the mempool solution with tunable pool size mentioned
-in,
+Is there anyone out there maintaining this sub system?
 
-https://lore.kernel.org/linux-mm/20190328145917.GC10283@arrakis.emea.arm.com/
+Dan
 
-I personally not very confident that Catalin will find some time soon to
-implement embedding kmemleak metadata into the slab. Even he or someone does
-eventually, it probably need quite some time to test and edge out many of corner
-cases that kmemleak could have by its natural.
 
-> 
-> Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Qian Cai <cai@lca.pw>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> ---
->  mm/kmemleak.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-> index 9dd581d..884a5e3 100644
-> --- a/mm/kmemleak.c
-> +++ b/mm/kmemleak.c
-> @@ -114,7 +114,7 @@
->  /* GFP bitmask for kmemleak internal allocations */
->  #define gfp_kmemleak_mask(gfp)	(((gfp) & (GFP_KERNEL | GFP_ATOMIC)) |
-> \
->  				 __GFP_NORETRY | __GFP_NOMEMALLOC | \
-> -				 __GFP_NOWARN | __GFP_NOFAIL)
-> +				 __GFP_NOWARN)
->  
->  /* scanning area inside a memory block */
->  struct kmemleak_scan_area {
+> Dan
+>
+> <snip>
