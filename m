@@ -2,127 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D94E96B445
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 04:03:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BF356B44C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 04:06:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbfGQCDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 22:03:31 -0400
-Received: from mga06.intel.com ([134.134.136.31]:45638 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727430AbfGQCDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 22:03:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2019 19:03:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,272,1559545200"; 
-   d="scan'208";a="366860947"
-Received: from txu2-mobl.ccr.corp.intel.com (HELO [10.239.196.165]) ([10.239.196.165])
-  by fmsmga006.fm.intel.com with ESMTP; 16 Jul 2019 19:03:28 -0700
-Subject: Re: [PATCH v7 2/3] KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
-From:   Tao Xu <tao3.xu@intel.com>
-To:     Eduardo Habkost <ehabkost@redhat.com>
-Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        sean.j.christopherson@intel.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, fenghua.yu@intel.com,
-        xiaoyao.li@linux.intel.com, jingqi.liu@intel.com
-References: <20190712082907.29137-1-tao3.xu@intel.com>
- <20190712082907.29137-3-tao3.xu@intel.com>
- <20190716160358.GE26800@habkost.net>
- <ec13a518-6dcb-fc87-36e6-31befd62281e@intel.com>
-Message-ID: <bcc75abe-44a8-acd8-570b-4dbc0ad97c09@intel.com>
-Date:   Wed, 17 Jul 2019 10:03:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727900AbfGQCFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 22:05:35 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34288 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbfGQCFe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 22:05:34 -0400
+Received: by mail-pl1-f193.google.com with SMTP id i2so11098343plt.1;
+        Tue, 16 Jul 2019 19:05:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yyCnAAqk50QuA4BIBmrwpAsydgjX7XlHlK6JOx65DDw=;
+        b=COaxmAt/1rYE2V0bO3fOwcy9AOu6ZItqgt7z0yJFcIToBFN7WR2IOKBaEsRG6f2oV/
+         7jNihXSPC/Fgw3SAM+JpTFvKs8bUzW1JTgrMg8ahJpn79fg0NFLde9ksQvOYv03GOK//
+         10h6wtCrDCWCTzVAhxYF3KdL2If6V9oWyNGLZclYY7CGLUMTXWn8GO4X/BCuA8p/49fM
+         MTfmesbcmL+rT90NrxCsfXB1Y9qszpcKWR5lC/DIE8lFbyG/wtHvQR4w9LGq2Z+aCjAG
+         cfxsXiWv9R9VmHxxeTAu4PFIG12pNt/eGwEhzTpiE2Wqx3kFeCGJXPlv/bg1j9/Wg+Zz
+         QGDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yyCnAAqk50QuA4BIBmrwpAsydgjX7XlHlK6JOx65DDw=;
+        b=pGXtlOISGzvLhNDBC9wiJTXK3qL2ah3hVMuOVgyFE/0kNMnNWZjDb2+tEB2yMuE+2R
+         x7rcCsy9M0HIjH1JwiFTs1Hoa9zc326FNYDDIKolaOsbtVp7XfULPTaX8DajbwOgPIhM
+         2u2N1l9NTy8E8M7x2gb+w/2kt1hzr6Q2uoiMH5fAn4RMZ2qiUjhrD5D/2jNYgnqfNvj8
+         ryNhWgQMiROdrT339ivp4CPmITNJ9o63oRTPBei91H2KKTXgZ0xeYgFM8qcoKdAoK3++
+         eV6AZxR2hTUXS8lJviVJEasScZBd7GCjJsjQTBXq5vCeEW+AzPYggvxvedxxyXHcLkGz
+         dVGA==
+X-Gm-Message-State: APjAAAWZBSWiBmZ012X+2g+uo7Osr2R8tBfwgYWtY3W8LT8fbDApjxMR
+        OdjcD/EdAeyKUf1OTbmqnLU=
+X-Google-Smtp-Source: APXvYqziOjUBLqVm7Ljn+gX0qv1m7k7hAhtfNX3S6c2+q6+5FyjgHUQz2dLeQN/U+ijm7WsOVtPlsQ==
+X-Received: by 2002:a17:902:f089:: with SMTP id go9mr39500527plb.81.1563329134078;
+        Tue, 16 Jul 2019 19:05:34 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.gmail.com with ESMTPSA id g2sm29161025pfb.95.2019.07.16.19.05.31
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 16 Jul 2019 19:05:33 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Catherine Sullivan <csully@google.com>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH] gve: replace kfree with kvfree
+Date:   Wed, 17 Jul 2019 10:05:11 +0800
+Message-Id: <20190717020510.4548-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <ec13a518-6dcb-fc87-36e6-31befd62281e@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/17/2019 9:17 AM, Tao Xu wrote:
-> On 7/17/2019 12:03 AM, Eduardo Habkost wrote:
->> On Fri, Jul 12, 2019 at 04:29:06PM +0800, Tao Xu wrote:
->>> UMWAIT and TPAUSE instructions use IA32_UMWAIT_CONTROL at MSR index E1H
->>> to determines the maximum time in TSC-quanta that the processor can 
->>> reside
->>> in either C0.1 or C0.2.
->>>
->>> This patch emulates MSR IA32_UMWAIT_CONTROL in guest and differentiate
->>> IA32_UMWAIT_CONTROL between host and guest. The variable
->>> mwait_control_cached in arch/x86/power/umwait.c caches the MSR value, so
->>> this patch uses it to avoid frequently rdmsr of IA32_UMWAIT_CONTROL.
->>>
->>> Co-developed-by: Jingqi Liu <jingqi.liu@intel.com>
->>> Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
->>> Signed-off-by: Tao Xu <tao3.xu@intel.com>
->>> ---
->> [...]
->>> +static void atomic_switch_umwait_control_msr(struct vcpu_vmx *vmx)
->>> +{
->>> +    if (!vmx_has_waitpkg(vmx))
->>> +        return;
->>> +
->>> +    if (vmx->msr_ia32_umwait_control != umwait_control_cached)
->>> +        add_atomic_switch_msr(vmx, MSR_IA32_UMWAIT_CONTROL,
->>> +            vmx->msr_ia32_umwait_control,
->>> +            umwait_control_cached, false);
->>
->> How exactly do we ensure NR_AUTOLOAD_MSRS (8) is still large enough?
->>
->> I see 3 existing add_atomic_switch_msr() calls, but the one at
->> atomic_switch_perf_msrs() is in a loop.  Are we absolutely sure
->> that perf_guest_get_msrs() will never return more than 5 MSRs?
->>
-> 
-> Quote the code of intel_guest_get_msrs:
-> 
-> static struct perf_guest_switch_msr *intel_guest_get_msrs(int *nr)
-> {
-> [...]
->      arr[0].msr = MSR_CORE_PERF_GLOBAL_CTRL;
->      arr[0].host = x86_pmu.intel_ctrl & ~cpuc->intel_ctrl_guest_mask;
->      arr[0].guest = x86_pmu.intel_ctrl & ~cpuc->intel_ctrl_host_mask;
->      if (x86_pmu.flags & PMU_FL_PEBS_ALL)
->          arr[0].guest &= ~cpuc->pebs_enabled;
->      else
->          arr[0].guest &= ~(cpuc->pebs_enabled & PEBS_COUNTER_MASK);
->      *nr = 1;
-> 
->      if (x86_pmu.pebs && x86_pmu.pebs_no_isolation) {
-> [...]
->          arr[1].msr = MSR_IA32_PEBS_ENABLE;
->          arr[1].host = cpuc->pebs_enabled;
->          arr[1].guest = 0;
->          *nr = 2;
-> [...]
-> 
-> There are most 2 msrs now. By default umwait is disabled in KVM. So by 
-> default there is no MSR_IA32_UMWAIT_CONTROL added into 
-> add_atomic_switch_msr().
-> 
-> Thanks.
+Variables allocated by kvzalloc should not be freed by kfree.
+Because they may be allocated by vmalloc.
+So we replace kfree with kvfree here.
 
-And for old hardware, kvm use core_guest_get_msrs, but umwait is for now 
-hardware, and if hardware in host doesn't have the cpuid, there is no 
-MSR_IA32_UMWAIT_CONTROL in kvm as well.
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+ drivers/net/ethernet/google/gve/gve_main.c | 22 +++++++++++-----------
+ drivers/net/ethernet/google/gve/gve_rx.c   |  4 ++--
+ 2 files changed, 13 insertions(+), 13 deletions(-)
 
->>
->>> +    else
->>> +        clear_atomic_switch_msr(vmx, MSR_IA32_UMWAIT_CONTROL);
->>> +}
->>> +
->>>   static void vmx_arm_hv_timer(struct vcpu_vmx *vmx, u32 val)
->>>   {
->>>       vmcs_write32(VMX_PREEMPTION_TIMER_VALUE, val);
->> [...]
->>
->>
-> 
+diff --git a/drivers/net/ethernet/google/gve/gve_main.c b/drivers/net/ethernet/google/gve/gve_main.c
+index 24f16e3368cd..10b8e9720c32 100644
+--- a/drivers/net/ethernet/google/gve/gve_main.c
++++ b/drivers/net/ethernet/google/gve/gve_main.c
+@@ -232,7 +232,7 @@ static int gve_alloc_notify_blocks(struct gve_priv *priv)
+ abort_with_msix_enabled:
+ 	pci_disable_msix(priv->pdev);
+ abort_with_msix_vectors:
+-	kfree(priv->msix_vectors);
++	kvfree(priv->msix_vectors);
+ 	priv->msix_vectors = NULL;
+ 	return err;
+ }
+@@ -256,7 +256,7 @@ static void gve_free_notify_blocks(struct gve_priv *priv)
+ 	priv->ntfy_blocks = NULL;
+ 	free_irq(priv->msix_vectors[priv->mgmt_msix_idx].vector, priv);
+ 	pci_disable_msix(priv->pdev);
+-	kfree(priv->msix_vectors);
++	kvfree(priv->msix_vectors);
+ 	priv->msix_vectors = NULL;
+ }
+ 
+@@ -445,12 +445,12 @@ static int gve_alloc_rings(struct gve_priv *priv)
+ 	return 0;
+ 
+ free_rx:
+-	kfree(priv->rx);
++	kvfree(priv->rx);
+ 	priv->rx = NULL;
+ free_tx_queue:
+ 	gve_tx_free_rings(priv);
+ free_tx:
+-	kfree(priv->tx);
++	kvfree(priv->tx);
+ 	priv->tx = NULL;
+ 	return err;
+ }
+@@ -500,7 +500,7 @@ static void gve_free_rings(struct gve_priv *priv)
+ 			gve_remove_napi(priv, ntfy_idx);
+ 		}
+ 		gve_tx_free_rings(priv);
+-		kfree(priv->tx);
++		kvfree(priv->tx);
+ 		priv->tx = NULL;
+ 	}
+ 	if (priv->rx) {
+@@ -509,7 +509,7 @@ static void gve_free_rings(struct gve_priv *priv)
+ 			gve_remove_napi(priv, ntfy_idx);
+ 		}
+ 		gve_rx_free_rings(priv);
+-		kfree(priv->rx);
++		kvfree(priv->rx);
+ 		priv->rx = NULL;
+ 	}
+ }
+@@ -592,9 +592,9 @@ static void gve_free_queue_page_list(struct gve_priv *priv,
+ 		gve_free_page(&priv->pdev->dev, qpl->pages[i],
+ 			      qpl->page_buses[i], gve_qpl_dma_dir(priv, id));
+ 
+-	kfree(qpl->page_buses);
++	kvfree(qpl->page_buses);
+ free_pages:
+-	kfree(qpl->pages);
++	kvfree(qpl->pages);
+ 	priv->num_registered_pages -= qpl->num_entries;
+ }
+ 
+@@ -635,7 +635,7 @@ static int gve_alloc_qpls(struct gve_priv *priv)
+ free_qpls:
+ 	for (j = 0; j <= i; j++)
+ 		gve_free_queue_page_list(priv, j);
+-	kfree(priv->qpls);
++	kvfree(priv->qpls);
+ 	return err;
+ }
+ 
+@@ -644,12 +644,12 @@ static void gve_free_qpls(struct gve_priv *priv)
+ 	int num_qpls = gve_num_tx_qpls(priv) + gve_num_rx_qpls(priv);
+ 	int i;
+ 
+-	kfree(priv->qpl_cfg.qpl_id_map);
++	kvfree(priv->qpl_cfg.qpl_id_map);
+ 
+ 	for (i = 0; i < num_qpls; i++)
+ 		gve_free_queue_page_list(priv, i);
+ 
+-	kfree(priv->qpls);
++	kvfree(priv->qpls);
+ }
+ 
+ /* Use this to schedule a reset when the device is capable of continuing
+diff --git a/drivers/net/ethernet/google/gve/gve_rx.c b/drivers/net/ethernet/google/gve/gve_rx.c
+index c1aeabd1c594..1914b8350da7 100644
+--- a/drivers/net/ethernet/google/gve/gve_rx.c
++++ b/drivers/net/ethernet/google/gve/gve_rx.c
+@@ -35,7 +35,7 @@ static void gve_rx_free_ring(struct gve_priv *priv, int idx)
+ 
+ 	gve_unassign_qpl(priv, rx->data.qpl->id);
+ 	rx->data.qpl = NULL;
+-	kfree(rx->data.page_info);
++	kvfree(rx->data.page_info);
+ 
+ 	slots = rx->data.mask + 1;
+ 	bytes = sizeof(*rx->data.data_ring) * slots;
+@@ -168,7 +168,7 @@ static int gve_rx_alloc_ring(struct gve_priv *priv, int idx)
+ 			  rx->q_resources, rx->q_resources_bus);
+ 	rx->q_resources = NULL;
+ abort_filled:
+-	kfree(rx->data.page_info);
++	kvfree(rx->data.page_info);
+ abort_with_slots:
+ 	bytes = sizeof(*rx->data.data_ring) * slots;
+ 	dma_free_coherent(hdev, bytes, rx->data.data_ring, rx->data.data_bus);
+-- 
+2.20.1
 
