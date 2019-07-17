@@ -2,91 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41A446BF85
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 18:17:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A45D16BF88
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 18:17:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbfGQQRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 12:17:07 -0400
-Received: from mga18.intel.com ([134.134.136.126]:21483 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726452AbfGQQRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 12:17:07 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2019 09:17:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,274,1559545200"; 
-   d="scan'208";a="187585973"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by fmsmga001.fm.intel.com with ESMTP; 17 Jul 2019 09:17:04 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hnmc3-0001Rq-CK; Wed, 17 Jul 2019 19:17:03 +0300
-Date:   Wed, 17 Jul 2019 19:17:03 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Daniel Drake <drake@endlessm.com>, yurii.pavlovskyi@gmail.com
-Subject: [GIT PULL] platform-drivers-x86 for 5.3-2
-Message-ID: <20190717161703.GA5516@smile.fi.intel.com>
+        id S1727167AbfGQQRp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 12:17:45 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:45731 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbfGQQRo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 12:17:44 -0400
+Received: by mail-vs1-f67.google.com with SMTP id h28so16868658vsl.12
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 09:17:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=1f71bew7laVtfIsuKPq3d/BOQ6q0ZfKKqG/9YiM6ceY=;
+        b=A9y9IO27J946pKAShDwefPhp4YJgf5p88QkRLCKHc7zGhv3K9MP+kgNRE7iJJefFTl
+         ytGo04k+AN6fa65Hdv6snPFfLEuTc5bLqFaC0z9lq/D4JjnmWdT88Wp6AV+HpqDNrlJm
+         WiI7rlyuVBBgUm7q9ICyUoeGYnwNHWhgWWqm5zwouWjxLe5P86YfDPMnAN5uVLkhKW/x
+         ih/PFYZd1DqUXsiUdavnAidOooHnj+oAhGSPjpzCoHXb6DsIbE3CmHkv4GauAf+o7h2o
+         VKT1krcgPMjcWYOc1GX3aeFxmFIlN/UwveLgsjiuQItQsNWdHvhzvA76uKmuzk+KztZ2
+         ngBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=1f71bew7laVtfIsuKPq3d/BOQ6q0ZfKKqG/9YiM6ceY=;
+        b=OW1+yZGPXD/5yDGxTyi1VdwzAgnLDeLdBKEcvm8T6Js2odWiJ4LUbfAcAawndSrpGs
+         rySexbeAAWTBYYZok+3pzFoCLOlc686ZcFi5zHWTtXNZJv56EmW27QFkmpTLsoZjmGO8
+         iawBp0ZNA5msjX1RFjS95Hpm8p7ckyTLY8dnWT3OYUdUxqPh2/sVESfvTw1npXrw4RJi
+         sLCuKSNzMNqxZjSikqL/7vOGS0uwKBvR7x0v+Z2jgY5dOu22S+bYHXs1YK6iif06sDwO
+         zSq1YtD5atWylWPIrTA/9irw+5NJqLRLUbV/uzZWrMOwd4XfNO5iRn+ipumd7/ZYDkVR
+         1JeQ==
+X-Gm-Message-State: APjAAAUgW7C/u5qG+/VLJJZfHdTN2T4E41oPYqxI53MJqCIKquHjw+IU
+        qakkTVj4SgvkIhFwUBH1eaODO/U3/dL5F9MVAKI=
+X-Google-Smtp-Source: APXvYqxbqsMqaKuEUaa7iaNUd7bytyy5HHNbMsHKxh9C7pB0Bt8xdKG++yv8aGcjF7G9VCwqQhu47Ub7DkRh11eQbOM=
+X-Received: by 2002:a67:444:: with SMTP id 65mr25003323vse.166.1563380263848;
+ Wed, 17 Jul 2019 09:17:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Reply-To: zia412@outlook.com
+Received: by 2002:ab0:71c1:0:0:0:0:0 with HTTP; Wed, 17 Jul 2019 09:17:43
+ -0700 (PDT)
+From:   AHM AHM <zaaama250@gmail.com>
+Date:   Wed, 17 Jul 2019 18:17:43 +0200
+X-Google-Sender-Auth: oLSkhXxDGpCTV_boRkSmO15TX8A
+Message-ID: <CAFpPhssDMHkJ_UoVJC7nbHBrw5YWcyuUFjZr-EZOeK9fDW7=ZQ@mail.gmail.com>
+Subject: OK
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Greetings,
 
-Last minute (naming) change to ASUS WMI driver.
+I humbly solicit for your partnership to transfer =E2=82=AC15 million Euros
+into your personal or company=E2=80=99s account .Contact me for more detail=
+ed
+explanation.
 
-It won't break any ABI, but has to be done now to avoid confusion in the future.
+Kindly send me the followings
 
-Thanks,
+Full Names
+Address
+Occupation
+Direct Mobile Telephone Lines
+Nationality
 
-With Best Regards,
-Andy Shevchenko
-
-The following changes since commit 0a8ad0ffa4d80a544f6cbff703bf6394339afcdf:
-
-  Merge tag 'for-linus-5.3-ofs1' of git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux (2019-07-16 15:15:29 -0700)
-
-are available in the Git repository at:
-
-  git://git.infradead.org/linux-platform-drivers-x86.git tags/platform-drivers-x86-v5.3-2
-
-for you to fetch changes up to 9af93db9e140a4e6e79cdb098919bc928a72cd59:
-
-  platform/x86: asus: Rename "fan mode" to "fan boost mode" (2019-07-17 19:07:58 +0300)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v5.3-2
-
-Provide better naming for ABI, i.e. tell that we have fan boost mode.
-
-The following is an automated git shortlog grouped by driver:
-
-asus:
- -  Rename "fan mode" to "fan boost mode"
-
-----------------------------------------------------------------
-Daniel Drake (1):
-      platform/x86: asus: Rename "fan mode" to "fan boost mode"
-
- Documentation/ABI/testing/sysfs-platform-asus-wmi |   6 +-
- drivers/platform/x86/asus-wmi.c                   | 118 ++++++++++++----------
- include/linux/platform_data/x86/asus-wmi.h        |   2 +-
- 3 files changed, 66 insertions(+), 60 deletions(-)
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Ahmed Zama
