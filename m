@@ -2,75 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A45D16BF88
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 18:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D8486BF95
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 18:27:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727167AbfGQQRp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 12:17:45 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:45731 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbfGQQRo (ORCPT
+        id S1727110AbfGQQ1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 12:27:07 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40885 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbfGQQ1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 12:17:44 -0400
-Received: by mail-vs1-f67.google.com with SMTP id h28so16868658vsl.12
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 09:17:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=1f71bew7laVtfIsuKPq3d/BOQ6q0ZfKKqG/9YiM6ceY=;
-        b=A9y9IO27J946pKAShDwefPhp4YJgf5p88QkRLCKHc7zGhv3K9MP+kgNRE7iJJefFTl
-         ytGo04k+AN6fa65Hdv6snPFfLEuTc5bLqFaC0z9lq/D4JjnmWdT88Wp6AV+HpqDNrlJm
-         WiI7rlyuVBBgUm7q9ICyUoeGYnwNHWhgWWqm5zwouWjxLe5P86YfDPMnAN5uVLkhKW/x
-         ih/PFYZd1DqUXsiUdavnAidOooHnj+oAhGSPjpzCoHXb6DsIbE3CmHkv4GauAf+o7h2o
-         VKT1krcgPMjcWYOc1GX3aeFxmFIlN/UwveLgsjiuQItQsNWdHvhzvA76uKmuzk+KztZ2
-         ngBQ==
+        Wed, 17 Jul 2019 12:27:07 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r1so25502289wrl.7
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 09:27:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=1f71bew7laVtfIsuKPq3d/BOQ6q0ZfKKqG/9YiM6ceY=;
-        b=OW1+yZGPXD/5yDGxTyi1VdwzAgnLDeLdBKEcvm8T6Js2odWiJ4LUbfAcAawndSrpGs
-         rySexbeAAWTBYYZok+3pzFoCLOlc686ZcFi5zHWTtXNZJv56EmW27QFkmpTLsoZjmGO8
-         iawBp0ZNA5msjX1RFjS95Hpm8p7ckyTLY8dnWT3OYUdUxqPh2/sVESfvTw1npXrw4RJi
-         sLCuKSNzMNqxZjSikqL/7vOGS0uwKBvR7x0v+Z2jgY5dOu22S+bYHXs1YK6iif06sDwO
-         zSq1YtD5atWylWPIrTA/9irw+5NJqLRLUbV/uzZWrMOwd4XfNO5iRn+ipumd7/ZYDkVR
-         1JeQ==
-X-Gm-Message-State: APjAAAUgW7C/u5qG+/VLJJZfHdTN2T4E41oPYqxI53MJqCIKquHjw+IU
-        qakkTVj4SgvkIhFwUBH1eaODO/U3/dL5F9MVAKI=
-X-Google-Smtp-Source: APXvYqxbqsMqaKuEUaa7iaNUd7bytyy5HHNbMsHKxh9C7pB0Bt8xdKG++yv8aGcjF7G9VCwqQhu47Ub7DkRh11eQbOM=
-X-Received: by 2002:a67:444:: with SMTP id 65mr25003323vse.166.1563380263848;
- Wed, 17 Jul 2019 09:17:43 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=77LfX5TBrAXvTY65lk0+TDDEXR8yxc8w01mcbTPv8w8=;
+        b=tKjJwfjLg8R4TKUiXtMk1KcjGAxEXt1kB0gR8WcMp6BVOBNkuPVQZmTIDy/NfFoXik
+         lGg6LacaNdlRaclhcJ8Xo/2nLrdyWZWklX41wZFokqROavzB2CSsqw4bSf2PVZ45do0J
+         sA8LZlfvtYnyUAHbTP1I4z5PNt9NbDuMK2znjskC7Pb83+DbavmH1V67hh3ENzcPvlEH
+         FT/28hSD8jtySgaS+w3nZQbu7lqrPf1pDhTmqQIQKVRIyMQlS3uoO5AeVocHMaPJrust
+         mS73V3A1tm6X8lv3a3RTQQyeCVOe3aGPDnqQgi3RNncH608Ftyr7tHX7d/2dr5ASGHv7
+         twDg==
+X-Gm-Message-State: APjAAAXJ8BXIkNUiIhFddhX0Q9ue53Go+JVlNP44SEZIdItI5slnHpYt
+        m7DFFtEBXYcfzjNqY+xP44AEiQ==
+X-Google-Smtp-Source: APXvYqwM9ov3nYMPI5jYiMjqrCSzPDsPtgILq6tjd7jCtMRTyA7mtJXiXg+g9/ZGRFcts9g5h4rzJQ==
+X-Received: by 2002:a5d:5452:: with SMTP id w18mr5278577wrv.327.1563380824795;
+        Wed, 17 Jul 2019 09:27:04 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:e427:3beb:1110:dda2? ([2001:b07:6468:f312:e427:3beb:1110:dda2])
+        by smtp.gmail.com with ESMTPSA id e19sm33590007wra.71.2019.07.17.09.27.03
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Jul 2019 09:27:04 -0700 (PDT)
+Subject: Re: [PATCH v7 2/2] KVM: LAPIC: Inject timer interrupt via posted
+ interrupt
+To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>
+References: <1562376411-3533-1-git-send-email-wanpengli@tencent.com>
+ <1562376411-3533-3-git-send-email-wanpengli@tencent.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <e8bc7f76-28e0-6c02-5cf2-bb1015a0d0db@redhat.com>
+Date:   Wed, 17 Jul 2019 18:27:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Reply-To: zia412@outlook.com
-Received: by 2002:ab0:71c1:0:0:0:0:0 with HTTP; Wed, 17 Jul 2019 09:17:43
- -0700 (PDT)
-From:   AHM AHM <zaaama250@gmail.com>
-Date:   Wed, 17 Jul 2019 18:17:43 +0200
-X-Google-Sender-Auth: oLSkhXxDGpCTV_boRkSmO15TX8A
-Message-ID: <CAFpPhssDMHkJ_UoVJC7nbHBrw5YWcyuUFjZr-EZOeK9fDW7=ZQ@mail.gmail.com>
-Subject: OK
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1562376411-3533-3-git-send-email-wanpengli@tencent.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings,
+On 06/07/19 03:26, Wanpeng Li wrote:
+> +
+> +void kvm_wait_lapic_expire(struct kvm_vcpu *vcpu)
+> +{
+> +	if (!lapic_timer_int_injected(vcpu))
+> +		return;
+> +
+> +	__kvm_wait_lapic_expire(vcpu);
+> +}
+>  EXPORT_SYMBOL_GPL(kvm_wait_lapic_expire);
 
-I humbly solicit for your partnership to transfer =E2=82=AC15 million Euros
-into your personal or company=E2=80=99s account .Contact me for more detail=
-ed
-explanation.
+I changed this to
 
-Kindly send me the followings
+	if (lapic_timer_int_injected(vcpu))
+		__kvm_wait_lapic_expire(vcpu);
 
-Full Names
-Address
-Occupation
-Direct Mobile Telephone Lines
-Nationality
+and queued the two patches.
 
-Ahmed Zama
+Paolo
