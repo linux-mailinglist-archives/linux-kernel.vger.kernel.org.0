@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64FC86B7A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 09:51:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F7CA6B793
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 09:51:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730600AbfGQHuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 03:50:12 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2278 "EHLO huawei.com"
+        id S1726269AbfGQHtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 03:49:32 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38066 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727778AbfGQHtZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 03:49:25 -0400
+        id S1727019AbfGQHta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 03:49:30 -0400
 Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id D4F0BAC392A93E6A9E31;
-        Wed, 17 Jul 2019 15:49:23 +0800 (CST)
+        by Forcepoint Email with ESMTP id C094CF2B200A73A2ECFF;
+        Wed, 17 Jul 2019 15:49:28 +0800 (CST)
 Received: from huawei.com (10.175.124.28) by DGGEMS402-HUB.china.huawei.com
  (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 17 Jul 2019
- 15:49:18 +0800
+ 15:49:19 +0800
 From:   Jason Yan <yanaijie@huawei.com>
 To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
         <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
@@ -27,9 +27,9 @@ CC:     <linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>,
         <yebin10@huawei.com>, <thunder.leizhen@huawei.com>,
         <jingxiangfeng@huawei.com>, <fanchengyang@huawei.com>,
         Jason Yan <yanaijie@huawei.com>
-Subject: [RFC PATCH 09/10] powerpc/fsl_booke/kaslr: support nokaslr cmdline parameter
-Date:   Wed, 17 Jul 2019 16:06:20 +0800
-Message-ID: <20190717080621.40424-10-yanaijie@huawei.com>
+Subject: [RFC PATCH 10/10] powerpc/fsl_booke/kaslr: dump out kernel offset information on panic
+Date:   Wed, 17 Jul 2019 16:06:21 +0800
+Message-ID: <20190717080621.40424-11-yanaijie@huawei.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190717080621.40424-1-yanaijie@huawei.com>
 References: <20190717080621.40424-1-yanaijie@huawei.com>
@@ -42,8 +42,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One may want to disable kaslr when boot, so provide a cmdline parameter
-'nokaslr' to support this.
+When kaslr is enabled, the kernel offset is different for every boot.
+This brings some difficult to debug the kernel. Dump out the kernel
+offset when panic so that we can easily debug the kernel.
 
 Signed-off-by: Jason Yan <yanaijie@huawei.com>
 Cc: Diana Craciun <diana.craciun@nxp.com>
@@ -54,41 +55,79 @@ Cc: Paul Mackerras <paulus@samba.org>
 Cc: Nicholas Piggin <npiggin@gmail.com>
 Cc: Kees Cook <keescook@chromium.org>
 ---
- arch/powerpc/kernel/kaslr_booke.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/powerpc/include/asm/page.h     |  5 +++++
+ arch/powerpc/kernel/machine_kexec.c |  1 +
+ arch/powerpc/kernel/setup-common.c  | 23 +++++++++++++++++++++++
+ 3 files changed, 29 insertions(+)
 
-diff --git a/arch/powerpc/kernel/kaslr_booke.c b/arch/powerpc/kernel/kaslr_booke.c
-index 00339c05879f..e65a5d9d2ff1 100644
---- a/arch/powerpc/kernel/kaslr_booke.c
-+++ b/arch/powerpc/kernel/kaslr_booke.c
-@@ -373,6 +373,18 @@ static unsigned long __init kaslr_choose_location(void *dt_ptr, phys_addr_t size
- 	return kaslr_offset;
- }
+diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
+index 60a68d3a54b1..cd3ac530e58d 100644
+--- a/arch/powerpc/include/asm/page.h
++++ b/arch/powerpc/include/asm/page.h
+@@ -317,6 +317,11 @@ struct vm_area_struct;
  
-+static inline __init bool kaslr_disabled(void)
+ extern unsigned long kimage_vaddr;
+ 
++static inline unsigned long kaslr_offset(void)
 +{
-+	char *str;
-+
-+	str = strstr(early_command_line, "nokaslr");
-+	if ((str == early_command_line) ||
-+	    (str > early_command_line && *(str - 1) == ' '))
-+		return true;
-+
-+	return false;
++	return kimage_vaddr - KERNELBASE;
 +}
 +
+ #include <asm-generic/memory_model.h>
+ #endif /* __ASSEMBLY__ */
+ #include <asm/slice.h>
+diff --git a/arch/powerpc/kernel/machine_kexec.c b/arch/powerpc/kernel/machine_kexec.c
+index c4ed328a7b96..078fe3d76feb 100644
+--- a/arch/powerpc/kernel/machine_kexec.c
++++ b/arch/powerpc/kernel/machine_kexec.c
+@@ -86,6 +86,7 @@ void arch_crash_save_vmcoreinfo(void)
+ 	VMCOREINFO_STRUCT_SIZE(mmu_psize_def);
+ 	VMCOREINFO_OFFSET(mmu_psize_def, shift);
+ #endif
++	vmcoreinfo_append_str("KERNELOFFSET=%lx\n", kaslr_offset());
+ }
+ 
  /*
-  * To see if we need to relocate the kernel to a random offset
-  * void *dt_ptr - address of the device tree
-@@ -388,6 +400,8 @@ notrace void __init kaslr_early_init(void *dt_ptr, phys_addr_t size)
- 	kernel_sz = (unsigned long)_end - KERNELBASE;
+diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
+index 1f8db666468d..49e540c0adeb 100644
+--- a/arch/powerpc/kernel/setup-common.c
++++ b/arch/powerpc/kernel/setup-common.c
+@@ -715,12 +715,35 @@ static struct notifier_block ppc_panic_block = {
+ 	.priority = INT_MIN /* may not return; must be done last */
+ };
  
- 	kaslr_get_cmdline(dt_ptr);
-+	if (kaslr_disabled())
-+		return;
++/*
++ * Dump out kernel offset information on panic.
++ */
++static int dump_kernel_offset(struct notifier_block *self, unsigned long v,
++			      void *p)
++{
++	const unsigned long offset = kaslr_offset();
++
++	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE) && offset > 0)
++		pr_emerg("Kernel Offset: 0x%lx from 0x%lx\n",
++			 offset, KERNELBASE);
++	else
++		pr_emerg("Kernel Offset: disabled\n");
++
++	return 0;
++}
++
++static struct notifier_block kernel_offset_notifier = {
++	.notifier_call = dump_kernel_offset
++};
++
+ void __init setup_panic(void)
+ {
+ 	/* PPC64 always does a hard irq disable in its panic handler */
+ 	if (!IS_ENABLED(CONFIG_PPC64) && !ppc_md.panic)
+ 		return;
+ 	atomic_notifier_chain_register(&panic_notifier_list, &ppc_panic_block);
++	atomic_notifier_chain_register(&panic_notifier_list,
++				       &kernel_offset_notifier);
+ }
  
- 	offset = kaslr_choose_location(dt_ptr, size, kernel_sz);
- 
+ #ifdef CONFIG_CHECK_CACHE_COHERENCY
 -- 
 2.17.2
 
