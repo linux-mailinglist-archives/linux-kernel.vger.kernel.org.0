@@ -2,53 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31C906BFE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 18:50:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 596D56BFE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 18:51:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729957AbfGQQuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 12:50:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60358 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729765AbfGQQuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 12:50:19 -0400
-Subject: Re: [GIT PULL] MIPS changes
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563382219;
-        bh=BNU7nBW9Ix6ttu9a1iqtFkvarTUm3bOUxNU1/pfnUkQ=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=s5yp5s5tXLrZOvK21lppHFc0T8IsoPCDvoSkZcY4VZfMlgcJFwr74g5pCOgVc6f/C
-         gsTFe6txNKnLUfY9+DWqrnQNPw5kzD+azxYK6RP0TPGCkZwe0oPhA2I50AhuYcybGM
-         xvP67Ow65b+3sGX6Nb+rs2BTC+NRIyvSmsoGPRs4=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190717152545.bhdnhjdf2tlhuv3o@pburton-laptop>
-References: <20190717152545.bhdnhjdf2tlhuv3o@pburton-laptop>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190717152545.bhdnhjdf2tlhuv3o@pburton-laptop>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git tags/mips_5.3
-X-PR-Tracked-Commit-Id: e5793cd1b5fedb39337cfa62251a25030f526e56
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: fa121bb3fed6313b1f0af23952301e06cf6d32ed
-Message-Id: <156338221916.6265.9350078517015520928.pr-tracker-bot@kernel.org>
-Date:   Wed, 17 Jul 2019 16:50:19 +0000
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+        id S1727933AbfGQQvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 12:51:33 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:42080 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727124AbfGQQvd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 12:51:33 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TX8jliE_1563382282;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TX8jliE_1563382282)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 18 Jul 2019 00:51:24 +0800
+Subject: Re: [v2 PATCH 1/2] mm: mempolicy: make the behavior consistent when
+ MPOL_MF_MOVE* and MPOL_MF_STRICT were specified
+To:     Vlastimil Babka <vbabka@suse.cz>, mhocko@kernel.org,
+        mgorman@techsingularity.net, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1561162809-59140-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1561162809-59140-2-git-send-email-yang.shi@linux.alibaba.com>
+ <fb74d657-90cd-6667-f253-162c951f1b05@suse.cz>
+ <efe90132-6832-d61a-5d55-d2cc134c7087@linux.alibaba.com>
+ <7806e608-ffcb-fd56-2e0f-a20bea127f40@suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <88894b57-7005-5882-ab9f-fc64e42cf8ca@linux.alibaba.com>
+Date:   Wed, 17 Jul 2019 09:51:21 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <7806e608-ffcb-fd56-2e0f-a20bea127f40@suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 17 Jul 2019 15:25:47 +0000:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git tags/mips_5.3
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/fa121bb3fed6313b1f0af23952301e06cf6d32ed
+On 7/17/19 3:55 AM, Vlastimil Babka wrote:
+> On 7/16/19 7:18 PM, Yang Shi wrote:
+>>> I think after your patch, you miss putback_movable_pages() in cases
+>>> where some were queued, and later the walk returned -EIO. The previous
+>>> code doesn't miss it, but it's also not obvious due to the multiple if
+>>> (!err) checks. I would rewrite it some thing like this:
+>>>
+>>> if (ret < 0) {
+>>>       putback_movable_pages(&pagelist);
+>>>       err = ret;
+>>>       goto mmap_out; // a new label above up_write()
+>>> }
+>> Yes, the old code had putback_movable_pages called when !err. But, I
+>> think that is for error handling of mbind_range() if I understand it
+>> correctly since if queue_pages_range() returns -EIO (only MPOL_MF_STRICT
+>> was specified and there was misplaced page) that page list should be
+>> empty . The old code should checked whether that list is empty or not.
+> Hm I guess you're right, returning with EIO means nothing was queued.
+>> So, in the new code I just removed that.
+>>
+>>> The rest can have reduced identation now.
+>> Yes, the goto does eliminate the extra indentation.
+>>
+>>>> +	else {
+>>>> +		err = mbind_range(mm, start, end, new);
+>>>>    
+>>>> -		if (nr_failed && (flags & MPOL_MF_STRICT))
+>>>> -			err = -EIO;
+>>>> -	} else
+>>>> -		putback_movable_pages(&pagelist);
+>>>> +		if (!err) {
+>>>> +			int nr_failed = 0;
+>>>> +
+>>>> +			if (!list_empty(&pagelist)) {
+>>>> +				WARN_ON_ONCE(flags & MPOL_MF_LAZY);
+>>>> +				nr_failed = migrate_pages(&pagelist, new_page,
+>>>> +					NULL, start, MIGRATE_SYNC,
+>>>> +					MR_MEMPOLICY_MBIND);
+>>>> +				if (nr_failed)
+>>>> +					putback_movable_pages(&pagelist);
+>>>> +			}
+>>>> +
+>>>> +			if ((ret > 0) ||
+>>>> +			    (nr_failed && (flags & MPOL_MF_STRICT)))
+>>>> +				err = -EIO;
+>>>> +		} else
+>>>> +			putback_movable_pages(&pagelist);
+>>> While at it, IIRC the kernel style says that when the 'if' part uses
+>>> '{ }' then the 'else' part should as well, and it shouldn't be mixed.
+>> Really? The old code doesn't have '{ }' for else, and checkpatch doesn't
+>> report any error or warning.
+> Checkpatch probably doesn't catch it, nor did the reviewers of the older
+> code. But coding-style.rst says:
+>
+> Do not unnecessarily use braces where a single statement will do.
+>
+> ...
+>
+> This does not apply if only one branch of a conditional statement is a
+> single
+> statement; in the latter case use braces in both branches:
+>
+> .. code-block:: c
+>
+>          if (condition) {
+>                  do_this();
+>                  do_that();
+>          } else {
+>                  otherwise();
+>          }
 
-Thank you!
+Thanks. Good to know this. Anyway, with the "goto" suggested above, we 
+don't need that "else" anymore and we could save some change of lines.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+>
+>
+> Thanks,
+> Vlastimil
+
