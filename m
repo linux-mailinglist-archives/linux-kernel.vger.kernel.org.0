@@ -2,219 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CCFD6C326
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 00:27:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D01E06C32C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 00:27:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731085AbfGQW0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 18:26:37 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:57158 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729847AbfGQW0f (ORCPT
+        id S1731076AbfGQW1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 18:27:22 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:45656 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727804AbfGQW1W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 18:26:35 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 45psLc32knz1rTYp;
-        Thu, 18 Jul 2019 00:26:32 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 45psLc2Ynyz1qqkw;
-        Thu, 18 Jul 2019 00:26:32 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id SJu6bBr5mRm5; Thu, 18 Jul 2019 00:26:30 +0200 (CEST)
-X-Auth-Info: 2hB5gV1vEgys6psgoWca99w/a87fz4xJs+doKBZFP38=
-Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Thu, 18 Jul 2019 00:26:30 +0200 (CEST)
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Enrico Weigelt <info@metux.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-input@vger.kernel.org, Lukasz Majewski <lukma@denx.de>
-Subject: [PATCH v4 3/3] input: touchscreen mc13xxx: Add mc34708 support
-Date:   Thu, 18 Jul 2019 00:26:02 +0200
-Message-Id: <20190717222602.2912-4-lukma@denx.de>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190717222602.2912-1-lukma@denx.de>
-References: <20190717222602.2912-1-lukma@denx.de>
+        Wed, 17 Jul 2019 18:27:22 -0400
+Received: by mail-oi1-f193.google.com with SMTP id m206so19854164oib.12;
+        Wed, 17 Jul 2019 15:27:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aKdCh/T0TvCjAVMnS0S/bH9S/vTC4w+CAFYfC32nDW8=;
+        b=mIhmNY8OOmwtMFNU6RpTk6OQ2bxRPWaHGEoYM6ZeeChFB8EPoLmmSQksz7WYM6uBI5
+         8ZEUjIDNIM+0UvXGkMjqAN5ezqlWUFOlvCaSsz3ipUWKPCaNulv3Dv0AGS165zzojj3S
+         fLXCSnTVcNff2I4BqEmTr8RNdWBEbNHMl9UyxD+mtgRbsiaIRkJUbTUcUWRwvLmqi46m
+         1QTM6AtPHy6p9wYsnSD5tWSUwZWZOdsvOVCUq/02KzvJnmmQfyN48TclShPXbygr1cAX
+         FEumu/fwVZgSaniXZCKlbzzN8lRx/CIcnN7aQaNZWcqpAXXoMuEk6eyhhI9KYvwz72Sb
+         /pww==
+X-Gm-Message-State: APjAAAUzqY/mrwjEH1g80wF3vsZHauBbdEZENBYZ3GNDIuC1f+HF8bO6
+        4yaV0qfaWnSi4cVNbQtKcA4oC9Sy1QxxtOk0ZaQ=
+X-Google-Smtp-Source: APXvYqxjF6AUD3helldHpsLA2ynZmGMJJif5IvIahrbl69j2lcbFNCAcru7gRAkBWEUHYm+zLKJK8RxSzHAFHKW/TCg=
+X-Received: by 2002:aca:edc8:: with SMTP id l191mr20926358oih.103.1563402441139;
+ Wed, 17 Jul 2019 15:27:21 -0700 (PDT)
+MIME-Version: 1.0
+References: <6254683.2O5gIZElE2@kreacher> <20190716214024.GA8345@lenoir>
+ <CAJZ5v0gB0AHTebjpp87YKA1wmE+tCw5V=eaRE2XDM3nyQYndnA@mail.gmail.com> <20190717132115.GB8345@lenoir>
+In-Reply-To: <20190717132115.GB8345@lenoir>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 18 Jul 2019 00:27:09 +0200
+Message-ID: <CAJZ5v0icfumJc7E4+LgWpi3+UNpTsH4usAJOg4FEeCBptYYzUQ@mail.gmail.com>
+Subject: Re: [PATCH] cpuidle: Always stop scheduler tick on adaptive-tick CPUs
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Thomas Lindroth <thomas.lindroth@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sascha Hauer <s.hauer@pengutronix.de>
+On Wed, Jul 17, 2019 at 3:21 PM Frederic Weisbecker <frederic@kernel.org> wrote:
+>
+> On Wed, Jul 17, 2019 at 09:55:08AM +0200, Rafael J. Wysocki wrote:
+> > On Tue, Jul 16, 2019 at 11:40 PM Frederic Weisbecker
+> > <frederic@kernel.org> wrote:
+> > >
+> > > On Tue, Jul 16, 2019 at 05:25:10PM +0200, Rafael J. Wysocki wrote:
+> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > >
+> > > > Running the scheduler tick on idle adaptive-tick CPUs is not useful
+> > >
+> > > Judging by the below change, you mean full dynticks, right?
+> >
+> > Right.
+> >
+> > > > and it may also be not expected by users (as reported by Thomas), so
+> > > > add a check to cpuidle_idle_call() to always stop the tick on them
+> > > > regardless of the idle duration predicted by the governor.
+> > > >
+> > > > Fixes: 554c8aa8ecad ("sched: idle: Select idle state before stopping the tick")
+> > > > Reported-by: Thomas Lindroth <thomas.lindroth@gmail.com>
+> > > > Tested-by: Thomas Lindroth <thomas.lindroth@gmail.com>
+> > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > ---
+> > > >  kernel/sched/idle.c |    3 ++-
+> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > >
+> > > > Index: linux-pm/kernel/sched/idle.c
+> > > > ===================================================================
+> > > > --- linux-pm.orig/kernel/sched/idle.c
+> > > > +++ linux-pm/kernel/sched/idle.c
+> > > > @@ -191,7 +191,8 @@ static void cpuidle_idle_call(void)
+> > > >                */
+> > > >               next_state = cpuidle_select(drv, dev, &stop_tick);
+> > > >
+> > > > -             if (stop_tick || tick_nohz_tick_stopped())
+> > > > +             if (stop_tick || tick_nohz_tick_stopped() ||
+> > > > +                 !housekeeping_cpu(dev->cpu, HK_FLAG_TICK))
+> > >
+> > > But tick_nohz_tick_stopped() also works on full dynticks CPUs. If the
+> > > tick isn't stopped on a full dynticks CPU by the time we reach this path,
+> > > it means that the conditions for the tick to be stopped are not met anyway
+> > > (eg: more than one task and sched tick is needed, perf event requires the tick,
+> > > posix CPU timer, etc...)
+> >
+> > First of all, according to Thomas, the patch does make a difference,
+> > so evidently on his system(s) the full dynticks CPUs enter the idle
+> > loop with running tick.
+> >
+> > This means that, indeed, the conditions for the tick to be stopped
+> > have not been met up to that point, but if the (full dynticks) CPU
+> > becomes idle, that's because it has been made idle on purpose
+> > (presumably by a user-space "orchestrator" or the sysadmin), so the
+> > kernel can assume that it will remain idle indefinitely.  That, in
+> > turn, is when the tick would be stopped on it regardless of everything
+> > else (even if it wasn't a full dynticks CPU).
+>
+> Well I think we disagree on that assumption that if a nohz_full CPU is put
+> idle, it will remain there indefinitely. Nohz_full CPUs aren't really special
+> in this regard, they can sleep on an IO, wait for a short event just like
+> any other CPU.
 
-The mc34708 has a different bit to enable pen detection. This
-adds the driver data and devtype necessary to probe the device
-and to distinguish between the mc13783 and the mc34708.
+Fair enough.
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+This means that the governor (or rather governors) will need to be
+modified to address the issue reported by Thomas.
 
----
-Changes for v4:
-- Remove type from struct mc13xx_chip
-- Add Acked-by from Dmitry
+Fortunately, I have a patch going in that direction too. :-)
 
-Changes for v3:
-- Replace forward declaration of mc13xxx_driver_data with
-  structure definition
-- Rename mc13xxx_driver_data with mc13xxx_chip
-- Move static struct mc13xxx_chip mc13783_chip and mc34708_chip
-  closer to ID table
-- Do not check mc13xxx device type
-
-Changes for v2:
-- Change nested if statements to a single one (with cr0 > ...)
-- Replace hardcoded max resistance value (4080) with a generic driver data
-  value.
-- Introduce new include/linux/mfd/mc34708.h header file for mc34708 specific
-  defines
-- Define as driver data mask and value for accessing mc13xxx registers
-
-Changes from the original patch:
-- Simplify the mcXXXXX_set_pen_detection functions
-- Fix checkpatch warnings
----
- drivers/input/touchscreen/mc13783_ts.c | 48 +++++++++++++++++++++++++++++++---
- 1 file changed, 44 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/input/touchscreen/mc13783_ts.c b/drivers/input/touchscreen/mc13783_ts.c
-index edd49e44e0c9..1dd8ed396225 100644
---- a/drivers/input/touchscreen/mc13783_ts.c
-+++ b/drivers/input/touchscreen/mc13783_ts.c
-@@ -10,6 +10,7 @@
-  */
- #include <linux/platform_device.h>
- #include <linux/mfd/mc13783.h>
-+#include <linux/mfd/mc34708.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/input.h>
-@@ -30,6 +31,12 @@ MODULE_PARM_DESC(sample_tolerance,
- 		"is supposed to be wrong and is discarded.  Set to 0 to "
- 		"disable this check.");
- 
-+struct mc13xxx_chip {
-+	int max_resistance;
-+	u32 reg_mask;
-+	u32 reg_value;
-+};
-+
- struct mc13783_ts_priv {
- 	struct input_dev *idev;
- 	struct mc13xxx *mc13xxx;
-@@ -37,6 +44,7 @@ struct mc13783_ts_priv {
- 	unsigned int sample[4];
- 	u8 ato;
- 	bool atox;
-+	const struct mc13xxx_chip *chip;
- };
- 
- static irqreturn_t mc13783_ts_handler(int irq, void *data)
-@@ -93,6 +101,9 @@ static void mc13783_ts_report_sample(struct mc13783_ts_priv *priv)
- 
- 	cr0 = (cr0 + cr1) / 2;
- 
-+	if (cr0 > priv->chip->max_resistance)
-+		cr0 = 0;
-+
- 	if (!cr0 || !sample_tolerance ||
- 			(x2 - x0 < sample_tolerance &&
- 			 y2 - y0 < sample_tolerance)) {
-@@ -102,14 +113,14 @@ static void mc13783_ts_report_sample(struct mc13783_ts_priv *priv)
- 			input_report_abs(idev, ABS_Y, y1);
- 
- 			dev_dbg(&idev->dev, "report (%d, %d, %d)\n",
--					x1, y1, 0x1000 - cr0);
-+				x1, y1, priv->chip->max_resistance - cr0);
- 			schedule_delayed_work(&priv->work, HZ / 50);
- 		} else {
- 			dev_dbg(&idev->dev, "report release\n");
- 		}
- 
- 		input_report_abs(idev, ABS_PRESSURE,
--				cr0 ? 0x1000 - cr0 : cr0);
-+				 cr0 ? priv->chip->max_resistance - cr0 : 0);
- 		input_report_key(idev, BTN_TOUCH, cr0);
- 		input_sync(idev);
- 	} else {
-@@ -146,7 +157,8 @@ static int mc13783_ts_open(struct input_dev *dev)
- 		goto out;
- 
- 	ret = mc13xxx_reg_rmw(priv->mc13xxx, MC13XXX_ADC0,
--			MC13XXX_ADC0_TSMOD_MASK, MC13XXX_ADC0_TSMOD0);
-+			      priv->chip->reg_mask,
-+			      priv->chip->reg_value);
- 	if (ret)
- 		mc13xxx_irq_free(priv->mc13xxx, MC13XXX_IRQ_TS, priv);
- out:
-@@ -160,7 +172,7 @@ static void mc13783_ts_close(struct input_dev *dev)
- 
- 	mc13xxx_lock(priv->mc13xxx);
- 	mc13xxx_reg_rmw(priv->mc13xxx, MC13XXX_ADC0,
--			MC13XXX_ADC0_TSMOD_MASK, 0);
-+			priv->chip->reg_mask, 0);
- 	mc13xxx_irq_free(priv->mc13xxx, MC13XXX_IRQ_TS, priv);
- 	mc13xxx_unlock(priv->mc13xxx);
- 
-@@ -172,6 +184,7 @@ static int __init mc13783_ts_probe(struct platform_device *pdev)
- 	struct mc13783_ts_priv *priv;
- 	struct mc13xxx_ts_platform_data *pdata = dev_get_platdata(&pdev->dev);
- 	struct input_dev *idev;
-+	const struct platform_device_id *id = platform_get_device_id(pdev);
- 	int ret = -ENOMEM;
- 
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-@@ -182,6 +195,7 @@ static int __init mc13783_ts_probe(struct platform_device *pdev)
- 	INIT_DELAYED_WORK(&priv->work, mc13783_ts_work);
- 	priv->mc13xxx = dev_get_drvdata(pdev->dev.parent);
- 	priv->idev = idev;
-+	priv->chip = (void *)id->driver_data;
- 
- 	if (pdata) {
- 		priv->atox = pdata->atox;
-@@ -228,7 +242,33 @@ static int mc13783_ts_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static struct mc13xxx_chip mc13783_chip = {
-+	.max_resistance = 4096,
-+	.reg_mask = MC13XXX_ADC0_TSMOD_MASK,
-+	.reg_value = MC13XXX_ADC0_TSMOD0,
-+};
-+
-+static struct mc13xxx_chip mc34708_chip = {
-+	.max_resistance = 4080,
-+	.reg_mask = MC34708_ADC0_TSMASK,
-+	.reg_value = MC34708_ADC0_TSPENDETEN,
-+};
-+
-+static const struct platform_device_id mc13xxx_ts_idtable[] = {
-+	{
-+		.name = "mc13783-ts",
-+		.driver_data = (kernel_ulong_t)&mc13783_chip,
-+	}, {
-+		.name = "mc34708-ts",
-+		.driver_data = (kernel_ulong_t)&mc34708_chip,
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+MODULE_DEVICE_TABLE(platform, mc13xxx_ts_idtable);
-+
- static struct platform_driver mc13783_ts_driver = {
-+	.id_table	= mc13xxx_ts_idtable,
- 	.remove		= mc13783_ts_remove,
- 	.driver		= {
- 		.name	= MC13783_TS_NAME,
--- 
-2.11.0
-
+Cheers!
