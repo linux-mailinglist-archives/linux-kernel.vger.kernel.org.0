@@ -2,180 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50BD76C3E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 02:49:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA5C16C3F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 02:59:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732069AbfGRAtr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 20:49:47 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:42694 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727804AbfGRAtr (ORCPT
+        id S1728474AbfGRA7D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 20:59:03 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:7542 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727658AbfGRA7C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 20:49:47 -0400
-Received: by mail-qk1-f195.google.com with SMTP id 201so19041470qkm.9
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 17:49:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=7K9LFXNQszPVt9oolCuthJEpelngJlWY3awPIGBoIrc=;
-        b=GZjJVzEiaTVbs3gP0mhVx/ascqRuKFftBg0qG8OjLCs9Uet45jCXXHASsA+I78EcEM
-         hnXVwAzXuOMkmmeiVNSMXOz6qQ6PQrO13L850mZrPiDOmrEl4+tmsaJATgsPDLzvCuHX
-         pKtA0WAL6PfYZ732t/8Hn7t/mcLhGq8mgFBmgAyj3C3f4w6pLEclhG2GZnZyY2pwiyIv
-         PbfEpwmggZ6X+dlw2lyCk8k5yM+HeTs5ukcAG8TCaHwMNf5XhyNs1uxa8lhpwmCm/N4j
-         arlVs+uOoN4ASTWBLtHsXFZOsmspHBc7JksnLpoBGrrHRb1mDJi7fsHLqiyUCUtZWwqy
-         SVTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=7K9LFXNQszPVt9oolCuthJEpelngJlWY3awPIGBoIrc=;
-        b=q7zcBaQhbgtLnj2bNAhGU53xbLrgCieRQ0esO2VyrtxPb+LCh1T1FaeHIwldWQYuUK
-         s0qLOJYYDC9EoL0uAJvpO3R+p8H3Y1zo6xLUFAB1cedbTQel3O31MZ2ECaIJ8EinvvIE
-         1byMlcVzxgVTuY2ZVxN/jNHLUc/a+rFNm/b473UggcnmoDGEH2SU8sZ1IRqhJLl7VF55
-         OuGIz+YgxlMcs6ixoU287GqnEUBbN0SOf+AvoKT1sCT8qqHcbOiPamX1ctYeiloY+8Jg
-         4wJNQNuuGo53fblc8Wdeg0ssP8+Z0PzggvYdF7MuOMkLZG+x8i9p8FUgxj3gMqgxU2GM
-         YTzw==
-X-Gm-Message-State: APjAAAU/sAhoxt/Lx7V9G3A45syIdmT4gQOAP3jkKs4PIZWbUXobPsXU
-        KBHK/RkiQGEHy2FThTxBzA8qtA==
-X-Google-Smtp-Source: APXvYqyFZ9N+j7zVEUuW7E/oqpo5oR1MZH84slnFKyHkQq0UmXesigIoFoR8pMXjjDLELyRq2Ou6vA==
-X-Received: by 2002:ae9:f101:: with SMTP id k1mr28781291qkg.337.1563410986046;
-        Wed, 17 Jul 2019 17:49:46 -0700 (PDT)
-Received: from qians-mbp.fios-router.home (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id v84sm11985703qkb.0.2019.07.17.17.49.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Jul 2019 17:49:45 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH] acpica: fix -Wnull-pointer-arithmetic warnings
-From:   Qian Cai <cai@lca.pw>
-In-Reply-To: <CAKwvOdmPX2DsUawcA0SzaFacjz==ACcfD8yDsbaS4eP4Es=Wzw@mail.gmail.com>
-Date:   Wed, 17 Jul 2019 20:49:43 -0400
-Cc:     rafael.j.wysocki@intel.com, robert.moore@intel.com,
-        erik.schmauss@intel.com, jkim@freebsd.org,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        devel@acpica.org,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <73A4565B-837B-4E13-8B72-63F69BF408E7@lca.pw>
-References: <20190717033807.1207-1-cai@lca.pw>
- <CAKwvOdmPX2DsUawcA0SzaFacjz==ACcfD8yDsbaS4eP4Es=Wzw@mail.gmail.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-X-Mailer: Apple Mail (2.3445.104.11)
+        Wed, 17 Jul 2019 20:59:02 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6I0vF3F104787;
+        Wed, 17 Jul 2019 20:58:51 -0400
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ttcq7kkay-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 17 Jul 2019 20:58:51 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x6I0ub5c021234;
+        Thu, 18 Jul 2019 00:58:50 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma03dal.us.ibm.com with ESMTP id 2tq6x7kqsj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 18 Jul 2019 00:58:50 +0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6I0wmJS46858604
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 18 Jul 2019 00:58:48 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B4D916A04F;
+        Thu, 18 Jul 2019 00:58:48 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 348C76A04D;
+        Thu, 18 Jul 2019 00:58:48 +0000 (GMT)
+Received: from linux-xej6.aus.stglabs.ibm.com (unknown [9.40.195.184])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 18 Jul 2019 00:58:48 +0000 (GMT)
+From:   Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+To:     james.bottomley@hansenpartnership.com
+Cc:     martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        brking@linux.vnet.ibm.com, abdhalee@linux.vnet.ibm.com,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Subject: [PATCH] ibmvfc: fix WARN_ON during event pool release
+Date:   Wed, 17 Jul 2019 14:48:27 -0500
+Message-Id: <20190717194827.12514-1-tyreld@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.12.3
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-17_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=249 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907180007
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+While removing an ibmvfc client adapter a WARN_ON like the following WARN_ON
+is seen in the kernel log:
 
+WARNING: CPU: 6 PID: 5421 at ./include/linux/dma-mapping.h:541
+ibmvfc_free_event_pool+0x12c/0x1f0 [ibmvfc]
+CPU: 6 PID: 5421 Comm: rmmod Tainted: G            E     4.17.0-rc1-next-20180419-autotest #1
+NIP:  d00000000290328c LR: d00000000290325c CTR: c00000000036ee20
+REGS: c000000288d1b7e0 TRAP: 0700   Tainted: G            E      (4.17.0-rc1-next-20180419-autotest)
+MSR:  800000010282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 44008828  XER: 20000000
+CFAR: c00000000036e408 SOFTE: 1
+GPR00: d00000000290325c c000000288d1ba60 d000000002917900 c000000289d75448
+GPR04: 0000000000000071 c0000000ff870000 0000000018040000 0000000000000001
+GPR08: 0000000000000000 c00000000156e838 0000000000000001 d00000000290c640
+GPR12: c00000000036ee20 c00000001ec4dc00 0000000000000000 0000000000000000
+GPR16: 0000000000000000 0000000000000000 00000100276901e0 0000000010020598
+GPR20: 0000000010020550 0000000010020538 0000000010020578 00000000100205b0
+GPR24: 0000000000000000 0000000000000000 0000000010020590 5deadbeef0000100
+GPR28: 5deadbeef0000200 d000000002910b00 0000000000000071 c0000002822f87d8
+NIP [d00000000290328c] ibmvfc_free_event_pool+0x12c/0x1f0 [ibmvfc]
+LR [d00000000290325c] ibmvfc_free_event_pool+0xfc/0x1f0 [ibmvfc]
+Call Trace:
+[c000000288d1ba60] [d00000000290325c] ibmvfc_free_event_pool+0xfc/0x1f0 [ibmvfc] (unreliable)
+[c000000288d1baf0] [d000000002909390] ibmvfc_abort_task_set+0x7b0/0x8b0 [ibmvfc]
+[c000000288d1bb70] [c0000000000d8c68] vio_bus_remove+0x68/0x100
+[c000000288d1bbb0] [c0000000007da7c4] device_release_driver_internal+0x1f4/0x2d0
+[c000000288d1bc00] [c0000000007da95c] driver_detach+0x7c/0x100
+[c000000288d1bc40] [c0000000007d8af4] bus_remove_driver+0x84/0x140
+[c000000288d1bcb0] [c0000000007db6ac] driver_unregister+0x4c/0xa0
+[c000000288d1bd20] [c0000000000d6e7c] vio_unregister_driver+0x2c/0x50
+[c000000288d1bd50] [d00000000290ba0c] cleanup_module+0x24/0x15e0 [ibmvfc]
+[c000000288d1bd70] [c0000000001dadb0] sys_delete_module+0x220/0x2d0
+[c000000288d1be30] [c00000000000b284] system_call+0x58/0x6c
+Instruction dump:
+e8410018 e87f0068 809f0078 e8bf0080 e8df0088 2fa30000 419e008c e9230200
+2fa90000 419e0080 894d098a 794a07e0 <0b0a0000> e9290008 2fa90000 419e0028
 
-> On Jul 17, 2019, at 6:01 PM, Nick Desaulniers =
-<ndesaulniers@google.com> wrote:
->=20
-> On Tue, Jul 16, 2019 at 8:38 PM Qian Cai <cai@lca.pw> wrote:
->>=20
->> Clang generate quite a few of those warnings.
->>=20
->> drivers/acpi/scan.c:759:28: warning: arithmetic on a null pointer
->> treated as a cast from integer to pointer is a GNU extension
->> [-Wnull-pointer-arithmetic]
->>                status =3D acpi_get_handle(ACPI_ROOT_OBJECT,
->> obj->string.pointer,
->>                                         ^~~~~~~~~~~~~~~~
->> ./include/acpi/actypes.h:458:56: note: expanded from macro
->> 'ACPI_ROOT_OBJECT'
->> #define ACPI_ROOT_OBJECT                ((acpi_handle) =
-ACPI_TO_POINTER
->> (ACPI_MAX_PTR))
->>                                                        =
-^~~~~~~~~~~~~~~
->> ./include/acpi/actypes.h:509:41: note: expanded from macro
->> 'ACPI_TO_POINTER'
->> #define ACPI_TO_POINTER(i)              ACPI_ADD_PTR (void, (void *) =
-0,
->> (acpi_size) (i))
->>                                         =
-^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> ./include/acpi/actypes.h:503:84: note: expanded from macro
->> 'ACPI_ADD_PTR'
->> #define ACPI_ADD_PTR(t, a, b)           ACPI_CAST_PTR (t,
->> (ACPI_CAST_PTR (u8, (a)) + (acpi_size)(b)))
->>                                         ^~~~~~~~~~~~~~~~~
->> ./include/acpi/actypes.h:501:66: note: expanded from macro
->> 'ACPI_CAST_PTR'
->> #define ACPI_CAST_PTR(t, p)             ((t *) (acpi_uintptr_t) (p))
->>                                                                  ^
->> This is because pointer arithmetic on a pointer not pointing to an =
-array
->> is an undefined behavior. Fix it by doing an integer arithmetic
->> instead.
->=20
-> Hi Qian, thanks for the patch.  How do I reproduce this issue,
-> precisely?  I just tried:
-> $ make CC=3Dclang -j71 drivers/acpi/scan.o
-> on linux-next today and don't observe the warning.  My clang is ToT
-> built sometime this week.  It looks like drivers/acpi/scan.o when
-> CONFIG_ACPI=3Dy, which is set in the defconfig.  Is there another set =
-of
-> configs to enable to observe the warning?
+This is tripped as a result of irqs being disabled during the call to
+dma_free_coherent() by ibmvfc_free_event_pool(). At this point in the code path
+we have quiesced the adapter and its overly paranoid anyways to be holding the
+host lock.
 
-# make W=3D1 -j 256
+Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+---
+ drivers/scsi/ibmvscsi/ibmvfc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-With the config,
-
-https://raw.githubusercontent.com/cailca/linux-mm/master/arm64.config=20
-
->=20
-> Also, the fix is curious.  Arithmetic on pointers to different
-> "objects" (with one element passed the end) may lead to provence
-> issues due to undefined behavior, but I would have expected some cases
-> to uintptr_t, then arithmetic on that type, as the solution (which is
-> what I suspect ACPI_CAST_PTR is doing).
->=20
-> Further, you seem to have modified ACPI_ADD_PTR but not ACPI_SUB_PTR;
-> I would have expected both to be afflicted together or not at all
-> based on their existing implementations.
-
-Yes, I thought about that, but ACPI_SUB_PTR does not seem used anywhere, =
-so I thought maybe just start a new discussion to remove it all together =
-later.
-
-
->=20
->>=20
->> Signed-off-by: Qian Cai <cai@lca.pw>
->> ---
->> include/acpi/actypes.h | 4 ++--
->> 1 file changed, 2 insertions(+), 2 deletions(-)
->>=20
->> diff --git a/include/acpi/actypes.h b/include/acpi/actypes.h
->> index ad6892a24015..25b4a32da177 100644
->> --- a/include/acpi/actypes.h
->> +++ b/include/acpi/actypes.h
->> @@ -500,13 +500,13 @@ typedef u64 acpi_integer;
->>=20
->> #define ACPI_CAST_PTR(t, p)             ((t *) (acpi_uintptr_t) (p))
->> #define ACPI_CAST_INDIRECT_PTR(t, p)    ((t **) (acpi_uintptr_t) (p))
->> -#define ACPI_ADD_PTR(t, a, b)           ACPI_CAST_PTR (t, =
-(ACPI_CAST_PTR (u8, (a)) + (acpi_size)(b)))
->> +#define ACPI_ADD_PTR(t, a, b)           ACPI_CAST_PTR (t, (a) + =
-(acpi_size)(b))
->> #define ACPI_SUB_PTR(t, a, b)           ACPI_CAST_PTR (t, =
-(ACPI_CAST_PTR (u8, (a)) - (acpi_size)(b)))
->> #define ACPI_PTR_DIFF(a, b)             ((acpi_size) (ACPI_CAST_PTR =
-(u8, (a)) - ACPI_CAST_PTR (u8, (b))))
->>=20
->> /* Pointer/Integer type conversions */
->>=20
->> -#define ACPI_TO_POINTER(i)              ACPI_ADD_PTR (void, (void *) =
-0, (acpi_size) (i))
->> +#define ACPI_TO_POINTER(i)              ACPI_ADD_PTR (void, 0, =
-(acpi_size) (i))
->=20
-> IIUC, these are adding `i` to NULL (or (void*)0)? X + 0 =3D=3D X ?
-> --=20
-> Thanks,
-> ~Nick Desaulniers
+diff --git a/drivers/scsi/ibmvscsi/ibmvfc.c b/drivers/scsi/ibmvscsi/ibmvfc.c
+index acd16e0d52cf..8cdbac076a1b 100644
+--- a/drivers/scsi/ibmvscsi/ibmvfc.c
++++ b/drivers/scsi/ibmvscsi/ibmvfc.c
+@@ -4864,8 +4864,8 @@ static int ibmvfc_remove(struct vio_dev *vdev)
+ 
+ 	spin_lock_irqsave(vhost->host->host_lock, flags);
+ 	ibmvfc_purge_requests(vhost, DID_ERROR);
+-	ibmvfc_free_event_pool(vhost);
+ 	spin_unlock_irqrestore(vhost->host->host_lock, flags);
++	ibmvfc_free_event_pool(vhost);
+ 
+ 	ibmvfc_free_mem(vhost);
+ 	spin_lock(&ibmvfc_driver_lock);
+-- 
+2.12.3
 
