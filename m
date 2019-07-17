@@ -2,89 +2,253 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60E1F6C2F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 00:05:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E6696C2FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 00:08:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728262AbfGQWFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 18:05:16 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37998 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727447AbfGQWFQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 18:05:16 -0400
-Received: by mail-lf1-f65.google.com with SMTP id h28so17607538lfj.5
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 15:05:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YSDBsvNUqnUp/t7kjQNVbtVYe15sAK39prvQBCJ8iQY=;
-        b=g84+xOg5RI1fWUeKUBJwojGU94tRjD8iZnr7jFeKgSFJWGDE5P+hiJZ/fByUC7X2Ud
-         Qp+qvIYxZtjYMQm2/OAIJKIyXJb/8NX7XJR0SU91SEDjU6fmhg1H4carPg11uTh9RG8E
-         J486BoqJAuMyOcptmKjQRPSZoDYh89CS+IIos=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YSDBsvNUqnUp/t7kjQNVbtVYe15sAK39prvQBCJ8iQY=;
-        b=m5NPKmN5uUMXvpAg6gLmEQfLu6kI7698u5kmtpPjVh+jHSjVVaIcK485Ct6wMkwvbp
-         inhGixLI+D7KG4q/fayAKZt66KNu7OdFuSIRw2pRfjtDpBOXxQlv+Lg8CzTvw/ZaS8RR
-         G9GO9xVww86ORCmuI+MEsL9T9NPaNuL+zgJL3lPaW+wa8rzT/hDWJnfcT/EM7U9WaCVF
-         fuc8uIGXGzh04Dbf3qyXetqtCnG5ksMs3fsM9eurlBtazQ+//tWFeyZKfqNFCL5xPzsv
-         j4vLTZZcDyIV1dfRpVIr4OqncqMRmm6BYgcit/lMXzcI7pxmKYH0nuWy652AvPBgoK14
-         Km6g==
-X-Gm-Message-State: APjAAAW/7s6v+nYv2I5UOPcWx8YleAYSKmG7iICsbDsIf1ft1nn2l2Fq
-        qrGGQrZPTGHNkl6kLT1EFkcpD2Ttams=
-X-Google-Smtp-Source: APXvYqwjtC/IMidK2jDIXfbEl9+mNamc61dZdh90H05cmMD/w6BF3U4wLpTcL9+MlANOr70x6BpAoQ==
-X-Received: by 2002:a05:6512:288:: with SMTP id j8mr20705817lfp.181.1563401113849;
-        Wed, 17 Jul 2019 15:05:13 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id k4sm4712642ljg.59.2019.07.17.15.05.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Jul 2019 15:05:13 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id v24so25236354ljg.13
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 15:05:12 -0700 (PDT)
-X-Received: by 2002:a2e:9192:: with SMTP id f18mr21972538ljg.52.1563401112629;
- Wed, 17 Jul 2019 15:05:12 -0700 (PDT)
+        id S1728149AbfGQWHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 18:07:07 -0400
+Received: from mga07.intel.com ([134.134.136.100]:60303 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727543AbfGQWHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 18:07:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2019 15:07:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,275,1559545200"; 
+   d="scan'208";a="366711687"
+Received: from bxing-desk.ccr.corp.intel.com (HELO [134.134.148.187]) ([134.134.148.187])
+  by fmsmga005.fm.intel.com with ESMTP; 17 Jul 2019 15:07:05 -0700
+Subject: Re: [PATCH v21 23/28] x86/vdso: Add __vdso_sgx_enter_enclave() to
+ wrap SGX enclave transitions
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+References: <20190713170804.2340-1-jarkko.sakkinen@linux.intel.com>
+ <20190713170804.2340-24-jarkko.sakkinen@linux.intel.com>
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+Message-ID: <d6a6865f-d7a9-dbe9-66b4-3f5cf62aaf6f@intel.com>
+Date:   Wed, 17 Jul 2019 15:07:06 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190625143715.1689-1-hch@lst.de> <20190625143715.1689-10-hch@lst.de>
- <20190717215956.GA30369@altlinux.org>
-In-Reply-To: <20190717215956.GA30369@altlinux.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 17 Jul 2019 15:04:56 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whj_+tYSRcDsw7mDGrkmyU9tAk-a53XK271wYtDqYRzig@mail.gmail.com>
-Message-ID: <CAHk-=whj_+tYSRcDsw7mDGrkmyU9tAk-a53XK271wYtDqYRzig@mail.gmail.com>
-Subject: Re: [PATCH 09/16] sparc64: use the generic get_user_pages_fast code
-To:     "Dmitry V. Levin" <ldv@altlinux.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Anatoly Pugachev <matorola@gmail.com>,
-        sparclinux@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190713170804.2340-24-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 17, 2019 at 2:59 PM Dmitry V. Levin <ldv@altlinux.org> wrote:
->
-> So this ended up as commit 7b9afb86b6328f10dc2cad9223d7def12d60e505
-> (thanks to Anatoly for bisecting) and introduced a regression:
-> futex.test from the strace test suite now causes an Oops on sparc64
-> in futex syscall.
+On 7/13/2019 10:07 AM, Jarkko Sakkinen wrote:
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+> 
+> Intel Software Guard Extensions (SGX) introduces a new CPL3-only enclave
+> mode that runs as a sort of black box shared object that is hosted by an
+> untrusted normal CPL3 process.
+> 
+> Skipping over a great deal of gory architecture details[1], SGX was
+> designed in such a way that the host process can utilize a library to
+> build, launch and run an enclave.  This is roughly analogous to how
+> e.g. libc implementations are used by most applications so that the
+> application can focus on its business logic.
+> 
+> The big gotcha is that because enclaves can generate *and* handle
+> exceptions, any SGX library must be prepared to handle nearly any
+> exception at any time (well, any time a thread is executing in an
+> enclave).  In Linux, this means the SGX library must register a
+> signal handler in order to intercept relevant exceptions and forward
+> them to the enclave (or in some cases, take action on behalf of the
+> enclave).  Unfortunately, Linux's signal mechanism doesn't mesh well
+> with libraries, e.g. signal handlers are process wide, are difficult
+> to chain, etc...  This becomes particularly nasty when using multiple
+> levels of libraries that register signal handlers, e.g. running an
+> enclave via cgo inside of the Go runtime.
+> 
+> In comes vDSO to save the day.  Now that vDSO can fixup exceptions,
+> add a function, __vdso_sgx_enter_enclave(), to wrap enclave transitions
+> and intercept any exceptions that occur when running the enclave.
+> 
+> __vdso_sgx_enter_enclave() does NOT adhere to the x86-64 ABI and instead
+> uses a custom calling convention.  The primary motivation is to avoid
+> issues that arise due to asynchronous enclave exits.  The x86-64 ABI
+> requires that EFLAGS.DF, MXCSR and FCW be preserved by the callee, and
+> unfortunately for the vDSO, the aformentioned registers/bits are not
+> restored after an asynchronous exit, e.g. EFLAGS.DF is in an unknown
+> state while MXCSR and FCW are reset to their init values.  So the vDSO
+> cannot simply pass the buck by requiring enclaves to adhere to the
+> x86-64 ABI.  That leaves three somewhat reasonable options:
+> 
+>    1) Save/restore non-volatile GPRs, MXCSR and FCW, and clear EFLAGS.DF
+> 
+>       + 100% compliant with the x86-64 ABI
+>       + Callable from any code
+>       + Minimal documentation required
+>       - Restoring MXCSR/FCW is likely unnecessary 99% of the time
+>       - Slow
+> 
+>    2) Save/restore non-volatile GPRs and clear EFLAGS.DF
+> 
+>       + Mostly compliant with the x86-64 ABI
+>       + Callable from any code that doesn't use SIMD registers
+>       - Need to document deviations from x86-64 ABI, i.e. MXCSR and FCW
+> 
+>    3) Require the caller to save/restore everything.
+> 
+>       + Fast
+>       + Userspace can pass all GPRs to the enclave (minus EAX, RBX and RCX)
+>       - Custom ABI
+>       - For all intents and purposes must be called from an assembly wrapper
+> 
+> __vdso_sgx_enter_enclave() implements option (3).  The custom ABI is
+> mostly a documentation issue, and even that is offset by the fact that
+> being more similar to hardware's ENCLU[EENTER/ERESUME] ABI reduces the
+> amount of documentation needed for the vDSO, e.g. options (2) and (3)
+> would need to document which registers are marshalled to/from enclaves.
+> Requiring an assembly wrapper imparts minimal pain on userspace as SGX
+> libraries and/or applications need a healthy chunk of assembly, e.g. in
+> the enclave, regardless of the vDSO's implementation.
+> 
+> Note, the C-like pseudocode describing the assembly routine is wrapped
+> in a non-existent macro instead of in a comment to trick kernel-doc into
+> auto-parsing the documentation and function prototype.  This is a double
+> win as the pseudocode is intended to aid kernel developers, not userland
+> enclave developers.
+> 
+> [1] Documentation/x86/sgx/1.Architecture.rst
+> 
+> Suggested-by: Andy Lutomirski <luto@amacapital.net>
+> Cc: Andy Lutomirski <luto@amacapital.net>
+> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Josh Triplett <josh@joshtriplett.org>
+> Cc: Haitao Huang <haitao.huang@linux.intel.com>
+> Cc: Jethro Beekman <jethro@fortanix.com>
+> Cc: Dr. Greg Wettstein <greg@enjellic.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Cedric Xing <cedric.xing@intel.com>
+> Signed-off-by: Cedric Xing <cedric.xing@intel.com>
+> ---
+>   arch/x86/entry/vdso/Makefile             |   2 +
+>   arch/x86/entry/vdso/vdso.lds.S           |   1 +
+>   arch/x86/entry/vdso/vsgx_enter_enclave.S | 169 +++++++++++++++++++++++
+>   arch/x86/include/uapi/asm/sgx.h          |  18 +++
+>   4 files changed, 190 insertions(+)
+>   create mode 100644 arch/x86/entry/vdso/vsgx_enter_enclave.S
+> 
+> diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+> index 715106395c71..1ae23e7d54a9 100644
+> --- a/arch/x86/entry/vdso/Makefile
+> +++ b/arch/x86/entry/vdso/Makefile
+> @@ -24,6 +24,7 @@ VDSO32-$(CONFIG_IA32_EMULATION)	:= y
+>   
+>   # files to link into the vdso
+>   vobjs-y := vdso-note.o vclock_gettime.o vgetcpu.o
+> +vobjs-$(VDSO64-y)		+= vsgx_enter_enclave.o
+>   
+>   # files to link into kernel
+>   obj-y				+= vma.o extable.o
+> @@ -92,6 +93,7 @@ CFLAGS_REMOVE_vdso-note.o = -pg
+>   CFLAGS_REMOVE_vclock_gettime.o = -pg
+>   CFLAGS_REMOVE_vgetcpu.o = -pg
+>   CFLAGS_REMOVE_vvar.o = -pg
+> +CFLAGS_REMOVE_vsgx_enter_enclave.o = -pg
+>   
+>   #
+>   # X32 processes use x32 vDSO to access 64bit kernel data.
+> diff --git a/arch/x86/entry/vdso/vdso.lds.S b/arch/x86/entry/vdso/vdso.lds.S
+> index 36b644e16272..4bf48462fca7 100644
+> --- a/arch/x86/entry/vdso/vdso.lds.S
+> +++ b/arch/x86/entry/vdso/vdso.lds.S
+> @@ -27,6 +27,7 @@ VERSION {
+>   		__vdso_time;
+>   		clock_getres;
+>   		__vdso_clock_getres;
+> +		__vdso_sgx_enter_enclave;
+>   	local: *;
+>   	};
+>   }
+> diff --git a/arch/x86/entry/vdso/vsgx_enter_enclave.S b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> new file mode 100644
+> index 000000000000..9331279b8fa6
+> --- /dev/null
+> +++ b/arch/x86/entry/vdso/vsgx_enter_enclave.S
+> @@ -0,0 +1,169 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#include <linux/linkage.h>
+> +#include <asm/export.h>
+> +#include <asm/errno.h>
+> +
+> +#include "extable.h"
+> +
+> +#define EX_LEAF		0*8
+> +#define EX_TRAPNR	0*8+4
+> +#define EX_ERROR_CODE	0*8+6
+> +#define EX_ADDRESS	1*8
+> +
+> +.code64
+> +.section .text, "ax"
+> +
+> +#ifdef SGX_KERNEL_DOC
+> +/**
+> + * __vdso_sgx_enter_enclave() - Enter an SGX enclave
+> + * @leaf:	ENCLU leaf, must be EENTER or ERESUME
+> + * @tcs:	TCS, must be non-NULL
+> + * @ex_info:	Optional struct sgx_enclave_exception instance
+> + * @callback:	Optional callback function to be called on enclave exit or
+> + *		exception
+> + *
+> + * **Important!**  __vdso_sgx_enter_enclave() is **NOT** compliant with the
+> + * x86-64 ABI, i.e. cannot be called from standard C code. As noted above,
+> + * input parameters must be passed via ``%eax``, ``8(%rsp)``, ``0x10(%rsp)`` and
+> + * ``0x18(%rsp)``, with the return value passed via ``%eax``. All other
+> + * registers will be passed through to the enclave as is. All registers except
+> + * ``%rbp`` must be treated as volatile from the caller's perspective, including
+> + * but not limited to GPRs, EFLAGS.DF, MXCSR, FCW, etc... Conversely, the
+> + * enclave being run **must** preserve the untrusted ``%rbp``.
+> + *
+> + * ``callback`` has the following signature:
+> + * int callback(long rdi, long rsi, long rdx,
+> + *		struct sgx_enclave_exinfo *exinfo, long r8, long r9,
+> + *		void *tcs, long ursp);
+> + * ``callback`` **shall** follow x86_64 ABI. All GPRs **except** ``%rax``,
+> + * ``%rbx`` and ``rcx`` are passed through to ``callback``. ``%rdi``, ``%rsi``,
+> + * ``%rdx``, ``%r8``, ``%r9``, along with the value of ``%rsp`` when the enclave
+> + * exited/excepted, can be accessed directly as input parameters, while other
+> + * GPRs can be accessed in assembly if needed.  A positive value returned from
+> + * ``callback`` will be treated as an ENCLU leaf (e.g. EENTER/ERESUME) to
+> + * reenter the enclave (without popping the extra data pushed by the enclave off
+> + * the stack), while 0 (zero) or a negative return value will be passed back to
+> + * the caller of __vdso_sgx_enter_enclave(). It is also safe to leave
+> + * ``callback`` via ``longjmp()`` or by throwing a C++ exception.
+> + *
+> + * Return:
+> + *    0 on success,
+> + *    -EINVAL if ENCLU leaf is not allowed,
+> + *    -EFAULT if ENCL or the enclave faults or non-positive value is returned
+> + *     from the callback.
+> + */
+> +typedef int (*sgx_callback)(long rdi, long rsi, long rdx,
+> +			    struct sgx_enclave_exinfo *exinfo, long r8,
+> +			    long r9, void *tcs, long ursp);
+> +int __vdso_sgx_enter_enclave(int leaf, void *tcs,
+> +			     struct sgx_enclave_exinfo *exinfo,
+> +			     sgx_callback callback)
 
-Can you post the oops here in the same thread too? Maybe it's already
-posted somewhere else, but I can't seem to find anything likely on
-lkml at least..
-
-On x86-64, it obviously just causes the (expected) EFAULT error from
-the futex call.
-
-Somebody with access to sparc64 probably needs to debug this, but
-having the exact oops wouldn't hurt...
-
-             Linus
+I may not have invoked kernel-doc properly but it seems kernel-doc isn't 
+able to pick up the parameters correctly.
