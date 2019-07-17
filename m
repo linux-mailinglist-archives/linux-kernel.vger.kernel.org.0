@@ -2,149 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7FCB6B7C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 10:01:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 829AD6B7D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 10:03:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfGQIBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 04:01:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49624 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbfGQIBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 04:01:05 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3FF6B309178C;
-        Wed, 17 Jul 2019 08:01:04 +0000 (UTC)
-Received: from [10.36.117.65] (ovpn-117-65.ams2.redhat.com [10.36.117.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6D5AE5C29A;
-        Wed, 17 Jul 2019 08:01:02 +0000 (UTC)
-Subject: Re: [PATCH 2/2] mm,memory_hotplug: Fix shrink_{zone,node}_span
-To:     Oscar Salvador <osalvador@suse.de>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Michal Hocko <mhocko@suse.com>, Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190715081549.32577-1-osalvador@suse.de>
- <20190715081549.32577-3-osalvador@suse.de> <87tvbne0rd.fsf@linux.ibm.com>
- <1563225851.3143.24.camel@suse.de>
- <CAPcyv4gp18-CRADqrqAbR0SnjKBoPaTyL_oaEyyNPJOeLybayg@mail.gmail.com>
- <20190717073853.GA22253@linux>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwX4EEwECACgFAljj9eoCGwMFCQlmAYAGCwkI
- BwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEE3eEPcA/4Na5IIP/3T/FIQMxIfNzZshIq687qgG
- 8UbspuE/YSUDdv7r5szYTK6KPTlqN8NAcSfheywbuYD9A4ZeSBWD3/NAVUdrCaRP2IvFyELj
- xoMvfJccbq45BxzgEspg/bVahNbyuBpLBVjVWwRtFCUEXkyazksSv8pdTMAs9IucChvFmmq3
- jJ2vlaz9lYt/lxN246fIVceckPMiUveimngvXZw21VOAhfQ+/sofXF8JCFv2mFcBDoa7eYob
- s0FLpmqFaeNRHAlzMWgSsP80qx5nWWEvRLdKWi533N2vC/EyunN3HcBwVrXH4hxRBMco3jvM
- m8VKLKao9wKj82qSivUnkPIwsAGNPdFoPbgghCQiBjBe6A75Z2xHFrzo7t1jg7nQfIyNC7ez
- MZBJ59sqA9EDMEJPlLNIeJmqslXPjmMFnE7Mby/+335WJYDulsRybN+W5rLT5aMvhC6x6POK
- z55fMNKrMASCzBJum2Fwjf/VnuGRYkhKCqqZ8gJ3OvmR50tInDV2jZ1DQgc3i550T5JDpToh
- dPBxZocIhzg+MBSRDXcJmHOx/7nQm3iQ6iLuwmXsRC6f5FbFefk9EjuTKcLMvBsEx+2DEx0E
- UnmJ4hVg7u1PQ+2Oy+Lh/opK/BDiqlQ8Pz2jiXv5xkECvr/3Sv59hlOCZMOaiLTTjtOIU7Tq
- 7ut6OL64oAq+zsFNBFXLn5EBEADn1959INH2cwYJv0tsxf5MUCghCj/CA/lc/LMthqQ773ga
- uB9mN+F1rE9cyyXb6jyOGn+GUjMbnq1o121Vm0+neKHUCBtHyseBfDXHA6m4B3mUTWo13nid
- 0e4AM71r0DS8+KYh6zvweLX/LL5kQS9GQeT+QNroXcC1NzWbitts6TZ+IrPOwT1hfB4WNC+X
- 2n4AzDqp3+ILiVST2DT4VBc11Gz6jijpC/KI5Al8ZDhRwG47LUiuQmt3yqrmN63V9wzaPhC+
- xbwIsNZlLUvuRnmBPkTJwwrFRZvwu5GPHNndBjVpAfaSTOfppyKBTccu2AXJXWAE1Xjh6GOC
- 8mlFjZwLxWFqdPHR1n2aPVgoiTLk34LR/bXO+e0GpzFXT7enwyvFFFyAS0Nk1q/7EChPcbRb
- hJqEBpRNZemxmg55zC3GLvgLKd5A09MOM2BrMea+l0FUR+PuTenh2YmnmLRTro6eZ/qYwWkC
- u8FFIw4pT0OUDMyLgi+GI1aMpVogTZJ70FgV0pUAlpmrzk/bLbRkF3TwgucpyPtcpmQtTkWS
- gDS50QG9DR/1As3LLLcNkwJBZzBG6PWbvcOyrwMQUF1nl4SSPV0LLH63+BrrHasfJzxKXzqg
- rW28CTAE2x8qi7e/6M/+XXhrsMYG+uaViM7n2je3qKe7ofum3s4vq7oFCPsOgwARAQABwsFl
- BBgBAgAPBQJVy5+RAhsMBQkJZgGAAAoJEE3eEPcA/4NagOsP/jPoIBb/iXVbM+fmSHOjEshl
- KMwEl/m5iLj3iHnHPVLBUWrXPdS7iQijJA/VLxjnFknhaS60hkUNWexDMxVVP/6lbOrs4bDZ
- NEWDMktAeqJaFtxackPszlcpRVkAs6Msn9tu8hlvB517pyUgvuD7ZS9gGOMmYwFQDyytpepo
- YApVV00P0u3AaE0Cj/o71STqGJKZxcVhPaZ+LR+UCBZOyKfEyq+ZN311VpOJZ1IvTExf+S/5
- lqnciDtbO3I4Wq0ArLX1gs1q1XlXLaVaA3yVqeC8E7kOchDNinD3hJS4OX0e1gdsx/e6COvy
- qNg5aL5n0Kl4fcVqM0LdIhsubVs4eiNCa5XMSYpXmVi3HAuFyg9dN+x8thSwI836FoMASwOl
- C7tHsTjnSGufB+D7F7ZBT61BffNBBIm1KdMxcxqLUVXpBQHHlGkbwI+3Ye+nE6HmZH7IwLwV
- W+Ajl7oYF+jeKaH4DZFtgLYGLtZ1LDwKPjX7VAsa4Yx7S5+EBAaZGxK510MjIx6SGrZWBrrV
- TEvdV00F2MnQoeXKzD7O4WFbL55hhyGgfWTHwZ457iN9SgYi1JLPqWkZB0JRXIEtjd4JEQcx
- +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <da07d964-fcfa-1406-bc12-faebbe38696e@redhat.com>
-Date:   Wed, 17 Jul 2019 10:01:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1728290AbfGQIDp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 04:03:45 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45214 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbfGQIDp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 04:03:45 -0400
+Received: by mail-pg1-f196.google.com with SMTP id o13so10743807pgp.12;
+        Wed, 17 Jul 2019 01:03:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2QQA3vCexTn2frwX9oyaSyj/otI+PVKWAPqRt9xz/tI=;
+        b=mMRLX4vd9rAOrjLK91NV8g2jlkCx3xJaU2OcazQoxMCK2uQXVArVpft9CPKPpqbFM/
+         rrD099qPhOMLuCV1/g87WIEBAZgSEMY3clCtKASRrzsesFzTCODuztCmFmVD1RjEQ+IF
+         uZiNfWEMScgQMyGfLB5FO6u2QlrbJnSVApVUxCifUxJPWfuy3+Q8OtjuThQTgFK4GmrG
+         TwE8M0jztpLh36qWBtyTZ+A+udw/YLUvPDHD/fKlIXalce/oK9pXXk64aWn0JfRU3E4p
+         DUCop+I3+UQEzoMYSOkjXOMgSjw5ccXpsc58WM9C0MlrEaTnArS1p8FUl/T9HELLboEr
+         mVng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2QQA3vCexTn2frwX9oyaSyj/otI+PVKWAPqRt9xz/tI=;
+        b=atALVDJst69s2yHVMtZMslL6mJw37SdXRLSJzz0odnmgixVanYgsg9Hcqpz8q93zc5
+         1x9jDG1bx7GrCKsXcMpQe+97S/o0/nnlAagq6snsvGCSxAMO4jSrI/69gYZ0/S+nZ3LI
+         Dg3GKj5ZA0RmQDqhCUEr+WDZBwgOhCJ6/oDOuz3Povid6Uew9KXiMvbc4dD2BT3XXrZh
+         H7LzdMjNJjkBlRc2t/+8kPNpqnwomFOYVNUpzOqrUWSkO1GUx/1bTDGAWnRz9591fAzW
+         ihPm5KOKZWPR2fRGQwLpuJz89l5wSURCg4THt26iQKaaR0fjH1xXUNVR2piHJ+VxFB02
+         GSDw==
+X-Gm-Message-State: APjAAAXX7zYOBGE1+Kbm28FRZj07S9HVUwg01YiHQCvmH/pqWi4fD71C
+        QDsgj0f/sjXXQ1qsZRVIVsY=
+X-Google-Smtp-Source: APXvYqxDN1G3bzBqD87mS88HozaTAIPTkQtuuVcqf/+I4IBdSowWubpAA0iomTS8usiVu23dzXx4iQ==
+X-Received: by 2002:a17:90a:3724:: with SMTP id u33mr41943097pjb.19.1563350624551;
+        Wed, 17 Jul 2019 01:03:44 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.gmail.com with ESMTPSA id y11sm27348761pfb.119.2019.07.17.01.03.41
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 17 Jul 2019 01:03:43 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH] net/mlx5: Replace kfree with kvfree
+Date:   Wed, 17 Jul 2019 16:03:22 +0800
+Message-Id: <20190717080322.13631-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190717073853.GA22253@linux>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 17 Jul 2019 08:01:04 +0000 (UTC)
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.07.19 09:38, Oscar Salvador wrote:
-> On Tue, Jul 16, 2019 at 07:28:54PM -0700, Dan Williams wrote:
->> This makes it more clear that the problem is with the "start_pfn ==
->> pfn" check relative to subsections, but it does not clarify why it
->> needs to clear pfn_valid() before calling shrink_zone_span().
->> Sections were not invalidated prior to shrink_zone_span() in the
->> pre-subsection implementation and it seems all we need is to keep the
->> same semantic. I.e. skip the range that is currently being removed:
-> 
-> Yes, as I said in my reply to Aneesh, that is the other way I thought
-> when fixing it.
-> The reason I went this way is because it seemed more reasonable and
-> natural to me that pfn_valid() would just return the next active
-> sub-section.
-> 
-> I just though that we could leverage the fact that we can deactivate
-> a sub-section before scanning for the next one.
-> 
-> On a second thought, the changes do not outweight the case, being the first
-> fix enough and less intrusive, so I will send a v2 with that instead.
-> 
-> 
+Variable allocated by kvmalloc should not be freed by kfree.
+Because it may be allocated by vmalloc.
+So replace kfree with kvfree here.
 
-I'd also like to note that we should strive for making all zone-related
-changes when offlining in the future, not when removing memory. So
-ideally, any core changes we perform from now, should make that step
-(IOW implementing that) easier, not harder. Of course, BUGs have to be
-fixed.
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/health.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The rough idea would be to also mark ZONE_DEVICE sections as ONLINE (or
-rather rename it to "ACTIVE" to generalize).
-
-For each section we would then have
-
-- pfn_valid(): We have a valid "struct page" / memmap
-- pfn_present(): We have actually added that memory via an oficial
-  interface to mm (e.g., arch_add_memory() )
-- pfn_online() / (or pfn_active()): Memory is active (online in "buddy"-
-  speak, or memory that was moved to the ZONE_DEVICE zone)
-
-When resizing the zones (e.g., when offlining memory), we would then
-search for pfn_online(), not pfn_present().
-
-In addition to move_pfn_range_to_zone(), we would have
-remove_pfn_range_from_zone(), called during offline_pages() / by
-devmem/hmm/pmem code before removing.
-
-(I started to look into this, but I don't have any patches yet)
-
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/health.c b/drivers/net/ethernet/mellanox/mlx5/core/health.c
+index 2fe6923f7ce0..9314777d99e3 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/health.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/health.c
+@@ -597,7 +597,7 @@ mlx5_fw_fatal_reporter_dump(struct devlink_health_reporter *reporter,
+ 	err = devlink_fmsg_arr_pair_nest_end(fmsg);
+ 
+ free_data:
+-	kfree(cr_data);
++	kvfree(cr_data);
+ 	return err;
+ }
+ 
 -- 
+2.20.1
 
-Thanks,
-
-David / dhildenb
