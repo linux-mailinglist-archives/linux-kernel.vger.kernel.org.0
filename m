@@ -2,157 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81B956B9AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 12:04:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0B0B6B9B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 12:04:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726275AbfGQKEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 06:04:45 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49180 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbfGQKEo (ORCPT
+        id S1726491AbfGQKEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 06:04:53 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:39745 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726312AbfGQKEv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 06:04:44 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6715F60F3C; Wed, 17 Jul 2019 10:04:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1563357883;
-        bh=PxqQnALfKSRdsnAJ3hzHy40Hd+Z0/yk/Ea0ZEWLH41g=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Vhdf4GXnTQEAR0KzBN6zGiFb/kbnxtOGH/4amg98ErC/wcoXHPko/lo5wnbvtVuSV
-         zV010JS17rU8lkWqclcn7QeIH0RuuxrPin3k87tBsaL16zUwIxrSEju1/smWgnfiN7
-         /pd9E0HwrCVY0QwIogxEx7ld/bRl8wj+1yR+6OUY=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [10.79.43.141] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 888C9602F5;
-        Wed, 17 Jul 2019 10:04:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1563357882;
-        bh=PxqQnALfKSRdsnAJ3hzHy40Hd+Z0/yk/Ea0ZEWLH41g=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Uue7bb9uJIbE++aHtPXX5xa5bSSGXOUdICkpkvXjc9+N9GVN2UcPUFc4B/+0bOD/S
-         XPg6wUyVkBjQEtAdc7sNuQpcoORSHwLeSi3YuWiMbDTbkeQ56nXc6ontjBVufuAM2Q
-         GcZ5lICxbfDZ2hPh5hhLX1bmmzlQ6XiC2z0FNxxw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 888C9602F5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH] opp: Return genpd virtual devices from
- dev_pm_opp_attach_genpd()
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org
-References: <027985ce35873cd218298302a1408da06d48458b.1562565567.git.viresh.kumar@linaro.org>
- <2ed7993d-523b-270a-2be9-83ad2426e946@codeaurora.org>
- <20190717054713.vn65cfiqebhzdvjq@vireshk-i7>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <2fbfc0fc-7d61-bf8c-67de-28183d03e26a@codeaurora.org>
-Date:   Wed, 17 Jul 2019 15:34:38 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 17 Jul 2019 06:04:51 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190717100449euoutp0228bed2212c03519ec95e671518107752~yKbelSTAF0451104511euoutp022
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 10:04:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190717100449euoutp0228bed2212c03519ec95e671518107752~yKbelSTAF0451104511euoutp022
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1563357889;
+        bh=woUJD0MUnc7hgwlmdEjoDvm2u+6Gwv5jeL7G5nOpHTQ=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=fp+150wWRFK7b/hDvHrDMyGmhJ++OhFBf/C1SXbo08qLP04PcruqlM14nVbSA0Fya
+         lGBHrxBc4VSwbRp5qA0MAWdB5366JYtige0BHcxI++GG7Hp8Rmbd4z6lxtLUe3rEVq
+         rEXfePNKnJXGkt2YRRJF+Qyjg9HiFd+XN3bkplcc=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190717100448eucas1p116241be6945c25de5db5c28dabc6360e~yKbdyJ_Hk1760117601eucas1p1v;
+        Wed, 17 Jul 2019 10:04:48 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 94.14.04325.0C2FE2D5; Wed, 17
+        Jul 2019 11:04:48 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190717100447eucas1p2c3ee55926bbd8e8461f0ff6cce4c2d22~yKbc1SkET3264032640eucas1p2p;
+        Wed, 17 Jul 2019 10:04:47 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190717100447eusmtrp163ec65e7682310c1a3264c64fcd8c9b8~yKbcnChcV1501515015eusmtrp1g;
+        Wed, 17 Jul 2019 10:04:47 +0000 (GMT)
+X-AuditID: cbfec7f5-b75ff700000010e5-ff-5d2ef2c0e56b
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 7C.E8.04146.FB2FE2D5; Wed, 17
+        Jul 2019 11:04:47 +0100 (BST)
+Received: from [106.120.51.20] (unknown [106.120.51.20]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190717100446eusmtip224af8f2f728af37f179fcc85a4346b9a~yKbb22hAM0168001680eusmtip2U;
+        Wed, 17 Jul 2019 10:04:46 +0000 (GMT)
+Subject: Re: [PATCH v1 20/50] ARM: dts: exynos: change and rename FSYS OPP
+ table in Exynos5420
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= 
+        <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com,
+        robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+        kyungmin.park@samsung.com, Andrzej Hajda <a.hajda@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+Message-ID: <33804835-4003-b86d-62cf-3802fbb91202@partner.samsung.com>
+Date:   Wed, 17 Jul 2019 12:04:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.7.1
 MIME-Version: 1.0
-In-Reply-To: <20190717054713.vn65cfiqebhzdvjq@vireshk-i7>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAJKOXPfHgmBo9NX6jO8qSqXjN1pFmnKkQEWbou+q7-BDq2XKQg@mail.gmail.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPKsWRmVeSWpSXmKPExsWy7djP87oHPunFGuw/wmVxa905VouNM9az
+        Wlz/8pzVYv4RILf/8Wtmi/PnN7BbnG16w26x6fE1VouPPfdYLS7vmsNmMeP8PiaLtUfuslss
+        vX6RyeLiKVeL240r2Cxa9x5htzj8pp3V4t+1jSwOQh5r5q1h9Hh/o5XdY9OqTjaPzUvqPfq2
+        rGL0+LxJLoAtissmJTUnsyy1SN8ugStj02qfgr3yFc9O5jYw3hDrYuTkkBAwkWhqfcHcxcjF
+        ISSwglHi59+FzCAJIYEvjBJtn0shEp8ZJTZe2ckO03HpxiVGiMRyRok1t+6wQHS8ZZQ4cCgQ
+        xBYWSJDYubuJCcQWEdCUuP73OytIA7PAVRaJH/e/AzVwcLAJ6EnsWFUIYvIKuEmsvyQJUs4i
+        oCqx/+wyNhBbVCBC4vKWXYwgNq+AoMTJmU/AVnEKBEr82n4MbDyzgLjErSfzoWx5ie1v54B9
+        IyHQySFx/mYXC8TRLhLfOreyQtjCEq+Ob4F6Rkbi9OQeqJpiiYbehYwQdo3E4/65UDXWEoeP
+        X2QFuZMZ6Jf1u/Qhwo4Sj16+ZQIJSwjwSdx4KwhxAp/EpG3TmSHCvBIdbUIQ1RoSW3ouMEHY
+        YhLL10xjn8CoNAvJY7OQPDMLyTOzEPYuYGRZxSieWlqcm55abJyXWq5XnJhbXJqXrpecn7uJ
+        EZjsTv87/nUH474/SYcYBTgYlXh4PQ7rxgqxJpYVV+YeYpTgYFYS4bX9qh0rxJuSWFmVWpQf
+        X1Sak1p8iFGag0VJnLea4UG0kEB6YklqdmpqQWoRTJaJg1OqgXFG/p2bn0Jjp61t3qLR4fO3
+        9I6PuZlN8LUM8XnhZ4UO/mG4m/x05r8DZ5JrihnvFB7fEmX1v/yUz7bioFOiVjM3O8xYyJL2
+        oI3zZqzi0STXXrGcX5oGhhv9VJe0PQw99r/aZeWzj/KnD4p1ezxMP6Qi/WpthmzL/WkrDv15
+        3soaxBR4UenxTmYlluKMREMt5qLiRACmTvIicgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKIsWRmVeSWpSXmKPExsVy+t/xe7r7P+nFGmzdzWtxa905VouNM9az
+        Wlz/8pzVYv4RILf/8Wtmi/PnN7BbnG16w26x6fE1VouPPfdYLS7vmsNmMeP8PiaLtUfuslss
+        vX6RyeLiKVeL240r2Cxa9x5htzj8pp3V4t+1jSwOQh5r5q1h9Hh/o5XdY9OqTjaPzUvqPfq2
+        rGL0+LxJLoAtSs+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1
+        SN8uQS9j02qfgr3yFc9O5jYw3hDrYuTkkBAwkbh04xJjFyMXh5DAUkaJBxtPs0IkxCQm7dvO
+        DmELS/y51sUGUfSaUWL1po1gRcICCRI7dzcxgdgiApoS1/9+ZwUpYha4yiIx5dVGdoiOfiaJ
+        Z2sPALVzcLAJ6EnsWFUIYvIKuEmsvyQJ0ssioCqx/+wyNhBbVCBCoq9tNpjNKyAocXLmExYQ
+        m1MgUOLX9mNgu5gFzCTmbX7IDGGLS9x6Mh8qLi+x/e0c5gmMQrOQtM9C0jILScssJC0LGFlW
+        MYqklhbnpucWG+oVJ+YWl+al6yXn525iBEb5tmM/N+9gvLQx+BCjAAejEg+vx2HdWCHWxLLi
+        ytxDjBIczEoivLZftWOFeFMSK6tSi/Lji0pzUosPMZoCPTeRWUo0OR+YgPJK4g1NDc0tLA3N
+        jc2NzSyUxHk7BA7GCAmkJ5akZqemFqQWwfQxcXBKNTD2zFzdtpphsel25Smbsg4pFLZMOWPT
+        fi3ZeneD0HazuDWr3q5z+dVctbjean198YN/jxtYymbunhElqnD7+8S8WfJvvhtebNL8JmZi
+        EBDx6+Gy6s+/56epZar1TTkqelj+ceTlr7lTrt2c+nae1ptfkVYlT6dfi4nmV9z4nuViVfzb
+        v4FKCgWnlFiKMxINtZiLihMB7Er3dQgDAAA=
+X-CMS-MailID: 20190717100447eucas1p2c3ee55926bbd8e8461f0ff6cce4c2d22
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190715124450eucas1p189043d196375aa6adacf898de81bfa9b
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190715124450eucas1p189043d196375aa6adacf898de81bfa9b
+References: <CGME20190715124450eucas1p189043d196375aa6adacf898de81bfa9b@eucas1p1.samsung.com>
+        <20190715124417.4787-1-l.luba@partner.samsung.com>
+        <20190715124417.4787-21-l.luba@partner.samsung.com>
+        <CAJKOXPfHgmBo9NX6jO8qSqXjN1pFmnKkQEWbou+q7-BDq2XKQg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Krzysztof,
 
+On 7/17/19 10:39 AM, Krzysztof Kozlowski wrote:
+> On Mon, 15 Jul 2019 at 14:44, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>>
+>> The FSYS and FSYS2 buses have similar characteristics and both have max
+>> frequency 240MHz. The old OPP table bus_fsys_apb_opp_table should be used
+>> only to FSYS APB bus because APB max frequency is 200MHz.
+>> The new OPPs for FSYS should increase its performance and related devices.
+> 
+> I do not understand the explanation. You say that there are two buses
+> - FSYS and FSYS2 - and old OPP table should be used for FSYS APB but
+> you remove the old one (by renaming). Or which one is the 'old one'
+> here? The reason is speed... wait, what? Usually DTS should describe
+> the HW so I imagine that proper opp table should be used for proper
+> bus. It surprised me that we switch a bus to different OPP table just
+> because of speed concerns. It should be correctness concern.
+> 
+> Please clarify and reword all this.
+> 
+> I am also not sure how this relates with previous patch - whether you
+> are fixing independent issues. Maybe because I do not see the issue
+> fixed... change the commit title and adjust the messages to focus WHY
+> you are doing it. For small fixes WHAT you are doing is rather obvious
+> so commit msg (and title) should not focus on it.
 
-On 7/17/2019 11:17 AM, Viresh Kumar wrote:
-> On 11-07-19, 15:09, Rajendra Nayak wrote:
->> Sorry for the delay
-> 
-> Same here :)
-> 
->> I seem to have completely missed this patch.
->> I just gave this a try and here are some observations,
->>
->> I have a case where I have one device with 2 power domains, one of them
->> is scale-able (supports perf state) and the other one supports only being
->> turned on and off.
->>
->> 1. In the driver I now need to use dev_pm_domain_attach_by_name/id to attach the
->> power domain which supports only on/off and then use dev_pm_opp_attach_genpd()
->> for the one which supports perf states.
->>
->> 2. My OPP table has only 1 required_opps, so the required_opp_count for the OPP table is 1.
->> Now if my device tree has my scale-able powerdomain at index 1 (it works if its at index 0)
->> then I end up with this error
->>
->> [    2.858628] ufshcd-qcom 1d84000.ufshc: Index can't be greater than required-opp-count - 1, rpmh_pd (1 : 1)
->>
->> so it looks like a lot of the OPP core today just assumes that if a device has multiple power domains,
->> all of them are scale-able which isn't necessarily true.
-> 
-> I don't think a lot of OPP core has these problems, but maybe only
-> this place. I was taking care of this since the beginning just forgot
-> it now.
-> 
-> What about this over this commit:
+I don't know how familiar you are with AMBA standard or general concept
+of NoC, so I am not sure if the explanation below would be sufficient.
+There are 3 buses: FSYS, FSYS2, FSYS APB. The first two are connecting
+AXI Slave/Master interfaces of the IP blocks. They are dedicated to
+transfer the data i.e. to MMC block using 128 bit bus width and 240MHz
+clock. The 3rd is dedicated for accessing peripheral registers -
+connecting to IP block interfaces called APB3 slave.
+As I mentioned in the comment the FSYS and FSYS2 are able to run faster
+than the APB bus.
+Thus, changing the old implementation which pinned FSYS and FSYS APB
+to the same OPP table is wrong. The right connection made by OPP
+reference should be FSYS and FSYS2 with also 240MHz max freq inside.
 
-Yes, this does seem to fix my concern mentioned in 2. above.
+I have discussed offline with Bartek and I will squash DT patches to
+an atomic-change-with-OPPs-and-PLL-rate-for-all-children, with more
+detailed comment in the commit message describing the old state and the
+new one.
+
+Thank you for the review.
+
+Regards,
+Lukasz
 
 > 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index d76ead4eff4c..1f11f8c92337 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -1789,13 +1789,16 @@ static void _opp_detach_genpd(struct opp_table *opp_table)
->    *
->    * This helper needs to be called once with a list of all genpd to attach.
->    * Otherwise the original device structure will be used instead by the OPP core.
-> + *
-> + * The order of entries in the names array must match the order in which
-> + * "required-opps" are added in DT.
->    */
->   struct opp_table *dev_pm_opp_attach_genpd(struct device *dev,
->                  const char **names, struct device ***virt_devs)
->   {
->          struct opp_table *opp_table;
->          struct device *virt_dev;
-> -       int index, ret = -EINVAL;
-> +       int index = 0, ret = -EINVAL;
->          const char **name = names;
->   
->          opp_table = dev_pm_opp_get_opp_table(dev);
-> @@ -1821,14 +1824,6 @@ struct opp_table *dev_pm_opp_attach_genpd(struct device *dev,
->                  goto unlock;
->   
->          while (*name) {
-> -               index = of_property_match_string(dev->of_node,
-> -                                                "power-domain-names", *name);
-> -               if (index < 0) {
-> -                       dev_err(dev, "Failed to find power domain: %s (%d)\n",
-> -                               *name, index);
-> -                       goto err;
-> -               }
-> -
->                  if (index >= opp_table->required_opp_count) {
->                          dev_err(dev, "Index can't be greater than required-opp-count - 1, %s (%d : %d)\n",
->                                  *name, opp_table->required_opp_count, index);
-> @@ -1849,6 +1844,7 @@ struct opp_table *dev_pm_opp_attach_genpd(struct device *dev,
->                  }
->   
->                  opp_table->genpd_virt_devs[index] = virt_dev;
-> +               index++;
->                  name++;
->          }
->   
+> Best regards,
+> Krzysztof
 > 
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+>>
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> ---
+>>   arch/arm/boot/dts/exynos5420.dtsi | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>> index 941c58bdd809..c7fc4b829b2a 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -995,7 +995,7 @@
+>>                          compatible = "samsung,exynos-bus";
+>>                          clocks = <&clock CLK_DOUT_ACLK200_FSYS>;
+>>                          clock-names = "bus";
+>> -                       operating-points-v2 = <&bus_fsys_apb_opp_table>;
+>> +                       operating-points-v2 = <&bus_fsys_opp_table>;
+>>                          status = "disabled";
+>>                  };
+>>
+>> @@ -1003,7 +1003,7 @@
+>>                          compatible = "samsung,exynos-bus";
+>>                          clocks = <&clock CLK_DOUT_ACLK200_FSYS2>;
+>>                          clock-names = "bus";
+>> -                       operating-points-v2 = <&bus_fsys2_opp_table>;
+>> +                       operating-points-v2 = <&bus_fsys_opp_table>;
+>>                          status = "disabled";
+>>                  };
+>>
+>> @@ -1157,7 +1157,7 @@
+>>                          };
+>>                  };
+>>
+>> -               bus_fsys2_opp_table: opp_table5 {
+>> +               bus_fsys_opp_table: opp_table5 {
+>>                          compatible = "operating-points-v2";
+>>
+>>                          opp00 {
+>> --
+>> 2.17.1
+>>
+> 
+> 
