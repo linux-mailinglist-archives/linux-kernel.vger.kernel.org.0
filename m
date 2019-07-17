@@ -2,120 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97DED6B676
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 08:18:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41DA16B684
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 08:20:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbfGQGSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 02:18:48 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:62971 "EHLO
+        id S1728491AbfGQGS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 02:18:59 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:63621 "EHLO
         conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfGQGS0 (ORCPT
+        with ESMTP id S1727582AbfGQGSu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 02:18:26 -0400
+        Wed, 17 Jul 2019 02:18:50 -0400
 Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id x6H6I5Oo009435;
-        Wed, 17 Jul 2019 15:18:14 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x6H6I5Oo009435
+        by conuserg-10.nifty.com with ESMTP id x6H6I5Oc009435;
+        Wed, 17 Jul 2019 15:18:06 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x6H6I5Oc009435
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1563344294;
-        bh=tV8Id8UQty/9yTwTbnWxEz0ZVA1NCDaDyk+FEo41GJ4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mxgVQSXY/Pk6U50rixL3JiIl5umcvl3ak0EkcZYWJm2Bvw3YzLcQ+7+MW/rxVyEeb
-         VMe1qVqxi8RvoAI+EOASzPXbD71nHD8vEc1f7NPQr67qFp2QVEdPtwGB4kBW2TtpEp
-         dJrFbYjtJmfnAcdqbRnNQ+dxXvQutkdtYmPvolLDFG3ygku5QOVWeBcuMi8Drx0LIP
-         Yc9ANZTaSgQGtKvu3P7RXCm55Zngn3oo27LQelPxYvrsAj6y4g2BsFpLq0g9Bpkpf3
-         BaBcb+jikDZua+PlQULSUVSasuUixwZzQT1ROkdwOhKgBbImJfJKO5HjiT5pXdJx25
-         /N4o4EtG/7VcA==
+        s=dec2015msa; t=1563344286;
+        bh=MsNRvlaE02YX1DTdpyxIjkokwz0Ur1MdtPkFVwAq4b4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=oq3djoWpo5WcGiuxcGvDlSmpHWrZr4kgViu2MjtmR1w8MEVYnSfr2mP4e04Ptg9kd
+         wyFg3Ycl2l0fQvSostoJg0269KOkRZR0cGf3kw3/cH4Nn67ugenUgiHeRBrofPvLt6
+         4gXYWNCsMp7iXdiLIbUxLzIpH3rZDoYOO/bRkdjJmzKepG2gRIwb1u2uVt0NmfiY7c
+         wyhhDMuG7r6fQEyiYXU+XoFcdLW4hzWwjfFpkUxFBbvu7sFwifEHp08xAZpmJPJqW0
+         isneZcJ3sCva4Z/DOlClTkLv/FqyqykwttLTfpbGThqEFuZ9MhOlYvxAIeFyoJSSZx
+         NeHOHn3Up2Hag==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
 Cc:     Joe Lawrence <joe.lawrence@redhat.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 12/12] kbuild: split out *.mod out of {single,multi}-used-m rules
-Date:   Wed, 17 Jul 2019 15:18:00 +0900
-Message-Id: <20190717061800.10018-13-yamada.masahiro@socionext.com>
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Renninger <trenn@suse.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH v3 00/12] kbuild: create *.mod with directory path and remove MODVERDIR
+Date:   Wed, 17 Jul 2019 15:17:48 +0900
+Message-Id: <20190717061800.10018-1-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190717061800.10018-1-yamada.masahiro@socionext.com>
-References: <20190717061800.10018-1-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, *.mod is created as a side-effect of obj-m.
 
-Split out *.mod as a dedicated build rule, which allows to unify
-the %.c -> %.o rule, and remove the single-used-m rule.
+This series kills the long standing MODVERDIR.
 
-This also makes the incremental build of allmodconfig faster because
-it saves $(NM) invocation when there is no change in the module.
+Since MODVERDIR has a flat structure, it cannot avoid a race
+condition when somebody introduces a module name conflict.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Kbuild now reads modules.order to get the list of all modules.
 
-Changes in v3: None
-Changes in v2: None
+The post-processing/installation stages will be more robust
+and simpler.
 
- scripts/Makefile.build | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index 9f37f203882f..0d434d0afc0b 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -67,8 +67,10 @@ ifeq ($(CONFIG_MODULES)$(need-modorder),y1)
- modorder-target := $(obj)/modules.order
- endif
- 
-+mod-targets := $(patsubst %.o, %.mod, $(obj-m))
-+
- __build: $(if $(KBUILD_BUILTIN),$(builtin-target) $(lib-target) $(extra-y)) \
--	 $(if $(KBUILD_MODULES),$(obj-m) $(modorder-target)) \
-+	 $(if $(KBUILD_MODULES),$(obj-m) $(mod-targets) $(modorder-target)) \
- 	 $(subdir-ym) $(always)
- 	@:
- 
-@@ -261,7 +263,7 @@ endef
- 
- # List module undefined symbols (or empty line if not enabled)
- ifdef CONFIG_TRIM_UNUSED_KSYMS
--cmd_undef_syms = $(NM) $@ | sed -n 's/^  *U //p' | xargs echo
-+cmd_undef_syms = $(NM) $< | sed -n 's/^  *U //p' | xargs echo
- else
- cmd_undef_syms = echo
- endif
-@@ -271,11 +273,15 @@ $(obj)/%.o: $(src)/%.c $(recordmcount_source) $(objtool_dep) FORCE
- 	$(call cmd,force_checksrc)
- 	$(call if_changed_rule,cc_o_c)
- 
--$(single-used-m): $(obj)/%.o: $(src)/%.c $(recordmcount_source) $(objtool_dep) FORCE
--	$(call cmd,force_checksrc)
--	$(call if_changed_rule,cc_o_c)
--	@{ echo $@; \
--	   $(cmd_undef_syms); } > $(patsubst %.o,%.mod,$@)
-+cmd_mod = { \
-+	echo $(if $($*-objs)$($*-y)$($*-m), $(addprefix $(obj)/, $($*-objs) $($*-y) $($*-m)), $(@:.mod=.o)); \
-+	$(cmd_undef_syms); \
-+	} > $@
-+
-+$(obj)/%.mod: $(obj)/%.o FORCE
-+	$(call if_changed,mod)
-+
-+targets += $(mod-targets)
- 
- quiet_cmd_cc_lst_c = MKLST   $@
-       cmd_cc_lst_c = $(CC) $(c_flags) -g -c -o $*.o $< && \
-@@ -456,8 +462,6 @@ quiet_cmd_link_multi-m = LD [M]  $@
- 
- $(multi-used-m): FORCE
- 	$(call if_changed,link_multi-m)
--	@{ echo $(filter %.o,$^); \
--	   $(cmd_undef_syms); } > $(patsubst %.o,%.mod,$@)
- $(call multi_depend, $(multi-used-m), .o, -objs -y -m)
- 
- targets += $(multi-used-m)
+
+Masahiro Yamada (12):
+  kbuild: do not create empty modules.order in the prepare stage
+  kbuild: get rid of kernel/ prefix from in-tree modules.{order,builtin}
+  kbuild: remove duplication from modules.order in sub-directories
+  scsi: remove pointless $(MODVERDIR)/$(obj)/53c700.ver
+  kbuild: modinst: read modules.order instead of $(MODVERDIR)/*.mod
+  kbuild: modsign: read modules.order instead of $(MODVERDIR)/*.mod
+  kbuild: modpost: read modules.order instead of $(MODVERDIR)/*.mod
+  kbuild: export_report: read modules.order instead of
+    .tmp_versions/*.mod
+  kbuild: create *.mod with full directory path and remove MODVERDIR
+  kbuild: remove the first line of *.mod files
+  kbuild: remove 'prepare1' target
+  kbuild: split out *.mod out of {single,multi}-used-m rules
+
+ .gitignore                                 |  1 +
+ Documentation/dontdiff                     |  1 +
+ Makefile                                   | 36 ++++++-------------
+ drivers/scsi/Makefile                      |  2 +-
+ lib/Kconfig.debug                          | 12 +------
+ scripts/Makefile.build                     | 40 +++++++++-------------
+ scripts/Makefile.modbuiltin                |  2 +-
+ scripts/Makefile.modinst                   |  5 +--
+ scripts/Makefile.modpost                   | 19 +++++-----
+ scripts/Makefile.modsign                   |  3 +-
+ scripts/adjust_autoksyms.sh                | 14 +++-----
+ scripts/export_report.pl                   | 11 +++---
+ scripts/mod/sumversion.c                   | 23 +++----------
+ scripts/modules-check.sh                   |  2 +-
+ scripts/package/mkspec                     |  2 +-
+ tools/power/cpupower/debug/kernel/Makefile |  4 +--
+ 16 files changed, 62 insertions(+), 115 deletions(-)
+
 -- 
 2.17.1
 
