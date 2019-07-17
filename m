@@ -2,164 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E853D6BBA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 13:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DBD56BBAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 13:44:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730564AbfGQLnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 07:43:02 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39960 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbfGQLnB (ORCPT
+        id S1731581AbfGQLnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 07:43:09 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42419 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731012AbfGQLnD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 07:43:01 -0400
-Received: by mail-pl1-f196.google.com with SMTP id a93so11824897pla.7
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 04:43:01 -0700 (PDT)
+        Wed, 17 Jul 2019 07:43:03 -0400
+Received: by mail-pl1-f194.google.com with SMTP id ay6so11840633plb.9
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 04:43:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=bJyjiMSczq8O/fy0DzHpsXHTkh3Pfc7KNhEI3e8/DNc=;
-        b=REOR2/eulenSRfo961iSG6Zwh3ujyZv+gSrkmc+Kvm3b7jmuCeJokM9AOCJTgjIR3E
-         GhFnwtRm3qAbsb7pmYMEBqHGSoVTNJ2AIiJGIb86WJRnQYRaLKEk4ziC/DKUeMVx4RZm
-         zJogkn9oIYwzMx4vOATigvOXDw6BRYxBxnWA1CGc4lO6gnRC1qr/iSwuhn9nURAi8kBD
-         S76ZhpTauDp3WTjvucHHX5NmsKKP2WD7jEbE4zdigXpYGIrnPoW6DDW/1FttgTX9oBDQ
-         lkazExwHUpDb5Vek3Nurm/v689kUPg25npVX5XsMRiF/DKddlsUQc7KZXOitavzwQdoJ
-         F4hw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Grx9Ph9cpPxnp5U6FBRGOs65Gt1iaoMhcGq5W71SZXw=;
+        b=dPqGbc0mQ4L1HVZkSH8ToVI8fJKg/9UNHDO/j/ERbXAicYMzOFznsbpKlaHUysv6li
+         HI+ov6aZkI81aTTtxCqQqgB/bUVOpQn9oyTV62JlPhH7/hgOpXEwCdWu9ddqQHOpZpdv
+         vvSbjVE/k6KiaC4iA854H6gt6BntwHIeZhW6TlwY6wZ/6+elD6DGPCHZxZrxLz2uCTHc
+         8iFhpa9H1Y4EYvcxgufIOEc+0j2fY1DuwRMYeLwfiF/zvSCA0YG2Xctd4B7QhffRyXW7
+         79B+/AUSAWe5ZZuaO+yAHuZlFSQxsBpNhxsDDOkk9SiW6k2AqHelqnkNry2oBYROn4ta
+         qk0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=bJyjiMSczq8O/fy0DzHpsXHTkh3Pfc7KNhEI3e8/DNc=;
-        b=mcqdxVBUn05tnDsfpEMZvGJguKAT0iWHDnRtoeBw+qsgj8NYX0bY3E2ot3Nnqk8FRu
-         G8eQxJAYstQHsm4xp5XvOrNxIHmlomtA6unPu+og+qO3V5fGRHrXiB5aPxiXSkcfNRqm
-         dhO1/pvugoLGXWjc5+IAORsftcw0/z5VrGLeXevxencAHUP7yHV5Cjpmq/NqXP4YXmWZ
-         pKJzpdDpIhw7lEQWtj6+RQuy1yCYEnPeUQm6/0JAZ1g7ZN1h+74m9+xkmDyqKd0j4FFw
-         EeBsIVmw+lAWp1hGz467ZlPGnrtS6d86OhgoGexcxmcd6llItf0nGQ0bdooLg+HzQePu
-         J1Lw==
-X-Gm-Message-State: APjAAAWGq5SCf3IYEHwyblgjGsFhegeBq7OAZ/XXUwgjIngciWOBvZcR
-        TcApsZzUlLNbo+6b/+/LKBObATQE
-X-Google-Smtp-Source: APXvYqyPVIgIkkAGz0j+I8ADYvdUfugkHiYN8xT/46UN9WPQG0pFVNSDVX2BfiDJiqiN3nKPF8Oaxg==
-X-Received: by 2002:a17:902:b68f:: with SMTP id c15mr43033767pls.104.1563363781160;
-        Wed, 17 Jul 2019 04:43:01 -0700 (PDT)
-Received: from huyue2.ccdomain.com ([218.189.10.173])
-        by smtp.gmail.com with ESMTPSA id v3sm22465538pfm.188.2019.07.17.04.42.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Jul 2019 04:43:00 -0700 (PDT)
-From:   Yue Hu <zbestahu@gmail.com>
-To:     phillip@squashfs.org.uk
-Cc:     linux-kernel@vger.kernel.org, huyue2@yulong.com
-Subject: [PATCH] squashfs: avoid to allocate page actor when to read into the page cache
-Date:   Wed, 17 Jul 2019 19:41:51 +0800
-Message-Id: <20190717114151.10508-1-zbestahu@gmail.com>
-X-Mailer: git-send-email 2.17.1.windows.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Grx9Ph9cpPxnp5U6FBRGOs65Gt1iaoMhcGq5W71SZXw=;
+        b=o4pO2fdKszzIaOW9GW7T/XRaxWAHMjEtV18765ky0QWw1BH8Ou6KFE05diqoOHZo3q
+         zCtkqVduY9HpUZH8ZJVP4FQw19h7jHicqe13XT1AXMwCweoGmfkSFobtWjyWZxQvY0nP
+         R+5OhEnZ+3RjMzFEPkZrBlJJv9AaYtdeM4TjFHmApzxktoYnRaU7dWLhRWStoMz6ogHZ
+         aX/NVzVhXneN0rb2HQa0zupWfpItBXmsxhePPyxYK84AO8IRSMV/sSKN5MlCY117ieJ5
+         wYtW5WksQx3zT2DMuzBO57hPUUy6pHZNH7YcU+hf5YxHt+J67dC76uWPBusHJvR6TeCg
+         lhOw==
+X-Gm-Message-State: APjAAAWGlxCc22km2QFZsSjjU/muzuTSPEUN5wBtmYRXhFZGZhYWYf8q
+        HjJkqnZ2kibiyZPYsK2KO3EoGfDVdWxQdSlvSOsxY5/BdZs=
+X-Google-Smtp-Source: APXvYqwmLG+YoWbUJiFaN+0PkmRQxPro9175aUMwlEodu495a+iL+q6DhBuBElFNfaLl03HSknMS7Mny75X+YTtbitI=
+X-Received: by 2002:a17:902:8689:: with SMTP id g9mr39719354plo.252.1563363782037;
+ Wed, 17 Jul 2019 04:43:02 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1561386715.git.andreyknvl@google.com> <ea0ff94ef2b8af12ea6c222c5ebd970e0849b6dd.1561386715.git.andreyknvl@google.com>
+ <20190624174015.GL29120@arrakis.emea.arm.com> <CAAeHK+y8vE=G_odK6KH=H064nSQcVgkQkNwb2zQD9swXxKSyUQ@mail.gmail.com>
+ <20190715180510.GC4970@ziepe.ca> <CAAeHK+xPQqJP7p_JFxc4jrx9k7N0TpBWEuB8Px7XHvrfDU1_gw@mail.gmail.com>
+ <20190716120624.GA29727@ziepe.ca>
+In-Reply-To: <20190716120624.GA29727@ziepe.ca>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Wed, 17 Jul 2019 13:42:50 +0200
+Message-ID: <CAAeHK+xGfCSNgJ1FA1Bi3-6iVZNa5-cPJF54SY9rETqSqnrOTw@mail.gmail.com>
+Subject: Re: [PATCH v18 11/15] IB/mlx4: untag user pointers in mlx4_get_umem_mr
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        kvm@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yue Hu <huyue2@yulong.com>
-
-Currently, we will allocate page actor in squashfs_readpage_block() via
-kmalloc() if enable SQUASHFS_FILE_DIRECT option. However, the actor size
-is small and it will be freed finally in this function. So just use stack
-memory to avoid out of memory. Also save this space for system use.
-
-Signed-off-by: Yue Hu <huyue2@yulong.com>
----
- fs/squashfs/file_direct.c | 10 +++-------
- fs/squashfs/page_actor.c  | 10 ++--------
- fs/squashfs/page_actor.h  |  4 ++--
- 3 files changed, 7 insertions(+), 17 deletions(-)
-
-diff --git a/fs/squashfs/file_direct.c b/fs/squashfs/file_direct.c
-index a4894cc..98c2dd1 100644
---- a/fs/squashfs/file_direct.c
-+++ b/fs/squashfs/file_direct.c
-@@ -35,7 +35,7 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
- 	int end_index = start_index | mask;
- 	int i, n, pages, missing_pages, bytes, res = -ENOMEM;
- 	struct page **page;
--	struct squashfs_page_actor *actor;
-+	struct squashfs_page_actor actor;
- 	void *pageaddr;
- 
- 	if (end_index > file_end)
-@@ -51,9 +51,7 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
- 	 * Create a "page actor" which will kmap and kunmap the
- 	 * page cache pages appropriately within the decompressor
- 	 */
--	actor = squashfs_page_actor_init_special(page, pages, 0);
--	if (actor == NULL)
--		goto out;
-+	squashfs_page_actor_init_special(&actor, page, pages, 0);
- 
- 	/* Try to grab all the pages covered by the Squashfs block */
- 	for (missing_pages = 0, i = 0, n = start_index; i < pages; i++, n++) {
-@@ -90,7 +88,7 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
- 	}
- 
- 	/* Decompress directly into the page cache buffers */
--	res = squashfs_read_data(inode->i_sb, block, bsize, NULL, actor);
-+	res = squashfs_read_data(inode->i_sb, block, bsize, NULL, &actor);
- 	if (res < 0)
- 		goto mark_errored;
- 
-@@ -116,7 +114,6 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
- 			put_page(page[i]);
- 	}
- 
--	kfree(actor);
- 	kfree(page);
- 
- 	return 0;
-@@ -135,7 +132,6 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
- 	}
- 
- out:
--	kfree(actor);
- 	kfree(page);
- 	return res;
- }
-diff --git a/fs/squashfs/page_actor.c b/fs/squashfs/page_actor.c
-index 520d323..0344806 100644
---- a/fs/squashfs/page_actor.c
-+++ b/fs/squashfs/page_actor.c
-@@ -78,14 +78,9 @@ static void direct_finish_page(struct squashfs_page_actor *actor)
- 		kunmap_atomic(actor->pageaddr);
- }
- 
--struct squashfs_page_actor *squashfs_page_actor_init_special(struct page **page,
--	int pages, int length)
-+void squashfs_page_actor_init_special(struct squashfs_page_actor *actor,
-+	struct page **page, int pages, int length)
- {
--	struct squashfs_page_actor *actor = kmalloc(sizeof(*actor), GFP_KERNEL);
--
--	if (actor == NULL)
--		return NULL;
--
- 	actor->length = length ? : pages * PAGE_SIZE;
- 	actor->page = page;
- 	actor->pages = pages;
-@@ -94,5 +89,4 @@ struct squashfs_page_actor *squashfs_page_actor_init_special(struct page **page,
- 	actor->squashfs_first_page = direct_first_page;
- 	actor->squashfs_next_page = direct_next_page;
- 	actor->squashfs_finish_page = direct_finish_page;
--	return actor;
- }
-diff --git a/fs/squashfs/page_actor.h b/fs/squashfs/page_actor.h
-index 2e3073a..ab9d381 100644
---- a/fs/squashfs/page_actor.h
-+++ b/fs/squashfs/page_actor.h
-@@ -61,8 +61,8 @@ struct squashfs_page_actor {
- };
- 
- extern struct squashfs_page_actor *squashfs_page_actor_init(void **, int, int);
--extern struct squashfs_page_actor *squashfs_page_actor_init_special(struct page
--							 **, int, int);
-+extern void squashfs_page_actor_init_special(struct squashfs_page_actor *actor,
-+				struct page **page, int pages, int length);
- static inline void *squashfs_first_page(struct squashfs_page_actor *actor)
- {
- 	return actor->squashfs_first_page(actor);
--- 
-1.9.1
-
+On Tue, Jul 16, 2019 at 2:06 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>
+> On Tue, Jul 16, 2019 at 12:42:07PM +0200, Andrey Konovalov wrote:
+> > On Mon, Jul 15, 2019 at 8:05 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > >
+> > > On Mon, Jul 15, 2019 at 06:01:29PM +0200, Andrey Konovalov wrote:
+> > > > On Mon, Jun 24, 2019 at 7:40 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > > > >
+> > > > > On Mon, Jun 24, 2019 at 04:32:56PM +0200, Andrey Konovalov wrote:
+> > > > > > This patch is a part of a series that extends kernel ABI to allow to pass
+> > > > > > tagged user pointers (with the top byte set to something else other than
+> > > > > > 0x00) as syscall arguments.
+> > > > > >
+> > > > > > mlx4_get_umem_mr() uses provided user pointers for vma lookups, which can
+> > > > > > only by done with untagged pointers.
+> > > > > >
+> > > > > > Untag user pointers in this function.
+> > > > > >
+> > > > > > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> > > > > >  drivers/infiniband/hw/mlx4/mr.c | 7 ++++---
+> > > > > >  1 file changed, 4 insertions(+), 3 deletions(-)
+> > > > >
+> > > > > Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> > > > >
+> > > > > This patch also needs an ack from the infiniband maintainers (Jason).
+> > > >
+> > > > Hi Jason,
+> > > >
+> > > > Could you take a look and give your acked-by?
+> > >
+> > > Oh, I think I did this a long time ago. Still looks OK.
+> >
+> > Hm, maybe that was we who lost it. Thanks!
+> >
+> > > You will send it?
+> >
+> > I will resend the patchset once the merge window is closed, if that's
+> > what you mean.
+>
+> No.. I mean who send it to Linus's tree? ie do you want me to take
+> this patch into rdma?
+>
+> Jason
