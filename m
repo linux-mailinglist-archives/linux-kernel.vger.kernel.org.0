@@ -2,94 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AA616BD1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 15:35:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 725E46BD39
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 15:37:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbfGQNft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 09:35:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54742 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726494AbfGQNft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 09:35:49 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EFE3159465;
-        Wed, 17 Jul 2019 13:35:48 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 85BC65DA34;
-        Wed, 17 Jul 2019 13:35:46 +0000 (UTC)
-Subject: Re: [PATCH v3 3/5] locking/qspinlock: Introduce CNA into the slow
- path of qspinlock
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Alex Kogan <alex.kogan@oracle.com>, linux@armlinux.org.uk,
-        mingo@redhat.com, will.deacon@arm.com, arnd@arndb.de,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, bp@alien8.de,
-        hpa@zytor.com, x86@kernel.org, guohanjun@huawei.com,
-        jglauber@marvell.com, steven.sistare@oracle.com,
-        daniel.m.jordan@oracle.com, dave.dice@oracle.com,
-        rahul.x.yadav@oracle.com
-References: <20190715192536.104548-1-alex.kogan@oracle.com>
- <20190715192536.104548-4-alex.kogan@oracle.com>
- <9fa54e98-0b9b-0931-db32-c6bd6ccfe75b@redhat.com>
- <20190717074435.GU3419@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <378093ad-46cc-7ecb-5a06-1e22ee5ce4a1@redhat.com>
-Date:   Wed, 17 Jul 2019 09:35:46 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728392AbfGQNhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 09:37:02 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41016 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727953AbfGQNgu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 09:36:50 -0400
+Received: by mail-pg1-f196.google.com with SMTP id x15so841052pgg.8
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 06:36:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=upJur9hX33jRa5ZDAABYWCcVNIU4OKrA323sUj0kiJ0=;
+        b=jU/Zat9i+mrs8cSnCYXrBiEONUz0WXxyKyOECIIPiTvG8WEhtGZGjK61290IX8o36U
+         OrHTHQ7Woyg/qn3+sukX8RWKFmT/Ab3vSFlM0FM2BRuiucJNWXV94DF4e2NhGQgdA44A
+         dT08TPfZUZgkz0of54cXYItyNEHlQbHBkArsYbqcDoUXDHAB+kz50O9ewS939NtAQV8u
+         N3pg+MG4dZM9J1oQTBELA9KEuGXZuE94dTh2nx4VJ6oW11nUXuKKdq/o5lVXbnas7dEB
+         7eGFT9GZTTNoP+bU6YviC4h7qnZidfElkMDjIpsDOMoPQb/nzifgWXLs7MlD24BgMlQq
+         Xslw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=upJur9hX33jRa5ZDAABYWCcVNIU4OKrA323sUj0kiJ0=;
+        b=mmId2lFnwDTRsNMAm8cyINLeKuX3bzLetMj4mF9jTcQhjvaa3/NJv41Oi9QvNbOByf
+         HIwCj996ss03Wx/D6162efnH7lbaffOa1H6T2j7fVYeNVEVk+JExFqm9IYdm3+uP7LN1
+         D0G6IYeMKWsemMItTPb4t6yIb1mgodIeyWW9nXmzrAUTS7VTVk6HBb69xUWgixRl0+DD
+         dQ6hUgiFuKngPsnSxoB96fMGKgimRUqgR8KVh7yTQ0P+LuW7hE6IC/8Vy/sfHukv0Hxk
+         BkcWEJbzF4nt3pxTJDZVVcr221zTKbJ+VN9s7iIgRe8myUmjgMaiP/VjdS96SfslkaFg
+         X2rA==
+X-Gm-Message-State: APjAAAXNTMk08JBUDDm78JIdtsecNdvm35vZgMdKFKaeIvl8qi84UFdQ
+        hLrPKr/s9qaMUfqPdJdVfKlmM5swgn2Nhp4jX4TSQw==
+X-Google-Smtp-Source: APXvYqz7m/UfmCxQEvGyEZmLKWfGDEQqrP2qzxF/oMVv3Ek5NDX+f4ncbRdtOgqzhkxO4Lp3vwbZe7MPyGJ1vZM4Wx0=
+X-Received: by 2002:a17:90a:2488:: with SMTP id i8mr43162554pje.123.1563370608796;
+ Wed, 17 Jul 2019 06:36:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190717074435.GU3419@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 17 Jul 2019 13:35:49 +0000 (UTC)
+References: <cover.1561386715.git.andreyknvl@google.com> <ea0ff94ef2b8af12ea6c222c5ebd970e0849b6dd.1561386715.git.andreyknvl@google.com>
+ <20190624174015.GL29120@arrakis.emea.arm.com> <CAAeHK+y8vE=G_odK6KH=H064nSQcVgkQkNwb2zQD9swXxKSyUQ@mail.gmail.com>
+ <20190715180510.GC4970@ziepe.ca> <CAAeHK+xPQqJP7p_JFxc4jrx9k7N0TpBWEuB8Px7XHvrfDU1_gw@mail.gmail.com>
+ <20190716120624.GA29727@ziepe.ca> <CAAeHK+xPPQ9QjAksbfWG-Zmnawt-cdw9eO_6GVxjEYcaDGvaRA@mail.gmail.com>
+ <20190717115828.GE12119@ziepe.ca>
+In-Reply-To: <20190717115828.GE12119@ziepe.ca>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Wed, 17 Jul 2019 15:36:37 +0200
+Message-ID: <CAAeHK+yyQpc6cxyVeUUWUwiQYy8iAgVXmOVO=EQYSNzy9G8Q0A@mail.gmail.com>
+Subject: Re: [PATCH v18 11/15] IB/mlx4: untag user pointers in mlx4_get_umem_mr
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        kvm@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/17/19 3:44 AM, Peter Zijlstra wrote:
-> On Tue, Jul 16, 2019 at 10:16:29PM -0400, Waiman Long wrote:
->>  A simple graphic to illustrate those queues will help too, for example
-> Very much yes!
+On Wed, Jul 17, 2019 at 1:58 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
 >
->> /*
->>  * MCS lock holder
->>  * ===============
->>  *    mcs_node
->>  *   +--------+      +----+         +----+
->>  *   | next   | ---> |next| -> ...  |next| -> NULL  [Main queue]
->>  *   | locked | -+   +----+         +----+
->>  *   +--------+  |
->>  *               |   +----+         +----+
->>  *               +-> |next| -> ...  |next| -> X     [Secondary queue]
->>  *    cna_node       +----+         +----+
->>  *   +--------*                       ^
->>  *   | tail   | ----------------------+
->>  *   +--------*   
-> Almost; IIUC that cna_node is the same as the one from locked, so you
-> end up with something like:
+> On Wed, Jul 17, 2019 at 01:44:07PM +0200, Andrey Konovalov wrote:
+> > On Tue, Jul 16, 2019 at 2:06 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > >
+> > > On Tue, Jul 16, 2019 at 12:42:07PM +0200, Andrey Konovalov wrote:
+> > > > On Mon, Jul 15, 2019 at 8:05 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > > > >
+> > > > > On Mon, Jul 15, 2019 at 06:01:29PM +0200, Andrey Konovalov wrote:
+> > > > > > On Mon, Jun 24, 2019 at 7:40 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > > > > > >
+> > > > > > > On Mon, Jun 24, 2019 at 04:32:56PM +0200, Andrey Konovalov wrote:
+> > > > > > > > This patch is a part of a series that extends kernel ABI to allow to pass
+> > > > > > > > tagged user pointers (with the top byte set to something else other than
+> > > > > > > > 0x00) as syscall arguments.
+> > > > > > > >
+> > > > > > > > mlx4_get_umem_mr() uses provided user pointers for vma lookups, which can
+> > > > > > > > only by done with untagged pointers.
+> > > > > > > >
+> > > > > > > > Untag user pointers in this function.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> > > > > > > >  drivers/infiniband/hw/mlx4/mr.c | 7 ++++---
+> > > > > > > >  1 file changed, 4 insertions(+), 3 deletions(-)
+> > > > > > >
+> > > > > > > Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> > > > > > >
+> > > > > > > This patch also needs an ack from the infiniband maintainers (Jason).
+> > > > > >
+> > > > > > Hi Jason,
+> > > > > >
+> > > > > > Could you take a look and give your acked-by?
+> > > > >
+> > > > > Oh, I think I did this a long time ago. Still looks OK.
+> > > >
+> > > > Hm, maybe that was we who lost it. Thanks!
+> > > >
+> > > > > You will send it?
+> > > >
+> > > > I will resend the patchset once the merge window is closed, if that's
+> > > > what you mean.
+> > >
+> > > No.. I mean who send it to Linus's tree? ie do you want me to take
+> > > this patch into rdma?
+> >
+> > I think the plan was to merge the whole series through the mm tree.
+> > But I don't mind if you want to take this patch into your tree. It's
+> > just that this patch doesn't make much sense without the rest of the
+> > series.
 >
->>  *    mcs_node
->>  *   +--------+      +----+         +----+
->>  *   | next   | ---> |next| -> ...  |next| -> NULL  [Main queue]
->>  *   | locked | -+   +----+         +----+
->>  *   +--------+  |
->>  *               |   +---------+         +----+
->>  *               +-> |mcs::next| -> ...  |next| -> NULL     [Secondary queue]
->>  *                   |cna::tail| -+      +----+
->>  *                   +---------+  |        ^
->>  *                                +--------+
->>  *
->>  * N.B. locked = 1 if secondary queue is absent.
->>  */
+> Generally I prefer if subsystem changes stay in subsystem trees. If
+> the patch is good standalone, and the untag API has already been
+> merged, this is a better strategy.
 
-Yes, you are right. Thanks for the correction.
+OK, feel free to take this into your tree, this works for me.
 
-Cheers,
-Longman
-
+>
+> Jason
