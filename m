@@ -2,67 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92F386BC1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 14:07:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 345856BC24
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 14:12:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730865AbfGQMHB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 08:07:01 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:37915 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726980AbfGQMHA (ORCPT
+        id S1726793AbfGQMMI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 08:12:08 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34953 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbfGQMMH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 08:07:00 -0400
-Received: by mail-io1-f69.google.com with SMTP id h4so26966290iol.5
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 05:07:00 -0700 (PDT)
+        Wed, 17 Jul 2019 08:12:07 -0400
+Received: by mail-pl1-f196.google.com with SMTP id w24so11887378plp.2;
+        Wed, 17 Jul 2019 05:12:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=p/Gb7jEE+ZplI0EyTPs6qOyFsh+o6XOv4kVQ51JCMkA=;
+        b=rcwhe/pOh/DKHRE75RRh3McP6NnmkSW99cb7AUyjWSX12bH7QqCxEl4D6tlsJXdK3S
+         gP8qjwnXpE4d7OadncmdHOzdNZbUYatXxmx+LTl/JPJ8JdcI8p8zuqMrMT/aWYiXlGr3
+         Q9nLc7wHVPm0w+sfk8qyEeKhunF00mRJmhzfQsWqtnY6c90r00rTBYhx2VUwQuZ8D+EX
+         2XjDlq8g3nVDmj/6JZoYDQeZD3kmsA0EI6d5RW3SK/t7FdGeSJ2gtiXFdcjqyJ5BrhBL
+         Md4iAWujKNGP5mP6urAUoZLW1nT9PPTb/bRys4yy+lYiIGV5dqTGhgM+es2PUKewe1Jc
+         WenQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=XMiM4VhhNGMXt1YUP9hYUP+H6sfTtdLHWoBTL1ud0JA=;
-        b=TWxL428Uct6WX+uLJCATWX8LXROw3s/JHz5QRP0DZq1Xq06wTuqD9xhy+XYXiw1lyM
-         kPx8UIvP3jDZYOU11wYna5xci7/K4tKJBBFEJz4TCZcx0IckQpR7bBwP0q9Kv3mqWQPd
-         +Q0ScWjKYoJwxNk1pYFxei3AOUY4GGuYeFaD5d2Yh+s8EybXNP+27YKuLY8y9XqTJsKR
-         CALapwneVR2oF+Jw9ZC9HPmYQpHj2Iz75ePH0Rao+zaph5Mlt5RUxuntEKASTlo2KjIb
-         oWBH3MjTv6zx9scH72KY9NuAc2RpRBwfkxhSPG0WMn8q8KREaKWXYidfbCIu4CSfhD6c
-         35ag==
-X-Gm-Message-State: APjAAAWS3E/Ci7mfsJObv2wExpZ28ZNS9WeTQROeQkMa6S/zAF6aMCv+
-        ia2/Km6dx+pvgGC3OS6w4knMcbOvOIqdpDePNZ5FCD4ua0ai
-X-Google-Smtp-Source: APXvYqzJDIa9bplYl+1WI2lx91wpvWCo7zcTm57mmmA3Rf0j84ecemM7YLsQPb+m1xJjo13foqByIr28LUi38D216xL3GGJaASl1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=p/Gb7jEE+ZplI0EyTPs6qOyFsh+o6XOv4kVQ51JCMkA=;
+        b=QYV4vPqyzWD4D2+YV1KG7qNSHCO77Wn9b0/aU9IxHTQV+VinRlaObKIIv0gkL8oWvB
+         Ma3fYbFGY2dlPch2oA+JsT1dEXz+f5bm81YxuGK6uwcQH14eU9QncN/pL+8GGJJatBEv
+         1lbfg5E8t3icuGHlubvE8SvrlN4kleO1ivqBzwXok/Hv5GZKrhVD4B+I/YFcTG816Aot
+         wSPg8isHAhr1Vrn6mIZLA9hI7SCGekwshY0qrfxswg4CGfRGvYLuEDIBfE58/YRRgFZH
+         2m8VLFnG9/g2D49UZDuGtqHxfNmp0xWPM1g3BwZvSOnmVwTWrmMhm9xaLD/ejYwu5HUD
+         Fsrg==
+X-Gm-Message-State: APjAAAWT3mf2AhjjGl/Dg4sO7yVOe81eEfOpBbW6QpbFJhyqedDgzEtP
+        97OxhI/AmPVrmZJY+snOAQg=
+X-Google-Smtp-Source: APXvYqzBZ+hy9Pqe1AbK+XLm/UpVjxZ6oNOlD0cIM+IMV3HiQI83dgqAbpNpjzhyCn1HLQ1D8exNhw==
+X-Received: by 2002:a17:902:2ae8:: with SMTP id j95mr39288806plb.276.1563365526969;
+        Wed, 17 Jul 2019 05:12:06 -0700 (PDT)
+Received: from localhost ([123.213.206.190])
+        by smtp.gmail.com with ESMTPSA id b1sm22695471pfi.91.2019.07.17.05.12.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Jul 2019 05:12:06 -0700 (PDT)
+Date:   Wed, 17 Jul 2019 21:12:03 +0900
+From:   Minwoo Im <minwoo.im.dev@gmail.com>
+To:     Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+Cc:     minwoo.im@samsung.com,
+        "sreekanth.reddy@broadcom.com" <sreekanth.reddy@broadcom.com>,
+        "sathya.prakash@broadcom.com" <sathya.prakash@broadcom.com>,
+        "suganath-prabu.subramani@broadcom.com" 
+        <suganath-prabu.subramani@broadcom.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "MPT-FusionLinux.pdl@broadcom.com" <MPT-FusionLinux.pdl@broadcom.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Euihyeok Kwon <eh81.kwon@samsung.com>,
+        Sarah Cho <sohyeon.jo@samsung.com>,
+        Sanggwan Lee <sanggwan.lee@samsung.com>,
+        Gyeongmin Nam <gm.nam@samsung.com>,
+        Sungjun Park <sj1228.park@samsung.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Minwoo Im <minwoo.im.dev@gmail.com>
+Subject: Re: [PATCH V2] mpt3sas: support target smid for [abort|query] task
+Message-ID: <20190717121203.GE10495@minwoo-desktop>
+References: <CGME20190714034415epcms2p25f9787cb71993a30f58524d2f355b543@epcms2p2>
+ <20190714034415epcms2p25f9787cb71993a30f58524d2f355b543@epcms2p2>
+ <860cc8cf-6419-c649-b2d9-19b82f6ebc99@suse.de>
 MIME-Version: 1.0
-X-Received: by 2002:a02:bca:: with SMTP id 193mr1412225jad.46.1563365220270;
- Wed, 17 Jul 2019 05:07:00 -0700 (PDT)
-Date:   Wed, 17 Jul 2019 05:07:00 -0700
-In-Reply-To: <CAAeHK+x4KAy2koonjij26iowtPuj67F=Mx+g0kYF968Zr-h8xg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009bc9b3058ddf5401@google.com>
-Subject: Re: WARNING in gpio_to_desc
-From:   syzbot <syzbot+cf35b76f35e068a1107f@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, bgolaszewski@baylibre.com,
-        cuissard@marvell.com, johan@kernel.org, linus.walleij@linaro.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, sameo@linux.intel.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <860cc8cf-6419-c649-b2d9-19b82f6ebc99@suse.de>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 19-07-15 08:13:36, Hannes Reinecke wrote:
+> I think this is fundamentally wrong.
+> ABORT_TASK is used to abort a single task, which of course has to be
+> known beforehand. If you don't know the task, what exactly do you hope
+> to achieve here? Aborting random I/O?
+> Or, even worse, aborting I/O the driver uses internally and corrupt the
+> internal workflow of the driver?
+> 
+> We should simply disallow any ABORT TASK from userspace if the TaskMID
+> is zero. And I would even argue to disabllow ABORT TASK from userspace
+> completely, as the smid is never relayed to userland, and as such the
+> user cannot know which task should be aborted.
+> 
+> Cheers,
+> 
+> Hannes
 
-syzbot has tested the proposed patch and the reproducer did not trigger  
-crash:
+Sreekanth,
 
-Reported-and-tested-by:  
-syzbot+cf35b76f35e068a1107f@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         6a3599ce usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d90745bdf884fc0a
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=126cd1a4600000
-
-Note: testing is done by a robot and is best-effort only.
+Could you please give some thoughts about what Hannes said?
