@@ -2,157 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB5376BDD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 16:08:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F0286BDDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 16:10:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbfGQOIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 10:08:38 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58334 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbfGQOIi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 10:08:38 -0400
-Received: from mail-pf1-f197.google.com ([209.85.210.197])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1hnkbk-00007P-LC
-        for linux-kernel@vger.kernel.org; Wed, 17 Jul 2019 14:08:36 +0000
-Received: by mail-pf1-f197.google.com with SMTP id r142so14516678pfc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 07:08:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=YArSjINoQ5yFdh8yhL0SWy97FyGsngj+ePsB8IsMtuk=;
-        b=G4GSAjXqkH7v1r0zs4lDF6E9UT7FKFXpj4E7s9CEikxJUJa+nKK13rLt8bs3HCWvTQ
-         owPBNlpUGdzFqMnqtQ2NkYY/iBm2eu8BKTgDoNGu+B4JOGaX3tDiamPwzJeQ3q2op2Kx
-         sPjtqlRxNnVNgHsypoijWUQbZP/DlRJf5d2NqDWSzoMy5hB/J5Df3H4vG54RRGK2DvZI
-         JyS+ceOyXqHTd/swUhFIlKqRMhXEzx2jkpJLwtBT0zSkCwRt103O4KLHw2s6noVHAt68
-         /HRDjhn1t435dIdGVTqCgKFVEWVo3ykD+CUISFdEdqNEB7GiX75yv6H24aE1zkfLtwTX
-         fO0A==
-X-Gm-Message-State: APjAAAVzeQZP54YxHhBvsrj0I2I4gwN+cLEjq0wJ9XcAYwZMrs+q/RG3
-        A5pLYJ23gl6sqOG+8zw3shUDrpOaH1g5mbcDV83bBz/macHwGv6U2iYe6ZQvICNuOe6kvj79pjt
-        9UtCRKKoXXLIklF1hGyyqgnwGxoMaoMc7Y/kcrRAwdA==
-X-Received: by 2002:a63:e807:: with SMTP id s7mr39993814pgh.194.1563372514782;
-        Wed, 17 Jul 2019 07:08:34 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwlK6Qi5Xq0uNYDu0Hh6e2GHdN6OYbWnhf+LwNe56dEfyhwoAbcSFb9/k/IBE3NMcL02+5NqQ==
-X-Received: by 2002:a63:e807:: with SMTP id s7mr39993775pgh.194.1563372514392;
-        Wed, 17 Jul 2019 07:08:34 -0700 (PDT)
-Received: from 2001-b011-380f-3c20-3096-77ea-5bd6-2b56.dynamic-ip6.hinet.net (2001-b011-380f-3c20-3096-77ea-5bd6-2b56.dynamic-ip6.hinet.net. [2001:b011:380f:3c20:3096:77ea:5bd6:2b56])
-        by smtp.gmail.com with ESMTPSA id q24sm21479100pjp.14.2019.07.17.07.08.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Jul 2019 07:08:33 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH v2 1/3] Bluetooth: btintel: Add firmware lock function
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <7CE1949F-76D2-4D27-82B6-02124E62DF5C@holtmann.org>
-Date:   Wed, 17 Jul 2019 22:08:30 +0800
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>,
-        Luciano Coelho <luciano.coelho@intel.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>, linuxwifi@intel.com,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-Message-Id: <B50A91CA-7379-42F9-8335-8FE4A51BE66F@canonical.com>
-References: <20190717074920.21624-1-kai.heng.feng@canonical.com>
- <7CE1949F-76D2-4D27-82B6-02124E62DF5C@holtmann.org>
-To:     Marcel Holtmann <marcel@holtmann.org>
-X-Mailer: Apple Mail (2.3445.104.11)
+        id S1727642AbfGQOK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 10:10:28 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:52744 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726085AbfGQOK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 10:10:28 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1954BA62BC597510B337;
+        Wed, 17 Jul 2019 22:10:22 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Wed, 17 Jul 2019
+ 22:10:16 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <keescook@chromium.org>, <gustavo@embeddedor.com>,
+        <terrelln@fb.com>, <clm@fb.com>, <yamada.masahiro@socionext.com>
+CC:     <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] lib: zstd: Make ZSTD_compressBlock_greedy_extDict static
+Date:   Wed, 17 Jul 2019 17:18:52 +0800
+Message-ID: <20190717091852.50808-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 21:36, Marcel Holtmann <marcel@holtmann.org> wrote:
+Fix sparse warnings:
 
-> Hi Kai-Heng,
->
->> When Intel 8260 starts to load Bluetooth firmware and WiFi firmware, by
->> calling btintel_download_firmware() and iwl_pcie_load_given_ucode_8000()
->> respectively, the Bluetooth btintel_download_firmware() aborts half way:
->> [   11.950216] Bluetooth: hci0: Failed to send firmware data (-38)
->>
->> Let btusb and iwlwifi load firmwares exclusively can avoid the issue, so
->> introduce a lock to use in btusb and iwlwifi.
->>
->> This issue still occurs with latest WiFi and Bluetooth firmwares.
->>
->> BugLink: https://bugs.launchpad.net/bugs/1832988
->>
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
->> v2:
->> - Add bug report link.
->> - Rebase on latest wireless-next.
->>
->> drivers/bluetooth/btintel.c   | 14 ++++++++++++++
->> drivers/bluetooth/btintel.h   | 10 ++++++++++
->> include/linux/intel-wifi-bt.h |  8 ++++++++
->> 3 files changed, 32 insertions(+)
->> create mode 100644 include/linux/intel-wifi-bt.h
->>
->> diff --git a/drivers/bluetooth/btintel.c b/drivers/bluetooth/btintel.c
->> index bb99c8653aab..93ab18d6ddad 100644
->> --- a/drivers/bluetooth/btintel.c
->> +++ b/drivers/bluetooth/btintel.c
->> @@ -20,6 +20,8 @@
->>
->> #define BDADDR_INTEL (&(bdaddr_t) {{0x00, 0x8b, 0x9e, 0x19, 0x03, 0x00}})
->>
->> +static DEFINE_MUTEX(firmware_lock);
->> +
->> int btintel_check_bdaddr(struct hci_dev *hdev)
->> {
->> 	struct hci_rp_read_bd_addr *bda;
->> @@ -709,6 +711,18 @@ int btintel_download_firmware(struct hci_dev *hdev,  
->> const struct firmware *fw,
->> }
->> EXPORT_SYMBOL_GPL(btintel_download_firmware);
->>
->> +void btintel_firmware_lock(void)
->> +{
->> +	mutex_lock(&firmware_lock);
->> +}
->> +EXPORT_SYMBOL_GPL(btintel_firmware_lock);
->> +
->> +void btintel_firmware_unlock(void)
->> +{
->> +	mutex_unlock(&firmware_lock);
->> +}
->> +EXPORT_SYMBOL_GPL(btintel_firmware_unlock);
->> +
->
-> so I am not in favor of this solution. The hardware guys should start  
-> looking into fixing the firmware loading and provide proper firmware that  
-> can be loaded at the same time.
+lib/zstd/compress.c:2252:6: warning:
+ symbol 'ZSTD_compressBlock_greedy_extDict' was not declared. Should it be static?
+lib/zstd/compress.c:2982:14: warning:
+ symbol 'ZSTD_createCStream_advanced' was not declared. Should it be static?
 
-Of course it’s much better to fix from hardware side.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ lib/zstd/compress.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
->
-> I am also not for sure penalizing all Intel Bluetooth/WiFi combos only  
-> because one of them has a bug during simultaneous loading of WiFi and  
-> Bluetooth firmware.
-
-Yes, it’s not ideal.
-
->
-> Frankly it would be better to detect a failed load and try a second time  
-> instead of trying to lock each other out. The cross-contamination of WiFi  
-> and Bluetooth drivers is just not clean.
-
-Ok. Where do you think is better to handle it, Bluetooth core or USB core?
-
-Kai-Heng
-
->
-> Regards
->
-> Marcel
+diff --git a/lib/zstd/compress.c b/lib/zstd/compress.c
+index 5e0b67003e55..651d686c00b6 100644
+--- a/lib/zstd/compress.c
++++ b/lib/zstd/compress.c
+@@ -2249,7 +2249,11 @@ void ZSTD_compressBlock_lazy_extDict_generic(ZSTD_CCtx *ctx, const void *src, si
+ 	}
+ }
+ 
+-void ZSTD_compressBlock_greedy_extDict(ZSTD_CCtx *ctx, const void *src, size_t srcSize) { ZSTD_compressBlock_lazy_extDict_generic(ctx, src, srcSize, 0, 0); }
++static void ZSTD_compressBlock_greedy_extDict(ZSTD_CCtx *ctx, const void *src,
++					      size_t srcSize)
++{
++	ZSTD_compressBlock_lazy_extDict_generic(ctx, src, srcSize, 0, 0);
++}
+ 
+ static void ZSTD_compressBlock_lazy_extDict(ZSTD_CCtx *ctx, const void *src, size_t srcSize)
+ {
+@@ -2979,7 +2983,7 @@ size_t ZSTD_CStreamWorkspaceBound(ZSTD_compressionParameters cParams)
+ 	return ZSTD_CCtxWorkspaceBound(cParams) + ZSTD_ALIGN(sizeof(ZSTD_CStream)) + ZSTD_ALIGN(inBuffSize) + ZSTD_ALIGN(outBuffSize);
+ }
+ 
+-ZSTD_CStream *ZSTD_createCStream_advanced(ZSTD_customMem customMem)
++static ZSTD_CStream *ZSTD_createCStream_advanced(ZSTD_customMem customMem)
+ {
+ 	ZSTD_CStream *zcs;
+ 
+-- 
+2.20.1
 
 
