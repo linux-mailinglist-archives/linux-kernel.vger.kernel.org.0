@@ -2,94 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 651AA6B8BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 11:00:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09A2A6B8C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 11:02:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729587AbfGQI6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 04:58:11 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:40685 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725951AbfGQI6H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 04:58:07 -0400
-Received: by mail-io1-f69.google.com with SMTP id v11so26377223iop.7
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 01:58:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=xGhpke50w1HUdO4d+bMv4tRJs7OApHioe/mQSw+3RDI=;
-        b=AetM0RAJCCIouxQSntVqX/fvj1modX9i6ek75aRQoiKnnyXLNpUY+7ubVkXxCxzQ9q
-         AT1VXf+/Hz5ThTYvqFEhULNLLTynLS63KruORJFAN18xa72I4Adxdsjly3VfjcmA01jB
-         xu5pwyL7swFKhwP9+ulZp1M7WIMZRRQYJpFB7CyI5jBFDV7CFMMmbxkCODm7LrCoAMhV
-         4KfpWrRvt3zaJbYINzxOWu3AjUYagyXkcgTkfbmxdf/QwaY5BwV7/x2f5AwMU/rhUe3l
-         I6q6YfhStE2okE6Q5RICK5ll8IIdAOxGCt3MVk+MJL/sjqZpKnu7d9ioUoAbsa2Usx+/
-         8OHg==
-X-Gm-Message-State: APjAAAWRrYhV1uG0QdiJe0Gi3eLvldvpvHK51ki7l9/PL0CZV5Xeq42Q
-        22vk4BF6tLPmCoEo0gpMHMFuwGd7bokbGY2ZoR7nxu/BVAQ1
-X-Google-Smtp-Source: APXvYqw7It60pOBuNYJfJLi1piGKUvvfXpqDCoRvvkiel4I1k+kLvg6kN7FksQE73xl+q4o2wU76sxcen7uKp5mgmj9gq5yWQ7Dj
-MIME-Version: 1.0
-X-Received: by 2002:a5d:9e48:: with SMTP id i8mr34368541ioi.51.1563353887164;
- Wed, 17 Jul 2019 01:58:07 -0700 (PDT)
-Date:   Wed, 17 Jul 2019 01:58:07 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001a51c4058ddcb1b6@google.com>
-Subject: kernel panic: stack is corrupted in pointer
-From:   syzbot <syzbot+79f5f028005a77ecb6bb@syzkaller.appspotmail.com>
-To:     airlied@linux.ie, alexander.deucher@amd.com,
-        amd-gfx@lists.freedesktop.org, ast@kernel.org,
-        christian.koenig@amd.com, daniel@iogearbox.net,
-        david1.zhou@amd.com, dri-devel@lists.freedesktop.org,
-        leo.liu@amd.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        id S1726114AbfGQJCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 05:02:24 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:49520 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725873AbfGQJCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 05:02:24 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4D3741A0174;
+        Wed, 17 Jul 2019 11:02:22 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 79D371A00FF;
+        Wed, 17 Jul 2019 11:02:15 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id F0931402D5;
+        Wed, 17 Jul 2019 17:02:06 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     ulf.hansson@linaro.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linus.walleij@linaro.org, stefan.wahren@i2se.com,
+        kstewart@linuxfoundation.org, tglx@linutronix.de,
+        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] mmc: mxs: use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 17 Jul 2019 16:52:59 +0800
+Message-Id: <20190717085259.31235-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Anson Huang <Anson.Huang@nxp.com>
 
-syzbot found the following crash on:
+Use the new helper devm_platform_ioremap_resource() which wraps the
+platform_get_resource() and devm_ioremap_resource() together, to
+simplify the code.
 
-HEAD commit:    1438cde7 Add linux-next specific files for 20190716
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13988058600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3430a151e1452331
-dashboard link: https://syzkaller.appspot.com/bug?extid=79f5f028005a77ecb6bb
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111fc8afa00000
-
-The bug was bisected to:
-
-commit 96a5d8d4915f3e241ebb48d5decdd110ab9c7dcf
-Author: Leo Liu <leo.liu@amd.com>
-Date:   Fri Jul 13 15:26:28 2018 +0000
-
-     drm/amdgpu: Make sure IB tests flushed after IP resume
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14a46200600000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=16a46200600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12a46200600000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+79f5f028005a77ecb6bb@syzkaller.appspotmail.com
-Fixes: 96a5d8d4915f ("drm/amdgpu: Make sure IB tests flushed after IP  
-resume")
-
-Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in:  
-pointer+0x702/0x750 lib/vsprintf.c:2187
-Shutting down cpus with NMI
-Kernel Offset: disabled
-
-
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/mmc/host/mxs-mmc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
+index b334e81..78e7e35 100644
+--- a/drivers/mmc/host/mxs-mmc.c
++++ b/drivers/mmc/host/mxs-mmc.c
+@@ -571,7 +571,6 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct mxs_mmc_host *host;
+ 	struct mmc_host *mmc;
+-	struct resource *iores;
+ 	int ret = 0, irq_err;
+ 	struct regulator *reg_vmmc;
+ 	struct mxs_ssp *ssp;
+@@ -587,8 +586,7 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+ 	host = mmc_priv(mmc);
+ 	ssp = &host->ssp;
+ 	ssp->dev = &pdev->dev;
+-	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	ssp->base = devm_ioremap_resource(&pdev->dev, iores);
++	ssp->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(ssp->base)) {
+ 		ret = PTR_ERR(ssp->base);
+ 		goto out_mmc_free;
+-- 
+2.7.4
+
