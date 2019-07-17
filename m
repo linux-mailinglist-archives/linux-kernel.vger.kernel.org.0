@@ -2,317 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B6EF6B758
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 09:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D3106B75E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 09:39:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726020AbfGQHaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 03:30:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38190 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725873AbfGQHaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 03:30:13 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CBB2C22386C;
-        Wed, 17 Jul 2019 07:30:12 +0000 (UTC)
-Received: from krava (unknown [10.43.17.77])
-        by smtp.corp.redhat.com (Postfix) with SMTP id DAD191001DC0;
-        Wed, 17 Jul 2019 07:30:06 +0000 (UTC)
-Date:   Wed, 17 Jul 2019 09:30:06 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Kyle Meyer <meyerk@hpe.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Kyle Meyer <kyle.meyer@hpe.com>
-Subject: Re: [PATCH] [PATCH v2] perf: Modify MAX_NR_CPUS and MAX_CACHES
-Message-ID: <20190717073006.GA1107@krava>
-References: <20190628153555.172539-1-meyerk@stormcage.eag.rdlabs.hpecorp.net>
+        id S1726215AbfGQHjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 03:39:08 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34800 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfGQHjI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 03:39:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=J0DX3eo5YEZ7czByoiftQzjyznMsu/Ci0NQ1fe80Fhk=; b=rjLQ3kgp2imt9Tw8aCCls2UXV
+        8rm2o/GZHLT7HQtRFT3j/Jid7nIOOfPDdBgX+t3RitxkA+6m59gFHdn6j+/5VlXZw3qeIx+YG+Nmd
+        R5OxzI3p1RAKYpdlvaJIyNHP5RrW08vQVA1K/ZB9FiatcAWB09TxLBx/UCNAwsQfOSjOBAJooiqhs
+        uwf/XsndXJMUVtsaE8qYAJZo3JhalQudl9GVbex/IFOcyNwTUOQl9NTIMrv1V13hzqgFA9iI2MdEy
+        v8DL73Y8VoL/G8tXUX7TVYdIA4UC+zgCVzkBI0KvSgmXPKnpzM3VnKznDw6BAUV5TOUHbgD/j/F1h
+        wrQO+iQsw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hneWB-0008Jf-1f; Wed, 17 Jul 2019 07:38:27 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 58BB92059DEA3; Wed, 17 Jul 2019 09:38:24 +0200 (CEST)
+Date:   Wed, 17 Jul 2019 09:38:24 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Christoph Hellwig <hch@lst.de>, Tejun Heo <tj@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Daniel Wagner <wagi@monom.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Clark Williams <clark.williams@gmail.com>,
+        Julia Cartwright <julia@ni.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [patch 1/1] Kconfig: Introduce CONFIG_PREEMPT_RT
+Message-ID: <20190717073824.GT3419@hirez.programming.kicks-ass.net>
+References: <20190715150402.798499167@linutronix.de>
+ <20190715150601.205143057@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190628153555.172539-1-meyerk@stormcage.eag.rdlabs.hpecorp.net>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 17 Jul 2019 07:30:12 +0000 (UTC)
+In-Reply-To: <20190715150601.205143057@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 28, 2019 at 10:35:55AM -0500, Kyle Meyer wrote:
-> Perf surpasses the limit of MAX_NR_CPUS and MAX_CACHES while attempting to
-> profile 1024 or more CPUs. Increase and/or make each limit dynamic to
-> regain normal functionality.
+On Mon, Jul 15, 2019 at 05:04:03PM +0200, Thomas Gleixner wrote:
+> Add a new entry to the preemption menu which enables the real-time support
+> for the kernel. The choice is only enabled when an architecture supports
+> it.
 > 
-> Before:
-> 	perf record -a
-> 	[ perf record: Woken up X times to write data ]
-> 	way too many cpu caches..
-> 	[ perf record: Captured and wrote X MB perf.data (X samples) ]
+> It selects PREEMPT as the RT features depend on it. To achieve that the
+> existing PREEMPT choice is renamed to PREEMPT_LL which select PREEMPT as
+> well.
 > 
-> 	perf report -C 1024
-> 	Error: failed to set  cpu bitmap
-> 	Requested CPU 1024 too large. Consider raising MAX_NR_CPUS
+> No functional change.
 > 
-> After:
-> 	perf record -a
-> 	[ perf record: Woken up X times to write data ]
-> 	[ perf record: Captured and wrote X MB perf.data (X samples) ]
-> 
-> 	perf report -C 1024
-> 	...
-> 
-> The variables nr_cpus_onln and max_caches are alternatives for MAX_NR_CPUS
-> and MAX_CACHES, they are initialized at runtime. MAX_NR_CPUS is increased
-> from 1024 to 2048 as it is still used by DECLARE_BITMAP() at compile time,
-> nr_cpus_onln replaces it elsewhere throughout perf.
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-I overlooked this one and it no longer applies because of
-another change from you:
-  9f94c7f947e9 perf tools: Increase MAX_NR_CPUS and MAX_CACHES
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-my worry here (did not check completely) is that some paths you
-changed can't use number of cpus from sysconf(_SC_NPROCESSORS_ONLN),
-because they are within the report code path, and the data can come
-from another machine with different number of cpus
-
-jirka
-
-
-> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Jiri Olsa <jolsa@redhat.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Russ Anderson <russ.anderson@hpe.com>
-> Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
 > ---
->  tools/perf/perf.c           |  6 ++++++
->  tools/perf/perf.h           |  3 ++-
->  tools/perf/util/cpumap.c    |  6 +++---
->  tools/perf/util/header.c    |  7 +++----
->  tools/perf/util/machine.c   | 11 +++++------
->  tools/perf/util/session.c   |  5 ++---
->  tools/perf/util/stat.c      |  4 ++--
->  tools/perf/util/svghelper.c | 10 +++++-----
->  8 files changed, 28 insertions(+), 24 deletions(-)
+>  arch/Kconfig           |    3 +++
+>  kernel/Kconfig.preempt |   25 +++++++++++++++++++++++--
+>  2 files changed, 26 insertions(+), 2 deletions(-)
 > 
-> diff --git a/tools/perf/perf.c b/tools/perf/perf.c
-> index 72df4b6fa36f..c2c22476a65f 100644
-> --- a/tools/perf/perf.c
-> +++ b/tools/perf/perf.c
-> @@ -427,6 +427,12 @@ int main(int argc, const char **argv)
->  	const char *cmd;
->  	char sbuf[STRERR_BUFSIZE];
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -809,6 +809,9 @@ config ARCH_NO_COHERENT_DMA_MMAP
+>  config ARCH_NO_PREEMPT
+>  	bool
 >  
-> +	nr_cpus_onln = sysconf(_SC_NPROCESSORS_ONLN);
-> +	if (nr_cpus_onln < 0) {
-> +		fprintf(stderr, "Cannot determine the number of CPUs currently online.\n");
-> +		goto out;
-> +	}
-> +	
->  	/* libsubcmd init */
->  	exec_cmd_init("perf", PREFIX, PERF_EXEC_PATH, EXEC_PATH_ENVIRONMENT);
->  	pager_init(PERF_PAGER_ENVIRONMENT);
-> diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-> index 711e009381ec..603391cac85b 100644
-> --- a/tools/perf/perf.h
-> +++ b/tools/perf/perf.h
-> @@ -26,9 +26,10 @@ static inline unsigned long long rdclock(void)
->  }
+> +config ARCH_SUPPORTS_RT
+> +	bool
+> +
+>  config CPU_NO_EFFICIENT_FFS
+>  	def_bool n
 >  
->  #ifndef MAX_NR_CPUS
-> -#define MAX_NR_CPUS			1024
-> +#define MAX_NR_CPUS			2048
->  #endif
+> --- a/kernel/Kconfig.preempt
+> +++ b/kernel/Kconfig.preempt
+> @@ -35,10 +35,10 @@ config PREEMPT_VOLUNTARY
 >  
-> +int nr_cpus_onln;
->  extern const char *input_name;
->  extern bool perf_host, perf_guest;
->  extern const char perf_version_string[];
-> diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
-> index c11a459ca582..83c05afef063 100644
-> --- a/tools/perf/util/cpumap.c
-> +++ b/tools/perf/util/cpumap.c
-> @@ -72,7 +72,7 @@ struct cpu_map *cpu_map__read(FILE *file)
->  			int new_max = nr_cpus + cpu - prev - 1;
+>  	  Select this if you are building a kernel for a desktop system.
 >  
->  			if (new_max >= max_entries) {
-> -				max_entries = new_max + MAX_NR_CPUS / 2;
-> +				max_entries = new_max + nr_cpus_onln / 2;
->  				tmp = realloc(tmp_cpus, max_entries * sizeof(int));
->  				if (tmp == NULL)
->  					goto out_free_tmp;
-> @@ -83,7 +83,7 @@ struct cpu_map *cpu_map__read(FILE *file)
->  				tmp_cpus[nr_cpus++] = prev;
->  		}
->  		if (nr_cpus == max_entries) {
-> -			max_entries += MAX_NR_CPUS;
-> +			max_entries += nr_cpus_onln;
->  			tmp = realloc(tmp_cpus, max_entries * sizeof(int));
->  			if (tmp == NULL)
->  				goto out_free_tmp;
-> @@ -170,7 +170,7 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
->  					goto invalid;
+> -config PREEMPT
+> +config PREEMPT_LL
+>  	bool "Preemptible Kernel (Low-Latency Desktop)"
+>  	depends on !ARCH_NO_PREEMPT
+> -	select PREEMPT_COUNT
+> +	select PREEMPT
+>  	select UNINLINE_SPIN_UNLOCK if !ARCH_INLINE_SPIN_UNLOCK
+>  	help
+>  	  This option reduces the latency of the kernel by making
+> @@ -55,7 +55,28 @@ config PREEMPT
+>  	  embedded system with latency requirements in the milliseconds
+>  	  range.
 >  
->  			if (nr_cpus == max_entries) {
-> -				max_entries += MAX_NR_CPUS;
-> +				max_entries += nr_cpus_onln;
->  				tmp = realloc(tmp_cpus, max_entries * sizeof(int));
->  				if (tmp == NULL)
->  					goto invalid;
-> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-> index 06ddb6618ef3..78f1acb069ed 100644
-> --- a/tools/perf/util/header.c
-> +++ b/tools/perf/util/header.c
-> @@ -1121,16 +1121,15 @@ static int build_caches(struct cpu_cache_level caches[], u32 size, u32 *cntp)
->  	return 0;
->  }
+> +config PREEMPT_RT
+> +	bool "Fully Preemptible Kernel (Real-Time)"
+> +	depends on EXPERT && ARCH_SUPPORTS_RT
+> +	select PREEMPT
+> +	help
+> +	  This option turns the kernel into a real-time kernel by replacing
+> +	  various locking primitives (spinlocks, rwlocks, etc) with
+> +	  preemptible priority-inheritance aware variants, enforcing
+> +	  interrupt threading and introducing mechanisms to break up long
+> +	  non-preemtible sections. This makes the kernel, except for very
+> +	  low level and critical code pathes (entry code, scheduler, low
+> +	  level interrupt handling) fully preemtible and brings most
+> +	  execution contexts under scheduler control.
+> +
+> +	  Select this if you are building a kernel for systems which
+> +	  require real-time guarantees.
+> +
+>  endchoice
 >  
-> -#define MAX_CACHES 2000
-> -
->  static int write_cache(struct feat_fd *ff,
->  		       struct perf_evlist *evlist __maybe_unused)
->  {
-> -	struct cpu_cache_level caches[MAX_CACHES];
-> +	u32 max_caches = (nr_cpus_onln * 4);
-> +	struct cpu_cache_level caches[max_caches];
->  	u32 cnt = 0, i, version = 1;
->  	int ret;
->  
-> -	ret = build_caches(caches, MAX_CACHES, &cnt);
-> +	ret = build_caches(caches, max_caches, &cnt);
->  	if (ret)
->  		goto out;
->  
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index 17eec39e775e..b4d792dbeb1f 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -2593,7 +2593,7 @@ int __machine__synthesize_threads(struct machine *machine, struct perf_tool *too
->  
->  pid_t machine__get_current_tid(struct machine *machine, int cpu)
->  {
-> -	if (cpu < 0 || cpu >= MAX_NR_CPUS || !machine->current_tid)
-> +	if (cpu < 0 || cpu >= nr_cpus_onln || !machine->current_tid)
->  		return -1;
->  
->  	return machine->current_tid[cpu];
-> @@ -2610,16 +2610,15 @@ int machine__set_current_tid(struct machine *machine, int cpu, pid_t pid,
->  	if (!machine->current_tid) {
->  		int i;
->  
-> -		machine->current_tid = calloc(MAX_NR_CPUS, sizeof(pid_t));
-> +		machine->current_tid = calloc(nr_cpus_onln, sizeof(pid_t));
->  		if (!machine->current_tid)
->  			return -ENOMEM;
-> -		for (i = 0; i < MAX_NR_CPUS; i++)
-> +		for (i = 0; i < nr_cpus_onln; i++)
->  			machine->current_tid[i] = -1;
->  	}
->  
-> -	if (cpu >= MAX_NR_CPUS) {
-> -		pr_err("Requested CPU %d too large. ", cpu);
-> -		pr_err("Consider raising MAX_NR_CPUS\n");
-> +	if (cpu >= nr_cpus_onln) {
-> +		pr_err("Requested CPU %d too large, there are %d CPUs currently online.\n", cpu, nr_cpus_onln);
->  		return -EINVAL;
->  	}
->  
-> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-> index 54cf163347f7..8641364555fb 100644
-> --- a/tools/perf/util/session.c
-> +++ b/tools/perf/util/session.c
-> @@ -2289,9 +2289,8 @@ int perf_session__cpu_bitmap(struct perf_session *session,
->  	for (i = 0; i < map->nr; i++) {
->  		int cpu = map->map[i];
->  
-> -		if (cpu >= MAX_NR_CPUS) {
-> -			pr_err("Requested CPU %d too large. "
-> -			       "Consider raising MAX_NR_CPUS\n", cpu);
-> +		if (cpu >= nr_cpus_onln) {
-> +			pr_err("Requested CPU %d too large, there are %d CPUs currently online.\n", cpu, nr_cpus_onln);
->  			goto out_delete_map;
->  		}
->  
-> diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-> index d91fe754b6d2..9d4a3b96496a 100644
-> --- a/tools/perf/util/stat.c
-> +++ b/tools/perf/util/stat.c
-> @@ -207,7 +207,7 @@ void perf_evlist__reset_stats(struct perf_evlist *evlist)
->  static void zero_per_pkg(struct perf_evsel *counter)
->  {
->  	if (counter->per_pkg_mask)
-> -		memset(counter->per_pkg_mask, 0, MAX_NR_CPUS);
-> +		memset(counter->per_pkg_mask, 0, nr_cpus_onln);
->  }
->  
->  static int check_per_pkg(struct perf_evsel *counter,
-> @@ -226,7 +226,7 @@ static int check_per_pkg(struct perf_evsel *counter,
->  		return 0;
->  
->  	if (!mask) {
-> -		mask = zalloc(MAX_NR_CPUS);
-> +		mask = zalloc(nr_cpus_onln);
->  		if (!mask)
->  			return -ENOMEM;
->  
-> diff --git a/tools/perf/util/svghelper.c b/tools/perf/util/svghelper.c
-> index fab8a048d31b..6a8241932dce 100644
-> --- a/tools/perf/util/svghelper.c
-> +++ b/tools/perf/util/svghelper.c
-> @@ -705,7 +705,7 @@ static void scan_thread_topology(int *map, struct topology *t, int cpu, int *pos
->  
->  		for_each_set_bit(thr,
->  				 cpumask_bits(&t->sib_thr[i]),
-> -				 MAX_NR_CPUS)
-> +				 nr_cpus_onln)
->  			if (map[thr] == -1)
->  				map[thr] = (*pos)++;
->  	}
-> @@ -720,7 +720,7 @@ static void scan_core_topology(int *map, struct topology *t)
->  	for (i = 0; i < t->sib_core_nr; i++)
->  		for_each_set_bit(cpu,
->  				 cpumask_bits(&t->sib_core[i]),
-> -				 MAX_NR_CPUS)
-> +				 nr_cpus_onln)
->  			scan_thread_topology(map, t, cpu, &pos);
->  }
->  
-> @@ -737,7 +737,7 @@ static int str_to_bitmap(char *s, cpumask_t *b)
->  
->  	for (i = 0; i < m->nr; i++) {
->  		c = m->map[i];
-> -		if (c >= MAX_NR_CPUS) {
-> +		if (c >= nr_cpus_onln) {
->  			ret = -1;
->  			break;
->  		}
-> @@ -784,13 +784,13 @@ int svg_build_topology_map(char *sib_core, int sib_core_nr,
->  		sib_thr += strlen(sib_thr) + 1;
->  	}
->  
-> -	topology_map = malloc(sizeof(int) * MAX_NR_CPUS);
-> +	topology_map = malloc(sizeof(int) * nr_cpus_onln);
->  	if (!topology_map) {
->  		fprintf(stderr, "topology: no memory\n");
->  		goto exit;
->  	}
->  
-> -	for (i = 0; i < MAX_NR_CPUS; i++)
-> +	for (i = 0; i < nr_cpus_onln; i++)
->  		topology_map[i] = -1;
->  
->  	scan_core_topology(topology_map, &t);
-> -- 
-> 2.12.3
+>  config PREEMPT_COUNT
+>         bool
+> +
+> +config PREEMPT
+> +       bool
+> +       select PREEMPT_COUNT
+> 
 > 
