@@ -2,60 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4466D6B599
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 06:38:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1724A6B59B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 06:38:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726146AbfGQEi1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 00:38:27 -0400
-Received: from verein.lst.de ([213.95.11.211]:47036 "EHLO verein.lst.de"
+        id S1726543AbfGQEie (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 00:38:34 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:54889 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbfGQEi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 00:38:26 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 416C168B05; Wed, 17 Jul 2019 06:38:24 +0200 (CEST)
-Date:   Wed, 17 Jul 2019 06:38:24 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Christoph Lameter <cl@linux.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 1/3] mm: document zone device struct page reserved
- fields
-Message-ID: <20190717043824.GA4755@lst.de>
-References: <20190717001446.12351-1-rcampbell@nvidia.com> <20190717001446.12351-2-rcampbell@nvidia.com> <26a47482-c736-22c4-c21b-eb5f82186363@nvidia.com> <20190717042233.GA4529@lst.de> <ae3936eb-2c08-c4a4-f670-10f25c7e0ed8@nvidia.com>
+        id S1725799AbfGQEid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 00:38:33 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45pPfG6TYLz9s3l;
+        Wed, 17 Jul 2019 14:38:30 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1563338311;
+        bh=7o9BO0ADmmnMeCw0wqmCaRTFN+ZKwypcAxGKZdpgnH8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=X5ODQmuVyLfNoIKGCLu+tlRTXrGFI1NzAdzDXi+dNhzYhZ52JAHiH6ajzlN3GeRg+
+         Oh3H2hbICg2tzXiMQQZdmIv42dQDjvuHTUyMtlqc69Vc8yesT0CUZ46RQyfzh4clUd
+         XgeoS0OeA5BkcUogkbmMZGz57c/XmTDI/MBih8AHpPtK4DDNX4jvJqFtz/aZauPbs7
+         VWfrGCAWtflRWAGnrNqLtRAEtDuahMn7MdXBWbus65jHa59P4brEIR5wKDgqSyX6NS
+         Aw1LO7WJ7bWRN2F5kMB+cqyK0zmR6U+/ZTZGPOCdQGa0RZMH8XcEojfGZbuDf8rA3l
+         Ac2SrTUUrLbYg==
+Date:   Wed, 17 Jul 2019 14:38:30 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+Subject: Re: mmotm 2019-07-16-17-14 uploaded
+Message-ID: <20190717143830.7f7c3097@canb.auug.org.au>
+In-Reply-To: <8165e113-6da1-c4c0-69eb-37b2d63ceed9@infradead.org>
+References: <20190717001534.83sL1%akpm@linux-foundation.org>
+        <8165e113-6da1-c4c0-69eb-37b2d63ceed9@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae3936eb-2c08-c4a4-f670-10f25c7e0ed8@nvidia.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/dKk7_zXGQ.uoxSOd_E_Lg0m"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 09:31:33PM -0700, John Hubbard wrote:
-> OK, so just delete all the _zd_pad_* fields? Works for me. It's misleading to
-> calling something padding, if it's actually unavailable because it's used
-> in the other union, so deleting would be even better than commenting.
-> 
-> In that case, it would still be nice to have this new snippet, right?:
+--Sig_/dKk7_zXGQ.uoxSOd_E_Lg0m
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I hope willy can chime in a bit on his thoughts about how the union in
-struct page should look like.  The padding at the end of the sub-structs
-certainly looks pointless, and other places don't use it either.  But if
-we are using the other fields it almost seems to me like we only want to
-union the lru field in the first sub-struct instead of overlaying most
-of it.
+Hi Randy,
+
+On Tue, 16 Jul 2019 20:50:11 -0700 Randy Dunlap <rdunlap@infradead.org> wro=
+te:
+>
+> drivers/gpu/drm/amd/amdgpu/Kconfig contains this (from linux-next.patch):
+>=20
+> --- a/drivers/gpu/drm/amd/amdgpu/Kconfig~linux-next
+> +++ a/drivers/gpu/drm/amd/amdgpu/Kconfig
+> @@ -27,7 +27,12 @@ config DRM_AMDGPU_CIK
+>  config DRM_AMDGPU_USERPTR
+>  	bool "Always enable userptr write support"
+>  	depends on DRM_AMDGPU
+> +<<<<<<< HEAD
+>  	depends on HMM_MIRROR
+> +=3D=3D=3D=3D=3D=3D=3D
+> +	depends on ARCH_HAS_HMM
+> +	select HMM_MIRROR
+> +>>>>>>> linux-next/akpm-base =20
+>  	help
+>  	  This option selects CONFIG_HMM and CONFIG_HMM_MIRROR if it
+>  	  isn't already selected to enabled full userptr support.
+>=20
+> which causes a lot of problems.
+
+Luckily, I don't apply that patch (I instead merge the actual
+linux-next tree at that point) so this does not affect the linux-next
+included version of mmotm.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/dKk7_zXGQ.uoxSOd_E_Lg0m
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0upkYACgkQAVBC80lX
+0GxY4Af+Oq4/F8H+zsaZlffvr9kWxLnnkP6seTpuCtjL3Lrao+6kmrHwvRxWXRmb
+DqfVHihQ1LhaVW8VoP1GycoXaKBcQn0goSb15YVCUh/GPRhYnatbaUFZwk+ktGmq
+k6ln30+yEY2kKT0FzWwX8dovVmwJ1UCQY1D0wCVMItQB58CerSX4mnmZWinA6lfO
+NEX3APGd2tviTSbBhvy3O8GsCtLGmyX4WWT+TRWJqOZnHeuPLTsIDjDUCAhab/y6
+SY6uOswYK1uKKBRJu7ATwmaJP2DMV2rm6Ueq+XH9Mx/sw19RG2Nji8/EoDhQ1WRh
+Yc0S0HXamFnMIevXgk9IgqtFYoCrvA==
+=eNFs
+-----END PGP SIGNATURE-----
+
+--Sig_/dKk7_zXGQ.uoxSOd_E_Lg0m--
