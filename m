@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5231B6BBEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 13:52:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B99566BBF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 13:54:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732840AbfGQLvu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 07:51:50 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44464 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732650AbfGQLvt (ORCPT
+        id S1726760AbfGQLyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 07:54:33 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39027 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfGQLyd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 07:51:49 -0400
-Received: by mail-pf1-f196.google.com with SMTP id t16so10711210pfe.11
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 04:51:49 -0700 (PDT)
+        Wed, 17 Jul 2019 07:54:33 -0400
+Received: by mail-pl1-f194.google.com with SMTP id b7so11868576pls.6
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 04:54:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=GIJbr25lVT/D/Vy27DLzuKerhv8UbYHOIOCQJikwBFA=;
-        b=uIzwJ/ze91LaMB3BoL1PAbHbciev+otvhS8f4ghjEtZICozZi6YfWLlksybW7RfJ0w
-         ol5s203a37yS0N/j6P6msr0Cn7wmAtOdEA+oSWiYe8+nJcErHR2bCcuQ8lqR1s42okzP
-         fFrIHf6Uc38uyBGRDbcz2YxUkNNMN7d3DXupfXAH3T4izSWPcr9xnXFGgHDgZGRDNWFm
-         xXKfS3WW53MdkuPvAXfZUbvsyzckXH+dcknPhehbXdI3zL8kbZK9W7Kp8OymyGg/1FPk
-         y+tEpiS4sguwTasF3IEkweGCeeoDZUcXb/7UEKMuKaU2Qsm8N7Jan9Q5KeuRT0VVz23W
-         FmdQ==
+        bh=ftsA6SziUzB7mZMqtb+NPTOifNieeCki+4HWoD26B1Y=;
+        b=RX5DcqigpBS6JXUlYNzu9cmNMAC2grNOXp9WsR0aK0MCsioAXFeMRSMQHJR2oP1DOv
+         uTQp8odiUnxv/zpgKZZn/q9NJ/sGzWV3xfils+WM1YL69MBfwixBwgD5PQl6G+DEDe9p
+         AfLe1ruR/2eWKLQBC8yp5Y8mQ5//Z0Cz9PAjMzaXclRWCXSxAKI0xugHegeT/bJ5DFXT
+         83h5pYuhgK9CBpf+24Qr3WIsTvlaPdSR84jq7tYki4PP8woT1zPumXvGelaTRPWM6CRJ
+         aXeFOZKK+gKOnX7gpveGdh00ggAnBKZqVirZmWkPpls9LytJZ4yFtoNnohPTOHgNMMnv
+         9msg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GIJbr25lVT/D/Vy27DLzuKerhv8UbYHOIOCQJikwBFA=;
-        b=qBPp3A2I7qDZa3/E0we4Y0pzw28qzv/qrng69RhCdPkelxr7NoDYlE2vQLyhqEsYsy
-         n3yfWkeip5fKlJyHY3sqLcbRX+toZ1VTwz8narCce4O646cCylJBW2k53hi9pBJoo3Lf
-         XTaK4tfaCepL6mmV5sUGJx656LLD/Aty7j1Xa6akfRCW+YfDSfdp6+N10MoN5OdnwSNA
-         Vb01Oci3sNV/p8mVjklW5f+rPOTxsUvkesYrOYYqguBkx/Qgse4Hou/c0qWLPutQP2CD
-         HUhKYKolCeaWRDsWhg/1fG+QH+CcrEk3kBBRkwLPxD6ZPyrz4uw2be7OiUbACPdCElbu
-         wjvg==
-X-Gm-Message-State: APjAAAWNXOVvUhlIZAmXF7/HatCnc8OQU2cMDIZ6QAHwhTZL3s4m5E64
-        rUMrZ/FnbGAwvdBBpwkixIg=
-X-Google-Smtp-Source: APXvYqzZd5w1gpD8uRbzHmNaVRtBwb7cvYeYpwZdI59MbwsKJhhvaXtRon+6DReuMIy9nrRfH9xrow==
-X-Received: by 2002:a63:ee08:: with SMTP id e8mr16191189pgi.70.1563364309173;
-        Wed, 17 Jul 2019 04:51:49 -0700 (PDT)
+        bh=ftsA6SziUzB7mZMqtb+NPTOifNieeCki+4HWoD26B1Y=;
+        b=pLgOqFlIoCU2QsyCZYy1Mbikc0rXzwLv5ZCt+hQnC9dMwIflDE8bTHwvfotWQG2xaF
+         AOlmUHMsjCj2pG9zFu+1K10y74Z8Nv7J7he2TjKvkGZ7oRc0lapMws65zuabv8xkNoyQ
+         RoQvLqEyzc5hYWbj96NiqWlTrYbdM1f63D20uSt09wscBv4qVwAMeSuQEmSJRDv+gUJb
+         xlEHzF9yof3eEhD8OK5rhhHoHq3/s/KwD7Z5Om5mP28YKqNHAcbQnSmGc4tKdQUsIXja
+         teiNrddfxRm1affxH2GVXDHurVcg4/rxMa2aHSAwFcRp/HZXdlnxPWsHWvI6mkWxneff
+         mOrA==
+X-Gm-Message-State: APjAAAVAnviKfk5ocTCFvCpbHyWf3q8I3jI0z+piHOuQfJmvVUA8wf0I
+        WT31KcX5GjykbhhceOMDTm4fFVdQfaw=
+X-Google-Smtp-Source: APXvYqzO02oaG99jKfNVRblZVE5ffaRzjKmORg3MYGOu0u9fYxYJwDy/w8tVgyvu/Y2NMOte7qvNvw==
+X-Received: by 2002:a17:902:ea:: with SMTP id a97mr42227799pla.182.1563364472811;
+        Wed, 17 Jul 2019 04:54:32 -0700 (PDT)
 Received: from localhost ([123.213.206.190])
-        by smtp.gmail.com with ESMTPSA id u6sm20799749pjx.23.2019.07.17.04.51.47
+        by smtp.gmail.com with ESMTPSA id k8sm24242905pgm.14.2019.07.17.04.54.31
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Jul 2019 04:51:48 -0700 (PDT)
-Date:   Wed, 17 Jul 2019 20:51:45 +0900
+        Wed, 17 Jul 2019 04:54:32 -0700 (PDT)
+Date:   Wed, 17 Jul 2019 20:54:29 +0900
 From:   Minwoo Im <minwoo.im.dev@gmail.com>
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -53,69 +53,93 @@ Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
         Keith Busch <kbusch@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Minwoo Im <minwoo.im.dev@gmail.com>
-Subject: Re: [PATCH v2 2/3] nvme-pci: Add support for variable IO SQ element
- size
-Message-ID: <20190717115145.GB10495@minwoo-desktop>
+Subject: Re: [PATCH v2 3/3] nvme-pci: Add support for Apple 2018+ models
+Message-ID: <20190717115429.GC10495@minwoo-desktop>
 References: <20190717004527.30363-1-benh@kernel.crashing.org>
- <20190717004527.30363-2-benh@kernel.crashing.org>
+ <20190717004527.30363-3-benh@kernel.crashing.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190717004527.30363-2-benh@kernel.crashing.org>
+In-Reply-To: <20190717004527.30363-3-benh@kernel.crashing.org>
 User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-07-17 10:45:26, Benjamin Herrenschmidt wrote:
-> The size of a submission queue element should always be 6 (64 bytes)
-> by spec.
+On 19-07-17 10:45:27, Benjamin Herrenschmidt wrote:
+> Based on reverse engineering and original patch by
 > 
-> However some controllers such as Apple's are not properly implementing
-> the standard and require a different size.
+> Paul Pawlowski <paul@mrarm.io>
 > 
-> This provides the ground work for the subsequent quirks for these
-> controllers.
+> This adds support for Apple weird implementation of NVME in their
+> 2018 or later machines. It accounts for the twice-as-big SQ entries
+> for the IO queues, and the fact that only interrupt vector 0 appears
+> to function properly.
 > 
 > Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> ---
->  drivers/nvme/host/pci.c | 11 ++++++++---
->  include/linux/nvme.h    |  1 +
->  2 files changed, 9 insertions(+), 3 deletions(-)
 > 
+> # Conflicts:
+> #	drivers/nvme/host/core.c
+> ---
+>  drivers/nvme/host/nvme.h | 10 ++++++++++
+>  drivers/nvme/host/pci.c  | 21 ++++++++++++++++++++-
+>  2 files changed, 30 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+> index 716a876119c8..ced0e0a7e039 100644
+> --- a/drivers/nvme/host/nvme.h
+> +++ b/drivers/nvme/host/nvme.h
+> @@ -92,6 +92,16 @@ enum nvme_quirks {
+>  	 * Broken Write Zeroes.
+>  	 */
+>  	NVME_QUIRK_DISABLE_WRITE_ZEROES		= (1 << 9),
+> +
+> +	/*
+> +	 * Use only one interrupt vector for all queues
+> +	 */
+> +	NVME_QUIRK_SINGLE_VECTOR		= (1 << 10),
+> +
+> +	/*
+> +	 * Use non-standard 128 bytes SQEs.
+> +	 */
+> +	NVME_QUIRK_128_BYTES_SQES		= (1 << 11),
+>  };
+>  
+>  /*
 > diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index 8f006638452b..1637677afb78 100644
+> index 1637677afb78..7088971d4c42 100644
 > --- a/drivers/nvme/host/pci.c
 > +++ b/drivers/nvme/host/pci.c
-> @@ -28,7 +28,7 @@
->  #include "trace.h"
->  #include "nvme.h"
+> @@ -2081,6 +2081,13 @@ static int nvme_setup_irqs(struct nvme_dev *dev, unsigned int nr_io_queues)
+>  	dev->io_queues[HCTX_TYPE_DEFAULT] = 1;
+>  	dev->io_queues[HCTX_TYPE_READ] = 0;
 >  
-> -#define SQ_SIZE(q)	((q)->q_depth * sizeof(struct nvme_command))
-> +#define SQ_SIZE(q)	((q)->q_depth << (q)->sqes)
->  #define CQ_SIZE(q)	((q)->q_depth * sizeof(struct nvme_completion))
->  
->  #define SGES_PER_PAGE	(PAGE_SIZE / sizeof(struct nvme_sgl_desc))
-> @@ -100,6 +100,7 @@ struct nvme_dev {
->  	unsigned io_queues[HCTX_MAX_TYPES];
->  	unsigned int num_vecs;
->  	int q_depth;
-> +	int io_sqes;
->  	u32 db_stride;
->  	void __iomem *bar;
->  	unsigned long bar_mapped_size;
-> @@ -162,7 +163,7 @@ static inline struct nvme_dev *to_nvme_dev(struct nvme_ctrl *ctrl)
->  struct nvme_queue {
->  	struct nvme_dev *dev;
->  	spinlock_t sq_lock;
-> -	struct nvme_command *sq_cmds;
-> +	void *sq_cmds;
+> +	/*
+> +	 * Some Apple controllers require all queues to use the
+> +	 * first vector.
+> +	 */
+> +	if (dev->ctrl.quirks & NVME_QUIRK_SINGLE_VECTOR)
+> +		irq_queues = 1;
+> +
+>  	return pci_alloc_irq_vectors_affinity(pdev, 1, irq_queues,
+>  			      PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
+>  }
+> @@ -2322,7 +2329,16 @@ static int nvme_pci_enable(struct nvme_dev *dev)
+>  				io_queue_depth);
+>  	dev->db_stride = 1 << NVME_CAP_STRIDE(dev->ctrl.cap);
+>  	dev->dbs = dev->bar + 4096;
+> -	dev->io_sqes = NVME_NVM_IOSQES;
+> +
+> +	/*
+> +	 * Some Apple controllers require a non-standard SQE size.
+> +	 * Interestingly they also seem to ignore the CC:IOSQES register
+> +	 * so we don't bother updating it here.
+> +	 */
 
-It would be great if it can remain the existing data type for the
-SQEs...  But I'm fine with this also.
+That is really interesting.
 
-It looks good to me.
+This also looks good to me.
 
 Reviewed-by: Minwoo Im <minwoo.im.dev@gmail.com>
 
