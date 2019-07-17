@@ -2,104 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 284756BD36
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 15:37:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C1B26BD1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 15:36:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728272AbfGQNgz convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 17 Jul 2019 09:36:55 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:41254 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727063AbfGQNgx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 09:36:53 -0400
-Received: from [192.168.21.149] (unknown [157.25.100.178])
-        by mail.holtmann.org (Postfix) with ESMTPSA id A216DCECC9;
-        Wed, 17 Jul 2019 15:45:25 +0200 (CEST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH v2 1/3] Bluetooth: btintel: Add firmware lock function
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20190717074920.21624-1-kai.heng.feng@canonical.com>
-Date:   Wed, 17 Jul 2019 15:36:50 +0200
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        emmanuel.grumbach@intel.com, luciano.coelho@intel.com,
-        Johan Hedberg <johan.hedberg@gmail.com>, linuxwifi@intel.com,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <7CE1949F-76D2-4D27-82B6-02124E62DF5C@holtmann.org>
-References: <20190717074920.21624-1-kai.heng.feng@canonical.com>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-X-Mailer: Apple Mail (2.3445.104.11)
+        id S1727369AbfGQNgd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 09:36:33 -0400
+Received: from mga04.intel.com ([192.55.52.120]:36148 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726880AbfGQNgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 09:36:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2019 06:36:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,274,1559545200"; 
+   d="scan'208";a="191261813"
+Received: from local-michael-cet-test.sh.intel.com ([10.239.159.128])
+  by fmsmga004.fm.intel.com with ESMTP; 17 Jul 2019 06:36:31 -0700
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com
+Cc:     mst@redhat.com, rkrcmar@redhat.com, jmattson@google.com,
+        yu.c.zhang@intel.com, alazar@bitdefender.com,
+        Yang Weijiang <weijiang.yang@intel.com>
+Subject: [PATCH v4 0/9] Enable Sub-page Write Protection Support
+Date:   Wed, 17 Jul 2019 21:37:42 +0800
+Message-Id: <20190717133751.12910-1-weijiang.yang@intel.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kai-Heng,
+EPT-Based Sub-Page write Protection(SPP)is a HW capability which allows
+Virtual Machine Monitor(VMM) to specify write-permission for guest
+physical memory at a sub-page(128 byte) granularity. When this
+capability is enabled, the CPU enforces write-access check for sub-pages
+within a 4KB page.
 
-> When Intel 8260 starts to load Bluetooth firmware and WiFi firmware, by
-> calling btintel_download_firmware() and iwl_pcie_load_given_ucode_8000()
-> respectively, the Bluetooth btintel_download_firmware() aborts half way:
-> [   11.950216] Bluetooth: hci0: Failed to send firmware data (-38)
-> 
-> Let btusb and iwlwifi load firmwares exclusively can avoid the issue, so
-> introduce a lock to use in btusb and iwlwifi.
-> 
-> This issue still occurs with latest WiFi and Bluetooth firmwares.
-> 
-> BugLink: https://bugs.launchpad.net/bugs/1832988
-> 
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
-> v2:
-> - Add bug report link.
-> - Rebase on latest wireless-next.
-> 
-> drivers/bluetooth/btintel.c   | 14 ++++++++++++++
-> drivers/bluetooth/btintel.h   | 10 ++++++++++
-> include/linux/intel-wifi-bt.h |  8 ++++++++
-> 3 files changed, 32 insertions(+)
-> create mode 100644 include/linux/intel-wifi-bt.h
-> 
-> diff --git a/drivers/bluetooth/btintel.c b/drivers/bluetooth/btintel.c
-> index bb99c8653aab..93ab18d6ddad 100644
-> --- a/drivers/bluetooth/btintel.c
-> +++ b/drivers/bluetooth/btintel.c
-> @@ -20,6 +20,8 @@
-> 
-> #define BDADDR_INTEL (&(bdaddr_t) {{0x00, 0x8b, 0x9e, 0x19, 0x03, 0x00}})
-> 
-> +static DEFINE_MUTEX(firmware_lock);
-> +
-> int btintel_check_bdaddr(struct hci_dev *hdev)
-> {
-> 	struct hci_rp_read_bd_addr *bda;
-> @@ -709,6 +711,18 @@ int btintel_download_firmware(struct hci_dev *hdev, const struct firmware *fw,
-> }
-> EXPORT_SYMBOL_GPL(btintel_download_firmware);
-> 
-> +void btintel_firmware_lock(void)
-> +{
-> +	mutex_lock(&firmware_lock);
-> +}
-> +EXPORT_SYMBOL_GPL(btintel_firmware_lock);
-> +
-> +void btintel_firmware_unlock(void)
-> +{
-> +	mutex_unlock(&firmware_lock);
-> +}
-> +EXPORT_SYMBOL_GPL(btintel_firmware_unlock);
-> +
+The feature is targeted to provide fine-grained memory protection for
+usages such as device virtualization, memory check-point and VM
+introspection etc.
 
-so I am not in favor of this solution. The hardware guys should start looking into fixing the firmware loading and provide proper firmware that can be loaded at the same time.
+SPP is active when the "sub-page write protection" (bit 23) is 1 in
+Secondary VM-Execution Controls. The feature is backed with a Sub-Page
+Permission Table(SPPT), SPPT is referenced via a 64-bit control field
+called Sub-Page Permission Table Pointer (SPPTP) which contains a
+4K-aligned physical address.
 
-I am also not for sure penalizing all Intel Bluetooth/WiFi combos only because one of them has a bug during simultaneous loading of WiFi and Bluetooth firmware.
+Right now, only 4KB physical pages are supported for SPP. To enable SPP
+for certain physical page, we need to first make the physical page
+write-protected, then set bit 61 of the corresponding EPT leaf entry. 
+While HW walks EPT, if bit 61 is set, it traverses SPPT with the guset
+physical address to find out the sub-page permissions at the leaf entry.
+If the corresponding bit is set, write to sub-page is permitted,
+otherwise, SPP induced EPT vilation is generated.
 
-Frankly it would be better to detect a failed load and try a second time instead of trying to lock each other out. The cross-contamination of WiFi and Bluetooth drivers is just not clean.
+Please refer to the SPP introduction document in this patch set and
+Intel SDM for details:
 
-Regards
+Intel SDM:
+https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf
 
-Marcel
+Previous patch:
+https://lkml.org/lkml/2019/6/6/695
+
+Patch 1: Introduction to SPP.
+Patch 2: Add SPP related flags and control bits.
+Patch 3: Functions for SPPT setup.
+Patch 4: Add SPP access bitmaps for memslots.
+Patch 5: Low level implementation of SPP operations.
+Patch 6: Implement User space access IOCTLs.
+Patch 7: Handle SPP induced VMExit and EPT violation.
+Patch 8: Enable lazy mode SPPT setup.
+Patch 9: Handle memory remapping and reclaim.
+
+
+Change logs:
+
+V3 -> v4:
+  1. Modified documentation to make it consistent with patches.
+  2. Allocated SPPT root page in init_spp() instead of vmx_set_cr3() to
+     avoid SPPT miss error.
+  3. Added back co-developers and sign-offs.
+
+V2 -> V3:                                                                
+  1. Rebased patches to kernel 5.1 release                                
+  2. Deferred SPPT setup to EPT fault handler if the page is not
+     available while set_subpage() is being called.
+  3. Added init IOCTL to reduce extra cost if SPP is not used.
+  4. Refactored patch structure, cleaned up cross referenced functions.
+  5. Added code to deal with memory swapping/migration/shrinker cases.
+
+V2 -> V1:
+  1. Rebased to 4.20-rc1
+  2. Move VMCS change to a separated patch.
+  3. Code refine and Bug fix 
+
+
+Yang Weijiang (9):
+  Documentation: Introduce EPT based Subpage Protection
+  KVM: VMX: Add control flags for SPP enabling
+  KVM: VMX: Implement functions for SPPT paging setup
+  KVM: VMX: Introduce SPP access bitmap and operation functions
+  KVM: VMX: Add init/set/get functions for SPP
+  KVM: VMX: Introduce SPP user-space IOCTLs
+  KVM: VMX: Handle SPP induced vmexit and page fault
+  KVM: MMU: Enable Lazy mode SPPT setup
+  KVM: MMU: Handle host memory remapping and reclaim
+
+ Documentation/virtual/kvm/spp_kvm.txt | 173 ++++++++++
+ arch/x86/include/asm/cpufeatures.h    |   1 +
+ arch/x86/include/asm/kvm_host.h       |  26 +-
+ arch/x86/include/asm/vmx.h            |  10 +
+ arch/x86/include/uapi/asm/vmx.h       |   2 +
+ arch/x86/kernel/cpu/intel.c           |   4 +
+ arch/x86/kvm/mmu.c                    | 480 ++++++++++++++++++++++++++
+ arch/x86/kvm/mmu.h                    |   1 +
+ arch/x86/kvm/vmx/capabilities.h       |   5 +
+ arch/x86/kvm/vmx/vmx.c                | 129 +++++++
+ arch/x86/kvm/x86.c                    | 141 ++++++++
+ include/linux/kvm_host.h              |   9 +
+ include/uapi/linux/kvm.h              |  17 +
+ 13 files changed, 997 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/virtual/kvm/spp_kvm.txt
+
+-- 
+2.17.2
 
