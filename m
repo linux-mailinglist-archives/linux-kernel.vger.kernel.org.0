@@ -2,53 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1588D6BB8E
+	by mail.lfdr.de (Postfix) with ESMTP id 7F3E96BB8F
 	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 13:37:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731077AbfGQLg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 07:36:58 -0400
-Received: from foss.arm.com ([217.140.110.172]:46522 "EHLO foss.arm.com"
+        id S1731276AbfGQLhU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 07:37:20 -0400
+Received: from mail.monom.org ([188.138.9.77]:43202 "EHLO mail.monom.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728220AbfGQLg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 07:36:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13985337;
-        Wed, 17 Jul 2019 04:36:58 -0700 (PDT)
-Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC7D43F71F;
-        Wed, 17 Jul 2019 04:36:56 -0700 (PDT)
-Subject: Re: [PATCH] MAINTAINERS: Update my email address
-To:     Julien Thierry <julien.thierry@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu
-Cc:     will@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
-        james.morse@arm.com, suzuki.poulose@arm.com,
-        julien.thierry.kdev@gmail.com
-References: <1563359535-2762-1-git-send-email-julien.thierry@arm.com>
-From:   Marc Zyngier <maz@kernel.org>
-Organization: Approximate
-Message-ID: <8c908dbc-41f5-ea62-80a9-4d2e91fb17f5@kernel.org>
-Date:   Wed, 17 Jul 2019 12:36:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <1563359535-2762-1-git-send-email-julien.thierry@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1728220AbfGQLhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 07:37:19 -0400
+Received: from mail.monom.org (localhost [127.0.0.1])
+        by filter.mynetwork.local (Postfix) with ESMTP id C991A50048A;
+        Wed, 17 Jul 2019 13:37:17 +0200 (CEST)
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.monom.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        MISSING_MID autolearn=no autolearn_force=no version=3.4.2
+Received: from localhost (b9168f23.cgn.dg-w.de [185.22.143.35])
+        by mail.monom.org (Postfix) with ESMTPSA id 74843500294;
+        Wed, 17 Jul 2019 13:37:17 +0200 (CEST)
+Date:   Wed, 17 Jul 2019 13:37:17 +0200
+From:   Daniel Wagner <wagi@monom.org>
+Subject: [ANNOUNCE] 4.4.185-rt184
+Data:   Wed, 17 Jul 2019 11:28:31 -0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Julia Cartwright <julia@ni.com>, Pavel Machek <pavel@denx.de>
+Message-Id: <20190717113717.C991A50048A@mail.monom.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/07/2019 11:32, Julien Thierry wrote:
-> My @arm.com address will stop working in a couple of weeks. Update
-> MAINTAINERS and .mailmap files with an address I'll have access to.
-> 
-> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Hello RT Folks!
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+I'm pleased to announce the 4.4.185-rt184 stable release.
 
-	M.
--- 
-Jazz is not dead, it just smells funny...
+This release is just an update to the new stable 4.4.185 version and
+no RT specific changes have been made.
+
+There were a couple of merge conflicts. Nothing too scary but please
+verify the intermediated releases (v4.4.180-rt182 and v4.4.181-rt183)
+if I fixed the merge conflicts correctly.
+
+Known issues:
+
+- The stable v4.4.178 update includes bdf3c006b9a2 ("vmstat: make
+  vmstat_updater deferrable again and shut down on idle") which brakes
+  -rt. f01f17d3705b ("mm, vmstat: make quiet_vmstat lighter") fixes
+  this problem and was send to stable-rt but rejected. The patch
+  brakes NVIDIAs Jetson hardware. More investigation or even better
+  hardware to test is needed.
+
+You can get this release via the git tree at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+  branch: v4.4-rt
+  Head SHA1: 7ccd9a25e258c003b801fb59492752efab279b2e
+
+Or to build 4.4.185-rt184 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.4.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v4.x/patch-4.4.185.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/4.4/patch-4.4.185-rt184.patch.xz
+
+Enjoy!
+   Daniel
