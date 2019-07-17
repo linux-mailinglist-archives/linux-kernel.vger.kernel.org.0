@@ -2,83 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B25406BE03
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 16:16:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99E976BE05
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 16:16:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbfGQOPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 10:15:17 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48690 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726452AbfGQOPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 10:15:16 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id F0368F4209FD8FD70EA7;
-        Wed, 17 Jul 2019 22:15:13 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Wed, 17 Jul 2019
- 22:15:06 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <sre@kernel.org>, <linus.walleij@linaro.org>,
-        <lee.jones@linaro.org>, <loic.pallardy@st.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH 1/3] power: supply: ab8500: remove set but not used variables 'vbup33_vrtcn' and 'bup_vch_range'
-Date:   Wed, 17 Jul 2019 22:15:02 +0800
-Message-ID: <20190717141502.53968-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727738AbfGQOP3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 10:15:29 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:49622 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbfGQOP3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 10:15:29 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6HEFJVe036361;
+        Wed, 17 Jul 2019 09:15:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1563372919;
+        bh=wmbVRRCj0IguumeyCLY5alwgve2QCszThM26fNaNT+Y=;
+        h=From:To:CC:Subject:Date;
+        b=FL+rfY1tSw0CRmepUeFIGKWqbgEIkpZ8eJccIH74o24uxCCleH9Zj51c4aCuwdP2Q
+         uFDEUT4yOz8UC6L7x43DFU1HhdEs4ABUw2ArnBm3Qj2hcgltu8QBmD3z7wfQekmEiE
+         GmAp5CHpQv0munbNjwly3GORfeXCHvNCtHsaBsIk=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6HEFJTe075585
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 17 Jul 2019 09:15:19 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 17
+ Jul 2019 09:15:18 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 17 Jul 2019 09:15:18 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6HEFISC094769;
+        Wed, 17 Jul 2019 09:15:18 -0500
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <lee.jones@linaro.org>,
+        <daniel.thompson@linaro.org>, <jingoohan1@gmail.com>
+CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <tomi.valkeinen@ti.com>, Jean-Jacques Hiblot <jjhiblot@ti.com>
+Subject: [PATCH v4 0/4] Add a generic driver for LED-based backlight
+Date:   Wed, 17 Jul 2019 16:15:10 +0200
+Message-ID: <20190717141514.21171-1-jjhiblot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warnings:
+This series aims to add a led-backlight driver, similar to pwm-backlight,
+but using a LED class device underneath.
 
-drivers/power/supply/ab8500_charger.c:
- In function ab8500_charger_init_hw_registers:
-drivers/power/supply/ab8500_charger.c:3013:24: warning:
- variable vbup33_vrtcn set but not used [-Wunused-but-set-variable]
-drivers/power/supply/ab8500_charger.c:3013:5: warning:
- variable bup_vch_range set but not used [-Wunused-but-set-variable]
+A few years ago (2015), Tomi Valkeinen posted a series implementing a
+backlight driver on top of a LED device:
+https://patchwork.kernel.org/patch/7293991/
+https://patchwork.kernel.org/patch/7294001/
+https://patchwork.kernel.org/patch/7293981/
 
-They are not used since commit 4c4268dc97c4 ("power:
-supply: ab8500: Drop AB8540/9540 support")
+The discussion stopped because Tomi lacked the time to work on it.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/power/supply/ab8500_charger.c | 7 -------
- 1 file changed, 7 deletions(-)
+changes in v4:
+- fix dev_err() messages and commit logs following the advices of Pavel
+- cosmetic changes (indents, getting rid of  "? 1 : 0" in
+  led_match_led_node())
 
-diff --git a/drivers/power/supply/ab8500_charger.c b/drivers/power/supply/ab8500_charger.c
-index 30de448..270a48a 100644
---- a/drivers/power/supply/ab8500_charger.c
-+++ b/drivers/power/supply/ab8500_charger.c
-@@ -3010,7 +3010,6 @@ static int ab8500_charger_usb_get_property(struct power_supply *psy,
- static int ab8500_charger_init_hw_registers(struct ab8500_charger *di)
- {
- 	int ret = 0;
--	u8 bup_vch_range = 0, vbup33_vrtcn = 0;
- 
- 	/* Setup maximum charger current and voltage for ABB cut2.0 */
- 	if (!is_ab8500_1p1_or_earlier(di->parent)) {
-@@ -3111,12 +3110,6 @@ static int ab8500_charger_init_hw_registers(struct ab8500_charger *di)
- 		goto out;
- 	}
- 
--	/* Backup battery voltage and current */
--	if (di->bm->bkup_bat_v > BUP_VCH_SEL_3P1V)
--		bup_vch_range = BUP_VCH_RANGE;
--	if (di->bm->bkup_bat_v == BUP_VCH_SEL_3P3V)
--		vbup33_vrtcn = VBUP33_VRTCN;
--
- 	ret = abx500_set_register_interruptible(di->dev,
- 		AB8500_RTC,
- 		AB8500_RTC_BACKUP_CHG_REG,
+changes in v3:
+- dt binding: don't limit the brightness range to 0-255. Use the range of
+  the underlying LEDs. as a side-effect, all LEDs must now have the same
+  range
+- driver: Adapt to dt binding update.
+- driver: rework probe() for clarity and remove the remaining goto.
+
+changes in v2:
+- handle more than one LED.
+- don't make the backlight device a child of the LED controller.
+- make brightness-levels and default-brightness-level optional
+- removed the option to use a GPIO enable.
+- removed the option to use a regulator. It should be handled by the LED
+  core
+- don't make any change to the LED core (not needed anymore)
+
+Jean-Jacques Hiblot (2):
+  leds: Add managed API to get a LED from a device driver
+  dt-bindings: backlight: Add led-backlight binding
+
+Tomi Valkeinen (2):
+  leds: Add of_led_get() and led_put()
+  backlight: add led-backlight driver
+
+ .../bindings/leds/backlight/led-backlight.txt |  28 ++
+ drivers/leds/led-class.c                      |  92 ++++++
+ drivers/video/backlight/Kconfig               |   7 +
+ drivers/video/backlight/Makefile              |   1 +
+ drivers/video/backlight/led_bl.c              | 268 ++++++++++++++++++
+ include/linux/leds.h                          |   6 +
+ 6 files changed, 402 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
+ create mode 100644 drivers/video/backlight/led_bl.c
+
 -- 
-2.7.4
-
+2.17.1
 
