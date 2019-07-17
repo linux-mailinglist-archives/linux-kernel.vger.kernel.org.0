@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C6F96B8E3
+	by mail.lfdr.de (Postfix) with ESMTP id 866D26B8E4
 	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 11:08:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730308AbfGQJHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 05:07:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47462 "EHLO mx1.suse.de"
+        id S1730596AbfGQJHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 05:07:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47504 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726106AbfGQJHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 05:07:30 -0400
+        id S1726391AbfGQJHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 05:07:31 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 62F82AF40;
+        by mx1.suse.de (Postfix) with ESMTP id EBF48AF57;
         Wed, 17 Jul 2019 09:07:29 +0000 (UTC)
 From:   Oscar Salvador <osalvador@suse.de>
 To:     akpm@linux-foundation.org
@@ -21,9 +21,9 @@ Cc:     dan.j.williams@intel.com, david@redhat.com,
         pasha.tatashin@soleen.com, mhocko@suse.com,
         aneesh.kumar@linux.ibm.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v2 1/2] mm,sparse: Fix deactivate_section for early sections
-Date:   Wed, 17 Jul 2019 11:07:24 +0200
-Message-Id: <20190717090725.23618-2-osalvador@suse.de>
+Subject: [PATCH v2 2/2] mm,memory_hotplug: Fix shrink_{zone,node}_span
+Date:   Wed, 17 Jul 2019 11:07:25 +0200
+Message-Id: <20190717090725.23618-3-osalvador@suse.de>
 X-Mailer: git-send-email 2.13.7
 In-Reply-To: <20190717090725.23618-1-osalvador@suse.de>
 References: <20190717090725.23618-1-osalvador@suse.de>
@@ -32,55 +32,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-deactivate_section checks whether a section is early or not
-in order to either call free_map_bootmem() or depopulate_section_memmap().
-Being the former for sections added at boot time, and the latter for
-sections hotplugged.
+Since [1], shrink_{zone,node}_span work on PAGES_PER_SUBSECTION granularity.
+We need to adapt the loop that checks whether a zone/node contains only holes,
+and skip the whole range to be removed.
 
-The problem is that we zero section_mem_map, so the last early_section()
-will always report false and the section will not be removed.
+Otherwise, since sub-sections belonging to the range to be removed have not yet
+been deactivated, pfn_valid() will return true on those and we will be left
+with a wrong accounting of spanned_pages, both for the zone and the node.
 
-Fix this checking whether a section is early or not at function
-entry.
-
-Fixes: mmotm ("mm/sparsemem: Support sub-section hotplug")
+Fixes: mmotm ("mm/hotplug: prepare shrink_{zone, pgdat}_span for sub-section removal")
 Signed-off-by: Oscar Salvador <osalvador@suse.de>
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Reviewed-by: Dan Williams <dan.j.wiliams@intel.com>
 ---
- mm/sparse.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ mm/memory_hotplug.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 3267c4001c6d..1e224149aab6 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -738,6 +738,7 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
- 	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
- 	DECLARE_BITMAP(tmp, SUBSECTIONS_PER_SECTION) = { 0 };
- 	struct mem_section *ms = __pfn_to_section(pfn);
-+	bool section_is_early = early_section(ms);
- 	struct page *memmap = NULL;
- 	unsigned long *subsection_map = ms->usage
- 		? &ms->usage->subsection_map[0] : NULL;
-@@ -772,7 +773,7 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
- 	if (bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION)) {
- 		unsigned long section_nr = pfn_to_section_nr(pfn);
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index b9ba5b85f9f7..2a9bbddb0e55 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -422,8 +422,8 @@ static void shrink_zone_span(struct zone *zone, unsigned long start_pfn,
+ 		if (page_zone(pfn_to_page(pfn)) != zone)
+ 			continue;
  
--		if (!early_section(ms)) {
-+		if (!section_is_early) {
- 			kfree(ms->usage);
- 			ms->usage = NULL;
- 		}
-@@ -780,7 +781,7 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
- 		ms->section_mem_map = sparse_encode_mem_map(NULL, section_nr);
- 	}
+-		 /* If the section is current section, it continues the loop */
+-		if (start_pfn == pfn)
++		/* Skip range to be removed */
++		if (pfn >= start_pfn && pfn < end_pfn)
+ 			continue;
  
--	if (early_section(ms) && memmap)
-+	if (section_is_early && memmap)
- 		free_map_bootmem(memmap);
- 	else
- 		depopulate_section_memmap(pfn, nr_pages, altmap);
+ 		/* If we find valid section, we have nothing to do */
+@@ -487,8 +487,8 @@ static void shrink_pgdat_span(struct pglist_data *pgdat,
+ 		if (pfn_to_nid(pfn) != nid)
+ 			continue;
+ 
+-		 /* If the section is current section, it continues the loop */
+-		if (start_pfn == pfn)
++		/* Skip range to be removed */
++		if (pfn >= start_pfn && pfn < end_pfn)
+ 			continue;
+ 
+ 		/* If we find valid section, we have nothing to do */
 -- 
 2.12.3
 
