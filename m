@@ -2,104 +2,331 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFC9F6BA20
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 12:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A5916BA25
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 12:29:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730435AbfGQK2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 06:28:04 -0400
-Received: from mail-eopbgr10048.outbound.protection.outlook.com ([40.107.1.48]:63416
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725799AbfGQK2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 06:28:04 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RiEuithwOPv0/AbM0NAUjmobFggGATnc8jG9m3nuis9ER5qxyooorHG6Sf6GpMQlZ8ZWJ/geuHeXIphzUv1y28aPaNxkLaajA/JiOrAqnSJS6QdjqIxLviLNfvKSZ7IQ4vXFuLBEykDEqTB7cg7uHpVQgp8sIjwkREH24ZZSVUj/EN9obPe67kaO40OKDkApuS/HD/iMuEAI2HnlPtzc6mVcMprEJtDkgTxU/oiDeMn678fOLaDSU+DaIsX6breHdqHll3tnVuMKK1HOvgHDKoQlbUxV6KNmlLDqPAUz7rVfSS+deun57H1MKAlOtWRZNpZ9Lz0QUWoO336tvP0jxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E9z9OupLGqKNUGucJ9d7gqAUQar0j5zoRIwuYy5/7+I=;
- b=QDKtg3fhjuPFZERcSvrPv2SWAixy7alnjW57UGd+QjCwJxNtKPbpMBkxtdlqq8oqJ+3AHD18pQkiVbaFgdaFEXeJux/hIfMV2rRD7UK1Pzg6w2TkrUSboko24eYjIOltBcTIgehjUGJJHIeq49FdWf4OnRb5pZcfzshM3clHMCi1w3VrFwquPSi2IT0cFeX9Mo9RmyigE1KCU2vlBRQFgXmubTu+nC1t+E0OAPHDyyn4SJN695YH3U+4ztO3Zc6WZBs+Og984tBR04UWNpzbvbfva+VE44yIHB0KulLx8g7MXqpcC0YWbVgtdTH1x5E0BKRlVdYXmyePmubStFigng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
- header.d=nxp.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E9z9OupLGqKNUGucJ9d7gqAUQar0j5zoRIwuYy5/7+I=;
- b=HBnFqjSVBzTnv/SqB1MYMvMzwlD2JFQjKSDaMp/c6pMlW87W/sb9cs+VqOeK6Vnjhs53kU4WRUdlCG9S/3tFdhnUQmNZrR9KnxHO7rzeisN4ngICNPliIcHGMxROuKKvCR7RC3dCuozAiv1D5hDevFUjN2ZIuR+H0JoJpyN8oAM=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.92.158) by
- AM0PR04MB6306.eurprd04.prod.outlook.com (20.179.33.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.14; Wed, 17 Jul 2019 10:28:00 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::7882:51:e491:8431]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::7882:51:e491:8431%7]) with mapi id 15.20.2073.012; Wed, 17 Jul 2019
- 10:28:00 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Darshak Patel <Darshak.patel@einfochips.com>,
-        Kinjan Patel <Kinjan.patel@einfochips.com>,
-        Prajose John <Prajose.john@einfochips.com>
-Subject: RE: [PATCH 2/3] dt-bindings: arm: Document i.MX8QXP AI_ML board
- binding
-Thread-Topic: [PATCH 2/3] dt-bindings: arm: Document i.MX8QXP AI_ML board
- binding
-Thread-Index: AQHVPGZvwNKzqiH7KkCyVIF3qYYIH6bOm3TQ
-Date:   Wed, 17 Jul 2019 10:28:00 +0000
-Message-ID: <AM0PR04MB4211FDB909B4114B7B01232480C90@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20190717061039.9271-1-manivannan.sadhasivam@linaro.org>
- <20190717061039.9271-3-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20190717061039.9271-3-manivannan.sadhasivam@linaro.org>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f2585ce2-9e95-4897-4caa-08d70aa17188
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB6306;
-x-ms-traffictypediagnostic: AM0PR04MB6306:
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-microsoft-antispam-prvs: <AM0PR04MB630685F182C10EF754ACF38380C90@AM0PR04MB6306.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:407;
-x-forefront-prvs: 01018CB5B3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(376002)(366004)(346002)(396003)(199004)(189003)(7416002)(81166006)(81156014)(446003)(74316002)(2501003)(7736002)(25786009)(64756008)(66946007)(66476007)(66556008)(66446008)(86362001)(8936002)(478600001)(558084003)(68736007)(76116006)(54906003)(316002)(8676002)(110136005)(53936002)(76176011)(55016002)(5660300002)(6436002)(3846002)(4326008)(6116002)(66066001)(33656002)(52536014)(7696005)(11346002)(476003)(14454004)(2906002)(71190400001)(44832011)(305945005)(486006)(71200400001)(9686003)(6246003)(229853002)(186003)(102836004)(26005)(6506007)(2201001)(256004)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6306;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: /LCOlTy3JMeyHbu61a508Lip0HK16Zmaf1ObArlz2uK4lMS2N1iRQhPXKhiuiUSqxtjLj0KHPbzth9SRd+biGPQqU2ipnt+uW842llvIpGj+LiZUMwJsbH+vtdKACU9a9OA+dMCFqTt4R3OUAnpx2ISqAitVa72Bq4wlbKbrj5sTGl7jOVlsO+SyFhTellDD8kDnFTcMvZrgw+mSGsgCCUhihbe+udnx+jBT8AB7ml5+aaYF7ofKZMfPkDI6bTf1PTvY1Ga9wP+ruEGRFoQBL2waKldcI4xU2Q7P38yO3fON34qCbkPHGPJtMWmAqTojWwAeAtbVEtmK9GYUrMqvZ4F6UOjN57llKWZYO4WgRccefLxszmiabZhaZIdZ3Gd555ePGBWcC+DzqlnKtXl95vHBHK7j0uRkh/cy3KhBWaY=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1730732AbfGQK25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 06:28:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48164 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725936AbfGQK25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 06:28:57 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 11E6F335D6;
+        Wed, 17 Jul 2019 10:28:56 +0000 (UTC)
+Received: from redhat.com (ovpn-120-247.rdu2.redhat.com [10.10.120.247])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 1938919D7E;
+        Wed, 17 Jul 2019 10:28:13 +0000 (UTC)
+Date:   Wed, 17 Jul 2019 06:28:12 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yang Zhang <yang.zhang.wz@gmail.com>, pagupta@redhat.com,
+        Rik van Riel <riel@surriel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        lcapitulino@redhat.com, wei.w.wang@intel.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, dan.j.williams@intel.com,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Subject: Re: [PATCH v1 6/6] virtio-balloon: Add support for aerating memory
+ via hinting
+Message-ID: <20190717055804-mutt-send-email-mst@kernel.org>
+References: <20190619222922.1231.27432.stgit@localhost.localdomain>
+ <20190619223338.1231.52537.stgit@localhost.localdomain>
+ <20190716055017-mutt-send-email-mst@kernel.org>
+ <CAKgT0Uc-2k9o7pjtf-GFAgr83c7RM-RTJ8-OrEzFv92uz+MTDw@mail.gmail.com>
+ <20190716115535-mutt-send-email-mst@kernel.org>
+ <CAKgT0Ud47-cWu9VnAAD_Q2Fjia5gaWCz_L9HUF6PBhbugv6tCQ@mail.gmail.com>
+ <20190716125845-mutt-send-email-mst@kernel.org>
+ <CAKgT0UfgPdU1H5ZZ7GL7E=_oZNTzTwZN60Q-+2keBxDgQYODfg@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2585ce2-9e95-4897-4caa-08d70aa17188
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2019 10:28:00.6485
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aisheng.dong@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6306
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0UfgPdU1H5ZZ7GL7E=_oZNTzTwZN60Q-+2keBxDgQYODfg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 17 Jul 2019 10:28:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBNYW5pdmFubmFuIFNhZGhhc2l2YW0gPG1hbml2YW5uYW4uc2FkaGFzaXZhbUBsaW5h
-cm8ub3JnPg0KPiBTZW50OiBXZWRuZXNkYXksIEp1bHkgMTcsIDIwMTkgMjoxMSBQTQ0KPiANCj4g
-RG9jdW1lbnQgZGV2aWNldHJlZSBiaW5kaW5nIG9mIGkuTVg4UVhQIEFJX01MIGJvYXJkIGZyb20g
-RWluZm9jaGlwcy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1hbml2YW5uYW4gU2FkaGFzaXZhbSA8
-bWFuaXZhbm5hbi5zYWRoYXNpdmFtQGxpbmFyby5vcmc+DQoNClJldmlld2VkLWJ5OiBEb25nIEFp
-c2hlbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0KDQpSZWdhcmRzDQpBaXNoZW5nDQo=
+On Tue, Jul 16, 2019 at 02:06:59PM -0700, Alexander Duyck wrote:
+> On Tue, Jul 16, 2019 at 10:41 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+> 
+> <snip>
+> 
+> > > > This is what I am saying. Having watched that patchset being developed,
+> > > > I think that's simply because processing blocks required mm core
+> > > > changes, which Wei was not up to pushing through.
+> > > >
+> > > >
+> > > > If we did
+> > > >
+> > > >         while (1) {
+> > > >                 alloc_pages
+> > > >                 add_buf
+> > > >                 get_buf
+> > > >                 free_pages
+> > > >         }
+> > > >
+> > > > We'd end up passing the same page to balloon again and again.
+> > > >
+> > > > So we end up reserving lots of memory with alloc_pages instead.
+> > > >
+> > > > What I am saying is that now that you are developing
+> > > > infrastructure to iterate over free pages,
+> > > > FREE_PAGE_HINT should be able to use it too.
+> > > > Whether that's possible might be a good indication of
+> > > > whether the new mm APIs make sense.
+> > >
+> > > The problem is the infrastructure as implemented isn't designed to do
+> > > that. I am pretty certain this interface will have issues with being
+> > > given small blocks to process at a time.
+> > >
+> > > Basically the design for the FREE_PAGE_HINT feature doesn't really
+> > > have the concept of doing things a bit at a time. It is either
+> > > filling, stopped, or done. From what I can tell it requires a
+> > > configuration change for the virtio balloon interface to toggle
+> > > between those states.
+> >
+> > Maybe I misunderstand what you are saying.
+> >
+> > Filling state can definitely report things
+> > a bit at a time. It does not assume that
+> > all of guest free memory can fit in a VQ.
+> 
+> I think where you and I may differ is that you are okay with just
+> pulling pages until you hit OOM, or allocation failures. Do I have
+> that right?
+
+This is exactly what the current code does. But that's an implementation
+detail which came about because we failed to find any other way to
+iterate over free blocks.
+
+> In my mind I am wanting to perform the hinting on a small
+> block at a time and work through things iteratively.
+> 
+> The problem is the FREE_PAGE_HINT doesn't have the option of returning
+> pages until all pages have been pulled. It is run to completion and
+> will keep filling the balloon until an allocation fails and the host
+> says it is done.
+
+OK so there are two points. One is that FREE_PAGE_HINT does not
+need to allocate a page at all. It really just wants to
+iterate over free pages.
+
+
+The reason FREE_PAGE_HINT does not free up pages until we finished
+iterating over the free list it not a hypervisor API. The reason is we
+don't want to keep getting the same address over and over again.
+
+> I would prefer to avoid that as I prefer to simply
+> notify the host of a fixed block of pages at a time and let it process
+> without having to have a thread on each side actively pushing pages,
+> or listening for the incoming pages.
+
+Right. And FREE_PAGE_HINT can go even further. It can push a page and
+let linux use it immediately. It does not even need to wait for host to
+process anything unless the VQ gets full.
+
+> 
+> > > > > The basic idea with the bubble hinting was to essentially create mini
+> > > > > balloons. As such I had based the code off of the balloon inflation
+> > > > > code. The only spot where it really differs is that I needed the
+> > > > > ability to pass higher order pages so I tweaked thinks and passed
+> > > > > "hints" instead of "pfns".
+> > > >
+> > > > And that is fine. But there isn't really such a big difference with
+> > > > FREE_PAGE_HINT except FREE_PAGE_HINT triggers upon host request and not
+> > > > in response to guest load.
+> > >
+> > > I disagree, I believe there is a significant difference.
+> >
+> > Yes there is, I just don't think it's in the iteration.
+> > The iteration seems to be useful to hinting.
+> 
+> I agree that iteration is useful to hinting. The problem is the
+> FREE_PAGE_HINT code isn't really designed to be iterative. It is
+> designed to run with a polling thread on each side and it is meant to
+> be run to completion.
+
+Absolutely. But that's a bug I think.
+
+> > > The
+> > > FREE_PAGE_HINT code was implemented to be more of a streaming
+> > > interface.
+> >
+> > It's implemented like this but it does not follow from
+> > the interface. The implementation is a combination of
+> > attempts to minimize # of exits and minimize mm core changes.
+> 
+> The problem is the interface doesn't have a good way of indicating
+> that it is done with a block of pages.
+> 
+> So what I am probably looking at if I do a sg implementation for my
+> hinting is to provide one large sg block for all 32 of the pages I
+> might be holding.
+
+Right now if you pass an sg it will try to allocate a buffer
+on demand for you. If this is a problem I could come up
+with a new API that lets caller allocate the buffer.
+Let me know.
+
+> I'm assuming that will still be processed as one
+> contiguous block. With that I can then at least maintain a single
+> response per request.
+
+Why do you care? Won't a counter of outstanding pages be enough?
+Down the road maybe we could actually try to pipeline
+things a bit. So send 32 pages once you get 16 of these back
+send 16 more. Better for SMP configs and does not hurt
+non-SMP too much. I am not saying we need to do it right away though.
+
+> > > This is one of the things Linus kept complaining about in
+> > > his comments. This code attempts to pull in ALL of the higher order
+> > > pages, not just a smaller block of them.
+> >
+> > It wants to report all higher order pages eventually, yes.
+> > But it's absolutely fine to report a chunk and then wait
+> > for host to process the chunk before reporting more.
+> >
+> > However, interfaces we came up with for this would call
+> > into virtio with a bunch of locks taken.
+> > The solution was to take pages off the free list completely.
+> > That in turn means we can't return them until
+> > we have processed all free memory.
+> 
+> I get that. The problem is the interface is designed around run to
+> completion. For example it will sit there in a busy loop waiting for a
+> free buffer because it knows the other side is suppose to be
+> processing the pages already.
+
+I didn't get this part.
+
+> > > Honestly the difference is
+> > > mostly in the hypervisor interface than what is needed for the kernel
+> > > interface, however the design of the hypervisor interface would make
+> > > doing things more incrementally much more difficult.
+> >
+> > OK that's interesting. The hypervisor interface is not
+> > documented in the spec yet. Let me take a stub at a writeup now. So:
+> >
+> >
+> >
+> > - hypervisor requests reporting by modifying command ID
+> >   field in config space, and interrupting guest
+> >
+> > - in response, guest sends the command ID value on a special
+> >   free page hinting VQ,
+> >   followed by any number of buffers. Each buffer is assumed
+> >   to be the address and length of memory that was
+> >   unused *at some point after the time when command ID was sent*.
+> >
+> >   Note that hypervisor takes pains to handle the case
+> >   where memory is actually no longer free by the time
+> >   it gets the memory.
+> >   This allows guest driver to take more liberties
+> >   and free pages without waiting for guest to
+> >   use the buffers.
+> >
+> >   This is also one of the reason we call this a free page hint -
+> >   the guarantee that page is free is a weak one,
+> >   in that sense it's more of a hint than a promise.
+> >   That helps guarantee we don't create OOM out of blue.
+
+I would like to stress the last paragraph above.
+
+
+> >
+> > - guest eventually sends a special buffer signalling to
+> >   host that it's done sending free pages.
+> >   It then stops reporting until command id changes.
+> 
+> The pages are not freed back to the guest until the host reports that
+> it is "DONE" via a configuration change. Doing that stops any further
+> progress, and attempting to resume will just restart from the
+> beginning.
+
+Right but it's not a requirement. Host does not assume this at all.
+It's done like this simply because we can't iterate over pages
+with the existing API.
+
+> The big piece this design is missing is the incremental notification
+> pages have been processed. The existing code just fills the vq with
+> pages and keeps doing it until it cannot allocate any more pages. We
+> would have to add logic to stop, flush, and resume to the existing
+> framework.
+
+But not to the hypervisor interface. Hypervisor is fine
+with pages being reused immediately. In fact, even before they
+are processed.
+
+> > - host can restart the process at any time by
+> >   updating command ID. That will make guest stop
+> >   and start from the beginning.
+> >
+> > - host can also stop the process by specifying a special
+> >   command ID value.
+> >
+> >
+> > =========
+> >
+> >
+> > Now let's compare to what you have here:
+> >
+> > - At any time after boot, guest walks over free memory and sends
+> >   addresses as buffers to the host
+> >
+> > - Memory reported is then guaranteed to be unused
+> >   until host has used the buffers
+> >
+> >
+> > Is above a fair summary?
+> >
+> > So yes there's a difference but the specific bit of chunking is same
+> > imho.
+> 
+> The big difference is that I am returning the pages after they are
+> processed, while FREE_PAGE_HINT doesn't and isn't designed to.
+
+It doesn't but the hypervisor *is* designed to support that.
+
+> The
+> problem is the interface doesn't allow for a good way to identify that
+> any given block of pages has been processed and can be returned.
+
+And that's because FREE_PAGE_HINT does not care.
+It can return any page at any point even before hypervisor
+saw it.
+
+> Instead pages go in, but they don't come out until the configuration
+> is changed and "DONE" is reported. The act of reporting "DONE" will
+> reset things and start them all over which kind of defeats the point.
+
+Right.
+
+But if you consider how we are using the shrinker you will
+see that it's kind of broken.
+For example not keeping track of allocated
+pages means the count we return is broken
+while reporting is active.
+
+I looked at fixing it but really if we can just
+stop allocating memory that would be way cleaner.
+
+
+For example we allocate pages until shrinker kicks in.
+Fair enough but in fact many it would be better to
+do the reverse: trigger shrinker and then send as many
+free pages as we can to host.
+
+-- 
+MST
