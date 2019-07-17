@@ -2,16 +2,16 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4CC96B884
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 10:49:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F4DA6B885
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 10:49:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbfGQIsM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 04:48:12 -0400
+        id S1728015AbfGQIsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 04:48:16 -0400
 Received: from esa4.microchip.iphmx.com ([68.232.154.123]:48390 "EHLO
         esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbfGQIsL (ORCPT
+        with ESMTP id S1725873AbfGQIsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 04:48:11 -0400
+        Wed, 17 Jul 2019 04:48:13 -0400
 Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
   Tudor.Ambarus@microchip.com designates 198.175.253.82 as
   permitted sender) identity=mailfrom;
@@ -31,30 +31,30 @@ Received-SPF: None (esa4.microchip.iphmx.com: no sender
   x-sender="postmaster@email.microchip.com";
   x-conformance=spf_only
 Authentication-Results: esa4.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: egWQ9HtsRDa705GfteZXFOPH8QLexUVokU3RVIIv/ic8K8l0Yc5dkz3HXn2M+Jw/255cZEHnkP
- WD5Zz/EG7+oeGXD1hsazskvvYTo1/+q0SETZKW/rm2JWg2KKfAbCbHJFcVWvaNQTEyfKdw6Cz2
- L2umNOExdR9jrHrQ4eXmpQ2G2rc0C1uLSS4SvYKHB2eENgGtunye7eVOfqFMjZAoYYuUuxr75U
- rsiFOSyMjJGLblZVDD+x/fQLtsStTbL8ss7R/swg9LsH/Ecl197zRqqU5NNcVwgn/5+PQSmkeC
- 7kQ=
+IronPort-SDR: gX6BS/Kk4iDwTPHVG3y98rywHzDncZqB1DcwtmmKxR4Gx7AeMMg9bZ4KThxfkHWdI3FYhCAbc1
+ DmgpxVDBWGgFZdlH0CPpHFQe0d4S3CYxldevy+0l05PuJgOEdP9bRz3BYUn0zlFVh5SPFoNbIm
+ pyIb//WxHazVMQ6hL4vqGUllmlaH4+YLauX4frecEBuGnkh7A+o1Q3+XYh24C7SBoiRJ2kpDoA
+ yVw19uIF7m7JJbpg7D7qV4pCupWR4GWXqLkX2QdDuIuQpATsECBVrqGGSC9h8Mkqm7yrtd9oAJ
+ jpQ=
 X-IronPort-AV: E=Sophos;i="5.64,273,1559545200"; 
-   d="scan'208";a="40862716"
+   d="scan'208";a="40862768"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 Jul 2019 01:48:10 -0700
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 Jul 2019 01:48:12 -0700
 Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
- chn-vm-ex04.mchp-main.com (10.10.87.151) with Microsoft SMTP Server
+ chn-vm-ex01.mchp-main.com (10.10.87.71) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.1713.5; Wed, 17 Jul 2019 01:48:10 -0700
 Received: from NAM05-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
  email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5 via Frontend
- Transport; Wed, 17 Jul 2019 01:48:09 -0700
+ Transport; Wed, 17 Jul 2019 01:48:10 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=b163yfHVKC3KTVDBB98iIo1JLJ1LsuEM9zehDTePH91I2o4a85hIRB9Ev8ndYUz++icup2b9GugQkIiiyT/wWxg5IOXLqwZ66o8wcCkc+fr3jucTMGD6PWOHLPFn7pqGF96eeEEbho4KbsNNIecNGgigqH3lhcDdvocL1X10cltKb6bDReq+5NKKQEGBgBUZrsWXJ/HTVAqLajXN8kffYD1cUdzqBLvSlTMpr2yfZDMpZCKOOEivUnxOW4Qxni3TITb2hkPfukNeIfRpiQhljb+ToB3L5P+uA8/V/dONIgTrq4LS8lnMUblUZYJrIi3lxOvXzF5dp1850EJRSjwlAQ==
+ b=dSZsS3bvrbKRWlJwSn4wzjD34SMVNTU58oXknxHwS4Cz4R9sly04r42S9Imlut6sjMm4hTyR5ANekMSFLtl+CgCXtmEkIv6+vzFcAlbMGS4uQfjiMxL7iZLQmRLYQ1j71NIh7JnbzYqJWZEPnfLvo1UL7ASCYUuIXtY36RkQl7kUYlw6PDoooFIfuNTYa2F12VVyvSo7EBJXrJ/Y55SR2WbxMOv9Gwr/2AODSK1h+r58mYBJ55XV3Hgm/burMt0Izv9AnXdzWofVmUtZmNRvfz/zAw5fBbgeyIuHTYw1nXKGh0dFExiwpF/xOp1QWsfP9i1dGS68VYp+qVvzAW41YQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rPAPUOclcugboN9S4o4SFdiLKfo5ZOxWTUuFfV8gUHs=;
- b=YBErepf72/mRoFfFk1K8XJyz702laOeE89wU3TYvapC8q4WNgdA8Cjjy9/xQfg1GwHyrlV6mgcbhKSeSQ3cKagkrtU4/kzx5pnuUJ3+XgtQ8BiMFpYkmWcyGWYoJV2zgZm3LB2SUJF6g6PBfBYonZ/i0pGAX3oBtvzViBcRLSiLFrsaCkW85A04zDdmRWWFL9AIb8SDTzLapzsEwpC6/ZsGqa6fQm5PF9XCg9lmCTIVmFaIFDkmD2/ciNtUoppQwiKLq+HPIWHvISO1JZpxwfDE2JWE8LjcKX4uaXzETDu+8vdQmw8u6IKpy0KHbrMnT3aARl18tFcAmN6qXjoCprQ==
+ bh=0Gyv/WkOXrC67AmpBWOY9ByZkwsz3pPLvYEy3Z1Qe7s=;
+ b=c2xl+k97BYZVc43Sit6y9X1lhPkIv3ddv/Xips7Qmy6RI6WynJAE+I54pSYG/g34VSJZiSR5Fc6NgLhtNlOPQN2qH7O2dhvzxKD9VjdSt1S49iVHK3vYAtekpe5HyzpcyVanqvn6Z6+mzW5Yn0gr9RhJhF80urZ9uYjmZt1vZBAC76NxfgfjnDfOMnvOOle8gKUd5Gq3aXFEXsfZyTXlccapc4BZP3WyuCm043P0JQPLDNxQOjPW46VYbCiI5QacOeQfRA7+ATtxTCPMKaaBjN6UBwvPz859K2Sd5tPtwky30//E/r0qgIjxPNUqKJMOQVt8hHI1KtgGPyK2h2Jt4w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
  smtp.mailfrom=microchip.com;dmarc=pass action=none
  header.from=microchip.com;dkim=pass header.d=microchip.com;arc=none
@@ -62,16 +62,16 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=microchiptechnology.onmicrosoft.com;
  s=selector1-microchiptechnology-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rPAPUOclcugboN9S4o4SFdiLKfo5ZOxWTUuFfV8gUHs=;
- b=G6g/k5/8jLxBKtLJeP/gZZgXSzQZX/BGB37Dw873q5Byxn0t+AKKKABNT47FAPrXKwsq8ctZys78ypfHEoIcXN6HDSUbGRkHpzKwfwRTjGW0i9UP/tK3m8AZMMPOc6ItZE4xlpjHXAzfCNyrBJVCpkX77GWr16SLSan9O+064j0=
+ bh=0Gyv/WkOXrC67AmpBWOY9ByZkwsz3pPLvYEy3Z1Qe7s=;
+ b=tmDLcCXLcv9j6xx6uoLqfzw2h0IIapQ4S/+cBzV62S7GEUWgurBnVk9STJACtBJ7QxqqqIcgqTlZWmQ9BZ4WEz5ID2ZqdT/kJwnF/PeMwQk908koOZ70N8tuYNmDk9Y/PKqjQ3X6t7XVGBCEGopzp8iWkS10aY3khCHbrXz+4GA=
 Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.98.146) by
  BN6SPR00MB254.namprd11.prod.outlook.com (10.173.236.150) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.14; Wed, 17 Jul 2019 08:48:07 +0000
+ 15.20.2073.14; Wed, 17 Jul 2019 08:48:09 +0000
 Received: from BN6PR11MB1842.namprd11.prod.outlook.com
  ([fe80::6515:912a:d113:5102]) by BN6PR11MB1842.namprd11.prod.outlook.com
  ([fe80::6515:912a:d113:5102%12]) with mapi id 15.20.2073.012; Wed, 17 Jul
- 2019 08:48:07 +0000
+ 2019 08:48:09 +0000
 From:   <Tudor.Ambarus@microchip.com>
 To:     <vigneshr@ti.com>, <marek.vasut@gmail.com>
 CC:     <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
@@ -79,13 +79,13 @@ CC:     <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
         <boris.brezillon@collabora.com>, <linux-mtd@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <Nicolas.Ferre@microchip.com>,
         <Tudor.Ambarus@microchip.com>
-Subject: [PATCH 1/5] mtd: spi-nor: fix description for int
- (*flash_is_locked)()
-Thread-Topic: [PATCH 1/5] mtd: spi-nor: fix description for int
- (*flash_is_locked)()
-Thread-Index: AQHVPHxaKG+eJEFhOUur/Urn3TTMig==
-Date:   Wed, 17 Jul 2019 08:48:06 +0000
-Message-ID: <20190717084745.19322-2-tudor.ambarus@microchip.com>
+Subject: [PATCH 2/5] mtd: spi-nor: group the code about the write protection
+ at power-up
+Thread-Topic: [PATCH 2/5] mtd: spi-nor: group the code about the write
+ protection at power-up
+Thread-Index: AQHVPHxbXzKnWnPqC02RF1i1z4jGIA==
+Date:   Wed, 17 Jul 2019 08:48:09 +0000
+Message-ID: <20190717084745.19322-3-tudor.ambarus@microchip.com>
 References: <20190717084745.19322-1-tudor.ambarus@microchip.com>
 In-Reply-To: <20190717084745.19322-1-tudor.ambarus@microchip.com>
 Accept-Language: en-US
@@ -99,22 +99,22 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.9.5
 x-originating-ip: [94.177.32.154]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4f688b50-a3b9-449a-2c6e-08d70a937cc8
+x-ms-office365-filtering-correlation-id: 725769e7-69a2-4086-391b-08d70a937e36
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BN6SPR00MB254;
 x-ms-traffictypediagnostic: BN6SPR00MB254:
-x-microsoft-antispam-prvs: <BN6SPR00MB254FA928B623D8090EC3C35F0C90@BN6SPR00MB254.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2449;
+x-microsoft-antispam-prvs: <BN6SPR00MB25462B82FA90ECC16C8E0E1F0C90@BN6SPR00MB254.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
 x-forefront-prvs: 01018CB5B3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(376002)(366004)(346002)(189003)(199004)(66066001)(102836004)(186003)(4326008)(99286004)(52116002)(76176011)(2616005)(486006)(386003)(6436002)(446003)(256004)(26005)(476003)(86362001)(53936002)(107886003)(6506007)(6486002)(66446008)(11346002)(14454004)(14444005)(6512007)(71190400001)(64756008)(71200400001)(25786009)(81156014)(110136005)(2501003)(478600001)(305945005)(7736002)(54906003)(1076003)(2906002)(5660300002)(36756003)(66476007)(81166006)(66556008)(6116002)(8676002)(50226002)(8936002)(4744005)(316002)(3846002)(66946007)(68736007);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6SPR00MB254;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(376002)(366004)(346002)(189003)(199004)(66066001)(102836004)(186003)(4326008)(99286004)(52116002)(76176011)(2616005)(486006)(386003)(6436002)(446003)(256004)(26005)(476003)(86362001)(53936002)(107886003)(6506007)(6486002)(66446008)(11346002)(14454004)(14444005)(6512007)(71190400001)(64756008)(71200400001)(25786009)(81156014)(110136005)(2501003)(478600001)(305945005)(7736002)(54906003)(1076003)(2906002)(5660300002)(36756003)(66476007)(81166006)(66556008)(6116002)(8676002)(50226002)(8936002)(316002)(3846002)(66946007)(68736007);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6SPR00MB254;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microchip.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: SYtxu3ie0Kzj0mHQ84xhV3Bwp4HfJ/y/ZkNkDnaXK03HUzUOe7iN2MQ4OC3nuPhipg4wI/in2ot3y2cFLBquRQMvMUZhmXNWN5NKMTsEsz4jJJ9AouQDfOoJ4CSsNvWZjLh3+ExgijxSdgApPJvUduMRCBjFUftdoKaQA0v/PmvIpyCOJ5WSB9j5cAFi3mrq9uxdRy7uqk5OBCUvgTtzj5A3CdLhs3K+zHZZjUP1mxHqi5Fu6PGspu6b0ZrikRUWk5s638lIsfv74Q/QFE+jYlhb4QnPRrKDjBx1k2bfU0KqUEVcS2V4ZsCkgjAZVwN2OrMJMC9sJto+609hV0a655mVOYDuGpBCJPfIjc1zMcAQPICeXiIa03JHes/V5vk+djuahvp4mcNH9k5qJv68EbARacLqwE3TEYU+Rtuy2Ho=
+x-microsoft-antispam-message-info: nzq7bFE1U875o5XbhduQrdT6ebGJQqjWgphgFV/trK4gfqxcgt83HuNv03NRX6Kv3iKY+juKRzlFxtMOlBCgobQoBbanWZxHA/6pZ6Q2Ipw4G8VKkhE7LT6wV4Pr5R7uU4Ouf263Jjb9k0Rax0OZ+55DI0HtC4WXqihfoXCJB+CFj1VGfSZMwbI19Q4fwbhVADMcA8S/STRBe/GTqEsYPtU+B1bBCsDXLAgW0BiQB8opUTjCF4nZRCAxUVlATCNcLxu/uEqrdl09yCI29Ss5jYR+bRYw5/yTBHZtp95WzvSYITrXib6wptQakVugAS7FBZwDNEjeSemCpfU73poCns1MthOJvFvsJYb42219s65iNwUITz3rERfWKBV9HU79ka04DKwjPb1V7K83GKe5DXL3GmBlXYcrj14/vxkIlZ4=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f688b50-a3b9-449a-2c6e-08d70a937cc8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2019 08:48:06.9046
+X-MS-Exchange-CrossTenant-Network-Message-Id: 725769e7-69a2-4086-391b-08d70a937e36
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2019 08:48:09.2026
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
@@ -128,29 +128,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-The description was interleaved.
+The write protection at power-up logic was split across functions
+because of a dependency to spansion_quad_enable(). Group the code
+in spi_nor_init() as the pointer to spansion_quad_enable() can be
+retrieved from nor->quad_enable.
+
+While touching this code, rename nor->clear_sr_bp() to
+nor->disable_write_protection() to better indicate its scope: it
+disables the default write protection after a power-on reset cycle.
+
+No functional change intended.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 ---
- include/linux/mtd/spi-nor.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/spi-nor/spi-nor.c | 39 ++++++++++++++++++++++++---------------
+ include/linux/mtd/spi-nor.h   |  6 +++---
+ 2 files changed, 27 insertions(+), 18 deletions(-)
 
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index 03cc788511d5..e9e441f91b68 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -3780,8 +3780,6 @@ static int spi_nor_init_params(struct spi_nor *nor,
+ 		default:
+ 			/* Kept only for backward compatibility purpose. */
+ 			params->quad_enable =3D spansion_quad_enable;
+-			if (nor->clear_sr_bp)
+-				nor->clear_sr_bp =3D spi_nor_spansion_clear_sr_bp;
+ 			break;
+ 		}
+=20
+@@ -4034,11 +4032,32 @@ static int spi_nor_init(struct spi_nor *nor)
+ {
+ 	int err;
+=20
+-	if (nor->clear_sr_bp) {
+-		err =3D nor->clear_sr_bp(nor);
++	/*
++	 * Atmel, SST, Intel/Numonyx, and others serial NOR tend to power up
++	 * with the software protection bits set.
++	 */
++	if (JEDEC_MFR(nor->info) =3D=3D SNOR_MFR_ATMEL ||
++	    JEDEC_MFR(nor->info) =3D=3D SNOR_MFR_INTEL ||
++	    JEDEC_MFR(nor->info) =3D=3D SNOR_MFR_SST ||
++	    nor->info->flags & SPI_NOR_HAS_LOCK) {
++		nor->disable_write_protection =3D spi_nor_clear_sr_bp;
++
++		/*
++		 * In case of spansion flashes, when the configuration register
++		 * Quad Enable bit is one, only the the Write Status (01h)
++		 * command with two data bytes may be used to clear the block
++		 * protection bits.
++		 */
++		if (nor->quad_enable =3D=3D spansion_quad_enable)
++			nor->disable_write_protection =3D
++				spi_nor_spansion_clear_sr_bp;
++	}
++
++	if (nor->disable_write_protection) {
++		err =3D nor->disable_write_protection(nor);
+ 		if (err) {
+ 			dev_err(nor->dev,
+-				"fail to clear block protection bits\n");
++				"failed to unlock the flash at init\n");
+ 			return err;
+ 		}
+ 	}
+@@ -4165,16 +4184,6 @@ int spi_nor_scan(struct spi_nor *nor, const char *na=
+me,
+ 	if (info->flags & SPI_S3AN)
+ 		nor->flags |=3D  SNOR_F_READY_XSR_RDY;
+=20
+-	/*
+-	 * Atmel, SST, Intel/Numonyx, and others serial NOR tend to power up
+-	 * with the software protection bits set.
+-	 */
+-	if (JEDEC_MFR(nor->info) =3D=3D SNOR_MFR_ATMEL ||
+-	    JEDEC_MFR(nor->info) =3D=3D SNOR_MFR_INTEL ||
+-	    JEDEC_MFR(nor->info) =3D=3D SNOR_MFR_SST ||
+-	    nor->info->flags & SPI_NOR_HAS_LOCK)
+-		nor->clear_sr_bp =3D spi_nor_clear_sr_bp;
+-
+ 	/* Parse the Serial Flash Discoverable Parameters table. */
+ 	ret =3D spi_nor_init_params(nor, &params);
+ 	if (ret)
 diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-index 9f57cdfcc93d..c4c2c5971284 100644
+index c4c2c5971284..6c3273760700 100644
 --- a/include/linux/mtd/spi-nor.h
 +++ b/include/linux/mtd/spi-nor.h
-@@ -372,10 +372,10 @@ struct flash_info;
-  * @flash_lock:		[FLASH-SPECIFIC] lock a region of the SPI NOR
-  * @flash_unlock:	[FLASH-SPECIFIC] unlock a region of the SPI NOR
+@@ -374,8 +374,8 @@ struct flash_info;
   * @flash_is_locked:	[FLASH-SPECIFIC] check if a region of the SPI NOR is
-+ *			completely locked
+  *			completely locked
   * @quad_enable:	[FLASH-SPECIFIC] enables SPI NOR quad mode
-  * @clear_sr_bp:	[FLASH-SPECIFIC] clears the Block Protection Bits from
-  *			the SPI NOR Status Register.
-- *			completely locked
+- * @clear_sr_bp:	[FLASH-SPECIFIC] clears the Block Protection Bits from
+- *			the SPI NOR Status Register.
++ * @disable_write_protection: [FLASH-SPECIFIC] disable write protection du=
+ring
++ *                            power-up
   * @priv:		the private data
   */
  struct spi_nor {
+@@ -412,7 +412,7 @@ struct spi_nor {
+ 	int (*flash_unlock)(struct spi_nor *nor, loff_t ofs, uint64_t len);
+ 	int (*flash_is_locked)(struct spi_nor *nor, loff_t ofs, uint64_t len);
+ 	int (*quad_enable)(struct spi_nor *nor);
+-	int (*clear_sr_bp)(struct spi_nor *nor);
++	int (*disable_write_protection)(struct spi_nor *nor);
+=20
+ 	void *priv;
+ };
 --=20
 2.9.5
 
