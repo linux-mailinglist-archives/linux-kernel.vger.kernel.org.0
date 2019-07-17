@@ -2,68 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFF9F6B4DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 05:08:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFDBF6B4E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 05:08:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728357AbfGQDGi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 23:06:38 -0400
-Received: from smtprelay0182.hostedemail.com ([216.40.44.182]:35905 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726069AbfGQDGh (ORCPT
+        id S1728604AbfGQDI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 23:08:29 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:57436 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbfGQDI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 23:06:37 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 4A32B34A1;
-        Wed, 17 Jul 2019 03:06:36 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3871:3872:3874:4321:4605:5007:6119:7903:10004:10400:10848:11232:11658:11914:12296:12297:12740:12760:12895:13069:13161:13229:13311:13357:13439:14181:14659:14721:21080:21433:21451:21627:30054:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:23,LUA_SUMMARY:none
-X-HE-Tag: cause64_738513b3fb42d
-X-Filterd-Recvd-Size: 1832
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 17 Jul 2019 03:06:33 +0000 (UTC)
-Message-ID: <fa656d2d8a1677a0a1fbea4b7f60dfca2661827b.camel@perches.com>
-Subject: Re: [PATCH] skbuff: fix compilation warnings in skb_dump()
-From:   Joe Perches <joe@perches.com>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        Qian Cai <cai@lca.pw>
-Cc:     David Miller <davem@davemloft.net>,
-        Willem de Bruijn <willemb@google.com>,
-        clang-built-linux@googlegroups.com,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Tue, 16 Jul 2019 20:06:32 -0700
-In-Reply-To: <CAF=yD-KW-XnDvD0i8VbzrkLGNWEY6cPoaEcHy40hbghGXTo+kA@mail.gmail.com>
-References: <1563288840-1913-1-git-send-email-cai@lca.pw>
-         <CAF=yD-KW-XnDvD0i8VbzrkLGNWEY6cPoaEcHy40hbghGXTo+kA@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Tue, 16 Jul 2019 23:08:28 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6H35cca191468;
+        Wed, 17 Jul 2019 03:08:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=UEaaAVvgCGyb+7Yj61X9MJGTm0YgTvSRv1ONnMOutJQ=;
+ b=GOiTdgfTFSbb/EFuPcJN7jTYkY32Qmns5pYKAj8sb8IUcHKX3AiiAvu0KZr2DhGuUTjl
+ Q+ViMT+0FbMmKkcPnICdmmxs+N+7nfidYVrJDJsF3cXRn0PLLpbAfF2s3M7HLZv0gYfj
+ WNqq+LZR5C8T+WQ0Vdks5WvoyMpZaAnPccg6+SN5MIYBLpU6kfSOxxbmnsSvzWTTdLZM
+ brw8TGVSUYnNBT4KD2ukTj6IdHno3pnlq/aIADGZlnIFmhVSgz3vb9x1y5cGcIIffbgh
+ jvOO1we7rSUyeE9/yl0uH6nLZFtLVSeZ7ecKJmDL0/wp2mT4NG3B8YXVUcdziP4fQpvR 0g== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2tq78pquay-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Jul 2019 03:08:00 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6H32jv8038951;
+        Wed, 17 Jul 2019 03:08:00 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2tq4du8s0c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Jul 2019 03:08:00 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6H37wC2022960;
+        Wed, 17 Jul 2019 03:07:58 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 17 Jul 2019 03:07:58 +0000
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
+        megaraidlinux.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: properly communicate queue limits to the DMA layer v2
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190617122000.22181-1-hch@lst.de>
+        <20190715165823.GA10029@lst.de> <yq1tvbn2ofc.fsf@oracle.com>
+        <20190715174617.GA11094@lst.de>
+Date:   Tue, 16 Jul 2019 23:07:55 -0400
+In-Reply-To: <20190715174617.GA11094@lst.de> (Christoph Hellwig's message of
+        "Mon, 15 Jul 2019 19:46:17 +0200")
+Message-ID: <yq1y30xxss4.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=907
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907170036
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=953 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907170036
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-07-16 at 17:04 +0200, Willem de Bruijn wrote:
-> On Tue, Jul 16, 2019 at 4:56 PM Qian Cai <cai@lca.pw> wrote:
-> > Fix them by using the proper types, and also fix some checkpatch
-> > warnings by using pr_info().
-> > 
-> > WARNING: printk() should include KERN_<LEVEL> facility level
-> > +               printk("%ssk family=%hu type=%u proto=%u\n",
-> 
-> Converting printk to pr_info lowers all levels to KERN_INFO.
-> 
-> skb_dump takes an explicit parameter level to be able to log at
-> KERN_ERR or KERN_WARNING
-> 
-> I would like to avoid those checkpatch warnings, but this is not the
-> right approach.
 
-Just ignore checkpatch when it doesn't know that
-the printk actually includes a KERN_<LEVEL> via
-"%s...", level
+Christoph,
 
+> I think all the patches on the block side went into 5.2, but it's been
+> a while, so I might misremember..
 
+I checked my notes and the reason I held them back was that I was
+waiting for a response from Broadcom wrt. the megaraid segment size
+limitation.  However, given that mpt3sas was acked, I assume it's the
+same thing.
+
+I'm not so keen on how big the last batch of patches for the merge
+window is getting. But I queued your fixes up for 5.3.
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
