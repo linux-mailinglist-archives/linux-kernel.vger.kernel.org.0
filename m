@@ -2,151 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B310B6BCCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 15:14:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E49F96BCD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 15:14:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbfGQNNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 09:13:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32904 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbfGQNNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 09:13:41 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14B0621743;
-        Wed, 17 Jul 2019 13:13:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563369220;
-        bh=Xqoht1vFn8rUPitKVXid1g6+VEyjIdTCcUnbdyEN/Dw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MH8EMyvuzRR3AdtPHRh/B9EOBDPW9C3hB619NuB5WE+07WuHeem3q4RbxW1+uWoaF
-         4MnSPnSKrUOnwoj94JZ2i+xognQMcYVZacLIuJWYUfvk/xoOhGJFni8b/h3LQ9G6ct
-         +aCbLmIe+7ZaXWkc6A5+nDme7f3Ld/6A8PgQRUlo=
-Date:   Wed, 17 Jul 2019 14:13:35 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Jan Stancek <jstancek@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, longman@redhat.com, dbueso@suse.de,
-        peterz@infradead.org, mingo@redhat.com
-Subject: Re: [PATCH v2] locking/rwsem: add acquire barrier to read_slowpath
- exit when queue is empty
-Message-ID: <20190717131335.b2ry43t2ov7ba4t4@willie-the-truck>
-References: <20190716185807.GJ3402@hirez.programming.kicks-ass.net>
- <a524cf95ab0dbdd1eb65e9decb9283e73d416b1d.1563352912.git.jstancek@redhat.com>
+        id S1727230AbfGQNOf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 09:14:35 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:60750 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfGQNOf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 09:14:35 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6HDEPVB051538;
+        Wed, 17 Jul 2019 08:14:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1563369265;
+        bh=MVYQ4EwMJMXmcBaMpkvWQRFoUm35w+HQYW/PHcy1kFc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=rWjPhmk9DU9HJIORujSb2McQa1FSgeWq54pLhFe2Nmw10zDo5kvu3QR3wsj/0yko6
+         fKmuX1/Xm6BYWYj9IVi5gyiB62Be8rgNTpbAXeNZaMU6KMpGsveuojoPl08CzYWH9g
+         WZUw35WR8ObV1Oez3ejRxxhta5AGluR9EZYHY6XY=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6HDEPmO039603
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 17 Jul 2019 08:14:25 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 17
+ Jul 2019 08:14:25 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 17 Jul 2019 08:14:25 -0500
+Received: from [10.250.98.129] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6HDENq3080895;
+        Wed, 17 Jul 2019 08:14:23 -0500
+Subject: Re: [PATCH v2 2/2] leds: Add control of the voltage/current regulator
+ to the LED core
+To:     Dan Murphy <dmurphy@ti.com>, <jacek.anaszewski@gmail.com>,
+        <pavel@ucw.cz>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <daniel.thompson@linaro.org>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20190715155657.22976-1-jjhiblot@ti.com>
+ <20190715155657.22976-3-jjhiblot@ti.com>
+ <9c17e9cc-8162-7b5d-2db9-d2bed20969c5@ti.com>
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+Message-ID: <3b8e5847-6859-d78d-6274-7a879557dcae@ti.com>
+Date:   Wed, 17 Jul 2019 15:14:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a524cf95ab0dbdd1eb65e9decb9283e73d416b1d.1563352912.git.jstancek@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <9c17e9cc-8162-7b5d-2db9-d2bed20969c5@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 17, 2019 at 02:02:20PM +0200, Jan Stancek wrote:
-> LTP mtest06 has been observed to rarely hit "still mapped when deleted"
-> and following BUG_ON on arm64:
->   page:ffff7e02fa37e480 refcount:3 mapcount:1 mapping:ffff80be3d678ab0 index:0x0
->   xfs_address_space_operations [xfs]
->   flags: 0xbfffe000000037(locked|referenced|uptodate|lru|active)
->   page dumped because: VM_BUG_ON_PAGE(page_mapped(page))
->   ------------[ cut here ]------------
->   kernel BUG at mm/filemap.c:171!
->   Internal error: Oops - BUG: 0 [#1] SMP
->   CPU: 220 PID: 154292 Comm: mmap1 Not tainted 5.2.0-0ecfebd.cki #1
->   Hardware name: HPE Apollo 70 /C01_APACHE_MB , BIOS L50_5.13_1.10 05/17/2019
->   pstate: 40400089 (nZcv daIf +PAN -UAO)
->   pc : unaccount_page_cache_page+0x17c/0x1a0
->   lr : unaccount_page_cache_page+0x17c/0x1a0
->   Call trace:
->   unaccount_page_cache_page+0x17c/0x1a0
->   delete_from_page_cache_batch+0xa0/0x300
->   truncate_inode_pages_range+0x1b8/0x640
->   truncate_inode_pages_final+0x88/0xa8
->   evict+0x1a0/0x1d8
->   iput+0x150/0x240
->   dentry_unlink_inode+0x120/0x130
->   __dentry_kill+0xd8/0x1d0
->   dentry_kill+0x88/0x248
->   dput+0x168/0x1b8
->   __fput+0xe8/0x208
->   ____fput+0x20/0x30
->   task_work_run+0xc0/0xf0
->   do_notify_resume+0x2b0/0x328
->   work_pending+0x8/0x10
-> 
-> The extra mapcount originated from pagefault handler, which handled
-> pagefault for vma that has already been detached. vma is detached
-> under mmap_sem write lock by detach_vmas_to_be_unmapped(), which
-> also invalidates vmacache.
-> 
-> When pagefault handler (under mmap_sem read lock) called find_vma(),
-> vmacache_valid() wrongly reported vmacache as valid.
-> 
-> After rwsem down_read() returns via 'queue empty' path (as of v5.2),
-> it does so without issuing read_acquire on sem->count:
->   down_read
->     __down_read
->       rwsem_down_read_failed
->         __rwsem_down_read_failed_common
->           raw_spin_lock_irq(&sem->wait_lock);
->           if (list_empty(&sem->wait_list)) {
->             if (atomic_long_read(&sem->count) >= 0) {
->               raw_spin_unlock_irq(&sem->wait_lock);
->               return sem;
-> 
-> Suspected problem here is that last *_acquire on down_read() side
-> happens before write side issues *_release:
->   1. writer: has the lock
->   2. reader: down_read() issues *read_acquire on entry
->   3. writer: mm->vmacache_seqnum++; downgrades lock (*fetch_add_release)
->   4. reader: __rwsem_down_read_failed_common() finds it can take lock and returns
->   5. reader: observes stale mm->vmacache_seqnum
-> 
-> I can reproduce the problem by running LTP mtest06 in a loop and building
-> kernel (-j $NCPUS) in parallel. It does reproduce since v4.20 up to v5.2
-> on arm64 HPE Apollo 70 (224 CPUs, 256GB RAM, 2 nodes). It triggers reliably
-> within ~hour. Patched kernel ran fine for 10+ hours with clean dmesg.
-> Tests were done against v5.2, since commit cf69482d62d9 ("locking/rwsem:
-> Enable readers spinning on writer") makes it much harder to reproduce.
-> 
-> v2: Move barrier after test (Waiman Long)
->     Use smp_acquire__after_ctrl_dep() (Peter Zijlstra)
-> 
-> Related: https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/mem/mtest06/mmap1.c
-> Related: commit dd2283f2605e ("mm: mmap: zap pages with read mmap_sem in munmap")
-> Fixes: 4b486b535c33 ("locking/rwsem: Exit read lock slowpath if queue empty & no writer")
-> 
-> Signed-off-by: Jan Stancek <jstancek@redhat.com>
-> Cc: stable@vger.kernel.org # v4.20+
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Davidlohr Bueso <dbueso@suse.de>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> ---
->  kernel/locking/rwsem.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-> index 37524a47f002..5ac72b60608b 100644
-> --- a/kernel/locking/rwsem.c
-> +++ b/kernel/locking/rwsem.c
-> @@ -1032,6 +1032,7 @@ static inline bool rwsem_reader_phase_trylock(struct rw_semaphore *sem,
->  		 */
->  		if (adjustment && !(atomic_long_read(&sem->count) &
->  		     (RWSEM_WRITER_MASK | RWSEM_FLAG_HANDOFF))) {
-> +			smp_acquire__after_ctrl_dep();
->  			raw_spin_unlock_irq(&sem->wait_lock);
->  			rwsem_set_reader_owned(sem);
->  			lockevent_inc(rwsem_rlock_fast);
+Hi Dan,
 
-If you add a comment to the code outlining the issue (preferably as a litmus
-test involving sem->count and some shared data which happens to be
-vmacache_seqnum in your test)), then:
+On 15/07/2019 20:59, Dan Murphy wrote:
+> JJ
+>
+> On 7/15/19 10:56 AM, Jean-Jacques Hiblot wrote:
+>> A LED is usually powered by a voltage/current regulator. Let the LED 
+>> core
+>> know about it. This allows the LED core to turn on or off the power 
+>> supply
+>> as needed.
+>
+> This allows the LED core to turn on or off managed power supplies.
+>
+>
+>>
+>> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+>> ---
 
-Reviewed-by: Will Deacon <will@kernel.org>
+>>       if (led_cdev->flags & LED_BRIGHT_HW_CHANGED) {
+>>           ret = led_add_brightness_hw_changed(led_cdev);
+>>           if (ret) {
+>> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+>> index 7107cd7e87cf..a12b880b0a2f 100644
+>> --- a/drivers/leds/led-core.c
+>> +++ b/drivers/leds/led-core.c
+>> @@ -23,6 +23,33 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
+>>   LIST_HEAD(leds_list);
+>>   EXPORT_SYMBOL_GPL(leds_list);
+>>   +static bool __led_need_regulator_update(struct led_classdev 
+>> *led_cdev,
+>> +                    int brightness)
+>> +{
+>> +    bool new_state = (brightness != LED_OFF);
+>> +
+>> +    return led_cdev->regulator && led_cdev->regulator_state != 
+>> new_state;
+>> +}
+>> +
+>> +static int __led_handle_regulator(struct led_classdev *led_cdev,
+>> +                int brightness)
+>> +{
+>> +    int rc;
+>
+> Should there be a check for the regulator pointer.
+>
+> If (!led_cdev->regulator)
+>
+>     return 0;
 
-Thanks,
+Not required because __led_need_regulator_update() returns false if 
+led_cdev->regulator is NULL.
 
-Will
+Thanks for the review
+
+JJ
+
+>
+>
+> Otherwise
+>
+> Reviewed-by: Dan Murphy <dmurphy@ti.com>
+>
+> <snip>
+>
