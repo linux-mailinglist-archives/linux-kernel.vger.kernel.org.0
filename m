@@ -2,483 +2,749 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0A326C1FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 22:14:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17A7F6C1F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 22:12:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728693AbfGQUOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 16:14:16 -0400
-Received: from mail-pg1-f172.google.com ([209.85.215.172]:42791 "EHLO
-        mail-pg1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725993AbfGQUOQ (ORCPT
+        id S1727539AbfGQULn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 16:11:43 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15138 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727184AbfGQULn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 16:14:16 -0400
-Received: by mail-pg1-f172.google.com with SMTP id t132so11677823pgb.9
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 13:14:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:from:date:subject;
-        bh=wFwzYNfk1JLs61+QvfChsPFoRDh7IkRBsGRWO//WkXs=;
-        b=JRXBNL/XKLpQQYJgQASYvBS3k2SnFhxKOOO6wmXPziwjkRxPc05fadukwdkl1sqlB9
-         7WsLOaswhFf3UlfEdbLDdn3JNRpAWDBR/giFtn1G8fgqRkkI8YOjOnu6asjZ76MKvVjb
-         ByuB7rifHvo9TFGK1aoQvLdEawkX8s0PogVhOMrorYqnSNrFTo56+iZtzg46L9ghuxhv
-         kgj38Z/7WYXA7LravOMHRzwvyRgOiPUlA//vuFFtSCu1bW1s+SI4nnQ4ZbqfCdnoLG9U
-         CgslAwSNe+wV0+T7ijq10VRSG7HFZH3rhVldEmr+9t0xkErudjHvEl9dP4MmAW7pylqq
-         q1Uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:from:date:subject;
-        bh=wFwzYNfk1JLs61+QvfChsPFoRDh7IkRBsGRWO//WkXs=;
-        b=rhlQXBRpzpmhRtDZCYZVAzRoUw1Z6iSanB6IoQE0eYq6AbeYMpYfIbuunCmC+PF6C0
-         2reuSG2ZBmOyM6RW5pi9worVvZV4ZjY0qwXm29ZOrzHt10tajRHUzOQSznbb+tYvJ3J9
-         SndlQTi4/ai+eDWZZgl0GaU/sLq54Z6j/l+5M5szxUvM0DSY6+y7VBtQc/5dbqqIIaZp
-         fncPFB5Bt5K8Xl4ly+VtAaB8HISBt5taI8SRK7C1VACsshmyufMeJ8/GeQVuuyot9LGx
-         bFlW1iQDnliIpvW31LxdtFe6qm/cMYGyWCxztcD1mcIg2vVhX67wEzWopkidsNoHBCSj
-         /LXQ==
-X-Gm-Message-State: APjAAAW0rt4Uba8l2RhOvA9sp90L+nD8/AssECUpF+waxas89zc7wqyK
-        wbwlko4uFEYbhAB4P8e0Y84=
-X-Google-Smtp-Source: APXvYqy/woNeUlPXQR+AL23HT2kOTiLNljpcuYfQtLjE2liT0zC277R3mXOk75a4eFPcwDPaaLJleA==
-X-Received: by 2002:a17:90a:9f4a:: with SMTP id q10mr46205261pjv.95.1563394455309;
-        Wed, 17 Jul 2019 13:14:15 -0700 (PDT)
-Received: from localhost ([103.70.83.110])
-        by smtp.gmail.com with ESMTPSA id c26sm24020613pfr.172.2019.07.17.13.14.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Jul 2019 13:14:14 -0700 (PDT)
-Message-ID: <5d2f8196.1c69fb81.958e6.3bdd@mx.google.com>
-From:   Abhishek Upperwal <a.upperwal@gmail.com>
-Date:   Thu, 18 Jul 2019 00:44:20 +0530
-Subject: [PATCH] Drivers: tty: cyclades: Fixed coding style issues
-To:     unlisted-recipients:; (no To-header on input)
+        Wed, 17 Jul 2019 16:11:43 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d2f80f00002>; Wed, 17 Jul 2019 13:11:28 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 17 Jul 2019 13:11:21 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 17 Jul 2019 13:11:21 -0700
+Received: from [10.2.164.12] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 17 Jul
+ 2019 20:11:19 +0000
+Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Joseph Lo <josephl@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
+        <linus.walleij@linaro.org>, <stefan@agner.ch>,
+        <mark.rutland@arm.com>, <pgaikwad@nvidia.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <jckuo@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <a5e1a6df-dff7-9e0c-9551-f78103a5462f@gmail.com>
+ <fd8bad73-464b-54f1-be94-fe3ac8b23e6e@gmail.com>
+ <0ee06d1a-310d-59f7-0aa6-b688b33447f5@nvidia.com>
+ <cedfafd0-4114-0821-0c4b-efc17c213449@gmail.com>
+ <707c4679-fde6-1714-ced0-dcf7ca8380a9@nvidia.com>
+ <c6c0a205-c083-fd46-361c-175bd8840c6e@nvidia.com>
+ <055457fd-621b-6c93-b671-d5e5380698c6@nvidia.com>
+ <20190717071105.3750a021@dimatab>
+ <77df234f-aa40-0319-a593-f1f19f0f1c2a@nvidia.com>
+ <20190717084221.2e9af56c@dimatab>
+ <093462f3-8c6d-d084-9822-ae4eff041c64@nvidia.com>
+ <20190717093317.70fefb27@dimatab>
+ <6e73dcee-6e24-b646-97a4-4b34aedd231d@nvidia.com>
+ <16f8b146-2581-a842-4997-53ab05b62c70@gmail.com>
+ <d7892bfc-2cbf-27af-518d-dc7e243815b8@nvidia.com>
+ <71272e9a-0f2a-c20d-6532-7e9057ad985c@gmail.com>
+ <78fd19b9-b652-8ac3-1f57-3b4adadee03f@nvidia.com>
+ <351a07d4-ba90-4793-129b-b1a733f95531@nvidia.com>
+ <e3e9beaf-b195-305e-4010-66e824813472@gmail.com>
+ <9271ae75-5663-e26e-df26-57cba94dab75@nvidia.com>
+Message-ID: <7ae3df9a-c0e9-cf71-8e90-4284db8df82f@nvidia.com>
+Date:   Wed, 17 Jul 2019 13:11:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <9271ae75-5663-e26e-df26-57cba94dab75@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1563394288; bh=JbOxcHokZTfBZehqRZhK8W4RLQgVgL0ASfqRVXxoLK4=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=Qrfaaz4t46kBgnD2i3LptM76Af+YEzSQEmAoz2WNLt5a2Ey3yYNdiNALYGk71jtgv
+         mWHabYN+CPRHIora/ChpuHu7zqP7QWuMs1AbG4xjajAALX9OS7tJLs3BYZfKJ48hpL
+         3oXlYF/6rSpxrw6736o0Kax4iHmSLqLTFzxAQE2v5KAJ2IRPf0Pq9SoQQEh9QXASd1
+         XqZQ7eMmNlzSkkJvckwZpbGYh9T3JZ+3GdYNG+pZXolqQp2a2AKbwGx56SDyHNnJkX
+         7m6DqdmCvpRIbe9Zf1AZO8+YOU4JBEuIVHIg46FAGjKF0J/R2+az/yzkzyoIb4FS7e
+         1bTAg8TopViDw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Corrected multi-line comment formats
 
-Signed-off-by: Abhishek Upperwal <a.upperwal@gmail.com>
----
- drivers/tty/cyclades.c | 181 +++++++++++++++++++++++------------------
- 1 file changed, 100 insertions(+), 81 deletions(-)
-
-diff --git a/drivers/tty/cyclades.c b/drivers/tty/cyclades.c
-index 4562c8060d09..760c4b2b4ea6 100644
---- a/drivers/tty/cyclades.c
-+++ b/drivers/tty/cyclades.c
-@@ -23,15 +23,17 @@
- #define CY_VERSION	"2.6"
- 
- /* If you need to install more boards than NR_CARDS, change the constant
--   in the definition below. No other change is necessary to support up to
--   eight boards. Beyond that you'll have to extend cy_isa_addresses. */
-+ * in the definition below. No other change is necessary to support up to
-+ * eight boards. Beyond that you'll have to extend cy_isa_addresses.
-+ */
- 
- #define NR_CARDS	4
- 
- /*
--   If the total number of ports is larger than NR_PORTS, change this
--   constant in the definition below. No other change is necessary to
--   support more boards/ports. */
-+ * If the total number of ports is larger than NR_PORTS, change this
-+ * constant in the definition below. No other change is necessary to
-+ * support more boards/ports.
-+ */
- 
- #define NR_PORTS	256
- 
-@@ -368,7 +370,8 @@ static int __cyy_issue_cmd(void __iomem *base_addr, u8 cmd, int index)
- 		udelay(10L);
- 	}
- 	/* if the CCR never cleared, the previous command
--	   didn't finish within the "reasonable time" */
-+	 * didn't finish within the "reasonable time"
-+	 */
- 	if (i == 100)
- 		return -1;
- 
-@@ -529,7 +532,8 @@ static void cyy_chip_rx(struct cyclades_card *cinfo, int chip,
- 			}
- 		} else {
- 			/* there was a software buffer overrun and nothing
--			 * could be done about it!!! */
-+			 * could be done about it!!!
-+			 */
- 			info->icount.buf_overrun++;
- 			info->idle_stats.overruns++;
- 		}
-@@ -572,8 +576,9 @@ static void cyy_chip_tx(struct cyclades_card *cinfo, unsigned int chip,
- 	u8 save_xir, channel, save_car, outch;
- 
- 	/* Since we only get here when the transmit buffer
--	   is empty, we know we can always stuff a dozen
--	   characters. */
-+	 * is empty, we know we can always stuff a dozen
-+	 * characters.
-+	 */
- #ifdef CY_DEBUG_INTERRUPTS
- 	printk(KERN_DEBUG "cyy_interrupt: xmit intr, chip %d\n", chip);
- #endif
-@@ -722,7 +727,8 @@ static void cyy_chip_modem(struct cyclades_card *cinfo, int chip,
- 		if (tty->hw_stopped) {
- 			if (mdm_status & CyCTS) {
- 				/* cy_start isn't used
--				   because... !!! */
-+				 * because... !!!
-+				 */
- 				tty->hw_stopped = 0;
- 				cyy_writeb(info, CySRER,
- 					cyy_readb(info, CySRER) | CyTxRdy);
-@@ -731,7 +737,8 @@ static void cyy_chip_modem(struct cyclades_card *cinfo, int chip,
- 		} else {
- 			if (!(mdm_status & CyCTS)) {
- 				/* cy_stop isn't used
--				   because ... !!! */
-+				 * because ... !!!
-+				 */
- 				tty->hw_stopped = 1;
- 				cyy_writeb(info, CySRER,
- 					cyy_readb(info, CySRER) & ~CyTxRdy);
-@@ -739,9 +746,10 @@ static void cyy_chip_modem(struct cyclades_card *cinfo, int chip,
- 		}
- 	}
- /*	if (mdm_change & CyDSR) {
--	}
--	if (mdm_change & CyRI) {
--	}*/
-+ *	}
-+ *	if (mdm_change & CyRI) {
-+ *	}
-+ */
- 	tty_kref_put(tty);
- end:
- 	/* end of service */
-@@ -750,8 +758,8 @@ static void cyy_chip_modem(struct cyclades_card *cinfo, int chip,
- }
- 
- /* The real interrupt service routine is called
--   whenever the card wants its hand held--chars
--   received, out buffer empty, modem change, etc.
-+ * whenever the card wants its hand held--chars
-+ * received, out buffer empty, modem change, etc.
-  */
- static irqreturn_t cyy_interrupt(int irq, void *dev_id)
- {
-@@ -777,9 +785,9 @@ static irqreturn_t cyy_interrupt(int irq, void *dev_id)
- 		return IRQ_HANDLED;
- 
- 	/* This loop checks all chips in the card.  Make a note whenever
--	   _any_ chip had some work to do, as this is considered an
--	   indication that there will be more to do.  Only when no chip
--	   has any work does this outermost loop exit.
-+	 * _any_ chip had some work to do, as this is considered an
-+	 * indication that there will be more to do.  Only when no chip
-+	 * has any work does this outermost loop exit.
- 	 */
- 	do {
- 		had_work = 0;
-@@ -791,9 +799,9 @@ static irqreturn_t cyy_interrupt(int irq, void *dev_id)
- 						(CySVRR << index))) != 0x00) {
- 				had_work++;
- 			/* The purpose of the following test is to ensure that
--			   no chip can monopolize the driver.  This forces the
--			   chips to be checked in a round-robin fashion (after
--			   draining each of a bunch (1000) of characters).
-+			 * no chip can monopolize the driver.  This forces the
-+			 * chips to be checked in a round-robin fashion (after
-+			 * draining each of a bunch (1000) of characters).
- 			 */
- 				if (1000 < too_many++)
- 					break;
-@@ -951,8 +959,9 @@ static void cyz_handle_rx(struct cyclades_port *info)
- 
- #ifdef BLOCKMOVE
- 	/* we'd like to use memcpy(t, f, n) and memset(s, c, count)
--	   for performance, but because of buffer boundaries, there
--	   may be several steps to the operation */
-+	 * for performance, but because of buffer boundaries, there
-+	 * may be several steps to the operation
-+	 */
- 	while (1) {
- 		len = tty_prepare_flip_string(port, &buf,
- 				char_count);
-@@ -985,7 +994,8 @@ static void cyz_handle_rx(struct cyclades_port *info)
- #endif
- #ifdef CONFIG_CYZ_INTR
- 	/* Recalculate the number of chars in the RX buffer and issue
--	   a cmd in case it's higher than the RX high water mark */
-+	 * a cmd in case it's higher than the RX high water mark
-+	 */
- 	rx_put = readl(&buf_ctrl->rx_put);
- 	if (rx_put >= rx_get)
- 		char_count = rx_put - rx_get;
-@@ -1028,7 +1038,7 @@ static void cyz_handle_tx(struct cyclades_port *info)
- 
- 	if (!char_count)
- 		return;
--		
-+
- 	tty = tty_port_tty_get(&info->port);
- 	if (tty == NULL)
- 		goto ztxdone;
-@@ -1441,7 +1451,8 @@ static void cy_shutdown(struct cyclades_port *info, struct tty_struct *tty)
- 
- 		cyy_issue_cmd(info, CyCHAN_CTL | CyDIS_RCVR);
- 		/* it may be appropriate to clear _XMIT at
--		   some later date (after testing)!!! */
-+		 * some later date (after testing)!!!
-+		 */
- 
- 		set_bit(TTY_IO_ERROR, &tty->flags);
- 		tty_port_set_initialized(&info->port, 0);
-@@ -1530,8 +1541,9 @@ static int cy_open(struct tty_struct *tty, struct file *filp)
- #ifdef CONFIG_CYZ_INTR
- 		else {
- 		/* In case this Z board is operating in interrupt mode, its
--		   interrupts should be enabled as soon as the first open
--		   happens to one of its ports. */
-+		 * interrupts should be enabled as soon as the first open
-+		 * happens to one of its ports.
-+		 */
- 			if (!cinfo->intr_enabled) {
- 				u16 intr;
- 
-@@ -1709,7 +1721,8 @@ static void cy_do_close(struct tty_port *port)
- 		cyy_writeb(info, CySRER, cyy_readb(info, CySRER) & ~CyRxData);
- 		if (tty_port_initialized(&info->port)) {
- 			/* Waiting for on-board buffers to be empty before
--			   closing the port */
-+			 * closing the port
-+			 */
- 			spin_unlock_irqrestore(&card->card_lock, flags);
- 			cy_wait_until_sent(port->tty, info->timeout);
- 			spin_lock_irqsave(&card->card_lock, flags);
-@@ -1717,7 +1730,8 @@ static void cy_do_close(struct tty_port *port)
- 	} else {
- #ifdef Z_WAKE
- 		/* Waiting for on-board buffers to be empty before closing
--		   the port */
-+		 * the port
-+		 */
- 		struct CH_CTRL __iomem *ch_ctrl = info->u.cyz.ch_ctrl;
- 		int retval;
- 
-@@ -2031,8 +2045,9 @@ static void cy_set_line_char(struct cyclades_port *info, struct tty_struct *tty)
- 			info->timeout = 0;
- 		}
- 		/* By tradition (is it a standard?) a baud rate of zero
--		   implies the line should be/has been closed.  A bit
--		   later in this routine such a test is performed. */
-+		 * implies the line should be/has been closed.  A bit
-+		 * later in this routine such a test is performed.
-+		 */
- 
- 		/* byte size and parity */
- 		info->cor5 = 0;
-@@ -2212,7 +2227,8 @@ static void cy_set_line_char(struct cyclades_port *info, struct tty_struct *tty)
- 					~(C_RS_CTS | C_RS_RTS));
- 		}
- 		/* As the HW flow control is done in firmware, the driver
--		   doesn't need to care about it */
-+		 * doesn't need to care about it
-+		 */
- 		tty_port_set_cts_flow(&info->port, 0);
- 
- 		/* XON/XOFF/XANY flow control flags */
-@@ -2297,8 +2313,7 @@ static int cy_set_serial_info(struct tty_struct *tty,
- 				ss->baud_base != info->baud ||
- 				(ss->flags & ASYNC_FLAGS &
- 					~ASYNC_USR_MASK) !=
--				(info->port.flags & ASYNC_FLAGS & ~ASYNC_USR_MASK))
--		{
-+				(info->port.flags & ASYNC_FLAGS & ~ASYNC_USR_MASK)) {
- 			mutex_unlock(&info->port.mutex);
- 			return -EPERM;
- 		}
-@@ -2491,7 +2506,7 @@ static int cy_break(struct tty_struct *tty, int break_state)
- 	spin_lock_irqsave(&card->card_lock, flags);
- 	if (!cy_is_Z(card)) {
- 		/* Let the transmit ISR take care of this (since it
--		   requires stuffing characters into the output stream).
-+		 * requires stuffing characters into the output stream).
- 		 */
- 		if (break_state == -1) {
- 			if (!info->breakon) {
-@@ -3140,7 +3155,8 @@ static int cy_init_card(struct cyclades_card *cinfo)
- }
- 
- /* initialize chips on Cyclom-Y card -- return number of valid
--   chips (which is number of ports/4) */
-+ * chips (which is number of ports/4)
-+ */
- static unsigned short cyy_init_card(void __iomem *true_base_addr,
- 		int index)
- {
-@@ -3160,9 +3176,9 @@ static unsigned short cyy_init_card(void __iomem *true_base_addr,
- 		mdelay(1);
- 		if (readb(base_addr + (CyCCR << index)) != 0x00) {
- 			/*************
--			printk(" chip #%d at %#6lx is never idle (CCR != 0)\n",
--			chip_number, (unsigned long)base_addr);
--			*************/
-+			 * printk(" chip #%d at %#6lx is never idle (CCR != 0)\n",
-+			 * chip_number, (unsigned long)base_addr);
-+			 *************/
- 			return chip_number;
- 		}
- 
-@@ -3170,10 +3186,10 @@ static unsigned short cyy_init_card(void __iomem *true_base_addr,
- 		udelay(10L);
- 
- 		/* The Cyclom-16Y does not decode address bit 9 and therefore
--		   cannot distinguish between references to chip 0 and a non-
--		   existent chip 4.  If the preceding clearing of the supposed
--		   chip 4 GFRCR register appears at chip 0, there is no chip 4
--		   and this must be a Cyclom-16Y, not a Cyclom-32Ye.
-+		 * cannot distinguish between references to chip 0 and a non-
-+		 * existent chip 4.  If the preceding clearing of the supposed
-+		 * chip 4 GFRCR register appears at chip 0, there is no chip 4
-+		 * and this must be a Cyclom-16Y, not a Cyclom-32Ye.
- 		 */
- 		if (chip_number == 4 && readb(true_base_addr +
- 				(cy_chip_offset[0] << index) +
-@@ -3186,19 +3202,19 @@ static unsigned short cyy_init_card(void __iomem *true_base_addr,
- 
- 		if (readb(base_addr + (CyGFRCR << index)) == 0x00) {
- 			/*
--			   printk(" chip #%d at %#6lx is not responding ",
--			   chip_number, (unsigned long)base_addr);
--			   printk("(GFRCR stayed 0)\n",
-+			 * printk(" chip #%d at %#6lx is not responding ",
-+			 * chip_number, (unsigned long)base_addr);
-+			 * printk("(GFRCR stayed 0)\n",
- 			 */
- 			return chip_number;
- 		}
- 		if ((0xf0 & (readb(base_addr + (CyGFRCR << index)))) !=
- 				0x40) {
- 			/*
--			printk(" chip #%d at %#6lx is not valid (GFRCR == "
--					"%#2x)\n",
--					chip_number, (unsigned long)base_addr,
--					base_addr[CyGFRCR<<index]);
-+			 * printk(" chip #%d at %#6lx is not valid (GFRCR == "
-+			 *		"%#2x)\n",
-+			 *		chip_number, (unsigned long)base_addr,
-+			 *		base_addr[CyGFRCR<<index]);
- 			 */
- 			return chip_number;
- 		}
-@@ -3206,7 +3222,8 @@ static unsigned short cyy_init_card(void __iomem *true_base_addr,
- 		if (readb(base_addr + (CyGFRCR << index)) >= CD1400_REV_J) {
- 			/* It is a CD1400 rev. J or later */
- 			/* Impossible to reach 5ms with this chip.
--			   Changed to 2ms instead (f = 500 Hz). */
-+			 * Changed to 2ms instead (f = 500 Hz).
-+			 */
- 			cy_writeb(base_addr + (CyPPR << index), CyCLOCK_60_2MS);
- 		} else {
- 			/* f = 200 Hz */
-@@ -3214,9 +3231,9 @@ static unsigned short cyy_init_card(void __iomem *true_base_addr,
- 		}
- 
- 		/*
--		   printk(" chip #%d at %#6lx is rev 0x%2x\n",
--		   chip_number, (unsigned long)base_addr,
--		   readb(base_addr+(CyGFRCR<<index)));
-+		 * printk(" chip #%d at %#6lx is rev 0x%2x\n",
-+		 * chip_number, (unsigned long)base_addr,
-+		 * readb(base_addr+(CyGFRCR<<index)));
- 		 */
- 	}
- 	return chip_number;
-@@ -3490,7 +3507,8 @@ static int cyz_load_fw(struct pci_dev *pdev, void __iomem *base_addr,
- 	}
- 
- 	/* Check whether the firmware is already loaded and running. If
--	   positive, skip this board */
-+	 * positive, skip this board
-+	 */
- 	if (__cyz_fpga_loaded(ctl_addr) && readl(&fid->signature) == ZFIRM_ID) {
- 		u32 cntval = readl(base_addr + 0x190);
- 
-@@ -3622,8 +3640,8 @@ static int cyz_load_fw(struct pci_dev *pdev, void __iomem *base_addr,
- 	cy_writel(&pt_zfwctrl->board_ctrl.dr_version, DRIVER_VERSION);
- 
- 	/*
--	   Early firmware failed to start looking for commands.
--	   This enables firmware interrupts for those commands.
-+	 * Early firmware failed to start looking for commands.
-+	 * This enables firmware interrupts for those commands.
- 	 */
- 	cy_writel(&ctl_addr->intr_ctrl_stat, readl(&ctl_addr->intr_ctrl_stat) |
- 			(1 << 17));
-@@ -3754,8 +3772,8 @@ static int cy_pci_probe(struct pci_dev *pdev,
- 			}
- #endif
- 			/* The following clears the firmware id word.  This
--			   ensures that the driver will not attempt to talk to
--			   the board until it has been properly initialized.
-+			 * ensures that the driver will not attempt to talk to
-+			 * the board until it has been properly initialized.
- 			 */
- 			if ((mailbox == ZO_V1) || (mailbox == ZO_V2))
- 				cy_writel(addr2 + ID_ADDRESS, 0L);
-@@ -3968,21 +3986,21 @@ static int cyclades_proc_show(struct seq_file *m, void *v)
- }
- 
- /* The serial driver boot-time initialization code!
--    Hardware I/O ports are mapped to character special devices on a
--    first found, first allocated manner.  That is, this code searches
--    for Cyclom cards in the system.  As each is found, it is probed
--    to discover how many chips (and thus how many ports) are present.
--    These ports are mapped to the tty ports 32 and upward in monotonic
--    fashion.  If an 8-port card is replaced with a 16-port card, the
--    port mapping on a following card will shift.
--
--    This approach is different from what is used in the other serial
--    device driver because the Cyclom is more properly a multiplexer,
--    not just an aggregation of serial ports on one card.
--
--    If there are more cards with more ports than have been
--    statically allocated above, a warning is printed and the
--    extra ports are ignored.
-+ *  Hardware I/O ports are mapped to character special devices on a
-+ *  first found, first allocated manner.  That is, this code searches
-+ *  for Cyclom cards in the system.  As each is found, it is probed
-+ *  to discover how many chips (and thus how many ports) are present.
-+ *  These ports are mapped to the tty ports 32 and upward in monotonic
-+ *  fashion.  If an 8-port card is replaced with a 16-port card, the
-+ *  port mapping on a following card will shift.
-+ *
-+ *  This approach is different from what is used in the other serial
-+ *  device driver because the Cyclom is more properly a multiplexer,
-+ *  not just an aggregation of serial ports on one card.
-+ *
-+ *  If there are more cards with more ports than have been
-+ *  statically allocated above, a warning is printed and the
-+ *  extra ports are ignored.
-  */
- 
- static const struct tty_operations cy_ops = {
-@@ -4043,11 +4061,12 @@ static int __init cy_init(void)
- 	}
- 
- 	/* the code below is responsible to find the boards. Each different
--	   type of board has its own detection routine. If a board is found,
--	   the next cy_card structure available is set by the detection
--	   routine. These functions are responsible for checking the
--	   availability of cy_card and cy_port data structures and updating
--	   the cy_next_channel. */
-+	 * type of board has its own detection routine. If a board is found,
-+	 * the next cy_card structure available is set by the detection
-+	 * routine. These functions are responsible for checking the
-+	 * availability of cy_card and cy_port data structures and updating
-+	 * the cy_next_channel.
-+	 */
- 
- 	/* look for isa boards */
- 	nboards = cy_detect_isa();
--- 
-2.17.1
-
+On 7/17/19 1:01 PM, Sowjanya Komatineni wrote:
+>
+> On 7/17/19 12:43 PM, Dmitry Osipenko wrote:
+>> 17.07.2019 21:54, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> On 7/17/19 11:51 AM, Sowjanya Komatineni wrote:
+>>>> On 7/17/19 11:32 AM, Dmitry Osipenko wrote:
+>>>>> 17.07.2019 20:29, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>> On 7/17/19 8:17 AM, Dmitry Osipenko wrote:
+>>>>>>> 17.07.2019 9:36, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
+:
+>>>>>>>> On 7/16/19 11:33 PM, Dmitry Osipenko wrote:
+>>>>>>>>> =D0=92 Tue, 16 Jul 2019 22:55:52 -0700
+>>>>>>>>> Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=
+=D0=B5=D1=82:
+>>>>>>>>>
+>>>>>>>>>> On 7/16/19 10:42 PM, Dmitry Osipenko wrote:
+>>>>>>>>>>> =D0=92 Tue, 16 Jul 2019 22:25:25 -0700
+>>>>>>>>>>> Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=
+=D0=B5=D1=82:
+>>>>>>>>>>>> On 7/16/19 9:11 PM, Dmitry Osipenko wrote:
+>>>>>>>>>>>>> =D0=92 Tue, 16 Jul 2019 19:35:49 -0700
+>>>>>>>>>>>>> Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=
+=88=D0=B5=D1=82:
+>>>>>>>>>>>>>> On 7/16/19 7:18 PM, Sowjanya Komatineni wrote:
+>>>>>>>>>>>>>>> On 7/16/19 3:06 PM, Sowjanya Komatineni wrote:
+>>>>>>>>>>>>>>>> On 7/16/19 3:00 PM, Dmitry Osipenko wrote:
+>>>>>>>>>>>>>>>>> 17.07.2019 0:35, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=
+=D0=B5=D1=82:
+>>>>>>>>>>>>>>>>>> On 7/16/19 2:21 PM, Dmitry Osipenko wrote:
+>>>>>>>>>>>>>>>>>>> 17.07.2019 0:12, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=
+=D0=B5=D1=82:
+>>>>>>>>>>>>>>>>>>>> On 7/16/19 1:47 PM, Dmitry Osipenko wrote:
+>>>>>>>>>>>>>>>>>>>>> 16.07.2019 22:26, Sowjanya Komatineni =D0=BF=D0=B8=D1=
+=88=D0=B5=D1=82:
+>>>>>>>>>>>>>>>>>>>>>> On 7/16/19 11:43 AM, Dmitry Osipenko wrote:
+>>>>>>>>>>>>>>>>>>>>>>> 16.07.2019 21:30, Sowjanya Komatineni =D0=BF=D0=B8=
+=D1=88=D0=B5=D1=82:
+>>>>>>>>>>>>>>>>>>>>>>>> On 7/16/19 11:25 AM, Dmitry Osipenko wrote:
+>>>>>>>>>>>>>>>>>>>>>>>>> 16.07.2019 21:19, Sowjanya Komatineni =D0=BF=D0=
+=B8=D1=88=D0=B5=D1=82:
+>>>>>>>>>>>>>>>>>>>>>>>>>> On 7/16/19 9:50 AM, Sowjanya Komatineni wrote:
+>>>>>>>>>>>>>>>>>>>>>>>>>>> On 7/16/19 8:00 AM, Dmitry Osipenko wrote:
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> 16.07.2019 11:06, Peter De Schrijver =D0=BF=D0=
+=B8=D1=88=D0=B5=D1=82:
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> On Tue, Jul 16, 2019 at 03:24:26PM +0800,=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Joseph
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Lo wrote:
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> OK, Will add to CPUFreq driver...
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> The other thing that also need=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> attention is
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> that T124 CPUFreq
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> driver
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> implicitly relies on DFLL driver to be=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> probed
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> first, which is
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> icky.
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Should I add check for successful dfll clk
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> register explicitly in
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPUFreq driver probe and defer till dfll=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> clk
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> registers?
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> Probably you should use the "device links".=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> See
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> [1][2] for the
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> example.
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> [1]
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> https://elixir.bootlin.com/linux/v5.2.1/source=
+/drivers/gpu/drm/tegra/dc.c#L2383=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> [2]
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> https://www.kernel.org/doc/html/latest/driver-=
+api/device_link.html=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> Return EPROBE_DEFER instead of EINVAL if
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> device_link_add() fails.
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> And
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> use of_find_device_by_node() to get the DFLL's
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> device, see [3].
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> [3]
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> https://git.kernel.org/pub/scm/linux/kernel/gi=
+t/next/linux-next.git/tree/drivers/devfreq/tegra20-devfreq.c#n100=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>> Will go thru and add...
+>>>>>>>>>>>>>>>>>>>>>>>>> Looks like I initially confused this case with
+>>>>>>>>>>>>>>>>>>>>>>>>> getting
+>>>>>>>>>>>>>>>>>>>>>>>>> orphaned clock.
+>>>>>>>>>>>>>>>>>>>>>>>>> I'm now seeing that the DFLL driver registers the
+>>>>>>>>>>>>>>>>>>>>>>>>> clock and then
+>>>>>>>>>>>>>>>>>>>>>>>>> clk_get(dfll) should be returning EPROBE_DEFER=20
+>>>>>>>>>>>>>>>>>>>>>>>>> until
+>>>>>>>>>>>>>>>>>>>>>>>>> DFLL driver is
+>>>>>>>>>>>>>>>>>>>>>>>>> probed, hence everything should be fine as-is and
+>>>>>>>>>>>>>>>>>>>>>>>>> there is no real
+>>>>>>>>>>>>>>>>>>>>>>>>> need
+>>>>>>>>>>>>>>>>>>>>>>>>> for the 'device link'. Sorry for the confusion!
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Sorry, I didn't follow the mail thread. Just
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> regarding the DFLL
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> part.
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> As you know it, the DFLL clock is one of the
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPU
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> clock sources and
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> integrated with DVFS control logic with the
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> regulator. We will not
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> switch
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPU to other clock sources once we=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> switched to
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> DFLL. Because the
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPU has
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> been regulated by the DFLL HW with the DVFS
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> table
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> (CVB or OPP
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> table
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> you see
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> in the driver.). We shouldn't reparent it to
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> other sources with
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> unknew
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> freq/volt pair. That's not guaranteed to
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> work. We
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> allow switching to
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> open-loop mode but different sources.
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> Okay, then the CPUFreq driver will have to
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> enforce
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> DFLL freq to
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> PLLP's
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> rate before switching to PLLP in order to=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> have a
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> proper CPU voltage.
+>>>>>>>>>>>>>>>>>>>>>>>>>>> PLLP freq is safe to work for any CPU voltage.
+>>>>>>>>>>>>>>>>>>>>>>>>>>> So no
+>>>>>>>>>>>>>>>>>>>>>>>>>>> need to enforce
+>>>>>>>>>>>>>>>>>>>>>>>>>>> DFLL freq to PLLP rate before changing CCLK_G
+>>>>>>>>>>>>>>>>>>>>>>>>>>> source
+>>>>>>>>>>>>>>>>>>>>>>>>>>> to PLLP during
+>>>>>>>>>>>>>>>>>>>>>>>>>>> suspend
+>>>>>>>>>>>>>>>>>>>>>>>>>> Sorry, please ignore my above comment. During
+>>>>>>>>>>>>>>>>>>>>>>>>>> suspend, need to change
+>>>>>>>>>>>>>>>>>>>>>>>>>> CCLK_G source to PLLP when dfll is in closed=20
+>>>>>>>>>>>>>>>>>>>>>>>>>> loop
+>>>>>>>>>>>>>>>>>>>>>>>>>> mode first and
+>>>>>>>>>>>>>>>>>>>>>>>>>> then
+>>>>>>>>>>>>>>>>>>>>>>>>>> dfll need to be set to open loop.
+>>>>>>>>>>>>>>>>>>>>>>>>> Okay.
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> And I don't exactly understand why we=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> need to
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> switch to PLLP in
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPU
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> idle
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> driver. Just keep it on CL-DVFS mode all the
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> time.
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> In SC7 entry, the dfll suspend function
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> moves it
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> the open-loop
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> mode. That's
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> all. The sc7-entryfirmware will handle=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> the rest
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> of the sequence to
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> turn off
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> the CPU power.
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> In SC7 resume, the warmboot code will handle
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> the
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> sequence to
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> turn on
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> regulator and power up the CPU cluster. And
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> leave
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> it on PLL_P.
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> After
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> resuming to the kernel, we re-init DFLL,
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> restore
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> the CPU clock
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> policy (CPU
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> runs on DFLL open-loop mode) and then=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> moving to
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> close-loop mode.
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> The DFLL is re-inited after switching CCLK to
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> DFLL
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> parent during of
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> the
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> early clocks-state restoring by CaR driver.=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> Hence
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> instead of having
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> odd
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> hacks in the CaR driver, it is much nicer to
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> have a
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> proper suspend-resume sequencing of the device
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> drivers. In this case
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPUFreq
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> driver is the driver that enables DFLL and
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> switches
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPU to that
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> clock
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> source, which means that this driver is also
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> should
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> be responsible for
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> management of the DFLL's state during of
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> suspend/resume process. If
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> CPUFreq driver disables DFLL during suspend=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> and
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> re-enables it
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> during
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> resume, then looks like the CaR driver hacks
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> around
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> DFLL are not
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> needed.
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> The DFLL part looks good to me. BTW,=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> change the
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> patch subject to
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "Add
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> suspend-resume support" seems more
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> appropriate to
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> me.
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> To clarify this, the sequences for DFLL use
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> are as
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> follows (assuming
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> all
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> required DFLL hw configuration has been done)
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Switch to DFLL:
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 0) Save current parent and frequency
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 1) Program DFLL to open loop mode
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 2) Enable DFLL
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 3) Change cclk_g parent to DFLL
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> For OVR regulator:
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 4) Change PWM output pin from tristate to=20
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> output
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 5) Enable DFLL PWM output
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> For I2C regulator:
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 4) Enable DFLL I2C output
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 6) Program DFLL to closed loop mode
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Switch away from DFLL:
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 0) Change cclk_g parent to PLLP so the CPU
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> frequency is ok for
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> any
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> vdd_cpu voltage
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 1) Program DFLL to open loop mode
+>>>>>>>>>>>>>>>>>>>>>>>>>> I see during switch away from DFLL (suspend),
+>>>>>>>>>>>>>>>>>>>>>>>>>> cclk_g
+>>>>>>>>>>>>>>>>>>>>>>>>>> parent is not
+>>>>>>>>>>>>>>>>>>>>>>>>>> changed to PLLP before changing dfll to open=20
+>>>>>>>>>>>>>>>>>>>>>>>>>> loop
+>>>>>>>>>>>>>>>>>>>>>>>>>> mode.
+>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>> Will add this ...
+>>>>>>>>>>>>>>>>>>>>>>>>> The CPUFreq driver switches parent to PLLP during
+>>>>>>>>>>>>>>>>>>>>>>>>> the
+>>>>>>>>>>>>>>>>>>>>>>>>> probe, similar
+>>>>>>>>>>>>>>>>>>>>>>>>> should be done on suspend.
+>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>> I'm also wondering if it's always safe to=20
+>>>>>>>>>>>>>>>>>>>>>>>>> switch to
+>>>>>>>>>>>>>>>>>>>>>>>>> PLLP in the probe.
+>>>>>>>>>>>>>>>>>>>>>>>>> If CPU is running on a lower freq than PLLP, then
+>>>>>>>>>>>>>>>>>>>>>>>>> some
+>>>>>>>>>>>>>>>>>>>>>>>>> other more
+>>>>>>>>>>>>>>>>>>>>>>>>> appropriate intermediate parent should be=20
+>>>>>>>>>>>>>>>>>>>>>>>>> selected.
+>>>>>>>>>>>>>>>>>>>>>>>> CPU parents are PLL_X, PLL_P, and dfll. PLL_X=20
+>>>>>>>>>>>>>>>>>>>>>>>> always
+>>>>>>>>>>>>>>>>>>>>>>>> runs at higher
+>>>>>>>>>>>>>>>>>>>>>>>> rate
+>>>>>>>>>>>>>>>>>>>>>>>> so switching to PLL_P during CPUFreq probe=20
+>>>>>>>>>>>>>>>>>>>>>>>> prior to
+>>>>>>>>>>>>>>>>>>>>>>>> dfll clock enable
+>>>>>>>>>>>>>>>>>>>>>>>> should be safe.
+>>>>>>>>>>>>>>>>>>>>>>> AFAIK, PLLX could run at ~200MHz. There is also a
+>>>>>>>>>>>>>>>>>>>>>>> divided output of
+>>>>>>>>>>>>>>>>>>>>>>> PLLP
+>>>>>>>>>>>>>>>>>>>>>>> which CCLKG supports, the PLLP_OUT4.
+>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>> Probably, realistically, CPU is always running=20
+>>>>>>>>>>>>>>>>>>>>>>> off a
+>>>>>>>>>>>>>>>>>>>>>>> fast PLLX during
+>>>>>>>>>>>>>>>>>>>>>>> boot, but I'm wondering what may happen on KEXEC. I
+>>>>>>>>>>>>>>>>>>>>>>> guess ideally CPUFreq driver should also have a
+>>>>>>>>>>>>>>>>>>>>>>> 'shutdown' callback to teardown DFLL
+>>>>>>>>>>>>>>>>>>>>>>> on a reboot, but likely that there are other
+>>>>>>>>>>>>>>>>>>>>>>> clock-related problems as
+>>>>>>>>>>>>>>>>>>>>>>> well that may break KEXEC and thus it is not very
+>>>>>>>>>>>>>>>>>>>>>>> important at the
+>>>>>>>>>>>>>>>>>>>>>>> moment.
+>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>> [snip]
+>>>>>>>>>>>>>>>>>>>>>> During bootup CPUG sources from PLL_X. By PLL_P=20
+>>>>>>>>>>>>>>>>>>>>>> source
+>>>>>>>>>>>>>>>>>>>>>> above I meant
+>>>>>>>>>>>>>>>>>>>>>> PLL_P_OUT4.
+>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>> As per clock policies, PLL_X is always used for high
+>>>>>>>>>>>>>>>>>>>>>> freq
+>>>>>>>>>>>>>>>>>>>>>> like
+>>>>>>>>>>>>>>>>>>>>>>> 800Mhz
+>>>>>>>>>>>>>>>>>>>>>> and for low frequency it will be sourced from PLLP.
+>>>>>>>>>>>>>>>>>>>>> Alright, then please don't forget to pre-initialize
+>>>>>>>>>>>>>>>>>>>>> PLLP_OUT4 rate to a
+>>>>>>>>>>>>>>>>>>>>> reasonable value using tegra_clk_init_table or
+>>>>>>>>>>>>>>>>>>>>> assigned-clocks.
+>>>>>>>>>>>>>>>>>>>> PLLP_OUT4 rate update is not needed as it is safe to
+>>>>>>>>>>>>>>>>>>>> run at
+>>>>>>>>>>>>>>>>>>>> 408Mhz because it is below fmax @ Vmin
+>>>>>>>>>>>>>>>>>>> So even 204MHz CVB entries are having the same=20
+>>>>>>>>>>>>>>>>>>> voltage as
+>>>>>>>>>>>>>>>>>>> 408MHz, correct? It's not instantly obvious to me=20
+>>>>>>>>>>>>>>>>>>> from the
+>>>>>>>>>>>>>>>>>>> DFLL driver's code where the fmax @ Vmin is defined,=20
+>>>>>>>>>>>>>>>>>>> I see
+>>>>>>>>>>>>>>>>>>> that there is the min_millivolts
+>>>>>>>>>>>>>>>>>>> and frequency entries starting from 204MHZ defined
+>>>>>>>>>>>>>>>>>>> per-table.
+>>>>>>>>>>>>>>>>>> Yes at Vmin CPU Fmax is ~800Mhz. So anything below that
+>>>>>>>>>>>>>>>>>> will
+>>>>>>>>>>>>>>>>>> work at Vmin voltage and PLLP max is 408Mhz.
+>>>>>>>>>>>>>>>>> Thank you for the clarification. It would be good to have
+>>>>>>>>>>>>>>>>> that
+>>>>>>>>>>>>>>>>> commented
+>>>>>>>>>>>>>>>>> in the code as well.
+>>>>>>>>>>>>>>>> OK, Will add...
+>>>>>>>>>>>>>>> Regarding, adding suspend/resume to CPUFreq, CPUFreq=20
+>>>>>>>>>>>>>>> suspend
+>>>>>>>>>>>>>>> happens very early even before disabling non-boot CPUs and
+>>>>>>>>>>>>>>> also
+>>>>>>>>>>>>>>> need to export clock driver APIs to CPUFreq.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Was thinking of below way of implementing this...
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Clock DFLL driver Suspend:
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=
+=A0=C2=A0 - Save CPU clock policy registers, and=20
+>>>>>>>>>>>>>>> Perform
+>>>>>>>>>>>>>>> dfll
+>>>>>>>>>>>>>>> suspend which sets in open loop mode
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> CPU Freq driver Suspend: does nothing
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Clock DFLL driver Resume:
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=
+=A0=C2=A0 - Re-init DFLL, Set in Open-Loop mode,=20
+>>>>>>>>>>>>>>> restore
+>>>>>>>>>>>>>>> CPU
+>>>>>>>>>>>>>>> Clock policy registers which actually sets source to DFLL
+>>>>>>>>>>>>>>> along
+>>>>>>>>>>>>>>> with other CPU Policy register restore.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> CPU Freq driver Resume:
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=
+=A0=C2=A0 - do clk_prepare_enable which acutally sets
+>>>>>>>>>>>>>>> DFLL in
+>>>>>>>>>>>>>>> Closed loop mode
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Adding one more note: Switching CPU Clock to PLLP is not
+>>>>>>>>>>>>>>> needed
+>>>>>>>>>>>>>>> as CPU CLock can be from dfll in open-loop mode as DFLL=20
+>>>>>>>>>>>>>>> is not
+>>>>>>>>>>>>>>> disabled anywhere throught the suspend/resume path and SC7
+>>>>>>>>>>>>>>> entry
+>>>>>>>>>>>>>>> FW and Warm boot code will switch CPU source to PLLP.
+>>>>>>>>>>>>> Since CPU resumes on PLLP, it will be cleaner to suspend=20
+>>>>>>>>>>>>> it on
+>>>>>>>>>>>>> PLLP as well. And besides, seems that currently disabling=20
+>>>>>>>>>>>>> DFLL
+>>>>>>>>>>>>> clock will disable DFLL completely and then you'd want to
+>>>>>>>>>>>>> re-init
+>>>>>>>>>>>>> the DFLL on resume any ways. So better to just disable DFLL
+>>>>>>>>>>>>> completely on suspend, which should happen on=20
+>>>>>>>>>>>>> clk_disable(dfll).
+>>>>>>>>>>>> Will switch to PLLP during CPUFreq suspend. With decision of
+>>>>>>>>>>>> using
+>>>>>>>>>>>> clk_disable during suspend, its mandatory to switch to PLLP as
+>>>>>>>>>>>> DFLL
+>>>>>>>>>>>> is completely disabled.
+>>>>>>>>>>>>
+>>>>>>>>>>>> My earlier concern was on restoring CPU policy as we can't do
+>>>>>>>>>>>> that
+>>>>>>>>>>>> from CPUFreq driver and need export from clock driver.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Clear now and will do CPU clock policy restore in after dfll
+>>>>>>>>>>>> re-init.
+>>>>>>>>>>> Why the policy can't be saved/restored by the CaR driver as a
+>>>>>>>>>>> context of any other clock?
+>>>>>>>>>> restoring cpu clock policy involves programming source and
+>>>>>>>>>> super_cclkg_divider.
+>>>>>>>>>>
+>>>>>>>>>> cclk_g is registered as clk_super_mux and it doesn't use
+>>>>>>>>>> frac_div ops
+>>>>>>>>>> to do save/restore its divider.
+>>>>>>>>> That can be changed of course and I guess it also could be as
+>>>>>>>>> simple as
+>>>>>>>>> saving and restoring of two raw u32 values of the policy/divider
+>>>>>>>>> registers.
+>>>>>>>>>
+>>>>>>>>>> Also, during clock context we cant restore cclk_g as cclk_g=20
+>>>>>>>>>> source
+>>>>>>>>>> will be dfll and dfll will not be resumed/re-initialized by the
+>>>>>>>>>> time
+>>>>>>>>>> clk_super_mux save/restore happens.
+>>>>>>>>>>
+>>>>>>>>>> we can't use save/restore context for dfll clk_ops because
+>>>>>>>>>> dfllCPU_out parent to CCLK_G is first in the clock tree and
+>>>>>>>>>> dfll_ref
+>>>>>>>>>> and dfll_soc peripheral clocks are not restored by the time dfll
+>>>>>>>>>> restore happens. Also dfll peripheral clock enables need to be
+>>>>>>>>>> restored before dfll restore happens which involves programming
+>>>>>>>>>> dfll
+>>>>>>>>>> controller for re-initialization.
+>>>>>>>>>>
+>>>>>>>>>> So dfll resume/re-init is done in clk-tegra210 at end of all=20
+>>>>>>>>>> clocks
+>>>>>>>>>> restore in V5 series but instead of in clk-tegra210 driver I=20
+>>>>>>>>>> moved
+>>>>>>>>>> now to dfll-fcpu driver pm_ops as all dfll dependencies will be
+>>>>>>>>>> restored thru clk_restore_context by then. This will be in V6.
+>>>>>>>>> Since DFLL is now guaranteed to be disabled across CaR
+>>>>>>>>> suspend/resume
+>>>>>>>>> (hence it has nothing to do in regards to CCLK) and given that=20
+>>>>>>>>> PLLs
+>>>>>>>>> state is restored before the rest of the clocks, I don't see why
+>>>>>>>>> not to
+>>>>>>>>> implement CCLK save/restore in a generic fasion. CPU policy=20
+>>>>>>>>> wull be
+>>>>>>>>> restored to either PLLP or PLLX (if CPUFreq driver is disabled).
+>>>>>>>>>
+>>>>>>>> CCLK_G save/restore should happen in clk_super_mux ops
+>>>>>>>> save/context and
+>>>>>>>> clk_super_mux save/restore happens very early as cclk_g is first
+>>>>>>>> in the
+>>>>>>>> clock tree and save/restore traverses through the tree top-bottom
+>>>>>>>> order.
+>>>>>>> If CCLK_G is restored before the PLLs, then just change the clocks
+>>>>>>> order
+>>>>>>> such that it won't happen.
+>>>>>>>
+>>>>>> I dont think we can change clocks order for CCLK_G.
+>>>>>>
+>>>>>> During bootup, cclk_g is registered after all pll's and peripheral
+>>>>>> clocks which is the way we wanted, So cclk_g will be the first=20
+>>>>>> one in
+>>>>>> the clk list as clk_register adds new clock first in the list.
+>>>>>>
+>>>>>> When clk_save_context and clk_restore_context APIs iterates over the
+>>>>>> list, cclk_g is the first
+>>>>> Looking at clk_core_restore_context(), I see that it walks up CLKs=20
+>>>>> list
+>>>>> from parent to children, hence I don't understand how it can ever=20
+>>>>> happen
+>>>>> that CCLK will be restored before the parent. The clocks registration
+>>>>> order doesn't matter at all in that case.
+>>>> yes from parent to children and dfllCPU_out is the top in the list and
+>>>> its child is cclk_g.
+>>>>
+>>>> the way clocks are registered is the order I see in the clock list and
+>>>> looking into clk_register API it adds new node first in the list.
+>>>>
+>>> cclkg_g & dfll register happens after all plls and peripheral clocks as
+>>> it need ref, soc and peripheral clocks to be enabled.
+>>>> So they are the last to get registered and so becomes first in the=20
+>>>> list.
+>>>>
+>>>> During save/restore context, it traverses thru this list and first in
+>>>> the list is dfllcpu_OUT (parent) and its child (cclk_g)
+>>>>
+>>>> saving should not be an issue at all but we cant restore cclk_g/dfll
+>>>> in normal way thru clk_ops restore as plls and peripherals restore
+>>>> doesn't happen by that time.
+>>>>
+>>> I was referring to clk_restore_context where it iterates thru root list
+>>> and for each core from the root list clk_core_restore does restore of
+>>> parent and children.
+>>>
+>>> dfllCPU_Out gets first in the list and its child is cclk_g
+>>>
+>>> https://elixir.bootlin.com/linux/v5.2.1/source/drivers/clk/clk.c#L1105
+>> What list you're talking about? clk_summary? It shows current *active*
+>> clocks configuration, if you'll try to disable CPUFreq driver then the
+>> parent of CCLK_G should be PLLX. Similarly when CPU is reparented to
+>> PLLP on driver's suspend, then PLLP is the parent.
+>>
+>>>>>>>> DFLL enable thru CPUFreq resume happens after all=20
+>>>>>>>> clk_restore_context
+>>>>>>>> happens. So during clk_restore_context, dfll re-init doesnt happen
+>>>>>>>> and
+>>>>>>>> doing cpu clock policy restore during super_mux clk_ops will=20
+>>>>>>>> crash as
+>>>>>>>> DFLL is not initialized and its clock is not enabled but CPU clock
+>>>>>>>> restore sets source to DFLL if we restore during super_clk_mux
+>>>>>>> If CPU was suspended on PLLP, then it will be restored on PLLP by
+>>>>>>> CaR. I
+>>>>>>> don't understand what DFLL has to do with the CCLK in that case=20
+>>>>>>> during
+>>>>>>> the clocks restore.
+>>>>>> My above comment is in reference to your request of doing=20
+>>>>>> save/restore
+>>>>>> for cclk_g in normal fashion thru save/restore context. Because=20
+>>>>>> of the
+>>>>>> clk order I mentioned above, we cclk_g will be the first one to=20
+>>>>>> go thru
+>>>>>> save/context.
+>>>>>>
+>>>>>> During save_context of cclk_g, source can be from PLLX, dfll.
+>>>>>>
+>>>>>> Issue will be when we do restore during clk_restore_context of
+>>>>>> cclk_g as
+>>>>>> by that time PLLX/dfll will not be restored.
+>>>>>>
+>>>>> Seems we already agreed that DFLL will be disabled by the CPUFreq=20
+>>>>> driver
+>>>>> on suspend. Hence CCLK can't be from DFLL if CPU is reparented to=20
+>>>>> PLLP
+>>>>> on CPUFreq driver's suspend, otherwise CPU keeps running from a
+>>>>> boot-state PLLX if CPUFreq driver is disabled.
+>>>> Yes suspend should not be an issue but issue will be during resume
+>>>> where if we do cclk_g restore in normal way thru clk_restore_context,
+>>>> cclk_g restore happens very early as dfllCPU out is the first one that
+>>>> goes thru restore context and plls/peripherals are not resumed by=20
+>>>> then.
+>>>>
+>>>> CPU runs from PLLX if dfll clock enable fails during boot. So when it
+>>>> gets to suspend, we save CPU running clock source as either PLLX or
+>>>> DFLL and then we switch to PLLP.
+>>>>
+>>>>
+>>>> On resume, CPU runs from PLLP by warm boot code and we need to restore
+>>>> back its source to the one it was using from saved source context
+>>>> (which can be either PLLX or DFLL)
+>>>>
+>>>> So PLLs & DFLL resume need to happen before CCLKG restore/resume.
+>>>>
+>>>>
+>>>> With all above discussions, we do DFLL disable in CPUFreq driver on
+>>>> suspend and on CPUFreq resume we enable DFLL back and restore CPU
+>>>> clock source it was using during suspend (which will be either PLLX if
+>>>> dfll enable fails during probe or it will be using DFLL).
+>> During suspend CPU's parent shall be PLLP and not DFLL (note that it is
+>> disabled) after reparenting to PLLP by the CPUFreq driver.
+>>
+> CPU source context should be saved before switching to safe source of=20
+> PLLP as on resume we need to restore back to source it was using=20
+> before we switch to safe source during suspend entry.
+>
+> So saved context for CPU Source will be either dfll or PLLX
+>
+PLLP reparenting is only during suspend/entry to have it as safe source=20
+but actual CPU source it was running from before suspending is either=20
+dfll/pllx which should be the one to be restored on CPUFreq resume.=20
+Resume happens with CPU running from PLLP till it gets to the point of=20
+restoring its original source (dfll or pllx)
+>>>> So i was trying to say dfll/cclk_g restore can't be done in normal way
+>>>> thru clk_ops save/restore context
+>> Let's see what happens if CPUFreq is active:
+>>
+>> 1. CPUFreq driver probe happens
+>> =C2=A0=C2=A0=C2=A0=C2=A02. CPU is reparented to PLLP
+>> =C2=A0=C2=A0=C2=A0=C2=A03. DFLL inited
+>> =C2=A0=C2=A0=C2=A0=C2=A04. CPU is reparented to DFLL
+>>
+>> 5. CPUFreq driver suspend happens
+>> =C2=A0=C2=A0=C2=A0=C2=A06. CPU is reparented to PLLP
+>> =C2=A0=C2=A0=C2=A0=C2=A07. DFLL is disabled
+>>
+>> 8. Car suspend happens
+>> =C2=A0=C2=A0=C2=A0=C2=A09. DFLL context saved
+>> =C2=A0=C2=A0=C2=A0=C2=A010. PLLP/PLLX context saved
+>> =C2=A0=C2=A0=C2=A0=C2=A011. CCLK context saved
+>>
+>> 12. Car resume happens
+>> =C2=A0=C2=A0=C2=A0=C2=A013. DFLL context restored
+>> =C2=A0=C2=A0=C2=A0=C2=A014. PLLP/PLLX context restored
+>> =C2=A0=C2=A0=C2=A0=C2=A015. CCLK context restored
+>>
+>> 16. CPUFreq driver resume happens
+>> =C2=A0=C2=A0=C2=A0=C2=A017. DFLL re-inited
+>> =C2=A0=C2=A0=C2=A0=C2=A018. CPU is reparented to DFLL
+>
+>
+> Below is the order of sequence it should be based on the order of clk=20
+> register.
+>
+> My comments inline in this sequence.
+>
+> 1. CPUFreq driver probe happens
+> =C2=A0=C2=A0=C2=A0=C2=A02. CPU is reparented to PLLP
+> =C2=A0=C2=A0=C2=A0=C2=A03. DFLL inited
+> =C2=A0=C2=A0=C2=A0=C2=A04. CPU is reparented to DFLL
+>
+>
+> 5. CPUFreq driver suspend happens
+> =C2=A0=C2=A0=C2=A0=C2=A06. Save CPU source which could be either dfll or =
+pllx
+> =C2=A0=C2=A0=C2=A0=C2=A07. CPU is reparented to safe known source PLLP
+> =C2=A0=C2=A0=C2=A0=C2=A08. DFLL is disabled
+>
+> 8. Car suspend happens
+> =C2=A0=C2=A0=C2=A0=C2=A09. DFLL context saved (With DFLL disabled in CPUF=
+req suspend,=20
+> nothing to be saved here as last freq req will always be saved).
+> =C2=A0=C2=A0=C2=A0=C2=A010. CCLK context saved (CPU clock source will be =
+saved in CPUFreq=20
+> driver suspend which could be either dfll or pllx)
+> =C2=A0=C2=A0=C2=A0=C2=A011. PLLP/PLLX context saved
+> =C2=A0=C2=A0=C2=A0=C2=A012. Peripheral Clock saved
+>
+> 12. Car resume happens
+> =C2=A0=C2=A0=C2=A0=C2=A013. DFLL context restored : No DFLL context to be=
+ restored and we=20
+> only need to reinitialize DFLL and re-initialize can't be done here as=20
+> this is the 1st to get restored and PLL/Peripheral clocks are not=20
+> restored by this time. So we can't use clk_ops restore for DFLL
+> =C2=A0=C2=A0=C2=A0=C2=A014. CCLK context restored
+> CCLK cant be restored here as context could be either dfll or pllx=20
+> which is the source orginally it was actually using before we force=20
+> switch to safe PLLP for suspend entry. So we can't use clk_ops restore=20
+> for DFLL
+>
+> 15. PLLP/PLLX context restored
+> =C2=A0=C2=A0=C2=A0=C2=A016. Peripheral context restored
+>
+> 16. CPUFreq driver resume happens
+> =C2=A0=C2=A0=C2=A0=C2=A017. DFLL re-inited (Invoking DFLL re-init in CPUF=
+req resume need=20
+> exporting DFLL reinit from Clock driver to CPUFreq driver)
+> =C2=A0=C2=A0=C2=A0=C2=A018. CPU is reparented to DFLL or PLLX based on sa=
+ved context from=20
+> step 9.
+>
+> Note: instead of exporting, we can do DFLL re-init from clock-dfll=20
+> driver itself thru dfll-fcpu pm_ops resume. So dfll will be=20
+> re-initialized by the time CPUFreq driver resumes and switches to use=20
+> DFLL source.
+>
