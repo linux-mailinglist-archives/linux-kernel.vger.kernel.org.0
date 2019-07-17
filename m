@@ -2,123 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68B946B6AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 08:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9F7A6B6B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 08:35:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbfGQGeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 02:34:09 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:49861 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbfGQGeJ (ORCPT
+        id S1727323AbfGQGfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 02:35:06 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45512 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbfGQGfF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 02:34:09 -0400
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id x6H6Y50h019086;
-        Wed, 17 Jul 2019 15:34:05 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x6H6Y50h019086
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1563345246;
-        bh=rG7ekEvaQy1IjhchJCTkqJacKz4cRc1jvbuG8gJAP9M=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=gXVacMquCuEXEGhx3Ti/SvGU6V2I4SNFOhfrjTKdUzbkaCwO18NlV21SnudqyxPHG
-         d+PjzkPbvOk0scjD/dOXf3Vg52Bp0v1WK5EC6wX6RxboJZXTw41dJjoNWQ3Je3c++e
-         u4XU2LWxmOGQKbRUkvSXBhNMBme07AqBAarjfd2ve+aftPiCe3CBPARFZ9Nf6p/Rz3
-         EWV/8P+MkYogE6+47q6v7DuYqJOdUCeQ62DHmXnud4EvHOHwAgybx8VzNoq4N3AI5o
-         eGV7K+mpxuGafTKlxs8WDo9sHqRvSe6q0D7RKCPOcUK8Q7lQzRBpib8ZOhy+0rpveI
-         fPEBa27iGHVKQ==
-X-Nifty-SrcIP: [209.85.217.47]
-Received: by mail-vs1-f47.google.com with SMTP id m8so15737320vsj.0;
-        Tue, 16 Jul 2019 23:34:05 -0700 (PDT)
-X-Gm-Message-State: APjAAAUbd3RgE1WpC6uDxGuibYNgQPrGTdPD4ZUt7KtG7DTCmiP6zIfN
-        D+84pE3NEA0enK2maE4CDkzypayhzHINxEOZfcs=
-X-Google-Smtp-Source: APXvYqzgNWfC169qm/VJmhV93vE8pqpShdA43iCdrk/fvt6DOhA6i66MYEisEz8GA2ScseJMPjrlg8uFi3GEPxYwCfk=
-X-Received: by 2002:a67:f495:: with SMTP id o21mr23161422vsn.54.1563345244535;
- Tue, 16 Jul 2019 23:34:04 -0700 (PDT)
+        Wed, 17 Jul 2019 02:35:05 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f9so23375778wre.12;
+        Tue, 16 Jul 2019 23:35:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4XebQ0f49Yy5q8IYJhpYbcY0E6K9JZ6GxX2Mpn0fMj4=;
+        b=sBgIS3ZGF9wiNKJ9acaqaZ8z0aNFhvIJc+683vOPaN4oO8BOLGN63qm9Hm7x0dAdn1
+         PzoIWoLt1maDIT3XxPhIS3xxk1Ek03yxTXF6vMUrnXpBFSN5aU9p7VWNIAKrW0G77BMy
+         keQJZuAOyj8Z8kGJ2ynwvJkyPzYJXmqRk4RS5jgA6bE/qpjHa8j02lw/QqdulKADa0XA
+         /lR0irdJMEaxmrVJMEoFu2UyUs+FaVfsj9nu6Z9i7Dzo3Yw+Nhh8lcan8YCgKqZ2IHFy
+         y85JjaM1N9XWOJkgyLyYOsM2Zw6mI2BgbeDSvoBrsWRQufWUQ25OsM2wHH7dT+Rbkykr
+         qOEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4XebQ0f49Yy5q8IYJhpYbcY0E6K9JZ6GxX2Mpn0fMj4=;
+        b=ccrtH98VJ7Sqe740y9Nbii36W2j4uJjXiWDg/5JwewkxnQopbgTu9G/ekN7wlsUVOD
+         TOzX8iDsbKQjlrLXeCMgaXMBdwrWILrvh8Wl6EjiOJaCKGnz1NBvMP8SupjYCKMeHvZ3
+         dsncwmZ5povOAxoeS7UviKaZK0aLD8sSf8eCmKBdklavYCvc79LJyS6lEjatL7zmZXm2
+         +H9HXzHbUxxeQBlyu4LdnjWmB/NfrkAaCS52IWcRquU85EjRlRDEXKsHpIOSu8cKna74
+         8Iq4gfTLwZCAyQavPFpj/EI8gXXCBfngC4LjWxxRZPBqqiIdr5Q7OtTWSDOukOseoqsB
+         xXQQ==
+X-Gm-Message-State: APjAAAXSioXiSP5YXyCuA22wTDABJp6tzKIFHtmhpT9PByNmdbbL6HTC
+        jUPLN1mOybLEmRs/MP0OUJtNqHZ7sSs=
+X-Google-Smtp-Source: APXvYqxnyNHyEbGNaXQD2Er7btAWJsv/EJB6L63+SkspuUAY1lOR9tO9IidM0n2t38IM6Udqo+rzLQ==
+X-Received: by 2002:adf:ce07:: with SMTP id p7mr39962069wrn.129.1563345302347;
+        Tue, 16 Jul 2019 23:35:02 -0700 (PDT)
+Received: from localhost.localdomain ([151.15.230.231])
+        by smtp.gmail.com with ESMTPSA id f12sm24530404wrg.5.2019.07.16.23.35.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 16 Jul 2019 23:35:01 -0700 (PDT)
+Date:   Wed, 17 Jul 2019 08:34:59 +0200
+From:   Juri Lelli <juri.lelli@gmail.com>
+To:     Clark Williams <williams@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        RT <linux-rt-users@vger.kernel.org>
+Subject: Re: [PREEMPT_RT]  splat in v5.2-rt1:   r t_mutex_owner(lock) !=
+ current
+Message-ID: <20190717063459.GD13885@localhost.localdomain>
+References: <20190716175509.17b03f1e@torg>
 MIME-Version: 1.0
-References: <20190709133019.25a8cd27@canb.auug.org.au> <ba1dd3e2-3091-816c-c308-2f9dd4385596@mellanox.com>
- <20190709071758.GI7034@mtr-leonro.mtl.com> <20190709124631.GG3436@mellanox.com>
- <20190710110443.002220c8@canb.auug.org.au> <20190710143036.1582c79d@canb.auug.org.au>
- <20190717092801.77037015@canb.auug.org.au>
-In-Reply-To: <20190717092801.77037015@canb.auug.org.au>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 17 Jul 2019 15:33:28 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARZqi-QcGaTEaoTEASbnBaGzYchgDoWeuthR+G8jxQHMg@mail.gmail.com>
-Message-ID: <CAK7LNARZqi-QcGaTEaoTEASbnBaGzYchgDoWeuthR+G8jxQHMg@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Mark Zhang <markz@mellanox.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Majd Dibbiny <majd@mellanox.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190716175509.17b03f1e@torg>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+Hi Clark,
 
+On 16/07/19 17:55, Clark Williams wrote:
+> Saw this after applying my thermal lock to raw patch and the change in i915 for lockdep. The 
+> splat occurred on boot when creating the kdump initramfs. System is an Intel NUC i7 with 32GB ram
+> and 256GB SSD for rootfs. 
+> 
+> The booting kernel has rt_mutex debugging turned on as well as lockdep and lockup configs. 
+> 
+> Jul 16 14:41:48 theseus dracut[3082]: *** Creating initramfs image file '/boot/initramfs-5.2.0-rt1.fixes+kdump.img' done ***
+> Jul 16 14:41:48 theseus kernel: ------------[ cut here ]------------
+> Jul 16 14:41:48 theseus kernel: DEBUG_LOCKS_WARN_ON(rt_mutex_owner(lock) != current)
+> Jul 16 14:41:48 theseus kernel: WARNING: CPU: 1 PID: 8349 at kernel/locking/rtmutex-debug.c:145 debug_rt_mutex_unlock+0x47/0x50
+> Jul 16 14:41:48 theseus kernel: Modules linked in: rfcomm xt_CHECKSUM xt_MASQUERADE tun bridge stp llc fuse nf_conntrack_netbios_ns nf_conntrack_broadcast xt_CT ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat ip6table_nat ip6table_mangle ip6table_raw>
+> Jul 16 14:41:48 theseus kernel:  snd_rawmidi snd_hda_core media snd_hwdep snd_seq btusb wmi_bmof snd_seq_device iwlwifi btrtl intel_wmi_thunderbolt btbcm snd_pcm iTCO_wdt btintel iTCO_vendor_support pcspkr bluetooth snd_timer rtsx_pci_ms cfg80211 snd memstick ecdh_generic i2c_i801 soundcore ec>
+> Jul 16 14:41:48 theseus kernel: CPU: 1 PID: 8349 Comm: fsfreeze Not tainted 5.2.0-rt1.fixes+ #16
+> Jul 16 14:41:48 theseus kernel: Hardware name: Intel Corporation NUC7i7BNH/NUC7i7BNB, BIOS BNKBL357.86A.0054.2017.1025.1822 10/25/2017
+> Jul 16 14:41:48 theseus kernel: RIP: 0010:debug_rt_mutex_unlock+0x47/0x50
+> Jul 16 14:41:48 theseus kernel: Code: c2 75 01 c3 e8 6a c1 3e 00 85 c0 74 f6 8b 05 30 3c 66 01 85 c0 75 ec 48 c7 c6 a0 b3 2e b1 48 c7 c7 48 bf 2c b1 e8 42 7d f8 ff <0f> 0b c3 66 0f 1f 44 00 00 c3 66 66 2e 0f 1f 84 00 00 00 00 00 0f
+> Jul 16 14:41:48 theseus kernel: RSP: 0018:ffffc03c5b607dd0 EFLAGS: 00010086
+> Jul 16 14:41:48 theseus kernel: RAX: 0000000000000000 RBX: ffff9a7d6deb0d98 RCX: 0000000000000000
+> Jul 16 14:41:48 theseus kernel: RDX: ffffffffb167ce50 RSI: 00000000ffffffff RDI: 00000000ffffffff
+> Jul 16 14:41:48 theseus kernel: RBP: ffff9a7d6deb0ab0 R08: 0000000000000000 R09: ffffffffb167cd20
+> Jul 16 14:41:48 theseus kernel: R10: ffffc03c5b607d10 R11: ffffffffb2aa38eb R12: 0000000000000246
+> Jul 16 14:41:48 theseus kernel: R13: ffffc03c5b607e00 R14: ffffc03c5b607e10 R15: ffffffffb034c53f
+> Jul 16 14:41:48 theseus kernel: FS:  00007fd6e2f0e540(0000) GS:ffff9a7d9e600000(0000) knlGS:0000000000000000
+> Jul 16 14:41:48 theseus kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> Jul 16 14:41:48 theseus kernel: CR2: 0000563557bc0178 CR3: 0000000792188006 CR4: 00000000003606e0
+> Jul 16 14:41:48 theseus kernel: Call Trace:
+> Jul 16 14:41:48 theseus kernel:  rt_mutex_slowunlock+0x25/0x80
+> Jul 16 14:41:48 theseus kernel:  __rt_mutex_unlock+0x45/0x80
+> Jul 16 14:41:48 theseus kernel:  percpu_up_write+0x1f/0x30
+> Jul 16 14:41:48 theseus kernel:  thaw_super_locked+0xde/0x110
+> Jul 16 14:41:48 theseus kernel:  do_vfs_ioctl+0x5de/0x720
+> Jul 16 14:41:48 theseus kernel:  ksys_ioctl+0x5e/0x90
+> Jul 16 14:41:48 theseus kernel:  __x64_sys_ioctl+0x16/0x20
+> Jul 16 14:41:48 theseus kernel:  do_syscall_64+0x66/0xb0
+> Jul 16 14:41:48 theseus kernel:  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> Jul 16 14:41:48 theseus kernel: RIP: 0033:0x7fd6e2e391fb
+> Jul 16 14:41:48 theseus kernel: Code: 0f 1e fa 48 8b 05 8d dc 0c 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 5d dc 0c 00 f7 d8 64 89 01 48
+> Jul 16 14:41:48 theseus kernel: RSP: 002b:00007ffe61e2f498 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> Jul 16 14:41:48 theseus kernel: RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fd6e2e391fb
+> Jul 16 14:41:48 theseus kernel: RDX: 0000000000000000 RSI: 00000000c0045878 RDI: 0000000000000003
+> Jul 16 14:41:48 theseus kernel: RBP: 0000000000000003 R08: 0000000000000001 R09: 0000000000000000
+> Jul 16 14:41:48 theseus kernel: R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
+> Jul 16 14:41:48 theseus kernel: R13: 00007ffe61e309fa R14: 0000000000000000 R15: 0000000000000000
+> Jul 16 14:41:48 theseus kernel: irq event stamp: 6254
+> Jul 16 14:41:48 theseus kernel: hardirqs last  enabled at (6253): [<ffffffffb0ac8590>] _raw_spin_unlock_irqrestore+0x60/0x90
+> Jul 16 14:41:48 theseus kernel: hardirqs last disabled at (6254): [<ffffffffb0ac8713>] _raw_spin_lock_irqsave+0x23/0x90
+> Jul 16 14:41:48 theseus kernel: softirqs last  enabled at (3330): [<ffffffffb003e4a8>] fpu__clear+0x88/0x200
+> Jul 16 14:41:48 theseus kernel: softirqs last disabled at (3327): [<ffffffffb003e46b>] fpu__clear+0x4b/0x200
+> Jul 16 14:41:48 theseus kernel: ---[ end trace 0000000000000002 ]---
+> Jul 16 14:41:49 theseus kdumpctl[1500]: kexec: loaded kdump kernel
+> Jul 16 14:41:49 theseus kdumpctl[1500]: Starting kdump: [OK]
 
-On Wed, Jul 17, 2019 at 8:28 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi,
->
-> On Wed, 10 Jul 2019 14:30:36 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Wed, 10 Jul 2019 11:04:43 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > On Tue, 9 Jul 2019 12:46:34 +0000 Jason Gunthorpe <jgg@mellanox.com> wrote:
-> > > >
-> > > > It isn't quite enough to make the header compile stand alone, I'm
-> > > > adding this instead.
-> > > >
-> > > > From 37c1e072276b03b080eb24ff24c39080aeaf49ef Mon Sep 17 00:00:00 2001
-> > > > From: Jason Gunthorpe <jgg@mellanox.com>
-> > > > Date: Tue, 9 Jul 2019 09:44:47 -0300
-> > > > Subject: [PATCH] RDMA/counters: Make rdma_counter.h compile stand alone
-> > >
-> > > I will apply this to linux-next today and reenable the stand alone
-> > > building for rdma_counter.h
-> >
-> > That worked for me ...
->
-> rdma_counter.h should be able to be removed from the exceptions list now.
->
-> I have been building linux-next with this patch for a while, so maybe
-> it could be applied to the kbuild tree?
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 10 Jul 2019 13:03:16 +1000
-> Subject: [PATCH] rdma: attempt to build rdma_counter.h stand alone again
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  include/Kbuild | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/include/Kbuild b/include/Kbuild
-> index 7e9f1acb9dd5..765ff864130d 100644
-> --- a/include/Kbuild
-> +++ b/include/Kbuild
-> @@ -949,7 +949,6 @@ header-test-                        += pcmcia/ds.h
->  header-test-                   += rdma/ib.h
->  header-test-                   += rdma/iw_portmap.h
->  header-test-                   += rdma/opa_port_info.h
-> -header-test-                   += rdma/rdma_counter.h
->  header-test-                   += rdma/rdmavt_cq.h
->  header-test-                   += rdma/restrack.h
->  header-test-                   += rdma/signature.h
+Looks like this is the same percpu_rwsem problem Peter is chasing down:
 
-Yes, this is just a one-liner fix-up,
-so I'd like to fold it into this:
+https://lore.kernel.org/linux-rt-users/20190326093421.GA29508@localhost.localdomain/
 
-https://patchwork.kernel.org/patch/11047283/
+Thanks,
 
-
--- 
-Best Regards
-Masahiro Yamada
+Juri
