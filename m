@@ -2,128 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A77056B34E
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 03:30:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85CA66B368
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 03:30:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfGQB3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 21:29:23 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39932 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726945AbfGQB3T (ORCPT
+        id S1726603AbfGQBar (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 21:30:47 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46958 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbfGQBaq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 21:29:19 -0400
-Received: by mail-pg1-f196.google.com with SMTP id u17so10301551pgi.6
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 18:29:19 -0700 (PDT)
+        Tue, 16 Jul 2019 21:30:46 -0400
+Received: by mail-pf1-f193.google.com with SMTP id c73so9963638pfb.13;
+        Tue, 16 Jul 2019 18:30:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding:cc:from:to;
-        bh=Zt2cGhW98jjWE3OdliFocFdkTeCj4B287sEGZ0SpTug=;
-        b=LRzFJFoIhdEmL95807L32ZJIuoUYPRnejcM4WZZAS5I0UeznU/mAzk5GHoafmOmsHO
-         IM1q2PeVsvlEPnevADzvUbNh7W588och2Rq5fZ7FuM8MS5EZgdQu/E3L+BqIYSfN2XU/
-         fS7NBtFCaQBxI26WtshKHqrbJwSXRxg0DRH2E+7ihFfC5kinDvs9QAQl4LeKl3WMrLal
-         EZk+GjuTQmWvWRkiN6fD0Uh9EK++IoK7hPKkpfs3WJ+9PYY0m//oOKVgI1hVB+8KwfWp
-         /ROJj7wU7v2lVN33h5c47bRwWtpAubgsifHDAD3lPqVXVzkWPuUCHQEfzucJpkMLwZmo
-         z7ZA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=neITER+zvrYjuYhibRCAZ2mUIZDBc7bmWlN6HB6gcKI=;
+        b=TyR3sxcqDcPBUFP6dAEFu9mdfp2q7bo/1ysGD6URAEn7Ok+LEneWbbq2jIFJ7jO6xr
+         E80POzx+7wBoYrK+X/onpGbJxavYHEluy/+nuA6UekMJncvOnLcGGk7xJXM85z3VdET/
+         M1l/sNuRZeipKzRNofXoiBhKLviWcFlNhyxXyXm2JrIMNmyYT++TDaBqft9CQBEOcLe1
+         7bbMoqeJ1uxJ9X6yyW4NmhpoAC9pMBfqCM2wRUK+3Dr2l6sLk9CzFJQIAddJuZ7Dz017
+         EGcQf3BHBW6sy/c6ubaAvYZMmP2mYdmmRdQ0Ux5XUF0wSQ0mhDAVP2EKJqnvZMFzOe9z
+         K+kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding:cc:from:to;
-        bh=Zt2cGhW98jjWE3OdliFocFdkTeCj4B287sEGZ0SpTug=;
-        b=NwgTUyJ+kUaI2vsY9i7P4xF+sy2TTNA89Fr5myOjSThqxUd/aVEfOD56ZdDIE3I5Fc
-         8gSDEF0mUKrezUzL+tliZXMuYDbzik+Jkl6utpH7Xawq+FHrsy8K6E8Q91vXwToOI/7K
-         O52EF1SFH09K/bxyLj82S8saA5HECBJbKLsWaKjTrkj1uClgufpufJJE/lcjc6L1YnRl
-         nzTwC2THLlQnyYiwlPMzVrgPLIMyQIEAJKVQ11ObB/gaP+MMcJQjz+JPxtaW58tdzTq1
-         MB1Ks3dOpq98sE1imKKt65yeYgyrOyVw5UsgML9mu0YLR1exv2QUKiVdAP1XFfEO8NYs
-         ZEPg==
-X-Gm-Message-State: APjAAAX9hT5laESU5jBMtJHXjI8edPTXMVKOv6l7mZy3eeaR0Ldy5CuY
-        un4Bp49ZQK+Q+rH5UO7wzgpJhw==
-X-Google-Smtp-Source: APXvYqxMG1qk1WTJLj8KetMfpnmMGNIO6J68LTkGZfygoiTvSJog6FgoAv0IrheBQXCx4vxGr6+m3Q==
-X-Received: by 2002:a63:e5a:: with SMTP id 26mr36209824pgo.3.1563326958663;
-        Tue, 16 Jul 2019 18:29:18 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id i3sm23567398pfo.138.2019.07.16.18.29.17
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 16 Jul 2019 18:29:17 -0700 (PDT)
-Subject: [PATCH v2 4/4] tools: Add fchmodat4
-Date:   Tue, 16 Jul 2019 18:27:19 -0700
-Message-Id: <20190717012719.5524-5-palmer@sifive.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190717012719.5524-1-palmer@sifive.com>
-References: <20190717012719.5524-1-palmer@sifive.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=neITER+zvrYjuYhibRCAZ2mUIZDBc7bmWlN6HB6gcKI=;
+        b=DxqM7HdcrHTf7+UlvfXs4oMwYg/8H6gFD7b8ecCDG5A6d7Fi7PWKECF6mCCj1KSUGU
+         idi0tLV3ssgHSANClX2ccy2VTiii3jtTkcICaTVf4ydFD2N11UL5MNWJILXWuEnreutZ
+         qjvAXxQuJGLhbVSdSt0WHyTVZzlMbgyaVJpVjS94/Tc4pMEXChxfjT6wVADblZiZ//HI
+         BUhETGvzD9j9IoL/w+rNx5UJ4yLZD+OyJhlrp5Ag2mIO573d8isWNSA4s97lpg2eq81/
+         xszX4ZkwP969UeMA/pSb7z7iBiOjCuUeRrO1H/H2NsHF1M57VnG6Oh9gsh+1EPsG1z4O
+         NMuw==
+X-Gm-Message-State: APjAAAVMcS3ztg9/3VqV3Pk53Gej1vMw0z2B1eKmdLcVTPvqxd/4z+qg
+        9AuYzaCXRY078XjLufYs+f4=
+X-Google-Smtp-Source: APXvYqxteJxMDlwlCNvvq4SuGqWoZbP7NjOqGn0uk70RZ1WP54WvJSTMSu99Enj+T2+HriAe3TQQ9Q==
+X-Received: by 2002:a63:5964:: with SMTP id j36mr37012010pgm.428.1563327046011;
+        Tue, 16 Jul 2019 18:30:46 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::b82a])
+        by smtp.gmail.com with ESMTPSA id a3sm23436067pfi.63.2019.07.16.18.30.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Jul 2019 18:30:44 -0700 (PDT)
+Date:   Tue, 16 Jul 2019 18:30:42 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org,
+        Adrian Ratiu <adrian.ratiu@collabora.com>,
+        Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org,
+        Brendan Gregg <brendan.d.gregg@gmail.com>, connoro@google.com,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        duyuchao <yuchao.du@unisoc.com>, Ingo Molnar <mingo@redhat.com>,
+        jeffv@google.com, Karim Yaghmour <karim.yaghmour@opersys.com>,
+        kernel-team@android.com, linux-kselftest@vger.kernel.org,
+        Manali Shukla <manalishukla14@gmail.com>,
+        Manjo Raja Rao <linux@manojrajarao.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Matt Mullins <mmullins@fb.com>,
+        Michal Gregorczyk <michalgr@fb.com>,
+        Michal Gregorczyk <michalgr@live.com>,
+        Mohammad Husain <russoue@gmail.com>, namhyung@google.com,
+        namhyung@kernel.org, netdev@vger.kernel.org,
+        paul.chaignon@gmail.com, primiano@google.com,
+        Qais Yousef <qais.yousef@arm.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Srinivas Ramana <sramana@codeaurora.org>,
+        Tamir Carmeli <carmeli.tamir@gmail.com>,
+        Yonghong Song <yhs@fb.com>
+Subject: Re: [PATCH RFC 0/4] Add support to directly attach BPF program to
+ ftrace
+Message-ID: <20190717013041.53sbn3tgfhtxgyb3@ast-mbp.dhcp.thefacebook.com>
+References: <20190710141548.132193-1-joel@joelfernandes.org>
+ <20190716205455.iimn3pqpvsc3k4ry@ast-mbp.dhcp.thefacebook.com>
+ <20190716213050.GA161922@google.com>
+ <20190716183117.77b3ed49@gandalf.local.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org,
-        tony.luck@intel.com, fenghua.yu@intel.com, geert@linux-m68k.org,
-        monstr@monstr.eu, ralf@linux-mips.org, paul.burton@mips.com,
-        jhogan@kernel.org, James.Bottomley@HansenPartnership.com,
-        deller@gmx.de, benh@kernel.crashing.org, paulus@samba.org,
-        mpe@ellerman.id.au, heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, ysato@users.sourceforge.jp,
-        dalias@libc.org, davem@davemloft.net, luto@kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        peterz@infradead.org, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, Palmer Dabbelt <palmer@sifive.com>,
-        dhowells@redhat.com, firoz.khan@linaro.org, stefan@agner.ch,
-        schwidefsky@de.ibm.com, axboe@kernel.dk, christian@brauner.io,
-        hare@suse.com, deepa.kernel@gmail.com, tycho@tycho.ws,
-        kim.phillips@arm.com, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-arch@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190716183117.77b3ed49@gandalf.local.home>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm not sure why it's necessary to add this explicitly to tools/ as well
-as arch/, but there were a few instances of fspick in here so I blindly
-added fchmodat4 in the same fashion.
+On Tue, Jul 16, 2019 at 06:31:17PM -0400, Steven Rostedt wrote:
+> On Tue, 16 Jul 2019 17:30:50 -0400
+> Joel Fernandes <joel@joelfernandes.org> wrote:
+> 
+> > I don't see why a new bpf node for a trace event is a bad idea, really.
+> > tracefs is how we deal with trace events on Android. We do it in production
+> > systems. This is a natural extension to that and fits with the security model
+> > well.
+> 
+> What I would like to see is a way to have BPF inject data into the
+> ftrace ring buffer directly. There's a bpf_trace_printk() that I find a
+> bit of a hack (especially since it hooks into trace_printk() which is
+> only for debugging purposes). Have a dedicated bpf ftrace ring
+> buffer event that can be triggered is what I am looking for. Then comes
+> the issue of what ring buffer to place it in, as ftrace can have
+> multiple ring buffer instances. But these instances are defined by the
+> tracefs instances directory. Having a way to associate a bpf program to
+> a specific event in a specific tracefs directory could allow for ways to
+> trigger writing into the correct ftrace buffer.
 
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
----
- tools/include/uapi/asm-generic/unistd.h           | 4 +++-
- tools/perf/arch/x86/entry/syscalls/syscall_64.tbl | 1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
+bpf can write anything (including full skb) into perf ring buffer.
+I don't think there is a use case yet to write into ftrace ring buffer.
+But I can be convinced otherwise :)
 
-diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
-index a87904daf103..36232ea94956 100644
---- a/tools/include/uapi/asm-generic/unistd.h
-+++ b/tools/include/uapi/asm-generic/unistd.h
-@@ -844,9 +844,11 @@ __SYSCALL(__NR_fsconfig, sys_fsconfig)
- __SYSCALL(__NR_fsmount, sys_fsmount)
- #define __NR_fspick 433
- __SYSCALL(__NR_fspick, sys_fspick)
-+#define __NR_fchmodat4 434
-+__SYSCALL(__NR_fchmodat4, sys_fchmodat4)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 434
-+#define __NR_syscalls 435
- 
- /*
-  * 32 bit systems traditionally used different
-diff --git a/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl b/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
-index b4e6f9e6204a..b92d5b195e66 100644
---- a/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -355,6 +355,7 @@
- 431	common	fsconfig		__x64_sys_fsconfig
- 432	common	fsmount			__x64_sys_fsmount
- 433	common	fspick			__x64_sys_fspick
-+434	common	fchmodat4		__x64_sys_fchmodat4
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
--- 
-2.21.0
+> But looking over the patches, I see what Alexei means that there's no
+> overlap with ftrace and these patches except for the tracefs directory
+> itself (which is part of the ftrace infrastructure). And the trace
+> events are technically part of the ftrace infrastructure too. I see the
+> tracefs interface being used, but I don't see how the bpf programs
+> being added affect the ftrace ring buffer or other parts of ftrace. And
+> I'm guessing that's what is confusing Alexei.
 
+yep.
+What I really like to see some day is proper integration of real ftrace
+and bpf. So that bpf progs can be invoked from some of the ftrace machinery.
+And the other way around.
+Like I'd love to be able to start ftracing all functions from bpf
+and stop it from bpf.
+The use case is kernel debugging. I'd like to examine a bunch of condition
+and start ftracing the execution. Then later decide wether this collection
+of ip addresses is interesting to analyze and post process it quickly
+while still inside bpf program.
