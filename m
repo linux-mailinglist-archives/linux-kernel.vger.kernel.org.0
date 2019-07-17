@@ -2,99 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18A806B701
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 08:55:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18DCE6B709
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 08:58:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbfGQGzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 02:55:09 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:59306 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727012AbfGQGzH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 02:55:07 -0400
-X-UUID: 9f1c975c797c4aa99fc512c38799216e-20190717
-X-UUID: 9f1c975c797c4aa99fc512c38799216e-20190717
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1132981241; Wed, 17 Jul 2019 14:55:03 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 17 Jul 2019 14:55:01 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 17 Jul 2019 14:55:01 +0800
-Message-ID: <1563346501.29169.25.camel@mtksdaap41>
-Subject: Re: [PATCH v4, 24/33] drm/mediatek: distinguish ovl and ovl_2l by
- layer_nr
-From:   CK Hu <ck.hu@mediatek.com>
-To:     <yongqiang.niu@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Wed, 17 Jul 2019 14:55:01 +0800
-In-Reply-To: <1562625253-29254-25-git-send-email-yongqiang.niu@mediatek.com>
-References: <1562625253-29254-1-git-send-email-yongqiang.niu@mediatek.com>
-         <1562625253-29254-25-git-send-email-yongqiang.niu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1726894AbfGQG6P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 02:58:15 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2275 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725936AbfGQG6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 02:58:15 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 878B3B2BD220132AE72E;
+        Wed, 17 Jul 2019 14:57:57 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Wed, 17 Jul 2019
+ 14:57:47 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <dri-devel@lists.freedesktop.org>, <bskeggs@redhat.com>,
+        <airlied@linux.ie>, <daniel@ffwll.ch>, <keescook@chromium.org>
+CC:     <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] drm/nouveau/secboot: Make acr_r352_ls_gpccs_func static
+Date:   Wed, 17 Jul 2019 14:56:26 +0800
+Message-ID: <20190717065626.42016-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 11F1DE6BD2C0561D80B2B9B084DC8B4CE48F7F7536BCB170DD002279A4AB79AD2000:8
-X-MTK:  N
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Yongqiang:
+Fix sparse warning:
 
-On Tue, 2019-07-09 at 06:34 +0800, yongqiang.niu@mediatek.com wrote:
-> From: Yongqiang Niu <yongqiang.niu@mediatek.com>
-> 
-> distinguish ovl and ovl_2l by layer_nr when get comp
-> id
-> 
+drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c:1092:1:
+ warning: symbol 'acr_r352_ls_gpccs_func' was not declared. Should it be static?
 
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> index 8ca4965..7e99827 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> @@ -326,7 +326,12 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
->  	if (irq < 0)
->  		return irq;
->  
-> -	comp_id = mtk_ddp_comp_get_id(dev->of_node, MTK_DISP_OVL);
-> +	priv->data = of_device_get_match_data(dev);
-> +
-> +	comp_id = mtk_ddp_comp_get_id(dev->of_node,
-> +				      priv->data->layer_nr == 4 ?
-> +				      MTK_DISP_OVL :
-> +				      MTK_DISP_OVL_2L);
->  	if (comp_id < 0) {
->  		dev_err(dev, "Failed to identify by alias: %d\n", comp_id);
->  		return comp_id;
-> @@ -339,8 +344,6 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> -	priv->data = of_device_get_match_data(dev);
-> -
->  	platform_set_drvdata(pdev, priv);
->  
->  	ret = devm_request_irq(dev, irq, mtk_disp_ovl_irq_handler,
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
+index 4fd4cfe..7af971d 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
+@@ -1088,7 +1088,7 @@ acr_r352_ls_gpccs_func_0 = {
+ 	.lhdr_flags = LSF_FLAG_FORCE_PRIV_LOAD,
+ };
+ 
+-const struct acr_r352_ls_func
++static const struct acr_r352_ls_func
+ acr_r352_ls_gpccs_func = {
+ 	.load = acr_ls_ucode_load_gpccs,
+ 	.version_max = 0,
+-- 
+2.7.4
 
 
