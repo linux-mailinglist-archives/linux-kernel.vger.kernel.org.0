@@ -2,59 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D62556B6ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 08:48:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28CD56B6F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 08:49:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbfGQGsT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 02:48:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58286 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725892AbfGQGsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 02:48:18 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 324A42173B;
-        Wed, 17 Jul 2019 06:48:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563346097;
-        bh=8TSSlUu25GjlJzJHNZqy/p5YiZiWAHnMkii3qUW77U4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=D0LpctmEwrX5bVBj5X7YXhz67Pxjo1xVya1Hf9znqpNoxiieBGTu5Y2WbceKpJUEd
-         TKYZIIp1j+bC4beGFn+jeJoS7H0C/8XkjhCNEccoOKibeYPTddnITwtrR6yhP/cG8x
-         LSS+8R7QWlz2u3K7HKNK+29Pdw25isOSbybb6omU=
-Date:   Wed, 17 Jul 2019 14:48:02 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     yibin.gong@nxp.com
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, broonie@kernel.org, festevam@gmail.com,
-        vkoul@kernel.org, dan.j.williams@intel.com,
-        u.kleine-koenig@pengutronix.de, catalin.marinas@arm.com,
-        l.stach@pengutronix.de, will.deacon@arm.com,
-        linux-spi@vger.kernel.org, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 14/15]  arm64: defconfig: Enable SDMA on i.mx8mq/8mm
-Message-ID: <20190717064800.GC3738@dragon>
-References: <20190610081753.11422-1-yibin.gong@nxp.com>
- <20190610081753.11422-15-yibin.gong@nxp.com>
+        id S1727182AbfGQGtH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 02:49:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58480 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725912AbfGQGtH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 02:49:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E867EACAE;
+        Wed, 17 Jul 2019 06:49:05 +0000 (UTC)
+Subject: Re: [PATCH v8 4/5] x86/paravirt: Remove const mark from
+ x86_hyper_xen_hvm variable
+To:     Joe Perches <joe@perches.com>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        linux-kernel@vger.kernel.org
+Cc:     bp@alien8.de, sstabellini@kernel.org, x86@kernel.org,
+        tglx@linutronix.de, xen-devel@lists.xenproject.org,
+        boris.ostrovsky@oracle.com, mingo@redhat.com
+References: <1563251169-30740-1-git-send-email-zhenzhong.duan@oracle.com>
+ <9791d12717bba784f24f35c29ddfaab9ccb78965.camel@perches.com>
+From:   Juergen Gross <jgross@suse.com>
+Message-ID: <d4be507a-aa31-9ba3-9bf0-c8b60ec3f93a@suse.com>
+Date:   Wed, 17 Jul 2019 08:49:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190610081753.11422-15-yibin.gong@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <9791d12717bba784f24f35c29ddfaab9ccb78965.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 04:17:52PM +0800, yibin.gong@nxp.com wrote:
-> From: Robin Gong <yibin.gong@nxp.com>
+On 17.07.19 08:46, Joe Perches wrote:
+> On Tue, 2019-07-16 at 12:26 +0800, Zhenzhong Duan wrote:
+>> .. as "nopv" support needs it to be changeable at boot up stage.
+>>
+>> Checkpatch reports warning, so move variable declarations from
+>> hypervisor.c to hypervisor.h
+> []
+>> diff --git a/arch/x86/xen/enlighten_hvm.c b/arch/x86/xen/enlighten_hvm.c
+> []
+>> @@ -259,7 +259,7 @@ static __init void xen_hvm_guest_late_init(void)
+>>   #endif
+>>   }
+>>   
+>> -const __initconst struct hypervisor_x86 x86_hyper_xen_hvm = {
+>> +struct hypervisor_x86 x86_hyper_xen_hvm __initdata = {
 > 
-> Enable SDMA support on i.mx8mq/8mm chips, including enabling
-> CONFIG_FW_LOADER_USER_HELPER/CONFIG_FW_LOADER_USER_HELPER_FALLBACK
-> for firmware loaded by udev.
-> 
-> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+> static?
 
-Applied, thanks.
+It is being referenced from arch/x86/kernel/cpu/hypervisor.c
+
+
+Juergen
