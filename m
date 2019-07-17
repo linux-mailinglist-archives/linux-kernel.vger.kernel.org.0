@@ -2,69 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF8036BD18
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 15:35:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AA616BD1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 15:35:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbfGQNev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 09:34:51 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:32006 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbfGQNev (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 09:34:51 -0400
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id x6HDYYnl026015
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 22:34:34 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x6HDYYnl026015
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1563370475;
-        bh=DbcjCcTo7q5MXqcF3EQmUtqhOVUs0jtmtfCZktcsvnU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fzjigQQlHNjrd5V6cj6G+JEIGBoRT9Y81xb8EMuLxkflI+HEm4LW6bNGgN0O/H82d
-         3/8hRVHazfqtnmc+TU7NgpNS7pqK2NoJsvKKQMtpZvZW/VNAIAM00BkaA0hd2Tznno
-         7Pp1S+FeuM+Fbui/G4MYShzuAkdUAGpUjRUKivQU4urG9CpcUkgauT06upzu3O+GNO
-         rdU3i/vHPYp5PnMfLvxDElccgX1T1Z+NiiJi2by1M9S8fuWKwzUeSTonIN3WVbjeWY
-         dyRNQbl/HL0rgiSEj7MuFWV8UVc3GQgATXzfMdezzQwH5PpCWoxezI2p4+zoGfYjiM
-         1iM4KRWZwaWYw==
-X-Nifty-SrcIP: [209.85.221.180]
-Received: by mail-vk1-f180.google.com with SMTP id b69so4961579vkb.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 06:34:34 -0700 (PDT)
-X-Gm-Message-State: APjAAAWgewQ2Yq/jwrsRn8jSNG7tSa/UVmx8G6eEqoMnjfL5GcGSj3Lz
-        VMaE6lN0fKiTePq+jVo12xwlhaWgrXRuAlyFnoM=
-X-Google-Smtp-Source: APXvYqz5qo12SvTOLtPIj4Hj33lRV1GblCWxuto1QdVi8RX68rNTxn2F6sPwhaaR6whs/dkClwWjloKyqDuY7Md4wWY=
-X-Received: by 2002:a1f:ac1:: with SMTP id 184mr15427703vkk.0.1563370473636;
- Wed, 17 Jul 2019 06:34:33 -0700 (PDT)
+        id S1727298AbfGQNft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 09:35:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54742 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726494AbfGQNft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 09:35:49 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EFE3159465;
+        Wed, 17 Jul 2019 13:35:48 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 85BC65DA34;
+        Wed, 17 Jul 2019 13:35:46 +0000 (UTC)
+Subject: Re: [PATCH v3 3/5] locking/qspinlock: Introduce CNA into the slow
+ path of qspinlock
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Alex Kogan <alex.kogan@oracle.com>, linux@armlinux.org.uk,
+        mingo@redhat.com, will.deacon@arm.com, arnd@arndb.de,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, bp@alien8.de,
+        hpa@zytor.com, x86@kernel.org, guohanjun@huawei.com,
+        jglauber@marvell.com, steven.sistare@oracle.com,
+        daniel.m.jordan@oracle.com, dave.dice@oracle.com,
+        rahul.x.yadav@oracle.com
+References: <20190715192536.104548-1-alex.kogan@oracle.com>
+ <20190715192536.104548-4-alex.kogan@oracle.com>
+ <9fa54e98-0b9b-0931-db32-c6bd6ccfe75b@redhat.com>
+ <20190717074435.GU3419@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <378093ad-46cc-7ecb-5a06-1e22ee5ce4a1@redhat.com>
+Date:   Wed, 17 Jul 2019 09:35:46 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <20190716055222.7578-1-himanshujha199640@gmail.com>
-In-Reply-To: <20190716055222.7578-1-himanshujha199640@gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 17 Jul 2019 22:33:57 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQH9HSiW=K9=jX+PZFy9+x2wh9QOr-jf5h9-fkE6UzorQ@mail.gmail.com>
-Message-ID: <CAK7LNAQH9HSiW=K9=jX+PZFy9+x2wh9QOr-jf5h9-fkE6UzorQ@mail.gmail.com>
-Subject: Re: [PATCH v2] coccinelle: api: add devm_platform_ioremap_resource script
-To:     Himanshu Jha <himanshujha199640@gmail.com>
-Cc:     Julia Lawall <Julia.Lawall@lip6.fr>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190717074435.GU3419@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 17 Jul 2019 13:35:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 2:52 PM Himanshu Jha
-<himanshujha199640@gmail.com> wrote:
+On 7/17/19 3:44 AM, Peter Zijlstra wrote:
+> On Tue, Jul 16, 2019 at 10:16:29PM -0400, Waiman Long wrote:
+>>  A simple graphic to illustrate those queues will help too, for example
+> Very much yes!
 >
-> Use recently introduced devm_platform_ioremap_resource
-> helper which wraps platform_get_resource() and
-> devm_ioremap_resource() together. This helps produce much
-> cleaner code and remove local `struct resource` declaration.
+>> /*
+>>  * MCS lock holder
+>>  * ===============
+>>  *    mcs_node
+>>  *   +--------+      +----+         +----+
+>>  *   | next   | ---> |next| -> ...  |next| -> NULL  [Main queue]
+>>  *   | locked | -+   +----+         +----+
+>>  *   +--------+  |
+>>  *               |   +----+         +----+
+>>  *               +-> |next| -> ...  |next| -> X     [Secondary queue]
+>>  *    cna_node       +----+         +----+
+>>  *   +--------*                       ^
+>>  *   | tail   | ----------------------+
+>>  *   +--------*   
+> Almost; IIUC that cna_node is the same as the one from locked, so you
+> end up with something like:
 >
-> Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> ---
+>>  *    mcs_node
+>>  *   +--------+      +----+         +----+
+>>  *   | next   | ---> |next| -> ...  |next| -> NULL  [Main queue]
+>>  *   | locked | -+   +----+         +----+
+>>  *   +--------+  |
+>>  *               |   +---------+         +----+
+>>  *               +-> |mcs::next| -> ...  |next| -> NULL     [Secondary queue]
+>>  *                   |cna::tail| -+      +----+
+>>  *                   +---------+  |        ^
+>>  *                                +--------+
+>>  *
+>>  * N.B. locked = 1 if secondary queue is absent.
+>>  */
 
-Applied to linux-kbuild. Thanks.
+Yes, you are right. Thanks for the correction.
 
--- 
-Best Regards
-Masahiro Yamada
+Cheers,
+Longman
+
