@@ -2,97 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C62BB6B76C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 09:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4303F6B760
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 09:41:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbfGQHls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 03:41:48 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35248 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727778AbfGQHlo (ORCPT
+        id S1726127AbfGQHl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 03:41:26 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38511 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbfGQHl0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 03:41:44 -0400
-Received: by mail-lj1-f194.google.com with SMTP id x25so22615378ljh.2;
-        Wed, 17 Jul 2019 00:41:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/1lJB4MpR9XdUfonxq30j+7es79jIicA8w86kThLLrQ=;
-        b=kAWyYFead9n/yArqNMRnAbRJIjnhlw/szW5y/vc0DsFcnV1NoURz5zHI1QZxZ7ZMk3
-         i8/9NCcRRIjh19pVQ2yj3iV2+7oEctwkpUuLkifLZo8u8y0nIaHPfRwz48NdJmvjMaXq
-         KD4q0uclW2v6acsYga90u/Qf/oOegZV8iPxS4OyFZUfQNifiIzmeeQaG/vKUffuQkOO9
-         H9XwBBeN+ESQjPP8I2Z2kPm/MWXJlvhGrCHpTM/FU/bkmVo6MsKhsI0PHrGtvcw5NVkq
-         7hdLlRnuHzxPhkUVQ727Fwj1u3AWdueQQQRrhazlk4QhzELvy0jM30cDFiWbf5jL3Q0D
-         lslA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/1lJB4MpR9XdUfonxq30j+7es79jIicA8w86kThLLrQ=;
-        b=LMaURIOHd7VaJ3WLLSZ3b3gFiAJ9ANHkQPefiPfTbv7Y+gcHmPaWLjfktW3Ls/S9XI
-         RELKas8K0pxq78Q11RZCH7ZeVYv9fpEkjnA7dx4TDPbMHtt6StuGH0GKgB+BzIQuhMXg
-         KptBVjzqzKprJJ4VfTzQ1jX7d9CXOrAFsznnVS0CiqxJURyngTuHbR4Z01XwKxShsHwD
-         hSe85mZ6LLbksq2QbZyDCLeQHwTt0a+PYb1AiOaloQHf4kiCShNZnNLsKVfWMM5abD0n
-         N9olwzoiM/hTVxoB1JMsUNDt694CJ/t4r2XalPKGh1VuUArYe8oxMw/h19JqOyCPYaCE
-         +Tug==
-X-Gm-Message-State: APjAAAXCKI02Tzhk1P+KT1tdJno5qyJ7Mdw/hwN+0ESEP8/gmYfOaHmu
-        WsfNnfxnQYq+m1ytUZMnGEA=
-X-Google-Smtp-Source: APXvYqx05SdhqnpDZIDDqeVfI2lMoRijFqn6g7Ff8SCspton0SnkT0v7xtkPw0fW8jgbU7lP4VaiYA==
-X-Received: by 2002:a2e:3c1a:: with SMTP id j26mr20132301lja.230.1563349302513;
-        Wed, 17 Jul 2019 00:41:42 -0700 (PDT)
-Received: from localhost ([188.170.223.67])
-        by smtp.gmail.com with ESMTPSA id x22sm3328651lfq.20.2019.07.17.00.41.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Jul 2019 00:41:41 -0700 (PDT)
-Date:   Wed, 17 Jul 2019 06:36:55 +0300
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Lukasz Majewski <lukma@denx.de>
-Cc:     Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Enrico Weigelt <info@metux.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] input: touchscreen mc13xxx: Add mc34708 support
-Message-ID: <20190717033655.GC621@penguin>
-References: <20190716221929.3782-1-lukma@denx.de>
- <20190716221929.3782-4-lukma@denx.de>
+        Wed, 17 Jul 2019 03:41:26 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 7C61880592; Wed, 17 Jul 2019 09:41:13 +0200 (CEST)
+Date:   Wed, 17 Jul 2019 09:41:24 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     jglisse@redhat.com, ebaskakov@nvidia.com, jhubbard@nvidia.com,
+        mhairgrove@nvidia.com, SCheung@nvidia.com, sgutti@nvidia.com,
+        aneesh.kumar@linux.vnet.ibm.com, bsingharora@gmail.com,
+        benh@kernel.crashing.org, dan.j.williams@intel.com,
+        dnellans@nvidia.com, hannes@cmpxchg.org,
+        kirill.shutemov@linux.intel.com, mhocko@kernel.org,
+        paulmck@linux.vnet.ibm.com, ross.zwisler@linux.intel.com,
+        vdavydov.dev@gmail.com, liubo95@huawei.com,
+        akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        kernel list <linux-kernel@vger.kernel.org>
+Subject: HMM_MIRROR has less than useful help text
+Message-ID: <20190717074124.GA21617@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
 Content-Disposition: inline
-In-Reply-To: <20190716221929.3782-4-lukma@denx.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 17, 2019 at 12:19:29AM +0200, Lukasz Majewski wrote:
-> From: Sascha Hauer <s.hauer@pengutronix.de>
-> 
-> The mc34708 has a different bit to enable pen detection. This
-> adds the driver data and devtype necessary to probe the device
-> and to distinguish between the mc13783 and the mc34708.
-> 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> 
-> ---
-> Changes for v3:
-> - Replace forward declaration of mc13xxx_driver_data with
->   structure definition
-> - Rename mc13xxx_driver_data with mc13xxx_chip
-> - Move static struct mc13xxx_chip mc13783_chip and mc34708_chip
->   closer to ID table
-> - Do not check mc13xxx device type
 
-You do not even need to define or store the type. Once it is dropped
-please feel free to add
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Hi!
 
-and merge with the other 2 patches.
+Commit c0b124054f9e42eb6da545a10fe9122a7d7c3f72 has very nice commit
+message, explaining what HMM_MIRROR is and when it is
+needed. Unfortunately, it did not make it into Kconfig help:
 
--- 
-Dmitry
+CONFIG_HMM_MIRROR:
+
+Select HMM_MIRROR if you want to mirror range of the CPU page table of
+a
+process into a device page table. Here, mirror means "keep
+synchronized".
+Prerequisites: the device must provide the ability to write-protect
+its
+page tables (at PAGE_SIZE granularity), and must be able to recover
+=66rom
+the resulting potential page faults.
+
+Could that be fixed?
+
+This is key information for me:
+
+# This is a heterogeneous memory management (HMM) process address space
+# mirroring.
+# This is useful for NVidia GPU >=3D Pascal, Mellanox IB >=3D mlx5 and more
+# hardware in the future.
+
+Thanks,
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--EVF5PPMfhYS0aIcm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl0u0SQACgkQMOfwapXb+vJ8zACcDY6r6pIBRTTsorfNlv1bWsri
+YsoAn1qx2CsKnc8psHoMGpmjiWiWW/zT
+=4Hji
+-----END PGP SIGNATURE-----
+
+--EVF5PPMfhYS0aIcm--
