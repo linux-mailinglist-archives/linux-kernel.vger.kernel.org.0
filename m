@@ -2,77 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FDFB6B2DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 02:30:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 470036B2EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 02:49:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389041AbfGQAaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 20:30:14 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39785 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbfGQAaO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 20:30:14 -0400
-Received: by mail-ot1-f67.google.com with SMTP id r21so17067007otq.6;
-        Tue, 16 Jul 2019 17:30:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=MCQzjwUfSJg8bVO8ghpSoCJiKJHXzfZqPvw/ahHwNPw=;
-        b=r8RkSqE+qR7LaYol52hD5Dvfbz30XMK7h8IO7ZYcUatnZjYqDyYB9knIneCuG34u0u
-         Q+tnanwGyUBGo30K0/kfsaOThbM8D2oERf9Gb+h5rZ9M7LhehsO4yPxSRVWJRxgtxGnN
-         h9N6G/3dfhWNIHvqwdM+VgQKZHBGB4DP1LC1uU5DbGDm0V+X7xegwK7R9uLvsOtQVprn
-         Ew1cclbTrx528p9yWGPAZoZrH/vJOphp9OMpEES0kZFY6b1eO2GKJkjDkpsGor/B5L/L
-         1XNdnHmga/qB1T/PZbAMMfT7gLKrShkpzMj5CL7/a99AI1lDIXBGuedjDN5tA7BXRNK5
-         S5Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MCQzjwUfSJg8bVO8ghpSoCJiKJHXzfZqPvw/ahHwNPw=;
-        b=sk2tuUJtJzF3qKgzLw4IU8bikJUALF4dCKQnsn9wQF3VtA2vg6tbsTZgiZh0bWorvd
-         ifaRhsO+Nr5lm6wqgSzalsgYOXBUYFtiNzRGqfLbqMjpvxLS3rFMdOmfqGHrzTVmvy2n
-         XpuEzJRR0em3eMvhnkw7W3a2h8aE4/exq3xMl29hV2/rTedg26YStwTp3kL06fr9+OO2
-         YA22HUwP3mmXnPIfE3LWE+AaoBi25lkphzCXgUhiotU6iFdyCwU85SgIzPSbp+tX2a+p
-         jqlqIRwN5gJvZM76grvuWp1xqB44sOLcrcRuoZi8itGmf/8Whi5R8Yal4mJiD6Zjo2ou
-         HZog==
-X-Gm-Message-State: APjAAAUpAJBgRTdDpuAcCwEFXJyxsw1gkV2efuWntW40x/JTJqWeQbBG
-        82IrDW8iea95JzuSbg5pL10vJYzvbC8kitVuQNoJEEz8
-X-Google-Smtp-Source: APXvYqwQuNZFZzhUZbkicKvWjEpcwSqJAVFAEJ9MRYLTYpXpNAERa2KheVR2ATM+eFC1fFJ24NlNJK8RLN6Zt/a/5BY=
-X-Received: by 2002:a9d:2c47:: with SMTP id f65mr27751467otb.185.1563323413251;
- Tue, 16 Jul 2019 17:30:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <1562376411-3533-1-git-send-email-wanpengli@tencent.com>
- <TY2PR02MB41600B4C6B9FF4A9F8CD957880F30@TY2PR02MB4160.apcprd02.prod.outlook.com>
- <0e05bac0-af49-996a-c5fd-f6c61782ae4f@redhat.com>
-In-Reply-To: <0e05bac0-af49-996a-c5fd-f6c61782ae4f@redhat.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Wed, 17 Jul 2019 08:30:07 +0800
-Message-ID: <CANRm+Cwi33d5LCNu0JTRkf1W5dSVUOOfqo+QGYe=pd0i=vRXzw@mail.gmail.com>
-Subject: Re: [PATCH v7 0/2] KVM: LAPIC: Implement Exitless Timer
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Wanpeng Li <wanpeng.li@hotmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S2389063AbfGQApx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 20:45:53 -0400
+Received: from gate.crashing.org ([63.228.1.57]:56497 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726344AbfGQApw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 20:45:52 -0400
+Received: from ufdda393ec48b57.ant.amazon.com (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x6H0jXnh032429;
+        Tue, 16 Jul 2019 19:45:34 -0500
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     linux-nvme@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, Jens Axboe <axboe@fb.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Paul Pawlowski <paul@mrarm.io>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: [PATCH v2 1/3] nvme-pci: Pass the queue to SQ_SIZE/CQ_SIZE macros
+Date:   Wed, 17 Jul 2019 10:45:25 +1000
+Message-Id: <20190717004527.30363-1-benh@kernel.crashing.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 11 Jul 2019 at 22:05, Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 11/07/19 15:50, Wanpeng Li wrote:
-> > kindly ping=EF=BC=8C
->
-> Sorry, I need more time to review this.  It's basically the only
-> remaining item for the 5.3 merge window, even though it won't be part of
-> the first pull request to Linus.
+This will make it easier to handle variable queue entry sizes
+later. No functional change.
 
-Thank you! Hope finally we will not miss it. :)
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/nvme/host/pci.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-Regards,
-Wanpeng Li
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index dd10cf78f2d3..8f006638452b 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -28,8 +28,8 @@
+ #include "trace.h"
+ #include "nvme.h"
+ 
+-#define SQ_SIZE(depth)		(depth * sizeof(struct nvme_command))
+-#define CQ_SIZE(depth)		(depth * sizeof(struct nvme_completion))
++#define SQ_SIZE(q)	((q)->q_depth * sizeof(struct nvme_command))
++#define CQ_SIZE(q)	((q)->q_depth * sizeof(struct nvme_completion))
+ 
+ #define SGES_PER_PAGE	(PAGE_SIZE / sizeof(struct nvme_sgl_desc))
+ 
+@@ -1344,16 +1344,16 @@ static enum blk_eh_timer_return nvme_timeout(struct request *req, bool reserved)
+ 
+ static void nvme_free_queue(struct nvme_queue *nvmeq)
+ {
+-	dma_free_coherent(nvmeq->dev->dev, CQ_SIZE(nvmeq->q_depth),
++	dma_free_coherent(nvmeq->dev->dev, CQ_SIZE(nvmeq),
+ 				(void *)nvmeq->cqes, nvmeq->cq_dma_addr);
+ 	if (!nvmeq->sq_cmds)
+ 		return;
+ 
+ 	if (test_and_clear_bit(NVMEQ_SQ_CMB, &nvmeq->flags)) {
+ 		pci_free_p2pmem(to_pci_dev(nvmeq->dev->dev),
+-				nvmeq->sq_cmds, SQ_SIZE(nvmeq->q_depth));
++				nvmeq->sq_cmds, SQ_SIZE(nvmeq));
+ 	} else {
+-		dma_free_coherent(nvmeq->dev->dev, SQ_SIZE(nvmeq->q_depth),
++		dma_free_coherent(nvmeq->dev->dev, SQ_SIZE(nvmeq),
+ 				nvmeq->sq_cmds, nvmeq->sq_dma_addr);
+ 	}
+ }
+@@ -1433,12 +1433,12 @@ static int nvme_cmb_qdepth(struct nvme_dev *dev, int nr_io_queues,
+ }
+ 
+ static int nvme_alloc_sq_cmds(struct nvme_dev *dev, struct nvme_queue *nvmeq,
+-				int qid, int depth)
++				int qid)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev->dev);
+ 
+ 	if (qid && dev->cmb_use_sqes && (dev->cmbsz & NVME_CMBSZ_SQS)) {
+-		nvmeq->sq_cmds = pci_alloc_p2pmem(pdev, SQ_SIZE(depth));
++		nvmeq->sq_cmds = pci_alloc_p2pmem(pdev, SQ_SIZE(nvmeq));
+ 		if (nvmeq->sq_cmds) {
+ 			nvmeq->sq_dma_addr = pci_p2pmem_virt_to_bus(pdev,
+ 							nvmeq->sq_cmds);
+@@ -1447,11 +1447,11 @@ static int nvme_alloc_sq_cmds(struct nvme_dev *dev, struct nvme_queue *nvmeq,
+ 				return 0;
+ 			}
+ 
+-			pci_free_p2pmem(pdev, nvmeq->sq_cmds, SQ_SIZE(depth));
++			pci_free_p2pmem(pdev, nvmeq->sq_cmds, SQ_SIZE(nvmeq));
+ 		}
+ 	}
+ 
+-	nvmeq->sq_cmds = dma_alloc_coherent(dev->dev, SQ_SIZE(depth),
++	nvmeq->sq_cmds = dma_alloc_coherent(dev->dev, SQ_SIZE(nvmeq),
+ 				&nvmeq->sq_dma_addr, GFP_KERNEL);
+ 	if (!nvmeq->sq_cmds)
+ 		return -ENOMEM;
+@@ -1465,12 +1465,13 @@ static int nvme_alloc_queue(struct nvme_dev *dev, int qid, int depth)
+ 	if (dev->ctrl.queue_count > qid)
+ 		return 0;
+ 
+-	nvmeq->cqes = dma_alloc_coherent(dev->dev, CQ_SIZE(depth),
++	nvmeq->q_depth = depth;
++	nvmeq->cqes = dma_alloc_coherent(dev->dev, CQ_SIZE(nvmeq),
+ 					 &nvmeq->cq_dma_addr, GFP_KERNEL);
+ 	if (!nvmeq->cqes)
+ 		goto free_nvmeq;
+ 
+-	if (nvme_alloc_sq_cmds(dev, nvmeq, qid, depth))
++	if (nvme_alloc_sq_cmds(dev, nvmeq, qid))
+ 		goto free_cqdma;
+ 
+ 	nvmeq->dev = dev;
+@@ -1479,15 +1480,14 @@ static int nvme_alloc_queue(struct nvme_dev *dev, int qid, int depth)
+ 	nvmeq->cq_head = 0;
+ 	nvmeq->cq_phase = 1;
+ 	nvmeq->q_db = &dev->dbs[qid * 2 * dev->db_stride];
+-	nvmeq->q_depth = depth;
+ 	nvmeq->qid = qid;
+ 	dev->ctrl.queue_count++;
+ 
+ 	return 0;
+ 
+  free_cqdma:
+-	dma_free_coherent(dev->dev, CQ_SIZE(depth), (void *)nvmeq->cqes,
+-							nvmeq->cq_dma_addr);
++	dma_free_coherent(dev->dev, CQ_SIZE(nvmeq), (void *)nvmeq->cqes,
++			  nvmeq->cq_dma_addr);
+  free_nvmeq:
+ 	return -ENOMEM;
+ }
+@@ -1515,7 +1515,7 @@ static void nvme_init_queue(struct nvme_queue *nvmeq, u16 qid)
+ 	nvmeq->cq_head = 0;
+ 	nvmeq->cq_phase = 1;
+ 	nvmeq->q_db = &dev->dbs[qid * 2 * dev->db_stride];
+-	memset((void *)nvmeq->cqes, 0, CQ_SIZE(nvmeq->q_depth));
++	memset((void *)nvmeq->cqes, 0, CQ_SIZE(nvmeq));
+ 	nvme_dbbuf_init(dev, nvmeq, qid);
+ 	dev->online_queues++;
+ 	wmb(); /* ensure the first interrupt sees the initialization */
+-- 
+2.17.1
+
