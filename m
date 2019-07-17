@@ -2,165 +2,235 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F5B86C234
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 22:35:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5B0E6C23D
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 22:39:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727683AbfGQUf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 16:35:27 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41370 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726598AbfGQUf0 (ORCPT
+        id S1727639AbfGQUjL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 16:39:11 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36760 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726598AbfGQUjK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 16:35:26 -0400
-Received: by mail-ot1-f65.google.com with SMTP id o101so26506083ota.8
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 13:35:26 -0700 (PDT)
+        Wed, 17 Jul 2019 16:39:10 -0400
+Received: by mail-ot1-f67.google.com with SMTP id r6so26535634oti.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 13:39:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=FXMPE8BPcH8HZFC59zfa+SPhPyvIIvJuCBoRrteYkho=;
-        b=moNgVqVQhCBuJdG5uOFEyRfVcJzkfTBNTs1Z3BXgLCU/zNi1D4oLYm2x2ZWNlhu00o
-         LT6iBaph3MXCWS/sJoRYUvIu8UNhz9wxYLRNawV9XKeiTlkcM6V4EJgr/o0s/l7F9H9n
-         eaCRXJ8QSkb6IS+3uCDJJTElg4bu/QRKrv6kl7cRPXszOjrPpMBITdPZYbXHEjohwL+D
-         5/kfaWdk788Em87avYwEI0HznRAtBgp6KwKJ6+O5YVGIUkjhdDxnZTLwziPCixlz6PTU
-         1KCuifdDUYJNf8a0zKSnLcOplBhmSUW0TobyxmWOkuvaybNzsLmYg0kGob2RUtlutN3j
-         qGdA==
+        bh=0K1Cw37rD1IppCvNdmCb2NpomqfVXYIhsQh1IU/oD2M=;
+        b=Jnj4k5BM3xdiZRNmRqlyaKTnna2ulN3efYQBqtjmKrFAOpRKBAV/7EbN4RAPJR64bP
+         1KqZwGzq5BmvEteASkiZGDMDvrNKXVjeFqSV/ncsLvyd5UBGT12hIcxtERkhXz9tv+JK
+         /muM4PIGh9XGPPYSs/mXTGUz33bv6Ez/Sqrz84Q27vbif83tkb4XjLRowRmYiZu8asLW
+         P28qCttABLTlHbPfOMoj1wAeLEBbIpTOk8hfNVtdF2zpsWqOIeR3Siao6oFkPv1XyymJ
+         hyNV5y55WaXoRsbycsAAcDeAlq9/e3YodSjd7CPo2al5kIPYwimksm4VFuTdDQMC+VkG
+         UDGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=FXMPE8BPcH8HZFC59zfa+SPhPyvIIvJuCBoRrteYkho=;
-        b=s7dU1E8++E0xIfW26ukL7l0/A9RBZAQsxIVFDs98wgbgp3QNp5TppRKFNFVMposquy
-         uUo01Bg9s1GVpoVvsqBYe+dTnaVgzwQJic4NM30eQUVn3GYjAyjSGVyKF80gdEmLbSXR
-         d8ial5LtBeyqxVLNrc/FfgFp3oBqoHq7DWoNl4WQ9pneysj7kn8zZk1VvZkJwbIH3nl0
-         l8tBJZpQDgT0H4+adxWVnlJNqFRsOj6F8zBHf9/PpmirHU0NmaM3xErCc0ejTAlbzwtB
-         vzTPXogOInC2Dq6wYXT/E7CrB0HPYjynp2bKOFo+6eBicOF4bm420gRStJFezPlzvMIt
-         NVZw==
-X-Gm-Message-State: APjAAAXm8WvFy6aj74E/cfDaTi5rpYlma82ZmnS6G+PH3Y5YMY1nCCGN
-        mrjzsJV/w7PH+iiW++YmXkjiw9JF1az34xLi4gDxYg==
-X-Google-Smtp-Source: APXvYqwiUDUXNi3NqRWqHDw5Y5A6ix3QwgYxmpU6YxwqpVdAsmXY+1UW4eisFVhv1mqNUfAErWIwIX2XUNG2O5mIWr8=
-X-Received: by 2002:a05:6830:160c:: with SMTP id g12mr32951615otr.231.1563395725759;
- Wed, 17 Jul 2019 13:35:25 -0700 (PDT)
+        bh=0K1Cw37rD1IppCvNdmCb2NpomqfVXYIhsQh1IU/oD2M=;
+        b=ddgYYgUnlIOUqUTOv0payumO6uqaBUDcubSHPnm+2r1JjYi2T6brbCAzFk1bm1FGdX
+         xaCJBq142OUHjkoa2z9UqhpHYrHsv91bOPuCLMqAXjzZsncCtFPiGnBITfaVz71ZO8K7
+         ndfTzNUyYPko10ksu8ps4PHAWbFg6IXQE70v09fAJxWZYmNCEkXoJ5PTr+swaVdasQHy
+         lFYF1n8/qRpHyfodr8MNtFmfdppV0L7kvPJZ7K4owmOGf7WB4x+sA/Kc3AIc+Tgzueih
+         7Qsz1Q8qezUkEgav5x8rOsE097VcqEhQQFMBnw6npWjxAZzIBJdY2VSIvtvRbRa+PQ2h
+         N14w==
+X-Gm-Message-State: APjAAAUODo6j0kGymQgprplUae4ERWGSW9xhjKjg1pUe0vF6oKF4E6w7
+        RPW/kQHmqlCXjp4zv3FLqQv6Sp1s6HtNziXvyarPKQ==
+X-Google-Smtp-Source: APXvYqzFAC0LjXRhmyx9k4jlXBUbQVZEKJtk559kQPLl7p8CQdRDxk3cRJQhRe9stTHVLrBWi0pGfW3EmOjr8T4fM4Y=
+X-Received: by 2002:a9d:6256:: with SMTP id i22mr9218922otk.139.1563395949553;
+ Wed, 17 Jul 2019 13:39:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190703011020.151615-1-saravanak@google.com> <20190717103220.f7cys267hq23fbsb@vireshk-i7>
-In-Reply-To: <20190717103220.f7cys267hq23fbsb@vireshk-i7>
+References: <20190712235245.202558-1-saravanak@google.com> <20190712235245.202558-3-saravanak@google.com>
+ <CAL_JsqJEmC5cttFavGH4iMh=3z2K4r4kjG44AFJCpxQZ9hPwQA@mail.gmail.com>
+ <CAGETcx-5ykD=9X1Lo2-G+T5uokFncbY2FmiJM8eZrgQ9JaBgxw@mail.gmail.com> <CAL_Jsq+Dfm8ng1OVcB+1N2ack05v8+u1VydfxM4Ukefqd9XK2w@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+Dfm8ng1OVcB+1N2ack05v8+u1VydfxM4Ukefqd9XK2w@mail.gmail.com>
 From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 17 Jul 2019 13:34:49 -0700
-Message-ID: <CAGETcx-tbjVzRKW8D-564zgNOhrA_z-NC1q5U70bhoUDBhp6VA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Introduce Bandwidth OPPs for interconnect paths
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
-        daidavid1@codeaurora.org, Rajendra Nayak <rnayak@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
+Date:   Wed, 17 Jul 2019 13:38:33 -0700
+Message-ID: <CAGETcx9AuGtWh_nFb4SbkdYRbNmDK07yKF+jDDPScN+Bdp7a9w@mail.gmail.com>
+Subject: Re: [PATCH v5 02/11] of/platform: Add functional dependency link from
+ DT bindings
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        David Collins <collinsd@codeaurora.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 17, 2019 at 3:32 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+On Wed, Jul 17, 2019 at 7:35 AM Rob Herring <robh+dt@kernel.org> wrote:
 >
-> On 02-07-19, 18:10, Saravana Kannan wrote:
-> > Interconnects and interconnect paths quantify their performance levels in
-> > terms of bandwidth and not in terms of frequency. So similar to how we have
-> > frequency based OPP tables in DT and in the OPP framework, we need
-> > bandwidth OPP table support in the OPP framework and in DT. Since there can
-> > be more than one interconnect path used by a device, we also need a way to
-> > assign a bandwidth OPP table to an interconnect path.
+> On Tue, Jul 16, 2019 at 5:54 PM Saravana Kannan <saravanak@google.com> wrote:
 > >
-> > This patch series:
-> > - Adds opp-peak-KBps and opp-avg-KBps properties to OPP DT bindings
-> > - Adds interconnect-opp-table property to interconnect DT bindings
-> > - Adds OPP helper functions for bandwidth OPP tables
-> > - Adds icc_get_opp_table() to get the OPP table for an interconnect path
+> > On Tue, Jul 16, 2019 at 4:43 PM Rob Herring <robh+dt@kernel.org> wrote:
+> > >
+> > > On Fri, Jul 12, 2019 at 5:52 PM Saravana Kannan <saravanak@google.com> wrote:
+> > > >
+> > > > Add device-links after the devices are created (but before they are
+> > > > probed) by looking at common DT bindings like clocks and
+> > > > interconnects.
+> > > >
+> > > > Automatically adding device-links for functional dependencies at the
+> > > > framework level provides the following benefits:
+> > > >
+> > > > - Optimizes device probe order and avoids the useless work of
+> > > >   attempting probes of devices that will not probe successfully
+> > > >   (because their suppliers aren't present or haven't probed yet).
+> > > >
+> > > >   For example, in a commonly available mobile SoC, registering just
+> > > >   one consumer device's driver at an initcall level earlier than the
+> > > >   supplier device's driver causes 11 failed probe attempts before the
+> > > >   consumer device probes successfully. This was with a kernel with all
+> > > >   the drivers statically compiled in. This problem gets a lot worse if
+> > > >   all the drivers are loaded as modules without direct symbol
+> > > >   dependencies.
+> > > >
+> > > > - Supplier devices like clock providers, interconnect providers, etc
+> > > >   need to keep the resources they provide active and at a particular
+> > > >   state(s) during boot up even if their current set of consumers don't
+> > > >   request the resource to be active. This is because the rest of the
+> > > >   consumers might not have probed yet and turning off the resource
+> > > >   before all the consumers have probed could lead to a hang or
+> > > >   undesired user experience.
+> > > >
+> > > >   Some frameworks (Eg: regulator) handle this today by turning off
+> > > >   "unused" resources at late_initcall_sync and hoping all the devices
+> > > >   have probed by then. This is not a valid assumption for systems with
+> > > >   loadable modules. Other frameworks (Eg: clock) just don't handle
+> > > >   this due to the lack of a clear signal for when they can turn off
+> > > >   resources. This leads to downstream hacks to handle cases like this
+> > > >   that can easily be solved in the upstream kernel.
+> > > >
+> > > >   By linking devices before they are probed, we give suppliers a clear
+> > > >   count of the number of dependent consumers. Once all of the
+> > > >   consumers are active, the suppliers can turn off the unused
+> > > >   resources without making assumptions about the number of consumers.
+> > > >
+> > > > By default we just add device-links to track "driver presence" (probe
+> > > > succeeded) of the supplier device. If any other functionality provided
+> > > > by device-links are needed, it is left to the consumer/supplier
+> > > > devices to change the link when they probe.
+> > > >
+> > > > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> > > > ---
+> > > >  .../admin-guide/kernel-parameters.txt         |  5 ++
+> > > >  drivers/of/platform.c                         | 57 +++++++++++++++++++
+> > > >  2 files changed, 62 insertions(+)
+> > > >
+> > > > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > > > index 138f6664b2e2..109b4310844f 100644
+> > > > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > > > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > > > @@ -3141,6 +3141,11 @@
+> > > >                         This can be set from sysctl after boot.
+> > > >                         See Documentation/sysctl/vm.txt for details.
+> > > >
+> > > > +       of_devlink      [KNL] Make device links from common DT bindings. Useful
+> > > > +                       for optimizing probe order and making sure resources
+> > > > +                       aren't turned off before the consumer devices have
+> > > > +                       probed.
+> > > > +
+> > > >         ohci1394_dma=early      [HW] enable debugging via the ohci1394 driver.
+> > > >                         See Documentation/debugging-via-ohci1394.txt for more
+> > > >                         info.
+> > > > diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> > > > index 04ad312fd85b..0930f9f89571 100644
+> > > > --- a/drivers/of/platform.c
+> > > > +++ b/drivers/of/platform.c
+> > > > @@ -509,6 +509,62 @@ int of_platform_default_populate(struct device_node *root,
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(of_platform_default_populate);
+> > > >
+> > > > +static int of_link_binding(struct device *dev,
+> > > > +                          const char *binding, const char *cell)
+> > > > +{
+> > > > +       struct of_phandle_args sup_args;
+> > > > +       struct platform_device *sup_dev;
+> > > > +       unsigned int i = 0, links = 0;
+> > > > +       u32 dl_flags = DL_FLAG_AUTOPROBE_CONSUMER;
+> > > > +
+> > > > +       while (!of_parse_phandle_with_args(dev->of_node, binding, cell, i,
+> > > > +                                          &sup_args)) {
+> > > > +               i++;
+> > > > +               sup_dev = of_find_device_by_node(sup_args.np);
+> > > > +               of_node_put(sup_args.np);
+> > > > +               if (!sup_dev)
+> > > > +                       continue;
+> > > > +               if (device_link_add(dev, &sup_dev->dev, dl_flags))
+> > > > +                       links++;
+> > > > +               put_device(&sup_dev->dev);
+> > > > +       }
+> > > > +       if (links < i)
+> > > > +               return -ENODEV;
+> > > > +       return 0;
+> > > > +}
+> > > > +
+> > > > +static bool of_devlink;
+> > > > +core_param(of_devlink, of_devlink, bool, 0);
+> > > > +
+> > > > +/*
+> > > > + * List of bindings and their cell names (use NULL if no cell names) from which
+> > > > + * device links need to be created.
+> > > > + */
+> > > > +static const char * const link_bindings[] = {
+> > > > +       "clocks", "#clock-cells",
+> > > > +       "interconnects", "#interconnect-cells",
+> > > > +};
+> > > > +
+> > > > +static int of_link_to_suppliers(struct device *dev)
+> > > > +{
+> > > > +       unsigned int i = 0;
+> > > > +       bool done = true;
+> > > > +
+> > > > +       if (!of_devlink)
+> > > > +               return 0;
+> > > > +       if (unlikely(!dev->of_node))
+> > > > +               return 0;
+> > > > +
+> > > > +       for (i = 0; i < ARRAY_SIZE(link_bindings) / 2; i++)
+> > > > +               if (of_link_binding(dev, link_bindings[i * 2],
+> > > > +                                       link_bindings[i * 2 + 1]))
+> > > > +                       done = false;
+> > >
+> > > Given the pending addition of regulators I think this should be
+> > > structured a bit differently so that we abstract out the matching and
+> > > phandle look-up so there's a clean separation of binding specifics.
+> > > It's kind of messy with 2 patterns to parse already and if we added a
+> > > 3rd? I would iterate over the properties as you do for regulators in
+> > > both cases and for each property call a binding specific match
+> > > function. The common pattern can of course be a common function. Let
+> > > me know if that makes sense. If not I can try to flesh it out some
+> > > more.
 > >
-> > So with the DT bindings added in this patch series, the DT for a GPU
-> > that does bandwidth voting from GPU to Cache and GPU to DDR would look
-> > something like this:
-> >
-> > gpu_cache_opp_table: gpu_cache_opp_table {
-> >       compatible = "operating-points-v2";
-> >
-> >       gpu_cache_3000: opp-3000 {
-> >               opp-peak-KBps = <3000>;
-> >               opp-avg-KBps = <1000>;
-> >       };
-> >       gpu_cache_6000: opp-6000 {
-> >               opp-peak-KBps = <6000>;
-> >               opp-avg-KBps = <2000>;
-> >       };
-> >       gpu_cache_9000: opp-9000 {
-> >               opp-peak-KBps = <9000>;
-> >               opp-avg-KBps = <9000>;
-> >       };
-> > };
-> >
-> > gpu_ddr_opp_table: gpu_ddr_opp_table {
-> >       compatible = "operating-points-v2";
-> >
-> >       gpu_ddr_1525: opp-1525 {
-> >               opp-peak-KBps = <1525>;
-> >               opp-avg-KBps = <452>;
-> >       };
-> >       gpu_ddr_3051: opp-3051 {
-> >               opp-peak-KBps = <3051>;
-> >               opp-avg-KBps = <915>;
-> >       };
-> >       gpu_ddr_7500: opp-7500 {
-> >               opp-peak-KBps = <7500>;
-> >               opp-avg-KBps = <3000>;
-> >       };
-> > };
+> > I've added regulator support in this series and I've refactored this
+> > code as I went along. I fully expect to squash some of the refactors
+> > once the final result of the series is acceptable.
 >
-> Who is going to use the above tables and how ?
-
-In this example the GPU driver would use these. It'll go through these
-and then decide what peak and average bw to pick based on whatever
-criteria.
-
-> These are the maximum
-> BW available over these paths, right ?
-
-I wouldn't call them "maximum" because there can't be multiple
-maximums :) But yes, these are the meaningful bandwidth from the GPU's
-perspective to use over these paths.
-
+> It would be easier to review the final result than incremental changes
+> which change the prior patches especially if the latter patches are
+> ultimately required.
 >
-> > gpu_opp_table: gpu_opp_table {
-> >       compatible = "operating-points-v2";
-> >       opp-shared;
-> >
-> >       opp-200000000 {
-> >               opp-hz = /bits/ 64 <200000000>;
-> >       };
-> >       opp-400000000 {
-> >               opp-hz = /bits/ 64 <400000000>;
-> >       };
-> > };
+> > It's not clear to me if you got to the end of the series and still
+> > think the final result needs to be refactored. Let me know what you
+> > think about this towards the end of the series and I can clean it up
+> > if you still think it needs some clean up.
 >
-> Shouldn't this link back to the above tables via required-opp, etc ?
-> How will we know how much BW is required by the GPU device for all the
-> paths ?
+> I probably should have replied on the regulator addition, but yes,
+> looking at that is what prompted my concerns here.
 
-If that's what the GPU driver wants to do, then yes. But the GPU
-driver could also choose to scale the bandwidth for these paths based
-on multiple other signals. Eg: bus port busy percentage, measure
-bandwidth, etc.
-
-Or they might even decide to pick the BW OPP that matches the index of
-their GPU OPP. It's up to them how they actually do the heuristic.
+Sounds good. Let me refactor the series and send it out again. Btw, if
+you have other issues you noticed, I'd be happy to fix those too
+before sending out the v6 of the series again.
 
 -Saravana
