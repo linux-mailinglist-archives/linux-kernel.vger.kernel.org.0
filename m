@@ -2,91 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E04EC6B4B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 04:49:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04D2F6B4C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 04:54:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728141AbfGQCsx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 22:48:53 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:34810 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbfGQCsx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 22:48:53 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6H2i9fm093863;
-        Wed, 17 Jul 2019 02:48:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=pfGCIG//lwlpwIjnlmlEe0IcGWwFZvpDJ6SGAJb7E+w=;
- b=qZsedlFn0F6IGP7QFl6bBFglyV51VDvqKi7pBfG6u5OjCdoaFGROuj+vMMj5gAJWRPlg
- aBEQKFedTIHgfO4r9CvhI5dqRoMI1Ay5i355NQyjW4ZPwoZDpeVTUebX6cCe1OcYLPc1
- gGIWfMHgiUTaeKoOuNHzOtxCViIcMw7v0CqbXYYR2dsRwm7fw1ytwM7uEACBIhSmGKX8
- SuClFGmaZNvXJHLcm1IGfepBkjcDSEBJTFosB6fXCPI9wRgO83bNic8ZUXi+85yFKoB+
- lz5b4ogxkPW6+DJXQqMmHapUDtSB2xz3z70DoZsgAsVnQeWWxHzQfF6rU6LKwQjkBLxi AA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2tq7xqyrkq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 17 Jul 2019 02:48:41 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6H2lQHF099298;
-        Wed, 17 Jul 2019 02:48:41 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2tsmcc53va-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 17 Jul 2019 02:48:40 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6H2mchj011067;
-        Wed, 17 Jul 2019 02:48:38 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 17 Jul 2019 02:48:38 +0000
-To:     "Bean Huo \(beanhuo\)" <beanhuo@micron.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Evan Green <evgreen@chromium.org>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi\@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH v1] scsi: ufs: change msleep to usleep_range
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <BN7PR08MB5684BBB44FD0E43501558A20DBCF0@BN7PR08MB5684.namprd08.prod.outlook.com>
-Date:   Tue, 16 Jul 2019 22:48:35 -0400
-In-Reply-To: <BN7PR08MB5684BBB44FD0E43501558A20DBCF0@BN7PR08MB5684.namprd08.prod.outlook.com>
-        (Bean Huo's message of "Mon, 15 Jul 2019 11:21:10 +0000")
-Message-ID: <yq136j5z88s.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        id S1728387AbfGQCyY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 22:54:24 -0400
+Received: from mga18.intel.com ([134.134.136.126]:5742 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725294AbfGQCyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 22:54:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2019 19:54:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,272,1559545200"; 
+   d="scan'208";a="175583455"
+Received: from likexu-e5-2699-v4.sh.intel.com ([10.239.48.159])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2019 19:54:22 -0700
+From:   Like Xu <like.xu@linux.intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     like.xu@linux.intel.com, wehuang@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: x86/vPMU: reset pmc->counter to 0 for pmu fixed_counters
+Date:   Wed, 17 Jul 2019 10:51:18 +0800
+Message-Id: <20190717025118.16783-1-like.xu@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=867
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907170033
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=913 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907170032
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+To avoid semantic inconsistency, the fixed_counters in Intel vPMU
+need to be reset to 0 in intel_pmu_reset() as gp_counters does.
 
-Bean,
+Signed-off-by: Like Xu <like.xu@linux.intel.com>
+---
+ arch/x86/kvm/vmx/pmu_intel.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-> This patch is to change msleep() to usleep_range() based on
-> Documentation/timers/timers-howto.txt. It suggests using
-> usleep_range() for small msec(1ms - 20ms) since msleep() will often
-> sleep longer than desired value.
-
-Applied to 5.4/scsi-queue, thanks!
-
+diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
+index 68d231d49c7a..4dea0e0e7e39 100644
+--- a/arch/x86/kvm/vmx/pmu_intel.c
++++ b/arch/x86/kvm/vmx/pmu_intel.c
+@@ -337,17 +337,22 @@ static void intel_pmu_init(struct kvm_vcpu *vcpu)
+ static void intel_pmu_reset(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
++	struct kvm_pmc *pmc = NULL;
+ 	int i;
+ 
+ 	for (i = 0; i < INTEL_PMC_MAX_GENERIC; i++) {
+-		struct kvm_pmc *pmc = &pmu->gp_counters[i];
++		pmc = &pmu->gp_counters[i];
+ 
+ 		pmc_stop_counter(pmc);
+ 		pmc->counter = pmc->eventsel = 0;
+ 	}
+ 
+-	for (i = 0; i < INTEL_PMC_MAX_FIXED; i++)
+-		pmc_stop_counter(&pmu->fixed_counters[i]);
++	for (i = 0; i < INTEL_PMC_MAX_FIXED; i++) {
++		pmc = &pmu->fixed_counters[i];
++
++		pmc_stop_counter(pmc);
++		pmc->counter = 0;
++	}
+ 
+ 	pmu->fixed_ctr_ctrl = pmu->global_ctrl = pmu->global_status =
+ 		pmu->global_ovf_ctrl = 0;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.21.0
+
