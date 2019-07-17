@@ -2,75 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E6FE6B895
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 10:49:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 041B46B87A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 10:44:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730093AbfGQItl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 04:49:41 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:52696 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbfGQItj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 04:49:39 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4F593200352;
-        Wed, 17 Jul 2019 10:49:38 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DD4EF2000A5;
-        Wed, 17 Jul 2019 10:49:32 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id ED985402D5;
-        Wed, 17 Jul 2019 16:49:25 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     aisheng.dong@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com,
-        wsa+renesas@sang-engineering.com, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 2/2] i2c: imx-lpi2c: use devm_platform_ioremap_resource() to simplify code
-Date:   Wed, 17 Jul 2019 16:40:17 +0800
-Message-Id: <20190717084017.30987-2-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190717084017.30987-1-Anson.Huang@nxp.com>
-References: <20190717084017.30987-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726244AbfGQIoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 04:44:03 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:52527 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbfGQIoC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 04:44:02 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hnfXc-0000rM-8D; Wed, 17 Jul 2019 10:44:00 +0200
+Date:   Wed, 17 Jul 2019 10:43:59 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LAK <linux-arm-kernel@lists.infradead.org>
+cc:     LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH] arm64: Avoid pointless schedule_preempt_irq() invocations
+Message-ID: <alpine.DEB.2.21.1907171036490.1767@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+When preempt_count is zero on return from interrupt then
+schedule_preempt_irq() is invoked even if TIF_NEED_RESCHED is not set.
 
-Use the new helper devm_platform_ioremap_resource() which wraps the
-platform_get_resource() and devm_ioremap_resource() together, to
-simplify the code.
+That does not make sense because schedule_preempt_irq() has to go through a
+full __schedule() for nothing in that case.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Check TIF_NEED_RESCHED and invoke schedule_preempt_irq() only if set.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- drivers/i2c/busses/i2c-imx-lpi2c.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Found while staring at some RT wrecakge in that area.
+---
+ arch/arm64/kernel/entry.S |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-imx-lpi2c.c b/drivers/i2c/busses/i2c-imx-lpi2c.c
-index dc00fab..c92b564 100644
---- a/drivers/i2c/busses/i2c-imx-lpi2c.c
-+++ b/drivers/i2c/busses/i2c-imx-lpi2c.c
-@@ -545,7 +545,6 @@ MODULE_DEVICE_TABLE(of, lpi2c_imx_of_match);
- static int lpi2c_imx_probe(struct platform_device *pdev)
- {
- 	struct lpi2c_imx_struct *lpi2c_imx;
--	struct resource *res;
- 	unsigned int temp;
- 	int irq, ret;
- 
-@@ -553,8 +552,7 @@ static int lpi2c_imx_probe(struct platform_device *pdev)
- 	if (!lpi2c_imx)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	lpi2c_imx->base = devm_ioremap_resource(&pdev->dev, res);
-+	lpi2c_imx->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(lpi2c_imx->base))
- 		return PTR_ERR(lpi2c_imx->base);
- 
--- 
-2.7.4
-
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -680,6 +680,10 @@ alternative_if ARM64_HAS_IRQ_PRIO_MASKIN
+ 	orr	x24, x24, x0
+ alternative_else_nop_endif
+ 	cbnz	x24, 1f				// preempt count != 0 || NMI return path
++
++	ldr	x0, [tsk, #TSK_TI_FLAGS]        // get flags
++	tbz	x0, #TIF_NEED_RESCHED, 1f      	// needs rescheduling?
++
+ 	bl	preempt_schedule_irq		// irq en/disable is done inside
+ 1:
+ #endif
