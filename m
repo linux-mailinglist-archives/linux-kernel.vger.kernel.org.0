@@ -2,95 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 705A16B781
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 09:48:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 859096B7A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 09:51:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727245AbfGQHsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 03:48:06 -0400
-Received: from mail.dice.at ([217.10.52.18]:48619 "EHLO smtp2.infineon.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbfGQHsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 03:48:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
-  t=1563349685; x=1594885685;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=jLjRAVqSTndz5dE6IWJsxuPEGZffP354eiHvBjyHn60=;
-  b=avRws9aS+PBEzH0udYw4KuxPTCpQ6xRWzXpNLbhC9+FVc18hmg9MLigw
-   6YkDbk3ATtE4d/1cQu1UiJ1j4omja+rNu8myaGz98BUBUN5nSpcsw9l1L
-   RFrjiIKb7mv67fKEE/BBGDR/9b2CekIyFs9XflPb3+EJWt7ns62i/omaZ
-   Y=;
-IronPort-SDR: 0RGylmZ7q/+cpH2mZauRiES1hBIz41p8bF2nW1YB4JTnC/l8OARGfVjKX8yMHZXJDYRe/3Ldg5
- OwlU/xuq9lmg==
-X-SBRS: None
-X-IronPort-AV: E=McAfee;i="6000,8403,9320"; a="6748731"
-X-IronPort-AV: E=Sophos;i="5.64,273,1559512800"; 
-   d="scan'208";a="6748731"
-Received: from unknown (HELO mucxv001.muc.infineon.com) ([172.23.11.16])
-  by smtp2.infineon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2019 09:48:03 +0200
-Received: from MUCSE708.infineon.com (MUCSE708.infineon.com [172.23.7.82])
-        by mucxv001.muc.infineon.com (Postfix) with ESMTPS;
-        Wed, 17 Jul 2019 09:48:03 +0200 (CEST)
-Received: from [10.154.32.63] (172.23.8.247) by MUCSE708.infineon.com
- (172.23.7.82) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.1.1591.10; Wed, 17
- Jul 2019 09:48:03 +0200
-Subject: Re: [PATCH v2 0/2] char: tpm: add new driver for tpm i2c ptp
-To:     Tomer Maimon <tmaimon77@gmail.com>,
-        Oshri Alkobi <oshrialkoby85@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, <peterhuewe@gmx.de>,
-        <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        IS20 Oshri Alkoby <oshri.alkoby@nuvoton.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        AP MS30 Linux Kernel community 
-        <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
-        <gcwilson@us.ibm.com>, <kgoldman@us.ibm.com>,
-        <nayna@linux.vnet.ibm.com>, IS30 Dan Morav <Dan.Morav@nuvoton.com>,
-        <eyal.cohen@nuvoton.com>
-References: <20190628151327.206818-1-oshrialkoby85@gmail.com>
- <8e6ca8796f229c5dc94355437351d7af323f0c56.camel@linux.intel.com>
- <79e8bfd2-2ed1-cf48-499c-5122229beb2e@infineon.com>
- <CAM9mBwJC2QD5-gV1eJUDzC2Fnnugr-oCZCoaH2sT_7ktFDkS-Q@mail.gmail.com>
- <45603af2fc8374a90ef9e81a67083395cc9c7190.camel@linux.intel.com>
- <6e7ff1b958d84f6e8e585fd3273ef295@NTILML02.nuvoton.com>
- <CAP6Zq1hPo9dG71YFyr7z9rjmi-DvoUZJOme4+2uqsfO+7nH+HQ@mail.gmail.com>
-From:   Alexander Steffen <Alexander.Steffen@infineon.com>
-Message-ID: <bccd2ebf-75b1-d02f-9283-4ffd7aa36616@infineon.com>
-Date:   Wed, 17 Jul 2019 09:48:02 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730460AbfGQHuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 03:50:02 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:60484 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728015AbfGQHt0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 03:49:26 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6H7hwmc119706;
+        Wed, 17 Jul 2019 07:48:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=OrJvKxRwwYXFXus0lT1vSh2dbIKM3XOiNJCVKb9uv9o=;
+ b=z99Wfl0evKOcLYS4AZ/6O5vSEQBfY+qAxda5oovUKw9P2jjtVuVtcAogTz3+RgSFnYdk
+ T09tEccswm8kIILPj4gF28Xyb3YQAo8G2adklHqAHXSY2XMBf6n/q13mnYWk1LNF/2R6
+ 3Khsz4IX6PvheoFW2PrTQd51Hy8dwOZEWZJ2zZMAm/f9CBGWdteg0YHusu/X3zU3GBSm
+ l0vbhkXEwytnpDMCnPT9JGX4iwGYEe8rEzuNMRMJP4NRNUHM3ColDq26XW1NnK5g/nTl
+ l7+jJgfEwHXcd+YPdbM8wN6lW2yKvGmBKspd92+sgWjcNf9dR9axbrEWLZjLpEcBqSBn pA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2tq7xr0txh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Jul 2019 07:48:13 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6H7hRR9036435;
+        Wed, 17 Jul 2019 07:48:12 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2tsmcc86wn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Jul 2019 07:48:12 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6H7mA2p024689;
+        Wed, 17 Jul 2019 07:48:10 GMT
+Received: from [10.175.27.185] (/10.175.27.185)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 17 Jul 2019 07:48:09 +0000
+Subject: Re: [PATCH v3 0/6] Tracing vs CR2
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux_lkml_grp@oracle.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Juergen Gross <jgross@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        He Zhe <zhe.he@windriver.com>,
+        Joel Fernandes <joel@joelfernandes.org>, devel@etsukata.com
+References: <20190711114054.406765395@infradead.org>
+ <4c71e14d-3a32-c3bb-8e3b-6e5100853192@oracle.com>
+ <97cdd0af-95cc-2583-dc19-129b20809110@oracle.com>
+ <CALCETrVisJsLk10WY6hgkqAJ7UsJCr4hHcdtrcUkMaPNOGNYLg@mail.gmail.com>
+From:   Vegard Nossum <vegard.nossum@oracle.com>
+Message-ID: <c2f775d7-93e5-1109-25f4-2b077d2c70e1@oracle.com>
+Date:   Wed, 17 Jul 2019 09:46:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <CAP6Zq1hPo9dG71YFyr7z9rjmi-DvoUZJOme4+2uqsfO+7nH+HQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <CALCETrVisJsLk10WY6hgkqAJ7UsJCr4hHcdtrcUkMaPNOGNYLg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.23.8.247]
-X-ClientProxiedBy: MUCSE708.infineon.com (172.23.7.82) To
- MUCSE708.infineon.com (172.23.7.82)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907170092
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907170092
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.07.2019 10:08, Tomer Maimon wrote:
-> Hi Jarkko and All,
-> 
-> Thanks for your feedback and sorry for the late response.
-> 
-> 
-> Due to the amount of work required to handle this technical feedback and 
-> project constraints we need to put this task on hold for the near future.
-> 
-> In the meantime, anyone from the community is welcome to take over this 
-> code and handle the re-design for the benefit of the entire TPM community.
 
-Too bad you lack the time to finish this.
+On 7/17/19 3:02 AM, Andy Lutomirski wrote:
+> On Tue, Jul 16, 2019 at 2:53 PM Vegard Nossum <vegard.nossum@oracle.com> wrote:
+>>
+>>
+>> On 7/16/19 9:33 PM, Vegard Nossum wrote:
+>>>
+>>> On 7/11/19 1:40 PM, Peter Zijlstra wrote:
+>>>> Hi,
+>>>>
+>>>> Here's the latest (and hopefully final) set of tracing vs CR2 patches.
+>>>>
+>>>> They are basically the same as v2, with only minor edits and tags
+>>>> collected
+>>>> from the last review.
+>>>>
+>>>> Please consider.
+>>>>
+>>>
+>>> Hi,
+>>>
+>>> I ran my own battery of tests on your patch set on top of
+>>> 5ad18b2e60b75c7297a998dea702451d33a052ed and ran into this:
+>>>
+> 
+> On a different thread, Peter and I decided that the last patch in this
+> series (the one that removes the _DEBUG stuff) is wrong.  Can you see
+> if these are reproducible with that patch removed?
 
-If somebody else were to pick it up, would it be possible for you to 
-provide a couple of TPMs that implement this protocol, so that it can be 
-properly tested?
+Yes, without the last patch I still get this:
 
-Alexander
+Run /init as init process
+init[711]: segfault at 40000000 ip 000000004000000a sp 0000000040000ff8 
+error 7
+------------[ cut here ]------------
+General protection fault in user access. Non-canonical address?
+WARNING: CPU: 0 PID: 711 at arch/x86/mm/extable.c:126 
+ex_handler_uaccess+0x5d/0x70
+CPU: 0 PID: 711 Comm: init Not tainted 5.2.0+ #125
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 
+Ubuntu-1.8.2-1ubuntu1 04/01/2014
+init[716]: segfault at 40000000 ip 000000004000000a sp 0000000040000ff8 
+error 7
+RIP: 0010:ex_handler_uaccess+0x5d/0x70
+Code: 5d 41 5c c3 e8 c4 8e 0e 00 80 3d e5 74 1e 01 00 75 d3 e8 b6 8e 0e 
+00 48 c7 c7 10 a7 fb 81 c6 05 d0 74 1e 01 01 e8 d1 43 01 00 <0f> 0b eb 
+b7 0f 1f 44 00 00 66 2e 0f 1f 84 00 00 00 00 00 55 48 89
+RSP: 0000:ffffc9000065fa18 EFLAGS: 00010086
+RAX: 0000000000000000 RBX: ffffffff81c07dac RCX: ffffffff811a887c
+init[714]: segfault at 40000000 ip 000000004000000a sp 0000000040000ff8 
+error 7
+RDX: 0000000000000000 RSI: ffffffff8289f05f RDI: 0000000000000093
+RBP: ffffc9000065fa88 R08: 000000002e80b265 R09: 000000000000003f
+init[718]: segfault at 40000000 ip 000000004000000a sp 0000000040000ff8 
+error 7
+R10: 0000000000000000 R11: 0000000000000000 R12: 000000000000000d
+R13: 000000000000000d R14: 0000000000000000 R15: 0000000000000000
+FS:  00000000006ce880(0000) GS:ffff88803ec00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000003fffffe0 CR3: 000000003d2f6004 CR4: 00000000003606f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+Code: Bad RIP value.
+  fixup_exception+0x50/0x6a
+  do_general_protection+0x40/0x160
+  general_protection+0x2d/0x40
+RIP: 0010:arch_stack_walk_user+0x71/0x100
+Code: 00 48 83 e8 10 49 39 c4 77 45 4c 8b 04 24 4c 89 e3 4d 89 fd 4c 89 
+fd 41 83 87 98 0a 00 00 01 0f 01 cb 0f ae e8 31 c0 4c 89 e2 <4c> 8b 33 
+4d 89 f4 85 c0 75 7a 48 8b 73 08 0f 01 ca 85 c0 74 1f 65
+[...]
+
+This is my reproducer (as init):
+
+#include <fcntl.h>
+#include <sched.h>
+#include <sys/mman.h>
+#include <sys/mount.h>
+#include <sys/stat.h>
+#include <sys/user.h>
+#include <unistd.h>
+#include <wait.h>
+
+struct child_data {
+   (*code)();
+};
+
+child_fn(void *arg)
+{
+   child_data *data = arg;
+   mprotect(data->code, PAGE_SIZE, PROT_EXEC);
+   data->code();
+}
+
+int main()
+{
+   mkdir("/sys", 7);
+   mount("nodev", "/sys", "sysfs", 0, "");
+   mount("nodev", "/sys/kernel/tracing", "tracefs", 0, "");
+
+   int tracing_options_userstacktrace = 
+open("/sys/kernel/tracing/options/userstacktrace", O_RDWR);
+   write(tracing_options_userstacktrace, "1\n", 2);
+
+   int tracing_events_preemptirq_irq_disable = 
+open("/sys/kernel/tracing/events/preemptirq/irq_disable/enable", O_RDWR);
+   write(tracing_events_preemptirq_irq_disable, "1\n", 2);
+
+   void *code = mmap(0, PAGE_SIZE, PROT_WRITE, MAP_PRIVATE | 
+MAP_ANONYMOUS | MAP_32BIT, 1, 0);
+   {
+     unsigned char *output = code;
+
+     *output++ = 72;
+     *output++ = 189;
+     for (int i = 0; i < 8; ++i)
+       *output++ = i;
+   }
+
+   void *child_stack = mmap(0, PAGE_SIZE, PROT_WRITE, MAP_PRIVATE | 
+MAP_ANONYMOUS | MAP_32BIT, 1, 0);
+
+   while (1) {
+     child_data data = { code };
+     clone(child_fn, child_stack, SIGCHLD, &data);
+   }
+}
+
+Compiled with -static and booted with "norandmaps" (for some reason that
+makes a difference), this is 100% reproducible for me, although the
+reproducer is somewhat sensitive to small changes that I don't quite
+understand.
+
+
+Vegard
