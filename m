@@ -2,96 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DFE16B5FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 07:36:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89E6D6B608
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 07:39:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfGQFfn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 01:35:43 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:6337 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725856AbfGQFfm (ORCPT
+        id S1726839AbfGQFjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 01:39:08 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57116 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725799AbfGQFjH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 01:35:42 -0400
-X-UUID: 53bbb227bb8d453680d5355fdfb934ef-20190717
-X-UUID: 53bbb227bb8d453680d5355fdfb934ef-20190717
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 693698133; Wed, 17 Jul 2019 13:35:38 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 17 Jul 2019 13:35:35 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 17 Jul 2019 13:35:36 +0800
-Message-ID: <1563341736.29169.15.camel@mtksdaap41>
-Subject: Re: [PATCH v4, 12/33] drm/mediatek: split DISP_REG_CONFIG_DSI_SEL
- setting into another use case
-From:   CK Hu <ck.hu@mediatek.com>
-To:     <yongqiang.niu@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Wed, 17 Jul 2019 13:35:36 +0800
-In-Reply-To: <1562625253-29254-13-git-send-email-yongqiang.niu@mediatek.com>
-References: <1562625253-29254-1-git-send-email-yongqiang.niu@mediatek.com>
-         <1562625253-29254-13-git-send-email-yongqiang.niu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Wed, 17 Jul 2019 01:39:07 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6H5bYWH101663
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 01:39:06 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tsurwv7h7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 01:39:05 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Wed, 17 Jul 2019 06:39:02 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 17 Jul 2019 06:38:59 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6H5cwd743843590
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Jul 2019 05:38:58 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F244F11C052;
+        Wed, 17 Jul 2019 05:38:57 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7A03411C04A;
+        Wed, 17 Jul 2019 05:38:56 +0000 (GMT)
+Received: from skywalker.linux.ibm.com (unknown [9.124.35.18])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 17 Jul 2019 05:38:56 +0000 (GMT)
+X-Mailer: emacs 26.2 (via feedmail 11-beta-1 I)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     Oscar Salvador <osalvador@suse.de>, akpm@linux-foundation.org
+Cc:     dan.j.williams@intel.com, david@redhat.com,
+        pasha.tatashin@soleen.com, mhocko@suse.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mm,memory_hotplug: Fix shrink_{zone,node}_span
+In-Reply-To: <1563225851.3143.24.camel@suse.de>
+References: <20190715081549.32577-1-osalvador@suse.de> <20190715081549.32577-3-osalvador@suse.de> <87tvbne0rd.fsf@linux.ibm.com> <1563225851.3143.24.camel@suse.de>
+Date:   Wed, 17 Jul 2019 11:08:54 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: F9D2280166EF5AA1468B07A64B20AE04654710B0E0A7273E89A21F547161FA5F2000:8
-X-MTK:  N
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 19071705-0008-0000-0000-000002FE32CD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19071705-0009-0000-0000-0000226BAB32
+Message-Id: <87o91tcj9t.fsf@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-17_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907170069
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Yongqiang:
+Oscar Salvador <osalvador@suse.de> writes:
 
-On Tue, 2019-07-09 at 06:33 +0800, yongqiang.niu@mediatek.com wrote:
-> From: Yongqiang Niu <yongqiang.niu@mediatek.com>
-> 
-> Here is two modifition in this patch:
-> 1.bls->dpi0 and rdma1->dsi are differen usecase,
-> Split DISP_REG_CONFIG_DSI_SEL setting into anther usecase
-> 2.remove DISP_REG_CONFIG_DPI_SEL setting, DPI_SEL_IN_BLS is 0 and
-> this is same with hardware defautl setting,
-> 
-
-You move 2 register setting out of the path from BLS to DPI0, does this
-path still work? Please make sure that all modification could work on
-all supported SoC.
-
-Regards,
-CK
-
-> Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> index d015c1a..47b3e35 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> @@ -400,10 +400,9 @@ static void mtk_ddp_sout_sel(void __iomem *config_regs,
->  	} else if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DPI0) {
->  		writel_relaxed(BLS_TO_DPI_RDMA1_TO_DSI,
->  			       config_regs + DISP_REG_CONFIG_OUT_SEL);
-> +	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DSI0) {
->  		writel_relaxed(DSI_SEL_IN_RDMA,
->  			       config_regs + DISP_REG_CONFIG_DSI_SEL);
-> -		writel_relaxed(DPI_SEL_IN_BLS,
-> -			       config_regs + DISP_REG_CONFIG_DPI_SEL);
->  	}
->  }
+> On Mon, 2019-07-15 at 21:41 +0530, Aneesh Kumar K.V wrote:
+>> Oscar Salvador <osalvador@suse.de> writes:
+>> 
+>> > Since [1], shrink_{zone,node}_span work on PAGES_PER_SUBSECTION
+>> > granularity.
+>> > The problem is that deactivation of the section occurs later on in
+>> > sparse_remove_section, so pfn_valid()->pfn_section_valid() will
+>> > always return
+>> > true before we deactivate the {sub}section.
+>> 
+>> Can you explain this more? The patch doesn't update section_mem_map
+>> update sequence. So what changed? What is the problem in finding
+>> pfn_valid() return true there?
+>
+> I realized that the changelog was quite modest, so a better explanation
+>  will follow.
+>
+> Let us analize what shrink_{zone,node}_span does.
+> We have to remember that shrink_zone_span gets called every time a
+> section is to be removed.
+>
+> There can be three possibilites:
+>
+> 1) section to be removed is the first one of the zone
+> 2) section to be removed is the last one of the zone
+> 3) section to be removed falls in the middle
 >  
+> For 1) and 2) cases, we will try to find the next section from
+> bottom/top, and in the third case we will check whether the section
+> contains only holes.
+>
+> Now, let us take the example where a ZONE contains only 1 section, and
+> we remove it.
+> The last loop of shrink_zone_span, will check for {start_pfn,end_pfn]
+> PAGES_PER_SECTION block the following:
+>
+> - section is valid
+> - pfn relates to the current zone/nid
+> - section is not the section to be removed
+>
+> Since we only got 1 section here, the check "start_pfn == pfn" will make us to continue the loop and then we are done.
+>
+> Now, what happens after the patch?
+>
+> We increment pfn on subsection basis, since "start_pfn == pfn", we jump
+> to the next sub-section (pfn+512), and call pfn_valid()-
+>>pfn_section_valid().
+> Since section has not been yet deactivded, pfn_section_valid() will
+> return true, and we will repeat this until the end of the loop.
+>
+> What should happen instead is:
+>
+> - we deactivate the {sub}-section before calling
+> shirnk_{zone,node}_span
+> - calls to pfn_valid() will now return false for the sections that have
+> been deactivated, and so we will get the pfn from the next activaded
+> sub-section, or nothing if the section is empty (section do not contain
+> active sub-sections).
+>
+> The example relates to the last loop in shrink_zone_span, but the same
+> applies to find_{smalles,biggest}_section.
+>
+> Please, note that we could probably do some hack like replacing:
+>
+> start_pfn == pfn 
+>
+> with
+>
+> pfn < end_pfn
 
+Why do you consider this a hack? 
+
+ /* If the section is current section, it continues the loop */
+	if (start_pfn == pfn)
+		continue;
+
+The comment explains that check is there to handle the exact scenario
+that you are fixing in this patch. With subsection patch that check is
+not sufficient. Shouldn't we just fix the check to handle that?
+
+Not sure about your comment w.r.t find_{smalles,biggest}_section. We
+search with pfn range outside the subsection we are trying to remove.
+So this should not have an impact there?
+
+
+>
+> But the way to fix this is to 1) deactivate {sub}-section and 2) let
+> shrink_{node,zone}_span find the next active {sub-section}.
+>
+> I hope this makes it more clear.
+
+-aneesh
 
