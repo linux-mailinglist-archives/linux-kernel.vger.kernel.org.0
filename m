@@ -2,118 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC6DF6BF2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 17:32:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D40506BF2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 17:32:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbfGQPbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 11:31:01 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45958 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725993AbfGQPbB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 11:31:01 -0400
-Received: by mail-wr1-f67.google.com with SMTP id f9so25278331wre.12;
-        Wed, 17 Jul 2019 08:30:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=lp9LaovzP897q8rJ2Yj+FnynKyErmgF+4dB6/5fv4Qc=;
-        b=cQBsCkXHEbz/p+7To9YvkAomNZXA+0rNFFlP1doS7rmcIw5JTbovEamNB84rUbwyeS
-         W05zL2tInijJOXZC+d3l5Bh/ih2vZWfz/xKsnTlqDahDzDoK10Us74oV71wrvkEF0zDW
-         336+9Tk7I3WqdQNqVAlwd57DLNpsGhqW7mcx375IKs6WeYDojUK0YHZitITwrC9tMqHw
-         c2ni9cBowAqaKArKkO8jcdwzkO0B1lOe7tWJLD463kyKM961HM/TcLMjDmPszRpBLbOi
-         S+jU3sXvL1qptIZ2GOKYhyuAu8JCAUm1Is/viML4UZ/+RcWGCL1dp/i7xXh5bcrcoAxr
-         k4nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=lp9LaovzP897q8rJ2Yj+FnynKyErmgF+4dB6/5fv4Qc=;
-        b=M8nC9g2XFIOom5/LQ1XsGHc0L70X4AY+vSjw72Dz7cTjjmNi+rWMTxGkiuOeJpHOkm
-         D7+fdrZws1H71NMUTMvG6Kw8TcHfPbd9nJyPLwh/JdJUmNTfVkpsgTXdSXhBefSyMjEo
-         c7AXJf0WIEnTvxHpygj3ZiKhLG3yh5ndqyDB+UjMDGvbNif3xnqkQlEdL5rz3SSFknxs
-         Bbb1SEkRvjAQCaCB73EzyrDxrc+9rqbZHQ0w9SqacCci8jb5cb75p4biWOocoT7IVXNF
-         9PkEokRN08QilzCh7/RpoqMkuLnhF/UfaTz02lJUmHplpDz2eDZbFkDFnj8uLl+R7MDc
-         dEiQ==
-X-Gm-Message-State: APjAAAXn58ywHHRB0r+nOUh9ZDupnn2HKna85rs3y7WD2Es9wmupvvw9
-        c88yT8GdqRJYfZRFRVnEvpUleDkSi2S+sm5oLXE=
-X-Google-Smtp-Source: APXvYqzYeK8zm6fB6RbtMRqyt4P012ELpdexhrmS+06mNC/hM+fmWO/+wj8CgMoax1sy0qPdnZacR0b4gMWxeqQ8Qlo=
-X-Received: by 2002:a5d:498f:: with SMTP id r15mr41131590wrq.353.1563377458447;
- Wed, 17 Jul 2019 08:30:58 -0700 (PDT)
+        id S1727526AbfGQPbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 11:31:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43354 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725873AbfGQPbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 11:31:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A2753AF5B;
+        Wed, 17 Jul 2019 15:31:44 +0000 (UTC)
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     linux-arm-kernel@lists.infradead.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org
+Cc:     catalin.marinas@arm.com, will@kernel.org, m.szyprowski@samsung.com,
+        hch@lst.de, phil@raspberrypi.org, stefan.wahren@i2se.com,
+        f.fainelli@gmail.com, mbrugger@suse.com,
+        Jisheng.Zhang@synaptics.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-kernel@vger.kernel.org
+Subject: [RFC 0/4] Raspberry Pi 4 DMA addressing support
+Date:   Wed, 17 Jul 2019 17:31:31 +0200
+Message-Id: <20190717153135.15507-1-nsaenzjulienne@suse.de>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20190717142922.214d54ec@canb.auug.org.au>
-In-Reply-To: <20190717142922.214d54ec@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Wed, 17 Jul 2019 17:30:47 +0200
-Message-ID: <CA+icZUUhnSGkLQcCZBzYXCRxExiZ1F=KnzdeiNSbojHRfxRjOA@mail.gmail.com>
-Subject: Re: linux-next: Tree for Jul 17
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steven, Hi Darrick,
+Hi all,
+this series attempts to address some issues we found while bringing up the new
+Raspberry Pi 4 in arm64 and it's intended to serve as a follow up to this:
+https://www.spinics.net/lists/arm-kernel/msg740650.html
 
-Unfortunately, my build-script is not working anymore.
+The new Raspberry Pi 4 has up to 4GB of ram but most devices can only address
+the first GB of ram: the DMA address range is 0xc0000000-0xfc000000 which is
+aliased to the first GB of memory 0x00000000-0x3c000000. Note that only some
+devices have this limitations, the ARM cores, PCIe, GENET, and 40-bit DMA
+channels have a wider view of the address space.
 
-I am using builddeb/mkdebian scripts.
+This is solved in arm32 by setting up the correct '.dma_zone_size = SZ_1G'
+which takes care of the allocating the coherent memory area at the right spot
+and also is taken into account in the arch specific 'dma_map_ops'.
 
-[ BUILD-LOG ]
-...
-set -e; mkdir -p include/config/; { echo "5.2.0$(/bin/bash
-./scripts/setlocalversion .)"; } > include/config/kernel.release.tmp;
-if [ -r include/config/kernel.release ] && cmp -s
-include/config/kernel.release include/config/kernel.release.tmp; then
-rm -f include/config/kernel.release.tmp; else : '  UPD
-include/config/kernel.release'; mv -f
-include/config/kernel.release.tmp include/config/kernel.release; fi
-make -f ./scripts/Makefile.build obj=3Dscripts/package bindeb-pkg
-/bin/bash ./scripts/package/mkdebian
-./scripts/package/mkdebian: line 149: cd: source/: No such file or director=
-y
-make[1]: *** [scripts/package/Makefile:79: bindeb-pkg] Error 1
-make: *** [Makefile:1442: bindeb-pkg] Error 2
+Unfortunately there is no such thing as '.dma_zone_size' in arm64, to make
+things worse it's assumed that all devices will be able to adress the first 4GB
+of memory.
 
-Investigations revealed hardcoded stuff from the ...
+This raises two issues: the coherent memory reserves are located in an area not
+accessible by most devices, and DMA streaming's dma_supported(), which fails
+for most devices since it's min_mask isn't properly set. Note that the rest if
+DMA streaming works fine thanks to the help of swiotlb.
 
-Merge remote-tracking branch 'iomap/iomap-for-next'
+On one hand I've implemented a function that parses the 'dma-range' on all
+interconnects and tries to select a location for the coherent memory reserves
+that'll fit all devices. I made the algorithm as simple as possible, based on
+the existing devices limitations.
 
-$ git blame scripts/package/mkdebian | grep 'cd source'
-87bdff62e470c (Darrick J. Wong    2019-06-27 17:30:15 -0700 149) (cd
-source/ ; stg ser | sed -e '/^-/d' -e 's/^. /  * /g') >>
-debian/changelog
-
-$ git log --oneline --author=3D"Darrick J. Wong" scripts/package/mkdebian
-87bdff62e470 mtr: Build script adjustments
-
-I do not think this was intended?
-
-Reverting seems to be easy and fix it for me.
-
-$ git revert --no-edit 87bdff62e470
-F=C3=BChre Erkennung f=C3=BCr ungenaue Umbenennung aus: 100% (2251440/22514=
-40), Fertig.
-[5.2.0-3-amd64-cbl-asmgoto db8ec1968620] Revert "mtr: Build script adjustme=
-nts"
- Date: Wed Jul 17 17:27:26 2019 +0200
- 3 files changed, 10 insertions(+), 17 deletions(-)
-
-Please make it work again for $WORLD.
-
-Thanks.
+On the other I've added a new variable in dma-direct that allows modifying the
+min_mask during the init process and taken care of setting it accordingly in
+the arm64's init code.
 
 Regards,
-- Sedat -
+Nicolas
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log=
-/scripts/package/mkdebian?h=3Dnext-20190717
+---
+
+Nicolas Saenz Julienne (4):
+  arm64: mm: use arm64_dma_phys_limit instead of calling max_zone_dma_phys()
+  arm64: mm: parse dma-ranges in order to better estimate arm64_dma_phys_limit
+  dma-direct: add dma_direct_min_mask
+  arm64: mm: set direct_dma_min_mask according to dma-ranges
+
+ arch/arm64/mm/init.c | 69 ++++++++++++++++++++++++++++++++++++++++----
+ kernel/dma/direct.c  |  4 ++-
+ 2 files changed, 67 insertions(+), 6 deletions(-)
+
+-- 
+2.22.0
+
