@@ -2,70 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B00C96B585
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 06:25:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 198276B58C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 06:27:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726019AbfGQEWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 00:22:36 -0400
-Received: from verein.lst.de ([213.95.11.211]:46934 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725856AbfGQEWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 00:22:36 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 6DB4E68B05; Wed, 17 Jul 2019 06:22:33 +0200 (CEST)
-Date:   Wed, 17 Jul 2019 06:22:33 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Christoph Lameter <cl@linux.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 1/3] mm: document zone device struct page reserved
- fields
-Message-ID: <20190717042233.GA4529@lst.de>
-References: <20190717001446.12351-1-rcampbell@nvidia.com> <20190717001446.12351-2-rcampbell@nvidia.com> <26a47482-c736-22c4-c21b-eb5f82186363@nvidia.com>
+        id S1726240AbfGQE1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 00:27:01 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38198 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbfGQE1A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 00:27:00 -0400
+Received: by mail-pl1-f194.google.com with SMTP id az7so11241678plb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 21:27:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WCoUs4Hb3/orTt0/DRrzcBNTaD0Ae5/zpkSi1tZIxVE=;
+        b=IiereG+0BCAa0XdwaQHy24zNuCtVxyNA8YYg1B/rOL7rToEYoFyLQ6dmh7K8T5iP65
+         KM2xMoG+2xMnWcf9Pjz19BorYKLoMK3P3X7Mudx5mDh1p2XVN0WvSl2r9sjpF2jMox6e
+         iSCKvrYrDQ1hxiYdXRJwOg7j883Kq0s2OwoT0QbBOL0j+lMEHlPqV6R3BebAqoPQy+Ch
+         MJdr5XaxXbNwzpX0AfyWf8OCAS2qK+kyrVZHdEMu9QJV0MXwfB6BIJ4VGA/04sGGt7Cf
+         1NNXOmO12/XdJoYR7mIFBlDVaqN8oAZ7wKwOdQ5qHijwffZYkLpJ+ysqq54Bft2WMwfQ
+         9OqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WCoUs4Hb3/orTt0/DRrzcBNTaD0Ae5/zpkSi1tZIxVE=;
+        b=nIRCr2JML7PwFu6w37DArlsuDHB65XYfxIXISutIZUVie7LQpC/SZLS6gnyXVwJ+gG
+         2njkkSQwzhal6dsGLYMO0T5KIOZnHly520pP6tOETb5ux/bvAevup9hS+sqQEqxVi+GA
+         OXz3xUxSSh9kiGkAtSVFAIFwKT6eBuQwGbRutlB/8mcYx/RdPKwzrEa5G4CLoCAlOD+G
+         WWkbL2Nb0Fvb4ZmcvCLAzNrbBS8t7JPfukhKe2z4vNZZqPoTa+tnhXQ29iqC7iQzjiz7
+         xZueAKq0IU3rWxnmr0ZPeL0tUhhHHKZAbvB/mm5sdY6R8wrR01744H3WT12hZm0qzPdy
+         QxnA==
+X-Gm-Message-State: APjAAAVXFLqlx28B94Fa/EQJw7SPTNAOdqr87saiaKKvBdK9nb++m8Pi
+        uTcZgSm0/8QpX33C7HHsg3rAiQ==
+X-Google-Smtp-Source: APXvYqzn00yoFOY6V0VVSZoXn809wajh7dZLsAzML9/Buf6OjvFE8aIcmdRSdethJ0XKQGYosUCTQg==
+X-Received: by 2002:a17:902:2de4:: with SMTP id p91mr9764548plb.28.1563337620108;
+        Tue, 16 Jul 2019 21:27:00 -0700 (PDT)
+Received: from localhost ([122.172.28.117])
+        by smtp.gmail.com with ESMTPSA id c26sm21187405pfr.172.2019.07.16.21.26.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Jul 2019 21:26:58 -0700 (PDT)
+Date:   Wed, 17 Jul 2019 09:56:55 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Wen Yang <wen.yang99@zte.com.cn>
+Cc:     rjw@rjwysocki.net, linuxppc-dev@lists.ozlabs.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
+        cheng.shengyu@zte.com.cn, Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH v7] cpufreq/pasemi: fix an use-after-free in
+ pas_cpufreq_cpu_init()
+Message-ID: <20190717042655.jmiblv5mhg55s7la@vireshk-i7>
+References: <1563335704-25562-1-git-send-email-wen.yang99@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <26a47482-c736-22c4-c21b-eb5f82186363@nvidia.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <1563335704-25562-1-git-send-email-wen.yang99@zte.com.cn>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 06:20:23PM -0700, John Hubbard wrote:
-> > -			unsigned long _zd_pad_1;	/* uses mapping */
-> > +			/*
-> > +			 * The following fields are used to hold the source
-> > +			 * page anonymous mapping information while it is
-> > +			 * migrated to device memory. See migrate_page().
-> > +			 */
-> > +			unsigned long _zd_pad_1;	/* aliases mapping */
-> > +			unsigned long _zd_pad_2;	/* aliases index */
-> > +			unsigned long _zd_pad_3;	/* aliases private */
+On 17-07-19, 11:55, Wen Yang wrote:
+> The cpu variable is still being used in the of_get_property() call
+> after the of_node_put() call, which may result in use-after-free.
 > 
-> Actually, I do think this helps. It's hard to document these fields, and
-> the ZONE_DEVICE pages have a really complicated situation during migration
-> to a device. 
+> Fixes: a9acc26b75f6 ("cpufreq/pasemi: fix possible object reference leak")
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+> v7: adapt to commit ("cpufreq: Make cpufreq_generic_init() return void")
+> v6: keep the blank line and fix warning: label 'out_unmap_sdcpwr' defined but not used.
+> v5: put together the code to get, use, and release cpu device_node.
+> v4: restore the blank line.
+> v3: fix a leaked reference.
+> v2: clean up the code according to the advice of viresh.
 > 
-> Additionally, I'm not sure, but should we go even further, and do this on the 
-> other side of the alias:
+>  drivers/cpufreq/pasemi-cpufreq.c | 23 +++++++++--------------
+>  1 file changed, 9 insertions(+), 14 deletions(-)
 
-The _zd_pad_* field obviously are NOT used anywhere in the source tree.
-So these comments are very misleading.  If we still keep
-using ->mapping, ->index and ->private we really should clean up the
-definition of struct page to make that obvious instead of trying to
-doctor around it using comments.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+-- 
+viresh
