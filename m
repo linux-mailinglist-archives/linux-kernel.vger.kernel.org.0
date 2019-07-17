@@ -2,92 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AEA96C2B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 23:41:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D79836C2BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 23:44:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729284AbfGQVk6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 17:40:58 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41383 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727205AbfGQVk5 (ORCPT
+        id S1729259AbfGQVnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 17:43:53 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:55411 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727205AbfGQVnx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 17:40:57 -0400
-Received: by mail-lf1-f66.google.com with SMTP id 62so12704321lfa.8;
-        Wed, 17 Jul 2019 14:40:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AUNlCsTwwbO9HSCCZ59q/nRyBLJZ8Uq2qfPS4sjf2bw=;
-        b=PvVtUppYSVSwPllMj/jefCGyUXmYsbq6cX8TAneIQFzhUiVapI8hru8mlyNoC1u5cY
-         kX0Fh/e0s20T4TxxryeP7pGijakb1+2YdLXRE836V7aR5S8LhCEEkiQoN0qYmYcwMnko
-         /0S8dTbyNZsgIWvBArjoqFlsuFw2Lc3AsiWZz2bAcMQWXq7U57KwuOtNibxmbR60yDUl
-         Eyc7EU4tm4scELD6aH/zUdw+yvK+WWBqrywcxkxbaS4egkHu9G1CxgDtOpKE83fwjjFP
-         I/It7qlp21yZ4EYrAlzZ4zRz/eH4Z55hmQ+JQm5z0gURy7ijBQytnqwnQ88yGsJ5pmHz
-         1gLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AUNlCsTwwbO9HSCCZ59q/nRyBLJZ8Uq2qfPS4sjf2bw=;
-        b=m5o9QuO1H7TfMswqt524XohYFRr8D4xXAxdeLspAxujKvnNCDmubYsFXTZ7TbrB4Nr
-         0qzO8VP5YQ42cQzeyZVNssPeL0ngPpdN9QvuVtNM+STWg6bqOW0E5I61UOBfPIkGjH7P
-         9EJco8AKarsgbwHT5qn4VvcGXcgtGCKBsA7OtVpRNwAdA6fdTS5mmlIuJzyypacpY4Rm
-         knm8SdXq8gjou/04TULQFu7IbboUr9EN7AG4WNs36/uFe5dv5u1N/gQ4E6cX73xtgca/
-         yCouP9gcTkQ69Y3xUCZQtxjOQDWnC0SPDaMLr4JZmpafEweyryZpEI6kdPgj/Y5IT+e1
-         p5kA==
-X-Gm-Message-State: APjAAAUKPuRCfLaAKoalqRSxXI6wCazuiNix7Lzfrgkfj6UIAolg2VQt
-        wRd5y/45rHWW8hAeRe1vcGXoWvQHd3oSniPsbIBMjbSx
-X-Google-Smtp-Source: APXvYqy9PfpIuDhwCi3MxfklB+DfN4XCTqP4heoMN4SE1wUj9s49KxDiS+adaMTbOahayBbHXFx/O7ROh+3tSNPcTNo=
-X-Received: by 2002:ac2:4351:: with SMTP id o17mr18944366lfl.100.1563399654721;
- Wed, 17 Jul 2019 14:40:54 -0700 (PDT)
+        Wed, 17 Jul 2019 17:43:53 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hnriC-0005hz-EP; Wed, 17 Jul 2019 23:43:44 +0200
+Date:   Wed, 17 Jul 2019 23:43:43 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Joerg Roedel <joro@8bytes.org>
+cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH 2/3] x86/mm: Sync also unmappings in vmalloc_sync_one()
+In-Reply-To: <20190717071439.14261-3-joro@8bytes.org>
+Message-ID: <alpine.DEB.2.21.1907172337590.1778@nanos.tec.linutronix.de>
+References: <20190717071439.14261-1-joro@8bytes.org> <20190717071439.14261-3-joro@8bytes.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190710141548.132193-1-joel@joelfernandes.org>
- <20190716205455.iimn3pqpvsc3k4ry@ast-mbp.dhcp.thefacebook.com>
- <20190716213050.GA161922@google.com> <20190716222650.tk2coihjtsxszarf@ast-mbp.dhcp.thefacebook.com>
- <20190716224150.GC172157@google.com> <20190716235500.GA199237@google.com>
- <20190717012406.lugqemvubixfdd6v@ast-mbp.dhcp.thefacebook.com> <20190717130119.GA138030@google.com>
-In-Reply-To: <20190717130119.GA138030@google.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Wed, 17 Jul 2019 14:40:42 -0700
-Message-ID: <CAADnVQJY_=yeY0C3k1ZKpRFu5oNbB4zhQf5tQnLr=Mi8i6cgeQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/4] Add support to directly attach BPF program to ftrace
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Android Kernel Team <kernel-team@android.com>,
-        Network Development <netdev@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 17, 2019 at 6:01 AM Joel Fernandes <joel@joelfernandes.org> wrote:
+On Wed, 17 Jul 2019, Joerg Roedel wrote:
 
-I trimmed cc. some emails were bouncing.
+> From: Joerg Roedel <jroedel@suse.de>
+> 
+> With huge-page ioremap areas the unmappings also need to be
+> synced between all page-tables. Otherwise it can cause data
+> corruption when a region is unmapped and later re-used.
+> 
+> Make the vmalloc_sync_one() function ready to sync
+> unmappings.
+> 
+> Fixes: 5d72b4fba40ef ('x86, mm: support huge I/O mapping capability I/F')
+> Signed-off-by: Joerg Roedel <jroedel@suse.de>
+> ---
+>  arch/x86/mm/fault.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+> index 4a4049f6d458..d71e167662c3 100644
+> --- a/arch/x86/mm/fault.c
+> +++ b/arch/x86/mm/fault.c
+> @@ -194,11 +194,12 @@ static inline pmd_t *vmalloc_sync_one(pgd_t *pgd, unsigned long address)
+>  
+>  	pmd = pmd_offset(pud, address);
+>  	pmd_k = pmd_offset(pud_k, address);
+> -	if (!pmd_present(*pmd_k))
+> -		return NULL;
+>  
+> -	if (!pmd_present(*pmd))
+> +	if (pmd_present(*pmd) ^ pmd_present(*pmd_k))
+>  		set_pmd(pmd, *pmd_k);
+> +
+> +	if (!pmd_present(*pmd_k))
+> +		return NULL;
+>  	else
+>  		BUG_ON(pmd_pfn(*pmd) != pmd_pfn(*pmd_k));
 
-> > I think allowing one tracepoint and disallowing another is pointless
-> > from security point of view. Tracing bpf program can do bpf_probe_read
-> > of anything.
->
-> I think the assumption here is the user controls the program instructions at
-> runtime, but that's not the case. The BPF program we are loading is not
-> dynamically generated, it is built at build time and it is loaded from a
-> secure verified partition, so even though it can do bpf_probe_read, it is
-> still not something that the user can change.
+So in case of unmap, this updates only the first entry in the pgd_list
+because vmalloc_sync_all() will break out of the iteration over pgd_list
+when NULL is returned from vmalloc_sync_one().
 
-so you're saying that by having a set of signed bpf programs which
-instructions are known to be non-malicious and allowed set of tracepoints
-to attach via selinux whitelist, such setup will be safe?
-Have you considered how mix and match will behave?
+I'm surely missing something, but how is that supposed to sync _all_ page
+tables on unmap as the changelog claims?
 
-> And, we are planning to make it
-> even more secure by making it kernel verify the program at load time as well
-> (you were on some discussions about that a few months ago).
+Thanks,
 
-It sounds like api decisions for this sticky raw_tp feature are
-driven by security choices which are not actually secure.
-I'm suggesting to avoid bringing up point of security as a reason for
-this api design, since it's making the opposite effect.
+	tglx
