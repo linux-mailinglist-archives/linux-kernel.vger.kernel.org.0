@@ -2,88 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9458C6B814
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 10:21:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CB606B81A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 10:22:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726115AbfGQIVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 04:21:09 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40094 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbfGQIVI (ORCPT
+        id S1728947AbfGQIWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 04:22:01 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:41252 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbfGQIWB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 04:21:08 -0400
-Received: by mail-pl1-f194.google.com with SMTP id a93so11549160pla.7;
-        Wed, 17 Jul 2019 01:21:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ukX3X8BRlmR//HwESuIDPD9A7bwWL5k5RN/PdnrF+7c=;
-        b=jn5ZE20XLizqfHuZvh1GR/0Vb7SWdayObV9Htzl/BkbTOqbg0W+7QFoJIZxyA8oisf
-         ub7IPEkAXW9Ms/q6+wmNHjyyin7WDdVgXlvk01urEO2GPm0PCaJCPEoKkQFPc91QuVPP
-         muiDZ7Hs9RVNqa2AU+GQ6ljzTFzuOV8zVOjnUNcPzoT9xmaErPuPEJiQ9aqNSmxc64q0
-         SpJSTaCCwzye9fBQkUiJ6gjxCmbC8tXBKAfGuhGfEyNImJSP0W7IbKlfNrtpTlLbAaok
-         qg/AeW7/L67AqbmG8nUaLwtTTUCF1zt7ZqU6gpOYHO0b1GA3C3POtuTvQM0kynxMXrUk
-         iBHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ukX3X8BRlmR//HwESuIDPD9A7bwWL5k5RN/PdnrF+7c=;
-        b=nen97rZI7sTDszVHwl6ef05wzhJR12+V8Te6Z0tlGHxwzJijZePENV2Rb3v5jOsYVy
-         JMOwjSUCHMnFZW7vxMvXzmTux3FYrkzGp8bJz5TebCGrC3njKscYBFii9moUcR0RgT4x
-         X0Tn08ozcqElt4NVJadnkNuj2FTG5ZC1ppUkNgwXkN8uOOXaW4SNTRjpc555Ka8aLhcp
-         +HtzCit5orMtnMiNYygTy+Nwh3UcuslmYj+V12SCV1Wr460SQDcgeBpq8rR+EalJik78
-         2P6+y9QOJ4rOarHD8xdQMWnNt9VgCEzg0vH6YhMQR9Wof/NN+IaiBnAXDtu8ylM8WrOk
-         mKYQ==
-X-Gm-Message-State: APjAAAUSTj8BBAbo6Ch2bzC9nU9kMgloZZXEo6+zr6sreqiHFRRBmPWS
-        7WRtgt5RzmRIPEEEiViBpwrMkO/5eBY=
-X-Google-Smtp-Source: APXvYqykTSlhQOSKNw5mHZfzwq6N10owDSgGGDbZSWEvVhka6bdL8xOstcLiMbxvuo3Sai44hpxjHA==
-X-Received: by 2002:a17:902:b186:: with SMTP id s6mr41487960plr.343.1563351667968;
-        Wed, 17 Jul 2019 01:21:07 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.gmail.com with ESMTPSA id p187sm34516844pfg.89.2019.07.17.01.21.05
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 17 Jul 2019 01:21:07 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] IB/mlx5: Replace kfree with kvfree
-Date:   Wed, 17 Jul 2019 16:21:01 +0800
-Message-Id: <20190717082101.14196-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Wed, 17 Jul 2019 04:22:01 -0400
+Received: from pc-375.home (2a01cb0c88d94a005820d607da339aae.ipv6.abo.wanadoo.fr [IPv6:2a01:cb0c:88d9:4a00:5820:d607:da33:9aae])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id D0D4828AA38;
+        Wed, 17 Jul 2019 09:21:58 +0100 (BST)
+Date:   Wed, 17 Jul 2019 10:21:56 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
+Cc:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "vigneshr@ti.com" <vigneshr@ti.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <michals@xilinx.com>,
+        Srikanth Vemula <svemula@xilinx.com>,
+        "nagasuresh12@gmail.com" <nagasuresh12@gmail.com>
+Subject: Re: [LINUX PATCH v18 1/2] mtd: rawnand: nand_micron: Do not over
+ write driver's read_page()/write_page()
+Message-ID: <20190717102156.68aa86f7@pc-375.home>
+In-Reply-To: <20190717095525.6e2e9730@pc-375.home>
+References: <20190716053051.11282-1-naga.sureshkumar.relli@xilinx.com>
+        <20190716093137.3d8e8c1f@pc-375.home>
+        <20190716094450.122ba6e7@pc-375.home>
+        <DM6PR02MB4779307E32670683AE9F60D6AFC90@DM6PR02MB4779.namprd02.prod.outlook.com>
+        <20190717095525.6e2e9730@pc-375.home>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Variable allocated by kvzalloc should not be freed by kfree.
-Because it may be allocated by vmalloc.
-So replace kfree with kvfree here.
+On Wed, 17 Jul 2019 09:55:25 +0200
+Boris Brezillon <boris.brezillon@collabora.com> wrote:
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
- drivers/infiniband/hw/mlx5/odp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Wed, 17 Jul 2019 05:33:35 +0000
+> Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
+> 
+> > Hi Boris,
+> >   
+> > > -----Original Message-----
+> > > From: Boris Brezillon <boris.brezillon@collabora.com>
+> > > Sent: Tuesday, July 16, 2019 1:15 PM
+> > > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> > > Cc: miquel.raynal@bootlin.com; bbrezillon@kernel.org; richard@nod.at;
+> > > dwmw2@infradead.org; computersforpeace@gmail.com; marek.vasut@gmail.com;
+> > > vigneshr@ti.com; yamada.masahiro@socionext.com; linux-mtd@lists.infradead.org; linux-
+> > > kernel@vger.kernel.org; Michal Simek <michals@xilinx.com>; Srikanth Vemula
+> > > <svemula@xilinx.com>; nagasuresh12@gmail.com
+> > > Subject: Re: [LINUX PATCH v18 1/2] mtd: rawnand: nand_micron: Do not over write
+> > > driver's read_page()/write_page()
+> > > 
+> > > On Tue, 16 Jul 2019 09:31:37 +0200
+> > > Boris Brezillon <boris.brezillon@collabora.com> wrote:
+> > >     
+> > > > On Mon, 15 Jul 2019 23:30:51 -0600
+> > > > Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com> wrote:
+> > > >    
+> > > > > Add check before assigning chip->ecc.read_page() and
+> > > > > chip->ecc.write_page()
+> > > > >
+> > > > > Signed-off-by: Naga Sureshkumar Relli
+> > > > > <naga.sureshkumar.relli@xilinx.com>
+> > > > > ---
+> > > > > Changes in v18
+> > > > >  - None
+> > > > > ---
+> > > > >  drivers/mtd/nand/raw/nand_micron.c | 7 +++++--
+> > > > >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/mtd/nand/raw/nand_micron.c
+> > > > > b/drivers/mtd/nand/raw/nand_micron.c
+> > > > > index cbd4f09ac178..565f2696c747 100644
+> > > > > --- a/drivers/mtd/nand/raw/nand_micron.c
+> > > > > +++ b/drivers/mtd/nand/raw/nand_micron.c
+> > > > > @@ -500,8 +500,11 @@ static int micron_nand_init(struct nand_chip *chip)
+> > > > >  		chip->ecc.size = 512;
+> > > > >  		chip->ecc.strength = chip->base.eccreq.strength;
+> > > > >  		chip->ecc.algo = NAND_ECC_BCH;
+> > > > > -		chip->ecc.read_page = micron_nand_read_page_on_die_ecc;
+> > > > > -		chip->ecc.write_page = micron_nand_write_page_on_die_ecc;
+> > > > > +		if (!chip->ecc.read_page)
+> > > > > +			chip->ecc.read_page = micron_nand_read_page_on_die_ecc;
+> > > > > +
+> > > > > +		if (!chip->ecc.write_page)
+> > > > > +			chip->ecc.write_page = micron_nand_write_page_on_die_ecc;
+> > > > >    
+> > > >
+> > > > Seriously?! I told you this was inappropriate and you keep sending
+> > > > this patch. So let's make it clear:
+> > > >
+> > > > Nacked-by: Boris Brezillon <boris.brezillon@collabora.com>
+> > > >
+> > > > Fix your controller driver instead of adding hacks to the Micron logic!    
+> > > 
+> > > Not even going to review the other patch: if you have to do that, that means the driver is
+> > > broken. On a side note, this patch series is still not threaded as it should be and it's a v18 for a
+> > > damn NAND controller driver! Sorry but you reached the limit of my patience. Please find
+> > > someone to help you with that task.    
+> > My intention is not to resend this 1/2 again. Sorry for that.
+> > We already had some discussion on [v17 1/2], https://lkml.org/lkml/2019/6/26/430
+> > And there we didn't conclude that raw_read()/writes().  
+> 
+> Yes, looks like I never replied to that one, but I think my previous
+> explanation were clear enough to not argue on that aspect any longer/
+> 
+> > So I thought that, will send updated driver along with this patch, then will get more information about
+> > The issue on the latest driver review.  
+> 
+> More on that topic. I don't think you ever tested on-die ECC on a
+> Micron NAND, otherwise you would have noticed that your solution
+> completely bypasses the on-die ECC logic (and this will clearly break
+> existing on-die ECC users). See, that's what I'm complaining about,
+> Looks like you don't really understand what you're doing.
+> 
+> > There is nothing like keep on sending this patch, As you people are experts in the driver review, 
+> > if this patch is a hack, then we will definitely fix that in controller driver. I will find a way to do that.
+> > 
+> > But in this flow of patch sending, if the work I did hurts you, then I am really sorry for that.  
+> 
+> I'm not offended, just tired going through the same driver over and
+> over again, reporting things that are wrong/inappropriate to then
+> realize you only addressed of a tiny portion of it in the following
+> version. My last reviews were rather incomplete because of that, and
+> now I'm giving up.
+> 
+> > Will fix this issue in the controller driver and will send the updated one.  
+> 
+> How? You say you'll fix the issue but I'm not even sure you understand
+> what the issue is? Clearly, the patch you've posted doesn't fix
+> anything, it's just papering over the fact that your controller driver
+> is not supporting raw accesses (or at least, not supporting it
+> properly).
+> 
+> Have you even looked at the datasheet you pointed to in patch 2 [1]?
+> Just went through it, and found a field that's supposed to control the
+> ECC engine activation: ecc_memcfg.ecc_mode. I don't see anything
+> changing that field in your code, so I guess raw accesses are actually
+> not really happening with the ECC engine disabled... 
 
-diff --git a/drivers/infiniband/hw/mlx5/odp.c b/drivers/infiniband/hw/mlx5/odp.c
-index 5b642d81e617..ea4b41b260b3 100644
---- a/drivers/infiniband/hw/mlx5/odp.c
-+++ b/drivers/infiniband/hw/mlx5/odp.c
-@@ -1813,7 +1813,7 @@ int mlx5_ib_advise_mr_prefetch(struct ib_pd *pd,
- 	if (valid_req)
- 		queue_work(system_unbound_wq, &work->work);
- 	else
--		kfree(work);
-+		kvfree(work);
- 
- 	srcu_read_unlock(&dev->mr_srcu, srcu_key);
- 
--- 
-2.20.1
+Looks like I was wrong about that part, you seem to call
+pl353_smc_set_ecc_mode(), just not in the right place (this should be
+done in the read/write_page_raw()).
 
+Also noticed the ecc_memcfg.ecc_extra_block field. Have you tried
+setting it to 0 for your raw accesses to get rid of the extra
+PL353_NAND_LAST_TRANSFER_LENGTH transfer?
