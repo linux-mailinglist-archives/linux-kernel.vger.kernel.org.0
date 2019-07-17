@@ -2,49 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 434316BB5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 13:30:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A4BE6BB5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 13:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbfGQLaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 07:30:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33856 "EHLO mail.kernel.org"
+        id S1731469AbfGQLav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 07:30:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46758 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725873AbfGQLai (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 07:30:38 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731248AbfGQLat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 07:30:49 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E5E520880;
-        Wed, 17 Jul 2019 11:30:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563363037;
-        bh=kYrTFywVNEOcsqT9h3RDsiGtTWLaNmgHCsJqpgxej5M=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=CacGiyKcDt0dGbSHJjdPxPxPksfAy0UogtH9e3Z6DTpc26ccLB82v38aUtOCON1Kd
-         WlEyKKx9239zGlHPH/QS+0sC9LOWMgnjEQT3B/hYlyz5ncsJUsCIruQt/Pl+Ln7hz2
-         aj+8cOOvTL5Z0uwVfj2BqFYsMgDNITvsx/1kuNiY=
-Date:   Wed, 17 Jul 2019 13:30:27 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     =?ISO-8859-15?Q?Filipe_La=EDns?= <lains@archlinux.org>
-cc:     nlopezcasad@logitech.com,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hid-logitech-dj: rename "gaming" receiver to
- "lightspeed"
-In-Reply-To: <20190716073621.4290-1-lains@archlinux.org>
-Message-ID: <nycvar.YFH.7.76.1907171330190.5899@cbobk.fhfr.pm>
-References: <20190716073621.4290-1-lains@archlinux.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8F45D81F19;
+        Wed, 17 Jul 2019 11:30:49 +0000 (UTC)
+Received: from steredhat.redhat.com (ovpn-116-100.ams2.redhat.com [10.36.116.100])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7AFF45C28C;
+        Wed, 17 Jul 2019 11:30:47 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org,
+        Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH v4 3/5] vsock/virtio: fix locking in virtio_transport_inc_tx_pkt()
+Date:   Wed, 17 Jul 2019 13:30:28 +0200
+Message-Id: <20190717113030.163499-4-sgarzare@redhat.com>
+In-Reply-To: <20190717113030.163499-1-sgarzare@redhat.com>
+References: <20190717113030.163499-1-sgarzare@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 17 Jul 2019 11:30:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Applied, thans.
+fwd_cnt and last_fwd_cnt are protected by rx_lock, so we should use
+the same spinlock also if we are in the TX path.
 
+Move also buf_alloc under the same lock.
+
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+---
+ include/linux/virtio_vsock.h            | 2 +-
+ net/vmw_vsock/virtio_transport_common.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/virtio_vsock.h b/include/linux/virtio_vsock.h
+index 49fc9d20bc43..4c7781f4b29b 100644
+--- a/include/linux/virtio_vsock.h
++++ b/include/linux/virtio_vsock.h
+@@ -35,7 +35,6 @@ struct virtio_vsock_sock {
+ 
+ 	/* Protected by tx_lock */
+ 	u32 tx_cnt;
+-	u32 buf_alloc;
+ 	u32 peer_fwd_cnt;
+ 	u32 peer_buf_alloc;
+ 
+@@ -43,6 +42,7 @@ struct virtio_vsock_sock {
+ 	u32 fwd_cnt;
+ 	u32 last_fwd_cnt;
+ 	u32 rx_bytes;
++	u32 buf_alloc;
+ 	struct list_head rx_queue;
+ };
+ 
+diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
+index a85559d4d974..34a2b42313b7 100644
+--- a/net/vmw_vsock/virtio_transport_common.c
++++ b/net/vmw_vsock/virtio_transport_common.c
+@@ -210,11 +210,11 @@ static void virtio_transport_dec_rx_pkt(struct virtio_vsock_sock *vvs,
+ 
+ void virtio_transport_inc_tx_pkt(struct virtio_vsock_sock *vvs, struct virtio_vsock_pkt *pkt)
+ {
+-	spin_lock_bh(&vvs->tx_lock);
++	spin_lock_bh(&vvs->rx_lock);
+ 	vvs->last_fwd_cnt = vvs->fwd_cnt;
+ 	pkt->hdr.fwd_cnt = cpu_to_le32(vvs->fwd_cnt);
+ 	pkt->hdr.buf_alloc = cpu_to_le32(vvs->buf_alloc);
+-	spin_unlock_bh(&vvs->tx_lock);
++	spin_unlock_bh(&vvs->rx_lock);
+ }
+ EXPORT_SYMBOL_GPL(virtio_transport_inc_tx_pkt);
+ 
 -- 
-Jiri Kosina
-SUSE Labs
+2.20.1
 
