@@ -2,137 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7C026C1D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 22:03:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 778836C1DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 22:08:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbfGQUCA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 16:02:00 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:54983 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726063AbfGQUB7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 16:01:59 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hnq7b-0003TQ-D4; Wed, 17 Jul 2019 22:01:51 +0200
-Date:   Wed, 17 Jul 2019 22:01:49 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linuxfoundation.org>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sebastian Siewior <bigeasy@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Christoph Hellwig <hch@lst.de>, Tejun Heo <tj@kernel.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Daniel Wagner <wagi@monom.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Clark Williams <clark.williams@gmail.com>,
-        Julia Cartwright <julia@ni.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Gratian Crisan <gratian.crisan@ni.com>
-Subject: [patch V2 1/1] Kconfig: Introduce CONFIG_PREEMPT_RT
-In-Reply-To: <20190715150601.205143057@linutronix.de>
-Message-ID: <alpine.DEB.2.21.1907172200190.1778@nanos.tec.linutronix.de>
-References: <20190715150402.798499167@linutronix.de> <20190715150601.205143057@linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727235AbfGQUIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 16:08:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53024 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726598AbfGQUIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 16:08:23 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A77A120818;
+        Wed, 17 Jul 2019 20:08:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563394101;
+        bh=q1RZuoJ0KNx0kwwTFepZFUYUm+UwOXQ71bx5OWCE9YE=;
+        h=In-Reply-To:References:Subject:To:Cc:From:Date:From;
+        b=VLvETRuYIlo2HPZACe/xsmKOqdJXKcLNpAdiE3R3w03k9QztUe2xijFzIFwLcuDKc
+         f3vuIss/LZJUonZR4/CuN2mYYEbt3f4nI9YZTYOo1tNDmIuC9OIsrmBI3E1LCMjb03
+         8/jA+fN2Ztb1qQFWSWVSJTkIlQX7lQs6OsqeiQi4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190715173527.5719-1-digetx@gmail.com>
+References: <20190715173527.5719-1-digetx@gmail.com>
+Subject: Re: [PATCH v1 1/2] clk: tegra: divider: Fix missing check for enable-bit on rate's recalculation
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 17 Jul 2019 13:08:20 -0700
+Message-Id: <20190717200821.A77A120818@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new entry to the preemption menu which enables the real-time support
-for the kernel. The choice is only enabled when an architecture supports
-it.
+Quoting Dmitry Osipenko (2019-07-15 10:35:26)
+> Unset "enable" bit means that divider is in bypass mode, hence it doesn't
+> have any effect in that case.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-It selects PREEMPT as the RT features depend on it. To achieve that the
-existing PREEMPT choice is renamed to PREEMPT_LL which select PREEMPT as
-well.
+Any Fixes tags for these patches?
 
-No functional change.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Acked-by: Clark Williams <williams@redhat.com>
-Acked-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Acked-by: Daniel Wagner <wagi@monom.org>
----
-V2: Fix typos in help text, collect acks
----
- arch/Kconfig           |    3 +++
- kernel/Kconfig.preempt |   25 +++++++++++++++++++++++--
- 2 files changed, 26 insertions(+), 2 deletions(-)
-
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -809,6 +809,9 @@ config ARCH_NO_COHERENT_DMA_MMAP
- config ARCH_NO_PREEMPT
- 	bool
- 
-+config ARCH_SUPPORTS_RT
-+	bool
-+
- config CPU_NO_EFFICIENT_FFS
- 	def_bool n
- 
---- a/kernel/Kconfig.preempt
-+++ b/kernel/Kconfig.preempt
-@@ -35,10 +35,10 @@ config PREEMPT_VOLUNTARY
- 
- 	  Select this if you are building a kernel for a desktop system.
- 
--config PREEMPT
-+config PREEMPT_LL
- 	bool "Preemptible Kernel (Low-Latency Desktop)"
- 	depends on !ARCH_NO_PREEMPT
--	select PREEMPT_COUNT
-+	select PREEMPT
- 	select UNINLINE_SPIN_UNLOCK if !ARCH_INLINE_SPIN_UNLOCK
- 	help
- 	  This option reduces the latency of the kernel by making
-@@ -55,7 +55,28 @@ config PREEMPT
- 	  embedded system with latency requirements in the milliseconds
- 	  range.
- 
-+config PREEMPT_RT
-+	bool "Fully Preemptible Kernel (Real-Time)"
-+	depends on EXPERT && ARCH_SUPPORTS_RT
-+	select PREEMPT
-+	help
-+	  This option turns the kernel into a real-time kernel by replacing
-+	  various locking primitives (spinlocks, rwlocks, etc.) with
-+	  preemptible priority-inheritance aware variants, enforcing
-+	  interrupt threading and introducing mechanisms to break up long
-+	  non-preemptible sections. This makes the kernel, except for very
-+	  low level and critical code pathes (entry code, scheduler, low
-+	  level interrupt handling) fully preemptible and brings most
-+	  execution contexts under scheduler control.
-+
-+	  Select this if you are building a kernel for systems which
-+	  require real-time guarantees.
-+
- endchoice
- 
- config PREEMPT_COUNT
-        bool
-+
-+config PREEMPT
-+       bool
-+       select PREEMPT_COUNT
