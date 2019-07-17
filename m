@@ -2,109 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5A356B3F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 03:57:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D94E96B445
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 04:03:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbfGQB4r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 21:56:47 -0400
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:34787 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728746AbfGQB4o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 21:56:44 -0400
-Received: by mail-pf1-f202.google.com with SMTP id i2so13506121pfe.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 18:56:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=z+RsQ5cMJRNJEspG7oJoFcFROmHPEJhG9JB06H11s3Q=;
-        b=arQQpTGJERz+HpGPXFp2jlPN5FrwHz2WQgWAk2OJzhGjTvteOU1VI4pyg3Gluszw+4
-         vjWiOIXlN3LE6Wmx+vW8ya52UlgsM6wNwD7n+F3tTlm0oU8wIAFq/wdLYE/uqwXxmQlX
-         XH8Q+EuWSZgjc3pc2sIgMXZRv15qqL94qa0UO9XEjvbkfa9x4jqUS6XSlv6anCR5d/Qu
-         TojpzGJ8KJngr73CNti9m0kYQQzcoyj/lkheRLPJEVpXYgERpvNTv8Z1n1LTd7t4E729
-         ECeSIi3rVf+NrWYm31K34bfHpNTeBSIN8kh5bzP8sJs2A90bieFh3IVp2mMrPJo+7TpA
-         I/fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=z+RsQ5cMJRNJEspG7oJoFcFROmHPEJhG9JB06H11s3Q=;
-        b=pGAfMxJM87s3u2a5VLEb4/urOmFgZCRq0mjP1nvWfluuqJQbk9CvTdiCdqTZA5UERu
-         OUCikG1F99YIO0zlvWfSc7JqDlraJS8lP2x5Wy7vE33FKLD+qg1BJ+QaiiClgO30kDdG
-         u+a/bdso1BqTYOn5hRnaT670V3TYK2EAhr6RXbqqQVbxKwr6x8A5LtM06xbgpwXfjfR9
-         buAeE72ypPHucKRxSkKbBu8lB+PuWomPmN17sObKSQXUgyna6NT7MmyAcketBTGqoKmB
-         GIdJb7nm3i7dJKxlh2JHcgmXZ8e3TLGxgIe+k99r0yDFsmFZIKsEv9j++EojUlpcjXM/
-         9NGA==
-X-Gm-Message-State: APjAAAXs3YxdNwDZTZSpamLysTv0yD+Un8EBt81yHHZD4s6ItFYMhwyG
-        nkT9+Le5itHR75UKVDLhUkEUVsmQG1mU72qhVmoD9w==
-X-Google-Smtp-Source: APXvYqwCZQKnuVk17fjP8A6U6bIZkWGFvrucA1ktqKosKL/38OKDiYQRbphN4EY4EbgHhiCugGJd7KJEeLMjHEFzWtBqZg==
-X-Received: by 2002:a65:4505:: with SMTP id n5mr34106191pgq.301.1563328603229;
- Tue, 16 Jul 2019 18:56:43 -0700 (PDT)
-Date:   Tue, 16 Jul 2019 18:55:43 -0700
-In-Reply-To: <20190717015543.152251-1-brendanhiggins@google.com>
-Message-Id: <20190717015543.152251-19-brendanhiggins@google.com>
-Mime-Version: 1.0
-References: <20190717015543.152251-1-brendanhiggins@google.com>
-X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-Subject: [PATCH v11 18/18] MAINTAINERS: add proc sysctl KUnit test to PROC
- SYSCTL section
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
-        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
-        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
-        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
-        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
-        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>,
-        Iurii Zaikin <yzaikin@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727718AbfGQCDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 22:03:31 -0400
+Received: from mga06.intel.com ([134.134.136.31]:45638 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727430AbfGQCDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 16 Jul 2019 22:03:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2019 19:03:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,272,1559545200"; 
+   d="scan'208";a="366860947"
+Received: from txu2-mobl.ccr.corp.intel.com (HELO [10.239.196.165]) ([10.239.196.165])
+  by fmsmga006.fm.intel.com with ESMTP; 16 Jul 2019 19:03:28 -0700
+Subject: Re: [PATCH v7 2/3] KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
+From:   Tao Xu <tao3.xu@intel.com>
+To:     Eduardo Habkost <ehabkost@redhat.com>
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        sean.j.christopherson@intel.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, fenghua.yu@intel.com,
+        xiaoyao.li@linux.intel.com, jingqi.liu@intel.com
+References: <20190712082907.29137-1-tao3.xu@intel.com>
+ <20190712082907.29137-3-tao3.xu@intel.com>
+ <20190716160358.GE26800@habkost.net>
+ <ec13a518-6dcb-fc87-36e6-31befd62281e@intel.com>
+Message-ID: <bcc75abe-44a8-acd8-570b-4dbc0ad97c09@intel.com>
+Date:   Wed, 17 Jul 2019 10:03:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <ec13a518-6dcb-fc87-36e6-31befd62281e@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add entry for the new proc sysctl KUnit test to the PROC SYSCTL section,
-and add Iurii as a maintainer.
+On 7/17/2019 9:17 AM, Tao Xu wrote:
+> On 7/17/2019 12:03 AM, Eduardo Habkost wrote:
+>> On Fri, Jul 12, 2019 at 04:29:06PM +0800, Tao Xu wrote:
+>>> UMWAIT and TPAUSE instructions use IA32_UMWAIT_CONTROL at MSR index E1H
+>>> to determines the maximum time in TSC-quanta that the processor can 
+>>> reside
+>>> in either C0.1 or C0.2.
+>>>
+>>> This patch emulates MSR IA32_UMWAIT_CONTROL in guest and differentiate
+>>> IA32_UMWAIT_CONTROL between host and guest. The variable
+>>> mwait_control_cached in arch/x86/power/umwait.c caches the MSR value, so
+>>> this patch uses it to avoid frequently rdmsr of IA32_UMWAIT_CONTROL.
+>>>
+>>> Co-developed-by: Jingqi Liu <jingqi.liu@intel.com>
+>>> Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
+>>> Signed-off-by: Tao Xu <tao3.xu@intel.com>
+>>> ---
+>> [...]
+>>> +static void atomic_switch_umwait_control_msr(struct vcpu_vmx *vmx)
+>>> +{
+>>> +    if (!vmx_has_waitpkg(vmx))
+>>> +        return;
+>>> +
+>>> +    if (vmx->msr_ia32_umwait_control != umwait_control_cached)
+>>> +        add_atomic_switch_msr(vmx, MSR_IA32_UMWAIT_CONTROL,
+>>> +            vmx->msr_ia32_umwait_control,
+>>> +            umwait_control_cached, false);
+>>
+>> How exactly do we ensure NR_AUTOLOAD_MSRS (8) is still large enough?
+>>
+>> I see 3 existing add_atomic_switch_msr() calls, but the one at
+>> atomic_switch_perf_msrs() is in a loop.  Are we absolutely sure
+>> that perf_guest_get_msrs() will never return more than 5 MSRs?
+>>
+> 
+> Quote the code of intel_guest_get_msrs:
+> 
+> static struct perf_guest_switch_msr *intel_guest_get_msrs(int *nr)
+> {
+> [...]
+>      arr[0].msr = MSR_CORE_PERF_GLOBAL_CTRL;
+>      arr[0].host = x86_pmu.intel_ctrl & ~cpuc->intel_ctrl_guest_mask;
+>      arr[0].guest = x86_pmu.intel_ctrl & ~cpuc->intel_ctrl_host_mask;
+>      if (x86_pmu.flags & PMU_FL_PEBS_ALL)
+>          arr[0].guest &= ~cpuc->pebs_enabled;
+>      else
+>          arr[0].guest &= ~(cpuc->pebs_enabled & PEBS_COUNTER_MASK);
+>      *nr = 1;
+> 
+>      if (x86_pmu.pebs && x86_pmu.pebs_no_isolation) {
+> [...]
+>          arr[1].msr = MSR_IA32_PEBS_ENABLE;
+>          arr[1].host = cpuc->pebs_enabled;
+>          arr[1].guest = 0;
+>          *nr = 2;
+> [...]
+> 
+> There are most 2 msrs now. By default umwait is disabled in KVM. So by 
+> default there is no MSR_IA32_UMWAIT_CONTROL added into 
+> add_atomic_switch_msr().
+> 
+> Thanks.
 
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-Cc: Iurii Zaikin <yzaikin@google.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+And for old hardware, kvm use core_guest_get_msrs, but umwait is for now 
+hardware, and if hardware in host doesn't have the cpuid, there is no 
+MSR_IA32_UMWAIT_CONTROL in kvm as well.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 48d04d180a988..f8204c75114da 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12721,12 +12721,14 @@ F:	Documentation/filesystems/proc.txt
- PROC SYSCTL
- M:	Luis Chamberlain <mcgrof@kernel.org>
- M:	Kees Cook <keescook@chromium.org>
-+M:	Iurii Zaikin <yzaikin@google.com>
- L:	linux-kernel@vger.kernel.org
- L:	linux-fsdevel@vger.kernel.org
- S:	Maintained
- F:	fs/proc/proc_sysctl.c
- F:	include/linux/sysctl.h
- F:	kernel/sysctl.c
-+F:	kernel/sysctl-test.c
- F:	tools/testing/selftests/sysctl/
- 
- PS3 NETWORK SUPPORT
--- 
-2.22.0.510.g264f2c817a-goog
+>>
+>>> +    else
+>>> +        clear_atomic_switch_msr(vmx, MSR_IA32_UMWAIT_CONTROL);
+>>> +}
+>>> +
+>>>   static void vmx_arm_hv_timer(struct vcpu_vmx *vmx, u32 val)
+>>>   {
+>>>       vmcs_write32(VMX_PREEMPTION_TIMER_VALUE, val);
+>> [...]
+>>
+>>
+> 
 
