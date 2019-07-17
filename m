@@ -2,96 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71F226B29C
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 02:00:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA7BE6B2A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 02:06:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389031AbfGPX7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 19:59:37 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33217 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728597AbfGPX7h (ORCPT
+        id S1730456AbfGQAGL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 20:06:11 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41618 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728597AbfGQAGL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 19:59:37 -0400
-Received: by mail-qt1-f193.google.com with SMTP id r6so17312607qtt.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 16:59:36 -0700 (PDT)
+        Tue, 16 Jul 2019 20:06:11 -0400
+Received: by mail-lj1-f196.google.com with SMTP id d24so21741804ljg.8
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Jul 2019 17:06:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zfE+1oH2ev9A7CB6B7OCM0HfuvGIKPETwgwy1wYPeZk=;
-        b=myAjYl3qrrjUdybw3rfkkqgxLpxX2EWxa6gWin7tovqVhvuC1kAEj0YUMz0a+INMKn
-         k34dHtcAcHsWoDetwCiVgDi03O2ZbX6tn7T6FBnKsTPf2BLewHVVFqVnoOY7p/UiUCEe
-         +2TMI/XehWPm3bOXRcM82WCBDwbCShBjLtw7Y=
+        bh=UWTBDLfiOb7SnMw+N5GrAnIvY64tlXzQQdEdF/klawQ=;
+        b=Y4ryglVJki1UmhEc9yquaMBLVlfvGa8LpjpLNuH/Mo0i/2hfTSvRE3LciZGI1uwSNs
+         dXK0SyNQYwrhrZQqhnNSluMsrCXDUr1aXp3fQM/devAD77pINnGDqh//AnQDCY9gdQU8
+         aA+TmVOdclNE7j2lGm79SGVvaxQCAojvI2UNOQTlwlqkXPzoXXaLuxVrFBNJ12vh/IY2
+         hZpNQ6ndyv1NvXDtf/x/ERy3Cu1X45OZ1fc7G9UUYZkRPFYQuDgWIsWd4p0SsTY5vJrh
+         PvcL4jAlgJNtkfROgv9Ag5w0G7J5QI+J8n9wu5kSJBeLOlVR2BVR4L1KmUmieMMIqh1j
+         rxdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zfE+1oH2ev9A7CB6B7OCM0HfuvGIKPETwgwy1wYPeZk=;
-        b=eACoLFdxRxg2EVAT2uAymkkmjACDD8l8B9jLMrAyh7peB4Z35V5PidAMHuAqXaC0fK
-         7CB6Aw9TKALuiHory185xpRfgpszLI9v/clq6ybVLNx+XY0JDK56CaTaoY42yTDdat0q
-         uIxeT/5ejkf3MBxYm4611kvVgUmB9SqOITY6lSC3xheyYeeOWyYdAyNT/eGrgGWTQGMt
-         xIulyiThiOBcDw5NgTLFBQF9aJqQRi8vpzRk/io8bdPGbydzzAvaIxvQzhLwGcor83fC
-         vwgOH91aAfF/7T0cmELqMjU9BBMM2mO81uDCq+z9Nbc2P4+B9Ph4l7J9u7yq+bYMGSdY
-         2Vkg==
-X-Gm-Message-State: APjAAAWOvRImS21L7hBgfzoQSvkQvCf5cqU4SA00ttF5QiUgsUOMlmhG
-        STs7x1X1ZnAXot4D5NDgOBwDca7djlo20vc24z0Rjw==
-X-Google-Smtp-Source: APXvYqyCn5WDabT9u/P+OGBvnjMb2lK0frfpzoQz2UZeeBoGFN9gytFn4nfFqeUwNxxQx3qvg3WhGoAnUFfps5oKIQ4=
-X-Received: by 2002:aed:3b1c:: with SMTP id p28mr24024945qte.312.1563321575377;
- Tue, 16 Jul 2019 16:59:35 -0700 (PDT)
+        bh=UWTBDLfiOb7SnMw+N5GrAnIvY64tlXzQQdEdF/klawQ=;
+        b=ccLB6kmGSOqmjULDOSf/nGFXdi5FHl1sa/PPBP13L+wbPuBDNFbMGjOP/+MDNEWf9u
+         JQCWNx9LbXoEJIXM5fo8IWrvj+jmURoULEPmmCYxpEV233/YvGnmKwbNnQbwUEIN8CZC
+         V78tPSMa41ajsI7ZF1mbgxlfQltJqsS+gXKY1DAZPrkLW4nTnKEr+XZadNqXk4dOz+eT
+         yNBxKOQB/kiJyFP9yZsok3eGYKb9qBbLv0ZH82VtV6IoFdHPu11dcAvJOFTwvbPA6zWP
+         z5inAo4TI6qpkT2vuJtnxB7C/lTI3dKuRjXtfvAxakn9xILBsPaQWFwqdH+4Q54Dg7ke
+         F83A==
+X-Gm-Message-State: APjAAAUlSVtBFK4mzolhnhb5GiFvmxLto02KWd8B2DHulBCxV2FNpRuD
+        mMPYHdXj9jMRP+TyE5seVtSX4aT+9XvDvgKiVyM=
+X-Google-Smtp-Source: APXvYqxkBXVHeEGtHHCDP05ZT176lupNUH/6sG/syt+yImLexbxuHAheccjAZUPQY7Av1RxxLt7aWN/RqLZEeIJpXHQ=
+X-Received: by 2002:a2e:9158:: with SMTP id q24mr19318497ljg.119.1563321968194;
+ Tue, 16 Jul 2019 17:06:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <1562625253-29254-1-git-send-email-yongqiang.niu@mediatek.com> <1562625253-29254-7-git-send-email-yongqiang.niu@mediatek.com>
-In-Reply-To: <1562625253-29254-7-git-send-email-yongqiang.niu@mediatek.com>
-From:   Ryan Case <ryandcase@chromium.org>
-Date:   Tue, 16 Jul 2019 16:59:23 -0700
-Message-ID: <CACjz--k0wVpxWTBXQeUHqm50RgvaCNkNb3DO+KviCOtq-e9gTQ@mail.gmail.com>
-Subject: Re: [PATCH v4, 06/33] dt-bindings: mediatek: add mutex description
- for mt8183 display
-To:     yongqiang.niu@mediatek.com
-Cc:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
+References: <20190703005202.7578-1-alistair.francis@wdc.com>
+ <mvmk1czh9y6.fsf@suse.de> <CAKmqyKPn9GBg=n1j-ZpEdCN4Qfi5qfNtEVgpgF8rYRpof4eNDA@mail.gmail.com>
+ <mvmpnmqfepx.fsf@suse.de> <CAK8P3a2NmdoHzFGKrzw4CBYDOBtZHDQCGsWE_L0UbG+w0bGWkA@mail.gmail.com>
+In-Reply-To: <CAK8P3a2NmdoHzFGKrzw4CBYDOBtZHDQCGsWE_L0UbG+w0bGWkA@mail.gmail.com>
+From:   Alistair Francis <alistair23@gmail.com>
+Date:   Tue, 16 Jul 2019 17:02:50 -0700
+Message-ID: <CAKmqyKPvqBZeL-R3no59XXieGo8qspoyEDYCWD3WR=ni-PRz3w@mail.gmail.com>
+Subject: Re: [PATCH RESEND 0/2] RISC-V: Handle the siginfo_t offset problem
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andreas Schwab <schwab@suse.de>,
+        Alistair Francis <alistair.francis@wdc.com>,
+        linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 8, 2019 at 3:37 PM <yongqiang.niu@mediatek.com> wrote:
+On Thu, Jul 4, 2019 at 2:19 AM Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> From: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> On Thu, Jul 4, 2019 at 9:20 AM Andreas Schwab <schwab@suse.de> wrote:
+> >
+> > On Jul 03 2019, Alistair Francis <alistair23@gmail.com> wrote:
+> >
+> > > On Wed, Jul 3, 2019 at 12:08 AM Andreas Schwab <schwab@suse.de> wrote:
+> > >>
+> > >> On Jul 02 2019, Alistair Francis <alistair.francis@wdc.com> wrote:
+> > >>
+> > >> > In the RISC-V 32-bit glibc port [1] the siginfo_t struct in the kernel
+> > >> > doesn't line up with the struct in glibc. In glibc world the _sifields
+> > >> > union is 8 byte alligned (although I can't figure out why)
+> > >>
+> > >> Try ptype/o in gdb.
+> > >
+> > > That's a useful tip, I'll be sure to use that next time.
+> >
+> > It was a serious note.  If the structs don't line up then there is a
+> > mismatch in types that cannot be solved by adding spurious padding.  You
+> > need to fix the types instead.
 >
-> This patch add mutex description for mt8183 display
+> Would it be an option to align all the basic typedefs (off_t, time_t,
+> clock_t, ...)
+> between glibc and kernel then, and just use the existing
+> sysdeps/unix/sysv/linux/generic/bits/typesizes.h after all to avoid
+> surprises like this?
 >
-> Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
-> ---
->  Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt | 1 +
->  1 file changed, 1 insertion(+)
+> As of v2 the functional difference is
 >
-> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> index bb9274a..4a22d49 100644
-> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> @@ -53,6 +53,7 @@ Required properties (all function blocks):
->    For most function blocks this is just a single clock input. Only the DSI and
->    DPI controller nodes have multiple clock inputs. These are documented in
->    mediatek,dsi.txt and mediatek,dpi.txt, respectively.
-> +  for MT8183 mutex, this hardware is always free run, has no clocks control
+> -#define __INO_T_TYPE        __ULONGWORD_TYPE
+> +#define __INO_T_TYPE    __UQUAD_TYPE
+>  #define __INO64_T_TYPE        __UQUAD_TYPE
+>  #define __MODE_T_TYPE        __U32_TYPE
+> -#define __NLINK_T_TYPE        __U32_TYPE
+> -#define __OFF_T_TYPE        __SLONGWORD_TYPE
+> +#define __NLINK_T_TYPE    __UQUAD_TYPE
+> +#define __OFF_T_TYPE    __SQUAD_TYPE
+>  #define __OFF64_T_TYPE        __SQUAD_TYPE
+> -#define __RLIM_T_TYPE        __ULONGWORD_TYPE
+> +#define __RLIM_T_TYPE      __UQUAD_TYPE
+>  #define __RLIM64_T_TYPE        __UQUAD_TYPE
+> -#define    __BLKCNT_T_TYPE        __SLONGWORD_TYPE
+> +#define __BLKCNT_T_TYPE    __SQUAD_TYPE
+>  #define    __BLKCNT64_T_TYPE    __SQUAD_TYPE
+> -#define    __FSBLKCNT_T_TYPE    __ULONGWORD_TYPE
+> +#define __FSBLKCNT_T_TYPE  __UQUAD_TYPE
+>  #define    __FSBLKCNT64_T_TYPE    __UQUAD_TYPE
+> -#define    __FSFILCNT_T_TYPE    __ULONGWORD_TYPE
+> +#define __FSFILCNT_T_TYPE  __UQUAD_TYPE
+>  #define    __FSFILCNT64_T_TYPE    __UQUAD_TYPE
+> -#define    __FSWORD_T_TYPE        __SWORD_TYPE
+> +#define __FSWORD_T_TYPE   __SQUAD_TYPE
+> -#define __CLOCK_T_TYPE        __SLONGWORD_TYPE
+> -#define __TIME_T_TYPE        __SLONGWORD_TYPE
+> +#define __CLOCK_T_TYPE     __SQUAD_TYPE
+> +#define __TIME_T_TYPE      __SQUAD_TYPE
+>  #define __USECONDS_T_TYPE    __U32_TYPE
+> -#define __SUSECONDS_T_TYPE    __SLONGWORD_TYPE
+> +#define __SUSECONDS_T_TYPE __SQUAD_TYPE
+> -#define __BLKSIZE_T_TYPE    __S32_TYPE
+> +#define __BLKSIZE_T_TYPE   __SQUAD_TYPE
+>  #define __FSID_T_TYPE        struct { int __val[2]; }
+>  #define __SSIZE_T_TYPE        __SWORD_TYPE
+> -#define __SYSCALL_SLONG_TYPE    __SLONGWORD_TYPE
+> -#define __SYSCALL_ULONG_TYPE    __ULONGWORD_TYPE
+> -#define __CPU_MASK_TYPE     __ULONGWORD_TYPE
+> +#define __SYSCALL_SLONG_TYPE __SQUAD_TYPE
+> +#define __SYSCALL_ULONG_TYPE __UQUAD_TYPE
+> +#define __CPU_MASK_TYPE    __UQUAD_TYPE
+>
+> -#ifdef __LP64__
+>  # define __RLIM_T_MATCHES_RLIM64_T    1
+> -#else
+> -# define __RLIM_T_MATCHES_RLIM64_T    0
+> -#endif
+>
+> +#define __ASSUME_TIME64_SYSCALLS 1
+> +#define __ASSUME_RLIM64_SYSCALLS 1
+>
+> Since the sysdeps/unix/sysv/linux/generic/bits/typesizes.h definitions
+> generally match the kernel, anything diverging from that has the potential
+> of breaking it, so the difference should probably be kept to the absolute
+> minimum.
+>
+> I think these ones are wrong and will cause bugs similar to the clock_t
+> issue if they are used with kernel interfaces:
+> __NLINK_T_TYPE, __FSWORD_T_TYPE, __CLOCK_T_TYPE,
+> __BLKSIZE_T_TYPE, __SYSCALL_ULONG_TYPE,
+> __SYSCALL_SLONG_TYPE, __CPU_MASK_TYPE
+>
+> These are fine as long as they are only used in user space and to
+> wrap kernel syscalls, but I think most of them can end up being
+> passed to the kernel, so it seems safer not to have rv32 diverge
+> without a good reason.
+>
+> The remaining ones (__INO_T_TYPE, __OFF_T_TYPE, __BLKCNT_T_TYPE,
+> __FSBLKCNT_T_TYPE, __FSFILCNT_T_TYPE, __TIME_T_TYPE) all
+> follow the pattern where the kernel has an old 32-bit type and a new
+> 64-bit type, but the kernel tries not to expose the 32-bit interfaces
+> to user space on new architectures and only provide the 64-bit
+> replacements, but there are a couple of interfaces that never got
+> replaced, typically in driver and file system ioctls.
+>
+> Since glibc already has code to deal with the 64-bit types and that
+> is well tested, it would seem safer to me to just #undef the old
+> types completely rather than defining them to 64-bit, which would
+> make them incompatible with the kernel's types.
 
-This should have capitalization, punctuation, and drop the trailing space.
+#undef-ing these results in build failures unfortunately, it seems
+like they are required.
 
-It also reads a little strangely. You may want something like "An
-exception is that the mt8183 mutex is always free running with no
-clocks property."
+I'm sending a v3 RFC to the glibc list right now. We can continue the
+discussion there.
+
+Alistair
 
 >
->  Required properties (DMA function blocks):
->  - compatible: Should be one of
-> --
-> 1.8.1.1.dirty
->
+>        Arnd
