@@ -2,116 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1EC06C8F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 07:58:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B6096C90D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 08:04:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbfGRF6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 01:58:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58538 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726000AbfGRF6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 01:58:32 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 72475308FBAC;
-        Thu, 18 Jul 2019 05:58:31 +0000 (UTC)
-Received: from redhat.com (ovpn-120-147.rdu2.redhat.com [10.10.120.147])
-        by smtp.corp.redhat.com (Postfix) with SMTP id C085E5D9D6;
-        Thu, 18 Jul 2019 05:58:17 +0000 (UTC)
-Date:   Thu, 18 Jul 2019 01:58:16 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Wei Wang <wei.w.wang@intel.com>
-Cc:     Alexander Duyck <alexander.duyck@gmail.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        "pagupta@redhat.com" <pagupta@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Subject: Re: use of shrinker in virtio balloon free page hinting
-Message-ID: <20190718015319-mutt-send-email-mst@kernel.org>
-References: <20190717071332-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F73E16D4B2@shsmsx102.ccr.corp.intel.com>
- <20190718000434-mutt-send-email-mst@kernel.org>
- <5D300A32.4090300@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5D300A32.4090300@intel.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 18 Jul 2019 05:58:31 +0000 (UTC)
+        id S2388465AbfGRGE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 02:04:29 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46903 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbfGRGE3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 02:04:29 -0400
+Received: by mail-qt1-f193.google.com with SMTP id h21so25926142qtn.13
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 23:04:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=s7CXeF8uvBKnNU0aV0PhameaA3sT+h57hx3g24HEe2U=;
+        b=tLPXq7XrsYVgQigVAOJiBXuul4CBsKrMICZCKovCK44Ov5zeezEwUScV326bhHtdJ7
+         gmrrc0pTRuUABFxdKGxNtBBe4GhKDSOQF9ujQTQkEtJz+NtgnIgzqLKyxcjDe5an6qTy
+         jhEnNgp/Mjqd0ZnEiMu94xmdX48ujqe4U7PJSRsLBxQXBMh8R/6El7/G88a2V3cbkqsC
+         Woh+q3GDc9/Brhf+DUj6sPN9MugKmhUbL+hs2t5WnjTajja6E//HEh8/dDPtHA/Lusa4
+         dDWavsoZYZJSlOHjrUJ59m+tIt0RR0at2gGOpvkA8k+chVNPiIbso8uEsml5RxRmq1jy
+         RepA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=s7CXeF8uvBKnNU0aV0PhameaA3sT+h57hx3g24HEe2U=;
+        b=bH9NXpJTSIrb3y9qmrcmgbjXlqemZdiYV6Dq3Ufm3K3tHdF2aq92Sy8GawPg4ydmHa
+         XVN0oV/I5qTnSAiSdv83dtNUrj/oiQGi8Pk7NxK+srSVEWR7I4U9/ANmFkC3K907xwnd
+         mxVQyUxy38SIsHwFCqPibOdP8SzGtHrf21nA1wmf0dF76eS1Iwr10Q1bv6n5rGB06xdf
+         5O2b9TV9k9RD+Tzg7vGGQCWbSxMfCUQJgntp9fIFWdF55JsOnsPp/r+0Ua8LfAUdqE27
+         v7kj81UZ5qjrhd+1KR13ZDFF3CRGGAU9RCUUYePEgvvFdD4iej2dulA/LvcpXRMNy17z
+         QN3w==
+X-Gm-Message-State: APjAAAUGfJdmX6RlKeY1WMBC/q4FlgfKqRzKRKI6KHzR8TXlnN24OPun
+        Xa3ZR7nt24cVd67mBcisxR0=
+X-Google-Smtp-Source: APXvYqzYIUatZiQ88JgMXznb7BmGeGoORVj6WzuMUstkNhdu0jSUZcv4xnSY1iqHI+C6yWxwEWQdDQ==
+X-Received: by 2002:aed:222d:: with SMTP id n42mr30703133qtc.144.1563429868394;
+        Wed, 17 Jul 2019 23:04:28 -0700 (PDT)
+Received: from k8s-master.slicetest.com (kovt.soborka.net. [94.158.152.75])
+        by smtp.googlemail.com with ESMTPSA id p59sm12527196qtd.75.2019.07.17.23.04.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Jul 2019 23:04:27 -0700 (PDT)
+From:   Kovtunenko Oleksandr <alexander198961@gmail.com>
+To:     shaggy@kernel.org, jfs-discussion@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Cc:     alexander198961@gmail.com
+Subject: [PATCH] fix null pointer bugzilla 203737 . wich is triggered in function bio_set_dev(bio, bdev) in case bdev is null Signed-off-by: Kovtunenko Oleksandr <alexander198961@gmail.com>
+Date:   Wed, 17 Jul 2019 08:04:50 +0000
+Message-Id: <1563350690-7734-1-git-send-email-alexander198961@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 01:57:06PM +0800, Wei Wang wrote:
-> On 07/18/2019 12:13 PM, Michael S. Tsirkin wrote:
-> > 
-> > It makes sense for pages in the balloon (requested by hypervisor).
-> > However free page hinting can freeze up lots of memory for its own
-> > internal reasons. It does not make sense to ask hypervisor
-> > to set flags in order to fix internal guest issues.
-> 
-> Sounds reasonable to me. Probably we could move the flag check to
-> shrinker_count and shrinker_scan as a reclaiming condition for
-> ballooning pages only?
+---
+ fs/jfs/jfs_logmgr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I think so, yes. I also wonder whether we should stop reporting
-at that point - otherwise we'll just allocate the freed pages again.
+diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
+index 9330eff..c2fcaa0 100644
+--- a/fs/jfs/jfs_logmgr.c
++++ b/fs/jfs/jfs_logmgr.c
+@@ -1209,6 +1209,7 @@ static int open_dummy_log(struct super_block *sb)
+ 		/* Make up some stuff */
+ 		dummy_log->base = 0;
+ 		dummy_log->size = 1024;
++		dummy_log->bdev = sb->s_bdev;
+ 		rc = lmLogInit(dummy_log);
+ 		if (rc) {
+ 			kfree(dummy_log);
+-- 
+1.8.3.1
 
-> 
-> > 
-> > Right. But that does not include the pages in the hint vq,
-> > which could be a significant amount of memory.
-> 
-> I think it includes, as vb->num_free_page_blocks records the total number
-> of free page blocks that balloon has taken from mm.
-
-Oh - you are right. Thanks!
-
-> For shrink_free_pages, it calls return_free_pages_to_mm, which pops pages
-> from vb->free_page_list (this is the list where pages get enlisted after
-> they
-> are put to the hint vq, see get_free_page_and_send).
-> 
-> 
-> > 
-> > 
-> > > > - if free pages are being reported, pages freed
-> > > >    by shrinker will just get re-allocated again
-> > > fill_balloon will re-try the allocation after sleeping 200ms once allocation fails.
-> > Even if ballon was never inflated, if shrinker frees some memory while
-> > we are hinting, hint vq will keep going and allocate it back without
-> > sleeping.
-> 
-> Still see get_free_page_and_send. -EINTR is returned when page allocation
-> fails,
-> and reporting ends then.
-
-what if it does not fail?
-
-
-> 
-> Shrinker is called on system memory pressure. On memory pressure
-> get_free_page_and_send will fail memory allocation, so it stops allocating
-> more.
-
-Memory pressure could be triggered by an unrelated allocation
-e.g. from another driver.
-
-> 
-> 
-> Best,
-> Wei
