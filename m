@@ -2,58 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A224B6B6D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 08:42:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 629126B6DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 08:43:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbfGQGmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 02:42:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48686 "EHLO mail.kernel.org"
+        id S1727582AbfGQGnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 02:43:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726282AbfGQGmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 02:42:44 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        id S1725980AbfGQGnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 02:43:21 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE5092173B;
-        Wed, 17 Jul 2019 06:42:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE6B120651;
+        Wed, 17 Jul 2019 06:43:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563345763;
-        bh=gdDuhx3XH8+TSHfY6ArJLp5Y6SaNs0xxYcyAMFH/vBs=;
+        s=default; t=1563345801;
+        bh=rpX3FlNAUKO8GVGTnuVeNc+iCU/DRSE4jAZjnlhh6/U=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cSCitkGDSY4+BuSrf+dmfLSE7mRzd9XYhEbtmGyeE0CftZrcflTe6SHbBzEyQk72f
-         NuMkjdmBKJstGxN9dX4ZgNL/GtiAuPDZJE3+7xsH913J0sP6ZpKAsZxXQjCwGM3p8T
-         bmMWqKwSQKuvGPaIHoAwJBsgqAP0XIZPbEQFWzbQ=
-Date:   Wed, 17 Jul 2019 14:42:28 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     yibin.gong@nxp.com
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, broonie@kernel.org, festevam@gmail.com,
-        vkoul@kernel.org, dan.j.williams@intel.com,
-        u.kleine-koenig@pengutronix.de, catalin.marinas@arm.com,
-        l.stach@pengutronix.de, will.deacon@arm.com,
-        linux-spi@vger.kernel.org, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 13/15] ARM: dts: imx6sll: correct sdma compatible
-Message-ID: <20190717064226.GB3738@dragon>
-References: <20190610081753.11422-1-yibin.gong@nxp.com>
- <20190610081753.11422-14-yibin.gong@nxp.com>
+        b=1Vhrd6HEP6Ym1QpvFRVB2pgGZDP5qGRMoJkZYzXkAT27BZk5SUBotZROwJh1ayhnO
+         A8zUaGmoGJ/E0pJrpvM2gBtZDwuJMN8OGYggKcdz90mSOXoLd7PbT1rTrWua8/6X2p
+         Za0+sksAuoM3znqHViWu2lp7dyiSu2O3GUGD4ajs=
+Date:   Wed, 17 Jul 2019 07:43:15 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, maz@kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Update my email address to @kernel.org
+Message-ID: <20190717064315.tn26dss343iv33oj@willie-the-truck>
+References: <20190716174308.17147-1-marc.zyngier@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190610081753.11422-14-yibin.gong@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190716174308.17147-1-marc.zyngier@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 04:17:51PM +0800, yibin.gong@nxp.com wrote:
-> From: Robin Gong <yibin.gong@nxp.com>
+On Tue, Jul 16, 2019 at 06:43:08PM +0100, Marc Zyngier wrote:
+> I will soon lose access to my @arm.com email address, so let's
+> update the MAINTAINERS file to point to my @kernel.org address,
+> as well as .mailmap for good measure.
 > 
-> Correct sdma compatible since ecspi errata ERR009165 has been fixed
-> on i.mx6sll as i.mx6ul.
+> Note that my @arm.com address will still work, but someone else
+> will be reading whatever is sent there. Don't say you didn't know!
 > 
-> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+> 
+> Notes:
+>     Yes, I'm sending this from my ARM address. That's intentional.
+>     I'll probably send it as part of a pull request later in the
+>     cycle, but that's just so that people know what is coming.
+> 
+>  .mailmap    | 1 +
+>  MAINTAINERS | 8 ++++----
+>  2 files changed, 5 insertions(+), 4 deletions(-)
 
-Applied, thanks.
+Let's see if you manage a better job of getting people to use your new
+address than I have:
+
+Acked-by: Will Deacon <will@kernel.org>
+
+Will
