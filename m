@@ -2,73 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 072136BE42
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 16:30:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20C6B6BE60
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 16:36:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727842AbfGQO3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 10:29:45 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:53911 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726598AbfGQO3p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 10:29:45 -0400
-Received: from [192.168.1.110] ([77.7.13.186]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MMX9b-1i3VR52amd-00JY40; Wed, 17 Jul 2019 16:29:40 +0200
-Subject: Re: [PATCH 5/6] leds: apu: fix error on probing failure
-To:     Pavel Machek <pavel@ucw.cz>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     linux-kernel@vger.kernel.org, jacek.anaszewski@gmail.com,
-        dmurphy@ti.com, linux-leds@vger.kernel.org
-References: <1563202653-20994-1-git-send-email-info@metux.net>
- <1563202653-20994-6-git-send-email-info@metux.net>
- <20190716192805.GE10400@amd>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <7ec18de5-f71b-4b9a-0db9-3c010a8e67e7@metux.net>
-Date:   Wed, 17 Jul 2019 16:29:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727367AbfGQOeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 10:34:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43504 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726272AbfGQOeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 10:34:36 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2B22A8553A;
+        Wed, 17 Jul 2019 14:34:36 +0000 (UTC)
+Received: from redhat.com (ovpn-125-71.rdu2.redhat.com [10.10.125.71])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 654AF19C59;
+        Wed, 17 Jul 2019 14:34:16 +0000 (UTC)
+Date:   Wed, 17 Jul 2019 10:34:15 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Alexander Duyck <alexander.duyck@gmail.com>, wei.w.wang@intel.com,
+        Nitesh Narayan Lal <nitesh@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yang Zhang <yang.zhang.wz@gmail.com>, pagupta@redhat.com,
+        Rik van Riel <riel@surriel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        lcapitulino@redhat.com, Andrea Arcangeli <aarcange@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, dan.j.williams@intel.com,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Subject: Re: use of shrinker in virtio balloon free page hinting
+Message-ID: <20190717103208-mutt-send-email-mst@kernel.org>
+References: <20190717071332-mutt-send-email-mst@kernel.org>
+ <959237f9-22cc-1e57-e07d-b8dc3ddf9ed6@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190716192805.GE10400@amd>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:0srtugDNayXYE+AWuw5JauOGcu8YeiV3n+ksdpHIlWS4f4wzwrN
- hLbR+a2Tb8SKjKKdqRB81BXU+uVVp3zX8m+sHFMKuQGOISC8OCoFw2pHImd/fb9NBV7kRwY
- VMJqzt++orNaz5mFxCRZm5h5DpXWCL+q9QFnJaGGXWeFLWhleXrGAu/KA2AaaiSps2kWZfX
- OJb+XpLVZp6HlsB1qpI7Q==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:u0lYIpEUqGU=:sGu5of7PSf1HM75QVu0Nyl
- TFeFAok/saS330hsIyz+LaNjjC1Cz862P9TUeidmq14LottEdK+1/80PzhhwJcABvivrFwOVZ
- kVHYrg4qTQ8tfw21vjT57in4l2ZX0PxhKkdz7QEsfOsiqRU2omcYruviaJMn2J4A2aIjLdLDb
- dwga4HklEeOcpGKwLYLel3nGRbLRK5tTWNWI71kFySBBIV8h+Tc9pPAyC/iDT1QOKCkZMgfCy
- SB7O5ZBNUPDNrjZq567+K30ri5TlAmHX5tvQD0aOJlC3zzWwGq07lm6XnSVAGJtdHKNqLixi0
- b21HR/mXz74VxjFgjNCGo5D14D4ER7Ww4dq+/U71yUxrIGT/sWJZZ2WNoIwbIXT5bjyG2sGoz
- JYfUTgt7eiO/zA6wD9JErkK5LKe3pr8MzxQVc3ikNCO5qYp6ez/OmDy/wGlWdXAZTRB/52rpK
- RMG6wVaNnRFWp/P+6O7hO+SV9l1zKNWTR/8xvzLLrRAHt59SXzILA7890l4937dY423fHZlQv
- avFPd4RJ/gZrZDHvpvSs5i0Rn8X6hWWyw16hM7Bq4sK2r8pGCNtfE8hsjtxM5rq11Xe2GXkA2
- tgmD2wfZyrut2Zqm4MK1ktBvD++mZjFvD1D/SGHgCeap4c3doH4wyeVmyP7Tj4SfzF0ML9Mig
- oWubHGTEt3qlATBwrJOLD954uMDDOCPPEVIPtbzaIi4HbQL2USGFn95idkN2aTmroX/caU4nF
- 1leC7F2Hx6abrPDKsHaK2u8QC9Jq+ROKyeebm+KAktfweLW9n0Vv9gyk3JA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <959237f9-22cc-1e57-e07d-b8dc3ddf9ed6@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 17 Jul 2019 14:34:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.07.19 21:28, Pavel Machek wrote:
-
-> You may want to add here: "For APUv2,3 support, enable CONFIG_xxx".
+On Wed, Jul 17, 2019 at 04:10:47PM +0200, David Hildenbrand wrote:
+> On 17.07.19 13:20, Michael S. Tsirkin wrote:
+> > Wei, others,
+> > 
+> > ATM virtio_balloon_shrinker_scan will only get registered
+> > when deflate on oom feature bit is set.
+> > 
+> > Not sure whether that's intentional.  Assuming it is:
+> > 
+> > virtio_balloon_shrinker_scan will try to locate and free
+> > pages that are processed by host.
+> > The above seems broken in several ways:
+> > - count ignores the free page list completely
+> > - if free pages are being reported, pages freed
+> >   by shrinker will just get re-allocated again
 > 
-> If you have any APUv2 users (and you may), this si chance to get their
-> attention.
+> Trying to answer your questions (not sure if I fully understood what you
+> mean)
+> 
+> virtio_balloon_shrinker_scan() will not be called due to inflation
+> requests (balloon_page_alloc()). It will be called whenever the system
+> is OOM, e.g., when starting a new application.
+> 
+> I assume you were expecting the shrinker getting called due to
+> balloon_page_alloc(). however, that is not the case as we pass
+> "__GFP_NORETRY".
 
-Good idea. Shall I repost a changed patch ? (or repost the whole queue)
+Right but it's possible we exhaust all memory, then
+someone else asks for a single page and that invokes
+the shrinker.
 
+> 
+> To test, something like:
+> 
+> 1. Start a VM with
+> 
+> -device virtio-balloon-pci,deflate-on-oom=true
+> 
+> 2. Inflate the balloon, e.g.,
+> 
+> QMP: balloon 1024
+> QMP: info balloon
+> -> 1024
+> 
+> See how "MemTotal" in /proc/meminfo in the guest won't change
+> 
+> 3. Run a workload that exhausts memory in the guest (OOM).
+> 
+> See how the balloon was automatically deflated
+> 
+> QMP: info balloon
+> -> Something bigger than 1024
+> 
+> 
+> Not sure if it is broken, last time I played with it, it worked, but
+> that was ~1-2 years ago.
+> 
+> -- 
+> 
+> Thanks,
+> 
+> David / dhildenb
 
---mtx
+Sorry I was unclear.  The question was about
+VIRTIO_BALLOON_F_FREE_PAGE_HINT specifically.
 
 -- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+MST
