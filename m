@@ -2,113 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 578746B9DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 12:14:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95F386B9E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 12:15:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfGQKOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 06:14:09 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:32824 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726568AbfGQKOI (ORCPT
+        id S1729695AbfGQKPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 06:15:08 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37905 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725893AbfGQKPH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 06:14:08 -0400
-Received: by mail-pf1-f196.google.com with SMTP id g2so10618175pfq.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 03:14:08 -0700 (PDT)
+        Wed, 17 Jul 2019 06:15:07 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y15so10613476pfn.5;
+        Wed, 17 Jul 2019 03:15:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PrtH8Kksib4dUXTG8vDDfJrfFptIvUSjdQBJsI2iu0I=;
-        b=f1LdET+KRqIqj9PnA29N8nNQaxzbjiZ1JbKHviB/BsS+AsQOPL4XhHv2A4MUIeQuvc
-         F+gYsmL0JB7hb85aYAftvNVt3oyy64kpgQSawB3nlXdZ9N6/Z+QyXLQHhvMms0O9aiiu
-         NOpnPL6tFJ5HCABcFOMbcFOjP63kP8qNSOlsCzyWQmFyVPDpdL1LUEqRGuuNPKRNP3hD
-         R1uWasEL3FHU1fmMNPabLuVF0rpSlM5z/Di3BmBIh3DA8niPmOkVE4S6E8coh6tbuzcE
-         Cp9i0nNJNQx2wB/pyblAm8KxortM3KD83m5NsqibpBGKyLrKyv5quGCchOTw5kRpav7j
-         giPg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/BlyQx1CQtUbdljXgzQOEsVnyderN3F/tQOkowCKWUQ=;
+        b=uoi9pWh55AGnrKz9wQDRxTJfvIcPJinWznMSgdB5DGm0cknbCFwgPfFWhOgEBvElB1
+         i42m9r0OGAkelxiCQIDlL2hp8hEEbbwm7bJuLiOfGmCFnbS+CJLgZT3QqwJN03CR+tlq
+         boLrhs+XrkOS7ixrKkFOx/vnbD7ifqx89CuacC4xpnWIiPMy7vh6A5WUl6okNbV2aKwy
+         SPJXLBlDmdFOHyx5KUGKMbKXFgUAcCtQ9LPts0uvw/XkethOsOVq2pYj2Hxi4ZmfJb4g
+         hcHrqIY1ha1gkQEHhic27MeMZ2i/yqU6iYUAJ2B2tEO+V0De9vSOur7AzRsSfTqyOt7V
+         6xxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PrtH8Kksib4dUXTG8vDDfJrfFptIvUSjdQBJsI2iu0I=;
-        b=OAs1S7/8lsiOp6SkAjh4w0kI/DOxgg/ojKQq3t2Of3/6T/zYfdIrAO7djZ2LeALxGU
-         G1oXkqTDS7v001ikBwcq9J7h8TDCUFFwP6pWxBCpDF4DouluGuYR202FsqIw2DF+BLW6
-         9Iz84M7g67Ih/hvvUd+q4P+RuBG+EZBmGp3PwHyE/WRk2kEMFLkmk8nkhuv7CGOFqeQH
-         O2qpKqnskN0LHHF2VXi0B/DLk8ARQVbrvahdixiEN26pnvPMQ12flVz77WDWgfqCeYB3
-         K3XxxrE9OHfngYQNeV9PLw2EK6YRZWVgpQ6WTg59JNjSzhzUM+6yqzURTr6Ac9goE7a1
-         JMGQ==
-X-Gm-Message-State: APjAAAVzkrbQdkDSA/xIVgxUIbpSjWsvq5Mzu43/L/GIiV+1eWvcfDwl
-        nNiuHocxUSK2sUurOEd9rTgeCw==
-X-Google-Smtp-Source: APXvYqwgDelo1R0pRbDg83TwcxWu53VaHcsIJ299vAGkcFkrH9OXpupDlA5aqqlZy1Ny7BKUMPBgCQ==
-X-Received: by 2002:a17:90a:2488:: with SMTP id i8mr42202505pje.123.1563358447438;
-        Wed, 17 Jul 2019 03:14:07 -0700 (PDT)
-Received: from localhost ([122.172.28.117])
-        by smtp.gmail.com with ESMTPSA id i3sm25297361pfo.138.2019.07.17.03.14.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Jul 2019 03:14:06 -0700 (PDT)
-Date:   Wed, 17 Jul 2019 15:44:04 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] opp: Return genpd virtual devices from
- dev_pm_opp_attach_genpd()
-Message-ID: <20190717101404.a7p5zjweq5m22vf5@vireshk-i7>
-References: <027985ce35873cd218298302a1408da06d48458b.1562565567.git.viresh.kumar@linaro.org>
- <2ed7993d-523b-270a-2be9-83ad2426e946@codeaurora.org>
- <20190717054713.vn65cfiqebhzdvjq@vireshk-i7>
- <2fbfc0fc-7d61-bf8c-67de-28183d03e26a@codeaurora.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/BlyQx1CQtUbdljXgzQOEsVnyderN3F/tQOkowCKWUQ=;
+        b=qtRq3PT8xGPcG/nGfaVEDnNSMsb4yyaiEpiBpG3iviV4z5WRwAI8eLWiH4sQdQaDER
+         EDLUh9SbIe2YsFwKuDQevkhqruaO/kq3I2T2YaqRlP4ud75O86Jp0T32QqAdrulDsFor
+         FjKMQTrT22wuiIUP8uSHWwY+ANVBqFbf4BOPPgeaYBh7OkRUQ0uwCQA74V53A177s74Z
+         Ma5MHFakAFZ5dcNvSTNorP0AtSpzRmgk68SmXv/6o+8Ygl1Ja2iEc7rKUooGJmigDjJz
+         16zo2YNcFUlPGfHzGgpKZWzbHC42tioKTyDRIfeuXV26h65blsyLqyPAymXjFa5OTqvf
+         FpYA==
+X-Gm-Message-State: APjAAAUppw0CWyrxIN8Cy2E1bo0lZZz6+Bn8hahIiNmweee48aGQctxa
+        16jG0bUSr/Gslcgo8YIamgM=
+X-Google-Smtp-Source: APXvYqwWhm7rVxZHAj0f1r/DpXT/jcfTW6iEkijvx6IfwCp8/Bv9nTsdhSHr+aH/njjPw08BemjU/w==
+X-Received: by 2002:a63:9318:: with SMTP id b24mr30103146pge.31.1563358507047;
+        Wed, 17 Jul 2019 03:15:07 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.gmail.com with ESMTPSA id q198sm23342176pfq.155.2019.07.17.03.15.04
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 17 Jul 2019 03:15:06 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH v2] net/mlx5: Replace kfree with kvfree
+Date:   Wed, 17 Jul 2019 18:14:57 +0800
+Message-Id: <20190717101456.17401-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2fbfc0fc-7d61-bf8c-67de-28183d03e26a@codeaurora.org>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-07-19, 15:34, Rajendra Nayak wrote:
-> 
-> 
-> On 7/17/2019 11:17 AM, Viresh Kumar wrote:
-> > On 11-07-19, 15:09, Rajendra Nayak wrote:
-> > > Sorry for the delay
-> > 
-> > Same here :)
-> > 
-> > > I seem to have completely missed this patch.
-> > > I just gave this a try and here are some observations,
-> > > 
-> > > I have a case where I have one device with 2 power domains, one of them
-> > > is scale-able (supports perf state) and the other one supports only being
-> > > turned on and off.
-> > > 
-> > > 1. In the driver I now need to use dev_pm_domain_attach_by_name/id to attach the
-> > > power domain which supports only on/off and then use dev_pm_opp_attach_genpd()
-> > > for the one which supports perf states.
-> > > 
-> > > 2. My OPP table has only 1 required_opps, so the required_opp_count for the OPP table is 1.
-> > > Now if my device tree has my scale-able powerdomain at index 1 (it works if its at index 0)
-> > > then I end up with this error
-> > > 
-> > > [    2.858628] ufshcd-qcom 1d84000.ufshc: Index can't be greater than required-opp-count - 1, rpmh_pd (1 : 1)
-> > > 
-> > > so it looks like a lot of the OPP core today just assumes that if a device has multiple power domains,
-> > > all of them are scale-able which isn't necessarily true.
-> > 
-> > I don't think a lot of OPP core has these problems, but maybe only
-> > this place. I was taking care of this since the beginning just forgot
-> > it now.
-> > 
-> > What about this over this commit:
-> 
-> Yes, this does seem to fix my concern mentioned in 2. above.
+Variable allocated by kvmalloc should not be freed by kfree.
+Because it may be allocated by vmalloc.
+So replace kfree with kvfree here.
 
-Great. I will include your Tested-by:, Lemme know if you have any
-objections.
+Fixes: 9b1f298236057 ("net/mlx5: Add support for FW fatal reporter dump")
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+Changes in v2:
+  - Add corresponding Fixes tag
 
+ drivers/net/ethernet/mellanox/mlx5/core/health.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/health.c b/drivers/net/ethernet/mellanox/mlx5/core/health.c
+index 2fe6923f7ce0..9314777d99e3 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/health.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/health.c
+@@ -597,7 +597,7 @@ mlx5_fw_fatal_reporter_dump(struct devlink_health_reporter *reporter,
+ 	err = devlink_fmsg_arr_pair_nest_end(fmsg);
+ 
+ free_data:
+-	kfree(cr_data);
++	kvfree(cr_data);
+ 	return err;
+ }
+ 
 -- 
-viresh
+2.20.1
+
