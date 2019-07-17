@@ -2,161 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6998E6BE19
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 16:20:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9DF56BE1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 16:20:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbfGQOTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 10:19:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58254 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726081AbfGQOTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 10:19:06 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E486981DE1;
-        Wed, 17 Jul 2019 14:19:05 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2FEB960D7C;
-        Wed, 17 Jul 2019 14:19:05 +0000 (UTC)
-Subject: Re: [PATCH v2] locking/rwsem: add acquire barrier to read_slowpath
- exit when queue is empty
-To:     Will Deacon <will@kernel.org>, Jan Stancek <jstancek@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, dbueso@suse.de, peterz@infradead.org,
-        mingo@redhat.com
-References: <20190716185807.GJ3402@hirez.programming.kicks-ass.net>
- <a524cf95ab0dbdd1eb65e9decb9283e73d416b1d.1563352912.git.jstancek@redhat.com>
- <20190717131335.b2ry43t2ov7ba4t4@willie-the-truck>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <21ff5905-198b-6ea5-6c2a-9fb10cb48ea7@redhat.com>
-Date:   Wed, 17 Jul 2019 10:19:04 -0400
+        id S1727684AbfGQOTu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 10:19:50 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39395 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725980AbfGQOTt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 10:19:49 -0400
+Received: by mail-lj1-f194.google.com with SMTP id v18so23791041ljh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 07:19:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=eng.ucsd.edu; s=google;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=ALgZ6/TH1TMMHtthc8F5W9I7v5d4Oi+UuqN4eyBdrw4=;
+        b=GbAckFZo8/FhS/sr0TgjOzcalYCkcrFtP/AfWtc1bYXaMcwMOhHoBYlG+eYqMNRKXF
+         EARfkktXu8aBMkttzbAGOJy1LM8bVJX1FK40HivMaxhUz+zRbo4WdGN+OAXNFTjMCKkr
+         S8FsublwaWgzchrOJhjHU4uJ7Fzuo5dSJTRug=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=ALgZ6/TH1TMMHtthc8F5W9I7v5d4Oi+UuqN4eyBdrw4=;
+        b=bvx6sZR+KLHi8tG55qi381AVexWWoaaENNJORNxNqzxTTZNUyw5L4Zrd64CN6RTD+Z
+         kUcRD6ZOFvqCw72v9yCU3FZ6d7Fet72CBoL1pSeUi5U4wyPI/OG1sQQc3PJtf4uLz7+0
+         F0/1NbUHomQOZmcs5yfpeyE6McaGb/jYkmQa4JX78nz2b0333HoX4mqxEg0hMYg+VlRK
+         pN1O+X6vDXfSO4VMFc+A5OuaWEPU9Seiec7LcB7uDuRFPPmSPGFcjlW9UPO/DEY+coxi
+         039QQJiaXM8XPPJPqeWh3eJqfO2nQSt8fkcPAd0LUD2hh6XJ899bDVptFDvs5e2zJJAL
+         uQ6Q==
+X-Gm-Message-State: APjAAAW/tmjXHvZvjGmjYInpkf9BXyE62hFdtxPf6EN6CaaTdHnbif24
+        o6SKBQImOMv0HjVddDrW5fNXqA==
+X-Google-Smtp-Source: APXvYqwBzJU+cWYO8PFAuszGvqL1iHP55OUYcRy+L0Sv2NnLdeDvpD6Z/2RqZi2sbUge04iKjAYLRA==
+X-Received: by 2002:a2e:8756:: with SMTP id q22mr21364419ljj.108.1563373187770;
+        Wed, 17 Jul 2019 07:19:47 -0700 (PDT)
+Received: from [192.168.1.2] (178-37-168-43.adsl.inetia.pl. [178.37.168.43])
+        by smtp.gmail.com with ESMTPSA id d3sm3472935lfb.92.2019.07.17.07.19.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 17 Jul 2019 07:19:47 -0700 (PDT)
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+From:   Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
+Subject: [PATCH RESEND] media: hdpvr: Add device num check and handling
+Message-ID: <757f11e5-8463-4f48-1f42-1ecf9bd0a86e@eng.ucsd.edu>
+Date:   Wed, 17 Jul 2019 07:19:46 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20190717131335.b2ry43t2ov7ba4t4@willie-the-truck>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 17 Jul 2019 14:19:05 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/17/19 9:13 AM, Will Deacon wrote:
-> On Wed, Jul 17, 2019 at 02:02:20PM +0200, Jan Stancek wrote:
->> LTP mtest06 has been observed to rarely hit "still mapped when deleted"
->> and following BUG_ON on arm64:
->>   page:ffff7e02fa37e480 refcount:3 mapcount:1 mapping:ffff80be3d678ab0 index:0x0
->>   xfs_address_space_operations [xfs]
->>   flags: 0xbfffe000000037(locked|referenced|uptodate|lru|active)
->>   page dumped because: VM_BUG_ON_PAGE(page_mapped(page))
->>   ------------[ cut here ]------------
->>   kernel BUG at mm/filemap.c:171!
->>   Internal error: Oops - BUG: 0 [#1] SMP
->>   CPU: 220 PID: 154292 Comm: mmap1 Not tainted 5.2.0-0ecfebd.cki #1
->>   Hardware name: HPE Apollo 70 /C01_APACHE_MB , BIOS L50_5.13_1.10 05/17/2019
->>   pstate: 40400089 (nZcv daIf +PAN -UAO)
->>   pc : unaccount_page_cache_page+0x17c/0x1a0
->>   lr : unaccount_page_cache_page+0x17c/0x1a0
->>   Call trace:
->>   unaccount_page_cache_page+0x17c/0x1a0
->>   delete_from_page_cache_batch+0xa0/0x300
->>   truncate_inode_pages_range+0x1b8/0x640
->>   truncate_inode_pages_final+0x88/0xa8
->>   evict+0x1a0/0x1d8
->>   iput+0x150/0x240
->>   dentry_unlink_inode+0x120/0x130
->>   __dentry_kill+0xd8/0x1d0
->>   dentry_kill+0x88/0x248
->>   dput+0x168/0x1b8
->>   __fput+0xe8/0x208
->>   ____fput+0x20/0x30
->>   task_work_run+0xc0/0xf0
->>   do_notify_resume+0x2b0/0x328
->>   work_pending+0x8/0x10
->>
->> The extra mapcount originated from pagefault handler, which handled
->> pagefault for vma that has already been detached. vma is detached
->> under mmap_sem write lock by detach_vmas_to_be_unmapped(), which
->> also invalidates vmacache.
->>
->> When pagefault handler (under mmap_sem read lock) called find_vma(),
->> vmacache_valid() wrongly reported vmacache as valid.
->>
->> After rwsem down_read() returns via 'queue empty' path (as of v5.2),
->> it does so without issuing read_acquire on sem->count:
->>   down_read
->>     __down_read
->>       rwsem_down_read_failed
->>         __rwsem_down_read_failed_common
->>           raw_spin_lock_irq(&sem->wait_lock);
->>           if (list_empty(&sem->wait_list)) {
->>             if (atomic_long_read(&sem->count) >= 0) {
->>               raw_spin_unlock_irq(&sem->wait_lock);
->>               return sem;
->>
->> Suspected problem here is that last *_acquire on down_read() side
->> happens before write side issues *_release:
->>   1. writer: has the lock
->>   2. reader: down_read() issues *read_acquire on entry
->>   3. writer: mm->vmacache_seqnum++; downgrades lock (*fetch_add_release)
->>   4. reader: __rwsem_down_read_failed_common() finds it can take lock and returns
->>   5. reader: observes stale mm->vmacache_seqnum
->>
->> I can reproduce the problem by running LTP mtest06 in a loop and building
->> kernel (-j $NCPUS) in parallel. It does reproduce since v4.20 up to v5.2
->> on arm64 HPE Apollo 70 (224 CPUs, 256GB RAM, 2 nodes). It triggers reliably
->> within ~hour. Patched kernel ran fine for 10+ hours with clean dmesg.
->> Tests were done against v5.2, since commit cf69482d62d9 ("locking/rwsem:
->> Enable readers spinning on writer") makes it much harder to reproduce.
->>
->> v2: Move barrier after test (Waiman Long)
->>     Use smp_acquire__after_ctrl_dep() (Peter Zijlstra)
->>
->> Related: https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/mem/mtest06/mmap1.c
->> Related: commit dd2283f2605e ("mm: mmap: zap pages with read mmap_sem in munmap")
->> Fixes: 4b486b535c33 ("locking/rwsem: Exit read lock slowpath if queue empty & no writer")
->>
->> Signed-off-by: Jan Stancek <jstancek@redhat.com>
->> Cc: stable@vger.kernel.org # v4.20+
->> Cc: Waiman Long <longman@redhat.com>
->> Cc: Davidlohr Bueso <dbueso@suse.de>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> ---
->>  kernel/locking/rwsem.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
->> index 37524a47f002..5ac72b60608b 100644
->> --- a/kernel/locking/rwsem.c
->> +++ b/kernel/locking/rwsem.c
->> @@ -1032,6 +1032,7 @@ static inline bool rwsem_reader_phase_trylock(struct rw_semaphore *sem,
->>  		 */
->>  		if (adjustment && !(atomic_long_read(&sem->count) &
->>  		     (RWSEM_WRITER_MASK | RWSEM_FLAG_HANDOFF))) {
->> +			smp_acquire__after_ctrl_dep();
->>  			raw_spin_unlock_irq(&sem->wait_lock);
->>  			rwsem_set_reader_owned(sem);
->>  			lockevent_inc(rwsem_rlock_fast);
-> If you add a comment to the code outlining the issue (preferably as a litmus
-> test involving sem->count and some shared data which happens to be
-> vmacache_seqnum in your test)), then:
->
-> Reviewed-by: Will Deacon <will@kernel.org>
->
-> Thanks,
->
-> Will
+Add hdpvr device num check and error handling
 
-Agreed. A comment just above smp_acquire__after_ctrl_dep() on why this
-is needed will be great.
+We need to increment the device count atomically before we checkout a
+device to make sure that we do not reach the max count, otherwise we get
+out-of-bounds errors as reported by syzbot. 
 
-Other than that,
+Reported-and-tested-by: syzbot+aac8d0d7205f112045d2@syzkaller.appspotmail.com
+Signed-off-by: Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
+---
+Changes in V1:
++ add storing of incremented index in dev_num var
++ add bounds check on dev_num and appropriate error handling
+- remove attomic_inc_return from inside of hdpvr_register call
 
-Acked-by: Waiman Long <longman@redhat.com>
+ drivers/media/usb/hdpvr/hdpvr-core.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/media/usb/hdpvr/hdpvr-core.c b/drivers/media/usb/hdpvr/hdpvr-core.c
+index 29ac7fc5b039..640ef83b57c9 100644
+--- a/drivers/media/usb/hdpvr/hdpvr-core.c
++++ b/drivers/media/usb/hdpvr/hdpvr-core.c
+@@ -275,6 +275,7 @@ static int hdpvr_probe(struct usb_interface *interface,
+ #endif
+ 	size_t buffer_size;
+ 	int i;
++	int dev_num;
+ 	int retval = -ENOMEM;
+ 
+ 	/* allocate memory for our device state and initialize it */
+@@ -371,9 +372,18 @@ static int hdpvr_probe(struct usb_interface *interface,
+ 		goto reg_fail;
+ 	}
+ #endif
+-
++
++	dev_num = atomic_inc_return(&dev_nr);
++	if (dev_num >= HDPVR_MAX) {
++		v4l2_err(&dev->v4l2_dev,
++			 "max device number reached, device register failed\n");
++		atomic_dec(&dev_nr);
++		retval = -ENODEV;
++		goto reg_fail;
++	}
++
+ 	retval = hdpvr_register_videodev(dev, &interface->dev,
+-				    video_nr[atomic_inc_return(&dev_nr)]);
++				    video_nr[dev_num]);
+ 	if (retval < 0) {
+ 		v4l2_err(&dev->v4l2_dev, "registering videodev failed\n");
+ 		goto reg_fail;
+-- 
+2.20.1
