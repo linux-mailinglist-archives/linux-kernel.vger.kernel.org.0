@@ -2,73 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58D176B4A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 04:41:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A580F6B4B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 04:48:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727929AbfGQCl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 16 Jul 2019 22:41:26 -0400
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:39154 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbfGQClZ (ORCPT
+        id S1728086AbfGQCs0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 16 Jul 2019 22:48:26 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:42586 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725892AbfGQCs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 16 Jul 2019 22:41:25 -0400
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1hnZs6-0002cE-00; Wed, 17 Jul 2019 02:40:46 +0000
-Date:   Tue, 16 Jul 2019 22:40:46 -0400
-From:   Rich Felker <dalias@libc.org>
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, rth@twiddle.net,
-        ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org,
-        tony.luck@intel.com, fenghua.yu@intel.com, geert@linux-m68k.org,
-        monstr@monstr.eu, ralf@linux-mips.org, paul.burton@mips.com,
-        jhogan@kernel.org, James.Bottomley@HansenPartnership.com,
-        deller@gmx.de, benh@kernel.crashing.org, paulus@samba.org,
-        mpe@ellerman.id.au, heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, ysato@users.sourceforge.jp,
-        davem@davemloft.net, luto@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        peterz@infradead.org, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, dhowells@redhat.com, firoz.khan@linaro.org,
-        stefan@agner.ch, schwidefsky@de.ibm.com, axboe@kernel.dk,
-        christian@brauner.io, hare@suse.com, deepa.kernel@gmail.com,
-        tycho@tycho.ws, kim.phillips@arm.com, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] Add fchmodat4(), a new syscall
-Message-ID: <20190717024046.GI1506@brightrain.aerifal.cx>
-References: <20190717012719.5524-1-palmer@sifive.com>
- <20190717012719.5524-3-palmer@sifive.com>
+        Tue, 16 Jul 2019 22:48:26 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6H2iQvb177284;
+        Wed, 17 Jul 2019 02:46:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=UVcvz0ojB67vzZ8WNdqNMDmGr/Pgq7JR2kih32TkJVc=;
+ b=ZXlJnyaNDROLY/C0M8G7ZBnAsvfAmi2uI7jHdajSa1wB4sActd5r1gQ08r8H9PpB8pjc
+ E7uW6XK6XcqkbNqUgFVzJZjkTN0A6bYX5/HRJMS1I4UJ/PeqiM0HP5yD91ngYe9dQ/Or
+ 8OBf8WXwtGXRmBKFZEfQKyTYMXQCII36qXLNI6SwCkMQDpZQIu4sNaYLwT8hfIf9EtXi
+ iBhw0AgHBDw7CYJniZjrWPHAP8gFXe8IBsxmqU/UiopjFLSHthQeU+46kfugigBqTLF2
+ CstA45eLb67/U/r31m8bhC1Pzt3Ej0J3tBC7EuVZzt1RZpdENhk4EGNmOIuIQEsH/jgG Fw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2tq78pqsm8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Jul 2019 02:46:21 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6H2givm007681;
+        Wed, 17 Jul 2019 02:46:20 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2tq4du8jja-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Jul 2019 02:46:20 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6H2kItY029346;
+        Wed, 17 Jul 2019 02:46:19 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 17 Jul 2019 02:46:18 +0000
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     <james.smart@broadcom.com>, <dick.kennedy@broadcom.com>,
+        <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
+Subject: Re: [PATCH -next] scsi: lpfc: Remove unnecessary null check before kfree
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190711141037.57880-1-yuehaibing@huawei.com>
+Date:   Tue, 16 Jul 2019 22:46:09 -0400
+In-Reply-To: <20190711141037.57880-1-yuehaibing@huawei.com>
+        (yuehaibing@huawei.com's message of "Thu, 11 Jul 2019 22:10:37 +0800")
+Message-ID: <yq17e8hz8cu.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190717012719.5524-3-palmer@sifive.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=927
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907170032
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9320 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=994 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907170032
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 06:27:17PM -0700, Palmer Dabbelt wrote:
-> man 3p says that fchmodat() takes a flags argument, but the Linux
-> syscall does not.  There doesn't appear to be a good userspace
-> workaround for this issue but the implementation in the kernel is pretty
-> straight-forward.  The specific use case where the missing flags came up
-> was WRT a fuse filesystem implemenation, but the functionality is pretty
-> generic so I'm assuming there would be other use cases.
 
-Note that we do have a workaround in musl libc with O_PATH and
-/proc/self/fd, but a syscall that allows a proper fix with the ugly
-workaround only in the fallback path for old kernels will be much
-appreciated!
+YueHaibing,
 
-What about also doing a new SYS_faccessat4 with working AT_EACCESS
-flag? The workaround we have to do for it is far worse.
+> A null check before a kfree is redundant, so remove it.
+> This is detected by coccinelle.
 
-Rich
+Applied to 5.4/scsi-queue. Thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
