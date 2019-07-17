@@ -2,160 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C83F6C03A
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 19:16:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7322F6C016
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 19:10:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727643AbfGQRQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 13:16:39 -0400
-Received: from vps.deutnet.info ([92.222.219.9]:60708 "EHLO vps.deutnet.info"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726917AbfGQRQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 13:16:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=deutnet.info; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:
-        To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=JdQW5yef3/oLdjTuLUcYjPBC8Xuj3agNuqkg0iaCI/0=; b=nFlfFWBYdBHEuafvpo+RbP7HTS
-        GI04vJPPD00ES7Hli6DLAaqlXo8+mjfV4L7R30WWDTG/WEfOJdOWByhAsoGcpvrzTkDHOHdkg8ZiR
-        LkN7oUv6ZtAllN+9j++w6pH1D3iV8deHDCpMwfMs4HneCqFYIUhyeZVZ7ar3N2GxryIVdXzDk1ZRw
-        pMtpyPrmX/DYhQjAKCDD2bc/V1fS66bq34xoe9Za3ThgBrmEa4J6GpzNpga6OCQUjX+NCuEjkffbK
-        KVcRhZrs1ETStZvwXk3PkhAfMB6CPZes/pP8NT54sTYBiNFvxGUUIYd2ps63KJskGZc0AFd4zT4Vl
-        4c8Z1/ew==;
-Received: from [2001:41d0:fe79:6700:cf3e:2f2c:b15:9bf9] (helo=sonata)
-        by vps.deutnet.info with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <agriveaux@deutnet.info>)
-        id 1hnn8N-0006tM-G7; Wed, 17 Jul 2019 18:50:27 +0200
-Received: from agriveaux by sonata with local (Exim 4.92)
-        (envelope-from <agriveaux@localhost.localdomain>)
-        id 1hnn8L-0003Du-DF; Wed, 17 Jul 2019 18:50:25 +0200
-Date:   Wed, 17 Jul 2019 18:50:25 +0200
-From:   Alexandre GRIVEAUX <agriveaux@deutnet.info>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Alexandre GRIVEAUX <agriveaux@deutnet.info>
-Cc:     linux-mips <linux-mips@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH] MIPS: JZ4740: DTS: Add I2C nodes
-Message-ID: <20190717165025.GA12362@localhost.localdomain>
+        id S1727469AbfGQRJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 13:09:42 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46677 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725993AbfGQRJm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 13:09:42 -0400
+Received: by mail-wr1-f65.google.com with SMTP id z1so25615247wru.13
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 10:09:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xqEMkscsbY5oL9SftmgUyHWcTOrzBMfKcOHFnSqBMq8=;
+        b=YiDfBjaC+cpAv2JoO1VJ8Fmwf6QdIduUTHIC71WXTa68ghZUDgtajXY3RKhEIYP43z
+         /IDmQogOEj6OGCmLywjon/V70o+tMzL9CIkwjodHBzM7jomyAXQd+CjaE38O+CWDZ0le
+         Ujw3M9dIZviOjT7FJi87ZZjkNa8Ax1I+JBl9FySMQhNzcpnHWjdB63oiuQA15Qe52Y5H
+         p4fdmIaIXtFlQKGGyDBfy0xDN+OO+eChSXMTztBlA0o0tJ0qngDkD0JePDkI8dx/mGAZ
+         BdtbsH9mrGsaogzhFVEmiSBaVecfNqB1t48hOJwf0XYrJOrBAfWISw4hZVPJPgNN5DBD
+         WN/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xqEMkscsbY5oL9SftmgUyHWcTOrzBMfKcOHFnSqBMq8=;
+        b=ohBONVPr5NBP13ZcpE8ohrSdxb5gaTJWPp7LOZqDEOEvyndCpybQBltiE4uoSvkwKE
+         YT0cvi5q2U+hK+CxZJZfklSe1E89QrLe0JYlxRBk7Zsj4iDtvXRE2Fvau4cFmRwRXuJ3
+         l/AvbY8Uy5HmeDfZcFCBM3k4Llepr/fytSALfKcnAf9rnCWSIghi0FpdLJDtmnjHvBzQ
+         uekUj9eGK4jZYkL0pjq9SqFLFW6w2coJ0wCoWy6yCEcGqRSqmSyCQuX1rZKkg78S/Aft
+         Bdq+DKiaBlp6CXZkbMBQ1dtgEpkAnUNA5srQSAfcM+V4/ghOsLduVdEHxsi8spCh9xZp
+         HDVA==
+X-Gm-Message-State: APjAAAU5m2ghXtYcQ3ReyE7mfmZK2LRs3bVMJGBrbZbThG11x0lga4q8
+        VTFSK705UIFLsdMcX32d81cNxlPPBMM=
+X-Google-Smtp-Source: APXvYqyAdOzPqW3HWrQP32WOm05reBgOXLygVi3Mj8KLfHriqcIebhnlOhWk1iCOFPhJD+OZKsr6eg==
+X-Received: by 2002:adf:ce05:: with SMTP id p5mr7278143wrn.197.1563383380230;
+        Wed, 17 Jul 2019 10:09:40 -0700 (PDT)
+Received: from brauner.io ([213.220.153.21])
+        by smtp.gmail.com with ESMTPSA id j6sm34119676wrx.46.2019.07.17.10.09.39
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 17 Jul 2019 10:09:39 -0700 (PDT)
+Date:   Wed, 17 Jul 2019 19:09:38 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Jonathan Corbet <corbet@lwn.net>,
+        Thorsten Leemhuis <linux@leemhuis.info>
+Subject: Re: incoming
+Message-ID: <20190717170937.geeejwiawngmugwb@brauner.io>
+References: <20190716162536.bb52b8f34a8ecf5331a86a42@linux-foundation.org>
+ <8056ff9c-1ff2-6b6d-67c0-f62e66064428@suse.cz>
+ <CAHk-=wg1VK0sCzCf_=KXWufTF1PPLX-kfSbNN0pk+QHzw7=ajw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHk-=wg1VK0sCzCf_=KXWufTF1PPLX-kfSbNN0pk+QHzw7=ajw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the devicetree nodes for the I2C core of the JZ4780 SoC, disabled
-by default.
----
- arch/mips/boot/dts/ingenic/jz4780.dtsi | 86 ++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
+On Wed, Jul 17, 2019 at 09:13:26AM -0700, Linus Torvalds wrote:
+> On Wed, Jul 17, 2019 at 1:47 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+> >
+> > So I've tried now to provide an example what I had in mind, below.
+> 
+> I'll take it as a trial. I added one-line notes about coda and the
+> PTRACE_GET_SYSCALL_INFO interface too.
+> 
+> I do hope that eventually I'll just get pull requests, and they'll
+> have more of a "theme" than this all (*)
+> 
+>            Linus
+> 
+> (*) Although in many ways, the theme for Andrew is "falls through the
+> cracks otherwise" so I'm not really complaining. This has been working
 
-diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-index b03cdec56de9..a76ecd69bfd0 100644
---- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
-+++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-@@ -239,6 +239,92 @@
- 		status = "disabled";
- 	};
- 
-+	i2c0: i2c@10050000 {
-+		compatible = "ingenic,jz4780-i2c";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		reg = <0x10050000 0x1000>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <60>;
-+
-+		clocks = <&cgu JZ4780_CLK_SMB0>;
-+		clock-frequency = <100000>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pins_i2c0_data>;
-+
-+		status = "disabled";
-+	};
-+
-+	i2c1: i2c@10051000 {
-+		compatible = "ingenic,jz4780-i2c";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x10051000 0x1000>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <59>;
-+
-+		clocks = <&cgu JZ4780_CLK_SMB1>;
-+		clock-frequency = <100000>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pins_i2c1_data>;
-+
-+		status = "disabled";
-+	};
-+
-+	i2c2: i2c@10052000 {
-+		compatible = "ingenic,jz4780-i2c";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x10052000 0x1000>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <58>;
-+
-+		clocks = <&cgu JZ4780_CLK_SMB2>;
-+		clock-frequency = <100000>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pins_i2c2_data>;
-+
-+		status = "disabled";
-+	};
-+
-+	i2c3: i2c@10053000 {
-+		compatible = "ingenic,jz4780-i2c";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x10053000 0x1000>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <57>;
-+
-+		clocks = <&cgu JZ4780_CLK_SMB3>;
-+		clock-frequency = <100000>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pins_i2c3_data>;
-+
-+		status = "disabled";
-+	};
-+
-+	i2c4: i2c@10054000 {
-+		compatible = "ingenic,jz4780-i2c";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x10054000 0x1000>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <56>;
-+
-+		clocks = <&cgu JZ4780_CLK_SMB4>;
-+		clock-frequency = <100000>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pins_i2c4_data>;
-+
-+		status = "disabled";
-+	};
-+
- 	watchdog: watchdog@10002000 {
- 		compatible = "ingenic,jz4780-watchdog";
- 		reg = <0x10002000 0x10>;
--- 
-2.20.1
-
+I put all pid{fd}/clone{3} which is mostly related to pid.c, exit.c,
+fork.c into my tree and try to give it a consistent theme for the prs I
+sent. And that at least from my perspective that worked and was pretty
+easy to coordinate with Andrew. That should hopefully make it a little
+easier to theme the -mm tree overall going forward.
