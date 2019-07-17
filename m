@@ -2,70 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B4146C054
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 19:24:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D82C06C04E
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 19:23:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388120AbfGQRXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 13:23:06 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:53606 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727260AbfGQRXG (ORCPT
+        id S2387863AbfGQRWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 13:22:23 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44954 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727280AbfGQRWX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 13:23:06 -0400
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x6HHMcFN026464;
-        Thu, 18 Jul 2019 02:22:39 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x6HHMcFN026464
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1563384159;
-        bh=IvZ7SC20dxc7X+546O7iFUVvinUcZEEQvyGPucg162c=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=n0O2kljSpN7bM4J5jb8zs4bblEKtEnYD34Gp/o9ZrEMhEn+MKk8R0uoXaTI7/NB1E
-         gx5ISUq9jBxzokoLXkBf73il0+32ldOzlyT631daenzjotVIQ0NC3Tm3uELTpmkYVN
-         8dFVfASt4Xp+Jym9uksnoVfhyOAjTD40M6VSz2yDdGsBwVuahnmCd+56ejybyVK0gU
-         4juLOd0XljlHOv9+JRXoScYjON+ar5v67ql/nfTS2nOmNwRhkDpyzRNA9UMaWq1Za/
-         vpcezvPmThp5vTYmzFOyXgusvtMd0XEtyMZEXcwEaBFC73fVqYpjPIXO9RzGzruoRR
-         dcywYNazrfCOw==
-X-Nifty-SrcIP: [209.85.217.44]
-Received: by mail-vs1-f44.google.com with SMTP id v6so17057989vsq.4;
-        Wed, 17 Jul 2019 10:22:39 -0700 (PDT)
-X-Gm-Message-State: APjAAAWQfVpkL0kLwiAHRjsqlQ6MCCv1L9Ds7NKes6F73tiWpbJeVPsP
-        86qRpRQewLCEL9BexKv1GGuRwN58Z2dFSSQWYiI=
-X-Google-Smtp-Source: APXvYqw9jEx7hbtW9LzvI1Jj9HtHNLv1zygWCUdwJHeZD6RgBkfmF4ytMTb7w/QiSf5lovPyIfYE1Q4SMaHviUe6NR4=
-X-Received: by 2002:a67:8e0a:: with SMTP id q10mr2283107vsd.215.1563384157905;
- Wed, 17 Jul 2019 10:22:37 -0700 (PDT)
+        Wed, 17 Jul 2019 13:22:23 -0400
+Received: by mail-pf1-f194.google.com with SMTP id t16so11147431pfe.11
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 10:22:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:cc:from:user-agent:date;
+        bh=l2ulz+HEZ33TLtGD0gtyTHpRn0lM8VKKeKFHaHpL698=;
+        b=Y8q8WGxHQQll47oGZMGDyQeU9t4dUPA+MBl5AUYiBoRR/gNrknxYpikGgCHTVq8WA6
+         iFKJS7m79cR/x0ODwjsBeAGh11f2A8JJ3glgAg7yT9UXyUlRJwPbXftAvjnAFx/nEBn/
+         REQVFCLRerodwlpY2V4mzgpjgU1C3OjDrwW00=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:cc:from
+         :user-agent:date;
+        bh=l2ulz+HEZ33TLtGD0gtyTHpRn0lM8VKKeKFHaHpL698=;
+        b=TDZkB9+pfkR/XbmG2d2W4WsH8BBxc9Znp76qiDqs5BaL3YkBU4wXzQXBku165wl2NC
+         phnf9CAWOf3G5FDPNro2ffIXG7A9u0md25L4xK62YRB73ANykHrliju4ofMuicxp+IVB
+         0Uz2uPmmeyEjLwOXxivG3/nsXsNaxS8p3Qige+xjDTyLh3y3roNT1maQDMwyWteBDawW
+         Hjg9TrhcfV/ejSgpWfbv0rlQydeLARNXMCVBNkOPhYidu1MLEbknhkC6iGdlmRYu5cE/
+         2TwBMh64ztHT/b5eM3u58bf61BsqmbGnXmGCqcEzlmhBwXpCZ7mbWP92f5feV7A5vyKR
+         uz5g==
+X-Gm-Message-State: APjAAAW6OGXsA9esRomN+ZPB3EXQnp9/FoqbcSpPYETtcyw0dtLzE9/r
+        9MZJ3M/dIve0mqHlGEK6yPaUCg==
+X-Google-Smtp-Source: APXvYqyWQKoNBIXLCon0D7eQpNio5dhXZcv2k6RF9k4MMwut6x0yKBuJ5c1e1zhHJI+aGoqMy60GIg==
+X-Received: by 2002:a63:fe15:: with SMTP id p21mr43006226pgh.149.1563384142245;
+        Wed, 17 Jul 2019 10:22:22 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id f12sm22308136pgo.85.2019.07.17.10.22.21
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 17 Jul 2019 10:22:21 -0700 (PDT)
+Message-ID: <5d2f594d.1c69fb81.baadd.d81d@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190717160626.26293-1-seth.forshee@canonical.com>
-In-Reply-To: <20190717160626.26293-1-seth.forshee@canonical.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 18 Jul 2019 02:22:02 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASPqp6eK_3bx2PPQ6nUyh=7RBhABNxNY0Yw7vqdn=Ej1g@mail.gmail.com>
-Message-ID: <CAK7LNASPqp6eK_3bx2PPQ6nUyh=7RBhABNxNY0Yw7vqdn=Ej1g@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: add -fcf-protection=none when using retpoline flags
-To:     Seth Forshee <seth.forshee@canonical.com>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190717171216.GK12119@ziepe.ca>
+References: <20190716224518.62556-1-swboyd@chromium.org> <20190716224518.62556-6-swboyd@chromium.org> <f824e3ab-ae2f-8c2f-549a-16569b10966e@infineon.com> <20190717122558.GF12119@ziepe.ca> <5d2f51a7.1c69fb81.6495.fbe8@mx.google.com> <20190717165628.GJ12119@ziepe.ca> <5d2f5570.1c69fb81.f3832.3c3f@mx.google.com> <20190717171216.GK12119@ziepe.ca>
+Subject: Re: [PATCH v2 5/6] tpm: add driver for cr50 on SPI
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Alexander Steffen <Alexander.Steffen@infineon.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andrey Pronin <apronin@chromium.org>,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-integrity@vger.kernel.org,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 17 Jul 2019 10:22:20 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 1:07 AM Seth Forshee <seth.forshee@canonical.com> wrote:
->
-> The gcc -fcf-protection=branch option is not compatible with
-> -mindirect-branch=thunk-extern. The latter is used when
-> CONFIG_RETPOLINE is selected, and this will fail to build with
-> a gcc which has -fcf-protection=branch enabled by default. Adding
-> -fcf-protection=none when building with retpoline enabled
-> prevents such build failures.
->
-> Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
+Quoting Jason Gunthorpe (2019-07-17 10:12:16)
+> On Wed, Jul 17, 2019 at 10:05:52AM -0700, Stephen Boyd wrote:
+> >=20
+> > Yes. The space savings comes from having the extra module 'cr50.ko' that
+> > holds almost nothing at all when the two drivers are modules.
+>=20
+> I'm not sure it is an actual savings, there is alot of minimum
+> overhead and alignment to have a module in the first place.
+>=20
 
-Applied to linux-kbuild. Thanks.
+Yeah. I'm pretty sure that's why it's a bool and not a tristate for this
+symbol. A module has overhead that is not necessary for these little
+helpers.
 
--- 
-Best Regards
-Masahiro Yamada
