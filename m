@@ -2,142 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECD966C011
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 19:09:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C83F6C03A
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 19:16:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbfGQRJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 13:09:25 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:37306 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725993AbfGQRJZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 13:09:25 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0TX8rF-l_1563383355;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TX8rF-l_1563383355)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 18 Jul 2019 01:09:19 +0800
-Subject: Re: list corruption in deferred_split_scan()
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Hugh Dickins <hughd@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Roman Gushchin <guro@fb.com>, Qian Cai <cai@lca.pw>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1562795006.8510.19.camel@lca.pw>
- <cd6e10bc-cb79-65c5-ff2b-4c244ae5eb1c@linux.alibaba.com>
- <1562879229.8510.24.camel@lca.pw>
- <b38ee633-f8e0-00ee-55ee-2f0aaea9ed6b@linux.alibaba.com>
- <1563225798.4610.5.camel@lca.pw>
- <5c853e6e-6367-d83c-bb97-97cd67320126@linux.alibaba.com>
- <8A64D551-FF5B-4068-853E-9E31AF323517@lca.pw>
- <e5aa1f5b-b955-5b8e-f502-7ac5deb141a7@linux.alibaba.com>
- <CALvZod7+ComCUROSBaj==r0VmCczs=npP4u6C9LuJWNWdfB0Pg@mail.gmail.com>
- <50f57bf8-a71a-c61f-74f7-31fb7bfe3253@linux.alibaba.com>
- <CALvZod7Je+gekSGR61LMeHdYoC_PJune_0qGNiDfNH2=oNeOgw@mail.gmail.com>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <01007247-8252-248a-7d97-f739120c7595@linux.alibaba.com>
-Date:   Wed, 17 Jul 2019 10:09:15 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        id S1727643AbfGQRQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 13:16:39 -0400
+Received: from vps.deutnet.info ([92.222.219.9]:60708 "EHLO vps.deutnet.info"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726917AbfGQRQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 13:16:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=deutnet.info; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:
+        To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=JdQW5yef3/oLdjTuLUcYjPBC8Xuj3agNuqkg0iaCI/0=; b=nFlfFWBYdBHEuafvpo+RbP7HTS
+        GI04vJPPD00ES7Hli6DLAaqlXo8+mjfV4L7R30WWDTG/WEfOJdOWByhAsoGcpvrzTkDHOHdkg8ZiR
+        LkN7oUv6ZtAllN+9j++w6pH1D3iV8deHDCpMwfMs4HneCqFYIUhyeZVZ7ar3N2GxryIVdXzDk1ZRw
+        pMtpyPrmX/DYhQjAKCDD2bc/V1fS66bq34xoe9Za3ThgBrmEa4J6GpzNpga6OCQUjX+NCuEjkffbK
+        KVcRhZrs1ETStZvwXk3PkhAfMB6CPZes/pP8NT54sTYBiNFvxGUUIYd2ps63KJskGZc0AFd4zT4Vl
+        4c8Z1/ew==;
+Received: from [2001:41d0:fe79:6700:cf3e:2f2c:b15:9bf9] (helo=sonata)
+        by vps.deutnet.info with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <agriveaux@deutnet.info>)
+        id 1hnn8N-0006tM-G7; Wed, 17 Jul 2019 18:50:27 +0200
+Received: from agriveaux by sonata with local (Exim 4.92)
+        (envelope-from <agriveaux@localhost.localdomain>)
+        id 1hnn8L-0003Du-DF; Wed, 17 Jul 2019 18:50:25 +0200
+Date:   Wed, 17 Jul 2019 18:50:25 +0200
+From:   Alexandre GRIVEAUX <agriveaux@deutnet.info>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Alexandre GRIVEAUX <agriveaux@deutnet.info>
+Cc:     linux-mips <linux-mips@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Subject: [PATCH] MIPS: JZ4740: DTS: Add I2C nodes
+Message-ID: <20190717165025.GA12362@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <CALvZod7Je+gekSGR61LMeHdYoC_PJune_0qGNiDfNH2=oNeOgw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add the devicetree nodes for the I2C core of the JZ4780 SoC, disabled
+by default.
+---
+ arch/mips/boot/dts/ingenic/jz4780.dtsi | 86 ++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
 
-
-On 7/17/19 10:02 AM, Shakeel Butt wrote:
-> On Tue, Jul 16, 2019 at 5:12 PM Yang Shi <yang.shi@linux.alibaba.com> wrote:
->>
->>
->> On 7/16/19 4:36 PM, Shakeel Butt wrote:
->>> Adding related people.
->>>
->>> The thread starts at:
->>> http://lkml.kernel.org/r/1562795006.8510.19.camel@lca.pw
->>>
->>> On Mon, Jul 15, 2019 at 8:01 PM Yang Shi <yang.shi@linux.alibaba.com> wrote:
->>>>
->>>> On 7/15/19 6:36 PM, Qian Cai wrote:
->>>>>> On Jul 15, 2019, at 8:22 PM, Yang Shi <yang.shi@linux.alibaba.com> wrote:
->>>>>>
->>>>>>
->>>>>>
->>>>>> On 7/15/19 2:23 PM, Qian Cai wrote:
->>>>>>> On Fri, 2019-07-12 at 12:12 -0700, Yang Shi wrote:
->>>>>>>>> Another possible lead is that without reverting the those commits below,
->>>>>>>>> kdump
->>>>>>>>> kernel would always also crash in shrink_slab_memcg() at this line,
->>>>>>>>>
->>>>>>>>> map = rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_map, true);
->>>>>>>> This looks a little bit weird. It seems nodeinfo[nid] is NULL? I didn't
->>>>>>>> think of where nodeinfo was freed but memcg was still online. Maybe a
->>>>>>>> check is needed:
->>>>>>> Actually, "memcg" is NULL.
->>>>>> It sounds weird. shrink_slab() is called in mem_cgroup_iter which does pin the memcg. So, the memcg should not go away.
->>>>> Well, the commit “mm: shrinker: make shrinker not depend on memcg kmem” changed this line in shrink_slab_memcg(),
->>>>>
->>>>> -     if (!memcg_kmem_enabled() || !mem_cgroup_online(memcg))
->>>>> +     if (!mem_cgroup_online(memcg))
->>>>>                 return 0;
->>>>>
->>>>> Since the kdump kernel has the parameter “cgroup_disable=memory”, shrink_slab_memcg() will no longer be able to handle NULL memcg from mem_cgroup_iter() as,
->>>>>
->>>>> if (mem_cgroup_disabled())
->>>>>         return NULL;
->>>> Aha, yes. memcg_kmem_enabled() implicitly checks !mem_cgroup_disabled().
->>>> Thanks for figuring this out. I think we need add mem_cgroup_dsiabled()
->>>> check before calling shrink_slab_memcg() as below:
->>>>
->>>> diff --git a/mm/vmscan.c b/mm/vmscan.c
->>>> index a0301ed..2f03c61 100644
->>>> --- a/mm/vmscan.c
->>>> +++ b/mm/vmscan.c
->>>> @@ -701,7 +701,7 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int
->>>> nid,
->>>>            unsigned long ret, freed = 0;
->>>>            struct shrinker *shrinker;
->>>>
->>>> -       if (!mem_cgroup_is_root(memcg))
->>>> +       if (!mem_cgroup_disabled() && !mem_cgroup_is_root(memcg))
->>>>                    return shrink_slab_memcg(gfp_mask, nid, memcg, priority);
->>>>
->>>>            if (!down_read_trylock(&shrinker_rwsem))
->>>>
->>> We were seeing unneeded oom-kills on kernels with
->>> "cgroup_disabled=memory" and Yang's patch series basically expose the
->>> bug to crash. I think the commit aeed1d325d42 ("mm/vmscan.c:
->>> generalize shrink_slab() calls in shrink_node()") missed the case for
->>> "cgroup_disabled=memory". However I am surprised that root_mem_cgroup
->>> is allocated even for "cgroup_disabled=memory" and it seems like
->>> css_alloc() is called even before checking if the corresponding
->>> controller is disabled.
->> I'm surprised too. A quick test with drgn shows root memcg is definitely
->> allocated:
->>
->>   >>> prog['root_mem_cgroup']
->> *(struct mem_cgroup *)0xffff8902cf058000 = {
->> [snip]
->>
->> But, isn't this a bug?
-> It can be treated as a bug as this is not expected but we can discuss
-> and take care of it later. I think we need your patch urgently as
-> memory reclaim and /proc/sys/vm/drop_caches is broken for
-> "cgroup_disabled=memory" kernel. So, please send your patch asap.
-
-Sure. I'm going to post the patch soon.
-
->
-> thanks,
-> Shakeel
+diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+index b03cdec56de9..a76ecd69bfd0 100644
+--- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
++++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+@@ -239,6 +239,92 @@
+ 		status = "disabled";
+ 	};
+ 
++	i2c0: i2c@10050000 {
++		compatible = "ingenic,jz4780-i2c";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		reg = <0x10050000 0x1000>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <60>;
++
++		clocks = <&cgu JZ4780_CLK_SMB0>;
++		clock-frequency = <100000>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pins_i2c0_data>;
++
++		status = "disabled";
++	};
++
++	i2c1: i2c@10051000 {
++		compatible = "ingenic,jz4780-i2c";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x10051000 0x1000>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <59>;
++
++		clocks = <&cgu JZ4780_CLK_SMB1>;
++		clock-frequency = <100000>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pins_i2c1_data>;
++
++		status = "disabled";
++	};
++
++	i2c2: i2c@10052000 {
++		compatible = "ingenic,jz4780-i2c";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x10052000 0x1000>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <58>;
++
++		clocks = <&cgu JZ4780_CLK_SMB2>;
++		clock-frequency = <100000>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pins_i2c2_data>;
++
++		status = "disabled";
++	};
++
++	i2c3: i2c@10053000 {
++		compatible = "ingenic,jz4780-i2c";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x10053000 0x1000>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <57>;
++
++		clocks = <&cgu JZ4780_CLK_SMB3>;
++		clock-frequency = <100000>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pins_i2c3_data>;
++
++		status = "disabled";
++	};
++
++	i2c4: i2c@10054000 {
++		compatible = "ingenic,jz4780-i2c";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x10054000 0x1000>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <56>;
++
++		clocks = <&cgu JZ4780_CLK_SMB4>;
++		clock-frequency = <100000>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pins_i2c4_data>;
++
++		status = "disabled";
++	};
++
+ 	watchdog: watchdog@10002000 {
+ 		compatible = "ingenic,jz4780-watchdog";
+ 		reg = <0x10002000 0x10>;
+-- 
+2.20.1
 
