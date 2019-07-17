@@ -2,63 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ED116B6FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 08:55:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F06A6B704
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Jul 2019 08:55:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfGQGzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 02:55:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41826 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbfGQGzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 02:55:04 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 032C121743;
-        Wed, 17 Jul 2019 06:54:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563346504;
-        bh=3Xt4tfBlIS/KrhkQpP7kW1uAGP7uRrEmTBLu4gx2nbY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PyMn41bYicm6bSdM1vgHd0VolUj1AD5wNiOa2GUoJ00QYsS3cFisakqUsC10GUcaZ
-         GDQFJ6DIGSbEo5+GPEVpdG/sgLRhC1q1YDjKGZdfquwyHpd0SZAPUIpYRfSrDg6VIc
-         n5TbotMhMW+k5GYa3aDH2rWVCsAbs3dS0l84WK+Y=
-Date:   Wed, 17 Jul 2019 14:54:42 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson.Huang@nxp.com
-Cc:     aisheng.dong@nxp.com, festevam@gmail.com, stefan@agner.ch,
-        kernel@pengutronix.de, linus.walleij@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        maxime.ripard@bootlin.com, olof@lixom.net,
-        horms+renesas@verge.net.au, jagan@amarulasolutions.com,
-        bjorn.andersson@linaro.org, leonard.crestez@nxp.com,
-        dinguyen@kernel.org, enric.balletbo@collabora.com,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH V2 3/3] arm64: defconfig: Select CONFIG_PINCTRL_IMX8MN by
- default
-Message-ID: <20190717065441.GD3738@dragon>
-References: <20190611122535.23583-1-Anson.Huang@nxp.com>
- <20190611122535.23583-3-Anson.Huang@nxp.com>
+        id S1727499AbfGQGzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 02:55:35 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:20473 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfGQGzf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 02:55:35 -0400
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x6H6tO50030501;
+        Wed, 17 Jul 2019 15:55:25 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x6H6tO50030501
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1563346525;
+        bh=DgvFg/PvmkUqzBOA3LWysbbyKsyxr/rzbPQxUzumKDw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=TEceMaLQ5cu0tGpqcOWAN+VpoUmoHF56DWywqHL4BqtRMRH8yZiDIcnW2aChUZtFk
+         FKmQFVpx5rtYHm8VH+hDO4m7ITgFw7GxEECodvMFGy2zflzyMpzJC/oXuy/H4nuWYc
+         LShHH3NSMfDlRWjtu1FFO6fsDSBBJlOCRO+c42nYqg+i8Hj3NncmHh2kgTtCaXAAFY
+         8u6oalskaRMYcDBKp9t0zkYO40o3PyCw7n069NxSXH48nyH3LbO/gBagF0Tbka2D5f
+         +Xz7ABcFzQgclalcPoRfu6VB5qAKWRRjKEMRC09nS4+FNRUXJSxWhpiWS37KXxEAE4
+         6Wpzz/dwC0DQw==
+X-Nifty-SrcIP: [209.85.217.46]
+Received: by mail-vs1-f46.google.com with SMTP id a186so14086876vsd.7;
+        Tue, 16 Jul 2019 23:55:25 -0700 (PDT)
+X-Gm-Message-State: APjAAAX/3/HOSWKlyyzaYY9Q/baGY+3Z4Wfp5MaixzxpGsg38hlxb68O
+        0rXWnyLBkcEl9TSh03PONWQotxeaey/TJ4wIvPg=
+X-Google-Smtp-Source: APXvYqyUI+81HuyA1Sg+kwLwpyTPzFweh3HUSTtZo2olVYVMKG4rx5J93T3cLKGpmXkX4ZQzCuZBNKZ8ypIyLzgXbB4=
+X-Received: by 2002:a67:fc45:: with SMTP id p5mr23322373vsq.179.1563346524244;
+ Tue, 16 Jul 2019 23:55:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190611122535.23583-3-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <alpine.DEB.2.21.1907161434260.1767@nanos.tec.linutronix.de>
+ <20190716170606.GA38406@archlinux-threadripper> <alpine.DEB.2.21.1907162059200.1767@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1907162135590.1767@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1907162135590.1767@nanos.tec.linutronix.de>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 17 Jul 2019 15:54:48 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASBiaMX8ihnmhLGmYfHX=ZHZmVN91nxmFZe-OCaw6Px2w@mail.gmail.com>
+Message-ID: <CAK7LNASBiaMX8ihnmhLGmYfHX=ZHZmVN91nxmFZe-OCaw6Px2w@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: Fail if gold linker is detected
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>, "H.J. Lu" <hjl.tools@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Mike Lothian <mike@fireburn.co.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 08:25:35PM +0800, Anson.Huang@nxp.com wrote:
-> From: Anson Huang <Anson.Huang@nxp.com>
-> 
-> Enable CONFIG_PINCTRL_IMX8MN by default to support i.MX8MN
-> pinctrl driver.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+On Wed, Jul 17, 2019 at 4:47 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> The gold linker has known issues of failing the build both in random and in
+> predictible ways:
+>
+>  - The x86/X32 VDSO build fails with:
+>
+>    arch/x86/entry/vdso/vclock_gettime-x32.o:vclock_gettime.c:function do_hres:
+>    error: relocation overflow: reference to 'hvclock_page'
+>
+>    That's a known issue for years and the usual workaround is to disable
+>    CONFIG_X86_32
+>
+>  - A recent build failure is caused by turning a relocation into an
+>    absolute one for unknown reasons. See link below.
+>
+>  - There are a couple of gold workarounds applied already, but reports
+>    about broken builds with ld.gold keep coming in on a regular base and in
+>    most cases the root cause is unclear.
+>
+> In context of the most recent fail H.J. stated:
+>
+>   "Since building a workable kernel for different kernel configurations
+>    isn't a requirement for gold, I don't recommend gold for kernel."
+>
+> So instead of dealing with attempts to duct tape gold support without
+> understanding the root cause and without support from the gold folks, fail
+> the build when gold is detected.
+>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Link: https://lore.kernel.org/r/CAMe9rOqMqkQ0LNpm25yE_Yt0FKp05WmHOrwc0aRDb53miFKM+w@mail.gmail.com
+> ---
 
-Applied, thanks.
+The code looks OK in the build system point of view.
+
+Please let me confirm this, just in case:
+For now, we give up all architectures, not only x86, right?
+
+I have not not heard much from other arch maintainers.
+
+
+-- 
+Best Regards
+Masahiro Yamada
