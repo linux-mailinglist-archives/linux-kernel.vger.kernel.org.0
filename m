@@ -2,60 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC6B96D647
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 23:14:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15C446D656
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 23:19:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390946AbfGRVOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 17:14:07 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:55874 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727767AbfGRVOH (ORCPT
+        id S2391327AbfGRVRv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 17:17:51 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38107 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391249AbfGRVRu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 17:14:07 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 29B831528342B;
-        Thu, 18 Jul 2019 14:14:06 -0700 (PDT)
-Date:   Thu, 18 Jul 2019 14:14:05 -0700 (PDT)
-Message-Id: <20190718.141405.1070121094691581998.davem@davemloft.net>
-To:     ldv@altlinux.org
-Cc:     hch@lst.de, khalid.aziz@oracle.com, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, matorola@gmail.com,
-        sparclinux@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/16] sparc64: use the generic get_user_pages_fast code
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190717215956.GA30369@altlinux.org>
-References: <20190625143715.1689-1-hch@lst.de>
-        <20190625143715.1689-10-hch@lst.de>
-        <20190717215956.GA30369@altlinux.org>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 18 Jul 2019 14:14:06 -0700 (PDT)
+        Thu, 18 Jul 2019 17:17:50 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6ILGHQO2166514
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 18 Jul 2019 14:16:17 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6ILGHQO2166514
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1563484578;
+        bh=jz7955kGbyUBLoiWj4srCxrmMGflmpWrYP14eUEMtK4=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=C129nuXcuVNQKSK1Hg8+zcaPGaPyE3PmwHSbXRGDb/XxXg2n6CWSrl0cEAGNjLyLz
+         LYHGiNWzOeH1iQsYuuFGvulLnzByQAiWqZ9DUaZ5a/0wNPdc2JMmTfNRzZRe9uk0Dg
+         40UDbNKJAD7aU94YttCyQ8SXyXcQi7R7XWv95DI/zyxlg1ZWcMd45VEv046E2atosK
+         U1Tv5GcH9e7YKxddKQQzUpELKrG3qjMfWry4kePRVjfowwEjTDp22dpu985RGVNf3+
+         lsIXL+61z/+cVHBU38w+lz73Gx4pN4YlQh9TyVspczyln57dRZ81qpcr6sQrNJJvTV
+         bmsQIgBE4dYEQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6ILGGNR2166511;
+        Thu, 18 Jul 2019 14:16:16 -0700
+Date:   Thu, 18 Jul 2019 14:16:16 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-a50a3f4b6a313dc76912bd4ad3b8b4f4b479c801@git.kernel.org>
+Cc:     julia@ni.com, tglx@linutronix.de, peterz@infradead.org,
+        paulmck@linux.ibm.com, frederic@kernel.org,
+        linux-kernel@vger.kernel.org, tj@kernel.org, lgoncalv@redhat.com,
+        lukas.bulwahn@gmail.com, bigeasy@linutronix.de,
+        rostedt@goodmis.org, mingo@kernel.org, bristot@redhat.com,
+        tom.zanussi@linux.intel.com, marc.zyngier@arm.com, efault@gmx.de,
+        gratian.crisan@ni.com, williams@redhat.com, hch@lst.de,
+        wagi@monom.org, gregkh@linuxfoundation.org, hpa@zytor.com,
+        akpm@linuxfoundation.org, torvalds@linux-foundation.org
+Reply-To: akpm@linuxfoundation.org, torvalds@linux-foundation.org,
+          gratian.crisan@ni.com, hch@lst.de, williams@redhat.com,
+          wagi@monom.org, gregkh@linuxfoundation.org, hpa@zytor.com,
+          efault@gmx.de, tom.zanussi@linux.intel.com, marc.zyngier@arm.com,
+          lukas.bulwahn@gmail.com, bigeasy@linutronix.de,
+          rostedt@goodmis.org, mingo@kernel.org, bristot@redhat.com,
+          tj@kernel.org, lgoncalv@redhat.com, linux-kernel@vger.kernel.org,
+          julia@ni.com, tglx@linutronix.de, peterz@infradead.org,
+          paulmck@linux.ibm.com, frederic@kernel.org
+In-Reply-To: <alpine.DEB.2.21.1907172200190.1778@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1907172200190.1778@nanos.tec.linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/urgent] sched/rt, Kconfig: Introduce CONFIG_PREEMPT_RT
+Git-Commit-ID: a50a3f4b6a313dc76912bd4ad3b8b4f4b479c801
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_48_96,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no
+        version=3.4.2
+X-Spam-Level: *
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Dmitry V. Levin" <ldv@altlinux.org>
-Date: Thu, 18 Jul 2019 00:59:56 +0300
+Commit-ID:  a50a3f4b6a313dc76912bd4ad3b8b4f4b479c801
+Gitweb:     https://git.kernel.org/tip/a50a3f4b6a313dc76912bd4ad3b8b4f4b479c801
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Wed, 17 Jul 2019 22:01:49 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 18 Jul 2019 23:10:57 +0200
 
-> So this ended up as commit 7b9afb86b6328f10dc2cad9223d7def12d60e505
-> (thanks to Anatoly for bisecting) and introduced a regression: 
-> futex.test from the strace test suite now causes an Oops on sparc64
-> in futex syscall.
-> 
-> Here is a heavily stripped down reproducer:
+sched/rt, Kconfig: Introduce CONFIG_PREEMPT_RT
 
-Does not reproduce for me on a T4-2 machine.
+Add a new entry to the preemption menu which enables the real-time support
+for the kernel. The choice is only enabled when an architecture supports
+it.
 
-So this problem might depend on the type of system you are on,
-I suspect it's one of those "pre-Niagara vs. Niagara and later"
-situations because that's the dividing line between two set of
-wildly different TLB and cache management methods.
+It selects PREEMPT as the RT features depend on it. To achieve that the
+existing PREEMPT choice is renamed to PREEMPT_LL which select PREEMPT as
+well.
 
-What kind of machine are you on?
+No functional change.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Acked-by: Clark Williams <williams@redhat.com>
+Acked-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Acked-by: Daniel Wagner <wagi@monom.org>
+Acked-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+Acked-by: Julia Cartwright <julia@ni.com>
+Acked-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Acked-by: Gratian Crisan <gratian.crisan@ni.com>
+Acked-by: Sebastian Siewior <bigeasy@linutronix.de>
+Cc: Andrew Morton <akpm@linuxfoundation.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Tejun Heo <tj@kernel.org>
+Link: http://lkml.kernel.org/r/alpine.DEB.2.21.1907172200190.1778@nanos.tec.linutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/Kconfig           |  3 +++
+ kernel/Kconfig.preempt | 25 +++++++++++++++++++++++--
+ 2 files changed, 26 insertions(+), 2 deletions(-)
+
+diff --git a/arch/Kconfig b/arch/Kconfig
+index c47b328eada0..ada51f36bd5d 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -801,6 +801,9 @@ config ARCH_NO_COHERENT_DMA_MMAP
+ config ARCH_NO_PREEMPT
+ 	bool
+ 
++config ARCH_SUPPORTS_RT
++	bool
++
+ config CPU_NO_EFFICIENT_FFS
+ 	def_bool n
+ 
+diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
+index dc0b682ec2d9..fc020c09b7e8 100644
+--- a/kernel/Kconfig.preempt
++++ b/kernel/Kconfig.preempt
+@@ -35,10 +35,10 @@ config PREEMPT_VOLUNTARY
+ 
+ 	  Select this if you are building a kernel for a desktop system.
+ 
+-config PREEMPT
++config PREEMPT_LL
+ 	bool "Preemptible Kernel (Low-Latency Desktop)"
+ 	depends on !ARCH_NO_PREEMPT
+-	select PREEMPT_COUNT
++	select PREEMPT
+ 	select UNINLINE_SPIN_UNLOCK if !ARCH_INLINE_SPIN_UNLOCK
+ 	help
+ 	  This option reduces the latency of the kernel by making
+@@ -55,7 +55,28 @@ config PREEMPT
+ 	  embedded system with latency requirements in the milliseconds
+ 	  range.
+ 
++config PREEMPT_RT
++	bool "Fully Preemptible Kernel (Real-Time)"
++	depends on EXPERT && ARCH_SUPPORTS_RT
++	select PREEMPT
++	help
++	  This option turns the kernel into a real-time kernel by replacing
++	  various locking primitives (spinlocks, rwlocks, etc.) with
++	  preemptible priority-inheritance aware variants, enforcing
++	  interrupt threading and introducing mechanisms to break up long
++	  non-preemptible sections. This makes the kernel, except for very
++	  low level and critical code pathes (entry code, scheduler, low
++	  level interrupt handling) fully preemptible and brings most
++	  execution contexts under scheduler control.
++
++	  Select this if you are building a kernel for systems which
++	  require real-time guarantees.
++
+ endchoice
+ 
+ config PREEMPT_COUNT
+        bool
++
++config PREEMPT
++       bool
++       select PREEMPT_COUNT
