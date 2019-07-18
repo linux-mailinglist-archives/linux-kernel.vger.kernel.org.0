@@ -2,122 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 408EC6CFD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 16:32:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A8386CFED
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 16:34:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390882AbfGRObz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 10:31:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57530 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390758AbfGRObh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 10:31:37 -0400
-Received: from devnote2 (ae027047.dynamic.ppp.asahi-net.or.jp [14.3.27.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2D48217F4;
-        Thu, 18 Jul 2019 14:31:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563460296;
-        bh=n0QuHuPmfGNDd/UjBj7iq8FnefrdHa1lz8nf16gnbDo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SAx8gDCjJJ1wdu+rR633sjpFn5TnWHaw0ry7jDsMkQ0OJxT3DG0n4HrAafwjAmlSv
-         c874iRbW+O2MqL45QNl0N8V73NSlzxPS3wZtU+mLqoFvncxRhIigcgHEv16ZuA03Ug
-         OlOMEGUQ5iEUFMYfXhfniBGHtbYlo1bWZjLa1SCk=
-Date:   Thu, 18 Jul 2019 23:31:33 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Dan Rue <dan.rue@linaro.org>,
-        Matt Hart <matthew.hart@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Daniel Diaz <daniel.diaz@linaro.org>
-Subject: Re: [PATCH 3/3] arm64: debug: Remove rcu_read_lock from debug
- exception
-Message-Id: <20190718233133.146065f668da6297e57e52ef@kernel.org>
-In-Reply-To: <20190718092022.GA3625@blommer>
-References: <156342860634.8565.14804606041960884732.stgit@devnote2>
-        <156342863822.8565.7624877983728871995.stgit@devnote2>
-        <20190718062215.GG14271@linux.ibm.com>
-        <20190718092022.GA3625@blommer>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2389933AbfGROed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 10:34:33 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37576 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726040AbfGROed (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 10:34:33 -0400
+Received: by mail-io1-f67.google.com with SMTP id q22so51773376iog.4;
+        Thu, 18 Jul 2019 07:34:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=oDl7E8YKcAEhCCAp8p0njilUrHjKHf6sfibp/FHWZTo=;
+        b=u6F+WnLGI2ptAR4uryiw92FIXjSyTxJroviYtGMBHF1degDfacRhXmmY7s41c2f/kB
+         /R1DuuvYeiI5maIhSSYwosX0qRoZghfT49S29+Wm6vOyMNFp0J9GZtIPAPtQtm4YylID
+         xwrkjNb9k8TclP+0zVToQAvVF/4CH//fITQdiAtUU5ByuKONgkYm+kC9RKrudkGSzhxR
+         jUFWuULz1d0LILvm+m1dOAOdmM/3F/IhCCjO2vmwDIGGFo79UW56ywXAQuKceGq1g/l1
+         dKbInlHFhNgnQCsV3qCwHvJLmPjZtNfm2ws80mU74Y4RZxYE7hId0xU+VSw3/c4qAxcV
+         fvCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=oDl7E8YKcAEhCCAp8p0njilUrHjKHf6sfibp/FHWZTo=;
+        b=ifkvwy3YkniX0fX7a2jixMA9hxsdei8GDdbr6Wrq31lOh3MY0FED8/RD+Tc/sz3RDa
+         Or9p+4zTR9OUaSnALAwUq2eta9KWcnKAFn79Glnvuk710arRoNUuRRWrasw51CVrrZok
+         IGU/Y9mozhv3HZvfSdLaKS6UF/1gqgVzGd6iMIfCbcFZPHOo6axd+AixhjBi+6wSYvKp
+         /7QKUJ4JYueteFqZQSK8hootpQNQZlEblcuCoxdAuqPDJKJ1HpnYqydH3WCTBJL4YHMz
+         LucqXtnjgiBCDmVklxCCaPQ0lequ8zUcVs9ouHP12LMbhrcIPVNA1XKb18dQpynwUjnq
+         Kb6g==
+X-Gm-Message-State: APjAAAXlBP2ZNPMRuujciV4u7lE+d8uJoCLl9CP4XC+rJsdVtX3kmYL8
+        bXiZ5ygxrgg0KtmfmYbZkc2Fde8d
+X-Google-Smtp-Source: APXvYqwbrz77pJJV1QMk+m26XOfbGgZ4WjOwTiuDXjo1erC4rtTCZ5iiYUeN8N3ZmggpXfDYhuVH9w==
+X-Received: by 2002:a6b:ee15:: with SMTP id i21mr11002926ioh.281.1563460471939;
+        Thu, 18 Jul 2019 07:34:31 -0700 (PDT)
+Received: from svens-asus.arcx.com ([184.94.50.30])
+        by smtp.gmail.com with ESMTPSA id x13sm21001895ioj.18.2019.07.18.07.34.31
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 18 Jul 2019 07:34:31 -0700 (PDT)
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
+To:     Fugang Duan <fugang.duan@nxp.com>
+Cc:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] net: fec: generate warning when using deprecated phy reset
+Date:   Thu, 18 Jul 2019 10:34:28 -0400
+Message-Id: <20190718143428.2392-1-TheSven73@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 18 Jul 2019 10:20:23 +0100
-Mark Rutland <mark.rutland@arm.com> wrote:
+Allowing the fec to reset its PHY via the phy-reset-gpios
+devicetree property is deprecated. To improve developer
+awareness, generate a warning whenever the deprecated
+property is used.
 
-> On Wed, Jul 17, 2019 at 11:22:15PM -0700, Paul E. McKenney wrote:
-> > On Thu, Jul 18, 2019 at 02:43:58PM +0900, Masami Hiramatsu wrote:
-> > > Remove rcu_read_lock()/rcu_read_unlock() from debug exception
-> > > handlers since the software breakpoint can be hit on idle task.
-> 
-> Why precisely do we need to elide these? Are we seeing warnings today?
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+---
+ drivers/net/ethernet/freescale/fec_main.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Yes, unfortunately, or fortunately. Naresh reported that warns when
-ftracetest ran. I confirmed that happens if I probe on default_idle_call too.
-
-/sys/kernel/debug/tracing # echo p default_idle_call >> kprobe_events 
-/sys/kernel/debug/tracing # echo 1 > events/kprobes/enable 
-/sys/kernel/debug/tracing # [  135.122237] 
-[  135.125035] =============================
-[  135.125310] WARNING: suspicious RCU usage
-[  135.125581] 5.2.0-08445-g9187c508bdc7 #20 Not tainted
-[  135.125904] -----------------------------
-[  135.126205] include/linux/rcupdate.h:594 rcu_read_lock() used illegally while idle!
-[  135.126839] 
-[  135.126839] other info that might help us debug this:
-[  135.126839] 
-[  135.127410] 
-[  135.127410] RCU used illegally from idle CPU!
-[  135.127410] rcu_scheduler_active = 2, debug_locks = 1
-[  135.128114] RCU used illegally from extended quiescent state!
-[  135.128555] 1 lock held by swapper/0/0:
-[  135.128944]  #0: (____ptrval____) (rcu_read_lock){....}, at: call_break_hook+0x0/0x178
-[  135.130499] 
-[  135.130499] stack backtrace:
-[  135.131192] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.2.0-08445-g9187c508bdc7 #20
-[  135.131841] Hardware name: linux,dummy-virt (DT)
-[  135.132224] Call trace:
-[  135.132491]  dump_backtrace+0x0/0x140
-[  135.132806]  show_stack+0x24/0x30
-[  135.133133]  dump_stack+0xc4/0x10c
-[  135.133726]  lockdep_rcu_suspicious+0xf8/0x108
-[  135.134171]  call_break_hook+0x170/0x178
-[  135.134486]  brk_handler+0x28/0x68
-[  135.134792]  do_debug_exception+0x90/0x150
-[  135.135051]  el1_dbg+0x18/0x8c
-[  135.135260]  default_idle_call+0x0/0x44
-[  135.135516]  cpu_startup_entry+0x2c/0x30
-[  135.135815]  rest_init+0x1b0/0x280
-[  135.136044]  arch_call_rest_init+0x14/0x1c
-[  135.136305]  start_kernel+0x4d4/0x500
-[  135.136597] 
-
-
-> 
-> > The exception entry and exit use irq_enter() and irq_exit(), in this
-> > case, correct?  Otherwise RCU will be ignoring this CPU.
-> 
-> This is missing today, which sounds like the underlying bug.
-
-Agreed. I'm not so familier with how debug exception is handled on arm64,
-would it be a kind of NMI or IRQ?
-
-Anyway, it seems that normal irqs are also not calling irq_enter/exit
-except for arch/arm64/kernel/smp.c. We need to fix that too for avoiding
-unexpected RCU issues.
-
-Thank you,
-
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index 38f10f7dcbc3..00e1b5e4ef71 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -3244,6 +3244,12 @@ static int fec_reset_phy(struct platform_device *pdev)
+ 	else if (!gpio_is_valid(phy_reset))
+ 		return 0;
+ 
++	/* Recommended way to provide a PHY reset:
++	 * - create a phy devicetree node, and link it to its fec (phy-handle)
++	 * - add your reset gpio to the phy devicetree node
++	 */
++	dev_warn(&pdev->dev, "devicetree: phy-reset-gpios is deprecated\n");
++
+ 	err = of_property_read_u32(np, "phy-reset-post-delay", &phy_post_delay);
+ 	/* valid reset duration should be less than 1s */
+ 	if (!err && phy_post_delay > 1000)
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.17.1
+
