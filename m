@@ -2,155 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADC8B6CC22
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:45:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19D2B6CC39
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389622AbfGRJpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 05:45:35 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:7436 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbfGRJpf (ORCPT
+        id S2389610AbfGRJrX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 05:47:23 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36587 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726649AbfGRJrX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 05:45:35 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d303fbc0000>; Thu, 18 Jul 2019 02:45:32 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 18 Jul 2019 02:45:34 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 18 Jul 2019 02:45:34 -0700
-Received: from [10.21.132.148] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 18 Jul
- 2019 09:45:32 +0000
-Subject: Re: [PATCH v1] soc/tegra: pmc: Query PCLK clock rate at probe time
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190707230843.11224-1-digetx@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <c9bd6dd3-7a03-6e2c-db9f-fefa059a428f@nvidia.com>
-Date:   Thu, 18 Jul 2019 10:45:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 18 Jul 2019 05:47:23 -0400
+Received: by mail-lj1-f196.google.com with SMTP id i21so26677459ljj.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 02:47:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=gB/oduENd+BsIOwUuYphtc1vzkjElb07KQmk4tLhZ+k=;
+        b=Ld5E5T2K8hVgwFFOff/9cRz2gKQO9y9uZAcvK8SP+bc4Je0gSSTe/FKRtZgtZEXw7t
+         DnblUc8wgSnJXjsVfhKMGdKmn/w13KUN91N3SXIOfavdfIGvfbx/cMP2nkJOCT+J/PGz
+         h8WCC1JsMkF5DFDipcCaVngk/w/0zVEm57kdWZmwe6CYY3t6Tm/Hr6Ctv2ZCXBf69QOD
+         B9Oqr65TxOR/D083DUmi/oyRMz2E+zsYG6E/lk9qDrepxo/zcmA1Y4rqHeunGyGK523x
+         ofnyIam5q6Rl30rrPPsxRIVn+Z3VjFgaEQDCCNDCIalrpVk4VMaTLnj77gKvML2KW6kR
+         U02g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=gB/oduENd+BsIOwUuYphtc1vzkjElb07KQmk4tLhZ+k=;
+        b=aFHz0Q0FMC4yJSnt5qglfhlW0YUsKDzw9Z1U+PahoaD4lR9hIoHBTEkpHN48nl2D3p
+         ReF6QSRbHsMBjUrXyorlZD2WoKnR1tDJZd0Q+DLiSa+tORlRbb11wIEaov7VZZnKymha
+         3NApxuXYndHAORYlMGWFtms1+FmPv9suondbraUsohbthoWqqHD8nU6AJMWedfO4mUAF
+         4TqIFoYHKPOgH77nkAnD56GcKadcscvOMbSB6l2beFF21UH6SsXcm0dmI78xxlDrOTri
+         QmYMBLL+CPhfC/R1KvJPHzbDyNPCGn48KolhMZHIk6F8SvxkZ0PDdpNaGSiFsYfH37m4
+         V1fg==
+X-Gm-Message-State: APjAAAWXQH3zN0gno/SMM3HrqHNyHlJjGnrTqWMN0aqb8DmC6rHeU6n0
+        6PLQK/XY2GGY6zCObMif2ovMUuKQZS5CzvmlOYyaDHJxXuk=
+X-Google-Smtp-Source: APXvYqyPOVhOhLnR8svjNFZbpJrFSBq7iSO7H0EK0jJu3qsF114ar1jgWWIPRpjlhgl1TEjutHazAuvG976Gy28vOLM=
+X-Received: by 2002:a2e:9b4a:: with SMTP id o10mr24191221ljj.137.1563443240961;
+ Thu, 18 Jul 2019 02:47:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190707230843.11224-1-digetx@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1563443132; bh=u8c0NlynrGVUWsDz/CzhhNNqyF1INsuspIBnpJ+/lfM=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=FqQjLLrUQDHOoHPei66yOGo/ApxHwTZYRLuLLCBYe2NpwB41A6HqrYEwTAjykjaDN
-         CzPZDIz/LbBfnHKgF97S6ooUw9OJvot5vtle6+d1BXkTFIR+6ZEGex4uCW/e3GBhFn
-         RXxyzr43f7zwAsukSwJiUAz/cvgDlHXrf4ymfWM1H5ls9hEnajUQSUmfVARmklfdQe
-         2jgko4hiAppZQwDqt2iSnqQJza+iU/IF5lsPakDy/rSWGTBMOQVUSq2vE4QW9tCn4x
-         xTb4pY/pyWWLvjAGsPS6rnmGY5vBRpCrZT0A8Rmq7XmUsjt5K46gpqi5d9VTlzaeX1
-         Vx+otw0CWkyAA==
+References: <20190718030045.780672747@linuxfoundation.org>
+In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 18 Jul 2019 15:17:09 +0530
+Message-ID: <CA+G9fYtZUsz3eOV5_6im60EGrhi+ncD4ootvZfmDNiBzqNm0Tg@mail.gmail.com>
+Subject: Re: [PATCH 4.19 00/47] 4.19.60-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 18 Jul 2019 at 08:37, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.19.60 release.
+> There are 47 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat 20 Jul 2019 02:59:27 AM UTC.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.19.60-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.19.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-On 08/07/2019 00:08, Dmitry Osipenko wrote:
-> The PCLK clock is running off SCLK, which is a critical clock that is
-> very unlikely to randomly change its rate. It's also a bit clumsy (and
-> apparently incorrect) to query the clock's rate with interrupts being
-> disabled because clk_get_rate() takes a mutex and that's the case during
-> suspend/cpuidle entering. Lastly, it's better to always fully reprogram
-> PMC state because it's not obvious whether it could be changed after SC7.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-I agree with the first part, but I would drop the last sentence because
-I see no evidence of this. Maybe Peter can confirm.
+Summary
+------------------------------------------------------------------------
 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/soc/tegra/pmc.c | 26 +++++++++++---------------
->  1 file changed, 11 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 9f9c1c677cf4..532e0ada012b 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -1433,6 +1433,7 @@ void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode)
->  void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
->  {
->  	unsigned long long rate = 0;
-> +	u64 ticks;
->  	u32 value;
->  
->  	switch (mode) {
-> @@ -1441,7 +1442,7 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
->  		break;
->  
->  	case TEGRA_SUSPEND_LP2:
-> -		rate = clk_get_rate(pmc->clk);
-> +		rate = pmc->rate;
+kernel: 4.19.60-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.19.y
+git commit: aa9b0c7579bacf570e7e430fa563e52b6b4ab15f
+git describe: v4.19.59-48-gaa9b0c7579ba
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
+ild/v4.19.59-48-gaa9b0c7579ba
 
-There is another call to clk_get_rate() that could be removed as well.
 
->  		break;
->  
->  	default:
-> @@ -1451,26 +1452,20 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
->  	if (WARN_ON_ONCE(rate == 0))
->  		rate = 100000000;
->  
-> -	if (rate != pmc->rate) {
-> -		u64 ticks;
-> -
-> -		ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
-> -		do_div(ticks, USEC_PER_SEC);
-> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
-> -
-> -		ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
-> -		do_div(ticks, USEC_PER_SEC);
-> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
-> +	ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
-> +	do_div(ticks, USEC_PER_SEC);
-> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
+No regressions (compared to build v4.19.59)
 
-You could go a step further and update the cpu_good_time/cpu_off_time to
-be ticks and calculated once during probe and recalculated if
-tegra_pmc_set_suspend_mode is called. I am not sure why we really need
-to pass mode to tegra_pmc_enter_suspend_mode() seeing as the mode is
-stored in the pmc struct.
+No fixes (compared to build v4.19.59)
 
->  
-> -		wmb();
-> -
-> -		pmc->rate = rate;
-> -	}
-> +	ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
-> +	do_div(ticks, USEC_PER_SEC);
-> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
->  
->  	value = tegra_pmc_readl(pmc, PMC_CNTRL);
->  	value &= ~PMC_CNTRL_SIDE_EFFECT_LP0;
->  	value |= PMC_CNTRL_CPU_PWRREQ_OE;
->  	tegra_pmc_writel(pmc, value, PMC_CNTRL);
-> +
-> +	wmb();
->  }
->  #endif
->  
-> @@ -2082,6 +2077,7 @@ static int tegra_pmc_probe(struct platform_device *pdev)
->  		pmc->clk = NULL;
->  	}
->  
-> +	pmc->rate = clk_get_rate(pmc->clk);
+Ran 24058 total tests in the following environments and test suites.
 
-You should check the value returned is not 0 here.
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
 
-Cheers
-Jon
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libgpiod
+* libhugetlbfs
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-hugetlb-tests
+* ltp-mm-tests
+* spectre-meltdown-checker-test
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-cpuhotplug-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* network-basic-tests
+* perf
+* v4l2-compliance
+* ltp-open-posix-tests
+* kvm-unit-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
 
--- 
-nvpublic
+--=20
+Linaro LKFT
+https://lkft.linaro.org
