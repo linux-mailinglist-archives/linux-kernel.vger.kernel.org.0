@@ -2,86 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D8AA6C7E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:30:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E31F6C7E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:30:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390040AbfGRDaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:30:22 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40535 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389907AbfGRDaU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:30:20 -0400
-Received: by mail-io1-f65.google.com with SMTP id h6so49180421iom.7;
-        Wed, 17 Jul 2019 20:30:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MpfvpjmlTMPBmUuzej87maWx1PJrD6FaaDHioeLL84E=;
-        b=OMCIi5Sfb5MwOLm6XsFa5rnhtGSOOmyaxgNRy1128OrPbA4eymHsdJuH+S/cOcS6vv
-         54s9MBzH6ne0+skVuUYS/xzsbGxlLB8xM3/ACVJVCi/QeH10Vr956M7OPytgWs86R+Vy
-         KM5+UgUzRlDHFIM/wYpyso0znxB4OfCGSt6wa8f3+7RbDe503LU6jA5ghePKI4rJd5wA
-         j6mUJh6CIzk3K1xICW1FYjurwGYcKSwyiEk/UQIFFK4iIOd0ehm5xInICWDMmummmL8x
-         MXdAMdkCf5ErRUrJmuHDAM+DDh91XUDHsq4Kaw0HtrkeQq/Sg6gUtbe7+ff+vHtRZank
-         pyjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MpfvpjmlTMPBmUuzej87maWx1PJrD6FaaDHioeLL84E=;
-        b=dkss6fhqXM4Awl4+iWYMajrbsChIQCsX0qnlfTvp6aFCJf19tTwS1w8SJvXJRNMGcn
-         yIvyokOlP28PW/xb/AmJnCLBfx2Fk5UsEsUxkyOWcUmi4kAG0vPsZdPb6OVyt73nA8n9
-         d9AyZdJ0JJxaUKyx5b2eqYbAzUVnbI+5x5YtMBkkINelymzV4mxIusfObT5wPLeNvrmH
-         rUiqgPam+SlhXrbNhWnDDDmyJ6+rQ4DC6qVl/S1aeHCX192dOVyluPZ/4NEFH5N+sM7b
-         Krmirdjr9PbkHOQ1NqE1KYAIVf+fHQgPbmW3jEoxeKXqN4pOrfL7+UCJf4kNF0BVAdO/
-         NXJg==
-X-Gm-Message-State: APjAAAXYRPzJC+bDDPWAG4/U1P2cZaQdXtpa4dfiFVc95Evs1jjxRmw0
-        wxC3yZumNn94p/UVQ1kQljU=
-X-Google-Smtp-Source: APXvYqyFoyIkweSohq8qL2Dg0gZNiPzsZKXbKWGVqtnjuHBK4EMWFPa9rODy9nt6w/9uZzpxJI3oFQ==
-X-Received: by 2002:a05:6638:cf:: with SMTP id w15mr46423902jao.136.1563420619701;
-        Wed, 17 Jul 2019 20:30:19 -0700 (PDT)
-Received: from localhost.localdomain (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
-        by smtp.gmail.com with ESMTPSA id 20sm30853470iog.62.2019.07.17.20.30.18
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 17 Jul 2019 20:30:18 -0700 (PDT)
-From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
-To:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        skunberg.kelsey@gmail.com
-Subject: [PATCH] PCI: Stop exporting pci_bus_sem
-Date:   Wed, 17 Jul 2019 21:29:52 -0600
-Message-Id: <20190718032951.40188-1-skunberg.kelsey@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S2390161AbfGRDaa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:30:30 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:38000 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390101AbfGRDa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:30:28 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hnx7Y-0005UF-6D; Thu, 18 Jul 2019 11:30:16 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hnx7Q-00051w-C7; Thu, 18 Jul 2019 11:30:08 +0800
+Date:   Thu, 18 Jul 2019 11:30:08 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mathias Krause <minipli@googlemail.com>
+Subject: Re: [PATCH] padata: Replace delayed timer with immediate workqueue
+ in padata_reorder
+Message-ID: <20190718033008.wle67s7esg27mrtz@gondor.apana.org.au>
+References: <c1bbbe94-dbdc-da14-e0c3-850c965d8b5d@oracle.com>
+ <20190716163253.24377-1-daniel.m.jordan@oracle.com>
+ <20190717111147.t776zlyhdqyl5dhc@gondor.apana.org.au>
+ <20190717232136.pboms73sqf6fdzic@ca-dmjordan1.us.oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190717232136.pboms73sqf6fdzic@ca-dmjordan1.us.oracle.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pci_bus_sem is not used by a loadable kernel module and does not need to
-be exported. Remove line exporting pci_bus_sem.
+On Wed, Jul 17, 2019 at 07:21:36PM -0400, Daniel Jordan wrote:
+>
+> > @@ -388,12 +336,12 @@ void padata_do_serial(struct padata_priv *padata)
+> >  	pqueue = per_cpu_ptr(pd->pqueue, cpu);
+> >  
+> >  	spin_lock(&pqueue->reorder.lock);
+> > -	atomic_inc(&pd->reorder_objects);
+> >  	list_add_tail(&padata->list, &pqueue->reorder.list);
+> > +	atomic_inc(&pd->reorder_objects);
+> 
+> Why switch the lines?  Seems ok to not do this.
 
-Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
----
- drivers/pci/search.c | 1 -
- 1 file changed, 1 deletion(-)
+This is crucial because otherwise the memory barrier won't apply
+to the list insertion.  With this patch, we are now using the list
+insertion as the indicator, rather than reorder_objects.
 
-diff --git a/drivers/pci/search.c b/drivers/pci/search.c
-index 7f4e65872b8d..bade14002fd8 100644
---- a/drivers/pci/search.c
-+++ b/drivers/pci/search.c
-@@ -15,7 +15,6 @@
- #include "pci.h"
- 
- DECLARE_RWSEM(pci_bus_sem);
--EXPORT_SYMBOL_GPL(pci_bus_sem);
- 
- /*
-  * pci_for_each_dma_alias - Iterate over DMA aliases for a device
+> > @@ -538,8 +479,6 @@ static void padata_flush_queues(struct parallel_data *pd)
+> >  		flush_work(&pqueue->work);
+> >  	}
+> >  
+> > -	del_timer_sync(&pd->timer);
+> > -
+> 
+> >  	if (atomic_read(&pd->reorder_objects))
+> >  		padata_reorder(pd);
+> 
+> I think we can do away with reorder_objects entirely by checking pd->cpu's
+> reorder queue here.
+
+As I said this will probably disappear altogether since we can't
+guarantee that padata_reorder will actually do anything if the
+jobs are stuck in async crypto processing.
+
+Thanks,
 -- 
-2.20.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
