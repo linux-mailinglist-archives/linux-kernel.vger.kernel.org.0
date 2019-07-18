@@ -2,192 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CF486C7D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:30:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC7D96C7CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:30:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389561AbfGRD3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:29:48 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34170 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389253AbfGRD3r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:29:47 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6I3SAYe097141
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 23:29:45 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ttccn0hnb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 23:29:45 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Thu, 18 Jul 2019 04:29:45 +0100
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 18 Jul 2019 04:29:39 +0100
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6I3TcUT49086816
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Jul 2019 03:29:38 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 84326AE05F;
-        Thu, 18 Jul 2019 03:29:38 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 94DE3AE05C;
-        Thu, 18 Jul 2019 03:29:34 +0000 (GMT)
-Received: from morokweng.localdomain.com (unknown [9.85.129.123])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 18 Jul 2019 03:29:34 +0000 (GMT)
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     x86@kernel.org
-Cc:     iommu@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH v3 5/6] fs/core/vmcore: Move sev_active() reference to x86 arch code
-Date:   Thu, 18 Jul 2019 00:28:57 -0300
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190718032858.28744-1-bauerman@linux.ibm.com>
-References: <20190718032858.28744-1-bauerman@linux.ibm.com>
+        id S2389259AbfGRD3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:29:10 -0400
+Received: from mail-eopbgr150083.outbound.protection.outlook.com ([40.107.15.83]:18986
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727601AbfGRD3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:29:09 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RzRlR4+SZKWYSLt3cpDa3RAE801nw64Wfrjr/cVsCeqffV3yZ2XZTHXqYF4kCy83vu+/XV5BDcvetg3fe5iLNGp9T+gCL2mg2aJsoyefifGLY8meOpS9nOAitsrgOsRaUAJiP5f/ez/iyxGXpD1M+/rP8mcXQ+3CvDhT749HNFsFCGD0DGDKCI2l6MmJ+WXV6jzKl9jbIorOooxak9TqLEaQwol1E/rTXejpiuWi9KkOFXyhu8McKhWURlAwCDFrG5VMJc0JUNavAyVdxBORDSESfhUKl4ZUdS3D+O5tOfu5tppE2Id3uUWGhFmRFojPCKbH3oIr2gJPQncQLVL8nw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8TbgJrcGw4l5ov7UeLUe0ybC+oqv2tlXgAe/QEPk/v4=;
+ b=fRma4TBGVhZ8kg6FMWgx6uTmn1RrXbPGNzVvhxot9kXHwyFgSTiBTUXn1yQ1O0EsAn4AKZMODKkpGHd8ubDjjs7Y2mt5I1j0R8RqLUJdFQ/w2LdAhhfw1qBHVmhWte+y42YNmhWFaGncanS7pD9cKP+W6c22fEilv5m3Lx6+P44vqsP7t0XNf0c5hFBNL3HQeGkhSkE7crrvsY942DrY8CgswPJDKLAQJjeaebnmlqeWr8wFAsOAlcFHkKVXYUzZpHcZCVJXIb1fwscXv20jR4O7GQ9cZpm4d0nfOufS5rRRn8oVdAoYTsX6D6GQ5pAFtCY6vOmFDZOqBU889IC4hw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
+ header.d=nxp.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8TbgJrcGw4l5ov7UeLUe0ybC+oqv2tlXgAe/QEPk/v4=;
+ b=HPBlUKWCZzayI66zY54X1ITmI43eu891fjFYVWiNEmfy+B4gxpSQrzF42Hd63qluKDoYV3odB1vFN1dWomX45yn/X2hvoSo/YLWVSVWMshCtbyCNsfAL7IUWXaDPVXfPRqaE/9rbpy75q9shBvj28WksfyjWRyp0ccbfmktyS54=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.92.158) by
+ AM0PR04MB6291.eurprd04.prod.outlook.com (20.179.33.87) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2073.14; Thu, 18 Jul 2019 03:29:06 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::7882:51:e491:8431]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::7882:51:e491:8431%7]) with mapi id 15.20.2073.012; Thu, 18 Jul 2019
+ 03:29:06 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Daniel Baluta <daniel.baluta@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Subject: RE: [PATCH 2/3] firmware: imx: scu-pd: Add mu_b side PD range
+Thread-Topic: [PATCH 2/3] firmware: imx: scu-pd: Add mu_b side PD range
+Thread-Index: AQHVMdIf/A/Nl6mgYkmorW+PMBHFi6bPyyMA
+Date:   Thu, 18 Jul 2019 03:29:06 +0000
+Message-ID: <AM0PR04MB42114DD325C5DB2E06011A4A80C80@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20190703190404.21136-1-daniel.baluta@nxp.com>
+ <20190703190404.21136-3-daniel.baluta@nxp.com>
+In-Reply-To: <20190703190404.21136-3-daniel.baluta@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e10935ee-66f1-4d68-19fb-08d70b301698
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB6291;
+x-ms-traffictypediagnostic: AM0PR04MB6291:
+x-microsoft-antispam-prvs: <AM0PR04MB6291AD87C88E0C62CC9DE13380C80@AM0PR04MB6291.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:268;
+x-forefront-prvs: 01026E1310
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(136003)(396003)(376002)(346002)(199004)(189003)(66476007)(102836004)(53546011)(6116002)(256004)(478600001)(71200400001)(68736007)(25786009)(33656002)(2906002)(55016002)(8936002)(8676002)(6246003)(99286004)(81156014)(54906003)(7736002)(4326008)(26005)(76176011)(3846002)(14454004)(53936002)(74316002)(11346002)(6506007)(64756008)(86362001)(316002)(66946007)(71190400001)(44832011)(7696005)(446003)(6436002)(66556008)(305945005)(76116006)(186003)(476003)(81166006)(486006)(110136005)(9686003)(52536014)(66066001)(229853002)(5660300002)(2501003)(66446008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6291;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Ep4IcrbBfoT3mdMvO7IfpQUCXMwN3lphUIihIgKkVWJlBw3Hm6MqOsp7TbV38OpBG/yot2zJii+M4NGAlcJYMZ30w3ukV1DteCBt9wOwmQL01G0uh17me5DPZnbnV7ZS5/ec+oM6ldizsFVj2Li9nGnMtg154iqs5OSD6CJpW0njWbJTLUINwN8uQCyj0UmZdE/s/EDVuNYGuruLyjOH5/xUDZL6CtJf6n4XLNOD6CEWFt56Wl7RIlV2cvfaQJnBGl/ci8lxgwo/gtEQIwNMhS0AMlnOLX4ClXWfNqs8+2FcXyCtWCrkviGn1YWza8cUfEc9wQL+5QGXvMO/a82T5wg+MOy87GOEROuHCqhkg4RkIltmCGQ4VSB481JesG2P+wWz+1J0QKqDTi2mV+3D0wYNUgA3LkOzDNmlDvaxK80=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19071803-0072-0000-0000-0000044A8A6A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011449; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01233737; UDB=6.00650106; IPR=6.01015064;
- MB=3.00027770; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-18 03:29:43
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19071803-0073-0000-0000-00004CBADC98
-Message-Id: <20190718032858.28744-6-bauerman@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-18_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=38 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907180037
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e10935ee-66f1-4d68-19fb-08d70b301698
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2019 03:29:06.0467
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: aisheng.dong@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6291
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Secure Encrypted Virtualization is an x86-specific feature, so it shouldn't
-appear in generic kernel code because it forces non-x86 architectures to
-define the sev_active() function, which doesn't make a lot of sense.
-
-To solve this problem, add an x86 elfcorehdr_read() function to override
-the generic weak implementation. To do that, it's necessary to make
-read_from_oldmem() public so that it can be used outside of vmcore.c.
-
-Also, remove the export for sev_active() since it's only used in files that
-won't be built as modules.
-
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
----
- arch/x86/kernel/crash_dump_64.c |  5 +++++
- arch/x86/mm/mem_encrypt.c       |  1 -
- fs/proc/vmcore.c                |  8 ++++----
- include/linux/crash_dump.h      | 14 ++++++++++++++
- include/linux/mem_encrypt.h     |  1 -
- 5 files changed, 23 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/kernel/crash_dump_64.c b/arch/x86/kernel/crash_dump_64.c
-index 22369dd5de3b..045e82e8945b 100644
---- a/arch/x86/kernel/crash_dump_64.c
-+++ b/arch/x86/kernel/crash_dump_64.c
-@@ -70,3 +70,8 @@ ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf, size_t csize,
- {
- 	return __copy_oldmem_page(pfn, buf, csize, offset, userbuf, true);
- }
-+
-+ssize_t elfcorehdr_read(char *buf, size_t count, u64 *ppos)
-+{
-+	return read_from_oldmem(buf, count, ppos, 0, sev_active());
-+}
-diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
-index 7139f2f43955..b1e823441093 100644
---- a/arch/x86/mm/mem_encrypt.c
-+++ b/arch/x86/mm/mem_encrypt.c
-@@ -349,7 +349,6 @@ bool sev_active(void)
- {
- 	return sme_me_mask && sev_enabled;
- }
--EXPORT_SYMBOL(sev_active);
- 
- /* Override for DMA direct allocation check - ARCH_HAS_FORCE_DMA_UNENCRYPTED */
- bool force_dma_unencrypted(struct device *dev)
-diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-index 57957c91c6df..ca1f20bedd8c 100644
---- a/fs/proc/vmcore.c
-+++ b/fs/proc/vmcore.c
-@@ -100,9 +100,9 @@ static int pfn_is_ram(unsigned long pfn)
- }
- 
- /* Reads a page from the oldmem device from given offset. */
--static ssize_t read_from_oldmem(char *buf, size_t count,
--				u64 *ppos, int userbuf,
--				bool encrypted)
-+ssize_t read_from_oldmem(char *buf, size_t count,
-+			 u64 *ppos, int userbuf,
-+			 bool encrypted)
- {
- 	unsigned long pfn, offset;
- 	size_t nr_bytes;
-@@ -166,7 +166,7 @@ void __weak elfcorehdr_free(unsigned long long addr)
-  */
- ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
- {
--	return read_from_oldmem(buf, count, ppos, 0, sev_active());
-+	return read_from_oldmem(buf, count, ppos, 0, false);
- }
- 
- /*
-diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-index f774c5eb9e3c..4664fc1871de 100644
---- a/include/linux/crash_dump.h
-+++ b/include/linux/crash_dump.h
-@@ -115,4 +115,18 @@ static inline int vmcore_add_device_dump(struct vmcoredd_data *data)
- 	return -EOPNOTSUPP;
- }
- #endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
-+
-+#ifdef CONFIG_PROC_VMCORE
-+ssize_t read_from_oldmem(char *buf, size_t count,
-+			 u64 *ppos, int userbuf,
-+			 bool encrypted);
-+#else
-+static inline ssize_t read_from_oldmem(char *buf, size_t count,
-+				       u64 *ppos, int userbuf,
-+				       bool encrypted)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif /* CONFIG_PROC_VMCORE */
-+
- #endif /* LINUX_CRASHDUMP_H */
-diff --git a/include/linux/mem_encrypt.h b/include/linux/mem_encrypt.h
-index 0c5b0ff9eb29..5c4a18a91f89 100644
---- a/include/linux/mem_encrypt.h
-+++ b/include/linux/mem_encrypt.h
-@@ -19,7 +19,6 @@
- #else	/* !CONFIG_ARCH_HAS_MEM_ENCRYPT */
- 
- static inline bool mem_encrypt_active(void) { return false; }
--static inline bool sev_active(void) { return false; }
- 
- #endif	/* CONFIG_ARCH_HAS_MEM_ENCRYPT */
- 
-
+PiBGcm9tOiBEYW5pZWwgQmFsdXRhIDxkYW5pZWwuYmFsdXRhQG54cC5jb20+DQo+IFNlbnQ6IFRo
+dXJzZGF5LCBKdWx5IDQsIDIwMTkgMzowNCBBTQ0KPiBTdWJqZWN0OiBbUEFUQ0ggMi8zXSBmaXJt
+d2FyZTogaW14OiBzY3UtcGQ6IEFkZCBtdV9iIHNpZGUgUEQgcmFuZ2UNCj4gDQo+IExTSU8gc3Vi
+c3lzdGVtIGNvbnRhaW5zIDE0IE1VIGluc3RhbmNlcy4NCj4gDQo+IDUgTVVzIHRvIGNvbW11bmlj
+YXRlIGJldHdlZW4gQVAgPC0+IFNDVQ0KPiAgIC0gc2lkZS1BIFBEIHJhbmdlIG1hbmFnZWQgYnkg
+QVANCj4gICAtIHNpZGUtQiBQRCByYW5nZSBtYW5hZ2VkIGJ5IFNDVQ0KPiANCj4gOSBNVXMgdG8g
+Y29tbXVuaWNhdGUgYmV0d2VlbiBBUCA8LT4gTTQNCg0KVGhlIGxlZnQgOU1VcyBhcmUgZ2VuZXJh
+bCBhbmQgY2FuIGJlIHVzZWQgYnkgYWxsIGNvcmVzLA0KZS5nIEFQL000L0RTUC4NClNvIGJlbG93
+IGRlc2NyaXB0aW9uIGlzIG5vdCBjb3JyZWN0Lg0KDQo+ICAgLSBzaWRlLUEgUEQgcmFuZ2UgbWFu
+YWdlZCBieSBBUA0KPiAgIC0gc2lkZS1CIFBEIHJhbmdlIG1hbmFnZWQgYnkgQVANCj4gDQo+IFNp
+Z25lZC1vZmYtYnk6IERhbmllbCBCYWx1dGEgPGRhbmllbC5iYWx1dGFAbnhwLmNvbT4NCj4gLS0t
+DQo+ICBkcml2ZXJzL2Zpcm13YXJlL2lteC9zY3UtcGQuYyB8IDEgKw0KPiAgMSBmaWxlIGNoYW5n
+ZWQsIDEgaW5zZXJ0aW9uKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9maXJtd2FyZS9p
+bXgvc2N1LXBkLmMgYi9kcml2ZXJzL2Zpcm13YXJlL2lteC9zY3UtcGQuYw0KPiBpbmRleCA5NTBk
+MzAyMzgxODYuLjMwYWRjMzEwNDM0NyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9maXJtd2FyZS9p
+bXgvc2N1LXBkLmMNCj4gKysrIGIvZHJpdmVycy9maXJtd2FyZS9pbXgvc2N1LXBkLmMNCj4gQEAg
+LTkzLDYgKzkzLDcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBpbXhfc2NfcGRfcmFuZ2UNCj4gaW14
+OHF4cF9zY3VfcGRfcmFuZ2VzW10gPSB7DQo+ICAJeyAia3BwIiwgSU1YX1NDX1JfS1BQLCAxLCBm
+YWxzZSwgMCB9LA0KPiAgCXsgImZzcGkiLCBJTVhfU0NfUl9GU1BJXzAsIDIsIHRydWUsIDAgfSwN
+Cj4gIAl7ICJtdV9hIiwgSU1YX1NDX1JfTVVfMEEsIDE0LCB0cnVlLCAwIH0sDQo+ICsJeyAibXVf
+YiIsIElNWF9TQ19SX01VXzVCLCA5LCB0cnVlLCAwIH0sDQoNClNob3VsZCBzdGFydCBmcm9tIDU/
+DQp7ICJtdV9iIiwgSU1YX1NDX1JfTVVfNUIsIDksIHRydWUsIDUgfSwNCg0KUmVnYXJkcw0KQWlz
+aGVuZw0KDQo+IA0KPiAgCS8qIENPTk4gU1MgKi8NCj4gIAl7ICJ1c2IiLCBJTVhfU0NfUl9VU0Jf
+MCwgMiwgdHJ1ZSwgMCB9LA0KPiAtLQ0KPiAyLjE3LjENCg0K
