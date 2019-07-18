@@ -2,47 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C74506D553
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 21:47:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6929C6D559
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 21:48:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391461AbfGRTqd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 15:46:33 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49275 "EHLO
+        id S2391583AbfGRTrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 15:47:13 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47469 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403799AbfGRTqb (ORCPT
+        with ESMTP id S2391394AbfGRTrM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 15:46:31 -0400
+        Thu, 18 Jul 2019 15:47:12 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6IJkJud2136460
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6IJl3HW2136613
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 18 Jul 2019 12:46:19 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6IJkJud2136460
+        Thu, 18 Jul 2019 12:47:04 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6IJl3HW2136613
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1563479179;
-        bh=WLy4ldt2VHH4CIY/WRDo7mCruY1+viqvfyUQpu1rzjI=;
+        s=2019061801; t=1563479224;
+        bh=QLmgHG6GxLsgdcsFj3WGG565YW99KcAv1vtOrOkRfQs=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=BRg5Fs3f0LIQr0V0/niFCYhs0dTjKD0lECzShAqvymHF9OjKldI18Fm380OJur8fz
-         leS93rTp9MNZIhtKjr16wO+JBsgqN5ms7vC+g9bsaQmTxHsFFeoBMpf83YRbOZVI8/
-         YL8xpoCaNHE+kPCEl6ASC3WlYW68asRAxzWMbg6fjHMeqXEH1WWkhPUkEIPCJof8DD
-         NUlczFXhFX6IoIlspaZKmWdlFdsVoR6Zf6eiBNXIKdD6/ME5f2jRAoI3w7P6ETbH32
-         RXRv1EJ2AbDCkBzxDircpA7UJ1xs4mwnvhUoUmt7Ogzhq6YLwViLiwX0npY/a+8jrO
-         mj3reBqRobI/A==
+        b=C7liqoEyX4KtMirVte9kGgETePa5PKYlmGEwKyCbGR3ZNKxo/JDflDjZ5inMvVcXw
+         7P+Fkb7IE4DuWOM+GaUohTkKAeoxsEE0QX6NuVQjFIPSr9cTHC4SRtYWOXShhpYw9y
+         xK5AtUQk69oTYYinT+AiPmZbSVVer/RL32qTNLhnEzI25iRrCd+K83wY6Y+5F7Nn+4
+         urqpJxZtLExVTYAebNC6Iw1MymXJ/oZd1/ei8MZUO0VQ3Gda+GXvMAdPNuZcZAKCVC
+         16bzULzAhHb6OAObX4V/mvqqRJHrlbwZmkNOolddv+Dg5/2ey9T+XuH2/G1/Oy9ENr
+         C1N8Tni+VFkWg==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6IJkIH82136453;
-        Thu, 18 Jul 2019 12:46:18 -0700
-Date:   Thu, 18 Jul 2019 12:46:18 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6IJl3hU2136610;
+        Thu, 18 Jul 2019 12:47:03 -0700
+Date:   Thu, 18 Jul 2019 12:47:03 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Zhenzhong Duan <tipbot@zytor.com>
-Message-ID: <tip-cd6697b8b8751b65abd7859af55cf06f36b8e716@git.kernel.org>
-Cc:     zhenzhong.duan@oracle.com, tglx@linutronix.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org
-Reply-To: tglx@linutronix.de, zhenzhong.duan@oracle.com, mingo@kernel.org,
-          hpa@zytor.com, linux-kernel@vger.kernel.org
-In-Reply-To: <1563282957-26898-1-git-send-email-zhenzhong.duan@oracle.com>
-References: <1563282957-26898-1-git-send-email-zhenzhong.duan@oracle.com>
+Message-ID: <tip-449f328637e3ca62461da04d60ccb35aa5aa21dc@git.kernel.org>
+Cc:     zhenzhong.duan@oracle.com, tglx@linutronix.de, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
+        hpa@zytor.com
+Reply-To: kirill.shutemov@linux.intel.com, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org,
+          zhenzhong.duan@oracle.com, tglx@linutronix.de
+In-Reply-To: <1563283040-31101-1-git-send-email-zhenzhong.duan@oracle.com>
+References: <1563283040-31101-1-git-send-email-zhenzhong.duan@oracle.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/boot/efi: Remove unused variables
-Git-Commit-ID: cd6697b8b8751b65abd7859af55cf06f36b8e716
+Subject: [tip:x86/urgent] x86/boot/compressed/64: Remove unused variable
+Git-Commit-ID: 449f328637e3ca62461da04d60ccb35aa5aa21dc
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,100 +62,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  cd6697b8b8751b65abd7859af55cf06f36b8e716
-Gitweb:     https://git.kernel.org/tip/cd6697b8b8751b65abd7859af55cf06f36b8e716
+Commit-ID:  449f328637e3ca62461da04d60ccb35aa5aa21dc
+Gitweb:     https://git.kernel.org/tip/449f328637e3ca62461da04d60ccb35aa5aa21dc
 Author:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
-AuthorDate: Tue, 16 Jul 2019 21:15:57 +0800
+AuthorDate: Tue, 16 Jul 2019 21:17:20 +0800
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Thu, 18 Jul 2019 21:41:57 +0200
 
-x86/boot/efi: Remove unused variables
+x86/boot/compressed/64: Remove unused variable
 
-Fix gcc warnings:
+Fix gcc warning:
 
-arch/x86/boot/compressed/eboot.c: In function 'make_boot_params':
-arch/x86/boot/compressed/eboot.c:394:6: warning: unused variable 'i' [-Wunused-variable]
-  int i;
-      ^
-arch/x86/boot/compressed/eboot.c:393:6: warning: unused variable 's1' [-Wunused-variable]
-  u8 *s1;
-      ^
-arch/x86/boot/compressed/eboot.c:392:7: warning: unused variable 's2' [-Wunused-variable]
-  u16 *s2;
-       ^
-arch/x86/boot/compressed/eboot.c:387:8: warning: unused variable 'options' [-Wunused-variable]
-  void *options, *handle;
-        ^
-arch/x86/boot/compressed/eboot.c: In function 'add_e820ext':
-arch/x86/boot/compressed/eboot.c:498:16: warning: unused variable 'size' [-Wunused-variable]
-  unsigned long size;
-                ^
-arch/x86/boot/compressed/eboot.c:497:15: warning: unused variable 'status' [-Wunused-variable]
-  efi_status_t status;
+arch/x86/boot/compressed/pgtable_64.c: In function 'find_trampoline_placement':
+arch/x86/boot/compressed/pgtable_64.c:43:16: warning: unused variable 'trampoline_start' [-Wunused-variable]
+  unsigned long trampoline_start;
                ^
-arch/x86/boot/compressed/eboot.c: In function 'exit_boot_func':
-arch/x86/boot/compressed/eboot.c:681:15: warning: unused variable 'status' [-Wunused-variable]
-  efi_status_t status;
-               ^
-arch/x86/boot/compressed/eboot.c:680:8: warning: unused variable 'nr_desc' [-Wunused-variable]
-  __u32 nr_desc;
-        ^
-arch/x86/boot/compressed/eboot.c: In function 'efi_main':
-arch/x86/boot/compressed/eboot.c:750:22: warning: unused variable 'image' [-Wunused-variable]
-  efi_loaded_image_t *image;
-                      ^
 
 Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/1563282957-26898-1-git-send-email-zhenzhong.duan@oracle.com
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Link: https://lkml.kernel.org/r/1563283040-31101-1-git-send-email-zhenzhong.duan@oracle.com
 
 ---
- arch/x86/boot/compressed/eboot.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ arch/x86/boot/compressed/pgtable_64.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
-index 220d1279d0e2..d6662fdef300 100644
---- a/arch/x86/boot/compressed/eboot.c
-+++ b/arch/x86/boot/compressed/eboot.c
-@@ -384,14 +384,11 @@ struct boot_params *make_boot_params(struct efi_config *c)
- 	struct apm_bios_info *bi;
- 	struct setup_header *hdr;
- 	efi_loaded_image_t *image;
--	void *options, *handle;
-+	void *handle;
- 	efi_guid_t proto = LOADED_IMAGE_PROTOCOL_GUID;
- 	int options_size = 0;
- 	efi_status_t status;
- 	char *cmdline_ptr;
--	u16 *s2;
--	u8 *s1;
--	int i;
- 	unsigned long ramdisk_addr;
- 	unsigned long ramdisk_size;
- 
-@@ -494,8 +491,6 @@ static void add_e820ext(struct boot_params *params,
- 			struct setup_data *e820ext, u32 nr_entries)
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index f8debf7aeb4c..5f2d03067ae5 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -40,7 +40,6 @@ int cmdline_find_option_bool(const char *option);
+ static unsigned long find_trampoline_placement(void)
  {
- 	struct setup_data *data;
--	efi_status_t status;
--	unsigned long size;
- 
- 	e820ext->type = SETUP_E820_EXT;
- 	e820ext->len  = nr_entries * sizeof(struct boot_e820_entry);
-@@ -677,8 +672,6 @@ static efi_status_t exit_boot_func(efi_system_table_t *sys_table_arg,
- 				   void *priv)
- {
- 	const char *signature;
--	__u32 nr_desc;
--	efi_status_t status;
- 	struct exit_boot_struct *p = priv;
- 
- 	signature = efi_is_64bit() ? EFI64_LOADER_SIGNATURE
-@@ -747,7 +740,6 @@ struct boot_params *
- efi_main(struct efi_config *c, struct boot_params *boot_params)
- {
- 	struct desc_ptr *gdt = NULL;
--	efi_loaded_image_t *image;
- 	struct setup_header *hdr = &boot_params->hdr;
- 	efi_status_t status;
- 	struct desc_struct *desc;
+ 	unsigned long bios_start = 0, ebda_start = 0;
+-	unsigned long trampoline_start;
+ 	struct boot_e820_entry *entry;
+ 	char *signature;
+ 	int i;
