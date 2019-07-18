@@ -2,88 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D20B6CBD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:25:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A22146CBB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:20:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389730AbfGRJYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 05:24:39 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:41528 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389453AbfGRJYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 05:24:33 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 938CF1A001B;
-        Thu, 18 Jul 2019 11:24:31 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4F2171A034A;
-        Thu, 18 Jul 2019 11:24:26 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 90CF6402D6;
-        Thu, 18 Jul 2019 17:24:19 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 4/4] ARM: dts: imx6sll: move GIC to right location in DT
-Date:   Thu, 18 Jul 2019 17:15:08 +0800
-Message-Id: <20190718091508.3248-4-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190718091508.3248-1-Anson.Huang@nxp.com>
-References: <20190718091508.3248-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2389635AbfGRJUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 05:20:14 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:10336 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726454AbfGRJUN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 05:20:13 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d3039cd0000>; Thu, 18 Jul 2019 02:20:13 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 18 Jul 2019 02:20:12 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 18 Jul 2019 02:20:12 -0700
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 18 Jul
+ 2019 09:20:10 +0000
+Subject: Re: [PATCH 4.9 00/54] 4.9.186-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20190718030048.392549994@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <3cab490d-bcd3-cff1-4404-ae419543880d@nvidia.com>
+Date:   Thu, 18 Jul 2019 10:20:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190718030048.392549994@linuxfoundation.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1563441613; bh=N2HOOC0z4qPAL3OarwDzU7tpXS7OX5GP4nKIXs7cO8E=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=hqdaMLubvZcxgqws6RKD6DezaF9Zd72W15rYv1kpn933/aeldzCruHCSOFeLyQm2y
+         gnoPy/avEnVxhkRLUWisHWurjN3xAt4QWEkoxJXwbfjAbktsuDnYRGJd03FrT1qEl8
+         RjTiJ0eWFssVV0CFQk9EsVjCkfqZsdNSZmBSnSpi264/lTLmMU6U+PvjYd5oGz72eT
+         2lzY1LlQ+wW2+QVn6M4SJ6Bo4BDqfCI8Cm5P2Cjt9EqHtSIdNllShzinc+7cpzNSiK
+         RNxZ7yLIS3TdJpxdh1qH6HXOhU1fX4c7Y1WHHrkR4fWBclzAZNEpLhC2nUXLWk+8eQ
+         GUeeVXZrF09Mg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
 
-GIC is inside of SoC from architecture perspective, it should
-be located inside of soc node in DT.
+On 18/07/2019 04:01, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.186 release.
+> There are 54 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat 20 Jul 2019 02:59:27 AM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.186-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/boot/dts/imx6sll.dtsi | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+All tests are passing for Tegra ...
 
-diff --git a/arch/arm/boot/dts/imx6sll.dtsi b/arch/arm/boot/dts/imx6sll.dtsi
-index b0a77ff..0e8116d 100644
---- a/arch/arm/boot/dts/imx6sll.dtsi
-+++ b/arch/arm/boot/dts/imx6sll.dtsi
-@@ -75,15 +75,6 @@
- 		};
- 	};
- 
--	intc: interrupt-controller@a01000 {
--		compatible = "arm,cortex-a9-gic";
--		#interrupt-cells = <3>;
--		interrupt-controller;
--		reg = <0x00a01000 0x1000>,
--		      <0x00a00100 0x100>;
--		interrupt-parent = <&intc>;
--	};
--
- 	ckil: clock-ckil {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-@@ -134,6 +125,15 @@
- 			reg = <0x00900000 0x20000>;
- 		};
- 
-+		intc: interrupt-controller@a01000 {
-+			compatible = "arm,cortex-a9-gic";
-+			#interrupt-cells = <3>;
-+			interrupt-controller;
-+			reg = <0x00a01000 0x1000>,
-+			      <0x00a00100 0x100>;
-+			interrupt-parent = <&intc>;
-+		};
-+
- 		L2: l2-cache@a02000 {
- 			compatible = "arm,pl310-cache";
- 			reg = <0x00a02000 0x1000>;
+Test results for stable-v4.9:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    24 tests:	24 pass, 0 fail
+
+Linux version:	4.9.186-rc1-g0bfad9234a3a
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
 -- 
-2.7.4
-
+nvpublic
