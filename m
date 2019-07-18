@@ -2,74 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0E2F6C90C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 08:04:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BBCA6C910
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 08:05:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387984AbfGRGEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 02:04:02 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:33727 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbfGRGEC (ORCPT
+        id S1732249AbfGRGE6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 02:04:58 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:56708 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbfGRGE6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 02:04:02 -0400
-Received: by mail-oi1-f194.google.com with SMTP id u15so20591053oiv.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 23:04:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P1LQPeatmBO3Ls1tFC7heZrLlLB6kdfVOLBzlpUftSA=;
-        b=Ygvn6fW/L34ez5EdLPrPysK+5BumzlK1V4WQbT4fqFL6HEi7RQKEYbZBC8wHQtaKBK
-         ILhnlxGZACwRFgbtUZ/n8gwZLALJfAJNBlCNHqhWaEY03GYLxSdxkMdz6PrGX4WBbGqw
-         WQrCBvhNz3srQAm1AXJ/zVHhqriAYY0Uljeb8fGVrU7SICX1/6GYYlhzvga6ITHO7GAM
-         DvCTi0As46YqyAOTObm0EiWraNRaWWQrTyg9ai9ay/DtLkVl8OtsXDafDYRXVY3gzQYu
-         YEyo2QDnoCpU9DfLo1fYXW2R1Zd1HAskVJKkXMxgwS6k6Q7jz5S9oHYn2q13cWDG8K5j
-         IMSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P1LQPeatmBO3Ls1tFC7heZrLlLB6kdfVOLBzlpUftSA=;
-        b=VovVIA93tokEN+uCygDp7fB6cJrIEi75H9H/hZ6B70texRUQ4HaKKkejcTyf1AIzg3
-         ux6/CVLQlQ+iF8k+UtreZ9pxhlGwKfFSzCUz+VRHaTgz4w8eF5CyfJnWSeMjtvi53/fu
-         giTvSfLzAniJWkxreGIhgGzwJYYfZgDGMkMwuqOgBindjSjT8rX2l57o+INInzmTR8JR
-         QBuMoGHizwd7MZCcVYE2AYEDfRWR85hZb0IRf9LGJIhNXyQopf2lf81XoJDp2vs3wUBS
-         xXd86gRfSj8ooze2bONKazahE88DgZ3/XG40VamryaRXswINYcxNroZiigIhHMwFm2kE
-         Fqzw==
-X-Gm-Message-State: APjAAAXMHg5m5X78F5baW2OG/3dN6qxk+kA8MTtGHWMB9+e3itly5T5k
-        /1ouVNhPl+j4YU7LhhHIwVGBl5W8wqFZpWSvylQ5Hw==
-X-Google-Smtp-Source: APXvYqxm9xDHx6ClBG2mF8PlRAsDH+bKVgC8qhkLQmyTe0e8hYV2WfgikTfBiTzNjyPyqgMGYXqJy4PfXQiD977bIfo=
-X-Received: by 2002:aca:ba02:: with SMTP id k2mr19915938oif.70.1563429841600;
- Wed, 17 Jul 2019 23:04:01 -0700 (PDT)
+        Thu, 18 Jul 2019 02:04:58 -0400
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x6I64nA0006135
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 15:04:50 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x6I64nA0006135
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1563429890;
+        bh=9Cn27QIZQfB3/PlsDEzrhs3gsGNmfjgopl2Ueaqh2co=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=DZ3QsT76aj6vYbKEXrr2j5egWye+7CzEUgQsrfOWOKHmx7JvShI+lArzlcW+AOyvW
+         wSnANMWV0XV6vrhCS54i04y7kxYcznx4J77KcLz+b+yAgJBWXHPYsfxZAUbkGlbIEg
+         Wpy1jycQ9ihqjwaQ6+dRgXMvQVOVCKDbuVVeu8pezwhgRb0iPhW2HMmEJrXpN0Hwca
+         Z9XpiacJPM0Xn6AZVGCdUw/RQ291pjY+J6nJm2TER9rzOusSlfNAz4EE6IWstB5/c9
+         sipLWjExYxEma8+YyZTycddtWzAD1pkERquktIODyC0IbIeXj8FJ0WaNnwVYx3yTzq
+         EiYfwG04kugtw==
+X-Nifty-SrcIP: [209.85.221.170]
+Received: by mail-vk1-f170.google.com with SMTP id f68so5537116vkf.5
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 23:04:50 -0700 (PDT)
+X-Gm-Message-State: APjAAAUOhvcAhQUzMcpKEK6TLVTwszn9+7kCKavMIIIU7ra4y+c/RW1u
+        CEKz7A/Eans3K4ixiX1caSkGsov8uaO0swpVhHo=
+X-Google-Smtp-Source: APXvYqzXwpNJxPAL3xak/xnvOG1FGRThsufi0IBo8anhshmeGUb3O1ZZmDqs4cK2QAroVJNrjr7kw7opeFsKmiXQ9mA=
+X-Received: by 2002:a1f:a34c:: with SMTP id m73mr4593622vke.74.1563429888906;
+ Wed, 17 Jul 2019 23:04:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190718054851.GA18376@lst.de>
-In-Reply-To: <20190718054851.GA18376@lst.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 17 Jul 2019 23:03:49 -0700
-Message-ID: <CAPcyv4g=Hr4KOV1NbzPVRxSVL0TaaEPykG3GHwERjx1-SmUQog@mail.gmail.com>
-Subject: Re: RFC: move kernel/memremap.c to mm/
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>, Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190710051320.8738-1-yamada.masahiro@socionext.com>
+In-Reply-To: <20190710051320.8738-1-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 18 Jul 2019 15:04:13 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQFPLcVrF4PiirqTy3PjPh_BTWNMzdMiNFaen6g1ew+Mw@mail.gmail.com>
+Message-ID: <CAK7LNAQFPLcVrF4PiirqTy3PjPh_BTWNMzdMiNFaen6g1ew+Mw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: stm32: use "depends on" instead of "if" after prompt
+To:     arm-soc <arm@kernel.org>, Olof Johansson <olof@lixom.net>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     soc@kernel.org, Alexandre Torgue <alexandre.torgue@st.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 17, 2019 at 10:49 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> Hi Dan,
->
-> was there any really good reason to have memremap.c in kernel/ back
-> when you started it?  It seems to be pretty much tried into the mm
-> infrastructure, and I keep mistyping the path.  Would you mind a simple
-> git-mv patch after -rc1 to move it to mm/ ?
+Hi Olof,
 
-No complaints from me. It ended up there because it was originally
-just the common memremap implementation always built with
-CONFIG_HAS_IOMEM.
 
-Arguably we should have done this move right after commit 5981690ddb8f
-("memremap: split devm_memremap_pages() and memremap()
-infrastructure").
+
+On Wed, Jul 10, 2019 at 2:15 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> This appeared after the global fixups by commit e32465429490 ("ARM: use
+> "depends on" for SoC configs instead of "if" after prompt"). Fix it now.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+
+
+I think probably this is too late,
+but I am afraid you silently added a wrong Fixes tag.
+
+
+
+
+commit 7e8a0f10899075ac2665c78c4e49dbaf32bf3346
+Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed Jul 10 14:13:20 2019 +0900
+
+    ARM: stm32: use "depends on" instead of "if" after prompt
+
+    This appeared after the global fixups by commit e32465429490 ("ARM: use
+    "depends on" for SoC configs instead of "if" after prompt"). Fix it now.
+
+    Link: https://lore.kernel.org/r/20190710051320.8738-1-yamada.masahiro@socionext.com
+    Fixes: e32465429490 ("ARM: use "depends on" for SoC configs
+instead of "if" after prompt")
+    Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+    Signed-off-by: Olof Johansson <olof@lixom.net>
+
+
+
+
+
+Commit e32465429490 converted all instances at that time.
+This is absolutely fine.
+
+
+Later, in 2018, commit 3ed71f8ad98a added a new instance.
+
+So, if this Fixes is wanted, it should have been
+Fixes: 3ed71f8ad98a ("ARM: stm32: prepare stm32 family to welcome
+armv7 architecture")
+
+
+This would confuse the stable kernel maintainers.
+
+
+
+>  arch/arm/mach-stm32/Kconfig | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-stm32/Kconfig b/arch/arm/mach-stm32/Kconfig
+> index 05d6b5aada80..57699bd8f107 100644
+> --- a/arch/arm/mach-stm32/Kconfig
+> +++ b/arch/arm/mach-stm32/Kconfig
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  menuconfig ARCH_STM32
+> -       bool "STMicroelectronics STM32 family" if ARM_SINGLE_ARMV7M || ARCH_MULTI_V7
+> +       bool "STMicroelectronics STM32 family"
+> +       depends on ARM_SINGLE_ARMV7M || ARCH_MULTI_V7
+>         select ARMV7M_SYSTICK if ARM_SINGLE_ARMV7M
+>         select HAVE_ARM_ARCH_TIMER if ARCH_MULTI_V7
+>         select ARM_GIC if ARCH_MULTI_V7
+> --
+> 2.17.1
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
