@@ -2,112 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 587286C3E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 02:52:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FA116C3FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 03:01:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728531AbfGRAwD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 20:52:03 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:38011 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727557AbfGRAwD (ORCPT
+        id S1729380AbfGRBBX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 21:01:23 -0400
+Received: from twhmllg4.macronix.com ([122.147.135.202]:46726 "EHLO
+        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727658AbfGRBBX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 20:52:03 -0400
-Received: by mail-qt1-f194.google.com with SMTP id n11so25394914qtl.5
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 17:52:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=j18WraFuZIluoyKhD6u2cAa7N3YW50rIzRpqn3W/qyo=;
-        b=ku/dsPt2CV4/LzppNoofF/xj17vxxH4Am/eVLliH4v+oBKAhu8qbqE0cbl3nhyfvPf
-         DkMSVTBbDUgQEGkZo5l98rjFv6VF4YQW56xJgQdRcBG9J+17qo8Ujm0F8JJnt6WriJZk
-         IvZgWTxkCqYoassa2sZadLBXpl6m5N5rTPjitv9dggsP4vOVt+wDCib+XmlcUw5gStui
-         tntmFhONphfREnnnqs54XEHJ8MQvqqmfMZNjUCvH39ji/EYdNR36LX+KgAVXJmpv9WAh
-         Fsc5qNNUFkPcjOE7kurckOuVdoQhvVvjlmM4A7xL9FgCCsrM2jo84+OT0YU3nS1CfEdm
-         kNWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=j18WraFuZIluoyKhD6u2cAa7N3YW50rIzRpqn3W/qyo=;
-        b=ft1Z26xup+T8Z2tkLDchXI6gbAieZzYlPnfCKytkWpKR08qBTX0x691i/TF5hCam7d
-         cxhuJQdCn/R63hkkoPcz+CyG1IT5Srj23jdlrDYPcIw2Hhpe2IFFb9yvN8NlBn3EbB8G
-         3pgTjdmJGXD44KgccuJ/LScAM1PerzP5DxJQpsjHInjDHHkCtf0MH9tdxfchml2BWOij
-         uRziYyv4EV17J/js+3yvHnmBeJnlCxcKQvmIchKBkKzQW5TRgIaqz1rYsoBKBetfsSsr
-         PsLBb9He2rPVbTtc1KetTFEVhf9qZbpI0uSV+/41PP0JeOJnlAfv2m43U8NIUvpsUlA4
-         tFQw==
-X-Gm-Message-State: APjAAAUL5CicPZgDDwaUR3+m4TZlPbS7Z0ed15FSuPe4rqHFxDeO8wlV
-        FRsL3C3XyG2uRSTYoKIuFJD2pQEUO8w=
-X-Google-Smtp-Source: APXvYqzWnrReab7SToU+AaYtwoMN2X2d3/rvf+DPDu/2s3OV39Bc03HEeA4XHkRWKImbUBr89GOMNA==
-X-Received: by 2002:a0c:8705:: with SMTP id 5mr30105641qvh.32.1563411122629;
-        Wed, 17 Jul 2019 17:52:02 -0700 (PDT)
-Received: from localhost.localdomain (209-6-36-129.s6527.c3-0.smr-cbr2.sbo-smr.ma.cable.rcncustomer.com. [209.6.36.129])
-        by smtp.gmail.com with ESMTPSA id 123sm10593436qkm.61.2019.07.17.17.52.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Jul 2019 17:52:02 -0700 (PDT)
-Date:   Wed, 17 Jul 2019 20:52:00 -0400
-From:   Konrad Rzeszutek Wilk <konrad@kernel.org>
-To:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] (swiotlb) for-linus-5.2
-Message-ID: <20190718005159.GA19783@localhost.localdomain>
+        Wed, 17 Jul 2019 21:01:23 -0400
+Received: from twhfmnt1.mxic.com.tw (twhfm1p2.macronix.com [172.17.20.92])
+        by TWHMLLG4.macronix.com with ESMTP id x6I0xWSG038122;
+        Thu, 18 Jul 2019 08:59:32 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+Received: from MXML06C.mxic.com.tw (mxml06c.mxic.com.tw [172.17.14.55])
+        by Forcepoint Email with ESMTP id 3D60852754C570DA3E11;
+        Thu, 18 Jul 2019 08:59:32 +0800 (CST)
+In-Reply-To: <93e86083-7f8a-402d-db4b-26263719be25@cogentembedded.com>
+References: <1562138144-2212-1-git-send-email-masonccyang@mxic.com.tw> <1562138144-2212-3-git-send-email-masonccyang@mxic.com.tw> <93e86083-7f8a-402d-db4b-26263719be25@cogentembedded.com>
+To:     "Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>
+Cc:     anders.roxell@linaro.org, bbrezillon@kernel.org,
+        christophe.kerello@st.com, computersforpeace@gmail.com,
+        devicetree@vger.kernel.org, dwmw2@infradead.org,
+        juliensu@mxic.com.tw, lee.jones@linaro.org, liang.yang@amlogic.com,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        marek.vasut@gmail.com, mark.rutland@arm.com,
+        miquel.raynal@bootlin.com, paul@crapouillou.net,
+        paul.burton@mips.com, richard@nod.at, robh+dt@kernel.org,
+        stefan@agner.ch, vigneshr@ti.com
+Subject: Re: [PATCH v5 2/2] dt-bindings: mtd: Document Macronix raw NAND controller
+ bindings
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="FCuugMFkClbJLl1L"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-KeepSent: A58FF3D1:7CE1288C-4825843B:0005429C;
+ type=4; name=$KeepSent
+X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
+Message-ID: <OFA58FF3D1.7CE1288C-ON4825843B.0005429C-4825843B.00057367@mxic.com.tw>
+From:   masonccyang@mxic.com.tw
+Date:   Thu, 18 Jul 2019 08:59:32 +0800
+X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
+ 2019/07/18 AM 08:59:32,
+        Serialize complete at 2019/07/18 AM 08:59:32
+Content-Type: text/plain; charset="US-ASCII"
+X-MAIL: TWHMLLG4.macronix.com x6I0xWSG038122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---FCuugMFkClbJLl1L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Sergei,
+
+> > Document the bindings used by the Macronix raw NAND controller.
+> > 
+> > Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> > ---
+> >   Documentation/devicetree/bindings/mtd/mxic-nand.txt | 20 
+++++++++++++++++++++
+> >   1 file changed, 20 insertions(+)
+> >   create mode 100644 
+Documentation/devicetree/bindings/mtd/mxic-nand.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mtd/mxic-nand.txt b/
+> Documentation/devicetree/bindings/mtd/mxic-nand.txt
+> > new file mode 100644
+> > index 0000000..ddd7660
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mtd/mxic-nand.txt
+> > @@ -0,0 +1,20 @@
+> > +Macronix Raw NAND Controller Device Tree Bindings
+> > +-------------------------------------------------
+> > +
+> > +Required properties:
+> > +- compatible: should be "macronix,nand-controller"
+> > +- reg: should contain 1 entrie for the registers
+> > +- interrupts: interrupt line connected to this raw NAND controller
+> > +- clock-names: should contain "ps_clk", "send_clk" and "send_dly_clk"
+> > +- clocks: should contain 3 phandles for the "ps_clk", "send_clk" and
+> > +    "send_dly_clk" clocks
+> > +
+> > +Example:
+> > +
+> > +   nand: mxic-nfc@43c30000 {
+> 
+>     The node names should be generic, and the DT spec 0.2 (section 
+2.2.2) even 
+> has documented "nand-controller", please rename.
+
+okay, will fix it to
+
+nand: nand-controller@43c30000 {
+
+}
+
+> 
+> > +      compatible = "macronix,nand-controller";
+> > +      reg = <0x43c30000 0x10000>;
+> > +      reg-names = "regs";
+> > +      clocks = <&clkwizard 0>, <&clkwizard 1>, <&clkc 15>;
+> > +      clock-names = "send_clk", "send_dly_clk", "ps_clk";
+> > +   };
+> > 
+> 
+> MBR, Sergei
+
+thanks & best regards,
+Mason
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information 
+and/or personal data, which is protected by applicable laws. Please be 
+reminded that duplication, disclosure, distribution, or use of this e-mail 
+(and/or its attachments) or any part thereof is prohibited. If you receive 
+this e-mail in error, please notify us immediately and delete this mail as 
+well as its attachment(s) from your system. In addition, please be 
+informed that collection, processing, and/or use of personal data is 
+prohibited unless expressly permitted by personal data protection laws. 
+Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
 
 
-Hey Linus,
 
-Please git pull the following branch:
+============================================================================
 
-  git pull git://git.kernel.org/pub/scm/linux/kernel/git/konrad/swiotlb.git for-linus-5.2
+CONFIDENTIALITY NOTE:
 
-which has one compiler fix, and a bug-fix in swiotlb_nr_tbl() and swiotlb_max_segment()
-to check also for no_iotlb_memory.
+This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
 
-Diffstat and changelog below:
+Macronix International Co., Ltd.
 
-drivers/xen/swiotlb-xen.c |  2 +-
- kernel/dma/swiotlb.c      | 30 ++++++++++++++++--------------
- 2 files changed, 17 insertions(+), 15 deletions(-)
+=====================================================================
 
-
-Arnd Bergmann (1):
-      swiotlb: fix phys_addr_t overflow warning
-
-Florian Fainelli (2):
-      swiotlb: Group identical cleanup in swiotlb_cleanup()
-      swiotlb: Return consistent SWIOTLB segments/nr_tbl
-
-
---FCuugMFkClbJLl1L
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJdL8KvAAoJEFKlDoTx2wm/03YP/2FxnLFTxEAi1qFcD55yuC+v
-6yYRmot29jCMA84rWhxEFCnsCPamG++eF+mx9d9HJrMonBWsvtm6FV5cpcsh9B3G
-Yqun9DZWWsop97ZVn5XsLdmLo7UCIJnjc+Z10ca91pQaV14CrNvtU7ZiaGGaUTXo
-MJ3WLil+sD5P8GrMgnYENA74jcnbEimd37XDtap2AE7lKpcQL1ihTHptAUO0pHne
-kuyPnwtzJALa2RNdsouFY4MCuRlmOsL4tIAUEzQE/NT5SmHt47zmf0n6Kk/1i1Le
-k7a91/TPxjNWvagwZozBRc4zuVbZgS5xMuUlMjzQHrWaqXYrSTSILZ3ZVnCKmyPK
-e8dZJZXtmcRLsSBW6wfE0HYv8SQGVMDTWBCAWjefqXa6uqkfvBaPWpa9r7qtBUZf
-B0oAls9LzdDliavybRXJL23nyq7Zjvdauw19L9CCBCMjuAoriEOkg9nZc/13H/w2
-XUWqhAjW/64U7wEjVBKkVWtXptTEpEp7T112hgXYxm39/Uk5pZnte2WouQbI1AMo
-xRr9G7y2V6pcXApgeUaCTYQmR7m8speRAfnoCy6xIl7skUIdTR6tQasfN3HHKu+q
-kAZdGGEKf7rSDthUMOeDN+z17AmX9OqORaBsOdMslo4L4qEtusm001djJoWL9+1U
-Z2zSIe/jS6Q9EwfS4EaS
-=WIqP
------END PGP SIGNATURE-----
-
---FCuugMFkClbJLl1L--
