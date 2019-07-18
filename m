@@ -2,167 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4741D6C3BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 02:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E0866C3BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 02:08:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731255AbfGRACx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 20:02:53 -0400
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:48289 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728538AbfGRACx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 20:02:53 -0400
-Received: by mail-pl1-f202.google.com with SMTP id i33so12887955pld.15
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 17:02:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=L/78IskbmRc+SAnYRdHcj67j75qZnnMK6y2VOBnfvrk=;
-        b=S8Yba5KmalqdPks1VNH9Uyedt6+Y0i8sR5GaZllNlSzySnf0g7KcoIn18+QvPtf/WD
-         MM5Mg0oIBJuvXHnYUYYmRhp8YmbmiRc8jWCfu+WjoGaWtBjA7HVQcBvT9p8RTOVA2CHA
-         TrQMZkRmwvtTgWXBQP9clKU1DLLCKnxp8Wdb6CGLX+c9GN0KFiEX6dM5dDTUEfh1PhY/
-         mcJpXHhxb0jFOlv4MFKCbUnDNhzPhM9oqsPzNzcAwZX4aGB5Xz3Vym6xL34fBePCXP1e
-         6/Z0Ppls3PoFbzBk1QA6O924jzTypnc7pko3pScKOISaEdoQ1VhUb3HR6nqMZQ0/TikG
-         g/EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=L/78IskbmRc+SAnYRdHcj67j75qZnnMK6y2VOBnfvrk=;
-        b=nrNraLpSzdAo4/6A4ZvSEgJtSiGIIO0Oyahyl8rN/R5Mr75Iops+phjARJwt6ah16/
-         Ufyya/WcuTWbs7ZMMv0Sh9MnioHdk2OS24rQNEAHg8jAtLGDIb+kQKhCOSSIECMXnL6d
-         FepLnACZ/xerFQMy9hlvD0HRRvrMfh6/j3804OtU2EHoV7i1y/kVO1cF88eiRnQ9SN6N
-         Q0FcKRR9q6XHQ1gJaf6K1etNCsbqBaRfgkV6FA0V9VE6XcvgYmL0ezit1GEaCE0lYjAH
-         3QrwLYgfNn9Yauc0T/JjClzTko/jFz6h39wotALltTTiYWHea9x7dqgdwl0EixZA4Ycr
-         E9tA==
-X-Gm-Message-State: APjAAAV/hajZ7SFvYmns872N3d4oofFbxttdlP2B5FFwC7h9yJv108N+
-        Oz8xZ/tHdHinSGyLNkzhj4tqZdsnEshhUg98+tWJ9w==
-X-Google-Smtp-Source: APXvYqwVE0HkM/l3O7QFSf8aW9eANsYMwJv8OSxTZYlAHNH9xFe7SxqEaIpQv935uuZ5aOz9IdAbsGGTjA1FKAfLQdzgfQ==
-X-Received: by 2002:a63:714a:: with SMTP id b10mr9682287pgn.25.1563408172263;
- Wed, 17 Jul 2019 17:02:52 -0700 (PDT)
-Date:   Wed, 17 Jul 2019 17:02:06 -0700
-In-Reply-To: <20190718000206.121392-1-vaibhavrustagi@google.com>
-Message-Id: <20190718000206.121392-3-vaibhavrustagi@google.com>
-Mime-Version: 1.0
-References: <20190718000206.121392-1-vaibhavrustagi@google.com>
-X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-Subject: [PATCH 2/2] x86/purgatory: do not use __builtin_memcpy and __builtin_memset.
-From:   Vaibhav Rustagi <vaibhavrustagi@google.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Vaibhav Rustagi <vaibhavrustagi@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        stable@vger.kernel.org, Manoj Gupta <manojgupta@google.com>,
-        Alistair Delva <adelva@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728644AbfGRAIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 20:08:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49706 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728068AbfGRAIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 20:08:45 -0400
+Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BFA620873;
+        Thu, 18 Jul 2019 00:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563408524;
+        bh=1FFEoza9+5oT6pKKCXm7RkOmgECLKITXvUuSVaUAhPs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QKIPG+L38/WFupSp2hHZBakgJUjChj1CZCpQiEJB+frzR6l+M9NKAMbOK5kCYyHfD
+         w96kErKeUPW9Pzn5LJJPFBGeI5YOMEgYAJCZ9x1Mwd+nEQtCW70ylaceo/GiNVWk94
+         rDiPxz2tIh7djPRLMC8GaWWt02FojxcHFppLS4Fw=
+Date:   Thu, 18 Jul 2019 02:08:42 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Thomas Lindroth <thomas.lindroth@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] cpuidle: Always stop scheduler tick on adaptive-tick CPUs
+Message-ID: <20190718000841.GA28715@lenoir>
+References: <6254683.2O5gIZElE2@kreacher>
+ <20190716214024.GA8345@lenoir>
+ <CAJZ5v0gB0AHTebjpp87YKA1wmE+tCw5V=eaRE2XDM3nyQYndnA@mail.gmail.com>
+ <20190717132115.GB8345@lenoir>
+ <CAJZ5v0icfumJc7E4+LgWpi3+UNpTsH4usAJOg4FEeCBptYYzUQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0icfumJc7E4+LgWpi3+UNpTsH4usAJOg4FEeCBptYYzUQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Desaulniers <ndesaulniers@google.com>
+On Thu, Jul 18, 2019 at 12:27:09AM +0200, Rafael J. Wysocki wrote:
+> On Wed, Jul 17, 2019 at 3:21 PM Frederic Weisbecker <frederic@kernel.org> wrote:
+> >
+> > On Wed, Jul 17, 2019 at 09:55:08AM +0200, Rafael J. Wysocki wrote:
+> > Well I think we disagree on that assumption that if a nohz_full CPU is put
+> > idle, it will remain there indefinitely. Nohz_full CPUs aren't really special
+> > in this regard, they can sleep on an IO, wait for a short event just like
+> > any other CPU.
+> 
+> Fair enough.
+> 
+> This means that the governor (or rather governors) will need to be
+> modified to address the issue reported by Thomas.
+> 
+> Fortunately, I have a patch going in that direction too. :-)
 
-Implementing memcpy and memset in terms of __builtin_memcpy and
-__builtin_memset is problematic.
-
-GCC at -O2 will replace calls to the builtins with calls to memcpy and
-memset (but will generate an inline implementation at -Os).  Clang will
-replace the builtins with these calls regardless of optimization level.
-
-$ llvm-objdump -dr arch/x86/purgatory/string.o | tail
-
-0000000000000339 memcpy:
-     339: 48 b8 00 00 00 00 00 00 00 00 movabsq $0, %rax
-                000000000000033b:  R_X86_64_64  memcpy
-     343: ff e0                         jmpq    *%rax
-
-0000000000000345 memset:
-     345: 48 b8 00 00 00 00 00 00 00 00 movabsq $0, %rax
-                0000000000000347:  R_X86_64_64  memset
-     34f: ff e0
-
-Such code results in infinite recursion at runtime. This is observed
-when doing kexec.
-
-Instead, reuse an implementation from arch/x86/boot/compressed/string.c
-if we define warn as a symbol.
-
-Link: https://bugs.chromium.org/p/chromium/issues/detail?id=984056
-Reported-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
-Tested-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
-Debugged-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
-Debugged-by: Manoj Gupta <manojgupta@google.com>
-Suggested-by: Alistair Delva <adelva@google.com>
-Signed-off-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
----
- arch/x86/purgatory/Makefile    |  3 +++
- arch/x86/purgatory/purgatory.c |  6 ++++++
- arch/x86/purgatory/string.c    | 23 -----------------------
- 3 files changed, 9 insertions(+), 23 deletions(-)
- delete mode 100644 arch/x86/purgatory/string.c
-
-diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-index 3589ec4a28c7..84b8314ddb2d 100644
---- a/arch/x86/purgatory/Makefile
-+++ b/arch/x86/purgatory/Makefile
-@@ -6,6 +6,9 @@ purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o string
- targets += $(purgatory-y)
- PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
- 
-+$(obj)/string.o: $(srctree)/arch/x86/boot/compressed/string.c FORCE
-+	$(call if_changed_rule,cc_o_c)
-+
- $(obj)/sha256.o: $(srctree)/lib/sha256.c FORCE
- 	$(call if_changed_rule,cc_o_c)
- 
-diff --git a/arch/x86/purgatory/purgatory.c b/arch/x86/purgatory/purgatory.c
-index 6d8d5a34c377..b607bda786f6 100644
---- a/arch/x86/purgatory/purgatory.c
-+++ b/arch/x86/purgatory/purgatory.c
-@@ -68,3 +68,9 @@ void purgatory(void)
- 	}
- 	copy_backup_region();
- }
-+
-+/*
-+ * Defined in order to reuse memcpy() and memset() from
-+ * arch/x86/boot/compressed/string.c
-+ */
-+void warn(const char *msg) {}
-diff --git a/arch/x86/purgatory/string.c b/arch/x86/purgatory/string.c
-deleted file mode 100644
-index 01ad43873ad9..000000000000
---- a/arch/x86/purgatory/string.c
-+++ /dev/null
-@@ -1,23 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * Simple string functions.
-- *
-- * Copyright (C) 2014 Red Hat Inc.
-- *
-- * Author:
-- *       Vivek Goyal <vgoyal@redhat.com>
-- */
--
--#include <linux/types.h>
--
--#include "../boot/string.c"
--
--void *memcpy(void *dst, const void *src, size_t len)
--{
--	return __builtin_memcpy(dst, src, len);
--}
--
--void *memset(void *dst, int c, size_t len)
--{
--	return __builtin_memset(dst, c, len);
--}
--- 
-2.22.0.510.g264f2c817a-goog
-
+Good to hear, please also Cc me on that one, thanks!
