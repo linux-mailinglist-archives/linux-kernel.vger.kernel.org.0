@@ -2,113 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7675A6D539
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 21:47:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C74506D553
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 21:47:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404148AbfGRTpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 15:45:34 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:64556 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404101AbfGRTp3 (ORCPT
+        id S2391461AbfGRTqd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 15:46:33 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49275 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403799AbfGRTqb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 15:45:29 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6IJi7IK092753;
-        Thu, 18 Jul 2019 15:44:58 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ttxs8rye1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 Jul 2019 15:44:58 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x6IJinwF099302;
-        Thu, 18 Jul 2019 15:44:57 -0400
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ttxs8ryc6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 Jul 2019 15:44:57 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x6IJhquN009613;
-        Thu, 18 Jul 2019 19:44:56 GMT
-Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
-        by ppma04dal.us.ibm.com with ESMTP id 2trtmrj0u3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 Jul 2019 19:44:56 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6IJis3C60424544
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Jul 2019 19:44:54 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 76B66BE056;
-        Thu, 18 Jul 2019 19:44:54 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B1210BE051;
-        Thu, 18 Jul 2019 19:44:49 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.186.82])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Thu, 18 Jul 2019 19:44:49 +0000 (GMT)
-References: <20190718032858.28744-1-bauerman@linux.ibm.com> <680bb92e-66eb-8959-88a5-3447a6a282c8@amd.com>
-User-agent: mu4e 1.2.0; emacs 26.2
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     "Lendacky\, Thomas" <Thomas.Lendacky@amd.com>
-Cc:     "x86\@kernel.org" <x86@kernel.org>,
-        "iommu\@lists.linux-foundation.org" 
-        <iommu@lists.linux-foundation.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linuxppc-dev\@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390\@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>
-Subject: Re: [PATCH v3 0/6] Remove x86-specific code from generic headers
-In-reply-to: <680bb92e-66eb-8959-88a5-3447a6a282c8@amd.com>
-Date:   Thu, 18 Jul 2019 16:44:47 -0300
-Message-ID: <87a7db3z68.fsf@morokweng.localdomain>
+        Thu, 18 Jul 2019 15:46:31 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6IJkJud2136460
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 18 Jul 2019 12:46:19 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6IJkJud2136460
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1563479179;
+        bh=WLy4ldt2VHH4CIY/WRDo7mCruY1+viqvfyUQpu1rzjI=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=BRg5Fs3f0LIQr0V0/niFCYhs0dTjKD0lECzShAqvymHF9OjKldI18Fm380OJur8fz
+         leS93rTp9MNZIhtKjr16wO+JBsgqN5ms7vC+g9bsaQmTxHsFFeoBMpf83YRbOZVI8/
+         YL8xpoCaNHE+kPCEl6ASC3WlYW68asRAxzWMbg6fjHMeqXEH1WWkhPUkEIPCJof8DD
+         NUlczFXhFX6IoIlspaZKmWdlFdsVoR6Zf6eiBNXIKdD6/ME5f2jRAoI3w7P6ETbH32
+         RXRv1EJ2AbDCkBzxDircpA7UJ1xs4mwnvhUoUmt7Ogzhq6YLwViLiwX0npY/a+8jrO
+         mj3reBqRobI/A==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6IJkIH82136453;
+        Thu, 18 Jul 2019 12:46:18 -0700
+Date:   Thu, 18 Jul 2019 12:46:18 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Zhenzhong Duan <tipbot@zytor.com>
+Message-ID: <tip-cd6697b8b8751b65abd7859af55cf06f36b8e716@git.kernel.org>
+Cc:     zhenzhong.duan@oracle.com, tglx@linutronix.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org
+Reply-To: tglx@linutronix.de, zhenzhong.duan@oracle.com, mingo@kernel.org,
+          hpa@zytor.com, linux-kernel@vger.kernel.org
+In-Reply-To: <1563282957-26898-1-git-send-email-zhenzhong.duan@oracle.com>
+References: <1563282957-26898-1-git-send-email-zhenzhong.duan@oracle.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/boot/efi: Remove unused variables
+Git-Commit-ID: cd6697b8b8751b65abd7859af55cf06f36b8e716
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-18_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907180202
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_48_96,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  cd6697b8b8751b65abd7859af55cf06f36b8e716
+Gitweb:     https://git.kernel.org/tip/cd6697b8b8751b65abd7859af55cf06f36b8e716
+Author:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+AuthorDate: Tue, 16 Jul 2019 21:15:57 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 18 Jul 2019 21:41:57 +0200
 
-Lendacky, Thomas <Thomas.Lendacky@amd.com> writes:
+x86/boot/efi: Remove unused variables
 
-> On 7/17/19 10:28 PM, Thiago Jung Bauermann wrote:
->> Hello,
->> 
->> This version is mostly about splitting up patch 2/3 into three separate
->> patches, as suggested by Christoph Hellwig. Two other changes are a fix in
->> patch 1 which wasn't selecting ARCH_HAS_MEM_ENCRYPT for s390 spotted by
->> Janani and removal of sme_active and sev_active symbol exports as suggested
->> by Christoph Hellwig.
->> 
->> These patches are applied on top of today's dma-mapping/for-next.
->> 
->> I don't have a way to test SME, SEV, nor s390's PEF so the patches have only
->> been build tested.
->
-> I'll try and get this tested quickly to be sure everything works for SME
-> and SEV.
+Fix gcc warnings:
 
-Thanks! And thanks for reviewing the patches.
+arch/x86/boot/compressed/eboot.c: In function 'make_boot_params':
+arch/x86/boot/compressed/eboot.c:394:6: warning: unused variable 'i' [-Wunused-variable]
+  int i;
+      ^
+arch/x86/boot/compressed/eboot.c:393:6: warning: unused variable 's1' [-Wunused-variable]
+  u8 *s1;
+      ^
+arch/x86/boot/compressed/eboot.c:392:7: warning: unused variable 's2' [-Wunused-variable]
+  u16 *s2;
+       ^
+arch/x86/boot/compressed/eboot.c:387:8: warning: unused variable 'options' [-Wunused-variable]
+  void *options, *handle;
+        ^
+arch/x86/boot/compressed/eboot.c: In function 'add_e820ext':
+arch/x86/boot/compressed/eboot.c:498:16: warning: unused variable 'size' [-Wunused-variable]
+  unsigned long size;
+                ^
+arch/x86/boot/compressed/eboot.c:497:15: warning: unused variable 'status' [-Wunused-variable]
+  efi_status_t status;
+               ^
+arch/x86/boot/compressed/eboot.c: In function 'exit_boot_func':
+arch/x86/boot/compressed/eboot.c:681:15: warning: unused variable 'status' [-Wunused-variable]
+  efi_status_t status;
+               ^
+arch/x86/boot/compressed/eboot.c:680:8: warning: unused variable 'nr_desc' [-Wunused-variable]
+  __u32 nr_desc;
+        ^
+arch/x86/boot/compressed/eboot.c: In function 'efi_main':
+arch/x86/boot/compressed/eboot.c:750:22: warning: unused variable 'image' [-Wunused-variable]
+  efi_loaded_image_t *image;
+                      ^
 
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/1563282957-26898-1-git-send-email-zhenzhong.duan@oracle.com
+
+---
+ arch/x86/boot/compressed/eboot.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
+index 220d1279d0e2..d6662fdef300 100644
+--- a/arch/x86/boot/compressed/eboot.c
++++ b/arch/x86/boot/compressed/eboot.c
+@@ -384,14 +384,11 @@ struct boot_params *make_boot_params(struct efi_config *c)
+ 	struct apm_bios_info *bi;
+ 	struct setup_header *hdr;
+ 	efi_loaded_image_t *image;
+-	void *options, *handle;
++	void *handle;
+ 	efi_guid_t proto = LOADED_IMAGE_PROTOCOL_GUID;
+ 	int options_size = 0;
+ 	efi_status_t status;
+ 	char *cmdline_ptr;
+-	u16 *s2;
+-	u8 *s1;
+-	int i;
+ 	unsigned long ramdisk_addr;
+ 	unsigned long ramdisk_size;
+ 
+@@ -494,8 +491,6 @@ static void add_e820ext(struct boot_params *params,
+ 			struct setup_data *e820ext, u32 nr_entries)
+ {
+ 	struct setup_data *data;
+-	efi_status_t status;
+-	unsigned long size;
+ 
+ 	e820ext->type = SETUP_E820_EXT;
+ 	e820ext->len  = nr_entries * sizeof(struct boot_e820_entry);
+@@ -677,8 +672,6 @@ static efi_status_t exit_boot_func(efi_system_table_t *sys_table_arg,
+ 				   void *priv)
+ {
+ 	const char *signature;
+-	__u32 nr_desc;
+-	efi_status_t status;
+ 	struct exit_boot_struct *p = priv;
+ 
+ 	signature = efi_is_64bit() ? EFI64_LOADER_SIGNATURE
+@@ -747,7 +740,6 @@ struct boot_params *
+ efi_main(struct efi_config *c, struct boot_params *boot_params)
+ {
+ 	struct desc_ptr *gdt = NULL;
+-	efi_loaded_image_t *image;
+ 	struct setup_header *hdr = &boot_params->hdr;
+ 	efi_status_t status;
+ 	struct desc_struct *desc;
