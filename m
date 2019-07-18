@@ -2,40 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D0776C537
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:07:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAAFD6C553
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:07:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389546AbfGRDD4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:03:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34676 "EHLO mail.kernel.org"
+        id S2389841AbfGRDE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:04:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727653AbfGRDDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:03:54 -0400
+        id S2389830AbfGRDE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:04:57 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4F792186A;
-        Thu, 18 Jul 2019 03:03:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F28F92053B;
+        Thu, 18 Jul 2019 03:04:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419034;
-        bh=j7bKrUiJ1J8VvFUWebgH2PV8DNtZU+Owk1782925xmE=;
+        s=default; t=1563419096;
+        bh=1M5uP+m8cuTDZeta1c/3TZC1egzglcR2qlnV2iaMkKY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iRGUeGjWQPZpuq6thsfsO/caYrZMEgTsi9VHeWFV/A31H+e8XjfhnyGyMBH0MNPsu
-         LfMepvrgMq+VPq582ZoSqahpZ6DDnFktVofsiQHRWrWL/xc3QcQfd9gASPhUhGNQWK
-         La3cCBRs+hJkB2NQ7nKDnWhDg2LaK60GvkaxkCkk=
+        b=n6rU6dGKSXoqvnfIcloEihcRJTlwcNCSlF9GaLjnbxWSVGq43FgNKcHWzsYnHc8Ji
+         pd7Vf3mZO4DM1TBDr27+QGqdobMVgzypBpFUAI8R3dRGqEUAhI+ySziZQkrJc/iUoU
+         xllD+mO5aBDSzmv7kYnNqSXXH7ip+CtM0jGFpL9o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        Joseph Yasi <joe.yasi@gmail.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Oleksandr Natalenko <oleksandr@redhat.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: [PATCH 5.1 02/54] e1000e: start network tx queue only when link is up
-Date:   Thu, 18 Jul 2019 12:00:57 +0900
-Message-Id: <20190718030053.529204238@linuxfoundation.org>
+        stable@vger.kernel.org, Cole Rogers <colerogers@disroot.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 5.1 03/54] Input: synaptics - enable SMBUS on T480 thinkpad trackpad
+Date:   Thu, 18 Jul 2019 12:00:58 +0900
+Message-Id: <20190718030053.613001211@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190718030053.287374640@linuxfoundation.org>
 References: <20190718030053.287374640@linuxfoundation.org>
@@ -48,74 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Cole Rogers <colerogers@disroot.org>
 
-commit d17ba0f616a08f597d9348c372d89b8c0405ccf3 upstream.
+commit abbe3acd7d72ab4633ade6bd24e8306b67e0add3 upstream.
 
-Driver does not want to keep packets in Tx queue when link is lost.
-But present code only reset NIC to flush them, but does not prevent
-queuing new packets. Moreover reset sequence itself could generate
-new packets via netconsole and NIC falls into endless reset loop.
+Thinkpad t480 laptops had some touchpad features disabled, resulting in the
+loss of pinch to activities in GNOME, on wayland, and other touch gestures
+being slower. This patch adds the touchpad of the t480 to the smbus_pnp_ids
+whitelist to enable the extra features. In my testing this does not break
+suspend (on fedora, with wayland, and GNOME, using the rc-6 kernel), while
+also fixing the feature on a T480.
 
-This patch wakes Tx queue only when NIC is ready to send packets.
-
-This is proper fix for problem addressed by commit 0f9e980bf5ee
-("e1000e: fix cyclic resets at link up with active tx").
-
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Suggested-by: Alexander Duyck <alexander.duyck@gmail.com>
-Tested-by: Joseph Yasi <joe.yasi@gmail.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Tested-by: Oleksandr Natalenko <oleksandr@redhat.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Cole Rogers <colerogers@disroot.org>
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/intel/e1000e/netdev.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/input/mouse/synaptics.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -4209,7 +4209,7 @@ void e1000e_up(struct e1000_adapter *ada
- 		e1000_configure_msix(adapter);
- 	e1000_irq_enable(adapter);
- 
--	netif_start_queue(adapter->netdev);
-+	/* Tx queue started by watchdog timer when link is up */
- 
- 	e1000e_trigger_lsc(adapter);
- }
-@@ -4607,6 +4607,7 @@ int e1000e_open(struct net_device *netde
- 	pm_runtime_get_sync(&pdev->dev);
- 
- 	netif_carrier_off(netdev);
-+	netif_stop_queue(netdev);
- 
- 	/* allocate transmit descriptors */
- 	err = e1000e_setup_tx_resources(adapter->tx_ring);
-@@ -4667,7 +4668,6 @@ int e1000e_open(struct net_device *netde
- 	e1000_irq_enable(adapter);
- 
- 	adapter->tx_hang_recheck = false;
--	netif_start_queue(netdev);
- 
- 	hw->mac.get_link_status = true;
- 	pm_runtime_put(&pdev->dev);
-@@ -5289,6 +5289,7 @@ static void e1000_watchdog_task(struct w
- 			if (phy->ops.cfg_on_link_up)
- 				phy->ops.cfg_on_link_up(hw);
- 
-+			netif_wake_queue(netdev);
- 			netif_carrier_on(netdev);
- 
- 			if (!test_bit(__E1000_DOWN, &adapter->state))
-@@ -5302,6 +5303,7 @@ static void e1000_watchdog_task(struct w
- 			/* Link status message must follow this format */
- 			pr_info("%s NIC Link is Down\n", adapter->netdev->name);
- 			netif_carrier_off(netdev);
-+			netif_stop_queue(netdev);
- 			if (!test_bit(__E1000_DOWN, &adapter->state))
- 				mod_timer(&adapter->phy_info_timer,
- 					  round_jiffies(jiffies + 2 * HZ));
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -176,6 +176,7 @@ static const char * const smbus_pnp_ids[
+ 	"LEN0072", /* X1 Carbon Gen 5 (2017) - Elan/ALPS trackpoint */
+ 	"LEN0073", /* X1 Carbon G5 (Elantech) */
+ 	"LEN0092", /* X1 Carbon 6 */
++	"LEN0093", /* T480 */
+ 	"LEN0096", /* X280 */
+ 	"LEN0097", /* X280 -> ALPS trackpoint */
+ 	"LEN200f", /* T450s */
 
 
