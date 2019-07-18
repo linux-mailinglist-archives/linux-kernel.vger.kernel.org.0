@@ -2,143 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ECC76CC37
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADC8B6CC22
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:45:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389957AbfGRJqU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 05:46:20 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:6948 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389610AbfGRJqT (ORCPT
+        id S2389622AbfGRJpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 05:45:35 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:7436 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbfGRJpf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 05:46:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1563443177; x=1594979177;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=m8T24ULFIcp9nPhaWsCGBuEwHGRjhFj53gyA6Z9iYKc=;
-  b=PxcPkjmK3ySpId1/0cREEM6UoqJ3FVjTbrig0FyE+xVZwziTDMt1GXvE
-   0IZ5lGpJyv2dZ88+Rbwe1vZlk+4gUPxIPd7xD4knvTEE1LtInTtyBJrMq
-   MFGSfpb4c70BdWg+kFnjRrDr3L4Gf6x7rgwRagqFkFso4Uco8lnV1a8s8
-   Q=;
-X-IronPort-AV: E=Sophos;i="5.64,276,1559520000"; 
-   d="scan'208";a="411235407"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-62350142.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 18 Jul 2019 09:46:17 +0000
-Received: from EX13MTAUWA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1e-62350142.us-east-1.amazon.com (Postfix) with ESMTPS id 2FE65A2644;
-        Thu, 18 Jul 2019 09:46:13 +0000 (UTC)
-Received: from EX13D13UWA001.ant.amazon.com (10.43.160.136) by
- EX13MTAUWA001.ant.amazon.com (10.43.160.118) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 18 Jul 2019 09:46:13 +0000
-Received: from u9ff250417f405e.ant.amazon.com (10.43.162.67) by
- EX13D13UWA001.ant.amazon.com (10.43.160.136) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 18 Jul 2019 09:46:06 +0000
-From:   Jonathan Chocron <jonnyc@amazon.com>
-To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <dwmw@amazon.co.uk>, <benh@kernel.crashing.org>,
-        <alisaidi@amazon.com>, <ronenk@amazon.com>, <barakw@amazon.com>,
-        <talel@amazon.com>, <hanochu@amazon.com>, <hhhawa@amazon.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <jonnyc@amazon.com>
-Subject: [PATCH v2 4/8] PCI: Add quirk to disable MSI-X support for Amazon's Annapurna Labs Root Port
-Date:   Thu, 18 Jul 2019 12:45:27 +0300
-Message-ID: <20190718094531.21423-5-jonnyc@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190718094531.21423-1-jonnyc@amazon.com>
-References: <20190718094531.21423-1-jonnyc@amazon.com>
+        Thu, 18 Jul 2019 05:45:35 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d303fbc0000>; Thu, 18 Jul 2019 02:45:32 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 18 Jul 2019 02:45:34 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 18 Jul 2019 02:45:34 -0700
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 18 Jul
+ 2019 09:45:32 +0000
+Subject: Re: [PATCH v1] soc/tegra: pmc: Query PCLK clock rate at probe time
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190707230843.11224-1-digetx@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <c9bd6dd3-7a03-6e2c-db9f-fefa059a428f@nvidia.com>
+Date:   Thu, 18 Jul 2019 10:45:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.162.67]
-X-ClientProxiedBy: EX13P01UWA004.ant.amazon.com (10.43.160.127) To
- EX13D13UWA001.ant.amazon.com (10.43.160.136)
+In-Reply-To: <20190707230843.11224-1-digetx@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1563443132; bh=u8c0NlynrGVUWsDz/CzhhNNqyF1INsuspIBnpJ+/lfM=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=FqQjLLrUQDHOoHPei66yOGo/ApxHwTZYRLuLLCBYe2NpwB41A6HqrYEwTAjykjaDN
+         CzPZDIz/LbBfnHKgF97S6ooUw9OJvot5vtle6+d1BXkTFIR+6ZEGex4uCW/e3GBhFn
+         RXxyzr43f7zwAsukSwJiUAz/cvgDlHXrf4ymfWM1H5ls9hEnajUQSUmfVARmklfdQe
+         2jgko4hiAppZQwDqt2iSnqQJza+iU/IF5lsPakDy/rSWGTBMOQVUSq2vE4QW9tCn4x
+         xTb4pY/pyWWLvjAGsPS6rnmGY5vBRpCrZT0A8Rmq7XmUsjt5K46gpqi5d9VTlzaeX1
+         Vx+otw0CWkyAA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Root Port (identified by [1c36:0032]) doesn't support MSI-X. On some
-platforms it is configured to not advertise the capability at all, while
-on others it (mistakenly) does. This causes a panic during
-initialization by the pcieport driver, since it tries to configure the
-MSI-X capability. Specifically, when trying to access the MSI-X table
-a "non-existing addr" exception occurs.
 
-Example stacktrace snippet:
+On 08/07/2019 00:08, Dmitry Osipenko wrote:
+> The PCLK clock is running off SCLK, which is a critical clock that is
+> very unlikely to randomly change its rate. It's also a bit clumsy (and
+> apparently incorrect) to query the clock's rate with interrupts being
+> disabled because clk_get_rate() takes a mutex and that's the case during
+> suspend/cpuidle entering. Lastly, it's better to always fully reprogram
+> PMC state because it's not obvious whether it could be changed after SC7.
 
-[    1.632363] SError Interrupt on CPU2, code 0xbf000000 -- SError
-[    1.632364] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.2.0-rc1-Jonny-14847-ge76f1d4a1828-dirty #33
-[    1.632365] Hardware name: Annapurna Labs Alpine V3 EVP (DT)
-[    1.632365] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[    1.632366] pc : __pci_enable_msix_range+0x4e4/0x608
-[    1.632367] lr : __pci_enable_msix_range+0x498/0x608
-[    1.632367] sp : ffffff80117db700
-[    1.632368] x29: ffffff80117db700 x28: 0000000000000001
-[    1.632370] x27: 0000000000000001 x26: 0000000000000000
-[    1.632372] x25: ffffffd3e9d8c0b0 x24: 0000000000000000
-[    1.632373] x23: 0000000000000000 x22: 0000000000000000
-[    1.632375] x21: 0000000000000001 x20: 0000000000000000
-[    1.632376] x19: ffffffd3e9d8c000 x18: ffffffffffffffff
-[    1.632378] x17: 0000000000000000 x16: 0000000000000000
-[    1.632379] x15: ffffff80116496c8 x14: ffffffd3e9844503
-[    1.632380] x13: ffffffd3e9844502 x12: 0000000000000038
-[    1.632382] x11: ffffffffffffff00 x10: 0000000000000040
-[    1.632384] x9 : ffffff801165e270 x8 : ffffff801165e268
-[    1.632385] x7 : 0000000000000002 x6 : 00000000000000b2
-[    1.632387] x5 : ffffffd3e9d8c2c0 x4 : 0000000000000000
-[    1.632388] x3 : 0000000000000000 x2 : 0000000000000000
-[    1.632390] x1 : 0000000000000000 x0 : ffffffd3e9844680
-[    1.632392] Kernel panic - not syncing: Asynchronous SError Interrupt
-[    1.632393] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.2.0-rc1-Jonny-14847-ge76f1d4a1828-dirty #33
-[    1.632394] Hardware name: Annapurna Labs Alpine V3 EVP (DT)
-[    1.632394] Call trace:
-[    1.632395]  dump_backtrace+0x0/0x140
-[    1.632395]  show_stack+0x14/0x20
-[    1.632396]  dump_stack+0xa8/0xcc
-[    1.632396]  panic+0x140/0x334
-[    1.632397]  nmi_panic+0x6c/0x70
-[    1.632398]  arm64_serror_panic+0x74/0x88
-[    1.632398]  __pte_error+0x0/0x28
-[    1.632399]  el1_error+0x84/0xf8
-[    1.632400]  __pci_enable_msix_range+0x4e4/0x608
-[    1.632400]  pci_alloc_irq_vectors_affinity+0xdc/0x150
-[    1.632401]  pcie_port_device_register+0x2b8/0x4e0
-[    1.632402]  pcie_portdrv_probe+0x34/0xf0
+I agree with the first part, but I would drop the last sentence because
+I see no evidence of this. Maybe Peter can confirm.
 
-Signed-off-by: Jonathan Chocron <jonnyc@amazon.com>
----
- drivers/pci/quirks.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 26 +++++++++++---------------
+>  1 file changed, 11 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 9f9c1c677cf4..532e0ada012b 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -1433,6 +1433,7 @@ void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode)
+>  void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+>  {
+>  	unsigned long long rate = 0;
+> +	u64 ticks;
+>  	u32 value;
+>  
+>  	switch (mode) {
+> @@ -1441,7 +1442,7 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+>  		break;
+>  
+>  	case TEGRA_SUSPEND_LP2:
+> -		rate = clk_get_rate(pmc->clk);
+> +		rate = pmc->rate;
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 23672680dba7..11f843aa96b3 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -2925,6 +2925,21 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ATTANSIC, 0x10a1,
- 			quirk_msi_intx_disable_qca_bug);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ATTANSIC, 0xe091,
- 			quirk_msi_intx_disable_qca_bug);
-+
-+/*
-+ * Amazon's Annapurna Labs 1c36:0031 Root Ports don't support MSI-X, so it
-+ * should be disabled on platforms where the device (mistakenly) advertises it.
-+ *
-+ * The 0031 device id is reused for other non Root Port device types,
-+ * therefore the quirk is registered for the PCI_CLASS_BRIDGE_PCI class.
-+ */
-+static void quirk_al_msi_disable(struct pci_dev *dev)
-+{
-+	dev->no_msi = 1;
-+	pci_warn(dev, "Disabling MSI-X\n");
-+}
-+DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_AMAZON_ANNAPURNA_LABS, 0x0031,
-+			      PCI_CLASS_BRIDGE_PCI, 8, quirk_al_msi_disable);
- #endif /* CONFIG_PCI_MSI */
- 
- /*
+There is another call to clk_get_rate() that could be removed as well.
+
+>  		break;
+>  
+>  	default:
+> @@ -1451,26 +1452,20 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+>  	if (WARN_ON_ONCE(rate == 0))
+>  		rate = 100000000;
+>  
+> -	if (rate != pmc->rate) {
+> -		u64 ticks;
+> -
+> -		ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
+> -		do_div(ticks, USEC_PER_SEC);
+> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
+> -
+> -		ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
+> -		do_div(ticks, USEC_PER_SEC);
+> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
+> +	ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
+> +	do_div(ticks, USEC_PER_SEC);
+> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
+
+You could go a step further and update the cpu_good_time/cpu_off_time to
+be ticks and calculated once during probe and recalculated if
+tegra_pmc_set_suspend_mode is called. I am not sure why we really need
+to pass mode to tegra_pmc_enter_suspend_mode() seeing as the mode is
+stored in the pmc struct.
+
+>  
+> -		wmb();
+> -
+> -		pmc->rate = rate;
+> -	}
+> +	ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
+> +	do_div(ticks, USEC_PER_SEC);
+> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
+>  
+>  	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+>  	value &= ~PMC_CNTRL_SIDE_EFFECT_LP0;
+>  	value |= PMC_CNTRL_CPU_PWRREQ_OE;
+>  	tegra_pmc_writel(pmc, value, PMC_CNTRL);
+> +
+> +	wmb();
+>  }
+>  #endif
+>  
+> @@ -2082,6 +2077,7 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+>  		pmc->clk = NULL;
+>  	}
+>  
+> +	pmc->rate = clk_get_rate(pmc->clk);
+
+You should check the value returned is not 0 here.
+
+Cheers
+Jon
+
 -- 
-2.17.1
-
+nvpublic
