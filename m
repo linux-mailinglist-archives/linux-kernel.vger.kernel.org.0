@@ -2,93 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 775BF6CD9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 13:44:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADC8D6CDA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 13:45:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390337AbfGRLoJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 07:44:09 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43592 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389994AbfGRLoJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 07:44:09 -0400
-Received: by mail-pf1-f194.google.com with SMTP id i189so12507554pfg.10;
-        Thu, 18 Jul 2019 04:44:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:date:message-id:in-reply-to:references:subject;
-        bh=DeKDZOFHUlI3nMz/EaT1o5xWxfybZf2zd27CHn8oOdg=;
-        b=r+zSM5opOHjy7dH4d7v0u+BRJBKTy02dx42DCYFCSSgH5tsJvbfd/kPkhrAfVOLScA
-         YfBoN6vWyD1zEBAobw/aSdJX6ulvvpLC1aBNxZn0uvt8eGc8Vb8OC90ekh4DX/iOYKIw
-         +H/nrgue0rfam/MkX1gLpzub/79AepLYPWrr9oDTNFEKu07KQG5g45aRcB8nBfUvnYBQ
-         iPE6PR9DkS7hQ3uqDJdTwzRsdNcGS6SUabUDUgHv91VCXIigIxnNeG+QMsBzs2ZcSMiM
-         YeT2Zv9Ozqukq7Wxagdfgs3wXc6ixzvXjlgHG3E9wJQTnq1/nYjtDatSlHctEqau8o2C
-         IjMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:date:message-id:in-reply-to
-         :references:subject;
-        bh=DeKDZOFHUlI3nMz/EaT1o5xWxfybZf2zd27CHn8oOdg=;
-        b=mJ9DAxRnw8AdqEZfvZjtX3GyYbyqDECxKYqutYHbuZZzlhZwZ8IYteohP5xSbxOzP/
-         JtJ16Hz/EapcemsHoEaMT8BPoW+O+tvoQ/S3bj/5CUA2WsWZYIY8uddjz3QV7wthiRBm
-         oJl/nponhVIAQnzUSgig1iaHjeupP28kf4Z5gbFT7a2MeIuQH4wigKz1vRIRVy/mNyKP
-         NI9t8lJ9yfPKX+qA3YiutSevlDmDuGNwm3NiVCFdwQ69s4p3pB20PxRbJlWtHBqHLBed
-         IgId0ZSxZKUXDaEltsIlQqtUwS3iSVXZ4KycokloZH9EQh8Ok7xKnkXSZkoMJTi2eaPT
-         69fQ==
-X-Gm-Message-State: APjAAAXGqwfA3inLr+OI5NgFd+E5hT0Zy1khsxxbLMNvWWTMsfd1GlKf
-        k13TQMlugDH9JfzO6MyyxGDp1Zxl
-X-Google-Smtp-Source: APXvYqyF+H2dhW1xjuLVeOTGT0sUgQRDWKxiKNoilbEq5kT1jdbnra2GxR7P7K2S2nrCzL4vBkFmUw==
-X-Received: by 2002:a17:90a:db52:: with SMTP id u18mr51038726pjx.107.1563450248226;
-        Thu, 18 Jul 2019 04:44:08 -0700 (PDT)
-Received: from [127.0.0.1] (FL1-133-202-12-40.iwa.mesh.ad.jp. [133.202.12.40])
-        by smtp.gmail.com with ESMTPSA id b136sm26298472pfb.73.2019.07.18.04.44.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Jul 2019 04:44:07 -0700 (PDT)
-From:   Magnus Damm <magnus.damm@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        geert+renesas@glider.be, daniel.lezcano@linaro.org,
-        linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>, tglx@linutronix.de
-Date:   Thu, 18 Jul 2019 20:45:38 +0900
-Message-Id: <156345033835.5307.9206628986166423962.sendpatchset@octo>
-In-Reply-To: <156345023791.5307.6113391102648394591.sendpatchset@octo>
-References: <156345023791.5307.6113391102648394591.sendpatchset@octo>
-Subject: [PATCH 7/7] clocksource/drivers/sh_cmt: Document "cmt-48" as deprecated
+        id S2390191AbfGRLpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 07:45:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32948 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726608AbfGRLpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 07:45:53 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E121D2085A;
+        Thu, 18 Jul 2019 11:45:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563450352;
+        bh=RPpl1KU1qr/RkmdD31fDZWCThQM0vN+6XBl50RiqJJE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bFr4hJ+aD6ugXNf56PVi1ZCswiZWGPB+WmeEwKSIEIIn1xCZPKECRENlC5+NPXSb1
+         AsQsnICVRq4W/Lyojpx7N2ElsvTqLJ3FiT9Tvsnxnzq8rCoSBsY7RZ5wIb/mdZSiis
+         UqfPno0uTpymZN4smggxej+JZavlSBuDvWDtKMqc=
+Date:   Thu, 18 Jul 2019 12:45:47 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Jan Stancek <jstancek@redhat.com>,
+        Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
+        dbueso@suse.de, mingo@redhat.com, jade.alglave@arm.com,
+        paulmck@linux.vnet.ibm.com
+Subject: Re: [PATCH v2] locking/rwsem: add acquire barrier to read_slowpath
+ exit when queue is empty
+Message-ID: <20190718114547.v4c7ucsp6k4i6o3b@willie-the-truck>
+References: <20190716185807.GJ3402@hirez.programming.kicks-ass.net>
+ <a524cf95ab0dbdd1eb65e9decb9283e73d416b1d.1563352912.git.jstancek@redhat.com>
+ <20190717131335.b2ry43t2ov7ba4t4@willie-the-truck>
+ <21ff5905-198b-6ea5-6c2a-9fb10cb48ea7@redhat.com>
+ <20190717192200.GA17687@dustball.usersys.redhat.com>
+ <20190718092640.52oliw3sid7gxyh6@willie-the-truck>
+ <20190718105812.GB3419@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190718105812.GB3419@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Thu, Jul 18, 2019 at 12:58:12PM +0200, Peter Zijlstra wrote:
+> On Thu, Jul 18, 2019 at 10:26:41AM +0100, Will Deacon wrote:
+> 
+> > /*
+> >  * We need to ensure ACQUIRE semantics when reading sem->count so that
+> >  * we pair with the RELEASE store performed by an unlocking/downgrading
+> >  * writer.
+> >  *
+> >  * P0 (writer)			P1 (reader)
+> >  *
+> >  * down_write(sem);
+> >  * <write shared data>
+> >  * downgrade_write(sem);
+> >  * -> fetch_add_release(&sem->count)
+> >  *
+> >  *				down_read_slowpath(sem);
+> >  *				-> atomic_read(&sem->count)
+> >  *				   <ctrl dep>
+> >  *				   smp_acquire__after_ctrl_dep()
+> >  *				<read shared data>
+> >  */
+> 
+> So I'm thinking all this is excessive; the simple rule is: lock acquire
+> should imply ACQUIRE, we all know why.
 
-Update the CMT driver to mark "renesas,cmt-48" as deprecated.
+Fair enough, I just thought this was worth highlighting because you can't
+reply on the wait_lock to give you ACQUIRE ordering.
 
-Instead of documenting a theoretical hardware device based on current software
-support level, define DT bindings top-down based on available data sheet
-information and make use of part numbers in the DT compat string.
+> > In writing this, I also noticed that we don't have any explicit ordering
+> > at the end of the reader slowpath when we wait on the queue but get woken
+> > immediately:
+> > 
+> > 	if (!waiter.task)
+> > 		break;
+> > 
+> > Am I missing something?
+> 
+> Ha!, I ran into the very same one. I keep confusing myself, but I think
+> you're right and that needs to be smp_load_acquire() to match the
+> smp_store_release() in rwsem_mark_wake().
+> 
+> (the actual race there is _tiny_ due to the smp_mb() right before it,
+> but I cannot convince myself that is indeed sufficient)
+> 
+> The signal_pending_state() case is also fun, but I think wait_lock there
+> is sufficient (even under RCpc).
+> 
+> I've ended up with this..
+> 
+> ---
+> diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+> index 37524a47f002..9eb630904a17 100644
+> --- a/kernel/locking/rwsem.c
+> +++ b/kernel/locking/rwsem.c
+> @@ -1000,6 +1000,7 @@ rwsem_down_read_slowpath(struct rw_semaphore *sem, int state)
+>  	atomic_long_add(-RWSEM_READER_BIAS, &sem->count);
+>  	adjustment = 0;
+>  	if (rwsem_optimistic_spin(sem, false)) {
+> +		/* rwsem_optimistic_spin() implies ACQUIRE through rwsem_*trylock() */
 
-In case of the only in-tree users r8a7740 and sh73a0 the compat strings
-"renesas,r8a7740-cmt1" and "renesas,sh73a0-cmt1" may be used instead.
+I couldn't figure out if this was dependent on the return value or not,
+and looking at osq_lock() I also couldn't see the ACQUIRE barrier when we're
+spinning on node->locked. Hmm.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+>  		/*
+>  		 * Wake up other readers in the wait list if the front
+>  		 * waiter is a reader.
+> @@ -1014,6 +1015,7 @@ rwsem_down_read_slowpath(struct rw_semaphore *sem, int state)
+>  		}
+>  		return sem;
+>  	} else if (rwsem_reader_phase_trylock(sem, waiter.last_rowner)) {
+> +		/* rwsem_reader_phase_trylock() implies ACQUIRE */
 
- drivers/clocksource/sh_cmt.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Can we add "on success" to the end of this, please?
 
---- 0011/drivers/clocksource/sh_cmt.c
-+++ work/drivers/clocksource/sh_cmt.c	2019-07-18 19:31:01.917491800 +0900
-@@ -921,7 +921,11 @@ static const struct platform_device_id s
- MODULE_DEVICE_TABLE(platform, sh_cmt_id_table);
- 
- static const struct of_device_id sh_cmt_of_table[] __maybe_unused = {
--	{ .compatible = "renesas,cmt-48", .data = &sh_cmt_info[SH_CMT_48BIT] },
-+	{
-+		/* deprecated, preserved for backward compatibility */
-+		.compatible = "renesas,cmt-48",
-+		.data = &sh_cmt_info[SH_CMT_48BIT]
-+	},
- 	{
- 		/* deprecated, preserved for backward compatibility */
- 		.compatible = "renesas,cmt-48-gen2",
+>  		return sem;
+>  	}
+>  
+> @@ -1032,6 +1034,8 @@ rwsem_down_read_slowpath(struct rw_semaphore *sem, int state)
+>  		 */
+>  		if (adjustment && !(atomic_long_read(&sem->count) &
+>  		     (RWSEM_WRITER_MASK | RWSEM_FLAG_HANDOFF))) {
+> +			/* Provide lock ACQUIRE */
+> +			smp_acquire__after_ctrl_dep();
+>  			raw_spin_unlock_irq(&sem->wait_lock);
+>  			rwsem_set_reader_owned(sem);
+>  			lockevent_inc(rwsem_rlock_fast);
+> @@ -1065,15 +1069,25 @@ rwsem_down_read_slowpath(struct rw_semaphore *sem, int state)
+>  	wake_up_q(&wake_q);
+>  
+>  	/* wait to be given the lock */
+> -	while (true) {
+> +	for (;;) {
+>  		set_current_state(state);
+> -		if (!waiter.task)
+> +		if (!smp_load_acquire(&waiter.task)) {
+> +			/*
+> +			 * Matches rwsem_mark_wake()'s smp_store_release() and ensures
+> +			 * we're ordered against its sem->count operations.
+> +			 */
+>  			break;
+> +		}
+
+Ack. Also, grepping for 'waiter.task' reveals a similar usage in
+drivers/tty/tty_ldsem.c if you're feeling brave enough.
+
+Will
