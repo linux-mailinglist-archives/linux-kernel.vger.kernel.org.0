@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C11516C763
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D81B6C753
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:24:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391184AbfGRDXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:23:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39796 "EHLO mail.kernel.org"
+        id S2390626AbfGRDIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:08:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390574AbfGRDIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:08:00 -0400
+        id S2390601AbfGRDID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:08:03 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D63C72173B;
-        Thu, 18 Jul 2019 03:07:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D64342173E;
+        Thu, 18 Jul 2019 03:08:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419279;
-        bh=p7qARXKPniQ4Gp1UilfQNwHUhNLhD7ZHzbN/ZdiWL40=;
+        s=default; t=1563419283;
+        bh=1E5KVj4G0WL07FDo69IxQG3sTxcw9QLYL/zcBouUFYM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dUyH5L/K6hgDi5fEs1k1+7HYwbr/yTnccLyHsqy1cjH/fY+Xr2s4BdYo8fncUhtA4
-         8ni7I80X62MtWub5mO99PLNp/1wjisNhmjIbhi0jQu0TfYdGr1B5gPp0qjIkX5PZ87
-         hRts4jzo60VMosB7rBS6WqCHkSqN2Li2uEzVFE10=
+        b=vW1BUyzpUHAyNzxAkcyy51r9IcsQSzvJHu/JSU0QtnSMg1PBn4SM468DYoOXoJGYV
+         c/zRboBOFagw42IwBhP3Bwbk3PmWXZ51uj446chwqEUBPLt69unTOyX9uIScHX62Qf
+         cXqN5iXh3L7FeVAAp4sEZ7CTFZSlpo8i+YUzDN40=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Haren Myneni <haren@us.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 42/47] crypto/NX: Set receive window credits to max number of CRBs in RxFIFO
-Date:   Thu, 18 Jul 2019 12:01:56 +0900
-Message-Id: <20190718030052.300915199@linuxfoundation.org>
+        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Ross Zwisler <zwisler@google.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 44/47] drm/udl: introduce a macro to convert dev to udl.
+Date:   Thu, 18 Jul 2019 12:01:58 +0900
+Message-Id: <20190718030052.482745174@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
 References: <20190718030045.780672747@linuxfoundation.org>
@@ -43,49 +45,157 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Haren Myneni <haren@linux.vnet.ibm.com>
+commit fd96e0dba19c53c2d66f2a398716bb74df8ca85e upstream.
 
-commit e52d484d9869eb291140545746ccbe5ffc7c9306 upstream.
+This just makes it easier to later embed drm into udl.
 
-System gets checkstop if RxFIFO overruns with more requests than the
-maximum possible number of CRBs in FIFO at the same time. The max number
-of requests per window is controlled by window credits. So find max
-CRBs from FIFO size and set it to receive window credits.
-
-Fixes: b0d6c9bab5e4 ("crypto/nx: Add P9 NX support for 842 compression engine")
-CC: stable@vger.kernel.org # v4.14+
-Signed-off-by:Haren Myneni <haren@us.ibm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190405031715.5959-3-airlied@gmail.com
+Signed-off-by: Ross Zwisler <zwisler@google.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/nx/nx-842-powernv.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/udl/udl_drv.h  |  2 ++
+ drivers/gpu/drm/udl/udl_fb.c   | 10 +++++-----
+ drivers/gpu/drm/udl/udl_gem.c  |  2 +-
+ drivers/gpu/drm/udl/udl_main.c | 12 ++++++------
+ 4 files changed, 14 insertions(+), 12 deletions(-)
 
---- a/drivers/crypto/nx/nx-842-powernv.c
-+++ b/drivers/crypto/nx/nx-842-powernv.c
-@@ -36,8 +36,6 @@ MODULE_ALIAS_CRYPTO("842-nx");
- #define WORKMEM_ALIGN	(CRB_ALIGN)
- #define CSB_WAIT_MAX	(5000) /* ms */
- #define VAS_RETRIES	(10)
--/* # of requests allowed per RxFIFO at a time. 0 for unlimited */
--#define MAX_CREDITS_PER_RXFIFO	(1024)
+diff --git a/drivers/gpu/drm/udl/udl_drv.h b/drivers/gpu/drm/udl/udl_drv.h
+index 4ae67d882eae..b3e08e876d62 100644
+--- a/drivers/gpu/drm/udl/udl_drv.h
++++ b/drivers/gpu/drm/udl/udl_drv.h
+@@ -71,6 +71,8 @@ struct udl_device {
+ 	atomic_t cpu_kcycles_used; /* transpired during pixel processing */
+ };
  
- struct nx842_workmem {
- 	/* Below fields must be properly aligned */
-@@ -821,7 +819,11 @@ static int __init vas_cfg_coproc_info(st
- 	rxattr.lnotify_lpid = lpid;
- 	rxattr.lnotify_pid = pid;
- 	rxattr.lnotify_tid = tid;
--	rxattr.wcreds_max = MAX_CREDITS_PER_RXFIFO;
-+	/*
-+	 * Maximum RX window credits can not be more than #CRBs in
-+	 * RxFIFO. Otherwise, can get checkstop if RxFIFO overruns.
-+	 */
-+	rxattr.wcreds_max = fifo_size / CRB_SIZE;
++#define to_udl(x) ((x)->dev_private)
++
+ struct udl_gem_object {
+ 	struct drm_gem_object base;
+ 	struct page **pages;
+diff --git a/drivers/gpu/drm/udl/udl_fb.c b/drivers/gpu/drm/udl/udl_fb.c
+index dd9ffded223b..590323ea261f 100644
+--- a/drivers/gpu/drm/udl/udl_fb.c
++++ b/drivers/gpu/drm/udl/udl_fb.c
+@@ -82,7 +82,7 @@ int udl_handle_damage(struct udl_framebuffer *fb, int x, int y,
+ 		      int width, int height)
+ {
+ 	struct drm_device *dev = fb->base.dev;
+-	struct udl_device *udl = dev->dev_private;
++	struct udl_device *udl = to_udl(dev);
+ 	int i, ret;
+ 	char *cmd;
+ 	cycles_t start_cycles, end_cycles;
+@@ -210,7 +210,7 @@ static int udl_fb_open(struct fb_info *info, int user)
+ {
+ 	struct udl_fbdev *ufbdev = info->par;
+ 	struct drm_device *dev = ufbdev->ufb.base.dev;
+-	struct udl_device *udl = dev->dev_private;
++	struct udl_device *udl = to_udl(dev);
  
- 	/*
- 	 * Open a VAS receice window which is used to configure RxFIFO
+ 	/* If the USB device is gone, we don't accept new opens */
+ 	if (drm_dev_is_unplugged(udl->ddev))
+@@ -441,7 +441,7 @@ static void udl_fbdev_destroy(struct drm_device *dev,
+ 
+ int udl_fbdev_init(struct drm_device *dev)
+ {
+-	struct udl_device *udl = dev->dev_private;
++	struct udl_device *udl = to_udl(dev);
+ 	int bpp_sel = fb_bpp;
+ 	struct udl_fbdev *ufbdev;
+ 	int ret;
+@@ -480,7 +480,7 @@ int udl_fbdev_init(struct drm_device *dev)
+ 
+ void udl_fbdev_cleanup(struct drm_device *dev)
+ {
+-	struct udl_device *udl = dev->dev_private;
++	struct udl_device *udl = to_udl(dev);
+ 	if (!udl->fbdev)
+ 		return;
+ 
+@@ -491,7 +491,7 @@ void udl_fbdev_cleanup(struct drm_device *dev)
+ 
+ void udl_fbdev_unplug(struct drm_device *dev)
+ {
+-	struct udl_device *udl = dev->dev_private;
++	struct udl_device *udl = to_udl(dev);
+ 	struct udl_fbdev *ufbdev;
+ 	if (!udl->fbdev)
+ 		return;
+diff --git a/drivers/gpu/drm/udl/udl_gem.c b/drivers/gpu/drm/udl/udl_gem.c
+index bb7b58407039..3b3e17652bb2 100644
+--- a/drivers/gpu/drm/udl/udl_gem.c
++++ b/drivers/gpu/drm/udl/udl_gem.c
+@@ -203,7 +203,7 @@ int udl_gem_mmap(struct drm_file *file, struct drm_device *dev,
+ {
+ 	struct udl_gem_object *gobj;
+ 	struct drm_gem_object *obj;
+-	struct udl_device *udl = dev->dev_private;
++	struct udl_device *udl = to_udl(dev);
+ 	int ret = 0;
+ 
+ 	mutex_lock(&udl->gem_lock);
+diff --git a/drivers/gpu/drm/udl/udl_main.c b/drivers/gpu/drm/udl/udl_main.c
+index 19055dda3140..09ce98113c0e 100644
+--- a/drivers/gpu/drm/udl/udl_main.c
++++ b/drivers/gpu/drm/udl/udl_main.c
+@@ -29,7 +29,7 @@
+ static int udl_parse_vendor_descriptor(struct drm_device *dev,
+ 				       struct usb_device *usbdev)
+ {
+-	struct udl_device *udl = dev->dev_private;
++	struct udl_device *udl = to_udl(dev);
+ 	char *desc;
+ 	char *buf;
+ 	char *desc_end;
+@@ -165,7 +165,7 @@ void udl_urb_completion(struct urb *urb)
+ 
+ static void udl_free_urb_list(struct drm_device *dev)
+ {
+-	struct udl_device *udl = dev->dev_private;
++	struct udl_device *udl = to_udl(dev);
+ 	int count = udl->urbs.count;
+ 	struct list_head *node;
+ 	struct urb_node *unode;
+@@ -198,7 +198,7 @@ static void udl_free_urb_list(struct drm_device *dev)
+ 
+ static int udl_alloc_urb_list(struct drm_device *dev, int count, size_t size)
+ {
+-	struct udl_device *udl = dev->dev_private;
++	struct udl_device *udl = to_udl(dev);
+ 	struct urb *urb;
+ 	struct urb_node *unode;
+ 	char *buf;
+@@ -262,7 +262,7 @@ static int udl_alloc_urb_list(struct drm_device *dev, int count, size_t size)
+ 
+ struct urb *udl_get_urb(struct drm_device *dev)
+ {
+-	struct udl_device *udl = dev->dev_private;
++	struct udl_device *udl = to_udl(dev);
+ 	int ret = 0;
+ 	struct list_head *entry;
+ 	struct urb_node *unode;
+@@ -295,7 +295,7 @@ struct urb *udl_get_urb(struct drm_device *dev)
+ 
+ int udl_submit_urb(struct drm_device *dev, struct urb *urb, size_t len)
+ {
+-	struct udl_device *udl = dev->dev_private;
++	struct udl_device *udl = to_udl(dev);
+ 	int ret;
+ 
+ 	BUG_ON(len > udl->urbs.size);
+@@ -370,7 +370,7 @@ int udl_drop_usb(struct drm_device *dev)
+ 
+ void udl_driver_unload(struct drm_device *dev)
+ {
+-	struct udl_device *udl = dev->dev_private;
++	struct udl_device *udl = to_udl(dev);
+ 
+ 	drm_kms_helper_poll_fini(dev);
+ 
+-- 
+2.20.1
+
 
 
