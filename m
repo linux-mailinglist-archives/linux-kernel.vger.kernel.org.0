@@ -2,118 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8A9C6CEFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 15:37:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BF7A6CF08
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 15:43:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbfGRNhW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 09:37:22 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39541 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390454AbfGRNhR (ORCPT
+        id S1727826AbfGRNm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 09:42:57 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:44097 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbfGRNm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 09:37:17 -0400
-Received: by mail-wr1-f65.google.com with SMTP id x4so28718781wrt.6;
-        Thu, 18 Jul 2019 06:37:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=MFH03ifrjd37/Jli9Q9+Ane3me57PKZntHndUzE6BBo=;
-        b=HX/K/FMyO4UzXj7s9k0gSYZFHPR7GOGdL/Gjx84AMw4cdGnFLUw642ucGixDxbo4KD
-         FxlPtbPwV2DrIh3v+bszenUMBz+p8oyUFSVapF2Uo/wKQDSh532OR9xtItbrpn6OASod
-         13+bDdeGFYZZz8WvlH7EH5+42MpzirbC/7U3HopHq6R2E+cHg3TSlJWMyk5w2s9pRJY4
-         8z1bGheDMFjRtihQj3/O/9iM/BKWxHoITvqM/OVvX77HhYXSdpIjIJQg56Qwv0H2O4Mg
-         dRpyp51z4M0ktUCD/utXIL/vd0DSSqjW4RdUJXcbmFkpFMkvfh8NiEU97K+QKQj2DRiL
-         jBGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=MFH03ifrjd37/Jli9Q9+Ane3me57PKZntHndUzE6BBo=;
-        b=PO5kLM+9ZQYMxzXZyQYx2guwAGTEn1fa+KwFlSds4T5VIkMF7S+YyrQkM2qGx7g+7I
-         mA0bbdzjJ6PJjFbt+knHiWMb7uBq8qvjVfDt4AxN/zlIQ1zlNGGo9Q2swCaK5rIK9k4G
-         +debdhbDPwSG2GVoVLkrJEzWXKxH1msu6S0zQ1QrQO0vO8w82q4LqUnmz6CG6ULmDxLw
-         AG8/sVVUGvWb+kGbV6zeuD3Bs+/AAHWAsZcALTFY4cDaOs4tMzuvoBrdHi+lksvYz7Sd
-         zb5xUFjijarAqkTiQ6XPsv8Qr0MSqqpbmfcUJItiWsMYOPPerLvwegk4E0Yd4RyXJGhZ
-         Q1EQ==
-X-Gm-Message-State: APjAAAVQJD5qLqvuOMfg6J0+4CXZjlyr/cvK5FRvgjVvCU6f7w7Gielc
-        5xce/afBWedCI81oo/GFxhbI4OWTxc0=
-X-Google-Smtp-Source: APXvYqz56M+LXSXys8qcBurl5iC50DjfDUEo3+/zHK2LZLb6JhFLPEElgAtvL8L4CRVrAoD+ffedqg==
-X-Received: by 2002:adf:f088:: with SMTP id n8mr6607017wro.58.1563457035233;
-        Thu, 18 Jul 2019 06:37:15 -0700 (PDT)
-Received: from 640k.localdomain ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id t185sm20479790wma.11.2019.07.18.06.37.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Jul 2019 06:37:14 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     wanpengli@tencent.com, rkrcmar@redhat.com, borntraeger@de.ibm.com,
-        paulus@ozlabs.org, maz@kernel.org
-Subject: [PATCH 2/2] KVM: s390: Use kvm_vcpu_wake_up in kvm_s390_vcpu_wakeup
-Date:   Thu, 18 Jul 2019 15:37:11 +0200
-Message-Id: <1563457031-21189-3-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1563457031-21189-1-git-send-email-pbonzini@redhat.com>
-References: <1563457031-21189-1-git-send-email-pbonzini@redhat.com>
+        Thu, 18 Jul 2019 09:42:57 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MysFQ-1ib6Sk0g0g-00vua9; Thu, 18 Jul 2019 15:42:44 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Andrzej Hajda <a.hajda@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        =?UTF-8?q?Ronald=20Tschal=C3=A4r?= <ronald@innovation.ch>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Sean Paul <sean@poorly.run>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/bridge: fix RC_CORE dependency
+Date:   Thu, 18 Jul 2019 15:42:24 +0200
+Message-Id: <20190718134240.2265724-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:LalC3fueD8ns/zVd1zUacsqU9/+XR1XYXbOtp5D2bbPKXX/+BVp
+ pih72gFX2h3gXxMbIh6oAihZdwH+/zSdgbm4Y7bfVsDmTY6G5T3jf7i2UeGAM3F7/NhQS7x
+ +uktKDqfLMK3uI0kgmWZoIlXK1TVxNOL/rDWwUnatfP7uVfpGNnlQOBWndwsJJ+XqMr5b1c
+ P3Pgiqsmjam1WjkypwzAA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:SL2m0TBWswY=:c4RPZmLcftwWBIHOBql1ST
+ Aj7g3NbIsK/RqoAvvZS4zv14zCFTUDURjXMcPEpPoL1ANhtfgPatR8MDdJGEXACdmtI6OiUJP
+ KpfO9ZJiqVnUgz8M6plbm/SErsdODRZsN76lQ8PWs02Kk8hgpgPpKvgQ7EUV1gNfFSVz5c9FW
+ vcM8zBE/RJR1sY1BBMEWrAwVWhXm5djLGsW8whrHOH+YNhi24tnCYlOFcpeGTxtNfk1xPb5re
+ nyRGtqVVA/6oahbrPJKVDKxkSXojMfwZN2iqo4XXdDLHHbkVURnMYlDHSfK2qN83BehQvvAEf
+ pd+h/0SmQef8O4SmrUOTq+VO7P4q1XV+tWsCSNAEzQltgZlE+EvF3D+djKDVpxuS8OMTUh/J/
+ eKS6dSAXzHuiZXiMNe8vEwCfsRQ/rX2uom7j8scK3y4Vts9evB3QQy8xMtjNolJ5UbWznAPtr
+ R3S/hr+Ljg1UEbumD/AcnWjZU7J4LiUmH9JpXntzT8HliOc3nww+G45i00fIKlBLMUc93BZhw
+ NRzpOAeLwAxn+3bx/jeUWDlIghYldlztzWIMdbG568tJC9zAJcOnoVzh1gdRtdg0c4s64blVF
+ rc+yMf+XJmkdWXS/whosAHGE8zySqupOx1bFq/3vsBBvdGkurVRMrTUVaIE/VooOK5jlH4c44
+ ar19zSgnKQiIa7F4tTC13ZBjYTnLecbEygJDs2KlNSAUlvRS17+6bUnPymbvi0WozPJSwEzCK
+ 13nxZFneJ+klscHMykjxh6SU23zJzYiwBVf00A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+Using 'imply' causes a new problem, as it allows the case of
+CONFIG_INPUT=m with RC_CORE=y, which fails to link:
 
-Use kvm_vcpu_wake_up() in kvm_s390_vcpu_wakeup().
+drivers/media/rc/rc-main.o: In function `ir_do_keyup':
+rc-main.c:(.text+0x2b4): undefined reference to `input_event'
+drivers/media/rc/rc-main.o: In function `rc_repeat':
+rc-main.c:(.text+0x350): undefined reference to `input_event'
+drivers/media/rc/rc-main.o: In function `rc_allocate_device':
+rc-main.c:(.text+0x90c): undefined reference to `input_allocate_device'
 
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Add a 'depends on' that allows building both with and without
+CONFIG_RC_CORE, but disallows combinations that don't link.
+
+Fixes: 5023cf32210d ("drm/bridge: make remote control optional")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-	v2->v3: no need to set vcpu->ready here
- arch/s390/kvm/interrupt.c | 23 +++--------------------
- 1 file changed, 3 insertions(+), 20 deletions(-)
+ drivers/gpu/drm/bridge/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
-index 26f8bf4a22a7..b5fd6e85657c 100644
---- a/arch/s390/kvm/interrupt.c
-+++ b/arch/s390/kvm/interrupt.c
-@@ -1224,28 +1224,11 @@ int kvm_s390_handle_wait(struct kvm_vcpu *vcpu)
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index f64c91defdc3..70a8ed2505aa 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -85,8 +85,8 @@ config DRM_SIL_SII8620
+ 	tristate "Silicon Image SII8620 HDMI/MHL bridge"
+ 	depends on OF
+ 	select DRM_KMS_HELPER
++	depends on RC_CORE || !RC_CORE
+ 	imply EXTCON
+-	imply RC_CORE
+ 	help
+ 	  Silicon Image SII8620 HDMI/MHL bridge chip driver.
  
- void kvm_s390_vcpu_wakeup(struct kvm_vcpu *vcpu)
- {
--	/*
--	 * We cannot move this into the if, as the CPU might be already
--	 * in kvm_vcpu_block without having the waitqueue set (polling)
--	 */
- 	vcpu->valid_wakeup = true;
-+	kvm_vcpu_wake_up(vcpu);
-+
- 	/*
--	 * This is mostly to document, that the read in swait_active could
--	 * be moved before other stores, leading to subtle races.
--	 * All current users do not store or use an atomic like update
--	 */
--	smp_mb__after_atomic();
--	if (swait_active(&vcpu->wq)) {
--		/*
--		 * The vcpu gave up the cpu voluntarily, mark it as a good
--		 * yield-candidate.
--		 */
--		WRITE_ONCE(vcpu->ready, true);
--		swake_up_one(&vcpu->wq);
--		vcpu->stat.halt_wakeup++;
--	}
--	/*
--	 * The VCPU might not be sleeping but is executing the VSIE. Let's
-+	 * The VCPU might not be sleeping but rather executing VSIE. Let's
- 	 * kick it, so it leaves the SIE to process the request.
- 	 */
- 	kvm_s390_vsie_kick(vcpu);
 -- 
-1.8.3.1
+2.20.0
 
