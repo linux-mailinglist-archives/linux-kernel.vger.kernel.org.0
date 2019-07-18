@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BD786C5D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:11:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D58246C5DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:11:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390669AbfGRDKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:10:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43352 "EHLO mail.kernel.org"
+        id S2391175AbfGRDK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:10:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391134AbfGRDKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:10:14 -0400
+        id S2390108AbfGRDKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:10:15 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A099821841;
-        Thu, 18 Jul 2019 03:10:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E03021871;
+        Thu, 18 Jul 2019 03:10:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419413;
-        bh=3fZOVIMhLXlJK6IU7no/pPiVvuBM30eZB7ippg/rVpI=;
+        s=default; t=1563419414;
+        bh=B5URgfaTe+t9l8CMVHfSaNqLrRqPX2HS2H0hr5sPhAk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hCGo1U+yQWWxKVyS8T/eaZQQerGEz4mlHMg0Stuf4UzH7r/JEP0CUBTVtCXHKXhPQ
-         7B6E0HhVYdMK+zQm1YblHqGNaQtroGXkBaBLa7+UHko799toLb1pXxKigSZxuTin7J
-         L0RdYxU/jap8OmHYwbmOqb1onCdZcby61J+rrUwo=
+        b=WfV3wO8UOfZsb41kNKK2yj4kvWkLOuIiWSO7K8TR3v/GGUslsk/lwTfhCKYfu85XG
+         ilfvyUofvirIvIYVsNOyQ4n0ZGu4yIuELKZ6oMpSBndlc3PwFjWQovxhgUL+TTwQQH
+         S4rw5EghdZtqt3vl0AkEMf4B8WerzF206wWUc9No=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Lin Yi <teroincn@163.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 38/80] net: dsa: mv88e6xxx: fix shift of FID bits in mv88e6185_g1_vtu_loadpurge()
-Date:   Thu, 18 Jul 2019 12:01:29 +0900
-Message-Id: <20190718030101.598580672@linuxfoundation.org>
+Subject: [PATCH 4.14 39/80] net :sunrpc :clnt :Fix xps refcount imbalance on the error path
+Date:   Thu, 18 Jul 2019 12:01:30 +0900
+Message-Id: <20190718030101.666672827@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
 References: <20190718030058.615992480@linuxfoundation.org>
@@ -45,32 +44,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 48620e341659f6e4b978ec229f6944dabe6df709 ]
+[ Upstream commit b96226148491505318228ac52624956bd98f9e0c ]
 
-The comment is correct, but the code ends up moving the bits four
-places too far, into the VTUOp field.
+rpc_clnt_add_xprt take a reference to struct rpc_xprt_switch, but forget
+to release it before return, may lead to a memory leak.
 
-Fixes: 11ea809f1a74 (net: dsa: mv88e6xxx: support 256 databases)
-Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Lin Yi <teroincn@163.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/mv88e6xxx/global1_vtu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sunrpc/clnt.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/dsa/mv88e6xxx/global1_vtu.c b/drivers/net/dsa/mv88e6xxx/global1_vtu.c
-index 8c8a0ec3d6e9..f260bd30c73a 100644
---- a/drivers/net/dsa/mv88e6xxx/global1_vtu.c
-+++ b/drivers/net/dsa/mv88e6xxx/global1_vtu.c
-@@ -416,7 +416,7 @@ int mv88e6185_g1_vtu_loadpurge(struct mv88e6xxx_chip *chip,
- 		 * VTU DBNum[7:4] are located in VTU Operation 11:8
- 		 */
- 		op |= entry->fid & 0x000f;
--		op |= (entry->fid & 0x00f0) << 8;
-+		op |= (entry->fid & 0x00f0) << 4;
+diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
+index 6d118357d9dc..9259529e0412 100644
+--- a/net/sunrpc/clnt.c
++++ b/net/sunrpc/clnt.c
+@@ -2706,6 +2706,7 @@ int rpc_clnt_add_xprt(struct rpc_clnt *clnt,
+ 	xprt = xprt_iter_xprt(&clnt->cl_xpi);
+ 	if (xps == NULL || xprt == NULL) {
+ 		rcu_read_unlock();
++		xprt_switch_put(xps);
+ 		return -EAGAIN;
  	}
- 
- 	return mv88e6xxx_g1_vtu_op(chip, op);
+ 	resvport = xprt->resvport;
 -- 
 2.20.1
 
