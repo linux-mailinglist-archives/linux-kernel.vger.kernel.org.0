@@ -2,83 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47DCA6C950
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 08:30:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AD2E6C93D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 08:24:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727601AbfGRG37 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 02:29:59 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50912 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbfGRG37 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 02:29:59 -0400
-Received: by mail-wm1-f66.google.com with SMTP id v15so24341529wml.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 23:29:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=O71ReyyfIMfn6gxA/QsNgwUZ9rVFehQHxeS9W6xMfvs=;
-        b=u7YukDqUKNSf05PsuG432+7ZzVHtctSbBxgs7A42q4ShY2iRLXdXd4JTXqNWOTtMeP
-         kUW7EgqSYqjCwXiAKScdrNS1oCYMKBo6QpnpWn/5xbiasC9fLfE4Ves3isetbmF8P14V
-         KWpn6yb0B5G0s+QHTE4jmdTr4o1Wi0Jghi0+hExjetoDhxrYU88RUZOu0t+JD70f0N1f
-         daYbeaAhyozbEtLdZknIUrhXnJZi4f4dQhVBq6gM+sh3Z88wpsDbgjKxquBn07nQbNKH
-         76Myi4dqjVnELRDWYfiIIHuqEebygO3/E1bwwpoiHOBz+nn1pw69VqDak04VLjDmV2HO
-         Liaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=O71ReyyfIMfn6gxA/QsNgwUZ9rVFehQHxeS9W6xMfvs=;
-        b=LJT38qOC4RZ3K2fxn+nydLpdPrLkuJmi/1NubKgzsvCWwqQTHwOs6umTxBUmeptRli
-         jPeNNeAWpDj9wGF6Lc0eUuwsmiQriXAE5JocALAET/VBLzvNNy/Ncpa85YfyLcTzKgrt
-         A/Rh1vmqbAj0wEt9bTYAKp+mPTsEo6qXlb/91Tkl2CGtp3l0woPEZjqV/eA82FXxV5+D
-         9ODcLjvyrIVia0jM4sEYA49/JAf7TSUn1bY13z03Gaz6eSp93KGLIS3kpSy+ahIRicyz
-         Igi0gdTKJrANwj9ZzGD2QriKvIUMlCKmAiokVTfyYSzDin8r8OIS7wbYjIgNF2SnQtaM
-         XTQQ==
-X-Gm-Message-State: APjAAAWfDRolPJMmQka79/cSPG8cpxLkQBJ8XT2ASSbay2koe6xYquLC
-        H3z36ATQE+t7OfYTfT+QUPaP+HUj
-X-Google-Smtp-Source: APXvYqwaFU2n6MH3CSEX/B6TzE9BJkfVk3mZnsRorxgnvoLxr+yYv9yIBkbU6ZX8wtUQmTv41e40EA==
-X-Received: by 2002:a1c:f418:: with SMTP id z24mr40020220wma.80.1563431396966;
-        Wed, 17 Jul 2019 23:29:56 -0700 (PDT)
-Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id j189sm27721368wmb.48.2019.07.17.23.29.55
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 17 Jul 2019 23:29:56 -0700 (PDT)
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-To:     linux-kernel@vger.kernel.org, oshpigelman@habana.ai,
-        ttayar@habana.ai
-Cc:     gregkh@linuxfoundation.org
-Subject: [PATCH] habanalabs: add debug print when rejecting CS
-Date:   Thu, 18 Jul 2019 09:29:54 +0300
-Message-Id: <20190718062954.15283-1-oded.gabbay@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1732598AbfGRGY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 02:24:29 -0400
+Received: from mga11.intel.com ([192.55.52.93]:44788 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726423AbfGRGY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 02:24:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2019 23:24:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,276,1559545200"; 
+   d="scan'208";a="191506353"
+Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
+  by fmsmga004.fm.intel.com with ESMTP; 17 Jul 2019 23:24:25 -0700
+Message-ID: <5D3011E9.4040908@intel.com>
+Date:   Thu, 18 Jul 2019 14:30:01 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+MIME-Version: 1.0
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+CC:     Alexander Duyck <alexander.duyck@gmail.com>,
+        Nitesh Narayan Lal <nitesh@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yang Zhang <yang.zhang.wz@gmail.com>,
+        "pagupta@redhat.com" <pagupta@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Subject: Re: use of shrinker in virtio balloon free page hinting
+References: <20190717071332-mutt-send-email-mst@kernel.org> <286AC319A985734F985F78AFA26841F73E16D4B2@shsmsx102.ccr.corp.intel.com> <20190718000434-mutt-send-email-mst@kernel.org> <5D300A32.4090300@intel.com> <20190718015319-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20190718015319-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When rejecting CS because of too many in-flight CS, print a debug message
-about it as it useful to know when the user is debugging (it indicates a
-back-pressure from the driver as the device is not fast enough to consume
-the CS)
+On 07/18/2019 01:58 PM, Michael S. Tsirkin wrote:
+>
+> what if it does not fail?
+>
+>
+>> Shrinker is called on system memory pressure. On memory pressure
+>> get_free_page_and_send will fail memory allocation, so it stops allocating
+>> more.
+> Memory pressure could be triggered by an unrelated allocation
+> e.g. from another driver.
 
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
----
- drivers/misc/habanalabs/command_submission.c | 2 ++
- 1 file changed, 2 insertions(+)
+As memory pressure is system-wide (no matter who triggers it), free page 
+hinting
+will fail on memory pressure, same as other drivers.
 
-diff --git a/drivers/misc/habanalabs/command_submission.c b/drivers/misc/habanalabs/command_submission.c
-index 6ad83d5ef4b0..f4e2c2ad0057 100644
---- a/drivers/misc/habanalabs/command_submission.c
-+++ b/drivers/misc/habanalabs/command_submission.c
-@@ -305,6 +305,8 @@ static int allocate_cs(struct hl_device *hdev, struct hl_ctx *ctx,
- 	other = ctx->cs_pending[fence->cs_seq & (HL_MAX_PENDING_CS - 1)];
- 	if ((other) && (!dma_fence_is_signaled(other))) {
- 		spin_unlock(&ctx->cs_lock);
-+		dev_dbg(hdev->dev,
-+			"Rejecting CS because of too many in-flights CS\n");
- 		rc = -EAGAIN;
- 		goto free_fence;
- 	}
--- 
-2.17.1
+As long as the page allocation succeeds, we could just think the system 
+is not in
+the memory pressure situation, then thing could go on normally.
 
+Also, the VIRTIO_BALLOON_FREE_PAGE_ALLOC_FLAG includes NORETRY and 
+NOMEMALLOC,
+which makes it easier than most other drivers to fail allocation first.
+
+Best,
+Wei
