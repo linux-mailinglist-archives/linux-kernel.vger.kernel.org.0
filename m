@@ -2,64 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 876466CB89
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:08:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E821F6CB5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:02:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389739AbfGRJGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 05:06:39 -0400
-Received: from m13-102.163.com ([220.181.13.102]:54801 "EHLO m13-102.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389532AbfGRJGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 05:06:38 -0400
-X-Greylist: delayed 907 seconds by postgrey-1.27 at vger.kernel.org; Thu, 18 Jul 2019 05:06:36 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=vWG8X
-        d+vw7pspWZS2Zgi9bzG7wBs4m0DBcDRl9qtqto=; b=iF6LblqsEePe2mkJkgRBr
-        Eb0mezDCy9i3RflFOb4rFRNgZDSPRVHCGjLUUzMR+0la2izyQCe7DpUi+Nma6Vkx
-        l/el99Y01I8XLwkPk79gDiCvrH61TxM6Z/Tzug5OZzpK8fI2gY/heekA7aH6AzrT
-        aFIOvSBLd5zK+ZWcVX0lKI=
-Received: from luferry$163.com ( [42.120.75.156] ) by ajax-webmail-wmsvr102
- (Coremail) ; Thu, 18 Jul 2019 16:50:52 +0800 (CST)
-X-Originating-IP: [42.120.75.156]
-Date:   Thu, 18 Jul 2019 16:50:52 +0800 (CST)
-From:   luferry <luferry@163.com>
-To:     "Thomas Gleixner" <tglx@linutronix.de>
-Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Rik van Riel" <riel@surriel.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH v2] smp: avoid generic_exec_single cause system
- lockup
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version SP_ntes V3.5 build
- 20190614(cb3344cf) Copyright (c) 2002-2019 www.mailtech.cn 163com
-In-Reply-To: <alpine.DEB.2.21.1907181007340.1778@nanos.tec.linutronix.de>
-References: <20190718080308.48381-1-luferry@163.com>
- <alpine.DEB.2.21.1907181007340.1778@nanos.tec.linutronix.de>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+        id S1726972AbfGRJCn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 05:02:43 -0400
+Received: from outbound-smtp02.blacknight.com ([81.17.249.8]:37261 "EHLO
+        outbound-smtp02.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726383AbfGRJCn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 05:02:43 -0400
+Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
+        by outbound-smtp02.blacknight.com (Postfix) with ESMTPS id B85DA989D5
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 10:02:40 +0100 (IST)
+Received: (qmail 4427 invoked from network); 18 Jul 2019 09:02:40 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.21.36])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 18 Jul 2019 09:02:40 -0000
+Date:   Thu, 18 Jul 2019 10:02:38 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jan Kara <jack@suse.cz>, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Subject: [PATCH] mm: migrate: Fix reference check race between
+ __find_get_block() and migration
+Message-ID: <20190718090238.GF24383@techsingularity.net>
 MIME-Version: 1.0
-Message-ID: <5f5fbd7.1073c.16c0446ea63.Coremail.luferry@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: ZsGowAC3zfHtMjBdUqAmAQ--.48588W
-X-CM-SenderInfo: poxiv2lu16il2tof0z/xtbBZhX1WlaD2nFzxAABsU
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CgoKCgoKCgoKCkF0IDIwMTktMDctMTggMTY6MDc6NTgsICJUaG9tYXMgR2xlaXhuZXIiIDx0Z2x4
-QGxpbnV0cm9uaXguZGU+IHdyb3RlOgo+T24gVGh1LCAxOCBKdWwgMjAxOSwgbHVmZXJyeUAxNjMu
-Y29tIHdyb3RlOgo+Cj4+IEZyb206IGx1ZmVycnkgPGx1ZmVycnlAMTYzLmNvbT4KPj4gCj4+IFRo
-ZSByYWNlIGNhbiByZXByb2R1Y2VkIGJ5IHNlbmRpbmcgd2FpdCBlbmFibGVkIElQSSBpbiBzb2Z0
-aXJxL2lycSBlbnYKPgo+V2hpY2ggY29kZSBwYXRoIGlzIGRvaW5nIHRoYXQ/Cj4KPlRoYW5rcywK
-Pgo+CXRnbHgKClRoYW5rcyBmb3IgeW91ciBraW5kbHkgcmVwbHkuCkkgY2hlY2tlZCBrZXJuZWwg
-YW5kIGZvdW5kIG5vIGNvZGUgcGF0aCBjYW4gcnVuIGludG8gdGhpcy4KQWN0dWFsbHkgLCBpIGVu
-Y291bnRlciB3aXRoIHRoaXMgcHJvYmxlbSBieSBteSBvd24gY29kZS4KSSBuZWVkIHRvIGRvIHNv
-bWUgc3BlY2lmaWMgdXJnZW50IHdvcmsgcGVyaW9kaWNpdHkgYW5kIHRoZXNlIAp3b3JrIG1heSBy
-dW4gZm9yIHF1aXRlIGEgd2hpbGUuIFNvIGkgY2FuJ3QgZGlzYWJsZSBpcnEgZHVyaW5nIHRoZXNl
-IHdvcmsgCndoaWNoIHN0b3BzIG1lIGZyb20gdXNpbmcgaHJ0aW1lciB0byBkbyB0aGlzLiBTbyBp
-IGRpZCBhZGQgYW4gZXh0cmEgCnNvZml0cnEgYWN0aW9uIHdoaWNoIG1heSBpbnZva2Ugc21wX2Nh
-bGwu
+From: Jan Kara <jack@suse.cz>
+
+buffer_migrate_page_norefs() can race with bh users in the following way:
+
+CPU1                                    CPU2
+buffer_migrate_page_norefs()
+  buffer_migrate_lock_buffers()
+  checks bh refs
+  spin_unlock(&mapping->private_lock)
+                                        __find_get_block()
+                                          spin_lock(&mapping->private_lock)
+                                          grab bh ref
+                                          spin_unlock(&mapping->private_lock)
+  move page                               do bh work
+
+This can result in various issues like lost updates to buffers (i.e.
+metadata corruption) or use after free issues for the old page.
+
+This patch closes the race by holding mapping->private_lock while the
+mapping is being moved to a new page. Ordinarily, a reference can be taken
+outside of the private_lock using the per-cpu BH LRU but the references
+are checked and the LRU invalidated if necessary. The private_lock is held
+once the references are known so the buffer lookup slow path will spin
+on the private_lock. Between the page lock and private_lock, it should
+be impossible for other references to be acquired and updates to happen
+during the migration.
+
+A user had reported data corruption issues on a distribution kernel with
+a similar page migration implementation as mainline. The data corruption
+could not be reproduced with this patch applied. A small number of
+migration-intensive tests were run and no performance problems were noted.
+
+[mgorman@techsingularity.net: Changelog, removed tracing]
+Fixes: 89cb0888ca14 "mm: migrate: provide buffer_migrate_page_norefs()"
+CC: stable@vger.kernel.org # v5.0+
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ mm/migrate.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/mm/migrate.c b/mm/migrate.c
+index e9594bc0d406..a59e4aed6d2e 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -771,12 +771,12 @@ static int __buffer_migrate_page(struct address_space *mapping,
+ 			}
+ 			bh = bh->b_this_page;
+ 		} while (bh != head);
+-		spin_unlock(&mapping->private_lock);
+ 		if (busy) {
+ 			if (invalidated) {
+ 				rc = -EAGAIN;
+ 				goto unlock_buffers;
+ 			}
++			spin_unlock(&mapping->private_lock);
+ 			invalidate_bh_lrus();
+ 			invalidated = true;
+ 			goto recheck_buffers;
+@@ -809,6 +809,8 @@ static int __buffer_migrate_page(struct address_space *mapping,
+ 
+ 	rc = MIGRATEPAGE_SUCCESS;
+ unlock_buffers:
++	if (check_refs)
++		spin_unlock(&mapping->private_lock);
+ 	bh = head;
+ 	do {
+ 		unlock_buffer(bh);
+
+-- 
+Mel Gorman
+SUSE Labs
