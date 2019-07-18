@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A8F6C5F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:12:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D914E6C611
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:13:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391418AbfGRDLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:11:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44808 "EHLO mail.kernel.org"
+        id S2391609AbfGRDNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:13:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389655AbfGRDLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:11:17 -0400
+        id S2391597AbfGRDNJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:13:09 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC2512053B;
-        Thu, 18 Jul 2019 03:11:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B85F205F4;
+        Thu, 18 Jul 2019 03:13:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419476;
-        bh=GHt8LwMbS7G867sthSZrkRERqZKFD1mhXFEBXgBAL2A=;
+        s=default; t=1563419589;
+        bh=F2P+Yuwxw/g0SuFWpPwa09atz9Iz1QQ2c+V6E8O1Jzk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UY0XwdRgZ/Lk0PiTN+xvaCO6T0Ggw6nUdZRr5aIu31NUvkNTKgkalpY879vipbPy/
-         XU2lnFB3RbyhijLgphiLJfefcGj85QNPv2XKqoPSMm6h2HE4uiePol+LyGeZq827Ec
-         P+uror5DU+XTh3MM8q21w+tETxRWJPPyOMT0vdps=
+        b=No83PIsAXoe5Kgsr5nJEzbFXyYroStJKqen+JOnXsFEpx+3P2LNmIKS4wA4ExAJc7
+         vOSULEyPpv+Lhx5RsSO/OBwnGgRLGCnxyEYnH0ddh9kV81fa0CnC8fF0Ttf4bSm41K
+         C+d5wVbLGmcRc4Cs4prS+PwzFp+fuEirtMrPMs3k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+182ce46596c3f2e1eb24@syzkaller.appspotmail.com,
-        Todd Kjos <tkjos@google.com>
-Subject: [PATCH 4.14 58/80] binder: fix memory leak in error path
-Date:   Thu, 18 Jul 2019 12:01:49 +0900
-Message-Id: <20190718030103.019747614@linuxfoundation.org>
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 20/54] ip6_tunnel: allow not to count pkts on tstats by passing dev as NULL
+Date:   Thu, 18 Jul 2019 12:01:50 +0900
+Message-Id: <20190718030050.910095217@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
-References: <20190718030058.615992480@linuxfoundation.org>
+In-Reply-To: <20190718030048.392549994@linuxfoundation.org>
+References: <20190718030048.392549994@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Todd Kjos <tkjos@android.com>
+[ Upstream commit 6f6a8622057c92408930c31698394fae1557b188 ]
 
-commit 1909a671dbc3606685b1daf8b22a16f65ea7edda upstream.
+A similar fix to Patch "ip_tunnel: allow not to count pkts on tstats by
+setting skb's dev to NULL" is also needed by ip6_tunnel.
 
-syzkallar found a 32-byte memory leak in a rarely executed error
-case. The transaction complete work item was not freed if put_user()
-failed when writing the BR_TRANSACTION_COMPLETE to the user command
-buffer. Fixed by freeing it before put_user() is called.
-
-Reported-by: syzbot+182ce46596c3f2e1eb24@syzkaller.appspotmail.com
-Signed-off-by: Todd Kjos <tkjos@google.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/android/binder.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/net/ip6_tunnel.h | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -3876,6 +3876,8 @@ retry:
- 		case BINDER_WORK_TRANSACTION_COMPLETE: {
- 			binder_inner_proc_unlock(proc);
- 			cmd = BR_TRANSACTION_COMPLETE;
-+			kfree(w);
-+			binder_stats_deleted(BINDER_STAT_TRANSACTION_COMPLETE);
- 			if (put_user(cmd, (uint32_t __user *)ptr))
- 				return -EFAULT;
- 			ptr += sizeof(uint32_t);
-@@ -3884,8 +3886,6 @@ retry:
- 			binder_debug(BINDER_DEBUG_TRANSACTION_COMPLETE,
- 				     "%d:%d BR_TRANSACTION_COMPLETE\n",
- 				     proc->pid, thread->pid);
--			kfree(w);
--			binder_stats_deleted(BINDER_STAT_TRANSACTION_COMPLETE);
- 		} break;
- 		case BINDER_WORK_NODE: {
- 			struct binder_node *node = container_of(w, struct binder_node, work);
+diff --git a/include/net/ip6_tunnel.h b/include/net/ip6_tunnel.h
+index 1b1cf33cbfb0..2b6abd046087 100644
+--- a/include/net/ip6_tunnel.h
++++ b/include/net/ip6_tunnel.h
+@@ -149,9 +149,12 @@ static inline void ip6tunnel_xmit(struct sock *sk, struct sk_buff *skb,
+ 	memset(skb->cb, 0, sizeof(struct inet6_skb_parm));
+ 	pkt_len = skb->len - skb_inner_network_offset(skb);
+ 	err = ip6_local_out(dev_net(skb_dst(skb)->dev), sk, skb);
+-	if (unlikely(net_xmit_eval(err)))
+-		pkt_len = -1;
+-	iptunnel_xmit_stats(dev, pkt_len);
++
++	if (dev) {
++		if (unlikely(net_xmit_eval(err)))
++			pkt_len = -1;
++		iptunnel_xmit_stats(dev, pkt_len);
++	}
+ }
+ #endif
+ #endif
+-- 
+2.20.1
+
 
 
