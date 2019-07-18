@@ -2,52 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28E366D4B9
+	by mail.lfdr.de (Postfix) with ESMTP id 9273A6D4BA
 	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 21:25:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391264AbfGRTZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 15:25:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37266 "EHLO mail.kernel.org"
+        id S2391334AbfGRTZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 15:25:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727972AbfGRTZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 15:25:16 -0400
-Subject: Re: [GIT PULL] tracing: Changes for 5.3
+        id S1727972AbfGRTZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 15:25:17 -0400
+Subject: Re: [GIT PULL] Modules updates for v5.3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563477915;
-        bh=1jPQwwCs25xZMb+U2J5sCfiwGNe5LOA1mzGFe+EzyE0=;
+        s=default; t=1563477916;
+        bh=AIVu5bgXjZtq+bohAoyuTUrVouah9VrcQQdD60mwgHo=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=d2LJ0/OAZ35qfslMdOLcgZWrHMR93vzkUq4ayIiJR/Pm8jlIVqmyvP+eyokvoQ8Rk
-         8/aAlHMIR6+PWy8xalyvNUkrC4vcZwTODmXiw7MXIwoiMFSo3RHilnRvaXs4uEQZ2k
-         c9JhnA0c251rdZ6d5Jl9t5FFjawSDZdlGq4jhNaA=
+        b=XkETVuvrPoAzSgYofqiJ8IQLw+HHgeCyWdJyGniGdNGmX2rvKSi7ihE+os0MIhx4d
+         g6IphbctP+VMPM3sjqYzDoDxMZU/ROy21bUcLnwRX/jx3mHA46Y30rXwEx1ah99GSz
+         JxzylyZ5gzkulGCxXQU5pgDDZXblQDW3jUMmcuLc=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190717112918.06d934dd@gandalf.local.home>
-References: <20190717112918.06d934dd@gandalf.local.home>
+In-Reply-To: <20190718113346.GA19574@linux-8ccs>
+References: <20190718113346.GA19574@linux-8ccs>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190717112918.06d934dd@gandalf.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
- trace-v5.3
-X-PR-Tracked-Commit-Id: 0aeb1def44169cbe7119f26cf10b974a2046142e
+X-PR-Tracked-Message-Id: <20190718113346.GA19574@linux-8ccs>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git
+ tags/modules-for-v5.3
+X-PR-Tracked-Commit-Id: 93651f80dcb616b8c9115cdafc8e57a781af22d0
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 818e95c768c6607a1df4cf022c00c3c58e2f203e
-Message-Id: <156347791566.32127.3004758995140924953.pr-tracker-bot@kernel.org>
-Date:   Thu, 18 Jul 2019 19:25:15 +0000
-To:     Steven Rostedt <rostedt@goodmis.org>
+X-PR-Merge-Commit-Id: da0acd7c656c09b362b5095dc8595f8655dc1223
+Message-Id: <156347791689.32127.14511774981821883242.pr-tracker-bot@kernel.org>
+Date:   Thu, 18 Jul 2019 19:25:16 +0000
+To:     Jessica Yu <jeyu@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 17 Jul 2019 11:29:18 -0400:
+The pull request you sent on Thu, 18 Jul 2019 13:33:49 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git trace-v5.3
+> git://git.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git tags/modules-for-v5.3
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/818e95c768c6607a1df4cf022c00c3c58e2f203e
+https://git.kernel.org/torvalds/c/da0acd7c656c09b362b5095dc8595f8655dc1223
 
 Thank you!
 
