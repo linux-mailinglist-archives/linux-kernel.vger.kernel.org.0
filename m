@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 998016C6E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:20:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C11516C763
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:25:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391650AbfGRDUP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:20:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45086 "EHLO mail.kernel.org"
+        id S2391184AbfGRDXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:23:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390632AbfGRDLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:11:30 -0400
+        id S2390574AbfGRDIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:08:00 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CD8C20818;
-        Thu, 18 Jul 2019 03:11:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D63C72173B;
+        Thu, 18 Jul 2019 03:07:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419489;
-        bh=ktO7hA2V2D/efF9ziFKYPw519gW3TXtB5RseJH0Pieo=;
+        s=default; t=1563419279;
+        bh=p7qARXKPniQ4Gp1UilfQNwHUhNLhD7ZHzbN/ZdiWL40=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GY9A3+c9UnsQaj77wj1EyPxHnWfC4lxazj1Zwgk8xYXBSw+HD0bAer4tS2cWxOINm
-         TQHk+QKPUEQyUw7uwkIMyThNwhFKL5j34C7yW0G8wfP4fnbbj8ftnnsP1Xitib7nTC
-         EtWBT4iIVCF5F6khOl2xbTM56YXGqlvTmA3P5DRo=
+        b=dUyH5L/K6hgDi5fEs1k1+7HYwbr/yTnccLyHsqy1cjH/fY+Xr2s4BdYo8fncUhtA4
+         8ni7I80X62MtWub5mO99PLNp/1wjisNhmjIbhi0jQu0TfYdGr1B5gPp0qjIkX5PZ87
+         hRts4jzo60VMosB7rBS6WqCHkSqN2Li2uEzVFE10=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 62/80] clk: ti: clkctrl: Fix returning uninitialized data
-Date:   Thu, 18 Jul 2019 12:01:53 +0900
-Message-Id: <20190718030103.297617998@linuxfoundation.org>
+        stable@vger.kernel.org, Haren Myneni <haren@us.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 42/47] crypto/NX: Set receive window credits to max number of CRBs in RxFIFO
+Date:   Thu, 18 Jul 2019 12:01:56 +0900
+Message-Id: <20190718030052.300915199@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
-References: <20190718030058.615992480@linuxfoundation.org>
+In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
+References: <20190718030045.780672747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,63 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 41b3588dba6ef4b7995735a97e47ff0aeea6c276 ]
+From: Haren Myneni <haren@linux.vnet.ibm.com>
 
-If we do a clk_get() for a clock that does not exists, we have
-_ti_omap4_clkctrl_xlate() return uninitialized data if no match
-is found. This can be seen in some cases with SLAB_DEBUG enabled:
+commit e52d484d9869eb291140545746ccbe5ffc7c9306 upstream.
 
-Unable to handle kernel paging request at virtual address 5a5a5a5a
-...
-clk_hw_create_clk.part.33
-sysc_notifier_call
-notifier_call_chain
-blocking_notifier_call_chain
-device_add
+System gets checkstop if RxFIFO overruns with more requests than the
+maximum possible number of CRBs in FIFO at the same time. The max number
+of requests per window is controlled by window credits. So find max
+CRBs from FIFO size and set it to receive window credits.
 
-Let's fix this by setting a found flag only when we find a match.
+Fixes: b0d6c9bab5e4 ("crypto/nx: Add P9 NX support for 842 compression engine")
+CC: stable@vger.kernel.org # v4.14+
+Signed-off-by:Haren Myneni <haren@us.ibm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Reported-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Fixes: 88a172526c32 ("clk: ti: add support for clkctrl clocks")
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Tested-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Tested-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+
 ---
- drivers/clk/ti/clkctrl.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/crypto/nx/nx-842-powernv.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index 82e4d5cccf84..2df8564f08a0 100644
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -215,6 +215,7 @@ static struct clk_hw *_ti_omap4_clkctrl_xlate(struct of_phandle_args *clkspec,
- {
- 	struct omap_clkctrl_provider *provider = data;
- 	struct omap_clkctrl_clk *entry;
-+	bool found = false;
+--- a/drivers/crypto/nx/nx-842-powernv.c
++++ b/drivers/crypto/nx/nx-842-powernv.c
+@@ -36,8 +36,6 @@ MODULE_ALIAS_CRYPTO("842-nx");
+ #define WORKMEM_ALIGN	(CRB_ALIGN)
+ #define CSB_WAIT_MAX	(5000) /* ms */
+ #define VAS_RETRIES	(10)
+-/* # of requests allowed per RxFIFO at a time. 0 for unlimited */
+-#define MAX_CREDITS_PER_RXFIFO	(1024)
  
- 	if (clkspec->args_count != 2)
- 		return ERR_PTR(-EINVAL);
-@@ -224,11 +225,13 @@ static struct clk_hw *_ti_omap4_clkctrl_xlate(struct of_phandle_args *clkspec,
+ struct nx842_workmem {
+ 	/* Below fields must be properly aligned */
+@@ -821,7 +819,11 @@ static int __init vas_cfg_coproc_info(st
+ 	rxattr.lnotify_lpid = lpid;
+ 	rxattr.lnotify_pid = pid;
+ 	rxattr.lnotify_tid = tid;
+-	rxattr.wcreds_max = MAX_CREDITS_PER_RXFIFO;
++	/*
++	 * Maximum RX window credits can not be more than #CRBs in
++	 * RxFIFO. Otherwise, can get checkstop if RxFIFO overruns.
++	 */
++	rxattr.wcreds_max = fifo_size / CRB_SIZE;
  
- 	list_for_each_entry(entry, &provider->clocks, node) {
- 		if (entry->reg_offset == clkspec->args[0] &&
--		    entry->bit_offset == clkspec->args[1])
-+		    entry->bit_offset == clkspec->args[1]) {
-+			found = true;
- 			break;
-+		}
- 	}
- 
--	if (!entry)
-+	if (!found)
- 		return ERR_PTR(-EINVAL);
- 
- 	return entry->clk;
--- 
-2.20.1
-
+ 	/*
+ 	 * Open a VAS receice window which is used to configure RxFIFO
 
 
