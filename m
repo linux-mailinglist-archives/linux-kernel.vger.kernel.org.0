@@ -2,164 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4193E6D45F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 21:09:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 422F36D461
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 21:09:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391052AbfGRTHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 15:07:39 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46279 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727685AbfGRTHj (ORCPT
+        id S2391139AbfGRTIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 15:08:19 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59143 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727685AbfGRTIT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 15:07:39 -0400
-Received: by mail-io1-f68.google.com with SMTP id i10so53185235iol.13
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 12:07:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
-        bh=MQUZMSd8XzLJvG3kqon6Z7O6xL3wGkssHmZcIZJnmv8=;
-        b=EvOoroJqXk90Np+OA+Gy1HD9IFvuOM3F6KVcElccvHImWBkweE9IcwQ+fFYQvkMZ9i
-         3C7TGrXvQX1/K29F2ddJvyLrBt5A5E50Qws/BQpY2OM9GUIGtYL1cUjaU2m9thKICpqd
-         oLtsW4dstSTM8SPWXF5VefG6b9SEFuHlYkPatg8C3WdEkDJfnahU/C+Wy72Yq829pFkp
-         H0ptNkpWIk6wJ+KDo3bsAJQp+P5e3KkNYZvmBMoBzA6OHsNvjVqRhF8dWQ/jQaC6F00D
-         uh80XKIXkR7Cg6/tsvJggCkuRqT9+S/QoHsoDzZsQiu28rk3MKraANiH4gcJsH9Jz1/1
-         06pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
-         :mime-version;
-        bh=MQUZMSd8XzLJvG3kqon6Z7O6xL3wGkssHmZcIZJnmv8=;
-        b=nZp2uVo1qBF2B9tlSWkQ604qfq1AoS/CbGpzJWjvdl1yQROxVpen4y6YCSK2qgEyrW
-         i/u3vJDrKjIzWvRtW+2K25b2vPvY8qBNoV9VcC9KIKjatWhSUYjGPxzPY/fNGb34auXk
-         X24PrEnshttckt7uyL2aQ1mIpOFtd2K5c2zcW6+yFwzh07UxaZwFkHYhidWOYUzuRnJm
-         4KjQxxcO2oJUfeIDGIx2eYBt7Q2Y3f30uJrUSwwzIln8JqQP8xYgfOm3Xoz6z8s+JIxe
-         JkpVXqFuE8A++H781v+H5EGh6QlRQTS+Grlv/MILEs2kjKckUvOhrZSWH4kO0DrPN10F
-         YadA==
-X-Gm-Message-State: APjAAAWRszt4cYCJF9nQXlI2CwOiTT5Dx0IZlcOKPxGQlB6NYveKGcHX
-        7OWbuvWg48HAFetdeA07EUj4AJnOoqY=
-X-Google-Smtp-Source: APXvYqyhJxkNfXL7NWy4swrh8GSZ5IwccJV82aIpycrs3GVBegCdaYy0F+qdLW8XH19x/r9Ypt+kMA==
-X-Received: by 2002:a5d:9bc6:: with SMTP id d6mr36025209ion.160.1563476858439;
-        Thu, 18 Jul 2019 12:07:38 -0700 (PDT)
-Received: from localhost (67-0-62-24.albq.qwest.net. [67.0.62.24])
-        by smtp.gmail.com with ESMTPSA id s10sm78233725iod.46.2019.07.18.12.07.37
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 18 Jul 2019 12:07:37 -0700 (PDT)
-Date:   Thu, 18 Jul 2019 12:07:36 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     torvalds@linux-foundation.org
-cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: [GIT PULL] RISC-V updates for v5.3
-Message-ID: <alpine.DEB.2.21.9999.1907181155050.17807@viisi.sifive.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        Thu, 18 Jul 2019 15:08:19 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6IJ88ZV2123630
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 18 Jul 2019 12:08:08 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6IJ88ZV2123630
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1563476888;
+        bh=aQAQe5BgxxOBXrEJ9nGnVWbNd5gMf/yIE7tOj2KUavw=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=O5NKwY4Vn9dj1q/iryV8RiOpi8+DbgbGguQyUfVG78EHSqMzHoWIuimo5aYGenfmV
+         9WeYYzAM1Ez/6zTOCiKM7UKCgwakTry3eFd88XBgDUBTzf7spg60b/T8yRDIZktrJB
+         U9zkIazPhalQvuQloUxTymjvYpZuxXtUyxda/3s3aVN207FZztekUeBN4zstFQ2qBC
+         9YnKCf6gupxmyVfZ5yjJK/HBBax0awJw3Q1F4I+hmnaWyFhczDvAcXS9938E2jzMTZ
+         tmq51iu54Q8BgSfSRbok3tsnyWVi4ogcN4ktB8sWIVDg65wGp5gHDH8OwiyyRDfdDf
+         Wq0JWJAwAJ2sg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6IJ87Lw2123627;
+        Thu, 18 Jul 2019 12:08:07 -0700
+Date:   Thu, 18 Jul 2019 12:08:07 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Josh Poimboeuf <tipbot@zytor.com>
+Message-ID: <tip-d99a6ce70ec6ed990b74bd4e34232fd830d20d27@git.kernel.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
+        jpoimboe@redhat.com, tglx@linutronix.de, peterz@infradead.org,
+        pbonzini@redhat.com, hpa@zytor.com
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
+          tglx@linutronix.de, jpoimboe@redhat.com, peterz@infradead.org,
+          hpa@zytor.com, pbonzini@redhat.com
+In-Reply-To: <c8cc9be60ebbceb3092aa5dd91916039a1f88275.1563413318.git.jpoimboe@redhat.com>
+References: <c8cc9be60ebbceb3092aa5dd91916039a1f88275.1563413318.git.jpoimboe@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:core/urgent] x86/kvm: Fix fastop function ELF metadata
+Git-Commit-ID: d99a6ce70ec6ed990b74bd4e34232fd830d20d27
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_48_96,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Commit-ID:  d99a6ce70ec6ed990b74bd4e34232fd830d20d27
+Gitweb:     https://git.kernel.org/tip/d99a6ce70ec6ed990b74bd4e34232fd830d20d27
+Author:     Josh Poimboeuf <jpoimboe@redhat.com>
+AuthorDate: Wed, 17 Jul 2019 20:36:37 -0500
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 18 Jul 2019 21:01:03 +0200
 
-The following changes since commit 6fbc7275c7a9ba97877050335f290341a1fd8dbf:
+x86/kvm: Fix fastop function ELF metadata
 
-  Linux 5.2-rc7 (2019-06-30 11:25:36 +0800)
+Some of the fastop functions, e.g. em_setcc(), are actually just used as
+global labels which point to blocks of functions.  The global labels are
+incorrectly annotated as functions.  Also the functions themselves don't
+have size annotations.
 
-are available in the Git repository at:
+Fixes a bunch of warnings like the following:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv/for-v5.3-rc1
+  arch/x86/kvm/emulate.o: warning: objtool: seto() is missing an ELF size annotation
+  arch/x86/kvm/emulate.o: warning: objtool: em_setcc() is missing an ELF size annotation
+  arch/x86/kvm/emulate.o: warning: objtool: setno() is missing an ELF size annotation
+  arch/x86/kvm/emulate.o: warning: objtool: setc() is missing an ELF size annotation
 
-for you to fetch changes up to 2d69fbf3d01a5b71e98137e2406d4087960c512e:
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/c8cc9be60ebbceb3092aa5dd91916039a1f88275.1563413318.git.jpoimboe@redhat.com
 
-  riscv: fix build break after macro-to-function conversion in generic cacheflush.h (2019-07-18 08:16:56 -0700)
+---
+ arch/x86/kvm/emulate.c | 44 +++++++++++++++++++++++++++++++-------------
+ 1 file changed, 31 insertions(+), 13 deletions(-)
 
-----------------------------------------------------------------
-RISC-V updates for v5.3
-
-- Hugepage support
-
-- "Image" header support for RISC-V kernel binaries, compatible with
-  the current ARM64 "Image" header
-
-- Initial page table setup now split into two stages
-
-- CONFIG_SOC support (starting with SiFive SoCs)
-
-- Avoid reserving memory between RAM start and the kernel in setup_bootmem()
-
-- Enable high-res timers and dynamic tick in the RV64 defconfig
-
-- Remove long-deprecated gate area stubs
-
-- MAINTAINERS updates to switch to the newly-created shared RISC-V git
-  tree, and to fix a get_maintainers.pl issue for patches involving
-  SiFive E-mail addresses
-
-Also, one integration fix to resolve a build problem introduced during
-in the v5.3-rc1 merge window:
-
-- Fix build break after macro-to-function conversion in
-  asm-generic/cacheflush.h
-
-----------------------------------------------------------------
-Alexandre Ghiti (2):
-      x86, arm64: Move ARCH_WANT_HUGE_PMD_SHARE config in arch/Kconfig
-      riscv: Introduce huge page support for 32/64bit kernel
-
-Andy Lutomirski (1):
-      riscv: Remove gate area stubs
-
-Anup Patel (3):
-      RISC-V: defconfig: Enable NO_HZ_IDLE and HIGH_RES_TIMERS
-      RISC-V: Fix memory reservation in setup_bootmem()
-      RISC-V: Setup initial page tables in two stages
-
-Atish Patra (1):
-      RISC-V: Add an Image header that boot loader can parse.
-
-Christoph Hellwig (1):
-      riscv: remove free_initrd_mem
-
-Loys Ollivier (3):
-      arch: riscv: add config option for building SiFive's SoC resource
-      riscv: select SiFive platform drivers with SOC_SIFIVE
-      riscv: defconfig: enable SOC_SIFIVE
-
-Paul Walmsley (3):
-      MAINTAINERS: don't automatically patches involving SiFive to the linux-riscv list
-      MAINTAINERS: change the arch/riscv git tree to the new shared tree
-      riscv: fix build break after macro-to-function conversion in generic cacheflush.h
-
-Yash Shah (1):
-      riscv: ccache: Remove unused variable
-
- Documentation/riscv/boot-image-header.txt |  50 +++++
- MAINTAINERS                               |   4 +-
- arch/Kconfig                              |   3 +
- arch/arm64/Kconfig                        |   2 +-
- arch/riscv/Kconfig                        |  10 +
- arch/riscv/Kconfig.socs                   |  13 ++
- arch/riscv/boot/dts/sifive/Makefile       |   2 +-
- arch/riscv/configs/defconfig              |   8 +-
- arch/riscv/configs/rv32_defconfig         |   2 +
- arch/riscv/include/asm/cacheflush.h       |  63 +++++-
- arch/riscv/include/asm/fixmap.h           |   5 +
- arch/riscv/include/asm/hugetlb.h          |  18 ++
- arch/riscv/include/asm/image.h            |  65 ++++++
- arch/riscv/include/asm/page.h             |  14 +-
- arch/riscv/include/asm/pgtable-64.h       |   5 +
- arch/riscv/include/asm/pgtable.h          |  16 +-
- arch/riscv/kernel/head.S                  |  49 ++++-
- arch/riscv/kernel/setup.c                 |   6 +-
- arch/riscv/kernel/vdso.c                  |  19 --
- arch/riscv/mm/Makefile                    |   2 +
- arch/riscv/mm/hugetlbpage.c               |  44 ++++
- arch/riscv/mm/init.c                      | 326 ++++++++++++++++++++++++------
- arch/riscv/mm/sifive_l2_cache.c           |  11 +-
- arch/x86/Kconfig                          |   4 +-
- 24 files changed, 620 insertions(+), 121 deletions(-)
- create mode 100644 Documentation/riscv/boot-image-header.txt
- create mode 100644 arch/riscv/Kconfig.socs
- create mode 100644 arch/riscv/include/asm/hugetlb.h
- create mode 100644 arch/riscv/include/asm/image.h
- create mode 100644 arch/riscv/mm/hugetlbpage.c
+diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+index 8e409ad448f9..718f7d9afedc 100644
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -312,29 +312,42 @@ static void invalidate_registers(struct x86_emulate_ctxt *ctxt)
+ 
+ static int fastop(struct x86_emulate_ctxt *ctxt, void (*fop)(struct fastop *));
+ 
+-#define FOP_FUNC(name) \
++#define __FOP_FUNC(name) \
+ 	".align " __stringify(FASTOP_SIZE) " \n\t" \
+ 	".type " name ", @function \n\t" \
+ 	name ":\n\t"
+ 
+-#define FOP_RET   "ret \n\t"
++#define FOP_FUNC(name) \
++	__FOP_FUNC(#name)
++
++#define __FOP_RET(name) \
++	"ret \n\t" \
++	".size " name ", .-" name "\n\t"
++
++#define FOP_RET(name) \
++	__FOP_RET(#name)
+ 
+ #define FOP_START(op) \
+ 	extern void em_##op(struct fastop *fake); \
+ 	asm(".pushsection .text, \"ax\" \n\t" \
+ 	    ".global em_" #op " \n\t" \
+-	    FOP_FUNC("em_" #op)
++	    ".align " __stringify(FASTOP_SIZE) " \n\t" \
++	    "em_" #op ":\n\t"
+ 
+ #define FOP_END \
+ 	    ".popsection")
+ 
++#define __FOPNOP(name) \
++	__FOP_FUNC(name) \
++	__FOP_RET(name)
++
+ #define FOPNOP() \
+-	FOP_FUNC(__stringify(__UNIQUE_ID(nop))) \
+-	FOP_RET
++	__FOPNOP(__stringify(__UNIQUE_ID(nop)))
+ 
+ #define FOP1E(op,  dst) \
+-	FOP_FUNC(#op "_" #dst) \
+-	"10: " #op " %" #dst " \n\t" FOP_RET
++	__FOP_FUNC(#op "_" #dst) \
++	"10: " #op " %" #dst " \n\t" \
++	__FOP_RET(#op "_" #dst)
+ 
+ #define FOP1EEX(op,  dst) \
+ 	FOP1E(op, dst) _ASM_EXTABLE(10b, kvm_fastop_exception)
+@@ -366,8 +379,9 @@ static int fastop(struct x86_emulate_ctxt *ctxt, void (*fop)(struct fastop *));
+ 	FOP_END
+ 
+ #define FOP2E(op,  dst, src)	   \
+-	FOP_FUNC(#op "_" #dst "_" #src) \
+-	#op " %" #src ", %" #dst " \n\t" FOP_RET
++	__FOP_FUNC(#op "_" #dst "_" #src) \
++	#op " %" #src ", %" #dst " \n\t" \
++	__FOP_RET(#op "_" #dst "_" #src)
+ 
+ #define FASTOP2(op) \
+ 	FOP_START(op) \
+@@ -405,8 +419,9 @@ static int fastop(struct x86_emulate_ctxt *ctxt, void (*fop)(struct fastop *));
+ 	FOP_END
+ 
+ #define FOP3E(op,  dst, src, src2) \
+-	FOP_FUNC(#op "_" #dst "_" #src "_" #src2) \
+-	#op " %" #src2 ", %" #src ", %" #dst " \n\t" FOP_RET
++	__FOP_FUNC(#op "_" #dst "_" #src "_" #src2) \
++	#op " %" #src2 ", %" #src ", %" #dst " \n\t"\
++	__FOP_RET(#op "_" #dst "_" #src "_" #src2)
+ 
+ /* 3-operand, word-only, src2=cl */
+ #define FASTOP3WCL(op) \
+@@ -423,7 +438,7 @@ static int fastop(struct x86_emulate_ctxt *ctxt, void (*fop)(struct fastop *));
+ 	".type " #op ", @function \n\t" \
+ 	#op ": \n\t" \
+ 	#op " %al \n\t" \
+-	FOP_RET
++	__FOP_RET(#op)
+ 
+ asm(".pushsection .fixup, \"ax\"\n"
+     ".global kvm_fastop_exception \n"
+@@ -449,7 +464,10 @@ FOP_SETCC(setle)
+ FOP_SETCC(setnle)
+ FOP_END;
+ 
+-FOP_START(salc) "pushf; sbb %al, %al; popf \n\t" FOP_RET
++FOP_START(salc)
++FOP_FUNC(salc)
++"pushf; sbb %al, %al; popf \n\t"
++FOP_RET(salc)
+ FOP_END;
+ 
+ /*
