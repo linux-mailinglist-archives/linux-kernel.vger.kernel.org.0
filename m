@@ -2,241 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E5F66CE81
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 15:03:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0598E6CE8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 15:04:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390476AbfGRNDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 09:03:32 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:57986 "EHLO ns.iliad.fr"
+        id S2390393AbfGRNEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 09:04:42 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:17475 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727767AbfGRNDc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 09:03:32 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 8EB7E2070A;
-        Thu, 18 Jul 2019 15:03:30 +0200 (CEST)
-Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 73348206B8;
-        Thu, 18 Jul 2019 15:03:30 +0200 (CEST)
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [PATCH v3] media: dvb: Provide 4 devm variants
-To:     Sean Young <sean@mess.org>, Brad Love <brad@nextdimension.cc>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>
-Cc:     linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Message-ID: <068836c7-a116-7e6f-cbb2-f2176fbb9a38@free.fr>
-Date:   Thu, 18 Jul 2019 15:03:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727730AbfGRNEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 09:04:41 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BB1ED3CBCF;
+        Thu, 18 Jul 2019 13:04:40 +0000 (UTC)
+Received: from redhat.com (ovpn-120-147.rdu2.redhat.com [10.10.120.147])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 94621611DB;
+        Thu, 18 Jul 2019 13:04:35 +0000 (UTC)
+Date:   Thu, 18 Jul 2019 09:04:34 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     ? jiang <jiangkidd@hotmail.com>
+Cc:     "jasowang@redhat.com" <jasowang@redhat.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "jakub.kicinski@netronome.com" <jakub.kicinski@netronome.com>,
+        "hawk@kernel.org" <hawk@kernel.org>,
+        "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+        "kafai@fb.com" <kafai@fb.com>,
+        "songliubraving@fb.com" <songliubraving@fb.com>,
+        "yhs@fb.com" <yhs@fb.com>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "xdp-newbies@vger.kernel.org" <xdp-newbies@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "jiangran.jr@alibaba-inc.com" <jiangran.jr@alibaba-inc.com>
+Subject: Re: [PATCH] virtio-net: parameterize min ring num_free for virtio
+ receive
+Message-ID: <20190718085836-mutt-send-email-mst@kernel.org>
+References: <BYAPR14MB32056583C4963342F5D817C4A6C80@BYAPR14MB3205.namprd14.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Thu Jul 18 15:03:30 2019 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BYAPR14MB32056583C4963342F5D817C4A6C80@BYAPR14MB3205.namprd14.prod.outlook.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 18 Jul 2019 13:04:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide devm variants for automatic resource release on device removal.
-Makes error-handling in probe() simpler, thus less error-prone.
-Once all resources are devmanaged, remove() is no longer needed.
+On Thu, Jul 18, 2019 at 12:55:50PM +0000, ? jiang wrote:
+> This change makes ring buffer reclaim threshold num_free configurable
+> for better performance, while it's hard coded as 1/2 * queue now.
+> According to our test with qemu + dpdk, packet dropping happens when
+> the guest is not able to provide free buffer in avail ring timely.
+> Smaller value of num_free does decrease the number of packet dropping
+> during our test as it makes virtio_net reclaim buffer earlier.
+> 
+> At least, we should leave the value changeable to user while the
+> default value as 1/2 * queue is kept.
+> 
+> Signed-off-by: jiangkidd <jiangkidd@hotmail.com>
 
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
----
-Changes from v2:
-x Handle dvb_register_adapter() return code correctly
-Changes from v1:
-x Simplify devm_dvb_register_adapter() implementation
-x Add 3 more devm APIs
-x Document them in devres.rst
----
- Documentation/driver-model/devres.rst |  6 ++++++
- drivers/media/dvb-core/dmxdev.c       | 13 +++++++++++++
- drivers/media/dvb-core/dvb_demux.c    | 13 +++++++++++++
- drivers/media/dvb-core/dvb_frontend.c | 13 +++++++++++++
- drivers/media/dvb-core/dvbdev.c       | 12 ++++++++++++
- include/media/dmxdev.h                |  3 +++
- include/media/dvb_demux.h             |  2 ++
- include/media/dvb_frontend.h          |  3 +++
- include/media/dvbdev.h                |  3 +++
- 9 files changed, 68 insertions(+)
+That would be one reason, but I suspect it's not the
+true one. If you need more buffer due to jitter
+then just increase the queue size. Would be cleaner.
 
-diff --git a/Documentation/driver-model/devres.rst b/Documentation/driver-model/devres.rst
-index 6af41a6a4bb6..84bdb61f27a3 100644
---- a/Documentation/driver-model/devres.rst
-+++ b/Documentation/driver-model/devres.rst
-@@ -268,6 +268,12 @@ DMA
- DRM
-   devm_drm_dev_init()
- 
-+DVB
-+  devm_dvb_dmx_init()
-+  devm_dvb_dmxdev_init()
-+  devm_dvb_register_adapter()
-+  devm_dvb_register_frontend()
-+
- GPIO
-   devm_gpiod_get()
-   devm_gpiod_get_index()
-diff --git a/drivers/media/dvb-core/dmxdev.c b/drivers/media/dvb-core/dmxdev.c
-index f14a872d1268..f38b65d1b430 100644
---- a/drivers/media/dvb-core/dmxdev.c
-+++ b/drivers/media/dvb-core/dmxdev.c
-@@ -1444,6 +1444,19 @@ int dvb_dmxdev_init(struct dmxdev *dmxdev, struct dvb_adapter *dvb_adapter)
- 
- EXPORT_SYMBOL(dvb_dmxdev_init);
- 
-+static void dmxdev_release(void *dmxdev)
-+{
-+	dvb_dmxdev_release(dmxdev);
-+}
-+
-+int devm_dvb_dmxdev_init(struct device *dev, struct dmxdev *dmxdev,
-+		struct dvb_adapter *dvb_adapter)
-+{
-+	int rc = dvb_dmxdev_init(dmxdev, dvb_adapter);
-+	return rc ? : devm_add_action_or_reset(dev, dmxdev_release, dmxdev);
-+}
-+EXPORT_SYMBOL(devm_dvb_dmxdev_init);
-+
- void dvb_dmxdev_release(struct dmxdev *dmxdev)
- {
- 	dmxdev->exit = 1;
-diff --git a/drivers/media/dvb-core/dvb_demux.c b/drivers/media/dvb-core/dvb_demux.c
-index 39a2c6ccf31d..55b9675b99c5 100644
---- a/drivers/media/dvb-core/dvb_demux.c
-+++ b/drivers/media/dvb-core/dvb_demux.c
-@@ -28,6 +28,7 @@
- #include <linux/string.h>
- #include <linux/crc32.h>
- #include <linux/uaccess.h>
-+#include <linux/device.h>
- #include <asm/div64.h>
- 
- #include <media/dvb_demux.h>
-@@ -1317,6 +1318,18 @@ int dvb_dmx_init(struct dvb_demux *dvbdemux)
- 
- EXPORT_SYMBOL(dvb_dmx_init);
- 
-+static void dmx_release(void *dvbdemux)
-+{
-+	dvb_dmx_release(dvbdemux);
-+}
-+
-+int devm_dvb_dmx_init(struct device *dev, struct dvb_demux *dvbdemux)
-+{
-+	int rc = dvb_dmx_init(dvbdemux);
-+	return rc ? : devm_add_action_or_reset(dev, dmx_release, dvbdemux);
-+}
-+EXPORT_SYMBOL(devm_dvb_dmx_init);
-+
- void dvb_dmx_release(struct dvb_demux *dvbdemux)
- {
- 	vfree(dvbdemux->cnt_storage);
-diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
-index 209186c5cd9b..4a281cd8c064 100644
---- a/drivers/media/dvb-core/dvb_frontend.c
-+++ b/drivers/media/dvb-core/dvb_frontend.c
-@@ -3007,6 +3007,19 @@ int dvb_register_frontend(struct dvb_adapter *dvb,
- }
- EXPORT_SYMBOL(dvb_register_frontend);
- 
-+static void unregister_frontend(void *fe)
-+{
-+	dvb_unregister_frontend(fe);
-+}
-+
-+int devm_dvb_register_frontend(struct device *dev,
-+		struct dvb_adapter *dvb, struct dvb_frontend *fe)
-+{
-+	int rc = dvb_register_frontend(dvb, fe);
-+	return rc ? : devm_add_action_or_reset(dev, unregister_frontend, fe);
-+}
-+EXPORT_SYMBOL(devm_dvb_register_frontend);
-+
- int dvb_unregister_frontend(struct dvb_frontend *fe)
- {
- 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
-diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
-index a3393cd4e584..0fc8dbf65045 100644
---- a/drivers/media/dvb-core/dvbdev.c
-+++ b/drivers/media/dvb-core/dvbdev.c
-@@ -885,6 +885,18 @@ int dvb_register_adapter(struct dvb_adapter *adap, const char *name,
- }
- EXPORT_SYMBOL(dvb_register_adapter);
- 
-+static void unreg_adapter(void *adap)
-+{
-+	dvb_unregister_adapter(adap);
-+}
-+
-+int devm_dvb_register_adapter(struct device *dev, struct dvb_adapter *adap,
-+		const char *name, struct module *module, short *adapter_nums)
-+{
-+	int rc = dvb_register_adapter(adap, name, module, dev, adapter_nums);
-+	return rc < 0 ? rc : devm_add_action_or_reset(dev, unreg_adapter, adap);
-+}
-+EXPORT_SYMBOL(devm_dvb_register_adapter);
- 
- int dvb_unregister_adapter(struct dvb_adapter *adap)
- {
-diff --git a/include/media/dmxdev.h b/include/media/dmxdev.h
-index baafa3b8aca4..0300d829aeea 100644
---- a/include/media/dmxdev.h
-+++ b/include/media/dmxdev.h
-@@ -204,6 +204,9 @@ struct dmxdev {
-  */
- int dvb_dmxdev_init(struct dmxdev *dmxdev, struct dvb_adapter *adap);
- 
-+int devm_dvb_dmxdev_init(struct device *dev, struct dmxdev *dmxdev,
-+		struct dvb_adapter *dvb_adapter);
-+
- /**
-  * dvb_dmxdev_release - releases a digital TV demux and unregisters it.
-  *
-diff --git a/include/media/dvb_demux.h b/include/media/dvb_demux.h
-index 3b6aeca7a49e..95fe901076d7 100644
---- a/include/media/dvb_demux.h
-+++ b/include/media/dvb_demux.h
-@@ -266,6 +266,8 @@ struct dvb_demux {
-  */
- int dvb_dmx_init(struct dvb_demux *demux);
- 
-+int devm_dvb_dmx_init(struct device *dev, struct dvb_demux *demux);
-+
- /**
-  * dvb_dmx_release - releases a digital TV demux internal buffers.
-  *
-diff --git a/include/media/dvb_frontend.h b/include/media/dvb_frontend.h
-index f05cd7b94a2c..56dbaf3cc7a9 100644
---- a/include/media/dvb_frontend.h
-+++ b/include/media/dvb_frontend.h
-@@ -713,6 +713,9 @@ struct dvb_frontend {
- int dvb_register_frontend(struct dvb_adapter *dvb,
- 				 struct dvb_frontend *fe);
- 
-+int devm_dvb_register_frontend(struct device *dev,
-+		struct dvb_adapter *dvb, struct dvb_frontend *fe);
-+
- /**
-  * dvb_unregister_frontend() - Unregisters a DVB frontend
-  *
-diff --git a/include/media/dvbdev.h b/include/media/dvbdev.h
-index 551325858de3..32f8d1626319 100644
---- a/include/media/dvbdev.h
-+++ b/include/media/dvbdev.h
-@@ -202,6 +202,9 @@ int dvb_register_adapter(struct dvb_adapter *adap, const char *name,
- 			 struct module *module, struct device *device,
- 			 short *adapter_nums);
- 
-+int devm_dvb_register_adapter(struct device *dev, struct dvb_adapter *adap,
-+		const char *name, struct module *module, short *adapter_nums);
-+
- /**
-  * dvb_unregister_adapter - Unregisters a DVB adapter
-  *
--- 
-2.17.1
+
+However are you sure this is the reason for
+packet drops? Do you see them dropped by dpdk
+due to lack of space in the ring? As opposed to
+by guest?
+
+
+> ---
+>  drivers/net/virtio_net.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 0d4115c9e20b..bc190dec6084 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -26,6 +26,9 @@
+>  static int napi_weight = NAPI_POLL_WEIGHT;
+>  module_param(napi_weight, int, 0444);
+>  
+> +static int min_numfree;
+> +module_param(min_numfree, int, 0444);
+> +
+>  static bool csum = true, gso = true, napi_tx;
+>  module_param(csum, bool, 0444);
+>  module_param(gso, bool, 0444);
+> @@ -1315,6 +1318,9 @@ static int virtnet_receive(struct receive_queue *rq, int budget,
+>  	void *buf;
+>  	int i;
+>  
+> +	if (!min_numfree)
+> +		min_numfree = virtqueue_get_vring_size(rq->vq) / 2;
+> +
+>  	if (!vi->big_packets || vi->mergeable_rx_bufs) {
+>  		void *ctx;
+>  
+> @@ -1331,7 +1337,7 @@ static int virtnet_receive(struct receive_queue *rq, int budget,
+>  		}
+>  	}
+>  
+> -	if (rq->vq->num_free > virtqueue_get_vring_size(rq->vq) / 2) {
+> +	if (rq->vq->num_free > min_numfree) {
+>  		if (!try_fill_recv(vi, rq, GFP_ATOMIC))
+>  			schedule_delayed_work(&vi->refill, 0);
+>  	}
+> -- 
+> 2.11.0
