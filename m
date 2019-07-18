@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83C3F6C583
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 279EA6C527
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:07:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390379AbfGRDHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:07:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38600 "EHLO mail.kernel.org"
+        id S2389240AbfGRDDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:03:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389830AbfGRDHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:07:09 -0400
+        id S2389210AbfGRDDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:03:11 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6EAB2053B;
-        Thu, 18 Jul 2019 03:07:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13995204EC;
+        Thu, 18 Jul 2019 03:03:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419229;
-        bh=LyZ1n9E0H3QVsJ1XmRdofYE6LF/cEyXD7zYBG/sL34s=;
+        s=default; t=1563418990;
+        bh=EjQiwJFzN6vC59pTA0kUIUoNEPvkuQCYIO3Sbda2fAo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FO1ejG7lioNEwT2jOeoiK4zoI7eJ26mNygIdLqqJVlXjJVaKw5hwunL8t+mKGjZuh
-         sFxXu9ZwOHXbX1Bt49JEX79IUiYyX2at6xvICL/g2tffMLkhLrUxh76ZDTxdnN6EVh
-         e4xR9gs2kB+E+mBWb5+ferH8tnSkleoWXrr1RTHw=
+        b=Mi+K5IJVw+eRyjwP25n3nVJ5O1/Ib9D+AfIBw193UqQeAjxPQrIYC2U2oFSR9MdKo
+         4I+P318aCIDoNGBQKSi2vpC2xBkBXX00raPgI+FgDjrEknneMjnVQCNlSeFf4xxQid
+         +OM387HbBUQTtdnWUp41HDRVxzMtvGfILj0xFags=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Milan Broz <gmazyland@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 21/47] dm verity: use message limit for data block corruption message
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: [PATCH 5.2 17/21] s390/qdio: dont touch the dsci in tiqdio_add_input_queues()
 Date:   Thu, 18 Jul 2019 12:01:35 +0900
-Message-Id: <20190718030050.489111670@linuxfoundation.org>
+Message-Id: <20190718030035.268489344@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
-References: <20190718030045.780672747@linuxfoundation.org>
+In-Reply-To: <20190718030030.456918453@linuxfoundation.org>
+References: <20190718030030.456918453@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2eba4e640b2c4161e31ae20090a53ee02a518657 ]
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-DM verity should also use DMERR_LIMIT to limit repeat data block
-corruption messages.
+commit ac6639cd3db607d386616487902b4cc1850a7be5 upstream.
 
-Signed-off-by: Milan Broz <gmazyland@gmail.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Current code sets the dsci to 0x00000080. Which doesn't make any sense,
+as the indicator area is located in the _left-most_ byte.
+
+Worse: if the dsci is the _shared_ indicator, this potentially clears
+the indication of activity for a _different_ device.
+tiqdio_thinint_handler() will then have no reason to call that device's
+IRQ handler, and the device ends up stalling.
+
+Fixes: d0c9d4a89fff ("[S390] qdio: set correct bit in dsci")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/md/dm-verity-target.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/s390/cio/qdio_thinint.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-index fc65f0dedf7f..e3599b43f9eb 100644
---- a/drivers/md/dm-verity-target.c
-+++ b/drivers/md/dm-verity-target.c
-@@ -236,8 +236,8 @@ static int verity_handle_err(struct dm_verity *v, enum verity_block_type type,
- 		BUG();
- 	}
+--- a/drivers/s390/cio/qdio_thinint.c
++++ b/drivers/s390/cio/qdio_thinint.c
+@@ -79,7 +79,6 @@ void tiqdio_add_input_queues(struct qdio
+ 	mutex_lock(&tiq_list_lock);
+ 	list_add_rcu(&irq_ptr->input_qs[0]->entry, &tiq_list);
+ 	mutex_unlock(&tiq_list_lock);
+-	xchg(irq_ptr->dsci, 1 << 7);
+ }
  
--	DMERR("%s: %s block %llu is corrupted", v->data_dev->name, type_str,
--		block);
-+	DMERR_LIMIT("%s: %s block %llu is corrupted", v->data_dev->name,
-+		    type_str, block);
- 
- 	if (v->corrupted_errs == DM_VERITY_MAX_CORRUPTED_ERRS)
- 		DMERR("%s: reached maximum errors", v->data_dev->name);
--- 
-2.20.1
-
+ void tiqdio_remove_input_queues(struct qdio_irq *irq_ptr)
 
 
