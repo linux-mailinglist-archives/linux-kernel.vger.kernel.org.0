@@ -2,82 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C10B76D5A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 22:17:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4E676D5AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 22:18:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391490AbfGRURQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 16:17:16 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:42108 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727687AbfGRURQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 16:17:16 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 2B2CC802B6; Thu, 18 Jul 2019 22:17:03 +0200 (CEST)
-Date:   Thu, 18 Jul 2019 22:17:13 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org,
-        johan@kernel.org, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org
-Subject: USB Modem support for Droid 4
-Message-ID: <20190718201713.GA25103@amd>
+        id S2391594AbfGRUSg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 16:18:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57394 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728022AbfGRUSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 16:18:36 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A5DF68E22C;
+        Thu, 18 Jul 2019 20:18:35 +0000 (UTC)
+Received: from [10.18.17.153] (dhcp-17-153.bos.redhat.com [10.18.17.153])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C787B19D7A;
+        Thu, 18 Jul 2019 20:18:34 +0000 (UTC)
+Subject: Re: [PATCH v2 08/11] kbuild: create *.mod with full directory path
+ and remove MODVERDIR
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>
+References: <20190711054434.1177-1-yamada.masahiro@socionext.com>
+ <20190711054434.1177-9-yamada.masahiro@socionext.com>
+ <20190716214023.GA15159@redhat.com>
+ <CAK7LNAQ41NhPPO6xoVObgFctTO6WewSXPfZkE7_bZXsdAtKSpA@mail.gmail.com>
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+Message-ID: <f1222c8a-9301-1e76-981d-a36e8687a29f@redhat.com>
+Date:   Thu, 18 Jul 2019 16:18:33 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAK7LNAQ41NhPPO6xoVObgFctTO6WewSXPfZkE7_bZXsdAtKSpA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 18 Jul 2019 20:18:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 7/17/19 1:21 AM, Masahiro Yamada wrote:
+>> Hi Masahiro,
+>>
+>> I'm following this patchset changes as they will affect the klp-convert
+>> series [1] that the livepatching folks have been working on...
+> 
+> Empty files .tmp_versions/*.livepatch are touched
+> to keep track of 'LIVEPATCH_* := y', right?
+> 
 
---azLHFNyN32YCQGCU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Pretty much.  From that patchset I think the rework would need to  modify..
 
-=46rom: Tony Lindgren <tony@atomide.com>
+- [PATCH v4 02/10] kbuild: Support for Symbols.list creation: creates a 
+Symbols.list file of kernel and module symbols, but *not* including any 
+from LIVEPATCH_* modules.
 
-Droid starts to have useful support in linux-next. Modem is tricky to
-play with, but this is enough to get basic support.
+- [PATCH v4 05/10] modpost: Integrate klp-convert: if a LIVEPATCH_* 
+module has changed, call a newly introduced klp-convert script on it.
 
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
+- [PATCH v4 06/10] modpost: Add modinfo flag to livepatch modules: find 
+any LIVEPATCH_* mod, add it to a livepatchmods file, then pass that file 
+to modpost
 
-diff --git a/drivers/usb/serial/qcserial.c b/drivers/usb/serial/qcserial.c
-index 613f91a..3ca9439 100644
---- a/drivers/usb/serial/qcserial.c
-+++ b/drivers/usb/serial/qcserial.c
-@@ -181,6 +181,9 @@ static const struct usb_device_id id_table[] =3D {
- 	/* Huawei devices */
- 	{DEVICE_HWI(0x03f0, 0x581d)},	/* HP lt4112 LTE/HSPA+ Gobi 4G Modem (Huawe=
-i me906e) */
-=20
-+	/* Motorola devices */
-+	{DEVICE_HWI(0x22b8, 0x2a70)},	/* Droid 4 mdm6600 */
-+
- 	{ }				/* Terminating entry */
- };
- MODULE_DEVICE_TABLE(usb, id_table);
+> Perhaps, adding a new field
+> to *.mod files might be cleaner.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+I can look into that.  By "field" you mean a new row in the file?
 
---azLHFNyN32YCQGCU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Regards,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl0w08kACgkQMOfwapXb+vJpwQCfTiUS2K4a1CVoJwFu6/B1FtTc
-z+kAnRGFucsG+uLBUmYmxdZiQpeyBTXZ
-=SQkN
------END PGP SIGNATURE-----
-
---azLHFNyN32YCQGCU--
+-- Joe
