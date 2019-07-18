@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BFFC6D823
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 03:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53CC36D825
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 03:04:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbfGSBEA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 21:04:00 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34162 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbfGSBD5 (ORCPT
+        id S1726787AbfGSBEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 21:04:09 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33027 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726613AbfGSBD6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 21:03:57 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n9so7439792pgc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 18:03:56 -0700 (PDT)
+        Thu, 18 Jul 2019 21:03:58 -0400
+Received: by mail-pf1-f196.google.com with SMTP id g2so13400742pfq.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 18:03:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=234sLOzVHB5hCj+BQKTblG2UsxBEUB0HpiZuWiY8m1k=;
-        b=fIn/C+oxIkXyH3rgsASOjz9QnUUYWGfYapVj08rHpJUVzsLcJ0/RXEhrvjzoNv+LJC
-         tf638XI6ng1o7PbvomKPkCwgNP2auqSxI6Im+cpd79YpTaFpsLKNpZla/NiEeAlrn/KQ
-         hr6rkw+VKP7wv81GhwekEquH459W2H0iLYTNzbyDj/oJSV8+IWoWrSUit53GDdgIkR18
-         ih6iincWXDm9Sy6Q/MnWbIatD5w7VMViOebN/Oaja6tD+VbghK7TtEApuMbr6OYwNzQE
-         TEY7Bg5xrboMwdMFsh9JX+4FYV6EdfYkPSqT+IoNgBf8kIUXjlLBkvlT8t+nKX7BJF0r
-         iT/w==
-X-Gm-Message-State: APjAAAVBXYlLFuTTkBK2QQaYeX0YekZAzI4C1cYNXXxTcFI9poPjgUJI
-        7chdPBzjhaqu6PI/kiOqsJ0=
-X-Google-Smtp-Source: APXvYqxVw4bYMMHJy9xZz2XbQ8FkLcAt/G11LsNEEH3AYxw1NB7JbL6nJQIqi9P5oSIllZx+WVr1og==
-X-Received: by 2002:a17:90a:20a2:: with SMTP id f31mr53921159pjg.90.1563498236261;
-        Thu, 18 Jul 2019 18:03:56 -0700 (PDT)
+        bh=3DerTdpMCvOAmilKWu1WZjnbwiZiuPLab19ZVw3bxBA=;
+        b=CcjIovhZedFsDdezc7AQitBZADDpwxrpZuoHqoLBsPIhq3ETzLfSXl5FRR6+g825Vi
+         NQ0I9It1E1J4o/5fbkjF2OxtlN2iwuclO8cVTscbJyPBi6km6qMmxFJxxkMzFIE4bGTu
+         rzjNrLYnlcBD9SO1IwKCAftWASxed/bC43uQ/wqzv0yb1ye8ptSZ3u/Xg8H6OBRMwpUd
+         OTLKRKIA9gaC57vo4o19GJsJGRGwObYHEArlmsjkVv6zOXCrvLEK2zVKa78QbGLBnnc4
+         3G3KoCFj7FOzMNs/8paTdMhLgqH8GDGR5U4ZYFibe2NCgJr2oRh2iuR9zxwmFBn/d5uV
+         xBag==
+X-Gm-Message-State: APjAAAUXSbEhqkrIabv94hfhj7o71LE6Ewi8t7A/x3RR/g4ix+EVpmuz
+        qz/qamyk+ELCQBaaYIpdmw0=
+X-Google-Smtp-Source: APXvYqzPAcu6qLOmEhMfz7VydByOJF8x4MlGexyAApZEKkNR5dc+pDZCOb3kIxs/VQggIwPkwgP3nw==
+X-Received: by 2002:a17:90b:8cd:: with SMTP id ds13mr51585957pjb.141.1563498237573;
+        Thu, 18 Jul 2019 18:03:57 -0700 (PDT)
 Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id q144sm28887612pfc.103.2019.07.18.18.03.55
+        by smtp.gmail.com with ESMTPSA id q144sm28887612pfc.103.2019.07.18.18.03.56
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 18 Jul 2019 18:03:55 -0700 (PDT)
+        Thu, 18 Jul 2019 18:03:56 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
@@ -41,9 +41,9 @@ Cc:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Nadav Amit <namit@vmware.com>
-Subject: [RFC 5/7] percpu: Assume preemption is disabled on per_cpu_ptr()
-Date:   Thu, 18 Jul 2019 10:41:08 -0700
-Message-Id: <20190718174110.4635-6-namit@vmware.com>
+Subject: [RFC 6/7] x86/percpu: Optimized arch_raw_cpu_ptr()
+Date:   Thu, 18 Jul 2019 10:41:09 -0700
+Message-Id: <20190718174110.4635-7-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190718174110.4635-1-namit@vmware.com>
 References: <20190718174110.4635-1-namit@vmware.com>
@@ -52,107 +52,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When per_cpu_ptr() is used, the caller should have preemption disabled,
-as otherwise the pointer is meaningless. If the user wants an "unstable"
-pointer he should call raw_cpu_ptr().
+Implementing arch_raw_cpu_ptr() in C, allows the compiler to perform
+better optimizations, such as setting an appropriate base to compute
+the address instead of an add instruction.
 
-Add an assertion to check that indeed preemption is disabled, and
-distinguish between the two cases to allow further, per-arch
-optimizations.
+The benefit of this computation is relevant only when using compiler
+segment qualifiers. It is inapplicable to use this method when the
+address size is greater than the maximum operand size, as it is when
+building vdso32.
+
+Distinguish between the two cases in which preemption is disabled (as
+happens when this_cpu_ptr() is used) and enabled (when raw_cpu_ptr() is
+used).
+
+This allows optimizations, for instance in rcu_dynticks_eqs_exit(),
+the following code:
+
+  mov    $0x2bbc0,%rax
+  add    %gs:0x7ef07570(%rip),%rax	# 0x10358 <this_cpu_off>
+  lock xadd %edx,0xd8(%rax)
+
+Turns with this patch into:
+
+  mov    %gs:0x7ef08aa5(%rip),%rax	# 0x10358 <this_cpu_off>
+  lock xadd %edx,0x2bc58(%rax)
 
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- include/asm-generic/percpu.h | 12 ++++++++++++
- include/linux/percpu-defs.h  | 33 ++++++++++++++++++++++++++++++++-
- 2 files changed, 44 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/percpu.h | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
 
-diff --git a/include/asm-generic/percpu.h b/include/asm-generic/percpu.h
-index c2de013b2cf4..7853605f4210 100644
---- a/include/asm-generic/percpu.h
-+++ b/include/asm-generic/percpu.h
-@@ -36,6 +36,14 @@ extern unsigned long __per_cpu_offset[NR_CPUS];
- #define my_cpu_offset __my_cpu_offset
- #endif
+diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
+index 13987f9bc82f..8bac7db397cc 100644
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -73,20 +73,41 @@
+ #endif /* USE_X86_SEG_SUPPORT */
  
+ #define __my_cpu_offset		this_cpu_read(this_cpu_off)
++#define __raw_my_cpu_offset	__this_cpu_read(this_cpu_off)
++#define __my_cpu_ptr(ptr)	(__my_cpu_type(*ptr) *)(uintptr_t)(ptr)
+ 
++#if USE_X86_SEG_SUPPORT && (!defined(BUILD_VDSO32) || defined(CONFIG_X86_64))
 +/*
-+ * Determine the offset of the current active processor when preemption is
-+ * disabled. Can be overriden by arch code.
++ * Efficient implementation for cases in which the compiler supports C segments.
++ * Allows the compiler to perform additional optimizations that can save more
++ * instructions.
++ *
++ * This optimized version can only be used if the pointer size equals to native
++ * operand size, which does not happen when vdso32 is used.
 + */
-+#ifndef __raw_my_cpu_offset
-+#define __raw_my_cpu_offset __my_cpu_offset
-+#endif
-+
- /*
-  * Arch may define arch_raw_cpu_ptr() to provide more efficient address
-  * translations for raw_cpu_ptr().
-@@ -44,6 +52,10 @@ extern unsigned long __per_cpu_offset[NR_CPUS];
- #define arch_raw_cpu_ptr(ptr) SHIFT_PERCPU_PTR(ptr, __my_cpu_offset)
- #endif
- 
-+#ifndef arch_raw_cpu_ptr_preemptable
-+#define arch_raw_cpu_ptr_preemptable(ptr) SHIFT_PERCPU_PTR(ptr, __raw_my_cpu_offset)
-+#endif
-+
- #ifdef CONFIG_HAVE_SETUP_PER_CPU_AREA
- extern void setup_per_cpu_areas(void);
- #endif
-diff --git a/include/linux/percpu-defs.h b/include/linux/percpu-defs.h
-index a6fabd865211..13afca8a37e7 100644
---- a/include/linux/percpu-defs.h
-+++ b/include/linux/percpu-defs.h
-@@ -237,20 +237,51 @@ do {									\
- 	SHIFT_PERCPU_PTR((ptr), per_cpu_offset((cpu)));			\
- })
- 
-+#ifndef arch_raw_cpu_ptr_preemption_disabled
-+#define arch_raw_cpu_ptr_preemption_disabled(ptr)			\
-+	arch_raw_cpu_ptr(ptr)
-+#endif
-+
-+#define raw_cpu_ptr_preemption_disabled(ptr)				\
++#define __arch_raw_cpu_ptr_qual(qual, ptr)				\
 +({									\
-+	__verify_pcpu_ptr(ptr);						\
-+	arch_raw_cpu_ptr_preemption_disabled(ptr);			\
++	(qual typeof(*(ptr)) __kernel __force *)((uintptr_t)(ptr) +	\
++						__my_cpu_offset);	\
 +})
-+
-+/*
-+ * If preemption is enabled, we need to read the pointer atomically on
-+ * raw_cpu_ptr(). However if it is disabled, we can use the
-+ * raw_cpu_ptr_nopreempt(), which is potentially more efficient. Similarly, we
-+ * can use the preemption-disabled version if the kernel is non-preemptable or
-+ * if voluntary preemption is used.
-+ */
-+#ifdef CONFIG_PREEMPT
-+
- #define raw_cpu_ptr(ptr)						\
- ({									\
- 	__verify_pcpu_ptr(ptr);						\
- 	arch_raw_cpu_ptr(ptr);						\
++#else /* USE_X86_SEG_SUPPORT && (!defined(BUILD_VDSO32) || defined(CONFIG_X86_64)) */
+ /*
+  * Compared to the generic __my_cpu_offset version, the following
+  * saves one instruction and avoids clobbering a temp register.
+  */
+-#define arch_raw_cpu_ptr(ptr)				\
++#define __arch_raw_cpu_ptr_qual(qual, ptr)		\
+ ({							\
+ 	unsigned long tcp_ptr__;			\
+-	asm volatile("add " __percpu_arg(1) ", %0"	\
++	asm qual ("add " __percpu_arg(1) ", %0"		\
+ 		     : "=r" (tcp_ptr__)			\
+ 		     : "m" (__my_cpu_var(this_cpu_off)),\
+ 		       "0" (ptr));			\
+ 	(typeof(*(ptr)) __kernel __force *)tcp_ptr__;	\
  })
- 
-+#else
++#endif /* USE_X86_SEG_SUPPORT && (!defined(BUILD_VDSO32) || defined(CONFIG_X86_64)) */
 +
-+#define raw_cpu_ptr(ptr)	raw_cpu_ptr_preemption_disabled(ptr)
-+
-+#endif
-+
- #ifdef CONFIG_DEBUG_PREEMPT
-+/*
-+ * Unlike other this_cpu_* operations, this_cpu_ptr() requires that preemption
-+ * will be disabled. In contrast, raw_cpu_ptr() does not require that.
-+ */
- #define this_cpu_ptr(ptr)						\
- ({									\
-+	__this_cpu_preempt_check("ptr");				\
- 	__verify_pcpu_ptr(ptr);						\
- 	SHIFT_PERCPU_PTR(ptr, my_cpu_offset);				\
- })
- #else
--#define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
-+#define this_cpu_ptr(ptr) raw_cpu_ptr_preemption_disabled(ptr)
- #endif
- 
- #else	/* CONFIG_SMP */
++#define arch_raw_cpu_ptr(ptr)				__arch_raw_cpu_ptr_qual(volatile, ptr)
++#define arch_raw_cpu_ptr_preemption_disabled(ptr)	__arch_raw_cpu_ptr_qual( , ptr)
+ #else /* CONFIG_SMP */
+ #define __percpu_seg_override
+ #define __percpu_prefix		""
 -- 
 2.17.1
 
