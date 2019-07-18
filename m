@@ -2,60 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BDF56CB57
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 10:59:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 876466CB89
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:08:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389602AbfGRI7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 04:59:15 -0400
-Received: from mga06.intel.com ([134.134.136.31]:13975 "EHLO mga06.intel.com"
+        id S2389739AbfGRJGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 05:06:39 -0400
+Received: from m13-102.163.com ([220.181.13.102]:54801 "EHLO m13-102.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726383AbfGRI7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 04:59:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2019 01:59:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,276,1559545200"; 
-   d="scan'208";a="158725434"
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by orsmga007.jf.intel.com with ESMTP; 18 Jul 2019 01:59:11 -0700
-From:   Felipe Balbi <felipe.balbi@linux.intel.com>
-To:     Richard Cochran <richardcochran@gmail.com>
-Cc:     netdev@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Christopher S . Hall" <christopher.s.hall@intel.com>
-Subject: Re: [RFC PATCH 4/5] PTP: Add flag for non-periodic output
-In-Reply-To: <20190717173645.GD1464@localhost>
-References: <20190716072038.8408-1-felipe.balbi@linux.intel.com> <20190716072038.8408-5-felipe.balbi@linux.intel.com> <20190716163927.GA2125@localhost> <87k1ch2m1i.fsf@linux.intel.com> <20190717173645.GD1464@localhost>
-Date:   Thu, 18 Jul 2019 11:59:10 +0300
-Message-ID: <87ftn3iuqp.fsf@linux.intel.com>
+        id S2389532AbfGRJGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 05:06:38 -0400
+X-Greylist: delayed 907 seconds by postgrey-1.27 at vger.kernel.org; Thu, 18 Jul 2019 05:06:36 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=vWG8X
+        d+vw7pspWZS2Zgi9bzG7wBs4m0DBcDRl9qtqto=; b=iF6LblqsEePe2mkJkgRBr
+        Eb0mezDCy9i3RflFOb4rFRNgZDSPRVHCGjLUUzMR+0la2izyQCe7DpUi+Nma6Vkx
+        l/el99Y01I8XLwkPk79gDiCvrH61TxM6Z/Tzug5OZzpK8fI2gY/heekA7aH6AzrT
+        aFIOvSBLd5zK+ZWcVX0lKI=
+Received: from luferry$163.com ( [42.120.75.156] ) by ajax-webmail-wmsvr102
+ (Coremail) ; Thu, 18 Jul 2019 16:50:52 +0800 (CST)
+X-Originating-IP: [42.120.75.156]
+Date:   Thu, 18 Jul 2019 16:50:52 +0800 (CST)
+From:   luferry <luferry@163.com>
+To:     "Thomas Gleixner" <tglx@linutronix.de>
+Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Rik van Riel" <riel@surriel.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH v2] smp: avoid generic_exec_single cause system
+ lockup
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version SP_ntes V3.5 build
+ 20190614(cb3344cf) Copyright (c) 2002-2019 www.mailtech.cn 163com
+In-Reply-To: <alpine.DEB.2.21.1907181007340.1778@nanos.tec.linutronix.de>
+References: <20190718080308.48381-1-luferry@163.com>
+ <alpine.DEB.2.21.1907181007340.1778@nanos.tec.linutronix.de>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <5f5fbd7.1073c.16c0446ea63.Coremail.luferry@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: ZsGowAC3zfHtMjBdUqAmAQ--.48588W
+X-CM-SenderInfo: poxiv2lu16il2tof0z/xtbBZhX1WlaD2nFzxAABsU
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Hi,
-
-Richard Cochran <richardcochran@gmail.com> writes:
-
-> On Wed, Jul 17, 2019 at 09:49:13AM +0300, Felipe Balbi wrote:
->> No worries, I'll work on this after vacations (I'll off for 2 weeks
->> starting next week). I thought about adding a new IOCTL until I saw that
->> rsv field. Oh well :-)
->
-> It would be great if you could fix up the PTP ioctls as a preface to
-> your series.
-
-no problem, anything in particular in mind? Just create new versions of
-all the IOCTLs so we can actually use the reserved fields in the future?
-
-cheers
-
--- 
-balbi
+CgoKCgoKCgoKCkF0IDIwMTktMDctMTggMTY6MDc6NTgsICJUaG9tYXMgR2xlaXhuZXIiIDx0Z2x4
+QGxpbnV0cm9uaXguZGU+IHdyb3RlOgo+T24gVGh1LCAxOCBKdWwgMjAxOSwgbHVmZXJyeUAxNjMu
+Y29tIHdyb3RlOgo+Cj4+IEZyb206IGx1ZmVycnkgPGx1ZmVycnlAMTYzLmNvbT4KPj4gCj4+IFRo
+ZSByYWNlIGNhbiByZXByb2R1Y2VkIGJ5IHNlbmRpbmcgd2FpdCBlbmFibGVkIElQSSBpbiBzb2Z0
+aXJxL2lycSBlbnYKPgo+V2hpY2ggY29kZSBwYXRoIGlzIGRvaW5nIHRoYXQ/Cj4KPlRoYW5rcywK
+Pgo+CXRnbHgKClRoYW5rcyBmb3IgeW91ciBraW5kbHkgcmVwbHkuCkkgY2hlY2tlZCBrZXJuZWwg
+YW5kIGZvdW5kIG5vIGNvZGUgcGF0aCBjYW4gcnVuIGludG8gdGhpcy4KQWN0dWFsbHkgLCBpIGVu
+Y291bnRlciB3aXRoIHRoaXMgcHJvYmxlbSBieSBteSBvd24gY29kZS4KSSBuZWVkIHRvIGRvIHNv
+bWUgc3BlY2lmaWMgdXJnZW50IHdvcmsgcGVyaW9kaWNpdHkgYW5kIHRoZXNlIAp3b3JrIG1heSBy
+dW4gZm9yIHF1aXRlIGEgd2hpbGUuIFNvIGkgY2FuJ3QgZGlzYWJsZSBpcnEgZHVyaW5nIHRoZXNl
+IHdvcmsgCndoaWNoIHN0b3BzIG1lIGZyb20gdXNpbmcgaHJ0aW1lciB0byBkbyB0aGlzLiBTbyBp
+IGRpZCBhZGQgYW4gZXh0cmEgCnNvZml0cnEgYWN0aW9uIHdoaWNoIG1heSBpbnZva2Ugc21wX2Nh
+bGwu
