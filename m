@@ -2,235 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 755D16D4D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 21:36:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CB016D4DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 21:42:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403767AbfGRTgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 15:36:49 -0400
-Received: from smtprelay0162.hostedemail.com ([216.40.44.162]:53434 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727687AbfGRTgt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 15:36:49 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id A019B181D12E7;
-        Thu, 18 Jul 2019 19:36:47 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:2:41:69:355:379:599:960:966:968:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1535:1593:1594:1605:1730:1747:1777:1792:2196:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3867:3870:3871:3872:4049:4118:4321:4385:4605:5007:7875:7903:8603:9592:10004:10848:11026:11232:11658:11914:12043:12048:12297:12438:12555:12683:12740:12760:12895:13439:14096:14097:14659:21080:21451:21611:21627:30012:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
-X-HE-Tag: duck35_58333dbfa7011
-X-Filterd-Recvd-Size: 7148
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 18 Jul 2019 19:36:45 +0000 (UTC)
-Message-ID: <5cce2a9f73f6bf5ee55c576f98a28b04fdbe05d6.camel@perches.com>
-Subject: Re: [PATCH] fnic: remove casting vmalloc
-From:   Joe Perches <joe@perches.com>
-To:     Vasyl Gomonovych <gomonovych@gmail.com>, satishkh@cisco.com,
-        sebaddel@cisco.com, kartilak@cisco.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Date:   Thu, 18 Jul 2019 12:36:44 -0700
-In-Reply-To: <20190718190235.8089-1-gomonovych@gmail.com>
-References: <20190718190235.8089-1-gomonovych@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        id S2391200AbfGRTli (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 15:41:38 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:50864 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727687AbfGRTlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 15:41:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=YAGdzBLCG5dsMfL2zbVRfaOZMtRzrb67yPj8E/E+uac=; b=3ztnFElTqVKGzD+iF3tjifiy3N
+        A8gfsJP3ZjLfHt7pOgFqDN5PHKIQuFefOQmD4Wzrekawv1UEn4bCImhcamiWALPT5tvbWJM08TSiK
+        jW/+Y9H8o6s6XgZKXtUCBZCv2B312F+uS8NbeBIVzM1U1qe/0fUL8qUrg8AlESMGHoV8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hoCHT-0002jA-8W; Thu, 18 Jul 2019 21:41:31 +0200
+Date:   Thu, 18 Jul 2019 21:41:31 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: fec: generate warning when using deprecated phy
+ reset
+Message-ID: <20190718194131.GK25635@lunn.ch>
+References: <20190718143428.2392-1-TheSven73@gmail.com>
+ <1563468471.2676.36.camel@pengutronix.de>
+ <CAOMZO5A_BuWMr1n_fFv4veyaXdcfjxO+9nFAgGfCrmAhNmzV5g@mail.gmail.com>
+ <CAGngYiULAjXwwxmUyHxEXhv1WzSeE_wE3idOLSnD5eEaZg3xDw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGngYiULAjXwwxmUyHxEXhv1WzSeE_wE3idOLSnD5eEaZg3xDw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-07-18 at 21:02 +0200, Vasyl Gomonovych wrote:
-> Generated by:  alloc_cast.cocci
+On Thu, Jul 18, 2019 at 01:21:36PM -0400, Sven Van Asbroeck wrote:
+> Lucas, Fabio,
+> 
+> On Thu, Jul 18, 2019 at 12:52 PM Fabio Estevam <festevam@gmail.com> wrote:
+> >
+> > > Not really a fan of this. This will cause existing DTs, which are
+> > > provided by the firmware in an ideal world and may not change at the
+> > > same rate as the kernel, to generate a warning with new kernels. Not
+> > > really helpful from the user experience point of view.
+> >
+> > I agree. I don't think this warning is useful.
+> 
+> Few users watch the dmesg log, But I totally see your point.
+> 
+> The problem I'm trying to address here is this: when I want to
+> reset the fec phy, I go look at existing devicetrees. Nearly
+> all of them use phy-reset-gpios, so that's what I'll use. But,
+> when I try to upstream the patch, the maintainer will tell me:
+> "no, that is deprecated, use this other method".
+> 
+> Is there a good solution you can think of which would point
+> the unwary developer to the correct phy reset method?
 
-Please look deeper than just the cocci output.
+Hi Sven
 
-> diff --git a/drivers/scsi/fnic/fnic_debugfs.c b/drivers/scsi/fnic/fnic_debugfs.c
-[]
-> @@ -59,8 +59,7 @@ int fnic_debugfs_init(void)
->  						fnic_trace_debugfs_root);
->  
->  	/* Allocate memory to structure */
-> -	fc_trc_flag = (struct fc_trace_flag_type *)
-> -		vmalloc(sizeof(struct fc_trace_flag_type));
-> +	fc_trc_flag = vmalloc(sizeof(struct fc_trace_flag_type));
->  
->  	if (fc_trc_flag) {
->  		fc_trc_flag->fc_row_file = 0;
+One option would be to submit a patch or a patchset changing all
+existing device tree files to make use of the core method. Anybody
+cut/pasting will then automatically use the correct core way of doing
+it.
 
-Not your fault, but this code is not well written.
+There is also a move towards using YAML to verify the correctness of
+DT files. It should be possible to mark the old property as
+deprecated, so there will be a build time warning, not a boot time
+warning.
 
-struct fc_trace_flag_type is:
-
-drivers/scsi/fnic/fnic_debugfs.c:struct fc_trace_flag_type {
-drivers/scsi/fnic/fnic_debugfs.c-       u8 fc_row_file;
-drivers/scsi/fnic/fnic_debugfs.c-       u8 fc_normal_file;
-drivers/scsi/fnic/fnic_debugfs.c-       u8 fnic_trace;
-drivers/scsi/fnic/fnic_debugfs.c-       u8 fc_trace;
-drivers/scsi/fnic/fnic_debugfs.c-       u8 fc_clear;
-drivers/scsi/fnic/fnic_debugfs.c-};
-
-It doesn't require vmalloc as it's just 5 bytes in size.
-Might as well do either of allocate it with kmalloc
-or because it's a singleton, just create a static.
-
-Maybe:
----
- drivers/scsi/fnic/fnic_debugfs.c | 55 ++++++++++++++++------------------------
- 1 file changed, 22 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/scsi/fnic/fnic_debugfs.c b/drivers/scsi/fnic/fnic_debugfs.c
-index 21991c99db7c..72071bd4c9a1 100644
---- a/drivers/scsi/fnic/fnic_debugfs.c
-+++ b/drivers/scsi/fnic/fnic_debugfs.c
-@@ -31,15 +31,13 @@ static struct dentry *fnic_fc_rdata_trace_debugfs_file;
- static struct dentry *fnic_fc_trace_enable;
- static struct dentry *fnic_fc_trace_clear;
- 
--struct fc_trace_flag_type {
-+static struct {
- 	u8 fc_row_file;
- 	u8 fc_normal_file;
- 	u8 fnic_trace;
- 	u8 fc_trace;
- 	u8 fc_clear;
--};
--
--static struct fc_trace_flag_type *fc_trc_flag;
-+} fc_trc_flag;
- 
- /*
-  * fnic_debugfs_init - Initialize debugfs for fnic debug logging
-@@ -52,26 +50,18 @@ static struct fc_trace_flag_type *fc_trc_flag;
-  */
- int fnic_debugfs_init(void)
- {
--	int rc = -1;
- 	fnic_trace_debugfs_root = debugfs_create_dir("fnic", NULL);
- 
- 	fnic_stats_debugfs_root = debugfs_create_dir("statistics",
- 						fnic_trace_debugfs_root);
- 
--	/* Allocate memory to structure */
--	fc_trc_flag = (struct fc_trace_flag_type *)
--		vmalloc(sizeof(struct fc_trace_flag_type));
--
--	if (fc_trc_flag) {
--		fc_trc_flag->fc_row_file = 0;
--		fc_trc_flag->fc_normal_file = 1;
--		fc_trc_flag->fnic_trace = 2;
--		fc_trc_flag->fc_trace = 3;
--		fc_trc_flag->fc_clear = 4;
--	}
-+	fc_trc_flag.fc_row_file = 0;
-+	fc_trc_flag.fc_normal_file = 1;
-+	fc_trc_flag.fnic_trace = 2;
-+	fc_trc_flag.fc_trace = 3;
-+	fc_trc_flag.fc_clear = 4;
- 
--	rc = 0;
--	return rc;
-+	return 0;
- }
- 
- /*
-@@ -89,8 +79,7 @@ void fnic_debugfs_terminate(void)
- 	debugfs_remove(fnic_trace_debugfs_root);
- 	fnic_trace_debugfs_root = NULL;
- 
--	if (fc_trc_flag)
--		vfree(fc_trc_flag);
-+	memset(&fc_trc_flag, 0, sizeof(fc_trc_flag));
- }
- 
- /*
-@@ -121,11 +110,11 @@ static ssize_t fnic_trace_ctrl_read(struct file *filp,
- 	u8 *trace_type;
- 	len = 0;
- 	trace_type = (u8 *)filp->private_data;
--	if (*trace_type == fc_trc_flag->fnic_trace)
-+	if (*trace_type == fc_trc_flag.fnic_trace)
- 		len = sprintf(buf, "%u\n", fnic_tracing_enabled);
--	else if (*trace_type == fc_trc_flag->fc_trace)
-+	else if (*trace_type == fc_trc_flag.fc_trace)
- 		len = sprintf(buf, "%u\n", fnic_fc_tracing_enabled);
--	else if (*trace_type == fc_trc_flag->fc_clear)
-+	else if (*trace_type == fc_trc_flag.fc_clear)
- 		len = sprintf(buf, "%u\n", fnic_fc_trace_cleared);
- 	else
- 		pr_err("fnic: Cannot read to any debugfs file\n");
-@@ -172,11 +161,11 @@ static ssize_t fnic_trace_ctrl_write(struct file *filp,
- 	if (ret < 0)
- 		return ret;
- 
--	if (*trace_type == fc_trc_flag->fnic_trace)
-+	if (*trace_type == fc_trc_flag.fnic_trace)
- 		fnic_tracing_enabled = val;
--	else if (*trace_type == fc_trc_flag->fc_trace)
-+	else if (*trace_type == fc_trc_flag.fc_trace)
- 		fnic_fc_tracing_enabled = val;
--	else if (*trace_type == fc_trc_flag->fc_clear)
-+	else if (*trace_type == fc_trc_flag.fc_clear)
- 		fnic_fc_trace_cleared = val;
- 	else
- 		pr_err("fnic: cannot write to any debugfs file\n");
-@@ -218,7 +207,7 @@ static int fnic_trace_debugfs_open(struct inode *inode,
- 	if (!fnic_dbg_prt)
- 		return -ENOMEM;
- 
--	if (*rdata_ptr == fc_trc_flag->fnic_trace) {
-+	if (*rdata_ptr == fc_trc_flag.fnic_trace) {
- 		fnic_dbg_prt->buffer = vmalloc(array3_size(3, trace_max_pages,
- 							   PAGE_SIZE));
- 		if (!fnic_dbg_prt->buffer) {
-@@ -347,13 +336,13 @@ void fnic_trace_debugfs_init(void)
- 	fnic_trace_enable = debugfs_create_file("tracing_enable",
- 					S_IFREG|S_IRUGO|S_IWUSR,
- 					fnic_trace_debugfs_root,
--					&(fc_trc_flag->fnic_trace),
-+					&fc_trc_flag.fnic_trace,
- 					&fnic_trace_ctrl_fops);
- 
- 	fnic_trace_debugfs_file = debugfs_create_file("trace",
- 					S_IFREG|S_IRUGO|S_IWUSR,
- 					fnic_trace_debugfs_root,
--					&(fc_trc_flag->fnic_trace),
-+					&fc_trc_flag.fnic_trace,
- 					&fnic_trace_debugfs_fops);
- }
- 
-@@ -390,27 +379,27 @@ void fnic_fc_trace_debugfs_init(void)
- 	fnic_fc_trace_enable = debugfs_create_file("fc_trace_enable",
- 					S_IFREG|S_IRUGO|S_IWUSR,
- 					fnic_trace_debugfs_root,
--					&(fc_trc_flag->fc_trace),
-+					&fc_trc_flag.fc_trace,
- 					&fnic_trace_ctrl_fops);
- 
- 	fnic_fc_trace_clear = debugfs_create_file("fc_trace_clear",
- 					S_IFREG|S_IRUGO|S_IWUSR,
- 					fnic_trace_debugfs_root,
--					&(fc_trc_flag->fc_clear),
-+					&fc_trc_flag.fc_clear,
- 					&fnic_trace_ctrl_fops);
- 
- 	fnic_fc_rdata_trace_debugfs_file =
- 		debugfs_create_file("fc_trace_rdata",
- 				    S_IFREG|S_IRUGO|S_IWUSR,
- 				    fnic_trace_debugfs_root,
--				    &(fc_trc_flag->fc_normal_file),
-+				    &fc_trc_flag.fc_normal_file,
- 				    &fnic_trace_debugfs_fops);
- 
- 	fnic_fc_trace_debugfs_file =
- 		debugfs_create_file("fc_trace",
- 				    S_IFREG|S_IRUGO|S_IWUSR,
- 				    fnic_trace_debugfs_root,
--				    &(fc_trc_flag->fc_row_file),
-+				    &fc_trc_flag.fc_row_file,
- 				    &fnic_trace_debugfs_fops);
- }
- 
-
+	Andrew
