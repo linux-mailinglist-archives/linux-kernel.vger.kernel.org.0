@@ -2,92 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D0526D14F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 17:46:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D9A16D158
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 17:49:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390687AbfGRPqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 11:46:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35522 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728120AbfGRPqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 11:46:31 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B1FFE30ADC81;
-        Thu, 18 Jul 2019 15:46:30 +0000 (UTC)
-Received: from laptop.jcline.org (unknown [10.13.105.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 45B2110021B2;
-        Thu, 18 Jul 2019 15:46:28 +0000 (UTC)
-Received: from laptop.jcline.org (localhost [IPv6:::1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by laptop.jcline.org (Postfix) with ESMTPS id 9FCF6704C8E5;
-        Thu, 18 Jul 2019 11:46:27 -0400 (EDT)
-Date:   Thu, 18 Jul 2019 11:46:26 -0400
-From:   Jeremy Cline <jcline@redhat.com>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     wbauer1@a1.net, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Jiri Kosina <jikos@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] HID: input: fix a4tech horizontal wheel custom usage
-Message-ID: <20190718154626.GC25351@laptop.jcline.org>
-References: <20190611121320.30267-1-nsaenzjulienne@suse.de>
- <CAO-hwJLAiC1o-kZ5epZHtO2GK+zc5x28pYbZH-XsY4yAuBmHWw@mail.gmail.com>
- <5346893.KeHrH3GHoD@linux-lf90.site>
- <CAO-hwJ+Nm+i+ehGurAxD3EQBX8-TFQ7p4J-1rV55fVA=NazgAw@mail.gmail.com>
+        id S2390797AbfGRPsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 11:48:38 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37317 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727780AbfGRPsh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 11:48:37 -0400
+Received: by mail-lf1-f65.google.com with SMTP id c9so19539942lfh.4
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 08:48:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H848abaLyIwWER/gEmAO68AwOfA/THbvpS8nBllhwXw=;
+        b=jv0LYAjJ3cQrNJJG4dHU14YIsAdM97SXPVhpRIr4VVu8+9iERlESrVNBKs76k6FuI4
+         5MgODQxyPDbLZqr0MrLNAQSevRvEeeGHp9UlobVgpfitV+wo4l8HV8TOibYKszCq8sy5
+         tp1Rbhe/dxF1BUOEUmPucLb6xWPa9oRC8faBk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H848abaLyIwWER/gEmAO68AwOfA/THbvpS8nBllhwXw=;
+        b=rBrSOWj4dnUui8CkOL3HTmzL2V2+/xMZYCvZYCrV9AcS/5xPL7WTv6Thatwa9tU1om
+         FAY0Zb772tbl2wtqzzuVlwo4BZSWAxpwAJZ90CbgN5kNaegzOMvbnnfmXf+NxaV5cU8X
+         SWI6VfxUN5yWHNB3Kc3KFjcyJef79oAC7c++hXpE7bzwUM5VcOmvjh2FCIU8Hp1Xd5E8
+         Rtvu8GjRWAhScm5q1uNQlS0TPtuyOtV2BSQvdpGdKmkqlYA/Ff1gdu7L5nGY3IhCUJeD
+         Xc33Vv7FZdUmeLGxL5DM+/WU17YQh6PwzGWtKKoTa3wOxo41yKVZwOe+icsBiCLQ3rHh
+         i7Lg==
+X-Gm-Message-State: APjAAAUBcU4PwifTgWjpUuuMhXh+CZbAqaPnCNB/pKneTwjfe5Z99BqK
+        OnwVw66oIlTgIl56zFq5ywCxRLvXlzQ=
+X-Google-Smtp-Source: APXvYqxKRuDw/Tevua3yyxSZtlXPD/N+kvhz9KEid8HUaa0CFoalJV+YlVKslu6zUQzMK0bKU/s+3w==
+X-Received: by 2002:ac2:4a6e:: with SMTP id q14mr21728932lfp.154.1563464915054;
+        Thu, 18 Jul 2019 08:48:35 -0700 (PDT)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id t23sm5143430ljd.98.2019.07.18.08.48.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Jul 2019 08:48:34 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id c9so19539856lfh.4
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 08:48:33 -0700 (PDT)
+X-Received: by 2002:a19:6519:: with SMTP id z25mr21132151lfb.42.1563464913226;
+ Thu, 18 Jul 2019 08:48:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAO-hwJ+Nm+i+ehGurAxD3EQBX8-TFQ7p4J-1rV55fVA=NazgAw@mail.gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 18 Jul 2019 15:46:30 +0000 (UTC)
+References: <20190718015712.197499-1-briannorris@chromium.org> <20190718074522.GA13713@redhat.com>
+In-Reply-To: <20190718074522.GA13713@redhat.com>
+From:   Brian Norris <briannorris@chromium.org>
+Date:   Thu, 18 Jul 2019 08:48:21 -0700
+X-Gmail-Original-Message-ID: <CA+ASDXM+tN_=RbgWjfajSp9aDq0vJrbLcaYsf5+69R3b-4Y=VQ@mail.gmail.com>
+Message-ID: <CA+ASDXM+tN_=RbgWjfajSp9aDq0vJrbLcaYsf5+69R3b-4Y=VQ@mail.gmail.com>
+Subject: Re: [PATCH] mac80211: don't warn about CW params when not using them
+To:     Stanislaw Gruszka <sgruszka@redhat.com>
+Cc:     Johannes Berg <johannes@sipsolutions.net>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Yan-Hsuan Chuang <yhchuang@realtek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 03:36:03PM +0200, Benjamin Tissoires wrote:
-> Hi Wolfgang,
-> 
-> On Thu, Jun 13, 2019 at 1:49 PM Wolfgang Bauer <wbauer@tmo.at> wrote:
-> >
-> > On Tuesday, 11. Juni 2019, 16:42:37 Benjamin Tissoires wrote:
-> > > On Tue, Jun 11, 2019 at 2:13 PM Nicolas Saenz Julienne
-> > >
-> > > <nsaenzjulienne@suse.de> wrote:
-> > > > NOTE: I CC'd Wolfgang as he's the one who can test this.
-> > >
-> > > I'll wait for Wolfram to confirm that the patch works before pushing then.
-> >
-> > My name is Wolfgang, not Wolfram... ;-)
-> 
-> ouch, sorry for that (I am more used to talk to the I2C maintainer apparently)
-> 
-> > But never mind.
-> >
-> > I tested the patch meanwhile on top of kernel 5.2.rc4, where the mouse wheel
-> > actually worked.
-> 
-> Actually, I am a little bit lost here.
-> 
-> The patch mentions a fix of c01908a14bf73, which is in 5.1 final.
-> So if your mouse works in 5.2.rc4, I am not sure how
-> HID-a4tech-fix-horizontal-scrolling.patch could break it.
-> 
-> Could you be slightly more specific in what "works" and what doesn't?
-> 
+On Thu, Jul 18, 2019 at 12:45 AM Stanislaw Gruszka <sgruszka@redhat.com> wrote:
+> Fix looks fine for me. However I think rtw88 should implement
+> drv_conf_tx() because parameters can be different on different
+> network setups and maybe more important WMM/AC parameters become
+> quite recently part of ETSI regulatory.
 
-For what it's worth, at least one user has hit this issue in Fedora
-starting on stable kernel v5.1.17[0] which has commit abf82e8f7e9a
-("HID: a4tech: fix horizontal scrolling"). Applying this patch on top of
-v5.1.18 fixed the issue for them.
+Ack. I just figured we should stay consistent with the WARNINGs (and
+we both noticed this one on earlier patch reviews). I don't know about
+you, but for me, the whole wireless stack is so full of WARNINGs that
+my crash reporter system separately classifies net/wireless and
+drivers/net/wireless/ from the rest of the kernel when categorizing
+automated problem reports. (And...most developers then ignore them.)
 
-[0] https://bugzilla.redhat.com/show_bug.cgi?id=1730762
+But I digress ;)
 
-
-Regards,
-Jeremy
+Brian
