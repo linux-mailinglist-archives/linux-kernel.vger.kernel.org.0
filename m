@@ -2,109 +2,347 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13B176CAD5
+	by mail.lfdr.de (Postfix) with ESMTP id 7D4856CAD6
 	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 10:20:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389349AbfGRITj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 04:19:39 -0400
-Received: from sonic311-30.consmr.mail.ir2.yahoo.com ([77.238.176.162]:37053
-        "EHLO sonic311-30.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726000AbfGRITj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 04:19:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1563437976; bh=QWuaa+lHzclsY2yyOL4j0kQhI4PRaQdtpwh12ByH9z4=; h=Date:From:Reply-To:Subject:From:Subject; b=P4SHJhFdZkGYPyx3AtlfKy3/z1W2NvDjRbaaRppqq+R1HPjXvBb6c6V0d6GLwFFR1Q6dFJUGx6i+1ldEUMERB4K0UdzIVxactziaAYj0gOv2IYa/gW8AwHv4HOP1MHt8k8xVYBxTs6XoGFGcpspQrINwSVxAL8V/095BjZHIeZ7HKoPLuaKFghlLJyrbTuuR1EJOxv8Tki9cQPrJKDtRcFs7KYwCf0xYeMgeOOHy7E9ycimbQIa/Zjwgu2dZI754iFGY5BbBTa+OMZ5TVdAGWzGz7XNALOTcJ5P7RhaTMXSbpqgrjfkrIBmLp/fmzxLYBFp+YGVyYsNGfftS62cBEg==
-X-YMail-OSG: 5J6EGhYVM1lumDRhKP6x0xNFvbUf8tMQkSc_9EG7EZ_x9j192FvvWzQHfVgOSZn
- GDaPA8EpbODsnDeR3Z1R_7ORP41sdm6oqF7HVIVO0Ui8W2kar3EGtfcvSANzow6kSYHbmkOgH.oV
- GF1bhcXJVxN.rpR0pxeejxfuyw790pMweoMCHwELWvKpg0p0yCELpATR5WzuVSY6yzhrEYA9NqCp
- EV7Yg76Qx.DZ.ZIow0qfp9T94XhtsAMUXFFINKkwO2hcuhTk2blVzUsP5cFmoE1R6vWXZcKJRi2D
- RSBCbfTBvClCsZkGYaB5y5Z.JJLwJUhbnmb4kdjS61Nw0UTDpqgHj7Dq.FUExbvk5N_52d6ds6ag
- R3mKR2fPyjZdt_w2U1hIeQeCWHpE2dKGlXl6pvKlR.MsaDkHd.7_UKjWXLIf2FT3NIpM1CS1tfz0
- w547HgHYum46vvQ6isath9uiE0_mC4R7nW4VRxpcpTh9Az3Z3FgZCwu4nKhIaErJtSXsn1FCIRl6
- iv0J_jXDgIcfE.JoCOW5flWV8tqLzXOcnP6id7YVLAD.qC5hXyc6n3QOiv3uBK8HFRVvWCmnnhhn
- sVM4Sh.kea3I7YcmB9yGMpn6aN_usU6PHj5m4YNPUvl1AcEgXs4XC7gpBvA6JnlP5k5b9KiOD4WM
- 4ii3hN_yI3t6hDEerHKYauMUY_cwO3ftjXevkpKHjfXpIiGHRuASZXv.KE6W7BFi1eaEdblNCDX.
- kBwXlK2T29rVKdTPJjqBGd0xLDJya6F8f_WqSTbz3HEf.Z0FPP6_YQP21hczpuPoxcfnIZc1LTz7
- 9fLoMUhr_L0dFaH6S4Vuxg2ulu76Cs2eRq53YjShued6wBUp5AKqwyoucR0.s_9mFseHkiz3TcW1
- VeGcrYfKmmeUlV_6s0JSJR7hpCnu52tSrN1QtqS3RBafkvTYsM.dyfIsTS00KW2RySqy71PtOSqd
- O9WlmW9IlDDfzYIXXoV0U0KQHx_0g_ENJFPNI7wLalsNvfK0L_VacUxJK5ftsg0yFD1HAZHCIHy5
- ktVn1NC8CWLERZ__.CvSq08rwAyE2uQrhXbyVCy9yA78IEx.olxnUVH2KKtBRxZIm9rPEFX1Om8V
- 22mbHSK25T1L_1U0iMMUlovQ3I7YW3FAjg9YPMOK6xzapqhSXIpYVU9YDEtqyRi103xvVCmF2q8G
- 5pZUR0EPLqY7Lopc_wWEjvYGkXTzxcffLeif7gS1kbUyI4P09xPrfZU75LAPp5H0.QHm2yza3
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ir2.yahoo.com with HTTP; Thu, 18 Jul 2019 08:19:36 +0000
-Date:   Thu, 18 Jul 2019 08:19:32 +0000 (UTC)
-From:   Abdoul Moussa <mabdoul744@gmail.com>
-Reply-To: mabdoul744@gmail.com
-Message-ID: <1839340843.4227597.1563437972424@mail.yahoo.com>
-Subject: HELLO! PLEASE TRY AND RESPOND SOONEST
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-To:     unlisted-recipients:; (no To-header on input)
+        id S2389469AbfGRITs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 04:19:48 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:59126 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726000AbfGRITs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 04:19:48 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ED4171A0029;
+        Thu, 18 Jul 2019 10:19:44 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DFA341A00AB;
+        Thu, 18 Jul 2019 10:19:44 +0200 (CEST)
+Received: from fsr-ub1864-103.ea.freescale.net (fsr-ub1864-103.ea.freescale.net [10.171.82.17])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 5F81C205C7;
+        Thu, 18 Jul 2019 10:19:44 +0200 (CEST)
+From:   Daniel Baluta <daniel.baluta@nxp.com>
+To:     shawnguo@kernel.org, o.rempel@pengutronix.de
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, ulf.hansson@linaro.org, anson.huang@nxp.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        shengjiu.wang@nxp.com, Daniel Baluta <daniel.baluta@nxp.com>
+Subject: [PATCH] firmware: imx: Add DSP IPC protocol interface
+Date:   Thu, 18 Jul 2019 11:19:43 +0300
+Message-Id: <20190718081943.10272-1-daniel.baluta@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My Dear Friend,
+Some of i.MX8 processors (e.g i.MX8QM, i.MX8QXP) contain
+the Tensilica HiFi4 DSP for advanced pre- and post-audio
+processing.
 
-Before I introduce myself, I wish to inform you that this letter is not a h=
-oax mail and I urge you to treat it serious. This letter must come to you a=
-s a big surprise, but I believe it is only a day that people meet and becom=
-e great friends and business partners. Please I want you to read this lette=
-r very carefully and I must apologize for barging this message into your ma=
-ilbox without any formal introduction due to the urgency and confidentialit=
-y of this business and I know that this message will come to you as a surpr=
-ise. Please this is not a joke and I will not like you to joke with it ok, =
-with due respect to your person and much sincerity of purpose, I make this =
-contact with you as I believe that you can be of great assistance to me. My=
- name is Mr.Abdoul Moussa, from Burkina Faso, West Africa. I work in United=
- Bank for Africa (UBA) as telex manager, please see this as a confidential =
-message and do not reveal it to another person and let me know whether you =
-can be of assistance regarding my proposal below because it is top secret.
+The communication between Host CPU and DSP firmware is
+taking place using a shared memory area for message passing
+and a dedicated Messaging Unit for notifications.
 
-I am about to retire from active Banking service to start a new life but I =
-am sceptical to reveal this particular secret to a stranger. You must assur=
-e me that everything will be handled confidentially because we are not goin=
-g to suffer again in life. It has been 10 years now that most of the greedy=
- African Politicians used our bank to launder money overseas through the he=
-lp of their Political advisers. Most of the funds which they transferred ou=
-t of the shores of Africa were gold and oil money that was supposed to have=
- been used to develop the continent. Their Political advisers always inflat=
-ed the amounts before transferring to foreign accounts, so I also used the =
-opportunity to divert part of the funds hence I am aware that there is no o=
-fficial trace of how much was transferred as all the accounts used for such=
- transfers were being closed after transfer. I acted as the Bank Officer to=
- most of the politicians and when I discovered that they were using me to s=
-ucceed in their greedy act; I also cleaned some of their banking records fr=
-om the Bank files and no one cared to ask me because the money was too much=
- for them to control. They laundered over $5billion Dollars during the proc=
-ess.
+DSP IPC protocol offers a doorbell interface using
+imx-mailbox API.
 
-Before I send this message to you, I have already diverted ($10.5million Do=
-llars) to an escrow account belonging to no one in the bank. The bank is an=
-xious now to know who the beneficiary to the funds is because they have mad=
-e a lot of profits with the funds. It is more than Eight years now and most=
- of the politicians are no longer using our bank to transfer funds overseas=
-. The ($10.5million Dollars) has been laying waste in our bank and I don=E2=
-=80=99t want to retire from the bank without transferring the funds to a fo=
-reign account to enable me to share the proceeds with the receiver (a forei=
-gner). The money will be shared 60% for me and 40% for you. There is no one=
- coming to ask you about the funds because I secured everything. I only wan=
-t you to assist me by providing a reliable bank account where the funds can=
- be transferred.
+We use 4 MU channels (2 x TXDB, 2 x RXDB) to implement a
+request-reply protocol.
 
-You are not to face any difficulties or legal implications as I am going to=
- handle the transfer personally. If you are capable of receiving the funds,=
- do let me know immediately to enable me to give you detailed information o=
-n what to do. For me, I have not stolen the money from anyone because the o=
-ther people that took the whole money did not face any problems. This is my=
- chance to grab my own life opportunity but you must keep the details of th=
-e funds secret to avoid any leakages as no one in the bank knows about my p=
-lans. Please get back to me if you are interested and capable to handle thi=
-s project, I shall intimate you on what to do when I hear from your confirm=
-ation and acceptance. If you are capable of being my trusted associate, do =
-declare your consent to me I am looking forward to hearing from you immedia=
-tely for further information. Make Sure You Reply To My private email: mabd=
-oul865@gmail.com=20
+Connection 0 (txdb0, rxdb0):
+        - Host writes messasge to shared memory [SHMEM]
+	- Host sends a request [MU]
+	- DSP handles request [SHMEM]
+	- DSP sends reply [MU]
 
-Thanks with my best regards.
+Connection 1 (txdb1, rxdb1):
+	- DSP writes a message to shared memory [SHMEM]
+	- DSP sends a request [MU]
+	- Host handles request [SHMEM]
+	- Host sends reply [MU]
+
+The protocol interface will be used by a Host client to
+communicate with the DSP. First client will be the i.MX8
+part from Sound Open Firmware infrastructure.
+
+The protocol offers the following interface:
+
+On Tx:
+   - imx_dsp_ring_doorbell, will be called to notify the DSP
+   that it needs to handle a request.
+
+On Rx:
+   - clients need to provide two callbacks:
+	.handle_reply
+	.handle_request
+  - the callbacks will be used by the protocol on
+    notification arrival from DSP.
+
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+---
+Changes since v2:
+	- remove DSP IPC own DT node as per Rob comments
+	- make dsp responsability to add MU nodes
+	- already got a Reviewed-by from Oleksij but won't add it
+	here since he might have some comments about new changes.
+	- drop dt-bindings patch since the DSP IPC no longer have
+	an associated DT node
+
+ drivers/firmware/imx/Kconfig     |  11 +++
+ drivers/firmware/imx/Makefile    |   1 +
+ drivers/firmware/imx/imx-dsp.c   | 138 +++++++++++++++++++++++++++++++
+ include/linux/firmware/imx/dsp.h |  67 +++++++++++++++
+ 4 files changed, 217 insertions(+)
+ create mode 100644 drivers/firmware/imx/imx-dsp.c
+ create mode 100644 include/linux/firmware/imx/dsp.h
+
+diff --git a/drivers/firmware/imx/Kconfig b/drivers/firmware/imx/Kconfig
+index 42b566f8903f..0dbee32da4c6 100644
+--- a/drivers/firmware/imx/Kconfig
++++ b/drivers/firmware/imx/Kconfig
+@@ -1,4 +1,15 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++config IMX_DSP
++	bool "IMX DSP Protocol driver"
++	depends on IMX_MBOX
++	help
++	  This enables DSP IPC protocol between host AP (Linux)
++	  and the firmware running on DSP.
++	  DSP exists on some i.MX8 processors (e.g i.MX8QM, i.MX8QXP).
++
++	  It acts like a doorbell. Client might use shared memory to
++	  exchange information with DSP side.
++
+ config IMX_SCU
+ 	bool "IMX SCU Protocol driver"
+ 	depends on IMX_MBOX
+diff --git a/drivers/firmware/imx/Makefile b/drivers/firmware/imx/Makefile
+index 802c4ad8e8f9..08bc9ddfbdfb 100644
+--- a/drivers/firmware/imx/Makefile
++++ b/drivers/firmware/imx/Makefile
+@@ -1,3 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_IMX_DSP)		+= imx-dsp.o
+ obj-$(CONFIG_IMX_SCU)		+= imx-scu.o misc.o imx-scu-irq.o
+ obj-$(CONFIG_IMX_SCU_PD)	+= scu-pd.o
+diff --git a/drivers/firmware/imx/imx-dsp.c b/drivers/firmware/imx/imx-dsp.c
+new file mode 100644
+index 000000000000..b05bdb06662e
+--- /dev/null
++++ b/drivers/firmware/imx/imx-dsp.c
+@@ -0,0 +1,138 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright 2019 NXP
++ *  Author: Daniel Baluta <daniel.baluta@nxp.com>
++ *
++ * Implementation of the DSP IPC interface (host side)
++ */
++
++#include <linux/firmware/imx/dsp.h>
++#include <linux/kernel.h>
++#include <linux/mailbox_client.h>
++#include <linux/module.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++/*
++ * imx_dsp_ring_doorbell - triggers an interrupt on the other side (DSP)
++ *
++ * @dsp: DSP IPC handle
++ * @chan_idx: index of the channel where to trigger the interrupt
++ *
++ * Returns non-negative value for success, negative value for error
++ */
++int imx_dsp_ring_doorbell(struct imx_dsp_ipc *ipc, unsigned int idx)
++{
++	int ret;
++	struct imx_dsp_chan *dsp_chan;
++
++	if (idx >= DSP_MU_CHAN_NUM)
++		return -EINVAL;
++
++	dsp_chan = &ipc->chans[idx];
++	ret = mbox_send_message(dsp_chan->ch, NULL);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++EXPORT_SYMBOL(imx_dsp_ring_doorbell);
++
++/*
++ * imx_dsp_handle_rx - rx callback used by imx mailbox
++ *
++ * @c: mbox client
++ * @msg: message received
++ *
++ * Users of DSP IPC will need to privde handle_reply and handle_request
++ * callbacks.
++ */
++static void imx_dsp_handle_rx(struct mbox_client *c, void *msg)
++{
++	struct imx_dsp_chan *chan = container_of(c, struct imx_dsp_chan, cl);
++
++	if (chan->idx == 0) {
++		chan->ipc->ops->handle_reply(chan->ipc);
++	} else {
++		chan->ipc->ops->handle_request(chan->ipc);
++		imx_dsp_ring_doorbell(chan->ipc, 1);
++	}
++}
++
++static int imx_dsp_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct imx_dsp_ipc *dsp_ipc;
++	struct imx_dsp_chan *dsp_chan;
++	struct mbox_client *cl;
++	char *chan_name;
++	int ret;
++	int i, j;
++
++	device_set_of_node_from_dev(&pdev->dev, pdev->dev.parent);
++
++	dsp_ipc = devm_kzalloc(dev, sizeof(*dsp_ipc), GFP_KERNEL);
++	if (!dsp_ipc)
++		return -ENOMEM;
++
++	for (i = 0; i < DSP_MU_CHAN_NUM; i++) {
++		if (i < 2)
++			chan_name = kasprintf(GFP_KERNEL, "txdb%d", i);
++		else
++			chan_name = kasprintf(GFP_KERNEL, "rxdb%d", i - 2);
++
++		if (!chan_name)
++			return -ENOMEM;
++
++		dsp_chan = &dsp_ipc->chans[i];
++		cl = &dsp_chan->cl;
++		cl->dev = dev;
++		cl->tx_block = false;
++		cl->knows_txdone = true;
++		cl->rx_callback = imx_dsp_handle_rx;
++
++		dsp_chan->ipc = dsp_ipc;
++		dsp_chan->idx = i % 2;
++		dsp_chan->ch = mbox_request_channel_byname(cl, chan_name);
++		if (IS_ERR(dsp_chan->ch)) {
++			ret = PTR_ERR(dsp_chan->ch);
++			if (ret != -EPROBE_DEFER)
++				dev_err(dev, "Failed to request mbox chan %s ret %d\n",
++					chan_name, ret);
++			goto out;
++		}
++
++		dev_dbg(dev, "request mbox chan %s\n", chan_name);
++		/* chan_name is not used anymore by framework */
++		kfree(chan_name);
++	}
++
++	dsp_ipc->dev = dev;
++
++	dev_set_drvdata(dev, dsp_ipc);
++
++	dev_info(dev, "NXP i.MX DSP IPC initialized\n");
++
++	return devm_of_platform_populate(dev);
++out:
++	kfree(chan_name);
++	for (j = 0; j < i; j++) {
++		dsp_chan = &dsp_ipc->chans[j];
++		mbox_free_channel(dsp_chan->ch);
++	}
++
++	return ret;
++}
++
++static struct platform_driver imx_dsp_driver = {
++	.driver = {
++		.name = "imx-dsp",
++	},
++	.probe = imx_dsp_probe,
++};
++builtin_platform_driver(imx_dsp_driver);
++
++MODULE_AUTHOR("Daniel Baluta <daniel.baluta@nxp.com>");
++MODULE_DESCRIPTION("IMX DSP IPC protocol driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/firmware/imx/dsp.h b/include/linux/firmware/imx/dsp.h
+new file mode 100644
+index 000000000000..7562099c9e46
+--- /dev/null
++++ b/include/linux/firmware/imx/dsp.h
+@@ -0,0 +1,67 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright 2019 NXP
++ *
++ * Header file for the DSP IPC implementation
++ */
++
++#ifndef _IMX_DSP_IPC_H
++#define _IMX_DSP_IPC_H
++
++#include <linux/device.h>
++#include <linux/types.h>
++#include <linux/mailbox_client.h>
++
++#define DSP_MU_CHAN_NUM		4
++
++struct imx_dsp_chan {
++	struct imx_dsp_ipc *ipc;
++	struct mbox_client cl;
++	struct mbox_chan *ch;
++	char *name;
++	int idx;
++};
++
++struct imx_dsp_ops {
++	void (*handle_reply)(struct imx_dsp_ipc *ipc);
++	void (*handle_request)(struct imx_dsp_ipc *ipc);
++};
++
++struct imx_dsp_ipc {
++	/* Host <-> DSP communication uses 2 txdb and 2 rxdb channels */
++	struct imx_dsp_chan chans[DSP_MU_CHAN_NUM];
++	struct device *dev;
++	struct imx_dsp_ops *ops;
++	void *private_data;
++};
++
++static inline void imx_dsp_set_data(struct imx_dsp_ipc *ipc, void *data)
++{
++	if (!ipc)
++		return;
++
++	ipc->private_data = data;
++}
++
++static inline void *imx_dsp_get_data(struct imx_dsp_ipc *ipc)
++{
++	if (!ipc)
++		return NULL;
++
++	return ipc->private_data;
++}
++
++#if IS_ENABLED(CONFIG_IMX_DSP)
++
++int imx_dsp_ring_doorbell(struct imx_dsp_ipc *dsp, unsigned int chan_idx);
++
++#else
++
++static inline int imx_dsp_ring_doorbell(struct imx_dsp_ipc *ipc,
++					unsigned int chan_idx)
++{
++	return -ENOTSUPP;
++}
++
++#endif
++#endif /* _IMX_DSP_IPC_H */
+-- 
+2.17.1
+
