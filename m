@@ -2,147 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B327E6C44B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 03:38:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9837A6C45F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 03:41:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387539AbfGRBh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 21:37:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53362 "EHLO mail.kernel.org"
+        id S1731924AbfGRBl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 21:41:26 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:51822 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732948AbfGRBhV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 21:37:21 -0400
-Received: from localhost (unknown [104.132.1.68])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8888621848;
-        Thu, 18 Jul 2019 01:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563413840;
-        bh=QyYFsZxXZWnmVJMpuh5ZwNXY/+BLv5Jmy5x+kjaFSGo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=1kJ4AeOEG8INgoFgmiFNxAdXLAmPzGWb+Fnl5r3ZDZZBcWBr7d+wZ8B5U5PQLGUlK
-         4DnoGGyGjK39IR+N5FjmvudA8lQ0brlPg8h7xUZmXIdpvBdcrUAfEtPP07aOOP3/Qn
-         cv+yodGTe+6HFutlx2jjaau7o6Q2rnXY2S3xb12Q=
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: fix to read source block before invalidating it
-Date:   Wed, 17 Jul 2019 18:37:18 -0700
-Message-Id: <20190718013718.70335-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727793AbfGRBl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 21:41:26 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 73D7B1A0210;
+        Thu, 18 Jul 2019 03:41:24 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9E42E1A0038;
+        Thu, 18 Jul 2019 03:41:19 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6A8BA402C3;
+        Thu, 18 Jul 2019 09:41:13 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     thierry.reding@gmail.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] pwm: mxs: use devm_platform_ioremap_resource() to simplify code
+Date:   Thu, 18 Jul 2019 09:32:05 +0800
+Message-Id: <20190718013205.24919-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-f2fs_allocate_data_block() invalidates old block address and enable new block
-address. Then, if we try to read old block by f2fs_submit_page_bio(), it will
-give WARN due to reading invalid blocks.
+From: Anson Huang <Anson.Huang@nxp.com>
 
-Let's make the order sanely back.
+Use the new helper devm_platform_ioremap_resource() which wraps the
+platform_get_resource() and devm_ioremap_resource() together, to
+simplify the code.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- fs/f2fs/gc.c | 57 ++++++++++++++++++++++++++++------------------------
- 1 file changed, 31 insertions(+), 26 deletions(-)
+ drivers/pwm/pwm-mxs.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 6691f526fa40..35c5453ab874 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -740,6 +740,7 @@ static int move_data_block(struct inode *inode, block_t bidx,
- 	block_t newaddr;
- 	int err = 0;
- 	bool lfs_mode = test_opt(fio.sbi, LFS);
-+	bool submitted = false;
+diff --git a/drivers/pwm/pwm-mxs.c b/drivers/pwm/pwm-mxs.c
+index 04c0f6b..b14376b 100644
+--- a/drivers/pwm/pwm-mxs.c
++++ b/drivers/pwm/pwm-mxs.c
+@@ -126,15 +126,13 @@ static int mxs_pwm_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct mxs_pwm_chip *mxs;
+-	struct resource *res;
+ 	int ret;
  
- 	/* do not read out */
- 	page = f2fs_grab_cache_page(inode->i_mapping, bidx, false);
-@@ -796,6 +797,20 @@ static int move_data_block(struct inode *inode, block_t bidx,
- 	if (lfs_mode)
- 		down_write(&fio.sbi->io_order_lock);
+ 	mxs = devm_kzalloc(&pdev->dev, sizeof(*mxs), GFP_KERNEL);
+ 	if (!mxs)
+ 		return -ENOMEM;
  
-+	mpage = f2fs_grab_cache_page(META_MAPPING(fio.sbi),
-+			fio.old_blkaddr, false);
-+	if (!mpage)
-+		goto put_out;
-+
-+	if (!PageUptodate(mpage)) {
-+		err = f2fs_submit_page_bio(&fio);
-+		if (err) {
-+			f2fs_put_page(mpage, 1);
-+			goto put_out;
-+		}
-+		submitted = true;
-+	}
-+
- 	f2fs_allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
- 					&sum, CURSEG_COLD_DATA, NULL, false);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	mxs->base = devm_ioremap_resource(&pdev->dev, res);
++	mxs->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(mxs->base))
+ 		return PTR_ERR(mxs->base);
  
-@@ -803,44 +818,34 @@ static int move_data_block(struct inode *inode, block_t bidx,
- 				newaddr, FGP_LOCK | FGP_CREAT, GFP_NOFS);
- 	if (!fio.encrypted_page) {
- 		err = -ENOMEM;
--		goto recover_block;
--	}
--
--	mpage = f2fs_pagecache_get_page(META_MAPPING(fio.sbi),
--					fio.old_blkaddr, FGP_LOCK, GFP_NOFS);
--	if (mpage) {
--		bool updated = false;
--
--		if (PageUptodate(mpage)) {
--			memcpy(page_address(fio.encrypted_page),
--					page_address(mpage), PAGE_SIZE);
--			updated = true;
--		}
- 		f2fs_put_page(mpage, 1);
--		invalidate_mapping_pages(META_MAPPING(fio.sbi),
--					fio.old_blkaddr, fio.old_blkaddr);
--		if (updated)
--			goto write_page;
-+		goto recover_block;
- 	}
- 
--	err = f2fs_submit_page_bio(&fio);
--	if (err)
--		goto put_page_out;
--
--	/* write page */
--	lock_page(fio.encrypted_page);
-+	if (!submitted)
-+		goto write_page;
- 
--	if (unlikely(fio.encrypted_page->mapping != META_MAPPING(fio.sbi))) {
-+	/* read source block */
-+	lock_page(mpage);
-+	if (unlikely(mpage->mapping != META_MAPPING(fio.sbi))) {
- 		err = -EIO;
-+		f2fs_put_page(mpage, 1);
- 		goto put_page_out;
- 	}
--	if (unlikely(!PageUptodate(fio.encrypted_page))) {
-+	if (unlikely(!PageUptodate(mpage))) {
- 		err = -EIO;
-+		f2fs_put_page(mpage, 1);
- 		goto put_page_out;
- 	}
--
- write_page:
-+	/* write target block */
- 	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA, true, true);
-+	memcpy(page_address(fio.encrypted_page),
-+				page_address(mpage), PAGE_SIZE);
-+	f2fs_put_page(mpage, 1);
-+	invalidate_mapping_pages(META_MAPPING(fio.sbi),
-+				fio.old_blkaddr, fio.old_blkaddr);
-+
- 	set_page_dirty(fio.encrypted_page);
- 	if (clear_page_dirty_for_io(fio.encrypted_page))
- 		dec_page_count(fio.sbi, F2FS_DIRTY_META);
 -- 
-2.19.0.605.g01d371f741-goog
+2.7.4
 
