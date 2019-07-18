@@ -2,107 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 664766D698
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 23:41:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFB396D69B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 23:44:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728028AbfGRVlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 17:41:50 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36337 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727685AbfGRVlu (ORCPT
+        id S2391441AbfGRVnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 17:43:40 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:56126 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727780AbfGRVnj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 17:41:50 -0400
-Received: by mail-pg1-f196.google.com with SMTP id l21so13472954pgm.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 14:41:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WXkPzSZf/fna3v9Du6552FbVJUMqyGEVvH1pVYvIMY4=;
-        b=V5STNS/qoo+hoVZ84al1gz5fifOhZXi5TNLkAQyzXqvCHDez69Q42Gc1XWjzaNNbwG
-         N7LT6lGx8NtDTUhplToKtR5wwYE6ctQpODx/wBZoo5gu5HBfYvoV6pcDfJt2GkeMitc3
-         NQse+pSPY+bAuwZMPQRQ1+RWkkLvdMU80lmc4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WXkPzSZf/fna3v9Du6552FbVJUMqyGEVvH1pVYvIMY4=;
-        b=afHXiWrGl7KLDd2NuaBV6SMo1RdYSVpdND0HiQjxsb8qD3Tb2JZPth7lYIsBBQ+4wI
-         7DzwbIEw4vhuMKrKTo4t4Ivzmxn+TOcHpVDh05llOt1SJX/SM0X7eFlzcUoi1MC/Y58y
-         1kyD4TSDnpTBcQJikW13t5Uy1LvYPgl0iRktEi1sf7tRt8rsClhpIKDZH9l/nkCWOgvs
-         gTjzt4JVtRgVKV+pZpqw+FEiP9YDCTEksfFxRNeTgLytDAEFx7KelZRukkmbLtZklIgH
-         nbYBjm3yYMYZbJ5QNcd84OUMKhqfRsntpu55QAJsZD5AP31wMBMf4xXMdTi9mgbc2mqI
-         77Vg==
-X-Gm-Message-State: APjAAAU8/nGWXbOkmSXAVmiepJGuYvAk7KVfOoF0hUNvqhaxBPTLohS3
-        pjN0X7vYGIL6/bnRc8ghSNWyZg==
-X-Google-Smtp-Source: APXvYqyHVzz82WKLnz3eIxpxYsyXxPYr1dGo2TBVXXV3yFi26z+3ibdtZ3ZK/+C5B+QnidGKJlAWOQ==
-X-Received: by 2002:a63:f456:: with SMTP id p22mr23401451pgk.45.1563486109760;
-        Thu, 18 Jul 2019 14:41:49 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id e17sm16860239pgm.21.2019.07.18.14.41.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Jul 2019 14:41:49 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] drm/bridge: dw-hdmi: Refuse DDC/CI transfers on the internal I2C controller
-Date:   Thu, 18 Jul 2019 14:41:35 -0700
-Message-Id: <20190718214135.79445-1-mka@chromium.org>
-X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 18 Jul 2019 17:43:39 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id AE4B315285AD7;
+        Thu, 18 Jul 2019 14:43:38 -0700 (PDT)
+Date:   Thu, 18 Jul 2019 14:43:36 -0700 (PDT)
+Message-Id: <20190718.144336.350349509076783997.davem@davemloft.net>
+To:     torvalds@linux-foundation.org
+Cc:     ldv@altlinux.org, hch@lst.de, khalid.aziz@oracle.com,
+        akpm@linux-foundation.org, matorola@gmail.com,
+        sparclinux@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/16] sparc64: use the generic get_user_pages_fast code
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <CAHk-=wgjmt2i37nn9v+nGC0m8-DdLBMEs=NC=TV-u+9XAzA61g@mail.gmail.com>
+References: <CAHk-=whj_+tYSRcDsw7mDGrkmyU9tAk-a53XK271wYtDqYRzig@mail.gmail.com>
+        <20190717233031.GB30369@altlinux.org>
+        <CAHk-=wgjmt2i37nn9v+nGC0m8-DdLBMEs=NC=TV-u+9XAzA61g@mail.gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 18 Jul 2019 14:43:39 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DDC/CI protocol involves sending a multi-byte request to the
-display via I2C, which is typically followed by a multi-byte
-response. The internal I2C controller only allows single byte
-reads/writes or reads of 8 sequential bytes, hence DDC/CI is not
-supported when the internal I2C controller is used. The I2C
-transfers complete without errors, however the data in the response
-is garbage. Abort transfers to/from slave address 0x37 (DDC) with
--EOPNOTSUPP, to make it evident that the communication is failing.
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 17 Jul 2019 17:17:16 -0700
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> From the oops, I assume that the problem is that get_user_pages_fast()
+> returned an invalid page, causing the bad access later in
+> get_futex_key().
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 045b1b13fd0e..e49402ebd56f 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -35,6 +35,7 @@
- 
- #include <media/cec-notifier.h>
- 
-+#define DDC_I2C_ADDR		0x37
- #define DDC_SEGMENT_ADDR	0x30
- 
- #define HDMI_EDID_LEN		512
-@@ -322,6 +323,13 @@ static int dw_hdmi_i2c_xfer(struct i2c_adapter *adap,
- 	u8 addr = msgs[0].addr;
- 	int i, ret = 0;
- 
-+	if (addr == DDC_I2C_ADDR)
-+		/*
-+		 * The internal I2C controller does not support the multi-byte
-+		 * read and write operations needed for DDC/VCP.
-+		 */
-+		return -EOPNOTSUPP;
-+
- 	dev_dbg(hdmi->dev, "xfer: num: %d, addr: %#x\n", num, addr);
- 
- 	for (i = 0; i < num; i++) {
--- 
-2.22.0.657.g960e92d24f-goog
+That's correct.  It's the first deref of page that oops's.
 
+
+> But that's odd too, considering that get_user_pages_fast() had
+> already accessed the page (both for looking up the head, and for
+> then doing things like SetPageReferenced(page)).
+
+Even the huge page cases all do that dereference as well, so it is
+indeed a mystery how the pointer works inside of get_user_pages_fast()
+but becomes garbage in the caller.
+
+This page pointer sits on the stack, so maybe something stores garbage
+there meanwhile.  Maybe the issue is even compiler dependent.
+
+I'll keep looking over the changes made here for clues.
