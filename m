@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 707206C6B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 040A76C607
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:12:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391315AbfGRDSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:18:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47090 "EHLO mail.kernel.org"
+        id S2391509AbfGRDMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:12:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390940AbfGRDMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:12:33 -0400
+        id S2391427AbfGRDMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:12:37 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4A0B2053B;
-        Thu, 18 Jul 2019 03:12:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 755F92173E;
+        Thu, 18 Jul 2019 03:12:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419553;
-        bh=SobYh8mLI6BtAj63+DMExQaLR1fY2RCoBiVdmaTCV3Q=;
+        s=default; t=1563419555;
+        bh=BXusX6BeYEk8o8nqBnrWgwvg0s0UXy6gsB+OSIHmS4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wVV23YO/iB9LhQtEpJwdwNOkH6p7rP44c36OXOe3UbS7Mhi4mHiPT1vtzPToU9ahh
-         N10X7RUO7xv7do7o8xw4U0OL86+utWyMlz9SJvHqvKgn6aCtN6pTISDX5SW5AE00vO
-         bea7rr93JiR4FdH1343v1KWI+7LMQ37xamkSkUKo=
+        b=iwlHCwEoZHle1j9mWifg62p9UTZnuP6Yv475bL00kwWxKMC4dAWXMlQRAGtKK5TTB
+         UwPqIow58qWYiGdCU8AlBpJ/K6YBLU0VoWydJ0N9llIYNu6p0+aVWXImY/m+5+BLRG
+         ++iDgxHg5vyQdBxxQq2f4y5VQ/Gdp4nCM1CILK5E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.9 25/54] mwifiex: Abort at too short BSS descriptor element
-Date:   Thu, 18 Jul 2019 12:01:55 +0900
-Message-Id: <20190718030051.332949620@linuxfoundation.org>
+        stable@vger.kernel.org, huangwen <huangwen@venustech.com.cn>,
+        Takashi Iwai <tiwai@suse.de>, Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.9 26/54] mwifiex: Fix heap overflow in mwifiex_uap_parse_tail_ies()
+Date:   Thu, 18 Jul 2019 12:01:56 +0900
+Message-Id: <20190718030051.420712506@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190718030048.392549994@linuxfoundation.org>
 References: <20190718030048.392549994@linuxfoundation.org>
@@ -45,85 +45,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit 685c9b7750bfacd6fc1db50d86579980593b7869 upstream.
+commit 69ae4f6aac1578575126319d3f55550e7e440449 upstream.
 
-Currently mwifiex_update_bss_desc_with_ie() implicitly assumes that
-the source descriptor entries contain the enough size for each type
-and performs copying without checking the source size.  This may lead
-to read over boundary.
+A few places in mwifiex_uap_parse_tail_ies() perform memcpy()
+unconditionally, which may lead to either buffer overflow or read over
+boundary.
 
-Fix this by putting the source size check in appropriate places.
+This patch addresses the issues by checking the read size and the
+destination size at each place more properly.  Along with the fixes,
+the patch cleans up the code slightly by introducing a temporary
+variable for the token size, and unifies the error path with the
+standard goto statement.
 
+Reported-by: huangwen <huangwen@venustech.com.cn>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/marvell/mwifiex/scan.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/net/wireless/marvell/mwifiex/ie.c |   45 ++++++++++++++++++++----------
+ 1 file changed, 30 insertions(+), 15 deletions(-)
 
---- a/drivers/net/wireless/marvell/mwifiex/scan.c
-+++ b/drivers/net/wireless/marvell/mwifiex/scan.c
-@@ -1258,6 +1258,8 @@ int mwifiex_update_bss_desc_with_ie(stru
- 			break;
+--- a/drivers/net/wireless/marvell/mwifiex/ie.c
++++ b/drivers/net/wireless/marvell/mwifiex/ie.c
+@@ -328,6 +328,8 @@ static int mwifiex_uap_parse_tail_ies(st
+ 	struct ieee80211_vendor_ie *vendorhdr;
+ 	u16 gen_idx = MWIFIEX_AUTO_IDX_MASK, ie_len = 0;
+ 	int left_len, parsed_len = 0;
++	unsigned int token_len;
++	int err = 0;
  
- 		case WLAN_EID_FH_PARAMS:
-+			if (element_len + 2 < sizeof(*fh_param_set))
-+				return -EINVAL;
- 			fh_param_set =
- 				(struct ieee_types_fh_param_set *) current_ptr;
- 			memcpy(&bss_entry->phy_param_set.fh_param_set,
-@@ -1266,6 +1268,8 @@ int mwifiex_update_bss_desc_with_ie(stru
- 			break;
- 
- 		case WLAN_EID_DS_PARAMS:
-+			if (element_len + 2 < sizeof(*ds_param_set))
-+				return -EINVAL;
- 			ds_param_set =
- 				(struct ieee_types_ds_param_set *) current_ptr;
- 
-@@ -1277,6 +1281,8 @@ int mwifiex_update_bss_desc_with_ie(stru
- 			break;
- 
- 		case WLAN_EID_CF_PARAMS:
-+			if (element_len + 2 < sizeof(*cf_param_set))
-+				return -EINVAL;
- 			cf_param_set =
- 				(struct ieee_types_cf_param_set *) current_ptr;
- 			memcpy(&bss_entry->ss_param_set.cf_param_set,
-@@ -1285,6 +1291,8 @@ int mwifiex_update_bss_desc_with_ie(stru
- 			break;
- 
- 		case WLAN_EID_IBSS_PARAMS:
-+			if (element_len + 2 < sizeof(*ibss_param_set))
-+				return -EINVAL;
- 			ibss_param_set =
- 				(struct ieee_types_ibss_param_set *)
- 				current_ptr;
-@@ -1294,10 +1302,14 @@ int mwifiex_update_bss_desc_with_ie(stru
- 			break;
- 
- 		case WLAN_EID_ERP_INFO:
-+			if (!element_len)
-+				return -EINVAL;
- 			bss_entry->erp_flags = *(current_ptr + 2);
- 			break;
- 
- 		case WLAN_EID_PWR_CONSTRAINT:
-+			if (!element_len)
-+				return -EINVAL;
- 			bss_entry->local_constraint = *(current_ptr + 2);
- 			bss_entry->sensed_11h = true;
- 			break;
-@@ -1337,6 +1349,9 @@ int mwifiex_update_bss_desc_with_ie(stru
- 			break;
- 
- 		case WLAN_EID_VENDOR_SPECIFIC:
-+			if (element_len + 2 < sizeof(vendor_ie->vend_hdr))
-+				return -EINVAL;
+ 	if (!info->tail || !info->tail_len)
+ 		return 0;
+@@ -343,6 +345,12 @@ static int mwifiex_uap_parse_tail_ies(st
+ 	 */
+ 	while (left_len > sizeof(struct ieee_types_header)) {
+ 		hdr = (void *)(info->tail + parsed_len);
++		token_len = hdr->len + sizeof(struct ieee_types_header);
++		if (token_len > left_len) {
++			err = -EINVAL;
++			goto out;
++		}
 +
- 			vendor_ie = (struct ieee_types_vendor_specific *)
- 					current_ptr;
+ 		switch (hdr->element_id) {
+ 		case WLAN_EID_SSID:
+ 		case WLAN_EID_SUPP_RATES:
+@@ -356,13 +364,16 @@ static int mwifiex_uap_parse_tail_ies(st
+ 		case WLAN_EID_VENDOR_SPECIFIC:
+ 			break;
+ 		default:
+-			memcpy(gen_ie->ie_buffer + ie_len, hdr,
+-			       hdr->len + sizeof(struct ieee_types_header));
+-			ie_len += hdr->len + sizeof(struct ieee_types_header);
++			if (ie_len + token_len > IEEE_MAX_IE_SIZE) {
++				err = -EINVAL;
++				goto out;
++			}
++			memcpy(gen_ie->ie_buffer + ie_len, hdr, token_len);
++			ie_len += token_len;
+ 			break;
+ 		}
+-		left_len -= hdr->len + sizeof(struct ieee_types_header);
+-		parsed_len += hdr->len + sizeof(struct ieee_types_header);
++		left_len -= token_len;
++		parsed_len += token_len;
+ 	}
  
+ 	/* parse only WPA vendor IE from tail, WMM IE is configured by
+@@ -372,15 +383,17 @@ static int mwifiex_uap_parse_tail_ies(st
+ 						    WLAN_OUI_TYPE_MICROSOFT_WPA,
+ 						    info->tail, info->tail_len);
+ 	if (vendorhdr) {
+-		memcpy(gen_ie->ie_buffer + ie_len, vendorhdr,
+-		       vendorhdr->len + sizeof(struct ieee_types_header));
+-		ie_len += vendorhdr->len + sizeof(struct ieee_types_header);
++		token_len = vendorhdr->len + sizeof(struct ieee_types_header);
++		if (ie_len + token_len > IEEE_MAX_IE_SIZE) {
++			err = -EINVAL;
++			goto out;
++		}
++		memcpy(gen_ie->ie_buffer + ie_len, vendorhdr, token_len);
++		ie_len += token_len;
+ 	}
+ 
+-	if (!ie_len) {
+-		kfree(gen_ie);
+-		return 0;
+-	}
++	if (!ie_len)
++		goto out;
+ 
+ 	gen_ie->ie_index = cpu_to_le16(gen_idx);
+ 	gen_ie->mgmt_subtype_mask = cpu_to_le16(MGMT_MASK_BEACON |
+@@ -390,13 +403,15 @@ static int mwifiex_uap_parse_tail_ies(st
+ 
+ 	if (mwifiex_update_uap_custom_ie(priv, gen_ie, &gen_idx, NULL, NULL,
+ 					 NULL, NULL)) {
+-		kfree(gen_ie);
+-		return -1;
++		err = -EINVAL;
++		goto out;
+ 	}
+ 
+ 	priv->gen_idx = gen_idx;
++
++ out:
+ 	kfree(gen_ie);
+-	return 0;
++	return err;
+ }
+ 
+ /* This function parses different IEs-head & tail IEs, beacon IEs,
 
 
