@@ -2,39 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C778B6C52F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:07:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D3326C556
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:07:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389367AbfGRDDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:03:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34194 "EHLO mail.kernel.org"
+        id S2389879AbfGRDFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:05:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389318AbfGRDDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:03:30 -0400
+        id S2389853AbfGRDFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:05:06 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A680D2173B;
-        Thu, 18 Jul 2019 03:03:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B17352173B;
+        Thu, 18 Jul 2019 03:05:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419009;
-        bh=o2Kr2eyw/O6JKnMps8ZPt7nNdeWLgNXBUuzb704FtCo=;
+        s=default; t=1563419105;
+        bh=SZLtCnvDrzAG+3SlFn47Lfe9Tc9P9rbtJ9EMIqcWHuU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X1OtsdwORL/rYZ9KUqc+qSVRvlUuhN0SkPTURrgYE1iDgWZTqYlR89PFSSYv2woag
-         ob/m7Ljxhp3sgSIMGHKD11UpX3JhHtmFzuUebAE2STAYRJoquDfZktJ5PqhAvMaEKs
-         ZbKRScS9NGG5Eu7yE7nCsVY2zYBKZGb1CcxudmyE=
+        b=UCuQ/bb5ovyAfRxTDz3V5AZVN1UIlNhbH8uK18l0/hlFSGVop3+85xr1ZwWvxGKDX
+         iIjJPl1VaQSaTd6HChMa0eJetbVDEVT9SSlO9aqbyIud1R0LN9faZomam+945pdXn1
+         HQcBXGOSj94XzMpb6u7bZlzmNYXegUZi2ZQG4Vfw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Hodaszi <Robert.Hodaszi@digi.com>,
+        stable@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 5.2 07/21] genirq: Delay deactivation in free_irq()
-Date:   Thu, 18 Jul 2019 12:01:25 +0900
-Message-Id: <20190718030031.976038290@linuxfoundation.org>
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Potapenko <glider@google.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 31/54] x86/boot/64: Add missing fixup_pointer() for next_early_pgt access
+Date:   Thu, 18 Jul 2019 12:01:26 +0900
+Message-Id: <20190718030055.748720665@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030030.456918453@linuxfoundation.org>
-References: <20190718030030.456918453@linuxfoundation.org>
+In-Reply-To: <20190718030053.287374640@linuxfoundation.org>
+References: <20190718030053.287374640@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,149 +51,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+[ Upstream commit c1887159eb48ba40e775584cfb2a443962cf1a05 ]
 
-commit 4001d8e8762f57d418b66e4e668601791900a1dd upstream.
+__startup_64() uses fixup_pointer() to access global variables in a
+position-independent fashion. Access to next_early_pgt was wrapped into the
+helper, but one instance in the 5-level paging branch was missed.
 
-When interrupts are shutdown, they are immediately deactivated in the
-irqdomain hierarchy. While this looks obviously correct there is a subtle
-issue:
+GCC generates a R_X86_64_PC32 PC-relative relocation for the access which
+doesn't trigger the issue, but Clang emmits a R_X86_64_32S which leads to
+an invalid memory access and system reboot.
 
-There might be an interrupt in flight when free_irq() is invoking the
-shutdown. This is properly handled at the irq descriptor / primary handler
-level, but the deactivation might completely disable resources which are
-required to acknowledge the interrupt.
-
-Split the shutdown code and deactivate the interrupt after synchronization
-in free_irq(). Fixup all other usage sites where this is not an issue to
-invoke the combined shutdown_and_deactivate() function instead.
-
-This still might be an issue if the interrupt in flight servicing is
-delayed on a remote CPU beyond the invocation of synchronize_irq(), but
-that cannot be handled at that level and needs to be handled in the
-synchronize_irq() context.
-
-Fixes: f8264e34965a ("irqdomain: Introduce new interfaces to support hierarchy irqdomains")
-Reported-by: Robert Hodaszi <Robert.Hodaszi@digi.com>
+Fixes: 187e91fe5e91 ("x86/boot/64/clang: Use fixup_pointer() to access 'next_early_pgt'")
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
-Link: https://lkml.kernel.org/r/20190628111440.098196390@linutronix.de
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Alexander Potapenko <glider@google.com>
+Link: https://lkml.kernel.org/r/20190620112422.29264-1-kirill.shutemov@linux.intel.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/irq/autoprobe.c  |    6 +++---
- kernel/irq/chip.c       |    6 ++++++
- kernel/irq/cpuhotplug.c |    2 +-
- kernel/irq/internals.h  |    1 +
- kernel/irq/manage.c     |   12 +++++++++++-
- 5 files changed, 22 insertions(+), 5 deletions(-)
+ arch/x86/kernel/head64.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/kernel/irq/autoprobe.c
-+++ b/kernel/irq/autoprobe.c
-@@ -90,7 +90,7 @@ unsigned long probe_irq_on(void)
- 			/* It triggered already - consider it spurious. */
- 			if (!(desc->istate & IRQS_WAITING)) {
- 				desc->istate &= ~IRQS_AUTODETECT;
--				irq_shutdown(desc);
-+				irq_shutdown_and_deactivate(desc);
- 			} else
- 				if (i < 32)
- 					mask |= 1 << i;
-@@ -127,7 +127,7 @@ unsigned int probe_irq_mask(unsigned lon
- 				mask |= 1 << i;
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 7df5bce4e1be..29ffa495bd1c 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -184,7 +184,8 @@ unsigned long __head __startup_64(unsigned long physaddr,
+ 	pgtable_flags = _KERNPG_TABLE_NOENC + sme_get_me_mask();
  
- 			desc->istate &= ~IRQS_AUTODETECT;
--			irq_shutdown(desc);
-+			irq_shutdown_and_deactivate(desc);
- 		}
- 		raw_spin_unlock_irq(&desc->lock);
- 	}
-@@ -169,7 +169,7 @@ int probe_irq_off(unsigned long val)
- 				nr_of_irqs++;
- 			}
- 			desc->istate &= ~IRQS_AUTODETECT;
--			irq_shutdown(desc);
-+			irq_shutdown_and_deactivate(desc);
- 		}
- 		raw_spin_unlock_irq(&desc->lock);
- 	}
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -314,6 +314,12 @@ void irq_shutdown(struct irq_desc *desc)
- 		}
- 		irq_state_clr_started(desc);
- 	}
-+}
-+
-+
-+void irq_shutdown_and_deactivate(struct irq_desc *desc)
-+{
-+	irq_shutdown(desc);
- 	/*
- 	 * This must be called even if the interrupt was never started up,
- 	 * because the activation can happen before the interrupt is
---- a/kernel/irq/cpuhotplug.c
-+++ b/kernel/irq/cpuhotplug.c
-@@ -116,7 +116,7 @@ static bool migrate_one_irq(struct irq_d
- 		 */
- 		if (irqd_affinity_is_managed(d)) {
- 			irqd_set_managed_shutdown(d);
--			irq_shutdown(desc);
-+			irq_shutdown_and_deactivate(desc);
- 			return false;
- 		}
- 		affinity = cpu_online_mask;
---- a/kernel/irq/internals.h
-+++ b/kernel/irq/internals.h
-@@ -82,6 +82,7 @@ extern int irq_activate_and_startup(stru
- extern int irq_startup(struct irq_desc *desc, bool resend, bool force);
+ 	if (la57) {
+-		p4d = fixup_pointer(early_dynamic_pgts[next_early_pgt++], physaddr);
++		p4d = fixup_pointer(early_dynamic_pgts[(*next_pgt_ptr)++],
++				    physaddr);
  
- extern void irq_shutdown(struct irq_desc *desc);
-+extern void irq_shutdown_and_deactivate(struct irq_desc *desc);
- extern void irq_enable(struct irq_desc *desc);
- extern void irq_disable(struct irq_desc *desc);
- extern void irq_percpu_enable(struct irq_desc *desc, unsigned int cpu);
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -13,6 +13,7 @@
- #include <linux/module.h>
- #include <linux/random.h>
- #include <linux/interrupt.h>
-+#include <linux/irqdomain.h>
- #include <linux/slab.h>
- #include <linux/sched.h>
- #include <linux/sched/rt.h>
-@@ -1699,6 +1700,7 @@ static struct irqaction *__free_irq(stru
- 	/* If this was the last handler, shut down the IRQ line: */
- 	if (!desc->action) {
- 		irq_settings_clr_disable_unlazy(desc);
-+		/* Only shutdown. Deactivate after synchronize_hardirq() */
- 		irq_shutdown(desc);
- 	}
- 
-@@ -1768,6 +1770,14 @@ static struct irqaction *__free_irq(stru
- 		 * require it to deallocate resources over the slow bus.
- 		 */
- 		chip_bus_lock(desc);
-+		/*
-+		 * There is no interrupt on the fly anymore. Deactivate it
-+		 * completely.
-+		 */
-+		raw_spin_lock_irqsave(&desc->lock, flags);
-+		irq_domain_deactivate_irq(&desc->irq_data);
-+		raw_spin_unlock_irqrestore(&desc->lock, flags);
-+
- 		irq_release_resources(desc);
- 		chip_bus_sync_unlock(desc);
- 		irq_remove_timings(desc);
-@@ -1855,7 +1865,7 @@ static const void *__cleanup_nmi(unsigne
- 	}
- 
- 	irq_settings_clr_disable_unlazy(desc);
--	irq_shutdown(desc);
-+	irq_shutdown_and_deactivate(desc);
- 
- 	irq_release_resources(desc);
- 
+ 		i = (physaddr >> PGDIR_SHIFT) % PTRS_PER_PGD;
+ 		pgd[i + 0] = (pgdval_t)p4d + pgtable_flags;
+-- 
+2.20.1
+
 
 
