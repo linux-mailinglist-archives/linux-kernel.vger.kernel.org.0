@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D24F96C7BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:26:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83C616C78E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:26:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388923AbfGRDDC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:03:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33640 "EHLO mail.kernel.org"
+        id S2389970AbfGRDFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:05:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387984AbfGRDC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:02:59 -0400
+        id S2389933AbfGRDFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:05:23 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0670F21841;
-        Thu, 18 Jul 2019 03:02:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83B062173B;
+        Thu, 18 Jul 2019 03:05:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563418978;
-        bh=sCxTIgADXOgJ0ljuhRomr+2gskzHAK3o+DYnRwZQytM=;
+        s=default; t=1563419122;
+        bh=poCa17KB4EoV73zCLWQXwNerWkkC8XFA9xpyH2sxeZc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gsqjaetd6he2mqA6TUm1sHKHoa9s8mNcot2x1ZegUAd6axE0BWhC7xbn0uLlbpHmD
-         SvEOHe+n9L7yhIujaYCsTtlrhH33to/Tqoc984TNjUlzgYSQZeUMMGBekC35anKSzP
-         I5sQNUy7D7qpHLfV46oRJtJHhV3tc5picrIt0Y4s=
+        b=fekfe2NEVS+Ujgb+iRlmTVhyEttZ8u0x+C5cLvu7I/8EZ4dtjd09JGBq7usd7rLwf
+         Gi3+DzMbROfhTGSlYWjnDcNzjaQ8SRYzUEeesInGilCfjygnjRopZaDxhLrFNikw51
+         SY6LjDuNxG1fXbj0FFvA2ug4BDMSGG33QtWfCmEo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 5.2 13/21] ARC: hide unused function unw_hdr_alloc
-Date:   Thu, 18 Jul 2019 12:01:31 +0900
-Message-Id: <20190718030033.826192040@linuxfoundation.org>
+        stable@vger.kernel.org, Yafang Shao <laoar.shao@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Wind Yu <yuzhoujian@didichuxing.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 38/54] mm/oom_kill.c: fix uninitialized oc->constraint
+Date:   Thu, 18 Jul 2019 12:01:33 +0900
+Message-Id: <20190718030056.186241465@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030030.456918453@linuxfoundation.org>
-References: <20190718030030.456918453@linuxfoundation.org>
+In-Reply-To: <20190718030053.287374640@linuxfoundation.org>
+References: <20190718030053.287374640@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,50 +47,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+[ Upstream commit 432b1de0de02a83f64695e69a2d83cbee10c236f ]
 
-commit fd5de2721ea7d16e2b16c4049ac49f229551b290 upstream.
+In dump_oom_summary() oc->constraint is used to show oom_constraint_text,
+but it hasn't been set before.  So the value of it is always the default
+value 0.  We should inititialize it before.
 
-As kernelci.org reports, this function is not used in
-vdk_hs38_defconfig:
+Bellow is the output when memcg oom occurs,
 
-arch/arc/kernel/unwind.c:188:14: warning: 'unw_hdr_alloc' defined but not used [-Wunused-function]
+before this patch:
+  oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null), cpuset=/,mems_allowed=0,oom_memcg=/foo,task_memcg=/foo,task=bash,pid=7997,uid=0
 
-Fixes: bc79c9a72165 ("ARC: dw2 unwind: Reinstante unwinding out of modules")
-Link: https://kernelci.org/build/id/5d1cae3f59b514300340c132/logs/
-Cc: stable@vger.kernel.org
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+after this patch:
+  oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null), cpuset=/,mems_allowed=0,oom_memcg=/foo,task_memcg=/foo,task=bash,pid=13681,uid=0
 
+Link: http://lkml.kernel.org/r/1560522038-15879-1-git-send-email-laoar.shao@gmail.com
+Fixes: ef8444ea01d7 ("mm, oom: reorganize the oom report in dump_header")
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Wind Yu <yuzhoujian@didichuxing.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/kernel/unwind.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ mm/oom_kill.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
---- a/arch/arc/kernel/unwind.c
-+++ b/arch/arc/kernel/unwind.c
-@@ -181,11 +181,6 @@ static void *__init unw_hdr_alloc_early(
- 	return memblock_alloc_from(sz, sizeof(unsigned int), MAX_DMA_ADDRESS);
- }
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 3a2484884cfd..263efad6fc7e 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -985,8 +985,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+ /*
+  * Determines whether the kernel must panic because of the panic_on_oom sysctl.
+  */
+-static void check_panic_on_oom(struct oom_control *oc,
+-			       enum oom_constraint constraint)
++static void check_panic_on_oom(struct oom_control *oc)
+ {
+ 	if (likely(!sysctl_panic_on_oom))
+ 		return;
+@@ -996,7 +995,7 @@ static void check_panic_on_oom(struct oom_control *oc,
+ 		 * does not panic for cpuset, mempolicy, or memcg allocation
+ 		 * failures.
+ 		 */
+-		if (constraint != CONSTRAINT_NONE)
++		if (oc->constraint != CONSTRAINT_NONE)
+ 			return;
+ 	}
+ 	/* Do not panic for oom kills triggered by sysrq */
+@@ -1033,7 +1032,6 @@ EXPORT_SYMBOL_GPL(unregister_oom_notifier);
+ bool out_of_memory(struct oom_control *oc)
+ {
+ 	unsigned long freed = 0;
+-	enum oom_constraint constraint = CONSTRAINT_NONE;
  
--static void *unw_hdr_alloc(unsigned long sz)
--{
--	return kmalloc(sz, GFP_KERNEL);
--}
--
- static void init_unwind_table(struct unwind_table *table, const char *name,
- 			      const void *core_start, unsigned long core_size,
- 			      const void *init_start, unsigned long init_size,
-@@ -366,6 +361,10 @@ ret_err:
- }
+ 	if (oom_killer_disabled)
+ 		return false;
+@@ -1069,10 +1067,10 @@ bool out_of_memory(struct oom_control *oc)
+ 	 * Check if there were limitations on the allocation (only relevant for
+ 	 * NUMA and memcg) that may require different handling.
+ 	 */
+-	constraint = constrained_alloc(oc);
+-	if (constraint != CONSTRAINT_MEMORY_POLICY)
++	oc->constraint = constrained_alloc(oc);
++	if (oc->constraint != CONSTRAINT_MEMORY_POLICY)
+ 		oc->nodemask = NULL;
+-	check_panic_on_oom(oc, constraint);
++	check_panic_on_oom(oc);
  
- #ifdef CONFIG_MODULES
-+static void *unw_hdr_alloc(unsigned long sz)
-+{
-+	return kmalloc(sz, GFP_KERNEL);
-+}
- 
- static struct unwind_table *last_table;
- 
+ 	if (!is_memcg_oom(oc) && sysctl_oom_kill_allocating_task &&
+ 	    current->mm && !oom_unkillable_task(current, NULL, oc->nodemask) &&
+-- 
+2.20.1
+
 
 
