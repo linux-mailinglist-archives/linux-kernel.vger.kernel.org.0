@@ -2,115 +2,262 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 077A06D39A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 20:20:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 819D66D3A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 20:20:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391005AbfGRSSN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 14:18:13 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51394 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728183AbfGRSSK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 14:18:10 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6II3ELD038870
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 14:18:09 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ttvv3aubk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 14:18:09 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <anju@linux.vnet.ibm.com>;
-        Thu, 18 Jul 2019 19:18:07 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 18 Jul 2019 19:18:03 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6III2V451904670
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Jul 2019 18:18:02 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 63DA54C040;
-        Thu, 18 Jul 2019 18:18:02 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DBFA74C04A;
-        Thu, 18 Jul 2019 18:17:59 +0000 (GMT)
-Received: from localhost.localdomain.com (unknown [9.199.42.37])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 18 Jul 2019 18:17:59 +0000 (GMT)
-From:   Anju T Sudhakar <anju@linux.vnet.ibm.com>
-To:     mpe@ellerman.id.au, acme@kernel.org, jolsa@redhat.com
-Cc:     namhyung@kernel.org, peterz@infradead.org,
-        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, maddy@linux.vnet.ibm.com,
-        anju@linux.vnet.ibm.com, ravi.bangoria@linux.ibm.com
-Subject: [PATCH v2 3/3] tools/perf: Set 'trace_cycles' as defaultevent for perf kvm record in powerpc
-Date:   Thu, 18 Jul 2019 23:47:49 +0530
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190718181749.30612-1-anju@linux.vnet.ibm.com>
-References: <20190718181749.30612-1-anju@linux.vnet.ibm.com>
+        id S2391111AbfGRSSV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 14:18:21 -0400
+Received: from foss.arm.com ([217.140.110.172]:33412 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391060AbfGRSST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 14:18:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C396F28;
+        Thu, 18 Jul 2019 11:18:18 -0700 (PDT)
+Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1CB513F71A;
+        Thu, 18 Jul 2019 11:18:16 -0700 (PDT)
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, cgroups@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>, Michal Koutny <mkoutny@suse.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alessio Balsini <balsini@android.com>
+Subject: [PATCH v12 2/6] sched/core: uclamp: Propagate parent clamps
+Date:   Thu, 18 Jul 2019 19:17:44 +0100
+Message-Id: <20190718181748.28446-3-patrick.bellasi@arm.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190718181748.28446-1-patrick.bellasi@arm.com>
+References: <20190718181748.28446-1-patrick.bellasi@arm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19071818-0028-0000-0000-00000385C660
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19071818-0029-0000-0000-00002445F13E
-Message-Id: <20190718181749.30612-3-anju@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-18_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907180187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use 'trace_imc/trace_cycles' as the default event for 'perf kvm record'
-in powerpc.
+In order to properly support hierarchical resources control, the cgroup
+delegation model requires that attribute writes from a child group never
+fail but still are locally consistent and constrained based on parent's
+assigned resources. This requires to properly propagate and aggregate
+parent attributes down to its descendants.
 
-Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
+Implement this mechanism by adding a new "effective" clamp value for each
+task group. The effective clamp value is defined as the smaller value
+between the clamp value of a group and the effective clamp value of its
+parent. This is the actual clamp value enforced on tasks in a task group.
+
+Since it's possible for a cpu.uclamp.min value to be bigger than the
+cpu.uclamp.max value, ensure local consistency by restricting each
+"protection" (i.e. min utilization) with the corresponding "limit"
+(i.e. max utilization).
+
+Do that at effective clamps propagation to ensure all user-space write
+never fails while still always tracking the most restrictive values.
+
+Update sysctl_sched_uclamp_handler() to use the newly introduced
+uclamp_mutex so that we serialize system default updates with cgroup
+relate updates.
+
+Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Tejun Heo <tj@kernel.org>
+
 ---
- tools/perf/arch/powerpc/util/kvm-stat.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+Changes in v12:
+ Message-ID: <20190716140706.vuggfigjlys44lkp@e110439-lin>
+ - use a dedicated variable for parent restrictions
+ - make more explicit in the documentation that the requested "protection" is
+   always capped by the requested "limit"
+ Message-ID: <20190716175542.p7vs2muslyuez6lq@e110439-lin>
+ - use the newly added uclamp_mutex to serialize the sysfs write callback
+---
+ kernel/sched/core.c  | 70 ++++++++++++++++++++++++++++++++++++++++++--
+ kernel/sched/sched.h |  2 ++
+ 2 files changed, 69 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/arch/powerpc/util/kvm-stat.c b/tools/perf/arch/powerpc/util/kvm-stat.c
-index c55e7405940e..0a06626fb18a 100644
---- a/tools/perf/arch/powerpc/util/kvm-stat.c
-+++ b/tools/perf/arch/powerpc/util/kvm-stat.c
-@@ -177,8 +177,9 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid __maybe_unused)
- /*
-  * Incase of powerpc architecture, pmu registers are programmable
-  * by guest kernel. So monitoring guest via host may not provide
-- * valid samples. It is better to fail the "perf kvm record"
-- * with default "cycles" event to monitor guest in powerpc.
-+ * valid samples with default 'cycles' event. It is better to use
-+ * 'trace_imc/trace_cycles' event for guest profiling, since it
-+ * can track the guest instruction pointer in the trace-record.
-  *
-  * Function to parse the arguments and return appropriate values.
-  */
-@@ -202,8 +203,14 @@ int kvm_add_default_arch_event(int *argc, const char **argv)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index fcc32afe53cb..08f5a0c205c6 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -773,6 +773,18 @@ static void set_load_weight(struct task_struct *p, bool update_load)
+ }
  
- 	parse_options(j, tmp, event_options, NULL, PARSE_OPT_KEEP_UNKNOWN);
- 	if (!event) {
--		free(tmp);
--		return -EINVAL;
-+		if (pmu_have_event("trace_imc", "trace_cycles")) {
-+			argv[j++] = strdup("-e");
-+			argv[j++] = strdup("trace_imc/trace_cycles/");
-+			*argc += 2;
-+		} else {
-+			free(tmp);
-+			return -EINVAL;
-+		}
+ #ifdef CONFIG_UCLAMP_TASK
++/*
++ * Serializes updates of utilization clamp values
++ *
++ * The (slow-path) user-space triggers utilization clamp value updates which
++ * can require updates on (fast-path) scheduler's data structures used to
++ * support enqueue/dequeue operations.
++ * While the per-CPU rq lock protects fast-path update operations, user-space
++ * requests are serialized using a mutex to reduce the risk of conflicting
++ * updates or API abuses.
++ */
++static DEFINE_MUTEX(uclamp_mutex);
++
+ /* Max allowed minimum utilization */
+ unsigned int sysctl_sched_uclamp_util_min = SCHED_CAPACITY_SCALE;
+ 
+@@ -1010,10 +1022,9 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
+ 				loff_t *ppos)
+ {
+ 	int old_min, old_max;
+-	static DEFINE_MUTEX(mutex);
+ 	int result;
+ 
+-	mutex_lock(&mutex);
++	mutex_lock(&uclamp_mutex);
+ 	old_min = sysctl_sched_uclamp_util_min;
+ 	old_max = sysctl_sched_uclamp_util_max;
+ 
+@@ -1048,7 +1059,7 @@ int sysctl_sched_uclamp_handler(struct ctl_table *table, int write,
+ 	sysctl_sched_uclamp_util_min = old_min;
+ 	sysctl_sched_uclamp_util_max = old_max;
+ done:
+-	mutex_unlock(&mutex);
++	mutex_unlock(&uclamp_mutex);
+ 
+ 	return result;
+ }
+@@ -1137,6 +1148,8 @@ static void __init init_uclamp(void)
+ 	unsigned int clamp_id;
+ 	int cpu;
+ 
++	mutex_init(&uclamp_mutex);
++
+ 	for_each_possible_cpu(cpu) {
+ 		memset(&cpu_rq(cpu)->uclamp, 0, sizeof(struct uclamp_rq));
+ 		cpu_rq(cpu)->uclamp_flags = 0;
+@@ -1153,6 +1166,7 @@ static void __init init_uclamp(void)
+ 		uclamp_default[clamp_id] = uc_max;
+ #ifdef CONFIG_UCLAMP_TASK_GROUP
+ 		root_task_group.uclamp_req[clamp_id] = uc_max;
++		root_task_group.uclamp[clamp_id] = uc_max;
+ #endif
  	}
+ }
+@@ -6740,6 +6754,7 @@ static inline void alloc_uclamp_sched_group(struct task_group *tg,
+ 	for_each_clamp_id(clamp_id) {
+ 		uclamp_se_set(&tg->uclamp_req[clamp_id],
+ 			      uclamp_none(clamp_id), false);
++		tg->uclamp[clamp_id] = parent->uclamp[clamp_id];
+ 	}
+ #endif
+ }
+@@ -6990,6 +7005,45 @@ static void cpu_cgroup_attach(struct cgroup_taskset *tset)
+ }
  
- 	free(tmp);
+ #ifdef CONFIG_UCLAMP_TASK_GROUP
++static void cpu_util_update_eff(struct cgroup_subsys_state *css)
++{
++	struct cgroup_subsys_state *top_css = css;
++	struct uclamp_se *uc_parent = NULL;
++	struct uclamp_se *uc_se = NULL;
++	unsigned int eff[UCLAMP_CNT];
++	unsigned int clamp_id;
++	unsigned int clamps;
++
++	css_for_each_descendant_pre(css, top_css) {
++		uc_parent = css_tg(css)->parent
++			? css_tg(css)->parent->uclamp : NULL;
++
++		for_each_clamp_id(clamp_id) {
++			/* Assume effective clamps matches requested clamps */
++			eff[clamp_id] = css_tg(css)->uclamp_req[clamp_id].value;
++			/* Cap effective clamps with parent's effective clamps */
++			if (uc_parent &&
++			    eff[clamp_id] > uc_parent[clamp_id].value) {
++				eff[clamp_id] = uc_parent[clamp_id].value;
++			}
++		}
++		/* Ensure protection is always capped by limit */
++		eff[UCLAMP_MIN] = min(eff[UCLAMP_MIN], eff[UCLAMP_MAX]);
++
++		/* Propagate most restrictive effective clamps */
++		clamps = 0x0;
++		uc_se = css_tg(css)->uclamp;
++		for_each_clamp_id(clamp_id) {
++			if (eff[clamp_id] == uc_se[clamp_id].value)
++				continue;
++			uc_se[clamp_id].value = eff[clamp_id];
++			uc_se[clamp_id].bucket_id = uclamp_bucket_id(eff[clamp_id]);
++			clamps |= (0x1 << clamp_id);
++		}
++		if (!clamps)
++			css = css_rightmost_descendant(css);
++	}
++}
+ 
+ #define _POW10(exp) ((unsigned int)1e##exp)
+ #define POW10(exp) _POW10(exp)
+@@ -7040,6 +7094,7 @@ static ssize_t cpu_uclamp_min_write(struct kernfs_open_file *of,
+ 	if (req.ret)
+ 		return req.ret;
+ 
++	mutex_lock(&uclamp_mutex);
+ 	rcu_read_lock();
+ 
+ 	tg = css_tg(of_css(of));
+@@ -7049,7 +7104,11 @@ static ssize_t cpu_uclamp_min_write(struct kernfs_open_file *of,
+ 	/* Keep track of the actual requested value */
+ 	tg->uclamp_pct[UCLAMP_MIN] = req.percent;
+ 
++	/* Update effective clamps to track the most restrictive value */
++	cpu_util_update_eff(of_css(of));
++
+ 	rcu_read_unlock();
++	mutex_unlock(&uclamp_mutex);
+ 
+ 	return nbytes;
+ }
+@@ -7065,6 +7124,7 @@ static ssize_t cpu_uclamp_max_write(struct kernfs_open_file *of,
+ 	if (req.ret)
+ 		return req.ret;
+ 
++	mutex_lock(&uclamp_mutex);
+ 	rcu_read_lock();
+ 
+ 	tg = css_tg(of_css(of));
+@@ -7074,7 +7134,11 @@ static ssize_t cpu_uclamp_max_write(struct kernfs_open_file *of,
+ 	/* Keep track of the actual requested value */
+ 	tg->uclamp_pct[UCLAMP_MAX] = req.percent;
+ 
++	/* Update effective clamps to track the most restrictive value */
++	cpu_util_update_eff(of_css(of));
++
+ 	rcu_read_unlock();
++	mutex_unlock(&uclamp_mutex);
+ 
+ 	return nbytes;
+ }
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index f10557a2dea7..93a030321210 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -399,6 +399,8 @@ struct task_group {
+ 	unsigned int		uclamp_pct[UCLAMP_CNT];
+ 	/* Clamp values requested for a task group */
+ 	struct uclamp_se	uclamp_req[UCLAMP_CNT];
++	/* Effective clamp values used for a task group */
++	struct uclamp_se	uclamp[UCLAMP_CNT];
+ #endif
+ 
+ };
 -- 
-2.20.1
+2.22.0
 
