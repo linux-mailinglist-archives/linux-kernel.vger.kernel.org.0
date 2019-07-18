@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A28F06C62E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:14:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FDC96C5FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:12:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391744AbfGRDOR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:14:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49996 "EHLO mail.kernel.org"
+        id S2390896AbfGRDMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:12:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391724AbfGRDOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:14:15 -0400
+        id S2390991AbfGRDLo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:11:44 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EFF421851;
-        Thu, 18 Jul 2019 03:14:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 396612053B;
+        Thu, 18 Jul 2019 03:11:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419654;
-        bh=9+0YbwFH7Y+Dix671mMXtS+EpIOTOpMOjdQI2OI22RU=;
+        s=default; t=1563419503;
+        bh=Cf1a/+xiUmejQNtMpMDZ7l+V+H20cegVoA9RHPjXCpQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aZ3IH+MTPN2/LoofN7iS0LlKAC34i+ffiuvz4zDKpvue6DfCL++HxVoQUh0NtCPP1
-         mna60FIYyflwYQzvHLQJ89DP+Bmnz4vpOdTfZn7eav37wxVLBahPz2tGjl7Ohhi9kK
-         66Q3JtYO6CyUAk+/HWU8fG7k0ROzhc/F/p3cbras=
+        b=VXl+39cs+73AVwHw5TPD+BaMiM5Eo4qHfM1oimd7SwpMhI0Zm4lf2hl4Z3CPs68ee
+         HCN86VD2IprA+Gq6UBkHA3yDGrV7SaXdHctZr3weN7ewso9IdHViWSJL7jKvhiGMwr
+         MF8cG/+omTwxZyBMB6LH7uZ07YrUAvwqowIhpOmg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Joseph Yasi <joe.yasi@gmail.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Oleksandr Natalenko <oleksandr@redhat.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: [PATCH 4.9 40/54] Revert "e1000e: fix cyclic resets at link up with active tx"
-Date:   Thu, 18 Jul 2019 12:02:10 +0900
-Message-Id: <20190718030052.585548548@linuxfoundation.org>
+        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Ross Zwisler <zwisler@google.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 80/80] drm/udl: move to embedding drm device inside udl device.
+Date:   Thu, 18 Jul 2019 12:02:11 +0900
+Message-Id: <20190718030105.759766674@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030048.392549994@linuxfoundation.org>
-References: <20190718030048.392549994@linuxfoundation.org>
+In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
+References: <20190718030058.615992480@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,80 +45,257 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+commit 6ecac85eadb9d4065b9038fa3d3c66d49038e14b upstream.
 
-commit caff422ea81e144842bc44bab408d85ac449377b upstream.
+This should help with some of the lifetime issues, and move us away
+from load/unload.
 
-This reverts commit 0f9e980bf5ee1a97e2e401c846b2af989eb21c61.
+[rez] Regarding the backport to v4.14.y, the only difference is due to
+the fact that in v4.14.y the udl_usb_probe() function still uses
+drm_dev_unref() instead of drm_dev_put().
 
-That change cased false-positive warning about hardware hang:
+Backport notes:
 
-e1000e: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: Rx/Tx
-IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
-e1000e 0000:00:1f.6 eth0: Detected Hardware Unit Hang:
-   TDH                  <0>
-   TDT                  <1>
-   next_to_use          <1>
-   next_to_clean        <0>
-buffer_info[next_to_clean]:
-   time_stamp           <fffba7a7>
-   next_to_watch        <0>
-   jiffies              <fffbb140>
-   next_to_watch.status <0>
-MAC Status             <40080080>
-PHY Status             <7949>
-PHY 1000BASE-T Status  <0>
-PHY Extended Status    <3000>
-PCI Status             <10>
-e1000e: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: Rx/Tx
+On Mon, Jul 15, 2019 at 09:13:08PM -0400, Sasha Levin wrote:
+> Hm, we don't need ac3b35f11a06 here? Why not? I'd love to document that
+> with the backport.
 
-Besides warning everything works fine.
-Original issue will be fixed property in following patch.
+Nope, we don't need that patch in the v4.14 backport.
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Reported-by: Joseph Yasi <joe.yasi@gmail.com>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=203175
-Tested-by: Joseph Yasi <joe.yasi@gmail.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Tested-by: Oleksandr Natalenko <oleksandr@redhat.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+In v4.19.y we have two functions, drm_dev_put() and drm_dev_unref(), which are
+aliases for one another (drm_dev_unref() just calls drm_dev_put()).
+drm_dev_unref() is the older of the two, and was introduced back in v4.0.
+drm_dev_put() was introduced in v4.15 with
 
+9a96f55034e41 drm: introduce drm_dev_{get/put} functions
+
+and slowly callers were moved from the old name (_unref) to the new name
+(_put).  The patch you mentioned, ac3b35f11a06, is one such patch where we are
+replacing a drm_dev_unref() call with a drm_dev_put() call.  This doesn't have
+a functional change, but was necessary so that the third patch in the v4.19.y
+series I sent would apply cleanly.
+
+For the v4.14.y series, though, the drm_dev_put() function hasn't yet been
+defined and everyone is still using drm_dev_unref().  So, we don't need a
+backport of ac3b35f11a06, and I also had a small backport change in the last
+patch of the v4.14.y series where I had to change a drm_dev_put() call with a
+drm_dev_unref() call.
+
+Just for posterity, the drm_dev_unref() calls were eventually all changed to
+drm_dev_put() in v5.0, and drm_dev_unref() was removed entirely.  That
+happened with the following two patches:
+
+808bad32ea423 drm: replace "drm_dev_unref" function with "drm_dev_put"
+ba1d345401476 drm: remove deprecated "drm_dev_unref" function
+
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190405031715.5959-4-airlied@gmail.com
+Signed-off-by: Ross Zwisler <zwisler@google.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/e1000e/netdev.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/udl/udl_drv.c  | 56 +++++++++++++++++++++++++++-------
+ drivers/gpu/drm/udl/udl_drv.h  |  9 +++---
+ drivers/gpu/drm/udl/udl_fb.c   |  2 +-
+ drivers/gpu/drm/udl/udl_main.c | 23 ++------------
+ 4 files changed, 53 insertions(+), 37 deletions(-)
 
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -5291,13 +5291,8 @@ static void e1000_watchdog_task(struct w
- 			/* 8000ES2LAN requires a Rx packet buffer work-around
- 			 * on link down event; reset the controller to flush
- 			 * the Rx packet buffer.
--			 *
--			 * If the link is lost the controller stops DMA, but
--			 * if there is queued Tx work it cannot be done.  So
--			 * reset the controller to flush the Tx packet buffers.
- 			 */
--			if ((adapter->flags & FLAG_RX_NEEDS_RESTART) ||
--			    e1000_desc_unused(tx_ring) + 1 < tx_ring->count)
-+			if (adapter->flags & FLAG_RX_NEEDS_RESTART)
- 				adapter->flags |= FLAG_RESTART_NOW;
- 			else
- 				pm_schedule_suspend(netdev->dev.parent,
-@@ -5320,6 +5315,14 @@ link_up:
- 	adapter->gotc_old = adapter->stats.gotc;
- 	spin_unlock(&adapter->stats64_lock);
+diff --git a/drivers/gpu/drm/udl/udl_drv.c b/drivers/gpu/drm/udl/udl_drv.c
+index b45ac6bc8add..b428c3da7576 100644
+--- a/drivers/gpu/drm/udl/udl_drv.c
++++ b/drivers/gpu/drm/udl/udl_drv.c
+@@ -43,10 +43,16 @@ static const struct file_operations udl_driver_fops = {
+ 	.llseek = noop_llseek,
+ };
  
-+	/* If the link is lost the controller stops DMA, but
-+	 * if there is queued Tx work it cannot be done.  So
-+	 * reset the controller to flush the Tx packet buffers.
-+	 */
-+	if (!netif_carrier_ok(netdev) &&
-+	    (e1000_desc_unused(tx_ring) + 1 < tx_ring->count))
-+		adapter->flags |= FLAG_RESTART_NOW;
++static void udl_driver_release(struct drm_device *dev)
++{
++	udl_fini(dev);
++	udl_modeset_cleanup(dev);
++	drm_dev_fini(dev);
++	kfree(dev);
++}
 +
- 	/* If reset is necessary, do it outside of interrupt context. */
- 	if (adapter->flags & FLAG_RESTART_NOW) {
- 		schedule_work(&adapter->reset_task);
+ static struct drm_driver driver = {
+ 	.driver_features = DRIVER_MODESET | DRIVER_GEM | DRIVER_PRIME,
+-	.load = udl_driver_load,
+-	.unload = udl_driver_unload,
+ 	.release = udl_driver_release,
+ 
+ 	/* gem hooks */
+@@ -70,28 +76,56 @@ static struct drm_driver driver = {
+ 	.patchlevel = DRIVER_PATCHLEVEL,
+ };
+ 
++static struct udl_device *udl_driver_create(struct usb_interface *interface)
++{
++	struct usb_device *udev = interface_to_usbdev(interface);
++	struct udl_device *udl;
++	int r;
++
++	udl = kzalloc(sizeof(*udl), GFP_KERNEL);
++	if (!udl)
++		return ERR_PTR(-ENOMEM);
++
++	r = drm_dev_init(&udl->drm, &driver, &interface->dev);
++	if (r) {
++		kfree(udl);
++		return ERR_PTR(r);
++	}
++
++	udl->udev = udev;
++	udl->drm.dev_private = udl;
++
++	r = udl_init(udl);
++	if (r) {
++		drm_dev_fini(&udl->drm);
++		kfree(udl);
++		return ERR_PTR(r);
++	}
++
++	usb_set_intfdata(interface, udl);
++	return udl;
++}
++
+ static int udl_usb_probe(struct usb_interface *interface,
+ 			 const struct usb_device_id *id)
+ {
+-	struct usb_device *udev = interface_to_usbdev(interface);
+-	struct drm_device *dev;
+ 	int r;
++	struct udl_device *udl;
+ 
+-	dev = drm_dev_alloc(&driver, &interface->dev);
+-	if (IS_ERR(dev))
+-		return PTR_ERR(dev);
++	udl = udl_driver_create(interface);
++	if (IS_ERR(udl))
++		return PTR_ERR(udl);
+ 
+-	r = drm_dev_register(dev, (unsigned long)udev);
++	r = drm_dev_register(&udl->drm, 0);
+ 	if (r)
+ 		goto err_free;
+ 
+-	usb_set_intfdata(interface, dev);
+-	DRM_INFO("Initialized udl on minor %d\n", dev->primary->index);
++	DRM_INFO("Initialized udl on minor %d\n", udl->drm.primary->index);
+ 
+ 	return 0;
+ 
+ err_free:
+-	drm_dev_unref(dev);
++	drm_dev_unref(&udl->drm);
+ 	return r;
+ }
+ 
+diff --git a/drivers/gpu/drm/udl/udl_drv.h b/drivers/gpu/drm/udl/udl_drv.h
+index ba0146e06b1e..d5a5dcd15dd8 100644
+--- a/drivers/gpu/drm/udl/udl_drv.h
++++ b/drivers/gpu/drm/udl/udl_drv.h
+@@ -49,8 +49,8 @@ struct urb_list {
+ struct udl_fbdev;
+ 
+ struct udl_device {
++	struct drm_device drm;
+ 	struct device *dev;
+-	struct drm_device *ddev;
+ 	struct usb_device *udev;
+ 	struct drm_crtc *crtc;
+ 
+@@ -68,7 +68,7 @@ struct udl_device {
+ 	atomic_t cpu_kcycles_used; /* transpired during pixel processing */
+ };
+ 
+-#define to_udl(x) ((x)->dev_private)
++#define to_udl(x) container_of(x, struct udl_device, drm)
+ 
+ struct udl_gem_object {
+ 	struct drm_gem_object base;
+@@ -101,9 +101,8 @@ struct urb *udl_get_urb(struct drm_device *dev);
+ int udl_submit_urb(struct drm_device *dev, struct urb *urb, size_t len);
+ void udl_urb_completion(struct urb *urb);
+ 
+-int udl_driver_load(struct drm_device *dev, unsigned long flags);
+-void udl_driver_unload(struct drm_device *dev);
+-void udl_driver_release(struct drm_device *dev);
++int udl_init(struct udl_device *udl);
++void udl_fini(struct drm_device *dev);
+ 
+ int udl_fbdev_init(struct drm_device *dev);
+ void udl_fbdev_cleanup(struct drm_device *dev);
+diff --git a/drivers/gpu/drm/udl/udl_fb.c b/drivers/gpu/drm/udl/udl_fb.c
+index 1e78767df06c..f41fd0684ce4 100644
+--- a/drivers/gpu/drm/udl/udl_fb.c
++++ b/drivers/gpu/drm/udl/udl_fb.c
+@@ -213,7 +213,7 @@ static int udl_fb_open(struct fb_info *info, int user)
+ 	struct udl_device *udl = to_udl(dev);
+ 
+ 	/* If the USB device is gone, we don't accept new opens */
+-	if (drm_dev_is_unplugged(udl->ddev))
++	if (drm_dev_is_unplugged(&udl->drm))
+ 		return -ENODEV;
+ 
+ 	ufbdev->fb_count++;
+diff --git a/drivers/gpu/drm/udl/udl_main.c b/drivers/gpu/drm/udl/udl_main.c
+index 05c14c80024c..124428f33e1e 100644
+--- a/drivers/gpu/drm/udl/udl_main.c
++++ b/drivers/gpu/drm/udl/udl_main.c
+@@ -311,20 +311,12 @@ int udl_submit_urb(struct drm_device *dev, struct urb *urb, size_t len)
+ 	return ret;
+ }
+ 
+-int udl_driver_load(struct drm_device *dev, unsigned long flags)
++int udl_init(struct udl_device *udl)
+ {
+-	struct usb_device *udev = (void*)flags;
+-	struct udl_device *udl;
++	struct drm_device *dev = &udl->drm;
+ 	int ret = -ENOMEM;
+ 
+ 	DRM_DEBUG("\n");
+-	udl = kzalloc(sizeof(struct udl_device), GFP_KERNEL);
+-	if (!udl)
+-		return -ENOMEM;
+-
+-	udl->udev = udev;
+-	udl->ddev = dev;
+-	dev->dev_private = udl;
+ 
+ 	if (!udl_parse_vendor_descriptor(dev, udl->udev)) {
+ 		ret = -ENODEV;
+@@ -359,7 +351,6 @@ int udl_driver_load(struct drm_device *dev, unsigned long flags)
+ err:
+ 	if (udl->urbs.count)
+ 		udl_free_urb_list(dev);
+-	kfree(udl);
+ 	DRM_ERROR("%d\n", ret);
+ 	return ret;
+ }
+@@ -370,7 +361,7 @@ int udl_drop_usb(struct drm_device *dev)
+ 	return 0;
+ }
+ 
+-void udl_driver_unload(struct drm_device *dev)
++void udl_fini(struct drm_device *dev)
+ {
+ 	struct udl_device *udl = to_udl(dev);
+ 
+@@ -378,12 +369,4 @@ void udl_driver_unload(struct drm_device *dev)
+ 		udl_free_urb_list(dev);
+ 
+ 	udl_fbdev_cleanup(dev);
+-	kfree(udl);
+-}
+-
+-void udl_driver_release(struct drm_device *dev)
+-{
+-	udl_modeset_cleanup(dev);
+-	drm_dev_fini(dev);
+-	kfree(dev);
+ }
+-- 
+2.20.1
+
 
 
