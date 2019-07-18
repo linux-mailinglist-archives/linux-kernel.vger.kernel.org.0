@@ -2,122 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 138876D366
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 20:00:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 931E46D36F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 20:04:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390984AbfGRSAK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 14:00:10 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43279 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390368AbfGRSAK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 14:00:10 -0400
-Received: by mail-pf1-f193.google.com with SMTP id i189so12970863pfg.10
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 11:00:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:cc:from:user-agent:date;
-        bh=1vjr89rXvmdf0wB/WdMQsMyhKQE9yJLVmO3GYLtPVv8=;
-        b=k/fa1LPxqJnclVt5GEioxr9RW7EbyJfYV5piMXPIZSTxtcvwm46SxOoXf6cZQjrbY6
-         bca4y1KZQKYwRAbFL7TF/0F3GjkjQ40o8BsRAOQWVUU2JLRYfaXohx1zuUR6O0+L0yQF
-         jjMXcPRZYvsl4H0NfBYJirfflhQ5+wTsGrZMs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:cc:from
-         :user-agent:date;
-        bh=1vjr89rXvmdf0wB/WdMQsMyhKQE9yJLVmO3GYLtPVv8=;
-        b=V0kc8ZLUHoKdb15Yc36xYEJDG/ZNcVIp8RrndIvKJja51/J+wJKQkfALy6rqG1Glm0
-         Fm984GxTafMsM+fJtK87e8Jv82lTGAW6/xVn31kVQPk5Ac2mohCiyBNma5fyTtTwESMm
-         dBDjIWduQ1R3+n61a2S/IxCh1ICh59VudMbnH8Q0zUXI6MUEAvEv71lxlMW4CRHCSx37
-         oHWOxhBWOo/skOxW+iktmJ2Go4F+CGT8P8Q5q0inYz21t/SgEcONCx2rMGyYwMErwCPy
-         dZ19ppiaHmJIvty+mbD9nSQcy/hTgMU5Ey9HaLJUOVLEABSbLecw1PT3CvvPRC23FHSW
-         gYaA==
-X-Gm-Message-State: APjAAAWxlpQTYjbhhptQ/WgDq3m85ExyVsC/lXlMGBUNLU54XVj7gfQ/
-        9MwgX7jd4BX/pY/OEzdjmE0aSw==
-X-Google-Smtp-Source: APXvYqxv3xo0LgfN2UblAdH0u++DeJ6HbfKAf0knXIKRJ+c6voucqKn+e+cPziHQVF1JO9OzN+TkJA==
-X-Received: by 2002:a63:eb51:: with SMTP id b17mr47673373pgk.384.1563472809305;
-        Thu, 18 Jul 2019 11:00:09 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id d2sm25585057pjs.21.2019.07.18.11.00.08
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 18 Jul 2019 11:00:08 -0700 (PDT)
-Message-ID: <5d30b3a8.1c69fb81.8c54.63a6@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        id S2390832AbfGRSEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 14:04:40 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48334 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727780AbfGRSEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 14:04:40 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 875EA2BFCA;
+        Thu, 18 Jul 2019 18:04:39 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 679025D71A;
+        Thu, 18 Jul 2019 18:04:34 +0000 (UTC)
+Subject: Re: [PATCH v2 2/2] mm, slab: Show last shrink time in us when
+ slab/shrink is read
+From:   Waiman Long <longman@redhat.com>
+To:     Christopher Lameter <cl@linux.com>
+Cc:     Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+References: <20190717202413.13237-1-longman@redhat.com>
+ <20190717202413.13237-3-longman@redhat.com>
+ <0100016c04e1562a-e516c595-1d46-40df-ab29-da1709277e9a-000000@email.amazonses.com>
+ <6fb9f679-02d1-c33f-2d79-4c2eaa45d264@redhat.com>
+Organization: Red Hat
+Message-ID: <9d35da26-6d85-d879-c966-3577bdb0cf02@redhat.com>
+Date:   Thu, 18 Jul 2019 14:04:33 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190710141433.7ama3gncss3y6dcx@willie-the-truck>
-References: <20190614203717.75479-1-swboyd@chromium.org> <20190614203717.75479-4-swboyd@chromium.org> <20190710141433.7ama3gncss3y6dcx@willie-the-truck>
-Subject: Re: [PATCH v2 3/5] memremap: Add support for read-only memory mappings
-To:     Will Deacon <will@kernel.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Evan Green <evgreen@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 18 Jul 2019 11:00:07 -0700
+In-Reply-To: <6fb9f679-02d1-c33f-2d79-4c2eaa45d264@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 18 Jul 2019 18:04:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Will Deacon (2019-07-10 07:14:34)
-> On Fri, Jun 14, 2019 at 01:37:15PM -0700, Stephen Boyd wrote:
-> > @@ -84,7 +91,10 @@ void *memremap(resource_size_t offset, size_t size, =
-unsigned long flags)
-> >       }
-> > =20
-> >       /* Try all mapping types requested until one returns non-NULL */
-> > -     if (flags & MEMREMAP_WB) {
-> > +     if ((flags & MEMREMAP_RO) && is_ram !=3D REGION_INTERSECTS)
-> > +             addr =3D arch_memremap_ro(offset, size);
-> > +
-> > +     if (!addr && (flags & MEMREMAP_WB)) {
-> >               /*
-> >                * MEMREMAP_WB is special in that it can be satisfied
-> >                * from the direct map.  Some archs depend on the
-> > @@ -103,7 +113,8 @@ void *memremap(resource_size_t offset, size_t size,=
- unsigned long flags)
-> >        * address mapping.  Enforce that this mapping is not aliasing
-> >        * System RAM.
-> >        */
-> > -     if (!addr && is_ram =3D=3D REGION_INTERSECTS && flags !=3D MEMREM=
-AP_WB) {
-> > +     if (!addr && is_ram =3D=3D REGION_INTERSECTS &&
-> > +         (flags !=3D MEMREMAP_WB || flags !=3D MEMREMAP_RO)) {
-> >               WARN_ONCE(1, "memremap attempted on ram %pa size: %#lx\n",
-> >                               &offset, (unsigned long) size);
-> >               return NULL;
->=20
-> This function seems a little confused about whether 'flags' is really a
-> bitmap of flags, or whether it is equal to exactly one entry in the enum.
-> Given that I think it's sensible for somebody to specify 'MEMREMAP_RO |
-> MEMREMAP_WT', then we probably need to start checking these things a bit
-> more thoroughly so we can reject unsupported combinations at the very lea=
-st.
->=20
+On 7/18/19 10:36 AM, Waiman Long wrote:
+>>> CONFIG_SLUB_DEBUG depends on CONFIG_SYSFS. So the new shrink_us field
+>>> is always available to the shrink methods.
+>> Aside from minimal systems without CONFIG_SYSFS... Does this build without
+>> CONFIG_SYSFS?
+> The sysfs code in mm/slub.c is guarded by CONFIG_SLUB_DEBUG which, in
+> turn, depends on CONFIG_SYSFS. So if CONFIG_SYSFS is off, the shrink
+> sysfs methods will be off as well. I haven't tried doing a minimal
+> build. I will certainly try that, but I don't expect any problem here.
 
-I'm also confused about the same thing. I thought it was a "getting
-worse via best effort" type of thing based on the comment above the
-function.
+I have tried a tiny config with slub. There was no compilation problem.
 
- * In the case of multiple flags, the different
- * mapping types will be attempted in the order listed below until one of
- * them succeeds.
-
-(I now realize I should have documented the new flag so that this order
-would be known. I'll resend this series again with the documentation
-fix.)
-
-I also thought that the combination of read-only and write through would
-be OK because the flags are more of a best effort approach to making a
-mapping. Given that, is there anything to reject? Or do we just keep
-trying until we can't try anymore?
+-Longman
 
