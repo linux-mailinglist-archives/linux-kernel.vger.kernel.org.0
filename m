@@ -2,124 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB9A46CB52
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 10:57:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB3926CB56
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 10:58:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389410AbfGRI5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 04:57:14 -0400
-Received: from outbound-smtp25.blacknight.com ([81.17.249.193]:46660 "EHLO
-        outbound-smtp25.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726383AbfGRI5O (ORCPT
+        id S2389564AbfGRI6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 04:58:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51220 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbfGRI6f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 04:57:14 -0400
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp25.blacknight.com (Postfix) with ESMTPS id 113A3B879F
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 09:57:11 +0100 (IST)
-Received: (qmail 15222 invoked from network); 18 Jul 2019 08:57:10 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.21.36])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 18 Jul 2019 08:57:10 -0000
-Date:   Thu, 18 Jul 2019 09:57:08 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     howaboutsynergy@protonmail.com, Vlastimil Babka <vbabka@suse.cz>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] mm: compaction: Avoid 100% CPU usage during compaction when
- a task is killed
-Message-ID: <20190718085708.GE24383@techsingularity.net>
+        Thu, 18 Jul 2019 04:58:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=59pNHHpCEcKGOhsQiGgUt+ozL25ouhHhLVmOteYpHqo=; b=Sl/xHuoEHjnd9+oJnoOHl+/dV
+        503KCLncGOkHKgDtY+ZuvmefhEkKqCy1i7V2t9gROCg3zRoqmiR6Js9X0oD8qy3Y7Tth3LbmafYDT
+        He1JTC/E5qR+RDoonXOpEFSw77sgdWgaesPD6TPI8NkcWwHiHUWsW7y5WDwGpt9EIcbYFmVBdu2FA
+        bhUj3ItAO0m80sPA0kDGIVhNtMxtzHiIe4CYM9FFlyPbHb1ilO60jm++5uhJyrN/R/J2hnWh4aq+0
+        UmsbRbYswE7+2mTN0mguwwNsaNhIAdRhfIn107Cdwjmc7MLSSMBcKdut3FKmazKei3cL/6ohIy70T
+        /uhe4BojQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1ho2Ee-00071l-H2; Thu, 18 Jul 2019 08:58:03 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 63545202173EA; Thu, 18 Jul 2019 10:57:54 +0200 (CEST)
+Date:   Thu, 18 Jul 2019 10:57:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vegard Nossum <vegard.nossum@oracle.com>
+Cc:     tglx@linutronix.de, bp@alien8.de, mingo@kernel.org,
+        rostedt@goodmis.org, luto@kernel.org,
+        torvalds@linux-foundation.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, jgross@suse.com,
+        linux-kernel@vger.kernel.org, zhe.he@windriver.com,
+        joel@joelfernandes.org, devel@etsukata.com
+Subject: [PATCH] stacktrace: Force USER_DS for stack_trace_save_user()
+Message-ID: <20190718085754.GM3402@hirez.programming.kicks-ass.net>
+References: <20190711114054.406765395@infradead.org>
+ <4c71e14d-3a32-c3bb-8e3b-6e5100853192@oracle.com>
+ <20190717080725.GK3402@hirez.programming.kicks-ass.net>
+ <b0a3406c-5de7-20e0-0f09-dbb7222426e2@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <b0a3406c-5de7-20e0-0f09-dbb7222426e2@oracle.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"howaboutsynergy" reported via kernel buzilla number 204165 that
-compact_zone_order was consuming 100% CPU during a stress test for
-prolonged periods of time. Specifically the following command, which
-should exit in 10 seconds, was taking an excessive time to finish while
-the CPU was pegged at 100%.
+On Wed, Jul 17, 2019 at 10:09:45AM +0200, Vegard Nossum wrote:
+> On 7/17/19 10:07 AM, Peter Zijlstra wrote:
 
-  stress -m 220 --vm-bytes 1000000000 --timeout 10
+> > Does something like the below help?
 
-Tracing indicated a pattern as follows
+> Yes.
 
-          stress-3923  [007]   519.106208: mm_compaction_isolate_migratepages: range=(0x70bb80 ~ 0x70bb80) nr_scanned=0 nr_taken=0
-          stress-3923  [007]   519.106212: mm_compaction_isolate_migratepages: range=(0x70bb80 ~ 0x70bb80) nr_scanned=0 nr_taken=0
-          stress-3923  [007]   519.106216: mm_compaction_isolate_migratepages: range=(0x70bb80 ~ 0x70bb80) nr_scanned=0 nr_taken=0
-          stress-3923  [007]   519.106219: mm_compaction_isolate_migratepages: range=(0x70bb80 ~ 0x70bb80) nr_scanned=0 nr_taken=0
-          stress-3923  [007]   519.106223: mm_compaction_isolate_migratepages: range=(0x70bb80 ~ 0x70bb80) nr_scanned=0 nr_taken=0
-          stress-3923  [007]   519.106227: mm_compaction_isolate_migratepages: range=(0x70bb80 ~ 0x70bb80) nr_scanned=0 nr_taken=0
-          stress-3923  [007]   519.106231: mm_compaction_isolate_migratepages: range=(0x70bb80 ~ 0x70bb80) nr_scanned=0 nr_taken=0
-          stress-3923  [007]   519.106235: mm_compaction_isolate_migratepages: range=(0x70bb80 ~ 0x70bb80) nr_scanned=0 nr_taken=0
-          stress-3923  [007]   519.106238: mm_compaction_isolate_migratepages: range=(0x70bb80 ~ 0x70bb80) nr_scanned=0 nr_taken=0
-          stress-3923  [007]   519.106242: mm_compaction_isolate_migratepages: range=(0x70bb80 ~ 0x70bb80) nr_scanned=0 nr_taken=0
+Thanks!
 
-Note that compaction is entered in rapid succession while scanning and
-isolating nothing. The problem is that when a task that is compacting
-receives a fatal signal, it retries indefinitely instead of exiting while
-making no progress as a fatal signal is pending.
-
-It's not easy to trigger this condition although enabling zswap helps on
-the basis that the timing is altered. A very small window has to be hit
-for the problem to occur (signal delivered while compacting and isolating
-a PFN for migration that is not aligned to SWAP_CLUSTER_MAX).
-
-This was reproduced locally -- 16G single socket system, 8G swap, 30% zswap
-configured, vm-bytes 22000000000 using Colin Kings stress-ng implementation
-from github running in a loop until the problem hits). Tracing recorded the
-problem occurring almost 200K times in a short window. With this patch, the
-problem hit 4 times but the task existed normally instead of consuming CPU.
-
-This problem has existed for some time but it was made worse by
-cf66f0700c8f ("mm, compaction: do not consider a need to reschedule as
-contention"). Before that commit, if the same condition was hit then
-locks would be quickly contended and compaction would exit that way.
-
-I haven't included a Reported-and-tested-by as the reporters real name
-is unknown but this was caught and repaired due to their testing and
-tracing.  If they want a tag added then hopefully they'll say so before
-this gets merged.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=204165
-Fixes: cf66f0700c8f ("mm, compaction: do not consider a need to reschedule as contention")
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-CC: stable@vger.kernel.org # v5.1+
 ---
- mm/compaction.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+Subject: stacktrace: Force USER_DS for stack_trace_save_user()
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Thu Jul 18 10:47:47 CEST 2019
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 9e1b9acb116b..952dc2fb24e5 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -842,13 +842,15 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+When walking userspace stacks, we should set USER_DS, otherwise
+access_ok() will not function as expected.
+
+Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
+Tested-by: Vegard Nossum <vegard.nossum@oracle.com>
+Reported-by: Eiichi Tsukata <devel@etsukata.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+--- a/kernel/stacktrace.c
++++ b/kernel/stacktrace.c
+@@ -226,12 +226,17 @@ unsigned int stack_trace_save_user(unsig
+ 		.store	= store,
+ 		.size	= size,
+ 	};
++	mm_segment_t fs;
  
- 		/*
- 		 * Periodically drop the lock (if held) regardless of its
--		 * contention, to give chance to IRQs. Abort async compaction
--		 * if contended.
-+		 * contention, to give chance to IRQs. Abort completely if
-+		 * a fatal signal is pending.
- 		 */
- 		if (!(low_pfn % SWAP_CLUSTER_MAX)
- 		    && compact_unlock_should_abort(&pgdat->lru_lock,
--					    flags, &locked, cc))
--			break;
-+					    flags, &locked, cc)) {
-+			low_pfn = 0;
-+			goto fatal_pending;
-+		}
+ 	/* Trace user stack if not a kernel thread */
+ 	if (current->flags & PF_KTHREAD)
+ 		return 0;
  
- 		if (!pfn_valid_within(low_pfn))
- 			goto isolate_fail;
-@@ -1060,6 +1062,7 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
- 	trace_mm_compaction_isolate_migratepages(start_pfn, low_pfn,
- 						nr_scanned, nr_isolated);
- 
-+fatal_pending:
- 	cc->total_migrate_scanned += nr_scanned;
- 	if (nr_isolated)
- 		count_compact_events(COMPACTISOLATED, nr_isolated);
++	fs = get_fs();
++	set_fs(USER_DS);
+ 	arch_stack_walk_user(consume_entry, &c, task_pt_regs(current));
++	set_fs(fs);
++
+ 	return c.len;
+ }
+ #endif
