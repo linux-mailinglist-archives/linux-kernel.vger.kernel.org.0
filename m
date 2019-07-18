@@ -2,149 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 988106D109
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 17:25:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E803C6D0F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 17:20:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390709AbfGRPYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 11:24:11 -0400
-Received: from mx0b-00010702.pphosted.com ([148.163.158.57]:36406 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727623AbfGRPYL (ORCPT
+        id S2390618AbfGRPUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 11:20:50 -0400
+Received: from smtprelay0214.hostedemail.com ([216.40.44.214]:50776 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726040AbfGRPUu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 11:24:11 -0400
-X-Greylist: delayed 1881 seconds by postgrey-1.27 at vger.kernel.org; Thu, 18 Jul 2019 11:24:09 EDT
-Received: from pps.filterd (m0098778.ppops.net [127.0.0.1])
-        by mx0b-00010702.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x6IEjhmR001012;
-        Thu, 18 Jul 2019 09:50:50 -0500
-Received: from nam05-dm3-obe.outbound.protection.outlook.com (mail-dm3nam05lp2054.outbound.protection.outlook.com [104.47.49.54])
-        by mx0b-00010702.pphosted.com with ESMTP id 2ts0d2sdm1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 Jul 2019 09:50:50 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kcGMZzYSkeWjW2zHrDf9y/IYd+bi5ygoGzt5gs7jH/JnzYe3Su2RJm6IVhsLpfMuTUj2kRfUQuORWsoEZ9z2nGmk7w/DDza/1ArgGd7U4YlPqFtb0NZg1BbFZdaEVm38Eht2UeY2aj60Pidubhu+xgHtyRtGUMhznRcPjKAoH2WmfLbzB7/ykqD0NvMOEgeRBBVqBdiQ3lXjyak6Kn10kx46AJ5jSfLk3uTAmhb6HBdsL0/RXIYOjhOEgwEnlhmbkVp5dRoJvxGNdAolNq2iV5AMGp6UYvDmOHx8pJ741F2tJIVmradkmcIy9P8mU9lnJNu0IEWv96DHJ7QA1Nqjng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8Y73QpYDz2dbaOtgBZUW/QrhQX2seNr2ZOW22JP7A5c=;
- b=Ph9Myu+n40EYNPZ4DUPN7CT2ARIc4qDjENcXLr/UCa0fsloWxpQ93pBCCf8IUCBx6AEXtoajSPHEfw/DkoKhPWWBkl03VJmFpcQgEDRKjgEsG8d0j5n38WMgXGnPftr3lBOcPBz04l8LFNLnYtGYndv0jsGaeyTaoTKw92fa9AZj74I9Mplx4lvOgCBs5GbFji/atGDKsLOrNDQWtGiQtKQ2e+WVtlWSYXXXLiB/YYl9eoRB4wsEY0r4rE/jLlkYRDb949ZJbMRsVFzdKfP/ye7/J/Y12niDlwm+UNkULBFDitNEe4xAzDamE0KWs2k9aC6sT9xNakKMXa4cJTyfSg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=ni.com;dmarc=pass action=none header.from=ni.com;dkim=pass
- header.d=ni.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=nio365.onmicrosoft.com; s=selector1-nio365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8Y73QpYDz2dbaOtgBZUW/QrhQX2seNr2ZOW22JP7A5c=;
- b=Jsaj1HHRUI1SSftzZqfav2k76PS1lmiYKlCrcJu9HrJLb3X62Ul3Vwtfkylz1W+y5vrr7mesQjmEwRpB4IVZwTOV+pc/6zvu1eqGpHl1tvuDRoxf2lbDYoX3kpcligoS0NrlZF95c57dZX2H1vZE7FrPmQLTEdSlVJRUzoMBKZo=
-Received: from BN6PR04MB0963.namprd04.prod.outlook.com (10.174.233.163) by
- BN6PR04MB1235.namprd04.prod.outlook.com (10.174.234.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.14; Thu, 18 Jul 2019 14:50:46 +0000
-Received: from BN6PR04MB0963.namprd04.prod.outlook.com
- ([fe80::c926:1efe:9535:239c]) by BN6PR04MB0963.namprd04.prod.outlook.com
- ([fe80::c926:1efe:9535:239c%5]) with mapi id 15.20.2073.015; Thu, 18 Jul 2019
- 14:50:46 +0000
-From:   Julia Cartwright <julia@ni.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     Linus Torvalds <torvalds@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sebastian Siewior <bigeasy@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Christoph Hellwig <hch@lst.de>, Tejun Heo <tj@kernel.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Daniel Wagner <wagi@monom.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Clark Williams <clark.williams@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Gratian Crisan <gratian.crisan@ni.com>
-Thread-Topic: [EXTERNAL] [patch V2 1/1] Kconfig: Introduce CONFIG_PREEMPT_RT
-Thread-Index: AQHVPXguhdAZfomJW0CBjlgFAcO5Hg==
-Date:   Thu, 18 Jul 2019 14:50:46 +0000
-Message-ID: <20190718145045.GH29109@jcartwri.amer.corp.natinst.com>
-References: <20190715150402.798499167@linutronix.de>
- <20190715150601.205143057@linutronix.de>
- <alpine.DEB.2.21.1907172200190.1778@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1907172200190.1778@nanos.tec.linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0201CA0023.namprd02.prod.outlook.com
- (2603:10b6:803:2b::33) To BN6PR04MB0963.namprd04.prod.outlook.com
- (2603:10b6:405:43::35)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [130.164.62.191]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 0a8dd360-c988-4659-d2da-08d70b8f5114
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN6PR04MB1235;
-x-ms-traffictypediagnostic: BN6PR04MB1235:
-x-microsoft-antispam-prvs: <BN6PR04MB1235C2A25D843148E8EC50F1F4C80@BN6PR04MB1235.namprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 01026E1310
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(39860400002)(366004)(396003)(346002)(199004)(189003)(66446008)(81166006)(4744005)(316002)(53936002)(186003)(2906002)(7736002)(446003)(6916009)(33656002)(54906003)(229853002)(81156014)(1076003)(102836004)(8936002)(305945005)(66556008)(11346002)(7416002)(14454004)(9686003)(6436002)(6486002)(8676002)(68736007)(71200400001)(52116002)(26005)(476003)(4326008)(6246003)(386003)(5660300002)(66476007)(99286004)(66066001)(71190400001)(6512007)(486006)(6116002)(6506007)(64756008)(478600001)(256004)(25786009)(76176011)(66946007)(3846002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR04MB1235;H:BN6PR04MB0963.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: ni.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: gxHmfqglT05JscROU7LX5Mf3lR1Q6sGUEIzwxBGpkIOr5WUFh71J3RRgonUUrnE1tEQtOC2Z+ACgPBTF2ZaCHEQZ/CXv0ZvxZ8pMuOL14CWhq+eIZ7LhYtlVcBoxHI+ofu1oBl87HrnBmLG+wWLFCui3KByCC3UZCSfOZ8UmO59yhPrYk2OyEEBnk6P6uH7bBDZ/wN+o6D4fidB/7d6qXQcMrmjk5IAzvJAcu/+Il3dhtpaDb3kx1u9ITUQ/o73Qaye6hnbNj2NCounJxpILrWj5WRdQH15qof6bSWoIp9aFphEN4piW/zDOop7EOW9L1YZcvs/t1TidPhJ8mJfR2ysXA+E54Pn73QIr80DxLSZCst/alOhIe8IlgXYqWWHjdFl4yo+ifyrIto43eRNSRlf2pi6ZVQ/uIm0hy/nujpk=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <205A59D371F27D41AC7157FB94F519EC@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 18 Jul 2019 11:20:50 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 7ACC7613C;
+        Thu, 18 Jul 2019 15:20:48 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1543:1593:1594:1711:1730:1747:1777:1792:2198:2199:2307:2393:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3870:3871:3874:4250:4321:4470:4605:5007:8660:10004:10400:10848:11026:11232:11658:11914:12043:12296:12297:12438:12555:12740:12760:12895:13095:13148:13149:13161:13229:13230:13439:14659:14721:21080:21324:21433:21451:21627:21740:30012:30025:30045:30054:30080:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: bead63_23f9ecf6bca52
+X-Filterd-Recvd-Size: 3930
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 18 Jul 2019 15:20:47 +0000 (UTC)
+Message-ID: <cedfd2fb31d943564e19c1652bc8983a18de45d4.camel@perches.com>
+Subject: Re: [PATCH] reiserfs: fix code unwinding with clang
+From:   Joe Perches <joe@perches.com>
+To:     Arnd Bergmann <arnd@arndb.de>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Date:   Thu, 18 Jul 2019 08:20:45 -0700
+In-Reply-To: <20190718134928.2472465-1-arnd@arndb.de>
+References: <20190718134928.2472465-1-arnd@arndb.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-X-OriginatorOrg: ni.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0a8dd360-c988-4659-d2da-08d70b8f5114
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2019 14:50:46.5971
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: julia.cartwright@ni.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR04MB1235
-Subject: Re: [patch V2 1/1] Kconfig: Introduce CONFIG_PREEMPT_RT
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:5.22.84,1.0.8
- definitions=2019-07-18_07:2019-07-18,2019-07-18 signatures=0
-X-Proofpoint-Spam-Details: rule=inbound_policy_notspam policy=inbound_policy score=30
- lowpriorityscore=0 bulkscore=0 mlxlogscore=999 phishscore=0 spamscore=0
- clxscore=1011 malwarescore=0 adultscore=0 priorityscore=1501
- suspectscore=0 impostorscore=0 mlxscore=0 classifier=spam adjust=30
- reason=mlx scancount=1 engine=8.12.0-1904300001
- definitions=main-1907180154
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 17, 2019 at 10:01:49PM +0200, Thomas Gleixner wrote:
-> Add a new entry to the preemption menu which enables the real-time suppor=
-t
-> for the kernel. The choice is only enabled when an architecture supports
-> it.
->=20
-> It selects PREEMPT as the RT features depend on it. To achieve that the
-> existing PREEMPT choice is renamed to PREEMPT_LL which select PREEMPT as
-> well.
->=20
-> No functional change.
->=20
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> Acked-by: Clark Williams <williams@redhat.com>
-> Acked-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-> Acked-by: Frederic Weisbecker <frederic@kernel.org>
-> Acked-by: Ingo Molnar <mingo@kernel.org>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-> Acked-by: Daniel Wagner <wagi@monom.org>
-> ---
+On Thu, 2019-07-18 at 15:49 +0200, Arnd Bergmann wrote:
+> Building reiserfs with clang leads to objtool warnings about a part of the
+> unreachable code that may confuse the ORC unwinder:
+> 
+> fs/reiserfs/ibalance.o: warning: objtool: balance_internal()+0xe8f: stack state mismatch: cfa1=7+240 cfa2=7+248
+> fs/reiserfs/ibalance.o: warning: objtool: internal_move_pointers_items()+0x36f: stack state mismatch: cfa1=7+152 cfa2=7+144
+> fs/reiserfs/lbalance.o: warning: objtool: leaf_cut_from_buffer()+0x58b: stack state mismatch: cfa1=7+128 cfa2=7+112
+> fs/reiserfs/lbalance.o: warning: objtool: leaf_copy_boundary_item()+0x7a9: stack state mismatch: cfa1=7+104 cfa2=7+96
+> fs/reiserfs/lbalance.o: warning: objtool: leaf_copy_items_entirely()+0x3d2: stack state mismatch: cfa1=7+120 cfa2=7+128
+> fs/reiserfs/do_balan.o: warning: objtool: replace_key()+0x158: stack state mismatch: cfa1=7+40 cfa2=7+56
+> fs/reiserfs/do_balan.o: warning: objtool: balance_leaf()+0x2791: stack state mismatch: cfa1=7+176 cfa2=7+192
+> 
+> Reword this to use the regular BUG() call directly from the original code
+> location, since objtool finds the generated object code more reasonable.
+> 
+> This will likely get fixed in a future clang release, but in the meantime
+> the workaround helps us build cleanly with existing releases.
 
-I'm excited to see where this goes.
+The original code read better.
 
-Acked-by: Julia Cartwright <julia@ni.com>
+This is kinda a gross solution that should probably be
+commented on in the code rather than just the commit message.
 
-  Julia
+> diff --git a/fs/reiserfs/prints.c b/fs/reiserfs/prints.c
+[]
+> @@ -387,7 +387,6 @@ void __reiserfs_panic(struct super_block *sb, const char *id,
+>  	else
+>  		printk(KERN_WARNING "REISERFS panic: %s%s%s: %s\n",
+>  		      id ? id : "", id ? " " : "", function, error_buf);
+> -	BUG();
+>  }
+>  
+>  void __reiserfs_error(struct super_block *sb, const char *id,
+> @@ -397,8 +396,10 @@ void __reiserfs_error(struct super_block *sb, const char *id,
+>  
+>  	BUG_ON(sb == NULL);
+>  
+> -	if (reiserfs_error_panic(sb))
+> +	if (reiserfs_error_panic(sb)) {
+>  		__reiserfs_panic(sb, id, function, error_buf);
+> +		BUG();
+> +	}
+>  
+>  	if (id && id[0])
+>  		printk(KERN_CRIT "REISERFS error (device %s): %s %s: %s\n",
+> diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+> index e5ca9ed79e54..f5bd17ee21f6 100644
+> --- a/fs/reiserfs/reiserfs.h
+> +++ b/fs/reiserfs/reiserfs.h
+> @@ -3185,10 +3185,9 @@ void unfix_nodes(struct tree_balance *);
+>  
+>  /* prints.c */
+>  void __reiserfs_panic(struct super_block *s, const char *id,
+> -		      const char *function, const char *fmt, ...)
+> -    __attribute__ ((noreturn));
+> +		      const char *function, const char *fmt, ...);
+>  #define reiserfs_panic(s, id, fmt, args...) \
+> -	__reiserfs_panic(s, id, __func__, fmt, ##args)
+> +	do { __reiserfs_panic(s, id, __func__, fmt, ##args); BUG(); } while (0)
+>  void __reiserfs_error(struct super_block *s, const char *id,
+>  		      const char *function, const char *fmt, ...);
+>  #define reiserfs_error(s, id, fmt, args...) \
+
