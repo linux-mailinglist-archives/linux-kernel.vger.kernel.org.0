@@ -2,111 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE3FD6D210
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 18:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 768326D216
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 18:37:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731029AbfGRQfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 12:35:02 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38796 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728011AbfGRQfB (ORCPT
+        id S1732556AbfGRQgc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 12:36:32 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:53356 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727781AbfGRQgc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 12:35:01 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f5so4308692pgu.5;
-        Thu, 18 Jul 2019 09:35:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Lt60PMLaU+8wzROOy95zC3m71GZZRlpEmV8HCiHmNcc=;
-        b=pkiXMmVNN1eRxc4wIKruOzUVS8t6JWGwLJF2tr93Etri93LWBBBEw6VNHF0aLScgJA
-         u9tHotpsEsU/CJsEhM01jIrDI5GhQxguJQAdneVaGBAnWjH4Fn+TmbTk9WfouTUiHfM5
-         kCpwm2Zwc/XgWkhWeF87BVf7g3sq4aL5tArpL0dAyjLfGwN0CETONNSb42JgzQ91T00A
-         PKb2lhpZyGu/vl+BXgvoWTklG9It1tZlmpt/MrTzzo5cIMZ5lUVsz/K6O9OHEtPyeJt/
-         ihJDRmbzdwefIUaDxmQoUGm0olLhGigTlW/uCVF2Wuv7VufLWopLaKnZTYjx0rjuvk6+
-         hfrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Lt60PMLaU+8wzROOy95zC3m71GZZRlpEmV8HCiHmNcc=;
-        b=bedzs6MNZlUqonBa4XGNoG2gkmn9OIBJxaz/fGkDOsoJeOc2UroEcC8cAtvI6cBi3x
-         bzUzSJ0RxhPjUz9LIltn0IFQKcg8alFryrm3dbB2gQa0FDEonHFhpDs3m3bmge06hlyI
-         4y7K1uDgf0DBjv6qNdIvty7ek+Kg38FzgUBCVWSuSyHQV18IeqyN6eeKbzZqidkcfBZM
-         DaoYqGPRxWaOYgHIeBpQM/ukfqyEJh7wSuDHt9rKYW2O6i1llJJ5fdCqCtutEMegVJhU
-         Ft85eLLRXJ8gsoJFpDNwslhG6wj+TFR5NRSacqe1+YJ6F6f8/0+NEaGT4FtXDFjnmqkG
-         OYgw==
-X-Gm-Message-State: APjAAAUUC0zOAELO/ltJNl5aMCmIpOloo4fVdQZUbkojSRtdg2eLSIIU
-        Ccht3VcuZaLam0j40WptSNAr5b63
-X-Google-Smtp-Source: APXvYqzllWPyaN8qN7BWj2JhBlgqc3l8QiT+iW6NoqEbeSjh4/SEyN/WHuQvNwkWKqmsVbHNS3n29w==
-X-Received: by 2002:a17:90a:cf8f:: with SMTP id i15mr2242020pju.110.1563467700928;
-        Thu, 18 Jul 2019 09:35:00 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id f64sm30543640pfa.115.2019.07.18.09.34.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Jul 2019 09:34:59 -0700 (PDT)
-Date:   Thu, 18 Jul 2019 09:34:58 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Mark Balantzyan <mbalant3@gmail.com>
-Cc:     wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Pavel Andrianov <andrianov@ispras.ru>
-Subject: Re: [PATCH] watchdog:alim1535_wdt: Fix data race in ali_settimer()
- concerning ali_timeout_bits variable.  variable.
-Message-ID: <20190718163458.GA18125@roeck-us.net>
-References: <20190718155238.3066-1-mbalant3@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190718155238.3066-1-mbalant3@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Thu, 18 Jul 2019 12:36:32 -0400
+Received: from grover.flets-west.jp (softbank126026094249.bbtec.net [126.26.94.249]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x6IGZOWl002955;
+        Fri, 19 Jul 2019 01:35:25 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x6IGZOWl002955
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1563467725;
+        bh=qK9D5U+XFfqL5PNQLZVCavZVXOZYKbNuMcBF5YYDexc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AwJGFVo7gC9IRoHpzS9XdsWJxZf5fekGyj87nCAQUjlC6xMkr8sLpNuB7Y32wyS4T
+         IFoKLw0LA22VWi10KmUS9iORar5oEEXPVBQM+4GkY3yAaLi1mPfadOPiStKG0XpiWg
+         r/NB7XOxa2rVsJq4EWMndJHHYvHJjwZaGe2BuNYAD9tNLOOuL4FXPGYgN3975Kovv3
+         FQih3cQX5oApRAHBZ9yi1HmgxrU4Vbrv2Srzshf5GtixkM7TD6xEp000kN94vKGQRJ
+         vXkAyF35eXFIdG7gAEt3Kc3WodbSngjgSBjWCWamRAoLiEteQmUFNhS15lzLdYkXHT
+         VoO1dEc3V9XxA==
+X-Nifty-SrcIP: [126.26.94.249]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     patches@arm.linux.org.uk
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: visit mach-* and plat-* directories when cleaning
+Date:   Fri, 19 Jul 2019 01:35:23 +0900
+Message-Id: <20190718163523.18842-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 08:52:38AM -0700, Mark Balantzyan wrote:
-> ---
+When you run "make clean" for arm, it never visits mach-* or plat-*
+directories because machine-y and plat-y are just empty.
 
-Subject and description are all messed up.
+When cleaning, all machine, plat directories are accumulated to
+machine-, plat-, respectively. So, let's pass them to core- to
+clean up those directories.
 
->  drivers/watchdog/alim1535_wdt.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/alim1535_wdt.c b/drivers/watchdog/alim1535_wdt.c
-> index 60f0c2eb..4ba2b860 100644
-> --- a/drivers/watchdog/alim1535_wdt.c
-> +++ b/drivers/watchdog/alim1535_wdt.c
-> @@ -107,6 +107,7 @@ static void ali_keepalive(void)
->  
->  static int ali_settimer(int t)
->  {
-> +    spin_lock(&ali_lock);
->      if (t < 0)
->          return -EINVAL;
->      else if (t < 60)
-> @@ -117,7 +118,7 @@ static int ali_settimer(int t)
->          ali_timeout_bits = (t / 300)|(1 << 6)|(1 << 7);
->      else
->          return -EINVAL;
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-This return and the return above will exit the function with the
-spinlock still active, which will guarantee a hangup if/when the
-function is re-entered.
+KernelVersion: v5.3-rc1
 
-> -
-> +    spin_unlock(&ali_lock);
->      timeout = t;
+ arch/arm/Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-timeout is still unprotected and may have no relation to the
-stored value of ali_timeout_bits.
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 792f7fa16a24..c3eb0d9a2fdd 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -286,6 +286,10 @@ core-y				+= arch/arm/net/
+ core-y				+= arch/arm/crypto/
+ core-y				+= $(machdirs) $(platdirs)
+ 
++# For cleaning
++core-				+= $(patsubst %,arch/arm/mach-%/, $(machine-))
++core-				+= $(patsubst %,arch/arm/plat-%/, $(plat-))
++
+ drivers-$(CONFIG_OPROFILE)      += arch/arm/oprofile/
+ 
+ libs-y				:= arch/arm/lib/ $(libs-y)
+-- 
+2.17.1
 
-Overall your patch would introduce much more severe problems
-than the problem it tries to fix, and it doesn't even completely
-fix that problem either.
-
-I would suggest to leave the driver alone, unless you have the hardware
-to test your changes. And, if you do, it would be much more valuable
-to convert the driver to use the watchdog subsystem.
-
-Thanks,
-Guenter
