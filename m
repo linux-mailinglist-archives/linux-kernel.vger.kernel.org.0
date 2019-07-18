@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41EDB6C530
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:07:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A53F6C589
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389385AbfGRDDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:03:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34244 "EHLO mail.kernel.org"
+        id S2390462AbfGRDHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:07:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389356AbfGRDDc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:03:32 -0400
+        id S2390418AbfGRDHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:07:25 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3EA621849;
-        Thu, 18 Jul 2019 03:03:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 550E42173E;
+        Thu, 18 Jul 2019 03:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419011;
-        bh=rku9e+gLZXd0cXvofkio1Hv3SFZniVvGJAakdWxEiW0=;
+        s=default; t=1563419244;
+        bh=JNmnvDPMdyjpXwlIPvXfoBh6zAcM6I6OFKdO/kIsPkk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YBf6j1Jd9BjeM5ArR6Dy8YGnLIeOgMju66PHtwOl2n0j4lguamAh+ey0xdqigJi8A
-         l0xzfedEXwKvSP0B05Yrq2H2bFzZ/F6j23PBSkeyG/+sGKPRqQpTrOK3TpDge+8bc1
-         JO+FkjfXI/osxpdJQTcELBJGN1yp4/U0d3wSBu20=
+        b=O4OfQHayfiVCY6ROPlK5TGXdxKN/VzwiAuR08H+P9bnedvVUTT6Nujy7+Tjn/LuGN
+         gOVaKfP0FvX5GYBDW/Bpe8V55j7bYfDDbjH+LTPcCtshb31Np2JiEyyCnqi2xLpSX+
+         HpeL8GElIUuSV9TAarcHUdZPtmpK7ZPC4OE4PybQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 5.2 08/21] genirq: Fix misleading synchronize_irq() documentation
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Olof Johansson <olof@lixom.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 12/47] ARM: omap2: remove incorrect __init annotation
 Date:   Thu, 18 Jul 2019 12:01:26 +0900
-Message-Id: <20190718030032.145247589@linuxfoundation.org>
+Message-Id: <20190718030049.664088966@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030030.456918453@linuxfoundation.org>
-References: <20190718030030.456918453@linuxfoundation.org>
+In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
+References: <20190718030045.780672747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +47,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+[ Upstream commit 27e23d8975270df6999f8b5b3156fc0c04927451 ]
 
-commit 1d21f2af8571c6a6a44e7c1911780614847b0253 upstream.
+omap3xxx_prm_enable_io_wakeup() is marked __init, but its caller is not, so
+we get a warning with clang-8:
 
-The function might sleep, so it cannot be called from interrupt
-context. Not even with care.
+WARNING: vmlinux.o(.text+0x343c8): Section mismatch in reference from the function omap3xxx_prm_late_init() to the function .init.text:omap3xxx_prm_enable_io_wakeup()
+The function omap3xxx_prm_late_init() references
+the function __init omap3xxx_prm_enable_io_wakeup().
+This is often because omap3xxx_prm_late_init lacks a __init
+annotation or the annotation of omap3xxx_prm_enable_io_wakeup is wrong.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Link: https://lkml.kernel.org/r/20190628111440.189241552@linutronix.de
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+When building with gcc, omap3xxx_prm_enable_io_wakeup() is always
+inlined, so we never noticed in the past.
 
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/irq/manage.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/mach-omap2/prm3xxx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -96,7 +96,8 @@ EXPORT_SYMBOL(synchronize_hardirq);
-  *	to complete before returning. If you use this function while
-  *	holding a resource the IRQ handler may need you will deadlock.
-  *
-- *	This function may be called - with care - from IRQ context.
-+ *	Can only be called from preemptible code as it might sleep when
-+ *	an interrupt thread is associated to @irq.
+diff --git a/arch/arm/mach-omap2/prm3xxx.c b/arch/arm/mach-omap2/prm3xxx.c
+index 05858f966f7d..dfa65fc2c82b 100644
+--- a/arch/arm/mach-omap2/prm3xxx.c
++++ b/arch/arm/mach-omap2/prm3xxx.c
+@@ -433,7 +433,7 @@ static void omap3_prm_reconfigure_io_chain(void)
+  * registers, and omap3xxx_prm_reconfigure_io_chain() must be called.
+  * No return value.
   */
- void synchronize_irq(unsigned int irq)
+-static void __init omap3xxx_prm_enable_io_wakeup(void)
++static void omap3xxx_prm_enable_io_wakeup(void)
  {
+ 	if (prm_features & PRM_HAS_IO_WAKEUP)
+ 		omap2_prm_set_mod_reg_bits(OMAP3430_EN_IO_MASK, WKUP_MOD,
+-- 
+2.20.1
+
 
 
