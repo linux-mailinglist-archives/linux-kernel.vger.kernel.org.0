@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9E886CB66
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:03:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 346C56CB67
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:03:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389720AbfGRJDA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 05:03:00 -0400
+        id S2389745AbfGRJDC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 05:03:02 -0400
 Received: from mail-eopbgr150109.outbound.protection.outlook.com ([40.107.15.109]:61477
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389657AbfGRJC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 05:02:58 -0400
+        id S2389688AbfGRJDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 05:03:00 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DjNEVLu5YDKYDry32xW80etNyJ1iU99mRu/+9yCJhIrOslIwFg7r1rOI2t6efhSodWFxFqyrWoKHqKuTriOH+hmRu97VCBC6OYb4mvt5s7sTC8d+pIEM5Bx0iVuxQ8dBoRi1Uxe8PvcnWsv1cbIZyi/m45DNNsf93yNfgURq7sAJDC7rOaOM5GJYeW2pNe+QaM3XNoffvUGXZ51L9OAkD0mVcFrIaAjvD4VtjUWA4HYlwHiuuAUITDANijcMp9uOU+HBnox3a94ejFrcBHsMHDz0rofRL6tZ/vtA7temyIpVAYgAvbOUWtzDe4WowWGYgaVEw20vgRT7h6QDnfWjmg==
+ b=lYZCc4pgnE1rJWTMDhqhe/0YzEkDME8mJASJdq0HrnrL6isKOUXARCDA6uG6thvFmRASz+6ew+0f6spF2PaBCPZsVaGimK+s/cW0JnrjSV7HtJLP1kdZY5wzw9O+q7MsIcWS8Yc0u4wU6w/46RwiHYhpIXas0+VFw53O87E0jhcqNuYmtdjsPQa9/51yLQwcS4ELZt9+FPRaxxLHBXvp0ZRwDxFBwZaAERpSWCNLpdNeIp/KqSWKGcrsqgDQVZx4P1dtSe4fxjNdRPtrDs8M2Phye2dxZYLcyfZ7HoHeCG+5Qi0xAB89fD9ED+VNbbe8/z+15ajqxRfLVpzYWxZzyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=45X+Y2bERyBfazVTmZxOV1DjVVuSO5pnlowazssve3c=;
- b=hN7qLEflPlQ1QhNS3kY4kTuGwrWsJdGW+aMYwUF97rniOFAbp1Eq6dH3K8nm4GudV/gPFU/5GW7H4JsbpQ4SwW4ehs3gkELB/1fG/Zcs0jmxaOuxcziE5nbl9azw9Nr9/R91JPRryxKJbek24n7LV+m/+T8iRO5vj42alECQqLktkmAxQGAvowZAyYStIv8Le/FTK4u8kFYxM0243H3npT88ZxjRi13UR3JmpHPKJxPQ7cbAgFD2RY9kJ/KlXIsGdHLOoGztsXR0gI9PQlWyU1XJ5CZGwEshBGtkN7fxmyskoBQRXmspB2it90G2jUB5lGyTD7LYfJrVz9ZQnhqnTw==
+ bh=5uLXKJYrLvfHg3G7lZuDe0a46kS1kUy/19CYoEhFZ8o=;
+ b=djbttD9JIf7mYEpn1d8/SobCzlvVyv3lmxBhJL/grHJ1qRNhCGtrpbARd9OtFWFlqm1aAJzx2JE9ss3GtuVW7QzHOB4XtTPL1mEJtzorOv5t1g5DYi6GjEnCw//3hG2MIqOOLEv2GiVZ0UdXNK0Vz6e70tHbm2WQ2xJyFlvTVECbHpTIkfEtzfrYkhY15gzeyeJ2nPcJIYthepKBqvx94GnGoynqCBo+qAazjkdcRRaGuDLQUxCekkgsmOrm0t84ILkn6Qxnr8QGIcKUm0Xp7vBSQX6DZ85HvwGOcRIXbijrrI9AVw6t7TCMsVZQBfK9QVQ/2fl08O4He2GkjxQ1Zw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
  smtp.mailfrom=toradex.com;dmarc=pass action=none
  header.from=toradex.com;dkim=pass header.d=toradex.com;arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=45X+Y2bERyBfazVTmZxOV1DjVVuSO5pnlowazssve3c=;
- b=SrEJySmM1iY2dCpRPscd6btFW1n1emjA2SjCOVfLHT3tp25rn3Do5BbN7P5tKlVAd/3DcefJWKm+cVbRX21jYaLJR/c6HBNBPuYyJQ6x94RQKHVHVQ4E2ERTd3cSk/FCNTZktgZ0+EKByCm0xL9PKzMEuRENvaOyaPPVFIHF7b4=
+ bh=5uLXKJYrLvfHg3G7lZuDe0a46kS1kUy/19CYoEhFZ8o=;
+ b=q8ZRS0jdoMecmlBF7Y1puxynwCSafg0TBSl1nLybxE6kzOif//Bep0fi5e5MUm3MoGU8FerwL94nN5G81MnOqPs1TpV6Phb91mY87kqfOTx0/Ews+S3oJpiDjsLSJxLz96v6ZJb+6VfOsUtvXSh9nagFjnRCobBvYZ89GX3A7FE=
 Received: from AM6PR05MB6535.eurprd05.prod.outlook.com (20.179.18.16) by
  AM6PR05MB5013.eurprd05.prod.outlook.com (20.177.35.14) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.12; Thu, 18 Jul 2019 09:02:51 +0000
+ 15.20.2094.12; Thu, 18 Jul 2019 09:02:54 +0000
 Received: from AM6PR05MB6535.eurprd05.prod.outlook.com
  ([fe80::c860:b386:22a:8ec9]) by AM6PR05MB6535.eurprd05.prod.outlook.com
  ([fe80::c860:b386:22a:8ec9%6]) with mapi id 15.20.2094.011; Thu, 18 Jul 2019
- 09:02:51 +0000
+ 09:02:54 +0000
 From:   Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
 To:     Fabio Estevam <festevam@gmail.com>
 CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -45,19 +45,19 @@ CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Jaroslav Kysela <perex@perex.cz>,
         Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
         Liam Girdwood <lgirdwood@gmail.com>
-Subject: [PATCH v5 4/6] ASoC: sgtl5000: add ADC mute control
-Thread-Topic: [PATCH v5 4/6] ASoC: sgtl5000: add ADC mute control
-Thread-Index: AQHVPUeTL7C42F/420K4CqAM90BbWw==
-Date:   Thu, 18 Jul 2019 09:02:51 +0000
-Message-ID: <20190718090240.18432-5-oleksandr.suvorov@toradex.com>
+Subject: [PATCH v5 5/6] ASoC: sgtl5000: Fix of unmute outputs on probe
+Thread-Topic: [PATCH v5 5/6] ASoC: sgtl5000: Fix of unmute outputs on probe
+Thread-Index: AQHVPUeU/o3Hdj/K5UqwPeiB1Nflkw==
+Date:   Thu, 18 Jul 2019 09:02:52 +0000
+Message-ID: <20190718090240.18432-6-oleksandr.suvorov@toradex.com>
 References: <20190718090240.18432-1-oleksandr.suvorov@toradex.com>
 In-Reply-To: <20190718090240.18432-1-oleksandr.suvorov@toradex.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM4PR08CA0058.eurprd08.prod.outlook.com
- (2603:10a6:205:2::29) To AM6PR05MB6535.eurprd05.prod.outlook.com
+x-clientproxiedby: AM0PR0102CA0001.eurprd01.prod.exchangelabs.com
+ (2603:10a6:208:14::14) To AM6PR05MB6535.eurprd05.prod.outlook.com
  (2603:10a6:20b:71::16)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=oleksandr.suvorov@toradex.com; 
@@ -65,23 +65,23 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.20.1
 x-originating-ip: [194.105.145.90]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1ceb33f8-3a81-4a7d-c879-08d70b5eb654
+x-ms-office365-filtering-correlation-id: 2b14652e-3b4f-4b88-eb28-08d70b5eb74a
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:AM6PR05MB5013;
 x-ms-traffictypediagnostic: AM6PR05MB5013:
-x-microsoft-antispam-prvs: <AM6PR05MB5013EECB2FFF8C645AC95A62F9C80@AM6PR05MB5013.eurprd05.prod.outlook.com>
+x-microsoft-antispam-prvs: <AM6PR05MB50136BDCF176333C6632F4EBF9C80@AM6PR05MB5013.eurprd05.prod.outlook.com>
 x-ms-oob-tlc-oobclassifiers: OLM:3044;
 x-forefront-prvs: 01026E1310
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39850400004)(346002)(366004)(376002)(396003)(136003)(199004)(189003)(2616005)(99286004)(68736007)(476003)(446003)(50226002)(11346002)(486006)(86362001)(8936002)(81166006)(76176011)(81156014)(26005)(14454004)(4326008)(186003)(386003)(6506007)(316002)(102836004)(6916009)(54906003)(52116002)(36756003)(6486002)(6436002)(71190400001)(71200400001)(6512007)(25786009)(66066001)(256004)(66946007)(64756008)(66476007)(66556008)(66446008)(1076003)(1411001)(5660300002)(4744005)(8676002)(478600001)(7736002)(44832011)(6116002)(3846002)(305945005)(53936002)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR05MB5013;H:AM6PR05MB6535.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39850400004)(346002)(366004)(376002)(396003)(136003)(199004)(189003)(2616005)(99286004)(68736007)(476003)(446003)(50226002)(11346002)(486006)(86362001)(8936002)(81166006)(76176011)(81156014)(26005)(14454004)(4326008)(186003)(386003)(6506007)(316002)(102836004)(6916009)(54906003)(52116002)(36756003)(6486002)(6436002)(71190400001)(71200400001)(6512007)(25786009)(14444005)(66066001)(256004)(66946007)(64756008)(66476007)(66556008)(66446008)(1076003)(1411001)(5660300002)(8676002)(478600001)(7736002)(44832011)(6116002)(3846002)(305945005)(53936002)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR05MB5013;H:AM6PR05MB6535.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: toradex.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: S7wzwTfOrl9dYaeAUK5URitFYxl9sn4UBtBfgZfv4KPooKlR9/thtyub4Az3sW3ftV72z5vfu/34nIM3CgJkxZZ/OHmt6I1q2Lljb63hc/Th/Mp0ZE3afsBvESIAiyzKRjLzHrUd3+A87WmmO8RUFmCtbIo7CAUzEeTH0U48apZelRv943pW0zzjjvqJbVsVj5J+Fc5FF/jc1TdkRFuZJKtcuvjm1GfHclKEMbGMW9PamgNvJu62QHk0Qzw9yUDxGLFjqiLNOSUN+3E0yC8p9aMd9RCnhKodyNN3zPQ4W7og8idH80YnsMA1IdMi91YoHKLsN/6Z0TNnpBFgnD4zx+3vOOv/B9YD0wcKKcLsigvMsieb9bidjAi23PrcXOS7BNgjswbEElmf8DRI6/RsgNyni7HXeiDrBl1SYBHqeAM=
+x-microsoft-antispam-message-info: uJZ8wbCj5V1wQSomMxF4TN9ZL4E6y3WcyyJGQLp2qPIG+lfweDzCq9Ud9D2igmOLbFLkLJSHNfaN0JxpTVKLJW5dAPhBvui2mr8HH7trn4Dvz8aMT2PkY3Y4BGuEruvVKqja2IxwP74KkB+u/XtmnOGdOeUxQZLmqzeRjUB0ZeuZF5XQDQhGqQy79B4fzXRXr6KLNCr5ItLZyq4G029OSlahdRn+V1pHkmPJ3/C3PG8dAaKRGqsEU0WCwdpz03vHOR0JQXmCSh6P6Fxphh65KRiXsp9grWpng+yTqBmLCVakKU1mr03aUMZFaytSdALCK4cZ+JdxPY6ztqJqDmp4hAtkNTOLleZnUPhMicFc/mV288OJqZpgkudkEcpv/j0ZViGIENE41h4s3sonbPpVdiyARaiTduAWblcyWFq6GvI=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1ceb33f8-3a81-4a7d-c879-08d70b5eb654
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2019 09:02:51.1644
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b14652e-3b4f-4b88-eb28-08d70b5eb74a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2019 09:02:52.7115
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
@@ -93,8 +93,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This control mute/unmute the ADC input of SGTL5000
-using its CHIP_ANA_CTRL register.
+To enable "zero cross detect" for ADC/HP, change
+HP_ZCD_EN/ADC_ZCD_EN bits only instead of writing the whole
+CHIP_ANA_CTRL register.
 
 Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
 Reviewed-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
@@ -109,22 +110,36 @@ Changes in v3: None
 Changes in v2:
 - Fix patch formatting
 
- sound/soc/codecs/sgtl5000.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/codecs/sgtl5000.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
-index a8d55c21a5f2d..0123d9cfcb473 100644
+index 0123d9cfcb473..31d546abde717 100644
 --- a/sound/soc/codecs/sgtl5000.c
 +++ b/sound/soc/codecs/sgtl5000.c
-@@ -710,6 +710,7 @@ static const struct snd_kcontrol_new sgtl5000_snd_contr=
-ols[] =3D {
- 			SGTL5000_CHIP_ANA_ADC_CTRL,
- 			8, 1, 0, capture_6db_attenuate),
- 	SOC_SINGLE("Capture ZC Switch", SGTL5000_CHIP_ANA_CTRL, 1, 1, 0),
-+	SOC_SINGLE("Capture Switch", SGTL5000_CHIP_ANA_CTRL, 0, 1, 1),
+@@ -1443,6 +1443,7 @@ static int sgtl5000_probe(struct snd_soc_component *c=
+omponent)
+ 	int ret;
+ 	u16 reg;
+ 	struct sgtl5000_priv *sgtl5000 =3D snd_soc_component_get_drvdata(componen=
+t);
++	unsigned int zcd_mask =3D SGTL5000_HP_ZCD_EN | SGTL5000_ADC_ZCD_EN;
 =20
- 	SOC_DOUBLE_TLV("Headphone Playback Volume",
- 			SGTL5000_CHIP_ANA_HP_CTRL,
+ 	/* power up sgtl5000 */
+ 	ret =3D sgtl5000_set_power_regs(component);
+@@ -1470,9 +1471,8 @@ static int sgtl5000_probe(struct snd_soc_component *c=
+omponent)
+ 	       0x1f);
+ 	snd_soc_component_write(component, SGTL5000_CHIP_PAD_STRENGTH, reg);
+=20
+-	snd_soc_component_write(component, SGTL5000_CHIP_ANA_CTRL,
+-			SGTL5000_HP_ZCD_EN |
+-			SGTL5000_ADC_ZCD_EN);
++	snd_soc_component_update_bits(component, SGTL5000_CHIP_ANA_CTRL,
++		zcd_mask, zcd_mask);
+=20
+ 	snd_soc_component_update_bits(component, SGTL5000_CHIP_MIC_CTRL,
+ 			SGTL5000_BIAS_R_MASK,
 --=20
 2.20.1
 
