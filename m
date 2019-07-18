@@ -2,108 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03D3A6D688
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 23:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49EA96D68F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 23:35:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391373AbfGRVe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 17:34:57 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36158 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727950AbfGRVe4 (ORCPT
+        id S2391558AbfGRVfs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 17:35:48 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37907 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727780AbfGRVfs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 17:34:56 -0400
-Received: by mail-pl1-f196.google.com with SMTP id k8so14539647plt.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 14:34:56 -0700 (PDT)
+        Thu, 18 Jul 2019 17:35:48 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y15so13202161pfn.5
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 14:35:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rq6ZXaexVOr1g5rKeqsc4reNWPARrrLFOhCOfoYVB1A=;
-        b=JYSGf+r6eqoqQXX0LxoRCLQDVYXbMATf/dpdcE8ADt32cleMWPhkS3t8ujcPp/F8L0
-         ARA/T0eJ8YG7/V3eto9Oku1wbLM0q1/7v64O7YrF2pG1UGKmaEs6dKYavTv1gxh4K4Sd
-         hvb0+ujdaFBp2ez+/CFo23PINM0BaOD7YPAa1MQN1+ZA3NWnzV4lKASRcqB/9N/R0sDJ
-         omrdWuCFXV6uec9Xbs/JlzrKhcefsdWp4qB3G+KvmRJfPuu91EXML6M8XYQBjj9kkAe2
-         8VcbdSBEdoYA3S5tKGsdtVXvNmpbZvxuNC1V/Wkxc+kTjckG/kN/VZ0xSa4VyUZX2PLh
-         D1Xw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=KkttYUYXAWuWBOKGYfn41xR+6vj7CFYrcZ8YCFpnCUQ=;
+        b=eKO2yoYFYu3Tnhrp1Rx1k9pfRxTZSm6XeyDXK0qTzarYNq4CcveUMKhrhOO+L5z1eb
+         Xt/N0Fp8730Doh929vOfA27ApjGm1UoMAjfMzvuMUSKbuSekYJHMP0l80bRqM1BUWaK9
+         Xx3cNZlgKViPwsCWwRg9KpWHaAJnOx4HYCR4g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rq6ZXaexVOr1g5rKeqsc4reNWPARrrLFOhCOfoYVB1A=;
-        b=JU9UXNjJN3+7jo9pLOdTCSdF3a1/LXcRjqr34vJfsi1aNJiV7jhTdx9NuVLIggIrg8
-         9bYHIgZAYTZ+z4g8AmHIIabDIjzcz9s3H4/zLZyODQaBhwGLpY6L24kJ2gZxdZL7RY5k
-         DW4nP6o4lR6b+GTe7fLnHZNp3x+aUVOrYkt5hw51LEcdVXTlu5JPlzr15uNSSLsXi1AM
-         CV1M6IwuBzmJC3OyVcq8UKiBmaaof5boH86k7D2WxGVoYKIEdZNDpLKJL0IXYNh9mi9J
-         mDRTgrdHeVoYg6Ls6NqqQO+5OFiWkOrieHStFB/XPHxAjvVYvhz0IMhOpRld0HM04Xnt
-         1F4Q==
-X-Gm-Message-State: APjAAAVI9sWol/sJbfkbFHc8k0RM78i2X/uaBvd/wgqxVxKOuRLpy5bV
-        vY5DuVBxQkmlP53zg4D73bSgiN1r0bp+oiYtFUcvqA==
-X-Google-Smtp-Source: APXvYqzepu9AlsPIvI969TgZ5nsQiSeZ9SiaxA4mD7hWWMjIhA7AV4zKxe75qx/Skek8PAJwZVprrnGOEcloIamJ3ok=
-X-Received: by 2002:a17:902:4aa3:: with SMTP id x32mr50406455pld.119.1563485695394;
- Thu, 18 Jul 2019 14:34:55 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=KkttYUYXAWuWBOKGYfn41xR+6vj7CFYrcZ8YCFpnCUQ=;
+        b=tXCopVkipdiNGny/B7pUbNGef29389jwd1vuVPL5uTB7Kkpx/IKy4maMFeCGYzZSJt
+         Ic8IAPgO/5FZnFJ4CxD7ZDeCimfHB1IXuw8PfzszcsfVhhPB9mixyrSzP942HiIC9ipX
+         me1jRtr5P6fEOXGyjRJWqVSivJyK6c5Y/mJBQlcetlcj8HNAA4fpzzkTC41w0CYSrBx1
+         cWyEutydLYJLzOz8w9lMedjJcvZ6E6BhD8yKyG2YbrcqEkgjhjyltP0prtgdHVgITdx/
+         /igYX4V1ZC4zgVDlCZqPcY6NFjb76saHpyhqUieOhpipQeqPZIDpQRtjSngvyQvX8iiI
+         tg6Q==
+X-Gm-Message-State: APjAAAWqibsgOgBXSmye79gKJLiVdRbFBoBr6kMJXMbrQj+b+aRBgBRn
+        bJkujBbur4qCsDr5p/fg1FonorC3VD4=
+X-Google-Smtp-Source: APXvYqzT0fTv1kapezScaDAMcftkI5shhKzLtvdMSdOzSbWnd4qnblZzQQlOIUWe2GaTzsbtqlc/dA==
+X-Received: by 2002:a63:3fc9:: with SMTP id m192mr50998872pga.429.1563485747382;
+        Thu, 18 Jul 2019 14:35:47 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id i9sm23169608pjj.2.2019.07.18.14.35.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 18 Jul 2019 14:35:46 -0700 (PDT)
+Date:   Thu, 18 Jul 2019 14:35:45 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        tobin@kernel.org, lkml <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>
+Subject: Re: BUG: KASAN: global-out-of-bounds in
+ ata_exec_internal_sg+0x50f/0xc70
+Message-ID: <201907181423.E808958@keescook>
+References: <CAG=yYw=S197+2TzdPaiEaz-9MRuVtd+Q_L9W8GOf4jKwyppNjQ@mail.gmail.com>
+ <CAKwvOdmg2b2PMzuzNmutacFArBNagjtwG=_VZvKhb4okzSkdiA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190718000206.121392-1-vaibhavrustagi@google.com> <20190718000206.121392-2-vaibhavrustagi@google.com>
-In-Reply-To: <20190718000206.121392-2-vaibhavrustagi@google.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 18 Jul 2019 14:34:44 -0700
-Message-ID: <CAKwvOdkHHNR7utufOcDwAOgBEA9MnOLh713Gaq01R=n26EyjZw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] x86/purgatory: add -mno-sse, -mno-mmx, -mno-sse2 to Makefile
-To:     Vaibhav Rustagi <vaibhavrustagi@google.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "# 3.4.x" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdmg2b2PMzuzNmutacFArBNagjtwG=_VZvKhb4okzSkdiA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 17, 2019 at 5:02 PM Vaibhav Rustagi
-<vaibhavrustagi@google.com> wrote:
->
-> Compiling the purgatory code with clang results in using of mmx
-> registers.
->
-> $ objdump -d arch/x86/purgatory/purgatory.ro | grep xmm
->
->      112:       0f 28 00                movaps (%rax),%xmm0
->      115:       0f 11 07                movups %xmm0,(%rdi)
->      122:       0f 28 00                movaps (%rax),%xmm0
->      125:       0f 11 47 10             movups %xmm0,0x10(%rdi)
->
-> Add -mno-sse, -mno-mmx, -mno-sse2 to avoid generating SSE instructions.
->
-> Signed-off-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
-> ---
->  arch/x86/purgatory/Makefile | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-> index 3cf302b26332..3589ec4a28c7 100644
-> --- a/arch/x86/purgatory/Makefile
-> +++ b/arch/x86/purgatory/Makefile
-> @@ -20,6 +20,7 @@ KCOV_INSTRUMENT := n
->  # sure how to relocate those. Like kexec-tools, use custom flags.
->
->  KBUILD_CFLAGS := -fno-strict-aliasing -Wall -Wstrict-prototypes -fno-zero-initialized-in-bss -fno-builtin -ffreestanding -c -Os -mcmodel=large
-> +KBUILD_CFLAGS += -mno-mmx -mno-sse -mno-sse2
+On Tue, Jul 16, 2019 at 11:28:29AM -0700, Nick Desaulniers wrote:
+> On Wed, Jul 10, 2019 at 10:44 AM Jeffrin Thalakkottoor
+> <jeffrin@rajagiritech.edu.in> wrote:
+> >
+> > hello all ,
+> >
+> > i encountered a KASAN bug related .    here are some related information...
+> >
+> >
+> > -------------------x-----------------------------x------------------
+> > [   30.037312] BUG: KASAN: global-out-of-bounds in
+> > ata_exec_internal_sg+0x50f/0xc70
+> > [   30.037447] Read of size 16 at addr ffffffff91f41f80 by task scsi_eh_1/149
+> >
+> >
+> > [   30.039935] The buggy address belongs to the variable:
+> > [   30.040059]  cdb.48319+0x0/0x40
+> > (gdb) l *ata_exec_internal_sg+0x50f
+> > 0xffffffff81c7b59f is in ata_exec_internal_sg (./include/linux/string.h:359).
+> 
+> So looks like ata_exec_internal_sg() is panic'ing when...
+> 
+> > 354 if (q_size < size)
+> > 355 __read_overflow2();
+> > 356 }
+> > 357 if (p_size < size || q_size < size)
+> > 358 fortify_panic(__func__);
+> > 359 return __builtin_memcpy(p, q, size);
 
-Yep, this is a commonly recurring bug in the kernel, observed again
-and again for Clang builds.  The top level Makefile carefully sets
-KBUILD_CFLAGS, then lower subdirs in the kernel wipe them away with
-`:=` assignment. Invariably important flags don't always get re-added.
-In this case, these flags are used in arch/x86/Makefile, but not here
-and should be IMO.  Thanks for the patch.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+^^^ here, so within memcpy(), but after the "easy" sanity checks.
 
-(Note that arch/x86/Makefile additionally sets -mno-3dnow and -mno-avx
-(if supported by the compiler).  Not sure if the maintainers would
-like a v2 with those added, and we don't strictly need them yet, but
-we may someday).
+The only place where I see ata_exec_internal_sg() calling memcpy() is
+here:
+
+        /* prepare & issue qc */
+        qc->tf = *tf;
+        if (cdb)
+                memcpy(qc->cdb, cdb, ATAPI_CDB_LEN);
+
+the "16" is consistent with the report:
+
+include/linux/ata.h:    ATAPI_CDB_LEN           = 16,
+
+which matches the claim about the cdb variable from KASAN. And it's a
+read, so "cdb" is wrong. Do you have a longer back trace? What called
+ata_exec_internal_sg()?
+
+ata_exec_internal() is the only caller of ata_exec_internal_sg(). Nearly
+all callers of ata_exec_internal() pass a NULL cdb. Those that don't
+are:
+
+atapi_eh_tur()
+	u8 cdb[ATAPI_CDB_LEN] = ...
+atapi_eh_request_sense()
+	u8 cdb[ATAPI_CDB_LEN] = ...
+
+These two are on the static and correctly sized.
+
+eject_tray()
+        static const char cdb[ATAPI_CDB_LEN] = ...
+zpodd_get_mech_type()
+	static const char cdb[] = ...
+
+These are both in rodata, and only the first is correctly sized. I
+assume the following will fix it:
+
+
+diff --git a/drivers/ata/libata-zpodd.c b/drivers/ata/libata-zpodd.c
+index 173e6f2dd9af..eefda51f97d3 100644
+--- a/drivers/ata/libata-zpodd.c
++++ b/drivers/ata/libata-zpodd.c
+@@ -56,7 +56,7 @@ static enum odd_mech_type zpodd_get_mech_type(struct ata_device *dev)
+ 	unsigned int ret;
+ 	struct rm_feature_desc *desc;
+ 	struct ata_taskfile tf;
+-	static const char cdb[] = {  GPCMD_GET_CONFIGURATION,
++	static const char cdb[ATAPI_CDB_LEN] = {  GPCMD_GET_CONFIGURATION,
+ 			2,      /* only 1 feature descriptor requested */
+ 			0, 3,   /* 3, removable medium feature */
+ 			0, 0, 0,/* reserved */
+
+
+
 -- 
-Thanks,
-~Nick Desaulniers
+Kees Cook
