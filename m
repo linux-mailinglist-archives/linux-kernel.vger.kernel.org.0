@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83A6C6C599
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65E0E6C5B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:11:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389283AbfGRDIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:08:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39830 "EHLO mail.kernel.org"
+        id S2390883AbfGRDIv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:08:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390595AbfGRDIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:08:02 -0400
+        id S2390864AbfGRDIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:08:48 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D61D02053B;
-        Thu, 18 Jul 2019 03:08:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5278205F4;
+        Thu, 18 Jul 2019 03:08:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419281;
-        bh=v0pOiJG1mOvtjYpbErT3N6sGzx26BLv+XJTj6VVqERc=;
+        s=default; t=1563419327;
+        bh=Shp4REY26jTKijwg6f6zgPTs3rXQ4FboKvg3as5AnNM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GiSpIIGY9q9fFlVoggV5IaitlU636xftM89VqImaUzvT5J/0pXFu609JZvVUnydRe
-         Cbw8cBG5PiU7aeUZu5Ptj0fnqrCAGUSTSBlHIt6QPy01fPoW53C3p0J/bDQ3gek43y
-         r8DyZw0AociDHqajRmQ0028O6E5br4FLp0sUSov0=
+        b=rIw415yeSPqCHusa8uY4oS5jZVd6nsU0xDur8y+AhaLrAk77DpW0I1SaplG4grG5Q
+         j/YotmvLoetw6Qp9aYdSdANHYpkpVKb3YKGVyJQOF1e4d2xhB/30t/8uWOwHsqVxxt
+         aPvHg4kg+BD2uo+EDbl+2lhA3EjLuhFcUwh1nbUM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>,
-        Jinyoung Park <jinyoungp@nvidia.com>,
-        Venkat Reddy Talla <vreddytalla@nvidia.com>,
-        Mark Zhang <markz@nvidia.com>, Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.19 43/47] regmap-irq: do not write mask register if mask_base is zero
-Date:   Thu, 18 Jul 2019 12:01:57 +0900
-Message-Id: <20190718030052.402102574@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        Joseph Yasi <joe.yasi@gmail.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Oleksandr Natalenko <oleksandr@redhat.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Subject: [PATCH 4.14 02/80] e1000e: start network tx queue only when link is up
+Date:   Thu, 18 Jul 2019 12:00:53 +0900
+Message-Id: <20190718030058.799580364@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
-References: <20190718030045.780672747@linuxfoundation.org>
+In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
+References: <20190718030058.615992480@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +48,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Zhang <markz@nvidia.com>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-commit 7151449fe7fa5962c6153355f9779d6be99e8e97 upstream.
+commit d17ba0f616a08f597d9348c372d89b8c0405ccf3 upstream.
 
-If client have not provided the mask base register then do not
-write into the mask register.
+Driver does not want to keep packets in Tx queue when link is lost.
+But present code only reset NIC to flush them, but does not prevent
+queuing new packets. Moreover reset sequence itself could generate
+new packets via netconsole and NIC falls into endless reset loop.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Signed-off-by: Jinyoung Park <jinyoungp@nvidia.com>
-Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
-Signed-off-by: Mark Zhang <markz@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+This patch wakes Tx queue only when NIC is ready to send packets.
+
+This is proper fix for problem addressed by commit 0f9e980bf5ee
+("e1000e: fix cyclic resets at link up with active tx").
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Suggested-by: Alexander Duyck <alexander.duyck@gmail.com>
+Tested-by: Joseph Yasi <joe.yasi@gmail.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Tested-by: Oleksandr Natalenko <oleksandr@redhat.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/regmap/regmap-irq.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/intel/e1000e/netdev.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/base/regmap/regmap-irq.c
-+++ b/drivers/base/regmap/regmap-irq.c
-@@ -91,6 +91,9 @@ static void regmap_irq_sync_unlock(struc
- 	 * suppress pointless writes.
- 	 */
- 	for (i = 0; i < d->chip->num_regs; i++) {
-+		if (!d->chip->mask_base)
-+			continue;
-+
- 		reg = d->chip->mask_base +
- 			(i * map->reg_stride * d->irq_reg_stride);
- 		if (d->chip->mask_invert) {
-@@ -526,6 +529,9 @@ int regmap_add_irq_chip(struct regmap *m
- 	/* Mask all the interrupts by default */
- 	for (i = 0; i < chip->num_regs; i++) {
- 		d->mask_buf[i] = d->mask_buf_def[i];
-+		if (!chip->mask_base)
-+			continue;
-+
- 		reg = chip->mask_base +
- 			(i * map->reg_stride * d->irq_reg_stride);
- 		if (chip->mask_invert)
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -4228,7 +4228,7 @@ void e1000e_up(struct e1000_adapter *ada
+ 		e1000_configure_msix(adapter);
+ 	e1000_irq_enable(adapter);
+ 
+-	netif_start_queue(adapter->netdev);
++	/* Tx queue started by watchdog timer when link is up */
+ 
+ 	e1000e_trigger_lsc(adapter);
+ }
+@@ -4604,6 +4604,7 @@ int e1000e_open(struct net_device *netde
+ 	pm_runtime_get_sync(&pdev->dev);
+ 
+ 	netif_carrier_off(netdev);
++	netif_stop_queue(netdev);
+ 
+ 	/* allocate transmit descriptors */
+ 	err = e1000e_setup_tx_resources(adapter->tx_ring);
+@@ -4664,7 +4665,6 @@ int e1000e_open(struct net_device *netde
+ 	e1000_irq_enable(adapter);
+ 
+ 	adapter->tx_hang_recheck = false;
+-	netif_start_queue(netdev);
+ 
+ 	hw->mac.get_link_status = true;
+ 	pm_runtime_put(&pdev->dev);
+@@ -5286,6 +5286,7 @@ static void e1000_watchdog_task(struct w
+ 			if (phy->ops.cfg_on_link_up)
+ 				phy->ops.cfg_on_link_up(hw);
+ 
++			netif_wake_queue(netdev);
+ 			netif_carrier_on(netdev);
+ 
+ 			if (!test_bit(__E1000_DOWN, &adapter->state))
+@@ -5299,6 +5300,7 @@ static void e1000_watchdog_task(struct w
+ 			/* Link status message must follow this format */
+ 			pr_info("%s NIC Link is Down\n", adapter->netdev->name);
+ 			netif_carrier_off(netdev);
++			netif_stop_queue(netdev);
+ 			if (!test_bit(__E1000_DOWN, &adapter->state))
+ 				mod_timer(&adapter->phy_info_timer,
+ 					  round_jiffies(jiffies + 2 * HZ));
 
 
