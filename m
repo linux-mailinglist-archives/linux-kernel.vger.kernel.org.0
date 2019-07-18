@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46E156C648
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:15:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D41B66C626
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:14:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392011AbfGRDPV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:15:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51650 "EHLO mail.kernel.org"
+        id S2391357AbfGRDN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:13:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391594AbfGRDPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:15:02 -0400
+        id S2391197AbfGRDNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:13:54 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0697D2173E;
-        Thu, 18 Jul 2019 03:15:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 562F021848;
+        Thu, 18 Jul 2019 03:13:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419701;
-        bh=Oe/yRIXP5akfgOnAVcmqiPsHio/RgupjUp5hy5Woa48=;
+        s=default; t=1563419633;
+        bh=uxiHfrSjK0hwgkdOBkC0bOU8cdJ7yEi5mGftw8bT4Ik=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oPbtWSFYLm0juNgB48BRLWjbytGxtd89Fkt873MYHaM/WEVAkNtxisJRYnCfPek6Y
-         CE1ao6KwABq416f4OZE8AfxVmP51Jg5R+RgvIzu5xwlfEOi8rc6Me5NMvbG9+w6W3R
-         Lt86St22Sn3SeScMO1rlfP0wnqxzl5kqxSzUIz0A=
+        b=dxy4h6Uik3VZ9sFRztaHwF1IfodS5evCrRpP9JM2XqbrDoAAAY2nZENflvPAim87W
+         NKFXXJQwwAUtieiT2is1MQuzk7wBekYOTC8L/KqWuYsidBNel2nAJoA+g1W+jUrwKa
+         be/EI8KbQGSfB5YbQitCF5OQkB91iGji1BJWbxo8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 4.4 23/40] staging: comedi: dt282x: fix a null pointer deref on interrupt
-Date:   Thu, 18 Jul 2019 12:02:19 +0900
-Message-Id: <20190718030048.304154058@linuxfoundation.org>
+        stable@vger.kernel.org, Milan Broz <gmazyland@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 50/54] dm verity: use message limit for data block corruption message
+Date:   Thu, 18 Jul 2019 12:02:20 +0900
+Message-Id: <20190718030053.493737908@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030039.676518610@linuxfoundation.org>
-References: <20190718030039.676518610@linuxfoundation.org>
+In-Reply-To: <20190718030048.392549994@linuxfoundation.org>
+References: <20190718030048.392549994@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,50 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ian Abbott <abbotti@mev.co.uk>
+[ Upstream commit 2eba4e640b2c4161e31ae20090a53ee02a518657 ]
 
-commit b8336be66dec06bef518030a0df9847122053ec5 upstream.
+DM verity should also use DMERR_LIMIT to limit repeat data block
+corruption messages.
 
-The interrupt handler `dt282x_interrupt()` causes a null pointer
-dereference for those supported boards that have no analog output
-support.  For these boards, `dev->write_subdev` will be `NULL` and
-therefore the `s_ao` subdevice pointer variable will be `NULL`.  In that
-case, the following call near the end of the interrupt handler results
-in a null pointer dereference:
-
-	comedi_handle_events(dev, s_ao);
-
-Fix it by only calling the above function if `s_ao` is valid.
-
-(There are other uses of `s_ao` by the interrupt handler that may or may
-not be reached depending on values of hardware registers.  Trust that
-they are reliable for now.)
-
-Note:
-commit 4f6f009b204f ("staging: comedi: dt282x: use comedi_handle_events()")
-propagates an earlier error from
-commit f21c74fa4cfe ("staging: comedi: dt282x: use cfc_handle_events()").
-
-Fixes: 4f6f009b204f ("staging: comedi: dt282x: use comedi_handle_events()")
-Cc: <stable@vger.kernel.org> # v3.19+
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Milan Broz <gmazyland@gmail.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/comedi/drivers/dt282x.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/md/dm-verity-target.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/comedi/drivers/dt282x.c
-+++ b/drivers/staging/comedi/drivers/dt282x.c
-@@ -553,7 +553,8 @@ static irqreturn_t dt282x_interrupt(int
+diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+index 0aba34a7b3b3..727f9e571955 100644
+--- a/drivers/md/dm-verity-target.c
++++ b/drivers/md/dm-verity-target.c
+@@ -218,8 +218,8 @@ static int verity_handle_err(struct dm_verity *v, enum verity_block_type type,
+ 		BUG();
  	}
- #endif
- 	comedi_handle_events(dev, s);
--	comedi_handle_events(dev, s_ao);
-+	if (s_ao)
-+		comedi_handle_events(dev, s_ao);
  
- 	return IRQ_RETVAL(handled);
- }
+-	DMERR("%s: %s block %llu is corrupted", v->data_dev->name, type_str,
+-		block);
++	DMERR_LIMIT("%s: %s block %llu is corrupted", v->data_dev->name,
++		    type_str, block);
+ 
+ 	if (v->corrupted_errs == DM_VERITY_MAX_CORRUPTED_ERRS)
+ 		DMERR("%s: reached maximum errors", v->data_dev->name);
+-- 
+2.20.1
+
 
 
