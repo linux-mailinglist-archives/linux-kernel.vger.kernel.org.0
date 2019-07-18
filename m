@@ -2,102 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 862066CF8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 16:17:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB3A36CF96
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 16:21:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390638AbfGRORD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 10:17:03 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:59357 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390605AbfGRORC (ORCPT
+        id S2390498AbfGROVE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 10:21:04 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35389 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726715AbfGROVD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 10:17:02 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MdNHa-1iNS2127Qe-00ZLMK; Thu, 18 Jul 2019 16:16:53 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Johan Korsnes <johan.korsnes@gmail.com>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Gabriel Francisco Mandaji <gfmandaji@gmail.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH] media: vivid: work around high stack usage with clang
-Date:   Thu, 18 Jul 2019 16:16:43 +0200
-Message-Id: <20190718141652.3323402-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Thu, 18 Jul 2019 10:21:03 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6IEJMYd2020610
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 18 Jul 2019 07:19:22 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6IEJMYd2020610
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1563459564;
+        bh=AmdxMoMzuLsh1qy0WRK6wfOHnIglwr04LEu/wExBCJk=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=eTHUdDlVWA4BaJiDpdnnWjxgYZj7R0Lt++CmqqLnGhdTSF9liSeXOyvxajLQOgCrX
+         jj9Y6dNeYCoKkbMesPh/VP5ExdI7etAJSGw8ZpRywymc2VGk30IVxRgG9knCAmgNby
+         uISVteHT2Jcp48WH/RKiS/9e3Np4wMxGeKo3nC8mLra6f7aRHyFNfzBjFGGLyqFrDj
+         RNRa1/ojiblzxusGAX91CRHUdyQ1ZMWfr7eajmeT/HptGK9/LvdC98uavbL1uXebGm
+         yNYDJ+6jiV80M0c4JQklSMUWvY4RORldj49EbmyY6KfqcEFts3Q7sS+qlc/NZtwTIw
+         yt62U2CXTSCWw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6IEJLdT2020601;
+        Thu, 18 Jul 2019 07:19:21 -0700
+Date:   Thu, 18 Jul 2019 07:19:21 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-2c2ffb925b368a1f00d4ddcc837f830394861d6c@git.kernel.org>
+Cc:     paulmck@linux.vnet.ibm.com, williams@redhat.com,
+        frederic@kernel.org, peterz@infradead.org, mingo@kernel.org,
+        rostedt@goodmis.org, hpa@zytor.com, lukas.bulwahn@gmail.com,
+        julia@ni.com, linux-kernel@vger.kernel.org, efault@gmx.de,
+        marc.zyngier@arm.com, bristot@redhat.com,
+        torvalds@linux-foundation.org, tom.zanussi@linux.intel.com,
+        gregkh@linuxfoundation.org, hch@lst.de, bigeasy@linutronix.de,
+        lgoncalv@redhat.com, clark.williams@gmail.com, tj@kernel.org,
+        gratian.crisan@ni.com, wagi@monom.org, paulmck@linux.ibm.com,
+        akpm@linuxfoundation.org, tglx@linutronix.de
+Reply-To: gratian.crisan@ni.com, tj@kernel.org, clark.williams@gmail.com,
+          lgoncalv@redhat.com, bigeasy@linutronix.de, hch@lst.de,
+          tglx@linutronix.de, akpm@linuxfoundation.org,
+          paulmck@linux.ibm.com, wagi@monom.org, marc.zyngier@arm.com,
+          efault@gmx.de, tom.zanussi@linux.intel.com,
+          gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
+          bristot@redhat.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          lukas.bulwahn@gmail.com, julia@ni.com, frederic@kernel.org,
+          williams@redhat.com, paulmck@linux.vnet.ibm.com,
+          rostedt@goodmis.org, mingo@kernel.org, peterz@infradead.org
+In-Reply-To: <alpine.DEB.2.21.1907172200190.1778@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1907172200190.1778@nanos.tec.linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/urgent] sched/rt, Kconfig: Introduce CONFIG_PREEMPT_RT
+Git-Commit-ID: 2c2ffb925b368a1f00d4ddcc837f830394861d6c
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:pQKRRjSAwPvJe/DxyiorcFmR6g4THfSDWMYc4p1kZ8aLckuM0qr
- xiClQ7AIVuxhBy+lGsPSBjcs77ak3SReRcHc5Am7mqZgcmrz9f4AoLd3JloLdNFEQglNegX
- 6jdTth3eX4T4XaZYZZVQjYzBNeckqyHawmVjOWSrwzLGx4S2Tp/SgN1edqnon9OwZxy0rr+
- ftQgSnAn9XDmMOCvB2ebA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:8NGldS+p5eQ=:By0jRMiqfFn2SYMphKkJGN
- i3yDPSR68JLDHktBXZ/qviTIEXWjHGJIdnA1VW72vr/hIz3WOnGbh7uZdJqfKdg5W5XuegFHI
- CjIkleZu201NWQ+tOktdMjcBbsF8z7rAOJvJd0rM7BXwi3fayjvf8l7SVubOp3GgyiqE9akGY
- KwzerfPyAtao1W+byoBidehfl987Lw4pHrMLUv7d5lru4Qg5Rxwcs0EM1yaUUMp52PI0R9oEg
- L+WvO2ty8u789v/03RE9d/S1OgvvOIGsj8dun2hMJ04PHuPnbj5+h6uKlhohhxfffam01eYT8
- 9kKMawa1wwQ28ZB0wQtX1QaakIsJ+xDEL63P54/GxBsGNrVINo8NT/2gc0MpkproSgjZ6SCWS
- h5lJOb5BVBClB3WcPG5+8U2SM3oV8m/oZJSIZ3ewHFCPImc5ulF1iJP6a2xGssg2yzPbP25+a
- d/S7rlHcj+CxpFnLBqMKthxqafWyqaud59fXGcSTybzxX+Fc38wWBiYu0rjynB1/6wUEUok9d
- QBdwA7Pl6CjsbMpH8SarPDXByn6sQs7cSZt2u3bpIGfsOOm2KC/kwn2EDjDhY9KgStKqyX/sM
- Fae6snP4LKzacTQ6bqMOe/8a1LfqWfS/5eH+ijSfqkslnL7hpZ0nHeZFdA/Pa1Glrb7NM+xjr
- nIdJuXqpjFhUmg3rj+0cf8okhl6YlHouWlE/0mBoF4mQ1GXOO69SEcd5TJGhIJ91ltRZvYb9q
- Xc7tFuIOp6ppiw+kpl1+2E7ACbzQatv09fxO6A==
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_48_96,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no
+        version=3.4.2
+X-Spam-Level: *
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Building a KASAN-enabled kernel with clang ends up in a case where too
-much is inlined into vivid_thread_vid_cap() and the stack usage grows
-a lot, possibly when the register allocation fails to produce efficient
-code and spills a lot of temporaries to the stack. This uses more
-than twice the amount of stack than the sum of the individual functions
-when they are not inlined:
+Commit-ID:  2c2ffb925b368a1f00d4ddcc837f830394861d6c
+Gitweb:     https://git.kernel.org/tip/2c2ffb925b368a1f00d4ddcc837f830394861d6c
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Wed, 17 Jul 2019 22:01:49 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 18 Jul 2019 14:53:32 +0200
 
-drivers/media/platform/vivid/vivid-kthread-cap.c:766:12: error: stack frame size of 2208 bytes in function 'vivid_thread_vid_cap' [-Werror,-Wframe-larger-than=]
+sched/rt, Kconfig: Introduce CONFIG_PREEMPT_RT
 
-Marking two of the key functions in here as 'noinline_for_stack' avoids
-the pathological case in clang without any apparent downside for gcc.
+Add a new entry to the preemption menu which enables the real-time support
+for the kernel. The choice is only enabled when an architecture supports
+it.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+It selects PREEMPT as the RT features depend on it. To achieve that the
+existing PREEMPT choice is renamed to PREEMPT_LL which select PREEMPT as
+well.
+
+No functional change.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Acked-by: Clark Williams <williams@redhat.com>
+Acked-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Acked-by: Daniel Wagner <wagi@monom.org>
+Acked-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+Cc: Andrew Morton <akpm@linuxfoundation.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Clark Williams <clark.williams@gmail.com>
+Cc: Gratian Crisan <gratian.crisan@ni.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Julia Cartwright <julia@ni.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sebastian Siewior <bigeasy@linutronix.de>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Link: http://lkml.kernel.org/r/alpine.DEB.2.21.1907172200190.1778@nanos.tec.linutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
-Not sure how much effort we want to put into fixing clang to not
-get into this case. I could open an llvm bug report if something
-thinks this has a chance of getting fixed there.
----
- drivers/media/platform/vivid/vivid-kthread-cap.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/Kconfig           |  3 +++
+ kernel/Kconfig.preempt | 25 +++++++++++++++++++++++--
+ 2 files changed, 26 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/vivid/vivid-kthread-cap.c b/drivers/media/platform/vivid/vivid-kthread-cap.c
-index 6cf495a7d5cc..4f94897e6303 100644
---- a/drivers/media/platform/vivid/vivid-kthread-cap.c
-+++ b/drivers/media/platform/vivid/vivid-kthread-cap.c
-@@ -232,8 +232,8 @@ static void *plane_vaddr(struct tpg_data *tpg, struct vivid_buffer *buf,
- 	return vbuf;
- }
+diff --git a/arch/Kconfig b/arch/Kconfig
+index c47b328eada0..ada51f36bd5d 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -801,6 +801,9 @@ config ARCH_NO_COHERENT_DMA_MMAP
+ config ARCH_NO_PREEMPT
+ 	bool
  
--static int vivid_copy_buffer(struct vivid_dev *dev, unsigned p, u8 *vcapbuf,
--		struct vivid_buffer *vid_cap_buf)
-+static noinline_for_stack int vivid_copy_buffer(struct vivid_dev *dev, unsigned p,
-+		u8 *vcapbuf, struct vivid_buffer *vid_cap_buf)
- {
- 	bool blank = dev->must_blank[vid_cap_buf->vb.vb2_buf.index];
- 	struct tpg_data *tpg = &dev->tpg;
-@@ -670,7 +670,8 @@ static void vivid_cap_update_frame_period(struct vivid_dev *dev)
- 	dev->cap_frame_period = f_period;
- }
++config ARCH_SUPPORTS_RT
++	bool
++
+ config CPU_NO_EFFICIENT_FFS
+ 	def_bool n
  
--static void vivid_thread_vid_cap_tick(struct vivid_dev *dev, int dropped_bufs)
-+static noinline_for_stack void vivid_thread_vid_cap_tick(struct vivid_dev *dev,
-+							 int dropped_bufs)
- {
- 	struct vivid_buffer *vid_cap_buf = NULL;
- 	struct vivid_buffer *vbi_cap_buf = NULL;
--- 
-2.20.0
-
+diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
+index dc0b682ec2d9..fc020c09b7e8 100644
+--- a/kernel/Kconfig.preempt
++++ b/kernel/Kconfig.preempt
+@@ -35,10 +35,10 @@ config PREEMPT_VOLUNTARY
+ 
+ 	  Select this if you are building a kernel for a desktop system.
+ 
+-config PREEMPT
++config PREEMPT_LL
+ 	bool "Preemptible Kernel (Low-Latency Desktop)"
+ 	depends on !ARCH_NO_PREEMPT
+-	select PREEMPT_COUNT
++	select PREEMPT
+ 	select UNINLINE_SPIN_UNLOCK if !ARCH_INLINE_SPIN_UNLOCK
+ 	help
+ 	  This option reduces the latency of the kernel by making
+@@ -55,7 +55,28 @@ config PREEMPT
+ 	  embedded system with latency requirements in the milliseconds
+ 	  range.
+ 
++config PREEMPT_RT
++	bool "Fully Preemptible Kernel (Real-Time)"
++	depends on EXPERT && ARCH_SUPPORTS_RT
++	select PREEMPT
++	help
++	  This option turns the kernel into a real-time kernel by replacing
++	  various locking primitives (spinlocks, rwlocks, etc.) with
++	  preemptible priority-inheritance aware variants, enforcing
++	  interrupt threading and introducing mechanisms to break up long
++	  non-preemptible sections. This makes the kernel, except for very
++	  low level and critical code pathes (entry code, scheduler, low
++	  level interrupt handling) fully preemptible and brings most
++	  execution contexts under scheduler control.
++
++	  Select this if you are building a kernel for systems which
++	  require real-time guarantees.
++
+ endchoice
+ 
+ config PREEMPT_COUNT
+        bool
++
++config PREEMPT
++       bool
++       select PREEMPT_COUNT
