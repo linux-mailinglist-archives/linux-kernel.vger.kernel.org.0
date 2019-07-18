@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED69A6C577
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DB3E6C55F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389377AbfGRDGh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:06:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37826 "EHLO mail.kernel.org"
+        id S2389990AbfGRDFd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:05:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390224AbfGRDGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:06:34 -0400
+        id S2389964AbfGRDFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:05:30 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19C1A2053B;
-        Thu, 18 Jul 2019 03:06:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2401F2173B;
+        Thu, 18 Jul 2019 03:05:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419193;
-        bh=JFTBxaKMojFpgikaKkfjlhcOl+A8lazwN8wO3Sr7K8w=;
+        s=default; t=1563419129;
+        bh=lD9OqQc2mRSNgykSipBy5wuaBor9EoomcHkZdwZRgEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yqypyu/iUEC1pZDiYt3+KR96Y1y+3RMzqv3Ywqmj8q/zYe4dEXkt3nFVb9RXUSuib
-         GjSWrChfaitPDcaWPgcHOvBsLs+Ga9XX6/9O/jA7b9lF8GYsU4qaMDPYcExrFAioUX
-         5B6jrGeUwCI1w3LYoYKVZbsLbzud3NuJKkSEhnGs=
+        b=UiwgGKjQ+eUU3L+DlH5oHITla/0+/adkGwQBqE0e/WBvDRLPOwzzDud1f9NhKopzt
+         4/lDIkPXntiRfM3ToND96f26mBAag2cJAsHd8IZbJdV911OBfYX0/qIKAcNjWUQZxr
+         ksAOpaL0CoucfR3GdU5Tplg3oB1/l8QFhMkKriks=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        Joseph Yasi <joe.yasi@gmail.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Oleksandr Natalenko <oleksandr@redhat.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: [PATCH 4.19 02/47] e1000e: start network tx queue only when link is up
-Date:   Thu, 18 Jul 2019 12:01:16 +0900
-Message-Id: <20190718030047.017203434@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 22/54] ppp: mppe: Add softdep to arc4
+Date:   Thu, 18 Jul 2019 12:01:17 +0900
+Message-Id: <20190718030055.083166383@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
-References: <20190718030045.780672747@linuxfoundation.org>
+In-Reply-To: <20190718030053.287374640@linuxfoundation.org>
+References: <20190718030053.287374640@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,74 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+[ Upstream commit aad1dcc4f011ea409850e040363dff1e59aa4175 ]
 
-commit d17ba0f616a08f597d9348c372d89b8c0405ccf3 upstream.
+The arc4 crypto is mandatory at ppp_mppe probe time, so let's put a
+softdep line, so that the corresponding module gets prepared
+gracefully.  Without this, a simple inclusion to initrd via dracut
+failed due to the missing dependency, for example.
 
-Driver does not want to keep packets in Tx queue when link is lost.
-But present code only reset NIC to flush them, but does not prevent
-queuing new packets. Moreover reset sequence itself could generate
-new packets via netconsole and NIC falls into endless reset loop.
-
-This patch wakes Tx queue only when NIC is ready to send packets.
-
-This is proper fix for problem addressed by commit 0f9e980bf5ee
-("e1000e: fix cyclic resets at link up with active tx").
-
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Suggested-by: Alexander Duyck <alexander.duyck@gmail.com>
-Tested-by: Joseph Yasi <joe.yasi@gmail.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Tested-by: Oleksandr Natalenko <oleksandr@redhat.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/e1000e/netdev.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/ppp/ppp_mppe.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -4208,7 +4208,7 @@ void e1000e_up(struct e1000_adapter *ada
- 		e1000_configure_msix(adapter);
- 	e1000_irq_enable(adapter);
+diff --git a/drivers/net/ppp/ppp_mppe.c b/drivers/net/ppp/ppp_mppe.c
+index 7ccdc62c6052..06d620b10704 100644
+--- a/drivers/net/ppp/ppp_mppe.c
++++ b/drivers/net/ppp/ppp_mppe.c
+@@ -63,6 +63,7 @@ MODULE_AUTHOR("Frank Cusack <fcusack@fcusack.com>");
+ MODULE_DESCRIPTION("Point-to-Point Protocol Microsoft Point-to-Point Encryption support");
+ MODULE_LICENSE("Dual BSD/GPL");
+ MODULE_ALIAS("ppp-compress-" __stringify(CI_MPPE));
++MODULE_SOFTDEP("pre: arc4");
+ MODULE_VERSION("1.0.2");
  
--	netif_start_queue(adapter->netdev);
-+	/* Tx queue started by watchdog timer when link is up */
- 
- 	e1000e_trigger_lsc(adapter);
- }
-@@ -4584,6 +4584,7 @@ int e1000e_open(struct net_device *netde
- 	pm_runtime_get_sync(&pdev->dev);
- 
- 	netif_carrier_off(netdev);
-+	netif_stop_queue(netdev);
- 
- 	/* allocate transmit descriptors */
- 	err = e1000e_setup_tx_resources(adapter->tx_ring);
-@@ -4644,7 +4645,6 @@ int e1000e_open(struct net_device *netde
- 	e1000_irq_enable(adapter);
- 
- 	adapter->tx_hang_recheck = false;
--	netif_start_queue(netdev);
- 
- 	hw->mac.get_link_status = true;
- 	pm_runtime_put(&pdev->dev);
-@@ -5266,6 +5266,7 @@ static void e1000_watchdog_task(struct w
- 			if (phy->ops.cfg_on_link_up)
- 				phy->ops.cfg_on_link_up(hw);
- 
-+			netif_wake_queue(netdev);
- 			netif_carrier_on(netdev);
- 
- 			if (!test_bit(__E1000_DOWN, &adapter->state))
-@@ -5279,6 +5280,7 @@ static void e1000_watchdog_task(struct w
- 			/* Link status message must follow this format */
- 			pr_info("%s NIC Link is Down\n", adapter->netdev->name);
- 			netif_carrier_off(netdev);
-+			netif_stop_queue(netdev);
- 			if (!test_bit(__E1000_DOWN, &adapter->state))
- 				mod_timer(&adapter->phy_info_timer,
- 					  round_jiffies(jiffies + 2 * HZ));
+ static unsigned int
+-- 
+2.20.1
+
 
 
