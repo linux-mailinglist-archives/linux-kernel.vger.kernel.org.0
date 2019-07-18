@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52DB96C5E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:12:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B2B96C6B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:18:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403874AbfGRDKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:10:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43980 "EHLO mail.kernel.org"
+        id S2391199AbfGRDMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:12:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390762AbfGRDKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:10:39 -0400
+        id S2391459AbfGRDMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:12:38 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0D4721849;
-        Thu, 18 Jul 2019 03:10:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 584552077C;
+        Thu, 18 Jul 2019 03:12:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419439;
-        bh=t8jPkMTTiMFzRlwycEpKgnRdqVF9UGIWNRTv+s1KUmY=;
+        s=default; t=1563419557;
+        bh=jptCgE6YTWSDNGmTq9kec/vLT5xnPBTD+yccwxKhFcA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MrcKW2j18qcZbGyMyPYTiujymGP1INMyD8NejfI41btGCZvs3k+1LDHDnZ/wNdi5t
-         o3RLLB4sdtLYBpQuZmIf6D9rs5QTDdloc8XWxe98UvxkCnRSO5nvxuQdNgJhNRW1lw
-         qtV3Yd6JDaVXvd+qkCkKhJJNAkg9aFdznhtlRCYg=
+        b=dLTAsZVVlHal6rA/A3jgjAWES+OUAvW7hwrT+PbJ55JcvmU7OCj/Nj4t9sBmOkKYE
+         AicZYF3H6+S6ID/5GJWJq88LRoXvXhKZpX7NNd9Dm/nt/s2xUPPcWdpexdLqGo1d6E
+         P7lvjRWppZY+WlazMF4569JwBHKNFsiG2VY+zvjw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Oros <poros@redhat.com>,
-        Ivan Vecera <ivecera@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 66/80] be2net: fix link failure after ethtool offline test
+        stable@vger.kernel.org, Hongjie Fang <hongjiefang@asrmicro.com>,
+        Eric Biggers <ebiggers@google.com>
+Subject: [PATCH 4.9 27/54] fscrypt: dont set policy for a dead directory
 Date:   Thu, 18 Jul 2019 12:01:57 +0900
-Message-Id: <20190718030103.570601485@linuxfoundation.org>
+Message-Id: <20190718030051.512374141@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
-References: <20190718030058.615992480@linuxfoundation.org>
+In-Reply-To: <20190718030048.392549994@linuxfoundation.org>
+References: <20190718030048.392549994@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,81 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2e5db6eb3c23e5dc8171eb8f6af7a97ef9fcf3a9 ]
+From: Hongjie Fang <hongjiefang@asrmicro.com>
 
-Certain cards in conjunction with certain switches need a little more
-time for link setup that results in ethtool link test failure after
-offline test. Patch adds a loop that waits for a link setup finish.
+commit 5858bdad4d0d0fc18bf29f34c3ac836e0b59441f upstream.
 
-Changes in v2:
-- added fixes header
+The directory may have been removed when entering
+fscrypt_ioctl_set_policy().  If so, the empty_dir() check will return
+error for ext4 file system.
 
-Fixes: 4276e47e2d1c ("be2net: Add link test to list of ethtool self tests.")
-Signed-off-by: Petr Oros <poros@redhat.com>
-Reviewed-by: Ivan Vecera <ivecera@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+ext4_rmdir() sets i_size = 0, then ext4_empty_dir() reports an error
+because 'inode->i_size < EXT4_DIR_REC_LEN(1) + EXT4_DIR_REC_LEN(2)'.  If
+the fs is mounted with errors=panic, it will trigger a panic issue.
+
+Add the check IS_DEADDIR() to fix this problem.
+
+Fixes: 9bd8212f981e ("ext4 crypto: add encryption policy and password salt support")
+Cc: <stable@vger.kernel.org> # v4.1+
+Signed-off-by: Hongjie Fang <hongjiefang@asrmicro.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- .../net/ethernet/emulex/benet/be_ethtool.c    | 28 +++++++++++++++----
- 1 file changed, 22 insertions(+), 6 deletions(-)
+ fs/crypto/policy.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/emulex/benet/be_ethtool.c b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-index 6ce7b8435ace..f66b246acaea 100644
---- a/drivers/net/ethernet/emulex/benet/be_ethtool.c
-+++ b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-@@ -893,7 +893,7 @@ static void be_self_test(struct net_device *netdev, struct ethtool_test *test,
- 			 u64 *data)
- {
- 	struct be_adapter *adapter = netdev_priv(netdev);
--	int status;
-+	int status, cnt;
- 	u8 link_status = 0;
- 
- 	if (adapter->function_caps & BE_FUNCTION_CAPS_SUPER_NIC) {
-@@ -904,6 +904,9 @@ static void be_self_test(struct net_device *netdev, struct ethtool_test *test,
- 
- 	memset(data, 0, sizeof(u64) * ETHTOOL_TESTS_NUM);
- 
-+	/* check link status before offline tests */
-+	link_status = netif_carrier_ok(netdev);
-+
- 	if (test->flags & ETH_TEST_FL_OFFLINE) {
- 		if (be_loopback_test(adapter, BE_MAC_LOOPBACK, &data[0]) != 0)
- 			test->flags |= ETH_TEST_FL_FAILED;
-@@ -924,13 +927,26 @@ static void be_self_test(struct net_device *netdev, struct ethtool_test *test,
- 		test->flags |= ETH_TEST_FL_FAILED;
- 	}
- 
--	status = be_cmd_link_status_query(adapter, NULL, &link_status, 0);
--	if (status) {
--		test->flags |= ETH_TEST_FL_FAILED;
--		data[4] = -1;
--	} else if (!link_status) {
-+	/* link status was down prior to test */
-+	if (!link_status) {
- 		test->flags |= ETH_TEST_FL_FAILED;
- 		data[4] = 1;
-+		return;
-+	}
-+
-+	for (cnt = 10; cnt; cnt--) {
-+		status = be_cmd_link_status_query(adapter, NULL, &link_status,
-+						  0);
-+		if (status) {
-+			test->flags |= ETH_TEST_FL_FAILED;
-+			data[4] = -1;
-+			break;
-+		}
-+
-+		if (link_status)
-+			break;
-+
-+		msleep_interruptible(500);
- 	}
- }
- 
--- 
-2.20.1
-
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -114,6 +114,8 @@ int fscrypt_process_policy(struct file *
+ 	if (!inode_has_encryption_context(inode)) {
+ 		if (!S_ISDIR(inode->i_mode))
+ 			ret = -ENOTDIR;
++		else if (IS_DEADDIR(inode))
++			ret = -ENOENT;
+ 		else if (!inode->i_sb->s_cop->empty_dir)
+ 			ret = -EOPNOTSUPP;
+ 		else if (!inode->i_sb->s_cop->empty_dir(inode))
 
 
