@@ -2,224 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB06C6CC87
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 12:07:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F9C56CC93
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 12:11:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389888AbfGRKH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 06:07:27 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:38249 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726423AbfGRKH1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 06:07:27 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R351e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=aaron.lu@linux.alibaba.com;NM=1;PH=DS;RN=20;SR=0;TI=SMTPD_---0TXCBWtI_1563444434;
-Received: from aaronlu(mailfrom:aaron.lu@linux.alibaba.com fp:SMTPD_---0TXCBWtI_1563444434)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 18 Jul 2019 18:07:21 +0800
-Date:   Thu, 18 Jul 2019 18:07:14 +0800
-From:   Aaron Lu <aaron.lu@linux.alibaba.com>
-To:     Julien Desfossez <jdesfossez@digitalocean.com>
-Cc:     Aubrey Li <aubrey.intel@gmail.com>,
-        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
-Message-ID: <20190718100714.GA469@aaronlu>
-References: <cover.1559129225.git.vpillai@digitalocean.com>
- <CAERHkruDE-7R5K=2yRqCJRCpV87HkHzDYbQA2WQkruVYpG7t7Q@mail.gmail.com>
- <e8872bd9-1c6b-fb12-b535-3d37740a0306@linux.alibaba.com>
- <20190531210816.GA24027@sinkpad>
- <20190606152637.GA5703@sinkpad>
- <20190612163345.GB26997@sinkpad>
- <635c01b0-d8f3-561b-5396-10c75ed03712@oracle.com>
- <20190613032246.GA17752@sinkpad>
- <CAERHkrsMFjjBpPZS7jDhzbob4PSmiPj83OfqEeiKgaDAU3ajOA@mail.gmail.com>
- <20190619183302.GA6775@sinkpad>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190619183302.GA6775@sinkpad>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S2389939AbfGRKKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 06:10:43 -0400
+Received: from mga14.intel.com ([192.55.52.115]:2216 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726495AbfGRKKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 06:10:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2019 03:10:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,276,1559545200"; 
+   d="scan'208";a="162031470"
+Received: from devel-ww.sh.intel.com ([10.239.48.128])
+  by orsmga008.jf.intel.com with ESMTP; 18 Jul 2019 03:10:39 -0700
+From:   Wei Wang <wei.w.wang@intel.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, mst@redhat.com, xdeguillard@vmware.com,
+        namit@vmware.com
+Cc:     akpm@linux-foundation.org, pagupta@redhat.com, riel@surriel.com,
+        dave.hansen@intel.com, david@redhat.com, konrad.wilk@oracle.com,
+        yang.zhang.wz@gmail.com, nitesh@redhat.com, lcapitulino@redhat.com,
+        aarcange@redhat.com, pbonzini@redhat.com,
+        alexander.h.duyck@linux.intel.com, dan.j.williams@intel.com
+Subject: [PATCH v2] mm/balloon_compaction: avoid duplicate page removal
+Date:   Thu, 18 Jul 2019 17:27:20 +0800
+Message-Id: <1563442040-13510-1-git-send-email-wei.w.wang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 02:33:02PM -0400, Julien Desfossez wrote:
-> On 17-Jun-2019 10:51:27 AM, Aubrey Li wrote:
-> > The result looks still unfair, and particularly, the variance is too high,
-> 
-> I just want to confirm that I am also seeing the same issue with a
-> similar setup. I also tried with the priority boost fix we previously
-> posted, the results are slightly better, but we are still seeing a very
-> high variance.
-> 
-> On average, the results I get for 10 30-seconds runs are still much
-> better than nosmt (both sysbench pinned on the same sibling) for the
-> memory benchmark, and pretty similar for the CPU benchmark, but the high
-> variance between runs is indeed concerning.
+Fixes: 418a3ab1e778 (mm/balloon_compaction: List interfaces)
 
-I was thinking to use util_avg signal to decide which task win in
-__prio_less() in the cross cpu case. The reason util_avg is chosen
-is because it represents how cpu intensive the task is, so the end
-result is, less cpu intensive task will preempt more cpu intensive
-task.
+A #GP is reported in the guest when requesting balloon inflation via
+virtio-balloon. The reason is that the virtio-balloon driver has
+removed the page from its internal page list (via balloon_page_pop),
+but balloon_page_enqueue_one also calls "list_del"  to do the removal.
+This is necessary when it's used from balloon_page_enqueue_list, but
+not from balloon_page_enqueue_one.
 
-Here is the test I have done to see how util_avg works
-(on a single node, 16 cores, 32 cpus vm):
-1 Start tmux and then start 3 windows with each running bash;
-2 Place two shells into two different cgroups and both have cpu.tag set;
-3 Switch to the 1st tmux window, start
-  will-it-scale/page_fault1_processes -t 16 -s 30
-  in the first tagged shell;
-4 Switch to the 2nd tmux window;
-5 Start
-  will-it-scale/page_fault1_processes -t 16 -s 30
-  in the 2nd tagged shell;
-6 Switch to the 3rd tmux window;
-7 Do some simple things in the 3rd untagged shell like ls to see if
-  untagged task is able to proceed;
-8 Wait for the two page_fault workloads to finish.
+So remove the list_del balloon_page_enqueue_one, and update some
+comments as a reminder.
 
-With v3 here, I can not do step 4 and later steps, i.e. the 16
-page_fault1 processes started in step 3 will occupy all 16 cores and
-other tasks do not have a chance to run, including tmux, which made
-switching tmux window impossible.
-
-With the below patch on top of v3 that makes use of util_avg to decide
-which task win, I can do all 8 steps and the final scores of the 2
-workloads are: 1796191 and 2199586. The score number are not close,
-suggesting some unfairness, but I can finish the test now...
-
-Here is the diff(consider it as a POC):
-
+Signed-off-by: Wei Wang <wei.w.wang@intel.com>
 ---
- kernel/sched/core.c  | 35 ++---------------------------------
- kernel/sched/fair.c  | 36 ++++++++++++++++++++++++++++++++++++
- kernel/sched/sched.h |  2 ++
- 3 files changed, 40 insertions(+), 33 deletions(-)
+ChangeLong:
+v1->v2: updated some comments
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 26fea68f7f54..7557a7bbb481 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -105,25 +105,8 @@ static inline bool prio_less(struct task_struct *a, struct task_struct *b)
- 	if (pa == -1) /* dl_prio() doesn't work because of stop_class above */
- 		return !dl_time_before(a->dl.deadline, b->dl.deadline);
- 
--	if (pa == MAX_RT_PRIO + MAX_NICE)  { /* fair */
--		u64 a_vruntime = a->se.vruntime;
--		u64 b_vruntime = b->se.vruntime;
--
--		/*
--		 * Normalize the vruntime if tasks are in different cpus.
--		 */
--		if (task_cpu(a) != task_cpu(b)) {
--			b_vruntime -= task_cfs_rq(b)->min_vruntime;
--			b_vruntime += task_cfs_rq(a)->min_vruntime;
--
--			trace_printk("(%d:%Lu,%Lu,%Lu) <> (%d:%Lu,%Lu,%Lu)\n",
--				     a->pid, a_vruntime, a->se.vruntime, task_cfs_rq(a)->min_vruntime,
--				     b->pid, b_vruntime, b->se.vruntime, task_cfs_rq(b)->min_vruntime);
--
--		}
--
--		return !((s64)(a_vruntime - b_vruntime) <= 0);
--	}
-+	if (pa == MAX_RT_PRIO + MAX_NICE) /* fair */
-+		return cfs_prio_less(a, b);
- 
- 	return false;
- }
-@@ -3663,20 +3646,6 @@ pick_task(struct rq *rq, const struct sched_class *class, struct task_struct *ma
- 	if (!class_pick)
- 		return NULL;
- 
--	if (!cookie) {
--		/*
--		 * If class_pick is tagged, return it only if it has
--		 * higher priority than max.
--		 */
--		bool max_is_higher = sched_feat(CORESCHED_STALL_FIX) ?
--				     max && !prio_less(max, class_pick) :
--				     max && prio_less(class_pick, max);
--		if (class_pick->core_cookie && max_is_higher)
--			return idle_sched_class.pick_task(rq);
--
--		return class_pick;
--	}
--
- 	/*
- 	 * If class_pick is idle or matches cookie, return early.
+ mm/balloon_compaction.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/mm/balloon_compaction.c b/mm/balloon_compaction.c
+index 83a7b61..8639bfc 100644
+--- a/mm/balloon_compaction.c
++++ b/mm/balloon_compaction.c
+@@ -21,7 +21,6 @@ static void balloon_page_enqueue_one(struct balloon_dev_info *b_dev_info,
+ 	 * memory corruption is possible and we should stop execution.
  	 */
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 26d29126d6a5..06fb00689db1 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -10740,3 +10740,39 @@ __init void init_sched_fair_class(void)
- #endif /* SMP */
+ 	BUG_ON(!trylock_page(page));
+-	list_del(&page->lru);
+ 	balloon_page_insert(b_dev_info, page);
+ 	unlock_page(page);
+ 	__count_vm_event(BALLOON_INFLATE);
+@@ -33,7 +32,7 @@ static void balloon_page_enqueue_one(struct balloon_dev_info *b_dev_info,
+  * @b_dev_info: balloon device descriptor where we will insert a new page to
+  * @pages: pages to enqueue - allocated using balloon_page_alloc.
+  *
+- * Driver must call it to properly enqueue a balloon pages before definitively
++ * Driver must call it to properly enqueue balloon pages before definitively
+  * removing it from the guest system.
+  *
+  * Return: number of pages that were enqueued.
+@@ -47,6 +46,7 @@ size_t balloon_page_list_enqueue(struct balloon_dev_info *b_dev_info,
  
- }
-+
-+bool cfs_prio_less(struct task_struct *a, struct task_struct *b)
-+{
-+	struct sched_entity *sea = &a->se;
-+	struct sched_entity *seb = &b->se;
-+	bool samecore = task_cpu(a) == task_cpu(b);
-+	struct task_struct *p;
-+	s64 delta;
-+
-+	if (samecore) {
-+		/* vruntime is per cfs_rq */
-+		while (!is_same_group(sea, seb)) {
-+			int sea_depth = sea->depth;
-+			int seb_depth = seb->depth;
-+
-+			if (sea_depth >= seb_depth)
-+				sea = parent_entity(sea);
-+			if (sea_depth <= seb_depth)
-+				seb = parent_entity(seb);
-+		}
-+
-+		delta = (s64)(sea->vruntime - seb->vruntime);
-+	}
-+
-+	/* across cpu: use util_avg to decide which task to run */
-+	delta = (s64)(sea->avg.util_avg - seb->avg.util_avg);
-+
-+	p = delta > 0 ? b : a;
-+	trace_printk("picked %s/%d %s: %Lu %Lu %Ld\n", p->comm, p->pid,
-+			samecore ? "vruntime" : "util_avg",
-+			samecore ? sea->vruntime : sea->avg.util_avg,
-+			samecore ? seb->vruntime : seb->avg.util_avg,
-+			delta);
-+
-+	return delta > 0;
-+}
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index e91c188a452c..02a6d71704f0 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2454,3 +2454,5 @@ static inline bool sched_energy_enabled(void)
- static inline bool sched_energy_enabled(void) { return false; }
+ 	spin_lock_irqsave(&b_dev_info->pages_lock, flags);
+ 	list_for_each_entry_safe(page, tmp, pages, lru) {
++		list_del(&page->lru);
+ 		balloon_page_enqueue_one(b_dev_info, page);
+ 		n_pages++;
+ 	}
+@@ -128,13 +128,19 @@ struct page *balloon_page_alloc(void)
+ EXPORT_SYMBOL_GPL(balloon_page_alloc);
  
- #endif /* CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL */
-+
-+bool cfs_prio_less(struct task_struct *a, struct task_struct *b);
+ /*
+- * balloon_page_enqueue - allocates a new page and inserts it into the balloon
+- *			  page list.
++ * balloon_page_enqueue - inserts a new page into the balloon page list.
++ *
+  * @b_dev_info: balloon device descriptor where we will insert a new page to
+  * @page: new page to enqueue - allocated using balloon_page_alloc.
+  *
+  * Driver must call it to properly enqueue a new allocated balloon page
+  * before definitively removing it from the guest system.
++ *
++ * Drivers must not call balloon_page_enqueue on pages that have been
++ * pushed to a list with balloon_page_push before removing them with
++ * balloon_page_pop. To all pages on a list, use balloon_page_list_enqueue
++ * instead.
++ *
+  * This function returns the page address for the recently enqueued page or
+  * NULL in the case we fail to allocate a new page this turn.
+  */
 -- 
-2.19.1.3.ge56e4f7
+2.7.4
 
