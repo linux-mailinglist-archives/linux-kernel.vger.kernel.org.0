@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56D746C59D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 417946C59F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390680AbfGRDIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:08:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40108 "EHLO mail.kernel.org"
+        id S2390701AbfGRDIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:08:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390648AbfGRDIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:08:14 -0400
+        id S2390665AbfGRDIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:08:16 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A71232077C;
-        Thu, 18 Jul 2019 03:08:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D75082173B;
+        Thu, 18 Jul 2019 03:08:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419293;
-        bh=Yqt/LllpGzMStVbT4HLxLYhzgZMPXuawn64z9mAi6yM=;
+        s=default; t=1563419295;
+        bh=uwB4vb3z/m1k+bVykQxmfhxl1uup4a6Q5Lxogz7dBKU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Is/xcaxX6+84JRZSoA8mlNo7dR7sEImaBdESTPdulxOjm9COBF1+DwvfYRb0iz5Fn
-         poz8ah2on+D9DskZJPSJKkgC0987vKGoAEjog/AUK1C142YUuIX9stxLXYWvH+tfXx
-         79u5suhh9GcJnOyVucJyK3jFtnO/O6j/pDjFaK3I=
+        b=YEdnVRGsO9GYQAGTdvoz7RLWbHtqYdprglbgWhgm3pDOgU7e/lKvNTCRqD8/NT+CK
+         vJesO8L3hgQj+QaPq2svuc23tcvsCe+ZTv5/vjgT892oUEZZBe0vPXC0uqhXKQMaqN
+         QBnPrttXDQsk5OGNOVZ+A0Qa7DZgSrzl1ZMKqB7U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Robert Hodaszi <Robert.Hodaszi@digi.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.19 31/47] genirq: Fix misleading synchronize_irq() documentation
-Date:   Thu, 18 Jul 2019 12:01:45 +0900
-Message-Id: <20190718030051.369338137@linuxfoundation.org>
+Subject: [PATCH 4.19 32/47] genirq: Add optional hardware synchronization for shutdown
+Date:   Thu, 18 Jul 2019 12:01:46 +0900
+Message-Id: <20190718030051.450770137@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
 References: <20190718030045.780672747@linuxfoundation.org>
@@ -45,32 +46,221 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner tglx@linutronix.de
 
-commit 1d21f2af8571c6a6a44e7c1911780614847b0253 upstream
+commit 62e0468650c30f0298822c580f382b16328119f6 upstream
 
-The function might sleep, so it cannot be called from interrupt
-context. Not even with care.
+free_irq() ensures that no hardware interrupt handler is executing on a
+different CPU before actually releasing resources and deactivating the
+interrupt completely in a domain hierarchy.
 
+But that does not catch the case where the interrupt is on flight at the
+hardware level but not yet serviced by the target CPU. That creates an
+interesing race condition:
+
+   CPU 0                  CPU 1               IRQ CHIP
+
+                                              interrupt is raised
+                                              sent to CPU1
+			  Unable to handle
+			  immediately
+			  (interrupts off,
+			   deep idle delay)
+   mask()
+   ...
+   free()
+     shutdown()
+     synchronize_irq()
+     release_resources()
+                          do_IRQ()
+                            -> resources are not available
+
+That might be harmless and just trigger a spurious interrupt warning, but
+some interrupt chips might get into a wedged state.
+
+Utilize the existing irq_get_irqchip_state() callback for the
+synchronization in free_irq().
+
+synchronize_hardirq() is not using this mechanism as it might actually
+deadlock unter certain conditions, e.g. when called with interrupts
+disabled and the target CPU is the one on which the synchronization is
+invoked. synchronize_irq() uses it because that function cannot be called
+from non preemtible contexts as it might sleep.
+
+No functional change intended and according to Marc the existing GIC
+implementations where the driver supports the callback should be able
+to cope with that core change. Famous last words.
+
+Fixes: 464d12309e1b ("x86/vector: Switch IOAPIC to global reservation mode")
+Reported-by: Robert Hodaszi <Robert.Hodaszi@digi.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Link: https://lkml.kernel.org/r/20190628111440.189241552@linutronix.de
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+Tested-by: Marc Zyngier <marc.zyngier@arm.com>
+Link: https://lkml.kernel.org/r/20190628111440.279463375@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- kernel/irq/manage.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/irq/internals.h |    4 ++
+ kernel/irq/manage.c    |   75 ++++++++++++++++++++++++++++++++++++-------------
+ 2 files changed, 60 insertions(+), 19 deletions(-)
 
+--- a/kernel/irq/internals.h
++++ b/kernel/irq/internals.h
+@@ -95,6 +95,10 @@ static inline void irq_mark_irq(unsigned
+ extern void irq_mark_irq(unsigned int irq);
+ #endif
+ 
++extern int __irq_get_irqchip_state(struct irq_data *data,
++				   enum irqchip_irq_state which,
++				   bool *state);
++
+ extern void init_kstat_irqs(struct irq_desc *desc, int node, int nr);
+ 
+ irqreturn_t __handle_irq_event_percpu(struct irq_desc *desc, unsigned int *flags);
 --- a/kernel/irq/manage.c
 +++ b/kernel/irq/manage.c
-@@ -96,7 +96,8 @@ EXPORT_SYMBOL(synchronize_hardirq);
-  *	to complete before returning. If you use this function while
-  *	holding a resource the IRQ handler may need you will deadlock.
+@@ -35,8 +35,9 @@ static int __init setup_forced_irqthread
+ early_param("threadirqs", setup_forced_irqthreads);
+ #endif
+ 
+-static void __synchronize_hardirq(struct irq_desc *desc)
++static void __synchronize_hardirq(struct irq_desc *desc, bool sync_chip)
+ {
++	struct irq_data *irqd = irq_desc_get_irq_data(desc);
+ 	bool inprogress;
+ 
+ 	do {
+@@ -52,6 +53,20 @@ static void __synchronize_hardirq(struct
+ 		/* Ok, that indicated we're done: double-check carefully. */
+ 		raw_spin_lock_irqsave(&desc->lock, flags);
+ 		inprogress = irqd_irq_inprogress(&desc->irq_data);
++
++		/*
++		 * If requested and supported, check at the chip whether it
++		 * is in flight at the hardware level, i.e. already pending
++		 * in a CPU and waiting for service and acknowledge.
++		 */
++		if (!inprogress && sync_chip) {
++			/*
++			 * Ignore the return code. inprogress is only updated
++			 * when the chip supports it.
++			 */
++			__irq_get_irqchip_state(irqd, IRQCHIP_STATE_ACTIVE,
++						&inprogress);
++		}
+ 		raw_spin_unlock_irqrestore(&desc->lock, flags);
+ 
+ 		/* Oops, that failed? */
+@@ -74,13 +89,18 @@ static void __synchronize_hardirq(struct
+  *	Returns: false if a threaded handler is active.
   *
-- *	This function may be called - with care - from IRQ context.
-+ *	Can only be called from preemptible code as it might sleep when
-+ *	an interrupt thread is associated to @irq.
+  *	This function may be called - with care - from IRQ context.
++ *
++ *	It does not check whether there is an interrupt in flight at the
++ *	hardware level, but not serviced yet, as this might deadlock when
++ *	called with interrupts disabled and the target CPU of the interrupt
++ *	is the current CPU.
+  */
+ bool synchronize_hardirq(unsigned int irq)
+ {
+ 	struct irq_desc *desc = irq_to_desc(irq);
+ 
+ 	if (desc) {
+-		__synchronize_hardirq(desc);
++		__synchronize_hardirq(desc, false);
+ 		return !atomic_read(&desc->threads_active);
+ 	}
+ 
+@@ -98,13 +118,17 @@ EXPORT_SYMBOL(synchronize_hardirq);
+  *
+  *	Can only be called from preemptible code as it might sleep when
+  *	an interrupt thread is associated to @irq.
++ *
++ *	It optionally makes sure (when the irq chip supports that method)
++ *	that the interrupt is not pending in any CPU and waiting for
++ *	service.
   */
  void synchronize_irq(unsigned int irq)
  {
+ 	struct irq_desc *desc = irq_to_desc(irq);
+ 
+ 	if (desc) {
+-		__synchronize_hardirq(desc);
++		__synchronize_hardirq(desc, true);
+ 		/*
+ 		 * We made sure that no hardirq handler is
+ 		 * running. Now verify that no threaded handlers are
+@@ -1650,8 +1674,12 @@ static struct irqaction *__free_irq(stru
+ 
+ 	unregister_handler_proc(irq, action);
+ 
+-	/* Make sure it's not being used on another CPU: */
+-	synchronize_hardirq(irq);
++	/*
++	 * Make sure it's not being used on another CPU and if the chip
++	 * supports it also make sure that there is no (not yet serviced)
++	 * interrupt in flight at the hardware level.
++	 */
++	__synchronize_hardirq(desc, true);
+ 
+ #ifdef CONFIG_DEBUG_SHIRQ
+ 	/*
+@@ -2184,6 +2212,28 @@ int __request_percpu_irq(unsigned int ir
+ }
+ EXPORT_SYMBOL_GPL(__request_percpu_irq);
+ 
++int __irq_get_irqchip_state(struct irq_data *data, enum irqchip_irq_state which,
++			    bool *state)
++{
++	struct irq_chip *chip;
++	int err = -EINVAL;
++
++	do {
++		chip = irq_data_get_irq_chip(data);
++		if (chip->irq_get_irqchip_state)
++			break;
++#ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
++		data = data->parent_data;
++#else
++		data = NULL;
++#endif
++	} while (data);
++
++	if (data)
++		err = chip->irq_get_irqchip_state(data, which, state);
++	return err;
++}
++
+ /**
+  *	irq_get_irqchip_state - returns the irqchip state of a interrupt.
+  *	@irq: Interrupt line that is forwarded to a VM
+@@ -2202,7 +2252,6 @@ int irq_get_irqchip_state(unsigned int i
+ {
+ 	struct irq_desc *desc;
+ 	struct irq_data *data;
+-	struct irq_chip *chip;
+ 	unsigned long flags;
+ 	int err = -EINVAL;
+ 
+@@ -2212,19 +2261,7 @@ int irq_get_irqchip_state(unsigned int i
+ 
+ 	data = irq_desc_get_irq_data(desc);
+ 
+-	do {
+-		chip = irq_data_get_irq_chip(data);
+-		if (chip->irq_get_irqchip_state)
+-			break;
+-#ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
+-		data = data->parent_data;
+-#else
+-		data = NULL;
+-#endif
+-	} while (data);
+-
+-	if (data)
+-		err = chip->irq_get_irqchip_state(data, which, state);
++	err = __irq_get_irqchip_state(data, which, state);
+ 
+ 	irq_put_desc_busunlock(desc, flags);
+ 	return err;
 
 
