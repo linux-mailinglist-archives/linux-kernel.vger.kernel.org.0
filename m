@@ -2,44 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 703CA6CF32
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 15:54:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 577626CF34
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 15:54:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390526AbfGRNxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 09:53:33 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43900 "EHLO
+        id S2390603AbfGRNxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 09:53:37 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:43912 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727791AbfGRNxd (ORCPT
+        with ESMTP id S2390573AbfGRNxh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 09:53:33 -0400
+        Thu, 18 Jul 2019 09:53:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=KL6fWBl+CLFFt4aWnjiO8B6w4bZAMG4MS2WQ/d3Yocs=; b=YSUYAiWqzr3DBTxBUoIHCVB9rg
-        1l5UxWSMkH1h/NyNXxkVxOEBP13QgeXflotf//fBzpymWqjRzKYlyQbtYAJ0sEdenTljMTXBJoU5J
-        dHQCFwtw+wAF3z9vBSYbpFdewzL/hcKwjrVHp/6aOhWxR0HSje30mnK7GqY0shlu2FuxJkVHeBznA
-        Cuh244+8gWxUaDV2pmiwLQcIytasglWvs5AuqkiP8t847bXeXybls5t9tABs1OBcimU1Bjss70oGe
-        OInyY2DJp2+rSAvvulh4fdxCDjMvMd/Mt2BsYmETi589WR2s2Vw0obDkk2Gi3LhTVQ0ScRDtOOux5
-        Dlr/4nVQ==;
+        bh=JZ17Zwq5nKyQodcnNqDyBJEdJKZbn+GdcZVs6/zKV5c=; b=yGZ9f+yoUMo8rKGQPxzUrMmHjX
+        kqiaOpwggFt+yaDlnd8y5nQdysmSTxmU63VvSy9M55BN56Dj2m+o4jOlLKuvmcj1mKmNfDFCMsZab
+        PSyvS4o2c0UxkOl14vvE4AM4CyFVdyO7pI2/Oejubq9LpgC6xtVpT6UMklX2uxzc0L2AB0o1ctK1D
+        elDnYqIIL++oiz2p8VBdTEjer+joq/E+KX8qc5PpNzeBwMBE8NVzHXWoC0NFmdBidVDRzX3QbhGLT
+        I0FC3M9OxzOlOgPnJ9MQyzzCoq8o+6fY02unxTvR5bYEPKqZP9AhZiNMfGxZpGJcZLOwbSM5ciUs9
+        2Ch/JlZQ==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1ho6qb-0003u4-GB; Thu, 18 Jul 2019 13:53:25 +0000
+        id 1ho6qb-0003u7-GR; Thu, 18 Jul 2019 13:53:26 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id C768320B979A4; Thu, 18 Jul 2019 15:53:22 +0200 (CEST)
-Message-Id: <20190718135206.012378477@infradead.org>
+        id CEBB120B979A5; Thu, 18 Jul 2019 15:53:22 +0200 (CEST)
+Message-Id: <20190718135206.123357505@infradead.org>
 User-Agent: quilt/0.65
-Date:   Thu, 18 Jul 2019 15:49:56 +0200
+Date:   Thu, 18 Jul 2019 15:49:57 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Will Deacon <will@kernel.org>
 Cc:     linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
         Jan Stancek <jstancek@redhat.com>,
         Waiman Long <longman@redhat.com>, dbueso@suse.de,
-        mingo@redhat.com, jade.alglave@arm.com, paulmck@linux.vnet.ibm.com
-Subject: [PATCH 2/4] rwsem: Add missing ACQUIRE to read_slowpath sleep loop
+        mingo@redhat.com, jade.alglave@arm.com, paulmck@linux.vnet.ibm.com,
+        Peter Hurley <peter@hurleysoftware.com>
+Subject: [PATCH 3/4] tty/ldsem: Add missing ACQUIRE to read_failed sleep loop
 References: <20190718134954.496297975@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,8 +49,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While reviewing another read_slowpath patch, both Will and I noticed
-another missing ACQUIRE, namely:
+While reviewing rwsem down_slowpath, Will noticed ldsem had a copy of
+a bug we just found for rwsem.
 
   X = 0;
 
@@ -75,28 +76,35 @@ another missing ACQUIRE, namely:
 
 Allows 'r == 0'.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Peter Hurley <peter@hurleysoftware.com>
+Fixes: 4898e640caf0 ("tty: Add timed, writer-prioritized rw semaphore")
 Reported-by: Will Deacon <will@kernel.org>
 Acked-by: Will Deacon <will@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/locking/rwsem.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/tty/tty_ldsem.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -1069,8 +1069,10 @@ rwsem_down_read_slowpath(struct rw_semap
- 	/* wait to be given the lock */
- 	while (true) {
- 		set_current_state(state);
+--- a/drivers/tty/tty_ldsem.c
++++ b/drivers/tty/tty_ldsem.c
+@@ -93,8 +93,7 @@ static void __ldsem_wake_readers(struct
+ 
+ 	list_for_each_entry_safe(waiter, next, &sem->read_wait, list) {
+ 		tsk = waiter->task;
+-		smp_mb();
+-		waiter->task = NULL;
++		smp_store_release(&waiter->task, NULL);
+ 		wake_up_process(tsk);
+ 		put_task_struct(tsk);
+ 	}
+@@ -194,7 +193,7 @@ down_read_failed(struct ld_semaphore *se
+ 	for (;;) {
+ 		set_current_state(TASK_UNINTERRUPTIBLE);
+ 
 -		if (!waiter.task)
-+		if (!smp_load_acquire(&waiter.task)) {
-+			/* Orders against rwsem_mark_wake()'s smp_store_release() */
++		if (!smp_load_acquire(&waiter.task))
  			break;
-+		}
- 		if (signal_pending_state(state, current)) {
- 			raw_spin_lock_irq(&sem->wait_lock);
- 			if (waiter.task)
+ 		if (!timeout)
+ 			break;
 
 
