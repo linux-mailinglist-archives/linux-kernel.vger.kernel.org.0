@@ -2,88 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2517A6D23C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 18:44:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8622D6D244
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 18:46:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390803AbfGRQnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 12:43:46 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41778 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732305AbfGRQnq (ORCPT
+        id S1728120AbfGRQpt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 12:45:49 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:39166 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbfGRQpt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 12:43:46 -0400
-Received: by mail-ed1-f68.google.com with SMTP id p15so30978008eds.8
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 09:43:45 -0700 (PDT)
+        Thu, 18 Jul 2019 12:45:49 -0400
+Received: by mail-ed1-f66.google.com with SMTP id m10so31002323edv.6
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 09:45:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+W9Fu950QMsufBfCCPx+AFaKU8cPICx7xAobprqzZjM=;
-        b=Yi1h9o2CQwbo6Qwnob3MkuqbT3GZvCeRMRmamE2v3Oszki45i8Qs9f/kn68w0M2+LQ
-         Ff3szsQU67WdJ6ROZ8QobqIZAfnu5yM69u/ZsjYEguU7FSP3tT7h10tU7QCZmVv3VQWz
-         3P9jA++wmEe1qRl4MmW6cB+kCHDIJVOm6KXYcujhMuT6knBHqhKSlNmGYJrFPQL06KRy
-         T1P/te4/Q9JeLCfOxj6whZsaMQg9uK+eIFk1VXf9AF4mvFOoq/2gJarF0gL1FrBxHs8+
-         gh0+Uec+7Heqi/fpINwOgeIWnXXsWOPhBE1CCM0kVhAYq9EF7UlRqhDeUelARzKrEG9L
-         1TWg==
+         :cc:content-transfer-encoding;
+        bh=KgRfHejv/zIzuUta64QTdW+DJVmqS0zjC4X90cCy9QI=;
+        b=PzoghoiUeT+cfTCoJNBcMdcHj4lUEnnKPdIB0RIR7UfIhBNExY45DGUWwEb6VInVhX
+         cdfKfmcchZblLxSSZF5AFrMDhwPcAlqFPUCLjsX8x8+8Zcs2u2GmFaiF1ECh4v8PQ2F8
+         j4HhGExKdqzRvuS2Dl4OmXpajh5psO9uuIZTpdM7O5nZPeYs4yVRzt8mIMiynp96OWiC
+         uDolhH6hlq7pA1VxLsr2gjfo3hvLExYypRB7JfUrW4J1IQdRCAoGrAG5ih/r8aFRnlxJ
+         PBn48/MCV1UMTY8QGKa/jew7xYNxn6sUpCvfRcBqSKGRUcEPnUkv/zraQfpIgkIpixCd
+         ortg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+W9Fu950QMsufBfCCPx+AFaKU8cPICx7xAobprqzZjM=;
-        b=IeZdBZ8lt/XulAXXFlxwzq6Ehzp9JWu4i7auM/8yQP6YCPG7R26/Fnnb/352Isx+9Q
-         mVLiM+zi+zMctW3ipDt2EwVhoIgjDE0a6uxZhj0BLvzpU9i0OwF3BfFrVAV4aOJVWYFM
-         R8F99dIwSCZ595vK0j4ktOL1ZgwGzRvCo7jesW0J0AtynEpVjbi5wRQ26QId+IbiQiI7
-         +ocW4pBt5YGsxYq17dlnZMCzwx52DceeOFPUTRDSi3DsyHUFmsnSVkdUYOcWdys2Rqzf
-         AhyCDbv6aG0Z8c/TzKiPtVA2Rrls04Fvn+fJqw9w/g7j4EpPwWAoVmzNPWzKKtgU/evS
-         dwXQ==
-X-Gm-Message-State: APjAAAVORdMOmu1m8525JdjOZlsMnmDcjB4/M5tNDqGchllGLXmXuJeF
-        whGNT1adP//8NOYY/r4cY95w2QYPoZgaauPxYsc=
-X-Google-Smtp-Source: APXvYqxnrB4IiF1XWQJdXPRciWeUOMIOt0s4We1X1OrTsNZMGgvS6iWNLx4UmmepwkQUKKhdElmEUt7TKDRGSjXGvZQ=
-X-Received: by 2002:aa7:c49a:: with SMTP id m26mr42805347edq.0.1563468224397;
- Thu, 18 Jul 2019 09:43:44 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=KgRfHejv/zIzuUta64QTdW+DJVmqS0zjC4X90cCy9QI=;
+        b=Utv7ARdTlmo/K15qiJuyPbjzYIs4tbXvsMlZpeOxTqDeNhXkhY0GuIbZsW6Zezd+UO
+         t55mmn/Q1/ddZRzSo+ReCgb2im4MouyjWK8uOvLEkALGwAMuBIzEoZpVPfK/p7xD0+LD
+         FkMI0y568YRYArMWmm9ltU13f4D+U5GODc883tNWbNgs8Kt1DqKrW0tzAbskgk/YzB/S
+         fSERuEs7vIHEKt/yJRj8lo5VlHWn0DPvQtmzg+GoE0oPgDSZn4plWFn2+uDM/9H1D3Wb
+         wKmM73Ua+fltEI1JHdGEgbnIsObgUzx/JdpOgPhf6XpRQZmdjgSPydtV2mvQWUTLYIxO
+         bx6w==
+X-Gm-Message-State: APjAAAUo7/qHqxm2pj67NPhRWFMfx4Cmc2XKA49YiIu87IWxtWMvYG7O
+        Gjo1++clzPmx5YGjn1YOukezjd++/GsnmkD9hKc=
+X-Google-Smtp-Source: APXvYqxFDf5VCS9acxFCu5q7BESVni3L/MJZz4NoBB7LBP3pSJFBG6PopXkq/zkj8QMkeiPsyBwKVx67bKcjyYdDtg4=
+X-Received: by 2002:a17:906:9447:: with SMTP id z7mr37111939ejx.165.1563468347812;
+ Thu, 18 Jul 2019 09:45:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190718024133.3873-1-leonardo@linux.ibm.com> <1563430353.3077.1.camel@suse.de>
- <0e67afe465cbbdf6ec9b122f596910cae77bc734.camel@linux.ibm.com>
- <20190718155704.GD30461@dhcp22.suse.cz> <CA+CK2bBU72owYSXH10LTU8NttvCASPNTNOqFfzA3XweXR3gOTw@mail.gmail.com>
- <20190718164043.GE30461@dhcp22.suse.cz>
-In-Reply-To: <20190718164043.GE30461@dhcp22.suse.cz>
+References: <20190718024133.3873-1-leonardo@linux.ibm.com> <CA+CK2bBu7DnG73SaBDwf9cBceNvKnZDEqA-gBJmKC9K_rqgO+A@mail.gmail.com>
+ <6cd8f8f753881aa14d9dfec9a018326abc1e3847.camel@linux.ibm.com>
+In-Reply-To: <6cd8f8f753881aa14d9dfec9a018326abc1e3847.camel@linux.ibm.com>
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-Date:   Thu, 18 Jul 2019 12:43:33 -0400
-Message-ID: <CA+CK2bDG8xNAgn++8uTOP9OsuEzynm=-Gkb+oUj9DKB8sEudiA@mail.gmail.com>
+Date:   Thu, 18 Jul 2019 12:45:36 -0400
+Message-ID: <CA+CK2bA9_B8siPCSSdrN_yecGZZy82UNx7P=QK8N5GuPjto1HQ@mail.gmail.com>
 Subject: Re: [PATCH 1/1] mm/memory_hotplug: Adds option to hot-add memory in ZONE_MOVABLE
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
+To:     Leonardo Bras <leonardo@linux.ibm.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Mike Rapoport <rppt@linux.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
         =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Just trying to understand, if kernel parameters is the preferable
-> > method, why do we even have
-> >
-> > MEMORY_HOTPLUG_DEFAULT_ONLINE
+On Thu, Jul 18, 2019 at 12:04 PM Leonardo Bras <leonardo@linux.ibm.com> wro=
+te:
 >
-> I have some opinion on this one TBH. I have even tried to remove it. The
-> config option has been added to workaround hotplug issues for some
-> memory balloning usecases where it was believed that the memory consumed
-> for the memory hotadd (struct pages) could get machine to OOM before
-> userspace manages to online it. So I would be more than happy to remove
-> it but there were some objections in the past. Maybe the work by Oscar
-> to allocate memmaps from the hotplugged memory can finally put an end to
-> this gross hack.
+> On Thu, 2019-07-18 at 08:19 -0400, Pavel Tatashin wrote:
+> > On Wed, Jul 17, 2019 at 10:42 PM Leonardo Bras <leonardo@linux.ibm.com>=
+ wrote:
+> > > Adds an option on kernel config to make hot-added memory online in
+> > > ZONE_MOVABLE by default.
+> > >
+> > > This would be great in systems with MEMORY_HOTPLUG_DEFAULT_ONLINE=3Dy=
+ by
+> > > allowing to choose which zone it will be auto-onlined
+> >
+> > This is a desired feature. From reading the code it looks to me that
+> > auto-selection of online method type should be done in
+> > memory_subsys_online().
+> >
+> > When it is called from device online, mem->online_type should be -1:
+> >
+> > if (mem->online_type < 0)
+> >      mem->online_type =3D MMOP_ONLINE_KEEP;
+> >
+> > Change it to:
+> > if (mem->online_type < 0)
+> >      mem->online_type =3D MMOP_DEFAULT_ONLINE_TYPE;
+> >
+> > And in "linux/memory_hotplug.h"
+> > #ifdef CONFIG_MEMORY_HOTPLUG_MOVABLE
+> > #define MMOP_DEFAULT_ONLINE_TYPE MMOP_ONLINE_MOVABLE
+> > #else
+> > #define MMOP_DEFAULT_ONLINE_TYPE MMOP_ONLINE_KEEP
+> > #endif
+> >
+> > Could be expanded to support MMOP_ONLINE_KERNEL as well.
+> >
+> > Pasha
+>
+> Thanks for the suggestions Pasha,
+>
+> I was made aware there is a kernel boot option "movable_node" that
+> already creates the behavior I was trying to reproduce.
 
-Makes sense, thank you for the background info.
+I agree with others, no need to duplicate this functionality in a
+config, and Michal in a separate e-mail explained the reasons why we
+have MEMORY_HOTPLUG_DEFAULT_ONLINE.
 
-Pasha
+>
+> I was thinking of changing my patch in order to add a config option
+> that makes this behavior default (i.e. not need to pass it as a boot
+> parameter.
+>
+> Do you think that it would still be a desired feature?
+>
+> Regards,
+>
+> Leonardo Br=C3=A1s
