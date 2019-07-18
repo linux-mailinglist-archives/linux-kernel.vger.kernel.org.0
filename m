@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5AC56C6B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:19:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC2B86C5D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:11:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403954AbfGRDMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:12:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45984 "EHLO mail.kernel.org"
+        id S2391146AbfGRDKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:10:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403790AbfGRDL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:11:59 -0400
+        id S2389758AbfGRDKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:10:09 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C778E20818;
-        Thu, 18 Jul 2019 03:11:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4ADEF205F4;
+        Thu, 18 Jul 2019 03:10:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419518;
-        bh=y+Qt8z6EkrYn2syy8x91Sls59simFVNgynORAtiOfBw=;
+        s=default; t=1563419408;
+        bh=6eCuCSXv/rUkzbDMseQAaw/Dls8iE2lIaphpMe0on5w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KJox1JtBPadBYhA8PLD62zxlBoziJQ57oDka5Wu+VAr2l8Avb2Vjyb90PzypBAAws
-         VQ8DEn+HhqpRpcYeLnHdZI7TlmsmzmM6/0zkL7FdHRGJKBU3QFTcpjsbmYwp0sIiQq
-         84bUqw7G7CNvxsLLnZIPS9/iIMC5Md0e1cuDtSwE=
+        b=fjmVB/Sb27RBLdXMF9x8MtsCo3QuXiLjcXDYdOtB8Gxvee2/fjXHCPyf4SHFoYQiC
+         k78x1dE4auVeKpTrMDpJXvEQa83AwQ6yhaerJLeYiqlt7Z7G9gvvrZ7kOs2YomQD2P
+         FIUVt+ICT9Nv1MkSd5CwyHvkUc1sJnJ2BgsS6dxU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 14/54] mlxsw: spectrum: Disallow prio-tagged packets when PVID is removed
-Date:   Thu, 18 Jul 2019 12:01:44 +0900
-Message-Id: <20190718030050.357370688@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kiruthika Varadarajan <Kiruthika.Varadarajan@harman.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.14 54/80] usb: gadget: ether: Fix race between gether_disconnect and rx_submit
+Date:   Thu, 18 Jul 2019 12:01:45 +0900
+Message-Id: <20190718030102.754423223@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030048.392549994@linuxfoundation.org>
-References: <20190718030048.392549994@linuxfoundation.org>
+In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
+References: <20190718030058.615992480@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4b14cc313f076c37b646cee06a85f0db59cf216c ]
+From: Kiruthika Varadarajan <Kiruthika.Varadarajan@harman.com>
 
-When PVID is removed from a bridge port, the Linux bridge drops both
-untagged and prio-tagged packets. Align mlxsw with this behavior.
+commit d29fcf7078bc8be2b6366cbd4418265b53c94fac upstream.
 
-Fixes: 148f472da5db ("mlxsw: reg: Add the Switch Port Acceptable Frame Types register")
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+On spin lock release in rx_submit, gether_disconnect get a chance to
+run, it makes port_usb NULL, rx_submit access NULL port USB, hence null
+pointer crash.
+
+Fixed by releasing the lock in rx_submit after port_usb is used.
+
+Fixes: 2b3d942c4878 ("usb ethernet gadget: split out network core")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Kiruthika Varadarajan <Kiruthika.Varadarajan@harman.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/mellanox/mlxsw/reg.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/function/u_ether.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/reg.h b/drivers/net/ethernet/mellanox/mlxsw/reg.h
-index a01e6c0d0cd1..b2a745b579fd 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/reg.h
-+++ b/drivers/net/ethernet/mellanox/mlxsw/reg.h
-@@ -935,7 +935,7 @@ static inline void mlxsw_reg_spaft_pack(char *payload, u8 local_port,
- 	MLXSW_REG_ZERO(spaft, payload);
- 	mlxsw_reg_spaft_local_port_set(payload, local_port);
- 	mlxsw_reg_spaft_allow_untagged_set(payload, allow_untagged);
--	mlxsw_reg_spaft_allow_prio_tagged_set(payload, true);
-+	mlxsw_reg_spaft_allow_prio_tagged_set(payload, allow_untagged);
- 	mlxsw_reg_spaft_allow_tagged_set(payload, true);
- }
+--- a/drivers/usb/gadget/function/u_ether.c
++++ b/drivers/usb/gadget/function/u_ether.c
+@@ -190,11 +190,12 @@ rx_submit(struct eth_dev *dev, struct us
+ 		out = dev->port_usb->out_ep;
+ 	else
+ 		out = NULL;
+-	spin_unlock_irqrestore(&dev->lock, flags);
  
--- 
-2.20.1
-
+ 	if (!out)
++	{
++		spin_unlock_irqrestore(&dev->lock, flags);
+ 		return -ENOTCONN;
+-
++	}
+ 
+ 	/* Padding up to RX_EXTRA handles minor disagreements with host.
+ 	 * Normally we use the USB "terminate on short read" convention;
+@@ -218,6 +219,7 @@ rx_submit(struct eth_dev *dev, struct us
+ 
+ 	if (dev->port_usb->is_fixed)
+ 		size = max_t(size_t, size, dev->port_usb->fixed_out_len);
++	spin_unlock_irqrestore(&dev->lock, flags);
+ 
+ 	skb = __netdev_alloc_skb(dev->net, size + NET_IP_ALIGN, gfp_flags);
+ 	if (skb == NULL) {
 
 
