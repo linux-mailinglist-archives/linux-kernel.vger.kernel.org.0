@@ -2,174 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 654226D709
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 01:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 414D96D724
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 01:09:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728160AbfGRXFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 19:05:55 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34629 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727972AbfGRXFy (ORCPT
+        id S2391532AbfGRXIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 19:08:53 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:10327 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728040AbfGRXIw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 19:05:54 -0400
-Received: by mail-lj1-f196.google.com with SMTP id p17so28977507ljg.1;
-        Thu, 18 Jul 2019 16:05:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fc+u6+V0LBMO4h5XjC3+9AyYfLXafLmHvtMzG1nomgE=;
-        b=nuDHuLBeSmox55Zwpt89WZmzaYohhH9FkinlEQpNtCxhihDP0Ue4k9XNHhu9m8479R
-         ++P446NtARkpPtEWIsbHo/HNHeRfCLKXkVbEZ9j5w0RjSFkbSv0MwvX30mgwJnn6vFpA
-         glXEhwIT+9ALQyM2hwixwq43TYJ//CpQz578628ActLr0KMGFMA7MGQYInuR+XfBiddY
-         XhmALJU0u6B1j1muragUyiWcgDwM2O+9/Ptk9885NoV2kiQpF0qwisdqcgiG2mtTP/CG
-         8buudUtysmru6o2gtuIsf97RiLcT6Q7IHhgGaDBla8i/ZkUdXpceZwuf+3VL1nQ2A5AE
-         8TJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fc+u6+V0LBMO4h5XjC3+9AyYfLXafLmHvtMzG1nomgE=;
-        b=nD0YRQ+q7y/fnbsZUek5RCvZHxC9efOKdBU7DoK0cLpPDtW6z1rxHBp+F+37oV/pNy
-         1Eu2YeVJGokl8oVl7fXiIg8SjUYpaaeTEYtWpUvjGuzIgEsOEO6FlwFfWSyvHWsdMM2k
-         FP0JhwUdBHBZF2oxaiSKkrjOS61guZNQ46SOP8/ERv6gb/kbalDvCfwXD89dy/l2sis9
-         jztAJ/ZvjvSFW0i+AjVtM6oYOaDeBgumD2FMitn8XpAAg4vkkI+vV0XuMbOId3g9i5A/
-         5WCHAzyFTke81g/RoFZE+URQU1Nt10HpBKr/CuKwV0lOIPjioWtXdipt2ibpEGly5UUX
-         XCMw==
-X-Gm-Message-State: APjAAAXQ39o/79mRlkXSRA16z5scrsX+pYs8OlL2WR7nRCucAzfgMuxH
-        aMkidWn3ZBzEOkdV5MSnqefnd+SwZbU4zTk13i4=
-X-Google-Smtp-Source: APXvYqw9fdugC/jRhcwqCisAxJ+Zj0R74bzZVO+RfkYWUdEJBKRFNdFU4Am1hVUA1F3fb7boXPR58wBpFYr/AX2KEp8=
-X-Received: by 2002:a2e:5dc6:: with SMTP id v67mr25865035lje.240.1563491152722;
- Thu, 18 Jul 2019 16:05:52 -0700 (PDT)
+        Thu, 18 Jul 2019 19:08:52 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d30fc020001>; Thu, 18 Jul 2019 16:08:50 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 18 Jul 2019 16:08:49 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 18 Jul 2019 16:08:49 -0700
+Received: from [10.110.103.56] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 18 Jul
+ 2019 23:08:49 +0000
+Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+CC:     <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+        Joseph Lo <josephl@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
+        <linus.walleij@linaro.org>, <stefan@agner.ch>,
+        <mark.rutland@arm.com>, <pgaikwad@nvidia.com>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <jckuo@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <351a07d4-ba90-4793-129b-b1a733f95531@nvidia.com>
+ <e3e9beaf-b195-305e-4010-66e824813472@gmail.com>
+ <9271ae75-5663-e26e-df26-57cba94dab75@nvidia.com>
+ <7ae3df9a-c0e9-cf71-8e90-4284db8df82f@nvidia.com>
+ <b01e37aa-f14e-e628-ceef-b25a845c6359@gmail.com>
+ <46b55527-da5d-c0b7-1c14-43b5c6d49dfa@nvidia.com>
+ <2de9a608-cf38-f56c-b192-7ffed65092f8@nvidia.com>
+ <bff3e9c0-727d-9aef-a0e2-583e53c39afd@gmail.com>
+ <5eedd224-77b0-1fc9-4e5e-d884b41a64ed@nvidia.com>
+ <89f23878-d4b2-2305-03e5-8a3e781c2b02@gmail.com>
+ <20190718194222.GH12715@pdeschrijver-desktop.Nvidia.com>
+ <056496ed-9abf-6907-c61c-a99ccf23b834@gmail.com>
+ <1c85cb35-ce7c-1dd1-f637-0c91b2b36db3@nvidia.com>
+Message-ID: <f664f161-9b6b-6446-e2f9-6373e654dfc3@nvidia.com>
+Date:   Thu, 18 Jul 2019 16:08:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190718121628.23991-1-andradanciu1997@gmail.com> <20190718121628.23991-2-andradanciu1997@gmail.com>
-In-Reply-To: <20190718121628.23991-2-andradanciu1997@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 18 Jul 2019 20:05:41 -0300
-Message-ID: <CAOMZO5B-9+JnbfrTWP8GTuc0VcnDDPEZq-iXGbYVx9a6O9gwRg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] arm64: dts: fsl: pico-pi: Add a device tree for
- the PICO-PI-IMX8M
-To:     Andra Danciu <andradanciu1997@gmail.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Li Yang <leoyang.li@nxp.com>, sriram.dash@nxp.com,
-        Lucas Stach <l.stach@pengutronix.de>, pankaj.bansal@nxp.com,
-        Ping Bai <ping.bai@nxp.com>,
-        Pramod Kumar <pramod.kumar_1@nxp.com>,
-        Bhaskar Upadhaya <bhaskar.upadhaya@nxp.com>,
-        Richard Hu <richard.hu@technexion.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1c85cb35-ce7c-1dd1-f637-0c91b2b36db3@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1563491330; bh=yLNZVYwQNwd5XjOkoTIzWL1zxas+oOtZJ/BsjgXV7AI=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=a8Kaxm/LRSqgEimsZBmmEtKiZ4LIzoimQxncG6SF5K5+xsSUGMAUjobMvHfIRVggu
+         3HbgXotNjEh1Zr728hQP2Y+AchtU9PgZLW97Dto8vkSAphlAWjuMJyWhw9wS/nr3P3
+         Xh64WmNpes/FjeCR097eeRTwucLfTTN85qWtOO5unnpBiBXqxRsGGJ0NMZIqUByj67
+         ZecHPfr8cBPfzbStxLdAMNSovcUUkIznF6Fh35hfVI+FRxF3KPmWFMDES+qxxdKPrr
+         mIrZcEwOb2MQZtCt5CZfxk1ImvG94rY4mSgWgD+weDzWx5pe9E92QiDWH+qOmMvsKN
+         cU9hk69fJ5wRA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andra,
 
-On Thu, Jul 18, 2019 at 9:16 AM Andra Danciu <andradanciu1997@gmail.com> wrote:
+On 7/18/19 1:36 PM, Sowjanya Komatineni wrote:
 >
-> From: Richard Hu <richard.hu@technexion.com>
-
-Please put a few words about the board and a link to its webpage, if available.
-
-> The current level of support yields a working console and is able to boot
-> userspace from NFS or init ramdisk.
+> On 7/18/19 1:26 PM, Dmitry Osipenko wrote:
+>> 18.07.2019 22:42, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> On Thu, Jul 18, 2019 at 02:44:56AM +0300, Dmitry Osipenko wrote:
+>>>>> dependencies I am referring are dfll_ref, dfll_soc, and DVFS=20
+>>>>> peripheral
+>>>>> clocks which need to be restored prior to DFLL reinit.
+>>>> Okay, but that shouldn't be a problem if clock dependencies are set up
+>>>> properly.
+>>>>
+>>>>>>> reverse list order during restore might not work as all other=20
+>>>>>>> clocks are
+>>>>>>> in proper order no with any ref clocks for plls getting restored=20
+>>>>>>> prior
+>>>>>>> to their clients
+>>>>>> Why? The ref clocks should be registered first and be the roots=20
+>>>>>> for PLLs
+>>>>>> and the rest. If it's not currently the case, then this need to be
+>>>>>> fixed. You need to ensure that each clock is modeled properly. If=20
+>>>>>> some
+>>>>>> child clock really depends on multiple parents, then the parents=20
+>>>>>> need to
+>>>>>> in the correct order or CCF need to be taught about such
+>>>>>> multi-dependencies.
+>>>>>>
+>>>>>> If some required feature is missed, then you have to implement it
+>>>>>> properly and for all, that's how things are done in upstream.=20
+>>>>>> Sometimes
+>>>>>> it's quite a lot of extra work that everyone are benefiting from in
+>>>>>> the end.
+>>>>>>
+>>>>>> [snip]
+>>>>> Yes, we should register ref/parents before their clients.
+>>>>>
+>>>>> cclk_g clk is registered last after all pll and peripheral clocks are
+>>>>> registers during clock init.
+>>>>>
+>>>>> dfllCPU_out clk is registered later during dfll-fcpu driver probe and
+>>>>> gets added to the clock list.
+>>>>>
+>>>>> Probably the issue seems to be not linking dfll_ref and dfll_soc
+>>>>> dependencies for dfllCPU_out thru clock list.
+>>>>>
+>>>>> clk-dfll driver during dfll_init_clks gets ref_clk and soc_clk=20
+>>>>> reference
+>>>>> thru DT.
+>>> The dfll does not have any parents. It has some clocks which are needed
+>>> for the logic part of the dfll to function, but there's no parent clock
+>>> as such unlike for peripheral clocks or PLLs where the parent is at
+>>> least used as a reference. The I2C controller of the DFLL shares the
+>>> lines with a normal I2C controller using some arbitration logic. That
+>>> logic only works if the clock for the normal I2C controller is enabled.
+>>> So you need probably 3 clocks enabled to initialize the dfll in that
+>>> case. I don't think it makes sense to add complicated logic to the=20
+>>> clock
+>>> core to deal with this rather strange case. To me it makes more=20
+>>> sense to
+>>> use pmops and open code the sequence there.
+>> It looks to me that dfllCPU is a PLL and dfll_ref is its reference
+>> parent, while dfll_soc clocks the logic that dynamically reconfigures
+>> dfllCPU in background. I see that PLLP is defined as a parent for
+>> dfll_ref and dfll_soc in the code. Hence seems dfll_ref should be set as
+>> a parent for dfllCPU, no?
 >
-> Additional subsystems that are active :
->         - Ethernet
->         - USB
+> dfll_soc will not be restored by the time dfllCPU resume happens after=20
+> dfll_ref.
 >
-> Cc: Daniel Baluta <daniel.baluta@nxp.com>
-> Signed-off-by: Richard Hu <richard.hu@technexion.com>
-> Signed-off-by: Andra Danciu <andradanciu1997@gmail.com>
-> ---
->  arch/arm64/boot/dts/freescale/Makefile       |   1 +
->  arch/arm64/boot/dts/freescale/pico-pi-8m.dts | 417 +++++++++++++++++++++++++++
->  2 files changed, 418 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/pico-pi-8m.dts
+> without dfll_soc, dfllCPU cannot be resumed either. So if we decide to=20
+> use parent we should use dfll_soc.
 >
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index c043aca66572..538422903e8a 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -26,3 +26,4 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mq-librem5-devkit.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mq-zii-ultra-rmb3.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8mq-zii-ultra-zest.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8qxp-mek.dtb
-> +dtb-$(CONFIG_ARCH_MXC) += pico-pi-8m.dtb
+>> Either way is good to me, given that DFLL will be disabled during
+>> suspend. Resetting DFLL on DFLL's driver resume using PM ops should be
+>> good. And then it also will be better to error out if DFLL is active
+>> during suspend on the DFLL's driver suspend.
+>
+> Doing in dfll-fcpu pm_ops is much better as it happens right after all=20
+> clocks are restored and unlike other clock enables, dfll need dfll=20
+> controller programming as well and is actually registered in dfll-fcpu=20
+> driver.
+>
+> With this, below is the sequence:
+>
+> CPUFreq suspend switches CPU to PLLP and disables dfll
+>
+> Will add dfll_suspend/resume in dfll-fcpu driver and in dfll suspend=20
+> will check for dfll active and will error out suspend.
+>
+> dfll resume does dfll reinit.
+>
+> CPUFreq resume enables dfll and switches CPU to dfll.
+>
+>
+> Will go with doing in dfll-fcpu pm_ops rather than parenting=20
+> dfllCPU_OUT...
+>
+Does is make sense to return error EBUSY if dfll is not disabled by the=20
+time dfll-fcpu suspend happens?
 
-The convention we use with imx dtbs is to put the SoC name first, so
-that would become:
+Or should I use ETIMEOUT?
 
-imx8mq-pico-pi.dtb
-
-
-> +&iomuxc {
-
-Please place iomuxc node as the last one.
-
-> +&fec1 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_fec1 &pinctrl_enet_3v3>;
-> +       phy-mode = "rgmii-id";
-> +       pinctrl-assert-gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>;
-
-This property does not exist.
-
-> +       phy-handle = <&ethphy0>;
-> +       fsl,magic-packet;
-> +       status = "okay";
-> +
-> +       mdio {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               ethphy0: ethernet-phy@1 {
-> +                       compatible = "ethernet-phy-ieee802.3-c22";
-> +                       reg = <1>;
-> +                       at803x,led-act-blind-workaround;
-> +                       at803x,eee-disabled;
-
-These two properties do not exist.
-
-> +&i2c1 {
-> +       clock-frequency = <100000>;
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_i2c1>;
-> +       status = "okay";
-> +
-> +       pmic: pmic@4b {
-> +               reg = <0x4b>;
-> +               compatible = "rohm,bd71837";
-> +               /* PMIC BD71837 PMIC_nINT GPIO1_IO12 */
-> +               pinctrl-0 = <&pinctrl_pmic>;
-
-pinctrl-names = "default" is missing
-
-> +               gpio_intr = <&gpio1 3 GPIO_ACTIVE_LOW>;
-
-This is not documented.
-
-Please look at Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-for the valid bindings and also at
-arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts for a
-reference for adding the BD71837 support.
-
-> +&A53_0 {
-> +       operating-points = <
-> +               /* kHz    uV */
-> +               1500000 1000000
-> +               1300000 1000000
-> +               1000000 900000
-> +               800000  900000
-
-This is not needed as these operating points are already specified at
-imx8mq.dtsi.
