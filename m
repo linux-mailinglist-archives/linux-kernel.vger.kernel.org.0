@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 160316C63D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:14:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92B916C67D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391897AbfGRDOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:14:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50954 "EHLO mail.kernel.org"
+        id S2391920AbfGRDRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:17:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391876AbfGRDOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:14:43 -0400
+        id S2403761AbfGRDOo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:14:44 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06CB12077C;
-        Thu, 18 Jul 2019 03:14:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8549A2077C;
+        Thu, 18 Jul 2019 03:14:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419682;
-        bh=ygdv+YsAuveBpw2fT4ksARAzgv+byXQjMTAXBDwhsPk=;
+        s=default; t=1563419683;
+        bh=itg0pRBq/p3azo6nmW418GBxQc+VG7W3lq2wVKW9NnQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v+SBUeUSs0Vti+LbklzWUISR8XgkmIPKD3FUtGSF1bjbi+2qI4KQOJE1KUNyKQc0p
-         yVjr9BTFbxYwyM5CBKyvbJIy+irm2xJl/1VZi3RTONTlmYa7BhcboAHi4PuaMMEbkT
-         D6NRjZAYpgJNfgS9Qr+0jWEoCxn0kahztqb2n8YM=
+        b=OLOI3EBEXIENbcn0+ATg2Jzz3Yz9GuQOQsqmIYot/eJjtFsgAwJ5GxC4iOKpuLD8q
+         Ifv+CtWSzFuiatuYkiRBqw273L/T+PLZBJgMRsvInw5sJmllp4cjXyVgBrzAxtUifr
+         VxO5iWjzIyAgBzuUfO+x8OXZe8yIw8Ma+iNH5v1M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?J=C3=B6rgen=20Storvist?= <jorgen.storvist@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 20/40] USB: serial: option: add support for GosunCn ME3630 RNDIS mode
-Date:   Thu, 18 Jul 2019 12:02:16 +0900
-Message-Id: <20190718030046.935324695@linuxfoundation.org>
+        Kiruthika Varadarajan <Kiruthika.Varadarajan@harman.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.4 21/40] usb: gadget: ether: Fix race between gether_disconnect and rx_submit
+Date:   Thu, 18 Jul 2019 12:02:17 +0900
+Message-Id: <20190718030047.194518068@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190718030039.676518610@linuxfoundation.org>
 References: <20190718030039.676518610@linuxfoundation.org>
@@ -44,43 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jörgen Storvist <jorgen.storvist@gmail.com>
+From: Kiruthika Varadarajan <Kiruthika.Varadarajan@harman.com>
 
-commit aed2a26283528fb69c38e414f649411aa48fb391 upstream.
+commit d29fcf7078bc8be2b6366cbd4418265b53c94fac upstream.
 
-Added USB IDs for GosunCn ME3630 cellular module in RNDIS mode.
+On spin lock release in rx_submit, gether_disconnect get a chance to
+run, it makes port_usb NULL, rx_submit access NULL port USB, hence null
+pointer crash.
 
-T:  Bus=03 Lev=01 Prnt=01 Port=01 Cnt=03 Dev#= 18 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=19d2 ProdID=0601 Rev=03.18
-S:  Manufacturer=Android
-S:  Product=Android
-S:  SerialNumber=b950269c
-C:  #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#=0x0 Alt= 0 #EPs= 1 Cls=e0(wlcon) Sub=01 Prot=03 Driver=rndis_host
-I:  If#=0x1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=rndis_host
-I:  If#=0x2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-I:  If#=0x3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#=0x4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+Fixed by releasing the lock in rx_submit after port_usb is used.
 
-Signed-off-by: Jörgen Storvist <jorgen.storvist@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fixes: 2b3d942c4878 ("usb ethernet gadget: split out network core")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Kiruthika Varadarajan <Kiruthika.Varadarajan@harman.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/option.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/gadget/function/u_ether.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -1338,6 +1338,7 @@ static const struct usb_device_id option
- 	  .driver_info = RSVD(4) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x0414, 0xff, 0xff, 0xff) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x0417, 0xff, 0xff, 0xff) },
-+	{ USB_DEVICE_INTERFACE_CLASS(ZTE_VENDOR_ID, 0x0601, 0xff) },	/* GosunCn ZTE WeLink ME3630 (RNDIS mode) */
- 	{ USB_DEVICE_INTERFACE_CLASS(ZTE_VENDOR_ID, 0x0602, 0xff) },	/* GosunCn ZTE WeLink ME3630 (MBIM mode) */
- 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1008, 0xff, 0xff, 0xff),
- 	  .driver_info = RSVD(4) },
+--- a/drivers/usb/gadget/function/u_ether.c
++++ b/drivers/usb/gadget/function/u_ether.c
+@@ -207,11 +207,12 @@ rx_submit(struct eth_dev *dev, struct us
+ 		out = dev->port_usb->out_ep;
+ 	else
+ 		out = NULL;
+-	spin_unlock_irqrestore(&dev->lock, flags);
+ 
+ 	if (!out)
++	{
++		spin_unlock_irqrestore(&dev->lock, flags);
+ 		return -ENOTCONN;
+-
++	}
+ 
+ 	/* Padding up to RX_EXTRA handles minor disagreements with host.
+ 	 * Normally we use the USB "terminate on short read" convention;
+@@ -232,6 +233,7 @@ rx_submit(struct eth_dev *dev, struct us
+ 
+ 	if (dev->port_usb->is_fixed)
+ 		size = max_t(size_t, size, dev->port_usb->fixed_out_len);
++	spin_unlock_irqrestore(&dev->lock, flags);
+ 
+ 	skb = alloc_skb(size + NET_IP_ALIGN, gfp_flags);
+ 	if (skb == NULL) {
 
 
