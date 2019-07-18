@@ -2,192 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF72A6C837
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 06:00:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1FA06C83C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 06:06:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbfGREAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 00:00:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46888 "EHLO mail.kernel.org"
+        id S1726659AbfGREGr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 00:06:47 -0400
+Received: from m12-17.163.com ([220.181.12.17]:43218 "EHLO m12-17.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725613AbfGREAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 00:00:07 -0400
-Received: from localhost (unknown [104.132.1.68])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 748FF2085A;
-        Thu, 18 Jul 2019 04:00:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563422406;
-        bh=XHxvAzXMESKUif9uHHTNssIoixW2oCEvuFfuaMJvfk0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OUR/nfX0mtrLRj8tgV95jebAyyh7jJxswB1enkiX1ZqrDdbuMTCHtvnPsnYRyGv8k
-         2pIBsuQlN64LIFelNWLBibjALSnahA0kdNaOzJ+2N8tMdrdfrUxST/iFSRGjAQLMyc
-         J77HQTOVyRqOdvgT4R4lwbFRWoIFOJLxraYARLFA=
-Date:   Wed, 17 Jul 2019 21:00:05 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to read source block before
- invalidating it
-Message-ID: <20190718040005.GA81995@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190718013718.70335-1-jaegeuk@kernel.org>
- <20190718031214.GA78336@jaegeuk-macbookpro.roam.corp.google.com>
- <19a25101-da74-de98-6ca4-a9fd9fa09ef2@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19a25101-da74-de98-6ca4-a9fd9fa09ef2@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+        id S1725976AbfGREGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 00:06:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=knoKCX55PhQ0en+A33
+        V0OQf+LqeP1gKbcJi8ENBx2k4=; b=Sa2Z0P88qtO0ECsr8F6/0hxX2ZcqqiCvSn
+        /vGKlpjKhJz7cfMtBEvCmOoLabWKdE9nKtF5mee/OkStkjECsFe0bFWmBw4cpGoz
+        UNz1rtysG4sY37sbfxdGP8O9krRzp+mAlz8vccbOLRwZW/0yuAvjCoRD8LhM0PCU
+        tYKeXk6oA=
+Received: from e69c04485.et15sqa.tbsite.net (unknown [106.11.237.24])
+        by smtp13 (Coremail) with SMTP id EcCowADXNREb8C9dJVEiEA--.864S2;
+        Thu, 18 Jul 2019 12:05:51 +0800 (CST)
+From:   luferry@163.com
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        linux-kernel@vger.kernel.org, luferry <luferry@163.com>
+Subject: [PATCH] smp: avoid generic_exec_single cause system lockup
+Date:   Thu, 18 Jul 2019 12:04:38 +0800
+Message-Id: <20190718040438.62433-1-luferry@163.com>
+X-Mailer: git-send-email 2.14.1.40.g8e62ba1
+X-CM-TRANSID: EcCowADXNREb8C9dJVEiEA--.864S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar4DXr1UKr13JrWUWw15Jwb_yoW8uryxpF
+        W8GrnrCw4jqa4Iy3srJw4fZ3yUJw4rJrWakFs5C393Aw42qF95XF9akF4FqayF9wn29FWY
+        vrs5ZFW0yw1UAr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jjPfQUUUUU=
+X-Originating-IP: [106.11.237.24]
+X-CM-SenderInfo: poxiv2lu16il2tof0z/xtbBax-1Wletwg-4fAAAso
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/18, Chao Yu wrote:
-> On 2019/7/18 11:12, Jaegeuk Kim wrote:
-> > f2fs_allocate_data_block() invalidates old block address and enable new block
-> > address. Then, if we try to read old block by f2fs_submit_page_bio(), it will
-> > give WARN due to reading invalid blocks.
-> > 
-> > Let's make the order sanely back.
-> 
-> Hmm.. to avoid WARM, we may suffer one more memcpy, I suspect this can reduce
-> online resize or foreground gc ioctl performance...
+From: luferry <luferry@163.com>
 
-I worried about performance tho, more concern came to me that there may exist a
-chance that other thread can allocate and write something in old block address.
+The race can reproduced by sending wait enabled IPI in softirq/irq env
 
-> 
-> Can we just relief to use DATA_GENERIC_ENHANCE_READ for this case...?
+src cpu only send ipi when dst cpu with queue empty, if interrupts
+disturbed between llist_add and send_ipi. Interrupt handler may raise
+softirq.In irq env, if src cpu try send_ipi to same dst cpu with
+wait enabled. Since dst cpu's queue is not empty, src cpu won't send
+ipi and dst cpu won't be waked up. src cpu will stall in
+csd_lock_wait(csd). Which may cause soft lockup or hard lockup depends on
+which time other cpus do send IPI to dst cpu.
 
-We need to keep consistency for this api.
+So just send IPI when wait enabled and in_interrupt()
 
-Thanks,
+if (llist_add(&csd->llist, &per_cpu(call_single_queue, cpu)))
+	// src cpu got interrupt here
+     arch_send_call_function_single_ipi(cpu);
 
-> 
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> 
-> Except performance, I'm okay with this change.
-> 
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> 
-> Thanks,
-> 
-> > ---
-> > v2:
-> > I was fixing the comments. :)
-> > 
-> >  fs/f2fs/gc.c | 70 +++++++++++++++++++++++++---------------------------
-> >  1 file changed, 34 insertions(+), 36 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > index 6691f526fa40..8974672db78f 100644
-> > --- a/fs/f2fs/gc.c
-> > +++ b/fs/f2fs/gc.c
-> > @@ -796,6 +796,29 @@ static int move_data_block(struct inode *inode, block_t bidx,
-> >  	if (lfs_mode)
-> >  		down_write(&fio.sbi->io_order_lock);
-> >  
-> > +	mpage = f2fs_grab_cache_page(META_MAPPING(fio.sbi),
-> > +					fio.old_blkaddr, false);
-> > +	if (!mpage)
-> > +		goto up_out;
-> > +
-> > +	fio.encrypted_page = mpage;
-> > +
-> > +	/* read source block in mpage */
-> > +	if (!PageUptodate(mpage)) {
-> > +		err = f2fs_submit_page_bio(&fio);
-> > +		if (err) {
-> > +			f2fs_put_page(mpage, 1);
-> > +			goto up_out;
-> > +		}
-> > +		lock_page(mpage);
-> > +		if (unlikely(mpage->mapping != META_MAPPING(fio.sbi) ||
-> > +						!PageUptodate(mpage))) {
-> > +			err = -EIO;
-> > +			f2fs_put_page(mpage, 1);
-> > +			goto up_out;
-> > +		}
-> > +	}
-> > +
-> >  	f2fs_allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
-> >  					&sum, CURSEG_COLD_DATA, NULL, false);
-> >  
-> > @@ -803,44 +826,18 @@ static int move_data_block(struct inode *inode, block_t bidx,
-> >  				newaddr, FGP_LOCK | FGP_CREAT, GFP_NOFS);
-> >  	if (!fio.encrypted_page) {
-> >  		err = -ENOMEM;
-> > -		goto recover_block;
-> > -	}
-> > -
-> > -	mpage = f2fs_pagecache_get_page(META_MAPPING(fio.sbi),
-> > -					fio.old_blkaddr, FGP_LOCK, GFP_NOFS);
-> > -	if (mpage) {
-> > -		bool updated = false;
-> > -
-> > -		if (PageUptodate(mpage)) {
-> > -			memcpy(page_address(fio.encrypted_page),
-> > -					page_address(mpage), PAGE_SIZE);
-> > -			updated = true;
-> > -		}
-> >  		f2fs_put_page(mpage, 1);
-> > -		invalidate_mapping_pages(META_MAPPING(fio.sbi),
-> > -					fio.old_blkaddr, fio.old_blkaddr);
-> > -		if (updated)
-> > -			goto write_page;
-> > -	}
-> > -
-> > -	err = f2fs_submit_page_bio(&fio);
-> > -	if (err)
-> > -		goto put_page_out;
-> > -
-> > -	/* write page */
-> > -	lock_page(fio.encrypted_page);
-> > -
-> > -	if (unlikely(fio.encrypted_page->mapping != META_MAPPING(fio.sbi))) {
-> > -		err = -EIO;
-> > -		goto put_page_out;
-> > -	}
-> > -	if (unlikely(!PageUptodate(fio.encrypted_page))) {
-> > -		err = -EIO;
-> > -		goto put_page_out;
-> > +		goto recover_block;
-> >  	}
-> >  
-> > -write_page:
-> > +	/* write target block */
-> >  	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA, true, true);
-> > +	memcpy(page_address(fio.encrypted_page),
-> > +				page_address(mpage), PAGE_SIZE);
-> > +	f2fs_put_page(mpage, 1);
-> > +	invalidate_mapping_pages(META_MAPPING(fio.sbi),
-> > +				fio.old_blkaddr, fio.old_blkaddr);
-> > +
-> >  	set_page_dirty(fio.encrypted_page);
-> >  	if (clear_page_dirty_for_io(fio.encrypted_page))
-> >  		dec_page_count(fio.sbi, F2FS_DIRTY_META);
-> > @@ -871,11 +868,12 @@ static int move_data_block(struct inode *inode, block_t bidx,
-> >  put_page_out:
-> >  	f2fs_put_page(fio.encrypted_page, 1);
-> >  recover_block:
-> > -	if (lfs_mode)
-> > -		up_write(&fio.sbi->io_order_lock);
-> >  	if (err)
-> >  		f2fs_do_replace_block(fio.sbi, &sum, newaddr, fio.old_blkaddr,
-> >  								true, true);
-> > +up_out:
-> > +	if (lfs_mode)
-> > +		up_write(&fio.sbi->io_order_lock);
-> >  put_out:
-> >  	f2fs_put_dnode(&dn);
-> >  out:
-> > 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+CPU0                                   CPU1
+
+kernel env:smp_call_function         call_single_queue empty
+kernel env:llist_add
+                                       call_single_queue got csd
+get interrupt
+raise softirq
+irq env:smp_call_function with wait
+irq env:llist_add
+irq env:queue not empty and skip send ipi
+irq env:waiting for csd execution
+
+Signed-off-by: luferry <luferry@163.com>
+---
+ kernel/smp.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/smp.c b/kernel/smp.c
+index d155374632eb..de31a49b9fa7 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -142,9 +142,8 @@ static DEFINE_PER_CPU_SHARED_ALIGNED(call_single_data_t, csd_data);
+ static int generic_exec_single(int cpu, call_single_data_t *csd,
+ 			       smp_call_func_t func, void *info)
+ {
++	unsigned long flags;
+ 	if (cpu == smp_processor_id()) {
+-		unsigned long flags;
+-
+ 		/*
+ 		 * We can unlock early even for the synchronous on-stack case,
+ 		 * since we're doing this from the same CPU..
+@@ -176,8 +175,10 @@ static int generic_exec_single(int cpu, call_single_data_t *csd,
+ 	 * locking and barrier primitives. Generic code isn't really
+ 	 * equipped to do the right thing...
+ 	 */
++	local_irq_save(flags);
+ 	if (llist_add(&csd->llist, &per_cpu(call_single_queue, cpu)))
+ 		arch_send_call_function_single_ipi(cpu);
++	local_irq_restore(flags);
+ 
+ 	return 0;
+ }
+-- 
+2.14.1.40.g8e62ba1
+
+
