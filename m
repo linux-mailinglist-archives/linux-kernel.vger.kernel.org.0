@@ -2,53 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD9FB6D260
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 18:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24EDF6D265
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 18:53:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390957AbfGRQuU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 12:50:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33220 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390323AbfGRQuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 12:50:18 -0400
-Subject: Re: [GIT PULL] sound fixes for 5.3-rc1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563468617;
-        bh=YmJhX/tMxM3yDYef/MStj63pU5kcSA7S06sIfI4oBP0=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=OvhGCLeBaiNncrrQsyRFnW5WEGcdX1Vsih2aR+0iWnnthoA9G9vwU7c0BUYP00IiD
-         dAtuT+t+jOc+OXyt1gauqa+glfxGlGN6+S04Zjsq1yV5R262A30TkISwyOixu+FFzX
-         VLT1BfX3A3NPtGyxDRhIEFX0N4bFm41Ayg/jCi28=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <s5hblxrpsl7.wl-tiwai@suse.de>
-References: <s5hblxrpsl7.wl-tiwai@suse.de>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <s5hblxrpsl7.wl-tiwai@suse.de>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
- tags/sound-fix-5.3-rc1
-X-PR-Tracked-Commit-Id: 4914da2fb0c89205790503f20dfdde854f3afdd8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2ae048e16636afd7521270acacb08d9c42fd23f0
-Message-Id: <156346861733.19804.1983223122027489541.pr-tracker-bot@kernel.org>
-Date:   Thu, 18 Jul 2019 16:50:17 +0000
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        id S2388540AbfGRQwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 12:52:38 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38047 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbfGRQwh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 12:52:37 -0400
+Received: by mail-lf1-f68.google.com with SMTP id h28so19697282lfj.5;
+        Thu, 18 Jul 2019 09:52:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=msbWUMjaCYaeI+P4QPRR4G+PLwfYrUtOEdjRRhRs8og=;
+        b=W9OTgOWhyZ7CZ+ZkvnsG1LJ0eXh+ID7kS7urAeOAzeQWiyE6XD8i38jHVyeNT0q2Z2
+         nOclhxk4LztvqoroRO0hn+sd0fYbhYbMhoedaaX9YZx2MAYKb3Y7flfXimD8UdPSuV9g
+         KeGjuGLYLHhFiNv1lsbPXzxwh+3TZWLJbgtlLUyaBpH90s085clpNJrI4Od+dqTwDKxc
+         /TNx6CwOUV0R2yh8AHYQTaE4K916DLo29Rs+whWjMfug6WyNJ9bdtGxifl8H05DLQAhv
+         Y5fCWODDxQa4a/F/PcokY/O5i4zx5F6WdzJKGcq0QoLTHYuM1IkehuHTyVnEHC7ymwUV
+         rfkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=msbWUMjaCYaeI+P4QPRR4G+PLwfYrUtOEdjRRhRs8og=;
+        b=F9lV7OVcjDGIgxnpoAtgb2qeVUh9vKvV5xN40iluDzcNRHJxwStMKa5BbsBjQgvOUh
+         8LF+Y7pghk5pSivgNqPDec3k75zvxYSY6WlCvbLdmmd02+8XNgQPy/1vL0DfH/NnmOQc
+         jKIbW9nG9/nOwviRgli624t1+bsrxjhs1cH2HJfCjNmae1KOrJP9BhrkVXReIBVIKz1C
+         CUVTDhkUGMOOqHPe8kOKVjmOExI5NCKwEjleXygEDU/dzRw9zAQnVsd/EQsFCywNgL/K
+         yB2XTj+gFZ+UteAw0hBOhnATbEu1rBiGEUseepq+zrDQdbNWwqQ/tsW1i4q126ehLnAq
+         bxEw==
+X-Gm-Message-State: APjAAAW0hZfba1SuE/hibUctqAHGUdu7OdVjWmzjAXhHRiXrfknKYs0Z
+        /lWBMx7OHNj0u7CMGToVc0tcLaj4IFmByhwbAjs=
+X-Google-Smtp-Source: APXvYqykUCdgoXyNEBAmDUL8YztRIX9tovJrHvYZtEhZmx25YAGdLqPvUOFBKjN4aW4qJn8POWC1aDXCVzUONyoVht0=
+X-Received: by 2002:a19:cbd3:: with SMTP id b202mr21894063lfg.185.1563468755252;
+ Thu, 18 Jul 2019 09:52:35 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190718143428.2392-1-TheSven73@gmail.com> <1563468471.2676.36.camel@pengutronix.de>
+In-Reply-To: <1563468471.2676.36.camel@pengutronix.de>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Thu, 18 Jul 2019 13:52:23 -0300
+Message-ID: <CAOMZO5A_BuWMr1n_fFv4veyaXdcfjxO+9nFAgGfCrmAhNmzV5g@mail.gmail.com>
+Subject: Re: [PATCH] net: fec: generate warning when using deprecated phy reset
+To:     Lucas Stach <l.stach@pengutronix.de>
+Cc:     Sven Van Asbroeck <thesven73@gmail.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 18 Jul 2019 12:03:48 +0200:
+On Thu, Jul 18, 2019 at 1:49 PM Lucas Stach <l.stach@pengutronix.de> wrote:
+>
+> Am Donnerstag, den 18.07.2019, 10:34 -0400 schrieb Sven Van Asbroeck:
+> > Allowing the fec to reset its PHY via the phy-reset-gpios
+> > devicetree property is deprecated. To improve developer
+> > awareness, generate a warning whenever the deprecated
+> > property is used.
+>
+> Not really a fan of this. This will cause existing DTs, which are
+> provided by the firmware in an ideal world and may not change at the
+> same rate as the kernel, to generate a warning with new kernels. Not
+> really helpful from the user experience point of view.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-fix-5.3-rc1
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2ae048e16636afd7521270acacb08d9c42fd23f0
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+I agree. I don't think this warning is useful.
