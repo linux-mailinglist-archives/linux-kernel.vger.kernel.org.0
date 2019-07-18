@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 939466C5DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:11:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A81A56C6BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:19:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390760AbfGRDKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:10:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43704 "EHLO mail.kernel.org"
+        id S2390904AbfGRDMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:12:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391176AbfGRDK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:10:27 -0400
+        id S2403924AbfGRDMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:12:13 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8F5920818;
-        Thu, 18 Jul 2019 03:10:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3F9E2053B;
+        Thu, 18 Jul 2019 03:12:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419426;
-        bh=ly62QCqzHy8b9qjSMa/DCfvrqlOs+AW3g4Ujo+qJVQM=;
+        s=default; t=1563419532;
+        bh=AsEgbgRxH0Tp+ZFrZIy9i6uRXoJJUF6eGevBzFtOm00=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O6Fpe1rCx+jlfxFSBWxKozjWRTDa7HbB3M7MYDeLAf3wXcNYsJmiwic86+8vsFtPb
-         Yb2PzNpvLsp19qfedR68mc8FNH6ZvcGNZykIBk8+cXB/sJYV8izF/h51FSBbczdYHf
-         ydB6BNB3Trv5ylJHjtal6+f5+4PCGxfNwHyMpUs8=
+        b=Tx5+/jXTlulukNt9MylD7TBU7gkZ2e/WqIm5xfHjI/pmFMvS8UWv8DSLkSfMYiPpU
+         W3uJbOMFRad4xxxHeH9pXF0GhNpNMLKjplpOuKTJDTLf8uubM2ksa9k2jHUpiZ/1Gt
+         1dBrPn83gWiS+PI3k2JCOGo+9rzee9iIPMwKeQdI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dianzhang Chen <dianzhangchen0@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
-        hpa@zytor.com
-Subject: [PATCH 4.14 44/80] x86/ptrace: Fix possible spectre-v1 in ptrace_get_debugreg()
+        stable@vger.kernel.org, Thomas Pedersen <thomas@eero.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 05/54] mac80211: mesh: fix RCU warning
 Date:   Thu, 18 Jul 2019 12:01:35 +0900
-Message-Id: <20190718030102.046131823@linuxfoundation.org>
+Message-Id: <20190718030049.461266618@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
-References: <20190718030058.615992480@linuxfoundation.org>
+In-Reply-To: <20190718030048.392549994@linuxfoundation.org>
+References: <20190718030048.392549994@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dianzhang Chen <dianzhangchen0@gmail.com>
+[ Upstream commit 551842446ed695641a00782cd118cbb064a416a1 ]
 
-commit 31a2fbb390fee4231281b939e1979e810f945415 upstream.
+ifmsh->csa is an RCU-protected pointer. The writer context
+in ieee80211_mesh_finish_csa() is already mutually
+exclusive with wdev->sdata.mtx, but the RCU checker did
+not know this. Use rcu_dereference_protected() to avoid a
+warning.
 
-The index to access the threads ptrace_bps is controlled by userspace via
-syscall: sys_ptrace(), hence leading to a potential exploitation of the
-Spectre variant 1 vulnerability.
+fixes the following warning:
 
-The index can be controlled from:
-    ptrace -> arch_ptrace -> ptrace_get_debugreg.
+[   12.519089] =============================
+[   12.520042] WARNING: suspicious RCU usage
+[   12.520652] 5.1.0-rc7-wt+ #16 Tainted: G        W
+[   12.521409] -----------------------------
+[   12.521972] net/mac80211/mesh.c:1223 suspicious rcu_dereference_check() usage!
+[   12.522928] other info that might help us debug this:
+[   12.523984] rcu_scheduler_active = 2, debug_locks = 1
+[   12.524855] 5 locks held by kworker/u8:2/152:
+[   12.525438]  #0: 00000000057be08c ((wq_completion)phy0){+.+.}, at: process_one_work+0x1a2/0x620
+[   12.526607]  #1: 0000000059c6b07a ((work_completion)(&sdata->csa_finalize_work)){+.+.}, at: process_one_work+0x1a2/0x620
+[   12.528001]  #2: 00000000f184ba7d (&wdev->mtx){+.+.}, at: ieee80211_csa_finalize_work+0x2f/0x90
+[   12.529116]  #3: 00000000831a1f54 (&local->mtx){+.+.}, at: ieee80211_csa_finalize_work+0x47/0x90
+[   12.530233]  #4: 00000000fd06f988 (&local->chanctx_mtx){+.+.}, at: ieee80211_csa_finalize_work+0x51/0x90
 
-Fix this by sanitizing the user supplied index before using it access
-thread->ptrace_bps.
-
-Signed-off-by: Dianzhang Chen <dianzhangchen0@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/1561476617-3759-1-git-send-email-dianzhangchen0@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Thomas Pedersen <thomas@eero.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/ptrace.c |    5 ++++-
+ net/mac80211/mesh.c | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/ptrace.c
-+++ b/arch/x86/kernel/ptrace.c
-@@ -24,6 +24,7 @@
- #include <linux/rcupdate.h>
- #include <linux/export.h>
- #include <linux/context_tracking.h>
-+#include <linux/nospec.h>
+diff --git a/net/mac80211/mesh.c b/net/mac80211/mesh.c
+index b2a27263d6ff..7f902e69530f 100644
+--- a/net/mac80211/mesh.c
++++ b/net/mac80211/mesh.c
+@@ -1135,7 +1135,8 @@ int ieee80211_mesh_finish_csa(struct ieee80211_sub_if_data *sdata)
+ 	ifmsh->chsw_ttl = 0;
  
- #include <linux/uaccess.h>
- #include <asm/pgtable.h>
-@@ -651,9 +652,11 @@ static unsigned long ptrace_get_debugreg
- {
- 	struct thread_struct *thread = &tsk->thread;
- 	unsigned long val = 0;
-+	int index = n;
+ 	/* Remove the CSA and MCSP elements from the beacon */
+-	tmp_csa_settings = rcu_dereference(ifmsh->csa);
++	tmp_csa_settings = rcu_dereference_protected(ifmsh->csa,
++					    lockdep_is_held(&sdata->wdev.mtx));
+ 	RCU_INIT_POINTER(ifmsh->csa, NULL);
+ 	if (tmp_csa_settings)
+ 		kfree_rcu(tmp_csa_settings, rcu_head);
+@@ -1157,6 +1158,8 @@ int ieee80211_mesh_csa_beacon(struct ieee80211_sub_if_data *sdata,
+ 	struct mesh_csa_settings *tmp_csa_settings;
+ 	int ret = 0;
  
- 	if (n < HBP_NUM) {
--		struct perf_event *bp = thread->ptrace_bps[n];
-+		struct perf_event *bp = thread->ptrace_bps[index];
-+		index = array_index_nospec(index, HBP_NUM);
- 
- 		if (bp)
- 			val = bp->hw.info.address;
++	lockdep_assert_held(&sdata->wdev.mtx);
++
+ 	tmp_csa_settings = kmalloc(sizeof(*tmp_csa_settings),
+ 				   GFP_ATOMIC);
+ 	if (!tmp_csa_settings)
+-- 
+2.20.1
+
 
 
