@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85BCE6C725
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:22:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 966406C717
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:22:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392017AbfGRDVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:21:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42184 "EHLO mail.kernel.org"
+        id S2391031AbfGRDJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:09:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390439AbfGRDJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:09:34 -0400
+        id S2390210AbfGRDJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:09:37 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E03C2173E;
-        Thu, 18 Jul 2019 03:09:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D8142173E;
+        Thu, 18 Jul 2019 03:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419373;
-        bh=Z19F6dIFva6wO8YOEqkB/IQngl30hrlIzSWm5TdpYRg=;
+        s=default; t=1563419376;
+        bh=KY1pTVSVOlB8zydh/WnqEu8LohWlLxvY35Ylhs8yDY4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e0Q6+DTzfw/C2P+VcLYjT2DMHS1m8AjrFCGc0A/9Dndw+oQ1NwHa8s0qUrULOXvys
-         pJr25DOo7ACIg6UNyaXjP3bk/MG712IuItXxfaoJ5BPpkA+YZrjlLNVSPyVKqF1nRZ
-         ZtQJwHFgHqS4aJw+cWuKU/f/O8v0RdP1+aMMIxLQ=
+        b=Rw36N548/BqRQ/psP2JKeYT4dGzNdre5UqRkCqnP0/pOv9YXNX+yt9TbA1nGOheag
+         32g2SbwzXeistbMl0KgAhDGloFJhFVMWYrHudf2TcdEbTkJBUvFjsSelpxeAZX7DNA
+         j72w0EPae7evjPmTTATBoQokX3LfCJ0f3ztd5g+8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org, Teresa Remmet <t.remmet@phytec.de>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 20/80] can: af_can: Fix error path of can_init()
-Date:   Thu, 18 Jul 2019 12:01:11 +0900
-Message-Id: <20190718030100.413550821@linuxfoundation.org>
+Subject: [PATCH 4.14 22/80] ARM: dts: am335x phytec boards: Fix cd-gpios active level
+Date:   Thu, 18 Jul 2019 12:01:13 +0900
+Message-Id: <20190718030100.540918640@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
 References: <20190718030058.615992480@linuxfoundation.org>
@@ -45,68 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c5a3aed1cd3152429348ee1fe5cdcca65fe901ce ]
+[ Upstream commit 8a0098c05a272c9a68f6885e09755755b612459c ]
 
-This patch add error path for can_init() to avoid possible crash if some
-error occurs.
+Active level of the mmc1 cd gpio needs to be low instead of high.
+Fix PCM-953 and phyBOARD-WEGA.
 
-Fixes: 0d66548a10cb ("[CAN]: Add PF_CAN core module")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Teresa Remmet <t.remmet@phytec.de>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/can/af_can.c | 24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/am335x-pcm-953.dtsi | 2 +-
+ arch/arm/boot/dts/am335x-wega.dtsi    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/can/af_can.c b/net/can/af_can.c
-index 9de9678fa7d0..46c85731d16f 100644
---- a/net/can/af_can.c
-+++ b/net/can/af_can.c
-@@ -959,6 +959,8 @@ static struct pernet_operations can_pernet_ops __read_mostly = {
+diff --git a/arch/arm/boot/dts/am335x-pcm-953.dtsi b/arch/arm/boot/dts/am335x-pcm-953.dtsi
+index 1ec8e0d80191..572fbd254690 100644
+--- a/arch/arm/boot/dts/am335x-pcm-953.dtsi
++++ b/arch/arm/boot/dts/am335x-pcm-953.dtsi
+@@ -197,7 +197,7 @@
+ 	bus-width = <4>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc1_pins>;
+-	cd-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
++	cd-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
+ 	status = "okay";
+ };
  
- static __init int can_init(void)
- {
-+	int err;
-+
- 	/* check for correct padding to be able to use the structs similarly */
- 	BUILD_BUG_ON(offsetof(struct can_frame, can_dlc) !=
- 		     offsetof(struct canfd_frame, len) ||
-@@ -972,15 +974,31 @@ static __init int can_init(void)
- 	if (!rcv_cache)
- 		return -ENOMEM;
+diff --git a/arch/arm/boot/dts/am335x-wega.dtsi b/arch/arm/boot/dts/am335x-wega.dtsi
+index 8ce541739b24..83e4fe595e37 100644
+--- a/arch/arm/boot/dts/am335x-wega.dtsi
++++ b/arch/arm/boot/dts/am335x-wega.dtsi
+@@ -157,7 +157,7 @@
+ 	bus-width = <4>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc1_pins>;
+-	cd-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
++	cd-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
+ 	status = "okay";
+ };
  
--	register_pernet_subsys(&can_pernet_ops);
-+	err = register_pernet_subsys(&can_pernet_ops);
-+	if (err)
-+		goto out_pernet;
- 
- 	/* protocol register */
--	sock_register(&can_family_ops);
--	register_netdevice_notifier(&can_netdev_notifier);
-+	err = sock_register(&can_family_ops);
-+	if (err)
-+		goto out_sock;
-+	err = register_netdevice_notifier(&can_netdev_notifier);
-+	if (err)
-+		goto out_notifier;
-+
- 	dev_add_pack(&can_packet);
- 	dev_add_pack(&canfd_packet);
- 
- 	return 0;
-+
-+out_notifier:
-+	sock_unregister(PF_CAN);
-+out_sock:
-+	unregister_pernet_subsys(&can_pernet_ops);
-+out_pernet:
-+	kmem_cache_destroy(rcv_cache);
-+
-+	return err;
- }
- 
- static __exit void can_exit(void)
 -- 
 2.20.1
 
