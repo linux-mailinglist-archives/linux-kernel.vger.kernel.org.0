@@ -2,70 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E28D6C83A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 06:05:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D00F26C840
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 06:13:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726578AbfGREFC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 00:05:02 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:47026 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbfGREFB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 00:05:01 -0400
-Received: by mail-io1-f69.google.com with SMTP id s83so29474795iod.13
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 21:05:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=rO6mN9k+vHdaOKXwiYK6lb8yy3omdcgM9VwY0e87b1I=;
-        b=SdkppBhEcyCsEXFnnA52TwtkFFyX0qsuUK93sSM5GX0ez52EGJlmCYnYcUaoAuX5cT
-         6Dqxbyezr6Ykt5MkKC6xQgVs/17yt6oaZiJW+/Ttauy6Ab/GxecYzdhJokOJ9QhcyWUT
-         SKVbYTBNVrC8bx2JRretW3ha8qowwOkRg+4y+ScaNnTsPOe6WzC1OQdtoEV46pSmC5Q9
-         N4PfKo3GaQBgUmUgQ3+Tacf97sylALIR1R45VFwlQW9W1YqtSEiB+f3fZeg76KKdP63N
-         24poedTSov2zj51zhWV+HTz7ekYZsfP26SeX9qS19t6fSwMPA1qRhFM2/enpc3kPFEN5
-         CPnA==
-X-Gm-Message-State: APjAAAXZuOTOj0KPzcD8iDzxZElF8EAUoM3B1zy++cm2P5sZZzMu6fKN
-        yBB+7bDPEQtUVwNW8eMCaiJX4lnSOwZYBykw7ShEKFj1uAsA
-X-Google-Smtp-Source: APXvYqyoTku210g3yO2ZxIoWRjLSWWYoJ7AIdVEja+ew4AgEiBHjNVm32t+GYNCHZjF/KU+MOvu5h3cIJpyzx3miUXglcYu1pfp9
+        id S1726693AbfGRENb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 00:13:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58142 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725976AbfGRENa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 00:13:30 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9E1FFC053B34;
+        Thu, 18 Jul 2019 04:13:29 +0000 (UTC)
+Received: from redhat.com (ovpn-120-147.rdu2.redhat.com [10.10.120.147])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 1D7AC600D1;
+        Thu, 18 Jul 2019 04:13:16 +0000 (UTC)
+Date:   Thu, 18 Jul 2019 00:13:15 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     "Wang, Wei W" <wei.w.wang@intel.com>
+Cc:     Alexander Duyck <alexander.duyck@gmail.com>,
+        Nitesh Narayan Lal <nitesh@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yang Zhang <yang.zhang.wz@gmail.com>,
+        "pagupta@redhat.com" <pagupta@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Subject: Re: use of shrinker in virtio balloon free page hinting
+Message-ID: <20190718000434-mutt-send-email-mst@kernel.org>
+References: <20190717071332-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F73E16D4B2@shsmsx102.ccr.corp.intel.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:7a5c:: with SMTP id z28mr45781722jad.40.1563422701068;
- Wed, 17 Jul 2019 21:05:01 -0700 (PDT)
-Date:   Wed, 17 Jul 2019 21:05:01 -0700
-In-Reply-To: <0000000000007e8b70058acbd60f@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bb2b51058decb6a2@google.com>
-Subject: Re: KASAN: use-after-free Read in nr_release
-From:   syzbot <syzbot+6eaef7158b19e3fec3a0@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, hdanton@sina.com, linux-hams@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        ralf@linux-mips.org, syzkaller-bugs@googlegroups.com,
-        xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <286AC319A985734F985F78AFA26841F73E16D4B2@shsmsx102.ccr.corp.intel.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 18 Jul 2019 04:13:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+On Wed, Jul 17, 2019 at 03:46:57PM +0000, Wang, Wei W wrote:
+> On Wednesday, July 17, 2019 7:21 PM, Michael S. Tsirkin wrote:
+> > 
+> > Wei, others,
+> > 
+> > ATM virtio_balloon_shrinker_scan will only get registered when deflate on
+> > oom feature bit is set.
+> > 
+> > Not sure whether that's intentional. 
+> 
+> Yes, we wanted to follow the old oom behavior, which allows the oom notifier
+> to deflate pages only when this feature bit has been negotiated.
 
-commit c8c8218ec5af5d2598381883acbefbf604e56b5e
-Author: Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Thu Jun 27 21:30:58 2019 +0000
+It makes sense for pages in the balloon (requested by hypervisor).
+However free page hinting can freeze up lots of memory for its own
+internal reasons. It does not make sense to ask hypervisor
+to set flags in order to fix internal guest issues.
 
-     netrom: fix a memory leak in nr_rx_frame()
+> > Assuming it is:
+> > 
+> > virtio_balloon_shrinker_scan will try to locate and free pages that are
+> > processed by host.
+> > The above seems broken in several ways:
+> > - count ignores the free page list completely
+> 
+> Do you mean virtio_balloon_shrinker_count()? It just reports to
+> do_shrink_slab the amount of freeable memory that balloon has.
+> (vb->num_pages and vb->num_free_page_blocks are all included )
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10a3bcd0600000
-start commit:   192f0f8e Merge tag 'powerpc-5.3-1' of git://git.kernel.org..
-git tree:       net-next
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=12a3bcd0600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a3bcd0600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=87305c3ca9c25c70
-dashboard link: https://syzkaller.appspot.com/bug?extid=6eaef7158b19e3fec3a0
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15882cd0600000
+Right. But that does not include the pages in the hint vq,
+which could be a significant amount of memory.
 
-Reported-by: syzbot+6eaef7158b19e3fec3a0@syzkaller.appspotmail.com
-Fixes: c8c8218ec5af ("netrom: fix a memory leak in nr_rx_frame()")
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> > - if free pages are being reported, pages freed
+> >   by shrinker will just get re-allocated again
+> 
+> fill_balloon will re-try the allocation after sleeping 200ms once allocation fails.
+
+Even if ballon was never inflated, if shrinker frees some memory while
+we are hinting, hint vq will keep going and allocate it back without
+sleeping.
+
+>  
+> > I was unable to make this part of code behave in any reasonable way - was
+> > shrinker usage tested? What's a good way to test that?
+> 
+> Please see the example that I tested before : https://lkml.org/lkml/2018/8/6/29
+> (just the first one: *1. V3 patches)
+> 
+> What problem did you see?
+> I just tried the latest code, and find ballooning reports a #GP (seems caused by
+> 418a3ab1e). 
+> I'll take a look at the details in the office tomorrow.
+> 
+> Best,
+> Wei
+
+I saw that VM hangs. Could be the above problem, let me know how it
+goes.
+
