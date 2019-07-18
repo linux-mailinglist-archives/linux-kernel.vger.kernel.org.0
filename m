@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 450546C594
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B5E16C597
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390567AbfGRDH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:07:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39634 "EHLO mail.kernel.org"
+        id S2390592AbfGRDIB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:08:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389707AbfGRDHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:07:53 -0400
+        id S2390020AbfGRDH4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:07:56 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B850B2053B;
-        Thu, 18 Jul 2019 03:07:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A171C2173E;
+        Thu, 18 Jul 2019 03:07:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419273;
-        bh=EjQiwJFzN6vC59pTA0kUIUoNEPvkuQCYIO3Sbda2fAo=;
+        s=default; t=1563419275;
+        bh=TQ9/G6BptbWSST519WW8I97eo7t6QlgZulsO0gAVW/E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JSOMhyIWM4g4kdiAmEViy/KDkHL3ps1yexm5d/HR8ZK+Bxn9zM0zEmsx0u1Z4E2OZ
-         dz/uOMqdclB46xcWcSXXa2MfZsTXe0XXeHL3kGqVtZLxxBRB2y1ADpXHHaxvzIWbkN
-         BkUVhHXRMicZYXgChozUmofQpPLtGuwj3rmBEgM4=
+        b=H6i/S//JPnodSBS/oZzY+7jOFaRM00+ShCdcwOrJjLDL1q1tSAQLQzWyJDgiXh8LQ
+         OjrnlejyHHgUsd+c5V3K+t2HmalVM8CbumB4iZpZ5OFXqYr7O8+cqjZAar31oydpRt
+         dMzL6qOfjeagss73/iDoejae9piXZd1bBp0pz7rA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH 4.19 39/47] s390/qdio: dont touch the dsci in tiqdio_add_input_queues()
-Date:   Thu, 18 Jul 2019 12:01:53 +0900
-Message-Id: <20190718030052.060549614@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 40/47] crypto: talitos - move struct talitos_edesc into talitos.h
+Date:   Thu, 18 Jul 2019 12:01:54 +0900
+Message-Id: <20190718030052.141201640@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
 References: <20190718030045.780672747@linuxfoundation.org>
@@ -43,37 +43,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit ac6639cd3db607d386616487902b4cc1850a7be5 upstream.
+commit d44769e4ccb636e8238adbc151f25467a536711b upstream.
 
-Current code sets the dsci to 0x00000080. Which doesn't make any sense,
-as the indicator area is located in the _left-most_ byte.
+Moves struct talitos_edesc into talitos.h so that it can be used
+from any place in talitos.c
 
-Worse: if the dsci is the _shared_ indicator, this potentially clears
-the indication of activity for a _different_ device.
-tiqdio_thinint_handler() will then have no reason to call that device's
-IRQ handler, and the device ends up stalling.
+It will be required for next patch ("crypto: talitos - fix hash
+on SEC1")
 
-Fixes: d0c9d4a89fff ("[S390] qdio: set correct bit in dsci")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: stable@vger.kernel.org
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/cio/qdio_thinint.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/crypto/talitos.c |   30 ------------------------------
+ drivers/crypto/talitos.h |   30 ++++++++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+), 30 deletions(-)
 
---- a/drivers/s390/cio/qdio_thinint.c
-+++ b/drivers/s390/cio/qdio_thinint.c
-@@ -79,7 +79,6 @@ void tiqdio_add_input_queues(struct qdio
- 	mutex_lock(&tiq_list_lock);
- 	list_add_rcu(&irq_ptr->input_qs[0]->entry, &tiq_list);
- 	mutex_unlock(&tiq_list_lock);
--	xchg(irq_ptr->dsci, 1 << 7);
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -913,36 +913,6 @@ badkey:
+ 	return -EINVAL;
  }
  
- void tiqdio_remove_input_queues(struct qdio_irq *irq_ptr)
+-/*
+- * talitos_edesc - s/w-extended descriptor
+- * @src_nents: number of segments in input scatterlist
+- * @dst_nents: number of segments in output scatterlist
+- * @icv_ool: whether ICV is out-of-line
+- * @iv_dma: dma address of iv for checking continuity and link table
+- * @dma_len: length of dma mapped link_tbl space
+- * @dma_link_tbl: bus physical address of link_tbl/buf
+- * @desc: h/w descriptor
+- * @link_tbl: input and output h/w link tables (if {src,dst}_nents > 1) (SEC2)
+- * @buf: input and output buffeur (if {src,dst}_nents > 1) (SEC1)
+- *
+- * if decrypting (with authcheck), or either one of src_nents or dst_nents
+- * is greater than 1, an integrity check value is concatenated to the end
+- * of link_tbl data
+- */
+-struct talitos_edesc {
+-	int src_nents;
+-	int dst_nents;
+-	bool icv_ool;
+-	dma_addr_t iv_dma;
+-	int dma_len;
+-	dma_addr_t dma_link_tbl;
+-	struct talitos_desc desc;
+-	union {
+-		struct talitos_ptr link_tbl[0];
+-		u8 buf[0];
+-	};
+-};
+-
+ static void talitos_sg_unmap(struct device *dev,
+ 			     struct talitos_edesc *edesc,
+ 			     struct scatterlist *src,
+--- a/drivers/crypto/talitos.h
++++ b/drivers/crypto/talitos.h
+@@ -65,6 +65,36 @@ struct talitos_desc {
+ 
+ #define TALITOS_DESC_SIZE	(sizeof(struct talitos_desc) - sizeof(__be32))
+ 
++/*
++ * talitos_edesc - s/w-extended descriptor
++ * @src_nents: number of segments in input scatterlist
++ * @dst_nents: number of segments in output scatterlist
++ * @icv_ool: whether ICV is out-of-line
++ * @iv_dma: dma address of iv for checking continuity and link table
++ * @dma_len: length of dma mapped link_tbl space
++ * @dma_link_tbl: bus physical address of link_tbl/buf
++ * @desc: h/w descriptor
++ * @link_tbl: input and output h/w link tables (if {src,dst}_nents > 1) (SEC2)
++ * @buf: input and output buffeur (if {src,dst}_nents > 1) (SEC1)
++ *
++ * if decrypting (with authcheck), or either one of src_nents or dst_nents
++ * is greater than 1, an integrity check value is concatenated to the end
++ * of link_tbl data
++ */
++struct talitos_edesc {
++	int src_nents;
++	int dst_nents;
++	bool icv_ool;
++	dma_addr_t iv_dma;
++	int dma_len;
++	dma_addr_t dma_link_tbl;
++	struct talitos_desc desc;
++	union {
++		struct talitos_ptr link_tbl[0];
++		u8 buf[0];
++	};
++};
++
+ /**
+  * talitos_request - descriptor submission request
+  * @desc: descriptor pointer (kernel virtual)
 
 
