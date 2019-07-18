@@ -2,109 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A13D6C8DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 07:44:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D77516C8E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 07:45:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388725AbfGRFoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 01:44:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59818 "EHLO mail.kernel.org"
+        id S1732367AbfGRFpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 01:45:22 -0400
+Received: from mga02.intel.com ([134.134.136.20]:11144 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725959AbfGRFoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 01:44:01 -0400
-Received: from localhost.localdomain (115.42.148.210.bf.2iij.net [210.148.42.115])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB1742077C;
-        Thu, 18 Jul 2019 05:43:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563428641;
-        bh=gfhHae/Itpt4cAnEUBWjU+vv/jZ4knj9Gh5tlJZH32w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NbZK2rcN4p4Do4xNZrSCrpocqmzJSvw185NluBokppvstd5PDELeRoeBvlxWmbx/j
-         5Z86mXbG9w36rFsAnbjFo6pNCtSmcdmZCEl3JBF6w4BplF9d9OaxK4npYS1TQtZzq+
-         o6puJrBaLviuSqMUn4YcVdYNnFDnm7ukvjVfqNoU=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     mhiramat@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Dan Rue <dan.rue@linaro.org>,
-        Matt Hart <matthew.hart@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Daniel Diaz <daniel.diaz@linaro.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH 3/3] arm64: debug: Remove rcu_read_lock from debug exception
-Date:   Thu, 18 Jul 2019 14:43:58 +0900
-Message-Id: <156342863822.8565.7624877983728871995.stgit@devnote2>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <156342860634.8565.14804606041960884732.stgit@devnote2>
-References: <156342860634.8565.14804606041960884732.stgit@devnote2>
-User-Agent: StGit/0.17.1-dirty
+        id S1725959AbfGRFpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 01:45:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2019 22:45:21 -0700
+X-IronPort-AV: E=Sophos;i="5.64,276,1559545200"; 
+   d="scan'208";a="161970970"
+Received: from likexu-mobl1.ccr.corp.intel.com (HELO [10.239.196.90]) ([10.239.196.90])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 17 Jul 2019 22:45:20 -0700
+Subject: Re: [PATCH] KVM: x86/vPMU: refine kvm_pmu err msg when event creation
+ failed
+To:     Joe Perches <joe@perches.com>, Paolo Bonzini <pbonzini@redhat.com>,
+        Avi Kivity <avi@scylladb.com>
+Cc:     kvm@vger.kernel.org, Gleb Natapov <gleb@redhat.com>,
+        like.xu@linux.inetl.com, linux-kernel@vger.kernel.org
+References: <20190718044914.35631-1-like.xu@linux.intel.com>
+ <9eda0e29f524275a217411ea81352271b782baa4.camel@perches.com>
+From:   Like Xu <like.xu@linux.intel.com>
+Organization: Intel OTC
+Message-ID: <1f865724-999d-89a7-c246-acfe9cb08d54@linux.intel.com>
+Date:   Thu, 18 Jul 2019 13:45:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <9eda0e29f524275a217411ea81352271b782baa4.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove rcu_read_lock()/rcu_read_unlock() from debug exception
-handlers since the software breakpoint can be hit on idle task.
+Hi Joe,
 
-Actually, we don't need it because those handlers run in exception
-context where the interrupts are disabled. This means those are never
-preempted.
+On 2019/7/18 13:18, Joe Perches wrote:
+> On Thu, 2019-07-18 at 12:49 +0800, Like Xu wrote:
+>> If a perf_event creation fails due to any reason of the host perf
+>> subsystem, it has no chance to log the corresponding event for guest
+>> which may cause abnormal sampling data in guest result. In debug mode,
+>> this message helps to understand the state of vPMC and we should not
+>> limit the number of occurrences.
+> []
+>> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
+> []
+>> @@ -131,8 +131,8 @@ static void pmc_reprogram_counter(struct kvm_pmc *pmc, u32 type,
+>>   						 intr ? kvm_perf_overflow_intr :
+>>   						 kvm_perf_overflow, pmc);
+>>   	if (IS_ERR(event)) {
+>> -		printk_once("kvm_pmu: event creation failed %ld\n",
+>> -			    PTR_ERR(event));
+>> +		pr_debug("kvm_pmu: event creation failed %ld\n for pmc->idx = %d",
+>> +			    PTR_ERR(event), pmc->idx);
+> 
+> Perhaps this was written as printk_once to avoid
+> spamming the log with repeated messages.
 
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Paul E. McKenney <paulmck@linux.ibm.com>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- arch/arm64/kernel/debug-monitors.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+The spamming case in practice from this messages is very rare but it's 
+logically possible.
 
-diff --git a/arch/arm64/kernel/debug-monitors.c b/arch/arm64/kernel/debug-monitors.c
-index f8719bd30850..48222a4760c2 100644
---- a/arch/arm64/kernel/debug-monitors.c
-+++ b/arch/arm64/kernel/debug-monitors.c
-@@ -207,16 +207,16 @@ static int call_step_hook(struct pt_regs *regs, unsigned int esr)
- 
- 	list = user_mode(regs) ? &user_step_hook : &kernel_step_hook;
- 
--	rcu_read_lock();
--
-+	/*
-+	 * Since single-step exception disables interrupt, this function is
-+	 * entirely not preemptible, and we can use rcu list safely here.
-+	 */
- 	list_for_each_entry_rcu(hook, list, node)	{
- 		retval = hook->fn(regs, esr);
- 		if (retval == DBG_HOOK_HANDLED)
- 			break;
- 	}
- 
--	rcu_read_unlock();
--
- 	return retval;
- }
- NOKPROBE_SYMBOL(call_step_hook);
-@@ -305,14 +305,16 @@ static int call_break_hook(struct pt_regs *regs, unsigned int esr)
- 
- 	list = user_mode(regs) ? &user_break_hook : &kernel_break_hook;
- 
--	rcu_read_lock();
-+	/*
-+	 * Since brk exception disables interrupt, this function is
-+	 * entirely not preemptible, and we can use rcu list safely here.
-+	 */
- 	list_for_each_entry_rcu(hook, list, node) {
- 		unsigned int comment = esr & ESR_ELx_BRK64_ISS_COMMENT_MASK;
- 
- 		if ((comment & ~hook->mask) == hook->imm)
- 			fn = hook->fn;
- 	}
--	rcu_read_unlock();
- 
- 	return fn ? fn(regs, esr) : DBG_HOOK_ERROR;
- }
+> 
+> Maybe this should use pr_debug_ratelimited.
+> (and it should also have a \n termination like:)
+
+Thanks and it's my mistake, agree on '\n' usage.
+
+> 
+> 		pr_debug_ratelimited("kvm_pmu: event creation failed %ld for pmc->idx = %d\n",
+> 				     PTR_ERR(event), pmc->idx);
+> 
+> Perhaps Avi Kivity remembers why he wrote it this way.
+> https://lore.kernel.org/kvm/1305129333-7456-6-git-send-email-avi@redhat.com >>
+> 
 
