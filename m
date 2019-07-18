@@ -2,168 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 182E96CB88
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:08:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CFF96CB8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:08:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389668AbfGRJGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 05:06:31 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:32837 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726488AbfGRJGa (ORCPT
+        id S2389666AbfGRJHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 05:07:07 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45802 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389453AbfGRJHH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 05:06:30 -0400
-Received: by mail-ot1-f67.google.com with SMTP id q20so28194170otl.0;
-        Thu, 18 Jul 2019 02:06:29 -0700 (PDT)
+        Thu, 18 Jul 2019 05:07:07 -0400
+Received: by mail-wr1-f67.google.com with SMTP id f9so27766580wre.12
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 02:07:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=FbAj5yhaqo7OvIXAnydPecQ9dRAE9THaUdkKuKLzG1w=;
-        b=K/g+6mHUNOSF2J+5zlaBOCLJ8T4bvEvWSHKyhOW248BJqAe8qFl6cu9M6ReX3FG6xO
-         7BvYEfE+QP6Cc3ibzXcvcr2FROwH8x8eUQWlbttMvM9M0wr1bDHsTps4uQY7OHYjh/Nv
-         mvng6hIEp+LM3y/7HyhhnH3viErVPVESIWN6yD9OBJ/kyJZkozVk/PjMGtLEtfn8LsPg
-         sUAFa3rxn83WgTFhr6h6oiBHeD9mIpgQJdn3xFEoRc1VWGHXRxwayFxcTL8qVaJ/2f9v
-         eiXg+aPQCj+CZ2Lx1Fue1sTAII+SGmt0WmPaJKmbgOWbwFpYnDIH6xWttazgi1BRoJ28
-         I1Qg==
-X-Gm-Message-State: APjAAAW6JrRkqANHUQw1yf66cOQsJvvxDRBpkDDDfuWSKIvggIrizPYo
-        YlIwexdTpQ7WjcepZWIK+HS3DU+Fv0WpEE5xEjE=
-X-Google-Smtp-Source: APXvYqwVELilhcj7/AyvcoyPaqePI4XcNocPmBuVGOTQJOffopuzXvFDyxzznYHI9PGWCSEnBWFy36yMNNu1I19cKoI=
-X-Received: by 2002:a05:6830:1516:: with SMTP id k22mr30020650otp.189.1563440789073;
- Thu, 18 Jul 2019 02:06:29 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=o9/78Nh53njXX6v0c2aPrfA34ngPUQ0RdFKx5mOyEAk=;
+        b=N81zupP+HqVgSu0MHuGlLIYQ+w+fw1v0p0/+LCQi2iibrGfZ5d5Dg9s1m5M0kcC96s
+         E72TbhrHvBkzYKhxD4HTEa2q3o3bGiPXUeOjsCFBtK3VLyKQU/2F956ZNuwdZ/FXllaw
+         p3ofULqlvnrkKiCeEQ0+8N/BPXdy8Or7hKgKejN0Uo9boAml4oNs/z3QZ+EGM5YgocO9
+         SP5KD3ZAWoVFjOrkfTVn+YS4SOFcfQLhUJvk3BVn3emX+pUI2FpiNGWCkJrvXUNShaUk
+         w/B1Bmc1KBzejI96T06aquFEs3f6cOeUoJtGx+afMArgxBTEL+kCpz8zUj54b19VAwfP
+         RcZQ==
+X-Gm-Message-State: APjAAAV9x84Q2Ip19mpvN6JA+iT9jtU9+qePJgqjdoLvNHoEVYHtCSjk
+        pHDVd00UIK5wsAj62o10imSZwQ==
+X-Google-Smtp-Source: APXvYqyJe5LzHOHqey7c/rVfA7/ANs0/AhmbYSsFPjYjrtprmy7Pr4a1Jbp/0GZaf1H8zloLknoqKw==
+X-Received: by 2002:adf:db50:: with SMTP id f16mr35132159wrj.214.1563440825128;
+        Thu, 18 Jul 2019 02:07:05 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:e427:3beb:1110:dda2? ([2001:b07:6468:f312:e427:3beb:1110:dda2])
+        by smtp.gmail.com with ESMTPSA id y6sm20665974wrp.12.2019.07.18.02.07.04
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Jul 2019 02:07:04 -0700 (PDT)
+Subject: Re: [PATCH RESEND] KVM: Boosting vCPUs that are delivering interrupts
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <1562915730-9490-1-git-send-email-wanpengli@tencent.com>
+ <f95fbf72-090f-fb34-3c20-64508979f251@redhat.com>
+ <db74a3a8-290e-edff-10ad-f861c60fbf8e@de.ibm.com>
+ <e31024e4-f437-becd-a9e3-e1ea8cd2e0c7@redhat.com>
+ <CANRm+Cw43DKqD17U+7-OPX3BmeNBThSe9-uWP2Atob+A0ApzLA@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <bc210153-fbae-25d4-bf6b-e31ceef36aa5@redhat.com>
+Date:   Thu, 18 Jul 2019 11:07:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 18 Jul 2019 11:06:18 +0200
-Message-ID: <CAJZ5v0irbFa5E=UZ+1XiiuoXC9zD0qc7vx3NtTCmB88h3_U4hw@mail.gmail.com>
-Subject: [GIT PULL] More power management updates for v5.3-rc1
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CANRm+Cw43DKqD17U+7-OPX3BmeNBThSe9-uWP2Atob+A0ApzLA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 18/07/19 10:43, Wanpeng Li wrote:
+>>> Isnt that done by the sched_in handler?
+>>
+>> I am a bit confused because, if it is done by the sched_in later, I
+>> don't understand why the sched_out handler hasn't set vcpu->preempted
+>> already.
+>>
+>> The s390 commit message is not very clear, but it talks about "a former
+>> sleeping cpu" that "gave up the cpu voluntarily".  Does "voluntarily"
+>> that mean it is in kvm_vcpu_block?  But then at least for x86 it would
+> 
+> see the prepare_to_swait_exlusive() in kvm_vcpu_block(), the task will
+> be set in TASK_INTERRUPTIBLE state, kvm_sched_out will set
+> vcpu->preempted to true iff current->state == TASK_RUNNING.
 
-Please pull from the tag
+Ok, I was totally blind to that "if" around vcpu->preempted = true, it's
+obvious now.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-5.3-rc1-2
+I think we need two flags then, for example vcpu->preempted and vcpu->ready:
 
-with top-most commit 918e162e6a71e924a343b41f71789ad14e1e3229
+- kvm_sched_out sets both of them to true iff current->state == TASK_RUNNING
 
- Merge branch 'pm-cpufreq'
+- kvm_vcpu_kick sets vcpu->ready to true
 
-on top of commit cf2d213e49fdf47e4c10dc629a3659e0026a54b8
+- kvm_sched_in clears both of them
 
- Merge tag 'pm-5.3-rc1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+This way, vmx_vcpu_pi_load can keep looking at preempted only (it
+handles voluntary preemption in pi_pre_block/pi_post_block).
 
-to receive more power management updates for 5.3-rc1.
+Also, kvm_s390_vcpu_wakeup can be changed to use kvm_vcpu_wake_up, which
+is nice.
 
-These modify the Intel RAPL driver to allow it to use an MMIO
-interface to the hardware, make the int340X thermal driver provide
-such an interface for it, add Intel Ice Lake CPU IDs to the RAPL
-driver (these changes depend on the previously merged x86 arch
-changes), update cpufreq to use the PM QoS framework for managing
-the min and max frequency limits, and add update the imx-cpufreq-dt
-cpufreq driver to support i.MX8MN.
-
-Specifics:
-
- - Add MMIO interface support to the Intel RAPL power capping
-   driver and update the int340X thermal driver to provide a
-   RAPL MMIO interface (Zhang Rui, Stephen Rothwell).
-
- - Add Intel Ice Lake CPU IDs to the RAPL driver (Zhang Rui,
-   Rajneesh Bhardwaj).
-
- - Make cpufreq use the PM QoS framework (instead of notifiers) for
-   managing the min and max frequency constraints (Viresh Kumar).
-
- - Add i.MX8MN support to the imx-cpufreq-dt cpufreq driver (Anson
-   Huang).
-
-Thanks!
-
-
----------------
-
-Anson Huang (1):
-      cpufreq: imx-cpufreq-dt: Add i.MX8MN support
-
-Rajneesh Bhardwaj (1):
-      powercap/rapl: Add Ice Lake NNPI support to RAPL driver
-
-Stephen Rothwell (1):
-      intel_rapl: need linux/cpuhotplug.h for enum cpuhp_state
-
-Viresh Kumar (8):
-      PM / QOS: Pass request type to dev_pm_qos_{add|remove}_notifier()
-      PM / QOS: Rename __dev_pm_qos_read_value() and dev_pm_qos_raw_read_value()
-      PM / QOS: Pass request type to dev_pm_qos_read_value()
-      PM / QoS: Add support for MIN/MAX frequency constraints
-      cpufreq: Register notifiers with the PM QoS framework
-      cpufreq: intel_pstate: Reuse refresh_frequency_limits()
-      cpufreq: Add QoS requests for userspace constraints
-      cpufreq: Make cpufreq_generic_init() return void
-
-Zhang Rui (16):
-      intel_rapl: use reg instead of msr
-      intel_rapl: remove hardcoded register index
-      intel_rapl: introduce intel_rapl.h
-      intel_rapl: introduce struct rapl_if_private
-      intel_rapl: abstract register address
-      intel_rapl: abstract register access operations
-      intel_rapl: cleanup some functions
-      intel_rapl: cleanup hardcoded MSR access
-      intel_rapl: abstract RAPL common code
-      intel_rapl: support 64 bit register
-      intel_rapl: support two power limits for every RAPL domain
-      int340X/processor_thermal_device: add support for MMIO RAPL
-      intel_rapl: Fix module autoloading issue
-      powercap/intel_rapl: add support for IceLake desktop
-      powercap/intel_rapl: add support for ICX
-      powercap/intel_rapl: add support for ICX-D
-
----------------
-
- Documentation/power/pm_qos_interface.txt           |  12 +-
- MAINTAINERS                                        |   1 +
- drivers/base/power/domain.c                        |   8 +-
- drivers/base/power/domain_governor.c               |   4 +-
- drivers/base/power/qos.c                           | 135 +++-
- drivers/base/power/runtime.c                       |   2 +-
- drivers/cpufreq/bmips-cpufreq.c                    |  17 +-
- drivers/cpufreq/cpufreq.c                          | 216 ++++--
- drivers/cpufreq/davinci-cpufreq.c                  |   3 +-
- drivers/cpufreq/imx-cpufreq-dt.c                   |   3 +-
- drivers/cpufreq/imx6q-cpufreq.c                    |   6 +-
- drivers/cpufreq/intel_pstate.c                     |   7 +-
- drivers/cpufreq/kirkwood-cpufreq.c                 |   3 +-
- drivers/cpufreq/loongson1-cpufreq.c                |   8 +-
- drivers/cpufreq/loongson2_cpufreq.c                |   3 +-
- drivers/cpufreq/maple-cpufreq.c                    |   3 +-
- drivers/cpufreq/omap-cpufreq.c                     |  15 +-
- drivers/cpufreq/pasemi-cpufreq.c                   |   3 +-
- drivers/cpufreq/pmac32-cpufreq.c                   |   3 +-
- drivers/cpufreq/pmac64-cpufreq.c                   |   3 +-
- drivers/cpufreq/s3c2416-cpufreq.c                  |   9 +-
- drivers/cpufreq/s3c64xx-cpufreq.c                  |  15 +-
- drivers/cpufreq/s5pv210-cpufreq.c                  |   3 +-
- drivers/cpufreq/sa1100-cpufreq.c                   |   3 +-
- drivers/cpufreq/sa1110-cpufreq.c                   |   3 +-
- drivers/cpufreq/spear-cpufreq.c                    |   3 +-
- drivers/cpufreq/tegra20-cpufreq.c                  |   8 +-
- drivers/cpuidle/governor.c                         |   2 +-
- drivers/powercap/Kconfig                           |  11 +-
- drivers/powercap/Makefile                          |   3 +-
- .../powercap/{intel_rapl.c => intel_rapl_common.c} | 801 ++++++++-------------
- drivers/powercap/intel_rapl_msr.c                  | 183 +++++
- drivers/thermal/intel/int340x_thermal/Kconfig      |   6 +
- .../int340x_thermal/processor_thermal_device.c     | 173 ++++-
- include/linux/cpufreq.h                            |  14 +-
- include/linux/intel_rapl.h                         | 155 ++++
- include/linux/pm_qos.h                             |  48 +-
- 37 files changed, 1196 insertions(+), 699 deletions(-)
+Paolo
