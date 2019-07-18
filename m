@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB5636C55C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 385106C57C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389940AbfGRDFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:05:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36394 "EHLO mail.kernel.org"
+        id S2389418AbfGRDGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:06:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389899AbfGRDFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:05:19 -0400
+        id S2390318AbfGRDGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:06:52 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 812C021848;
-        Thu, 18 Jul 2019 03:05:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5ABD42173B;
+        Thu, 18 Jul 2019 03:06:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419118;
-        bh=Cw8nZhSNTC1JErlNBl+stX66sOGdrKeE3CNCJw9MiTQ=;
+        s=default; t=1563419210;
+        bh=gTH0e8Mlg3KOJ8aqeGQWp1Y+oCvRQ5Lp7NhXpx454Pk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KQAxbbL9LLEQOhg77C8Im7f+Iomg7AQ3o0eoZu4BjiFE/7Ny5LKAKjaAOLl63jz9s
-         Vh485AaehisXaxquO78dDrMsjRXZPYJk4N4rWm28+LsgJa/d4QmIySLpGC4KukGFel
-         EbKtGXUqIpQeVWm2erfgr0EtKN/X9Y+3zV3NAblY=
+        b=c16GPP/By8HmtU43RCCO0uvSvK93arMVxAKAJ/M5X99lUwHmrwWd1MFvhTLl34VWP
+         /AL52L84saP6KOx9dzF/kg3DhIjdbgz/MRzKnQclz8tNSVp6/O7umrQxzmigG9rTVm
+         HdVn3T+z576Ds2r2tiwfzc3BN9NeoSGxBkcCPwSE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eiichi Tsukata <devel@etsukata.com>,
-        Thomas Gleixner <tglx@linutronix.de>, peterz@infradead.org,
+        stable@vger.kernel.org,
+        Sergej Benilov <sergej.benilov@googlemail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 36/54] cpu/hotplug: Fix out-of-bounds read when setting fail state
+Subject: [PATCH 4.19 17/47] sis900: fix TX completion
 Date:   Thu, 18 Jul 2019 12:01:31 +0900
-Message-Id: <20190718030056.073634451@linuxfoundation.org>
+Message-Id: <20190718030050.127545621@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030053.287374640@linuxfoundation.org>
-References: <20190718030053.287374640@linuxfoundation.org>
+In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
+References: <20190718030045.780672747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,70 +45,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 33d4a5a7a5b4d02915d765064b2319e90a11cbde ]
+[ Upstream commit 8ac8a01092b2added0749ef937037bf1912e13e3 ]
 
-Setting invalid value to /sys/devices/system/cpu/cpuX/hotplug/fail
-can control `struct cpuhp_step *sp` address, results in the following
-global-out-of-bounds read.
+Since commit 605ad7f184b60cfaacbc038aa6c55ee68dee3c89 "tcp: refine TSO autosizing",
+outbound throughput is dramatically reduced for some connections, as sis900
+is doing TX completion within idle states only.
 
-Reproducer:
+Make TX completion happen after every transmitted packet.
 
-  # echo -2 > /sys/devices/system/cpu/cpu0/hotplug/fail
+Test:
+netperf
 
-KASAN report:
+before patch:
+> netperf -H remote -l -2000000 -- -s 1000000
+MIGRATED TCP STREAM TEST from 0.0.0.0 () port 0 AF_INET to 95.223.112.76 () port 0 AF_INET : demo
+Recv   Send    Send
+Socket Socket  Message  Elapsed
+Size   Size    Size     Time     Throughput
+bytes  bytes   bytes    secs.    10^6bits/sec
 
-  BUG: KASAN: global-out-of-bounds in write_cpuhp_fail+0x2cd/0x2e0
-  Read of size 8 at addr ffffffff89734438 by task bash/1941
+ 87380 327680 327680    253.44      0.06
 
-  CPU: 0 PID: 1941 Comm: bash Not tainted 5.2.0-rc6+ #31
-  Call Trace:
-   write_cpuhp_fail+0x2cd/0x2e0
-   dev_attr_store+0x58/0x80
-   sysfs_kf_write+0x13d/0x1a0
-   kernfs_fop_write+0x2bc/0x460
-   vfs_write+0x1e1/0x560
-   ksys_write+0x126/0x250
-   do_syscall_64+0xc1/0x390
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-  RIP: 0033:0x7f05e4f4c970
+after patch:
+> netperf -H remote -l -10000000 -- -s 1000000
+MIGRATED TCP STREAM TEST from 0.0.0.0 () port 0 AF_INET to 95.223.112.76 () port 0 AF_INET : demo
+Recv   Send    Send
+Socket Socket  Message  Elapsed
+Size   Size    Size     Time     Throughput
+bytes  bytes   bytes    secs.    10^6bits/sec
 
-  The buggy address belongs to the variable:
-   cpu_hotplug_lock+0x98/0xa0
+ 87380 327680 327680    5.38       14.89
 
-  Memory state around the buggy address:
-   ffffffff89734300: fa fa fa fa 00 00 00 00 00 00 00 00 00 00 00 00
-   ffffffff89734380: fa fa fa fa 00 00 00 00 00 00 00 00 00 00 00 00
-  >ffffffff89734400: 00 00 00 00 fa fa fa fa 00 00 00 00 fa fa fa fa
-                                          ^
-   ffffffff89734480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-   ffffffff89734500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+Thx to Dave Miller and Eric Dumazet for helpful hints
 
-Add a sanity check for the value written from user space.
-
-Fixes: 1db49484f21ed ("smp/hotplug: Hotplug state fail injection")
-Signed-off-by: Eiichi Tsukata <devel@etsukata.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: peterz@infradead.org
-Link: https://lkml.kernel.org/r/20190627024732.31672-1-devel@etsukata.com
+Signed-off-by: Sergej Benilov <sergej.benilov@googlemail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/cpu.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/sis/sis900.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 6170034f4118..e97e7224ab47 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -1954,6 +1954,9 @@ static ssize_t write_cpuhp_fail(struct device *dev,
- 	if (ret)
- 		return ret;
+diff --git a/drivers/net/ethernet/sis/sis900.c b/drivers/net/ethernet/sis/sis900.c
+index 4bb89f74742c..d5bcbc40a55f 100644
+--- a/drivers/net/ethernet/sis/sis900.c
++++ b/drivers/net/ethernet/sis/sis900.c
+@@ -1057,7 +1057,7 @@ sis900_open(struct net_device *net_dev)
+ 	sis900_set_mode(sis_priv, HW_SPEED_10_MBPS, FDX_CAPABLE_HALF_SELECTED);
  
-+	if (fail < CPUHP_OFFLINE || fail > CPUHP_ONLINE)
-+		return -EINVAL;
-+
- 	/*
- 	 * Cannot fail STARTING/DYING callbacks.
- 	 */
+ 	/* Enable all known interrupts by setting the interrupt mask. */
+-	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE);
++	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE | TxDESC);
+ 	sw32(cr, RxENA | sr32(cr));
+ 	sw32(ier, IE);
+ 
+@@ -1578,7 +1578,7 @@ static void sis900_tx_timeout(struct net_device *net_dev)
+ 	sw32(txdp, sis_priv->tx_ring_dma);
+ 
+ 	/* Enable all known interrupts by setting the interrupt mask. */
+-	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE);
++	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE | TxDESC);
+ }
+ 
+ /**
+@@ -1618,7 +1618,7 @@ sis900_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+ 			spin_unlock_irqrestore(&sis_priv->lock, flags);
+ 			return NETDEV_TX_OK;
+ 	}
+-	sis_priv->tx_ring[entry].cmdsts = (OWN | skb->len);
++	sis_priv->tx_ring[entry].cmdsts = (OWN | INTR | skb->len);
+ 	sw32(cr, TxENA | sr32(cr));
+ 
+ 	sis_priv->cur_tx ++;
+@@ -1674,7 +1674,7 @@ static irqreturn_t sis900_interrupt(int irq, void *dev_instance)
+ 	do {
+ 		status = sr32(isr);
+ 
+-		if ((status & (HIBERR|TxURN|TxERR|TxIDLE|RxORN|RxERR|RxOK)) == 0)
++		if ((status & (HIBERR|TxURN|TxERR|TxIDLE|TxDESC|RxORN|RxERR|RxOK)) == 0)
+ 			/* nothing intresting happened */
+ 			break;
+ 		handled = 1;
+@@ -1684,7 +1684,7 @@ static irqreturn_t sis900_interrupt(int irq, void *dev_instance)
+ 			/* Rx interrupt */
+ 			sis900_rx(net_dev);
+ 
+-		if (status & (TxURN | TxERR | TxIDLE))
++		if (status & (TxURN | TxERR | TxIDLE | TxDESC))
+ 			/* Tx interrupt */
+ 			sis900_finish_xmit(net_dev);
+ 
+@@ -1896,8 +1896,8 @@ static void sis900_finish_xmit (struct net_device *net_dev)
+ 
+ 		if (tx_status & OWN) {
+ 			/* The packet is not transmitted yet (owned by hardware) !
+-			 * Note: the interrupt is generated only when Tx Machine
+-			 * is idle, so this is an almost impossible case */
++			 * Note: this is an almost impossible condition
++			 * in case of TxDESC ('descriptor interrupt') */
+ 			break;
+ 		}
+ 
+@@ -2473,7 +2473,7 @@ static int sis900_resume(struct pci_dev *pci_dev)
+ 	sis900_set_mode(sis_priv, HW_SPEED_10_MBPS, FDX_CAPABLE_HALF_SELECTED);
+ 
+ 	/* Enable all known interrupts by setting the interrupt mask. */
+-	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE);
++	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE | TxDESC);
+ 	sw32(cr, RxENA | sr32(cr));
+ 	sw32(ier, IE);
+ 
 -- 
 2.20.1
 
