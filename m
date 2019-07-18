@@ -2,97 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 863CF6C9CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 09:13:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21A8E6C9CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 09:14:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388641AbfGRHNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 03:13:38 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41416 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726397AbfGRHNi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 03:13:38 -0400
-Received: by mail-wr1-f67.google.com with SMTP id c2so24212999wrm.8
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 00:13:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=sMWGdIBskAXlgSXElRU2iGkeNv9D4GYWdN+GpC7oXQM=;
-        b=Bu2sT4EZELj0c4mj6KsnQtGkPvcSURG48zP8Mo3zAGHqhwrbyF+0r3DlgPh6f+7roJ
-         039S3ngpUdbvKkYrqY60GFA1zqL9V4hhsPVD/P7EqrWmbG4jf3AR4Zs5eJBLAk0MMS2n
-         wZTcvnBeB5iWCn+8XXtP66LuLgm27N+KwC/+5np+2aTaktl+pnxOV5bq3sP7PVOf03T+
-         z2kbt+U/51T36AtdNSGovt1Oovm2LX1H318rLPGdC96xbXNEdUpq6VOI9Z0M0FKTqfJ+
-         LiH7xohhU19kCP8kwEezDdZfQMQsSrp8KChoXCOEElV6LuVnDo9sjgvaT0ROtUOqgLL/
-         ZHug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=sMWGdIBskAXlgSXElRU2iGkeNv9D4GYWdN+GpC7oXQM=;
-        b=JKBXenudbSDfeswsABy+5FH9+kZjMH8lI7d+oQ/zslPMk6i89/znmub5pJp3HdWWo+
-         Tri055Qm7m+Kf9bCS7xJMLU5qGnSL5RqR/S8kntEyIk7GFMEz1V62+Ah0HEknf8Y4h/Z
-         wytROYdxvpez2ZPdz56snWADkz3FP9jugIcqRtqWHgI9rxaV6au+O0Wtwp0+yxHqRfGO
-         oxmsBg9KI4rdhvwI805zzAbhkxCjKh6KiEylwm1Km1PxrLR/WbjZQ9tr/Y0BcK+CRDSs
-         tPNc7o0/nGoCFIRxldb+1CDp79Z9myi9LgSUDLuXQeIbh2SyQzV9OdlMt3X+pzGW/9C7
-         rRNg==
-X-Gm-Message-State: APjAAAUGMTmnHwHo/4u3/SOH5FZxjEfqAo28jUWpwtcI+m/xJC8rlsI+
-        ZHJ00defrLRu6VpQ69JOvXk=
-X-Google-Smtp-Source: APXvYqzcBAb8Et9Z9adQ/ILXK6A7y1rUPXRoHnLrabxHArMt7RJHYGYahWMjFGFvMYuEyKVqSvhiBQ==
-X-Received: by 2002:adf:e947:: with SMTP id m7mr48788143wrn.123.1563434016470;
-        Thu, 18 Jul 2019 00:13:36 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id u2sm24648763wmc.3.2019.07.18.00.13.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Jul 2019 00:13:35 -0700 (PDT)
-Message-ID: <5d301c1f.1c69fb81.74c54.ae89@mx.google.com>
-Date:   Thu, 18 Jul 2019 00:13:35 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S2389134AbfGRHOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 03:14:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55444 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726423AbfGRHOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 03:14:32 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE64B20880;
+        Thu, 18 Jul 2019 07:14:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563434071;
+        bh=9J/UArI4Ztjw2ar/HnzHxBARiZ7Et7nhhnVy5Y1gJko=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1pOVdorM6isyvwSj/vR9YcdgjHSexgzmSmBK53TVr6NgF9to+f/OZkPnlwMmKleUm
+         dwv0gaasDPa4V1W2iVYbz0jrc1qTAfGoEnaP7ds88nJXIFjcowN9g5gqL6t6kYocz1
+         Y4KiiaZ9m0w8YCXWHlu7xVITUEcMp9n5yfAoYlsg=
+Date:   Thu, 18 Jul 2019 15:14:13 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson.Huang@nxp.com
+Cc:     s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        leonard.crestez@nxp.com, abel.vesa@nxp.com,
+        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH 1/2] soc: imx8: Add i.MX8MQ UID(unique identifier) support
+Message-ID: <20190718071411.GK3738@dragon>
+References: <20190626074415.18224-1-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v4.9.185-55-gcc08f2abafc7
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Branch: linux-4.9.y
-In-Reply-To: <20190718030048.392549994@linuxfoundation.org>
-References: <20190718030048.392549994@linuxfoundation.org>
-Subject: Re: [PATCH 4.9 00/54] 4.9.186-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190626074415.18224-1-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.9.y boot: 105 boots: 0 failed, 104 passed with 1 offline =
-(v4.9.185-55-gcc08f2abafc7)
+On Wed, Jun 26, 2019 at 03:44:14PM +0800, Anson.Huang@nxp.com wrote:
+> From: Anson Huang <Anson.Huang@nxp.com>
+> 
+> Add i.MX8MQ SoC UID(unique identifier) support, user
+> can read it from sysfs:
+> 
+> root@imx8mqevk:~# cat /sys/devices/soc0/soc_uid
+> D56911D6F060954B
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.9.y/kernel/v4.9.185-55-gcc08f2abafc7/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
-/kernel/v4.9.185-55-gcc08f2abafc7/
-
-Tree: stable-rc
-Branch: linux-4.9.y
-Git Describe: v4.9.185-55-gcc08f2abafc7
-Git Commit: cc08f2abafc74b206e12ac1f1b11284ccc032572
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 50 unique boards, 23 SoC families, 15 builds out of 197
-
-Offline Platforms:
-
-arm64:
-
-    defconfig:
-        gcc-8
-            meson-gxbb-odroidc2: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
+Applied both, thanks.
