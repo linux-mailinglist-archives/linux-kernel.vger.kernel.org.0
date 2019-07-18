@@ -2,116 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E17B76CF21
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 15:50:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E304A6CF33
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 15:54:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390349AbfGRNtg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 09:49:36 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:56529 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726608AbfGRNtg (ORCPT
+        id S2390566AbfGRNxf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 09:53:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52088 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390537AbfGRNxd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 09:49:36 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MTfgb-1i0NMn18gf-00U1Gc; Thu, 18 Jul 2019 15:49:32 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, reiserfs-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Subject: [PATCH] reiserfs: fix code unwinding with clang
-Date:   Thu, 18 Jul 2019 15:49:14 +0200
-Message-Id: <20190718134928.2472465-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:n//jM1UBMvz4mHz40peDwZc0bRe4ei5G+DelCfLdZD7Qggm1mNR
- 5lg/1/Ua7+Flu6b43iHKvvAncGM9RX+0Iu1W0gkjKyJd1fYgvKnretljrYLFMMkQbYO946Y
- eFt8rOCaDb1e0s+DjAkwFbI+kLcWuWFEv4iTjUyQLrMy9g59dy8rFqB3VoVbVC+csXL6NiL
- A9aNZzyatGyOOzim35qsQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Dhra0qbXmnY=:zyw1yfG1la0nHo0Ct+9ozv
- oyX//ivF63x4MRRXFd10pqUK/uTuHL2XuzE+SsCgsZXKD5a3C/q2cdrF12xFba2SE4K7rEQLq
- PzZIRxDKm7TfeR7aYQI+IxWW3J6UAFsL0KQgknu2e9llHCY8qw9obDDn3QUCrI4zXMAn3ke9U
- m5V7elH8Gdyqzd/1+KM3Bxdo0Dj2+3Ha3S5ZdUA5OBr9dLN3MD/R3gfErAUVvGl89SqompmFl
- HbysB5BGdjrduFpnVlnH9dU5h9S0aJK8TlJWLZ1Kml9SGR9CGORZHQb0rwFqPPoX+tAbTfBtd
- GnSiRlpNe7Grsa3dg+PMIBYZPb32RV2mJstpOOPvSvyR34e7mIkLzLEISkqc51h+1GGybQK1v
- cnz4FORiZJZW8znDiIlXh57c6HobSu4Twd6HKhnF3/gMYs2IWhZPJoylHBTX1doITR79uOyXp
- /aD9sZmMXwZslA1A13ERrFF94/EegLV3Jw7i4G7nKjQhG+2ACuFCbA5wx22vPn+bnQfQv0p4q
- Q8fLCEHyYbzcAlOmp4oNIAA6xit5lFVFzVrsT6vKCLwP6VJ4p+7GdQ2yS900B+qDRr9qEfQ02
- wpGetCmR6xk/SjeNBrSZyc7FDTo6ImRQTmVop8m4o3U/xDmXmchMmD7Lqtaf22SPAPFTW1HI3
- 4AQJwsJFbIJd/MjzWShdH2TiNYsBFjCCxpVqrQstctczHU4jCQuw/24PiFDFftCocupN+TKEE
- Xc2fAXLIHWDpLM3W4e1SfTGjBl5x1HtR9rQ8AQ==
+        Thu, 18 Jul 2019 09:53:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Subject:Cc:To:From:Date:Message-Id:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=TwfmR5tTn6/LBXbB/rae7IzpBvJIoc1FPGUkeejKVqI=; b=iGH3CodcpGY8HZv0ZhjZVbixb
+        9HvqMaKmt18fIpDaFvcgYYBrQ5uoatKGwljH9sB/iBDcmzRk5xOKeItzsU8OnWHf42LhFzQd8T7wM
+        t5ZOc8hgEvZeRd80NJtSyX9MdrCrNUfVbaH0venw9mKOk8rpq+pzKmxKhc951VYZtsWTzeJIOdzyY
+        g5skGAY5uMWbJtLZBWnficbgpbQwCcc3ruAE05G43KQjPeOQqn8g5/sc64Tgj0F6KnrQSG6YC5jzi
+        KbxFxSQREZVDRB4cy69yOSd7Bdc1maWJ59YkxpPYAUzII700wRgOnFq5kyXrkup4wwOO7OQs84ewY
+        QI3Deu0dg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1ho6qa-0006Jb-VC; Thu, 18 Jul 2019 13:53:25 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id BE9C820B979A2; Thu, 18 Jul 2019 15:53:22 +0200 (CEST)
+Message-Id: <20190718134954.496297975@infradead.org>
+User-Agent: quilt/0.65
+Date:   Thu, 18 Jul 2019 15:49:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Will Deacon <will@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jan Stancek <jstancek@redhat.com>,
+        Waiman Long <longman@redhat.com>, dbueso@suse.de,
+        mingo@redhat.com, jade.alglave@arm.com, paulmck@linux.vnet.ibm.com
+Subject: [PATCH 0/4] Various rwsem ACQUIRE fixes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Building reiserfs with clang leads to objtool warnings about a part of the
-unreachable code that may confuse the ORC unwinder:
-
-fs/reiserfs/ibalance.o: warning: objtool: balance_internal()+0xe8f: stack state mismatch: cfa1=7+240 cfa2=7+248
-fs/reiserfs/ibalance.o: warning: objtool: internal_move_pointers_items()+0x36f: stack state mismatch: cfa1=7+152 cfa2=7+144
-fs/reiserfs/lbalance.o: warning: objtool: leaf_cut_from_buffer()+0x58b: stack state mismatch: cfa1=7+128 cfa2=7+112
-fs/reiserfs/lbalance.o: warning: objtool: leaf_copy_boundary_item()+0x7a9: stack state mismatch: cfa1=7+104 cfa2=7+96
-fs/reiserfs/lbalance.o: warning: objtool: leaf_copy_items_entirely()+0x3d2: stack state mismatch: cfa1=7+120 cfa2=7+128
-fs/reiserfs/do_balan.o: warning: objtool: replace_key()+0x158: stack state mismatch: cfa1=7+40 cfa2=7+56
-fs/reiserfs/do_balan.o: warning: objtool: balance_leaf()+0x2791: stack state mismatch: cfa1=7+176 cfa2=7+192
-
-Reword this to use the regular BUG() call directly from the original code
-location, since objtool finds the generated object code more reasonable.
-
-This will likely get fixed in a future clang release, but in the meantime
-the workaround helps us build cleanly with existing releases.
-
-Link: https://groups.google.com/d/msgid/clang-built-linux/20190712135755.7qa4wxw3bfmwn5rp%40treble
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/reiserfs/prints.c   | 5 +++--
- fs/reiserfs/reiserfs.h | 5 ++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/fs/reiserfs/prints.c b/fs/reiserfs/prints.c
-index 9fed1c05f1f4..da996eaaebac 100644
---- a/fs/reiserfs/prints.c
-+++ b/fs/reiserfs/prints.c
-@@ -387,7 +387,6 @@ void __reiserfs_panic(struct super_block *sb, const char *id,
- 	else
- 		printk(KERN_WARNING "REISERFS panic: %s%s%s: %s\n",
- 		      id ? id : "", id ? " " : "", function, error_buf);
--	BUG();
- }
- 
- void __reiserfs_error(struct super_block *sb, const char *id,
-@@ -397,8 +396,10 @@ void __reiserfs_error(struct super_block *sb, const char *id,
- 
- 	BUG_ON(sb == NULL);
- 
--	if (reiserfs_error_panic(sb))
-+	if (reiserfs_error_panic(sb)) {
- 		__reiserfs_panic(sb, id, function, error_buf);
-+		BUG();
-+	}
- 
- 	if (id && id[0])
- 		printk(KERN_CRIT "REISERFS error (device %s): %s %s: %s\n",
-diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
-index e5ca9ed79e54..f5bd17ee21f6 100644
---- a/fs/reiserfs/reiserfs.h
-+++ b/fs/reiserfs/reiserfs.h
-@@ -3185,10 +3185,9 @@ void unfix_nodes(struct tree_balance *);
- 
- /* prints.c */
- void __reiserfs_panic(struct super_block *s, const char *id,
--		      const char *function, const char *fmt, ...)
--    __attribute__ ((noreturn));
-+		      const char *function, const char *fmt, ...);
- #define reiserfs_panic(s, id, fmt, args...) \
--	__reiserfs_panic(s, id, __func__, fmt, ##args)
-+	do { __reiserfs_panic(s, id, __func__, fmt, ##args); BUG(); } while (0)
- void __reiserfs_error(struct super_block *s, const char *id,
- 		      const char *function, const char *fmt, ...);
- #define reiserfs_error(s, id, fmt, args...) \
--- 
-2.20.0
+These are the patches I ended up with after we started with Jan's patch (edited).
 
