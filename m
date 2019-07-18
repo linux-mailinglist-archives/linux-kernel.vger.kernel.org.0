@@ -2,210 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54ACC6C93A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 08:24:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF1166C945
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 08:26:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbfGRGYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 02:24:18 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44240 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbfGRGYS (ORCPT
+        id S1729855AbfGRG0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 02:26:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:16952 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726498AbfGRG0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 02:24:18 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DC788615E6; Thu, 18 Jul 2019 06:24:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1563431056;
-        bh=/QI8ucl9LYpJopinminlJ9+z32qpUYhGxQmZgFux1Bc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=M7r4CJrN70QQLKwwswaPy8ChFTskWmqVNKn8odnzcaaJh4b5T+zVPVFf8tFcvf42M
-         zrLkdvEtKjoo71tTFP1TvgP7IxhDtNcegka6e8EIcmMq++J0TSIgsoejcGkV4phIuu
-         8A23B0KJNdGRrj4HZY06ChAhm/xWZvNESHke/fkA=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id BAB43609CD;
-        Thu, 18 Jul 2019 06:24:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1563431055;
-        bh=/QI8ucl9LYpJopinminlJ9+z32qpUYhGxQmZgFux1Bc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dansnQKB4/NEh6yA2vt+5WYGis1xntQJbFIFhA9OoJ8bt4AVFLiuD95c4aQBAFen3
-         OyydVtJ4kCcOiX86hbcp6PNA0NnK8kZLAJVOAAKc34Baruax9ML2+nmqOP3AZ9xfZN
-         iX3MLgjSZUwqNe5oxiodHJ8eYaQI2bVrCA2sf2aQ=
+        Thu, 18 Jul 2019 02:26:21 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6I6MVx1151536
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 02:26:19 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tthfkd1q3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 02:26:19 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 18 Jul 2019 07:26:17 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 18 Jul 2019 07:26:13 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6I6QCkb43516064
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 18 Jul 2019 06:26:12 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 20EC7AE045;
+        Thu, 18 Jul 2019 06:26:12 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3192AAE053;
+        Thu, 18 Jul 2019 06:26:11 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.168])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 18 Jul 2019 06:26:11 +0000 (GMT)
+Date:   Thu, 18 Jul 2019 09:26:09 +0300
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Leonardo Bras <leonardo@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/1] mm/memory_hotplug: Adds option to hot-add memory in
+ ZONE_MOVABLE
+References: <20190718024133.3873-1-leonardo@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 18 Jul 2019 11:54:15 +0530
-From:   gokulsri@codeaurora.org
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        david.brown@linaro.org, devicetree@vger.kernel.org,
-        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org,
-        sricharan@codeaurora.org
-Subject: Re: [PATCH 12/12] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
-In-Reply-To: <20190717201326.DCEB520880@mail.kernel.org>
-References: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
- <1562859668-14209-13-git-send-email-gokulsri@codeaurora.org>
- <20190717201326.DCEB520880@mail.kernel.org>
-Message-ID: <d818af556d18808301e12beeb8427e6e@codeaurora.org>
-X-Sender: gokulsri@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190718024133.3873-1-leonardo@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19071806-0016-0000-0000-00000293E773
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19071806-0017-0000-0000-000032F1C1E3
+Message-Id: <20190718062608.GA20726@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-18_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907180072
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-07-18 01:43, Stephen Boyd wrote:
-> Quoting Gokul Sriram Palanisamy (2019-07-11 08:41:08)
->> diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi 
->> b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
->> index 6a61a63..c24e3f6 100644
->> --- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
->> @@ -10,6 +10,22 @@
->>         model = "Qualcomm Technologies, Inc. IPQ8074";
->>         compatible = "qcom,ipq8074";
->> 
->> +       reserved-memory {
->> +               #address-cells = <2>;
->> +               #size-cells = <2>;
->> +               ranges;
->> +
->> +               smem_region:smem@4ab00000 {
+On Wed, Jul 17, 2019 at 11:41:34PM -0300, Leonardo Bras wrote:
+> Adds an option on kernel config to make hot-added memory online in
+> ZONE_MOVABLE by default.
 > 
-> Put a space between the colon and the node name. Also, just call it
-> memory@4ab00000.
+> This would be great in systems with MEMORY_HOTPLUG_DEFAULT_ONLINE=y by
+> allowing to choose which zone it will be auto-onlined
+ 
+Please add more elaborate description of the problem you are solving and
+the solution outline.
 
-  ok, will fix.
-> 
-> 		smem_region: memory@4ab00000 {
-> 
->> +                       no-map;
->> +                       reg = <0x0 0x4ab00000 0x0 0x00100000>;
->> +               };
->> +
->> +               q6_region: q6@4b000000 {
-> 
-> memory@
 
-  ok, will fix.
+> Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
+> ---
+>  drivers/base/memory.c |  3 +++
+>  mm/Kconfig            | 14 ++++++++++++++
+>  2 files changed, 17 insertions(+)
 > 
->> +                       no-map;
->> +                       reg = <0x0 0x4b000000 0x0 0x05f00000>;
->> +               };
->> +       };
->> +
->>         firmware {
->>                 scm {
->>                         compatible = "qcom,scm-ipq8074", "qcom,scm";
->> @@ -431,6 +447,115 @@
->>                                       "axi_m_sticky";
->>                         status = "disabled";
->>                 };
->> +               apcs: syscon@b111000 {
-> 
-> Add a newline between nodes please.
+> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+> index f180427e48f4..378b585785c1 100644
+> --- a/drivers/base/memory.c
+> +++ b/drivers/base/memory.c
+> @@ -670,6 +670,9 @@ static int init_memory_block(struct memory_block **memory,
+>  	mem->state = state;
+>  	start_pfn = section_nr_to_pfn(mem->start_section_nr);
+>  	mem->phys_device = arch_get_memory_phys_device(start_pfn);
+> +#ifdef CONFIG_MEMORY_HOTPLUG_MOVABLE
+> +	mem->online_type = MMOP_ONLINE_MOVABLE;
+> +#endif
 
-  ok, will fix.
+Does it has to be a compile time option?
+Seems like this can be changed at run time or at least at boot.
+  
+>  	ret = register_memory(mem);
+>  
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index f0c76ba47695..74e793720f43 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -180,6 +180,20 @@ config MEMORY_HOTREMOVE
+>  	depends on MEMORY_HOTPLUG && ARCH_ENABLE_MEMORY_HOTREMOVE
+>  	depends on MIGRATION
+>  
+> +config MEMORY_HOTPLUG_MOVABLE
+> +	bool "Enhance the likelihood of hot-remove"
+> +	depends on MEMORY_HOTREMOVE
+> +	help
+> +	  This option sets the hot-added memory zone to MOVABLE which
+> +	  drastically reduces the chance of a hot-remove to fail due to
+> +	  unmovable memory segments. Kernel memory can't be allocated in
+> +	  this zone.
+> +
+> +	  Say Y here if you want to have better chance to hot-remove memory
+> +	  that have been previously hot-added.
+> +	  Say N here if you want to make all hot-added memory available to
+> +	  kernel space.
+> +
+>  # Heavily threaded applications may benefit from splitting the mm-wide
+>  # page_table_lock, so that faults on different parts of the user address
+>  # space can be handled with less contention: split it at this NR_CPUS.
+> -- 
+> 2.20.1
 > 
->> +                       compatible = "syscon";
->> +                       reg = <0x0B111000 0x1000>;
->> +               };
->> +
->> +               wcss: smp2p-wcss {
-> 
-> This node should be outside the soc node because it doesn't have a reg
-> property
 
-  ok, will fix.
-> 
->> +                       compatible = "qcom,smp2p";
->> +                       qcom,smem = <435>, <428>;
->> +
->> +                       interrupt-parent = <&intc>;
->> +                       interrupts = <0 322 1>;
->> +
->> +                       qcom,ipc = <&apcs 8 9>;
->> +
->> +                       qcom,local-pid = <0>;
->> +                       qcom,remote-pid = <1>;
->> +
->> +                       wcss_smp2p_out: master-kernel {
->> +                               qcom,entry-name = "master-kernel";
->> +                               qcom,smp2p-feature-ssr-ack;
->> +                               #qcom,smem-state-cells = <1>;
->> +                       };
->> +
->> +                       wcss_smp2p_in: slave-kernel {
->> +                               qcom,entry-name = "slave-kernel";
->> +
->> +                               interrupt-controller;
->> +                               #interrupt-cells = <2>;
->> +                       };
->> +               };
->> +
->> +               tcsr_q6_block: syscon@1945000 {
-> 
-> Do you really need _block in these aliases?
+-- 
+Sincerely yours,
+Mike.
 
-  ok, will fix it to "tcsr_q6"
-> 
->> +                       compatible = "syscon";
->> +                       reg = <0x1945000 0xE000>;
->> +               };
->> +
->> +               tcsr_mutex_block: syscon@193d000 {
->> +                       compatible = "syscon";
->> +                       reg = <0x1905000 0x8000>;
->> +               };
->> +
->> +               tcsr_mutex: hwlock@193d000 {
->> +                       compatible = "qcom,tcsr-mutex";
->> +                       syscon = <&tcsr_mutex_block 0 0x80>;
->> +                       #hwlock-cells = <1>;
->> +               };
->> +
->> +               smem: qcom,smem@4AB00000 {
-> 
-> lowercase please. And just 'smem' I guess.
-
-  ok, will fix.
-> 
->> +                       compatible = "qcom,smem";
->> +                       memory-region = <&smem_region>;
->> +                       hwlocks = <&tcsr_mutex 0>;
->> +               };
->> +
->> +               apcs_glb: mailbox@b111000 {
->> +                       compatible = "qcom,ipq8074-apcs-apps-global";
->> +                       reg = <0xb111000 0x1000>;
-> 
-> These addresses should be padded out to 8 digits for the address part
-> (not the size).
-
-  ok, will fix.
-> 
->> +
->> +                       #mbox-cells = <1>;
->> +               };
->> +
->> +               q6v5_wcss: q6v5_wcss@CD00000 {
-> 
-> lowercase.
-
-  ok, will fix.
-> 
->> +                       compatible = "qcom,ipq8074-wcss-pil";
->> +                       reg = <0xCD00000 0x4040>,
->> +                             <0x4AB000 0x20>;
-
-Regards,
-  Gokul
