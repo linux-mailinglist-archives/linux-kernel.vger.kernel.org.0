@@ -2,84 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 251976D4C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 21:31:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96F206D4CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 21:33:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391401AbfGRTbb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 15:31:31 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43869 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728111AbfGRTbb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 15:31:31 -0400
-Received: by mail-lj1-f195.google.com with SMTP id y17so3909008ljk.10;
-        Thu, 18 Jul 2019 12:31:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=qcL3LovIaG2I+4/Ya4EZq8QuwXXlyROXKp2x+863zag=;
-        b=bxDHW8OFGKYh0iChgAPve01fDS61WHbwQNju+rrB0FSCA+XHKytTf+UIw0WXhxeDH8
-         IH2MQR1ydnwuDrKJB/yeqqg3tKgrXHMbBYNpTCRDxyW3+GzIub5F1P036SSsx1keDjsN
-         2T3AuKSXyI6IoAG1MAMqr0UdfxvVcDD+K3p6RsKKUHEEurWWIh5lRqZZuiuVCe0e2dsQ
-         PyCLFDKcwCmNCTb17Ba+ZU2xm+QBUBwpxAocdg2IIHvMXB1hMQqChTRc0Ceyd08nr1HU
-         6v3l0BlgbcImFhLdwzi9fcf1BFH9uH+IslFAQvgUeSxv8aYQpoVcZwNHz2Qg3Px+RugR
-         Bs6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=qcL3LovIaG2I+4/Ya4EZq8QuwXXlyROXKp2x+863zag=;
-        b=FWHmIdy7DdTOqgZmgrhlVXnNl2G6XLy0aul/fnGxBFma+mxpELK3JvCbadLVZqO+zY
-         nR1tHNBDgnBBXc8NhoCILj94ZZ/No/8sUuQxQEnVPJPw+NdFcKve/jxroGya8VFu6q2r
-         PKQkQ4NImHuOsWGBrFVoKyjmdwgTdOJ8HIvGDYfW01zpsmx8QKLZo+htmznkWjkMOU5J
-         UQnqxwpJ5u/zmFuVY68O9jfMR1miBjaOwhdPjWvz2dqh2CaO+jjWL7RBS49Xzyredf/J
-         VVKtQalr9VD4nJPt5jdEJ4Wdo3r+uUzl9j3DM+3c3+qP82YF6hKk4/qyVe/ZWaRh0/fA
-         V+mQ==
-X-Gm-Message-State: APjAAAW/O1WSNeOlNMDLVsZUcJvHQcRkGo1KRcspxRX8M5P92kWoM4pc
-        CBp/p9YcF/MKg3i0Wt+NfF1tpf8weyngMw==
-X-Google-Smtp-Source: APXvYqyVZBlbCBK1Y7Pv7LjJuRnTwXIED6u/+IBJTZFH9W7ohhUCtmgd+v2B/Rpb3qJcXdxW/jwBUw==
-X-Received: by 2002:a2e:870f:: with SMTP id m15mr25339251lji.223.1563478289408;
-        Thu, 18 Jul 2019 12:31:29 -0700 (PDT)
-Received: from ul001888.eu.tieto.com ([91.90.160.140])
-        by smtp.gmail.com with ESMTPSA id x137sm4124120lff.23.2019.07.18.12.31.28
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 18 Jul 2019 12:31:28 -0700 (PDT)
-From:   Vasyl Gomonovych <gomonovych@gmail.com>
-To:     tyreld@linux.ibm.com, benh@kernel.crashing.org, paulus@samba.org,
-        mpe@ellerman.id.au, jejb@linux.ibm.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc:     Vasyl Gomonovych <gomonovych@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: ibmvscsi: remove casting dma_alloc_coherent
-Date:   Thu, 18 Jul 2019 21:31:12 +0200
-Message-Id: <20190718193112.17709-1-gomonovych@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S2391406AbfGRTc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 15:32:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39368 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728111AbfGRTc6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 15:32:58 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B4B52173B;
+        Thu, 18 Jul 2019 19:32:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563478377;
+        bh=CLupE/lo1riA13YdIygZu79G1Jn33wd0Lj+QWcC8hvE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0qY8XsM16uoNsDiGiFobZCQn9iZpIYq9m36toWJoC7Up2mKOVowQcCENm+yPX4TPM
+         p5KIDd+GRV7eoJaCSNNeWk9ngTuznnyPM7n7wlqtwcJI+LQ2Vda8hg9E9qRN0Xxgqp
+         XgcVGYebdLZuY5pxtbxZyVmcEMNSWZHS0nntRjfs=
+Date:   Thu, 18 Jul 2019 15:32:56 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Jiri Benc <jbenc@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Yonghong Song <yhs@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: Re: [PATCH AUTOSEL 5.2 226/249] selftests: bpf: fix inlines in
+ test_lwt_seg6local
+Message-ID: <20190718193256.GA4240@sasha-vm>
+References: <20190715134655.4076-1-sashal@kernel.org>
+ <20190715134655.4076-226-sashal@kernel.org>
+ <20190717114334.5556a14e@redhat.com>
+ <20190717234757.GD3079@sasha-vm>
+ <20190718093654.0a3426f5@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190718093654.0a3426f5@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix allocation style
-Generated by:  alloc_cast.cocci
+On Thu, Jul 18, 2019 at 09:36:54AM +0200, Jiri Benc wrote:
+>On Wed, 17 Jul 2019 19:47:57 -0400, Sasha Levin wrote:
+>> It fixes a bug, right?
+>
+>A bug in selftests. And quite likely, it probably happens only with
+>some compiler versions.
+>
+>I don't think patches only touching tools/testing/selftests/ qualify
+>for stable in general. They don't affect the end users.
 
-Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
----
- drivers/scsi/ibmvscsi/ibmvscsi.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I'd argue that a bug in your tests is just as (if not even more) worse
+than a bug in the code.
 
-diff --git a/drivers/scsi/ibmvscsi/ibmvscsi.c b/drivers/scsi/ibmvscsi/ibmvscsi.c
-index 7f66a7783209..7e9b3e409851 100644
---- a/drivers/scsi/ibmvscsi/ibmvscsi.c
-+++ b/drivers/scsi/ibmvscsi/ibmvscsi.c
-@@ -715,8 +715,7 @@ static int map_sg_data(struct scsi_cmnd *cmd,
- 
- 	/* get indirect table */
- 	if (!evt_struct->ext_list) {
--		evt_struct->ext_list = (struct srp_direct_buf *)
--			dma_alloc_coherent(dev,
-+		evt_struct->ext_list = dma_alloc_coherent(dev,
- 					   SG_ALL * sizeof(struct srp_direct_buf),
- 					   &evt_struct->ext_list_token, 0);
- 		if (!evt_struct->ext_list) {
--- 
-2.17.1
-
+--
+Thanks,
+Sasha
