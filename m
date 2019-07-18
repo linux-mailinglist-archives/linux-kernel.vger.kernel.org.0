@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BBE36C552
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:07:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B1F16C53D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:07:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389826AbfGRDE4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:04:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35886 "EHLO mail.kernel.org"
+        id S2389636AbfGRDEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:04:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389055AbfGRDEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:04:54 -0400
+        id S2389593AbfGRDED (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:04:03 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EC8F2053B;
-        Thu, 18 Jul 2019 03:04:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC2C621880;
+        Thu, 18 Jul 2019 03:04:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419094;
-        bh=PpvmCOPbE9s6jpQxZJhuaJxhtoYDJLESMSpfDaNHBIk=;
+        s=default; t=1563419042;
+        bh=368xgV5chnlIR6TMjaRLKtO91K1HD/zbeVNzTu8LWMU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dqbbgYSjpHt08Y+KNhryIQrlOcTm+kxDvkWWMxjihzz44nJSFdE7A+g5iP7Gl7pnF
-         sPalon/dkRPASs9HgAGtcL3NXBqOg4KL1b9Y/UzyVvU8aJrlmImAVlo6ik6Xq16JgY
-         rGOUikxOYeZ1zp5nn7FVF8rSpirl2fps1C3I+VSc=
+        b=IbSDAFGeD2CbzZ2W9maTwMb9/Tpo9shA05XcprhHPlQl6y9R+uLcrK7qyWTBgZ9zH
+         /3hlNx3miaxRQULRURfe5zH1n5MgSBK/zS2VZkfjCrxRWDNZ0LbWYvSDzVXWDp6R05
+         iYYdQLoEgRDz3J8t2onsQvMGWyDIY5zynTJsJ2b8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        stable@vger.kernel.org, Ran Wang <ran.wang_1@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 12/54] efi/bgrt: Drop BGRT status field reserved bits check
-Date:   Thu, 18 Jul 2019 12:01:07 +0900
-Message-Id: <20190718030054.339239653@linuxfoundation.org>
+Subject: [PATCH 5.1 13/54] arm64: dts: ls1028a: Fix CPU idle fail.
+Date:   Thu, 18 Jul 2019 12:01:08 +0900
+Message-Id: <20190718030054.411412190@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190718030053.287374640@linuxfoundation.org>
 References: <20190718030053.287374640@linuxfoundation.org>
@@ -44,43 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a483fcab38b43fb34a7f12ab1daadd3907f150e2 ]
+[ Upstream commit 53f2ac9d3aa881ed419054076042898b77c27ee4 ]
 
-Starting with ACPI 6.2 bits 1 and 2 of the BGRT status field are no longer
-reserved. These bits are now used to indicate if the image needs to be
-rotated before being displayed.
+PSCI spec define 1st parameter's bit 16 of function CPU_SUSPEND to
+indicate CPU State Type: 0 for standby, 1 for power down. In this
+case, we want to select standby for CPU idle feature. But current
+setting wrongly select power down and cause CPU SUSPEND fail every
+time. Need this fix.
 
-The first device using these bits has now shown up (the GPD MicroPC) and
-the reserved bits check causes us to reject the valid BGRT table on this
-device.
-
-Rather then changing the reserved bits check, allowing only the 2 new bits,
-instead just completely remove it so that we do not end up with a similar
-problem when more bits are added in the future.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Fixes: 8897f3255c9c ("arm64: dts: Add support for NXP LS1028A SoC")
+Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/efi/efi-bgrt.c | 5 -----
- 1 file changed, 5 deletions(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/firmware/efi/efi-bgrt.c b/drivers/firmware/efi/efi-bgrt.c
-index a2384184a7de..b07c17643210 100644
---- a/drivers/firmware/efi/efi-bgrt.c
-+++ b/drivers/firmware/efi/efi-bgrt.c
-@@ -47,11 +47,6 @@ void __init efi_bgrt_init(struct acpi_table_header *table)
- 		       bgrt->version);
- 		goto out;
- 	}
--	if (bgrt->status & 0xfe) {
--		pr_notice("Ignoring BGRT: reserved status bits are non-zero %u\n",
--		       bgrt->status);
--		goto out;
--	}
- 	if (bgrt->image_type != 0) {
- 		pr_notice("Ignoring BGRT: invalid image type %u (expected 0)\n",
- 		       bgrt->image_type);
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index 2896bbcfa3bb..228872549f01 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -28,7 +28,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&clockgen 1 0>;
+ 			next-level-cache = <&l2>;
+-			cpu-idle-states = <&CPU_PH20>;
++			cpu-idle-states = <&CPU_PW20>;
+ 		};
+ 
+ 		cpu1: cpu@1 {
+@@ -38,7 +38,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&clockgen 1 0>;
+ 			next-level-cache = <&l2>;
+-			cpu-idle-states = <&CPU_PH20>;
++			cpu-idle-states = <&CPU_PW20>;
+ 		};
+ 
+ 		l2: l2-cache {
+@@ -53,13 +53,13 @@
+ 		 */
+ 		entry-method = "arm,psci";
+ 
+-		CPU_PH20: cpu-ph20 {
+-			compatible = "arm,idle-state";
+-			idle-state-name = "PH20";
+-			arm,psci-suspend-param = <0x00010000>;
+-			entry-latency-us = <1000>;
+-			exit-latency-us = <1000>;
+-			min-residency-us = <3000>;
++		CPU_PW20: cpu-pw20 {
++			  compatible = "arm,idle-state";
++			  idle-state-name = "PW20";
++			  arm,psci-suspend-param = <0x0>;
++			  entry-latency-us = <2000>;
++			  exit-latency-us = <2000>;
++			  min-residency-us = <6000>;
+ 		};
+ 	};
+ 
 -- 
 2.20.1
 
