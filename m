@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 525376C457
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 03:38:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AB406C44E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 03:38:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389255AbfGRBiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 21:38:14 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38320 "EHLO mx1.redhat.com"
+        id S2388809AbfGRBhd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 21:37:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52522 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387528AbfGRBh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 21:37:27 -0400
+        id S2387683AbfGRBh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 21:37:28 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2237E5AFE9;
-        Thu, 18 Jul 2019 01:37:27 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 58E3A8667D;
+        Thu, 18 Jul 2019 01:37:28 +0000 (UTC)
 Received: from treble.redhat.com (ovpn-122-211.rdu2.redhat.com [10.10.122.211])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F01975DAA4;
-        Thu, 18 Jul 2019 01:37:25 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4CA505D9CC;
+        Thu, 18 Jul 2019 01:37:27 +0000 (UTC)
 From:   Josh Poimboeuf <jpoimboe@redhat.com>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -27,112 +27,46 @@ Cc:     linux-kernel@vger.kernel.org,
         Nick Desaulniers <ndesaulniers@google.com>,
         Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
         Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v2 13/22] objtool: Refactor function alias logic
-Date:   Wed, 17 Jul 2019 20:36:48 -0500
-Message-Id: <26a99c31426540f19c9a58b9e10727c385a147bc.1563413318.git.jpoimboe@redhat.com>
+Subject: [PATCH v2 14/22] objtool: Warn on zero-length functions
+Date:   Wed, 17 Jul 2019 20:36:49 -0500
+Message-Id: <03d429c4fa87829c61c5dc0e89652f4d9efb62f1.1563413318.git.jpoimboe@redhat.com>
 In-Reply-To: <cover.1563413318.git.jpoimboe@redhat.com>
 References: <cover.1563413318.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 18 Jul 2019 01:37:27 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 18 Jul 2019 01:37:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-- Add an alias check in validate_functions().  With this change, aliases
-  no longer need uaccess_safe set.
-
-- Add an alias check in decode_instructions().  With this change, the
-  "if (!insn->func)" check is no longer needed.
-
-- Don't create aliases for zero-length functions, as it can have
-  unexpected results.  The next patch will spit out a warning for
-  zero-length functions anyway.
+All callable functions should have an ELF size.
 
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Tested-by: Nick Desaulniers <ndesaulniers@google.com>
 ---
- tools/objtool/check.c | 16 +++++++++-------
- tools/objtool/elf.c   |  2 +-
- 2 files changed, 10 insertions(+), 8 deletions(-)
+ tools/objtool/check.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index bb9cfda670fd..9bf4844d9226 100644
+index 9bf4844d9226..16454cbca679 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -276,7 +276,7 @@ static int decode_instructions(struct objtool_file *file)
- 		}
- 
- 		list_for_each_entry(func, &sec->symbol_list, list) {
--			if (func->type != STT_FUNC)
-+			if (func->type != STT_FUNC || func->alias != func)
+@@ -2357,6 +2357,12 @@ static int validate_functions(struct objtool_file *file)
+ 			if (func->type != STT_FUNC)
  				continue;
  
- 			if (!find_insn(file, sec, func->offset)) {
-@@ -286,8 +286,7 @@ static int decode_instructions(struct objtool_file *file)
- 			}
- 
- 			func_for_each_insn(file, func, insn)
--				if (!insn->func)
--					insn->func = func;
-+				insn->func = func;
- 		}
- 	}
- 
-@@ -508,7 +507,7 @@ static void add_uaccess_safe(struct objtool_file *file)
- 		if (!func)
- 			continue;
- 
--		func->alias->uaccess_safe = true;
-+		func->uaccess_safe = true;
- 	}
- }
- 
-@@ -1887,7 +1886,7 @@ static bool insn_state_match(struct instruction *insn, struct insn_state *state)
- static inline bool func_uaccess_safe(struct symbol *func)
- {
- 	if (func)
--		return func->alias->uaccess_safe;
-+		return func->uaccess_safe;
- 
- 	return false;
- }
-@@ -2355,14 +2354,17 @@ static int validate_functions(struct objtool_file *file)
- 
- 	for_each_sec(file, sec) {
- 		list_for_each_entry(func, &sec->symbol_list, list) {
--			if (func->type != STT_FUNC || func->pfunc != func)
-+			if (func->type != STT_FUNC)
-+				continue;
++			if (!func->len) {
++				WARN("%s() is missing an ELF size annotation",
++				     func->name);
++				warnings++;
++			}
 +
-+			if (func->pfunc != func || func->alias != func)
+ 			if (func->pfunc != func || func->alias != func)
  				continue;
  
- 			insn = find_insn(file, sec, func->offset);
- 			if (!insn || insn->ignore || insn->visited)
- 				continue;
- 
--			state.uaccess = func->alias->uaccess_safe;
-+			state.uaccess = func->uaccess_safe;
- 
- 			ret = validate_branch(file, func, insn, state);
- 			if (ret && backtrace)
-diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index e99e1be19ad9..d2c211b0a5a0 100644
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -278,7 +278,7 @@ static int read_symbols(struct elf *elf)
- 			}
- 
- 			if (sym->offset == s->offset) {
--				if (sym->len == s->len && alias == sym)
-+				if (sym->len && sym->len == s->len && alias == sym)
- 					alias = s;
- 
- 				if (sym->len >= s->len) {
 -- 
 2.20.1
 
