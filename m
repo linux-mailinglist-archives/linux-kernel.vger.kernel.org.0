@@ -2,41 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 557146C545
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B656C575
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389709AbfGRDEZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:04:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35312 "EHLO mail.kernel.org"
+        id S2389553AbfGRDGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:06:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389686AbfGRDEV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:04:21 -0400
+        id S2390224AbfGRDGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:06:30 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03BED2173E;
-        Thu, 18 Jul 2019 03:04:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACA8B21841;
+        Thu, 18 Jul 2019 03:06:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419061;
-        bh=623kValpv34WsKFoygoDirXW4XUgbpNOmF1Aot+Nhw8=;
+        s=default; t=1563419190;
+        bh=hoooPKZxvTjINFyFI5RRGC3c4QkG+G40R3yt+6m+l3E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oR9opb8ulETRmacgTosFV44G3WcESpxWE/oLGvsU7Fd43Lg8JaXZyrRgGMm45KI1W
-         P8vhHg6qpAUoM6CkqG8ympNuf9ltkxO2awKrkFd3tJ0ySViuCBCoWg7QEaZKeCCrkI
-         Co5jtB+8QfyBM/yGwoXS/fEYRCJAxcqczxrRCIFM=
+        b=l1AfxI43UAPmNkdQwIKoc6SnslRYHHY6f7UCn+C9AZWkpKjCrOpsYHt04zaYbXaEw
+         /7qzG22OE+v9yYqne1OGWULyfNMfJGSBbOoeSRY4jNdNJMcj3liVY/iEeie+21yvDQ
+         9GZS+89qkspeu8kpGN+gNqSTjvgl79amoofMYKts=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 19/54] x86/efi: fix a -Wtype-limits compilation warning
-Date:   Thu, 18 Jul 2019 12:01:14 +0900
-Message-Id: <20190718030054.892867977@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Joseph Yasi <joe.yasi@gmail.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Oleksandr Natalenko <oleksandr@redhat.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Subject: [PATCH 4.19 01/47] Revert "e1000e: fix cyclic resets at link up with active tx"
+Date:   Thu, 18 Jul 2019 12:01:15 +0900
+Message-Id: <20190718030046.473694109@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030053.287374640@linuxfoundation.org>
-References: <20190718030053.287374640@linuxfoundation.org>
+In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
+References: <20190718030045.780672747@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -45,37 +49,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 919aef44d73d5d0c04213cb1bc31149cc074e65e ]
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-Compiling a kernel with W=1 generates this warning,
+commit caff422ea81e144842bc44bab408d85ac449377b upstream.
 
-arch/x86/platform/efi/quirks.c:731:16: warning: comparison of unsigned
-expression >= 0 is always true [-Wtype-limits]
+This reverts commit 0f9e980bf5ee1a97e2e401c846b2af989eb21c61.
 
-Fixes: 3425d934fc03 ("efi/x86: Handle page faults occurring while running ...")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Acked-by: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+That change cased false-positive warning about hardware hang:
+
+e1000e: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: Rx/Tx
+IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
+e1000e 0000:00:1f.6 eth0: Detected Hardware Unit Hang:
+   TDH                  <0>
+   TDT                  <1>
+   next_to_use          <1>
+   next_to_clean        <0>
+buffer_info[next_to_clean]:
+   time_stamp           <fffba7a7>
+   next_to_watch        <0>
+   jiffies              <fffbb140>
+   next_to_watch.status <0>
+MAC Status             <40080080>
+PHY Status             <7949>
+PHY 1000BASE-T Status  <0>
+PHY Extended Status    <3000>
+PCI Status             <10>
+e1000e: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: Rx/Tx
+
+Besides warning everything works fine.
+Original issue will be fixed property in following patch.
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Reported-by: Joseph Yasi <joe.yasi@gmail.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=203175
+Tested-by: Joseph Yasi <joe.yasi@gmail.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Tested-by: Oleksandr Natalenko <oleksandr@redhat.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/x86/platform/efi/quirks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/e1000e/netdev.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index a25a9fd987a9..529522c62d89 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -724,7 +724,7 @@ void efi_recover_from_page_fault(unsigned long phys_addr)
- 	 * Address range 0x0000 - 0x0fff is always mapped in the efi_pgd, so
- 	 * page faulting on these addresses isn't expected.
- 	 */
--	if (phys_addr >= 0x0000 && phys_addr <= 0x0fff)
-+	if (phys_addr <= 0x0fff)
- 		return;
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -5286,13 +5286,8 @@ static void e1000_watchdog_task(struct w
+ 			/* 8000ES2LAN requires a Rx packet buffer work-around
+ 			 * on link down event; reset the controller to flush
+ 			 * the Rx packet buffer.
+-			 *
+-			 * If the link is lost the controller stops DMA, but
+-			 * if there is queued Tx work it cannot be done.  So
+-			 * reset the controller to flush the Tx packet buffers.
+ 			 */
+-			if ((adapter->flags & FLAG_RX_NEEDS_RESTART) ||
+-			    e1000_desc_unused(tx_ring) + 1 < tx_ring->count)
++			if (adapter->flags & FLAG_RX_NEEDS_RESTART)
+ 				adapter->flags |= FLAG_RESTART_NOW;
+ 			else
+ 				pm_schedule_suspend(netdev->dev.parent,
+@@ -5315,6 +5310,14 @@ link_up:
+ 	adapter->gotc_old = adapter->stats.gotc;
+ 	spin_unlock(&adapter->stats64_lock);
  
- 	/*
--- 
-2.20.1
-
++	/* If the link is lost the controller stops DMA, but
++	 * if there is queued Tx work it cannot be done.  So
++	 * reset the controller to flush the Tx packet buffers.
++	 */
++	if (!netif_carrier_ok(netdev) &&
++	    (e1000_desc_unused(tx_ring) + 1 < tx_ring->count))
++		adapter->flags |= FLAG_RESTART_NOW;
++
+ 	/* If reset is necessary, do it outside of interrupt context. */
+ 	if (adapter->flags & FLAG_RESTART_NOW) {
+ 		schedule_work(&adapter->reset_task);
 
 
