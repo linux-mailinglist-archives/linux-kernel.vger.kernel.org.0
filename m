@@ -2,122 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B60526D212
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 18:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AEEA6D218
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 18:38:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731890AbfGRQgF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 12:36:05 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36432 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbfGRQgE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 12:36:04 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 262EE8029D; Thu, 18 Jul 2019 18:35:51 +0200 (CEST)
-Date:   Thu, 18 Jul 2019 18:36:01 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Balbir Singh <bsingharora@gmail.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Evgeny Baskakov <ebaskakov@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Sherry Cheung <SCheung@nvidia.com>,
-        Subhash Gutti <sgutti@nvidia.com>,
-        Aneesh Kumar KV <aneesh.kumar@linux.vnet.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        David Nellans <dnellans@nvidia.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Bob Liu <liubo95@huawei.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: HMM_MIRROR has less than useful help text
-Message-ID: <20190718163601.GA21502@amd>
-References: <20190717074124.GA21617@amd>
- <CAKTCnzkzvPgMK8i-cTuWFLRPPg4=DTkVQmS238VTgYJaUy=iVA@mail.gmail.com>
- <CAPcyv4i3vzuWfKQXF-GWKpCXACjE6HTeczPRoHUp+tOBMEAP-Q@mail.gmail.com>
+        id S1731788AbfGRQhq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 12:37:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51608 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726649AbfGRQhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 12:37:45 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F33BB217F4;
+        Thu, 18 Jul 2019 16:37:44 +0000 (UTC)
+Date:   Thu, 18 Jul 2019 12:37:43 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Eiichi Tsukata <devel@etsukata.com>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        peterz@infradead.org, mingo@redhat.com
+Subject: Re: [PATCH] tracing: Fix user stack trace "??" output
+Message-ID: <20190718123743.3aa5d697@gandalf.local.home>
+In-Reply-To: <1789efd4-1108-64e8-a6aa-39ca5d5595dc@etsukata.com>
+References: <20190630085438.25545-1-devel@etsukata.com>
+        <1789efd4-1108-64e8-a6aa-39ca5d5595dc@etsukata.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4i3vzuWfKQXF-GWKpCXACjE6HTeczPRoHUp+tOBMEAP-Q@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 18 Jul 2019 10:23:19 +0900
+Eiichi Tsukata <devel@etsukata.com> wrote:
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Hello Steven
+> 
+> Would you review the patch?
 
-On Thu 2019-07-18 07:25:42, Dan Williams wrote:
-> On Thu, Jul 18, 2019 at 4:04 AM Balbir Singh <bsingharora@gmail.com> wrot=
-e:
-> >
-> > On Wed, Jul 17, 2019 at 5:41 PM Pavel Machek <pavel@ucw.cz> wrote:
-> > >
-> > > Hi!
-> > >
-> > > Commit c0b124054f9e42eb6da545a10fe9122a7d7c3f72 has very nice commit
-> > > message, explaining what HMM_MIRROR is and when it is
-> > > needed. Unfortunately, it did not make it into Kconfig help:
-> > >
-> > > CONFIG_HMM_MIRROR:
-> > >
-> > > Select HMM_MIRROR if you want to mirror range of the CPU page table of
-> > > a
-> > > process into a device page table. Here, mirror means "keep
-> > > synchronized".
-> > > Prerequisites: the device must provide the ability to write-protect
-> > > its
-> > > page tables (at PAGE_SIZE granularity), and must be able to recover
-> > > from
-> > > the resulting potential page faults.
-> > >
-> > > Could that be fixed?
-> > >
-> > > This is key information for me:
-> > >
-> > > # This is a heterogeneous memory management (HMM) process address spa=
-ce
-> > > # mirroring.
-> > > # This is useful for NVidia GPU >=3D Pascal, Mellanox IB >=3D mlx5 an=
-d more
-> > > # hardware in the future.
-> > >
-> >
-> > That seems like a reasonable request
->=20
-> Hi Pavel, care to send a patch?
+Thanks for reminding me. Looks good, I'll apply it now and start
+testing it.
 
-I hoped patch author would fix up their code. I'm not HMM expert, he
-should be...
+-- Steve
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---vkogqOf2sHV7VnPd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl0wn/EACgkQMOfwapXb+vLB6ACeLmMyj948TuYUlFIoTfib+UuC
-2KwAn3SFfrNn/UFu/9H/1W7LWAGPUp1U
-=54UH
------END PGP SIGNATURE-----
-
---vkogqOf2sHV7VnPd--
