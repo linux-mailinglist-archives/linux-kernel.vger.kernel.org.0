@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B095E6C5A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7421C6C590
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390722AbfGRDIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:08:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40246 "EHLO mail.kernel.org"
+        id S2390547AbfGRDHr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:07:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390705AbfGRDIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:08:20 -0400
+        id S2390513AbfGRDHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:07:42 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6011020818;
-        Thu, 18 Jul 2019 03:08:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF19B2173E;
+        Thu, 18 Jul 2019 03:07:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419299;
-        bh=2NnYurcBklqmnqT1VQithL4VeHbtrCVlDnNF0EYmTsE=;
+        s=default; t=1563419261;
+        bh=6TvLc+s1Z5B/h1l3/U0Pe2FamVxtuWOhIhEnM7zXQp8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l2NxL3NVKe0cw3MNh7dN4qGR+pQ17zs4l/xJBX+06n0dwxr2GjMvyJecnxPRn5aKz
-         eBgzpp24Y1qXLw38KGpLC3aZkghDgbcAlOJqgi+S9EUIK/xqh+GZFxplbwcKu24rv+
-         9vcv9K+9Gv18+SFtueX33y5S2XZn6mcBvpMH7ggo=
+        b=ryx4VF8mZCxLzgYAN6epACOtx1BkSrnpK0C+gcxdKTAYVhOWQ0KOoCCSwCRO2G++o
+         cbrAWTpTSRNZ3dbZH9ssTD7lKLY6PJ+v3AWoHKrnJJvYRlZP2wJmQg7KVrxUzI0Qqt
+         +vlMTYDuh12YNm/q9NDyIeMyihtNZstx7sOX7ucY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Hodaszi <Robert.Hodaszi@digi.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.19 34/47] x86/irq: Handle spurious interrupt after shutdown gracefully
-Date:   Thu, 18 Jul 2019 12:01:48 +0900
-Message-Id: <20190718030051.635882875@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.19 36/47] ARC: hide unused function unw_hdr_alloc
+Date:   Thu, 18 Jul 2019 12:01:50 +0900
+Message-Id: <20190718030051.825109263@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
 References: <20190718030045.780672747@linuxfoundation.org>
@@ -44,112 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner tglx@linutronix.de
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit b7107a67f0d125459fe41f86e8079afd1a5e0b15 upstream
+commit fd5de2721ea7d16e2b16c4049ac49f229551b290 upstream.
 
-Since the rework of the vector management, warnings about spurious
-interrupts have been reported. Robert provided some more information and
-did an initial analysis. The following situation leads to these warnings:
+As kernelci.org reports, this function is not used in
+vdk_hs38_defconfig:
 
-   CPU 0                  CPU 1               IO_APIC
+arch/arc/kernel/unwind.c:188:14: warning: 'unw_hdr_alloc' defined but not used [-Wunused-function]
 
-                                              interrupt is raised
-                                              sent to CPU1
-			  Unable to handle
-			  immediately
-			  (interrupts off,
-			   deep idle delay)
-   mask()
-   ...
-   free()
-     shutdown()
-     synchronize_irq()
-     clear_vector()
-                          do_IRQ()
-                            -> vector is clear
-
-Before the rework the vector entries of legacy interrupts were statically
-assigned and occupied precious vector space while most of them were
-unused. Due to that the above situation was handled silently because the
-vector was handled and the core handler of the assigned interrupt
-descriptor noticed that it is shut down and returned.
-
-While this has been usually observed with legacy interrupts, this situation
-is not limited to them. Any other interrupt source, e.g. MSI, can cause the
-same issue.
-
-After adding proper synchronization for level triggered interrupts, this
-can only happen for edge triggered interrupts where the IO-APIC obviously
-cannot provide information about interrupts in flight.
-
-While the spurious warning is actually harmless in this case it worries
-users and driver developers.
-
-Handle it gracefully by marking the vector entry as VECTOR_SHUTDOWN instead
-of VECTOR_UNUSED when the vector is freed up.
-
-If that above late handling happens the spurious detector will not complain
-and switch the entry to VECTOR_UNUSED. Any subsequent spurious interrupt on
-that line will trigger the spurious warning as before.
-
-Fixes: 464d12309e1b ("x86/vector: Switch IOAPIC to global reservation mode")
-Reported-by: Robert Hodaszi <Robert.Hodaszi@digi.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>-
-Tested-by: Robert Hodaszi <Robert.Hodaszi@digi.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Link: https://lkml.kernel.org/r/20190628111440.459647741@linutronix.de
+Fixes: bc79c9a72165 ("ARC: dw2 unwind: Reinstante unwinding out of modules")
+Link: https://kernelci.org/build/id/5d1cae3f59b514300340c132/logs/
+Cc: stable@vger.kernel.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- arch/x86/include/asm/hw_irq.h |    3 ++-
- arch/x86/kernel/apic/vector.c |    4 ++--
- arch/x86/kernel/irq.c         |    2 +-
- 3 files changed, 5 insertions(+), 4 deletions(-)
+ arch/arc/kernel/unwind.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/arch/x86/include/asm/hw_irq.h
-+++ b/arch/x86/include/asm/hw_irq.h
-@@ -151,7 +151,8 @@ extern char irq_entries_start[];
- #endif
+--- a/arch/arc/kernel/unwind.c
++++ b/arch/arc/kernel/unwind.c
+@@ -185,11 +185,6 @@ static void *__init unw_hdr_alloc_early(
+ 				       MAX_DMA_ADDRESS);
+ }
  
- #define VECTOR_UNUSED		NULL
--#define VECTOR_RETRIGGERED	((void *)~0UL)
-+#define VECTOR_SHUTDOWN		((void *)~0UL)
-+#define VECTOR_RETRIGGERED	((void *)~1UL)
+-static void *unw_hdr_alloc(unsigned long sz)
+-{
+-	return kmalloc(sz, GFP_KERNEL);
+-}
+-
+ static void init_unwind_table(struct unwind_table *table, const char *name,
+ 			      const void *core_start, unsigned long core_size,
+ 			      const void *init_start, unsigned long init_size,
+@@ -370,6 +365,10 @@ ret_err:
+ }
  
- typedef struct irq_desc* vector_irq_t[NR_VECTORS];
- DECLARE_PER_CPU(vector_irq_t, vector_irq);
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -342,7 +342,7 @@ static void clear_irq_vector(struct irq_
- 	trace_vector_clear(irqd->irq, vector, apicd->cpu, apicd->prev_vector,
- 			   apicd->prev_cpu);
+ #ifdef CONFIG_MODULES
++static void *unw_hdr_alloc(unsigned long sz)
++{
++	return kmalloc(sz, GFP_KERNEL);
++}
  
--	per_cpu(vector_irq, apicd->cpu)[vector] = VECTOR_UNUSED;
-+	per_cpu(vector_irq, apicd->cpu)[vector] = VECTOR_SHUTDOWN;
- 	irq_matrix_free(vector_matrix, apicd->cpu, vector, managed);
- 	apicd->vector = 0;
+ static struct unwind_table *last_table;
  
-@@ -351,7 +351,7 @@ static void clear_irq_vector(struct irq_
- 	if (!vector)
- 		return;
- 
--	per_cpu(vector_irq, apicd->prev_cpu)[vector] = VECTOR_UNUSED;
-+	per_cpu(vector_irq, apicd->prev_cpu)[vector] = VECTOR_SHUTDOWN;
- 	irq_matrix_free(vector_matrix, apicd->prev_cpu, vector, managed);
- 	apicd->prev_vector = 0;
- 	apicd->move_in_progress = 0;
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -246,7 +246,7 @@ __visible unsigned int __irq_entry do_IR
- 	if (!handle_irq(desc, regs)) {
- 		ack_APIC_irq();
- 
--		if (desc != VECTOR_RETRIGGERED) {
-+		if (desc != VECTOR_RETRIGGERED && desc != VECTOR_SHUTDOWN) {
- 			pr_emerg_ratelimited("%s: %d.%d No irq handler for vector\n",
- 					     __func__, smp_processor_id(),
- 					     vector);
 
 
