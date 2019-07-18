@@ -2,156 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04DC26D7A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:10:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 488EB6D81E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 03:03:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726230AbfGSAKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 20:10:04 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44540 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbfGSAKD (ORCPT
+        id S1726188AbfGSBDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 21:03:50 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38416 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbfGSBDu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 20:10:03 -0400
-Received: by mail-pf1-f195.google.com with SMTP id t16so13324974pfe.11
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 17:10:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ozlabs-ru.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fFoYMXbgkLyImkyiPR85e/LWs0d1ApwxQXfa0WN+oEE=;
-        b=0EAYC1tRo8ME/2G3iSq7FtnpcVhybbdcYHddpWCWAeLXa3tjYucjA+Q9MWulSm2IN3
-         D6/8c2bYhweapxKcISQ+gOB5YdefwYGDQ7B/RiSY52fgUtMzMRIs5NXU9KCf20n/tPao
-         Y/giYLnCqn1V/kbTF8RW1bmqRaxOkBHfvtGWrrWwp01Z1PnVShxZRXV2M66SKXWUDetE
-         qjz+q+GdhQ+4oaO4BnwtVFbcv1BtxK+7Z/ni5LEcjO+rYWxMI7awKaJZoGOEFBsDy3lY
-         BNLt90jcY885u2imdndNgrJsgmvu/1n8E0+JR8Ywb47x/TIAc5QvDPsbnZl/EJ+cCabk
-         Ytlw==
+        Thu, 18 Jul 2019 21:03:50 -0400
+Received: by mail-pl1-f193.google.com with SMTP id az7so14735218plb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 18:03:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fFoYMXbgkLyImkyiPR85e/LWs0d1ApwxQXfa0WN+oEE=;
-        b=LyFP1n9euxLSR/FFYDAsvSVLw15e25U7+Pilwgej09joizA3X/iOZLdjIN0CvAqF4J
-         ZoJgmxQZhjHWC84T7MHEb1nQlW7JjsNRb8QqIWnBQT5D0f5eS/wusHkxiXIB8yidp1gd
-         6vh/vOB3yiPjmjgmGK2aV5SRUtPOrNM14t1AigNovmoUMkw56zGelj2priTmT8Z3lL66
-         zsTgE8n02V1lmBDuOVF0i5MYk8C5kfq2slp51csOz7l5rB5X7Ri69Ly/2VLwIEz2H3RS
-         CnDSGEarLVzYXxhVTt/XsAmV3Uc23+5QQmfUk5nKnXbyDJEb/uYUtAl+jdnmFjybzodm
-         //pg==
-X-Gm-Message-State: APjAAAUvVs5Yek+HysEw+0E8L8kfuC3IjVD6eqNfLj6QOtpSznqnA9+d
-        Fq6KQjMb5pC82HuEtdghLYg=
-X-Google-Smtp-Source: APXvYqzpYHWrPvsO31+ael8IJn2Nps6aYiIVECtFcMVCZg+Aa+th0QJmhwSh9oqlQafyybQhD/Vgkw==
-X-Received: by 2002:a63:f941:: with SMTP id q1mr51054323pgk.350.1563495002829;
-        Thu, 18 Jul 2019 17:10:02 -0700 (PDT)
-Received: from [10.61.2.175] ([122.99.82.10])
-        by smtp.gmail.com with ESMTPSA id f12sm25771388pgo.85.2019.07.18.17.09.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Jul 2019 17:10:01 -0700 (PDT)
-Subject: Re: [PATCH v2 03/13] powerpc/prom_init: Add the ESM call to prom_init
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     Segher Boessenkool <segher@kernel.crashing.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Anshuman Khandual <anshuman.linux@gmail.com>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>, linux-kernel@vger.kernel.org,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Christoph Hellwig <hch@lst.de>
-References: <20190713060023.8479-1-bauerman@linux.ibm.com>
- <20190713060023.8479-4-bauerman@linux.ibm.com>
- <70f8097f-7222-fe18-78b4-9372c21bfc9d@ozlabs.ru>
- <20190718195850.GU20882@gate.crashing.org>
- <875znz3ud7.fsf@morokweng.localdomain>
-From:   Alexey Kardashevskiy <aik@ozlabs.ru>
-Message-ID: <f4cba627-8c40-ce95-0ede-b01edf3546dc@ozlabs.ru>
-Date:   Fri, 19 Jul 2019 10:09:56 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <875znz3ud7.fsf@morokweng.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=d3rODNYxuy5WSNSg2yOMOvh6Io0aB+kYlsQ525KJnc0=;
+        b=VniQ51CkLGNon56YgITDV/olp4AWOFIA6rzhpqBDYGzue81zg1RfpFXwtVN9A8bnsN
+         axZ1YX+54woQfvdxS4kqHJZdo/UEEtgdXbrq7s5ct7W7aDvTBmTf1ko+L5ShlB/SLLkq
+         f67vqQWc2kQcbQX1Y/mQgCjuIr5K8q2MWIA6eN6W46fYRO56JBmxCE91dI4qGyslPCtu
+         cSZ+fQAtu5jV4Mc7zZAbiLseZc5CeyDdhGW1klz67TI1ZqH5iI/HXyHL+pgPikwzYDKM
+         0xZ+gjhX/XFishj9flq3E7OZKgtC669YLj54pIA/XqZ1zjDffQrkqr4oLSem6JxYYnJx
+         P6fA==
+X-Gm-Message-State: APjAAAXznEitaKSbmKIkMEbl0DWZm6GLo/ypog2st82AtD/AOx2IIgg4
+        7/C6+90Hz3F7gd3KDeERJ5Bv1bovJcc=
+X-Google-Smtp-Source: APXvYqyNnYXLRkRi6Ll9bz/3tajFAV1xPszlLINuuVWkZO2ozRs4+asqt2Ylc201rgEWbM7nm9wEHQ==
+X-Received: by 2002:a17:902:2f84:: with SMTP id t4mr48549709plb.57.1563498229683;
+        Thu, 18 Jul 2019 18:03:49 -0700 (PDT)
+Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id q144sm28887612pfc.103.2019.07.18.18.03.48
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 18 Jul 2019 18:03:49 -0700 (PDT)
+From:   Nadav Amit <namit@vmware.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Nadav Amit <namit@vmware.com>
+Subject: [RFC 0/7] x86/percpu: Use segment qualifiers 
+Date:   Thu, 18 Jul 2019 10:41:03 -0700
+Message-Id: <20190718174110.4635-1-namit@vmware.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+GCC 6+ supports segment qualifiers. Using them allows to implement
+several optimizations:
 
+1. Avoid unnecessary instructions when an operation is carried on
+read/written per-cpu value, and instead allow the compiler to set
+instructions that access per-cpu value directly.
 
-On 19/07/2019 07:28, Thiago Jung Bauermann wrote:
-> 
-> Hello Segher,
-> 
-> Thanks for your review and suggestions!
-> 
-> Segher Boessenkool <segher@kernel.crashing.org> writes:
-> 
->> (Sorry to hijack your reply).
->>
->> On Thu, Jul 18, 2019 at 06:11:48PM +1000, Alexey Kardashevskiy wrote:
->>> On 13/07/2019 16:00, Thiago Jung Bauermann wrote:
->>>> From: Ram Pai <linuxram@us.ibm.com>
->>>> +static int enter_secure_mode(unsigned long kbase, unsigned long fdt)
->>>> +{
->>>> +	register uint64_t func asm("r3") = UV_ESM;
->>>> +	register uint64_t arg1 asm("r4") = (uint64_t)kbase;
->>>> +	register uint64_t arg2 asm("r5") = (uint64_t)fdt;
->>>
->>> What does UV do with kbase and fdt precisely? Few words in the commit
->>> log will do.
+2. Make this_cpu_ptr() more efficient and allow its value to be cached,
+since preemption must be disabled when this_cpu_ptr() is used.
 
+3. Provide better alternative for this_cpu_read_stable() that caches
+values more efficiently using alias attribute to const variable.
 
-What about this one? :)
+4. Allow the compiler to perform other optimizations (e.g. CSE).
 
+5. Use rip-relative addressing in per_cpu_read_stable(), which make it
+PIE-ready.
 
->>>
->>>> +
->>>> +	asm volatile("sc 2\n"
->>>> +		     : "=r"(func)
->>>> +		     : "0"(func), "r"(arg1), "r"(arg2)
->>>> +		     :);
->>>> +
->>>> +	return (int)func;
->>>
->>> And why "func"? Is it "function"? Weird name. Thanks,
-> 
-> Yes, I believe func is for function. Perhaps ucall would be clearer
-> if the variable wasn't reused for the return value as Segher points out.
-> 
->> Maybe the three vars should just be called "r3", "r4", and "r5" --
->> r3 is used as return value as well, so "func" isn't a great name for it.
-> 
-> Yes, that does seem simpler.
-> 
->> Some other comments about this inline asm:
->>
->> The "\n" makes the generated asm look funny and has no other function.
->> Instead of using backreferences you can use a "+" constraint, "inout".
->> Empty clobber list is strange.
->> Casts to the return type, like most other casts, are an invitation to
->> bugs and not actually useful.
->>
->> So this can be written
->>
->> static int enter_secure_mode(unsigned long kbase, unsigned long fdt)
->> {
->> 	register uint64_t r3 asm("r3") = UV_ESM;
->> 	register uint64_t r4 asm("r4") = kbase;
->> 	register uint64_t r4 asm("r5") = fdt;
->>
->> 	asm volatile("sc 2" : "+r"(r3) : "r"(r4), "r"(r5));
->>
->> 	return r3;
->> }
-> 
-> I'll adopt your version, it is cleaner inded. Thanks for providing it!
-> 
->> (and it probably should use u64 instead of both uint64_t and unsigned long?)
-> 
-> Almost all of prom_init.c uses unsigned long, with u64 in just a few
-> places. uint64_t isn't used anywhere else in the file. I'll switch to
-> unsigned long everywhere, since this feature is only for 64 bit.
-> 
+"size" and Peter's compare do not seem to show the impact on code size
+reduction correctly. Summing the code size according to nm on defconfig
+shows a minor reduction from 11349763 to 11339840 (0.09%).
+
+Nadav Amit (7):
+  compiler: Report x86 segment support
+  x86/percpu: Use compiler segment prefix qualifier
+  x86/percpu: Use C for percpu accesses when possible
+  x86: Fix possible caching of current_task
+  percpu: Assume preemption is disabled on per_cpu_ptr()
+  x86/percpu: Optimized arch_raw_cpu_ptr()
+  x86/current: Aggressive caching of current
+
+ arch/x86/include/asm/current.h         |  30 +++
+ arch/x86/include/asm/fpu/internal.h    |   7 +-
+ arch/x86/include/asm/percpu.h          | 293 +++++++++++++++++++------
+ arch/x86/include/asm/preempt.h         |   3 +-
+ arch/x86/include/asm/resctrl_sched.h   |  14 +-
+ arch/x86/kernel/cpu/Makefile           |   1 +
+ arch/x86/kernel/cpu/common.c           |   7 +-
+ arch/x86/kernel/cpu/current.c          |  16 ++
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c |   4 +-
+ arch/x86/kernel/process_32.c           |   4 +-
+ arch/x86/kernel/process_64.c           |   4 +-
+ include/asm-generic/percpu.h           |  12 +
+ include/linux/compiler-gcc.h           |   4 +
+ include/linux/compiler.h               |   2 +-
+ include/linux/percpu-defs.h            |  33 ++-
+ 15 files changed, 346 insertions(+), 88 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/current.c
 
 -- 
-Alexey
+2.17.1
+
