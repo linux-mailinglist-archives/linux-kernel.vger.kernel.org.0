@@ -2,124 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F29B6D764
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 01:54:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60CA36D76B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 01:58:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726207AbfGRXxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 19:53:55 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:48104 "EHLO ale.deltatee.com"
+        id S1726441AbfGRX6T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 19:58:19 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:54474 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725992AbfGRXxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 19:53:55 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1hoGDh-0002nz-FR; Thu, 18 Jul 2019 17:53:54 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1hoGDg-0001jK-0y; Thu, 18 Jul 2019 17:53:52 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Cc:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Thu, 18 Jul 2019 17:53:50 -0600
-Message-Id: <20190718235350.6610-1-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726131AbfGRX6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 19:58:17 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 420721A0244;
+        Fri, 19 Jul 2019 01:58:12 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 34D141A0135;
+        Fri, 19 Jul 2019 01:58:12 +0200 (CEST)
+Received: from lorenz.ea.freescale.net (lorenz.ea.freescale.net [10.171.71.5])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id CBF10205D1;
+        Fri, 19 Jul 2019 01:58:11 +0200 (CEST)
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-imx <linux-imx@nxp.com>
+Subject: [PATCH v2 00/14] crypto: caam - fixes for kernel v5.3
+Date:   Fri, 19 Jul 2019 02:57:42 +0300
+Message-Id: <1563494276-3993-1-git-send-email-iuliana.prodan@nxp.com>
+X-Mailer: git-send-email 2.1.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, kbusch@kernel.org, axboe@fb.com, hch@lst.de, sagi@grimberg.me, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_FREE,MYRULES_NO_TEXT autolearn=ham
-        autolearn_force=no version=3.4.2
-Subject: [PATCH] nvme-core: Fix memory leak caused by incorrect subsystem free
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When freeing the subsystem after finding another match with
-__nvme_find_get_subsystem(), use put_device() instead of
-__nvme_release_subsystem() which calls kfree() directly.
+The series solves:
+- the failures found with fuzz testing;
+- resources clean-up on caampkc/caamrng exit path.
 
-Per the documentation, put_device() should always be used
-after device_initialization() is called. Otherwise, leaks
-like the one below which was detected by kmemleak may occur.
+The first 10 patches solve the issues found with
+CONFIG_CRYPTO_MANAGER_EXTRA_TESTS enabled.
+They modify the drivers to provide a valid error (and not the hardware
+error ID) to the user, via completion callbacks.
+They check key length, assoclen, authsize and input size to solve the
+fuzz tests that expect -EINVAL to be returned when these values are
+not valid.
 
-Once the call of __nvme_release_subsystem() is removed it no
-longer makes sense to keep the helper, so fold it back
-into nvme_release_subsystem().
+The next 4 patches check the algorithm registration for caampkc
+module and unregister it only if the registration was successful.
+Also, on caampkc/caamrng, the exit point function is executed only if the
+registration was successful to avoid double freeing of resources in case
+the initialization function failed.
 
-unreferenced object 0xffff8883d12bfbc0 (size 16):
-  comm "nvme", pid 2635, jiffies 4294933602 (age 739.952s)
-  hex dump (first 16 bytes):
-    6e 76 6d 65 2d 73 75 62 73 79 73 32 00 88 ff ff  nvme-subsys2....
-  backtrace:
-    [<000000007d8fc208>] __kmalloc_track_caller+0x16d/0x2a0
-    [<0000000081169e5f>] kvasprintf+0xad/0x130
-    [<0000000025626f25>] kvasprintf_const+0x47/0x120
-    [<00000000fa66ad36>] kobject_set_name_vargs+0x44/0x120
-    [<000000004881f8b3>] dev_set_name+0x98/0xc0
-    [<000000007124dae3>] nvme_init_identify+0x1995/0x38e0
-    [<000000009315020a>] nvme_loop_configure_admin_queue+0x4fa/0x5e0
-    [<000000001a63e766>] nvme_loop_create_ctrl+0x489/0xf80
-    [<00000000a46ecc23>] nvmf_dev_write+0x1a12/0x2220
-    [<000000002259b3d5>] __vfs_write+0x66/0x120
-    [<000000002f6df81e>] vfs_write+0x154/0x490
-    [<000000007e8cfc19>] ksys_write+0x10a/0x240
-    [<00000000ff5c7b85>] __x64_sys_write+0x73/0xb0
-    [<00000000fee6d692>] do_syscall_64+0xaa/0x470
-    [<00000000997e1ede>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Fixes: ab9e00cc72fa ("nvme: track subsystems")
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 ---
- drivers/nvme/host/core.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+Changes since V1:
+	- update commit description for ("crypto: caam - update IV only when crypto operation succeeds").
+---
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 0a7b46066fe3..f53207f65d9a 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2316,17 +2316,15 @@ static void nvme_init_subnqn(struct nvme_subsystem *subsys, struct nvme_ctrl *ct
- 	memset(subsys->subnqn + off, 0, sizeof(subsys->subnqn) - off);
- }
- 
--static void __nvme_release_subsystem(struct nvme_subsystem *subsys)
-+static void nvme_release_subsystem(struct device *dev)
- {
-+	struct nvme_subsystem *subsys =
-+		container_of(dev, struct nvme_subsystem, dev);
-+
- 	ida_simple_remove(&nvme_subsystems_ida, subsys->instance);
- 	kfree(subsys);
- }
- 
--static void nvme_release_subsystem(struct device *dev)
--{
--	__nvme_release_subsystem(container_of(dev, struct nvme_subsystem, dev));
--}
--
- static void nvme_destroy_subsystem(struct kref *ref)
- {
- 	struct nvme_subsystem *subsys =
-@@ -2482,7 +2480,7 @@ static int nvme_init_subsystem(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
- 	mutex_lock(&nvme_subsystems_lock);
- 	found = __nvme_find_get_subsystem(subsys->subnqn);
- 	if (found) {
--		__nvme_release_subsystem(subsys);
-+		put_device(&subsys->dev);
- 		subsys = found;
- 
- 		if (!nvme_validate_cntlid(subsys, ctrl, id)) {
+Horia Geantă (5):
+  crypto: caam/qi - fix error handling in ERN handler
+  crypto: caam - fix return code in completion callbacks
+  crypto: caam - update IV only when crypto operation succeeds
+  crypto: caam - keep both virtual and dma key addresses
+  crypto: caam - fix DKP for certain key lengths
+
+Iuliana Prodan (9):
+  crypto: caam - check key length
+  crypto: caam - check authsize
+  crypto: caam - check assoclen
+  crypto: caam - check zero-length input
+  crypto: caam - update rfc4106 sh desc to support zero length input
+  crypto: caam - free resources in case caam_rng registration failed
+  crypto: caam - execute module exit point only if necessary
+  crypto: caam - unregister algorithm only if the registration succeeded
+  crypto: caam - change return value in case CAAM has no MDHA
+
+ drivers/crypto/caam/Makefile        |   2 +-
+ drivers/crypto/caam/caamalg.c       | 226 ++++++++++++++++----------
+ drivers/crypto/caam/caamalg_desc.c  |  46 ++++--
+ drivers/crypto/caam/caamalg_desc.h  |   2 +-
+ drivers/crypto/caam/caamalg_qi.c    | 222 +++++++++++++++----------
+ drivers/crypto/caam/caamalg_qi2.c   | 316 ++++++++++++++++++++++++------------
+ drivers/crypto/caam/caamhash.c      | 113 ++++++++-----
+ drivers/crypto/caam/caamhash_desc.c |   5 +-
+ drivers/crypto/caam/caamhash_desc.h |   2 +-
+ drivers/crypto/caam/caampkc.c       |  80 ++++++---
+ drivers/crypto/caam/caamrng.c       |  17 +-
+ drivers/crypto/caam/common_if.c     |  88 ++++++++++
+ drivers/crypto/caam/common_if.h     |  19 +++
+ drivers/crypto/caam/desc_constr.h   |  34 ++--
+ drivers/crypto/caam/error.c         |  61 ++++---
+ drivers/crypto/caam/error.h         |   2 +-
+ drivers/crypto/caam/key_gen.c       |   5 +-
+ drivers/crypto/caam/qi.c            |  10 +-
+ drivers/crypto/caam/regs.h          |   1 +
+ 19 files changed, 851 insertions(+), 400 deletions(-)
+ create mode 100644 drivers/crypto/caam/common_if.c
+ create mode 100644 drivers/crypto/caam/common_if.h
+
 -- 
-2.20.1
+2.1.0
 
