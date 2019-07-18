@@ -2,39 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 994876C799
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:26:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 692586C76B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:25:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390713AbfGRDZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:25:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36864 "EHLO mail.kernel.org"
+        id S2390422AbfGRDYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:24:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389491AbfGRDFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:05:43 -0400
+        id S2390417AbfGRDHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:07:21 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DA05204EC;
-        Thu, 18 Jul 2019 03:05:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D08921841;
+        Thu, 18 Jul 2019 03:07:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419143;
-        bh=STu5mrw5Db9c2jV+T8+Ud0rGngMeFFfl1sy7OsYWEI8=;
+        s=default; t=1563419241;
+        bh=HTMTVcyI4ODRSZYSR5Zt8vuz0PIAJWXWe2GIrXjEO7A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o14IyDr7Rhato862eMSfNx3gauM/6LFTQBcDRppo8tdW6y2RsJPhodo7f6V4JaN88
-         RFaIzUzsudvQiN4LobexI1tXGl/oWd87sriHjftI9/dAhqFNbtxeMBupf5iMK26f13
-         l7+0ioFnVtdxL48IH699T81gUNJBxXSfxI20wAUs=
+        b=zUKgjymwDDLUaNkD0XBwUNHBslJioD1XLVbCxx4Sx0fi/Ia7AtgnLUOUIG5QwRxR2
+         PbSK9VHAJavDkEhNHSp2WjorQwwHwvtJWv0HS34wxzArx60ruIGalOHO2QB/gYrl8O
+         59p4UDDs4Z/wL5aCK+OlTZZA8FpFba/Ey3cvC2P4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerome Marchand <jmarchan@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 28/54] dm table: dont copy from a NULL pointer in realloc_argv()
-Date:   Thu, 18 Jul 2019 12:01:23 +0900
-Message-Id: <20190718030055.544898115@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Young Xiao <92siuyang@gmail.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 10/47] perf/core: Fix perf_sample_regs_user() mm check
+Date:   Thu, 18 Jul 2019 12:01:24 +0900
+Message-Id: <20190718030049.458927533@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030053.287374640@linuxfoundation.org>
-References: <20190718030053.287374640@linuxfoundation.org>
+In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
+References: <20190718030045.780672747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +55,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a0651926553cfe7992166432e418987760882652 ]
+[ Upstream commit 085ebfe937d7a7a5df1729f35a12d6d655fea68c ]
 
-For the first call to realloc_argv() in dm_split_args(), old_argv is
-NULL and size is zero. Then memcpy is called, with the NULL old_argv
-as the source argument and a zero size argument. AFAIK, this is
-undefined behavior and generates the following warning when compiled
-with UBSAN on ppc64le:
+perf_sample_regs_user() uses 'current->mm' to test for the presence of
+userspace, but this is insufficient, consider use_mm().
 
-In file included from ./arch/powerpc/include/asm/paca.h:19,
-                 from ./arch/powerpc/include/asm/current.h:16,
-                 from ./include/linux/sched.h:12,
-                 from ./include/linux/kthread.h:6,
-                 from drivers/md/dm-core.h:12,
-                 from drivers/md/dm-table.c:8:
-In function 'memcpy',
-    inlined from 'realloc_argv' at drivers/md/dm-table.c:565:3,
-    inlined from 'dm_split_args' at drivers/md/dm-table.c:588:9:
-./include/linux/string.h:345:9: error: argument 2 null where non-null expected [-Werror=nonnull]
-  return __builtin_memcpy(p, q, size);
-         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/md/dm-table.c: In function 'dm_split_args':
-./include/linux/string.h:345:9: note: in a call to built-in function '__builtin_memcpy'
+A better test is: '!(current->flags & PF_KTHREAD)', exec() clears
+PF_KTHREAD after it sets the new ->mm but before it drops to userspace
+for the first time.
 
-Signed-off-by: Jerome Marchand <jmarchan@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Possibly obsoletes: bf05fc25f268 ("powerpc/perf: Fix oops when kthread execs user process")
+
+Reported-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Reported-by: Young Xiao <92siuyang@gmail.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 4018994f3d87 ("perf: Add ability to attach user level registers dump to sample")
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-table.c | 2 +-
+ kernel/events/core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index 350cf0451456..ec8b27e20de3 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -561,7 +561,7 @@ static char **realloc_argv(unsigned *size, char **old_argv)
- 		gfp = GFP_NOIO;
- 	}
- 	argv = kmalloc_array(new_size, sizeof(*argv), gfp);
--	if (argv) {
-+	if (argv && old_argv) {
- 		memcpy(argv, old_argv, *size * sizeof(*argv));
- 		*size = new_size;
- 	}
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 171b83ebed4a..3b61ff40bfe2 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5906,7 +5906,7 @@ static void perf_sample_regs_user(struct perf_regs *regs_user,
+ 	if (user_mode(regs)) {
+ 		regs_user->abi = perf_reg_abi(current);
+ 		regs_user->regs = regs;
+-	} else if (current->mm) {
++	} else if (!(current->flags & PF_KTHREAD)) {
+ 		perf_get_regs_user(regs_user, regs, regs_user_copy);
+ 	} else {
+ 		regs_user->abi = PERF_SAMPLE_REGS_ABI_NONE;
 -- 
 2.20.1
 
