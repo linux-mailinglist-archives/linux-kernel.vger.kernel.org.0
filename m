@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 035096C744
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:24:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8270F6C79B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:26:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389743AbfGRDHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:07:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38500 "EHLO mail.kernel.org"
+        id S2390580AbfGRDZf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:25:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389507AbfGRDHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:07:04 -0400
+        id S2389945AbfGRDFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:05:25 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 952F52173B;
-        Thu, 18 Jul 2019 03:07:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C983204EC;
+        Thu, 18 Jul 2019 03:05:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419224;
-        bh=dQwsRVBmoXuusJyqVdFUhRdWuy0a4VgWH2/aUY0GhS0=;
+        s=default; t=1563419124;
+        bh=cMRELNw+IVtsFSkaR6gmehlYDl1+E35KaDgLU11yhAc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Le5fOJSStdCdXZfSIFaxeIfIKjGszMe+X0nDD+swQZ4HJYw9QfaQmvzabsDSWC4d9
-         5DcEqziq7EgUE2Wo28VvNHwY4BUg6bOVaiJIo1I4/vSh58dUjxOMfy0WOUO9EuNZy3
-         hipHe634Rm2GTuZqIHweJuFxmUUnzx1LSIanlrQw=
+        b=qPwqr8Ty0w/Y3Apy2LjkJBm9gkJc16ldKbBTPa0ILoHZ+7IUa8e69ol3Vl+bwgRhK
+         HmjzYwjMeloI9G7afvQI9nx6o3N5NsyJUmxbgu5tqyrFHm3hZhqvbItHfFpXn8jcZ3
+         48b8lonDR+iS7kZCJbExdM1aHx5OjHatZKjismB8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>,
-        Phil Reid <preid@electromag.com.au>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 19/47] pinctrl: mcp23s08: Fix add_data and irqchip_add_nested call order
-Date:   Thu, 18 Jul 2019 12:01:33 +0900
-Message-Id: <20190718030050.288562738@linuxfoundation.org>
+Subject: [PATCH 5.1 39/54] fork,memcg: alloc_thread_stack_node needs to set tsk->stack
+Date:   Thu, 18 Jul 2019 12:01:34 +0900
+Message-Id: <20190718030056.240131358@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
-References: <20190718030045.780672747@linuxfoundation.org>
+In-Reply-To: <20190718030053.287374640@linuxfoundation.org>
+References: <20190718030053.287374640@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,68 +47,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6dbc6e6f58556369bf999cd7d9793586f1b0e4b4 ]
+[ Upstream commit 1bf4580e00a248a2c86269125390eb3648e1877c ]
 
-Currently probing of the mcp23s08 results in an error message
-"detected irqchip that is shared with multiple gpiochips:
-please fix the driver"
+Commit 5eed6f1dff87 ("fork,memcg: fix crash in free_thread_stack on
+memcg charge fail") corrected two instances, but there was a third
+instance of this bug.
 
-This is due to the following:
+Without setting tsk->stack, if memcg_charge_kernel_stack fails, it'll
+execute free_thread_stack() on a dangling pointer.
 
-Call to mcp23s08_irqchip_setup() with call hierarchy:
-mcp23s08_irqchip_setup()
-  gpiochip_irqchip_add_nested()
-    gpiochip_irqchip_add_key()
-      gpiochip_set_irq_hooks()
+Enterprise kernels are compiled with VMAP_STACK=y so this isn't
+critical, but custom VMAP_STACK=n builds should have some performance
+advantage, with the drawback of risking to fail fork because compaction
+didn't succeed.  So as long as VMAP_STACK=n is a supported option it's
+worth fixing it upstream.
 
-Call to devm_gpiochip_add_data() with call hierarchy:
-devm_gpiochip_add_data()
-  gpiochip_add_data_with_key()
-    gpiochip_add_irqchip()
-      gpiochip_set_irq_hooks()
-
-The gpiochip_add_irqchip() returns immediately if there isn't a irqchip
-but we added a irqchip due to the previous mcp23s08_irqchip_setup()
-call. So it calls gpiochip_set_irq_hooks() a second time.
-
-Fix this by moving the call to devm_gpiochip_add_data before
-the call to mcp23s08_irqchip_setup
-
-Fixes: 02e389e63e35 ("pinctrl: mcp23s08: fix irq setup order")
-Suggested-by: Marco Felsch <m.felsch@pengutronix.de>
-Signed-off-by: Phil Reid <preid@electromag.com.au>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Link: http://lkml.kernel.org/r/20190619011450.28048-1-aarcange@redhat.com
+Fixes: 9b6f7e163cd0 ("mm: rework memcg kernel stack accounting")
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Acked-by: Roman Gushchin <guro@fb.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-mcp23s08.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ kernel/fork.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index cecbce21d01f..33c3eca0ece9 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -889,6 +889,10 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 	if (ret < 0)
- 		goto fail;
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 2628f3773ca8..ee24fea0eede 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -245,7 +245,11 @@ static unsigned long *alloc_thread_stack_node(struct task_struct *tsk, int node)
+ 	struct page *page = alloc_pages_node(node, THREADINFO_GFP,
+ 					     THREAD_SIZE_ORDER);
  
-+	ret = devm_gpiochip_add_data(dev, &mcp->chip, mcp);
-+	if (ret < 0)
-+		goto fail;
-+
- 	mcp->irq_controller =
- 		device_property_read_bool(dev, "interrupt-controller");
- 	if (mcp->irq && mcp->irq_controller) {
-@@ -930,10 +934,6 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 			goto fail;
- 	}
+-	return page ? page_address(page) : NULL;
++	if (likely(page)) {
++		tsk->stack = page_address(page);
++		return tsk->stack;
++	}
++	return NULL;
+ #endif
+ }
  
--	ret = devm_gpiochip_add_data(dev, &mcp->chip, mcp);
--	if (ret < 0)
--		goto fail;
--
- 	if (one_regmap_config) {
- 		mcp->pinctrl_desc.name = devm_kasprintf(dev, GFP_KERNEL,
- 				"mcp23xxx-pinctrl.%d", raw_chip_address);
 -- 
 2.20.1
 
