@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 763126C5C3
+	by mail.lfdr.de (Postfix) with ESMTP id DFAC26C5C4
 	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:11:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391017AbfGRDJe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:09:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42118 "EHLO mail.kernel.org"
+        id S2403802AbfGRDJg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:09:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390999AbfGRDJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:09:32 -0400
+        id S2390999AbfGRDJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:09:35 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1AAB20818;
-        Thu, 18 Jul 2019 03:09:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F9CE205F4;
+        Thu, 18 Jul 2019 03:09:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419371;
-        bh=S/h8bMj9dYlzLDIQkq5FX3kIwrthWQmwTA+B6FKzt/4=;
+        s=default; t=1563419374;
+        bh=Blxmk7+hQu3gQbcXMbrnq13q1tLDhvAAnJhvXIM8+Fw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k+d/x0jaAtvS+E/PMEG2c24YeOU7XlKAvJrgc5+JOMs44nUwoJVgKVH3b+hTSddbJ
-         buBZn9ph8FvqzzVqSXIeh+yOHmqK1AAmi6uK0AHuUia0HHxb+Fd3mxJFwOkCLzppxf
-         1V0tWsPxVcAVkZThahKzCMIZOpPbbnDQ4cRdcKik=
+        b=bHgz3b9RTMYaqpFfcJL6vOR+6gboeUvvrH8hDpMD+ZhsZ+x6qbwLZoDf5oJc+EK7o
+         cT07NpviCfpLVNH4fVLnKqXR0i98jG30EKt/6FBz+cqav28Vm+vEB0tsZYcMvB4pdT
+         5teD6ckiTv23HyAJpZIbx/nNa3xWWAQ//cbmJ+z4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 19/80] can: m_can: implement errata "Needless activation of MRAF irq"
-Date:   Thu, 18 Jul 2019 12:01:10 +0900
-Message-Id: <20190718030100.325995106@linuxfoundation.org>
+Subject: [PATCH 4.14 21/80] ibmvnic: Refresh device multicast list after reset
+Date:   Thu, 18 Jul 2019 12:01:12 +0900
+Message-Id: <20190718030100.473568428@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
 References: <20190718030058.615992480@linuxfoundation.org>
@@ -46,74 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3e82f2f34c930a2a0a9e69fdc2de2f2f1388b442 ]
+[ Upstream commit be32a24372cf162e825332da1a7ccef058d4f20b ]
 
-During frame reception while the MCAN is in Error Passive state and the
-Receive Error Counter has thevalue MCAN_ECR.REC = 127, it may happen
-that MCAN_IR.MRAF is set although there was no Message RAM access
-failure. If MCAN_IR.MRAF is enabled, an interrupt to the Host CPU is
-generated.
+It was observed that multicast packets were no longer received after
+a device reset.  The fix is to resend the current multicast list to
+the backing device after recovery.
 
-Work around:
-The Message RAM Access Failure interrupt routine needs to check whether
-
-    MCAN_ECR.RP = '1' and MCAN_ECR.REC = '127'.
-
-In this case, reset MCAN_IR.MRAF. No further action is required.
-This affects versions older than 3.2.0
-
-Errata explained on Sama5d2 SoC which includes this hardware block:
-http://ww1.microchip.com/downloads/en/DeviceDoc/SAMA5D2-Family-Silicon-Errata-and-Data-Sheet-Clarification-DS80000803B.pdf
-chapter 6.2
-
-Reproducibility: If 2 devices with m_can are connected back to back,
-configuring different bitrate on them will lead to interrupt storm on
-the receiving side, with error "Message RAM access failure occurred".
-Another way is to have a bad hardware connection. Bad wire connection
-can lead to this issue as well.
-
-This patch fixes the issue according to provided workaround.
-
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Reviewed-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/m_can/m_can.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/net/ethernet/ibm/ibmvnic.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-index d3ce904e929e..ebad93ac8f11 100644
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -818,6 +818,27 @@ static int m_can_poll(struct napi_struct *napi, int quota)
- 	if (!irqstatus)
- 		goto end;
+diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
+index c914b338691b..956fbb164e6f 100644
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -1489,6 +1489,9 @@ static int do_reset(struct ibmvnic_adapter *adapter,
+ 		return 0;
+ 	}
  
-+	/* Errata workaround for issue "Needless activation of MRAF irq"
-+	 * During frame reception while the MCAN is in Error Passive state
-+	 * and the Receive Error Counter has the value MCAN_ECR.REC = 127,
-+	 * it may happen that MCAN_IR.MRAF is set although there was no
-+	 * Message RAM access failure.
-+	 * If MCAN_IR.MRAF is enabled, an interrupt to the Host CPU is generated
-+	 * The Message RAM Access Failure interrupt routine needs to check
-+	 * whether MCAN_ECR.RP = ’1’ and MCAN_ECR.REC = 127.
-+	 * In this case, reset MCAN_IR.MRAF. No further action is required.
-+	 */
-+	if ((priv->version <= 31) && (irqstatus & IR_MRAF) &&
-+	    (m_can_read(priv, M_CAN_ECR) & ECR_RP)) {
-+		struct can_berr_counter bec;
++	/* refresh device's multicast list */
++	ibmvnic_set_multi(netdev);
 +
-+		__m_can_get_berr_counter(dev, &bec);
-+		if (bec.rxerr == 127) {
-+			m_can_write(priv, M_CAN_IR, IR_MRAF);
-+			irqstatus &= ~IR_MRAF;
-+		}
-+	}
-+
- 	psr = m_can_read(priv, M_CAN_PSR);
- 	if (irqstatus & IR_ERR_STATE)
- 		work_done += m_can_handle_state_errors(dev, psr);
+ 	/* kick napi */
+ 	for (i = 0; i < adapter->req_rx_queues; i++)
+ 		napi_schedule(&adapter->napi[i]);
 -- 
 2.20.1
 
