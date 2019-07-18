@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53CC36D825
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 03:04:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF2C76D824
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 03:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbfGSBEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 21:04:09 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33027 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbfGSBD6 (ORCPT
+        id S1726748AbfGSBED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 21:04:03 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:40171 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726645AbfGSBD7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 21:03:58 -0400
-Received: by mail-pf1-f196.google.com with SMTP id g2so13400742pfq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 18:03:58 -0700 (PDT)
+        Thu, 18 Jul 2019 21:03:59 -0400
+Received: by mail-pl1-f196.google.com with SMTP id a93so14718379pla.7
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 18:03:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=3DerTdpMCvOAmilKWu1WZjnbwiZiuPLab19ZVw3bxBA=;
-        b=CcjIovhZedFsDdezc7AQitBZADDpwxrpZuoHqoLBsPIhq3ETzLfSXl5FRR6+g825Vi
-         NQ0I9It1E1J4o/5fbkjF2OxtlN2iwuclO8cVTscbJyPBi6km6qMmxFJxxkMzFIE4bGTu
-         rzjNrLYnlcBD9SO1IwKCAftWASxed/bC43uQ/wqzv0yb1ye8ptSZ3u/Xg8H6OBRMwpUd
-         OTLKRKIA9gaC57vo4o19GJsJGRGwObYHEArlmsjkVv6zOXCrvLEK2zVKa78QbGLBnnc4
-         3G3KoCFj7FOzMNs/8paTdMhLgqH8GDGR5U4ZYFibe2NCgJr2oRh2iuR9zxwmFBn/d5uV
-         xBag==
-X-Gm-Message-State: APjAAAUXSbEhqkrIabv94hfhj7o71LE6Ewi8t7A/x3RR/g4ix+EVpmuz
-        qz/qamyk+ELCQBaaYIpdmw0=
-X-Google-Smtp-Source: APXvYqzPAcu6qLOmEhMfz7VydByOJF8x4MlGexyAApZEKkNR5dc+pDZCOb3kIxs/VQggIwPkwgP3nw==
-X-Received: by 2002:a17:90b:8cd:: with SMTP id ds13mr51585957pjb.141.1563498237573;
-        Thu, 18 Jul 2019 18:03:57 -0700 (PDT)
+        bh=AfEn5k4rF+4iyOCNDK+njemPaPAtLOhaIH1NFhEtQDU=;
+        b=OWZU34Z10dfkKPVRMCR09vXrHEVJy64/m6t9wpT/Z37/d6xD6xhOS9Rp/Cflo2Ic1J
+         ra+XakdWkWRLLH5qiSOLZP5ZdMoLkWw3NILb/aIfisL/Sde1Z2Sj3IjfTVvFXz1SGT/2
+         xyk0QakcrsNHbr46BhudRSIpVBjPFggjn4T9Oix/ICoeWstUn26u/nwQqgTtnYYW05a8
+         5g2c4tf6OyaM5TpSDQNtggACNUNxSKsDTeRazu3R6KwVLZ37DAGPhzPTm0PYnOy+wWni
+         GLH0hgg7vqifp9Y1yMfPLXcy5q1L668j/yscvtuf3igpT8wliWzy/q5ffZVgG1KF11MU
+         Qghw==
+X-Gm-Message-State: APjAAAVBRuNo/4TikxQA5fC7fZh/GvONJV8rKzPG01QUQWoun596T4fa
+        pJKSosJFaArW7C8diA2U3nI=
+X-Google-Smtp-Source: APXvYqyhsq27MEfPksB3VDBaqIt0D5Qk2mg7fN8v214SkBZF3Le67xP0kHhrV+oxZ1OoWlXOu59bwQ==
+X-Received: by 2002:a17:902:be15:: with SMTP id r21mr52291590pls.293.1563498238781;
+        Thu, 18 Jul 2019 18:03:58 -0700 (PDT)
 Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id q144sm28887612pfc.103.2019.07.18.18.03.56
+        by smtp.gmail.com with ESMTPSA id q144sm28887612pfc.103.2019.07.18.18.03.57
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 18 Jul 2019 18:03:56 -0700 (PDT)
+        Thu, 18 Jul 2019 18:03:58 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
@@ -41,9 +41,9 @@ Cc:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Nadav Amit <namit@vmware.com>
-Subject: [RFC 6/7] x86/percpu: Optimized arch_raw_cpu_ptr()
-Date:   Thu, 18 Jul 2019 10:41:09 -0700
-Message-Id: <20190718174110.4635-7-namit@vmware.com>
+Subject: [RFC 7/7] x86/current: Aggressive caching of current
+Date:   Thu, 18 Jul 2019 10:41:10 -0700
+Message-Id: <20190718174110.4635-8-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190718174110.4635-1-namit@vmware.com>
 References: <20190718174110.4635-1-namit@vmware.com>
@@ -52,84 +52,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implementing arch_raw_cpu_ptr() in C, allows the compiler to perform
-better optimizations, such as setting an appropriate base to compute
-the address instead of an add instruction.
+The current_task is supposed to be constant in each thread and therefore
+does not need to be reread. There is already an attempt to cache it
+using inline assembly, using this_cpu_read_stable(), which hides the
+dependency on the read memory address.
 
-The benefit of this computation is relevant only when using compiler
-segment qualifiers. It is inapplicable to use this method when the
-address size is greater than the maximum operand size, as it is when
-building vdso32.
+However, this caching is not working very well. For example,
+sync_mm_rss() still reads current_task twice for no reason.
 
-Distinguish between the two cases in which preemption is disabled (as
-happens when this_cpu_ptr() is used) and enabled (when raw_cpu_ptr() is
-used).
-
-This allows optimizations, for instance in rcu_dynticks_eqs_exit(),
-the following code:
-
-  mov    $0x2bbc0,%rax
-  add    %gs:0x7ef07570(%rip),%rax	# 0x10358 <this_cpu_off>
-  lock xadd %edx,0xd8(%rax)
-
-Turns with this patch into:
-
-  mov    %gs:0x7ef08aa5(%rip),%rax	# 0x10358 <this_cpu_off>
-  lock xadd %edx,0x2bc58(%rax)
+Allow more aggressive caching by aliasing current_task to
+into a constant const_current_task and reading from the constant copy.
+Doing so requires the compiler to support x86 segment qualifiers.
+Hide const_current_task in a different compilation unit to avoid the
+compiler from assuming that the value is constant during compilation.
 
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/percpu.h | 25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/current.h | 30 ++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/Makefile   |  1 +
+ arch/x86/kernel/cpu/common.c   |  7 +------
+ arch/x86/kernel/cpu/current.c  | 16 ++++++++++++++++
+ include/linux/compiler.h       |  2 +-
+ 5 files changed, 49 insertions(+), 7 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/current.c
 
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index 13987f9bc82f..8bac7db397cc 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -73,20 +73,41 @@
- #endif /* USE_X86_SEG_SUPPORT */
+diff --git a/arch/x86/include/asm/current.h b/arch/x86/include/asm/current.h
+index 3e204e6140b5..7f093e81a647 100644
+--- a/arch/x86/include/asm/current.h
++++ b/arch/x86/include/asm/current.h
+@@ -10,11 +10,41 @@ struct task_struct;
  
- #define __my_cpu_offset		this_cpu_read(this_cpu_off)
-+#define __raw_my_cpu_offset	__this_cpu_read(this_cpu_off)
-+#define __my_cpu_ptr(ptr)	(__my_cpu_type(*ptr) *)(uintptr_t)(ptr)
+ DECLARE_PER_CPU(struct task_struct *, current_task);
  
-+#if USE_X86_SEG_SUPPORT && (!defined(BUILD_VDSO32) || defined(CONFIG_X86_64))
-+/*
-+ * Efficient implementation for cases in which the compiler supports C segments.
-+ * Allows the compiler to perform additional optimizations that can save more
-+ * instructions.
-+ *
-+ * This optimized version can only be used if the pointer size equals to native
-+ * operand size, which does not happen when vdso32 is used.
-+ */
-+#define __arch_raw_cpu_ptr_qual(qual, ptr)				\
-+({									\
-+	(qual typeof(*(ptr)) __kernel __force *)((uintptr_t)(ptr) +	\
-+						__my_cpu_offset);	\
-+})
-+#else /* USE_X86_SEG_SUPPORT && (!defined(BUILD_VDSO32) || defined(CONFIG_X86_64)) */
- /*
-  * Compared to the generic __my_cpu_offset version, the following
-  * saves one instruction and avoids clobbering a temp register.
-  */
--#define arch_raw_cpu_ptr(ptr)				\
-+#define __arch_raw_cpu_ptr_qual(qual, ptr)		\
- ({							\
- 	unsigned long tcp_ptr__;			\
--	asm volatile("add " __percpu_arg(1) ", %0"	\
-+	asm qual ("add " __percpu_arg(1) ", %0"		\
- 		     : "=r" (tcp_ptr__)			\
- 		     : "m" (__my_cpu_var(this_cpu_off)),\
- 		       "0" (ptr));			\
- 	(typeof(*(ptr)) __kernel __force *)tcp_ptr__;	\
- })
-+#endif /* USE_X86_SEG_SUPPORT && (!defined(BUILD_VDSO32) || defined(CONFIG_X86_64)) */
++#if USE_X86_SEG_SUPPORT
 +
-+#define arch_raw_cpu_ptr(ptr)				__arch_raw_cpu_ptr_qual(volatile, ptr)
-+#define arch_raw_cpu_ptr_preemption_disabled(ptr)	__arch_raw_cpu_ptr_qual( , ptr)
- #else /* CONFIG_SMP */
- #define __percpu_seg_override
- #define __percpu_prefix		""
++/*
++ * Hold a constant alias for current_task, which would allow to avoid caching of
++ * current task.
++ *
++ * We must mark const_current_task with the segment qualifiers, as otherwise gcc
++ * would do redundant reads of const_current_task.
++ */
++DECLARE_PER_CPU(struct task_struct * const __percpu_seg_override, const_current_task);
++
++static __always_inline struct task_struct *get_current(void)
++{
++
++	/*
++	 * GCC is missing functionality of removing segment qualifiers, which
++	 * messes with per-cpu infrastructure that holds local copies. Use
++	 * __raw_cpu_read to avoid holding any copy.
++	 */
++	return __raw_cpu_read(, const_current_task);
++}
++
++#else /* USE_X86_SEG_SUPPORT */
++
++/*
++ * Without segment qualifier support, the per-cpu infrastrucutre is not
++ * suitable for reading constants, so use this_cpu_read_stable() in this case.
++ */
+ static __always_inline struct task_struct *get_current(void)
+ {
+ 	return this_cpu_read_stable(current_task);
+ }
+ 
++#endif /* USE_X86_SEG_SUPPORT */
++
+ #define current get_current()
+ 
+ #endif /* __ASSEMBLY__ */
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index d7a1e5a9331c..d816f03a37d7 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -19,6 +19,7 @@ CFLAGS_common.o		:= $(nostackp)
+ 
+ obj-y			:= cacheinfo.o scattered.o topology.o
+ obj-y			+= common.o
++obj-y			+= current.o
+ obj-y			+= rdrand.o
+ obj-y			+= match.o
+ obj-y			+= bugs.o
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index e0489d2860d3..33a6b51e8059 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1607,13 +1607,8 @@ DEFINE_PER_CPU_FIRST(struct fixed_percpu_data,
+ EXPORT_PER_CPU_SYMBOL_GPL(fixed_percpu_data);
+ 
+ /*
+- * The following percpu variables are hot.  Align current_task to
+- * cacheline size such that they fall in the same cacheline.
++ * The following percpu variables are hot.
+  */
+-DEFINE_PER_CPU(struct task_struct *, current_task) ____cacheline_aligned =
+-	&init_task;
+-EXPORT_PER_CPU_SYMBOL(current_task);
+-
+ DEFINE_PER_CPU(struct irq_stack *, hardirq_stack_ptr);
+ DEFINE_PER_CPU(unsigned int, irq_count) __visible = -1;
+ 
+diff --git a/arch/x86/kernel/cpu/current.c b/arch/x86/kernel/cpu/current.c
+new file mode 100644
+index 000000000000..3238c6e34984
+--- /dev/null
++++ b/arch/x86/kernel/cpu/current.c
+@@ -0,0 +1,16 @@
++#include <linux/sched/task.h>
++#include <asm/current.h>
++
++/*
++ * Align current_task to cacheline size such that they fall in the same
++ * cacheline.
++ */
++DEFINE_PER_CPU(struct task_struct *, current_task) ____cacheline_aligned =
++	&init_task;
++EXPORT_PER_CPU_SYMBOL(current_task);
++
++#if USE_X86_SEG_SUPPORT
++DECLARE_PER_CPU(struct task_struct * const __percpu_seg_override, const_current_task)
++	__attribute__((alias("current_task")));
++EXPORT_PER_CPU_SYMBOL(const_current_task);
++#endif
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index f0fd5636fddb..1b6ee9ab6373 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -299,7 +299,7 @@ unsigned long read_word_at_a_time(const void *addr)
+  */
+ #define __ADDRESSABLE(sym) \
+ 	static void * __section(".discard.addressable") __used \
+-		__PASTE(__addressable_##sym, __LINE__) = (void *)&sym;
++		__PASTE(__addressable_##sym, __LINE__) = (void *)(uintptr_t)&sym;
+ 
+ /**
+  * offset_to_ptr - convert a relative memory offset to an absolute pointer
 -- 
 2.17.1
 
