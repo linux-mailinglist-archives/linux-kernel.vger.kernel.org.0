@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19DFE6C529
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:07:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D5D66C564
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389296AbfGRDDX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:03:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34014 "EHLO mail.kernel.org"
+        id S2389538AbfGRDFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:05:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389252AbfGRDDV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:03:21 -0400
+        id S2390036AbfGRDFm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:05:42 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62E932173B;
-        Thu, 18 Jul 2019 03:03:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA73D21841;
+        Thu, 18 Jul 2019 03:05:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419000;
-        bh=EOqjTyZARP8Mz1ivHyEMBzL8+5UqiihTHldWS5cAR2A=;
+        s=default; t=1563419141;
+        bh=agxZ9USqDthhFmvxTjDTB4OD6zGc12k9+pdVOWDN6SY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2HR06FedZxaz7DJY0pBnjLjfnXIL+pSXL/k/Wg0iEkJqzBBha2aWgygD1hyHDB3Vf
-         BPzKYmy5Kpqz20Sd25KagtOdZCDGdv6knRN82EoO5AZy55UUhQzCf/PEVopwr16DuW
-         cW5CqChZW5C951D0Midxt+2YucTBrR/ZLbnwFRgM=
+        b=ChE31C748a8Nslgg/r9eJdSBiApqc03OoOh8AwpXQNSZ+DLV/E3Ns1fu9xd6uc9XK
+         XvGqSu1w9ie6Bi/uacSA96EsTHw/PtKQvmU4gX+CUDeAmf31OwBF/SpR0QHsoUEqLq
+         i4H3YCzLf99LN/xF+PmWBAwm4lu8Ry92NrKxUuUE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.2 04/21] nilfs2: do not use unexported cpu_to_le32()/le32_to_cpu() in uapi header
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 27/54] pinctrl: ocelot: fix pinmuxing for pins after 31
 Date:   Thu, 18 Jul 2019 12:01:22 +0900
-Message-Id: <20190718030031.251273422@linuxfoundation.org>
+Message-Id: <20190718030055.476573988@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030030.456918453@linuxfoundation.org>
-References: <20190718030030.456918453@linuxfoundation.org>
+In-Reply-To: <20190718030053.287374640@linuxfoundation.org>
+References: <20190718030053.287374640@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,129 +45,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+[ Upstream commit 4b36082e2e09c2769710756390d54cfca563ed96 ]
 
-commit c32cc30c0544f13982ee0185d55f4910319b1a79 upstream.
+The actual layout for OCELOT_GPIO_ALT[01] when there are more than 32 pins
+is interleaved, i.e. OCELOT_GPIO_ALT0[0], OCELOT_GPIO_ALT1[0],
+OCELOT_GPIO_ALT0[1], OCELOT_GPIO_ALT1[1]. Introduce a new REG_ALT macro to
+facilitate the register offset calculation and use it where necessary.
 
-cpu_to_le32/le32_to_cpu is defined in include/linux/byteorder/generic.h,
-which is not exported to user-space.
-
-UAPI headers must use the ones prefixed with double-underscore.
-
-Detected by compile-testing exported headers:
-
-  include/linux/nilfs2_ondisk.h: In function `nilfs_checkpoint_set_snapshot':
-  include/linux/nilfs2_ondisk.h:536:17: error: implicit declaration of function `cpu_to_le32' [-Werror=implicit-function-declaration]
-    cp->cp_flags = cpu_to_le32(le32_to_cpu(cp->cp_flags) |  \
-                   ^
-  include/linux/nilfs2_ondisk.h:552:1: note: in expansion of macro `NILFS_CHECKPOINT_FNS'
-   NILFS_CHECKPOINT_FNS(SNAPSHOT, snapshot)
-   ^~~~~~~~~~~~~~~~~~~~
-  include/linux/nilfs2_ondisk.h:536:29: error: implicit declaration of function `le32_to_cpu' [-Werror=implicit-function-declaration]
-    cp->cp_flags = cpu_to_le32(le32_to_cpu(cp->cp_flags) |  \
-                               ^
-  include/linux/nilfs2_ondisk.h:552:1: note: in expansion of macro `NILFS_CHECKPOINT_FNS'
-   NILFS_CHECKPOINT_FNS(SNAPSHOT, snapshot)
-   ^~~~~~~~~~~~~~~~~~~~
-  include/linux/nilfs2_ondisk.h: In function `nilfs_segment_usage_set_clean':
-  include/linux/nilfs2_ondisk.h:622:19: error: implicit declaration of function `cpu_to_le64' [-Werror=implicit-function-declaration]
-    su->su_lastmod = cpu_to_le64(0);
-                     ^~~~~~~~~~~
-
-Link: http://lkml.kernel.org/r/20190605053006.14332-1-yamada.masahiro@socionext.com
-Fixes: e63e88bc53ba ("nilfs2: move ioctl interface and disk layout to uapi separately")
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Joe Perches <joe@perches.com>
-Cc: <stable@vger.kernel.org>	[4.9+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: da801ab56ad8 pinctrl: ocelot: add MSCC Jaguar2 support
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/uapi/linux/nilfs2_ondisk.h |   24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/pinctrl/pinctrl-ocelot.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/include/uapi/linux/nilfs2_ondisk.h
-+++ b/include/uapi/linux/nilfs2_ondisk.h
-@@ -29,7 +29,7 @@
- 
- #include <linux/types.h>
- #include <linux/magic.h>
--
-+#include <asm/byteorder.h>
- 
- #define NILFS_INODE_BMAP_SIZE	7
- 
-@@ -533,19 +533,19 @@ enum {
- static inline void							\
- nilfs_checkpoint_set_##name(struct nilfs_checkpoint *cp)		\
- {									\
--	cp->cp_flags = cpu_to_le32(le32_to_cpu(cp->cp_flags) |		\
--				   (1UL << NILFS_CHECKPOINT_##flag));	\
-+	cp->cp_flags = __cpu_to_le32(__le32_to_cpu(cp->cp_flags) |	\
-+				     (1UL << NILFS_CHECKPOINT_##flag));	\
- }									\
- static inline void							\
- nilfs_checkpoint_clear_##name(struct nilfs_checkpoint *cp)		\
- {									\
--	cp->cp_flags = cpu_to_le32(le32_to_cpu(cp->cp_flags) &		\
-+	cp->cp_flags = __cpu_to_le32(__le32_to_cpu(cp->cp_flags) &	\
- 				   ~(1UL << NILFS_CHECKPOINT_##flag));	\
- }									\
- static inline int							\
- nilfs_checkpoint_##name(const struct nilfs_checkpoint *cp)		\
- {									\
--	return !!(le32_to_cpu(cp->cp_flags) &				\
-+	return !!(__le32_to_cpu(cp->cp_flags) &				\
- 		  (1UL << NILFS_CHECKPOINT_##flag));			\
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index d2478db975bd..fb76fb2e9ea5 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -396,7 +396,7 @@ static int ocelot_pin_function_idx(struct ocelot_pinctrl *info,
+ 	return -1;
  }
  
-@@ -595,20 +595,20 @@ enum {
- static inline void							\
- nilfs_segment_usage_set_##name(struct nilfs_segment_usage *su)		\
- {									\
--	su->su_flags = cpu_to_le32(le32_to_cpu(su->su_flags) |		\
-+	su->su_flags = __cpu_to_le32(__le32_to_cpu(su->su_flags) |	\
- 				   (1UL << NILFS_SEGMENT_USAGE_##flag));\
- }									\
- static inline void							\
- nilfs_segment_usage_clear_##name(struct nilfs_segment_usage *su)	\
- {									\
- 	su->su_flags =							\
--		cpu_to_le32(le32_to_cpu(su->su_flags) &			\
-+		__cpu_to_le32(__le32_to_cpu(su->su_flags) &		\
- 			    ~(1UL << NILFS_SEGMENT_USAGE_##flag));      \
- }									\
- static inline int							\
- nilfs_segment_usage_##name(const struct nilfs_segment_usage *su)	\
- {									\
--	return !!(le32_to_cpu(su->su_flags) &				\
-+	return !!(__le32_to_cpu(su->su_flags) &				\
- 		  (1UL << NILFS_SEGMENT_USAGE_##flag));			\
+-#define REG(r, info, p) ((r) * (info)->stride + (4 * ((p) / 32)))
++#define REG_ALT(msb, info, p) (OCELOT_GPIO_ALT0 * (info)->stride + 4 * ((msb) + ((info)->stride * ((p) / 32))))
+ 
+ static int ocelot_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ 				 unsigned int selector, unsigned int group)
+@@ -412,19 +412,21 @@ static int ocelot_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ 
+ 	/*
+ 	 * f is encoded on two bits.
+-	 * bit 0 of f goes in BIT(pin) of ALT0, bit 1 of f goes in BIT(pin) of
+-	 * ALT1
++	 * bit 0 of f goes in BIT(pin) of ALT[0], bit 1 of f goes in BIT(pin) of
++	 * ALT[1]
+ 	 * This is racy because both registers can't be updated at the same time
+ 	 * but it doesn't matter much for now.
+ 	 */
+-	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT0, info, pin->pin),
++	regmap_update_bits(info->map, REG_ALT(0, info, pin->pin),
+ 			   BIT(p), f << p);
+-	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT1, info, pin->pin),
++	regmap_update_bits(info->map, REG_ALT(1, info, pin->pin),
+ 			   BIT(p), f << (p - 1));
+ 
+ 	return 0;
  }
  
-@@ -619,15 +619,15 @@ NILFS_SEGMENT_USAGE_FNS(ERROR, error)
- static inline void
- nilfs_segment_usage_set_clean(struct nilfs_segment_usage *su)
- {
--	su->su_lastmod = cpu_to_le64(0);
--	su->su_nblocks = cpu_to_le32(0);
--	su->su_flags = cpu_to_le32(0);
-+	su->su_lastmod = __cpu_to_le64(0);
-+	su->su_nblocks = __cpu_to_le32(0);
-+	su->su_flags = __cpu_to_le32(0);
- }
++#define REG(r, info, p) ((r) * (info)->stride + (4 * ((p) / 32)))
++
+ static int ocelot_gpio_set_direction(struct pinctrl_dev *pctldev,
+ 				     struct pinctrl_gpio_range *range,
+ 				     unsigned int pin, bool input)
+@@ -445,9 +447,9 @@ static int ocelot_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 	struct ocelot_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
+ 	unsigned int p = offset % 32;
  
- static inline int
- nilfs_segment_usage_clean(const struct nilfs_segment_usage *su)
- {
--	return !le32_to_cpu(su->su_flags);
-+	return !__le32_to_cpu(su->su_flags);
- }
+-	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT0, info, offset),
++	regmap_update_bits(info->map, REG_ALT(0, info, offset),
+ 			   BIT(p), 0);
+-	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT1, info, offset),
++	regmap_update_bits(info->map, REG_ALT(1, info, offset),
+ 			   BIT(p), 0);
  
- /**
+ 	return 0;
+-- 
+2.20.1
+
 
 
