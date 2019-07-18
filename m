@@ -2,123 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97FEB6C3BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 02:06:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5F746C3B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 02:02:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728501AbfGRAGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 20:06:42 -0400
-Received: from egyptian.birch.relay.mailchannels.net ([23.83.209.56]:31915
-        "EHLO egyptian.birch.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728049AbfGRAGm (ORCPT
+        id S1728520AbfGRACZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 20:02:25 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:50123 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727804AbfGRACZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 20:06:42 -0400
-X-Sender-Id: 18vtm3q735|x-authuser|mail@thomaslambertz.de
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 6030750118A
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 23:48:22 +0000 (UTC)
-Received: from relay004.mxroute.com (100-96-4-184.trex.outbound.svc.cluster.local [100.96.4.184])
-        (Authenticated sender: 18vtm3q735)
-        by relay.mailchannels.net (Postfix) with ESMTPA id 16F6B50152F
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 23:48:20 +0000 (UTC)
-X-Sender-Id: 18vtm3q735|x-authuser|mail@thomaslambertz.de
-Received: from relay004.mxroute.com ([TEMPUNAVAIL]. [185.234.75.11])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
-        by 0.0.0.0:2500 (trex/5.17.3);
-        Wed, 17 Jul 2019 23:48:22 +0000
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: 18vtm3q735|x-authuser|mail@thomaslambertz.de
-X-MailChannels-Auth-Id: 18vtm3q735
-X-Belong-Harbor: 7e2961444de4470f_1563407302155_2635510663
-X-MC-Loop-Signature: 1563407302155:2693518527
-X-MC-Ingress-Time: 1563407302155
-Received: from relay-ext1.mxrelay.co (relay-ext1.mxrelay.co [185.19.31.132])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay004.mxroute.com (Postfix) with ESMTPS id 89E083F0E1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 23:48:13 +0000 (UTC)
-Received: from qrelay100.mxroute.com (qrelay100.mxroute.com [172.82.139.100])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay-ext1.mxrelay.co (Postfix) with ESMTPS id 9121047389
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 23:48:11 +0000 (UTC)
-Received: from filter002.mxroute.com (unknown [94.130.183.33])
-        by qrelay100.mxroute.com (Postfix) with ESMTP id DD93F10086D;
-        Wed, 17 Jul 2019 19:48:09 -0400 (EDT)
-Received: from aus.mxroute.com (unknown [45.125.247.50])
-        by filter002.mxroute.com (Postfix) with ESMTPS id 02F3B3F03D;
-        Wed, 17 Jul 2019 23:48:04 +0000 (UTC)
-From:   Thomas Lambertz <mail@thomaslambertz.de>
-Subject: [5.2 regression] x86/fpu changes cause crashes in KVM guest
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Wed, 17 Jul 2019 20:02:25 -0400
+Received: by mail-pl1-f201.google.com with SMTP id 65so12879018plf.16
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 17:02:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=F4BwMGynHNNojraJ7LjreMR6L3I2Kny/UtiBEd/49jg=;
+        b=K9hevwQMFXcVZY0TVfn6Ud/SV2/bHQesWc9wE618szqhc73WC4OW/bMO8wMFXc5LHT
+         hBJsqQkPoYSzk0WIBzNs3qSkuRNk+q8717TU4h0P6ksPRJedS3kWLecav/KjMXIH7Mi5
+         M/N9JoDiIr7xGzxxHzypHZTYjT5LP3c+lfUD2KPWSKXNoC4hlhUwAwd1OY9ZdIq7Pp97
+         oqjPKHwwgQADwKO5BxCEdut3RWlfmF/gkW39Ja3geKDPXAnuszI+ynX67Pv0EtyrmlUl
+         QuA6JPstUx1rlEZhmP65fPWS7RZ0ir8cg1pbk4fTrlHO/ilY/HIn9ObcMp7MViu9ngEE
+         zIww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=F4BwMGynHNNojraJ7LjreMR6L3I2Kny/UtiBEd/49jg=;
+        b=EW2A9tIVcFaDtYVqtwQUAPOrn+7VPVtVFMgMDWaZa766A6AV5CbMI+I7104q5v50Ak
+         rbwOcvBtTXe5TqS9CcHtDDVRpz1Gfhzr8vEMMnN8UbAS8IvsgDV+dEMC305YyXJ5WRDF
+         FUNJu6AkWL9t1+YsSUlnr7mAtLQNJ76+IO8GLWRCasHITakRnts9nDvi5lAUEGOAqRmM
+         hTvOD3K4YfQp8yBnwP35jM4oaTpq5ZPknyE3r75B2nDhIKD+wX3BZoTgyg3sypIqsqYB
+         zErJsLocdz50BcmOZ9ffgKUicsRnihpaW62PcbFcd5TbrH1+EPVovU40StxhGyMILxOR
+         35dg==
+X-Gm-Message-State: APjAAAWlmPiRHa7kNbdmjJSCnZdX9a8Wc7nCVZc7imS0/foDJxkUV2B5
+        6HuyxKkmZOa2ve6e1vkTFDioxbDciv9+4P9oryyBeA==
+X-Google-Smtp-Source: APXvYqwbaNEq2cmulN5Pfzy8ARhvkLv7MBCDx+b2D8ZSCoaObYtbmood/GQ5VD54MA7JAkzuFbKme7G/xBzZ4Lv3lK4edg==
+X-Received: by 2002:a63:5765:: with SMTP id h37mr12364689pgm.183.1563408143830;
+ Wed, 17 Jul 2019 17:02:23 -0700 (PDT)
+Date:   Wed, 17 Jul 2019 17:02:04 -0700
+Message-Id: <20190718000206.121392-1-vaibhavrustagi@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
+Subject: [PATCH 0/2] Support kexec/kdump for clang built kernel
+From:   Vaibhav Rustagi <vaibhavrustagi@google.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Message-ID: <217248af-e980-9cb0-ff0d-9773413b9d38@thomaslambertz.de>
-Date:   Thu, 18 Jul 2019 01:47:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AuthUser: mail@thomaslambertz.de
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Vaibhav Rustagi <vaibhavrustagi@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since kernel 5.2, I've been experiencing strange issues in my Windows 10 
-QEMU/KVM guest.
-Via bisection, I have tracked down that the issue lies in the FPU state 
-handling changes.
-Kernels before 8ff468c29e9a9c3afe9152c10c7b141343270bf3 work great, the 
-ones afterwards are affected.
-Sometimes the state seems to be restored incorrectly in the guest.
+This patch series includes the following:
 
-I have managed to reproduce it relatively cleanly, on a linux guest.
-(ubuntu-server 18.04, but that should not matter, since it occured on 
-windows aswell)
+1. Adding compiler options to not use XMM registers in the purgatory code.
+2. Reuse the implementation of memcpy and memset instead of relying on
+__builtin_memcpy and __builtin_memset as it causes infinite recursion
+in clang.
 
-To reproduce the issue, you need prime95 (or mprime), from 
-https://www.mersenne.org/download/ .
-This is just a stress test for the FPU, which helps reproduce the error 
-much quicker.
+Nick Desaulniers (1):
+  x86/purgatory: do not use __builtin_memcpy and __builtin_memset.
 
-- Run it in the guest as 'Benchmark Only', and choose the '(2) Small 
-FFTs' torture test. Give it the maximum amount of cores (for me 10).
-- On the host, run the same test. To keep my pc usable, I limited it to 
-5 cores. I do this to put some pressure on the system.
-- repeatedly focus and unfocus the qemu window
+Vaibhav Rustagi (1):
+  x86/purgatory: add -mno-sse, -mno-mmx, -mno-sse2 to Makefile
 
-With this config, errors in the guest usually occur within 30 seconds. 
-Without the refocusing, takes ~5min on average, but the variance of this 
-time is quite large.
+ arch/x86/purgatory/Makefile    |  4 ++++
+ arch/x86/purgatory/purgatory.c |  6 ++++++
+ arch/x86/purgatory/string.c    | 23 -----------------------
+ 3 files changed, 10 insertions(+), 23 deletions(-)
+ delete mode 100644 arch/x86/purgatory/string.c
 
-The error messages are either
-     "FATAL ERROR: Rounding was ......., expected less than 0.4"
-or
-     "FATAL ERROR: Resulting sum was ....., expexted: ......",
-suggesting that something in the calculation has gone wrong.
+-- 
+2.22.0.510.g264f2c817a-goog
 
-On the host, no errors are ever observed!
-
-
-I am running an AMD Ryzen 5 1600X on an Gigabyte GA-AX370 Gaming 5 
-motherboard.
-My main operating system is ArchLinux, the issue exists both with the 
-Arch and upstream kernel.
-QEMU is managed with virt-manager, but the issue also appears with the 
-following simple qemu cmdline:
-
-qemu-system-x86_64 -hda /var/lib/libvirt/images/ubuntu18.04.qcow2 
--enable-kvm -smp 10 -m 2048
-
-When kvm acceleration is disabled, the issue predictably goes away.
-
-The issue still exists on the latest github upstream kernel, 
-22051d9c4a57d3b4a8b5a7407efc80c71c7bfb16.
-
-- Thomas
