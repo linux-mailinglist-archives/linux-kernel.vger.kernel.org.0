@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6F6F6C5CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:11:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 763126C5C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:11:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389774AbfGRDJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:09:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42608 "EHLO mail.kernel.org"
+        id S2391017AbfGRDJe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:09:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391052AbfGRDJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:09:47 -0400
+        id S2390999AbfGRDJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:09:32 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A94C205F4;
-        Thu, 18 Jul 2019 03:09:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1AAB20818;
+        Thu, 18 Jul 2019 03:09:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419386;
-        bh=dAh+zuNthGs12/kWyN/jbJWspHyKM2RO7mBtFnSFE7k=;
+        s=default; t=1563419371;
+        bh=S/h8bMj9dYlzLDIQkq5FX3kIwrthWQmwTA+B6FKzt/4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yBiE2Slz+PxMGBVhA59Fua0IJ6mFYiVdtgE6K76SenFQXb4w46HW+YylQqG66uWYk
-         xM75iU8BmoqzTTyHb1n5NWV5kiz+zDP5cVqQQuJhMA1NyieGMxx4fc74pDWDKCfcXZ
-         xsKf2acP0aKrLsGqWCKN6b9Gaz6g5o6P/73WbeJw=
+        b=k+d/x0jaAtvS+E/PMEG2c24YeOU7XlKAvJrgc5+JOMs44nUwoJVgKVH3b+hTSddbJ
+         buBZn9ph8FvqzzVqSXIeh+yOHmqK1AAmi6uK0AHuUia0HHxb+Fd3mxJFwOkCLzppxf
+         1V0tWsPxVcAVkZThahKzCMIZOpPbbnDQ4cRdcKik=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Nyekjaer <sean@geanix.com>,
+        stable@vger.kernel.org,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
         Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 17/80] dt-bindings: can: mcp251x: add mcp25625 support
-Date:   Thu, 18 Jul 2019 12:01:08 +0900
-Message-Id: <20190718030100.162593916@linuxfoundation.org>
+Subject: [PATCH 4.14 19/80] can: m_can: implement errata "Needless activation of MRAF irq"
+Date:   Thu, 18 Jul 2019 12:01:10 +0900
+Message-Id: <20190718030100.325995106@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
 References: <20190718030058.615992480@linuxfoundation.org>
@@ -44,31 +46,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0df82dcd55832a99363ab7f9fab954fcacdac3ae ]
+[ Upstream commit 3e82f2f34c930a2a0a9e69fdc2de2f2f1388b442 ]
 
-Fully compatible with mcp2515, the mcp25625 have integrated transceiver.
+During frame reception while the MCAN is in Error Passive state and the
+Receive Error Counter has thevalue MCAN_ECR.REC = 127, it may happen
+that MCAN_IR.MRAF is set although there was no Message RAM access
+failure. If MCAN_IR.MRAF is enabled, an interrupt to the Host CPU is
+generated.
 
-This patch add the mcp25625 to the device tree bindings documentation.
+Work around:
+The Message RAM Access Failure interrupt routine needs to check whether
 
-Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+    MCAN_ECR.RP = '1' and MCAN_ECR.REC = '127'.
+
+In this case, reset MCAN_IR.MRAF. No further action is required.
+This affects versions older than 3.2.0
+
+Errata explained on Sama5d2 SoC which includes this hardware block:
+http://ww1.microchip.com/downloads/en/DeviceDoc/SAMA5D2-Family-Silicon-Errata-and-Data-Sheet-Clarification-DS80000803B.pdf
+chapter 6.2
+
+Reproducibility: If 2 devices with m_can are connected back to back,
+configuring different bitrate on them will lead to interrupt storm on
+the receiving side, with error "Message RAM access failure occurred".
+Another way is to have a bad hardware connection. Bad wire connection
+can lead to this issue as well.
+
+This patch fixes the issue according to provided workaround.
+
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Reviewed-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/net/can/microchip,mcp251x.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/can/m_can/m_can.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/can/microchip,mcp251x.txt b/Documentation/devicetree/bindings/net/can/microchip,mcp251x.txt
-index ee3723beb701..33b38716b77f 100644
---- a/Documentation/devicetree/bindings/net/can/microchip,mcp251x.txt
-+++ b/Documentation/devicetree/bindings/net/can/microchip,mcp251x.txt
-@@ -4,6 +4,7 @@ Required properties:
-  - compatible: Should be one of the following:
-    - "microchip,mcp2510" for MCP2510.
-    - "microchip,mcp2515" for MCP2515.
-+   - "microchip,mcp25625" for MCP25625.
-  - reg: SPI chip select.
-  - clocks: The clock feeding the CAN controller.
-  - interrupt-parent: The parent interrupt controller.
+diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+index d3ce904e929e..ebad93ac8f11 100644
+--- a/drivers/net/can/m_can/m_can.c
++++ b/drivers/net/can/m_can/m_can.c
+@@ -818,6 +818,27 @@ static int m_can_poll(struct napi_struct *napi, int quota)
+ 	if (!irqstatus)
+ 		goto end;
+ 
++	/* Errata workaround for issue "Needless activation of MRAF irq"
++	 * During frame reception while the MCAN is in Error Passive state
++	 * and the Receive Error Counter has the value MCAN_ECR.REC = 127,
++	 * it may happen that MCAN_IR.MRAF is set although there was no
++	 * Message RAM access failure.
++	 * If MCAN_IR.MRAF is enabled, an interrupt to the Host CPU is generated
++	 * The Message RAM Access Failure interrupt routine needs to check
++	 * whether MCAN_ECR.RP = ’1’ and MCAN_ECR.REC = 127.
++	 * In this case, reset MCAN_IR.MRAF. No further action is required.
++	 */
++	if ((priv->version <= 31) && (irqstatus & IR_MRAF) &&
++	    (m_can_read(priv, M_CAN_ECR) & ECR_RP)) {
++		struct can_berr_counter bec;
++
++		__m_can_get_berr_counter(dev, &bec);
++		if (bec.rxerr == 127) {
++			m_can_write(priv, M_CAN_IR, IR_MRAF);
++			irqstatus &= ~IR_MRAF;
++		}
++	}
++
+ 	psr = m_can_read(priv, M_CAN_PSR);
+ 	if (irqstatus & IR_ERR_STATE)
+ 		work_done += m_can_handle_state_errors(dev, psr);
 -- 
 2.20.1
 
