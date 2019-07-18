@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCC166C5D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:11:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBE5E6C6D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:19:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390572AbfGRDKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:10:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43096 "EHLO mail.kernel.org"
+        id S2392033AbfGRDTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:19:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391101AbfGRDKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:10:05 -0400
+        id S2391350AbfGRDL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:11:57 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 905FA21841;
-        Thu, 18 Jul 2019 03:10:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C14CF2053B;
+        Thu, 18 Jul 2019 03:11:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419404;
-        bh=Ulc6IGMJovVWgezLWzctt5c4gvetb3xmZ8ycD3SVkZY=;
+        s=default; t=1563419516;
+        bh=FZEx4hQOG+1BUEUJZvKLmEMH+MnReXuk845PKTuYfBI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vwDMmQm3V5v4K2nD7To2UDHUUF8GFjVYro2bbh7tqoiItrXEKIhMuK+YAhslSYgPg
-         ZYMQoLmy5DZEhvG4wPgvMDNTcXzfZSJlaRLaBD14NTxdOU0/7z7d8qskaqVCqYx2wi
-         +2AAmvkEoKzfNrKp7Fwu29GonutpIWPyKWTOaf0E=
+        b=QyxIortkWOJLHH5ZhMlyLO4UOViP3CJqXsOGjE3ELn4JnwO2JlTh9esGt49ORRsYm
+         oykV7lib/M15yfLjS7G1MOkKEo6cErmfa4DsSVLJ1QWeDxEkcBcBO5f1ISWTRd+L4f
+         lq/70Asga1JqYGAX7xBM095Jnwqg7YBXWZ3Wyr+M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Barta <o.barta89@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.14 52/80] Revert "serial: 8250: Dont service RX FIFO if interrupts are disabled"
+        stable@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 13/54] KVM: arm/arm64: vgic: Fix kvm_device leak in vgic_its_destroy
 Date:   Thu, 18 Jul 2019 12:01:43 +0900
-Message-Id: <20190718030102.627376265@linuxfoundation.org>
+Message-Id: <20190718030050.240184396@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
-References: <20190718030058.615992480@linuxfoundation.org>
+In-Reply-To: <20190718030048.392549994@linuxfoundation.org>
+References: <20190718030048.392549994@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Barta <o.barta89@gmail.com>
+[ Upstream commit 4729ec8c1e1145234aeeebad5d96d77f4ccbb00a ]
 
-commit 3f2640ed7be838c3f05c0d2b0f7c7508e7431e48 upstream.
+kvm_device->destroy() seems to be supposed to free its kvm_device
+struct, but vgic_its_destroy() is not currently doing this,
+resulting in a memory leak, resulting in kmemleak reports such as
+the following:
 
-This reverts commit 2e9fe539108320820016f78ca7704a7342788380.
+unreferenced object 0xffff800aeddfe280 (size 128):
+  comm "qemu-system-aar", pid 13799, jiffies 4299827317 (age 1569.844s)
+  [...]
+  backtrace:
+    [<00000000a08b80e2>] kmem_cache_alloc+0x178/0x208
+    [<00000000dcad2bd3>] kvm_vm_ioctl+0x350/0xbc0
 
-Reading LSR unconditionally but processing the error flags only if
-UART_IIR_RDI bit was set before in IIR may lead to a loss of transmission
-error information on UARTs where the transmission error flags are cleared
-by a read of LSR. Information are lost in case an error is detected right
-before the read of LSR while processing e.g. an UART_IIR_THRI interrupt.
+Fix it.
 
-Signed-off-by: Oliver Barta <o.barta89@gmail.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Fixes: 2e9fe5391083 ("serial: 8250: Don't service RX FIFO if interrupts are disabled")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: Andre Przywara <andre.przywara@arm.com>
+Fixes: 1085fdc68c60 ("KVM: arm64: vgic-its: Introduce new KVM ITS device")
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/8250/8250_port.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ virt/kvm/arm/vgic/vgic-its.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -1873,8 +1873,7 @@ int serial8250_handle_irq(struct uart_po
+diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
+index 1ebbf233de9a..6d64b2cb02ab 100644
+--- a/virt/kvm/arm/vgic/vgic-its.c
++++ b/virt/kvm/arm/vgic/vgic-its.c
+@@ -1466,6 +1466,7 @@ static void vgic_its_destroy(struct kvm_device *kvm_dev)
+ 	mutex_unlock(&its->its_lock);
  
- 	status = serial_port_in(port, UART_LSR);
+ 	kfree(its);
++	kfree(kvm_dev);/* alloc by kvm_ioctl_create_device, free by .destroy */
+ }
  
--	if (status & (UART_LSR_DR | UART_LSR_BI) &&
--	    iir & UART_IIR_RDI) {
-+	if (status & (UART_LSR_DR | UART_LSR_BI)) {
- 		if (!up->dma || handle_rx_dma(up, iir))
- 			status = serial8250_rx_chars(up, status);
- 	}
+ static int vgic_its_has_attr(struct kvm_device *dev,
+-- 
+2.20.1
+
 
 
