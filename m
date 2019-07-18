@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 385106C57C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF34D6C521
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:07:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389418AbfGRDGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:06:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38280 "EHLO mail.kernel.org"
+        id S2389129AbfGRDDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:03:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390318AbfGRDGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:06:52 -0400
+        id S1727577AbfGRDDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:03:01 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5ABD42173B;
-        Thu, 18 Jul 2019 03:06:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D2EE21849;
+        Thu, 18 Jul 2019 03:03:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419210;
-        bh=gTH0e8Mlg3KOJ8aqeGQWp1Y+oCvRQ5Lp7NhXpx454Pk=;
+        s=default; t=1563418980;
+        bh=VZRbkZ6kretyBIwPDNjNMe1O0/KGopWD1k+pBXBkUdg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c16GPP/By8HmtU43RCCO0uvSvK93arMVxAKAJ/M5X99lUwHmrwWd1MFvhTLl34VWP
-         /AL52L84saP6KOx9dzF/kg3DhIjdbgz/MRzKnQclz8tNSVp6/O7umrQxzmigG9rTVm
-         HdVn3T+z576Ds2r2tiwfzc3BN9NeoSGxBkcCPwSE=
+        b=gUnGMh+IMOXxSw3RCttBebQHgbkfZI+x927GFvHwJTlprkiBzLf1xJRIXAQcINP8W
+         WDYYMWMEAk5zO6YnyVp4yCg0vXqbyWFW/J4pYfqRuBvV1x9hIk9YJjV4SRUbd0q5WP
+         IT6F8dceG0lDQfzP3O6CsS7J2n8SA3oJGLZb9uys=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergej Benilov <sergej.benilov@googlemail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 17/47] sis900: fix TX completion
-Date:   Thu, 18 Jul 2019 12:01:31 +0900
-Message-Id: <20190718030050.127545621@linuxfoundation.org>
+        stable@vger.kernel.org, Philipp Rudo <prudo@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: [PATCH 5.2 14/21] s390/ipl: Fix detection of has_secure attribute
+Date:   Thu, 18 Jul 2019 12:01:32 +0900
+Message-Id: <20190718030034.170275687@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
-References: <20190718030045.780672747@linuxfoundation.org>
+In-Reply-To: <20190718030030.456918453@linuxfoundation.org>
+References: <20190718030030.456918453@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,117 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8ac8a01092b2added0749ef937037bf1912e13e3 ]
+From: Philipp Rudo <prudo@linux.ibm.com>
 
-Since commit 605ad7f184b60cfaacbc038aa6c55ee68dee3c89 "tcp: refine TSO autosizing",
-outbound throughput is dramatically reduced for some connections, as sis900
-is doing TX completion within idle states only.
+commit 1b2be2071aca9aab22e3f902bcb0fca46a1d3b00 upstream.
 
-Make TX completion happen after every transmitted packet.
+Use the correct bit for detection of the machine capability associated
+with the has_secure attribute. It is expected that the underlying
+platform (including hypervisors) unsets the bit when they don't provide
+secure ipl for their guests.
 
-Test:
-netperf
+Fixes: c9896acc7851 ("s390/ipl: Provide has_secure sysfs attribute")
+Cc: stable@vger.kernel.org # 5.2
+Signed-off-by: Philipp Rudo <prudo@linux.ibm.com>
+Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Reviewed-by: Peter Oberparleiter <oberpar@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-before patch:
-> netperf -H remote -l -2000000 -- -s 1000000
-MIGRATED TCP STREAM TEST from 0.0.0.0 () port 0 AF_INET to 95.223.112.76 () port 0 AF_INET : demo
-Recv   Send    Send
-Socket Socket  Message  Elapsed
-Size   Size    Size     Time     Throughput
-bytes  bytes   bytes    secs.    10^6bits/sec
-
- 87380 327680 327680    253.44      0.06
-
-after patch:
-> netperf -H remote -l -10000000 -- -s 1000000
-MIGRATED TCP STREAM TEST from 0.0.0.0 () port 0 AF_INET to 95.223.112.76 () port 0 AF_INET : demo
-Recv   Send    Send
-Socket Socket  Message  Elapsed
-Size   Size    Size     Time     Throughput
-bytes  bytes   bytes    secs.    10^6bits/sec
-
- 87380 327680 327680    5.38       14.89
-
-Thx to Dave Miller and Eric Dumazet for helpful hints
-
-Signed-off-by: Sergej Benilov <sergej.benilov@googlemail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/sis/sis900.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/s390/include/asm/sclp.h   |    1 -
+ arch/s390/kernel/ipl.c         |    7 +------
+ drivers/s390/char/sclp_early.c |    1 -
+ 3 files changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/sis/sis900.c b/drivers/net/ethernet/sis/sis900.c
-index 4bb89f74742c..d5bcbc40a55f 100644
---- a/drivers/net/ethernet/sis/sis900.c
-+++ b/drivers/net/ethernet/sis/sis900.c
-@@ -1057,7 +1057,7 @@ sis900_open(struct net_device *net_dev)
- 	sis900_set_mode(sis_priv, HW_SPEED_10_MBPS, FDX_CAPABLE_HALF_SELECTED);
- 
- 	/* Enable all known interrupts by setting the interrupt mask. */
--	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE);
-+	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE | TxDESC);
- 	sw32(cr, RxENA | sr32(cr));
- 	sw32(ier, IE);
- 
-@@ -1578,7 +1578,7 @@ static void sis900_tx_timeout(struct net_device *net_dev)
- 	sw32(txdp, sis_priv->tx_ring_dma);
- 
- 	/* Enable all known interrupts by setting the interrupt mask. */
--	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE);
-+	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE | TxDESC);
+--- a/arch/s390/include/asm/sclp.h
++++ b/arch/s390/include/asm/sclp.h
+@@ -80,7 +80,6 @@ struct sclp_info {
+ 	unsigned char has_gisaf : 1;
+ 	unsigned char has_diag318 : 1;
+ 	unsigned char has_sipl : 1;
+-	unsigned char has_sipl_g2 : 1;
+ 	unsigned char has_dirq : 1;
+ 	unsigned int ibc;
+ 	unsigned int mtid;
+--- a/arch/s390/kernel/ipl.c
++++ b/arch/s390/kernel/ipl.c
+@@ -286,12 +286,7 @@ static struct kobj_attribute sys_ipl_sec
+ static ssize_t ipl_has_secure_show(struct kobject *kobj,
+ 				   struct kobj_attribute *attr, char *page)
+ {
+-	if (MACHINE_IS_LPAR)
+-		return sprintf(page, "%i\n", !!sclp.has_sipl);
+-	else if (MACHINE_IS_VM)
+-		return sprintf(page, "%i\n", !!sclp.has_sipl_g2);
+-	else
+-		return sprintf(page, "%i\n", 0);
++	return sprintf(page, "%i\n", !!sclp.has_sipl);
  }
  
- /**
-@@ -1618,7 +1618,7 @@ sis900_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
- 			spin_unlock_irqrestore(&sis_priv->lock, flags);
- 			return NETDEV_TX_OK;
- 	}
--	sis_priv->tx_ring[entry].cmdsts = (OWN | skb->len);
-+	sis_priv->tx_ring[entry].cmdsts = (OWN | INTR | skb->len);
- 	sw32(cr, TxENA | sr32(cr));
- 
- 	sis_priv->cur_tx ++;
-@@ -1674,7 +1674,7 @@ static irqreturn_t sis900_interrupt(int irq, void *dev_instance)
- 	do {
- 		status = sr32(isr);
- 
--		if ((status & (HIBERR|TxURN|TxERR|TxIDLE|RxORN|RxERR|RxOK)) == 0)
-+		if ((status & (HIBERR|TxURN|TxERR|TxIDLE|TxDESC|RxORN|RxERR|RxOK)) == 0)
- 			/* nothing intresting happened */
- 			break;
- 		handled = 1;
-@@ -1684,7 +1684,7 @@ static irqreturn_t sis900_interrupt(int irq, void *dev_instance)
- 			/* Rx interrupt */
- 			sis900_rx(net_dev);
- 
--		if (status & (TxURN | TxERR | TxIDLE))
-+		if (status & (TxURN | TxERR | TxIDLE | TxDESC))
- 			/* Tx interrupt */
- 			sis900_finish_xmit(net_dev);
- 
-@@ -1896,8 +1896,8 @@ static void sis900_finish_xmit (struct net_device *net_dev)
- 
- 		if (tx_status & OWN) {
- 			/* The packet is not transmitted yet (owned by hardware) !
--			 * Note: the interrupt is generated only when Tx Machine
--			 * is idle, so this is an almost impossible case */
-+			 * Note: this is an almost impossible condition
-+			 * in case of TxDESC ('descriptor interrupt') */
- 			break;
- 		}
- 
-@@ -2473,7 +2473,7 @@ static int sis900_resume(struct pci_dev *pci_dev)
- 	sis900_set_mode(sis_priv, HW_SPEED_10_MBPS, FDX_CAPABLE_HALF_SELECTED);
- 
- 	/* Enable all known interrupts by setting the interrupt mask. */
--	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE);
-+	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE | TxDESC);
- 	sw32(cr, RxENA | sr32(cr));
- 	sw32(ier, IE);
- 
--- 
-2.20.1
-
+ static struct kobj_attribute sys_ipl_has_secure_attr =
+--- a/drivers/s390/char/sclp_early.c
++++ b/drivers/s390/char/sclp_early.c
+@@ -41,7 +41,6 @@ static void __init sclp_early_facilities
+ 	sclp.has_hvs = !!(sccb->fac119 & 0x80);
+ 	sclp.has_kss = !!(sccb->fac98 & 0x01);
+ 	sclp.has_sipl = !!(sccb->cbl & 0x02);
+-	sclp.has_sipl_g2 = !!(sccb->cbl & 0x04);
+ 	if (sccb->fac85 & 0x02)
+ 		S390_lowcore.machine_flags |= MACHINE_FLAG_ESOP;
+ 	if (sccb->fac91 & 0x40)
 
 
