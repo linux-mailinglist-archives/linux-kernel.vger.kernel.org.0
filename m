@@ -2,118 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 792366C83D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 06:09:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF72A6C837
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 06:00:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbfGREJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 00:09:23 -0400
-Received: from mx0b-00010702.pphosted.com ([148.163.158.57]:43884 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725976AbfGREJX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 00:09:23 -0400
-X-Greylist: delayed 1237 seconds by postgrey-1.27 at vger.kernel.org; Thu, 18 Jul 2019 00:09:22 EDT
-Received: from pps.filterd (m0098779.ppops.net [127.0.0.1])
-        by mx0b-00010702.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x6I3jchG026798
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 22:48:45 -0500
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2051.outbound.protection.outlook.com [104.47.36.51])
-        by mx0b-00010702.pphosted.com with ESMTP id 2ts0cd7xwt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 22:48:45 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SoJ22StuC7LryG8db3dEL3zzi/JJgOMfDfUprADQXY0IPMTO7uUWN6kj4hbIoVaMEgVH7V8OXaZVilTqCvUqQX/sCc9CWaQNx/ZYPGw3oirZM19T7CX/6X0NLTgp05j6K0C2rL2NnSTQPisDJ5ryDjTUhEBHZLNhnxmH0dt+U9OaD4f39qIKbFhLIcwCWWQOpJWfIIxZ4O14KZK8fVkAVwwX1gTpASpAze9OK6Ay3XblVnvcPaTQPUo6GJXc1i8JIdteH4TE3sDOoP3Swtqd57ysFsKY+1PHvXm78mJAR2KOSrihU30Z1b1ZFhJMy/psEr5TprxppyV/psOG7PJuWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hNr3kzVhwMK6+UhX6hIAZbop7fOeZlcFRw0fn43z3s4=;
- b=JUe/t4U5uj2X2RhMUyIX7lh/EZL8H/jR/uXd+oF0wmnDoKaT+0ImlIG7shWV3IoGBoCo25AU4Lz4weDXPA2Wm90HP4CRp9URt8PQogjTCC/x9jlFXZoVoCEyoozuCNA8y6bkkHZghs3fDWuwVAQz4rCDArt68A9o2W8EoJ9Yy4Htvx0ZbGlmbMu4oDHi8bAv5+INbSJcAtJ528nL/GzHqeGlPx36ItOqP1uUXPXOXSqiC7hy98Jmd6rir8G1On5hH4EmxtlNjeRfIFBnIKfeYKN/DZwgGW/cdgNlk+rhk+m2EeqZbnJarjsvSk5V0vt8cH9BnbqFQ+vwKs/JHLirmw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=ni.com;dmarc=pass action=none header.from=ni.com;dkim=pass
- header.d=ni.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=nio365.onmicrosoft.com; s=selector1-nio365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hNr3kzVhwMK6+UhX6hIAZbop7fOeZlcFRw0fn43z3s4=;
- b=d7x60vidRR4bbG+KGqeIuVzXVZGxKKvbQ8dJLHtyCz3/NpsJl/ZaBDbME5qabx+7XXMkqJ57OA2tNhQ7gEHstc3pupcsqCeL3+0Q85hVY7YROtOpcIQMqviRqbI9qi2VKMcNK1pXlVzUUjARjf5p7rA6xd03lOC91HuUlcFK7jc=
-Received: from DM6PR04MB6249.namprd04.prod.outlook.com (20.178.228.16) by
- DM6PR04MB5868.namprd04.prod.outlook.com (20.179.49.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.10; Thu, 18 Jul 2019 03:48:42 +0000
-Received: from DM6PR04MB6249.namprd04.prod.outlook.com
- ([fe80::e4b8:8309:6793:f623]) by DM6PR04MB6249.namprd04.prod.outlook.com
- ([fe80::e4b8:8309:6793:f623%5]) with mapi id 15.20.2073.015; Thu, 18 Jul 2019
- 03:48:42 +0000
-From:   Kar Hin Ong <kar.hin.ong@ni.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Keng Soon Cheah <keng.soon.cheah@ni.com>
-Subject: Firing an interrupt pin induces the occurrence of another interrupt
-Thread-Topic: Firing an interrupt pin induces the occurrence of another
- interrupt
-Thread-Index: AdU9G2vsQGAkqV8+TnmePN80wZpMhw==
-Date:   Thu, 18 Jul 2019 03:48:42 +0000
-Message-ID: <DM6PR04MB6249DDAA6BCD01D1B37D41E8C3C80@DM6PR04MB6249.namprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [130.164.75.17]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2e936329-26d9-45e0-047b-08d70b32d3be
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:DM6PR04MB5868;
-x-ms-traffictypediagnostic: DM6PR04MB5868:
-x-microsoft-antispam-prvs: <DM6PR04MB58680A9268AD639B71C511B4C3C80@DM6PR04MB5868.namprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 01026E1310
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(366004)(136003)(39860400002)(376002)(189003)(199004)(256004)(4744005)(8676002)(81166006)(478600001)(2501003)(5660300002)(66066001)(7736002)(8936002)(2906002)(71190400001)(14454004)(74316002)(7696005)(2351001)(66556008)(71200400001)(3846002)(6916009)(305945005)(26005)(6116002)(81156014)(316002)(99286004)(486006)(476003)(102836004)(33656002)(6506007)(52536014)(5640700003)(86362001)(55016002)(4326008)(9686003)(53936002)(66946007)(66476007)(6436002)(64756008)(68736007)(76116006)(66446008)(25786009)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR04MB5868;H:DM6PR04MB6249.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: ni.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Db6/rKiNxjd01TPAiQfuDcPJ5Sm97g6Ng4Wpvvg1w/iADaf7GjC8nFhe8+RtNv2wtG4EgzNzAL84beNwvo6I/20eTGpm4F5jKSHVcYtpOlru4D9Uu8UAlEPgDcYJ0ixIi5me8A8zHmcxtVYxxb+A9zF/Oe5TpYsP15IrER1dkvV3vtSyHwyG5Yi7gJjsFzT9IRjBCK4IewxXxM34o9yRUC4rkH8HnSa0UJeua/1+5hiE1LTvkNCct0K7fJbHjSfBwlCeuN3HP8HKKgMVAAPkmOKPx48tFGdsuZiNNDMnzn7B3be+KnXmd97K5D6saM8rb6jR8JbPb5tI49dtZDeOyhTi4o2rXdbfkWtTCk2wz8NjrcDqtgap2YrcqaqDyZO6h4VVZF9VhCau07d+73bTEZBFNxliVrVHctFULgH1lh8=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726445AbfGREAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 00:00:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46888 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725613AbfGREAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 00:00:07 -0400
+Received: from localhost (unknown [104.132.1.68])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 748FF2085A;
+        Thu, 18 Jul 2019 04:00:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563422406;
+        bh=XHxvAzXMESKUif9uHHTNssIoixW2oCEvuFfuaMJvfk0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OUR/nfX0mtrLRj8tgV95jebAyyh7jJxswB1enkiX1ZqrDdbuMTCHtvnPsnYRyGv8k
+         2pIBsuQlN64LIFelNWLBibjALSnahA0kdNaOzJ+2N8tMdrdfrUxST/iFSRGjAQLMyc
+         J77HQTOVyRqOdvgT4R4lwbFRWoIFOJLxraYARLFA=
+Date:   Wed, 17 Jul 2019 21:00:05 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to read source block before
+ invalidating it
+Message-ID: <20190718040005.GA81995@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190718013718.70335-1-jaegeuk@kernel.org>
+ <20190718031214.GA78336@jaegeuk-macbookpro.roam.corp.google.com>
+ <19a25101-da74-de98-6ca4-a9fd9fa09ef2@huawei.com>
 MIME-Version: 1.0
-X-OriginatorOrg: ni.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e936329-26d9-45e0-047b-08d70b32d3be
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2019 03:48:42.3511
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kar.hin.ong@ni.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR04MB5868
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:5.22.84,1.0.8
- definitions=2019-07-18_01:2019-07-17,2019-07-18 signatures=0
-X-Proofpoint-Spam-Details: rule=inbound_policy_notspam policy=inbound_policy score=30 malwarescore=0
- clxscore=1011 bulkscore=0 impostorscore=0 phishscore=0 mlxscore=0
- spamscore=0 lowpriorityscore=0 mlxlogscore=658 priorityscore=1501
- adultscore=0 suspectscore=0 classifier=spam adjust=30 reason=mlx
- scancount=1 engine=8.12.0-1904300001 definitions=main-1907180041
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19a25101-da74-de98-6ca4-a9fd9fa09ef2@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,=20
+On 07/18, Chao Yu wrote:
+> On 2019/7/18 11:12, Jaegeuk Kim wrote:
+> > f2fs_allocate_data_block() invalidates old block address and enable new block
+> > address. Then, if we try to read old block by f2fs_submit_page_bio(), it will
+> > give WARN due to reading invalid blocks.
+> > 
+> > Let's make the order sanely back.
+> 
+> Hmm.. to avoid WARM, we may suffer one more memcpy, I suspect this can reduce
+> online resize or foreground gc ioctl performance...
 
-I have a x86 system with Xeon CPU running Linux with preempt_rt patch (kern=
-el version 4.14).=20
+I worried about performance tho, more concern came to me that there may exist a
+chance that other thread can allocate and write something in old block address.
 
-When a PCI device firing interrupt to GSI 44 (ioapic2, pin20), I noticed th=
-at GSI 19 (ioapic1, pin19) will get fired as well, and then it went unhandl=
-ed.
-I can reproduce this issue by using another PCI card or swapping the PCI ca=
-rd to other slot, as long as the device is driving GSI 44.
+> 
+> Can we just relief to use DATA_GENERIC_ENHANCE_READ for this case...?
 
-By putting traces on do_IRQ, I can see it's being called once for GSI 44, t=
-hen being called another once for GSI 19.
+We need to keep consistency for this api.
 
-I tried to reproduce it on RHEL 8, it is not reproducible initially. Howeve=
-r, after I added "threadirqs" kernel parameter, this behaviour appears on R=
-HEL 8 as well.
+Thanks,
 
-I would like to get your advice on whether this could be a kernel issue or =
-hardware issue.
-Inputs on how to further narrow down the issue are most welcomed.
-
-Thanks very much in advance,
-Kar Hin Ong
+> 
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> 
+> Except performance, I'm okay with this change.
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> 
+> Thanks,
+> 
+> > ---
+> > v2:
+> > I was fixing the comments. :)
+> > 
+> >  fs/f2fs/gc.c | 70 +++++++++++++++++++++++++---------------------------
+> >  1 file changed, 34 insertions(+), 36 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index 6691f526fa40..8974672db78f 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -796,6 +796,29 @@ static int move_data_block(struct inode *inode, block_t bidx,
+> >  	if (lfs_mode)
+> >  		down_write(&fio.sbi->io_order_lock);
+> >  
+> > +	mpage = f2fs_grab_cache_page(META_MAPPING(fio.sbi),
+> > +					fio.old_blkaddr, false);
+> > +	if (!mpage)
+> > +		goto up_out;
+> > +
+> > +	fio.encrypted_page = mpage;
+> > +
+> > +	/* read source block in mpage */
+> > +	if (!PageUptodate(mpage)) {
+> > +		err = f2fs_submit_page_bio(&fio);
+> > +		if (err) {
+> > +			f2fs_put_page(mpage, 1);
+> > +			goto up_out;
+> > +		}
+> > +		lock_page(mpage);
+> > +		if (unlikely(mpage->mapping != META_MAPPING(fio.sbi) ||
+> > +						!PageUptodate(mpage))) {
+> > +			err = -EIO;
+> > +			f2fs_put_page(mpage, 1);
+> > +			goto up_out;
+> > +		}
+> > +	}
+> > +
+> >  	f2fs_allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
+> >  					&sum, CURSEG_COLD_DATA, NULL, false);
+> >  
+> > @@ -803,44 +826,18 @@ static int move_data_block(struct inode *inode, block_t bidx,
+> >  				newaddr, FGP_LOCK | FGP_CREAT, GFP_NOFS);
+> >  	if (!fio.encrypted_page) {
+> >  		err = -ENOMEM;
+> > -		goto recover_block;
+> > -	}
+> > -
+> > -	mpage = f2fs_pagecache_get_page(META_MAPPING(fio.sbi),
+> > -					fio.old_blkaddr, FGP_LOCK, GFP_NOFS);
+> > -	if (mpage) {
+> > -		bool updated = false;
+> > -
+> > -		if (PageUptodate(mpage)) {
+> > -			memcpy(page_address(fio.encrypted_page),
+> > -					page_address(mpage), PAGE_SIZE);
+> > -			updated = true;
+> > -		}
+> >  		f2fs_put_page(mpage, 1);
+> > -		invalidate_mapping_pages(META_MAPPING(fio.sbi),
+> > -					fio.old_blkaddr, fio.old_blkaddr);
+> > -		if (updated)
+> > -			goto write_page;
+> > -	}
+> > -
+> > -	err = f2fs_submit_page_bio(&fio);
+> > -	if (err)
+> > -		goto put_page_out;
+> > -
+> > -	/* write page */
+> > -	lock_page(fio.encrypted_page);
+> > -
+> > -	if (unlikely(fio.encrypted_page->mapping != META_MAPPING(fio.sbi))) {
+> > -		err = -EIO;
+> > -		goto put_page_out;
+> > -	}
+> > -	if (unlikely(!PageUptodate(fio.encrypted_page))) {
+> > -		err = -EIO;
+> > -		goto put_page_out;
+> > +		goto recover_block;
+> >  	}
+> >  
+> > -write_page:
+> > +	/* write target block */
+> >  	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA, true, true);
+> > +	memcpy(page_address(fio.encrypted_page),
+> > +				page_address(mpage), PAGE_SIZE);
+> > +	f2fs_put_page(mpage, 1);
+> > +	invalidate_mapping_pages(META_MAPPING(fio.sbi),
+> > +				fio.old_blkaddr, fio.old_blkaddr);
+> > +
+> >  	set_page_dirty(fio.encrypted_page);
+> >  	if (clear_page_dirty_for_io(fio.encrypted_page))
+> >  		dec_page_count(fio.sbi, F2FS_DIRTY_META);
+> > @@ -871,11 +868,12 @@ static int move_data_block(struct inode *inode, block_t bidx,
+> >  put_page_out:
+> >  	f2fs_put_page(fio.encrypted_page, 1);
+> >  recover_block:
+> > -	if (lfs_mode)
+> > -		up_write(&fio.sbi->io_order_lock);
+> >  	if (err)
+> >  		f2fs_do_replace_block(fio.sbi, &sum, newaddr, fio.old_blkaddr,
+> >  								true, true);
+> > +up_out:
+> > +	if (lfs_mode)
+> > +		up_write(&fio.sbi->io_order_lock);
+> >  put_out:
+> >  	f2fs_put_dnode(&dn);
+> >  out:
+> > 
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
