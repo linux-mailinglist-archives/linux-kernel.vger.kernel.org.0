@@ -2,165 +2,355 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19D2B6CC39
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:48:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C6486CC1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:44:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389610AbfGRJrX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 05:47:23 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36587 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726649AbfGRJrX (ORCPT
+        id S2389650AbfGRJoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 05:44:07 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:54754 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726454AbfGRJoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 05:47:23 -0400
-Received: by mail-lj1-f196.google.com with SMTP id i21so26677459ljj.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 02:47:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=gB/oduENd+BsIOwUuYphtc1vzkjElb07KQmk4tLhZ+k=;
-        b=Ld5E5T2K8hVgwFFOff/9cRz2gKQO9y9uZAcvK8SP+bc4Je0gSSTe/FKRtZgtZEXw7t
-         DnblUc8wgSnJXjsVfhKMGdKmn/w13KUN91N3SXIOfavdfIGvfbx/cMP2nkJOCT+J/PGz
-         h8WCC1JsMkF5DFDipcCaVngk/w/0zVEm57kdWZmwe6CYY3t6Tm/Hr6Ctv2ZCXBf69QOD
-         B9Oqr65TxOR/D083DUmi/oyRMz2E+zsYG6E/lk9qDrepxo/zcmA1Y4rqHeunGyGK523x
-         ofnyIam5q6Rl30rrPPsxRIVn+Z3VjFgaEQDCCNDCIalrpVk4VMaTLnj77gKvML2KW6kR
-         U02g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=gB/oduENd+BsIOwUuYphtc1vzkjElb07KQmk4tLhZ+k=;
-        b=aFHz0Q0FMC4yJSnt5qglfhlW0YUsKDzw9Z1U+PahoaD4lR9hIoHBTEkpHN48nl2D3p
-         ReF6QSRbHsMBjUrXyorlZD2WoKnR1tDJZd0Q+DLiSa+tORlRbb11wIEaov7VZZnKymha
-         3NApxuXYndHAORYlMGWFtms1+FmPv9suondbraUsohbthoWqqHD8nU6AJMWedfO4mUAF
-         4TqIFoYHKPOgH77nkAnD56GcKadcscvOMbSB6l2beFF21UH6SsXcm0dmI78xxlDrOTri
-         QmYMBLL+CPhfC/R1KvJPHzbDyNPCGn48KolhMZHIk6F8SvxkZ0PDdpNaGSiFsYfH37m4
-         V1fg==
-X-Gm-Message-State: APjAAAWXQH3zN0gno/SMM3HrqHNyHlJjGnrTqWMN0aqb8DmC6rHeU6n0
-        6PLQK/XY2GGY6zCObMif2ovMUuKQZS5CzvmlOYyaDHJxXuk=
-X-Google-Smtp-Source: APXvYqyPOVhOhLnR8svjNFZbpJrFSBq7iSO7H0EK0jJu3qsF114ar1jgWWIPRpjlhgl1TEjutHazAuvG976Gy28vOLM=
-X-Received: by 2002:a2e:9b4a:: with SMTP id o10mr24191221ljj.137.1563443240961;
- Thu, 18 Jul 2019 02:47:20 -0700 (PDT)
+        Thu, 18 Jul 2019 05:44:07 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190718094403epoutp021214fa90c3b83e7b36bc1ac6b81765c4~ydyos53g51767317673epoutp02K
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 09:44:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190718094403epoutp021214fa90c3b83e7b36bc1ac6b81765c4~ydyos53g51767317673epoutp02K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1563443043;
+        bh=YSL5yKEP9EwGOhrB6Xc1FHRbPp1eEqaxJe0hPuyLF7M=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=ZqfauW9oA7hEGJ+HQjQV8QQwEZBEsRVwSJ+7FTULKM9auRrzHVpMyOoPofoS8H1FT
+         mrFCfDMfQdzxUJWYE+ysyagQCM2YyMzlVh8f6E3AjIVQciTiSbEjtZj6gKoxRX+HiK
+         EtdNA31hlVcNLh6dpBP5j0qkmwL9ZMtlwbndycPw=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20190718094403epcas1p40679e867128a1a9f03940d8a56bfb113~ydyoXFD2E1964619646epcas1p41;
+        Thu, 18 Jul 2019 09:44:03 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.156]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 45q8NK0jzCzMqYkd; Thu, 18 Jul
+        2019 09:44:01 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        88.48.04085.06F303D5; Thu, 18 Jul 2019 18:44:00 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20190718094400epcas1p4ee3099a605cd7345181215bc02a6ac0c~ydyly1P0L1440814408epcas1p4h;
+        Thu, 18 Jul 2019 09:44:00 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190718094400epsmtrp2bf7a1eca8b66b2e426c9492fb82ef4c7~ydylyG3To0651806518epsmtrp2U;
+        Thu, 18 Jul 2019 09:44:00 +0000 (GMT)
+X-AuditID: b6c32a39-d03ff70000000ff5-f0-5d303f602a65
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A7.1C.03638.06F303D5; Thu, 18 Jul 2019 18:44:00 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190718094400epsmtip1851c65f0b6bf173971eea9deab645e1a~ydylmuTgI1996219962epsmtip1O;
+        Thu, 18 Jul 2019 09:44:00 +0000 (GMT)
+Subject: Re: [PATCH v4 17/24] PM / devfreq: tegra30: Use tracepoints for
+ debugging
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <209220ec-b677-3500-0e55-6cad57e97f88@samsung.com>
+Date:   Thu, 18 Jul 2019 18:47:09 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190718030045.780672747@linuxfoundation.org>
-In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Thu, 18 Jul 2019 15:17:09 +0530
-Message-ID: <CA+G9fYtZUsz3eOV5_6im60EGrhi+ncD4ootvZfmDNiBzqNm0Tg@mail.gmail.com>
-Subject: Re: [PATCH 4.19 00/47] 4.19.60-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190707223303.6755-18-digetx@gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTURzmbHd3V2t1XFm/DGreiFAwd9XZtVJ7WA0sEDN6IXabN2fu1e4m
+        PaGyh0qLIpJcPnpYliFRWKhRCx+9rJRWES0jsGBpKWn2Mqrd3SL/+34f33d+33fOoeTqejKC
+        yrc4eLuFM9FkKHG9NUobw6Vqs7XvaPbSpx7E7nOfIdhHez8oWW9zBckOudoQW/LZTbK+PRdI
+        9ntzFcEern9CLgjRN3bXIH2Tu1updxX1k/rDDXVIP3R1WoZiXcF8I8/l8nYNbzFYc/Mtecl0
+        +sqcxTm6RC0TwySxc2iNhTPzyXTa8oyYpfmmQB5aU8iZnAEqgxMEOjZlvt3qdPAao1VwJNO8
+        LddkS7LNFjiz4LTkzTZYzXMZrTZOFxBuKDB2/qwkbMeXbD2/Z5DcjZ6zpSiEApwAV8r7FKUo
+        lFLjRgSny14R0jAYGH54SWn4gqD64Xnin6WvrBOJWI1vInjiS5dEAwge9g0qSxFFTcBZcKNs
+        mchPxL8QlHwvIkWDHK+F1qZLMhGTOBo8/hdBfjyOhGffepDoVeEU8NdPEWkCz4SPd9qCu8Lx
+        GnjQVhXMoMJhcL/8bRCH4ES45Xopl46fDC/fVsskPB2Krp2UixkA/yah1/dbIRVIg6eek3/x
+        BOi926CUcAQM9d8kJbwDLt5vIyVzMYIGT9dfQzx4zh2TiUHlOAouN8dKdCQ0jVQiafE46B8+
+        pBAlgFVQfEAtSWaA9023TMJT4OzBEvIIot2j6rhHVXCPquD+v+wUIurQJN4mmPN4gbHpRj/2
+        VRT8qtFJjejO4+UtCFOIHqt6QcdmqxVcobDN3IKAktMTVb73AUqVy23bztutOXaniRdakC5w
+        20flEeEGa+DjWxw5jC4uPj6eTWASdQxDT1ZV/YzKVuM8zsEX8LyNt//zyaiQiN3IWTvi88aM
+        kaWc6d3ylekZ8DRFpu2r8N/WPLoX6Xq9cFwYGrv2QlpXe+aK9TWV9bMKjfOKaytW+UOTUsM7
+        Li/qbtfop2b2DO8f7hg64eVSOzaxezOMI61zE/wdYbsMm1cf2JjvPWibNKBcVl7NtLs6a3f+
+        MuwsTd6+tdqU9f4Dl76FJgQjx0TL7QL3B5zIqnrAAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsWy7bCSnG6CvUGswZ6HMharPz5mtGiZtYjF
+        4mzTG3aLy7vmsFl87j3CaNH5ZRabxe3GFWwWP3fNY7HoW3uJzYHTY8fdJYweO2fdZffobX7H
+        5tG3ZRWjx+dNcgGsUVw2Kak5mWWpRfp2CVwZ5//MZSmY6lqxrPETWwPjNYsuRk4OCQETidfT
+        zjN2MXJxCAnsZpT4uOQQM0RCUmLaxaNANgeQLSxx+HAxRM1bRon7H7awgMSFBUIkdk9zB4mL
+        CDQxSWzqvcAO0sssECnRM3cLG0TDFkaJU49bGEESbAJaEvtf3GADsfkFFCWu/njMCDKIV8BO
+        4sVaSZAwi4CqxNtjR8DKRQUiJCZd28kCYvMKCEqcnPkEzOYUMJPY13uLGWKXusSfeZegbHGJ
+        W0/mM0HY8hLNW2czT2AUnoWkfRaSlllIWmYhaVnAyLKKUTK1oDg3PbfYsMAoL7Vcrzgxt7g0
+        L10vOT93EyM4wrS0djCeOBF/iFGAg1GJh/eGkn6sEGtiWXFl7iFGCQ5mJRHe2y+BQrwpiZVV
+        qUX58UWlOanFhxilOViUxHnl849FCgmkJ5akZqemFqQWwWSZODilGhgnfRKL3tn90eTyqZD8
+        3YdZnv93sVT8+2Imj+a3V5c+z2k5Krtb75CsetpHSZeWrz1TJtTMfn46aIfIqu0GVxRPJDl3
+        Ws/5Y+n2bOrt6OKlib+7F7858mS5bORsjgnqHybImkte4TbYVLV4zWaJe3mn4h95TzpXrS65
+        XD3v9/fDNT2Ogioq2mHzlFiKMxINtZiLihMBHsOxxqwCAAA=
+X-CMS-MailID: 20190718094400epcas1p4ee3099a605cd7345181215bc02a6ac0c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190707223623epcas4p13d01a60ae2b88dde4c4f7fdba04da170
+References: <20190707223303.6755-1-digetx@gmail.com>
+        <CGME20190707223623epcas4p13d01a60ae2b88dde4c4f7fdba04da170@epcas4p1.samsung.com>
+        <20190707223303.6755-18-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 18 Jul 2019 at 08:37, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.19.60 release.
-> There are 47 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat 20 Jul 2019 02:59:27 AM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.60-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 19. 7. 8. 오전 7:32, Dmitry Osipenko wrote:
+> Debug messages create too much CPU and memory activity by themselves,
+> so it's difficult to debug lower rates and catch unwanted interrupts
+> that happen rarely. Tracepoints are ideal in that regards because they
+> do not contribute to the sampled date at all. This allowed me to catch
+> few problems which are fixed by the followup patches, without tracepoints
+> it would be much harder to do.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/devfreq/tegra30-devfreq.c      |  43 +++-------
+>  include/trace/events/tegra30_devfreq.h | 105 +++++++++++++++++++++++++
+>  2 files changed, 117 insertions(+), 31 deletions(-)
+>  create mode 100644 include/trace/events/tegra30_devfreq.h
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+As I knew, 'include/trace/events' don't include the header file
+for only one device driver. Usually, the trace event is provided
+by framework instead of each devic driver.
 
-Summary
-------------------------------------------------------------------------
+> 
+> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+> index 6ebf0f505767..43c9c5fbfe91 100644
+> --- a/drivers/devfreq/tegra30-devfreq.c
+> +++ b/drivers/devfreq/tegra30-devfreq.c
+> @@ -19,6 +19,9 @@
+>  #include <linux/reset.h>
+>  #include <linux/workqueue.h>
+>  
+> +#define CREATE_TRACE_POINTS
+> +#include <trace/events/tegra30_devfreq.h>
+> +
+>  #include "governor.h"
+>  
+>  #define ACTMON_GLB_STATUS					0x0
+> @@ -283,9 +286,6 @@ static void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra,
+>  					 unsigned long *lower,
+>  					 unsigned long *upper)
+>  {
+> -	struct device *ddev = tegra->devfreq->dev.parent;
+> -	u32 offset = dev->config->offset;
+> -
+>  	/*
+>  	 * Memory frequencies are guaranteed to have 1MHz granularity
+>  	 * and thus we need this rounding down to get a proper watermarks
+> @@ -298,8 +298,8 @@ static void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra,
+>  	*lower = tegra_actmon_lower_freq(tegra, target_freq);
+>  	*upper = tegra_actmon_upper_freq(tegra, target_freq);
+>  
+> -	dev_dbg(ddev, "%03x: target_freq %lu lower freq %lu upper freq %lu\n",
+> -		offset, target_freq, *lower, *upper);
+> +	trace_device_lower_upper(dev->config->offset, target_freq,
+> +				 *lower, *upper);
+>  
+>  	/*
+>  	 * The upper watermark should take into account CPU's frequency
+> @@ -377,30 +377,13 @@ static void tegra_devfreq_update_wmark(struct tegra_devfreq *tegra,
+>  	device_writel(dev, lower + delta, ACTMON_DEV_LOWER_WMARK);
+>  }
+>  
+> -static void actmon_device_debug(struct tegra_devfreq *tegra,
+> -				struct tegra_devfreq_device *dev,
+> -				const char *prefix)
+> -{
+> -	dev_dbg(tegra->devfreq->dev.parent,
+> -		"%03x: %s: 0x%08x 0x%08x a %u %u %u c %u %u %u b %lu cpu %u\n",
+> -		dev->config->offset, prefix,
+> -		device_readl(dev, ACTMON_DEV_INTR_STATUS),
+> -		device_readl(dev, ACTMON_DEV_CTRL),
+> -		device_readl(dev, ACTMON_DEV_AVG_COUNT),
+> -		device_readl(dev, ACTMON_DEV_AVG_LOWER_WMARK),
+> -		device_readl(dev, ACTMON_DEV_AVG_UPPER_WMARK),
+> -		device_readl(dev, ACTMON_DEV_COUNT),
+> -		device_readl(dev, ACTMON_DEV_LOWER_WMARK),
+> -		device_readl(dev, ACTMON_DEV_UPPER_WMARK),
+> -		dev->boost_freq, cpufreq_get(0));
+> -}
+> -
+>  static void actmon_isr_device(struct tegra_devfreq *tegra,
+>  			      struct tegra_devfreq_device *dev)
+>  {
+>  	u32 intr_status, dev_ctrl, avg_intr_mask, avg_count;
+>  
+> -	actmon_device_debug(tegra, dev, "isr+");
+> +	trace_device_isr_enter(tegra->regs, dev->config->offset,
+> +			       dev->boost_freq, cpufreq_get(0));
+>  
+>  	intr_status = device_readl(dev, ACTMON_DEV_INTR_STATUS);
+>  	avg_count = device_readl(dev, ACTMON_DEV_AVG_COUNT);
+> @@ -455,7 +438,8 @@ static void actmon_isr_device(struct tegra_devfreq *tegra,
+>  	device_writel(dev, dev_ctrl, ACTMON_DEV_CTRL);
+>  	device_writel(dev, ACTMON_INTR_STATUS_CLEAR, ACTMON_DEV_INTR_STATUS);
+>  
+> -	actmon_device_debug(tegra, dev, "isr-");
+> +	trace_device_isr_exit(tegra->regs, dev->config->offset,
+> +			      dev->boost_freq, cpufreq_get(0));
+>  }
+>  
+>  static unsigned long actmon_update_target(struct tegra_devfreq *tegra,
+> @@ -749,7 +733,6 @@ static struct devfreq_dev_profile tegra_devfreq_profile = {
+>  static int tegra_governor_get_target(struct devfreq *devfreq,
+>  				     unsigned long *freq)
+>  {
+> -	struct device *ddev = devfreq->dev.parent;
+>  	struct devfreq_dev_status *stat;
+>  	struct tegra_devfreq *tegra;
+>  	struct tegra_devfreq_device *dev;
+> @@ -770,13 +753,11 @@ static int tegra_governor_get_target(struct devfreq *devfreq,
+>  		dev = &tegra->devices[i];
+>  
+>  		dev_target_freq = actmon_update_target(tegra, dev);
+> -
+>  		target_freq = max(target_freq, dev_target_freq);
+>  
+> -		dev_dbg(ddev, "%03x: upd: dev_target_freq %lu\n",
+> -			dev->config->offset, dev_target_freq);
+> -
+> -		actmon_device_debug(tegra, dev, "upd");
+> +		trace_device_target_freq(dev->config->offset, dev_target_freq);
+> +		trace_device_target_update(tegra->regs, dev->config->offset,
+> +					   dev->boost_freq, cpufreq_get(0));
+>  	}
+>  
+>  	*freq = target_freq;
+> diff --git a/include/trace/events/tegra30_devfreq.h b/include/trace/events/tegra30_devfreq.h
+> new file mode 100644
+> index 000000000000..8f264a489daf
+> --- /dev/null
+> +++ b/include/trace/events/tegra30_devfreq.h
+> @@ -0,0 +1,105 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM tegra30_devfreq
+> +
+> +#if !defined(_TRACE_TEGRA30_DEVFREQ_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _TRACE_TEGRA30_DEVFREQ_H
+> +
+> +#include <linux/io.h>
+> +#include <linux/tracepoint.h>
+> +#include <linux/types.h>
+> +
+> +DECLARE_EVENT_CLASS(device_state,
+> +	TP_PROTO(void __iomem *base, u32 offset, u32 boost, u32 cpufreq),
+> +	TP_ARGS(base, offset, boost, cpufreq),
+> +	TP_STRUCT__entry(
+> +		__field(u32, offset)
+> +		__field(u32, intr_status)
+> +		__field(u32, ctrl)
+> +		__field(u32, avg_count)
+> +		__field(u32, avg_lower)
+> +		__field(u32, avg_upper)
+> +		__field(u32, count)
+> +		__field(u32, lower)
+> +		__field(u32, upper)
+> +		__field(u32, boost_freq)
+> +		__field(u32, cpu_freq)
+> +	),
+> +	TP_fast_assign(
+> +		__entry->offset		= offset;
+> +		__entry->intr_status	= readl_relaxed(base + offset + 0x24);
+> +		__entry->ctrl		= readl_relaxed(base + offset + 0x0);
+> +		__entry->avg_count	= readl_relaxed(base + offset + 0x20);
+> +		__entry->avg_lower	= readl_relaxed(base + offset + 0x14);
+> +		__entry->avg_upper	= readl_relaxed(base + offset + 0x10);
+> +		__entry->count		= readl_relaxed(base + offset + 0x1c);
+> +		__entry->lower		= readl_relaxed(base + offset + 0x8);
+> +		__entry->upper		= readl_relaxed(base + offset + 0x4);
+> +		__entry->boost_freq	= boost;
+> +		__entry->cpu_freq	= cpufreq;
+> +	),
+> +	TP_printk("%03x: intr 0x%08x ctrl 0x%08x avg %010u %010u %010u cnt %010u %010u %010u boost %010u cpu %u",
+> +		__entry->offset,
+> +		__entry->intr_status,
+> +		__entry->ctrl,
+> +		__entry->avg_count,
+> +		__entry->avg_lower,
+> +		__entry->avg_upper,
+> +		__entry->count,
+> +		__entry->lower,
+> +		__entry->upper,
+> +		__entry->boost_freq,
+> +		__entry->cpu_freq)
+> +);
+> +
+> +DEFINE_EVENT(device_state, device_isr_enter,
+> +	TP_PROTO(void __iomem *base, u32 offset, u32 boost, u32 cpufreq),
+> +	TP_ARGS(base, offset, boost, cpufreq));
+> +
+> +DEFINE_EVENT(device_state, device_isr_exit,
+> +	TP_PROTO(void __iomem *base, u32 offset, u32 boost, u32 cpufreq),
+> +	TP_ARGS(base, offset, boost, cpufreq));
+> +
+> +DEFINE_EVENT(device_state, device_target_update,
+> +	TP_PROTO(void __iomem *base, u32 offset, u32 boost, u32 cpufreq),
+> +	TP_ARGS(base, offset, boost, cpufreq));
+> +
+> +TRACE_EVENT(device_lower_upper,
+> +	TP_PROTO(u32 offset, u32 target, u32 lower, u32 upper),
+> +	TP_ARGS(offset, target, lower, upper),
+> +	TP_STRUCT__entry(
+> +		__field(u32, offset)
+> +		__field(u32, target)
+> +		__field(u32, lower)
+> +		__field(u32, upper)
+> +	),
+> +	TP_fast_assign(
+> +		__entry->offset = offset;
+> +		__entry->target = target;
+> +		__entry->lower = lower;
+> +		__entry->upper = upper;
+> +	),
+> +	TP_printk("%03x: freq %010u lower freq %010u upper freq %010u",
+> +		__entry->offset,
+> +		__entry->target,
+> +		__entry->lower,
+> +		__entry->upper)
+> +);
+> +
+> +TRACE_EVENT(device_target_freq,
+> +	TP_PROTO(u32 offset, u32 target),
+> +	TP_ARGS(offset, target),
+> +	TP_STRUCT__entry(
+> +		__field(u32, offset)
+> +		__field(u32, target)
+> +	),
+> +	TP_fast_assign(
+> +		__entry->offset = offset;
+> +		__entry->target = target;
+> +	),
+> +	TP_printk("%03x: freq %010u", __entry->offset, __entry->target)
+> +);
+> +#endif /* _TRACE_TEGRA30_DEVFREQ_H */
+> +
+> +/* This part must be outside protection */
+> +#include <trace/define_trace.h>
+> 
 
-kernel: 4.19.60-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.19.y
-git commit: aa9b0c7579bacf570e7e430fa563e52b6b4ab15f
-git describe: v4.19.59-48-gaa9b0c7579ba
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
-ild/v4.19.59-48-gaa9b0c7579ba
 
-
-No regressions (compared to build v4.19.59)
-
-No fixes (compared to build v4.19.59)
-
-Ran 24058 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-hugetlb-tests
-* ltp-mm-tests
-* spectre-meltdown-checker-test
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-cpuhotplug-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* network-basic-tests
-* perf
-* v4l2-compliance
-* ltp-open-posix-tests
-* kvm-unit-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
