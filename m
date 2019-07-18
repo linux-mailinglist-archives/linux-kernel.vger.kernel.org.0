@@ -2,72 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9837A6C45F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 03:41:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 563306C466
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 03:44:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731924AbfGRBl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 21:41:26 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:51822 "EHLO inva020.nxp.com"
+        id S1732570AbfGRBoB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 21:44:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53580 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727793AbfGRBl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 21:41:26 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 73D7B1A0210;
-        Thu, 18 Jul 2019 03:41:24 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9E42E1A0038;
-        Thu, 18 Jul 2019 03:41:19 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6A8BA402C3;
-        Thu, 18 Jul 2019 09:41:13 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     thierry.reding@gmail.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] pwm: mxs: use devm_platform_ioremap_resource() to simplify code
-Date:   Thu, 18 Jul 2019 09:32:05 +0800
-Message-Id: <20190718013205.24919-1-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729988AbfGRBoA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 21:44:00 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 761DDC049E23;
+        Thu, 18 Jul 2019 01:44:00 +0000 (UTC)
+Received: from whitewolf.redhat.com (ovpn-120-112.rdu2.redhat.com [10.10.120.112])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 00F7C19C78;
+        Thu, 18 Jul 2019 01:43:58 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Juston Li <juston.li@intel.com>, Imre Deak <imre.deak@intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>, Harry Wentland <hwentlan@amd.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: [PATCH 01/26] drm/dp_mst: Move link address dumping into a function
+Date:   Wed, 17 Jul 2019 21:42:24 -0400
+Message-Id: <20190718014329.8107-2-lyude@redhat.com>
+In-Reply-To: <20190718014329.8107-1-lyude@redhat.com>
+References: <20190718014329.8107-1-lyude@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 18 Jul 2019 01:44:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+Since we're about to be calling this from multiple places. Also it makes
+things easier to read!
 
-Use the new helper devm_platform_ioremap_resource() which wraps the
-platform_get_resource() and devm_ioremap_resource() together, to
-simplify the code.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Cc: Juston Li <juston.li@intel.com>
+Cc: Imre Deak <imre.deak@intel.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: Harry Wentland <hwentlan@amd.com>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
 ---
- drivers/pwm/pwm-mxs.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/drm_dp_mst_topology.c | 35 ++++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/pwm/pwm-mxs.c b/drivers/pwm/pwm-mxs.c
-index 04c0f6b..b14376b 100644
---- a/drivers/pwm/pwm-mxs.c
-+++ b/drivers/pwm/pwm-mxs.c
-@@ -126,15 +126,13 @@ static int mxs_pwm_probe(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+index 0984b9a34d55..998081b9b205 100644
+--- a/drivers/gpu/drm/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+@@ -2013,6 +2013,28 @@ static void drm_dp_queue_down_tx(struct drm_dp_mst_topology_mgr *mgr,
+ 	mutex_unlock(&mgr->qlock);
+ }
+ 
++static void
++drm_dp_dump_link_address(struct drm_dp_link_address_ack_reply *reply)
++{
++	struct drm_dp_link_addr_reply_port *port_reply;
++	int i;
++
++	for (i = 0; i < reply->nports; i++) {
++		port_reply = &reply->ports[i];
++		DRM_DEBUG_KMS("port %d: input %d, pdt: %d, pn: %d, dpcd_rev: %02x, mcs: %d, ddps: %d, ldps %d, sdp %d/%d\n",
++			      i,
++			      port_reply->input_port,
++			      port_reply->peer_device_type,
++			      port_reply->port_number,
++			      port_reply->dpcd_revision,
++			      port_reply->mcs,
++			      port_reply->ddps,
++			      port_reply->legacy_device_plug_status,
++			      port_reply->num_sdp_streams,
++			      port_reply->num_sdp_stream_sinks);
++	}
++}
++
+ static void drm_dp_send_link_address(struct drm_dp_mst_topology_mgr *mgr,
+ 				     struct drm_dp_mst_branch *mstb)
  {
- 	struct device_node *np = pdev->dev.of_node;
- 	struct mxs_pwm_chip *mxs;
--	struct resource *res;
- 	int ret;
+@@ -2038,18 +2060,7 @@ static void drm_dp_send_link_address(struct drm_dp_mst_topology_mgr *mgr,
+ 			DRM_DEBUG_KMS("link address nak received\n");
+ 		} else {
+ 			DRM_DEBUG_KMS("link address reply: %d\n", txmsg->reply.u.link_addr.nports);
+-			for (i = 0; i < txmsg->reply.u.link_addr.nports; i++) {
+-				DRM_DEBUG_KMS("port %d: input %d, pdt: %d, pn: %d, dpcd_rev: %02x, mcs: %d, ddps: %d, ldps %d, sdp %d/%d\n", i,
+-				       txmsg->reply.u.link_addr.ports[i].input_port,
+-				       txmsg->reply.u.link_addr.ports[i].peer_device_type,
+-				       txmsg->reply.u.link_addr.ports[i].port_number,
+-				       txmsg->reply.u.link_addr.ports[i].dpcd_revision,
+-				       txmsg->reply.u.link_addr.ports[i].mcs,
+-				       txmsg->reply.u.link_addr.ports[i].ddps,
+-				       txmsg->reply.u.link_addr.ports[i].legacy_device_plug_status,
+-				       txmsg->reply.u.link_addr.ports[i].num_sdp_streams,
+-				       txmsg->reply.u.link_addr.ports[i].num_sdp_stream_sinks);
+-			}
++			drm_dp_dump_link_address(&txmsg->reply.u.link_addr);
  
- 	mxs = devm_kzalloc(&pdev->dev, sizeof(*mxs), GFP_KERNEL);
- 	if (!mxs)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mxs->base = devm_ioremap_resource(&pdev->dev, res);
-+	mxs->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(mxs->base))
- 		return PTR_ERR(mxs->base);
+ 			drm_dp_check_mstb_guid(mstb, txmsg->reply.u.link_addr.guid);
  
 -- 
-2.7.4
+2.21.0
 
