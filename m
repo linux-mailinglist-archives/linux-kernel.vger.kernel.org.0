@@ -2,265 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 861656D4DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 21:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE54E6D4E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 21:42:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391360AbfGRTll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 15:41:41 -0400
-Received: from mail-ua1-f74.google.com ([209.85.222.74]:44843 "EHLO
-        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391249AbfGRTlk (ORCPT
+        id S2391420AbfGRTm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 15:42:28 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:1817 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727687AbfGRTm1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 15:41:40 -0400
-Received: by mail-ua1-f74.google.com with SMTP id p13so2784873uad.11
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 12:41:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=NyDDuPcwfKxqjN9VK9vgGqLXXuUUhCPRqo1nWMqUF1g=;
-        b=jcY2CBffEmchmiRjAf/pm1/FeJLqCiDq5um50nqrO2GRUmQc9vmAKY3qqmeZpeEcb4
-         OUxlwAIspNwOOAjJTw2LfUYNYdKdTy9x+eSVRFDtupponDaa+SDb8aeryX2t3RnmPIOm
-         6QAcB4qcixDj/Gj23xGwFKr/fJhCjkTKA25A3AH4dXlJc8uNpEZsH//7xvHA4onufzje
-         1VblSW8vhZWaTrGW4CgyI54pHVMEjwIavLuyykWQBfP3lf9RFEm+5VvIcpxCn2WOyNxF
-         f18BT4dSJsq6o4IMShzZ1Hr+7jNkyFM+0ix3z2hQqUMpdENXlUH6kdEfcssvjSPC7QxE
-         ZBWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=NyDDuPcwfKxqjN9VK9vgGqLXXuUUhCPRqo1nWMqUF1g=;
-        b=jWNnHWRZRrx9F84fogLtmVXvsqaiZ06kUWn4iucsr/xvzcCX3eWhYrfWIYOT55IllQ
-         S+RwM7C8bfKR0yqmNBCKWFwo2sZMCbjiu8rvUgQSfN76OmnHEqD2GpxR4O9Vloysnvrw
-         51U6vvdgBmO16GQwFYN8RsNaoPtu6YuC9HQ3107uVLqlIXjkOmIupNaaC9cjIPTO7/IU
-         ZqM8LHFx7kuovwSHr3kYcx+E/KkLwXZsjMGLi04i6958Y/71C6eiq2UgcwKv4lCxH/JT
-         4IAmrMTCL+HLKeKh8BDoLH0GoD19YTWZ+jT3W1QU8z3nU6kETqxf/GCewQtSb/7anK7f
-         VVCA==
-X-Gm-Message-State: APjAAAVDje3rk2qiyE1yeyvxCPyTQA/lRP2zYQeZzy7yJIHRQbjMPg/s
-        G307dzMzAJWV0HAUjTDxOBHfSpCf/hAOBwQ=
-X-Google-Smtp-Source: APXvYqwXqcZXkM5Ps6Nmi5nJ0iqzxvaoGR8zYdsRgH1OcvmtSFMGN0PyLHnpBNha9oOHO3/IwHPKxmc7jyTiz/4=
-X-Received: by 2002:a1f:1288:: with SMTP id 130mr19236937vks.12.1563478899563;
- Thu, 18 Jul 2019 12:41:39 -0700 (PDT)
-Date:   Thu, 18 Jul 2019 12:41:33 -0700
-Message-Id: <20190718194133.64034-1-atifniyaz@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-Subject: [PATCH v2] input: API for Setting a Timestamp from a Driver
-From:   Atif Niyaz <atifniyaz@google.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Atif Niyaz <atifniyaz11@gmail.com>,
-        Siarhei Vishniakou <svv@google.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Atif Niyaz <atifniyaz@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 18 Jul 2019 15:42:27 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d30cb9f0000>; Thu, 18 Jul 2019 12:42:23 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 18 Jul 2019 12:42:25 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 18 Jul 2019 12:42:25 -0700
+Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 18 Jul
+ 2019 19:42:24 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
+        id 9BF8340FB7; Thu, 18 Jul 2019 22:42:22 +0300 (EEST)
+Date:   Thu, 18 Jul 2019 22:42:22 +0300
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     Sowjanya Komatineni <skomatineni@nvidia.com>, <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Joseph Lo <josephl@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
+        <linus.walleij@linaro.org>, <stefan@agner.ch>,
+        <mark.rutland@arm.com>, <pgaikwad@nvidia.com>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <jckuo@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH V5 11/18] clk: tegra210: Add support for Tegra210 clocks
+Message-ID: <20190718194222.GH12715@pdeschrijver-desktop.Nvidia.com>
+References: <351a07d4-ba90-4793-129b-b1a733f95531@nvidia.com>
+ <e3e9beaf-b195-305e-4010-66e824813472@gmail.com>
+ <9271ae75-5663-e26e-df26-57cba94dab75@nvidia.com>
+ <7ae3df9a-c0e9-cf71-8e90-4284db8df82f@nvidia.com>
+ <b01e37aa-f14e-e628-ceef-b25a845c6359@gmail.com>
+ <46b55527-da5d-c0b7-1c14-43b5c6d49dfa@nvidia.com>
+ <2de9a608-cf38-f56c-b192-7ffed65092f8@nvidia.com>
+ <bff3e9c0-727d-9aef-a0e2-583e53c39afd@gmail.com>
+ <5eedd224-77b0-1fc9-4e5e-d884b41a64ed@nvidia.com>
+ <89f23878-d4b2-2305-03e5-8a3e781c2b02@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <89f23878-d4b2-2305-03e5-8a3e781c2b02@gmail.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1563478943; bh=5FpCNevAZSgLDBucELA9oU+PCl9UYv2Xv3xtjYyC9y8=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=DDLCwzuME5O0A4YUQknIw4sCUkldWctxiCJ9bDnWp6qE+7iIFqC/NJoAaxlXQCeLa
+         TzMoNzS+yEM9rQS+1+DySpmZANKGC+MvKIWAsXOUjD8ItK8BCrH3ZAi3vP5Yrcg2gP
+         22pqyk+kOIE+d3XeE+gIpnwrym+pcGlqRUUy0kgIIwd/6ZmTNjcoA4HNJQBoaKiGsR
+         q03Z3eCoo4g/AWvoRHwvAu8u3rSnhRrJrNmVlqCyZ8HjzVQNGPe7eMyDbgWjs3zh4i
+         WKkByiMGTFcr3jJ7ePohOzNg55JNhm21HkqsUocH9Ry3Zs970Ma61FBx/2M5Ub0+R+
+         z/KE+9lXH0gWQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, evdev stamps events with timestamps acquired in evdev_events.
-However, this timestamping may not be accurate in terms of measuring
-when the actual event happened. This API allows any 3rd party driver to
-be able to call input_set_timestamp, and provide a timestamp that can be
-utilized in order to provide a more accurate sense of time for the
-event
+On Thu, Jul 18, 2019 at 02:44:56AM +0300, Dmitry Osipenko wrote:
+> > 
+> > dependencies I am referring are dfll_ref, dfll_soc, and DVFS peripheral
+> > clocks which need to be restored prior to DFLL reinit.
+> 
+> Okay, but that shouldn't be a problem if clock dependencies are set up
+> properly.
+> 
+> >>> reverse list order during restore might not work as all other clocks are
+> >>> in proper order no with any ref clocks for plls getting restored prior
+> >>> to their clients
+> >> Why? The ref clocks should be registered first and be the roots for PLLs
+> >> and the rest. If it's not currently the case, then this need to be
+> >> fixed. You need to ensure that each clock is modeled properly. If some
+> >> child clock really depends on multiple parents, then the parents need to
+> >> in the correct order or CCF need to be taught about such
+> >> multi-dependencies.
+> >>
+> >> If some required feature is missed, then you have to implement it
+> >> properly and for all, that's how things are done in upstream. Sometimes
+> >> it's quite a lot of extra work that everyone are benefiting from in
+> >> the end.
+> >>
+> >> [snip]
+> > 
+> > Yes, we should register ref/parents before their clients.
+> > 
+> > cclk_g clk is registered last after all pll and peripheral clocks are
+> > registers during clock init.
+> > 
+> > dfllCPU_out clk is registered later during dfll-fcpu driver probe and
+> > gets added to the clock list.
+> > 
+> > Probably the issue seems to be not linking dfll_ref and dfll_soc
+> > dependencies for dfllCPU_out thru clock list.
+> > 
+> > clk-dfll driver during dfll_init_clks gets ref_clk and soc_clk reference
+> > thru DT.
 
-Signed-off-by: Atif Niyaz <atifniyaz@google.com>
----
- drivers/input/evdev.c | 43 +++++++++++++++++--------------------------
- drivers/input/input.c | 16 ++++++++++++++++
- include/linux/input.h | 37 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 70 insertions(+), 26 deletions(-)
+The dfll does not have any parents. It has some clocks which are needed
+for the logic part of the dfll to function, but there's no parent clock
+as such unlike for peripheral clocks or PLLs where the parent is at
+least used as a reference. The I2C controller of the DFLL shares the
+lines with a normal I2C controller using some arbitration logic. That
+logic only works if the clock for the normal I2C controller is enabled.
+So you need probably 3 clocks enabled to initialize the dfll in that
+case. I don't think it makes sense to add complicated logic to the clock
+core to deal with this rather strange case. To me it makes more sense to
+use pmops and open code the sequence there.
 
-diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
-index 867c2cfd0038..3160b2223955 100644
---- a/drivers/input/evdev.c
-+++ b/drivers/input/evdev.c
-@@ -25,13 +25,6 @@
- #include <linux/cdev.h>
- #include "input-compat.h"
- 
--enum evdev_clock_type {
--	EV_CLK_REAL = 0,
--	EV_CLK_MONO,
--	EV_CLK_BOOT,
--	EV_CLK_MAX
--};
--
- struct evdev {
- 	int open;
- 	struct input_handle handle;
-@@ -53,7 +46,7 @@ struct evdev_client {
- 	struct fasync_struct *fasync;
- 	struct evdev *evdev;
- 	struct list_head node;
--	unsigned int clk_type;
-+	enum input_clock_type clk_type;
- 	bool revoked;
- 	unsigned long *evmasks[EV_CNT];
- 	unsigned int bufsize;
-@@ -150,16 +143,19 @@ static void __evdev_flush_queue(struct evdev_client *client, unsigned int type)
- static void __evdev_queue_syn_dropped(struct evdev_client *client)
- {
- 	struct input_event ev;
--	ktime_t time;
- 	struct timespec64 ts;
-+	ktime_t *time = input_get_timestamp(client->evdev->handle.dev);
- 
--	time = client->clk_type == EV_CLK_REAL ?
--			ktime_get_real() :
--			client->clk_type == EV_CLK_MONO ?
--				ktime_get() :
--				ktime_get_boottime();
-+	switch (client->clk_type) {
-+	case INPUT_CLK_REAL:
-+	case INPUT_CLK_MONO:
-+		ts = ktime_to_timespec64(time[client->clk_type]);
-+		break;
-+	default:
-+		ts = ktime_to_timespec64(time[INPUT_CLK_BOOT]);
-+		break;
-+	}
- 
--	ts = ktime_to_timespec64(time);
- 	ev.input_event_sec = ts.tv_sec;
- 	ev.input_event_usec = ts.tv_nsec / NSEC_PER_USEC;
- 	ev.type = EV_SYN;
-@@ -185,21 +181,21 @@ static void evdev_queue_syn_dropped(struct evdev_client *client)
- 	spin_unlock_irqrestore(&client->buffer_lock, flags);
- }
- 
--static int evdev_set_clk_type(struct evdev_client *client, unsigned int clkid)
-+static int evdev_set_clk_type(struct evdev_client *client, clockid_t clkid)
- {
- 	unsigned long flags;
--	unsigned int clk_type;
-+	enum input_clock_type clk_type;
- 
- 	switch (clkid) {
- 
- 	case CLOCK_REALTIME:
--		clk_type = EV_CLK_REAL;
-+		clk_type = INPUT_CLK_REAL;
- 		break;
- 	case CLOCK_MONOTONIC:
--		clk_type = EV_CLK_MONO;
-+		clk_type = INPUT_CLK_MONO;
- 		break;
- 	case CLOCK_BOOTTIME:
--		clk_type = EV_CLK_BOOT;
-+		clk_type = INPUT_CLK_BOOT;
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -307,12 +303,7 @@ static void evdev_events(struct input_handle *handle,
- {
- 	struct evdev *evdev = handle->private;
- 	struct evdev_client *client;
--	ktime_t ev_time[EV_CLK_MAX];
--
--	ev_time[EV_CLK_MONO] = ktime_get();
--	ev_time[EV_CLK_REAL] = ktime_mono_to_real(ev_time[EV_CLK_MONO]);
--	ev_time[EV_CLK_BOOT] = ktime_mono_to_any(ev_time[EV_CLK_MONO],
--						 TK_OFFS_BOOT);
-+	ktime_t *ev_time = input_get_timestamp(handle->dev);
- 
- 	rcu_read_lock();
- 
-diff --git a/drivers/input/input.c b/drivers/input/input.c
-index 7f3c5fcb9ed6..b8d711980bdd 100644
---- a/drivers/input/input.c
-+++ b/drivers/input/input.c
-@@ -1894,6 +1894,22 @@ void input_free_device(struct input_dev *dev)
- }
- EXPORT_SYMBOL(input_free_device);
- 
-+/**
-+ * input_get_timestamp - get timestamp for input events
-+ * @dev: input device to get timestamp from
-+ *
-+ * A valid timestamp is a timestamp of non-zero value.
-+ */
-+ktime_t *input_get_timestamp(struct input_dev *dev)
-+{
-+	const ktime_t invalid_timestamp = ktime_set(0, 0);
-+
-+	if (!ktime_compare(dev->timestamp[INPUT_CLK_MONO], invalid_timestamp))
-+		input_set_timestamp(dev, ktime_get());
-+	return dev->timestamp;
-+}
-+EXPORT_SYMBOL(input_get_timestamp);
-+
- /**
-  * input_set_capability - mark device as capable of a certain event
-  * @dev: device that is capable of emitting or accepting event
-diff --git a/include/linux/input.h b/include/linux/input.h
-index 510e78558c10..cf8c69abb342 100644
---- a/include/linux/input.h
-+++ b/include/linux/input.h
-@@ -33,6 +33,13 @@ struct input_value {
- 	__s32 value;
- };
- 
-+enum input_clock_type {
-+	INPUT_CLK_REAL = 0,
-+	INPUT_CLK_MONO,
-+	INPUT_CLK_BOOT,
-+	INPUT_CLK_MAX
-+};
-+
- /**
-  * struct input_dev - represents an input device
-  * @name: name of the device
-@@ -114,6 +121,8 @@ struct input_value {
-  * @vals: array of values queued in the current frame
-  * @devres_managed: indicates that devices is managed with devres framework
-  *	and needs not be explicitly unregistered or freed.
-+ * @timestamp: storage for a timestamp set by input_set_timestamp called
-+ *  by a driver
-  */
- struct input_dev {
- 	const char *name;
-@@ -184,6 +193,8 @@ struct input_dev {
- 	struct input_value *vals;
- 
- 	bool devres_managed;
-+
-+	ktime_t timestamp[INPUT_CLK_MAX];
- };
- #define to_input_dev(d) container_of(d, struct input_dev, dev)
- 
-@@ -382,6 +393,32 @@ void input_close_device(struct input_handle *);
- 
- int input_flush_device(struct input_handle *handle, struct file *file);
- 
-+/**
-+ * input_set_timestamp - set timestamp for input events
-+ * @dev: input device to set timestamp for
-+ * @timestamp: the time at which the event has occurred
-+ *   in CLOCK_MONOTONIC
-+ *
-+ * This function is intended to provide to the input system a more
-+ * accurate time of when an event actually occurred. The driver should
-+ * call this function as soon as a timestamp is acquired ensuring
-+ * clock conversions in input_set_timestamp are done correctly.
-+ *
-+ * The system entering a suspend between timestamp acquisition and
-+ * calling input_set_timestamp can result in inaccurate conversions.
-+ *
-+ */
-+static inline void input_set_timestamp(struct input_dev *dev,
-+	ktime_t timestamp)
-+{
-+	dev->timestamp[INPUT_CLK_MONO] = timestamp;
-+	dev->timestamp[INPUT_CLK_REAL] = ktime_mono_to_real(timestamp);
-+	dev->timestamp[INPUT_CLK_BOOT] = ktime_mono_to_any(
-+		timestamp, TK_OFFS_BOOT);
-+}
-+
-+ktime_t *input_get_timestamp(struct input_dev *dev);
-+
- void input_event(struct input_dev *dev, unsigned int type, unsigned int code, int value);
- void input_inject_event(struct input_handle *handle, unsigned int type, unsigned int code, int value);
- 
--- 
-2.22.0.510.g264f2c817a-goog
+Peter.
 
