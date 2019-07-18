@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF34D6C521
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:07:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 355786C55D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389129AbfGRDDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:03:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33664 "EHLO mail.kernel.org"
+        id S2389954AbfGRDF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:05:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727577AbfGRDDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:03:01 -0400
+        id S2389926AbfGRDFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:05:22 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D2EE21849;
-        Thu, 18 Jul 2019 03:03:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91D7C204EC;
+        Thu, 18 Jul 2019 03:05:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563418980;
-        bh=VZRbkZ6kretyBIwPDNjNMe1O0/KGopWD1k+pBXBkUdg=;
+        s=default; t=1563419120;
+        bh=l1EEUCPHh1aJx9m0gcIHChMvU9fddZ+kRica2HsYdWY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gUnGMh+IMOXxSw3RCttBebQHgbkfZI+x927GFvHwJTlprkiBzLf1xJRIXAQcINP8W
-         WDYYMWMEAk5zO6YnyVp4yCg0vXqbyWFW/J4pYfqRuBvV1x9hIk9YJjV4SRUbd0q5WP
-         IT6F8dceG0lDQfzP3O6CsS7J2n8SA3oJGLZb9uys=
+        b=IyYFmwlgayBht9YXzOgH5zioJnWs8zboMvMC5vypbMTVwEdYiYoOEJJDgl87wUMQy
+         w4DS6TiY0U6xelf+G8L+QEhf1y/9ECZVJMNhCxvoAZBaQ3BTBFRb2wSd5U1fze1jnK
+         FW1a8XpuR6HbhPrpL6GKl2lJF3bXZyEMLD0tO94w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Philipp Rudo <prudo@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH 5.2 14/21] s390/ipl: Fix detection of has_secure attribute
+        stable@vger.kernel.org, Nicolas Boichat <drinkcat@chromium.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 37/54] pinctrl: mediatek: Update cur_mask in mask/mask ops
 Date:   Thu, 18 Jul 2019 12:01:32 +0900
-Message-Id: <20190718030034.170275687@linuxfoundation.org>
+Message-Id: <20190718030056.125250607@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030030.456918453@linuxfoundation.org>
-References: <20190718030030.456918453@linuxfoundation.org>
+In-Reply-To: <20190718030053.287374640@linuxfoundation.org>
+References: <20190718030053.287374640@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,64 +45,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Philipp Rudo <prudo@linux.ibm.com>
+[ Upstream commit 9d957a959bc8c3dfe37572ac8e99affb5a885965 ]
 
-commit 1b2be2071aca9aab22e3f902bcb0fca46a1d3b00 upstream.
+During suspend/resume, mtk_eint_mask may be called while
+wake_mask is active. For example, this happens if a wake-source
+with an active interrupt handler wakes the system:
+irq/pm.c:irq_pm_check_wakeup would disable the interrupt, so
+that it can be handled later on in the resume flow.
 
-Use the correct bit for detection of the machine capability associated
-with the has_secure attribute. It is expected that the underlying
-platform (including hypervisors) unsets the bit when they don't provide
-secure ipl for their guests.
+However, this may happen before mtk_eint_do_resume is called:
+in this case, wake_mask is loaded, and cur_mask is restored
+from an older copy, re-enabling the interrupt, and causing
+an interrupt storm (especially for level interrupts).
 
-Fixes: c9896acc7851 ("s390/ipl: Provide has_secure sysfs attribute")
-Cc: stable@vger.kernel.org # 5.2
-Signed-off-by: Philipp Rudo <prudo@linux.ibm.com>
-Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Reviewed-by: Peter Oberparleiter <oberpar@linux.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Step by step, for a line that has both wake and interrupt enabled:
+ 1. cur_mask[irq] = 1; wake_mask[irq] = 1; EINT_EN[irq] = 1 (interrupt
+    enabled at hardware level)
+ 2. System suspends, resumes due to that line (at this stage EINT_EN
+    == wake_mask)
+ 3. irq_pm_check_wakeup is called, and disables the interrupt =>
+    EINT_EN[irq] = 0, but we still have cur_mask[irq] = 1
+ 4. mtk_eint_do_resume is called, and restores EINT_EN = cur_mask, so
+    it reenables EINT_EN[irq] = 1 => interrupt storm as the driver
+    is not yet ready to handle the interrupt.
 
+This patch fixes the issue in step 3, by recording all mask/unmask
+changes in cur_mask. This also avoids the need to read the current
+mask in eint_do_suspend, and we can remove mtk_eint_chip_read_mask
+function.
+
+The interrupt will be re-enabled properly later on, sometimes after
+mtk_eint_do_resume, when the driver is ready to handle it.
+
+Fixes: 58a5e1b64bb0 ("pinctrl: mediatek: Implement wake handler and suspend resume")
+Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+Acked-by: Sean Wang <sean.wang@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/include/asm/sclp.h   |    1 -
- arch/s390/kernel/ipl.c         |    7 +------
- drivers/s390/char/sclp_early.c |    1 -
- 3 files changed, 1 insertion(+), 8 deletions(-)
+ drivers/pinctrl/mediatek/mtk-eint.c | 18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
 
---- a/arch/s390/include/asm/sclp.h
-+++ b/arch/s390/include/asm/sclp.h
-@@ -80,7 +80,6 @@ struct sclp_info {
- 	unsigned char has_gisaf : 1;
- 	unsigned char has_diag318 : 1;
- 	unsigned char has_sipl : 1;
--	unsigned char has_sipl_g2 : 1;
- 	unsigned char has_dirq : 1;
- 	unsigned int ibc;
- 	unsigned int mtid;
---- a/arch/s390/kernel/ipl.c
-+++ b/arch/s390/kernel/ipl.c
-@@ -286,12 +286,7 @@ static struct kobj_attribute sys_ipl_sec
- static ssize_t ipl_has_secure_show(struct kobject *kobj,
- 				   struct kobj_attribute *attr, char *page)
- {
--	if (MACHINE_IS_LPAR)
--		return sprintf(page, "%i\n", !!sclp.has_sipl);
--	else if (MACHINE_IS_VM)
--		return sprintf(page, "%i\n", !!sclp.has_sipl_g2);
--	else
--		return sprintf(page, "%i\n", 0);
-+	return sprintf(page, "%i\n", !!sclp.has_sipl);
+diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
+index 737385e86beb..7e526bcf5e0b 100644
+--- a/drivers/pinctrl/mediatek/mtk-eint.c
++++ b/drivers/pinctrl/mediatek/mtk-eint.c
+@@ -113,6 +113,8 @@ static void mtk_eint_mask(struct irq_data *d)
+ 	void __iomem *reg = mtk_eint_get_offset(eint, d->hwirq,
+ 						eint->regs->mask_set);
+ 
++	eint->cur_mask[d->hwirq >> 5] &= ~mask;
++
+ 	writel(mask, reg);
  }
  
- static struct kobj_attribute sys_ipl_has_secure_attr =
---- a/drivers/s390/char/sclp_early.c
-+++ b/drivers/s390/char/sclp_early.c
-@@ -41,7 +41,6 @@ static void __init sclp_early_facilities
- 	sclp.has_hvs = !!(sccb->fac119 & 0x80);
- 	sclp.has_kss = !!(sccb->fac98 & 0x01);
- 	sclp.has_sipl = !!(sccb->cbl & 0x02);
--	sclp.has_sipl_g2 = !!(sccb->cbl & 0x04);
- 	if (sccb->fac85 & 0x02)
- 		S390_lowcore.machine_flags |= MACHINE_FLAG_ESOP;
- 	if (sccb->fac91 & 0x40)
+@@ -123,6 +125,8 @@ static void mtk_eint_unmask(struct irq_data *d)
+ 	void __iomem *reg = mtk_eint_get_offset(eint, d->hwirq,
+ 						eint->regs->mask_clr);
+ 
++	eint->cur_mask[d->hwirq >> 5] |= mask;
++
+ 	writel(mask, reg);
+ 
+ 	if (eint->dual_edge[d->hwirq])
+@@ -217,19 +221,6 @@ static void mtk_eint_chip_write_mask(const struct mtk_eint *eint,
+ 	}
+ }
+ 
+-static void mtk_eint_chip_read_mask(const struct mtk_eint *eint,
+-				    void __iomem *base, u32 *buf)
+-{
+-	int port;
+-	void __iomem *reg;
+-
+-	for (port = 0; port < eint->hw->ports; port++) {
+-		reg = base + eint->regs->mask + (port << 2);
+-		buf[port] = ~readl_relaxed(reg);
+-		/* Mask is 0 when irq is enabled, and 1 when disabled. */
+-	}
+-}
+-
+ static int mtk_eint_irq_request_resources(struct irq_data *d)
+ {
+ 	struct mtk_eint *eint = irq_data_get_irq_chip_data(d);
+@@ -384,7 +375,6 @@ static void mtk_eint_irq_handler(struct irq_desc *desc)
+ 
+ int mtk_eint_do_suspend(struct mtk_eint *eint)
+ {
+-	mtk_eint_chip_read_mask(eint, eint->base, eint->cur_mask);
+ 	mtk_eint_chip_write_mask(eint, eint->base, eint->wake_mask);
+ 
+ 	return 0;
+-- 
+2.20.1
+
 
 
