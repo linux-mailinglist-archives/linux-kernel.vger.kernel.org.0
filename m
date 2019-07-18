@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 352DD6C525
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:07:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B9A16C581
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389216AbfGRDDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:03:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33806 "EHLO mail.kernel.org"
+        id S2389226AbfGRDHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:07:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389185AbfGRDDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:03:08 -0400
+        id S2390345AbfGRDHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:07:07 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 625CA204EC;
-        Thu, 18 Jul 2019 03:03:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81824205F4;
+        Thu, 18 Jul 2019 03:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563418987;
-        bh=YfICFsESOvdQZDGiHscJVaj94R0uz2pITiwXWI9h5k4=;
+        s=default; t=1563419227;
+        bh=CU9tKT6KmdY5XkHWOV14uNEe1lBa1UfOHASx6+LfbQ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vovVF8gRZxIwnBrvGb05EGNmVF39Xmc50j/mMEUw/y0oHk+/yHnrSA+sq2rD9rHOC
-         X2/gbHTniT4U10jkOacj6i9BwEh+nvUeN/TxadBRSa8H9KBUIVOk4UeJ6Kmi9oX+8V
-         y2An+6Sm2j2i8wcIHQNH8GZQa7H/UQF0sOxLnGyU=
+        b=eskZEKCCMxl0XMBMymLl8BbplXVExK9LFenEd8DbvJkoUK3JfJ5dUq+lr+eIjnzKH
+         ZZbVNOLwnki3J6grwZVStyGlYXfv5ZTuhhtncWt/mGT77fCKkkcp/204nufvzuH2jp
+         vyVXXbV0WiO3gFdjP5+0tuf0A34LP1NuXU9GyS6A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH 5.2 16/21] s390/qdio: (re-)initialize tiqdio list entries
+        stable@vger.kernel.org, Jerome Marchand <jmarchan@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 20/47] dm table: dont copy from a NULL pointer in realloc_argv()
 Date:   Thu, 18 Jul 2019 12:01:34 +0900
-Message-Id: <20190718030034.929584571@linuxfoundation.org>
+Message-Id: <20190718030050.388713512@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030030.456918453@linuxfoundation.org>
-References: <20190718030030.456918453@linuxfoundation.org>
+In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
+References: <20190718030045.780672747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,77 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+[ Upstream commit a0651926553cfe7992166432e418987760882652 ]
 
-commit e54e4785cb5cb4896cf4285964aeef2125612fb2 upstream.
+For the first call to realloc_argv() in dm_split_args(), old_argv is
+NULL and size is zero. Then memcpy is called, with the NULL old_argv
+as the source argument and a zero size argument. AFAIK, this is
+undefined behavior and generates the following warning when compiled
+with UBSAN on ppc64le:
 
-When tiqdio_remove_input_queues() removes a queue from the tiq_list as
-part of qdio_shutdown(), it doesn't re-initialize the queue's list entry
-and the prev/next pointers go stale.
+In file included from ./arch/powerpc/include/asm/paca.h:19,
+                 from ./arch/powerpc/include/asm/current.h:16,
+                 from ./include/linux/sched.h:12,
+                 from ./include/linux/kthread.h:6,
+                 from drivers/md/dm-core.h:12,
+                 from drivers/md/dm-table.c:8:
+In function 'memcpy',
+    inlined from 'realloc_argv' at drivers/md/dm-table.c:565:3,
+    inlined from 'dm_split_args' at drivers/md/dm-table.c:588:9:
+./include/linux/string.h:345:9: error: argument 2 null where non-null expected [-Werror=nonnull]
+  return __builtin_memcpy(p, q, size);
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/md/dm-table.c: In function 'dm_split_args':
+./include/linux/string.h:345:9: note: in a call to built-in function '__builtin_memcpy'
 
-If a subsequent qdio_establish() fails while sending the ESTABLISH cmd,
-it calls qdio_shutdown() again in QDIO_IRQ_STATE_ERR state and
-tiqdio_remove_input_queues() will attempt to remove the queue entry a
-second time. This dereferences the stale pointers, and bad things ensue.
-Fix this by re-initializing the list entry after removing it from the
-list.
-
-For good practice also initialize the list entry when the queue is first
-allocated, and remove the quirky checks that papered over this omission.
-Note that prior to
-commit e521813468f7 ("s390/qdio: fix access to uninitialized qdio_q fields"),
-these checks were bogus anyway.
-
-setup_queues_misc() clears the whole queue struct, and thus needs to
-re-init the prev/next pointers as well.
-
-Fixes: 779e6e1c724d ("[S390] qdio: new qdio driver.")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Jerome Marchand <jmarchan@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/cio/qdio_setup.c   |    2 ++
- drivers/s390/cio/qdio_thinint.c |    4 ++--
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/md/dm-table.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/s390/cio/qdio_setup.c
-+++ b/drivers/s390/cio/qdio_setup.c
-@@ -150,6 +150,7 @@ static int __qdio_allocate_qs(struct qdi
- 			return -ENOMEM;
- 		}
- 		irq_ptr_qs[i] = q;
-+		INIT_LIST_HEAD(&q->entry);
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index c7fe4789c40e..34ab30dd5de9 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -562,7 +562,7 @@ static char **realloc_argv(unsigned *size, char **old_argv)
+ 		gfp = GFP_NOIO;
  	}
- 	return 0;
- }
-@@ -178,6 +179,7 @@ static void setup_queues_misc(struct qdi
- 	q->mask = 1 << (31 - i);
- 	q->nr = i;
- 	q->handler = handler;
-+	INIT_LIST_HEAD(&q->entry);
- }
- 
- static void setup_storage_lists(struct qdio_q *q, struct qdio_irq *irq_ptr,
---- a/drivers/s390/cio/qdio_thinint.c
-+++ b/drivers/s390/cio/qdio_thinint.c
-@@ -87,14 +87,14 @@ void tiqdio_remove_input_queues(struct q
- 	struct qdio_q *q;
- 
- 	q = irq_ptr->input_qs[0];
--	/* if establish triggered an error */
--	if (!q || !q->entry.prev || !q->entry.next)
-+	if (!q)
- 		return;
- 
- 	mutex_lock(&tiq_list_lock);
- 	list_del_rcu(&q->entry);
- 	mutex_unlock(&tiq_list_lock);
- 	synchronize_rcu();
-+	INIT_LIST_HEAD(&q->entry);
- }
- 
- static inline int has_multiple_inq_on_dsci(struct qdio_irq *irq_ptr)
+ 	argv = kmalloc_array(new_size, sizeof(*argv), gfp);
+-	if (argv) {
++	if (argv && old_argv) {
+ 		memcpy(argv, old_argv, *size * sizeof(*argv));
+ 		*size = new_size;
+ 	}
+-- 
+2.20.1
+
 
 
