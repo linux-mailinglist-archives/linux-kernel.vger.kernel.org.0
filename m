@@ -2,72 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D8306D3FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 20:32:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF1536D402
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 20:32:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391181AbfGRSaR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 14:30:17 -0400
-Received: from mail.us.es ([193.147.175.20]:39416 "EHLO mail.us.es"
+        id S2391314AbfGRSab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 14:30:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391149AbfGRSaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 14:30:16 -0400
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id 4D8FDB5AAD
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 20:30:14 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 3F0C91150B9
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 20:30:14 +0200 (CEST)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id 20F8B4FA29; Thu, 18 Jul 2019 20:30:14 +0200 (CEST)
-X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on antivirus1-rhel7.int
-X-Spam-Level: 
-X-Spam-Status: No, score=-108.2 required=7.5 tests=ALL_TRUSTED,BAYES_50,
-        SMTPAUTH_US2,USER_IN_WHITELIST autolearn=disabled version=3.4.1
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 7281C202D2;
-        Thu, 18 Jul 2019 20:30:11 +0200 (CEST)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Thu, 18 Jul 2019 20:30:11 +0200 (CEST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (sys.soleta.eu [212.170.55.40])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id 49BF44265A31;
-        Thu, 18 Jul 2019 20:30:11 +0200 (CEST)
-Date:   Thu, 18 Jul 2019 20:30:10 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     davem@davemloft.net, kadlec@netfilter.org, fw@strlen.de,
-        roopa@cumulusnetworks.com, nikolay@cumulusnetworks.com,
-        wenxu@ucloud.cn, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, bridge@lists.linux-foundation.org,
-        coreteam@netfilter.org, netfilter-devel@vger.kernel.org
-Subject: Re: [PATCH net-next] netfilter: nft_meta: Fix build error
-Message-ID: <20190718183010.s243aiunyycpz3np@salvia>
-References: <20190709070126.29972-1-yuehaibing@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190709070126.29972-1-yuehaibing@huawei.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2391188AbfGRSaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 14:30:18 -0400
+Subject: Re: [GIT PULL] Ceph updates for 5.3-rc1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563474617;
+        bh=qZHMcMnRBTr/LKF9ulZ0FQG18lq34RDEgtPvWy2omN0=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=UNqIH+2dEtjY0pMu+XxRGarXfHVgfrxgCNbcDLHSrM6IjQFE2OhFdRYW8YgPFqqmb
+         Y5pJl9aQVl7ru/7Hdv8b2xVbhStS2OEkRVr8VsymJQGA78ov6T74+bbUlWCBKSB8T/
+         z+g2nIwcUbhSRceIR/Gg9qaUbPBwbyAM4XrkI9v0=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190717112825.23829-1-idryomov@gmail.com>
+References: <20190717112825.23829-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190717112825.23829-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git
+ tags/ceph-for-5.3-rc1
+X-PR-Tracked-Commit-Id: d31d07b97a5e76f41e00eb81dcca740e84aa7782
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: d9b9c893048e9d308a833619f0866f1f52778cf5
+Message-Id: <156347461755.12683.16079074350077877952.pr-tracker-bot@kernel.org>
+Date:   Thu, 18 Jul 2019 18:30:17 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 03:01:26PM +0800, YueHaibing wrote:
-> If NFT_BRIDGE_META is y and NF_TABLES is m, building fails:
-> 
-> net/bridge/netfilter/nft_meta_bridge.o: In function `nft_meta_bridge_get_init':
-> nft_meta_bridge.c:(.text+0xd0): undefined reference to `nft_parse_register'
-> nft_meta_bridge.c:(.text+0xec): undefined reference to `nft_validate_register_store'
+The pull request you sent on Wed, 17 Jul 2019 13:28:25 +0200:
 
-I took this one from Arnd instead:
+> https://github.com/ceph/ceph-client.git tags/ceph-for-5.3-rc1
 
-https://patchwork.ozlabs.org/patch/1130262/
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/d9b9c893048e9d308a833619f0866f1f52778cf5
 
-Thanks.
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
