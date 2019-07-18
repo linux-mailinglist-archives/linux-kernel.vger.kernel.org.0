@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D81B6C753
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:24:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFB586C6F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:20:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390626AbfGRDIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:08:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39888 "EHLO mail.kernel.org"
+        id S2391561AbfGRDUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:20:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390601AbfGRDID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:08:03 -0400
+        id S2389520AbfGRDKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:10:49 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D64342173E;
-        Thu, 18 Jul 2019 03:08:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEAB420818;
+        Thu, 18 Jul 2019 03:10:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419283;
-        bh=1E5KVj4G0WL07FDo69IxQG3sTxcw9QLYL/zcBouUFYM=;
+        s=default; t=1563419448;
+        bh=k9q8apqyLIH+lCzu3WSNExghbX03GbVS0UeqxqzU3D0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vW1BUyzpUHAyNzxAkcyy51r9IcsQSzvJHu/JSU0QtnSMg1PBn4SM468DYoOXoJGYV
-         c/zRboBOFagw42IwBhP3Bwbk3PmWXZ51uj446chwqEUBPLt69unTOyX9uIScHX62Qf
-         cXqN5iXh3L7FeVAAp4sEZ7CTFZSlpo8i+YUzDN40=
+        b=MRLJwaqYQGx9G8lplSoWbqbNKE8J7d/0CIin5fBZ0PkCD1F/VPib6N4Dir6DRZmQH
+         Zf2rWxhRz/+y1yIQloXZ8lBXgEY9cfQq+ZcK/9BSCcy49Dl3F3FWtyHLE0Cq6nUXGb
+         vLy96eFiTsnOz9fPGHHjhCxNoDkFfH8nWOF8aAEA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Ross Zwisler <zwisler@google.com>,
+        stable@vger.kernel.org,
+        Sergej Benilov <sergej.benilov@googlemail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 44/47] drm/udl: introduce a macro to convert dev to udl.
-Date:   Thu, 18 Jul 2019 12:01:58 +0900
-Message-Id: <20190718030052.482745174@linuxfoundation.org>
+Subject: [PATCH 4.14 68/80] sis900: fix TX completion
+Date:   Thu, 18 Jul 2019 12:01:59 +0900
+Message-Id: <20190718030103.835081068@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
-References: <20190718030045.780672747@linuxfoundation.org>
+In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
+References: <20190718030058.615992480@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,154 +45,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit fd96e0dba19c53c2d66f2a398716bb74df8ca85e upstream.
+[ Upstream commit 8ac8a01092b2added0749ef937037bf1912e13e3 ]
 
-This just makes it easier to later embed drm into udl.
+Since commit 605ad7f184b60cfaacbc038aa6c55ee68dee3c89 "tcp: refine TSO autosizing",
+outbound throughput is dramatically reduced for some connections, as sis900
+is doing TX completion within idle states only.
 
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Dave Airlie <airlied@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190405031715.5959-3-airlied@gmail.com
-Signed-off-by: Ross Zwisler <zwisler@google.com>
+Make TX completion happen after every transmitted packet.
+
+Test:
+netperf
+
+before patch:
+> netperf -H remote -l -2000000 -- -s 1000000
+MIGRATED TCP STREAM TEST from 0.0.0.0 () port 0 AF_INET to 95.223.112.76 () port 0 AF_INET : demo
+Recv   Send    Send
+Socket Socket  Message  Elapsed
+Size   Size    Size     Time     Throughput
+bytes  bytes   bytes    secs.    10^6bits/sec
+
+ 87380 327680 327680    253.44      0.06
+
+after patch:
+> netperf -H remote -l -10000000 -- -s 1000000
+MIGRATED TCP STREAM TEST from 0.0.0.0 () port 0 AF_INET to 95.223.112.76 () port 0 AF_INET : demo
+Recv   Send    Send
+Socket Socket  Message  Elapsed
+Size   Size    Size     Time     Throughput
+bytes  bytes   bytes    secs.    10^6bits/sec
+
+ 87380 327680 327680    5.38       14.89
+
+Thx to Dave Miller and Eric Dumazet for helpful hints
+
+Signed-off-by: Sergej Benilov <sergej.benilov@googlemail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/udl/udl_drv.h  |  2 ++
- drivers/gpu/drm/udl/udl_fb.c   | 10 +++++-----
- drivers/gpu/drm/udl/udl_gem.c  |  2 +-
- drivers/gpu/drm/udl/udl_main.c | 12 ++++++------
- 4 files changed, 14 insertions(+), 12 deletions(-)
+ drivers/net/ethernet/sis/sis900.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/udl/udl_drv.h b/drivers/gpu/drm/udl/udl_drv.h
-index 4ae67d882eae..b3e08e876d62 100644
---- a/drivers/gpu/drm/udl/udl_drv.h
-+++ b/drivers/gpu/drm/udl/udl_drv.h
-@@ -71,6 +71,8 @@ struct udl_device {
- 	atomic_t cpu_kcycles_used; /* transpired during pixel processing */
- };
+diff --git a/drivers/net/ethernet/sis/sis900.c b/drivers/net/ethernet/sis/sis900.c
+index 40bd88362e3d..693f9582173b 100644
+--- a/drivers/net/ethernet/sis/sis900.c
++++ b/drivers/net/ethernet/sis/sis900.c
+@@ -1057,7 +1057,7 @@ sis900_open(struct net_device *net_dev)
+ 	sis900_set_mode(sis_priv, HW_SPEED_10_MBPS, FDX_CAPABLE_HALF_SELECTED);
  
-+#define to_udl(x) ((x)->dev_private)
-+
- struct udl_gem_object {
- 	struct drm_gem_object base;
- 	struct page **pages;
-diff --git a/drivers/gpu/drm/udl/udl_fb.c b/drivers/gpu/drm/udl/udl_fb.c
-index dd9ffded223b..590323ea261f 100644
---- a/drivers/gpu/drm/udl/udl_fb.c
-+++ b/drivers/gpu/drm/udl/udl_fb.c
-@@ -82,7 +82,7 @@ int udl_handle_damage(struct udl_framebuffer *fb, int x, int y,
- 		      int width, int height)
- {
- 	struct drm_device *dev = fb->base.dev;
--	struct udl_device *udl = dev->dev_private;
-+	struct udl_device *udl = to_udl(dev);
- 	int i, ret;
- 	char *cmd;
- 	cycles_t start_cycles, end_cycles;
-@@ -210,7 +210,7 @@ static int udl_fb_open(struct fb_info *info, int user)
- {
- 	struct udl_fbdev *ufbdev = info->par;
- 	struct drm_device *dev = ufbdev->ufb.base.dev;
--	struct udl_device *udl = dev->dev_private;
-+	struct udl_device *udl = to_udl(dev);
+ 	/* Enable all known interrupts by setting the interrupt mask. */
+-	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE);
++	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE | TxDESC);
+ 	sw32(cr, RxENA | sr32(cr));
+ 	sw32(ier, IE);
  
- 	/* If the USB device is gone, we don't accept new opens */
- 	if (drm_dev_is_unplugged(udl->ddev))
-@@ -441,7 +441,7 @@ static void udl_fbdev_destroy(struct drm_device *dev,
+@@ -1580,7 +1580,7 @@ static void sis900_tx_timeout(struct net_device *net_dev)
+ 	sw32(txdp, sis_priv->tx_ring_dma);
  
- int udl_fbdev_init(struct drm_device *dev)
- {
--	struct udl_device *udl = dev->dev_private;
-+	struct udl_device *udl = to_udl(dev);
- 	int bpp_sel = fb_bpp;
- 	struct udl_fbdev *ufbdev;
- 	int ret;
-@@ -480,7 +480,7 @@ int udl_fbdev_init(struct drm_device *dev)
+ 	/* Enable all known interrupts by setting the interrupt mask. */
+-	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE);
++	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE | TxDESC);
+ }
  
- void udl_fbdev_cleanup(struct drm_device *dev)
- {
--	struct udl_device *udl = dev->dev_private;
-+	struct udl_device *udl = to_udl(dev);
- 	if (!udl->fbdev)
- 		return;
+ /**
+@@ -1620,7 +1620,7 @@ sis900_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+ 			spin_unlock_irqrestore(&sis_priv->lock, flags);
+ 			return NETDEV_TX_OK;
+ 	}
+-	sis_priv->tx_ring[entry].cmdsts = (OWN | skb->len);
++	sis_priv->tx_ring[entry].cmdsts = (OWN | INTR | skb->len);
+ 	sw32(cr, TxENA | sr32(cr));
  
-@@ -491,7 +491,7 @@ void udl_fbdev_cleanup(struct drm_device *dev)
+ 	sis_priv->cur_tx ++;
+@@ -1676,7 +1676,7 @@ static irqreturn_t sis900_interrupt(int irq, void *dev_instance)
+ 	do {
+ 		status = sr32(isr);
  
- void udl_fbdev_unplug(struct drm_device *dev)
- {
--	struct udl_device *udl = dev->dev_private;
-+	struct udl_device *udl = to_udl(dev);
- 	struct udl_fbdev *ufbdev;
- 	if (!udl->fbdev)
- 		return;
-diff --git a/drivers/gpu/drm/udl/udl_gem.c b/drivers/gpu/drm/udl/udl_gem.c
-index bb7b58407039..3b3e17652bb2 100644
---- a/drivers/gpu/drm/udl/udl_gem.c
-+++ b/drivers/gpu/drm/udl/udl_gem.c
-@@ -203,7 +203,7 @@ int udl_gem_mmap(struct drm_file *file, struct drm_device *dev,
- {
- 	struct udl_gem_object *gobj;
- 	struct drm_gem_object *obj;
--	struct udl_device *udl = dev->dev_private;
-+	struct udl_device *udl = to_udl(dev);
- 	int ret = 0;
+-		if ((status & (HIBERR|TxURN|TxERR|TxIDLE|RxORN|RxERR|RxOK)) == 0)
++		if ((status & (HIBERR|TxURN|TxERR|TxIDLE|TxDESC|RxORN|RxERR|RxOK)) == 0)
+ 			/* nothing intresting happened */
+ 			break;
+ 		handled = 1;
+@@ -1686,7 +1686,7 @@ static irqreturn_t sis900_interrupt(int irq, void *dev_instance)
+ 			/* Rx interrupt */
+ 			sis900_rx(net_dev);
  
- 	mutex_lock(&udl->gem_lock);
-diff --git a/drivers/gpu/drm/udl/udl_main.c b/drivers/gpu/drm/udl/udl_main.c
-index 19055dda3140..09ce98113c0e 100644
---- a/drivers/gpu/drm/udl/udl_main.c
-+++ b/drivers/gpu/drm/udl/udl_main.c
-@@ -29,7 +29,7 @@
- static int udl_parse_vendor_descriptor(struct drm_device *dev,
- 				       struct usb_device *usbdev)
- {
--	struct udl_device *udl = dev->dev_private;
-+	struct udl_device *udl = to_udl(dev);
- 	char *desc;
- 	char *buf;
- 	char *desc_end;
-@@ -165,7 +165,7 @@ void udl_urb_completion(struct urb *urb)
+-		if (status & (TxURN | TxERR | TxIDLE))
++		if (status & (TxURN | TxERR | TxIDLE | TxDESC))
+ 			/* Tx interrupt */
+ 			sis900_finish_xmit(net_dev);
  
- static void udl_free_urb_list(struct drm_device *dev)
- {
--	struct udl_device *udl = dev->dev_private;
-+	struct udl_device *udl = to_udl(dev);
- 	int count = udl->urbs.count;
- 	struct list_head *node;
- 	struct urb_node *unode;
-@@ -198,7 +198,7 @@ static void udl_free_urb_list(struct drm_device *dev)
+@@ -1898,8 +1898,8 @@ static void sis900_finish_xmit (struct net_device *net_dev)
  
- static int udl_alloc_urb_list(struct drm_device *dev, int count, size_t size)
- {
--	struct udl_device *udl = dev->dev_private;
-+	struct udl_device *udl = to_udl(dev);
- 	struct urb *urb;
- 	struct urb_node *unode;
- 	char *buf;
-@@ -262,7 +262,7 @@ static int udl_alloc_urb_list(struct drm_device *dev, int count, size_t size)
+ 		if (tx_status & OWN) {
+ 			/* The packet is not transmitted yet (owned by hardware) !
+-			 * Note: the interrupt is generated only when Tx Machine
+-			 * is idle, so this is an almost impossible case */
++			 * Note: this is an almost impossible condition
++			 * in case of TxDESC ('descriptor interrupt') */
+ 			break;
+ 		}
  
- struct urb *udl_get_urb(struct drm_device *dev)
- {
--	struct udl_device *udl = dev->dev_private;
-+	struct udl_device *udl = to_udl(dev);
- 	int ret = 0;
- 	struct list_head *entry;
- 	struct urb_node *unode;
-@@ -295,7 +295,7 @@ struct urb *udl_get_urb(struct drm_device *dev)
+@@ -2475,7 +2475,7 @@ static int sis900_resume(struct pci_dev *pci_dev)
+ 	sis900_set_mode(sis_priv, HW_SPEED_10_MBPS, FDX_CAPABLE_HALF_SELECTED);
  
- int udl_submit_urb(struct drm_device *dev, struct urb *urb, size_t len)
- {
--	struct udl_device *udl = dev->dev_private;
-+	struct udl_device *udl = to_udl(dev);
- 	int ret;
- 
- 	BUG_ON(len > udl->urbs.size);
-@@ -370,7 +370,7 @@ int udl_drop_usb(struct drm_device *dev)
- 
- void udl_driver_unload(struct drm_device *dev)
- {
--	struct udl_device *udl = dev->dev_private;
-+	struct udl_device *udl = to_udl(dev);
- 
- 	drm_kms_helper_poll_fini(dev);
+ 	/* Enable all known interrupts by setting the interrupt mask. */
+-	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE);
++	sw32(imr, RxSOVR | RxORN | RxERR | RxOK | TxURN | TxERR | TxIDLE | TxDESC);
+ 	sw32(cr, RxENA | sr32(cr));
+ 	sw32(ier, IE);
  
 -- 
 2.20.1
