@@ -2,97 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C6DB6CBB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:19:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0A7E6CBCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:24:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389582AbfGRJTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 05:19:47 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:6107 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726454AbfGRJTq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 05:19:46 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d3039af0001>; Thu, 18 Jul 2019 02:19:43 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 18 Jul 2019 02:19:45 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 18 Jul 2019 02:19:45 -0700
-Received: from [10.21.132.148] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 18 Jul
- 2019 09:19:43 +0000
-Subject: Re: [PATCH 4.4 00/40] 4.4.186-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20190718030039.676518610@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <056947a6-ad2d-1b91-4e58-f01368edd12e@nvidia.com>
-Date:   Thu, 18 Jul 2019 10:19:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190718030039.676518610@linuxfoundation.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1563441583; bh=8vQnuAkXDb9yFtGqMzdBRi60XMQ5F1XsxU4P5JiO29Q=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=EwzDdDuEww6SiN9t61CaDnhkRXAVRWmgu60iMFVBMi4BDHMVf2DjjaRhMth7bn8+G
-         qVBIQT79+zdSEiJddkADRJCc6zTLUgDXS1PJXd8l/WDZjknra4npAgOsIP2SckThLy
-         vNOy3BUQawr5+ukzVnkOy+7vO6b3hYyL4rdf6dCx7AJI4EGqsTCyZy2sTlCccb2/na
-         njO+8QgzbbNQ1pHhaJBvrBhipLDV83puiXpFHuRcz25K/WjwLfDvH7Boqyysbsf2Lj
-         R0b0IFHjOwvFtiZbfWNm1GCk+rm5aUJ4JQa9dTDpd0s7oWSF808SyRZMqFnHiqQ3g/
-         pQByH4COWex7A==
+        id S1727688AbfGRJYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 05:24:30 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:44656 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726383AbfGRJYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 05:24:30 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5F98E200125;
+        Thu, 18 Jul 2019 11:24:28 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1A58A20013E;
+        Thu, 18 Jul 2019 11:24:23 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 58D3440296;
+        Thu, 18 Jul 2019 17:24:16 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 1/4] ARM: dts: imx6sx: move GIC to right location in DT
+Date:   Thu, 18 Jul 2019 17:15:05 +0800
+Message-Id: <20190718091508.3248-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Anson Huang <Anson.Huang@nxp.com>
 
-On 18/07/2019 04:01, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.186 release.
-> There are 40 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat 20 Jul 2019 02:59:27 AM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.186-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+GIC is inside of SoC from architecture perspective, it should
+be located inside of soc node in DT.
 
-All tests are passing for Tegra ...
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ arch/arm/boot/dts/imx6sx.dtsi | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-Test results for stable-v4.4:
-    6 builds:	6 pass, 0 fail
-    12 boots:	12 pass, 0 fail
-    19 tests:	19 pass, 0 fail
-
-Linux version:	4.4.186-rc1-gf046b75a1ffd
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra30-cardhu-a04
-
-Cheers
-Jon
-
+diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
+index bb25add..fe00f9a 100644
+--- a/arch/arm/boot/dts/imx6sx.dtsi
++++ b/arch/arm/boot/dts/imx6sx.dtsi
+@@ -90,15 +90,6 @@
+ 		};
+ 	};
+ 
+-	intc: interrupt-controller@a01000 {
+-		compatible = "arm,cortex-a9-gic";
+-		#interrupt-cells = <3>;
+-		interrupt-controller;
+-		reg = <0x00a01000 0x1000>,
+-		      <0x00a00100 0x100>;
+-		interrupt-parent = <&intc>;
+-	};
+-
+ 	ckil: clock-ckil {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+@@ -181,6 +172,15 @@
+ 			clocks = <&clks IMX6SX_CLK_OCRAM>;
+ 		};
+ 
++		intc: interrupt-controller@a01000 {
++			compatible = "arm,cortex-a9-gic";
++			#interrupt-cells = <3>;
++			interrupt-controller;
++			reg = <0x00a01000 0x1000>,
++			      <0x00a00100 0x100>;
++			interrupt-parent = <&intc>;
++		};
++
+ 		L2: l2-cache@a02000 {
+ 			compatible = "arm,pl310-cache";
+ 			reg = <0x00a02000 0x1000>;
 -- 
-nvpublic
+2.7.4
+
