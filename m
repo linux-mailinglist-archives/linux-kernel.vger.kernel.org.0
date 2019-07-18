@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E77ED6C5AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5D8E6C635
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:14:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390767AbfGRDIc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:08:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40412 "EHLO mail.kernel.org"
+        id S2391396AbfGRDOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:14:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390739AbfGRDI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:08:26 -0400
+        id S2391808AbfGRDOb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:14:31 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AECF72077C;
-        Thu, 18 Jul 2019 03:08:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 287BC21851;
+        Thu, 18 Jul 2019 03:14:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419306;
-        bh=dzAAhdj6ZpCSbriRU5PnpOzikiVL8RSDfIQwRm8t+O4=;
+        s=default; t=1563419670;
+        bh=dAh+zuNthGs12/kWyN/jbJWspHyKM2RO7mBtFnSFE7k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ruPIiell5HI9FP9aL5ba1A5TELG4ZRBHhcPXQHtW9fcmDb1c9j72LRfk8bOPZ43qv
-         CIRMbrEuh5naawojPP0zqRkJSHTpg4H7Pps22hHjt5AlYvp2QCGHSeYWDr/OM/D1lp
-         3TUeVU0bxWouO4W6GW09DfdFw4UhB+ZRhBPBpRKw=
+        b=HAZ7peS3MfbfEx4C7+4gGzqxLBlQ5QL3n7oAoyBL8kOhJQr1Gp3n63dqF8FkfW7+z
+         QQfjws85ax/1/j894ijn2JvNfp/FgY9njMZsOYISwCSfcUPpVBz87GOfaHOXXvzzVA
+         2FWz2EGyLSPZROsDLcrU6J9vPwIRbwu7WPgnifIA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Sean Nyekjaer <sean@geanix.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 47/47] x86/entry/32: Fix ENDPROC of common_spurious
+Subject: [PATCH 4.4 05/40] dt-bindings: can: mcp251x: add mcp25625 support
 Date:   Thu, 18 Jul 2019 12:02:01 +0900
-Message-Id: <20190718030052.723143571@linuxfoundation.org>
+Message-Id: <20190718030040.594610769@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
-References: <20190718030045.780672747@linuxfoundation.org>
+In-Reply-To: <20190718030039.676518610@linuxfoundation.org>
+References: <20190718030039.676518610@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +44,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1cbec37b3f9cff074a67bef4fc34b30a09958a0a ]
+[ Upstream commit 0df82dcd55832a99363ab7f9fab954fcacdac3ae ]
 
-common_spurious is currently ENDed erroneously. common_interrupt is used
-in its ENDPROC. So fix this mistake.
+Fully compatible with mcp2515, the mcp25625 have integrated transceiver.
 
-Found by my asm macros rewrite patchset.
+This patch add the mcp25625 to the device tree bindings documentation.
 
-Fixes: f8a8fe61fec8 ("x86/irq: Seperate unused system vectors from spurious entry again")
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190709063402.19847-1-jslaby@suse.cz
+Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/entry/entry_32.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/net/can/microchip,mcp251x.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index d7b64c8d1907..8059d4fd915c 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -1119,7 +1119,7 @@ common_spurious:
- 	movl	%esp, %eax
- 	call	smp_spurious_interrupt
- 	jmp	ret_from_intr
--ENDPROC(common_interrupt)
-+ENDPROC(common_spurious)
- #endif
- 
- /*
+diff --git a/Documentation/devicetree/bindings/net/can/microchip,mcp251x.txt b/Documentation/devicetree/bindings/net/can/microchip,mcp251x.txt
+index ee3723beb701..33b38716b77f 100644
+--- a/Documentation/devicetree/bindings/net/can/microchip,mcp251x.txt
++++ b/Documentation/devicetree/bindings/net/can/microchip,mcp251x.txt
+@@ -4,6 +4,7 @@ Required properties:
+  - compatible: Should be one of the following:
+    - "microchip,mcp2510" for MCP2510.
+    - "microchip,mcp2515" for MCP2515.
++   - "microchip,mcp25625" for MCP25625.
+  - reg: SPI chip select.
+  - clocks: The clock feeding the CAN controller.
+  - interrupt-parent: The parent interrupt controller.
 -- 
 2.20.1
 
