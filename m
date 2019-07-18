@@ -2,733 +2,941 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FC5E6D180
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 18:09:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E4EA6D186
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 18:10:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730586AbfGRQHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 12:07:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44408 "EHLO mx1.redhat.com"
+        id S1730063AbfGRQJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 12:09:56 -0400
+Received: from mga14.intel.com ([192.55.52.115]:30356 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726040AbfGRQHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 12:07:23 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 18E22A3B5F;
-        Thu, 18 Jul 2019 16:07:22 +0000 (UTC)
-Received: from redhat.com (ovpn-120-147.rdu2.redhat.com [10.10.120.147])
-        by smtp.corp.redhat.com (Postfix) with SMTP id AFD6E60635;
-        Thu, 18 Jul 2019 16:07:09 +0000 (UTC)
-Date:   Thu, 18 Jul 2019 12:07:08 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yang Zhang <yang.zhang.wz@gmail.com>, pagupta@redhat.com,
-        Rik van Riel <riel@surriel.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        lcapitulino@redhat.com, wei.w.wang@intel.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, dan.j.williams@intel.com,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Subject: Re: [PATCH v1 6/6] virtio-balloon: Add support for aerating memory
- via hinting
-Message-ID: <20190718113548-mutt-send-email-mst@kernel.org>
-References: <20190716055017-mutt-send-email-mst@kernel.org>
- <CAKgT0Uc-2k9o7pjtf-GFAgr83c7RM-RTJ8-OrEzFv92uz+MTDw@mail.gmail.com>
- <20190716115535-mutt-send-email-mst@kernel.org>
- <CAKgT0Ud47-cWu9VnAAD_Q2Fjia5gaWCz_L9HUF6PBhbugv6tCQ@mail.gmail.com>
- <20190716125845-mutt-send-email-mst@kernel.org>
- <CAKgT0UfgPdU1H5ZZ7GL7E=_oZNTzTwZN60Q-+2keBxDgQYODfg@mail.gmail.com>
- <20190717055804-mutt-send-email-mst@kernel.org>
- <CAKgT0Uf4iJxEx+3q_Vo9L1QPuv9PhZUv1=M9UCsn6_qs7rG4aw@mail.gmail.com>
- <20190718003211-mutt-send-email-mst@kernel.org>
- <CAKgT0UfQ3dtfjjm8wnNxX1+Azav6ws9zemH6KYc7RuyvyFo3fQ@mail.gmail.com>
+        id S1726040AbfGRQJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 12:09:56 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2019 09:09:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,278,1559545200"; 
+   d="scan'208";a="251857668"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga001.jf.intel.com with ESMTP; 18 Jul 2019 09:09:46 -0700
+Date:   Thu, 18 Jul 2019 09:09:46 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm@lists.01.org, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] driver-core, libnvdimm: Let device subsystems add
+ local lockdep coverage
+Message-ID: <20190718160945.GA14270@iweiny-DESK2.sc.intel.com>
+References: <156341206785.292348.1660822720191643298.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <156341210661.292348.7014034644265455704.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKgT0UfQ3dtfjjm8wnNxX1+Azav6ws9zemH6KYc7RuyvyFo3fQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 18 Jul 2019 16:07:22 +0000 (UTC)
+In-Reply-To: <156341210661.292348.7014034644265455704.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 08:34:37AM -0700, Alexander Duyck wrote:
-> On Wed, Jul 17, 2019 at 10:14 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Wed, Jul 17, 2019 at 09:43:52AM -0700, Alexander Duyck wrote:
-> > > On Wed, Jul 17, 2019 at 3:28 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > >
-> > > > On Tue, Jul 16, 2019 at 02:06:59PM -0700, Alexander Duyck wrote:
-> > > > > On Tue, Jul 16, 2019 at 10:41 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > > >
-> > > > > <snip>
-> > > > >
-> > > > > > > > This is what I am saying. Having watched that patchset being developed,
-> > > > > > > > I think that's simply because processing blocks required mm core
-> > > > > > > > changes, which Wei was not up to pushing through.
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > If we did
-> > > > > > > >
-> > > > > > > >         while (1) {
-> > > > > > > >                 alloc_pages
-> > > > > > > >                 add_buf
-> > > > > > > >                 get_buf
-> > > > > > > >                 free_pages
-> > > > > > > >         }
-> > > > > > > >
-> > > > > > > > We'd end up passing the same page to balloon again and again.
-> > > > > > > >
-> > > > > > > > So we end up reserving lots of memory with alloc_pages instead.
-> > > > > > > >
-> > > > > > > > What I am saying is that now that you are developing
-> > > > > > > > infrastructure to iterate over free pages,
-> > > > > > > > FREE_PAGE_HINT should be able to use it too.
-> > > > > > > > Whether that's possible might be a good indication of
-> > > > > > > > whether the new mm APIs make sense.
-> > > > > > >
-> > > > > > > The problem is the infrastructure as implemented isn't designed to do
-> > > > > > > that. I am pretty certain this interface will have issues with being
-> > > > > > > given small blocks to process at a time.
-> > > > > > >
-> > > > > > > Basically the design for the FREE_PAGE_HINT feature doesn't really
-> > > > > > > have the concept of doing things a bit at a time. It is either
-> > > > > > > filling, stopped, or done. From what I can tell it requires a
-> > > > > > > configuration change for the virtio balloon interface to toggle
-> > > > > > > between those states.
-> > > > > >
-> > > > > > Maybe I misunderstand what you are saying.
-> > > > > >
-> > > > > > Filling state can definitely report things
-> > > > > > a bit at a time. It does not assume that
-> > > > > > all of guest free memory can fit in a VQ.
-> > > > >
-> > > > > I think where you and I may differ is that you are okay with just
-> > > > > pulling pages until you hit OOM, or allocation failures. Do I have
-> > > > > that right?
-> > > >
-> > > > This is exactly what the current code does. But that's an implementation
-> > > > detail which came about because we failed to find any other way to
-> > > > iterate over free blocks.
-> > >
-> > > I get that. However my concern is that permeated other areas of the
-> > > implementation that make taking another approach much more difficult
-> > > than it needs to be.
-> >
-> > Implementation would have to change to use an iterator obviously. But I don't see
-> > that it leaked out to a hypervisor interface.
-> >
-> > In fact take a look at virtio_balloon_shrinker_scan
-> > and you will see that it calls shrink_free_pages
-> > without waiting for the device at all.
+On Wed, Jul 17, 2019 at 06:08:26PM -0700, Dan Williams wrote:
+> For good reason, the standard device_lock() is marked
+> lockdep_set_novalidate_class() because there is simply no sane way to
+> describe the myriad ways the device_lock() ordered with other locks.
+> However, that leaves subsystems that know their own local device_lock()
+> ordering rules to find lock ordering mistakes manually. Instead,
+> introduce an optional / additional lockdep-enabled lock that a subsystem
+> can acquire in all the same paths that the device_lock() is acquired.
 > 
-> Yes, and in case you missed it earlier I am pretty sure that leads to
-> possible memory corruption. I don't think it was tested enough to be
-> able to say that is safe.
-
-More testing would be good, for sure.
-
-> Specifically we cannot be clearing the dirty flag on pages that are in
-> use. We should only be clearing that flag for pages that are
-> guaranteed to not be in use.
-
-I think that clearing the dirty flag is safe if the flag was originally
-set and the page has been
-write-protected before reporting was requested.
-In that case we know that page has not been changed.
-Right?
-
-> > > > > In my mind I am wanting to perform the hinting on a small
-> > > > > block at a time and work through things iteratively.
-> > > > >
-> > > > > The problem is the FREE_PAGE_HINT doesn't have the option of returning
-> > > > > pages until all pages have been pulled. It is run to completion and
-> > > > > will keep filling the balloon until an allocation fails and the host
-> > > > > says it is done.
-> > > >
-> > > > OK so there are two points. One is that FREE_PAGE_HINT does not
-> > > > need to allocate a page at all. It really just wants to
-> > > > iterate over free pages.
-> > >
-> > > I agree that it should just want to iterate over pages. However the
-> > > issue I am trying to point out is that it doesn't have any guarantees
-> > > on ordering and that is my concern. What I want to avoid is
-> > > potentially corrupting memory.
-> >
-> > I get that. I am just trying to make sure you are aware that for
-> > FREE_PAGE_HINT specifically ordering does not matter because it does not
-> > care when hypervisor used the buffers. It only cares that page was
-> > free after it got the request. used buffers are only tracked to avoid
-> > overflowing the VQ. This is different from your hinting where you make
-> > it the responsibility of the guest to not allocate page before it was
-> > used.
+> A conversion of the NFIT driver and NVDIMM subsystem to a
+> lockdep-validate device_lock() scheme is included. The
+> debug_nvdimm_lock() implementation implements the correct lock-class and
+> stacking order for the libnvdimm device topology hierarchy.
 > 
-> Prove to me that the ordering does not matter. As far as I can tell it
-> should since this is being used to clear the bitmap and will affect
-> migration.
-
-OK I will try.
-
-Imagine a page that is used by Linux.
-It has been write protected by sync dirty bitmap.
-Note how that does not happen while reporting
-is active: it happens before and next after reporting
-is done.
-
-Now what are the bits that will be cleared by hinting?
-These are dirty bits from page use from before hinting was
-requested. We do not care about these because we know
-that page was free at some point afterwards.
-So any data it had can be safely discarded.
-
-
-
-All this should have been documented in qemu source but
-unfortunately wasn't :(
-
-
-
-Is the above convincing?
-
-
-
-
-> I'm pretty certain the page should not be freed until it
-> has been processed. Otherwise I believe there is a risk of the page
-> not being migrated and leading to a memory corruption when the VM is
-> finally migrated.
-
-I understand the concern, it was definitely on my mind
-and I think it was addressed. But do let me know.
-
-> > >
-> > > So for example with my current hinting approach I am using the list of
-> > > hints because I get back one completion indicating all of the hints
-> > > have been processed. It is only at that point that I can go back and
-> > > make the memory available for allocation again.
-> >
-> > Right. But just counting them would work just as well, no?
-> > At least as long as you wait for everything to complete...
-> > If you want to pipeline, see below
+> Yes, this is a hack, but hopefully it is a useful hack for other
+> subsystems device_lock() debug sessions. Quoting Greg:
 > 
-> Yes, but if possible I would also want to try and keep the batch
-> behavior that I have.
+>     "Yeah, it feels a bit hacky but it's really up to a subsystem to mess up
+>      using it as much as anything else, so user beware :)
+> 
+>      I don't object to it if it makes things easier for you to debug."
+> 
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Keith Busch <keith.busch@intel.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-As in pass a batch to host at once? Sure I think it's a good idea.
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
-> We could count the descriptors processed,
-> however that is still essentially done all via busy waiting in the
-> FREE_PAGE_HINT logic.
-
-OK let's discuss FREE_PAGE_HINT separately above. Until we
-agree on whether it's safe to free up pages before they
-are used for that usecase, we are just going in circles.
-
-
-> > >
-> > > So one big issue right now with the FREE_PAGE_HINT approach is that it
-> > > is designed to be all or nothing. Using the balloon makes it
-> > > impossible for us to be incremental as all the pages are contained in
-> > > one spot. What we would need is some way to associate a page with a
-> > > given vq buffer.
-> >
-> > Sorry if I'm belaboring the obvious, but isn't this what 'void *data' in
-> > virtqueue_add_inbuf is designed for?  And if you only ever use
-> > virtqueue_add_inbuf and virtqueue_add_outbuf on a given VQ, then you can
-> > track two pointers using virtqueue_add_inbuf_ctx.
+> ---
+>  drivers/acpi/nfit/core.c        |   28 ++++++++--------
+>  drivers/acpi/nfit/nfit.h        |   24 ++++++++++++++
+>  drivers/base/core.c             |    3 ++
+>  drivers/nvdimm/btt_devs.c       |   16 +++++----
+>  drivers/nvdimm/bus.c            |   28 ++++++++++------
+>  drivers/nvdimm/core.c           |   10 +++---
+>  drivers/nvdimm/dimm_devs.c      |    4 +-
+>  drivers/nvdimm/namespace_devs.c |   36 ++++++++++-----------
+>  drivers/nvdimm/nd-core.h        |   68 +++++++++++++++++++++++++++++++++++++++
+>  drivers/nvdimm/pfn_devs.c       |   24 +++++++-------
+>  drivers/nvdimm/pmem.c           |    4 +-
+>  drivers/nvdimm/region.c         |    2 +
+>  drivers/nvdimm/region_devs.c    |   16 +++++----
+>  include/linux/device.h          |    5 +++
+>  14 files changed, 187 insertions(+), 81 deletions(-)
 > 
-> I am still learning virtio so I wasn't aware of this piece until
-> yesterday. For FREE_PAGE_HINT it would probably work as we would then
-> have that association. For my page hinting I am still thinking I would
-> prefer to just pass around a scatterlist since that is the structure I
-> would likely fill and then later drain of pages versus just
-> maintaining a list.
-
-OK. That might need an API extension. We do support scatter lists
-but ATM they allocate memory internally. Not something you
-want to do when you are playing with free lists I think.
-
-> > > Ultimately in order to really make the FREE_PAGE_HINT
-> > > logic work with something like my page hinting logic it would need to
-> > > work more like a network Rx ring in that we would associate a page per
-> > > buffer and have some way of knowing the two are associated.
-> >
-> > Right. That's exactly how virtio net does it btw.
+> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+> index 23022cf20d26..f22139458ce1 100644
+> --- a/drivers/acpi/nfit/core.c
+> +++ b/drivers/acpi/nfit/core.c
+> @@ -1282,7 +1282,7 @@ static ssize_t hw_error_scrub_store(struct device *dev,
+>  	if (rc)
+>  		return rc;
+>  
+> -	device_lock(dev);
+> +	nfit_device_lock(dev);
+>  	nd_desc = dev_get_drvdata(dev);
+>  	if (nd_desc) {
+>  		struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
+> @@ -1299,7 +1299,7 @@ static ssize_t hw_error_scrub_store(struct device *dev,
+>  			break;
+>  		}
+>  	}
+> -	device_unlock(dev);
+> +	nfit_device_unlock(dev);
+>  	if (rc)
+>  		return rc;
+>  	return size;
+> @@ -1319,7 +1319,7 @@ static ssize_t scrub_show(struct device *dev,
+>  	ssize_t rc = -ENXIO;
+>  	bool busy;
+>  
+> -	device_lock(dev);
+> +	nfit_device_lock(dev);
+>  	nd_desc = dev_get_drvdata(dev);
+>  	if (!nd_desc) {
+>  		device_unlock(dev);
+> @@ -1339,7 +1339,7 @@ static ssize_t scrub_show(struct device *dev,
+>  	}
+>  
+>  	mutex_unlock(&acpi_desc->init_mutex);
+> -	device_unlock(dev);
+> +	nfit_device_unlock(dev);
+>  	return rc;
+>  }
+>  
+> @@ -1356,14 +1356,14 @@ static ssize_t scrub_store(struct device *dev,
+>  	if (val != 1)
+>  		return -EINVAL;
+>  
+> -	device_lock(dev);
+> +	nfit_device_lock(dev);
+>  	nd_desc = dev_get_drvdata(dev);
+>  	if (nd_desc) {
+>  		struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
+>  
+>  		rc = acpi_nfit_ars_rescan(acpi_desc, ARS_REQ_LONG);
+>  	}
+> -	device_unlock(dev);
+> +	nfit_device_unlock(dev);
+>  	if (rc)
+>  		return rc;
+>  	return size;
+> @@ -1749,9 +1749,9 @@ static void acpi_nvdimm_notify(acpi_handle handle, u32 event, void *data)
+>  	struct acpi_device *adev = data;
+>  	struct device *dev = &adev->dev;
+>  
+> -	device_lock(dev->parent);
+> +	nfit_device_lock(dev->parent);
+>  	__acpi_nvdimm_notify(dev, event);
+> -	device_unlock(dev->parent);
+> +	nfit_device_unlock(dev->parent);
+>  }
+>  
+>  static bool acpi_nvdimm_has_method(struct acpi_device *adev, char *method)
+> @@ -3457,8 +3457,8 @@ static int acpi_nfit_flush_probe(struct nvdimm_bus_descriptor *nd_desc)
+>  	struct device *dev = acpi_desc->dev;
+>  
+>  	/* Bounce the device lock to flush acpi_nfit_add / acpi_nfit_notify */
+> -	device_lock(dev);
+> -	device_unlock(dev);
+> +	nfit_device_lock(dev);
+> +	nfit_device_unlock(dev);
+>  
+>  	/* Bounce the init_mutex to complete initial registration */
+>  	mutex_lock(&acpi_desc->init_mutex);
+> @@ -3602,8 +3602,8 @@ void acpi_nfit_shutdown(void *data)
+>  	 * acpi_nfit_ars_rescan() submissions have had a chance to
+>  	 * either submit or see ->cancel set.
+>  	 */
+> -	device_lock(bus_dev);
+> -	device_unlock(bus_dev);
+> +	nfit_device_lock(bus_dev);
+> +	nfit_device_unlock(bus_dev);
+>  
+>  	flush_workqueue(nfit_wq);
+>  }
+> @@ -3746,9 +3746,9 @@ EXPORT_SYMBOL_GPL(__acpi_nfit_notify);
+>  
+>  static void acpi_nfit_notify(struct acpi_device *adev, u32 event)
+>  {
+> -	device_lock(&adev->dev);
+> +	nfit_device_lock(&adev->dev);
+>  	__acpi_nfit_notify(&adev->dev, adev->handle, event);
+> -	device_unlock(&adev->dev);
+> +	nfit_device_unlock(&adev->dev);
+>  }
+>  
+>  static const struct acpi_device_id acpi_nfit_ids[] = {
+> diff --git a/drivers/acpi/nfit/nfit.h b/drivers/acpi/nfit/nfit.h
+> index 6ee2b02af73e..24241941181c 100644
+> --- a/drivers/acpi/nfit/nfit.h
+> +++ b/drivers/acpi/nfit/nfit.h
+> @@ -312,6 +312,30 @@ static inline struct acpi_nfit_desc *to_acpi_desc(
+>  	return container_of(nd_desc, struct acpi_nfit_desc, nd_desc);
+>  }
+>  
+> +#ifdef CONFIG_PROVE_LOCKING
+> +static inline void nfit_device_lock(struct device *dev)
+> +{
+> +	device_lock(dev);
+> +	mutex_lock(&dev->lockdep_mutex);
+> +}
+> +
+> +static inline void nfit_device_unlock(struct device *dev)
+> +{
+> +	mutex_unlock(&dev->lockdep_mutex);
+> +	device_unlock(dev);
+> +}
+> +#else
+> +static inline void nfit_device_lock(struct device *dev)
+> +{
+> +	device_lock(dev);
+> +}
+> +
+> +static inline void nfit_device_unlock(struct device *dev)
+> +{
+> +	device_unlock(dev);
+> +}
+> +#endif
+> +
+>  const guid_t *to_nfit_uuid(enum nfit_uuids id);
+>  int acpi_nfit_init(struct acpi_nfit_desc *acpi_desc, void *nfit, acpi_size sz);
+>  void acpi_nfit_shutdown(void *data);
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index eaf3aa0cb803..4825949d6547 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -1663,6 +1663,9 @@ void device_initialize(struct device *dev)
+>  	kobject_init(&dev->kobj, &device_ktype);
+>  	INIT_LIST_HEAD(&dev->dma_pools);
+>  	mutex_init(&dev->mutex);
+> +#ifdef CONFIG_PROVE_LOCKING
+> +	mutex_init(&dev->lockdep_mutex);
+> +#endif
+>  	lockdep_set_novalidate_class(&dev->mutex);
+>  	spin_lock_init(&dev->devres_lock);
+>  	INIT_LIST_HEAD(&dev->devres_head);
+> diff --git a/drivers/nvdimm/btt_devs.c b/drivers/nvdimm/btt_devs.c
+> index 62d00fffa4af..3508a79110c7 100644
+> --- a/drivers/nvdimm/btt_devs.c
+> +++ b/drivers/nvdimm/btt_devs.c
+> @@ -62,14 +62,14 @@ static ssize_t sector_size_store(struct device *dev,
+>  	struct nd_btt *nd_btt = to_nd_btt(dev);
+>  	ssize_t rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	nvdimm_bus_lock(dev);
+>  	rc = nd_size_select_store(dev, buf, &nd_btt->lbasize,
+>  			btt_lbasize_supported);
+>  	dev_dbg(dev, "result: %zd wrote: %s%s", rc, buf,
+>  			buf[len - 1] == '\n' ? "" : "\n");
+>  	nvdimm_bus_unlock(dev);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc ? rc : len;
+>  }
+> @@ -91,11 +91,11 @@ static ssize_t uuid_store(struct device *dev,
+>  	struct nd_btt *nd_btt = to_nd_btt(dev);
+>  	ssize_t rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	rc = nd_uuid_store(dev, &nd_btt->uuid, buf, len);
+>  	dev_dbg(dev, "result: %zd wrote: %s%s", rc, buf,
+>  			buf[len - 1] == '\n' ? "" : "\n");
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc ? rc : len;
+>  }
+> @@ -120,13 +120,13 @@ static ssize_t namespace_store(struct device *dev,
+>  	struct nd_btt *nd_btt = to_nd_btt(dev);
+>  	ssize_t rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	nvdimm_bus_lock(dev);
+>  	rc = nd_namespace_store(dev, &nd_btt->ndns, buf, len);
+>  	dev_dbg(dev, "result: %zd wrote: %s%s", rc, buf,
+>  			buf[len - 1] == '\n' ? "" : "\n");
+>  	nvdimm_bus_unlock(dev);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc;
+>  }
+> @@ -138,14 +138,14 @@ static ssize_t size_show(struct device *dev,
+>  	struct nd_btt *nd_btt = to_nd_btt(dev);
+>  	ssize_t rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	if (dev->driver)
+>  		rc = sprintf(buf, "%llu\n", nd_btt->size);
+>  	else {
+>  		/* no size to convey if the btt instance is disabled */
+>  		rc = -ENXIO;
+>  	}
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc;
+>  }
+> diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
+> index df41f3571dc9..798c5c4aea9c 100644
+> --- a/drivers/nvdimm/bus.c
+> +++ b/drivers/nvdimm/bus.c
+> @@ -26,7 +26,7 @@
+>  
+>  int nvdimm_major;
+>  static int nvdimm_bus_major;
+> -static struct class *nd_class;
+> +struct class *nd_class;
+>  static DEFINE_IDA(nd_ida);
+>  
+>  static int to_nd_device_type(struct device *dev)
+> @@ -91,7 +91,10 @@ static int nvdimm_bus_probe(struct device *dev)
+>  			dev->driver->name, dev_name(dev));
+>  
+>  	nvdimm_bus_probe_start(nvdimm_bus);
+> +	debug_nvdimm_lock(dev);
+>  	rc = nd_drv->probe(dev);
+> +	debug_nvdimm_unlock(dev);
+> +
+>  	if (rc == 0)
+>  		nd_region_probe_success(nvdimm_bus, dev);
+>  	else
+> @@ -113,8 +116,11 @@ static int nvdimm_bus_remove(struct device *dev)
+>  	struct nvdimm_bus *nvdimm_bus = walk_to_nvdimm_bus(dev);
+>  	int rc = 0;
+>  
+> -	if (nd_drv->remove)
+> +	if (nd_drv->remove) {
+> +		debug_nvdimm_lock(dev);
+>  		rc = nd_drv->remove(dev);
+> +		debug_nvdimm_unlock(dev);
+> +	}
+>  	nd_region_disable(nvdimm_bus, dev);
+>  
+>  	dev_dbg(&nvdimm_bus->dev, "%s.remove(%s) = %d\n", dev->driver->name,
+> @@ -140,7 +146,7 @@ static void nvdimm_bus_shutdown(struct device *dev)
+>  
+>  void nd_device_notify(struct device *dev, enum nvdimm_event event)
+>  {
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	if (dev->driver) {
+>  		struct nd_device_driver *nd_drv;
+>  
+> @@ -148,7 +154,7 @@ void nd_device_notify(struct device *dev, enum nvdimm_event event)
+>  		if (nd_drv->notify)
+>  			nd_drv->notify(dev, event);
+>  	}
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  }
+>  EXPORT_SYMBOL(nd_device_notify);
+>  
+> @@ -296,7 +302,7 @@ static void nvdimm_bus_release(struct device *dev)
+>  	kfree(nvdimm_bus);
+>  }
+>  
+> -static bool is_nvdimm_bus(struct device *dev)
+> +bool is_nvdimm_bus(struct device *dev)
+>  {
+>  	return dev->release == nvdimm_bus_release;
+>  }
+> @@ -575,9 +581,9 @@ void nd_device_unregister(struct device *dev, enum nd_async_mode mode)
+>  		 * or otherwise let the async path handle it if the
+>  		 * unregistration was already queued.
+>  		 */
+> -		device_lock(dev);
+> +		nd_device_lock(dev);
+>  		killed = kill_device(dev);
+> -		device_unlock(dev);
+> +		nd_device_unlock(dev);
+>  
+>  		if (!killed)
+>  			return;
+> @@ -888,10 +894,10 @@ void wait_nvdimm_bus_probe_idle(struct device *dev)
+>  		if (nvdimm_bus->probe_active == 0)
+>  			break;
+>  		nvdimm_bus_unlock(dev);
+> -		device_unlock(dev);
+> +		nd_device_unlock(dev);
+>  		wait_event(nvdimm_bus->wait,
+>  				nvdimm_bus->probe_active == 0);
+> -		device_lock(dev);
+> +		nd_device_lock(dev);
+>  		nvdimm_bus_lock(dev);
+>  	} while (true);
+>  }
+> @@ -1107,7 +1113,7 @@ static int __nd_ioctl(struct nvdimm_bus *nvdimm_bus, struct nvdimm *nvdimm,
+>  		goto out;
+>  	}
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	nvdimm_bus_lock(dev);
+>  	rc = nd_cmd_clear_to_send(nvdimm_bus, nvdimm, func, buf);
+>  	if (rc)
+> @@ -1129,7 +1135,7 @@ static int __nd_ioctl(struct nvdimm_bus *nvdimm_bus, struct nvdimm *nvdimm,
+>  
+>  out_unlock:
+>  	nvdimm_bus_unlock(dev);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  out:
+>  	kfree(in_env);
+>  	kfree(out_env);
+> diff --git a/drivers/nvdimm/core.c b/drivers/nvdimm/core.c
+> index 5e1f060547bf..9204f1e9fd14 100644
+> --- a/drivers/nvdimm/core.c
+> +++ b/drivers/nvdimm/core.c
+> @@ -246,7 +246,7 @@ static int nd_uuid_parse(struct device *dev, u8 *uuid_out, const char *buf,
+>   *
+>   * Enforce that uuids can only be changed while the device is disabled
+>   * (driver detached)
+> - * LOCKING: expects device_lock() is held on entry
+> + * LOCKING: expects nd_device_lock() is held on entry
+>   */
+>  int nd_uuid_store(struct device *dev, u8 **uuid_out, const char *buf,
+>  		size_t len)
+> @@ -347,15 +347,15 @@ static DEVICE_ATTR_RO(provider);
+>  
+>  static int flush_namespaces(struct device *dev, void *data)
+>  {
+> -	device_lock(dev);
+> -	device_unlock(dev);
+> +	nd_device_lock(dev);
+> +	nd_device_unlock(dev);
+>  	return 0;
+>  }
+>  
+>  static int flush_regions_dimms(struct device *dev, void *data)
+>  {
+> -	device_lock(dev);
+> -	device_unlock(dev);
+> +	nd_device_lock(dev);
+> +	nd_device_unlock(dev);
+>  	device_for_each_child(dev, NULL, flush_namespaces);
+>  	return 0;
+>  }
+> diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
+> index dfecd6e17043..29a065e769ea 100644
+> --- a/drivers/nvdimm/dimm_devs.c
+> +++ b/drivers/nvdimm/dimm_devs.c
+> @@ -484,12 +484,12 @@ static ssize_t security_store(struct device *dev,
+>  	 * done while probing is idle and the DIMM is not in active use
+>  	 * in any region.
+>  	 */
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	nvdimm_bus_lock(dev);
+>  	wait_nvdimm_bus_probe_idle(dev);
+>  	rc = __security_store(dev, buf, len);
+>  	nvdimm_bus_unlock(dev);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc;
+>  }
+> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+> index a434a5964cb9..92cd809d7e43 100644
+> --- a/drivers/nvdimm/namespace_devs.c
+> +++ b/drivers/nvdimm/namespace_devs.c
+> @@ -410,7 +410,7 @@ static ssize_t alt_name_store(struct device *dev,
+>  	struct nd_region *nd_region = to_nd_region(dev->parent);
+>  	ssize_t rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	nvdimm_bus_lock(dev);
+>  	wait_nvdimm_bus_probe_idle(dev);
+>  	rc = __alt_name_store(dev, buf, len);
+> @@ -418,7 +418,7 @@ static ssize_t alt_name_store(struct device *dev,
+>  		rc = nd_namespace_label_update(nd_region, dev);
+>  	dev_dbg(dev, "%s(%zd)\n", rc < 0 ? "fail " : "", rc);
+>  	nvdimm_bus_unlock(dev);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc < 0 ? rc : len;
+>  }
+> @@ -1077,7 +1077,7 @@ static ssize_t size_store(struct device *dev,
+>  	if (rc)
+>  		return rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	nvdimm_bus_lock(dev);
+>  	wait_nvdimm_bus_probe_idle(dev);
+>  	rc = __size_store(dev, val);
+> @@ -1103,7 +1103,7 @@ static ssize_t size_store(struct device *dev,
+>  	dev_dbg(dev, "%llx %s (%d)\n", val, rc < 0 ? "fail" : "success", rc);
+>  
+>  	nvdimm_bus_unlock(dev);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc < 0 ? rc : len;
+>  }
+> @@ -1286,7 +1286,7 @@ static ssize_t uuid_store(struct device *dev,
+>  	} else
+>  		return -ENXIO;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	nvdimm_bus_lock(dev);
+>  	wait_nvdimm_bus_probe_idle(dev);
+>  	if (to_ndns(dev)->claim)
+> @@ -1302,7 +1302,7 @@ static ssize_t uuid_store(struct device *dev,
+>  	dev_dbg(dev, "result: %zd wrote: %s%s", rc, buf,
+>  			buf[len - 1] == '\n' ? "" : "\n");
+>  	nvdimm_bus_unlock(dev);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc < 0 ? rc : len;
+>  }
+> @@ -1376,7 +1376,7 @@ static ssize_t sector_size_store(struct device *dev,
+>  	} else
+>  		return -ENXIO;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	nvdimm_bus_lock(dev);
+>  	if (to_ndns(dev)->claim)
+>  		rc = -EBUSY;
+> @@ -1387,7 +1387,7 @@ static ssize_t sector_size_store(struct device *dev,
+>  	dev_dbg(dev, "result: %zd %s: %s%s", rc, rc < 0 ? "tried" : "wrote",
+>  			buf, buf[len - 1] == '\n' ? "" : "\n");
+>  	nvdimm_bus_unlock(dev);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc ? rc : len;
+>  }
+> @@ -1502,9 +1502,9 @@ static ssize_t holder_show(struct device *dev,
+>  	struct nd_namespace_common *ndns = to_ndns(dev);
+>  	ssize_t rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	rc = sprintf(buf, "%s\n", ndns->claim ? dev_name(ndns->claim) : "");
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc;
+>  }
+> @@ -1541,7 +1541,7 @@ static ssize_t holder_class_store(struct device *dev,
+>  	struct nd_region *nd_region = to_nd_region(dev->parent);
+>  	ssize_t rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	nvdimm_bus_lock(dev);
+>  	wait_nvdimm_bus_probe_idle(dev);
+>  	rc = __holder_class_store(dev, buf);
+> @@ -1549,7 +1549,7 @@ static ssize_t holder_class_store(struct device *dev,
+>  		rc = nd_namespace_label_update(nd_region, dev);
+>  	dev_dbg(dev, "%s(%zd)\n", rc < 0 ? "fail " : "", rc);
+>  	nvdimm_bus_unlock(dev);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc < 0 ? rc : len;
+>  }
+> @@ -1560,7 +1560,7 @@ static ssize_t holder_class_show(struct device *dev,
+>  	struct nd_namespace_common *ndns = to_ndns(dev);
+>  	ssize_t rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	if (ndns->claim_class == NVDIMM_CCLASS_NONE)
+>  		rc = sprintf(buf, "\n");
+>  	else if ((ndns->claim_class == NVDIMM_CCLASS_BTT) ||
+> @@ -1572,7 +1572,7 @@ static ssize_t holder_class_show(struct device *dev,
+>  		rc = sprintf(buf, "dax\n");
+>  	else
+>  		rc = sprintf(buf, "<unknown>\n");
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc;
+>  }
+> @@ -1586,7 +1586,7 @@ static ssize_t mode_show(struct device *dev,
+>  	char *mode;
+>  	ssize_t rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	claim = ndns->claim;
+>  	if (claim && is_nd_btt(claim))
+>  		mode = "safe";
+> @@ -1599,7 +1599,7 @@ static ssize_t mode_show(struct device *dev,
+>  	else
+>  		mode = "raw";
+>  	rc = sprintf(buf, "%s\n", mode);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc;
+>  }
+> @@ -1703,8 +1703,8 @@ struct nd_namespace_common *nvdimm_namespace_common_probe(struct device *dev)
+>  		 * Flush any in-progess probes / removals in the driver
+>  		 * for the raw personality of this namespace.
+>  		 */
+> -		device_lock(&ndns->dev);
+> -		device_unlock(&ndns->dev);
+> +		nd_device_lock(&ndns->dev);
+> +		nd_device_unlock(&ndns->dev);
+>  		if (ndns->dev.driver) {
+>  			dev_dbg(&ndns->dev, "is active, can't bind %s\n",
+>  					dev_name(dev));
+> diff --git a/drivers/nvdimm/nd-core.h b/drivers/nvdimm/nd-core.h
+> index 6cd470547106..0ac52b6eb00e 100644
+> --- a/drivers/nvdimm/nd-core.h
+> +++ b/drivers/nvdimm/nd-core.h
+> @@ -9,6 +9,7 @@
+>  #include <linux/sizes.h>
+>  #include <linux/mutex.h>
+>  #include <linux/nd.h>
+> +#include "nd.h"
+>  
+>  extern struct list_head nvdimm_bus_list;
+>  extern struct mutex nvdimm_bus_list_mutex;
+> @@ -182,4 +183,71 @@ ssize_t nd_namespace_store(struct device *dev,
+>  		struct nd_namespace_common **_ndns, const char *buf,
+>  		size_t len);
+>  struct nd_pfn *to_nd_pfn_safe(struct device *dev);
+> +bool is_nvdimm_bus(struct device *dev);
+> +
+> +#ifdef CONFIG_PROVE_LOCKING
+> +extern struct class *nd_class;
+> +
+> +enum {
+> +	LOCK_BUS,
+> +	LOCK_NDCTL,
+> +	LOCK_REGION,
+> +	LOCK_DIMM = LOCK_REGION,
+> +	LOCK_NAMESPACE,
+> +	LOCK_CLAIM,
+> +};
+> +
+> +static inline void debug_nvdimm_lock(struct device *dev)
+> +{
+> +	if (is_nd_region(dev))
+> +		mutex_lock_nested(&dev->lockdep_mutex, LOCK_REGION);
+> +	else if (is_nvdimm(dev))
+> +		mutex_lock_nested(&dev->lockdep_mutex, LOCK_DIMM);
+> +	else if (is_nd_btt(dev) || is_nd_pfn(dev) || is_nd_dax(dev))
+> +		mutex_lock_nested(&dev->lockdep_mutex, LOCK_CLAIM);
+> +	else if (dev->parent && (is_nd_region(dev->parent)))
+> +		mutex_lock_nested(&dev->lockdep_mutex, LOCK_NAMESPACE);
+> +	else if (is_nvdimm_bus(dev))
+> +		mutex_lock_nested(&dev->lockdep_mutex, LOCK_BUS);
+> +	else if (dev->class && dev->class == nd_class)
+> +		mutex_lock_nested(&dev->lockdep_mutex, LOCK_NDCTL);
+> +	else
+> +		dev_WARN(dev, "unknown lock level\n");
+> +}
+> +
+> +static inline void debug_nvdimm_unlock(struct device *dev)
+> +{
+> +	mutex_unlock(&dev->lockdep_mutex);
+> +}
+> +
+> +static inline void nd_device_lock(struct device *dev)
+> +{
+> +	device_lock(dev);
+> +	debug_nvdimm_lock(dev);
+> +}
+> +
+> +static inline void nd_device_unlock(struct device *dev)
+> +{
+> +	debug_nvdimm_unlock(dev);
+> +	device_unlock(dev);
+> +}
+> +#else
+> +static inline void nd_device_lock(struct device *dev)
+> +{
+> +	device_lock(dev);
+> +}
+> +
+> +static inline void nd_device_unlock(struct device *dev)
+> +{
+> +	device_unlock(dev);
+> +}
+> +
+> +static inline void debug_nvdimm_lock(struct device *dev)
+> +{
+> +}
+> +
+> +static inline void debug_nvdimm_unlock(struct device *dev)
+> +{
+> +}
+> +#endif
+>  #endif /* __ND_CORE_H__ */
+> diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
+> index 0f81fc56bbfd..9b09fe18e666 100644
+> --- a/drivers/nvdimm/pfn_devs.c
+> +++ b/drivers/nvdimm/pfn_devs.c
+> @@ -67,7 +67,7 @@ static ssize_t mode_store(struct device *dev,
+>  	struct nd_pfn *nd_pfn = to_nd_pfn_safe(dev);
+>  	ssize_t rc = 0;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	nvdimm_bus_lock(dev);
+>  	if (dev->driver)
+>  		rc = -EBUSY;
+> @@ -89,7 +89,7 @@ static ssize_t mode_store(struct device *dev,
+>  	dev_dbg(dev, "result: %zd wrote: %s%s", rc, buf,
+>  			buf[len - 1] == '\n' ? "" : "\n");
+>  	nvdimm_bus_unlock(dev);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc ? rc : len;
+>  }
+> @@ -132,14 +132,14 @@ static ssize_t align_store(struct device *dev,
+>  	struct nd_pfn *nd_pfn = to_nd_pfn_safe(dev);
+>  	ssize_t rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	nvdimm_bus_lock(dev);
+>  	rc = nd_size_select_store(dev, buf, &nd_pfn->align,
+>  			nd_pfn_supported_alignments());
+>  	dev_dbg(dev, "result: %zd wrote: %s%s", rc, buf,
+>  			buf[len - 1] == '\n' ? "" : "\n");
+>  	nvdimm_bus_unlock(dev);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc ? rc : len;
+>  }
+> @@ -161,11 +161,11 @@ static ssize_t uuid_store(struct device *dev,
+>  	struct nd_pfn *nd_pfn = to_nd_pfn_safe(dev);
+>  	ssize_t rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	rc = nd_uuid_store(dev, &nd_pfn->uuid, buf, len);
+>  	dev_dbg(dev, "result: %zd wrote: %s%s", rc, buf,
+>  			buf[len - 1] == '\n' ? "" : "\n");
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc ? rc : len;
+>  }
+> @@ -190,13 +190,13 @@ static ssize_t namespace_store(struct device *dev,
+>  	struct nd_pfn *nd_pfn = to_nd_pfn_safe(dev);
+>  	ssize_t rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	nvdimm_bus_lock(dev);
+>  	rc = nd_namespace_store(dev, &nd_pfn->ndns, buf, len);
+>  	dev_dbg(dev, "result: %zd wrote: %s%s", rc, buf,
+>  			buf[len - 1] == '\n' ? "" : "\n");
+>  	nvdimm_bus_unlock(dev);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc;
+>  }
+> @@ -208,7 +208,7 @@ static ssize_t resource_show(struct device *dev,
+>  	struct nd_pfn *nd_pfn = to_nd_pfn_safe(dev);
+>  	ssize_t rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	if (dev->driver) {
+>  		struct nd_pfn_sb *pfn_sb = nd_pfn->pfn_sb;
+>  		u64 offset = __le64_to_cpu(pfn_sb->dataoff);
+> @@ -222,7 +222,7 @@ static ssize_t resource_show(struct device *dev,
+>  		/* no address to convey if the pfn instance is disabled */
+>  		rc = -ENXIO;
+>  	}
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc;
+>  }
+> @@ -234,7 +234,7 @@ static ssize_t size_show(struct device *dev,
+>  	struct nd_pfn *nd_pfn = to_nd_pfn_safe(dev);
+>  	ssize_t rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	if (dev->driver) {
+>  		struct nd_pfn_sb *pfn_sb = nd_pfn->pfn_sb;
+>  		u64 offset = __le64_to_cpu(pfn_sb->dataoff);
+> @@ -250,7 +250,7 @@ static ssize_t size_show(struct device *dev,
+>  		/* no size to convey if the pfn instance is disabled */
+>  		rc = -ENXIO;
+>  	}
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc;
+>  }
+> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> index 28cb44c61d4a..53797e7be18a 100644
+> --- a/drivers/nvdimm/pmem.c
+> +++ b/drivers/nvdimm/pmem.c
+> @@ -520,8 +520,8 @@ static int nd_pmem_remove(struct device *dev)
+>  		nvdimm_namespace_detach_btt(to_nd_btt(dev));
+>  	else {
+>  		/*
+> -		 * Note, this assumes device_lock() context to not race
+> -		 * nd_pmem_notify()
+> +		 * Note, this assumes nd_device_lock() context to not
+> +		 * race nd_pmem_notify()
+>  		 */
+>  		sysfs_put(pmem->bb_state);
+>  		pmem->bb_state = NULL;
+> diff --git a/drivers/nvdimm/region.c b/drivers/nvdimm/region.c
+> index 488c47ac4c4a..37bf8719a2a4 100644
+> --- a/drivers/nvdimm/region.c
+> +++ b/drivers/nvdimm/region.c
+> @@ -102,7 +102,7 @@ static int nd_region_remove(struct device *dev)
+>  	nvdimm_bus_unlock(dev);
+>  
+>  	/*
+> -	 * Note, this assumes device_lock() context to not race
+> +	 * Note, this assumes nd_device_lock() context to not race
+>  	 * nd_region_notify()
+>  	 */
+>  	sysfs_put(nd_region->bb_state);
+> diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+> index a15276cdec7d..91b5a7ade0d5 100644
+> --- a/drivers/nvdimm/region_devs.c
+> +++ b/drivers/nvdimm/region_devs.c
+> @@ -329,7 +329,7 @@ static ssize_t set_cookie_show(struct device *dev,
+>  	 * the v1.1 namespace label cookie definition. To read all this
+>  	 * data we need to wait for probing to settle.
+>  	 */
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	nvdimm_bus_lock(dev);
+>  	wait_nvdimm_bus_probe_idle(dev);
+>  	if (nd_region->ndr_mappings) {
+> @@ -346,7 +346,7 @@ static ssize_t set_cookie_show(struct device *dev,
+>  		}
+>  	}
+>  	nvdimm_bus_unlock(dev);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	if (rc)
+>  		return rc;
+> @@ -422,12 +422,12 @@ static ssize_t available_size_show(struct device *dev,
+>  	 * memory nvdimm_bus_lock() is dropped, but that's userspace's
+>  	 * problem to not race itself.
+>  	 */
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	nvdimm_bus_lock(dev);
+>  	wait_nvdimm_bus_probe_idle(dev);
+>  	available = nd_region_available_dpa(nd_region);
+>  	nvdimm_bus_unlock(dev);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return sprintf(buf, "%llu\n", available);
+>  }
+> @@ -439,12 +439,12 @@ static ssize_t max_available_extent_show(struct device *dev,
+>  	struct nd_region *nd_region = to_nd_region(dev);
+>  	unsigned long long available = 0;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	nvdimm_bus_lock(dev);
+>  	wait_nvdimm_bus_probe_idle(dev);
+>  	available = nd_region_allocatable_dpa(nd_region);
+>  	nvdimm_bus_unlock(dev);
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return sprintf(buf, "%llu\n", available);
+>  }
+> @@ -563,12 +563,12 @@ static ssize_t region_badblocks_show(struct device *dev,
+>  	struct nd_region *nd_region = to_nd_region(dev);
+>  	ssize_t rc;
+>  
+> -	device_lock(dev);
+> +	nd_device_lock(dev);
+>  	if (dev->driver)
+>  		rc = badblocks_show(&nd_region->bb, buf, 0);
+>  	else
+>  		rc = -ENXIO;
+> -	device_unlock(dev);
+> +	nd_device_unlock(dev);
+>  
+>  	return rc;
+>  }
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 0da5c67f6be1..9237b857b598 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -909,6 +909,8 @@ struct dev_links_info {
+>   * 		This identifies the device type and carries type-specific
+>   * 		information.
+>   * @mutex:	Mutex to synchronize calls to its driver.
+> + * @lockdep_mutex: An optional debug lock that a subsystem can use as a
+> + * 		peer lock to gain localized lockdep coverage of the device_lock.
+>   * @bus:	Type of bus device is on.
+>   * @driver:	Which driver has allocated this
+>   * @platform_data: Platform data specific to the device.
+> @@ -991,6 +993,9 @@ struct device {
+>  					   core doesn't touch it */
+>  	void		*driver_data;	/* Driver data, set and get with
+>  					   dev_set_drvdata/dev_get_drvdata */
+> +#ifdef CONFIG_PROVE_LOCKING
+> +	struct mutex		lockdep_mutex;
+> +#endif
+>  	struct mutex		mutex;	/* mutex to synchronize calls to
+>  					 * its driver.
+>  					 */
 > 
-> Yeah, I saw that after reviewing the code yesterday.
-> 
-> > > > The reason FREE_PAGE_HINT does not free up pages until we finished
-> > > > iterating over the free list it not a hypervisor API. The reason is we
-> > > > don't want to keep getting the same address over and over again.
-> > > >
-> > > > > I would prefer to avoid that as I prefer to simply
-> > > > > notify the host of a fixed block of pages at a time and let it process
-> > > > > without having to have a thread on each side actively pushing pages,
-> > > > > or listening for the incoming pages.
-> > > >
-> > > > Right. And FREE_PAGE_HINT can go even further. It can push a page and
-> > > > let linux use it immediately. It does not even need to wait for host to
-> > > > process anything unless the VQ gets full.
-> > >
-> > > If it is doing what you are saying it will be corrupting memory.
-> >
-> > No and that is hypervisor's responsibility.
-> >
-> > I think you are missing part of the picture here.
-> >
-> > Here is a valid implementation:
-> >
-> > Before asking for hints, hypervisor write-protects all memory, and logs
-> > all write faults. When hypervisor gets the hint, if page has since been
-> > modified, the hint is ignored.
-> 
-> No here is the part where I think you missed the point. I was already
-> aware of this. So my concern is this scenario.
-> 
-> If you put a hint on the VQ and then free the memory back to the
-> guest, what about the scenario where another process could allocate
-> the memory and dirty it before we process the hint request on the
-> host? In that case the page was dirtied, the hypervisor will have
-> correctly write faulted and dirtied it, and then we came though and
-> incorrectly marked it as being free. That is the scenario I am worried
-> about as I am pretty certain that leads to memory corruption.
-
-It would for sure. There are actually two dirty bit data structures.
-One is maintained by KVM, I'd like to call it a "write log" here.
-the other is maintained by qemu, that's the "dirty bitmap".
-
-sync is the step where we atomically copy write log to dirty
-bitmap and write-protect memory.
-It works like this in theory:
-
-	sync
-
-	command id ++
-
-	request hints from guest with command id
-
-XXX->
-
-	get hint - if command id matches - clear dirty bitmap bit
-
-	sync
-
-
-code underwent enough changes that I couldn't
-easily verify that's still the case but was
-very clear originally :)
-
-Can you see how if a hint crosses a sync then
-it has a different command id and so is ignored?
-and if not then writes are logged.
-
-
-> 
-> >
-> > > At a
-> > > minimum it has to wait until the page has been processed and the dirty
-> > > bit cleared before it can let linux use it again. It is all a matter
-> > > of keeping the dirty bit coherent. If we let linux use it again
-> > > immediately and then cleared the dirty bit we would open up a possible
-> > > data corruption race during migration as a dirty page might not be
-> > > marked as such.
-> >
-> > I think you are talking about the dirty bit on the host, right?
-> >
-> > The implication is that calling MADV_FREE from qemu would
-> > not be a good implementation of FREE_PAGE_HINT.
-> > And indeed, as far as I can see it does nothing of the sort.
-> 
-> I don't mean the dirty bit on the host, I am talking about the bitmap
-> used to determine which pages need to be migrated. That is what this
-> hint is updating and it is also being tracked via the write protection
-> of the pages at the start of migration.
-> 
-> My concern is that we can end up losing track of pages that are
-> updated if we are hinting after they have been freed back to the guest
-> for reallocation.
-> 
-> > > > >
-> > > > > > > > > The basic idea with the bubble hinting was to essentially create mini
-> > > > > > > > > balloons. As such I had based the code off of the balloon inflation
-> > > > > > > > > code. The only spot where it really differs is that I needed the
-> > > > > > > > > ability to pass higher order pages so I tweaked thinks and passed
-> > > > > > > > > "hints" instead of "pfns".
-> > > > > > > >
-> > > > > > > > And that is fine. But there isn't really such a big difference with
-> > > > > > > > FREE_PAGE_HINT except FREE_PAGE_HINT triggers upon host request and not
-> > > > > > > > in response to guest load.
-> > > > > > >
-> > > > > > > I disagree, I believe there is a significant difference.
-> > > > > >
-> > > > > > Yes there is, I just don't think it's in the iteration.
-> > > > > > The iteration seems to be useful to hinting.
-> > > > >
-> > > > > I agree that iteration is useful to hinting. The problem is the
-> > > > > FREE_PAGE_HINT code isn't really designed to be iterative. It is
-> > > > > designed to run with a polling thread on each side and it is meant to
-> > > > > be run to completion.
-> > > >
-> > > > Absolutely. But that's a bug I think.
-> > >
-> > > I think it is a part of the design. Basically in order to avoid
-> > > corrupting memory it cannot return the page to the guest kernel until
-> > > it has finished clearing the dirty bits associated with the pages.
-> >
-> > OK I hope I clarified by that's not supposed to be the case.
-> 
-> I think you might have missed something. I am pretty certain issues
-> are still present.
-> 
-> > > > > > > The
-> > > > > > > FREE_PAGE_HINT code was implemented to be more of a streaming
-> > > > > > > interface.
-> > > > > >
-> > > > > > It's implemented like this but it does not follow from
-> > > > > > the interface. The implementation is a combination of
-> > > > > > attempts to minimize # of exits and minimize mm core changes.
-> > > > >
-> > > > > The problem is the interface doesn't have a good way of indicating
-> > > > > that it is done with a block of pages.
-> > > > >
-> > > > > So what I am probably looking at if I do a sg implementation for my
-> > > > > hinting is to provide one large sg block for all 32 of the pages I
-> > > > > might be holding.
-> > > >
-> > > > Right now if you pass an sg it will try to allocate a buffer
-> > > > on demand for you. If this is a problem I could come up
-> > > > with a new API that lets caller allocate the buffer.
-> > > > Let me know.
-> > > >
-> > > > > I'm assuming that will still be processed as one
-> > > > > contiguous block. With that I can then at least maintain a single
-> > > > > response per request.
-> > > >
-> > > > Why do you care? Won't a counter of outstanding pages be enough?
-> > > > Down the road maybe we could actually try to pipeline
-> > > > things a bit. So send 32 pages once you get 16 of these back
-> > > > send 16 more. Better for SMP configs and does not hurt
-> > > > non-SMP too much. I am not saying we need to do it right away though.
-> > >
-> > > So the big thing is we cannot give the page back to the guest kernel
-> > > until we know the processing has been completed. In the case of the
-> > > MADV_DONT_NEED call it will zero out the entire page on the next
-> > > access. If the guest kernel had already written data by the time we
-> > > get to that it would cause a data corruption and kill the whole guest.
-> >
-> >
-> > Exactly but FREE_PAGE_HINT does not cause qemu to call MADV_DONT_NEED.
-> 
-> No, instead it clears the bit indicating that the page is supposed to
-> be migrated. The effect will not be all that different, just delayed
-> until the VM is actually migrated.
-> 
-> > > > > > > This is one of the things Linus kept complaining about in
-> > > > > > > his comments. This code attempts to pull in ALL of the higher order
-> > > > > > > pages, not just a smaller block of them.
-> > > > > >
-> > > > > > It wants to report all higher order pages eventually, yes.
-> > > > > > But it's absolutely fine to report a chunk and then wait
-> > > > > > for host to process the chunk before reporting more.
-> > > > > >
-> > > > > > However, interfaces we came up with for this would call
-> > > > > > into virtio with a bunch of locks taken.
-> > > > > > The solution was to take pages off the free list completely.
-> > > > > > That in turn means we can't return them until
-> > > > > > we have processed all free memory.
-> > > > >
-> > > > > I get that. The problem is the interface is designed around run to
-> > > > > completion. For example it will sit there in a busy loop waiting for a
-> > > > > free buffer because it knows the other side is suppose to be
-> > > > > processing the pages already.
-> > > >
-> > > > I didn't get this part.
-> > >
-> > > I think the part you may not be getting is that we cannot let the
-> > > guest use the page until the hint has been processed. Otherwise we
-> > > risk corrupting memory. That is the piece that has me paranoid. If we
-> > > end up performing a hint on a page that is use somewhere in the kernel
-> > > it will corrupt memory one way or another. That is the thing I have to
-> > > avoid at all cost.
-> >
-> > You have to do it, sure. And that is because you do not
-> > assume that hypervisor does it for you. But FREE_PAGE_HINT doesn't,
-> > hypervisor takes care of that.
-> 
-> Sort of. The hypervisor is trying to do dirty page tracking, however
-> the FREE_PAGE_HINT interferes with that. That is the problem. If we
-> get that out of order then the hypervisor work will be undone and we
-> just make a mess of memory.
-> 
-> > > That is why I have to have a way to know exactly which pages have been
-> > > processed and which haven't before I return pages to the guest.
-> > > Otherwise I am just corrupting memory.
-> >
-> > Sure. That isn't really hard though.
-> 
-> Agreed.
-> 
-> > >
-> > > > > > > Honestly the difference is
-> > > > > > > mostly in the hypervisor interface than what is needed for the kernel
-> > > > > > > interface, however the design of the hypervisor interface would make
-> > > > > > > doing things more incrementally much more difficult.
-> > > > > >
-> > > > > > OK that's interesting. The hypervisor interface is not
-> > > > > > documented in the spec yet. Let me take a stub at a writeup now. So:
-> > > > > >
-> > > > > >
-> > > > > >
-> > > > > > - hypervisor requests reporting by modifying command ID
-> > > > > >   field in config space, and interrupting guest
-> > > > > >
-> > > > > > - in response, guest sends the command ID value on a special
-> > > > > >   free page hinting VQ,
-> > > > > >   followed by any number of buffers. Each buffer is assumed
-> > > > > >   to be the address and length of memory that was
-> > > > > >   unused *at some point after the time when command ID was sent*.
-> > > > > >
-> > > > > >   Note that hypervisor takes pains to handle the case
-> > > > > >   where memory is actually no longer free by the time
-> > > > > >   it gets the memory.
-> > > > > >   This allows guest driver to take more liberties
-> > > > > >   and free pages without waiting for guest to
-> > > > > >   use the buffers.
-> > > > > >
-> > > > > >   This is also one of the reason we call this a free page hint -
-> > > > > >   the guarantee that page is free is a weak one,
-> > > > > >   in that sense it's more of a hint than a promise.
-> > > > > >   That helps guarantee we don't create OOM out of blue.
-> > > >
-> > > > I would like to stress the last paragraph above.
-> > >
-> > > The problem is we don't want to give bad hints. What we do based on
-> > > the hint is clear the dirty bit. If we clear it in err when the page
-> > > is actually in use it will lead to data corruption after migration.
-> >
-> > That's true for your patches. I get that.
-> 
-> No, it should be true for FREE_PAGE_HINT as well. The fact that it
-> isn't is a bug as far as I am concerned. If you are doing dirty page
-> tracking in the hypervisor you cannot expect it to behave well if the
-> guest is providing it with bad data.
-> 
-> > > The idea with the hint is that you are saying the page is currently
-> > > not in use, however if you send that hint late and have already freed
-> > > the page back you can corrupt memory.
-> >
-> >
-> > That part is I think wrong - assuming "you" means upstream code.
-> 
-> Yes, I am referring to someone running FREE_PAGE_HINT code. I usually
-> try to replace them with "we" to make it clear I am not talking about
-> someone personally, it is a bad habit.
-> 
-> > > > > >
-> > > > > > - guest eventually sends a special buffer signalling to
-> > > > > >   host that it's done sending free pages.
-> > > > > >   It then stops reporting until command id changes.
-> > > > >
-> > > > > The pages are not freed back to the guest until the host reports that
-> > > > > it is "DONE" via a configuration change. Doing that stops any further
-> > > > > progress, and attempting to resume will just restart from the
-> > > > > beginning.
-> > > >
-> > > > Right but it's not a requirement. Host does not assume this at all.
-> > > > It's done like this simply because we can't iterate over pages
-> > > > with the existing API.
-> > >
-> > > The problem is nothing about the implementation was designed for
-> > > iteration. What I would have to do is likely gut and rewrite the
-> > > entire guest side of the FREE_PAGE_HINT code in order to make it work
-> > > iteratively.
-> >
-> >
-> > Right. I agree.
-> >
-> > > As I mentioned it would probably have to look more like a
-> > > NIC Rx ring in handling because we would have to have some sort of way
-> > > to associate the pages 1:1 to the buffers.
-> > >
-> > > > > The big piece this design is missing is the incremental notification
-> > > > > pages have been processed. The existing code just fills the vq with
-> > > > > pages and keeps doing it until it cannot allocate any more pages. We
-> > > > > would have to add logic to stop, flush, and resume to the existing
-> > > > > framework.
-> > > >
-> > > > But not to the hypervisor interface. Hypervisor is fine
-> > > > with pages being reused immediately. In fact, even before they
-> > > > are processed.
-> > >
-> > > I don't think that is actually the case. If it does that I am pretty
-> > > sure it will corrupt memory during migration.
-> > >
-> > > Take a look at qemu_guest_free_page_hint:
-> > > https://github.com/qemu/qemu/blob/master/migration/ram.c#L3342
-> > >
-> > > I'm pretty sure that code is going in and clearing the dirty bitmap
-> > > for memory.
-> >
-> > Yes it does. However the trick is that meanwhile
-> > kvm is logging new writes. So the bitmap that
-> > is being cleared is the bitmap that was logged before the request
-> > was sent to guest.
-> >
-> > > If we were to allow a page to be allocated and used and
-> > > then perform the hint it is going to introduce a race where the page
-> > > might be missed for migration and could result in memory corruption.
-> >
-> > commit c13c4153f76db23cac06a12044bf4dd346764059 has this explanation:
-> >
-> >     Note: balloon will report pages which were free at the time of this call.
-> >     As the reporting happens asynchronously, dirty bit logging must be
-> >     enabled before this free_page_start call is made. Guest reporting must be
-> >     disabled before the migration dirty bitmap is synchronized.
-> >
-> > but over multiple iterations this seems to have been dropped
-> > from code comments. Wei, would you mind going back
-> > and documenting the APIs you used?
-> > They seem to be causing confusion ...
-> 
-> The "Note" is the behavior I am seeing. Specifically there is nothing
-> in place to prevent the freed pages from causing corruption if they
-> are freed before being hinted. The requirement should be that they
-> cannot be freed until after they are hinted that way the dirty bit
-> logging will mark the page as dirty if it is accessed AFTER being
-> hinted.
-> 
-> If you do not guarantee the hinting has happened first you could end
-> up logging the dirty bit before the hint is processed and then clear
-> the dirty bit due to the hint. It is pretty straight forward to
-> resolve by just not putting the page into the balloon until after the
-> hint has been processed.
-> 
-> > >
-> > > > > > - host can restart the process at any time by
-> > > > > >   updating command ID. That will make guest stop
-> > > > > >   and start from the beginning.
-> > > > > >
-> > > > > > - host can also stop the process by specifying a special
-> > > > > >   command ID value.
-> > > > > >
-> > > > > >
-> > > > > > =========
-> > > > > >
-> > > > > >
-> > > > > > Now let's compare to what you have here:
-> > > > > >
-> > > > > > - At any time after boot, guest walks over free memory and sends
-> > > > > >   addresses as buffers to the host
-> > > > > >
-> > > > > > - Memory reported is then guaranteed to be unused
-> > > > > >   until host has used the buffers
-> > > > > >
-> > > > > >
-> > > > > > Is above a fair summary?
-> > > > > >
-> > > > > > So yes there's a difference but the specific bit of chunking is same
-> > > > > > imho.
-> > > > >
-> > > > > The big difference is that I am returning the pages after they are
-> > > > > processed, while FREE_PAGE_HINT doesn't and isn't designed to.
-> > > >
-> > > > It doesn't but the hypervisor *is* designed to support that.
-> > >
-> > > Not really, it seems like it is more just a side effect of things.
-> >
-> > I hope the commit log above is enough to convice you we did
-> > think about this.
-> 
-> Sorry, but no. I think the "note" convinced me there is a race
-> condition, specifically in the shrinker case. We cannot free the page
-> back to host memory until the hint has been processed, otherwise we
-> will race with the dirty bit logging.
-> 
-> > > Also as I mentioned before I am also not a huge fan of polling on both
-> > > sides as it is just going to burn through CPU. If we are iterative and
-> > > polling it is going to end up with us potentially pushing one CPU at
-> > > 100%, and if the one CPU doing the polling cannot keep up with the
-> > > page updates coming from the other CPUs we would be stuck in that
-> > > state for a while. I would have preferred to see something where the
-> > > CPU would at least allow other tasks to occur while it is waiting for
-> > > buffers to be returned by the host.
-> >
-> > You lost me here. What does polling have to do with it?
-> 
-> This is just another issue I found. Specifically busy polling while
-> waiting on the host to process the hints. I'm not a fan of it and was
-> just pointing it out.
-> 
-> > > > > The
-> > > > > problem is the interface doesn't allow for a good way to identify that
-> > > > > any given block of pages has been processed and can be returned.
-> > > >
-> > > > And that's because FREE_PAGE_HINT does not care.
-> > > > It can return any page at any point even before hypervisor
-> > > > saw it.
-> > >
-> > > I disagree, see my comment above.
-> >
-> > OK let's see if above is enough to convice you. Or maybe  we
-> > have a bug when shrinker is invoked :) But I don't think so.
-> 
-> I'm pretty sure there is a bug.
-> 
-> > > > > Instead pages go in, but they don't come out until the configuration
-> > > > > is changed and "DONE" is reported. The act of reporting "DONE" will
-> > > > > reset things and start them all over which kind of defeats the point.
-> > > >
-> > > > Right.
-> > > >
-> > > > But if you consider how we are using the shrinker you will
-> > > > see that it's kind of broken.
-> > > > For example not keeping track of allocated
-> > > > pages means the count we return is broken
-> > > > while reporting is active.
-> > > >
-> > > > I looked at fixing it but really if we can just
-> > > > stop allocating memory that would be way cleaner.
-> > >
-> > > Agreed. If we hit an OOM we should probably just stop the free page
-> > > hinting and treat that as the equivalent to an allocation failure.
-> >
-> > And fix the shrinker count to include the pages in the vq. Yea.
-> 
-> I don't know if we really want to touch the pages in the VQ. I would
-> say that we should leave them alone.
-> 
-> > >
-> > > As-is I think this also has the potential for corrupting memory since
-> > > it will likely be returning the most recent pages added to the balloon
-> > > so the pages are likely still on the processing queue.
-> >
-> > That part is fine I think because of the above.
-> >
-> > >
-> > > > For example we allocate pages until shrinker kicks in.
-> > > > Fair enough but in fact many it would be better to
-> > > > do the reverse: trigger shrinker and then send as many
-> > > > free pages as we can to host.
-> > >
-> > > I'm not sure I understand this last part.
-> >
-> > Oh basically what I am saying is this: one of the reasons to use page
-> > hinting is when host is short on memory.  In that case, why don't we use
-> > shrinker to ask kernel drivers to free up memory? Any memory freed could
-> > then be reported to host.
-> 
-> Didn't the balloon driver already have a feature like that where it
-> could start shrinking memory if the host was under memory pressure? If
-> so how would adding another one add much value.
-> 
-> The idea here is if the memory is free we just mark it as such. As
-> long as we can do so with no noticeable overhead on the guest or host
-> why not just do it?
