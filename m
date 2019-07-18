@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C19C6C5CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:11:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48C306C6C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:19:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403834AbfGRDJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:09:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42712 "EHLO mail.kernel.org"
+        id S2391649AbfGRDTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:19:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391084AbfGRDJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:09:51 -0400
+        id S2403937AbfGRDMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:12:15 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DEB6205F4;
-        Thu, 18 Jul 2019 03:09:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87CAE2053B;
+        Thu, 18 Jul 2019 03:12:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419390;
-        bh=c9LPplSzz/uVr4cX4W0O58ybJ3HneGqBkRGgS8Tz5aI=;
+        s=default; t=1563419535;
+        bh=C1c2bap0BjeTdw6aU88vKC6L/xCsD46TWzAYAiH0YoM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RRYG/LKV8Zb7GpI0gcsl9FOq7WMw1OHYwEZDohLNHgZISWIkUxEVpeSeJjXCUFJBr
-         p3u79i24ujf88cTIN9jwMrS/6Ebuv4nS1j7DAEdA1FGW6KYWdgCce+37Z2CehhmgFy
-         YT+fPc/JZ770k4DAzXvBfGWxqxhZlzHUyl9uo4Pg=
+        b=KUwGpjx3CZvaZ3jTzriu/l4eENnsMYGdowtEWT3LRh5qKf3cCU7nTj38pGrnaLbA1
+         yHk85X3UyJFCqxIZN7lbiG/Z4mBiZfom40vaFJKeld38AOpXjKWrS2jrF/aJWzKKEU
+         OGCFeA9jnWWXwOQWGFEkN4ZN/6q9106doifpgjG4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dianzhang Chen <dianzhangchen0@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
-        hpa@zytor.com
-Subject: [PATCH 4.14 45/80] x86/tls: Fix possible spectre-v1 in do_get_thread_area()
+        stable@vger.kernel.org,
+        Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 06/54] mac80211: free peer keys before vif down in mesh
 Date:   Thu, 18 Jul 2019 12:01:36 +0900
-Message-Id: <20190718030102.121554920@linuxfoundation.org>
+Message-Id: <20190718030049.563415326@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
-References: <20190718030058.615992480@linuxfoundation.org>
+In-Reply-To: <20190718030048.392549994@linuxfoundation.org>
+References: <20190718030048.392549994@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,63 +45,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dianzhang Chen <dianzhangchen0@gmail.com>
+[ Upstream commit 0112fa557c3bb3a002bc85760dc3761d737264d3 ]
 
-commit 993773d11d45c90cb1c6481c2638c3d9f092ea5b upstream.
+freeing peer keys after vif down is resulting in peer key uninstall
+to fail due to interface lookup failure. so fix that.
 
-The index to access the threads tls array is controlled by userspace
-via syscall: sys_ptrace(), hence leading to a potential exploitation
-of the Spectre variant 1 vulnerability.
-
-The index can be controlled from:
-        ptrace -> arch_ptrace -> do_get_thread_area.
-
-Fix this by sanitizing the user supplied index before using it to access
-the p->thread.tls_array.
-
-Signed-off-by: Dianzhang Chen <dianzhangchen0@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/1561524630-3642-1-git-send-email-dianzhangchen0@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/tls.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ net/mac80211/mesh.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/kernel/tls.c
-+++ b/arch/x86/kernel/tls.c
-@@ -5,6 +5,7 @@
- #include <linux/user.h>
- #include <linux/regset.h>
- #include <linux/syscalls.h>
-+#include <linux/nospec.h>
+diff --git a/net/mac80211/mesh.c b/net/mac80211/mesh.c
+index 7f902e69530f..5c347d3a92c9 100644
+--- a/net/mac80211/mesh.c
++++ b/net/mac80211/mesh.c
+@@ -885,6 +885,7 @@ void ieee80211_stop_mesh(struct ieee80211_sub_if_data *sdata)
  
- #include <linux/uaccess.h>
- #include <asm/desc.h>
-@@ -220,6 +221,7 @@ int do_get_thread_area(struct task_struc
- 		       struct user_desc __user *u_info)
- {
- 	struct user_desc info;
-+	int index;
+ 	/* flush STAs and mpaths on this iface */
+ 	sta_info_flush(sdata);
++	ieee80211_free_keys(sdata, true);
+ 	mesh_path_flush_by_iface(sdata);
  
- 	if (idx == -1 && get_user(idx, &u_info->entry_number))
- 		return -EFAULT;
-@@ -227,8 +229,11 @@ int do_get_thread_area(struct task_struc
- 	if (idx < GDT_ENTRY_TLS_MIN || idx > GDT_ENTRY_TLS_MAX)
- 		return -EINVAL;
- 
--	fill_user_desc(&info, idx,
--		       &p->thread.tls_array[idx - GDT_ENTRY_TLS_MIN]);
-+	index = idx - GDT_ENTRY_TLS_MIN;
-+	index = array_index_nospec(index,
-+			GDT_ENTRY_TLS_MAX - GDT_ENTRY_TLS_MIN + 1);
-+
-+	fill_user_desc(&info, idx, &p->thread.tls_array[index]);
- 
- 	if (copy_to_user(u_info, &info, sizeof(info)))
- 		return -EFAULT;
+ 	/* stop the beacon */
+-- 
+2.20.1
+
 
 
