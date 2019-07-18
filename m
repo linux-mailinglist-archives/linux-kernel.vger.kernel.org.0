@@ -2,108 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E821F6CB5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:02:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54C156CB60
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:03:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726972AbfGRJCn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 05:02:43 -0400
-Received: from outbound-smtp02.blacknight.com ([81.17.249.8]:37261 "EHLO
-        outbound-smtp02.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726383AbfGRJCn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 05:02:43 -0400
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp02.blacknight.com (Postfix) with ESMTPS id B85DA989D5
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 10:02:40 +0100 (IST)
-Received: (qmail 4427 invoked from network); 18 Jul 2019 09:02:40 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.21.36])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 18 Jul 2019 09:02:40 -0000
-Date:   Thu, 18 Jul 2019 10:02:38 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jan Kara <jack@suse.cz>, LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: [PATCH] mm: migrate: Fix reference check race between
- __find_get_block() and migration
-Message-ID: <20190718090238.GF24383@techsingularity.net>
+        id S2389586AbfGRJCw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 05:02:52 -0400
+Received: from mout.gmx.net ([212.227.15.19]:56717 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726383AbfGRJCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 05:02:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1563440564;
+        bh=QBJLKn+dC85PPnBTLMHzTLIGPoRKi6Pjtg7ozwSWChw=;
+        h=X-UI-Sender-Class:Date:From:To:Subject;
+        b=l5RsIHa4K1su+VlK5d1tdjFI4lbHTeXIhTQEKSKydIoTXS52oG4HJTW2PNAKEgh7K
+         dNICnhin/zntO93+vhiaFpp3rub+NrmEyqbAnhd0QAthHNEJ6EafIvJtH/TiWJbDhK
+         p2qG0owYaAHMq8hWu8WMp1iUDzKEj5NPuiei3xmM=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from ls3530 ([193.16.224.40]) by mail.gmx.com (mrgmx002
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0Mg4FJ-1i2emH0JGf-00NPoZ; Thu, 18
+ Jul 2019 11:02:44 +0200
+Date:   Thu, 18 Jul 2019 11:02:41 +0200
+From:   Helge Deller <deller@gmx.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        John David Anglin <dave.anglin@bell.net>
+Subject: [GIT PULL] parisc architecture fixes for kernel v5.3-rc1
+Message-ID: <20190718090241.GA14685@ls3530>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Provags-ID: V03:K1:aHvyAxHtghpi/zBwhRwKoL7EnfnYdGJGMe0qrMPr3GieWA/TUlg
+ hFVHRiN78tPGjPq1rLjPBvANMhxrcsBcU1vSMDbFW4RDhwaQiiOKf1pSHXzo4yQWLkmNH4U
+ qNL0YxFn/IsApbFL9FZzkmzOeaSYXEHqDE/2qpJW6wIPUGfCUh4lRQnIa63EKUSf3blS+Lz
+ T/lK5teKV5zelm+8WIAkg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:S7OEbOnUAnE=:2o8XdFrrEv90jkCkZjKVOs
+ 7AlAuPyhk2HXPhpBwohvboe5jA9CCzXIAFy0WfHQL/wY6SBV5uENtV4Z/8Lrn4YWTLsck3+xL
+ e+dU08Xg9VU+/FcqfEwjjXmUvwgkpm9FRSi5UQPbx8mFVMd8b1iJhmpIWTCcm9fER1rDutg1j
+ 6xdqviHxpMPkLQ0dUbiD2zZKLflXMKOclmj9nnldUkHRPvg6f7GOlOOHRoIw1IftTJQMGtK2v
+ kcRcYiyPDHmFLRWMM1WMSZyeC8dw5g1yML0P5XLMtkv4lGSvCmjBzDlwAlS5iT/y3DPzkYdlV
+ DyxVX8ZuP8HmQHmCCvYbgr5QVaO9C4HaR0xzSaci2X1tcS+lhNd3zA5LilU6agAGHl6EZQzjU
+ SeYKyW6fAYdN4ylVhVC3qev80nTcgHrt3um6IJzB3YrQsQZJkdkLLKMCVzVjBkp8lcMzDhuBn
+ RrIZA4qZ+wIiPVzNvFayHq3+AAC74KSkB6qD/EFfXCPu2z4EkqmzNkt6ee6+FgyiUzizc1PSN
+ 6tL5qYUOdZy06dDoXfV0DPxh4E+xRPBnM8AaFd3Zg/hE2yHW04Qu+7gO9wTJBe3WaW35m4+tH
+ JktJkDrlmTPqmqa0KoY3YG9lnBRsCyddGkTSCYAmvCicz4lk3HSpHmk3rPzuL9qH2X2z5QKHC
+ zQj/RSgFjN09Krf0fU6EZv36uAbLEfMjzS4jO8SU3/qWRm3gX9+v+Te612tk5hh3WZQSDBOsI
+ e28uxzoWrdoebUg6NxnS2SgJKFzyFi5NTxXkHmfemAwCtGiGBEEDBS2Eg/8YjuBDUOvfAk0LU
+ 9Z5ac15HsPPUN0RpEi0Etq4JnDfWRjfvCyCF3p9dij06/Trpauelhi4ESNA00J7BdobBos8Us
+ DU+uTPnKVxRqRvolNJY7oUeby4vB4TuLzCjd3biLFhFX17iYpfiUj4PvWIVALanmezpa8fnB4
+ TOVyfpGCAKooBxbe8U9KW3L012ZrSgCv9qGECW14Nu9u3en2dS4Sjav3LxpDF14YC0wNa5mr0
+ sXafhjUrriKk9hMk23RnbC4qjwEIF9uHO7pIYD570eqrs5n8ofFkn3U61Yx1uAEMsA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+Hi Linus,
 
-buffer_migrate_page_norefs() can race with bh users in the following way:
+please pull a few more fixes for the parisc architecture for kernel 5.3-rc1 from:
 
-CPU1                                    CPU2
-buffer_migrate_page_norefs()
-  buffer_migrate_lock_buffers()
-  checks bh refs
-  spin_unlock(&mapping->private_lock)
-                                        __find_get_block()
-                                          spin_lock(&mapping->private_lock)
-                                          grab bh ref
-                                          spin_unlock(&mapping->private_lock)
-  move page                               do bh work
+  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git parisc-5.3-2
 
-This can result in various issues like lost updates to buffers (i.e.
-metadata corruption) or use after free issues for the old page.
+Changes:
+- Prevent kernel panics by adding proper checking of register values injected
+  via the ptrace interface.
+- Wire up the new clone3 syscall.
 
-This patch closes the race by holding mapping->private_lock while the
-mapping is being moved to a new page. Ordinarily, a reference can be taken
-outside of the private_lock using the per-cpu BH LRU but the references
-are checked and the LRU invalidated if necessary. The private_lock is held
-once the references are known so the buffer lookup slow path will spin
-on the private_lock. Between the page lock and private_lock, it should
-be impossible for other references to be acquired and updates to happen
-during the migration.
+Thanks,
+Helge
 
-A user had reported data corruption issues on a distribution kernel with
-a similar page migration implementation as mainline. The data corruption
-could not be reproduced with this patch applied. A small number of
-migration-intensive tests were run and no performance problems were noted.
+----------------------------------------------------------------
+Helge Deller (4):
+      parisc: Fix kernel panic due invalid values in IAOQ0 or IAOQ1
+      parisc: Ensure userspace privilege for ptraced processes in regset functions
+      parisc: Avoid kernel panic triggered by invalid kprobe
+      parisc: Wire up clone3 syscall
 
-[mgorman@techsingularity.net: Changelog, removed tracing]
-Fixes: 89cb0888ca14 "mm: migrate: provide buffer_migrate_page_norefs()"
-CC: stable@vger.kernel.org # v5.0+
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- mm/migrate.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/mm/migrate.c b/mm/migrate.c
-index e9594bc0d406..a59e4aed6d2e 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -771,12 +771,12 @@ static int __buffer_migrate_page(struct address_space *mapping,
- 			}
- 			bh = bh->b_this_page;
- 		} while (bh != head);
--		spin_unlock(&mapping->private_lock);
- 		if (busy) {
- 			if (invalidated) {
- 				rc = -EAGAIN;
- 				goto unlock_buffers;
- 			}
-+			spin_unlock(&mapping->private_lock);
- 			invalidate_bh_lrus();
- 			invalidated = true;
- 			goto recheck_buffers;
-@@ -809,6 +809,8 @@ static int __buffer_migrate_page(struct address_space *mapping,
- 
- 	rc = MIGRATEPAGE_SUCCESS;
- unlock_buffers:
-+	if (check_refs)
-+		spin_unlock(&mapping->private_lock);
- 	bh = head;
- 	do {
- 		unlock_buffer(bh);
-
--- 
-Mel Gorman
-SUSE Labs
+ arch/parisc/include/asm/unistd.h        |  1 +
+ arch/parisc/kernel/entry.S              |  1 +
+ arch/parisc/kernel/kprobes.c            |  3 +++
+ arch/parisc/kernel/ptrace.c             | 31 ++++++++++++++++++++-----------
+ arch/parisc/kernel/syscalls/syscall.tbl |  2 +-
+ 5 files changed, 26 insertions(+), 12 deletions(-)
