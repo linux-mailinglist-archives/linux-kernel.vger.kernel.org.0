@@ -2,157 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CA316C99F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 09:01:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A12DA6C9AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 09:03:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbfGRHBE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 03:01:04 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56267 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726090AbfGRHBE (ORCPT
+        id S1727466AbfGRHC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 03:02:57 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40828 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbfGRHC4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 03:01:04 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1ho0PM-00009E-Bd; Thu, 18 Jul 2019 09:00:52 +0200
-Date:   Thu, 18 Jul 2019 09:00:50 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Dexuan Cui <decui@microsoft.com>
-cc:     Haiyang Zhang <haiyangz@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Long Li <longli@microsoft.com>, vkuznets <vkuznets@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
-        "driverdev-devel@linuxdriverproject.org" 
-        <driverdev-devel@linuxdriverproject.org>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>
-Subject: RE: [PATCH] x86/hyper-v: Zero out the VP assist page to fix CPU
- offlining
-In-Reply-To: <PU1P153MB01693AB444C4A432FBA2507BBFC80@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-Message-ID: <alpine.DEB.2.21.1907180846290.1778@nanos.tec.linutronix.de>
-References: <PU1P153MB01697CBE66649B4BA91D8B48BFFA0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM> <alpine.DEB.2.21.1907180058210.1778@nanos.tec.linutronix.de> <PU1P153MB01693AB444C4A432FBA2507BBFC80@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 18 Jul 2019 03:02:56 -0400
+Received: by mail-ed1-f67.google.com with SMTP id k8so29150700eds.7
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 00:02:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=+pttUf9JOE4Ko/cvFHetgihkO7Q5ZVv/6VvZ5ChVAtY=;
+        b=aIq1hMjTyo9FPNklqgy/DxgiehHS3Wo1zPUZWBD7DfIqCue2lpe4k1EV5vqMutFMLq
+         Bp1iwOPOrHso/abPWYZD1iBB0kADXXZSveojYO54QV8010CtqSW/2dTl4K0QbxcS8TuQ
+         QrxVF9C5d3b3Vg+rNHMbQTbxA+I1/KOfxZSXw1eeY1X5ixHiVmUgomI7kMRkXZqELCFF
+         iKnuej/8Ahjq87nCCMSVMc3BonnzTBA4/UJpTzA4anZPga9nu19f3gqWNymdyXQcJiTv
+         zkexgQkYwhv0PeI0ymYDSuz4bWZjA3Q/bVaLO0PAfDe+gC8vbAh0geKgRd7aKOm3I2Tq
+         uzdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=+pttUf9JOE4Ko/cvFHetgihkO7Q5ZVv/6VvZ5ChVAtY=;
+        b=DnbOPJzARhvw22CCtEOwFr4BoN4A5sp0z9yHKwx3HLy3UMEDaFF9dgFmlkU57lnEpv
+         xwfWbarB7fdHATZZfNeZZuYPlwXTH2P8OOZF6l2UCjQ6ryOS1nfVMjiDabXWevLkyk7j
+         FcVpPB2Cgz3uDaxPBRHQK0dDO36aidsqreJD6SZ7xLqwi2HajvZOTkBj8YhqPYkr2Gak
+         WoJ6y0NnRm6ws06fmAlqzx9nZnVK4/36Nr1S4RVpYI70N88vrh7UYudr0F3rMnxevM56
+         5qHy8US/R+T2o54t9S/094D00kvFQ/Xmue+aEQJDuUWoesyP1v1xcYKLn88MWpDGP5c3
+         HuSg==
+X-Gm-Message-State: APjAAAUIYoWqBO9cH8qbIZu535HqOvuvpeCUMkcsjBlXKfOKKsx0pO2Q
+        YKFd/BuiXaO0zHS6W2EmLDSPOzQ0DO/wSewmrak=
+X-Google-Smtp-Source: APXvYqyGeROxFRkm9IAKC6p2UOIvf1USIxdNX3iLskZk62mEKqNE1ovcoX3P+Y/THW/JS8Annt5stvmK5YedYSteNvM=
+X-Received: by 2002:a50:eb4d:: with SMTP id z13mr39222855edp.271.1563433370889;
+ Thu, 18 Jul 2019 00:02:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Received: by 2002:a17:906:4e93:0:0:0:0 with HTTP; Thu, 18 Jul 2019 00:02:50
+ -0700 (PDT)
+Reply-To: joemulla66@gmail.com
+From:   "Mr. Joe Mulla" <jonesjohngriffith1@gmail.com>
+Date:   Thu, 18 Jul 2019 08:02:50 +0100
+Message-ID: <CAK6Ggus7UF=uzHFD1iF2cksOsPmoOjrKLsqCC3jES=cGPW7PPw@mail.gmail.com>
+Subject: Church, Muslim
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 18 Jul 2019, Dexuan Cui wrote:
-> > On Thu, 4 Jul 2019, Dexuan Cui wrote:
-> > This is the allocation when the CPU is brought online for the first
-> > time. So what effect has zeroing at allocation time vs. offlining and
-> > potentially receiving IPIs? That allocation is never freed.
-> > 
-> > Neither the comment nor the changelog make any sense to me.
-> > 	tglx
-> 
-> That allocation was introduced by the commit
-> a46d15cc1ae5 ("x86/hyper-v: allocate and use Virtual Processor Assist Pages").
-> 
-> I think it's ok to not free the page when a CPU is offlined: every
-> CPU uses only 1 page and CPU offlining is not really a very usual
-> operation except for the scenario of hibernation (and suspend-to-memory), 
-> where the CPUs are quickly onlined again, when we resume from hibernation.
-> IMO Vitaly intentionally decided to not free the page for simplicity of the
-> code.
-> 
-> When a CPU (e.g. CPU1) is being onlined, in hv_cpu_init(), we allocate the
-> VP_ASSIST_PAGE page and enable the PV EOI optimization for this CPU by
-> writing the MSR HV_X64_MSR_VP_ASSIST_PAGE. From now on, this CPU
-> *always* uses hvp->apic_assist (which is updated by the hypervisor) to
-> decide if it needs to write the EOI MSR:
-> 
-> static void hv_apic_eoi_write(u32 reg, u32 val)
-> {
->         struct hv_vp_assist_page *hvp = hv_vp_assist_page[smp_processor_id()];
-> 
->         if (hvp && (xchg(&hvp->apic_assist, 0) & 0x1))
->                 return;
-> 
->         wrmsr(HV_X64_MSR_EOI, val, 0);
-> }
-> 
-> When a CPU (e.g. CPU1) is being offlined, on this CPU, we do:
-> 1. in hv_cpu_die(), we disable the PV EOI optimizaton for this CPU;
-> 2. we finish the remaining work of stopping this CPU;
-> 3. this CPU is completed stopped.
-> 
-> Between 1 and 3, this CPU can still receive interrupts (e.g. IPIs from CPU0,
-> and Local APIC timer interrupts), and this CPU *must* write the EOI MSR for
-> every interrupt received, otherwise the hypervisor may not deliver further
-> interrupts, which may be needed to stop this CPU completely.
-> 
-> So we need to make sure hvp->apic_assist.bit0 is zero, after we run the line
-> "wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0);" in hv_cpu_die(). The easiest
-> way is what I do in this patch. Alternatively, we can use the below patch:
-> 
-> @@ -188,8 +188,12 @@ static int hv_cpu_die(unsigned int cpu)
->         local_irq_restore(flags);
->         free_page((unsigned long)input_pg);
-> 
-> -       if (hv_vp_assist_page && hv_vp_assist_page[cpu])
-> +       if (hv_vp_assist_page && hv_vp_assist_page[cpu]) {
-> +               local_irq_save(flags);
->                 wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0);
-> +               hvp->apic_assist &= ~1;
-> +               local_irq_restore(flags);
-> +       }
-> 
->         if (hv_reenlightenment_cb == NULL)
->                 return 0;
-> 
-> This second version needs 3+ lines, so I prefer the one-line version. :-)
+-- 
+Dear Friend
 
-Those are two different things. The GPF_ZERO allocation makes sense on it's
-own but it _cannot_ prevent the following scenario:
+How are you and members of your family doing? I am Mr, Joe Mulla  I
+was married to Mrs.Roberta from Toronto Canada who worked with
+Canadian Embassy in  Republic Philippines for nine years before she
+died in the year 2016. I have some funds I inherited from my late
+wife. Before her death we were both happy born again. Since her death
+I decided not to remarry or get a child outside my  matrimonial home.
+When my late wife was alive she deposited the sum of $17.5 Million in
+a bank and recently,my DOCTOR told me that I might not stay long due
+to some  problems known to me. Having known my  condition I decided to
+donate this fund to a Orphanage or good Christian or Muslim that will
+utilize this money the way I am  going to instruct here in.
 
-    cpu_init()
-      if (!hvp)
-      	 hvp = vmalloc(...., GFP_ZERO);
-    ...
+I want a Church, Muslim, organization or good person that will use
+this fund for orphanages, widows, propagating the word of God and to
+endeavor that the house of God is maintained. I took this decision
+because I don't have any child that  will inherit this money and my
+wife's relatives are not  good, not even good at all because they are
+the one  that killed her in other to have all my late wife's
+properties and I don't want my wife's efforts to  be used by
+unbelievers. I don't want a situation where  this money will be used
+in an ungodly way.Having known my condition I decided to donate I and
+my late wife's fund to an individual or
 
-    hvp->apic_assist |= 1;
+charity organization that has a good heart and can sincerely use the
+fund for the up keeping of the less privileged. Please if you would be
+able to use these funds for the Lord's work kindly reply me as soon as
+possible for more detail.
 
-#1   cpu_die()
-      if (....)
-           wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0);
+Please assure me that you will act accordingly as I Stated herein and
+ensure no one else knows about this fund. Also remember that am giving
+you all this based on trust and again I will want you to stick to your
+words.
+Thanks and Remain Blessed.
 
-   ---> IPI
-   	if (!(hvp->apic_assist & 1))	
-	   wrmsr(APIC_EOI);    <- PATH not taken
-
-#3   cpu is dead
-
-    cpu_init()
-       if (!hvp)
-          hvp = vmalloc(....m, GFP_ZERO);  <- NOT TAKEN because hvp != NULL
-
-So you have to come up with a better fairy tale why GFP_ZERO 'fixes' this.
-
-Allocating hvp with GFP_ZERO makes sense on it's own so the allocated
-memory has a defined state, but that's a different story.
-
-The 3 liner patch above makes way more sense and you can spare the
-local_irq_save/restore by moving the whole condition into the
-irq_save/restore region above.
-
-Thanks,
-
-	tglx
-
+Mr. Joe Mulla.
