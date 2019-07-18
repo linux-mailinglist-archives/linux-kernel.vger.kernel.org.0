@@ -2,108 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 867936CACB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 10:18:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27D876CAD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 10:20:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbfGRIRt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 04:17:49 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43616 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbfGRIRt (ORCPT
+        id S2389426AbfGRISu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 04:18:50 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34872 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbfGRISu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 04:17:49 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p13so27595182wru.10
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 01:17:48 -0700 (PDT)
+        Thu, 18 Jul 2019 04:18:50 -0400
+Received: by mail-pl1-f193.google.com with SMTP id w24so13481060plp.2;
+        Thu, 18 Jul 2019 01:18:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=11mjxUgmlKpFT65Qn2eRET8NgzSw6D9B85VQzs3KMfo=;
+        b=HtvtQx53myfqvYkQHosyY0m2p2GWHSgJJFqxDjRNT3U1hCs+p/fPZ89zb5atB9tEHk
+         upOI07pZfj0LpeDY79dNU+aDhdiMhF2PuuZ9ecJHPFs7P6E3BGj5WWeYyuZM0Csf/Npd
+         wTJq85Ysb2fGCQNjrp+6WDjrjbBonUxrMZnAdQeklgBldQHRe5jppXfpjvKKeHcB0bSt
+         PkzVzGTgWBcF0I44iDTR/dLI13Iz77Iav2txppTF+8e34wwtKdz0Cea78dER1cWCLjiL
+         zBrTPRwFNYIIIW0NYoH2gqsIxMjf1SbqEF1cSUJKRVh5IhW9GDveHDWeGEvcBHfQMm5z
+         KvyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Gxcnav4cxj9NSWzD1Jo7B/97fmLNhoQUXArg3gxl5H8=;
-        b=XuTwyj57aTCaU6cyJZhbiuYI5t/6Olkt1dmOmmtKit/YRAN1qhsjHF/igqCYsTcMRH
-         QxXf/tFpSiSOejc7RiaA7YtH0YZnT0QV+lbMjReBWBNGuaF9rvgqqq5m+hM1tI935Hs+
-         E7de6uZrtdecJG6izXlRfFpf1E8pY/rdPuuOky5b9iSEq2gIFPG4wDUZyNjO5GYY+0Pm
-         O3sTdH2uvVmvsSF+EwD/CUKjs33eCMryjPTdUvVj3HeXQsDtfBA174b0feGQKxv+gu+e
-         t53C43SQgM2YhbLETnYGcFPIO4H9Ms8PKE5NEUUrHiFEBS3vNv52xqI+lcOdVJUY0TLf
-         27jQ==
-X-Gm-Message-State: APjAAAW7tUaL/UpiZc+UkwBnKJT/LpAHyr8xV/g/7tudNbP3LAK3EVjy
-        FBT4ER1AGT7JHfr7J4T7NYwLWwH3n3rAKQ==
-X-Google-Smtp-Source: APXvYqzGFipt/JGSI4UDF+hfMuTUCQUMCUT8bsb/SNwDx6YIzS8VdHrXOL4zKiO14pX+q9h3fbDbpg==
-X-Received: by 2002:adf:cd84:: with SMTP id q4mr40390898wrj.232.1563437867685;
-        Thu, 18 Jul 2019 01:17:47 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:e427:3beb:1110:dda2? ([2001:b07:6468:f312:e427:3beb:1110:dda2])
-        by smtp.gmail.com with ESMTPSA id k17sm28255950wrq.83.2019.07.18.01.17.46
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Jul 2019 01:17:47 -0700 (PDT)
-Subject: Re: [PATCH v2 03/22] x86/kvm: Replace vmx_vmenter()'s call to
- kvm_spurious_fault() with UD2
-To:     Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <cover.1563413318.git.jpoimboe@redhat.com>
- <9fc2216c9dc972f95bb65ce2966a682c6bda1cb0.1563413318.git.jpoimboe@redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <2a0e0d3f-f8a1-afce-810a-bc9697e54ed1@redhat.com>
-Date:   Thu, 18 Jul 2019 10:17:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <9fc2216c9dc972f95bb65ce2966a682c6bda1cb0.1563413318.git.jpoimboe@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=11mjxUgmlKpFT65Qn2eRET8NgzSw6D9B85VQzs3KMfo=;
+        b=Bak/pQjPa5hXCqo9oUSkLnNVoHCDyNip7QbC5pluWbryevJ4gMsbdhllCl8Fs2irnw
+         jvK6jy9fWVMQYQnyfoWbZ30ub+4TndOke7JlbA/Wmv+eBvF9ySk8HYTDvCxNYe5Ua5rw
+         vlYcAAm6cycGYtRulP1whbz++zv5K0e7sClovEvUlUXPCSI98onB/M5huKyW5tbYHWQu
+         qa2kF/XJCC6YWhdVtOjLvOiGfw9j8b9s75O79EaTmLG5fmV++gqcioDoW6BkN37KVSYF
+         EA7vOTKkQM10ALZTH5elAwmR6i4hc35xGXUzJ5045skXO9hCQQypHgeH6If7jArEtwG/
+         9LuA==
+X-Gm-Message-State: APjAAAVz9mIptoM5z6QW9zyO/Vtg/yY/KYgmzvODe7FT/gmR4dF0UPZd
+        0nGALvFqPvFa4FyA2P8TLrY=
+X-Google-Smtp-Source: APXvYqxQjMJEfvJGrhGFiRueAoYUztOJhNxXAleug7p9acbsgKYgBHkrzTU/a9kvRRQPAFedi8jUWg==
+X-Received: by 2002:a17:902:9a42:: with SMTP id x2mr49146527plv.106.1563437929386;
+        Thu, 18 Jul 2019 01:18:49 -0700 (PDT)
+Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.googlemail.com with ESMTPSA id l4sm26669847pff.50.2019.07.18.01.18.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Jul 2019 01:18:48 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     QLogic-Storage-Upstream@cavium.com,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH 3/3] scsi: qedf: Replace vmalloc + memset with vzalloc
+Date:   Thu, 18 Jul 2019 16:18:32 +0800
+Message-Id: <20190718081832.28808-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.11.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/07/19 03:36, Josh Poimboeuf wrote:
-> Objtool reports the following:
-> 
->   arch/x86/kvm/vmx/vmenter.o: warning: objtool: vmx_vmenter()+0x14: call without frame pointer save/setup
-> 
-> But frame pointers are necessarily broken anyway, because
-> __vmx_vcpu_run() clobbers RBP with the guest's value before calling
-> vmx_vmenter().  So calling without a frame pointer doesn't make things
-> any worse.
-> 
-> Make objtool happy by changing the call to a UD2.
-> 
-> Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
-> v2: ud2 instead of kvm_spurious_fault() [Paolo]
-> 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> ---
->  arch/x86/kvm/vmx/vmenter.S | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
-> index d4cb1945b2e3..4010d519eb8c 100644
-> --- a/arch/x86/kvm/vmx/vmenter.S
-> +++ b/arch/x86/kvm/vmx/vmenter.S
-> @@ -54,9 +54,9 @@ ENTRY(vmx_vmenter)
->  	ret
->  
->  3:	cmpb $0, kvm_rebooting
-> -	jne 4f
-> -	call kvm_spurious_fault
-> -4:	ret
-> +	je 4f
-> +	ret
-> +4:	ud2
->  
->  	.pushsection .fixup, "ax"
->  5:	jmp 3b
-> 
+Use vzalloc instead of using vmalloc to allocate memory
+and then zeroing it with memset 0.
+This simplifies the code.
 
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+ drivers/scsi/qedf/qedf_dbg.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/qedf/qedf_dbg.c b/drivers/scsi/qedf/qedf_dbg.c
+index e0387e495261..0d2aed82882a 100644
+--- a/drivers/scsi/qedf/qedf_dbg.c
++++ b/drivers/scsi/qedf/qedf_dbg.c
+@@ -106,11 +106,10 @@ qedf_dbg_info(struct qedf_dbg_ctx *qedf, const char *func, u32 line,
+ int
+ qedf_alloc_grc_dump_buf(u8 **buf, uint32_t len)
+ {
+-		*buf = vmalloc(len);
++		*buf = vzalloc(len);
+ 		if (!(*buf))
+ 			return -ENOMEM;
+ 
+-		memset(*buf, 0, len);
+ 		return 0;
+ }
+ 
+-- 
+2.20.1
+
