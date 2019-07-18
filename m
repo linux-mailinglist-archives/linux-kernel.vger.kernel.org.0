@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE2CF6C572
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56D746C59D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:08:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389601AbfGRDG0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:06:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37600 "EHLO mail.kernel.org"
+        id S2390680AbfGRDIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:08:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390204AbfGRDGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:06:23 -0400
+        id S2390648AbfGRDIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:08:14 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3C9D2173E;
-        Thu, 18 Jul 2019 03:06:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A71232077C;
+        Thu, 18 Jul 2019 03:08:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419182;
-        bh=sWK4i+p/35T5hB/RVRHRHVv3oqwIeJXgGkvOV38q0UY=;
+        s=default; t=1563419293;
+        bh=Yqt/LllpGzMStVbT4HLxLYhzgZMPXuawn64z9mAi6yM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UxgCm66L9bYn3Ze8Ye4hez6Y6d2KyZaEhaL+lersMU92mLFmJP8Pouy3F1iZSo4Cp
-         GBS37j/jT6qk90I0CvtEgYO9qXBILsA2/9aSMGFIMCzpr/cPSY6l4VLOAo7syVNrQk
-         /omRM4sNoiG0IEiyECo2I0bKraHo7LOPsrNBp1Qg=
+        b=Is/xcaxX6+84JRZSoA8mlNo7dR7sEImaBdESTPdulxOjm9COBF1+DwvfYRb0iz5Fn
+         poz8ah2on+D9DskZJPSJKkgC0987vKGoAEjog/AUK1C142YUuIX9stxLXYWvH+tfXx
+         79u5suhh9GcJnOyVucJyK3jFtnO/O6j/pDjFaK3I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH 5.1 48/54] s390: fix stfle zero padding
-Date:   Thu, 18 Jul 2019 12:01:43 +0900
-Message-Id: <20190718030056.913035326@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.19 31/47] genirq: Fix misleading synchronize_irq() documentation
+Date:   Thu, 18 Jul 2019 12:01:45 +0900
+Message-Id: <20190718030051.369338137@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030053.287374640@linuxfoundation.org>
-References: <20190718030053.287374640@linuxfoundation.org>
+In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
+References: <20190718030045.780672747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,83 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
+From: Thomas Gleixner tglx@linutronix.de
 
-commit 4f18d869ffd056c7858f3d617c71345cf19be008 upstream.
+commit 1d21f2af8571c6a6a44e7c1911780614847b0253 upstream
 
-The stfle inline assembly returns the number of double words written
-(condition code 0) or the double words it would have written
-(condition code 3), if the memory array it got as parameter would have
-been large enough.
+The function might sleep, so it cannot be called from interrupt
+context. Not even with care.
 
-The current stfle implementation assumes that the array is always
-large enough and clears those parts of the array that have not been
-written to with a subsequent memset call.
-
-If however the array is not large enough memset will get a negative
-length parameter, which means that memset clears memory until it gets
-an exception and the kernel crashes.
-
-To fix this simply limit the maximum length. Move also the inline
-assembly to an extra function to avoid clobbering of register 0, which
-might happen because of the added min_t invocation together with code
-instrumentation.
-
-The bug was introduced with commit 14375bc4eb8d ("[S390] cleanup
-facility list handling") but was rather harmless, since it would only
-write to a rather large array. It became a potential problem with
-commit 3ab121ab1866 ("[S390] kernel: Add z/VM LGR detection"). Since
-then it writes to an array with only four double words, while some
-machines already deliver three double words. As soon as machines have
-a facility bit within the fifth double a crash on IPL would happen.
-
-Fixes: 14375bc4eb8d ("[S390] cleanup facility list handling")
-Cc: <stable@vger.kernel.org> # v2.6.37+
-Reviewed-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Link: https://lkml.kernel.org/r/20190628111440.189241552@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- arch/s390/include/asm/facility.h |   21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
 
---- a/arch/s390/include/asm/facility.h
-+++ b/arch/s390/include/asm/facility.h
-@@ -59,6 +59,18 @@ static inline int test_facility(unsigned
- 	return __test_facility(nr, &S390_lowcore.stfle_fac_list);
- }
- 
-+static inline unsigned long __stfle_asm(u64 *stfle_fac_list, int size)
-+{
-+	register unsigned long reg0 asm("0") = size - 1;
-+
-+	asm volatile(
-+		".insn s,0xb2b00000,0(%1)" /* stfle */
-+		: "+d" (reg0)
-+		: "a" (stfle_fac_list)
-+		: "memory", "cc");
-+	return reg0;
-+}
-+
- /**
-  * stfle - Store facility list extended
-  * @stfle_fac_list: array where facility list can be stored
-@@ -75,13 +87,8 @@ static inline void __stfle(u64 *stfle_fa
- 	memcpy(stfle_fac_list, &S390_lowcore.stfl_fac_list, 4);
- 	if (S390_lowcore.stfl_fac_list & 0x01000000) {
- 		/* More facility bits available with stfle */
--		register unsigned long reg0 asm("0") = size - 1;
--
--		asm volatile(".insn s,0xb2b00000,0(%1)" /* stfle */
--			     : "+d" (reg0)
--			     : "a" (stfle_fac_list)
--			     : "memory", "cc");
--		nr = (reg0 + 1) * 8; /* # bytes stored by stfle */
-+		nr = __stfle_asm(stfle_fac_list, size);
-+		nr = min_t(unsigned long, (nr + 1) * 8, size * 8);
- 	}
- 	memset((char *) stfle_fac_list + nr, 0, size * 8 - nr);
- }
+---
+ kernel/irq/manage.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -96,7 +96,8 @@ EXPORT_SYMBOL(synchronize_hardirq);
+  *	to complete before returning. If you use this function while
+  *	holding a resource the IRQ handler may need you will deadlock.
+  *
+- *	This function may be called - with care - from IRQ context.
++ *	Can only be called from preemptible code as it might sleep when
++ *	an interrupt thread is associated to @irq.
+  */
+ void synchronize_irq(unsigned int irq)
+ {
 
 
