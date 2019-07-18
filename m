@@ -2,134 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67D5D6C6A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:18:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC8B36C6D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:19:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392006AbfGRDSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:18:32 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:39012 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389508AbfGRDSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:18:30 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id F35D54FE71;
-        Thu, 18 Jul 2019 05:18:23 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
-        with ESMTP id nZ38r1RPFd3K; Thu, 18 Jul 2019 05:18:14 +0200 (CEST)
-Date:   Thu, 18 Jul 2019 13:17:29 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        David Drysdale <drysdale@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v9 05/10] namei: O_BENEATH-style path resolution flags
-Message-ID: <20190718031729.scehpjydhuxgxqjy@yavin>
-References: <20190706145737.5299-6-cyphar@cyphar.com>
- <20190712043341.GI17978@ZenIV.linux.org.uk>
- <20190712105745.nruaftgeat6irhzr@yavin>
- <20190712123924.GK17978@ZenIV.linux.org.uk>
- <20190712125552.GL17978@ZenIV.linux.org.uk>
- <20190712132553.GN17978@ZenIV.linux.org.uk>
- <20190712150026.GO17978@ZenIV.linux.org.uk>
- <20190713024153.GA3817@ZenIV.linux.org.uk>
- <20190714070029.m53etvm3y4etidxt@yavin>
- <20190714143623.GR17978@ZenIV.linux.org.uk>
+        id S2403806AbfGRDTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:19:47 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:36347 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2391350AbfGRDTp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:19:45 -0400
+X-UUID: ac384d41e70c43c7a6dc458b2e91b1de-20190718
+X-UUID: ac384d41e70c43c7a6dc458b2e91b1de-20190718
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <xia.jiang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 884264207; Thu, 18 Jul 2019 11:19:41 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 18 Jul 2019 11:19:40 +0800
+Received: from [10.17.3.153] (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 18 Jul 2019 11:19:39 +0800
+Message-ID: <1563419979.20220.12.camel@mhfsdcap03>
+Subject: Re: [PATCH 0/5]Add support for mt2701 JPEG ENC support
+From:   mtk12025 <xia.jiang@mediatek.com>
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rick Chang <rick.chang@mediatek.com>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>, <srv_heupstream@mediatek.com>
+Date:   Thu, 18 Jul 2019 11:19:39 +0800
+In-Reply-To: <79316488-30fd-7ff3-7598-d29f85f663ab@xs4all.nl>
+References: <20190709032103.10291-1-xia.jiang@mediatek.com>
+         <79316488-30fd-7ff3-7598-d29f85f663ab@xs4all.nl>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z4aw3kgjubxi6rqg"
-Content-Disposition: inline
-In-Reply-To: <20190714143623.GR17978@ZenIV.linux.org.uk>
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dear Hans,
+Thank you for your reply.
 
---z4aw3kgjubxi6rqg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+PATCH v2 has used the latest v4l2-compliance version for test.
 
-On 2019-07-14, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Sun, Jul 14, 2019 at 05:00:29PM +1000, Aleksa Sarai wrote:
-> > The basic property being guaranteed by LOOKUP_IN_ROOT is that it will
-> > not result in resolution of a path component which was not inside the
-> > root of the dirfd tree at some point during resolution (and that all
-> > absolute symlink and ".." resolution will be done relative to the
-> > dirfd). This may smell slightly of chroot(2), because unfortunately it
-> > is a similar concept -- the reason for this is to allow for a more
-> > efficient way to safely resolve paths inside a rootfs than spawning a
-> > separate process to then pass back the fd to the caller.
->=20
-> IDGI...  If attacker can modify your subtree, you have already lost -
-> after all, they can make anything appear inside that tree just before
-> your syscall is made and bring it back out immediately afterwards.
-> And if they can't, what is the race you are trying to protect against?
-> Confused...
+PATCH v2 has fixed the compliance test fail, and the driver checked the
+buffer size in queue_setup function.
 
-I'll be honest, this code mostly exists because Jann Horn said that it
-was necessary in order for this interface to be safe against those kinds
-of attacks. Though, it's also entirely possible I just am
-mis-remembering the attack scenario he described when I posted v1 of
-this series last year.
+I am sorry for existence of change-id caused by my mistake in the new
+patch.
 
-The use-case I need this functionality for (as do other container
-runtimes) is one where you are trying to safely interact with a
-directory tree that is a (malicious) container's root filesystem -- so
-the container won't be able to move the directory tree root, nor can
-they move things outside the rootfs into it (or the reverse). Users
-dealing with FTP, web, or file servers probably have similar
-requirements.
+Best Regards,
+Xia Jiang
 
-There is an obvious race condition if you allow the attacker to move the
-root (I give an example and test-case of it in the last patch in the
-series), and given that it is fairly trivial to defend against I don't
-see the downside in including it? But it's obviously your call -- and
-maybe Jann Horn can explain the reasoning behind this much better than I
-can.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---z4aw3kgjubxi6rqg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXS/kxgAKCRCdlLljIbnQ
-Eo0/AQD7a5jDbww9O+NZeirpVja2r3Y2CFcg1rTXSOeRjy321gEAoJhiO3HmSR50
-nG/Ogapy7jTKDSyCcC7BfUZDZSz67go=
-=wzlY
------END PGP SIGNATURE-----
-
---z4aw3kgjubxi6rqg--
