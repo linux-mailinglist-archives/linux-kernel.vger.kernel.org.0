@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8729B6C5B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:11:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6F6F6C5CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:11:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727658AbfGRDIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:08:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40918 "EHLO mail.kernel.org"
+        id S2389774AbfGRDJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:09:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390311AbfGRDIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:08:46 -0400
+        id S2391052AbfGRDJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:09:47 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD81421850;
-        Thu, 18 Jul 2019 03:08:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A94C205F4;
+        Thu, 18 Jul 2019 03:09:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419325;
-        bh=+3pnNI24UcgqddC+16lnH/sPlaUZ2koWchHGt+Hx0XE=;
+        s=default; t=1563419386;
+        bh=dAh+zuNthGs12/kWyN/jbJWspHyKM2RO7mBtFnSFE7k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vrmXpMfsawVtRyfDHpASXi6rJwgG7E12kt0+Ujq99nXvGBfgpo9fSpY9chuqUKeuG
-         Ti/osyuElCe9v9ckGkIlgEVZWQGyj59HZ15MY8TDbdxoBtjVUVVUO09yZGTn8xYNGe
-         //xkerB3cvbvpWY7MIVuFlaR+7yqPosXwc3v/7RA=
+        b=yBiE2Slz+PxMGBVhA59Fua0IJ6mFYiVdtgE6K76SenFQXb4w46HW+YylQqG66uWYk
+         xM75iU8BmoqzTTyHb1n5NWV5kiz+zDP5cVqQQuJhMA1NyieGMxx4fc74pDWDKCfcXZ
+         xsKf2acP0aKrLsGqWCKN6b9Gaz6g5o6P/73WbeJw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Sean Nyekjaer <sean@geanix.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 16/80] netfilter: ipv6: nf_defrag: accept duplicate fragments again
-Date:   Thu, 18 Jul 2019 12:01:07 +0900
-Message-Id: <20190718030100.095937583@linuxfoundation.org>
+Subject: [PATCH 4.14 17/80] dt-bindings: can: mcp251x: add mcp25625 support
+Date:   Thu, 18 Jul 2019 12:01:08 +0900
+Message-Id: <20190718030100.162593916@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
 References: <20190718030058.615992480@linuxfoundation.org>
@@ -44,57 +44,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8a3dca632538c550930ce8bafa8c906b130d35cf ]
+[ Upstream commit 0df82dcd55832a99363ab7f9fab954fcacdac3ae ]
 
-When fixing the skb leak introduced by the conversion to rbtree, I
-forgot about the special case of duplicate fragments. The condition
-under the 'insert_error' label isn't effective anymore as
-nf_ct_frg6_gather() doesn't override the returned value anymore. So
-duplicate fragments now get NF_DROP verdict.
+Fully compatible with mcp2515, the mcp25625 have integrated transceiver.
 
-To accept duplicate fragments again, handle them specially as soon as
-inet_frag_queue_insert() reports them. Return -EINPROGRESS which will
-translate to NF_STOLEN verdict, like any accepted fragment. However,
-such packets don't carry any new information and aren't queued, so we
-just drop them immediately.
+This patch add the mcp25625 to the device tree bindings documentation.
 
-Fixes: a0d56cb911ca ("netfilter: ipv6: nf_defrag: fix leakage of unqueued fragments")
-Signed-off-by: Guillaume Nault <gnault@redhat.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/netfilter/nf_conntrack_reasm.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/net/can/microchip,mcp251x.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/ipv6/netfilter/nf_conntrack_reasm.c b/net/ipv6/netfilter/nf_conntrack_reasm.c
-index 73c29ddcfb95..35d5a76867d0 100644
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -265,8 +265,14 @@ static int nf_ct_frag6_queue(struct frag_queue *fq, struct sk_buff *skb,
- 
- 	prev = fq->q.fragments_tail;
- 	err = inet_frag_queue_insert(&fq->q, skb, offset, end);
--	if (err)
-+	if (err) {
-+		if (err == IPFRAG_DUP) {
-+			/* No error for duplicates, pretend they got queued. */
-+			kfree_skb(skb);
-+			return -EINPROGRESS;
-+		}
- 		goto insert_error;
-+	}
- 
- 	if (dev)
- 		fq->iif = dev->ifindex;
-@@ -304,8 +310,6 @@ static int nf_ct_frag6_queue(struct frag_queue *fq, struct sk_buff *skb,
- 	return -EINPROGRESS;
- 
- insert_error:
--	if (err == IPFRAG_DUP)
--		goto err;
- 	inet_frag_kill(&fq->q);
- err:
- 	skb_dst_drop(skb);
+diff --git a/Documentation/devicetree/bindings/net/can/microchip,mcp251x.txt b/Documentation/devicetree/bindings/net/can/microchip,mcp251x.txt
+index ee3723beb701..33b38716b77f 100644
+--- a/Documentation/devicetree/bindings/net/can/microchip,mcp251x.txt
++++ b/Documentation/devicetree/bindings/net/can/microchip,mcp251x.txt
+@@ -4,6 +4,7 @@ Required properties:
+  - compatible: Should be one of the following:
+    - "microchip,mcp2510" for MCP2510.
+    - "microchip,mcp2515" for MCP2515.
++   - "microchip,mcp25625" for MCP25625.
+  - reg: SPI chip select.
+  - clocks: The clock feeding the CAN controller.
+  - interrupt-parent: The parent interrupt controller.
 -- 
 2.20.1
 
