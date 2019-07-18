@@ -2,159 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4594D6CC44
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:48:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A70D6CC6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:58:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390007AbfGRJsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 05:48:06 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:26298 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389773AbfGRJsF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 05:48:05 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190718094803epoutp01c67a57593685df6d7e338cc586cbf987~yd2IKAGcc2909829098epoutp01L
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 09:48:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190718094803epoutp01c67a57593685df6d7e338cc586cbf987~yd2IKAGcc2909829098epoutp01L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1563443283;
-        bh=EnL2xp05mWqLeGDMN6DJMsvJ0i6MvNbScjk8J1uUFsU=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=qEGeAxPX2yWSIHKi6M/thI+UNGe+hPvbo5zBgaqb8nSZaBV3l9un2Il3fPP2E5Z6d
-         MQ76hz4w47VGTXAUQh31+9XNVbOi5k8HDctW1alrnDWodXEvqYxZ07qxVTJr9QufwP
-         eRUVtXD2MMoWoRM5baOsi2AYCvgb1reOiTHth3bs=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190718094802epcas1p2d8bf23068535be8c33835f37139f2bd7~yd2HknHGw2089520895epcas1p2Z;
-        Thu, 18 Jul 2019 09:48:02 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.158]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 45q8Sw5q2rzMqYkZ; Thu, 18 Jul
-        2019 09:48:00 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        65.76.04075.940403D5; Thu, 18 Jul 2019 18:47:53 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20190718094752epcas1p4660cd9d3968a1755369c6ad049eedbb9~yd1_Jxqwa2804528045epcas1p4C;
-        Thu, 18 Jul 2019 09:47:52 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190718094752epsmtrp1e11ba8d2cd74d9bfb934003ed8662826~yd1_JADS81806718067epsmtrp1C;
-        Thu, 18 Jul 2019 09:47:52 +0000 (GMT)
-X-AuditID: b6c32a36-b49ff70000000feb-94-5d3040496893
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F0.4D.03706.840403D5; Thu, 18 Jul 2019 18:47:52 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190718094752epsmtip1c604dc5d6ad1521a6a85093ce7212561~yd197g1V61985719857epsmtip1z;
-        Thu, 18 Jul 2019 09:47:52 +0000 (GMT)
-Subject: Re: [PATCH v4 19/24] PM / devfreq: tegra30: Optimize upper
- consecutive watermark selection
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <17fabbaf-ceca-7551-0a58-9c8a0e7027ed@samsung.com>
-Date:   Thu, 18 Jul 2019 18:51:02 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20190707223303.6755-20-digetx@gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURTNo9PpEitDUbj2Q2GMJDQCHbB1MEIwoKnKBy4xLiE4oRNAuqVT
-        iNsHWIIULUuIC6OgQYkK7hYDGEURY2qCCogiBDFqVEAximtAtO1g5O/ce8595573nlSkvIKr
-        pDlmO2szM0YSl2PX70ZGRa1O0qRrqqckdOPn14gu4uswunPfBwnd03ocp8ddHYh2fuVxeqDw
-        LE7/aq3F6LIL3XiSTN88eBrpW/hBid7lGMP1Ze4GpB+/Oj9NvDV3eTbLGFhbGGvOtBhyzFkJ
-        5NoNGckZWp2GiqLi6aVkmJkxsQlkSmpa1Koco3chMiyfMeZ5W2kMx5Exicttljw7G5Zt4ewJ
-        JGs1GK3x1miOMXF55qzoTItpGaXRxGq9wu252YdHXZj11qyd56sOiAuQU16KZFIglkChx4GV
-        IrlUSTQjqOh+Ml18QVDk2Y+E4juCrt+3sX8jjja3WCBuIqh0vRMJxScEHw41BfhUwQQLQyPX
-        JT5iDjGFwPnLgfsIEbEF7rY0+kU4oYa2933+fiARDr0/XyMfVhCJ8OLikB9jxCLoL5/y6+cS
-        m+FBRy0maILAU/3Gj2WEDvhTjZhwfij0vzkRIOAF4Gg65t8OiD84FJa9ms6QAkf2eXABB8PI
-        fbdEwCoYLi+exnvgnKcDF4ZLELjbHosFIg7a6qu8DlKvQyRcao0R2uHQMlGDBOPZMPbtoNgn
-        AUIBJcVKQbIQel4OBgh4Hpza78QrEMnPiMPPiMDPiMD/NzuJsAYUwlo5UxbLUdbYme99Ffm/
-        q1rXjOoeprYjQorIWYo+MiZdKWbyuV2mdgRSETlHMTDsbSkMzK7drM2SYcszslw70npvu1Kk
-        mptp8X5+sz2D0sbGxcXRSyidlqLIUEXtZGS6kshi7Gwuy1pZ27+5AKlMVYDWP2Mkf8a+9nd/
-        /LEsdhO/vqC6pb4hf+9JjexZxI0fBaOB6gkid42nY+VzdXpI8Pneus6INS7M2XD57YOFj75N
-        1ZQEhZuureubcCdHr46v6NLJS39Xl68oM5Xb78REji6uGwgyr7t3ZqN8T/HTVkMaOS+BSQrZ
-        0dOkqppsij+7bfIoiXHZDKUW2TjmL2hMIqPEAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsWy7bCSnK6Hg0GswcypeharPz5mtGiZtYjF
-        4mzTG3aLy7vmsFl87j3CaNH5ZRabxe3GFWwWP3fNY7HoW3uJzYHTY8fdJYweO2fdZffobX7H
-        5tG3ZRWjx+dNcgGsUVw2Kak5mWWpRfp2CVwZ0173shTs46lYM7mbtYGxk6uLkZNDQsBEonn/
-        FtYuRi4OIYHdjBKPDl1lgUhISky7eJS5i5EDyBaWOHy4GKLmLaPE3M4rrCA1wgKpEvdfbWMH
-        SYgINDFJbOq9wA6SYBaIlOiZu4UNomMLo8SEt8uYQRJsAloS+1/cYAOx+QUUJa7+eMwIYvMK
-        2EncW3cfzGYRUJW41f+PCcQWFYiQmHRtJwtEjaDEyZlPwGxOATOJWYtXs0AsU5f4M+8SM4Qt
-        LnHryXwmCFteonnrbOYJjMKzkLTPQtIyC0nLLCQtCxhZVjFKphYU56bnFhsWGOallusVJ+YW
-        l+al6yXn525iBEeZluYOxstL4g8xCnAwKvHw3lDSjxViTSwrrsw9xCjBwawkwnv7JVCINyWx
-        siq1KD++qDQntfgQozQHi5I479O8Y5FCAumJJanZqakFqUUwWSYOTqkGRq5HVnNu2j+0zdTK
-        8eLYc3d/zqwZxi8/u0TGWb06nmivOMtvU0XGZa3CWIMJx/Z9MXkwZ/tGTRvn925q9b9yVl13
-        UOavCOaYIvbylFxDPPvR2JnXEs9sdlDVkinKUd272ybq076otvLZee9fXpj0OKs+ewvrjg8K
-        P+ubZglcVcupPMV+IurYGSWW4oxEQy3mouJEAPqLqtauAgAA
-X-CMS-MailID: 20190718094752epcas1p4660cd9d3968a1755369c6ad049eedbb9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190707223622epcas4p48ec0d7e6fa26bc2397fa4351c0bd0c2d
-References: <20190707223303.6755-1-digetx@gmail.com>
-        <CGME20190707223622epcas4p48ec0d7e6fa26bc2397fa4351c0bd0c2d@epcas4p4.samsung.com>
-        <20190707223303.6755-20-digetx@gmail.com>
+        id S2389861AbfGRJ6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 05:58:52 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:40138 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726383AbfGRJ6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 05:58:52 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1801A2000AF;
+        Thu, 18 Jul 2019 11:58:50 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5611C200018;
+        Thu, 18 Jul 2019 11:58:44 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 1D47940296;
+        Thu, 18 Jul 2019 17:58:37 +0800 (SGT)
+From:   Hui Song <hui.song_1@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Song Hui <hui.song_1@nxp.com>
+Subject: [PATCH 1/2] arm64: dts: ls1028a: Fix GPIO work fail.
+Date:   Thu, 18 Jul 2019 17:49:01 +0800
+Message-Id: <20190718094902.15562-1-hui.song_1@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19. 7. 8. 오전 7:32, Dmitry Osipenko wrote:
-> The memory activity counter may get a bit higher than a watermark which
-> is selected based on OPP that corresponds to a highest EMC rate, in this
-> case watermark is lower than the actual memory activity is and thus
-> results in unwanted "upper" interrupts.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra30-devfreq.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+From: Song Hui <hui.song_1@nxp.com>
 
-It seems that you can combine patch19 with patch20.
+Add ls1028a device specify compatible.
+Make gpio as little-endian deal.
 
-> 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 8d6bf6e9f1ae..c3cf87231d25 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -363,7 +363,18 @@ static void tegra_devfreq_update_wmark(struct tegra_devfreq *tegra,
->  	tegra_actmon_get_lower_upper(tegra, dev, freq - 1, &lower, &upper);
->  
->  	delta = do_percent(upper - lower, dev->config->boost_up_threshold);
-> -	device_writel(dev, lower + delta, ACTMON_DEV_UPPER_WMARK);
-> +
-> +	/*
-> +	 * The memory events count could go a bit higher than the maximum
-> +	 * defined by the OPPs, hence make the upper watermark infinitely
-> +	 * high to avoid unnecessary upper interrupts in that case.
-> +	 */
-> +	if (freq == tegra->max_freq)
-> +		upper = ULONG_MAX;
-> +	else
-> +		upper = lower + delta;
-> +
-> +	device_writel(dev, upper, ACTMON_DEV_UPPER_WMARK);
->  
->  	/*
->  	 * Meanwhile the lower mark is based on the average value
-> 
+Signed-off-by: Song Hui <hui.song_1@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index 7975519..488602b 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -277,33 +277,36 @@
+ 		};
+ 
+ 		gpio1: gpio@2300000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls1028a-gpio","fsl,qoriq-gpio";
+ 			reg = <0x0 0x2300000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
++			little-endian;
+ 		};
+ 
+ 		gpio2: gpio@2310000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls1028a-gpio","fsl,qoriq-gpio";
+ 			reg = <0x0 0x2310000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
++			little-endian;
+ 		};
+ 
+ 		gpio3: gpio@2320000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls1028a-gpio","fsl,qoriq-gpio";
+ 			reg = <0x0 0x2320000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
++			little-endian;
+ 		};
+ 
+ 		usb0: usb@3100000 {
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.9.5
+
