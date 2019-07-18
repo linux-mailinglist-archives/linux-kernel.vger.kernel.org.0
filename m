@@ -2,102 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71B756CB8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:08:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73F546CB6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:03:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389541AbfGRJIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 05:08:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52048 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726513AbfGRJIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 05:08:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B9942AF95;
-        Thu, 18 Jul 2019 09:08:00 +0000 (UTC)
-Date:   Thu, 18 Jul 2019 11:08:00 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>
-Cc:     Joe Lawrence <joe.lawrence@redhat.com>,
-        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
-        Nicolai Stange <nstange@suse.de>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 3/5] livepatch: Allow to distinguish different version of
- system state changes
-Message-ID: <20190718090800.gd2neswknsnmey2h@pathway.suse.cz>
-References: <20190611135627.15556-1-pmladek@suse.com>
- <20190611135627.15556-4-pmladek@suse.com>
+        id S2389833AbfGRJDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 05:03:11 -0400
+Received: from mga12.intel.com ([192.55.52.136]:19828 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389802AbfGRJDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 05:03:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2019 02:03:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,276,1559545200"; 
+   d="scan'208";a="187751473"
+Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
+  by fmsmga001.fm.intel.com with ESMTP; 18 Jul 2019 02:03:05 -0700
+Message-ID: <5D303719.3060900@intel.com>
+Date:   Thu, 18 Jul 2019 17:08:41 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190611135627.15556-4-pmladek@suse.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+CC:     Alexander Duyck <alexander.duyck@gmail.com>,
+        Nitesh Narayan Lal <nitesh@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yang Zhang <yang.zhang.wz@gmail.com>,
+        "pagupta@redhat.com" <pagupta@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Subject: Re: use of shrinker in virtio balloon free page hinting
+References: <20190717071332-mutt-send-email-mst@kernel.org> <286AC319A985734F985F78AFA26841F73E16D4B2@shsmsx102.ccr.corp.intel.com> <20190718000434-mutt-send-email-mst@kernel.org> <5D300A32.4090300@intel.com> <20190718015319-mutt-send-email-mst@kernel.org> <5D3011E9.4040908@intel.com> <20190718024408-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20190718024408-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-06-11 15:56:25, Petr Mladek wrote:
-> It might happen that an older change is not enough and the same system
-> state has to be modified another way. Different changes need to get
-> distinguished by a version number added to struct klp_state.
-> 
-> The version can also be used to prevent loading incompatible livepatches.
-> The check is done when the livepatch is enabled. The rules are:
-> 
->   + Any completely new system state modification is allowed.
-> 
->   + System state modifications with the same or higher version are allowed
->     for already modified system states.
-> 
->   + Cumulative livepatches must handle all system state modifications from
->     already installed livepatches.
-> 
->   + Non-cumulative livepatches are allowed to touch already modified
->     system states.
-> 
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> ---
->  include/linux/livepatch.h |  2 ++
->  kernel/livepatch/core.c   |  8 ++++++++
->  kernel/livepatch/state.c  | 40 +++++++++++++++++++++++++++++++++++++++-
->  kernel/livepatch/state.h  |  9 +++++++++
->  4 files changed, 58 insertions(+), 1 deletion(-)
->  create mode 100644 kernel/livepatch/state.h
-> 
-> diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-> index 591abdee30d7..8bc4c6cc3f3f 100644
-> --- a/include/linux/livepatch.h
-> +++ b/include/linux/livepatch.h
-> @@ -135,10 +135,12 @@ struct klp_object {
->  /**
->   * struct klp_state - state of the system modified by the livepatch
->   * @id:		system state identifier (non zero)
-> + * @version:	version of the change (non-zero)
->   * @data:	custom data
->   */
->  struct klp_state {
->  	int id;
+On 07/18/2019 02:47 PM, Michael S. Tsirkin wrote:
+> On Thu, Jul 18, 2019 at 02:30:01PM +0800, Wei Wang wrote:
+>> On 07/18/2019 01:58 PM, Michael S. Tsirkin wrote:
+>>> what if it does not fail?
+>>>
+>>>
+>>>> Shrinker is called on system memory pressure. On memory pressure
+>>>> get_free_page_and_send will fail memory allocation, so it stops allocating
+>>>> more.
+>>> Memory pressure could be triggered by an unrelated allocation
+>>> e.g. from another driver.
+>> As memory pressure is system-wide (no matter who triggers it), free page
+>> hinting
+>> will fail on memory pressure, same as other drivers.
+> That would be good.  Except instead of failing it can hit a race
+> condition where it will reallocate memory freed by shrinker. Not good.
 
-As suggested by Nicolay, there will be in v2:
+OK..I could see this when another module does allocation, which triggers 
+kswapd
+to have balloon's shrinker release some memory, which could be eaten by 
+balloon
+quickly again before that module takes it, and this could happen repeatedly
+in theory.
 
-	unsigned long id;
+So add a vb->stop_free_page_report boolean, set it in shrinker_count, 
+and clear it in
+virtio_balloon_queue_free_page_work?
 
-> +	int version;
-
-It would make sense to make "version" unsigned as well.
-I am just unsure about the size:
-
-  + "unsigned long" looks like an overhead to me
-  + "u8" might be enough
-
-But I would stay on the safe side and use:
-
-	unsigned int version;
-
-Is anyone against?
-
-Best Regards,
-Petr
+Best,
+Wei
