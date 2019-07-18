@@ -2,61 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D7006D509
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 21:47:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FB0A6D50F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 21:47:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391685AbfGRTot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 15:44:49 -0400
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:39448 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391660AbfGRTos (ORCPT
+        id S2391339AbfGRTox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 15:44:53 -0400
+Received: from mail-yb1-f202.google.com ([209.85.219.202]:45023 "EHLO
+        mail-yb1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391413AbfGRTou (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 15:44:48 -0400
-Received: by mail-pl1-f202.google.com with SMTP id r7so14465919plo.6
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 12:44:47 -0700 (PDT)
+        Thu, 18 Jul 2019 15:44:50 -0400
+Received: by mail-yb1-f202.google.com with SMTP id w200so12612543ybg.11
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 12:44:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=ae+mrOFMmNbS13ze66pnDjDUvUjQtnZm37VMj80uCqw=;
-        b=UJwm5Ga9g54CaLEdGA8QyuIaY7IBpWCVeyIvfD3G6gpAmd8OrcZQ11NeNOk72vl0Sq
-         6wjmMNJQGYNAg/FeXy9EtrtHU39pYShrIoxJrFoVY4m47FXreOzpUUK4f7/X/3NBgONJ
-         1b5QxDiNZaf3pYVBSWe/DuMy8XvQxZq4wFSboXSkJoESJLktmqQ4I0pfhjJxJnZeuvzd
-         FJJxaVC3uEviIHFt9Dgm8XelmFqp1s8+4Cx2UXUStKJ4NCHHhZUAtPc5P+uEFjkI/ieR
-         kIqHRYyhaPIswURMQ2tKdACCRPDQl5vL/zGmn7y81WvhXMFtGNrm+//pr3sgZ3n1lzwG
-         20Xw==
+        bh=RqpfjquZ0GE2zpg4eJx3Cd128lI5VFuP5LKKMsWaFSI=;
+        b=qB9l0rlZdf1ZSzaRrkTDiiRPVJ59qbbPv/eC3uB0Eygb7kg3fkemSZwjWZu4/V2e7r
+         RqGqRUuCJJpwr+tC6Eqans0mir3JuYlFXe9OUuCjNjx7dr94sdMzyJssS6GNXaJPaLA2
+         jLr1mPI6iXVmtCKOQzDzXuWUR9KeIUX1YwugsPZbbx+3aYnwWBr4Tm8dKeznrou7F3zH
+         +6GQwehAYwQ91AzLcAQxko+dJauQHFA+gVoaiM5xlaraqYrmD2AVzvat1ZR2i34hY6F4
+         vPdulwSobVmL4QVh4zui3Jy23qYxvfpcYiXoLPjoqjIFO9noO62KTo1vNCi8XTqGvDDk
+         JNUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=ae+mrOFMmNbS13ze66pnDjDUvUjQtnZm37VMj80uCqw=;
-        b=hSw3MN+rJ2I+4bJzYlQh3E/ottRqUqHYETZoLKAgo4jSRMzwpvgPGsfFpwsS5bilrl
-         GY1ja8skhcakL9CPCo5h9v9nLgtlU6FtcKrvimeMuw3OXuIWKhZEciwV3AqupRBxunRw
-         jWa6t+fzmBlzijJqOVLtt9BFpe8IfEfic3MmdIYDuxyL9CYgK6AQbu/zFz1Q+RJDxWM8
-         RnH1+m2ICfdddXNCRZ0YzoH7CaK6ymY3g5SS4V94LfplgWJs5F/A+6bamYZG4QR/O1Ve
-         6jbAfYw8lmD3k5TCWXGfrEuBO4tZktj6MEW1M4C1+iShK9BZL9pcd4GAMAJyWIrqISzH
-         vs6w==
-X-Gm-Message-State: APjAAAUVvuJ4fHg439+Om2qFaqWs41qy9JNL57e7Iyy431qEmMi2QTp0
-        WYUZ+85ypasEBhomNx+HpF04+MwhnrA8HrLJmbN2/g==
-X-Google-Smtp-Source: APXvYqwnWbJfvojxAzuHzIjs3CUWwAAI2M+flGyDkNHJ+WHS4jsnxEpbjNH77559e8zqpp6C91BXoFnbfUEFCWk2Gp2pBg==
-X-Received: by 2002:a63:c64b:: with SMTP id x11mr49316460pgg.319.1563479087082;
- Thu, 18 Jul 2019 12:44:47 -0700 (PDT)
-Date:   Thu, 18 Jul 2019 12:43:57 -0700
+        bh=RqpfjquZ0GE2zpg4eJx3Cd128lI5VFuP5LKKMsWaFSI=;
+        b=f1yDZ1lTpU4+viugVwcC1mKnFOhHaOZ+yJmbYiwywTtLuiGb9SF4FlLL9Yvs6CRgBV
+         WC2eKqoiGPXCjvQ6etGflOYC0rvtzAS1wdkQLntyjyszrZaoAglmKJoASgGjgNu4GDPp
+         YPaFkyfDxif942ibPvU7o3tbNrk5zNLRzttxmusR5itcQjLHVZ/8eEJIOR73y+jWvGta
+         M9R6cEnZnF8kkBUxUQbyGX3sbMweaJWpupVip/hTVVf+3X05OawG+MWLa2OR15ovtnqC
+         EKWf/HIit3Tj5cTE0Sh/64BeQNZpCVyj2+wcMwDUGmbA8B+sLjwAL6q+6+QlV5BH21r1
+         5M4A==
+X-Gm-Message-State: APjAAAVUKNEPIFPAHKXraOe341z6LtUmt/lk9o67hGZkKYIpUIkV6ZTL
+        hYLR8gAl3OUQIUv/WBSo+tgB4aJDAKfdGSwpMug82A==
+X-Google-Smtp-Source: APXvYqy/t8VeuQfO2ZAGyoAVYFHwDJHul3AKIzmL6DhaskBsqNip8Z6iUGnuploP6DNyyDk+p2NwIaUJnDyntsETVXfrxw==
+X-Received: by 2002:a25:2a56:: with SMTP id q83mr27205767ybq.299.1563479089832;
+ Thu, 18 Jul 2019 12:44:49 -0700 (PDT)
+Date:   Thu, 18 Jul 2019 12:43:58 -0700
 In-Reply-To: <20190718194415.108476-1-matthewgarrett@google.com>
-Message-Id: <20190718194415.108476-12-matthewgarrett@google.com>
+Message-Id: <20190718194415.108476-13-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190718194415.108476-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-Subject: [PATCH V36 11/29] PCI: Lock down BAR access when the kernel is locked down
+Subject: [PATCH V36 12/29] x86: Lock down IO port access when the kernel is
+ locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Matthew Garrett <mjg59@srcf.ucam.org>,
-        David Howells <dhowells@redhat.com>,
         Matthew Garrett <mjg59@google.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Kees Cook <keescook@chromium.org>, linux-pci@vger.kernel.org
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -65,155 +65,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Matthew Garrett <mjg59@srcf.ucam.org>
 
-Any hardware that can potentially generate DMA has to be locked down in
-order to avoid it being possible for an attacker to modify kernel code,
-allowing them to circumvent disabled module loading or module signing.
-Default to paranoid - in future we can potentially relax this for
-sufficiently IOMMU-isolated devices.
+IO port access would permit users to gain access to PCI configuration
+registers, which in turn (on a lot of hardware) give access to MMIO
+register space. This would potentially permit root to trigger arbitrary
+DMA, so lock it down by default.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
+This also implicitly locks down the KDADDIO, KDDELIO, KDENABIO and
+KDDISABIO console ioctls.
+
 Signed-off-by: Matthew Garrett <mjg59@google.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
-cc: linux-pci@vger.kernel.org
+cc: x86@kernel.org
 ---
- drivers/pci/pci-sysfs.c      | 16 ++++++++++++++++
- drivers/pci/proc.c           | 14 ++++++++++++--
- drivers/pci/syscall.c        |  4 +++-
- include/linux/security.h     |  1 +
- security/lockdown/lockdown.c |  1 +
- 5 files changed, 33 insertions(+), 3 deletions(-)
+ arch/x86/kernel/ioport.c     | 7 +++++--
+ include/linux/security.h     | 1 +
+ security/lockdown/lockdown.c | 1 +
+ 3 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 6d27475e39b2..ec103a7e13fc 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -903,6 +903,11 @@ static ssize_t pci_write_config(struct file *filp, struct kobject *kobj,
- 	unsigned int size = count;
- 	loff_t init_off = off;
- 	u8 *data = (u8 *) buf;
-+	int ret;
-+
-+	ret = security_locked_down(LOCKDOWN_PCI_ACCESS);
-+	if (ret)
-+		return ret;
- 
- 	if (off > dev->cfg_size)
- 		return 0;
-@@ -1164,6 +1169,11 @@ static int pci_mmap_resource(struct kobject *kobj, struct bin_attribute *attr,
- 	int bar = (unsigned long)attr->private;
- 	enum pci_mmap_state mmap_type;
- 	struct resource *res = &pdev->resource[bar];
-+	int ret;
-+
-+	ret = security_locked_down(LOCKDOWN_PCI_ACCESS);
-+	if (ret)
-+		return ret;
- 
- 	if (res->flags & IORESOURCE_MEM && iomem_is_exclusive(res->start))
- 		return -EINVAL;
-@@ -1240,6 +1250,12 @@ static ssize_t pci_write_resource_io(struct file *filp, struct kobject *kobj,
- 				     struct bin_attribute *attr, char *buf,
- 				     loff_t off, size_t count)
- {
-+	int ret;
-+
-+	ret = security_locked_down(LOCKDOWN_PCI_ACCESS);
-+	if (ret)
-+		return ret;
-+
- 	return pci_resource_io(filp, kobj, attr, buf, off, count, true);
- }
- 
-diff --git a/drivers/pci/proc.c b/drivers/pci/proc.c
-index 445b51db75b0..e29b0d5ced62 100644
---- a/drivers/pci/proc.c
-+++ b/drivers/pci/proc.c
-@@ -13,6 +13,7 @@
- #include <linux/seq_file.h>
- #include <linux/capability.h>
- #include <linux/uaccess.h>
-+#include <linux/security.h>
- #include <asm/byteorder.h>
- #include "pci.h"
- 
-@@ -115,7 +116,11 @@ static ssize_t proc_bus_pci_write(struct file *file, const char __user *buf,
- 	struct pci_dev *dev = PDE_DATA(ino);
- 	int pos = *ppos;
- 	int size = dev->cfg_size;
--	int cnt;
-+	int cnt, ret;
-+
-+	ret = security_locked_down(LOCKDOWN_PCI_ACCESS);
-+	if (ret)
-+		return ret;
- 
- 	if (pos >= size)
- 		return 0;
-@@ -196,6 +201,10 @@ static long proc_bus_pci_ioctl(struct file *file, unsigned int cmd,
- #endif /* HAVE_PCI_MMAP */
- 	int ret = 0;
- 
-+	ret = security_locked_down(LOCKDOWN_PCI_ACCESS);
-+	if (ret)
-+		return ret;
-+
- 	switch (cmd) {
- 	case PCIIOC_CONTROLLER:
- 		ret = pci_domain_nr(dev->bus);
-@@ -238,7 +247,8 @@ static int proc_bus_pci_mmap(struct file *file, struct vm_area_struct *vma)
- 	struct pci_filp_private *fpriv = file->private_data;
- 	int i, ret, write_combine = 0, res_bit = IORESOURCE_MEM;
- 
--	if (!capable(CAP_SYS_RAWIO))
-+	if (!capable(CAP_SYS_RAWIO) ||
-+	    security_locked_down(LOCKDOWN_PCI_ACCESS))
- 		return -EPERM;
- 
- 	if (fpriv->mmap_state == pci_mmap_io) {
-diff --git a/drivers/pci/syscall.c b/drivers/pci/syscall.c
-index d96626c614f5..31e39558d49d 100644
---- a/drivers/pci/syscall.c
-+++ b/drivers/pci/syscall.c
-@@ -7,6 +7,7 @@
- 
+diff --git a/arch/x86/kernel/ioport.c b/arch/x86/kernel/ioport.c
+index 0fe1c8782208..61a89d3c0382 100644
+--- a/arch/x86/kernel/ioport.c
++++ b/arch/x86/kernel/ioport.c
+@@ -11,6 +11,7 @@
  #include <linux/errno.h>
- #include <linux/pci.h>
+ #include <linux/types.h>
+ #include <linux/ioport.h>
 +#include <linux/security.h>
- #include <linux/syscalls.h>
- #include <linux/uaccess.h>
- #include "pci.h"
-@@ -90,7 +91,8 @@ SYSCALL_DEFINE5(pciconfig_write, unsigned long, bus, unsigned long, dfn,
- 	u32 dword;
- 	int err = 0;
+ #include <linux/smp.h>
+ #include <linux/stddef.h>
+ #include <linux/slab.h>
+@@ -31,7 +32,8 @@ long ksys_ioperm(unsigned long from, unsigned long num, int turn_on)
  
--	if (!capable(CAP_SYS_ADMIN))
-+	if (!capable(CAP_SYS_ADMIN) ||
-+	    security_locked_down(LOCKDOWN_PCI_ACCESS))
+ 	if ((from + num <= from) || (from + num > IO_BITMAP_BITS))
+ 		return -EINVAL;
+-	if (turn_on && !capable(CAP_SYS_RAWIO))
++	if (turn_on && (!capable(CAP_SYS_RAWIO) ||
++			security_locked_down(LOCKDOWN_IOPORT)))
  		return -EPERM;
  
- 	dev = pci_get_domain_bus_and_slot(0, bus, dfn);
+ 	/*
+@@ -126,7 +128,8 @@ SYSCALL_DEFINE1(iopl, unsigned int, level)
+ 		return -EINVAL;
+ 	/* Trying to gain more privileges? */
+ 	if (level > old) {
+-		if (!capable(CAP_SYS_RAWIO))
++		if (!capable(CAP_SYS_RAWIO) ||
++		    security_locked_down(LOCKDOWN_IOPORT))
+ 			return -EPERM;
+ 	}
+ 	regs->flags = (regs->flags & ~X86_EFLAGS_IOPL) |
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 304a155a5628..8adbd62b7669 100644
+index 8adbd62b7669..79250b2ffb8f 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -107,6 +107,7 @@ enum lockdown_reason {
- 	LOCKDOWN_DEV_MEM,
+@@ -108,6 +108,7 @@ enum lockdown_reason {
  	LOCKDOWN_KEXEC,
  	LOCKDOWN_HIBERNATION,
-+	LOCKDOWN_PCI_ACCESS,
+ 	LOCKDOWN_PCI_ACCESS,
++	LOCKDOWN_IOPORT,
  	LOCKDOWN_INTEGRITY_MAX,
  	LOCKDOWN_CONFIDENTIALITY_MAX,
  };
 diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index a0996f75629f..655fe388e615 100644
+index 655fe388e615..316f7cf4e996 100644
 --- a/security/lockdown/lockdown.c
 +++ b/security/lockdown/lockdown.c
-@@ -22,6 +22,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
+@@ -23,6 +23,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
  	[LOCKDOWN_KEXEC] = "kexec of unsigned images",
  	[LOCKDOWN_HIBERNATION] = "hibernation",
-+	[LOCKDOWN_PCI_ACCESS] = "direct PCI access",
+ 	[LOCKDOWN_PCI_ACCESS] = "direct PCI access",
++	[LOCKDOWN_IOPORT] = "raw io port access",
  	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
  	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
  };
