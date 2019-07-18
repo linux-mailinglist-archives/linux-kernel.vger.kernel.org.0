@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 953EC6C767
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:25:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFE126C6FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:21:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391614AbfGRDX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:23:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39230 "EHLO mail.kernel.org"
+        id S2391501AbfGRDU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:20:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390476AbfGRDHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:07:33 -0400
+        id S2391147AbfGRDKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:10:17 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 813BD2173E;
-        Thu, 18 Jul 2019 03:07:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C260221841;
+        Thu, 18 Jul 2019 03:10:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419252;
-        bh=a5sgTZ72/I4FO9orhxbPhNpD9S17BaVxk/dNjKE3foQ=;
+        s=default; t=1563419417;
+        bh=NcZZzhaLzdat+yqaF8MIGu8GX/hbheQFPNJEoYo0n4k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xAtees6YOZrJzGNyFj2e2sgBHqbwTZg4/zbXkKasEiVqyfYRHQi+weev93ABteyb/
-         3dp5Fe6gBn77hZ1zAPju9cWXkyE0fid4kYPLjszMrqzcuSYNxwA1lhe7L+sWZzQC3g
-         grIPYL5FnEx614Tq7nkKWEDDZp5WfgbqcZcNEA50=
+        b=DbgrAYDCRch4sv6EdLUp3Xly+fJgwi7VYgMfQBCqfHm+JDrVmvZ71Yi4hnny7eANM
+         mgrQTiuNqNX1mhV7OwLx/ZHHPJAuvPyTiQhx7HU9FmuraIw4eKlJXHindCORYa17zf
+         PRTaTXbPI0atFS1jc7bj/rY88RfysZPDNaf7Tx14=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 16/47] ppp: mppe: Add softdep to arc4
-Date:   Thu, 18 Jul 2019 12:01:30 +0900
-Message-Id: <20190718030050.034722781@linuxfoundation.org>
+        stable@vger.kernel.org, Hongjie Fang <hongjiefang@asrmicro.com>,
+        Eric Biggers <ebiggers@google.com>
+Subject: [PATCH 4.14 40/80] fscrypt: dont set policy for a dead directory
+Date:   Thu, 18 Jul 2019 12:01:31 +0900
+Message-Id: <20190718030101.746236336@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
-References: <20190718030045.780672747@linuxfoundation.org>
+In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
+References: <20190718030058.615992480@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit aad1dcc4f011ea409850e040363dff1e59aa4175 ]
+From: Hongjie Fang <hongjiefang@asrmicro.com>
 
-The arc4 crypto is mandatory at ppp_mppe probe time, so let's put a
-softdep line, so that the corresponding module gets prepared
-gracefully.  Without this, a simple inclusion to initrd via dracut
-failed due to the missing dependency, for example.
+commit 5858bdad4d0d0fc18bf29f34c3ac836e0b59441f upstream.
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The directory may have been removed when entering
+fscrypt_ioctl_set_policy().  If so, the empty_dir() check will return
+error for ext4 file system.
+
+ext4_rmdir() sets i_size = 0, then ext4_empty_dir() reports an error
+because 'inode->i_size < EXT4_DIR_REC_LEN(1) + EXT4_DIR_REC_LEN(2)'.  If
+the fs is mounted with errors=panic, it will trigger a panic issue.
+
+Add the check IS_DEADDIR() to fix this problem.
+
+Fixes: 9bd8212f981e ("ext4 crypto: add encryption policy and password salt support")
+Cc: <stable@vger.kernel.org> # v4.1+
+Signed-off-by: Hongjie Fang <hongjiefang@asrmicro.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ppp/ppp_mppe.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/crypto/policy.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ppp/ppp_mppe.c b/drivers/net/ppp/ppp_mppe.c
-index a205750b431b..8609c1a0777b 100644
---- a/drivers/net/ppp/ppp_mppe.c
-+++ b/drivers/net/ppp/ppp_mppe.c
-@@ -63,6 +63,7 @@ MODULE_AUTHOR("Frank Cusack <fcusack@fcusack.com>");
- MODULE_DESCRIPTION("Point-to-Point Protocol Microsoft Point-to-Point Encryption support");
- MODULE_LICENSE("Dual BSD/GPL");
- MODULE_ALIAS("ppp-compress-" __stringify(CI_MPPE));
-+MODULE_SOFTDEP("pre: arc4");
- MODULE_VERSION("1.0.2");
- 
- static unsigned int
--- 
-2.20.1
-
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -81,6 +81,8 @@ int fscrypt_ioctl_set_policy(struct file
+ 	if (ret == -ENODATA) {
+ 		if (!S_ISDIR(inode->i_mode))
+ 			ret = -ENOTDIR;
++		else if (IS_DEADDIR(inode))
++			ret = -ENOENT;
+ 		else if (!inode->i_sb->s_cop->empty_dir(inode))
+ 			ret = -ENOTEMPTY;
+ 		else
 
 
