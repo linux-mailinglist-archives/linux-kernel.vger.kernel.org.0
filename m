@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 966406C717
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:22:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B27A6C740
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:24:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391031AbfGRDJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:09:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42298 "EHLO mail.kernel.org"
+        id S2390268AbfGRDGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:06:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390210AbfGRDJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:09:37 -0400
+        id S2389587AbfGRDGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:06:36 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D8142173E;
-        Thu, 18 Jul 2019 03:09:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2D37204EC;
+        Thu, 18 Jul 2019 03:06:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419376;
-        bh=KY1pTVSVOlB8zydh/WnqEu8LohWlLxvY35Ylhs8yDY4=;
+        s=default; t=1563419196;
+        bh=1M5uP+m8cuTDZeta1c/3TZC1egzglcR2qlnV2iaMkKY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rw36N548/BqRQ/psP2JKeYT4dGzNdre5UqRkCqnP0/pOv9YXNX+yt9TbA1nGOheag
-         32g2SbwzXeistbMl0KgAhDGloFJhFVMWYrHudf2TcdEbTkJBUvFjsSelpxeAZX7DNA
-         j72w0EPae7evjPmTTATBoQokX3LfCJ0f3ztd5g+8=
+        b=XvDPrLWqAFav6ariOrL9tC46yEd5kRjzsKorIALaSkBJWA6WljZvxr8G7WCA/JQd9
+         vXMKRQlC9X5dh0qSVA//PWhpOmO6OhDBNzpGKFsi7PcIwTW69BCqZV31FVdjHacdS+
+         LkCCQaWIis11mGIQ6srR0nkg2UedMGgIIfi7L8Y0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Teresa Remmet <t.remmet@phytec.de>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 22/80] ARM: dts: am335x phytec boards: Fix cd-gpios active level
-Date:   Thu, 18 Jul 2019 12:01:13 +0900
-Message-Id: <20190718030100.540918640@linuxfoundation.org>
+        stable@vger.kernel.org, Cole Rogers <colerogers@disroot.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.19 03/47] Input: synaptics - enable SMBUS on T480 thinkpad trackpad
+Date:   Thu, 18 Jul 2019 12:01:17 +0900
+Message-Id: <20190718030047.215069355@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
-References: <20190718030058.615992480@linuxfoundation.org>
+In-Reply-To: <20190718030045.780672747@linuxfoundation.org>
+References: <20190718030045.780672747@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8a0098c05a272c9a68f6885e09755755b612459c ]
+From: Cole Rogers <colerogers@disroot.org>
 
-Active level of the mmc1 cd gpio needs to be low instead of high.
-Fix PCM-953 and phyBOARD-WEGA.
+commit abbe3acd7d72ab4633ade6bd24e8306b67e0add3 upstream.
 
-Signed-off-by: Teresa Remmet <t.remmet@phytec.de>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Thinkpad t480 laptops had some touchpad features disabled, resulting in the
+loss of pinch to activities in GNOME, on wayland, and other touch gestures
+being slower. This patch adds the touchpad of the t480 to the smbus_pnp_ids
+whitelist to enable the extra features. In my testing this does not break
+suspend (on fedora, with wayland, and GNOME, using the rc-6 kernel), while
+also fixing the feature on a T480.
+
+Signed-off-by: Cole Rogers <colerogers@disroot.org>
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/boot/dts/am335x-pcm-953.dtsi | 2 +-
- arch/arm/boot/dts/am335x-wega.dtsi    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/input/mouse/synaptics.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/am335x-pcm-953.dtsi b/arch/arm/boot/dts/am335x-pcm-953.dtsi
-index 1ec8e0d80191..572fbd254690 100644
---- a/arch/arm/boot/dts/am335x-pcm-953.dtsi
-+++ b/arch/arm/boot/dts/am335x-pcm-953.dtsi
-@@ -197,7 +197,7 @@
- 	bus-width = <4>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc1_pins>;
--	cd-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
-+	cd-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/am335x-wega.dtsi b/arch/arm/boot/dts/am335x-wega.dtsi
-index 8ce541739b24..83e4fe595e37 100644
---- a/arch/arm/boot/dts/am335x-wega.dtsi
-+++ b/arch/arm/boot/dts/am335x-wega.dtsi
-@@ -157,7 +157,7 @@
- 	bus-width = <4>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc1_pins>;
--	cd-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
-+	cd-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
- 	status = "okay";
- };
- 
--- 
-2.20.1
-
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -176,6 +176,7 @@ static const char * const smbus_pnp_ids[
+ 	"LEN0072", /* X1 Carbon Gen 5 (2017) - Elan/ALPS trackpoint */
+ 	"LEN0073", /* X1 Carbon G5 (Elantech) */
+ 	"LEN0092", /* X1 Carbon 6 */
++	"LEN0093", /* T480 */
+ 	"LEN0096", /* X280 */
+ 	"LEN0097", /* X280 -> ALPS trackpoint */
+ 	"LEN200f", /* T450s */
 
 
