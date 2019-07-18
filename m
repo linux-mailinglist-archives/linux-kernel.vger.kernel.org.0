@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CEFC6C68F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:17:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3CAE6C5EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:12:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392128AbfGRDRt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:17:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50192 "EHLO mail.kernel.org"
+        id S2391253AbfGRDLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:11:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391755AbfGRDOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:14:20 -0400
+        id S2390808AbfGRDLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:11:02 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6CAA2173E;
-        Thu, 18 Jul 2019 03:14:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1900B205F4;
+        Thu, 18 Jul 2019 03:11:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419660;
-        bh=nmpK3gZd43PWK653ZajHttdDO4lbHQPISVPaW5lPcbs=;
+        s=default; t=1563419462;
+        bh=Y2HbY6nMTyaVNBvYYnjLTL+BRCTxKa+hPrWPXEPUo+s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oQo3s9mZk22FvcovGLu1NCsNXcbzenJ+z0JP+9HAJoAKXIFuWH3tat/h/wxS757iR
-         9BabCWB7FmRJXwuHw+AX9JpxWUYy/Dnln8/DIwM3s6hw5/YryjqBItSpJBBVLCsiRc
-         4j6S1g+en7TOyJTP8Zo/6/5hXrPygdcx/QYV4dzY=
+        b=MzfKpe2vY3G6wzHdC20ahT4MampRs4J70eqM4clCDtnFTSGYsRez7sx2nKppM00I3
+         07n5E5haGV6oVBkUCld08vpLMHo420UtywsaGPCllB1eLGHEeSZ4IMsT5Cc8JaVKDm
+         7CvZoChGNgkT1/vkkiiUheAzLuwm40Lr/9nbI1WU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kiruthika Varadarajan <Kiruthika.Varadarajan@harman.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.9 33/54] usb: gadget: ether: Fix race between gether_disconnect and rx_submit
-Date:   Thu, 18 Jul 2019 12:02:03 +0900
-Message-Id: <20190718030052.008794590@linuxfoundation.org>
+        stable@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 73/80] linux/kernel.h: fix overflow for DIV_ROUND_UP_ULL
+Date:   Thu, 18 Jul 2019 12:02:04 +0900
+Message-Id: <20190718030105.125331132@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030048.392549994@linuxfoundation.org>
-References: <20190718030048.392549994@linuxfoundation.org>
+In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
+References: <20190718030058.615992480@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +47,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kiruthika Varadarajan <Kiruthika.Varadarajan@harman.com>
+[ Upstream commit 8f9fab480c7a87b10bb5440b5555f370272a5d59 ]
 
-commit d29fcf7078bc8be2b6366cbd4418265b53c94fac upstream.
+DIV_ROUND_UP_ULL adds the two arguments and then invokes
+DIV_ROUND_DOWN_ULL.  But on a 32bit system the addition of two 32 bit
+values can overflow.  DIV_ROUND_DOWN_ULL does it correctly and stashes
+the addition into a unsigned long long so cast the result to unsigned
+long long here to avoid the overflow condition.
 
-On spin lock release in rx_submit, gether_disconnect get a chance to
-run, it makes port_usb NULL, rx_submit access NULL port USB, hence null
-pointer crash.
-
-Fixed by releasing the lock in rx_submit after port_usb is used.
-
-Fixes: 2b3d942c4878 ("usb ethernet gadget: split out network core")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Kiruthika Varadarajan <Kiruthika.Varadarajan@harman.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+[akpm@linux-foundation.org: DIV_ROUND_UP_ULL must be an rval]
+Link: http://lkml.kernel.org/r/20190625100518.30753-1-vkoul@kernel.org
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/u_ether.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ include/linux/kernel.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/gadget/function/u_ether.c
-+++ b/drivers/usb/gadget/function/u_ether.c
-@@ -198,11 +198,12 @@ rx_submit(struct eth_dev *dev, struct us
- 		out = dev->port_usb->out_ep;
- 	else
- 		out = NULL;
--	spin_unlock_irqrestore(&dev->lock, flags);
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 1c5469adaa85..bb7baecef002 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -101,7 +101,8 @@
+ #define DIV_ROUND_DOWN_ULL(ll, d) \
+ 	({ unsigned long long _tmp = (ll); do_div(_tmp, d); _tmp; })
  
- 	if (!out)
-+	{
-+		spin_unlock_irqrestore(&dev->lock, flags);
- 		return -ENOTCONN;
--
-+	}
+-#define DIV_ROUND_UP_ULL(ll, d)		DIV_ROUND_DOWN_ULL((ll) + (d) - 1, (d))
++#define DIV_ROUND_UP_ULL(ll, d) \
++	DIV_ROUND_DOWN_ULL((unsigned long long)(ll) + (d) - 1, (d))
  
- 	/* Padding up to RX_EXTRA handles minor disagreements with host.
- 	 * Normally we use the USB "terminate on short read" convention;
-@@ -223,6 +224,7 @@ rx_submit(struct eth_dev *dev, struct us
- 
- 	if (dev->port_usb->is_fixed)
- 		size = max_t(size_t, size, dev->port_usb->fixed_out_len);
-+	spin_unlock_irqrestore(&dev->lock, flags);
- 
- 	skb = alloc_skb(size + NET_IP_ALIGN, gfp_flags);
- 	if (skb == NULL) {
+ #if BITS_PER_LONG == 32
+ # define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP_ULL(ll, d)
+-- 
+2.20.1
+
 
 
