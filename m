@@ -2,117 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED5CB6C454
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 03:38:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B327E6C44B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 03:38:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389217AbfGRBhv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 21:37:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52546 "EHLO mx1.redhat.com"
+        id S2387539AbfGRBh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 21:37:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389146AbfGRBhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 21:37:38 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1732948AbfGRBhV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 21:37:21 -0400
+Received: from localhost (unknown [104.132.1.68])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8044F8667D;
-        Thu, 18 Jul 2019 01:37:38 +0000 (UTC)
-Received: from treble.redhat.com (ovpn-122-211.rdu2.redhat.com [10.10.122.211])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7042F5D9CC;
-        Thu, 18 Jul 2019 01:37:37 +0000 (UTC)
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v2 22/22] objtool: Support conditional retpolines
-Date:   Wed, 17 Jul 2019 20:36:57 -0500
-Message-Id: <30d4c758b267ef487fb97e6ecb2f148ad007b554.1563413318.git.jpoimboe@redhat.com>
-In-Reply-To: <cover.1563413318.git.jpoimboe@redhat.com>
-References: <cover.1563413318.git.jpoimboe@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 8888621848;
+        Thu, 18 Jul 2019 01:37:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563413840;
+        bh=QyYFsZxXZWnmVJMpuh5ZwNXY/+BLv5Jmy5x+kjaFSGo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=1kJ4AeOEG8INgoFgmiFNxAdXLAmPzGWb+Fnl5r3ZDZZBcWBr7d+wZ8B5U5PQLGUlK
+         4DnoGGyGjK39IR+N5FjmvudA8lQ0brlPg8h7xUZmXIdpvBdcrUAfEtPP07aOOP3/Qn
+         cv+yodGTe+6HFutlx2jjaau7o6Q2rnXY2S3xb12Q=
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: fix to read source block before invalidating it
+Date:   Wed, 17 Jul 2019 18:37:18 -0700
+Message-Id: <20190718013718.70335-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 18 Jul 2019 01:37:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A Clang-built kernel is showing the following warning:
+f2fs_allocate_data_block() invalidates old block address and enable new block
+address. Then, if we try to read old block by f2fs_submit_page_bio(), it will
+give WARN due to reading invalid blocks.
 
-  arch/x86/kernel/platform-quirks.o: warning: objtool: x86_early_init_platform_quirks()+0x84: unreachable instruction
+Let's make the order sanely back.
 
-That corresponds to this code:
-
-  7e:   0f 85 00 00 00 00       jne    84 <x86_early_init_platform_quirks+0x84>
-                        80: R_X86_64_PC32       __x86_indirect_thunk_r11-0x4
-  84:   c3                      retq
-
-This is a conditional retpoline sibling call, which is now possible
-thanks to retpolines.  Objtool hasn't seen that before.  It's
-incorrectly interpreting the conditional jump as an unconditional
-dynamic jump.
-
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- tools/objtool/arch.h  |  1 +
- tools/objtool/check.c | 12 ++++++++++--
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ fs/f2fs/gc.c | 57 ++++++++++++++++++++++++++++------------------------
+ 1 file changed, 31 insertions(+), 26 deletions(-)
 
-diff --git a/tools/objtool/arch.h b/tools/objtool/arch.h
-index 50448c0c4bca..ced3765c4f44 100644
---- a/tools/objtool/arch.h
-+++ b/tools/objtool/arch.h
-@@ -15,6 +15,7 @@ enum insn_type {
- 	INSN_JUMP_CONDITIONAL,
- 	INSN_JUMP_UNCONDITIONAL,
- 	INSN_JUMP_DYNAMIC,
-+	INSN_JUMP_DYNAMIC_CONDITIONAL,
- 	INSN_CALL,
- 	INSN_CALL_DYNAMIC,
- 	INSN_RETURN,
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 381e36dc587c..a93ecce40641 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -575,7 +575,11 @@ static int add_jump_destinations(struct objtool_file *file)
- 			 * Retpoline jumps are really dynamic jumps in
- 			 * disguise, so convert them accordingly.
- 			 */
--			insn->type = INSN_JUMP_DYNAMIC;
-+			if (insn->type == INSN_JUMP_UNCONDITIONAL)
-+				insn->type = INSN_JUMP_DYNAMIC;
-+			else
-+				insn->type = INSN_JUMP_DYNAMIC_CONDITIONAL;
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 6691f526fa40..35c5453ab874 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -740,6 +740,7 @@ static int move_data_block(struct inode *inode, block_t bidx,
+ 	block_t newaddr;
+ 	int err = 0;
+ 	bool lfs_mode = test_opt(fio.sbi, LFS);
++	bool submitted = false;
+ 
+ 	/* do not read out */
+ 	page = f2fs_grab_cache_page(inode->i_mapping, bidx, false);
+@@ -796,6 +797,20 @@ static int move_data_block(struct inode *inode, block_t bidx,
+ 	if (lfs_mode)
+ 		down_write(&fio.sbi->io_order_lock);
+ 
++	mpage = f2fs_grab_cache_page(META_MAPPING(fio.sbi),
++			fio.old_blkaddr, false);
++	if (!mpage)
++		goto put_out;
 +
- 			insn->retpoline_safe = true;
- 			continue;
- 		} else {
-@@ -2114,13 +2118,17 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
- 			break;
- 
- 		case INSN_JUMP_DYNAMIC:
-+		case INSN_JUMP_DYNAMIC_CONDITIONAL:
- 			if (func && is_sibling_call(insn)) {
- 				ret = validate_sibling_call(insn, &state);
- 				if (ret)
- 					return ret;
- 			}
- 
--			return 0;
-+			if (insn->type == INSN_JUMP_DYNAMIC)
-+				return 0;
++	if (!PageUptodate(mpage)) {
++		err = f2fs_submit_page_bio(&fio);
++		if (err) {
++			f2fs_put_page(mpage, 1);
++			goto put_out;
++		}
++		submitted = true;
++	}
 +
-+			break;
+ 	f2fs_allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
+ 					&sum, CURSEG_COLD_DATA, NULL, false);
  
- 		case INSN_CONTEXT_SWITCH:
- 			if (func && (!next_insn || !next_insn->hint)) {
+@@ -803,44 +818,34 @@ static int move_data_block(struct inode *inode, block_t bidx,
+ 				newaddr, FGP_LOCK | FGP_CREAT, GFP_NOFS);
+ 	if (!fio.encrypted_page) {
+ 		err = -ENOMEM;
+-		goto recover_block;
+-	}
+-
+-	mpage = f2fs_pagecache_get_page(META_MAPPING(fio.sbi),
+-					fio.old_blkaddr, FGP_LOCK, GFP_NOFS);
+-	if (mpage) {
+-		bool updated = false;
+-
+-		if (PageUptodate(mpage)) {
+-			memcpy(page_address(fio.encrypted_page),
+-					page_address(mpage), PAGE_SIZE);
+-			updated = true;
+-		}
+ 		f2fs_put_page(mpage, 1);
+-		invalidate_mapping_pages(META_MAPPING(fio.sbi),
+-					fio.old_blkaddr, fio.old_blkaddr);
+-		if (updated)
+-			goto write_page;
++		goto recover_block;
+ 	}
+ 
+-	err = f2fs_submit_page_bio(&fio);
+-	if (err)
+-		goto put_page_out;
+-
+-	/* write page */
+-	lock_page(fio.encrypted_page);
++	if (!submitted)
++		goto write_page;
+ 
+-	if (unlikely(fio.encrypted_page->mapping != META_MAPPING(fio.sbi))) {
++	/* read source block */
++	lock_page(mpage);
++	if (unlikely(mpage->mapping != META_MAPPING(fio.sbi))) {
+ 		err = -EIO;
++		f2fs_put_page(mpage, 1);
+ 		goto put_page_out;
+ 	}
+-	if (unlikely(!PageUptodate(fio.encrypted_page))) {
++	if (unlikely(!PageUptodate(mpage))) {
+ 		err = -EIO;
++		f2fs_put_page(mpage, 1);
+ 		goto put_page_out;
+ 	}
+-
+ write_page:
++	/* write target block */
+ 	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA, true, true);
++	memcpy(page_address(fio.encrypted_page),
++				page_address(mpage), PAGE_SIZE);
++	f2fs_put_page(mpage, 1);
++	invalidate_mapping_pages(META_MAPPING(fio.sbi),
++				fio.old_blkaddr, fio.old_blkaddr);
++
+ 	set_page_dirty(fio.encrypted_page);
+ 	if (clear_page_dirty_for_io(fio.encrypted_page))
+ 		dec_page_count(fio.sbi, F2FS_DIRTY_META);
 -- 
-2.20.1
+2.19.0.605.g01d371f741-goog
 
