@@ -2,128 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0264D6CDA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 13:45:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ED356CD9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 13:44:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390080AbfGRLpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 07:45:22 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58702 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726608AbfGRLpW (ORCPT
+        id S2390327AbfGRLn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 07:43:57 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45893 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbfGRLn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 07:45:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NKk1z9eeAZpeVSsCA5XD6xsclz2cwdL0iURWkjA/YF0=; b=wlXSOFlWAZaZhPQOl1zJwbMRx
-        frcQPj15rPyZEVIl3jhXyGyy0HYkv8Hjp+Yl6V7nF3hQ7A6RVJsMf0IZzdNF5UtaoN+WOWkxRIfTP
-        FUbqlP/0b9XHmgjePbatehOO1pe3NMr9rBfuF0tuAi5fXuT7KekyIzN6cyXhKHhFnw4ak=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ho4qX-0004yz-3a; Thu, 18 Jul 2019 11:45:13 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 2FE502742C07; Thu, 18 Jul 2019 12:45:12 +0100 (BST)
-Date:   Thu, 18 Jul 2019 12:45:12 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Yong Wu <yong.wu@mediatek.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Tomasz Figa <tfiga@google.com>,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, chao.hao@mediatek.com,
-        cui.zhang@mediatek.com, ming-fan.chen@mediatek.com,
-        youlin.pei@mediatek.com, Nicolas Boichat <drinkcat@chromium.org>,
-        anan.sun@mediatek.com, Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: [RFC PATCH] regulator: core: Move device_link_remove out from
- regulator_list_mutex
-Message-ID: <20190718114512.GA5761@sirena.org.uk>
-References: <1563432146-28097-1-git-send-email-yong.wu@mediatek.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
-Content-Disposition: inline
-In-Reply-To: <1563432146-28097-1-git-send-email-yong.wu@mediatek.com>
-X-Cookie: Oh, wow!  Look at the moon!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 18 Jul 2019 07:43:57 -0400
+Received: by mail-pg1-f195.google.com with SMTP id o13so12770968pgp.12;
+        Thu, 18 Jul 2019 04:43:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:date:message-id:in-reply-to:references:subject;
+        bh=IGzz/j95f1SCm6JxIZBHarR8Zr/45NveZScDEByX+FA=;
+        b=Pn6e3M6cmUUJXwpH5V+kSi/GAKBH2dMqGFvxp/ZpDZ5KWU2fPgyJRIr/D+DSZCWhaB
+         Pueg+7FgQgBukLcazFSKSXIMbyKAP+m8BfQjN3412JXYRiTKW7YJOkhvEMBHfZj+dQnb
+         nTJvL5a5P/JGU/TvM79wsQ1Upkb0uZQG/n2sDe+e6Ux9zVp4TQKo4hWBUPLWytiSF40q
+         ILchNY5souYmy4YCty/H0nXP/9ZM84JeEbE1o628EtOl8QuEnODqu9UhC/8cpzW12ALM
+         QdM22XHdlsH+SJTnHS82pydXIz0257iGVn9hU5RvqRB7T4ZCPcGzdfPZKJrBYnsvgKM2
+         o5Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:date:message-id:in-reply-to
+         :references:subject;
+        bh=IGzz/j95f1SCm6JxIZBHarR8Zr/45NveZScDEByX+FA=;
+        b=LXmeMNh5gy57l0Ka8t9dja4KLXWpoqcQUjkFXCQT18lVZT9YvXizhiXyJZgMHjFE6h
+         AIHyPf36/51/vbc6p2z7inuZkGoaMU6fAGlZrot061b2Bq/JKZvRzAMXwus9jVqkql/W
+         24ZSyZ+O5O4ls3YBuMIEl1gCviju6WYJnbjaFs/gUHubthB5cBMH7tU6b0NVog2YP6P7
+         M9ri0vWXAvAsAcNG+1mWU/w3G3C2P9KqqxEodVHkQKZryNt5YLfClNBAID82KffcVOlv
+         rvMtbWP0ceRXWxImDnfhsihy0CCx93RrG5c4rL2Ls3K9Ujll9wgoyQuOjJ/DZXHgdY1b
+         HuOA==
+X-Gm-Message-State: APjAAAUko5Y5pR0pwCxM6ZZ970lR8mNmvGg4hEu28DZ0rsRUuPqBcjWO
+        rdpx5PRoDgWxriBuKt7Xk55DFGkA
+X-Google-Smtp-Source: APXvYqx0SuuW9UZDBzwqmepbneO4j6zQjBnRObwyEe0onLOEwDx6yk1Kk4TAS4UIpLd2GnXhuKQ3RQ==
+X-Received: by 2002:a63:fe15:: with SMTP id p21mr47770944pgh.149.1563450236000;
+        Thu, 18 Jul 2019 04:43:56 -0700 (PDT)
+Received: from [127.0.0.1] (FL1-133-202-12-40.iwa.mesh.ad.jp. [133.202.12.40])
+        by smtp.gmail.com with ESMTPSA id j15sm39116123pfn.150.2019.07.18.04.43.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Jul 2019 04:43:54 -0700 (PDT)
+From:   Magnus Damm <magnus.damm@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        geert+renesas@glider.be, daniel.lezcano@linaro.org,
+        linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>, tglx@linutronix.de
+Date:   Thu, 18 Jul 2019 20:45:24 +0900
+Message-Id: <156345032407.5307.16702422867507502597.sendpatchset@octo>
+In-Reply-To: <156345023791.5307.6113391102648394591.sendpatchset@octo>
+References: <156345023791.5307.6113391102648394591.sendpatchset@octo>
+Subject: [PATCH 6/7] clocksource/drivers/sh_cmt: r8a7740 and sh73a0 SoC-specific match
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Magnus Damm <damm+renesas@opensource.se>
 
---qDbXVdCdHGoSgWSk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add SoC-specific matching for CMT1 on r8a7740 and sh73a0.
 
-On Thu, Jul 18, 2019 at 02:42:26PM +0800, Yong Wu wrote:
-> The MediaTek SMI adding device_link patch looks reveal a deadlock
-> issue reported in [1], This patch is to fix this deadlock issue.
+This allows us to move away from the old DT bindings such as
+ - "renesas,cmt-48-sh73a0"
+ - "renesas,cmt-48-r8a7740"
+ - "renesas,cmt-48"
+in favour for the now commonly used format "renesas,<soc>-<device>"
 
-Can you please describe in words what this issue is and how the patch
-addresses it?
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-> This is the detailed log:
->=20
-> [    4.664194] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [    4.670368] WARNING: possible circular locking dependency detected
-> [    4.676545] 5.2.0-rc2-next-20190528-44527-g6c94b6475c04 #20 Tainted: G=
- S
-> [    4.684539] ------------------------------------------------------
+ drivers/clocksource/sh_cmt.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Please think hard before including complete backtraces in upstream
-reports, they are very large and contain almost no useful information
-relative to their size so often obscure the relevant content in your
-message. If part of the backtrace is usefully illustrative then it's
-usually better to pull out the relevant sections.
-
-> index 955a0a1..3db9350 100644
-> --- a/drivers/regulator/core.c
-> +++ b/drivers/regulator/core.c
-> @@ -2048,7 +2048,9 @@ static void _regulator_put(struct regulator *regula=
-tor)
->  	debugfs_remove_recursive(regulator->debugfs);
-> =20
->  	if (regulator->dev) {
-> +		mutex_unlock(&regulator_list_mutex);
->  		device_link_remove(regulator->dev, &rdev->dev);
-> +		mutex_lock(&regulator_list_mutex);
-> =20
->  		/* remove any sysfs entries */
->  		sysfs_remove_link(&rdev->dev.kobj, regulator->supply_name);
-> --=20
-> 1.9.1
->=20
-
-Just randomly dropping and reacquiring the lock in the middle of a
-series of operations sounds potentially racy...  What happens if the
-list gets changed while the lock is dropped?
-
---qDbXVdCdHGoSgWSk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0wW8UACgkQJNaLcl1U
-h9Duwgf8DrFA6rkNbZWAOQolUO3ScHl7ZIFDMYs/c8IslX851jEG59mVl69AFFdx
-OOzfKw4BgDoYJX0pIoCnYGkEyTZgI3m1zWOmb3ceu8UPwxDa2fOeXaXvfRT0C9IP
-J4sQe88/NyzcipB6TwzYri4MnDI/dC5cmnHGuiOLWRzLtu9JKLdkyqoHynMk8gy8
-RbFiatFKpVgxXz1RCVKulsJ/bZuHAUoa827QErIIzH00XVUSeolXp0k1HOZmbtJe
-xrUkA+hvKhCw+cJaft/ifJWyO9+AorM7CGBJvJtSYuqjUp4rB5+Bl4T/8IHVNgtX
-rl74RJhGjAjgSzIE+HlBKIiOD1DL8A==
-=hW06
------END PGP SIGNATURE-----
-
---qDbXVdCdHGoSgWSk--
+--- 0001/drivers/clocksource/sh_cmt.c
++++ work/drivers/clocksource/sh_cmt.c	2019-07-18 19:29:06.005414716 +0900
+@@ -928,6 +928,14 @@ static const struct of_device_id sh_cmt_
+ 		.data = &sh_cmt_info[SH_CMT0_RCAR_GEN2]
+ 	},
+ 	{
++		.compatible = "renesas,r8a7740-cmt1",
++		.data = &sh_cmt_info[SH_CMT_48BIT]
++	},
++	{
++		.compatible = "renesas,sh73a0-cmt1",
++		.data = &sh_cmt_info[SH_CMT_48BIT]
++	},
++	{
+ 		.compatible = "renesas,rcar-gen2-cmt0",
+ 		.data = &sh_cmt_info[SH_CMT0_RCAR_GEN2]
+ 	},
