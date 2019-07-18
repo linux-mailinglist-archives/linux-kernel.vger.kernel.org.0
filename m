@@ -2,110 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0C866CE70
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 15:01:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EBBA6CE78
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 15:02:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389920AbfGRNBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 09:01:37 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:62826 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726608AbfGRNBf (ORCPT
+        id S2390272AbfGRNCw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 09:02:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41392 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726715AbfGRNCw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 09:01:35 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6ICwD2U086119
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 09:01:34 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ttrxerxpu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 09:01:34 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Thu, 18 Jul 2019 14:01:31 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 18 Jul 2019 14:01:26 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6ID1O1I46399696
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Jul 2019 13:01:24 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B3CC511C04C;
-        Thu, 18 Jul 2019 13:01:24 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3B18911C04A;
-        Thu, 18 Jul 2019 13:01:24 +0000 (GMT)
-Received: from oc2783563651 (unknown [9.152.224.219])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 18 Jul 2019 13:01:24 +0000 (GMT)
-Date:   Thu, 18 Jul 2019 15:01:23 +0200
-From:   Halil Pasic <pasic@linux.ibm.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Thiago Jung Bauermann <bauerman@linux.ibm.com>, x86@kernel.org,
-        iommu@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>
-Subject: Re: [PATCH v3 6/6] s390/mm: Remove sev_active() function
-In-Reply-To: <20190718084456.GE24562@lst.de>
-References: <20190718032858.28744-1-bauerman@linux.ibm.com>
-        <20190718032858.28744-7-bauerman@linux.ibm.com>
-        <20190718084456.GE24562@lst.de>
-Organization: IBM
-X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19071813-0028-0000-0000-00000385B410
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19071813-0029-0000-0000-00002445DDD0
-Message-Id: <20190718150123.4230a00c.pasic@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-18_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=994 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907180135
+        Thu, 18 Jul 2019 09:02:52 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3697D6074F; Thu, 18 Jul 2019 13:02:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1563454971;
+        bh=sgsFyHLcYoHrD5KxPdTjsgPzLSw0xPnXtobgkrmHXVs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RGU1XexgB6vEco53IQLkEIEws93mzzPXxadmjSstr0IjgRwY/wetlhC7CShIRJfkR
+         zWZ4etKtTSv7S+F3ucot2uMEkIacFSs9Sf++/HuMZZrpaqLsj3Kro7onCxB9mm9Vw2
+         DX1oHJFspN/xi8Gm7mDBY9GNqa3JCV7HIA2L3/Xw=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 56EBD6063A;
+        Thu, 18 Jul 2019 13:02:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1563454970;
+        bh=sgsFyHLcYoHrD5KxPdTjsgPzLSw0xPnXtobgkrmHXVs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KLJE4MXBM7wLc2ww6DqgbpMeZEN2vsUva5bfrvSLK+c+Asz9Z78CKvm2ujJZ5pwSY
+         naSH2NbCypYFmmCGN/OKxaepLidUOdObw33LgVNd7Xhkz7p9MeziCXM2RNzkwYJ/jW
+         li3r/B1SGSYafZ82nbngDAdT5wDeKne9D6/AdlWM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 56EBD6063A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+To:     agross@kernel.org, linux-arm-msm@vger.kernel.org
+Cc:     bjorn.andersson@linaro.org, jcrouse@codeaurora.org,
+        rishabhb@codeaurora.org, evgreen@chromium.org,
+        linux-kernel@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH v2 0/3] soc: qcom: llcc cleanups
+Date:   Thu, 18 Jul 2019 18:32:35 +0530
+Message-Id: <20190718130238.11324-1-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 18 Jul 2019 10:44:56 +0200
-Christoph Hellwig <hch@lst.de> wrote:
+To better support future versions of llcc, consolidating the
+driver to llcc-qcom driver file, and taking care of the dependencies.
+v1 series is availale at:
+https://lore.kernel.org/patchwork/patch/1099573/
 
-> > -/* are we a protected virtualization guest? */
-> > -bool sev_active(void)
-> > -{
-> > -	return is_prot_virt_guest();
-> > -}
-> > -
-> >  bool force_dma_unencrypted(struct device *dev)
-> >  {
-> > -	return sev_active();
-> > +	return is_prot_virt_guest();
-> >  }
-> 
-> Do we want to keep the comment for force_dma_unencrypted?
+Changes since v1:
+Addressing Bjorn's comments -
+ * Not using llcc-plat as the platform driver rather using a single
+   driver file now - llcc-qcom.
+ * Removed SCT_ENTRY macro.
+ * Moved few structure definitions from include/linux path to llcc-qcom
+   driver as they are not exposed to other subsystems.
 
-Yes we do. With the comment transferred:
+Vivek Gautam (3):
+  soc: qcom: llcc cleanup to get rid of sdm845 specific driver file
+  soc: qcom: Rename llcc-slice to llcc-qcom
+  soc: qcom: Make llcc-qcom a generic driver
 
-Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+ drivers/soc/qcom/Kconfig                       |  14 +--
+ drivers/soc/qcom/Makefile                      |   3 +-
+ drivers/soc/qcom/{llcc-slice.c => llcc-qcom.c} | 155 +++++++++++++++++++++++--
+ drivers/soc/qcom/llcc-sdm845.c                 | 100 ----------------
+ include/linux/soc/qcom/llcc-qcom.h             | 104 -----------------
+ 5 files changed, 152 insertions(+), 224 deletions(-)
+ rename drivers/soc/qcom/{llcc-slice.c => llcc-qcom.c} (64%)
+ delete mode 100644 drivers/soc/qcom/llcc-sdm845.c
 
-> 
-> Otherwise looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
