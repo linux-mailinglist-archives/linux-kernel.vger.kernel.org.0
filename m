@@ -2,155 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 949FB6C4FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 04:39:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 113066C503
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 04:43:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731625AbfGRCjf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 22:39:35 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:54272 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727804AbfGRCjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 22:39:35 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9EE5BB0F0EA6FD46A821;
-        Thu, 18 Jul 2019 10:39:33 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 18 Jul
- 2019 10:39:30 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to read source block before
- invalidating it
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20190718013718.70335-1-jaegeuk@kernel.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <8049131e-4200-83c8-516a-8fa03a238e29@huawei.com>
-Date:   Thu, 18 Jul 2019 10:39:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1733057AbfGRCmi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 22:42:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:11460 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727804AbfGRCmi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 22:42:38 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6I2bkH8014658
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 22:42:37 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ttd9adag3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Jul 2019 22:42:36 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <leonardo@linux.ibm.com>;
+        Thu, 18 Jul 2019 03:42:35 +0100
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 18 Jul 2019 03:42:30 +0100
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6I2gT4Q42598804
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 18 Jul 2019 02:42:29 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D6C30AE062;
+        Thu, 18 Jul 2019 02:42:29 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE5C0AE05C;
+        Thu, 18 Jul 2019 02:42:17 +0000 (GMT)
+Received: from LeoBras.ibmuc.com (unknown [9.85.131.254])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 18 Jul 2019 02:42:16 +0000 (GMT)
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 1/1] mm/memory_hotplug: Adds option to hot-add memory in ZONE_MOVABLE
+Date:   Wed, 17 Jul 2019 23:41:34 -0300
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190718013718.70335-1-jaegeuk@kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19071802-2213-0000-0000-000003B290F7
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011449; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01233723; UDB=6.00650096; IPR=6.01015051;
+ MB=3.00027769; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-18 02:42:33
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19071802-2214-0000-0000-00005F49F2FE
+Message-Id: <20190718024133.3873-1-leonardo@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-18_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907180028
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/7/18 9:37, Jaegeuk Kim wrote:
-> f2fs_allocate_data_block() invalidates old block address and enable new block
-> address. Then, if we try to read old block by f2fs_submit_page_bio(), it will
-> give WARN due to reading invalid blocks.
-> 
-> Let's make the order sanely back.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/gc.c | 57 ++++++++++++++++++++++++++++------------------------
->  1 file changed, 31 insertions(+), 26 deletions(-)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 6691f526fa40..35c5453ab874 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -740,6 +740,7 @@ static int move_data_block(struct inode *inode, block_t bidx,
->  	block_t newaddr;
->  	int err = 0;
->  	bool lfs_mode = test_opt(fio.sbi, LFS);
-> +	bool submitted = false;
->  
->  	/* do not read out */
->  	page = f2fs_grab_cache_page(inode->i_mapping, bidx, false);
-> @@ -796,6 +797,20 @@ static int move_data_block(struct inode *inode, block_t bidx,
->  	if (lfs_mode)
->  		down_write(&fio.sbi->io_order_lock);
->  
-> +	mpage = f2fs_grab_cache_page(META_MAPPING(fio.sbi),
-> +			fio.old_blkaddr, false);
-> +	if (!mpage)
-> +		goto put_out;
+Adds an option on kernel config to make hot-added memory online in
+ZONE_MOVABLE by default.
 
-Needs to release io_order_lock.
+This would be great in systems with MEMORY_HOTPLUG_DEFAULT_ONLINE=y by
+allowing to choose which zone it will be auto-onlined
 
-> +
-> +	if (!PageUptodate(mpage)) {
-> +		err = f2fs_submit_page_bio(&fio);
-> +		if (err) {
-> +			f2fs_put_page(mpage, 1);
-> +			goto put_out;
+Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
+---
+ drivers/base/memory.c |  3 +++
+ mm/Kconfig            | 14 ++++++++++++++
+ 2 files changed, 17 insertions(+)
 
-Ditto.
+diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+index f180427e48f4..378b585785c1 100644
+--- a/drivers/base/memory.c
++++ b/drivers/base/memory.c
+@@ -670,6 +670,9 @@ static int init_memory_block(struct memory_block **memory,
+ 	mem->state = state;
+ 	start_pfn = section_nr_to_pfn(mem->start_section_nr);
+ 	mem->phys_device = arch_get_memory_phys_device(start_pfn);
++#ifdef CONFIG_MEMORY_HOTPLUG_MOVABLE
++	mem->online_type = MMOP_ONLINE_MOVABLE;
++#endif
+ 
+ 	ret = register_memory(mem);
+ 
+diff --git a/mm/Kconfig b/mm/Kconfig
+index f0c76ba47695..74e793720f43 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -180,6 +180,20 @@ config MEMORY_HOTREMOVE
+ 	depends on MEMORY_HOTPLUG && ARCH_ENABLE_MEMORY_HOTREMOVE
+ 	depends on MIGRATION
+ 
++config MEMORY_HOTPLUG_MOVABLE
++	bool "Enhance the likelihood of hot-remove"
++	depends on MEMORY_HOTREMOVE
++	help
++	  This option sets the hot-added memory zone to MOVABLE which
++	  drastically reduces the chance of a hot-remove to fail due to
++	  unmovable memory segments. Kernel memory can't be allocated in
++	  this zone.
++
++	  Say Y here if you want to have better chance to hot-remove memory
++	  that have been previously hot-added.
++	  Say N here if you want to make all hot-added memory available to
++	  kernel space.
++
+ # Heavily threaded applications may benefit from splitting the mm-wide
+ # page_table_lock, so that faults on different parts of the user address
+ # space can be handled with less contention: split it at this NR_CPUS.
+-- 
+2.20.1
 
-Thanks,
-
-> +		}
-> +		submitted = true;
-> +	}
-> +
->  	f2fs_allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
->  					&sum, CURSEG_COLD_DATA, NULL, false);
->  
-> @@ -803,44 +818,34 @@ static int move_data_block(struct inode *inode, block_t bidx,
->  				newaddr, FGP_LOCK | FGP_CREAT, GFP_NOFS);
->  	if (!fio.encrypted_page) {
->  		err = -ENOMEM;
-> -		goto recover_block;
-> -	}
-> -
-> -	mpage = f2fs_pagecache_get_page(META_MAPPING(fio.sbi),
-> -					fio.old_blkaddr, FGP_LOCK, GFP_NOFS);
-> -	if (mpage) {
-> -		bool updated = false;
-> -
-> -		if (PageUptodate(mpage)) {
-> -			memcpy(page_address(fio.encrypted_page),
-> -					page_address(mpage), PAGE_SIZE);
-> -			updated = true;
-> -		}
->  		f2fs_put_page(mpage, 1);
-> -		invalidate_mapping_pages(META_MAPPING(fio.sbi),
-> -					fio.old_blkaddr, fio.old_blkaddr);
-> -		if (updated)
-> -			goto write_page;
-> +		goto recover_block;
->  	}
->  
-> -	err = f2fs_submit_page_bio(&fio);
-> -	if (err)
-> -		goto put_page_out;
-> -
-> -	/* write page */
-> -	lock_page(fio.encrypted_page);
-> +	if (!submitted)
-> +		goto write_page;
->  
-> -	if (unlikely(fio.encrypted_page->mapping != META_MAPPING(fio.sbi))) {
-> +	/* read source block */
-> +	lock_page(mpage);
-> +	if (unlikely(mpage->mapping != META_MAPPING(fio.sbi))) {
->  		err = -EIO;
-> +		f2fs_put_page(mpage, 1);
->  		goto put_page_out;
->  	}
-> -	if (unlikely(!PageUptodate(fio.encrypted_page))) {
-> +	if (unlikely(!PageUptodate(mpage))) {
->  		err = -EIO;
-> +		f2fs_put_page(mpage, 1);
->  		goto put_page_out;
->  	}
-> -
->  write_page:
-> +	/* write target block */
->  	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA, true, true);
-> +	memcpy(page_address(fio.encrypted_page),
-> +				page_address(mpage), PAGE_SIZE);
-> +	f2fs_put_page(mpage, 1);
-> +	invalidate_mapping_pages(META_MAPPING(fio.sbi),
-> +				fio.old_blkaddr, fio.old_blkaddr);
-> +
->  	set_page_dirty(fio.encrypted_page);
->  	if (clear_page_dirty_for_io(fio.encrypted_page))
->  		dec_page_count(fio.sbi, F2FS_DIRTY_META);
-> 
