@@ -2,227 +2,673 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33E616C462
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 03:43:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A46F6C49C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 03:45:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731800AbfGRBnA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 21:43:00 -0400
-Received: from mail-eopbgr10060.outbound.protection.outlook.com ([40.107.1.60]:29441
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727804AbfGRBnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 21:43:00 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=On+J+56MN0+7umQWgArBfdK3LAUlyWGe4C+2HAORAKDWLeMydNrxgl2xSgoWmJ+duyHURFELRNB8V+xuOVBGT/jyCXqzt2KXeMAOMNS0PiGuByqBAqkg6KbpK38P7YYhR+yuI7+isIAfBsZ3jfOtymyHSo+7amuN3uOz0k7tDrqkYlR6UaGn+hWhppyCcxPD4Cx2a0cNLVT/pad+qeFS+hFPag++/71Wi6VnyGRKYQJqparbbrqWID3b4bsi41Vzzwp36U1DZdFuDXUGMtBfQRtr3FlSulbUTEJDqddhRejz7LLxUSQBeY8V/zXgY7Z/3VvXAk0/ymkmis48Y7OtiQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p/0gsWW2r9nUPujKn+CUXWuDZt7h3TiMWe7F8dTj2xw=;
- b=CoRbN/+C55J2u/94ldHm2wixbWilyEanDf6OzGnN9+YQXAAF/D24gzoTHtbxS4D34rxt/SbW08pXZLnRg5+B9DGa9hWym3FKLaebz6ZS9mndzvJc5fHzSfNZfVqFO8HiLX71Bkdu5qeAER5yHUG2x7ONiVdQa7DRBt2Bn94tjuXPL7UbxjwfXsyQSAWmhhmVsnBZGT76/aWGq6qN30XOsGUd0W9i8WSi3wWGOPVXdoA/wdeTbb2zSlaIgRIFcDUPonkpsTvpyn37n68hMYPPCICHzN9VAp7A2AGCuDCtFLkrUVk6M+dwIRpuzHfXJVCxE/RY/mGA8zf6iWPLk9ypHg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
- header.d=nxp.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p/0gsWW2r9nUPujKn+CUXWuDZt7h3TiMWe7F8dTj2xw=;
- b=Ub2C+/NuL0XHYMrcxyKatb02gQYHekhxspcGOYfLpRPVGURBiUaLxNR0pOV9+gBcrzy3yxh60/15Ud8yQwBVE7cf54FzSvW4qLAVh0FcEsycOFXV30Rjn/zW/z2EHZQh2kF6E1uIXR2IA2+ubaVH4O7bFWwwfMZEJOzgL02B644=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB4434.eurprd04.prod.outlook.com (52.135.145.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.11; Thu, 18 Jul 2019 01:42:53 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::2023:c0e5:8a63:2e47]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::2023:c0e5:8a63:2e47%5]) with mapi id 15.20.2094.011; Thu, 18 Jul 2019
- 01:42:53 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Rob Herring <robh+dt@kernel.org>
-CC:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "andre.przywara@arm.com" <andre.przywara@arm.com>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH v3 1/2] dt-bindings: mailbox: add binding doc for the ARM
- SMC/HVC mailbox
-Thread-Topic: [PATCH v3 1/2] dt-bindings: mailbox: add binding doc for the ARM
- SMC/HVC mailbox
-Thread-Index: AQHVOvV8miufREPgWk29kTcXKZEuBabL6GiAgAO0YqA=
-Date:   Thu, 18 Jul 2019 01:42:52 +0000
-Message-ID: <AM0PR04MB44816D1B4251E7DDE34C5BDE88C80@AM0PR04MB4481.eurprd04.prod.outlook.com>
-References: <1563184103-8493-1-git-send-email-peng.fan@nxp.com>
- <1563184103-8493-2-git-send-email-peng.fan@nxp.com>
- <CAL_JsqJkt7pX9F9NggL2EXxS=2oiF07VJCOqVTvF-Zwz=cjmvg@mail.gmail.com>
-In-Reply-To: <CAL_JsqJkt7pX9F9NggL2EXxS=2oiF07VJCOqVTvF-Zwz=cjmvg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c05f2507-53f7-4350-5972-08d70b213ff6
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4434;
-x-ms-traffictypediagnostic: AM0PR04MB4434:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <AM0PR04MB44345D11C9EE48D4CDDD60A588C80@AM0PR04MB4434.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 01026E1310
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(396003)(376002)(366004)(346002)(199004)(189003)(186003)(7696005)(44832011)(26005)(68736007)(76176011)(486006)(99286004)(102836004)(6506007)(53936002)(53546011)(15650500001)(14444005)(33656002)(6436002)(52536014)(3846002)(2906002)(64756008)(81156014)(256004)(476003)(11346002)(446003)(8676002)(55016002)(6306002)(9686003)(6116002)(54906003)(86362001)(14454004)(316002)(25786009)(478600001)(6246003)(7736002)(4326008)(8936002)(229853002)(71200400001)(305945005)(76116006)(66556008)(5660300002)(81166006)(74316002)(66446008)(66946007)(66476007)(66066001)(71190400001)(45080400002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4434;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: OraqSPcUiNVQFMPUjigpl7L2hcZKsVn7mUavw+EKN9wBtJHCwMo2dgqRyc1cIRjlHgVIuimR2GR97JZfrgDG5nZ7pOFVPmw7kHdW0lzds2o1y4YlMktR4KRiYyHgSKmocaparUq6LhUgqi7uGyDU/CNUHTbnyh2/QfT8rjbDl965hPZgaGqa8qeZAm+zQ9Sv/FcENumC+jXkN1WhH5yVW0DQQfrCmgq8+VU+S5M7FrmaZRoe3MszAWBUGZdsHORZF8giI/z0x4YmB4au7bZ10xv9kbZyUYv7DJhaNxZ+6ppc0D3t8CHld+RhOJSbPyJTIFrIhorDeqg793U03+eRtvkCvOHMmk0LyuqTkJOQYL+9Pgfk08szeB+rVP/eS+aLz8+jvhW9rculLJfYcJ10yfPlXRP4LDKiq7NqFnJH7u8=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c05f2507-53f7-4350-5972-08d70b213ff6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2019 01:42:52.9910
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: peng.fan@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4434
+        id S2389347AbfGRBpH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 21:45:07 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:41681 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389318AbfGRBpB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 21:45:01 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 9244521B6B;
+        Wed, 17 Jul 2019 21:45:00 -0400 (EDT)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Wed, 17 Jul 2019 21:45:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm3; bh=s1qt3Qibxm6g4Vlk9mLJ8LpBCY1+UU4
+        OMqSSBQKD17U=; b=Mi7mXRvCui2lfxJ/QqX4g/vJjwWHx+Nv9zvNRQu4/pxnR2+
+        F/x8au7odQvblv4dq6027PXSmYtSyAWiWuKAsgmtzUfAnL2fCqrY3rPbbbg7eoMp
+        tqJLAeHv5tsYBsyb36CCVSwpcPVRrV7mdhCLT2bAZnBz6P93EwloHpS0T38qU4Mt
+        N6PTGrAsSTx6VxdETqJHLXBa99YGyeMzUol2FrH4BtZc8ZPyZm16bvAjZAjFXDMO
+        XmyL1vdowc2OX1gItYE7dO8BiRWu1qSraoJBTSHC6EsumWp40vx0K8hfpgZxb9f0
+        DzHZDhdXcaFvGGPejRWeLU7CBCizcl0xZjbUlIg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=s1qt3Q
+        ibxm6g4Vlk9mLJ8LpBCY1+UU4OMqSSBQKD17U=; b=H2N4oKhb0j0b36nyQsHlCS
+        8uIAW4u84RHJbQv/Gk/USddRZ4YQFyl9XnnD5nHKJ/n2uGjIH0+IqomxXq+tzLQV
+        yrDLQhGi4OaNly0SctYvgOvY1r/Gx9KFlhQO9FH+D3OfP0FQN1la4Zk5Wyw9axon
+        FTEXw5h4o2PmpUqZnlf/DDjIujGQaiGoN04V4DxDhALVip+l8ViKXTko90vicq8T
+        +snYVDH4hPdpXRqLTuLsvE6L+5NM7NAryl/BLeks+6gEfufLoX3dLlYgRZFcJOYn
+        ULC0jOWuITFuz+pwQZ0schvvW0wFc4j4517tIdPbUDDzm667bjJnHjvPHs1xfdoQ
+        ==
+X-ME-Sender: <xms:G88vXWSb8qGvTYhZOTadxHVPgiPM-tQPY-v2jYh6JJpWrRQPlWJWqQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrieeggdegkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
+    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucffohhmrg
+    hinhepkhgvrhhnvghlrdhorhhgnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhgurhgv
+    fiesrghjrdhiugdrrghunecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:G88vXdCC8X9HixU1qR65xmX6LUCvPviQYJPbS-0CwP-Mv_LwAusQSg>
+    <xmx:G88vXZJNu7o6K8LhxA40ryxxiaGpUUqNANzGlA_VGAAzaObIrxCDdQ>
+    <xmx:G88vXf_EQbe9CJXs2qxNxJyGqnPmMRIIb65qHtsYmMBTaXvDWDnmAQ>
+    <xmx:HM8vXSl4sJ-s-ZSzs25dKdmKILadIQNW3oHWnWaw3FCNUe4bCaUmXA>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id F0D08E03EA; Wed, 17 Jul 2019 21:44:58 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.6-731-g19d3b16-fmstable-20190627v1
+Mime-Version: 1.0
+Message-Id: <87073970-39cd-43e1-8197-d794537fa58a@www.fastmail.com>
+In-Reply-To: <1563399020-16905-1-git-send-email-hongweiz@ami.com>
+References: <1563399020-16905-1-git-send-email-hongweiz@ami.com>
+Date:   Thu, 18 Jul 2019 11:14:32 +0930
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Hongwei Zhang" <hongweiz@ami.com>,
+        "Bartosz Golaszewski" <bgolaszewski@baylibre.com>,
+        "Joel Stanley" <joel@jms.id.au>,
+        "Linus Walleij" <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3 v4] ARM: dts: aspeed: Add SGPIO driver
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgUm9iLA0KDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjMgMS8yXSBkdC1iaW5kaW5nczogbWFp
-bGJveDogYWRkIGJpbmRpbmcgZG9jIGZvciB0aGUgQVJNDQo+IFNNQy9IVkMgbWFpbGJveA0KPiAN
-Cj4gT24gTW9uLCBKdWwgMTUsIDIwMTkgYXQgNDoxMCBBTSBQZW5nIEZhbiA8cGVuZy5mYW5Abnhw
-LmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBGcm9tOiBQZW5nIEZhbiA8cGVuZy5mYW5AbnhwLmNvbT4N
-Cj4gPg0KPiA+IFRoZSBBUk0gU01DL0hWQyBtYWlsYm94IGJpbmRpbmcgZGVzY3JpYmVzIGEgZmly
-bXdhcmUgaW50ZXJmYWNlIHRvDQo+ID4gdHJpZ2dlciBhY3Rpb25zIGluIHNvZnR3YXJlIGxheWVy
-cyBydW5uaW5nIGluIHRoZSBFTDIgb3IgRUwzIGV4Y2VwdGlvbiBsZXZlbHMuDQo+ID4gVGhlIHRl
-cm0gIkFSTSIgaGVyZSByZWxhdGVzIHRvIHRoZSBTTUMgaW5zdHJ1Y3Rpb24gYXMgcGFydCBvZiB0
-aGUgQVJNDQo+ID4gaW5zdHJ1Y3Rpb24gc2V0LCBub3QgYXMgYSBzdGFuZGFyZCBlbmRvcnNlZCBi
-eSBBUk0gTHRkLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogUGVuZyBGYW4gPHBlbmcuZmFuQG54
-cC5jb20+DQo+ID4gLS0tDQo+ID4NCj4gPiBWMzoNCj4gPiAgQ29udmVydCB0byB5YW1sDQo+ID4g
-IERyb3AgaW50ZXJydXB0DQo+ID4gIEludHJvdWRjZSB0cmFuc3BvcnRzIHRvIGluZGljYXRlIG1l
-bS9yZWcgIFRoZSBmdW5jIGlkIGlzIHN0aWxsIGtlcHQNCj4gPiBhcyBvcHRpb25hbCwgYmVjYXVz
-ZSBsaWtlIFNDTUkgaXQgb25seSAgY2FyZXMgYWJvdXQgbWVzc2FnZS4NCj4gPg0KPiA+IFYyOg0K
-PiA+ICBJbnRyb2R1Y2UgaW50ZXJydXB0cyBhcyBhIHByb3BlcnR5Lg0KPiA+DQo+ID4gIC4uLi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL21haWxib3gvYXJtLXNtYy55YW1sICAgICAgIHwgMTI0DQo+ICsr
-KysrKysrKysrKysrKysrKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMTI0IGluc2VydGlvbnMo
-KykNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0DQo+ID4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL21haWxib3gvYXJtLXNtYy55YW1sDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21haWxib3gvYXJtLXNtYy55YW1sDQo+ID4g
-Yi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWFpbGJveC9hcm0tc21jLnlhbWwN
-Cj4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiA+IGluZGV4IDAwMDAwMDAwMDAwMC4uZGE5YjFh
-MDNiYzRlDQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9tYWlsYm94L2FybS1zbWMueWFtbA0KPiA+IEBAIC0wLDAgKzEsMTI0IEBA
-DQo+ID4gKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChHUEwtMi4wIE9SIEJTRC0yLUNsYXVz
-ZSkgJVlBTUwgMS4yDQo+ID4gKy0tLQ0KPiA+ICskaWQ6DQo+ID4gK2h0dHBzOi8vZXVyMDEuc2Fm
-ZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9vay5jb20vP3VybD1odHRwJTNBJTJGJTJGZGV2aQ0KPiA+
-DQo+ICtjZXRyZWUub3JnJTJGc2NoZW1hcyUyRm1haWxib3glMkZhcm0tc21jLnlhbWwlMjMmYW1w
-O2RhdGE9MDIlNw0KPiBDMDElN0NwDQo+ID4NCj4gK2VuZy5mYW4lNDBueHAuY29tJTdDNDI0ZTBk
-MWMxOWMzNDQ0MDZiNjAwOGQ3MDk0NjU1OTElN0M2ODZlYTENCj4gZDNiYzJiNGMNCj4gPg0KPiAr
-NmZhOTJjZDk5YzVjMzAxNjM1JTdDMCU3QzAlN0M2MzY5ODgwNzAwMDI3NzI3MDUmYW1wO3NkYXRh
-PURWDQo+IHN0USUyRmh1Tg0KPiA+ICtjNjclMkJ0MDh5WGliUXJYN3NJZW9jSHppWXAzZGtrZVJv
-SjQlM0QmYW1wO3Jlc2VydmVkPTANCj4gPiArJHNjaGVtYToNCj4gPiAraHR0cHM6Ly9ldXIwMS5z
-YWZlbGlua3MucHJvdGVjdGlvbi5vdXRsb29rLmNvbS8/dXJsPWh0dHAlM0ElMkYlMkZkZXZpDQo+
-ID4NCj4gK2NldHJlZS5vcmclMkZtZXRhLXNjaGVtYXMlMkZjb3JlLnlhbWwlMjMmYW1wO2RhdGE9
-MDIlN0MwMSU3Q3BlDQo+IG5nLmZhbiUNCj4gPg0KPiArNDBueHAuY29tJTdDNDI0ZTBkMWMxOWMz
-NDQ0MDZiNjAwOGQ3MDk0NjU1OTElN0M2ODZlYTFkM2JjMmI0DQo+IGM2ZmE5MmNkOQ0KPiA+DQo+
-ICs5YzVjMzAxNjM1JTdDMCU3QzAlN0M2MzY5ODgwNzAwMDI3ODI2OTgmYW1wO3NkYXRhPUQlMkZh
-MlNVDQo+IFclMkZDcWNsSmR5DQo+ID4gK1JiRmdncXFMJTJCQUV1bUVSMEszckFhaXNZMmJNYyUz
-RCZhbXA7cmVzZXJ2ZWQ9MA0KPiA+ICsNCj4gPiArdGl0bGU6IEFSTSBTTUMgTWFpbGJveCBJbnRl
-cmZhY2UNCj4gPiArDQo+ID4gK21haW50YWluZXJzOg0KPiA+ICsgIC0gUGVuZyBGYW4gPHBlbmcu
-ZmFuQG54cC5jb20+DQo+ID4gKw0KPiA+ICtkZXNjcmlwdGlvbjogfA0KPiA+ICsgIFRoaXMgbWFp
-bGJveCB1c2VzIHRoZSBBUk0gc21jIChzZWN1cmUgbW9uaXRvciBjYWxsKSBhbmQgaHZjDQo+ID4g
-KyhoeXBlcnZpc29yDQo+ID4gKyAgY2FsbCkgaW5zdHJ1Y3Rpb24gdG8gdHJpZ2dlciBhIG1haWxi
-b3gtY29ubmVjdGVkIGFjdGl2aXR5IGluDQo+ID4gK2Zpcm13YXJlLA0KPiA+ICsgIGV4ZWN1dGlu
-ZyBvbiB0aGUgdmVyeSBzYW1lIGNvcmUgYXMgdGhlIGNhbGxlci4gQnkgbmF0dXJlIHRoaXMNCj4g
-PiArb3BlcmF0aW9uDQo+ID4gKyAgaXMgc3luY2hyb25vdXMgYW5kIHRoaXMgbWFpbGJveCBwcm92
-aWRlcyBubyB3YXkgZm9yIGFzeW5jaHJvbm91cw0KPiA+ICttZXNzYWdlcw0KPiA+ICsgIHRvIGJl
-IGRlbGl2ZXJlZCB0aGUgb3RoZXIgd2F5IHJvdW5kLCBmcm9tIGZpcm13YXJlIHRvIHRoZSBPUywg
-YnV0DQo+ID4gKyAgYXN5bmNocm9ub3VzIG5vdGlmaWNhdGlvbiBjb3VsZCBhbHNvIGJlIHN1cHBv
-cnRlZC4gSG93ZXZlciB0aGUNCj4gPiArdmFsdWUgb2YNCj4gPiArICByMC93MC94MCB0aGUgZmly
-bXdhcmUgcmV0dXJucyBhZnRlciB0aGUgc21jIGNhbGwgaXMgZGVsaXZlcmVkIGFzIGENCj4gPiAr
-cmVjZWl2ZWQNCj4gPiArICBtZXNzYWdlIHRvIHRoZSBtYWlsYm94IGZyYW1ld29yaywgc28gYSBz
-eW5jaHJvbm91cyBjb21tdW5pY2F0aW9uDQo+ID4gK2NhbiBiZQ0KPiA+ICsgIGVzdGFibGlzaGVk
-LCBmb3IgYSBhc3luY2hyb25vdXMgbm90aWZpY2F0aW9uLCBubyB2YWx1ZSB3aWxsIGJlIHJldHVy
-bmVkLg0KPiA+ICsgIFRoZSBleGFjdCBtZWFuaW5nIG9mIGJvdGggdGhlIGFjdGlvbiB0aGUgbWFp
-bGJveCB0cmlnZ2VycyBhcyB3ZWxsDQo+ID4gK2FzIHRoZQ0KPiA+ICsgIHJldHVybiB2YWx1ZSBp
-cyBkZWZpbmVkIGJ5IHRoZWlyIHVzZXJzIGFuZCBpcyBub3Qgc3ViamVjdCB0byB0aGlzIGJpbmRp
-bmcuDQo+ID4gKw0KPiA+ICsgIE9uZSB1c2UgY2FzZSBvZiB0aGlzIG1haWxib3ggaXMgdGhlIFND
-TUkgaW50ZXJmYWNlLCB3aGljaCB1c2VzDQo+ID4gKyBzaGFyZWQgbWVtb3J5ICB0byB0cmFuc2Zl
-ciBjb21tYW5kcyBhbmQgcGFyYW1ldGVycywgYW5kIGEgbWFpbGJveA0KPiB0bw0KPiA+ICsgdHJp
-Z2dlciBhIGZ1bmN0aW9uICBjYWxsLiBUaGlzIGFsbG93cyBTb0NzIHdpdGhvdXQgYSBzZXBhcmF0
-ZQ0KPiA+ICsgbWFuYWdlbWVudCBwcm9jZXNzb3IgKG9yIHdoZW4gIHN1Y2ggYSBwcm9jZXNzb3Ig
-aXMgbm90IGF2YWlsYWJsZSBvcg0KPiA+ICsgdXNlZCkgdG8gdXNlIHRoaXMgc3RhbmRhcmRpemVk
-ICBpbnRlcmZhY2UgYW55d2F5Lg0KPiA+ICsNCj4gPiArICBUaGlzIGJpbmRpbmcgZGVzY3JpYmVz
-IG5vIGhhcmR3YXJlLCBidXQgZXN0YWJsaXNoZXMgYSBmaXJtd2FyZQ0KPiBpbnRlcmZhY2UuDQo+
-ID4gKyAgVXBvbiByZWNlaXZpbmcgYW4gU01DIHVzaW5nIG9uZSBvZiB0aGUgZGVzY3JpYmVkIFNN
-QyBmdW5jdGlvbg0KPiA+ICsgaWRlbnRpZmllcnMsICB0aGUgZmlybXdhcmUgaXMgZXhwZWN0ZWQg
-dG8gdHJpZ2dlciBzb21lIG1haWxib3ggY29ubmVjdGVkDQo+IGZ1bmN0aW9uYWxpdHkuDQo+ID4g
-KyAgVGhlIGNvbW11bmljYXRpb24gZm9sbG93cyB0aGUgQVJNIFNNQyBjYWxsaW5nIGNvbnZlbnRp
-b24uDQo+ID4gKyAgRmlybXdhcmUgZXhwZWN0cyBhbiBTTUMgZnVuY3Rpb24gaWRlbnRpZmllciBp
-biByMCBvciB3MC4gVGhlDQo+ID4gKyBzdXBwb3J0ZWQgIGlkZW50aWZpZXJzIGFyZSBwYXNzZWQg
-ZnJvbSBjb25zdW1lcnMsIG9yIGxpc3RlZCBpbiB0aGUNCj4gPiArIHRoZSBhcm0sZnVuYy1pZHMg
-IHByb3BlcnRpZXMgYXMgZGVzY3JpYmVkIGJlbG93LiBUaGUgZmlybXdhcmUgY2FuDQo+ID4gKyBy
-ZXR1cm4gb25lIHZhbHVlIGluICB0aGUgZmlyc3QgU01DIHJlc3VsdCByZWdpc3RlciwgaXQgaXMg
-ZXhwZWN0ZWQNCj4gPiArIHRvIGJlIGFuIGVycm9yIHZhbHVlLCAgd2hpY2ggc2hhbGwgYmUgcHJv
-cGFnYXRlZCB0byB0aGUgbWFpbGJveCBjbGllbnQuDQo+ID4gKw0KPiA+ICsgIEFueSBjb3JlIHdo
-aWNoIHN1cHBvcnRzIHRoZSBTTUMgb3IgSFZDIGluc3RydWN0aW9uIGNhbiBiZSB1c2VkLCBhcw0K
-PiA+ICsgbG9uZyBhcyAgYSBmaXJtd2FyZSBjb21wb25lbnQgcnVubmluZyBpbiBFTDMgb3IgRUwy
-IGlzIGhhbmRsaW5nIHRoZXNlDQo+IGNhbGxzLg0KPiA+ICsNCj4gPiArcHJvcGVydGllczoNCj4g
-PiArICBjb21wYXRpYmxlOg0KPiA+ICsgICAgY29uc3Q6IGFybSxzbWMtbWJveA0KPiA+ICsNCj4g
-PiArICAiI21ib3gtY2VsbHMiOg0KPiA+ICsgICAgY29uc3Q6IDENCj4gPiArDQo+ID4gKyAgYXJt
-LG51bS1jaGFuczoNCj4gPiArICAgIGRlc2NyaXB0aW9uOiBUaGUgbnVtYmVyIG9mIGNoYW5uZWxz
-IHN1cHBvcnRlZC4NCj4gPiArICAgICRyZWY6IC9zY2hlbWFzL3R5cGVzLnlhbWwjL2RlZmluaXRp
-b25zL3VpbnQzMg0KPiANCj4gQ29uc3RyYWludHM/IDAgaXMgdmFsaWQ/IDJeMzI/DQoNCjAgaXMg
-bm90IHZhbGlkLiBUaGVyZSBzaG91bGQgYmUgbGltaXRlZCBjaGFubmVscywgYnV0IGRlcGVuZHMg
-b24gZmlybXdhcmUgZGVzaWduLg0KDQo+IA0KPiA+ICsNCj4gPiArICBtZXRob2Q6DQo+ID4gKyAg
-ICBpdGVtczoNCj4gPiArICAgICAgLSBlbnVtOg0KPiA+ICsgICAgICAgICAgLSBzbWMNCj4gPiAr
-ICAgICAgICAgIC0gaHZjDQo+ID4gKw0KPiA+ICsgIHRyYW5zcG9ydHM6DQo+ID4gKyAgICBpdGVt
-czoNCj4gPiArICAgICAgLSBlbnVtOg0KPiA+ICsgICAgICAgICAgLSBtZW0NCj4gPiArICAgICAg
-ICAgIC0gcmVnDQo+IA0KPiBXaGF0IGlmIHNvbWVvbmUgd2FudHMgdG8gY29uZmlndXJlIHRoaXMg
-cGVyIGNoYW5uZWw/IFBlcmhhcHMgI21ib3gtY2VsbHMNCj4gc2hvdWxkIGJlIDIgYW5kIHRoaXMg
-Y2FuIGJlIGEgY2xpZW50IHBhcmFtZXRlci4NCg0KSSBuZWVkIHRvIGNoZWNrLiBDdXJyZW50bHkg
-SSBvbmx5IHVzZSBvbmUgdHlwZS4gVGhlcmUgbWlnaHQgYmUgcGVvcGxlDQp3YW50IHRvIHVzZSBk
-aWZmZXJlbnQgdHJhbnNwb3J0cyBmb3IgZWFjaCBjaGFubmVscy4NCg0KPiANCj4gTWluaW1hbGx5
-LCB0aGlzIG5lZWRzIGEgJ2FybScgdmVuZG9yIHByZWZpeCBpZiBpdCBzdGF5cy4NCg0KImFybSx0
-cmFuc3BvcnRzIiBpbiB2NC4NCg0KPiANCj4gPiArDQo+ID4gKyAgYXJtLGZ1bmMtaWRzOg0KPiA+
-ICsgICAgZGVzY3JpcHRpb246IHwNCj4gPiArICAgICAgQW4gYXJyYXkgb2YgMzItYml0IHZhbHVl
-cyBzcGVjaWZ5aW5nIHRoZSBmdW5jdGlvbiBJRHMgdXNlZCBieSBlYWNoDQo+ID4gKyAgICAgIG1h
-aWxib3ggY2hhbm5lbC4gVGhvc2UgZnVuY3Rpb24gSURzIGZvbGxvdyB0aGUgQVJNIFNNQyBjYWxs
-aW5nDQo+ID4gKyAgICAgIGNvbnZlbnRpb24gc3RhbmRhcmQgWzFdLg0KPiANCj4gV2hhdCdzIHRo
-ZSBkZWZhdWx0IGlmIG5vdCBzcGVjaWZpZWQ/IE9yIHRoaXMgc2hvdWxkIGJlIHJlcXVpcmVkPw0K
-DQpJZiBub3Qgc3BlY2lmaWVkLCBpdCBtZWFucyB0aGUgY2xpZW50IGZpcm13YXJlIGRyaXZlciB3
-aWxsIHBhc3MgaXQgdG8gbWFpbGJveCBkcml2ZXIuDQoNClRoYW5rcywNClBlbmcuDQoNCj4gDQo+
-ID4gKw0KPiA+ICsgICAgICBUaGVyZSBpcyBvbmUgaWRlbnRpZmllciBwZXIgY2hhbm5lbCBhbmQg
-dGhlIG51bWJlciBvZiBzdXBwb3J0ZWQNCj4gPiArICAgICAgY2hhbm5lbHMgaXMgZGV0ZXJtaW5l
-ZCBieSB0aGUgbGVuZ3RoIG9mIHRoaXMgYXJyYXkuDQo+ID4gKyAgICBtaW5JdGVtczogMA0KPiA+
-ICsgICAgbWF4SXRlbXM6IDQwOTYgICAjIFNob3VsZCBiZSBlbm91Z2g/DQo+ID4gKw0KPiA+ICty
-ZXF1aXJlZDoNCj4gPiArICAtIGNvbXBhdGlibGUNCj4gPiArICAtICIjbWJveC1jZWxscyINCj4g
-PiArICAtIGFybSxudW0tY2hhbnMNCj4gPiArICAtIHRyYW5zcG9ydHMNCj4gPiArICAtIG1ldGhv
-ZA0KPiA+ICsNCj4gPiArZXhhbXBsZXM6DQo+ID4gKyAgLSB8DQo+ID4gKyAgICBzcmFtQDkxMDAw
-MCB7DQo+ID4gKyAgICAgIGNvbXBhdGlibGUgPSAibW1pby1zcmFtIjsNCj4gPiArICAgICAgcmVn
-ID0gPDB4MCAweDkzZjAwMCAweDAgMHgxMDAwPjsNCj4gPiArICAgICAgI2FkZHJlc3MtY2VsbHMg
-PSA8MT47DQo+ID4gKyAgICAgICNzaXplLWNlbGxzID0gPDE+Ow0KPiA+ICsgICAgICByYW5nZXMg
-PSA8MCAweDAgMHg5M2YwMDAgMHgxMDAwPjsNCj4gPiArDQo+ID4gKyAgICAgICAgY3B1X3NjcF9s
-cHJpOiBzY3Atc2htZW1AMCB7DQo+ID4gKyAgICAgICAgICBjb21wYXRpYmxlID0gImFybSxzY21p
-LXNobWVtIjsNCj4gPiArICAgICAgICAgIHJlZyA9IDwweDAgMHgyMDA+Ow0KPiA+ICsgICAgICAg
-IH07DQo+ID4gKw0KPiA+ICsgICAgICAgIGNwdV9zY3BfaHByaTogc2NwLXNobWVtQDIwMCB7DQo+
-ID4gKyAgICAgICAgICBjb21wYXRpYmxlID0gImFybSxzY21pLXNobWVtIjsNCj4gPiArICAgICAg
-ICAgIHJlZyA9IDwweDIwMCAweDIwMD47DQo+ID4gKyAgICAgICAgfTsNCj4gPiArICAgIH07DQo+
-ID4gKw0KPiA+ICsgICAgZmlybXdhcmUgew0KPiA+ICsgICAgICBzbWNfbWJveDogbWFpbGJveCB7
-DQo+ID4gKyAgICAgICAgI21ib3gtY2VsbHMgPSA8MT47DQo+ID4gKyAgICAgICAgY29tcGF0aWJs
-ZSA9ICJhcm0sc21jLW1ib3giOw0KPiA+ICsgICAgICAgIG1ldGhvZCA9ICJzbWMiOw0KPiA+ICsg
-ICAgICAgIGFybSxudW0tY2hhbnMgPSA8MHgyPjsNCj4gPiArICAgICAgICB0cmFuc3BvcnRzID0g
-Im1lbSI7DQo+ID4gKyAgICAgICAgLyogT3B0aW9uYWwgKi8NCj4gPiArICAgICAgICBhcm0sZnVu
-Yy1pZHMgPSA8MHhjMjAwMDBmZT4sIDwweGMyMDAwMGZmPjsNCj4gPiArICAgICAgfTsNCj4gPiAr
-DQo+ID4gKyAgICAgIHNjbWkgew0KPiA+ICsgICAgICAgIGNvbXBhdGlibGUgPSAiYXJtLHNjbWki
-Ow0KPiA+ICsgICAgICAgIG1ib3hlcyA9IDwmbWFpbGJveCAwICZtYWlsYm94IDE+Ow0KPiA+ICsg
-ICAgICAgIG1ib3gtbmFtZXMgPSAidHgiLCAicngiOw0KPiA+ICsgICAgICAgIHNobWVtID0gPCZj
-cHVfc2NwX2xwcmkgJmNwdV9zY3BfaHByaT47DQo+ID4gKyAgICAgIH07DQo+ID4gKyAgICB9Ow0K
-PiA+ICsNCj4gPiArLi4uDQo+ID4gLS0NCj4gPiAyLjE2LjQNCj4gPg0K
+Hello Hongwei,
+
+The driver is shaping up! I have a few remaining nitpicks below:
+
+The first is the patch subject:
+
+[PATCH 2/3 v4] ARM: dts: aspeed: Add SGPIO driver
+
+I think one of the first iterations of the patch included the devicetree changes. It doesn't
+any more, as the devicetree updates should be done in a separate patch, however the
+subject is now inaccurate. Disregarding the [PATCH ...] prefix, it should be:
+
+gpio: aspeed: Add SPGIO driver
+
+As for the [PATCH ...] prefix business, both your bindings patch and your driver patch are
+listed as patch 2/3, and there's no third patch in the series. `git format-patch` takes
+care of all this for you - I encourage you to get `git send-email` working so you can
+use it to send the patches produced from `git format-patch` (as they won't have these
+problems). Further, if you're sending multiple patches it's useful to include a cover
+letter as the patches will be properly threaded underneath it, which helps keep related
+patches together and provides a place to talk about your patches that isn't the commit
+message.
+
+On Thu, 18 Jul 2019, at 07:00, Hongwei Zhang wrote:
+> Add SGPIO driver support for Aspeed AST2500 SoC.
+> 
+> Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
+> ---
+>  drivers/gpio/sgpio-aspeed.c | 518 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 518 insertions(+)
+>  create mode 100644 drivers/gpio/sgpio-aspeed.c
+> 
+> diff --git a/drivers/gpio/sgpio-aspeed.c b/drivers/gpio/sgpio-aspeed.c
+> new file mode 100644
+> index 0000000..715052c
+> --- /dev/null
+> +++ b/drivers/gpio/sgpio-aspeed.c
+> @@ -0,0 +1,518 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright 2019 American Megatrends International LLC.
+> + *
+> + * Author: Karthikeyan Mani <karthikeyanm@amiindia.co.in>
+> + */
+> +
+> +#include <linux/gpio/driver.h>
+> +#include <linux/gpio/aspeed.h>
+> +#include <linux/hashtable.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/init.h>
+> +#include <linux/clk.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/string.h>
+> +#include <linux/gpio.h>
+
+It would be nice if these were sorted alphabetically. Not overly fussed though.
+
+> +
+> +#define MAX_NR_SGPIO			80
+> +
+> +#define ASPEED_SGPIO_CTRL		0x54
+> +
+> +#define ASPEED_SGPIO_PINS_MASK		GENMASK(9, 6)
+> +#define ASPEED_SGPIO_CLK_DIV_MASK	GENMASK(31, 16)
+> +#define ASPEED_SGPIO_ENABLE		BIT(0)
+> +
+> +struct aspeed_sgpio {
+> +	struct gpio_chip chip;
+> +	struct clk *pclk;
+> +	spinlock_t lock;
+> +	void __iomem *base;
+> +	uint32_t dir_in[3];
+> +	int irq;
+> +};
+> +
+> +struct aspeed_sgpio_bank {
+> +	uint16_t    val_regs;
+> +	uint16_t    rdata_reg;
+> +	uint16_t    irq_regs;
+> +	const char  names[4][3];
+> +};
+> +
+> +/*
+> + * Note: The "value" register returns the input value when the GPIO is
+> + *	 configured as an input.
+> + *
+> + *	 The "rdata" register returns the output value when the GPIO is
+> + *	 configured as an output.
+> + */
+> +static const struct aspeed_sgpio_bank aspeed_sgpio_banks[] = {
+> +	{
+> +		.val_regs = 0x0000,
+> +		.rdata_reg = 0x0070,
+> +		.irq_regs = 0x0004,
+> +		.names = { "A", "B", "C", "D" },
+> +	},
+> +	{
+> +		.val_regs = 0x001C,
+> +		.rdata_reg = 0x0074,
+> +		.irq_regs = 0x0020,
+> +		.names = { "E", "F", "G", "H" },
+> +	},
+> +	{
+> +		.val_regs = 0x0038,
+> +		.rdata_reg = 0x0078,
+> +		.irq_regs = 0x003C,
+> +		.names = { "I", "J" },
+> +	},
+> +};
+> +
+> +enum aspeed_sgpio_reg {
+> +	reg_val,
+> +	reg_rdata,
+> +	reg_irq_enable,
+> +	reg_irq_type0,
+> +	reg_irq_type1,
+> +	reg_irq_type2,
+> +	reg_irq_status,
+> +};
+> +
+> +#define GPIO_VAL_VALUE      0x00
+> +#define GPIO_IRQ_ENABLE     0x00
+> +#define GPIO_IRQ_TYPE0      0x04
+> +#define GPIO_IRQ_TYPE1      0x08
+> +#define GPIO_IRQ_TYPE2      0x0C
+> +#define GPIO_IRQ_STATUS     0x10
+> +
+> +/* This will be resolved at compile time */
+> +static inline void __iomem *bank_reg(struct aspeed_sgpio *gpio,
+> +				     const struct aspeed_sgpio_bank *bank,
+> +				     const enum aspeed_sgpio_reg reg)
+> +{
+> +	switch (reg) {
+> +	case reg_val:
+> +		return gpio->base + bank->val_regs + GPIO_VAL_VALUE;
+> +	case reg_rdata:
+> +		return gpio->base + bank->rdata_reg;
+> +	case reg_irq_enable:
+> +		return gpio->base + bank->irq_regs + GPIO_IRQ_ENABLE;
+> +	case reg_irq_type0:
+> +		return gpio->base + bank->irq_regs + GPIO_IRQ_TYPE0;
+> +	case reg_irq_type1:
+> +		return gpio->base + bank->irq_regs + GPIO_IRQ_TYPE1;
+> +	case reg_irq_type2:
+> +		return gpio->base + bank->irq_regs + GPIO_IRQ_TYPE2;
+> +	case reg_irq_status:
+> +		return gpio->base + bank->irq_regs + GPIO_IRQ_STATUS;
+> +	default:
+> +		/* acturally if code runs to here, it's an error case */
+> +		BUG_ON(1);
+> +	}
+> +}
+> +
+> +#define GPIO_BANK(x)    ((x) >> 5)
+> +#define GPIO_OFFSET(x)  ((x) & 0x1f)
+> +#define GPIO_BIT(x)     BIT(GPIO_OFFSET(x))
+> +
+> +static const struct aspeed_sgpio_bank *to_bank(unsigned int offset)
+> +{
+> +	unsigned int bank = GPIO_BANK(offset);
+> +
+> +	WARN_ON(bank >= ARRAY_SIZE(aspeed_sgpio_banks));
+> +	return &aspeed_sgpio_banks[bank];
+> +}
+> +
+> +static int aspeed_sgpio_get(struct gpio_chip *gc, unsigned int offset)
+> +{
+> +	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
+> +	const struct aspeed_sgpio_bank *bank = to_bank(offset);
+> +	unsigned long flags;
+> +	enum aspeed_sgpio_reg reg;
+> +	bool is_input;
+> +	int rc = 0;
+> +
+> +	spin_lock_irqsave(&gpio->lock, flags);
+> +
+> +	is_input = gpio->dir_in[GPIO_BANK(offset)] & GPIO_BIT(offset);
+> +	reg = is_input ? reg_val : reg_rdata;
+> +	rc = !!(ioread32(bank_reg(gpio, bank, reg)) & GPIO_BIT(offset));
+> +
+> +	spin_unlock_irqrestore(&gpio->lock, flags);
+> +
+> +	return rc;
+> +}
+> +
+> +static void aspeed_sgpio_set(struct gpio_chip *gc, unsigned int 
+> offset, int val)
+> +{
+> +	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
+> +	const struct aspeed_sgpio_bank *bank = to_bank(offset);
+> +	unsigned long flags;
+> +	void __iomem *addr;
+> +	u32 reg = 0;
+> +
+> +	spin_lock_irqsave(&gpio->lock, flags);
+> +
+> +	addr = bank_reg(gpio, bank, reg_val);
+> +
+> +	if (val)
+> +		reg |= GPIO_BIT(offset);
+> +	else
+> +		reg &= ~GPIO_BIT(offset);
+> +
+> +	iowrite32(reg, addr);
+> +
+> +	spin_unlock_irqrestore(&gpio->lock, flags);
+> +}
+> +
+> +static int aspeed_sgpio_dir_in(struct gpio_chip *gc, unsigned int 
+> offset)
+> +{
+> +	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&gpio->lock, flags);
+> +	gpio->dir_in[GPIO_BANK(offset)] |= GPIO_BIT(offset);
+> +	spin_unlock_irqrestore(&gpio->lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static int aspeed_sgpio_dir_out(struct gpio_chip *gc, unsigned int 
+> offset, int val)
+> +{
+> +	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&gpio->lock, flags);
+> +	gpio->dir_in[GPIO_BANK(offset)] &= ~GPIO_BIT(offset);
+> +	spin_unlock_irqrestore(&gpio->lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static int aspeed_sgpio_get_direction(struct gpio_chip *gc, unsigned 
+> int offset)
+> +{
+> +	int dir_status;
+> +	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&gpio->lock, flags);
+> +	dir_status = gpio->dir_in[GPIO_BANK(offset)] & GPIO_BIT(offset);
+> +	spin_unlock_irqrestore(&gpio->lock, flags);
+> +
+> +	return dir_status;
+> +
+> +}
+> +
+> +static inline void irqd_to_aspeed_sgpio_data(struct irq_data *d,
+> +					     struct aspeed_sgpio **gpio,
+> +					     const struct aspeed_sgpio_bank **bank,
+> +					     u32 *bit, int *offset)
+> +{
+> +	struct aspeed_sgpio *internal;
+> +
+> +	*offset = irqd_to_hwirq(d);
+> +	internal = irq_data_get_irq_chip_data(d);
+> +	WARN_ON(!internal);
+> +
+> +	*gpio = internal;
+> +	*bank = to_bank(*offset);
+> +	*bit = GPIO_BIT(*offset);
+> +}
+> +
+> +static void aspeed_sgpio_irq_ack(struct irq_data *d)
+> +{
+> +	const struct aspeed_sgpio_bank *bank;
+> +	struct aspeed_sgpio *gpio;
+> +	unsigned long flags;
+> +	void __iomem *status_addr;
+> +	int offset;
+> +	u32 bit;
+> +
+> +	irqd_to_aspeed_sgpio_data(d, &gpio, &bank, &bit, &offset);
+> +
+> +	status_addr = bank_reg(gpio, bank, reg_irq_status);
+> +
+> +	spin_lock_irqsave(&gpio->lock, flags);
+> +
+> +	iowrite32(bit, status_addr);
+> +
+> +	spin_unlock_irqrestore(&gpio->lock, flags);
+> +}
+> +
+> +static void aspeed_sgpio_irq_set_mask(struct irq_data *d, bool set)
+> +{
+> +	const struct aspeed_sgpio_bank *bank;
+> +	struct aspeed_sgpio *gpio;
+> +	unsigned long flags;
+> +	u32 reg, bit;
+> +	void __iomem *addr;
+> +	int offset;
+> +
+> +	irqd_to_aspeed_sgpio_data(d, &gpio, &bank, &bit, &offset);
+> +	addr = bank_reg(gpio, bank, reg_irq_enable);
+> +
+> +	spin_lock_irqsave(&gpio->lock, flags);
+> +
+> +	reg = ioread32(addr);
+> +	if (set)
+> +		reg |= bit;
+> +	else
+> +		reg &= ~bit;
+> +
+> +	iowrite32(reg, addr);
+> +
+> +	spin_unlock_irqrestore(&gpio->lock, flags);
+> +}
+> +
+> +static void aspeed_sgpio_irq_mask(struct irq_data *d)
+> +{
+> +	aspeed_sgpio_irq_set_mask(d, false);
+> +}
+> +
+> +static void aspeed_sgpio_irq_unmask(struct irq_data *d)
+> +{
+> +	aspeed_sgpio_irq_set_mask(d, true);
+> +}
+> +
+> +static int aspeed_sgpio_set_type(struct irq_data *d, unsigned int type)
+> +{
+> +	u32 type0 = 0;
+> +	u32 type1 = 0;
+> +	u32 type2 = 0;
+> +	u32 bit, reg;
+> +	const struct aspeed_sgpio_bank *bank;
+> +	irq_flow_handler_t handler;
+> +	struct aspeed_sgpio *gpio;
+> +	unsigned long flags;
+> +	void __iomem *addr;
+> +	int offset;
+> +
+> +	irqd_to_aspeed_sgpio_data(d, &gpio, &bank, &bit, &offset);
+> +
+> +	switch (type & IRQ_TYPE_SENSE_MASK) {
+> +	case IRQ_TYPE_EDGE_BOTH:
+> +		type2 |= bit;
+> +		/* fall through */
+> +	case IRQ_TYPE_EDGE_RISING:
+> +		type0 |= bit;
+> +		/* fall through */
+> +	case IRQ_TYPE_EDGE_FALLING:
+> +		handler = handle_edge_irq;
+> +		break;
+> +	case IRQ_TYPE_LEVEL_HIGH:
+> +		type0 |= bit;
+> +		/* fall through */
+> +	case IRQ_TYPE_LEVEL_LOW:
+> +		type1 |= bit;
+> +		handler = handle_level_irq;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	spin_lock_irqsave(&gpio->lock, flags);
+> +
+> +	addr = bank_reg(gpio, bank, reg_irq_type0);
+> +	reg = ioread32(addr);
+> +	reg = (reg & ~bit) | type0;
+> +	iowrite32(reg, addr);
+> +
+> +	addr = bank_reg(gpio, bank, reg_irq_type1);
+> +	reg = ioread32(addr);
+> +	reg = (reg & ~bit) | type1;
+> +	iowrite32(reg, addr);
+> +
+> +	addr = bank_reg(gpio, bank, reg_irq_type2);
+> +	reg = ioread32(addr);
+> +	reg = (reg & ~bit) | type2;
+> +	iowrite32(reg, addr);
+> +
+> +	spin_unlock_irqrestore(&gpio->lock, flags);
+> +
+> +	irq_set_handler_locked(d, handler);
+> +
+> +	return 0;
+> +}
+> +
+> +static void aspeed_sgpio_irq_handler(struct irq_desc *desc)
+> +{
+> +	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
+> +	struct irq_chip *ic = irq_desc_get_chip(desc);
+> +	struct aspeed_sgpio *data = gpiochip_get_data(gc);
+> +	unsigned int i, p, girq;
+> +	unsigned long reg;
+> +
+> +	chained_irq_enter(ic, desc);
+> +
+> +	for (i = 0; i < ARRAY_SIZE(aspeed_sgpio_banks); i++) {
+> +		const struct aspeed_sgpio_bank *bank = &aspeed_sgpio_banks[i];
+> +
+> +		reg = ioread32(bank_reg(data, bank, reg_irq_status));
+> +
+> +		for_each_set_bit(p, &reg, 32) {
+> +			girq = irq_find_mapping(gc->irq.domain, i * 32 + p);
+> +			generic_handle_irq(girq);
+> +		}
+> +
+> +	}
+> +
+> +	chained_irq_exit(ic, desc);
+> +}
+> +
+> +static struct irq_chip aspeed_sgpio_irqchip = {
+> +	.name       = "aspeed-sgpio",
+> +	.irq_ack    = aspeed_sgpio_irq_ack,
+> +	.irq_mask   = aspeed_sgpio_irq_mask,
+> +	.irq_unmask = aspeed_sgpio_irq_unmask,
+> +	.irq_set_type   = aspeed_sgpio_set_type,
+> +};
+> +
+> +static int aspeed_sgpio_setup_irqs(struct aspeed_sgpio *gpio,
+> +				   struct platform_device *pdev)
+> +{
+> +	int rc, i;
+> +	const struct aspeed_sgpio_bank *bank;
+> +
+> +	rc = platform_get_irq(pdev, 0);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	gpio->irq = rc;
+> +
+> +	/* Disable IRQ and clear Interrupt status registers for all SPGIO 
+> Pins. */
+> +	for (i = 0; i < ARRAY_SIZE(aspeed_sgpio_banks); i++) {
+> +		bank =  &aspeed_sgpio_banks[i];
+> +		/* disable irq enable bits */
+> +		iowrite32(0x00000000, bank_reg(gpio, bank, reg_irq_enable));
+> +		/* clear status bits */
+> +		iowrite32(0xffffffff, bank_reg(gpio, bank, reg_irq_status));
+> +	}
+> +
+> +	rc = gpiochip_irqchip_add(&gpio->chip, &aspeed_sgpio_irqchip,
+> +				  0, handle_bad_irq, IRQ_TYPE_NONE);
+> +	if (rc) {
+> +		dev_info(&pdev->dev, "Could not add irqchip\n");
+> +		return rc;
+> +	}
+> +
+> +	gpiochip_set_chained_irqchip(&gpio->chip, &aspeed_sgpio_irqchip,
+> +				     gpio->irq, aspeed_sgpio_irq_handler);
+> +
+> +	/* set IRQ settings and Enable Interrupt */
+> +	for (i = 0; i < ARRAY_SIZE(aspeed_sgpio_banks); i++) {
+> +		bank = &aspeed_sgpio_banks[i];
+> +		/* set falling or level-low irq */
+> +		iowrite32(0x00000000, bank_reg(gpio, bank, reg_irq_type0));
+> +		/* trigger type is edge */
+> +		iowrite32(0x00000000, bank_reg(gpio, bank, reg_irq_type1));
+> +		/* dual edge trigger mode. */
+> +		iowrite32(0xffffffff, bank_reg(gpio, bank, reg_irq_type2));
+> +		/* enable irq */
+> +		iowrite32(0xffffffff, bank_reg(gpio, bank, reg_irq_enable));
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id aspeed_sgpio_of_table[] = {
+> +	{ .compatible = "aspeed,ast2400-sgpio" },
+> +	{ .compatible = "aspeed,ast2500-sgpio" },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, aspeed_sgpio_of_table);
+> +
+> +static int __init aspeed_sgpio_probe(struct platform_device *pdev)
+> +{
+> +	struct aspeed_sgpio *gpio;
+> +	u32 nr_gpios, sgpio_freq, sgpio_clk_div;
+> +	int rc;
+> +	unsigned long apb_freq;
+> +
+> +	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
+> +	if (!gpio)
+> +		return -ENOMEM;
+> +
+> +	gpio->base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(gpio->base))
+> +		return PTR_ERR(gpio->base);
+> +
+> +	rc = of_property_read_u32(pdev->dev.of_node, "nr-gpios", &nr_gpios);
+
+I just checked and the standard property is "ngpios", not "nr-gpios"[1]. Please fix
+this and the bindings document.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/gpio/gpio.txt?h=v5.2#n141
+
+> +	if ((rc < 0) || (nr_gpios > MAX_NR_SGPIO)) {
+> +		dev_err(&pdev->dev, "Could not read nr-gpios property\n");
+
+Triggering this error message with the `nr_gpios > MAX_NR_SGPIO`
+condition is a bit confusing. I think you should check that in a separate
+conditional block if you would like to issue a dev_err():
+
+if (rc < 0) {
+        dev_err(&pdev->dev, "Could not read nr-gpios property\n");
+        return -EINVAL;
+} else if (nr_gpios > MAX_NR_GPIOS) {
+        dev_err(&pdev->dev, "Number of GPIOs exceeds the maximum of %d: %d\n",
+                         MAX_NR_SGPIO, nr_gpios);
+        return -EINVAL;
+}
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	rc = of_property_read_u32(pdev->dev.of_node, "bus-frequency", 
+> &sgpio_freq);
+> +	if (rc < 0) {
+> +		dev_err(&pdev->dev, "Could not read bus-frequency property\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	gpio->pclk = devm_clk_get(&pdev->dev, NULL);
+> +	if (IS_ERR(gpio->pclk)) {
+> +		dev_err(&pdev->dev, "devm_clk_get failed\n");
+> +		return PTR_ERR(gpio->pclk);
+> +	}
+> +
+> +	apb_freq = clk_get_rate(gpio->pclk);
+> +
+> +	/*
+> +	 * From the datasheet,
+> +	 *	SGPIO period = 1/PCLK * 2 * (GPIO254[31:16] + 1)
+> +	 *	period = 2 * (GPIO254[31:16] + 1) / PCLK
+> +	 *	frequency = 1 / (2 * (GPIO254[31:16] + 1) / PCLK)
+> +	 *	frequency = PCLK / (2 * (GPIO254[31:16] + 1))
+> +	 *	frequency * 2 * (GPIO254[31:16] + 1) = PCLK
+> +	 *	GPIO254[31:16] = PCLK / (frequency * 2) - 1
+> +	 */
+> +	if (sgpio_freq == 0)
+> +		return -EINVAL;
+> +
+> +	sgpio_clk_div = (apb_freq / (sgpio_freq * 2)) - 1;
+> +
+> +	if (sgpio_clk_div > (1 << 16) - 1)
+> +		return -EINVAL;
+> +
+> +	iowrite32(FIELD_PREP(ASPEED_SGPIO_CLK_DIV_MASK, sgpio_clk_div) |
+> +		  FIELD_PREP(ASPEED_SGPIO_PINS_MASK, (nr_gpios / 8)) |
+> +		  ASPEED_SGPIO_ENABLE,
+> +		  gpio->base + ASPEED_SGPIO_CTRL);
+> +
+> +	spin_lock_init(&gpio->lock);
+> +
+> +	gpio->chip.parent = &pdev->dev;
+> +	gpio->chip.ngpio = nr_gpios;
+> +	gpio->chip.direction_input = aspeed_sgpio_dir_in;
+> +	gpio->chip.direction_output = aspeed_sgpio_dir_out;
+> +	gpio->chip.get_direction = aspeed_sgpio_get_direction;
+> +	gpio->chip.request = NULL;
+> +	gpio->chip.free = NULL;
+> +	gpio->chip.get = aspeed_sgpio_get;
+> +	gpio->chip.set = aspeed_sgpio_set;
+> +	gpio->chip.set_config = NULL;
+> +	gpio->chip.label = dev_name(&pdev->dev);
+> +	gpio->chip.base =  ARCH_NR_GPIOS - MAX_NR_SGPIO;
+
+Please set this to -1 so the base is chosen for you by the gpio subsystem.
+
+> +
+> +	/* set all SGPIO pins as input. */
+> +	memset(gpio->dir_in, 0xff, sizeof(gpio->dir_in));
+
+You've used devm_kzalloc() above, so the memory is already zeroed. You can
+remove the memset(), maybe just shift the comment to the devm_kzalloc().
+
+Other than these small issues, looks good to me. Thanks for iterating on it.
+
+Andrew
+
+> +
+> +	rc = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	return aspeed_sgpio_setup_irqs(gpio, pdev);
+> +}
+> +
+> +static struct platform_driver aspeed_sgpio_driver = {
+> +	.driver = {
+> +		.name = KBUILD_MODNAME,
+> +		.of_match_table = aspeed_sgpio_of_table,
+> +	},
+> +};
+> +
+> +module_platform_driver_probe(aspeed_sgpio_driver, aspeed_sgpio_probe);
+> +MODULE_DESCRIPTION("Aspeed Serial GPIO Driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.7.4
+> 
+>
