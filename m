@@ -2,112 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C1B56D36B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 20:03:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADC686D37E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 20:11:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728279AbfGRSDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 14:03:20 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:60360 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbfGRSDT (ORCPT
+        id S2390574AbfGRSLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 14:11:12 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42217 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726040AbfGRSLL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 14:03:19 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6IHx7EU122228;
-        Thu, 18 Jul 2019 18:03:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=nGM+TFa+P/Arh/z0uyq1lS3KstmUHzzsTf+kS9cTjgw=;
- b=2jcOh1bP4oMsf+o5Nsm6lFPpxuU9ZFtzXXe2uHDj+l0jawSetIxSJOpl05ENnI8Xrlm1
- jwnzWcqdfppKEzDeh6ryh+5TBDtDJx1dJvMEVtgBYBlq3JOjGsNTiEmEkEseanVBSA0h
- Q0mD8kUEih2GedLWzWV2FduxdZ6PzgrosqTZBTK/mFRlimSi8mH8ZemIk4N/P5IBXdQP
- iYjtRVHdffxu7TlGLWR54EVNFzMYbT8OeRzD4Bletwxa9VNLdfvpGrDHKY2hS8Sg/Q/j
- WnygGSg7xpqWZizPRRUqB1k9IqXt18E6x/ehH84BrlPVSxzsE2XHdQmgUtnGrr+GBxbG xQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2tq78q2e5e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Jul 2019 18:03:11 +0000
-Received: from localhost.us.oracle.com ([10.129.136.207])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x6II3562031079;
-        Thu, 18 Jul 2019 18:03:05 GMT
-From:   Thomas Tai <thomas.tai@oracle.com>
-To:     thomas.tai@oracle.com, pjones@redhat.com,
-        linux-kernel@vger.kernel.org
-Cc:     konrad@kernel.org
-Subject: iscsi_ibft: change ISCSI_IBFT depends on ACPI instead of ISCSI_IBFT_FIND
-Date:   Thu, 18 Jul 2019 18:37:34 +0000
-Message-Id: <1563475054-10680-1-git-send-email-thomas.tai@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9322 signatures=668688
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=907 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907180187
+        Thu, 18 Jul 2019 14:11:11 -0400
+Received: by mail-lj1-f196.google.com with SMTP id t28so28264133lje.9;
+        Thu, 18 Jul 2019 11:11:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ACngBykYqB0o3NihblCBOiLR+sDnmChE/17QqNQkmcw=;
+        b=jItEiZ4smIzaJkxpqnRTFanp5FpRVV/67ycDHQXpzrPJUx6p2owcwNeJImKQR310CW
+         kzWda1OmdsgvC/hwoMkcUThzcnaAyihMpvlEJTatPYHAQTsAbsi+ad84rmJC+2s9uVcc
+         VLGK5ET37aeorCMQ7iDU/hMxd+X6MggGYi1tyrIcYeNdG7LgNFwzfoQInw8Uz1vDLgmd
+         oO9sMR2R9B80MnJbpZoW5NZw4QjXXfanxvFzbDby4tzMMPBcWq18ciQldrvPzEXj8gLa
+         dvCMWmL2VmoSpQVYgVflj+/rXLXkk0Q0Mkw6Oe89uDp+Ip8lZLsyVXnovBkT30NPEqkO
+         N2Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ACngBykYqB0o3NihblCBOiLR+sDnmChE/17QqNQkmcw=;
+        b=lDyyO6q2EN7BjeVemhoZ6jjK5an0Z8yQ821HBvOiinWmgU+inoqzjAiYOk9v/bAP/V
+         rM40gTfo5wmprWVpF4qj8moTs9LiRXj4mg9tdHbDrkWhiG9DGHFl8RcJmnJ68T/R7zLp
+         VZPJQEeuNLNoOk+ANZT9a7PNCHsAWom28sx84AXf+ts3Rr4wwCMAGc/mQ4plZ+nyM/J2
+         ScrJJtVbrxY2EpwmdYU1+/q3sWcb3k793qt0Ktugw/PfpUB8zKU4kiPgQkEhXi9Zqd8G
+         NbmxEc44an+hczPyvySMElFYIZ1GZIYGv1TQ7Lg8e5mziMncjuAtiBmYum3Wevqu1yjE
+         AUvA==
+X-Gm-Message-State: APjAAAWBj8YoSBP/hZTaPsL/cQ6gkN6wiMkO1H+G0MmXSXD82uRp/X0o
+        KGQ9OZojkXz+rxrFOwTAPuQ=
+X-Google-Smtp-Source: APXvYqz/XTtQof1rtC+XVjV+AQYDnfiRRkma3v5LvU9uzKZHguKDa20vmBNi3JFOkSc7d9PhykRxWg==
+X-Received: by 2002:a2e:9048:: with SMTP id n8mr5868906ljg.37.1563473469447;
+        Thu, 18 Jul 2019 11:11:09 -0700 (PDT)
+Received: from ul001888.eu.tieto.com ([91.90.160.140])
+        by smtp.gmail.com with ESMTPSA id k82sm5196001lje.30.2019.07.18.11.11.08
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 18 Jul 2019 11:11:08 -0700 (PDT)
+From:   Vasyl Gomonovych <gomonovych@gmail.com>
+To:     gomonovych@gmail.com
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: pmcraid: Use dma_pool_zalloc rather than dma_pool_alloc
+Date:   Thu, 18 Jul 2019 20:10:51 +0200
+Message-Id: <20190718181051.22882-1-gomonovych@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-iscsi_ibft can use ACPI to find the iBFT entry during bootup,
-currently, ISCSI_IBFT depends on ISCSI_IBFT_FIND which is
-a X86 legacy way to find the iBFT by searching through the
-low memory. This patch changes the dependency so that other
-arch like ARM64 can use ISCSI_IBFT as long as the arch supports
-ACPI.
+Use *_pool_zalloc rather than *_pool_alloc followed by memset with 0
+The semantic patch that makes this change is available
+in scripts/coccinelle/api/alloc/pool_zalloc-simple.cocci.
 
-ibft_init() needs to use the global variable ibft_addr declared
-in iscsi_ibft_find.c. A #ifndef CONFIG_ISCSI_IBFT_FIND is needed
-to declare the variable if CONFIG_ISCSI_IBFT_FIND is not selected.
-Moving ibft_addr into the iscsi_ibft.c does not work because if
-ISCSI_IBFT is selected as a module, the arch/x86/kernel/setup.c won't
-be able to find the variable at compile time.
-
-Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
-
+Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
 ---
- drivers/firmware/Kconfig      | 5 +++--
- drivers/firmware/iscsi_ibft.c | 4 ++++
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ drivers/scsi/pmcraid.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index 1f6633b..8237863 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -164,7 +164,7 @@ config DMI_SCAN_MACHINE_NON_EFI_FALLBACK
+diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
+index 71ff3936da4f945f3d8a798a8b2129ca3c07ec22..f79d7750934e629c6d6edc1a075205247889531d 100644
+--- a/drivers/scsi/pmcraid.c
++++ b/drivers/scsi/pmcraid.c
+@@ -4653,9 +4653,7 @@ static int pmcraid_allocate_control_blocks(struct pmcraid_instance *pinstance)
+ 		return -ENOMEM;
  
- config ISCSI_IBFT_FIND
- 	bool "iSCSI Boot Firmware Table Attributes"
--	depends on X86 && ACPI
-+	depends on X86 && ISCSI_IBFT
- 	default n
- 	help
- 	  This option enables the kernel to find the region of memory
-@@ -175,7 +175,8 @@ config ISCSI_IBFT_FIND
- config ISCSI_IBFT
- 	tristate "iSCSI Boot Firmware Table Attributes module"
- 	select ISCSI_BOOT_SYSFS
--	depends on ISCSI_IBFT_FIND && SCSI && SCSI_LOWLEVEL
-+	select ISCSI_IBFT_FIND if X86
-+	depends on ACPI && SCSI && SCSI_LOWLEVEL
- 	default	n
- 	help
- 	  This option enables support for detection and exposing of iSCSI
-diff --git a/drivers/firmware/iscsi_ibft.c b/drivers/firmware/iscsi_ibft.c
-index 132b9ba..220bbc9 100644
---- a/drivers/firmware/iscsi_ibft.c
-+++ b/drivers/firmware/iscsi_ibft.c
-@@ -93,6 +93,10 @@
- MODULE_LICENSE("GPL");
- MODULE_VERSION(IBFT_ISCSI_VERSION);
+ 	for (i = 0; i < PMCRAID_MAX_CMD; i++) {
+-		pinstance->cmd_list[i]->ioa_cb =
+-			dma_pool_alloc(
+-				pinstance->control_pool,
++		pinstance->cmd_list[i]->ioa_cb = dma_pool_zalloc(pinstance->control_pool,
+ 				GFP_KERNEL,
+ 				&(pinstance->cmd_list[i]->ioa_cb_bus_addr));
  
-+#ifndef CONFIG_ISCSI_IBFT_FIND
-+struct acpi_table_ibft *ibft_addr;
-+#endif
-+
- struct ibft_hdr {
- 	u8 id;
- 	u8 version;
+@@ -4663,8 +4661,6 @@ static int pmcraid_allocate_control_blocks(struct pmcraid_instance *pinstance)
+ 			pmcraid_release_control_blocks(pinstance, i);
+ 			return -ENOMEM;
+ 		}
+-		memset(pinstance->cmd_list[i]->ioa_cb, 0,
+-			sizeof(struct pmcraid_control_block));
+ 	}
+ 	return 0;
+ }
 -- 
-1.8.3.1
+2.17.1
 
