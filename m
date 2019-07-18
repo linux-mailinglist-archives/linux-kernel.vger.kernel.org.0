@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 103B76C450
+	by mail.lfdr.de (Postfix) with ESMTP id 7F5AA6C451
 	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 03:38:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389104AbfGRBhg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 21:37:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43642 "EHLO mx1.redhat.com"
+        id S2389148AbfGRBhj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 21:37:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49882 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388738AbfGRBhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 21:37:34 -0400
+        id S2389048AbfGRBhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 21:37:35 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 800DB85365;
-        Thu, 18 Jul 2019 01:37:33 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id B9BFE83F51;
+        Thu, 18 Jul 2019 01:37:34 +0000 (UTC)
 Received: from treble.redhat.com (ovpn-122-211.rdu2.redhat.com [10.10.122.211])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6FED55D9CC;
-        Thu, 18 Jul 2019 01:37:32 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AC3BF5D9CC;
+        Thu, 18 Jul 2019 01:37:33 +0000 (UTC)
 From:   Josh Poimboeuf <jpoimboe@redhat.com>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -27,278 +27,216 @@ Cc:     linux-kernel@vger.kernel.org,
         Nick Desaulniers <ndesaulniers@google.com>,
         Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
         Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v2 18/22] objtool: Refactor jump table code
-Date:   Wed, 17 Jul 2019 20:36:53 -0500
-Message-Id: <cf951b0c0641628e0b9b81f7ceccd9bcabcb4bd8.1563413318.git.jpoimboe@redhat.com>
+Subject: [PATCH v2 19/22] objtool: Support repeated uses of the same C jump table
+Date:   Wed, 17 Jul 2019 20:36:54 -0500
+Message-Id: <e995befaada9d4d8b2cf788ff3f566ba900d2b4d.1563413318.git.jpoimboe@redhat.com>
 In-Reply-To: <cover.1563413318.git.jpoimboe@redhat.com>
 References: <cover.1563413318.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 18 Jul 2019 01:37:33 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 18 Jul 2019 01:37:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that C jump tables are supported, call them "jump tables" instead of
-"switch tables".  Also rename some other variables, add comments, and
-simplify the code flow a bit.
+From: Jann Horn <jannh@google.com>
 
+This fixes objtool for both a GCC issue and a Clang issue:
+
+1) GCC issue:
+
+   kernel/bpf/core.o: warning: objtool: ___bpf_prog_run()+0x8d5: sibling call from callable instruction with modified stack frame
+
+   With CONFIG_RETPOLINE=n, GCC is doing the following optimization in
+   ___bpf_prog_run().
+
+   Before:
+
+           select_insn:
+                   jmp *jumptable(,%rax,8)
+                   ...
+           ALU64_ADD_X:
+                   ...
+                   jmp select_insn
+           ALU_ADD_X:
+                   ...
+                   jmp select_insn
+
+   After:
+
+           select_insn:
+                   jmp *jumptable(, %rax, 8)
+                   ...
+           ALU64_ADD_X:
+                   ...
+                   jmp *jumptable(, %rax, 8)
+           ALU_ADD_X:
+                   ...
+                   jmp *jumptable(, %rax, 8)
+
+   This confuses objtool.  It has never seen multiple indirect jump
+   sites which use the same jump table.
+
+   For GCC switch tables, the only way of detecting the size of a table
+   is by continuing to scan for more tables.  The size of the previous
+   table can only be determined after another switch table is found, or
+   when the scan reaches the end of the function.
+
+   That logic was reused for C jump tables, and was based on the
+   assumption that each jump table only has a single jump site.  The
+   above optimization breaks that assumption.
+
+2) Clang issue:
+
+   drivers/usb/misc/sisusbvga/sisusb.o: warning: objtool: sisusb_write_mem_bulk()+0x588: can't find switch jump table
+
+   With clang 9, code can be generated where a function contains two
+   indirect jump instructions which use the same switch table.
+
+The fix is the same for both issues: split the jump table parsing into
+two passes.
+
+In the first pass, locate the heads of all switch tables for the
+function and mark their locations.
+
+In the second pass, parse the switch tables and add them.
+
+Fixes: e55a73251da3 ("bpf: Fix ORC unwinding in non-JIT BPF code")
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Jann Horn <jannh@google.com>
+Co-developed-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Tested-by: Nick Desaulniers <ndesaulniers@google.com>
 ---
-v2:
-- comment tweak: "switch jump table" -> "jump table" [PeterZ]
----
- tools/objtool/check.c | 82 +++++++++++++++++++++++--------------------
- tools/objtool/elf.c   |  2 +-
- tools/objtool/elf.h   |  2 +-
- 3 files changed, 46 insertions(+), 40 deletions(-)
+ tools/objtool/check.c | 53 +++++++++++++++++++++++--------------------
+ tools/objtool/check.h |  1 +
+ tools/objtool/elf.h   |  1 +
+ 3 files changed, 30 insertions(+), 25 deletions(-)
 
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index a190a6e79a91..a904f98236b4 100644
+index a904f98236b4..a64bb54abd29 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -627,7 +627,7 @@ static int add_jump_destinations(struct objtool_file *file)
- 			 * However this code can't completely replace the
- 			 * read_symbols() code because this doesn't detect the
- 			 * case where the parent function's only reference to a
--			 * subfunction is through a switch table.
-+			 * subfunction is through a jump table.
- 			 */
- 			if (!strstr(insn->func->name, ".cold.") &&
- 			    strstr(insn->jump_dest->func->name, ".cold.")) {
-@@ -899,20 +899,24 @@ static int add_special_section_alts(struct objtool_file *file)
- 	return ret;
+@@ -900,7 +900,7 @@ static int add_special_section_alts(struct objtool_file *file)
  }
  
--static int add_switch_table(struct objtool_file *file, struct instruction *insn,
-+static int add_jump_table(struct objtool_file *file, struct instruction *insn,
- 			    struct rela *table, struct rela *next_table)
+ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
+-			    struct rela *table, struct rela *next_table)
++			    struct rela *table)
  {
  	struct rela *rela = table;
--	struct instruction *alt_insn;
-+	struct instruction *dest_insn;
- 	struct alternative *alt;
- 	struct symbol *pfunc = insn->func->pfunc;
- 	unsigned int prev_offset = 0;
- 
--	list_for_each_entry_from(rela, &table->rela_sec->rela_list, list) {
-+	/*
-+	 * Each @rela is a switch table relocation which points to the target
-+	 * instruction.
-+	 */
-+	list_for_each_entry_from(rela, &table->sec->rela_list, list) {
- 		if (rela == next_table)
- 			break;
- 
--		/* Make sure the switch table entries are consecutive: */
-+		/* Make sure the table entries are consecutive: */
- 		if (prev_offset && rela->offset != prev_offset + 8)
- 			break;
- 
-@@ -921,12 +925,12 @@ static int add_switch_table(struct objtool_file *file, struct instruction *insn,
- 		    rela->addend == pfunc->offset)
- 			break;
- 
--		alt_insn = find_insn(file, rela->sym->sec, rela->addend);
--		if (!alt_insn)
-+		dest_insn = find_insn(file, rela->sym->sec, rela->addend);
-+		if (!dest_insn)
- 			break;
- 
--		/* Make sure the jmp dest is in the function or subfunction: */
--		if (alt_insn->func->pfunc != pfunc)
-+		/* Make sure the destination is in the same function: */
-+		if (dest_insn->func->pfunc != pfunc)
- 			break;
- 
- 		alt = malloc(sizeof(*alt));
-@@ -935,7 +939,7 @@ static int add_switch_table(struct objtool_file *file, struct instruction *insn,
- 			return -1;
- 		}
- 
--		alt->insn = alt_insn;
-+		alt->insn = dest_insn;
- 		list_add_tail(&alt->list, &insn->alts);
- 		prev_offset = rela->offset;
- 	}
-@@ -950,7 +954,7 @@ static int add_switch_table(struct objtool_file *file, struct instruction *insn,
- }
- 
- /*
-- * find_switch_table() - Given a dynamic jump, find the switch jump table in
-+ * find_jump_table() - Given a dynamic jump, find the switch jump table in
-  * .rodata associated with it.
-  *
-  * There are 3 basic patterns:
-@@ -992,13 +996,13 @@ static int add_switch_table(struct objtool_file *file, struct instruction *insn,
-  *
-  *    NOTE: RETPOLINE made it harder still to decode dynamic jumps.
-  */
--static struct rela *find_switch_table(struct objtool_file *file,
-+static struct rela *find_jump_table(struct objtool_file *file,
- 				      struct symbol *func,
- 				      struct instruction *insn)
- {
--	struct rela *text_rela, *rodata_rela;
-+	struct rela *text_rela, *table_rela;
- 	struct instruction *orig_insn = insn;
--	struct section *rodata_sec;
-+	struct section *table_sec;
- 	unsigned long table_offset;
- 
- 	/*
-@@ -1031,7 +1035,7 @@ static struct rela *find_switch_table(struct objtool_file *file,
- 			continue;
- 
- 		table_offset = text_rela->addend;
--		rodata_sec = text_rela->sym->sec;
-+		table_sec = text_rela->sym->sec;
- 
- 		if (text_rela->type == R_X86_64_PC32)
- 			table_offset += 4;
-@@ -1045,29 +1049,31 @@ static struct rela *find_switch_table(struct objtool_file *file,
- 		 * need to be placed in the C_JUMP_TABLE_SECTION section.  They
- 		 * have symbols associated with them.
- 		 */
--		if (find_symbol_containing(rodata_sec, table_offset) &&
--		    strcmp(rodata_sec->name, C_JUMP_TABLE_SECTION))
-+		if (find_symbol_containing(table_sec, table_offset) &&
-+		    strcmp(table_sec->name, C_JUMP_TABLE_SECTION))
- 			continue;
- 
--		rodata_rela = find_rela_by_dest(rodata_sec, table_offset);
--		if (rodata_rela) {
--			/*
--			 * Use of RIP-relative switch jumps is quite rare, and
--			 * indicates a rare GCC quirk/bug which can leave dead
--			 * code behind.
--			 */
--			if (text_rela->type == R_X86_64_PC32)
--				file->ignore_unreachables = true;
-+		/* Each table entry has a rela associated with it. */
-+		table_rela = find_rela_by_dest(table_sec, table_offset);
-+		if (!table_rela)
-+			continue;
- 
--			return rodata_rela;
--		}
-+		/*
-+		 * Use of RIP-relative switch jumps is quite rare, and
-+		 * indicates a rare GCC quirk/bug which can leave dead code
-+		 * behind.
-+		 */
-+		if (text_rela->type == R_X86_64_PC32)
-+			file->ignore_unreachables = true;
+ 	struct instruction *dest_insn;
+@@ -913,7 +913,9 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
+ 	 * instruction.
+ 	 */
+ 	list_for_each_entry_from(rela, &table->sec->rela_list, list) {
+-		if (rela == next_table)
 +
-+		return table_rela;
- 	}
++		/* Check for the end of the table: */
++		if (rela != table && rela->jump_table_start)
+ 			break;
  
+ 		/* Make sure the table entries are consecutive: */
+@@ -1072,13 +1074,15 @@ static struct rela *find_jump_table(struct objtool_file *file,
  	return NULL;
  }
  
- 
--static int add_func_switch_tables(struct objtool_file *file,
-+static int add_func_jump_tables(struct objtool_file *file,
- 				  struct symbol *func)
+-
+-static int add_func_jump_tables(struct objtool_file *file,
+-				  struct symbol *func)
++/*
++ * First pass: Mark the head of each jump table so that in the next pass,
++ * we know when a given jump table ends and the next one starts.
++ */
++static void mark_func_jump_tables(struct objtool_file *file,
++				    struct symbol *func)
  {
- 	struct instruction *insn, *last = NULL, *prev_jump = NULL;
-@@ -1080,7 +1086,7 @@ static int add_func_switch_tables(struct objtool_file *file,
+-	struct instruction *insn, *last = NULL, *prev_jump = NULL;
+-	struct rela *rela, *prev_rela = NULL;
+-	int ret;
++	struct instruction *insn, *last = NULL;
++	struct rela *rela;
  
- 		/*
- 		 * Store back-pointers for unconditional forward jumps such
--		 * that find_switch_table() can back-track using those and
-+		 * that find_jump_table() can back-track using those and
- 		 * avoid some potentially confusing code.
- 		 */
- 		if (insn->type == INSN_JUMP_UNCONDITIONAL && insn->jump_dest &&
-@@ -1095,17 +1101,17 @@ static int add_func_switch_tables(struct objtool_file *file,
- 		if (insn->type != INSN_JUMP_DYNAMIC)
+ 	func_for_each_insn_all(file, func, insn) {
+ 		if (!last)
+@@ -1102,26 +1106,24 @@ static int add_func_jump_tables(struct objtool_file *file,
  			continue;
  
--		rela = find_switch_table(file, func, insn);
-+		rela = find_jump_table(file, func, insn);
- 		if (!rela)
- 			continue;
- 
- 		/*
--		 * We found a switch table, but we don't know yet how big it
-+		 * We found a jump table, but we don't know yet how big it
- 		 * is.  Don't add it until we reach the end of the function or
--		 * the beginning of another switch table in the same function.
-+		 * the beginning of another jump table in the same function.
- 		 */
- 		if (prev_jump) {
--			ret = add_switch_table(file, prev_jump, prev_rela, rela);
-+			ret = add_jump_table(file, prev_jump, prev_rela, rela);
- 			if (ret)
- 				return ret;
+ 		rela = find_jump_table(file, func, insn);
+-		if (!rela)
+-			continue;
+-
+-		/*
+-		 * We found a jump table, but we don't know yet how big it
+-		 * is.  Don't add it until we reach the end of the function or
+-		 * the beginning of another jump table in the same function.
+-		 */
+-		if (prev_jump) {
+-			ret = add_jump_table(file, prev_jump, prev_rela, rela);
+-			if (ret)
+-				return ret;
++		if (rela) {
++			rela->jump_table_start = true;
++			insn->jump_table = rela;
  		}
-@@ -1115,7 +1121,7 @@ static int add_func_switch_tables(struct objtool_file *file,
+-
+-		prev_jump = insn;
+-		prev_rela = rela;
  	}
++}
++
++static int add_func_jump_tables(struct objtool_file *file,
++				  struct symbol *func)
++{
++	struct instruction *insn;
++	int ret;
++
++	func_for_each_insn_all(file, func, insn) {
++		if (!insn->jump_table)
++			continue;
  
- 	if (prev_jump) {
--		ret = add_switch_table(file, prev_jump, prev_rela, NULL);
-+		ret = add_jump_table(file, prev_jump, prev_rela, NULL);
+-	if (prev_jump) {
+-		ret = add_jump_table(file, prev_jump, prev_rela, NULL);
++		ret = add_jump_table(file, insn, insn->jump_table);
  		if (ret)
  			return ret;
  	}
-@@ -1128,7 +1134,7 @@ static int add_func_switch_tables(struct objtool_file *file,
-  * section which contains a list of addresses within the function to jump to.
-  * This finds these jump tables and adds them to the insn->alts lists.
-  */
--static int add_switch_table_alts(struct objtool_file *file)
-+static int add_jump_table_alts(struct objtool_file *file)
- {
- 	struct section *sec;
- 	struct symbol *func;
-@@ -1142,7 +1148,7 @@ static int add_switch_table_alts(struct objtool_file *file)
+@@ -1148,6 +1150,7 @@ static int add_jump_table_alts(struct objtool_file *file)
  			if (func->type != STT_FUNC)
  				continue;
  
--			ret = add_func_switch_tables(file, func);
-+			ret = add_func_jump_tables(file, func);
++			mark_func_jump_tables(file, func);
+ 			ret = add_func_jump_tables(file, func);
  			if (ret)
  				return ret;
- 		}
-@@ -1339,7 +1345,7 @@ static int decode_sections(struct objtool_file *file)
- 	if (ret)
- 		return ret;
- 
--	ret = add_switch_table_alts(file);
-+	ret = add_jump_table_alts(file);
- 	if (ret)
- 		return ret;
- 
-diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index d2c211b0a5a0..4650f5d3fff2 100644
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -385,7 +385,7 @@ static int read_relas(struct elf *elf)
- 			rela->offset = rela->rela.r_offset;
- 			symndx = GELF_R_SYM(rela->rela.r_info);
- 			rela->sym = find_symbol_by_index(elf, symndx);
--			rela->rela_sec = sec;
-+			rela->sec = sec;
- 			if (!rela->sym) {
- 				WARN("can't find rela entry symbol %d for %s",
- 				     symndx, sec->name);
+diff --git a/tools/objtool/check.h b/tools/objtool/check.h
+index cb60b9acf5cf..afa6a79e0715 100644
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -38,6 +38,7 @@ struct instruction {
+ 	struct symbol *call_dest;
+ 	struct instruction *jump_dest;
+ 	struct instruction *first_jump_src;
++	struct rela *jump_table;
+ 	struct list_head alts;
+ 	struct symbol *func;
+ 	struct stack_op stack_op;
 diff --git a/tools/objtool/elf.h b/tools/objtool/elf.h
-index e44ca5d51871..1b638de4e7c0 100644
+index 1b638de4e7c0..14e7d4c3aff1 100644
 --- a/tools/objtool/elf.h
 +++ b/tools/objtool/elf.h
-@@ -57,7 +57,7 @@ struct rela {
- 	struct list_head list;
- 	struct hlist_node hash;
- 	GElf_Rela rela;
--	struct section *rela_sec;
-+	struct section *sec;
- 	struct symbol *sym;
+@@ -62,6 +62,7 @@ struct rela {
  	unsigned int type;
  	unsigned long offset;
+ 	int addend;
++	bool jump_table_start;
+ };
+ 
+ struct elf {
 -- 
 2.20.1
 
