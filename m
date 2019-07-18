@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6FE16D826
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 03:04:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BFFC6D823
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 03:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbfGSBEN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 21:04:13 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39107 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726512AbfGSBD4 (ORCPT
+        id S1726684AbfGSBEA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 21:04:00 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34162 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726573AbfGSBD5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 21:03:56 -0400
-Received: by mail-pg1-f194.google.com with SMTP id u17so13660568pgi.6
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 18:03:55 -0700 (PDT)
+        Thu, 18 Jul 2019 21:03:57 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n9so7439792pgc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 18:03:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=QUqGa8au0uDH1tINq6znit6jPqnzQUOjsfwZbBIMFT0=;
-        b=N9HDba9d04eKCE2btEs3UJYzQEVUEx2u08namUXFk/wR87/FEdq4EC86nMsQ/D/ndp
-         dTHvzntHvqzZk3oGXgIDkoHodo4MMnBvktQNT0uPbBFspQ6CjdIYXuqxn0bGNEYoQtGs
-         YUQGvaeYw/zVcSlIBDNukedDzomUs0BJlReNTkwfn2fmeqgo9OSib5AtWf+sQhMsn7SL
-         NP7VYndrY/44Kb5BH6LhuiNLn2KFLbapmglt0VVQfmD7Z5P+62cJw3HP7tFYMY6R24pR
-         yz/2wa8Abwt7wFcj7YPn9JAukrt79sFlkk87s0aFNDgF54vndCRnGZcJbxwkYZSjIMN1
-         1n7A==
-X-Gm-Message-State: APjAAAUtG3NS8NyVRY451hsvJO19r2WVc7t6pKdJWlCpZ5fif9YE9fkA
-        +89tfrJXCI3dnw6SWIj4A0Y=
-X-Google-Smtp-Source: APXvYqzpTsNJrZ8Mdkw8naoXjSTxrnQl24WVdHNA7zUA29Berhm2UK7JfrFA00fickSHQwCmB/TqNQ==
-X-Received: by 2002:a63:506:: with SMTP id 6mr50053303pgf.434.1563498234951;
-        Thu, 18 Jul 2019 18:03:54 -0700 (PDT)
+        bh=234sLOzVHB5hCj+BQKTblG2UsxBEUB0HpiZuWiY8m1k=;
+        b=fIn/C+oxIkXyH3rgsASOjz9QnUUYWGfYapVj08rHpJUVzsLcJ0/RXEhrvjzoNv+LJC
+         tf638XI6ng1o7PbvomKPkCwgNP2auqSxI6Im+cpd79YpTaFpsLKNpZla/NiEeAlrn/KQ
+         hr6rkw+VKP7wv81GhwekEquH459W2H0iLYTNzbyDj/oJSV8+IWoWrSUit53GDdgIkR18
+         ih6iincWXDm9Sy6Q/MnWbIatD5w7VMViOebN/Oaja6tD+VbghK7TtEApuMbr6OYwNzQE
+         TEY7Bg5xrboMwdMFsh9JX+4FYV6EdfYkPSqT+IoNgBf8kIUXjlLBkvlT8t+nKX7BJF0r
+         iT/w==
+X-Gm-Message-State: APjAAAVBXYlLFuTTkBK2QQaYeX0YekZAzI4C1cYNXXxTcFI9poPjgUJI
+        7chdPBzjhaqu6PI/kiOqsJ0=
+X-Google-Smtp-Source: APXvYqxVw4bYMMHJy9xZz2XbQ8FkLcAt/G11LsNEEH3AYxw1NB7JbL6nJQIqi9P5oSIllZx+WVr1og==
+X-Received: by 2002:a17:90a:20a2:: with SMTP id f31mr53921159pjg.90.1563498236261;
+        Thu, 18 Jul 2019 18:03:56 -0700 (PDT)
 Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id q144sm28887612pfc.103.2019.07.18.18.03.53
+        by smtp.gmail.com with ESMTPSA id q144sm28887612pfc.103.2019.07.18.18.03.55
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 18 Jul 2019 18:03:54 -0700 (PDT)
+        Thu, 18 Jul 2019 18:03:55 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
@@ -41,9 +41,9 @@ Cc:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Nadav Amit <namit@vmware.com>
-Subject: [RFC 4/7] x86: Fix possible caching of current_task
-Date:   Thu, 18 Jul 2019 10:41:07 -0700
-Message-Id: <20190718174110.4635-5-namit@vmware.com>
+Subject: [RFC 5/7] percpu: Assume preemption is disabled on per_cpu_ptr()
+Date:   Thu, 18 Jul 2019 10:41:08 -0700
+Message-Id: <20190718174110.4635-6-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190718174110.4635-1-namit@vmware.com>
 References: <20190718174110.4635-1-namit@vmware.com>
@@ -52,159 +52,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-this_cpu_read_stable() is allowed and supposed to cache and return the
-same value, specifically for current_task. It actually does not cache
-current_task very well, which hinders possible invalid caching when the
-task is switched in __switch_to().
+When per_cpu_ptr() is used, the caller should have preemption disabled,
+as otherwise the pointer is meaningless. If the user wants an "unstable"
+pointer he should call raw_cpu_ptr().
 
-Fix the possible caching by avoiding the use of current in
-__switch_to()'s dynamic extent.
+Add an assertion to check that indeed preemption is disabled, and
+distinguish between the two cases to allow further, per-arch
+optimizations.
 
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/fpu/internal.h    |  7 ++++---
- arch/x86/include/asm/resctrl_sched.h   | 14 +++++++-------
- arch/x86/kernel/cpu/resctrl/rdtgroup.c |  4 ++--
- arch/x86/kernel/process_32.c           |  4 ++--
- arch/x86/kernel/process_64.c           |  4 ++--
- 5 files changed, 17 insertions(+), 16 deletions(-)
+ include/asm-generic/percpu.h | 12 ++++++++++++
+ include/linux/percpu-defs.h  | 33 ++++++++++++++++++++++++++++++++-
+ 2 files changed, 44 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 4c95c365058a..b537788600fe 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -588,9 +588,10 @@ static inline void switch_fpu_prepare(struct fpu *old_fpu, int cpu)
+diff --git a/include/asm-generic/percpu.h b/include/asm-generic/percpu.h
+index c2de013b2cf4..7853605f4210 100644
+--- a/include/asm-generic/percpu.h
++++ b/include/asm-generic/percpu.h
+@@ -36,6 +36,14 @@ extern unsigned long __per_cpu_offset[NR_CPUS];
+ #define my_cpu_offset __my_cpu_offset
+ #endif
  
++/*
++ * Determine the offset of the current active processor when preemption is
++ * disabled. Can be overriden by arch code.
++ */
++#ifndef __raw_my_cpu_offset
++#define __raw_my_cpu_offset __my_cpu_offset
++#endif
++
  /*
-  * Load PKRU from the FPU context if available. Delay loading of the
-- * complete FPU state until the return to userland.
-+ * complete FPU state until the return to userland. Avoid reading current during
-+ * switch.
-  */
--static inline void switch_fpu_finish(struct fpu *new_fpu)
-+static inline void switch_fpu_finish(struct task_struct *task, struct fpu *new_fpu)
- {
- 	u32 pkru_val = init_pkru_value;
- 	struct pkru_state *pk;
-@@ -598,7 +599,7 @@ static inline void switch_fpu_finish(struct fpu *new_fpu)
- 	if (!static_cpu_has(X86_FEATURE_FPU))
- 		return;
+  * Arch may define arch_raw_cpu_ptr() to provide more efficient address
+  * translations for raw_cpu_ptr().
+@@ -44,6 +52,10 @@ extern unsigned long __per_cpu_offset[NR_CPUS];
+ #define arch_raw_cpu_ptr(ptr) SHIFT_PERCPU_PTR(ptr, __my_cpu_offset)
+ #endif
  
--	set_thread_flag(TIF_NEED_FPU_LOAD);
-+	set_ti_thread_flag(task_thread_info(task), TIF_NEED_FPU_LOAD);
++#ifndef arch_raw_cpu_ptr_preemptable
++#define arch_raw_cpu_ptr_preemptable(ptr) SHIFT_PERCPU_PTR(ptr, __raw_my_cpu_offset)
++#endif
++
+ #ifdef CONFIG_HAVE_SETUP_PER_CPU_AREA
+ extern void setup_per_cpu_areas(void);
+ #endif
+diff --git a/include/linux/percpu-defs.h b/include/linux/percpu-defs.h
+index a6fabd865211..13afca8a37e7 100644
+--- a/include/linux/percpu-defs.h
++++ b/include/linux/percpu-defs.h
+@@ -237,20 +237,51 @@ do {									\
+ 	SHIFT_PERCPU_PTR((ptr), per_cpu_offset((cpu)));			\
+ })
  
- 	if (!cpu_feature_enabled(X86_FEATURE_OSPKE))
- 		return;
-diff --git a/arch/x86/include/asm/resctrl_sched.h b/arch/x86/include/asm/resctrl_sched.h
-index f6b7fe2833cc..9a00d9df9d02 100644
---- a/arch/x86/include/asm/resctrl_sched.h
-+++ b/arch/x86/include/asm/resctrl_sched.h
-@@ -51,7 +51,7 @@ DECLARE_STATIC_KEY_FALSE(rdt_mon_enable_key);
-  *   simple as possible.
-  * Must be called with preemption disabled.
-  */
--static void __resctrl_sched_in(void)
-+static void __resctrl_sched_in(struct task_struct *task)
- {
- 	struct resctrl_pqr_state *state = this_cpu_ptr(&pqr_state);
- 	u32 closid = state->default_closid;
-@@ -62,13 +62,13 @@ static void __resctrl_sched_in(void)
- 	 * Else use the closid/rmid assigned to this cpu.
- 	 */
- 	if (static_branch_likely(&rdt_alloc_enable_key)) {
--		if (current->closid)
-+		if (task->closid)
- 			closid = current->closid;
- 	}
++#ifndef arch_raw_cpu_ptr_preemption_disabled
++#define arch_raw_cpu_ptr_preemption_disabled(ptr)			\
++	arch_raw_cpu_ptr(ptr)
++#endif
++
++#define raw_cpu_ptr_preemption_disabled(ptr)				\
++({									\
++	__verify_pcpu_ptr(ptr);						\
++	arch_raw_cpu_ptr_preemption_disabled(ptr);			\
++})
++
++/*
++ * If preemption is enabled, we need to read the pointer atomically on
++ * raw_cpu_ptr(). However if it is disabled, we can use the
++ * raw_cpu_ptr_nopreempt(), which is potentially more efficient. Similarly, we
++ * can use the preemption-disabled version if the kernel is non-preemptable or
++ * if voluntary preemption is used.
++ */
++#ifdef CONFIG_PREEMPT
++
+ #define raw_cpu_ptr(ptr)						\
+ ({									\
+ 	__verify_pcpu_ptr(ptr);						\
+ 	arch_raw_cpu_ptr(ptr);						\
+ })
  
- 	if (static_branch_likely(&rdt_mon_enable_key)) {
--		if (current->rmid)
--			rmid = current->rmid;
-+		if (task->rmid)
-+			rmid = task->rmid;
- 	}
- 
- 	if (closid != state->cur_closid || rmid != state->cur_rmid) {
-@@ -78,15 +78,15 @@ static void __resctrl_sched_in(void)
- 	}
- }
- 
--static inline void resctrl_sched_in(void)
-+static inline void resctrl_sched_in(struct task_struct *task)
- {
- 	if (static_branch_likely(&rdt_enable_key))
--		__resctrl_sched_in();
-+		__resctrl_sched_in(task);
- }
- 
++#else
++
++#define raw_cpu_ptr(ptr)	raw_cpu_ptr_preemption_disabled(ptr)
++
++#endif
++
+ #ifdef CONFIG_DEBUG_PREEMPT
++/*
++ * Unlike other this_cpu_* operations, this_cpu_ptr() requires that preemption
++ * will be disabled. In contrast, raw_cpu_ptr() does not require that.
++ */
+ #define this_cpu_ptr(ptr)						\
+ ({									\
++	__this_cpu_preempt_check("ptr");				\
+ 	__verify_pcpu_ptr(ptr);						\
+ 	SHIFT_PERCPU_PTR(ptr, my_cpu_offset);				\
+ })
  #else
+-#define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
++#define this_cpu_ptr(ptr) raw_cpu_ptr_preemption_disabled(ptr)
+ #endif
  
--static inline void resctrl_sched_in(void) {}
-+static inline void resctrl_sched_in(struct task_struct *task) {}
- 
- #endif /* CONFIG_X86_CPU_RESCTRL */
- 
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index bf3034994754..71bd82a6e3c6 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -311,7 +311,7 @@ static void update_cpu_closid_rmid(void *info)
- 	 * executing task might have its own closid selected. Just reuse
- 	 * the context switch code.
- 	 */
--	resctrl_sched_in();
-+	resctrl_sched_in(current);
- }
- 
- /*
-@@ -536,7 +536,7 @@ static void move_myself(struct callback_head *head)
- 
- 	preempt_disable();
- 	/* update PQR_ASSOC MSR to make resource group go into effect */
--	resctrl_sched_in();
-+	resctrl_sched_in(current);
- 	preempt_enable();
- 
- 	kfree(callback);
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index b8ceec4974fe..699a4c95ab13 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -292,10 +292,10 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 
- 	this_cpu_write(current_task, next_p);
- 
--	switch_fpu_finish(next_fpu);
-+	switch_fpu_finish(next_p, next_fpu);
- 
- 	/* Load the Intel cache allocation PQR MSR. */
--	resctrl_sched_in();
-+	resctrl_sched_in(next_p);
- 
- 	return prev_p;
- }
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 250e4c4ac6d9..e945bc744804 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -575,7 +575,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	this_cpu_write(current_task, next_p);
- 	this_cpu_write(cpu_current_top_of_stack, task_top_of_stack(next_p));
- 
--	switch_fpu_finish(next_fpu);
-+	switch_fpu_finish(next_p, next_fpu);
- 
- 	/* Reload sp0. */
- 	update_task_stack(next_p);
-@@ -622,7 +622,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	}
- 
- 	/* Load the Intel cache allocation PQR MSR. */
--	resctrl_sched_in();
-+	resctrl_sched_in(next_p);
- 
- 	return prev_p;
- }
+ #else	/* CONFIG_SMP */
 -- 
 2.17.1
 
