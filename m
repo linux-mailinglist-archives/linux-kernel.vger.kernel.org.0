@@ -2,100 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 302696CC16
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:42:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCB386CC28
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 11:46:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389728AbfGRJmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 05:42:49 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:45997 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbfGRJmt (ORCPT
+        id S2389852AbfGRJpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 05:45:55 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:26400 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbfGRJpz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 05:42:49 -0400
-Received: by mail-lf1-f68.google.com with SMTP id u10so18688970lfm.12;
-        Thu, 18 Jul 2019 02:42:47 -0700 (PDT)
+        Thu, 18 Jul 2019 05:45:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=5gpt/zcvafN1FXFMWf3dMVSAEfdVCbW03VkO8WwV5vo=;
-        b=S2WE0InyJmLKEBoGNgjlrk3QaZPdurWS35GRbBRPUi7+l+dLipZr1X4zFxoapUPCsg
-         /DNCxvrXLyHASE0MKWonphIUU1E/bo2xtV71nXxuQDn37bXqljdBcirjwttzgbme3F7a
-         D8+an2rOKh+uqE5pUdnEoZqNIZozFqnx3cDL/mYNzqDpcEb5NSzWdCniulaXhA6BhBn5
-         +NzL1B/1JUMZiBlEF9eU6hA0tudvfnLN2CEaPiqvs2TegupPANrdWagcSuWTZYFWw4ut
-         hFzVdExQEbska1S12lXRqUL2xPyDDQXmKk73l0IDjUAtLUyIrkF/72pJcQS0gbOxGg97
-         VliQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=5gpt/zcvafN1FXFMWf3dMVSAEfdVCbW03VkO8WwV5vo=;
-        b=MbmbOd+QjMXh5rVfbXk9FGHlrUzZrXpFNO396LCNMv4VxM3sPeucqu1F6XnF7Vom0m
-         rcIhB/Th5uYhTgqWeyTQ0ExZSBMrsH4aNYDwzs3UgNP+7VjkEWJSfIyX/jL1Fm+UwIzX
-         0s6sNV22LDgOrTO3/tL8osQWXP9ONR8PrgMtvXPsd9knfQ/TcjS6NaW6mrxIahdpy0KL
-         wUpR8mKbbMeBoHBbQK3TJUETsxCcFWHcDoBLJ0hGe64hiJg7Wjlh6i4uGgXLZWhXo7PD
-         shBQgiOsLkDYFeE728SsekgvmS0jQ8OIjmfvSjYWGv1DAMozU7lh6oOh0Zn7W/sQr9LZ
-         pOsg==
-X-Gm-Message-State: APjAAAWwGgRYQa7wExPsMyXj5ufYBwJeUr+crZSVcQNn+OAhQUlFqior
-        l7r7O+x1PA26aBUAWE/DusI=
-X-Google-Smtp-Source: APXvYqyA1yFFPTV8h5ZXJHEmv9lw2X1Fq4eve3kn8IkgNRYpOvoZ41FJTupm0GNqOSNec1JehdsM3w==
-X-Received: by 2002:ac2:414d:: with SMTP id c13mr2767424lfi.47.1563442966991;
-        Thu, 18 Jul 2019 02:42:46 -0700 (PDT)
-Received: from peter.cuba.int. ([83.220.32.68])
-        by smtp.googlemail.com with ESMTPSA id e87sm5675260ljf.54.2019.07.18.02.42.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Jul 2019 02:42:46 -0700 (PDT)
-From:   Peter Kosyh <p.kosyh@gmail.com>
-To:     p.kosyh@gmail.com
-Cc:     davem@davemloft.net, David Ahern <dsa@cumulusnetworks.com>,
-        Shrijeet Mukherjee <shrijeet@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Signed-off-by: Peter Kosyh <p.kosyh@gmail.com>
-Date:   Thu, 18 Jul 2019 12:41:14 +0300
-Message-Id: <20190718094114.13718-1-p.kosyh@gmail.com>
-X-Mailer: git-send-email 2.11.0
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1563443154; x=1594979154;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=u1OZ0RKFDA8KTxhSUk4edGI+HfrldPAbhHw2+/kPPjo=;
+  b=Q6QQutm6/Vex5FifA6XSDS6jl5fu+KZSbkSNSmro8XNE0KeF1Zr6a60E
+   y+DcsqIt+lmKA8Homgv7YpscgSHEdHOeA80oDONo9qGOa86mbqFsyYHu7
+   k9MIS+7x3VFSPDClNygPIHwVq9ZA8TiyFgMVjRii7xyi7BB9AeVQKoABm
+   M=;
+X-IronPort-AV: E=Sophos;i="5.64,276,1559520000"; 
+   d="scan'208";a="411235357"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-57e1d233.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 18 Jul 2019 09:45:53 +0000
+Received: from EX13MTAUWA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1e-57e1d233.us-east-1.amazon.com (Postfix) with ESMTPS id 6014C1419F0;
+        Thu, 18 Jul 2019 09:45:50 +0000 (UTC)
+Received: from EX13D13UWA001.ant.amazon.com (10.43.160.136) by
+ EX13MTAUWA001.ant.amazon.com (10.43.160.118) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 18 Jul 2019 09:45:49 +0000
+Received: from u9ff250417f405e.ant.amazon.com (10.43.162.67) by
+ EX13D13UWA001.ant.amazon.com (10.43.160.136) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 18 Jul 2019 09:45:43 +0000
+From:   Jonathan Chocron <jonnyc@amazon.com>
+To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <dwmw@amazon.co.uk>, <benh@kernel.crashing.org>,
+        <alisaidi@amazon.com>, <ronenk@amazon.com>, <barakw@amazon.com>,
+        <talel@amazon.com>, <hanochu@amazon.com>, <hhhawa@amazon.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <jonnyc@amazon.com>
+Subject: [PATCH v2 0/8] Amazon's Annapurna Labs DT-based PCIe host controller driver
+Date:   Thu, 18 Jul 2019 12:45:23 +0300
+Message-ID: <20190718094531.21423-1-jonnyc@amazon.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.43.162.67]
+X-ClientProxiedBy: EX13P01UWA004.ant.amazon.com (10.43.160.127) To
+ EX13D13UWA001.ant.amazon.com (10.43.160.136)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vrf_process_v4_outbound() and vrf_process_v6_outbound() do routing
-using ip/ipv6 addresses, but don't make sure the header is available in
-skb->data[] (skb_headlen() is less then header size).
+This series adds support for Amazon's Annapurna Labs DT-based PCIe host
+controller driver.
+Additionally, it adds 3 quirks (ACS, VPD and MSI-X) and 2 generic DWC patches.
 
-The situation may occures while forwarding from MPLS layer to vrf, for
-example.
+Regarding the 2nd DWC patch (PCI flags support), do you think this should
+be done in the context of a host-bridge driver at all (as opposed to PCI
+system-wide code)?
 
-So, this patch adds pskb_may_pull() calls in is_ip_tx_frame(), just before
-call to vrf_process_... functions.
+Changes since v1:
+- Added comment regarding 0x0031 being used as a dev_id for non root-port devices as well
+- Fixed different message/comment/print wordings
+- Added panic stacktrace to commit message of MSI-x quirk patch
+- Changed to pci_warn() instead of dev_warn()
+- Added unit_address after node_name in dt-binding
+- Updated Kconfig help description
+- Used GENMASK and FIELD_PREP/GET where appropriate
+- Removed leftover field from struct al_pcie and moved all ptrs to
+  the beginning
+- Re-wrapped function definitions and invocations to use fewer lines
+- Change %p to %px in dbg prints in rd/wr_conf() functions
+- Removed validation that the port is configured to RC mode (as this is
+  added generically in PATCH 7/8)
+- Removed unnecessary variable initializations
+- Swtiched to %pR for printing resources
 
-Signed-off-by: Peter Kosyh <p.kosyh@gmail.com>
----
- drivers/net/vrf.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/vrf.c b/drivers/net/vrf.c
-index 54edf8956a25..d552f29a58d1 100644
---- a/drivers/net/vrf.c
-+++ b/drivers/net/vrf.c
-@@ -292,13 +292,16 @@ static netdev_tx_t is_ip_tx_frame(struct sk_buff *skb, struct net_device *dev)
- {
- 	switch (skb->protocol) {
- 	case htons(ETH_P_IP):
-+		if (!pskb_may_pull(skb, ETH_HLEN + sizeof(struct iphdr))
-+			break;
- 		return vrf_process_v4_outbound(skb, dev);
- 	case htons(ETH_P_IPV6):
-+		if (!pskb_may_pull(skb, ETH_HLEN + sizeof(struct ipv6hdr))
-+			break;
- 		return vrf_process_v6_outbound(skb, dev);
--	default:
--		vrf_tx_error(dev, skb);
--		return NET_XMIT_DROP;
- 	}
-+	vrf_tx_error(dev, skb);
-+	return NET_XMIT_DROP;
- }
- 
- static netdev_tx_t vrf_xmit(struct sk_buff *skb, struct net_device *dev)
+Ali Saidi (1):
+  PCI: Add ACS quirk for Amazon Annapurna Labs root ports
+
+Jonathan Chocron (7):
+  PCI: Add Amazon's Annapurna Labs vendor ID
+  PCI/VPD: Add VPD release quirk for Amazon's Annapurna Labs Root Port
+  PCI: Add quirk to disable MSI-X support for Amazon's Annapurna Labs
+    Root Port
+  dt-bindings: PCI: Add Amazon's Annapurna Labs PCIe host bridge binding
+  PCI: al: Add support for DW based driver type
+  PCI: dw: Add validation that PCIe core is set to correct mode
+  PCI: dw: Add support for PCI_PROBE_ONLY/PCI_REASSIGN_ALL_BUS flags
+
+ .../devicetree/bindings/pci/pcie-al.txt       |  45 +++
+ MAINTAINERS                                   |   3 +-
+ drivers/pci/controller/dwc/Kconfig            |  12 +
+ drivers/pci/controller/dwc/pcie-al.c          | 373 ++++++++++++++++++
+ .../pci/controller/dwc/pcie-designware-ep.c   |   8 +
+ .../pci/controller/dwc/pcie-designware-host.c |  31 +-
+ drivers/pci/quirks.c                          |  34 ++
+ drivers/pci/vpd.c                             |  16 +
+ include/linux/pci_ids.h                       |   2 +
+ 9 files changed, 519 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/pcie-al.txt
+
 -- 
-2.11.0
+2.17.1
 
