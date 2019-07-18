@@ -2,133 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 352956CF36
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 15:54:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56D906CF22
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 15:50:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390573AbfGRNxo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 09:53:44 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43920 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390574AbfGRNxh (ORCPT
+        id S2390458AbfGRNuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 09:50:10 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36714 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390350AbfGRNuK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 09:53:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=q0KGUBYy1+/7QlMG960RGlggnhNzObvuQQ3z5su4p10=; b=q6Spbf+gLD099kzuQ1i67Mg0x0
-        o9Bds4PAfrdwAqPevfxygjFJUPB+9Ey0E3eUs3/MWjh5/MBgE9M0wgMmqhaN1Al8yfokaImPFQ922
-        M5uK4eRkmwkTahjeULcKC5c1SWZrBXC7x3cjClp1R2YIS6OEITNEJbzok2RYZIbej6sK4EJ13t5w8
-        +AJyc6FeGRy4RCYjJQz/OQImWWRv9pif5+N5o3ASEISx1tTY26PN4yLMDR2Uhe7hhMT+YBorlJ3TK
-        u3UB6xqpTKNMGV8X9RDLrmQZ+7vZXtAC4TzetAIu9zCx/h/sVAEDp+NnmTyJqfVcY49B8zw2xjqxz
-        fU5bsnoA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1ho6qb-0003u6-Fk; Thu, 18 Jul 2019 13:53:25 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id D4DBD20B979A6; Thu, 18 Jul 2019 15:53:22 +0200 (CEST)
-Message-Id: <20190718135206.228078863@infradead.org>
-User-Agent: quilt/0.65
-Date:   Thu, 18 Jul 2019 15:49:58 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jan Stancek <jstancek@redhat.com>,
-        Waiman Long <longman@redhat.com>, dbueso@suse.de,
-        mingo@redhat.com, jade.alglave@arm.com, paulmck@linux.vnet.ibm.com
-Subject: [PATCH 4/4] rwsem: Add ACQUIRE comments
-References: <20190718134954.496297975@infradead.org>
+        Thu, 18 Jul 2019 09:50:10 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n4so28833836wrs.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 06:50:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Bz4hXPRK29P5/tSQD68cHTBPadb5Yosu8Qu+r8c9DuM=;
+        b=pCD1gMqdgmj5NS4Z+gMlo3JFwFdzrFskrTqHiSt0KpWe8BEDyO1BT73mmxA3K1Z035
+         ITQX0EekNT+dmS/trs2ABZw3Vzi/ZA+5Xe5BUyZOblwe/D72WU1GCz0hw9XEkvrKCx9r
+         4HUyUJ5tX74Vo9w+XncsT5zbpnbyvleB5ELkTHlrk/tIJUa94D0BX86JFeubzRgZ4+a9
+         FDrr81USElkLGqwMriN4PHmai1Qqt70gQDJdYFVIaOop2RFUXhEvC5/xHYwlBMjbZESl
+         YfuQ5p5oW9VWH5c3tvD9KoxkQxKGsq8eMjGzh/bjZvc40uUbQ2+OZLiLF9gdN+6w6Hv/
+         Fiww==
+X-Gm-Message-State: APjAAAXKcqF3ZFhF9cISkRdyh/EgPxwep+bvYLEAp4WePzQcV93RHSAS
+        A7r3fwaslREhBYKi0BrYJrnP9A==
+X-Google-Smtp-Source: APXvYqwpwFxUVWFfPgX205bMOicWtlXBUDH5d5qy2/uaaO9L8NQkWL0kgSuznvRy5cX56Dyvvft4SA==
+X-Received: by 2002:a05:6000:1043:: with SMTP id c3mr24338666wrx.236.1563457807970;
+        Thu, 18 Jul 2019 06:50:07 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:e427:3beb:1110:dda2? ([2001:b07:6468:f312:e427:3beb:1110:dda2])
+        by smtp.gmail.com with ESMTPSA id t13sm33212917wrr.0.2019.07.18.06.50.06
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 18 Jul 2019 06:50:07 -0700 (PDT)
+Subject: Re: [PATCH 1/2] KVM: Boost vCPUs that are delivering interrupts
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     wanpengli@tencent.com, rkrcmar@redhat.com, paulus@ozlabs.org,
+        maz@kernel.org
+References: <1563457031-21189-1-git-send-email-pbonzini@redhat.com>
+ <1563457031-21189-2-git-send-email-pbonzini@redhat.com>
+ <c28fb650-8150-4f42-4d01-8e8b2490c8b6@de.ibm.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <d935d853-fa09-f41a-637a-77b45fd611d3@redhat.com>
+Date:   Thu, 18 Jul 2019 15:50:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <c28fb650-8150-4f42-4d01-8e8b2490c8b6@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we just reviewed read_slowpath for ACQUIRE correctness, add a
-few coments to retain our findings.
+On 18/07/19 15:45, Christian Borntraeger wrote:
+> 
+> 
+> On 18.07.19 15:37, Paolo Bonzini wrote:
+>> From: Wanpeng Li <wanpengli@tencent.com>
+>>
+>> Inspired by commit 9cac38dd5d (KVM/s390: Set preempted flag during
+>> vcpu wakeup and interrupt delivery), we want to also boost not just
+>> lock holders but also vCPUs that are delivering interrupts. Most
+>> smp_call_function_many calls are synchronous, so the IPI target vCPUs
+>> are also good yield candidates.  This patch introduces vcpu->ready to
+>> boost vCPUs during wakeup and interrupt delivery time; unlike s390 we do
+>> not reuse vcpu->preempted so that voluntarily preempted vCPUs are taken
+>> into account by kvm_vcpu_on_spin, but vmx_vcpu_pi_put is not affected
+>> (VT-d PI handles voluntary preemption separately, in pi_pre_block).
+>>
+>> Testing on 80 HT 2 socket Xeon Skylake server, with 80 vCPUs VM 80GB RAM:
+>> ebizzy -M
+>>
+>>             vanilla     boosting    improved
+>> 1VM          21443       23520         9%
+>> 2VM           2800        8000       180%
+>> 3VM           1800        3100        72%
+>>
+>> Testing on my Haswell desktop 8 HT, with 8 vCPUs VM 8GB RAM, two VMs,
+>> one running ebizzy -M, the other running 'stress --cpu 2':
+>>
+>> w/ boosting + w/o pv sched yield(vanilla)
+>>
+>>             vanilla     boosting   improved
+>>               1570         4000      155%
+>>
+>> w/ boosting + w/ pv sched yield(vanilla)
+>>
+>>             vanilla     boosting   improved
+>>               1844         5157      179%
+>>
+>> w/o boosting, perf top in VM:
+>>
+>>  72.33%  [kernel]       [k] smp_call_function_many
+>>   4.22%  [kernel]       [k] call_function_i
+>>   3.71%  [kernel]       [k] async_page_fault
+>>
+>> w/ boosting, perf top in VM:
+>>
+>>  38.43%  [kernel]       [k] smp_call_function_many
+>>   6.31%  [kernel]       [k] async_page_fault
+>>   6.13%  libc-2.23.so   [.] __memcpy_avx_unaligned
+>>   4.88%  [kernel]       [k] call_function_interrupt
+>>
+>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>> Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+>> Cc: Paul Mackerras <paulus@ozlabs.org>
+>> Cc: Marc Zyngier <maz@kernel.org>
+>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+>> ---
+>> 	v2->v3: put it in kvm_vcpu_wake_up, use WRITE_ONCE
+> 
+> 
+> Looks good. Some more comments
+> 
+>>
+>>  arch/s390/kvm/interrupt.c | 2 +-
+>>  include/linux/kvm_host.h  | 1 +
+>>  virt/kvm/kvm_main.c       | 9 +++++++--
+> [...]
+> 
+>> @@ -4205,6 +4206,8 @@ static void kvm_sched_in(struct preempt_notifier *pn, int cpu)
+>>  
+>>  	if (vcpu->preempted)
+>>  		vcpu->preempted = false;
+>> +	if (vcpu->ready)
+>> +		WRITE_ONCE(vcpu->ready, false);
+> 
+> What is the rationale of checking before writing. Avoiding writable cache line ping pong?
 
-Acked-by: Will Deacon <will@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- kernel/locking/rwsem.c |   18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+I think it can be removed.  The only case where you'd have ping pong is
+when vcpu->ready is true due to kvm_vcpu_wake_up, so it's not saving
+anything.
 
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -1000,6 +1000,7 @@ rwsem_down_read_slowpath(struct rw_semap
- 	atomic_long_add(-RWSEM_READER_BIAS, &sem->count);
- 	adjustment = 0;
- 	if (rwsem_optimistic_spin(sem, false)) {
-+		/* rwsem_optimistic_spin() implies ACQUIRE on success */
- 		/*
- 		 * Wake up other readers in the wait list if the front
- 		 * waiter is a reader.
-@@ -1014,6 +1015,7 @@ rwsem_down_read_slowpath(struct rw_semap
- 		}
- 		return sem;
- 	} else if (rwsem_reader_phase_trylock(sem, waiter.last_rowner)) {
-+		/* rwsem_reader_phase_trylock() implies ACQUIRE on success */
- 		return sem;
- 	}
- 
-@@ -1067,10 +1069,10 @@ rwsem_down_read_slowpath(struct rw_semap
- 	wake_up_q(&wake_q);
- 
- 	/* wait to be given the lock */
--	while (true) {
-+	for (;;) {
- 		set_current_state(state);
- 		if (!smp_load_acquire(&waiter.task)) {
--			/* Orders against rwsem_mark_wake()'s smp_store_release() */
-+			/* Matches rwsem_mark_wake()'s smp_store_release(). */
- 			break;
- 		}
- 		if (signal_pending_state(state, current)) {
-@@ -1078,6 +1080,7 @@ rwsem_down_read_slowpath(struct rw_semap
- 			if (waiter.task)
- 				goto out_nolock;
- 			raw_spin_unlock_irq(&sem->wait_lock);
-+			/* Ordered by sem->wait_lock against rwsem_mark_wake(). */
- 			break;
- 		}
- 		schedule();
-@@ -1087,6 +1090,7 @@ rwsem_down_read_slowpath(struct rw_semap
- 	__set_current_state(TASK_RUNNING);
- 	lockevent_inc(rwsem_rlock);
- 	return sem;
-+
- out_nolock:
- 	list_del(&waiter.list);
- 	if (list_empty(&sem->wait_list)) {
-@@ -1127,8 +1131,10 @@ rwsem_down_write_slowpath(struct rw_sema
- 
- 	/* do optimistic spinning and steal lock if possible */
- 	if (rwsem_can_spin_on_owner(sem, RWSEM_WR_NONSPINNABLE) &&
--	    rwsem_optimistic_spin(sem, true))
-+	    rwsem_optimistic_spin(sem, true)) {
-+		/* rwsem_optimistic_spin() implies ACQUIRE on success */
- 		return sem;
-+	}
- 
- 	/*
- 	 * Disable reader optimistic spinning for this rwsem after
-@@ -1188,9 +1194,11 @@ rwsem_down_write_slowpath(struct rw_sema
- wait:
- 	/* wait until we successfully acquire the lock */
- 	set_current_state(state);
--	while (true) {
--		if (rwsem_try_write_lock(sem, wstate))
-+	for (;;) {
-+		if (rwsem_try_write_lock(sem, wstate)) {
-+			/* rwsem_try_write_lock() implies ACQUIRE on success */
- 			break;
-+		}
- 
- 		raw_spin_unlock_irq(&sem->wait_lock);
- 
+>>  	kvm_arch_sched_in(vcpu, cpu);
+>>  
+>> @@ -4216,8 +4219,10 @@ static void kvm_sched_out(struct preempt_notifier *pn,
+>>  {
+>>  	struct kvm_vcpu *vcpu = preempt_notifier_to_vcpu(pn);
+>>  
+>> -	if (current->state == TASK_RUNNING)
+>> +	if (current->state == TASK_RUNNING) {
+>>  		vcpu->preempted = true;
+> 
+> WOuld it make sense to also use WRITE_ONCE for vcpu->preempted ?
 
+vcpu->preempted is not read/written anymore by other threads after this
+patch.
+> 
+>> +		WRITE_ONCE(vcpu->ready, true);
+>> +	}
+>>  	kvm_arch_vcpu_put(vcpu);
+>>  }
+>>  
+>>
+> 
 
