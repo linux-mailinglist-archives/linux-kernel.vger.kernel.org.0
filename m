@@ -2,100 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D23C6CD77
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 13:38:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C02BD6CD76
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 13:38:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390188AbfGRLiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 07:38:23 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43324 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390175AbfGRLiX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 07:38:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1XG9ETPfNXBdNR3murMRWQhuyxiiIWkFmuE6S3E2wT8=; b=1/o08/7tmX+HDtavM1ps+YmJb
-        MhYxip3PmYG60pHlETONIUpfVDnYkS1v+bG/HXysh/59aCdbHUOzVyWiI7GlO2LPlUqh3CkCCsyTk
-        lWTPjsmj+7gGGhiNnOsTXNQ5VgvFl3ad4WssRDPUvwt8qbmdKh/3tBe3PKdhh4/REyVTtBZU1b5u7
-        hl40aTazOPDFSG1gAxTz4TIQTHXDa6aFL3VZg11Eo9K18p6xDYRmcaKJbLuMyph8GYAWak3TnjCyv
-        Yts4VkIHfqpIBRI7pGZS8zY0yDb95xKKJdE9wNb6sLYt9EXYOfz0GuAcjkU7XauiCK3nO7GWeMF1u
-        qcNHrqcGg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1ho4jX-0003CC-TY; Thu, 18 Jul 2019 11:38:04 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A42B920197A71; Thu, 18 Jul 2019 13:37:58 +0200 (CEST)
-Date:   Thu, 18 Jul 2019 13:37:58 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        prakash.sangappa@oracle.com, dhaval.giani@oracle.com,
-        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
-        mgorman@techsingularity.net, Paul Turner <pjt@google.com>
-Subject: Re: [RFC PATCH 2/3] sched: change scheduler to give preference to
- soft affinity CPUs
-Message-ID: <20190718113758.GN3402@hirez.programming.kicks-ass.net>
-References: <20190626224718.21973-1-subhra.mazumdar@oracle.com>
- <20190626224718.21973-3-subhra.mazumdar@oracle.com>
- <20190702172851.GA3436@hirez.programming.kicks-ass.net>
- <a91c09ce-aec1-eaa1-4daf-70024cebf360@oracle.com>
+        id S2390140AbfGRLiD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 07:38:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56014 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726495AbfGRLiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 07:38:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 69640AC1C;
+        Thu, 18 Jul 2019 11:38:01 +0000 (UTC)
+Date:   Thu, 18 Jul 2019 13:38:01 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Nicolai Stange <nstange@suse.de>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 3/5] livepatch: Allow to distinguish different version of
+ system state changes
+Message-ID: <20190718113801.bol75rgt26d72goy@pathway.suse.cz>
+References: <20190611135627.15556-1-pmladek@suse.com>
+ <20190611135627.15556-4-pmladek@suse.com>
+ <87o92n2sao.fsf@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a91c09ce-aec1-eaa1-4daf-70024cebf360@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87o92n2sao.fsf@suse.de>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 17, 2019 at 08:31:25AM +0530, Subhra Mazumdar wrote:
+Hi,
+
+first, I am sorry that I answer this non-trivial mail so late.
+I know that it might be hard to remember the context.
+
+
+On Mon 2019-06-24 12:26:07, Nicolai Stange wrote:
+> Petr Mladek <pmladek@suse.com> writes:
+> > diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+> > index 24c4a13bd26c..614642719825 100644
+> > --- a/kernel/livepatch/core.c
+> > +++ b/kernel/livepatch/core.c
+> > @@ -1003,6 +1004,13 @@ int klp_enable_patch(struct klp_patch *patch)
+> >  
+> >  	mutex_lock(&klp_mutex);
+> >  
+> > +	if(!klp_is_patch_compatible(patch)) {
+> > +		pr_err("Livepatch patch (%s) is not compatible with the already installed livepatches.\n",
+> > +			patch->mod->name);
+> > +		mutex_unlock(&klp_mutex);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> >  	ret = klp_init_patch_early(patch);
+> >  	if (ret) {
+> >  		mutex_unlock(&klp_mutex);
 > 
-> On 7/2/19 10:58 PM, Peter Zijlstra wrote:
-> > On Wed, Jun 26, 2019 at 03:47:17PM -0700, subhra mazumdar wrote:
-> > > The soft affinity CPUs present in the cpumask cpus_preferred is used by the
-> > > scheduler in two levels of search. First is in determining wake affine
-> > > which choses the LLC domain and secondly while searching for idle CPUs in
-> > > LLC domain. In the first level it uses cpus_preferred to prune out the
-> > > search space. In the second level it first searches the cpus_preferred and
-> > > then cpus_allowed. Using affinity_unequal flag it breaks early to avoid
-> > > any overhead in the scheduler fast path when soft affinity is not used.
-> > > This only changes the wake up path of the scheduler, the idle balancing
-> > > is unchanged; together they achieve the "softness" of scheduling.
-> > I really dislike this implementation.
-> > 
-> > I thought the idea was to remain work conserving (in so far as that
-> > we're that anyway), so changing select_idle_sibling() doesn't make sense
-> > to me. If there is idle, we use it.
-> > 
-> > Same for newidle; which you already retained.
-> The scheduler is already not work conserving in many ways. Soft affinity is
-> only for those who want to use it and has no side effects when not used.
-> Also the way scheduler is implemented in the first level of search it may
-> not be possible to do it in a work conserving way, I am open to ideas.
+> 
+> Just as a remark: klp_reverse_transition() could still transition back
+> to a !klp_is_patch_compatible() patch.
 
-I really don't understand the premise of this soft affinity stuff then.
+I am slightly confused. The new livepatch is enabled only when the new
+states have the same or higher version. And only callbacks from
+the new livepatch are used, including post_unpatch() when
+the transition gets reverted.
 
-I understood it was to allow spreading if under-utilized, but group when
-over-utilized, but you're arguing for the exact opposite, which doesn't
-make sense.
+The "compatible" livepatch should be able to handle all situations:
 
-> > And I also really don't want a second utilization tipping point; we
-> > already have the overloaded thing.
-> The numbers in the cover letter show that a static tipping point will not
-> work for all workloads. What soft affinity is doing is essentially trading
-> off cache coherence for more CPU. The optimum tradeoff point will vary
-> from workload to workload and the system metrics of coherence overhead etc.
-> If we just use the domain overload that becomes a static definition of
-> tipping point, we need something tunable that captures this tradeoff. The
-> ratio of CPU util seemed to work well and capture that.
+    + Modify the system state when it was not modified before.
 
-And then you run two workloads with different characteristics on the
-same box.
+    + Take over the system state when it has already been modified
+      by the previous livepatch.
 
-Global knobs are buggered.
+    + Restore the previous state when the transition is reverted.
+
+
+> I don't think it's much of a problem, because for live patches
+> introducing completely new states to the system, it is reasonable
+> to assume that they'll start applying incompatible changes only from
+> their ->post_patch(), I guess.
+>
+> For state "upgrades" to higher versions, it's not so clear though and
+> some care will be needed. But I think these could still be handled
+> safely at the cost of some complexity in the new live patch's
+> ->post_patch().
+
+Just to be sure. The post_unpatch() from the new livepatch
+will get called when the transitions is reverted. It should
+be able to revert any changes made by its own pre_patch().
+
+You are right that it will need some care. Especially because
+the transition revert is not easy to test.
+
+I think that this is the main reason why Joe would like
+to introduce the sticky flag. It might be used to block
+the transition revert and livepatch disabling when it would
+be to complicated, error-prone, or even impossible.
+
+
+> Another detail is that ->post_unpatch() will be called for the new live
+> patch which has been unpatched due to transition reversal and one would
+> have to be careful not to free shared state from under the older, still
+> active live patch. How would ->post_unpatch() distinguish between
+> transition reversal and "normal" live patch disabling?  By
+> klp_get_prev_state() != NULL?
+
+Exactly. klp_get_prev_state() != NULL can be used in the
+post_unpatch() to restore the original state when
+the transition gets reverted.
+
+See restore_console_loglevel() in lib/livepatch/test_klp_state2.c
+
+> Perhaps transition reversal should be mentioned in the documentation?
+
+Good point. I'll mention it in the documentation.
+
+Best Regards,
+Petr
