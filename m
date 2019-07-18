@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A3656C6EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:20:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 277AE6C77C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:25:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391231AbfGRDUY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:20:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44736 "EHLO mail.kernel.org"
+        id S2391045AbfGRDZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:25:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391238AbfGRDLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:11:12 -0400
+        id S2390124AbfGRDGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:06:01 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D188205F4;
-        Thu, 18 Jul 2019 03:11:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59E1B204EC;
+        Thu, 18 Jul 2019 03:06:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419471;
-        bh=/xAkpM3kOJg/Mwhe9RfVtMXfWjwQWzDs/GzrNCpYdjg=;
+        s=default; t=1563419160;
+        bh=p7qARXKPniQ4Gp1UilfQNwHUhNLhD7ZHzbN/ZdiWL40=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W1fZdEi/LEuEq9OhXuWty+4l/FLjTZZnP7msv38ztiC8Glm+5hx+aAWweE7TGkpzN
-         7wibxiG9q1uq7Ms3XdZ28sqFnMcqoJJl8IH8MoIAndc3jKtjD6Q/3RxRHz6aS+JBcA
-         Mj0eOUzIRJm4jolWtz4uMSerVTVmyAsPJ/D4GuoE=
+        b=KklUylW6yZrS5SR49J3Cee6xO172NsnCAk7O8CliSaVfI9HpUZBRfPU/3pR4ROVzh
+         KavIM+NmoVkBOpzPmZxeLRxqFbapBYy6Om/st6vLc8sxk/Lp8qbMaz1c5EZk8E4qVO
+         j/5QdOpafxXXpLiybe5jH133A+DqbPOk0eGLbWCE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 4.14 57/80] staging: comedi: amplc_pci230: fix null pointer deref on interrupt
+        stable@vger.kernel.org, Haren Myneni <haren@us.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 5.1 53/54] crypto/NX: Set receive window credits to max number of CRBs in RxFIFO
 Date:   Thu, 18 Jul 2019 12:01:48 +0900
-Message-Id: <20190718030102.953260755@linuxfoundation.org>
+Message-Id: <20190718030057.294006798@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
-References: <20190718030058.615992480@linuxfoundation.org>
+In-Reply-To: <20190718030053.287374640@linuxfoundation.org>
+References: <20190718030053.287374640@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,45 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ian Abbott <abbotti@mev.co.uk>
+From: Haren Myneni <haren@linux.vnet.ibm.com>
 
-commit 7379e6baeddf580d01feca650ec1ad508b6ea8ee upstream.
+commit e52d484d9869eb291140545746ccbe5ffc7c9306 upstream.
 
-The interrupt handler `pci230_interrupt()` causes a null pointer
-dereference for a PCI260 card.  There is no analog output subdevice for
-a PCI260.  The `dev->write_subdev` subdevice pointer and therefore the
-`s_ao` subdevice pointer variable will be `NULL` for a PCI260.  The
-following call near the end of the interrupt handler results in the null
-pointer dereference for a PCI260:
+System gets checkstop if RxFIFO overruns with more requests than the
+maximum possible number of CRBs in FIFO at the same time. The max number
+of requests per window is controlled by window credits. So find max
+CRBs from FIFO size and set it to receive window credits.
 
-	comedi_handle_events(dev, s_ao);
-
-Fix it by only calling the above function if `s_ao` is valid.
-
-Note that the other uses of `s_ao` in the calls
-`pci230_handle_ao_nofifo(dev, s_ao);` and `pci230_handle_ao_fifo(dev,
-s_ao);` will never be reached for a PCI260, so they are safe.
-
-Fixes: 39064f23284c ("staging: comedi: amplc_pci230: use comedi_handle_events()")
-Cc: <stable@vger.kernel.org> # v3.19+
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+Fixes: b0d6c9bab5e4 ("crypto/nx: Add P9 NX support for 842 compression engine")
+CC: stable@vger.kernel.org # v4.14+
+Signed-off-by:Haren Myneni <haren@us.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/staging/comedi/drivers/amplc_pci230.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
---- a/drivers/staging/comedi/drivers/amplc_pci230.c
-+++ b/drivers/staging/comedi/drivers/amplc_pci230.c
-@@ -2339,7 +2339,8 @@ static irqreturn_t pci230_interrupt(int
- 	devpriv->intr_running = false;
- 	spin_unlock_irqrestore(&devpriv->isr_spinlock, irqflags);
+---
+ drivers/crypto/nx/nx-842-powernv.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+--- a/drivers/crypto/nx/nx-842-powernv.c
++++ b/drivers/crypto/nx/nx-842-powernv.c
+@@ -36,8 +36,6 @@ MODULE_ALIAS_CRYPTO("842-nx");
+ #define WORKMEM_ALIGN	(CRB_ALIGN)
+ #define CSB_WAIT_MAX	(5000) /* ms */
+ #define VAS_RETRIES	(10)
+-/* # of requests allowed per RxFIFO at a time. 0 for unlimited */
+-#define MAX_CREDITS_PER_RXFIFO	(1024)
  
--	comedi_handle_events(dev, s_ao);
-+	if (s_ao)
-+		comedi_handle_events(dev, s_ao);
- 	comedi_handle_events(dev, s_ai);
+ struct nx842_workmem {
+ 	/* Below fields must be properly aligned */
+@@ -821,7 +819,11 @@ static int __init vas_cfg_coproc_info(st
+ 	rxattr.lnotify_lpid = lpid;
+ 	rxattr.lnotify_pid = pid;
+ 	rxattr.lnotify_tid = tid;
+-	rxattr.wcreds_max = MAX_CREDITS_PER_RXFIFO;
++	/*
++	 * Maximum RX window credits can not be more than #CRBs in
++	 * RxFIFO. Otherwise, can get checkstop if RxFIFO overruns.
++	 */
++	rxattr.wcreds_max = fifo_size / CRB_SIZE;
  
- 	return IRQ_HANDLED;
+ 	/*
+ 	 * Open a VAS receice window which is used to configure RxFIFO
 
 
