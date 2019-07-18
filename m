@@ -2,76 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA42D6D1DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 18:19:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F8296D1E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 18:19:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729991AbfGRQSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 12:18:25 -0400
-Received: from relay.sw.ru ([185.231.240.75]:41000 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726649AbfGRQSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 12:18:25 -0400
-Received: from [172.16.25.12]
-        by relay.sw.ru with esmtp (Exim 4.92)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1ho96r-000845-Ln; Thu, 18 Jul 2019 19:18:21 +0300
-Subject: Re: [PATCH] kasan: push back KASAN_STACK detection to clang-10
+        id S1732141AbfGRQSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 12:18:40 -0400
+Received: from smtprelay0025.hostedemail.com ([216.40.44.25]:36818 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729774AbfGRQSk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 12:18:40 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 568338023D98;
+        Thu, 18 Jul 2019 16:18:38 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:800:960:988:989:1260:1277:1311:1313:1314:1345:1359:1431:1437:1515:1516:1518:1534:1543:1593:1594:1711:1730:1747:1777:1792:2195:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3355:3622:3865:3866:3867:3868:3870:3871:3872:3874:4321:5007:6119:7903:8603:10004:10400:10848:11026:11232:11658:11914:12043:12296:12297:12438:12555:12740:12760:12895:13160:13229:13439:13869:14181:14659:14721:21080:21324:21451:21627:30005:30012:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: deer25_684dc6a622a40
+X-Filterd-Recvd-Size: 4295
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 18 Jul 2019 16:18:36 +0000 (UTC)
+Message-ID: <db0a363fa35f1582f20e529d79927995a5512c0d.camel@perches.com>
+Subject: Re: [PATCH] crypto: aegis: fix badly optimized clang output
+From:   Joe Perches <joe@perches.com>
 To:     Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Qian Cai <cai@lca.pw>, Mark Brown <broonie@kernel.org>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-References: <20190718141503.3258299-1-arnd@arndb.de>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <0ee5952b-5a76-c8a5-a30a-ee3c46a54814@virtuozzo.com>
-Date:   Thu, 18 Jul 2019 19:18:28 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Ondrej Mosnacek <omosnacek@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Date:   Thu, 18 Jul 2019 09:18:35 -0700
+In-Reply-To: <20190718135017.2493006-1-arnd@arndb.de>
+References: <20190718135017.2493006-1-arnd@arndb.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-In-Reply-To: <20190718141503.3258299-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 2019-07-18 at 15:50 +0200, Arnd Bergmann wrote:
+> Clang sometimes makes very different inlining decisions from gcc.
+> In case of the aegis crypto algorithms, it decides to turn the innermost
+> primitives (and, xor, ...) into separate functions but inline most of
+> the rest.
 
+> This results in a huge amount of variables spilled on the stack, leading
+> to rather slow execution as well as kernel stack usage beyond the 32-bit
+> warning limit when CONFIG_KASAN is enabled:
+> 
+> crypto/aegis256.c:123:13: warning: stack frame size of 648 bytes in function 'crypto_aegis256_encrypt_chunk' [-Wframe-larger-than=]
+> crypto/aegis256.c:366:13: warning: stack frame size of 1264 bytes in function 'crypto_aegis256_crypt' [-Wframe-larger-than=]
+> crypto/aegis256.c:187:13: warning: stack frame size of 656 bytes in function 'crypto_aegis256_decrypt_chunk' [-Wframe-larger-than=]
+> crypto/aegis128l.c:135:13: warning: stack frame size of 832 bytes in function 'crypto_aegis128l_encrypt_chunk' [-Wframe-larger-than=]
+> crypto/aegis128l.c:415:13: warning: stack frame size of 1480 bytes in function 'crypto_aegis128l_crypt' [-Wframe-larger-than=]
+> crypto/aegis128l.c:218:13: warning: stack frame size of 848 bytes in function 'crypto_aegis128l_decrypt_chunk' [-Wframe-larger-than=]
+> crypto/aegis128.c:116:13: warning: stack frame size of 584 bytes in function 'crypto_aegis128_encrypt_chunk' [-Wframe-larger-than=]
+> crypto/aegis128.c:351:13: warning: stack frame size of 1064 bytes in function 'crypto_aegis128_crypt' [-Wframe-larger-than=]
+> crypto/aegis128.c:177:13: warning: stack frame size of 592 bytes in function 'crypto_aegis128_decrypt_chunk' [-Wframe-larger-than=]
+> 
+> Forcing the primitives to all get inlined avoids the issue and the
+> resulting code is similar to what gcc produces.
 
-On 7/18/19 5:14 PM, Arnd Bergmann wrote:
-> asan-stack mode still uses dangerously large kernel stacks of
-> tens of kilobytes in some drivers, and it does not seem that anyone
-> is working on the clang bug.
+Why weren't these functions in .h files
+not always marked with inline?
+
+Are there other static non-inlined function
+definitions in .h files that should also get
+this inline/__always_inline marking?
+
+I presume there are but can't think of a
+reasonable way to find them off the top of
+my head.
+
 > 
-> Let's push this back to clang-10 for now so users don't run into
-> this by accident, and we can test-build allmodconfig kernels using
-> clang-9 without drowning in warnings.
-> 
-> Link: https://bugs.llvm.org/show_bug.cgi?id=38809
-> Fixes: 6baec880d7a5 ("kasan: turn off asan-stack for clang-8 and earlier")
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  lib/Kconfig.kasan | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  crypto/aegis.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
-> index 4fafba1a923b..2f260bb63d77 100644
-> --- a/lib/Kconfig.kasan
-> +++ b/lib/Kconfig.kasan
-> @@ -106,7 +106,7 @@ endchoice
+> diff --git a/crypto/aegis.h b/crypto/aegis.h
+> index 41a3090cda8e..efed7251c49d 100644
+> --- a/crypto/aegis.h
+> +++ b/crypto/aegis.h
+> @@ -34,21 +34,21 @@ static const union aegis_block crypto_aegis_const[2] = {
+>  	} },
+>  };
 >  
->  config KASAN_STACK_ENABLE
->  	bool "Enable stack instrumentation (unsafe)" if CC_IS_CLANG && !COMPILE_TEST
-> -	default !(CLANG_VERSION < 90000)
-> +	default !(CLANG_VERSION < 100000)
+> -static void crypto_aegis_block_xor(union aegis_block *dst,
+> +static __always_inline void crypto_aegis_block_xor(union aegis_block *dst,
+>  				   const union aegis_block *src)
+>  {
+>  	dst->words64[0] ^= src->words64[0];
+>  	dst->words64[1] ^= src->words64[1];
+>  }
+>  
+> -static void crypto_aegis_block_and(union aegis_block *dst,
+> +static __always_inline void crypto_aegis_block_and(union aegis_block *dst,
+>  				   const union aegis_block *src)
+>  {
+>  	dst->words64[0] &= src->words64[0];
+>  	dst->words64[1] &= src->words64[1];
+>  }
+>  
+> -static void crypto_aegis_aesenc(union aegis_block *dst,
+> +static __always_inline void crypto_aegis_aesenc(union aegis_block *dst,
+>  				const union aegis_block *src,
+>  				const union aegis_block *key)
+>  {
 
-Wouldn't be better to make this thing for any clang version? And only when the bug is
-finally fixed, specify the clang version which can enable this safely.
-
-
->  	depends on KASAN
->  	help
->  	  The LLVM stack address sanitizer has a know problem that
-> 
