@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DC676C6D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:20:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89A786C606
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 05:12:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390739AbfGRDLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 17 Jul 2019 23:11:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45282 "EHLO mail.kernel.org"
+        id S2391027AbfGRDMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 17 Jul 2019 23:12:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390668AbfGRDLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 17 Jul 2019 23:11:37 -0400
+        id S2391142AbfGRDMb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 17 Jul 2019 23:12:31 -0400
 Received: from localhost (115.42.148.210.bf.2iij.net [210.148.42.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA5272053B;
-        Thu, 18 Jul 2019 03:11:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF69A2053B;
+        Thu, 18 Jul 2019 03:12:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563419495;
-        bh=pY8vLtxEqeP7gkP4k4vJU71w3R36mgNhS5lbMuykcVM=;
+        s=default; t=1563419551;
+        bh=Ibh7NgMaFkGJ8SvI600xDa7GK1ltTxQvofdnrEX9MBM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b2XnvA21+0QLxiHk8fc3oECAVk4VbaBeH4tRzL4sgax4Dne79aIqz18SJBnrmScdo
-         mvjLe7Ay3Ev9kp4p+kiU0vBTPOJNJo7qJr5eupyvU3KUMD+3LcZU3B78CuDXoyHQMK
-         YZUcZb7J9ptJvBE35qlHOlW0f7cZ7GJjzje0fnKo=
+        b=UTr1i2vHtCXNBXboX/jLvwG8G4UhIA1Y5VVzpAxwDNzxJM8R2AwX6C6oERtk7AAQA
+         6ypPDMWKM6bJlZogt5wB4Tu3E9YFLCCaoNDYxT9sgattDVNfR2zawVce5J/nHcGgoL
+         xr0XpiRt4qoj+Iv36OLugUoTi9PP3wuEp1qjoFQ8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.14 55/80] usb: renesas_usbhs: add a workaround for a race condition of workqueue
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 16/54] ARM: davinci: da8xx: specify dma_coherent_mask for lcdc
 Date:   Thu, 18 Jul 2019 12:01:46 +0900
-Message-Id: <20190718030102.818316347@linuxfoundation.org>
+Message-Id: <20190718030050.551530761@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190718030058.615992480@linuxfoundation.org>
-References: <20190718030058.615992480@linuxfoundation.org>
+In-Reply-To: <20190718030048.392549994@linuxfoundation.org>
+References: <20190718030048.392549994@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,129 +44,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+[ Upstream commit 68f2515bb31a664ba3e2bc1eb78dd9f529b10067 ]
 
-commit b2357839c56ab7d06bcd4e866ebc2d0e2b7997f3 upstream.
+The lcdc device is missing the dma_coherent_mask definition causing the
+following warning on da850-evm:
 
-The old commit 6e4b74e4690d ("usb: renesas: fix scheduling in atomic
-context bug") fixed an atomic issue by using workqueue for the shdmac
-dmaengine driver. However, this has a potential race condition issue
-between the work pending and usbhsg_ep_free_request() in gadget mode.
-When usbhsg_ep_free_request() is called while pending the queue,
-since the work_struct will be freed and then the work handler is
-called, kernel panic happens on process_one_work().
+da8xx_lcdc da8xx_lcdc.0: found Sharp_LK043T1DG01 panel
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at kernel/dma/mapping.c:247 dma_alloc_attrs+0xc8/0x110
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper Not tainted 5.2.0-rc3-00077-g16d72dd4891f #18
+Hardware name: DaVinci DA850/OMAP-L138/AM18x EVM
+[<c000fce8>] (unwind_backtrace) from [<c000d900>] (show_stack+0x10/0x14)
+[<c000d900>] (show_stack) from [<c001a4f8>] (__warn+0xec/0x114)
+[<c001a4f8>] (__warn) from [<c001a634>] (warn_slowpath_null+0x3c/0x48)
+[<c001a634>] (warn_slowpath_null) from [<c0065860>] (dma_alloc_attrs+0xc8/0x110)
+[<c0065860>] (dma_alloc_attrs) from [<c02820f8>] (fb_probe+0x228/0x5a8)
+[<c02820f8>] (fb_probe) from [<c02d3e9c>] (platform_drv_probe+0x48/0x9c)
+[<c02d3e9c>] (platform_drv_probe) from [<c02d221c>] (really_probe+0x1d8/0x2d4)
+[<c02d221c>] (really_probe) from [<c02d2474>] (driver_probe_device+0x5c/0x168)
+[<c02d2474>] (driver_probe_device) from [<c02d2728>] (device_driver_attach+0x58/0x60)
+[<c02d2728>] (device_driver_attach) from [<c02d27b0>] (__driver_attach+0x80/0xbc)
+[<c02d27b0>] (__driver_attach) from [<c02d047c>] (bus_for_each_dev+0x64/0xb4)
+[<c02d047c>] (bus_for_each_dev) from [<c02d1590>] (bus_add_driver+0xe4/0x1d8)
+[<c02d1590>] (bus_add_driver) from [<c02d301c>] (driver_register+0x78/0x10c)
+[<c02d301c>] (driver_register) from [<c000a5c0>] (do_one_initcall+0x48/0x1bc)
+[<c000a5c0>] (do_one_initcall) from [<c05cae6c>] (kernel_init_freeable+0x10c/0x1d8)
+[<c05cae6c>] (kernel_init_freeable) from [<c048a000>] (kernel_init+0x8/0xf4)
+[<c048a000>] (kernel_init) from [<c00090e0>] (ret_from_fork+0x14/0x34)
+Exception stack(0xc6837fb0 to 0xc6837ff8)
+7fa0:                                     00000000 00000000 00000000 00000000
+7fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+7fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+---[ end trace 8a8073511be81dd2 ]---
 
-To fix the issue, if we could call cancel_work_sync() at somewhere
-before the free request, it could be easy. However,
-the usbhsg_ep_free_request() is called on atomic (e.g. f_ncm driver
-calls free request via gether_disconnect()).
+Add a 32-bit mask to the platform device's definition.
 
-For now, almost all users are having "USB-DMAC" and the DMAengine
-driver can be used on atomic. So, this patch adds a workaround for
-a race condition to call the DMAengine APIs without the workqueue.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This means we still have TODO on shdmac environment (SH7724), but
-since it doesn't have SMP, the race condition might not happen.
-
-Fixes: ab330cf3888d ("usb: renesas_usbhs: add support for USB-DMAC")
-Cc: <stable@vger.kernel.org> # v4.1+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/renesas_usbhs/fifo.c |   34 ++++++++++++++++++++++------------
- 1 file changed, 22 insertions(+), 12 deletions(-)
+ arch/arm/mach-davinci/devices-da8xx.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/renesas_usbhs/fifo.c
-+++ b/drivers/usb/renesas_usbhs/fifo.c
-@@ -818,9 +818,8 @@ static int __usbhsf_dma_map_ctrl(struct
- }
- 
- static void usbhsf_dma_complete(void *arg);
--static void xfer_work(struct work_struct *work)
-+static void usbhsf_dma_xfer_preparing(struct usbhs_pkt *pkt)
- {
--	struct usbhs_pkt *pkt = container_of(work, struct usbhs_pkt, work);
- 	struct usbhs_pipe *pipe = pkt->pipe;
- 	struct usbhs_fifo *fifo;
- 	struct usbhs_priv *priv = usbhs_pipe_to_priv(pipe);
-@@ -828,12 +827,10 @@ static void xfer_work(struct work_struct
- 	struct dma_chan *chan;
- 	struct device *dev = usbhs_priv_to_dev(priv);
- 	enum dma_transfer_direction dir;
--	unsigned long flags;
- 
--	usbhs_lock(priv, flags);
- 	fifo = usbhs_pipe_to_fifo(pipe);
- 	if (!fifo)
--		goto xfer_work_end;
-+		return;
- 
- 	chan = usbhsf_dma_chan_get(fifo, pkt);
- 	dir = usbhs_pipe_is_dir_in(pipe) ? DMA_DEV_TO_MEM : DMA_MEM_TO_DEV;
-@@ -842,7 +839,7 @@ static void xfer_work(struct work_struct
- 					pkt->trans, dir,
- 					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
- 	if (!desc)
--		goto xfer_work_end;
-+		return;
- 
- 	desc->callback		= usbhsf_dma_complete;
- 	desc->callback_param	= pipe;
-@@ -850,7 +847,7 @@ static void xfer_work(struct work_struct
- 	pkt->cookie = dmaengine_submit(desc);
- 	if (pkt->cookie < 0) {
- 		dev_err(dev, "Failed to submit dma descriptor\n");
--		goto xfer_work_end;
-+		return;
- 	}
- 
- 	dev_dbg(dev, "  %s %d (%d/ %d)\n",
-@@ -861,8 +858,17 @@ static void xfer_work(struct work_struct
- 	dma_async_issue_pending(chan);
- 	usbhsf_dma_start(pipe, fifo);
- 	usbhs_pipe_enable(pipe);
-+}
-+
-+static void xfer_work(struct work_struct *work)
-+{
-+	struct usbhs_pkt *pkt = container_of(work, struct usbhs_pkt, work);
-+	struct usbhs_pipe *pipe = pkt->pipe;
-+	struct usbhs_priv *priv = usbhs_pipe_to_priv(pipe);
-+	unsigned long flags;
- 
--xfer_work_end:
-+	usbhs_lock(priv, flags);
-+	usbhsf_dma_xfer_preparing(pkt);
- 	usbhs_unlock(priv, flags);
- }
- 
-@@ -915,8 +921,13 @@ static int usbhsf_dma_prepare_push(struc
- 	pkt->trans = len;
- 
- 	usbhsf_tx_irq_ctrl(pipe, 0);
--	INIT_WORK(&pkt->work, xfer_work);
--	schedule_work(&pkt->work);
-+	/* FIXME: Workaound for usb dmac that driver can be used in atomic */
-+	if (usbhs_get_dparam(priv, has_usb_dmac)) {
-+		usbhsf_dma_xfer_preparing(pkt);
-+	} else {
-+		INIT_WORK(&pkt->work, xfer_work);
-+		schedule_work(&pkt->work);
+diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
+index 9a22d40602aa..24779504f489 100644
+--- a/arch/arm/mach-davinci/devices-da8xx.c
++++ b/arch/arm/mach-davinci/devices-da8xx.c
+@@ -706,6 +706,9 @@ static struct platform_device da8xx_lcdc_device = {
+ 	.id		= 0,
+ 	.num_resources	= ARRAY_SIZE(da8xx_lcdc_resources),
+ 	.resource	= da8xx_lcdc_resources,
++	.dev		= {
++		.coherent_dma_mask	= DMA_BIT_MASK(32),
 +	}
+ };
  
- 	return 0;
- 
-@@ -1022,8 +1033,7 @@ static int usbhsf_dma_prepare_pop_with_u
- 
- 	pkt->trans = pkt->length;
- 
--	INIT_WORK(&pkt->work, xfer_work);
--	schedule_work(&pkt->work);
-+	usbhsf_dma_xfer_preparing(pkt);
- 
- 	return 0;
- 
+ int __init da8xx_register_lcdc(struct da8xx_lcdc_platform_data *pdata)
+-- 
+2.20.1
+
 
 
