@@ -2,108 +2,297 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D676D626
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 22:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CFCC6D604
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Jul 2019 22:51:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391472AbfGRU7E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 16:59:04 -0400
-Received: from [23.106.125.11] ([23.106.125.11]:49224 "EHLO WIN-M5327EF98B9"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727685AbfGRU7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 16:59:04 -0400
-X-Greylist: delayed 1173 seconds by postgrey-1.27 at vger.kernel.org; Thu, 18 Jul 2019 16:58:41 EDT
-Received: from WIN-M5327EF98B9 ([23.106.125.11]) by WIN-M5327EF98B9 with Microsoft SMTPSVC(7.5.7601.17514);
-         Thu, 18 Jul 2019 13:32:39 -0700
-From:   "EWELINA KOZLOWSKA" <ewelina.kozlowska@orlen.pl>
-Subject: Rezygnacja z zamowienia
-To:     linux-kernel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="FAcq160vTBnO=_MFIyeZAXsYz4r61syox10"
+        id S2391147AbfGRUvt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 16:51:49 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:51468 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727687AbfGRUvt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 16:51:49 -0400
+Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 68FB3C0A75;
+        Thu, 18 Jul 2019 20:51:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1563483108; bh=n6uWkuvjhu3Hdf5gkmZc44j9tCtYMS9DvhGOul33ooY=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=Brw0uk9VeypXYpplEYUJCMKNXUfzNlcN8sHAINMh230juNe5fG+e/KdggCPmCNg2g
+         HnGv0KFyJ5lUasAFASD8DWlka8pjDjOObQS1KDQeQQeG4Nc46luyH7KXgPEWsAhxOQ
+         gKKb+TV9Nm6LVGEwJJNjO31ZKgLhUrYokqPeop4lpu99RWvrOLTYGAhNqJV1ZtMjVf
+         XB4zxg+Jacb3r+VQiP0Nk/eCtqUmn+iojYWA3NADinwi1D/HTUUxkLXbVK3YRMYX4A
+         eT378AMmQue8DzT3JvhvdKe9sg/LW4XbSK2/vz5YXc3TLS4pMdPVbOUYpd9W8i5psu
+         SjZTPk+7ZZgUQ==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 2FDD0A009A;
+        Thu, 18 Jul 2019 20:51:42 +0000 (UTC)
+Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 18 Jul 2019 13:51:26 -0700
+Received: from NAM05-DM3-obe.outbound.protection.outlook.com (10.13.134.195)
+ by mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 18 Jul 2019 13:51:26 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=k9Tin9B7imO1x67LyU3FGnJprhIkaxQIuSaZAxsPxQbq6Oy9SDW4TfD20Yvk9N1EkDppkD43DvtFiJLbLhy8yXdTIBNNSmMSNRlpzj0gzMWqtTQ/cjfkjdErNsIBnuaMIOVKRZT7H/UUuUgrFVCEXf7s4JTIriXLP78ToijbYFpcTTZuKNTbUev/leUC30P+XEk2Zw5Nvxi4TWSMgbtZpkPiqjHURVyzxye30Jkg4uCI+wdioaskqAlsOd4wp1Yhwh7WmgDXmr1bOut4q4KsG1Z6vBsQZOt9BclfOSfg7Jh7Rey75eQ+wnrbMz8A1BxZj6TBGWLWOGdGzuFpcbsVAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eLbsui8LwC4H3ZPZbAfPK7eKWOlQwvA8/Zx/7ZMRxQU=;
+ b=W5cQd14YIIKhhMg2hBRWx1im1FvX855SPBDOmBtoBoYn78M9h7uvR708a+kkCsSbIKIuyUyqCceQsbYGk9XE/ybNlk94v1bZXFyfv/MmC6bU/nWqCLWyk3grHC6F87fnbGiiMFzAKrjInnSCFlAE6swTgnEus/Yi/BmGbl2QOrmNGnvLRr4UsuzhNJAtrd8RDpHnVyytILM8pd2Q4o55TKMrLBScGxKnq21xTiEV8W+//SL3zVSMN3ukNwsmTVpfyVG3fFTff6MeJ/gsCgcjajVBugnYa5fsDEyMEbGO9qfmjyF13cOM8SVa2QOO/XQxkQ2Gsf31wNePg2YegcyEBg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=synopsys.com;dmarc=pass action=none
+ header.from=synopsys.com;dkim=pass header.d=synopsys.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=synopsys.onmicrosoft.com; s=selector1-synopsys-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eLbsui8LwC4H3ZPZbAfPK7eKWOlQwvA8/Zx/7ZMRxQU=;
+ b=cDdNWV81+AHIL+fNaM56meNzXfWqO6leNHdjK5HhaUMgJrM+WZly8tBb4vCfyynzG3csQezwiCBHNSsp41tB7Y99za1hZ6xIiEX93BtgpVDk28laWHUnWeFcgpw8PvB27qn/soEI2ZKl8UXrTVT6AF/5mKCP1n5hPZ7m9KdsslE=
+Received: from CY4PR1201MB0120.namprd12.prod.outlook.com (10.172.78.14) by
+ CY4SPR00MB2380.namprd12.prod.outlook.com (10.173.43.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2073.14; Thu, 18 Jul 2019 20:51:23 +0000
+Received: from CY4PR1201MB0120.namprd12.prod.outlook.com
+ ([fe80::1c8d:9b3c:7538:477b]) by CY4PR1201MB0120.namprd12.prod.outlook.com
+ ([fe80::1c8d:9b3c:7538:477b%4]) with mapi id 15.20.2094.011; Thu, 18 Jul 2019
+ 20:51:23 +0000
+From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To:     linux-stable <stable@vger.kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Corentin Labbe" <clabbe@baylibre.com>,
+        "khilman@baylibre.com" <khilman@baylibre.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Subject: RE: [PATCH v2 2/2] ARC: enable uboot support unconditionally
+Thread-Topic: [PATCH v2 2/2] ARC: enable uboot support unconditionally
+Thread-Index: AQHUxHcRQQpuVpv4ikGdBs8+CyKThqbRyW7g
+Date:   Thu, 18 Jul 2019 20:51:23 +0000
+Message-ID: <CY4PR1201MB0120530B12273DDC5B06D823A1C80@CY4PR1201MB0120.namprd12.prod.outlook.com>
+References: <20190214150745.18773-1-Eugeniy.Paltsev@synopsys.com>
+ <20190214150745.18773-3-Eugeniy.Paltsev@synopsys.com>
+In-Reply-To: <20190214150745.18773-3-Eugeniy.Paltsev@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abrodkin@synopsys.com; 
+x-originating-ip: [198.182.37.200]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a9014e51-f4a1-4452-c3b5-08d70bc1b1c9
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:CY4SPR00MB2380;
+x-ms-traffictypediagnostic: CY4SPR00MB2380:
+x-ms-exchange-purlcount: 2
+x-microsoft-antispam-prvs: <CY4SPR00MB2380071444F2C6067F202264A1C80@CY4SPR00MB2380.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4125;
+x-forefront-prvs: 01026E1310
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(39860400002)(396003)(136003)(376002)(13464003)(199004)(189003)(7736002)(6246003)(6306002)(81156014)(55016002)(81166006)(9686003)(66066001)(74316002)(71200400001)(14444005)(53936002)(486006)(54906003)(5660300002)(478600001)(99286004)(3846002)(2906002)(102836004)(305945005)(53546011)(6506007)(33656002)(14454004)(7696005)(11346002)(8936002)(25786009)(66476007)(6116002)(76176011)(966005)(68736007)(66946007)(52536014)(256004)(86362001)(446003)(186003)(316002)(229853002)(4326008)(6916009)(8676002)(476003)(66556008)(71190400001)(64756008)(66446008)(107886003)(26005)(76116006)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4SPR00MB2380;H:CY4PR1201MB0120.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: HS1371qlQJ1bZ9Bc5KB8v1l0fcMynZ99CZKV6PKmIU9jTjrXCRmcOPreu2c2s0awIhxIU7TZvcsuAwTmc/mUsGR7gIKh2uTdDVvsNooSvkZKSq+1ibKc/HPkk9JJ12raHsZphojn11WRiUgF7z85w+zAJQBZ5lCRHAtyoP8GyPYOHQ1N6sOy6lUPHFXR3LERjghryveoo5WTpwFqDTu3wYj1XQgdQ4WELIY/ZydprCfjnp5z68knuJxdqDm6ED+2UhMWb5qi5KTo7xzWFfpUBR1RU9d8yuw3Gb6DavegvqmAWmsVuJhAA6tYX5NWrh4fpgPgpeJpFD2Xw04Tv3gpR1Io/Kdbwn3Gt+5O8S3rbYXQYKtt/LWBYA/8yhq/tzQl5AoWmhdnhFLNB3bCen9rN1JbBj+4GhcqCgFbKnE/Bx4=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Reply-To: ewelina.kozlowska@orlen.pl
-Date:   Thu, 18 Jul 2019 13:32:39 -0700
-Message-ID: <WIN-M5327EF98B9KbK10002756b@WIN-M5327EF98B9>
-X-OriginalArrivalTime: 18 Jul 2019 20:32:39.0456 (UTC) FILETIME=[F14E2200:01D53DA7]
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9014e51-f4a1-4452-c3b5-08d70bc1b1c9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2019 20:51:23.2079
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: abrodkin@synopsys.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4SPR00MB2380
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format
+Hi Greg,
 
---FAcq160vTBnO=_MFIyeZAXsYz4r61syox10
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+> -----Original Message-----
+> From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> Sent: Thursday, February 14, 2019 6:08 PM
+> To: linux-snps-arc@lists.infradead.org; Vineet Gupta <vgupta@synopsys.com=
+>
+> Cc: linux-kernel@vger.kernel.org; Alexey Brodkin <abrodkin@synopsys.com>;=
+ Corentin Labbe
+> <clabbe@baylibre.com>; khilman@baylibre.com; Eugeniy Paltsev <Eugeniy.Pal=
+tsev@synopsys.com>
+> Subject: [PATCH v2 2/2] ARC: enable uboot support unconditionally
+>=20
+> After reworking U-boot args handling code and adding paranoid
+> arguments check we can eliminate CONFIG_ARC_UBOOT_SUPPORT and
+> enable uboot support unconditionally.
+>=20
+> For JTAG case we can assume that core registers will come up
+> reset value of 0 or in worst case we rely on user passing
+> '-on=3Dclear_regs' to Metaware debugger.
+>=20
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-Witam, zgodnie z rozmowa telefoniczna , wysylam formularz odstapienia =
-i potwierdzenie przelewu za zamowienie, poprosze o zwrot na ten sam nu=
-mer rachunki.
+May we have this one back-ported to linux-4.19.y?
 
-Pozdrawiam
+It was initially applied to Linus' tree during 5.0 development
+cycle [1] but was never back-ported.
 
---FAcq160vTBnO=_MFIyeZAXsYz4r61syox10
-Content-Type: application/octet-stream;
-        name="odstapienie.zip"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
-        filename="odstapienie.zip"
+Now w/o that patch in KernelCI we see boot failure on ARC HSDK
+board [2] as opposed to normally working later kernel versions.
 
-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
-AgACAPYAAAB6CwAAAAA=
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/?id=3D493a2f812446e92bcb1e69a77381b4d39808d730
+[2] https://storage.kernelci.org/stable/linux-4.19.y/v4.19.59/arc/hsdk_defc=
+onfig/gcc-8/lab-baylibre/boot-hsdk.txt
 
---FAcq160vTBnO=_MFIyeZAXsYz4r61syox10--
+Below is that same patch but rebased on linux-4.19 as in its pristine
+form it won't apply due to offset of one of hunks.
 
+-Alexey
+
+------------------------------------>8--------------------------------
+From 3e565355f6a2d1a82bc9ecd47a46d1fa3c0cd2c1 Mon Sep 17 00:00:00 2001
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Date: Thu, 14 Feb 2019 18:07:45 +0300
+Subject: [PATCH] ARC: enable uboot support unconditionally
+
+After reworking U-boot args handling code and adding paranoid
+arguments check we can eliminate CONFIG_ARC_UBOOT_SUPPORT and
+enable uboot support unconditionally.
+
+For JTAG case we can assume that core registers will come up
+reset value of 0 or in worst case we rely on user passing
+'-on=3Dclear_regs' to Metaware debugger.
+
+Cc: stable@vger.kernel.org
+Tested-by: Corentin LABBE <clabbe@baylibre.com>
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+---
+ arch/arc/Kconfig                        | 13 -------------
+ arch/arc/configs/nps_defconfig          |  1 -
+ arch/arc/configs/vdk_hs38_defconfig     |  1 -
+ arch/arc/configs/vdk_hs38_smp_defconfig |  2 --
+ arch/arc/kernel/head.S                  |  2 --
+ arch/arc/kernel/setup.c                 |  2 --
+ 6 files changed, 21 deletions(-)
+
+diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+index 85eb7fc2e241..97b45fe8f0c2 100644
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -199,7 +199,6 @@ config NR_CPUS
+=20
+ config ARC_SMP_HALT_ON_RESET
+ 	bool "Enable Halt-on-reset boot mode"
+-	default y if ARC_UBOOT_SUPPORT
+ 	help
+ 	  In SMP configuration cores can be configured as Halt-on-reset
+ 	  or they could all start at same time. For Halt-on-reset, non
+@@ -538,18 +537,6 @@ config ARC_DBG_TLB_PARANOIA
+=20
+ endif
+=20
+-config ARC_UBOOT_SUPPORT
+-	bool "Support uboot arg Handling"
+-	default n
+-	help
+-	  ARC Linux by default checks for uboot provided args as pointers to
+-	  external cmdline or DTB. This however breaks in absence of uboot,
+-	  when booting from Metaware debugger directly, as the registers are
+-	  not zeroed out on reset by mdb and/or ARCv2 based cores. The bogus
+-	  registers look like uboot args to kernel which then chokes.
+-	  So only enable the uboot arg checking/processing if users are sure
+-	  of uboot being in play.
+-
+ config ARC_BUILTIN_DTB_NAME
+ 	string "Built in DTB"
+ 	help
+diff --git a/arch/arc/configs/nps_defconfig b/arch/arc/configs/nps_defconfi=
+g
+index 6e84060e7c90..621f59407d76 100644
+--- a/arch/arc/configs/nps_defconfig
++++ b/arch/arc/configs/nps_defconfig
+@@ -31,7 +31,6 @@ CONFIG_ARC_CACHE_LINE_SHIFT=3D5
+ # CONFIG_ARC_HAS_LLSC is not set
+ CONFIG_ARC_KVADDR_SIZE=3D402
+ CONFIG_ARC_EMUL_UNALIGNED=3Dy
+-CONFIG_ARC_UBOOT_SUPPORT=3Dy
+ CONFIG_PREEMPT=3Dy
+ CONFIG_NET=3Dy
+ CONFIG_UNIX=3Dy
+diff --git a/arch/arc/configs/vdk_hs38_defconfig b/arch/arc/configs/vdk_hs3=
+8_defconfig
+index 1e59a2e9c602..e447ace6fa1c 100644
+--- a/arch/arc/configs/vdk_hs38_defconfig
++++ b/arch/arc/configs/vdk_hs38_defconfig
+@@ -13,7 +13,6 @@ CONFIG_PARTITION_ADVANCED=3Dy
+ CONFIG_ARC_PLAT_AXS10X=3Dy
+ CONFIG_AXS103=3Dy
+ CONFIG_ISA_ARCV2=3Dy
+-CONFIG_ARC_UBOOT_SUPPORT=3Dy
+ CONFIG_ARC_BUILTIN_DTB_NAME=3D"vdk_hs38"
+ CONFIG_PREEMPT=3Dy
+ CONFIG_NET=3Dy
+diff --git a/arch/arc/configs/vdk_hs38_smp_defconfig b/arch/arc/configs/vdk=
+_hs38_smp_defconfig
+index b5c3f6c54b03..c82cdb10aaf4 100644
+--- a/arch/arc/configs/vdk_hs38_smp_defconfig
++++ b/arch/arc/configs/vdk_hs38_smp_defconfig
+@@ -15,8 +15,6 @@ CONFIG_AXS103=3Dy
+ CONFIG_ISA_ARCV2=3Dy
+ CONFIG_SMP=3Dy
+ # CONFIG_ARC_TIMERS_64BIT is not set
+-# CONFIG_ARC_SMP_HALT_ON_RESET is not set
+-CONFIG_ARC_UBOOT_SUPPORT=3Dy
+ CONFIG_ARC_BUILTIN_DTB_NAME=3D"vdk_hs38_smp"
+ CONFIG_PREEMPT=3Dy
+ CONFIG_NET=3Dy
+diff --git a/arch/arc/kernel/head.S b/arch/arc/kernel/head.S
+index 208bf2c9e7b0..a72bbda2f7aa 100644
+--- a/arch/arc/kernel/head.S
++++ b/arch/arc/kernel/head.S
+@@ -100,7 +100,6 @@ ENTRY(stext)
+ 	st.ab   0, [r5, 4]
+ 1:
+=20
+-#ifdef CONFIG_ARC_UBOOT_SUPPORT
+ 	; Uboot - kernel ABI
+ 	;    r0 =3D [0] No uboot interaction, [1] cmdline in r2, [2] DTB in r2
+ 	;    r1 =3D magic number (always zero as of now)
+@@ -109,7 +108,6 @@ ENTRY(stext)
+ 	st	r0, [@uboot_tag]
+ 	st      r1, [@uboot_magic]
+ 	st	r2, [@uboot_arg]
+-#endif
+=20
+ 	; setup "current" tsk and optionally cache it in dedicated r25
+ 	mov	r9, @init_task
+diff --git a/arch/arc/kernel/setup.c b/arch/arc/kernel/setup.c
+index a1218937abd6..89c97dcfa360 100644
+--- a/arch/arc/kernel/setup.c
++++ b/arch/arc/kernel/setup.c
+@@ -493,7 +493,6 @@ void __init handle_uboot_args(void)
+ 	bool use_embedded_dtb =3D true;
+ 	bool append_cmdline =3D false;
+=20
+-#ifdef CONFIG_ARC_UBOOT_SUPPORT
+ 	/* check that we know this tag */
+ 	if (uboot_tag !=3D UBOOT_TAG_NONE &&
+ 	    uboot_tag !=3D UBOOT_TAG_CMDLINE &&
+@@ -525,7 +524,6 @@ void __init handle_uboot_args(void)
+ 		append_cmdline =3D true;
+=20
+ ignore_uboot_args:
+-#endif
+=20
+ 	if (use_embedded_dtb) {
+ 		machine_desc =3D setup_machine_fdt(__dtb_start);
+--=20
+2.16.2
