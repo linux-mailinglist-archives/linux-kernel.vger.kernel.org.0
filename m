@@ -2,99 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F19D16E168
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 09:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 631FE6E164
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 09:09:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727509AbfGSHJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 03:09:47 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40000 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727436AbfGSHJq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 03:09:46 -0400
-Received: by mail-pg1-f196.google.com with SMTP id w10so14046881pgj.7
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 00:09:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=0LeeAyTVsmLsUpPz7KDXnnPyr4L05PS3OGLUvnsErUM=;
-        b=a86lshRVZo1JvdbvlNOzh2S2zd3nIg//DqFgL+WW7L8MWBICb0TJIBvAUGRdjviCYd
-         P3Ah6m1xBLXnE/VLnZg3N0YXLE+kbAjqtj5lrnkpMfi+V1ZCO95IWOmVw0uXR8R0yg80
-         Z/+Mf/94dAjeVtVmNJuhK1wRAOfJGdnjkDbQlgOO0bNu4kvIJ4ggnINhXHFSV9h3TP/r
-         oqA2EIOv5PyMwZHbc2hxBvkCzB4k/3BC6lr9SgVTixxwUD+H6o+819s+e0Jlk/bL/wxw
-         15YyeJwQAtV79qAHZ4k5Ntr/LumYeiJfUVxZ22pv5e9BV/lrkZkO0cESNWAJMBj4Ez7s
-         2d1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=0LeeAyTVsmLsUpPz7KDXnnPyr4L05PS3OGLUvnsErUM=;
-        b=SvjwDnp7Dd3kMkVyLFZeitAm/x5qGUJGw9E4V+z0g5Uo+yuYB3iVRBDnrp6xZdCmwJ
-         p90A9W2RuM1yUh8JcV+5aljh3nDWFXhMcKtZnyh5MsemhAcYIfPPfkauy5DIfa2SPAcz
-         1cPggvOfS2WYn5NK3gw/gielOYyhpqSN52AtWGy64y2z0QTjBmnFTb7GfkvTQ/6SmUt4
-         3Ho9DTVMOEeRydY+iN83sqrv/Bd0qWjeUOvWck3/5i3JqR+ETlavnGCMwu2cp8TBOaKk
-         2Ko4EzuKZjz1m6mZD+/Cwhx3B76xURk0ZPGIdr5pdZUv19WRTruH3UEbcTlenXy3pQKh
-         NbMw==
-X-Gm-Message-State: APjAAAVeuZsz9UTmnqb5+0HCvKYfVFDVxODr4DqDd6ZZx3kstVKm+Q91
-        vhxAiHCUSPS2qKvYRH3DCA/J
-X-Google-Smtp-Source: APXvYqzrr0Go2Vx0z9CClLEHsJMpXca4xfICOrN1UqAeij1rNOA6ZEyLzOT3xu7pceNkPRgvRU9bEA==
-X-Received: by 2002:a17:90a:360c:: with SMTP id s12mr56809775pjb.30.1563520185267;
-        Fri, 19 Jul 2019 00:09:45 -0700 (PDT)
-Received: from localhost.localdomain ([2405:204:730b:4a40:d09e:c7ec:fbb:1676])
-        by smtp.gmail.com with ESMTPSA id r6sm56259346pjb.22.2019.07.19.00.09.38
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 19 Jul 2019 00:09:44 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, robh+dt@kernel.org
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Darshak.Patel@einfochips.com,
-        kinjan.patel@einfochips.com, prajose.john@einfochips.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 0/3] Add support for i.MXQXP AI_ML board
-Date:   Fri, 19 Jul 2019 12:39:23 +0530
-Message-Id: <20190719070926.29114-1-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        id S1726709AbfGSHJe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 03:09:34 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:44568 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725853AbfGSHJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 03:09:34 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A209C1A0130;
+        Fri, 19 Jul 2019 09:09:32 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 953971A0126;
+        Fri, 19 Jul 2019 09:09:32 +0200 (CEST)
+Received: from lorenz.ea.freescale.net (lorenz.ea.freescale.net [10.171.71.5])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 4BAEE205D1;
+        Fri, 19 Jul 2019 09:09:32 +0200 (CEST)
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Gilad Ben-Yossef <gilad@benyossef.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-imx <linux-imx@nxp.com>
+Subject: [PATCH 2/2] crypto: bcm - check assoclen for rfc4543/rfc4106
+Date:   Fri, 19 Jul 2019 10:09:24 +0300
+Message-Id: <1563520164-1153-2-git-send-email-iuliana.prodan@nxp.com>
+X-Mailer: git-send-email 2.1.0
+In-Reply-To: <1563520164-1153-1-git-send-email-iuliana.prodan@nxp.com>
+References: <1563520164-1153-1-git-send-email-iuliana.prodan@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Validated assoclen for RFC4543 which expects an assoclen
+of 16 or 20, the same as RFC4106.
+Based on seqiv, IPsec ESP and RFC4543/RFC4106 the assoclen is sizeof
+IP Header (spi, seq_no, extended seq_no) and IV len. This can be 16 or
+20 bytes.
 
-This patchset adds support for i.MXQXP AI_ML board from Einfochips.
-This board is one of the Consumer Edition boards of the 96Boards family
-based on i.MX8QXP SoC from NXP/Freescale.
+Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+---
+ drivers/crypto/bcm/cipher.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-The initial support includes following peripherals which are tested and
-known to be working:
-
-1. Debug serial via UART2
-2. uSD
-3. WiFi
-4. Ethernet
-
-More information about this board can be found in Arrow website:
-https://www.arrow.com/en/products/imx8-ai-ml/arrow-development-tools
-
-Thanks,
-Mani
-
-Changes in v2:
-
-* Incorporated review comments from Dong (small cleanups)
-
-Manivannan Sadhasivam (3):
-  dt-bindings: Add Vendor prefix for Einfochips
-  dt-bindings: arm: Document i.MX8QXP AI_ML board binding
-  arm64: dts: freescale: Add support for i.MX8QXP AI_ML board
-
- .../devicetree/bindings/arm/fsl.yaml          |   1 +
- .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
- arch/arm64/boot/dts/freescale/Makefile        |   1 +
- .../boot/dts/freescale/imx8qxp-ai_ml.dts      | 249 ++++++++++++++++++
- 4 files changed, 253 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8qxp-ai_ml.dts
-
+diff --git a/drivers/crypto/bcm/cipher.c b/drivers/crypto/bcm/cipher.c
+index d972ffa..02ef600 100644
+--- a/drivers/crypto/bcm/cipher.c
++++ b/drivers/crypto/bcm/cipher.c
+@@ -2640,6 +2640,19 @@ static int aead_need_fallback(struct aead_request *req)
+ 		return 1;
+ 	}
+ 
++	/*
++	 * RFC4106 and RFC4543 cannot handle the case where AAD is other than
++	 * 16 or 20 bytes long. So use fallback in this case.
++	 */
++	if (ctx->cipher.mode == CIPHER_MODE_GCM &&
++	    ctx->cipher.alg == CIPHER_ALG_AES &&
++	    rctx->iv_ctr_len == GCM_RFC4106_IV_SIZE &&
++	    req->assoclen != 16 && req->assoclen != 20) {
++		flow_log("RFC4106/RFC4543 needs fallback for assoclen"
++			 " other than 16 or 20 bytes\n");
++		return 1;
++	}
++
+ 	payload_len = req->cryptlen;
+ 	if (spu->spu_type == SPU_TYPE_SPUM)
+ 		payload_len += req->assoclen;
 -- 
-2.17.1
+2.1.0
 
