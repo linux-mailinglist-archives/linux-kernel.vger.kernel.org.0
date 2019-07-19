@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7BAE6DF5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:35:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8416F6DF5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:35:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729616AbfGSEBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:01:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33302 "EHLO mail.kernel.org"
+        id S1729669AbfGSEBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:01:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728707AbfGSEBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:01:33 -0400
+        id S1729516AbfGSEBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:01:36 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E79B218A5;
-        Fri, 19 Jul 2019 04:01:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E81F21851;
+        Fri, 19 Jul 2019 04:01:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508893;
-        bh=5objRnYHCmulPFW07H0iD2s+QME+63EI23t7tqFFspE=;
+        s=default; t=1563508895;
+        bh=ts1M3lz2EXopxqOzc++QgTO3csnWak9R06rPforK5Rk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Btk434umaW44ES/jNthjsdREPrpR86bQOCpxhYATE8qrqizfOmlBuabBnk+UoK0Ns
-         FpRfWz1NL6Mb+hPrKK/cyJI4+QUPp8iHkMLfAVT/bmgR9Hhz6DLyOlZG9ySMQ01xUn
-         BzQive5rNhXw7AVV8cNaV6D9zRco3UODihi5t2xs=
+        b=MO3MjM0uvs4p50UQoAWiZyjvxQYoIsJY68tIpihwQX48hzkLCjpFDwBYt+ctcrE9a
+         qEys+/M6QPxTv2cWE/m6kbsYu6ExRw2dz8X5tmMtJr6HR060INFz5moAxNl5+lRhsE
+         997Ovq9J8eO8JGdBS3Tj56B3fXRrmW/5QsNlhd/4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 5.2 141/171] powerpc/boot: add {get, put}_unaligned_be32 to xz_config.h
-Date:   Thu, 18 Jul 2019 23:56:12 -0400
-Message-Id: <20190719035643.14300-141-sashal@kernel.org>
+Cc:     Gerd Rausch <gerd.rausch@oracle.com>,
+        Zhu Yanjun <yanjun.zhu@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 143/171] rds: Accept peer connection reject messages due to incompatible version
+Date:   Thu, 18 Jul 2019 23:56:14 -0400
+Message-Id: <20190719035643.14300-143-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -43,102 +45,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Gerd Rausch <gerd.rausch@oracle.com>
 
-[ Upstream commit 9e005b761e7ad153dcf40a6cba1d681fe0830ac6 ]
+[ Upstream commit 8c6166cfc9cd48e93d9176561e50b63cef4330d5 ]
 
-The next commit will make the way of passing CONFIG options more robust.
-Unfortunately, it would uncover another hidden issue; without this
-commit, skiroot_defconfig would be broken like this:
+Prior to
+commit d021fabf525ff ("rds: rdma: add consumer reject")
 
-|   WRAP    arch/powerpc/boot/zImage.pseries
-| arch/powerpc/boot/wrapper.a(decompress.o): In function `bcj_powerpc.isra.10':
-| decompress.c:(.text+0x720): undefined reference to `get_unaligned_be32'
-| decompress.c:(.text+0x7a8): undefined reference to `put_unaligned_be32'
-| make[1]: *** [arch/powerpc/boot/Makefile;383: arch/powerpc/boot/zImage.pseries] Error 1
-| make: *** [arch/powerpc/Makefile;295: zImage] Error 2
+function "rds_rdma_cm_event_handler_cmn" would always honor a rejected
+connection attempt by issuing a "rds_conn_drop".
 
-skiroot_defconfig is the only defconfig that enables CONFIG_KERNEL_XZ
-for ppc, which has never been correctly built before.
+The commit mentioned above added a "break", eliminating
+the "fallthrough" case and made the "rds_conn_drop" rather conditional:
 
-I figured out the root cause in lib/decompress_unxz.c:
+Now it only happens if a "consumer defined" reject (i.e. "rdma_reject")
+carries an integer-value of "1" inside "private_data":
 
-| #ifdef CONFIG_PPC
-| #      define XZ_DEC_POWERPC
-| #endif
+  if (!conn)
+    break;
+    err = (int *)rdma_consumer_reject_data(cm_id, event, &len);
+    if (!err || (err && ((*err) == RDS_RDMA_REJ_INCOMPAT))) {
+      pr_warn("RDS/RDMA: conn <%pI6c, %pI6c> rejected, dropping connection\n",
+              &conn->c_laddr, &conn->c_faddr);
+              conn->c_proposed_version = RDS_PROTOCOL_COMPAT_VERSION;
+              rds_conn_drop(conn);
+    }
+    rdsdebug("Connection rejected: %s\n",
+             rdma_reject_msg(cm_id, event->status));
+    break;
+    /* FALLTHROUGH */
+A number of issues are worth mentioning here:
+   #1) Previous versions of the RDS code simply rejected a connection
+       by calling "rdma_reject(cm_id, NULL, 0);"
+       So the value of the payload in "private_data" will not be "1",
+       but "0".
 
-CONFIG_PPC is undefined here in the ppc bootwrapper because autoconf.h
-is not included except by arch/powerpc/boot/serial.c
+   #2) Now the code has become dependent on host byte order and sizing.
+       If one peer is big-endian, the other is little-endian,
+       or there's a difference in sizeof(int) (e.g. ILP64 vs LP64),
+       the *err check does not work as intended.
 
-XZ_DEC_POWERPC is not defined, therefore, bcj_powerpc() is not compiled
-for the bootwrapper.
+   #3) There is no check for "len" to see if the data behind *err is even valid.
+       Luckily, it appears that the "rdma_reject(cm_id, NULL, 0)" will always
+       carry 148 bytes of zeroized payload.
+       But that should probably not be relied upon here.
 
-With the next commit passing CONFIG_PPC correctly, we would realize that
-{get,put}_unaligned_be32 was missing.
+   #4) With the added "break;",
+       we might as well drop the misleading "/* FALLTHROUGH */" comment.
 
-Unlike the other decompressors, the ppc bootwrapper duplicates all the
-necessary helpers in arch/powerpc/boot/.
+This commit does _not_ address issue #2, as the sender would have to
+agree on a byte order as well.
 
-The other architectures define __KERNEL__ and pull in helpers for
-building the decompressors.
+Here is the sequence of messages in this observed error-scenario:
+   Host-A is pre-QoS changes (excluding the commit mentioned above)
+   Host-B is post-QoS changes (including the commit mentioned above)
 
-If ppc bootwrapper had defined __KERNEL__, lib/xz/xz_private.h would
-have included <asm/unaligned.h>:
+   #1 Host-B
+      issues a connection request via function "rds_conn_path_transition"
+      connection state transitions to "RDS_CONN_CONNECTING"
 
-| #ifdef __KERNEL__
-| #       include <linux/xz.h>
-| #       include <linux/kernel.h>
-| #       include <asm/unaligned.h>
+   #2 Host-A
+      rejects the incompatible connection request (from #1)
+      It does so by calling "rdma_reject(cm_id, NULL, 0);"
 
-However, doing so would cause tons of definition conflicts since the
-bootwrapper has duplicated everything.
+   #3 Host-B
+      receives an "RDMA_CM_EVENT_REJECTED" event (from #2)
+      But since the code is changed in the way described above,
+      it won't drop the connection here, simply because "*err == 0".
 
-I just added copies of {get,put}_unaligned_be32, following the
-bootwrapper coding convention.
+   #4 Host-A
+      issues a connection request
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190705100144.28785-1-yamada.masahiro@socionext.com
+   #5 Host-B
+      receives an "RDMA_CM_EVENT_CONNECT_REQUEST" event
+      and ends up calling "rds_ib_cm_handle_connect".
+      But since the state is already in "RDS_CONN_CONNECTING"
+      (as of #1) it will end up issuing a "rdma_reject" without
+      dropping the connection:
+         if (rds_conn_state(conn) == RDS_CONN_CONNECTING) {
+             /* Wait and see - our connect may still be succeeding */
+             rds_ib_stats_inc(s_ib_connect_raced);
+         }
+         goto out;
+
+   #6 Host-A
+      receives an "RDMA_CM_EVENT_REJECTED" event (from #5),
+      drops the connection and tries again (goto #4) until it gives up.
+
+Tested-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+Signed-off-by: Gerd Rausch <gerd.rausch@oracle.com>
+Signed-off-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/boot/xz_config.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ net/rds/rdma_transport.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/boot/xz_config.h b/arch/powerpc/boot/xz_config.h
-index e22e5b3770dd..ebfadd39e192 100644
---- a/arch/powerpc/boot/xz_config.h
-+++ b/arch/powerpc/boot/xz_config.h
-@@ -20,10 +20,30 @@ static inline uint32_t swab32p(void *p)
- 
- #ifdef __LITTLE_ENDIAN__
- #define get_le32(p) (*((uint32_t *) (p)))
-+#define cpu_to_be32(x) swab32(x)
-+static inline u32 be32_to_cpup(const u32 *p)
-+{
-+	return swab32p((u32 *)p);
-+}
- #else
- #define get_le32(p) swab32p(p)
-+#define cpu_to_be32(x) (x)
-+static inline u32 be32_to_cpup(const u32 *p)
-+{
-+	return *p;
-+}
- #endif
- 
-+static inline uint32_t get_unaligned_be32(const void *p)
-+{
-+	return be32_to_cpup(p);
-+}
-+
-+static inline void put_unaligned_be32(u32 val, void *p)
-+{
-+	*((u32 *)p) = cpu_to_be32(val);
-+}
-+
- #define memeq(a, b, size) (memcmp(a, b, size) == 0)
- #define memzero(buf, size) memset(buf, 0, size)
- 
+diff --git a/net/rds/rdma_transport.c b/net/rds/rdma_transport.c
+index 46bce8389066..9db455d02255 100644
+--- a/net/rds/rdma_transport.c
++++ b/net/rds/rdma_transport.c
+@@ -112,7 +112,9 @@ static int rds_rdma_cm_event_handler_cmn(struct rdma_cm_id *cm_id,
+ 		if (!conn)
+ 			break;
+ 		err = (int *)rdma_consumer_reject_data(cm_id, event, &len);
+-		if (!err || (err && ((*err) == RDS_RDMA_REJ_INCOMPAT))) {
++		if (!err ||
++		    (err && len >= sizeof(*err) &&
++		     ((*err) <= RDS_RDMA_REJ_INCOMPAT))) {
+ 			pr_warn("RDS/RDMA: conn <%pI6c, %pI6c> rejected, dropping connection\n",
+ 				&conn->c_laddr, &conn->c_faddr);
+ 			conn->c_proposed_version = RDS_PROTOCOL_COMPAT_VERSION;
+@@ -122,7 +124,6 @@ static int rds_rdma_cm_event_handler_cmn(struct rdma_cm_id *cm_id,
+ 		rdsdebug("Connection rejected: %s\n",
+ 			 rdma_reject_msg(cm_id, event->status));
+ 		break;
+-		/* FALLTHROUGH */
+ 	case RDMA_CM_EVENT_ADDR_ERROR:
+ 	case RDMA_CM_EVENT_ROUTE_ERROR:
+ 	case RDMA_CM_EVENT_CONNECT_ERROR:
 -- 
 2.20.1
 
