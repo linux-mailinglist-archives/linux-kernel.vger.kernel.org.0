@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A8F66DCFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE6DE6DD07
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:20:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388984AbfGSEMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:12:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48216 "EHLO mail.kernel.org"
+        id S2389644AbfGSEUT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:20:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731043AbfGSEMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:12:43 -0400
+        id S2388949AbfGSEMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:12:45 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD65E218D9;
-        Fri, 19 Jul 2019 04:12:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17613218DA;
+        Fri, 19 Jul 2019 04:12:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509562;
-        bh=5objRnYHCmulPFW07H0iD2s+QME+63EI23t7tqFFspE=;
+        s=default; t=1563509564;
+        bh=RGRHkax0X2h+aBGdjq5vtEw/ydfjMFrM6xCJLzFw5sI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OE5tx/zNrXz+LzwRtU6UW0pTALVsl2TvZ2i/laUtcJcOsBumuHg09A+YkxvbBO6Fe
-         PXC1ZO4PlvRICuKUT7Xtzms6H/g87j33Z1QDz5/A9+4hVCqG2eYyXRMYdqsvtMplud
-         G3uUH0sLtXSG8VRrTwYBopH0TwDwXtyOYG6g6aVA=
+        b=aQmgYU9kTnHYh3CJQ6ImQaZ3ji3olnhW0fzq1saNcWP1Oaix/rk/74w8992jwMWP3
+         wpRunzm3FZPOhjsBMaDIsPT4RvXqDe4QKUZDjhoWEJAfecQ1O+7FiYx4QnpG12TsiT
+         i7H348xOTIuSbpbxhU7Uh482sYqzIWvJBXbcyFCA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.14 48/60] powerpc/boot: add {get, put}_unaligned_be32 to xz_config.h
-Date:   Fri, 19 Jul 2019 00:10:57 -0400
-Message-Id: <20190719041109.18262-48-sashal@kernel.org>
+Cc:     morten petersen <morten_bp@live.dk>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 50/60] mailbox: handle failed named mailbox channel request
+Date:   Fri, 19 Jul 2019 00:10:59 -0400
+Message-Id: <20190719041109.18262-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719041109.18262-1-sashal@kernel.org>
 References: <20190719041109.18262-1-sashal@kernel.org>
@@ -43,101 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: morten petersen <morten_bp@live.dk>
 
-[ Upstream commit 9e005b761e7ad153dcf40a6cba1d681fe0830ac6 ]
+[ Upstream commit 25777e5784a7b417967460d4fcf9660d05a0c320 ]
 
-The next commit will make the way of passing CONFIG options more robust.
-Unfortunately, it would uncover another hidden issue; without this
-commit, skiroot_defconfig would be broken like this:
+Previously, if mbox_request_channel_byname was used with a name
+which did not exist in the "mbox-names" property of a mailbox
+client, the mailbox corresponding to the last entry in the
+"mbox-names" list would be incorrectly selected.
+With this patch, -EINVAL is returned if the named mailbox is
+not found.
 
-|   WRAP    arch/powerpc/boot/zImage.pseries
-| arch/powerpc/boot/wrapper.a(decompress.o): In function `bcj_powerpc.isra.10':
-| decompress.c:(.text+0x720): undefined reference to `get_unaligned_be32'
-| decompress.c:(.text+0x7a8): undefined reference to `put_unaligned_be32'
-| make[1]: *** [arch/powerpc/boot/Makefile;383: arch/powerpc/boot/zImage.pseries] Error 1
-| make: *** [arch/powerpc/Makefile;295: zImage] Error 2
-
-skiroot_defconfig is the only defconfig that enables CONFIG_KERNEL_XZ
-for ppc, which has never been correctly built before.
-
-I figured out the root cause in lib/decompress_unxz.c:
-
-| #ifdef CONFIG_PPC
-| #      define XZ_DEC_POWERPC
-| #endif
-
-CONFIG_PPC is undefined here in the ppc bootwrapper because autoconf.h
-is not included except by arch/powerpc/boot/serial.c
-
-XZ_DEC_POWERPC is not defined, therefore, bcj_powerpc() is not compiled
-for the bootwrapper.
-
-With the next commit passing CONFIG_PPC correctly, we would realize that
-{get,put}_unaligned_be32 was missing.
-
-Unlike the other decompressors, the ppc bootwrapper duplicates all the
-necessary helpers in arch/powerpc/boot/.
-
-The other architectures define __KERNEL__ and pull in helpers for
-building the decompressors.
-
-If ppc bootwrapper had defined __KERNEL__, lib/xz/xz_private.h would
-have included <asm/unaligned.h>:
-
-| #ifdef __KERNEL__
-| #       include <linux/xz.h>
-| #       include <linux/kernel.h>
-| #       include <asm/unaligned.h>
-
-However, doing so would cause tons of definition conflicts since the
-bootwrapper has duplicated everything.
-
-I just added copies of {get,put}_unaligned_be32, following the
-bootwrapper coding convention.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190705100144.28785-1-yamada.masahiro@socionext.com
+Signed-off-by: Morten Borup Petersen <morten_bp@live.dk>
+Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/boot/xz_config.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/mailbox/mailbox.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/boot/xz_config.h b/arch/powerpc/boot/xz_config.h
-index e22e5b3770dd..ebfadd39e192 100644
---- a/arch/powerpc/boot/xz_config.h
-+++ b/arch/powerpc/boot/xz_config.h
-@@ -20,10 +20,30 @@ static inline uint32_t swab32p(void *p)
+diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+index 537f4f6d009b..44b49a2676f0 100644
+--- a/drivers/mailbox/mailbox.c
++++ b/drivers/mailbox/mailbox.c
+@@ -391,11 +391,13 @@ struct mbox_chan *mbox_request_channel_byname(struct mbox_client *cl,
  
- #ifdef __LITTLE_ENDIAN__
- #define get_le32(p) (*((uint32_t *) (p)))
-+#define cpu_to_be32(x) swab32(x)
-+static inline u32 be32_to_cpup(const u32 *p)
-+{
-+	return swab32p((u32 *)p);
-+}
- #else
- #define get_le32(p) swab32p(p)
-+#define cpu_to_be32(x) (x)
-+static inline u32 be32_to_cpup(const u32 *p)
-+{
-+	return *p;
-+}
- #endif
+ 	of_property_for_each_string(np, "mbox-names", prop, mbox_name) {
+ 		if (!strncmp(name, mbox_name, strlen(name)))
+-			break;
++			return mbox_request_channel(cl, index);
+ 		index++;
+ 	}
  
-+static inline uint32_t get_unaligned_be32(const void *p)
-+{
-+	return be32_to_cpup(p);
-+}
-+
-+static inline void put_unaligned_be32(u32 val, void *p)
-+{
-+	*((u32 *)p) = cpu_to_be32(val);
-+}
-+
- #define memeq(a, b, size) (memcmp(a, b, size) == 0)
- #define memzero(buf, size) memset(buf, 0, size)
+-	return mbox_request_channel(cl, index);
++	dev_err(cl->dev, "%s() could not locate channel named \"%s\"\n",
++		__func__, name);
++	return ERR_PTR(-EINVAL);
+ }
+ EXPORT_SYMBOL_GPL(mbox_request_channel_byname);
  
 -- 
 2.20.1
