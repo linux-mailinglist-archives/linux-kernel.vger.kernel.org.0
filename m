@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6790B6D9E8
+	by mail.lfdr.de (Postfix) with ESMTP id D1F6C6D9E9
 	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 05:58:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727880AbfGSD6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 23:58:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57530 "EHLO mail.kernel.org"
+        id S1727964AbfGSD6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 23:58:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727823AbfGSD6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 23:58:14 -0400
+        id S1727891AbfGSD6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 23:58:19 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9FD32184E;
-        Fri, 19 Jul 2019 03:58:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E5FC2186A;
+        Fri, 19 Jul 2019 03:58:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508693;
-        bh=z+8JcC18Jtyh8uyT6UA2/SC24y/hq7VVcY9YA+weTuk=;
+        s=default; t=1563508698;
+        bh=rfp2mhSWp3ECQi2RiDeADP41GduMWU6Ii4yw3ZaWYKw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G1lNXnI+nXdooUfTkRfB1jDqaUZXgNl2kvRsTiJDHEXXe0M+JcNvL9PoxjTclzl27
-         QgJwJkQsFwNPXl/oS7LwA03zjFnEmXl1zwsxOGmY8ENxvNEbJiAvX2HnaDYe4iYAal
-         TDVCPP+mpJwWrLZgc8/e/KJVc8dVX1vGfowN/uWo=
+        b=g1ByPGDcIhqTW/FW7oPHcBZx+jxkENw3/9A2qpJZSm4BGHM5cKy92IWmix+koJmEN
+         Xe+icS4gvHyNFa6Eo9nue0Q/c1hQbyDEEVct0hdjuTHeI0Ia7x9wCz0jiDLp+otmTs
+         g7OvH4ik5d7Aof1jpAzC2VQanq6306nQaOcHNrMw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Krunoslav Kovac <Krunoslav.Kovac@amd.com>,
-        Aric Cyr <Aric.Cyr@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.2 036/171] drm/amd/display: CS_TFM_1D only applied post EOTF
-Date:   Thu, 18 Jul 2019 23:54:27 -0400
-Message-Id: <20190719035643.14300-36-sashal@kernel.org>
+Cc:     Daniel Rosenberg <drosen@google.com>, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 5.2 038/171] f2fs: Fix accounting for unusable blocks
+Date:   Thu, 18 Jul 2019 23:54:29 -0400
+Message-Id: <20190719035643.14300-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -45,42 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Krunoslav Kovac <Krunoslav.Kovac@amd.com>
+From: Daniel Rosenberg <drosen@google.com>
 
-[ Upstream commit 6ad34adeaec5b56a5ba90e90099cabf1c1fe9dd2 ]
+[ Upstream commit a4c3ecaaadac5693f555cfef1c9eecf4c39df818 ]
 
-[Why]
-There's some unnecessary mem allocation for CS_TFM_ID. What's worse, it
-depends on LUT size and since it's 4K for CS_TFM_1D, it is 16x bigger
-than in regular case when it's actually needed. This leads to some
-crashes in stress conditions.
+Fixes possible underflows when dealing with unusable blocks.
 
-[How]
-Skip ramp combining designed for RGB256 and DXGI gamma with CS_TFM_1D.
-
-Signed-off-by: Krunoslav Kovac <Krunoslav.Kovac@amd.com>
-Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/modules/color/color_gamma.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/f2fs/f2fs.h | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/modules/color/color_gamma.c b/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
-index a1055413bade..31f867bb5afe 100644
---- a/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
-+++ b/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
-@@ -1564,7 +1564,8 @@ bool mod_color_calculate_regamma_params(struct dc_transfer_func *output_tf,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index d1b64cb77326..9e6721e15b24 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1767,8 +1767,12 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
  
- 	output_tf->type = TF_TYPE_DISTRIBUTED_POINTS;
+ 	if (!__allow_reserved_blocks(sbi, inode, true))
+ 		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
+-	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
+-		avail_user_block_count -= sbi->unusable_block_count;
++	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
++		if (avail_user_block_count > sbi->unusable_block_count)
++			avail_user_block_count -= sbi->unusable_block_count;
++		else
++			avail_user_block_count = 0;
++	}
+ 	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
+ 		diff = sbi->total_valid_block_count - avail_user_block_count;
+ 		if (diff > *count)
+@@ -1968,7 +1972,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+ 					struct inode *inode, bool is_inode)
+ {
+ 	block_t	valid_block_count;
+-	unsigned int valid_node_count;
++	unsigned int valid_node_count, user_block_count;
+ 	int err;
  
--	if (ramp && (mapUserRamp || ramp->type != GAMMA_RGB_256)) {
-+	if (ramp && ramp->type != GAMMA_CS_TFM_1D &&
-+			(mapUserRamp || ramp->type != GAMMA_RGB_256)) {
- 		rgb_user = kvcalloc(ramp->num_entries + _EXTRA_POINTS,
- 			    sizeof(*rgb_user),
- 			    GFP_KERNEL);
+ 	if (is_inode) {
+@@ -1995,10 +1999,11 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+ 
+ 	if (!__allow_reserved_blocks(sbi, inode, false))
+ 		valid_block_count += F2FS_OPTION(sbi).root_reserved_blocks;
++	user_block_count = sbi->user_block_count;
+ 	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
+-		valid_block_count += sbi->unusable_block_count;
++		user_block_count -= sbi->unusable_block_count;
+ 
+-	if (unlikely(valid_block_count > sbi->user_block_count)) {
++	if (unlikely(valid_block_count > user_block_count)) {
+ 		spin_unlock(&sbi->stat_lock);
+ 		goto enospc;
+ 	}
 -- 
 2.20.1
 
