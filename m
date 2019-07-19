@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15E166DD95
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:24:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF12C6DD90
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:24:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388756AbfGSEYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:24:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44454 "EHLO mail.kernel.org"
+        id S2389193AbfGSEXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:23:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387779AbfGSEJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:09:50 -0400
+        id S1726347AbfGSEKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:10:17 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B078121872;
-        Fri, 19 Jul 2019 04:09:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F768218D3;
+        Fri, 19 Jul 2019 04:10:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509389;
-        bh=Q23VozQgqC4XWzuLefYwKMGSYo5yIeAkrhoFlfpLTiM=;
+        s=default; t=1563509416;
+        bh=5objRnYHCmulPFW07H0iD2s+QME+63EI23t7tqFFspE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gV6sMsUT3GhUNknwQAucvctc8gdm0KbjObAhHwxAaTfM43T7zikqcb+0Sy8eJTjMN
-         dJtmx1kYU6NfLvUvWwipfBIMxtJQoSmzphQbFD5a/1SnlDtY3p3jWsEoQccC+FDN2Y
-         4D5lfrBUOs30vCZfrwjsJSOqRse6S+5zz43RdYXc=
+        b=jqMBSTkXKtPSBBKO0+k4ETXXCduQe1AjUuCtYbtP5a0l+NRGFA79x5P7jpAvzagyp
+         9TnntK93d0gni3TihCWkpagQEiCfV0xVm4v+FDVB2JxJc08qJ8QwcwaJ8ocy1IOj7t
+         3DLcFEzDmMzxzQgMPW9xPYtFDrnsO5ejNPnT3Af0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Minghuan Lian <Minghuan.Lian@nxp.com>,
-        Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 069/101] PCI: mobiveil: Initialize Primary/Secondary/Subordinate bus numbers
-Date:   Fri, 19 Jul 2019 00:07:00 -0400
-Message-Id: <20190719040732.17285-69-sashal@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 079/101] powerpc/boot: add {get, put}_unaligned_be32 to xz_config.h
+Date:   Fri, 19 Jul 2019 00:07:10 -0400
+Message-Id: <20190719040732.17285-79-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
 References: <20190719040732.17285-1-sashal@kernel.org>
@@ -45,42 +43,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit 6f3ab451aa5c2cbff33197d82fe8489cbd55ad91 ]
+[ Upstream commit 9e005b761e7ad153dcf40a6cba1d681fe0830ac6 ]
 
-The reset value of Primary, Secondary and Subordinate bus numbers is
-zero which is a broken setup.
+The next commit will make the way of passing CONFIG options more robust.
+Unfortunately, it would uncover another hidden issue; without this
+commit, skiroot_defconfig would be broken like this:
 
-Program a sensible default value for Primary/Secondary/Subordinate
-bus numbers.
+|   WRAP    arch/powerpc/boot/zImage.pseries
+| arch/powerpc/boot/wrapper.a(decompress.o): In function `bcj_powerpc.isra.10':
+| decompress.c:(.text+0x720): undefined reference to `get_unaligned_be32'
+| decompress.c:(.text+0x7a8): undefined reference to `put_unaligned_be32'
+| make[1]: *** [arch/powerpc/boot/Makefile;383: arch/powerpc/boot/zImage.pseries] Error 1
+| make: *** [arch/powerpc/Makefile;295: zImage] Error 2
 
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
-Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+skiroot_defconfig is the only defconfig that enables CONFIG_KERNEL_XZ
+for ppc, which has never been correctly built before.
+
+I figured out the root cause in lib/decompress_unxz.c:
+
+| #ifdef CONFIG_PPC
+| #      define XZ_DEC_POWERPC
+| #endif
+
+CONFIG_PPC is undefined here in the ppc bootwrapper because autoconf.h
+is not included except by arch/powerpc/boot/serial.c
+
+XZ_DEC_POWERPC is not defined, therefore, bcj_powerpc() is not compiled
+for the bootwrapper.
+
+With the next commit passing CONFIG_PPC correctly, we would realize that
+{get,put}_unaligned_be32 was missing.
+
+Unlike the other decompressors, the ppc bootwrapper duplicates all the
+necessary helpers in arch/powerpc/boot/.
+
+The other architectures define __KERNEL__ and pull in helpers for
+building the decompressors.
+
+If ppc bootwrapper had defined __KERNEL__, lib/xz/xz_private.h would
+have included <asm/unaligned.h>:
+
+| #ifdef __KERNEL__
+| #       include <linux/xz.h>
+| #       include <linux/kernel.h>
+| #       include <asm/unaligned.h>
+
+However, doing so would cause tons of definition conflicts since the
+bootwrapper has duplicated everything.
+
+I just added copies of {get,put}_unaligned_be32, following the
+bootwrapper coding convention.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190705100144.28785-1-yamada.masahiro@socionext.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/pcie-mobiveil.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/powerpc/boot/xz_config.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
-index 3e81e68b5ce0..2fe7ebdad2d2 100644
---- a/drivers/pci/controller/pcie-mobiveil.c
-+++ b/drivers/pci/controller/pcie-mobiveil.c
-@@ -508,6 +508,12 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
- 		return err;
- 	}
+diff --git a/arch/powerpc/boot/xz_config.h b/arch/powerpc/boot/xz_config.h
+index e22e5b3770dd..ebfadd39e192 100644
+--- a/arch/powerpc/boot/xz_config.h
++++ b/arch/powerpc/boot/xz_config.h
+@@ -20,10 +20,30 @@ static inline uint32_t swab32p(void *p)
  
-+	/* setup bus numbers */
-+	value = csr_readl(pcie, PCI_PRIMARY_BUS);
-+	value &= 0xff000000;
-+	value |= 0x00ff0100;
-+	csr_writel(pcie, value, PCI_PRIMARY_BUS);
+ #ifdef __LITTLE_ENDIAN__
+ #define get_le32(p) (*((uint32_t *) (p)))
++#define cpu_to_be32(x) swab32(x)
++static inline u32 be32_to_cpup(const u32 *p)
++{
++	return swab32p((u32 *)p);
++}
+ #else
+ #define get_le32(p) swab32p(p)
++#define cpu_to_be32(x) (x)
++static inline u32 be32_to_cpup(const u32 *p)
++{
++	return *p;
++}
+ #endif
+ 
++static inline uint32_t get_unaligned_be32(const void *p)
++{
++	return be32_to_cpup(p);
++}
 +
- 	/*
- 	 * program Bus Master Enable Bit in Command Register in PAB Config
- 	 * Space
++static inline void put_unaligned_be32(u32 val, void *p)
++{
++	*((u32 *)p) = cpu_to_be32(val);
++}
++
+ #define memeq(a, b, size) (memcmp(a, b, size) == 0)
+ #define memzero(buf, size) memset(buf, 0, size)
+ 
 -- 
 2.20.1
 
