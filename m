@@ -2,164 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B96B36E3F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:08:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B8476E3FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:10:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbfGSKIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 06:08:37 -0400
-Received: from mail-eopbgr20065.outbound.protection.outlook.com ([40.107.2.65]:64067
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725794AbfGSKIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 06:08:37 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CcU10ifY89d1sgEu08MHlYDAXLSLXqtvLURX/UHjhdnozZ0/6yf0G9hozb85NHhO27KLsGB/ukqbaBgOwzJr/lGF3cgzHukxVIlMxlsGiqTVcx4DWirxzAa4HsQlU52E8PqXmmT3LJ+1qZ0/MC7KDM8alZSqc0wU1pTN3gSBiQVU9l9V29JrYt7JOrTNCLxjb4GOVp+DF2fYkL3yZa0kPiOCCECOCbgcVSAHqNCDRwrditriJgc3q9M91bo8uLt7OgGW9Zpke5FlOJIwMwvjcUJpv9IeiTZ7UaBh8pb1boB7ghQbuCBlZaWziXdSEcdmmZXQgKdiUrvAm2OX9ynVhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jFXReoj9qkBzR0qlZe4HPyQSGnt+PAUVIRSj9fzhf/U=;
- b=VjnsbvebQi3RRfe1eLmL6fg1XlCjsKDnIHcwgqJffiv3LSuJppZjEdV+HJurGYb3Pf9gRNng3vyTFVawmzczy8Yoesh0dGlWpJPu1I67+PKUQYp4M1UAMOBWipW5zXqeG4Pwt7OsTFfEI4EUJXWE4xLDKYAaJLn9kl2ZsvXv4c9qbEJK7CoqE/fC3UAkHNlrtr6rJsDXje/j2LZ7eMk/ptfR3EkvYKtx2ITj4tw60QIV6b1bwJBGh0goMJCJmIJ+QRT3th/OFuapm5pYzGCcwN3o54u10vMtQQot14mtycj+z4DL1QN47t9wIMgH3tYpMTk15FoccWFLbMl0cVXjNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
- header.d=nxp.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jFXReoj9qkBzR0qlZe4HPyQSGnt+PAUVIRSj9fzhf/U=;
- b=TEKSvzQG6ANDelBrFscNR3rJuKAL159czXEDhe8y6vMvgp8NNNg74q6ZMKrfKBhM4tTtXKfiOqtWlTbCyBeyfvh2DTsyAMPiv9pOMFeegtzsj3qDRseziTYEMvYSSn9gI6zNNcRTGbi5pBMczsz4nDUKuj7K/xZCXQgmdiefCnA=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3438.eurprd04.prod.outlook.com (52.134.3.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.14; Fri, 19 Jul 2019 10:08:32 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::7c64:5296:4607:e10]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::7c64:5296:4607:e10%5]) with mapi id 15.20.2073.012; Fri, 19 Jul 2019
- 10:08:32 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v2 09/14] crypto: caam - keep both virtual and dma key
- addresses
-Thread-Topic: [PATCH v2 09/14] crypto: caam - keep both virtual and dma key
- addresses
-Thread-Index: AQHVPcSrL0fOkGV3mUijL9yeORi/pQ==
-Date:   Fri, 19 Jul 2019 10:08:32 +0000
-Message-ID: <VI1PR0402MB348509F1A53E377B9343976198CB0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <1563494276-3993-1-git-send-email-iuliana.prodan@nxp.com>
- <1563494276-3993-10-git-send-email-iuliana.prodan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [212.146.100.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8752321e-6cd3-486d-8abe-08d70c310e4d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3438;
-x-ms-traffictypediagnostic: VI1PR0402MB3438:
-x-microsoft-antispam-prvs: <VI1PR0402MB34382091197DBDD5E919C8CB98CB0@VI1PR0402MB3438.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-forefront-prvs: 01039C93E4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(366004)(396003)(346002)(39860400002)(189003)(199004)(66556008)(305945005)(44832011)(25786009)(256004)(476003)(6246003)(68736007)(66946007)(486006)(66066001)(7736002)(66476007)(64756008)(6636002)(14444005)(99286004)(76176011)(6116002)(7696005)(66446008)(229853002)(3846002)(33656002)(52536014)(2906002)(4326008)(446003)(53546011)(5660300002)(6506007)(76116006)(26005)(102836004)(186003)(71200400001)(71190400001)(86362001)(53936002)(14454004)(8676002)(81156014)(81166006)(8936002)(478600001)(55016002)(9686003)(6436002)(316002)(91956017)(74316002)(54906003)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3438;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: ZvX81TijFiW+FoSYZpMacM/nD0LqussgjA0lqOuS4gskVyvYQUwqrcovdTkhd5gIfw50mOMUku/bkdEo6qCSKM4E+2l0AIAQeLohQbVtnq/BJUBqnfT9T2VSfajQetb83ebc7izxlomevMv3AmZv9E4dKmXwCYFNsaO0O1e+Q520LT64+PCTii9CIvoRIdY65xYVOPpyp0I5HKFyqbb20B6uO1npFlqCnFZgIOam+gR36i9UvrcEaDK6nv8JZKnp202wPMYI5+JjybgEg6PXM/bhWaLSJ0YfrGMP3Ds6tX4FwxygJ1UZ5YsBCQF1eWHl/Mtjwf7M4aCCKWf2cj4svPW8/C3a4N60sD0ahRcQX93gQRJkkkLXyEGvHzK185ENBcJJyltS3fgKyFJOG3TlYfaM+eACUgXMtuGVksi+oTA=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8752321e-6cd3-486d-8abe-08d70c310e4d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2019 10:08:32.8038
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: horia.geanta@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3438
+        id S1727206AbfGSKKR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 06:10:17 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:29227 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725794AbfGSKKR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 06:10:17 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x6JA93Jd024206;
+        Fri, 19 Jul 2019 19:09:03 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x6JA93Jd024206
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1563530944;
+        bh=a3YovZwajy5jGOBf14Q9c/0gf55f02Iub75GoLKtQIY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GSkUvEXip3o937QdMIXgFGg+VCWE+8VZWQ9b9Jj4gfiPnlc9JBOxOietRh9VOev2q
+         pYA5dVmLYxjDNcSndl+DG97sD6JyDgVfjVb04Y5mfdQJp93B7fO2AAB+qa1wauBFOk
+         slOTTL9ILJUpTvPn+4G0vA4lFeC4sgWSMoQTsXdYi1l/07pXU+PRxfckJKiXKdWtIg
+         YewTkXQILglKBCJmUsdkKS7sZ8BSN0xDNnyOelWNexBVpNbxvPBlCQhoHhiaGAWxNd
+         cXAAofc9duC1OcI7E6xI8whOg+AmAjmfSHYCoDvz/5ivt857R4LHfuRii3EXZeadt6
+         dr/J5lYKOa99w==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kbuild: disable compile-test of kernel headers for now
+Date:   Fri, 19 Jul 2019 19:08:59 +0900
+Message-Id: <20190719100859.11227-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/19/2019 2:58 AM, Iuliana Prodan wrote:=0A=
-> From: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-> =0A=
-> Update alginfo struct to keep both virtual and dma key addresses,=0A=
-> so that descriptors have them at hand.=0A=
-> One example where this is needed is in the xcbc(aes) shared descriptors,=
-=0A=
-> which are updated in current patch.=0A=
-> Another example is the upcoming fix for DKP.=0A=
-> =0A=
-> Signed-off-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-> ---=0A=
->  drivers/crypto/caam/caamhash.c      | 26 ++++++++++++--------------=0A=
->  drivers/crypto/caam/caamhash_desc.c |  5 ++---=0A=
->  drivers/crypto/caam/caamhash_desc.h |  2 +-=0A=
->  drivers/crypto/caam/desc_constr.h   | 10 ++++------=0A=
->  4 files changed, 19 insertions(+), 24 deletions(-)=0A=
-> =0A=
-> diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhas=
-h.c=0A=
-> index 2ec4bad..14fdfa1 100644=0A=
-> --- a/drivers/crypto/caam/caamhash.c=0A=
-> +++ b/drivers/crypto/caam/caamhash.c=0A=
-[...]=0A=
-> @@ -508,6 +502,10 @@ static int axcbc_setkey(struct crypto_ahash *ahash, =
-const u8 *key,=0A=
->  	memcpy(ctx->key, key, keylen);=0A=
->  	dma_sync_single_for_device(jrdev, ctx->key_dma, keylen, DMA_TO_DEVICE);=
-=0A=
->  	ctx->adata.keylen =3D keylen;=0A=
-> +	/* key is loaded from memory for UPDATE and FINALIZE states */=0A=
-> +	ctx->adata.key_dma =3D ctx->key_dma;=0A=
-> +	/* key is immediate data for INIT and INITFINAL states */=0A=
-> +	ctx->adata.key_virt =3D ctx->key;=0A=
->  =0A=
-Now that it's possible to store both virtual and dma key addresses,=0A=
-it would be more efficient to move these assignments .cra_init callback.=0A=
-=0A=
-I'll submit the changes in v3.=0A=
-=0A=
-Horia=0A=
-=0A=
-[...]=0A=
-> diff --git a/drivers/crypto/caam/desc_constr.h b/drivers/crypto/caam/desc=
-_constr.h=0A=
-> index 5988a26..8154174 100644=0A=
-> --- a/drivers/crypto/caam/desc_constr.h=0A=
-> +++ b/drivers/crypto/caam/desc_constr.h=0A=
-> @@ -457,8 +457,8 @@ do { \=0A=
->   *           functions where it is used.=0A=
->   * @keylen: length of the provided algorithm key, in bytes=0A=
->   * @keylen_pad: padded length of the provided algorithm key, in bytes=0A=
-> - * @key: address where algorithm key resides; virtual address if key_inl=
-ine=0A=
-> - *       is true, dma (bus) address if key_inline is false.=0A=
-> + * @key_dma: dma (bus) address where algorithm key resides=0A=
-> + * @key_virt: virtual address where algorithm key resides=0A=
->   * @key_inline: true - key can be inlined in the descriptor; false - key=
- is=0A=
->   *              referenced by the descriptor=0A=
->   */=0A=
-> @@ -466,10 +466,8 @@ struct alginfo {=0A=
->  	u32 algtype;=0A=
->  	unsigned int keylen;=0A=
->  	unsigned int keylen_pad;=0A=
-> -	union {=0A=
-> -		dma_addr_t key_dma;=0A=
-> -		const void *key_virt;=0A=
-> -	};=0A=
-> +	dma_addr_t key_dma;=0A=
-> +	const void *key_virt;=0A=
->  	bool key_inline;=0A=
->  };=0A=
->  =0A=
-> =0A=
+This compile-test started from the strong belief that (almost) all
+headers should be able to be compiled as a standalone unit, but this
+requirement seems to be just annoying.
+
+I believe compile-test of exported headers is good. On the other hand,
+in-kernel headers are not necessarily supposed to be always compilable.
+Actually, some headers are only included under a certain combination
+of CONFIG options, and that is definitely fine.
+
+This test is still causing false positive errors in randconfig.
+Moreover, newly added headers are compile-tested by default, sometimes
+they catch (not fatal) bugs, but often raise false positive errors to
+end up with making people upset.
+
+The merge window is closing shortly, so there is not much I can do.
+Disable it for now, and take a pause to re-think whether we should
+continue this or change the course.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ init/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/init/Kconfig b/init/Kconfig
+index 9697c6b5303c..778551a1a13c 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -111,6 +111,7 @@ config HEADER_TEST
+ config KERNEL_HEADER_TEST
+ 	bool "Compile test kernel headers"
+ 	depends on HEADER_TEST
++	depends on BROKEN	# disabled for now
+ 	help
+ 	  Headers in include/ are used to build external moduls.
+ 	  Compile test them to ensure they are self-contained, i.e.
+-- 
+2.17.1
+
