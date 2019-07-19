@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3F1E6DBD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:11:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 244BE6DBDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:12:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733179AbfGSELr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:11:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46742 "EHLO mail.kernel.org"
+        id S2388614AbfGSEL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:11:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388509AbfGSELn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:11:43 -0400
+        id S1731159AbfGSELy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:11:54 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EB0F2189E;
-        Fri, 19 Jul 2019 04:11:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 404AF2189E;
+        Fri, 19 Jul 2019 04:11:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509502;
-        bh=TvvcABlbRGKUObILSTVX5+PVS+Q2yIAdMwzACKoK6sI=;
+        s=default; t=1563509514;
+        bh=jz7sHNyKe7PMf5YhqpKzdxcf8dmmt7SrhaGPJaDmwDw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VrvL+tsaJ5Thcrctw6gGWuxwADVZy1hfaXAZ0UN2yNykX/Q/kkzy/CvAw7P4cb7Kd
-         +/ogEn4c051UHciPKRah+TR5B9an/Yh7FOxUFcmV5mfLbxnR+QL1tewhotUnunnIvO
-         U8PiPdPEW6xBZRyGt7ln+b93taPVZFsy7QgbcZUM=
+        b=YKvyE5MQKrUU+jmlEidfNQzZsH5ssoSo5VBYq1E7duANfYb2RD8jMRjgwRw3zMg+P
+         TeZ124R2CH2UJgreMB5O3RqPvWfD6QFWc6uPrEqdliOcX4UH9HTGctMSszlcu9ZZvy
+         mwadB5fM6L1wNwFlTP49ec66U9bV6uBwHfEemETA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Serge Semin <fancer.lancer@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 20/60] tty: serial_core: Set port active bit in uart_port_activate
-Date:   Fri, 19 Jul 2019 00:10:29 -0400
-Message-Id: <20190719041109.18262-20-sashal@kernel.org>
+Cc:     Sean Paul <seanpaul@chromium.org>,
+        Rob Clark <robdclark@chromium.org>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.14 24/60] drm/msm: Depopulate platform on probe failure
+Date:   Fri, 19 Jul 2019 00:10:33 -0400
+Message-Id: <20190719041109.18262-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719041109.18262-1-sashal@kernel.org>
 References: <20190719041109.18262-1-sashal@kernel.org>
@@ -43,71 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Serge Semin <fancer.lancer@gmail.com>
+From: Sean Paul <seanpaul@chromium.org>
 
-[ Upstream commit 13b18d35909707571af9539f7731389fbf0feb31 ]
+[ Upstream commit 4368a1539c6b41ac3cddc06f5a5117952998804c ]
 
-A bug was introduced by commit b3b576461864 ("tty: serial_core: convert
-uart_open to use tty_port_open"). It caused a constant warning printed
-into the system log regarding the tty and port counter mismatch:
+add_display_components() calls of_platform_populate, and we depopluate
+on pdev remove, but not when probe fails. So if we get a probe deferral
+in one of the components, we won't depopulate the platform. This causes
+the core to keep references to devices which should be destroyed, which
+causes issues when those same devices try to re-initialize on the next
+probe attempt.
 
-[   21.644197] ttyS ttySx: tty_port_close_start: tty->count = 1 port count = 2
+I think this is the reason we had issues with the gmu's device-managed
+resources on deferral (worked around in commit 94e3a17f33a5).
 
-in case if session hangup was detected so the warning is printed starting
-from the second open-close iteration.
-
-Particularly the problem was discovered in situation when there is a
-serial tty device without hardware back-end being setup. It is considered
-by the tty-serial subsystems as a hardware problem with session hang up.
-In this case uart_startup() will return a positive value with TTY_IO_ERROR
-flag set in corresponding tty_struct instance. The same value will get
-passed to be returned from the activate() callback and then being returned
-from tty_port_open(). But since in this case tty_port_block_til_ready()
-isn't called the TTY_PORT_ACTIVE flag isn't set (while the method had been
-called before tty_port_open conversion was introduced and the rest of the
-subsystem code expected the bit being set in this case), which prevents the
-uart_hangup() method to perform any cleanups including the tty port
-counter setting to zero. So the next attempt to open/close the tty device
-will discover the counters mismatch.
-
-In order to fix the problem we need to manually set the TTY_PORT_ACTIVE
-flag in case if uart_startup() returned a positive value. In this case
-the hang up procedure will perform a full set of cleanup actions including
-the port ref-counter resetting.
-
-Fixes: b3b576461864 "tty: serial_core: convert uart_open to use tty_port_open"
-Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Rob Clark <robdclark@chromium.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190617201301.133275-3-sean@poorly.run
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/serial_core.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/msm/msm_drv.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index c39246b916af..17e2311f7b00 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -1742,6 +1742,7 @@ static int uart_port_activate(struct tty_port *port, struct tty_struct *tty)
- {
- 	struct uart_state *state = container_of(port, struct uart_state, port);
- 	struct uart_port *uport;
-+	int ret;
+diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+index 606df7bea97b..b970427e53a7 100644
+--- a/drivers/gpu/drm/msm/msm_drv.c
++++ b/drivers/gpu/drm/msm/msm_drv.c
+@@ -1097,16 +1097,24 @@ static int msm_pdev_probe(struct platform_device *pdev)
  
- 	uport = uart_port_check(state);
- 	if (!uport || uport->flags & UPF_DEAD)
-@@ -1752,7 +1753,11 @@ static int uart_port_activate(struct tty_port *port, struct tty_struct *tty)
- 	/*
- 	 * Start up the serial port.
+ 	ret = add_gpu_components(&pdev->dev, &match);
+ 	if (ret)
+-		return ret;
++		goto fail;
+ 
+ 	/* on all devices that I am aware of, iommu's which can map
+ 	 * any address the cpu can see are used:
  	 */
--	return uart_startup(tty, state, 0);
-+	ret = uart_startup(tty, state, 0);
-+	if (ret > 0)
-+		tty_port_set_active(port, 1);
+ 	ret = dma_set_mask_and_coherent(&pdev->dev, ~0);
+ 	if (ret)
+-		return ret;
++		goto fail;
 +
++	ret = component_master_add_with_match(&pdev->dev, &msm_drm_ops, match);
++	if (ret)
++		goto fail;
++
++	return 0;
+ 
+-	return component_master_add_with_match(&pdev->dev, &msm_drm_ops, match);
++fail:
++	of_platform_depopulate(&pdev->dev);
 +	return ret;
  }
  
- static const char *uart_type(struct uart_port *port)
+ static int msm_pdev_remove(struct platform_device *pdev)
 -- 
 2.20.1
 
