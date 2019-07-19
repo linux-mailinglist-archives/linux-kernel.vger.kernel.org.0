@@ -2,113 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BD816E109
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 08:34:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68D466E117
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 08:38:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbfGSGet (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 02:34:49 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35060 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbfGSGes (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 02:34:48 -0400
-Received: by mail-wr1-f67.google.com with SMTP id y4so31062318wrm.2;
-        Thu, 18 Jul 2019 23:34:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kMcKTsEVyji+n2fYLtlne8FEnWZcMA2/ktkd0SxT+VI=;
-        b=QSOwOufE4zhKaOthPkDk7gWdX3qwYegZikq56s0mkeTwW5vSbnTSAff0lcnACu34zb
-         vdRjrjSoxzugWQ5xieksmi9CByUQ5AnlvJvPceiVK6Sma4J2CcItR6GSqE/+xv2rjim9
-         hszdEfhJIQs0Cvwusfs52LSo1AccmTUPJozjSty8KUF6cjhaQHqgQxUAgI0dd8a4xTnH
-         BZ8cKAEWJkxNC2IOVZ6nJ+kTlghlY5buBFzyqooQ2Jiy3cOwUPAYOLNzB/9wFrTNfb72
-         p9dkMyMTd4O6yToPz/j1GJ9UScDq+CL+Hi80pQVbp5CH5uBdZp0mNnDg/VSEYBXXVgOE
-         ehYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kMcKTsEVyji+n2fYLtlne8FEnWZcMA2/ktkd0SxT+VI=;
-        b=BILJIDFTiLJd6KQpuJOQE9102mtBhs0Gesstd355vEv53pVH5YpninYpuzepLU6/IK
-         5qx9irZVuyVpmP6sP65zYReupDmBrFUjWdeG8Sf7qSDk6poCR4pUBrtRC618QuWrnY9Y
-         9FdAkTAliSbif+WcdO38zFv/SzRv9r6Wn+f5dH1SHSg87UzteIi+PSgMqemtVNRbhqq3
-         YP4+L+qOsSaXNKcVgq/mj0oX6pYHnK1oYWPWkBfTLPRIepIoKlbhY2qBxtuFeT0QgUtq
-         JS8OPQ92ASJfRMRWhf3o35X2F/dCZzoHLQnVKXOHHHZyvYZiF6l+JeXE9GVu/MSXnHZ5
-         Nx1Q==
-X-Gm-Message-State: APjAAAUTuxFSwkXPusqmSGYuT4NSCRlEa+4gaKO9tspXTaUbOnR7biK8
-        lTq5yylCqjo3tcrihqOS+HpQsdYAjL/auJCOiB4=
-X-Google-Smtp-Source: APXvYqzkF6gS1MNZBLZ1Ty1LQtpQfLnkNKW7cn72gR9MP8uHzDu7PJQxe2xQB/GaBTVdYHWPDS52KzZOIEH2mFQtBgM=
-X-Received: by 2002:a05:6000:14b:: with SMTP id r11mr54574650wrx.196.1563518086309;
- Thu, 18 Jul 2019 23:34:46 -0700 (PDT)
+        id S1727130AbfGSGiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 02:38:02 -0400
+Received: from mga17.intel.com ([192.55.52.151]:30838 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726067AbfGSGh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 02:37:59 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2019 23:37:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,281,1559545200"; 
+   d="asc'?scan'208";a="367166291"
+Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.13.116])
+  by fmsmga005.fm.intel.com with ESMTP; 18 Jul 2019 23:37:55 -0700
+Date:   Fri, 19 Jul 2019 14:34:43 +0800
+From:   Zhenyu Wang <zhenyuw@linux.intel.com>
+To:     Kechen Lu <kechen.lu@intel.com>
+Cc:     intel-gvt-dev@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kraxel@redhat.com,
+        zhenyuw@linux.intel.com, zhiyuan.lv@intel.com,
+        zhi.a.wang@intel.com, kevin.tian@intel.com, hang.yuan@intel.com,
+        alex.williamson@redhat.com
+Subject: Re: [RFC PATCH v4 6/6] drm/i915/gvt: Add cursor plane reg update
+ trap emulation handler
+Message-ID: <20190719063443.GE28809@zhen-hp.sh.intel.com>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+References: <20190718155640.25928-1-kechen.lu@intel.com>
+ <20190718155640.25928-7-kechen.lu@intel.com>
 MIME-Version: 1.0
-References: <20190718151346.3523-1-daniel.baluta@nxp.com> <20190718151346.3523-4-daniel.baluta@nxp.com>
- <CAL_JsqJ6o9mTjLYjnfcYgfSFKb95W8FseZBBb8RLosB__GNBcw@mail.gmail.com>
- <CAEnQRZBubFz90Xf8irDwc=erTXmByXX4rkzZy9r8ymfAuQEsZA@mail.gmail.com> <VI1PR04MB5055597B7C3AC114FEB7E3E5EEC80@VI1PR04MB5055.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB5055597B7C3AC114FEB7E3E5EEC80@VI1PR04MB5055.eurprd04.prod.outlook.com>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Fri, 19 Jul 2019 09:34:34 +0300
-Message-ID: <CAEnQRZC+LyoZ_C3_0RVgRpBFVMuMT26KPVZunqqNKC=OJcERog@mail.gmail.com>
-Subject: Re: [PATCH 3/3] dt-bindings: dsp: fsl: Add DSP core binding support
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        Paul Olaru <paul.olaru@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Frank Li <frank.li@nxp.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sound-open-firmware@alsa-project.org" 
-        <sound-open-firmware@alsa-project.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="DqhR8hV3EnoxUkKN"
+Content-Disposition: inline
+In-Reply-To: <20190718155640.25928-7-kechen.lu@intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 9:40 PM Leonard Crestez <leonard.crestez@nxp.com> wrote:
->
-> On 18.07.2019 21:24, Daniel Baluta wrote:
-> > On Thu, Jul 18, 2019 at 7:41 PM Rob Herring <robh+dt@kernel.org> wrote:
-> >>
-> >> On Thu, Jul 18, 2019 at 9:13 AM Daniel Baluta <daniel.baluta@nxp.com> wrote:
-> >>>
-> >>> This describes the DSP device tree node.
-> >>>
-> >>> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
->
-> >>> +  power-domains:
-> >>> +    description:
-> >>> +      List of phandle and PM domain specifier as documented in
-> >>> +      Documentation/devicetree/bindings/power/power_domain.txt
-> >>
-> >> How many? 4?
-> >
-> > Yes, 4 for i.MX8QXP. Also, the same number is for i.MX8QM. Anyhow, I didn't
-> > added added a limit here because I really don't know how many will be
-> > in upcoming i.MX platforms.
->
-> Which 4? It might help to use power-domain-names explicitly just like
-> it's done for clocks and mboxes.
->
-> This is very common for phandle lists.
 
-4 like in the example at the bottom of the patch:
+--DqhR8hV3EnoxUkKN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-+   power-domains = <&pd IMX_SC_R_MU_13A>,
-+                        <&pd IMX_SC_R_MU_13B>,
-+                        <&pd IMX_SC_R_DSP>,
-+                        <&pd IMX_SC_R_DSP_RAM>;
+On 2019.07.18 23:56:40 +0800, Kechen Lu wrote:
+> This patch adds the cursor plane CURBASE reg update trap handler
+> in order to :
+>=20
+> - Deliver the cursor refresh event at each vblank emulation,
+> the flip_done_event bit check is supposed to do here. If cursor
+> plane updates happen, deliver the cursor refresh events.
+>=20
+> - Support the sync and async cursor plane updates and
+> corresponding cursor plane flip interrupts reporting.
+>=20
+> Signed-off-by: Kechen Lu <kechen.lu@intel.com>
+> ---
+>  drivers/gpu/drm/i915/gvt/display.c   | 11 +++++++++++
+>  drivers/gpu/drm/i915/gvt/handlers.c  | 27 ++++++++++++++++++++++++---
+>  drivers/gpu/drm/i915/gvt/interrupt.c |  7 +++++++
+>  drivers/gpu/drm/i915/gvt/interrupt.h |  3 +++
+>  4 files changed, 45 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/i915/gvt/display.c b/drivers/gpu/drm/i915/gv=
+t/display.c
+> index df52e4b4c1b0..a0accc51d44f 100644
+> --- a/drivers/gpu/drm/i915/gvt/display.c
+> +++ b/drivers/gpu/drm/i915/gvt/display.c
+> @@ -399,6 +399,7 @@ static void emulate_vblank_on_pipe(struct intel_vgpu =
+*vgpu, int pipe)
+>  		[PIPE_C] =3D PIPE_C_VBLANK,
+>  	};
+>  	int pri_flip_event =3D SKL_FLIP_EVENT(pipe, PLANE_PRIMARY);
+> +	int cur_flip_event =3D CURSOR_A_FLIP_DONE + pipe;
+>  	int event;
+>  	u64 eventfd_signal_val =3D 0;
+>  	static int pageflip_count;
+> @@ -417,6 +418,11 @@ static void emulate_vblank_on_pipe(struct intel_vgpu=
+ *vgpu, int pipe)
+>  			pageflip_count +=3D PAGEFLIP_INC_COUNT;
+>  		}
+> =20
+> +		if (event =3D=3D cur_flip_event) {
+> +			eventfd_signal_val +=3D DISPLAY_CUR_REFRESH_EVENT_INC;
+> +			pageflip_count +=3D PAGEFLIP_INC_COUNT;
+> +		}
+> +
+>  		intel_vgpu_trigger_virtual_event(vgpu, event);
+>  	}
+> =20
+> @@ -430,6 +436,11 @@ static void emulate_vblank_on_pipe(struct intel_vgpu=
+ *vgpu, int pipe)
+>  			eventfd_signal_val +=3D DISPLAY_PRI_REFRESH_EVENT_INC;
+>  			pageflip_count +=3D PAGEFLIP_INC_COUNT;
+>  		}
+> +
+> +		if (event =3D=3D PLANE_CURSOR) {
+> +			eventfd_signal_val +=3D DISPLAY_CUR_REFRESH_EVENT_INC;
+> +			pageflip_count +=3D PAGEFLIP_INC_COUNT;
+> +		}
+>  	}
+> =20
+>  	if (--pageflip_count < 0) {
+> diff --git a/drivers/gpu/drm/i915/gvt/handlers.c b/drivers/gpu/drm/i915/g=
+vt/handlers.c
+> index 6ad29c4f08e5..821ff88977d8 100644
+> --- a/drivers/gpu/drm/i915/gvt/handlers.c
+> +++ b/drivers/gpu/drm/i915/gvt/handlers.c
+> @@ -767,6 +767,27 @@ static int pri_surf_mmio_write(struct intel_vgpu *vg=
+pu, unsigned int offset,
+>  	return 0;
+>  }
+> =20
+> +#define CURBASE_TO_PIPE(reg) \
+> +	calc_index(offset, _CURABASE, _CURBBASE, 0, CURBASE(PIPE_C))
+> +
+> +static int cur_surf_mmio_write(struct intel_vgpu *vgpu, unsigned int off=
+set,
+> +		void *p_data, unsigned int bytes)
+> +{
+> +	struct drm_i915_private *dev_priv =3D vgpu->gvt->dev_priv;
+> +	u32 pipe =3D CURBASE_TO_PIPE(offset);
+> +	int event =3D CURSOR_A_FLIP_DONE + pipe;
+> +
+> +	write_vreg(vgpu, offset, p_data, bytes);
+> +
+> +	if (vgpu_vreg_t(vgpu, CURCNTR(pipe)) & PLANE_CTL_ASYNC_FLIP) {
+> +		intel_vgpu_trigger_virtual_event(vgpu, event);
+> +		set_bit(PLANE_CURSOR, vgpu->display.async_flip_event[pipe]);
+> +	} else
+> +		set_bit(event, vgpu->irq.flip_done_event[pipe]);
+> +
+> +	return 0;
+> +}
+> +
+>  #define SPRSURF_TO_PIPE(offset) \
+>  	calc_index(offset, _SPRA_SURF, _SPRB_SURF, 0, SPRSURF(PIPE_C))
+> =20
+> @@ -1955,9 +1976,9 @@ static int init_generic_mmio_info(struct intel_gvt =
+*gvt)
+>  	MMIO_D(CURPOS(PIPE_B), D_ALL);
+>  	MMIO_D(CURPOS(PIPE_C), D_ALL);
+> =20
+> -	MMIO_D(CURBASE(PIPE_A), D_ALL);
+> -	MMIO_D(CURBASE(PIPE_B), D_ALL);
+> -	MMIO_D(CURBASE(PIPE_C), D_ALL);
+> +	MMIO_DH(CURBASE(PIPE_A), D_ALL, NULL, cur_surf_mmio_write);
+> +	MMIO_DH(CURBASE(PIPE_B), D_ALL, NULL, cur_surf_mmio_write);
+> +	MMIO_DH(CURBASE(PIPE_C), D_ALL, NULL, cur_surf_mmio_write);
 
-Not sure if it makes sense to use power-domain-names as the driver parses
-directly the "power-domains" property.
+I think we should also track cursor pos change right?
+
+> =20
+>  	MMIO_D(CUR_FBC_CTL(PIPE_A), D_ALL);
+>  	MMIO_D(CUR_FBC_CTL(PIPE_B), D_ALL);
+> diff --git a/drivers/gpu/drm/i915/gvt/interrupt.c b/drivers/gpu/drm/i915/=
+gvt/interrupt.c
+> index 951681813230..9c2b9d2e1529 100644
+> --- a/drivers/gpu/drm/i915/gvt/interrupt.c
+> +++ b/drivers/gpu/drm/i915/gvt/interrupt.c
+> @@ -113,6 +113,9 @@ static const char * const irq_name[INTEL_GVT_EVENT_MA=
+X] =3D {
+>  	[SPRITE_A_FLIP_DONE] =3D "Sprite Plane A flip done",
+>  	[SPRITE_B_FLIP_DONE] =3D "Sprite Plane B flip done",
+>  	[SPRITE_C_FLIP_DONE] =3D "Sprite Plane C flip done",
+> +	[CURSOR_A_FLIP_DONE] =3D "Cursor Plane A flip done",
+> +	[CURSOR_B_FLIP_DONE] =3D "Cursor Plane B flip done",
+> +	[CURSOR_C_FLIP_DONE] =3D "Cursor Plane C flip done",
+> =20
+>  	[PCU_THERMAL] =3D "PCU Thermal Event",
+>  	[PCU_PCODE2DRIVER_MAILBOX] =3D "PCU pcode2driver mailbox event",
+> @@ -593,6 +596,10 @@ static void gen8_init_irq(
+>  		SET_BIT_INFO(irq, 4, SPRITE_A_FLIP_DONE, INTEL_GVT_IRQ_INFO_DE_PIPE_A);
+>  		SET_BIT_INFO(irq, 4, SPRITE_B_FLIP_DONE, INTEL_GVT_IRQ_INFO_DE_PIPE_B);
+>  		SET_BIT_INFO(irq, 4, SPRITE_C_FLIP_DONE, INTEL_GVT_IRQ_INFO_DE_PIPE_C);
+> +
+> +		SET_BIT_INFO(irq, 6, CURSOR_A_FLIP_DONE, INTEL_GVT_IRQ_INFO_DE_PIPE_A);
+> +		SET_BIT_INFO(irq, 6, CURSOR_B_FLIP_DONE, INTEL_GVT_IRQ_INFO_DE_PIPE_B);
+> +		SET_BIT_INFO(irq, 6, CURSOR_C_FLIP_DONE, INTEL_GVT_IRQ_INFO_DE_PIPE_C);
+>  	}
+> =20
+>  	/* GEN8 interrupt PCU events */
+> diff --git a/drivers/gpu/drm/i915/gvt/interrupt.h b/drivers/gpu/drm/i915/=
+gvt/interrupt.h
+> index 5313fb1b33e1..158f1c7a23f2 100644
+> --- a/drivers/gpu/drm/i915/gvt/interrupt.h
+> +++ b/drivers/gpu/drm/i915/gvt/interrupt.h
+> @@ -92,6 +92,9 @@ enum intel_gvt_event_type {
+>  	SPRITE_A_FLIP_DONE,
+>  	SPRITE_B_FLIP_DONE,
+>  	SPRITE_C_FLIP_DONE,
+> +	CURSOR_A_FLIP_DONE,
+> +	CURSOR_B_FLIP_DONE,
+> +	CURSOR_C_FLIP_DONE,
+> =20
+>  	PCU_THERMAL,
+>  	PCU_PCODE2DRIVER_MAILBOX,
+> --=20
+> 2.17.1
+>=20
+
+--=20
+Open Source Technology Center, Intel ltd.
+
+$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
+
+--DqhR8hV3EnoxUkKN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXTFkgwAKCRCxBBozTXgY
+J4d8AJ99urqsjYPF0voL37JuWJgmO27bhACfdInwRS5Cx4nZdmSF129gjIl2A38=
+=ka4J
+-----END PGP SIGNATURE-----
+
+--DqhR8hV3EnoxUkKN--
