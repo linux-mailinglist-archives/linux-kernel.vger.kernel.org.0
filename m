@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAF0F6DA1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:00:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 874E46DA25
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:00:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728770AbfGSD7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 23:59:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59074 "EHLO mail.kernel.org"
+        id S1728847AbfGSD7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 23:59:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728729AbfGSD73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 23:59:29 -0400
+        id S1728815AbfGSD7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 23:59:39 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F8E421873;
-        Fri, 19 Jul 2019 03:59:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CD5D218A6;
+        Fri, 19 Jul 2019 03:59:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508768;
-        bh=ZQ3WWzSDhz3Qb1WmYN7C9YZY6kD2OJayrXx0bEgbiUo=;
+        s=default; t=1563508778;
+        bh=WWiRGUwXypUjI0ab0plnKjXWJt7EYhDzkrUQgknLJxY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yfB1GatYlURKFt5r51m31XsyTry31v2XrT1qCC/h5Rxtp4ZYcWuZR70DDht2CU766
-         LS9783YYRl9njmzaTqtShLqTL8xIj9e9c+0Uc1c+UkoLYp0lfve5t+GD6mFGI+Q6WG
-         OesBbx+1ew8HeGfrdLqe3WV8IEBMjvt+0HqdpH64=
+        b=1lG41vMUR/3ZUX8X+ePfCgD32jLqXXiV4EdQsi7CLfTA6WX/gajnmxBBSXbvWbPnX
+         Apj2tX8T1GMngAGN9AY2qzm3AQMNR1RLJi8UYECPdmt97wScdD+sMvvEWeb6p7HBHz
+         VxXuRZk8xy++gbLBOQnkBTyuyVtVKal5UAp8woPs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stefan Roese <sr@denx.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 079/171] serial: mctrl_gpio: Check if GPIO property exisits before requesting it
-Date:   Thu, 18 Jul 2019 23:55:10 -0400
-Message-Id: <20190719035643.14300-79-sashal@kernel.org>
+Cc:     Nathan Huckleberry <nhuck@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, linux-kbuild@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 5.2 085/171] net/ipv4: fib_trie: Avoid cryptic ternary expressions
+Date:   Thu, 18 Jul 2019 23:55:16 -0400
+Message-Id: <20190719035643.14300-85-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -47,110 +48,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Roese <sr@denx.de>
+From: Nathan Huckleberry <nhuck@google.com>
 
-[ Upstream commit d99482673f950817b30caf3fcdfb31179b050ce1 ]
+[ Upstream commit 25cec756891e8733433efea63b2254ddc93aa5cc ]
 
-This patch adds a check for the GPIOs property existence, before the
-GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
-support is added (2nd patch in this patch series) on x86 platforms using
-ACPI.
+empty_child_inc/dec() use the ternary operator for conditional
+operations. The conditions involve the post/pre in/decrement
+operator and the operation is only performed when the condition
+is *not* true. This is hard to parse for humans, use a regular
+'if' construct instead and perform the in/decrement separately.
 
-Here Mika's comments from 2016-08-09:
+This also fixes two warnings that are emitted about the value
+of the ternary expression being unused, when building the kernel
+with clang + "kbuild: Remove unnecessary -Wno-unused-value"
+(https://lore.kernel.org/patchwork/patch/1089869/):
 
-"
-I noticed that with v4.8-rc1 serial console of some of our Broxton
-systems does not work properly anymore. I'm able to see output but input
-does not work.
+CC      net/ipv4/fib_trie.o
+net/ipv4/fib_trie.c:351:2: error: expression result unused [-Werror,-Wunused-value]
+        ++tn_info(n)->empty_children ? : ++tn_info(n)->full_children;
 
-I bisected it down to commit 4ef03d328769eddbfeca1f1c958fdb181a69c341
-("tty/serial/8250: use mctrl_gpio helpers").
-
-The reason why it fails is that in ACPI we do not have names for GPIOs
-(except when _DSD is used) so we use the "idx" to index into _CRS GPIO
-resources. Now mctrl_gpio_init_noauto() goes through a list of GPIOs
-calling devm_gpiod_get_index_optional() passing "idx" of 0 for each. The
-UART device in Broxton has following (simplified) ACPI description:
-
-    Device (URT4)
-    {
-        ...
-        Name (_CRS, ResourceTemplate () {
-            GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
-                    "\\_SB.GPO0", 0x00, ResourceConsumer)
-            {
-                0x003A
-            }
-            GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
-                    "\\_SB.GPO0", 0x00, ResourceConsumer)
-            {
-                0x003D
-            }
-        })
-
-In this case it finds the first GPIO (0x003A which happens to be RX pin
-for that UART), turns it into GPIO which then breaks input for the UART
-device. This also breaks systems with bluetooth connected to UART (those
-typically have some GPIOs in their _CRS).
-
-Any ideas how to fix this?
-
-We cannot just drop the _CRS index lookup fallback because that would
-break many existing machines out there so maybe we can limit this to
-only DT enabled machines. Or alternatively probe if the property first
-exists before trying to acquire the GPIOs (using
-device_property_present()).
-"
-
-This patch implements the fix suggested by Mika in his statement above.
-
-Signed-off-by: Stefan Roese <sr@denx.de>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Yegor Yefremov <yegorslists@googlemail.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Yegor Yefremov <yegorslists@googlemail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 95f60ea3e99a ("fib_trie: Add collapse() and should_collapse() to resize")
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Acked-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/serial_mctrl_gpio.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ scripts/Makefile.extrawarn | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/serial/serial_mctrl_gpio.c
-index 39ed56214cd3..2b400189be91 100644
---- a/drivers/tty/serial/serial_mctrl_gpio.c
-+++ b/drivers/tty/serial/serial_mctrl_gpio.c
-@@ -12,6 +12,7 @@
- #include <linux/termios.h>
- #include <linux/serial_core.h>
- #include <linux/module.h>
-+#include <linux/property.h>
+diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+index 3ab8d1a303cd..b293246e48fe 100644
+--- a/scripts/Makefile.extrawarn
++++ b/scripts/Makefile.extrawarn
+@@ -68,7 +68,6 @@ else
  
- #include "serial_mctrl_gpio.h"
- 
-@@ -116,6 +117,19 @@ struct mctrl_gpios *mctrl_gpio_init_noauto(struct device *dev, unsigned int idx)
- 
- 	for (i = 0; i < UART_GPIO_MAX; i++) {
- 		enum gpiod_flags flags;
-+		char *gpio_str;
-+		bool present;
-+
-+		/* Check if GPIO property exists and continue if not */
-+		gpio_str = kasprintf(GFP_KERNEL, "%s-gpios",
-+				     mctrl_gpios_desc[i].name);
-+		if (!gpio_str)
-+			continue;
-+
-+		present = device_property_present(dev, gpio_str);
-+		kfree(gpio_str);
-+		if (!present)
-+			continue;
- 
- 		if (mctrl_gpios_desc[i].dir_out)
- 			flags = GPIOD_OUT_LOW;
+ ifdef CONFIG_CC_IS_CLANG
+ KBUILD_CFLAGS += -Wno-initializer-overrides
+-KBUILD_CFLAGS += -Wno-unused-value
+ KBUILD_CFLAGS += -Wno-format
+ KBUILD_CFLAGS += -Wno-sign-compare
+ KBUILD_CFLAGS += -Wno-format-zero-length
 -- 
 2.20.1
 
