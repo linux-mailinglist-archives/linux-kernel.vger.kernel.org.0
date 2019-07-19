@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A13826DBF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:12:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23CB86DCF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:19:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388189AbfGSEMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:12:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48244 "EHLO mail.kernel.org"
+        id S2388264AbfGSEMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:12:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388933AbfGSEMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:12:44 -0400
+        id S2388958AbfGSEMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:12:46 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA94F218E0;
-        Fri, 19 Jul 2019 04:12:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 103B72189D;
+        Fri, 19 Jul 2019 04:12:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509563;
-        bh=4oix9x7A/tqf3jdGjWpv3BVILSw+e5mGGDNcbkJd5vQ=;
+        s=default; t=1563509565;
+        bh=70rOfI1NUMza8q/+UGj7NaQBTt0XEWgZa39z5HZ3bEs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a7NZJncvgUQ4enC81DZJy7mVsYCnFkt25Zcu4yZJZVECWKBXFijiie/UtKm+VU+0M
-         xUnFJxIoL2XlZsRVWl1N3vWD6JKPWfd+4y/S/IuBBJ+328hgmxq6oj6i2a0eDtfkTK
-         XLQmoN4gfkNiH5B9mB/qEIf4UESibKUdCgYqLbn0=
+        b=nPJWQlRDVA3grWZ1HnK/ywiw8JzYFYaPNJ6DvU8ZA9ZwwTXLTJoDy1tG4kFPDqFfS
+         lNFXfCu5w9X7uFb9PSHr5Y6/6qMNa8QgxkeGUU38U3Rae6Q+/MYp2HVtIVixwSFOlv
+         Zkq6gKIAnjP2TtrzdDT1HOSU8DYLdej7thdmTLkE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ocean Chen <oceanchen@google.com>, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.14 49/60] f2fs: avoid out-of-range memory access
-Date:   Fri, 19 Jul 2019 00:10:58 -0400
-Message-Id: <20190719041109.18262-49-sashal@kernel.org>
+Cc:     Oliver O'Halloran <oohall@gmail.com>,
+        Sachin Sant <sachinp@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.14 51/60] powerpc/eeh: Handle hugepages in ioremap space
+Date:   Fri, 19 Jul 2019 00:11:00 -0400
+Message-Id: <20190719041109.18262-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719041109.18262-1-sashal@kernel.org>
 References: <20190719041109.18262-1-sashal@kernel.org>
@@ -44,39 +44,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ocean Chen <oceanchen@google.com>
+From: Oliver O'Halloran <oohall@gmail.com>
 
-[ Upstream commit 56f3ce675103e3fb9e631cfb4131fc768bc23e9a ]
+[ Upstream commit 33439620680be5225c1b8806579a291e0d761ca0 ]
 
-blkoff_off might over 512 due to fs corrupt or security
-vulnerability. That should be checked before being using.
+In commit 4a7b06c157a2 ("powerpc/eeh: Handle hugepages in ioremap
+space") support for using hugepages in the vmalloc and ioremap areas was
+enabled for radix. Unfortunately this broke EEH MMIO error checking.
 
-Use ENTRIES_IN_SUM to protect invalid value in cur_data_blkoff.
+Detection works by inserting a hook which checks the results of the
+ioreadXX() set of functions.  When a read returns a 0xFFs response we
+need to check for an error which we do by mapping the (virtual) MMIO
+address back to a physical address, then mapping physical address to a
+PCI device via an interval tree.
 
-Signed-off-by: Ocean Chen <oceanchen@google.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+When translating virt -> phys we currently assume the ioremap space is
+only populated by PAGE_SIZE mappings. If a hugepage mapping is found we
+emit a WARN_ON(), but otherwise handles the check as though a normal
+page was found. In pathalogical cases such as copying a buffer
+containing a lot of 0xFFs from BAR memory this can result in the system
+not booting because it's too busy printing WARN_ON()s.
+
+There's no real reason to assume huge pages can't be present and we're
+prefectly capable of handling them, so do that.
+
+Fixes: 4a7b06c157a2 ("powerpc/eeh: Handle hugepages in ioremap space")
+Reported-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
+Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
+Tested-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190710150517.27114-1-oohall@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/segment.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/powerpc/kernel/eeh.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 70bd15cadb44..18d51c36a5e3 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2612,6 +2612,11 @@ static int read_compacted_summaries(struct f2fs_sb_info *sbi)
- 		seg_i = CURSEG_I(sbi, i);
- 		segno = le32_to_cpu(ckpt->cur_data_segno[i]);
- 		blk_off = le16_to_cpu(ckpt->cur_data_blkoff[i]);
-+		if (blk_off > ENTRIES_IN_SUM) {
-+			f2fs_bug_on(sbi, 1);
-+			f2fs_put_page(page, 1);
-+			return -EFAULT;
-+		}
- 		seg_i->next_segno = segno;
- 		reset_curseg(sbi, i, 0);
- 		seg_i->alloc_type = ckpt->alloc_type[i];
+diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
+index 45322b37669a..d2ba7936d0d3 100644
+--- a/arch/powerpc/kernel/eeh.c
++++ b/arch/powerpc/kernel/eeh.c
+@@ -361,10 +361,19 @@ static inline unsigned long eeh_token_to_phys(unsigned long token)
+ 	ptep = find_init_mm_pte(token, &hugepage_shift);
+ 	if (!ptep)
+ 		return token;
+-	WARN_ON(hugepage_shift);
+-	pa = pte_pfn(*ptep) << PAGE_SHIFT;
+ 
+-	return pa | (token & (PAGE_SIZE-1));
++	pa = pte_pfn(*ptep);
++
++	/* On radix we can do hugepage mappings for io, so handle that */
++	if (hugepage_shift) {
++		pa <<= hugepage_shift;
++		pa |= token & ((1ul << hugepage_shift) - 1);
++	} else {
++		pa <<= PAGE_SHIFT;
++		pa |= token & (PAGE_SIZE - 1);
++	}
++
++	return pa;
+ }
+ 
+ /*
 -- 
 2.20.1
 
