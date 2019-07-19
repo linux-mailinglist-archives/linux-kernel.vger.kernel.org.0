@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AA496DBC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:11:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7816F6DBCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388458AbfGSEL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:11:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46304 "EHLO mail.kernel.org"
+        id S1732394AbfGSELd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:11:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388410AbfGSELX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:11:23 -0400
+        id S2388459AbfGSELa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:11:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4348721872;
-        Fri, 19 Jul 2019 04:11:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88B68218BB;
+        Fri, 19 Jul 2019 04:11:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509482;
-        bh=WNjxKfVglkiS8lEwzicqeDhTFnwuzi16XtGFvZQExiI=;
+        s=default; t=1563509489;
+        bh=QoNhA/E3iRwdS19rm21kkSOAa3YfFVivd0airztDrc8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eWeh660LiGyZu4x6fsGznhhl57FZ3uWlnkyUh3AT6D2e2efJmBLuQg8LnFYhwO0oc
-         YT5YU4BgMS9slBx8ZBCcppk1oA+T+Y0AUrfsZP6r1XQROWk8vNtarmueStJ99WLBIN
-         7C4wLIPRFVuAMHwRC4Zt6f8D3RAJ7YcUodGWSXko=
+        b=suj/ALOMHKukokM9xpwiHu5br+71Wc78F/zKSUgQdGtsDMZ70fGyP0kbJBGyA3dZA
+         kgtU6gk24FVZ1Nw3POPO+oQefNyqOpgZb4sO5Bl5dM4j2KGV6j3ejVTyVYnbI8Sy/2
+         6hO8H83TXDfL/1l6OFLMqRllKp9/CrGY+NMyWJLw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.14 08/60] drm/bridge: tc358767: read display_props in get_modes()
-Date:   Fri, 19 Jul 2019 00:10:17 -0400
-Message-Id: <20190719041109.18262-8-sashal@kernel.org>
+Cc:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 12/60] tty/serial: digicolor: Fix digicolor-usart already registered warning
+Date:   Fri, 19 Jul 2019 00:10:21 -0400
+Message-Id: <20190719041109.18262-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719041109.18262-1-sashal@kernel.org>
 References: <20190719041109.18262-1-sashal@kernel.org>
@@ -44,44 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
 
-[ Upstream commit 3231573065ad4f4ecc5c9147b24f29f846dc0c2f ]
+[ Upstream commit c7ad9ba0611c53cfe194223db02e3bca015f0674 ]
 
-We need to know the link bandwidth to filter out modes we cannot
-support, so we need to have read the display props before doing the
-filtering.
+When modprobe/rmmod/modprobe module, if platform_driver_register() fails,
+the kernel complained,
 
-To ensure we have up to date display props, call tc_get_display_props()
-in the beginning of tc_connector_get_modes().
+  proc_dir_entry 'driver/digicolor-usart' already registered
+  WARNING: CPU: 1 PID: 5636 at fs/proc/generic.c:360 proc_register+0x19d/0x270
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190528082747.3631-22-tomi.valkeinen@ti.com
+Fix this by adding uart_unregister_driver() when platform_driver_register() fails.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Acked-by: Baruch Siach <baruch@tkos.co.il>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/tty/serial/digicolor-usart.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index 6eebd8ad0c52..9705ca197b90 100644
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -1147,6 +1147,13 @@ static int tc_connector_get_modes(struct drm_connector *connector)
- 	struct tc_data *tc = connector_to_tc(connector);
- 	struct edid *edid;
- 	unsigned int count;
-+	int ret;
-+
-+	ret = tc_get_display_props(tc);
-+	if (ret < 0) {
-+		dev_err(tc->dev, "failed to read display props: %d\n", ret);
-+		return 0;
-+	}
+diff --git a/drivers/tty/serial/digicolor-usart.c b/drivers/tty/serial/digicolor-usart.c
+index 02ad6953b167..50ec5f1ac77f 100644
+--- a/drivers/tty/serial/digicolor-usart.c
++++ b/drivers/tty/serial/digicolor-usart.c
+@@ -545,7 +545,11 @@ static int __init digicolor_uart_init(void)
+ 	if (ret)
+ 		return ret;
  
- 	if (tc->panel && tc->panel->funcs && tc->panel->funcs->get_modes) {
- 		count = tc->panel->funcs->get_modes(tc->panel);
+-	return platform_driver_register(&digicolor_uart_platform);
++	ret = platform_driver_register(&digicolor_uart_platform);
++	if (ret)
++		uart_unregister_driver(&digicolor_uart);
++
++	return ret;
+ }
+ module_init(digicolor_uart_init);
+ 
 -- 
 2.20.1
 
