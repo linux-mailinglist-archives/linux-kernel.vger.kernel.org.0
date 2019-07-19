@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 200176DFC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:38:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 783EF6DFC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:38:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfGSEAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:00:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59940 "EHLO mail.kernel.org"
+        id S1730974AbfGSEhR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:37:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726600AbfGSEAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:00:05 -0400
+        id S1726509AbfGSEAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:00:07 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 078AC21882;
-        Fri, 19 Jul 2019 04:00:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45323218B8;
+        Fri, 19 Jul 2019 04:00:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508804;
-        bh=/TZCDMO7PmrUqAcLJZ0HPzkEVQDWNzyulwyt0GEmmqM=;
+        s=default; t=1563508806;
+        bh=HPwqXK7LYeOfAs1dVNST7+TF5veS5ciMOJwxqjjjRRQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k0Uxg2zULNrvAeuQfNtRdr0/Biivoii9eUXyTxbxVlGyPh7hicFdLgCEIRqH3TcSl
-         5SZkBgA1H1IBXE7NVxzik0G251fdNGsCbMJHkc4sU/YCqMcY1LOr/FY/ZcXw0QqeNR
-         D32WfSRsuFSPylnKdlSmT3Hpgyv5tzrGl55ZY32Q=
+        b=nXaCSzZRJlCiAGmtSaBGOsuZvI69QzPjlwZMhMSoPrp2wX60hb0YaZIOQnefjGcWK
+         QT0pjNtwQg6Mc11Nj5X4NfESDcPBvlbUhfoJRVt6mDea8vT+vg0PdXRtp8imQraCpv
+         8TQ8YW05MbxjIo/r3MtKI6JyuSuEUisoURhwpKME=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Robert Hancock <hancock@sedsystems.ca>,
+Cc:     Axel Lin <axel.lin@ingics.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
         Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 099/171] mfd: core: Set fwnode for created devices
-Date:   Thu, 18 Jul 2019 23:55:30 -0400
-Message-Id: <20190719035643.14300-99-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 101/171] mfd: hi655x-pmic: Fix missing return value check for devm_regmap_init_mmio_clk
+Date:   Thu, 18 Jul 2019 23:55:32 -0400
+Message-Id: <20190719035643.14300-101-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -43,34 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robert Hancock <hancock@sedsystems.ca>
+From: Axel Lin <axel.lin@ingics.com>
 
-[ Upstream commit c176c6d7e932662668bcaec2d763657096589d85 ]
+[ Upstream commit 7efd105c27fd2323789b41b64763a0e33ed79c08 ]
 
-The logic for setting the of_node on devices created by mfd did not set
-the fwnode pointer to match, which caused fwnode-based APIs to
-malfunction on these devices since the fwnode pointer was null. Fix
-this.
+Since devm_regmap_init_mmio_clk can fail, add return value checking.
 
-Signed-off-by: Robert Hancock <hancock@sedsystems.ca>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Acked-by: Chen Feng <puck.chen@hisilicon.com>
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/mfd-core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mfd/hi655x-pmic.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-index dbf684c4ebfb..23276a80e3b4 100644
---- a/drivers/mfd/mfd-core.c
-+++ b/drivers/mfd/mfd-core.c
-@@ -175,6 +175,7 @@ static int mfd_add_device(struct device *parent, int id,
- 		for_each_child_of_node(parent->of_node, np) {
- 			if (of_device_is_compatible(np, cell->of_compatible)) {
- 				pdev->dev.of_node = np;
-+				pdev->dev.fwnode = &np->fwnode;
- 				break;
- 			}
- 		}
+diff --git a/drivers/mfd/hi655x-pmic.c b/drivers/mfd/hi655x-pmic.c
+index f1c51ce309fa..7e3959aaa285 100644
+--- a/drivers/mfd/hi655x-pmic.c
++++ b/drivers/mfd/hi655x-pmic.c
+@@ -109,6 +109,8 @@ static int hi655x_pmic_probe(struct platform_device *pdev)
+ 
+ 	pmic->regmap = devm_regmap_init_mmio_clk(dev, NULL, base,
+ 						 &hi655x_regmap_config);
++	if (IS_ERR(pmic->regmap))
++		return PTR_ERR(pmic->regmap);
+ 
+ 	regmap_read(pmic->regmap, HI655X_BUS_ADDR(HI655X_VER_REG), &pmic->ver);
+ 	if ((pmic->ver < PMU_VER_START) || (pmic->ver > PMU_VER_END)) {
 -- 
 2.20.1
 
