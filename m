@@ -2,95 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB5586E082
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 07:18:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A24FA6E07A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 07:12:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbfGSFPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 01:15:48 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:6452 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbfGSFPs (ORCPT
+        id S1726724AbfGSFMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 01:12:21 -0400
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:39976 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725794AbfGSFMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 01:15:48 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d3152090000>; Thu, 18 Jul 2019 22:15:53 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 18 Jul 2019 22:15:46 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 18 Jul 2019 22:15:46 -0700
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 19 Jul
- 2019 05:15:46 +0000
-Subject: Re: [PATCH] mm/Kconfig: additional help text for HMM_MIRROR option
-To:     Ira Weiny <ira.weiny@intel.com>, <john.hubbard@gmail.com>
-CC:     <pavel@ucw.cz>, <SCheung@nvidia.com>, <akpm@linux-foundation.org>,
-        <aneesh.kumar@linux.vnet.ibm.com>, <benh@kernel.crashing.org>,
-        <bsingharora@gmail.com>, <dan.j.williams@intel.com>,
-        <dnellans@nvidia.com>, <ebaskakov@nvidia.com>,
-        <hannes@cmpxchg.org>, <jglisse@redhat.com>,
-        <kirill.shutemov@linux.intel.com>, <linux-kernel@vger.kernel.org>,
-        <liubo95@huawei.com>, <mhairgrove@nvidia.com>, <mhocko@kernel.org>,
-        <paulmck@linux.vnet.ibm.com>, <ross.zwisler@linux.intel.com>,
-        <sgutti@nvidia.com>, <torvalds@linux-foundation.org>,
-        <vdavydov.dev@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Christoph Hellwig <hch@infradead.org>
-References: <20190717074124.GA21617@amd>
- <20190719013253.17642-1-jhubbard@nvidia.com>
- <20190719043439.GA26230@iweiny-DESK2.sc.intel.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <8428df79-94cc-cd17-1a48-c0e4b2202020@nvidia.com>
-Date:   Thu, 18 Jul 2019 22:15:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190719043439.GA26230@iweiny-DESK2.sc.intel.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1563513353; bh=VdrNvSRBFELFK33ytn5kbidh/QHSLYPE/i2QNziYCLA=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=UXJaHY/FT+BnMPc015XGl2/LQGokhkp4NTsZXg0h2tgOPgcUT+0u16dM5EKAOq6CT
-         ErjzrgGNxlW5J+4dmXiqIDGflpOu18927t/ePslvWtMvvwvtXOueaErvyooCjGVIDJ
-         IrrHw1AXB2DjlP24qpuWOkTFH7IUOMjkDAqn2OtrbOGtlEz/AuZbY2VJqLp7vebhhz
-         5pYF3TAlS/4Bfk30AvNqpWM21Yv7mA2ou9B7LI4gJ8DBGMTRUbyDBbmDrmQJ5/4MN9
-         2gjWYy12o5EEXsMgsLOBWFnFybnLPpZwK8mCs//N69DayBt7YzYpBKGZLS3cVpP1l8
-         9zZCqEFxz0o2w==
+        Fri, 19 Jul 2019 01:12:21 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=shannon.zhao@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TXG4GTe_1563513118;
+Received: from localhost(mailfrom:shannon.zhao@linux.alibaba.com fp:SMTPD_---0TXG4GTe_1563513118)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 19 Jul 2019 13:12:17 +0800
+From:   Shannon Zhao <shenglong.zsl@alibaba-inc.com>
+To:     linux-kernel@vger.kernel.org, jnair@marvell.com,
+        bhelgaas@google.com, linux-pci@vger.kernel.org, gduan@marvell.com
+Subject: [PATCH] PCI: Add ACS quirk for Cavium ThunderX 2 root port devices
+Date:   Fri, 19 Jul 2019 21:10:35 +0800
+Message-Id: <1563541835-141011-1-git-send-email-shenglong.zsl@alibaba-inc.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/18/19 9:34 PM, Ira Weiny wrote:
-> On Thu, Jul 18, 2019 at 06:32:53PM -0700, john.hubbard@gmail.com wrote:
->> From: John Hubbard <jhubbard@nvidia.com>
-...
->> +	  Select HMM_MIRROR if you have hardware that meets the above
->> +	  description. An early, partial list of such hardware is:
->> +	  an NVIDIA GPU >= Pascal, Mellanox IB >= mlx5, or an AMD GPU.
-> 
-> I don't think we want to put device information here.  If we want that
-> information in Kconfig best to put it in the devices themselves.  Otherwise
-> this list will get stale.
-> 
-> Other than that, looks good.
-> 
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> 
+From: Shannon Zhao <shannon.zhao@linux.alibaba.com>
 
-Hi Ira, thanks for the review, I'll remove that last sentence. I'll post a v2
-with your reviewed by tag, in a new email thread. But first I'll wait to see 
-if there are other replies.
+Like commit f2ddaf8(PCI: Apply Cavium ThunderX ACS quirk to more Root
+Ports), it should apply ACS quirk to ThunderX 2 root port devices.
 
-thanks,
+Signed-off-by: Shannon Zhao <shannon.zhao@linux.alibaba.com>
+---
+ drivers/pci/quirks.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index 28c64f8..ea7848b 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -4224,10 +4224,12 @@ static bool pci_quirk_cavium_acs_match(struct pci_dev *dev)
+ 	 * family by 0xf800 mask (which represents 8 SoCs), while the lower
+ 	 * bits of device ID are used to indicate which subdevice is used
+ 	 * within the SoC.
++	 * Effectively selects the ThunderX 2 root ports whose device ID
++	 * is 0xaf84.
+ 	 */
+ 	return (pci_is_pcie(dev) &&
+ 		(pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT) &&
+-		((dev->device & 0xf800) == 0xa000));
++		((dev->device & 0xf800) == 0xa000 || dev->device == 0xaf84));
+ }
+ 
+ static int pci_quirk_cavium_acs(struct pci_dev *dev, u16 acs_flags)
 -- 
-John Hubbard
-NVIDIA
+1.8.3.1
+
