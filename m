@@ -2,82 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B8CC6E6E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 15:54:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFFAE6E6EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 15:55:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbfGSNxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 09:53:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37132 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726239AbfGSNxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 09:53:54 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2373220873;
-        Fri, 19 Jul 2019 13:53:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563544433;
-        bh=PWY0uoVGOh2PIWiAEFdra9jU7XP0LdTkL6CqbiecmhI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=JgHCo4v2VcpkMOr8kI0jFODeODS1YOtg9AsqQnJyqBNCHNCTlFh5NFtHqcs1vxwpx
-         qQyCpne+/nfzZ34ku+t1vzhuDvt6A54gDCZrOViO30B6wcPFaTuEiRE7CUfMulmqBA
-         F08wF7Cj2BPP37/60P6QY8I77v78jM+kWN3bJ7gs=
-Date:   Fri, 19 Jul 2019 09:53:52 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     tglx@linutronix.de, bigeasy@linutronix.de, peterz@infradead.org,
-        mingo@kernel.org, tj@kernel.org, jiangshanlai@gmail.com
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: NULL ptr deref in wq_worker_sleeping on 4.19
-Message-ID: <20190719135352.GF4240@sasha-vm>
+        id S1729347AbfGSNzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 09:55:24 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40961 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbfGSNzY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 09:55:24 -0400
+Received: by mail-lj1-f194.google.com with SMTP id d24so30872362ljg.8
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 06:55:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WfKjdd4jfIoTccghK7pWcsEpU2/Nd09MjPTNSJWRhB4=;
+        b=kIsVLGRdoX6IH7ccke2IbWoecVugltuE7jUmLF8RRhgzZ28SH4/BGfTE9bqu8rqJlz
+         GyfKbp+EjiR26HR2eURgrps6Th/tRkO2fjhREWD72L9gtQr3GIm2VuAZvenNONarSq/2
+         tpsrtcOaiAsY8aF6pfR7DWSEMdqUUh4vRahYbn8eoLk6pS9X0nFRxyqVUZL0Za+WsLP/
+         ZW79EAI64bCEZyRGnogucN+fp/8fMCkVCcCN0DO92d/RMyiswfOYztIM7OYQanYkWP/Q
+         gqDZ/wJwupLSlwDYObasiov5wagm7MEp8/4VXR6df85/BtvaG5hJZL/41StI7kiZ+gN0
+         W4CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WfKjdd4jfIoTccghK7pWcsEpU2/Nd09MjPTNSJWRhB4=;
+        b=Ah1L02Q7EesgEACyu+DB1TUc8ijibbRZIjGvgYTvmYssO6080/j9+S7LN+AzOZ/XIH
+         zrSfr4FACL/Q1bOohCGsNa5voIASMwe3nDMygyPV/wE2QwE4nMev+hQSAmNoVFbm6gge
+         DpUs8pamcKWRM60QdtwsJXY7eaavNU5Gg9zAJSYMgxf+RxGS7vzB39xI3Wut/NlEBe1J
+         3qevIf8vwI7u+gxNsOWVy8CQGRtH41QBGNrufJzjO5bjSGzEDPqCeGnrRcQggzYDoUZg
+         U0XFIsCXfpj1GnfebDXfkp1lKC3r+IAPa/kmAV3fk+EisGzzZUXo5OtUpL6QpZHKWlaa
+         aKmw==
+X-Gm-Message-State: APjAAAVEd7GHQtS6c2x0bkoscCbYNoj9ZxjbJDfUZJI9MYBZHVYioH7S
+        uRiXLlqKd94kW/PsHMwXNjQJDuFhZs/CsQe7vLdHTQ==
+X-Google-Smtp-Source: APXvYqy+g3dfp+7Nz5gMS40s2QLg/L8mkmq3Cz6sOZNz3H0fWW77/0IlWR32qgYxqo+nXRaoiibNtXDbjaXt8KfSDQE=
+X-Received: by 2002:a2e:1290:: with SMTP id 16mr26757782ljs.88.1563544522265;
+ Fri, 19 Jul 2019 06:55:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1563523105-24673-1-git-send-email-vincent.guittot@linaro.org>
+ <1563523105-24673-4-git-send-email-vincent.guittot@linaro.org> <20190719132207.GM3419@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190719132207.GM3419@hirez.programming.kicks-ass.net>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Fri, 19 Jul 2019 15:55:11 +0200
+Message-ID: <CAKfTPtCsYeX5ej-o1WL2kpO2MjLyCJis0kwFq7cgjHEiBYQPog@mail.gmail.com>
+Subject: Re: [PATCH 3/5] sched/fair: rework load_balance
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Phil Auld <pauld@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi folks,
+On Fri, 19 Jul 2019 at 15:22, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Fri, Jul 19, 2019 at 09:58:23AM +0200, Vincent Guittot wrote:
+> >  enum group_type {
+> > -     group_other = 0,
+> > +     group_has_spare = 0,
+> > +     group_fully_busy,
+> >       group_misfit_task,
+> > +     group_asym_capacity,
+> >       group_imbalanced,
+> >       group_overloaded,
+> >  };
+>
+> The order of this group_type is important, maybe add a few words on how
+> this order got to be.
 
-We're seeing a rare panic on boot in wq_worker_sleeping() on boot in
-4.19 kernels. I wasn't able to reproduce this with 5.2, but I'm not sure
-whether it's because the issue is fixed, or I was just unlucky.
+Yes, I will
+>
+> >  static inline enum
+> > -group_type group_classify(struct sched_group *group,
+> > +group_type group_classify(struct lb_env *env,
+> > +                       struct sched_group *group,
+> >                         struct sg_lb_stats *sgs)
+> >  {
+> > -     if (sgs->group_no_capacity)
+> > +     if (group_is_overloaded(env, sgs))
+> >               return group_overloaded;
+> >
+> >       if (sg_imbalanced(group))
+> > @@ -7953,7 +7975,13 @@ group_type group_classify(struct sched_group *group,
+> >       if (sgs->group_misfit_task_load)
+> >               return group_misfit_task;
+> >
+> > -     return group_other;
+> > +     if (sgs->group_asym_capacity)
+> > +             return group_asym_capacity;
+> > +
+> > +     if (group_has_capacity(env, sgs))
+> > +             return group_has_spare;
+> > +
+> > +     return group_fully_busy;
+> >  }
+>
+> OCD is annoyed that this function doesn't have the same / reverse order
+> of the one in the enum.
 
-The panic looks like this:
+I will reorder them
 
-[    0.852791] BUG: unable to handle kernel NULL pointer dereference at 0000000000000010
-[    0.853260] PGD 0 P4D 0 
-[    0.853260] Oops: 0000 [#1] SMP PTI
-[    0.853260] CPU: 7 PID: 49 Comm:  Not tainted 4.19.52-9858d02fd940 #1
-[    0.853260] Hardware name: Microsoft Corporation Virtual Machine/Virtual Machine, BIOS 090007  06/02/2017
-[    0.853260] RIP: 0010:kthread_data+0x12/0x30
-[    0.853260] Code: 83 7f 58 00 74 02 0f 0b e9 bb 2d 19 00 0f 0b eb e2 0f 1f 80 00 00 00 00 0f 1f 44 00 00 f6 47 26 20 74 0c 48 8b 87 98 05 00 00 <48> 8b 40 10 c3 0f 0b 48 8b 87 98 05 00 00 48 8b 40 10 c3 90 66 2e
-[    0.853260] RSP: 0000:ffffc900036abe38 EFLAGS: 00010002
-[    0.853260] RAX: 0000000000000000 RBX: ffff8887bfbe17c0 RCX: 0000000000000000
-[    0.853260] RDX: 0000000000000001 RSI: 000000000000000a RDI: ffff8887bbb4bb00
-[    0.853260] RBP: ffffc900036abea0 R08: 0000000000000000 R09: 0000000000000000
-[    0.853260] R10: ffffc9000368bd90 R11: 0000000000000000 R12: ffff8887bbb4bb00
-[    0.853260] R13: 0000000000000000 R14: ffffc900036abe60 R15: 0000000000000000
-[    0.853260] FS:  0000000000000000(0000) GS:ffff8887bfbc0000(0000) knlGS:0000000000000000
-[    0.853260] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    0.853260] CR2: 0000000000000068 CR3: 00000007df40a000 CR4: 00000000001406e0
-[    0.853260] Call Trace:
-[    0.853260]  wq_worker_sleeping+0xa/0x60
-[    0.853260]  __schedule+0x571/0x8c0
-[    0.853260]  schedule+0x32/0x80
-[    0.853260]  worker_thread+0xc7/0x440
-[    0.853260]  kthread+0xf8/0x130
-[    0.853260]  ret_from_fork+0x35/0x40
-[    0.853260] Modules linked in:
-[    0.853260] CR2: 0000000000000010
-[    0.853260] ---[ end trace 160fda44361ab977 ]---
+>
+> > @@ -8070,7 +8111,7 @@ static bool update_sd_pick_busiest(struct lb_env *env,
+> >        */
+> >       if (sgs->group_type == group_misfit_task &&
+> >           (!group_smaller_max_cpu_capacity(sg, sds->local) ||
+> > -          !group_has_capacity(env, &sds->local_stat)))
+> > +          sds->local_stat.group_type != group_has_spare))
+> >               return false;
+> >
+> >       if (sgs->group_type > busiest->group_type)
+> > @@ -8079,11 +8120,18 @@ static bool update_sd_pick_busiest(struct lb_env *env,
+> >       if (sgs->group_type < busiest->group_type)
+> >               return false;
+>
+> from reading the patch it wasn't obvious that at this point
 
-I see that this area was recently touched by 6d25be5782e4 ("sched/core,
-workqueues: Distangle worker accounting from rq lock") but I'm not sure
-if it's related.
+I will add a comment to mention this
 
---
-Thanks,
-Sasha
+> sgs->group_type == busiest->group_type, and I wondered if
+> busiest->avg_load below was pointing to garbage, it isn't.
+>
+> > -     if (sgs->avg_load <= busiest->avg_load)
+> > +     /* Select the overloaded group with highest avg_load */
+> > +     if (sgs->group_type == group_overloaded &&
+> > +         sgs->avg_load <= busiest->avg_load)
+> > +             return false;
+> > +
+> > +     /* Prefer to move from lowest priority CPU's work */
+> > +     if (sgs->group_type == group_asym_capacity && sds->busiest &&
+> > +         sched_asym_prefer(sg->asym_prefer_cpu, sds->busiest->asym_prefer_cpu))
+> >               return false;
+> >
+> >       if (!(env->sd->flags & SD_ASYM_CPUCAPACITY))
+> > -             goto asym_packing;
+> > +             goto spare_capacity;
+> >
+> >       /*
+> >        * Candidate sg has no more than one task per CPU and
+>
+> Can we do a switch (sds->group_type) here? it seems to have most of them
+> listed.
+
+I will have a look but I'm afraid that the
+ if (!(env->sd->flags & SD_ASYM_CPUCAPACITY))
+prevents us to get something readbale
