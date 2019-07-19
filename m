@@ -2,137 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD4FD6E1E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 09:42:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8186B6E1D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 09:40:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfGSHmc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 03:42:32 -0400
-Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:46793 "EHLO
-        mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726563AbfGSHmc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 03:42:32 -0400
-X-Greylist: delayed 447 seconds by postgrey-1.27 at vger.kernel.org; Fri, 19 Jul 2019 03:42:30 EDT
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx-rz-2.rrze.uni-erlangen.de (Postfix) with ESMTPS id 45qjT26mVvzPjnn;
-        Fri, 19 Jul 2019 09:35:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2013;
-        t=1563521702; bh=yOYrrqsoP7xiL7aTR5BIYron1L3/CjNHI2+GyajljJo=;
-        h=Date:From:To:Cc:Subject:From:To:CC:Subject;
-        b=XZFhg9m4FEj9Zh6256KAD+1e7gii5kauo6uGYk0bxy2QIcUfYS9ULegzXzM2popl3
-         i2RuWz/x91vsWKnb2gSE7FrHbyBhN5u7skdRx6QG6ApmyyypU5A9aZ1hDFexhoba9B
-         UPj+DcrqWHrS9TvxviCbuVNl/wILpwV4m/MHSJPRhHGjKYZ+zR5ozQQ7hA2i37VOW8
-         yqF8SL7Kj8HTGlNuuNMgV5s5HHBxvNlS0xvweewsbp+My51VawrK9lou3HqkfNn3dk
-         NFoHpsgiLVfeo9IsdeYQqccbLFHzf3g89Vrqbu1p4WnF+wIySSnYjCvFzpu4L1sr/q
-         MXfZfqUZ15P/Q==
-X-Virus-Scanned: amavisd-new at boeck1.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 131.188.11.37
-Received: from faumail.fau.de (smtp-auth.fau.de [131.188.11.37])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: U2FsdGVkX1883fpKlfwRJYkDn4vR1d9ipl8I7lHqxkQ=)
-        by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 45qjT046K3zPm7w;
-        Fri, 19 Jul 2019 09:35:00 +0200 (CEST)
-Received: from k1yuaZ/LKFFjKx39D0nQu8gFL8SwcwKHOWELJhm3b/E=
- by faumail.uni-erlangen.de
- with HTTP (HTTP/1.1 POST); Fri, 19 Jul 2019 09:35:00 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 19 Jul 2019 07:35:00 +0000
-From:   "Duda, Sebastian" <sebastian.duda@fau.de>
-To:     joe@perches.com
-Cc:     linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com,
-        ralf.ramsauer@oth-regensburg.de, wolfgang.mauerer@oth-regensburg.de
-Subject: get_maintainers.pl subsystem output
-Message-ID: <2c912379f96f502080bfcc79884cdc35@fau.de>
-X-Sender: sebastian.duda@fau.de
-User-Agent: Roundcube Webmail/1.2.9
+        id S1726913AbfGSHks (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 03:40:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49926 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726247AbfGSHks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 03:40:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E9717AC68;
+        Fri, 19 Jul 2019 07:40:46 +0000 (UTC)
+From:   Petr Mladek <pmladek@suse.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>
+Cc:     Joe Lawrence <joe.lawrence@redhat.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        Nicolai Stange <nstange@suse.de>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH v2 0/5] livepatch: new API to track system state changes
+Date:   Fri, 19 Jul 2019 09:40:29 +0200
+Message-Id: <20190719074034.29761-1-pmladek@suse.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe,
+Hi,
 
-I'm conducting a large-scale patch analysis of the LKML with 1.8 million 
-patch emails. I'm using the `get_maintainer.pl` script to know which 
-patch is related to which subsystem.
+this is another piece in the puzzle that helps to maintain more
+livepatches.
 
-I ran into two issues while using the script:
+Especially pre/post (un)patch callbacks might change a system state.
+Any newly installed livepatch has to somehow deal with system state
+modifications done be already installed livepatches.
 
-1. When I use the script the trivial way
-
-     $ scripts/get_maintainer.pl --subsystem --status --separator , 
-drivers/media/i2c/adv748x/
-     Kieran Bingham <kieran.bingham@ideasonboard.com> (maintainer:ANALOG 
-DEVICES INC ADV748X DRIVER),Mauro Carvalho Chehab <mchehab@kernel.org> 
-(maintainer:MEDIA INPUT INFRASTRUCTURE 
-(V4L/DVB)),linux-media@vger.kernel.org (open list:ANALOG DEVICES INC 
-ADV748X DRIVER),linux-kernel@vger.kernel.org (open list)
-     Maintained,Buried alive in reporters
-     ANALOG DEVICES INC ADV748X DRIVER,MEDIA INPUT INFRASTRUCTURE 
-(V4L/DVB),THE REST
-
-the output is hard to parse because the status `Maintained` is displayed 
-only once but related to two subsystems.
-
-I'd prefer a more table like representation, like this:
-
-     Kieran Bingham <kieran.bingham@ideasonboard.com> (maintainer:ANALOG 
-DEVICES INC ADV748X DRIVER),linux-media@vger.kernel.org (open 
-list:ANALOG DEVICES INC ADV748X DRIVER),ANALOG DEVICES INC ADV748X 
-DRIVER,Maintained
-     Mauro Carvalho Chehab <mchehab@kernel.org> (maintainer:MEDIA INPUT 
-INFRASTRUCTURE (V4L/DVB)),MEDIA INPUT INFRASTRUCTURE 
-(V4L/DVB),Maintained
-     linux-kernel@vger.kernel.org (open list),THE REST,Buried alive in 
-reporters
+This patchset provides a simple and generic API that
+helps to keep and pass information between the livepatches.
+It is also usable to prevent loading incompatible livepatches.
 
 
-2. I want to analyze multiple patches, currently I am calling the script 
-once per patch. When calling the script with multiple files the files 
-output is merged
+Changes since v1:
 
-     $ scripts/get_maintainer.pl --subsystem --status --separator ',' 
-drivers/media/i2c/adv748x/ include/uapi/linux/wmi.h
-     Kieran Bingham <kieran.bingham@ideasonboard.com> (maintainer:ANALOG 
-DEVICES INC ADV748X DRIVER),Mauro Carvalho Chehab <mchehab@kernel.org> 
-(maintainer:MEDIA INPUT INFRASTRUCTURE 
-(V4L/DVB)),linux-media@vger.kernel.org (open list:ANALOG DEVICES INC 
-ADV748X DRIVER),linux-kernel@vger.kernel.org (open 
-list),platform-driver-x86@vger.kernel.org (open list:ACPI WMI DRIVER)
-     Maintained,Buried alive in reporters,Orphan
-     ANALOG DEVICES INC ADV748X DRIVER,MEDIA INPUT INFRASTRUCTURE 
-(V4L/DVB),THE REST,ACPI WMI DRIVER
-
-I'd like to run the script with all files but separated output, like 
-this:
-
-     $ scripts/get_maintainer.pl --subsystem --status --separator ',' 
---separate-files drivers/media/i2c/adv748x/ include/uapi/linux/wmi.h
-     Kieran Bingham <kieran.bingham@ideasonboard.com> (maintainer:ANALOG 
-DEVICES INC ADV748X DRIVER),Mauro Carvalho Chehab <mchehab@kernel.org> 
-(maintainer:MEDIA INPUT INFRASTRUCTURE 
-(V4L/DVB)),linux-media@vger.kernel.org (open list:ANALOG DEVICES INC 
-ADV748X DRIVER),linux-kernel@vger.kernel.org (open list)
-     Maintained,Buried alive in reporters
-     ANALOG DEVICES INC ADV748X DRIVER,MEDIA INPUT INFRASTRUCTURE 
-(V4L/DVB),THE REST
-
-     platform-driver-x86@vger.kernel.org (open list:ACPI WMI 
-DRIVER),linux-kernel@vger.kernel.org (open list)
-     Orphan,Buried alive in reporters
-     ACPI WMI DRIVER,THE REST
+  + Use "unsigned long" instead of "int" for "state.id" [Nicolai]
+  + Use "unsigned int" instead of "int" for "state.version [Petr]
+  + Include "state.h" to avoid warning about non-static func [Miroslav]
+  + Simplify logic in klp_is_state_compatible() [Miroslav]
+  + Document how livepatches should handle the state [Nicolai]
+  + Fix some typos, formulation, module metadata [Joe, Miroslav]
 
 
-My Questions are:
-1. How can I make get_maintainer's output to be more table-like?
-2. How can I make get_maintainer.pl to separate each file's output?
+Petr Mladek (5):
+  livepatch: Keep replaced patches until post_patch callback is called
+  livepatch: Basic API to track system state changes
+  livepatch: Allow to distinguish different version of system state
+    changes
+  livepatch: Documentation of the new API for tracking system state
+    changes
+  livepatch: Selftests of the API for tracking system state changes
 
-Kind Regards
-Sebastian
+ Documentation/livepatch/index.rst               |   1 +
+ Documentation/livepatch/system-state.rst        | 167 +++++++++++++++++++++
+ include/linux/livepatch.h                       |  17 +++
+ kernel/livepatch/Makefile                       |   2 +-
+ kernel/livepatch/core.c                         |  44 ++++--
+ kernel/livepatch/core.h                         |   5 +-
+ kernel/livepatch/state.c                        | 122 +++++++++++++++
+ kernel/livepatch/state.h                        |   9 ++
+ kernel/livepatch/transition.c                   |  12 +-
+ lib/livepatch/Makefile                          |   5 +-
+ lib/livepatch/test_klp_state.c                  | 161 ++++++++++++++++++++
+ lib/livepatch/test_klp_state2.c                 | 190 ++++++++++++++++++++++++
+ lib/livepatch/test_klp_state3.c                 |   5 +
+ tools/testing/selftests/livepatch/Makefile      |   3 +-
+ tools/testing/selftests/livepatch/test-state.sh | 180 ++++++++++++++++++++++
+ 15 files changed, 902 insertions(+), 21 deletions(-)
+ create mode 100644 Documentation/livepatch/system-state.rst
+ create mode 100644 kernel/livepatch/state.c
+ create mode 100644 kernel/livepatch/state.h
+ create mode 100644 lib/livepatch/test_klp_state.c
+ create mode 100644 lib/livepatch/test_klp_state2.c
+ create mode 100644 lib/livepatch/test_klp_state3.c
+ create mode 100755 tools/testing/selftests/livepatch/test-state.sh
+
+-- 
+2.16.4
+
