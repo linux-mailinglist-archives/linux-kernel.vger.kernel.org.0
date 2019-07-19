@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 477016DB74
+	by mail.lfdr.de (Postfix) with ESMTP id B62F86DB75
 	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:09:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733173AbfGSEIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:08:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42960 "EHLO mail.kernel.org"
+        id S1730373AbfGSEIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:08:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730262AbfGSEIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:08:36 -0400
+        id S1732260AbfGSEIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:08:38 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C9DA218BB;
-        Fri, 19 Jul 2019 04:08:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D047D21872;
+        Fri, 19 Jul 2019 04:08:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509315;
-        bh=wkULyQRXP14aeC86+dGvNKwqYMCKi3U5/yIPxp27Dnk=;
+        s=default; t=1563509317;
+        bh=STJ7eoRUjKT6lWQmYtHhHf0Q6NbOBi3UBDB7Dc3P0JY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h6USihHqa99FS9VOVKiBn2213ggTjStitWGlQdweiQOQGidycv19/8ca7B3BhePmg
-         9C+LyF1yAQYVmwE3JIP5Tcw4WJFaeBIeslFF7irF84WAPR+yIk/SjUIJkMhrsiF/C7
-         +0sVT1YzYGbywyW0OdOsASvJ/jTEA14BUMoSZ3aM=
+        b=Fx4FeD9iNlEMvzkcVfxcYcXSgWHXqGh1cRsflAUoQN8xLxdAQMOnuYLb+BMSuiNG3
+         CcKmqvhtGtioP46Ua4hcWo3b+CtE4q0ARlIgW5N6lfrqEdkFQIzxG0JRXgZWGYXixp
+         qPHM81ikWmUUCZkzfbNySMKuDomWYc9Ik0XrEnTQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 029/101] drm/amd/display: fix compilation error
-Date:   Fri, 19 Jul 2019 00:06:20 -0400
-Message-Id: <20190719040732.17285-29-sashal@kernel.org>
+Cc:     Nathan Lynch <nathanl@linux.ibm.com>,
+        "Gautham R . Shenoy" <ego@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 030/101] powerpc/pseries/mobility: prevent cpu hotplug during DT update
+Date:   Fri, 19 Jul 2019 00:06:21 -0400
+Message-Id: <20190719040732.17285-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
 References: <20190719040732.17285-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,38 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+From: Nathan Lynch <nathanl@linux.ibm.com>
 
-[ Upstream commit 88099f53cc3717437f5fc9cf84205c5b65118377 ]
+[ Upstream commit e59a175faa8df9d674247946f2a5a9c29c835725 ]
 
-this patch fixes below compilation error
+CPU online/offline code paths are sensitive to parts of the device
+tree (various cpu node properties, cache nodes) that can be changed as
+a result of a migration.
 
-drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c: In
-function ‘dcn10_apply_ctx_for_surface’:
-drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:2378:3:
-error: implicit declaration of function ‘udelay’
-[-Werror=implicit-function-declaration]
-   udelay(underflow_check_delay_us);
+Prevent CPU hotplug while the device tree potentially is inconsistent.
 
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: 410bccf97881 ("powerpc/pseries: Partition migration in the kernel")
+Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
+Reviewed-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/platforms/pseries/mobility.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-index 7736ef123e9b..ead221ccb93e 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-@@ -23,6 +23,7 @@
-  *
+diff --git a/arch/powerpc/platforms/pseries/mobility.c b/arch/powerpc/platforms/pseries/mobility.c
+index f0e30dc94988..7b60fcf04dc4 100644
+--- a/arch/powerpc/platforms/pseries/mobility.c
++++ b/arch/powerpc/platforms/pseries/mobility.c
+@@ -9,6 +9,7 @@
+  * 2 as published by the Free Software Foundation.
   */
  
-+#include <linux/delay.h>
- #include "dm_services.h"
- #include "core_types.h"
- #include "resource.h"
++#include <linux/cpu.h>
+ #include <linux/kernel.h>
+ #include <linux/kobject.h>
+ #include <linux/smp.h>
+@@ -344,11 +345,19 @@ void post_mobility_fixup(void)
+ 	if (rc)
+ 		printk(KERN_ERR "Post-mobility activate-fw failed: %d\n", rc);
+ 
++	/*
++	 * We don't want CPUs to go online/offline while the device
++	 * tree is being updated.
++	 */
++	cpus_read_lock();
++
+ 	rc = pseries_devicetree_update(MIGRATION_SCOPE);
+ 	if (rc)
+ 		printk(KERN_ERR "Post-mobility device tree update "
+ 			"failed: %d\n", rc);
+ 
++	cpus_read_unlock();
++
+ 	/* Possibly switch to a new RFI flush type */
+ 	pseries_setup_rfi_flush();
+ 
 -- 
 2.20.1
 
