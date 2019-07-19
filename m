@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A13856D9FF
+	by mail.lfdr.de (Postfix) with ESMTP id 378066D9FE
 	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 05:59:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728338AbfGSD6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 23:58:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58146 "EHLO mail.kernel.org"
+        id S1727121AbfGSD6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 23:58:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728216AbfGSD6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727016AbfGSD6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 18 Jul 2019 23:58:46 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2139421851;
-        Fri, 19 Jul 2019 03:58:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7064D21873;
+        Fri, 19 Jul 2019 03:58:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508725;
-        bh=TI0TPOQn5WRhgeZCy07aXRVhI2CGOzL2HZJKi35gJgg=;
+        s=default; t=1563508726;
+        bh=J8yg1JMnlCbaWL6cdq7le4aMJLf01ArsHpijP5jmHeI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vFaxJwwb7fXtwQHwdbk1B6i3tWGP5Afa1MJCq/IEIXTKl73lltp9GZVCX41j1q+Up
-         SPL8rlnJyOWJ2p81DjPoNdWFXyXeDqVS9QMTTO6pK+OTtSVKXt0Kti1Km+HmJ48TsC
-         jSNNiAcwrfGyJRGnsMi6O+wr/YW9hf9fyBtcFZoM=
+        b=UNUSlW4LxU7CDYItQ9E9EPQk7r2o+O8PTuEOLFOYtfy8bNNIlRycrlIPdhgePMEq5
+         I8dsbW46pbhBP+ZmqUveEjwjx9/GwS4kHF5s3lMoluv6OXiqCZkV2ubM07br55MFE3
+         Qeofr3/vy0HUwG1GDgOjmON793B33uvP/22Iqi30=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wesley Chalmers <Wesley.Chalmers@amd.com>,
-        Anthony Koo <Anthony.Koo@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.2 053/171] drm/amd/display: Update link rate from DPCD 10
-Date:   Thu, 18 Jul 2019 23:54:44 -0400
-Message-Id: <20190719035643.14300-53-sashal@kernel.org>
+Cc:     David Riley <davidriley@chromium.org>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 5.2 054/171] drm/virtio: Add memory barriers for capset cache.
+Date:   Thu, 18 Jul 2019 23:54:45 -0400
+Message-Id: <20190719035643.14300-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -46,64 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wesley Chalmers <Wesley.Chalmers@amd.com>
+From: David Riley <davidriley@chromium.org>
 
-[ Upstream commit 53c81fc7875bc2dca358485dac3999e14ec91a00 ]
+[ Upstream commit 9ff3a5c88e1f1ab17a31402b96d45abe14aab9d7 ]
 
-[WHY]
-Some panels return a link rate of 0 (unknown) in DPCD 0. In this case,
-an appropriate mode cannot be set, and certain panels will show
-corruption as they are forced to use a mode they do not support.
+After data is copied to the cache entry, atomic_set is used indicate
+that the data is the entry is valid without appropriate memory barriers.
+Similarly the read side was missing the corresponding memory barriers.
 
-[HOW]
-Read DPCD 10 in the case where supported link rate from DPCD 0 is
-unknown, and pass that value on to the reported link rate.
-This re-introduces behaviour present in previous versions that appears
-to have been accidentally removed.
-
-Signed-off-by: Wesley Chalmers <Wesley.Chalmers@amd.com>
-Reviewed-by: Anthony Koo <Anthony.Koo@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: David Riley <davidriley@chromium.org>
+Link: http://patchwork.freedesktop.org/patch/msgid/20190610211810.253227-5-davidriley@chromium.org
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c | 3 +++
+ drivers/gpu/drm/virtio/virtgpu_vq.c    | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-index 1ee544a32ebb..253311864cdd 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-@@ -1624,8 +1624,7 @@ static bool decide_edp_link_settings(struct dc_link *link, struct dc_link_settin
- 	uint32_t link_bw;
+diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+index 949a264985fc..19fbffd0f7a3 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+@@ -542,6 +542,9 @@ static int virtio_gpu_get_caps_ioctl(struct drm_device *dev,
+ 	if (!ret)
+ 		return -EBUSY;
  
- 	if (link->dpcd_caps.dpcd_rev.raw < DPCD_REV_14 ||
--			link->dpcd_caps.edp_supported_link_rates_count == 0 ||
--			link->dc->config.optimize_edp_link_rate == false) {
-+			link->dpcd_caps.edp_supported_link_rates_count == 0) {
- 		*link_setting = link->verified_link_cap;
- 		return true;
- 	}
-@@ -2597,7 +2596,8 @@ void detect_edp_sink_caps(struct dc_link *link)
- 	memset(supported_link_rates, 0, sizeof(supported_link_rates));
- 
- 	if (link->dpcd_caps.dpcd_rev.raw >= DPCD_REV_14 &&
--			link->dc->config.optimize_edp_link_rate) {
-+			(link->dc->config.optimize_edp_link_rate ||
-+			link->reported_link_cap.link_rate == LINK_RATE_UNKNOWN)) {
- 		// Read DPCD 00010h - 0001Fh 16 bytes at one shot
- 		core_link_read_dpcd(link, DP_SUPPORTED_LINK_RATES,
- 							supported_link_rates, sizeof(supported_link_rates));
-@@ -2612,6 +2612,9 @@ void detect_edp_sink_caps(struct dc_link *link)
- 				link_rate = linkRateInKHzToLinkRateMultiplier(link_rate_in_khz);
- 				link->dpcd_caps.edp_supported_link_rates[link->dpcd_caps.edp_supported_link_rates_count] = link_rate;
- 				link->dpcd_caps.edp_supported_link_rates_count++;
++	/* is_valid check must proceed before copy of the cache entry. */
++	smp_rmb();
 +
-+				if (link->reported_link_cap.link_rate < link_rate)
-+					link->reported_link_cap.link_rate = link_rate;
- 			}
+ 	ptr = cache_ent->caps_cache;
+ 
+ copy_exit:
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+index 5bb0f0a084e9..a7684f9c80db 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -583,6 +583,8 @@ static void virtio_gpu_cmd_capset_cb(struct virtio_gpu_device *vgdev,
+ 		    cache_ent->id == le32_to_cpu(cmd->capset_id)) {
+ 			memcpy(cache_ent->caps_cache, resp->capset_data,
+ 			       cache_ent->size);
++			/* Copy must occur before is_valid is signalled. */
++			smp_wmb();
+ 			atomic_set(&cache_ent->is_valid, 1);
+ 			break;
  		}
- 	}
 -- 
 2.20.1
 
