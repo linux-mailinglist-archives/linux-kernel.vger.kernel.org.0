@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CD596DD17
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:20:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED3C46DD12
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:20:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390130AbfGSEUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:20:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47580 "EHLO mail.kernel.org"
+        id S2388878AbfGSEMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:12:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732409AbfGSEMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:12:18 -0400
+        id S2388846AbfGSEM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:12:28 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B060218D2;
-        Fri, 19 Jul 2019 04:12:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E92221873;
+        Fri, 19 Jul 2019 04:12:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509538;
-        bh=hiTHTmyk3KOj/EoQupVp/vhM9auTA+2n0b+Szdifsqw=;
+        s=default; t=1563509548;
+        bh=WIb8G95L+YAnnb0aPBsyOH9LxsBWBZI1bIEaN89U1NQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y7yd2REnIT0k9rDn9Au9IYAAA4kgrEPVLNgtuSC+hdfqXt/ZpKsx3ZSgR+/TXrYSa
-         aNniuEeOWjOMQUlV2DHkh0Of+AMKdtve9PX09W6iWCl9LHvM3d0GEI92tXPtXSbnwd
-         Hbi5IfnwNCHdmN5tCg3qcrWWKm9tnmWP1Jx6EkVg=
+        b=x1MmDr6Djxl+R7x4hGdsex0Wnq5v8o9NVY7s9fFs3Hbt9wZrxJQQUmQzq6thhjKnC
+         +VxbUqDCiit0+AYeHk8CMBI6fK6jsUpPH1nmn6hBOlb2HGRH/ehw+ER6FVw9CfHpB0
+         vwTY52QFZO1Yobhx8/A9rwfHQIXIqzs5nbBafrWk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Liu, Changcheng" <changcheng.liu@intel.com>,
-        Changcheng Liu <changcheng.liu@aliyun.com>,
-        Shiraz Saleem <shiraz.saleem@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 38/60] RDMA/i40iw: Set queue pair state when being queried
-Date:   Fri, 19 Jul 2019 00:10:47 -0400
-Message-Id: <20190719041109.18262-38-sashal@kernel.org>
+Cc:     Numfor Mbiziwo-Tiapo <nums@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mark Drayton <mbd@fb.com>, Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 43/60] perf test mmap-thread-lookup: Initialize variable to suppress memory sanitizer warning
+Date:   Fri, 19 Jul 2019 00:10:52 -0400
+Message-Id: <20190719041109.18262-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719041109.18262-1-sashal@kernel.org>
 References: <20190719041109.18262-1-sashal@kernel.org>
@@ -45,36 +49,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Liu, Changcheng" <changcheng.liu@intel.com>
+From: Numfor Mbiziwo-Tiapo <nums@google.com>
 
-[ Upstream commit 2e67e775845373905d2c2aecb9062c2c4352a535 ]
+[ Upstream commit 4e4cf62b37da5ff45c904a3acf242ab29ed5881d ]
 
-The API for ib_query_qp requires the driver to set qp_state and
-cur_qp_state on return, add the missing sets.
+Running the 'perf test' command after building perf with a memory
+sanitizer causes a warning that says:
 
-Fixes: d37498417947 ("i40iw: add files for iwarp interface")
-Signed-off-by: Changcheng Liu <changcheng.liu@aliyun.com>
-Acked-by: Shiraz Saleem <shiraz.saleem@intel.com>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+  WARNING: MemorySanitizer: use-of-uninitialized-value... in mmap-thread-lookup.c
+
+Initializing the go variable to 0 silences this harmless warning.
+
+Committer warning:
+
+This was harmless, just a simple test writing whatever was at that
+sizeof(int) memory area just to signal another thread blocked reading
+that file created with pipe(). Initialize it tho so that we don't get
+this warning.
+
+Signed-off-by: Numfor Mbiziwo-Tiapo <nums@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mark Drayton <mbd@fb.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lkml.kernel.org/r/20190702173716.181223-1-nums@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/i40iw/i40iw_verbs.c | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/tests/mmap-thread-lookup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/i40iw/i40iw_verbs.c b/drivers/infiniband/hw/i40iw/i40iw_verbs.c
-index c1021b4afb41..57bfe4808247 100644
---- a/drivers/infiniband/hw/i40iw/i40iw_verbs.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_verbs.c
-@@ -821,6 +821,8 @@ static int i40iw_query_qp(struct ib_qp *ibqp,
- 	struct i40iw_qp *iwqp = to_iwqp(ibqp);
- 	struct i40iw_sc_qp *qp = &iwqp->sc_qp;
+diff --git a/tools/perf/tests/mmap-thread-lookup.c b/tools/perf/tests/mmap-thread-lookup.c
+index 3c3f3e029e33..2ecb86876f10 100644
+--- a/tools/perf/tests/mmap-thread-lookup.c
++++ b/tools/perf/tests/mmap-thread-lookup.c
+@@ -52,7 +52,7 @@ static void *thread_fn(void *arg)
+ {
+ 	struct thread_data *td = arg;
+ 	ssize_t ret;
+-	int go;
++	int go = 0;
  
-+	attr->qp_state = iwqp->ibqp_state;
-+	attr->cur_qp_state = attr->qp_state;
- 	attr->qp_access_flags = 0;
- 	attr->cap.max_send_wr = qp->qp_uk.sq_size;
- 	attr->cap.max_recv_wr = qp->qp_uk.rq_size;
+ 	if (thread_init(td))
+ 		return NULL;
 -- 
 2.20.1
 
