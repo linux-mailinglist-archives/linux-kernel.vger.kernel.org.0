@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FE2D6DB77
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02F126DB7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:09:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733231AbfGSEIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:08:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43112 "EHLO mail.kernel.org"
+        id S1733278AbfGSEIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:08:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731912AbfGSEIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:08:45 -0400
+        id S1731912AbfGSEIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:08:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32073218BB;
-        Fri, 19 Jul 2019 04:08:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6463218BB;
+        Fri, 19 Jul 2019 04:08:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509324;
-        bh=Kv4dAL8DwB38AMp1Ja0QC7CQHWK0A5JvIj+UwchxZbM=;
+        s=default; t=1563509330;
+        bh=GCknv2iR1X3DAJdVXiOIgIt2QQqLeu1ocCWVTs0WptI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l4sWlzB+nhV1gApmPpGgAHnz4PN0Zw+aFWTqueq9CdoowSAKx3ymAKc+wmTHNCtYI
-         QbW/BhP0+AwH2EGTbC23jZiLpcJxlr8SAjzdyePoZrGyI84kPrlLYH/qC67V1WlOvb
-         UoAO/U4sn42nxcDmgeWDyUh3lOMuYJaJnUbcGhxU=
+        b=rk0Bdamqhh9kOkxY0ujwG9C4PkweiNnSersDdrLpRh1OjYIu40xXQMBnIrJN9tcia
+         hCwUzpaHepyWJXqLIbuuQ7R4pDO+FPsFNwRm06u9iSpn5ubU69BIsFWgRXA/Sa6ZNP
+         L1eCXk5k+SSec33WLk7R51A1lQzGojrsWujQ/is0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 035/101] usb: gadget: Zero ffs_io_data
-Date:   Fri, 19 Jul 2019 00:06:26 -0400
-Message-Id: <20190719040732.17285-35-sashal@kernel.org>
+Cc:     Raul E Rangel <rrangel@chromium.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 037/101] mmc: sdhci: sdhci-pci-o2micro: Check if controller supports 8-bit width
+Date:   Fri, 19 Jul 2019 00:06:28 -0400
+Message-Id: <20190719040732.17285-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
 References: <20190719040732.17285-1-sashal@kernel.org>
@@ -43,57 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+From: Raul E Rangel <rrangel@chromium.org>
 
-[ Upstream commit 508595515f4bcfe36246e4a565cf280937aeaade ]
+[ Upstream commit de23f0b757766d9fae59df97da6e8bdc5b231351 ]
 
-In some cases the "Allocate & copy" block in ffs_epfile_io() is not
-executed. Consequently, in such a case ffs_alloc_buffer() is never called
-and struct ffs_io_data is not initialized properly. This in turn leads to
-problems when ffs_free_buffer() is called at the end of ffs_epfile_io().
+The O2 controller supports 8-bit EMMC access.
 
-This patch uses kzalloc() instead of kmalloc() in the aio case and memset()
-in non-aio case to properly initialize struct ffs_io_data.
+JESD84-B51 section A.6.3.a defines the bus testing procedure that
+`mmc_select_bus_width()` implements. This is used to determine the actual
+bus width of the eMMC.
 
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/f_fs.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/mmc/host/sdhci-pci-o2micro.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-index aa15593a3ac4..2050993fb58b 100644
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -1101,11 +1101,12 @@ static ssize_t ffs_epfile_write_iter(struct kiocb *kiocb, struct iov_iter *from)
- 	ENTER();
+diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
+index fa8d9da2ab7f..e248d7945c06 100644
+--- a/drivers/mmc/host/sdhci-pci-o2micro.c
++++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+@@ -290,11 +290,21 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
+ {
+ 	struct sdhci_pci_chip *chip;
+ 	struct sdhci_host *host;
+-	u32 reg;
++	u32 reg, caps;
+ 	int ret;
  
- 	if (!is_sync_kiocb(kiocb)) {
--		p = kmalloc(sizeof(io_data), GFP_KERNEL);
-+		p = kzalloc(sizeof(io_data), GFP_KERNEL);
- 		if (unlikely(!p))
- 			return -ENOMEM;
- 		p->aio = true;
- 	} else {
-+		memset(p, 0, sizeof(*p));
- 		p->aio = false;
- 	}
- 
-@@ -1137,11 +1138,12 @@ static ssize_t ffs_epfile_read_iter(struct kiocb *kiocb, struct iov_iter *to)
- 	ENTER();
- 
- 	if (!is_sync_kiocb(kiocb)) {
--		p = kmalloc(sizeof(io_data), GFP_KERNEL);
-+		p = kzalloc(sizeof(io_data), GFP_KERNEL);
- 		if (unlikely(!p))
- 			return -ENOMEM;
- 		p->aio = true;
- 	} else {
-+		memset(p, 0, sizeof(*p));
- 		p->aio = false;
- 	}
- 
+ 	chip = slot->chip;
+ 	host = slot->host;
++
++	caps = sdhci_readl(host, SDHCI_CAPABILITIES);
++
++	/*
++	 * mmc_select_bus_width() will test the bus to determine the actual bus
++	 * width.
++	 */
++	if (caps & SDHCI_CAN_DO_8BIT)
++		host->mmc->caps |= MMC_CAP_8_BIT_DATA;
++
+ 	switch (chip->pdev->device) {
+ 	case PCI_DEVICE_ID_O2_SDS0:
+ 	case PCI_DEVICE_ID_O2_SEABIRD0:
 -- 
 2.20.1
 
