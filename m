@@ -2,67 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9B4F6D88F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 03:47:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A59556D88A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 03:47:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbfGSBr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 21:47:56 -0400
-Received: from mga06.intel.com ([134.134.136.31]:36383 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726066AbfGSBr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 21:47:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2019 18:47:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,280,1559545200"; 
-   d="scan'208";a="158969092"
-Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
-  by orsmga007.jf.intel.com with ESMTP; 18 Jul 2019 18:47:55 -0700
-Received: from orsmsx151.amr.corp.intel.com (10.22.226.38) by
- ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 18 Jul 2019 18:47:55 -0700
-Received: from orsmsx103.amr.corp.intel.com ([169.254.5.44]) by
- ORSMSX151.amr.corp.intel.com ([169.254.7.148]) with mapi id 14.03.0439.000;
- Thu, 18 Jul 2019 18:47:55 -0700
-From:   "Brown, Aaron F" <aaron.f.brown@intel.com>
-To:     "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [Intel-wired-lan] [PATCH 2/2] e1000e: disable force K1-off
- feature
-Thread-Topic: [Intel-wired-lan] [PATCH 2/2] e1000e: disable force K1-off
- feature
-Thread-Index: AQHVPdP7vBl3T42EgE6ElZb5gwVOlw==
-Date:   Fri, 19 Jul 2019 01:47:54 +0000
-Message-ID: <309B89C4C689E141A5FF6A0C5FB2118B970D36B7@ORSMSX103.amr.corp.intel.com>
-References: <20190708045546.30160-1-kai.heng.feng@canonical.com>
- <20190708045546.30160-2-kai.heng.feng@canonical.com>
-In-Reply-To: <20190708045546.30160-2-kai.heng.feng@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726632AbfGSBq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 21:46:56 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41847 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbfGSBqz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 21:46:55 -0400
+Received: by mail-lj1-f196.google.com with SMTP id d24so29197075ljg.8;
+        Thu, 18 Jul 2019 18:46:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=sI36ppd+4vw5yRr/qfzItcT9H0vm+FouNUT+YAtFRhA=;
+        b=lzdZ1Oi5yg4sVrJCQd6t3akMOvV8mAvnj/eqv/p1EJ4d6oUHu48Ayn5WP3L//G2PG+
+         RR0ksx7MODmNrZePHoSy9xizXU+5UXlZwY9OG4lms4Gp2pSKznqaykiTQH846oaemTGa
+         LwyfKsMcaEBoOY5BU7YIkVqljouuWMw4YTMu7jGS53uwZBCK49IW3RM4LZwvD8UEmlKd
+         qtq8fGQfG6d8K4pRtIqSMvpXMd8CY9wFtjfcxQVpMD2s8SKdLco6oQ6gqykW7Lg9li++
+         kTSDe6a4is3yBQ6kV3iXH33jz+xPrqKFSPkf6k/KC1NxRhZVTn015kD+4SZzEYeb31HF
+         yvuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=sI36ppd+4vw5yRr/qfzItcT9H0vm+FouNUT+YAtFRhA=;
+        b=ExsRV9fHywZ6B57KTJ1QcUzJmZCkaLLFcJ0h9m7SsU6RyJjWy3CZtiy50Hw1byGVD8
+         sq4AJeJ6n1fJS4Zz9SmRasOPBBaTcGKDfkomGWeVEc0DWlWCz1XXZaEVJBEodNUMxE1R
+         pS6pIlbEHuVUUzpXRUz9zuX7Tp9xmoe3Ov5iBO89fzmHbWLl70Z42r1CqHutswoVcuoG
+         xQzE0QgpKzgRbgtd9uKuVMwllfjo0mRQolwge+xRnvqmIdE9DowCTVuCCKwUc19cx3tF
+         VKLRqQYEReAMKyvhBmGT9DRKHDb7dPTPB4Q9gePq7e7ZAZSDJV8mLqDVdSSfvk5ZtglQ
+         eRhw==
+X-Gm-Message-State: APjAAAXg4njfAaPWmnRRPPM2asi8mzBj9ijxqlhiakw1q8VmrhTcia+s
+        DAKsjEQG6xtSGt04bm1WcHA=
+X-Google-Smtp-Source: APXvYqwImUugk0jDMae8IQv65b2Tpe/0EHgSiCj9SFg88aHscenKpCiuxOcK+TArjQ3mBzKfHe5a3Q==
+X-Received: by 2002:a2e:8e83:: with SMTP id z3mr25651232ljk.98.1563500813319;
+        Thu, 18 Jul 2019 18:46:53 -0700 (PDT)
+Received: from dimatab (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.gmail.com with ESMTPSA id z85sm5352918ljb.101.2019.07.18.18.46.52
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 18 Jul 2019 18:46:53 -0700 (PDT)
+Date:   Fri, 19 Jul 2019 04:50:30 +0300
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 17/24] PM / devfreq: tegra30: Use tracepoints for
+ debugging
+Message-ID: <20190719045030.30b2fe67@dimatab>
+In-Reply-To: <ffa24275-4499-c27a-8c60-a5f4d738913c@samsung.com>
+References: <20190707223303.6755-1-digetx@gmail.com>
+        <CGME20190707223623epcas4p13d01a60ae2b88dde4c4f7fdba04da170@epcas4p1.samsung.com>
+        <20190707223303.6755-18-digetx@gmail.com>
+        <209220ec-b677-3500-0e55-6cad57e97f88@samsung.com>
+        <20190719034938.6382f989@dimatab>
+        <ffa24275-4499-c27a-8c60-a5f4d738913c@samsung.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE5LTA3LTA4IGF0IDEyOjU1ICswODAwLCBLYWktSGVuZyBGZW5nIHdyb3RlOgo+
-IEZvcndhcmRwb3J0IGZyb20gaHR0cDovL21haWxzLmRwZGsub3JnL2FyY2hpdmVzL2Rldi8yMDE2
-LU5vdmVtYmVyLzA1MDY1OC5odG1sCj4gCj4gTUFDLVBIWSBkZXN5bmMgbWF5IG9jY3VyIGNhdXNp
-bmcgbWlzZGV0ZWN0aW9uIG9mIGxpbmsgdXAgZXZlbnQuCj4gRGlzYWJsaW5nIEsxLW9mZiBmZWF0
-dXJlIGNhbiB3b3JrIGFyb3VuZCB0aGUgcHJvYmxlbS4KPiAKPiBCdWd6aWxsYTogaHR0cHM6Ly9i
-dWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMDQwNTcKPiAKPiBTaWduZWQtb2Zm
-LWJ5OiBLYWktSGVuZyBGZW5nIDxrYWkuaGVuZy5mZW5nQGNhbm9uaWNhbC5jb20+Cj4gLS0tCj4g
-IGRyaXZlcnMvbmV0L2V0aGVybmV0L2ludGVsL2UxMDAwZS9ody5oICAgICAgfCAxICsKPiAgZHJp
-dmVycy9uZXQvZXRoZXJuZXQvaW50ZWwvZTEwMDBlL2ljaDhsYW4uYyB8IDMgKysrCj4gIDIgZmls
-ZXMgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspCj4gCgpUZXN0ZWQtYnk6IEFhcm9uIEJyb3duIDxh
-YXJvbi5mLmJyb3duQGludGVsLmNvbT4K
+=D0=92 Fri, 19 Jul 2019 10:01:55 +0900
+Chanwoo Choi <cw00.choi@samsung.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+
+> On 19. 7. 19. =EC=98=A4=EC=A0=84 9:49, Dmitry Osipenko wrote:
+> > =D0=92 Thu, 18 Jul 2019 18:47:09 +0900
+> > Chanwoo Choi <cw00.choi@samsung.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >  =20
+> >> On 19. 7. 8. =EC=98=A4=EC=A0=84 7:32, Dmitry Osipenko wrote: =20
+> >>> Debug messages create too much CPU and memory activity by
+> >>> themselves, so it's difficult to debug lower rates and catch
+> >>> unwanted interrupts that happen rarely. Tracepoints are ideal in
+> >>> that regards because they do not contribute to the sampled date at
+> >>> all. This allowed me to catch few problems which are fixed by the
+> >>> followup patches, without tracepoints it would be much harder to
+> >>> do.
+> >>>
+> >>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >>> ---
+> >>>  drivers/devfreq/tegra30-devfreq.c      |  43 +++-------
+> >>>  include/trace/events/tegra30_devfreq.h | 105
+> >>> +++++++++++++++++++++++++ 2 files changed, 117 insertions(+), 31
+> >>> deletions(-) create mode 100644
+> >>> include/trace/events/tegra30_devfreq.h   =20
+> >>
+> >> As I knew, 'include/trace/events' don't include the header file
+> >> for only one device driver. Usually, the trace event is provided
+> >> by framework instead of each devic driver. =20
+> >=20
+> > There are at least trace headers there for the tegra-apbdma,
+> > tegra-host1x, intel-sst and intel-ish devices. I don't think that
+> > there is a strict rule for the trace headers placement. =20
+>=20
+> OK.
+>=20
+> But, As I already replied on patch4, if you want to show the register
+> dump, you better to add the debugfs feature to devfreq framework for
+> showing the register dump instead of printing the register dump with
+> debug level and this trace event.=20
+>=20
+> As I said, just register dump is not useful for all developers.
+> Almost developer cannot understand the meaning of debug log for
+> register dump.
+
+I think there is some disconnect here. I'm finding that the raw
+register values are essential for debugging of this driver. The
+registers tracing is very trivial and self-explanatory, just can't see
+any better variant.
+
+The registers documentation is available for everyone, you can go to
+NVIDIA website and download it (after registration).
+
+We have registers tracing in other Tegra drivers, please see for the
+quick example:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/dr=
+ivers/staging/media/tegra-vde/trace.h
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/dr=
+ivers/gpu/drm/tegra/trace.h
+
+It's the first time I'm seeing complains about debug tracing and
+currently having hard time trying to understand yours point.
+
+> Also, it is not proper way that front patch adds the some code
+> and then later patch removes the additional code in the same series.
+> Before sending the patches, you can renew them.
+
+Okay.
