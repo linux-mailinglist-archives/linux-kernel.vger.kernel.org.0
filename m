@@ -2,48 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF7966D80A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:59:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 151806D80C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:59:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbfGSA7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 20:59:11 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34618 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726571AbfGSA7J (ORCPT
+        id S1726535AbfGSA7T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 20:59:19 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46764 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726597AbfGSA7K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 20:59:09 -0400
-Received: by mail-pl1-f193.google.com with SMTP id i2so14761140plt.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 17:59:08 -0700 (PDT)
+        Thu, 18 Jul 2019 20:59:10 -0400
+Received: by mail-pl1-f195.google.com with SMTP id c2so14712297plz.13
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 17:59:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yjgylcrTL5oyKrI42SHzoTCEiC3xG7heV6oUteyqMZI=;
-        b=PhXkjIWGqizFBW8n8mO4IkpTSwz7iFtzWPInC6vYyRmE8AWrQtRyqWX+2kY2SWui/J
-         3LXxAhaE/5dMdky/GE01h6txLsmbcgsjPc1WM/jTpCL7RVH4a132t2DzFIunz3Ln5ru8
-         mGmuPgV/y/O0P5/Ublvinc/bqUVP9tst1dLQYOk1ft68ylwJyXEsKQKN6anKMwN5aiPk
-         Ga+H0A6wC/YdN3OEnwSEwXT7FD+YleRNDAo1naOmBt7/iUNKKwrg7hQR17y+e2jh12V/
-         9JaNz+EonnMUsfA+TWgiP1CaO6ChQ5TxOilKbCZldW8E//Hd49ToY8fW7AizF+/92rfQ
-         borA==
-X-Gm-Message-State: APjAAAUjenTazAmnFt7sPeJvVI+SP51cH0TP7+sgs9Iv95gr1BAY9ZxL
-        3hticjYfl03zw54CWMqrRxc=
-X-Google-Smtp-Source: APXvYqz8sRHkEKr4xyktWcX8xbiOG0ipAuM46YJNReRMzbdes97/0EuivmL3uKlfTmZcDJ/s7j+YDQ==
-X-Received: by 2002:a17:902:744c:: with SMTP id e12mr53133801plt.287.1563497948205;
-        Thu, 18 Jul 2019 17:59:08 -0700 (PDT)
+        bh=Q4iIYpK+S82JSeYdaEcEAwDaH95Awzo4IK/xQp46zGM=;
+        b=QXbQnE+WWYJ3RFGvsdp3qVfMoJsyRTtN6L7CxeLWjz0Ku2KBj89L80FDhfZBxP5xjl
+         oIoyA8kpCc0lYAM95uYFCxcSKjijwVyV7DkSAQgTdYTVCrwacOBS9K4JyIV/xNCxR4Rq
+         Edb3KRwR+rkSFc3viEoyepXzB6rrCxRdFMrzzm4cJV0BVM0lDVqu3PXytswqjNux8zBF
+         TNaw3a97qXvNm9fjCNiS/v0VsrTCbH0seAsjCeEPMaOzlfMG+0ZzMXszXoDgHG2YYs5Z
+         Xue9+KwD2KvLrrC6bNor7VClCVQiLy7FFQubhpmAhotIEVoh/lw2u7vln/Evo0KIYf0U
+         N9TQ==
+X-Gm-Message-State: APjAAAXkQ1Izx3zAYhyDvSThP3C+zDClv5T3B+7GxC9EuAz0e+rLPEMU
+        oRF+8CIKTlVmVcoWmNTkKeQ=
+X-Google-Smtp-Source: APXvYqx9bioOcesYK4TqBUmuB5QCAnPDMfSkh0IcOUOHN+zDAU0j0d0bJ2H22La6zJygvFAqoa+xMg==
+X-Received: by 2002:a17:902:fe14:: with SMTP id g20mr50616582plj.54.1563497949334;
+        Thu, 18 Jul 2019 17:59:09 -0700 (PDT)
 Received: from htb-2n-eng-dhcp405.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id j128sm14025166pfg.28.2019.07.18.17.59.06
+        by smtp.gmail.com with ESMTPSA id j128sm14025166pfg.28.2019.07.18.17.59.08
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 18 Jul 2019 17:59:07 -0700 (PDT)
+        Thu, 18 Jul 2019 17:59:08 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Andy Lutomirski <luto@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>
 Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Nadav Amit <namit@vmware.com>
-Subject: [PATCH v3 7/9] cpumask: Mark functions as pure
-Date:   Thu, 18 Jul 2019 17:58:35 -0700
-Message-Id: <20190719005837.4150-8-namit@vmware.com>
+        Ingo Molnar <mingo@redhat.com>, Nadav Amit <namit@vmware.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Mike Travis <mike.travis@hpe.com>
+Subject: [PATCH v3 8/9] x86/mm/tlb: Remove UV special case
+Date:   Thu, 18 Jul 2019 17:58:36 -0700
+Message-Id: <20190719005837.4150-9-namit@vmware.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719005837.4150-1-namit@vmware.com>
 References: <20190719005837.4150-1-namit@vmware.com>
@@ -54,39 +56,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cpumask_next_and() and cpumask_any_but() are pure, and marking them as
-such seems to generate different and presumably better code for
-native_flush_tlb_multi().
+SGI UV support is outdated and not maintained, and it is not clear how
+it performs relatively to non-UV. Remove the code to simplify the code.
 
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Acked-by: Mike Travis <mike.travis@hpe.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- include/linux/cpumask.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/mm/tlb.c | 25 -------------------------
+ 1 file changed, 25 deletions(-)
 
-diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-index 0c7db5efe66c..6d57e6372b9d 100644
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -211,7 +211,7 @@ static inline unsigned int cpumask_last(const struct cpumask *srcp)
- 	return find_last_bit(cpumask_bits(srcp), nr_cpumask_bits);
- }
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 89f83ad19507..40daad52ec7d 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -684,31 +684,6 @@ void native_flush_tlb_multi(const struct cpumask *cpumask,
+ 		trace_tlb_flush(TLB_REMOTE_SEND_IPI,
+ 				(info->end - info->start) >> PAGE_SHIFT);
  
--unsigned int cpumask_next(int n, const struct cpumask *srcp);
-+unsigned int __pure cpumask_next(int n, const struct cpumask *srcp);
- 
- /**
-  * cpumask_next_zero - get the next unset cpu in a cpumask
-@@ -228,8 +228,8 @@ static inline unsigned int cpumask_next_zero(int n, const struct cpumask *srcp)
- 	return find_next_zero_bit(cpumask_bits(srcp), nr_cpumask_bits, n+1);
- }
- 
--int cpumask_next_and(int n, const struct cpumask *, const struct cpumask *);
--int cpumask_any_but(const struct cpumask *mask, unsigned int cpu);
-+int __pure cpumask_next_and(int n, const struct cpumask *, const struct cpumask *);
-+int __pure cpumask_any_but(const struct cpumask *mask, unsigned int cpu);
- unsigned int cpumask_local_spread(unsigned int i, int node);
- 
- /**
+-	if (is_uv_system()) {
+-		/*
+-		 * This whole special case is confused.  UV has a "Broadcast
+-		 * Assist Unit", which seems to be a fancy way to send IPIs.
+-		 * Back when x86 used an explicit TLB flush IPI, UV was
+-		 * optimized to use its own mechanism.  These days, x86 uses
+-		 * smp_call_function_many(), but UV still uses a manual IPI,
+-		 * and that IPI's action is out of date -- it does a manual
+-		 * flush instead of calling flush_tlb_func_remote().  This
+-		 * means that the percpu tlb_gen variables won't be updated
+-		 * and we'll do pointless flushes on future context switches.
+-		 *
+-		 * Rather than hooking native_flush_tlb_multi() here, I think
+-		 * that UV should be updated so that smp_call_function_many(),
+-		 * etc, are optimal on UV.
+-		 */
+-		flush_tlb_func_local((void *)info);
+-
+-		cpumask = uv_flush_tlb_others(cpumask, info);
+-		if (cpumask)
+-			smp_call_function_many(cpumask, flush_tlb_func_remote,
+-					       (void *)info, 1);
+-		return;
+-	}
+-
+ 	/*
+ 	 * If no page tables were freed, we can skip sending IPIs to
+ 	 * CPUs in lazy TLB mode. They will flush the CPU themselves
 -- 
 2.20.1
 
