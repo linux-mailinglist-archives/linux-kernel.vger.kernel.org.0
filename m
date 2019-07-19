@@ -2,163 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD7126E5F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 14:57:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAFF66E60D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 15:05:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728621AbfGSM54 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 08:57:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58254 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726239AbfGSM54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 08:57:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 32DF7AB9D;
-        Fri, 19 Jul 2019 12:57:54 +0000 (UTC)
-Date:   Fri, 19 Jul 2019 14:57:53 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Konstantin Khlebnikov <koct9i@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        John Ogness <john.ogness@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Petr Tesarik <ptesarik@suse.cz>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] printk/panic: Access the main printk log in panic()
- only when safe
-Message-ID: <20190719125753.miniwfq4nhicy76n@pathway.suse.cz>
-References: <20190716072805.22445-1-pmladek@suse.com>
- <20190716072805.22445-2-pmladek@suse.com>
- <20190717095615.GD3664@jagdpanzerIV>
- <20190718083629.nso3vwbvmankqgks@pathway.suse.cz>
- <20190718094934.GA10041@jagdpanzerIV>
+        id S1728709AbfGSNFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 09:05:07 -0400
+Received: from heisenberg.micso.it ([195.32.69.61]:20723 "EHLO
+        heisenberg.micso.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbfGSNFH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 09:05:07 -0400
+X-Greylist: delayed 516 seconds by postgrey-1.27 at vger.kernel.org; Fri, 19 Jul 2019 09:05:06 EDT
+Received: from webmail.micso.net (localhost [127.0.0.1])
+        by heisenberg.micso.it (Postfix) with ESMTP id 59FF02068D;
+        Fri, 19 Jul 2019 14:56:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=quipo.it; s=default;
+        t=1563540988; bh=HmfITkp7M1v8EexLpWtlbL1vHc9I7hpBsuEzrnoy854=;
+        h=Date:From:To:Subject:Reply-To;
+        b=UtJXIrzqRbXUhtUwX9J0mcWmccf2XXN2ZXmwKYnf740U1+xLYxWF5cVh/+5fFah7O
+         x0KDeiHn2cTQlMvrJL+NSgNrOnshs6NDnkjViCmS9E922jJL0iU3zgF1YAZZ6rDVMq
+         H/9t5oGGirN9IE1ZBQOMZdpOjl60QqB2cyAapaQ8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190718094934.GA10041@jagdpanzerIV>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Fri, 19 Jul 2019 13:56:28 +0100
+From:   Linda Guerin <divitostefania@quipo.it>
+To:     undisclosed-recipients:;
+Subject: Je serai ravis de faire ta connaissance
+Reply-To: linda.guerin@yahoo.com
+Mail-Reply-To: linda.guerin@yahoo.com
+Message-ID: <df6f2b59271661951fd6e8250e3f6916@quipo.it>
+X-Sender: divitostefania@quipo.it
+User-Agent: Micso Freenet Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-07-18 18:49:34, Sergey Senozhatsky wrote:
-> On (07/18/19 10:36), Petr Mladek wrote:
-> > On Wed 2019-07-17 18:56:15, Sergey Senozhatsky wrote:
-> > > On (07/16/19 09:28), Petr Mladek wrote:
-> > > > Kernel tries hard to store and show printk messages when panicking. Even
-> > > > logbuf_lock gets re-initialized when only one CPU is running after
-> > > > smp_send_stop().
-> > > > 
-> > > > Unfortunately, smp_send_stop() might fail on architectures that do not
-> > > > use NMI as a fallback. Then printk log buffer might stay locked and
-> > > > a deadlock is almost inevitable.
-> > > 
-> > > I'd say that deadlock is still almost inevitable.
-> > > 
-> > > panic-CPU syncs with the printing-CPU before it attempts to SMP_STOP.
-> > > If there is an active printing-CPU, which is looping in console_unlock(),
-> > > taking logbuf_lock in order to msg_print_text() and stuff, then panic-CPU
-> > > will spin on console_owner waiting for that printing-CPU to handover
-> > > printing duties.
-> > > 
-> > > 	pr_emerg("Kernel panic - not syncing");
-> > > 	smp_send_stop();
-> > 
-> > Good point. I forgot the handover logic. Well, it is enabled only
-> > around call_console_drivers(). Therefore it is not under
-> > lockbuf_lock.
-> > 
-> > I had in mind some infinite loop or deadlock in vprintk_store().
-> > There was at least one long time ago (warning triggered
-> > by leap second).
-> > 
-> > 
-> > > If printing-CPU goes nuts under logbuf_lock, has corrupted IDT or anything
-> > > else, then we will not progress with panic(). panic-CPU will deadlock. If
-> > > not on
-> > > 	pr_emerg("Kernel panic - not syncing")
-> > > 
-> > > then on another pr_emerg(), right before the NMI-fallback.
-> > 
-> > Nested printk() should not be problem thanks to printk_safe.
-> 
-> Where do nested printk()-s come from? Which one of the following
-> scenarios you cover in commit message:
-> 
-> scenario 1
-> 
-> - we have CPUB which holds logbuf_lock
-> - we have CPUA which panic()-s the system, but can't bring CPUB down,
->   so logbuf_lock stays locked on remote CPU
+Bonjour mon cher correspondant,
+Je m'appelle Linda GUERIN d'origine française et âgé de 30ans. Je suis 
+gestionnaire de projet au sein d'une organisation nommée OCID siégé au 
+Canada. L'ocid est une organisation qui œuvre dans le domaine du 
+développement, de la coopération internationale et de l’aide humanitaire 
+et qui, depuis longtemps, combat la pauvreté et l’exclusion au sein des 
+communautés les plus marginalisées un peu partout dans le monde. En 
+effet, c'est en faisant quelques recherches sur le net que je suis tombé 
+sur ton adresse émail et j'ai voulu correspondre avec toi afin d'établir 
+si possible une relation plus affinée à divers niveaux parce qu'une 
+personne de plus comme ami est une bonne chose dans la vie d'un être 
+humain. Alors,je serai ravis de faire ta connaissance afin de donner vie 
+à cette nouvelle amitié qui va naître entre nous car l'amitié a toujours 
+un avantage quelque part. Merci de me répondre sur mon adresse émail 
+personnel :
+linda.guerin@yahoo.com
 
-No, this scenario is not affected by this patch. It would always lead to
-a deadlock.
-
-> scenario 2
-> 
-> - we have CPUA which holds logbuf_lock
-> - we have panic() on CPUA, but it cannot bring down some other CPUB
->   so logbuf_lock stays locked on local CPU, and it cannot re-init
->   logbuf.
-
-This scenario should get better handled by this patch. The difference
-will be when smp_send_stop() is not able to stop all CPUs:
-
-  + Before:
-      + printk_safe_flush_on_panic() will keep logbuf_lock locked
-	and do nothing.
-
-      + kmsg_dump(), console_unblank(), or console_flush_on_panic()
-	will deadlock when they try to get logbuf_lock(). They will
-	not be able to process any single line.
-
-  + After:
-      + printk_bust_lock_safe() will keep logbuf_lock locked
-
-      + All functions using logbuf_lock will not get called.
-	We will not see the messages (as previously) but the
-	system will not deadlock.
-
-
-But there is one more scenario 3:
-
-  - we have CPUB which loops or is deadlocked in IRQ context
-
-  - we have CPUA which panic()-s the system, but can't bring CPUB down,
-    so logbuf_lock might be takes and release from time to time
-    by CPUB
-
-Hmm, this scenario might be handled a bit _worse_ by this patch:
-
-  + Before:
-      + printk_safe_flush_on_panic() will not touch logbuf_lock
-	The messages will get flushed according to the state of
-	logbuf_lock at the moment when it is being checked.
-
-      + kmsg_dump(), console_unblank(), or console_flush_on_panic()
-	will be able to do their job.
-
-  + After:
-      +  printk_safe_flush_on_panic(), kmsg_dump(), console_unblank(),
-	 and console_flush_on_panic() could finish the job. But they
-	 will get called _only_ when logbuf_lock is released at
-	 the moment when it is being checked by printk_bust_lock_safe().
-
-
-Resume:
-
-From my POV, the 3rd scenario is the most likely one. Therefore this
-patch would make more bad than good.
-
-It might be possible to somehow detect if lockbuf_lock is released
-from time the time on the non-stopped CPU. But it would be hairy.
-IMHO, it is not worth it.
-
-Thanks a lot for helping me to sort the ideas. I suggest to forget
-this patch and work on lockless ringbuffer.
-
-Best Regards,
-Petr
+Mlle Linda GUERIN
