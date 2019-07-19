@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 834EA6EC4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 23:51:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18A3C6EC40
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 23:50:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389257AbfGSVvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 17:51:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50952 "EHLO mail.kernel.org"
+        id S2388845AbfGSVuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 17:50:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388706AbfGSVt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388708AbfGSVt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 19 Jul 2019 17:49:58 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74BC521882;
+        by mail.kernel.org (Postfix) with ESMTPSA id ABBB121883;
         Fri, 19 Jul 2019 21:49:57 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1hoalI-00080F-Ib; Fri, 19 Jul 2019 17:49:56 -0400
-Message-Id: <20190719214956.460034332@goodmis.org>
+        id 1hoalI-00080l-Nd; Fri, 19 Jul 2019 17:49:56 -0400
+Message-Id: <20190719214956.623149328@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 19 Jul 2019 17:49:34 -0400
+Date:   Fri, 19 Jul 2019 17:49:35 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -32,7 +32,7 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <wagi@monom.org>, tom.zanussi@linux.intel.com
-Subject: [PATCH RT 03/16] genirq: Handle missing work_struct in irq_set_affinity_notifier()
+Subject: [PATCH RT 04/16] arm: imx6: cpuidle: Use raw_spinlock_t
 References: <20190719214931.700049248@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -48,38 +48,49 @@ If anyone has any objections, please let me know.
 
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit bbc4d2a7d6ff54ba923640d9a42c7bef7185fe98 ]
+[ Upstream commit 40d0332ec8312e9c090f0a5414d9c90e12b13611 ]
 
-The backported stable commit
-   59c39840f5abf ("genirq: Prevent use-after-free and work list corruption")
-
-added cancel_work_sync() on a work_struct element which is not available
-in RT.
-
-Replace cancel_work_sync() with kthread_cancel_work_sync() on RT.
+The idle call back is invoked with disabled interrupts and requires
+raw_spinlock_t locks to work.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/irq/manage.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/mach-imx/cpuidle-imx6q.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 381305c48a0a..b2736d7d863b 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -385,8 +385,9 @@ irq_set_affinity_notifier(unsigned int irq, struct irq_affinity_notify *notify)
- 	raw_spin_unlock_irqrestore(&desc->lock, flags);
+diff --git a/arch/arm/mach-imx/cpuidle-imx6q.c b/arch/arm/mach-imx/cpuidle-imx6q.c
+index 326e870d7123..d9ac80aa1eb0 100644
+--- a/arch/arm/mach-imx/cpuidle-imx6q.c
++++ b/arch/arm/mach-imx/cpuidle-imx6q.c
+@@ -17,22 +17,22 @@
+ #include "hardware.h"
  
- 	if (old_notify) {
--#ifndef CONFIG_PREEMPT_RT_BASE
--		/* Need to address this for PREEMPT_RT */
-+#ifdef CONFIG_PREEMPT_RT_BASE
-+		kthread_cancel_work_sync(&notify->work);
-+#else
- 		cancel_work_sync(&old_notify->work);
- #endif
- 		kref_put(&old_notify->kref, old_notify->release);
+ static int num_idle_cpus = 0;
+-static DEFINE_SPINLOCK(cpuidle_lock);
++static DEFINE_RAW_SPINLOCK(cpuidle_lock);
+ 
+ static int imx6q_enter_wait(struct cpuidle_device *dev,
+ 			    struct cpuidle_driver *drv, int index)
+ {
+-	spin_lock(&cpuidle_lock);
++	raw_spin_lock(&cpuidle_lock);
+ 	if (++num_idle_cpus == num_online_cpus())
+ 		imx6_set_lpm(WAIT_UNCLOCKED);
+-	spin_unlock(&cpuidle_lock);
++	raw_spin_unlock(&cpuidle_lock);
+ 
+ 	cpu_do_idle();
+ 
+-	spin_lock(&cpuidle_lock);
++	raw_spin_lock(&cpuidle_lock);
+ 	if (num_idle_cpus-- == num_online_cpus())
+ 		imx6_set_lpm(WAIT_CLOCKED);
+-	spin_unlock(&cpuidle_lock);
++	raw_spin_unlock(&cpuidle_lock);
+ 
+ 	return index;
+ }
 -- 
 2.20.1
 
