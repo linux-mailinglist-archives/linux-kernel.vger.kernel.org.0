@@ -2,113 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 468FB6D8F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 04:20:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B8D86D8F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 04:18:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbfGSCTy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 22:19:54 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:20468 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726067AbfGSCTx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 22:19:53 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id A6C4F507D6;
-        Fri, 19 Jul 2019 04:19:47 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id rthfEAqSrQty; Fri, 19 Jul 2019 04:19:37 +0200 (CEST)
-Date:   Fri, 19 Jul 2019 12:19:31 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     "Dmitry V. Levin" <ldv@altlinux.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v9 08/10] open: openat2(2) syscall
-Message-ID: <20190719021931.ypwvcvp3imbgjjx6@yavin>
-References: <20190706145737.5299-1-cyphar@cyphar.com>
- <20190706145737.5299-9-cyphar@cyphar.com>
- <20190719015933.GA18022@altlinux.org>
+        id S1726512AbfGSCRh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 22:17:37 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45812 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbfGSCRg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 22:17:36 -0400
+Received: by mail-lf1-f66.google.com with SMTP id u10so20590809lfm.12;
+        Thu, 18 Jul 2019 19:17:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=HNMhY1ykx0GnlF6JKggl8sLwPS/j8cg780i6U3Mhwco=;
+        b=Dx8cfGssBH0NKhAMWIEB7HWEf805sROrkX6S5J/H28OWuwBMRRU3XkAr5eAmVFT9Mw
+         xxtr+j/rXikat90qken+vFjFhMwaBUnzOe8dRPPpvN+SWFTxK+CYvm1ksW69kEQ7BPa8
+         E6iLZjIXomLfUMqUMgTHWAFmS8GmuhpQZXKHomw1K/R2yMQJ1sLcTYpEjyWGWl1dPURU
+         WxudHnp625GFMMhE0rthRa/X1xc3gCisghB0Y2115/uoylalkqkhZI44mtgJ8g6zrVzZ
+         wsJ3sExsi2j1zRFpiOYu8rEIC2d75wgFRX0mh56YRO/lcBPQpaI9OnSmZSJaczdpYcnz
+         wz/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=HNMhY1ykx0GnlF6JKggl8sLwPS/j8cg780i6U3Mhwco=;
+        b=psjT1Y8DrvcB14ik8583sizHJqHMvbwgE59m5YGbv8wjPAhdD54BEHeJe5lwGbgleM
+         0P7bSfxVdX2b6sD/ZNhHKWaWIgqwcL11kqzflT52cvZx6rwSlvPlPv28GdmIBChAW1LX
+         vMI0nB+lElzP1k49GRxbT52d+EY+PHbvIYfkTb1RUJ9wWRwuR9o4BXSrQlIsIICpSwhJ
+         PqoqbtPO/ZC23Uo0iCRe4sIb08LorXVy/Oj2awV3rJb5h3symq/NmrL1+iytBvfJkdX3
+         60SbPgVGHZ+TmXvn4pM3xmDC6nXCsbxW8eZh1GtZE4xXzgzjKuDq1EjniniPqvmWoWz5
+         g+KA==
+X-Gm-Message-State: APjAAAX7mt3OArFrUOjNTfyqCcrG6LHcRTJe/YpdQOVHcKzsi5OMtYVT
+        t/hPB0TQJelQM9gSri2d3IM=
+X-Google-Smtp-Source: APXvYqzAKEmTBGQd15nuGMd3QY1+47/Z33uRupMg//JatM2+dT3yIeJw6o+KZj2LFG0FNsvByPG07g==
+X-Received: by 2002:a19:6a01:: with SMTP id u1mr22530555lfu.141.1563502654101;
+        Thu, 18 Jul 2019 19:17:34 -0700 (PDT)
+Received: from dimatab (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.gmail.com with ESMTPSA id i62sm5317413lji.14.2019.07.18.19.17.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 18 Jul 2019 19:17:33 -0700 (PDT)
+Date:   Fri, 19 Jul 2019 05:21:11 +0300
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 20/24] PM / devfreq: tegra30: Optimize upper average
+ watermark selection
+Message-ID: <20190719052111.6641285d@dimatab>
+In-Reply-To: <1cec80ae-c03e-98a7-1d9f-6b57690610c7@samsung.com>
+References: <20190707223303.6755-1-digetx@gmail.com>
+        <CGME20190707223619epcas4p333f556dcf5a477b5cad5c9362a6f9b97@epcas4p3.samsung.com>
+        <20190707223303.6755-21-digetx@gmail.com>
+        <e3358039-d1b3-a5a0-1a37-aeb8edd49d6b@samsung.com>
+        <20190719045943.73b53e31@dimatab>
+        <1cec80ae-c03e-98a7-1d9f-6b57690610c7@samsung.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="g4nevyq6aunc32xc"
-Content-Disposition: inline
-In-Reply-To: <20190719015933.GA18022@altlinux.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+=D0=92 Fri, 19 Jul 2019 11:06:05 +0900
+Chanwoo Choi <cw00.choi@samsung.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
---g4nevyq6aunc32xc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On 2019-07-19, Dmitry V. Levin <ldv@altlinux.org> wrote:
-> On Sun, Jul 07, 2019 at 12:57:35AM +1000, Aleksa Sarai wrote:
-> [...]
-> > +/**
-> > + * Arguments for how openat2(2) should open the target path. If @extra=
- is zero,
-> > + * then openat2(2) is identical to openat(2).
-> > + *
-> > + * @flags: O_* flags (unknown flags ignored).
+> On 19. 7. 19. =EC=98=A4=EC=A0=84 10:59, Dmitry Osipenko wrote:
+> > =D0=92 Fri, 19 Jul 2019 10:36:30 +0900
+> > Chanwoo Choi <cw00.choi@samsung.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >  =20
+> >> On 19. 7. 8. =EC=98=A4=EC=A0=84 7:32, Dmitry Osipenko wrote: =20
+> >>> I noticed that CPU may be crossing the dependency threshold very
+> >>> frequently for some workloads and this results in a lot of
+> >>> interrupts which could be avoided if MCALL client is keeping
+> >>> actual EMC frequency at a higher rate.
+> >>>
+> >>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >>> ---
+> >>>  drivers/devfreq/tegra30-devfreq.c | 23 ++++++++++++++++++-----
+> >>>  1 file changed, 18 insertions(+), 5 deletions(-)
+> >>>
+> >>> diff --git a/drivers/devfreq/tegra30-devfreq.c
+> >>> b/drivers/devfreq/tegra30-devfreq.c index
+> >>> c3cf87231d25..4d582809acb6 100644 ---
+> >>> a/drivers/devfreq/tegra30-devfreq.c +++
+> >>> b/drivers/devfreq/tegra30-devfreq.c @@ -314,7 +314,8 @@ static
+> >>> void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra, }
+> >>> =20
+> >>>  static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq
+> >>> *tegra,
+> >>> -					   struct
+> >>> tegra_devfreq_device *dev)
+> >>> +					   struct
+> >>> tegra_devfreq_device *dev,
+> >>> +					   unsigned long freq)
+> >>>  {
+> >>>  	unsigned long avg_threshold, lower, upper;
+> >>> =20
+> >>> @@ -323,6 +324,15 @@ static void
+> >>> tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
+> >>> avg_threshold =3D dev->config->avg_dependency_threshold;
+> >>> avg_threshold =3D avg_threshold * ACTMON_SAMPLING_PERIOD;=20
+> >>> +	/*
+> >>> +	 * If cumulative EMC frequency selection is higher than
+> >>> the
+> >>> +	 * device's, then there is no need to set upper watermark
+> >>> to
+> >>> +	 * a lower value because it will result in unnecessary
+> >>> upper
+> >>> +	 * interrupts.
+> >>> +	 */
+> >>> +	if (freq * ACTMON_SAMPLING_PERIOD > upper)
+> >>> +		upper =3D freq * ACTMON_SAMPLING_PERIOD;   =20
+> >>
+> >> Also, 'upper value is used on the patch5. You can combine this code
+> >> to patch5 or if this patch depends on the cpu notifier, you can
+> >> combine it to the patch of adding cpu notifier without separate
+> >> patch. =20
+> >=20
+> > Well okay, I'll try to squash some of the patches in the next
+> > revision. Usually I'm receiving comments in the other direction,
+> > asking to separate patches into smaller changes ;) So that's more a
+> > personal preference of each maintainer, I'd say.
+> >  =20
 >=20
-> What was the rationale for implementing this semantics?
-> Ignoring unknown flags makes potential extension of this new interface
-> problematic.  This has bitten us many times already, so ...
+> Right. We have to make the patch with atomic attribute.
+> But, if there are patches which touch the same code
+> in the same patchset. We can squash or do refactorig
+> of this code.
 
-I am mirroring the semantics of open(2) and openat(2).
+The main benefit of having smaller logical changes is that when there is
+a bug, it's easier to narrow down the offending change using bisection.
+And it's just easier to review smaller patches, of course.
 
-To be clear, I am in favour of doing it -- and it would definitely be
-possible to implement it with -EINVAL (you would just mask off
-~VALID_OPEN_FLAGS for the older syscalls). But Linus' response to my
-point about (the lack of) -EINVAL for unknown open(2) flags gave me the
-impression he would be against this idea (though I might be
-misunderstanding the point he was making).
+> And also, if possible, I'd like you to make the patch
+> list according to the role of patch. For example,
+> the patches related to the 'watermark' could be sequentially
+> listed. But, it is not forced opinion. If just possible.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+Okay, will take this into account.
 
---g4nevyq6aunc32xc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXTEorwAKCRCdlLljIbnQ
-Eop3AQDsS+JxsKMay74AdwHvqjPK3crvN47y0krPsv6vGBsWhQD/f+ChPlnwx226
-SbxKk/nCjHvnDSJga0WPUznn7tBxUQQ=
-=7H8a
------END PGP SIGNATURE-----
-
---g4nevyq6aunc32xc--
