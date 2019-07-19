@@ -2,153 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B8D86D8F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 04:18:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 037FB6D902
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 04:20:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbfGSCRh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 22:17:37 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45812 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726015AbfGSCRg (ORCPT
+        id S1726812AbfGSCUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 22:20:16 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:43943 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbfGSCUP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 22:17:36 -0400
-Received: by mail-lf1-f66.google.com with SMTP id u10so20590809lfm.12;
-        Thu, 18 Jul 2019 19:17:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HNMhY1ykx0GnlF6JKggl8sLwPS/j8cg780i6U3Mhwco=;
-        b=Dx8cfGssBH0NKhAMWIEB7HWEf805sROrkX6S5J/H28OWuwBMRRU3XkAr5eAmVFT9Mw
-         xxtr+j/rXikat90qken+vFjFhMwaBUnzOe8dRPPpvN+SWFTxK+CYvm1ksW69kEQ7BPa8
-         E6iLZjIXomLfUMqUMgTHWAFmS8GmuhpQZXKHomw1K/R2yMQJ1sLcTYpEjyWGWl1dPURU
-         WxudHnp625GFMMhE0rthRa/X1xc3gCisghB0Y2115/uoylalkqkhZI44mtgJ8g6zrVzZ
-         wsJ3sExsi2j1zRFpiOYu8rEIC2d75wgFRX0mh56YRO/lcBPQpaI9OnSmZSJaczdpYcnz
-         wz/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HNMhY1ykx0GnlF6JKggl8sLwPS/j8cg780i6U3Mhwco=;
-        b=psjT1Y8DrvcB14ik8583sizHJqHMvbwgE59m5YGbv8wjPAhdD54BEHeJe5lwGbgleM
-         0P7bSfxVdX2b6sD/ZNhHKWaWIgqwcL11kqzflT52cvZx6rwSlvPlPv28GdmIBChAW1LX
-         vMI0nB+lElzP1k49GRxbT52d+EY+PHbvIYfkTb1RUJ9wWRwuR9o4BXSrQlIsIICpSwhJ
-         PqoqbtPO/ZC23Uo0iCRe4sIb08LorXVy/Oj2awV3rJb5h3symq/NmrL1+iytBvfJkdX3
-         60SbPgVGHZ+TmXvn4pM3xmDC6nXCsbxW8eZh1GtZE4xXzgzjKuDq1EjniniPqvmWoWz5
-         g+KA==
-X-Gm-Message-State: APjAAAX7mt3OArFrUOjNTfyqCcrG6LHcRTJe/YpdQOVHcKzsi5OMtYVT
-        t/hPB0TQJelQM9gSri2d3IM=
-X-Google-Smtp-Source: APXvYqzAKEmTBGQd15nuGMd3QY1+47/Z33uRupMg//JatM2+dT3yIeJw6o+KZj2LFG0FNsvByPG07g==
-X-Received: by 2002:a19:6a01:: with SMTP id u1mr22530555lfu.141.1563502654101;
-        Thu, 18 Jul 2019 19:17:34 -0700 (PDT)
-Received: from dimatab (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.gmail.com with ESMTPSA id i62sm5317413lji.14.2019.07.18.19.17.33
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 18 Jul 2019 19:17:33 -0700 (PDT)
-Date:   Fri, 19 Jul 2019 05:21:11 +0300
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 20/24] PM / devfreq: tegra30: Optimize upper average
- watermark selection
-Message-ID: <20190719052111.6641285d@dimatab>
-In-Reply-To: <1cec80ae-c03e-98a7-1d9f-6b57690610c7@samsung.com>
-References: <20190707223303.6755-1-digetx@gmail.com>
-        <CGME20190707223619epcas4p333f556dcf5a477b5cad5c9362a6f9b97@epcas4p3.samsung.com>
-        <20190707223303.6755-21-digetx@gmail.com>
-        <e3358039-d1b3-a5a0-1a37-aeb8edd49d6b@samsung.com>
-        <20190719045943.73b53e31@dimatab>
-        <1cec80ae-c03e-98a7-1d9f-6b57690610c7@samsung.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
+        Thu, 18 Jul 2019 22:20:15 -0400
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x6J2Jpp4017092;
+        Fri, 19 Jul 2019 11:19:52 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x6J2Jpp4017092
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1563502792;
+        bh=+sM+seELdRIbsaJZCOpd5FOhzKDSjUglYwxZ8lI5IpY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=yxdGOC7h01PMpNWjoMFR3aQrxdO5yDDJLqCQxGqYKM6FyzHzHe91A5yhUiQzTtC5W
+         OlkeTRP7/BRNJnUGwcPzjaWgw0Y8FtbF/VIdBp5O4He1W3hx03o1jNHI5vAXShBa5/
+         psBH6zqbnPp4rzO4C0XrCs+JS7Er0Aor0txupQa1HbJETPRryqrOCI8UXwOWcORW7h
+         N5JpaSSV8JMV18LyNxdwf3GjcV4agFAuKGt/jpH3G5YdlsW31L6DiN3Q87HfFDm66U
+         AaA1V0sSYtyun5RVb2udp1ivpRNod9qlbye1bCdr1oyoOylv4/Itr2zwClhNrP/TWI
+         Z3MuMVng0jBsg==
+X-Nifty-SrcIP: [209.85.217.42]
+Received: by mail-vs1-f42.google.com with SMTP id r3so20521282vsr.13;
+        Thu, 18 Jul 2019 19:19:52 -0700 (PDT)
+X-Gm-Message-State: APjAAAWy8L7BDABd3H+NF9OTfcef+czhAs+m9vW7YQdj1eA8xI6WKlcR
+        Wp3Eo27DK6lM1A/u6z8Sdjw33ifsShVJL/Tf+ys=
+X-Google-Smtp-Source: APXvYqybBFz/HOYZeKsR6BcR2USXMe1xocX0bGf4StjrIgG6+mNOvEm2C5Vhfm1+zxBz6YSUHwPKd+7SVqirj8eqr8g=
+X-Received: by 2002:a67:f495:: with SMTP id o21mr31554842vsn.54.1563502790950;
+ Thu, 18 Jul 2019 19:19:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <20190718125509.775525-1-arnd@arndb.de> <20190718125703.GA28332@lst.de>
+ <CAK8P3a2k3ddUD-b+OskpDfAkm6KGAGAOBabkXk3Uek1dShTiUA@mail.gmail.com>
+ <20190718130835.GA28520@lst.de> <20190718142525.GE7116@magnolia>
+In-Reply-To: <20190718142525.GE7116@magnolia>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 19 Jul 2019 11:19:15 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASN5d_ppx6wJSm+fcf9HiX9i6zX4fxiR5_WuF6QUOExXQ@mail.gmail.com>
+Message-ID: <CAK7LNASN5d_ppx6wJSm+fcf9HiX9i6zX4fxiR5_WuF6QUOExXQ@mail.gmail.com>
+Subject: Re: [PATCH] iomap: hide iomap_sector with CONFIG_BLOCK=n
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jani Nikula <jani.nikula@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=D0=92 Fri, 19 Jul 2019 11:06:05 +0900
-Chanwoo Choi <cw00.choi@samsung.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+Hi.
 
-> On 19. 7. 19. =EC=98=A4=EC=A0=84 10:59, Dmitry Osipenko wrote:
-> > =D0=92 Fri, 19 Jul 2019 10:36:30 +0900
-> > Chanwoo Choi <cw00.choi@samsung.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >  =20
-> >> On 19. 7. 8. =EC=98=A4=EC=A0=84 7:32, Dmitry Osipenko wrote: =20
-> >>> I noticed that CPU may be crossing the dependency threshold very
-> >>> frequently for some workloads and this results in a lot of
-> >>> interrupts which could be avoided if MCALL client is keeping
-> >>> actual EMC frequency at a higher rate.
-> >>>
-> >>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >>> ---
-> >>>  drivers/devfreq/tegra30-devfreq.c | 23 ++++++++++++++++++-----
-> >>>  1 file changed, 18 insertions(+), 5 deletions(-)
-> >>>
-> >>> diff --git a/drivers/devfreq/tegra30-devfreq.c
-> >>> b/drivers/devfreq/tegra30-devfreq.c index
-> >>> c3cf87231d25..4d582809acb6 100644 ---
-> >>> a/drivers/devfreq/tegra30-devfreq.c +++
-> >>> b/drivers/devfreq/tegra30-devfreq.c @@ -314,7 +314,8 @@ static
-> >>> void tegra_actmon_get_lower_upper(struct tegra_devfreq *tegra, }
-> >>> =20
-> >>>  static void tegra_devfreq_update_avg_wmark(struct tegra_devfreq
-> >>> *tegra,
-> >>> -					   struct
-> >>> tegra_devfreq_device *dev)
-> >>> +					   struct
-> >>> tegra_devfreq_device *dev,
-> >>> +					   unsigned long freq)
-> >>>  {
-> >>>  	unsigned long avg_threshold, lower, upper;
-> >>> =20
-> >>> @@ -323,6 +324,15 @@ static void
-> >>> tegra_devfreq_update_avg_wmark(struct tegra_devfreq *tegra,
-> >>> avg_threshold =3D dev->config->avg_dependency_threshold;
-> >>> avg_threshold =3D avg_threshold * ACTMON_SAMPLING_PERIOD;=20
-> >>> +	/*
-> >>> +	 * If cumulative EMC frequency selection is higher than
-> >>> the
-> >>> +	 * device's, then there is no need to set upper watermark
-> >>> to
-> >>> +	 * a lower value because it will result in unnecessary
-> >>> upper
-> >>> +	 * interrupts.
-> >>> +	 */
-> >>> +	if (freq * ACTMON_SAMPLING_PERIOD > upper)
-> >>> +		upper =3D freq * ACTMON_SAMPLING_PERIOD;   =20
-> >>
-> >> Also, 'upper value is used on the patch5. You can combine this code
-> >> to patch5 or if this patch depends on the cpu notifier, you can
-> >> combine it to the patch of adding cpu notifier without separate
-> >> patch. =20
-> >=20
-> > Well okay, I'll try to squash some of the patches in the next
-> > revision. Usually I'm receiving comments in the other direction,
-> > asking to separate patches into smaller changes ;) So that's more a
-> > personal preference of each maintainer, I'd say.
-> >  =20
->=20
-> Right. We have to make the patch with atomic attribute.
-> But, if there are patches which touch the same code
-> in the same patchset. We can squash or do refactorig
-> of this code.
+On Thu, Jul 18, 2019 at 11:28 PM Darrick J. Wong
+<darrick.wong@oracle.com> wrote:
+>
+> On Thu, Jul 18, 2019 at 03:08:35PM +0200, Christoph Hellwig wrote:
+> > On Thu, Jul 18, 2019 at 03:03:15PM +0200, Arnd Bergmann wrote:
+> > > The inclusion comes from the recently added header check in commit
+> > > c93a0368aaa2 ("kbuild: do not create wrappers for header-test-y").
+> > >
+> > > This just tries to include every header by itself to see if there are build
+> > > failures from missing indirect includes. We probably don't want to
+> > > add an exception for iomap.h there.
+> >
+> > I very much disagree with that check.  We don't need to make every
+> > header compilable with a setup where it should not be included.
+>
+> Seconded, unless there's some scenario where someone needs iomap when
+> CONFIG_BLOCK=n (???)
 
-The main benefit of having smaller logical changes is that when there is
-a bug, it's easier to narrow down the offending change using bisection.
-And it's just easier to review smaller patches, of course.
+I agree.
 
-> And also, if possible, I'd like you to make the patch
-> list according to the role of patch. For example,
-> the patches related to the 'watermark' could be sequentially
-> listed. But, it is not forced opinion. If just possible.
+There is no situation that iomap.h is included when CONFIG_BLOCK=n.
+So, it is pointless to surround offending code with #ifdef
+just for the purpose of satisfying the header-test.
 
-Okay, will take this into account.
 
+I started to think
+compiling all headers is more painful than useful.
+
+
+MW is closing, so I am thinking of disabling it for now
+to take time to re-think.
+
+
+diff --git a/init/Kconfig b/init/Kconfig
+index bd7d650d4a99..cbb31d134f7e 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -111,6 +111,7 @@ config HEADER_TEST
+ config KERNEL_HEADER_TEST
+        bool "Compile test kernel headers"
+        depends on HEADER_TEST
++       depends on BROKEN
+        help
+          Headers in include/ are used to build external moduls.
+          Compile test them to ensure they are self-contained, i.e.
+
+
+
+Maybe, we should compile-test headers
+only when it is reasonable to do so.
+
+-- 
+Best Regards
+Masahiro Yamada
