@@ -2,146 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ADE76E513
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 13:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C94676E517
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 13:37:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbfGSLeY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 07:34:24 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:5108 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbfGSLeX (ORCPT
+        id S1727823AbfGSLgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 07:36:54 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:49867 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726075AbfGSLgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 07:34:23 -0400
-Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
-  Ajay.Kathat@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Ajay.Kathat@microchip.com";
-  x-sender="Ajay.Kathat@microchip.com"; x-conformance=spf_only;
-  x-record-type="v=spf1"; x-record-text="v=spf1 mx
-  a:ushub1.microchip.com a:smtpout.microchip.com
-  a:mx1.microchip.iphmx.com a:mx2.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa6.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Ajay.Kathat@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa6.microchip.iphmx.com; spf=Pass smtp.mailfrom=Ajay.Kathat@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: 9HAHxvPWKHMX6xXkIRGF6U0uGVsNJZI0irNPU7G8ckkRJsPvEpT8Q9lXvtNQ2tHrmJ+xbgJcZe
- ehA9Kl+68wm/P7qbbOeWYQt2UqVvhCw0H6jf7AylZYC3asj70566pKAyNw90PfJ1OeJ3f76Izu
- mCr0pWCAj5L5QJy+fX1JMs/u1YWRM6XOIpoeSV1UjuXSngaGVVczFNUvD6LoLdH+efrlkawnC5
- M9ptucVBYkpb8K222D1I/o4pw163kpe4dZx+HlbKTYm+Jj/n7i9yaSGhoHWfrkbCulY8Kr9C0W
- 52I=
-X-IronPort-AV: E=Sophos;i="5.64,282,1559545200"; 
-   d="scan'208";a="38937699"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 19 Jul 2019 04:34:21 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
- chn-vm-ex01.mchp-main.com (10.10.87.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 19 Jul 2019 04:34:20 -0700
-Received: from NAM03-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Fri, 19 Jul 2019 04:34:20 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=axGc15rfkuuqDQ5Mcb2E/COHI3ZtaeuHfTv4kt46/lrlUKGyL+hX7T0jXCvDM4hUGwnAnqGsCOZd+b5RmDz3PMv+DyzLdVHzh2EXHWNghlVTFS3pkDLpQwavACFFKqZMUYtcMZSTriClQeAVW4KjRjo3FEXmdO9gv2MBdNtlThpcC5br6hCdgc0D2a0O8UCOTdOTdMmD+lYjEuFlcB6qfLA6qnbUoDVmzTbkM0CfTZlMhX+S9VJXIFZoOuEdgVTEu4oxc4+9jPgBZGCMzuCS4+ucqoPrpXbStmWRMDrgvgbellzeD812fFeAME+kWBn3Jq/PxQF5wyd5VMVbvshCVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ewje1OrZEmiwknx0jsN7gpq0TSuDGawzaNgGJVfHY0M=;
- b=KBnNdtrQMtP2L3vviHKyajRaiYHGahGcm8skSOQw95Qbo3dOvkO+bzXy5F1p5UEU0JLKiu70HbO8m/q4j00GHxRnWU7JTd1gQ4RAQatLZjszeqKLojuF/Lfm9cBCXYVxW+Ggj1usbwsojxgGYLyTbLeE8+0oHek5GpCmMFD7QFvTE/oxlBwblwAb/ItbS1CXx9cuQ+kKWDR5BcecurHuEkVoJ9/F/3Tgghi/RsHPymU1fkgyDE8isc7H5zgsLFb19MYwwMAKJlVF0zAFCrajmmQwLe+hK4peG77vqbONTtN1MSjUd3wVL7z1eTDEPSRCgmpbSbc4XxZWirajPp6oSA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=microchip.com;dmarc=pass action=none
- header.from=microchip.com;dkim=pass header.d=microchip.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ewje1OrZEmiwknx0jsN7gpq0TSuDGawzaNgGJVfHY0M=;
- b=bSfWLbXvOpRDsUqkU2N8A37fRZPZNriOZKlOVsFki+MMvCS0fyynxseb0W0SAMZ7pbWPvBMG6C1zjvRsgmXOdTUkt7usOTRJzHvy01/zzgWiUl92RAZInunhRXe4UsoWNQoP73PMgJiluGQ4uFnx1fzt3Gqg2YiKJb/M1fF68mY=
-Received: from BN6PR11MB3985.namprd11.prod.outlook.com (10.255.129.78) by
- BN6PR11MB1716.namprd11.prod.outlook.com (10.173.33.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2073.14; Fri, 19 Jul 2019 11:34:17 +0000
-Received: from BN6PR11MB3985.namprd11.prod.outlook.com
- ([fe80::54db:507:e9da:5086]) by BN6PR11MB3985.namprd11.prod.outlook.com
- ([fe80::54db:507:e9da:5086%6]) with mapi id 15.20.2073.012; Fri, 19 Jul 2019
- 11:34:17 +0000
-From:   <Ajay.Kathat@microchip.com>
-To:     <hslester96@gmail.com>
-CC:     <Adham.Abozaeid@microchip.com>, <gregkh@linuxfoundation.org>,
-        <linux-wireless@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] staging: wilc1000: Merge memcpy + le32_to_cpus to
- get_unaligned_le32
-Thread-Topic: [PATCH] staging: wilc1000: Merge memcpy + le32_to_cpus to
- get_unaligned_le32
-Thread-Index: AQHVPglvMqeECHTdUkeF0n7ouW4TM6bRz6sA
-Date:   Fri, 19 Jul 2019 11:34:17 +0000
-Message-ID: <8c14743d-efe1-3e3a-0419-bde22f848751@microchip.com>
-References: <20190719081005.4598-1-hslester96@gmail.com>
-In-Reply-To: <20190719081005.4598-1-hslester96@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BMXPR01CA0041.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:c::27) To BN6PR11MB3985.namprd11.prod.outlook.com
- (2603:10b6:405:7b::14)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [49.205.218.233]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bcf15511-97f7-4429-5857-08d70c3d08be
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN6PR11MB1716;
-x-ms-traffictypediagnostic: BN6PR11MB1716:
-x-microsoft-antispam-prvs: <BN6PR11MB1716E68D1F5A60D1374E6518E3CB0@BN6PR11MB1716.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2512;
-x-forefront-prvs: 01039C93E4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(39860400002)(346002)(366004)(396003)(189003)(199004)(2906002)(7736002)(8676002)(256004)(6436002)(486006)(31686004)(186003)(8936002)(476003)(71200400001)(54906003)(316002)(6486002)(1411001)(31696002)(68736007)(36756003)(66066001)(99286004)(86362001)(53546011)(386003)(305945005)(478600001)(76176011)(25786009)(14454004)(229853002)(6506007)(52116002)(53936002)(6512007)(6246003)(78486014)(81156014)(6116002)(3846002)(26005)(4326008)(81166006)(446003)(64756008)(66556008)(102836004)(66476007)(71190400001)(66446008)(66946007)(11346002)(6916009)(2616005)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1716;H:BN6PR11MB3985.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: j1vFk9/TA94SqN8P0CQBQp2PWEG7Jzh8oRtoXSiIAuOWjQFg/ZaRkN7+sm9ojkmUys9q4ea2naXDkx4fr1/miQPayuqFrqqf1xyaZ3/IfihxTmpOMJLsEHGvwxM83bQXrICr9ZfeoHLBgYocnYsTgFlrSIMY+//h3ihOZlwKU37q19VUVipgziXyFs/NpU9ktANQ8Pt1FNI3hknco41BZCBduEIDvbbM7ZtJSb6RPhL9F/jvVQuZ3vPAykIOPnV+Vwff6zPAFIDM2EPu+QEeKeAj5Mq6AArKr+gTBD+Vznfqm8fH/WilbWcDckl25+b6ArhljOnoKRAiW4rfXT1LAOpPnZBKMt/dqX6LGNCpMCZkuGld1DR/UiX0JFKtCm4ShB5k0AuAwJRmvgdK/oVIwgvmhVEKhFqme911THAKxEY=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <51182E83F4814747BE92D343F9FF7412@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 19 Jul 2019 07:36:52 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1N8oOk-1iTbMT0DmY-015ovh; Fri, 19 Jul 2019 13:36:43 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: [PATCH] [v2] waitqueue: shut up clang -Wuninitialized warnings
+Date:   Fri, 19 Jul 2019 13:36:00 +0200
+Message-Id: <20190719113638.4189771-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: bcf15511-97f7-4429-5857-08d70c3d08be
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2019 11:34:17.7943
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ajay.kathat@microchip.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1716
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:x4+Cu1ASADiy/TbeMxC/JpZ4Hr+PHiYnuXbOqr4YY9JuJSpeng2
+ 3f9Gv8/AO2G4WxmO68xqn9d3RwvDe9mxBGI5CUxFNJPDCg0QiArroD7xGIRZwk+hXUBIXlA
+ 0x3gN1Voe7tuES9yOqd27PpTJZs0P6DO03C0/UY7ekCZfmL1fIHWnwSkqEAygUyvmQnxqoV
+ c5Jecl7JhGU8xwpKrJUbQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:7KfZFP7XH+Q=:Sn529HJGwLvCwrDi6Sgmzi
+ +fliR/ktHw/W5AYSQhDmM/bxLESMIymifufmMeaWI/i5RMLb2RxzaXQcBH6q5nHnYmRcwTsdX
+ Kll+kpldL7cqtevGoLOH33Yqt+6oUCO2uvbleralr8HS1J0WdjAoXA3OhpaQQq8pHUgLERDVf
+ XxtFeemwa27Oe/cDd1i/hMZzlSaui1TvJZLopkdyU0LlMjAv88c/f7JzOs+EcWgrQFDkhImIg
+ HJSXtFBK8Ikd+3v0mFYssMKumwhjMLenmbGH5GNgxjbzim5EBbaibDgoxoqN8Jn5EY+H2Kq6K
+ X0MExrlW22nEiW46wLpYqmpkN7Wygsav9IsAyZVUNKlpAdDG+GkCcZ5Lpborb09YROrXdW7hK
+ bbrIB88olZcwFvfwZZPDrT88aSTicaSSRM9MnZ6jVJsj/6dTH3SrK4bkf87gmyyJEp9y9HYWM
+ pmbv7MI5/m8NAdDweu99zx3PptL2AUlaycJ61aTEYECauAhLjwUfTSvTFGYmgK74zDvusaZcB
+ caF1VFYZsRVX+ey+hNDRs+aL1a2g0jBWdg6nFHOJLmnDv9T+xnTXdQKJ9txjXhkoyoLz08/CD
+ I/4V/uBReZfUHLxqX3x2Cc4c5UXOveCZoY/SeO5q1HWoXBORJVd1DHP0OwpH9pFVtHcgDdfun
+ xhacoCdNcU9kOi/dCWl77O389gffoYnPtnGwo+TFkAI2LM0HZOwSYATF5ljnOmpWEQ1jPT7b/
+ iVslKq2SbVc0nSP2oQ1UaArDfdXf3cSLtU7M/w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gNy8xOS8yMDE5IDE6NDAgUE0sIENodWhvbmcgWXVhbiB3cm90ZToNCj4gDQo+IE1lcmdlIHRo
-ZSBjb21ibyB1c2Ugb2YgbWVtY3B5IGFuZCBsZTMyX3RvX2NwdXMuDQo+IFVzZSBnZXRfdW5hbGln
-bmVkX2xlMzIgaW5zdGVhZC4NCj4gVGhpcyBzaW1wbGlmaWVzIHRoZSBjb2RlLg0KPiANCj4gU2ln
-bmVkLW9mZi1ieTogQ2h1aG9uZyBZdWFuIDxoc2xlc3Rlcjk2QGdtYWlsLmNvbT4NCj4gLS0tDQo+
-ICBkcml2ZXJzL3N0YWdpbmcvd2lsYzEwMDAvd2lsY193ZmlfY2Znb3BlcmF0aW9ucy5jIHwgMyAr
-LS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMiBkZWxldGlvbnMoLSkNCj4g
-DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvd2lsYzEwMDAvd2lsY193ZmlfY2Znb3Bl
-cmF0aW9ucy5jIGIvZHJpdmVycy9zdGFnaW5nL3dpbGMxMDAwL3dpbGNfd2ZpX2NmZ29wZXJhdGlv
-bnMuYw0KPiBpbmRleCBkNzJmZGQzMzMwNTAuLjEyZmI0YWRkMDVlYyAxMDA2NDQNCj4gLS0tIGEv
-ZHJpdmVycy9zdGFnaW5nL3dpbGMxMDAwL3dpbGNfd2ZpX2NmZ29wZXJhdGlvbnMuYw0KPiArKysg
-Yi9kcml2ZXJzL3N0YWdpbmcvd2lsYzEwMDAvd2lsY193ZmlfY2Znb3BlcmF0aW9ucy5jDQo+IEBA
-IC0xMDM4LDggKzEwMzgsNyBAQCB2b2lkIHdpbGNfd2ZpX3AycF9yeChzdHJ1Y3Qgd2lsY192aWYg
-KnZpZiwgdTggKmJ1ZmYsIHUzMiBzaXplKQ0KPiAgCXMzMiBmcmVxOw0KPiAgCV9fbGUxNiBmYzsN
-Cj4gIA0KPiAtCW1lbWNweSgmaGVhZGVyLCAoYnVmZiAtIEhPU1RfSERSX09GRlNFVCksIEhPU1Rf
-SERSX09GRlNFVCk7DQo+IC0JbGUzMl90b19jcHVzKCZoZWFkZXIpOw0KPiArCWhlYWRlciA9IGdl
-dF91bmFsaWduZWRfbGUzMihidWZmIC0gSE9TVF9IRFJfT0ZGU0VUKTsNCj4gIAlwa3Rfb2Zmc2V0
-ID0gR0VUX1BLVF9PRkZTRVQoaGVhZGVyKTsNCj4gIA0KPiAgCWlmIChwa3Rfb2Zmc2V0ICYgSVNf
-TUFOQUdNRU1FTlRfQ0FMTEJBQ0spIHsNCj4gDQoNClRoYW5rcyBmb3Igc2VuZGluZyB0aGUgcGF0
-Y2hlcy4NCg0KVGhlIGNvZGUgY2hhbmdlIGxvb2tzIG9rYXkgdG8gbWUuIEp1c3QgYSBtaW5vciBj
-b21tZW50LCBhdm9pZCB0aGUgdXNlIG9mDQpzYW1lIHN1YmplY3QgbGluZSBmb3IgZGlmZmVyZW50
-IHBhdGNoZXMuDQoNClJlZ2FyZHMsDQpBamF5DQo=
+When CONFIG_LOCKDEP is set, every use of DECLARE_WAIT_QUEUE_HEAD_ONSTACK()
+produces an bogus warning from clang, which is particularly annoying
+for allmodconfig builds:
+
+fs/namei.c:1646:34: error: variable 'wq' is uninitialized when used within its own initialization [-Werror,-Wuninitialized]
+        DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
+                                        ^~
+include/linux/wait.h:74:63: note: expanded from macro 'DECLARE_WAIT_QUEUE_HEAD_ONSTACK'
+        struct wait_queue_head name = __WAIT_QUEUE_HEAD_INIT_ONSTACK(name)
+                               ~~~~                                  ^~~~
+include/linux/wait.h:72:33: note: expanded from macro '__WAIT_QUEUE_HEAD_INIT_ONSTACK'
+        ({ init_waitqueue_head(&name); name; })
+                                       ^~~~
+
+A patch for clang has already been proposed and should soon be
+merged for clang-9, but for now all clang versions produce the
+warning in an otherwise (almost) clean allmodconfig build.
+
+Link: https://bugs.llvm.org/show_bug.cgi?id=31829
+Link: https://bugs.llvm.org/show_bug.cgi?id=42604
+Link: https://lore.kernel.org/lkml/20190703081119.209976-1-arnd@arndb.de/
+Link: https://reviews.llvm.org/D64678
+Link: https://storage.kernelci.org/next/master/next-20190717/arm64/allmodconfig/clang-8/build-warnings.log
+Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v2: given that kernelci is getting close to reporting a clean build for
+    clang, I'm trying again with a less invasive approach after my
+    first version was not too popular.
+---
+ include/linux/wait.h | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/wait.h b/include/linux/wait.h
+index ddb959641709..276499ae1a3e 100644
+--- a/include/linux/wait.h
++++ b/include/linux/wait.h
+@@ -70,8 +70,17 @@ extern void __init_waitqueue_head(struct wait_queue_head *wq_head, const char *n
+ #ifdef CONFIG_LOCKDEP
+ # define __WAIT_QUEUE_HEAD_INIT_ONSTACK(name) \
+ 	({ init_waitqueue_head(&name); name; })
+-# define DECLARE_WAIT_QUEUE_HEAD_ONSTACK(name) \
++# if defined(__clang__) && __clang_major__ <= 9
++/* work around https://bugs.llvm.org/show_bug.cgi?id=42604 */
++#  define DECLARE_WAIT_QUEUE_HEAD_ONSTACK(name)					\
++	_Pragma("clang diagnostic push")					\
++	_Pragma("clang diagnostic ignored \"-Wuninitialized\"")			\
++	struct wait_queue_head name = __WAIT_QUEUE_HEAD_INIT_ONSTACK(name)	\
++	_Pragma("clang diagnostic pop")
++# else
++#  define DECLARE_WAIT_QUEUE_HEAD_ONSTACK(name) \
+ 	struct wait_queue_head name = __WAIT_QUEUE_HEAD_INIT_ONSTACK(name)
++# endif
+ #else
+ # define DECLARE_WAIT_QUEUE_HEAD_ONSTACK(name) DECLARE_WAIT_QUEUE_HEAD(name)
+ #endif
+-- 
+2.20.0
+
