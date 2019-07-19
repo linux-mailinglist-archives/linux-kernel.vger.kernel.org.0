@@ -2,95 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DEB36E5DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 14:44:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 827196E5E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 14:49:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728388AbfGSMn6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 08:43:58 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35923 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727559AbfGSMn5 (ORCPT
+        id S1728457AbfGSMsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 08:48:38 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:38632 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbfGSMsi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 08:43:57 -0400
-Received: by mail-pl1-f194.google.com with SMTP id k8so15602861plt.3;
-        Fri, 19 Jul 2019 05:43:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id;
-        bh=/FrjOlHsU/rFl8swGWw38s2HqBJIeif3GsejqegBQfE=;
-        b=HHBrAYBsAlGxR2OIsZGbdNPvlEtFEwW5mIo9kKXWBwu9d4V+76wWe/JhlvzH4cRzOl
-         c/s+PKUjJ768Dms1tPcHbfJ6sR5hRwsWPCSn8eY//T6P67/wyUyJaHOjg8oWvu6deR80
-         iW23s6joLdSePWwcOSjbrhX1eeq5YlkoYEL1u0MnizWv1QX8dyQ5a6CyDaZEgcw8W0+U
-         jgChwcXrQzqkbJ1aqtVcnbz5FjkgVGMUeVC5uv7X+KyxzAUgwiPOaljKG3L/1HPYtvsO
-         3Tt5t9tvTQBjVupL7CxLf8z4FpRe2usC6RXP0cnB3bESqEweUF6MwX50Ouw7y5Q2oi/W
-         vGnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=/FrjOlHsU/rFl8swGWw38s2HqBJIeif3GsejqegBQfE=;
-        b=E6xfx0dbhMiZ4VD86urN/fjQT8a10D+JviPPhaRKIYJB1i7mekielgjMHQpkp6BEoH
-         /SoHo4KbbNefYiX1biH5aqw23h+94kCoK2QJXzX9RytH10ftK7AfxDFTWBgNoM01UVY3
-         LI6sa/vJ+UlcHx+dFvA2DG8D3oLOc3wd2NXrj6REyaljn0yq+FR+39nFeqYkIl9tdvDd
-         OwVnKiPj+eXqzmXalU/+q6JZt2+xw7m9GWvQVe2drxf0q7jgD2k5yOkBONLN8kP8ftFu
-         wsyrTSiKf3TMh9LOl/DNreuBzMpfQe/Lb4bPyATICbyk0Kxb9afJOSH2+dmXPPnJYlmE
-         /HnQ==
-X-Gm-Message-State: APjAAAXYgD81q2RvWr5A8X8pyg8pHRuf/wQpxBR/ECSwUR6404uuOcVQ
-        DLQyBUyK2GumBZs0A7zX7Ck=
-X-Google-Smtp-Source: APXvYqx+9N9T2/+1wzwWwh/y89oJ9P0IE/G4zN8NafEAO+fPvr12z2A57s7nZTYhogOgeMC5M9ukpg==
-X-Received: by 2002:a17:902:724c:: with SMTP id c12mr55789189pll.219.1563540237303;
-        Fri, 19 Jul 2019 05:43:57 -0700 (PDT)
-Received: from localhost.localdomain ([103.121.208.202])
-        by smtp.gmail.com with ESMTPSA id l189sm37612530pfl.7.2019.07.19.05.43.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Jul 2019 05:43:56 -0700 (PDT)
-From:   Yin Fengwei <nh26223.lmm@gmail.com>
-To:     dhowells@redhat.com, gregkh@linuxfoundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, miklos@szeredi.hu,
-        viro@zeniv.linux.org.uk, tglx@linutronix.de,
-        kstewart@linuxfoundation.org
-Subject: [PATCH] fs: fs_parser: avoid NULL param->string to kstrtouint
-Date:   Fri, 19 Jul 2019 20:43:29 +0800
-Message-Id: <20190719124329.23207-1-nh26223.lmm@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 19 Jul 2019 08:48:38 -0400
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x6JCmW6I009843
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 21:48:33 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x6JCmW6I009843
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1563540513;
+        bh=0qpHUtufjLE2Zht/Y2B4RKQAO0L/g1Zo9WaeV3lBtFs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ICnJ3RNFfFPrNodbEkbdMDdGTp5jW/r9qV7mMEHuFzPhMkQ+G5OeemKkxXgj/0wxq
+         5fJ+H4kucUOwxTKhTptH3mV9n/UmaPYlX/Xd6KbrVBCNWLfTNXbdvw/P4nM89LCJ5q
+         ENmy/FBfkIuzKjfnwCmx8I+Ck764qnnE+N7OvRfYJg9xwKrRirrZKlQ7v8ZPtPT4Qt
+         To8f3h2+z1QIDxJnNpRzCIbr1/KaQyUnxjJOZq9etoVduw5vXeEMmtoSl+J22iIZ4A
+         PIhOt8jrl3XK+OQn6yzOEgWkDoOMCD+AHqwr+ppeObwxOm7FD8c8gcBgw4OIs8CRbU
+         8krrWl39qgDkw==
+X-Nifty-SrcIP: [209.85.222.48]
+Received: by mail-ua1-f48.google.com with SMTP id z13so12514705uaa.4
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 05:48:32 -0700 (PDT)
+X-Gm-Message-State: APjAAAXLsNSjYbGN3hxoV2eKS5m90QkY61e9+XnmkfZJddVhuxZq8nRF
+        S4NV6jjpS3jMHjx11ctMDagO7gnh8a+4ubsog6s=
+X-Google-Smtp-Source: APXvYqxOyWum8d8aY9+9Dr7DtLlXKz2YSlhp6ZMGjkRPpk6HL2DkyJda99rECBEPf7yVSnsipgh62d6QeUv24pwtGI8=
+X-Received: by 2002:ab0:5ea6:: with SMTP id y38mr33134716uag.40.1563540511666;
+ Fri, 19 Jul 2019 05:48:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190719113139.4005262-1-arnd@arndb.de>
+In-Reply-To: <20190719113139.4005262-1-arnd@arndb.de>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 19 Jul 2019 21:47:55 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS49O=v8tJe+NauzsexVeg5hWNzFMFuWbCJbqc_qRv3dw@mail.gmail.com>
+Message-ID: <CAK7LNAS49O=v8tJe+NauzsexVeg5hWNzFMFuWbCJbqc_qRv3dw@mail.gmail.com>
+Subject: Re: [PATCH] [v2] blkdev: always export SECTOR_SHIFT
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot reported general protection fault in kstrtouint:
-https://lkml.org/lkml/2019/7/18/328
+Hi Arnd,
 
-From the log, if the mount option is something like:
-   fd,XXXXXXXXXXXXXXXXXXXX
+On Fri, Jul 19, 2019 at 8:32 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> When CONFIG_BLOCK is disabled, SECTOR_SHIFT is unknown, and this leads
+> to a failure in the testing infrastructure added from commit c93a0368aaa2
+> ("kbuild: do not create wrappers for header-test-y"):
 
-The default parameter (which has NULL param->string) will be
-passed to vfs_parse_fs_param. Finally, this NULL param->string
-is passed to kstrtouint and trigger NULL pointer access.
+I think this should be
 
-Reported-by: syzbot+398343b7c1b1b989228d@syzkaller.appspotmail.com
-Fixes: 71cbb7570a9a ("vfs: Move the subtype parameter into fuse")
+commit 43c78d88036e ("kbuild: compile-test kernel headers to ensure
+they are self-contained")
 
-Signed-off-by: Yin Fengwei <nh26223.lmm@gmail.com>
----
- fs/fs_parser.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks.
 
-diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-index d13fe7d797c2..578e6880ac67 100644
---- a/fs/fs_parser.c
-+++ b/fs/fs_parser.c
-@@ -210,6 +210,10 @@ int fs_parse(struct fs_context *fc,
- 	case fs_param_is_fd: {
- 		switch (param->type) {
- 		case fs_value_is_string:
-+			if (result->has_value) {
-+				goto bad_value;
-+			}
-+
- 			ret = kstrtouint(param->string, 0, &result->uint_32);
- 			break;
- 		case fs_value_is_file:
+
+>
+> In file included from <built-in>:3:
+> include/linux/iomap.h:76:48: error: use of undeclared identifier 'SECTOR_SHIFT'
+>         return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
+>
+> If we want to keep build testing all headers, the macro needs to
+> either be defined, or not used. Move it out of the #ifdef
+> section to ensure it is visible.
+>
+> Fixes: db074436f421 ("iomap: move the direct IO code into a separate file")
+> Link: https://lore.kernel.org/lkml/20190718125509.775525-1-arnd@arndb.de/T/
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> The discussion about the build testing is still going on, but I promised
+> to send this version anyway for reference. I see no other header-test
+> failures in randconfig builds with this patch.
+> ---
+
+
+
 -- 
-2.17.1
-
+Best Regards
+Masahiro Yamada
