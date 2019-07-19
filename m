@@ -2,39 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27D386DE1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C38E6DE10
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:26:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733022AbfGSEIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:08:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42386 "EHLO mail.kernel.org"
+        id S1730571AbfGSEIZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:08:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732958AbfGSEIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:08:14 -0400
+        id S1732983AbfGSEIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:08:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A69292187F;
-        Fri, 19 Jul 2019 04:08:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 475AE21872;
+        Fri, 19 Jul 2019 04:08:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509293;
-        bh=lFA/SdWyKKC7pB2ExBe+FYfpD82/Opn5RKbuCTjsP9I=;
+        s=default; t=1563509296;
+        bh=OwPkD1ZxcC/tQtUPnQiKK8evUVR/5Xj1GmEdTgy3UsU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OFgEi8Tfgk7JAeoETU5q3fud2EyJgMaA0alD7AEnMC7bY6IfUyCMQKJXMsVlORyUj
-         znunWwd4TFETq1TTYXL8hwR7g/Py3hDlwtkkkcdN1fGYvmuGQ2O00wd3sC+nLeMr/O
-         hv0u+GDtAa75WpXxKk5Kjy7EJyH2DJ5SA+1P28i4=
+        b=nJF/XsxxVVgn2Chfj0EFri2eBfKy7fkWi7cIYI+e6axfhVkqIgLoV6VYcXLPAsXhn
+         q9Y7/3y4/vjSAMxj88Jmpvu4UxrAjfWZoAIwAZkwIlIYXm4LRg8N2P8vBiZO6NxQsy
+         /3KD9ABI3humJq6mBgiyIeZhjni0pvzq+n5Nh3Kk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thierry Reding <treding@nvidia.com>,
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
         Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 019/101] gpu: host1x: Increase maximum DMA segment size
-Date:   Fri, 19 Jul 2019 00:06:10 -0400
-Message-Id: <20190719040732.17285-19-sashal@kernel.org>
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 021/101] drm/crc-debugfs: Also sprinkle irqrestore over early exits
+Date:   Fri, 19 Jul 2019 00:06:12 -0400
+Message-Id: <20190719040732.17285-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
 References: <20190719040732.17285-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -43,56 +51,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-[ Upstream commit 1e390478cfb527e34c9ab89ba57212cb05c33c51 ]
+[ Upstream commit d99004d7201aa653658ff2390d6e516567c96ebc ]
 
-Recent versions of the DMA API debug code have started to warn about
-violations of the maximum DMA segment size. This is because the segment
-size defaults to 64 KiB, which can easily be exceeded in large buffer
-allocations such as used in DRM/KMS for framebuffers.
+I. was. blind.
 
-Technically the Tegra SMMU and ARM SMMU don't have a maximum segment
-size (they map individual pages irrespective of whether they are
-contiguous or not), so the choice of 4 MiB is a bit arbitrary here. The
-maximum segment size is a 32-bit unsigned integer, though, so we can't
-set it to the correct maximum size, which would be the size of the
-aperture.
+Caught with vkms, which has some really slow crc computation function.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Fixes: 1882018a70e0 ("drm/crc-debugfs: User irqsafe spinlock in drm_crtc_add_crc_entry")
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Emil Velikov <emil.velikov@collabora.com>
+Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
+Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190606211544.5389-1-daniel.vetter@ffwll.ch
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/host1x/bus.c | 3 +++
- include/linux/host1x.h   | 2 ++
- 2 files changed, 5 insertions(+)
+ drivers/gpu/drm/drm_debugfs_crc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index 815bdb42e3f0..0121fe7a4548 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -423,6 +423,9 @@ static int host1x_device_add(struct host1x *host1x,
+diff --git a/drivers/gpu/drm/drm_debugfs_crc.c b/drivers/gpu/drm/drm_debugfs_crc.c
+index a334a82fcb36..c88e5ff41add 100644
+--- a/drivers/gpu/drm/drm_debugfs_crc.c
++++ b/drivers/gpu/drm/drm_debugfs_crc.c
+@@ -385,7 +385,7 @@ int drm_crtc_add_crc_entry(struct drm_crtc *crtc, bool has_frame,
  
- 	of_dma_configure(&device->dev, host1x->dev->of_node, true);
+ 	/* Caller may not have noticed yet that userspace has stopped reading */
+ 	if (!crc->entries) {
+-		spin_unlock(&crc->lock);
++		spin_unlock_irqrestore(&crc->lock, flags);
+ 		return -EINVAL;
+ 	}
  
-+	device->dev.dma_parms = &device->dma_parms;
-+	dma_set_max_seg_size(&device->dev, SZ_4M);
-+
- 	err = host1x_device_parse_dt(device, driver);
- 	if (err < 0) {
- 		kfree(device);
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index 89110d896d72..aef6e2f73802 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -310,6 +310,8 @@ struct host1x_device {
- 	struct list_head clients;
+@@ -396,7 +396,7 @@ int drm_crtc_add_crc_entry(struct drm_crtc *crtc, bool has_frame,
+ 		bool was_overflow = crc->overflow;
  
- 	bool registered;
-+
-+	struct device_dma_parameters dma_parms;
- };
+ 		crc->overflow = true;
+-		spin_unlock(&crc->lock);
++		spin_unlock_irqrestore(&crc->lock, flags);
  
- static inline struct host1x_device *to_host1x_device(struct device *dev)
+ 		if (!was_overflow)
+ 			DRM_ERROR("Overflow of CRC buffer, userspace reads too slow.\n");
 -- 
 2.20.1
 
