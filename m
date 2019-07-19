@@ -2,175 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5515E6D7DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:41:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 115E36D7D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:37:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726482AbfGSAkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 20:40:01 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:48470 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726015AbfGSAkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 20:40:01 -0400
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hoGwH-0003ao-La; Thu, 18 Jul 2019 18:39:58 -0600
-To:     Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Cc:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>
-References: <20190718225132.5865-1-logang@deltatee.com>
- <20190718225132.5865-2-logang@deltatee.com>
- <c52f80b1-e154-b11f-a868-e3209e4ccb2d@grimberg.me>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <6deea9e7-ff3c-e115-b2f2-8914df0b6da7@deltatee.com>
-Date:   Thu, 18 Jul 2019 18:39:56 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726343AbfGSAgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 20:36:50 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41730 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbfGSAgu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 20:36:50 -0400
+Received: by mail-lf1-f66.google.com with SMTP id 62so15613188lfa.8;
+        Thu, 18 Jul 2019 17:36:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=d6XRGsphvO5VwyeOTd5IMW9yead4IXNTP6aR3kKM4EQ=;
+        b=aGRCvWxwn2WzSEgd1n1l8Vh27OT1zQaA5s6nZ0E3niteyofVZwJbOiJkiwO9PH+W98
+         BCsjJgAxfzHgPzTWuL5/6VVspWNLRWxgcbl2Z9rxk1D97rZNHW62qCPRBKRUOCIWCld+
+         fMxrnxNKiZtq29pjy0XRve1dKRtouBSnDtz7HNox4gPea4maBlM735SaG3SLxp/3Jcqc
+         2g0M3ClnAnjV+QIa0nMzYxJqHOycDJp9YecdN8wbOyAuK/zqmmlW089BciNm5vsNG+TV
+         jSr3HGVWZYp+VwsKSEdn+yk/Yoa2dNTxegKi8NsQefGDOtU5ZU7VBCkzNXD5YMMtzafb
+         UWOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=d6XRGsphvO5VwyeOTd5IMW9yead4IXNTP6aR3kKM4EQ=;
+        b=BkrB6p7m8+Cklk9Sw5lrU+FwaeD3wR0+CUxawqHEtOIWMd1N4F797qud7xrm+Cb0Z1
+         HQHTM/uAdo+AneCSfEAx1ABlcRsUidvl+pKhMtYBkk/ZrFFmh4MYkWdtyI0SAO5EF+rI
+         Re/LzH3+pljTdriu8N/KCe1ejDNf29U2pR0cqJcCzN0Jd+uTpIzLkvkkwGkHye3qDixa
+         K+NlMm/0JdChJqcfCRASNbCMTiOtEO6Go/fmACxm86ES/n5JrwpQnxM0GWL0ima7pGGF
+         zoMFAOnPtGWLvLH5raSZXFZJTD0xWkOKmWWRxH7Jj7F4exagL0OivQDajWE73deulf0b
+         yEHQ==
+X-Gm-Message-State: APjAAAWpBlRVK/5UIedRj5ktQqQONiqzvNU9wyjvFNvAVMslTwtgzNx3
+        zR9i4tziSMpDOj3WNZXiUnE=
+X-Google-Smtp-Source: APXvYqx6kxUTxgleSYbBtQCAXESEe/JwOtRHpq7xJ1C3VU3OCfBetFuk2jnZGapCuV9p18o+wZQ98w==
+X-Received: by 2002:a19:9111:: with SMTP id t17mr22440659lfd.113.1563496608296;
+        Thu, 18 Jul 2019 17:36:48 -0700 (PDT)
+Received: from dimatab (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.gmail.com with ESMTPSA id z83sm5368566ljb.73.2019.07.18.17.36.47
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 18 Jul 2019 17:36:48 -0700 (PDT)
+Date:   Fri, 19 Jul 2019 03:40:25 +0300
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 19/24] PM / devfreq: tegra30: Optimize upper
+ consecutive watermark selection
+Message-ID: <20190719034025.67c82123@dimatab>
+In-Reply-To: <17fabbaf-ceca-7551-0a58-9c8a0e7027ed@samsung.com>
+References: <20190707223303.6755-1-digetx@gmail.com>
+        <CGME20190707223622epcas4p48ec0d7e6fa26bc2397fa4351c0bd0c2d@epcas4p4.samsung.com>
+        <20190707223303.6755-20-digetx@gmail.com>
+        <17fabbaf-ceca-7551-0a58-9c8a0e7027ed@samsung.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
 MIME-Version: 1.0
-In-Reply-To: <c52f80b1-e154-b11f-a868-e3209e4ccb2d@grimberg.me>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: hch@lst.de, axboe@fb.com, kbusch@kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, sagi@grimberg.me
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH 2/2] nvme-core: Fix deadlock when deleting the ctrl while
- scanning
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+=D0=92 Thu, 18 Jul 2019 18:51:02 +0900
+Chanwoo Choi <cw00.choi@samsung.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
+> On 19. 7. 8. =EC=98=A4=EC=A0=84 7:32, Dmitry Osipenko wrote:
+> > The memory activity counter may get a bit higher than a watermark
+> > which is selected based on OPP that corresponds to a highest EMC
+> > rate, in this case watermark is lower than the actual memory
+> > activity is and thus results in unwanted "upper" interrupts.
+> >=20
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > ---
+> >  drivers/devfreq/tegra30-devfreq.c | 13 ++++++++++++-
+> >  1 file changed, 12 insertions(+), 1 deletion(-) =20
+>=20
+> It seems that you can combine patch19 with patch20.
 
-On 2019-07-18 6:25 p.m., Sagi Grimberg wrote:
-> 
->> With multipath enabled, nvme_scan_work() can read from the
->> device (through nvme_mpath_add_disk()). However, with fabrics,
->> once ctrl->state is set to NVME_CTRL_DELETING, the reads will hang
->> (see nvmf_check_ready()).
->>
->> After setting the state to deleting, nvme_remove_namespaces() will
->> hang waiting for scan_work to flush and these tasks will hang.
->>
->> To fix this, ensure we take scan_lock before changing the ctrl-state.
->> Also, ensure the state is checked while the lock is held
->> in nvme_scan_lock_work().
-> 
-> That's a big hammer...
+No, consecutive and average watermarks are different things that have
+different purposes. Consecutive are used for boosting, while average
+are for significant memory bandwidth changes.
 
-I didn't think the scan_lock was that contested or that
-nvme_change_ctrl_state() was really called that often...
+> >=20
+> > diff --git a/drivers/devfreq/tegra30-devfreq.c
+> > b/drivers/devfreq/tegra30-devfreq.c index
+> > 8d6bf6e9f1ae..c3cf87231d25 100644 ---
+> > a/drivers/devfreq/tegra30-devfreq.c +++
+> > b/drivers/devfreq/tegra30-devfreq.c @@ -363,7 +363,18 @@ static
+> > void tegra_devfreq_update_wmark(struct tegra_devfreq *tegra,
+> > tegra_actmon_get_lower_upper(tegra, dev, freq - 1, &lower, &upper);=20
+> >  	delta =3D do_percent(upper - lower,
+> > dev->config->boost_up_threshold);
+> > -	device_writel(dev, lower + delta, ACTMON_DEV_UPPER_WMARK);
+> > +
+> > +	/*
+> > +	 * The memory events count could go a bit higher than the
+> > maximum
+> > +	 * defined by the OPPs, hence make the upper watermark
+> > infinitely
+> > +	 * high to avoid unnecessary upper interrupts in that case.
+> > +	 */
+> > +	if (freq =3D=3D tegra->max_freq)
+> > +		upper =3D ULONG_MAX;
+> > +	else
+> > +		upper =3D lower + delta;
+> > +
+> > +	device_writel(dev, upper, ACTMON_DEV_UPPER_WMARK);
+> > =20
+> >  	/*
+> >  	 * Meanwhile the lower mark is based on the average value
+> >  =20
+>=20
+>=20
 
-> But this is I/O that we cannot have queued until we have a path..
-> 
-> I would rather have nvme_remove_namespaces() requeue all I/Os for
-> namespaces that serve as the current_path and have the make_request
-> routine to fail I/O if all controllers are deleting as well.
-> 
-> Would something like [1] (untested) make sense instead?
-
-I'll have to give this a try next week and I'll let you know then. It
-kind of makes sense to me but a number of things I tried to fix this
-that I thought made sense did not work.
-
-> 
->> +    mutex_lock(&ctrl->scan_lock);
->> +
->>       if (ctrl->state != NVME_CTRL_LIVE)
->>           return;
-> 
-> unlock
-
-If we unlock here and relock below, we'd have to recheck the ctrl->state
-to avoid any races. If you don't want to call nvme_identify_ctrl with
-the lock held, then it would probably be better to move the state check
-below it.
-
->>   @@ -3547,7 +3554,6 @@ static void nvme_scan_work(struct work_struct
->> *work)
->>       if (nvme_identify_ctrl(ctrl, &id))
->>           return;
-> 
-> unlock
-> 
-> 
-> [1]:
-> -- 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index 76cd3dd8736a..627f5871858d 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -3576,6 +3576,11 @@ void nvme_remove_namespaces(struct nvme_ctrl *ctrl)
->         struct nvme_ns *ns, *next;
->         LIST_HEAD(ns_list);
-> 
-> +       mutex_lock(&ctrl->scan_lock);
-> +       list_for_each_entry(ns, &ctrl->namespaces, list)
-> +               nvme_mpath_clear_current_path(ns);
-> +       mutex_lock(&ctrl->scan_lock);
-> +
->         /* prevent racing with ns scanning */
->         flush_work(&ctrl->scan_work);
-> 
-> diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-> index a9a927677970..da1731266788 100644
-> --- a/drivers/nvme/host/multipath.c
-> +++ b/drivers/nvme/host/multipath.c
-> @@ -231,6 +231,24 @@ inline struct nvme_ns *nvme_find_path(struct
-> nvme_ns_head *head)
->         return ns;
->  }
-> 
-> +static bool nvme_available_path(struct nvme_ns_head *head)
-> +{
-> +       struct nvme_ns *ns;
-> +
-> +       list_for_each_entry_rcu(ns, &head->list, siblings) {
-> +               switch (ns->ctrl->state) {
-> +               case NVME_CTRL_LIVE:
-> +               case NVME_CTRL_RESETTING:
-> +               case NVME_CTRL_CONNECTING:
-> +                       /* fallthru */
-> +                       return true;
-> +               default:
-> +                       break;
-> +               }
-> +       }
-> +       return false;
-> +}
-> +
->  static blk_qc_t nvme_ns_head_make_request(struct request_queue *q,
->                 struct bio *bio)
->  {
-> @@ -257,14 +275,14 @@ static blk_qc_t nvme_ns_head_make_request(struct
-> request_queue *q,
->                                       disk_devt(ns->head->disk),
->                                       bio->bi_iter.bi_sector);
->                 ret = direct_make_request(bio);
-> -       } else if (!list_empty_careful(&head->list)) {
-> -               dev_warn_ratelimited(dev, "no path available - requeuing
-> I/O\n");
-> +       } else if (nvme_available_path(head)) {
-> +               dev_warn_ratelimited(dev, "no usable path - requeuing
-> I/O\n");
-> 
->                 spin_lock_irq(&head->requeue_lock);
->                 bio_list_add(&head->requeue_list, bio);
->                 spin_unlock_irq(&head->requeue_lock);
->         } else {
-> -               dev_warn_ratelimited(dev, "no path - failing I/O\n");
-> +               dev_warn_ratelimited(dev, "no available path - failing
-> I/O\n");
-> 
->                 bio->bi_status = BLK_STS_IOERR;
->                 bio_endio(bio);
-> -- 
