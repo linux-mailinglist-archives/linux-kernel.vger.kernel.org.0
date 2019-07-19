@@ -2,49 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B3BA6E33E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 11:16:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8FDD6E332
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 11:13:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbfGSJQO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 05:16:14 -0400
-Received: from mail.celpinf.com.ar ([181.199.160.12]:53110 "EHLO
-        mail.celpinf.com.ar" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbfGSJQN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 05:16:13 -0400
-X-Greylist: delayed 1381 seconds by postgrey-1.27 at vger.kernel.org; Fri, 19 Jul 2019 05:16:13 EDT
-Received: from webmail.celpinf.com.ar (mail.celpinf.com.ar [181.199.160.12])
-        by mail.celpinf.com.ar (8.14.4/8.14.4) with ESMTP id x6J8kiXB006604;
-        Fri, 19 Jul 2019 05:46:45 -0300
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.celpinf.com.ar x6J8kiXB006604
+        id S1726247AbfGSJNP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 05:13:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46288 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725794AbfGSJNP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 05:13:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 60C7EAFB7;
+        Fri, 19 Jul 2019 09:13:14 +0000 (UTC)
+Date:   Fri, 19 Jul 2019 11:13:13 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v1] drivers/base/node.c: Simplify
+ unregister_memory_block_under_nodes()
+Message-ID: <20190719091313.GR30461@dhcp22.suse.cz>
+References: <20190718142239.7205-1-david@redhat.com>
+ <20190719084239.GO30461@dhcp22.suse.cz>
+ <eff19965-f280-6124-8fc5-56e3101f67cb@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Fri, 19 Jul 2019 09:46:44 +0100
-From:   info@webmail.hu
-To:     undisclosed-recipients:;
-Subject: =?UTF-8?Q?Friss=C3=ADtse_fi=C3=B3kj=C3=A1t?=
-Message-ID: <6e6eb4175c9d2dd5c8ad0fbf9fa40b15@celpinf.com.ar>
-X-Sender: info@webmail.hu
-User-Agent: Roundcube Webmail/1.1.4
-X-Multinetmo-MailScanner-Information: Please contact the ISP for more information
-X-Multinetmo-MailScanner-ID: x6J8kiXB006604
-X-Multinetmo-MailScanner: Found to be clean
-X-Multinetmo-MailScanner-From: info@webmail.hu
-X-Spam-Status: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eff19965-f280-6124-8fc5-56e3101f67cb@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri 19-07-19 11:05:51, David Hildenbrand wrote:
+> On 19.07.19 10:42, Michal Hocko wrote:
+> > On Thu 18-07-19 16:22:39, David Hildenbrand wrote:
+> >> We don't allow to offline memory block devices that belong to multiple
+> >> numa nodes. Therefore, such devices can never get removed. It is
+> >> sufficient to process a single node when removing the memory block.
+> >>
+> >> Remember for each memory block if it belongs to no, a single, or mixed
+> >> nodes, so we can use that information to skip unregistering or print a
+> >> warning (essentially a safety net to catch BUGs).
+> > 
+> > I do not really like NUMA_NO_NODE - 1 thing. This is yet another invalid
+> > node that is magic. Why should we even care? In other words why is this
+> > patch an improvement?
+> 
+> Oh, and to answer that part of the question:
+> 
+> We no longer have to iterate over each pfn of a memory block to be removed.
 
+Is it possible that we are overzealous when unregistering syfs files and
+we should simply skip the pfn walk even without this change?
 
 -- 
-Kérjük, vegye figyelembe, hogy a Webmail-fiókja jelenleg túlterhelt, 
-az összes Webmail-fiókot frissítjük. Kérjük, ellenőrizze 
-webmailét ma az alábbi linkkel.
-
-https://accountweb.inditioncra.com/6mbopv5i
-
-© 2019 Webmail ellenőrző központ
+Michal Hocko
+SUSE Labs
