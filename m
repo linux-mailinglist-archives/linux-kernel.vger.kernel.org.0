@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECCDE6DF66
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:35:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E4016DF62
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:35:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbfGSEed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:34:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33684 "EHLO mail.kernel.org"
+        id S1730769AbfGSEe1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:34:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729693AbfGSEBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:01:53 -0400
+        id S1729723AbfGSEB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:01:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D5A321851;
-        Fri, 19 Jul 2019 04:01:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7748E218B8;
+        Fri, 19 Jul 2019 04:01:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508912;
-        bh=+hCM6REWCGyOM6ATFUsntBdajWBPV6AdXDvS2mwE8Qg=;
+        s=default; t=1563508915;
+        bh=AX73ikEry2voD9wFvV2u+EohCETcn1SCunXvxQ1Q/iM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fzWYcQuMN9EAw0u2vd5/2Q+4CK1ltGJPIP/ygvB+bUP4cS38CHYs0xHZa3UzNPY5O
-         GSqqkvR9NRCzYGPKYvqmFrMz4OzZD1/zF0YCUOlENOw8xzOBLY51cDvPPQpYk6/tYH
-         A/nO+OMQjzuiiUYOXPD9q+zxuJzw6NmeliD7AY0k=
+        b=JQSKNuJLYiTUdttgbHjCFM57pro8CPqICgCCnxH9IsrXsC8gM2/0Z1+su6lJi9x/s
+         1OQD4qMO6UtWGoccmF/v5pQAbk0TJz55BLXeSDAhykuTXGyBSY7eGH4s9cXSfSnJw/
+         vZypyNkYu5NEjTixxmmW5LsFAcX5U2yfOCEKNayw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Maor Gottlieb <maorg@mellanox.com>, Roi Dayan <roid@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 155/171] net/mlx5: E-Switch, Fix default encap mode
-Date:   Thu, 18 Jul 2019 23:56:26 -0400
-Message-Id: <20190719035643.14300-155-sashal@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Kees Cook <keescook@chromium.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>,
+        v9fs-developer@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 5.2 157/171] 9p: pass the correct prototype to read_cache_page
+Date:   Thu, 18 Jul 2019 23:56:28 -0400
+Message-Id: <20190719035643.14300-157-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -44,66 +47,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maor Gottlieb <maorg@mellanox.com>
+From: Christoph Hellwig <hch@lst.de>
 
-[ Upstream commit 9a64144d683a4395f57562d90247c61a0bf5105f ]
+[ Upstream commit f053cbd4366051d7eb6ba1b8d529d20f719c2963 ]
 
-Encap mode is related to switchdev mode only. Move the init of
-the encap mode to eswitch_offloads. Before this change, we reported
-that eswitch supports encap, even tough the device was in non
-SRIOV mode.
+Fix the callback 9p passes to read_cache_page to actually have the
+proper type expected.  Casting around function pointers can easily
+hide typing bugs, and defeats control flow protection.
 
-Fixes: 7768d1971de67 ('net/mlx5: E-Switch, Add control for encapsulation')
-Signed-off-by: Maor Gottlieb <maorg@mellanox.com>
-Reviewed-by: Roi Dayan <roid@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Link: http://lkml.kernel.org/r/20190520055731.24538-5-hch@lst.de
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Cc: Sami Tolvanen <samitolvanen@google.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c          | 5 -----
- drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c | 7 +++++++
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ fs/9p/vfs_addr.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-index 6a921e24cd5e..e9339e7d6a18 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-@@ -1882,11 +1882,6 @@ int mlx5_eswitch_init(struct mlx5_core_dev *dev)
- 	esw->enabled_vports = 0;
- 	esw->mode = SRIOV_NONE;
- 	esw->offloads.inline_mode = MLX5_INLINE_MODE_NONE;
--	if (MLX5_CAP_ESW_FLOWTABLE_FDB(dev, reformat) &&
--	    MLX5_CAP_ESW_FLOWTABLE_FDB(dev, decap))
--		esw->offloads.encap = DEVLINK_ESWITCH_ENCAP_MODE_BASIC;
--	else
--		esw->offloads.encap = DEVLINK_ESWITCH_ENCAP_MODE_NONE;
- 
- 	dev->priv.eswitch = esw;
- 	return 0;
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-index 47b446d30f71..c2beadc41c40 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-@@ -1840,6 +1840,12 @@ int esw_offloads_init(struct mlx5_eswitch *esw, int vf_nvports,
+diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+index bc57ae9e2963..cce9ace651a2 100644
+--- a/fs/9p/vfs_addr.c
++++ b/fs/9p/vfs_addr.c
+@@ -35,8 +35,9 @@
+  * @page: structure to page
+  *
+  */
+-static int v9fs_fid_readpage(struct p9_fid *fid, struct page *page)
++static int v9fs_fid_readpage(void *data, struct page *page)
  {
- 	int err;
++	struct p9_fid *fid = data;
+ 	struct inode *inode = page->mapping->host;
+ 	struct bio_vec bvec = {.bv_page = page, .bv_len = PAGE_SIZE};
+ 	struct iov_iter to;
+@@ -107,7 +108,8 @@ static int v9fs_vfs_readpages(struct file *filp, struct address_space *mapping,
+ 	if (ret == 0)
+ 		return ret;
  
-+	if (MLX5_CAP_ESW_FLOWTABLE_FDB(esw->dev, reformat) &&
-+	    MLX5_CAP_ESW_FLOWTABLE_FDB(esw->dev, decap))
-+		esw->offloads.encap = DEVLINK_ESWITCH_ENCAP_MODE_BASIC;
-+	else
-+		esw->offloads.encap = DEVLINK_ESWITCH_ENCAP_MODE_NONE;
-+
- 	err = esw_offloads_steering_init(esw, vf_nvports, total_nvports);
- 	if (err)
- 		return err;
-@@ -1901,6 +1907,7 @@ void esw_offloads_cleanup(struct mlx5_eswitch *esw)
- 	esw_offloads_devcom_cleanup(esw);
- 	esw_offloads_unload_all_reps(esw, num_vfs);
- 	esw_offloads_steering_cleanup(esw);
-+	esw->offloads.encap = DEVLINK_ESWITCH_ENCAP_MODE_NONE;
+-	ret = read_cache_pages(mapping, pages, (void *)v9fs_vfs_readpage, filp);
++	ret = read_cache_pages(mapping, pages, v9fs_fid_readpage,
++			filp->private_data);
+ 	p9_debug(P9_DEBUG_VFS, "  = %d\n", ret);
+ 	return ret;
  }
- 
- static int esw_mode_from_devlink(u16 mode, u16 *mlx5_mode)
 -- 
 2.20.1
 
