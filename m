@@ -2,139 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEACD6ECA6
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 01:02:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B31E6ECA9
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 01:08:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732445AbfGSXCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 19:02:53 -0400
-Received: from mail-eopbgr770075.outbound.protection.outlook.com ([40.107.77.75]:54327
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728747AbfGSXCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 19:02:53 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hzlHpwNDM3Xtl7RKlu2BSpppOW2qamxSVDOjg7Si2kuPE69iRw141WMk6INW07H3+yfokw63ZfmR0dEK8gTzMYRtMgqwNNF7xikxzUc8DFBgajKwX2LiVYaurxvUyX0DPVoec1ej0Atv7j7X4hUCUUS+hlQqMil0Lr6eAY67fVmC+mDqSgGZvxbP80wtWVi2CBGVHWK1TIeIIoLqqY86RRsUyOo6bfN/6tWkzpT7AmUQRcYuLdcIsURJaKkmdcb72rVffu2xMS85vqCK51uwoYjSFaH7knF9uhAGB12uszS3Jmf3fPJBhr6wcx8jRqo4qAqdkyGI2D/fQn4+CwC92Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kcrv2m54MRahLciDr3DupushtytNe0Jqkv/fWka/ceQ=;
- b=d9BVFxV3BYXjT3tmFGTFhHmjVlz7wcWUnPfr2VvsvKWfWBpVC0P8PGHkDTK9IF49az3ZNzi2wP4z4a+Skbh2RsfWSXA8Vke5ph7zQrkgF5aZOH5GYpyWurjJwyM+OPSxJOgO+1/d+AkcUps7FR7fxuYiRxrFmDdWKyDJcxxUIsRtdn81PKCWVVzWtJ+MOovuHPLtXbeRcgM2wVOF1PHod9fXk/akfMKJfzWu6YeirFXbfx14I+hGZ+8InVvb1Jsu2t+K/F1f8rfLoW7HL8j1gm+FvQwc6bvQrOUEQMGewku+BxYk+U47BXOmnFN0Pr7Xml5Ykd+GVDrf/Z/IiGNJ4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=vmware.com;dmarc=pass action=none
- header.from=vmware.com;dkim=pass header.d=vmware.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kcrv2m54MRahLciDr3DupushtytNe0Jqkv/fWka/ceQ=;
- b=p+JT7L0KFe0EHMYpb3QMStjYzN+AMEJVrNj65Fa85UHoRCBElGwjrqDJ3YAyDN4mHy3Wo7p1iGHKQ7dKX2KxcTC/jkKuKMRMmwCjFyAdKHX5di4sh9EmnrDy7dIIAYZRyCuTDYyRiVwRHb8ZvjoS9VEXg2z4KxK6LH2WfbCUSnE=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB6200.namprd05.prod.outlook.com (20.178.55.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2115.8; Fri, 19 Jul 2019 23:02:48 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::e00b:cb41:8ed6:b718]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::e00b:cb41:8ed6:b718%2]) with mapi id 15.20.2094.009; Fri, 19 Jul 2019
- 23:02:47 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Joe Perches <joe@perches.com>
-CC:     Dave Hansen <dave.hansen@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH v3 3/9] x86/mm/tlb: Open-code on_each_cpu_cond_mask() for
- tlb_is_not_lazy()
-Thread-Topic: [PATCH v3 3/9] x86/mm/tlb: Open-code on_each_cpu_cond_mask() for
- tlb_is_not_lazy()
-Thread-Index: AQHVPc0s+2522G+J006mLkslhMknOKbSRkAAgAABN4CAAEPkAIAABTIA
-Date:   Fri, 19 Jul 2019 23:02:47 +0000
-Message-ID: <D13BA044-AC02-46A7-9C5C-48FE8B6E8F63@vmware.com>
-References: <20190719005837.4150-1-namit@vmware.com>
- <20190719005837.4150-4-namit@vmware.com>
- <8bf005e2-7ac7-f1cf-eca1-0e152dd912a7@intel.com>
- <6847D7A3-4618-4BC3-97B6-EC53F6985504@vmware.com>
- <511eb129bc0a6c92e3547c69a6e55695241dfe4a.camel@perches.com>
-In-Reply-To: <511eb129bc0a6c92e3547c69a6e55695241dfe4a.camel@perches.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [66.170.99.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 193e75f7-57dd-4d11-199d-08d70c9d3792
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR05MB6200;
-x-ms-traffictypediagnostic: BYAPR05MB6200:
-x-microsoft-antispam-prvs: <BYAPR05MB620080D38B9BECF4814A677AD0CB0@BYAPR05MB6200.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 01039C93E4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(396003)(39860400002)(366004)(136003)(199004)(189003)(33656002)(7416002)(71190400001)(71200400001)(305945005)(14454004)(7736002)(6506007)(256004)(53546011)(14444005)(99286004)(186003)(486006)(26005)(54906003)(102836004)(8676002)(446003)(11346002)(76176011)(316002)(476003)(2616005)(4326008)(68736007)(8936002)(5660300002)(6116002)(6246003)(3846002)(6916009)(66946007)(76116006)(81166006)(81156014)(66066001)(66446008)(64756008)(66556008)(66476007)(229853002)(6512007)(2906002)(6436002)(86362001)(6486002)(53936002)(478600001)(25786009)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB6200;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: k1i6IjQtADvAdESwi9+ZmAOfPXYz/0eXMa+BxQZab0RUNRjbargccaAxdMzGrjsI9FBJxC+bthS9dRdYyEHFKTiFsh12MOhmekWTLsDCHIqd6Enh2DiDYKSSaatb8vZMApp8KdBXiyrPbHD+3xL2b7Y6nUXocDsSfEOABqZn8iO9xB3Ipf1k2t2/O8UKiFKtk3N09lHvr6Ok8nuWBK79ZV84bfhnpTyizrCWDRBs/meloIwkrELb4qDwba54xjFVCMIp4OhaaJEFCuRE8pDoYcD7JIxHogm9gwANIaQx/PTSTyzxP/xy32p4dG/KEVT4WWPEBpSUjvEA22MK22yfdBMZGR++VKB1upNH3B8sLJyH8m/yvbnUy1xDC3ukVaV6/ViSvALeazqtxu8HcyDsAn6gViKTcZKeBL0SEKrZlew=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DCFDDF14852C9A4BA9A4A4AE7610444E@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1732527AbfGSXHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 19:07:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45954 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728747AbfGSXHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 19:07:52 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EB5C2089C;
+        Fri, 19 Jul 2019 23:07:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563577671;
+        bh=6h+e0DQ6omq60QcQu5YWlxGv1jSCpjt2R+a+Cp1vyTA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=SVSCVAFUR7KijMhbggA2vVf9ja197HO3/EZeglfHS1uLj9MGTrj6TLon1iUEsoAbL
+         jXwNqirqqO0t4OgBKa/kOxQEXzXZaavgFvHlW6hwkYV5Evp2/qYbEe+wjCVC+BM0cL
+         OsgVjE2yQ+OoUdCFqwS8j2fC5vfL3LB82Eo0A8Qo=
+Message-ID: <1dee14212043f12ef5b26e4aee0c3155e118abf3.camel@kernel.org>
+Subject: Re: [PATCH 2/4] ceph: fix buffer free while holding i_ceph_lock in
+ __ceph_setxattr()
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luis Henriques <lhenriques@suse.com>,
+        Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>
+Date:   Fri, 19 Jul 2019 19:07:49 -0400
+In-Reply-To: <20190719143222.16058-3-lhenriques@suse.com>
+References: <20190719143222.16058-1-lhenriques@suse.com>
+         <20190719143222.16058-3-lhenriques@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 193e75f7-57dd-4d11-199d-08d70c9d3792
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2019 23:02:47.5576
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: namit@vmware.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB6200
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiBKdWwgMTksIDIwMTksIGF0IDM6NDQgUE0sIEpvZSBQZXJjaGVzIDxqb2VAcGVyY2hlcy5j
-b20+IHdyb3RlOg0KPiANCj4gT24gRnJpLCAyMDE5LTA3LTE5IGF0IDE4OjQxICswMDAwLCBOYWRh
-diBBbWl0IHdyb3RlOg0KPj4+IE9uIEp1bCAxOSwgMjAxOSwgYXQgMTE6MzYgQU0sIERhdmUgSGFu
-c2VuIDxkYXZlLmhhbnNlbkBpbnRlbC5jb20+IHdyb3RlOg0KPj4+IA0KPj4+IE9uIDcvMTgvMTkg
-NTo1OCBQTSwgTmFkYXYgQW1pdCB3cm90ZToNCj4+Pj4gQEAgLTg2NSw3ICs4OTMsNyBAQCB2b2lk
-IGFyY2hfdGxiYmF0Y2hfZmx1c2goc3RydWN0IGFyY2hfdGxiZmx1c2hfdW5tYXBfYmF0Y2ggKmJh
-dGNoKQ0KPj4+PiAJaWYgKGNwdW1hc2tfdGVzdF9jcHUoY3B1LCAmYmF0Y2gtPmNwdW1hc2spKSB7
-DQo+Pj4+IAkJbG9ja2RlcF9hc3NlcnRfaXJxc19lbmFibGVkKCk7DQo+Pj4+IAkJbG9jYWxfaXJx
-X2Rpc2FibGUoKTsNCj4+Pj4gLQkJZmx1c2hfdGxiX2Z1bmNfbG9jYWwoJmZ1bGxfZmx1c2hfdGxi
-X2luZm8pOw0KPj4+PiArCQlmbHVzaF90bGJfZnVuY19sb2NhbCgodm9pZCAqKSZmdWxsX2ZsdXNo
-X3RsYl9pbmZvKTsNCj4+Pj4gCQlsb2NhbF9pcnFfZW5hYmxlKCk7DQo+Pj4+IAl9DQo+Pj4gDQo+
-Pj4gVGhpcyBsb29rcyBsaWtlIHN1cGVyZmx1b3VzIGNodXJuLiAgSXMgaXQ/DQo+PiANCj4+IFVu
-Zm9ydHVuYXRlbHkgbm90LCBzaW5jZSBmdWxsX2ZsdXNoX3RsYl9pbmZvIGlzIGRlZmluZWQgYXMg
-Y29uc3QuIFdpdGhvdXQgaXQNCj4+IHlvdSB3b3VsZCBnZXQ6DQo+PiANCj4+IHdhcm5pbmc6IHBh
-c3NpbmcgYXJndW1lbnQgMSBvZiDigJhmbHVzaF90bGJfZnVuY19sb2NhbOKAmSBkaXNjYXJkcyDi
-gJhjb25zdOKAmSBxdWFsaWZpZXIgZnJvbSBwb2ludGVyIHRhcmdldCB0eXBlIFstV2Rpc2NhcmRl
-ZC1xdWFsaWZpZXJzXQ0KPj4gDQo+PiBBbmQgZmx1c2hfdGxiX2Z1bmNfbG9jYWwoKSBzaG91bGQg
-Z2V0ICh2b2lkICopIGFyZ3VtZW50IHNpbmNlIGl0IGlzIGFsc28NCj4+IHVzZWQgYnkgdGhlIFNN
-UCBpbmZyYXN0cnVjdHVyZS4NCj4gDQo+IGh1aD8NCj4gDQo+IGNvbW1pdCAzZGI2ZDVhNWVjYWYw
-YTc3OGQ3MjFjY2Y5ODA5MjQ4MzUwZDRiZmFmDQo+IEF1dGhvcjogTmFkYXYgQW1pdCA8bmFtaXRA
-dm13YXJlLmNvbT4NCj4gRGF0ZTogICBUaHUgQXByIDI1IDE2OjAxOjQzIDIwMTkgLTA3MDANCj4g
-DQo+IFtdDQo+IA0KPiAtc3RhdGljIHZvaWQgZmx1c2hfdGxiX2Z1bmNfbG9jYWwodm9pZCAqaW5m
-bywgZW51bSB0bGJfZmx1c2hfcmVhc29uIHJlYXNvbikNCj4gK3N0YXRpYyB2b2lkIGZsdXNoX3Rs
-Yl9mdW5jX2xvY2FsKGNvbnN0IHZvaWQgKmluZm8sIGVudW0gdGxiX2ZsdXNoX3JlYXNvbiByZWFz
-b24pDQoNCkhvcGVmdWxseSBJIGRlY2lwaGVyIHRoZSDigJxodWg/4oCdIGNvcnJlY3RseS4uLg0K
-DQpXaGVuIHdlIG1vdmVkIHRoZSBmbHVzaF90bGJfaW5mbyBvZmYgdGhlIHN0YWNrLCBpbiB0aGUg
-cGF0Y2ggdGhhdCB5b3UNCnJlZmVyZW5jZSwgd2UgY3JlYXRlZCBhIGdsb2JhbCBmdWxsX2ZsdXNo
-X3RsYl9pbmZvIHZhcmlhYmxlLCB3aGljaCB3YXMgc2V0DQphcyBjb25zdCBhbmQgZGVsaXZlcmVk
-IHRvIGZsdXNoX3RsYl9mdW5jX2xvY2FsLiBJIGNoYW5nZWQgdGhlIHNpZ25hdHVyZSBvZg0KdGhl
-IGZ1bmN0aW9uIHRvIGF2b2lkIGNhc3RpbmcuIElJUkMsIHNldHRpbmcgdGhlIHZhcmlhYmxlIGFz
-IGNvbnN0YW50DQpzbGlnaHRseSBpbXByb3ZlZCB0aGUgZ2VuZXJhdGVkIGFzc2VtYmx5LCBhbmQg
-YW55aG93IG1hZGUgc2Vuc2UuDQoNCkluIHRoaXMgcGF0Y2gtc2V0IEkgbmVlZCB0byBjaGFuZ2Ug
-dGhlIGZpcnN0IGFyZ3VtZW50IG9mDQpmbHVzaF90bGJfZnVuY19sb2NhbCB0byBiZSBub24tY29u
-c3QgdG8gbWF0Y2ggdGhlIFNNUCBmdW5jdGlvbiBzaWduYXR1cmUNCndoaWNoIHRha2VzIGEgc2lu
-Z2xlIG5vbi1jb25zdCB2b2lkICogYXJndW1lbnQuIFllcywgdGhlcmUgaXMgd2hhdCBzZWVtcyB0
-bw0KYmUgbm9uLXNhZmUgY2FzdGluZywgYnV0IGZsdXNoX3RsYl9mdW5jX2NvbW1vbigpIGNhc3Rz
-IGl0IGJhY2sgaW50byBhIGNvbnN0DQp2YXJpYWJsZS4NCg0KSSBrbm93IHRoYXQgSSBhbHNvIGFk
-ZGVkIHRoZSBpbmZyYXN0cnVjdHVyZSB0byBydW4gYSBmdW5jdGlvbiBsb2NhbGx5IGluIHRoZQ0K
-U01QIGluZnJhc3RydWN0dXJlLCBidXQgaXQgbWFkZSBzZW5zZSB0byBoYXZlIHRoZSBzYW1lIHNp
-Z25hdHVyZSBmb3IgbG9jYWwNCmZ1bmN0aW9uIGFuZCByZW1vdGUgb25lcy4NCg0KRG9lcyBpdCBt
-YWtlIG1vcmUgc2Vuc2Ugbm93Pw0KDQo=
+On Fri, 2019-07-19 at 15:32 +0100, Luis Henriques wrote:
+> Calling ceph_buffer_put() in __ceph_setxattr() may end up freeing the
+> i_xattrs.prealloc_blob buffer while holding the i_ceph_lock.  This can be
+> fixed by postponing the call until later, when the lock is released.
+> 
+> The following backtrace was triggered by fstests generic/117.
+> 
+>   BUG: sleeping function called from invalid context at mm/vmalloc.c:2283
+>   in_atomic(): 1, irqs_disabled(): 0, pid: 650, name: fsstress
+>   3 locks held by fsstress/650:
+>    #0: 00000000870a0fe8 (sb_writers#8){.+.+}, at: mnt_want_write+0x20/0x50
+>    #1: 00000000ba0c4c74 (&type->i_mutex_dir_key#6){++++}, at: vfs_setxattr+0x55/0xa0
+>    #2: 000000008dfbb3f2 (&(&ci->i_ceph_lock)->rlock){+.+.}, at: __ceph_setxattr+0x297/0x810
+>   CPU: 1 PID: 650 Comm: fsstress Not tainted 5.2.0+ #437
+>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58-prebuilt.qemu.org 04/01/2014
+>   Call Trace:
+>    dump_stack+0x67/0x90
+>    ___might_sleep.cold+0x9f/0xb1
+>    vfree+0x4b/0x60
+>    ceph_buffer_release+0x1b/0x60
+>    __ceph_setxattr+0x2b4/0x810
+>    __vfs_setxattr+0x66/0x80
+>    __vfs_setxattr_noperm+0x59/0xf0
+>    vfs_setxattr+0x81/0xa0
+>    setxattr+0x115/0x230
+>    ? filename_lookup+0xc9/0x140
+>    ? rcu_read_lock_sched_held+0x74/0x80
+>    ? rcu_sync_lockdep_assert+0x2e/0x60
+>    ? __sb_start_write+0x142/0x1a0
+>    ? mnt_want_write+0x20/0x50
+>    path_setxattr+0xba/0xd0
+>    __x64_sys_lsetxattr+0x24/0x30
+>    do_syscall_64+0x50/0x1c0
+>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>   RIP: 0033:0x7ff23514359a
+> 
+> Signed-off-by: Luis Henriques <lhenriques@suse.com>
+> ---
+>  fs/ceph/xattr.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index 37b458a9af3a..c083557b3657 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -1036,6 +1036,7 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+>  	struct ceph_inode_info *ci = ceph_inode(inode);
+>  	struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
+>  	struct ceph_cap_flush *prealloc_cf = NULL;
+> +	struct ceph_buffer *old_blob = NULL;
+>  	int issued;
+>  	int err;
+>  	int dirty = 0;
+> @@ -1109,13 +1110,15 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+>  		struct ceph_buffer *blob;
+>  
+>  		spin_unlock(&ci->i_ceph_lock);
+> -		dout(" preaallocating new blob size=%d\n", required_blob_size);
+> +		ceph_buffer_put(old_blob); /* Shouldn't be required */
+> +		dout(" pre-allocating new blob size=%d\n", required_blob_size);
+>  		blob = ceph_buffer_new(required_blob_size, GFP_NOFS);
+>  		if (!blob)
+>  			goto do_sync_unlocked;
+>  		spin_lock(&ci->i_ceph_lock);
+> +		/* prealloc_blob can't be released while holding i_ceph_lock */
+>  		if (ci->i_xattrs.prealloc_blob)
+> -			ceph_buffer_put(ci->i_xattrs.prealloc_blob);
+> +			old_blob = ci->i_xattrs.prealloc_blob;
+>  		ci->i_xattrs.prealloc_blob = blob;
+>  		goto retry;
+>  	}
+> @@ -1131,6 +1134,7 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+>  	}
+>  
+>  	spin_unlock(&ci->i_ceph_lock);
+> +	ceph_buffer_put(old_blob);
+>  	if (lock_snap_rwsem)
+>  		up_read(&mdsc->snap_rwsem);
+>  	if (dirty)
+
+(cc'ing Al)
+
+Al pointed out on IRC that vfree should be callable under spinlock. It
+only sleeps if !in_interrupt(), and I think that should return true if
+we're holding a spinlock.
+
+I'll plan to try replicating this soon.
+-- 
+Jeff Layton <jlayton@kernel.org>
+
