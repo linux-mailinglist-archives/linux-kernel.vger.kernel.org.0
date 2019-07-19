@@ -2,270 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0A6C6E30E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 11:03:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A5626E312
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 11:05:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727171AbfGSJDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 05:03:07 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38607 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbfGSJDH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 05:03:07 -0400
-Received: by mail-ed1-f68.google.com with SMTP id r12so33800375edo.5
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 02:03:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=NTYdVI+WDghg25Lh1/RUZv6ZZAp/zTJ3VjSdQgXSPTs=;
-        b=KD3lK83s3CIHwHrpMPtIFEt1gEGpK1VVDPD+T0VOHRw+09nr37+fu+WFfqTFwj/cm0
-         SBlscF/y3i/N5TrzmAQC96yMp3LuMv9GHskQFPxbyGRHvb/S4eeBwnNnaKJxym2WANYg
-         I4WJUvMz5Cb7VqheqrvQ+2ZsktKi2h46cJlaQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=NTYdVI+WDghg25Lh1/RUZv6ZZAp/zTJ3VjSdQgXSPTs=;
-        b=ZemcqwzY8i0R6agzUtrldVOQPephQaqfHCVjc72sFNVv+VXMFiOWrsxoZeGkK6YgWR
-         +xfIfvwksBzQGmAgTT6F2pud0uucm8l1KVmgZyuLbcFW6UDvae4uCgBMHyZbSavsc1m3
-         fadbnQTgvG7ajYxByHyTVHG267KWVUy5DZSglx8GbwTTNnbtpzHkMZMTc36pJGNgTrmu
-         aSzKPHFph/O6B3MLd5JPphtI4ajjRroYZBYTSaLjaYlnEdR+pXRivFv9le+4bsVOxhc6
-         OfsXUsm+gLJ69gVV2Q0lSdJ2lR0rrz1rAtKrJOYXUw3qkEaY0v3awBV1AzwqM7/wx/cz
-         rOJQ==
-X-Gm-Message-State: APjAAAWbiPbGw6bCIbmvEnK0z6GlNcbUJ66mPD3a4TnzkmonIPBOGB0E
-        zb1+V+OLtYsTv7l+G5a8+qQ=
-X-Google-Smtp-Source: APXvYqzPCEN4N6ROEqjAAde4BDvee7qmW4cqQsY/XO1fq2mi39wNlizjYgnGUxS2u2JgwzVdNFkVMA==
-X-Received: by 2002:a50:987a:: with SMTP id h55mr46028023edb.108.1563526985231;
-        Fri, 19 Jul 2019 02:03:05 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id e29sm7797870eda.51.2019.07.19.02.03.03
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 19 Jul 2019 02:03:04 -0700 (PDT)
-Date:   Fri, 19 Jul 2019 11:03:02 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Cc:     Haneen Mohammed <hamohammed.sa@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Simon Ser <contact@emersion.fr>,
-        Oleg Vasilev <oleg.vasilev@intel.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3] drm/vkms: Add support for vkms work without vblank
-Message-ID: <20190719090302.GE15868@phenom.ffwll.local>
-Mail-Followup-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        David Airlie <airlied@linux.ie>, Simon Ser <contact@emersion.fr>,
-        Oleg Vasilev <oleg.vasilev@intel.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20190710015514.42anrmx3r2ijaomz@smtp.gmail.com>
- <20190710164036.GZ15868@phenom.ffwll.local>
- <20190712025718.wdlafaujpxhpupj7@smtp.gmail.com>
- <20190716090345.GX15868@phenom.ffwll.local>
- <20190717020737.z2mu64s3lfyt7pl7@smtp.gmail.com>
+        id S1727093AbfGSJE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 05:04:59 -0400
+Received: from mga03.intel.com ([134.134.136.65]:17509 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726036AbfGSJE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 05:04:56 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2019 02:04:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,281,1559545200"; 
+   d="scan'208";a="179569783"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga002.jf.intel.com with ESMTP; 19 Jul 2019 02:04:53 -0700
+Cc:     baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>, kevin.tian@intel.com,
+        ashok.raj@intel.com, dima@arista.com, tmurphy@arista.com,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        jacob.jun.pan@intel.com
+Subject: Re: [PATCH v4 12/15] iommu/vt-d: Cleanup get_valid_domain_for_dev()
+To:     Alex Williamson <alex.williamson@redhat.com>
+References: <20190525054136.27810-1-baolu.lu@linux.intel.com>
+ <20190525054136.27810-13-baolu.lu@linux.intel.com>
+ <20190717211226.5ffbf524@x1.home>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <9957afdd-4075-e7ee-e1e6-97acb870e17a@linux.intel.com>
+Date:   Fri, 19 Jul 2019 17:04:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190717020737.z2mu64s3lfyt7pl7@smtp.gmail.com>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190717211226.5ffbf524@x1.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 16, 2019 at 11:07:37PM -0300, Rodrigo Siqueira wrote:
-> On 07/16, Daniel Vetter wrote:
-> > On Thu, Jul 11, 2019 at 11:57:18PM -0300, Rodrigo Siqueira wrote:
-> > > On 07/10, Daniel Vetter wrote:
-> > > > On Tue, Jul 09, 2019 at 10:55:14PM -0300, Rodrigo Siqueira wrote:
-> > > > > Currently, vkms only work with enabled VBlank. This patch adds another
-> > > > > operation model that allows vkms to work without VBlank support. In this
-> > > > > scenario, vblank signaling is faked by calling drm_send_vblank_event()
-> > > > > in vkms_crtc_atomic_flush(); this approach works due to the
-> > > > > drm_vblank_get() == 0 checking.
-> > > > > 
-> > > > > Changes since V2:
-> > > > >  - Rebase
-> > > > > 
-> > > > > Changes since V1:
-> > > > >   Daniel Vetter:
-> > > > >   - Change module parameter name from disablevblank to virtual_hw
-> > > > >   - Improve parameter description
-> > > > >   - Improve commit message
-> > > > > 
-> > > > > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> > > > > ---
-> > > > >  drivers/gpu/drm/vkms/vkms_crtc.c | 10 ++++++++++
-> > > > >  drivers/gpu/drm/vkms/vkms_drv.c  | 13 +++++++++++--
-> > > > >  drivers/gpu/drm/vkms/vkms_drv.h  |  2 ++
-> > > > >  3 files changed, 23 insertions(+), 2 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
-> > > > > index 49a8ec2cb1c1..a0c75b8c4335 100644
-> > > > > --- a/drivers/gpu/drm/vkms/vkms_crtc.c
-> > > > > +++ b/drivers/gpu/drm/vkms/vkms_crtc.c
-> > > > > @@ -207,12 +207,22 @@ static int vkms_crtc_atomic_check(struct drm_crtc *crtc,
-> > > > >  static void vkms_crtc_atomic_enable(struct drm_crtc *crtc,
-> > > > >  				    struct drm_crtc_state *old_state)
-> > > > >  {
-> > > > > +	struct vkms_output *vkms_out = drm_crtc_to_vkms_output(crtc);
-> > > > > +
-> > > > > +	if (vkms_out->disable_vblank)
-> > > > > +		return;
-> > > > > +
-> > > > >  	drm_crtc_vblank_on(crtc);
-> > > > >  }
-> > > > >  
-> > > > >  static void vkms_crtc_atomic_disable(struct drm_crtc *crtc,
-> > > > >  				     struct drm_crtc_state *old_state)
-> > > > >  {
-> > > > > +	struct vkms_output *vkms_out = drm_crtc_to_vkms_output(crtc);
-> > > > > +
-> > > > > +	if (vkms_out->disable_vblank)
-> > > > > +		return;
-> > > > > +
-> > > > >  	drm_crtc_vblank_off(crtc);
-> > > > >  }
-> > > > >  
-> > > > > diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-> > > > > index 152d7de24a76..542a002ef9d5 100644
-> > > > > --- a/drivers/gpu/drm/vkms/vkms_drv.c
-> > > > > +++ b/drivers/gpu/drm/vkms/vkms_drv.c
-> > > > > @@ -34,6 +34,11 @@ bool enable_writeback;
-> > > > >  module_param_named(enable_writeback, enable_writeback, bool, 0444);
-> > > > >  MODULE_PARM_DESC(enable_writeback, "Enable/Disable writeback connector");
-> > > > >  
-> > > > > +bool virtual_hw;
-> > > > 
-> > > > Can be static, you only use this in vkms_drv.c.
-> > > > 
-> > > > > +module_param_named(virtual_hw, virtual_hw, bool, 0444);
-> > > > > +MODULE_PARM_DESC(virtual_hw,
-> > > > > +		 "Enable virtual hardware mode (disables vblanks and immediately completes flips)");
-> > > > > +
-> > > > >  static const struct file_operations vkms_driver_fops = {
-> > > > >  	.owner		= THIS_MODULE,
-> > > > >  	.open		= drm_open,
-> > > > > @@ -154,9 +159,13 @@ static int __init vkms_init(void)
-> > > > >  	if (ret)
-> > > > >  		goto out_unregister;
-> > > > >  
-> > > > > -	vkms_device->drm.irq_enabled = true;
-> > > > > +	vkms_device->output.disable_vblank = virtual_hw;
-> > > > > +	vkms_device->drm.irq_enabled = !virtual_hw;
-> > > > > +
-> > > > > +	if (virtual_hw)
-> > > > > +		DRM_INFO("Virtual hardware mode enabled");
-> > > > >  
-> > > > > -	ret = drm_vblank_init(&vkms_device->drm, 1);
-> > > > > +	ret = (virtual_hw) ? 0 : drm_vblank_init(&vkms_device->drm, 1);
-> > > > >  	if (ret) {
-> > > > >  		DRM_ERROR("Failed to vblank\n");
-> > > > >  		goto out_fini;
-> > > > > diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> > > > > index 9ff2cd4ebf81..256e5e65c947 100644
-> > > > > --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> > > > > +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> > > > > @@ -21,6 +21,7 @@
-> > > > >  
-> > > > >  extern bool enable_cursor;
-> > > > >  extern bool enable_writeback;
-> > > > > +extern bool virtual_hw;
-> > > > >  
-> > > > >  struct vkms_composer {
-> > > > >  	struct drm_framebuffer fb;
-> > > > > @@ -69,6 +70,7 @@ struct vkms_output {
-> > > > >  	struct drm_connector connector;
-> > > > >  	struct drm_writeback_connector wb_connector;
-> > > > >  	struct hrtimer vblank_hrtimer;
-> > > > > +	bool disable_vblank;
-> > > > >  	ktime_t period_ns;
-> > > > >  	struct drm_pending_vblank_event *event;
-> > > > >  	/* ordered wq for composer_work */
-> > > > 
-> > > > I'm kinda wondering how this works at all ... does writeback/crc still
-> > > > work if you set virtual mode? Writeback since this seems based on the
-> > > > writeback series ...
-> > > 
-> > > Hi,
-> > > 
-> > > I tested this patch with kms_flip with the "drm/drm_vblank: Change
-> > > EINVAL by the correct errno" patch [1]. However, you’re right about the
-> > > writeback/crc tests, they does not pass because this patch disables
-> > > vblank which in turn does not invoke "vkms_vblank_simulate()".
-> > > 
-> > > In this sense, I’m a little bit confused about how should I handle this
-> > > issue. If I correctly understood, without vblank support we have to
-> > > trigger vkms_composer_worker() when the userspace invoke
-> > > drmModePageFlip(), am I right?  If so, an approach could add page_flip()
-> > > callback to vkms and invoke vkms_composer_worker(); however, the
-> > > documentation says that page_flip is a legacy entry point. Do you have a
-> > > suggestion?
-> > 
-> > We need this in atomic, for everyone. So instead of launching a vblank and
-> > letting the vblank simulation kick off the crc/writeback work,
-> > atomic_flush needs to also kick of the crc/vblank work. And make sure that
-> > we feed the same vblank frame count values to the generated vblank even as
-> > to the crc work (or maybe those are hardcoded to 0 for vblank-less, not
-> > sure).
-> > -Daniel
+Hi Alex,
+
+On 7/18/19 11:12 AM, Alex Williamson wrote:
+> On Sat, 25 May 2019 13:41:33 +0800
+> Lu Baolu <baolu.lu@linux.intel.com> wrote:
 > 
-> Just for checking if I correctly understood... the idea is reworking
-> vkms_vblank_simulate() a little bit in order to decouple the kick of
-> crc/writeback to atomic_flush(). Right?
-
-Yes, but only for virtual mode, where we do not have the vblank. For
-vblank mode we obviously still need the vblank simulation. I haven't
-looked into what/how you should set the vblank counts for the crc/composer
-work in the virtual case, that probably needs some figuring out.
--Daniel
->  
-> > > 
-> > > 1. https://patchwork.freedesktop.org/patch/314399/?series=50697&rev=7
-> > > 
-> > > Thanks
-> > >  
-> > > > btw if you send out patches that need other patches, point at that other
-> > > > series in the cover letter or patch. Gets confusing fast otherwise.
-> > > > -Daniel
-> > > > -- 
-> > > > Daniel Vetter
-> > > > Software Engineer, Intel Corporation
-> > > > http://blog.ffwll.ch
-> > > 
-> > > -- 
-> > > Rodrigo Siqueira
-> > > https://siqueira.tech
-> > 
-> > 
-> > 
-> > > _______________________________________________
-> > > dri-devel mailing list
-> > > dri-devel@lists.freedesktop.org
-> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > 
-> > 
-> > -- 
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > http://blog.ffwll.ch
+>> Previously, get_valid_domain_for_dev() is used to retrieve the
+>> DMA domain which has been attached to the device or allocate one
+>> if no domain has been attached yet. As we have delegated the DMA
+>> domain management to upper layer, this function is used purely to
+>> allocate a private DMA domain if the default domain doesn't work
+>> for ths device. Cleanup the code for readability.
+>>
+>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> ---
+>>   drivers/iommu/intel-iommu.c | 18 ++++++++----------
+>>   include/linux/intel-iommu.h |  1 -
+>>   2 files changed, 8 insertions(+), 11 deletions(-)
 > 
-> -- 
-> Rodrigo Siqueira
-> https://siqueira.tech
+> System fails to boot bisected to this commit:
 
+Is this the same issue as this https://lkml.org/lkml/2019/7/18/840?
 
+Best regards,
+Baolu
 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> 
+> ommit 4ec066c7b1476e0ca66a7acdb575627a5d1a1ee6 (HEAD, refs/bisect/bad)
+> Author: Lu Baolu <baolu.lu@linux.intel.com>
+> Date:   Sat May 25 13:41:33 2019 +0800
+> 
+>      iommu/vt-d: Cleanup get_valid_domain_for_dev()
+> 
+> [    6.857697] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+> [    6.870723] ehci-pci: EHCI PCI platform driver
+> [    6.879666] ehci-pci 0000:00:1a.0: EHCI Host Controller
+> [    6.890122] ehci-pci 0000:00:1a.0: new USB bus registered, assigned bus number 1
+> [    6.904893] ehci-pci 0000:00:1a.0: debug port 2
+> [    6.913961] ehci-pci 0000:00:1a.0: DMAR: Setting identity map [0xbe8d1000 - 0xbe8dffff]
+> [    6.929953] ehci-pci 0000:00:1a.0: DMAR: 32bit DMA uses non-identity mapping
+> [    6.944033] WARNING: CPU: 0 PID: 1 at drivers/iommu/intel-iommu.c:600 domain_get_iommu+0x55/0x60
+> [    6.945017] Modules linked in:
+> [    6.945017] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.2.0-rc2+ #37
+> [    6.945017] Hardware name: System manufacturer System Product Name/P8H67-M PRO, BIOS 3904 04/27/2013
+> [    6.945017] RIP: 0010:domain_get_iommu+0x55/0x60
+> [    6.945017] Code: c2 01 eb 0b 48 83 c0 01 8b 34 87 85 f6 75 0b 48 63 c8 48 39 c2 75 ed 31 c0 c3 48 c1 e1 03 48 8b 05 e0 f5 44 01 48 8b 04 08 c3 <0f> 0b 31 c0 c3 31 c9 eb eb 66 90 0f 1f 44 00 00 41 55 40 0f b6 f6
+> [    6.945017] RSP: 0018:ffffbd02418bba98 EFLAGS: 00010293
+> [    6.945017] RAX: ffffffffffffffff RBX: 0000000000000000 RCX: 0000000000000000
+> [    6.945017] RDX: 0000000000001000 RSI: 00000000313ea000 RDI: ffff9ce9f3026e00
+> [    6.945017] RBP: ffff9cea144f80b0 R08: 00000000ffffffff R09: ffff9ce9f13ea000
+> [    6.945017] R10: 0000000000100000 R11: 0000000000000100 R12: 00000000313ea000
+> [    6.945017] R13: ffff9ce9f3026e00 R14: 0000000000001000 R15: 00000000313ea000
+> [    6.945017] FS:  0000000000000000(0000) GS:ffff9ceddf400000(0000) knlGS:0000000000000000
+> [    6.945017] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    6.945017] CR2: 00007fa72ed421f8 CR3: 000000011b20a001 CR4: 00000000001606f0
+> [    6.945017] Call Trace:
+> [    6.945017]  __intel_map_single+0x4e/0x120
+> [    6.945017]  intel_alloc_coherent+0xa7/0x110
+> [    6.945017]  dma_pool_alloc+0xd9/0x1e0
+> [    6.945017]  ehci_qh_alloc+0x55/0x130
+> [    6.945017]  ehci_setup+0x284/0x7b0
+> [    6.945017]  ehci_pci_setup+0x8b/0x41d
+> [    6.945017]  usb_add_hcd.cold.40+0x1c5/0x7b7
+> [    6.945017]  usb_hcd_pci_probe+0x2a4/0x420
+> [    6.945017]  local_pci_probe+0x42/0x80
+> [    6.945017]  pci_device_probe+0x115/0x190
+> [    6.945017]  really_probe+0xef/0x390
+> [    6.945017]  driver_probe_device+0xb4/0x100
+> [    6.945017]  device_driver_attach+0x4f/0x60
+> [    6.945017]  __driver_attach+0x86/0x140
+> [    6.945017]  ? device_driver_attach+0x60/0x60
+> [    6.945017]  bus_for_each_dev+0x77/0xc0
+> [    6.945017]  ? klist_add_tail+0x3b/0x60
+> [    6.945017]  bus_add_driver+0x14a/0x1e0
+> [    6.945017]  ? ehci_hcd_init+0xaa/0xaa
+> [    6.945017]  ? do_early_param+0x8e/0x8e
+> [    6.945017]  driver_register+0x6b/0xb0
+> [    6.945017]  ? ehci_hcd_init+0xaa/0xaa
+> [    6.945017]  do_one_initcall+0x46/0x1f4
+> [    6.945017]  ? do_early_param+0x8e/0x8e
+> [    6.945017]  kernel_init_freeable+0x1ac/0x255
+> [    6.945017]  ? rest_init+0x9f/0x9f
+> [    6.945017]  kernel_init+0xa/0x101
+> [    6.945017]  ret_from_fork+0x35/0x40
+> [    6.945017] ---[ end trace 1aa3219cfb92242b ]---
+> 
+> Kernel command line includes intel_iommu=on iommu=pt
+> 
+> On the merge commit of Joerg's pull request for 5.3 (6b04014f3f15),
+> including:
+> 
+> commit c57b260a7d7d60dfbcf794dd9836c1d9fdbf5434
+> Author: Lu Baolu <baolu.lu@linux.intel.com>
+> Date:   Wed Jun 12 08:28:46 2019 +0800
+> 
+>      iommu/vt-d: Set domain type for a private domain
+>      
+>      Otherwise, domain_get_iommu() will be broken.
+>      
+>      Fixes: 942067f1b6b97 ("iommu/vt-d: Identify default domains replaced with private")
+> 
+> 
+> The fail to boot error shows as:
+> 
+> [    7.042371] general protection fault: 0000 [#1] SMP PTI
+> [    7.042968] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.2.0+ #39
+> [    7.042968] Hardware name: System manufacturer System Product Name/P8H67-M PRO, BIOS 3904 04/27/2013
+> [    7.042968] RIP: 0010:domain_context_mapping_one+0x212/0x4c0
+> [    7.042968] Code: 39 c2 0f 8d fc 01 00 00 48 8b 15 49 4d b5 00 eb 0c 83 e8 01 41 39 c2 0f 84 ea 01 00 00 4d 8b 00 49 81 e0 00 f0 ff ff 49 01 d0 <41> f6 00 03 75 e1 b8 f4 ff ff ff e9 be fe ff ff 44 89 e1 45 89 e0
+> [    7.042968] RSP: 0018:ffffb021818bb928 EFLAGS: 00010087
+> [    7.042968] RAX: 0000000000000002 RBX: ffff9d665f057f00 RCX: 0000000000000001
+> [    7.042968] RDX: ffff9d6240000000 RSI: 0000000000000030 RDI: ffff9d665f057f00
+> [    7.042968] RBP: 0000000000000003 R08: f0008c563000e000 R09: ffff9d627155a000
+> [    7.042968] R10: 0000000000000001 R11: 0000000000000804 R12: 0000000000000000
+> [    7.042968] R13: 0000000000000002 R14: 0000000000000000 R15: ffff9d6285934200
+> [    7.042968] FS:  0000000000000000(0000) GS:ffff9d665f400000(0000) knlGS:0000000000000000
+> [    7.042968] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    7.042968] CR2: 00007f99e08a81f8 CR3: 000000040c20a001 CR4: 00000000001606f0
+> [    7.042968] Call Trace:
+> [    7.042968]  ? domain_context_mapping_one+0x4c0/0x4c0
+> [    7.042968]  pci_for_each_dma_alias+0x30/0x140
+> [    7.042968]  dmar_insert_one_dev_info+0x33f/0x4b0
+> [    7.042968]  get_private_domain_for_dev.part.75+0x136/0x2f0
+> [    7.042968]  ? __dmar_remove_one_dev_info+0x106/0x250
+> [    7.042968]  iommu_need_mapping+0xac/0xc0
+> [    7.042968]  intel_alloc_coherent+0x20/0x110
+> [    7.042968]  xhci_mem_init+0x1ba/0xee1
+> [    7.042968]  ? xhci_dbg_trace+0x6b/0xb0
+> [    7.042968]  ? recalibrate_cpu_khz+0x10/0x10
+> [    7.042968]  ? ktime_get+0x36/0xa0
+> [    7.042968]  ? xhci_pci_suspend+0xd0/0xd0
+> [    7.042968]  xhci_init+0x81/0x170
+> [    7.042968]  xhci_gen_setup+0x1fe/0x360
+> [    7.042968]  xhci_pci_setup+0x4d/0x120
+> [    7.042968]  usb_add_hcd.cold.40+0x1c5/0x7b7
+> [    7.042968]  usb_hcd_pci_probe+0x214/0x420
+> [    7.042968]  xhci_pci_probe+0x29/0x1f0
+> [    7.042968]  local_pci_probe+0x42/0x80
+> [    7.042968]  pci_device_probe+0x115/0x190
+> [    7.042968]  really_probe+0xef/0x390
+> [    7.042968]  driver_probe_device+0xb4/0x100
+> [    7.042968]  device_driver_attach+0x4f/0x60
+> [    7.042968]  __driver_attach+0x86/0x140
+> [    7.042968]  ? device_driver_attach+0x60/0x60
+> [    7.042968]  bus_for_each_dev+0x77/0xc0
+> [    7.042968]  ? klist_add_tail+0x3b/0x60
+> [    7.042968]  bus_add_driver+0x14a/0x1e0
+> [    7.042968]  ? xhci_debugfs_create_root+0x20/0x20
+> [    7.042968]  ? do_early_param+0x8e/0x8e
+> [    7.042968]  driver_register+0x6b/0xb0
+> [    7.042968]  ? xhci_debugfs_create_root+0x20/0x20
+> [    7.042968]  do_one_initcall+0x46/0x1f4
+> [    7.042968]  ? do_early_param+0x8e/0x8e
+> [    7.042968]  kernel_init_freeable+0x1ac/0x255
+> [    7.042968]  ? rest_init+0x9f/0x9f
+> [    7.042968]  kernel_init+0xa/0x101
+> [    7.042968]  ret_from_fork+0x35/0x40
+> [    7.042968] Modules linked in:
+> [    7.042968] ---[ end trace 6d6cf443442a773d ]---
+> 
+> Thanks,
+> Alex
+> 
