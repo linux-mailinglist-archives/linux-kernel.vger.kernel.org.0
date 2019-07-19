@@ -2,221 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C8386DEA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60F536DF67
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:35:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732595AbfGSE3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:29:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37924 "EHLO mail.kernel.org"
+        id S1733196AbfGSEeo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:34:44 -0400
+Received: from mga07.intel.com ([134.134.136.100]:22524 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731658AbfGSEF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:05:27 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B02B3218A3;
-        Fri, 19 Jul 2019 04:05:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509126;
-        bh=RnpYIfsmVQzw+RTCY/meZ6Kjw8GaVvaz5MFpeWecvx8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C1eHW7pJFv4OWLeUtqApGHTsqOLGqidkx0yAqimutlTVF0WguaPuPcRG6d8Gh+SDF
-         tDlvCgpIT7UY8/14sRAbJEzG1CGVtUQKfdB5Y+hZ1tUluXdO/WLLhIq0XE2lh/dBrU
-         a8rC7BX0wUQebGJSINkw9lapoQ5IrRHW23vOtkpY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Parav Pandit <parav@mellanox.com>,
-        Daniel Jurgens <danielj@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 085/141] IB/mlx5: Fixed reporting counters on 2nd port for Dual port RoCE
-Date:   Fri, 19 Jul 2019 00:01:50 -0400
-Message-Id: <20190719040246.15945-85-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190719040246.15945-1-sashal@kernel.org>
-References: <20190719040246.15945-1-sashal@kernel.org>
+        id S1731387AbfGSEem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:34:42 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2019 21:34:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,280,1559545200"; 
+   d="scan'208";a="168447576"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga008.fm.intel.com with ESMTP; 18 Jul 2019 21:34:40 -0700
+Date:   Thu, 18 Jul 2019 21:34:40 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     john.hubbard@gmail.com
+Cc:     pavel@ucw.cz, SCheung@nvidia.com, akpm@linux-foundation.org,
+        aneesh.kumar@linux.vnet.ibm.com, benh@kernel.crashing.org,
+        bsingharora@gmail.com, dan.j.williams@intel.com,
+        dnellans@nvidia.com, ebaskakov@nvidia.com, hannes@cmpxchg.org,
+        jglisse@redhat.com, jhubbard@nvidia.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        liubo95@huawei.com, mhairgrove@nvidia.com, mhocko@kernel.org,
+        paulmck@linux.vnet.ibm.com, ross.zwisler@linux.intel.com,
+        sgutti@nvidia.com, torvalds@linux-foundation.org,
+        vdavydov.dev@gmail.com, Jason Gunthorpe <jgg@ziepe.ca>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] mm/Kconfig: additional help text for HMM_MIRROR option
+Message-ID: <20190719043439.GA26230@iweiny-DESK2.sc.intel.com>
+References: <20190717074124.GA21617@amd>
+ <20190719013253.17642-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190719013253.17642-1-jhubbard@nvidia.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Parav Pandit <parav@mellanox.com>
+On Thu, Jul 18, 2019 at 06:32:53PM -0700, john.hubbard@gmail.com wrote:
+> From: John Hubbard <jhubbard@nvidia.com>
+> 
+> The HMM_MIRROR option in Kconfig is a little underdocumented and
+> mysterious, and leaves people wondering whether to enable it.
+> 
+> Add text explaining just a little bit more about HMM, and also
+> mention which hardware would benefit from having HMM_MIRROR
+> enabled.
+> 
+> Suggested-by: Pavel Machek <pavel@ucw.cz>
+> Cc: Balbir Singh <bsingharora@gmail.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Jerome Glisse <jglisse@redhat.com>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+> 
+> Hi Pavel and all, does this help? I've tried to capture the key missing bits
+> of documentation, but still keep it small, for Kconfig.
+> 
+> thanks,
+> John Hubbard
+> NVIDIA
+> 
+>  mm/Kconfig | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
+> 
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 56cec636a1fc..2fcb92e7f696 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -681,11 +681,18 @@ config HMM_MIRROR
+>  	depends on MMU && 64BIT
+>  	select MMU_NOTIFIER
+>  	help
+> -	  Select HMM_MIRROR if you want to mirror range of the CPU page table of a
+> -	  process into a device page table. Here, mirror means "keep synchronized".
+> -	  Prerequisites: the device must provide the ability to write-protect its
+> -	  page tables (at PAGE_SIZE granularity), and must be able to recover from
+> -	  the resulting potential page faults.
+> +	  This is Heterogeneous Memory Management (HMM) process address space
+> +	  mirroring.
+> +
+> +	  HMM_MIRROR provides a way to mirror ranges of the CPU page tables
+> +	  of a process into a device page table. Here, mirror means "keep
+> +	  synchronized". Prerequisites: the device must provide the ability
+> +	  to write-protect its page tables (at PAGE_SIZE granularity), and
+> +	  must be able to recover from the resulting potential page faults.
+> +
+> +	  Select HMM_MIRROR if you have hardware that meets the above
+> +	  description. An early, partial list of such hardware is:
+> +	  an NVIDIA GPU >= Pascal, Mellanox IB >= mlx5, or an AMD GPU.
 
-[ Upstream commit 2f40cf30c8644360d37287861d5288f00eab35e5 ]
+I don't think we want to put device information here.  If we want that
+information in Kconfig best to put it in the devices themselves.  Otherwise
+this list will get stale.
 
-Currently during dual port IB device registration in below code flow,
+Other than that, looks good.
 
-ib_register_device()
-  ib_device_register_sysfs()
-    ib_setup_port_attrs()
-      add_port()
-        get_counter_table()
-          get_perf_mad()
-            process_mad()
-              mlx5_ib_process_mad()
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
-mlx5_ib_process_mad() fails on 2nd port when both the ports are not fully
-setup at the device level (because 2nd port is unaffiliated).
+Ira
 
-As a result, get_perf_mad() registers different PMA counter group for 1st
-and 2nd port, namely pma_counter_ext and pma_counter. However both ports
-have the same capability and counter offsets.
-
-Due to this when counters are read by the user via sysfs in below code
-flow, counters are queried from wrong location from the device mainly from
-PPCNT instead of VPORT counters.
-
-show_pma_counter()
-  get_perf_mad()
-    process_mad()
-      mlx5_ib_process_mad()
-        process_pma_cmd()
-
-This shows all zero counters for 2nd port.
-
-To overcome this, process_pma_cmd() is invoked, and when unaffiliated port
-is not yet setup during device registration phase, make the query on the
-first port.  while at it, only process_pma_cmd() needs to work on the
-native port number and underlying mdev, so shift the get, put calls to
-where its needed inside process_pma_cmd().
-
-Fixes: 212f2a87b74f ("IB/mlx5: Route MADs for dual port RoCE")
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/infiniband/hw/mlx5/mad.c | 60 +++++++++++++++++++-------------
- 1 file changed, 36 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/infiniband/hw/mlx5/mad.c b/drivers/infiniband/hw/mlx5/mad.c
-index 6c529e6f3a01..348c1df69cdc 100644
---- a/drivers/infiniband/hw/mlx5/mad.c
-+++ b/drivers/infiniband/hw/mlx5/mad.c
-@@ -200,19 +200,33 @@ static void pma_cnt_assign(struct ib_pma_portcounters *pma_cnt,
- 			     vl_15_dropped);
- }
- 
--static int process_pma_cmd(struct mlx5_core_dev *mdev, u8 port_num,
-+static int process_pma_cmd(struct mlx5_ib_dev *dev, u8 port_num,
- 			   const struct ib_mad *in_mad, struct ib_mad *out_mad)
- {
--	int err;
-+	struct mlx5_core_dev *mdev;
-+	bool native_port = true;
-+	u8 mdev_port_num;
- 	void *out_cnt;
-+	int err;
- 
-+	mdev = mlx5_ib_get_native_port_mdev(dev, port_num, &mdev_port_num);
-+	if (!mdev) {
-+		/* Fail to get the native port, likely due to 2nd port is still
-+		 * unaffiliated. In such case default to 1st port and attached
-+		 * PF device.
-+		 */
-+		native_port = false;
-+		mdev = dev->mdev;
-+		mdev_port_num = 1;
-+	}
- 	/* Declaring support of extended counters */
- 	if (in_mad->mad_hdr.attr_id == IB_PMA_CLASS_PORT_INFO) {
- 		struct ib_class_port_info cpi = {};
- 
- 		cpi.capability_mask = IB_PMA_CLASS_CAP_EXT_WIDTH;
- 		memcpy((out_mad->data + 40), &cpi, sizeof(cpi));
--		return IB_MAD_RESULT_SUCCESS | IB_MAD_RESULT_REPLY;
-+		err = IB_MAD_RESULT_SUCCESS | IB_MAD_RESULT_REPLY;
-+		goto done;
- 	}
- 
- 	if (in_mad->mad_hdr.attr_id == IB_PMA_PORT_COUNTERS_EXT) {
-@@ -221,11 +235,13 @@ static int process_pma_cmd(struct mlx5_core_dev *mdev, u8 port_num,
- 		int sz = MLX5_ST_SZ_BYTES(query_vport_counter_out);
- 
- 		out_cnt = kvzalloc(sz, GFP_KERNEL);
--		if (!out_cnt)
--			return IB_MAD_RESULT_FAILURE;
-+		if (!out_cnt) {
-+			err = IB_MAD_RESULT_FAILURE;
-+			goto done;
-+		}
- 
- 		err = mlx5_core_query_vport_counter(mdev, 0, 0,
--						    port_num, out_cnt, sz);
-+						    mdev_port_num, out_cnt, sz);
- 		if (!err)
- 			pma_cnt_ext_assign(pma_cnt_ext, out_cnt);
- 	} else {
-@@ -234,20 +250,23 @@ static int process_pma_cmd(struct mlx5_core_dev *mdev, u8 port_num,
- 		int sz = MLX5_ST_SZ_BYTES(ppcnt_reg);
- 
- 		out_cnt = kvzalloc(sz, GFP_KERNEL);
--		if (!out_cnt)
--			return IB_MAD_RESULT_FAILURE;
-+		if (!out_cnt) {
-+			err = IB_MAD_RESULT_FAILURE;
-+			goto done;
-+		}
- 
--		err = mlx5_core_query_ib_ppcnt(mdev, port_num,
-+		err = mlx5_core_query_ib_ppcnt(mdev, mdev_port_num,
- 					       out_cnt, sz);
- 		if (!err)
- 			pma_cnt_assign(pma_cnt, out_cnt);
--		}
--
-+	}
- 	kvfree(out_cnt);
--	if (err)
--		return IB_MAD_RESULT_FAILURE;
--
--	return IB_MAD_RESULT_SUCCESS | IB_MAD_RESULT_REPLY;
-+	err = err ? IB_MAD_RESULT_FAILURE :
-+		    IB_MAD_RESULT_SUCCESS | IB_MAD_RESULT_REPLY;
-+done:
-+	if (native_port)
-+		mlx5_ib_put_native_port_mdev(dev, port_num);
-+	return err;
- }
- 
- int mlx5_ib_process_mad(struct ib_device *ibdev, int mad_flags, u8 port_num,
-@@ -259,8 +278,6 @@ int mlx5_ib_process_mad(struct ib_device *ibdev, int mad_flags, u8 port_num,
- 	struct mlx5_ib_dev *dev = to_mdev(ibdev);
- 	const struct ib_mad *in_mad = (const struct ib_mad *)in;
- 	struct ib_mad *out_mad = (struct ib_mad *)out;
--	struct mlx5_core_dev *mdev;
--	u8 mdev_port_num;
- 	int ret;
- 
- 	if (WARN_ON_ONCE(in_mad_size != sizeof(*in_mad) ||
-@@ -269,19 +286,14 @@ int mlx5_ib_process_mad(struct ib_device *ibdev, int mad_flags, u8 port_num,
- 
- 	memset(out_mad->data, 0, sizeof(out_mad->data));
- 
--	mdev = mlx5_ib_get_native_port_mdev(dev, port_num, &mdev_port_num);
--	if (!mdev)
--		return IB_MAD_RESULT_FAILURE;
--
--	if (MLX5_CAP_GEN(mdev, vport_counters) &&
-+	if (MLX5_CAP_GEN(dev->mdev, vport_counters) &&
- 	    in_mad->mad_hdr.mgmt_class == IB_MGMT_CLASS_PERF_MGMT &&
- 	    in_mad->mad_hdr.method == IB_MGMT_METHOD_GET) {
--		ret = process_pma_cmd(mdev, mdev_port_num, in_mad, out_mad);
-+		ret = process_pma_cmd(dev, port_num, in_mad, out_mad);
- 	} else {
- 		ret =  process_mad(ibdev, mad_flags, port_num, in_wc, in_grh,
- 				   in_mad, out_mad);
- 	}
--	mlx5_ib_put_native_port_mdev(dev, port_num);
- 	return ret;
- }
- 
--- 
-2.20.1
-
+>  
+>  config DEVICE_PRIVATE
+>  	bool "Unaddressable device memory (GPU memory, ...)"
+> -- 
+> 2.22.0
+> 
