@@ -2,121 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60F536DF67
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:35:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E979B6DF9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:36:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733196AbfGSEeo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:34:44 -0400
-Received: from mga07.intel.com ([134.134.136.100]:22524 "EHLO mga07.intel.com"
+        id S1732349AbfGSEgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:36:40 -0400
+Received: from gate.crashing.org ([63.228.1.57]:60658 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731387AbfGSEem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:34:42 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2019 21:34:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,280,1559545200"; 
-   d="scan'208";a="168447576"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga008.fm.intel.com with ESMTP; 18 Jul 2019 21:34:40 -0700
-Date:   Thu, 18 Jul 2019 21:34:40 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     john.hubbard@gmail.com
-Cc:     pavel@ucw.cz, SCheung@nvidia.com, akpm@linux-foundation.org,
-        aneesh.kumar@linux.vnet.ibm.com, benh@kernel.crashing.org,
-        bsingharora@gmail.com, dan.j.williams@intel.com,
-        dnellans@nvidia.com, ebaskakov@nvidia.com, hannes@cmpxchg.org,
-        jglisse@redhat.com, jhubbard@nvidia.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        liubo95@huawei.com, mhairgrove@nvidia.com, mhocko@kernel.org,
-        paulmck@linux.vnet.ibm.com, ross.zwisler@linux.intel.com,
-        sgutti@nvidia.com, torvalds@linux-foundation.org,
-        vdavydov.dev@gmail.com, Jason Gunthorpe <jgg@ziepe.ca>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH] mm/Kconfig: additional help text for HMM_MIRROR option
-Message-ID: <20190719043439.GA26230@iweiny-DESK2.sc.intel.com>
-References: <20190717074124.GA21617@amd>
- <20190719013253.17642-1-jhubbard@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190719013253.17642-1-jhubbard@nvidia.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        id S1730891AbfGSEgg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:36:36 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x6J4aDNX030520;
+        Thu, 18 Jul 2019 23:36:14 -0500
+Message-ID: <f19ac710b4dc28fb3b59ef11bd06d341bc939f3d.camel@kernel.crashing.org>
+Subject: [PATCH v2] nvme-pci: Support shared tags across queues for Apple
+ 2018 controllers
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     linux-nvme@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, Paul Pawlowski <paul@mrarm.io>,
+        Jens Axboe <axboe@fb.com>, Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Minwoo Im <minwoo.im.dev@gmail.com>
+Date:   Fri, 19 Jul 2019 14:36:13 +1000
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 06:32:53PM -0700, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
-> 
-> The HMM_MIRROR option in Kconfig is a little underdocumented and
-> mysterious, and leaves people wondering whether to enable it.
-> 
-> Add text explaining just a little bit more about HMM, and also
-> mention which hardware would benefit from having HMM_MIRROR
-> enabled.
-> 
-> Suggested-by: Pavel Machek <pavel@ucw.cz>
-> Cc: Balbir Singh <bsingharora@gmail.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Jerome Glisse <jglisse@redhat.com>
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
-> 
-> Hi Pavel and all, does this help? I've tried to capture the key missing bits
-> of documentation, but still keep it small, for Kconfig.
-> 
-> thanks,
-> John Hubbard
-> NVIDIA
-> 
->  mm/Kconfig | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
-> 
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 56cec636a1fc..2fcb92e7f696 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -681,11 +681,18 @@ config HMM_MIRROR
->  	depends on MMU && 64BIT
->  	select MMU_NOTIFIER
->  	help
-> -	  Select HMM_MIRROR if you want to mirror range of the CPU page table of a
-> -	  process into a device page table. Here, mirror means "keep synchronized".
-> -	  Prerequisites: the device must provide the ability to write-protect its
-> -	  page tables (at PAGE_SIZE granularity), and must be able to recover from
-> -	  the resulting potential page faults.
-> +	  This is Heterogeneous Memory Management (HMM) process address space
-> +	  mirroring.
-> +
-> +	  HMM_MIRROR provides a way to mirror ranges of the CPU page tables
-> +	  of a process into a device page table. Here, mirror means "keep
-> +	  synchronized". Prerequisites: the device must provide the ability
-> +	  to write-protect its page tables (at PAGE_SIZE granularity), and
-> +	  must be able to recover from the resulting potential page faults.
-> +
-> +	  Select HMM_MIRROR if you have hardware that meets the above
-> +	  description. An early, partial list of such hardware is:
-> +	  an NVIDIA GPU >= Pascal, Mellanox IB >= mlx5, or an AMD GPU.
+Another issue with the Apple T2 based 2018 controllers seem to be
+that they blow up (and shut the machine down) if there's a tag
+collision between the IO queue and the Admin queue.
 
-I don't think we want to put device information here.  If we want that
-information in Kconfig best to put it in the devices themselves.  Otherwise
-this list will get stale.
+My suspicion is that they use our tags for their internal tracking
+and don't mix them with the queue id. They also seem to not like
+when tags go beyond the IO queue depth, ie 128 tags.
 
-Other than that, looks good.
+This adds a quirk that offsets all the tags in the IO queue by 32
+to avoid those collisions. It also limits the number of IO queues
+to 1 since the code wouldn't otherwise make sense (the device
+supports only one queue anyway but better safe than sorry) and
+reduces the size of the IO queue
 
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+---
 
-Ira
+Note: One thing I noticed is how we have nvme_completion as volatile.
 
->  
->  config DEVICE_PRIVATE
->  	bool "Unaddressable device memory (GPU memory, ...)"
-> -- 
-> 2.22.0
-> 
+I don't think we really need that, it's forcing the compiler to constantly
+reload things which makes no sense once we have established that an
+entry is valid.
+
+And since we have a data & control dependency from nvme_cqe_pending(),
+we know that reading the CQE is going to depend on it being valid. I
+don't really see what volatile is buying us here other than cargo culting.
+
+Cheers,
+Ben.
+
+ drivers/nvme/host/nvme.h |  5 ++++
+ drivers/nvme/host/pci.c  | 52 +++++++++++++++++++++++++++++++++-------
+ 2 files changed, 49 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index ced0e0a7e039..7c6de398de7d 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -102,6 +102,11 @@ enum nvme_quirks {
+ 	 * Use non-standard 128 bytes SQEs.
+ 	 */
+ 	NVME_QUIRK_128_BYTES_SQES		= (1 << 11),
++
++	/*
++	 * Prevent tag overlap between queues
++	 */
++	NVME_QUIRK_SHARED_TAGS			= (1 << 12),
+ };
+ 
+ /*
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 7088971d4c42..c38e946ad8ca 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -178,6 +178,7 @@ struct nvme_queue {
+ 	u16 cq_head;
+ 	u16 last_cq_head;
+ 	u16 qid;
++	u16 tag_offset;
+ 	u8 cq_phase;
+ 	u8 sqes;
+ 	unsigned long flags;
+@@ -490,6 +491,7 @@ static void nvme_submit_cmd(struct nvme_queue *nvmeq, struct nvme_command *cmd,
+ 			    bool write_sq)
+ {
+ 	spin_lock(&nvmeq->sq_lock);
++	cmd->common.command_id += nvmeq->tag_offset;
+ 	memcpy(nvmeq->sq_cmds + (nvmeq->sq_tail << nvmeq->sqes),
+ 	       cmd, sizeof(*cmd));
+ 	if (++nvmeq->sq_tail == nvmeq->q_depth)
+@@ -951,9 +953,10 @@ static inline void nvme_ring_cq_doorbell(struct nvme_queue *nvmeq)
+ static inline void nvme_handle_cqe(struct nvme_queue *nvmeq, u16 idx)
+ {
+ 	volatile struct nvme_completion *cqe = &nvmeq->cqes[idx];
++	u16 ctag = cqe->command_id - nvmeq->tag_offset;
+ 	struct request *req;
+ 
+-	if (unlikely(cqe->command_id >= nvmeq->q_depth)) {
++	if (unlikely(ctag >= nvmeq->q_depth)) {
+ 		dev_warn(nvmeq->dev->ctrl.device,
+ 			"invalid id %d completed on queue %d\n",
+ 			cqe->command_id, le16_to_cpu(cqe->sq_id));
+@@ -966,14 +969,13 @@ static inline void nvme_handle_cqe(struct nvme_queue *nvmeq, u16 idx)
+ 	 * aborts.  We don't even bother to allocate a struct request
+ 	 * for them but rather special case them here.
+ 	 */
+-	if (unlikely(nvmeq->qid == 0 &&
+-			cqe->command_id >= NVME_AQ_BLK_MQ_DEPTH)) {
++	if (unlikely(nvmeq->qid == 0 && ctag >= NVME_AQ_BLK_MQ_DEPTH)) {
+ 		nvme_complete_async_event(&nvmeq->dev->ctrl,
+ 				cqe->status, &cqe->result);
+ 		return;
+ 	}
+ 
+-	req = blk_mq_tag_to_rq(*nvmeq->tags, cqe->command_id);
++	req = blk_mq_tag_to_rq(*nvmeq->tags, ctag);
+ 	trace_nvme_sq(req, cqe->sq_head, nvmeq->sq_tail);
+ 	nvme_end_request(req, cqe->status, cqe->result);
+ }
+@@ -1004,7 +1006,10 @@ static inline int nvme_process_cq(struct nvme_queue *nvmeq, u16 *start,
+ 
+ 	*start = nvmeq->cq_head;
+ 	while (nvme_cqe_pending(nvmeq)) {
+-		if (tag == -1U || nvmeq->cqes[nvmeq->cq_head].command_id == tag)
++		u16 ctag = nvmeq->cqes[nvmeq->cq_head].command_id;
++
++		ctag -= nvmeq->tag_offset;
++		if (tag == -1U || ctag == tag)
+ 			found++;
+ 		nvme_update_cq_head(nvmeq);
+ 	}
+@@ -1487,6 +1492,10 @@ static int nvme_alloc_queue(struct nvme_dev *dev, int qid, int depth)
+ 	nvmeq->qid = qid;
+ 	dev->ctrl.queue_count++;
+ 
++	if (qid && (dev->ctrl.quirks & NVME_QUIRK_SHARED_TAGS))
++		nvmeq->tag_offset = NVME_AQ_DEPTH;
++	else
++		nvmeq->tag_offset = 0;
+ 	return 0;
+ 
+  free_cqdma:
+@@ -2106,6 +2115,14 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
+ 	unsigned long size;
+ 
+ 	nr_io_queues = max_io_queues();
++
++	/*
++	 * If tags are shared with admin queue (Apple bug), then
++	 * make sure we only use one queue.
++	 */
++	if (dev->ctrl.quirks & NVME_QUIRK_SHARED_TAGS)
++		nr_io_queues = 1;
++
+ 	result = nvme_set_queue_count(&dev->ctrl, &nr_io_queues);
+ 	if (result < 0)
+ 		return result;
+@@ -2300,6 +2317,7 @@ static int nvme_pci_enable(struct nvme_dev *dev)
+ {
+ 	int result = -ENOMEM;
+ 	struct pci_dev *pdev = to_pci_dev(dev->dev);
++	unsigned int mqes;
+ 
+ 	if (pci_enable_device_mem(pdev))
+ 		return result;
+@@ -2325,8 +2343,8 @@ static int nvme_pci_enable(struct nvme_dev *dev)
+ 
+ 	dev->ctrl.cap = lo_hi_readq(dev->bar + NVME_REG_CAP);
+ 
+-	dev->q_depth = min_t(int, NVME_CAP_MQES(dev->ctrl.cap) + 1,
+-				io_queue_depth);
++	mqes = NVME_CAP_MQES(dev->ctrl.cap);
++	dev->q_depth = min_t(int, mqes + 1, io_queue_depth);
+ 	dev->db_stride = 1 << NVME_CAP_STRIDE(dev->ctrl.cap);
+ 	dev->dbs = dev->bar + 4096;
+ 
+@@ -2340,6 +2358,23 @@ static int nvme_pci_enable(struct nvme_dev *dev)
+ 	else
+ 		dev->io_sqes = NVME_NVM_IOSQES;
+ 
++	/*
++	 * Another Apple one: If we're going to offset the IO queue tags,
++	 * we still want to make sure they are no bigger than MQES,
++	 * it *looks* like otherwise, bad things happen (I suspect some
++	 * of the tag tracking in that device is limited).
++	 */
++	if (dev->ctrl.quirks & NVME_QUIRK_SHARED_TAGS) {
++		if (mqes <= NVME_AQ_DEPTH) {
++			dev_err(dev->ctrl.device, "Apple shared tags quirk"
++				" not compatible with device mqes %d\n", mqes);
++			result = -ENODEV;
++			goto disable;
++		}
++		dev->q_depth = min_t(int, dev->q_depth,
++				     mqes - NVME_AQ_DEPTH + 1);
++	}
++
+ 	/*
+ 	 * Temporary fix for the Apple controller found in the MacBook8,1 and
+ 	 * some MacBook7,1 to avoid controller resets and data loss.
+@@ -3057,7 +3092,8 @@ static const struct pci_device_id nvme_id_table[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2003) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2005),
+ 		.driver_data = NVME_QUIRK_SINGLE_VECTOR |
+-				NVME_QUIRK_128_BYTES_SQES },
++				NVME_QUIRK_128_BYTES_SQES |
++				NVME_QUIRK_SHARED_TAGS },
+ 	{ 0, }
+ };
+ MODULE_DEVICE_TABLE(pci, nvme_id_table);
+
+
