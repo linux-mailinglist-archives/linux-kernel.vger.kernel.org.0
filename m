@@ -2,58 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A6D76E773
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 16:36:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE5506E778
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 16:38:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729582AbfGSOfi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 10:35:38 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43173 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729238AbfGSOfh (ORCPT
+        id S1729705AbfGSOhq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 10:37:46 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:46590 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729238AbfGSOhp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 10:35:37 -0400
-Received: by mail-ed1-f66.google.com with SMTP id e3so34715515edr.10
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 07:35:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=HFXS9gDXqppzjLCxJ7qCq9efbS0WJDeydU4GETAXLUg=;
-        b=ojlP2fbavBsJdj+rl+3Go115B9PTDnhCNL/dM/r7PC5qCDJq61ZM5DqV56v7JTR2e5
-         Z2aul+6lfN98f8cnGPJs/4pD9eSn64ZiQx1yxshmERpVfnTByeScnQFU8V0xmlbCSqNq
-         zGlRcLwvnnISohFvbkVqE40OJMCzmbeT8aFHgfPSfQIIO9naUoYDCRPE0dqCln/MhPmW
-         sWfaz6BPCNMddg8QBee8C/Xys6k30/tP9LS6OAcKtm8p/KqF0WJSJg4VA/eYqFuHsuWu
-         Cx9/FXUFoTyu/KbW4nhdyRPz1GXMviw/Uo74BiNWacmmR9mMD7UIpng7O3+oT6N4fnAT
-         YYXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=HFXS9gDXqppzjLCxJ7qCq9efbS0WJDeydU4GETAXLUg=;
-        b=XLQ6baYn6BkzhFhkxb1kdR1FEyF2eixkN9IPVPIF+M20HfUrXnMby0o+gjMs2oM0bS
-         yzUjqKIni3qln881sxKev2wYn35Fl+4Nuh27GSj0hsIop3MS0Lt511s9DY1B+sDYkYZS
-         4ai++Jzxf42wxZf5m4wE6g6Te9L2Ik1Ac6fxfOan58tnjsYrI4GIe0QKZ+vD10R3eXwZ
-         mmRL4/uLm3fJncZf9IzfulV0Q98vyBJdocSxFQArKbIqja9rCObsy4DX+VT5miR91Y7k
-         q2W62WfTsC+QxKGJKMNT0mr3k3ss9vLEgdV2bRZ5jRAgEZm/SF5S91Eo9uIyuk49BaRE
-         /snw==
-X-Gm-Message-State: APjAAAWdH9mWZ7FrD+JT0v2o9+C6hApqhF61n1BAt92EB3d+HO1qRQj0
-        P5yoh2ALNedJ3xrAfZ/jvSBNE7L/Hy6lhFHHV6Q=
-X-Google-Smtp-Source: APXvYqyktcILNMJdJfGCt75k3KYNBvnstN5fuEzj1C+XEEJHcvf5ZUjd7cY8JWZz/nIRnjBqwB916K5wOa549EPHmaA=
-X-Received: by 2002:a50:b554:: with SMTP id z20mr46452319edd.296.1563546936117;
- Fri, 19 Jul 2019 07:35:36 -0700 (PDT)
+        Fri, 19 Jul 2019 10:37:45 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6JEJPOp174728;
+        Fri, 19 Jul 2019 14:37:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=Ea7YAj6aCsOltfu+jfPBwzRyC/igLXsJVch2fiMu4OQ=;
+ b=Nc3vuAQCpmSezUOfAD5aodlXEX8+XXr1jDfVvso0ldX2DXHlakZ/J1xpqhw27m9yoma3
+ i5rFPxHTnRo/WZ4SnHwJQXtR7g67e5E1jIfYdjtvYZsddu2JUphFxIxUdwrcqmQZu+bj
+ zTTrHrAj6q5mJKSIB/kWiHSdWVWQAFVX5rd1QUr13vO+kK1Zqqd+1nF9m8TcBIjtkrVN
+ 2N1ce658/fORcx4y6/BRjTib5eUK8FyRjlpbjcPnXbC57cUJrbTBFZHoZqF9aCxmB+rL
+ ryT+KGXIKOEnzdaOIT4SG650/5atByMcw4AfGHNYNWbAHYXKaKLotEnaGnq4Qf0uRMPr +A== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2tq7xrf0gp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Jul 2019 14:37:30 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6JEHcM8066621;
+        Fri, 19 Jul 2019 14:37:30 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2tsmcdmnqd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Jul 2019 14:37:30 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6JEbQV4005554;
+        Fri, 19 Jul 2019 14:37:27 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 19 Jul 2019 14:37:26 +0000
+Date:   Fri, 19 Jul 2019 10:37:21 -0400
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mathias Krause <minipli@googlemail.com>
+Subject: Re: [v2 PATCH] padata: Replace delayed timer with immediate
+ workqueue in padata_reorder
+Message-ID: <20190719143721.awtvjf2pk37f5zsv@ca-dmjordan1.us.oracle.com>
+References: <c1bbbe94-dbdc-da14-e0c3-850c965d8b5d@oracle.com>
+ <20190716163253.24377-1-daniel.m.jordan@oracle.com>
+ <20190717111147.t776zlyhdqyl5dhc@gondor.apana.org.au>
+ <20190717183227.b3hqphukkndqumhw@ca-dmjordan1.us.oracle.com>
+ <20190718033131.4m4ypbq7tiucqcsl@gondor.apana.org.au>
+ <20190718142730.uhdkwx5onigdpxno@ca-dmjordan1.us.oracle.com>
+ <20190718145634.xagjemdqpoe44xxh@gondor.apana.org.au>
+ <20190718150146.bztw3uugd5sqhdvk@gondor.apana.org.au>
 MIME-Version: 1.0
-Received: by 2002:a17:906:45c1:0:0:0:0 with HTTP; Fri, 19 Jul 2019 07:35:34
- -0700 (PDT)
-Reply-To: amweber987@gmail.com
-From:   Amanda Weber <commyjere@gmail.com>
-Date:   Fri, 19 Jul 2019 14:35:34 +0000
-Message-ID: <CANSXNV7fxOdh3SV+s_R72Rc+6gmOFW_Z6riyqKV-E+5qxZo9zw@mail.gmail.com>
-Subject: Hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190718150146.bztw3uugd5sqhdvk@gondor.apana.org.au>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9322 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=702
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907190160
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9322 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=744 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907190160
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi dear, I am Ms.Amanda Weber. You still have not responded to the
-previous email I sent to you
+On Thu, Jul 18, 2019 at 11:01:46PM +0800, Herbert Xu wrote:
+> @@ -376,9 +325,8 @@ void padata_do_serial(struct padata_priv *padata)
+>  
+>  	cpu = get_cpu();
+>  
+> -	/* We need to run on the same CPU padata_do_parallel(.., padata, ..)
+> -	 * was called on -- or, at least, enqueue the padata object into the
+> -	 * correct per-cpu queue.
+> +	/* We need to enqueue the padata object into the correct
+> +	 * per-cpu queue.
+>  	 */
+>  	if (cpu != padata->cpu) {
+>  		reorder_via_wq = 1;
+> @@ -388,12 +336,12 @@ void padata_do_serial(struct padata_priv *padata)
+>  	pqueue = per_cpu_ptr(pd->pqueue, cpu);
+>  
+>  	spin_lock(&pqueue->reorder.lock);
+> -	atomic_inc(&pd->reorder_objects);
+>  	list_add_tail(&padata->list, &pqueue->reorder.list);
+> +	atomic_inc(&pd->reorder_objects);
+>  	spin_unlock(&pqueue->reorder.lock);
+>  
+>  	/*
+> -	 * Ensure the atomic_inc of reorder_objects above is ordered correctly
+> +	 * Ensure the addition to the reorder list is ordered correctly
+>  	 * with the trylock of pd->lock in padata_reorder.  Pairs with smp_mb
+>  	 * in padata_reorder.
+>  	 */
+> @@ -401,13 +349,7 @@ void padata_do_serial(struct padata_priv *padata)
+>  
+>  	put_cpu();
+>  
+> -	/* If we're running on the wrong CPU, call padata_reorder() via a
+> -	 * kernel worker.
+> -	 */
+> -	if (reorder_via_wq)
+> -		queue_work_on(cpu, pd->pinst->wq, &pqueue->reorder_work);
+> -	else
+> -		padata_reorder(pd);
+> +	padata_reorder(pd);
+>  }
+>  EXPORT_SYMBOL(padata_do_serial);
+
+If I'm not missing anything, still looks like get_cpu() and reorder_via_wq no
+longer have an effect with this patch and can be removed.
