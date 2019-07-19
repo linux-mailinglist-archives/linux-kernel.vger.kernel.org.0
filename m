@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74BF36DED5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:31:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70F8A6DEC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:31:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731147AbfGSEEi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:04:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36792 "EHLO mail.kernel.org"
+        id S1731214AbfGSEEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:04:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731009AbfGSEEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:04:30 -0400
+        id S1728444AbfGSEEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:04:36 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 854AC21873;
-        Fri, 19 Jul 2019 04:04:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D665721852;
+        Fri, 19 Jul 2019 04:04:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509070;
-        bh=IgqLmc9gab5vB2kgwbuIUQkckeqHIN4ozj7XkneYH2c=;
+        s=default; t=1563509075;
+        bh=qceo+/TEZVRgGCiRPA/chu92E1luGtQgGGimokaAYQA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pkx/qd9sNjLjrYJLgV3i/3Pn7z5nwqq0sIetBrlWv9SkSjR+Z4/RCT4KbtJPJUGV9
-         j5nMR0Qu6H8/UhNkhnNHgtMbfWq7kHdb64jZmK6IWF71Pv1JmH2moUtomR3XJgT6rM
-         MMjXA/UIHu2JIa3HxUZ125fIASO2QrF2pvObGgFU=
+        b=VXxZE2wf3D9qECqHEL9/VzA1m2PVZf/PehME29z8XV9czUk9XGzlJxYl+amQ8Pu08
+         87uiR5Z4WaJgo2bLL38LO7ihCjGMoV3w+oL1yxFNjlRrLuGfd3XUK62v/aEWdQyI7a
+         8Nyfl7fNPMFzT2O41mNpkFROVkazuxyK0ccWP1eY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+Cc:     EJ Hsu <ejh@nvidia.com>, Alan Stern <stern@rowland.harvard.edu>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 052/141] usb: gadget: Zero ffs_io_data
-Date:   Fri, 19 Jul 2019 00:01:17 -0400
-Message-Id: <20190719040246.15945-52-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 054/141] usb: gadget: storage: Remove warning message
+Date:   Fri, 19 Jul 2019 00:01:19 -0400
+Message-Id: <20190719040246.15945-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040246.15945-1-sashal@kernel.org>
 References: <20190719040246.15945-1-sashal@kernel.org>
@@ -43,57 +43,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+From: EJ Hsu <ejh@nvidia.com>
 
-[ Upstream commit 508595515f4bcfe36246e4a565cf280937aeaade ]
+[ Upstream commit e70b3f5da00119e057b7faa557753fee7f786f17 ]
 
-In some cases the "Allocate & copy" block in ffs_epfile_io() is not
-executed. Consequently, in such a case ffs_alloc_buffer() is never called
-and struct ffs_io_data is not initialized properly. This in turn leads to
-problems when ffs_free_buffer() is called at the end of ffs_epfile_io().
+This change is to fix below warning message in following scenario:
+usb_composite_setup_continue: Unexpected call
 
-This patch uses kzalloc() instead of kmalloc() in the aio case and memset()
-in non-aio case to properly initialize struct ffs_io_data.
+When system tried to enter suspend, the fsg_disable() will be called to
+disable fsg driver and send a signal to fsg_main_thread. However, at
+this point, the fsg_main_thread has already been frozen and can not
+respond to this signal. So, this signal will be pended until
+fsg_main_thread wakes up.
 
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Once system resumes from suspend, fsg_main_thread will detect a signal
+pended and do some corresponding action (in handle_exception()). Then,
+host will send some setup requests (get descriptor, set configuration...)
+to UDC driver trying to enumerate this device. During the handling of "set
+configuration" request, it will try to sync up with fsg_main_thread by
+sending a signal (which is the same as the signal sent by fsg_disable)
+to it. In a similar manner, once the fsg_main_thread receives this
+signal, it will call handle_exception() to handle the request.
+
+However, if the fsg_main_thread wakes up from suspend a little late and
+"set configuration" request from Host arrives a little earlier,
+fsg_main_thread might come across the request from "set configuration"
+when it handles the signal from fsg_disable(). In this case, it will
+handle this request as well. So, when fsg_main_thread tries to handle
+the signal sent from "set configuration" later, there will nothing left
+to do and warning message "Unexpected call" is printed.
+
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: EJ Hsu <ejh@nvidia.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/f_fs.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/function/f_mass_storage.c | 21 ++++++++++++++------
+ drivers/usb/gadget/function/storage_common.h |  1 +
+ 2 files changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-index c7ed90084d1a..213ff03c8a9f 100644
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -1183,11 +1183,12 @@ static ssize_t ffs_epfile_write_iter(struct kiocb *kiocb, struct iov_iter *from)
- 	ENTER();
+diff --git a/drivers/usb/gadget/function/f_mass_storage.c b/drivers/usb/gadget/function/f_mass_storage.c
+index 043f97ad8f22..982c3e89eb0d 100644
+--- a/drivers/usb/gadget/function/f_mass_storage.c
++++ b/drivers/usb/gadget/function/f_mass_storage.c
+@@ -2293,8 +2293,7 @@ static int fsg_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
+ static void fsg_disable(struct usb_function *f)
+ {
+ 	struct fsg_dev *fsg = fsg_from_func(f);
+-	fsg->common->new_fsg = NULL;
+-	raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE);
++	raise_exception(fsg->common, FSG_STATE_DISCONNECT);
+ }
  
- 	if (!is_sync_kiocb(kiocb)) {
--		p = kmalloc(sizeof(io_data), GFP_KERNEL);
-+		p = kzalloc(sizeof(io_data), GFP_KERNEL);
- 		if (unlikely(!p))
- 			return -ENOMEM;
- 		p->aio = true;
- 	} else {
-+		memset(p, 0, sizeof(*p));
- 		p->aio = false;
+ 
+@@ -2307,6 +2306,7 @@ static void handle_exception(struct fsg_common *common)
+ 	enum fsg_state		old_state;
+ 	struct fsg_lun		*curlun;
+ 	unsigned int		exception_req_tag;
++	struct fsg_dev		*fsg;
+ 
+ 	/*
+ 	 * Clear the existing signals.  Anything but SIGUSR1 is converted
+@@ -2413,9 +2413,19 @@ static void handle_exception(struct fsg_common *common)
+ 		break;
+ 
+ 	case FSG_STATE_CONFIG_CHANGE:
+-		do_set_interface(common, common->new_fsg);
+-		if (common->new_fsg)
++		fsg = common->new_fsg;
++		/*
++		 * Add a check here to double confirm if a disconnect event
++		 * occurs and common->new_fsg has been cleared.
++		 */
++		if (fsg) {
++			do_set_interface(common, fsg);
+ 			usb_composite_setup_continue(common->cdev);
++		}
++		break;
++
++	case FSG_STATE_DISCONNECT:
++		do_set_interface(common, NULL);
+ 		break;
+ 
+ 	case FSG_STATE_EXIT:
+@@ -2989,8 +2999,7 @@ static void fsg_unbind(struct usb_configuration *c, struct usb_function *f)
+ 
+ 	DBG(fsg, "unbind\n");
+ 	if (fsg->common->fsg == fsg) {
+-		fsg->common->new_fsg = NULL;
+-		raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE);
++		raise_exception(fsg->common, FSG_STATE_DISCONNECT);
+ 		/* FIXME: make interruptible or killable somehow? */
+ 		wait_event(common->fsg_wait, common->fsg != fsg);
  	}
- 
-@@ -1219,11 +1220,12 @@ static ssize_t ffs_epfile_read_iter(struct kiocb *kiocb, struct iov_iter *to)
- 	ENTER();
- 
- 	if (!is_sync_kiocb(kiocb)) {
--		p = kmalloc(sizeof(io_data), GFP_KERNEL);
-+		p = kzalloc(sizeof(io_data), GFP_KERNEL);
- 		if (unlikely(!p))
- 			return -ENOMEM;
- 		p->aio = true;
- 	} else {
-+		memset(p, 0, sizeof(*p));
- 		p->aio = false;
- 	}
- 
+diff --git a/drivers/usb/gadget/function/storage_common.h b/drivers/usb/gadget/function/storage_common.h
+index e5e3a2553aaa..12687f7e3de9 100644
+--- a/drivers/usb/gadget/function/storage_common.h
++++ b/drivers/usb/gadget/function/storage_common.h
+@@ -161,6 +161,7 @@ enum fsg_state {
+ 	FSG_STATE_ABORT_BULK_OUT,
+ 	FSG_STATE_PROTOCOL_RESET,
+ 	FSG_STATE_CONFIG_CHANGE,
++	FSG_STATE_DISCONNECT,
+ 	FSG_STATE_EXIT,
+ 	FSG_STATE_TERMINATED
+ };
 -- 
 2.20.1
 
