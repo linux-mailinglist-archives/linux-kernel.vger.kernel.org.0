@@ -2,177 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B1816E605
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 15:03:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DF8B6E61C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 15:12:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728671AbfGSND0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 09:03:26 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37794 "EHLO huawei.com"
+        id S1728763AbfGSNMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 09:12:37 -0400
+Received: from mail-eopbgr760043.outbound.protection.outlook.com ([40.107.76.43]:57604
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726239AbfGSND0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 09:03:26 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 337BB58917896E0CF7E2;
-        Fri, 19 Jul 2019 21:03:24 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Fri, 19 Jul 2019
- 21:03:13 +0800
-From:   Zhihao@vger.kernel.org, Cheng@vger.kernel.org
-To:     <richard@nod.at>, <s.hauer@pengutronix.de>, <dedekind1@gmail.com>,
-        <yi.zhang@huawei.com>
-CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <chengzhihao1@huawei.com>
-Subject: [PATCH] ubifs: ubifs_tnc_start_commit: Fix OOB in layout_in_gaps
-Date:   Fri, 19 Jul 2019 21:09:00 +0800
-Message-ID: <1563541740-16726-1-git-send-email-chengzhihao1@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1728152AbfGSNMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 09:12:37 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Z+R4EvSfFC6oIOg0I57t2z+Xhzj+CCwoBxHdt+rsD9fjHnm5T4LwOs+3VZOvNdh+wlgvn/Ms+jx2afoMHU4gy2cD6amngRTsC4xyW9N9e8SsUGRssQSqCY7OQj5YrZ3XipDC+WRm7AAl60zuMjJH6ogD/1PzI30+4XE+QVAgVe42B7wup1WyXQ46ZB8NdqKpWcCQBFSa3tkb1bemtn6glYF8mKtwjicOeU3IvZ8JT4KieyFEexsspBZoG01KsRUC9nHTpFqSve8PGgbEhFiM/pvKjZzKXfvD65Sjd6jadJ5zqN5kwzMvCWJVooRF1HKU0en3B4Y/fMc2lA4sEcFsBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ggUqI1mtPCK2vMkfn/mmHXNkd5CgzlWib7SrLAVBYn4=;
+ b=YsYmOwy+XGrf9f/u2ggKDbZK6oA9I/0x5F4oWIqig3UTRrN1TucnYbiZx582cO99yrUXWRTbXEkBjWRjmf18ird41I4iZ1FHlbtclb7r5ErLzSA0WcDtIVLkUz4IpGPilqVdSUmpAfz3gWEWZWd/AoX0VXKc2bMbvzpoIDAfqOIlqjskFS9LK4ySx7OVb8pnhfggiYBLSHSiYjjRbWxvrcbyy/hWIS2AWlDogEzzgTuM3O4pCuPHyfxNGgqPYqiW9J6GauKX8m5upvwnJJpOoUcW0NFh2ydp5sWYDJfXpH5Fz8E63suVxaI2j/FyLaeeV0djuiNfuOv0Ku49r3pKNQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=amd.com;dmarc=pass action=none header.from=amd.com;dkim=pass
+ header.d=amd.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ggUqI1mtPCK2vMkfn/mmHXNkd5CgzlWib7SrLAVBYn4=;
+ b=ZVFR7r7S6LbywOS+XXr/Kv6FMk4sAJRpvuIwl+1cAp8qzyk9s4PB9xZRGleFVB1JrdcHqKkCFiNw1uzTMheItotNXoaWuz5V79ki2QZ5fjLGpQOlMutMMGfCdRUD+YSOYt485wD9AHBzSJZpHp/YZWXatn3ohEvQOZylS1O5QVI=
+Received: from DM6PR12MB3163.namprd12.prod.outlook.com (20.179.104.150) by
+ DM6PR12MB3019.namprd12.prod.outlook.com (20.178.30.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2094.12; Fri, 19 Jul 2019 13:12:34 +0000
+Received: from DM6PR12MB3163.namprd12.prod.outlook.com
+ ([fe80::9c3d:8593:906c:e4f7]) by DM6PR12MB3163.namprd12.prod.outlook.com
+ ([fe80::9c3d:8593:906c:e4f7%6]) with mapi id 15.20.2073.012; Fri, 19 Jul 2019
+ 13:12:34 +0000
+From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
+CC:     "x86@kernel.org" <x86@kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Mike Anderson <andmike@linux.ibm.com>,
+        Ram Pai <linuxram@us.ibm.com>
+Subject: Re: [PATCH v3 0/6] Remove x86-specific code from generic headers
+Thread-Topic: [PATCH v3 0/6] Remove x86-specific code from generic headers
+Thread-Index: AQHVPRj/oX9x6en7K0GjSSUSyjk8U6bQU/MAgAB0XYCAASS5gA==
+Date:   Fri, 19 Jul 2019 13:12:33 +0000
+Message-ID: <879a196a-1d92-931d-88f4-6ce17a09cf20@amd.com>
+References: <20190718032858.28744-1-bauerman@linux.ibm.com>
+ <680bb92e-66eb-8959-88a5-3447a6a282c8@amd.com>
+ <87a7db3z68.fsf@morokweng.localdomain>
+In-Reply-To: <87a7db3z68.fsf@morokweng.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN6PR04CA0004.namprd04.prod.outlook.com
+ (2603:10b6:805:3e::17) To DM6PR12MB3163.namprd12.prod.outlook.com
+ (2603:10b6:5:182::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.84.11]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a3b2d442-bed0-474d-cc2b-08d70c4ac2f6
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR12MB3019;
+x-ms-traffictypediagnostic: DM6PR12MB3019:
+x-microsoft-antispam-prvs: <DM6PR12MB3019427DB838CD628D02CA71ECCB0@DM6PR12MB3019.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 01039C93E4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(396003)(366004)(39860400002)(346002)(189003)(199004)(102836004)(53936002)(52116002)(7736002)(229853002)(256004)(6436002)(31696002)(25786009)(7416002)(8936002)(68736007)(6506007)(53546011)(305945005)(6916009)(6486002)(386003)(186003)(31686004)(486006)(71200400001)(71190400001)(2906002)(478600001)(446003)(14454004)(5660300002)(6512007)(4326008)(76176011)(54906003)(81156014)(476003)(26005)(2616005)(66066001)(6246003)(36756003)(8676002)(3846002)(6116002)(316002)(64756008)(66446008)(81166006)(66946007)(11346002)(66556008)(99286004)(86362001)(66476007)(4744005)(41533002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3019;H:DM6PR12MB3163.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: F+z10TAX7b2fjtuBQEJL/X8dKfTh3kpLJ9l2EFFTfGUpWQHv3pKi923NSa4WHX3bZUDw7uVBjpSbx5TWXFEMqHG85J5aQOhUfgGwLGGFUa5p0uTmHKFg2e7fQ1tLgzphhqT9M7A7P4Lbi6n7qpFOMh/91YWDTjI0TOJ2cTR+tsAAVNPOeyNH+SkzZnb7gzI/YwCi7X4PJy/k1QeFqUBtnxsi/prOkx6wcGurCvrIUusYqQGDuu9CUAI7jPK1mQzqrWjeIu5q9NF24AGyo03Uswm8UOS8Sjzk1eRLwW32/7PnqBBx1/zcZrPBZAEEVANxJaQqXz3JoLueq4RNAdMoXQrq+mjiDov0v1Un7n2z/LFvw8rakuUggZfcvDrQDch9lC0rmF+bSS8FnX1g7LY+vaOUs2o0/pKyEVkZUo+/dY0=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E6763BDAFFDD7843AF08E64ECA218C71@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3b2d442-bed0-474d-cc2b-08d70c4ac2f6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2019 13:12:34.0158
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tlendack@amd.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3019
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-
-Running stress-test test_2 in mtd-utils on ubi device, sometimes we can
-get follwing oops message:
-
-  BUG: unable to handle page fault for address: ffffffff00000140
-  #PF: supervisor read access in kernel mode
-  #PF: error_code(0x0000) - not-present page
-  PGD 280a067 P4D 280a067 PUD 0
-  Oops: 0000 [#1] SMP
-  CPU: 0 PID: 60 Comm: kworker/u16:1 Kdump: loaded Not tainted 5.2.0 #13
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0
-  -0-ga698c8995f-prebuilt.qemu.org 04/01/2014
-  Workqueue: writeback wb_workfn (flush-ubifs_0_0)
-  RIP: 0010:rb_next_postorder+0x2e/0xb0
-  Code: 80 db 03 01 48 85 ff 0f 84 97 00 00 00 48 8b 17 48 83 05 bc 80 db
-  03 01 48 83 e2 fc 0f 84 82 00 00 00 48 83 05 b2 80 db 03 01 <48> 3b 7a
-  10 48 89 d0 74 02 f3 c3 48 8b 52 08 48 83 05 a3 80 db 03
-  RSP: 0018:ffffc90000887758 EFLAGS: 00010202
-  RAX: ffff888129ae4700 RBX: ffff888138b08400 RCX: 0000000080800001
-  RDX: ffffffff00000130 RSI: 0000000080800024 RDI: ffff888138b08400
-  RBP: ffff888138b08400 R08: ffffea0004a6b920 R09: 0000000000000000
-  R10: ffffc90000887740 R11: 0000000000000001 R12: ffff888128d48000
-  R13: 0000000000000800 R14: 000000000000011e R15: 00000000000007c8
-  FS:  0000000000000000(0000) GS:ffff88813ba00000(0000)
-  knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: ffffffff00000140 CR3: 000000013789d000 CR4: 00000000000006f0
-  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-  Call Trace:
-    destroy_old_idx+0x5d/0xa0 [ubifs]
-    ubifs_tnc_start_commit+0x4fe/0x1380 [ubifs]
-    do_commit+0x3eb/0x830 [ubifs]
-    ubifs_run_commit+0xdc/0x1c0 [ubifs]
-
-Above Oops are due to the slab-out-of-bounds happened in do-while of
-function layout_in_gaps indirectly called by ubifs_tnc_start_commit. In
-function layout_in_gaps, there is a do-while loop placing index nodes
-into the gaps created by obsolete index nodes in non-empty index LEBs
-until rest index nodes can totally be placed into pre-allocated empty
-LEBs. @c->gap_lebs points to a memory area(integer array) which records
-LEB numbers used by 'in-the-gaps' method. Whenever a fitable index LEB
-is found, corresponding lnum will be incrementally written into the
-memory area pointed by @c->gap_lebs. The size
-((@c->lst.idx_lebs + 1) * sizeof(int)) of memory area is allocated before
-do-while loop and can not be changed in the loop. But @c->lst.idx_lebs
-could be increased by function ubifs_change_lp (called by
-layout_leb_in_gaps->ubifs_find_dirty_idx_leb->get_idx_gc_leb) during the
-loop. So, sometimes oob happens when number of cycles in do-while loop
-exceeds the original value of @c->lst.idx_lebs. See detail in
-https://bugzilla.kernel.org/show_bug.cgi?id=204229.
-This patch fixes oob in layout_in_gaps.
-
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
----
- fs/ubifs/tnc_commit.c | 30 +++++++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 7 deletions(-)
-
-diff --git a/fs/ubifs/tnc_commit.c b/fs/ubifs/tnc_commit.c
-index a384a0f..9fc6b8e 100644
---- a/fs/ubifs/tnc_commit.c
-+++ b/fs/ubifs/tnc_commit.c
-@@ -212,7 +212,7 @@ static int is_idx_node_in_use(struct ubifs_info *c, union ubifs_key *key,
- /**
-  * layout_leb_in_gaps - layout index nodes using in-the-gaps method.
-  * @c: UBIFS file-system description object
-- * @p: return LEB number here
-+ * @p: return LEB number in @c->gap_lebs[p]
-  *
-  * This function lays out new index nodes for dirty znodes using in-the-gaps
-  * method of TNC commit.
-@@ -221,7 +221,7 @@ static int is_idx_node_in_use(struct ubifs_info *c, union ubifs_key *key,
-  * This function returns the number of index nodes written into the gaps, or a
-  * negative error code on failure.
-  */
--static int layout_leb_in_gaps(struct ubifs_info *c, int *p)
-+static int layout_leb_in_gaps(struct ubifs_info *c, int p)
- {
- 	struct ubifs_scan_leb *sleb;
- 	struct ubifs_scan_node *snod;
-@@ -236,7 +236,7 @@ static int layout_leb_in_gaps(struct ubifs_info *c, int *p)
- 		 * filled, however we do not check there at present.
- 		 */
- 		return lnum; /* Error code */
--	*p = lnum;
-+	c->gap_lebs[p] = lnum;
- 	dbg_gc("LEB %d", lnum);
- 	/*
- 	 * Scan the index LEB.  We use the generic scan for this even though
-@@ -355,7 +355,8 @@ static int get_leb_cnt(struct ubifs_info *c, int cnt)
-  */
- static int layout_in_gaps(struct ubifs_info *c, int cnt)
- {
--	int err, leb_needed_cnt, written, *p;
-+	int err, leb_needed_cnt, written, p = 0, old_idx_lebs;
-+	old_idx_lebs = c->lst.idx_lebs;
- 
- 	dbg_gc("%d znodes to write", cnt);
- 
-@@ -364,9 +365,8 @@ static int layout_in_gaps(struct ubifs_info *c, int cnt)
- 	if (!c->gap_lebs)
- 		return -ENOMEM;
- 
--	p = c->gap_lebs;
- 	do {
--		ubifs_assert(c, p < c->gap_lebs + c->lst.idx_lebs);
-+		ubifs_assert(c, p < c->lst.idx_lebs);
- 		written = layout_leb_in_gaps(c, p);
- 		if (written < 0) {
- 			err = written;
-@@ -392,9 +392,25 @@ static int layout_in_gaps(struct ubifs_info *c, int cnt)
- 		leb_needed_cnt = get_leb_cnt(c, cnt);
- 		dbg_gc("%d znodes remaining, need %d LEBs, have %d", cnt,
- 		       leb_needed_cnt, c->ileb_cnt);
-+		/*
-+		 * Dynamically change the size of @c->gap_lebs to prevent
-+		 * oob, because @c->lst.idx_lebs could be increased by
-+		 * function @get_idx_gc_leb (called by layout_leb_in_gaps->
-+		 * ubifs_find_dirty_idx_leb) during loop. Only enlarge
-+		 * @c->gap_lebs when needed.
-+		 *
-+		 */
-+		if (leb_needed_cnt > c->ileb_cnt && p >= old_idx_lebs &&
-+		    old_idx_lebs < c->lst.idx_lebs) {
-+			old_idx_lebs = c->lst.idx_lebs;
-+			c->gap_lebs = krealloc(c->gap_lebs, sizeof(int) *
-+					       (old_idx_lebs + 1), GFP_NOFS);
-+			if (!c->gap_lebs)
-+			      return -ENOMEM;
-+		}
- 	} while (leb_needed_cnt > c->ileb_cnt);
- 
--	*p = -1;
-+	c->gap_lebs[p] = -1;
- 	return 0;
- }
- 
--- 
-2.7.4
-
+T24gNy8xOC8xOSAyOjQ0IFBNLCBUaGlhZ28gSnVuZyBCYXVlcm1hbm4gd3JvdGU6DQo+IA0KPiBM
+ZW5kYWNreSwgVGhvbWFzIDxUaG9tYXMuTGVuZGFja3lAYW1kLmNvbT4gd3JpdGVzOg0KPiANCj4+
+IE9uIDcvMTcvMTkgMTA6MjggUE0sIFRoaWFnbyBKdW5nIEJhdWVybWFubiB3cm90ZToNCj4+PiBI
+ZWxsbywNCj4+Pg0KPj4+IFRoaXMgdmVyc2lvbiBpcyBtb3N0bHkgYWJvdXQgc3BsaXR0aW5nIHVw
+IHBhdGNoIDIvMyBpbnRvIHRocmVlIHNlcGFyYXRlDQo+Pj4gcGF0Y2hlcywgYXMgc3VnZ2VzdGVk
+IGJ5IENocmlzdG9waCBIZWxsd2lnLiBUd28gb3RoZXIgY2hhbmdlcyBhcmUgYSBmaXggaW4NCj4+
+PiBwYXRjaCAxIHdoaWNoIHdhc24ndCBzZWxlY3RpbmcgQVJDSF9IQVNfTUVNX0VOQ1JZUFQgZm9y
+IHMzOTAgc3BvdHRlZCBieQ0KPj4+IEphbmFuaSBhbmQgcmVtb3ZhbCBvZiBzbWVfYWN0aXZlIGFu
+ZCBzZXZfYWN0aXZlIHN5bWJvbCBleHBvcnRzIGFzIHN1Z2dlc3RlZA0KPj4+IGJ5IENocmlzdG9w
+aCBIZWxsd2lnLg0KPj4+DQo+Pj4gVGhlc2UgcGF0Y2hlcyBhcmUgYXBwbGllZCBvbiB0b3Agb2Yg
+dG9kYXkncyBkbWEtbWFwcGluZy9mb3ItbmV4dC4NCj4+Pg0KPj4+IEkgZG9uJ3QgaGF2ZSBhIHdh
+eSB0byB0ZXN0IFNNRSwgU0VWLCBub3IgczM5MCdzIFBFRiBzbyB0aGUgcGF0Y2hlcyBoYXZlIG9u
+bHkNCj4+PiBiZWVuIGJ1aWxkIHRlc3RlZC4NCj4+DQo+PiBJJ2xsIHRyeSBhbmQgZ2V0IHRoaXMg
+dGVzdGVkIHF1aWNrbHkgdG8gYmUgc3VyZSBldmVyeXRoaW5nIHdvcmtzIGZvciBTTUUNCj4+IGFu
+ZCBTRVYuDQoNCkJ1aWx0IGFuZCB0ZXN0ZWQgYm90aCBTTUUgYW5kIFNFViBhbmQgZXZlcnl0aGlu
+ZyBhcHBlYXJzIHRvIGJlIHdvcmtpbmcNCndlbGwgKG5vdCBleHRlbnNpdmUgdGVzdGluZywgYnV0
+IHNob3VsZCBiZSBnb29kIGVub3VnaCkuDQoNClRoYW5rcywNClRvbQ0KDQo+IA0KPiBUaGFua3Mh
+IEFuZCB0aGFua3MgZm9yIHJldmlld2luZyB0aGUgcGF0Y2hlcy4NCj4gDQo=
