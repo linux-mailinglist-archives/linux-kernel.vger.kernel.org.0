@@ -2,66 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 316FB6EC94
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 00:49:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27A486ECA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 01:02:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732305AbfGSWtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 18:49:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40876 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727344AbfGSWtu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 18:49:50 -0400
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A42E721874;
-        Fri, 19 Jul 2019 22:49:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563576589;
-        bh=Klt7CebjyXqGVRbXNF1U3wyGJqIWQOIIcRLJT93OQ+g=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=wCy7eeadZZYg4XZBwCEH/aG4rCHd2X8+WQJiqZrXJ05hWYYDpJXaZWmRfgv4FvYEM
-         EuINtaeTGaWgTB9XR5asYzOpIZ7b9GSBb0mTWM1ZHC/jGKTReSTIOeTeqvrCh0vAU+
-         cVlTZzQsQGSlXlgZiHR8eBtYlTA1QwdjIODnYyj0=
-Received: by mail-qk1-f171.google.com with SMTP id d79so24435899qke.11;
-        Fri, 19 Jul 2019 15:49:49 -0700 (PDT)
-X-Gm-Message-State: APjAAAV3xo+BhMweRPDC4rqsrvLxXr4Nw7WlqDWtAPj9/6Imc3E0QQYq
-        kJpn5wRCyQ57jyOfhK2pX8zCfiz1d6iHbuoBEQ==
-X-Google-Smtp-Source: APXvYqzTrjLNjpoGgXzQ/tPDhplfN9MU7nWEaESSUgvy6jdg+g0UISnO9ycXnTKR/7UlNhzEJDMiPYgAxXRtGPIff+g=
-X-Received: by 2002:a37:a48e:: with SMTP id n136mr37922560qke.223.1563576588892;
- Fri, 19 Jul 2019 15:49:48 -0700 (PDT)
+        id S1732365AbfGSXBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 19:01:34 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33178 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728904AbfGSXBe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 19:01:34 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hobsD-0007B3-2X; Sat, 20 Jul 2019 01:01:09 +0200
+Date:   Sat, 20 Jul 2019 01:01:08 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Eiichi Tsukata <devel@etsukata.com>, edwintorok@gmail.com,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: [PATCH] x86/stacktrace: Do not access user space memory
+ unnecessarily
+In-Reply-To: <alpine.DEB.2.21.1907200018050.1782@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1907200039110.1782@nanos.tec.linutronix.de>
+References: <20190702053151.26922-1-devel@etsukata.com> <20190702072821.GX3419@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1907021400350.1802@nanos.tec.linutronix.de> <20190702113355.5be9ebfe@gandalf.local.home> <20190702133905.1482b87e@gandalf.local.home>
+ <20190719202836.GB13680@linux.intel.com> <alpine.DEB.2.21.1907200018050.1782@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190717115109.15168-1-alexandru.ardelean@analog.com> <20190717115109.15168-5-alexandru.ardelean@analog.com>
-In-Reply-To: <20190717115109.15168-5-alexandru.ardelean@analog.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 19 Jul 2019 16:49:37 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKZMoxdH_rpyD9kTEPtFZ=QxEV325wH=6qdhNX2nS=9ug@mail.gmail.com>
-Message-ID: <CAL_JsqKZMoxdH_rpyD9kTEPtFZ=QxEV325wH=6qdhNX2nS=9ug@mail.gmail.com>
-Subject: Re: [PATCH 4/4][V2] dt-bindings: iio: imu: add bindings for ADIS16460
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 17, 2019 at 5:51 AM Alexandru Ardelean
-<alexandru.ardelean@analog.com> wrote:
->
-> This change adds device-tree bindings for the ADIS16460.
->
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> ---
->  .../bindings/iio/imu/adi,adis16460.yaml       | 53 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 54 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml
+On Sat, 20 Jul 2019, Thomas Gleixner wrote:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> On Fri, 19 Jul 2019, Sean Christopherson wrote:
+> > On Tue, Jul 02, 2019 at 01:39:05PM -0400, Steven Rostedt wrote:
+> > 
+> > I'm hitting a similar panic that bisects to commit
+> > 
+> >   a0d14b8909de ("x86/mm, tracing: Fix CR2 corruption")
+> > 
+> > except I'm experiencing death immediately after starting init.
+> > 
+> > Through sheer dumb luck, I tracked (pun intended) this down to forcing
+> > context tracking:
+> > 
+> >   CONFIG_CONTEXT_TRACKING=y
+> >   CONFIG_CONTEXT_TRACKING_FORCE=y
+> >   CONFIG_VIRT_CPU_ACCOUNTING_GEN=y
+> > 
+> > I haven't attempted to debug further and I'll be offline for most of the
+> > next few days.  Hopefully this is enough to root cause the badness.
+> > 
+> > [    0.680477] Run /sbin/init as init process
+> > [    0.682116] init[1]: segfault at 2926a7ef ip 00007f98a49d9c30 sp 00007fffd83e6af0 error 14 in ld-2.23.so[7f98a49d9000+26000]
+> 
+> That's because the call into the context tracking muck clobbers RDX which
+> contains the CR2 value on pagefault. So the pagefault resolves to crap and
+> kills init.
+> 
+> Brute force fix below. That needs to be conditional on read_cr2 but for now
+> it does the job.
+
+But it does it just for the context tracking case. TRACE_IRQS_OFF* will do
+the same damage.
+
+Fix is not pretty, but ...
+
+Thanks,
+
+	tglx
+
+8<-----------
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -876,6 +876,7 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work
+ 
+ 	.if \read_cr2
+ 	GET_CR2_INTO(%rdx);			/* can clobber %rax */
++	pushq	%rdx
+ 	.endif
+ 
+ 	.if \shift_ist != -1
+@@ -885,12 +886,20 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work
+ 	.endif
+ 
+ 	.if \paranoid == 0
++	.if \read_cr2
++	testb	$3, CS + 8(%rsp)
++	.else
+ 	testb	$3, CS(%rsp)
++	.endif
+ 	jz	.Lfrom_kernel_no_context_tracking_\@
+ 	CALL_enter_from_user_mode
+ .Lfrom_kernel_no_context_tracking_\@:
+ 	.endif
+ 
++	.if \read_cr2
++	popq	%rdx
++	.endif
++
+ 	movq	%rsp, %rdi			/* pt_regs pointer */
+ 
+ 	.if \has_error_code
