@@ -2,110 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF5116EC39
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 23:48:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3FE76EC3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 23:50:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388690AbfGSVrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 17:47:55 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40531 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728915AbfGSVrz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 17:47:55 -0400
-Received: by mail-qt1-f193.google.com with SMTP id a15so32594851qtn.7
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 14:47:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5HwGl0g54Inu2dbHSvUTjnjBXO/l4Rj8T8rMQLiptqQ=;
-        b=S7NSIgwsEeldpe7xNOPbAeT15AiLbQlHN5SkR4PFzKcUrnCuWgDYdIi6GFqO4QmLGa
-         O3p+XMs7pGfbtW2YdDsMea5DMxRqTA0bXKv+rqrhuC0PazCUwnTPKItm7cicOl6tC8b9
-         2QqkNbWkQoXW/Yhtza4WUxK82UPmCnyz5wZk/cUU5Dknmzxb5fM3F1KitYTurr36JSYp
-         NIfODJan61L2wwW69zYnwz0MTnkdPy6fPggNtG8vSFnXIyyv9z6P876+ZRoVBRFWeWOB
-         2lnMzlNyRswXmzb10WlEo7w5xTHFZPGwALYR0LUh6qVntZKzGMnS/8MhxrV0oAjyjNwB
-         3mhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5HwGl0g54Inu2dbHSvUTjnjBXO/l4Rj8T8rMQLiptqQ=;
-        b=F0rEZIvo8hoccuAdU/HxT8QRa/ptfg8ijG0nEOlNu+wuc/j5f33PM+sOk453GrtCBu
-         dfOethY2RDzbLWNSmuV/5hpkn1cTsf+LPph+S+mJt0BqOjgj0SiNnkLnCJQhX6yCX89v
-         UoXjVCuBgLT+NnkNA0zy1fc4I8SaN4Nypcy+rR9MVm35MFIXaWzmHGGiYEmIZlPA9hsn
-         occLx906Tbtm7i10F/rhWruc/bETMDDNQWaHr1mtjFmHF5Y9/MEw6JSIg0igP6jYMG5K
-         LxALBHVp9unwA+crnbzQAPKHPQ7F+h/ZMT2ZaLG1uzCfoUqRjuw7ac7AXjjzBGsrZiIy
-         r/XA==
-X-Gm-Message-State: APjAAAUBpaKv4PCgRxcunl6nqSDIWbhhzEiuDOlLIDq6PtQPjFFWj0vb
-        3O/MV7gMtzkdnoGjrZDRi7UX7w==
-X-Google-Smtp-Source: APXvYqw2RzqAIIsmVz3/U7pX3OR2QqfQEoLGKDqx/8DZeQgj2h2q3hME8vDfKuW76z7cPpa6BS23kA==
-X-Received: by 2002:ac8:394b:: with SMTP id t11mr38419556qtb.286.1563572874284;
-        Fri, 19 Jul 2019 14:47:54 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id z1sm15011603qke.122.2019.07.19.14.47.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Jul 2019 14:47:53 -0700 (PDT)
-Message-ID: <1563572871.11067.2.camel@lca.pw>
-Subject: Re: [PATCH] be2net: fix adapter->big_page_size miscaculation
-From:   Qian Cai <cai@lca.pw>
-To:     David Miller <davem@davemloft.net>
-Cc:     morbo@google.com, ndesaulniers@google.com, jyknight@google.com,
-        sathya.perla@broadcom.com, ajit.khaparde@broadcom.com,
-        sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com,
-        arnd@arndb.de, dhowells@redhat.com, hpa@zytor.com,
-        netdev@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, natechancellor@gmail.com
-Date:   Fri, 19 Jul 2019 17:47:51 -0400
-In-Reply-To: <20190718.162928.124906203979938369.davem@davemloft.net>
-References: <CAKwvOdkCfqfpJYYX+iu2nLCUUkeDorDdVP3e7koB9NYsRwgCNw@mail.gmail.com>
-         <CAGG=3QUvdwJs1wW1w+5Mord-qFLa=_WkjTsiZuwGfcjkoEJGNQ@mail.gmail.com>
-         <75B428FC-734C-4B15-B1A7-A3FC5F9F2FE5@lca.pw>
-         <20190718.162928.124906203979938369.davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S2388868AbfGSVuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 17:50:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50916 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388705AbfGSVt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 17:49:58 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C3D121880;
+        Fri, 19 Jul 2019 21:49:57 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1hoalI-0007zl-Dl; Fri, 19 Jul 2019 17:49:56 -0400
+Message-Id: <20190719214956.312858047@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Fri, 19 Jul 2019 17:49:33 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org,
+        linux-rt-users <linux-rt-users@vger.kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        John Kacur <jkacur@redhat.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Julia Cartwright <julia@ni.com>,
+        Daniel Wagner <wagi@monom.org>, tom.zanussi@linux.intel.com
+Subject: [PATCH RT 02/16] genirq: Do not invoke the affinity callback via a workqueue on RT
+References: <20190719214931.700049248@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-07-18 at 16:29 -0700, David Miller wrote:
-> From: Qian Cai <cai@lca.pw>
-> Date: Thu, 18 Jul 2019 19:26:47 -0400
-> 
-> > 
-> > 
-> >> On Jul 18, 2019, at 5:21 PM, Bill Wendling <morbo@google.com> wrote:
-> >> 
-> >> [My previous response was marked as spam...]
-> >> 
-> >> Top-of-tree clang says that it's const:
-> >> 
-> >> $ gcc a.c -O2 && ./a.out
-> >> a is a const.
-> >> 
-> >> $ clang a.c -O2 && ./a.out
-> >> a is a const.
-> > 
-> > 
-> > I used clang-7.0.1. So, this is getting worse where both GCC and clang will
-> start to suffer the
-> > same problem.
-> 
-> Then rewrite the module parameter macros such that the non-constness
-> is evident to all compilers regardless of version.
-> 
-> That is the place to fix this, otherwise we will just be adding hacks
-> all over the place rather than in just one spot.
+4.19.59-rt24-rc1 stable review patch.
+If anyone has any objections, please let me know.
 
-The problem is that when the compiler is compiling be_main.o, it has no
-knowledge about what is going to happen in load_module().  The compiler can only
-see that a "const struct kernel_param_ops" "__param_ops_rx_frag_size" at the
-time with
+------------------
 
-__param_ops_rx_frag_size.arg = &rx_frag_size
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-but only in load_module()->parse_args()->parse_one()->param_set_ushort(), it
-changes "__param_ops_rx_frag_size.arg" which in-turn changes the value
-of "rx_frag_size".
+[ Upstream commit 2122adbe011cdc0eb62ad62494e181005b23c76a ]
+
+Joe Korty reported, that __irq_set_affinity_locked() schedules a
+workqueue while holding a rawlock which results in a might_sleep()
+warning.
+This patch uses swork_queue() instead.
+
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ include/linux/interrupt.h |  5 ++---
+ kernel/irq/manage.c       | 19 ++++---------------
+ 2 files changed, 6 insertions(+), 18 deletions(-)
+
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 72333899f043..a9321f6429f2 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -13,7 +13,7 @@
+ #include <linux/hrtimer.h>
+ #include <linux/kref.h>
+ #include <linux/workqueue.h>
+-#include <linux/swork.h>
++#include <linux/kthread.h>
+ 
+ #include <linux/atomic.h>
+ #include <asm/ptrace.h>
+@@ -228,7 +228,6 @@ extern void resume_device_irqs(void);
+  * struct irq_affinity_notify - context for notification of IRQ affinity changes
+  * @irq:		Interrupt to which notification applies
+  * @kref:		Reference count, for internal use
+- * @swork:		Swork item, for internal use
+  * @work:		Work item, for internal use
+  * @notify:		Function to be called on change.  This will be
+  *			called in process context.
+@@ -241,7 +240,7 @@ struct irq_affinity_notify {
+ 	unsigned int irq;
+ 	struct kref kref;
+ #ifdef CONFIG_PREEMPT_RT_BASE
+-	struct swork_event swork;
++	struct kthread_work work;
+ #else
+ 	struct work_struct work;
+ #endif
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index 7f4041357d2f..381305c48a0a 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -261,7 +261,7 @@ int irq_set_affinity_locked(struct irq_data *data, const struct cpumask *mask,
+ 		kref_get(&desc->affinity_notify->kref);
+ 
+ #ifdef CONFIG_PREEMPT_RT_BASE
+-		swork_queue(&desc->affinity_notify->swork);
++		kthread_schedule_work(&desc->affinity_notify->work);
+ #else
+ 		schedule_work(&desc->affinity_notify->work);
+ #endif
+@@ -326,21 +326,11 @@ static void _irq_affinity_notify(struct irq_affinity_notify *notify)
+ }
+ 
+ #ifdef CONFIG_PREEMPT_RT_BASE
+-static void init_helper_thread(void)
+-{
+-	static int init_sworker_once;
+-
+-	if (init_sworker_once)
+-		return;
+-	if (WARN_ON(swork_get()))
+-		return;
+-	init_sworker_once = 1;
+-}
+ 
+-static void irq_affinity_notify(struct swork_event *swork)
++static void irq_affinity_notify(struct kthread_work *work)
+ {
+ 	struct irq_affinity_notify *notify =
+-		container_of(swork, struct irq_affinity_notify, swork);
++		container_of(work, struct irq_affinity_notify, work);
+ 	_irq_affinity_notify(notify);
+ }
+ 
+@@ -383,8 +373,7 @@ irq_set_affinity_notifier(unsigned int irq, struct irq_affinity_notify *notify)
+ 		notify->irq = irq;
+ 		kref_init(&notify->kref);
+ #ifdef CONFIG_PREEMPT_RT_BASE
+-		INIT_SWORK(&notify->swork, irq_affinity_notify);
+-		init_helper_thread();
++		kthread_init_work(&notify->work, irq_affinity_notify);
+ #else
+ 		INIT_WORK(&notify->work, irq_affinity_notify);
+ #endif
+-- 
+2.20.1
+
+
