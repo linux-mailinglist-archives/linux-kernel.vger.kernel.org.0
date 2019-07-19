@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B3936E229
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 09:59:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40AA56E224
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 09:59:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbfGSH7R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 03:59:17 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38201 "EHLO
+        id S1727317AbfGSH7D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 03:59:03 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37825 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbfGSH66 (ORCPT
+        with ESMTP id S1725853AbfGSH66 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 19 Jul 2019 03:58:58 -0400
-Received: by mail-wr1-f65.google.com with SMTP id g17so31282590wrr.5
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 00:58:56 -0700 (PDT)
+Received: by mail-wr1-f65.google.com with SMTP id n9so6200847wrr.4
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 00:58:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QHdcaXLFj8hmuPKGO9zvPjkzsCCROieoZsTLr0egxPg=;
-        b=vznvEbUxNcH663vJhzhl4z0PMqD//u2+kSJ24N5/XjxaE1ugq0im0no7sO+8r0FiUj
-         QgUxS6oi+Wcjnc4XHwIkaLxEL4fIhDg2k5TqG4vd7gN/Q88WE4XHYmyrqt4vNwDeA9ol
-         c0nj3ccsoFRp5qF7VgoLUP9DziZwlEHRHyQfltTNC9Wcn/L/46bbfwolRfj0GMb46qUb
-         gjhi2dUUcM721Jt7xbVtUeHeqbG5SUpXiZclpSIglJKTOcSSQYYBRQedOYm2IwEqKDDB
-         COxISo/3RJFkncXD8yVLqr9VAhvq1sSPAFR4IJSCoDi1Fs6/tPg6yFTfYItjXyE5fZoj
-         2z2A==
+        bh=VFn6DSv72GJsliLwuv9W2q96ioKlPRjyGZeuajHmgtE=;
+        b=SB+Ov0l/ue1DcfuYS7KJdEGkxp2FpHHZXl+50VpC3zP0c34kTRQAwGeucMbAAVl1Ym
+         eKgsMQPdtJudYvhWBfTFA3WHdWOguR65R2AbhrzwE65dwT9xpV7xvXQrZLEFVFayIMjB
+         jM3Usdn5pm+CboXgEuYNPVw+LdJMMS84BSzJvVDUeVjh7uDKa9eB3VsI30x0ZHV8hZHY
+         bknEIW2O3g7diOO17GclFlDJepm4SVDDke3WWS54R/0TnrSA322/mEl63hxwiXyP9wJx
+         yNadEkuzm5zbPx+9wE4NZMDbMJM27apXefJMrbbQ2X3a0jESln+H85htqNGc5wWkvKj5
+         Qoyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=QHdcaXLFj8hmuPKGO9zvPjkzsCCROieoZsTLr0egxPg=;
-        b=YEd/laQ1rWPNaxmPYiSQOzOXsB+dlcQXAD8+wkVm2E6dWhj28V+cOEr3wqWbIKm/Su
-         7bYx2/KradU8JchwhpTQTAYASqS3c/sVRAxX5wFiCevRrFZZbnlRinG5EKYUkiVdOoJw
-         iuPi7vGyEx4iWcgChhylVsqa6upRknG7imt4ujlBJPpVwJVvBzN0uNzD72dsvv6KpPFK
-         ekgF9DlOaFCpcE2o+bkrKeIgJ+hQRGKy3gFtlgxne/GIaAFhIAimKR1S5VCn9k75kRwl
-         5H/yT10RjllgSNGLZLoy4ORjT0mCmIsSWBdtBaS4KGKT6TGDLW+3e0K5loT68HNdS3Lm
-         ir+Q==
-X-Gm-Message-State: APjAAAVnUD2rXQOsbX5tNPoj0GxUmX4q7Eoai/XNo6zMMGB7L5o88S4c
-        9PQaNhNP+ewgSpbnRdG/c8mWDTZ3NRU=
-X-Google-Smtp-Source: APXvYqyqAkC7X6vPgsVRgnrllgRRzYxNCIUi23MfZ8NFpuu3VbXv1Db64TWCXD1dO9R/lq3ydgFl7Q==
-X-Received: by 2002:adf:da4d:: with SMTP id r13mr21972112wrl.281.1563523135353;
-        Fri, 19 Jul 2019 00:58:55 -0700 (PDT)
+        bh=VFn6DSv72GJsliLwuv9W2q96ioKlPRjyGZeuajHmgtE=;
+        b=PZotBVcJ1X5pFYI1APF0TneULZLDAWMXFS4eS2oLe1EPK3J9wWfK5UU4M4nInNHCpZ
+         3g3ByRm8EPpdPc10Fabg8+oYz47JHXobCqnAfTzEvsGG+GE00WJVwmv6Cd82/neh6UG0
+         QqlMnR/FOM1G2NC0y9OazM3PQO3rRnDF7FEyN2HDEijYmxW/mwCkyHFCz0lDElNe5V/G
+         uo9ua6JS178EVcpaqt9WtaYAfp/XeOZhcGuHLO8GXg9SlYNY2Uaq71itdmpb18yjynT2
+         1XLdV9dPuRGzjxC3ooJETzIT0pC5IPFjZXF04E/YlAlYueFQKlnFxBD8TgmYk0uD/jN6
+         pq6g==
+X-Gm-Message-State: APjAAAVv2w6Os+rhtUxS3+de6bcc/pqr0DK96m+PUDmJBDCb6q79oAR2
+        QxEUX1RwOZG+PFPXcD+81ev5N0Nbyck=
+X-Google-Smtp-Source: APXvYqxlXRCD7iqCOp2OAHKzG19OuBJ4aCcDxfKzGKrRsaX5l7EpKOaaGyfCF03qWgrJ5g1m64tx8Q==
+X-Received: by 2002:a5d:5386:: with SMTP id d6mr55713933wrv.207.1563523136338;
+        Fri, 19 Jul 2019 00:58:56 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:e0a:f:6020:484b:32fe:1cf4:f69b])
-        by smtp.gmail.com with ESMTPSA id c1sm58673826wrh.1.2019.07.19.00.58.54
+        by smtp.gmail.com with ESMTPSA id c1sm58673826wrh.1.2019.07.19.00.58.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 19 Jul 2019 00:58:54 -0700 (PDT)
+        Fri, 19 Jul 2019 00:58:55 -0700 (PDT)
 From:   Vincent Guittot <vincent.guittot@linaro.org>
 To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
         peterz@infradead.org
 Cc:     quentin.perret@arm.com, dietmar.eggemann@arm.com,
         Morten.Rasmussen@arm.com, pauld@redhat.com,
         Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH 1/5] sched/fair: clean up asym packing
-Date:   Fri, 19 Jul 2019 09:58:21 +0200
-Message-Id: <1563523105-24673-2-git-send-email-vincent.guittot@linaro.org>
+Subject: [PATCH 2/5] sched/fair: rename sum_nr_running to sum_h_nr_running
+Date:   Fri, 19 Jul 2019 09:58:22 +0200
+Message-Id: <1563523105-24673-3-git-send-email-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1563523105-24673-1-git-send-email-vincent.guittot@linaro.org>
 References: <1563523105-24673-1-git-send-email-vincent.guittot@linaro.org>
@@ -61,125 +61,158 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clean up asym packing to follow the default load balance behavior:
-- classify the group by creating a group_asym_capacity field.
-- calculate the imbalance in calculate_imbalance() instead of bypassing it.
-
-We don't need to test twice same conditions anymore to detect asym packing
-and we consolidate the calculation of imbalance in calculate_imbalance().
+sum_nr_running will track rq->nr_running task and sum_h_nr_running
+will track cfs->h_nr_running so we can use both to detect when other
+scheduling class are running and preempt CFS.
 
 There is no functional changes.
 
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- kernel/sched/fair.c | 63 ++++++++++++++---------------------------------------
- 1 file changed, 16 insertions(+), 47 deletions(-)
+ kernel/sched/fair.c | 31 +++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index fff5632..7a530fd 100644
+index 7a530fd..67f0acd 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -7654,6 +7654,7 @@ struct sg_lb_stats {
+@@ -7650,6 +7650,7 @@ struct sg_lb_stats {
+ 	unsigned long group_capacity;
+ 	unsigned long group_util; /* Total utilization of the group */
+ 	unsigned int sum_nr_running; /* Nr tasks running in the group */
++	unsigned int sum_h_nr_running; /* Nr tasks running in the group */
+ 	unsigned int idle_cpus;
  	unsigned int group_weight;
  	enum group_type group_type;
- 	int group_no_capacity;
-+	int group_asym_capacity;
- 	unsigned long group_misfit_task_load; /* A CPU has a task too big for its capacity */
- #ifdef CONFIG_NUMA_BALANCING
- 	unsigned int nr_numa_running;
-@@ -8110,9 +8111,17 @@ static bool update_sd_pick_busiest(struct lb_env *env,
- 	 * ASYM_PACKING needs to move all the work to the highest
- 	 * prority CPUs in the group, therefore mark all groups
- 	 * of lower priority than ourself as busy.
-+	 *
-+	 * This is primarily intended to used at the sibling level.  Some
-+	 * cores like POWER7 prefer to use lower numbered SMT threads.  In the
-+	 * case of POWER7, it can move to lower SMT modes only when higher
-+	 * threads are idle.  When in lower SMT modes, the threads will
-+	 * perform better since they share less core resources.  Hence when we
-+	 * have idle threads, we want them to be the higher ones.
+@@ -7695,6 +7696,7 @@ static inline void init_sd_lb_stats(struct sd_lb_stats *sds)
+ 		.busiest_stat = {
+ 			.avg_load = 0UL,
+ 			.sum_nr_running = 0,
++			.sum_h_nr_running = 0,
+ 			.group_type = group_other,
+ 		},
+ 	};
+@@ -7885,7 +7887,7 @@ static inline int sg_imbalanced(struct sched_group *group)
+ static inline bool
+ group_has_capacity(struct lb_env *env, struct sg_lb_stats *sgs)
+ {
+-	if (sgs->sum_nr_running < sgs->group_weight)
++	if (sgs->sum_h_nr_running < sgs->group_weight)
+ 		return true;
+ 
+ 	if ((sgs->group_capacity * 100) >
+@@ -7906,7 +7908,7 @@ group_has_capacity(struct lb_env *env, struct sg_lb_stats *sgs)
+ static inline bool
+ group_is_overloaded(struct lb_env *env, struct sg_lb_stats *sgs)
+ {
+-	if (sgs->sum_nr_running <= sgs->group_weight)
++	if (sgs->sum_h_nr_running <= sgs->group_weight)
+ 		return false;
+ 
+ 	if ((sgs->group_capacity * 100) <
+@@ -8000,6 +8002,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ 
+ 		sgs->group_load += cpu_runnable_load(rq);
+ 		sgs->group_util += cpu_util(i);
++		sgs->sum_h_nr_running += rq->cfs.h_nr_running;
+ 		sgs->sum_nr_running += rq->cfs.h_nr_running;
+ 
+ 		nr_running = rq->nr_running;
+@@ -8030,8 +8033,8 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ 	sgs->group_capacity = group->sgc->capacity;
+ 	sgs->avg_load = (sgs->group_load*SCHED_CAPACITY_SCALE) / sgs->group_capacity;
+ 
+-	if (sgs->sum_nr_running)
+-		sgs->load_per_task = sgs->group_load / sgs->sum_nr_running;
++	if (sgs->sum_h_nr_running)
++		sgs->load_per_task = sgs->group_load / sgs->sum_h_nr_running;
+ 
+ 	sgs->group_weight = group->group_weight;
+ 
+@@ -8088,7 +8091,7 @@ static bool update_sd_pick_busiest(struct lb_env *env,
+ 	 * capable CPUs may harm throughput. Maximize throughput,
+ 	 * power/energy consequences are not considered.
  	 */
- 	if (sgs->sum_nr_running &&
+-	if (sgs->sum_nr_running <= sgs->group_weight &&
++	if (sgs->sum_h_nr_running <= sgs->group_weight &&
+ 	    group_smaller_min_cpu_capacity(sds->local, sg))
+ 		return false;
+ 
+@@ -8119,7 +8122,7 @@ static bool update_sd_pick_busiest(struct lb_env *env,
+ 	 * perform better since they share less core resources.  Hence when we
+ 	 * have idle threads, we want them to be the higher ones.
+ 	 */
+-	if (sgs->sum_nr_running &&
++	if (sgs->sum_h_nr_running &&
  	    sched_asym_prefer(env->dst_cpu, sg->asym_prefer_cpu)) {
-+		sgs->group_asym_capacity = 1;
+ 		sgs->group_asym_capacity = 1;
  		if (!sds->busiest)
- 			return true;
- 
-@@ -8254,51 +8263,6 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+@@ -8137,9 +8140,9 @@ static bool update_sd_pick_busiest(struct lb_env *env,
+ #ifdef CONFIG_NUMA_BALANCING
+ static inline enum fbq_type fbq_classify_group(struct sg_lb_stats *sgs)
+ {
+-	if (sgs->sum_nr_running > sgs->nr_numa_running)
++	if (sgs->sum_h_nr_running > sgs->nr_numa_running)
+ 		return regular;
+-	if (sgs->sum_nr_running > sgs->nr_preferred_running)
++	if (sgs->sum_h_nr_running > sgs->nr_preferred_running)
+ 		return remote;
+ 	return all;
  }
+@@ -8214,7 +8217,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+ 		 */
+ 		if (prefer_sibling && sds->local &&
+ 		    group_has_capacity(env, local) &&
+-		    (sgs->sum_nr_running > local->sum_nr_running + 1)) {
++		    (sgs->sum_h_nr_running > local->sum_h_nr_running + 1)) {
+ 			sgs->group_no_capacity = 1;
+ 			sgs->group_type = group_classify(sg, sgs);
+ 		}
+@@ -8226,7 +8229,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
  
- /**
-- * check_asym_packing - Check to see if the group is packed into the
-- *			sched domain.
-- *
-- * This is primarily intended to used at the sibling level.  Some
-- * cores like POWER7 prefer to use lower numbered SMT threads.  In the
-- * case of POWER7, it can move to lower SMT modes only when higher
-- * threads are idle.  When in lower SMT modes, the threads will
-- * perform better since they share less core resources.  Hence when we
-- * have idle threads, we want them to be the higher ones.
-- *
-- * This packing function is run on idle threads.  It checks to see if
-- * the busiest CPU in this domain (core in the P7 case) has a higher
-- * CPU number than the packing function is being run on.  Here we are
-- * assuming lower CPU number will be equivalent to lower a SMT thread
-- * number.
-- *
-- * Return: 1 when packing is required and a task should be moved to
-- * this CPU.  The amount of the imbalance is returned in env->imbalance.
-- *
-- * @env: The load balancing environment.
-- * @sds: Statistics of the sched_domain which is to be packed
-- */
--static int check_asym_packing(struct lb_env *env, struct sd_lb_stats *sds)
--{
--	int busiest_cpu;
--
--	if (!(env->sd->flags & SD_ASYM_PACKING))
--		return 0;
--
--	if (env->idle == CPU_NOT_IDLE)
--		return 0;
--
--	if (!sds->busiest)
--		return 0;
--
--	busiest_cpu = sds->busiest->asym_prefer_cpu;
--	if (sched_asym_prefer(busiest_cpu, env->dst_cpu))
--		return 0;
--
--	env->imbalance = sds->busiest_stat.group_load;
--
--	return 1;
--}
--
--/**
-  * fix_small_imbalance - Calculate the minor imbalance that exists
-  *			amongst the groups of a sched_domain, during
-  *			load balancing.
-@@ -8382,6 +8346,11 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ next_group:
+ 		/* Now, start updating sd_lb_stats */
+-		sds->total_running += sgs->sum_nr_running;
++		sds->total_running += sgs->sum_h_nr_running;
+ 		sds->total_load += sgs->group_load;
+ 		sds->total_capacity += sgs->group_capacity;
+ 
+@@ -8280,7 +8283,7 @@ void fix_small_imbalance(struct lb_env *env, struct sd_lb_stats *sds)
  	local = &sds->local_stat;
  	busiest = &sds->busiest_stat;
  
-+	if (busiest->group_asym_capacity) {
-+		env->imbalance = busiest->group_load;
-+		return;
-+	}
-+
- 	if (busiest->group_type == group_imbalanced) {
- 		/*
- 		 * In the group_imb case we cannot rely on group-wide averages
-@@ -8486,8 +8455,8 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
- 	busiest = &sds.busiest_stat;
- 
- 	/* ASYM feature bypasses nice load balance check */
--	if (check_asym_packing(env, &sds))
--		return sds.busiest;
-+	if (busiest->group_asym_capacity)
-+		goto force_balance;
+-	if (!local->sum_nr_running)
++	if (!local->sum_h_nr_running)
+ 		local->load_per_task = cpu_avg_load_per_task(env->dst_cpu);
+ 	else if (busiest->load_per_task > local->load_per_task)
+ 		imbn = 1;
+@@ -8378,7 +8381,7 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ 	 */
+ 	if (busiest->group_type == group_overloaded &&
+ 	    local->group_type   == group_overloaded) {
+-		load_above_capacity = busiest->sum_nr_running * SCHED_CAPACITY_SCALE;
++		load_above_capacity = busiest->sum_h_nr_running * SCHED_CAPACITY_SCALE;
+ 		if (load_above_capacity > busiest->group_capacity) {
+ 			load_above_capacity -= busiest->group_capacity;
+ 			load_above_capacity *= scale_load_down(NICE_0_LOAD);
+@@ -8459,7 +8462,7 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
+ 		goto force_balance;
  
  	/* There is no busy sibling group to pull tasks from */
- 	if (!sds.busiest || busiest->sum_nr_running == 0)
+-	if (!sds.busiest || busiest->sum_nr_running == 0)
++	if (!sds.busiest || busiest->sum_h_nr_running == 0)
+ 		goto out_balanced;
+ 
+ 	/* XXX broken for overlapping NUMA groups */
+@@ -8781,7 +8784,7 @@ static int load_balance(int this_cpu, struct rq *this_rq,
+ 	env.src_rq = busiest;
+ 
+ 	ld_moved = 0;
+-	if (busiest->nr_running > 1) {
++	if (busiest->cfs.h_nr_running > 1) {
+ 		/*
+ 		 * Attempt to move tasks. If find_busiest_group has found
+ 		 * an imbalance but busiest->nr_running <= 1, the group is
 -- 
 2.7.4
 
