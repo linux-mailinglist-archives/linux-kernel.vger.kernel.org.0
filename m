@@ -2,59 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 800C36E6A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 15:39:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCAC06E6AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 15:39:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729104AbfGSNhk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 09:37:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47654 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727354AbfGSNhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 09:37:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 95D33AD33;
-        Fri, 19 Jul 2019 13:37:38 +0000 (UTC)
-Subject: Re: [PATCH 4/4] Documentation:kernel-per-CPU-kthreads.txt: Remove
- reference to elevator=
-To:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>
-References: <20190714053453.1655-1-marcos.souza.org@gmail.com>
- <20190714053453.1655-5-marcos.souza.org@gmail.com>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <8b3c7096-5414-bf04-e470-a0f5b42f3371@suse.de>
-Date:   Fri, 19 Jul 2019 15:37:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1729161AbfGSNhv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 09:37:51 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45445 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727972AbfGSNhv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 09:37:51 -0400
+Received: by mail-io1-f66.google.com with SMTP id g20so58436971ioc.12
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 06:37:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RZjbY0MaT6UAbPH1wjXD/28Vzvm/xrV41gWCDtH/Zgc=;
+        b=CFMJqLm8STRXF20f8x5Scl80Jvrnq7e0wqiZJfZxXCAu1VhsIA7eBko5wd6eS1OEw5
+         Uy42PvzmsnI6FwM+axqYz7Z0vY/owPz8hNge4q2iBf83vDVxqykAPd9hYOApcMK1qBS3
+         uGbARDadMZv8c5LxATRua3tUulE9864iGWNLvMcWHARqCqc5JXtOY94tt9uiai/RzmeT
+         mvA/lO4xITNKXLoA/VoHsaifsLyUiK0F5TAQIZPBhwD0JxESy+nqp34n2YIyYLQHqXKg
+         WtDdkR5UMBB32tTcmiwCZ7NLWASFIRaCZzeVODmLvm7KNg2STC1hcyjQcXWsYgLk2Ifg
+         Sj9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RZjbY0MaT6UAbPH1wjXD/28Vzvm/xrV41gWCDtH/Zgc=;
+        b=AJaBAOLBL1GTz0PrzJ47PSMCdT3epD3DsLgigUB2bA/K6N2X1XwUMEB+hehdV8qmm7
+         CeTlgG7jTEv/LkRVlZ8TtZCVv02BJA8m931WIh+6gfeGGkhM5lI6ypKKhbssNeTKy8j0
+         3gtN2zeqzx3TwVNZqZdWq8QERJkgNxzcH6jMskxL0uJzxsY3h2Iz6zjcIUTTUFZ6VHkJ
+         W1z5TkkW0fNh1Mb3gvTYHOPtPUjq4liyk12+/cn84z8DIJSFZUYt/XPHiwDieMunmMKv
+         g+pNln0xG6cVva+WukRMmXtNIb7264rqDaJIOMDeadF26D9wao1NJdmA4U+kDWATpNwD
+         v6vg==
+X-Gm-Message-State: APjAAAXeN/hhcUnRoSV/W0+Tlo3A/Pzh2iH9tVNmCdriWjioGLGtuqTE
+        AEbLMz0XC2sOZw7KdDI24Ow+AJ/nunXk0FSRjYUXqw==
+X-Google-Smtp-Source: APXvYqyBhZpTSPfvsPmtieVyZpieljJsIsnw3wZLtW5Q7oA/SdVcTnOz10NqjvVRw9/mQWgrE57FGHsmh11BaU/x1Us=
+X-Received: by 2002:a5d:80d6:: with SMTP id h22mr26351958ior.231.1563543470069;
+ Fri, 19 Jul 2019 06:37:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190714053453.1655-5-marcos.souza.org@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190719124329.23207-1-nh26223.lmm@gmail.com>
+In-Reply-To: <20190719124329.23207-1-nh26223.lmm@gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 19 Jul 2019 15:37:37 +0200
+Message-ID: <CACT4Y+aVS5nn0Pv31tAOujcAPvCAOuK_iPZ1CCNbgAOL=JDvvg@mail.gmail.com>
+Subject: Re: [PATCH] fs: fs_parser: avoid NULL param->string to kstrtouint
+To:     Yin Fengwei <nh26223.lmm@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/14/19 7:34 AM, Marcos Paulo de Souza wrote:
-> This argument was not being considered since blk-mq was set by default,
-> so removed this documentation to avoid confusion.
-> 
-> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+On Fri, Jul 19, 2019 at 2:44 PM Yin Fengwei <nh26223.lmm@gmail.com> wrote:
+>
+> syzbot reported general protection fault in kstrtouint:
+> https://lkml.org/lkml/2019/7/18/328
+>
+> From the log, if the mount option is something like:
+>    fd,XXXXXXXXXXXXXXXXXXXX
+>
+> The default parameter (which has NULL param->string) will be
+> passed to vfs_parse_fs_param. Finally, this NULL param->string
+> is passed to kstrtouint and trigger NULL pointer access.
+>
+> Reported-by: syzbot+398343b7c1b1b989228d@syzkaller.appspotmail.com
+> Fixes: 71cbb7570a9a ("vfs: Move the subtype parameter into fuse")
+>
+> Signed-off-by: Yin Fengwei <nh26223.lmm@gmail.com>
 > ---
->   Documentation/kernel-per-CPU-kthreads.txt | 8 +++-----
->   1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.com>
+>  fs/fs_parser.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+> index d13fe7d797c2..578e6880ac67 100644
+> --- a/fs/fs_parser.c
+> +++ b/fs/fs_parser.c
+> @@ -210,6 +210,10 @@ int fs_parse(struct fs_context *fc,
+>         case fs_param_is_fd: {
+>                 switch (param->type) {
+>                 case fs_value_is_string:
+> +                       if (result->has_value) {
 
-Cheers,
+!result->has_value ?
 
-Hannes
--- 
-Dr. Hannes Reinecke            Teamlead Storage & Networking
-hare@suse.de                              +49 911 74053 688
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-HRB 21284 (AG Nürnberg)
+> +                               goto bad_value;
+> +                       }
+> +
+>                         ret = kstrtouint(param->string, 0, &result->uint_32);
+>                         break;
+>                 case fs_value_is_file:
+> --
+> 2.17.1
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20190719124329.23207-1-nh26223.lmm%40gmail.com.
