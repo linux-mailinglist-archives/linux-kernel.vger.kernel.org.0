@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64C3A6DFEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:40:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF0E06DFF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:40:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbfGSD6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 23:58:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57660 "EHLO mail.kernel.org"
+        id S1728197AbfGSD6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 23:58:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727891AbfGSD6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 23:58:21 -0400
+        id S1728134AbfGSD6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 23:58:33 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D51721855;
-        Fri, 19 Jul 2019 03:58:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2EB92186A;
+        Fri, 19 Jul 2019 03:58:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508701;
-        bh=A8V1gvm+yaht1CTUyJ/J+QZqRvGR/yXURvSy6UwnNUc=;
+        s=default; t=1563508712;
+        bh=d3e4tqvNiIM0DHagGPl0Sq0p/6aSS+We4bM12lQE+Fs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VlaiSkmGPPBkB1SzAYxXkk6pDs/G0SZZXYxPab2j1TSRBEI01Q1eSH0Fv1mvqSAX5
-         y8Gfamd5N3cRDIE3TDxs7WdRz8kA0zCpR//MNxuNGVDAIUp9XmwfsaoccTpDahRNz8
-         KpKPj3cq8FVTB/E041J8sd0ONAqQP/vQT0TUZoDM=
+        b=AGRasT+WozgKcqz6ymQ2FXS7eCa+cdc5Gqbvmy5YbrY544YpLYP9f6sgbAr77XVB1
+         gO+HmISeUTd95nI3pBgOIQi/MH1NuM2E20p1u2A7JTxoF1EwoNeKfxEPB1SVPLnKAu
+         NUOguGc+IvtekMvYPb2CBLRqSUHvnRmjs6s2ad2I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 040/171] gpu: host1x: Increase maximum DMA segment size
-Date:   Thu, 18 Jul 2019 23:54:31 -0400
-Message-Id: <20190719035643.14300-40-sashal@kernel.org>
+Cc:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 048/171] tty/serial: digicolor: Fix digicolor-usart already registered warning
+Date:   Thu, 18 Jul 2019 23:54:39 -0400
+Message-Id: <20190719035643.14300-48-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -43,56 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
 
-[ Upstream commit 1e390478cfb527e34c9ab89ba57212cb05c33c51 ]
+[ Upstream commit c7ad9ba0611c53cfe194223db02e3bca015f0674 ]
 
-Recent versions of the DMA API debug code have started to warn about
-violations of the maximum DMA segment size. This is because the segment
-size defaults to 64 KiB, which can easily be exceeded in large buffer
-allocations such as used in DRM/KMS for framebuffers.
+When modprobe/rmmod/modprobe module, if platform_driver_register() fails,
+the kernel complained,
 
-Technically the Tegra SMMU and ARM SMMU don't have a maximum segment
-size (they map individual pages irrespective of whether they are
-contiguous or not), so the choice of 4 MiB is a bit arbitrary here. The
-maximum segment size is a 32-bit unsigned integer, though, so we can't
-set it to the correct maximum size, which would be the size of the
-aperture.
+  proc_dir_entry 'driver/digicolor-usart' already registered
+  WARNING: CPU: 1 PID: 5636 at fs/proc/generic.c:360 proc_register+0x19d/0x270
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Fix this by adding uart_unregister_driver() when platform_driver_register() fails.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Acked-by: Baruch Siach <baruch@tkos.co.il>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/host1x/bus.c | 3 +++
- include/linux/host1x.h   | 2 ++
- 2 files changed, 5 insertions(+)
+ drivers/tty/serial/digicolor-usart.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index 9797ccb0a073..6387302c1245 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -414,6 +414,9 @@ static int host1x_device_add(struct host1x *host1x,
+diff --git a/drivers/tty/serial/digicolor-usart.c b/drivers/tty/serial/digicolor-usart.c
+index f460cca139e2..13ac36e2da4f 100644
+--- a/drivers/tty/serial/digicolor-usart.c
++++ b/drivers/tty/serial/digicolor-usart.c
+@@ -541,7 +541,11 @@ static int __init digicolor_uart_init(void)
+ 	if (ret)
+ 		return ret;
  
- 	of_dma_configure(&device->dev, host1x->dev->of_node, true);
- 
-+	device->dev.dma_parms = &device->dma_parms;
-+	dma_set_max_seg_size(&device->dev, SZ_4M);
+-	return platform_driver_register(&digicolor_uart_platform);
++	ret = platform_driver_register(&digicolor_uart_platform);
++	if (ret)
++		uart_unregister_driver(&digicolor_uart);
 +
- 	err = host1x_device_parse_dt(device, driver);
- 	if (err < 0) {
- 		kfree(device);
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index cfff30b9a62e..e6eea45e1154 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -297,6 +297,8 @@ struct host1x_device {
- 	struct list_head clients;
++	return ret;
+ }
+ module_init(digicolor_uart_init);
  
- 	bool registered;
-+
-+	struct device_dma_parameters dma_parms;
- };
- 
- static inline struct host1x_device *to_host1x_device(struct device *dev)
 -- 
 2.20.1
 
