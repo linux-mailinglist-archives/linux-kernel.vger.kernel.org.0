@@ -2,99 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5596C6D80B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F15F6D814
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 03:00:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfGSA7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 20:59:15 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38082 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbfGSA7L (ORCPT
+        id S1726900AbfGSA76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 20:59:58 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:37053 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726015AbfGSA76 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 20:59:11 -0400
-Received: by mail-pl1-f193.google.com with SMTP id az7so14729771plb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 17:59:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=52ff2sVTRVrMNzSgbFtfzdvqT9duS14nn7AZNdI5P58=;
-        b=R0dMofgFuB9tGLyb1bCOmFvWmNVN8OzvG5oXEHtclzZvBA3iGbXjXe8SCiL4QGgmOk
-         I4DQi7SDL0puNtRJz9Ck55+VCL4FVgoVOX3RtlKcP4klc+BO8ArPBsFq8Js/oHT4FNDs
-         xG4evPzPF7o254jUU2TGIndJYiHvb8dbVV5QqBl4S5x+uWViW2kfY8Cr0YQzutOmwJIe
-         7YCzDTTocNI75mERHRm1q4yjSII8AbRfjkvMo1/g1n8LrWUnOfySH2/p8qFik2aUH2kY
-         Ffup9BzT1BhjlDeicc5QfPHVtJx5K/yMLdyJbB18pEDmbxQkU5YvOby7oElYVSBUGHqb
-         NAHQ==
-X-Gm-Message-State: APjAAAVZr2MqI7/CcuoEamzvrtXmOY+vS9RqBneJraHD2NsMUKFQ1KFP
-        I3wYFk9EpBlAO3yYT8JziX8=
-X-Google-Smtp-Source: APXvYqwgvmFAAZeUOCJVaWzoi5gOB7p0agOZpFL8PR+2GsrX/PxxBRib/dGvzFOHlYO69suenKb+Ow==
-X-Received: by 2002:a17:902:1566:: with SMTP id b35mr54832410plh.147.1563497950525;
-        Thu, 18 Jul 2019 17:59:10 -0700 (PDT)
-Received: from htb-2n-eng-dhcp405.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id j128sm14025166pfg.28.2019.07.18.17.59.09
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 18 Jul 2019 17:59:09 -0700 (PDT)
-From:   Nadav Amit <namit@vmware.com>
-To:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Nadav Amit <namit@vmware.com>
-Subject: [PATCH v3 9/9] x86/mm/tlb: Remove unnecessary uses of the inline keyword
-Date:   Thu, 18 Jul 2019 17:58:37 -0700
-Message-Id: <20190719005837.4150-10-namit@vmware.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190719005837.4150-1-namit@vmware.com>
-References: <20190719005837.4150-1-namit@vmware.com>
+        Thu, 18 Jul 2019 20:59:58 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R801e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TXEfKGN_1563497991;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TXEfKGN_1563497991)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 19 Jul 2019 08:59:53 +0800
+Subject: Re: list corruption in deferred_split_scan()
+To:     Qian Cai <cai@lca.pw>
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, linux-kernel@vger.kernel.org
+References: <1562795006.8510.19.camel@lca.pw>
+ <cd6e10bc-cb79-65c5-ff2b-4c244ae5eb1c@linux.alibaba.com>
+ <1562879229.8510.24.camel@lca.pw>
+ <b38ee633-f8e0-00ee-55ee-2f0aaea9ed6b@linux.alibaba.com>
+ <9F50D703-FF08-44FA-B1E5-4F8A2F8C7061@lca.pw>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <7a0c0092-40d1-eede-14dd-3c4c052edf0c@linux.alibaba.com>
+Date:   Thu, 18 Jul 2019 17:59:50 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <9F50D703-FF08-44FA-B1E5-4F8A2F8C7061@lca.pw>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The compiler is smart enough without these hints.
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/mm/tlb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 40daad52ec7d..2ddc32e787f3 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -189,7 +189,7 @@ static void sync_current_stack_to_mm(struct mm_struct *mm)
- 	}
- }
- 
--static inline unsigned long mm_mangle_tif_spec_ib(struct task_struct *next)
-+static unsigned long mm_mangle_tif_spec_ib(struct task_struct *next)
- {
- 	unsigned long next_tif = task_thread_info(next)->flags;
- 	unsigned long ibpb = (next_tif >> TIF_SPEC_IB) & LAST_USER_MM_IBPB;
-@@ -748,7 +748,7 @@ static DEFINE_PER_CPU_SHARED_ALIGNED(struct flush_tlb_info, flush_tlb_info);
- static DEFINE_PER_CPU(unsigned int, flush_tlb_info_idx);
- #endif
- 
--static inline struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
-+static struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
- 			unsigned long start, unsigned long end,
- 			unsigned int stride_shift, bool freed_tables,
- 			u64 new_tlb_gen)
-@@ -774,7 +774,7 @@ static inline struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
- 	return info;
- }
- 
--static inline void put_flush_tlb_info(void)
-+static void put_flush_tlb_info(void)
- {
- #ifdef CONFIG_DEBUG_VM
- 	/* Complete reentrency prevention checks */
--- 
-2.20.1
+On 7/18/19 5:54 PM, Qian Cai wrote:
+>
+>> On Jul 12, 2019, at 3:12 PM, Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>>
+>>
+>>
+>> On 7/11/19 2:07 PM, Qian Cai wrote:
+>>> On Wed, 2019-07-10 at 17:16 -0700, Yang Shi wrote:
+>>>> Hi Qian,
+>>>>
+>>>>
+>>>> Thanks for reporting the issue. But, I can't reproduce it on my machine.
+>>>> Could you please share more details about your test? How often did you
+>>>> run into this problem?
+>>> I can almost reproduce it every time on a HPE ProLiant DL385 Gen10 server. Here
+>>> is some more information.
+>>>
+>>> # cat .config
+>>>
+>>> https://raw.githubusercontent.com/cailca/linux-mm/master/x86.config
+>> I tried your kernel config, but I still can't reproduce it. My compiler doesn't have retpoline support, so CONFIG_RETPOLINE is disabled in my test, but I don't think this would make any difference for this case.
+>>
+>> According to the bug call trace in the earlier email, it looks deferred _split_scan lost race with put_compound_page. The put_compound_page would call free_transhuge_page() which delete the page from the deferred split queue, but it may still appear on the deferred list due to some reason.
+>>
+>> Would you please try the below patch?
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index b7f709d..66bd9db 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -2765,7 +2765,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+>>          if (!mapcount && page_ref_freeze(head, 1 + extra_pins)) {
+>>                  if (!list_empty(page_deferred_list(head))) {
+>>                          ds_queue->split_queue_len--;
+>> -                       list_del(page_deferred_list(head));
+>> +                       list_del_init(page_deferred_list(head));
+>>                  }
+>>                  if (mapping)
+>>                          __dec_node_page_state(page, NR_SHMEM_THPS);
+>> @@ -2814,7 +2814,7 @@ void free_transhuge_page(struct page *page)
+>>          spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+>>          if (!list_empty(page_deferred_list(page))) {
+>>                  ds_queue->split_queue_len--;
+>> -               list_del(page_deferred_list(page));
+>> +               list_del_init(page_deferred_list(page));
+>>          }
+>>          spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
+>>          free_compound_page(page);
+> Unfortunately, I am no longer be able to reproduce the original list corruption with today’s linux-next.
+
+It is because the patches have been dropped from -mm tree by Andrew due 
+to this problem I guess. You have to use next-20190711, or apply the 
+patches on today's linux-next.
+
 
