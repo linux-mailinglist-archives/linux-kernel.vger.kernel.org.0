@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D44D6DFD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:38:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 944FA6DFD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:38:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729932AbfGSEiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:38:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58996 "EHLO mail.kernel.org"
+        id S2389695AbfGSEiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:38:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728705AbfGSD70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 23:59:26 -0400
+        id S1727483AbfGSD7b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 23:59:31 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BFFF21855;
-        Fri, 19 Jul 2019 03:59:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BA8E2189F;
+        Fri, 19 Jul 2019 03:59:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508765;
-        bh=k9Z0PZaDpi4CULLhNh5P7Ql5oV//CD2Fz8mJtLtweNE=;
+        s=default; t=1563508770;
+        bh=3GGrEOm9fazLA5eumls6MQ4xq/akDvOrKzvg5TbmCUM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mxFbYoJlkACLRZ11kDdb+ONdYm+uMWqv8K7QwwND3k/kt3t4aIf4nmFGcSZkd9Q2E
-         vZvtwvWjPxoWFzTdC+ZmV1k1Zq7Apx6lj2SW1ykZFgOC+BLKwFEm9Gmhggi1quh+xI
-         fEJwzR7gM40c0ceKfYYjM1uBFP+cIa2Uxk57XCsA=
+        b=Sz4jSDsiyRMvVJvoyIeoqAq6kElmEzTaHO1nUwLs+sSBK5qKtiWN/+kAO1oz0Qo6K
+         Ie0sJSaEeTvzBMVBljwFqPt+3Lm0o2aGhjRbP+N+RuIUEDafk8zu0L2f8QSzDdNriQ
+         OhVMvRIoNxX2qOQUdQKEfCHQE+QIQdtxELVgmy34=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 5.2 077/171] powerpc/pci/of: Fix OF flags parsing for 64bit BARs
-Date:   Thu, 18 Jul 2019 23:55:08 -0400
-Message-Id: <20190719035643.14300-77-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 5.2 080/171] staging: ks7010: Fix build error
+Date:   Thu, 18 Jul 2019 23:55:11 -0400
+Message-Id: <20190719035643.14300-80-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -46,65 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Kardashevskiy <aik@ozlabs.ru>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit df5be5be8735ef2ae80d5ae1f2453cd81a035c4b ]
+[ Upstream commit 3e5bc68fa596874500e8c718605aa44d5e42a34c ]
 
-When the firmware does PCI BAR resource allocation, it passes the assigned
-addresses and flags (prefetch/64bit/...) via the "reg" property of
-a PCI device device tree node so the kernel does not need to do
-resource allocation.
+when CRYPTO is m and KS7010 is y, building fails:
 
-The flags are stored in resource::flags - the lower byte stores
-PCI_BASE_ADDRESS_SPACE/etc bits and the other bytes are IORESOURCE_IO/etc.
-Some flags from PCI_BASE_ADDRESS_xxx and IORESOURCE_xxx are duplicated,
-such as PCI_BASE_ADDRESS_MEM_PREFETCH/PCI_BASE_ADDRESS_MEM_TYPE_64/etc.
-When parsing the "reg" property, we copy the prefetch flag but we skip
-on PCI_BASE_ADDRESS_MEM_TYPE_64 which leaves the flags out of sync.
+drivers/staging/ks7010/ks_hostif.o: In function `michael_mic.constprop.13':
+ks_hostif.c:(.text+0x560): undefined reference to `crypto_alloc_shash'
+ks_hostif.c:(.text+0x580): undefined reference to `crypto_shash_setkey'
+ks_hostif.c:(.text+0x5e0): undefined reference to `crypto_destroy_tfm'
+ks_hostif.c:(.text+0x614): undefined reference to `crypto_shash_update'
+ks_hostif.c:(.text+0x62c): undefined reference to `crypto_shash_update'
+ks_hostif.c:(.text+0x648): undefined reference to `crypto_shash_finup'
 
-The missing IORESOURCE_MEM_64 flag comes into play under 2 conditions:
-1. we remove PCI_PROBE_ONLY for pseries (by hacking pSeries_setup_arch()
-or by passing "/chosen/linux,pci-probe-only");
-2. we request resource alignment (by passing pci=resource_alignment=
-via the kernel cmd line to request PAGE_SIZE alignment or defining
-ppc_md.pcibios_default_alignment which returns anything but 0). Note that
-the alignment requests are ignored if PCI_PROBE_ONLY is enabled.
+Add CRYPTO and CRYPTO_HASH dependencies to fix this.
 
-With 1) and 2), the generic PCI code in the kernel unconditionally
-decides to:
-- reassign the BARs in pci_specified_resource_alignment() (works fine)
-- write new BARs to the device - this fails for 64bit BARs as the generic
-code looks at IORESOURCE_MEM_64 (not set) and writes only lower 32bits
-of the BAR and leaves the upper 32bit unmodified which breaks BAR mapping
-in the hypervisor.
-
-This fixes the issue by copying the flag. This is useful if we want to
-enforce certain BAR alignment per platform as handling subpage sized BARs
-is proven to cause problems with hotplug (SLOF already aligns BARs to 64k).
-
-Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-Reviewed-by: Sam Bobroff <sbobroff@linux.ibm.com>
-Reviewed-by: Oliver O'Halloran <oohall@gmail.com>
-Reviewed-by: Shawn Anastasio <shawn@anastas.io>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 8b523f20417d ("staging: ks7010: removed custom Michael MIC implementation.")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/pci_of_scan.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/staging/ks7010/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/powerpc/kernel/pci_of_scan.c b/arch/powerpc/kernel/pci_of_scan.c
-index 24522aa37665..c63c53b37e8e 100644
---- a/arch/powerpc/kernel/pci_of_scan.c
-+++ b/arch/powerpc/kernel/pci_of_scan.c
-@@ -42,6 +42,8 @@ unsigned int pci_parse_of_flags(u32 addr0, int bridge)
- 	if (addr0 & 0x02000000) {
- 		flags = IORESOURCE_MEM | PCI_BASE_ADDRESS_SPACE_MEMORY;
- 		flags |= (addr0 >> 22) & PCI_BASE_ADDRESS_MEM_TYPE_64;
-+		if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64)
-+			flags |= IORESOURCE_MEM_64;
- 		flags |= (addr0 >> 28) & PCI_BASE_ADDRESS_MEM_TYPE_1M;
- 		if (addr0 & 0x40000000)
- 			flags |= IORESOURCE_PREFETCH
+diff --git a/drivers/staging/ks7010/Kconfig b/drivers/staging/ks7010/Kconfig
+index 0987fdc2f70d..9d7cbc8b12df 100644
+--- a/drivers/staging/ks7010/Kconfig
++++ b/drivers/staging/ks7010/Kconfig
+@@ -5,6 +5,7 @@ config KS7010
+ 	select WIRELESS_EXT
+ 	select WEXT_PRIV
+ 	select FW_LOADER
++	depends on CRYPTO && CRYPTO_HASH
+ 	help
+ 	  This is a driver for KeyStream KS7010 based SDIO WIFI cards. It is
+ 	  found on at least later Spectec SDW-821 (FCC-ID "S2Y-WLAN-11G-K" only,
 -- 
 2.20.1
 
