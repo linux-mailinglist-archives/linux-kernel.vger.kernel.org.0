@@ -2,49 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8438D6D810
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 03:00:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF7966D80A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:59:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726753AbfGSA7Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 20:59:25 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34022 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726539AbfGSA7H (ORCPT
+        id S1726647AbfGSA7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 20:59:11 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34618 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726571AbfGSA7J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 20:59:07 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b13so13392514pfo.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 17:59:07 -0700 (PDT)
+        Thu, 18 Jul 2019 20:59:09 -0400
+Received: by mail-pl1-f193.google.com with SMTP id i2so14761140plt.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 17:59:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MlOkGjlKe23/Wup3KXevKcIurY4O1G8mMmCmtgnZfrQ=;
-        b=HOhKSzYqV6KqMIm52mdYN9BLgbiOqdSSCp2b9Ly/J/gPatb5FqP+ZgppPgI0Bff+xr
-         OR2CQNyClTIQ/AtXimOwzy5tVNmbVqkPf81b8B25eX+b9l2fvRPSMN3pn1Y07E50F5ux
-         aeLhBX3k8V5k3N6u8bP6It6sjSDjCewNi80MCRLeayUqVtig4nQgqZ6nF01jfgKHf711
-         OtuoDqqT2nkmeDtaCoLDnDeym+xUH2PFQvAHXWWef6sLJn1vOrmSAKEDjTZxSod98yNI
-         znZSNavSAFAH1xtr3gTDNVFI3CE3hJAS4Xs9tcOBwyfhq9QLWP90YMVTC3K4u9Dy3O9B
-         PpnQ==
-X-Gm-Message-State: APjAAAUnE3aIFZT/i6r0tzwhnJkn1a0DPhI+TcUDyUeImhtHvJHgfhQY
-        Y0cVBVM2JYt7N1BIvH1rXdxAyzJV/3o=
-X-Google-Smtp-Source: APXvYqzTrtPwuTC0VDUpV7kyMgndF0s9Wa/i8EXJD31LgPjv9Tl6Ni8zmXCml5tRSEyXiz6OMjd2eQ==
-X-Received: by 2002:a17:90a:8a15:: with SMTP id w21mr54640132pjn.134.1563497946884;
-        Thu, 18 Jul 2019 17:59:06 -0700 (PDT)
+        bh=yjgylcrTL5oyKrI42SHzoTCEiC3xG7heV6oUteyqMZI=;
+        b=PhXkjIWGqizFBW8n8mO4IkpTSwz7iFtzWPInC6vYyRmE8AWrQtRyqWX+2kY2SWui/J
+         3LXxAhaE/5dMdky/GE01h6txLsmbcgsjPc1WM/jTpCL7RVH4a132t2DzFIunz3Ln5ru8
+         mGmuPgV/y/O0P5/Ublvinc/bqUVP9tst1dLQYOk1ft68ylwJyXEsKQKN6anKMwN5aiPk
+         Ga+H0A6wC/YdN3OEnwSEwXT7FD+YleRNDAo1naOmBt7/iUNKKwrg7hQR17y+e2jh12V/
+         9JaNz+EonnMUsfA+TWgiP1CaO6ChQ5TxOilKbCZldW8E//Hd49ToY8fW7AizF+/92rfQ
+         borA==
+X-Gm-Message-State: APjAAAUjenTazAmnFt7sPeJvVI+SP51cH0TP7+sgs9Iv95gr1BAY9ZxL
+        3hticjYfl03zw54CWMqrRxc=
+X-Google-Smtp-Source: APXvYqz8sRHkEKr4xyktWcX8xbiOG0ipAuM46YJNReRMzbdes97/0EuivmL3uKlfTmZcDJ/s7j+YDQ==
+X-Received: by 2002:a17:902:744c:: with SMTP id e12mr53133801plt.287.1563497948205;
+        Thu, 18 Jul 2019 17:59:08 -0700 (PDT)
 Received: from htb-2n-eng-dhcp405.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id j128sm14025166pfg.28.2019.07.18.17.59.05
+        by smtp.gmail.com with ESMTPSA id j128sm14025166pfg.28.2019.07.18.17.59.06
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 18 Jul 2019 17:59:06 -0700 (PDT)
+        Thu, 18 Jul 2019 17:59:07 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Andy Lutomirski <luto@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>
 Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Nadav Amit <namit@vmware.com>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH v3 6/9] x86/mm/tlb: Do not make is_lazy dirty for no reason
-Date:   Thu, 18 Jul 2019 17:58:34 -0700
-Message-Id: <20190719005837.4150-7-namit@vmware.com>
+        Ingo Molnar <mingo@redhat.com>, Nadav Amit <namit@vmware.com>
+Subject: [PATCH v3 7/9] cpumask: Mark functions as pure
+Date:   Thu, 18 Jul 2019 17:58:35 -0700
+Message-Id: <20190719005837.4150-8-namit@vmware.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719005837.4150-1-namit@vmware.com>
 References: <20190719005837.4150-1-namit@vmware.com>
@@ -55,33 +54,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Blindly writing to is_lazy for no reason, when the written value is
-identical to the old value, makes the cacheline dirty for no reason.
-Avoid making such writes to prevent cache coherency traffic for no
-reason.
+cpumask_next_and() and cpumask_any_but() are pure, and marking them as
+such seems to generate different and presumably better code for
+native_flush_tlb_multi().
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Suggested-by: Dave Hansen <dave.hansen@intel.com>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/mm/tlb.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/cpumask.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index af80c274c88d..89f83ad19507 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -322,7 +322,8 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 		__flush_tlb_all();
- 	}
- #endif
--	this_cpu_write(cpu_tlbstate_shared.is_lazy, false);
-+	if (was_lazy)
-+		this_cpu_write(cpu_tlbstate_shared.is_lazy, false);
+diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+index 0c7db5efe66c..6d57e6372b9d 100644
+--- a/include/linux/cpumask.h
++++ b/include/linux/cpumask.h
+@@ -211,7 +211,7 @@ static inline unsigned int cpumask_last(const struct cpumask *srcp)
+ 	return find_last_bit(cpumask_bits(srcp), nr_cpumask_bits);
+ }
  
- 	/*
- 	 * The membarrier system call requires a full memory barrier and
+-unsigned int cpumask_next(int n, const struct cpumask *srcp);
++unsigned int __pure cpumask_next(int n, const struct cpumask *srcp);
+ 
+ /**
+  * cpumask_next_zero - get the next unset cpu in a cpumask
+@@ -228,8 +228,8 @@ static inline unsigned int cpumask_next_zero(int n, const struct cpumask *srcp)
+ 	return find_next_zero_bit(cpumask_bits(srcp), nr_cpumask_bits, n+1);
+ }
+ 
+-int cpumask_next_and(int n, const struct cpumask *, const struct cpumask *);
+-int cpumask_any_but(const struct cpumask *mask, unsigned int cpu);
++int __pure cpumask_next_and(int n, const struct cpumask *, const struct cpumask *);
++int __pure cpumask_any_but(const struct cpumask *mask, unsigned int cpu);
+ unsigned int cpumask_local_spread(unsigned int i, int node);
+ 
+ /**
 -- 
 2.20.1
 
