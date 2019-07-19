@@ -2,151 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFDF16E6CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 15:48:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF5BE6E6D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 15:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728980AbfGSNrc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 09:47:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58472 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726243AbfGSNrc (ORCPT
+        id S1729242AbfGSNtC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 09:49:02 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52819 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726373AbfGSNtB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 09:47:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+Hokg8oUCnTJMdm04EjJEy1G6bBUYjC7FCjqYdguhZU=; b=axLrHVblj6QSmD96ZBPWWhsJ7
-        ZTNj+ezWX4oz/SJj96v9eF1lNLXZD3Tcmeq0s0Ibn0Om7SNSHLlJY0j0awyDs2pP7INXSVnVwIzKi
-        qvFs3W15ircRizWGrn1Vz9ddCg9IFrkXJeHv+kK9tDpRIe4DXZBD9UP6Gcwm9Ne3LSRtwcliVLWvQ
-        TMco3z8JAlX27HCKEdYvuFSJBf4Uihx58ZhJ4yhuI8CDOUS4NnkQZfsLSSDOBuPuL3/P+dPq/ptmf
-        exyAQ+twVE8tg/sHgus0qBOev9FkWPIwOPI2VrRkaTc+qAoFgE7GRbEQqdMqfnUNDlAywrV0Dxthi
-        /+fIfHq+Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hoTEP-0001Lb-5Q; Fri, 19 Jul 2019 13:47:29 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6B95820B4B7B6; Fri, 19 Jul 2019 15:47:27 +0200 (CEST)
-Date:   Fri, 19 Jul 2019 15:47:27 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Fox <afox@redhat.com>,
-        Stephen Johnston <sjohnsto@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stanislaw Gruszka <sgruszka@redhat.com>
-Subject: Re: [PATCH] sched/cputime: make scale_stime() more precise
-Message-ID: <20190719134727.GV3463@hirez.programming.kicks-ass.net>
-References: <20190718131834.GA22211@redhat.com>
- <20190719110349.GG3419@hirez.programming.kicks-ass.net>
+        Fri, 19 Jul 2019 09:49:01 -0400
+Received: by mail-wm1-f67.google.com with SMTP id s3so28887845wms.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 06:49:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=smQrXP7fwTxA46Gpk0cUyjwxtkHs1F6EO+T3/TBVils=;
+        b=pxnNx+ZxdcuUMn0NtVbfef0Vuu56KnXksI27SUUh5BHVNIbS6fDTjk4NFbivrHrFGU
+         xlOQWuNhymyxYBxnfhgYLBeU7DYcDE2kVRzkTWT4+Ok9hfYKFvFCdijgK7TwPKOr3ZZh
+         /WpGXY+iRzcYY3/pkhDH98ENcLxmBFr1Oiee9QoE6VqfTCWfCNWKoRoRutz9NDVTX46i
+         euVA+8hALb4kWLGLG/X60xQ1PYkdf3cSd/FKQ7/7u2+pYC4fak96WfbyN8IHdiSkGREh
+         tVxJv5MkWx9+sSg46E5HmkWgOqDGIqDl1C8lIZIF3+Faf/tVnlWf49RqqMmKWflV0nAi
+         gycw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=smQrXP7fwTxA46Gpk0cUyjwxtkHs1F6EO+T3/TBVils=;
+        b=b8rYCm0GYn8EzDdxFsjfii2Qqv059es6PJzVIy8FBfiXz4mYc1yxL9jJdNk+ny//Re
+         lM2ROPjmMu33WpHGAqJuWCdWGLpUY4lQ25WNOMWG0lcSZJPE6qU3xWFejlA216zT9dYS
+         pUI/ZbsylqnMkUOB2HFhubEM6LHsUNKzon/1aLD4B/+0nc6uCSutZJY1PQ725NCnqziH
+         Qf8n+SlDEwynSSLZteluAuEcuCvxkhzJVTKR/l+KFsImFqE4bcSoiGTdJknzZ0+tm2gs
+         0jTKlvfUA0/0b8Q1gez8v0BaqrwnquIE0g+TTWzHsF5TdPE3eX3ZaVIQubMFp6BnPNqW
+         vWLA==
+X-Gm-Message-State: APjAAAUqztZ49cHIIEGAMbxOe8+U9MZ5mcTO+EzVOHX4so8OyrDZxPKK
+        sNNh8I+yA2rXeMHrCxuOPZMIGVrop62P01/PZVQ=
+X-Google-Smtp-Source: APXvYqzDaYY9rYKHKDGCwiLwi65ngNe/ST9pocKyF9LYbS7nmk7ou7kxpOekW2VDCTMI1n4rLwN03/IXpSWtL/epsWs=
+X-Received: by 2002:a1c:3cc4:: with SMTP id j187mr46214806wma.36.1563544139506;
+ Fri, 19 Jul 2019 06:48:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190719110349.GG3419@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <alpine.DEB.2.21.1907182223560.1785@nanos.tec.linutronix.de> <CA+icZUW5jNJY3L5EcxrtOttwpbdAWQ7=U_bZaLHcTogOdNuTcQ@mail.gmail.com>
+In-Reply-To: <CA+icZUW5jNJY3L5EcxrtOttwpbdAWQ7=U_bZaLHcTogOdNuTcQ@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Fri, 19 Jul 2019 15:48:46 +0200
+Message-ID: <CA+icZUUtNibYGbHEt+cqsu6cuKYF7=MobvPQ9mkXU1pJZhFw9w@mail.gmail.com>
+Subject: Re: x86 - clang / objtool status
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 19, 2019 at 01:03:49PM +0200, Peter Zijlstra wrote:
-> On Thu, Jul 18, 2019 at 03:18:34PM +0200, Oleg Nesterov wrote:
-> > People report that utime and stime from /proc/<pid>/stat become very wrong
-> > when the numbers are big enough. In particular, the monitored application
-> > can run all the time in user-space but only stime grows.
-> > 
-> > This is because scale_stime() is very inaccurate. It tries to minimize the
-> > relative error, but the absolute error can be huge.
-> > 
-> > Andrew wrote the test-case:
-> > 
-> > 	int main(int argc, char **argv)
-> > 	{
-> > 	    struct task_cputime c;
-> > 	    struct prev_cputime p;
-> > 	    u64 st, pst, cst;
-> > 	    u64 ut, put, cut;
-> > 	    u64 x;
-> > 	    int i = -1; // one step not printed
-> > 
-> > 	    if (argc != 2)
-> > 	    {
-> > 		printf("usage: %s <start_in_seconds>\n", argv[0]);
-> > 		return 1;
-> > 	    }
-> > 	    x = strtoull(argv[1], NULL, 0) * SEC;
-> > 	    printf("start=%lld\n", x);
-> > 
-> > 	    p.stime = 0;
-> > 	    p.utime = 0;
-> > 
-> > 	    while (i++ < NSTEPS)
-> > 	    {
-> > 		x += STEP;
-> > 		c.stime = x;
-> > 		c.utime = x;
-> > 		c.sum_exec_runtime = x + x;
-> > 		pst = cputime_to_clock_t(p.stime);
-> > 		put = cputime_to_clock_t(p.utime);
-> > 		cputime_adjust(&c, &p, &ut, &st);
-> > 		cst = cputime_to_clock_t(st);
-> > 		cut = cputime_to_clock_t(ut);
-> > 		if (i)
-> > 		    printf("ut(diff)/st(diff): %20lld (%4lld)  %20lld (%4lld)\n",
-> > 			cut, cut - put, cst, cst - pst);
-> > 	    }
-> > 	}
-> > 
-> > For example,
-> > 
-> > 	$ ./stime 300000
-> > 	start=300000000000000
-> > 	ut(diff)/st(diff):            299994875 (   0)             300009124 (2000)
-> > 	ut(diff)/st(diff):            299994875 (   0)             300011124 (2000)
-> > 	ut(diff)/st(diff):            299994875 (   0)             300013124 (2000)
-> > 	ut(diff)/st(diff):            299994875 (   0)             300015124 (2000)
-> > 	ut(diff)/st(diff):            299994875 (   0)             300017124 (2000)
-> > 	ut(diff)/st(diff):            299994875 (   0)             300019124 (2000)
-> > 	ut(diff)/st(diff):            299994875 (   0)             300021124 (2000)
-> > 	ut(diff)/st(diff):            299994875 (   0)             300023124 (2000)
-> > 	ut(diff)/st(diff):            299994875 (   0)             300025124 (2000)
-> > 	ut(diff)/st(diff):            299994875 (   0)             300027124 (2000)
-> > 	ut(diff)/st(diff):            299994875 (   0)             300029124 (2000)
-> > 	ut(diff)/st(diff):            299996875 (2000)             300029124 (   0)
-> > 	ut(diff)/st(diff):            299998875 (2000)             300029124 (   0)
-> > 	ut(diff)/st(diff):            300000875 (2000)             300029124 (   0)
-> > 	ut(diff)/st(diff):            300002875 (2000)             300029124 (   0)
-> > 	ut(diff)/st(diff):            300004875 (2000)             300029124 (   0)
-> > 	ut(diff)/st(diff):            300006875 (2000)             300029124 (   0)
-> > 	ut(diff)/st(diff):            300008875 (2000)             300029124 (   0)
-> > 	ut(diff)/st(diff):            300010875 (2000)             300029124 (   0)
-> > 	ut(diff)/st(diff):            300012055 (1180)             300029944 ( 820)
-> > 	ut(diff)/st(diff):            300012055 (   0)             300031944 (2000)
-> > 	ut(diff)/st(diff):            300012055 (   0)             300033944 (2000)
-> > 	ut(diff)/st(diff):            300012055 (   0)             300035944 (2000)
-> > 	ut(diff)/st(diff):            300012055 (   0)             300037944 (2000)
-> > 
-> > shows the problem even when sum_exec_runtime is not that big: 300000 secs.
-> > 
-> > The new implementation of scale_stime() does the additional div64_u64_rem()
-> > in a loop but see the comment, as long it is used by cputime_adjust() this
-> > can happen only once.
-> 
-> That only shows something after long long staring :/ There's no words on
-> what the output actually means or what would've been expected.
-> 
-> Also, your example is incomplete; the below is a test for scale_stime();
-> from this we can see that the division results in too large a number,
-> but, important for our use-case in cputime_adjust(), it is a step
-> function (due to loss in precision) and for every plateau we shift
-> runtime into the wrong bucket.
+> First of all I find out that it is possible to download and apply the
+> series (here: v2) from patchwork (see [1]).
+> I highly appreciate to have this in Josh's Git [2].
+>
 
-But I'm still confused, since in the long run, it should still end up
-with a proportionally divided user/system, irrespective of some short
-term wobblies.
+There it is.
 
-So please, better articulate the problem.
+- sed@ -
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git/log/?h=objtool-many-fixes-v2
