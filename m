@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 574056DABC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:04:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAEBF6DABF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:04:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730710AbfGSEDx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:03:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35898 "EHLO mail.kernel.org"
+        id S1730783AbfGSED7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:03:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730663AbfGSEDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:03:49 -0400
+        id S1729690AbfGSED4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:03:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA24A21873;
-        Fri, 19 Jul 2019 04:03:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05796218A3;
+        Fri, 19 Jul 2019 04:03:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509028;
-        bh=6t3CAgcV6XpPNrDoO83vKqpOcFu/CSfxU4by1Tzh9ak=;
+        s=default; t=1563509034;
+        bh=KLNygqYyFHSspqiGbQoEEhnB0BiMvRcyv/HVld6ouGY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C67vdf5t9Z+5JwrG1y3twhkSetpI6EVw3xCtdQmcE7Trf5CVxTneLRZoB6rkxkBQb
-         HbtdGkEetDPQavYNjmcM6kj+tABVi6YLfjBrIGUVKoKxPLXRVb+9bk/m+VrsWiWZxT
-         k0zOabNveYOB2fr8BZ66m8dgPHd+oveUrvAOrLWc=
+        b=gG92Eaf41xslAw5ZuRsfh3CNcCGf7LtU/QhL4z6rbN1kEtdsIrK5I1ygbhj3+39zH
+         LJ9/UoL4yKlb8KIYdmOs1X5Za6zU72p8Ojzzt4p6EsRnzhAqZu8Rks4M/IYekL2qcd
+         44XblHDPC8JmCOnU+yNf59bX3fNoCmts6013jx7M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Rosenberg <drosen@google.com>, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Shayenne Moura <shayenneluzmoura@gmail.com>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
         Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 5.1 028/141] f2fs: Fix accounting for unusable blocks
-Date:   Fri, 19 Jul 2019 00:00:53 -0400
-Message-Id: <20190719040246.15945-28-sashal@kernel.org>
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.1 033/141] drm/vkms: Forward timer right after drm_crtc_handle_vblank
+Date:   Fri, 19 Jul 2019 00:00:58 -0400
+Message-Id: <20190719040246.15945-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040246.15945-1-sashal@kernel.org>
 References: <20190719040246.15945-1-sashal@kernel.org>
@@ -44,62 +46,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Rosenberg <drosen@google.com>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-[ Upstream commit a4c3ecaaadac5693f555cfef1c9eecf4c39df818 ]
+[ Upstream commit 7355965da22b8d9ebac8bce4b776399fb0bb9d32 ]
 
-Fixes possible underflows when dealing with unusable blocks.
+In
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+commit def35e7c592616bc09be328de8795e5e624a3cf8
+Author: Shayenne Moura <shayenneluzmoura@gmail.com>
+Date:   Wed Jan 30 14:06:36 2019 -0200
+
+    drm/vkms: Bugfix extra vblank frame
+
+we fixed the vblank counter to give accurate results outside of
+drm_crtc_handle_vblank, which fixed bugs around vblank timestamps
+being off-by-one and causing the vblank counter to jump when it
+shouldn't.
+
+The trouble is that this completely broke crc generation. Shayenne and
+Rodrigo tracked this down to the vblank timestamp going backwards in
+time somehow. Which then resulted in an underflow in drm_vblank.c
+code, which resulted in all kinds of things breaking really badly.
+
+The reason for this is that once we've called drm_crtc_handle_vblank
+and the hrtimer isn't forwarded yet, we're returning a vblank
+timestamp in the past. This race is really hard to hit since it's
+small, except when you enable crc generation: In that case there's a
+call to drm_crtc_accurate_vblank right in-betwen, so we're guaranteed
+to hit the bug.
+
+The fix is to roll the hrtimer forward _before_ we do the vblank
+processing (which has a side-effect of incrementing the vblank
+counter), and we always subtract one frame from the hrtimer - since
+now it's always one frame in the future.
+
+To make sure we don't hit this again also add a WARN_ON checking for
+whether our timestamp is somehow moving into the past, which is never
+should.
+
+This also aligns more with how real hw works:
+1. first all registers are updated with the new timestamp/vblank
+counter values.
+2. then an interrupt is generated
+3. kernel interrupt handler eventually fires.
+
+So doing this aligns vkms closer with what drm_vblank.c expects.
+Document this also in a comment.
+
+Cc: Shayenne Moura <shayenneluzmoura@gmail.com>
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Tested-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Reviewed-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190606084404.12014-1-daniel.vetter@ffwll.ch
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/vkms/vkms_crtc.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2ba2478d0663..f1157d5c62bb 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1761,8 +1761,12 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
+index 8a9aeb0a9ea8..0947a9f75c79 100644
+--- a/drivers/gpu/drm/vkms/vkms_crtc.c
++++ b/drivers/gpu/drm/vkms/vkms_crtc.c
+@@ -15,6 +15,10 @@ static enum hrtimer_restart vkms_vblank_simulate(struct hrtimer *timer)
  
- 	if (!__allow_reserved_blocks(sbi, inode, true))
- 		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
--	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
--		avail_user_block_count -= sbi->unusable_block_count;
-+	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
-+		if (avail_user_block_count > sbi->unusable_block_count)
-+			avail_user_block_count -= sbi->unusable_block_count;
-+		else
-+			avail_user_block_count = 0;
-+	}
- 	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
- 		diff = sbi->total_valid_block_count - avail_user_block_count;
- 		if (diff > *count)
-@@ -1958,7 +1962,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
- 					struct inode *inode, bool is_inode)
- {
- 	block_t	valid_block_count;
--	unsigned int valid_node_count;
-+	unsigned int valid_node_count, user_block_count;
- 	int err;
+ 	spin_lock(&output->lock);
  
- 	if (is_inode) {
-@@ -1985,10 +1989,11 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
- 
- 	if (!__allow_reserved_blocks(sbi, inode, false))
- 		valid_block_count += F2FS_OPTION(sbi).root_reserved_blocks;
-+	user_block_count = sbi->user_block_count;
- 	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
--		valid_block_count += sbi->unusable_block_count;
-+		user_block_count -= sbi->unusable_block_count;
- 
--	if (unlikely(valid_block_count > sbi->user_block_count)) {
-+	if (unlikely(valid_block_count > user_block_count)) {
- 		spin_unlock(&sbi->stat_lock);
- 		goto enospc;
++	ret_overrun = hrtimer_forward_now(&output->vblank_hrtimer,
++					  output->period_ns);
++	WARN_ON(ret_overrun != 1);
++
+ 	ret = drm_crtc_handle_vblank(crtc);
+ 	if (!ret)
+ 		DRM_ERROR("vkms failure on handling vblank");
+@@ -35,10 +39,6 @@ static enum hrtimer_restart vkms_vblank_simulate(struct hrtimer *timer)
+ 			DRM_WARN("failed to queue vkms_crc_work_handle");
  	}
+ 
+-	ret_overrun = hrtimer_forward_now(&output->vblank_hrtimer,
+-					  output->period_ns);
+-	WARN_ON(ret_overrun != 1);
+-
+ 	spin_unlock(&output->lock);
+ 
+ 	return HRTIMER_RESTART;
+@@ -74,11 +74,21 @@ bool vkms_get_vblank_timestamp(struct drm_device *dev, unsigned int pipe,
+ {
+ 	struct vkms_device *vkmsdev = drm_device_to_vkms_device(dev);
+ 	struct vkms_output *output = &vkmsdev->output;
++	struct drm_vblank_crtc *vblank = &dev->vblank[pipe];
+ 
+ 	*vblank_time = output->vblank_hrtimer.node.expires;
+ 
+-	if (!in_vblank_irq)
+-		*vblank_time -= output->period_ns;
++	if (WARN_ON(*vblank_time == vblank->time))
++		return true;
++
++	/*
++	 * To prevent races we roll the hrtimer forward before we do any
++	 * interrupt processing - this is how real hw works (the interrupt is
++	 * only generated after all the vblank registers are updated) and what
++	 * the vblank core expects. Therefore we need to always correct the
++	 * timestampe by one frame.
++	 */
++	*vblank_time -= output->period_ns;
+ 
+ 	return true;
+ }
 -- 
 2.20.1
 
