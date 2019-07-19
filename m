@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ED966DA87
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:03:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15E586DA8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:03:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730187AbfGSEC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:02:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34820 "EHLO mail.kernel.org"
+        id S1730213AbfGSEDA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:03:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726396AbfGSECt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:02:49 -0400
+        id S1730185AbfGSEC5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:02:57 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD37121852;
-        Fri, 19 Jul 2019 04:02:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77F1A21882;
+        Fri, 19 Jul 2019 04:02:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508968;
-        bh=jktFPpDuIqOzqjieAQUW5J9XIQ8OTSOTVbaNVO6/MOg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=FrcGspduwKzPCLZq1Y1jZWH1leuzZdBQa5vmkmoFlqrouOrTWn47+7AcR4p8hozNd
-         PA0+7m9ACmIWSKRyabwIFFHqm6Yr4EcogSABaijVIkADcwNDtXPIeY4HeJP5hOOcM3
-         KbDJRurjCClKL1R98X2anPBoyg05ps8N6Xa3kbco=
+        s=default; t=1563508976;
+        bh=loio7EbnPyE2U2r+HyGRrKSUH0ysEvubFWprXBu+1MA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=A5ODP+2WccjNEqIim8rKr2M3Ucknu6bqDoWDBqwwd78R0wtVFwSdHUlrkZvw7ouKM
+         rOO45oHHq2EigF1g8bFnzWn60nFwHWWXwUFDf2O76ACkWEPHH+1ThDhtcrsCRKLb2o
+         aKSQjbAFBYh0LpqFv4iX376OQjkshnsC4yKrJZjw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.1 001/141] drm/panel: simple: Fix panel_simple_dsi_probe
-Date:   Fri, 19 Jul 2019 00:00:26 -0400
-Message-Id: <20190719040246.15945-1-sashal@kernel.org>
+Cc:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>,
+        Corey Minyard <cminyard@mvista.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 005/141] ipmi_si: fix unexpected driver unregister warning
+Date:   Fri, 19 Jul 2019 00:00:30 -0400
+Message-Id: <20190719040246.15945-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190719040246.15945-1-sashal@kernel.org>
+References: <20190719040246.15945-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -42,41 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
 
-[ Upstream commit 7ad9db66fafb0f0ad53fd2a66217105da5ddeffe ]
+[ Upstream commit 2f66353963043e1d8dfacfbdf509acc5d3be7698 ]
 
-In case mipi_dsi_attach() fails remove the registered panel to avoid added
-panel without corresponding device.
+If ipmi_si_platform_init()->platform_driver_register() fails,
+platform_driver_unregister() called unconditionally will trigger
+following warning,
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190226081153.31334-1-peter.ujfalusi@ti.com
+ipmi_platform: Unable to register driver: -12
+------------[ cut here ]------------
+Unexpected driver unregister!
+WARNING: CPU: 1 PID: 7210 at drivers/base/driver.c:193 driver_unregister+0x60/0x70 drivers/base/driver.c:193
+
+Fix it by adding platform_registered variable, only unregister platform
+driver when it is already successfully registered.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Message-Id: <20190517101245.4341-1-wangkefeng.wang@huawei.com>
+
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/panel/panel-simple.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/char/ipmi/ipmi_si_platform.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 9e8218f6a3f2..a82358e8fd73 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -3038,7 +3038,14 @@ static int panel_simple_dsi_probe(struct mipi_dsi_device *dsi)
- 	dsi->format = desc->format;
- 	dsi->lanes = desc->lanes;
+diff --git a/drivers/char/ipmi/ipmi_si_platform.c b/drivers/char/ipmi/ipmi_si_platform.c
+index 54c7ded2a1ff..859c78de1d4a 100644
+--- a/drivers/char/ipmi/ipmi_si_platform.c
++++ b/drivers/char/ipmi/ipmi_si_platform.c
+@@ -19,6 +19,7 @@
+ #include "ipmi_si.h"
+ #include "ipmi_dmi.h"
  
--	return mipi_dsi_attach(dsi);
-+	err = mipi_dsi_attach(dsi);
-+	if (err) {
-+		struct panel_simple *panel = dev_get_drvdata(&dsi->dev);
-+
-+		drm_panel_remove(&panel->base);
-+	}
-+
-+	return err;
++static bool platform_registered;
+ static bool si_tryplatform = true;
+ #ifdef CONFIG_ACPI
+ static bool          si_tryacpi = true;
+@@ -471,9 +472,12 @@ void ipmi_si_platform_init(void)
+ 	int rv = platform_driver_register(&ipmi_platform_driver);
+ 	if (rv)
+ 		pr_err("Unable to register driver: %d\n", rv);
++	else
++		platform_registered = true;
  }
  
- static int panel_simple_dsi_remove(struct mipi_dsi_device *dsi)
+ void ipmi_si_platform_shutdown(void)
+ {
+-	platform_driver_unregister(&ipmi_platform_driver);
++	if (platform_registered)
++		platform_driver_unregister(&ipmi_platform_driver);
+ }
 -- 
 2.20.1
 
