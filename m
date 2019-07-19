@@ -2,71 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B50DC6E51D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 13:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F5806E51E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 13:38:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbfGSLiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 07:38:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50364 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726239AbfGSLiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 07:38:09 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BADE0307D85B;
-        Fri, 19 Jul 2019 11:38:08 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5D6F45C1A1;
-        Fri, 19 Jul 2019 11:38:08 +0000 (UTC)
-Subject: Re: [GIT PULL] Modules updates for v5.3
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jessica Yu <jeyu@kernel.org>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-References: <20190718113346.GA19574@linux-8ccs>
- <CAHk-=whjTFKB3TPPkgCvMX9P+C=hy2ZjhQy7C5reTQKV6MtuOw@mail.gmail.com>
-From:   Prarit Bhargava <prarit@redhat.com>
-Message-ID: <e6fec7b7-40de-884e-a37b-f60dcc129c02@redhat.com>
-Date:   Fri, 19 Jul 2019 07:38:07 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727947AbfGSLif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 07:38:35 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:41478 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbfGSLif (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 07:38:35 -0400
+Received: by mail-ot1-f65.google.com with SMTP id o101so32417674ota.8
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 04:38:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=03l048ehGxbSZZvOhAbamfgP2eq6FIOyrVURBTlBhNs=;
+        b=ToFcEYTtmavvIks8RcmyYaASfqPyN867JqO37meFlTpO9kpKeS7LqxInQu6jPVLVxs
+         /pqGtDKSHsOXp7VUK7uyZ1Bxg/8N+3TM4cxHEFdKOVW/fM9UPQfU8q867c/MkwgKoZsZ
+         i5n82uPtLeYR2j0VeZxps2HKP8UYgLtLrGB5mRpa2i6/cPcuyvpo5ABD8gWzwhmYfXY7
+         Ykg4H1f238nUWVfqMwwx1oYNkYPyWAtIMc2tf4jbbyvAmRjd7xbPLnUoxMlUCGzhsuMT
+         PpeBc8slCEK7yGXNJhI01LwKJyORDZgCD32kIbM5hDEeb4/CpWi3RYAwxhN52yujqSBy
+         LXeg==
+X-Gm-Message-State: APjAAAUAsDH4fZEF8k+0+PTDGiGtdem/nejjndIBj6x14EG1rYPSomPo
+        9fV/GSt32jg3T4R0sf8I9VptJF8yGk7VVOplW8zptA==
+X-Google-Smtp-Source: APXvYqzSDldk05B6ipsj8LXolcsxZ2gKRCSMuliXabwaUAp+PBKB7Y1ksewM7J8YmPmDj56HZ7dTgLS8Vj6SAeDLCSo=
+X-Received: by 2002:a9d:4109:: with SMTP id o9mr15975223ote.353.1563536314574;
+ Fri, 19 Jul 2019 04:38:34 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=whjTFKB3TPPkgCvMX9P+C=hy2ZjhQy7C5reTQKV6MtuOw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 19 Jul 2019 11:38:08 +0000 (UTC)
+References: <CA+7wUszbn05nieiVsGM=MXFtf9HVks8vqtuOKw7ejTYFZhq0iQ@mail.gmail.com>
+In-Reply-To: <CA+7wUszbn05nieiVsGM=MXFtf9HVks8vqtuOKw7ejTYFZhq0iQ@mail.gmail.com>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Fri, 19 Jul 2019 13:38:17 +0200
+Message-ID: <CA+7wUsxtQ2BODXVth0TTmxCuU9iGcfqMNY3xh2pfbddcK-21vg@mail.gmail.com>
+Subject: Re: Help: Regression in v4.19 : do_IRQ: 0.37 No irq handler for vector
+To:     LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jul 19, 2019 at 1:32 PM Mathieu Malaterre <malat@debian.org> wrote:
+>
+> [cc me please]
+>
+> Hi there,
+>
+> I recently upgraded my desktop to Debian/buster. Now when I start my
+> xfce session I can hear the system bell, and my dmesg is filled with
+> numerous:
+>
+> [  920.728347] do_IRQ: 0.37 No irq handler for vector
+>
+> The symptoms seems to be gone using git/master:
+>
+> 3a1d5384b7decbff6519daa9c65a35665e227323
+>
+> Could someone suggest a method/tool to track down which commit needs
+> backport to v4.19 (other than a git bisect).
+>
+> For reference:
+> * this is bug Debian #932304
+> * I can boot in recovery mode without any issue. It seems to be
+> related to an event in single mode
 
+s/single mode/default mode/
 
-On 7/18/19 3:20 PM, Linus Torvalds wrote:
-> On Thu, Jul 18, 2019 at 4:33 AM Jessica Yu <jeyu@kernel.org> wrote:
->>
->> Modules updates for v5.3
->>
->> - Fix bug where -EEXIST was being returned for going modules
-> 
-> Hmm.
-> 
-> I have pulled this, but this change makes me a bit nervous.
-> 
-> I have this dim memory of us having deadlocks in module loading
-> because module loading triggered other modules to be loaded, and we
-> had circular dependencies..
-> 
+In other word: it occurs when I 'ctrl+d' from the rescue mode into the
+default mode.
 
-Interesting.  I'll try to search around to see if I can find the thread.
-
-P.
-
-> This is from years and years ago (that whole state check is not
-> recent), so my memory may simply be wrong, but I thought I'd mention
-> it...
-> 
->                    Linus
-> 
+> Thanks much,
