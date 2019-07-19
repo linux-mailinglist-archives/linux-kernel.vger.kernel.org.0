@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9FF36D9E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 05:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88B166D9E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 05:58:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbfGSD6K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 23:58:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57244 "EHLO mail.kernel.org"
+        id S1727856AbfGSD6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 23:58:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727719AbfGSD6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 23:58:00 -0400
+        id S1727811AbfGSD6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 23:58:12 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67DA921851;
-        Fri, 19 Jul 2019 03:57:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 188A12184E;
+        Fri, 19 Jul 2019 03:58:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508680;
-        bh=Wr3x8ZZZZHuF7Y+/WDvHqqDNEqTCWfNjBXxp0WKNg4Y=;
+        s=default; t=1563508691;
+        bh=qM2zHBibiBBO03fWCDDQyTr6ziwHDkUz0cX/k5QHERA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kVs33hqaaBQokpT314lcFB7Gb50iHuRJGcJ4u/BWvg/MMNnea+hNsJGJfeOgFotza
-         85x/o82uRWsio4RzlnMNnHiVvuPNeUNTLrrhbXviqSy+V+oJzmLqXIK1JnabLLqCLW
-         w8EqvPNIOmqMp5fngiJB5s4inc+jog0A5zQQ57Qk=
+        b=FPhgJ1SYmS/Hn5MmOhfD5/eSUN9IJr6ZZhQp1LrYUbKN72DbK6hHl16325pX8VLSe
+         MJx3NiqECbyw1Wj5okGhYLC8xVPEDUcYPPiyuZ7TXzgGkx4iGXGNU+24a6Ef3nQLVC
+         IGw+pR7MzatuD+HrS7Avms4Cxm2ziQxBM/Ncq1r8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 031/171] PCI: Return error if cannot probe VF
-Date:   Thu, 18 Jul 2019 23:54:22 -0400
-Message-Id: <20190719035643.14300-31-sashal@kernel.org>
+Cc:     Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Harry Wentland <Harry.Wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.2 035/171] drm/amd/display: Reset planes for color management changes
+Date:   Thu, 18 Jul 2019 23:54:26 -0400
+Message-Id: <20190719035643.14300-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -43,63 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Williamson <alex.williamson@redhat.com>
+From: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
 
-[ Upstream commit 76002d8b48c4b08c9bd414517dd295e132ad910b ]
+[ Upstream commit 7316c4ad299663a16ca9ce13e5e817b4ca760809 ]
 
-Commit 0e7df22401a3 ("PCI: Add sysfs sriov_drivers_autoprobe to control
-VF driver binding") allows the user to specify that drivers for VFs of
-a PF should not be probed, but it actually causes pci_device_probe() to
-return success back to the driver core in this case.  Therefore by all
-sysfs appearances the device is bound to a driver, the driver link from
-the device exists as does the device link back from the driver, yet the
-driver's probe function is never called on the device.  We also fail to
-do any sort of cleanup when we're prohibited from probing the device,
-the IRQ setup remains in place and we even hold a device reference.
+[Why]
+For commits with allow_modeset=false and CRTC degamma changes the planes
+aren't reset. This results in incorrect rendering.
 
-Instead, abort with errno before any setup or references are taken when
-pci_device_can_probe() prevents us from trying to probe the device.
+[How]
+Reset the planes when color management has changed on the CRTC.
+Technically this will include regamma changes as well, but it doesn't
+really after legacy userspace since those commit with
+allow_modeset=true.
 
-Link: https://lore.kernel.org/lkml/155672991496.20698.4279330795743262888.stgit@gimli.home
-Fixes: 0e7df22401a3 ("PCI: Add sysfs sriov_drivers_autoprobe to control VF driver binding")
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Reviewed-by: Harry Wentland <Harry.Wentland@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/pci-driver.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index ca3793002e2f..74c3df250d9c 100644
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -414,6 +414,9 @@ static int pci_device_probe(struct device *dev)
- 	struct pci_dev *pci_dev = to_pci_dev(dev);
- 	struct pci_driver *drv = to_pci_driver(dev->driver);
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 31530bfd002a..0e482349a5cb 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -6331,6 +6331,10 @@ static bool should_reset_plane(struct drm_atomic_state *state,
+ 	if (!new_crtc_state)
+ 		return true;
  
-+	if (!pci_device_can_probe(pci_dev))
-+		return -ENODEV;
++	/* CRTC Degamma changes currently require us to recreate planes. */
++	if (new_crtc_state->color_mgmt_changed)
++		return true;
 +
- 	pci_assign_irq(pci_dev);
+ 	if (drm_atomic_crtc_needs_modeset(new_crtc_state))
+ 		return true;
  
- 	error = pcibios_alloc_irq(pci_dev);
-@@ -421,12 +424,10 @@ static int pci_device_probe(struct device *dev)
- 		return error;
- 
- 	pci_dev_get(pci_dev);
--	if (pci_device_can_probe(pci_dev)) {
--		error = __pci_device_probe(drv, pci_dev);
--		if (error) {
--			pcibios_free_irq(pci_dev);
--			pci_dev_put(pci_dev);
--		}
-+	error = __pci_device_probe(drv, pci_dev);
-+	if (error) {
-+		pcibios_free_irq(pci_dev);
-+		pci_dev_put(pci_dev);
- 	}
- 
- 	return error;
 -- 
 2.20.1
 
