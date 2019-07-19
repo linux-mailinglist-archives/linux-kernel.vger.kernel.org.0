@@ -2,89 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CDBD6EA89
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 20:12:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F6556EA87
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 20:12:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731210AbfGSSMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 14:12:19 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42233 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728995AbfGSSMT (ORCPT
+        id S1731080AbfGSSMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 14:12:01 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37905 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728995AbfGSSMB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 14:12:19 -0400
-Received: by mail-io1-f68.google.com with SMTP id e20so29898607iob.9;
-        Fri, 19 Jul 2019 11:12:18 -0700 (PDT)
+        Fri, 19 Jul 2019 14:12:01 -0400
+Received: by mail-qt1-f194.google.com with SMTP id n11so31963689qtl.5
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 11:12:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=dsDZYqBz2B/9szRhH3WeBnpIjRQIOUerQGzQ6PdSv0s=;
-        b=vINiyOn65BtuiilQEPOADyKF/2NzWgOlsxJ6gm1J03DtRd70+E93QXxbpyltQigisu
-         u15MHTBH4/6W+hboUxo7JAg1mXQ4hooE2hsAnLxC+4OFcpIzQqfEy2MsaQap3kTM0u2t
-         KG9SbBbabOr7UzQv0RFDgRnLGAhEZEb7qkbYpt5bmjPqEHejCz4bkedb7EaMtXS58sV+
-         IS/Dx6NbyW/odeAg59pvYUMIdkgl5b3JK9lxvPsrWH76hIu4MhQrgj06BYWsbRvjO8vL
-         9kwfTg1GrKxcfObykPFC6tp0Cf3TjimFnwA9ClW+s/RB9Z4lLrL9wuIm5qdqrMZ+F5z8
-         JfFA==
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=bJfmts1M/+h1o+4O8Q8DKxV+oITmIApDowU9SNo+fxM=;
+        b=IJM9zuvpr3CfEK9e/Y1NOcJnVlmphKBP1yYn3DtBnd9DuVt8Gicm1J7Nc+99xLJ7pz
+         APWfCRXlUUz1FTPi0ZnLF4uDXOLw/cNjGmCI04F6v14Ig3noirA+36H65kXneKrccx2Z
+         0y2LDtdaeK8U39jakkumArYFzlNcdBHfvh5RvRTmCd+zXcpUlMjbrJZDEpPYWfN9w2Hk
+         Zta8bkcgmHefdQbcp3DOBX+xcz1YjR6AAQ48VNJUoN+LPWfRR81Gn0AtUhLqxUIK2w+M
+         okFIg4CqEVhNN2X8Z8jX9tgU2PD2d5F8KvOK5v0k0bR4MiOWOt55ITQH9A4HzPiXcm6p
+         Z4jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=dsDZYqBz2B/9szRhH3WeBnpIjRQIOUerQGzQ6PdSv0s=;
-        b=O7++Ko4+YaEnUP4xYKXTJ6eeU03Snpk4NXzTdqXPvte2rYCPBG0hob1NIpb72eQeqI
-         HaNq3xg+DR/DoFx/VFt1ti+ubfVAXaVTOYw6eXWjQakda26Wxh90YxDA9R5NoH0RRhHO
-         apYQY4CyWXKzrydiGXeQWXOoBck5lxi/6Sb4PjB2Aggld5IyamDH14VVcsCs7GkdXAbj
-         LDaoQMMezxDFICSJt5TfXmRy7KDFKm/sww7oRVX2Ycbxbwj2zfbmvLwrIkRpIm3if9Gw
-         Cio3nKOHONUx8xZXXA85sN++kcCBboVgptvBv3sbjov0b73vspl1wDvgO/8nYeaMfVZB
-         u9Vw==
-X-Gm-Message-State: APjAAAX3fOKimAZbk4Iuz8nyZoq9A/RJ/BXNusOjdhIVMldtegG4aA3m
-        exWQfDQDZv8bvXjIaTmeAgw=
-X-Google-Smtp-Source: APXvYqztUCtieRhnonxnVrZbtr/8FiR1A3c0S7cx7eL+5FpFvKsex9Rujqj/YerjZxXoQ0tXgX2deg==
-X-Received: by 2002:a02:c519:: with SMTP id s25mr54933428jam.11.1563559938082;
-        Fri, 19 Jul 2019 11:12:18 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id h18sm25343254iob.80.2019.07.19.11.12.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Jul 2019 11:12:17 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Vinod Koul <vkoul@kernel.org>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] lpss8250_dma_setup: there is memory leak when second allocation fails
-Date:   Fri, 19 Jul 2019 13:11:58 -0500
-Message-Id: <20190719181200.25607-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=bJfmts1M/+h1o+4O8Q8DKxV+oITmIApDowU9SNo+fxM=;
+        b=X1oAlvapABQSk2SjHSqAIGPyWHsndeA9bmUZDVV2CixFflW6CMdMCGMRU5eKT2U+jM
+         X+AiHUU89IntvQblz6sGEe/alGsijbjHS2bXqGvWE2HqG9iQqqYGbnenOa89U6yRwkda
+         8QO5gximQHBNHucBgIR9jU+qZcVSYa/kGTMT9fYsJw7eZpLNjeW471wpZglPLm3qxSEp
+         QpATru/heNFz9nRtIJ44Y9l79Sh8KzKHBPiulavfIoK+3QZlXvtjlISW9N5a93zUsYAV
+         B1nS+bTUBk0QNddrfrhmZMOlaFt30n2sJQVth57js3mdavTTHtBiI8G+ayrok0lwOmJ+
+         B4rg==
+X-Gm-Message-State: APjAAAVHGkIsaUKbEC+A6x6HKEbkJrVQvgzJJCJ/4KAJr2U0ODsgeFxI
+        bAr+eoAuxWKPqM1qfvJ3CKJ7TYXbgis0vhNrJSw=
+X-Google-Smtp-Source: APXvYqzAtahstZSw5/hqw3l76MuAXmeUoVIgtCcLiAZQ9rv26QMiI4bMI6d9O3i+urOt1Y/bupVtYyOYNNFheXEfwnY=
+X-Received: by 2002:a0c:b902:: with SMTP id u2mr37440608qvf.15.1563559920652;
+ Fri, 19 Jul 2019 11:12:00 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a0c:d02d:0:0:0:0:0 with HTTP; Fri, 19 Jul 2019 11:12:00
+ -0700 (PDT)
+Reply-To: sindi.kuku2218@gmail.com
+From:   Miss Sindi Kuku <mridrismusa161719@gmail.com>
+Date:   Fri, 19 Jul 2019 20:12:00 +0200
+Message-ID: <CAGxzRC7qpfwo3ZXCSYKYwOcs95_Z0qCwc6ewZRBjUine4cHLUw@mail.gmail.com>
+Subject: Dear Friend,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-in lpss8250_dma_setup, we need to release the first dma slave object
-allocated in case of the second allocation failure.
+Dear Friend,
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
- drivers/tty/serial/8250/8250_lpss.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+How are you doing with your family? I hope fine. I'm happy to inform
+you about my success in getting those funds transferred under the
+co-operation of a new partner from Venezuela, Presently I=E2=80=99m in
+Venezuela, and meanwhile I didn't forget your past efforts to assist
+me in transferring those funds despite that it failed us somehow.
 
-diff --git a/drivers/tty/serial/8250/8250_lpss.c b/drivers/tty/serial/8250/8250_lpss.c
-index d07e431110d9..6e1f86db88b2 100644
---- a/drivers/tty/serial/8250/8250_lpss.c
-+++ b/drivers/tty/serial/8250/8250_lpss.c
-@@ -259,8 +259,10 @@ static int lpss8250_dma_setup(struct lpss8250 *lpss, struct uart_8250_port *port
- 		return -ENOMEM;
- 
- 	tx_param = devm_kzalloc(dev, sizeof(*tx_param), GFP_KERNEL);
--	if (!tx_param)
-+	if (!tx_param) {
-+		kfree(rx_param);
- 		return -ENOMEM;
-+	}
- 
- 	*rx_param = lpss->dma_param;
- 	dma->rxconf.src_maxburst = lpss->dma_maxburst;
--- 
-2.17.1
+ Nowcontact my secretary in Burkina-Faso West Africa through his
+e-mail id (idrismusa161719@linuxmail.org) ask him to send you the ATM
+worth sum of ($850,000 US Dollars) which I kept for your compensation
+for all the past efforts and attempts to assist me in this
+transaction.
 
+So feel free and get in touch with my secretary Mr.Idris Musa, he will
+send the ATM CARD to you and you should not forget to send him your
+information where he will send your ATM CARD to avoid any mistake.
+
+Regards!
+Miss Sindi Kuku.
