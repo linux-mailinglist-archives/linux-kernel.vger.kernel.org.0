@@ -2,256 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E7D16DCD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 077FC6DCC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:18:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389143AbfGSENT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:13:19 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:45624 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389120AbfGSENR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:13:17 -0400
-Received: by mail-oi1-f194.google.com with SMTP id m206so23279762oib.12
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 21:13:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BBg/SpzJKxugafPWMMosPXw5SytgBm1YGaM4NNvGJDc=;
-        b=H5OjxIZoEkfuh+BaXpjX/pWe+iQGfanbT2bOd3sM4legsE4SiYE80Tj8KAU2jvds0e
-         Mxr/zcqZG87Twl/BXInO3u04qW6G8ozKzk73+dP4GSvDNQCkWRM8vmomFyqwybxWLiFv
-         M9MtWI16w0dfheM9PWO6MmKFfQdJQIh/r4LO1ug7rMYFsKt+o7YJn9md8X+eROEueJRi
-         ovy7Xv6UhsL+a1qx+HFlCXTOGrcZLZRH/HPwZt9ASIbuvmsQOAqGA++h7fvekfYDkRgc
-         XAKx9xe4wBCLPlgopB4mDWDYGLg7iX0Y5/fcPTSK6WZzeOE9IGl2JD6IFuO1q2De7z/u
-         uoGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BBg/SpzJKxugafPWMMosPXw5SytgBm1YGaM4NNvGJDc=;
-        b=W7WsJciH72sl0QIT1yvvPHC9TvExOg33U4GoVmCJcraamFQXjAm5FtpF6YP2qreg+B
-         Y9MXtRDirI5wQdtB0/EFMYAHa7qh/8EpYU9D5OA05ITBR7Glt0HK+HP9U58BgSWfkHJR
-         BvYioZ2psSbZAbhsOXngyLLINczO5yUTRGpCul9UQkUpRn5hBgaLrCdVFhnVPqAVo9Bk
-         hhyUzu7I0xx/kkgUaKYpJMoNxnpe45i49k9vrTHUxxVlDH+NPMAHTUU+1uL2Gt1iRVQo
-         AnVBiLN/tRFPJcDLUESl0PGcPL2Kzo/8UOdAB5TWecsV4wYJTc0C7BoQRbyN8WBhqebE
-         HHDg==
-X-Gm-Message-State: APjAAAXbXyDTwhUCQqc+gERUIR3eKPQZeTs4rhh3ybHV6BHGLhgDZVyq
-        vypqjknxavH7XFxkD1xeYWAaB9YERMB1IJCBaI6ZHg==
-X-Google-Smtp-Source: APXvYqzBAJh1/b89Fa5lS5fErNWhLxSnISMCd/8kxoDRTJTCjc2JoU+Suem39K7FsH59IA+z2qcDYAK7qwDiGu5hcyc=
-X-Received: by 2002:aca:d8c2:: with SMTP id p185mr26312729oig.30.1563509595836;
- Thu, 18 Jul 2019 21:13:15 -0700 (PDT)
+        id S2389707AbfGSESb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:18:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49730 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389233AbfGSENk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:13:40 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 015C421872;
+        Fri, 19 Jul 2019 04:13:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563509619;
+        bh=fP4IzCslR1zeypehGIfOoj8lpAnEwhSQPZTzaGeEYBg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=uIxEjyJSvXxJKQckel5kzXvO7SspGAaTLisj9mL0lE/so676Zfy6pjjvgMZlQ7RMb
+         15lWwV/ggUVsq06w86b8tu8mABa9IpvjyXN6q2K6QjeWiFI+Rte8u2SKMGGK5Na03Q
+         ioNfTniVunm0YizmMx6oFLpe37p8IkdfDUsoYU6Y=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Peter Smith <peter.smith@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sasha Levin <sashal@kernel.org>, linux-kbuild@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.9 21/45] kbuild: Add -Werror=unknown-warning-option to CLANG_FLAGS
+Date:   Fri, 19 Jul 2019 00:12:40 -0400
+Message-Id: <20190719041304.18849-21-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190719041304.18849-1-sashal@kernel.org>
+References: <20190719041304.18849-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20190703011020.151615-1-saravanak@google.com> <20190717103220.f7cys267hq23fbsb@vireshk-i7>
- <CAGETcx-tbjVzRKW8D-564zgNOhrA_z-NC1q5U70bhoUDBhp6VA@mail.gmail.com> <20190718053746.64drmonk72vwnt4s@vireshk-i7>
-In-Reply-To: <20190718053746.64drmonk72vwnt4s@vireshk-i7>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Thu, 18 Jul 2019 21:12:39 -0700
-Message-ID: <CAGETcx_-=b3An9YdxLUnZap=0iaeczvWTEnw65FMLU8BwA3HfQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Introduce Bandwidth OPPs for interconnect paths
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
-        daidavid1@codeaurora.org, Rajendra Nayak <rnayak@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 17, 2019 at 10:37 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> I know you have explained lots of things earlier as well, but they are
-> available over multiple threads and I don't know where to reply now :)
->
-> Lets have proper discussion (once again) here and be done with it.
-> Sorry for the trouble of explaining things again.
->
-> On 17-07-19, 13:34, Saravana Kannan wrote:
-> > On Wed, Jul 17, 2019 at 3:32 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > > On 02-07-19, 18:10, Saravana Kannan wrote:
-> > > > gpu_cache_opp_table: gpu_cache_opp_table {
-> > > >       compatible = "operating-points-v2";
-> > > >
-> > > >       gpu_cache_3000: opp-3000 {
-> > > >               opp-peak-KBps = <3000>;
-> > > >               opp-avg-KBps = <1000>;
-> > > >       };
-> > > >       gpu_cache_6000: opp-6000 {
-> > > >               opp-peak-KBps = <6000>;
-> > > >               opp-avg-KBps = <2000>;
-> > > >       };
-> > > >       gpu_cache_9000: opp-9000 {
-> > > >               opp-peak-KBps = <9000>;
-> > > >               opp-avg-KBps = <9000>;
-> > > >       };
-> > > > };
-> > > >
-> > > > gpu_ddr_opp_table: gpu_ddr_opp_table {
-> > > >       compatible = "operating-points-v2";
-> > > >
-> > > >       gpu_ddr_1525: opp-1525 {
-> > > >               opp-peak-KBps = <1525>;
-> > > >               opp-avg-KBps = <452>;
-> > > >       };
-> > > >       gpu_ddr_3051: opp-3051 {
-> > > >               opp-peak-KBps = <3051>;
-> > > >               opp-avg-KBps = <915>;
-> > > >       };
-> > > >       gpu_ddr_7500: opp-7500 {
-> > > >               opp-peak-KBps = <7500>;
-> > > >               opp-avg-KBps = <3000>;
-> > > >       };
-> > > > };
-> > >
-> > > Who is going to use the above tables and how ?
-> >
-> > In this example the GPU driver would use these. It'll go through these
-> > and then decide what peak and average bw to pick based on whatever
-> > criteria.
->
-> Are you saying that the GPU driver will decide which bandwidth to
-> choose while running at a particular frequency (say 2 GHz) ? And that
-> it can choose 1525 or 3051 or 7500 from the ddr path ?
->
-> Will it be possible to publicly share how we derive to these decisions
-> ?
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-GPU is just an example. So I can't really speak for how a random GPU
-driver might decide the bandwidth to pick.
+[ Upstream commit 589834b3a0097a4908f4112eac0ca2feb486fa32 ]
 
-But one obvious way is to start at the lowest bandwidth and check the
-bus port busy%. If it's > 80% busy, it'll pick the next bandwidth,
-etc. So, something like what cpufreq ondemand or conservative governor
-used to do.
+In commit ebcc5928c5d9 ("arm64: Silence gcc warnings about arch ABI
+drift"), the arm64 Makefile added -Wno-psabi to KBUILD_CFLAGS, which is
+a GCC only option so clang rightfully complains:
 
-> The thing is I don't like these separate OPP tables which will not be
-> used by anyone else, but just GPU (or a single device).
+warning: unknown warning option '-Wno-psabi' [-Wunknown-warning-option]
 
-The BW OPP table isn't always a secondary OPP table. It can be a
-primary OPP table too. For example, if you have a bandwidth monitoring
-device/HW IP that can measure for a path and make requests for that
-path, it'll have a BW OPP table and it'll pick from one of those BW
-OPP levels based on the hardware measurements. It will have it's own
-device driver. This is basically no different from a device being the
-only user of a freq OPP table.
+https://clang.llvm.org/docs/DiagnosticsReference.html#wunknown-warning-option
 
-> I would like
-> to put this data in the GPU OPP table only. What about putting a
-> range in the GPU OPP table for the Bandwidth if it can change so much
-> for the same frequency.
+However, by default, this is merely a warning so the build happily goes
+on with a slew of these warnings in the process.
 
-I don't think the range is going to work. If a GPU is doing purely
-computational work, it's not unreasonable for it to vote for the
-lowest bandwidth for any GPU frequency.
+Commit c3f0d0bc5b01 ("kbuild, LLVMLinux: Add -Werror to cc-option to
+support clang") worked around this behavior in cc-option by adding
+-Werror so that unknown flags cause an error. However, this all happens
+silently and when an unknown flag is added to the build unconditionally
+like -Wno-psabi, cc-option will always fail because there is always an
+unknown flag in the list of flags. This manifested as link time failures
+in the arm64 libstub because -fno-stack-protector didn't get added to
+KBUILD_CFLAGS.
 
->
-> > > These are the maximum
-> > > BW available over these paths, right ?
-> >
-> > I wouldn't call them "maximum" because there can't be multiple
-> > maximums :) But yes, these are the meaningful bandwidth from the GPU's
-> > perspective to use over these paths.
-> >
-> > >
-> > > > gpu_opp_table: gpu_opp_table {
-> > > >       compatible = "operating-points-v2";
-> > > >       opp-shared;
-> > > >
-> > > >       opp-200000000 {
-> > > >               opp-hz = /bits/ 64 <200000000>;
-> > > >       };
-> > > >       opp-400000000 {
-> > > >               opp-hz = /bits/ 64 <400000000>;
-> > > >       };
-> > > > };
-> > >
-> > > Shouldn't this link back to the above tables via required-opp, etc ?
-> > > How will we know how much BW is required by the GPU device for all the
-> > > paths ?
-> >
-> > If that's what the GPU driver wants to do, then yes. But the GPU
-> > driver could also choose to scale the bandwidth for these paths based
-> > on multiple other signals. Eg: bus port busy percentage, measure
-> > bandwidth, etc.
->
-> Lets say that the GPU is running at 2 GHz right now and based on above
-> inputs it wants to increase the bandwidth to 7500 for ddr path, now
-> does it make sense to run at 4 GHz instead of 2 so we utilize the
-> bandwidth to the best of our ability and waste less power ?
+To avoid these weird cryptic failures in the future, make clang behave
+like gcc and immediately error when it encounters an unknown flag by
+adding -Werror=unknown-warning-option to CLANG_FLAGS. This can be added
+unconditionally for clang because it is supported by at least 3.0.0,
+according to godbolt [1] and 4.0.0, according to its documentation [2],
+which is far earlier than we typically support.
 
-This is kinda hard to explain, but I'll try.
+[1]: https://godbolt.org/z/7F7rm3
+[2]: https://releases.llvm.org/4.0.0/tools/clang/docs/DiagnosticsReference.html#wunknown-warning-option
 
-Firstly, the GPU power increase might be so high that you might not
-want to do this anyway.
+Link: https://github.com/ClangBuiltLinux/linux/issues/511
+Link: https://github.com/ClangBuiltLinux/linux/issues/517
+Suggested-by: Peter Smith <peter.smith@linaro.org>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-Also, what you are proposing *might* improve the perf/mW (efficiency)
-but it doesn't decrease the actual power consumption. So, this doesn't
-really work towards saving power for mobile devices.
+diff --git a/Makefile b/Makefile
+index c80dad45334e..60b562dbd97f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -515,6 +515,7 @@ ifneq ($(GCC_TOOLCHAIN),)
+ CLANG_FLAGS	+= --gcc-toolchain=$(GCC_TOOLCHAIN)
+ endif
+ CLANG_FLAGS	+= -no-integrated-as
++CLANG_FLAGS	+= -Werror=unknown-warning-option
+ KBUILD_CFLAGS	+= $(CLANG_FLAGS)
+ KBUILD_AFLAGS	+= $(CLANG_FLAGS)
+ endif
+-- 
+2.20.1
 
-Also, if the GPU is generating a lot of traffic to DDR and you
-increase the GPU frequency, it's only going to generate even more
-traffic. So you'll end up in a positive feedback loop that maxes out
-the frequency and bandwidth. Definitely not something you want for a
-mobile device.
-
-> If something like that is acceptable, then what about keeping the
-> bandwidth fixed for frequencies and rather scale the frequency of the
-> GPU on the inputs your provided (like bus port busy percentage, etc).
-
-I don't think it's acceptable.
-
-> The current proposal makes me wonder on why should we try to reuse OPP
-> tables for providing these bandwidth values as the OPP tables for
-> interconnect paths isn't really a lot of data, only bandwidth all the
-> time and there is no linking from the device's OPP table as well.
-
-I think everyone is getting too tied up on mapping device frequency to
-bandwidth requests. That's useful for a limited set of cases. But it
-doesn't work for a lot of use cases.
-
-Couple of benefits of using BW OPPs instead of with listing bandwidth
-values as part of frequency OPP tables:
-- Works better when the interconnect path has more useful levels that
-the device frequency levels. I think this might even be true on the
-SDM845 for GPU and DDR. The link from freq OPP to BW OPP could list
-the minimum bandwidth level to use for a particular device freq and
-then let the hardware monitoring heuristic take it higher from there.
-- Works even if no freq to bandwidth mapping heuristic is used but the
-device needs to skip certain bandwidth levels based on the platform's
-power/perf reasons.
-- More scalable as more properties are added to BW OPP levels. Traffic
-priority is one natural extension of the BW OPP "rows". Explicit
-latency is another possibility.
-- Currently devices that have use case specific bandwidth levels
-(that's not computed at runtime) have no way of capturing their use
-case level bandwidth needs in DT. Everyone is inventing their own
-scheme. Having BW OPP table would allow them capture all the use case
-specific bandwidth levels in DT and then pick one using the
-index/phandle/etc. We could even allow naming OPP rows and pick it
-that way. Not saying this is a main reason for BW OPP tables or we
-should do this, but this is a possibility to consider.
-
-Long story short, BW OPP tables make a lot of sense for anyone who has
-actually done bandwidth scaling on a commercial platform.
-
-If people are getting too tied up about the interconnect-opp-table we
-can just drop that. I just added that to avoid having any implicit
-ordering of tables in the operation-points-v2 property vs
-interconnects property and call it out more explicitly. But it's not a
-hill worth dying on.
-
--Saravana
