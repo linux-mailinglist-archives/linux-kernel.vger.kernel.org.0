@@ -2,169 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A89A26D7BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:25:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F0F06D7C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:31:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726131AbfGSAZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 20:25:18 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35226 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbfGSAZR (ORCPT
+        id S1726426AbfGSAbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 20:31:16 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:52618 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbfGSAbQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 20:25:17 -0400
-Received: by mail-ot1-f68.google.com with SMTP id j19so31007605otq.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 17:25:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3IoGFnjg00mt4dPax7bXZwTDcqISI79mUm9JDBcUrl0=;
-        b=fY7dSR7SRoTvZ+kFzuoILA5Ain53o9Sd2gnBjP6JTXAV4IE+Yw/sFi90/c9GysEHWf
-         j2qrO4J/7dCygJjiJgmuVU/s6+b/ZFEfST3ni2fOccFTxw+vH3WAxQtID9fj8R5PnXfc
-         +OKc+1ooBgiH6sndOb1u3NzeuR8+lf0RYaMF7WuRr+67TeIhL53W//jEnyHL/8I7yA9t
-         HhrEDVaEPlCx6swY1g6GLeWA8+z41HS+NkcsYYdI8IkMh+RwidiEwBBAwjSdjtXPgS4X
-         juspnqtpJ6+H3xCnL8chtoPvd6qoptWk+SttAg7beJsXP9RUsRfHT+mx4qAN+ox+iZBY
-         8Xvg==
-X-Gm-Message-State: APjAAAW17H1fdoUTt2qLoXT1jQ8yVCbUz3/Oe7k1+bZehN3OKHSHWmqQ
-        XEAmpdP/ErMMPGeKS9tIAwI=
-X-Google-Smtp-Source: APXvYqwp74SqZaZ1mzJLSJxZj8+X4BWzpJr1g+SgvGiqQMYYR6kf6/0vRmWhygxkZHndfxsl+jXSLA==
-X-Received: by 2002:a9d:6a0f:: with SMTP id g15mr6463309otn.135.1563495916926;
-        Thu, 18 Jul 2019 17:25:16 -0700 (PDT)
-Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
-        by smtp.gmail.com with ESMTPSA id i1sm9510593oie.45.2019.07.18.17.25.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Jul 2019 17:25:16 -0700 (PDT)
-Subject: Re: [PATCH 2/2] nvme-core: Fix deadlock when deleting the ctrl while
- scanning
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Cc:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>
-References: <20190718225132.5865-1-logang@deltatee.com>
- <20190718225132.5865-2-logang@deltatee.com>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <c52f80b1-e154-b11f-a868-e3209e4ccb2d@grimberg.me>
-Date:   Thu, 18 Jul 2019 17:25:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thu, 18 Jul 2019 20:31:16 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6J0TTUE124178;
+        Fri, 19 Jul 2019 00:30:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
+ bh=J26ID3VhBWbTmSXvBSWz6hrmQIArsBpDq2yhhBCBSO4=;
+ b=H6LzqGTGYtOgbnoSkU0/jp5FjIxiUFAl4x+FQqoye7DqLu9BECbRWq8CJYgkcmkMj3/g
+ egvRkKHstNfMzr7vpSQ3LifW3hRoOC/9Y+Xj3n8CK28IuvjmZIr9ObCPsB0w5Vb5Q/wf
+ OljlALngHdIPn1ww5BPqED5k2ncFMOIx5/AE/11rsFa/rsPrsV93uTmoDTrWL4KX3tLc
+ d1X/daxuqYve68QYaiT6InMCCTXNH6KQXGcntQwO0wrhkCCK8v/A24n/DgrkIFn9JNVx
+ bHygWTeGXEyZUnyxBa8xc2ZvR9IptY4khxWGQ8+cfrGi1pYH37e9+665BuscbBewvFgK Eg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2tq6qu3x23-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Jul 2019 00:30:56 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6J0NUGE148911;
+        Fri, 19 Jul 2019 00:30:55 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2tsctyksfk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Jul 2019 00:30:55 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6J0Ulch020895;
+        Fri, 19 Jul 2019 00:30:47 GMT
+Received: from localhost (/10.145.178.44)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 19 Jul 2019 00:30:47 +0000
+Date:   Thu, 18 Jul 2019 17:30:45 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: linux-next: Tree for Jul 18 (header build error)
+Message-ID: <20190719003045.GF692234@magnolia>
+References: <20190718133751.3cf036be@canb.auug.org.au>
+ <127d228c-322d-6349-382b-d304974df148@infradead.org>
+ <20190719100557.3ead3285@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190718225132.5865-2-logang@deltatee.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190719100557.3ead3285@canb.auug.org.au>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9322 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907190001
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9322 signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907190002
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> With multipath enabled, nvme_scan_work() can read from the
-> device (through nvme_mpath_add_disk()). However, with fabrics,
-> once ctrl->state is set to NVME_CTRL_DELETING, the reads will hang
-> (see nvmf_check_ready()).
+On Fri, Jul 19, 2019 at 10:05:57AM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> After setting the state to deleting, nvme_remove_namespaces() will
-> hang waiting for scan_work to flush and these tasks will hang.
+> On Thu, 18 Jul 2019 10:00:22 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+> >
+> > on x86_64, when CONFIG_BLOCK is not set:
+> > 
+> >   CC      include/linux/iomap.h.s
+> > In file included from <command-line>:0:0:
+> > ./../include/linux/iomap.h: In function ‘iomap_sector’:
+> > ./../include/linux/iomap.h:76:48: error: ‘SECTOR_SHIFT’ undeclared (first use in this function); did you mean ‘SECTIONS_SHIFT’?
+> >   return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
+> >                                                 ^~~~~~~~~~~~
 > 
-> To fix this, ensure we take scan_lock before changing the ctrl-state.
-> Also, ensure the state is checked while the lock is held
-> in nvme_scan_lock_work().
+> include/linux/iomap.h should only be used when CONFIG_BLOCK is set (if
+> you follow the Kconfig trail).  So maybe this header should only be
+> compile tested if CONFIG_BLOCK is set.
 
-That's a big hammer...
+Yeah, that's basically what Christoph said earlier today.
 
-But this is I/O that we cannot have queued until we have a path..
+Granted, nobody replied to my question about where in the kernel would
+someone be using iomap to map file offsets to disk locations without
+block devices, but ...
 
-I would rather have nvme_remove_namespaces() requeue all I/Os for
-namespaces that serve as the current_path and have the make_request
-routine to fail I/O if all controllers are deleting as well.
+... oh, this is some weird "mash all the kernel headers together and see
+if they compile" thing, isn't it?  Um, yes, iomap.h should only be
+tested if CONFIG_IOMAP=y (which in turn requires CONFIG_BLOCK=y).
 
-Would something like [1] (untested) make sense instead?
+--D
 
-
-> +	mutex_lock(&ctrl->scan_lock);
-> +
->   	if (ctrl->state != NVME_CTRL_LIVE)
->   		return;
-
-unlock
-
->   
-> @@ -3547,7 +3554,6 @@ static void nvme_scan_work(struct work_struct *work)
->   	if (nvme_identify_ctrl(ctrl, &id))
->   		return;
-
-unlock
+> -- 
+> Cheers,
+> Stephen Rothwell
 
 
-[1]:
---
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 76cd3dd8736a..627f5871858d 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -3576,6 +3576,11 @@ void nvme_remove_namespaces(struct nvme_ctrl *ctrl)
-         struct nvme_ns *ns, *next;
-         LIST_HEAD(ns_list);
-
-+       mutex_lock(&ctrl->scan_lock);
-+       list_for_each_entry(ns, &ctrl->namespaces, list)
-+               nvme_mpath_clear_current_path(ns);
-+       mutex_lock(&ctrl->scan_lock);
-+
-         /* prevent racing with ns scanning */
-         flush_work(&ctrl->scan_work);
-
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index a9a927677970..da1731266788 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -231,6 +231,24 @@ inline struct nvme_ns *nvme_find_path(struct 
-nvme_ns_head *head)
-         return ns;
-  }
-
-+static bool nvme_available_path(struct nvme_ns_head *head)
-+{
-+       struct nvme_ns *ns;
-+
-+       list_for_each_entry_rcu(ns, &head->list, siblings) {
-+               switch (ns->ctrl->state) {
-+               case NVME_CTRL_LIVE:
-+               case NVME_CTRL_RESETTING:
-+               case NVME_CTRL_CONNECTING:
-+                       /* fallthru */
-+                       return true;
-+               default:
-+                       break;
-+               }
-+       }
-+       return false;
-+}
-+
-  static blk_qc_t nvme_ns_head_make_request(struct request_queue *q,
-                 struct bio *bio)
-  {
-@@ -257,14 +275,14 @@ static blk_qc_t nvme_ns_head_make_request(struct 
-request_queue *q,
-                                       disk_devt(ns->head->disk),
-                                       bio->bi_iter.bi_sector);
-                 ret = direct_make_request(bio);
--       } else if (!list_empty_careful(&head->list)) {
--               dev_warn_ratelimited(dev, "no path available - requeuing 
-I/O\n");
-+       } else if (nvme_available_path(head)) {
-+               dev_warn_ratelimited(dev, "no usable path - requeuing 
-I/O\n");
-
-                 spin_lock_irq(&head->requeue_lock);
-                 bio_list_add(&head->requeue_list, bio);
-                 spin_unlock_irq(&head->requeue_lock);
-         } else {
--               dev_warn_ratelimited(dev, "no path - failing I/O\n");
-+               dev_warn_ratelimited(dev, "no available path - failing 
-I/O\n");
-
-                 bio->bi_status = BLK_STS_IOERR;
-                 bio_endio(bio);
---
