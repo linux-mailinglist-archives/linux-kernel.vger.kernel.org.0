@@ -2,118 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 746B36EB17
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 21:31:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16C5F6EB1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 21:31:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732675AbfGST34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 15:29:56 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46625 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728092AbfGST34 (ORCPT
+        id S1732786AbfGSTaQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 15:30:16 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8323 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730259AbfGSTaP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 15:29:56 -0400
-Received: by mail-ed1-f68.google.com with SMTP id d4so35418222edr.13
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 12:29:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Wppe19Sbg/LaJHpxWMdO2Cb51TOC5T5tbB13DPqYbts=;
-        b=mPOJjaoZ8B7DFK7HNdHEH/Bw5fbLR+1KxuWp2BA2vv0HUD0YEGHXoJQZY54jVODQw/
-         YhRra+7xWLba9fuM14ry76BA+ljUlOoSb8yMuT3Zapv1d0u93v78SjdnwI9r3d3a07tV
-         H0LkhC2VK1+ucQxDxv6V4FCWtg1vCeBif9OM9er0VolH4LBtVGtnTa6qTSpawVCmKDJp
-         5W6pYxqYICLJOnHyxeBVwwYZxRACZO4Vv9g0vodIIMB0GU80X33yAoQLW2fit2LfmC7f
-         Y7o1ITm1lmWFOOt3TO4rhQXPRp5kJWNBewVwnUxPLY2DVVFL3LmUybZUqSdYCAnPhBYJ
-         7tvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Wppe19Sbg/LaJHpxWMdO2Cb51TOC5T5tbB13DPqYbts=;
-        b=E7icubAz3y8NQ69n/fl3rpWaenHsZisd3HlaGTzRPZz7bNJwjZm+au0zoYCQ9N2wBM
-         DqM3aBcvQG9vos8qMU+zgfNPWvl8EtrAFPlTdNcMHgCgy4F0iPrDYIbEvuaxXlMG04yh
-         +AOP+n+ia+VQhpf5gnrmnC/vRNpY8IWAls1TvjRQl+xtNh6LESTmey7NsvXp+r+XD2rr
-         nB3VrndaGYxGNn33eeHaS4XZr6vuEnv2BZxrXpzC7eDnluO9XS9hWYpeONeQaao5IRIy
-         m+fKDpWGtEyepxi6cmuwNZ/VjCnCvzx2umtbIQlDaQ1Xc4Nq9f2OqKPpNRhbuIidwOkM
-         Di3A==
-X-Gm-Message-State: APjAAAUacDJxjQuaA2BIdEk7+Uh1TNYGHDsG/wilkQbkr+sscOkLTWu7
-        mS44Kmp9oz570mbsRfCbNTs=
-X-Google-Smtp-Source: APXvYqzYGfoa+2Rs+xxkevrhYuAWHQ7Z7bZb+FBxde/d70WtXAkvJgTnGcsuMrHKhgpC4pYgls3CMg==
-X-Received: by 2002:a50:84e2:: with SMTP id 89mr48449082edq.218.1563564594936;
-        Fri, 19 Jul 2019 12:29:54 -0700 (PDT)
-Received: from archon.lan (adsl-89-217-88-77.adslplus.ch. [89.217.88.77])
-        by smtp.gmail.com with ESMTPSA id d4sm8738624edb.4.2019.07.19.12.29.54
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 19 Jul 2019 12:29:54 -0700 (PDT)
-From:   Xavier Ruppen <xruppen@gmail.com>
-To:     khilman@baylibre.com
-Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, narmstrong@baylibre.com,
-        martin.blumenstingl@googlemail.com,
-        Xavier Ruppen <xruppen@gmail.com>
-Subject: [PATCH] arm64: dts: meson: odroid-n2: keep SD card regulator always on
-Date:   Fri, 19 Jul 2019 21:29:54 +0200
-Message-Id: <20190719192954.26481-1-xruppen@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        Fri, 19 Jul 2019 15:30:15 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d321a430002>; Fri, 19 Jul 2019 12:30:12 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 19 Jul 2019 12:30:14 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 19 Jul 2019 12:30:14 -0700
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 19 Jul
+ 2019 19:30:13 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 19 Jul
+ 2019 19:30:05 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 19 Jul 2019 19:30:05 +0000
+Received: from rcampbell-dev.nvidia.com (Not Verified[10.110.48.66]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d321a3c000b>; Fri, 19 Jul 2019 12:30:04 -0700
+From:   Ralph Campbell <rcampbell@nvidia.com>
+To:     <linux-mm@kvack.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        <stable@vger.kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Jason Gunthorpe" <jgg@mellanox.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "Ira Weiny" <ira.weiny@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Mel Gorman" <mgorman@techsingularity.net>,
+        Jan Kara <jack@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
+Subject: [PATCH v2 2/3] mm/hmm: fix ZONE_DEVICE anon page mapping reuse
+Date:   Fri, 19 Jul 2019 12:29:54 -0700
+Message-ID: <20190719192955.30462-3-rcampbell@nvidia.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190719192955.30462-1-rcampbell@nvidia.com>
+References: <20190719192955.30462-1-rcampbell@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1563564612; bh=VRtcfh5WiSupUP5Y8ZWeqEYjlWzsti4A1ZaXu55dh6o=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
+         Content-Type:Content-Transfer-Encoding;
+        b=B+e5qGRXNq78hbYvK0jR2F1wmPW858/Up0dRZbJZpsibttglgzYKMDTaY5O0kkqDn
+         9XStOpiEipTaCyrs4/YYKvqn2ukRw1bC2K1taS/8pvAIiY5YV1wRR1eZoCnOQyd2Xm
+         m8p3EG0tNoc8Hi1wKkrvHwCYFl+s6QyG9NN5XoFPT1hOlps3WClf1HEndKYJynvkoB
+         7guzLd8DbBpE457bUieNeGtI+dYXN1BKmnMKX6qTVcztr8EfCgk3TDriLPmNtXcix9
+         kqzuQVVFUoTFFU3ejMuQmfd6x0wh8YqS+TGYByo/+1bsLybirEeYo7rFI7MX3Ad/Mz
+         DlD4XaHKKTrAw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When powering off the Odroid N2, the tflash_vdd regulator is
-automatically turned off by the kernel. This is a problem
-when issuing the "reboot" command while using an SD card.
-The boot ROM does not power this regulator back on, blocking
-the reboot process at the boot ROM stage, preventing the
-SD card from being detected.
+When a ZONE_DEVICE private page is freed, the page->mapping field can be
+set. If this page is reused as an anonymous page, the previous value can
+prevent the page from being inserted into the CPU's anon rmap table.
+For example, when migrating a pte_none() page to device memory:
+  migrate_vma(ops, vma, start, end, src, dst, private)
+    migrate_vma_collect()
+      src[] =3D MIGRATE_PFN_MIGRATE
+    migrate_vma_prepare()
+      /* no page to lock or isolate so OK */
+    migrate_vma_unmap()
+      /* no page to unmap so OK */
+    ops->alloc_and_copy()
+      /* driver allocates ZONE_DEVICE page for dst[] */
+    migrate_vma_pages()
+      migrate_vma_insert_page()
+        page_add_new_anon_rmap()
+          __page_set_anon_rmap()
+            /* This check sees the page's stale mapping field */
+            if (PageAnon(page))
+              return
+            /* page->mapping is not updated */
 
-Adding the "regulator-always-on" property fixes the problem.
+The result is that the migration appears to succeed but a subsequent CPU
+fault will be unable to migrate the page back to system memory or worse.
 
-Signed-off-by: Xavier Ruppen <xruppen@gmail.com>
+Clear the page->mapping field when freeing the ZONE_DEVICE page so stale
+pointer data doesn't affect future page use.
+
+Fixes: b7a523109fb5c9d2d6dd ("mm: don't clear ->mapping in hmm_devmem_free"=
+)
+Cc: stable@vger.kernel.org
+Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Jan Kara <jack@suse.cz>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: "J=C3=A9r=C3=B4me Glisse" <jglisse@redhat.com>
 ---
+ kernel/memremap.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-Here is what the boot ROM output looks like without this patch:
-
-    [root@alarm ~]# reboot 
-    [...]
-    [   24.275860] shutdown[1]: All loop devices detached.
-    [   24.278864] shutdown[1]: Detaching DM devices.
-    [   24.287105] kvm: exiting hardware virtualization
-    [   24.318776] reboot: Restarting system
-    bl31 reboot reason: 0xd
-    bl31 reboot reason: 0x0
-    system cmd  1.
-    G12B:BL:6e7c85:7898ac;FEAT:E0F83180:2000;POC:F;RCY:0;
-    EMMC:800;NAND:81;SD?:0;SD:400;USB:8;LOOP:1;EMMC:800;
-    NAND:81;SD?:0;SD:400;USB:8;LOOP:2;EMMC:800;NAND:81;
-    SD?:0;SD:400;USB:8;LOOP:3; [...]
-
-Other people can be seen having this problem on the odroid
-forum [1].
-
-The cause of the problem was found by Martin Blumenstingl
-on #linux-amlogic. We may want to add his Suggested-by tag
-if he agrees.
-
-[1] https://forum.odroid.com/viewtopic.php?f=176&t=33993
-
- arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-index 81780ffcc7f0..4e916e1f71f7 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-@@ -53,6 +53,7 @@
- 
- 		gpio = <&gpio_ao GPIOAO_8 GPIO_ACTIVE_HIGH>;
- 		enable-active-high;
-+		regulator-always-on;
- 	};
- 
- 	tf_io: gpio-regulator-tf_io {
--- 
-2.21.0
+diff --git a/kernel/memremap.c b/kernel/memremap.c
+index bea6f887adad..98d04466dcde 100644
+--- a/kernel/memremap.c
++++ b/kernel/memremap.c
+@@ -408,6 +408,30 @@ void __put_devmap_managed_page(struct page *page)
+=20
+ 		mem_cgroup_uncharge(page);
+=20
++		/*
++		 * When a device_private page is freed, the page->mapping field
++		 * may still contain a (stale) mapping value. For example, the
++		 * lower bits of page->mapping may still identify the page as
++		 * an anonymous page. Ultimately, this entire field is just
++		 * stale and wrong, and it will cause errors if not cleared.
++		 * One example is:
++		 *
++		 *  migrate_vma_pages()
++		 *    migrate_vma_insert_page()
++		 *      page_add_new_anon_rmap()
++		 *        __page_set_anon_rmap()
++		 *          ...checks page->mapping, via PageAnon(page) call,
++		 *            and incorrectly concludes that the page is an
++		 *            anonymous page. Therefore, it incorrectly,
++		 *            silently fails to set up the new anon rmap.
++		 *
++		 * For other types of ZONE_DEVICE pages, migration is either
++		 * handled differently or not done at all, so there is no need
++		 * to clear page->mapping.
++		 */
++		if (is_device_private_page(page))
++			page->mapping =3D NULL;
++
+ 		page->pgmap->ops->page_free(page);
+ 	} else if (!count)
+ 		__put_page(page);
+--=20
+2.20.1
 
