@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D6536DE02
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:25:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A335E6DDF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:25:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389891AbfGSEZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:25:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43070 "EHLO mail.kernel.org"
+        id S1733253AbfGSEIv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:08:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733187AbfGSEIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:08:43 -0400
+        id S1731920AbfGSEIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:08:49 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96CB0218D3;
-        Fri, 19 Jul 2019 04:08:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8282A2189D;
+        Fri, 19 Jul 2019 04:08:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509322;
-        bh=O8HT2pH6vGBnCh/MlCqiRitWwv2BB4ay0LN4OVrinHI=;
+        s=default; t=1563509329;
+        bh=sjrm5f2fQ8z79TJJx53UQ+uXfdj9Q8vaJfurVb6GqNo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sle1jGmUUlahYR73depQC0snFCNJW9MKS5XbdFrThR3zca6VwS0+eK0IICoZGvD8V
-         ekG/arUM8bVbGLZIXbTsXku2C2kUYhMWQLkkD6h/rwk82UMpcdT4t1uhzWZhZZP3fr
-         LrUucup3y+gUnLYugzeXCDbGIdNgEmZcTW4QguiM=
+        b=1/HYzGe/dQ687YY8Upw4hcv+31YDRjp9V3TdlG/bSuuPxZPn6FvKRxQrmY24EeFI7
+         q/l+fD2LAfF5TPEBT50bUWov6Y4YU09rsVJqELkS/Fc3BDAdfybNDbTpS00xk1iOOK
+         htCX3YTIo+LRHpXTRpdjswdceGXXLQj0g2qHxQ+Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Serge Semin <fancer.lancer@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 034/101] tty: serial_core: Set port active bit in uart_port_activate
-Date:   Fri, 19 Jul 2019 00:06:25 -0400
-Message-Id: <20190719040732.17285-34-sashal@kernel.org>
+Cc:     EJ Hsu <ejh@nvidia.com>, Alan Stern <stern@rowland.harvard.edu>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 036/101] usb: gadget: storage: Remove warning message
+Date:   Fri, 19 Jul 2019 00:06:27 -0400
+Message-Id: <20190719040732.17285-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
 References: <20190719040732.17285-1-sashal@kernel.org>
@@ -43,71 +43,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Serge Semin <fancer.lancer@gmail.com>
+From: EJ Hsu <ejh@nvidia.com>
 
-[ Upstream commit 13b18d35909707571af9539f7731389fbf0feb31 ]
+[ Upstream commit e70b3f5da00119e057b7faa557753fee7f786f17 ]
 
-A bug was introduced by commit b3b576461864 ("tty: serial_core: convert
-uart_open to use tty_port_open"). It caused a constant warning printed
-into the system log regarding the tty and port counter mismatch:
+This change is to fix below warning message in following scenario:
+usb_composite_setup_continue: Unexpected call
 
-[   21.644197] ttyS ttySx: tty_port_close_start: tty->count = 1 port count = 2
+When system tried to enter suspend, the fsg_disable() will be called to
+disable fsg driver and send a signal to fsg_main_thread. However, at
+this point, the fsg_main_thread has already been frozen and can not
+respond to this signal. So, this signal will be pended until
+fsg_main_thread wakes up.
 
-in case if session hangup was detected so the warning is printed starting
-from the second open-close iteration.
+Once system resumes from suspend, fsg_main_thread will detect a signal
+pended and do some corresponding action (in handle_exception()). Then,
+host will send some setup requests (get descriptor, set configuration...)
+to UDC driver trying to enumerate this device. During the handling of "set
+configuration" request, it will try to sync up with fsg_main_thread by
+sending a signal (which is the same as the signal sent by fsg_disable)
+to it. In a similar manner, once the fsg_main_thread receives this
+signal, it will call handle_exception() to handle the request.
 
-Particularly the problem was discovered in situation when there is a
-serial tty device without hardware back-end being setup. It is considered
-by the tty-serial subsystems as a hardware problem with session hang up.
-In this case uart_startup() will return a positive value with TTY_IO_ERROR
-flag set in corresponding tty_struct instance. The same value will get
-passed to be returned from the activate() callback and then being returned
-from tty_port_open(). But since in this case tty_port_block_til_ready()
-isn't called the TTY_PORT_ACTIVE flag isn't set (while the method had been
-called before tty_port_open conversion was introduced and the rest of the
-subsystem code expected the bit being set in this case), which prevents the
-uart_hangup() method to perform any cleanups including the tty port
-counter setting to zero. So the next attempt to open/close the tty device
-will discover the counters mismatch.
+However, if the fsg_main_thread wakes up from suspend a little late and
+"set configuration" request from Host arrives a little earlier,
+fsg_main_thread might come across the request from "set configuration"
+when it handles the signal from fsg_disable(). In this case, it will
+handle this request as well. So, when fsg_main_thread tries to handle
+the signal sent from "set configuration" later, there will nothing left
+to do and warning message "Unexpected call" is printed.
 
-In order to fix the problem we need to manually set the TTY_PORT_ACTIVE
-flag in case if uart_startup() returned a positive value. In this case
-the hang up procedure will perform a full set of cleanup actions including
-the port ref-counter resetting.
-
-Fixes: b3b576461864 "tty: serial_core: convert uart_open to use tty_port_open"
-Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: EJ Hsu <ejh@nvidia.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/serial_core.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/usb/gadget/function/f_mass_storage.c | 21 ++++++++++++++------
+ drivers/usb/gadget/function/storage_common.h |  1 +
+ 2 files changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 8dbeb14a1e3a..fe9261ffe3db 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -1738,6 +1738,7 @@ static int uart_port_activate(struct tty_port *port, struct tty_struct *tty)
+diff --git a/drivers/usb/gadget/function/f_mass_storage.c b/drivers/usb/gadget/function/f_mass_storage.c
+index 1074cb82ec17..c712b338f05f 100644
+--- a/drivers/usb/gadget/function/f_mass_storage.c
++++ b/drivers/usb/gadget/function/f_mass_storage.c
+@@ -2293,8 +2293,7 @@ static int fsg_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
+ static void fsg_disable(struct usb_function *f)
  {
- 	struct uart_state *state = container_of(port, struct uart_state, port);
- 	struct uart_port *uport;
-+	int ret;
- 
- 	uport = uart_port_check(state);
- 	if (!uport || uport->flags & UPF_DEAD)
-@@ -1748,7 +1749,11 @@ static int uart_port_activate(struct tty_port *port, struct tty_struct *tty)
- 	/*
- 	 * Start up the serial port.
- 	 */
--	return uart_startup(tty, state, 0);
-+	ret = uart_startup(tty, state, 0);
-+	if (ret > 0)
-+		tty_port_set_active(port, 1);
-+
-+	return ret;
+ 	struct fsg_dev *fsg = fsg_from_func(f);
+-	fsg->common->new_fsg = NULL;
+-	raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE);
++	raise_exception(fsg->common, FSG_STATE_DISCONNECT);
  }
  
- static const char *uart_type(struct uart_port *port)
+ 
+@@ -2307,6 +2306,7 @@ static void handle_exception(struct fsg_common *common)
+ 	enum fsg_state		old_state;
+ 	struct fsg_lun		*curlun;
+ 	unsigned int		exception_req_tag;
++	struct fsg_dev		*fsg;
+ 
+ 	/*
+ 	 * Clear the existing signals.  Anything but SIGUSR1 is converted
+@@ -2413,9 +2413,19 @@ static void handle_exception(struct fsg_common *common)
+ 		break;
+ 
+ 	case FSG_STATE_CONFIG_CHANGE:
+-		do_set_interface(common, common->new_fsg);
+-		if (common->new_fsg)
++		fsg = common->new_fsg;
++		/*
++		 * Add a check here to double confirm if a disconnect event
++		 * occurs and common->new_fsg has been cleared.
++		 */
++		if (fsg) {
++			do_set_interface(common, fsg);
+ 			usb_composite_setup_continue(common->cdev);
++		}
++		break;
++
++	case FSG_STATE_DISCONNECT:
++		do_set_interface(common, NULL);
+ 		break;
+ 
+ 	case FSG_STATE_EXIT:
+@@ -2989,8 +2999,7 @@ static void fsg_unbind(struct usb_configuration *c, struct usb_function *f)
+ 
+ 	DBG(fsg, "unbind\n");
+ 	if (fsg->common->fsg == fsg) {
+-		fsg->common->new_fsg = NULL;
+-		raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE);
++		raise_exception(fsg->common, FSG_STATE_DISCONNECT);
+ 		/* FIXME: make interruptible or killable somehow? */
+ 		wait_event(common->fsg_wait, common->fsg != fsg);
+ 	}
+diff --git a/drivers/usb/gadget/function/storage_common.h b/drivers/usb/gadget/function/storage_common.h
+index e5e3a2553aaa..12687f7e3de9 100644
+--- a/drivers/usb/gadget/function/storage_common.h
++++ b/drivers/usb/gadget/function/storage_common.h
+@@ -161,6 +161,7 @@ enum fsg_state {
+ 	FSG_STATE_ABORT_BULK_OUT,
+ 	FSG_STATE_PROTOCOL_RESET,
+ 	FSG_STATE_CONFIG_CHANGE,
++	FSG_STATE_DISCONNECT,
+ 	FSG_STATE_EXIT,
+ 	FSG_STATE_TERMINATED
+ };
 -- 
 2.20.1
 
