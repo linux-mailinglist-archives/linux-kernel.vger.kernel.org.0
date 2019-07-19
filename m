@@ -2,106 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B154D6D7C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:30:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FA906D7D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:36:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726263AbfGSAay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 20:30:54 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37629 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbfGSAay (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 20:30:54 -0400
-Received: by mail-lf1-f68.google.com with SMTP id c9so20468135lfh.4;
-        Thu, 18 Jul 2019 17:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Xho2od4dR/ejVEmeXeRJDJbW0RNQVIpYbWcGXZpI5jM=;
-        b=PoHem9fIGg4wqnF8Um03wzb4+ec8lw19QRIsHE0kkWaoW0EwCYviUNXR1lrMMwA+Ba
-         m3uvT53qQsn3wXhFqHcNCowE4x/i8TSecJudbdfi1Wyx1qqvJMtv4hyuN3B8S/oRd2WS
-         sMubF8qEUvi0zbL0ZWlCL3JXEvnYcI/cwocdysQkE4UskPWCid48GlTDk4Gg89A1IUs+
-         wH21K9oSmAwaYfCzNFexSrkeSujL2mfwUtvFhGOIqrzPS/8w4nPxJuGMcfiB5qh3kOYa
-         GjAsX18ac0QjEmCEHQ67IxJRP9pivBgrB3cRUEA3/3WtM3j+gqfOe7qyYK03ERB1LxAJ
-         Zg9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Xho2od4dR/ejVEmeXeRJDJbW0RNQVIpYbWcGXZpI5jM=;
-        b=U9Jz1WWOhTa6z26TUwqtTi3A76AMITSQwlbp0McPyb65QFMrp/rDK7NbFw3bjt+98x
-         GJIypHm0vPAdIkdtMsCSfY9dGloP8hsBXArtmSDar8OUq2viLNznZzyWzSs0ZEisYbTd
-         kvALm2E4LuJWpYeKPBnvBh/dAEpqvf1lJuNrOnEEG4CWg+VDepZoUoiNeqJDYTqpmdAf
-         6z9ZIAn0055znszEtsUjNPAlkyqC3wsJE7D8+O/R8/DWDa52TwPBgjOd+T8aAsOR2khe
-         4ZzpwN5eSwzUuUucFNk6MUDRPB4ra1bjvHlawQDsztmz8qYpv4BRvvgwqIiobRicBuE5
-         yZUA==
-X-Gm-Message-State: APjAAAV4imHFtoOV9uqoC3zaBGoDSh3LhASKDgFiXFeg0CocAr8WvSwP
-        m3kwPM1gGJqahJzahLR0d0E=
-X-Google-Smtp-Source: APXvYqzj15bv7yXHFwe28D14xB3MBwm0/yF+lel2HERvYQjD0qd4+CP7nds3FkKe4Q4+F1R27WkkXg==
-X-Received: by 2002:a19:2297:: with SMTP id i145mr22187789lfi.97.1563496251701;
-        Thu, 18 Jul 2019 17:30:51 -0700 (PDT)
-Received: from dimatab (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.gmail.com with ESMTPSA id z30sm4726328lfj.63.2019.07.18.17.30.50
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 18 Jul 2019 17:30:51 -0700 (PDT)
-Date:   Fri, 19 Jul 2019 03:34:29 +0300
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 22/24] PM / devfreq: tegra30: Include appropriate
- header
-Message-ID: <20190719033429.47985963@dimatab>
-In-Reply-To: <2f317faf-8de0-2717-cda7-b15374039493@samsung.com>
-References: <20190707223303.6755-1-digetx@gmail.com>
-        <CGME20190707223620epcas4p16538beeb317e2ed0cbecb64147f32b71@epcas4p1.samsung.com>
-        <20190707223303.6755-23-digetx@gmail.com>
-        <2f317faf-8de0-2717-cda7-b15374039493@samsung.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
+        id S1726211AbfGSAgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 20:36:08 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:54667 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726028AbfGSAgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 20:36:08 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45qX9d58p6z9s3Z;
+        Fri, 19 Jul 2019 10:36:05 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1563496565;
+        bh=A+TA+2R+siqm/hZzdzM+n47UXTwyBo0+6SZwnCK3ldU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=exsrLHOk4/j+LH0kK1phxyWNQDVN2ShZz3o6sfxhjGrfJGYy/AtnN7oWTFAnGjGNz
+         pdB1v94JZKzv/9N4KJingJ3MQEeaWU0Vgi/Yn8aVSyPhlFoRl+LRboC3rhB+VZNz6L
+         ZZaRP89R1IKh6wFN3FOWzNwGUOubYLrH2TK9myeZyGZfINY00eHlYRNI9bVX2BpjKQ
+         x/aOHb0mkeVFmRJxiscHN9eLF/WyoLtcIWdx3HO07+wSjwTNhZ6vKZ4wxKa33BcqsO
+         zqn/qiH0uT554GHjOjYapmm6ATgvAEZT0EhIzG1lzyAzgNuyGWmpv8iHzxTicrKzX0
+         7Ig7Vb2Jh0Q4g==
+Date:   Fri, 19 Jul 2019 10:36:05 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: Re: linux-next: Tree for Jul 18 (header build error)
+Message-ID: <20190719103605.5ee9198a@canb.auug.org.au>
+In-Reply-To: <20190719100557.3ead3285@canb.auug.org.au>
+References: <20190718133751.3cf036be@canb.auug.org.au>
+        <127d228c-322d-6349-382b-d304974df148@infradead.org>
+        <20190719100557.3ead3285@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="Sig_/bCrC30V_16tyleeOcNzjhRQ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=D0=92 Thu, 18 Jul 2019 18:58:50 +0900
-Chanwoo Choi <cw00.choi@samsung.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+--Sig_/bCrC30V_16tyleeOcNzjhRQ
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-> On 19. 7. 8. =EC=98=A4=EC=A0=84 7:33, Dmitry Osipenko wrote:
-> > It's not very correct to include mod_devicetable.h for the OF device
-> > drivers and of_device.h should be included instead.
-> >=20
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > ---
-> >  drivers/devfreq/tegra30-devfreq.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/devfreq/tegra30-devfreq.c
-> > b/drivers/devfreq/tegra30-devfreq.c index
-> > 8a674fad26be..19e872a64148 100644 ---
-> > a/drivers/devfreq/tegra30-devfreq.c +++
-> > b/drivers/devfreq/tegra30-devfreq.c @@ -13,7 +13,7 @@
-> >  #include <linux/io.h>
-> >  #include <linux/irq.h>
-> >  #include <linux/module.h>
-> > -#include <linux/mod_devicetable.h>
-> > +#include <linux/of_device.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/pm_opp.h>
-> >  #include <linux/reset.h>
-> >  =20
->=20
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->=20
-> Is not there other unused header file anymore?
->=20
+Hi all,
 
-The rest looks good to me.
+On Fri, 19 Jul 2019 10:05:57 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Thu, 18 Jul 2019 10:00:22 -0700 Randy Dunlap <rdunlap@infradead.org> w=
+rote:
+> >
+> > on x86_64, when CONFIG_BLOCK is not set:
+> >=20
+> >   CC      include/linux/iomap.h.s
+> > In file included from <command-line>:0:0:
+> > ./../include/linux/iomap.h: In function =E2=80=98iomap_sector=E2=80=99:
+> > ./../include/linux/iomap.h:76:48: error: =E2=80=98SECTOR_SHIFT=E2=80=99=
+ undeclared (first use in this function); did you mean =E2=80=98SECTIONS_SH=
+IFT=E2=80=99?
+> >   return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
+> >                                                 ^~~~~~~~~~~~ =20
+>=20
+> include/linux/iomap.h should only be used when CONFIG_BLOCK is set (if
+> you follow the Kconfig trail).  So maybe this header should only be
+> compile tested if CONFIG_BLOCK is set.
+
+Or maybe fs/iomap/ needs to grow a private header file for stuff like
+iomap_sector() ?
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/bCrC30V_16tyleeOcNzjhRQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0xEHUACgkQAVBC80lX
+0GzBlAgAi0HSYElWpG7qvU6y21A8vri4QTUVA0mIE8DqRqX2pjgUOPmQaaGge2u+
+Q58vKppAl1Dzt8qbUI9B6xBR4TrbXjqTTRhZHTuWwO0UbHB8rBW4amAVqZMFlXx6
+iJq8CdnB/Cdltv434Nilsk5R9PIn3ePDgvyxuc9xgEJ3ZIckceT/zntjqNiJJUBs
+egV9XQokaGfQRFKnVK6sqrRgZV0k7YU+Yb396N8I8+Zy3PKMCvj1WERFlp+BOmJ5
+TTAii5R0hjA5cCLnYia6f4LCO+bNWduuuiv0/oUv32iv0yWpgFLKbqO+astE09f4
+3JMCCpjfRvlGLUbZZTneZdp+h4AHlQ==
+=+bDW
+-----END PGP SIGNATURE-----
+
+--Sig_/bCrC30V_16tyleeOcNzjhRQ--
