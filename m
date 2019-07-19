@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B0526DA9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:03:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBE8A6DA9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:03:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730377AbfGSEDW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:03:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35128 "EHLO mail.kernel.org"
+        id S1730338AbfGSEDO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:03:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729262AbfGSEDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:03:09 -0400
+        id S1729333AbfGSEDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:03:11 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F044220659;
-        Fri, 19 Jul 2019 04:03:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B95A121882;
+        Fri, 19 Jul 2019 04:03:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508987;
-        bh=ZlWkEdRJvTY47KX2HOEWGdFa6JduKjmmf7EGe4lg97A=;
+        s=default; t=1563508990;
+        bh=iBYGP2XBc6Wct1cGsCLA+hgQgp6l9VQMtNASFOIsf4o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nIfHduBxOH10asP4k3q/5LWZTlF7vO/etAEq5WZA2USxyeyldQhha5sjW0Jf0MMAW
-         d4/EfW+jd/syZriOagHmE5dNw/e4bLpdhJ1oatqv/iWrDHGedyM73TaDhjmzqs0Kdp
-         y8LGsXDe+ffxo5zzwVMUGO15IbakdHdyI6g9eWcc=
+        b=RiACEpoQ57IyVleN8cDAWE4u/uNhI2Z6gMypgF8749y1jaAnWPDRq/mVFGkHHGZrp
+         sp0ufbUMTGkNtNZzh/jP1D1qW/h8rI7HEG5WSfC93kyzFWG3+pxCGbjyH4FNoGmtBA
+         4aK9WZPMrhzVfpozPgbq9RAbnLJqcR8NgZd3Ss+c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+Cc:     Gen Zhang <blackgod016574@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 011/141] tty: serial: cpm_uart - fix init when SMC is relocated
-Date:   Fri, 19 Jul 2019 00:00:36 -0400
-Message-Id: <20190719040246.15945-11-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 012/141] consolemap: Fix a memory leaking bug in drivers/tty/vt/consolemap.c
+Date:   Fri, 19 Jul 2019 00:00:37 -0400
+Message-Id: <20190719040246.15945-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040246.15945-1-sashal@kernel.org>
 References: <20190719040246.15945-1-sashal@kernel.org>
@@ -43,76 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Gen Zhang <blackgod016574@gmail.com>
 
-[ Upstream commit 06aaa3d066db87e8478522d910285141d44b1e58 ]
+[ Upstream commit 84ecc2f6eb1cb12e6d44818f94fa49b50f06e6ac ]
 
-SMC relocation can also be activated earlier by the bootloader,
-so the driver's behaviour cannot rely on selected kernel config.
+In function con_insert_unipair(), when allocation for p2 and p1[n]
+fails, ENOMEM is returned, but previously allocated p1 is not freed,
+remains as leaking memory. Thus we should free p1 as well when this
+allocation fails.
 
-When the SMC is relocated, CPM_CR_INIT_TRX cannot be used.
-
-But the only thing CPM_CR_INIT_TRX does is to clear the
-rstate and tstate registers, so this can be done manually,
-even when SMC is not relocated.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Fixes: 9ab921201444 ("cpm_uart: fix non-console port startup bug")
+Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/cpm_uart/cpm_uart_core.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/tty/vt/consolemap.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/cpm_uart/cpm_uart_core.c b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-index b929c7ae3a27..7bab9a3eda92 100644
---- a/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-+++ b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-@@ -407,7 +407,16 @@ static int cpm_uart_startup(struct uart_port *port)
- 			clrbits16(&pinfo->sccp->scc_sccm, UART_SCCM_RX);
- 		}
- 		cpm_uart_initbd(pinfo);
--		cpm_line_cr_cmd(pinfo, CPM_CR_INIT_TRX);
-+		if (IS_SMC(pinfo)) {
-+			out_be32(&pinfo->smcup->smc_rstate, 0);
-+			out_be32(&pinfo->smcup->smc_tstate, 0);
-+			out_be16(&pinfo->smcup->smc_rbptr,
-+				 in_be16(&pinfo->smcup->smc_rbase));
-+			out_be16(&pinfo->smcup->smc_tbptr,
-+				 in_be16(&pinfo->smcup->smc_tbase));
-+		} else {
-+			cpm_line_cr_cmd(pinfo, CPM_CR_INIT_TRX);
+diff --git a/drivers/tty/vt/consolemap.c b/drivers/tty/vt/consolemap.c
+index 7c7ada0b3ea0..814d1b7967ae 100644
+--- a/drivers/tty/vt/consolemap.c
++++ b/drivers/tty/vt/consolemap.c
+@@ -489,7 +489,11 @@ con_insert_unipair(struct uni_pagedir *p, u_short unicode, u_short fontpos)
+ 	p2 = p1[n = (unicode >> 6) & 0x1f];
+ 	if (!p2) {
+ 		p2 = p1[n] = kmalloc_array(64, sizeof(u16), GFP_KERNEL);
+-		if (!p2) return -ENOMEM;
++		if (!p2) {
++			kfree(p1);
++			p->uni_pgdir[n] = NULL;
++			return -ENOMEM;
 +		}
+ 		memset(p2, 0xff, 64*sizeof(u16)); /* No glyphs for the characters (yet) */
  	}
- 	/* Install interrupt handler. */
- 	retval = request_irq(port->irq, cpm_uart_int, 0, "cpm_uart", port);
-@@ -861,16 +870,14 @@ static void cpm_uart_init_smc(struct uart_cpm_port *pinfo)
- 	         (u8 __iomem *)pinfo->tx_bd_base - DPRAM_BASE);
  
- /*
-- *  In case SMC1 is being relocated...
-+ *  In case SMC is being relocated...
-  */
--#if defined (CONFIG_I2C_SPI_SMC1_UCODE_PATCH)
- 	out_be16(&up->smc_rbptr, in_be16(&pinfo->smcup->smc_rbase));
- 	out_be16(&up->smc_tbptr, in_be16(&pinfo->smcup->smc_tbase));
- 	out_be32(&up->smc_rstate, 0);
- 	out_be32(&up->smc_tstate, 0);
- 	out_be16(&up->smc_brkcr, 1);              /* number of break chars */
- 	out_be16(&up->smc_brkec, 0);
--#endif
- 
- 	/* Set up the uart parameters in the
- 	 * parameter ram.
-@@ -884,8 +891,6 @@ static void cpm_uart_init_smc(struct uart_cpm_port *pinfo)
- 	out_be16(&up->smc_brkec, 0);
- 	out_be16(&up->smc_brkcr, 1);
- 
--	cpm_line_cr_cmd(pinfo, CPM_CR_INIT_TRX);
--
- 	/* Set UART mode, 8 bit, no parity, one stop.
- 	 * Enable receive and transmit.
- 	 */
 -- 
 2.20.1
 
