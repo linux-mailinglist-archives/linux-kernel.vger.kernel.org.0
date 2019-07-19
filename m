@@ -2,133 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D21FF6D937
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 04:57:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7867A6D93A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 04:59:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726436AbfGSC50 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 22:57:26 -0400
-Received: from mail-eopbgr10077.outbound.protection.outlook.com ([40.107.1.77]:55270
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726015AbfGSC50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 22:57:26 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dVxBa2WajzHcix4QotDaEkFj9JRDR/kkTqIkvilgZB9zNusHYdvHPMbSa7dCtJDLoBZb76IJhgQD9D3o+yg3u4yNJIYFfSW/Xdfb3byQ/itM07l825USU3frnviH3R3Rfq0ENzLgz6AaUsKRZuvfWMV64a7FEDJ5+Mvn7uptxolJ/bHTN+2QStfmIbUmR2o4jVITjf5A1GGQOIXcaFs+7Yl194BDob9sQj9//85wdlJKMWR63tD6qVNkt7fOg/JMFuBqa2Sw4g6Ffph7qTFXHr4AeIQxUSwCB3Jqk7F+fsJDh2/rIcqFKpZuE614v2h2bQS1ZLrwoolfXoyVFvfSbg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xg25Odx5olzbIu9bBPs86cWuciJWim95pBDoddpkFa0=;
- b=MPYzTmvUcFQ4VvK6c9Z9R4Qr03HVgAhD8GkyR1P2Vsr9j0Cnl6MB/hlHMZYgijCm1xIxZDEw7DDfTObhUrgUt6vjrZqd5N5xiguMYklrWHlkfjuxwMC+jVyTnmYHc8LQfvH8GA/oiIv3sfqJyW3ZQRlisPilWIGXbna+OatVbRR9R+Qik+n8Z9twaUyoyoEM4kGeAkxR9A7QxYL0bnInMqyQqYPolBrdKy6+6Z61YvGRMj1gRFEbz+rig8dgplsiUCnC9mKDDegmLIK9XtBK1a5CMl9/NxHumGUi4Dn0xxrfgnM7WHd77VZpvtzo07p+A0hQ7foxzB5WfdHOSnsdXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
- header.d=nxp.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xg25Odx5olzbIu9bBPs86cWuciJWim95pBDoddpkFa0=;
- b=QNeDwuAt4JHm1eqPG3La4923u2HNPpDuz73WUJ4qf9tUdTC2JcR1XqhBEZBRsb++MNU/mf6CurNMOX7SNpgEiRij+D0yOd171al5YqVtv20Eau2SsD5qfBFHPfMLOEU73C8Y4id8MaRPfIhK0l8ZdJqkkgUAWlQuidsQbCc4Kkk=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3740.eurprd04.prod.outlook.com (52.134.71.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.14; Fri, 19 Jul 2019 02:57:20 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::7cdf:bddc:212c:f77e]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::7cdf:bddc:212c:f77e%4]) with mapi id 15.20.2094.013; Fri, 19 Jul 2019
- 02:57:20 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Trent Piepho <tpiepho@impinj.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] rtc: snvs: fix possible race condition
-Thread-Topic: [PATCH] rtc: snvs: fix possible race condition
-Thread-Index: AQHVO6gHgDF/BlJMPUyX9VGe8rSFO6bOpJgAgAAyYBCAAN3WgIAA4I4AgACuAJA=
-Date:   Fri, 19 Jul 2019 02:57:20 +0000
-Message-ID: <DB3PR0402MB3916053E6344520416BC976BF5CB0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <20190716071858.36750-1-Anson.Huang@nxp.com>
-         <AM0PR04MB421167283C950557E231181480C90@AM0PR04MB4211.eurprd04.prod.outlook.com>
-         <DB3PR0402MB39164D0022E25706D2B871C7F5C90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-         <AM0PR04MB421114F025F27AF2BC5FA21980C80@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <1563467526.2343.80.camel@impinj.com>
-In-Reply-To: <1563467526.2343.80.camel@impinj.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5736e7af-6646-4041-89e5-08d70bf4d144
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3740;
-x-ms-traffictypediagnostic: DB3PR0402MB3740:
-x-microsoft-antispam-prvs: <DB3PR0402MB374070AB378C9917D6000C96F5CB0@DB3PR0402MB3740.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 01039C93E4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(396003)(376002)(346002)(136003)(199004)(189003)(14454004)(229853002)(14444005)(256004)(66556008)(66476007)(64756008)(52536014)(66446008)(7736002)(9686003)(66946007)(44832011)(2201001)(99286004)(486006)(71190400001)(71200400001)(316002)(76116006)(6636002)(86362001)(110136005)(5660300002)(66066001)(26005)(6436002)(25786009)(2501003)(186003)(102836004)(7696005)(68736007)(4326008)(478600001)(76176011)(3846002)(2906002)(6506007)(53936002)(305945005)(33656002)(6116002)(55016002)(8936002)(11346002)(8676002)(81166006)(81156014)(476003)(74316002)(446003)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3740;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Ume8/c/ZmWurLwt9hXyns0aCJ/UJ/jfyu3w9ncMvNCWy3ijPNETVC8Ps37oHeHE+Qnaz+Z7HANKyp6FaBiZqQ1WmDPAZcRtYGyAhLgPMsVO+EG6833sQtixQs1PqG41UJc/S4TlZOsHAM1eTYiGWs0YKopT+FWi8fHGHylbwDO19AdxPh/sCb0cwJiONkpxTWyGHmBlaxeCAUlVfYO+rsFhdldmQAwe3X+vqnVbSE4KaZ7+nUvpC74WEFuvkiZ3cvACjqQ3I4/3MABszQVQuneQ8J6St5VrcDjKwZWnBO3RhU7c+TLesqFS0NLazIjyBKBTX/dVBYITuDtxtTbHSB8CIxqorhX3HrHA3Oxvigs2eegxWWGV0d+0UQS1PKruRGOga0JQlzMvjJz+malDNQHse36E2ZPONBWMDfQ0IdG8=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726425AbfGSC74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 22:59:56 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:58182 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726015AbfGSC74 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 22:59:56 -0400
+X-UUID: b46f2d8561aa45c9ae2e0868a59a8ce5-20190719
+X-UUID: b46f2d8561aa45c9ae2e0868a59a8ce5-20190719
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <changqi.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1746597379; Fri, 19 Jul 2019 10:59:47 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 19 Jul 2019 10:59:45 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 19 Jul 2019 10:59:45 +0800
+From:   Changqi Hu <changqi.hu@mediatek.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Changqi Hu <changqi.hu@mediatek.com>,
+        Peter Shih <pihsun@chromium.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        <linux-serial@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>
+Subject: [PATCH v3] serial: 8250-mtk: modify mtk uart power and clock management
+Date:   Fri, 19 Jul 2019 10:59:42 +0800
+Message-ID: <1563505182-2408-1-git-send-email-changqi.hu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5736e7af-6646-4041-89e5-08d70bf4d144
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2019 02:57:20.5780
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: anson.huang@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3740
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIFRyZW50DQoNCj4gT24gVGh1LCAyMDE5LTA3LTE4IGF0IDAzOjA4ICswMDAwLCBBaXNoZW5n
-IERvbmcgd3JvdGU6DQo+ID4gPiBGcm9tOiBBbnNvbiBIdWFuZw0KPiA+ID4gU2VudDogV2VkbmVz
-ZGF5LCBKdWx5IDE3LCAyMDE5IDk6NTggUE0+IEhpLCBBaXNoZW5nDQo+ID4gPg0KPiA+ID4gPiA+
-IEZyb206IEFuc29uLkh1YW5nQG54cC5jb20gPEFuc29uLkh1YW5nQG54cC5jb20+DQo+ID4gPiA+
-ID4gU2VudDogVHVlc2RheSwgSnVseSAxNiwgMjAxOSAzOjE5IFBNDQo+ID4gPiA+ID4NCj4gPiA+
-ID4gPiBUaGUgUlRDIElSUSBpcyByZXF1ZXN0ZWQgYmVmb3JlIHRoZSBzdHJ1Y3QgcnRjX2Rldmlj
-ZSBpcw0KPiA+ID4gPiA+IGFsbG9jYXRlZCwgdGhpcyBtYXkgbGVhZCB0byBhIE5VTEwgcG9pbnRl
-ciBkZXJlZmVyZW5jZSBpbiBJUlENCj4gPiA+ID4gPiBoYW5kbGVyLg0KPiA+ID4gPiA+DQo+ID4g
-PiA+ID4gVG8gZml4IHRoaXMgaXNzdWUsIGFsbG9jYXRpbmcgdGhlIHJ0Y19kZXZpY2Ugc3RydWN0
-IGJlZm9yZQ0KPiA+ID4gPiA+IHJlcXVlc3RpbmcgdGhlIFJUQyBJUlEgdXNpbmcgZGV2bV9ydGNf
-YWxsb2NhdGVfZGV2aWNlLCBhbmQgdXNlDQo+ID4gPiA+ID4gcnRjX3JlZ2lzdGVyX2RldmljZSB0
-byByZWdpc3RlciB0aGUgUlRDIGRldmljZS4NCj4gPiA+ID4gPg0KPiA+ID4gPg0KPiA+ID4gPiBJ
-IHNhdyBvdGhlciBydGMgZHJpdmVycyBkaWQgdGhlIHNhbWUgd2F5IGFzIHVzLCBzbyB0aGlzIGxv
-b2tzIGxpa2UNCj4gPiA+ID4gYSBjb21tb24gcHJvYmxlbS4NCj4gPiA+ID4gTXkgcXVlc3Rpb24g
-aXMgaWYgd2UgY2FuIGNsZWFyIGludGVycnVwdCBzdGF0dXMgYmVmb3JlIHJlZ2lzdGVyIHRvDQo+
-ID4gPiA+IGF2b2lkIHRoaXMgaXNzdWUgYXMgb3RoZXIgcnRjIGRyaXZlcnM/DQo+ID4gPg0KPiA+
-ID4gSSB0aGluayB3ZSBjYW4gTk9UIHByZWRpY3Qgd2hlbiB0aGUgSVJRIHdpbGwgYmUgcGVuZGlu
-ZywgSVJRIGNvdWxkDQo+ID4gPiBhcnJpdmUgYXQgYW55IHRpbWUsIHRoZSBtb3N0IHNhZmUgd2F5
-IGlzIHRvIHByZXBhcmUgZXZlcnl0aGluZw0KPiA+ID4gYmVmb3JlIHJlcXVlc3RpbmcvZW5hYmxp
-bmcgSVJRLg0KPiA+ID4gVGhlcmUgaXMgYWxzbyBwYXRjaCB0byBmaXggc2ltaWxhciBpc3N1ZToN
-Cj4gDQo+IEkgdGhpbmsgb25lIGNvdWxkIGF0dGVtcHQgdG8gZGlzYWJsZSBhbGwgaXJxIHNvdXJj
-ZXMgaW4gdGhlIGRldmljZSB2aWEgaXRzDQo+IHJlZ2lzdGVyIHNwYWNlLCB0aGVuIGVuYWJsZSB0
-aGUgaW50ZXJydXB0LiAgQnV0IHRoaXMgc2VlbXMgbW9yZSBzcGVjaWZpYyB0bw0KPiBlYWNoIGRl
-dmljZSB0aGFuIGNoYW5naW5nIHRoZSBwYXR0ZXJuIG9mIGRldmljZSByZWdpc3RyYXRpb24sIHNv
-IElNSE8sIGl0J3MNCj4gbm90IHJlYWxseSBiZXR0ZXIuDQo+IA0KPiBJIGRvIHdvcnJ5IHRoYXQg
-aGFuZGxpbmcgdGhlIGlycSBiZWZvcmUgdGhlIHJ0YyBkZXZpY2UgaXMgcmVnaXN0ZXJlZCBjb3Vs
-ZCBzdGlsbA0KPiByZXN1bHQgaW4gYSBjcmFzaC4gIEZyb20gd2hhdCBJIHNhdywgdGhlIGlycSBw
-YXRoIGluIHNudnMgb25seSB1c2VzIGRyaXZlciBzdGF0ZQ0KPiBtZW1iZXJzIHRoYXQgYXJlIGZ1
-bGx5IGluaXRpYWxpemVkIGZvciB0aGUgbW9zdCBwYXJ0LCBhbmQgdGhlIGFsbG9jYXRlZCBidXQN
-Cj4gdW5yZWdpc3RlcmVkIGRhdGEtPnJ0YyBpcyBvbmx5IHVzZWQgaW4gb25lIGNhbGwgdG8gcnRj
-X3VwZGF0ZV9pcnEoKSwgd2hpY2gNCj4gYXBwZWFycyB0byBiZSBvayB3aXRoIHRoaXMuDQo+IA0K
-PiBCdXQgaXQgaXMgbm90IHRoYXQgaGFyZCB0byBpbWFnaW5lIHRoYXQgc29tZXRoaW5nIGNvdWxk
-IGdvIGludG8gdGhlIHJ0YyBjb3JlDQo+IHRoYXQgYXNzdW1lcyBjYWxsIGxpa2UgcnRjX3VwZGF0
-ZV9pcnEoKSBhcmUgb25seSBtYWRlIG9uIHJlZ2lzdGVyZWQgZGV2aWNlcy4NCj4gDQo+IElmIHRo
-ZXJlIHdhcyBhIHdheSB0byBkbyBpdCwgSSB0aGluayBhbGxvY2F0aW5nIHRoZSBpcnEgaW4gYSBt
-YXNrZWQgc3RhdGUgYW5kDQo+IHRoZW4gdW5tYXNraW5nIGl0IGFzIHBhcnQgb2YgdGhlIGZpbmFs
-IHJlZ2lzdHJhdGlvbiBjYWxsIHRvIG1ha2UgdGhlIGRldmljZSBnbw0KPiBsaXZlIHdvdWxkIGJl
-IGEgc2FmZXIgYW5kIG1vcmUgZ2VuZXJhbCBwYXR0ZXJuLg0KDQpJdCBtYWtlcyBzZW5zZSwgSSB0
-aGluayB3ZSBjYW4ganVzdCBtb3ZlIHRoZSBkZXZtX3JlcXVlc3RfaXJxKCkgdG8gYWZ0ZXIgcnRj
-X3JlZ2lzdGVyX2RldmljZSgpLA0KSXQgd2lsbCBtYWtlIHN1cmUgZXZlcnl0aGluZyBpcyByZWFk
-eSBiZWZvcmUgSVJRIGlzIGVuYWJsZWQuIFdpbGwgc2VuZCBvdXQgYSBWMiBwYXRjaC4gDQoNClRo
-YW5rcywNCkFuc29uDQoNCg==
+modify mtk uart runtime interface, add uart clock use count.
+merge patch v1 and patch v2 together.
+
+Signed-off-by: Changqi Hu <changqi.hu@mediatek.com>
+---
+ drivers/tty/serial/8250/8250_mtk.c | 50 ++++++++++++++++++++++++--------------
+ 1 file changed, 32 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_mtk.c b/drivers/tty/serial/8250/8250_mtk.c
+index f470ded..a07c8ae 100644
+--- a/drivers/tty/serial/8250/8250_mtk.c
++++ b/drivers/tty/serial/8250/8250_mtk.c
+@@ -31,6 +31,7 @@
+ #define MTK_UART_RXTRI_AD	0x14	/* RX Trigger address */
+ #define MTK_UART_FRACDIV_L	0x15	/* Fractional divider LSB address */
+ #define MTK_UART_FRACDIV_M	0x16	/* Fractional divider MSB address */
++#define MTK_UART_DEBUG0	0x18
+ #define MTK_UART_IER_XOFFI	0x20	/* Enable XOFF character interrupt */
+ #define MTK_UART_IER_RTSI	0x40	/* Enable RTS Modem status interrupt */
+ #define MTK_UART_IER_CTSI	0x80	/* Enable CTS Modem status interrupt */
+@@ -386,9 +387,18 @@ static void mtk8250_set_flow_ctrl(struct uart_8250_port *up, int mode)
+ static int __maybe_unused mtk8250_runtime_suspend(struct device *dev)
+ {
+ 	struct mtk8250_data *data = dev_get_drvdata(dev);
++	struct uart_8250_port *up = serial8250_get_port(data->line);
+ 
+-	clk_disable_unprepare(data->uart_clk);
+-	clk_disable_unprepare(data->bus_clk);
++	/* wait until UART in idle status */
++	while
++		(serial_in(up, MTK_UART_DEBUG0));
++
++	if (data->clk_count == 0U) {
++		dev_dbg(dev, "%s clock count is 0\n", __func__);
++	} else {
++		clk_disable_unprepare(data->bus_clk);
++		data->clk_count--;
++	}
+ 
+ 	return 0;
+ }
+@@ -398,16 +408,16 @@ static int __maybe_unused mtk8250_runtime_resume(struct device *dev)
+ 	struct mtk8250_data *data = dev_get_drvdata(dev);
+ 	int err;
+ 
+-	err = clk_prepare_enable(data->uart_clk);
+-	if (err) {
+-		dev_warn(dev, "Can't enable clock\n");
+-		return err;
+-	}
+-
+-	err = clk_prepare_enable(data->bus_clk);
+-	if (err) {
+-		dev_warn(dev, "Can't enable bus clock\n");
+-		return err;
++	if (data->clk_count > 0U) {
++		dev_dbg(dev, "%s clock count is %d\n", __func__,
++			data->clk_count);
++	} else {
++		err = clk_prepare_enable(data->bus_clk);
++		if (err) {
++			dev_warn(dev, "Can't enable bus clock\n");
++			return err;
++		}
++		data->clk_count++;
+ 	}
+ 
+ 	return 0;
+@@ -417,12 +427,14 @@ static int __maybe_unused mtk8250_runtime_resume(struct device *dev)
+ mtk8250_do_pm(struct uart_port *port, unsigned int state, unsigned int old)
+ {
+ 	if (!state)
+-		pm_runtime_get_sync(port->dev);
++		if (!mtk8250_runtime_resume(port->dev))
++			pm_runtime_get_sync(port->dev);
+ 
+ 	serial8250_do_pm(port, state, old);
+ 
+ 	if (state)
+-		pm_runtime_put_sync_suspend(port->dev);
++		if (!pm_runtime_put_sync_suspend(port->dev))
++			mtk8250_runtime_suspend(port->dev);
+ }
+ 
+ #ifdef CONFIG_SERIAL_8250_DMA
+@@ -499,6 +511,8 @@ static int mtk8250_probe(struct platform_device *pdev)
+ 	if (!data)
+ 		return -ENOMEM;
+ 
++	data->clk_count = 0;
++
+ 	if (pdev->dev.of_node) {
+ 		err = mtk8250_probe_of(pdev, &uart.port, data);
+ 		if (err)
+@@ -531,6 +545,7 @@ static int mtk8250_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, data);
+ 
++	pm_runtime_enable(&pdev->dev);
+ 	err = mtk8250_runtime_resume(&pdev->dev);
+ 	if (err)
+ 		return err;
+@@ -539,9 +554,6 @@ static int mtk8250_probe(struct platform_device *pdev)
+ 	if (data->line < 0)
+ 		return data->line;
+ 
+-	pm_runtime_set_active(&pdev->dev);
+-	pm_runtime_enable(&pdev->dev);
+-
+ 	return 0;
+ }
+ 
+@@ -552,11 +564,13 @@ static int mtk8250_remove(struct platform_device *pdev)
+ 	pm_runtime_get_sync(&pdev->dev);
+ 
+ 	serial8250_unregister_port(data->line);
+-	mtk8250_runtime_suspend(&pdev->dev);
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_put_noidle(&pdev->dev);
+ 
++	if (!pm_runtime_status_suspended(&pdev->dev))
++		mtk8250_runtime_suspend(&pdev->dev);
++
+ 	return 0;
+ }
+ 
+-- 
+1.8.1.1.dirty
+
