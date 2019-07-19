@@ -2,55 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47C4B6DF7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:36:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D176DF4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729338AbfGSEBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:01:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60952 "EHLO mail.kernel.org"
+        id S1727381AbfGSEBZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:01:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729301AbfGSEBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:01:03 -0400
+        id S1727912AbfGSEBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:01:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D80421850;
-        Fri, 19 Jul 2019 04:00:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEA8C2189F;
+        Fri, 19 Jul 2019 04:01:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508861;
-        bh=VZYhGO+wZgOgOOzXf5CsdNH7PZ6O3JbGnuCqN9yB02I=;
+        s=default; t=1563508875;
+        bh=7YF9Uid1C0lbFML1wlmKoR05pB85TZy845a6C/dNUTM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0/ZDM53LLB52WVgdmEBiXHGDNc4YiNa1BWQ4K+BHQz0SESePHKTgybVOIflOTGhi7
-         PoeQFOw4BI+StAsUbxJtA8FIaqj1v2USRRqm3J3UvhhA+Tcu1dcmNi51absy+IFPmE
-         WnaMApvBHDt8vY1GHUVSCe5NVtgiz5hqAbowcR6A=
+        b=F9THlLPUc5/6u3b8JxhO5E1qrvyKU3ONzhXFRE/6FqC+Sl9SWmxCq/2NuFEYK9lvo
+         tEBQZ9Ocy0APEdYPGnbX4XdCHhjoK+T91AEzUlAi0/m88+g6LE4ficlVIKcvNKas2t
+         mRF4NJKJiK0IjVRNKaGRPM0SMvOk65BknvOjYtvw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Leo Yan <leo.yan@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Changbin Du <changbin.du@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Song Liu <songliubraving@fb.com>,
-        Suzuki Poulouse <suzuki.poulose@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 127/171] perf session: Fix potential NULL pointer dereference found by the smatch tool
-Date:   Thu, 18 Jul 2019 23:55:58 -0400
-Message-Id: <20190719035643.14300-127-sashal@kernel.org>
+Cc:     Konstantin Taranov <konstantin.taranov@inf.ethz.ch>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 131/171] RDMA/rxe: Fill in wc byte_len with IB_WC_RECV_RDMA_WITH_IMM
+Date:   Thu, 18 Jul 2019 23:56:02 -0400
+Message-Id: <20190719035643.14300-131-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -63,79 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leo Yan <leo.yan@linaro.org>
+From: Konstantin Taranov <konstantin.taranov@inf.ethz.ch>
 
-[ Upstream commit f3c8d90757724982e5f07cd77d315eb64ca145ac ]
+[ Upstream commit bdce1290493caa3f8119f24b5dacc3fb7ca27389 ]
 
-Based on the following report from Smatch, fix the potential
-NULL pointer dereference check.
+Calculate the correct byte_len on the receiving side when a work
+completion is generated with IB_WC_RECV_RDMA_WITH_IMM opcode.
 
-  tools/perf/util/session.c:1252
-  dump_read() error: we previously assumed 'evsel' could be null
-  (see line 1249)
+According to the IBA byte_len must indicate the number of written bytes,
+whereas it was always equal to zero for the IB_WC_RECV_RDMA_WITH_IMM
+opcode, even though data was transferred.
 
-  tools/perf/util/session.c
-  1240 static void dump_read(struct perf_evsel *evsel, union perf_event *event)
-  1241 {
-  1242         struct read_event *read_event = &event->read;
-  1243         u64 read_format;
-  1244
-  1245         if (!dump_trace)
-  1246                 return;
-  1247
-  1248         printf(": %d %d %s %" PRIu64 "\n", event->read.pid, event->read.tid,
-  1249                evsel ? perf_evsel__name(evsel) : "FAIL",
-  1250                event->read.value);
-  1251
-  1252         read_format = evsel->attr.read_format;
-                             ^^^^^^^
-
-'evsel' could be NULL pointer, for this case this patch directly bails
-out without dumping read_event.
-
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Alexios Zavras <alexios.zavras@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Changbin Du <changbin.du@intel.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190702103420.27540-9-leo.yan@linaro.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 8700e3e7c485 ("Soft RoCE driver")
+Signed-off-by: Konstantin Taranov <konstantin.taranov@inf.ethz.ch>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/session.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/infiniband/sw/rxe/rxe_resp.c  | 5 ++++-
+ drivers/infiniband/sw/rxe/rxe_verbs.h | 1 +
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 54cf163347f7..2e61dd6a3574 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1249,6 +1249,9 @@ static void dump_read(struct perf_evsel *evsel, union perf_event *event)
- 	       evsel ? perf_evsel__name(evsel) : "FAIL",
- 	       event->read.value);
+diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c b/drivers/infiniband/sw/rxe/rxe_resp.c
+index aca9f60f9b21..1cbfbd98eb22 100644
+--- a/drivers/infiniband/sw/rxe/rxe_resp.c
++++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+@@ -431,6 +431,7 @@ static enum resp_states check_rkey(struct rxe_qp *qp,
+ 			qp->resp.va = reth_va(pkt);
+ 			qp->resp.rkey = reth_rkey(pkt);
+ 			qp->resp.resid = reth_len(pkt);
++			qp->resp.length = reth_len(pkt);
+ 		}
+ 		access = (pkt->mask & RXE_READ_MASK) ? IB_ACCESS_REMOTE_READ
+ 						     : IB_ACCESS_REMOTE_WRITE;
+@@ -856,7 +857,9 @@ static enum resp_states do_complete(struct rxe_qp *qp,
+ 				pkt->mask & RXE_WRITE_MASK) ?
+ 					IB_WC_RECV_RDMA_WITH_IMM : IB_WC_RECV;
+ 		wc->vendor_err = 0;
+-		wc->byte_len = wqe->dma.length - wqe->dma.resid;
++		wc->byte_len = (pkt->mask & RXE_IMMDT_MASK &&
++				pkt->mask & RXE_WRITE_MASK) ?
++					qp->resp.length : wqe->dma.length - wqe->dma.resid;
  
-+	if (!evsel)
-+		return;
-+
- 	read_format = evsel->attr.read_format;
+ 		/* fields after byte_len are different between kernel and user
+ 		 * space
+diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
+index e8be7f44e3be..28bfb3ece104 100644
+--- a/drivers/infiniband/sw/rxe/rxe_verbs.h
++++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+@@ -213,6 +213,7 @@ struct rxe_resp_info {
+ 	struct rxe_mem		*mr;
+ 	u32			resid;
+ 	u32			rkey;
++	u32			length;
+ 	u64			atomic_orig;
  
- 	if (read_format & PERF_FORMAT_TOTAL_TIME_ENABLED)
+ 	/* SRQ only */
 -- 
 2.20.1
 
