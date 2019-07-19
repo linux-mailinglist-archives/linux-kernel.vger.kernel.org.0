@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F21226DEE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:31:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C5166DEDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:31:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733018AbfGSEbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:31:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36700 "EHLO mail.kernel.org"
+        id S1732718AbfGSEbe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:31:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729349AbfGSEE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:04:26 -0400
+        id S1731049AbfGSEE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:04:28 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DF69218BB;
-        Fri, 19 Jul 2019 04:04:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9EDF218C5;
+        Fri, 19 Jul 2019 04:04:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509065;
-        bh=FzBhEF34oFmmc1zHB7qdnkk66oYjSKhxdU5FAfR2vGY=;
+        s=default; t=1563509067;
+        bh=QeuD7FVE0C6XJfW+9HMAVEkFiaxcitPJ8TI4F1Jpr88=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L0bWeUyNKkH+LKC3Dc+BCqgfiHgsjhg4emTQQFqLu+LykLzIaT1/iIYAnwMV+2ta4
-         3Hcx0DVZRIqjNJayNjYEdd5eRbE0OQhJWl6c8KXpBz6L7q5tTMGMVWPC8wm38R6LUD
-         +BGb9CNffDHAtZ3ImPSLNmZgq8No5bKsgHFoIFHQ=
+        b=gJ7k79ScAXhlbEQSqFA8eTyuYm7x1ugDtinA3mhN8YA3GXRBCM+Qs1yw4oZLdoqKh
+         EvUlAM3tJs3HaoMOtTVtLQGX6xIR9ewKNDmgNIs7iHnecw1NIp2I7OAiPJno5PXctX
+         82z6WyrL9A0BXd37yaR4w9cizW3IPpELmYmK2Zl0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sergey Organov <sorganov@gmail.com>,
+Cc:     Serge Semin <fancer.lancer@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 049/141] serial: imx: fix locking in set_termios()
-Date:   Fri, 19 Jul 2019 00:01:14 -0400
-Message-Id: <20190719040246.15945-49-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 051/141] tty: serial_core: Set port active bit in uart_port_activate
+Date:   Fri, 19 Jul 2019 00:01:16 -0400
+Message-Id: <20190719040246.15945-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040246.15945-1-sashal@kernel.org>
 References: <20190719040246.15945-1-sashal@kernel.org>
@@ -43,87 +43,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergey Organov <sorganov@gmail.com>
+From: Serge Semin <fancer.lancer@gmail.com>
 
-[ Upstream commit 4e828c3e09201512be5ee162393f334321f7cf01 ]
+[ Upstream commit 13b18d35909707571af9539f7731389fbf0feb31 ]
 
-imx_uart_set_termios() called imx_uart_rts_active(), or
-imx_uart_rts_inactive() before taking port->port.lock.
+A bug was introduced by commit b3b576461864 ("tty: serial_core: convert
+uart_open to use tty_port_open"). It caused a constant warning printed
+into the system log regarding the tty and port counter mismatch:
 
-As a consequence, sport->port.mctrl that these functions modify
-could have been changed without holding port->port.lock.
+[   21.644197] ttyS ttySx: tty_port_close_start: tty->count = 1 port count = 2
 
-Moved locking of port->port.lock above the calls to fix the issue.
+in case if session hangup was detected so the warning is printed starting
+from the second open-close iteration.
 
-Signed-off-by: Sergey Organov <sorganov@gmail.com>
+Particularly the problem was discovered in situation when there is a
+serial tty device without hardware back-end being setup. It is considered
+by the tty-serial subsystems as a hardware problem with session hang up.
+In this case uart_startup() will return a positive value with TTY_IO_ERROR
+flag set in corresponding tty_struct instance. The same value will get
+passed to be returned from the activate() callback and then being returned
+from tty_port_open(). But since in this case tty_port_block_til_ready()
+isn't called the TTY_PORT_ACTIVE flag isn't set (while the method had been
+called before tty_port_open conversion was introduced and the rest of the
+subsystem code expected the bit being set in this case), which prevents the
+uart_hangup() method to perform any cleanups including the tty port
+counter setting to zero. So the next attempt to open/close the tty device
+will discover the counters mismatch.
+
+In order to fix the problem we need to manually set the TTY_PORT_ACTIVE
+flag in case if uart_startup() returned a positive value. In this case
+the hang up procedure will perform a full set of cleanup actions including
+the port ref-counter resetting.
+
+Fixes: b3b576461864 "tty: serial_core: convert uart_open to use tty_port_open"
+Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/imx.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+ drivers/tty/serial/serial_core.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-index dff75dc94731..105512440f3f 100644
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -383,6 +383,7 @@ static void imx_uart_ucrs_restore(struct imx_port *sport,
- }
- #endif
- 
-+/* called with port.lock taken and irqs caller dependent */
- static void imx_uart_rts_active(struct imx_port *sport, u32 *ucr2)
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 46e3a2337f06..264bae8e50a4 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -1777,6 +1777,7 @@ static int uart_port_activate(struct tty_port *port, struct tty_struct *tty)
  {
- 	*ucr2 &= ~(UCR2_CTSC | UCR2_CTS);
-@@ -391,6 +392,7 @@ static void imx_uart_rts_active(struct imx_port *sport, u32 *ucr2)
- 	mctrl_gpio_set(sport->gpios, sport->port.mctrl);
+ 	struct uart_state *state = container_of(port, struct uart_state, port);
+ 	struct uart_port *uport;
++	int ret;
+ 
+ 	uport = uart_port_check(state);
+ 	if (!uport || uport->flags & UPF_DEAD)
+@@ -1787,7 +1788,11 @@ static int uart_port_activate(struct tty_port *port, struct tty_struct *tty)
+ 	/*
+ 	 * Start up the serial port.
+ 	 */
+-	return uart_startup(tty, state, 0);
++	ret = uart_startup(tty, state, 0);
++	if (ret > 0)
++		tty_port_set_active(port, 1);
++
++	return ret;
  }
  
-+/* called with port.lock taken and irqs caller dependent */
- static void imx_uart_rts_inactive(struct imx_port *sport, u32 *ucr2)
- {
- 	*ucr2 &= ~UCR2_CTSC;
-@@ -400,6 +402,7 @@ static void imx_uart_rts_inactive(struct imx_port *sport, u32 *ucr2)
- 	mctrl_gpio_set(sport->gpios, sport->port.mctrl);
- }
- 
-+/* called with port.lock taken and irqs caller dependent */
- static void imx_uart_rts_auto(struct imx_port *sport, u32 *ucr2)
- {
- 	*ucr2 |= UCR2_CTSC;
-@@ -1550,6 +1553,16 @@ imx_uart_set_termios(struct uart_port *port, struct ktermios *termios,
- 		old_csize = CS8;
- 	}
- 
-+	del_timer_sync(&sport->timer);
-+
-+	/*
-+	 * Ask the core to calculate the divisor for us.
-+	 */
-+	baud = uart_get_baud_rate(port, termios, old, 50, port->uartclk / 16);
-+	quot = uart_get_divisor(port, baud);
-+
-+	spin_lock_irqsave(&sport->port.lock, flags);
-+
- 	if ((termios->c_cflag & CSIZE) == CS8)
- 		ucr2 = UCR2_WS | UCR2_SRST | UCR2_IRTS;
- 	else
-@@ -1593,16 +1606,6 @@ imx_uart_set_termios(struct uart_port *port, struct ktermios *termios,
- 			ucr2 |= UCR2_PROE;
- 	}
- 
--	del_timer_sync(&sport->timer);
--
--	/*
--	 * Ask the core to calculate the divisor for us.
--	 */
--	baud = uart_get_baud_rate(port, termios, old, 50, port->uartclk / 16);
--	quot = uart_get_divisor(port, baud);
--
--	spin_lock_irqsave(&sport->port.lock, flags);
--
- 	sport->port.read_status_mask = 0;
- 	if (termios->c_iflag & INPCK)
- 		sport->port.read_status_mask |= (URXD_FRMERR | URXD_PRERR);
+ static const char *uart_type(struct uart_port *port)
 -- 
 2.20.1
 
