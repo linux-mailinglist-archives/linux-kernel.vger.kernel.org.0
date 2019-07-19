@@ -2,74 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD7F36EB6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 22:04:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E15BD6EB72
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 22:05:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731330AbfGSUEB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 16:04:01 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:41404 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727497AbfGSUEA (ORCPT
+        id S1731818AbfGSUFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 16:05:50 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40514 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728812AbfGSUFt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 16:04:00 -0400
-Received: by mail-io1-f72.google.com with SMTP id x17so35516783iog.8
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 13:04:00 -0700 (PDT)
+        Fri, 19 Jul 2019 16:05:49 -0400
+Received: by mail-wm1-f68.google.com with SMTP id v19so30082396wmj.5;
+        Fri, 19 Jul 2019 13:05:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LhwuEfAWfiEHK8h+/sGCMcZbf2WkYnCPlgk8A3vAekc=;
+        b=aZ6pI29mc8rQNUafXyq9rPme6gj6WIeWZv6e1FXQ6vnfDWO6baE3wG5YE09axX0NKT
+         vTc/Ct2llNDfKtZFgdIyWVgqviYmugoNZRTctJdCyekfHMm51zeNena++xU7CQ1qighk
+         QB7gOhZHTBKr84B3N4lZ6KXydpZpEayklJX0dBK1GyC9d6f9b76n2ls6dcgcDhBZQzZ5
+         kDE2510r8EeTHF6RA+p919Nqmzp7W0hgflMlysk4nx38WsUz5hlQrjXB1BgU0SNy4ebN
+         g1P04X99bFcT/KGmU52zjVSuGSRr5e5RS+uberbnakv4eP9a3VAcWpz71yuLUkgHKg28
+         ybAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=aPsM7izy0lsHgieRMKZNuSLjrGTa3/1dak1h6g1FuBU=;
-        b=ONw4Sp0YT8K3LKZkqg7XhjgemBfmvPVQUKdp2wfSxT6HxjJ2Sy3YC/2+JkQPr8AmHd
-         mkuMQhjDLZWRLrEgIl813p6SgvyzNsRPnT3y69/H/OmHduxvQJdTo9ngkDjahE6QXPOs
-         ULmcaf5ytTtP6PxyXL8+W70HiwlzRGpu/r74ZwbfmmKu22CGHudKdFcHaj9baw+QY/z+
-         S5G3/qqdkrMpbPn0XTQn6ECiZBIdhuKa14R1k8WPhv5cDgXLEOcQVEihepKjznNtkUIL
-         4IvhBswpb2aHBo0reglD72jxG3GLBM/5yKXADO4GZr4oHc/svVlpfRnclJHLYslqUjRO
-         2uJg==
-X-Gm-Message-State: APjAAAVDC6lJ2CIrsN3p6ccUxfhGNqxdSR4EeziQDQNYNpst0zMmqyR9
-        1Nmw0fqMMRU6sm6BNjHOcXMQm9ZIXWXa/N00luOLnruNnhUJ
-X-Google-Smtp-Source: APXvYqxidYggLhCDlKDPPoGD3FSWeBWxwtOzAyrvnQyzo3ixpa+XRzwDjKZfxioOdAVAMIp4fTiorW0EVPKAU++mh06/cyXjSy0g
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LhwuEfAWfiEHK8h+/sGCMcZbf2WkYnCPlgk8A3vAekc=;
+        b=mkUHCNYw1VB6LLlgmACqLgOoRiGPi4A4Ika6uCkv5svs2/Brb7W3oSgLmYw1ygUj6q
+         4amtxODOBdZUycUKLJIWY6Wgz9NC8ofLVRonNtWaskPx/fYuew9/hWPuiNMvQgtNMcNt
+         +uCtpTVaQrz9js55P+YOzove3XxdpK1UY4bL4r5R+UyXm9JByCQfPCzSW2t0I4y/vrne
+         z0CStjMpNKBVC8z4MqNdQIG041I7n95HP3L1OjLlRtRNQjlsW2pAwVKvsWTp3iXbSm7c
+         uIzEKZ3fgBZayllHM+VlLo/ZGEnCxOy32wOObr03EAExy7MwtqCOqGjWbsZF7g+6CLV7
+         5q6g==
+X-Gm-Message-State: APjAAAUedcZ0bKJJ2z9XjMi992MXJg/V00YS1/yWRbMgcIGLIBFELQNH
+        pWav8ZEZcWeDtG7GQrTUmwQuhPt0
+X-Google-Smtp-Source: APXvYqwmzDlp81Z8OSCWa5VeLuVh1tSdAWMlvZ7w7wN10bNLCP9vJQt+Ja6w8/mC/EY2qPuV0Ko5OQ==
+X-Received: by 2002:a1c:c747:: with SMTP id x68mr49510714wmf.138.1563566747044;
+        Fri, 19 Jul 2019 13:05:47 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8bd6:c00:40e3:8fe6:4421:a541? ([2003:ea:8bd6:c00:40e3:8fe6:4421:a541])
+        by smtp.googlemail.com with ESMTPSA id o6sm57912418wra.27.2019.07.19.13.05.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 19 Jul 2019 13:05:45 -0700 (PDT)
+Subject: Re: network problems with r8169
+To:     Thomas Voegtle <tv@lio96.de>
+References: <alpine.LSU.2.21.1907182032370.7080@er-systems.de>
+Cc:     linux-kernel@vger.kernel.org,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <2eeedff5-4911-db6e-6bfd-99b591daa7ef@gmail.com>
+Date:   Fri, 19 Jul 2019 22:05:38 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-Received: by 2002:a5d:87c6:: with SMTP id q6mr29436327ios.115.1563566640206;
- Fri, 19 Jul 2019 13:04:00 -0700 (PDT)
-Date:   Fri, 19 Jul 2019 13:04:00 -0700
-In-Reply-To: <00000000000045e7a1058e02458a@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002c183d058e0e3abd@google.com>
-Subject: Re: KASAN: use-after-free Write in tlb_finish_mmu
-From:   syzbot <syzbot+8267e9af795434ffadad@syzkaller.appspotmail.com>
-To:     aarcange@redhat.com, davem@davemloft.net, hch@infradead.org,
-        james.bottomley@hansenpartnership.com, jasowang@redhat.com,
-        jglisse@redhat.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-parisc@vger.kernel.org, mst@redhat.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <alpine.LSU.2.21.1907182032370.7080@er-systems.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+On 18.07.2019 20:50, Thomas Voegtle wrote:
+> 
+> Hello,
+> 
+> I'm having network problems with the commits on r8169 since v5.2. There are ping packet loss, sometimes 100%, sometimes 50%. In the end network is unusable.
+> 
+> v5.2 is fine, I bisected it down to:
+> 
+> a2928d28643e3c064ff41397281d20c445525032 is the first bad commit
+> commit a2928d28643e3c064ff41397281d20c445525032
+> Author: Heiner Kallweit <hkallweit1@gmail.com>
+> Date:   Sun Jun 2 10:53:49 2019 +0200
+> 
+>     r8169: use paged versions of phylib MDIO access functions
+> 
+>     Use paged versions of phylib MDIO access functions to simplify
+>     the code.
+> 
+>     Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+>     Signed-off-by: David S. Miller <davem@davemloft.net>
+> 
+> 
+> Reverting that commit on top of v5.2-11564-g22051d9c4a57 fixes the problem
+> for me (had to adjust the renaming to r8169_main.c).
+> 
+> I have a:
+> 04:00.0 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
+> RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller [10ec:8168] (rev
+> 0c)
+>         Subsystem: Biostar Microtech Int'l Corp Device [1565:2400]
+>         Kernel driver in use: r8169
+> 
+> on a BIOSTAR H81MG motherboard.
+> 
+Interesting. I have the same chip version (RTL8168g) and can't reproduce
+the issue. Can you provide a full dmesg output and test the patch below
+on top of linux-next? I'd be interested in the WARN_ON stack traces
+(if any) and would like to know whether the experimental change to
+__phy_modify_changed helps.
 
-commit 7f466032dc9e5a61217f22ea34b2df932786bbfc
-Author: Jason Wang <jasowang@redhat.com>
-Date:   Fri May 24 08:12:18 2019 +0000
+> 
+> greetings,
+> 
+>   Thomas
+> 
+> 
+Heiner
 
-     vhost: access vq metadata through kernel virtual address
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11642a58600000
-start commit:   22051d9c Merge tag 'platform-drivers-x86-v5.3-2' of git://..
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=13642a58600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=15642a58600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d831b9cbe82e79e4
-dashboard link: https://syzkaller.appspot.com/bug?extid=8267e9af795434ffadad
-userspace arch: i386
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10d58784600000
+diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
+index 8d7dd4c5f..26be73000 100644
+--- a/drivers/net/ethernet/realtek/r8169_main.c
++++ b/drivers/net/ethernet/realtek/r8169_main.c
+@@ -1934,6 +1934,8 @@ static int rtl_get_eee_supp(struct rtl8169_private *tp)
+ 	struct phy_device *phydev = tp->phydev;
+ 	int ret;
+ 
++	WARN_ON(phy_read(phydev, 0x1f));
++
+ 	switch (tp->mac_version) {
+ 	case RTL_GIGA_MAC_VER_34:
+ 	case RTL_GIGA_MAC_VER_35:
+@@ -1957,6 +1959,8 @@ static int rtl_get_eee_lpadv(struct rtl8169_private *tp)
+ 	struct phy_device *phydev = tp->phydev;
+ 	int ret;
+ 
++	WARN_ON(phy_read(phydev, 0x1f));
++
+ 	switch (tp->mac_version) {
+ 	case RTL_GIGA_MAC_VER_34:
+ 	case RTL_GIGA_MAC_VER_35:
+@@ -1980,6 +1984,8 @@ static int rtl_get_eee_adv(struct rtl8169_private *tp)
+ 	struct phy_device *phydev = tp->phydev;
+ 	int ret;
+ 
++	WARN_ON(phy_read(phydev, 0x1f));
++
+ 	switch (tp->mac_version) {
+ 	case RTL_GIGA_MAC_VER_34:
+ 	case RTL_GIGA_MAC_VER_35:
+@@ -2003,6 +2009,8 @@ static int rtl_set_eee_adv(struct rtl8169_private *tp, int val)
+ 	struct phy_device *phydev = tp->phydev;
+ 	int ret = 0;
+ 
++	WARN_ON(phy_read(phydev, 0x1f));
++
+ 	switch (tp->mac_version) {
+ 	case RTL_GIGA_MAC_VER_34:
+ 	case RTL_GIGA_MAC_VER_35:
+diff --git a/drivers/net/phy/phy-core.c b/drivers/net/phy/phy-core.c
+index 16667fbac..1aa1142b8 100644
+--- a/drivers/net/phy/phy-core.c
++++ b/drivers/net/phy/phy-core.c
+@@ -463,12 +463,10 @@ int __phy_modify_changed(struct phy_device *phydev, u32 regnum, u16 mask,
+ 		return ret;
+ 
+ 	new = (ret & ~mask) | set;
+-	if (new == ret)
+-		return 0;
+ 
+-	ret = __phy_write(phydev, regnum, new);
++	__phy_write(phydev, regnum, new);
+ 
+-	return ret < 0 ? ret : 1;
++	return new != ret;
+ }
+ EXPORT_SYMBOL_GPL(__phy_modify_changed);
+ 
+-- 
+2.22.0
 
-Reported-by: syzbot+8267e9af795434ffadad@syzkaller.appspotmail.com
-Fixes: 7f466032dc9e ("vhost: access vq metadata through kernel virtual  
-address")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
