@@ -2,99 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E3506E13D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 08:56:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7B546E14D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 09:00:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbfGSGzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 02:55:47 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:29417 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725616AbfGSGzq (ORCPT
+        id S1727145AbfGSHAK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 03:00:10 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44015 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726247AbfGSHAK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 02:55:46 -0400
-X-UUID: af31ce153ea848c1bc425f9b6cf813ef-20190719
-X-UUID: af31ce153ea848c1bc425f9b6cf813ef-20190719
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1331009977; Fri, 19 Jul 2019 14:55:39 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 19 Jul 2019 14:55:38 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 19 Jul 2019 14:55:38 +0800
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Felix Fietkau <nbd@nbd.name>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-CC:     Roy Luo <royluo@google.com>, YF Luo <yf.luo@mediatek.com>,
-        Yiwei Chung <yiwei.chung@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        <linux-wireless@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH 3/3] mt76: mt7615: add cwmin/cwmax initial values
-Date:   Fri, 19 Jul 2019 14:55:36 +0800
-Message-ID: <c83e14787bc86f8f8062e0aa44e03ef80c3fd38a.1563518381.git.ryder.lee@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <50d28c9b0f9e7d6b277d36fc93f55142d7535259.1563518381.git.ryder.lee@mediatek.com>
-References: <50d28c9b0f9e7d6b277d36fc93f55142d7535259.1563518381.git.ryder.lee@mediatek.com>
+        Fri, 19 Jul 2019 03:00:10 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1hoMsB-0007Ad-DF; Fri, 19 Jul 2019 09:00:07 +0200
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1hoMs9-0003lG-Hi; Fri, 19 Jul 2019 09:00:05 +0200
+Date:   Fri, 19 Jul 2019 09:00:05 +0200
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Daniel Baluta <daniel.baluta@nxp.com>
+Cc:     shawnguo@kernel.org, mark.rutland@arm.com, aisheng.dong@nxp.com,
+        peng.fan@nxp.com, anson.huang@nxp.com, devicetree@vger.kernel.org,
+        s.hauer@pengutronix.de, Frank.Li@nxp.com,
+        linux-kernel@vger.kernel.org, paul.olaru@nxp.com,
+        robh+dt@kernel.org, linux-imx@nxp.com, kernel@pengutronix.de,
+        leonard.crestez@nxp.com, festevam@gmail.com, shengjiu.wang@nxp.com,
+        linux-arm-kernel@lists.infradead.org,
+        sound-open-firmware@alsa-project.org
+Subject: Re: [PATCH 0/3] Add DSP node on i.MX8QXP board
+Message-ID: <20190719070005.mkqvfhjras2jmo52@pengutronix.de>
+References: <20190718151346.3523-1-daniel.baluta@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190718151346.3523-1-daniel.baluta@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 08:55:39 up 62 days, 13:13, 49 users,  load average: 0.14, 0.13,
+ 0.07
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add initial values in mt7615_mcu_set_wmm() to cleanup setup flow.
+Hi Daniel,
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
- drivers/net/wireless/mediatek/mt76/mt7615/mcu.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+thanks for your patches :) but it's quite common to bundle the driver
+related and the dt related patches. Can you add the firmware related
+patch to this series in your v2?
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-index 5fd162be3654..154c09428b69 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-@@ -622,10 +622,7 @@ int mt7615_mcu_set_rts_thresh(struct mt7615_dev *dev, u32 val)
- int mt7615_mcu_set_wmm(struct mt7615_dev *dev, u8 queue,
- 		       const struct ieee80211_tx_queue_params *params)
- {
--#define WMM_AIFS_SET	BIT(0)
--#define WMM_CW_MIN_SET	BIT(1)
--#define WMM_CW_MAX_SET	BIT(2)
--#define WMM_TXOP_SET	BIT(3)
-+#define WMM_PARAM_SET	GENMASK(3, 0)
- 	struct req_data {
- 		u8 number;
- 		u8 rsv[3];
-@@ -638,19 +635,17 @@ int mt7615_mcu_set_wmm(struct mt7615_dev *dev, u8 queue,
- 	} __packed req = {
- 		.number = 1,
- 		.queue = queue,
--		.valid = WMM_AIFS_SET | WMM_TXOP_SET,
-+		.valid = WMM_PARAM_SET,
- 		.aifs = params->aifs,
-+		.cw_min = BIT(5) - 1,
-+		.cw_max = cpu_to_le16(BIT(10) - 1),
- 		.txop = cpu_to_le16(params->txop),
- 	};
- 
--	if (params->cw_min) {
--		req.valid |= WMM_CW_MIN_SET;
-+	if (params->cw_min)
- 		req.cw_min = params->cw_min;
--	}
--	if (params->cw_max) {
--		req.valid |= WMM_CW_MAX_SET;
-+	if (params->cw_max)
- 		req.cw_max = cpu_to_le16(params->cw_max);
--	}
- 
- 	return __mt76_mcu_send_msg(&dev->mt76, MCU_EXT_CMD_EDCA_UPDATE,
- 				   &req, sizeof(req), true);
+Regards,
+  Marco
+
+On 19-07-18 18:13, Daniel Baluta wrote:
+> i.MX8QXP boards feature an Hifi4 DSP from Tensilica. This patch series
+> adds the DT node.
+> 
+> Note that we switched to the new yaml format for bindings documentation.
+> 
+> The DSP will run SOF Firmware [1]. Patches adding support for Linux DSP
+> driver are already sent for review to SOF folks [2].
+> 
+> This patch series also contains a patch introducing DT related clocks.
+> 
+> The patch was already reviewed here:
+> 	https://lkml.org/lkml/2019/7/17/975
+> 
+> but I added it in this patch series because it wasn't yet picked by
+> Shawn so patches 2/3 will not compiled without patch 1.
+> 
+> [1] https://github.com/thesofproject/sof
+> [2] https://github.com/thesofproject/linux/pull/1048/commits
+> 
+> Daniel Baluta (3):
+>   clk: imx8: Add DSP related clocks
+>   arm64: dts: imx8qxp: Add DSP DT node
+>   dt-bindings: dsp: fsl: Add DSP core binding support
+> 
+>  .../devicetree/bindings/dsp/fsl,dsp.yaml      | 87 +++++++++++++++++++
+>  arch/arm64/boot/dts/freescale/imx8qxp-mek.dts |  4 +
+>  arch/arm64/boot/dts/freescale/imx8qxp.dtsi    | 32 +++++++
+>  drivers/clk/imx/clk-imx8qxp-lpcg.c            |  5 ++
+>  include/dt-bindings/clock/imx8-clock.h        |  6 +-
+>  5 files changed, 133 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> 
+> -- 
+> 2.17.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+
 -- 
-2.18.0
-
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
