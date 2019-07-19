@@ -2,90 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39E786E16D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 09:10:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 199F66E16F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 09:10:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727584AbfGSHJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 03:09:55 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34464 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727535AbfGSHJx (ORCPT
+        id S1727620AbfGSHKB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 03:10:01 -0400
+Received: from mail-pl1-f180.google.com ([209.85.214.180]:39370 "EHLO
+        mail-pl1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727535AbfGSHJ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 03:09:53 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n9so7819728pgc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 00:09:52 -0700 (PDT)
+        Fri, 19 Jul 2019 03:09:59 -0400
+Received: by mail-pl1-f180.google.com with SMTP id b7so15192482pls.6
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 00:09:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hw2kNiLoj+LvvfY1YdobU4HU5vXnmTyj3KhgfWP8Lyc=;
-        b=F30SYFLzLUaEvZZyNkrfusWAtMzfDxAGnKIlXrIl6LOCJF2OhfQDsDLT9cmynvdevK
-         JwjuT2TZXcF7zudqpIWMz5/gKm7J0X+6DBmaiQWIZz5dAtOiAitm4MlmT3q+az3sfLrq
-         lAjPAWrRlY/T2WWHlDSv6/2omGMuIyOvfC8PwRKM85273cve4F8Tft6YALL0ynYxhIv/
-         CH7yoVCrZPA0JjDcZeBNWyPX/AMfNdFDhZOFC9bgc1KRlwop6/yxHjX62T9H5Pujnjvv
-         MhXFDeDWxctuByVAbbgvmXY4NjfDmZKaXHs65AJ1zUhplntVEUSR7kzG+yIfgk/dQlY1
-         7tdg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=wejlJJPjvhTTbCNGB4VjnLtYjtQuI5s6iJfj743WH8I=;
+        b=lmu043Hz6zAVciotAIw/JtZ9gpdYGTWPlmxnLrJhHiguq63+npVZdwXC9Yq94o9dJF
+         S4TYuKUcrC6nPnjd3BoJ26izYVnpbfMWHrQvcpxMsztSF9K7Kvnfu1Vdky+C9p+gB1Zp
+         Oh98xM0LMQHYPgE5MPM55pH1qK/dWz/oMTk9FAQNd/n2TLrd4Zx4+cJg4skaK5RhkwQ5
+         mmYmxYJ+RsBdPoz6T2IK9wpbNw8VVu3BekgcTs1guzTY3y5zCFtFv1TktgnaCAkobBJR
+         6fZY01Q5OT7IG4FvrdcYcT6OueIt4s/UXex6ghjoDNm2sLmYY++Lg/bJlFs7dvfH+KVO
+         RiHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hw2kNiLoj+LvvfY1YdobU4HU5vXnmTyj3KhgfWP8Lyc=;
-        b=Qn6MjT1oO82tXotPZwnITKbaz/SoRSVap8lCBwtm2V3VJu7EJGY4zxtj0C4FhJ3Gyd
-         nkXF9+YNcIZT9sIRqah3V9UWgToS0+w13Go2nQAxMjPxkyfxucpLoKVyqNPzE34cN5rV
-         ihvvtdCrJv+4xYG9cB+D8tOnYzhkP3MfGhzejtLl2rKmCvHq7e583slL57BI1IBzomwD
-         L0hz5Yw0LzBmu2NTD9wUdO1gAe/bRKl/xwKczs3lA1lkwCzkMnAFugnyK8kFTdPkAOir
-         6vXZy9uP8vO+DATu/3kZNdw7w3H518xxI42tpnyVBYN6BHae7QfaN/cQNJPbqoBSszCY
-         gBxQ==
-X-Gm-Message-State: APjAAAUp+ibZk9Iet2VlP/8ALro/UhH09r0WoJCQPQfuNbSR6ZY6FsAE
-        5KQ/IgsEX5WNA7IMy31Ejk0=
-X-Google-Smtp-Source: APXvYqyPYlKJsxcZlDbnkyt2zjKgqcTXPGjGOmY0RYcfU9CmypL8Bb/NbeFOHQDzySOm0VehvgYREA==
-X-Received: by 2002:a17:90a:208d:: with SMTP id f13mr54371662pjg.68.1563520192524;
-        Fri, 19 Jul 2019 00:09:52 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id r18sm17470274pfg.77.2019.07.19.00.09.49
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=wejlJJPjvhTTbCNGB4VjnLtYjtQuI5s6iJfj743WH8I=;
+        b=DudBCaIib0pKzZ6+RxLZl5fz4lbE4QJV4SkLyYBAIguoYBjYBHoetzLqEs61PyaBAW
+         wKJw5etT+CLNYnrSnHnbDJxWnwwpmlCBS9ncDdQbV8OrGbFZom1ck4VXvO2CGZSXfIn6
+         qkMCUi0HDj7Pb1uc9M8dimTJT4AcxjAIsdZvVaPWgWXFDKGypwHPdpo6Fmb0dVFsNv/i
+         1XUWR/YWqmfIuhLCOzOh/tlbhOu8OPyE77CPpF7Mfvbh8hMZGJfoX1bNspHeoH3Lu3d6
+         VlnhbEXvkc2tjDfsaEXIfWMG8xJb1xFjimwLJZ23VGwKUy6i7Yq643EC0osTOzW+aiDx
+         IUZQ==
+X-Gm-Message-State: APjAAAVxduO054Mia+8+L5pTxcAvOoPenn4gJyoSGaGrJCUyO5Bwm9SN
+        iljGSkLrnlmbnYRTaEpHpCqB
+X-Google-Smtp-Source: APXvYqyvX2dItjj9s9D7tuG12+0UPJBQozTDJS4lYY0lsaWB25b6IUqfd8X/oUBdeEUOluWrLVNr9Q==
+X-Received: by 2002:a17:902:7894:: with SMTP id q20mr53150658pll.339.1563520198971;
+        Fri, 19 Jul 2019 00:09:58 -0700 (PDT)
+Received: from localhost.localdomain ([2405:204:730b:4a40:d09e:c7ec:fbb:1676])
+        by smtp.gmail.com with ESMTPSA id r6sm56259346pjb.22.2019.07.19.00.09.52
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 19 Jul 2019 00:09:51 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] staging: rtl8712: Merge memcpy + be16_to_cpus to get_unaligned_be16
-Date:   Fri, 19 Jul 2019 15:09:22 +0800
-Message-Id: <20190719070921.27749-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+        Fri, 19 Jul 2019 00:09:58 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, robh+dt@kernel.org
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Darshak.Patel@einfochips.com,
+        kinjan.patel@einfochips.com, prajose.john@einfochips.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 2/3] dt-bindings: arm: Document i.MX8QXP AI_ML board binding
+Date:   Fri, 19 Jul 2019 12:39:25 +0530
+Message-Id: <20190719070926.29114-3-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190719070926.29114-1-manivannan.sadhasivam@linaro.org>
+References: <20190719070926.29114-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Merge the combo of memcpy and be16_to_cpus.
-Use get_unaligned_be16 instead.
-This simplifies the code.
+Document devicetree binding of i.MX8QXP AI_ML board from Einfochips.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/staging/rtl8712/rtl871x_recv.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/staging/rtl8712/rtl871x_recv.c b/drivers/staging/rtl8712/rtl871x_recv.c
-index 5298fe603437..9969e5265a40 100644
---- a/drivers/staging/rtl8712/rtl871x_recv.c
-+++ b/drivers/staging/rtl8712/rtl871x_recv.c
-@@ -245,8 +245,7 @@ union recv_frame *r8712_portctrl(struct _adapter *adapter,
- 	if (auth_alg == 2) {
- 		/* get ether_type */
- 		ptr = ptr + pfhdr->attrib.hdrlen + LLC_HEADER_SIZE;
--		memcpy(&ether_type, ptr, 2);
--		be16_to_cpus(&ether_type);
-+		ether_type = get_unaligned_be16(ptr);
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 407138ebc0d0..8e9209a75478 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -180,6 +180,7 @@ properties:
+       - description: i.MX8QXP based Boards
+         items:
+           - enum:
++              - einfochips,imx8qxp-ai_ml  # i.MX8QXP AI_ML Board
+               - fsl,imx8qxp-mek           # i.MX8QXP MEK Board
+           - const: fsl,imx8qxp
  
- 		if ((psta != NULL) && (psta->ieee8021x_blocked)) {
- 			/* blocked
 -- 
-2.20.1
+2.17.1
 
