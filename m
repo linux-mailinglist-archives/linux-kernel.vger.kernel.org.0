@@ -2,47 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FBF16DB6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:09:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03EE86DB6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:09:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733053AbfGSEIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:08:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42442 "EHLO mail.kernel.org"
+        id S1733109AbfGSEIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:08:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732970AbfGSEIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:08:15 -0400
+        id S1733029AbfGSEIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:08:21 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFBCE2082E;
-        Fri, 19 Jul 2019 04:08:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F09021880;
+        Fri, 19 Jul 2019 04:08:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509294;
-        bh=U0e1hfcszPJLc7pIVa6axSW23a8D+Vk7pOBpIP1Z8SI=;
+        s=default; t=1563509300;
+        bh=d3e4tqvNiIM0DHagGPl0Sq0p/6aSS+We4bM12lQE+Fs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xgTde1aWedT764FgkoMqkmzAH6DrMpZQYGfBK+abI9gV+aZ16tjzoX1sqAMb2GsuV
-         UWCREZtuPcAsrEZoSRkEe3osGLRHgPtmW1V+NWWf22YXgD+LNBrhEtQ1wCidfenXgi
-         UlIKt5OqBYcl+Wp3CtMUT2QBmOmRgkwh1LpjlLeo=
+        b=Lh41Agavwb44jt3CXAUMuEKl86LVl81H1aGy4vV1RFitdoqg7L++cKTB0fuNUiVVo
+         PZbUG4mHVQtaDnuBEegyMZ9s/XiIh08nSQgcs0Nwx1TBYsI1/SHQ99qvlU1GJ0q9nt
+         6uzFKcv7niG+FJOOaeQY69WjRu7RNuwf6EtduU60=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 020/101] drm/crc-debugfs: User irqsafe spinlock in drm_crtc_add_crc_entry
-Date:   Fri, 19 Jul 2019 00:06:11 -0400
-Message-Id: <20190719040732.17285-20-sashal@kernel.org>
+Cc:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 023/101] tty/serial: digicolor: Fix digicolor-usart already registered warning
+Date:   Fri, 19 Jul 2019 00:06:14 -0400
+Message-Id: <20190719040732.17285-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
 References: <20190719040732.17285-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -51,51 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
 
-[ Upstream commit 1882018a70e06376234133e69ede9dd743b4dbd9 ]
+[ Upstream commit c7ad9ba0611c53cfe194223db02e3bca015f0674 ]
 
-We can be called from any context, we need to be prepared.
+When modprobe/rmmod/modprobe module, if platform_driver_register() fails,
+the kernel complained,
 
-Noticed this while hacking on vkms, which calls this function from a
-normal worker. Which really upsets lockdep.
+  proc_dir_entry 'driver/digicolor-usart' already registered
+  WARNING: CPU: 1 PID: 5636 at fs/proc/generic.c:360 proc_register+0x19d/0x270
 
-Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Emil Velikov <emil.velikov@collabora.com>
-Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190605194556.16744-1-daniel.vetter@ffwll.ch
+Fix this by adding uart_unregister_driver() when platform_driver_register() fails.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Acked-by: Baruch Siach <baruch@tkos.co.il>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_debugfs_crc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/tty/serial/digicolor-usart.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_debugfs_crc.c b/drivers/gpu/drm/drm_debugfs_crc.c
-index 99961192bf03..a334a82fcb36 100644
---- a/drivers/gpu/drm/drm_debugfs_crc.c
-+++ b/drivers/gpu/drm/drm_debugfs_crc.c
-@@ -379,8 +379,9 @@ int drm_crtc_add_crc_entry(struct drm_crtc *crtc, bool has_frame,
- 	struct drm_crtc_crc *crc = &crtc->crc;
- 	struct drm_crtc_crc_entry *entry;
- 	int head, tail;
-+	unsigned long flags;
+diff --git a/drivers/tty/serial/digicolor-usart.c b/drivers/tty/serial/digicolor-usart.c
+index f460cca139e2..13ac36e2da4f 100644
+--- a/drivers/tty/serial/digicolor-usart.c
++++ b/drivers/tty/serial/digicolor-usart.c
+@@ -541,7 +541,11 @@ static int __init digicolor_uart_init(void)
+ 	if (ret)
+ 		return ret;
  
--	spin_lock(&crc->lock);
-+	spin_lock_irqsave(&crc->lock, flags);
- 
- 	/* Caller may not have noticed yet that userspace has stopped reading */
- 	if (!crc->entries) {
-@@ -411,7 +412,7 @@ int drm_crtc_add_crc_entry(struct drm_crtc *crtc, bool has_frame,
- 	head = (head + 1) & (DRM_CRC_ENTRIES_NR - 1);
- 	crc->head = head;
- 
--	spin_unlock(&crc->lock);
-+	spin_unlock_irqrestore(&crc->lock, flags);
- 
- 	wake_up_interruptible(&crc->wq);
+-	return platform_driver_register(&digicolor_uart_platform);
++	ret = platform_driver_register(&digicolor_uart_platform);
++	if (ret)
++		uart_unregister_driver(&digicolor_uart);
++
++	return ret;
+ }
+ module_init(digicolor_uart_init);
  
 -- 
 2.20.1
