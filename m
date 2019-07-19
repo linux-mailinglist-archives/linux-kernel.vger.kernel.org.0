@@ -2,90 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D9506E672
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 15:33:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3165B6E675
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 15:33:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728991AbfGSNbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 09:31:44 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43447 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728163AbfGSNbo (ORCPT
+        id S1729049AbfGSNbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 09:31:49 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36871 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728432AbfGSNbr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 09:31:44 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f25so14472720pgv.10
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 06:31:43 -0700 (PDT)
+        Fri, 19 Jul 2019 09:31:47 -0400
+Received: by mail-pl1-f196.google.com with SMTP id b3so15651411plr.4
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 06:31:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=MVr0XIO31Bkuy2FDATI2mwycXO2udY8JgwdYSo9e+8w=;
-        b=pHLK0RdTzIiVUlo4jNpM+6x8mkmhdSmNWjyd1KwT2Bp7UBpFR8mTwiLUCZhjwwCN6X
-         zrTcQmun3ZX/td2Vxb/qXFKA9qPC0XbhwnEbFoui6Bgh9+mQz2nSFbnFyCX/IzYidMGU
-         ECLsEjIgbbahw5lcOzQCuUaVid/sOxTAFzVg2djQ7TQb9c9woArMBsXwnAoLzGQ+smWi
-         3iDHfEkJEIGFOhf3ZWDyKj8unfJf5rIle2647cJDwOIfTFYE3jCZn0k/W3lX76mqjqBD
-         HE9FaX0zr0SnsIxYp6qeNeDo2GxvNI14+FdsS9FVmUeYyvMWuazxYj6NLR/4/9joy+X7
-         v9Ng==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=mGGBQjuamiUtrVxadzRH0T3QChYv88JTRGFWYKUNnp4=;
+        b=FBEmjb0qrVWLovbPmr7DSDJHa+ihZqziFBLKc/xL8I6kdno/oQgbE2eWdUGo1V4KIn
+         keVyNUINecuyEzsF4Pz97IJAyu1G9NhmFr6XVQsfEgff2zWdlqlxMfY9CICQOuvud5X2
+         BG2PDCVMRRwo3Ok7Atlz+hLmcIFNmVATqEBo2B9ffRxDN/v8U3HG6L1w5FsTCbyUKhso
+         UzucxMWIBB/CfuBZYThIMoXLA8Qc0KWuAZtXcwoZ/MG3BfFPAlxyjntA3iTqXS4j96SM
+         dOQgPr2eEl6FwRMRXcMFol9yqqITJPKljakK4E1ezN5mP/WIi4XCuH0G2eSx0i1yULa3
+         eF+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MVr0XIO31Bkuy2FDATI2mwycXO2udY8JgwdYSo9e+8w=;
-        b=Z5xJKvjiGHTTH7kDsaBxqRph+qjb9ZMuH4tZ7A7Rpqtlvkcox6OFaz1Cb6hpLFbPp5
-         wD192/Xu8SXs1VyLGLyPvcpNUVwQtoIa6do7K3s4wjSkcnhC2fdILyKukyF7K20ooAC+
-         7nOXpV2OA8pYRnW547LDh65V80k3URWHkwtkedvBWCfSkJNmbXjgayIQElHfyyq4I6ii
-         FZ9M6eGsss2hRRxR4ybxldnz+YGRpLFDBoa25Z3ohKvcBDEzXRRhpHxL3dwSilhBO3X6
-         MG2Od8pMNJodahdr1jNwcK2bK6Ps163UwveJXVa3uN42noT51Wko7kwxwCIAEAR8gBuw
-         TSPQ==
-X-Gm-Message-State: APjAAAVomABBfp0hj0e+0ZsDXav7NySvjYLZKPQm5/KcQWUnmvrCSQIV
-        sWaYJdUXpfS080qlhnIF7A3V6jdzzz2PPA==
-X-Google-Smtp-Source: APXvYqyr0/brVyGxhb4PbxwxryDlUtxweTQv+DfpIhIHoLlaxUEBwoAR5YXbBh7iCb3AxDIrPXfxIQ==
-X-Received: by 2002:a65:4786:: with SMTP id e6mr52906473pgs.448.1563543103118;
-        Fri, 19 Jul 2019 06:31:43 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=mGGBQjuamiUtrVxadzRH0T3QChYv88JTRGFWYKUNnp4=;
+        b=uT0+tYYfGPCbxjhw1BoxF6eGw+PPX1P3X0b4oGkD/FcYNK9QdbmI9Ck4w+a3vFNLz3
+         zEZujfOnEYs5hn531HuE89u7Bd2SF1QDxvLx0NbAzMr2g/jkhv5ZBex/4jFXiPaLdBzd
+         6XSrpp10jRsNpDWF0tD/cNkSieh0DUdxZ7herQi6cX/fi+JBCrxEchy1ElSLgrZXsebq
+         P/XZ1POeTHkFrNVvK9q+qf2ABNj/5pvI7Z0KLWkwNhwVCTKUVJXOhHbLlfo9FB3z56DO
+         ywEWXL7nHvKlai2sBzowCDcag9xRPSkwwEvONoYdvjBbL2ifZV1o17El2iO7ij8K+bH/
+         sfHA==
+X-Gm-Message-State: APjAAAUkYiOrJ6x0MxMU7/D4q9FL/lAGCZTwObZexDdBERiabxMrw/0k
+        KXl/+heoDNx2dq5piI7ns+95LhyYp3sUdA==
+X-Google-Smtp-Source: APXvYqzejEADmz1oEMYuwz2STWJSzqbdGnEcAnx3Y/w6xRj0RFlUPU/CKmc4ymAW+ztfJM9WMDoFOw==
+X-Received: by 2002:a17:902:be12:: with SMTP id r18mr54212293pls.341.1563543106635;
+        Fri, 19 Jul 2019 06:31:46 -0700 (PDT)
 Received: from bogon.bytedance.net ([61.120.150.76])
-        by smtp.gmail.com with ESMTPSA id x9sm37875954pfn.177.2019.07.19.06.31.39
+        by smtp.gmail.com with ESMTPSA id x9sm37875954pfn.177.2019.07.19.06.31.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 19 Jul 2019 06:31:42 -0700 (PDT)
+        Fri, 19 Jul 2019 06:31:46 -0700 (PDT)
 From:   Fei Li <lifei.shirley@bytedance.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Jason Wang <jasowang@redhat.com>, Pawel Moll <pawel.moll@arm.com>,
         "Michael S . Tsirkin" <mst@redhat.com>,
         Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Fam Zheng <zhengfeiran@bytedance.com>,
-        Fei Li <lifei.shirley@bytedance.com>
-Subject: [PATCH v1 0/2] virtio-mmio: support multiple interrupt vectors
-Date:   Fri, 19 Jul 2019 21:31:33 +0800
-Message-Id: <20190719133135.32418-1-lifei.shirley@bytedance.com>
+        Fam Zheng <zhengfeiran@bytedance.com>
+Subject: [PATCH 1/2] virtio-mmio: Process vrings more proactively
+Date:   Fri, 19 Jul 2019 21:31:34 +0800
+Message-Id: <20190719133135.32418-2-lifei.shirley@bytedance.com>
 X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+In-Reply-To: <20190719133135.32418-1-lifei.shirley@bytedance.com>
+References: <20190719133135.32418-1-lifei.shirley@bytedance.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Fam Zheng <zhengfeiran@bytedance.com>
 
-This patch series implements multiple interrupt vectors support for
-virtio-mmio device. This is especially useful for multiqueue vhost-net
-device when using firecracker micro-vms as the guest.
+This allows the backend to _not_ trap mmio read of the status register
+after injecting IRQ in the data path, which can improve the performance
+significantly by avoiding a vmexit for each interrupt.
 
-Test result:
-With 8 vcpus & 8 net queues set, one vhost-net device with 8 irqs can
-receive 9 times more pps comparing with only one irq:
-- 564830.38 rxpck/s for 8 irqs on
-- 67665.06 rxpck/s for 1 irq on
+More importantly it also makes it possible for Firecracker to hook up
+virtio-mmio with vhost-net, in which case there isn't a way to implement
+proper status register handling.
 
-Please help to review, thanks!
+For a complete backend that does set either INT_CONFIG bit or INT_VRING
+bit upon generating irq, what happens hasn't changed.
 
-Have a nice day
-Fei
+Signed-off-by: Fam Zheng <zhengfeiran@bytedance.com>
+---
+ drivers/virtio/virtio_mmio.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-
-Fam Zheng (1):
-  virtio-mmio: Process vrings more proactively
-
-Fei Li (1):
-  virtio-mmio: support multiple interrupt vectors
-
- drivers/virtio/virtio_mmio.c | 238 +++++++++++++++++++++++++++++++++++--------
- 1 file changed, 196 insertions(+), 42 deletions(-)
-
+diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
+index e09edb5c5e06..9b42502b2204 100644
+--- a/drivers/virtio/virtio_mmio.c
++++ b/drivers/virtio/virtio_mmio.c
+@@ -295,9 +295,7 @@ static irqreturn_t vm_interrupt(int irq, void *opaque)
+ 	if (unlikely(status & VIRTIO_MMIO_INT_CONFIG)) {
+ 		virtio_config_changed(&vm_dev->vdev);
+ 		ret = IRQ_HANDLED;
+-	}
+-
+-	if (likely(status & VIRTIO_MMIO_INT_VRING)) {
++	} else {
+ 		spin_lock_irqsave(&vm_dev->lock, flags);
+ 		list_for_each_entry(info, &vm_dev->virtqueues, node)
+ 			ret |= vring_interrupt(irq, info->vq);
 -- 
 2.11.0
 
