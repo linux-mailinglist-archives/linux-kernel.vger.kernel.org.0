@@ -2,101 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FA906D7D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 748AC6D7D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:37:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726211AbfGSAgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 20:36:08 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:54667 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726028AbfGSAgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 20:36:08 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45qX9d58p6z9s3Z;
-        Fri, 19 Jul 2019 10:36:05 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1563496565;
-        bh=A+TA+2R+siqm/hZzdzM+n47UXTwyBo0+6SZwnCK3ldU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=exsrLHOk4/j+LH0kK1phxyWNQDVN2ShZz3o6sfxhjGrfJGYy/AtnN7oWTFAnGjGNz
-         pdB1v94JZKzv/9N4KJingJ3MQEeaWU0Vgi/Yn8aVSyPhlFoRl+LRboC3rhB+VZNz6L
-         ZZaRP89R1IKh6wFN3FOWzNwGUOubYLrH2TK9myeZyGZfINY00eHlYRNI9bVX2BpjKQ
-         x/aOHb0mkeVFmRJxiscHN9eLF/WyoLtcIWdx3HO07+wSjwTNhZ6vKZ4wxKa33BcqsO
-         zqn/qiH0uT554GHjOjYapmm6ATgvAEZT0EhIzG1lzyAzgNuyGWmpv8iHzxTicrKzX0
-         7Ig7Vb2Jh0Q4g==
-Date:   Fri, 19 Jul 2019 10:36:05 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: linux-next: Tree for Jul 18 (header build error)
-Message-ID: <20190719103605.5ee9198a@canb.auug.org.au>
-In-Reply-To: <20190719100557.3ead3285@canb.auug.org.au>
-References: <20190718133751.3cf036be@canb.auug.org.au>
-        <127d228c-322d-6349-382b-d304974df148@infradead.org>
-        <20190719100557.3ead3285@canb.auug.org.au>
+        id S1726422AbfGSAg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 20:36:59 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44949 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbfGSAg6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 20:36:58 -0400
+Received: by mail-pl1-f196.google.com with SMTP id t14so14692365plr.11
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Jul 2019 17:36:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OnU2jQx1H+2VCBHEGo1995LVw57aSop7IIeZNBH89nc=;
+        b=PIBTVtTqR6+ev2CTE/DKLURMWifMrFafD1Q/T4svlXBkiVuxjUkHCnMG1lfswD8T5o
+         SgX5fQFN3SxryUwTHj74wUzFhGQ40vKyiFtztJTX7ZpRVQ8NC3wNSUUhYHSB5LpPv/kn
+         zkCO5VB1D2Jbem/fs7JWp0gL+rpoTsp8TsJSEQvoOaBgrKd9oSJuvDg3q2bbbJpfNcT1
+         1Jsr6KcydEMbUD0wO5fliFID/VjPvBFec+xMzAl1JpYwvngWXGClZ4pztq8Ot2oAO6p7
+         g300dx6bwoNHVv6bq/1oq4pooVSrXDJzv/hvMSv0TAOOn31teG9WAuJs1KTQ9/UFaqg+
+         MroQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OnU2jQx1H+2VCBHEGo1995LVw57aSop7IIeZNBH89nc=;
+        b=ZTGIsQ9tsIUjCsOx4Nnu2g6BVwp/iZr+bEf2U/imq5+DeVNZGO6NpejoOhrIWq9VKN
+         YEynk1z4yAh19dBnBzrBOd8hDAxPXIGoW0WfJxLDQCXqey6ECmmDG4QzwbnEimwuQ1PI
+         VQJYE2QtEEs2laYgna585LLzoQRuiuCWOHZ3Y2OSRsSIB5hxAbuS/VjRebz+MCVrL2F+
+         VPXp3eNwrL8nXNImR8DagKr1r03/YT6L0Vzj+7+hkimKlIMwhI8QEWZAvEGKQGAsUoZ+
+         iVSn1W79JcrcND6B1ujysLVnqipkfO1zsmQr4tWwiV0hkzgy29Gf0zruaz2m/wOXP9ac
+         7bog==
+X-Gm-Message-State: APjAAAWqYDQq5EYP/LUKQepXdbXbTDuQ4bjyODzuGrq5y2CkN04UNcw0
+        wxWRYloLux6avdqmWICg04lU0w==
+X-Google-Smtp-Source: APXvYqxCMvNQL956cnE+p4k3mnSVCs+/HR7epvTt3H3ohlGcfLW7nf/6SFkkyRx2IsDwIHxlAocz9A==
+X-Received: by 2002:a17:902:9688:: with SMTP id n8mr52272137plp.227.1563496617905;
+        Thu, 18 Jul 2019 17:36:57 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id r6sm53800797pjb.22.2019.07.18.17.36.56
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 18 Jul 2019 17:36:57 -0700 (PDT)
+Date:   Thu, 18 Jul 2019 17:36:55 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Benjamin LaHaise <ben@communityfibre.ca>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] aio: Support read/write with non-iter file-ops
+Message-ID: <20190719003655.GO30636@minitux>
+References: <20190718231054.8175-1-bjorn.andersson@linaro.org>
+ <20190718231751.GV17978@ZenIV.linux.org.uk>
+ <20190718234352.GN30636@minitux>
+ <20190718235616.GM29731@kvack.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/bCrC30V_16tyleeOcNzjhRQ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190718235616.GM29731@kvack.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/bCrC30V_16tyleeOcNzjhRQ
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Thu 18 Jul 16:56 PDT 2019, Benjamin LaHaise wrote:
 
-Hi all,
+> On Thu, Jul 18, 2019 at 04:43:52PM -0700, Bjorn Andersson wrote:
+> > On Thu 18 Jul 16:17 PDT 2019, Al Viro wrote:
+> > 
+> > > On Thu, Jul 18, 2019 at 04:10:54PM -0700, Bjorn Andersson wrote:
+> > > > Implement a wrapper for aio_read()/write() to allow async IO on files
+> > > > not implementing the iter version of read/write, such as sysfs. This
+> > > > mimics how readv/writev uses non-iter ops in do_loop_readv_writev().
+> > > 
+> > > IDGI.  How would that IO manage to be async?  And what's the point
+> > > using aio in such situations in the first place?
+> > 
+> > The point is that an application using aio to submit io operations on a
+> > set of files, can use the same mechanism to read/write files that
+> > happens to be implemented by driver only implementing read/write (not
+> > read_iter/write_iter) in the registered file_operations struct, such as
+> > kernfs.
+> > 
+> > In this particular case I have a sysfs file that is accessing hardware
+> > and hence will block for a while and using this patch I can io_submit()
+> > a write and handle the completion of this in my normal event loop.
+> > 
+> > 
+> > Each individual io operation will be just as synchronous as the current
+> > iter-based mechanism - for the drivers that implement that.
+> 
+> Just adding the fops is not enough.  I have patches floating around at
+> Solace that add thread based fallbacks for files that don't have an aio
+> read / write implementation, but I'm not working on that code any more.
 
-On Fri, 19 Jul 2019 10:05:57 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Thu, 18 Jul 2019 10:00:22 -0700 Randy Dunlap <rdunlap@infradead.org> w=
-rote:
-> >
-> > on x86_64, when CONFIG_BLOCK is not set:
-> >=20
-> >   CC      include/linux/iomap.h.s
-> > In file included from <command-line>:0:0:
-> > ./../include/linux/iomap.h: In function =E2=80=98iomap_sector=E2=80=99:
-> > ./../include/linux/iomap.h:76:48: error: =E2=80=98SECTOR_SHIFT=E2=80=99=
- undeclared (first use in this function); did you mean =E2=80=98SECTIONS_SH=
-IFT=E2=80=99?
-> >   return (iomap->addr + pos - iomap->offset) >> SECTOR_SHIFT;
-> >                                                 ^~~~~~~~~~~~ =20
->=20
-> include/linux/iomap.h should only be used when CONFIG_BLOCK is set (if
-> you follow the Kconfig trail).  So maybe this header should only be
-> compile tested if CONFIG_BLOCK is set.
+My bad. Took another look and now I see the bigger picture of how this
+is currently implemented and why just adding the fops would defeat the
+purpose of the api.
 
-Or maybe fs/iomap/ needs to grow a private header file for stuff like
-iomap_sector() ?
+Sorry for the noise.
 
---=20
-Cheers,
-Stephen Rothwell
+> The thread based methods were quite useful in applications that had a need
+> for using other kernel infrastructure in their main event loops.
+> 
 
---Sig_/bCrC30V_16tyleeOcNzjhRQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Yes indeed.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0xEHUACgkQAVBC80lX
-0GzBlAgAi0HSYElWpG7qvU6y21A8vri4QTUVA0mIE8DqRqX2pjgUOPmQaaGge2u+
-Q58vKppAl1Dzt8qbUI9B6xBR4TrbXjqTTRhZHTuWwO0UbHB8rBW4amAVqZMFlXx6
-iJq8CdnB/Cdltv434Nilsk5R9PIn3ePDgvyxuc9xgEJ3ZIckceT/zntjqNiJJUBs
-egV9XQokaGfQRFKnVK6sqrRgZV0k7YU+Yb396N8I8+Zy3PKMCvj1WERFlp+BOmJ5
-TTAii5R0hjA5cCLnYia6f4LCO+bNWduuuiv0/oUv32iv0yWpgFLKbqO+astE09f4
-3JMCCpjfRvlGLUbZZTneZdp+h4AHlQ==
-=+bDW
------END PGP SIGNATURE-----
-
---Sig_/bCrC30V_16tyleeOcNzjhRQ--
+Regards,
+Bjorn
