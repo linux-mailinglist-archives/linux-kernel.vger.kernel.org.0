@@ -2,36 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E643B6EABB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 20:37:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED15E6EABC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 20:39:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731774AbfGSSgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 14:36:51 -0400
-Received: from mga03.intel.com ([134.134.136.65]:53788 "EHLO mga03.intel.com"
+        id S1731804AbfGSSiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 14:38:08 -0400
+Received: from mga01.intel.com ([192.55.52.88]:55983 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727970AbfGSSgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 14:36:51 -0400
+        id S1727970AbfGSSiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 14:38:08 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2019 11:36:50 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2019 11:38:07 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,283,1559545200"; 
-   d="scan'208";a="179701029"
+   d="scan'208";a="179701306"
 Received: from ray.jf.intel.com (HELO [10.7.201.140]) ([10.7.201.140])
-  by orsmga002.jf.intel.com with ESMTP; 19 Jul 2019 11:36:50 -0700
-Subject: Re: [PATCH v3 3/9] x86/mm/tlb: Open-code on_each_cpu_cond_mask() for
- tlb_is_not_lazy()
+  by orsmga002.jf.intel.com with ESMTP; 19 Jul 2019 11:38:07 -0700
+Subject: Re: [PATCH v3 5/9] x86/mm/tlb: Privatize cpu_tlbstate
 To:     Nadav Amit <namit@vmware.com>, Andy Lutomirski <luto@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>
 Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
+        Ingo Molnar <mingo@redhat.com>
 References: <20190719005837.4150-1-namit@vmware.com>
- <20190719005837.4150-4-namit@vmware.com>
+ <20190719005837.4150-6-namit@vmware.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -77,12 +74,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
  hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
  vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-Message-ID: <8bf005e2-7ac7-f1cf-eca1-0e152dd912a7@intel.com>
-Date:   Fri, 19 Jul 2019 11:36:50 -0700
+Message-ID: <052e9e57-8f72-d005-f0f7-4060bc665ba4@intel.com>
+Date:   Fri, 19 Jul 2019 11:38:07 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190719005837.4150-4-namit@vmware.com>
+In-Reply-To: <20190719005837.4150-6-namit@vmware.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -92,13 +89,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 7/18/19 5:58 PM, Nadav Amit wrote:
-> @@ -865,7 +893,7 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
->  	if (cpumask_test_cpu(cpu, &batch->cpumask)) {
->  		lockdep_assert_irqs_enabled();
->  		local_irq_disable();
-> -		flush_tlb_func_local(&full_flush_tlb_info);
-> +		flush_tlb_func_local((void *)&full_flush_tlb_info);
->  		local_irq_enable();
->  	}
+> +struct tlb_state_shared {
+> +	/*
+> +	 * We can be in one of several states:
+> +	 *
+> +	 *  - Actively using an mm.  Our CPU's bit will be set in
+> +	 *    mm_cpumask(loaded_mm) and is_lazy == false;
+> +	 *
+> +	 *  - Not using a real mm.  loaded_mm == &init_mm.  Our CPU's bit
+> +	 *    will not be set in mm_cpumask(&init_mm) and is_lazy == false.
+> +	 *
+> +	 *  - Lazily using a real mm.  loaded_mm != &init_mm, our bit
+> +	 *    is set in mm_cpumask(loaded_mm), but is_lazy == true.
+> +	 *    We're heuristically guessing that the CR3 load we
+> +	 *    skipped more than makes up for the overhead added by
+> +	 *    lazy mode.
+> +	 */
+> +	bool is_lazy;
+> +};
+> +DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state_shared, cpu_tlbstate_shared);
 
-This looks like superfluous churn.  Is it?
+Could we get a comment about what "shared" means and why we need shared
+state?
+
+Should we change 'tlb_state' to 'tlb_state_private'?
+
