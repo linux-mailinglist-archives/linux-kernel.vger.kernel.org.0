@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6562D6DA6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:02:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E3786DA71
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:02:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfGSECF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:02:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33586 "EHLO mail.kernel.org"
+        id S1729865AbfGSECJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:02:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727665AbfGSEBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:01:50 -0400
+        id S1729702AbfGSEBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:01:55 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B440B21882;
-        Fri, 19 Jul 2019 04:01:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F1A521873;
+        Fri, 19 Jul 2019 04:01:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508908;
-        bh=Sa2/51Z6qR6YnpSIFqrqfzBUcq3VEdtQQgHmAsLWhMg=;
+        s=default; t=1563508914;
+        bh=9GAUxEDGrz6p+X4090gdjhdKhYDC2727M0VEUVEW7Zk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bw4VMMPm9IG/P+OOwXL0Mu5yA+AWTsVsM9hh4I8UnkDA5n/qb+mLXXMpA54k6qP8z
-         9aJepyTWOlt+YnBz83GayDFL+459HoN3yP4tD6VNUKKaczwsCNahcf077LXEaCA13T
-         z4puqImr3cx3ff720/ldoSq3Jd6Ws+y1k2RC+NvI=
+        b=P1bvtev9IcCHwx/bTh9HILe944CP2yEbgTErDWs2hT5DpSX8ktcrcOtcxlBnU9qBv
+         9ays0IlEp5o6wxMIUlgxL69Efwd76urRw+nt0Vqu8/PGLNBads84SX2vHyOdmjd5kf
+         Nqgz3A4YggRPXpLlmgxo5HGKzdFx8D8+zeU3UQ+k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Minwoo Im <minwoo.im.dev@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.2 153/171] nvme: fix NULL deref for fabrics options
-Date:   Thu, 18 Jul 2019 23:56:24 -0400
-Message-Id: <20190719035643.14300-153-sashal@kernel.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 5.2 156/171] mm/kmemleak.c: fix check for softirq context
+Date:   Thu, 18 Jul 2019 23:56:27 -0400
+Message-Id: <20190719035643.14300-156-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -45,86 +45,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Minwoo Im <minwoo.im.dev@gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
 
-[ Upstream commit 7d30c81b80ea9b0812d27030a46a5bf4c4e328f5 ]
+[ Upstream commit 6ef9056952532c3b746de46aa10d45b4d7797bd8 ]
 
-git://git.infradead.org/nvme.git nvme-5.3 branch now causes the
-following NULL deref oops.  Check the ctrl->opts first before the deref.
+in_softirq() is a wrong predicate to check if we are in a softirq
+context.  It also returns true if we have BH disabled, so objects are
+falsely stamped with "softirq" comm.  The correct predicate is
+in_serving_softirq().
 
-[   16.337581] BUG: kernel NULL pointer dereference, address: 0000000000000056
-[   16.338551] #PF: supervisor read access in kernel mode
-[   16.338551] #PF: error_code(0x0000) - not-present page
-[   16.338551] PGD 0 P4D 0
-[   16.338551] Oops: 0000 [#1] SMP PTI
-[   16.338551] CPU: 2 PID: 1035 Comm: kworker/u16:5 Not tainted 5.2.0-rc6+ #1
-[   16.338551] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.2-0-gf9626ccb91-prebuilt.qemu-project.org 04/01/2014
-[   16.338551] Workqueue: nvme-wq nvme_scan_work [nvme_core]
-[   16.338551] RIP: 0010:nvme_validate_ns+0xc9/0x7e0 [nvme_core]
-[   16.338551] Code: c0 49 89 c5 0f 84 00 07 00 00 48 8b 7b 58 e8 be 48 39 c1 48 3d 00 f0 ff ff 49 89 45 18 0f 87 a4 06 00 00 48 8b 93 70 0a 00 00 <80> 7a 56 00 74 0c 48 8b 40 68 83 48 3c 08 49 8b 45 18 48 89 c6 bf
-[   16.338551] RSP: 0018:ffffc900024c7d10 EFLAGS: 00010283
-[   16.338551] RAX: ffff888135a30720 RBX: ffff88813a4fd1f8 RCX: 0000000000000007
-[   16.338551] RDX: 0000000000000000 RSI: ffffffff8256dd38 RDI: ffff888135a30720
-[   16.338551] RBP: 0000000000000001 R08: 0000000000000007 R09: ffff88813aa6a840
-[   16.338551] R10: 0000000000000001 R11: 000000000002d060 R12: ffff88813a4fd1f8
-[   16.338551] R13: ffff88813a77f800 R14: ffff88813aa35180 R15: 0000000000000001
-[   16.338551] FS:  0000000000000000(0000) GS:ffff88813ba80000(0000) knlGS:0000000000000000
-[   16.338551] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   16.338551] CR2: 0000000000000056 CR3: 000000000240a002 CR4: 0000000000360ee0
-[   16.338551] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   16.338551] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   16.338551] Call Trace:
-[   16.338551]  nvme_scan_work+0x2c0/0x340 [nvme_core]
-[   16.338551]  ? __switch_to_asm+0x40/0x70
-[   16.338551]  ? _raw_spin_unlock_irqrestore+0x18/0x30
-[   16.338551]  ? try_to_wake_up+0x408/0x450
-[   16.338551]  process_one_work+0x20b/0x3e0
-[   16.338551]  worker_thread+0x1f9/0x3d0
-[   16.338551]  ? cancel_delayed_work+0xa0/0xa0
-[   16.338551]  kthread+0x117/0x120
-[   16.338551]  ? kthread_stop+0xf0/0xf0
-[   16.338551]  ret_from_fork+0x3a/0x50
-[   16.338551] Modules linked in: nvme nvme_core
-[   16.338551] CR2: 0000000000000056
-[   16.338551] ---[ end trace b9bf761a93e62d84 ]---
-[   16.338551] RIP: 0010:nvme_validate_ns+0xc9/0x7e0 [nvme_core]
-[   16.338551] Code: c0 49 89 c5 0f 84 00 07 00 00 48 8b 7b 58 e8 be 48 39 c1 48 3d 00 f0 ff ff 49 89 45 18 0f 87 a4 06 00 00 48 8b 93 70 0a 00 00 <80> 7a 56 00 74 0c 48 8b 40 68 83 48 3c 08 49 8b 45 18 48 89 c6 bf
-[   16.338551] RSP: 0018:ffffc900024c7d10 EFLAGS: 00010283
-[   16.338551] RAX: ffff888135a30720 RBX: ffff88813a4fd1f8 RCX: 0000000000000007
-[   16.338551] RDX: 0000000000000000 RSI: ffffffff8256dd38 RDI: ffff888135a30720
-[   16.338551] RBP: 0000000000000001 R08: 0000000000000007 R09: ffff88813aa6a840
-[   16.338551] R10: 0000000000000001 R11: 000000000002d060 R12: ffff88813a4fd1f8
-[   16.338551] R13: ffff88813a77f800 R14: ffff88813aa35180 R15: 0000000000000001
-[   16.338551] FS:  0000000000000000(0000) GS:ffff88813ba80000(0000) knlGS:0000000000000000
-[   16.338551] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   16.338551] CR2: 0000000000000056 CR3: 000000000240a002 CR4: 0000000000360ee0
-[   16.338551] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   16.338551] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+If user does cat from /sys/kernel/debug/kmemleak previously they would
+see this, which is clearly wrong, this is system call context (see the
+comm):
 
-Fixes: 958f2a0f8121 ("nvme-tcp: set the STABLE_WRITES flag when data digests are enabled")
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Keith Busch <kbusch@kernel.org>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Minwoo Im <minwoo.im.dev@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+unreferenced object 0xffff88805bd661c0 (size 64):
+  comm "softirq", pid 0, jiffies 4294942959 (age 12.400s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 ff ff ff ff 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<0000000007dcb30c>] kmemleak_alloc_recursive include/linux/kmemleak.h:55 [inline]
+    [<0000000007dcb30c>] slab_post_alloc_hook mm/slab.h:439 [inline]
+    [<0000000007dcb30c>] slab_alloc mm/slab.c:3326 [inline]
+    [<0000000007dcb30c>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
+    [<00000000969722b7>] kmalloc include/linux/slab.h:547 [inline]
+    [<00000000969722b7>] kzalloc include/linux/slab.h:742 [inline]
+    [<00000000969722b7>] ip_mc_add1_src net/ipv4/igmp.c:1961 [inline]
+    [<00000000969722b7>] ip_mc_add_src+0x36b/0x400 net/ipv4/igmp.c:2085
+    [<00000000a4134b5f>] ip_mc_msfilter+0x22d/0x310 net/ipv4/igmp.c:2475
+    [<00000000d20248ad>] do_ip_setsockopt.isra.0+0x19fe/0x1c00 net/ipv4/ip_sockglue.c:957
+    [<000000003d367be7>] ip_setsockopt+0x3b/0xb0 net/ipv4/ip_sockglue.c:1246
+    [<000000003c7c76af>] udp_setsockopt+0x4e/0x90 net/ipv4/udp.c:2616
+    [<000000000c1aeb23>] sock_common_setsockopt+0x3e/0x50 net/core/sock.c:3130
+    [<000000000157b92b>] __sys_setsockopt+0x9e/0x120 net/socket.c:2078
+    [<00000000a9f3d058>] __do_sys_setsockopt net/socket.c:2089 [inline]
+    [<00000000a9f3d058>] __se_sys_setsockopt net/socket.c:2086 [inline]
+    [<00000000a9f3d058>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2086
+    [<000000001b8da885>] do_syscall_64+0x7c/0x1a0 arch/x86/entry/common.c:301
+    [<00000000ba770c62>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+now they will see this:
+
+unreferenced object 0xffff88805413c800 (size 64):
+  comm "syz-executor.4", pid 8960, jiffies 4294994003 (age 14.350s)
+  hex dump (first 32 bytes):
+    00 7a 8a 57 80 88 ff ff e0 00 00 01 00 00 00 00  .z.W............
+    00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000c5d3be64>] kmemleak_alloc_recursive include/linux/kmemleak.h:55 [inline]
+    [<00000000c5d3be64>] slab_post_alloc_hook mm/slab.h:439 [inline]
+    [<00000000c5d3be64>] slab_alloc mm/slab.c:3326 [inline]
+    [<00000000c5d3be64>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
+    [<0000000023865be2>] kmalloc include/linux/slab.h:547 [inline]
+    [<0000000023865be2>] kzalloc include/linux/slab.h:742 [inline]
+    [<0000000023865be2>] ip_mc_add1_src net/ipv4/igmp.c:1961 [inline]
+    [<0000000023865be2>] ip_mc_add_src+0x36b/0x400 net/ipv4/igmp.c:2085
+    [<000000003029a9d4>] ip_mc_msfilter+0x22d/0x310 net/ipv4/igmp.c:2475
+    [<00000000ccd0a87c>] do_ip_setsockopt.isra.0+0x19fe/0x1c00 net/ipv4/ip_sockglue.c:957
+    [<00000000a85a3785>] ip_setsockopt+0x3b/0xb0 net/ipv4/ip_sockglue.c:1246
+    [<00000000ec13c18d>] udp_setsockopt+0x4e/0x90 net/ipv4/udp.c:2616
+    [<0000000052d748e3>] sock_common_setsockopt+0x3e/0x50 net/core/sock.c:3130
+    [<00000000512f1014>] __sys_setsockopt+0x9e/0x120 net/socket.c:2078
+    [<00000000181758bc>] __do_sys_setsockopt net/socket.c:2089 [inline]
+    [<00000000181758bc>] __se_sys_setsockopt net/socket.c:2086 [inline]
+    [<00000000181758bc>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2086
+    [<00000000d4b73623>] do_syscall_64+0x7c/0x1a0 arch/x86/entry/common.c:301
+    [<00000000c1098bec>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Link: http://lkml.kernel.org/r/20190517171507.96046-1-dvyukov@gmail.com
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/core.c | 2 +-
+ mm/kmemleak.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index b4048748551e..db5731657529 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -3257,7 +3257,7 @@ static int nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 		goto out_free_ns;
- 	}
- 
--	if (ctrl->opts->data_digest)
-+	if (ctrl->opts && ctrl->opts->data_digest)
- 		ns->queue->backing_dev_info->capabilities
- 			|= BDI_CAP_STABLE_WRITES;
- 
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 9dd581d11565..3e147ea83182 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -575,7 +575,7 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+ 	if (in_irq()) {
+ 		object->pid = 0;
+ 		strncpy(object->comm, "hardirq", sizeof(object->comm));
+-	} else if (in_softirq()) {
++	} else if (in_serving_softirq()) {
+ 		object->pid = 0;
+ 		strncpy(object->comm, "softirq", sizeof(object->comm));
+ 	} else {
 -- 
 2.20.1
 
