@@ -2,137 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B4816E7B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 17:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D8486E7C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 17:07:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730042AbfGSPGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 11:06:07 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:40846 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729961AbfGSPF7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 11:05:59 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190719150558euoutp02114e57da04d54209e5f3a9486a4d28d2~y10-LiRGM1492114921euoutp02F
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 15:05:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190719150558euoutp02114e57da04d54209e5f3a9486a4d28d2~y10-LiRGM1492114921euoutp02F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1563548758;
-        bh=uK2H2CY5YVkbPXh3EKmhTQmAPpi5mTFt1H3u7NFbf9M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dv4tnf/AnT0cnBAVTYhsnwdjULtrEcwhihAwb6cftM4K/SYNaSUOK9FRLT4cX3XNE
-         SuOZHyUCI4RJdmQbZxnZy+yes3F3iV3EzNLnkGl1FnfRH+UA6KjEaSG5yXidmVtyI9
-         buYpQC1MciosWsMQ5MVkumLT8zHK6/dg2CgHKZgo=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190719150557eucas1p2266c376b4f71c2df9f0d45e273004c64~y10_f-qVu2491724917eucas1p2I;
-        Fri, 19 Jul 2019 15:05:57 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id A3.19.04377.55CD13D5; Fri, 19
-        Jul 2019 16:05:57 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190719150556eucas1p2bc6f133c48ec1be9b36119a414887969~y1092WE_s1668816688eucas1p2D;
-        Fri, 19 Jul 2019 15:05:56 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190719150556eusmtrp2e4660feafb9c13e5be61d014a8ff74d1~y109oQf353114831148eusmtrp2C;
-        Fri, 19 Jul 2019 15:05:56 +0000 (GMT)
-X-AuditID: cbfec7f4-113ff70000001119-7b-5d31dc553c0b
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 74.9F.04146.45CD13D5; Fri, 19
-        Jul 2019 16:05:56 +0100 (BST)
-Received: from AMDC3218.DIGITAL.local (unknown [106.120.51.18]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190719150555eusmtip1ce8f0fdb626b0b71e4a3c68029e11ac2~y108yjwBz2871128711eusmtip10;
-        Fri, 19 Jul 2019 15:05:55 +0000 (GMT)
-From:   k.konieczny@partner.samsung.com
-To:     k.konieczny@partner.samsung.com
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v3 5/5] dt-bindings: devfreq: exynos-bus: remove unused
- property
-Date:   Fri, 19 Jul 2019 17:05:35 +0200
-Message-Id: <20190719150535.15501-6-k.konieczny@partner.samsung.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190719150535.15501-1-k.konieczny@partner.samsung.com>
+        id S1730150AbfGSPGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 11:06:42 -0400
+Received: from mail-eopbgr00065.outbound.protection.outlook.com ([40.107.0.65]:24198
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726072AbfGSPGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 11:06:41 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iffxJp1/zYSZ9rQOOP+na7f4Gx/RtfpNxKIfkknunR/KAw51doIQCGWjNarLYnnO5NeqJYeKOqkfhDSWbHth3qjR+kz30u72qykO5/BSXoTQ7H7lbK7INbehUEZSDPCIFsse3JQJbDSGBgyG1Ut5s8qJ0X7NgWxlAgoTPSBnkVL/rKjpdT3aar0/ieKT2f25Xb1oB2C69sc3XcQChZkgdTHieO16jf6q1YNaJ/Zjf0OgY/xD2bz8laSCp1b/530zkHSnhfhdnz1MhVtyKLCqvju7EUx6vGm5/6Om+H6Zt4HZYSFd/a36fBgl5ZG3LjIhzZalKUL5IVQLNTzI0M9rvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9z+3Xm1p3K11WOk1fC41X04qus8b22zfzhUMDmBZsG4=;
+ b=PP0b1Hldwq2FAqJYPbfutqg+e9LcM0L1RPi+c0TSQAbPE/Qn0qRge3z5GX2Eofr/6fk4rcR31AtRwJpa2Fu/7waG/2zWdLUl096SG7GS5uU9yRf5DhJptRPq7iOcoG7JabDKK0kqMRC5SuyfP65RKJZmneRvDfSvF+UlBDKs2ifkU7+3WBuJ6czbQoGkmaPOR6cOA9GHwWokoLOqPbngyZSwHjWav0q3+R1pBAUnZL0DYNhLBo2Tyh96M8KtZKIfD9msgsUuGF3iywezGnbuBsdwm8Hk45xWMS9tH2b0F+fvWZkARWU6emcnOB74ZcW1cLSGPmrQFf7xs3lohbeAeg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
+ header.d=nxp.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9z+3Xm1p3K11WOk1fC41X04qus8b22zfzhUMDmBZsG4=;
+ b=FKbO+xCzjIvr8ZuqgVcDrJ9eoclTMfYSj+dNZDku2VP0nSR4sjUxWSY+LcJFlCNPoGvMtR6ipGHBalQzhUucrDed2yPjKqfgX0P6VUYxhIL0YZHDPRl+O/WZRxrhzBmVpqRypX/7QTfDErzdNfTSR2jFjYF8Gkk6RYU3CWQtsP4=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3821.eurprd04.prod.outlook.com (52.134.16.30) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2073.14; Fri, 19 Jul 2019 15:06:38 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::7c64:5296:4607:e10]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::7c64:5296:4607:e10%5]) with mapi id 15.20.2073.012; Fri, 19 Jul 2019
+ 15:06:38 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v2 06/14] crypto: caam - check assoclen
+Thread-Topic: [PATCH v2 06/14] crypto: caam - check assoclen
+Thread-Index: AQHVPcSrPwrclwKlbUCTKS9P1HlDCw==
+Date:   Fri, 19 Jul 2019 15:06:38 +0000
+Message-ID: <VI1PR0402MB34850ACE9BD5CC43A150085798CB0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <1563494276-3993-1-git-send-email-iuliana.prodan@nxp.com>
+ <1563494276-3993-7-git-send-email-iuliana.prodan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8f46f3fc-aeb4-4584-65c5-08d70c5ab30c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3821;
+x-ms-traffictypediagnostic: VI1PR0402MB3821:
+x-microsoft-antispam-prvs: <VI1PR0402MB3821F8581C423E8D1392F6E198CB0@VI1PR0402MB3821.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 01039C93E4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(39860400002)(346002)(376002)(396003)(199004)(189003)(256004)(33656002)(4744005)(14444005)(53936002)(68736007)(74316002)(102836004)(71190400001)(71200400001)(53546011)(7696005)(6506007)(76176011)(14454004)(186003)(305945005)(4326008)(7736002)(66066001)(229853002)(5660300002)(9686003)(81156014)(76116006)(476003)(66946007)(55016002)(54906003)(3846002)(110136005)(44832011)(86362001)(6116002)(26005)(66476007)(25786009)(8936002)(99286004)(52536014)(66446008)(64756008)(66556008)(478600001)(446003)(2906002)(6246003)(6636002)(91956017)(316002)(81166006)(486006)(8676002)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3821;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: u/Rzpoq1sOteha7KBWzAcu0MpZeyqKa4WS3Xz+W9o3b45diA8YvFonAFvemSvK9dUy2c+abVNZKoKpNvcw+SgR/9va82JqpMsmQHGRTdISFdx0Pt8Euhcp3zbmt4vAi5CTYHq4JA6BIEfY05zHzZ91IETR5GAuG6YFMExjmSLG2BXngq9ku9PjBJwijyYt3rft9DKi2Q9c3V4p8k5u40V3LykEqhQZwKLADGoIi3Ac2k8VafUAlUIm1HNbOON38Bfp6T+egui9gmyigzxfTvWzDKslF+zUXIqk5dJEgsgIAloS7ta+suW4UlTHto0R/+2hQDfu5vMEKVwFq915VtLe4Eclnj9U8fTrmdQ1+pABPJRx8PZ++o5J3hR1e0aeoOX7bxfQBuc/yHdKXpvUolMjlj+zjvaJekZy58H3pgrW0=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTYRz1u4/d62pynYYfKoaLpILyQcEXRlQYLQgqe0APyZUXlZzKbvNV
-        kT00N2iZVtoKNdIU89HmMh8pvtp6+Egis3QiuShNLdtIjXK5Xa3+O7/zO+c7vwMfjYuHSG86
-        Nv4Uq4iXxUkEQqLWONu99sBgcETQz4teSJdfTaK3tk8kKuzoJpGm2Q7Q1ZEvOOrpeUihrgvj
-        FNKP9JHodcMdAbJe6QAov6cZQ5UdZgqVvO3F0MD5MgEan+nCUEZTB4Xm+nQEqhk2CraIpRUF
-        FUCqL1cJpDXF56Stk08wqcZQDqSm/seY1Kr320MdFm6KYuNik1hF4OZIYUxV/a5EM51ys6mQ
-        TAftlBq40pBZDzV53QI1ENJipgzAG9ctFD/YAFQNTBL8YAXQ1DBGLFpaB9UYvygFsKqij/hr
-        sVt7cYdKwKyEhvxRZ4gnswLmDuXhDhHOzBLw4Wudc+HBhEOtxQgcmJg3vMmsdZpFTBj88evR
-        woXLoaqu0RntymyHttavFK9xh89vWZw8Pq+5+Og2zusnKJj7zpPHYdCWVYjx2AOOmQwLb/pC
-        e/0inww/3tU4S0PmEoDDl6cWeobCdlMvqQb0fMBqWN0QyNNb4efvc4SDhowb7J9w509wgzm1
-        jo4OWgSzMsW8ei0ssHeSPPaBanvVApbCqQktyAb+2v/KaP8ro/2XWwTwcuDFKjl5NMuFxLPJ
-        6ziZnFPGR687kSDXg/lf93LOZKsDDb+OtwGGBpKlom/vgyPEpCyJS5W3AUjjEk/RwGhghFgU
-        JUtNYxUJxxTKOJZrAz40IfESnXYZPiJmomWn2JMsm8gqFrcY7eqdDiJXcTOV7O8XAeZlFuWZ
-        a/5+yGSrMUeGgfqxtJYdatWd4o1n65ZseHrvS+Y5TO2mS6qbdTl09GzOtmfGEItQHbCv12d/
-        0VB2askDfaPZPTzZ6LL3YP80JZ4yHP8Qm2caVmrcU0Jf7XaxGqdLN7QZwu936nxb5Bk9zGR/
-        0PROVbiE4GJkwWtwBSf7A16+BApxAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRmVeSWpSXmKPExsVy+t/xu7ohdwxjDZZ9VbbYOGM9q8X1L89Z
-        LeYfOcdq0bfvP6NF/+PXzBbnz29gtzjb9IbdYtPja6wWl3fNYbP43HuE0WLG+X1MFmuP3GW3
-        WHr9IpPF7cYVbBZvfpxlsmjde4Td4t+1jSwWmx8cY3MQ8lgzbw2jx6ZVnWwem5fUexx8t4fJ
-        o2/LKkaP4ze2M3l83iQXwB6lZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRv
-        Z5OSmpNZllqkb5egl7Fup0/BXY6KaXvnszYwHmbvYuTkkBAwkTh4p4upi5GLQ0hgKaPEqr+r
-        2CAS0hKNp1czQdjCEn+udbFBFH1ilLj5expYgk1AVWLLjJdgk0QElCUm35vODFLELNDJKrHi
-        yRGwScICARL/L/5kBbFZgBqutm1jBrF5BVwkvv3ZCnWGvETnjt0sIDangKvEl4PvweJCQDU7
-        Vs6DqheUODnzCVgNM1B989bZzBMYBWYhSc1CklrAyLSKUSS1tDg3PbfYUK84Mbe4NC9dLzk/
-        dxMjMCq3Hfu5eQfjpY3BhxgFOBiVeHg/3DKMFWJNLCuuzD3EKMHBrCTCe/ulfqwQb0piZVVq
-        UX58UWlOavEhRlOgJyYyS4km5wMTRl5JvKGpobmFpaG5sbmxmYWSOG+HwMEYIYH0xJLU7NTU
-        gtQimD4mDk6pBkbbbu/i7r5Vzu7Ob8+U790f9rBE/s/ShhvV7sXu//fm9emkBG5hf31zasVf
-        r0kOetdOOnHtuntpmpzI4ZRrpg/3rTjmX73yqsHe1WrP/L9dPXauWCA/v4Ypzfd1sxaLNuPM
-        J27vI7ZJTvzTr23Cd+DY7LNFIXe/ZU79YR8prH6J23jNGe1XK6SUWIozEg21mIuKEwGyGisE
-        4AIAAA==
-X-CMS-MailID: 20190719150556eucas1p2bc6f133c48ec1be9b36119a414887969
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190719150556eucas1p2bc6f133c48ec1be9b36119a414887969
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190719150556eucas1p2bc6f133c48ec1be9b36119a414887969
-References: <20190719150535.15501-1-k.konieczny@partner.samsung.com>
-        <CGME20190719150556eucas1p2bc6f133c48ec1be9b36119a414887969@eucas1p2.samsung.com>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f46f3fc-aeb4-4584-65c5-08d70c5ab30c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2019 15:06:38.6218
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: horia.geanta@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3821
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unused DT property "exynos,voltage-tolerance".
-
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- Documentation/devicetree/bindings/devfreq/exynos-bus.txt | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-index f8e946471a58..e71f752cc18f 100644
---- a/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-+++ b/Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-@@ -50,8 +50,6 @@ Required properties only for passive bus device:
- Optional properties only for parent bus device:
- - exynos,saturation-ratio: the percentage value which is used to calibrate
- 			the performance count against total cycle count.
--- exynos,voltage-tolerance: the percentage value for bus voltage tolerance
--			which is used to calculate the max voltage.
- 
- Detailed correlation between sub-blocks and power line according to Exynos SoC:
- - In case of Exynos3250, there are two power line as following:
--- 
-2.22.0
-
+On 7/19/2019 2:58 AM, Iuliana Prodan wrote:=0A=
+[...]=0A=
+> --- a/drivers/crypto/caam/common_if.c=0A=
+> +++ b/drivers/crypto/caam/common_if.c=0A=
+> @@ -66,6 +66,23 @@ int check_rfc4106_authsize(unsigned int authsize)=0A=
+>  }=0A=
+>  EXPORT_SYMBOL(check_rfc4106_authsize);=0A=
+>  =0A=
+> +/*=0A=
+> + * validate assoclen for RFC4106/RFC4543=0A=
+> + */=0A=
+> +int check_ipsec_assoclen(unsigned int assoclen)=0A=
+> +{=0A=
+> +	switch (assoclen) {=0A=
+> +	case 16:=0A=
+> +	case 20:=0A=
+> +		break;=0A=
+> +	default:=0A=
+> +		return -EINVAL;=0A=
+> +	}=0A=
+> +=0A=
+> +	return 0;=0A=
+> +}=0A=
+> +EXPORT_SYMBOL(check_ipsec_assoclen);=0A=
+> +=0A=
+It's probably worth making this function (and even the other ones=0A=
+in common_if) inline.=0A=
+=0A=
+Herbert, is it worth having these checks moved to crypto API,=0A=
+so they could be shared b/w all implementations?=0A=
+=0A=
+This would also provide clear guidance wrt. rules related to=0A=
+input parameters length.=0A=
+=0A=
+Thanks,=0A=
+Horia=0A=
