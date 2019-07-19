@@ -2,97 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DD366E3D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:02:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BF356E3E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:06:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfGSKC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 06:02:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36390 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbfGSKC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 06:02:26 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DF302173B;
-        Fri, 19 Jul 2019 10:02:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563530545;
-        bh=KvPLM1GNe5tFVjsJpLtAS+Cc5JSEL3ozQZTgGhM2Zj0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ngDBnyyvbzeDdeqaWe1yYZ14j969anbfifz4sULg2Y/9mfJfcN2ruBIKYgfHGrwXv
-         RK6jQPeP2tF0RC6ZW5ZWHe7piD8IkfoGr1N8FVpUiEllxkKqG6jvPfz5Eo+0qxU4FW
-         pwk+O2cge3NeLPhjy9rKqiqtFbFtbFxsxPikY1Nw=
-Date:   Fri, 19 Jul 2019 11:02:20 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Joakim Zhang <qiangqing.zhang@nxp.com>
-Cc:     "peterz@infradead.org" <peterz@infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "jolsa@redhat.com" <jolsa@redhat.com>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        Frank Li <frank.li@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-Subject: Re: [PATCH] perf tool: arch: arm64: change the way for
- get_cpuid_str() function
-Message-ID: <20190719100219.b3bbrv4t4qcv2gid@willie-the-truck>
-References: <20190718061853.10403-1-qiangqing.zhang@nxp.com>
- <20190719075450.xcm4i4a5sfaxlfap@willie-the-truck>
- <DB7PR04MB4618EE69C2D8A664660C19C4E6CB0@DB7PR04MB4618.eurprd04.prod.outlook.com>
+        id S1727764AbfGSKGB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 06:06:01 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:39890 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbfGSKGA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 06:06:00 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6JA5ubt031335;
+        Fri, 19 Jul 2019 05:05:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1563530756;
+        bh=kEvJafuT1mgVbVr5vHN42Lk/YX5x6Xiii0b77v5ee/M=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=h2ZRrvKub8w1lRclaH1XGeYI9et46t8uhXdTmcqPzYSwd6/I3wcpVc0YY1YNCYDmL
+         NBS5iKvrV9p0iuw/30ExYNkaY/SxlfIiceAeUG1utTmQHJcP3PwYgMfNnrkjfF74C/
+         YUikXxhCOljROFaSjLWqyolVLMJlZA+w1Kicecbw=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6JA5uou020375
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 19 Jul 2019 05:05:56 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 19
+ Jul 2019 05:05:56 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 19 Jul 2019 05:05:56 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6JA5sIR062705;
+        Fri, 19 Jul 2019 05:05:54 -0500
+Subject: Re: [PATCH] phy: core: document calibrate() method
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        <linux-usb@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+References: <CGME20190719095254eucas1p29c9e6c7aac20cf89b589fd2f2036c485@eucas1p2.samsung.com>
+ <20190719095245.17401-1-m.szyprowski@samsung.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <085b8093-d7bc-d960-f0d8-8776818ebab0@ti.com>
+Date:   Fri, 19 Jul 2019 15:34:14 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB7PR04MB4618EE69C2D8A664660C19C4E6CB0@DB7PR04MB4618.eurprd04.prod.outlook.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190719095245.17401-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 19, 2019 at 08:29:12AM +0000, Joakim Zhang wrote:
-> > On Thu, Jul 18, 2019 at 06:21:30AM +0000, Joakim Zhang wrote:
-> > > Now the get_cpuid__str function returns the MIDR string of the first
-> > > online cpu from the range of cpus asscociated with the PMU CORE device.
-> > >
-> > > It can work when pass a perf_pmu entity to get_cpuid_str. However, it
-> > > will pass NULL via perf_pmu__find_map from metricgroup.c if we want to
-> > > add metric group for arm64. When pass NULL to get_cpuid_str, it can't
-> > > return the MIDR string.
-> > 
-> > Why is this code passing a NULL PMU? What information does it actually need?
-> > Other functions, such as print_pmu_events(), iterate over all PMUs.
-> 
-> tools/perf/utils/metricgroup.c:
-> metricgroup__add_metric()/metricgroup__has_metric()/metricgroup__print()---->perf_pmu__find_map(NULL)------>perf_pmu__getcpuid(NULL)----->get_cpuid_str(NULL)
-> So, it will eventually pass NULL to get_cpuid_str() function for arm64, and now get_cpuid_str() for arm64 need *struct perf_pmu* entity to return MIDR string.
-> 
-> And the declaration for get_cpuid_str() is char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused) in tools/perf/utils/header.h file.
-> So, it can return MIDR string without passing *struct perf_pmu* entity. Arch PowerPC/x86/s390 which implement metricgroup all add __maybe_unused.
-> 
-> > > There are three methods from userspace getting MIDR string for arm64:
-> > > 1. parse
-> > > sysfs(/sys/devices/system/cpu/cpu?/regs/identification/midr_el1)
-> > > 2. parse procfs(/proc/cpuinfo)
-> > > 3. read the hwcaps(MIDR register) with getauxval(AT_HWCAP)
-> > >
-> > > Perfer to select #3 as it is more simple and direct.
-> > 
-> > That's probably terminally broken for heterogeneous systems, so I'm not at all
-> > happy with this patch.
-> 
-> The implement of get_cpuid_str() for arm64 now only can return the MIDR
-> string of the first online cpu. I think it is also broken for
-> heterogeneous systems.
+Hi Marek,
 
-I disagree: the current code returns the MIDR string for the first online
-CPU *corresponding to the PMU* (e.g. pmu->cpus) and therefore handles
-heterogeneous systems like that.
+On 19/07/19 3:22 PM, Marek Szyprowski wrote:
+> Commit 36914111e682 ("drivers: phy: add calibrate method") added support
+> for generic phy_calibrate() method, but it didn't explain in detail when
+> such method is supposed to be called. Add some more documentation directly
+> to the phy.h to make it clean that it is intended to be called after every
+> host controller reset.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  include/linux/phy/phy.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> index 15032f145063..46775e8b0ed9 100644
+> --- a/include/linux/phy/phy.h
+> +++ b/include/linux/phy/phy.h
+> @@ -101,6 +101,18 @@ struct phy_ops {
+>  	int	(*validate)(struct phy *phy, enum phy_mode mode, int submode,
+>  			    union phy_configure_opts *opts);
+>  	int	(*reset)(struct phy *phy);
+> +
+> +	/**
+> +	 * @calibrate:
+> +	 *
+> +	 * Optional.
+> +	 *
+> +	 * Used to calibrate phy, typically by adjusting some parameters
+> +	 * in runtime, which are otherwise lost after host controller
+> +	 * reset and cannot be set in phy_init() and phy_power_on().
+> +	 *
+> +	 * Returns: 0 if successful, an negative error code otherwise
+> +	 */
+>  	int	(*calibrate)(struct phy *phy);
 
-> Will, do you know how to fix this issue more reasonable?
+This should be added in drivers/phy/phy-core.c before phy_calibrate()? We could
+add a separate section in Documentation/phy.txt to document these phy_ops.
 
-I still don't know what the metricgroup coce is trying to achieve, but my
-previous suggestion about looking at print_pmu_events() is probably still a
-good place to start.
-
-Will
+Thanks
+Kishon
