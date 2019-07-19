@@ -2,233 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FF6C6D833
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 03:13:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A2FF6D82E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 03:10:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbfGSBMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 21:12:54 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:41868 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725992AbfGSBMy (ORCPT
+        id S1726322AbfGSBKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 21:10:24 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35427 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbfGSBKX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 21:12:54 -0400
-Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id A9D0AC0BF4;
-        Fri, 19 Jul 2019 01:12:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1563498773; bh=fnel+lDEPFN/oJpyePgR8DYCQkzmWiZniGM/ZZxD3dE=;
-        h=From:To:Subject:Date:References:From;
-        b=ZEhz8dZsGSEIlJMDb7mhhQIOU9cWPAurPaLITCZgpxdWvP3C9tPU439uBkqbe7bs2
-         k4Azl4ZBd2J/jkfVL4W8xfLNQlrukjlFGz6+K/3R/hfPm2s/JExeXbezGg5myXVWGx
-         yBKjwlwSl/BfxYaOVeZng1mKRjg2rnaaFGpALT2MR32V+ccmrcLAfECVj9o67Tv4Yu
-         1XYmYNRQlh6yEOs4RzQhzJMHtR6PwGOQ7AcYIVvUaTXIopG/q893Y94O3FVUxM7KJy
-         yR9kAo5Ro0to5WWP0qtLRHql0ZT8/n2e5O1SVeAuP1b2OtCojRs+Q2AkAB+OKLtWpO
-         rFGpF+t+Pdi7Q==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id C67D4A0067;
-        Fri, 19 Jul 2019 01:12:41 +0000 (UTC)
-Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
- us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 18 Jul 2019 18:12:27 -0700
-Received: from NAM02-BL2-obe.outbound.protection.outlook.com (10.13.134.195)
- by mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Thu, 18 Jul 2019 18:12:27 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MPkjuDO0LASos7lNQ0LQRzW0bkZR1eF57DmIq159FprVpergPVE3x1nCT80k6gz+wPExZJ2Giup7w91nFZPteXvgYW3OyUPsu2OBWDmLsI3q9pYCk+y724/zm/VxU4OLVVwDHC0BVWv6AM9Blt3rEUwU3g6W9pK5Mqn4CtoBb8MVgkpThyL8eIhx1reThdA5xQMUDBcF7U1rm/lANWn7n1tPDdsxS305LbJc9dDCru5FSLAJ1kXsvSeUVZc3TjGIRHhqyUwfip1Pcdm/OBQ8oIOfCDgGs96yKzbWUPj6/ZhMbyHikFzY0VK34d8afb6TSTDyTIeu0qBPcU7oXs2JMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kcb/lyfE4ajOmgKbnd1bCGg+RjzdKNu8rIsqTRRG1C0=;
- b=kdMHFWU45XRPofdcq/j06wl+IJqBuZJrJSJ+HgCpQO+Z60eJ6ZF/KNrfC8p+wb27YOp4prPHaI7CnRLVVMnZjJnhgCCbUvlXsIH7IxKk1fCh/+QLG84CbxevqQDHsPJnP0W/v7EEf532mB0xCflNOC0TjyhqwX8Z9ysX9P0cg7Vzu+/NNW7XwRDNITj1PavD2lWL77Cbg0sboM4Pwnr2Z0cb5+an3RRtmMsBY7NEB4Mx5c/9VX4FNCm9YHsI0vfeGUgAshwePgMlDWAHfrhsfTZQ3AkKpZusBR0ONuvhOxRhusN7eL7ZmYqus/GHAWH2H4AX2aCui+N8RZolZXcCEw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=synopsys.com;dmarc=pass action=none
- header.from=synopsys.com;dkim=pass header.d=synopsys.com;arc=none
+        Thu, 18 Jul 2019 21:10:23 -0400
+Received: by mail-lf1-f67.google.com with SMTP id p197so20515187lfa.2;
+        Thu, 18 Jul 2019 18:10:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=synopsys.onmicrosoft.com; s=selector1-synopsys-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kcb/lyfE4ajOmgKbnd1bCGg+RjzdKNu8rIsqTRRG1C0=;
- b=vJw3r6CfLVcFIhlpHluoRBZzqTUGU9eAmjTm502aObT/qN/1Lo/DUFVGjU/6Tudcny5qd5FEYDSem/iSKmI6s5AjzJ93qDBF6iXODv+iCwaUO0MSPodPs/Mq4mrwvEFdNaysk68gyJaDBgVFWw64LARtNM4thdVzGPk7j/GYcgI=
-Received: from CY4PR1201MB0037.namprd12.prod.outlook.com (10.172.78.22) by
- CY4PR1201MB0022.namprd12.prod.outlook.com (10.172.79.8) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.11; Fri, 19 Jul 2019 01:12:25 +0000
-Received: from CY4PR1201MB0037.namprd12.prod.outlook.com
- ([fe80::8dd:b2af:d63f:c339]) by CY4PR1201MB0037.namprd12.prod.outlook.com
- ([fe80::8dd:b2af:d63f:c339%9]) with mapi id 15.20.2094.011; Fri, 19 Jul 2019
- 01:12:25 +0000
-From:   Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-To:     "fei.yang@intel.com" <fei.yang@intel.com>,
-        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "john.stultz@linaro.org" <john.stultz@linaro.org>,
-        "andrzej.p@collabora.com" <andrzej.p@collabora.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v3] usb: dwc3: gadget: trb_dequeue is not updated properly
-Thread-Topic: [PATCH v3] usb: dwc3: gadget: trb_dequeue is not updated
- properly
-Thread-Index: AQHVPct5482iA1i8Sk2wptVdWd1tFw==
-Date:   Fri, 19 Jul 2019 01:12:24 +0000
-Message-ID: <CY4PR1201MB003708ADAD79BF4FD24D3445AACB0@CY4PR1201MB0037.namprd12.prod.outlook.com>
-References: <1563497183-7114-1-git-send-email-fei.yang@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=thinhn@synopsys.com; 
-x-originating-ip: [198.182.56.5]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 518887a1-60a7-4333-2b37-08d70be628c9
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY4PR1201MB0022;
-x-ms-traffictypediagnostic: CY4PR1201MB0022:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <CY4PR1201MB0022B8F9455CD2259B7EA4EEAACB0@CY4PR1201MB0022.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2887;
-x-forefront-prvs: 01039C93E4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(366004)(39860400002)(346002)(376002)(189003)(199004)(99286004)(81156014)(8936002)(256004)(6116002)(3846002)(81166006)(14444005)(2906002)(8676002)(68736007)(25786009)(33656002)(14454004)(316002)(110136005)(486006)(76176011)(102836004)(2501003)(6506007)(229853002)(7696005)(66556008)(26005)(71190400001)(71200400001)(66446008)(5660300002)(66066001)(66476007)(66946007)(64756008)(76116006)(91956017)(86362001)(476003)(446003)(186003)(2201001)(478600001)(6306002)(55016002)(9686003)(53936002)(7736002)(305945005)(6436002)(966005)(74316002)(6246003)(52536014);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR1201MB0022;H:CY4PR1201MB0037.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: synopsys.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Uz0ujBzyUUwKck5oJb/b512s0AsgVga2cy5pjFiZkMFpDvi+HYJTYCZB1rvPBbhkaPAyEYl59VJtQ7RB58TeXGCcBMYTKSFBmsLM4ABTkrZW+TEDA3zYTzU9AW9aRsuEbvqQghk9KRDcIBB8aPKBbHdrqG++QvR51dJegyIGFQWJ8qn+eQdJ91NM4BxDb3OW5ueRlG4QoUh2sUJcvlw5zvDHItUVbrtwFE+/ERzVkgiAvyscV+IhguqdpIiXOKJthtsdd6k9mK/e/GUDeVMEGVBJghigu5aVPxr2n86k2fpUVuHmzRZoIEnDOJo6IekJDZt/kvse1WDbzjULxXlvH/tuubSJIroZB+S1IbxKox/hEmf3hf9YzUzCj+j05z2kvNzRkO+eM9WkGUdRq6vXlVZplvQUcWpy1c4R4gPa0yI=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=T1Cb1uc+HNNSylpCLGSfB2K7Z5KAc5egJTyCxBCXEck=;
+        b=i634c7QPpiwdP/WP9K7AkudOWgdmwiqHdNoytstivK+83m9XFxwFVRlwkIezN9W63K
+         q/+OzevpaGiTzsELx4evTb9lzq/8wpKUDLP4LqF4cTUbuAew60pHIdUC8hKT9fwoenm4
+         7v4dW5jyvhcWzoGRbyfOmC3piIvitfCsAZPx/XXwn4hQW3IJTfW7cARV88bDP99ULM/3
+         GjLtN1zvc7X7MUp4hkG39YbEX9fkA0M3aNd1pv6lEv9dON3y/YM6ERpfwArpsE64k46l
+         YrmaF3ysCtrfLc1qTMKgyS7hA913whfOPxit7D18suRpDtScPwP/w2CXlVXWdNiYGRLS
+         kpYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=T1Cb1uc+HNNSylpCLGSfB2K7Z5KAc5egJTyCxBCXEck=;
+        b=gD/f3dneyunEAspjyPjo3uTu0eIPlDojyRQlc7yHUXztbua9zfAbjLu6XJj7VAAM9h
+         4AO9ZopRbgpyKm6s+ksQWY24aUU9CIVX1MnE1RlME0gz9uUP1puprn1kn2VLb/gOxmtf
+         pou0T5V2j4hPbHOQHyAhxprZei1kiVN4nIQR7enBV3hYhGFqqlNMMMj3CGzLgGq9Dgd4
+         yKhXYx+om1xw/62oAERnPm+k7KK/iwCmGsZPbFPsHgY8GREj2QLg2KCN/0Q6M9tuARMl
+         nCjMk3nsGn3OpLIguXLZIpJwi5oyqQzANKD0Jak3r/DWCO8im4Ad4+q23arPpWinmOYx
+         0o+Q==
+X-Gm-Message-State: APjAAAVKA2ZfAJRjPK9ojR41WgKJMBdmkdCII1BwjgSeE6lnSCHsPoo+
+        P3MfFaAhi0wnupzncXjnSn0=
+X-Google-Smtp-Source: APXvYqxjJDF8pvttVkPAB7+4IqNzjc4RpokY0Afi6sHm05SGhUbMLGdt59zpwW6xppvk96pdoNZgGQ==
+X-Received: by 2002:ac2:546a:: with SMTP id e10mr22942504lfn.75.1563498620454;
+        Thu, 18 Jul 2019 18:10:20 -0700 (PDT)
+Received: from dimatab (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.gmail.com with ESMTPSA id 199sm5383111ljf.44.2019.07.18.18.10.19
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 18 Jul 2019 18:10:20 -0700 (PDT)
+Date:   Fri, 19 Jul 2019 04:13:57 +0300
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 11/24] PM / devfreq: tegra30: Add debug messages
+Message-ID: <20190719041357.0a80a2dc@dimatab>
+In-Reply-To: <f630dacc-2065-a12d-bd03-1fc6c4363e1f@samsung.com>
+References: <20190707223303.6755-1-digetx@gmail.com>
+        <CGME20190707223640epcas4p15337f40466342832b731ad6a53be946e@epcas4p1.samsung.com>
+        <20190707223303.6755-12-digetx@gmail.com>
+        <c883bdbe-427f-35a1-9e63-5e4953a84286@samsung.com>
+        <53cd0ba5-f814-cd9b-19c5-1d42717ca58c@gmail.com>
+        <922c9178-71de-46ad-eafd-805af461bedb@samsung.com>
+        <f819c226-4328-c85d-5da3-932391fa6747@gmail.com>
+        <f630dacc-2065-a12d-bd03-1fc6c4363e1f@samsung.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 518887a1-60a7-4333-2b37-08d70be628c9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2019 01:12:24.9321
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: thinhn@synopsys.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1201MB0022
-X-OriginatorOrg: synopsys.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,=0A=
-=0A=
-fei.yang@intel.com wrote:=0A=
-> From: Fei Yang <fei.yang@intel.com>=0A=
->=0A=
-> If scatter-gather operation is allowed, a large USB request is split into=
-=0A=
-> multiple TRBs. These TRBs are chained up by setting DWC3_TRB_CTRL_CHN bit=
-=0A=
-> except the last one which has DWC3_TRB_CTRL_IOC bit set instead.=0A=
-> Since only the last TRB has IOC set for the whole USB request, the=0A=
-> dwc3_gadget_ep_reclaim_trb_sg() gets called only once after the last TRB=
-=0A=
-> completes and all the TRBs allocated for this request are supposed to be=
-=0A=
-> reclaimed. However that is not what the current code does.=0A=
->=0A=
-> dwc3_gadget_ep_reclaim_trb_sg() is trying to reclaim all the TRBs in the=
-=0A=
-> following for-loop,=0A=
-> 	for_each_sg(sg, s, pending, i) {=0A=
-> 		trb =3D &dep->trb_pool[dep->trb_dequeue];=0A=
->=0A=
->                 if (trb->ctrl & DWC3_TRB_CTRL_HWO)=0A=
->                         break;=0A=
->=0A=
->                 req->sg =3D sg_next(s);=0A=
->                 req->num_pending_sgs--;=0A=
->=0A=
->                 ret =3D dwc3_gadget_ep_reclaim_completed_trb(dep, req,=0A=
->                                 trb, event, status, chain);=0A=
->                 if (ret)=0A=
->                         break;=0A=
->         }=0A=
-> but since the interrupt comes only after the last TRB completes, the=0A=
-> event->status has DEPEVT_STATUS_IOC bit set, so that the for-loop ends fo=
-r=0A=
-> the first TRB due to dwc3_gadget_ep_reclaim_completed_trb() returns 1.=0A=
-> 	if (event->status & DEPEVT_STATUS_IOC)=0A=
-> 		return 1;=0A=
->=0A=
-> This patch addresses the issue by checking each TRB in function=0A=
-> dwc3_gadget_ep_reclaim_trb_sg() and maing sure the chained ones are prope=
-rly=0A=
-> reclaimed. dwc3_gadget_ep_reclaim_completed_trb() will return 1 Only for =
-the=0A=
-> last TRB.=0A=
->=0A=
-> Signed-off-by: Fei Yang <fei.yang@intel.com>=0A=
-> Cc: stable <stable@vger.kernel.org>=0A=
-> ---=0A=
-> v2: Better solution is to reclaim chained TRBs in dwc3_gadget_ep_reclaim_=
-trb_sg()=0A=
->     and leave the last TRB to the dwc3_gadget_ep_reclaim_completed_trb().=
-=0A=
-> v3: Checking DWC3_TRB_CTRL_CHN bit for each TRB instead, and making sure =
-that=0A=
->     dwc3_gadget_ep_reclaim_completed_trb() returns 1 only for the last TR=
-B.=0A=
-> ---=0A=
->  drivers/usb/dwc3/gadget.c | 11 ++++++++---=0A=
->  1 file changed, 8 insertions(+), 3 deletions(-)=0A=
->=0A=
-> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c=0A=
-> index 173f532..88eed49 100644=0A=
-> --- a/drivers/usb/dwc3/gadget.c=0A=
-> +++ b/drivers/usb/dwc3/gadget.c=0A=
-> @@ -2394,7 +2394,7 @@ static int dwc3_gadget_ep_reclaim_completed_trb(str=
-uct dwc3_ep *dep,=0A=
->  	if (event->status & DEPEVT_STATUS_SHORT && !chain)=0A=
->  		return 1;=0A=
->  =0A=
-> -	if (event->status & DEPEVT_STATUS_IOC)=0A=
-> +	if (event->status & DEPEVT_STATUS_IOC && !chain)=0A=
->  		return 1;=0A=
->  =0A=
->  	return 0;=0A=
-> @@ -2404,11 +2404,12 @@ static int dwc3_gadget_ep_reclaim_trb_sg(struct d=
-wc3_ep *dep,=0A=
->  		struct dwc3_request *req, const struct dwc3_event_depevt *event,=0A=
->  		int status)=0A=
->  {=0A=
-> -	struct dwc3_trb *trb =3D &dep->trb_pool[dep->trb_dequeue];=0A=
-> +	struct dwc3_trb *trb;=0A=
->  	struct scatterlist *sg =3D req->sg;=0A=
->  	struct scatterlist *s;=0A=
->  	unsigned int pending =3D req->num_pending_sgs;=0A=
->  	unsigned int i;=0A=
-> +	int chain =3D false;=0A=
->  	int ret =3D 0;=0A=
->  =0A=
->  	for_each_sg(sg, s, pending, i) {=0A=
-> @@ -2419,9 +2420,13 @@ static int dwc3_gadget_ep_reclaim_trb_sg(struct dw=
-c3_ep *dep,=0A=
->  =0A=
->  		req->sg =3D sg_next(s);=0A=
->  		req->num_pending_sgs--;=0A=
-> +		if (trb->ctrl & DWC3_TRB_CTRL_CHN)=0A=
-> +			chain =3D true;=0A=
-> +		else=0A=
-> +			chain =3D false;=0A=
->  =0A=
->  		ret =3D dwc3_gadget_ep_reclaim_completed_trb(dep, req,=0A=
-> -				trb, event, status, true);=0A=
-> +				trb, event, status, chain);=0A=
->  		if (ret)=0A=
->  			break;=0A=
->  	}=0A=
-=0A=
-There was already a fix a long time ago by Anurag. But it never made it=0A=
-to the kernel mainline. You can check this out:=0A=
-https://patchwork.kernel.org/patch/10640137/=0A=
-=0A=
-Hi Felipe,=0A=
-=0A=
-Maybe you can review and cherry-pick that patch?=0A=
-=0A=
-Thanks,=0A=
-Thinh=0A=
+=D0=92 Thu, 18 Jul 2019 18:07:05 +0900
+Chanwoo Choi <cw00.choi@samsung.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+
+> On 19. 7. 18. =EC=98=A4=EC=A0=84 12:46, Dmitry Osipenko wrote:
+> > 17.07.2019 9:45, Chanwoo Choi =D0=BF=D0=B8=D1=88=D0=B5=D1=82: =20
+> >> On 19. 7. 16. =EC=98=A4=ED=9B=84 10:26, Dmitry Osipenko wrote: =20
+> >>> 16.07.2019 15:23, Chanwoo Choi =D0=BF=D0=B8=D1=88=D0=B5=D1=82: =20
+> >>>> Hi Dmitry,
+> >>>>
+> >>>> Usually, the kernel log print for all users
+> >>>> such as changing the frequency, fail or success.
+> >>>>
+> >>>> But, if the log just show the register dump,
+> >>>> it is not useful for all users. It is just used
+> >>>> for only specific developer.
+> >>>>
+> >>>> I recommend that you better to add more exception handling
+> >>>> code on many points instead of just showing the register dump. =20
+> >>>
+> >>> The debug messages are not users, but for developers. Yes, I
+> >>> primarily made the debugging to be useful for myself and will be
+> >>> happy to change the way debugging is done if there will be any
+> >>> other active developer for this driver. The registers dump is
+> >>> more than enough in order to understand what's going on, I don't
+> >>> see any real need to change anything here for now. =20
+> >>
+> >> Basically, we have to develop code and add the log for anyone.
+> >> As you commented, even if there are no other developer, we never
+> >> guarantee this assumption forever. And also, if added debug message
+> >> for only you, you can add them when testing it temporarily.
+> >>
+> >> If you want to add the just register dump log for you,
+> >> I can't agree. Once again, I hope that anyone understand
+> >> the meaning of debug message as much possible as.
+> >> =20
+> >=20
+> > The registers dump should be good for everyone because it's a
+> > self-explanatory information for anyone who is familiar with the
+> > hardware. I don't think there is a need for anything else than what
+> > is proposed in this patch, at least for now. I also simply don't
+> > see any other better way to debug the state of this particular
+> > hardware, again this logging is for the driver developers and not
+> > for users.
+> >=20
+> > Initially, I was temporarily adding the debug messages. Now they are
+> > pretty much mandatory for verifying that driver is working
+> > properly. And of course the debugging messages got into the shape
+> > of this patch after several iterations of refinements. So again, I
+> > suppose that this should be good enough for everyone who is
+> > familiar with the hardware. And of course I'm open to the
+> > constructive suggestions, the debugging aid is not an ABI and could
+> > be changed/improved at any time.
+> >=20
+> > You're suggesting to break down the debugging into several smaller
+> > pieces, but I'm finding that as not a constructive suggestion
+> > because the information about the full hardware state is actually
+> > necessary for the productive debugging.
+> >=20
+> >  =20
+>=20
+> Sorry for that as I saie, I cannot agree this patch. In my case,
+> I don't understand what is meaning of register dump of this patch.
+> I knew that just register dump are useful for real developer.
+
+It's not only a registers dump, as you may see there is also a dump of
+other properties like boosting value, OPPs selection and etc.
+
+It looks to me that you're also missing important detail that debug
+messages are compiled out unless DEBUG is defined for the drivers
+build. So in order to get the debug message a user shall explicitly add
+#define DEBUG macro to the code or enable debug messages globally in
+the kernel's config. There is also an option for dynamic debug messages
+in the kernel, but it doesn't matter now because all these messages are
+turned into tracepoints later in the patch #17.
+
+> If you want to show the register dump, you better to add some feature
+> with debugfs for devfreq framework in order to read the register dump.
+> As I knew, sound framework (alsa) has the similar feature for checking
+> the register dump.
+>=20
+
+The intent was to have an option for dynamic debugging of the driver and
+initially debug messages were good enough, but then it became not enough
+and hence the debug messages were turned into tracepoints in the patch
+#17. Would it be acceptable to squash this patch and #17?
+
