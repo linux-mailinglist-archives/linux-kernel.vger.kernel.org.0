@@ -2,223 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 875E16D7DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:39:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 488956D7F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:48:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbfGSAjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 20:39:25 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:39945 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbfGSAjX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 20:39:23 -0400
-Received: by mail-lf1-f65.google.com with SMTP id b17so20508313lff.7;
-        Thu, 18 Jul 2019 17:39:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WCkyKYTPbPUh8SG+lXVnndg59ELsHEuerb/rYoY8h3w=;
-        b=g3at9eEMDZ3nWk1PMPltMtWtHC+dIyIRlMQXGTRT7ya+EJuT8QAjC4J/HZ5w+dgPDU
-         fgA63t1tXM/Cki9E1nY8qpomHnjiScNTpE66JF15GxbfJbWojQoZ9qjgk5OeOYeI9J6L
-         /uEFU90Jn0QC42lFXYioKNCdMFF+Lf7cwMYX4+ERkUXbRZeliLeVtQxYf/Z5MsPorZVp
-         K2zAJp2/KVdMjzL/wxu50iIjegpEfzGyBlJvXU2oIedDoknYDYne8OGPvaPvkFNCfPVu
-         /N4F0KC4VNdDUnHGuFLFY3joAJ4JRAmGswjLEjn1WMBbVSycF/gkP4qSl750Gaqhoebc
-         aRJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WCkyKYTPbPUh8SG+lXVnndg59ELsHEuerb/rYoY8h3w=;
-        b=Cm1Q6NUKiP0/7xok5ZPQDUf+p3XrL6/So5FME/dZMCxqLxFvtCwqDAKOGYSuW6xpRr
-         K4Sdl7o2r8q+ClCJSKBtBGBgfUmsrw0+/lG2kDa0CZy44UgbxQThO0u2GBNDRrWs/kJ2
-         5TG4nNeurvdssbhXXLB33LGSgn8O0e6X0BLdT7mcnwaI4Stm/GuiEB0kiXmaXw1BLV+W
-         VBClRMRFS41xEBQHoUbEQ7CzUuPR0aQJ1XML+T9y7DNddb/Ig+itLiLygpaKXACBWH3z
-         uYQxCBx+nIfbv/8sOmjiW8wfYXjlba8VyRnpMjEtU0+PEy6WmvasoBjvgjLx+4Mre0D8
-         0BMA==
-X-Gm-Message-State: APjAAAWJ1LpH899U9yePzFl3KhKVQz0i8x46bmtTO1QUWYN/TjNxlfvy
-        alnX+hPTvTYqa6cZrmKm4rM=
-X-Google-Smtp-Source: APXvYqwMShFT1VPyMw1AhICy0JWk5ONRwIM69pZQ6NM6d2V9e0EnMLTzjZqwDEz19lF2lnERUgsQXg==
-X-Received: by 2002:ac2:4ace:: with SMTP id m14mr9975695lfp.99.1563496760535;
-        Thu, 18 Jul 2019 17:39:20 -0700 (PDT)
-Received: from dimatab (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
-        by smtp.gmail.com with ESMTPSA id t137sm4192909lff.78.2019.07.18.17.39.19
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 18 Jul 2019 17:39:20 -0700 (PDT)
-Date:   Fri, 19 Jul 2019 03:42:58 +0300
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 18/24] PM / devfreq: tegra30: Optimize CPUFreq
- notifier
-Message-ID: <20190719034258.651a9c06@dimatab>
-In-Reply-To: <ce18694a-4281-a245-7bdf-299fedc3c724@samsung.com>
-References: <20190707223303.6755-1-digetx@gmail.com>
-        <CGME20190707223618epcas4p48e1e2ae7af04775ac50c68b7636f1a56@epcas4p4.samsung.com>
-        <20190707223303.6755-19-digetx@gmail.com>
-        <ce18694a-4281-a245-7bdf-299fedc3c724@samsung.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        id S1726379AbfGSAqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 20:46:34 -0400
+Received: from mga07.intel.com ([134.134.136.100]:8592 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726015AbfGSAqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 20:46:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2019 17:46:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,280,1559545200"; 
+   d="scan'208";a="170749011"
+Received: from fei-dev-host.jf.intel.com ([10.7.198.158])
+  by orsmga003.jf.intel.com with ESMTP; 18 Jul 2019 17:46:32 -0700
+From:   fei.yang@intel.com
+To:     felipe.balbi@linux.intel.com, john.stultz@linaro.org,
+        andrzej.p@collabora.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        stable@vger.kernel.org
+Subject: [PATCH v3] usb: dwc3: gadget: trb_dequeue is not updated properly
+Date:   Thu, 18 Jul 2019 17:46:23 -0700
+Message-Id: <1563497183-7114-1-git-send-email-fei.yang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=D0=92 Thu, 18 Jul 2019 18:48:42 +0900
-Chanwoo Choi <cw00.choi@samsung.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+From: Fei Yang <fei.yang@intel.com>
 
-> On 19. 7. 8. =EC=98=A4=EC=A0=84 7:32, Dmitry Osipenko wrote:
-> > When CPU's memory activity is low or memory activity is high such
-> > that CPU's frequency contribution to the boosting is not taken into
-> > account, then there is no need to schedule devfreq's update. This
-> > eliminates unnecessary CPU activity during of idling caused by the
-> > scheduled work.
-> >=20
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > ---
-> >  drivers/devfreq/tegra30-devfreq.c | 73
-> > +++++++++++++++++++++++++++---- 1 file changed, 64 insertions(+), 9
-> > deletions(-) =20
->=20
-> Patch4 add the 'cpufreq notifier' and this patch optimize the cpufreq
-> notifier. I think t hat you can combine two patches.
+If scatter-gather operation is allowed, a large USB request is split into
+multiple TRBs. These TRBs are chained up by setting DWC3_TRB_CTRL_CHN bit
+except the last one which has DWC3_TRB_CTRL_IOC bit set instead.
+Since only the last TRB has IOC set for the whole USB request, the
+dwc3_gadget_ep_reclaim_trb_sg() gets called only once after the last TRB
+completes and all the TRBs allocated for this request are supposed to be
+reclaimed. However that is not what the current code does.
 
-I'd prefer to keep them separate for a sake of git bisection.
+dwc3_gadget_ep_reclaim_trb_sg() is trying to reclaim all the TRBs in the
+following for-loop,
+	for_each_sg(sg, s, pending, i) {
+		trb = &dep->trb_pool[dep->trb_dequeue];
 
-> >=20
-> > diff --git a/drivers/devfreq/tegra30-devfreq.c
-> > b/drivers/devfreq/tegra30-devfreq.c index
-> > 43c9c5fbfe91..8d6bf6e9f1ae 100644 ---
-> > a/drivers/devfreq/tegra30-devfreq.c +++
-> > b/drivers/devfreq/tegra30-devfreq.c @@ -216,10 +216,10 @@ static
-> > inline unsigned long do_percent(unsigned long val, unsigned int
-> > pct) return val * pct / 100; }
-> > =20
-> > -static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq
-> > *tegra) +static unsigned long actmon_cpu_to_emc_rate(struct
-> > tegra_devfreq *tegra,
-> > +					    unsigned int cpu_freq)
-> >  {
-> >  	const struct tegra_actmon_emc_ratio *ratio =3D
-> > actmon_emc_ratios;
-> > -	unsigned int cpu_freq =3D cpufreq_get(0);
-> >  	unsigned int i;
-> > =20
-> >  	for (i =3D 0; i < ARRAY_SIZE(actmon_emc_ratios); i++,
-> > ratio++) { @@ -239,15 +239,15 @@
-> > tegra_actmon_account_cpu_freq(struct tegra_devfreq *tegra, struct
-> > tegra_devfreq_device *dev, unsigned long target_freq)
-> >  {
-> > -	unsigned long static_cpu_emc_freq;
-> > +	unsigned long cpu_emc_freq =3D 0;
-> > =20
-> > -	if (dev->config->avg_dependency_threshold &&
-> > -	    dev->config->avg_dependency_threshold < dev->avg_freq)
-> > {
-> > -		static_cpu_emc_freq =3D
-> > actmon_cpu_to_emc_rate(tegra);
-> > -		target_freq =3D max(target_freq,
-> > static_cpu_emc_freq);
-> > -	}
-> > +	if (!dev->config->avg_dependency_threshold)
-> > +		return target_freq;
-> > =20
-> > -	return target_freq;
-> > +	if (dev->avg_freq > dev->config->avg_dependency_threshold)
-> > +		cpu_emc_freq =3D actmon_cpu_to_emc_rate(tegra,
-> > cpufreq_get(0)); +
-> > +	return max(target_freq, cpu_emc_freq);
-> >  }
-> > =20
-> >  static unsigned long tegra_actmon_lower_freq(struct tegra_devfreq
-> > *tegra, @@ -531,16 +531,71 @@ static void
-> > tegra_actmon_delayed_update(struct work_struct *work)
-> > mutex_unlock(&tegra->devfreq->lock); }
-> > =20
-> > +static unsigned long
-> > +tegra_actmon_cpufreq_contribution(struct tegra_devfreq *tegra,
-> > +				  unsigned int cpu_freq)
-> > +{
-> > +	unsigned long freq, static_cpu_emc_freq;
-> > +
-> > +	/* check whether CPU's freq is taken into account at all */
-> > +	if (tegra->devices[MCCPU].avg_freq <=3D
-> > +	    tegra->devices[MCCPU].config->avg_dependency_threshold)
-> > +		return 0;
-> > +
-> > +	static_cpu_emc_freq =3D actmon_cpu_to_emc_rate(tegra,
-> > cpu_freq); +
-> > +	/* compare static CPU-EMC freq with MCALL */
-> > +	freq =3D tegra->devices[MCALL].avg_freq +
-> > +	       tegra->devices[MCALL].boost_freq;
-> > +
-> > +	freq =3D tegra_actmon_upper_freq(tegra, freq);
-> > +
-> > +	if (freq =3D=3D tegra->max_freq || freq >=3D static_cpu_emc_freq)
-> > +		return 0;
-> > +
-> > +	/* compare static CPU-EMC freq with MCCPU */
-> > +	freq =3D tegra->devices[MCCPU].avg_freq +
-> > +	       tegra->devices[MCCPU].boost_freq;
-> > +
-> > +	freq =3D tegra_actmon_upper_freq(tegra, freq);
-> > +
-> > +	if (freq =3D=3D tegra->max_freq || freq >=3D static_cpu_emc_freq)
-> > +		return 0;
-> > +
-> > +	return static_cpu_emc_freq;
-> > +}
-> > +
-> >  static int tegra_actmon_cpu_notify_cb(struct notifier_block *nb,
-> >  				      unsigned long action, void
-> > *ptr) {
-> > +	struct cpufreq_freqs *freqs =3D ptr;
-> >  	struct tegra_devfreq *tegra;
-> > +	unsigned long old, new;
-> > =20
-> >  	if (action !=3D CPUFREQ_POSTCHANGE)
-> >  		return NOTIFY_OK;
-> > =20
-> >  	tegra =3D container_of(nb, struct tegra_devfreq,
-> > cpu_rate_change_nb);=20
-> > +	/*
-> > +	 * Quickly check whether CPU frequency should be taken
-> > into account
-> > +	 * at all, without blocking CPUFreq's core.
-> > +	 */
-> > +	if (mutex_trylock(&tegra->devfreq->lock)) {
-> > +		old =3D tegra_actmon_cpufreq_contribution(tegra,
-> > freqs->old);
-> > +		new =3D tegra_actmon_cpufreq_contribution(tegra,
-> > freqs->new);
-> > +		mutex_unlock(&tegra->devfreq->lock);
-> > +
-> > +		/*
-> > +		 * If CPU's frequency shouldn't be taken into
-> > account at
-> > +		 * the moment, then there is no need to update the
-> > devfreq's
-> > +		 * state because ISR will re-check CPU's frequency
-> > on the
-> > +		 * next interrupt.
-> > +		 */
-> > +		if (old =3D=3D new)
-> > +			return NOTIFY_OK;
-> > +	}
-> > +
-> >  	/*
-> >  	 * CPUFreq driver should support
-> > CPUFREQ_ASYNC_NOTIFICATION in order
-> >  	 * to allow asynchronous notifications. This means we
-> > can't block=20
->=20
->=20
+                if (trb->ctrl & DWC3_TRB_CTRL_HWO)
+                        break;
+
+                req->sg = sg_next(s);
+                req->num_pending_sgs--;
+
+                ret = dwc3_gadget_ep_reclaim_completed_trb(dep, req,
+                                trb, event, status, chain);
+                if (ret)
+                        break;
+        }
+but since the interrupt comes only after the last TRB completes, the
+event->status has DEPEVT_STATUS_IOC bit set, so that the for-loop ends for
+the first TRB due to dwc3_gadget_ep_reclaim_completed_trb() returns 1.
+	if (event->status & DEPEVT_STATUS_IOC)
+		return 1;
+
+This patch addresses the issue by checking each TRB in function
+dwc3_gadget_ep_reclaim_trb_sg() and maing sure the chained ones are properly
+reclaimed. dwc3_gadget_ep_reclaim_completed_trb() will return 1 Only for the
+last TRB.
+
+Signed-off-by: Fei Yang <fei.yang@intel.com>
+Cc: stable <stable@vger.kernel.org>
+---
+v2: Better solution is to reclaim chained TRBs in dwc3_gadget_ep_reclaim_trb_sg()
+    and leave the last TRB to the dwc3_gadget_ep_reclaim_completed_trb().
+v3: Checking DWC3_TRB_CTRL_CHN bit for each TRB instead, and making sure that
+    dwc3_gadget_ep_reclaim_completed_trb() returns 1 only for the last TRB.
+---
+ drivers/usb/dwc3/gadget.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 173f532..88eed49 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2394,7 +2394,7 @@ static int dwc3_gadget_ep_reclaim_completed_trb(struct dwc3_ep *dep,
+ 	if (event->status & DEPEVT_STATUS_SHORT && !chain)
+ 		return 1;
+ 
+-	if (event->status & DEPEVT_STATUS_IOC)
++	if (event->status & DEPEVT_STATUS_IOC && !chain)
+ 		return 1;
+ 
+ 	return 0;
+@@ -2404,11 +2404,12 @@ static int dwc3_gadget_ep_reclaim_trb_sg(struct dwc3_ep *dep,
+ 		struct dwc3_request *req, const struct dwc3_event_depevt *event,
+ 		int status)
+ {
+-	struct dwc3_trb *trb = &dep->trb_pool[dep->trb_dequeue];
++	struct dwc3_trb *trb;
+ 	struct scatterlist *sg = req->sg;
+ 	struct scatterlist *s;
+ 	unsigned int pending = req->num_pending_sgs;
+ 	unsigned int i;
++	int chain = false;
+ 	int ret = 0;
+ 
+ 	for_each_sg(sg, s, pending, i) {
+@@ -2419,9 +2420,13 @@ static int dwc3_gadget_ep_reclaim_trb_sg(struct dwc3_ep *dep,
+ 
+ 		req->sg = sg_next(s);
+ 		req->num_pending_sgs--;
++		if (trb->ctrl & DWC3_TRB_CTRL_CHN)
++			chain = true;
++		else
++			chain = false;
+ 
+ 		ret = dwc3_gadget_ep_reclaim_completed_trb(dep, req,
+-				trb, event, status, true);
++				trb, event, status, chain);
+ 		if (ret)
+ 			break;
+ 	}
+-- 
+2.7.4
 
