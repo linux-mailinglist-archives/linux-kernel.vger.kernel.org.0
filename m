@@ -2,59 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 023BB6E3F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:09:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A4176E3CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:00:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbfGSKJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 06:09:18 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:44454 "EHLO inva020.nxp.com"
+        id S1726893AbfGSKAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 06:00:09 -0400
+Received: from foss.arm.com ([217.140.110.172]:41202 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbfGSKJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 06:09:18 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DA5EE1A0159;
-        Fri, 19 Jul 2019 12:09:16 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7DFDD1A003F;
-        Fri, 19 Jul 2019 12:09:12 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CB26B402B5;
-        Fri, 19 Jul 2019 18:09:06 +0800 (SGT)
-From:   Wen He <wen.he_1@nxp.com>
-To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, liviu.dudau@arm.com,
-        robh+dt@kernel.org
-Cc:     leoyang.li@nxp.com, Wen He <wen.he_1@nxp.com>
-Subject: [v2 3/3] dts: arm64: ls1028a: Add optional property node for Mali DP500
-Date:   Fri, 19 Jul 2019 17:59:56 +0800
-Message-Id: <20190719095956.11774-1-wen.he_1@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1725794AbfGSKAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 06:00:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DAF05337;
+        Fri, 19 Jul 2019 03:00:05 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4AC3F3F59C;
+        Fri, 19 Jul 2019 03:00:04 -0700 (PDT)
+Date:   Fri, 19 Jul 2019 10:59:59 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Dan Rue <dan.rue@linaro.org>,
+        Matt Hart <matthew.hart@linaro.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Daniel Diaz <daniel.diaz@linaro.org>,
+        James Morse <james.morse@arm.com>
+Subject: Re: [PATCH 3/3] arm64: debug: Remove rcu_read_lock from debug
+ exception
+Message-ID: <20190719095958.GA19605@lakrids.cambridge.arm.com>
+References: <156342860634.8565.14804606041960884732.stgit@devnote2>
+ <156342863822.8565.7624877983728871995.stgit@devnote2>
+ <20190718062215.GG14271@linux.ibm.com>
+ <20190718092022.GA3625@blommer>
+ <20190718233133.146065f668da6297e57e52ef@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190718233133.146065f668da6297e57e52ef@kernel.org>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch use the optional property node "arm,malidp-arqos-value" to
-can be dynamic configure QoS signaling.
+On Thu, Jul 18, 2019 at 11:31:33PM +0900, Masami Hiramatsu wrote:
+> On Thu, 18 Jul 2019 10:20:23 +0100
+> Mark Rutland <mark.rutland@arm.com> wrote:
+> 
+> > On Wed, Jul 17, 2019 at 11:22:15PM -0700, Paul E. McKenney wrote:
+> > > On Thu, Jul 18, 2019 at 02:43:58PM +0900, Masami Hiramatsu wrote:
+> > > > Remove rcu_read_lock()/rcu_read_unlock() from debug exception
+> > > > handlers since the software breakpoint can be hit on idle task.
+> > 
+> > Why precisely do we need to elide these? Are we seeing warnings today?
+> 
+> Yes, unfortunately, or fortunately. Naresh reported that warns when
+> ftracetest ran. I confirmed that happens if I probe on default_idle_call too.
+> 
+> /sys/kernel/debug/tracing # echo p default_idle_call >> kprobe_events 
+> /sys/kernel/debug/tracing # echo 1 > events/kprobes/enable 
+> /sys/kernel/debug/tracing # [  135.122237] 
+> [  135.125035] =============================
+> [  135.125310] WARNING: suspicious RCU usage
+> [  135.125581] 5.2.0-08445-g9187c508bdc7 #20 Not tainted
+> [  135.125904] -----------------------------
+> [  135.126205] include/linux/rcupdate.h:594 rcu_read_lock() used illegally while idle!
+> [  135.126839] 
+> [  135.126839] other info that might help us debug this:
+> [  135.126839] 
+> [  135.127410] 
+> [  135.127410] RCU used illegally from idle CPU!
+> [  135.127410] rcu_scheduler_active = 2, debug_locks = 1
+> [  135.128114] RCU used illegally from extended quiescent state!
+> [  135.128555] 1 lock held by swapper/0/0:
+> [  135.128944]  #0: (____ptrval____) (rcu_read_lock){....}, at: call_break_hook+0x0/0x178
+> [  135.130499] 
+> [  135.130499] stack backtrace:
+> [  135.131192] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.2.0-08445-g9187c508bdc7 #20
+> [  135.131841] Hardware name: linux,dummy-virt (DT)
+> [  135.132224] Call trace:
+> [  135.132491]  dump_backtrace+0x0/0x140
+> [  135.132806]  show_stack+0x24/0x30
+> [  135.133133]  dump_stack+0xc4/0x10c
+> [  135.133726]  lockdep_rcu_suspicious+0xf8/0x108
+> [  135.134171]  call_break_hook+0x170/0x178
+> [  135.134486]  brk_handler+0x28/0x68
+> [  135.134792]  do_debug_exception+0x90/0x150
+> [  135.135051]  el1_dbg+0x18/0x8c
+> [  135.135260]  default_idle_call+0x0/0x44
+> [  135.135516]  cpu_startup_entry+0x2c/0x30
+> [  135.135815]  rest_init+0x1b0/0x280
+> [  135.136044]  arch_call_rest_init+0x14/0x1c
+> [  135.136305]  start_kernel+0x4d4/0x500
+> [  135.136597] 
+> 
+> > > The exception entry and exit use irq_enter() and irq_exit(), in this
+> > > case, correct?  Otherwise RCU will be ignoring this CPU.
+> > 
+> > This is missing today, which sounds like the underlying bug.
+> 
+> Agreed. I'm not so familier with how debug exception is handled on arm64,
+> would it be a kind of NMI or IRQ?
 
-Signed-off-by: Wen He <wen.he_1@nxp.com>
----
- arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+They're more like faults, in that they're synchronous exceptions.
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index 7975519b4f56..aef5b06a98d5 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -554,6 +554,7 @@
- 		clocks = <&dpclk>, <&aclk>, <&aclk>, <&pclk>;
- 		clock-names = "pxlclk", "mclk", "aclk", "pclk";
- 		arm,malidp-output-port-lines = /bits/ 8 <8 8 8>;
-+		arm,malidp-arqos-value = <0xd000d000>;
- 
- 		port {
- 			dp0_out: endpoint {
--- 
-2.17.1
+Given that, I think using irq_enter() / irq_exit() would be surprising
+here, but perhaps they're misnamed.
 
+What do other architectures do here? Having a kprobe on the critical
+path to idle doesn't sound specific to arm64, but perhaps it is (and we
+should rule it out).
+
+Thanks,
+Mark.
