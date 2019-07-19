@@ -2,90 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF5EC6E245
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 10:10:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA1A96E24B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 10:12:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfGSIKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 04:10:25 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34827 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbfGSIKY (ORCPT
+        id S1727176AbfGSIMP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 04:12:15 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33276 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbfGSIMO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 04:10:24 -0400
-Received: by mail-pl1-f194.google.com with SMTP id w24so15247854plp.2;
-        Fri, 19 Jul 2019 01:10:24 -0700 (PDT)
+        Fri, 19 Jul 2019 04:12:14 -0400
+Received: by mail-lj1-f196.google.com with SMTP id h10so29963294ljg.0;
+        Fri, 19 Jul 2019 01:12:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ldCcok439XiSVa6AGYJGqO7cyqiS7oTbReHSOBCfvnE=;
-        b=pKmSqnllu7Ylmp71SktjrAuLTPt/Aj9dQ3RdkOi6HrILRYK5FQEWnUxEwsal7uiuUt
-         sdeihZFIaKfmiQowAovtE4yy2/iZD1YIHo653AcbDHg+tMPdGzmV9F/EtKKcOkWWVQvp
-         ukuAov9z65TUw09OjxmfLyvKohabXmOwHHFlodDD1E7TZg/GmSVV54jEpYkI2gQpznWo
-         9pkAtGAOVQbE8hxBQIXDgCetd2BYeNyMVKcXjd5xQ5U66hIh46Kb4fUWF3hi5MaPzEz4
-         YbxtvbfRN7eoitHB7VCbl5lgLw5Lqy2n9dRxq970Mt5Mx6zlrUjhmtpCsUDaWztIIbX6
-         8/wA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=mEBaSqitjE462bEAjNFGz8xwcHRYHwLdCUJSC13I1HM=;
+        b=o9c2gcWbMFWrT8wxt9D7NX5RkGevgroq610iUkNIWnwd4Hir6W8hdOKMafk+dMiB8i
+         wduJuz1UzdZwsj6lSJqrY+s9p24rNsaYoTsd4RvkHunwWHkCt3Suc7YfQX1pcTbXR4Lt
+         RBv7EGJjS1Il/mnUCMZOSzXEmjwZFalhPDPFOKRAzY1rSVDdYwJT/cExtwnIV31vow6B
+         d6F+JDYylpCZhvxoGL94MRceKyNO+jVyGTiNRg7zcGAnQ3iTchHh+xePtYQBN3qgO7Pq
+         dQvREvPbSP0QkH7wl+pbmpNcUSAan+7AF0vr1gIMZeIXoRzXvwNZeVe97qe4bGweLOpH
+         f6mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ldCcok439XiSVa6AGYJGqO7cyqiS7oTbReHSOBCfvnE=;
-        b=tYrv6lP7cElXKttdeQl+1nEwtOmMwEu+hA4Nv7dwUSoRaJ0TkHLXvJ0/Q6O2l6wDAx
-         29LcVP7TB9UNEnscA4W5LLo9nKMppDioIpEPfD/MR3ezlUY9huVUTxNGKn/tW+3KZoz1
-         U2WR2fepccmPqzO0n5lnm2PzUcDyoTiS5wpso9VAIoMKwQTDYuUvWAcgfsdVgy5PxZNy
-         lUCtKs9iejRL2X6wDdaIxAWvLPea9ZAEQRoQ1xOI+Lz+MHRG/3lG0VnhLTr+FfPK6HmG
-         V8oU2YzNhlVR6KqiTnOuOvOEZtGq6fE2YQID9sEoe3xO+KkQ0OM2+u2u0IcKDviv765s
-         rNpw==
-X-Gm-Message-State: APjAAAVXyVFOSqOfEXG27kaqkMfjFZkmFGbbIqqDEqtbDkb8RVk6ujVN
-        Uznk2psJVvr9VGLgjBxkS84=
-X-Google-Smtp-Source: APXvYqykkOF8/von8g5LZdSGDNFmG9Aj6nytf+VL5Z4Vd9CSBfS89tB/QwlOHkxkf1zeWyOnvoV88w==
-X-Received: by 2002:a17:902:20ec:: with SMTP id v41mr52314648plg.142.1563523823694;
-        Fri, 19 Jul 2019 01:10:23 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id 33sm35849261pgy.22.2019.07.19.01.10.20
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 19 Jul 2019 01:10:23 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Adham Abozaeid <adham.abozaeid@microchip.com>,
-        Ajay Singh <ajay.kathat@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] staging: wilc1000: Merge memcpy + le32_to_cpus to get_unaligned_le32
-Date:   Fri, 19 Jul 2019 16:10:06 +0800
-Message-Id: <20190719081005.4598-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=mEBaSqitjE462bEAjNFGz8xwcHRYHwLdCUJSC13I1HM=;
+        b=hRzjtWuHd8PcC/+r6re3iRNqlUUnvrUU+uGp/3lvYMqXBxhD3SHIBrsrCcea07H/ZA
+         Z920OUAkHv6YrSIe/7qqZqMNrYdJqd0gdNMIoS7e/Y4yG6RcLMkw2UQwjSIM8oH0Gg49
+         wRUSj3aobZepKpNeeORTYQMxKUn6zK+DNQ7CUl/sefp2J3Qli22JE//x5Ny0yQfCRq/D
+         /HFXShcXLjM92rT3gMozuQ9WLtPo+hFSoWnujPgVNvvivWiPaq9Aj7RIPU2IpjTCK3vt
+         w1px69Yk2Q+aJD3JfMI7y29MFsycBeSw8Un1cOXARuMIeQibTXi2jNkBVAKIZ410RkJl
+         Jhyw==
+X-Gm-Message-State: APjAAAUTFycm052D1eTDFnLimc+sPbaIHZqaY/xQRyeKeK0+4qzI4l+6
+        hkoI+xUUn9gEESvvgS58dSg=
+X-Google-Smtp-Source: APXvYqxZcTgCvF2Fp5q2IDGGyyhyLMRArBwBWQonSV/wGWV1db0uJaSKGV2f8utlhSbuEkjkKaeYLw==
+X-Received: by 2002:a2e:2411:: with SMTP id k17mr27314205ljk.136.1563523932846;
+        Fri, 19 Jul 2019 01:12:12 -0700 (PDT)
+Received: from peter.cuba.int. ([83.220.32.68])
+        by smtp.googlemail.com with ESMTPSA id a70sm5476692ljf.57.2019.07.19.01.12.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 19 Jul 2019 01:12:12 -0700 (PDT)
+From:   Peter Kosyh <p.kosyh@gmail.com>
+To:     David Ahern <dsa@cumulusnetworks.com>
+Cc:     davem@davemloft.net, Peter Kosyh <p.kosyh@gmail.com>,
+        Shrijeet Mukherjee <shrijeet@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] vrf: make sure skb->data contains ip header to make routing
+Date:   Fri, 19 Jul 2019 11:11:47 +0300
+Message-Id: <20190719081148.11512-1-p.kosyh@gmail.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <213bada2-fe81-3c14-1506-11abf0f3ca22@cumulusnetworks.com>
+References: <213bada2-fe81-3c14-1506-11abf0f3ca22@cumulusnetworks.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Merge the combo use of memcpy and le32_to_cpus.
-Use get_unaligned_le32 instead.
-This simplifies the code.
+vrf_process_v4_outbound() and vrf_process_v6_outbound() do routing
+using ip/ipv6 addresses, but don't make sure the header is available
+in skb->data[] (skb_headlen() is less then header size).
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Case:
+
+1) igb driver from intel.
+2) Packet size is greater then 255.
+3) MPLS forwards to VRF device.
+
+So, patch adds pskb_may_pull() calls in vrf_process_v4/v6_outbound()
+functions.
+
+Signed-off-by: Peter Kosyh <p.kosyh@gmail.com>
 ---
- drivers/staging/wilc1000/wilc_wfi_cfgoperations.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/vrf.c | 58 +++++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 35 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-index d72fdd333050..12fb4add05ec 100644
---- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-+++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-@@ -1038,8 +1038,7 @@ void wilc_wfi_p2p_rx(struct wilc_vif *vif, u8 *buff, u32 size)
- 	s32 freq;
- 	__le16 fc;
+diff --git a/drivers/net/vrf.c b/drivers/net/vrf.c
+index 54edf8956a25..6e84328bdd40 100644
+--- a/drivers/net/vrf.c
++++ b/drivers/net/vrf.c
+@@ -165,23 +165,29 @@ static int vrf_ip6_local_out(struct net *net, struct sock *sk,
+ static netdev_tx_t vrf_process_v6_outbound(struct sk_buff *skb,
+ 					   struct net_device *dev)
+ {
+-	const struct ipv6hdr *iph = ipv6_hdr(skb);
++	const struct ipv6hdr *iph;
+ 	struct net *net = dev_net(skb->dev);
+-	struct flowi6 fl6 = {
+-		/* needed to match OIF rule */
+-		.flowi6_oif = dev->ifindex,
+-		.flowi6_iif = LOOPBACK_IFINDEX,
+-		.daddr = iph->daddr,
+-		.saddr = iph->saddr,
+-		.flowlabel = ip6_flowinfo(iph),
+-		.flowi6_mark = skb->mark,
+-		.flowi6_proto = iph->nexthdr,
+-		.flowi6_flags = FLOWI_FLAG_SKIP_NH_OIF,
+-	};
++	struct flowi6 fl6;
+ 	int ret = NET_XMIT_DROP;
+ 	struct dst_entry *dst;
+ 	struct dst_entry *dst_null = &net->ipv6.ip6_null_entry->dst;
  
--	memcpy(&header, (buff - HOST_HDR_OFFSET), HOST_HDR_OFFSET);
--	le32_to_cpus(&header);
-+	header = get_unaligned_le32(buff - HOST_HDR_OFFSET);
- 	pkt_offset = GET_PKT_OFFSET(header);
++	if (!pskb_may_pull(skb, ETH_HLEN + sizeof(struct ipv6hdr)))
++		goto err;
++
++	iph = ipv6_hdr(skb);
++
++	memset(&fl6, 0, sizeof(fl6));
++	/* needed to match OIF rule */
++	fl6.flowi6_oif = dev->ifindex;
++	fl6.flowi6_iif = LOOPBACK_IFINDEX;
++	fl6.daddr = iph->daddr;
++	fl6.saddr = iph->saddr;
++	fl6.flowlabel = ip6_flowinfo(iph);
++	fl6.flowi6_mark = skb->mark;
++	fl6.flowi6_proto = iph->nexthdr;
++	fl6.flowi6_flags = FLOWI_FLAG_SKIP_NH_OIF;
++
+ 	dst = ip6_route_output(net, NULL, &fl6);
+ 	if (dst == dst_null)
+ 		goto err;
+@@ -237,21 +243,27 @@ static int vrf_ip_local_out(struct net *net, struct sock *sk,
+ static netdev_tx_t vrf_process_v4_outbound(struct sk_buff *skb,
+ 					   struct net_device *vrf_dev)
+ {
+-	struct iphdr *ip4h = ip_hdr(skb);
++	struct iphdr *ip4h;
+ 	int ret = NET_XMIT_DROP;
+-	struct flowi4 fl4 = {
+-		/* needed to match OIF rule */
+-		.flowi4_oif = vrf_dev->ifindex,
+-		.flowi4_iif = LOOPBACK_IFINDEX,
+-		.flowi4_tos = RT_TOS(ip4h->tos),
+-		.flowi4_flags = FLOWI_FLAG_ANYSRC | FLOWI_FLAG_SKIP_NH_OIF,
+-		.flowi4_proto = ip4h->protocol,
+-		.daddr = ip4h->daddr,
+-		.saddr = ip4h->saddr,
+-	};
++	struct flowi4 fl4;
+ 	struct net *net = dev_net(vrf_dev);
+ 	struct rtable *rt;
  
- 	if (pkt_offset & IS_MANAGMEMENT_CALLBACK) {
++	if (!pskb_may_pull(skb, ETH_HLEN + sizeof(struct iphdr)))
++		goto err;
++
++	ip4h = ip_hdr(skb);
++
++	memset(&fl4, 0, sizeof(fl4));
++	/* needed to match OIF rule */
++	fl4.flowi4_oif = vrf_dev->ifindex;
++	fl4.flowi4_iif = LOOPBACK_IFINDEX;
++	fl4.flowi4_tos = RT_TOS(ip4h->tos);
++	fl4.flowi4_flags = FLOWI_FLAG_ANYSRC | FLOWI_FLAG_SKIP_NH_OIF;
++	fl4.flowi4_proto = ip4h->protocol;
++	fl4.daddr = ip4h->daddr;
++	fl4.saddr = ip4h->saddr;
++
+ 	rt = ip_route_output_flow(net, &fl4, NULL);
+ 	if (IS_ERR(rt))
+ 		goto err;
 -- 
-2.20.1
+2.11.0
 
