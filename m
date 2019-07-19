@@ -2,118 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25EE46E599
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 14:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56D636E5A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 14:27:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbfGSMYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 08:24:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726072AbfGSMYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 08:24:17 -0400
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 008D02187F
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 12:24:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563539056;
-        bh=Ck4eZ/5Sqk7t+dWiweDZ19MBs3yztrS1A6zmoiFGVAw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZcNjefoh2NgQpIgYbn+H2tVOGJH8ErxcAhc6+nhkF2NKowZQmfV/bo9bFIeERf6V+
-         e5lEbDQVV+FjMtX+0oLpIZOZOF9kLkX08V64y5bEm2Tk69vUbmMkunpHRdqm7EDgXk
-         orAA3mbAq+W7VQCoANy++bomLiKbdAY+oZSYbb/s=
-Received: by mail-wr1-f41.google.com with SMTP id r1so32066265wrl.7
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 05:24:15 -0700 (PDT)
-X-Gm-Message-State: APjAAAUSBNyDsL8Jp4edPdlPKor17aaurZx3tSDWS0AYSGRLU9ROuXTR
-        i57VJ3FPIrIozIvqe4voRa9+ABUo2l7wdR1XyRxEqQ==
-X-Google-Smtp-Source: APXvYqwbf/NL9etE6iTEeE98k4Q7WxwDbyr6pULcKvmuiR7Rm2kxxUrs7jste1M0Depb2v/FP6vu8RxFKZXYMKPTr6A=
-X-Received: by 2002:adf:dd0f:: with SMTP id a15mr15129921wrm.265.1563539054479;
- Fri, 19 Jul 2019 05:24:14 -0700 (PDT)
+        id S1728241AbfGSM1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 08:27:16 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:57240 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbfGSM1Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 08:27:16 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6JCRCNo066325;
+        Fri, 19 Jul 2019 07:27:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1563539232;
+        bh=C15ifLtTMW9RCLd4ICeuIimwJTRxzJ3T1kPA7gs2at4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=i+yvDK9DowbNnToFTY2uhYAJFMgC9FT/7LU+DEsyksjJMyP7FwphYoe1o5U02HSaN
+         0evBtBW23LW+BU10aPFaNcHvagrNmYAvVTm2bm/jT/mCGCKAS3qiyNN1G3fYs31iAG
+         5q3DRtiM5dWpYD+J4PyElilDtWbLKN4J8dNMqsTg=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6JCRCuq044990
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 19 Jul 2019 07:27:12 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 19
+ Jul 2019 07:27:11 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 19 Jul 2019 07:27:11 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6JCR98S005093;
+        Fri, 19 Jul 2019 07:27:10 -0500
+Subject: Re: [PATCH] phy: core: document calibrate() method
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        <linux-usb@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+References: <CGME20190719095254eucas1p29c9e6c7aac20cf89b589fd2f2036c485@eucas1p2.samsung.com>
+ <20190719095245.17401-1-m.szyprowski@samsung.com>
+ <085b8093-d7bc-d960-f0d8-8776818ebab0@ti.com>
+ <1865da50-000f-e235-4090-1058d2aa217b@samsung.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <6345ff36-9ee3-fe41-e416-a1178087b2c7@ti.com>
+Date:   Fri, 19 Jul 2019 17:55:30 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190717071439.14261-1-joro@8bytes.org> <20190717071439.14261-4-joro@8bytes.org>
- <CALCETrXfCbajLhUixKNaMfFw91gzoQzt__faYLwyBqA3eAbQVA@mail.gmail.com>
- <20190718091745.GG13091@suse.de> <CALCETrXJYuHN872F74kVTuw4dYOc5saKqoUFbgJ5X0EuGEhXcA@mail.gmail.com>
- <20190719122111.GD19068@suse.de>
-In-Reply-To: <20190719122111.GD19068@suse.de>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 19 Jul 2019 05:24:03 -0700
-X-Gmail-Original-Message-ID: <CALCETrUjATNr97ZWX41Tt3QyiMM+GSqG92Nn=qZTTG6XrvL8GQ@mail.gmail.com>
-Message-ID: <CALCETrUjATNr97ZWX41Tt3QyiMM+GSqG92Nn=qZTTG6XrvL8GQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] mm/vmalloc: Sync unmappings in vunmap_page_range()
-To:     Joerg Roedel <jroedel@suse.de>
-Cc:     Andy Lutomirski <luto@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1865da50-000f-e235-4090-1058d2aa217b@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 19, 2019 at 5:21 AM Joerg Roedel <jroedel@suse.de> wrote:
->
-> On Thu, Jul 18, 2019 at 12:04:49PM -0700, Andy Lutomirski wrote:
-> > I find it problematic that there is no meaningful documentation as to
-> > what vmalloc_sync_all() is supposed to do.
->
-> Yeah, I found that too, there is no real design around
-> vmalloc_sync_all(). It looks like it was just added to fit the purpose
-> on x86-32. That also makes it hard to find all necessary call-sites.
->
-> > Which is obviously entirely inapplicable.  If I'm understanding
-> > correctly, the underlying issue here is that the vmalloc fault
-> > mechanism can propagate PGD entry *addition*, but nothing (not even
-> > flush_tlb_kernel_range()) propagates PGD entry *removal*.
->
-> Close, the underlying issue is not about PGD, but PMD entry
-> addition/removal on x86-32 pae systems.
->
-> > I find it suspicious that only x86 has this.  How do other
-> > architectures handle this?
->
-> The problem on x86-PAE arises from the !SHARED_KERNEL_PMD case, which was
-> introduced by the  Xen-PV patches and then re-used for the PTI-x32
-> enablement to be able to map the LDT into user-space at a fixed address.
->
-> Other architectures probably don't have the !SHARED_KERNEL_PMD case (or
-> do unsharing of kernel page-tables on any level where a huge-page could
-> be mapped).
->
-> > At the very least, I think this series needs a comment in
-> > vmalloc_sync_all() explaining exactly what the function promises to
-> > do.
->
-> Okay, as it stands, it promises to sync mappings for the vmalloc area
-> between all PGDs in the system. I will add that as a comment.
->
-> > But maybe a better fix is to add code to flush_tlb_kernel_range()
-> > to sync the vmalloc area if the flushed range overlaps the vmalloc
-> > area.
->
-> That would also cause needless overhead on x86-64 because the vmalloc
-> area doesn't need syncing there. I can make it x86-32 only, but that is
-> not a clean solution imo.
+Hi Marek,
 
-Could you move the vmalloc_sync_all() call to the lazy purge path,
-though?  If nothing else, it will cause it to be called fewer times
-under any given workload, and it looks like it could be rather slow on
-x86_32.
+On 19/07/19 5:51 PM, Marek Szyprowski wrote:
+> Hi Kishon,
+> 
+> On 2019-07-19 12:04, Kishon Vijay Abraham I wrote:
+>> Hi Marek,
+>>
+>> On 19/07/19 3:22 PM, Marek Szyprowski wrote:
+>>> Commit 36914111e682 ("drivers: phy: add calibrate method") added support
+>>> for generic phy_calibrate() method, but it didn't explain in detail when
+>>> such method is supposed to be called. Add some more documentation directly
+>>> to the phy.h to make it clean that it is intended to be called after every
+>>> host controller reset.
+>>>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> ---
+>>>   include/linux/phy/phy.h | 12 ++++++++++++
+>>>   1 file changed, 12 insertions(+)
+>>>
+>>> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+>>> index 15032f145063..46775e8b0ed9 100644
+>>> --- a/include/linux/phy/phy.h
+>>> +++ b/include/linux/phy/phy.h
+>>> @@ -101,6 +101,18 @@ struct phy_ops {
+>>>   	int	(*validate)(struct phy *phy, enum phy_mode mode, int submode,
+>>>   			    union phy_configure_opts *opts);
+>>>   	int	(*reset)(struct phy *phy);
+>>> +
+>>> +	/**
+>>> +	 * @calibrate:
+>>> +	 *
+>>> +	 * Optional.
+>>> +	 *
+>>> +	 * Used to calibrate phy, typically by adjusting some parameters
+>>> +	 * in runtime, which are otherwise lost after host controller
+>>> +	 * reset and cannot be set in phy_init() and phy_power_on().
+>>> +	 *
+>>> +	 * Returns: 0 if successful, an negative error code otherwise
+>>> +	 */
+>>>   	int	(*calibrate)(struct phy *phy);
+>> This should be added in drivers/phy/phy-core.c before phy_calibrate()?
+> 
+> Okay. Do you want to keep it also in phy.h (like for validate and 
+> configure)?
 
->
-> > Or, even better, improve x86_32 the way we did x86_64: adjust
-> > the memory mapping code such that top-level paging entries are never
-> > deleted in the first place.
->
-> There is not enough address space on x86-32 to partition it like on
-> x86-64. In the default PAE configuration there are _four_ PGD entries,
-> usually one for the kernel, and then 512 PMD entries. Partitioning
-> happens on the PMD level, for example there is one entry (2MB of address
-> space) reserved for the user-space LDT mapping.
+No. Adding in phy.txt and before phy_calibrate() should suffice IMO.
 
-Ugh, fair enough.
+Thanks
+Kishon
