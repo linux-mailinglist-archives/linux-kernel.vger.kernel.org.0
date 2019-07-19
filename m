@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B7D46DD3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:21:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 431D46DD38
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389016AbfGSEVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:21:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47262 "EHLO mail.kernel.org"
+        id S2389369AbfGSEVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:21:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388653AbfGSEMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:12:05 -0400
+        id S1732862AbfGSEMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:12:10 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD19E21873;
-        Fri, 19 Jul 2019 04:12:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DC7B21872;
+        Fri, 19 Jul 2019 04:12:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509524;
-        bh=iZ67JdgCIuYaVGiGuIHDqG7PjRoM2Dbn3bbUpNl2z/Q=;
+        s=default; t=1563509530;
+        bh=NKN2kMwDMv/CtJoT/kNNSdoQYzqkb1OZN7iL5M3DnOc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FqqvpKgB5fkuNSFugf/VFASx2vTNBrFsKqC1rLceKNxss8OIGFs74MtJut7k5ER/h
-         Ye3KWTZe1mAHnzjRG+tR+MeBwFmI7NFS+BtLAH/aOUF8UhGf0ZYW2/jaqWr9fwnIVQ
-         ZGeb8uADpPt4RUgnCA/OKvwPx3dWQxU9EUl+DadY=
+        b=PoAwjjCp+Io96ivyMf/In1cpjbSBl9JM8biYDlVJXdv/AYQ2MkRQBh6mEI0j5MwLM
+         0WDWFyc6PMKXFYWr1Pqe+1xFX7lgcQGhsm7pH8ifspXuoWKTbHtJku4nVgN1R+3DEY
+         xUrHI39+b9Rc0KlxzLGahiExdzyi2W4+cKtSW0NY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bastien Nocera <hadess@hadess.net>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 30/60] iio: iio-utils: Fix possible incorrect mask calculation
-Date:   Fri, 19 Jul 2019 00:10:39 -0400
-Message-Id: <20190719041109.18262-30-sashal@kernel.org>
+Cc:     Robert Hancock <hancock@sedsystems.ca>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 33/60] mfd: core: Set fwnode for created devices
+Date:   Fri, 19 Jul 2019 00:10:42 -0400
+Message-Id: <20190719041109.18262-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719041109.18262-1-sashal@kernel.org>
 References: <20190719041109.18262-1-sashal@kernel.org>
@@ -43,53 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bastien Nocera <hadess@hadess.net>
+From: Robert Hancock <hancock@sedsystems.ca>
 
-[ Upstream commit 208a68c8393d6041a90862992222f3d7943d44d6 ]
+[ Upstream commit c176c6d7e932662668bcaec2d763657096589d85 ]
 
-On some machines, iio-sensor-proxy was returning all 0's for IIO sensor
-values. It turns out that the bits_used for this sensor is 32, which makes
-the mask calculation:
+The logic for setting the of_node on devices created by mfd did not set
+the fwnode pointer to match, which caused fwnode-based APIs to
+malfunction on these devices since the fwnode pointer was null. Fix
+this.
 
-*mask = (1 << 32) - 1;
-
-If the compiler interprets the 1 literals as 32-bit ints, it generates
-undefined behavior depending on compiler version and optimization level.
-On my system, it optimizes out the shift, so the mask value becomes
-
-*mask = (1) - 1;
-
-With a mask value of 0, iio-sensor-proxy will always return 0 for every axis.
-
-Avoid incorrect 0 values caused by compiler optimization.
-
-See original fix by Brett Dutro <brett.dutro@gmail.com> in
-iio-sensor-proxy:
-https://github.com/hadess/iio-sensor-proxy/commit/9615ceac7c134d838660e209726cd86aa2064fd3
-
-Signed-off-by: Bastien Nocera <hadess@hadess.net>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Robert Hancock <hancock@sedsystems.ca>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/iio/iio_utils.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mfd/mfd-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/iio/iio_utils.c b/tools/iio/iio_utils.c
-index 7a6d61c6c012..55272fef3b50 100644
---- a/tools/iio/iio_utils.c
-+++ b/tools/iio/iio_utils.c
-@@ -159,9 +159,9 @@ int iioutils_get_type(unsigned *is_signed, unsigned *bytes, unsigned *bits_used,
- 			*be = (endianchar == 'b');
- 			*bytes = padint / 8;
- 			if (*bits_used == 64)
--				*mask = ~0;
-+				*mask = ~(0ULL);
- 			else
--				*mask = (1ULL << *bits_used) - 1;
-+				*mask = (1ULL << *bits_used) - 1ULL;
- 
- 			*is_signed = (signchar == 's');
- 			if (fclose(sysfsfp)) {
+diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
+index c57e407020f1..5c8ed2150c8b 100644
+--- a/drivers/mfd/mfd-core.c
++++ b/drivers/mfd/mfd-core.c
+@@ -179,6 +179,7 @@ static int mfd_add_device(struct device *parent, int id,
+ 		for_each_child_of_node(parent->of_node, np) {
+ 			if (of_device_is_compatible(np, cell->of_compatible)) {
+ 				pdev->dev.of_node = np;
++				pdev->dev.fwnode = &np->fwnode;
+ 				break;
+ 			}
+ 		}
 -- 
 2.20.1
 
