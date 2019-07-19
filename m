@@ -2,117 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4B3F6E319
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 11:06:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C48906E323
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 11:07:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbfGSJF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 05:05:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44122 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbfGSJFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 05:05:55 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CC7638110A;
-        Fri, 19 Jul 2019 09:05:54 +0000 (UTC)
-Received: from [10.36.117.221] (ovpn-117-221.ams2.redhat.com [10.36.117.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0E68310190BB;
-        Fri, 19 Jul 2019 09:05:51 +0000 (UTC)
-Subject: Re: [PATCH v1] drivers/base/node.c: Simplify
- unregister_memory_block_under_nodes()
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Oscar Salvador <osalvador@suse.de>
-References: <20190718142239.7205-1-david@redhat.com>
- <20190719084239.GO30461@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <eff19965-f280-6124-8fc5-56e3101f67cb@redhat.com>
-Date:   Fri, 19 Jul 2019 11:05:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727372AbfGSJHi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 05:07:38 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41071 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbfGSJHh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 05:07:37 -0400
+Received: by mail-pf1-f194.google.com with SMTP id m30so13907827pff.8;
+        Fri, 19 Jul 2019 02:07:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XVW3vUyQIGlttxB7d4coQNzCIFhrIEtf8tciYiOHfMM=;
+        b=kSJour3PB25SjVK+zTOUmCSVJJMU+pBRgmBaNXOp4U2TLYeO899DuO4rmrR0V8c8Tx
+         8SRLDCDqcc/z3pdAT2ITifncdNMk1q131CqOUMdUFTE3oso5CqWpEv6sXOfK4HV/l8P0
+         SDASWajXB4cmXRFtwZbK7Ci0Hd84CRuP7dg/3Y5mRi8R0uzWmo68dOVpKytCmrzuaKwU
+         +DSgmOykXwmdm4MIuNlrxsY9wHAwzhE4oynOg+DKa7zSGn6mAOmfBr1Doa1J4PKZgWnn
+         I//Tsuj40cNKYCtqC6vk4YcGO9p+Rw9mBsgEu006hQNLRn3qIEER6q9pMUk4yS8/NvNO
+         lXZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XVW3vUyQIGlttxB7d4coQNzCIFhrIEtf8tciYiOHfMM=;
+        b=nJMesKNyTEuXHbddf2Qf3RGjcTKZtuMUBcvbumvrQnE02JtvJhYLNvDVn1gDLmNqJr
+         qvsmf+9c/BZ4e/gsWjJNnaNfE66apvSyGVy2RThQxWHxGLqFVtlJTPKJrI9qdy513iex
+         V/mmKaZXt/972yIxfJYAT0whMZ+HIfEhvNytzy2+rHwW9ED9PNZZQk5HFUVd15B9jBL+
+         YxuCiWrMfS+7g59RMf+GGpHAtTiqP4rvWVBz9F0QSumXWc4SE8io38dUtjWbCaQk5E6h
+         EzxYW5P1KVXRWsdMdJ5UjI5bkZ17azDPziVh+/kmaOIo5oqVtMm7b/CXWjPiNG7v4x38
+         JfyA==
+X-Gm-Message-State: APjAAAWTad4L8qV0S/fYOTbI8fuznv0fcJZbQXID4R1Sbrcenct4cJ0R
+        GEKRkk6WLA7lCCZr7JfTAWg=
+X-Google-Smtp-Source: APXvYqyjSDLx5lH9egeR88KsrwSkCirIGl9HHEdsM3Nz+aKE8lyMEY5RzKoWTbu1soMFSage/QWrEQ==
+X-Received: by 2002:a63:db45:: with SMTP id x5mr40825943pgi.293.1563527256835;
+        Fri, 19 Jul 2019 02:07:36 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
+        by smtp.gmail.com with ESMTPSA id d2sm27223139pjs.21.2019.07.19.02.07.34
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 19 Jul 2019 02:07:36 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH] ax88179_178a: Merge memcpy + le32_to_cpus to get_unaligned_le32
+Date:   Fri, 19 Jul 2019 17:07:15 +0800
+Message-Id: <20190719090714.19037-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190719084239.GO30461@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 19 Jul 2019 09:05:54 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19.07.19 10:42, Michal Hocko wrote:
-> On Thu 18-07-19 16:22:39, David Hildenbrand wrote:
->> We don't allow to offline memory block devices that belong to multiple
->> numa nodes. Therefore, such devices can never get removed. It is
->> sufficient to process a single node when removing the memory block.
->>
->> Remember for each memory block if it belongs to no, a single, or mixed
->> nodes, so we can use that information to skip unregistering or print a
->> warning (essentially a safety net to catch BUGs).
-> 
-> I do not really like NUMA_NO_NODE - 1 thing. This is yet another invalid
-> node that is magic. Why should we even care? In other words why is this
-> patch an improvement?
+Merge the combo use of memcpy and le32_to_cpus.
+Use get_unaligned_le32 instead.
+This simplifies the code.
 
-Oh, and to answer that part of the question:
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+ drivers/net/usb/ax88179_178a.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-We no longer have to iterate over each pfn of a memory block to be removed.
-
+diff --git a/drivers/net/usb/ax88179_178a.c b/drivers/net/usb/ax88179_178a.c
+index 0bc457ba8574..72d165114b67 100644
+--- a/drivers/net/usb/ax88179_178a.c
++++ b/drivers/net/usb/ax88179_178a.c
+@@ -1366,8 +1366,7 @@ static int ax88179_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
+ 		return 0;
+ 
+ 	skb_trim(skb, skb->len - 4);
+-	memcpy(&rx_hdr, skb_tail_pointer(skb), 4);
+-	le32_to_cpus(&rx_hdr);
++	rx_hdr = get_unaligned_le32(skb_tail_pointer(skb));
+ 
+ 	pkt_cnt = (u16)rx_hdr;
+ 	hdr_off = (u16)(rx_hdr >> 16);
 -- 
+2.20.1
 
-Thanks,
-
-David / dhildenb
