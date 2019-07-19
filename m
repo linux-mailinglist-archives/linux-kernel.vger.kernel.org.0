@@ -2,124 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B322B6E3CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 11:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 880776E3DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:04:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbfGSJ6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 05:58:11 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41924 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbfGSJ6L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 05:58:11 -0400
-Received: by mail-ed1-f67.google.com with SMTP id p15so33941765eds.8;
-        Fri, 19 Jul 2019 02:58:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2gpYE+zJ6EXcLs21MOYZokgRLOUE5PGmGdhYUwcBgjU=;
-        b=rTW8MZ4xBHDd/sC6TSsfB+StXORNzg7HRiHx1YbH0m4LtNTF6MrW/HUhQbrtZ6DkIK
-         fkKCaXYur2JwBI1zyBUvUFcjMLrUqZWzcNGu//qOpVaRciPFjjG+AmeU84nNeuokIoRV
-         310WML2iuWQenrkUXWsMF4KfGBfJDyfROXTZld/U3aBo9clcWlPRuFjmmawow6r82L31
-         jfQCGR9rRt/G/hyx49P9BKHxJNANxhN/dfz/B3IuPlWTHElL3o1Yc8eBBYHRdFuoODDR
-         8iICTsBnuzLTXtrtaDn+F6oQydOp8Jy5+Z0eCRl7LAOLNrTVRF01VTWvS57YP1491P42
-         eDbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2gpYE+zJ6EXcLs21MOYZokgRLOUE5PGmGdhYUwcBgjU=;
-        b=cH24Ng4p7xxDlV3HyzpBXrvnLTe1yY+yMjcCPWfguU/tB/bmNtCumtDAWehP3grth9
-         1V7uS8w/NsVCBH5Dq0BzdqJ6t/SVEmeyuKMzlgE3apGZl4TQ7a74NwlJgIpXKAHYlYaJ
-         OVTazzkH5T9dai9uNre563O8L/eoTRKYZsaxu5PvdrCrZUueIstXE5KPT3F5Hn4jIXRo
-         TKBb+7VWQKITtjbdqAZ2VfyE98t8bpYPru5i8iSzOYp1a/fzDxyCUH4jdSwKZTUPKTQI
-         lICMa0e39QvDwsfLSFCMzUZZgtm10i74Rejt9hjIwONmp1ZMJXzdu6Uxkui0sDtqSqDJ
-         h4tw==
-X-Gm-Message-State: APjAAAUunGrDiXrZucz/S6psh5mK0Cz9stnZjLHzZNFF6ZXlW5DWZ9ox
-        WK1OtDhHCmQ5x83btQrFXGmxSv5Shyq87+OOQ9o=
-X-Google-Smtp-Source: APXvYqz8Fuu5vbQkb81iceuLPYVPUjam3GRqu4pmMWX89pXd5blNX5FXfiQKk4TyQyIIdE5HJRqfrTu6skrxqvM8GNQ=
-X-Received: by 2002:a17:906:9447:: with SMTP id z7mr40297534ejx.165.1563530289559;
- Fri, 19 Jul 2019 02:58:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190712063240.GD7702@X58A-UD3R> <20190712125116.GB92297@google.com>
- <CANrsvRMh6L_sEmoF_K3Mx=1VcuGSwQAT8CZHep69aSZUTBvwpA@mail.gmail.com>
- <CAEXW_YTeAUuVqViBfiOTQhckMDH229oQdPXG6SNqGK0xYm-yzA@mail.gmail.com>
- <20190713151330.GE26519@linux.ibm.com> <20190713154257.GE133650@google.com>
- <20190713174111.GG26519@linux.ibm.com> <CAEXW_YTcL-nOfJXkChGhvQtqqfSLpAYr327PLu1SmGEEADCevw@mail.gmail.com>
- <20190719003942.GA28226@X58A-UD3R> <CAEXW_YQij-N2-NFjUQtsmYxVLtWxcQk_Kb16fGBzzPAZtWg+sg@mail.gmail.com>
- <20190719074329.GY14271@linux.ibm.com>
-In-Reply-To: <20190719074329.GY14271@linux.ibm.com>
-From:   Byungchul Park <max.byungchul.park@gmail.com>
-Date:   Fri, 19 Jul 2019 18:57:58 +0900
-Message-ID: <CANrsvRM7ehvqcPtKMV7RyRCiXwe_R_TsLZiNtxBPY_qnSg2LNQ@mail.gmail.com>
-Subject: Re: [PATCH] rcu: Make jiffies_till_sched_qs writable
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Byungchul Park <byungchul.park@lge.com>,
-        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-team@lge.com
-Content-Type: text/plain; charset="UTF-8"
+        id S1727478AbfGSKEI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 06:04:08 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:55478 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725853AbfGSKEI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 06:04:08 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3F172200158;
+        Fri, 19 Jul 2019 12:04:06 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 93545200266;
+        Fri, 19 Jul 2019 12:04:01 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E856D402B5;
+        Fri, 19 Jul 2019 18:03:55 +0800 (SGT)
+From:   Wen He <wen.he_1@nxp.com>
+To:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        liviu.dudau@arm.com, brian.starkey@arm.com, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     leoyang.li@nxp.com, Wen He <wen.he_1@nxp.com>
+Subject: [v2 1/3] drm/arm/mali-dp: Add display QoS interface configuration for Mali DP500
+Date:   Fri, 19 Jul 2019 17:54:45 +0800
+Message-Id: <20190719095445.11575-1-wen.he_1@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 19, 2019 at 4:43 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
->
-> On Thu, Jul 18, 2019 at 08:52:52PM -0400, Joel Fernandes wrote:
-> > On Thu, Jul 18, 2019 at 8:40 PM Byungchul Park <byungchul.park@lge.com> wrote:
-> > [snip]
-> > > > - There is a bug in the CPU stopper machinery itself preventing it
-> > > > from scheduling the stopper on Y. Even though Y is not holding up the
-> > > > grace period.
-> > >
-> > > Or any thread on Y is busy with preemption/irq disabled preventing the
-> > > stopper from being scheduled on Y.
-> > >
-> > > Or something is stuck in ttwu() to wake up the stopper on Y due to any
-> > > scheduler locks such as pi_lock or rq->lock or something.
-> > >
-> > > I think what you mentioned can happen easily.
-> > >
-> > > Basically we would need information about preemption/irq disabled
-> > > sections on Y and scheduler's current activity on every cpu at that time.
-> >
-> > I think all that's needed is an NMI backtrace on all CPUs. An ARM we
-> > don't have NMI solutions and only IPI or interrupt based backtrace
-> > works which should at least catch and the preempt disable and softirq
-> > disable cases.
->
-> True, though people with systems having hundreds of CPUs might not
-> thank you for forcing an NMI backtrace on each of them.  Is it possible
-> to NMI only the ones that are holding up the CPU stopper?
+Configure the display Quality of service (QoS) levels priority if the
+optional property node "arm,malidp-aqros-value" is defined in DTS file.
 
-What a good idea! I think it's possible!
+QoS signaling using AQROS and AWQOS AXI interface signals, the AQROS is
+driven from the "RQOS" register, so needed to program the RQOS register
+to avoid the 4k resolution flicker issue on the LS1028A platform.
 
-But we need to think about the case NMI doesn't work when the
-holding-up was caused by IRQ disabled.
+Signed-off-by: Wen He <wen.he_1@nxp.com>
+---
+change in v2:
+        - modify some content based on feedback from maintainers
 
-Though it's just around the corner of weekend, I will keep thinking
-on it during weekend!
+ drivers/gpu/drm/arm/malidp_drv.c  |  6 ++++++
+ drivers/gpu/drm/arm/malidp_hw.c   | 13 +++++++++++++
+ drivers/gpu/drm/arm/malidp_hw.h   |  3 +++
+ drivers/gpu/drm/arm/malidp_regs.h | 10 ++++++++++
+ 4 files changed, 32 insertions(+)
 
-Thanks,
-Byungchul
-
->                                                         Thanx, Paul
->
-> > But yeah I don't see why just the stacks of those CPUs that are
-> > blocking the CPU X would not suffice for the trivial cases where a
-> > piece of misbehaving code disable interrupts / preemption and
-> > prevented the stopper thread from executing.
-> >
-> > May be once the test case is ready (no rush!) , then it will be more
-> > clear what can help.
-> >
-> > J.
-> >
-
-
-
+diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+index f25ec4382277..61c49a0668a7 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.c
++++ b/drivers/gpu/drm/arm/malidp_drv.c
+@@ -818,6 +818,12 @@ static int malidp_bind(struct device *dev)
+ 
+ 	malidp->core_id = version;
+ 
++	ret = of_property_read_u32(dev->of_node,
++					"arm,malidp-arqos-value",
++					&hwdev->arqos_value);
++	if (ret)
++		hwdev->arqos_value = 0x0;
++
+ 	/* set the number of lines used for output of RGB data */
+ 	ret = of_property_read_u8_array(dev->of_node,
+ 					"arm,malidp-output-port-lines",
+diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
+index 50af399d7f6f..323683b1e9f7 100644
+--- a/drivers/gpu/drm/arm/malidp_hw.c
++++ b/drivers/gpu/drm/arm/malidp_hw.c
+@@ -374,6 +374,19 @@ static void malidp500_modeset(struct malidp_hw_device *hwdev, struct videomode *
+ 		malidp_hw_setbits(hwdev, MALIDP_DISP_FUNC_ILACED, MALIDP_DE_DISPLAY_FUNC);
+ 	else
+ 		malidp_hw_clearbits(hwdev, MALIDP_DISP_FUNC_ILACED, MALIDP_DE_DISPLAY_FUNC);
++
++	/*
++	 * Program the RQoS register to avoid 4k resolution flicker
++	 * on the LS1028A.
++	 */
++	if (hwdev->arqos_value) {
++		val = hwdev->arqos_value;
++
++		if (mode->pixelclock == 594000000)
++			malidp_hw_setbits(hwdev, val, MALIDP500_RQOS_QUALITY);
++		else
++			malidp_hw_clearbits(hwdev, val, MALIDP500_RQOS_QUALITY);
++	}
+ }
+ 
+ int malidp_format_get_bpp(u32 fmt)
+diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_hw.h
+index 968a65eed371..e4c36bc90bda 100644
+--- a/drivers/gpu/drm/arm/malidp_hw.h
++++ b/drivers/gpu/drm/arm/malidp_hw.h
+@@ -251,6 +251,9 @@ struct malidp_hw_device {
+ 
+ 	/* size of memory used for rotating layers, up to two banks available */
+ 	u32 rotation_memory[2];
++
++	/* priority level of RQOS register used for driven the ARQOS signal */
++	u32 arqos_value;
+ };
+ 
+ static inline u32 malidp_hw_read(struct malidp_hw_device *hwdev, u32 reg)
+diff --git a/drivers/gpu/drm/arm/malidp_regs.h b/drivers/gpu/drm/arm/malidp_regs.h
+index 993031542fa1..514c50dcb74d 100644
+--- a/drivers/gpu/drm/arm/malidp_regs.h
++++ b/drivers/gpu/drm/arm/malidp_regs.h
+@@ -210,6 +210,16 @@
+ #define MALIDP500_CONFIG_VALID		0x00f00
+ #define MALIDP500_CONFIG_ID		0x00fd4
+ 
++/*
++ * The quality of service (QoS) register on the DP500. RQOS register values
++ * are driven by the ARQOS signal, using AXI transacations, dependent on the
++ * FIFO input level.
++ * The RQOS register can also set QoS levels for:
++ *    - RED_ARQOS   @ A 4-bit signal value for close to underflow conditions
++ *    - GREEN_ARQOS @ A 4-bit signal value for normal conditions
++ */
++#define MALIDP500_RQOS_QUALITY          0x00500
++
+ /* register offsets and bits specific to DP550/DP650 */
+ #define MALIDP550_ADDR_SPACE_SIZE	0x10000
+ #define MALIDP550_DE_CONTROL		0x00010
 -- 
-Thanks,
-Byungchul
+2.17.1
+
