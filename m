@@ -2,108 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE58C6E841
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 17:55:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89D296E858
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 18:00:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730464AbfGSPyC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 11:54:02 -0400
-Received: from mail-eopbgr70057.outbound.protection.outlook.com ([40.107.7.57]:24485
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727927AbfGSPyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 11:54:01 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=L3CL5jDCzNUDIUNOaV73DN8B3kyqC0Gm+f+y8qbvaSuF8wwqnzgxqaJQ/1meBc9owQCID29iWWDjoqpANC3w22SIojc7mEsZXnXWmrJowQHpO9xuS00Qk8nKDiGcyYlh/QvxPIhUStS3UECNFrtx46KK4vEjngVKYIfMZgK2IjT+uWX3Q3CSBf0RwjcGwZ3M2lFD5PkIC4zk9LME92+3JOYiBUVIT8lllBi8OQkliA7e1AzgQksGRYiEa0u0Alas+uSQiBdo87v04uM9l4QVoljTGKjpPRb9yxMgyJCRQxDNeEVZMqmt4sHJIlRUW5MTPNWRUwond8OdFP9WOx7/mg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ljUdsTerhXURISW6KYfDbGWQ5hkppm6fOqFnOZbAmyc=;
- b=IXvX6MSL5my2AfDqOTO02PVw7fBA8Wt51wp+LvX9PQ6/CRS4H+/Tnr9nPsv5znuVq3CZmwZqE+OqGFHclhYwBurPQvgHsXZO9wamWEhqnUfOmQo1EZUAudjCO3R44k9WGlBunXeDbAzFOXL/ULo+dI51IKO9tuo70vwc5/do+ks4+itVJvm5BMjr7g1ixPAxvm/DftWSfsuV61b+zSIK1bn1t3x8xCM118sVnQqtw6qwAR0NmFFf+JHwhCljf9HkMMv8fm5IHRNEzg+etETzWfZjWk/lkzsU7WLzgdfcLvLW81CBmn5rxHsD6Ve9rY9Udg0DxvKqR+hW7HJqi4+JIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
- header.d=nxp.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ljUdsTerhXURISW6KYfDbGWQ5hkppm6fOqFnOZbAmyc=;
- b=nSiY+8unQ7xaZK2QDKlmqLMKmQ8/pMRNv6rcdGJl+UDRmse+H7suab6OqP+VtkSyUEh6/MerunHH0FHMj1F+okF1tQiJehmQUkWBOPUfqmK/CN3vmxE4lgXLoTOYBGACrk7u+6JwC7I/xIcvXH8uhvhjLsbPwnB3zvzX28S7Bj4=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB2830.eurprd04.prod.outlook.com (10.175.21.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.11; Fri, 19 Jul 2019 15:53:57 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::7c64:5296:4607:e10]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::7c64:5296:4607:e10%5]) with mapi id 15.20.2073.012; Fri, 19 Jul 2019
- 15:53:57 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v2 11/14] crypto: caam - free resources in case caam_rng
- registration failed
-Thread-Topic: [PATCH v2 11/14] crypto: caam - free resources in case caam_rng
- registration failed
-Thread-Index: AQHVPcSsWvTQBfAmgEuDvU1d/uopWA==
-Date:   Fri, 19 Jul 2019 15:53:57 +0000
-Message-ID: <VI1PR0402MB34854E7338BACFC9F531BAD098CB0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <1563494276-3993-1-git-send-email-iuliana.prodan@nxp.com>
- <1563494276-3993-12-git-send-email-iuliana.prodan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [212.146.100.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 451c700f-f507-476d-bfc0-08d70c614f2c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB2830;
-x-ms-traffictypediagnostic: VI1PR0402MB2830:
-x-microsoft-antispam-prvs: <VI1PR0402MB283097FFAD59C18BE088AD0C98CB0@VI1PR0402MB2830.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:541;
-x-forefront-prvs: 01039C93E4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(346002)(376002)(366004)(136003)(199004)(189003)(53546011)(44832011)(6506007)(4326008)(4744005)(486006)(316002)(76176011)(2906002)(71190400001)(71200400001)(478600001)(76116006)(91956017)(55016002)(9686003)(66476007)(66946007)(476003)(6636002)(8676002)(6436002)(86362001)(446003)(256004)(14444005)(99286004)(7736002)(229853002)(7696005)(26005)(66066001)(102836004)(54906003)(6246003)(8936002)(66446008)(110136005)(66556008)(64756008)(186003)(74316002)(33656002)(14454004)(68736007)(81166006)(305945005)(52536014)(81156014)(6116002)(3846002)(53936002)(25786009)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2830;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Qf5M3zbDtTGzmGOFhK1xSKEwssbgBimvqBR/QB6bYyPvYxX5O/I74xI+l73d/Z81iYk3t5BpOp4DTsOuy71lmYACLe69kDrfWoPtANCbKXxlF/fc86E/2XG/5XMHFFvEvoYiRskGgAw4LHUCSvs9mGYfuTsixVA7M+L4lSD40yxdcJyrDDElCgHd7HpgxEzQxjrE4TVZoefNqrRueWOvpUGQmLobfe4tlP02FgzsOFdKn3PKraJcOl15D57JxWIoYug31sN3sO1VqS0mvMoCSYe1mhftR3B+CfACdBMJnbAsYUNKrnZtpc/sZHGPBD6vA/fUv25mnH5vvp8Cv0R0yyOyMmx83QHNjRvgBES8DnMNRKlOnxVHaHW0ZXM2DKs/nMqLlkMzn5TXnhJM2qH9e4BwxczJYF7Byor7vEy5Ccg=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1730561AbfGSQAw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 12:00:52 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:58713 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727927AbfGSQAw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 12:00:52 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1hoVJR-0000DQ-Q5; Fri, 19 Jul 2019 10:00:49 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1hoVJF-00007t-01; Fri, 19 Jul 2019 10:00:49 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Tycho Andersen <tycho@tycho.ws>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        nhorman@tuxdriver.com
+References: <20190529153427.GB8959@cisco>
+        <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
+        <20190529222835.GD8959@cisco>
+        <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
+        <20190530170913.GA16722@mail.hallyn.com>
+        <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
+        <20190708180558.5bar6ripag3sdadl@madcap2.tricolour.ca>
+        <CAHC9VhRTT7JWqNnynvK04wKerjc-3UJ6R1uPtjCAPVr_tW-7MA@mail.gmail.com>
+        <20190716220320.sotbfqplgdructg7@madcap2.tricolour.ca>
+        <CAHC9VhScHizB2r5q3T5s0P3jkYdvzBPPudDksosYFp_TO7W9-Q@mail.gmail.com>
+        <20190718005145.eshekqfr3navqqiy@madcap2.tricolour.ca>
+        <CAHC9VhTYV02ws3QcezER5cY+Xt+tExcJEO-dumTDx=FXGFh3nw@mail.gmail.com>
+Date:   Fri, 19 Jul 2019 11:00:24 -0500
+In-Reply-To: <CAHC9VhTYV02ws3QcezER5cY+Xt+tExcJEO-dumTDx=FXGFh3nw@mail.gmail.com>
+        (Paul Moore's message of "Thu, 18 Jul 2019 17:52:58 -0400")
+Message-ID: <87muhadnfr.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 451c700f-f507-476d-bfc0-08d70c614f2c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2019 15:53:57.4728
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: horia.geanta@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2830
+Content-Type: text/plain
+X-XM-SPF: eid=1hoVJF-00007t-01;;;mid=<87muhadnfr.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18MlRZOnz5KekqSTfqL1FafpgF6dgr4Jq4=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4999]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Paul Moore <paul@paul-moore.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 12445 ms - load_scoreonly_sql: 0.07 (0.0%),
+        signal_user_changed: 3.0 (0.0%), b_tie_ro: 2.0 (0.0%), parse: 1.79
+        (0.0%), extract_message_metadata: 20 (0.2%), get_uri_detail_list: 3.3
+        (0.0%), tests_pri_-1000: 13 (0.1%), tests_pri_-950: 1.51 (0.0%),
+        tests_pri_-900: 1.26 (0.0%), tests_pri_-90: 34 (0.3%), check_bayes: 31
+        (0.3%), b_tokenize: 10 (0.1%), b_tok_get_all: 9 (0.1%), b_comp_prob: 6
+        (0.0%), b_tok_touch_all: 2.6 (0.0%), b_finish: 0.85 (0.0%),
+        tests_pri_0: 380 (3.1%), check_dkim_signature: 1.03 (0.0%),
+        check_dkim_adsp: 3.3 (0.0%), poll_dns_idle: 11972 (96.2%),
+        tests_pri_10: 2.1 (0.0%), tests_pri_500: 11982 (96.3%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/19/2019 2:58 AM, Iuliana Prodan wrote:=0A=
-> Check the return value of the hardware registration for caam_rng and free=
-=0A=
-> resources in case of failure.=0A=
-> =0A=
-> Fixes: 6e4e603a9 ("crypto: caam - Dynamic memory allocation for caam_rng_=
-ctx object")=0A=
-This should be:=0A=
-Fixes: e24f7c9e87d4 ("crypto: caam - hwrng support")=0A=
-=0A=
-since there are resources leaked (like DMA mapped buffers) due to not check=
-ing=0A=
-the return code of hwrng_register() even in the initial caamrng commit.=0A=
-=0A=
-This doesn't have much practical value, since we haven't seen this failure=
-=0A=
-in practice and we don't intend fixing previous kernel releases.=0A=
-=0A=
-Horia=0A=
+Paul Moore <paul@paul-moore.com> writes:
+
+> On Wed, Jul 17, 2019 at 8:52 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+>> On 2019-07-16 19:30, Paul Moore wrote:
+>
+> ...
+>
+>> > We can trust capable(CAP_AUDIT_CONTROL) for enforcing audit container
+>> > ID policy, we can not trust ns_capable(CAP_AUDIT_CONTROL).
+>>
+>> Ok.  So does a process in a non-init user namespace have two (or more)
+>> sets of capabilities stored in creds, one in the init_user_ns, and one
+>> in current_user_ns?  Or does it get stripped of all its capabilities in
+>> init_user_ns once it has its own set in current_user_ns?  If the former,
+>> then we can use capable().  If the latter, we need another mechanism, as
+>> you have suggested might be needed.
+>
+> Unfortunately I think the problem is that ultimately we need to allow
+> any container orchestrator that has been given privileges to manage
+> the audit container ID to also grant that privilege to any of the
+> child process/containers it manages.  I don't believe we can do that
+> with capabilities based on the code I've looked at, and the
+> discussions I've had, but if you find a way I would leave to hear it.
+
+>> If some random unprivileged user wants to fire up a container
+>> orchestrator/engine in his own user namespace, then audit needs to be
+>> namespaced.  Can we safely discard this scenario for now?
+>
+> I think the only time we want to allow a container orchestrator to
+> manage the audit container ID is if it has been granted that privilege
+> by someone who has that privilege already.  In the zero-container, or
+> single-level of containers, case this is relatively easy, and we can
+> accomplish it using CAP_AUDIT_CONTROL as the privilege.  If we start
+> nesting container orchestrators it becomes more complicated as we need
+> to be able to support granting and inheriting this privilege in a
+> manner; this is why I suggested a new mechanism *may* be necessary.
+
+
+Let me segway a bit and see if I can get this conversation out of the
+rut it seems to have drifted into.
+
+Unprivileged containers and nested containers exist today and are going
+to become increasingly common.  Let that be a given.
+
+As I recall the interesting thing for audit to log is actions by
+privileged processes.  Audit can log more but generally configuring
+logging by of the actions of unprivileged users is effectively a self
+DOS.
+
+So I think the initial implementation can safely ignore actions of
+nested containers and unprivileged containers because you don't care
+about their actions. 
+
+If we start allow running audit in a container then we need to deal with
+all of the nesting issues but until then I don't think you folks care.
+
+Or am I wrong.  Do the requirements for securely auditing things from
+the kernel care about the actions of unprivileged users?
+
+Eric
