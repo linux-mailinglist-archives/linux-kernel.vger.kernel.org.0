@@ -2,118 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC87B6DEF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:32:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64C3A6DFEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:40:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387735AbfGSEcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:32:05 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:36012 "EHLO inva021.nxp.com"
+        id S1726906AbfGSD6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 23:58:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729286AbfGSEEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:04:11 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1E665200072;
-        Fri, 19 Jul 2019 06:04:10 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E16B2200146;
-        Fri, 19 Jul 2019 06:04:03 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 28AE5402A9;
-        Fri, 19 Jul 2019 12:03:56 +0800 (SGT)
-From:   Biwen Li <biwen.li@nxp.com>
-To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        leoyang.li@nxp.com, robh+dt@kernel.org
-Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xiaobo.xie@nxp.com, jiafei.pan@nxp.com, ran.wang_1@nxp.com,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        Biwen Li <biwen.li@nxp.com>
-Subject: [v6,2/2] dt-bindings: rtc: add bindings for FlexTimer Module
-Date:   Fri, 19 Jul 2019 11:54:00 +0800
-Message-Id: <20190719035400.9800-2-biwen.li@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190719035400.9800-1-biwen.li@nxp.com>
-References: <20190719035400.9800-1-biwen.li@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727891AbfGSD6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 23:58:21 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D51721855;
+        Fri, 19 Jul 2019 03:58:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563508701;
+        bh=A8V1gvm+yaht1CTUyJ/J+QZqRvGR/yXURvSy6UwnNUc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VlaiSkmGPPBkB1SzAYxXkk6pDs/G0SZZXYxPab2j1TSRBEI01Q1eSH0Fv1mvqSAX5
+         y8Gfamd5N3cRDIE3TDxs7WdRz8kA0zCpR//MNxuNGVDAIUp9XmwfsaoccTpDahRNz8
+         KpKPj3cq8FVTB/E041J8sd0ONAqQP/vQT0TUZoDM=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 040/171] gpu: host1x: Increase maximum DMA segment size
+Date:   Thu, 18 Jul 2019 23:54:31 -0400
+Message-Id: <20190719035643.14300-40-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
+References: <20190719035643.14300-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch adds bindings for FlexTimer Module
+From: Thierry Reding <treding@nvidia.com>
 
-Signed-off-by: Biwen Li <biwen.li@nxp.com>
+[ Upstream commit 1e390478cfb527e34c9ab89ba57212cb05c33c51 ]
+
+Recent versions of the DMA API debug code have started to warn about
+violations of the maximum DMA segment size. This is because the segment
+size defaults to 64 KiB, which can easily be exceeded in large buffer
+allocations such as used in DRM/KMS for framebuffers.
+
+Technically the Tegra SMMU and ARM SMMU don't have a maximum segment
+size (they map individual pages irrespective of whether they are
+contiguous or not), so the choice of 4 MiB is a bit arbitrary here. The
+maximum segment size is a 32-bit unsigned integer, though, so we can't
+set it to the correct maximum size, which would be the size of the
+aperture.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-Change in v6:
-    - correct subject
-    - delete note
-    - remove reg property about IP Powerdown exception register
+ drivers/gpu/host1x/bus.c | 3 +++
+ include/linux/host1x.h   | 2 ++
+ 2 files changed, 5 insertions(+)
 
-Change in v5:
-    - None
-
-Change in v4:
-    - add note about dts and kernel options
-    - add aliases in example
-
-Change in v3:
-	- remove reg-names property
-	- correct cells number
-
-Change in v2:
-	- replace ls1043a with ls1088a as example
-	- add rcpm node and fsl,rcpm-wakeup property
-
- .../bindings/rtc/rtc-fsl-ftm-alarm.txt        | 41 +++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-
-diff --git a/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-new file mode 100644
-index 000000000000..9291b022ffc7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/rtc/rtc-fsl-ftm-alarm.txt
-@@ -0,0 +1,41 @@
-+Freescale FlexTimer Module (FTM) Alarm
+diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+index 9797ccb0a073..6387302c1245 100644
+--- a/drivers/gpu/host1x/bus.c
++++ b/drivers/gpu/host1x/bus.c
+@@ -414,6 +414,9 @@ static int host1x_device_add(struct host1x *host1x,
+ 
+ 	of_dma_configure(&device->dev, host1x->dev->of_node, true);
+ 
++	device->dev.dma_parms = &device->dma_parms;
++	dma_set_max_seg_size(&device->dev, SZ_4M);
 +
-+Required properties:
-+- compatible : Should be "fsl,<chip>-ftm-alarm", the
-+	       supported chips include
-+	       "fsl,ls1012a-ftm-alarm"
-+	       "fsl,ls1021a-ftm-alarm"
-+	       "fsl,ls1028a-ftm-alarm"
-+	       "fsl,ls1043a-ftm-alarm"
-+	       "fsl,ls1046a-ftm-alarm"
-+	       "fsl,ls1088a-ftm-alarm"
-+	       "fsl,ls208xa-ftm-alarm"
-+- reg : Specifies base physical address and size of the register sets for the
-+  FlexTimer Module.
-+- interrupts : Should be the FlexTimer Module interrupt.
-+- fsl,rcpm-wakeup property and rcpm node : Please refer
-+	Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+ 	err = host1x_device_parse_dt(device, driver);
+ 	if (err < 0) {
+ 		kfree(device);
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index cfff30b9a62e..e6eea45e1154 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -297,6 +297,8 @@ struct host1x_device {
+ 	struct list_head clients;
+ 
+ 	bool registered;
 +
-+Optional properties:
-+- big-endian: If the host controller is big-endian mode, specify this property.
-+  The default endian mode is little-endian.
-+
-+Example:
-+aliases {
-+	...
-+	rtc1 = ftm_alarm0; // Use FlexTimer Module as /dev/rtc1
-+	...
-+};
-+
-+rcpm: rcpm@1e34040 {
-+	compatible = "fsl,ls1088a-rcpm", "fsl,qoriq-rcpm-2.1+";
-+	reg = <0x0 0x1e34040 0x0 0x18>;
-+	#fsl,rcpm-wakeup-cells = <6>;
-+};
-+
-+ftm_alarm0: timer@2800000 {
-+	compatible = "fsl,ls1088a-ftm-alarm";
-+	reg = <0x0 0x2800000 0x0 0x10000>;
-+	fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0>;
-+	interrupts = <0 44 4>;
-+};
++	struct device_dma_parameters dma_parms;
+ };
+ 
+ static inline struct host1x_device *to_host1x_device(struct device *dev)
 -- 
-2.17.1
+2.20.1
 
