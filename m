@@ -2,89 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93D7C6DE74
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:28:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7DD76DE25
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:26:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387946AbfGSE2r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:28:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34020 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732082AbfGSEGV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:06:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B0197AC2E;
-        Fri, 19 Jul 2019 04:06:19 +0000 (UTC)
-Subject: Re: [Xen-devel] [PATCH 1/2] xen/gntdev: replace global limit of
- mapped pages by limit per call
-To:     Andrew Cooper <andrew.cooper3@citrix.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc:     Stefano Stabellini <sstabellini@kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-References: <20190718065222.31310-1-jgross@suse.com>
- <20190718065222.31310-2-jgross@suse.com>
- <4e402502-acbc-2718-26d4-cbcf83697c15@citrix.com>
-From:   Juergen Gross <jgross@suse.com>
-Message-ID: <03892464-7429-c2e0-79fd-2774bcc3ce20@suse.com>
-Date:   Fri, 19 Jul 2019 06:06:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1733206AbfGSEIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:08:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43022 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733168AbfGSEIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:08:39 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0305A21873;
+        Fri, 19 Jul 2019 04:08:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563509318;
+        bh=9ukidh25MQROVRS6jwQ4gvmq8UI0wDzcsHUs1QeyUS0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dibIJrWHFK8yKXgyTUjAVTL2UgPGGdZDnB7iBm/FOLMim4IWHYX9Qfsx/nlLQ80/N
+         FKRsA/vqr6A0akQdnc/ReVisv/xaBAXFK/C2PmN18b7R5TMJd74CPylNDu2/gvVSqn
+         /2X/BblVe+WWNJeIW9MtRLzJylMcm6bEQZ7GUyuA=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Yakir Yang <ykk@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 031/101] drm/rockchip: Properly adjust to a true clock in adjusted_mode
+Date:   Fri, 19 Jul 2019 00:06:22 -0400
+Message-Id: <20190719040732.17285-31-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
+References: <20190719040732.17285-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <4e402502-acbc-2718-26d4-cbcf83697c15@citrix.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18.07.19 19:36, Andrew Cooper wrote:
-> On 18/07/2019 07:52, Juergen Gross wrote:
->> Today there is a global limit of pages mapped via /dev/xen/gntdev set
->> to 1 million pages per default.
-> 
-> The Xen default limit even for dom0 is 1024 pages * 16 entries per page,
-> which is far lower than this limit.
+From: Douglas Anderson <dianders@chromium.org>
 
-Actually its 256 entries per page, but this is still lower than the
-current limit.
+[ Upstream commit 99b9683f2142b20bad78e61f7f829e8714e45685 ]
 
-> 
->> There is no reason why that limit is
->> existing, as total number of foreign mappings is limited by the
-> 
-> s/foreign/grant/ ?
+When fixing up the clock in vop_crtc_mode_fixup() we're not doing it
+quite correctly.  Specifically if we've got the true clock 266666667 Hz,
+we'll perform this calculation:
+   266666667 / 1000 => 266666
 
-Can do.
+Later when we try to set the clock we'll do clk_set_rate(266666 *
+1000).  The common clock framework won't actually pick the proper clock
+in this case since it always wants clocks <= the specified one.
 
-> 
->> hypervisor anyway and preferring kernel mappings over userspace ones
->> doesn't make sense.
-> 
-> Its probably also worth stating that this a root-only device, which
-> further brings in to question the user/kernel split.
+Let's solve this by using DIV_ROUND_UP.
 
-Yes.
+Fixes: b59b8de31497 ("drm/rockchip: return a true clock rate to adjusted_mode")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Reviewed-by: Yakir Yang <ykk@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190614224730.98622-1-dianders@chromium.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> 
->>
->> Additionally checking of that limit is fragile, as the number of pages
->> to map via one call is specified in a 32-bit unsigned variable which
->> isn't tested to stay within reasonable limits (the only test is the
->> value to be <= zero, which basically excludes only calls without any
->> mapping requested). So trying to map e.g. 0xffff0000 pages while
->> already nearly 1000000 pages are mapped will effectively lower the
->> global number of mapped pages such that a parallel call mapping a
->> reasonable amount of pages can succeed in spite of the global limit
->> being violated.
->>
->> So drop the global limit and introduce per call limit instead.
-> 
-> Its probably worth talking about this new limit.  What is it trying to
-> protect?
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index f8f9ae6622eb..873624a11ce8 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -880,7 +880,8 @@ static bool vop_crtc_mode_fixup(struct drm_crtc *crtc,
+ 	struct vop *vop = to_vop(crtc);
+ 
+ 	adjusted_mode->clock =
+-		clk_round_rate(vop->dclk, mode->clock * 1000) / 1000;
++		DIV_ROUND_UP(clk_round_rate(vop->dclk, mode->clock * 1000),
++			     1000);
+ 
+ 	return true;
+ }
+-- 
+2.20.1
 
-Out-of-bounds allocations.
-
-
-Juergen
