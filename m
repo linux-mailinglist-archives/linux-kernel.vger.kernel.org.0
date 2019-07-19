@@ -2,85 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B8476E3FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:10:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC0D06E420
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:19:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbfGSKKR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 06:10:17 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:29227 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbfGSKKR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 06:10:17 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id x6JA93Jd024206;
-        Fri, 19 Jul 2019 19:09:03 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x6JA93Jd024206
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1563530944;
-        bh=a3YovZwajy5jGOBf14Q9c/0gf55f02Iub75GoLKtQIY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=GSkUvEXip3o937QdMIXgFGg+VCWE+8VZWQ9b9Jj4gfiPnlc9JBOxOietRh9VOev2q
-         pYA5dVmLYxjDNcSndl+DG97sD6JyDgVfjVb04Y5mfdQJp93B7fO2AAB+qa1wauBFOk
-         slOTTL9ILJUpTvPn+4G0vA4lFeC4sgWSMoQTsXdYi1l/07pXU+PRxfckJKiXKdWtIg
-         YewTkXQILglKBCJmUsdkKS7sZ8BSN0xDNnyOelWNexBVpNbxvPBlCQhoHhiaGAWxNd
-         cXAAofc9duC1OcI7E6xI8whOg+AmAjmfSHYCoDvz/5ivt857R4LHfuRii3EXZeadt6
-         dr/J5lYKOa99w==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] kbuild: disable compile-test of kernel headers for now
-Date:   Fri, 19 Jul 2019 19:08:59 +0900
-Message-Id: <20190719100859.11227-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727502AbfGSKTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 06:19:07 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:53950 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725798AbfGSKTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 06:19:06 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 54E871A0144;
+        Fri, 19 Jul 2019 12:19:04 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EE9E51A0046;
+        Fri, 19 Jul 2019 12:18:59 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 51F78402CF;
+        Fri, 19 Jul 2019 18:18:54 +0800 (SGT)
+From:   Wen He <wen.he_1@nxp.com>
+To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, mark.rutland@arm.com,
+        shawnguo@kernel.org, robh+dt@kernel.org
+Cc:     leoyang.li@nxp.com, Wen He <wen.he_1@nxp.com>
+Subject: [v2 1/4] dt-bindings: display: Add DT bindings for LS1028A HDP-TX PHY.
+Date:   Fri, 19 Jul 2019 18:09:39 +0800
+Message-Id: <20190719100942.12016-1-wen.he_1@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This compile-test started from the strong belief that (almost) all
-headers should be able to be compiled as a standalone unit, but this
-requirement seems to be just annoying.
+Add DT bindings documentmation for the HDP-TX PHY controller. The describes
+which could be found on NXP Layerscape ls1028a platform.
 
-I believe compile-test of exported headers is good. On the other hand,
-in-kernel headers are not necessarily supposed to be always compilable.
-Actually, some headers are only included under a certain combination
-of CONFIG options, and that is definitely fine.
-
-This test is still causing false positive errors in randconfig.
-Moreover, newly added headers are compile-tested by default, sometimes
-they catch (not fatal) bugs, but often raise false positive errors to
-end up with making people upset.
-
-The merge window is closing shortly, so there is not much I can do.
-Disable it for now, and take a pause to re-think whether we should
-continue this or change the course.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Wen He <wen.he_1@nxp.com>
 ---
+change in v2:
+        - correction the node name.
 
- init/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/display/fsl,hdp.txt   | 56 +++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/fsl,hdp.txt
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 9697c6b5303c..778551a1a13c 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -111,6 +111,7 @@ config HEADER_TEST
- config KERNEL_HEADER_TEST
- 	bool "Compile test kernel headers"
- 	depends on HEADER_TEST
-+	depends on BROKEN	# disabled for now
- 	help
- 	  Headers in include/ are used to build external moduls.
- 	  Compile test them to ensure they are self-contained, i.e.
+diff --git a/Documentation/devicetree/bindings/display/fsl,hdp.txt b/Documentation/devicetree/bindings/display/fsl,hdp.txt
+new file mode 100644
+index 000000000000..53ca08337587
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/fsl,hdp.txt
+@@ -0,0 +1,56 @@
++NXP Layerscpae ls1028a HDP-TX PHY Controller
++============================================
++
++The following bindings describe the Cadence HDP TX PHY on ls1028a that
++offer multi-protocol support of standars such as eDP and Displayport,
++supports for 25-600MHz pixel clock and up to 4k2k at 60MHz resolution.
++The HDP transmitter is a Cadence HDP TX controller IP with a companion
++PHY IP.
++
++Required properties:
++  - compatible:   Should be "fsl,ls1028a-dp" for ls1028a.
++  - reg:          Physical base address and size of the block of registers used
++  by the processor.
++  - interrupts:   HDP hotplug in/out detect interrupt number
++  - clocks:       A list of phandle + clock-specifier pairs, one for each entry
++  in 'clock-names'
++  - clock-names:  A list of clock names. It should contain:
++      - "clk_ipg": inter-Integrated circuit clock
++      - "clk_core": for the Main Display TX controller clock
++      - "clk_pxl": for the pixel clock feeding the output PLL of the processor
++      - "clk_pxl_mux": for the high PerfPLL bypass clock
++      - "clk_pxl_link": for the link rate pixel clock
++      - "clk_apb": for the APB interface clock
++      - "clk_vif": for the Video pixel clock
++
++Required sub-nodes:
++  - port: The HDP connection to an encoder output port. The connection
++    is modelled using the OF graph bindings specified in
++    Documentation/devicetree/bindings/graph.txt
++
++
++Example:
++
++/ {
++        ...
++
++        hdptx0: display@f200000 {
++                compatible = "fsl,ls1028a-dp";
++		reg = <0x0 0xf1f0000 0x0 0xffff>,
++		    <0x0 0xf200000 0x0 0xfffff>;
++                interrupts = <0 221 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&sysclk>, <&hdpclk>, <&dpclk>,
++                         <&dpclk>, <&dpclk>, <&pclk>, <&dpclk>;
++		clock-names = "clk_ipg", "clk_core", "clk_pxl",
++                              "clk_pxl_mux", "clk_pxl_link", "clk_apb",
++                              "clk_vif";
++
++		port {
++			dp1_output: endpoint {
++				remote-endpoint = <&dp0_input>;
++			};
++		};
++        };
++
++        ...
++};
 -- 
 2.17.1
 
