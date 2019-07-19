@@ -2,119 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D70476D7E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:41:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5515E6D7DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:41:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbfGSAkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 20:40:47 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:40020 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbfGSAkr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 20:40:47 -0400
-Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
-        by 156.147.23.51 with ESMTP; 19 Jul 2019 09:40:45 +0900
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
-        by 156.147.1.121 with ESMTP; 19 Jul 2019 09:40:45 +0900
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Fri, 19 Jul 2019 09:39:42 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Byungchul Park <max.byungchul.park@gmail.com>,
-        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-team@lge.com
-Subject: Re: [PATCH] rcu: Make jiffies_till_sched_qs writable
-Message-ID: <20190719003942.GA28226@X58A-UD3R>
-References: <20190711164818.GA260447@google.com>
- <20190711195839.GA163275@google.com>
- <20190712063240.GD7702@X58A-UD3R>
- <20190712125116.GB92297@google.com>
- <CANrsvRMh6L_sEmoF_K3Mx=1VcuGSwQAT8CZHep69aSZUTBvwpA@mail.gmail.com>
- <CAEXW_YTeAUuVqViBfiOTQhckMDH229oQdPXG6SNqGK0xYm-yzA@mail.gmail.com>
- <20190713151330.GE26519@linux.ibm.com>
- <20190713154257.GE133650@google.com>
- <20190713174111.GG26519@linux.ibm.com>
- <CAEXW_YTcL-nOfJXkChGhvQtqqfSLpAYr327PLu1SmGEEADCevw@mail.gmail.com>
+        id S1726482AbfGSAkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 20:40:01 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:48470 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726015AbfGSAkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 20:40:01 -0400
+Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1hoGwH-0003ao-La; Thu, 18 Jul 2019 18:39:58 -0600
+To:     Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Cc:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>
+References: <20190718225132.5865-1-logang@deltatee.com>
+ <20190718225132.5865-2-logang@deltatee.com>
+ <c52f80b1-e154-b11f-a868-e3209e4ccb2d@grimberg.me>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <6deea9e7-ff3c-e115-b2f2-8914df0b6da7@deltatee.com>
+Date:   Thu, 18 Jul 2019 18:39:56 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEXW_YTcL-nOfJXkChGhvQtqqfSLpAYr327PLu1SmGEEADCevw@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <c52f80b1-e154-b11f-a868-e3209e4ccb2d@grimberg.me>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 68.147.80.180
+X-SA-Exim-Rcpt-To: hch@lst.de, axboe@fb.com, kbusch@kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, sagi@grimberg.me
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [PATCH 2/2] nvme-core: Fix deadlock when deleting the ctrl while
+ scanning
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 12:14:22PM -0400, Joel Fernandes wrote:
-> Trimming the list a bit to keep my noise level low,
+
+
+On 2019-07-18 6:25 p.m., Sagi Grimberg wrote:
 > 
-> On Sat, Jul 13, 2019 at 1:41 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
-> [snip]
-> > > It still feels like you guys are hyperfocusing on this one particular
-> > > > knob.  I instead need you to look at the interrelating knobs as a group.
-> > >
-> > > Thanks for the hints, we'll do that.
-> > >
-> > > > On the debugging side, suppose someone gives you an RCU bug report.
-> > > > What information will you need?  How can you best get that information
-> > > > without excessive numbers of over-and-back interactions with the guy
-> > > > reporting the bug?  As part of this last question, what information is
-> > > > normally supplied with the bug?  Alternatively, what information are
-> > > > bug reporters normally expected to provide when asked?
-> > >
-> > > I suppose I could dig out some of our Android bug reports of the past where
-> > > there were RCU issues but if there's any fires you are currently fighting do
-> > > send it our way as debugging homework ;-)
-> >
-> >   Suppose that you were getting RCU CPU stall
-> > warnings featuring multi_cpu_stop() called from cpu_stopper_thread().
-> > Of course, this really means that some other CPU/task is holding up
-> > multi_cpu_stop() without also blocking the current grace period.
-> >
+>> With multipath enabled, nvme_scan_work() can read from the
+>> device (through nvme_mpath_add_disk()). However, with fabrics,
+>> once ctrl->state is set to NVME_CTRL_DELETING, the reads will hang
+>> (see nvmf_check_ready()).
+>>
+>> After setting the state to deleting, nvme_remove_namespaces() will
+>> hang waiting for scan_work to flush and these tasks will hang.
+>>
+>> To fix this, ensure we take scan_lock before changing the ctrl-state.
+>> Also, ensure the state is checked while the lock is held
+>> in nvme_scan_lock_work().
 > 
-> So I took a shot at this trying to learn how CPU stoppers work in
-> relation to this problem.
+> That's a big hammer...
+
+I didn't think the scan_lock was that contested or that
+nvme_change_ctrl_state() was really called that often...
+
+> But this is I/O that we cannot have queued until we have a path..
 > 
-> I am assuming here say CPU X has entered MULTI_STOP_DISABLE_IRQ state
-> in multi_cpu_stop() but another CPU Y has not yet entered this state.
-> So CPU X is stalling RCU but it is really because of CPU Y. Now in the
-> problem statement, you mentioned CPU Y is not holding up the grace
-> period, which means Y doesn't have any of IRQ, BH or preemption
-> disabled ; but is still somehow stalling RCU indirectly by troubling
-> X.
+> I would rather have nvme_remove_namespaces() requeue all I/Os for
+> namespaces that serve as the current_path and have the make_request
+> routine to fail I/O if all controllers are deleting as well.
 > 
-> This can only happen if :
-> - CPU Y has a thread executing on it that is higher priority than CPU
-> X's stopper thread which prevents it from getting scheduled. - but the
-> CPU stopper thread (migration/..) is highest priority RT so this would
-> be some kind of an odd scheduler bug.
+> Would something like [1] (untested) make sense instead?
 
-I think this bug hardly can happen.
+I'll have to give this a try next week and I'll let you know then. It
+kind of makes sense to me but a number of things I tried to fix this
+that I thought made sense did not work.
 
-> - There is a bug in the CPU stopper machinery itself preventing it
-> from scheduling the stopper on Y. Even though Y is not holding up the
-> grace period.
+> 
+>> +    mutex_lock(&ctrl->scan_lock);
+>> +
+>>       if (ctrl->state != NVME_CTRL_LIVE)
+>>           return;
+> 
+> unlock
 
-Or any thread on Y is busy with preemption/irq disabled preventing the
-stopper from being scheduled on Y.
+If we unlock here and relock below, we'd have to recheck the ctrl->state
+to avoid any races. If you don't want to call nvme_identify_ctrl with
+the lock held, then it would probably be better to move the state check
+below it.
 
-Or something is stuck in ttwu() to wake up the stopper on Y due to any
-scheduler locks such as pi_lock or rq->lock or something.
-
-I think what you mentioned can happen easily.
-
-Basically we would need information about preemption/irq disabled
-sections on Y and scheduler's current activity on every cpu at that time.
-
-Am I missing something?
-
-> Did I get that right? Would be exciting to run the rcutorture test
-> once Paul has it available to reproduce this problem.
-
-Thanks,
-Byungchul
-
+>>   @@ -3547,7 +3554,6 @@ static void nvme_scan_work(struct work_struct
+>> *work)
+>>       if (nvme_identify_ctrl(ctrl, &id))
+>>           return;
+> 
+> unlock
+> 
+> 
+> [1]:
+> -- 
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index 76cd3dd8736a..627f5871858d 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -3576,6 +3576,11 @@ void nvme_remove_namespaces(struct nvme_ctrl *ctrl)
+>         struct nvme_ns *ns, *next;
+>         LIST_HEAD(ns_list);
+> 
+> +       mutex_lock(&ctrl->scan_lock);
+> +       list_for_each_entry(ns, &ctrl->namespaces, list)
+> +               nvme_mpath_clear_current_path(ns);
+> +       mutex_lock(&ctrl->scan_lock);
+> +
+>         /* prevent racing with ns scanning */
+>         flush_work(&ctrl->scan_work);
+> 
+> diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+> index a9a927677970..da1731266788 100644
+> --- a/drivers/nvme/host/multipath.c
+> +++ b/drivers/nvme/host/multipath.c
+> @@ -231,6 +231,24 @@ inline struct nvme_ns *nvme_find_path(struct
+> nvme_ns_head *head)
+>         return ns;
+>  }
+> 
+> +static bool nvme_available_path(struct nvme_ns_head *head)
+> +{
+> +       struct nvme_ns *ns;
+> +
+> +       list_for_each_entry_rcu(ns, &head->list, siblings) {
+> +               switch (ns->ctrl->state) {
+> +               case NVME_CTRL_LIVE:
+> +               case NVME_CTRL_RESETTING:
+> +               case NVME_CTRL_CONNECTING:
+> +                       /* fallthru */
+> +                       return true;
+> +               default:
+> +                       break;
+> +               }
+> +       }
+> +       return false;
+> +}
+> +
+>  static blk_qc_t nvme_ns_head_make_request(struct request_queue *q,
+>                 struct bio *bio)
+>  {
+> @@ -257,14 +275,14 @@ static blk_qc_t nvme_ns_head_make_request(struct
+> request_queue *q,
+>                                       disk_devt(ns->head->disk),
+>                                       bio->bi_iter.bi_sector);
+>                 ret = direct_make_request(bio);
+> -       } else if (!list_empty_careful(&head->list)) {
+> -               dev_warn_ratelimited(dev, "no path available - requeuing
+> I/O\n");
+> +       } else if (nvme_available_path(head)) {
+> +               dev_warn_ratelimited(dev, "no usable path - requeuing
+> I/O\n");
+> 
+>                 spin_lock_irq(&head->requeue_lock);
+>                 bio_list_add(&head->requeue_list, bio);
+>                 spin_unlock_irq(&head->requeue_lock);
+>         } else {
+> -               dev_warn_ratelimited(dev, "no path - failing I/O\n");
+> +               dev_warn_ratelimited(dev, "no available path - failing
+> I/O\n");
+> 
+>                 bio->bi_status = BLK_STS_IOERR;
+>                 bio_endio(bio);
+> -- 
