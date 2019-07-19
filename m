@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F5AC6DAF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:05:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EC666DAF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:05:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731560AbfGSEFU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:05:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37470 "EHLO mail.kernel.org"
+        id S1731651AbfGSEF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:05:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731485AbfGSEFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:05:11 -0400
+        id S1731567AbfGSEFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:05:20 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E048721852;
-        Fri, 19 Jul 2019 04:05:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3B5E218CA;
+        Fri, 19 Jul 2019 04:05:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509111;
-        bh=7LtCSTVakegA+JvR+2gjOZypnVk82REVMs4XU8wW3/A=;
+        s=default; t=1563509119;
+        bh=kTlVAKLl0+iFmqj6xmLlcr3dlE6UW351pmPpSTZw25A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sHly2G8KVisZuJjkHx1UEcOqNGk5t5xXL0M+7UzKMPOboWG8VC+T/ZC1qjkzs+gPD
-         FRTDqeBkaURiHkIYi/s90xYJbi3hAuNtirawVV3bLXoO5XGrsD2P5FPTOpK+7TkEj9
-         PrHboG/3/34FsApP+gjGQbAbESgtQ10UkBsvfHu8=
+        b=jCn2UPA3rJi0QutSO16criIbxuE5h53c1qd7lZ787j0XhOXnuU5KbRL7Q4UZaZjKY
+         arkWMINlJO/tLI9KwPzFfiDP03JwGdrLW1yh7vBtozu3Tgq1J80T8EMyh/RDWnpM19
+         pkeENTMGl9ggLKSWv9kmbqedt5oa0El8NoyQaHy8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Robert Hancock <hancock@sedsystems.ca>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 075/141] mfd: core: Set fwnode for created devices
-Date:   Fri, 19 Jul 2019 00:01:40 -0400
-Message-Id: <20190719040246.15945-75-sashal@kernel.org>
+Cc:     Sahitya Tummala <stummala@codeaurora.org>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 5.1 080/141] f2fs: fix is_idle() check for discard type
+Date:   Fri, 19 Jul 2019 00:01:45 -0400
+Message-Id: <20190719040246.15945-80-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040246.15945-1-sashal@kernel.org>
 References: <20190719040246.15945-1-sashal@kernel.org>
@@ -43,34 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robert Hancock <hancock@sedsystems.ca>
+From: Sahitya Tummala <stummala@codeaurora.org>
 
-[ Upstream commit c176c6d7e932662668bcaec2d763657096589d85 ]
+[ Upstream commit 56659ce838456c6f2315ce8a4bd686ac4b23e9d1 ]
 
-The logic for setting the of_node on devices created by mfd did not set
-the fwnode pointer to match, which caused fwnode-based APIs to
-malfunction on these devices since the fwnode pointer was null. Fix
-this.
+The discard thread should issue upto dpolicy->max_requests at once
+and wait for all those discard requests at once it reaches
+dpolicy->max_requests. It should then sleep for dpolicy->min_interval
+timeout before issuing the next batch of discard requests. But in the
+current code of is_idle(), it checks for dcc_info->queued_discard and
+aborts issuing the discard batch of max_requests. This
+dcc_info->queued_discard will be true always once one discard command
+is issued.
 
-Signed-off-by: Robert Hancock <hancock@sedsystems.ca>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+It is thus resulting into this type of discard request pattern -
+
+- Issue discard request#1
+- is_idle() returns false, discard thread waits for request#1 and then
+  sleeps for min_interval 50ms.
+- Issue discard request#2
+- is_idle() returns false, discard thread waits for request#2 and then
+  sleeps for min_interval 50ms.
+- and so on for all other discard requests, assuming f2fs is idle w.r.t
+  other conditions.
+
+With this fix, the pattern will look like this -
+
+- Issue discard request#1
+- Issue discard request#2
+  and so on upto max_requests of 8
+- Issue discard request#8
+- wait for min_interval 50ms.
+
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/mfd-core.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/f2fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-index 94e3f32ce935..182973df1aed 100644
---- a/drivers/mfd/mfd-core.c
-+++ b/drivers/mfd/mfd-core.c
-@@ -179,6 +179,7 @@ static int mfd_add_device(struct device *parent, int id,
- 		for_each_child_of_node(parent->of_node, np) {
- 			if (of_device_is_compatible(np, cell->of_compatible)) {
- 				pdev->dev.of_node = np;
-+				pdev->dev.fwnode = &np->fwnode;
- 				break;
- 			}
- 		}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f1157d5c62bb..1024550ad11a 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2194,7 +2194,7 @@ static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
+ 		get_pages(sbi, F2FS_DIO_WRITE))
+ 		return false;
+ 
+-	if (SM_I(sbi) && SM_I(sbi)->dcc_info &&
++	if (type != DISCARD_TIME && SM_I(sbi) && SM_I(sbi)->dcc_info &&
+ 			atomic_read(&SM_I(sbi)->dcc_info->queued_discard))
+ 		return false;
+ 
 -- 
 2.20.1
 
