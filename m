@@ -2,150 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33CCC6E3E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:05:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2AB26E3EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:08:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbfGSKFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 06:05:47 -0400
-Received: from mail-eopbgr40092.outbound.protection.outlook.com ([40.107.4.92]:10046
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727618AbfGSKFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 06:05:44 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EjoZsa0RMV9JGFR7vMzSsPdFAHqqyQhlIhIsz+C/KlyWndJfKUBQsJNPr4U2cJyUeq7DxfGpEa1l43ogflBQBB/iQvRglSZd6d4dxrPq+8Oe7TdOlfhBOzUJttRvvGDsO1NgoPU4HbP85mEBjsSKPrjyFkPVszPWYvz/eIJ8pdHFif/bsMLyHpHrTRoL7Ku85H446f0lTtieZ5oci2kHv8BDKiYoEy0KOLmYnh7fZDSB7beU8Y2GVy+MPwMuBxYoWv8Yu0eKneJlzG833ys1pQEl2wnL/MJ1ruh06sPHmPPVS35cRMSiuZT/UXKOHSkDUyoVCFUdXRdGwrLh7MrPyw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=koq0CKddyZm2mfqkFPbj4WrPzE2dqUucDVLLxp5WBtk=;
- b=C4wwS5Nd92X1kqMfI7f1+rNXyTyHpTxB0AfstMXeUsIao1YV7B/EtLjWcduzqhg+qTmfiRfAXQNBgQexJTyJwQCVZGa0lfB5OB5/ExheJFYPzZ5H8T1IoHOEynaEPUw48Anrz9Kzg6PIoblWtC/5oZBkDs7pT7cr1/yn8ogfz/Oc3t+I2e3W/+zE/UpIAUVTNm/X6MkOj3fZ7ZIaKWiCNM0/CQqHxYEn+KY0HCgKYjUYdJ6/HFTVI6uOosGsVJQ+m9Tk1E6kRbrAsezNwpOClaYE/9OF4HXNYRmvKyopdMfEsTCftnNT+3qG4XbHIMGAJoOMqB5iqmRmCQCN/vRftA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=toradex.com;dmarc=pass action=none
- header.from=toradex.com;dkim=pass header.d=toradex.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=koq0CKddyZm2mfqkFPbj4WrPzE2dqUucDVLLxp5WBtk=;
- b=EHnLM8M7zXibs/SSSzJ+2XryzxOKO8jnsJ2NLnKS32qZxnap44yGAiMuBmMavWOqxLR5uQtDnMAetfiP6s0qFdzsOg/N/B/SZetMXshJSjy36kfsvnyX40Z3N/usRMeyS8fCjNLUoHSqnbZlgkj7p4pPvWj4YWKi8E+zjo2KcQw=
-Received: from AM6PR05MB6535.eurprd05.prod.outlook.com (20.179.18.16) by
- AM6PR05MB5925.eurprd05.prod.outlook.com (20.179.0.215) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.14; Fri, 19 Jul 2019 10:05:37 +0000
-Received: from AM6PR05MB6535.eurprd05.prod.outlook.com
- ([fe80::c860:b386:22a:8ec9]) by AM6PR05MB6535.eurprd05.prod.outlook.com
- ([fe80::c860:b386:22a:8ec9%6]) with mapi id 15.20.2094.011; Fri, 19 Jul 2019
- 10:05:37 +0000
-From:   Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-To:     Fabio Estevam <festevam@gmail.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Igor Opaniuk <igor.opaniuk@toradex.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Subject: [PATCH v6 6/6] ASoC: sgtl5000: Fix charge pump source assignment
-Thread-Topic: [PATCH v6 6/6] ASoC: sgtl5000: Fix charge pump source assignment
-Thread-Index: AQHVPhmDKAGkLrCq2kum0p6xuKjV/w==
-Date:   Fri, 19 Jul 2019 10:05:37 +0000
-Message-ID: <20190719100524.23300-7-oleksandr.suvorov@toradex.com>
-References: <20190719100524.23300-1-oleksandr.suvorov@toradex.com>
-In-Reply-To: <20190719100524.23300-1-oleksandr.suvorov@toradex.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM3PR04CA0139.eurprd04.prod.outlook.com (2603:10a6:207::23)
- To AM6PR05MB6535.eurprd05.prod.outlook.com (2603:10a6:20b:71::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=oleksandr.suvorov@toradex.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.20.1
-x-originating-ip: [194.105.145.90]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 74f73370-2ed0-415f-7721-08d70c30a5a0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:AM6PR05MB5925;
-x-ms-traffictypediagnostic: AM6PR05MB5925:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <AM6PR05MB5925CA6F93D56B5A608C5B9CF9CB0@AM6PR05MB5925.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:989;
-x-forefront-prvs: 01039C93E4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39840400004)(396003)(136003)(376002)(366004)(346002)(199004)(189003)(14454004)(68736007)(8676002)(50226002)(6486002)(8936002)(54906003)(305945005)(7736002)(71190400001)(71200400001)(6436002)(81156014)(186003)(99286004)(66476007)(66446008)(66556008)(64756008)(1411001)(81166006)(2906002)(6306002)(476003)(36756003)(66946007)(446003)(256004)(6512007)(86362001)(6916009)(26005)(966005)(478600001)(66066001)(11346002)(52116002)(53936002)(486006)(76176011)(2616005)(25786009)(1076003)(6506007)(4326008)(44832011)(3846002)(6116002)(316002)(5660300002)(102836004)(386003);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR05MB5925;H:AM6PR05MB6535.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: toradex.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: SDVHdJ8TDLcNF/2T5Hpmk7+CYNiEpn+ILZESOY0qVqO2mSEMNpmG/Zm9HA9kONhWZ6nVzh9M4pKZDbcpCf7cgb8oeYScYu2W+2Em5bQyQB1vAeOtdS/HK6Hcc5ahIakPpApHHb2wbFaaT+zHUsB7Ka0i8B5VfkJGplViD5x2MVsYacKsbbMI3He3o8IvxfL2miYKwK9oWBZHurE9xIOgjFalBIgMQQmFa2aYkmWM/SHLivny32ThK0Ylu3u376pdnvldvKZxQ2emzrLbtoMlUZP3spQCR5ka7AbnpMznvFuDyUYXcg4Fd4eDJS5bSakFryQLAn+jnqxnn9mQ+y0X8DP06SnpfJ89QM52pGJRvIJx6BrbZdhZPV522H7nA0bTSbDmlI7nM/6IGufrV4Zfu4HAjqmLtqu0OKrXvOLP3Ao=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1727301AbfGSKHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 06:07:41 -0400
+Received: from foss.arm.com ([217.140.110.172]:41334 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725794AbfGSKHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 06:07:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3C0D337;
+        Fri, 19 Jul 2019 03:07:39 -0700 (PDT)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 625283F59C;
+        Fri, 19 Jul 2019 03:07:38 -0700 (PDT)
+Subject: Re: [PATCH 1/3] arm64: kprobes: Recover pstate.D in single-step
+ exception handler
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Dan Rue <dan.rue@linaro.org>,
+        Matt Hart <matthew.hart@linaro.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Daniel Diaz <daniel.diaz@linaro.org>
+References: <156342860634.8565.14804606041960884732.stgit@devnote2>
+ <156342861775.8565.9122725195458920037.stgit@devnote2>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <3a198660-35cc-0c65-6a6d-e30d2494ff21@arm.com>
+Date:   Fri, 19 Jul 2019 11:07:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74f73370-2ed0-415f-7721-08d70c30a5a0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jul 2019 10:05:37.4154
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oleksandr.suvorov@toradex.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB5925
+In-Reply-To: <156342861775.8565.9122725195458920037.stgit@devnote2>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If VDDA !=3D VDDIO and any of them is greater than 3.1V, charge pump
-source can be assigned automatically [1].
+Hi!
 
-[1] https://www.nxp.com/docs/en/data-sheet/SGTL5000.pdf
+On 18/07/2019 06:43, Masami Hiramatsu wrote:
+> On arm64, if a nested kprobes hit, it can crash the kernel with below
+> error message.
+> 
+> [  152.118921] Unexpected kernel single-step exception at EL1
+> 
+> This is because commit 7419333fa15e ("arm64: kprobe: Always clear
+> pstate.D in breakpoint exception handler") clears pstate.D always in
+> the nested kprobes. That is correct *unless* any nested kprobes
+> (single-stepping) runs inside other kprobes (including kprobes in
+>  user handler).
 
-Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-Reviewed-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Reviewed-by: Igor Opaniuk <igor.opaniuk@toradex.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+kprobes probing kprobes!? ... why do we support this?
 
----
+We treat 'debug' as our highest exception level, it can interrupt pNMI and RAS-errors.
+Letting it loop doesn't sound like a good idea.
 
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3:
-- Add the reference to NXP SGTL5000 data sheet to commit message
-- Fix multi-line comment format
 
-Changes in v2:
-- Fix patch formatting
+> When the 1st kprobe hits, do_debug_exception() will be called. At this
+> point, debug exception (= pstate.D) must be masked (=1).
 
- sound/soc/codecs/sgtl5000.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+> When the 2nd (nested) kprobe is hit before single-step of the first kprobe,
 
-diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
-index 23f4ae2f0723..aa1f9637d895 100644
---- a/sound/soc/codecs/sgtl5000.c
-+++ b/sound/soc/codecs/sgtl5000.c
-@@ -1338,12 +1338,17 @@ static int sgtl5000_set_power_regs(struct snd_soc_c=
-omponent *component)
- 					SGTL5000_INT_OSC_EN);
- 		/* Enable VDDC charge pump */
- 		ana_pwr |=3D SGTL5000_VDDC_CHRGPMP_POWERUP;
--	} else if (vddio >=3D 3100 && vdda >=3D 3100) {
-+	} else {
- 		ana_pwr &=3D ~SGTL5000_VDDC_CHRGPMP_POWERUP;
--		/* VDDC use VDDIO rail */
--		lreg_ctrl |=3D SGTL5000_VDDC_ASSN_OVRD;
--		lreg_ctrl |=3D SGTL5000_VDDC_MAN_ASSN_VDDIO <<
--			    SGTL5000_VDDC_MAN_ASSN_SHIFT;
-+		/*
-+		 * if vddio =3D=3D vdda the source of charge pump should be
-+		 * assigned manually to VDDIO
-+		 */
-+		if (vddio =3D=3D vdda) {
-+			lreg_ctrl |=3D SGTL5000_VDDC_ASSN_OVRD;
-+			lreg_ctrl |=3D SGTL5000_VDDC_MAN_ASSN_VDDIO <<
-+				    SGTL5000_VDDC_MAN_ASSN_SHIFT;
-+		}
- 	}
-=20
- 	snd_soc_component_write(component, SGTL5000_CHIP_LINREG_CTRL, lreg_ctrl);
---=20
-2.20.1
+How does this happen?
+I guess the kprobe-helper-function gets called in debug context, but surely you can't
+kprobe a kprobe-helper-function? What stops this going in a loop?
 
+
+> it modifies debug exception clear (pstate.D = 0).
+
+After taking the first BRK, DAIF=0xf, everything is masked. When you take the second BRK
+this shouldn't change.
+
+Those spsr_set_debug_flag() calls are modifying the spsr in the regs structure, they only
+become PSTATE when we eret for single-step.
+
+
+> Then, when the 1st kprobe setting up single-step, it saves current
+> DAIF, mask DAIF, enable single-step, and restore DAIF.
+
+> However, since "D" flag in DAIF is cleared by the 2nd kprobe, the
+> single-step exception happens soon after restoring DAIF.
+
+PSTATE.D bit clearing should only be effective for the duration of the single-step.
+
+
+> To solve this issue, this refers saved pstate register to check the
+> previous pstate.D and recover it if needed.
+
+(This sounds like undoing something that shouldn't have happened in the first place)
+
+
+> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
+> index bd5dfffca272..6e1dc0bb4c82 100644
+> --- a/arch/arm64/kernel/probes/kprobes.c
+> +++ b/arch/arm64/kernel/probes/kprobes.c
+> @@ -201,12 +201,14 @@ spsr_set_debug_flag(struct pt_regs *regs, int mask)
+>   * interrupt occurrence in the period of exception return and  start of
+>   * out-of-line single-step, that result in wrongly single stepping
+>   * into the interrupt handler.
+> + * This also controls debug flag, so that we can refer the saved pstate.
+>   */
+>  static void __kprobes kprobes_save_local_irqflag(struct kprobe_ctlblk *kcb,
+>  						struct pt_regs *regs)
+>  {
+>  	kcb->saved_irqflag = regs->pstate;
+>  	regs->pstate |= PSR_I_BIT;
+> +	spsr_set_debug_flag(regs, 0);
+
+(Nit: this is the only caller of spsr_set_debug_flag(), as we're modifing regs->pstate
+directly here, can we lose the helper and just manipulate regs->pstate? )
+
+>  }
+>  
+>  static void __kprobes kprobes_restore_local_irqflag(struct kprobe_ctlblk *kcb,
+> @@ -245,15 +251,12 @@ static void __kprobes setup_singlestep(struct kprobe *p,
+>  		kcb->kprobe_status = KPROBE_HIT_SS;
+>  	}
+>
+> -
+>  	if (p->ainsn.api.insn) {
+>  		/* prepare for single stepping */
+>  		slot = (unsigned long)p->ainsn.api.insn;
+>
+>  		set_ss_context(kcb, slot);	/* mark pending ss */
+>
+> -		spsr_set_debug_flag(regs, 0);
+> -
+>  		/* IRQs and single stepping do not mix well. */
+>  		kprobes_save_local_irqflag(kcb, regs);
+>  		kernel_enable_single_step(regs);
+
+These two hunks look like cleanup, could we do this separately from a fix for stable?
+
+
+
+> @@ -216,6 +218,10 @@ static void __kprobes kprobes_restore_local_irqflag(struct kprobe_ctlblk *kcb,
+>  		regs->pstate |= PSR_I_BIT;
+>  	else
+>  		regs->pstate &= ~PSR_I_BIT;
+> +
+> +	/* Recover pstate.D mask if needed */
+> +	if (kcb->saved_irqflag & PSR_D_BIT)
+> +		spsr_set_debug_flag(regs, 1);
+>  }
+
+Ugh. .. I get it ..
+
+I think the simplest summary of the problem is:
+Kprobes unmasks debug exceptions for single-step, then leaves them unmasked when the
+probed function is restarted.
+
+I'd like to know more about this nested case, but I don't think its the simplest example
+of this problem.
+The commit message is describing both the interrupted and running PSTATE as PSTATE. I
+think it would be clearer if you called the interrupted one SPSR (saved pstate register).
+That's the value in the regs structure.
+
+
+Please don't re-manipulate the flags, its overly verbose and we've already got this wrong
+once! We should just blindly restore the DAIF setting we had before as its simpler.
+
+Could we change kprobes_save_local_irqflag() to save the DAIF bits of pstate:
+| kcb->saved_irqflag = regs->pstate & DAIF_MASK;
+(DAIF_MASK is all four PSR bits)
+
+So that we can then fix this in kprobes_restore_local_irqflag() with:
+| regs->pstate &= ~DAIF_MASK;
+| regs->pstate |= kcb->saved_irqflag
+
+(the value splicing is needed because regs->pstate also holds the 'condition code' flags,
+which could be modified by the single-step instruction, then depended on afterwards.)
+
+
+Thanks,
+
+James
