@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCAFF6DB5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46F9F6DB5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:09:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732759AbfGSEHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:07:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41456 "EHLO mail.kernel.org"
+        id S1732796AbfGSEHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:07:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727739AbfGSEHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:07:40 -0400
+        id S1727498AbfGSEHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:07:46 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF6B3218C3;
-        Fri, 19 Jul 2019 04:07:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7620B218A3;
+        Fri, 19 Jul 2019 04:07:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509259;
-        bh=Q2SEaEAU3FeOtqv5GUeAciOTGA6J81HutJNlYGYF0XQ=;
+        s=default; t=1563509265;
+        bh=dnlfijSju3fcIuFGMb3mwrJ/k/TBn0pi7EGPnTDJZrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s93kMGyLLD2k3k1Gj4gRZm/ikUNwk2u+bwfE0Pt/vu5BH+iqKGp+d38xqYdY4ILmj
-         dQrprdakBzL9JmnDSLyNp+oY9QhWCxKbRoQcfkWfH0shYLQqQC1m3CCwEBe5YHRPMs
-         PtXPvI4UkTKsNyAi7295mksI8iGbzIULf79Gu82M=
+        b=igRzZTaYAFo7fhI/rfW6BQ8W40+B6i8S7H57qq15gMh6nT0itBaqr0UyU6NtDXAiK
+         LZNFn11cwj8ETYLqXdwjqsQm6WmqqpQkyVTfwePFzZHCU0NMtCA+1BFT5R3mA30H+N
+         iHs2RyFYm4KbsPmFnbAi31MZFJUP8Cj0e+l4UCb0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Fabien Dessenne <fabien.dessenne@st.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 003/101] iio: adc: stm32-dfsdm: missing error case during probe
-Date:   Fri, 19 Jul 2019 00:05:54 -0400
-Message-Id: <20190719040732.17285-3-sashal@kernel.org>
+Cc:     Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Thinh Nguyen <thinhn@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 005/101] usb: core: hub: Disable hub-initiated U1/U2
+Date:   Fri, 19 Jul 2019 00:05:56 -0400
+Message-Id: <20190719040732.17285-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
 References: <20190719040732.17285-1-sashal@kernel.org>
@@ -44,47 +44,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabien Dessenne <fabien.dessenne@st.com>
+From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
 
-[ Upstream commit d2fc0156963cae8f1eec8e2dd645fbbf1e1c1c8e ]
+[ Upstream commit 561759292774707b71ee61aecc07724905bb7ef1 ]
 
-During probe, check the devm_ioremap_resource() error value.
-Also return the devm_clk_get() error value instead of -EINVAL.
+If the device rejects the control transfer to enable device-initiated
+U1/U2 entry, then the device will not initiate U1/U2 transition. To
+improve the performance, the downstream port should not initate
+transition to U1/U2 to avoid the delay from the device link command
+response (no packet can be transmitted while waiting for a response from
+the device). If the device has some quirks and does not implement U1/U2,
+it may reject all the link state change requests, and the downstream
+port may resend and flood the bus with more requests. This will affect
+the device performance even further. This patch disables the
+hub-initated U1/U2 if the device-initiated U1/U2 entry fails.
 
-Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
-Acked-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reference: USB 3.2 spec 7.2.4.2.3
+
+Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/adc/stm32-dfsdm-core.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/usb/core/hub.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/iio/adc/stm32-dfsdm-core.c b/drivers/iio/adc/stm32-dfsdm-core.c
-index bf089f5d6225..941630615e88 100644
---- a/drivers/iio/adc/stm32-dfsdm-core.c
-+++ b/drivers/iio/adc/stm32-dfsdm-core.c
-@@ -213,6 +213,8 @@ static int stm32_dfsdm_parse_of(struct platform_device *pdev,
- 	}
- 	priv->dfsdm.phys_base = res->start;
- 	priv->dfsdm.base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(priv->dfsdm.base))
-+		return PTR_ERR(priv->dfsdm.base);
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index eb24ec0e160d..c4281d16bcb7 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -3958,6 +3958,9 @@ static int usb_set_lpm_timeout(struct usb_device *udev,
+  * control transfers to set the hub timeout or enable device-initiated U1/U2
+  * will be successful.
+  *
++ * If the control transfer to enable device-initiated U1/U2 entry fails, then
++ * hub-initiated U1/U2 will be disabled.
++ *
+  * If we cannot set the parent hub U1/U2 timeout, we attempt to let the xHCI
+  * driver know about it.  If that call fails, it should be harmless, and just
+  * take up more slightly more bus bandwidth for unnecessary U1/U2 exit latency.
+@@ -4012,23 +4015,24 @@ static void usb_enable_link_state(struct usb_hcd *hcd, struct usb_device *udev,
+ 		 * host know that this link state won't be enabled.
+ 		 */
+ 		hcd->driver->disable_usb3_lpm_timeout(hcd, udev, state);
+-	} else {
+-		/* Only a configured device will accept the Set Feature
+-		 * U1/U2_ENABLE
+-		 */
+-		if (udev->actconfig)
+-			usb_set_device_initiated_lpm(udev, state, true);
++		return;
++	}
  
- 	/*
- 	 * "dfsdm" clock is mandatory for DFSDM peripheral clocking.
-@@ -222,8 +224,10 @@ static int stm32_dfsdm_parse_of(struct platform_device *pdev,
- 	 */
- 	priv->clk = devm_clk_get(&pdev->dev, "dfsdm");
- 	if (IS_ERR(priv->clk)) {
--		dev_err(&pdev->dev, "No stm32_dfsdm_clk clock found\n");
--		return -EINVAL;
-+		ret = PTR_ERR(priv->clk);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "Failed to get clock (%d)\n", ret);
-+		return ret;
+-		/* As soon as usb_set_lpm_timeout(timeout) returns 0, the
+-		 * hub-initiated LPM is enabled. Thus, LPM is enabled no
+-		 * matter the result of usb_set_device_initiated_lpm().
+-		 * The only difference is whether device is able to initiate
+-		 * LPM.
+-		 */
++	/* Only a configured device will accept the Set Feature
++	 * U1/U2_ENABLE
++	 */
++	if (udev->actconfig &&
++	    usb_set_device_initiated_lpm(udev, state, true) == 0) {
+ 		if (state == USB3_LPM_U1)
+ 			udev->usb3_lpm_u1_enabled = 1;
+ 		else if (state == USB3_LPM_U2)
+ 			udev->usb3_lpm_u2_enabled = 1;
++	} else {
++		/* Don't request U1/U2 entry if the device
++		 * cannot transition to U1/U2.
++		 */
++		usb_set_lpm_timeout(udev, state, 0);
++		hcd->driver->disable_usb3_lpm_timeout(hcd, udev, state);
  	}
+ }
  
- 	priv->aclk = devm_clk_get(&pdev->dev, "audio");
 -- 
 2.20.1
 
