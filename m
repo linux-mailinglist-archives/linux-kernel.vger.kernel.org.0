@@ -2,92 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D34B46E6AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 15:39:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 800C36E6A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 15:39:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729130AbfGSNho (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 09:37:44 -0400
-Received: from mga18.intel.com ([134.134.136.126]:35262 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728715AbfGSNhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729104AbfGSNhk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 19 Jul 2019 09:37:40 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2019 06:37:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,282,1559545200"; 
-   d="scan'208";a="179627372"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by orsmga002.jf.intel.com with ESMTP; 19 Jul 2019 06:37:37 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hoT4p-0003sx-PA; Fri, 19 Jul 2019 16:37:35 +0300
-Date:   Fri, 19 Jul 2019 16:37:35 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Kangjie Lu <kjlu@umn.edu>, Aditya Pakki <pakki001@umn.edu>
-Cc:     emamd001@umn.edu, smccaman@umn.edu,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Vinod Koul <vkoul@kernel.org>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] 8250_lpss: check null return when calling pci_ioremap_bar
-Message-ID: <20190719133735.GM9224@smile.fi.intel.com>
-References: <20190719025443.2368-1-navid.emamdoost@gmail.com>
+Received: from mx2.suse.de ([195.135.220.15]:47654 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727354AbfGSNhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 09:37:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 95D33AD33;
+        Fri, 19 Jul 2019 13:37:38 +0000 (UTC)
+Subject: Re: [PATCH 4/4] Documentation:kernel-per-CPU-kthreads.txt: Remove
+ reference to elevator=
+To:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>
+References: <20190714053453.1655-1-marcos.souza.org@gmail.com>
+ <20190714053453.1655-5-marcos.souza.org@gmail.com>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <8b3c7096-5414-bf04-e470-a0f5b42f3371@suse.de>
+Date:   Fri, 19 Jul 2019 15:37:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20190714053453.1655-5-marcos.souza.org@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190719025443.2368-1-navid.emamdoost@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 09:54:42PM -0500, Navid Emamdoost wrote:
-> pci_ioremap_bar may return null. This is eventually de-referenced at 
-> drivers/dma/dw/core.c:1154 and drivers/dma/dw/core.c:1168. A null check is
->  needed to prevent null de-reference. I am adding the check and in case of
->  failure returning -ENOMEM (I am not sure this is the best errno, you may 
-> consider it as a placeholder), and subsequently changing the caller’s 
-> return type, and propagating the error.
+On 7/14/19 7:34 AM, Marcos Paulo de Souza wrote:
+> This argument was not being considered since blk-mq was set by default,
+> so removed this documentation to avoid confusion.
+> 
+> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+> ---
+>   Documentation/kernel-per-CPU-kthreads.txt | 8 +++-----
+>   1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.com>
 
-Thanks for the patch, my comments below.
+Cheers,
 
->  	chip->irq = pci_irq_vector(pdev, 0);
->  	chip->regs = pci_ioremap_bar(pdev, 1);
-> +	if (!chip->regs)
-> +		return -ENOMEM;
-
-This is the same case as below, it's fine to go on without DMA support.
-
->  	chip->pdata = &qrk_serial_dma_pdata;
-
-So, I would rather to put like this...
-
-Hold on, I remember someone already tried to fix this [1].
-
-I dunno why it wasn't v5, due to [2].
-
-Also, similar to yours, but wrong [3].
-
-Thus, please, collaborate guys, and send one compiling solution  based on [1].
-
->  	/* Falling back to PIO mode if DMA probing fails */
->  	ret = dw_dma_probe(chip);
->  	if (ret)
-> -		return;
-> +		return 0;
-
-[1]: https://www.spinics.net/lists/linux-serial/msg33965.html
-[2]: https://lists.01.org/pipermail/kbuild-all/2019-March/059215.html
-[3]: https://lore.kernel.org/patchwork/patch/1051000/
-
+Hannes
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Dr. Hannes Reinecke            Teamlead Storage & Networking
+hare@suse.de                              +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
+HRB 21284 (AG Nürnberg)
