@@ -2,107 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33F0C6D7D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:39:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D70476D7E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 02:41:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726251AbfGSAjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 20:39:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49326 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726015AbfGSAjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 20:39:21 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C53C2184E;
-        Fri, 19 Jul 2019 00:39:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563496760;
-        bh=eCiWYiZG0ijNfOfYOEbIo8fg8pTnk26ENs0Aqaz/cgo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=f6Dg00TfBDLf1gF7NAlB0tOU/aoninJxRB86vg6K1gzl6biVF6I0ogXIw2V8fvr5j
-         a2AJ5A5ucibTrJkLgk3rQVoNIXxw3BMXeZbwdymW18rSUauD6E2iKwW31pO6sMiyr6
-         +JjNRC1URT4N53iTjmCJ1ZdOn7iQFbKYqqhivgk4=
-Date:   Thu, 18 Jul 2019 20:39:19 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     corbet@lwn.net, solar@openwall.com, will@kernel.org,
-        peterz@infradead.org, gregkh@linuxfoundation.org,
-        tyhicks@canonical.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Documentation/security-bugs: provide more information
- about linux-distros
-Message-ID: <20190719003919.GC4240@sasha-vm>
-References: <20190717231103.13949-1-sashal@kernel.org>
- <201907181457.D61AC061C@keescook>
+        id S1726541AbfGSAkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 20:40:47 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:40020 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbfGSAkr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 20:40:47 -0400
+Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
+        by 156.147.23.51 with ESMTP; 19 Jul 2019 09:40:45 +0900
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
+        by 156.147.1.121 with ESMTP; 19 Jul 2019 09:40:45 +0900
+X-Original-SENDERIP: 10.177.222.33
+X-Original-MAILFROM: byungchul.park@lge.com
+Date:   Fri, 19 Jul 2019 09:39:42 +0900
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Byungchul Park <max.byungchul.park@gmail.com>,
+        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        kernel-team@lge.com
+Subject: Re: [PATCH] rcu: Make jiffies_till_sched_qs writable
+Message-ID: <20190719003942.GA28226@X58A-UD3R>
+References: <20190711164818.GA260447@google.com>
+ <20190711195839.GA163275@google.com>
+ <20190712063240.GD7702@X58A-UD3R>
+ <20190712125116.GB92297@google.com>
+ <CANrsvRMh6L_sEmoF_K3Mx=1VcuGSwQAT8CZHep69aSZUTBvwpA@mail.gmail.com>
+ <CAEXW_YTeAUuVqViBfiOTQhckMDH229oQdPXG6SNqGK0xYm-yzA@mail.gmail.com>
+ <20190713151330.GE26519@linux.ibm.com>
+ <20190713154257.GE133650@google.com>
+ <20190713174111.GG26519@linux.ibm.com>
+ <CAEXW_YTcL-nOfJXkChGhvQtqqfSLpAYr327PLu1SmGEEADCevw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201907181457.D61AC061C@keescook>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAEXW_YTcL-nOfJXkChGhvQtqqfSLpAYr327PLu1SmGEEADCevw@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 03:00:55PM -0700, Kees Cook wrote:
->On Wed, Jul 17, 2019 at 07:11:03PM -0400, Sasha Levin wrote:
->> Provide more information about how to interact with the linux-distros
->> mailing list for disclosing security bugs.
->>
->> Reference the linux-distros list policy and clarify that the reporter
->> must read and understand those policies as they differ from
->> security@kernel.org's policy.
->>
->> Suggested-by: Solar Designer <solar@openwall.com>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->
->Sorry, but NACK, see below...
->
->> ---
->>
->> Changes in v2:
->>  - Focus more on pointing to the linux-distros wiki and policies.
->
->I think this is already happening in the text. What specifically do you
->want described differently?
+On Thu, Jul 18, 2019 at 12:14:22PM -0400, Joel Fernandes wrote:
+> Trimming the list a bit to keep my noise level low,
+> 
+> On Sat, Jul 13, 2019 at 1:41 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
+> [snip]
+> > > It still feels like you guys are hyperfocusing on this one particular
+> > > > knob.  I instead need you to look at the interrelating knobs as a group.
+> > >
+> > > Thanks for the hints, we'll do that.
+> > >
+> > > > On the debugging side, suppose someone gives you an RCU bug report.
+> > > > What information will you need?  How can you best get that information
+> > > > without excessive numbers of over-and-back interactions with the guy
+> > > > reporting the bug?  As part of this last question, what information is
+> > > > normally supplied with the bug?  Alternatively, what information are
+> > > > bug reporters normally expected to provide when asked?
+> > >
+> > > I suppose I could dig out some of our Android bug reports of the past where
+> > > there were RCU issues but if there's any fires you are currently fighting do
+> > > send it our way as debugging homework ;-)
+> >
+> >   Suppose that you were getting RCU CPU stall
+> > warnings featuring multi_cpu_stop() called from cpu_stopper_thread().
+> > Of course, this really means that some other CPU/task is holding up
+> > multi_cpu_stop() without also blocking the current grace period.
+> >
+> 
+> So I took a shot at this trying to learn how CPU stoppers work in
+> relation to this problem.
+> 
+> I am assuming here say CPU X has entered MULTI_STOP_DISABLE_IRQ state
+> in multi_cpu_stop() but another CPU Y has not yet entered this state.
+> So CPU X is stalling RCU but it is really because of CPU Y. Now in the
+> problem statement, you mentioned CPU Y is not holding up the grace
+> period, which means Y doesn't have any of IRQ, BH or preemption
+> disabled ; but is still somehow stalling RCU indirectly by troubling
+> X.
+> 
+> This can only happen if :
+> - CPU Y has a thread executing on it that is higher priority than CPU
+> X's stopper thread which prevents it from getting scheduled. - but the
+> CPU stopper thread (migration/..) is highest priority RT so this would
+> be some kind of an odd scheduler bug.
 
-The main issue was that there isn't anything pointing to the
-linux-distros policies. The current text outlines a few of them ("add
-[vs]", and "there should be an embargo period"), but it effectively just
-gives out the linux-distros mailing address and tells the reporter to
-contact it.
+I think this bug hardly can happen.
 
->>  - Remove explicit linux-distros email.
->
->I don't like this because we had past trouble with notifications going
->to the distros@ list and leaking Linux-only flaws to the BSDs. As there
->isn't a separate linux-distros wiki, the clarification of WHICH list is
->needed.
+> - There is a bug in the CPU stopper machinery itself preventing it
+> from scheduling the stopper on Y. Even though Y is not holding up the
+> grace period.
 
-Why would removing the explicit linux-distros email encourage people to
-send reports to it?
+Or any thread on Y is busy with preemption/irq disabled preventing the
+stopper from being scheduled on Y.
 
-I also don't understand what you mean by "there isn't a separate
-linux-distros wiki"? There is one, and I want to point the reporter
-there.
+Or something is stuck in ttwu() to wake up the stopper on Y due to any
+scheduler locks such as pi_lock or rq->lock or something.
 
->>  - Remove various explanations of linux-distros policies.
->
->I don't think there's value in removing the Tue-Thu comment, nor
->providing context for why distros need time. This has been a regular
->thing we've had to explain to researchers that aren't familiar with
->update procedures and publication timing.
+I think what you mentioned can happen easily.
 
-To be fair, the Tue-Thu comment is listed in the section describing how
-to do coordination with linux-distros, and linux-distros don't have a
-Tue-Thu policy. If it's a security@kernel.org policy then let's list it
-elsewhere.
+Basically we would need information about preemption/irq disabled
+sections on Y and scheduler's current activity on every cpu at that time.
 
-If you feel that there is a consensus around Tue-Thu let's just add it
-to the linux-distros policy wiki, there's no point in listing random
-policies from that wiki.
+Am I missing something?
 
---
+> Did I get that right? Would be exciting to run the rcutorture test
+> once Paul has it available to reproduce this problem.
+
 Thanks,
-Sasha
+Byungchul
+
