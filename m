@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D92F6DBE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:12:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94C336DBEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:12:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388776AbfGSEMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:12:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47482 "EHLO mail.kernel.org"
+        id S2388808AbfGSEMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:12:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729594AbfGSEMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:12:13 -0400
+        id S2388000AbfGSEMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:12:20 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2B4921873;
-        Fri, 19 Jul 2019 04:12:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72FE62189E;
+        Fri, 19 Jul 2019 04:12:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509532;
-        bh=aLsdwTpMpfOml35aRANSXramiq7HO3wnjV9fDK1SdcQ=;
+        s=default; t=1563509539;
+        bh=B5BaCrDkd16abE/dgvJMTx+7Q+mR4c/bTrOyE51wWn0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1h+e7l8kYP0Q9L+3OixhfauDz5RiiJd26ydFVrrR5MNELQwSWdI31UQpFfRBcT7M2
-         p7QilAYw9Q8d23yZ+Op+2XaE5gXQ81cvGQ34OaA3mOlFmf2Ngmp0tAS+fxSvKP2ecf
-         Sza99/OXtD10HvTSR5/7AD3QXeK0YmaWoMeH7Ip8=
+        b=2Vc2rF3cpHy/TBEEbhUFl0FM+0iOkwQXqDXzHme/dVqUwjFLbtK0CVuireabqGitg
+         Ptne8qAxL50+MsCuEpCj/KjWVmLn+aL2q1hRkF7EKCjsrZKT1psL+knu5HL7JYVHGK
+         UI/d7Az9kbEAz9HSkIlQgzhDeOr/6m3grgYO/dwQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Axel Lin <axel.lin@ingics.com>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 35/60] mfd: hi655x-pmic: Fix missing return value check for devm_regmap_init_mmio_clk
-Date:   Fri, 19 Jul 2019 00:10:44 -0400
-Message-Id: <20190719041109.18262-35-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 39/60] serial: sh-sci: Terminate TX DMA during buffer flushing
+Date:   Fri, 19 Jul 2019 00:10:48 -0400
+Message-Id: <20190719041109.18262-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719041109.18262-1-sashal@kernel.org>
 References: <20190719041109.18262-1-sashal@kernel.org>
@@ -44,33 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Axel Lin <axel.lin@ingics.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 7efd105c27fd2323789b41b64763a0e33ed79c08 ]
+[ Upstream commit 775b7ffd7d6d5db320d99b0a485c51e04dfcf9f1 ]
 
-Since devm_regmap_init_mmio_clk can fail, add return value checking.
+While the .flush_buffer() callback clears sci_port.tx_dma_len since
+commit 1cf4a7efdc71cab8 ("serial: sh-sci: Fix race condition causing
+garbage during shutdown"), it does not terminate a transmit DMA
+operation that may be in progress.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Acked-by: Chen Feng <puck.chen@hisilicon.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Fix this by terminating any pending DMA operations, and resetting the
+corresponding cookie.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+
+Link: https://lore.kernel.org/r/20190624123540.20629-3-geert+renesas@glider.be
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/hi655x-pmic.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/tty/serial/sh-sci.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/hi655x-pmic.c b/drivers/mfd/hi655x-pmic.c
-index 96c07fa1802a..6693f74aa6ab 100644
---- a/drivers/mfd/hi655x-pmic.c
-+++ b/drivers/mfd/hi655x-pmic.c
-@@ -112,6 +112,8 @@ static int hi655x_pmic_probe(struct platform_device *pdev)
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 66c8bbea06c4..dc0b36ab999a 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1571,11 +1571,18 @@ static void sci_free_dma(struct uart_port *port)
  
- 	pmic->regmap = devm_regmap_init_mmio_clk(dev, NULL, base,
- 						 &hi655x_regmap_config);
-+	if (IS_ERR(pmic->regmap))
-+		return PTR_ERR(pmic->regmap);
- 
- 	regmap_read(pmic->regmap, HI655X_BUS_ADDR(HI655X_VER_REG), &pmic->ver);
- 	if ((pmic->ver < PMU_VER_START) || (pmic->ver > PMU_VER_END)) {
+ static void sci_flush_buffer(struct uart_port *port)
+ {
++	struct sci_port *s = to_sci_port(port);
++
+ 	/*
+ 	 * In uart_flush_buffer(), the xmit circular buffer has just been
+-	 * cleared, so we have to reset tx_dma_len accordingly.
++	 * cleared, so we have to reset tx_dma_len accordingly, and stop any
++	 * pending transfers
+ 	 */
+-	to_sci_port(port)->tx_dma_len = 0;
++	s->tx_dma_len = 0;
++	if (s->chan_tx) {
++		dmaengine_terminate_async(s->chan_tx);
++		s->cookie_tx = -EINVAL;
++	}
+ }
+ #else /* !CONFIG_SERIAL_SH_SCI_DMA */
+ static inline void sci_request_dma(struct uart_port *port)
 -- 
 2.20.1
 
