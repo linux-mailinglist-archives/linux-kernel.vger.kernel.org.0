@@ -2,119 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A4176E3CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:00:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB11A6E3D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:04:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbfGSKAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 06:00:09 -0400
-Received: from foss.arm.com ([217.140.110.172]:41202 "EHLO foss.arm.com"
+        id S1727456AbfGSKC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 06:02:57 -0400
+Received: from foss.arm.com ([217.140.110.172]:41260 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbfGSKAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 06:00:08 -0400
+        id S1727351AbfGSKC5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 06:02:57 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DAF05337;
-        Fri, 19 Jul 2019 03:00:05 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4AC3F3F59C;
-        Fri, 19 Jul 2019 03:00:04 -0700 (PDT)
-Date:   Fri, 19 Jul 2019 10:59:59 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Dan Rue <dan.rue@linaro.org>,
-        Matt Hart <matthew.hart@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Daniel Diaz <daniel.diaz@linaro.org>,
-        James Morse <james.morse@arm.com>
-Subject: Re: [PATCH 3/3] arm64: debug: Remove rcu_read_lock from debug
- exception
-Message-ID: <20190719095958.GA19605@lakrids.cambridge.arm.com>
-References: <156342860634.8565.14804606041960884732.stgit@devnote2>
- <156342863822.8565.7624877983728871995.stgit@devnote2>
- <20190718062215.GG14271@linux.ibm.com>
- <20190718092022.GA3625@blommer>
- <20190718233133.146065f668da6297e57e52ef@kernel.org>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D6AC337;
+        Fri, 19 Jul 2019 03:02:56 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D8CBE3F59C;
+        Fri, 19 Jul 2019 03:02:53 -0700 (PDT)
+Date:   Fri, 19 Jul 2019 11:02:16 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Lina Iyer <ilina@codeaurora.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Souvik Chakravarty <souvik.chakravarty@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 14/18] drivers: firmware: psci: Manage runtime PM in the
+ idle path for CPUs
+Message-ID: <20190719100216.GA8587@e121166-lin.cambridge.arm.com>
+References: <20190513192300.653-1-ulf.hansson@linaro.org>
+ <20190513192300.653-15-ulf.hansson@linaro.org>
+ <20190716155317.GB32490@e121166-lin.cambridge.arm.com>
+ <CAPDyKFrJ75mo+s6GuUCTQ-nVv7C+9YJyTVmwuBZ2RKFOvOi3Nw@mail.gmail.com>
+ <20190718133053.GA27222@e121166-lin.cambridge.arm.com>
+ <CAPDyKFr4NmichQk4uf+Wgbanh=5idKYY=37WCb6U_hNFDVYg=w@mail.gmail.com>
+ <20190718174116.GD25567@codeaurora.org>
+ <CAPDyKFrxBdZfskyp2HOb5YykkAqkBzRfW4-LLbcj1DAaL65XpA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190718233133.146065f668da6297e57e52ef@kernel.org>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <CAPDyKFrxBdZfskyp2HOb5YykkAqkBzRfW4-LLbcj1DAaL65XpA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 11:31:33PM +0900, Masami Hiramatsu wrote:
-> On Thu, 18 Jul 2019 10:20:23 +0100
-> Mark Rutland <mark.rutland@arm.com> wrote:
+On Thu, Jul 18, 2019 at 11:49:11PM +0200, Ulf Hansson wrote:
+> On Thu, 18 Jul 2019 at 19:41, Lina Iyer <ilina@codeaurora.org> wrote:
+> >
+> > On Thu, Jul 18 2019 at 10:55 -0600, Ulf Hansson wrote:
+> > >On Thu, 18 Jul 2019 at 15:31, Lorenzo Pieralisi
+> > ><lorenzo.pieralisi@arm.com> wrote:
+> > >>
+> > >> On Thu, Jul 18, 2019 at 12:35:07PM +0200, Ulf Hansson wrote:
+> > >> > On Tue, 16 Jul 2019 at 17:53, Lorenzo Pieralisi
+> > >> > <lorenzo.pieralisi@arm.com> wrote:
+> > >> > >
+> > >> > > On Mon, May 13, 2019 at 09:22:56PM +0200, Ulf Hansson wrote:
+> > >> > > > When the hierarchical CPU topology layout is used in DT, let's allow the
+> > >> > > > CPU to be power managed through its PM domain, via deploying runtime PM
+> > >> > > > support.
+> > >> > > >
+> > >> > > > To know for which idle states runtime PM reference counting is needed,
+> > >> > > > let's store the index of deepest idle state for the CPU, in a per CPU
+> > >> > > > variable. This allows psci_cpu_suspend_enter() to compare this index with
+> > >> > > > the requested idle state index and then act accordingly.
+> > >> > >
+> > >> > > I do not see why a system with two CPU CPUidle states, say CPU retention
+> > >> > > and CPU shutdown, should not be calling runtime PM on CPU retention
+> > >> > > entry.
+> > >> >
+> > >> > If the CPU idle governor did select the CPU retention for the CPU, it
+> > >> > was probably because the target residency for the CPU shutdown state
+> > >> > could not be met.
+> > >>
+> > >> The kernel does not know what those cpu states represent, so, this is an
+> > >> assumption you are making and it must be made clear that this code works
+> > >> as long as your assumption is valid.
+> > >>
+> > >> If eg a "cluster" retention state has lower target_residency than
+> > >> the deepest CPU idle state this assumption is wrong.
+> > >
+> > >Good point, you are right. I try to find a place to document this assumption.
+> > >
+> > >>
+> > >> And CPUidle and genPD governor decisions are not synced anyway so,
+> > >> again, this is an assumption, not a certainty.
+> > >>
+> > >> > In this case, there is no point in allowing any other deeper idle
+> > >> > states for cluster/package/system, since those have even greater
+> > >> > residencies, hence calling runtime PM doesn't make sense.
+> > >>
+> > >> On the systems you are testing on.
+> > >
+> > >So what you are saying typically means, that if all CPUs in the same
+> > >cluster have entered the CPU retention state, on some system the
+> > >cluster may also put into a cluster retention state (assuming the
+> > >target residency is met)?
+> > >
+> > >Do you know of any systems that has these characteristics?
+> > >
+> > Many QCOM SoCs can do that. But with the hardware improving, the
+> > power-performance benefits skew the results in favor of powering off
+> > the cluster than keeping the CPU and cluster in retention.
+> >
+> > Kevin H and I thought of this problem earlier on. But that is a second
+> > level problem to solve and definitely to be thought of after we have the
+> > support for the deepest states in the kernel. We left that out for a
+> > later date. The idea would have been to setup the allowable state(s) in
+> > the DT for CPU and cluster state definitions and have the genpd take
+> > that into consideration when deciding the idle state for the domain.
 > 
-> > On Wed, Jul 17, 2019 at 11:22:15PM -0700, Paul E. McKenney wrote:
-> > > On Thu, Jul 18, 2019 at 02:43:58PM +0900, Masami Hiramatsu wrote:
-> > > > Remove rcu_read_lock()/rcu_read_unlock() from debug exception
-> > > > handlers since the software breakpoint can be hit on idle task.
-> > 
-> > Why precisely do we need to elide these? Are we seeing warnings today?
+> Thanks for confirming.
 > 
-> Yes, unfortunately, or fortunately. Naresh reported that warns when
-> ftracetest ran. I confirmed that happens if I probe on default_idle_call too.
+> This more or less means we need to improve the hierarchical support in
+> genpd to support more levels, such that it makes sense to have a genpd
+> governor assigned at more than one level. This doesn't work well
+> today. As I also have stated, this is on my todo list for genpd.
 > 
-> /sys/kernel/debug/tracing # echo p default_idle_call >> kprobe_events 
-> /sys/kernel/debug/tracing # echo 1 > events/kprobes/enable 
-> /sys/kernel/debug/tracing # [  135.122237] 
-> [  135.125035] =============================
-> [  135.125310] WARNING: suspicious RCU usage
-> [  135.125581] 5.2.0-08445-g9187c508bdc7 #20 Not tainted
-> [  135.125904] -----------------------------
-> [  135.126205] include/linux/rcupdate.h:594 rcu_read_lock() used illegally while idle!
-> [  135.126839] 
-> [  135.126839] other info that might help us debug this:
-> [  135.126839] 
-> [  135.127410] 
-> [  135.127410] RCU used illegally from idle CPU!
-> [  135.127410] rcu_scheduler_active = 2, debug_locks = 1
-> [  135.128114] RCU used illegally from extended quiescent state!
-> [  135.128555] 1 lock held by swapper/0/0:
-> [  135.128944]  #0: (____ptrval____) (rcu_read_lock){....}, at: call_break_hook+0x0/0x178
-> [  135.130499] 
-> [  135.130499] stack backtrace:
-> [  135.131192] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.2.0-08445-g9187c508bdc7 #20
-> [  135.131841] Hardware name: linux,dummy-virt (DT)
-> [  135.132224] Call trace:
-> [  135.132491]  dump_backtrace+0x0/0x140
-> [  135.132806]  show_stack+0x24/0x30
-> [  135.133133]  dump_stack+0xc4/0x10c
-> [  135.133726]  lockdep_rcu_suspicious+0xf8/0x108
-> [  135.134171]  call_break_hook+0x170/0x178
-> [  135.134486]  brk_handler+0x28/0x68
-> [  135.134792]  do_debug_exception+0x90/0x150
-> [  135.135051]  el1_dbg+0x18/0x8c
-> [  135.135260]  default_idle_call+0x0/0x44
-> [  135.135516]  cpu_startup_entry+0x2c/0x30
-> [  135.135815]  rest_init+0x1b0/0x280
-> [  135.136044]  arch_call_rest_init+0x14/0x1c
-> [  135.136305]  start_kernel+0x4d4/0x500
-> [  135.136597] 
-> 
-> > > The exception entry and exit use irq_enter() and irq_exit(), in this
-> > > case, correct?  Otherwise RCU will be ignoring this CPU.
-> > 
-> > This is missing today, which sounds like the underlying bug.
-> 
-> Agreed. I'm not so familier with how debug exception is handled on arm64,
-> would it be a kind of NMI or IRQ?
+> However, I also agree with your standpoint, that let's start simple to
+> enable the deepest state as a start with, then we can improve things
+> on top.
 
-They're more like faults, in that they're synchronous exceptions.
-
-Given that, I think using irq_enter() / irq_exit() would be surprising
-here, but perhaps they're misnamed.
-
-What do other architectures do here? Having a kprobe on the critical
-path to idle doesn't sound specific to arm64, but perhaps it is (and we
-should rule it out).
+How to solve this in the kernel I don't know but please do make sure
+that the DT bindings allow you to describe what's needed, once they are
+merged you won't be able to change them and I won't bodge the code to
+make things fit, so if anything let's focus on getting them right as a
+matter of priority to get this done please.
 
 Thanks,
-Mark.
+Lorenzo
