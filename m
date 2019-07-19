@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 918376DD86
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:23:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6C516DD84
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:23:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388764AbfGSEXr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:23:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44996 "EHLO mail.kernel.org"
+        id S2388913AbfGSEXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:23:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387944AbfGSEKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:10:18 -0400
+        id S2387982AbfGSEKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:10:20 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0505218BB;
-        Fri, 19 Jul 2019 04:10:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9E24218B6;
+        Fri, 19 Jul 2019 04:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509417;
-        bh=24i8YY+iN6K36Tpf4CMCn/dJ19WA2BJlrqbM/tkVKNw=;
+        s=default; t=1563509419;
+        bh=EC+R/IWz9lMvvkhtV6ReCvhVyoTRgMYn0JYsA9ZNY4M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IaG5KwvlJr+JgkdYzeeuvVDay+HUoBU8UOYYLMJXi/mGyUD6bIZJZoVkRDUR1Dwcg
-         IZWKhIyR782hGIkVYl4/0zhFWw6hHnzZWdOO+16UDPITHENc/WkSBMeJkHNJkSpEzY
-         DEt5dHjNwOZKZdxhBRjwcsn454Q2outJVE/dU4g4=
+        b=zBeFWLzEEXd5KUW3uS4xN+/TP4e5mSFZeiH1kPSicW3FiDejdQffgfS61kQSPoaMz
+         XdFF2wysD7ZASZlCtBL4Cxw+EuapdsvpU9euXMadQPwilgy512ayuG/YFypDOebEqV
+         JY0LYyKx8nDxeHho4CCqiGGLpAN6ZxKS07mNI2CA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 080/101] block: init flush rq ref count to 1
-Date:   Fri, 19 Jul 2019 00:07:11 -0400
-Message-Id: <20190719040732.17285-80-sashal@kernel.org>
+Cc:     morten petersen <morten_bp@live.dk>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 082/101] mailbox: handle failed named mailbox channel request
+Date:   Fri, 19 Jul 2019 00:07:13 -0400
+Message-Id: <20190719040732.17285-82-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
 References: <20190719040732.17285-1-sashal@kernel.org>
@@ -42,45 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: morten petersen <morten_bp@live.dk>
 
-[ Upstream commit b554db147feea39617b533ab6bca247c91c6198a ]
+[ Upstream commit 25777e5784a7b417967460d4fcf9660d05a0c320 ]
 
-We discovered a problem in newer kernels where a disconnect of a NBD
-device while the flush request was pending would result in a hang.  This
-is because the blk mq timeout handler does
+Previously, if mbox_request_channel_byname was used with a name
+which did not exist in the "mbox-names" property of a mailbox
+client, the mailbox corresponding to the last entry in the
+"mbox-names" list would be incorrectly selected.
+With this patch, -EINVAL is returned if the named mailbox is
+not found.
 
-        if (!refcount_inc_not_zero(&rq->ref))
-                return true;
-
-to determine if it's ok to run the timeout handler for the request.
-Flush_rq's don't have a ref count set, so we'd skip running the timeout
-handler for this request and it would just sit there in limbo forever.
-
-Fix this by always setting the refcount of any request going through
-blk_init_rq() to 1.  I tested this with a nbd-server that dropped flush
-requests to verify that it hung, and then tested with this patch to
-verify I got the timeout as expected and the error handling kicked in.
-Thanks,
-
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Morten Borup Petersen <morten_bp@live.dk>
+Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mailbox/mailbox.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 682bc561b77b..9ca703bcfe3b 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -198,6 +198,7 @@ void blk_rq_init(struct request_queue *q, struct request *rq)
- 	rq->internal_tag = -1;
- 	rq->start_time_ns = ktime_get_ns();
- 	rq->part = NULL;
-+	refcount_set(&rq->ref, 1);
+diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+index 674b35f402f5..055c90b8253c 100644
+--- a/drivers/mailbox/mailbox.c
++++ b/drivers/mailbox/mailbox.c
+@@ -391,11 +391,13 @@ struct mbox_chan *mbox_request_channel_byname(struct mbox_client *cl,
+ 
+ 	of_property_for_each_string(np, "mbox-names", prop, mbox_name) {
+ 		if (!strncmp(name, mbox_name, strlen(name)))
+-			break;
++			return mbox_request_channel(cl, index);
+ 		index++;
+ 	}
+ 
+-	return mbox_request_channel(cl, index);
++	dev_err(cl->dev, "%s() could not locate channel named \"%s\"\n",
++		__func__, name);
++	return ERR_PTR(-EINVAL);
  }
- EXPORT_SYMBOL(blk_rq_init);
+ EXPORT_SYMBOL_GPL(mbox_request_channel_byname);
  
 -- 
 2.20.1
