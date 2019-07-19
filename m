@@ -2,114 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 443846D8D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 04:14:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64C016D8C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 04:10:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbfGSCMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 22:12:23 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:36266 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726015AbfGSCMW (ORCPT
+        id S1726357AbfGSCKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 22:10:53 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39557 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbfGSCKx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 22:12:22 -0400
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 6C8B372CA65;
-        Fri, 19 Jul 2019 05:12:18 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 5F3667CC774; Fri, 19 Jul 2019 05:12:18 +0300 (MSK)
-Date:   Fri, 19 Jul 2019 05:12:18 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org,
-        sparclinux <sparclinux@vger.kernel.org>
-Subject: Re: [PATCH v9 08/10] open: openat2(2) syscall
-Message-ID: <20190719021218.GB18022@altlinux.org>
-References: <20190706145737.5299-1-cyphar@cyphar.com>
- <20190706145737.5299-9-cyphar@cyphar.com>
- <CAK8P3a33rGhPDFfRBAQyLTMG_WoEgX_toDgWR2O7rSwxKsZG+w@mail.gmail.com>
- <20190718161231.xcno272nvqpln3wj@yavin>
- <CAK8P3a3MiYK4bJiA3G_m5H-TpfN5__--b+=szsJBhG7_it+NQg@mail.gmail.com>
+        Thu, 18 Jul 2019 22:10:53 -0400
+Received: by mail-lj1-f195.google.com with SMTP id v18so29209060ljh.6;
+        Thu, 18 Jul 2019 19:10:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=j1C21+f0ZZxOBtFVDj1L3bfAXqnNfJEOByZtlSHJOoE=;
+        b=UtzbaHE5hMkyyAKW6u5Fe90gnYzBM7jVsWKogTM+FcpVVAjA1X1+2QgclM/qVVCner
+         nSo8A3MFJ9CQ1O0MlAdlUSaNH52Ma1/uaBFQzDBy8/Clu2rov6G3QYGPtRZD1NESxuQb
+         b9bxVtlrz1Psxxui9661qETk26i93/j+puksRceUkzNk43EDhDSAYRncKuEbx0cE9Yqz
+         XqLMyN1lQkaMHbHibjkiz8X+vtZ+OXq2ySTZBuU1XNZH/Y1QBRY3773qnVkK5dGZ2dWP
+         WAHdjcbBsy+J6FNJRjZKP+ge7rc1lEiIGJMgnOr+2Pz2c/KJWApwUYbqWLit4WsoQy7+
+         X1+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=j1C21+f0ZZxOBtFVDj1L3bfAXqnNfJEOByZtlSHJOoE=;
+        b=M1g580XXo4c956ARy6hNh3ES70TXrEXsfX7grlxLSId7oX3WbcyY6b1ITIwBxkeT7i
+         xUAjaqDoJwt92pK2apWXujYifXxSofXDCXlaLEx1IYYvKA6c5AumGWELi9Jk8pQcw2V2
+         N/o1FUItO+vIi70JHUbmif4D50iz22afgrXXy5UuZFt4g5z7AuCDQNNmmx3SjBi5jygb
+         3lzJRZk7b6vC2Z+80TrVo7MhNkJ+WTkjMpJIsGYIihAXq8usKbcdw28CA3WQzvVb+BLu
+         wer9w+Pm/yE8uuT/lxwewPTkvS8p1mTzvOXSeNTT43mcDb9NQVRiKMjdv0gsBwXyybOU
+         NFlA==
+X-Gm-Message-State: APjAAAV5EVezFi9GnMNuS2rf9qV8Bnwc4/r7bpnNYm83o4xNP6UJrV+c
+        KPDkRj3q2CByoSXuMehyIno=
+X-Google-Smtp-Source: APXvYqy/0frX3l9f3g/yrC98yEx9Qc8AtNmbR+vX8KqhVRxSh9CeEuw0YNszCXwsCT5cqVXJlW0CEw==
+X-Received: by 2002:a2e:85d4:: with SMTP id h20mr26239716ljj.142.1563502250737;
+        Thu, 18 Jul 2019 19:10:50 -0700 (PDT)
+Received: from dimatab (ppp79-139-233-208.pppoe.spdop.ru. [79.139.233.208])
+        by smtp.gmail.com with ESMTPSA id u9sm4280278lfk.64.2019.07.18.19.10.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 18 Jul 2019 19:10:50 -0700 (PDT)
+Date:   Fri, 19 Jul 2019 05:14:26 +0300
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 12/24] PM / devfreq: tegra30: Inline all one-line
+ functions
+Message-ID: <20190719051426.4e4145d8@dimatab>
+In-Reply-To: <97f2a317-989a-bcad-dd45-ccf00ba18cca@samsung.com>
+References: <20190707223303.6755-1-digetx@gmail.com>
+        <CGME20190707223633epcas4p3873704f3199126be0e8d5cb7454c7a51@epcas4p3.samsung.com>
+        <20190707223303.6755-13-digetx@gmail.com>
+        <b5634fbe-8bc1-0f04-e13b-6345dfbb5615@samsung.com>
+        <b7da3fa2-00d1-5bd6-408c-202c85be917d@gmail.com>
+        <45621f73-2f86-cde7-a92e-2a34810b9c05@samsung.com>
+        <20190719042251.37cc9cda@dimatab>
+        <92f82420-5c50-468f-a403-7b4c36958076@samsung.com>
+        <97f2a317-989a-bcad-dd45-ccf00ba18cca@samsung.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="XOIedfhf+7KOe/yw"
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3MiYK4bJiA3G_m5H-TpfN5__--b+=szsJBhG7_it+NQg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+=D0=92 Fri, 19 Jul 2019 10:27:16 +0900
+Chanwoo Choi <cw00.choi@samsung.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
---XOIedfhf+7KOe/yw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 19. 7. 19. =EC=98=A4=EC=A0=84 10:24, Chanwoo Choi wrote:
+> > On 19. 7. 19. =EC=98=A4=EC=A0=84 10:22, Dmitry Osipenko wrote: =20
+> >> =D0=92 Thu, 18 Jul 2019 18:09:05 +0900
+> >> Chanwoo Choi <cw00.choi@samsung.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >> =20
+> >>> On 19. 7. 16. =EC=98=A4=ED=9B=84 10:35, Dmitry Osipenko wrote: =20
+> >>>> 16.07.2019 15:26, Chanwoo Choi =D0=BF=D0=B8=D1=88=D0=B5=D1=82:   =20
+> >>>>> Hi Dmitry,
+> >>>>>
+> >>>>> I'm not sure that it is necessary.
+> >>>>> As I knew, usally, the 'inline' is used on header file
+> >>>>> to define the empty functions.
+> >>>>>
+> >>>>> Do we have to change it with 'inline' keyword?   =20
+> >>>>
+> >>>> The 'inline' attribute tells compiler that instead of jumping
+> >>>> into the function, it should take the function's code and
+> >>>> replace the function's invocation with that code. This is done
+> >>>> in order to help compiler optimize code properly, please see
+> >>>> [1]. There is absolutely no need to create a function call into
+> >>>> a function that consists of a single instruction.
+> >>>>
+> >>>> [1] https://gcc.gnu.org/onlinedocs/gcc-9.1.0/gcc/Inline.html
+> >>>>    =20
+> >>>
+> >>> If you want to add 'inline' keyword, I recommend that=20
+> >>> you better to remove the modified function in this patch
+> >>> and then just call the 'write_relaxed or read_relaxed' function
+> >>> directly. It is same result when using inline keyword. =20
+> >>
+> >> That could be done, but it makes code less readable.
+> >>
+> >> See the difference:
+> >>
+> >> device_writel(dev, ACTMON_INTR_STATUS_CLEAR,
+> >> ACTMON_DEV_INTR_STATUS);
+> >>
+> >> writel_relaxed(ACTMON_INTR_STATUS_CLEAR,
+> >> 	       dev->regs + ACTMON_DEV_INTR_STATUS); =20
+> >=20
+> > No problem if you add the detailed comment and you want to use
+> > the 'inline' keyword. =20
+>=20
+> Basically, I think that 'inline' keyword is not necessary.
 
-On Thu, Jul 18, 2019 at 11:29:50PM +0200, Arnd Bergmann wrote:
-[...]
-> 5. you get the same problem with seccomp and strace that
->    clone3() has -- these and others only track the register
->    arguments by default.
+Sure, but I'm finding that it's always nicer to explicitly inline a very
+simple functions because compiler may not do it properly itself in some
+cases.
 
-Just for the record, this is definitely not the case for strace:
-it decodes arrays, structures, netlink messages, and so on by default.
+> But if you want to use 'inline' keyword, I recommend
+> that call the 'write_relaxed or read_relaxed' function directly
+> with detailed description.=20
 
-
---=20
-ldv
-
---XOIedfhf+7KOe/yw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJdMScCAAoJEAVFT+BVnCUIYvwQANcM+eTRdr/OJd9417suNuao
-fK6ZbVTB/aaBGBsln3InsvqjxtiOe72mbflNqDDxwP0oUq2xEEAAdYmkEIRJ5pEn
-N2R2uSpSqZFIDhR+lm6eAfA28Suec+rb0A9HwKKGHPpd5YrqWaxWEVfRxnCngswi
-BH6aC+g9yXIRMR7ge0KVES+Gd5dU1jU8qfQETkko32Ezsnec88dLUftqKIhKWIDd
-VnH8ew6RK6aje6oxhHbvqdJnSFXrMeV6Ws//cp2OLF4A4EKOm7q/Rhf0+yFF5ePQ
-awYV/U0TdWkjIU9bQDCNDphS5p25MAv3g6AIXaUAotT3gaWe6WpFMSEKMgmBLph1
-PsaazyUgw8nOh9RwDFT9yek4gmPF5x0HWrZsI85fKIsOt1t1wX3CHRQ3JVjYkpTC
-d4GxWgiiAgTg8b1wjTUAjiMYqVrtSwx9srn6GA6ej9fopN2j4iWkARDLk//+xHWC
-UfqMUw42wEY6PNKhY3YCa1M9joeXUlWSbz65v9ZAZRPCoXvo7eNw8EePrwMBX3QM
-3pzUI2Ljakux7pASi/YYLl5Vpl1yHqEEi7ToQchsUfTJD/Geqj6528ht9GqBgaYf
-s5a/eS/MD0AnBD7ytiDIfimWqrLJrLCpWLEufV60EOzRBFDxoS5QNOhQYbHVsZbh
-ZLQTIMZM09jpTHhYqh4r
-=2x2F
------END PGP SIGNATURE-----
-
---XOIedfhf+7KOe/yw--
+Could you please reword this sentence? Not sure that I'm understanding
+it correctly.
