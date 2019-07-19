@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03EE86DB6F
+	by mail.lfdr.de (Postfix) with ESMTP id E0D3E6DB71
 	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:09:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733109AbfGSEIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:08:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42628 "EHLO mail.kernel.org"
+        id S1733128AbfGSEIe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:08:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733029AbfGSEIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:08:21 -0400
+        id S1727046AbfGSEIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:08:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F09021880;
-        Fri, 19 Jul 2019 04:08:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B6AB218A4;
+        Fri, 19 Jul 2019 04:08:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509300;
-        bh=d3e4tqvNiIM0DHagGPl0Sq0p/6aSS+We4bM12lQE+Fs=;
+        s=default; t=1563509309;
+        bh=FCsMAB1Le3dbb95jMq3Ii7C9GcLfcQ3xoI0XX/azHDM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lh41Agavwb44jt3CXAUMuEKl86LVl81H1aGy4vV1RFitdoqg7L++cKTB0fuNUiVVo
-         PZbUG4mHVQtaDnuBEegyMZ9s/XiIh08nSQgcs0Nwx1TBYsI1/SHQ99qvlU1GJ0q9nt
-         6uzFKcv7niG+FJOOaeQY69WjRu7RNuwf6EtduU60=
+        b=RLqkxekKC0vfF+OEkKHdwwvrkbCOGEMK6nJWp6DEifl1TY+prHnJ928PRVTQyiLwG
+         eLTill5aWOSDx+TMHCoj3wVo5YZUdVuVDzuGVfAjlxzS3dLLBi/56KXkfwFnzINBSy
+         Ty30lEpYcpiXNAmkKgvaF3fcIbpB7o8Mq+2Zudm8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 023/101] tty/serial: digicolor: Fix digicolor-usart already registered warning
-Date:   Fri, 19 Jul 2019 00:06:14 -0400
-Message-Id: <20190719040732.17285-23-sashal@kernel.org>
+Cc:     David Riley <davidriley@chromium.org>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.19 027/101] drm/virtio: Add memory barriers for capset cache.
+Date:   Fri, 19 Jul 2019 00:06:18 -0400
+Message-Id: <20190719040732.17285-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
 References: <20190719040732.17285-1-sashal@kernel.org>
@@ -45,44 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
+From: David Riley <davidriley@chromium.org>
 
-[ Upstream commit c7ad9ba0611c53cfe194223db02e3bca015f0674 ]
+[ Upstream commit 9ff3a5c88e1f1ab17a31402b96d45abe14aab9d7 ]
 
-When modprobe/rmmod/modprobe module, if platform_driver_register() fails,
-the kernel complained,
+After data is copied to the cache entry, atomic_set is used indicate
+that the data is the entry is valid without appropriate memory barriers.
+Similarly the read side was missing the corresponding memory barriers.
 
-  proc_dir_entry 'driver/digicolor-usart' already registered
-  WARNING: CPU: 1 PID: 5636 at fs/proc/generic.c:360 proc_register+0x19d/0x270
-
-Fix this by adding uart_unregister_driver() when platform_driver_register() fails.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Acked-by: Baruch Siach <baruch@tkos.co.il>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: David Riley <davidriley@chromium.org>
+Link: http://patchwork.freedesktop.org/patch/msgid/20190610211810.253227-5-davidriley@chromium.org
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/digicolor-usart.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c | 3 +++
+ drivers/gpu/drm/virtio/virtgpu_vq.c    | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/tty/serial/digicolor-usart.c b/drivers/tty/serial/digicolor-usart.c
-index f460cca139e2..13ac36e2da4f 100644
---- a/drivers/tty/serial/digicolor-usart.c
-+++ b/drivers/tty/serial/digicolor-usart.c
-@@ -541,7 +541,11 @@ static int __init digicolor_uart_init(void)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+index 7bdf6f0e58a5..8d2f5ded86d6 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+@@ -528,6 +528,9 @@ static int virtio_gpu_get_caps_ioctl(struct drm_device *dev,
+ 	if (!ret)
+ 		return -EBUSY;
  
--	return platform_driver_register(&digicolor_uart_platform);
-+	ret = platform_driver_register(&digicolor_uart_platform);
-+	if (ret)
-+		uart_unregister_driver(&digicolor_uart);
++	/* is_valid check must proceed before copy of the cache entry. */
++	smp_rmb();
 +
-+	return ret;
- }
- module_init(digicolor_uart_init);
+ 	ptr = cache_ent->caps_cache;
  
+ copy_exit:
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+index 020070d483d3..c8a581b1f4c4 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -588,6 +588,8 @@ static void virtio_gpu_cmd_capset_cb(struct virtio_gpu_device *vgdev,
+ 		    cache_ent->id == le32_to_cpu(cmd->capset_id)) {
+ 			memcpy(cache_ent->caps_cache, resp->capset_data,
+ 			       cache_ent->size);
++			/* Copy must occur before is_valid is signalled. */
++			smp_wmb();
+ 			atomic_set(&cache_ent->is_valid, 1);
+ 			break;
+ 		}
 -- 
 2.20.1
 
