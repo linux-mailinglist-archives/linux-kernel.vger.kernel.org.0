@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EC666DAF8
+	by mail.lfdr.de (Postfix) with ESMTP id E82D06DAF9
 	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:05:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731651AbfGSEF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:05:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37720 "EHLO mail.kernel.org"
+        id S1728105AbfGSEF2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:05:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731567AbfGSEFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:05:20 -0400
+        id S1731584AbfGSEFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:05:22 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3B5E218CA;
-        Fri, 19 Jul 2019 04:05:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25F7B21852;
+        Fri, 19 Jul 2019 04:05:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509119;
-        bh=kTlVAKLl0+iFmqj6xmLlcr3dlE6UW351pmPpSTZw25A=;
+        s=default; t=1563509121;
+        bh=4C3GOrjknXPI85zfXqF36miPxIgMOCcb0/OZJSd8Rqc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jCn2UPA3rJi0QutSO16criIbxuE5h53c1qd7lZ787j0XhOXnuU5KbRL7Q4UZaZjKY
-         arkWMINlJO/tLI9KwPzFfiDP03JwGdrLW1yh7vBtozu3Tgq1J80T8EMyh/RDWnpM19
-         pkeENTMGl9ggLKSWv9kmbqedt5oa0El8NoyQaHy8=
+        b=QkIvhWMv7kJjWVgpsH9d/vKorl5Q/0kJIHfnRyy60wrLI1GDJFdqdKThTWk3CpnYi
+         XZh31HkeshReMEoWQO4cIEjeYv1wfAeqLnKnsrkdp71Mjf1sCNcauaO3N5Fi769LwZ
+         E5KN1qUtlbMmABWSce18fUKc8bhXRUTchhLGkZ9k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sahitya Tummala <stummala@codeaurora.org>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 5.1 080/141] f2fs: fix is_idle() check for discard type
-Date:   Fri, 19 Jul 2019 00:01:45 -0400
-Message-Id: <20190719040246.15945-80-sashal@kernel.org>
+Cc:     Christian Lamparter <chunkeey@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 5.1 081/141] powerpc/4xx/uic: clear pending interrupt after irq type/pol change
+Date:   Fri, 19 Jul 2019 00:01:46 -0400
+Message-Id: <20190719040246.15945-81-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040246.15945-1-sashal@kernel.org>
 References: <20190719040246.15945-1-sashal@kernel.org>
@@ -44,58 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sahitya Tummala <stummala@codeaurora.org>
+From: Christian Lamparter <chunkeey@gmail.com>
 
-[ Upstream commit 56659ce838456c6f2315ce8a4bd686ac4b23e9d1 ]
+[ Upstream commit 3ab3a0689e74e6aa5b41360bc18861040ddef5b1 ]
 
-The discard thread should issue upto dpolicy->max_requests at once
-and wait for all those discard requests at once it reaches
-dpolicy->max_requests. It should then sleep for dpolicy->min_interval
-timeout before issuing the next batch of discard requests. But in the
-current code of is_idle(), it checks for dcc_info->queued_discard and
-aborts issuing the discard batch of max_requests. This
-dcc_info->queued_discard will be true always once one discard command
-is issued.
+When testing out gpio-keys with a button, a spurious
+interrupt (and therefore a key press or release event)
+gets triggered as soon as the driver enables the irq
+line for the first time.
 
-It is thus resulting into this type of discard request pattern -
+This patch clears any potential bogus generated interrupt
+that was caused by the switching of the associated irq's
+type and polarity.
 
-- Issue discard request#1
-- is_idle() returns false, discard thread waits for request#1 and then
-  sleeps for min_interval 50ms.
-- Issue discard request#2
-- is_idle() returns false, discard thread waits for request#2 and then
-  sleeps for min_interval 50ms.
-- and so on for all other discard requests, assuming f2fs is idle w.r.t
-  other conditions.
-
-With this fix, the pattern will look like this -
-
-- Issue discard request#1
-- Issue discard request#2
-  and so on upto max_requests of 8
-- Issue discard request#8
-- wait for min_interval 50ms.
-
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/4xx/uic.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f1157d5c62bb..1024550ad11a 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2194,7 +2194,7 @@ static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
- 		get_pages(sbi, F2FS_DIO_WRITE))
- 		return false;
+diff --git a/arch/powerpc/platforms/4xx/uic.c b/arch/powerpc/platforms/4xx/uic.c
+index 8b4dd0da0839..9e27cfe27026 100644
+--- a/arch/powerpc/platforms/4xx/uic.c
++++ b/arch/powerpc/platforms/4xx/uic.c
+@@ -158,6 +158,7 @@ static int uic_set_irq_type(struct irq_data *d, unsigned int flow_type)
  
--	if (SM_I(sbi) && SM_I(sbi)->dcc_info &&
-+	if (type != DISCARD_TIME && SM_I(sbi) && SM_I(sbi)->dcc_info &&
- 			atomic_read(&SM_I(sbi)->dcc_info->queued_discard))
- 		return false;
+ 	mtdcr(uic->dcrbase + UIC_PR, pr);
+ 	mtdcr(uic->dcrbase + UIC_TR, tr);
++	mtdcr(uic->dcrbase + UIC_SR, ~mask);
+ 
+ 	raw_spin_unlock_irqrestore(&uic->lock, flags);
  
 -- 
 2.20.1
