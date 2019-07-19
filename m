@@ -2,60 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A24FA6E07A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 07:12:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E9B46E088
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 07:22:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbfGSFMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 01:12:21 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:39976 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725794AbfGSFMV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 01:12:21 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=shannon.zhao@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TXG4GTe_1563513118;
-Received: from localhost(mailfrom:shannon.zhao@linux.alibaba.com fp:SMTPD_---0TXG4GTe_1563513118)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 19 Jul 2019 13:12:17 +0800
-From:   Shannon Zhao <shenglong.zsl@alibaba-inc.com>
-To:     linux-kernel@vger.kernel.org, jnair@marvell.com,
-        bhelgaas@google.com, linux-pci@vger.kernel.org, gduan@marvell.com
-Subject: [PATCH] PCI: Add ACS quirk for Cavium ThunderX 2 root port devices
-Date:   Fri, 19 Jul 2019 21:10:35 +0800
-Message-Id: <1563541835-141011-1-git-send-email-shenglong.zsl@alibaba-inc.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1726802AbfGSFWK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 01:22:10 -0400
+Received: from muru.com ([72.249.23.125]:55306 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725794AbfGSFWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 01:22:10 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id D34C8809B;
+        Fri, 19 Jul 2019 05:22:33 +0000 (UTC)
+Date:   Thu, 18 Jul 2019 22:22:05 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Pavel Machek <pavel@denx.de>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
+        mpartap@gmx.net, merlijn@wizzup.org, johan@kernel.org,
+        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org
+Subject: Re: USB Modem support for Droid 4
+Message-ID: <20190719052205.GK5447@atomide.com>
+References: <20190718201713.GA25103@amd>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190718201713.GA25103@amd>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shannon Zhao <shannon.zhao@linux.alibaba.com>
+Hi,
 
-Like commit f2ddaf8(PCI: Apply Cavium ThunderX ACS quirk to more Root
-Ports), it should apply ACS quirk to ThunderX 2 root port devices.
+* Pavel Machek <pavel@denx.de> [190718 20:17]:
+> From: Tony Lindgren <tony@atomide.com>
+> 
+> Droid starts to have useful support in linux-next. Modem is tricky to
+> play with, but this is enough to get basic support.
 
-Signed-off-by: Shannon Zhao <shannon.zhao@linux.alibaba.com>
----
- drivers/pci/quirks.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Below is a better patch using option driver adding support for all
+the ports. I'll send it out with a proper description after -rc1.
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 28c64f8..ea7848b 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4224,10 +4224,12 @@ static bool pci_quirk_cavium_acs_match(struct pci_dev *dev)
- 	 * family by 0xf800 mask (which represents 8 SoCs), while the lower
- 	 * bits of device ID are used to indicate which subdevice is used
- 	 * within the SoC.
-+	 * Effectively selects the ThunderX 2 root ports whose device ID
-+	 * is 0xaf84.
- 	 */
- 	return (pci_is_pcie(dev) &&
- 		(pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT) &&
--		((dev->device & 0xf800) == 0xa000));
-+		((dev->device & 0xf800) == 0xa000 || dev->device == 0xaf84));
- }
+Regards,
+
+Tony
+
+8< ----------------
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -83,6 +83,12 @@ static void option_instat_callback(struct urb *urb);
+ #define HUAWEI_PRODUCT_K4605			0x14C6
+ #define HUAWEI_PRODUCT_E173S6			0x1C07
  
- static int pci_quirk_cavium_acs(struct pci_dev *dev, u16 acs_flags)
--- 
-1.8.3.1
-
++#define MOTOROLA_VENDOR_ID			0x22b8
++#define MOTOROLA_PRODUCT_MDM6600		0x2a70
++#define MOTOROLA_PRODUCT_MDM9600		0x2e0a
++#define MOTOROLA_PRODUCT_MDM_RAM_DL		0x4281
++#define MOTOROLA_PRODUCT_MDM_QC_DL		0x900e
++
+ #define QUANTA_VENDOR_ID			0x0408
+ #define QUANTA_PRODUCT_Q101			0xEA02
+ #define QUANTA_PRODUCT_Q111			0xEA03
+@@ -968,6 +974,10 @@ static const struct usb_device_id option_ids[] = {
+ 	{ USB_VENDOR_AND_INTERFACE_INFO(HUAWEI_VENDOR_ID, 0xff, 0x06, 0x7B) },
+ 	{ USB_VENDOR_AND_INTERFACE_INFO(HUAWEI_VENDOR_ID, 0xff, 0x06, 0x7C) },
+ 
++	{ USB_DEVICE_AND_INTERFACE_INFO(MOTOROLA_VENDOR_ID, MOTOROLA_PRODUCT_MDM6600, 0xff, 0xff, 0xff) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(MOTOROLA_VENDOR_ID, MOTOROLA_PRODUCT_MDM9600, 0xff, 0xff, 0xff) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(MOTOROLA_VENDOR_ID, MOTOROLA_PRODUCT_MDM_RAM_DL, 0x0a, 0x00, 0xfc) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(MOTOROLA_VENDOR_ID, MOTOROLA_PRODUCT_MDM_QC_DL, 0xff, 0xff, 0xff) },
+ 
+ 	{ USB_DEVICE(NOVATELWIRELESS_VENDOR_ID, NOVATELWIRELESS_PRODUCT_V640) },
+ 	{ USB_DEVICE(NOVATELWIRELESS_VENDOR_ID, NOVATELWIRELESS_PRODUCT_V620) },
