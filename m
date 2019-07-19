@@ -2,69 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF5F96E3F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:08:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBC076E3D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:04:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbfGSKIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 06:08:07 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:43020 "EHLO inva020.nxp.com"
+        id S1727322AbfGSKCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 06:02:42 -0400
+Received: from mga17.intel.com ([192.55.52.151]:43793 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbfGSKIG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 06:08:06 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 00CA01A0144;
-        Fri, 19 Jul 2019 12:08:05 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 41D0A1A0187;
-        Fri, 19 Jul 2019 12:07:59 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id F38B0402D5;
-        Fri, 19 Jul 2019 18:07:51 +0800 (SGT)
-From:   Wen He <wen.he_1@nxp.com>
-To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, mark.rutland@arm.com,
-        liviu.dudau@arm.com, brian.starkey@arm.com, airlied@linux.ie,
-        daniel@ffwll.ch, robh+dt@kernel.org
-Cc:     leoyang.li@nxp.com, Wen He <wen.he_1@nxp.com>
-Subject: [v2 2/3] dt/bindings: display: Add optional property node defined for Mali DP500
-Date:   Fri, 19 Jul 2019 17:58:42 +0800
-Message-Id: <20190719095842.11683-1-wen.he_1@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1725853AbfGSKCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 06:02:42 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2019 03:02:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,281,1559545200"; 
+   d="asc'?scan'208";a="176257422"
+Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.13.116])
+  by FMSMGA003.fm.intel.com with ESMTP; 19 Jul 2019 03:02:39 -0700
+Date:   Fri, 19 Jul 2019 17:59:27 +0800
+From:   Zhenyu Wang <zhenyuw@linux.intel.com>
+To:     "Lu, Kechen" <kechen.lu@intel.com>
+Cc:     "Zhang, Tina" <tina.zhang@intel.com>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kraxel@redhat.com" <kraxel@redhat.com>,
+        "Lv, Zhiyuan" <zhiyuan.lv@intel.com>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "Yuan, Hang" <hang.yuan@intel.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>
+Subject: Re: [RFC PATCH v4 1/6] vfio: Define device specific irq type
+ capability
+Message-ID: <20190719095927.GG28809@zhen-hp.sh.intel.com>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+References: <20190718155640.25928-1-kechen.lu@intel.com>
+ <20190718155640.25928-2-kechen.lu@intel.com>
+ <20190719060540.GC28809@zhen-hp.sh.intel.com>
+ <31185F57AF7C4B4F87C41E735C23A6FE64DFC7@shsmsx102.ccr.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="HKEL+t8MFpg/ASTE"
+Content-Disposition: inline
+In-Reply-To: <31185F57AF7C4B4F87C41E735C23A6FE64DFC7@shsmsx102.ccr.corp.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add optional property node 'arm,malidp-arqos-value' for the Mali DP500.
-This property describe the ARQoS levels of DP500's QoS signaling.
 
-Signed-off-by: Wen He <wen.he_1@nxp.com>
----
- Documentation/devicetree/bindings/display/arm,malidp.txt | 3 +++
- 1 file changed, 3 insertions(+)
+--HKEL+t8MFpg/ASTE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/display/arm,malidp.txt b/Documentation/devicetree/bindings/display/arm,malidp.txt
-index 2f7870983ef1..76a0e7251251 100644
---- a/Documentation/devicetree/bindings/display/arm,malidp.txt
-+++ b/Documentation/devicetree/bindings/display/arm,malidp.txt
-@@ -37,6 +37,8 @@ Optional properties:
-     Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt)
-     to be used for the framebuffer; if not present, the framebuffer may
-     be located anywhere in memory.
-+  - arm,malidp-arqos-high-level: integer of u32 value describing the ARQoS
-+    levels of DP500's QoS signaling.
- 
- 
- Example:
-@@ -54,6 +56,7 @@ Example:
- 		clocks = <&oscclk2>, <&fpgaosc0>, <&fpgaosc1>, <&fpgaosc1>;
- 		clock-names = "pxlclk", "mclk", "aclk", "pclk";
- 		arm,malidp-output-port-lines = /bits/ 8 <8 8 8>;
-+		arm,malidp-arqos-high-level = <&rqosvalue>;
- 		port {
- 			dp0_output: endpoint {
- 				remote-endpoint = <&tda998x_2_input>;
--- 
-2.17.1
+On 2019.07.19 09:02:33 +0000, Lu, Kechen wrote:
+> Hi,
+>=20
+> > -----Original Message-----
+> > From: Zhenyu Wang [mailto:zhenyuw@linux.intel.com]
+> > Sent: Friday, July 19, 2019 2:06 PM
+> > To: Lu, Kechen <kechen.lu@intel.com>
+> > Cc: intel-gvt-dev@lists.freedesktop.org; kvm@vger.kernel.org; linux-=20
+> > kernel@vger.kernel.org; Zhang, Tina <tina.zhang@intel.com>;=20
+> > kraxel@redhat.com; zhenyuw@linux.intel.com; Lv, Zhiyuan=20
+> > <zhiyuan.lv@intel.com>; Wang, Zhi A <zhi.a.wang@intel.com>; Tian,=20
+> > Kevin <kevin.tian@intel.com>; Yuan, Hang <hang.yuan@intel.com>;=20
+> > alex.williamson@redhat.com; Eric Auger <eric.auger@redhat.com>
+> > Subject: Re: [RFC PATCH v4 1/6] vfio: Define device specific irq type=
+=20
+> > capability
+> >=20
+> > On 2019.07.18 23:56:35 +0800, Kechen Lu wrote:
+> > > From: Tina Zhang <tina.zhang@intel.com>
+> > >
+> > > Cap the number of irqs with fixed indexes and use capability chains=
+=20
+> > > to chain device specific irqs.
+> > >
+> > > Signed-off-by: Tina Zhang <tina.zhang@intel.com>
+> > > Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> > > ---
+> > >  include/uapi/linux/vfio.h | 19 ++++++++++++++++++-
+> > >  1 file changed, 18 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h=20
+> > > index 8f10748dac79..be6adab4f759 100644
+> > > --- a/include/uapi/linux/vfio.h
+> > > +++ b/include/uapi/linux/vfio.h
+> > > @@ -448,11 +448,27 @@ struct vfio_irq_info {
+> > >  #define VFIO_IRQ_INFO_MASKABLE		(1 << 1)
+> > >  #define VFIO_IRQ_INFO_AUTOMASKED	(1 << 2)
+> > >  #define VFIO_IRQ_INFO_NORESIZE		(1 << 3)
+> > > +#define VFIO_IRQ_INFO_FLAG_CAPS		(1 << 4) /* Info supports caps
+> > */
+> > >  	__u32	index;		/* IRQ index */
+> > >  	__u32	count;		/* Number of IRQs within this index */
+> > > +	__u32	cap_offset;	/* Offset within info struct of first cap */
+> >=20
+> > This still breaks ABI as argsz would be updated with this new field,=20
+> > so it would cause compat issue. I think my last suggestion was to=20
+> > assume cap list starts after vfio_irq_info.
+> >
+> =20
+> In the common practice, the general logic is first use the "count" as the=
+ "minsz" boundary to perform copy from user, and then perform following log=
+ic, so that the incompatibility issue would not happen. BTW, this patch has=
+ been double checked by Eric Auger before included in his patch-set.=20
+>=20
 
+yeah, sorry I was thinking vfio might fail in that case but it seems
+current code assume argsz should be larger than minsz for count here,
+so that's fine.
+
+>=20
+> > >  };
+> > >  #define VFIO_DEVICE_GET_IRQ_INFO	_IO(VFIO_TYPE, VFIO_BASE + 9)
+> > >
+> > > +/*
+> > > + * The irq type capability allows irqs unique to a specific device=
+=20
+> > > +or
+> > > + * class of devices to be exposed.
+> > > + *
+> > > + * The structures below define version 1 of this capability.
+> > > + */
+> > > +#define VFIO_IRQ_INFO_CAP_TYPE      3
+> > > +
+> > > +struct vfio_irq_info_cap_type {
+> > > +	struct vfio_info_cap_header header;
+> > > +	__u32 type;     /* global per bus driver */
+> > > +	__u32 subtype;  /* type specific */ };
+> > > +
+> > >  /**
+> > >   * VFIO_DEVICE_SET_IRQS - _IOW(VFIO_TYPE, VFIO_BASE + 10, struct
+> > vfio_irq_set)
+> > >   *
+> > > @@ -554,7 +570,8 @@ enum {
+> > >  	VFIO_PCI_MSIX_IRQ_INDEX,
+> > >  	VFIO_PCI_ERR_IRQ_INDEX,
+> > >  	VFIO_PCI_REQ_IRQ_INDEX,
+> > > -	VFIO_PCI_NUM_IRQS
+> > > +	VFIO_PCI_NUM_IRQS =3D 5	/* Fixed user ABI, IRQ indexes >=3D5 use
+> > */
+> > > +				/* device specific cap to define content */
+> > >  };
+> > >
+> > >  /*
+> > > --
+> > > 2.17.1
+> > >
+> >=20
+> > --
+> > Open Source Technology Center, Intel ltd.
+> >=20
+> > $gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
+
+--=20
+Open Source Technology Center, Intel ltd.
+
+$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
+
+--HKEL+t8MFpg/ASTE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXTGUfwAKCRCxBBozTXgY
+J/UoAJ44zsldWP7UQPboscULWpi5vt3WswCePRPUL9w/jjULfR02ApGsutPBcso=
+=0x0A
+-----END PGP SIGNATURE-----
+
+--HKEL+t8MFpg/ASTE--
