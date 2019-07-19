@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 210F26DF11
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABDDC6DF10
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:33:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729213AbfGSEcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:32:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35766 "EHLO mail.kernel.org"
+        id S2388223AbfGSEci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:32:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729315AbfGSEDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:03:39 -0400
+        id S1729631AbfGSEDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:03:50 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D68C218A6;
-        Fri, 19 Jul 2019 04:03:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5EF321852;
+        Fri, 19 Jul 2019 04:03:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509019;
-        bh=D9BmbBuuM+wIhLMScxfAIfeSr7v6szNVEbHQRxIphdM=;
+        s=default; t=1563509029;
+        bh=xJWM+tZIoapFv4GSwx0sVFSPmPqZfVRBUqtRa8P7R8M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wLMOQQa5LHfWGUWfWXuR64PfiDwhN1KX0A3X4j47w2H/Hw6KR7pKUf7gXhhyXpOJk
-         4fUW12ysHi+qHLSasz6waly2Ca8B6YHDWUfOVlt63Syjz3irPXTm9V8pEmWlaXAhpW
-         Lbh3zOBhAs0n6JFggAbp/byBtzMvmLqC31UA3IH4=
+        b=HApRB9/gQQkXuywsTkwBsZnXrZn/zcLA7WzWUhPBXG6nhIJpWiPcUAQB1WMspeWeL
+         SDbjvgDytLfwEClJCRhR3udON5KQk5f9MepyTJZYesWQ1G6OazZEkTbKjHpUe2204x
+         WUoOKoX2KiZv4KT0LO40ONybMwPGIwYRFDjjXukA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jyri Sarha <jsarha@ti.com>, Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Cc:     Daniel Rosenberg <drosen@google.com>, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.1 025/141] drm/bridge: sii902x: pixel clock unit is 10kHz instead of 1kHz
-Date:   Fri, 19 Jul 2019 00:00:50 -0400
-Message-Id: <20190719040246.15945-25-sashal@kernel.org>
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 5.1 029/141] f2fs: Lower threshold for disable_cp_again
+Date:   Fri, 19 Jul 2019 00:00:54 -0400
+Message-Id: <20190719040246.15945-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040246.15945-1-sashal@kernel.org>
 References: <20190719040246.15945-1-sashal@kernel.org>
@@ -44,42 +44,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jyri Sarha <jsarha@ti.com>
+From: Daniel Rosenberg <drosen@google.com>
 
-[ Upstream commit 8dbfc5b65023b67397aca28e8adb25c819f6398c ]
+[ Upstream commit ae4ad7ea09d32ff1b6fb908ff12f8c1bd5241b29 ]
 
-The pixel clock unit in the first two registers (0x00 and 0x01) of
-sii9022 is 10kHz, not 1kHz as in struct drm_display_mode. Division by
-10 fixes the issue.
+The existing threshold for allowable holes at checkpoint=disable time is
+too high. The OVP space contains reserved segments, which are always in
+the form of free segments. These must be subtracted from the OVP value.
 
-Signed-off-by: Jyri Sarha <jsarha@ti.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1a2a8eae0b9d6333e7a5841026bf7fd65c9ccd09.1558964241.git.jsarha@ti.com
+The current threshold is meant to be the maximum value of holes of a
+single type we can have and still guarantee that we can fill the disk
+without failing to find space for a block of a given type.
+
+If the disk is full, ignoring current reserved, which only helps us,
+the amount of unused blocks is equal to the OVP area. Of that, there
+are reserved segments, which must be free segments, and the rest of the
+ovp area, which can come from either free segments or holes. The maximum
+possible amount of holes is OVP-reserved.
+
+Now, consider the disk when mounting with checkpoint=disable.
+We must be able to fill all available free space with either data or
+node blocks. When we start with checkpoint=disable, holes are locked to
+their current type. Say we have H of one type of hole, and H+X of the
+other. We can fill H of that space with arbitrary typed blocks via SSR.
+For the remaining H+X blocks, we may not have any of a given block type
+left at all. For instance, if we were to fill the disk entirely with
+blocks of the type with fewer holes, the H+X blocks of the opposite type
+would not be used. If H+X > OVP-reserved, there would be more holes than
+could possibly exist, and we would have failed to find a suitable block
+earlier on, leading to a crash in update_sit_entry.
+
+If H+X <= OVP-reserved, then the holes end up effectively masked by the OVP
+region in this case.
+
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/sii902x.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/f2fs/segment.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
-index 08e12fef1349..5f40e38d1407 100644
---- a/drivers/gpu/drm/bridge/sii902x.c
-+++ b/drivers/gpu/drm/bridge/sii902x.c
-@@ -239,10 +239,11 @@ static void sii902x_bridge_mode_set(struct drm_bridge *bridge,
- 	struct regmap *regmap = sii902x->regmap;
- 	u8 buf[HDMI_INFOFRAME_SIZE(AVI)];
- 	struct hdmi_avi_infoframe frame;
-+	u16 pixel_clock_10kHz = adj->clock / 10;
- 	int ret;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index e9778f06ac0b..60373930b1b7 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -876,7 +876,9 @@ void f2fs_dirty_to_prefree(struct f2fs_sb_info *sbi)
+ int f2fs_disable_cp_again(struct f2fs_sb_info *sbi)
+ {
+ 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+-	block_t ovp = overprovision_segments(sbi) << sbi->log_blocks_per_seg;
++	int ovp_hole_segs =
++		(overprovision_segments(sbi) - reserved_segments(sbi));
++	block_t ovp_holes = ovp_hole_segs << sbi->log_blocks_per_seg;
+ 	block_t holes[2] = {0, 0};	/* DATA and NODE */
+ 	struct seg_entry *se;
+ 	unsigned int segno;
+@@ -891,10 +893,10 @@ int f2fs_disable_cp_again(struct f2fs_sb_info *sbi)
+ 	}
+ 	mutex_unlock(&dirty_i->seglist_lock);
  
--	buf[0] = adj->clock;
--	buf[1] = adj->clock >> 8;
-+	buf[0] = pixel_clock_10kHz & 0xff;
-+	buf[1] = pixel_clock_10kHz >> 8;
- 	buf[2] = adj->vrefresh;
- 	buf[3] = 0x00;
- 	buf[4] = adj->hdisplay;
+-	if (holes[DATA] > ovp || holes[NODE] > ovp)
++	if (holes[DATA] > ovp_holes || holes[NODE] > ovp_holes)
+ 		return -EAGAIN;
+ 	if (is_sbi_flag_set(sbi, SBI_CP_DISABLED_QUICK) &&
+-		dirty_segments(sbi) > overprovision_segments(sbi))
++		dirty_segments(sbi) > ovp_hole_segs)
+ 		return -EAGAIN;
+ 	return 0;
+ }
 -- 
 2.20.1
 
