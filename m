@@ -2,71 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E1656E41B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:18:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60B006E442
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:28:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbfGSKSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 06:18:09 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:54409 "EHLO ozlabs.org"
+        id S1727547AbfGSK1K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 06:27:10 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:50354 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727477AbfGSKSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 06:18:08 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45qn5722thz9s3Z;
-        Fri, 19 Jul 2019 20:18:03 +1000 (AEST)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christian Brauner <christian@brauner.io>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [PATCH 1/2] arch: mark syscall number 435 reserved for clone3
-In-Reply-To: <20190716130631.tohj4ub54md25dys@brauner.io>
-References: <20190714192205.27190-1-christian@brauner.io> <20190714192205.27190-2-christian@brauner.io> <e14eb2f9-43cb-0b9d-dec4-b7e7dcd62091@de.ibm.com> <20190716130631.tohj4ub54md25dys@brauner.io>
-Date:   Fri, 19 Jul 2019 20:18:02 +1000
-Message-ID: <874l3i8h0l.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1725794AbfGSK1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 06:27:10 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0334E2000C9;
+        Fri, 19 Jul 2019 12:27:09 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8658A20000A;
+        Fri, 19 Jul 2019 12:27:05 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id EB33A402B5;
+        Fri, 19 Jul 2019 18:27:00 +0800 (SGT)
+From:   Wen He <wen.he_1@nxp.com>
+To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        p.zabel@pengutronix.de
+Cc:     leoyang.li@nxp.com, linux-imx@nxp.com, Wen He <wen.he_1@nxp.com>
+Subject: [v2] gpu: ipu-v3: allow to build with ARCH_LAYERSCAPE
+Date:   Fri, 19 Jul 2019 18:17:51 +0800
+Message-Id: <20190719101751.12315-1-wen.he_1@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Brauner <christian@brauner.io> writes:
-> On Mon, Jul 15, 2019 at 03:56:04PM +0200, Christian Borntraeger wrote:
->> I think Vasily already has a clone3 patch for s390x with 435. 
->
-> A quick follow-up on this. Helge and Michael have asked whether there
-> are any tests for clone3. Yes, there will be and I try to have them
-> ready by the end of the this or next week for review. In the meantime I
-> hope the following minimalistic test program that just verifies very
-> very basic functionality (It's not pretty.) will help you test:
+The new LS1028A DP driver code causes a link failure when DRM_IMX built-in,
+but platform is ARCH_LAYERSCAPE:
 
-Hi Christian,
+drivers/gpu/drm/imx/ipuv3-crtc.c:51: undefined reference to `ipu_prg_enable'
+drivers/gpu/drm/imx/ipuv3-crtc.c:52: undefined reference to `ipu_dc_enable'
+drivers/gpu/drm/imx/ipuv3-crtc.c:53: undefined reference to `ipu_dc_enable_channel'
+drivers/gpu/drm/imx/ipuv3-crtc.c:54: undefined reference to `ipu_di_enable'
+drivers/gpu/drm/imx/ipuv3-crtc.o: In function `ipu_crtc_mode_set_nofb
 
-Thanks for the test.
+Adding a Kconfig dependency allow to build if ARCH_LAYERSCAPE is enable.
 
-This actually oopses on powerpc, it hits the BUG_ON in CHECK_FULL_REGS
-in process.c around line 1633:
+Signed-off-by: Wen He <wen.he_1@nxp.com>
+---
+change in v2:
+        - fix Kconfig conflit issue after rebased to kernel 5.2
 
-	} else {
-		/* user thread */
-		struct pt_regs *regs = current_pt_regs();
-		CHECK_FULL_REGS(regs);
-		*childregs = *regs;
-		if (usp)
+ drivers/gpu/ipu-v3/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/gpu/ipu-v3/Kconfig b/drivers/gpu/ipu-v3/Kconfig
+index 061fb990c120..be515dd95c2c 100644
+--- a/drivers/gpu/ipu-v3/Kconfig
++++ b/drivers/gpu/ipu-v3/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config IMX_IPUV3_CORE
+ 	tristate "IPUv3 core support"
+-	depends on SOC_IMX5 || SOC_IMX6Q || ARCH_MULTIPLATFORM || COMPILE_TEST
++	depends on SOC_IMX5 || SOC_IMX6Q || ARCH_MULTIPLATFORM || COMPILE_TEST || ARCH_LAYERSCAPE
+ 	depends on DRM || !DRM # if DRM=m, this can't be 'y'
+ 	select BITREVERSE
+ 	select GENERIC_ALLOCATOR if DRM
+-- 
+2.17.1
 
-So I'll have to dig into how we fix that before we wire up clone3.
-
-Turns out testing is good! :)
-
-cheers
