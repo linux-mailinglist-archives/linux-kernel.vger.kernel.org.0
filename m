@@ -2,140 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F1E86E1D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 09:39:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD4FD6E1E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 09:42:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbfGSHjP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 03:39:15 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2290 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726271AbfGSHjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 03:39:15 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A2A08BFD0208CAD6C96A;
-        Fri, 19 Jul 2019 15:39:13 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 19 Jul 2019 15:39:05 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: separate NOCoW and pinfile semantics
-Date:   Fri, 19 Jul 2019 15:39:03 +0800
-Message-ID: <20190719073903.9138-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        id S1726832AbfGSHmc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 03:42:32 -0400
+Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:46793 "EHLO
+        mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726563AbfGSHmc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 03:42:32 -0400
+X-Greylist: delayed 447 seconds by postgrey-1.27 at vger.kernel.org; Fri, 19 Jul 2019 03:42:30 EDT
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx-rz-2.rrze.uni-erlangen.de (Postfix) with ESMTPS id 45qjT26mVvzPjnn;
+        Fri, 19 Jul 2019 09:35:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2013;
+        t=1563521702; bh=yOYrrqsoP7xiL7aTR5BIYron1L3/CjNHI2+GyajljJo=;
+        h=Date:From:To:Cc:Subject:From:To:CC:Subject;
+        b=XZFhg9m4FEj9Zh6256KAD+1e7gii5kauo6uGYk0bxy2QIcUfYS9ULegzXzM2popl3
+         i2RuWz/x91vsWKnb2gSE7FrHbyBhN5u7skdRx6QG6ApmyyypU5A9aZ1hDFexhoba9B
+         UPj+DcrqWHrS9TvxviCbuVNl/wILpwV4m/MHSJPRhHGjKYZ+zR5ozQQ7hA2i37VOW8
+         yqF8SL7Kj8HTGlNuuNMgV5s5HHBxvNlS0xvweewsbp+My51VawrK9lou3HqkfNn3dk
+         NFoHpsgiLVfeo9IsdeYQqccbLFHzf3g89Vrqbu1p4WnF+wIySSnYjCvFzpu4L1sr/q
+         MXfZfqUZ15P/Q==
+X-Virus-Scanned: amavisd-new at boeck1.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 131.188.11.37
+Received: from faumail.fau.de (smtp-auth.fau.de [131.188.11.37])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: U2FsdGVkX1883fpKlfwRJYkDn4vR1d9ipl8I7lHqxkQ=)
+        by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 45qjT046K3zPm7w;
+        Fri, 19 Jul 2019 09:35:00 +0200 (CEST)
+Received: from k1yuaZ/LKFFjKx39D0nQu8gFL8SwcwKHOWELJhm3b/E=
+ by faumail.uni-erlangen.de
+ with HTTP (HTTP/1.1 POST); Fri, 19 Jul 2019 09:35:00 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 19 Jul 2019 07:35:00 +0000
+From:   "Duda, Sebastian" <sebastian.duda@fau.de>
+To:     joe@perches.com
+Cc:     linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com,
+        ralf.ramsauer@oth-regensburg.de, wolfgang.mauerer@oth-regensburg.de
+Subject: get_maintainers.pl subsystem output
+Message-ID: <2c912379f96f502080bfcc79884cdc35@fau.de>
+X-Sender: sebastian.duda@fau.de
+User-Agent: Roundcube Webmail/1.2.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pinning a file is heavy, because skipping pinned files make GC
-running with heavy load or no effect.
+Hi Joe,
 
-So that this patch propose to separate nocow and pinfile semantics:
-- NOCoW flag can only be set on regular file.
-- NOCoW file will only trigger IPU at common writeback/flush.
-- NOCow file will do OPU during GC.
+I'm conducting a large-scale patch analysis of the LKML with 1.8 million 
+patch emails. I'm using the `get_maintainer.pl` script to know which 
+patch is related to which subsystem.
 
-For the demand of 1) avoid fragment of file's physical block and
-2) userspace don't care about file's specific physical address,
-tagging file as NOCoW will be cheaper than pinned one.
+I ran into two issues while using the script:
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- rebase code to fix compile error.
- fs/f2fs/data.c |  3 ++-
- fs/f2fs/f2fs.h |  1 +
- fs/f2fs/file.c | 22 +++++++++++++++++++---
- 3 files changed, 22 insertions(+), 4 deletions(-)
+1. When I use the script the trivial way
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index a2a28bb269bf..15fb8954c363 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1884,7 +1884,8 @@ static inline bool check_inplace_update_policy(struct inode *inode,
- 
- bool f2fs_should_update_inplace(struct inode *inode, struct f2fs_io_info *fio)
- {
--	if (f2fs_is_pinned_file(inode))
-+	if (f2fs_is_pinned_file(inode) ||
-+			F2FS_I(inode)->i_flags & F2FS_NOCOW_FL)
- 		return true;
- 
- 	/* if this is cold file, we should overwrite to avoid fragmentation */
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 596ab3e1dd7b..f6c5a3d2e659 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2374,6 +2374,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
- #define F2FS_NOATIME_FL			0x00000080 /* do not update atime */
- #define F2FS_INDEX_FL			0x00001000 /* hash-indexed directory */
- #define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
-+#define F2FS_NOCOW_FL			0x00800000 /* Do not cow file */
- #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
- 
- /* Flags that should be inherited by new inodes from their parent. */
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 7ca545874060..ae0fec54cac6 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1692,6 +1692,7 @@ static const struct {
- 	{ F2FS_NOATIME_FL,	FS_NOATIME_FL },
- 	{ F2FS_INDEX_FL,	FS_INDEX_FL },
- 	{ F2FS_DIRSYNC_FL,	FS_DIRSYNC_FL },
-+	{ F2FS_NOCOW_FL,	FS_NOCOW_FL },
- 	{ F2FS_PROJINHERIT_FL,	FS_PROJINHERIT_FL },
- };
- 
-@@ -1715,7 +1716,8 @@ static const struct {
- 		FS_NODUMP_FL |		\
- 		FS_NOATIME_FL |		\
- 		FS_DIRSYNC_FL |		\
--		FS_PROJINHERIT_FL)
-+		FS_PROJINHERIT_FL |	\
-+		FS_NOCOW_FL)
- 
- /* Convert f2fs on-disk i_flags to FS_IOC_{GET,SET}FLAGS flags */
- static inline u32 f2fs_iflags_to_fsflags(u32 iflags)
-@@ -1753,8 +1755,6 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
- 		fsflags |= FS_ENCRYPT_FL;
- 	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
- 		fsflags |= FS_INLINE_DATA_FL;
--	if (is_inode_flag_set(inode, FI_PIN_FILE))
--		fsflags |= FS_NOCOW_FL;
- 
- 	fsflags &= F2FS_GETTABLE_FS_FL;
- 
-@@ -1794,6 +1794,22 @@ static int f2fs_ioc_setflags(struct file *filp, unsigned long arg)
- 	if (ret)
- 		goto out;
- 
-+	if ((fsflags ^ old_fsflags) & FS_NOCOW_FL) {
-+		if (!S_ISREG(inode->i_mode)) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		if (f2fs_should_update_outplace(inode, NULL)) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		ret = f2fs_convert_inline_inode(inode);
-+		if (ret)
-+			goto out;
-+	}
-+
- 	ret = f2fs_setflags_common(inode, iflags,
- 			f2fs_fsflags_to_iflags(F2FS_SETTABLE_FS_FL));
- out:
--- 
-2.18.0.rc1
+     $ scripts/get_maintainer.pl --subsystem --status --separator , 
+drivers/media/i2c/adv748x/
+     Kieran Bingham <kieran.bingham@ideasonboard.com> (maintainer:ANALOG 
+DEVICES INC ADV748X DRIVER),Mauro Carvalho Chehab <mchehab@kernel.org> 
+(maintainer:MEDIA INPUT INFRASTRUCTURE 
+(V4L/DVB)),linux-media@vger.kernel.org (open list:ANALOG DEVICES INC 
+ADV748X DRIVER),linux-kernel@vger.kernel.org (open list)
+     Maintained,Buried alive in reporters
+     ANALOG DEVICES INC ADV748X DRIVER,MEDIA INPUT INFRASTRUCTURE 
+(V4L/DVB),THE REST
 
+the output is hard to parse because the status `Maintained` is displayed 
+only once but related to two subsystems.
+
+I'd prefer a more table like representation, like this:
+
+     Kieran Bingham <kieran.bingham@ideasonboard.com> (maintainer:ANALOG 
+DEVICES INC ADV748X DRIVER),linux-media@vger.kernel.org (open 
+list:ANALOG DEVICES INC ADV748X DRIVER),ANALOG DEVICES INC ADV748X 
+DRIVER,Maintained
+     Mauro Carvalho Chehab <mchehab@kernel.org> (maintainer:MEDIA INPUT 
+INFRASTRUCTURE (V4L/DVB)),MEDIA INPUT INFRASTRUCTURE 
+(V4L/DVB),Maintained
+     linux-kernel@vger.kernel.org (open list),THE REST,Buried alive in 
+reporters
+
+
+2. I want to analyze multiple patches, currently I am calling the script 
+once per patch. When calling the script with multiple files the files 
+output is merged
+
+     $ scripts/get_maintainer.pl --subsystem --status --separator ',' 
+drivers/media/i2c/adv748x/ include/uapi/linux/wmi.h
+     Kieran Bingham <kieran.bingham@ideasonboard.com> (maintainer:ANALOG 
+DEVICES INC ADV748X DRIVER),Mauro Carvalho Chehab <mchehab@kernel.org> 
+(maintainer:MEDIA INPUT INFRASTRUCTURE 
+(V4L/DVB)),linux-media@vger.kernel.org (open list:ANALOG DEVICES INC 
+ADV748X DRIVER),linux-kernel@vger.kernel.org (open 
+list),platform-driver-x86@vger.kernel.org (open list:ACPI WMI DRIVER)
+     Maintained,Buried alive in reporters,Orphan
+     ANALOG DEVICES INC ADV748X DRIVER,MEDIA INPUT INFRASTRUCTURE 
+(V4L/DVB),THE REST,ACPI WMI DRIVER
+
+I'd like to run the script with all files but separated output, like 
+this:
+
+     $ scripts/get_maintainer.pl --subsystem --status --separator ',' 
+--separate-files drivers/media/i2c/adv748x/ include/uapi/linux/wmi.h
+     Kieran Bingham <kieran.bingham@ideasonboard.com> (maintainer:ANALOG 
+DEVICES INC ADV748X DRIVER),Mauro Carvalho Chehab <mchehab@kernel.org> 
+(maintainer:MEDIA INPUT INFRASTRUCTURE 
+(V4L/DVB)),linux-media@vger.kernel.org (open list:ANALOG DEVICES INC 
+ADV748X DRIVER),linux-kernel@vger.kernel.org (open list)
+     Maintained,Buried alive in reporters
+     ANALOG DEVICES INC ADV748X DRIVER,MEDIA INPUT INFRASTRUCTURE 
+(V4L/DVB),THE REST
+
+     platform-driver-x86@vger.kernel.org (open list:ACPI WMI 
+DRIVER),linux-kernel@vger.kernel.org (open list)
+     Orphan,Buried alive in reporters
+     ACPI WMI DRIVER,THE REST
+
+
+My Questions are:
+1. How can I make get_maintainer's output to be more table-like?
+2. How can I make get_maintainer.pl to separate each file's output?
+
+Kind Regards
+Sebastian
