@@ -2,124 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F21F86E824
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 17:46:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 618586E82C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 17:47:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730293AbfGSPqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 11:46:03 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33435 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728322AbfGSPqD (ORCPT
+        id S1730387AbfGSPrV convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 19 Jul 2019 11:47:21 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:64536 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728443AbfGSPrU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 11:46:03 -0400
-Received: by mail-lf1-f68.google.com with SMTP id x3so22147331lfc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 08:46:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2i7XSW198CMKZZw/oRPpHFSGJvTtzgi6p+v7sLruFk0=;
-        b=OJWKwITsKyxbnlS0LH03nJUzIRgDj4HBhyT4vMEyGQ6EN06YQEuUoYb20H6Gsa8zQw
-         EwEWDH60b8cY6WpV7NqZXES7EIMgoFu3+J963adyTXX0uQO/Mf2BER3vU6A6a1IvlsaP
-         7l49OF0jxezm9cpK+OmzVJs2+RBEvd990hPYR7BC3TrIy5Djh5XaymkzZ5GU4ZUmbjEj
-         m7nm/WunQ7jFXL8gQcL2VYadccG9Q4cfQfe4xlZpCsxCkVJuC+wr4Zsrk8uYEAeZ2qOl
-         hJRCbd661qmRSRf0MTaGrsgFxcBqfyTsnMBr5cWLjs2R+zioMi3cvaVwx9BIcqxbfHp5
-         5YFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2i7XSW198CMKZZw/oRPpHFSGJvTtzgi6p+v7sLruFk0=;
-        b=mRPgLPX8Dweq1Zb61lJ+tcI32z9P1HFD0exkfZw1s1GgiWkCgJ5jTCSESBVdeLbHJD
-         P2SeeQYhCN3lo6XgLtcgTwG8QmOJccB4tHkzlakwLTIg7Aqdt3QJZES4PjZr+tbA3/R4
-         7qQYZRBMv0FIZD3L70RGD6A9pkiPlwTckWXAxKqONFo2s0GvpbOrdNdC4DJlOE1rs7Y4
-         BGI61h0Yn3fXx33SdwUFzb0+JraEO7vZTVhZD10dbFRWN5Wv9oGsp4LANLXZwuNOs0Zi
-         sXSJ5A7ol4LWhldpthPPwZQB1o9zTQrCahDg0+ion7KYbfkytKUm4Il3qcrUeczKj5gl
-         71zQ==
-X-Gm-Message-State: APjAAAWArocG5aGBxHEkDwCxvYMCcvuLCEYNXnF/lvVBbAJa2s5UFP3b
-        ZTkF4l89c4kSXJIxWccoUZQuig==
-X-Google-Smtp-Source: APXvYqyBt2StFCI7rh2Sk0ml59+DBfBzrP0WyeRhK86P9lv3ycCs1xNa4cli07smdEAr/GbdpDk7YQ==
-X-Received: by 2002:a19:9111:: with SMTP id t17mr24403978lfd.113.1563551161408;
-        Fri, 19 Jul 2019 08:46:01 -0700 (PDT)
-Received: from centauri (ua-83-226-229-61.bbcust.telenor.se. [83.226.229.61])
-        by smtp.gmail.com with ESMTPSA id k82sm5733963lje.30.2019.07.19.08.45.59
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 19 Jul 2019 08:46:00 -0700 (PDT)
-Date:   Fri, 19 Jul 2019 17:45:58 +0200
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
-        vireshk@kernel.org, bjorn.andersson@linaro.org,
-        ulf.hansson@linaro.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/13] arm64: dts: qcom: qcs404: Add CPR and populate OPP
- table
-Message-ID: <20190719154558.GA32518@centauri>
-References: <20190705095726.21433-1-niklas.cassel@linaro.org>
- <20190705095726.21433-12-niklas.cassel@linaro.org>
- <20190710090303.tb5ue3wq6r7ofyev@vireshk-i7>
- <20190715132405.GA5040@centauri>
- <20190716103436.az5rdk6f3yoa3apz@vireshk-i7>
- <20190716105318.GA26592@centauri>
- <20190717044923.ccmebeewbinlslkm@vireshk-i7>
+        Fri, 19 Jul 2019 11:47:20 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6JFkgG5006110
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 11:47:19 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tug36t4h0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 11:47:19 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Fri, 19 Jul 2019 16:47:18 +0100
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 19 Jul 2019 16:47:12 +0100
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6JFlBQD50725154
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Jul 2019 15:47:11 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D8EBAAE05C;
+        Fri, 19 Jul 2019 15:47:11 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8ABCAAE05F;
+        Fri, 19 Jul 2019 15:47:07 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.85.190.209])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Fri, 19 Jul 2019 15:47:07 +0000 (GMT)
+References: <20190718032858.28744-1-bauerman@linux.ibm.com> <20190718032858.28744-6-bauerman@linux.ibm.com> <4a07bf75-b516-c81b-da7a-4b323e6d7e52@amd.com> <c85ae8ff-3b7b-88bf-6b6a-c41b159c9cc2@redhat.com>
+User-agent: mu4e 1.2.0; emacs 26.2
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     lijiang <lijiang@redhat.com>
+Cc:     "Lendacky\, Thomas" <Thomas.Lendacky@amd.com>,
+        "x86\@kernel.org" <x86@kernel.org>,
+        "iommu\@lists.linux-foundation.org" 
+        <iommu@lists.linux-foundation.org>,
+        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linuxppc-dev\@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390\@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Mike Anderson <andmike@linux.ibm.com>,
+        Ram Pai <linuxram@us.ibm.com>, Baoquan He <bhe@redhat.com>
+Subject: Re: [PATCH v3 5/6] fs/core/vmcore: Move sev_active() reference to x86 arch code
+In-reply-to: <c85ae8ff-3b7b-88bf-6b6a-c41b159c9cc2@redhat.com>
+Date:   Fri, 19 Jul 2019 12:47:03 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190717044923.ccmebeewbinlslkm@vireshk-i7>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-TM-AS-GCONF: 00
+x-cbid: 19071915-0072-0000-0000-0000044B1EEB
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011457; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000287; SDB=6.01234458; UDB=6.00650541; IPR=6.01015790;
+ MB=3.00027801; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-19 15:47:17
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19071915-0073-0000-0000-00004CBB738B
+Message-Id: <87h87igh6w.fsf@morokweng.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-19_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907190172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 17, 2019 at 10:19:23AM +0530, Viresh Kumar wrote:
-> On 16-07-19, 12:53, Niklas Cassel wrote:
-> > Here I cheated and simply used get_cpu_device(0).
-> > 
-> > Since I cheated, I used get_cpu_device(0) always,
-> > so even when CPU1,CPU2,CPU3 is attached, dev_pm_opp_get_opp_count(cpu0) is
-> > still 0.
-> > 
-> > I added a print in
-> > [    3.836533] cpr_set_performance: number of OPPs for dev: cpu0: 3
-> > 
-> > And there I can see that OPP count is 3, so it appears that with the
-> > current code, we need to wait until cpufreq-dt.c:cpufreq_init()
-> > has been called, maybe dev_pm_opp_of_cpumask_add_table() needs
-> > to be called before dev_pm_opp_get_opp_count(cpu0) actually returns 3.
-> > 
-> > cpufreq_init() is called by platform_device_register_simple("cpufreq-dt", -1,
-> >                                                           NULL, 0);
-> > which is called after dev_pm_opp_attach_genpd().
-> > 
-> > What I don't understand is that dev_pm_opp_attach_genpd() actually returns
-> > a OPP table. So why do we need to wait for dev_pm_opp_of_cpumask_add_table(),
-> > before either dev_pm_opp_get_opp_count(cpu0) or
-> > dev_pm_opp_get_opp_count(genpd_virtdev_for_cpu0) returns 3?
-> 
-> Ah, I see the problems now. No, cpufreq table can't be available at
-> this point of time and we aren't going to change that. It is the right
-> thing to do.
-> 
-> Now, even if the kernel isn't written in a way which works for you, it
-> isn't right to put more things in DT than required. DT is (should be)
-> very much independent of the Linux kernel.
-> 
-> So we have to parse DT to find highest frequency for each
-> required-opp. Best is to put that code in the OPP core and use it from
-> your driver.
 
-Hello Viresh,
+Hello Lianbo,
 
-Could you please have a look at the last two patches here:
-https://git.linaro.org/people/niklas.cassel/kernel.git/log/?h=cpr-opp-hz
+lijiang <lijiang@redhat.com> writes:
 
-If you like my proposal then I could send out the first patch (the one to
-OPP core) as a real patch (with an improved commit message), and
-incorporate the second patch into my CPR patch series when I send out a V2.
+> 在 2019年07月19日 01:47, Lendacky, Thomas 写道:
+>> On 7/17/19 10:28 PM, Thiago Jung Bauermann wrote:
+>>> Secure Encrypted Virtualization is an x86-specific feature, so it shouldn't
+>>> appear in generic kernel code because it forces non-x86 architectures to
+>>> define the sev_active() function, which doesn't make a lot of sense.
+>>>
+>>> To solve this problem, add an x86 elfcorehdr_read() function to override
+>>> the generic weak implementation. To do that, it's necessary to make
+>>> read_from_oldmem() public so that it can be used outside of vmcore.c.
+>>>
+>>> Also, remove the export for sev_active() since it's only used in files that
+>>> won't be built as modules.
+>>>
+>>> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+>> 
+>> Adding Lianbo and Baoquan, who recently worked on this, for their review.
+>> 
+>
+> This change looks good to me.
+>
+> Reviewed-by: Lianbo Jiang <lijiang@redhat.com>
 
+Thanks for your review!
 
-Kind regards,
-Niklas
+-- 
+Thiago Jung Bauermann
+IBM Linux Technology Center
+
