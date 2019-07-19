@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E65C56DBCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:11:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFF606DBCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:11:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732107AbfGSELh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:11:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46532 "EHLO mail.kernel.org"
+        id S2387707AbfGSELj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:11:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388410AbfGSELe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:11:34 -0400
+        id S2388493AbfGSELh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:11:37 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 877E42189E;
-        Fri, 19 Jul 2019 04:11:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CE1121873;
+        Fri, 19 Jul 2019 04:11:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509493;
-        bh=DfqWPlcE3qTbS3EoC2xAO0NVcgWAGR3hzi7aWYfawnw=;
+        s=default; t=1563509497;
+        bh=BOwvCVviHuS1yi7wXAMbRF92DV7o6/7cxfw9HudwqSI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SomDpdesB/AYTJzS2cfNZQBfAdzTRKt8YezJXbGMohwKlbHny1UnNo90NuHLVkKEq
-         x7jHOfVhJT3JCDSvxRJT68S35gB3OcAQAbPNBhiwlISchOoTzx/jEoTZuCjxIbX7vo
-         SG9EJQQodwx7SjfCgwE+ekgNKj8MaJoToBOSge88=
+        b=uZMPfhiVD7JG4eo1ATiiw84+v/vs68sINmjdTxFF82iZwH4Dxm2+02d21NEqg4ORP
+         RYz251EPIN6VihX0D1cdv56mDRKaUeALzQywBBj8a/qR+0jfmA0uFrQZ9KX4sojoya
+         MsPUSY5bsLPL4k+q2Dla3r6MKATih06pZ4Rv2d6U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rautkoski Kimmo EXT <ext-kimmo.rautkoski@vaisala.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 14/60] serial: 8250: Fix TX interrupt handling condition
-Date:   Fri, 19 Jul 2019 00:10:23 -0400
-Message-Id: <20190719041109.18262-14-sashal@kernel.org>
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 16/60] phy: renesas: rcar-gen2: Fix memory leak at error paths
+Date:   Fri, 19 Jul 2019 00:10:25 -0400
+Message-Id: <20190719041109.18262-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719041109.18262-1-sashal@kernel.org>
 References: <20190719041109.18262-1-sashal@kernel.org>
@@ -43,46 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rautkoski Kimmo EXT <ext-kimmo.rautkoski@vaisala.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-[ Upstream commit db1b5bc047b3cadaedab3826bba82c3d9e023c4b ]
+[ Upstream commit d4a36e82924d3305a17ac987a510f3902df5a4b2 ]
 
-Interrupt handler checked THRE bit (transmitter holding register
-empty) in LSR to detect if TX fifo is empty.
-In case when there is only receive interrupts the TX handling
-got called because THRE bit in LSR is set when there is no
-transmission (FIFO empty). TX handling caused TX stop, which in
-RS-485 half-duplex mode actually resets receiver FIFO. This is not
-desired during reception because of possible data loss.
+This patch fixes memory leak at error paths of the probe function.
+In for_each_child_of_node, if the loop returns, the driver should
+call of_put_node() before returns.
 
-The fix is to check if THRI is set in IER in addition of the TX
-fifo status. THRI in IER is set when TX is started and cleared
-when TX is stopped.
-This ensures that TX handling is only called when there is really
-transmission on going and an interrupt for THRE and not when there
-are only RX interrupts.
-
-Signed-off-by: Kimmo Rautkoski <ext-kimmo.rautkoski@vaisala.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Julia Lawall <julia.lawall@lip6.fr>
+Fixes: 1233f59f745b237 ("phy: Renesas R-Car Gen2 PHY driver")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/8250/8250_port.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/phy/renesas/phy-rcar-gen2.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index ecf3d631bc09..b61fa5fcae68 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -1879,7 +1879,8 @@ int serial8250_handle_irq(struct uart_port *port, unsigned int iir)
- 			status = serial8250_rx_chars(up, status);
- 	}
- 	serial8250_modem_status(up);
--	if ((!up->dma || up->dma->tx_err) && (status & UART_LSR_THRE))
-+	if ((!up->dma || up->dma->tx_err) && (status & UART_LSR_THRE) &&
-+		(up->ier & UART_IER_THRI))
- 		serial8250_tx_chars(up);
- 
- 	spin_unlock_irqrestore(&port->lock, flags);
+diff --git a/drivers/phy/renesas/phy-rcar-gen2.c b/drivers/phy/renesas/phy-rcar-gen2.c
+index 97d4dd6ea924..aa02b19b7e0e 100644
+--- a/drivers/phy/renesas/phy-rcar-gen2.c
++++ b/drivers/phy/renesas/phy-rcar-gen2.c
+@@ -288,6 +288,7 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
+ 		error = of_property_read_u32(np, "reg", &channel_num);
+ 		if (error || channel_num > 2) {
+ 			dev_err(dev, "Invalid \"reg\" property\n");
++			of_node_put(np);
+ 			return error;
+ 		}
+ 		channel->select_mask = select_mask[channel_num];
+@@ -303,6 +304,7 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
+ 						   &rcar_gen2_phy_ops);
+ 			if (IS_ERR(phy->phy)) {
+ 				dev_err(dev, "Failed to create PHY\n");
++				of_node_put(np);
+ 				return PTR_ERR(phy->phy);
+ 			}
+ 			phy_set_drvdata(phy->phy, phy);
 -- 
 2.20.1
 
