@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF0E06DFF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:40:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3869D6DFEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:38:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728197AbfGSD6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 23:58:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57948 "EHLO mail.kernel.org"
+        id S1728540AbfGSD7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 23:59:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728134AbfGSD6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 23:58:33 -0400
+        id S1728429AbfGSD7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 23:59:03 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2EB92186A;
-        Fri, 19 Jul 2019 03:58:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AE11218D0;
+        Fri, 19 Jul 2019 03:59:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508712;
-        bh=d3e4tqvNiIM0DHagGPl0Sq0p/6aSS+We4bM12lQE+Fs=;
+        s=default; t=1563508742;
+        bh=yJmRyrzBt/ZQZo6dAZhH1BB6xNTq2RP6aEkDuFKhFlE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AGRasT+WozgKcqz6ymQ2FXS7eCa+cdc5Gqbvmy5YbrY544YpLYP9f6sgbAr77XVB1
-         gO+HmISeUTd95nI3pBgOIQi/MH1NuM2E20p1u2A7JTxoF1EwoNeKfxEPB1SVPLnKAu
-         NUOguGc+IvtekMvYPb2CBLRqSUHvnRmjs6s2ad2I=
+        b=X1AehkT5+mFNEYjaYZ7AVpLXYlpSnHgh0vdkbvCz5699szOCDrX+WuoqylCVP4kwX
+         gTxKFO5551fNZrVa+Q8pMbbBzrkEDnO+BfLJidjRtp09isWYIm63nToh07fUImQag6
+         i6vcZ2thNwK74Au3GcY3DjeGitMFsO4BZTaYtfTI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 048/171] tty/serial: digicolor: Fix digicolor-usart already registered warning
-Date:   Thu, 18 Jul 2019 23:54:39 -0400
-Message-Id: <20190719035643.14300-48-sashal@kernel.org>
+Cc:     Yurii Pavlovskyi <yurii.pavlovskyi@gmail.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        acpi4asus-user@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 063/171] platform/x86: asus-wmi: Increase input buffer size of WMI methods
+Date:   Thu, 18 Jul 2019 23:54:54 -0400
+Message-Id: <20190719035643.14300-63-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -45,44 +46,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
+From: Yurii Pavlovskyi <yurii.pavlovskyi@gmail.com>
 
-[ Upstream commit c7ad9ba0611c53cfe194223db02e3bca015f0674 ]
+[ Upstream commit 98e865a522983f2afde075648ec9d15ea4bb9194 ]
 
-When modprobe/rmmod/modprobe module, if platform_driver_register() fails,
-the kernel complained,
+The asus-nb-wmi driver is matched by WMI alias but fails to load on TUF
+Gaming series laptops producing multiple ACPI errors in the kernel log.
 
-  proc_dir_entry 'driver/digicolor-usart' already registered
-  WARNING: CPU: 1 PID: 5636 at fs/proc/generic.c:360 proc_register+0x19d/0x270
+The input buffer for WMI method invocation size is 2 dwords, whereas
+3 are expected by this model.
 
-Fix this by adding uart_unregister_driver() when platform_driver_register() fails.
+FX505GM:
+..
+Method (WMNB, 3, Serialized)
+{
+    P8XH (Zero, 0x11)
+    CreateDWordField (Arg2, Zero, IIA0)
+    CreateDWordField (Arg2, 0x04, IIA1)
+    CreateDWordField (Arg2, 0x08, IIA2)
+    Local0 = (Arg1 & 0xFFFFFFFF)
+    ...
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Acked-by: Baruch Siach <baruch@tkos.co.il>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Compare with older K54C:
+...
+Method (WMNB, 3, NotSerialized)
+{
+    CreateDWordField (Arg2, 0x00, IIA0)
+    CreateDWordField (Arg2, 0x04, IIA1)
+    Local0 = (Arg1 & 0xFFFFFFFF)
+    ...
+
+Increase buffer size to 3 dwords. No negative consequences of this change
+are expected, as the input buffer size is not verified. The original
+function is replaced by a wrapper for a new method passing value 0 for the
+last parameter. The new function will be used to control RGB keyboard
+backlight.
+
+Signed-off-by: Yurii Pavlovskyi <yurii.pavlovskyi@gmail.com>
+Reviewed-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/digicolor-usart.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/platform/x86/asus-wmi.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/digicolor-usart.c b/drivers/tty/serial/digicolor-usart.c
-index f460cca139e2..13ac36e2da4f 100644
---- a/drivers/tty/serial/digicolor-usart.c
-+++ b/drivers/tty/serial/digicolor-usart.c
-@@ -541,7 +541,11 @@ static int __init digicolor_uart_init(void)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 9b18a184e0aa..abfa99d18fea 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -85,6 +85,7 @@ static bool ashs_present(void)
+ struct bios_args {
+ 	u32 arg0;
+ 	u32 arg1;
++	u32 arg2; /* At least TUF Gaming series uses 3 dword input buffer. */
+ } __packed;
  
--	return platform_driver_register(&digicolor_uart_platform);
-+	ret = platform_driver_register(&digicolor_uart_platform);
-+	if (ret)
-+		uart_unregister_driver(&digicolor_uart);
-+
-+	return ret;
+ /*
+@@ -211,11 +212,13 @@ static void asus_wmi_input_exit(struct asus_wmi *asus)
+ 	asus->inputdev = NULL;
  }
- module_init(digicolor_uart_init);
  
+-int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1, u32 *retval)
++static int asus_wmi_evaluate_method3(u32 method_id,
++		u32 arg0, u32 arg1, u32 arg2, u32 *retval)
+ {
+ 	struct bios_args args = {
+ 		.arg0 = arg0,
+ 		.arg1 = arg1,
++		.arg2 = arg2,
+ 	};
+ 	struct acpi_buffer input = { (acpi_size) sizeof(args), &args };
+ 	struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
+@@ -247,6 +250,11 @@ int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1, u32 *retval)
+ 
+ 	return 0;
+ }
++
++int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1, u32 *retval)
++{
++	return asus_wmi_evaluate_method3(method_id, arg0, arg1, 0, retval);
++}
+ EXPORT_SYMBOL_GPL(asus_wmi_evaluate_method);
+ 
+ static int asus_wmi_evaluate_method_agfn(const struct acpi_buffer args)
 -- 
 2.20.1
 
