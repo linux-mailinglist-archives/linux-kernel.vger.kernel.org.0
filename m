@@ -2,152 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 760746EB67
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 22:02:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17FCF6EB6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 22:04:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731087AbfGSUCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 16:02:45 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45256 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727497AbfGSUCp (ORCPT
+        id S1731461AbfGSUEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 16:04:06 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:40099 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727497AbfGSUEF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 16:02:45 -0400
-Received: by mail-pg1-f196.google.com with SMTP id o13so14899258pgp.12
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 13:02:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=5N6LdOFrJjCGue8cmzcmZMQF0A64ylNe67FM2v5UYwc=;
-        b=UGjkJsZMA2fiZtIAfmbFGijLgKyG17B3eQ5YtmodVmWNxm4QJS+OfEyZ+Yx0rDQby2
-         gnj1ZAjcG7OI7VSuae91ptxx0prbKEh6VLzS2BftpTlOw7ct6KvfS89UEMgXf3CKrAUm
-         VaSB94oa9pL4apBBZkcMyNzGYnpzyBzTuQq30KTDOHMXp7Xb9c9oc9841+wEnQyr+ujd
-         Q2anwrvnoScMKEKCNV3+pPM0tIGmNLbdiVFoc3Mc4Omod3QzKFB5m7AZ+WgiGgw39cIs
-         N8SknDNp4z08kAzx0YLMPgaREHUUUqxXxTMX9u3ky5Xw4RULICCNa2aGIxbU5/gx3dQE
-         NTYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=5N6LdOFrJjCGue8cmzcmZMQF0A64ylNe67FM2v5UYwc=;
-        b=SpOxchHs9rdCAu3LH9DQW2v2Cxp5AmuCUZN8MViKL0cH7zHJeWYR49cPKOn3iOrP7m
-         9XZ1B/T050pvV4s4XDtAvKnfg4UxDQRqtrfHR8mARIfc0Wc+52sSS8OC+M24qi/TMPor
-         4V8bGUXS2nuwr0Ly0t6p16iYxmff6z4LqucdrC1t/Bubm5sFEDPEmpmw9RkGjmo13KU2
-         2Kf5qbUAwskIm7cLN/Izs3/BZXRkWXye+/Xz3sIDollCdMIIoHHT6KoZLyj466kdNNh8
-         8pl0NZiuWQx0KzHW3Xdb1CL71Iwt0A4szuWELWRiKowZ5daxEYEZxxRT4y06WCl9+wnJ
-         jr1w==
-X-Gm-Message-State: APjAAAWsdFB5mZ7VySwrSTcwvhZEDl2jzsDGg2RdT0+dwR6gNrf6groi
-        ZF9aG5bRyvM8U86zPLpcjVg=
-X-Google-Smtp-Source: APXvYqyUkjtJ5/kr1NKh5evL+FbdXcRYyIgbQbmLhNrEiZG/igGdTIgx+LqU2x5WMPCYNej1LAZAWw==
-X-Received: by 2002:a63:f807:: with SMTP id n7mr57629925pgh.119.1563566564159;
-        Fri, 19 Jul 2019 13:02:44 -0700 (PDT)
-Received: from bharath12345-Inspiron-5559 ([103.110.42.33])
-        by smtp.gmail.com with ESMTPSA id c8sm37375979pjq.2.2019.07.19.13.02.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 19 Jul 2019 13:02:43 -0700 (PDT)
-Date:   Sat, 20 Jul 2019 01:32:35 +0530
-From:   Bharath Vedartham <linux.bhar@gmail.com>
-To:     jhubbard@nvidia.com, ira.weiny@intel.com, jglisse@redhat.com,
-        gregkh@linuxfoundation.org, Matt.Sickler@daktronics.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH v3] staging: kpc2000: Convert put_page to put_user_page*()
-Message-ID: <20190719200235.GA16122@bharath12345-Inspiron-5559>
+        Fri, 19 Jul 2019 16:04:05 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1Mnqfc-1iCLCN0wWI-00pPiL; Fri, 19 Jul 2019 22:03:53 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Qian Cai <cai@lca.pw>, Mark Brown <broonie@kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: [PATCH] [v2] kasan: remove clang version check for KASAN_STACK
+Date:   Fri, 19 Jul 2019 22:03:31 +0200
+Message-Id: <20190719200347.2596375-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Provags-ID: V03:K1:J27HTozIf70i015ShzVyaLK+SKYj6oJakqgt/Py0qVMEmYfLKM9
+ j+FkpX8855SdCqSKs2wi92QbC7o3aqLQvNgxq/xx3R4aCeH08w0VqtGpX4T4EbPISZX3OY8
+ lSD+dj8qNlT3hfFZ7Ze1B3V3BzTo+QpxirpCVkZFyZHc38Mgnxb3kuu0/Nm4Jl7iwDFYLn9
+ qTVJIZwC5u7uUNp+jafJg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/juMIMxIzxg=:iBIGzTzUSBL3xedoNlYaaG
+ r5RefbUKXEHUEznMmsDzgDixJeDDy8cqrsL8mAg3tcJcc3zh6+dXKofFk3QOuXU4WNhIDkpfA
+ HCJNRAiZKQM/Mjt9Vtag9p/URnIYCexJFgDYI1A111rD2WWRZqF2CyEfmixCGkRLHJZ2f6Sly
+ +VFbLt/cQWHNholtFUY2zfUJFgfgohkx0QNniwURsZyx2y5pjvYiL6NFzXG3sbcP11U6nSpya
+ 31MqUYh4A90SOiuyIZsyt9U8s+eMvlN8XgwjYXRwnHRXfjZIAWnBK/mr7NrDdjfkqqbmLp7OV
+ tyNpGhwzjQfL9iRO6D1fD2dGRWSkTFhHisONWCazKwYNvsSD+9k7aY4QOWu/S0C+75Gks/hxY
+ eAAdofAgm2J1FCmaPV7LBsQTmUDl9C/DKAMhQYIVkHvBaSQ7NhQ4vmzxDhome5y3B8AyvKrB6
+ wcyYzIwUCwBFSG0QCXRdrBi81uAAf6bkO1lkLmeQjVS7qQIMNSTelqOCeFRtmda1pI76nMJR7
+ +84sLsqgphb/1NyJOxpCD9Dr+BnM9MyvCob2rKhm9Eg9/N8U2WVU7FraS8mlJUI9XLBNC6Pos
+ 4ABN9E13YYMcPfoBnVSzuUXhBXJTb2xdUwqJqtrVMUhEb40S/exUSunDA7c+R45pd6t/m108q
+ naN/0db8NEDKpWK//bMM/+x8kNKCnq0uMXTVBi/0FNrRUNzVe9GW9kyucdWlu0JUZVbkRvUj8
+ +KsUe3idCPE7mg6SMPa1lCVGzx9N1L9faXM6kw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There have been issues with coordination of various subsystems using
-get_user_pages. These issues are better described in [1].
+asan-stack mode still uses dangerously large kernel stacks of
+tens of kilobytes in some drivers, and it does not seem that anyone
+is working on the clang bug.
 
-An implementation of tracking get_user_pages is currently underway
-The implementation requires the use put_user_page*() variants to release
-a reference rather than put_page(). The commit that introduced
-put_user_pages, Commit fc1d8e7cca2daa18d2fe56b94874848adf89d7f5 ("mm: introduce
-put_user_page*(), placeholder version").
+Turn it off for all clang versions to prevent users from
+accidentally enabling it once they update to clang-9, and
+to help automated build testing with clang-9.
 
-The implementation currently simply calls put_page() within
-put_user_page(). But in the future, it is to change to add a mechanism
-to keep track of get_user_pages. Once a tracking mechanism is
-implemented, we can make attempts to work on improving on coordination
-between various subsystems using get_user_pages.
-
-[1] https://lwn.net/Articles/753027/
-
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: Jérôme Glisse <jglisse@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Matt Sickler <Matt.Sickler@daktronics.com>
-Cc: devel@driverdev.osuosl.org 
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org
-Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+Link: https://bugs.llvm.org/show_bug.cgi?id=38809
+Fixes: 6baec880d7a5 ("kasan: turn off asan-stack for clang-8 and earlier")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-Changes since v1
-	- Improved changelog by John's suggestion.
-	- Moved logic to dirty pages below sg_dma_unmap
-	and removed PageReserved check.
-Changes since v2
-	- Added back PageResevered check as suggested by John Hubbard.
-	
-The PageReserved check needs a closer look and is not worth messing
-around with for now.
-
-Matt, Could you give any suggestions for testing this patch?
-    
-If in-case, you are willing to pick this up to test. Could you
-apply this patch to this tree
-https://github.com/johnhubbard/linux/tree/gup_dma_core
-and test it with your devices?
-
+v2: disable the feature for all clang versions, not just 9 and below.
 ---
- drivers/staging/kpc2000/kpc_dma/fileops.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ lib/Kconfig.kasan | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/kpc2000/kpc_dma/fileops.c b/drivers/staging/kpc2000/kpc_dma/fileops.c
-index 6166587..75ad263 100644
---- a/drivers/staging/kpc2000/kpc_dma/fileops.c
-+++ b/drivers/staging/kpc2000/kpc_dma/fileops.c
-@@ -198,9 +198,7 @@ int  kpc_dma_transfer(struct dev_private_data *priv, struct kiocb *kcb, unsigned
- 	sg_free_table(&acd->sgt);
-  err_dma_map_sg:
-  err_alloc_sg_table:
--	for (i = 0 ; i < acd->page_count ; i++){
--		put_page(acd->user_pages[i]);
--	}
-+	put_user_pages(acd->user_pages, acd->page_count);
-  err_get_user_pages:
- 	kfree(acd->user_pages);
-  err_alloc_userpages:
-@@ -221,16 +219,13 @@ void  transfer_complete_cb(struct aio_cb_data *acd, size_t xfr_count, u32 flags)
- 	
- 	dev_dbg(&acd->ldev->pldev->dev, "transfer_complete_cb(acd = [%p])\n", acd);
- 	
--	for (i = 0 ; i < acd->page_count ; i++){
--		if (!PageReserved(acd->user_pages[i])){
--			set_page_dirty(acd->user_pages[i]);
--		}
--	}
--	
- 	dma_unmap_sg(&acd->ldev->pldev->dev, acd->sgt.sgl, acd->sgt.nents, acd->ldev->dir);
- 	
--	for (i = 0 ; i < acd->page_count ; i++){
--		put_page(acd->user_pages[i]);
-+	for (i = 0; i < acd->page_count; i++) {
-+		if (!PageReserved(acd->user_pages[i]))
-+			put_user_pages_dirty(&acd->user_pages[i], 1);
-+		else
-+			put_user_page(acd->user_pages[i]);
- 	}
- 	
- 	sg_free_table(&acd->sgt);
+diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
+index 4fafba1a923b..7fa97a8b5717 100644
+--- a/lib/Kconfig.kasan
++++ b/lib/Kconfig.kasan
+@@ -106,7 +106,6 @@ endchoice
+ 
+ config KASAN_STACK_ENABLE
+ 	bool "Enable stack instrumentation (unsafe)" if CC_IS_CLANG && !COMPILE_TEST
+-	default !(CLANG_VERSION < 90000)
+ 	depends on KASAN
+ 	help
+ 	  The LLVM stack address sanitizer has a know problem that
+@@ -115,11 +114,11 @@ config KASAN_STACK_ENABLE
+ 	  Disabling asan-stack makes it safe to run kernels build
+ 	  with clang-8 with KASAN enabled, though it loses some of
+ 	  the functionality.
+-	  This feature is always disabled when compile-testing with clang-8
+-	  or earlier to avoid cluttering the output in stack overflow
+-	  warnings, but clang-8 users can still enable it for builds without
+-	  CONFIG_COMPILE_TEST.  On gcc and later clang versions it is
+-	  assumed to always be safe to use and enabled by default.
++	  This feature is always disabled when compile-testing with clang
++	  to avoid cluttering the output in stack overflow warnings,
++	  but clang users can still enable it for builds without
++	  CONFIG_COMPILE_TEST.	On gcc it is assumed to always be safe
++	  to use and enabled by default.
+ 
+ config KASAN_STACK
+ 	int
 -- 
-2.7.4
+2.20.0
 
