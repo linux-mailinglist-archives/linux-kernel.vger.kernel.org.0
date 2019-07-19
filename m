@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 644E66DA27
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:00:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4141D6DA29
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:00:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728885AbfGSD7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 23:59:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59452 "EHLO mail.kernel.org"
+        id S1728941AbfGSD7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 23:59:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727619AbfGSD7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 23:59:44 -0400
+        id S1728896AbfGSD7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 23:59:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9782121873;
-        Fri, 19 Jul 2019 03:59:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9302121851;
+        Fri, 19 Jul 2019 03:59:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508783;
-        bh=pocZzY6HKbyA/R5cRbnDBsEmJmNaf6ik5va4ZL9jQCk=;
+        s=default; t=1563508790;
+        bh=BQz8KjtbQ5pipuq7bQLDsW55O1T1dwOXaBRQq797aEc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qd7CcAZH+vHqP+P1r3/3Izc4fpMxcjnbFw/k7bEvkVMLkF2uqAmcdpV0QCS+IBY8Q
-         fmND8vSMwd6gFXFchf3KYrdtfjvyGiztpj9wezBRSVE62u9hlN+kZv0g4uYldxkMKF
-         StV16+UfI+vrs/JU31FqYXhwbf52/yH1NPSLedAg=
+        b=tp2yy9yBHhnf4aEqqNWI2aXjGJ5SthJybbrMhVCRTH0lKFJOIakeSmeYnjalhOZJP
+         BzqyDAQyyI0gU1SwYql5jvUKfk39b2wKP4rwwOPPDMhg5/0U0ZsK3+oUC7bZOL/WDO
+         gwJ0LLmI79jAJDgZKwt+Yn9yIN0W9vIt/twK1Rvk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 087/171] genksyms: Teach parser about 128-bit built-in types
-Date:   Thu, 18 Jul 2019 23:55:18 -0400
-Message-Id: <20190719035643.14300-87-sashal@kernel.org>
+Cc:     Bastien Nocera <hadess@hadess.net>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 090/171] iio: iio-utils: Fix possible incorrect mask calculation
+Date:   Thu, 18 Jul 2019 23:55:21 -0400
+Message-Id: <20190719035643.14300-90-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -43,67 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will.deacon@arm.com>
+From: Bastien Nocera <hadess@hadess.net>
 
-[ Upstream commit a222061b85234d8a44486a46bd4df7e2cda52385 ]
+[ Upstream commit 208a68c8393d6041a90862992222f3d7943d44d6 ]
 
-__uint128_t crops up in a few files that export symbols to modules, so
-teach genksyms about it and the other GCC built-in 128-bit integer types
-so that we don't end up skipping the CRC generation for some symbols due
-to the parser failing to spot them:
+On some machines, iio-sensor-proxy was returning all 0's for IIO sensor
+values. It turns out that the bits_used for this sensor is 32, which makes
+the mask calculation:
 
-  | WARNING: EXPORT symbol "kernel_neon_begin" [vmlinux] version
-  |          generation failed, symbol will not be versioned.
-  | ld: arch/arm64/kernel/fpsimd.o: relocation R_AARCH64_ABS32 against
-  |     `__crc_kernel_neon_begin' can not be used when making a shared
-  |     object
-  | ld: arch/arm64/kernel/fpsimd.o:(.data+0x0): dangerous relocation:
-  |     unsupported relocation
+*mask = (1 << 32) - 1;
 
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+If the compiler interprets the 1 literals as 32-bit ints, it generates
+undefined behavior depending on compiler version and optimization level.
+On my system, it optimizes out the shift, so the mask value becomes
+
+*mask = (1) - 1;
+
+With a mask value of 0, iio-sensor-proxy will always return 0 for every axis.
+
+Avoid incorrect 0 values caused by compiler optimization.
+
+See original fix by Brett Dutro <brett.dutro@gmail.com> in
+iio-sensor-proxy:
+https://github.com/hadess/iio-sensor-proxy/commit/9615ceac7c134d838660e209726cd86aa2064fd3
+
+Signed-off-by: Bastien Nocera <hadess@hadess.net>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/genksyms/keywords.c | 4 ++++
- scripts/genksyms/parse.y    | 2 ++
- 2 files changed, 6 insertions(+)
+ tools/iio/iio_utils.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/genksyms/keywords.c b/scripts/genksyms/keywords.c
-index e93336baaaed..c586d32dd2c3 100644
---- a/scripts/genksyms/keywords.c
-+++ b/scripts/genksyms/keywords.c
-@@ -25,6 +25,10 @@ static struct resword {
- 	{ "__volatile__", VOLATILE_KEYW },
- 	{ "__builtin_va_list", VA_LIST_KEYW },
+diff --git a/tools/iio/iio_utils.c b/tools/iio/iio_utils.c
+index a22b6e8fad46..7399eb7f1378 100644
+--- a/tools/iio/iio_utils.c
++++ b/tools/iio/iio_utils.c
+@@ -156,9 +156,9 @@ int iioutils_get_type(unsigned *is_signed, unsigned *bytes, unsigned *bits_used,
+ 			*be = (endianchar == 'b');
+ 			*bytes = padint / 8;
+ 			if (*bits_used == 64)
+-				*mask = ~0;
++				*mask = ~(0ULL);
+ 			else
+-				*mask = (1ULL << *bits_used) - 1;
++				*mask = (1ULL << *bits_used) - 1ULL;
  
-+	{ "__int128", BUILTIN_INT_KEYW },
-+	{ "__int128_t", BUILTIN_INT_KEYW },
-+	{ "__uint128_t", BUILTIN_INT_KEYW },
-+
- 	// According to rth, c99 defines "_Bool", __restrict", __restrict__", "restrict".  KAO
- 	{ "_Bool", BOOL_KEYW },
- 	{ "_restrict", RESTRICT_KEYW },
-diff --git a/scripts/genksyms/parse.y b/scripts/genksyms/parse.y
-index 00a6d7e54971..1ebcf52cd0f9 100644
---- a/scripts/genksyms/parse.y
-+++ b/scripts/genksyms/parse.y
-@@ -76,6 +76,7 @@ static void record_compound(struct string_list **keyw,
- %token ATTRIBUTE_KEYW
- %token AUTO_KEYW
- %token BOOL_KEYW
-+%token BUILTIN_INT_KEYW
- %token CHAR_KEYW
- %token CONST_KEYW
- %token DOUBLE_KEYW
-@@ -263,6 +264,7 @@ simple_type_specifier:
- 	| VOID_KEYW
- 	| BOOL_KEYW
- 	| VA_LIST_KEYW
-+	| BUILTIN_INT_KEYW
- 	| TYPE			{ (*$1)->tag = SYM_TYPEDEF; $$ = $1; }
- 	;
- 
+ 			*is_signed = (signchar == 's');
+ 			if (fclose(sysfsfp)) {
 -- 
 2.20.1
 
