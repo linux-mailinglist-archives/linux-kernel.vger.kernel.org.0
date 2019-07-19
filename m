@@ -2,55 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CA816DBF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:12:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A13826DBF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:12:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388898AbfGSEMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:12:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47866 "EHLO mail.kernel.org"
+        id S2388189AbfGSEMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:12:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728380AbfGSEMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:12:33 -0400
+        id S2388933AbfGSEMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:12:44 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 287072189D;
-        Fri, 19 Jul 2019 04:12:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA94F218E0;
+        Fri, 19 Jul 2019 04:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509552;
-        bh=oXOiVDPKokV0YoJp0VcieNm7AmxS3aIBuNZIJn63Vbk=;
+        s=default; t=1563509563;
+        bh=4oix9x7A/tqf3jdGjWpv3BVILSw+e5mGGDNcbkJd5vQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=az9HOBf+995fDjoDFoxFBCKa1UNqO9MMn97vFtBgLh2m3CrqkFyJqRWg4mvxo+aGm
-         KfvVfHByibr0cjayXLOzvw5hAX9keA1STcu6FSCgf/Anbv2go/ayHg/xSLy4ko1qsz
-         iym4KeIiXkBPE6KvPp/wvaO2C7CgsvwW2Vk+FfLk=
+        b=a7NZJncvgUQ4enC81DZJy7mVsYCnFkt25Zcu4yZJZVECWKBXFijiie/UtKm+VU+0M
+         xUnFJxIoL2XlZsRVWl1N3vWD6JKPWfd+4y/S/IuBBJ+328hgmxq6oj6i2a0eDtfkTK
+         XLQmoN4gfkNiH5B9mB/qEIf4UESibKUdCgYqLbn0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Leo Yan <leo.yan@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Changbin Du <changbin.du@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Song Liu <songliubraving@fb.com>,
-        Suzuki Poulouse <suzuki.poulose@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 44/60] perf session: Fix potential NULL pointer dereference found by the smatch tool
-Date:   Fri, 19 Jul 2019 00:10:53 -0400
-Message-Id: <20190719041109.18262-44-sashal@kernel.org>
+Cc:     Ocean Chen <oceanchen@google.com>, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.14 49/60] f2fs: avoid out-of-range memory access
+Date:   Fri, 19 Jul 2019 00:10:58 -0400
+Message-Id: <20190719041109.18262-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719041109.18262-1-sashal@kernel.org>
 References: <20190719041109.18262-1-sashal@kernel.org>
@@ -63,79 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leo Yan <leo.yan@linaro.org>
+From: Ocean Chen <oceanchen@google.com>
 
-[ Upstream commit f3c8d90757724982e5f07cd77d315eb64ca145ac ]
+[ Upstream commit 56f3ce675103e3fb9e631cfb4131fc768bc23e9a ]
 
-Based on the following report from Smatch, fix the potential
-NULL pointer dereference check.
+blkoff_off might over 512 due to fs corrupt or security
+vulnerability. That should be checked before being using.
 
-  tools/perf/util/session.c:1252
-  dump_read() error: we previously assumed 'evsel' could be null
-  (see line 1249)
+Use ENTRIES_IN_SUM to protect invalid value in cur_data_blkoff.
 
-  tools/perf/util/session.c
-  1240 static void dump_read(struct perf_evsel *evsel, union perf_event *event)
-  1241 {
-  1242         struct read_event *read_event = &event->read;
-  1243         u64 read_format;
-  1244
-  1245         if (!dump_trace)
-  1246                 return;
-  1247
-  1248         printf(": %d %d %s %" PRIu64 "\n", event->read.pid, event->read.tid,
-  1249                evsel ? perf_evsel__name(evsel) : "FAIL",
-  1250                event->read.value);
-  1251
-  1252         read_format = evsel->attr.read_format;
-                             ^^^^^^^
-
-'evsel' could be NULL pointer, for this case this patch directly bails
-out without dumping read_event.
-
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Alexios Zavras <alexios.zavras@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Changbin Du <changbin.du@intel.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190702103420.27540-9-leo.yan@linaro.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Ocean Chen <oceanchen@google.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/session.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/f2fs/segment.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index da55081aefc6..c49e8ea1a42c 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1145,6 +1145,9 @@ static void dump_read(struct perf_evsel *evsel, union perf_event *event)
- 	       evsel ? perf_evsel__name(evsel) : "FAIL",
- 	       event->read.value);
- 
-+	if (!evsel)
-+		return;
-+
- 	read_format = evsel->attr.read_format;
- 
- 	if (read_format & PERF_FORMAT_TOTAL_TIME_ENABLED)
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 70bd15cadb44..18d51c36a5e3 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2612,6 +2612,11 @@ static int read_compacted_summaries(struct f2fs_sb_info *sbi)
+ 		seg_i = CURSEG_I(sbi, i);
+ 		segno = le32_to_cpu(ckpt->cur_data_segno[i]);
+ 		blk_off = le16_to_cpu(ckpt->cur_data_blkoff[i]);
++		if (blk_off > ENTRIES_IN_SUM) {
++			f2fs_bug_on(sbi, 1);
++			f2fs_put_page(page, 1);
++			return -EFAULT;
++		}
+ 		seg_i->next_segno = segno;
+ 		reset_curseg(sbi, i, 0);
+ 		seg_i->alloc_type = ckpt->alloc_type[i];
 -- 
 2.20.1
 
