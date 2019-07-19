@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79A736D9F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 05:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 584916D9FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 05:59:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbfGSD6n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 23:58:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58036 "EHLO mail.kernel.org"
+        id S1728277AbfGSD6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 23:58:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728206AbfGSD6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 23:58:39 -0400
+        id S1728216AbfGSD6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 23:58:43 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E03D21851;
-        Fri, 19 Jul 2019 03:58:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75E282186A;
+        Fri, 19 Jul 2019 03:58:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508718;
-        bh=R3UxDjgTbacNgKcJvMdnsgwwpj7qgbnHxLcI0sBnYsw=;
+        s=default; t=1563508722;
+        bh=mGJjLnQQ/4+ObCoHaIBDqw4yszwDJRupU01Ku3dNIhU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CrOBPF4hHcblIC7sFQ8nOU6D6vcoSc/uKhMk6R8CO5/fG/zSkPpoNgJaOFXb8IUP3
-         hg4ysYyoyMXyDm15GpiKvTkfzrJ75x7Ew/Z7P4KjkJPJ7PVFeAM2BuMdhqBCE1+a89
-         mfKvcBMTvkErVR7qL+CUV2F8uNrTBslrMscO/Xvk=
+        b=mzxn2vBf2w0AUmLD4P8tZeIzZomSIkRr4afGK97axqzwzoDGWLv+K59Q/z63D84jG
+         Y3c2X+0Qf6SM+haWy9A7zb4Co1AemQ3lL14lqLRGRvyLpdrdd0CPEbBFIJZh0q+c6y
+         v2ka0A5bQEy71lNe0BRdado6u6dNZ9y6uXdD6WV4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alan Mikhak <alan.mikhak@sifive.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.2 051/171] PCI: endpoint: Allocate enough space for fixed size BAR
-Date:   Thu, 18 Jul 2019 23:54:42 -0400
-Message-Id: <20190719035643.14300-51-sashal@kernel.org>
+Cc:     Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.2 052/171] drm/amd/display: Always allocate initial connector state state
+Date:   Thu, 18 Jul 2019 23:54:43 -0400
+Message-Id: <20190719035643.14300-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -45,47 +45,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Mikhak <alan.mikhak@sifive.com>
+From: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
 
-[ Upstream commit f16fb16ed16c7f561e9c41c9ae4107c7f6aa553c ]
+[ Upstream commit f04bee34d6e35df26cbb2d65e801adfd0d8fe20d ]
 
-PCI endpoint test function code should honor the .bar_fixed_size parameter
-from underlying endpoint controller drivers or results may be unexpected.
+[Why]
+Unlike our regular connectors, MST connectors don't start off with
+an initial connector state. This causes a NULL pointer dereference to
+occur when attaching the bpc property since it tries to modify the
+connector state.
 
-In pci_epf_test_alloc_space(), check if BAR being used for test
-register space is a fixed size BAR. If so, allocate the required fixed
-size.
+We need an initial connector state on the connector to avoid the crash.
 
-Signed-off-by: Alan Mikhak <alan.mikhak@sifive.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+[How]
+Use our reset helper to allocate an initial state and reset the values
+to their defaults. We were already doing this before, just not for
+MST connectors.
+
+Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Reviewed-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/endpoint/functions/pci-epf-test.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index 27806987e93b..7d41e6684b87 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -434,10 +434,16 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
- 	int bar;
- 	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
- 	const struct pci_epc_features *epc_features;
-+	size_t test_reg_size;
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 0e482349a5cb..dc3ac66a4450 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -4627,6 +4627,13 @@ void amdgpu_dm_connector_init_helper(struct amdgpu_display_manager *dm,
+ {
+ 	struct amdgpu_device *adev = dm->ddev->dev_private;
  
- 	epc_features = epf_test->epc_features;
- 
--	base = pci_epf_alloc_space(epf, sizeof(struct pci_epf_test_reg),
-+	if (epc_features->bar_fixed_size[test_reg_bar])
-+		test_reg_size = bar_size[test_reg_bar];
-+	else
-+		test_reg_size = sizeof(struct pci_epf_test_reg);
++	/*
++	 * Some of the properties below require access to state, like bpc.
++	 * Allocate some default initial connector state with our reset helper.
++	 */
++	if (aconnector->base.funcs->reset)
++		aconnector->base.funcs->reset(&aconnector->base);
 +
-+	base = pci_epf_alloc_space(epf, test_reg_size,
- 				   test_reg_bar, epc_features->align);
- 	if (!base) {
- 		dev_err(dev, "Failed to allocated register space\n");
+ 	aconnector->connector_id = link_index;
+ 	aconnector->dc_link = link;
+ 	aconnector->base.interlace_allowed = false;
+@@ -4809,9 +4816,6 @@ static int amdgpu_dm_connector_init(struct amdgpu_display_manager *dm,
+ 			&aconnector->base,
+ 			&amdgpu_dm_connector_helper_funcs);
+ 
+-	if (aconnector->base.funcs->reset)
+-		aconnector->base.funcs->reset(&aconnector->base);
+-
+ 	amdgpu_dm_connector_init_helper(
+ 		dm,
+ 		aconnector,
 -- 
 2.20.1
 
