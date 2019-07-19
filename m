@@ -2,133 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3D206E488
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:51:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C9B06E490
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:54:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbfGSKvL convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 19 Jul 2019 06:51:11 -0400
-Received: from mail.savoirfairelinux.com ([208.88.110.44]:42378 "EHLO
-        mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbfGSKvK (ORCPT
+        id S1727663AbfGSKwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 06:52:43 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33920 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbfGSKwn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 06:51:10 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.savoirfairelinux.com (Postfix) with ESMTP id AB1B89C01AF;
-        Fri, 19 Jul 2019 06:51:09 -0400 (EDT)
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
-        by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id UITvdYQh0lmp; Fri, 19 Jul 2019 06:51:08 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.savoirfairelinux.com (Postfix) with ESMTP id CD8AD9C0279;
-        Fri, 19 Jul 2019 06:51:08 -0400 (EDT)
-X-Virus-Scanned: amavisd-new at mail.savoirfairelinux.com
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
-        by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id DuBALd-RrgDk; Fri, 19 Jul 2019 06:51:08 -0400 (EDT)
-Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [192.168.48.237])
-        by mail.savoirfairelinux.com (Postfix) with ESMTP id 9CA4D9C01AF;
-        Fri, 19 Jul 2019 06:51:08 -0400 (EDT)
-Date:   Fri, 19 Jul 2019 06:51:08 -0400 (EDT)
-From:   Gilles Doffe <gilles.doffe@savoirfairelinux.com>
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, mark rutland <mark.rutland@arm.com>,
-        festevam@gmail.com, s hauer <s.hauer@pengutronix.de>,
-        robh+dt@kernel.org, linux-imx@nxp.com, kernel@pengutronix.de,
-        shawnguo@kernel.org
-Message-ID: <405527661.6507550.1563533468485.JavaMail.zimbra@savoirfairelinux.com>
-In-Reply-To: <20190712135541.55fgchvyp33cl3uv@pengutronix.de>
-References: <20190712124522.571-1-gilles.doffe@savoirfairelinux.com> <20190712135541.55fgchvyp33cl3uv@pengutronix.de>
-Subject: Re: [PATCH] arm: dts: imx6qdl: add gpio expander pca9535
+        Fri, 19 Jul 2019 06:52:43 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id AEBEB802EE; Fri, 19 Jul 2019 12:52:28 +0200 (CEST)
+Date:   Fri, 19 Jul 2019 12:52:39 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     john.hubbard@gmail.com, SCheung@nvidia.com,
+        akpm@linux-foundation.org, aneesh.kumar@linux.vnet.ibm.com,
+        benh@kernel.crashing.org, bsingharora@gmail.com,
+        dan.j.williams@intel.com, dnellans@nvidia.com,
+        ebaskakov@nvidia.com, hannes@cmpxchg.org, jglisse@redhat.com,
+        jhubbard@nvidia.com, kirill.shutemov@linux.intel.com,
+        linux-kernel@vger.kernel.org, liubo95@huawei.com,
+        mhairgrove@nvidia.com, mhocko@kernel.org,
+        paulmck@linux.vnet.ibm.com, ross.zwisler@linux.intel.com,
+        sgutti@nvidia.com, torvalds@linux-foundation.org,
+        vdavydov.dev@gmail.com, Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH] mm/Kconfig: additional help text for HMM_MIRROR option
+Message-ID: <20190719105239.GA10627@amd>
+References: <20190717074124.GA21617@amd>
+ <20190719013253.17642-1-jhubbard@nvidia.com>
+ <20190719055748.GA29082@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Zimbra 8.8.11_GA_3737 (ZimbraWebClient - GC75 (Linux)/8.8.11_GA_3737)
-Thread-Topic: imx6qdl: add gpio expander pca9535
-Thread-Index: vpg0c/hPAh+Ul1ZzEvqvEtVCDcLJKQ==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="liOOAslEiF7prFVr"
+Content-Disposition: inline
+In-Reply-To: <20190719055748.GA29082@infradead.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Marco,
 
-Thanks for your review.
+--liOOAslEiF7prFVr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Corrected in v2.
+On Thu 2019-07-18 22:57:48, Christoph Hellwig wrote:
+> On Thu, Jul 18, 2019 at 06:32:53PM -0700, john.hubbard@gmail.com wrote:
+> > +	  HMM_MIRROR provides a way to mirror ranges of the CPU page tables
+> > +	  of a process into a device page table. Here, mirror means "keep
+> > +	  synchronized". Prerequisites: the device must provide the ability
+> > +	  to write-protect its page tables (at PAGE_SIZE granularity), and
+> > +	  must be able to recover from the resulting potential page faults.
+> > +
+> > +	  Select HMM_MIRROR if you have hardware that meets the above
+> > +	  description. An early, partial list of such hardware is:
+> > +	  an NVIDIA GPU >=3D Pascal, Mellanox IB >=3D mlx5, or an AMD GPU.
+>=20
+> Nevermind that the Nvidia support is stagaging and looks rather broken,
+> there is no Mellanox user of this either at this point.
+>=20
+> But either way this has no business in a common kconfig help.  Just
+> drop the fine grained details and leave it to the overview.
 
-Regards,
-Gilles
+I disagree here. This explains what kind of hardware this is for (very
+new). Partial list does not hurt, and I know that I probably don't
+need to enable this.
 
------ Le 12 Juil 19, à 15:55, Marco Felsch m.felsch@pengutronix.de a écrit :
+How else am I supposed to know if my computer needs page tables
+synchronized?
 
-Hi,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-On 19-07-12 14:45, Gilles DOFFE wrote:
-> The pca9535 gpio expander is present on the Rex baseboard, but missing
-> from the dtsi.
-> 
-> Add the new gpio controller and the associated interrupt line
-> MX6QDL_PAD_NANDF_CS3__GPIO6_IO16.
-> 
-> Signed-off-by: Gilles DOFFE <gilles.doffe@savoirfairelinux.com>
-> ---
->  arch/arm/boot/dts/imx6qdl-rex.dtsi | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/imx6qdl-rex.dtsi b/arch/arm/boot/dts/imx6qdl-rex.dtsi
-> index 97f1659144ea..d5324c6761c1 100644
-> --- a/arch/arm/boot/dts/imx6qdl-rex.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl-rex.dtsi
-> @@ -136,6 +136,19 @@
->  		compatible = "atmel,24c02";
->  		reg = <0x57>;
->  	};
-> +
-> +	gpio8: pca9535@27 {
+--liOOAslEiF7prFVr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Just a nitpick, I would change that to
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-	pca9535: gpio8@27 {
+iEYEARECAAYFAl0xoPcACgkQMOfwapXb+vIiygCgpZIgxcueA5lGweI7pvQKR6l2
+oNQAn2gePbpEnABaDspF4wN2+WKGu1GH
+=y1s7
+-----END PGP SIGNATURE-----
 
-Regards,
-  Marco
-
-> +		compatible = "nxp,pca9535";
-> +		reg = <0x27>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_pca9535>;
-> +		interrupt-parent = <&gpio6>;
-> +		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
->  };
->  
->  &i2c3 {
-> @@ -237,6 +250,12 @@
->  			>;
->  		};
->  
-> +		pinctrl_pca9535: pca9535 {
-> +			fsl,pins = <
-> +				MX6QDL_PAD_NANDF_CS3__GPIO6_IO16	0x00017059
-> +		   >;
-> +		};
-> +
->  		pinctrl_uart1: uart1grp {
->  			fsl,pins = <
->  				MX6QDL_PAD_CSI0_DAT10__UART1_TX_DATA	0x1b0b1
-> -- 
-> 2.19.1
-> 
-> 
-> 
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+--liOOAslEiF7prFVr--
