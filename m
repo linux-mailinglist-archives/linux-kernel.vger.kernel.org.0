@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2242D6DA0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 05:59:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A2026DA19
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:00:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728516AbfGSD7I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 23:59:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58446 "EHLO mail.kernel.org"
+        id S1728585AbfGSD7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 23:59:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728412AbfGSD7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 23:59:02 -0400
+        id S1728509AbfGSD7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 23:59:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 408BC21855;
-        Fri, 19 Jul 2019 03:59:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3379121852;
+        Fri, 19 Jul 2019 03:59:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508741;
-        bh=OL3m8w6JGxXEraNlHHkKWsgAzjb1zehLVVJ4wLcvjK4=;
+        s=default; t=1563508747;
+        bh=cMkGSY6nHF8MaSprRbBJnM+U9bxKfqQFy7K21qB/h2s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Noyvf9QcqpGUU9jPpQwgH1JpxRYb1KMQODZ14fH8cG9DbErhZm7nHSfrmlJi04l7q
-         QIOTqmD8mz5Wr0Z9UQBsFwhscumvEAXGZ5LQxpK7YHFgecUNSHcTSkKSn8SY+qti2S
-         t7KbtqZXPztLUDMl547ApaQ98+xVs9+mhBPCNATY=
+        b=gvRWJGJRaHxZOVv1Yxsb3KyiL7wG5b4WuCvypfanRv+MIJu5my2FKOJjem8FYIg1h
+         R06XMZXI5jqjbV3i6vI4q175dZNOYnX1tlfvx34ctqlaAT870ha5xVxgTxcf3srM8Z
+         mHVuKwPs8xdG640hZs3eWsiRmKTAJVIUsbO/YKJA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Yakir Yang <ykk@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.2 062/171] drm/rockchip: Properly adjust to a true clock in adjusted_mode
-Date:   Thu, 18 Jul 2019 23:54:53 -0400
-Message-Id: <20190719035643.14300-62-sashal@kernel.org>
+Cc:     Serge Semin <fancer.lancer@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 068/171] tty: serial_core: Set port active bit in uart_port_activate
+Date:   Thu, 18 Jul 2019 23:54:59 -0400
+Message-Id: <20190719035643.14300-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -46,46 +43,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Serge Semin <fancer.lancer@gmail.com>
 
-[ Upstream commit 99b9683f2142b20bad78e61f7f829e8714e45685 ]
+[ Upstream commit 13b18d35909707571af9539f7731389fbf0feb31 ]
 
-When fixing up the clock in vop_crtc_mode_fixup() we're not doing it
-quite correctly.  Specifically if we've got the true clock 266666667 Hz,
-we'll perform this calculation:
-   266666667 / 1000 => 266666
+A bug was introduced by commit b3b576461864 ("tty: serial_core: convert
+uart_open to use tty_port_open"). It caused a constant warning printed
+into the system log regarding the tty and port counter mismatch:
 
-Later when we try to set the clock we'll do clk_set_rate(266666 *
-1000).  The common clock framework won't actually pick the proper clock
-in this case since it always wants clocks <= the specified one.
+[   21.644197] ttyS ttySx: tty_port_close_start: tty->count = 1 port count = 2
 
-Let's solve this by using DIV_ROUND_UP.
+in case if session hangup was detected so the warning is printed starting
+from the second open-close iteration.
 
-Fixes: b59b8de31497 ("drm/rockchip: return a true clock rate to adjusted_mode")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Reviewed-by: Yakir Yang <ykk@rock-chips.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190614224730.98622-1-dianders@chromium.org
+Particularly the problem was discovered in situation when there is a
+serial tty device without hardware back-end being setup. It is considered
+by the tty-serial subsystems as a hardware problem with session hang up.
+In this case uart_startup() will return a positive value with TTY_IO_ERROR
+flag set in corresponding tty_struct instance. The same value will get
+passed to be returned from the activate() callback and then being returned
+from tty_port_open(). But since in this case tty_port_block_til_ready()
+isn't called the TTY_PORT_ACTIVE flag isn't set (while the method had been
+called before tty_port_open conversion was introduced and the rest of the
+subsystem code expected the bit being set in this case), which prevents the
+uart_hangup() method to perform any cleanups including the tty port
+counter setting to zero. So the next attempt to open/close the tty device
+will discover the counters mismatch.
+
+In order to fix the problem we need to manually set the TTY_PORT_ACTIVE
+flag in case if uart_startup() returned a positive value. In this case
+the hang up procedure will perform a full set of cleanup actions including
+the port ref-counter resetting.
+
+Fixes: b3b576461864 "tty: serial_core: convert uart_open to use tty_port_open"
+Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/tty/serial/serial_core.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 12ed5265a90b..09046135e720 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -1011,7 +1011,8 @@ static bool vop_crtc_mode_fixup(struct drm_crtc *crtc,
- 	struct vop *vop = to_vop(crtc);
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 83f4dd0bfd74..4223cb496764 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -1777,6 +1777,7 @@ static int uart_port_activate(struct tty_port *port, struct tty_struct *tty)
+ {
+ 	struct uart_state *state = container_of(port, struct uart_state, port);
+ 	struct uart_port *uport;
++	int ret;
  
- 	adjusted_mode->clock =
--		clk_round_rate(vop->dclk, mode->clock * 1000) / 1000;
-+		DIV_ROUND_UP(clk_round_rate(vop->dclk, mode->clock * 1000),
-+			     1000);
- 
- 	return true;
+ 	uport = uart_port_check(state);
+ 	if (!uport || uport->flags & UPF_DEAD)
+@@ -1787,7 +1788,11 @@ static int uart_port_activate(struct tty_port *port, struct tty_struct *tty)
+ 	/*
+ 	 * Start up the serial port.
+ 	 */
+-	return uart_startup(tty, state, 0);
++	ret = uart_startup(tty, state, 0);
++	if (ret > 0)
++		tty_port_set_active(port, 1);
++
++	return ret;
  }
+ 
+ static const char *uart_type(struct uart_port *port)
 -- 
 2.20.1
 
