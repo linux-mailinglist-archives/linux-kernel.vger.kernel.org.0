@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18A3C6EC40
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 23:50:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99D106EC4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 23:51:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388845AbfGSVuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 17:50:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50996 "EHLO mail.kernel.org"
+        id S2389215AbfGSVvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 17:51:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388708AbfGSVt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388719AbfGSVt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 19 Jul 2019 17:49:58 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABBB121883;
+        by mail.kernel.org (Postfix) with ESMTPSA id CBA8521897;
         Fri, 19 Jul 2019 21:49:57 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1hoalI-00080l-Nd; Fri, 19 Jul 2019 17:49:56 -0400
-Message-Id: <20190719214956.623149328@goodmis.org>
+        id 1hoalI-00081F-Tg; Fri, 19 Jul 2019 17:49:56 -0400
+Message-Id: <20190719214956.816542002@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 19 Jul 2019 17:49:35 -0400
+Date:   Fri, 19 Jul 2019 17:49:36 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -32,7 +32,7 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <wagi@monom.org>, tom.zanussi@linux.intel.com
-Subject: [PATCH RT 04/16] arm: imx6: cpuidle: Use raw_spinlock_t
+Subject: [PATCH RT 05/16] rcu: Dont allow to change rcu_normal_after_boot on RT
 References: <20190719214931.700049248@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -48,49 +48,32 @@ If anyone has any objections, please let me know.
 
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit 40d0332ec8312e9c090f0a5414d9c90e12b13611 ]
+[ Upstream commit c6c058c10577815a2491ce661876cff00a4c3b15 ]
 
-The idle call back is invoked with disabled interrupts and requires
-raw_spinlock_t locks to work.
+On RT rcu_normal_after_boot is enabled by default.
+Don't allow to disable it on RT because the "expedited rcu" would
+introduce latency spikes.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- arch/arm/mach-imx/cpuidle-imx6q.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ kernel/rcu/update.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mach-imx/cpuidle-imx6q.c b/arch/arm/mach-imx/cpuidle-imx6q.c
-index 326e870d7123..d9ac80aa1eb0 100644
---- a/arch/arm/mach-imx/cpuidle-imx6q.c
-+++ b/arch/arm/mach-imx/cpuidle-imx6q.c
-@@ -17,22 +17,22 @@
- #include "hardware.h"
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index 16d8dba23329..ed75addd3ccd 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -69,7 +69,9 @@ module_param(rcu_expedited, int, 0);
+ extern int rcu_normal; /* from sysctl */
+ module_param(rcu_normal, int, 0);
+ static int rcu_normal_after_boot = IS_ENABLED(CONFIG_PREEMPT_RT_FULL);
++#ifndef CONFIG_PREEMPT_RT_FULL
+ module_param(rcu_normal_after_boot, int, 0);
++#endif
+ #endif /* #ifndef CONFIG_TINY_RCU */
  
- static int num_idle_cpus = 0;
--static DEFINE_SPINLOCK(cpuidle_lock);
-+static DEFINE_RAW_SPINLOCK(cpuidle_lock);
- 
- static int imx6q_enter_wait(struct cpuidle_device *dev,
- 			    struct cpuidle_driver *drv, int index)
- {
--	spin_lock(&cpuidle_lock);
-+	raw_spin_lock(&cpuidle_lock);
- 	if (++num_idle_cpus == num_online_cpus())
- 		imx6_set_lpm(WAIT_UNCLOCKED);
--	spin_unlock(&cpuidle_lock);
-+	raw_spin_unlock(&cpuidle_lock);
- 
- 	cpu_do_idle();
- 
--	spin_lock(&cpuidle_lock);
-+	raw_spin_lock(&cpuidle_lock);
- 	if (num_idle_cpus-- == num_online_cpus())
- 		imx6_set_lpm(WAIT_CLOCKED);
--	spin_unlock(&cpuidle_lock);
-+	raw_spin_unlock(&cpuidle_lock);
- 
- 	return index;
- }
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
 -- 
 2.20.1
 
