@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6022E6DBBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:11:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6D776DBC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:11:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388299AbfGSELI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:11:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45882 "EHLO mail.kernel.org"
+        id S2388394AbfGSELT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:11:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387395AbfGSELE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:11:04 -0400
+        id S2388365AbfGSELQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:11:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 335DC218BB;
-        Fri, 19 Jul 2019 04:11:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE2E821873;
+        Fri, 19 Jul 2019 04:11:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509463;
-        bh=mQm+CNfILf4HgLBV5paf+2He7aQloxrTWT/t92e57Nc=;
+        s=default; t=1563509474;
+        bh=8wTo43N4oBCQdJhdwhoOIgKxVWeenbjo97e7VgmifY4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yTS+2yN3slFWTH+jD/WOCIFB11buTmcyX8u7COSx8rbhDyQvL6IC6wxnQ2Z+H5wRn
-         CyAYEUzykkQV9nPeIK2hq4W+vZUPAb5davXMeva5fNOnb7RAtR6A4Jg0nUWxclIxKf
-         uV6toTrySUKy6mnJK6dF9kyPFXF3DQSqCIsx5Ip0=
+        b=rbuY4NHwFRgTN7r9YAv4kCImbkRFGtTrX9d8A/twY3QYu/ZqdehqHwI1JEQM9d9xv
+         SjBXnszbXvSjsJlDahzDEVqIUH8FmcryftEMG4oj2atRl9vi2tBuKBKm3+1fjRwW7H
+         MpalBh6WTduaHrYrPe5YG3RlhzDvgY7c3SN1Zqcs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yuyang Du <duyuyang@gmail.com>, Qian Cai <cai@lca.pw>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>, arnd@arndb.de,
-        frederic@kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 100/101] locking/lockdep: Fix lock used or unused stats error
-Date:   Fri, 19 Jul 2019 00:07:31 -0400
-Message-Id: <20190719040732.17285-100-sashal@kernel.org>
+Cc:     Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Thinh Nguyen <thinhn@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 02/60] usb: core: hub: Disable hub-initiated U1/U2
+Date:   Fri, 19 Jul 2019 00:10:11 -0400
+Message-Id: <20190719041109.18262-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
-References: <20190719040732.17285-1-sashal@kernel.org>
+In-Reply-To: <20190719041109.18262-1-sashal@kernel.org>
+References: <20190719041109.18262-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -49,77 +44,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yuyang Du <duyuyang@gmail.com>
+From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
 
-[ Upstream commit 68d41d8c94a31dfb8233ab90b9baf41a2ed2da68 ]
+[ Upstream commit 561759292774707b71ee61aecc07724905bb7ef1 ]
 
-The stats variable nr_unused_locks is incremented every time a new lock
-class is register and decremented when the lock is first used in
-__lock_acquire(). And after all, it is shown and checked in lockdep_stats.
+If the device rejects the control transfer to enable device-initiated
+U1/U2 entry, then the device will not initiate U1/U2 transition. To
+improve the performance, the downstream port should not initate
+transition to U1/U2 to avoid the delay from the device link command
+response (no packet can be transmitted while waiting for a response from
+the device). If the device has some quirks and does not implement U1/U2,
+it may reject all the link state change requests, and the downstream
+port may resend and flood the bus with more requests. This will affect
+the device performance even further. This patch disables the
+hub-initated U1/U2 if the device-initiated U1/U2 entry fails.
 
-However, under configurations that either CONFIG_TRACE_IRQFLAGS or
-CONFIG_PROVE_LOCKING is not defined:
+Reference: USB 3.2 spec 7.2.4.2.3
 
-The commit:
-
-  091806515124b20 ("locking/lockdep: Consolidate lock usage bit initialization")
-
-missed marking the LOCK_USED flag at IRQ usage initialization because
-as mark_usage() is not called. And the commit:
-
-  886532aee3cd42d ("locking/lockdep: Move mark_lock() inside CONFIG_TRACE_IRQFLAGS && CONFIG_PROVE_LOCKING")
-
-further made mark_lock() not defined such that the LOCK_USED cannot be
-marked at all when the lock is first acquired.
-
-As a result, we fix this by not showing and checking the stats under such
-configurations for lockdep_stats.
-
-Reported-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Yuyang Du <duyuyang@gmail.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: arnd@arndb.de
-Cc: frederic@kernel.org
-Link: https://lkml.kernel.org/r/20190709101522.9117-1-duyuyang@gmail.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/locking/lockdep_proc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/usb/core/hub.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
-diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-index 3dd980dfba2d..6cf288eef670 100644
---- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -210,6 +210,7 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
- 		      nr_hardirq_read_safe = 0, nr_hardirq_read_unsafe = 0,
- 		      sum_forward_deps = 0;
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index eddecaf1f0b2..f83a5fb17c3f 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -3873,6 +3873,9 @@ static int usb_set_lpm_timeout(struct usb_device *udev,
+  * control transfers to set the hub timeout or enable device-initiated U1/U2
+  * will be successful.
+  *
++ * If the control transfer to enable device-initiated U1/U2 entry fails, then
++ * hub-initiated U1/U2 will be disabled.
++ *
+  * If we cannot set the parent hub U1/U2 timeout, we attempt to let the xHCI
+  * driver know about it.  If that call fails, it should be harmless, and just
+  * take up more slightly more bus bandwidth for unnecessary U1/U2 exit latency.
+@@ -3927,23 +3930,24 @@ static void usb_enable_link_state(struct usb_hcd *hcd, struct usb_device *udev,
+ 		 * host know that this link state won't be enabled.
+ 		 */
+ 		hcd->driver->disable_usb3_lpm_timeout(hcd, udev, state);
+-	} else {
+-		/* Only a configured device will accept the Set Feature
+-		 * U1/U2_ENABLE
+-		 */
+-		if (udev->actconfig)
+-			usb_set_device_initiated_lpm(udev, state, true);
++		return;
++	}
  
-+#ifdef CONFIG_PROVE_LOCKING
- 	list_for_each_entry(class, &all_lock_classes, lock_entry) {
- 
- 		if (class->usage_mask == 0)
-@@ -241,12 +242,12 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
- 		if (class->usage_mask & LOCKF_ENABLED_HARDIRQ_READ)
- 			nr_hardirq_read_unsafe++;
- 
--#ifdef CONFIG_PROVE_LOCKING
- 		sum_forward_deps += lockdep_count_forward_deps(class);
--#endif
+-		/* As soon as usb_set_lpm_timeout(timeout) returns 0, the
+-		 * hub-initiated LPM is enabled. Thus, LPM is enabled no
+-		 * matter the result of usb_set_device_initiated_lpm().
+-		 * The only difference is whether device is able to initiate
+-		 * LPM.
+-		 */
++	/* Only a configured device will accept the Set Feature
++	 * U1/U2_ENABLE
++	 */
++	if (udev->actconfig &&
++	    usb_set_device_initiated_lpm(udev, state, true) == 0) {
+ 		if (state == USB3_LPM_U1)
+ 			udev->usb3_lpm_u1_enabled = 1;
+ 		else if (state == USB3_LPM_U2)
+ 			udev->usb3_lpm_u2_enabled = 1;
++	} else {
++		/* Don't request U1/U2 entry if the device
++		 * cannot transition to U1/U2.
++		 */
++		usb_set_lpm_timeout(udev, state, 0);
++		hcd->driver->disable_usb3_lpm_timeout(hcd, udev, state);
  	}
- #ifdef CONFIG_DEBUG_LOCKDEP
- 	DEBUG_LOCKS_WARN_ON(debug_atomic_read(nr_unused_locks) != nr_unused);
-+#endif
-+
- #endif
- 	seq_printf(m, " lock-classes:                  %11lu [max: %lu]\n",
- 			nr_lock_classes, MAX_LOCKDEP_KEYS);
+ }
+ 
 -- 
 2.20.1
 
