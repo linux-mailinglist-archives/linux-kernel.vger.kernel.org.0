@@ -2,133 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12D976E228
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 09:59:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65AB76E236
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 10:05:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbfGSH7I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 03:59:08 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36055 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbfGSH7B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 03:59:01 -0400
-Received: by mail-wm1-f65.google.com with SMTP id g67so23952244wme.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 00:59:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2g1oW2O4/Y2MDAYw/ieUv2Y7XyEA8DlEcwQeTSjYL8E=;
-        b=fMYClMx0ivNpXEExhxPGrj+mU9NTw55/wz4x01IIeZ1Yew+7VsC7ogFZDY4R9OiEG0
-         mHx7pCQyF/th8dUEWNDD7JyDpxaC+lj+kb9TANFkmB1TfDapD2tzC8EXmn91AnNs/btF
-         v9+OtNKXMf53urQX/WDJdrY/QjAXwyS9th+Qx3NqzDhEz0KD4GwkGbwJ0wVLfcWXbldo
-         ak6GMzzwnMqmYKdzdoz0SStbFhBpGxi5g7qYTnBU3fsAQqGiJLQVqj58gsHx6BsPqJb/
-         EKFOu22KWJIY46fVy3RTYylz7BmPV2Uhrccc1pBkQHD+O/q14615fb3fR0m6ttrmyD+V
-         opIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=2g1oW2O4/Y2MDAYw/ieUv2Y7XyEA8DlEcwQeTSjYL8E=;
-        b=UdTcPWmwr9q+Ul/+DegiYuYVMmR68yZMN1Q/78VdACOqbs2+XDX36CWVJOPvmUq1ug
-         qnV2NB0LwllLIlpcegKwkzhMjPl4SEXWEOZkhbWBM9UOcaCpiip5eT8V71lyzeC00Rwl
-         w9Ed2Ol7d1FVR/3n3sRzlIBU81d2VkJ5qEkILhsuvx/qPVE96TVwBHzzvu2LBC2SUgXH
-         EmfG6fKp3SKqY6sUyrEHr1koniUjSS4D+1ZPyCKS67M6ONWYqqUvu0n0/mb0nFUss7fr
-         fMTaXAntz170Sns6HdcuSY1JlbITLTMqqOrpWriLxkX4y8zegizSNPj3Mqc8YIIMYnxt
-         BBDQ==
-X-Gm-Message-State: APjAAAUTCWS8cGwWSnABSxGU/mlK426+n9JgQqPZH173gJaapz/cb8VC
-        4MIFkPlaJsCudaRLaO0Rd+08gZBf0Es=
-X-Google-Smtp-Source: APXvYqxUALvCwQdY7DjQMJA0xipwktJDWNGJldADyYLCfXqX6rUx1RJsLrtjvC6MJcQ+1e9O7P/VOw==
-X-Received: by 2002:a1c:3587:: with SMTP id c129mr48253558wma.90.1563523139161;
-        Fri, 19 Jul 2019 00:58:59 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:e0a:f:6020:484b:32fe:1cf4:f69b])
-        by smtp.gmail.com with ESMTPSA id c1sm58673826wrh.1.2019.07.19.00.58.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 19 Jul 2019 00:58:58 -0700 (PDT)
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org
-Cc:     quentin.perret@arm.com, dietmar.eggemann@arm.com,
-        Morten.Rasmussen@arm.com, pauld@redhat.com,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH 5/5] sched/fair: evenly spread tasks when not overloaded
-Date:   Fri, 19 Jul 2019 09:58:25 +0200
-Message-Id: <1563523105-24673-6-git-send-email-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1563523105-24673-1-git-send-email-vincent.guittot@linaro.org>
-References: <1563523105-24673-1-git-send-email-vincent.guittot@linaro.org>
+        id S1726842AbfGSIEo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 04:04:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726076AbfGSIEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 04:04:44 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92CAD20665;
+        Fri, 19 Jul 2019 08:04:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563523483;
+        bh=R9hD24Tj+KSZAJ28RSPSUwPQVIMBYE4b6HdUPoO5ENo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=m8MOrcHmD7GUTE+3OqkFDbOKMNS9fnRrLxrB7nLIQkjljVojmxNAdqsPbJ5fOThya
+         mPOeyalN6YXDdpXe7XSJL5yRtQx9zsxHlRo+8r62FsFHDCIkp4aqDtw/7yKEWCTs6c
+         YBeOG8iYEDoFccPxedp3h0UP/Fk3hxTZWN2j6Yu8=
+Date:   Fri, 19 Jul 2019 09:04:36 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, arnd@arndb.de, linux@armlinux.org.uk,
+        daniel.lezcano@linaro.org, tglx@linutronix.de, salyzyn@android.com,
+        pcc@google.com, 0x7f454c46@gmail.com, linux@rasmusvillemoes.dk,
+        huw@codeweavers.com, sthotton@marvell.com, andre.przywara@arm.com,
+        luto@kernel.org, john.stultz@linaro.org, naohiro.aota@wdc.com,
+        yamada.masahiro@socionext.com
+Subject: Re: [PATCH] arm64: vdso: Cleanup Makefiles.
+Message-ID: <20190719080435.f3nlecyu3ysnsnpv@willie-the-truck>
+References: <20190712153746.5dwwptgrle3z25m7@willie-the-truck>
+ <20190718114121.33024-1-vincenzo.frascino@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190718114121.33024-1-vincenzo.frascino@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When there is only 1 cpu per group, using the idle cpus to evenly spread
-tasks doesn't make sense and nr_running is a better metrics.
+On Thu, Jul 18, 2019 at 12:41:21PM +0100, Vincenzo Frascino wrote:
+> diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso32/Makefile
+> index 21009ed5a755..6c4e496309c4 100644
+> --- a/arch/arm64/kernel/vdso32/Makefile
+> +++ b/arch/arm64/kernel/vdso32/Makefile
+> @@ -155,17 +155,17 @@ $(asm-obj-vdso): %.o: %.S FORCE
+>  	$(call if_changed_dep,vdsoas)
+>  
+>  # Actual build commands
+> -quiet_cmd_vdsold_and_vdso_check = LD      $@
+> +quiet_cmd_vdsold_and_vdso_check = VDSOLIB $@
+>        cmd_vdsold_and_vdso_check = $(cmd_vdsold); $(cmd_vdso_check)
+>  
+> -quiet_cmd_vdsold = VDSOL   $@
+> +quiet_cmd_vdsold = VDSOLD  $@
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- kernel/sched/fair.c | 42 +++++++++++++++++++++++++++++-------------
- 1 file changed, 29 insertions(+), 13 deletions(-)
+I think we should be more consistent about whether or not we prefix things
+with VDSO, so either go with "VDSOLD, VDSOCC and VDSOAS" or stick to "LD,
+CC and AS" rather than mixing between them.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index c221713..a60ddef 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8353,7 +8353,7 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
- 		env->src_grp_type = migrate_task;
- 		imbalance = max_t(long, 0, (local->idle_cpus - busiest->idle_cpus) >> 1);
- 
--		if (sds->prefer_sibling)
-+		if (sds->prefer_sibling || busiest->group_weight == 1)
- 			/*
- 			 * When prefer sibling, evenly spread running tasks on
- 			 * groups.
-@@ -8531,18 +8531,34 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
- 	    busiest->sum_nr_running > local->sum_nr_running + 1)
- 		goto force_balance;
- 
--	if (busiest->group_type != group_overloaded &&
--	     (env->idle == CPU_NOT_IDLE ||
--	      local->idle_cpus <= (busiest->idle_cpus + 1)))
--		/*
--		 * If the busiest group is not overloaded
--		 * and there is no imbalance between this and busiest group
--		 * wrt idle CPUs, it is balanced. The imbalance
--		 * becomes significant if the diff is greater than 1 otherwise
--		 * we might end up to just move the imbalance on another
--		 * group.
--		 */
--		goto out_balanced;
-+	if (busiest->group_type != group_overloaded) {
-+		if (env->idle == CPU_NOT_IDLE)
-+			/*
-+			 * If the busiest group is not overloaded (and as a
-+			 * result the local one too) but this cpu is already
-+			 * busy, let another idle cpu try to pull task.
-+			 */
-+			goto out_balanced;
-+
-+		if (busiest->group_weight > 1 &&
-+		    local->idle_cpus <= (busiest->idle_cpus + 1))
-+			/*
-+			 * If the busiest group is not overloaded
-+			 * and there is no imbalance between this and busiest
-+			 * group wrt idle CPUs, it is balanced. The imbalance
-+			 * becomes significant if the diff is greater than 1
-+			 * otherwise we might end up to just move the imbalance
-+			 * on another group. Of course this applies only if
-+			 * there is more than 1 CPU per group.
-+			 */
-+			goto out_balanced;
-+
-+		if (busiest->sum_nr_running == 1)
-+			/*
-+			 * busiest doesn't have any tasks waiting to run
-+			 */
-+			goto out_balanced;
-+	}
- 
- force_balance:
- 	/* Looks like there is an imbalance. Compute it */
--- 
-2.7.4
+I think my suggestion would be something along the lines of CC, LD, AS for
+the native vdso and CC32, LD32, AS32 for the compat vdso.
 
+Will
