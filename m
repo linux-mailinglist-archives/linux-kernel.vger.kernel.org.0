@@ -2,93 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB02C6EC70
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 00:24:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FB9D6EC79
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 00:25:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728888AbfGSWYP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 18:24:15 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33046 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727344AbfGSWYO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 18:24:14 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hobHp-0006IG-Ng; Sat, 20 Jul 2019 00:23:34 +0200
-Date:   Sat, 20 Jul 2019 00:23:32 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Eiichi Tsukata <devel@etsukata.com>, edwintorok@gmail.com,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [PATCH] x86/stacktrace: Do not access user space memory
- unnecessarily
-In-Reply-To: <20190719202836.GB13680@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1907200018050.1782@nanos.tec.linutronix.de>
-References: <20190702053151.26922-1-devel@etsukata.com> <20190702072821.GX3419@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1907021400350.1802@nanos.tec.linutronix.de> <20190702113355.5be9ebfe@gandalf.local.home> <20190702133905.1482b87e@gandalf.local.home>
- <20190719202836.GB13680@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1730430AbfGSWZz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 18:25:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34372 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727344AbfGSWZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 18:25:53 -0400
+Received: from [172.20.8.67] (fs96f9c61d.tkyc509.ap.nuro.jp [150.249.198.29])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22F662089C;
+        Fri, 19 Jul 2019 22:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563575151;
+        bh=8BWoO3DvmgmHko8VDYdzETwa/D8Uvwa79H4eUTG3YyA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=2d21roDptAiEMN+/t1Tn1VqLwtXAzfhagrwnPWLFbYgAsIvJrwHrLthScReql/x37
+         AR35y/eDLcde0w6tvfWPiYxJdZI5Xmb/Wqr3rItqjuiTHCL3Wa/X60g/Pf/v1glDZV
+         /OWIM04HKP6cE2E1wkO2gqhjsIBpm7gFFRxIlREI=
+Subject: Re: [PATCH v10 8/9] kselftest: save-and-restore errno to allow for %m
+ formatting
+To:     Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Drysdale <drysdale@google.com>,
+        Chanho Min <chanho.min@lge.com>,
+        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org,
+        shuah <shuah@kernel.org>
+References: <20190719164225.27083-1-cyphar@cyphar.com>
+ <20190719164225.27083-9-cyphar@cyphar.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <b32d95a1-8a49-65ef-4ddd-fe86a7ca01d5@kernel.org>
+Date:   Fri, 19 Jul 2019 16:25:46 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20190719164225.27083-9-cyphar@cyphar.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 19 Jul 2019, Sean Christopherson wrote:
-> On Tue, Jul 02, 2019 at 01:39:05PM -0400, Steven Rostedt wrote:
+On 7/19/19 10:42 AM, Aleksa Sarai wrote:
+> Previously, using "%m" in a ksft_* format string can result in strange
+> output because the errno value wasn't saved before calling other libc
+> functions. The solution is to simply save and restore the errno before
+> we format the user-supplied format string.
 > 
-> I'm hitting a similar panic that bisects to commit
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+>   tools/testing/selftests/kselftest.h | 15 +++++++++++++++
+>   1 file changed, 15 insertions(+)
 > 
->   a0d14b8909de ("x86/mm, tracing: Fix CR2 corruption")
+> diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
+> index ec15c4f6af55..0ac49d91a260 100644
+> --- a/tools/testing/selftests/kselftest.h
+> +++ b/tools/testing/selftests/kselftest.h
+> @@ -10,6 +10,7 @@
+>   #ifndef __KSELFTEST_H
+>   #define __KSELFTEST_H
+>   
+> +#include <errno.h>
+>   #include <stdlib.h>
+>   #include <unistd.h>
+>   #include <stdarg.h>
+> @@ -81,58 +82,68 @@ static inline void ksft_print_cnts(void)
+>   
+>   static inline void ksft_print_msg(const char *msg, ...)
+>   {
+> +	int saved_errno = errno;
+>   	va_list args;
+>   
+>   	va_start(args, msg);
+>   	printf("# ");
+> +	errno = saved_errno;
+>   	vprintf(msg, args);
+>   	va_end(args);
+>   }
+>   
+>   static inline void ksft_test_result_pass(const char *msg, ...)
+>   {
+> +	int saved_errno = errno;
+>   	va_list args;
+>   
+>   	ksft_cnt.ksft_pass++;
+>   
+>   	va_start(args, msg);
+>   	printf("ok %d ", ksft_test_num());
+> +	errno = saved_errno;
+>   	vprintf(msg, args);
+>   	va_end(args);
+>   }
+>   
+>   static inline void ksft_test_result_fail(const char *msg, ...)
+>   {
+> +	int saved_errno = errno;
+>   	va_list args;
+>   
+>   	ksft_cnt.ksft_fail++;
+>   
+>   	va_start(args, msg);
+>   	printf("not ok %d ", ksft_test_num());
+> +	errno = saved_errno;
+>   	vprintf(msg, args);
+>   	va_end(args);
+>   }
+>   
+>   static inline void ksft_test_result_skip(const char *msg, ...)
+>   {
+> +	int saved_errno = errno;
+>   	va_list args;
+>   
+>   	ksft_cnt.ksft_xskip++;
+>   
+>   	va_start(args, msg);
+>   	printf("not ok %d # SKIP ", ksft_test_num());
+> +	errno = saved_errno;
+>   	vprintf(msg, args);
+>   	va_end(args);
+>   }
+>   
+>   static inline void ksft_test_result_error(const char *msg, ...)
+>   {
+> +	int saved_errno = errno;
+>   	va_list args;
+>   
+>   	ksft_cnt.ksft_error++;
+>   
+>   	va_start(args, msg);
+>   	printf("not ok %d # error ", ksft_test_num());
+> +	errno = saved_errno;
+>   	vprintf(msg, args);
+>   	va_end(args);
+>   }
+> @@ -152,10 +163,12 @@ static inline int ksft_exit_fail(void)
+>   
+>   static inline int ksft_exit_fail_msg(const char *msg, ...)
+>   {
+> +	int saved_errno = errno;
+>   	va_list args;
+>   
+>   	va_start(args, msg);
+>   	printf("Bail out! ");
+> +	errno = saved_errno;
+>   	vprintf(msg, args);
+>   	va_end(args);
+>   
+> @@ -178,10 +191,12 @@ static inline int ksft_exit_xpass(void)
+>   static inline int ksft_exit_skip(const char *msg, ...)
+>   {
+>   	if (msg) {
+> +		int saved_errno = errno;
+>   		va_list args;
+>   
+>   		va_start(args, msg);
+>   		printf("not ok %d # SKIP ", 1 + ksft_test_num());
+> +		errno = saved_errno;
+>   		vprintf(msg, args);
+>   		va_end(args);
+>   	} else {
 > 
-> except I'm experiencing death immediately after starting init.
-> 
-> Through sheer dumb luck, I tracked (pun intended) this down to forcing
-> context tracking:
-> 
->   CONFIG_CONTEXT_TRACKING=y
->   CONFIG_CONTEXT_TRACKING_FORCE=y
->   CONFIG_VIRT_CPU_ACCOUNTING_GEN=y
-> 
-> I haven't attempted to debug further and I'll be offline for most of the
-> next few days.  Hopefully this is enough to root cause the badness.
-> 
-> [    0.680477] Run /sbin/init as init process
-> [    0.682116] init[1]: segfault at 2926a7ef ip 00007f98a49d9c30 sp 00007fffd83e6af0 error 14 in ld-2.23.so[7f98a49d9000+26000]
 
-That's because the call into the context tracking muck clobbers RDX which
-contains the CR2 value on pagefault. So the pagefault resolves to crap and
-kills init.
+Hi Aleksa,
 
-Brute force fix below. That needs to be conditional on read_cr2 but for now
-it does the job.
+Can you send this patch separate from the patch series. I will apply
+this as bug fix to 5.3-rc2 or rc3.
 
-Thanks,
+This isn't part of this series anyway and I would like to get this in
+right away.
 
-	tglx
-
-8<------------
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -887,7 +887,9 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work
- 	.if \paranoid == 0
- 	testb	$3, CS(%rsp)
- 	jz	.Lfrom_kernel_no_context_tracking_\@
-+	pushq	%rdx
- 	CALL_enter_from_user_mode
-+	popq	%rdx
- .Lfrom_kernel_no_context_tracking_\@:
- 	.endif
- 
-
-
-
+thanks,
+-- Shuah
