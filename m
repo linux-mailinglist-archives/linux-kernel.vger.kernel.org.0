@@ -2,113 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C09C46E532
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 13:48:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D6226E537
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 13:50:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbfGSLsz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 07:48:55 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:34306 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbfGSLsy (ORCPT
+        id S1728145AbfGSLuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 07:50:06 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:45932 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727665AbfGSLuG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 07:48:54 -0400
-Received: by mail-qk1-f196.google.com with SMTP id t8so22997071qkt.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 04:48:54 -0700 (PDT)
+        Fri, 19 Jul 2019 07:50:06 -0400
+Received: by mail-oi1-f194.google.com with SMTP id m206so24035885oib.12;
+        Fri, 19 Jul 2019 04:50:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BEQquUvm7pZb1cGrDQA3i7EHBHTQR3PwBTHZJKzT7h0=;
-        b=KZYGzcJevvRDH/6zp+YVDCefS3om5aI+gV/vnmPR0/mlwLZy6qFkMcogazQ3K3PVUz
-         5o48RyAUvp13eSQwsllPS5+/tmM3HaSpVc2sqRjA0JrOWuX5f27wQmRadmm5WVIpoA5h
-         3rZVxfwDs46gmhnjNUMmDt61unvbhmLt2xIVhq0HJ1tRFcG7ZChQSou1qeIgm08LatnA
-         QKKfZOEAIkODuRh5CVxABuFmOsnX6q3enfSB/gY8yXZfhhIyTXd3nFjf6zEHBvX4T+sy
-         ZAWjQZrxfsxHESEeRbtUkr1wYUQauy/MF9PtNAeinWcxoZSSMhrDTxEwaw2HMkW+aAXT
-         sXaQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=sqpTcP76z8L1qAX6ZIXz8oQ1xDJvx6eMGKj4s5NJ4n4=;
+        b=bd4qes53GBobFCQjiSauq8kko/7lDoscPritfqpd7h/NfzroV52tvn57Qt4nLg/MDZ
+         gnNOw0YQmSxdV2YLiKfb7LLmgz8iHznTxZAACh/IPiIdIMsqfN28Z3RO3tGYlR9ob+Sr
+         XlnAux65a7xlSAaPyepAcJCfmIcS/uc7Ix3qoSzepLhj4qXywdHrTVU1TVWvs0C5GUQG
+         If3PkDVd/xE/RzS2AExYFWIW7+Kyhx3MEk2Xhu6E1HMJWcwnomQukWTaiepmlvFnOS/u
+         A3DeCZIuf4Yg4Oqjy1pDtWwASCaznZkERw4FqyY8AZMYCJUACciqXfHr2rV4cw1U6aWE
+         1tmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BEQquUvm7pZb1cGrDQA3i7EHBHTQR3PwBTHZJKzT7h0=;
-        b=DcmBUNj0BQ5KH5aFHKRDfhlXULDqSw7iDRDrU13lGnKhz4XLLVuatYba/xLqOTEUiT
-         PryELZMzTHbOUNE3oJ98deekLWvcU4WxDn/L7X5hipcd9AgHWiahzII4R3GCpd3kkTAf
-         DhCYqvWDRCLJbrDRgCCbzLRl80eoPFeEkedO1+yY4rJhzAEkjIi0NYXkYTaUS6rKz9JH
-         zgyuN7reEOnjsNn0XDess71p1qeajXnvzNxfKwhCVvJWedgZHOrxMh8utBWbocnXLqko
-         59bx540XhQDMWdAXjAuDA/dRw3xiEOvU96s+8dCCjZewP5D47nmT9c/jLpYIUuHn8evf
-         7csw==
-X-Gm-Message-State: APjAAAWlwA8YbBUXk654EHi7RlC9MK3ujzzNwFE0rrVir56zlmqp4F8u
-        Z6uRaezYNW3AWxpzZy0kiQbcYWQGwlXr9Q==
-X-Google-Smtp-Source: APXvYqxLJkrUw01kbBde4x9oizq7gCJSe4ztR8DzrTiMMUKXnRI1HsQOrg244wufi2Z5TQ/KbsJuPA==
-X-Received: by 2002:a37:3d7:: with SMTP id 206mr35110960qkd.252.1563536933893;
-        Fri, 19 Jul 2019 04:48:53 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id h19sm10801517qto.3.2019.07.19.04.48.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 19 Jul 2019 04:48:53 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hoRNd-0004I3-1p; Fri, 19 Jul 2019 08:48:53 -0300
-Date:   Fri, 19 Jul 2019 08:48:53 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Christoph Hellwig <hch@infradead.org>, john.hubbard@gmail.com,
-        SCheung@nvidia.com, akpm@linux-foundation.org,
-        aneesh.kumar@linux.vnet.ibm.com, benh@kernel.crashing.org,
-        bsingharora@gmail.com, dan.j.williams@intel.com,
-        dnellans@nvidia.com, ebaskakov@nvidia.com, hannes@cmpxchg.org,
-        jglisse@redhat.com, jhubbard@nvidia.com,
-        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
-        liubo95@huawei.com, mhairgrove@nvidia.com, mhocko@kernel.org,
-        paulmck@linux.vnet.ibm.com, ross.zwisler@linux.intel.com,
-        sgutti@nvidia.com, torvalds@linux-foundation.org,
-        vdavydov.dev@gmail.com
-Subject: Re: [PATCH] mm/Kconfig: additional help text for HMM_MIRROR option
-Message-ID: <20190719114853.GB15816@ziepe.ca>
-References: <20190717074124.GA21617@amd>
- <20190719013253.17642-1-jhubbard@nvidia.com>
- <20190719055748.GA29082@infradead.org>
- <20190719105239.GA10627@amd>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=sqpTcP76z8L1qAX6ZIXz8oQ1xDJvx6eMGKj4s5NJ4n4=;
+        b=HYkAnrd14WEsUXIjZGSSoaXRZ3nskAvp3n23JCPooX+PV0WdRm3E0/FAL6/RErzjFz
+         p3Vpv8yjK8V1CQjkzIerWOYRiGBVr5FaJE6+57sa1P/nHkIYU/cFDYOdE5KFfEofhUIR
+         yHJpw/kJ/CSR3lLbvJXiRMAEzxlPv0kAuGGLiiLObxvKlHYNlV1f4X/i15CPT0wSr5b0
+         mnDHTRqOcnDD70/3MFMuTYl9EoWCatz8hpi8R3VdXeahGznj0SNO9Q+UleGyBftXapce
+         x3t52Oi+rOfwkSGqCFe6BhiAqNLi+0Tyy8lwvm0z4biwmRQyNVIdicL6ZC8wgcXSkBmg
+         N1cw==
+X-Gm-Message-State: APjAAAUKqoR2R8C1vk8qc4DMBuRvbolg5lpl0PdUZOCThvEIVGvDIHfq
+        7J/gjefCc8s8BMKAENjTvcso5ChskCelHW/VqeA=
+X-Google-Smtp-Source: APXvYqzTzot0TaouNF6K1z/L7Hs8zJ+9SFAcylB1aJuoJDSPAmqyWlbMSaqn+piwy+TqxrQfg7WIaGyMlSocp0wU8CM=
+X-Received: by 2002:aca:2303:: with SMTP id e3mr23263015oie.112.1563537004914;
+ Fri, 19 Jul 2019 04:50:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190719105239.GA10627@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190719104802.18070-1-andradanciu1997@gmail.com>
+ <20190719104802.18070-2-andradanciu1997@gmail.com> <CAOMZO5Btu1Shou=dGRrG74e5UjHnh7NtR4+4ETK0t_1Zt48Crw@mail.gmail.com>
+In-Reply-To: <CAOMZO5Btu1Shou=dGRrG74e5UjHnh7NtR4+4ETK0t_1Zt48Crw@mail.gmail.com>
+From:   Andra Danciu <andradanciu1997@gmail.com>
+Date:   Fri, 19 Jul 2019 14:49:54 +0300
+Message-ID: <CAJNLGswXF8XtZKnFtzaK+7Xvs0Ygwwh4WP5PiO8Csc7pDG1vNA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] arm64: dts: fsl: pico-pi: Add a device tree for
+ the PICO-PI-IMX8M
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Ping Bai <ping.bai@nxp.com>,
+        =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <Michal.Vokac@ysoft.com>,
+        Li Yang <leoyang.li@nxp.com>, sriram.dash@nxp.com,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Vabhav Sharma <vabhav.sharma@nxp.com>,
+        Bhaskar Upadhaya <bhaskar.upadhaya@nxp.com>,
+        Pramod Kumar <pramod.kumar_1@nxp.com>, pankaj.bansal@nxp.com,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Richard Hu <richard.hu@technexion.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 19, 2019 at 12:52:39PM +0200, Pavel Machek wrote:
-> On Thu 2019-07-18 22:57:48, Christoph Hellwig wrote:
-> > On Thu, Jul 18, 2019 at 06:32:53PM -0700, john.hubbard@gmail.com wrote:
-> > > +	  HMM_MIRROR provides a way to mirror ranges of the CPU page tables
-> > > +	  of a process into a device page table. Here, mirror means "keep
-> > > +	  synchronized". Prerequisites: the device must provide the ability
-> > > +	  to write-protect its page tables (at PAGE_SIZE granularity), and
-> > > +	  must be able to recover from the resulting potential page faults.
-> > > +
-> > > +	  Select HMM_MIRROR if you have hardware that meets the above
-> > > +	  description. An early, partial list of such hardware is:
-> > > +	  an NVIDIA GPU >= Pascal, Mellanox IB >= mlx5, or an AMD GPU.
-> > 
-> > Nevermind that the Nvidia support is stagaging and looks rather broken,
-> > there is no Mellanox user of this either at this point.
-> > 
-> > But either way this has no business in a common kconfig help.  Just
-> > drop the fine grained details and leave it to the overview.
-> 
-> I disagree here. This explains what kind of hardware this is for (very
-> new). Partial list does not hurt, and I know that I probably don't
-> need to enable this.
-> 
-> How else am I supposed to know if my computer needs page tables
-> synchronized?
+Hi Fabio,
 
-It is like MMU_NOTIFIERS, if something needs it, then it will select
-it.
+I compiled with W=3D1 and you are right, they cause warning. I will remove =
+them.
 
-Maybe it should just be a hidden kconfig anyhow as there is no reason
-to turn it on without also turning on a using driver.
-
-Jason
-
+=C3=8En vin., 19 iul. 2019 la 14:19, Fabio Estevam <festevam@gmail.com> a s=
+cris:
+>
+> Hi Andra,
+>
+> On Fri, Jul 19, 2019 at 7:48 AM andradanciu1997
+> <andradanciu1997@gmail.com> wrote:
+>
+> > +       pmic: pmic@4b {
+> > +               reg =3D <0x4b>;
+> > +               compatible =3D "rohm,bd71837";
+> > +               /* PMIC BD71837 PMIC_nINT GPIO1_IO12 */
+> > +               pinctrl-names =3D "default";
+> > +               pinctrl-0 =3D <&pinctrl_pmic>;
+> > +               clocks =3D <&pmic_osc>;
+> > +               clock-names =3D "osc";
+> > +               clock-output-names =3D "pmic_clk";
+> > +               interrupt-parent =3D <&gpio1>;
+> > +               interrupts =3D <3 GPIO_ACTIVE_LOW>;
+> > +               interrupt-names =3D "irq";
+> > +
+> > +               regulators {
+> > +                       #address-cells =3D <1>;
+> > +                       #size-cells =3D <0>;
+>
+> #address-cells and  #size-cells are not needed and they cause warnings wi=
+th W=3D1:
+>
+>   DTC     arch/arm64/boot/dts/freescale/imx8mq-pico-pi.dtb
+> arch/arm64/boot/dts/freescale/imx8mq-pico-pi.dts:77.14-196.5: Warning
+> (avoid_unnecessary_addr_size):
+> /soc@0/bus@30800000/i2c@30a20000/pmic@4b/regulators: unnecessary
+> #address-cells/#size-cells without "ranges" or child "reg" property
+>
+> Please remove them.
