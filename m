@@ -2,104 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D6EE6E27D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 10:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8FB56E26D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 10:26:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbfGSI2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 04:28:49 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40025 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbfGSI2t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 04:28:49 -0400
-Received: by mail-pf1-f193.google.com with SMTP id p184so13848828pfp.7;
-        Fri, 19 Jul 2019 01:28:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LVGzUddFUDDTd3XNu9CaLaSeJBDagIzKEuUQ6S8/s64=;
-        b=qN+wKk3BWFLjRh9ab2e6MyK9FKz8VnKuCBk/inm6CAhxWcF6tuiUlSD3Vw6ZSQWfih
-         +nOgLhtQp22wCw/LyvjpD93gPJNonWeMlCIk5zaf0VqxSFvpr6sj4ydfKHdVbeBFgeSV
-         GO0LzpkpnRa7iZ54liIdH2CtzkRkqF+iDyK9GLSD7suwEr06ER97sL7V37d6ElDNi1dG
-         ybtqo1YZlLg5aR2/SryKOmY5sI4UW29biCd5t3Zur+BsV3dFivwA57qAUXo8e2jvNpr+
-         T75HuSNFsCNgIqCvHp4PII4uU7fsrnqstRaP5TkoR8ibPFbgmcYOKKy2l6lJBeZHO2oG
-         uhfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LVGzUddFUDDTd3XNu9CaLaSeJBDagIzKEuUQ6S8/s64=;
-        b=ib4740gZ1c3vQ+XteXKvAozvxN11d9S8kJasPm7pSPW7vZDgMgJkJxQZbUuas+nVTq
-         P1zy9N5ZcciKM0pVPN4JG9iUzxh4b/6fqmbRWQXRBLzzage+Na8nWQVS6HpdTyIdOCMc
-         K28fCEX+GQdmF+oj9L3ecVfFWVjs52QdUR7+7wdzwjz/d8xFTPjjVT8YbcmsTzD70PJD
-         7Jytak4o+zvZyp30LRKeYKLZKW9Dn4atJItj89BtrCv/7BMMDzw0VnwoObkXmrGdl+hz
-         ohb3btFL79AB9YAtMXJnUfII6yr4gnYnBpBdP2KiKNN8T7RDtmP/yriZ5ShlLHc/o1/c
-         1JRA==
-X-Gm-Message-State: APjAAAU/mN/xRWb+RrhZ0us55ZLCkllnbeb1gvynhwKtGO0TYe2KvRfd
-        G4x4KqCI23MBLiNv2f44RB4joBSHWWg=
-X-Google-Smtp-Source: APXvYqwSJYJRDkiPvTx+U2mHyK7domPC9FfXywft7CFvpQJ7ZlWy5IN+8l64JYP/oblGlRkxzGAdUw==
-X-Received: by 2002:a63:5920:: with SMTP id n32mr51055663pgb.352.1563524928589;
-        Fri, 19 Jul 2019 01:28:48 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id f197sm30023348pfa.161.2019.07.19.01.28.45
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 19 Jul 2019 01:28:47 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Steve Glendinning <steve.glendinning@shawell.net>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] usbnet: smsc75xx: Merge memcpy + le32_to_cpus to get_unaligned_le32
-Date:   Fri, 19 Jul 2019 16:27:31 +0800
-Message-Id: <20190719082730.6378-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727047AbfGSI0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 04:26:22 -0400
+Received: from mga14.intel.com ([192.55.52.115]:51802 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725853AbfGSI0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 04:26:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2019 01:26:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,281,1559545200"; 
+   d="scan'208";a="319903679"
+Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
+  by orsmga004.jf.intel.com with ESMTP; 19 Jul 2019 01:26:18 -0700
+Message-ID: <5D317FFA.8000507@intel.com>
+Date:   Fri, 19 Jul 2019 16:31:54 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+To:     Eric Hankland <ehankland@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+CC:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] KVM: x86: Add fixed counters to PMU filter
+References: <20190718183818.190051-1-ehankland@google.com>
+In-Reply-To: <20190718183818.190051-1-ehankland@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Merge the combo use of memcpy and le32_to_cpus.
-Use get_unaligned_le32 instead.
-This simplifies the code.
+On 07/19/2019 02:38 AM, Eric Hankland wrote:
+> From: ehankland <ehankland@google.com>
+>
+> Updates KVM_CAP_PMU_EVENT_FILTER so it can also whitelist or blacklist
+> fixed counters.
+>
+> Signed-off-by: ehankland <ehankland@google.com>
+> ---
+>   Documentation/virtual/kvm/api.txt | 13 ++++++++-----
+>   arch/x86/include/uapi/asm/kvm.h   |  9 ++++++---
+>   arch/x86/kvm/pmu.c                | 30 +++++++++++++++++++++++++-----
+>   3 files changed, 39 insertions(+), 13 deletions(-)
+>
+> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+> index 2cd6250b2896..96bcf1aa1931 100644
+> --- a/Documentation/virtual/kvm/api.txt
+> +++ b/Documentation/virtual/kvm/api.txt
+> @@ -4090,17 +4090,20 @@ Parameters: struct kvm_pmu_event_filter (in)
+>   Returns: 0 on success, -1 on error
+>   
+>   struct kvm_pmu_event_filter {
+> -       __u32 action;
+> -       __u32 nevents;
+> -       __u64 events[0];
+> +	__u32 action;
+> +	__u32 nevents;
+> +	__u32 fixed_counter_bitmap;
+> +	__u32 flags;
+> +	__u32 pad[4];
+> +	__u64 events[0];
+>   };
+>   
+>   This ioctl restricts the set of PMU events that the guest can program.
+>   The argument holds a list of events which will be allowed or denied.
+>   The eventsel+umask of each event the guest attempts to program is compared
+>   against the events field to determine whether the guest should have access.
+> -This only affects general purpose counters; fixed purpose counters can
+> -be disabled by changing the perfmon CPUID leaf.
+> +The events field only controls general purpose counters; fixed purpose
+> +counters are controlled by the fixed_counter_bitmap.
+>   
+>   Valid values for 'action':
+>   #define KVM_PMU_EVENT_ALLOW 0
+> diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+> index e901b0ab116f..503d3f42da16 100644
+> --- a/arch/x86/include/uapi/asm/kvm.h
+> +++ b/arch/x86/include/uapi/asm/kvm.h
+> @@ -435,9 +435,12 @@ struct kvm_nested_state {
+>   
+>   /* for KVM_CAP_PMU_EVENT_FILTER */
+>   struct kvm_pmu_event_filter {
+> -       __u32 action;
+> -       __u32 nevents;
+> -       __u64 events[0];
+> +	__u32 action;
+> +	__u32 nevents;
+> +	__u32 fixed_counter_bitmap;
+> +	__u32 flags;
+> +	__u32 pad[4];
+> +	__u64 events[0];
+>   };
+>   
+>   #define KVM_PMU_EVENT_ALLOW 0
+> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
+> index aa5a2597305a..ae5cd1b02086 100644
+> --- a/arch/x86/kvm/pmu.c
+> +++ b/arch/x86/kvm/pmu.c
+> @@ -19,8 +19,8 @@
+>   #include "lapic.h"
+>   #include "pmu.h"
+>   
+> -/* This keeps the total size of the filter under 4k. */
+> -#define KVM_PMU_EVENT_FILTER_MAX_EVENTS 63
+> +/* This is enough to filter the vast majority of currently defined events. */
+> +#define KVM_PMU_EVENT_FILTER_MAX_EVENTS 300
+>   
+>   /* NOTE:
+>    * - Each perf counter is defined as "struct kvm_pmc";
+> @@ -206,12 +206,25 @@ void reprogram_fixed_counter(struct kvm_pmc *pmc, u8 ctrl, int idx)
+>   {
+>   	unsigned en_field = ctrl & 0x3;
+>   	bool pmi = ctrl & 0x8;
+> +	struct kvm_pmu_event_filter *filter;
+> +	struct kvm *kvm = pmc->vcpu->kvm;
+> +
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
- drivers/net/usb/smsc75xx.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+unnecessary white space here, other part looks good to me.
 
-diff --git a/drivers/net/usb/smsc75xx.c b/drivers/net/usb/smsc75xx.c
-index 1417a22962a1..7fac9db5380d 100644
---- a/drivers/net/usb/smsc75xx.c
-+++ b/drivers/net/usb/smsc75xx.c
-@@ -661,8 +661,7 @@ static void smsc75xx_status(struct usbnet *dev, struct urb *urb)
- 		return;
- 	}
- 
--	memcpy(&intdata, urb->transfer_buffer, 4);
--	le32_to_cpus(&intdata);
-+	intdata = get_unaligned_le32(urb->transfer_buffer);
- 
- 	netif_dbg(dev, link, dev->net, "intdata: 0x%08X\n", intdata);
- 
-@@ -2181,12 +2180,10 @@ static int smsc75xx_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
- 		struct sk_buff *ax_skb;
- 		unsigned char *packet;
- 
--		memcpy(&rx_cmd_a, skb->data, sizeof(rx_cmd_a));
--		le32_to_cpus(&rx_cmd_a);
-+		rx_cmd_a = get_unaligned_le32(skb->data);
- 		skb_pull(skb, 4);
- 
--		memcpy(&rx_cmd_b, skb->data, sizeof(rx_cmd_b));
--		le32_to_cpus(&rx_cmd_b);
-+		rx_cmd_b = get_unaligned_le32(skb->data);
- 		skb_pull(skb, 4 + RXW_PADDING);
- 
- 		packet = skb->data;
--- 
-2.20.1
+Reviewed-by: Wei Wang <wei.w.wang@intel.com>
 
+Best,
+Wei
