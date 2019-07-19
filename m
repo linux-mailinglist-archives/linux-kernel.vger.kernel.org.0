@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 193CD6DBC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:11:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C2956DBC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:11:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388425AbfGSELX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:11:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46226 "EHLO mail.kernel.org"
+        id S2388443AbfGSEL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:11:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733220AbfGSELU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:11:20 -0400
+        id S1730254AbfGSELW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:11:22 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08DC521872;
-        Fri, 19 Jul 2019 04:11:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3991121873;
+        Fri, 19 Jul 2019 04:11:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509479;
-        bh=bE/o6eAqU6qX/EAT/Xurvd6Cx5OVld2x7NE5cyW1lOg=;
+        s=default; t=1563509481;
+        bh=lTpd3BwJntjvisbyb/KkUvM8RQIScLiS5UOe+xKdDrg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hMKmvvVYew3QMsEWHNMmQ7A7cHeXV74TxYZEagejUo7NLYCSwdew1CEss5j8S22lT
-         L6Wf5t1EJWLBkUO/XHGFF1OqZYYda6Ue/okAKC1TGO2f4bbX8ILt2W/kp3VlLM5wve
-         NQUIF2q+6IhNY4SQufHyp0pExp/Bcnn+pZkUe+9s=
+        b=IK5y7uGNwssdy/6IMIpU1xh/iUIngh849+YaD94uVrjPS8aMcKCIWlgO8lykg+VF2
+         1g3zSWOa9apHjCxADf7uNsxdLBP/7c+KIdv5uN1mbIAM+iKa+37cedi8d1bLGsJfsw
+         5pStqknUABx0rz8M3SJoYXLKJ1WMV80HckPej+yo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 05/60] tty: serial: cpm_uart - fix init when SMC is relocated
-Date:   Fri, 19 Jul 2019 00:10:14 -0400
-Message-Id: <20190719041109.18262-5-sashal@kernel.org>
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 07/60] PCI: Return error if cannot probe VF
+Date:   Fri, 19 Jul 2019 00:10:16 -0400
+Message-Id: <20190719041109.18262-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719041109.18262-1-sashal@kernel.org>
 References: <20190719041109.18262-1-sashal@kernel.org>
@@ -43,76 +43,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Alex Williamson <alex.williamson@redhat.com>
 
-[ Upstream commit 06aaa3d066db87e8478522d910285141d44b1e58 ]
+[ Upstream commit 76002d8b48c4b08c9bd414517dd295e132ad910b ]
 
-SMC relocation can also be activated earlier by the bootloader,
-so the driver's behaviour cannot rely on selected kernel config.
+Commit 0e7df22401a3 ("PCI: Add sysfs sriov_drivers_autoprobe to control
+VF driver binding") allows the user to specify that drivers for VFs of
+a PF should not be probed, but it actually causes pci_device_probe() to
+return success back to the driver core in this case.  Therefore by all
+sysfs appearances the device is bound to a driver, the driver link from
+the device exists as does the device link back from the driver, yet the
+driver's probe function is never called on the device.  We also fail to
+do any sort of cleanup when we're prohibited from probing the device,
+the IRQ setup remains in place and we even hold a device reference.
 
-When the SMC is relocated, CPM_CR_INIT_TRX cannot be used.
+Instead, abort with errno before any setup or references are taken when
+pci_device_can_probe() prevents us from trying to probe the device.
 
-But the only thing CPM_CR_INIT_TRX does is to clear the
-rstate and tstate registers, so this can be done manually,
-even when SMC is not relocated.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Fixes: 9ab921201444 ("cpm_uart: fix non-console port startup bug")
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: https://lore.kernel.org/lkml/155672991496.20698.4279330795743262888.stgit@gimli.home
+Fixes: 0e7df22401a3 ("PCI: Add sysfs sriov_drivers_autoprobe to control VF driver binding")
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/cpm_uart/cpm_uart_core.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/pci/pci-driver.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/tty/serial/cpm_uart/cpm_uart_core.c b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-index 8b2b694334ec..8f5a5a16cb3b 100644
---- a/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-+++ b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-@@ -421,7 +421,16 @@ static int cpm_uart_startup(struct uart_port *port)
- 			clrbits16(&pinfo->sccp->scc_sccm, UART_SCCM_RX);
- 		}
- 		cpm_uart_initbd(pinfo);
--		cpm_line_cr_cmd(pinfo, CPM_CR_INIT_TRX);
-+		if (IS_SMC(pinfo)) {
-+			out_be32(&pinfo->smcup->smc_rstate, 0);
-+			out_be32(&pinfo->smcup->smc_tstate, 0);
-+			out_be16(&pinfo->smcup->smc_rbptr,
-+				 in_be16(&pinfo->smcup->smc_rbase));
-+			out_be16(&pinfo->smcup->smc_tbptr,
-+				 in_be16(&pinfo->smcup->smc_tbase));
-+		} else {
-+			cpm_line_cr_cmd(pinfo, CPM_CR_INIT_TRX);
-+		}
+diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+index ea69b4dbab66..e5a8bf2c9b37 100644
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -415,6 +415,9 @@ static int pci_device_probe(struct device *dev)
+ 	struct pci_dev *pci_dev = to_pci_dev(dev);
+ 	struct pci_driver *drv = to_pci_driver(dev->driver);
+ 
++	if (!pci_device_can_probe(pci_dev))
++		return -ENODEV;
++
+ 	pci_assign_irq(pci_dev);
+ 
+ 	error = pcibios_alloc_irq(pci_dev);
+@@ -422,12 +425,10 @@ static int pci_device_probe(struct device *dev)
+ 		return error;
+ 
+ 	pci_dev_get(pci_dev);
+-	if (pci_device_can_probe(pci_dev)) {
+-		error = __pci_device_probe(drv, pci_dev);
+-		if (error) {
+-			pcibios_free_irq(pci_dev);
+-			pci_dev_put(pci_dev);
+-		}
++	error = __pci_device_probe(drv, pci_dev);
++	if (error) {
++		pcibios_free_irq(pci_dev);
++		pci_dev_put(pci_dev);
  	}
- 	/* Install interrupt handler. */
- 	retval = request_irq(port->irq, cpm_uart_int, 0, "cpm_uart", port);
-@@ -875,16 +884,14 @@ static void cpm_uart_init_smc(struct uart_cpm_port *pinfo)
- 	         (u8 __iomem *)pinfo->tx_bd_base - DPRAM_BASE);
  
- /*
-- *  In case SMC1 is being relocated...
-+ *  In case SMC is being relocated...
-  */
--#if defined (CONFIG_I2C_SPI_SMC1_UCODE_PATCH)
- 	out_be16(&up->smc_rbptr, in_be16(&pinfo->smcup->smc_rbase));
- 	out_be16(&up->smc_tbptr, in_be16(&pinfo->smcup->smc_tbase));
- 	out_be32(&up->smc_rstate, 0);
- 	out_be32(&up->smc_tstate, 0);
- 	out_be16(&up->smc_brkcr, 1);              /* number of break chars */
- 	out_be16(&up->smc_brkec, 0);
--#endif
- 
- 	/* Set up the uart parameters in the
- 	 * parameter ram.
-@@ -898,8 +905,6 @@ static void cpm_uart_init_smc(struct uart_cpm_port *pinfo)
- 	out_be16(&up->smc_brkec, 0);
- 	out_be16(&up->smc_brkcr, 1);
- 
--	cpm_line_cr_cmd(pinfo, CPM_CR_INIT_TRX);
--
- 	/* Set UART mode, 8 bit, no parity, one stop.
- 	 * Enable receive and transmit.
- 	 */
+ 	return error;
 -- 
 2.20.1
 
