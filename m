@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B5BA6E03B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:41:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E0106E02E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:40:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729041AbfGSElB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:41:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56464 "EHLO mail.kernel.org"
+        id S1727251AbfGSD5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 23:57:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726941AbfGSD5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 23:57:10 -0400
+        id S1727127AbfGSD5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 23:57:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F148021855;
-        Fri, 19 Jul 2019 03:57:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A8A821855;
+        Fri, 19 Jul 2019 03:57:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563508629;
-        bh=ddgz5FpkFtKJjV40+Op1NTp30XAoAWKB4qb3QXdny4Q=;
+        s=default; t=1563508637;
+        bh=dx3w/gaxsQB/kVyv5frAgH7kCv3W+gj1u39OzbTqqpk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VqtBlrecgi3VgGRRXlmEwUkYnx21/ccVTfQ1sMmuzcGy9u63DjhIhc1HqxnKRsQNU
-         9AFUTIeY1hWWYnGU7Wr0EQ+Y9a1bBERRyV7uJdZZrN8EjICDeuL14qnh4hX1txVu/A
-         jFD8FgW+VHOYZQ/G0Td83J1hJVK6UnGQ/SWdiAJc=
+        b=kC8rAPC2SwUlpzic3a0Bkmeu+sKAFbdfhejU+SPUmkv2TO1u9RE5UMC5bNn/sbUjr
+         aYQxXBqZ6vmUXjO6Deg4dpp/ohZ/Ue0wL+KpI5TvFzHea0fCWcrW0cBTyC/XX1IFDE
+         5ZnY/4XWMvgjSBS5NxplX1h8ZsUPye7uQ0ZgM3uQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Serge Semin <fancer.lancer@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 011/171] tty: max310x: Fix invalid baudrate divisors calculator
-Date:   Thu, 18 Jul 2019 23:54:02 -0400
-Message-Id: <20190719035643.14300-11-sashal@kernel.org>
+Cc:     Chao Yu <yuchao0@huawei.com>,
+        Park Ju Hyung <qkrwngud825@gmail.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 5.2 015/171] f2fs: fix to check layout on last valid checkpoint park
+Date:   Thu, 18 Jul 2019 23:54:06 -0400
+Message-Id: <20190719035643.14300-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719035643.14300-1-sashal@kernel.org>
 References: <20190719035643.14300-1-sashal@kernel.org>
@@ -43,112 +45,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Serge Semin <fancer.lancer@gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 35240ba26a932b279a513f66fa4cabfd7af55221 ]
+[ Upstream commit 5dae2d39074dde941cc3150dcbb7840d88179743 ]
 
-Current calculator doesn't do it' job quite correct. First of all the
-max310x baud-rates generator supports the divisor being less than 16.
-In this case the x2/x4 modes can be used to double or quadruple
-the reference frequency. But the current baud-rate setter function
-just filters all these modes out by the first condition and setups
-these modes only if there is a clocks-baud division remainder. The former
-doesn't seem right at all, since enabling the x2/x4 modes causes the line
-noise tolerance reduction and should be only used as a last resort to
-enable a requested too high baud-rate.
+As Ju Hyung reported:
 
-Finally the fraction is supposed to be calculated from D = Fref/(c*baud)
-formulae, but not from D % 16, which causes the precision loss. So to speak
-the current baud-rate calculator code works well only if the baud perfectly
-fits to the uart reference input frequency.
+"
+I was semi-forced today to use the new kernel and test f2fs.
 
-Lets fix the calculator by implementing the algo fully compliant with
-the fractional baud-rate generator described in the datasheet:
-D = Fref / (c*baud), where c={16,8,4} is the x1/x2/x4 rate mode
-respectively, Fref - reference input frequency. The divisor fraction is
-calculated from the same formulae, but making sure it is found with a
-resolution of 0.0625 (four bits).
+My Ubuntu initramfs got a bit wonky and I had to boot into live CD and
+fix some stuffs. The live CD was using 4.15 kernel, and just mounting
+the f2fs partition there corrupted f2fs and my 4.19(with 5.1-rc1-4.19
+f2fs-stable merged) refused to mount with "SIT is corrupted node"
+message.
 
-Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I used the latest f2fs-tools sent by Chao including "fsck.f2fs: fix to
+repair cp_loads blocks at correct position"
+
+It spit out 140M worth of output, but at least I didn't have to run it
+twice. Everything returned "Ok" in the 2nd run.
+The new log is at
+http://arter97.com/f2fs/final
+
+After fixing the image, I used my 4.19 kernel with 5.2-rc1-4.19
+f2fs-stable merged and it mounted.
+
+But, I got this:
+[    1.047791] F2FS-fs (nvme0n1p3): layout of large_nat_bitmap is
+deprecated, run fsck to repair, chksum_offset: 4092
+[    1.081307] F2FS-fs (nvme0n1p3): Found nat_bits in checkpoint
+[    1.161520] F2FS-fs (nvme0n1p3): recover fsync data on readonly fs
+[    1.162418] F2FS-fs (nvme0n1p3): Mounted with checkpoint version = 761c7e00
+
+But after doing a reboot, the message is gone:
+[    1.098423] F2FS-fs (nvme0n1p3): Found nat_bits in checkpoint
+[    1.177771] F2FS-fs (nvme0n1p3): recover fsync data on readonly fs
+[    1.178365] F2FS-fs (nvme0n1p3): Mounted with checkpoint version = 761c7eda
+
+I'm not exactly sure why the kernel detected that I'm still using the
+old layout on the first boot. Maybe fsck didn't fix it properly, or
+the check from the kernel is improper.
+"
+
+Although we have rebuild the old deprecated checkpoint with new layout
+during repair, we only repair last checkpoint park, the other old one is
+remained.
+
+Once the image was mounted, we will 1) sanity check layout and 2) decide
+which checkpoint park to use according to cp_ver. So that we will print
+reported message unnecessarily at step 1), to avoid it, we simply move
+layout check into f2fs_sanity_check_ckpt() after step 2).
+
+Reported-by: Park Ju Hyung <qkrwngud825@gmail.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/max310x.c | 51 ++++++++++++++++++++++--------------
- 1 file changed, 31 insertions(+), 20 deletions(-)
+ fs/f2fs/checkpoint.c | 11 -----------
+ fs/f2fs/super.c      |  9 +++++++++
+ 2 files changed, 9 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index e5aebbf5f302..c3afd128b8fc 100644
---- a/drivers/tty/serial/max310x.c
-+++ b/drivers/tty/serial/max310x.c
-@@ -496,37 +496,48 @@ static bool max310x_reg_precious(struct device *dev, unsigned int reg)
- 
- static int max310x_set_baud(struct uart_port *port, int baud)
- {
--	unsigned int mode = 0, clk = port->uartclk, div = clk / baud;
-+	unsigned int mode = 0, div = 0, frac = 0, c = 0, F = 0;
- 
--	/* Check for minimal value for divider */
--	if (div < 16)
--		div = 16;
--
--	if (clk % baud && (div / 16) < 0x8000) {
-+	/*
-+	 * Calculate the integer divisor first. Select a proper mode
-+	 * in case if the requested baud is too high for the pre-defined
-+	 * clocks frequency.
-+	 */
-+	div = port->uartclk / baud;
-+	if (div < 8) {
-+		/* Mode x4 */
-+		c = 4;
-+		mode = MAX310X_BRGCFG_4XMODE_BIT;
-+	} else if (div < 16) {
- 		/* Mode x2 */
-+		c = 8;
- 		mode = MAX310X_BRGCFG_2XMODE_BIT;
--		clk = port->uartclk * 2;
--		div = clk / baud;
--
--		if (clk % baud && (div / 16) < 0x8000) {
--			/* Mode x4 */
--			mode = MAX310X_BRGCFG_4XMODE_BIT;
--			clk = port->uartclk * 4;
--			div = clk / baud;
--		}
-+	} else {
-+		c = 16;
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index ed70b68b2b38..d0539ddad6e2 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -832,17 +832,6 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
+ 		return -EINVAL;
  	}
  
--	max310x_port_write(port, MAX310X_BRGDIVMSB_REG, (div / 16) >> 8);
--	max310x_port_write(port, MAX310X_BRGDIVLSB_REG, div / 16);
--	max310x_port_write(port, MAX310X_BRGCFG_REG, (div % 16) | mode);
-+	/* Calculate the divisor in accordance with the fraction coefficient */
-+	div /= c;
-+	F = c*baud;
+-	if (__is_set_ckpt_flags(*cp_block, CP_LARGE_NAT_BITMAP_FLAG)) {
+-		if (crc_offset != CP_MIN_CHKSUM_OFFSET) {
+-			f2fs_put_page(*cp_page, 1);
+-			f2fs_msg(sbi->sb, KERN_WARNING,
+-				"layout of large_nat_bitmap is deprecated, "
+-				"run fsck to repair, chksum_offset: %zu",
+-				crc_offset);
+-			return -EINVAL;
+-		}
+-	}
+-
+ 	crc = f2fs_checkpoint_chksum(sbi, *cp_block);
+ 	if (crc != cur_cp_crc(*cp_block)) {
+ 		f2fs_put_page(*cp_page, 1);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 6b959bbb336a..856f9081c599 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2718,6 +2718,15 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 		return 1;
+ 	}
+ 
++	if (__is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG) &&
++		le32_to_cpu(ckpt->checksum_offset) != CP_MIN_CHKSUM_OFFSET) {
++		f2fs_msg(sbi->sb, KERN_WARNING,
++			"layout of large_nat_bitmap is deprecated, "
++			"run fsck to repair, chksum_offset: %u",
++			le32_to_cpu(ckpt->checksum_offset));
++		return 1;
++	}
 +
-+	/* Calculate the baud rate fraction */
-+	if (div > 0)
-+		frac = (16*(port->uartclk % F)) / F;
-+	else
-+		div = 1;
-+
-+	max310x_port_write(port, MAX310X_BRGDIVMSB_REG, div >> 8);
-+	max310x_port_write(port, MAX310X_BRGDIVLSB_REG, div);
-+	max310x_port_write(port, MAX310X_BRGCFG_REG, frac | mode);
- 
--	return DIV_ROUND_CLOSEST(clk, div);
-+	/* Return the actual baud rate we just programmed */
-+	return (16*port->uartclk) / (c*(16*div + frac));
- }
- 
- static int max310x_update_best_err(unsigned long f, long *besterr)
- {
- 	/* Use baudrate 115200 for calculate error */
--	long err = f % (115200 * 16);
-+	long err = f % (460800 * 16);
- 
- 	if ((*besterr < 0) || (*besterr > err)) {
- 		*besterr = err;
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+ 		f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
+ 		return 1;
 -- 
 2.20.1
 
