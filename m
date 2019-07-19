@@ -2,56 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C30E76EB42
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 21:45:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B270B6EB44
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 21:45:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387636AbfGSTp3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 15:45:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34390 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387573AbfGSTp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 15:45:26 -0400
-Subject: Re: [GIT PULL] tracing: Fix user stack trace "??" output
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563565525;
-        bh=vWRPReZFbl+fQBujRz2eAovwyLAgFh282Yy3mDKjR1o=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=K5OWXYcgMr34jZZFkn42lx0FE+vy9ilF485F0BRZtm5YY5GOmYkrJ3Jg8iuhdav8y
-         ac2isJbH+fNQ2r1+nSc7Ge6hzQmKMfCksEzGftcwu3A20Ev8K7FI5IQkgw0SypO/Uw
-         1ky9EehGvrOZorTPu2Wc16qouHNOUL3HamaH2igw=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190719121813.4b113efd@gandalf.local.home>
-References: <20190719121813.4b113efd@gandalf.local.home>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190719121813.4b113efd@gandalf.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
- trace-v5.3-2
-X-PR-Tracked-Commit-Id: 6d54ceb539aacc3df65c89500e8b045924f3ef81
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 41ba485ef1d0dca98c5b194b8fb19201e123a08d
-Message-Id: <156356552591.25668.1158656745829989869.pr-tracker-bot@kernel.org>
-Date:   Fri, 19 Jul 2019 19:45:25 +0000
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Eiichi Tsukata <devel@etsukata.com>
+        id S2387706AbfGSTpg convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 19 Jul 2019 15:45:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42836 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387668AbfGSTpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 15:45:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5E00FACBC;
+        Fri, 19 Jul 2019 19:45:33 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>, Will Deacon <will.deacon@arm.com>,
+        "huang ying" <huang.ying.caritas@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>, <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "Ingo Molnar" <mingo@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        <linux-kernel@vger.kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v8 13/19] locking/rwsem: Make rwsem->owner an atomic_long_t
+References: <20190520205918.22251-1-longman@redhat.com>
+        <20190520205918.22251-14-longman@redhat.com>
+        <20190719184538.GA20324@hermes.olymp>
+        <2ed44afa-4528-a785-f188-2daf24343f97@redhat.com>
+Date:   Fri, 19 Jul 2019 20:45:32 +0100
+In-Reply-To: <2ed44afa-4528-a785-f188-2daf24343f97@redhat.com> (Waiman Long's
+        message of "Fri, 19 Jul 2019 15:32:10 -0400")
+Message-ID: <87lfwtlsf7.fsf@suse.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 19 Jul 2019 12:18:13 -0400:
+Waiman Long <longman@redhat.com> writes:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git trace-v5.3-2
+> On 7/19/19 2:45 PM, Luis Henriques wrote:
+>> On Mon, May 20, 2019 at 04:59:12PM -0400, Waiman Long wrote:
+>>> The rwsem->owner contains not just the task structure pointer, it also
+>>> holds some flags for storing the current state of the rwsem. Some of
+>>> the flags may have to be atomically updated. To reflect the new reality,
+>>> the owner is now changed to an atomic_long_t type.
+>>>
+>>> New helper functions are added to properly separate out the task
+>>> structure pointer and the embedded flags.
+>> I started seeing KASAN use-after-free with current master, and a bisect
+>> showed me that this commit 94a9717b3c40 ("locking/rwsem: Make
+>> rwsem->owner an atomic_long_t") was the problem.  Does it ring any
+>> bells?  I can easily reproduce it with xfstests (generic/464).
+>>
+>> Cheers,
+>> --
+>> Luís
+>
+> This patch shouldn't change the behavior of the rwsem code. The code
+> only access data within the rw_semaphore structures. I don't know why it
+> will cause a KASAN error. I will have to reproduce it and figure out
+> exactly which statement is doing the invalid access.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/41ba485ef1d0dca98c5b194b8fb19201e123a08d
+Yeah, screwing the bisection is something I've done in the past so I may
+have got the wrong commit.  Another detail is that I was running
+xfstests against CephFS, I didn't tried with any other filesystem.  I
+can try to reproduce with btrfs or xfs next week.
 
-Thank you!
-
+Cheers,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Luis
