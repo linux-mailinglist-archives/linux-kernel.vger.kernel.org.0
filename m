@@ -2,102 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35D466DE12
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93D7C6DE74
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:28:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733134AbfGSE0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:26:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42828 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733104AbfGSEI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:08:29 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1C6021872;
-        Fri, 19 Jul 2019 04:08:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509308;
-        bh=DYiF5DgPJpZupVqJuk1jG1zwZm28TFhMhfDz8SNFOYU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AL/v9sg0vmmvQB5ByrqK3FiHDwbvqFpICTQWrFWdpi9PyjjNftDbZ3K87alJvkW/l
-         3c0o0WeubH3YQ8lgNJpx2l/zoS2/yB6qqrQESmemKDD5XGaLb2hyazIAsRx85TBn7D
-         MY4ynxwTvr1FuU7+TEE5NpW8EeGd5GmUqGMoBDWk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 026/101] drm/amd/display: Always allocate initial connector state state
-Date:   Fri, 19 Jul 2019 00:06:17 -0400
-Message-Id: <20190719040732.17285-26-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
-References: <20190719040732.17285-1-sashal@kernel.org>
+        id S2387946AbfGSE2r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:28:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34020 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732082AbfGSEGV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:06:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B0197AC2E;
+        Fri, 19 Jul 2019 04:06:19 +0000 (UTC)
+Subject: Re: [Xen-devel] [PATCH 1/2] xen/gntdev: replace global limit of
+ mapped pages by limit per call
+To:     Andrew Cooper <andrew.cooper3@citrix.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc:     Stefano Stabellini <sstabellini@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+References: <20190718065222.31310-1-jgross@suse.com>
+ <20190718065222.31310-2-jgross@suse.com>
+ <4e402502-acbc-2718-26d4-cbcf83697c15@citrix.com>
+From:   Juergen Gross <jgross@suse.com>
+Message-ID: <03892464-7429-c2e0-79fd-2774bcc3ce20@suse.com>
+Date:   Fri, 19 Jul 2019 06:06:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+In-Reply-To: <4e402502-acbc-2718-26d4-cbcf83697c15@citrix.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+On 18.07.19 19:36, Andrew Cooper wrote:
+> On 18/07/2019 07:52, Juergen Gross wrote:
+>> Today there is a global limit of pages mapped via /dev/xen/gntdev set
+>> to 1 million pages per default.
+> 
+> The Xen default limit even for dom0 is 1024 pages * 16 entries per page,
+> which is far lower than this limit.
 
-[ Upstream commit f04bee34d6e35df26cbb2d65e801adfd0d8fe20d ]
+Actually its 256 entries per page, but this is still lower than the
+current limit.
 
-[Why]
-Unlike our regular connectors, MST connectors don't start off with
-an initial connector state. This causes a NULL pointer dereference to
-occur when attaching the bpc property since it tries to modify the
-connector state.
+> 
+>> There is no reason why that limit is
+>> existing, as total number of foreign mappings is limited by the
+> 
+> s/foreign/grant/ ?
 
-We need an initial connector state on the connector to avoid the crash.
+Can do.
 
-[How]
-Use our reset helper to allocate an initial state and reset the values
-to their defaults. We were already doing this before, just not for
-MST connectors.
+> 
+>> hypervisor anyway and preferring kernel mappings over userspace ones
+>> doesn't make sense.
+> 
+> Its probably also worth stating that this a root-only device, which
+> further brings in to question the user/kernel split.
 
-Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Reviewed-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Yes.
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index dac7978f5ee1..221de241535a 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -3644,6 +3644,13 @@ void amdgpu_dm_connector_init_helper(struct amdgpu_display_manager *dm,
- {
- 	struct amdgpu_device *adev = dm->ddev->dev_private;
- 
-+	/*
-+	 * Some of the properties below require access to state, like bpc.
-+	 * Allocate some default initial connector state with our reset helper.
-+	 */
-+	if (aconnector->base.funcs->reset)
-+		aconnector->base.funcs->reset(&aconnector->base);
-+
- 	aconnector->connector_id = link_index;
- 	aconnector->dc_link = link;
- 	aconnector->base.interlace_allowed = false;
-@@ -3811,9 +3818,6 @@ static int amdgpu_dm_connector_init(struct amdgpu_display_manager *dm,
- 			&aconnector->base,
- 			&amdgpu_dm_connector_helper_funcs);
- 
--	if (aconnector->base.funcs->reset)
--		aconnector->base.funcs->reset(&aconnector->base);
--
- 	amdgpu_dm_connector_init_helper(
- 		dm,
- 		aconnector,
--- 
-2.20.1
+> 
+>>
+>> Additionally checking of that limit is fragile, as the number of pages
+>> to map via one call is specified in a 32-bit unsigned variable which
+>> isn't tested to stay within reasonable limits (the only test is the
+>> value to be <= zero, which basically excludes only calls without any
+>> mapping requested). So trying to map e.g. 0xffff0000 pages while
+>> already nearly 1000000 pages are mapped will effectively lower the
+>> global number of mapped pages such that a parallel call mapping a
+>> reasonable amount of pages can succeed in spite of the global limit
+>> being violated.
+>>
+>> So drop the global limit and introduce per call limit instead.
+> 
+> Its probably worth talking about this new limit.  What is it trying to
+> protect?
 
+Out-of-bounds allocations.
+
+
+Juergen
