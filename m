@@ -2,77 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 840936EB12
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 21:29:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCCE86EB18
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 21:31:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732642AbfGST2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 15:28:31 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:39142 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728092AbfGST2a (ORCPT
+        id S1732703AbfGSTaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 15:30:02 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:12405 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728092AbfGSTaB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 15:28:30 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 99EF0C0ABA;
-        Fri, 19 Jul 2019 19:28:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1563564510; bh=Hdp/JPcL7+oZycXcOcMtk5gY76vQ+jEs/4pUwlrEtss=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DFBj8XV0B/QuQE8aOgizpLS/br+cSX4K3124yNr6VkULKY9+CPMDapq+h3JPUpAOd
-         v48bGz7ugdpJgBV/C2r44iKci7U/4fC/VWapZWK151pqxzQpPK5wJQZTxnejEkkBxb
-         FgNFXRXjDOoIkfPIA2cxUcXdJmsgJgSGKRB2vjxeEfxTBnwpCtNEKxD0ZXcFnzsUOH
-         7rlCUyuxnPQJ5XOTQrZ8x1A49hZ0UoNpCTm44eahzbiOl4Bso1QDvP2mDr3GT/eepi
-         NXpCbmMpuMuVC/Ji29j5hCBD9XcOB0Y4+b0/Tp9pLJW7UlWBTnt/D6wkCyQwqRkAjg
-         8M9uUbI69imuw==
-Received: from paltsev-e7480.internal.synopsys.com (unknown [10.121.8.79])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 0E70FA0057;
-        Fri, 19 Jul 2019 19:28:27 +0000 (UTC)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-kbuild@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [TRIVIAL PATCH] of: per-file dtc preprocessor flags
-Date:   Fri, 19 Jul 2019 22:28:24 +0300
-Message-Id: <20190719192824.24639-1-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.21.0
+        Fri, 19 Jul 2019 15:30:01 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d321a400000>; Fri, 19 Jul 2019 12:30:08 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 19 Jul 2019 12:30:01 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 19 Jul 2019 12:30:01 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 19 Jul
+ 2019 19:30:01 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 19 Jul 2019 19:30:01 +0000
+Received: from rcampbell-dev.nvidia.com (Not Verified[10.110.48.66]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d321a380008>; Fri, 19 Jul 2019 12:30:00 -0700
+From:   Ralph Campbell <rcampbell@nvidia.com>
+To:     <linux-mm@kvack.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Ralph Campbell <rcampbell@nvidia.com>
+Subject: [PATCH v2 0/3] mm/hmm: fixes for device private page migration
+Date:   Fri, 19 Jul 2019 12:29:52 -0700
+Message-ID: <20190719192955.30462-1-rcampbell@nvidia.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1563564608; bh=lzvQpqIVeAPQspf/bNGxauqHX/fDBWVwZY/7PMGCtIU=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Type:
+         Content-Transfer-Encoding;
+        b=f1zyVgL62a6J62vELNsAkF8adZRIJsmhjhNt9ae9hmswAqZgPy7W34pHtD0IjtTCt
+         JEpnm9W+2O2A+ET/L2emFffOjibWenG+ZqkQ5f+ICrC08wFEfGrs8bvTsKn0teCnIK
+         S6Vw/R3nqhKWiviB/BXyi0+pfFyxbpyFuE2Oc+sSxTGJHOZu7cBAtwPdz87YPKgqpO
+         uFEQ/g5xHRvQm++75knbg+2DioQw4unpiDzwwYCe6J2CwZ+f4aoHf/oOTuIbeNCaJM
+         2C7JFDt0xjZcSb7NXI2cJDhSv+2EmmNF2tR2XCrYGTRhBS7yhr6QIl5PLmyUR6B0Zp
+         zVr0JtVpfU3fQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As of today we are able to pass custom flags to dtc compiler but not
-to dtc preprocessor.
-This ability is required for including some board-specific header files.
-It allows us to pass defined constants to dts without their duplication
-in several places.
+Testing the latest linux git tree turned up a few bugs with page
+migration to and from ZONE_DEVICE private and anonymous pages.
+Hopefully it clarifies how ZONE_DEVICE private struct page uses
+the same mapping and index fields from the source anonymous page
+mapping.
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
- scripts/Makefile.lib | 2 ++
- 1 file changed, 2 insertions(+)
+Changes from v1 to v2:
 
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index f1f38c8cdc74..f2595a608dce 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -166,6 +166,8 @@ dtc_cpp_flags  = -Wp,-MD,$(depfile).pre.tmp -nostdinc                    \
- 		 $(addprefix -I,$(DTC_INCLUDE))                          \
- 		 -undef -D__DTS__
- 
-+dtc_cpp_flags  += $(DTC_CPP_FLAGS_$(basetarget))
-+
- # Useful for describing the dependency of composite objects
- # Usage:
- #   $(call multi_depend, multi_used_targets, suffix_to_remove, suffix_to_add)
--- 
-2.21.0
+Patch #1 merges ZONE_DEVICE page struct into a union of lru and
+a struct for ZONE_DEVICE fields. So, basically a new patch.
+
+Patch #2 updates the code comments for clearing page->mapping as
+suggested by John Hubbard.
+
+Patch #3 is unchanged from the previous posting but note that
+Andrew Morton has v1 queued in v5.2-mmotm-2019-07-18-16-08.
+
+Ralph Campbell (3):
+  mm: document zone device struct page reserved fields
+  mm/hmm: fix ZONE_DEVICE anon page mapping reuse
+  mm/hmm: Fix bad subpage pointer in try_to_unmap_one
+
+ include/linux/mm_types.h | 9 ++++++++-
+ kernel/memremap.c        | 4 ++++
+ mm/rmap.c                | 1 +
+ 3 files changed, 13 insertions(+), 1 deletion(-)
+
+--=20
+2.20.1
 
