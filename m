@@ -2,76 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38E9C6D918
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 04:35:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D75576D926
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 04:43:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726597AbfGSCfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 22:35:30 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2682 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726015AbfGSCfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 22:35:30 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 313D2F73CA5F42628F4B;
-        Fri, 19 Jul 2019 10:35:28 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 19 Jul 2019 10:35:20 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <jani.nikula@linux.intel.com>, <joonas.lahtinen@linux.intel.com>,
-        <rodrigo.vivi@intel.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <ville.syrjala@linux.intel.com>,
-        <maarten.lankhorst@linux.intel.com>, <matthew.d.roper@intel.com>
-CC:     YueHaibing <yuehaibing@huawei.com>,
-        <intel-gfx@lists.freedesktop.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] drm/i915/icl: Remove set but not used variable 'src_y'
-Date:   Fri, 19 Jul 2019 02:41:00 +0000
-Message-ID: <20190719024100.64738-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726374AbfGSCmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 22:42:53 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:34092 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726015AbfGSCmw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 22:42:52 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TXF5rRz_1563504168;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TXF5rRz_1563504168)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 19 Jul 2019 10:42:49 +0800
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     Alex Shi <alex.shi@linux.alibaba.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] cputime: remove rq parameter for irqtime_account_process_tick func
+Date:   Fri, 19 Jul 2019 10:42:41 +0800
+Message-Id: <20190719024242.249429-1-alex.shi@linux.alibaba.com>
+X-Mailer: git-send-email 2.19.1.856.g8858448bb
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Using the per cpu rq in function directly is enough, don't need get and
+pass it from outside as a parameter. That's make function neat.
 
-drivers/gpu/drm/i915/display/intel_sprite.c: In function 'g4x_sprite_check_scaling':
-drivers/gpu/drm/i915/display/intel_sprite.c:1494:13: warning:
- variable 'src_y' set but not used [-Wunused-but-set-variable]
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Wanpeng Li <wanpeng.li@hotmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
 ---
- drivers/gpu/drm/i915/display/intel_sprite.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ kernel/sched/cputime.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/display/intel_sprite.c b/drivers/gpu/drm/i915/display/intel_sprite.c
-index 34586f29be60..9c3367491f04 100644
---- a/drivers/gpu/drm/i915/display/intel_sprite.c
-+++ b/drivers/gpu/drm/i915/display/intel_sprite.c
-@@ -1491,7 +1491,7 @@ g4x_sprite_check_scaling(struct intel_crtc_state *crtc_state,
- 	const struct drm_framebuffer *fb = plane_state->base.fb;
- 	const struct drm_rect *src = &plane_state->base.src;
- 	const struct drm_rect *dst = &plane_state->base.dst;
--	int src_x, src_y, src_w, src_h, crtc_w, crtc_h;
-+	int src_x, src_w, src_h, crtc_w, crtc_h;
- 	const struct drm_display_mode *adjusted_mode =
- 		&crtc_state->base.adjusted_mode;
- 	unsigned int cpp = fb->format->cpp[0];
-@@ -1502,7 +1502,6 @@ g4x_sprite_check_scaling(struct intel_crtc_state *crtc_state,
- 	crtc_h = drm_rect_height(dst);
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index 2305ce89a26c..3aaf761ede81 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -355,7 +355,7 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
+  * softirq as those do not count in task exec_runtime any more.
+  */
+ static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+-					 struct rq *rq, int ticks)
++					 int ticks)
+ {
+ 	u64 other, cputime = TICK_NSEC * ticks;
  
- 	src_x = src->x1 >> 16;
--	src_y = src->y1 >> 16;
- 	src_w = drm_rect_width(src) >> 16;
- 	src_h = drm_rect_height(src) >> 16;
-
-
+@@ -381,7 +381,7 @@ static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+ 		account_system_index_time(p, cputime, CPUTIME_SOFTIRQ);
+ 	} else if (user_tick) {
+ 		account_user_time(p, cputime);
+-	} else if (p == rq->idle) {
++	} else if (p == this_rq()->idle) {
+ 		account_idle_time(cputime);
+ 	} else if (p->flags & PF_VCPU) { /* System time or guest time */
+ 		account_guest_time(p, cputime);
+@@ -392,14 +392,12 @@ static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+ 
+ static void irqtime_account_idle_ticks(int ticks)
+ {
+-	struct rq *rq = this_rq();
+-
+-	irqtime_account_process_tick(current, 0, rq, ticks);
++	irqtime_account_process_tick(current, 0, ticks);
+ }
+ #else /* CONFIG_IRQ_TIME_ACCOUNTING */
+ static inline void irqtime_account_idle_ticks(int ticks) { }
+ static inline void irqtime_account_process_tick(struct task_struct *p, int user_tick,
+-						struct rq *rq, int nr_ticks) { }
++						int nr_ticks) { }
+ #endif /* CONFIG_IRQ_TIME_ACCOUNTING */
+ 
+ /*
+@@ -475,13 +473,12 @@ void thread_group_cputime_adjusted(struct task_struct *p, u64 *ut, u64 *st)
+ void account_process_tick(struct task_struct *p, int user_tick)
+ {
+ 	u64 cputime, steal;
+-	struct rq *rq = this_rq();
+ 
+ 	if (vtime_accounting_cpu_enabled())
+ 		return;
+ 
+ 	if (sched_clock_irqtime) {
+-		irqtime_account_process_tick(p, user_tick, rq, 1);
++		irqtime_account_process_tick(p, user_tick, 1);
+ 		return;
+ 	}
+ 
+@@ -495,7 +492,7 @@ void account_process_tick(struct task_struct *p, int user_tick)
+ 
+ 	if (user_tick)
+ 		account_user_time(p, cputime);
+-	else if ((p != rq->idle) || (irq_count() != HARDIRQ_OFFSET))
++	else if ((p != this_rq()->idle) || (irq_count() != HARDIRQ_OFFSET))
+ 		account_system_time(p, HARDIRQ_OFFSET, cputime);
+ 	else
+ 		account_idle_time(cputime);
+-- 
+2.19.1.856.g8858448bb
 
