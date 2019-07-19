@@ -2,154 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FE2B6D922
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 04:39:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38E9C6D918
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 04:35:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbfGSCjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 22:39:40 -0400
-Received: from twhmllg4.macronix.com ([211.75.127.132]:52150 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726015AbfGSCjj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 22:39:39 -0400
-Received: from twhfmnt1.mxic.com.tw (twhfm1p2.macronix.com [172.17.20.92])
-        by TWHMLLG4.macronix.com with ESMTP id x6J2cuaQ072409;
-        Fri, 19 Jul 2019 10:38:56 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-Received: from MXML06C.mxic.com.tw (mxml06c.macronix.com [172.17.14.55])
-        by Forcepoint Email with ESMTP id B17D5E65125DE4DC5AE3;
-        Fri, 19 Jul 2019 10:38:56 +0800 (CST)
-In-Reply-To: <CAMuHMdUPmj0tAhJ18DhQEbYxP7g4MMBMe0U_2eQFQ7mOq4ZFLQ@mail.gmail.com>
-References: <1561023046-20886-1-git-send-email-masonccyang@mxic.com.tw> <1561023046-20886-3-git-send-email-masonccyang@mxic.com.tw> <CAMuHMdUPmj0tAhJ18DhQEbYxP7g4MMBMe0U_2eQFQ7mOq4ZFLQ@mail.gmail.com>
-To:     "Geert Uytterhoeven" <geert@linux-m68k.org>
-Cc:     "Boris Brezillon" <bbrezillon@kernel.org>,
-        "Mark Brown" <broonie@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "Geert Uytterhoeven" <geert+renesas@glider.be>,
-        "Simon Horman" <horms@verge.net.au>, juliensu@mxic.com.tw,
-        "Lee Jones" <lee.jones@linaro.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "Linux-Renesas" <linux-renesas-soc@vger.kernel.org>,
-        "linux-spi" <linux-spi@vger.kernel.org>,
-        "Marek Vasut" <marek.vasut@gmail.com>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        "Miquel Raynal" <miquel.raynal@bootlin.com>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v14 2/2] dt-bindings: spi: Document Renesas R-Car Gen3 RPC-IF
- controller bindings
+        id S1726597AbfGSCfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 22:35:30 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2682 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726015AbfGSCfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 22:35:30 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 313D2F73CA5F42628F4B;
+        Fri, 19 Jul 2019 10:35:28 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 19 Jul 2019 10:35:20 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <jani.nikula@linux.intel.com>, <joonas.lahtinen@linux.intel.com>,
+        <rodrigo.vivi@intel.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <ville.syrjala@linux.intel.com>,
+        <maarten.lankhorst@linux.intel.com>, <matthew.d.roper@intel.com>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <intel-gfx@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] drm/i915/icl: Remove set but not used variable 'src_y'
+Date:   Fri, 19 Jul 2019 02:41:00 +0000
+Message-ID: <20190719024100.64738-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-KeepSent: 43DF9AAE:9EB63E41-4825843C:000C61B7;
- type=4; name=$KeepSent
-X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
-Message-ID: <OF43DF9AAE.9EB63E41-ON4825843C.000C61B7-4825843C.000E8D45@mxic.com.tw>
-From:   masonccyang@mxic.com.tw
-Date:   Fri, 19 Jul 2019 10:38:56 +0800
-X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
- 2019/07/19 AM 10:38:56,
-        Serialize complete at 2019/07/19 AM 10:38:56
-Content-Type: text/plain; charset="US-ASCII"
-X-MAIL: TWHMLLG4.macronix.com x6J2cuaQ072409
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Hi Geert, 
+drivers/gpu/drm/i915/display/intel_sprite.c: In function 'g4x_sprite_check_scaling':
+drivers/gpu/drm/i915/display/intel_sprite.c:1494:13: warning:
+ variable 'src_y' set but not used [-Wunused-but-set-variable]
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/i915/display/intel_sprite.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/display/intel_sprite.c b/drivers/gpu/drm/i915/display/intel_sprite.c
+index 34586f29be60..9c3367491f04 100644
+--- a/drivers/gpu/drm/i915/display/intel_sprite.c
++++ b/drivers/gpu/drm/i915/display/intel_sprite.c
+@@ -1491,7 +1491,7 @@ g4x_sprite_check_scaling(struct intel_crtc_state *crtc_state,
+ 	const struct drm_framebuffer *fb = plane_state->base.fb;
+ 	const struct drm_rect *src = &plane_state->base.src;
+ 	const struct drm_rect *dst = &plane_state->base.dst;
+-	int src_x, src_y, src_w, src_h, crtc_w, crtc_h;
++	int src_x, src_w, src_h, crtc_w, crtc_h;
+ 	const struct drm_display_mode *adjusted_mode =
+ 		&crtc_state->base.adjusted_mode;
+ 	unsigned int cpp = fb->format->cpp[0];
+@@ -1502,7 +1502,6 @@ g4x_sprite_check_scaling(struct intel_crtc_state *crtc_state,
+ 	crtc_h = drm_rect_height(dst);
  
-Thanks for your review!
-
-Will fix it as 
-
-+Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
-+---------------------------------------------------------
-+
-+Required properties:
-+- compatible: should be an SoC-specific compatible value, followed by
-+                                "renesas,rcar-gen3-rpc" as a fallback.
-+                                supported SoC-specific values are:
-+                                "renesas,r8a77980-rpc"          (R-Car 
-V3H)
-+                                "renesas,r8a77995-rpc"          (R-Car 
-D3)
-+- reg: should contain three register areas:
-+       first for the base address of RPC-IF registers,
-+       second for the direct mapping read mode and
-+       third for the write buffer area.
-+- reg-names: should contain "regs", "dirmap" and "wbuf"
-+- clocks: should contain the clock phandle/specifier pair for the module 
-clock.
-+- clock-names: should contain "rpc"
-+- power-domains: should contain the power domain phandle/secifier pair.
-+- resets: should contain the reset controller phandle/specifier pair.
-+- #address-cells: should be 1
-+- #size-cells: should be 0
-+
-+  flash: should be represented by a subnode of the RPC-IF node, 
-+  which "compatible" property contains "jedec,spi-nor", it presents SPI 
-is used.
-+
-+Example:
-+
-+                rpc: spi@ee200000 {
-+                                compatible = "renesas,r8a77995-rpc", 
-"renesas,rcar-gen3-rpc";
-+                                reg = <0 0xee200000 0 0x200>, <0 
-0x08000000 0 0x4000000>,
-+                                      <0 0xee208000 0 0x100>;
-+                                reg-names = "regs", "dirmap", "wbuf";
-+                                clocks = <&cpg CPG_MOD 917>;
-+                                clock-names = "rpc";
-+                                power-domains = <&sysc 
-R8A77995_PD_ALWAYS_ON>;
-+                                resets = <&cpg 917>;
-+                                #address-cells = <1>;
-+                                #size-cells = <0>;
-+
-+                                flash@0 {
-+                                                compatible = 
-"jedec,spi-nor";
-+                                                reg = <0>;
-+                                                spi-max-frequency = 
-<40000000>;
-+                                                spi-tx-bus-width = <1>;
-+                                                spi-rx-bus-width = <1>;
-+                                };
-+                };
-
-Is it OK ?
-
-thanks & best regards,
-Mason
+ 	src_x = src->x1 >> 16;
+-	src_y = src->y1 >> 16;
+ 	src_w = drm_rect_width(src) >> 16;
+ 	src_h = drm_rect_height(src) >> 16;
 
 
-CONFIDENTIALITY NOTE:
-
-This e-mail and any attachments may contain confidential information 
-and/or personal data, which is protected by applicable laws. Please be 
-reminded that duplication, disclosure, distribution, or use of this e-mail 
-(and/or its attachments) or any part thereof is prohibited. If you receive 
-this e-mail in error, please notify us immediately and delete this mail as 
-well as its attachment(s) from your system. In addition, please be 
-informed that collection, processing, and/or use of personal data is 
-prohibited unless expressly permitted by personal data protection laws. 
-Thank you for your attention and cooperation.
-
-Macronix International Co., Ltd.
-
-=====================================================================
-
-
-
-============================================================================
-
-CONFIDENTIALITY NOTE:
-
-This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
-
-Macronix International Co., Ltd.
-
-=====================================================================
 
