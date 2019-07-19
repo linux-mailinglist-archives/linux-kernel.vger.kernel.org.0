@@ -2,147 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB11A6E3D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:04:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DD366E3D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:02:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbfGSKC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 06:02:57 -0400
-Received: from foss.arm.com ([217.140.110.172]:41260 "EHLO foss.arm.com"
+        id S1727070AbfGSKC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 06:02:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727351AbfGSKC5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 06:02:57 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D6AC337;
-        Fri, 19 Jul 2019 03:02:56 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D8CBE3F59C;
-        Fri, 19 Jul 2019 03:02:53 -0700 (PDT)
-Date:   Fri, 19 Jul 2019 11:02:16 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Lina Iyer <ilina@codeaurora.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Souvik Chakravarty <souvik.chakravarty@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 14/18] drivers: firmware: psci: Manage runtime PM in the
- idle path for CPUs
-Message-ID: <20190719100216.GA8587@e121166-lin.cambridge.arm.com>
-References: <20190513192300.653-1-ulf.hansson@linaro.org>
- <20190513192300.653-15-ulf.hansson@linaro.org>
- <20190716155317.GB32490@e121166-lin.cambridge.arm.com>
- <CAPDyKFrJ75mo+s6GuUCTQ-nVv7C+9YJyTVmwuBZ2RKFOvOi3Nw@mail.gmail.com>
- <20190718133053.GA27222@e121166-lin.cambridge.arm.com>
- <CAPDyKFr4NmichQk4uf+Wgbanh=5idKYY=37WCb6U_hNFDVYg=w@mail.gmail.com>
- <20190718174116.GD25567@codeaurora.org>
- <CAPDyKFrxBdZfskyp2HOb5YykkAqkBzRfW4-LLbcj1DAaL65XpA@mail.gmail.com>
+        id S1725794AbfGSKC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 06:02:26 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DF302173B;
+        Fri, 19 Jul 2019 10:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563530545;
+        bh=KvPLM1GNe5tFVjsJpLtAS+Cc5JSEL3ozQZTgGhM2Zj0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ngDBnyyvbzeDdeqaWe1yYZ14j969anbfifz4sULg2Y/9mfJfcN2ruBIKYgfHGrwXv
+         RK6jQPeP2tF0RC6ZW5ZWHe7piD8IkfoGr1N8FVpUiEllxkKqG6jvPfz5Eo+0qxU4FW
+         pwk+O2cge3NeLPhjy9rKqiqtFbFtbFxsxPikY1Nw=
+Date:   Fri, 19 Jul 2019 11:02:20 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Joakim Zhang <qiangqing.zhang@nxp.com>
+Cc:     "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "jolsa@redhat.com" <jolsa@redhat.com>,
+        "namhyung@kernel.org" <namhyung@kernel.org>,
+        Frank Li <frank.li@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+Subject: Re: [PATCH] perf tool: arch: arm64: change the way for
+ get_cpuid_str() function
+Message-ID: <20190719100219.b3bbrv4t4qcv2gid@willie-the-truck>
+References: <20190718061853.10403-1-qiangqing.zhang@nxp.com>
+ <20190719075450.xcm4i4a5sfaxlfap@willie-the-truck>
+ <DB7PR04MB4618EE69C2D8A664660C19C4E6CB0@DB7PR04MB4618.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPDyKFrxBdZfskyp2HOb5YykkAqkBzRfW4-LLbcj1DAaL65XpA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <DB7PR04MB4618EE69C2D8A664660C19C4E6CB0@DB7PR04MB4618.eurprd04.prod.outlook.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 11:49:11PM +0200, Ulf Hansson wrote:
-> On Thu, 18 Jul 2019 at 19:41, Lina Iyer <ilina@codeaurora.org> wrote:
-> >
-> > On Thu, Jul 18 2019 at 10:55 -0600, Ulf Hansson wrote:
-> > >On Thu, 18 Jul 2019 at 15:31, Lorenzo Pieralisi
-> > ><lorenzo.pieralisi@arm.com> wrote:
-> > >>
-> > >> On Thu, Jul 18, 2019 at 12:35:07PM +0200, Ulf Hansson wrote:
-> > >> > On Tue, 16 Jul 2019 at 17:53, Lorenzo Pieralisi
-> > >> > <lorenzo.pieralisi@arm.com> wrote:
-> > >> > >
-> > >> > > On Mon, May 13, 2019 at 09:22:56PM +0200, Ulf Hansson wrote:
-> > >> > > > When the hierarchical CPU topology layout is used in DT, let's allow the
-> > >> > > > CPU to be power managed through its PM domain, via deploying runtime PM
-> > >> > > > support.
-> > >> > > >
-> > >> > > > To know for which idle states runtime PM reference counting is needed,
-> > >> > > > let's store the index of deepest idle state for the CPU, in a per CPU
-> > >> > > > variable. This allows psci_cpu_suspend_enter() to compare this index with
-> > >> > > > the requested idle state index and then act accordingly.
-> > >> > >
-> > >> > > I do not see why a system with two CPU CPUidle states, say CPU retention
-> > >> > > and CPU shutdown, should not be calling runtime PM on CPU retention
-> > >> > > entry.
-> > >> >
-> > >> > If the CPU idle governor did select the CPU retention for the CPU, it
-> > >> > was probably because the target residency for the CPU shutdown state
-> > >> > could not be met.
-> > >>
-> > >> The kernel does not know what those cpu states represent, so, this is an
-> > >> assumption you are making and it must be made clear that this code works
-> > >> as long as your assumption is valid.
-> > >>
-> > >> If eg a "cluster" retention state has lower target_residency than
-> > >> the deepest CPU idle state this assumption is wrong.
+On Fri, Jul 19, 2019 at 08:29:12AM +0000, Joakim Zhang wrote:
+> > On Thu, Jul 18, 2019 at 06:21:30AM +0000, Joakim Zhang wrote:
+> > > Now the get_cpuid__str function returns the MIDR string of the first
+> > > online cpu from the range of cpus asscociated with the PMU CORE device.
 > > >
-> > >Good point, you are right. I try to find a place to document this assumption.
-> > >
-> > >>
-> > >> And CPUidle and genPD governor decisions are not synced anyway so,
-> > >> again, this is an assumption, not a certainty.
-> > >>
-> > >> > In this case, there is no point in allowing any other deeper idle
-> > >> > states for cluster/package/system, since those have even greater
-> > >> > residencies, hence calling runtime PM doesn't make sense.
-> > >>
-> > >> On the systems you are testing on.
-> > >
-> > >So what you are saying typically means, that if all CPUs in the same
-> > >cluster have entered the CPU retention state, on some system the
-> > >cluster may also put into a cluster retention state (assuming the
-> > >target residency is met)?
-> > >
-> > >Do you know of any systems that has these characteristics?
-> > >
-> > Many QCOM SoCs can do that. But with the hardware improving, the
-> > power-performance benefits skew the results in favor of powering off
-> > the cluster than keeping the CPU and cluster in retention.
-> >
-> > Kevin H and I thought of this problem earlier on. But that is a second
-> > level problem to solve and definitely to be thought of after we have the
-> > support for the deepest states in the kernel. We left that out for a
-> > later date. The idea would have been to setup the allowable state(s) in
-> > the DT for CPU and cluster state definitions and have the genpd take
-> > that into consideration when deciding the idle state for the domain.
+> > > It can work when pass a perf_pmu entity to get_cpuid_str. However, it
+> > > will pass NULL via perf_pmu__find_map from metricgroup.c if we want to
+> > > add metric group for arm64. When pass NULL to get_cpuid_str, it can't
+> > > return the MIDR string.
+> > 
+> > Why is this code passing a NULL PMU? What information does it actually need?
+> > Other functions, such as print_pmu_events(), iterate over all PMUs.
 > 
-> Thanks for confirming.
+> tools/perf/utils/metricgroup.c:
+> metricgroup__add_metric()/metricgroup__has_metric()/metricgroup__print()---->perf_pmu__find_map(NULL)------>perf_pmu__getcpuid(NULL)----->get_cpuid_str(NULL)
+> So, it will eventually pass NULL to get_cpuid_str() function for arm64, and now get_cpuid_str() for arm64 need *struct perf_pmu* entity to return MIDR string.
 > 
-> This more or less means we need to improve the hierarchical support in
-> genpd to support more levels, such that it makes sense to have a genpd
-> governor assigned at more than one level. This doesn't work well
-> today. As I also have stated, this is on my todo list for genpd.
+> And the declaration for get_cpuid_str() is char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused) in tools/perf/utils/header.h file.
+> So, it can return MIDR string without passing *struct perf_pmu* entity. Arch PowerPC/x86/s390 which implement metricgroup all add __maybe_unused.
 > 
-> However, I also agree with your standpoint, that let's start simple to
-> enable the deepest state as a start with, then we can improve things
-> on top.
+> > > There are three methods from userspace getting MIDR string for arm64:
+> > > 1. parse
+> > > sysfs(/sys/devices/system/cpu/cpu?/regs/identification/midr_el1)
+> > > 2. parse procfs(/proc/cpuinfo)
+> > > 3. read the hwcaps(MIDR register) with getauxval(AT_HWCAP)
+> > >
+> > > Perfer to select #3 as it is more simple and direct.
+> > 
+> > That's probably terminally broken for heterogeneous systems, so I'm not at all
+> > happy with this patch.
+> 
+> The implement of get_cpuid_str() for arm64 now only can return the MIDR
+> string of the first online cpu. I think it is also broken for
+> heterogeneous systems.
 
-How to solve this in the kernel I don't know but please do make sure
-that the DT bindings allow you to describe what's needed, once they are
-merged you won't be able to change them and I won't bodge the code to
-make things fit, so if anything let's focus on getting them right as a
-matter of priority to get this done please.
+I disagree: the current code returns the MIDR string for the first online
+CPU *corresponding to the PMU* (e.g. pmu->cpus) and therefore handles
+heterogeneous systems like that.
 
-Thanks,
-Lorenzo
+> Will, do you know how to fix this issue more reasonable?
+
+I still don't know what the metricgroup coce is trying to achieve, but my
+previous suggestion about looking at print_pmu_events() is probably still a
+good place to start.
+
+Will
