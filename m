@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D636DD40
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:21:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DB156DD2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:21:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389498AbfGSEV1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:21:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47102 "EHLO mail.kernel.org"
+        id S2388668AbfGSEMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:12:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732715AbfGSEL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:11:57 -0400
+        id S1731159AbfGSEMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:12:01 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D758A21873;
-        Fri, 19 Jul 2019 04:11:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBB7D2189E;
+        Fri, 19 Jul 2019 04:11:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509517;
-        bh=tGjESBeDYN43XYR3+Lpn7FySCqjRCcufydLk9+TMPUk=;
+        s=default; t=1563509520;
+        bh=xfCU53WlHTAlJW2/uhkH1BKmeggsOheUfndwnFGFaQg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i2cC29GOaLv8fwDICPtmH7MavleQB2pUC9xraHfof8sQkpnHsH1c9K9yK+sJbYLs6
-         DuenCsEzYEviGkQaVb2YEF3leOQGUnkM8ygt7zk1Hfb+eqyx4eUbg6KWJQpK4VYH6k
-         +zrfu5MwMwPbMp0BwSYNMbkFyvCk5DYRCJh+Umqw=
+        b=mPCY0YUcNo98A8ss2RK1IRm1HX8tu42yOITCjLF+aIs3NvBKeBEV8xwihrnBP2fGr
+         VnV6k9PHC3/KhiCa+meS2+IIpsElS1Li2wiqjgf76dIR6x2D4H+17ZxI+AuXxN7vxD
+         OAjsPDYnGvrqAi/+RMen37DVxt418bVeemtWdgSQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Tejun Heo <tj@kernel.org>, Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 26/60] PCI: sysfs: Ignore lockdep for remove attribute
-Date:   Fri, 19 Jul 2019 00:10:35 -0400
-Message-Id: <20190719041109.18262-26-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Peter Smith <peter.smith@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sasha Levin <sashal@kernel.org>, linux-kbuild@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.14 28/60] kbuild: Add -Werror=unknown-warning-option to CLANG_FLAGS
+Date:   Fri, 19 Jul 2019 00:10:37 -0400
+Message-Id: <20190719041109.18262-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719041109.18262-1-sashal@kernel.org>
 References: <20190719041109.18262-1-sashal@kernel.org>
@@ -47,61 +46,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit dc6b698a86fe40a50525433eb8e92a267847f6f9 ]
+[ Upstream commit 589834b3a0097a4908f4112eac0ca2feb486fa32 ]
 
-With CONFIG_PROVE_LOCKING=y, using sysfs to remove a bridge with a device
-below it causes a lockdep warning, e.g.,
+In commit ebcc5928c5d9 ("arm64: Silence gcc warnings about arch ABI
+drift"), the arm64 Makefile added -Wno-psabi to KBUILD_CFLAGS, which is
+a GCC only option so clang rightfully complains:
 
-  # echo 1 > /sys/class/pci_bus/0000:00/device/0000:00:00.0/remove
-  ============================================
-  WARNING: possible recursive locking detected
-  ...
-  pci_bus 0000:01: busn_res: [bus 01] is released
+warning: unknown warning option '-Wno-psabi' [-Wunknown-warning-option]
 
-The remove recursively removes the subtree below the bridge.  Each call
-uses a different lock so there's no deadlock, but the locks were all
-created with the same lockdep key so the lockdep checker can't tell them
-apart.
+https://clang.llvm.org/docs/DiagnosticsReference.html#wunknown-warning-option
 
-Mark the "remove" sysfs attribute with __ATTR_IGNORE_LOCKDEP() as it is
-safe to ignore the lockdep check between different "remove" kernfs
-instances.
+However, by default, this is merely a warning so the build happily goes
+on with a slew of these warnings in the process.
 
-There's discussion about a similar issue in USB at [1], which resulted in
-356c05d58af0 ("sysfs: get rid of some lockdep false positives") and
-e9b526fe7048 ("i2c: suppress lockdep warning on delete_device"), which do
-basically the same thing for USB "remove" and i2c "delete_device" files.
+Commit c3f0d0bc5b01 ("kbuild, LLVMLinux: Add -Werror to cc-option to
+support clang") worked around this behavior in cc-option by adding
+-Werror so that unknown flags cause an error. However, this all happens
+silently and when an unknown flag is added to the build unconditionally
+like -Wno-psabi, cc-option will always fail because there is always an
+unknown flag in the list of flags. This manifested as link time failures
+in the arm64 libstub because -fno-stack-protector didn't get added to
+KBUILD_CFLAGS.
 
-[1] https://lore.kernel.org/r/Pine.LNX.4.44L0.1204251436140.1206-100000@iolanthe.rowland.org
-Link: https://lore.kernel.org/r/20190526225151.3865-1-marek.vasut@gmail.com
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-[bhelgaas: trim commit log, details at above links]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>
+To avoid these weird cryptic failures in the future, make clang behave
+like gcc and immediately error when it encounters an unknown flag by
+adding -Werror=unknown-warning-option to CLANG_FLAGS. This can be added
+unconditionally for clang because it is supported by at least 3.0.0,
+according to godbolt [1] and 4.0.0, according to its documentation [2],
+which is far earlier than we typically support.
+
+[1]: https://godbolt.org/z/7F7rm3
+[2]: https://releases.llvm.org/4.0.0/tools/clang/docs/DiagnosticsReference.html#wunknown-warning-option
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/511
+Link: https://github.com/ClangBuiltLinux/linux/issues/517
+Suggested-by: Peter Smith <peter.smith@linaro.org>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/pci-sysfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index c3f0473d1afa..ee7dccab771d 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -496,7 +496,7 @@ static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
- 		pci_stop_and_remove_bus_device_locked(to_pci_dev(dev));
- 	return count;
- }
--static struct device_attribute dev_remove_attr = __ATTR(remove,
-+static struct device_attribute dev_remove_attr = __ATTR_IGNORE_LOCKDEP(remove,
- 							(S_IWUSR|S_IWGRP),
- 							NULL, remove_store);
- 
+diff --git a/Makefile b/Makefile
+index c36e64bd9ae7..3d43f922953f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -488,6 +488,7 @@ ifneq ($(GCC_TOOLCHAIN),)
+ CLANG_FLAGS	+= --gcc-toolchain=$(GCC_TOOLCHAIN)
+ endif
+ CLANG_FLAGS	+= -no-integrated-as
++CLANG_FLAGS	+= -Werror=unknown-warning-option
+ KBUILD_CFLAGS	+= $(CLANG_FLAGS)
+ KBUILD_AFLAGS	+= $(CLANG_FLAGS)
+ export CLANG_FLAGS
 -- 
 2.20.1
 
