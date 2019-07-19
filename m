@@ -2,54 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8E7D6D973
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 05:46:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF0DA6D976
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 05:46:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbfGSDqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 18 Jul 2019 23:46:06 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:56578 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbfGSDqG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 18 Jul 2019 23:46:06 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hoJqO-0007U5-7g; Fri, 19 Jul 2019 03:46:04 +0000
-Date:   Fri, 19 Jul 2019 04:46:04 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] vfs.git misc
-Message-ID: <20190719034604.GZ17978@ZenIV.linux.org.uk>
+        id S1726861AbfGSDqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 18 Jul 2019 23:46:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54314 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726055AbfGSDqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 18 Jul 2019 23:46:21 -0400
+Received: from localhost (p91006-ipngnfx01marunouchi.tokyo.ocn.ne.jp [153.156.43.6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E61832173B;
+        Fri, 19 Jul 2019 03:46:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563507980;
+        bh=SwMD6+/cj1yolV8kd0YVf3nZtjqo9EnuU1iriUtY5ok=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=i26LvF+0yy/DNWBELjJsweXoZTmccpsFzjlZMUIjdy+g7PM2gvNjnB7yQauv/qhXc
+         gEx4XzrQZ37ACMwMoOpWNlmiVCSnIiZm1H+MjtqnFjyl6bTnU1arpBf7ZYaZKx8wSb
+         fJpArHgdj9AwJyi6XwZG/S/yYDGs3wHRewlLtg8Q=
+Date:   Fri, 19 Jul 2019 12:46:18 +0900
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.2 00/21] 5.2.2-stable review
+Message-ID: <20190719034618.GA8184@kroah.com>
+References: <20190718030030.456918453@linuxfoundation.org>
+ <CA+G9fYvXydEVdXBhLdagzj5gvxmdZgUkDQ8UFToRtb0UwH672g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+G9fYvXydEVdXBhLdagzj5gvxmdZgUkDQ8UFToRtb0UwH672g@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Assorted stuff.
+On Thu, Jul 18, 2019 at 06:12:34PM +0530, Naresh Kamboju wrote:
+> On Thu, 18 Jul 2019 at 08:33, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 5.2.2 release.
+> > There are 21 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sat 20 Jul 2019 02:59:27 AM UTC.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.2-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> Results from Linaro’s test farm.
+> No regressions on arm64, arm, x86_64, and i386.
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+Thanks for testing all of these and letting me know.
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.misc
-
-for you to fetch changes up to 02e5ad973883c36c0868b301b8357d9c455bb91c:
-
-  perf_event_get(): don't bother with fget_raw() (2019-06-26 20:43:53 -0400)
-
-----------------------------------------------------------------
-Al Viro (1):
-      perf_event_get(): don't bother with fget_raw()
-
-Ian Kent (1):
-      vfs: update d_make_root() description
-
- Documentation/filesystems/porting | 15 +++++++++++++--
- kernel/events/core.c              |  4 +---
- 2 files changed, 14 insertions(+), 5 deletions(-)
+greg k-h
