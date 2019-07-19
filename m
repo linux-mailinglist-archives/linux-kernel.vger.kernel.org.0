@@ -2,125 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6278F6E614
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 15:08:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B1816E605
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 15:03:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbfGSNI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 09:08:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34486 "EHLO mx1.suse.de"
+        id S1728671AbfGSND0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 09:03:26 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37794 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726239AbfGSNI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 09:08:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7A20CAF8A;
-        Fri, 19 Jul 2019 13:08:55 +0000 (UTC)
-Message-ID: <58753252bd7964e3b9e9558b633bd325c4a898a1.camel@suse.de>
-Subject: Re: [RFC 3/4] dma-direct: add dma_direct_min_mask
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>, catalin.marinas@arm.com,
-        will@kernel.org, phil@raspberrypi.org, stefan.wahren@i2se.com,
-        f.fainelli@gmail.com, mbrugger@suse.com,
-        Jisheng.Zhang@synaptics.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 19 Jul 2019 15:08:52 +0200
-In-Reply-To: <13dd1a4f33fcf814545f0d93f18429e853de9eaf.camel@suse.de>
-References: <20190717153135.15507-1-nsaenzjulienne@suse.de>
-         <20190717153135.15507-4-nsaenzjulienne@suse.de>
-         <20190718091526.GA25321@lst.de>
-         <13dd1a4f33fcf814545f0d93f18429e853de9eaf.camel@suse.de>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-yHJZ8oknJEb7FX+m0jvD"
-User-Agent: Evolution 3.32.3 
+        id S1726239AbfGSND0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 09:03:26 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 337BB58917896E0CF7E2;
+        Fri, 19 Jul 2019 21:03:24 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Fri, 19 Jul 2019
+ 21:03:13 +0800
+From:   Zhihao@vger.kernel.org, Cheng@vger.kernel.org
+To:     <richard@nod.at>, <s.hauer@pengutronix.de>, <dedekind1@gmail.com>,
+        <yi.zhang@huawei.com>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <chengzhihao1@huawei.com>
+Subject: [PATCH] ubifs: ubifs_tnc_start_commit: Fix OOB in layout_in_gaps
+Date:   Fri, 19 Jul 2019 21:09:00 +0800
+Message-ID: <1563541740-16726-1-git-send-email-chengzhihao1@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Zhihao Cheng <chengzhihao1@huawei.com>
 
---=-yHJZ8oknJEb7FX+m0jvD
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Running stress-test test_2 in mtd-utils on ubi device, sometimes we can
+get follwing oops message:
 
-On Thu, 2019-07-18 at 13:18 +0200, Nicolas Saenz Julienne wrote:
-> On Thu, 2019-07-18 at 11:15 +0200, Christoph Hellwig wrote:
-> > On Wed, Jul 17, 2019 at 05:31:34PM +0200, Nicolas Saenz Julienne wrote:
-> > > Historically devices with ZONE_DMA32 have been assumed to be able to
-> > > address at least the lower 4GB of ram for DMA. This is still the defu=
-alt
-> > > behavior yet the Raspberry Pi 4 is limited to the first GB of memory.
-> > > This has been observed to trigger failures in dma_direct_supported() =
-as
-> > > the 'min_mask' isn't properly set.
-> > >=20
-> > > We create 'dma_direct_min_mask' in order for the arch init code to be
-> > > able to fine-tune dma direct's 'min_dma' mask.
-> >=20
-> > Normally we use ZONE_DMA for that case.
->=20
-> Fair enough, I didn't think of that possibility.
->=20
-> So would the arm64 maintainers be happy with something like this:
->=20
-> - ZONE_DMA: Follows standard definition, 16MB in size. ARCH_ZONE_DMA_BITS=
- is
-> 	    left as is.
-> - ZONE_DMA32: Will honor the most constraining 'dma-ranges'. Which so far=
- for
-> 	      most devices is 4G, except for RPi4.
-> - ZONE_NORMAL: The rest of the memory.
+  BUG: unable to handle page fault for address: ffffffff00000140
+  #PF: supervisor read access in kernel mode
+  #PF: error_code(0x0000) - not-present page
+  PGD 280a067 P4D 280a067 PUD 0
+  Oops: 0000 [#1] SMP
+  CPU: 0 PID: 60 Comm: kworker/u16:1 Kdump: loaded Not tainted 5.2.0 #13
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0
+  -0-ga698c8995f-prebuilt.qemu.org 04/01/2014
+  Workqueue: writeback wb_workfn (flush-ubifs_0_0)
+  RIP: 0010:rb_next_postorder+0x2e/0xb0
+  Code: 80 db 03 01 48 85 ff 0f 84 97 00 00 00 48 8b 17 48 83 05 bc 80 db
+  03 01 48 83 e2 fc 0f 84 82 00 00 00 48 83 05 b2 80 db 03 01 <48> 3b 7a
+  10 48 89 d0 74 02 f3 c3 48 8b 52 08 48 83 05 a3 80 db 03
+  RSP: 0018:ffffc90000887758 EFLAGS: 00010202
+  RAX: ffff888129ae4700 RBX: ffff888138b08400 RCX: 0000000080800001
+  RDX: ffffffff00000130 RSI: 0000000080800024 RDI: ffff888138b08400
+  RBP: ffff888138b08400 R08: ffffea0004a6b920 R09: 0000000000000000
+  R10: ffffc90000887740 R11: 0000000000000001 R12: ffff888128d48000
+  R13: 0000000000000800 R14: 000000000000011e R15: 00000000000007c8
+  FS:  0000000000000000(0000) GS:ffff88813ba00000(0000)
+  knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: ffffffff00000140 CR3: 000000013789d000 CR4: 00000000000006f0
+  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+  Call Trace:
+    destroy_old_idx+0x5d/0xa0 [ubifs]
+    ubifs_tnc_start_commit+0x4fe/0x1380 [ubifs]
+    do_commit+0x3eb/0x830 [ubifs]
+    ubifs_run_commit+0xdc/0x1c0 [ubifs]
 
-Never mind this suggestion, I don't think it makes any sense. If anything a=
-rm64
-seems to fit the ZONE_DMA usage pattern of arm and powerpc: where ZONE_DMA'=
-s
-size is decided based on ram size and/or board configuration. It was actual=
-ly
-set-up like this until Christoph's ad67f5a6545f7 ("arm64: replace ZONE_DMA =
-with
-ZONE_DMA32").
+Above Oops are due to the slab-out-of-bounds happened in do-while of
+function layout_in_gaps indirectly called by ubifs_tnc_start_commit. In
+function layout_in_gaps, there is a do-while loop placing index nodes
+into the gaps created by obsolete index nodes in non-empty index LEBs
+until rest index nodes can totally be placed into pre-allocated empty
+LEBs. @c->gap_lebs points to a memory area(integer array) which records
+LEB numbers used by 'in-the-gaps' method. Whenever a fitable index LEB
+is found, corresponding lnum will be incrementally written into the
+memory area pointed by @c->gap_lebs. The size
+((@c->lst.idx_lebs + 1) * sizeof(int)) of memory area is allocated before
+do-while loop and can not be changed in the loop. But @c->lst.idx_lebs
+could be increased by function ubifs_change_lp (called by
+layout_leb_in_gaps->ubifs_find_dirty_idx_leb->get_idx_gc_leb) during the
+loop. So, sometimes oob happens when number of cycles in do-while loop
+exceeds the original value of @c->lst.idx_lebs. See detail in
+https://bugzilla.kernel.org/show_bug.cgi?id=204229.
+This patch fixes oob in layout_in_gaps.
 
-So the easy solution would be to simply revert that commit. On one hand I f=
-eel
-it would be a step backwards as most 64 bit architectures have been moving =
-to
-use ZONE_DMA32. On the other, current ZONE_DMA32 usage seems to be heavily
-rooted on having a 32 bit DMA mask*, which will no longer be the case on ar=
-m64
-if we want to support the RPi 4.
+Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
+---
+ fs/ubifs/tnc_commit.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
 
-So the way I see it and lacking a better solution, the argument is stronger=
- on
-moving back arm64 to using ZONE_DMA. Any comments/opinions?
-
-Note that I've been looking at all the DMA/CMA/swiotlb code to see if this
-would break anything or change behaviors and couldn't find anything obvious=
-. I
-also tested the revert on my RPi4 and nothing seems to fail.
-
-* A good example is dma-direct's implementation.
-
-
---=-yHJZ8oknJEb7FX+m0jvD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl0xwOQACgkQlfZmHno8
-x/4SeAf+MwPSVWf/ID6jt6VrnWUTSIi5Z+nZtH48wv+4/USMxGds1Kd+TeULaZEf
-xYq9ukgZgipmxlQ6AX01EmJvtV3h6RhMaiq0EMckFyh2H1U3LfLJ56hgmlXcef9m
-ktws/JY7JeK2ygPKynPRqgY4H1v1dmFlsjSU6szy4QKEEfx2ET1Yukvl8Zs9eSpa
-hdhddrM5AG53/SILdrQacParrMb2NXl1r6WRQqmOURLzV274d0ut3bjDPa6pv/Yd
-xRekzhU6SIHJ4mmPTxC4fBbtslGmh3+RwCczC9UaefCVJ5lZsGkNfsMocTUfakqO
-hv1LXHuOi2kbBY9/aaRmhHBEajVEog==
-=bSz/
------END PGP SIGNATURE-----
-
---=-yHJZ8oknJEb7FX+m0jvD--
+diff --git a/fs/ubifs/tnc_commit.c b/fs/ubifs/tnc_commit.c
+index a384a0f..9fc6b8e 100644
+--- a/fs/ubifs/tnc_commit.c
++++ b/fs/ubifs/tnc_commit.c
+@@ -212,7 +212,7 @@ static int is_idx_node_in_use(struct ubifs_info *c, union ubifs_key *key,
+ /**
+  * layout_leb_in_gaps - layout index nodes using in-the-gaps method.
+  * @c: UBIFS file-system description object
+- * @p: return LEB number here
++ * @p: return LEB number in @c->gap_lebs[p]
+  *
+  * This function lays out new index nodes for dirty znodes using in-the-gaps
+  * method of TNC commit.
+@@ -221,7 +221,7 @@ static int is_idx_node_in_use(struct ubifs_info *c, union ubifs_key *key,
+  * This function returns the number of index nodes written into the gaps, or a
+  * negative error code on failure.
+  */
+-static int layout_leb_in_gaps(struct ubifs_info *c, int *p)
++static int layout_leb_in_gaps(struct ubifs_info *c, int p)
+ {
+ 	struct ubifs_scan_leb *sleb;
+ 	struct ubifs_scan_node *snod;
+@@ -236,7 +236,7 @@ static int layout_leb_in_gaps(struct ubifs_info *c, int *p)
+ 		 * filled, however we do not check there at present.
+ 		 */
+ 		return lnum; /* Error code */
+-	*p = lnum;
++	c->gap_lebs[p] = lnum;
+ 	dbg_gc("LEB %d", lnum);
+ 	/*
+ 	 * Scan the index LEB.  We use the generic scan for this even though
+@@ -355,7 +355,8 @@ static int get_leb_cnt(struct ubifs_info *c, int cnt)
+  */
+ static int layout_in_gaps(struct ubifs_info *c, int cnt)
+ {
+-	int err, leb_needed_cnt, written, *p;
++	int err, leb_needed_cnt, written, p = 0, old_idx_lebs;
++	old_idx_lebs = c->lst.idx_lebs;
+ 
+ 	dbg_gc("%d znodes to write", cnt);
+ 
+@@ -364,9 +365,8 @@ static int layout_in_gaps(struct ubifs_info *c, int cnt)
+ 	if (!c->gap_lebs)
+ 		return -ENOMEM;
+ 
+-	p = c->gap_lebs;
+ 	do {
+-		ubifs_assert(c, p < c->gap_lebs + c->lst.idx_lebs);
++		ubifs_assert(c, p < c->lst.idx_lebs);
+ 		written = layout_leb_in_gaps(c, p);
+ 		if (written < 0) {
+ 			err = written;
+@@ -392,9 +392,25 @@ static int layout_in_gaps(struct ubifs_info *c, int cnt)
+ 		leb_needed_cnt = get_leb_cnt(c, cnt);
+ 		dbg_gc("%d znodes remaining, need %d LEBs, have %d", cnt,
+ 		       leb_needed_cnt, c->ileb_cnt);
++		/*
++		 * Dynamically change the size of @c->gap_lebs to prevent
++		 * oob, because @c->lst.idx_lebs could be increased by
++		 * function @get_idx_gc_leb (called by layout_leb_in_gaps->
++		 * ubifs_find_dirty_idx_leb) during loop. Only enlarge
++		 * @c->gap_lebs when needed.
++		 *
++		 */
++		if (leb_needed_cnt > c->ileb_cnt && p >= old_idx_lebs &&
++		    old_idx_lebs < c->lst.idx_lebs) {
++			old_idx_lebs = c->lst.idx_lebs;
++			c->gap_lebs = krealloc(c->gap_lebs, sizeof(int) *
++					       (old_idx_lebs + 1), GFP_NOFS);
++			if (!c->gap_lebs)
++			      return -ENOMEM;
++		}
+ 	} while (leb_needed_cnt > c->ileb_cnt);
+ 
+-	*p = -1;
++	c->gap_lebs[p] = -1;
+ 	return 0;
+ }
+ 
+-- 
+2.7.4
 
