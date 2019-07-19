@@ -2,107 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BCFE6DE81
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:29:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 689BC6DE32
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388388AbfGSE3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:29:05 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:48560 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730095AbfGSEFx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:05:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=8rZP02MbRSBBbscvbeC9+WMvkdTaXb3OCI4XMXn4kxA=; b=CA7z7nXmYMd0B49HXCCyEP4B2t
-        Tsl9LivcM+GTdLImucd8KdWVRv1OHB8+n+xmMbRNPPggzXoAK2bNPnVYKW+Yc+lxgrIHH2aL9JCni
-        BYBpRaNV2HDW7Nfy6iSFkXk5oPJIJlOWALCCSzVZHEqXyVKmM8snhfilDtGFNpm0MY9AvDADPvyrn
-        Hj5x9wwunkCmcUs2T+CwfiegCG71vpcJ+Pgs2pwOeA7il1P6Gn5jsEh3ccJqC553xVMKH6zn20qI+
-        JzAPDrGfG9uc4bkEZs9ST6VxzVLjkRsTZlxSjzLqVIAMuT8xpzGlhmmxoBkLcqYtE3LSWRT1NHD+0
-        tEDGckeg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hoK9V-0002w4-38; Fri, 19 Jul 2019 04:05:49 +0000
-Subject: Re: [PATCH] Input: applespi: Fix build error without CONFIG_PCI
-To:     "Life is hard, and then you die" <ronald@innovation.ch>,
-        YueHaibing <yuehaibing@huawei.com>
-Cc:     dmitry.torokhov@gmail.com, hsweeten@visionengravers.com,
-        robh@kernel.org, arnd@arndb.de, andriy.shevchenko@linux.intel.com,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-References: <20190718020654.39860-1-yuehaibing@huawei.com>
- <20190718114036.GA2872@innovation.ch>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6a7111e2-3347-11fa-58d9-11d337a91c42@infradead.org>
-Date:   Thu, 18 Jul 2019 21:05:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1732774AbfGSEHr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:07:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41510 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732758AbfGSEHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:07:43 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B65CF218BA;
+        Fri, 19 Jul 2019 04:07:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563509262;
+        bh=X4vd8OK4yXQ0AbEdR++MYAR4NsXHtv+u2lPVXgjJSTE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=v9ECzsN0EZwIKcv6wghM1xSCaOWZJr2MFscNuFBpkf1r05qxZejWR6dxsgKxphIlv
+         e8ZQwfasdZ0h/83bdce4OvPvcLLo7wIX2nJyPXcEsFNA0iROQ9WnN5A+stjXIJBcZ5
+         U/6VNaCGRPKLJODpHXX9kN24AblR46EJ8G4hV2Fk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Quentin Deslandes <quentin.deslandes@itdev.co.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 4.19 004/101] staging: vt6656: use meaningful error code during buffer allocation
+Date:   Fri, 19 Jul 2019 00:05:55 -0400
+Message-Id: <20190719040732.17285-4-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190719040732.17285-1-sashal@kernel.org>
+References: <20190719040732.17285-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20190718114036.GA2872@innovation.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/18/19 4:40 AM, Life is hard, and then you die wrote:
-> 
-> On Thu, Jul 18, 2019 at 10:06:54AM +0800, YueHaibing wrote:
->> If CONFIG_KEYBOARD_APPLESPI is set to y, but
->> CONFIG_PCI is not set, building will fails:
->>
->> drivers/spi/spi-pxa2xx-pci.c: In function pxa2xx_spi_pci_probe:
->> drivers/spi/spi-pxa2xx-pci.c:208:8: error: implicit declaration of function pcim_enable_device;
->>  did you mean pci_enable_device? [-Werror=implicit-function-declaration]
->>   ret = pcim_enable_device(dev);
->>         ^~~~~~~~~~~~~~~~~~
->>         pci_enable_device
->> drivers/spi/spi-pxa2xx-pci.c:239:8: error: implicit declaration of function pci_alloc_irq_vectors;
->>  did you mean pci_alloc_consistent? [-Werror=implicit-function-declaration]
->>   ret = pci_alloc_irq_vectors(dev, 1, 1, PCI_IRQ_ALL_TYPES);
->>         ^~~~~~~~~~~~~~~~~~~~~
->>
->> Make CONFIG_KEYBOARD_APPLESPI depends on CONFIG_PCI
->> to fix this.
->>
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Fixes: b426ac045209 ("Input: add Apple SPI keyboard and trackpad driver")
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  drivers/input/keyboard/Kconfig | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
->> index dd934c4..fefcc46 100644
->> --- a/drivers/input/keyboard/Kconfig
->> +++ b/drivers/input/keyboard/Kconfig
->> @@ -74,7 +74,7 @@ config ATARI_KBD_CORE
->>  config KEYBOARD_APPLESPI
->>  	tristate "Apple SPI keyboard and trackpad"
->>  	depends on ACPI && EFI
->> -	depends on SPI
->> +	depends on SPI && PCI
->>  	depends on X86 || COMPILE_TEST
->>  	imply SPI_PXA2XX
->>  	imply SPI_PXA2XX_PCI
->> -- 
->> 2.7.4
-> 
-> I think this is more properly fixed by Dmitry's suggestion of making
-> SPI_PXA2XX_PCI depend on PCI, since it's that module, not applespi,
-> that actually needs PCI - see
-> https://www.spinics.net/lists/linux-input/msg62351.html
+From: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
 
-Dmitry's patch works for my failing test case.
+[ Upstream commit d8c2869300ab5f7a19bf6f5a04fe473c5c9887e3 ]
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+Check on called function's returned value for error and return 0 on
+success or a negative errno value on error instead of a boolean value.
 
-Thanks.
+Signed-off-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/staging/vt6656/main_usb.c | 42 ++++++++++++++++++++-----------
+ 1 file changed, 28 insertions(+), 14 deletions(-)
 
+diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
+index ccafcc2c87ac..70433f756d8e 100644
+--- a/drivers/staging/vt6656/main_usb.c
++++ b/drivers/staging/vt6656/main_usb.c
+@@ -402,16 +402,19 @@ static void vnt_free_int_bufs(struct vnt_private *priv)
+ 	kfree(priv->int_buf.data_buf);
+ }
+ 
+-static bool vnt_alloc_bufs(struct vnt_private *priv)
++static int vnt_alloc_bufs(struct vnt_private *priv)
+ {
++	int ret = 0;
+ 	struct vnt_usb_send_context *tx_context;
+ 	struct vnt_rcb *rcb;
+ 	int ii;
+ 
+ 	for (ii = 0; ii < priv->num_tx_context; ii++) {
+ 		tx_context = kmalloc(sizeof(*tx_context), GFP_KERNEL);
+-		if (!tx_context)
++		if (!tx_context) {
++			ret = -ENOMEM;
+ 			goto free_tx;
++		}
+ 
+ 		priv->tx_context[ii] = tx_context;
+ 		tx_context->priv = priv;
+@@ -419,16 +422,20 @@ static bool vnt_alloc_bufs(struct vnt_private *priv)
+ 
+ 		/* allocate URBs */
+ 		tx_context->urb = usb_alloc_urb(0, GFP_KERNEL);
+-		if (!tx_context->urb)
++		if (!tx_context->urb) {
++			ret = -ENOMEM;
+ 			goto free_tx;
++		}
+ 
+ 		tx_context->in_use = false;
+ 	}
+ 
+ 	for (ii = 0; ii < priv->num_rcb; ii++) {
+ 		priv->rcb[ii] = kzalloc(sizeof(*priv->rcb[ii]), GFP_KERNEL);
+-		if (!priv->rcb[ii])
++		if (!priv->rcb[ii]) {
++			ret = -ENOMEM;
+ 			goto free_rx_tx;
++		}
+ 
+ 		rcb = priv->rcb[ii];
+ 
+@@ -436,39 +443,46 @@ static bool vnt_alloc_bufs(struct vnt_private *priv)
+ 
+ 		/* allocate URBs */
+ 		rcb->urb = usb_alloc_urb(0, GFP_KERNEL);
+-		if (!rcb->urb)
++		if (!rcb->urb) {
++			ret = -ENOMEM;
+ 			goto free_rx_tx;
++		}
+ 
+ 		rcb->skb = dev_alloc_skb(priv->rx_buf_sz);
+-		if (!rcb->skb)
++		if (!rcb->skb) {
++			ret = -ENOMEM;
+ 			goto free_rx_tx;
++		}
+ 
+ 		rcb->in_use = false;
+ 
+ 		/* submit rx urb */
+-		if (vnt_submit_rx_urb(priv, rcb))
++		ret = vnt_submit_rx_urb(priv, rcb);
++		if (ret)
+ 			goto free_rx_tx;
+ 	}
+ 
+ 	priv->interrupt_urb = usb_alloc_urb(0, GFP_KERNEL);
+-	if (!priv->interrupt_urb)
++	if (!priv->interrupt_urb) {
++		ret = -ENOMEM;
+ 		goto free_rx_tx;
++	}
+ 
+ 	priv->int_buf.data_buf = kmalloc(MAX_INTERRUPT_SIZE, GFP_KERNEL);
+ 	if (!priv->int_buf.data_buf) {
+-		usb_free_urb(priv->interrupt_urb);
+-		goto free_rx_tx;
++		ret = -ENOMEM;
++		goto free_rx_tx_urb;
+ 	}
+ 
+-	return true;
++	return 0;
+ 
++free_rx_tx_urb:
++	usb_free_urb(priv->interrupt_urb);
+ free_rx_tx:
+ 	vnt_free_rx_bufs(priv);
+-
+ free_tx:
+ 	vnt_free_tx_bufs(priv);
+-
+-	return false;
++	return ret;
+ }
+ 
+ static void vnt_tx_80211(struct ieee80211_hw *hw,
 -- 
-~Randy
+2.20.1
+
