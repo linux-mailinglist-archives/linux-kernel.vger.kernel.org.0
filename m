@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AA296DB08
+	by mail.lfdr.de (Postfix) with ESMTP id E7C956DB0A
 	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 06:06:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731934AbfGSEF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 00:05:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38592 "EHLO mail.kernel.org"
+        id S1731988AbfGSEGC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 00:06:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728765AbfGSEFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 00:05:52 -0400
+        id S1729136AbfGSEFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 00:05:55 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE1F0218BC;
-        Fri, 19 Jul 2019 04:05:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74594218D1;
+        Fri, 19 Jul 2019 04:05:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563509152;
-        bh=uVOmfcGqr9MtGJMPPvp0QPQzFti5byiwdK2D7EFkMxY=;
+        s=default; t=1563509154;
+        bh=DMiXV2Y3bxC3tjEsHuHMAMM5Zn2EY1lsfePC4T8uFNQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Abuj0Z5Svq0paMwdVE/4okaZBzIJnrcQzSkRUG/+5nLbM9wfkHSMmLI6ENc3FsLSJ
-         FR/oUL9if+GnzxAjI6/bpP/drO3shRidTBNjgvbZEk0MU91MJnaW9/PBPodO/QU7M1
-         7n9f3dsYCXTmf+2Hua4xuzLUll3vg3r/KBlNYR9g=
+        b=OW0nsqpFPUIlTYES4t+MLnvIzFOQHnxSGtkSsdaFhu1L3vehgRosiznK0HdIgB1fm
+         sUsgF+kouIM9G6QWcRVRGi4ah8OpF+CGi+vWRP0bNsLWWeWsm9ADgJiKlEONX8NL29
+         oQ+LfqsBwX7zYvySkMGs0lLP2p673vxXN/ChnY9E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Leo Yan <leo.yan@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
@@ -48,9 +48,9 @@ Cc:     Leo Yan <leo.yan@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 098/141] perf top: Fix potential NULL pointer dereference detected by the smatch tool
-Date:   Fri, 19 Jul 2019 00:02:03 -0400
-Message-Id: <20190719040246.15945-98-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 099/141] perf trace: Fix potential NULL pointer dereference found by the smatch tool
+Date:   Fri, 19 Jul 2019 00:02:04 -0400
+Message-Id: <20190719040246.15945-99-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190719040246.15945-1-sashal@kernel.org>
 References: <20190719040246.15945-1-sashal@kernel.org>
@@ -65,33 +65,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Leo Yan <leo.yan@linaro.org>
 
-[ Upstream commit 111442cfc8abdeaa7ec1407f07ef7b3e5f76654e ]
+[ Upstream commit 7a6d49dc8cad8fa1f3d63994102af8f9ae9c859f ]
 
 Based on the following report from Smatch, fix the potential NULL
 pointer dereference check.
 
-  tools/perf/builtin-top.c:109
-  perf_top__parse_source() warn: variable dereferenced before check 'he'
-  (see line 103)
+  tools/perf/builtin-trace.c:1044
+  thread_trace__new() error: we previously assumed 'ttrace' could be
+  null (see line 1041).
 
-  tools/perf/builtin-top.c:233
-  perf_top__show_details() warn: variable dereferenced before check 'he'
-  (see line 228)
-
-  tools/perf/builtin-top.c
-  101 static int perf_top__parse_source(struct perf_top *top, struct hist_entry *he)
-  102 {
-  103         struct perf_evsel *evsel = hists_to_evsel(he->hists);
-                                                        ^^^^
-  104         struct symbol *sym;
-  105         struct annotation *notes;
-  106         struct map *map;
-  107         int err = -1;
-  108
-  109         if (!he || !he->ms.sym)
-  110                 return -1;
-
-This patch moves the values assignment after validating pointer 'he'.
+  tools/perf/builtin-trace.c
+  1037 static struct thread_trace *thread_trace__new(void)
+  1038 {
+  1039         struct thread_trace *ttrace =  zalloc(sizeof(struct thread_trace));
+  1040
+  1041         if (ttrace)
+  1042                 ttrace->files.max = -1;
+  1043
+  1044         ttrace->syscall_stats = intlist__new(NULL);
+               ^^^^^^^^
+  1045
+  1046         return ttrace;
+  1047 }
 
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
@@ -115,53 +110,32 @@ Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Thomas Richter <tmricht@linux.ibm.com>
 Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190702103420.27540-4-leo.yan@linaro.org
+Link: http://lkml.kernel.org/r/20190702103420.27540-6-leo.yan@linaro.org
+[ Just made it look like other tools/perf constructors, same end result ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/builtin-top.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ tools/perf/builtin-trace.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index fbbb0da43abb..42e3a4d07b18 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -101,7 +101,7 @@ static void perf_top__resize(struct perf_top *top)
- 
- static int perf_top__parse_source(struct perf_top *top, struct hist_entry *he)
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index f5b3a1e9c1dd..aca22e8f6947 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -998,10 +998,10 @@ static struct thread_trace *thread_trace__new(void)
  {
--	struct perf_evsel *evsel = hists_to_evsel(he->hists);
-+	struct perf_evsel *evsel;
- 	struct symbol *sym;
- 	struct annotation *notes;
- 	struct map *map;
-@@ -110,6 +110,8 @@ static int perf_top__parse_source(struct perf_top *top, struct hist_entry *he)
- 	if (!he || !he->ms.sym)
- 		return -1;
+ 	struct thread_trace *ttrace =  zalloc(sizeof(struct thread_trace));
  
-+	evsel = hists_to_evsel(he->hists);
-+
- 	sym = he->ms.sym;
- 	map = he->ms.map;
+-	if (ttrace)
++	if (ttrace) {
+ 		ttrace->files.max = -1;
+-
+-	ttrace->syscall_stats = intlist__new(NULL);
++		ttrace->syscall_stats = intlist__new(NULL);
++	}
  
-@@ -226,7 +228,7 @@ static void perf_top__record_precise_ip(struct perf_top *top,
- static void perf_top__show_details(struct perf_top *top)
- {
- 	struct hist_entry *he = top->sym_filter_entry;
--	struct perf_evsel *evsel = hists_to_evsel(he->hists);
-+	struct perf_evsel *evsel;
- 	struct annotation *notes;
- 	struct symbol *symbol;
- 	int more;
-@@ -234,6 +236,8 @@ static void perf_top__show_details(struct perf_top *top)
- 	if (!he)
- 		return;
- 
-+	evsel = hists_to_evsel(he->hists);
-+
- 	symbol = he->ms.sym;
- 	notes = symbol__annotation(symbol);
- 
+ 	return ttrace;
+ }
 -- 
 2.20.1
 
