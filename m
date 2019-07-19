@@ -2,145 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 585E16E2E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 10:52:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3A776E2F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 10:55:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbfGSIvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 04:51:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43532 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbfGSIvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 04:51:17 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BEFDB2EED01;
-        Fri, 19 Jul 2019 08:51:16 +0000 (UTC)
-Received: from [10.72.12.179] (ovpn-12-179.pek2.redhat.com [10.72.12.179])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 29D6C5C57A;
-        Fri, 19 Jul 2019 08:51:01 +0000 (UTC)
-Subject: Re: [PATCH v4 4/5] vhost/vsock: split packets to send using multiple
- buffers
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
-References: <20190717113030.163499-1-sgarzare@redhat.com>
- <20190717113030.163499-5-sgarzare@redhat.com>
- <20190717105336-mutt-send-email-mst@kernel.org>
- <CAGxU2F45v40qAOHkm1Hk2E69gCS0UwVgS5NS+tDXXuzdF4EixA@mail.gmail.com>
- <20190718041234-mutt-send-email-mst@kernel.org>
- <CAGxU2F6oo7Cou7t9o=gG2=wxHMKX9xYQXNxVtDYeHq5fyEhJWg@mail.gmail.com>
- <20190718072741-mutt-send-email-mst@kernel.org>
- <20190719080832.7hoeus23zjyrx3cc@steredhat>
- <fcd19719-e5a9-adad-1e6c-c84487187088@redhat.com>
- <20190719083920.67qo2umpthz454be@steredhat>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <53da84b9-184f-1377-0582-ab7cf42ebdb6@redhat.com>
-Date:   Fri, 19 Jul 2019 16:51:00 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726967AbfGSIzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 04:55:43 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45612 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbfGSIzl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 04:55:41 -0400
+Received: by mail-pl1-f194.google.com with SMTP id y8so15299051plr.12;
+        Fri, 19 Jul 2019 01:55:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lV5j+XUqWBJfA9H3lN3dIsabShwNTCRmUvxvYq2uiYc=;
+        b=Cwjj8OImi4J89USf/o0U1of0m4rjg+Hknu7KKXFkUNWnz2oxGkCPZq7Jh9CMeu/1C/
+         WLqzfQ5JfOXJ2feKjfBxKtT8yS/Y+LBr4w+Uq9WcVeslwrHcD6hq2q8WbHXGNWKhKFOp
+         etpCPYp+4oYoeqPBxWji7S++4UV9EGiECuYn6jPlv2xXt8g3zrP3SzxiQMBPQX9YXOkF
+         vv/skUelxjuOD4SS6yuY67DjiU7H2Lx/d/FUvh6VYSPIFt4aj2ek29qyopemDYPgqrKY
+         vPECVO209d4c9ExSulOD0OYsIsvKgGcNOl8Xdd3o/o1Iwd/bqEBB+FAoikOBxI1Fkp2L
+         g4iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lV5j+XUqWBJfA9H3lN3dIsabShwNTCRmUvxvYq2uiYc=;
+        b=g3R5wyNblRG91BgW3EiuXWz6dNJ7PX+oD18vvSW+AKGVAoRCU251/Kfc29iUb5R5YG
+         BvIGYMhH/EiBtH31a0XiYrR/qoY4zlXIGxIM1JUig0f8DGsxgS3HzN0lTZQCoExAIumy
+         Oz/GfXSP3M2bx+Z4bugmjyQyXVFBpAVp6cSca78hy1hyi3rv4KJfXNenv39KSS1us0l/
+         nu94VDr0OpXpmZMuafjEbbAk6oyR4+z0T/DOX53bS2UNyovnuoQX//d2URBDSWVt3FWy
+         kTcfGx5fnCJAnCAstAFxM47WtJ+4pLRXvBnejiEEkmGiDXFINjYnfRohL7kHwTXfwzzv
+         Mpog==
+X-Gm-Message-State: APjAAAWWVLmy9UXcx/etLiLoSN9x7fhqJC1rm1nPETESSgWG8zCWBz6J
+        28swaoPlkINSuy3pjnhbcFB4W1tAgL8=
+X-Google-Smtp-Source: APXvYqzr5/czZtUj4SwnWAsLsaUxE/e+JZt+xlsEffEtC2SwVU/HV6d1ADK3EWZLW2PIV9wO/RyP8g==
+X-Received: by 2002:a17:902:2a68:: with SMTP id i95mr56582918plb.167.1563526540523;
+        Fri, 19 Jul 2019 01:55:40 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
+        by smtp.gmail.com with ESMTPSA id k3sm18202640pgq.92.2019.07.19.01.55.37
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 19 Jul 2019 01:55:39 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Adham Abozaeid <adham.abozaeid@microchip.com>,
+        Ajay Singh <ajay.kathat@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH] staging: wilc1000: Merge memcpy + le32_to_cpus to get_unaligned_le32
+Date:   Fri, 19 Jul 2019 16:55:08 +0800
+Message-Id: <20190719085507.10925-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190719083920.67qo2umpthz454be@steredhat>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 19 Jul 2019 08:51:16 +0000 (UTC)
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Merge the combo use of memcpy and le32_to_cpus.
+Use get_unaligned_le32 instead.
+This simplifies the code.
 
-On 2019/7/19 下午4:39, Stefano Garzarella wrote:
-> On Fri, Jul 19, 2019 at 04:21:52PM +0800, Jason Wang wrote:
->> On 2019/7/19 下午4:08, Stefano Garzarella wrote:
->>> On Thu, Jul 18, 2019 at 07:35:46AM -0400, Michael S. Tsirkin wrote:
->>>> On Thu, Jul 18, 2019 at 11:37:30AM +0200, Stefano Garzarella wrote:
->>>>> On Thu, Jul 18, 2019 at 10:13 AM Michael S. Tsirkin<mst@redhat.com>  wrote:
->>>>>> On Thu, Jul 18, 2019 at 09:50:14AM +0200, Stefano Garzarella wrote:
->>>>>>> On Wed, Jul 17, 2019 at 4:55 PM Michael S. Tsirkin<mst@redhat.com>  wrote:
->>>>>>>> On Wed, Jul 17, 2019 at 01:30:29PM +0200, Stefano Garzarella wrote:
->>>>>>>>> If the packets to sent to the guest are bigger than the buffer
->>>>>>>>> available, we can split them, using multiple buffers and fixing
->>>>>>>>> the length in the packet header.
->>>>>>>>> This is safe since virtio-vsock supports only stream sockets.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Stefano Garzarella<sgarzare@redhat.com>
->>>>>>>> So how does it work right now? If an app
->>>>>>>> does sendmsg with a 64K buffer and the other
->>>>>>>> side publishes 4K buffers - does it just stall?
->>>>>>> Before this series, the 64K (or bigger) user messages was split in 4K packets
->>>>>>> (fixed in the code) and queued in an internal list for the TX worker.
->>>>>>>
->>>>>>> After this series, we will queue up to 64K packets and then it will be split in
->>>>>>> the TX worker, depending on the size of the buffers available in the
->>>>>>> vring. (The idea was to allow EWMA or a configuration of the buffers size, but
->>>>>>> for now we postponed it)
->>>>>> Got it. Using workers for xmit is IMHO a bad idea btw.
->>>>>> Why is it done like this?
->>>>> Honestly, I don't know the exact reasons for this design, but I suppose
->>>>> that the idea was to have only one worker that uses the vring, and
->>>>> multiple user threads that enqueue packets in the list.
->>>>> This can simplify the code and we can put the user threads to sleep if
->>>>> we don't have "credit" available (this means that the receiver doesn't
->>>>> have space to receive the packet).
->>>> I think you mean the reverse: even without credits you can copy from
->>>> user and queue up data, then process it without waking up the user
->>>> thread.
->>> I checked the code better, but it doesn't seem to do that.
->>> The .sendmsg callback of af_vsock, check if the transport has space
->>> (virtio-vsock transport returns the credit available). If there is no
->>> space, it put the thread to sleep on the 'sk_sleep(sk)' wait_queue.
->>>
->>> When the transport receives an update of credit available on the other
->>> peer, it calls 'sk->sk_write_space(sk)' that wakes up the thread
->>> sleeping, that will queue the new packet.
->>>
->>> So, in the current implementation, the TX worker doesn't check the
->>> credit available, it only sends the packets.
->>>
->>>> Does it help though? It certainly adds up work outside of
->>>> user thread context which means it's not accounted for
->>>> correctly.
->>> I can try to xmit the packet directly in the user thread context, to see
->>> the improvements.
->>
->> It will then looks more like what virtio-net (and other networking device)
->> did.
-> I'll try ASAP, the changes should not be too complicated... I hope :)
->
->>
->>>> Maybe we want more VQs. Would help improve parallelism. The question
->>>> would then become how to map sockets to VQs. With a simple hash
->>>> it's easy to create collisions ...
->>> Yes, more VQs can help but the map question is not simple to answer.
->>> Maybe we can do an hash on the (cid, port) or do some kind of estimation
->>> of queue utilization and try to balance.
->>> Should the mapping be unique?
->>
->> It sounds to me you want some kind of fair queuing? We've already had
->> several qdiscs that do this.
-> Thanks for pointing it out!
->
->> So if we use the kernel networking xmit path, all those issues could be
->> addressed.
-> One more point to AF_VSOCK + net-stack, but we have to evaluate possible
-> drawbacks in using the net-stack. (e.g. more latency due to the complexity
-> of the net-stack?)
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+ drivers/staging/wilc1000/wilc_mon.c  | 3 +--
+ drivers/staging/wilc1000/wilc_wlan.c | 9 +++------
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/staging/wilc1000/wilc_mon.c b/drivers/staging/wilc1000/wilc_mon.c
+index 7d7933d40924..d6f14f69ad64 100644
+--- a/drivers/staging/wilc1000/wilc_mon.c
++++ b/drivers/staging/wilc1000/wilc_mon.c
+@@ -35,8 +35,7 @@ void wilc_wfi_monitor_rx(struct net_device *mon_dev, u8 *buff, u32 size)
+ 		return;
+ 
+ 	/* Get WILC header */
+-	memcpy(&header, (buff - HOST_HDR_OFFSET), HOST_HDR_OFFSET);
+-	le32_to_cpus(&header);
++	header = get_unaligned_le32(buff - HOST_HDR_OFFSET);
+ 	/*
+ 	 * The packet offset field contain info about what type of management
+ 	 * the frame we are dealing with and ack status
+diff --git a/drivers/staging/wilc1000/wilc_wlan.c b/drivers/staging/wilc1000/wilc_wlan.c
+index d46876edcfeb..7d438ae90c3e 100644
+--- a/drivers/staging/wilc1000/wilc_wlan.c
++++ b/drivers/staging/wilc1000/wilc_wlan.c
+@@ -703,8 +703,7 @@ static void wilc_wlan_handle_rx_buff(struct wilc *wilc, u8 *buffer, int size)
+ 
+ 	do {
+ 		buff_ptr = buffer + offset;
+-		memcpy(&header, buff_ptr, 4);
+-		le32_to_cpus(&header);
++		header = get_unaligned_le32(buff_ptr);
+ 
+ 		is_cfg_packet = (header >> 31) & 0x1;
+ 		pkt_offset = (header >> 22) & 0x1ff;
+@@ -874,10 +873,8 @@ int wilc_wlan_firmware_download(struct wilc *wilc, const u8 *buffer,
+ 
+ 	offset = 0;
+ 	do {
+-		memcpy(&addr, &buffer[offset], 4);
+-		memcpy(&size, &buffer[offset + 4], 4);
+-		le32_to_cpus(&addr);
+-		le32_to_cpus(&size);
++		addr = get_unaligned_le32(&buffer[offset]);
++		size = get_unaligned_le32(&buffer[offset + 4]);
+ 		acquire_bus(wilc, WILC_BUS_ACQUIRE_ONLY);
+ 		offset += 8;
+ 		while (((int)size) && (offset < buffer_size)) {
+-- 
+2.20.1
 
-Yes, we need benchmark the performance. But as we've noticed, current 
-vsock implementation is not efficient, and for stream socket, the 
-overhead should be minimal. The most important thing is to avoid 
-reinventing things that has already existed.
-
-Thanks
-
-
->
-> Thanks,
-> Stefano
