@@ -2,70 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60B006E442
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:28:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE49C6E42A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Jul 2019 12:21:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbfGSK1K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 06:27:10 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:50354 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbfGSK1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 06:27:10 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0334E2000C9;
-        Fri, 19 Jul 2019 12:27:09 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8658A20000A;
-        Fri, 19 Jul 2019 12:27:05 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id EB33A402B5;
-        Fri, 19 Jul 2019 18:27:00 +0800 (SGT)
-From:   Wen He <wen.he_1@nxp.com>
-To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        p.zabel@pengutronix.de
-Cc:     leoyang.li@nxp.com, linux-imx@nxp.com, Wen He <wen.he_1@nxp.com>
-Subject: [v2] gpu: ipu-v3: allow to build with ARCH_LAYERSCAPE
-Date:   Fri, 19 Jul 2019 18:17:51 +0800
-Message-Id: <20190719101751.12315-1-wen.he_1@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727248AbfGSKUw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 06:20:52 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:40114 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725794AbfGSKUw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 19 Jul 2019 06:20:52 -0400
+Received: by mail-oi1-f193.google.com with SMTP id w196so2549961oie.7;
+        Fri, 19 Jul 2019 03:20:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=s1PmZpw92veA1eto1LTZBUzfAFcyq0DgVKOAfp0MiE4=;
+        b=oiZEvxEPRshTOj8YoPaI8n0z8YGmSea439I4TBwmEPewhKtHo9ue3GqOTnaFdhKXsk
+         3G2GokHfW3XA1fgwPihs4HIV0y4zacKxwot/IH/dWrZtLMb7RPdGIsGZ3PGPJ0vWEvwd
+         0YS0RR7hbDgXwVqTsBMIvGKoen3Xbe5/Av+4RzFi9UwEtaI7cVjjjB0w+UqkWZbjci+9
+         0r/G9+uuIJ0RJluU6e5UvN+MrgDECIvrmY4jQO39rFe2t69f1nV0LhkTlNwNPCVf7CnI
+         48JcLqLSypP2U5al99kFU2FTuI+cJgdYFm/YQuXbrzRME0Js7U8h0Mla1qNBhAf7mKJn
+         E0gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=s1PmZpw92veA1eto1LTZBUzfAFcyq0DgVKOAfp0MiE4=;
+        b=G21rC7h6a3ExECfoQctBrvbkBdvN6KDn/Xgs7qZXwlvizMTrjSUqhgx6NDHfwOTznj
+         HUTv8uHrl1Akfw8l7CKqCxgZpXB0iDx4lBHTcHnTvxbxxSl626gSkLcnst/Gm7FP2Wlo
+         V5/JuZRIxkbg2zUfcn0wW9NTWrXLU/+29BIjpaguO40xM5gac33mt8AFaJPnsAXOgJa9
+         BSIpOdeqrocCiq438D5S9snQZqLqgaJx7oI9Tr5ViZPwLPlyMH/zQqbd1KhrOOUnZ1hM
+         W0E2inUkupsdTz1ZAGt//wNbOsOO2df+G5AzTtRG8ROI2rSzi6pPSXe7MovutYBfTa/X
+         Bt+Q==
+X-Gm-Message-State: APjAAAVvvJYHPQxlYHfTJEMNVukp81bSw9vBvlXiDFbA+5oa36hMthAq
+        7s5eX0iHMdo0SaRdFMqqc/kxd+GWblJ4FM0vKCQ=
+X-Google-Smtp-Source: APXvYqzBAufPNh0LrT5elMfGn1t8/NkuW5Z43HoQwl2eH229QNfm5i5dp/CS/2mTz1UuuJDjR05tq8mPcvBU6W1B5bc=
+X-Received: by 2002:aca:90c:: with SMTP id 12mr24747271oij.91.1563531650797;
+ Fri, 19 Jul 2019 03:20:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190718121628.23991-1-andradanciu1997@gmail.com>
+ <20190718121628.23991-2-andradanciu1997@gmail.com> <CAOMZO5B-9+JnbfrTWP8GTuc0VcnDDPEZq-iXGbYVx9a6O9gwRg@mail.gmail.com>
+In-Reply-To: <CAOMZO5B-9+JnbfrTWP8GTuc0VcnDDPEZq-iXGbYVx9a6O9gwRg@mail.gmail.com>
+From:   Andra Danciu <andradanciu1997@gmail.com>
+Date:   Fri, 19 Jul 2019 13:20:40 +0300
+Message-ID: <CAJNLGsxvTmoBjfj82i3Fc5v7WUiw7XYtXg8nQNHZ_xdtuB711Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] arm64: dts: fsl: pico-pi: Add a device tree for
+ the PICO-PI-IMX8M
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Li Yang <leoyang.li@nxp.com>, sriram.dash@nxp.com,
+        Lucas Stach <l.stach@pengutronix.de>, pankaj.bansal@nxp.com,
+        Ping Bai <ping.bai@nxp.com>,
+        Pramod Kumar <pramod.kumar_1@nxp.com>,
+        Bhaskar Upadhaya <bhaskar.upadhaya@nxp.com>,
+        Richard Hu <richard.hu@technexion.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new LS1028A DP driver code causes a link failure when DRM_IMX built-in,
-but platform is ARCH_LAYERSCAPE:
+Hi Fabio,
 
-drivers/gpu/drm/imx/ipuv3-crtc.c:51: undefined reference to `ipu_prg_enable'
-drivers/gpu/drm/imx/ipuv3-crtc.c:52: undefined reference to `ipu_dc_enable'
-drivers/gpu/drm/imx/ipuv3-crtc.c:53: undefined reference to `ipu_dc_enable_channel'
-drivers/gpu/drm/imx/ipuv3-crtc.c:54: undefined reference to `ipu_di_enable'
-drivers/gpu/drm/imx/ipuv3-crtc.o: In function `ipu_crtc_mode_set_nofb
+Please find my answers inline:
 
-Adding a Kconfig dependency allow to build if ARCH_LAYERSCAPE is enable.
-
-Signed-off-by: Wen He <wen.he_1@nxp.com>
----
-change in v2:
-        - fix Kconfig conflit issue after rebased to kernel 5.2
-
- drivers/gpu/ipu-v3/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/ipu-v3/Kconfig b/drivers/gpu/ipu-v3/Kconfig
-index 061fb990c120..be515dd95c2c 100644
---- a/drivers/gpu/ipu-v3/Kconfig
-+++ b/drivers/gpu/ipu-v3/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config IMX_IPUV3_CORE
- 	tristate "IPUv3 core support"
--	depends on SOC_IMX5 || SOC_IMX6Q || ARCH_MULTIPLATFORM || COMPILE_TEST
-+	depends on SOC_IMX5 || SOC_IMX6Q || ARCH_MULTIPLATFORM || COMPILE_TEST || ARCH_LAYERSCAPE
- 	depends on DRM || !DRM # if DRM=m, this can't be 'y'
- 	select BITREVERSE
- 	select GENERIC_ALLOCATOR if DRM
--- 
-2.17.1
-
+=C3=8En vin., 19 iul. 2019 la 02:05, Fabio Estevam <festevam@gmail.com> a s=
+cris:
+>
+> Hi Andra,
+>
+> On Thu, Jul 18, 2019 at 9:16 AM Andra Danciu <andradanciu1997@gmail.com> =
+wrote:
+> >
+> > From: Richard Hu <richard.hu@technexion.com>
+>
+> Please put a few words about the board and a link to its webpage, if avai=
+lable.
+OK
+>
+> > The current level of support yields a working console and is able to bo=
+ot
+> > userspace from NFS or init ramdisk.
+> >
+> > Additional subsystems that are active :
+> >         - Ethernet
+> >         - USB
+> >
+> > Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> > Signed-off-by: Richard Hu <richard.hu@technexion.com>
+> > Signed-off-by: Andra Danciu <andradanciu1997@gmail.com>
+> > ---
+> >  arch/arm64/boot/dts/freescale/Makefile       |   1 +
+> >  arch/arm64/boot/dts/freescale/pico-pi-8m.dts | 417 +++++++++++++++++++=
+++++++++
+> >  2 files changed, 418 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/freescale/pico-pi-8m.dts
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/d=
+ts/freescale/Makefile
+> > index c043aca66572..538422903e8a 100644
+> > --- a/arch/arm64/boot/dts/freescale/Makefile
+> > +++ b/arch/arm64/boot/dts/freescale/Makefile
+> > @@ -26,3 +26,4 @@ dtb-$(CONFIG_ARCH_MXC) +=3D imx8mq-librem5-devkit.dtb
+> >  dtb-$(CONFIG_ARCH_MXC) +=3D imx8mq-zii-ultra-rmb3.dtb
+> >  dtb-$(CONFIG_ARCH_MXC) +=3D imx8mq-zii-ultra-zest.dtb
+> >  dtb-$(CONFIG_ARCH_MXC) +=3D imx8qxp-mek.dtb
+> > +dtb-$(CONFIG_ARCH_MXC) +=3D pico-pi-8m.dtb
+>
+> The convention we use with imx dtbs is to put the SoC name first, so
+> that would become:
+>
+> imx8mq-pico-pi.dtb
+Will do.
+>
+>
+> > +&iomuxc {
+>
+> Please place iomuxc node as the last one.
+Will do.
+>
+> > +&fec1 {
+> > +       pinctrl-names =3D "default";
+> > +       pinctrl-0 =3D <&pinctrl_fec1 &pinctrl_enet_3v3>;
+> > +       phy-mode =3D "rgmii-id";
+> > +       pinctrl-assert-gpios =3D <&gpio1 0 GPIO_ACTIVE_HIGH>;
+>
+> This property does not exist.
+OK, I will remove it.
+>
+> > +       phy-handle =3D <&ethphy0>;
+> > +       fsl,magic-packet;
+> > +       status =3D "okay";
+> > +
+> > +       mdio {
+> > +               #address-cells =3D <1>;
+> > +               #size-cells =3D <0>;
+> > +
+> > +               ethphy0: ethernet-phy@1 {
+> > +                       compatible =3D "ethernet-phy-ieee802.3-c22";
+> > +                       reg =3D <1>;
+> > +                       at803x,led-act-blind-workaround;
+> > +                       at803x,eee-disabled;
+>
+> These two properties do not exist.
+OK, I will remove them.
+>
+> > +&i2c1 {
+> > +       clock-frequency =3D <100000>;
+> > +       pinctrl-names =3D "default";
+> > +       pinctrl-0 =3D <&pinctrl_i2c1>;
+> > +       status =3D "okay";
+> > +
+> > +       pmic: pmic@4b {
+> > +               reg =3D <0x4b>;
+> > +               compatible =3D "rohm,bd71837";
+> > +               /* PMIC BD71837 PMIC_nINT GPIO1_IO12 */
+> > +               pinctrl-0 =3D <&pinctrl_pmic>;
+>
+> pinctrl-names =3D "default" is missing
+OK, will add.
+>
+> > +               gpio_intr =3D <&gpio1 3 GPIO_ACTIVE_LOW>;
+>
+> This is not documented.
+>
+> Please look at Documentation/devicetree/bindings/regulator/rohm,bd71837-r=
+egulator.txt
+> for the valid bindings and also at
+> arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts for a
+> reference for adding the BD71837 support.
+OK, will do.
+>
+> > +&A53_0 {
+> > +       operating-points =3D <
+> > +               /* kHz    uV */
+> > +               1500000 1000000
+> > +               1300000 1000000
+> > +               1000000 900000
+> > +               800000  900000
+>
+> This is not needed as these operating points are already specified at
+> imx8mq.dtsi.
+OK, I will remove it.
