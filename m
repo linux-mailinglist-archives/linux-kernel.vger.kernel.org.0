@@ -2,114 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E2036ED22
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 03:24:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A55D6ED3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 03:43:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732907AbfGTBX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 19 Jul 2019 21:23:56 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:32860 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728662AbfGTBXz (ORCPT
+        id S1733046AbfGTBkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 19 Jul 2019 21:40:49 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33949 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729002AbfGTBks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 19 Jul 2019 21:23:55 -0400
-Received: by mail-qt1-f193.google.com with SMTP id r6so28787339qtt.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 18:23:55 -0700 (PDT)
+        Fri, 19 Jul 2019 21:40:48 -0400
+Received: by mail-ed1-f68.google.com with SMTP id s49so1099908edb.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Jul 2019 18:40:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sycMcUcoeC9bn38OVaHWWfc+SOTmaJGA01wVQbaVLhA=;
-        b=j3D1XjXjtg4zmql5wk+RMkmqZD5Hle6ME7GgXhWWtj8Fw7LX1e/blGU6w6B+QOXkAq
-         rktRz22Y//T2SZXOBJeqawf3WEQRfXMiHsKs4YvwkBLOj4k4RpSBiie9fD0+3IePxl4S
-         +riIyWNdtSpgQwK9FkiSHPAinVCXfK9BWwgqM0+Z4tI4PikqpMHDz3RQ+XtgP/MUtS7y
-         C7NgaggySyC7oCEI3QiZGyAOQunwNnID6P7sMMc/Ky61Gjk4gy18vBae/lZAsnn05QGs
-         XxyceRD36zVI24ThdFWO3bRcG3rIYA+BWavT/5NzJj2ivwk7LF5azM//CPZUxrRbeFLo
-         4fNw==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=3H0IiALIqBqUpZ2JWN/PXUgLGICkSXTbhko9SeQLx9o=;
+        b=Myn3x4P2/6QeG2KiG7wLEnG50YN/OVlKuruupgCxUwORhuZjCWq7e6LWD6f4csjggE
+         bti4Ut/dDK622G3omtfEMkYPu76f0GaHza7oQ0H+rEJxItf0kP4EA7i7VdBGA+pAT4bB
+         SGOmIJ2Kymnq/BPa7JG2rGyjbv87Qc7AfeJbLkl3LkOOmL+rlS2mdoOL5CxkKPzgiAR6
+         qfuasSI7rWCzDzVZ84e2+ewQoDi8Guqw9P3jYnr6+VeNoaj8wRu3xJ1rg8UtRNQCrDoE
+         5nS+Lz1dXeDVbX6OrhS3S0NhU3vmefEbkAdhnilbn1Br2sX6K/8J9tvpxW7sJBNsKXgx
+         K8dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sycMcUcoeC9bn38OVaHWWfc+SOTmaJGA01wVQbaVLhA=;
-        b=myPybs9FmcS3PaS4cvPFQNvbP+6JWTvK3v1DR+h8PLNxhqmM3/tVz9xOPkt32BnAIT
-         qpdFP53hTrmfJLJk0m2iS1xfd3JIX/hkf3twkBuzgqRMrngFhSgCpgfXZ/7Vv6Mc8dnn
-         b7bTnQK87sOHqaqZAUM83ByUekiS5apfKfjGt/WA7WtBA6jk2eQNKz0Wrirj6r5XT+9i
-         9+aC80jiUunv4yczMSOmoi/kDsu+jKpW8aWqOrgASkd+3psI550f/ewLzfNzLc4xiUVR
-         otoD749liZEWdRpqGwvP1dJDGyI5KtHd8+gpflJ1sQPtCRBCn4x9+q1g3mXypJvYYOwl
-         Y6wQ==
-X-Gm-Message-State: APjAAAWj/pbpMvz7JdAsG1v2BWjgBW94hwBNDP4t9r9M79/ybuC25UKJ
-        ADwClY9DEIdN8WPXkxwqOu33OA==
-X-Google-Smtp-Source: APXvYqz7v2dDsHo+mKy4sc2jHdJtjMacRYbAbU+2Bx2jjwOuBdsfQO33fBZMHYtC2f1dUlaDo8NRjw==
-X-Received: by 2002:a0c:bd86:: with SMTP id n6mr40840893qvg.183.1563585834497;
-        Fri, 19 Jul 2019 18:23:54 -0700 (PDT)
-Received: from localhost.localdomain (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id p3sm22707150qta.12.2019.07.19.18.23.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 19 Jul 2019 18:23:53 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     mingo@redhat.com, peterz@infradead.org
-Cc:     valentin.schneider@arm.com, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH v4] sched/core: silence a warning in sched_init()
-Date:   Fri, 19 Jul 2019 21:23:19 -0400
-Message-Id: <20190720012319.884-1-cai@lca.pw>
-X-Mailer: git-send-email 2.20.1 (Apple Git-117)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=3H0IiALIqBqUpZ2JWN/PXUgLGICkSXTbhko9SeQLx9o=;
+        b=Qm8B7XH3R5ezQxkQNffVkuTangz6+G/vlKBoLN+sHEtQ7SzjaZYAY1wVAjTC34KSdm
+         DskvLP1heylMXTyOoHww8nDmnzjPkjXxXojr+D+DqMvclsFKGIOxM6FqWlV3Fkim21L2
+         Af4wqarOWEReUO/IUNSnYt0aTzscngP2Nt/GV26qbWleo347xSlumHzUKXMiLa8TcSUi
+         0r+bqm/iDEU7AO65+wDh6lf2rggLQdixho4U9mq1rU0ZmC9fkSC9zJv9afuheuJGZePL
+         mqiUk57Bqe9YMuf4aj4xbJOMd0Mzumvj1om9ZNLcFym61aDc0ZXianTQbqKNK79hd4Tv
+         otng==
+X-Gm-Message-State: APjAAAWztiQfS36s5SyDqYY3mIUNBIqeXbwux3bPrLKloL91I4H+tGKj
+        RMbMgFud6kt4wusHUEkFnvdQrp44xXoXacPbA9A=
+X-Google-Smtp-Source: APXvYqzqzVWeBVH5XhUWo1wErkcrACb21PDsscoYnAbtoq9noBEEvjtlpCW39VAIls/19wvMWeBhYtGwBQggPM43IfE=
+X-Received: by 2002:a50:ec0e:: with SMTP id g14mr10822473edr.210.1563586847334;
+ Fri, 19 Jul 2019 18:40:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a17:906:2543:0:0:0:0 with HTTP; Fri, 19 Jul 2019 18:40:46
+ -0700 (PDT)
+From:   rose marye <rosemarye020@gmail.com>
+Date:   Sat, 20 Jul 2019 02:40:46 +0100
+Message-ID: <CALFWDSrnzwGQL+M6QXzCagfamo=SgSrDva-TsdMXCJVCM2XP_A@mail.gmail.com>
+Subject: Thank you for your understanding
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Compiling a kernel with both FAIR_GROUP_SCHED=n and RT_GROUP_SCHED=n
-will generate a compiler warning,
-
-kernel/sched/core.c: In function 'sched_init':
-kernel/sched/core.c:5906:32: warning: variable 'ptr' set but not used
-[-Wunused-but-set-variable]
- unsigned long alloc_size = 0, ptr;
-                               ^~~
-It is unnecessary to have both "alloc_size" and "ptr", so just combine
-them.
-
-Signed-off-by: Qian Cai <cai@lca.pw>
----
-
-v4: Combine "alloc_size" and "ptr" together.
-v3: Use a different approach to see if Peter will like it.
-v2: Incorporate the feedback from Valentin.
-
- kernel/sched/core.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 2b037f195473..6eefaeea4c88 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6371,19 +6371,19 @@ DECLARE_PER_CPU(cpumask_var_t, select_idle_mask);
- 
- void __init sched_init(void)
- {
--	unsigned long alloc_size = 0, ptr;
-+	unsigned long ptr = 0;
- 	int i;
- 
- 	wait_bit_init();
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
--	alloc_size += 2 * nr_cpu_ids * sizeof(void **);
-+	ptr += 2 * nr_cpu_ids * sizeof(void **);
- #endif
- #ifdef CONFIG_RT_GROUP_SCHED
--	alloc_size += 2 * nr_cpu_ids * sizeof(void **);
-+	ptr += 2 * nr_cpu_ids * sizeof(void **);
- #endif
--	if (alloc_size) {
--		ptr = (unsigned long)kzalloc(alloc_size, GFP_NOWAIT);
-+	if (ptr) {
-+		ptr = (unsigned long)kzalloc(ptr, GFP_NOWAIT);
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 		root_task_group.se = (struct sched_entity **)ptr;
--- 
-2.20.1 (Apple Git-117)
-
+Hello, my name is Rose,
+I have a business proposal that will benefit us, it is a business
+worth 3.5million USD, Kindly get back to us if your interested for
+more details.
+Regards
+Rose
