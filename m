@@ -2,54 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D11526F05E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 20:40:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6ECE6F066
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 20:50:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729167AbfGTSku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 20 Jul 2019 14:40:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51364 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729086AbfGTSkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Jul 2019 14:40:31 -0400
-Subject: Re: [GIT pull] perf/urgent for 5.3-rc1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563648030;
-        bh=ll1v6hmUc7AiRx7yqSRHB/zv2M50rKm8tJl4An3pg0Q=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=ltZ9VtdCvoBXGU4iJ5vEOhAiHr7g9Zy3DV8cHa5IsS4JCuRUXDexlDzqIDUx87W3j
-         hz4XtVImYObTkqNZoSfTx8kCYpt86Vk+NrRsELznVquGvPp4v6QU1P+xnIBzXNRQXu
-         UcgT7R85ndY6/5iCcPnbLLGus+vpAvccipTMVu4s=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <156362700019.18624.13205640129006069326.tglx@nanos.tec.linutronix.de>
-References: <156362700018.18624.18097992605540415098.tglx@nanos.tec.linutronix.de>
- <156362700019.18624.13205640129006069326.tglx@nanos.tec.linutronix.de>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <156362700019.18624.13205640129006069326.tglx@nanos.tec.linutronix.de>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- perf-urgent-for-linus
-X-PR-Tracked-Commit-Id: e0c5c5e308ee9b3548844f0d88da937782b895ef
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 46f5c0cc3af0ecb76224a91d2997d74e35ff7821
-Message-Id: <156364803081.20023.14197029287253196676.pr-tracker-bot@kernel.org>
-Date:   Sat, 20 Jul 2019 18:40:30 +0000
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
+        id S1726056AbfGTSul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 20 Jul 2019 14:50:41 -0400
+Received: from mail-qk1-f179.google.com ([209.85.222.179]:45903 "EHLO
+        mail-qk1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbfGTSul (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Jul 2019 14:50:41 -0400
+Received: by mail-qk1-f179.google.com with SMTP id s22so25755102qkj.12;
+        Sat, 20 Jul 2019 11:50:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K1DjJdNnl+zka9s8zl8TpnQj9JyccYfNCrdgUGT2JBc=;
+        b=E0Z9AYzsZ5A+FkVMOHPFogm4Q3Zy261XHb3O8qqBw+NPtSFvrRR3r9pVDAogOIlLHA
+         0UtoVhxWsC/ziDJCqkqCypTBaL4SoK8wqXwBbJuG2es2KigAqB2th+fdX3p+1jGPSI5H
+         kVNrplbfvGwAKoTpRtbYrBSgHTyHHg8Mj5cH1YteEA43gSa4HbpyhdHAMPYsUVGKfyfV
+         B0zOFKof9uyzh6Ln1urU8CnzjrjUUhVwRR4UPS5CzKqAylTFUwOSfU9ItK5+ox8tgTIO
+         ueUhn627l1gXxKK/AYv4OaB5wsJsTfQtRiTKrHHaukvnQsW09u4mr4m4MD8hRnFsvpev
+         uxuA==
+X-Gm-Message-State: APjAAAXHIRaqQwCJ4qWtnjNfnR87+tFy/mdH9EQGiKHwihkIA0nI1XM1
+        zyHmygxLPizB5hkWsU3cuQFc/vNfmSgZ4uSsE/E=
+X-Google-Smtp-Source: APXvYqwOgP5JyfSYb+na0Yw3siiSnE4qFFFhH9b1DMjUEZg8Ra4RTQ8jwZpCHV3GgMemx0iWkTj65t0WRcrRnMXGEsk=
+X-Received: by 2002:a37:76c5:: with SMTP id r188mr39763653qkc.394.1563648640160;
+ Sat, 20 Jul 2019 11:50:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190720174844.4b989d34@sf> <87wogca86l.fsf@mid.deneb.enyo.de>
+In-Reply-To: <87wogca86l.fsf@mid.deneb.enyo.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 20 Jul 2019 20:50:23 +0200
+Message-ID: <CAK8P3a3s3OeBj1MviaJV2UR0eUhF0GKPBi1iFf_3QKQyNPkuqw@mail.gmail.com>
+Subject: Re: linux-headers-5.2 and proper use of SIOCGSTAMP
+To:     Florian Weimer <fw@deneb.enyo.de>
+Cc:     Sergei Trofimovich <slyfox@gentoo.org>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        linux-man <linux-man@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 20 Jul 2019 12:50:00 -0000:
+On Sat, Jul 20, 2019 at 8:10 PM Florian Weimer <fw@deneb.enyo.de> wrote:
+>
+> * Sergei Trofimovich:
+>
+> > Should #include <linux/sockios.h> always be included by user app?
+> > Or should glibc tweak it's definition of '#include <sys/socket.h>'
+> > to make it available on both old and new version of linux headers?
+>
+> What is the reason for dropping SIOCGSTAMP from <asm/socket.h>?
+>
+> If we know that, it will be much easier to decide what to do about
+> <sys/socket.h>.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
+As far as I can tell, nobody thought it would be a problem to move it
+from asm/sockios.h to linux/sockios.h, as the general rule is that one
+should use the linux/*.h version if both exist, and that the asm/*.h
+version only contains architecture specific definitions. The new
+definition is the same across all architectures, so it made sense to
+have it in the common file.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/46f5c0cc3af0ecb76224a91d2997d74e35ff7821
+If the assumption was wrong, the obvious solution is to duplicate the
+definitions everywhere or move the common parts into
+asm-generic/sockios.h, but it would have been better to hear about
+that earlier.
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+      Arnd
