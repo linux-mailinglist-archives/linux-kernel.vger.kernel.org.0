@@ -2,328 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 984846EE56
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 10:00:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 570566EE5D
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 10:02:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfGTIAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 20 Jul 2019 04:00:47 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:48350 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726723AbfGTIAr (ORCPT
+        id S1726855AbfGTICJ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 20 Jul 2019 04:02:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:10130 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726836AbfGTICJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Jul 2019 04:00:47 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6K80W4c078951;
-        Sat, 20 Jul 2019 03:00:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1563609632;
-        bh=G2dFa5gqh0pxSKoDZZ1GmICjzR13jLfmt4ybJwHlBV8=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=QzmqGUBdbQo/WK0eX/95/Fge7riBAZvImlDuvmqCOAwJ9GOehW9ta3MqoRMqpnPH0
-         +Y4N06aT0kyKUBaaOvHE7hajPkhW3N6Elm9DbUpxab/Cj55ux3ccsqZEOW5+Pv+Sqs
-         BTRevxNoR/bpYve5X9u+0glKkBoFQK6n1wCkBEt8=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6K80We9110083
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 20 Jul 2019 03:00:32 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Sat, 20
- Jul 2019 03:00:32 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Sat, 20 Jul 2019 03:00:32 -0500
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6K80NJ9072322;
-        Sat, 20 Jul 2019 03:00:29 -0500
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>
-CC:     Marek Vasut <marek.vasut@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>
-Subject: [PATCH v2 2/2] mtd: spi-nor: Rework hwcaps selection for the spi-mem case
-Date:   Sat, 20 Jul 2019 13:30:23 +0530
-Message-ID: <20190720080023.5279-3-vigneshr@ti.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190720080023.5279-1-vigneshr@ti.com>
-References: <20190720080023.5279-1-vigneshr@ti.com>
+        Sat, 20 Jul 2019 04:02:09 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6K7vTOJ081974
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2019 04:02:07 -0400
+Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [192.155.248.67])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2tuuvs5yma-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Jul 2019 04:02:07 -0400
+Received: from localhost
+        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
+        for <linux-kernel@vger.kernel.org> from <BMT@zurich.ibm.com>;
+        Sat, 20 Jul 2019 08:02:06 -0000
+Received: from us1a3-smtp07.a3.dal06.isc4sb.com (10.146.103.14)
+        by smtp.notes.na.collabserv.com (10.106.227.16) with smtp.notes.na.collabserv.com ESMTP;
+        Sat, 20 Jul 2019 08:02:00 -0000
+Received: from us1a3-mail162.a3.dal06.isc4sb.com ([10.146.71.4])
+          by us1a3-smtp07.a3.dal06.isc4sb.com
+          with ESMTP id 2019072008015996-126596 ;
+          Sat, 20 Jul 2019 08:01:59 +0000 
+In-Reply-To: <20190719012938.100628-1-maowenan@huawei.com>
+Subject: Re: [PATCH -next] infiniband: siw: remove set but not used variables 'rv'
+From:   "Bernard Metzler" <BMT@zurich.ibm.com>
+To:     "Mao Wenan" <maowenan@huawei.com>
+Cc:     <dledford@redhat.com>, <jgg@ziepe.ca>,
+        <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Date:   Sat, 20 Jul 2019 08:01:59 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Sensitivity: 
+Importance: Normal
+X-Priority: 3 (Normal)
+References: <20190719012938.100628-1-maowenan@huawei.com>
+X-Mailer: IBM iNotes ($HaikuForm 1054) | IBM Domino Build
+ SCN1812108_20180501T0841_FP55 May 22, 2019 at 11:09
+X-LLNOutbound: False
+X-Disclaimed: 775
+X-TNEFEvaluated: 1
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+x-cbid: 19072008-0327-0000-0000-00000C071D23
+X-IBM-SpamModules-Scores: BY=0; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
+ SC=0.40962; ST=0; TS=0; UL=0; ISC=; MB=0.017273
+X-IBM-SpamModules-Versions: BY=3.00011461; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000287; SDB=6.01234777; UDB=6.00650736; IPR=6.01016115;
+ BA=6.00006356; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00027814; XFM=3.00000015;
+ UTC=2019-07-20 08:02:04
+X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
+X-IBM-AV-VERSION: SAVI=2019-07-20 01:42:31 - 6.00010186
+x-cbparentid: 19072008-0328-0000-0000-0000183448A0
+Message-Id: <OF77C0BA7B.17273086-ON0025843D.002C20A5-0025843D.002C20AD@notes.na.collabserv.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-20_05:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
+-----"Mao Wenan" <maowenan@huawei.com> wrote: -----
 
-The spi-mem layer provides a spi_mem_supports_op() function to check
-whether a specific operation is supported by the controller or not.
-This is much more accurate than the hwcaps selection logic based on
-SPI_{RX,TX}_ flags.
+>To: <bmt@zurich.ibm.com>, <dledford@redhat.com>, <jgg@ziepe.ca>
+>From: "Mao Wenan" <maowenan@huawei.com>
+>Date: 07/19/2019 03:24AM
+>Cc: <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+><kernel-janitors@vger.kernel.org>, "Mao Wenan" <maowenan@huawei.com>
+>Subject: [EXTERNAL] [PATCH -next] infiniband: siw: remove set but not
+>used variables 'rv'
+>
+>Fixes gcc '-Wunused-but-set-variable' warning:
+>
+>drivers/infiniband/sw/siw/siw_cm.c: In function siw_cep_set_inuse:
+>drivers/infiniband/sw/siw/siw_cm.c:223:6: warning: variable rv set
+>but not used [-Wunused-but-set-variable]
+>
+>It is not used since commit 6c52fdc244b5("rdma/siw: connection
+>management")
+>
+>Signed-off-by: Mao Wenan <maowenan@huawei.com>
+>---
+> drivers/infiniband/sw/siw/siw_cm.c | 3 +--
+> 1 file changed, 1 insertion(+), 2 deletions(-)
+>
+>diff --git a/drivers/infiniband/sw/siw/siw_cm.c
+>b/drivers/infiniband/sw/siw/siw_cm.c
+>index a7cde98..9ce8a1b 100644
+>--- a/drivers/infiniband/sw/siw/siw_cm.c
+>+++ b/drivers/infiniband/sw/siw/siw_cm.c
+>@@ -220,13 +220,12 @@ static void siw_put_work(struct siw_cm_work
+>*work)
+> static void siw_cep_set_inuse(struct siw_cep *cep)
+> {
+> 	unsigned long flags;
+>-	int rv;
+> retry:
+> 	spin_lock_irqsave(&cep->lock, flags);
+> 
+> 	if (cep->in_use) {
+> 		spin_unlock_irqrestore(&cep->lock, flags);
+>-		rv = wait_event_interruptible(cep->waitq, !cep->in_use);
+>+		wait_event_interruptible(cep->waitq, !cep->in_use);
+> 		if (signal_pending(current))
+> 			flush_signals(current);
+> 		goto retry;
+>-- 
+>2.7.4
+>
+>
 
-Rework the hwcaps selection logic to use spi_mem_supports_op() when
-nor->spimem != NULL.
+Mao, many thanks for finding that. So, yes, 'rv'  shall be removed.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
----
-v2:
-Refractor spi_nor_spimem_adjust_hwcaps to avoid looping twice over
-WCAPS
-Add docs to new functions
-Rework spi_nor_spimem_check_op() logic
-
- drivers/mtd/spi-nor/spi-nor.c | 183 +++++++++++++++++++++++++++-------
- include/linux/mtd/spi-nor.h   |  14 +++
- 2 files changed, 161 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index f428a6d4022b..924dbaf3fa49 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -3028,6 +3028,129 @@ static int spi_nor_read_sfdp(struct spi_nor *nor, u32 addr,
- 	return ret;
- }
- 
-+/**
-+ * spi_nor_spimem_check_op - check if the operation is supported
-+ *                           by controller
-+ *@nor:        pointer to a 'struct spi_nor'
-+ *@op:         pointer to op template to be checked
-+ *
-+ * Returns 0 if operation is supported, -ENOTSUPP otherwise.
-+ */
-+static int spi_nor_spimem_check_op(struct spi_nor *nor,
-+				   struct spi_mem_op *op)
-+{
-+	/*
-+	 * First test with 4 address bytes. The opcode itself might
-+	 * be a 3B addressing opcode but we don't care, because
-+	 * SPI controller implementation should not check the opcode,
-+	 * but just the sequence.
-+	 */
-+	op->addr.nbytes = 4;
-+	if (!spi_mem_supports_op(nor->spimem, op)) {
-+		/* If flash size <16MB, 3 address bytes are sufficient */
-+		if (nor->mtd.size <= SZ_16M) {
-+			op->addr.nbytes = 3;
-+			if (!spi_mem_supports_op(nor->spimem, op))
-+				return -ENOTSUPP;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * spi_nor_spimem_check_readop - check if the read op is supported
-+ *                               by controller
-+ *@nor:         pointer to a 'struct spi_nor'
-+ *@read:        pointer to op template to be checked
-+ *
-+ * Returns 0 if operation is supported, -ENOTSUPP otherwise.
-+ */
-+static int spi_nor_spimem_check_readop(struct spi_nor *nor,
-+				       const struct spi_nor_read_command *read)
-+{
-+	struct spi_mem_op op = SPI_MEM_OP(SPI_MEM_OP_CMD(read->opcode, 1),
-+					  SPI_MEM_OP_ADDR(3, 0, 1),
-+					  SPI_MEM_OP_DUMMY(0, 1),
-+					  SPI_MEM_OP_DATA_IN(0, NULL, 1));
-+
-+	op.cmd.buswidth = spi_nor_get_protocol_inst_nbits(read->proto);
-+	op.addr.buswidth = spi_nor_get_protocol_addr_nbits(read->proto);
-+	op.data.buswidth = spi_nor_get_protocol_data_nbits(read->proto);
-+	op.dummy.buswidth = op.addr.buswidth;
-+	op.dummy.nbytes = (read->num_mode_clocks + read->num_wait_states) *
-+			  op.dummy.buswidth / 8;
-+
-+	return spi_nor_spimem_check_op(nor, &op);
-+}
-+
-+/**
-+ * spi_nor_spimem_check_pp - check if the page program op is supported
-+ *                           by controller
-+ *@nor:         pointer to a 'struct spi_nor'
-+ *@pp:          pointer to op template to be checked
-+ *
-+ * Returns 0 if operation is supported, -ENOTSUPP otherwise.
-+ */
-+static int spi_nor_spimem_check_pp(struct spi_nor *nor,
-+				   const struct spi_nor_pp_command *pp)
-+{
-+	struct spi_mem_op op = SPI_MEM_OP(SPI_MEM_OP_CMD(pp->opcode, 1),
-+					  SPI_MEM_OP_ADDR(3, 0, 1),
-+					  SPI_MEM_OP_NO_DUMMY,
-+					  SPI_MEM_OP_DATA_OUT(0, NULL, 1));
-+
-+	op.cmd.buswidth = spi_nor_get_protocol_inst_nbits(pp->proto);
-+	op.addr.buswidth = spi_nor_get_protocol_addr_nbits(pp->proto);
-+	op.data.buswidth = spi_nor_get_protocol_data_nbits(pp->proto);
-+
-+	return spi_nor_spimem_check_op(nor, &op);
-+}
-+
-+/**
-+ * spi_nor_spimem_adjust_hwcaps - Find optimal Read/Write protocol
-+ *                                based on SPI controller capabilities
-+ * @nor:        pointer to a 'struct spi_nor'
-+ * @params:     pointer to the 'struct spi_nor_flash_parameter'
-+ *              representing SPI NOR flash capabilities
-+ * @hwcaps:     pointer to resulting capabilities after adjusting
-+ *              according to controller and flash's capability
-+ */
-+static void
-+spi_nor_spimem_adjust_hwcaps(struct spi_nor *nor,
-+			     const struct spi_nor_flash_parameter *params,
-+			     u32 *hwcaps)
-+{
-+	unsigned int cap;
-+
-+	/* DTR modes are not supported yet, mask them all. */
-+	*hwcaps &= ~SNOR_HWCAPS_DTR;
-+
-+	/* X-X-X modes are not supported yet, mask them all. */
-+	*hwcaps &= ~SNOR_HWCAPS_X_X_X;
-+
-+	/* Start with read commands. */
-+	for (cap = 0; cap < sizeof(*hwcaps) * BITS_PER_BYTE; cap++) {
-+		int rdidx, ppidx;
-+
-+		if (!(*hwcaps & BIT(cap)))
-+			continue;
-+
-+		rdidx = spi_nor_hwcaps_read2cmd(BIT(cap));
-+		if (rdidx >= 0 &&
-+		    spi_nor_spimem_check_readop(nor, &params->reads[rdidx]))
-+			*hwcaps &= ~BIT(cap);
-+
-+		ppidx = spi_nor_hwcaps_pp2cmd(BIT(cap));
-+		if (ppidx < 0)
-+			continue;
-+
-+		if (spi_nor_spimem_check_pp(nor,
-+					    &params->page_programs[ppidx]))
-+			*hwcaps &= ~BIT(cap);
-+	}
-+}
-+
- /**
-  * spi_nor_read_sfdp_dma_unsafe() - read Serial Flash Discoverable Parameters.
-  * @nor:	pointer to a 'struct spi_nor'
-@@ -4437,16 +4560,25 @@ static int spi_nor_setup(struct spi_nor *nor,
- 	 */
- 	shared_mask = hwcaps->mask & params->hwcaps.mask;
- 
--	/* SPI n-n-n protocols are not supported yet. */
--	ignored_mask = (SNOR_HWCAPS_READ_2_2_2 |
--			SNOR_HWCAPS_READ_4_4_4 |
--			SNOR_HWCAPS_READ_8_8_8 |
--			SNOR_HWCAPS_PP_4_4_4 |
--			SNOR_HWCAPS_PP_8_8_8);
--	if (shared_mask & ignored_mask) {
--		dev_dbg(nor->dev,
--			"SPI n-n-n protocols are not supported yet.\n");
--		shared_mask &= ~ignored_mask;
-+	if (nor->spimem) {
-+		/*
-+		 * When called from spi_nor_probe(), all caps are set and we
-+		 * need to discard some of them based on what the SPI
-+		 * controller actually supports (using spi_mem_supports_op()).
-+		 */
-+		spi_nor_spimem_adjust_hwcaps(nor, params, &shared_mask);
-+	} else {
-+		/*
-+		 * SPI n-n-n protocols are not supported when the SPI
-+		 * controller directly implements the spi_nor interface.
-+		 * Yet another reason to switch to spi-mem.
-+		 */
-+		ignored_mask = SNOR_HWCAPS_X_X_X;
-+		if (shared_mask & ignored_mask) {
-+			dev_dbg(nor->dev,
-+				"SPI n-n-n protocols are not supported.\n");
-+			shared_mask &= ~ignored_mask;
-+		}
- 	}
- 
- 	/* Select the (Fast) Read command. */
-@@ -4775,11 +4907,11 @@ static int spi_nor_probe(struct spi_mem *spimem)
- 	struct spi_device *spi = spimem->spi;
- 	struct flash_platform_data *data = dev_get_platdata(&spi->dev);
- 	struct spi_nor *nor;
--	struct spi_nor_hwcaps hwcaps = {
--		.mask = SNOR_HWCAPS_READ |
--			SNOR_HWCAPS_READ_FAST |
--			SNOR_HWCAPS_PP,
--	};
-+	/*
-+	 * Enable all caps by default. The core will mask them after
-+	 * checking what's really supported using spi_mem_supports_op().
-+	 */
-+	const struct spi_nor_hwcaps hwcaps = { .mask = SNOR_HWCAPS_ALL };
- 	char *flash_name;
- 	int ret;
- 
-@@ -4806,27 +4938,6 @@ static int spi_nor_probe(struct spi_mem *spimem)
- 
- 	spi_mem_set_drvdata(spimem, nor);
- 
--	if (spi->mode & SPI_RX_OCTAL) {
--		hwcaps.mask |= SNOR_HWCAPS_READ_1_1_8;
--
--		if (spi->mode & SPI_TX_OCTAL)
--			hwcaps.mask |= (SNOR_HWCAPS_READ_1_8_8 |
--					SNOR_HWCAPS_PP_1_1_8 |
--					SNOR_HWCAPS_PP_1_8_8);
--	} else if (spi->mode & SPI_RX_QUAD) {
--		hwcaps.mask |= SNOR_HWCAPS_READ_1_1_4;
--
--		if (spi->mode & SPI_TX_QUAD)
--			hwcaps.mask |= (SNOR_HWCAPS_READ_1_4_4 |
--					SNOR_HWCAPS_PP_1_1_4 |
--					SNOR_HWCAPS_PP_1_4_4);
--	} else if (spi->mode & SPI_RX_DUAL) {
--		hwcaps.mask |= SNOR_HWCAPS_READ_1_1_2;
--
--		if (spi->mode & SPI_TX_DUAL)
--			hwcaps.mask |= SNOR_HWCAPS_READ_1_2_2;
--	}
--
- 	if (data && data->name)
- 		nor->mtd.name = data->name;
- 
-diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-index e18c03f72ded..4521a38452d6 100644
---- a/include/linux/mtd/spi-nor.h
-+++ b/include/linux/mtd/spi-nor.h
-@@ -526,6 +526,20 @@ struct spi_nor_hwcaps {
- #define SNOR_HWCAPS_PP_1_8_8	BIT(21)
- #define SNOR_HWCAPS_PP_8_8_8	BIT(22)
- 
-+#define SNOR_HWCAPS_X_X_X	(SNOR_HWCAPS_READ_2_2_2 |	\
-+				 SNOR_HWCAPS_READ_4_4_4 |	\
-+				 SNOR_HWCAPS_READ_8_8_8 |	\
-+				 SNOR_HWCAPS_PP_4_4_4 |		\
-+				 SNOR_HWCAPS_PP_8_8_8)
-+
-+#define SNOR_HWCAPS_DTR		(SNOR_HWCAPS_READ_1_1_1_DTR |	\
-+				 SNOR_HWCAPS_READ_1_2_2_DTR |	\
-+				 SNOR_HWCAPS_READ_1_4_4_DTR |	\
-+				 SNOR_HWCAPS_READ_1_8_8_DTR)
-+
-+#define SNOR_HWCAPS_ALL		(SNOR_HWCAPS_READ_MASK |	\
-+				 SNOR_HWCAPS_PP_MASK)
-+
- /**
-  * spi_nor_scan() - scan the SPI NOR
-  * @nor:	the spi_nor structure
--- 
-2.22.0
+Reviewed-by: Bernard Metzler <bmt@zurich.ibm.com>
 
