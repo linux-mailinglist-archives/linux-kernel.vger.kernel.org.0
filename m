@@ -2,54 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 885476EE94
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 11:20:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BA1A6EEAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 11:32:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbfGTJUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 20 Jul 2019 05:20:20 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:55273 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727286AbfGTJUT (ORCPT
+        id S1727367AbfGTJcd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 20 Jul 2019 05:32:33 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46087 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727325AbfGTJcd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Jul 2019 05:20:19 -0400
-X-Originating-IP: 91.163.65.175
-Received: from localhost (91-163-65-175.subs.proxad.net [91.163.65.175])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id B01CFFF804;
-        Sat, 20 Jul 2019 09:20:16 +0000 (UTC)
-Date:   Sat, 20 Jul 2019 11:20:16 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 1/8] pinctrl: sunxi: v3s: introduce support for V3
-Message-ID: <20190720092016.bue2d7lhflrpmcg4@flea>
-References: <20190713034634.44585-1-icenowy@aosc.io>
- <20190713034634.44585-2-icenowy@aosc.io>
+        Sat, 20 Jul 2019 05:32:33 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6K9Vvxu2881070
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 20 Jul 2019 02:31:57 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6K9Vvxu2881070
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1563615118;
+        bh=BBhwiJSF4HFd2wW6rUTEeMMDnaC77jv+fheQaqPwEcQ=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=Jm0iZkDF+xWRZob0aMKmnYtFvNgiat/Df8UvYIomWwl0DBWD4FzuNP7c3kMleaBgr
+         ziPH+kyHSiCIHXBAggQ8pPc5VSvT6o/9/nTM8WDGnCuPZfu6D40DvigY8+cm6j4cm+
+         Elfwp9ufpoEmoERuhBPTpq8cWvrQtSw6HFkULG4yrD6hu40f4LPb5O6Pq/dG+yZig+
+         ue0qzKk+Chd/3tHCGtBzy5SHptSnwThMbjmF4TqlN6hkhE0nbAdIWYTZIZ38n9eS9X
+         X9Ki8pPNJapCZ3R0Ms2A0KO9meAIB5s160oxNm+XBgT3aPaGU8UUKBr9mv9ftoYru7
+         Db9u0sMGTcI3g==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6K9VvQV2881067;
+        Sat, 20 Jul 2019 02:31:57 -0700
+Date:   Sat, 20 Jul 2019 02:31:57 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
+Message-ID: <tip-19dbdcb8039cff16669a05136a29180778d16d0a@git.kernel.org>
+Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
+        luferry@163.com, hpa@zytor.com, mingo@kernel.org,
+        tglx@linutronix.de
+Reply-To: mingo@kernel.org, luferry@163.com, hpa@zytor.com,
+          tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          peterz@infradead.org
+In-Reply-To: <20190718160601.GP3402@hirez.programming.kicks-ass.net>
+References: <20190718160601.GP3402@hirez.programming.kicks-ass.net>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:smp/urgent] smp: Warn on function calls from softirq context
+Git-Commit-ID: 19dbdcb8039cff16669a05136a29180778d16d0a
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190713034634.44585-2-icenowy@aosc.io>
-User-Agent: NeoMutt/20180716
+X-Spam-Status: No, score=1.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Level: *
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 13, 2019 at 11:46:27AM +0800, Icenowy Zheng wrote:
-> Introduce the GPIO pins that is only available on V3 (not on V3s) to the
-> V3s pinctrl driver.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Commit-ID:  19dbdcb8039cff16669a05136a29180778d16d0a
+Gitweb:     https://git.kernel.org/tip/19dbdcb8039cff16669a05136a29180778d16d0a
+Author:     Peter Zijlstra <peterz@infradead.org>
+AuthorDate: Thu, 18 Jul 2019 11:20:09 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sat, 20 Jul 2019 11:27:16 +0200
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+smp: Warn on function calls from softirq context
 
-Maxime
+It's clearly documented that smp function calls cannot be invoked from
+softirq handling context. Unfortunately nothing enforces that or emits a
+warning.
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+A single function call can be invoked from softirq context only via
+smp_call_function_single_async().
+
+The only legit context is task context, so add a warning to that effect.
+
+Reported-by: luferry <luferry@163.com>
+Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190718160601.GP3402@hirez.programming.kicks-ass.net
+---
+ kernel/smp.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/kernel/smp.c b/kernel/smp.c
+index 616d4d114847..7dbcb402c2fc 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -291,6 +291,14 @@ int smp_call_function_single(int cpu, smp_call_func_t func, void *info,
+ 	WARN_ON_ONCE(cpu_online(this_cpu) && irqs_disabled()
+ 		     && !oops_in_progress);
+ 
++	/*
++	 * When @wait we can deadlock when we interrupt between llist_add() and
++	 * arch_send_call_function_ipi*(); when !@wait we can deadlock due to
++	 * csd_lock() on because the interrupt context uses the same csd
++	 * storage.
++	 */
++	WARN_ON_ONCE(!in_task());
++
+ 	csd = &csd_stack;
+ 	if (!wait) {
+ 		csd = this_cpu_ptr(&csd_data);
+@@ -416,6 +424,14 @@ void smp_call_function_many(const struct cpumask *mask,
+ 	WARN_ON_ONCE(cpu_online(this_cpu) && irqs_disabled()
+ 		     && !oops_in_progress && !early_boot_irqs_disabled);
+ 
++	/*
++	 * When @wait we can deadlock when we interrupt between llist_add() and
++	 * arch_send_call_function_ipi*(); when !@wait we can deadlock due to
++	 * csd_lock() on because the interrupt context uses the same csd
++	 * storage.
++	 */
++	WARN_ON_ONCE(!in_task());
++
+ 	/* Try to fastpath.  So, what's a CPU they want? Ignoring this one. */
+ 	cpu = cpumask_first_and(mask, cpu_online_mask);
+ 	if (cpu == this_cpu)
