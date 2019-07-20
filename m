@@ -2,49 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14F9F6F056
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 20:40:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AFAC6F059
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 20:40:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728989AbfGTSkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 20 Jul 2019 14:40:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50778 "EHLO mail.kernel.org"
+        id S1729045AbfGTSk2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 20 Jul 2019 14:40:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728968AbfGTSkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Jul 2019 14:40:04 -0400
-Subject: Re: [git pull] vfs.git - dcache and mountpoint stuff
+        id S1729039AbfGTSkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Jul 2019 14:40:25 -0400
+Subject: Re: [GIT PULL] More Kbuild updates for v5.3-rc1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563648003;
-        bh=hDVDu3/yyXF6w2H9HFBHKWdoh8U/c0IY4QXxKw0So3c=;
+        s=default; t=1563648025;
+        bh=38t8tijbNEd+CV3qTnwaK/it4JSgS/EqIApQJNRIUDU=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=VNtHMm+z/TdPTQY5jVZisvWJt1ymX3g/x/xJLk930lrGAFtDbcZzCpJ0HA4HPTBCt
-         3kD+6JMh/P3TAVmk0sjmil+Z4uSv6GgJCyi8Ru3ZMps5tKHQfkL/q7La1zX4zVyUBA
-         yG7eQfXHIa9gORqqKSaGlxSDaMsFDrXca+gorLoU=
+        b=s1xg5aXLfBjv/80uEQ/aJjgVEcBPWqJWOWmiWtYgifBpK12sZMALu4oQuOsX+5tli
+         C3nufqtDekSiL96BI1CeEurdmz1GEhkRJOcROjb2wTMVs0MBF1oFCrjUgS6LituvXC
+         KWCOiZsXiYdIFmJ9Oh4LGlDQhOqhhyOywegx0PJk=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190720030217.GC17978@ZenIV.linux.org.uk>
-References: <20190720030217.GC17978@ZenIV.linux.org.uk>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190720030217.GC17978@ZenIV.linux.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.dcache2
-X-PR-Tracked-Commit-Id: 56cbb429d911991170fe867b4bba14f0efed5829
+In-Reply-To: <CAK7LNAQD7m+PCS6KtoVmZ_7kggLeWD6LE6NkfZ7TeaSO26sQGA@mail.gmail.com>
+References: <CAK7LNAQD7m+PCS6KtoVmZ_7kggLeWD6LE6NkfZ7TeaSO26sQGA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAK7LNAQD7m+PCS6KtoVmZ_7kggLeWD6LE6NkfZ7TeaSO26sQGA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+ tags/kbuild-v5.3-2
+X-PR-Tracked-Commit-Id: 29be86d7f9cb18df4123f309ac7857570513e8bc
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 18253e034d2aeee140f82fc9fe89c4bce5c81799
-Message-Id: <156364800369.20023.1746757645356503990.pr-tracker-bot@kernel.org>
-Date:   Sat, 20 Jul 2019 18:40:03 +0000
-To:     Al Viro <viro@zeniv.linux.org.uk>
+X-PR-Merge-Commit-Id: 168c79971b4a7be7011e73bf488b740a8e1135c8
+Message-Id: <156364802496.20023.10550559026864840074.pr-tracker-bot@kernel.org>
+Date:   Sat, 20 Jul 2019 18:40:24 +0000
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+        masahiroy@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 20 Jul 2019 04:02:18 +0100:
+The pull request you sent on Sat, 20 Jul 2019 11:31:01 +0900:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.dcache2
+> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git tags/kbuild-v5.3-2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/18253e034d2aeee140f82fc9fe89c4bce5c81799
+https://git.kernel.org/torvalds/c/168c79971b4a7be7011e73bf488b740a8e1135c8
 
 Thank you!
 
