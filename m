@@ -2,69 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38C426EFEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 18:03:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9E206EFFB
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 18:27:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbfGTQDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 20 Jul 2019 12:03:35 -0400
-Received: from mailoutvs36.siol.net ([185.57.226.227]:53080 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726482AbfGTQDf (ORCPT
+        id S1726572AbfGTQ1t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 20 Jul 2019 12:27:49 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:52417 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725940AbfGTQ1t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Jul 2019 12:03:35 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 6EE635207E5;
-        Sat, 20 Jul 2019 18:03:32 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id N2-Axw94Gu4C; Sat, 20 Jul 2019 18:03:32 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 22AFF52066B;
-        Sat, 20 Jul 2019 18:03:32 +0200 (CEST)
-Received: from jernej-laptop.localnet (89-212-178-211.dynamic.t-2.net [89.212.178.211])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id ED72F520CD1;
-        Sat, 20 Jul 2019 18:03:29 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     wens@csie.org, airlied@linux.ie, daniel@ffwll.ch,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 0/3] drm/sun4i: Add support for color encoding and range
-Date:   Sat, 20 Jul 2019 18:03:29 +0200
-Message-ID: <10088719.p65GSun1Qg@jernej-laptop>
-In-Reply-To: <20190720054255.vyma2lyiu2tohl74@flea>
-References: <20190713120346.30349-1-jernej.skrabec@siol.net> <20190720054255.vyma2lyiu2tohl74@flea>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Sat, 20 Jul 2019 12:27:49 -0400
+Received: from grover.flets-west.jp (softbank126026094249.bbtec.net [126.26.94.249]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id x6KGRfOq009136;
+        Sun, 21 Jul 2019 01:27:41 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x6KGRfOq009136
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1563640061;
+        bh=Pv01/fNbqPnaUNjJtQ/RzZ1+tcdYQt0y1A77DCr4Efg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Bb3pmzApRABgiJM6+BQoQfdOqInJvXbY2nUhOGGf80+w1n3V8GvycdsgBsCJ2rA5f
+         BIZLEs0k6vBzgmSClr5B2DcHnVrkpjY/O7YhC5xbZTU08VR9dtScAZs0gfm7/xXf27
+         Kyucvr14YgPM/UexqQDxTw2mwDUDciMWZ9/t4qeiNeAdJXvQNk2A2vkP/WdKbC3Nm2
+         pHoA6vknaX/ZrJalZ4docIWfo7zybpIyZ9+LMUpk4mSF5Vx0tlzu6jEls9Sd9XS8Ni
+         0KTmLMBtwffVrhp9X5DkmduWtOYxzxaWpOJndpSo2gNvIHYCZLvUpUF8VoF7iZF2Bo
+         yEQOteW+PPNhQ==
+X-Nifty-SrcIP: [126.26.94.249]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] kbuild: use $(basename ...) for cmd_asn1_compiler
+Date:   Sun, 21 Jul 2019 01:27:38 +0900
+Message-Id: <20190720162740.4292-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne sobota, 20. julij 2019 ob 07:42:55 CEST je Maxime Ripard napisal(a):
-> On Sat, Jul 13, 2019 at 02:03:43PM +0200, Jernej Skrabec wrote:
-> > In order to correctly convert image between YUV and RGB, you have to
-> > know color encoding and color range. This patch set adds appropriate
-> > properties and considers them when choosing CSC conversion matrix for
-> > DE2 and DE3.
-> > 
-> > Note that this is only the half of needed changes when using HDMI output.
-> > DW HDMI bridge driver has to be extended to have a property to select
-> > limited (TVs) or full (PC monitors) range. But that will be done at a
-> > later time.
-> > 
-> > Please take a look.
-> 
-> Sorry for the delay, I applied all three.
+$(basename ...) trims the last suffix. Using it is more intuitive in
+my opinion.
 
-No problem. Thanks!
+This pattern rule makes %.asn1.c and %.asn1.h at the same time.
+Previously, the short log showed only either of them, depending on
+the target file in question.
 
-Best regards,
-Jernej
+To clarify that two files are being generated by the single recipe,
+I changed the log as follows:
 
+Before:
 
+  ASN.1   crypto/asymmetric_keys/x509.asn1.c
+
+After:
+
+  ASN.1   crypto/asymmetric_keys/x509.asn1.[ch]
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ scripts/Makefile.build | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 644431140434..7f71dbd180cb 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -388,9 +388,9 @@ $(obj)/%.lds: $(src)/%.lds.S FORCE
+ 
+ # ASN.1 grammar
+ # ---------------------------------------------------------------------------
+-quiet_cmd_asn1_compiler = ASN.1   $@
++quiet_cmd_asn1_compiler = ASN.1   $(basename $@).[ch]
+       cmd_asn1_compiler = $(objtree)/scripts/asn1_compiler $< \
+-				$(subst .h,.c,$@) $(subst .c,.h,$@)
++				$(basename $@).c $(basename $@).h
+ 
+ $(obj)/%.asn1.c $(obj)/%.asn1.h: $(src)/%.asn1 $(objtree)/scripts/asn1_compiler
+ 	$(call cmd,asn1_compiler)
+-- 
+2.17.1
 
