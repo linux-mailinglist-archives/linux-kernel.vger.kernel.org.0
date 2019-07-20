@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48EF06EF44
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 13:59:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAA426EF46
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 14:05:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728154AbfGTL7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 20 Jul 2019 07:59:20 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:23497 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728119AbfGTL7U (ORCPT
+        id S1728183AbfGTMFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 20 Jul 2019 08:05:55 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:30478 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728166AbfGTMFz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Jul 2019 07:59:20 -0400
+        Sat, 20 Jul 2019 08:05:55 -0400
 Received: from grover.flets-west.jp (softbank126026094249.bbtec.net [126.26.94.249]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id x6KBx4Gd028252;
-        Sat, 20 Jul 2019 20:59:04 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x6KBx4Gd028252
+        by conuserg-09.nifty.com with ESMTP id x6KC5TD2027657;
+        Sat, 20 Jul 2019 21:05:29 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x6KC5TD2027657
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1563623945;
-        bh=GFDvRP9bqIHxNECOxKtmvkjwLEmjaFRIEJAa+wgV2uw=;
+        s=dec2015msa; t=1563624330;
+        bh=PlqRxZpGx0lOam9T/VREmCDkQVEbRoPfBxPqGOy+QWw=;
         h=From:To:Cc:Subject:Date:From;
-        b=o/4Pg1Be2urdgK4+mEqW1SNA66LavvsYpb1uRoQeNZSs1WY6HrkhYpRSYGgwTyFaj
-         b2cQLNWnXbN0ZFNg/x9Nr9Mb2zRH8I80NiQMkSnu/2E/aIkO2VCOfkilfXZ2MDPmvV
-         4Nq3gIxhpBUWKPMcSpcIW7GZcVI1bw30FzUtraRBQi+faYeBSWfdUCe7zaAuuj4aHn
-         DbaD18nuD5weeZCLNVO+8IkuJDLDSwNwJKwL6iUm0K7HkpuGDq1zXFNBmP76syPN7i
-         cqS9SKuk1Arv+TO2mVhFF3KiOIWv0ZUjGyEkU1OAAwKLdKrWv0TO7Hm2AR0E93rS3R
-         lzb+iT1bShJsw==
+        b=iG7FrbSfoyn7dFgAfshNE6gxv6mGNxGPGDUmcIFQqy/gHgLcMFDk5uREb0RqxGUT8
+         s/+GFXYPaTrmOVnB1QFq7vVunnd/nxgVNddLUwp8rzTTwkZUjvzAduJT4ONPJiDPPX
+         oKS0ztwIB0J2SaEXxGPx3E8dR4ym5mUzL/XN+fN/cMJfml0dvbFfHUR/PM3Go0fWSf
+         JbqnXKfvzDSc2Xx21kKrgksPMCuwUVnjzIDK4oI55WbeqaCHk1JE5pMdW7mx6Z0wBA
+         6UMdMwWKbUMaKXLNoBzn0tVIHjC5q54d9jPz9mQXw0arKXgi54IS+LZnukwRD72CKy
+         IZr6s3uWkOh4Q==
 X-Nifty-SrcIP: [126.26.94.249]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
 Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: pinctrl-single: add header include guard
-Date:   Sat, 20 Jul 2019 20:58:58 +0900
-Message-Id: <20190720115858.7015-1-yamada.masahiro@socionext.com>
+Subject: [PATCH] block: pg: add header include guard
+Date:   Sat, 20 Jul 2019 21:05:25 +0900
+Message-Id: <20190720120526.7722-1-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -46,28 +45,29 @@ Add a header include guard just in case.
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- include/linux/platform_data/pinctrl-single.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ include/uapi/linux/pg.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/platform_data/pinctrl-single.h b/include/linux/platform_data/pinctrl-single.h
-index 1cf36fdf9510..7473d3c4cabf 100644
---- a/include/linux/platform_data/pinctrl-single.h
-+++ b/include/linux/platform_data/pinctrl-single.h
-@@ -1,4 +1,8 @@
- /* SPDX-License-Identifier: GPL-2.0 */
+diff --git a/include/uapi/linux/pg.h b/include/uapi/linux/pg.h
+index 364c350e85cd..62b6f69bd9fb 100644
+--- a/include/uapi/linux/pg.h
++++ b/include/uapi/linux/pg.h
+@@ -35,6 +35,9 @@
+ 
+ */
+ 
++#ifndef _UAPI_LINUX_PG_H
++#define _UAPI_LINUX_PG_H
 +
-+#ifndef _PINCTRL_SINGLE_H
-+#define _PINCTRL_SINGLE_H
-+
- /**
-  * irq:		optional wake-up interrupt
-  * rearm:	optional soc specific rearm function
-@@ -11,3 +15,5 @@ struct pcs_pdata {
- 	int irq;
- 	void (*rearm)(void);
+ #define PG_MAGIC	'P'
+ #define PG_RESET	'Z'
+ #define PG_COMMAND	'C'
+@@ -61,4 +64,4 @@ struct pg_read_hdr {
+ 
  };
-+
-+#endif /* _PINCTRL_SINGLE_H */
+ 
+-/* end of pg.h */
++#endif /* _UAPI_LINUX_PG_H */
 -- 
 2.17.1
 
