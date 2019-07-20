@@ -2,68 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D8A16EF7B
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 15:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AE666EF8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 15:48:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728441AbfGTNZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 20 Jul 2019 09:25:05 -0400
-Received: from mx1.cock.li ([185.10.68.5]:60777 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727497AbfGTNZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Jul 2019 09:25:04 -0400
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
-        autolearn=disabled version=3.4.2
-From:   Robert Karszniewicz <avoidr@firemail.cc>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firemail.cc; s=mail;
-        t=1563628615; bh=UJ4UPCQ6KTaOMKiUiOK1HLUSwhxZK+o1vVoca6TIZfc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zt5IafkXqOJZXaTfBk63k+kEVLQTzb7Q0/HZaPtjzgMfqE4XwcLPhBVaCGF4veo18
-         wZ8gP1hjTeCLUvpuRwqpWG3fyMNiAxGFh8xVVv5ElbiOIa9tCQx3s5qhBSoZcNG3ZM
-         QXR9He7DRA9LrlPix8wIHA4rYTApF8rIgCa45ubVSqDCmk314g5yY14j9+usqDRjET
-         U2PE5NCpXfyxbO2ofjztrrpqxxikwZAzIYu5jt/eVzkv19877T5DGrc9cNV31tZXtO
-         DLxpz50DffS6G295j+09QoLs9Un6+cVIFyrlIvXP0e4Zmpn2q1T2FGBn/9VLSR+OVi
-         cT178neJNSpcg==
-To:     Rudolf Marek <r.marek@assembler.cz>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Robert Karszniewicz <avoidr@firemail.cc>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] hwmon: (k8temp) documentation: update URL of datasheet
-Date:   Sat, 20 Jul 2019 15:16:52 +0200
-Message-Id: <7139bc7707c24bd4dd7eb323e2da90105a3de9c1.1563522498.git.avoidr@firemail.cc>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <cover.1563522498.git.avoidr@firemail.cc>
-References: <cover.1563522498.git.avoidr@firemail.cc>
+        id S1728483AbfGTNpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 20 Jul 2019 09:45:51 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55934 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728464AbfGTNpv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Jul 2019 09:45:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=RIOU5LAIILgInsLZKUJUGf35teEgUvYEPJttEJyAaQY=; b=hc2vn/K3NITr/qd1/BeBsZT89k
+        zpOPsH5kbh9nphMRj0YhRabkG2m1KOYcLKyR3VLjEXzz5541Dbqq7VCmAmNGuhaxjQlb7Z4KMTjmB
+        TVMtHk3ecngXCQITb+nv8IrZob3Q4piWDyvRQ8hmi/Y2d08pzOq9QgikWJskvrscwbo5VVFSGyv0v
+        +mQPo3uZbr3Z+kTRfPEQys46PYqncVZSM7HXqbMdMsaAWJSfulRFirm35y6RWxJ59ovNr3Ojmzgi/
+        0aMqZ+Q4OfkizaD2yOJH7YYBFGGmsOkTd+caVR3EgB0JyvZEewk5PIgcmdnFoNif3cYLEm2cWO3nS
+        cXprQMaw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hopgF-00027k-Q9; Sat, 20 Jul 2019 13:45:44 +0000
+Subject: Re: [PATCH] mtd: hyperbus: Kconfig: Fix HBMC_AM654 dependencies
+To:     Vignesh Raghavendra <vigneshr@ti.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mao Wenan <maowenan@huawei.com>
+References: <20190719082912.10316-1-vigneshr@ti.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <83175738-a41e-04e6-7be2-85213dfdc416@infradead.org>
+Date:   Sat, 20 Jul 2019 06:45:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190719082912.10316-1-vigneshr@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The old URL is dead.
+On 7/19/19 1:29 AM, Vignesh Raghavendra wrote:
+> On x86_64, when CONFIG_OF is not disabled:
+> 
+> WARNING: unmet direct dependencies detected for MUX_MMIO
+>   Depends on [n]: MULTIPLEXER [=y] && (OF [=n] || COMPILE_TEST [=n])
+>   Selected by [y]:
+>   - HBMC_AM654 [=y] && MTD [=y] && MTD_HYPERBUS [=y]
+> 
+> due to
+> config HBMC_AM654
+> 	tristate "HyperBus controller driver for AM65x SoC"
+> 	select MULTIPLEXER
+> 	select MUX_MMIO
+> 
+> Fix this by making HBMC_AM654 imply MUX_MMIO instead of select so
+> that dependencies are taken care of. MUX_MMIO is optional for
+> functioning of driver.
+> 
+> Fixes: b07079f1642c ("mtd: hyperbus: Add driver for TI's HyperBus memory controller")
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
 
-Signed-off-by: Robert Karszniewicz <avoidr@firemail.cc>
----
- Documentation/hwmon/k8temp.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
 
-diff --git a/Documentation/hwmon/k8temp.rst b/Documentation/hwmon/k8temp.rst
-index 72da12aa17e5..fe9109521056 100644
---- a/Documentation/hwmon/k8temp.rst
-+++ b/Documentation/hwmon/k8temp.rst
-@@ -9,7 +9,7 @@ Supported chips:
- 
-     Addresses scanned: PCI space
- 
--    Datasheet: http://support.amd.com/us/Processor_TechDocs/32559.pdf
-+    Datasheet: http://www.amd.com/system/files/TechDocs/32559.pdf
- 
- Author: Rudolf Marek
- 
+Thanks.
+
+> ---
+>  drivers/mtd/hyperbus/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/hyperbus/Kconfig b/drivers/mtd/hyperbus/Kconfig
+> index cff6bbd226f5..1c691df8eff7 100644
+> --- a/drivers/mtd/hyperbus/Kconfig
+> +++ b/drivers/mtd/hyperbus/Kconfig
+> @@ -15,7 +15,7 @@ if MTD_HYPERBUS
+>  config HBMC_AM654
+>  	tristate "HyperBus controller driver for AM65x SoC"
+>  	select MULTIPLEXER
+> -	select MUX_MMIO
+> +	imply MUX_MMIO
+>  	help
+>  	 This is the driver for HyperBus controller on TI's AM65x and
+>  	 other SoCs
+> 
+
+
 -- 
-2.22.0
-
+~Randy
