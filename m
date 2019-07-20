@@ -2,48 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC6B46F04D
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 20:17:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14F9F6F056
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Jul 2019 20:40:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728841AbfGTSQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 20 Jul 2019 14:16:39 -0400
-Received: from albireo.enyo.de ([5.158.152.32]:37214 "EHLO albireo.enyo.de"
+        id S1728989AbfGTSkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 20 Jul 2019 14:40:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726594AbfGTSQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 20 Jul 2019 14:16:39 -0400
-X-Greylist: delayed 362 seconds by postgrey-1.27 at vger.kernel.org; Sat, 20 Jul 2019 14:16:37 EDT
-Received: from [172.17.203.2] (helo=deneb.enyo.de)
-        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1hotoT-0005X9-Ta; Sat, 20 Jul 2019 18:10:29 +0000
-Received: from fw by deneb.enyo.de with local (Exim 4.92)
-        (envelope-from <fw@deneb.enyo.de>)
-        id 1hotoQ-0003IG-OG; Sat, 20 Jul 2019 20:10:26 +0200
-From:   Florian Weimer <fw@deneb.enyo.de>
-To:     Sergei Trofimovich <slyfox@gentoo.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        libc-alpha@sourceware.org, Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>, mtk.manpages@gmail.com,
-        linux-man@vger.kernel.org
-Subject: Re: linux-headers-5.2 and proper use of SIOCGSTAMP
-References: <20190720174844.4b989d34@sf>
-Date:   Sat, 20 Jul 2019 20:10:26 +0200
-In-Reply-To: <20190720174844.4b989d34@sf> (Sergei Trofimovich's message of
-        "Sat, 20 Jul 2019 17:48:44 +0100")
-Message-ID: <87wogca86l.fsf@mid.deneb.enyo.de>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1728968AbfGTSkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 20 Jul 2019 14:40:04 -0400
+Subject: Re: [git pull] vfs.git - dcache and mountpoint stuff
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563648003;
+        bh=hDVDu3/yyXF6w2H9HFBHKWdoh8U/c0IY4QXxKw0So3c=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=VNtHMm+z/TdPTQY5jVZisvWJt1ymX3g/x/xJLk930lrGAFtDbcZzCpJ0HA4HPTBCt
+         3kD+6JMh/P3TAVmk0sjmil+Z4uSv6GgJCyi8Ru3ZMps5tKHQfkL/q7La1zX4zVyUBA
+         yG7eQfXHIa9gORqqKSaGlxSDaMsFDrXca+gorLoU=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190720030217.GC17978@ZenIV.linux.org.uk>
+References: <20190720030217.GC17978@ZenIV.linux.org.uk>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190720030217.GC17978@ZenIV.linux.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.dcache2
+X-PR-Tracked-Commit-Id: 56cbb429d911991170fe867b4bba14f0efed5829
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 18253e034d2aeee140f82fc9fe89c4bce5c81799
+Message-Id: <156364800369.20023.1746757645356503990.pr-tracker-bot@kernel.org>
+Date:   Sat, 20 Jul 2019 18:40:03 +0000
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Sergei Trofimovich:
+The pull request you sent on Sat, 20 Jul 2019 04:02:18 +0100:
 
-> Should #include <linux/sockios.h> always be included by user app?
-> Or should glibc tweak it's definition of '#include <sys/socket.h>'
-> to make it available on both old and new version of linux headers?
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.dcache2
 
-What is the reason for dropping SIOCGSTAMP from <asm/socket.h>?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/18253e034d2aeee140f82fc9fe89c4bce5c81799
 
-If we know that, it will be much easier to decide what to do about
-<sys/socket.h>.
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
