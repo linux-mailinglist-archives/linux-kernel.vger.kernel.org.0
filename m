@@ -2,59 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77B5D6F2A8
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2019 12:43:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA0FC6F2AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2019 12:49:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbfGUKnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 21 Jul 2019 06:43:43 -0400
-Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:51104 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbfGUKnn (ORCPT
+        id S1726393AbfGUKtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 21 Jul 2019 06:49:24 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42579 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbfGUKtY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Jul 2019 06:43:43 -0400
-Received: from localhost.localdomain ([92.140.204.221])
-        by mwinf5d33 with ME
-        id fNjg2000X4n7eLC03Njht7; Sun, 21 Jul 2019 12:43:41 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 21 Jul 2019 12:43:41 +0200
-X-ME-IP: 92.140.204.221
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     ccaulfie@redhat.com, teigland@redhat.com
-Cc:     cluster-devel@redhat.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] dlm: fix a typo
-Date:   Sun, 21 Jul 2019 12:43:22 +0200
-Message-Id: <20190721104322.30019-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.20.1
+        Sun, 21 Jul 2019 06:49:24 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q10so16006444pff.9
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2019 03:49:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=eKFZ+EJBtskl1K3Uj/6mEks//mPAAbWUtGxEDCSbwhI=;
+        b=hLJyV9DjZPboQ7KXy5p51iwcZvwuln7M6OXpjcGUp3WjsgHpwSD39IogMlGKXrsdcY
+         S+M1yzJ7XZUR6LSSuqOxYvWjKNsrHyy0cQjnjwNDUIjoI+WgIkhtwb2Hx3xzoQPmUrWf
+         rjO+HfphX62VK4lSatvndtye0xK5Fpp9OjqSmVObNLtOv8b3YahgNMlSDBjQbsuWXXFk
+         +y7cSY4D96Lw3Af6Fr/o0QibV5aU4DYg2h9upvET5wFE+MYaTLDMM40rNSDirEoXM7Mp
+         V0mvN5e3DOQha2i1J48HaJPCCuli4fieJDhh/ppyJ1/AqZ4efWxSg6EK68bYFgYexio3
+         Rzdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=eKFZ+EJBtskl1K3Uj/6mEks//mPAAbWUtGxEDCSbwhI=;
+        b=qospySIAGB10hzNbM8JgASca13LbokCRsc0y/ogZoTQoklTBQq8wfpecgoVl12t2+m
+         7AgZtVb8FZ27G39WNOxv7bcJFgCX2JYfEZJqjq7NNo0NJX5ClYzZNz/TQCzDlE1tVrN7
+         ATMSQEqMaWqsnLx0HddmVRish/j0bMkS1u50dnIk+pkYdlmHXKdWaNWprj51SYiJ5RD1
+         440LrsayOnpYRd4cuBjM0xrpIo4Dosncf/nzYT+j4tNzLH4IN0onfj1s2E3c5aG7jpDx
+         e9NqNcSFtU7Z+qC3zW62N8VAXeafQQb34UJPbwQOD9Iuq0QGbHAwLCxeJOocrA8CjLjk
+         /Nrw==
+X-Gm-Message-State: APjAAAVqtlRCdZixxzMGCWlixH6ifbxOxntBmYCI9PIVupnlxbEqsgNB
+        4O753+lsFbHDFnmnlnA0ooE=
+X-Google-Smtp-Source: APXvYqyPW325GP+WXejUuGAHO4b7Sgym3wb9RCTAINF/vHd801OWKwoP7wpSCgDF/91Tcu0ehPezAQ==
+X-Received: by 2002:a63:d04e:: with SMTP id s14mr62897813pgi.189.1563706163666;
+        Sun, 21 Jul 2019 03:49:23 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.86.126])
+        by smtp.gmail.com with ESMTPSA id l4sm36276472pff.50.2019.07.21.03.49.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 21 Jul 2019 03:49:22 -0700 (PDT)
+Date:   Sun, 21 Jul 2019 16:19:17 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Dave Kleikamp <shaggy@kernel.org>,
+        jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: [PATCH] jfs: Change return type of txLog
+Message-ID: <20190721104917.GA4627@hari-Inspiron-1545>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-s/locksapce/lockspace
+As txLog always returns 0 change return type from int to void.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+fix below issue reported by coccicheck 
+/fs/jfs/jfs_txnmgr.c:1370:5-7: Unneeded variable: "rc". Return "0" on
+line 1417
+
+
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 ---
- fs/dlm/lockspace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/jfs/jfs_txnmgr.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/fs/dlm/lockspace.c b/fs/dlm/lockspace.c
-index 00fa700f4e83..9c95df8a36e9 100644
---- a/fs/dlm/lockspace.c
-+++ b/fs/dlm/lockspace.c
-@@ -870,7 +870,7 @@ static int release_lockspace(struct dlm_ls *ls, int force)
-  * until this returns.
+diff --git a/fs/jfs/jfs_txnmgr.c b/fs/jfs/jfs_txnmgr.c
+index c8ce7f1..645cd0a2 100644
+--- a/fs/jfs/jfs_txnmgr.c
++++ b/fs/jfs/jfs_txnmgr.c
+@@ -159,8 +159,8 @@ static void mapLog(struct jfs_log * log, struct tblock * tblk, struct lrd * lrd,
+ static void txAllocPMap(struct inode *ip, struct maplock * maplock,
+ 		struct tblock * tblk);
+ static void txForce(struct tblock * tblk);
+-static int txLog(struct jfs_log * log, struct tblock * tblk,
+-		struct commit * cd);
++static void txLog(struct jfs_log *log, struct tblock *tblk,
++		struct commit *cd);
+ static void txUpdateMap(struct tblock * tblk);
+ static void txRelease(struct tblock * tblk);
+ static void xtLog(struct jfs_log * log, struct tblock * tblk, struct lrd * lrd,
+@@ -1256,8 +1256,7 @@ int txCommit(tid_t tid,		/* transaction identifier */
+ 	 *
+ 	 * txUpdateMap() resets XAD_NEW in XAD.
+ 	 */
+-	if ((rc = txLog(log, tblk, &cd)))
+-		goto TheEnd;
++	 txLog(log, tblk, &cd);
+ 
+ 	/*
+ 	 * Ensure that inode isn't reused before
+@@ -1365,9 +1364,8 @@ int txCommit(tid_t tid,		/* transaction identifier */
   *
-  * Force has 4 possible values:
-- * 0 - don't destroy locksapce if it has any LKBs
-+ * 0 - don't destroy lockspace if it has any LKBs
-  * 1 - destroy lockspace if it has remote LKBs but not if it has local LKBs
-  * 2 - destroy lockspace regardless of LKBs
-  * 3 - destroy lockspace as part of a forced shutdown
+  * RETURN :
+  */
+-static int txLog(struct jfs_log * log, struct tblock * tblk, struct commit * cd)
++static void txLog(struct jfs_log *log, struct tblock *tblk, struct commit *cd)
+ {
+-	int rc = 0;
+ 	struct inode *ip;
+ 	lid_t lid;
+ 	struct tlock *tlck;
+@@ -1413,8 +1411,6 @@ static int txLog(struct jfs_log * log, struct tblock * tblk, struct commit * cd)
+ 			jfs_err("UFO tlock:0x%p", tlck);
+ 		}
+ 	}
+-
+-	return rc;
+ }
+ 
+ /*
 -- 
-2.20.1
+2.7.4
 
