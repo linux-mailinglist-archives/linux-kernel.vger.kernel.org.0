@@ -2,52 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1FD76F4D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2019 21:04:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81D696F4DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2019 21:04:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbfGUTEs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 21 Jul 2019 15:04:48 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49479 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfGUTEs (ORCPT
+        id S1727474AbfGUTEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 21 Jul 2019 15:04:53 -0400
+Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:57247 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727420AbfGUTEx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Jul 2019 15:04:48 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 3B47880385; Sun, 21 Jul 2019 21:04:35 +0200 (CEST)
-Date:   Sun, 21 Jul 2019 21:03:35 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Pawel Laszczak <pawell@cadence.com>
-Cc:     felipe.balbi@linux.intel.com, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, rogerq@ti.com,
-        linux-kernel@vger.kernel.org, jbergsagel@ti.com, nsekhar@ti.com,
-        nm@ti.com, sureshp@cadence.com, jpawar@cadence.com,
-        kurahul@cadence.com, aniljoy@cadence.com
-Subject: Re: [PATCH v10 0/6] Introduced new Cadence USBSS DRD Driver.
-Message-ID: <20190721190335.GA19831@xo-6d-61-c0.localdomain>
-References: <1563733939-21214-1-git-send-email-pawell@cadence.com>
+        Sun, 21 Jul 2019 15:04:53 -0400
+Received: from localhost.localdomain ([92.140.204.221])
+        by mwinf5d45 with ME
+        id fX4n2000F4n7eLC03X4oXd; Sun, 21 Jul 2019 21:04:48 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 21 Jul 2019 21:04:48 +0200
+X-ME-IP: 92.140.204.221
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     rmfrfs@gmail.com, mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] media: ov2680: fix a typo in a function name
+Date:   Sun, 21 Jul 2019 21:04:23 +0200
+Message-Id: <20190721190423.9534-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1563733939-21214-1-git-send-email-pawell@cadence.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+All functions in this file starts with 'ov2680_', except ov2860_parse_dt().
 
-> This patch introduce new Cadence USBSS DRD driver to linux kernel.
-> 
-> The Cadence USBSS DRD Controller is a highly configurable IP Core which
-> can be instantiated as Dual-Role Device (DRD), Peripheral Only and
-> Host Only (XHCI)configurations.
+This is likely a typo.
+rename it to 'ov2680_parse_dt()' (6 and 8)
 
-I see you are using debugfs to select between DRD, peripheral-onlyh and XHCI... 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/i2c/ov2680.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Is that good idea?
+diff --git a/drivers/media/i2c/ov2680.c b/drivers/media/i2c/ov2680.c
+index b10bcfabaeeb..c59c9e51c380 100644
+--- a/drivers/media/i2c/ov2680.c
++++ b/drivers/media/i2c/ov2680.c
+@@ -1023,7 +1023,7 @@ static int ov2680_check_id(struct ov2680_dev *sensor)
+ 	return 0;
+ }
+ 
+-static int ov2860_parse_dt(struct ov2680_dev *sensor)
++static int ov2680_parse_dt(struct ov2680_dev *sensor)
+ {
+ 	struct device *dev = ov2680_to_dev(sensor);
+ 	int ret;
+@@ -1064,7 +1064,7 @@ static int ov2680_probe(struct i2c_client *client)
+ 
+ 	sensor->i2c_client = client;
+ 
+-	ret = ov2860_parse_dt(sensor);
++	ret = ov2680_parse_dt(sensor);
+ 	if (ret < 0)
+ 		return -EINVAL;
+ 
+-- 
+2.20.1
 
-This is at least 3rd driver needing that capability, and debugfs does not
-sound like a good match.
-
-									Pavel
