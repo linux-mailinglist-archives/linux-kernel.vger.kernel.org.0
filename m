@@ -2,59 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D74A6F598
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2019 22:33:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1C3F6F59B
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2019 22:37:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfGUUde (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 21 Jul 2019 16:33:34 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:34742 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbfGUUde (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Jul 2019 16:33:34 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5480215265E2B;
-        Sun, 21 Jul 2019 13:33:33 -0700 (PDT)
-Date:   Sun, 21 Jul 2019 13:33:32 -0700 (PDT)
-Message-Id: <20190721.133332.437348204765200497.davem@davemloft.net>
-To:     p.kosyh@gmail.com
-Cc:     dsa@cumulusnetworks.com, shrijeet@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] vrf: make sure skb->data contains ip header to make
- routing
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190719081148.11512-1-p.kosyh@gmail.com>
-References: <213bada2-fe81-3c14-1506-11abf0f3ca22@cumulusnetworks.com>
-        <20190719081148.11512-1-p.kosyh@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1726847AbfGUUhe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 21 Jul 2019 16:37:34 -0400
+Received: from mx1.riseup.net ([198.252.153.129]:44720 "EHLO mx1.riseup.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725796AbfGUUhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Jul 2019 16:37:33 -0400
+Received: from capuchin.riseup.net (capuchin-pn.riseup.net [10.0.1.176])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "*.riseup.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (verified OK))
+        by mx1.riseup.net (Postfix) with ESMTPS id 199BE1A02E0;
+        Sun, 21 Jul 2019 13:37:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+        t=1563741453; bh=W3XfJWnWhH14ISZ95oKKFD712umDCzjhU++DOEBCHzA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hj0GFN8FsAUqAo3PwwCaBAjWHhhFpIgsntH2NHLbEod5PP/HqqEQ+AeuG/PU6WLZW
+         DM0Y6DWOxztV40IGjPTxhZGP3ziIdy4xufsEqU2qTyiXcCaYEM947vF29Sh5WjYnms
+         X+BLVvoy4Id5pd/n7Q0Y2ihEEFWtScXWik9sXP10=
+X-Riseup-User-ID: 060C099BE3A56F342C111FDE49890A5BFED934EC9FB32B0CFFFDC8448FE3247C
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+         by capuchin.riseup.net (Postfix) with ESMTPSA id 143EC120328;
+        Sun, 21 Jul 2019 13:37:32 -0700 (PDT)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 21 Jul 2019 13:33:33 -0700 (PDT)
+Date:   Sun, 21 Jul 2019 13:37:31 -0700
+From:   avoidr@riseup.net
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Rudolf Marek <r.marek@assembler.cz>,
+        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Robert Karszniewicz <avoidr@firemail.cc>,
+        linux-hwmon-owner@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] hwmon: (k8temp) update to use new hwmon
+ registration API
+In-Reply-To: <20190721151408.GA13373@roeck-us.net>
+References: <1d0f98fb-a0a6-38b7-98f6-ec4c365587b0@roeck-us.net>
+ <20190721120051.28064-1-avoidr@riseup.net>
+ <20190721151408.GA13373@roeck-us.net>
+Message-ID: <16e03db49372a5f240b241f985f8685c@riseup.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Kosyh <p.kosyh@gmail.com>
-Date: Fri, 19 Jul 2019 11:11:47 +0300
+On 2019-07-21 17:14, Guenter Roeck wrote:
+> On Sun, Jul 21, 2019 at 02:00:51PM +0200, Robert Karszniewicz wrote:
+>> Removes:
+>> - hwmon_dev from k8temp_data struct, as that is now passed
+>>   to callbacks, anyway.
+>> - other k8temp_data struct fields, too.
+>> - k8temp_update_device()
+>>
+>> Also reduces binary size:
+>>    text    data     bss     dec     hex filename
+>>    4139    1448       0    5587    15d3 drivers/hwmon/k8temp.ko.bak
+>>    3103    1220       0    4323    10e3 drivers/hwmon/k8temp.ko
+>>
+>> Signed-off-by: Robert Karszniewicz <avoidr@firemail.cc>
+>> Signed-off-by: Robert Karszniewicz <avoidr@riseup.net>
+> 
+> Applied.
 
-> vrf_process_v4_outbound() and vrf_process_v6_outbound() do routing
-> using ip/ipv6 addresses, but don't make sure the header is available
-> in skb->data[] (skb_headlen() is less then header size).
-> 
-> Case:
-> 
-> 1) igb driver from intel.
-> 2) Packet size is greater then 255.
-> 3) MPLS forwards to VRF device.
-> 
-> So, patch adds pskb_may_pull() calls in vrf_process_v4/v6_outbound()
-> functions.
-> 
-> Signed-off-by: Peter Kosyh <p.kosyh@gmail.com>
+Thank you! It's been a joy!
 
-Applied and queued up for -stable, thanks.
+>> ---
+>> Changes from v2:
+>> - if (data->swap_core_select)
+>> -     core ^= 1;
+>> + core ^= data->swap_core_select;
+>>
+>> However, that produces slightly more .text than v2, and is a tad too
+>> "tricky", I personally find.
+>>
+> Interesting - for me it produces ~30 bytes less code (with gcc 7.4.0).
+
+Strange. I just verified to make sure and I do get ~30 bytes /more/ code
+(with gcc 9.1.0).
