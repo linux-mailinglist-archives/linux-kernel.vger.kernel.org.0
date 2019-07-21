@@ -2,73 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BCCA6F589
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2019 22:24:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A83C96F58F
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2019 22:30:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbfGUUYl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 21 Jul 2019 16:24:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:57616 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726429AbfGUUYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Jul 2019 16:24:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2526328;
-        Sun, 21 Jul 2019 13:24:40 -0700 (PDT)
-Received: from why (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D6933F694;
-        Sun, 21 Jul 2019 13:24:36 -0700 (PDT)
-Date:   Sun, 21 Jul 2019 21:24:10 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <linus.walleij@linaro.org>, <stefan@agner.ch>,
-        <mark.rutland@arm.com>, <pdeschrijver@nvidia.com>,
-        <pgaikwad@nvidia.com>, <sboyd@kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <jckuo@nvidia.com>, <josephl@nvidia.com>, <talho@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <digetx@gmail.com>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during
- suspend
-Message-ID: <20190721212410.12a889c7@why>
-In-Reply-To: <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
-References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
-        <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
-Organization: ARM Ltd
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1727458AbfGUUaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 21 Jul 2019 16:30:06 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:34674 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbfGUUaG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Jul 2019 16:30:06 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8A07915265938;
+        Sun, 21 Jul 2019 13:30:05 -0700 (PDT)
+Date:   Sun, 21 Jul 2019 13:30:04 -0700 (PDT)
+Message-Id: <20190721.133004.1039855471027921342.davem@davemloft.net>
+To:     fred@fredlawl.com
+Cc:     vishal@chelsio.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bhelgaas@google.com
+Subject: Re: [PATCH] cxgb4: Prefer pcie_capability_read_word()
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190718020745.8867-1-fred@fredlawl.com>
+References: <20190718020745.8867-1-fred@fredlawl.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 21 Jul 2019 13:30:05 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 21 Jul 2019 12:40:40 -0700
-Sowjanya Komatineni <skomatineni@nvidia.com> wrote:
+From: Frederick Lawler <fred@fredlawl.com>
+Date: Wed, 17 Jul 2019 21:07:36 -0500
 
-> Tegra210 platforms use sc7 entry firmware to program Tegra LP0/SC7 entry
-> sequence and sc7 entry firmware is run from COP/BPMP-Lite.
+> Commit 8c0d3a02c130 ("PCI: Add accessors for PCI Express Capability")
+> added accessors for the PCI Express Capability so that drivers didn't
+> need to be aware of differences between v1 and v2 of the PCI
+> Express Capability.
 > 
-> So, COP/BPMP-Lite still need IRQ function to finish SC7 suspend sequence
-> for Tegra210.
+> Replace pci_read_config_word() and pci_write_config_word() calls with
+> pcie_capability_read_word() and pcie_capability_write_word().
 > 
-> This patch has fix for leaving the COP IRQ enabled for Tegra210 during
-> interrupt controller suspend operation.
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> Signed-off-by: Frederick Lawler <fred@fredlawl.com>
 
-Acked-by: Marc Zyngier <maz@kernel.org>
-
-Please let me know how you want this to be merged (either via the
-irqchip tree as a standalone patch, or as part of the series via
-another tree).
-
-Thanks,
-
-	M.
--- 
-Without deviation from the norm, progress is not possible.
+Applied.
