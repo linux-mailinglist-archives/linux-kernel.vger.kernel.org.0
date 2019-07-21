@@ -2,52 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DDA16F462
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2019 19:35:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EB1F6F461
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2019 19:35:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbfGURfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 21 Jul 2019 13:35:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57028 "EHLO mail.kernel.org"
+        id S1727129AbfGURf0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 21 Jul 2019 13:35:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725944AbfGURfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726572AbfGURfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 21 Jul 2019 13:35:25 -0400
-Subject: Re: [GIT PULL] Devicetree fixes for 5.3-rc
+Subject: Re: [GIT PULL] SMB3 Fixes
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563730525;
-        bh=/S//mateIPhyQjzfkcmvtqohiRSJ0nruDIMdJzdGzbY=;
+        s=default; t=1563730524;
+        bh=0c9wqIbTNNk+aeOzXcI2UuaBzNiigppZlLCMZ68AmIw=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=VUV9Xi+lGNL48kD9kSaagWc84itXwABsATnMzM1IrtPNuVQAhH9AdYr4Qa6RY+Gbx
-         ew3Ubbmgb5cR1+5NeUws4xEN886k453tavTqEYTnTjp63ANRFvOT5/XAybeq3/fadG
-         kXAZMnOP+nIcxJRySl0A5Gn0+uZMYpv1LiiEemKc=
+        b=cvihYoiiozfZtRtt/ks/7gCSEumwwefcOwbysGgKuiStlpzSKwyy4/t7UrHuPTtDv
+         aVkcOK9e9c8Kep8sI9xA3TlNmTKcCgX2dbkl7emlhfReWba26dddw8zIMkw4qaw1VJ
+         3GPJ4usz+41wFavFaDil/SJ+Ybr8AxPyMD0YRrzM=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAL_JsqLTAAT1hEPkxD=BUvmovvA+rdsZdbVfQM6=1m9bvaEysQ@mail.gmail.com>
-References: <CAL_JsqLTAAT1hEPkxD=BUvmovvA+rdsZdbVfQM6=1m9bvaEysQ@mail.gmail.com>
+In-Reply-To: <CAH2r5muOA_2qm+Ah4TDDUA7zUAzYLxpwX-+XLuY95kmRMiPB0w@mail.gmail.com>
+References: <CAH2r5muOA_2qm+Ah4TDDUA7zUAzYLxpwX-+XLuY95kmRMiPB0w@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAL_JsqLTAAT1hEPkxD=BUvmovvA+rdsZdbVfQM6=1m9bvaEysQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
- tags/devicetree-fixes-for-5.3
-X-PR-Tracked-Commit-Id: e2297f7c3ab3b68dda2ac732b1767212019d3bdf
+X-PR-Tracked-Message-Id: <CAH2r5muOA_2qm+Ah4TDDUA7zUAzYLxpwX-+XLuY95kmRMiPB0w@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git
+ tags/5.3-smb3-fixes
+X-PR-Tracked-Commit-Id: 2a957ace44d4cf0f6194a4209d4fa67ee5461d8f
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c7bf0a0f3703bc145368b9ced02749bf75fc718d
-Message-Id: <156373052497.21043.9914828581045231482.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 91962d0f79cb61776bfb97eb5ea912e49e809d6c
+Message-Id: <156373052446.21043.1969421287821131790.pr-tracker-bot@kernel.org>
 Date:   Sun, 21 Jul 2019 17:35:24 +0000
-To:     Rob Herring <robh@kernel.org>
+To:     Steve French <smfrench@gmail.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
+        CIFS <linux-cifs@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 20 Jul 2019 20:37:56 -0600:
+The pull request you sent on Sat, 20 Jul 2019 18:48:45 -0500:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git tags/devicetree-fixes-for-5.3
+> git://git.samba.org/sfrench/cifs-2.6.git tags/5.3-smb3-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c7bf0a0f3703bc145368b9ced02749bf75fc718d
+https://git.kernel.org/torvalds/c/91962d0f79cb61776bfb97eb5ea912e49e809d6c
 
 Thank you!
 
