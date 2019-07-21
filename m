@@ -2,110 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB6CB6F5D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2019 23:29:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 789E56F625
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Jul 2019 23:37:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbfGUV2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 21 Jul 2019 17:28:50 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33378 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727021AbfGUV2o (ORCPT
+        id S1726519AbfGUVhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 21 Jul 2019 17:37:14 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.109]:27674 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725796AbfGUVhO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Jul 2019 17:28:44 -0400
-Received: by mail-pf1-f195.google.com with SMTP id g2so16379729pfq.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2019 14:28:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uzae+Qd1Byrv0UOQeZfaSHTaSyqBzZD/Hpc9kz59NfY=;
-        b=Yam6/YpaOP6bPTYwljYxwlWuX3jMD/lCzg3QiuYIa6gRAmzrU8wKPQ1ILS3OSpKirO
-         6lgKvjPdvFrJbgH0wxsT4NvWeTYQ2s8uSe2i9aN1Py8mVBesyKmO1HZu9FlE4wRth2bq
-         5akk3QyFYHwG65RBQtkuXuYQCrA3PhblISq3qdjG8wu4GKvan7RSC8e8X71FwVQQVzVp
-         0itzSO0NGWzPCAL27VKQWrigRihwjsvNBpBKhob/jS3hyfTTbEP+qrJL+2I9IsnAHpwA
-         /TVXO53jGoMgl0ca5aGaqvQE1tT9E6aHqeOeLmOROgWrphmueA6auBYxwMDalqZBAL8Q
-         XNOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uzae+Qd1Byrv0UOQeZfaSHTaSyqBzZD/Hpc9kz59NfY=;
-        b=mX/Ouyt/UpfEmiriQEyByVbYDlcGLPYU5j/0dGWZ16hXCEuZsyJFIB2zOpkhSOCOit
-         LBlGydh8o7HRoc1nRujF/DBslIRg5qYTJCwjo3TGGsdf033IwDyS6zpcWmWKJKTP43Nj
-         4lV8KD4zUFkoUKdSF1gFLcMpXIJu12Nm1SiQiGZtuTiYIgjFU4tCz70NrkDaSiPoT68s
-         b1G5z+OJ1freVvOUZsiKVBc5uwQpz87TYQ6LaQjoZqzPTxcbt06dg61HpC2WOkrrQnXv
-         wG1e/pZrJgdSWginMhmkFmOZhoxGFwn9krHBchtgaJkv5pHNEgkgakftrIC6R/evsKbB
-         MBYQ==
-X-Gm-Message-State: APjAAAXHK/Lp/LP2L7ulMyUcrQcbCD0LNmOBUZmQ4VQuycTlr12qE+RQ
-        xuHnRtin5u7GvkkRB1Q5sDs=
-X-Google-Smtp-Source: APXvYqy3imS8LcCW0KIw5rHT/3yUpApQ1RumQtdmq4C5tgkebLhe6k/q9lQLM0Z0ng/Cs7C7tMUwSg==
-X-Received: by 2002:a17:90a:ab0b:: with SMTP id m11mr75527588pjq.73.1563744523798;
-        Sun, 21 Jul 2019 14:28:43 -0700 (PDT)
-Received: from localhost.localdomain ([2601:640:105:2ef8:a909:5e8d:6363:7009])
-        by smtp.gmail.com with ESMTPSA id t9sm37970510pji.18.2019.07.21.14.28.42
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 21 Jul 2019 14:28:43 -0700 (PDT)
-From:   Yury Norov <yury.norov@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Amritha Nambiar <amritha.nambiar@intel.com>,
-        Willem de Bruijn <willemb@google.com>,
+        Sun, 21 Jul 2019 17:37:14 -0400
+X-Greylist: delayed 1411 seconds by postgrey-1.27 at vger.kernel.org; Sun, 21 Jul 2019 17:37:13 EDT
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id D772B1454
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2019 16:13:41 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id pJ9JhkGtw4FKppJ9JhvaDU; Sun, 21 Jul 2019 16:13:41 -0500
+X-Authority-Reason: nr=8
+Received: from cablelink-187-160-61-189.pcs.intercable.net ([187.160.61.189]:63708 helo=[192.168.0.8])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hpJ9I-000LJG-Mz; Sun, 21 Jul 2019 16:13:41 -0500
+Subject: Re: [GIT PULL] Wimplicit-fallthrough patches for 5.3-rc1
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Tobin C . Harding" <tobin@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Cc:     Yury Norov <yury.norov@gmail.com>, Yury Norov <ynorov@marvell.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 7/7] cpumask: don't calculate length of the input string
-Date:   Sun, 21 Jul 2019 14:27:53 -0700
-Message-Id: <20190721212753.3287-8-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190721212753.3287-1-yury.norov@gmail.com>
-References: <20190721212753.3287-1-yury.norov@gmail.com>
+References: <20190709182010.GA32200@embeddedor>
+ <20190710141526.2f905572@canb.auug.org.au>
+ <3fae69d0-2a7e-107f-e054-d2bdef924704@embeddedor.com>
+ <20190711073624.58d7105e@canb.auug.org.au>
+ <858bd3e0-ffc5-07e1-d1d9-37c3d2a1d595@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <52f02f6a-ca0f-261c-a1c1-716cb0d9adf2@embeddedor.com>
+Date:   Sun, 21 Jul 2019 16:13:32 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <858bd3e0-ffc5-07e1-d1d9-37c3d2a1d595@embeddedor.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.160.61.189
+X-Source-L: No
+X-Exim-ID: 1hpJ9I-000LJG-Mz
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: cablelink-187-160-61-189.pcs.intercable.net ([192.168.0.8]) [187.160.61.189]:63708
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From Yury Norov <ynorov@marvell.com>
+Hi Linus,
 
-New design of inner bitmap_parse() allows to avoid
-calculating the size of a null-terminated string.
+I noticed you didn't merge these changes in v5.3-rc1.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Yury Norov <ynorov@marvell.com>
-Signed-off-by: Yury Norov <yury.norov@gmail.com>
----
- include/linux/cpumask.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Should I send them again for rc2?
 
-diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-index 21755471b1c31..d55d015edc58a 100644
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -633,9 +633,7 @@ static inline int cpumask_parselist_user(const char __user *buf, int len,
-  */
- static inline int cpumask_parse(const char *buf, struct cpumask *dstp)
- {
--	unsigned int len = strchrnul(buf, '\n') - buf;
--
--	return bitmap_parse(buf, len, cpumask_bits(dstp), nr_cpumask_bits);
-+	return bitmap_parse(buf, UINT_MAX, cpumask_bits(dstp), nr_cpumask_bits);
- }
- 
- /**
--- 
-2.20.1
+Do you have any comments on this pull-request?
 
+Thanks
+--
+Gustavo
+
+On 7/18/19 3:28 PM, Gustavo A. R. Silva wrote:
+> 
+> 
+> On 7/10/19 4:36 PM, Stephen Rothwell wrote:
+>> Hi Gustavo,
+>>
+>> On Wed, 10 Jul 2019 13:14:10 -0500 "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+>>>
+>>> At some point during this development cycle, we reached the quota of zero
+>>> fall-through warnings, but people continued introducing such warnings. So,
+>>> it seems we are now pretty much ready for enabling -Wimplicit-fallthrough
+>>> globally. Before it turns into a never ending story. :)
+>>
+>> Sounds good to me.  My mail was, I guess, just a heads up to Linus that
+>> he will see some new warnings in his test build if he merges your
+>> tree.  Thanks for addressing them.
+>>
+> Yep. Thanks, Stephen.
+> 
+> Linus:
+> 
+> After you have merged all the trees containing fall-through patches, you might
+> see the following warnings:
+> 
+> arch/x86/events/intel/core.c:4957:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> arch/x86/events/intel/core.c:5006:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> drivers/mtd/nand/onenand/onenand_base.c:3261:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> 
+> for which I already have patches ready to be applied, but I didn't include them
+> in my pull-request because such patches don't apply to 5.2-rc2, on which I based
+> my -next tree for v5.3.
+> 
+> We can coordinate and I can send you the patches that address those and any other
+> warning that you might see after merging my pull-request and just before you release
+> 5.3-rc1. So we can have the -Wimplicit-fallthrough option globally enabled in
+> 5.3-rc1 and zero fall-through warnings.
+> 
+> What do you think?
+> 
+> Thanks
+> --
+> Gustavo
+> 
