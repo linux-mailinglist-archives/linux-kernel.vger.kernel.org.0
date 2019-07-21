@@ -2,546 +2,409 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D62566F68B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 00:55:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7105A6F68F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 00:56:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbfGUWzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 21 Jul 2019 18:55:41 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46033 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbfGUWzk (ORCPT
+        id S1726593AbfGUW4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 21 Jul 2019 18:56:08 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:52701 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbfGUW4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Jul 2019 18:55:40 -0400
-Received: by mail-pf1-f196.google.com with SMTP id r1so16422261pfq.12
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2019 15:55:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8807rrEgU49PMkYsIoN1XkOYGrKVx/Ci/iuCpz99dlY=;
-        b=s+U1BkBkWu4bQwv/QpGeJB9EKpuz5Pal4FtJ4iKNuarrHMFyLPhSRZ+NVt17XzJO+j
-         Q93VuesDmrdr5D265tGTtVbQz+04BlaFgj3jzEZvccNhWYGPwi9MvKVdfsOagv2lkUW/
-         fFJxHhnHgFXevGHKbuX6hvUdzibRWZNZ/Qyk5WJh1KmlGTlMXCinNdRj7X/m1N8kIoyN
-         NtctmfltWXGWBGiqlRygUMhlm/1RI2m+5sAZDVfdEOpBrlJB9NZRDx/f2f1WTdPpmOjE
-         INntaIi618+2rP5OGWHs55TBRmMHts+OL6UfkNK9DXZ54V8EnCPuVFvIpIEjB9riDbO2
-         mjgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8807rrEgU49PMkYsIoN1XkOYGrKVx/Ci/iuCpz99dlY=;
-        b=ChBm4aLNSJyukmNAE4A0DJ2KspTOdZgtANeQKpoJrgBvEHs9Y8R6PdIv9yHn6Kmm4P
-         ui99ds69E72tFfbvaopnvsrFywH/9nP++guA4WmpL7/qsqQ1IOmhVj6caHKbiKXPwKAX
-         g2e2dnvJ5T9ArhLWJ/sgrr2FrwNJgLve6Grqlz8T5vb6iEqAudpBa11b24Z6DtP2muTT
-         GvgnH5UbIOCSsCxyFrKCzGTN8x4Pm/yVbcH8ae4qEKqjlcmDsLLnBPwsE9jWPotIIaJR
-         DQrKkwSBE5bhehciryOlQ1rKRPKCg33rQoyvhDmkfjJd964+ghy1jKqKDDxKDmeXRlyW
-         TOmg==
-X-Gm-Message-State: APjAAAWmB1HXGJiFZAHsumm2c7KH7FecSoLVIdwXRgG/SDdzcqQzigYi
-        LM50jlF5PrMFL3NxDQzqGnoRadRKCbWroA==
-X-Google-Smtp-Source: APXvYqzPclc613faNb7sSxf983iywju2Q3o3PD+Vo8oWaviuiUVoxl8qcBwp8QrHcze2hWc5fE/UWQ==
-X-Received: by 2002:a63:6904:: with SMTP id e4mr8001045pgc.321.1563749739710;
-        Sun, 21 Jul 2019 15:55:39 -0700 (PDT)
-Received: from debian ([103.231.91.38])
-        by smtp.gmail.com with ESMTPSA id k8sm37211252pgm.14.2019.07.21.15.55.35
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 21 Jul 2019 15:55:38 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 04:25:30 +0530
-From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 5.3-rc1
-Message-ID: <20190721225526.GA23272@debian>
-References: <CAHk-=wiVjkTqzP6OppBuLQZ+t1mpRQC4T+Ho4Wg2sBAapKd--Q@mail.gmail.com>
+        Sun, 21 Jul 2019 18:56:08 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id D38D3891AB;
+        Mon, 22 Jul 2019 10:56:05 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1563749765;
+        bh=Th6xSjXuHNJjGLRd9aoDajb/emE1LzqtVwlVo5H5ass=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=gBGnZREAQCwZV9DeA2f6coAIhA/mAbSso6RzuzihsbE7ApAdIcHoT/tLl+bsx/+KJ
+         qyyedb3lt27NaK58rkoy77EAHaFGHzsCw1XHDPf3lUwS3X5SY46n9zg9P50EEGU9X4
+         404LpZM0wkPpNDk4h2ELZTsXNjim8xH5YuSMJWQYMAYf561jWj+h0lGlGjF6vxJWcz
+         65R6pYUj4x7SWdV+MZ57K2O4xNRg0tjy69H4Pqjqy/VQS5JbpMY+xC7GZNJwh30g7i
+         HsUE91KtCiXtICxAoGxzEzPyGz7H+QGZ2eJTcM75bm5wSDGy5Qd3m3RQ+ZcDSdhSg/
+         9tzThPMhR9mgQ==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5d34ed850000>; Mon, 22 Jul 2019 10:56:05 +1200
+Received: from grantmc-dl.ws.atlnz.lc (grantmc-dl.ws.atlnz.lc [10.33.24.16])
+        by smtp (Postfix) with ESMTP id 8A4A313EECE;
+        Mon, 22 Jul 2019 10:56:07 +1200 (NZST)
+Received: by grantmc-dl.ws.atlnz.lc (Postfix, from userid 1772)
+        id 873DC100E0A; Mon, 22 Jul 2019 10:56:05 +1200 (NZST)
+From:   Grant McEwan <grant.mcewan@alliedtelesis.co.nz>
+To:     jdelvare@suse.com, linux@roeck-us.net
+Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Grant McEwan <grant.mcewan@alliedtelesis.co.nz>
+Subject: [PATCH v2 1/1] hwmon: (adt7475) Convert to use hwmon_device_register_with_groups()
+Date:   Mon, 22 Jul 2019 10:55:30 +1200
+Message-Id: <20190721225530.28799-2-grant.mcewan@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190721225530.28799-1-grant.mcewan@alliedtelesis.co.nz>
+References: <20190721225530.28799-1-grant.mcewan@alliedtelesis.co.nz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiVjkTqzP6OppBuLQZ+t1mpRQC4T+Ho4Wg2sBAapKd--Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+hwmon_device_register() is a deprecated function and produces a warning.
 
---pf9I7BMVVzbSWLtt
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Converting the driver to use the hwmon_device_register_with_groups()
+instead.
 
-Here we go Linus! :)=20
+Signed-off-by: Grant McEwan <grant.mcewan@alliedtelesis.co.nz>
+---
+ drivers/hwmon/adt7475.c | 146 ++++++++++++++--------------------------
+ 1 file changed, 50 insertions(+), 96 deletions(-)
 
-On 14:33 Sun 21 Jul , Linus Torvalds wrote:
->It's been two weeks, and the merge window is over, and Linux 5.3-rc1
->is tagged and pushed out.
->
->This is a pretty big release, judging by the commit count. Not the
->biggest ever (that honor still goes to 4.9-rc1, which was
->exceptionally big), and we've had a couple of comparable ones (4.12,
->4.15 and 4.19 were also big merge windows), but it's definitely up
->there.
->
->The merge window also started out pretty painfully, with me hitting a
->couple of bugs in the first couple of days. That's never a good sign,
->since I don't tend to do anything particularly odd, and if I hit bugs
->it means code wasn't tested well enough. In one case it was due to me
->using a simplified configuration that hadn't been tested, and caused
->an odd issue to show up - it happens. But in the other case, it really
->was code that was too recent and too rough and hadn't baked enough.
->The first got fixed, the second just got reverted.
->
->Anyway, despite the rocky start, and the big size, things mostly
->smoothed out towards the end of the merge window. And there's a lot to
->like in 5.3. Too much to do the shortlog with individual commits, of
->course, so appended is the usual "mergelog" of people I merged from
->and a one-liner very high-level "what got merged". For more detail,
->you should go check the git tree.
->
->As always: the people credited below are just the people I pull from,
->there's about 1600 individual developers (for 12500+ non-merge
->commits) in this merge window.
->
->Go test,
->
->            Linus
->
->---
->
->Al Viro (5):
->    vfs mount updates
->    adfs updates
->    misc vfs updates
->    dcache and mountpoint updates
->    vfs documentation typo fix
->
->Alex Williamson (1):
->    VFIO updates
->
->Alexandre Belloni (1):
->    RTC updates
->
->Andreas Gruenbacher (1):
->    gfs2 updates
->
->Andrew Morton (3):
->    updates
->    more updates
->    yet more updates
->
->Andy Shevchenko (2):
->    x86 platform driver updates
->    another x86 platform driver update
->
->Arnd Bergmann (1):
->    asm-generic updates
->
->Bartlomiej Zolnierkiewicz (1):
->    fbdev updates
->
->Benson Leung (1):
->    chrome platform updates
->
->Bjorn Andersson (3):
->    rpmsg updates
->    remoteproc updates
->    hwspinlock updates
->
->Bjorn Helgaas (1):
->    PCI updates
->
->Boris Brezillon (1):
->    ic3 updates
->
->Bruce Fields (1):
->    nfsd updates
->
->Catalin Marinas (1):
->    arm64 updates
->
->Christian Brauner (3):
->    pidfd updates
->    clone3 system call
->    pidfd and clone3 fixes
->
->Christoph Hellwig (2):
->    dma-mapping updates
->    dma-mapping fixes
->
->Corey Minyard (1):
->    IPMI updates
->
->Dan Williams (2):
->    libnvdimm updates
->    dax updates
->
->Daniel Vetter (1):
->    drm fixes
->
->Darrick Wong (6):
->    iomap updates
->    copy_file_range updates
->    common SETFLAGS/FSSETXATTR parameter checking
->    xfs updates
->    xfs cleanups
->    iomap split/cleanup
->
->Dave Airlie (1):
->    drm updates
->
->David Howells (5):
->    misc keyring updates
->    request_key improvements
->    keyring namespacing
->    keyring ACL support
->    afs updates
->
->David Miller (5):
->    networking updates
->    IDE update
->    networking fixes
->    sparc updates
->    networking fixes
->
->David Sterba (1):
->    btrfs updates
->
->David Teigland (1):
->    dlm updates
->
->Denis Efremov (1):
->    floppy ioctl verification fixes
->
->Dennis Zhou (1):
->    percpu updates
->
->Dmitry Torokhov (2):
->    input updates
->    more input updates
->
->Dominique Martinet (1):
->    9p updates
->
->Eric Biederman (1):
->    force_sig() argument change
->
->Eric Biggers (1):
->    fscrypt updates
->
->Geert Uytterhoeven (2):
->    m68k updates
->    m68k fix
->
->Greg KH (5):
->    char / misc driver updates
->    staging and IIO driver updates
->    tty / serial driver updates
->    USB / PHY updates
->    driver core and debugfs updates
->
->Greg Ungerer (1):
->    m68nommu updates
->
->Guenter Roeck (1):
->    hwmon updates
->
->Guo Ren (1):
->    arch/csky updates
->
->Helge Deller (2):
->    parisc updates
->    parisc fixes
->
->Herbert Xu (2):
->    crypto updates
->    crypto fixes
->
->Ilya Dryomov (1):
->    ceph updates
->
->Ingo Molnar (17):
->    RCU updates
->    locking updates
->    RAS updates
->    scheduler updates
->    x86 asm updates
->    x86 build updates
->    x86 cache resource control update
->    x86 cleanups
->    x86 AVX512 status update
->    x86 paravirt updates
->    x86 platform updates
->    x86 topology updates
->    perf updates
->    scheduler fix
->    x86 fix
->    locking fix
->    perf fixes
->
->Jacek Anaszewski (1):
->    LED updates
->
->Jaegeuk Kim (1):
->    f2fs updates
->
->James Bottomley (3):
->    SCSI updates
->    SCSI scatter-gather list updates
->    SCSI fixes
->
->James Morris (1):
->    capabilities update
->
->Jan Kara (2):
->    fsnotify updates
->    ext2, udf and quota updates
->
->Jarkko Sakkinen (1):
->    tpm updates
->
->Jason Gunthorpe (2):
->    HMM updates
->    rdma updates
->
->Jassi Brar (1):
->    mailbox updates
->
->Jeff Layton (1):
->    file locking updates
->
->Jens Axboe (4):
->    block updates
->    libata updates
->    io_uring updates
->    more block updates
->
->Jessica Yu (1):
->    module updates
->
->Jiri Kosina (2):
->    livepatching updates
->    HID updates
->
->Joerg Roedel (1):
->    iommu updates
->
->Jon Mason (1):
->    NTB updates
->
->Jonathan Corbet (1):
->    Documentation updates
->
->Juergen Gross (1):
->    xen updates
->
->Kees Cook (2):
->    pstore updates
->    security/loadpin updates
->
->Kirill Smelkov (1):
->    stream_open() updates
->
->Konrad Rzeszutek Wilk (1):
->    swiotlb updates
->
->Lee Jones (2):
->    MFD updates
->    backlight updates
->
->Ley Foon Tan (1):
->    arch/nios2 updates
->
->Linus Walleij (3):
->    GPIO updates
->    pin control updates
->    GPIO fixes
->
->Mark Brown (3):
->    regmap updates
->    regulator updates
->    spi updates
->
->Masahiro Yamada (3):
->    Kbuild updates
->    Kconfig updates
->    more Kbuild updates
->
->Mauro Carvalho Chehab (2):
->    media updates
->    rst conversion of docs
->
->Max Filippov (1):
->    Xtensa updates
->
->Micah Morton (1):
->    safesetid updates
->
->Michael Ellerman (1):
->    powerpc updates
->
->Michael Tsirkin (1):
->    virtio, vhost updates
->
->Mike Marshall (1):
->    orangefs updates
->
->Mike Snitzer (2):
->    device mapper updates
->    more device mapper updates
->
->Mimi Zohar (1):
->    integrity updates
->
->Miquel Raynal (1):
->    MTD updates
->
->Olof Johansson (4):
->    ARM SoC platform updates
->    ARM SoC-related driver updates
->    ARM Devicetree updates
->    ARM SoC defconfig updates
->
->Paolo Bonzini (2):
->    KVM updates
->    more KVM updates
->
->Paul Burton (1):
->    MIPS updates
->
->Paul Moore (2):
->    audit updates
->    selinux updates
->
->Paul Walmsley (1):
->    RISC-V updates
->
->Petr Mladek (1):
->    printk updates
->
->Rafael Wysocki (6):
->    power management updates
->    ACPI updates
->    device properties framework updates
->    ACPI fix
->    more ACPI updates
->    more power management updates
->
->Richard Weinberger (2):
->    UML updates
->    UBIFS updates
->
->Rob Herring (2):
->    Devicetree updates
->    Devicetree fixes
->
->Russell King (1):
->    ARM updates
->
->Sasha Levin (1):
->    hyper-v updates
->
->Sebastian Reichel (1):
->    power supply and reset updates
->
->Shuah Khan (1):
->    Kselftest updates
->
->Stephen Boyd (1):
->    clk updates
->
->Steve French (2):
->    cifs updates
->    cifs fixes
->
->Steven Rostedt (2):
->    tracing updates
->    tracing fix
->
->Takashi Iwai (2):
->    sound updates
->    sound fixes
->
->Ted Ts'o (1):
->    ext4 updates
->
->Tejun Heo (2):
->    workqueue updates
->    cgroup updates
->
->Thierry Reding (1):
->    pwm updates
->
->Thomas Gleixner (22):
->    debugobjects updates
->    Reed-Solomon library updates
->    SMP/hotplug updates
->    irq updates
->    timer updates
->    x96 apic updates
->    x86 vsyscall updates
->    x86 FPU updates
->    x86 CPU feature updates
->    x86 timer updates
->    x86 pti updates
->    x86 boot updates
->    x865 kdump updates
->    irq fixes
->    stacktrace fix
->    timer fixes
->    x86 fixes
->    CONFIG_PREEMPT_RT stub config
->    smp fix
->    core fixes
->    perf tooling updates
->    x86 fixes
->
->Tony Luck (1):
->    EDAC updates
->
->Trond Myklebust (1):
->    NFS client updates
->
->Tyler Hicks (1):
->    eCryptfs updates
->
->Ulf Hansson (1):
->    MMC updates
->
->Vasily Gorbik (2):
->    s390 updates
->    more s390 updates
->
->Vineet Gupta (1):
->    ARC updates
->
->Vinod Koul (1):
->    dmaengine updates
->
->Wim Van Sebroeck (1):
->    watchdog updates
->
->Wolfram Sang (1):
->    i2c updates
->
->Yoshinori Sato (2):
->    SH updates
->    h8300 update
->
->Zhang Rui (1):
->    thermal management updates
+diff --git a/drivers/hwmon/adt7475.c b/drivers/hwmon/adt7475.c
+index c3c6031a7285..6c64d50c9aae 100644
+--- a/drivers/hwmon/adt7475.c
++++ b/drivers/hwmon/adt7475.c
+@@ -187,7 +187,7 @@ static const struct of_device_id __maybe_unused adt74=
+75_of_match[] =3D {
+ MODULE_DEVICE_TABLE(of, adt7475_of_match);
+=20
+ struct adt7475_data {
+-	struct device *hwmon_dev;
++	struct i2c_client *client;
+ 	struct mutex lock;
+=20
+ 	unsigned long measure_updated;
+@@ -212,6 +212,7 @@ struct adt7475_data {
+=20
+ 	u8 vid;
+ 	u8 vrm;
++	const struct attribute_group *groups[9];
+ };
+=20
+ static struct i2c_driver adt7475_driver;
+@@ -346,8 +347,8 @@ static ssize_t voltage_store(struct device *dev,
+ {
+=20
+ 	struct sensor_device_attribute_2 *sattr =3D to_sensor_dev_attr_2(attr);
+-	struct i2c_client *client =3D to_i2c_client(dev);
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
++	struct adt7475_data *data =3D dev_get_drvdata(dev);
++	struct i2c_client *client =3D data->client;
+ 	unsigned char reg;
+ 	long val;
+=20
+@@ -440,8 +441,8 @@ static ssize_t temp_store(struct device *dev, struct =
+device_attribute *attr,
+ 			  const char *buf, size_t count)
+ {
+ 	struct sensor_device_attribute_2 *sattr =3D to_sensor_dev_attr_2(attr);
+-	struct i2c_client *client =3D to_i2c_client(dev);
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
++	struct adt7475_data *data =3D dev_get_drvdata(dev);
++	struct i2c_client *client =3D data->client;
+ 	unsigned char reg =3D 0;
+ 	u8 out;
+ 	int temp;
+@@ -542,8 +543,7 @@ static ssize_t temp_st_show(struct device *dev, struc=
+t device_attribute *attr,
+ 			    char *buf)
+ {
+ 	struct sensor_device_attribute_2 *sattr =3D to_sensor_dev_attr_2(attr);
+-	struct i2c_client *client =3D to_i2c_client(dev);
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
++	struct adt7475_data *data =3D dev_get_drvdata(dev);
+ 	long val;
+=20
+ 	switch (sattr->index) {
+@@ -570,8 +570,8 @@ static ssize_t temp_st_store(struct device *dev,
+ 			     size_t count)
+ {
+ 	struct sensor_device_attribute_2 *sattr =3D to_sensor_dev_attr_2(attr);
+-	struct i2c_client *client =3D to_i2c_client(dev);
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
++	struct adt7475_data *data =3D dev_get_drvdata(dev);
++	struct i2c_client *client =3D data->client;
+ 	unsigned char reg;
+ 	int shift, idx;
+ 	ulong val;
+@@ -647,8 +647,8 @@ static ssize_t point2_show(struct device *dev, struct=
+ device_attribute *attr,
+ static ssize_t point2_store(struct device *dev, struct device_attribute =
+*attr,
+ 			    const char *buf, size_t count)
+ {
+-	struct i2c_client *client =3D to_i2c_client(dev);
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
++	struct adt7475_data *data =3D dev_get_drvdata(dev);
++	struct i2c_client *client =3D data->client;
+ 	struct sensor_device_attribute_2 *sattr =3D to_sensor_dev_attr_2(attr);
+ 	int temp;
+ 	long val;
+@@ -710,8 +710,8 @@ static ssize_t tach_store(struct device *dev, struct =
+device_attribute *attr,
+ {
+=20
+ 	struct sensor_device_attribute_2 *sattr =3D to_sensor_dev_attr_2(attr);
+-	struct i2c_client *client =3D to_i2c_client(dev);
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
++	struct adt7475_data *data =3D dev_get_drvdata(dev);
++	struct i2c_client *client =3D data->client;
+ 	unsigned long val;
+=20
+ 	if (kstrtoul(buf, 10, &val))
+@@ -769,8 +769,8 @@ static ssize_t pwm_store(struct device *dev, struct d=
+evice_attribute *attr,
+ {
+=20
+ 	struct sensor_device_attribute_2 *sattr =3D to_sensor_dev_attr_2(attr);
+-	struct i2c_client *client =3D to_i2c_client(dev);
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
++	struct adt7475_data *data =3D dev_get_drvdata(dev);
++	struct i2c_client *client =3D data->client;
+ 	unsigned char reg =3D 0;
+ 	long val;
+=20
+@@ -818,8 +818,8 @@ static ssize_t stall_disable_show(struct device *dev,
+ 				  struct device_attribute *attr, char *buf)
+ {
+ 	struct sensor_device_attribute_2 *sattr =3D to_sensor_dev_attr_2(attr);
+-	struct i2c_client *client =3D to_i2c_client(dev);
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
++	struct adt7475_data *data =3D dev_get_drvdata(dev);
++
+ 	u8 mask =3D BIT(5 + sattr->index);
+=20
+ 	return sprintf(buf, "%d\n", !!(data->enh_acoustics[0] & mask));
+@@ -830,8 +830,8 @@ static ssize_t stall_disable_store(struct device *dev=
+,
+ 				   const char *buf, size_t count)
+ {
+ 	struct sensor_device_attribute_2 *sattr =3D to_sensor_dev_attr_2(attr);
+-	struct i2c_client *client =3D to_i2c_client(dev);
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
++	struct adt7475_data *data =3D dev_get_drvdata(dev);
++	struct i2c_client *client =3D data->client;
+ 	long val;
+ 	u8 mask =3D BIT(5 + sattr->index);
+=20
+@@ -914,8 +914,8 @@ static ssize_t pwmchan_store(struct device *dev,
+ 			     size_t count)
+ {
+ 	struct sensor_device_attribute_2 *sattr =3D to_sensor_dev_attr_2(attr);
+-	struct i2c_client *client =3D to_i2c_client(dev);
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
++	struct adt7475_data *data =3D dev_get_drvdata(dev);
++	struct i2c_client *client =3D data->client;
+ 	int r;
+ 	long val;
+=20
+@@ -938,8 +938,8 @@ static ssize_t pwmctrl_store(struct device *dev,
+ 			     size_t count)
+ {
+ 	struct sensor_device_attribute_2 *sattr =3D to_sensor_dev_attr_2(attr);
+-	struct i2c_client *client =3D to_i2c_client(dev);
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
++	struct adt7475_data *data =3D dev_get_drvdata(dev);
++	struct i2c_client *client =3D data->client;
+ 	int r;
+ 	long val;
+=20
+@@ -982,8 +982,8 @@ static ssize_t pwmfreq_store(struct device *dev,
+ 			     size_t count)
+ {
+ 	struct sensor_device_attribute_2 *sattr =3D to_sensor_dev_attr_2(attr);
+-	struct i2c_client *client =3D to_i2c_client(dev);
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
++	struct adt7475_data *data =3D dev_get_drvdata(dev);
++	struct i2c_client *client =3D data->client;
+ 	int out;
+ 	long val;
+=20
+@@ -1022,8 +1022,8 @@ static ssize_t pwm_use_point2_pwm_at_crit_store(str=
+uct device *dev,
+ 					struct device_attribute *devattr,
+ 					const char *buf, size_t count)
+ {
+-	struct i2c_client *client =3D to_i2c_client(dev);
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
++	struct adt7475_data *data =3D dev_get_drvdata(dev);
++	struct i2c_client *client =3D data->client;
+ 	long val;
+=20
+ 	if (kstrtol(buf, 10, &val))
+@@ -1342,26 +1342,6 @@ static int adt7475_detect(struct i2c_client *clien=
+t,
+ 	return 0;
+ }
+=20
+-static void adt7475_remove_files(struct i2c_client *client,
+-				 struct adt7475_data *data)
+-{
+-	sysfs_remove_group(&client->dev.kobj, &adt7475_attr_group);
+-	if (data->has_fan4)
+-		sysfs_remove_group(&client->dev.kobj, &fan4_attr_group);
+-	if (data->has_pwm2)
+-		sysfs_remove_group(&client->dev.kobj, &pwm2_attr_group);
+-	if (data->has_voltage & (1 << 0))
+-		sysfs_remove_group(&client->dev.kobj, &in0_attr_group);
+-	if (data->has_voltage & (1 << 3))
+-		sysfs_remove_group(&client->dev.kobj, &in3_attr_group);
+-	if (data->has_voltage & (1 << 4))
+-		sysfs_remove_group(&client->dev.kobj, &in4_attr_group);
+-	if (data->has_voltage & (1 << 5))
+-		sysfs_remove_group(&client->dev.kobj, &in5_attr_group);
+-	if (data->has_vid)
+-		sysfs_remove_group(&client->dev.kobj, &vid_attr_group);
+-}
+-
+ static int adt7475_update_limits(struct i2c_client *client)
+ {
+ 	struct adt7475_data *data =3D i2c_get_clientdata(client);
+@@ -1489,7 +1469,8 @@ static int adt7475_probe(struct i2c_client *client,
+ 	};
+=20
+ 	struct adt7475_data *data;
+-	int i, ret =3D 0, revision;
++	struct device *hwmon_dev;
++	int i, ret =3D 0, revision, group_num =3D 0;
+ 	u8 config2, config3;
+=20
+ 	data =3D devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
+@@ -1497,6 +1478,7 @@ static int adt7475_probe(struct i2c_client *client,
+ 		return -ENOMEM;
+=20
+ 	mutex_init(&data->lock);
++	data->client =3D client;
+ 	i2c_set_clientdata(client, data);
+=20
+ 	if (client->dev.of_node)
+@@ -1590,52 +1572,40 @@ static int adt7475_probe(struct i2c_client *clien=
+t,
+ 		break;
+ 	}
+=20
+-	ret =3D sysfs_create_group(&client->dev.kobj, &adt7475_attr_group);
+-	if (ret)
+-		return ret;
++	data->groups[group_num++] =3D &adt7475_attr_group;
+=20
+ 	/* Features that can be disabled individually */
+ 	if (data->has_fan4) {
+-		ret =3D sysfs_create_group(&client->dev.kobj, &fan4_attr_group);
+-		if (ret)
+-			goto eremove;
++		data->groups[group_num++] =3D &fan4_attr_group;
+ 	}
+ 	if (data->has_pwm2) {
+-		ret =3D sysfs_create_group(&client->dev.kobj, &pwm2_attr_group);
+-		if (ret)
+-			goto eremove;
++		data->groups[group_num++] =3D &pwm2_attr_group;
+ 	}
+ 	if (data->has_voltage & (1 << 0)) {
+-		ret =3D sysfs_create_group(&client->dev.kobj, &in0_attr_group);
+-		if (ret)
+-			goto eremove;
++		data->groups[group_num++] =3D &in0_attr_group;
+ 	}
+ 	if (data->has_voltage & (1 << 3)) {
+-		ret =3D sysfs_create_group(&client->dev.kobj, &in3_attr_group);
+-		if (ret)
+-			goto eremove;
++		data->groups[group_num++] =3D &in3_attr_group;
+ 	}
+ 	if (data->has_voltage & (1 << 4)) {
+-		ret =3D sysfs_create_group(&client->dev.kobj, &in4_attr_group);
+-		if (ret)
+-			goto eremove;
++		data->groups[group_num++] =3D &in4_attr_group;
+ 	}
+ 	if (data->has_voltage & (1 << 5)) {
+-		ret =3D sysfs_create_group(&client->dev.kobj, &in5_attr_group);
+-		if (ret)
+-			goto eremove;
++		data->groups[group_num++] =3D &in5_attr_group;
+ 	}
+ 	if (data->has_vid) {
+ 		data->vrm =3D vid_which_vrm();
+-		ret =3D sysfs_create_group(&client->dev.kobj, &vid_attr_group);
+-		if (ret)
+-			goto eremove;
++		data->groups[group_num] =3D &vid_attr_group;
+ 	}
+=20
+-	data->hwmon_dev =3D hwmon_device_register(&client->dev);
+-	if (IS_ERR(data->hwmon_dev)) {
+-		ret =3D PTR_ERR(data->hwmon_dev);
+-		goto eremove;
++	/* register device with all the acquired attributes */
++	hwmon_dev =3D devm_hwmon_device_register_with_groups(&client->dev,
++							   client->name, data,
++							   data->groups);
++
++	if (IS_ERR(hwmon_dev)) {
++		ret =3D PTR_ERR(hwmon_dev);
++		return ret;
+ 	}
+=20
+ 	dev_info(&client->dev, "%s device, revision %d\n",
+@@ -1657,21 +1627,7 @@ static int adt7475_probe(struct i2c_client *client=
+,
+ 	/* Limits and settings, should never change update more than once */
+ 	ret =3D adt7475_update_limits(client);
+ 	if (ret)
+-		goto eremove;
+-
+-	return 0;
+-
+-eremove:
+-	adt7475_remove_files(client, data);
+-	return ret;
+-}
+-
+-static int adt7475_remove(struct i2c_client *client)
+-{
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
+-
+-	hwmon_device_unregister(data->hwmon_dev);
+-	adt7475_remove_files(client, data);
++		return ret;
+=20
+ 	return 0;
+ }
+@@ -1683,7 +1639,6 @@ static struct i2c_driver adt7475_driver =3D {
+ 		.of_match_table =3D of_match_ptr(adt7475_of_match),
+ 	},
+ 	.probe		=3D adt7475_probe,
+-	.remove		=3D adt7475_remove,
+ 	.id_table	=3D adt7475_id,
+ 	.detect		=3D adt7475_detect,
+ 	.address_list	=3D normal_i2c,
+@@ -1757,8 +1712,8 @@ static void adt7475_read_pwm(struct i2c_client *cli=
+ent, int index)
+=20
+ static int adt7475_update_measure(struct device *dev)
+ {
+-	struct i2c_client *client =3D to_i2c_client(dev);
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
++	struct adt7475_data *data =3D dev_get_drvdata(dev);
++	struct i2c_client *client =3D data->client;
+ 	u16 ext;
+ 	int i;
+ 	int ret;
+@@ -1854,8 +1809,7 @@ static int adt7475_update_measure(struct device *de=
+v)
+=20
+ static struct adt7475_data *adt7475_update_device(struct device *dev)
+ {
+-	struct i2c_client *client =3D to_i2c_client(dev);
+-	struct adt7475_data *data =3D i2c_get_clientdata(client);
++	struct adt7475_data *data =3D dev_get_drvdata(dev);
+ 	int ret;
+=20
+ 	mutex_lock(&data->lock);
+--=20
+2.22.0
 
---pf9I7BMVVzbSWLtt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEnwF+nWawchZUPOuwsjqdtxFLKRUFAl007VoACgkQsjqdtxFL
-KRX3KQf/SB+ixZtFGiyOb4uMYVrrxwJy6lbEk7OhJZ3HcxmjbegO0hWVsEidwqqS
-TLUADaDmPOunEk7JJ+TRQmC++0ZvmrQqNUiNkMyZ7UqQJb9MPxbasB8ZZ+RR8gZ0
-l4ZIl7rzaEVIWZ9GPIn5596VYHHRhSA08dsyALADnQ86+f1PX77AZm+2HrDuLBZx
-agUUd68TICAHTLWyctzizpcydHd21R99Zqo41NGfyIVzVzUM45BolsJy1gdFOc5q
-E7bJZm/RZj/dJzo05f4ml1YUAuf52tvNYD8tyT7viV4o68gdELXdFXtro85Y6ncR
-qPPq00FDdEK1swW1v1ROGjwdIZjhFg==
-=HDl4
------END PGP SIGNATURE-----
-
---pf9I7BMVVzbSWLtt--
