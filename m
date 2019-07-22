@@ -2,87 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1673C70BE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 23:43:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB03F70BE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 23:44:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732877AbfGVVnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 17:43:37 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:54152 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732873AbfGVVnh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 17:43:37 -0400
-Received: from [192.168.1.41] ([92.140.204.221])
-        by mwinf5d78 with ME
-        id fxjb200034n7eLC03xjbvD; Mon, 22 Jul 2019 23:43:35 +0200
-X-ME-Helo: [192.168.1.41]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 22 Jul 2019 23:43:35 +0200
-X-ME-IP: 92.140.204.221
-Subject: Re: [PATCH][next] clk: Si5341/Si5340: remove redundant assignment to
- n_den
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Colin King <colin.king@canonical.com>,
-        linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Newsgroups: gmane.linux.kernel,gmane.linux.kernel.clk,gmane.linux.kernel.janitors
-References: <20190701165020.19840-1-colin.king@canonical.com>
- <20190722212414.6EF8D21900@mail.kernel.org>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <d1cd2b10-8fd4-f224-3bcd-5b938f72d249@wanadoo.fr>
-Date:   Mon, 22 Jul 2019 23:43:32 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731006AbfGVVo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 17:44:27 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:41130 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730274AbfGVVo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 17:44:27 -0400
+Received: from 084035110054.static.ipv4.infopact.nl ([84.35.110.54] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hpg6V-0001tM-PU; Mon, 22 Jul 2019 23:44:19 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Nathan Huckleberry <nhuck@google.com>, andy.yan@rock-chips.com,
+        mturquette@baylibre.com, zhangqing@rock-chips.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH] clk: rockchip: Fix -Wunused-const-variable
+Date:   Mon, 22 Jul 2019 23:44:18 +0200
+Message-ID: <19079299.fd1ZiCyHlL@phil>
+In-Reply-To: <20190722213519.910D321900@mail.kernel.org>
+References: <20190627222220.89175-1-nhuck@google.com> <20190722213519.910D321900@mail.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20190722212414.6EF8D21900@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 22/07/2019 à 23:24, Stephen Boyd a écrit :
-> Please Cc authors of drivers so they can ack/review.
->
-> Adding Mike to take a look.
->
-> Quoting Colin King (2019-07-01 09:50:20)
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The variable n_den is initialized however that value is never read
->> as n_den is re-assigned a little later in the two paths of a
->> following if-statement.  Remove the redundant assignment.
->>
->> Addresses-Coverity: ("Unused value")
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>   drivers/clk/clk-si5341.c | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
->> index 72424eb7e5f8..6e780c2a9e6b 100644
->> --- a/drivers/clk/clk-si5341.c
->> +++ b/drivers/clk/clk-si5341.c
->> @@ -547,7 +547,6 @@ static int si5341_synth_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->>          bool is_integer;
->>   
->>          n_num = synth->data->freq_vco;
->> -       n_den = rate;
->>   
->>          /* see if there's an integer solution */
->>          r = do_div(n_num, rate);
->
-Hi,
+Hi Stephen,
 
-I got the same advise from some else no later than yesterday (i.e. email 
-the author...)
-Maybe 'get_maintainer.pl' could be improved to search for it and propose 
-the mail automatically?
+Am Montag, 22. Juli 2019, 23:35:18 CEST schrieb Stephen Boyd:
+> Quoting Nathan Huckleberry (2019-06-27 15:22:20)
+> > Clang produces the following warning
+> > 
+> > drivers/clk/rockchip/clk-rv1108.c:125:7: warning: unused variable
+> > 'mux_pll_src_3plls_p' [-Wunused-const-variable]
+> > PNAME(mux_pll_src_3plls_p)      = { "apll", "gpll", "dpll" };
+> > 
+> > Looks like this variable was never used. Deleting it to remove the
+> > warning.
+> > 
+> > Cc: clang-built-linux@googlegroups.com
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/524
+> > Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+> > ---
+> >  drivers/clk/rockchip/clk-rv1108.c | 1 -
+> >  1 file changed, 1 deletion(-)
+> 
+> Heiko, can you pick this up? Looks like v5.4 material.
 
-just my 2c.
+yep ... I'm planning to do that :-)
+
+Heiko
 
 
-CJ
+> > diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
+> > index 96cc6af5632c..5947d3192866 100644
+> > --- a/drivers/clk/rockchip/clk-rv1108.c
+> > +++ b/drivers/clk/rockchip/clk-rv1108.c
+> > @@ -122,7 +122,6 @@ PNAME(mux_usb480m_pre_p)    = { "usbphy", "xin24m" };
+> >  PNAME(mux_hdmiphy_phy_p)       = { "hdmiphy", "xin24m" };
+> >  PNAME(mux_dclk_hdmiphy_pre_p)  = { "dclk_hdmiphy_src_gpll", "dclk_hdmiphy_src_dpll" };
+> >  PNAME(mux_pll_src_4plls_p)     = { "dpll", "gpll", "hdmiphy", "usb480m" };
+> > -PNAME(mux_pll_src_3plls_p)     = { "apll", "gpll", "dpll" };
+> >  PNAME(mux_pll_src_2plls_p)     = { "dpll", "gpll" };
+> >  PNAME(mux_pll_src_apll_gpll_p) = { "apll", "gpll" };
+> >  PNAME(mux_aclk_peri_src_p)     = { "aclk_peri_src_gpll", "aclk_peri_src_dpll" };
+
+
+
 
