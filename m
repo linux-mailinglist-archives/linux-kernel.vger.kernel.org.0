@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B59570C3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 00:00:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BACD70C3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 00:00:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732924AbfGVWAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 18:00:35 -0400
-Received: from 195-159-176-226.customer.powertech.no ([195.159.176.226]:39278
-        "EHLO blaine.gmane.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731495AbfGVWAd (ORCPT
+        id S1732449AbfGVWA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 18:00:29 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:41684 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731495AbfGVWA3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 18:00:33 -0400
-Received: from list by blaine.gmane.org with local (Exim 4.89)
-        (envelope-from <glk-linux-kernel-4@m.gmane.org>)
-        id 1hpgMB-000FcE-GA
-        for linux-kernel@vger.kernel.org; Tue, 23 Jul 2019 00:00:31 +0200
-X-Injected-Via-Gmane: http://gmane.org/
-To:     linux-kernel@vger.kernel.org
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+        Mon, 22 Jul 2019 18:00:29 -0400
+Received: from [192.168.1.41] ([92.140.204.221])
+        by mwinf5d78 with ME
+        id fy0S200024n7eLC03y0SST; Tue, 23 Jul 2019 00:00:26 +0200
+X-ME-Helo: [192.168.1.41]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 23 Jul 2019 00:00:26 +0200
+X-ME-IP: 92.140.204.221
 Subject: Re: [PATCH][next] clk: Si5341/Si5340: remove redundant assignment to
  n_den
-Date:   Tue, 23 Jul 2019 00:00:24 +0200
-Message-ID: <a92ca50d-b33e-8779-294c-301535d0f0d5@wanadoo.fr>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Colin King <colin.king@canonical.com>,
+        linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Newsgroups: gmane.linux.kernel,gmane.linux.kernel.clk,gmane.linux.kernel.janitors
 References: <20190701165020.19840-1-colin.king@canonical.com>
  <20190722212414.6EF8D21900@mail.kernel.org>
  <d1cd2b10-8fd4-f224-3bcd-5b938f72d249@wanadoo.fr>
  <20190722215314.9F4F121951@mail.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <a92ca50d-b33e-8779-294c-301535d0f0d5@wanadoo.fr>
+Date:   Tue, 23 Jul 2019 00:00:24 +0200
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
+MIME-Version: 1.0
 In-Reply-To: <20190722215314.9F4F121951@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Cc:     linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -90,6 +95,5 @@ history, so I guess that it is on by default.
 I was thinking at parsing files to see if MODULE_AUTHOR includes an email.
 
 CJ
-
 
 
