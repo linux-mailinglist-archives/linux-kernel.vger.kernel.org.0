@@ -2,82 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B4E270348
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:13:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11B9F7032B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:11:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbfGVPND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 11:13:03 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:49668 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727343AbfGVPNA (ORCPT
+        id S1727729AbfGVPLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 11:11:15 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39288 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726989AbfGVPLO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 11:13:00 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-99.corp.google.com [104.133.0.99] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x6MFCQsi029018
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 22 Jul 2019 11:12:27 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 4D51E4202F5; Mon, 22 Jul 2019 11:12:26 -0400 (EDT)
-Date:   Mon, 22 Jul 2019 11:12:26 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Gao Xiang <hsiangkao@aol.com>
-Cc:     dsterba@suse.cz, Gao Xiang <gaoxiang25@huawei.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        Mon, 22 Jul 2019 11:11:14 -0400
+Received: by mail-pf1-f196.google.com with SMTP id f17so13527184pfn.6
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 08:11:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=okW2ZRllj1UmKp04aEFvJhWydriFCMDOSg9DK6KAQaA=;
+        b=wrERNdA+k3qS3VTOu/hN4vusaATGstfPhZIORk2Dy9VxFSHX2bgxeEdSe8p6U0/EAv
+         +TXWdeDvyTIgsJ4XbeVIw+X09pvmBoQ3ajv70KQJYEhdDYwDidbw8LYOGhlJQL3xwb+s
+         IOpT++HqYP41y78gpqHYg5CYNIhrDoO62Gfot61zR6PWkMAqweRs35n3muoJfpFP5YSp
+         L9zChQWF00xKxHH7Z9eLKQhAvJmvACNyIsEGIQtl4pxeUoip+l2MRBlQXFsTZTvI3dYU
+         q+bDyjaWjSPhcLl81BiJs13VqpI+EZAevtwToHpvbTk/s9Ojfxg13Un8ZgmxCf08h8xE
+         4jtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=okW2ZRllj1UmKp04aEFvJhWydriFCMDOSg9DK6KAQaA=;
+        b=cbMTq3/d9txO4yk2Sq6ASX4LUl7IyuA2E10a0LIrAxCcpreU43MdOAZ2cssdiCR1hZ
+         Qww1xG+pLzC+XLWC1SJrUAcbjUUu+XkImrHRiSoy5ETSnF7g2IJYapLaZqMjH80q2amm
+         DSvJvU/HO+X09BhDz8GKTJxJYvs11QjS82zgHkoZ1S25QsaotMEGZcERBDHlux2qnXBo
+         HWXeQEHlevHbyk049JB9mXM5mEucHEiacUmLUr9yrz2IyKmFCnZhXJbkcAHxQE/HmR4o
+         rlDIKwEoqsW39lUUOt43df2LNiDTDnFDWP2Fg/WMqu6xTeHZHO6XJVPeSPlIFBF2h3Av
+         STPQ==
+X-Gm-Message-State: APjAAAXUy/tFrRZRodF+1bPlW+215DbjUeRthv18ShvMtWP4gdUP/j6i
+        Nsvp+Sk7PHJAwivqrfkS9qLvUw==
+X-Google-Smtp-Source: APXvYqyUMggcpHvQEIWA1uz/HQ0m+BWgq/e/QrwPKl6dVDM71u87KBblZBgc9PooMtK9Xla5oXXYZw==
+X-Received: by 2002:aa7:8189:: with SMTP id g9mr755670pfi.143.1563808274042;
+        Mon, 22 Jul 2019 08:11:14 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id n140sm41835626pfd.132.2019.07.22.08.11.12
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 22 Jul 2019 08:11:13 -0700 (PDT)
+Date:   Mon, 22 Jul 2019 08:12:34 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Minwoo Im <minwoo.im.dev@gmail.com>,
+        MSM <linux-arm-msm@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v3 23/24] erofs: introduce cached decompression
-Message-ID: <20190722151226.GC5172@mit.edu>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Gao Xiang <hsiangkao@aol.com>, dsterba@suse.cz,
-        Gao Xiang <gaoxiang25@huawei.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org,
-        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>, Fang Wei <fangwei1@huawei.com>
-References: <20190722025043.166344-1-gaoxiang25@huawei.com>
- <20190722025043.166344-24-gaoxiang25@huawei.com>
- <20190722101818.GN20977@twin.jikos.cz>
- <41f1659a-0d16-4316-34fc-335b7d142d5c@aol.com>
- <20190722132513.GA5172@mit.edu>
- <db672675-c471-5bc8-af15-91c1859e9008@aol.com>
+        Andy Gross <agross@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] firmware: qcom_scm: fix error for incompatible pointer
+Message-ID: <20190722151234.GJ7234@tuxbook-pro>
+References: <20190719134303.7617-1-minwoo.im.dev@gmail.com>
+ <7ea51e42-ab8a-e4e2-1833-651e2dabca3c@free.fr>
+ <20190722093059.GA29538@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
 Content-Disposition: inline
-In-Reply-To: <db672675-c471-5bc8-af15-91c1859e9008@aol.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190722093059.GA29538@lst.de>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 10:16:44PM +0800, Gao Xiang wrote:
-> OK, I will give a try. One point I think is how to deal with the case
-> if there is already cached information when remounting as well as you said.
->
-> As the first step, maybe the mount option can be defined as
-> allowing/forbiding caching from now on, which can be refined later.
+On Mon 22 Jul 02:30 PDT 2019, Christoph Hellwig wrote:
 
-Yes; possible solutions include ignoring the issue (assuming that
-cached data structures that "shouldn't" be in the cache given the new
-cache strategy will fall out of the cache over time), forcibly
-flushing the cache when the caching strategy has changed, and of
-course, forbidding caching strategy change at remount time.
+> On Mon, Jul 22, 2019 at 10:38:55AM +0200, Marc Gonzalez wrote:
+> > > In file included from drivers/firmware/qcom_scm.c:12:0:
+> > > ./include/linux/dma-mapping.h:636:21: note: expected ‘dma_addr_t * {aka long long unsigned int *}’ but argument is of type ‘phys_addr_t * {aka unsigned int *}’
+> > >  static inline void *dma_alloc_coherent(struct device *dev, size_t size,
+> > >                      ^~~~~~~~~~~~~~~~~~
+> > > ```
+> > > 
+> > > We just can cast phys_addr_t to dma_addr_t here.
+> > 
+> > IME, casting is rarely a proper solution.
+> 
+> *nod*
+> 
+> ptr_phys probably should be a dma_addr_t.  Unless this driver is so
+> magic that it really wants a physical and not a dma address, in which
+> case it needs to use alloc_pages instead of dma_alloc_coherent
+> and then call page_to_phys on the returned page, and a very big comment
+> explaining why it is so special.
 
-Cheers,
+The scm call takes physical addresses (which happens to be 1:1 with DMA
+addresses for this driver).
 
-					- Ted
+This allocation started off (downstream) as a simple kmalloc(), but
+while the scm call is being executed an access from Linux will cause a
+security violation (that's not handled gracefully). The properties of
+dma_alloc is closer, so that's where the code is today.
+
+Optimally this should be something like alloc_pages() and some mechanism
+for unmapping the pages during the call. But no one has come up with a
+suitable patch for that.
+
+
+But there's a patch from Stephen for this already (not doing a
+typecast).  Apparently I missed merging this, so I'll do that.
+
+https://lore.kernel.org/linux-arm-msm/20190517210923.202131-2-swboyd@chromium.org/
+
+Regards,
+Bjorn
