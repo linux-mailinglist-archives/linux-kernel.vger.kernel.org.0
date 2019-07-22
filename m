@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18E6D6F931
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 07:57:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1124E6F92E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 07:57:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725795AbfGVF51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 01:57:27 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:37756 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727520AbfGVF5P (ORCPT
+        id S1727619AbfGVF5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 01:57:20 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44855 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727589AbfGVF5R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 01:57:15 -0400
-Received: by mail-ed1-f67.google.com with SMTP id w13so39506029eds.4
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2019 22:57:14 -0700 (PDT)
+        Mon, 22 Jul 2019 01:57:17 -0400
+Received: by mail-ed1-f68.google.com with SMTP id k8so39452486edr.11
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2019 22:57:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=TqB0rOZLlIYh0a/SpSOrS2aG6wy2S7sHIDUEyeUZVZg=;
-        b=gezfKoa3qKy7xPyCUHoxaFJthIwAlw54R2fUek3dXgLyhqVEMHotVYj8+wwaIHrNjC
-         IYvfBBQU/JhMWxByqEbyyQipkJJ54h9RUgitieBUKDeIrPLVY7V3O+ZCwxnlxto2GTIb
-         UlZj2kUAdLp0mDSWbArVC1AiJO1iT7lxNdWDZdQ6U35CzScgzRWjVOJd16sg0WeTOc6e
-         R6fadiWy9m1YNkLIJ3JCB7mVUUuAh5EASppf0MiPR1eA9/fxkO4H0IiGWym1mYJgJu45
-         uGUXlOj3BVHEYF+D3xNbDQotLWAdcNhlTTsomh7E+7jYzNqmCSntkgR8PpAV36Coqcrq
-         jjKQ==
+        bh=JWav04oSOMMfjnrIfRfnbnhq134i7LRODNuQ+JDA4d8=;
+        b=iAeg5YAbgEc4aYUgaNNECEsRpX+e9jc1I5YBQtLvCy5UcbJE62lDIR8qMw5Uo0URLB
+         OR5S1U843vWDtFQk2NDReGy4Qxb7N98CbYzYs19BsFtoqLD5DWV07b8V1JPSFcBXbjyW
+         HWYtON8kw3CBY7KNYNNyGUBHFOA2grIb+ldo42JgaM/4i3ZcSJ6dGqY8b5ov1FKoVBoE
+         u87X+cv6T+p3shg/9BvIHVmZMWjV6L+fwDaG0iRgxd82oLNaJqJYY0HpMvnJNy+GF4+3
+         1xdSCLtQ22Jf1yyhsfFqpq9MU4Nvy6SLNJPh91tNdAwCOX3JwyfS85HihQlxDN91dRgF
+         e32w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references;
-        bh=TqB0rOZLlIYh0a/SpSOrS2aG6wy2S7sHIDUEyeUZVZg=;
-        b=Q2A6YkmbtkV0bK2aS9zY6RSkMgpSqUZNmfuNH25S+GPhqEvwYlBGQdXnyEB+GzO3v7
-         tzdWNx3n6unSAOP/rXUZ5ePaaRpUY7uTlPzlDK2KlE8Pl8lzfjREEdo41r6YwP3QGLLr
-         qXOJX72qYl8w63v2uKh+F6nQKt+2kshO/uExyQUZZaS7Q7oMMVjaAKTX4xUmTCXlq8sk
-         N/33HEet9qKgtXjNd+cxnqEPYyO6AZmTrha8IqEp48/A9Qx12ON6hrsVrSa2yFOu+NRL
-         n7jxd25TEoHz84MbuAqqEUSm+/GYg0H7f1ZzW2KYrXz0rcnoNMTbF6FuHUOwHUoEvNO9
-         aTwA==
-X-Gm-Message-State: APjAAAUEW5crx8f/e3mkjZgaSsh6GlIDjQQyE/D6aDw2JG2O3aVZrQu8
-        MMTuZF573SPcA4YKhRQuIrc=
-X-Google-Smtp-Source: APXvYqx6ImEFwf8Is2ljvvdc4l0y2Rhn6dNHfM+qK/yx45nzcqfiYPSyeBCbYyIS9F+jcjplkkTHxQ==
-X-Received: by 2002:a17:906:af86:: with SMTP id mj6mr6292915ejb.157.1563775033987;
-        Sun, 21 Jul 2019 22:57:13 -0700 (PDT)
+        bh=JWav04oSOMMfjnrIfRfnbnhq134i7LRODNuQ+JDA4d8=;
+        b=YS5qXYoHfhcKQ3jUpe/uVMzXsKdv8mzwWZohJLguGg+GV2cke1lhVfkQyUE4do8RQ/
+         3PkAebFArLNKML2ibOf/Bn9PpP9YfVSduFlm4kKE19ulr0eO/i3JSrUndNLY7RfB+0Oy
+         i4lBbc/26GSFdBvmUP0QUlzFsNpXNZtwCVXqmj65o90sA5x3+jAnmALG14G2W+mk/Do7
+         2rq4lhq7v19WEiZY3EXkMjZGDxLV4AQvHfIaf4m578oGxu4Y5un2nlc3BSz8c8hvr+g7
+         4G75ocab8tUieKBr2xlCy+NutgvR1FruCfxAFr1I1eSStMOW4kEIZ/MoVxC90Lhzenii
+         u85w==
+X-Gm-Message-State: APjAAAU8T3AutSwTd1Lf51Hv0ZLoKvJjlArCPcFsLp4BOR5WBl7eckU7
+        SQu/o2QYZsZaMRpRDnM9ttE=
+X-Google-Smtp-Source: APXvYqzUeEvZzXubeuDVswHFU5kKDVfDWDqDmcg24fW79naD2l793eQa7IXung57mhGRdtZ8MAtoew==
+X-Received: by 2002:a50:89b4:: with SMTP id g49mr58295914edg.39.1563775036035;
+        Sun, 21 Jul 2019 22:57:16 -0700 (PDT)
 Received: from opensdev.fritz.box (business-178-015-117-054.static.arcor-ip.net. [178.15.117.54])
-        by smtp.gmail.com with ESMTPSA id a6sm10351725eds.19.2019.07.21.22.57.11
+        by smtp.gmail.com with ESMTPSA id a6sm10351725eds.19.2019.07.21.22.57.14
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 21 Jul 2019 22:57:13 -0700 (PDT)
+        Sun, 21 Jul 2019 22:57:15 -0700 (PDT)
 From:   shiva.linuxworks@gmail.com
 X-Google-Original-From: sshivamurthy@micron.com
 To:     Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -60,9 +60,9 @@ To:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Jeff Kletsky <git-commits@allycomm.com>,
         Chuanhong Guo <gch981213@gmail.com>,
         liaoweixiong <liaoweixiong@allwinnertech.com>
-Subject: [PATCH 7/8] mtd: spinand: micron: Fix read failure in Micron M70A flashes
-Date:   Mon, 22 Jul 2019 07:56:20 +0200
-Message-Id: <20190722055621.23526-8-sshivamurthy@micron.com>
+Subject: [PATCH 8/8] mtd: spinand: micron: Enable micron flashes with multi-die
+Date:   Mon, 22 Jul 2019 07:56:21 +0200
+Message-Id: <20190722055621.23526-9-sshivamurthy@micron.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190722055621.23526-1-sshivamurthy@micron.com>
 References: <20190722055621.23526-1-sshivamurthy@micron.com>
@@ -73,43 +73,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Shivamurthy Shastri <sshivamurthy@micron.com>
 
-M70A series flashes by default enable continuous read feature (BIT0 in
-configuration register). This feature will not expose the ECC to host
-and causing read failure.
+Some of the Micron flashes has multi-die, and need to select the die
+each time while accessing it.
 
 Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
 ---
- drivers/mtd/nand/spi/micron.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/mtd/nand/spi/micron.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
 diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
-index 6fde93ec23a1..1e28ea3d1362 100644
+index 1e28ea3d1362..fa2b43caf39d 100644
 --- a/drivers/mtd/nand/spi/micron.c
 +++ b/drivers/mtd/nand/spi/micron.c
-@@ -127,6 +127,15 @@ static int micron_spinand_detect(struct spinand_device *spinand)
- 	return 1;
+@@ -90,6 +90,19 @@ static int micron_ecc_get_status(struct spinand_device *spinand,
+ 	return -EINVAL;
  }
  
-+static int micron_spinand_init(struct spinand_device *spinand)
++static int micron_select_target(struct spinand_device *spinand,
++				unsigned int target)
 +{
-+	/*
-+	 * Some of the Micron flashes enable this BIT by default,
-+	 * and there is a chance of read failure due to this.
-+	 */
-+	return spinand_upd_cfg(spinand, CFG_QUAD_ENABLE, 0);
++	struct spi_mem_op op = SPINAND_SET_FEATURE_OP(0xd0,
++						      spinand->scratchbuf);
++
++	if (target == 1)
++		target = 0x40;
++
++	*spinand->scratchbuf = target;
++	return spi_mem_exec_op(spinand->spimem, &op);
 +}
 +
- static void micron_fixup_param_page(struct spinand_device *spinand,
- 				    struct nand_onfi_params *p)
+ static int micron_spinand_detect(struct spinand_device *spinand)
  {
-@@ -150,6 +159,7 @@ static void micron_fixup_param_page(struct spinand_device *spinand,
+ 	const struct spi_mem_op *op;
+@@ -105,6 +118,7 @@ static int micron_spinand_detect(struct spinand_device *spinand)
+ 	spinand->flags = 0;
+ 	spinand->eccinfo.get_status = micron_ecc_get_status;
+ 	spinand->eccinfo.ooblayout = &micron_ooblayout_ops;
++	spinand->select_target = micron_select_target;
  
- static const struct spinand_manufacturer_ops micron_spinand_manuf_ops = {
- 	.detect = micron_spinand_detect,
-+	.init = micron_spinand_init,
- 	.fixup_param_page = micron_fixup_param_page,
- };
- 
+ 	op = spinand_select_op_variant(spinand,
+ 				       &read_cache_variants);
 -- 
 2.17.1
 
