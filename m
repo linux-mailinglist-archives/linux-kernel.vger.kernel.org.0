@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7794C708F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:57:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB13E7090C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:58:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731881AbfGVS5B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 14:57:01 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:38028 "EHLO
+        id S1731942AbfGVS5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 14:57:05 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38046 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728890AbfGVS5A (ORCPT
+        with ESMTP id S1728890AbfGVS5D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 14:57:00 -0400
+        Mon, 22 Jul 2019 14:57:03 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hpdUY-0002OR-K4; Mon, 22 Jul 2019 20:56:58 +0200
-Message-Id: <20190722105218.962517234@linutronix.de>
+        id 1hpdUb-0002P3-4m; Mon, 22 Jul 2019 20:57:01 +0200
+Message-Id: <20190722105219.342631201@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Mon, 22 Jul 2019 20:47:07 +0200
+Date:   Mon, 22 Jul 2019 20:47:11 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
@@ -26,8 +26,7 @@ Cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
         Stephane Eranian <eranian@google.com>,
         Feng Tang <feng.tang@intel.com>,
         Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: [patch V3 02/25] x86/apic: Invoke perf_events_lapic_init() after
- enabling APIC
+Subject: [patch V3 06/25] x86/apic: Cleanup the include maze
 References: <20190722104705.550071814@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -36,43 +35,266 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the APIC is soft disabled then unmasking an LVT entry does not work and
-the write is ignored. perf_events_lapic_init() tries to do so.
-
-Move the invocation after the point where the APIC has been enabled.
+All of these APIC files include the world and some more. Remove the
+unneeded cruft.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/kernel/apic/apic.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/x86/kernel/apic/apic_flat_64.c   |   15 ++++-----------
+ arch/x86/kernel/apic/apic_noop.c      |   18 +-----------------
+ arch/x86/kernel/apic/apic_numachip.c  |    6 +++---
+ arch/x86/kernel/apic/ipi.c            |   15 +--------------
+ arch/x86/kernel/apic/probe_32.c       |   18 ++----------------
+ arch/x86/kernel/apic/probe_64.c       |   11 -----------
+ arch/x86/kernel/apic/x2apic_cluster.c |   14 ++++++--------
+ arch/x86/kernel/apic/x2apic_phys.c    |    9 +++------
+ arch/x86/kernel/apic/x2apic_uv_x.c    |   28 ++++------------------------
+ 9 files changed, 24 insertions(+), 110 deletions(-)
 
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1517,7 +1517,6 @@ static void setup_local_APIC(void)
- 	int logical_apicid, ldr_apicid;
- #endif
+--- a/arch/x86/kernel/apic/apic_flat_64.c
++++ b/arch/x86/kernel/apic/apic_flat_64.c
+@@ -8,21 +8,14 @@
+  * Martin Bligh, Andi Kleen, James Bottomley, John Stultz, and
+  * James Cleverdon.
+  */
+-#include <linux/acpi.h>
+-#include <linux/errno.h>
+-#include <linux/threads.h>
+ #include <linux/cpumask.h>
+-#include <linux/string.h>
+-#include <linux/kernel.h>
+-#include <linux/ctype.h>
+-#include <linux/hardirq.h>
+ #include <linux/export.h>
++#include <linux/acpi.h>
  
--
- 	if (disable_apic) {
- 		disable_ioapic_support();
- 		return;
-@@ -1532,8 +1531,6 @@ static void setup_local_APIC(void)
- 		apic_write(APIC_ESR, 0);
- 	}
- #endif
--	perf_events_lapic_init();
--
- 	/*
- 	 * Double-check whether this APIC is really registered.
- 	 * This is meaningless in clustered apic mode, so we skip it.
-@@ -1614,6 +1611,8 @@ static void setup_local_APIC(void)
- 	value |= SPURIOUS_APIC_VECTOR;
- 	apic_write(APIC_SPIV, value);
+-#include <asm/smp.h>
+-#include <asm/ipi.h>
+-#include <asm/apic.h>
+-#include <asm/apic_flat_64.h>
+ #include <asm/jailhouse_para.h>
++#include <asm/apic_flat_64.h>
++#include <asm/apic.h>
++#include <asm/ipi.h>
  
-+	perf_events_lapic_init();
+ static struct apic apic_physflat;
+ static struct apic apic_flat;
+--- a/arch/x86/kernel/apic/apic_noop.c
++++ b/arch/x86/kernel/apic/apic_noop.c
+@@ -9,25 +9,9 @@
+  * to not uglify the caller's code and allow to call (some) apic routines
+  * like self-ipi, etc...
+  */
+-
+-#include <linux/threads.h>
+ #include <linux/cpumask.h>
+-#include <linux/string.h>
+-#include <linux/kernel.h>
+-#include <linux/ctype.h>
+-#include <linux/errno.h>
+-#include <asm/fixmap.h>
+-#include <asm/mpspec.h>
+-#include <asm/apicdef.h>
+-#include <asm/apic.h>
+-#include <asm/setup.h>
+ 
+-#include <linux/smp.h>
+-#include <asm/ipi.h>
+-
+-#include <linux/interrupt.h>
+-#include <asm/acpi.h>
+-#include <asm/e820/api.h>
++#include <asm/apic.h>
+ 
+ static void noop_init_apic_ldr(void) { }
+ static void noop_send_IPI(int cpu, int vector) { }
+--- a/arch/x86/kernel/apic/apic_numachip.c
++++ b/arch/x86/kernel/apic/apic_numachip.c
+@@ -10,15 +10,15 @@
+  * Send feedback to <support@numascale.com>
+  *
+  */
+-
++#include <linux/types.h>
+ #include <linux/init.h>
+ 
+ #include <asm/numachip/numachip.h>
+ #include <asm/numachip/numachip_csr.h>
+-#include <asm/ipi.h>
 +
- 	/*
- 	 * Set up LVT0, LVT1:
- 	 *
+ #include <asm/apic_flat_64.h>
+ #include <asm/pgtable.h>
+-#include <asm/pci_x86.h>
++#include <asm/ipi.h>
+ 
+ u8 numachip_system __read_mostly;
+ static const struct apic apic_numachip1;
+--- a/arch/x86/kernel/apic/ipi.c
++++ b/arch/x86/kernel/apic/ipi.c
+@@ -1,21 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#include <linux/cpumask.h>
+-#include <linux/interrupt.h>
+ 
+-#include <linux/mm.h>
+-#include <linux/delay.h>
+-#include <linux/spinlock.h>
+-#include <linux/kernel_stat.h>
+-#include <linux/mc146818rtc.h>
+-#include <linux/cache.h>
+-#include <linux/cpu.h>
++#include <linux/cpumask.h>
+ 
+-#include <asm/smp.h>
+-#include <asm/mtrr.h>
+-#include <asm/tlbflush.h>
+-#include <asm/mmu_context.h>
+ #include <asm/apic.h>
+-#include <asm/proto.h>
+ #include <asm/ipi.h>
+ 
+ void __default_send_IPI_shortcut(unsigned int shortcut, int vector, unsigned int dest)
+--- a/arch/x86/kernel/apic/probe_32.c
++++ b/arch/x86/kernel/apic/probe_32.c
+@@ -6,26 +6,12 @@
+  *
+  * Generic x86 APIC driver probe layer.
+  */
+-#include <linux/threads.h>
+-#include <linux/cpumask.h>
+ #include <linux/export.h>
+-#include <linux/string.h>
+-#include <linux/kernel.h>
+-#include <linux/ctype.h>
+-#include <linux/init.h>
+ #include <linux/errno.h>
+-#include <asm/fixmap.h>
+-#include <asm/mpspec.h>
+-#include <asm/apicdef.h>
+-#include <asm/apic.h>
+-#include <asm/setup.h>
+-
+-#include <linux/smp.h>
+-#include <asm/ipi.h>
+ 
+-#include <linux/interrupt.h>
++#include <asm/apic.h>
+ #include <asm/acpi.h>
+-#include <asm/e820/api.h>
++#include <asm/ipi.h>
+ 
+ #ifdef CONFIG_HOTPLUG_CPU
+ #define DEFAULT_SEND_IPI	(1)
+--- a/arch/x86/kernel/apic/probe_64.c
++++ b/arch/x86/kernel/apic/probe_64.c
+@@ -8,19 +8,8 @@
+  * Martin Bligh, Andi Kleen, James Bottomley, John Stultz, and
+  * James Cleverdon.
+  */
+-#include <linux/threads.h>
+-#include <linux/cpumask.h>
+-#include <linux/string.h>
+-#include <linux/init.h>
+-#include <linux/kernel.h>
+-#include <linux/ctype.h>
+-#include <linux/hardirq.h>
+-#include <linux/dmar.h>
+-
+-#include <asm/smp.h>
+ #include <asm/apic.h>
+ #include <asm/ipi.h>
+-#include <asm/setup.h>
+ 
+ /*
+  * Check the APIC IDs in bios_cpu_apicid and choose the APIC mode.
+--- a/arch/x86/kernel/apic/x2apic_cluster.c
++++ b/arch/x86/kernel/apic/x2apic_cluster.c
+@@ -1,14 +1,12 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#include <linux/threads.h>
++
++#include <linux/cpuhotplug.h>
+ #include <linux/cpumask.h>
+-#include <linux/string.h>
+-#include <linux/kernel.h>
+-#include <linux/ctype.h>
+-#include <linux/dmar.h>
+-#include <linux/irq.h>
+-#include <linux/cpu.h>
++#include <linux/slab.h>
++#include <linux/mm.h>
++
++#include <asm/apic.h>
+ 
+-#include <asm/smp.h>
+ #include "x2apic.h"
+ 
+ struct cluster_mask {
+--- a/arch/x86/kernel/apic/x2apic_phys.c
++++ b/arch/x86/kernel/apic/x2apic_phys.c
+@@ -1,13 +1,10 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#include <linux/threads.h>
++
+ #include <linux/cpumask.h>
+-#include <linux/string.h>
+-#include <linux/kernel.h>
+-#include <linux/ctype.h>
+-#include <linux/dmar.h>
++#include <linux/acpi.h>
+ 
+-#include <asm/smp.h>
+ #include <asm/ipi.h>
++
+ #include "x2apic.h"
+ 
+ int x2apic_phys;
+--- a/arch/x86/kernel/apic/x2apic_uv_x.c
++++ b/arch/x86/kernel/apic/x2apic_uv_x.c
+@@ -7,40 +7,20 @@
+  *
+  * Copyright (C) 2007-2014 Silicon Graphics, Inc. All rights reserved.
+  */
++#include <linux/crash_dump.h>
++#include <linux/cpuhotplug.h>
+ #include <linux/cpumask.h>
+-#include <linux/hardirq.h>
+ #include <linux/proc_fs.h>
+-#include <linux/threads.h>
+-#include <linux/kernel.h>
++#include <linux/memory.h>
+ #include <linux/export.h>
+-#include <linux/string.h>
+-#include <linux/ctype.h>
+-#include <linux/sched.h>
+-#include <linux/timer.h>
+-#include <linux/slab.h>
+-#include <linux/cpu.h>
+-#include <linux/init.h>
+-#include <linux/io.h>
+ #include <linux/pci.h>
+-#include <linux/kdebug.h>
+-#include <linux/delay.h>
+-#include <linux/crash_dump.h>
+-#include <linux/reboot.h>
+-#include <linux/memory.h>
+-#include <linux/numa.h>
+ 
++#include <asm/e820/api.h>
+ #include <asm/uv/uv_mmrs.h>
+ #include <asm/uv/uv_hub.h>
+-#include <asm/current.h>
+-#include <asm/pgtable.h>
+ #include <asm/uv/bios.h>
+ #include <asm/uv/uv.h>
+ #include <asm/apic.h>
+-#include <asm/e820/api.h>
+-#include <asm/ipi.h>
+-#include <asm/smp.h>
+-#include <asm/x86_init.h>
+-#include <asm/nmi.h>
+ 
+ DEFINE_PER_CPU(int, x2apic_extra_bits);
+ 
 
 
