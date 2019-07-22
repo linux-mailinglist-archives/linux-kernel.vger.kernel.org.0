@@ -2,249 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F8C270865
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:24:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9124E70875
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:27:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731631AbfGVSYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 14:24:09 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36980 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbfGVSYJ (ORCPT
+        id S1731715AbfGVSZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 14:25:05 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44855 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731757AbfGVSZE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 14:24:09 -0400
-Received: by mail-pg1-f196.google.com with SMTP id i70so7316560pgd.4
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 11:24:08 -0700 (PDT)
+        Mon, 22 Jul 2019 14:25:04 -0400
+Received: by mail-pl1-f196.google.com with SMTP id t14so19507823plr.11
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 11:25:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=tbsYAl6lEifnMbida92iAOzaQwo02qpPsm/r9kyfdRA=;
-        b=fJ1SX2xRQ+m9MlCgPtJImagZL+JUJWHWzwXd06uCwCbYuwTUJ+lFT83AmDqNEyG1KS
-         6i7OehgbNUQJV0DQiK528BtDnflwmfsAuvxK9/VXd5gPBl/mcvha4JTF0sHl6bn08Wu3
-         6FexZ+LNc1n/xwKwySfZyTyLm5zjlY78dlveQ=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x8c0DPCRMv9IW9PP1p4HBNy16Fzp3nQIOkgwmBpQwpo=;
+        b=FfZ6mG6bnACwo8lgLXr1zYGkAj7V4iNwkTU4H5ELO+CqHQDbFy8TPLhLV8XtPvILqW
+         TowJOHAi23SCQrrxtT2YTfMTfZT0utOVqKKuvQM9feJUKIT7JNt7M+zJZk8pj3Ja4Z0d
+         xtriekUe46UMlYaBOMlvThIUciUDwEHKz3k6E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=tbsYAl6lEifnMbida92iAOzaQwo02qpPsm/r9kyfdRA=;
-        b=hYiVvVwjtalhx8skw2e2E+M1nA8d/kK3jKK4Sx4y/2lds+VLJ+6pDL32A7XRSIy4g7
-         xoII91CQGQkUt0KzpOuM4U8hoOzl44muFp2WUBPV2kQKINXhl+V85bu8IFDe15tjpsrp
-         czM0RvlHxrvBSMvEvpk8ie2ug7COUJcyz9skyESms4YzierOoVl/0C9nOKL0vE/lXepK
-         6AxRqHdVVFF2XEDRiTOjQN08Gtfon7lx0r5sO4u/sCFB8tLDrJYYD7f2hDo6oKO7/ivQ
-         csMcLOZDpnvEGbDnM9CcL6bjhExi/G0TdpkphZCR2fDddpeb7o0/dnaUepzSvPVYK1hW
-         vVRA==
-X-Gm-Message-State: APjAAAX3l1ZndXjZA2TcNqx8cXZ3dInznpBIddyVfSdqEumC/VpWw+dQ
-        yweJznHsF55zx0zfJqy+VEdEKw==
-X-Google-Smtp-Source: APXvYqwOqYkXB6MsiqicQMplBz9tEI/SBuN3tpmwoB/rD+fYBbHpvD2aXPJCyAlJVBa7oMwPObiyZw==
-X-Received: by 2002:a63:ee0c:: with SMTP id e12mr73754197pgi.184.1563819848563;
-        Mon, 22 Jul 2019 11:24:08 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id o3sm74917711pje.1.2019.07.22.11.24.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Jul 2019 11:24:07 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 11:24:06 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x8c0DPCRMv9IW9PP1p4HBNy16Fzp3nQIOkgwmBpQwpo=;
+        b=oEzz8RsEN5mxVxOLA5v/Ib4uoKshAxW+Go0h8bgBTsUSysqaFsMfNRp8Z/KeNsvtLn
+         suXGARK4WV+Vv9ZnYRVv76J6i9SJ3qnRKWt0iCZW0Lwrd/YLN1bKxDG4wwYnc0tyMn6N
+         h7OoORmRXzO0fOmCv2tme6ug2hmNK4j5dQf9s/dyHLBpmbho+HG54X7dGeIwPjP+leMl
+         yU22XfWoZ1DhX/ohSeWuCBiNtENIRfcsmfSH91yKcsCfbgqJ4q0Y8K6h6o4Or27qIB6D
+         B5Z35u1IdS00h+qZXOi8LvV0urnADp3AcdwI9qlCP4DDFPWZ675Xu3R976NHeqtIsYX9
+         pHJw==
+X-Gm-Message-State: APjAAAVZ393OOnOTRgZiMd0DaPN/sy6ZRBn8yjPGLkLZIoj7x34m6afg
+        mxyv6Utdoox8lKaoZCTTmk/72Q==
+X-Google-Smtp-Source: APXvYqwyyl3J3Mb8JWQgZSDuxJTdfEQ/qKsf4Mi5pmNYAuIsVFOtUl3uWg6CUWJmNS9uHBU4AAA4AQ==
+X-Received: by 2002:a17:902:7448:: with SMTP id e8mr76695940plt.85.1563819903648;
+        Mon, 22 Jul 2019 11:25:03 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id a3sm36117683pfl.145.2019.07.22.11.25.02
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 22 Jul 2019 11:25:03 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     David Airlie <airlied@linux.ie>, linux-fbdev@vger.kernel.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        dri-devel@lists.freedesktop.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Russell King <linux@armlinux.org.uk>,
         Daniel Vetter <daniel@ffwll.ch>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/i915: Mark expected switch fall-throughs
-Message-ID: <201907221123.1B963BA9@keescook>
-References: <20190722181244.GA2085@embeddedor>
+        Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 0/4] video: of: display_timing: Adjust err printing of of_get_display_timing()
+Date:   Mon, 22 Jul 2019 11:24:35 -0700
+Message-Id: <20190722182439.44844-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190722181244.GA2085@embeddedor>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 01:12:44PM -0500, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
-> 
-> This patch fixes the following warnings:
-> 
-> drivers/gpu/drm/i915/gem/i915_gem_mman.c: In function ‘i915_gem_fault’:
-> drivers/gpu/drm/i915/gem/i915_gem_mman.c:342:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    if (!i915_terminally_wedged(i915))
->       ^
-> drivers/gpu/drm/i915/gem/i915_gem_mman.c:345:2: note: here
->   case -EAGAIN:
->   ^~~~
-> 
-> drivers/gpu/drm/i915/gem/i915_gem_pages.c: In function ‘i915_gem_object_map’:
-> ./include/linux/compiler.h:78:22: warning: this statement may fall through [-Wimplicit-fallthrough=]
->  # define unlikely(x) __builtin_expect(!!(x), 0)
->                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> ./include/asm-generic/bug.h:136:2: note: in expansion of macro ‘unlikely’
->   unlikely(__ret_warn_on);     \
->   ^~~~~~~~
-> drivers/gpu/drm/i915/i915_utils.h:49:25: note: in expansion of macro ‘WARN’
->  #define MISSING_CASE(x) WARN(1, "Missing case (%s == %ld)\n", \
->                          ^~~~
-> drivers/gpu/drm/i915/gem/i915_gem_pages.c:270:3: note: in expansion of macro ‘MISSING_CASE’
->    MISSING_CASE(type);
->    ^~~~~~~~~~~~
-> drivers/gpu/drm/i915/gem/i915_gem_pages.c:272:2: note: here
->   case I915_MAP_WB:
->   ^~~~
-> 
-> drivers/gpu/drm/i915/i915_gpu_error.c: In function ‘error_record_engine_registers’:
-> ./include/linux/compiler.h:78:22: warning: this statement may fall through [-Wimplicit-fallthrough=]
->  # define unlikely(x) __builtin_expect(!!(x), 0)
->                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> ./include/asm-generic/bug.h:136:2: note: in expansion of macro ‘unlikely’
->   unlikely(__ret_warn_on);     \
->   ^~~~~~~~
-> drivers/gpu/drm/i915/i915_utils.h:49:25: note: in expansion of macro ‘WARN’
->  #define MISSING_CASE(x) WARN(1, "Missing case (%s == %ld)\n", \
->                          ^~~~
-> drivers/gpu/drm/i915/i915_gpu_error.c:1196:5: note: in expansion of macro ‘MISSING_CASE’
->      MISSING_CASE(engine->id);
->      ^~~~~~~~~~~~
-> drivers/gpu/drm/i915/i915_gpu_error.c:1197:4: note: here
->     case RCS0:
->     ^~~~
-> 
-> drivers/gpu/drm/i915/display/intel_dp.c: In function ‘intel_dp_get_fia_supported_lane_count’:
-> ./include/linux/compiler.h:78:22: warning: this statement may fall through [-Wimplicit-fallthrough=]
->  # define unlikely(x) __builtin_expect(!!(x), 0)
->                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> ./include/asm-generic/bug.h:136:2: note: in expansion of macro ‘unlikely’
->   unlikely(__ret_warn_on);     \
->   ^~~~~~~~
-> drivers/gpu/drm/i915/i915_utils.h:49:25: note: in expansion of macro ‘WARN’
->  #define MISSING_CASE(x) WARN(1, "Missing case (%s == %ld)\n", \
->                          ^~~~
-> drivers/gpu/drm/i915/display/intel_dp.c:233:3: note: in expansion of macro ‘MISSING_CASE’
->    MISSING_CASE(lane_info);
->    ^~~~~~~~~~~~
-> drivers/gpu/drm/i915/display/intel_dp.c:234:2: note: here
->   case 1:
->   ^~~~
-> 
-> drivers/gpu/drm/i915/display/intel_display.c: In function ‘check_digital_port_conflicts’:
->   CC [M]  drivers/gpu/drm/nouveau/nvkm/engine/disp/cursgv100.o
-> drivers/gpu/drm/i915/display/intel_display.c:12043:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->     if (WARN_ON(!HAS_DDI(to_i915(dev))))
->        ^
-> drivers/gpu/drm/i915/display/intel_display.c:12046:3: note: here
->    case INTEL_OUTPUT_DP:
->    ^~~~
-> 
-> Also, notice that the Makefile is modified in order to stop
-> ignoring fall-through warnings. The -Wimplicit-fallthrough
-> option will be enabled globally in v5.3.
-> 
-> Warning level 3 was used: -Wimplicit-fallthrough=3
-> 
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+As reported by Sam Ravnborg [1], after commit b8a2948fa2b3
+("drm/panel: simple: Add ability to override typical timing") we now
+see a pointless error message printed on every boot for many systems.
+Let's fix that by adjusting who is responsible for printing error
+messages when of_get_display_timing() is used.
 
-Excellent; I think these are literally the last remaining cases in the
-kernel. :)
+Most certainly we can bikeshed the topic about whether this is the
+right fix or we should instead add logic to panel_simple_probe() to
+avoid calling of_get_display_timing() in the case where there is no
+"panel-timing" sub-node.  If there is consensus that I should move the
+fix to panel_simple_probe() I'm happy to spin this series.  In that
+case we probably should _remove_ the extra prints that were already
+present in the other two callers of of_get_display_timing().
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+While at it, fix a missing of_node_put() found by code inspection.
 
--Kees
+NOTE: amba-clcd and panel-lvds were only compile-tested.
 
-> ---
->  drivers/gpu/drm/i915/Makefile                | 1 -
->  drivers/gpu/drm/i915/display/intel_display.c | 2 +-
->  drivers/gpu/drm/i915/display/intel_dp.c      | 1 +
->  drivers/gpu/drm/i915/gem/i915_gem_mman.c     | 2 +-
->  drivers/gpu/drm/i915/gem/i915_gem_pages.c    | 2 +-
->  drivers/gpu/drm/i915/i915_gpu_error.c        | 1 +
->  6 files changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/Makefile b/drivers/gpu/drm/i915/Makefile
-> index 91355c2ea8a5..8cace65f50ce 100644
-> --- a/drivers/gpu/drm/i915/Makefile
-> +++ b/drivers/gpu/drm/i915/Makefile
-> @@ -16,7 +16,6 @@ subdir-ccflags-y := -Wall -Wextra
->  subdir-ccflags-y += $(call cc-disable-warning, unused-parameter)
->  subdir-ccflags-y += $(call cc-disable-warning, type-limits)
->  subdir-ccflags-y += $(call cc-disable-warning, missing-field-initializers)
-> -subdir-ccflags-y += $(call cc-disable-warning, implicit-fallthrough)
->  subdir-ccflags-y += $(call cc-disable-warning, unused-but-set-variable)
->  # clang warnings
->  subdir-ccflags-y += $(call cc-disable-warning, sign-compare)
-> diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/drm/i915/display/intel_display.c
-> index 8592a7d422de..30b97ded6fdd 100644
-> --- a/drivers/gpu/drm/i915/display/intel_display.c
-> +++ b/drivers/gpu/drm/i915/display/intel_display.c
-> @@ -12042,7 +12042,7 @@ static bool check_digital_port_conflicts(struct intel_atomic_state *state)
->  		case INTEL_OUTPUT_DDI:
->  			if (WARN_ON(!HAS_DDI(to_i915(dev))))
->  				break;
-> -			/* else: fall through */
-> +			/* else, fall through */
->  		case INTEL_OUTPUT_DP:
->  		case INTEL_OUTPUT_HDMI:
->  		case INTEL_OUTPUT_EDP:
-> diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
-> index 4336df46fe78..d0fc34826771 100644
-> --- a/drivers/gpu/drm/i915/display/intel_dp.c
-> +++ b/drivers/gpu/drm/i915/display/intel_dp.c
-> @@ -231,6 +231,7 @@ static int intel_dp_get_fia_supported_lane_count(struct intel_dp *intel_dp)
->  	switch (lane_info) {
->  	default:
->  		MISSING_CASE(lane_info);
-> +		/* fall through */
->  	case 1:
->  	case 2:
->  	case 4:
-> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_mman.c b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
-> index 391621ee3cbb..39a661927d8e 100644
-> --- a/drivers/gpu/drm/i915/gem/i915_gem_mman.c
-> +++ b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
-> @@ -341,7 +341,7 @@ vm_fault_t i915_gem_fault(struct vm_fault *vmf)
->  		 */
->  		if (!i915_terminally_wedged(i915))
->  			return VM_FAULT_SIGBUS;
-> -		/* else: fall through */
-> +		/* else, fall through */
->  	case -EAGAIN:
->  		/*
->  		 * EAGAIN means the gpu is hung and we'll wait for the error
-> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_pages.c b/drivers/gpu/drm/i915/gem/i915_gem_pages.c
-> index b36ad269f4ea..65eb430cedba 100644
-> --- a/drivers/gpu/drm/i915/gem/i915_gem_pages.c
-> +++ b/drivers/gpu/drm/i915/gem/i915_gem_pages.c
-> @@ -268,7 +268,7 @@ static void *i915_gem_object_map(const struct drm_i915_gem_object *obj,
->  	switch (type) {
->  	default:
->  		MISSING_CASE(type);
-> -		/* fallthrough to use PAGE_KERNEL anyway */
-> +		/* fallthrough - to use PAGE_KERNEL anyway */
->  	case I915_MAP_WB:
->  		pgprot = PAGE_KERNEL;
->  		break;
-> diff --git a/drivers/gpu/drm/i915/i915_gpu_error.c b/drivers/gpu/drm/i915/i915_gpu_error.c
-> index b7e9fddef270..41a511d5267f 100644
-> --- a/drivers/gpu/drm/i915/i915_gpu_error.c
-> +++ b/drivers/gpu/drm/i915/i915_gpu_error.c
-> @@ -1194,6 +1194,7 @@ static void error_record_engine_registers(struct i915_gpu_state *error,
->  			switch (engine->id) {
->  			default:
->  				MISSING_CASE(engine->id);
-> +				/* fall through */
->  			case RCS0:
->  				mmio = RENDER_HWS_PGA_GEN7;
->  				break;
-> -- 
-> 2.22.0
-> 
+[1] https://lkml.kernel.org/r/20190721093815.GA4375@ravnborg.org
+
+
+Douglas Anderson (4):
+  video: of: display_timing: Add of_node_put() in
+    of_get_display_timing()
+  video: of: display_timing: Don't yell if no timing node is present
+  drm: panel-lvds: Spout an error if of_get_display_timing() gives an
+    error
+  video: amba-clcd: Spout an error if of_get_display_timing() gives an
+    error
+
+ drivers/gpu/drm/panel/panel-lvds.c |  5 ++++-
+ drivers/video/fbdev/amba-clcd.c    |  4 +++-
+ drivers/video/of_display_timing.c  | 11 +++++++----
+ 3 files changed, 14 insertions(+), 6 deletions(-)
 
 -- 
-Kees Cook
+2.22.0.657.g960e92d24f-goog
+
