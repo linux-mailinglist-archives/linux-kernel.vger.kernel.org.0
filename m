@@ -2,76 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFA9F70642
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 18:57:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31DE07063C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 18:56:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730026AbfGVQ52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 12:57:28 -0400
-Received: from scorn.kernelslacker.org ([45.56.101.199]:36182 "EHLO
-        scorn.kernelslacker.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729728AbfGVQ51 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 12:57:27 -0400
-X-Greylist: delayed 1166 seconds by postgrey-1.27 at vger.kernel.org; Mon, 22 Jul 2019 12:57:27 EDT
-Received: from [2601:196:4600:6634:ae9e:17ff:feb7:72ca] (helo=wopr.kernelslacker.org)
-        by scorn.kernelslacker.org with esmtp (Exim 4.92)
-        (envelope-from <davej@codemonkey.org.uk>)
-        id 1hpbK3-0000th-Ut; Mon, 22 Jul 2019 12:38:00 -0400
-Received: by wopr.kernelslacker.org (Postfix, from userid 1026)
-        id 9239D5601D8; Mon, 22 Jul 2019 12:37:59 -0400 (EDT)
-Date:   Mon, 22 Jul 2019 12:37:59 -0400
-From:   Dave Jones <davej@codemonkey.org.uk>
-To:     Linux Kernel <linux-kernel@vger.kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>
-Subject: 5.3-rc1 panic in dma_direct_max_mapping_size
-Message-ID: <20190722163759.GA28686@codemonkey.org.uk>
-Mail-Followup-To: Dave Jones <davej@codemonkey.org.uk>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
+        id S1729209AbfGVQ44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 12:56:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54194 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728343AbfGVQ44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 12:56:56 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C400C3082133;
+        Mon, 22 Jul 2019 16:56:55 +0000 (UTC)
+Received: from [10.36.116.45] (ovpn-116-45.ams2.redhat.com [10.36.116.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4B74719D71;
+        Mon, 22 Jul 2019 16:56:51 +0000 (UTC)
+Subject: Re: [PATCH v2] dma-mapping: Use dma_get_mask in
+ dma_addressing_limited
+To:     eric.auger.pro@gmail.com, hch@lst.de, m.szyprowski@samsung.com,
+        robin.murphy@arm.com, mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <20190722165149.3763-1-eric.auger@redhat.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <77ba1061-08b6-421e-a6dd-d5db9851325b@redhat.com>
+Date:   Mon, 22 Jul 2019 18:56:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Note: SpamAssassin invocation failed
+In-Reply-To: <20190722165149.3763-1-eric.auger@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 22 Jul 2019 16:56:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-only got a partial panic, but when I threw 5.3-rc1 on a linode vm,
-it hit this:
+Hi Christoph,
 
- bus_add_driver+0x1a9/0x1c0
- ? scsi_init_sysctl+0x22/0x22
- driver_register+0x6b/0xa6
- ? scsi_init_sysctl+0x22/0x22
- init+0x86/0xcc
- do_one_initcall+0x69/0x334
- kernel_init_freeable+0x367/0x3ff
- ? rest_init+0x247/0x247
- kernel_init+0xa/0xf9
- ret_from_fork+0x3a/0x50
-CR2: 0000000000000000
----[ end trace 2967cd16f7b1a303 ]---
-RIP: 0010:dma_direct_max_mapping_size+0x21/0x71
-Code: 0f b6 c0 c3 0f 1f 44 00 00 0f 1f 44 00 00 55 53 48 89 fb e8 21 0e 00 00 84 c0 74 2c 48 8b 83 20 03 00 00 48 8b ab
-30 03 00 00 <48> 8b 00 48 85 c0 75 20 48 89 df e8 ff f3 ff ff 48 39 e8 77 2c 83
-RSP: 0018:ffffb58f00013ae8 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: ffffa35ff8914ac8 RCX: ffffb58f00013a1c
-RDX: ffffa35ff81d4658 RSI: 000000000000007e RDI: ffffa35ff8914ac8
-RBP: 0000000000000000 R08: ffffa35ff81d4cc0 R09: ffffa35ff82e3bc8
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffa35ff8914ac8
-R13: 000000000000ffff R14: ffffa35ff826c160 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffffa35ffba00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 000000012d220001 CR4: 00000000003606f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
-Kernel Offset: 0x1b000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+On 7/22/19 6:51 PM, Eric Auger wrote:
+> We currently have cases where the dma_addressing_limited() gets
+> called with dma_mask unset. This causes a NULL pointer dereference.
+> 
+> Use dma_get_mask() accessor to prevent the crash.
+> 
+> Fixes: b866455423e0 ("dma-mapping: add a dma_addressing_limited helper")
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
 
+As a follow-up of my last email, here is a patch featuring
+dma_get_mask(). But you don't have the WARN_ON_ONCE anymore, pointing
+out suspect users.
 
-Will try and get some more debug info this evening if it isn't obvious
-from the above.
+Feel free to pick up your preferred approach
 
-	Dave
+Thanks
+
+Eric
+> 
+> ---
+> 
+> v1 -> v2:
+> - was [PATCH 1/2] dma-mapping: Protect dma_addressing_limited
+>   against NULL dma_mask
+> - Use dma_get_mask
+> ---
+>  include/linux/dma-mapping.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index e11b115dd0e4..f7d1eea32c78 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -689,8 +689,8 @@ static inline int dma_coerce_mask_and_coherent(struct device *dev, u64 mask)
+>   */
+>  static inline bool dma_addressing_limited(struct device *dev)
+>  {
+> -	return min_not_zero(*dev->dma_mask, dev->bus_dma_mask) <
+> -		dma_get_required_mask(dev);
+> +	return min_not_zero(dma_get_mask(dev), dev->bus_dma_mask) <
+> +			    dma_get_required_mask(dev);
+>  }
+>  
+>  #ifdef CONFIG_ARCH_HAS_SETUP_DMA_OPS
+> 
