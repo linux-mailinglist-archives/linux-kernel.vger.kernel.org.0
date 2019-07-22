@@ -2,98 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86C09709F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 21:43:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B7D170A00
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 21:45:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730259AbfGVTnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 15:43:08 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43499 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727905AbfGVTnI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 15:43:08 -0400
-Received: by mail-lj1-f196.google.com with SMTP id y17so14181406ljk.10
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 12:43:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dev-mellanox-co-il.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yDcZGwhuKZu3iHdLJjjZrDjT2mDiJYa3/PCuflSwhmE=;
-        b=JH+WTPvGR1uJXOfkLig+2OnrW2RKgN80CBOlHfHzmzd4O+bmVrzCRVv79MtxWactpN
-         5AQJgh8/hKUCP0JLKzw9h/Ia3Zucxwt24sq0z1NWzgC9D7F9JM39IuPnlfeD8HuVZjgZ
-         df1gbXNdbJqX60F6+Y/PKNW/1fE0l4GJwD+5qqqbYRcIBhraAj8DB6QvLVW+D4BcwoSy
-         XbY47a81+I07ouFEfhrSnksjfYHY98ImOhSJYDBYtWMQ1Mjelr3fU9T1Oy9gC9xOVFkv
-         9z7hQlZHI374PYI2T6OQwIYP1EKvSEMpTqTekwepqb6IjDkwfgi3/YVva8PPoL2m8Qmh
-         Yl4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yDcZGwhuKZu3iHdLJjjZrDjT2mDiJYa3/PCuflSwhmE=;
-        b=sblPfUvAa/MT6jMvR7WUZNV4axxyXbS5ggkxOKloJ7LuKt08FZMsY3tyTMV55ms1IH
-         y4SDonN3j1iVE+ib4dC+uYKKX2gfkGXW0WCjc9+akLrQA7JvgY7xXzexx6dazb9MhfEm
-         Wft6r7Yi7146TS9ZIm0LZSEsfV1VGIPcBSyr5fBaxvYNWM3fS/v9EqNbLuv9jbt+KGJ/
-         jNFggXbYVrKr1r3LTgPE9yCsJM7Mv08Fb3uBSA+UlHrdX/7nwB25/vdVLvAScI/LjBzC
-         /39Hn/iP7LeWviu1uctB05KNpc0Fy9hewp/5SpHthRjKvwKUOVslFa7LEaWHAtUHeWoi
-         ylEA==
-X-Gm-Message-State: APjAAAXhLlQHGuKmTWzF8u2B230lkRYfKYouICi+FPXnsCU3u5B0KyNF
-        p//lQn+G7CWFOE6Ygsi1BnA7tcuLeWfhy8vbQTs=
-X-Google-Smtp-Source: APXvYqxYj26MsmsL+EUr6K7HJeh4VOAk6pAdE7CkRMdt0FiDft3k4b/ODkmGcqVb0AGyHNqMuSc+O0XivAmJeX8kyWM=
-X-Received: by 2002:a2e:3604:: with SMTP id d4mr36892450lja.85.1563824585693;
- Mon, 22 Jul 2019 12:43:05 -0700 (PDT)
+        id S1730884AbfGVTo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 15:44:58 -0400
+Received: from ms.lwn.net ([45.79.88.28]:42980 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728505AbfGVTo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 15:44:58 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 13C6C2C9;
+        Mon, 22 Jul 2019 19:44:58 +0000 (UTC)
+Date:   Mon, 22 Jul 2019 13:44:56 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Federico Vaga <federico.vaga@vaga.pv.it>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] doc:it_IT: align translation to mainline
+Message-ID: <20190722134456.6b38077c@lwn.net>
+In-Reply-To: <20190718074724.29807-1-federico.vaga@vaga.pv.it>
+References: <20190718074724.29807-1-federico.vaga@vaga.pv.it>
+Organization: LWN.net
 MIME-Version: 1.0
-References: <1563820482-10302-1-git-send-email-cai@lca.pw> <20190722.120901.1770656295609872438.davem@davemloft.net>
-In-Reply-To: <20190722.120901.1770656295609872438.davem@davemloft.net>
-From:   Saeed Mahameed <saeedm@dev.mellanox.co.il>
-Date:   Mon, 22 Jul 2019 12:42:54 -0700
-Message-ID: <CALzJLG81NvsSbv7Qv11QnX3pvogeSmO-vsn1uYP13p5T14irig@mail.gmail.com>
-Subject: Re: [PATCH] net/mlx5: fix -Wtype-limits compilation warnings
-To:     David Miller <davem@davemloft.net>
-Cc:     Qian Cai <cai@lca.pw>, Saeed Mahameed <saeedm@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 12:09 PM David Miller <davem@davemloft.net> wrote:
->
-> From: Qian Cai <cai@lca.pw>
-> Date: Mon, 22 Jul 2019 14:34:42 -0400
->
-> > The commit b9a7ba556207 ("net/mlx5: Use event mask based on device
-> > capabilities") introduced a few compilation warnings due to it bumps
-> > MLX5_EVENT_TYPE_MAX from 0x27 to 0x100 which is always greater than
-> > an "struct {mlx5_eqe|mlx5_nb}.type" that is an "u8".
-> >
-> > drivers/net/ethernet/mellanox/mlx5/core/eq.c: In function
-> > 'mlx5_eq_notifier_register':
-> > drivers/net/ethernet/mellanox/mlx5/core/eq.c:948:21: warning: comparison
-> > is always false due to limited range of data type [-Wtype-limits]
-> >   if (nb->event_type >= MLX5_EVENT_TYPE_MAX)
-> >                      ^~
-> > drivers/net/ethernet/mellanox/mlx5/core/eq.c: In function
-> > 'mlx5_eq_notifier_unregister':
-> > drivers/net/ethernet/mellanox/mlx5/core/eq.c:959:21: warning: comparison
-> > is always false due to limited range of data type [-Wtype-limits]
-> >   if (nb->event_type >= MLX5_EVENT_TYPE_MAX)
-> >
-> > Fix them by removing unnecessary checkings.
-> >
-> > Fixes: b9a7ba556207 ("net/mlx5: Use event mask based on device capabilities")
-> > Signed-off-by: Qian Cai <cai@lca.pw>
->
-> Saeed, I am assuming that you will take this.
+On Thu, 18 Jul 2019 09:47:24 +0200
+Federico Vaga <federico.vaga@vaga.pv.it> wrote:
 
-Yes, will take it.
-The patch LGTM, though not applying it yet so others get the chance to
-review it.
-will apply it in a couple of days.
+> The patch translates the following patches in Italian:
+> 
+> d9d7c0c497b8 docs: Note that :c:func: should no longer be used
+> 83e8b971f81c sphinx.rst: Add note about code snippets embedded in the text
+> cca5e0b8a430 Documentation: PGP: update for newer HW devices
+> 
+> Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
 
-Thanks,
-Saeed.
+Applied (and the second one as well), thanks.
+
+jon
