@@ -2,276 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 670546F766
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 04:51:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F0756F7BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 05:05:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbfGVCvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 21 Jul 2019 22:51:52 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2731 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728913AbfGVCvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Jul 2019 22:51:31 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 6BAC64CF3FF124CDE215;
-        Mon, 22 Jul 2019 10:51:29 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 22 Jul
- 2019 10:51:22 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v3 24/24] erofs: add document
-Date:   Mon, 22 Jul 2019 10:50:43 +0800
-Message-ID: <20190722025043.166344-25-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190722025043.166344-1-gaoxiang25@huawei.com>
-References: <20190722025043.166344-1-gaoxiang25@huawei.com>
+        id S1726736AbfGVDFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 21 Jul 2019 23:05:35 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:38672 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbfGVDFf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Jul 2019 23:05:35 -0400
+Received: by mail-io1-f68.google.com with SMTP id j6so38443856ioa.5;
+        Sun, 21 Jul 2019 20:05:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3d0TsmehIUmq0qA3N9Vz5YuFrjv8Qaa0x6G/JzdD5+Q=;
+        b=PIdr/rGhuR3gElVXXEdhqxyDoPfQRzGzlzRsAzSQday/+3+zU5J3I9qZT6yMlM2fxC
+         A2ZisZVGcn44iTC+0t6mQPvcI95y5XP/aEe+4LQvNeGv1J+HYwuOdYmEqJOav62y++gS
+         zxOGTc3oSX5cc/upKn85TCm5IR5jvT3jGwbumY2ub48cdTQ6MmGd+YdDmBtSK5M6eFuB
+         Xrb8xZXXQHQ/NO/TeEABtAaz8tXI11OQrfCGbCzW0vjI7DrAO9YtPFvjkM1XFP/FeKOe
+         /dU0yTmQNTSoACdXOIIVGickG3YEmqPsuPg0aRctVXiHaOEol9vOSvh1Z+qtpOWddo68
+         H9qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3d0TsmehIUmq0qA3N9Vz5YuFrjv8Qaa0x6G/JzdD5+Q=;
+        b=OwwPwM93o/gfSctgktG8lwfCT87n1DiHahFe5ridOYPLMMznTKkTjMXcO7VpQRn59T
+         cJOciGpSfcRRRc1g85/FTmOpxrZsI+2Ioda7Ktm/0QWVYCdzK3KNhLx/xz6VMFk4oMV5
+         2hRTIWA+S16I6EVi1cbeeKvA4BvbxobIhKHLw6cusB/GN30IswoxrzaIp2G7q+MW/Q2o
+         vD2x3FaUEHVK6C5XU1DDX17p/g9ZxEXVjywG0YXpaU7Un1MkiTddvMC2PdZrsvV/zKei
+         jn4yADlGz3JSH+jSnfghpHvSucROHS75upLF1ikTafl/YP6yVIxeW3lmKo5EXKzFHT+j
+         uO1Q==
+X-Gm-Message-State: APjAAAVI+lVIVLo5l0J33KHmY8U0p4Us+nA8DJNSc69BCyZxcVlIAT1B
+        FPDZGs8T6N6geZxR2poZlZHvrIzGCgneQQ==
+X-Google-Smtp-Source: APXvYqzwrHss0BMfmADs2MwmQrZARNdK6NgwhQ1YV7GWuJj8TMtVG8AWad93ZKewi4L8d+CLLcB06Q==
+X-Received: by 2002:a6b:6f06:: with SMTP id k6mr53829059ioc.32.1563764734329;
+        Sun, 21 Jul 2019 20:05:34 -0700 (PDT)
+Received: from localhost.localdomain (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
+        by smtp.gmail.com with ESMTPSA id i23sm27928326ioj.24.2019.07.21.20.05.32
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 21 Jul 2019 20:05:33 -0700 (PDT)
+From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
+To:     iyappan@os.amperecomputing.com, keyur@os.amperecomputing.com,
+        quan@os.amperecomputing.com, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     bjorn@helgaas.com, rjw@rjwysocki.net, skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        skunberg.kelsey@gmail.com
+Subject: [PATCH] drivers: net: xgene: Remove acpi_has_method() calls
+Date:   Sun, 21 Jul 2019 21:04:01 -0600
+Message-Id: <20190722030401.69563-1-skunberg.kelsey@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This documents key features, usage, and
-on-disk design of erofs.
+acpi_evaluate_object will already return an error if the needed method
+does not exist. Remove unnecessary acpi_has_method() calls and check the
+returned acpi_status for failure instead.
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
 ---
- Documentation/filesystems/erofs.txt | 211 ++++++++++++++++++++++++++++
- 1 file changed, 211 insertions(+)
- create mode 100644 Documentation/filesystems/erofs.txt
+ drivers/net/ethernet/apm/xgene/xgene_enet_hw.c    |  7 +++----
+ drivers/net/ethernet/apm/xgene/xgene_enet_sgmac.c | 10 +++++-----
+ drivers/net/ethernet/apm/xgene/xgene_enet_xgmac.c |  9 ++++-----
+ 3 files changed, 12 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/filesystems/erofs.txt b/Documentation/filesystems/erofs.txt
-new file mode 100644
-index 000000000000..b7ff62fb61a4
---- /dev/null
-+++ b/Documentation/filesystems/erofs.txt
-@@ -0,0 +1,211 @@
-+Overview
-+========
-+
-+EROFS file-system stands for Enhanced Read-Only File System. Different
-+from other read-only file systems, it aims to be designed for flexibility,
-+scalability, but be kept simple and high performance.
-+
-+It is designed as a better filesystem solution for the following scenarios:
-+ - read-only storage media or
-+
-+ - part of a fully trusted read-only solution, which means it needs to be
-+   immutable and bit-for-bit identical to the official golden image for
-+   their releases due to security and other considerations and
-+
-+ - hope to save some extra storage space with guaranteed end-to-end performance
-+   by using reduced metadata and transparent file compression, especially
-+   for those embedded devices with limited memory (ex, smartphone);
-+
-+Here is the main features of EROFS:
-+ - Little endian on-disk design;
-+
-+ - Currently 4KB block size (nobh) and therefore maximum 16TB address space;
-+
-+ - Metadata & data could be mixed by design;
-+
-+ - 2 inode versions for different requirements:
-+                          v1            v2
-+   Inode metadata size:   32 bytes      64 bytes
-+   Max file size:         4 GB          16 EB (also limited by max. vol size)
-+   Max uids/gids:         65536         4294967296
-+   File creation time:    no            yes (64 + 32-bit timestamp)
-+   Max hardlinks:         65536         4294967296
-+   Metadata reserved:     4 bytes       14 bytes
-+
-+ - Support extended attributes (xattrs) as an option;
-+
-+ - Support xattr inline and tail-end data inline for all files;
-+
-+ - Support POSIX.1e ACLs by using xattrs;
-+
-+ - Support statx();
-+
-+ - Support transparent file compression as an option:
-+   LZ4 algorithm with 4 KB fixed-output compression for high performance;
-+
-+The following git tree provides the file system user-space tools under
-+development (ex, formatting tool mkfs.erofs):
-+>> git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git
-+
-+Bugs and patches are welcome, please kindly help us and send to the following
-+linux-erofs mailing list:
-+>> linux-erofs mailing list   <linux-erofs@lists.ozlabs.org>
-+
-+Note that EROFS is still working in progress as a Linux staging driver,
-+Cc the staging mailing list as well is highly recommended:
-+>> Linux Driver Project Developer List <devel@driverdev.osuosl.org>
-+
-+Mount options
-+=============
-+
-+fault_injection=%d     Enable fault injection in all supported types with
-+                       specified injection rate. Supported injection type:
-+                       Type_Name                Type_Value
-+                       FAULT_KMALLOC            0x000000001
-+                       FAULT_READ_IO            0x000000002
-+(no)user_xattr         Setup Extended User Attributes. Note: xattr is enabled
-+                       by default if CONFIG_EROFS_FS_XATTR is selected.
-+(no)acl                Setup POSIX Access Control List. Note: acl is enabled
-+                       by default if CONFIG_EROFS_FS_POSIX_ACL is selected.
-+
-+On-disk details
-+===============
-+
-+Summary
-+-------
-+Different from other read-only file systems, an EROFS volume is designed
-+to be as simple as possible:
-+
-+                                |-> aligned with the block size
-+   ____________________________________________________________
-+  | |SB| | ... | Metadata | ... | Data | Metadata | ... | Data |
-+  |_|__|_|_____|__________|_____|______|__________|_____|______|
-+  0 +1K
-+
-+All data areas should be aligned with the block size, but metadata areas
-+may not. All metadatas can be now observed in two different spaces (views):
-+ 1. Inode metadata space
-+    Each valid inode should be aligned with an inode slot, which is a fixed
-+    value (32 bytes) and designed to be kept in line with v1 inode size.
-+
-+    Each inode can be directly found with the following formula:
-+         inode offset = meta_blkaddr * block_size + 32 * nid
-+
-+                                |-> aligned with 8B
-+                                           |-> followed closely
-+    + meta_blkaddr blocks                                      |-> another slot
-+     _____________________________________________________________________
-+    |  ...   | inode |  xattrs  | extents  | data inline | ... | inode ...
-+    |________|_______|(optional)|(optional)|__(optional)_|_____|__________
-+             |-> aligned with the inode slot size
-+                  .                   .
-+                .                         .
-+              .                              .
-+            .                                    .
-+          .                                         .
-+        .                                              .
-+      .____________________________________________________|-> aligned with 4B
-+      | xattr_ibody_header | shared xattrs | inline xattrs |
-+      |____________________|_______________|_______________|
-+      |->    12 bytes    <-|->x * 4 bytes<-|               .
-+                          .                .                 .
-+                    .                      .                   .
-+               .                           .                     .
-+           ._______________________________.______________________.
-+           | id | id | id | id |  ... | id | ent | ... | ent| ... |
-+           |____|____|____|____|______|____|_____|_____|____|_____|
-+                                           |-> aligned with 4B
-+                                                       |-> aligned with 4B
-+
-+    Inode could be 32 or 64 bytes, which can be distinguished from a common
-+    field which all inode versions have -- i_advise:
-+
-+        __________________               __________________
-+       |     i_advise     |             |     i_advise     |
-+       |__________________|             |__________________|
-+       |        ...       |             |        ...       |
-+       |                  |             |                  |
-+       |__________________| 32 bytes    |                  |
-+                                        |                  |
-+                                        |__________________| 64 bytes
-+
-+    Xattrs, extents, data inline are followed by the corresponding inode with
-+    proper alignes, and they could be optional for different data mappings,
-+    _currently_ there are totally 3 valid data mappings supported:
-+
-+     1) flat file data without data inline (no extent);
-+     2) fixed-output size data compression (must have extents);
-+     3) flat file data with tail-end data inline (no extent);
-+
-+    The size of the optional xattrs is indicated by i_xattr_count in inode
-+    header. Large xattrs or xattrs shared by many different files can be
-+    stored in shared xattrs metadata rather than inlined right after inode.
-+
-+ 2. Shared xattrs metadata space
-+    Shared xattrs space is similar to the above inode space, started with
-+    a specific block indicated by xattr_blkaddr, organized one by one with
-+    proper align.
-+
-+    Each share xattr can also be directly found by the following formula:
-+         xattr offset = xattr_blkaddr * block_size + 4 * xattr_id
-+
-+                           |-> aligned by  4 bytes
-+    + xattr_blkaddr blocks                     |-> aligned with 4 bytes
-+     _________________________________________________________________________
-+    |  ...   | xattr_entry |  xattr data | ... |  xattr_entry | xattr data  ...
-+    |________|_____________|_____________|_____|______________|_______________
-+
-+Directories
-+-----------
-+All directories are now organized in a compact on-disk format. Note that
-+each directory block is divided into index and name areas in order to support
-+random file lookup, and all directory entries are _strictly_ recorded in
-+alphabetical order in order to support improved prefix binary search
-+algorithm (could refer to the related source code).
-+
-+                 ___________________________
-+                /                           |
-+               /              ______________|________________
-+              /              /              | nameoff1       | nameoffN-1
-+ ____________.______________._______________v________________v__________
-+| dirent | dirent | ... | dirent | filename | filename | ... | filename |
-+|___.0___|____1___|_____|___N-1__|____0_____|____1_____|_____|___N-1____|
-+     \                           ^
-+      \                          |                           * could have
-+       \                         |                             trailing '\0'
-+        \________________________| nameoff0
-+
-+                             Directory block
-+
-+Note that apart from the offset of the first filename, nameoff0 also indicates
-+the total number of directory entries in this block since it is no need to
-+introduce another on-disk field at all.
-+
-+Compression
-+-----------
-+Currently, EROFS supports 4KB fixed-output clustersize transparent file
-+compression, as illustrated below:
-+
-+         |---- Variant-Length Extent ----|-------- VLE --------|----- VLE -----
-+         clusterofs                      clusterofs            clusterofs
-+         |                               |                     |   logical data
-+_________v_______________________________v_____________________v_______________
-+... |    .        |             |        .    |             |  .          | ...
-+____|____.________|_____________|________.____|_____________|__.__________|____
-+    |-> cluster <-|-> cluster <-|-> cluster <-|-> cluster <-|-> cluster <-|
-+         size          size          size          size          size
-+          .                             .                .                   .
-+           .                       .               .                  .
-+            .                  .              .                .
-+      _______._____________._____________._____________._____________________
-+         ... |             |             |             | ... physical data
-+      _______|_____________|_____________|_____________|_____________________
-+             |-> cluster <-|-> cluster <-|-> cluster <-|
-+                  size          size          size
-+
-+Currently each on-disk physical cluster can contain 4KB (un)compressed data
-+at most. For each logical cluster, there is a corresponding on-disk index to
-+describe its cluster type, physical cluster address, etc.
-+
-+See "struct z_erofs_vle_decompressed_index" in erofs_fs.h for more details.
-+
+diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c b/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c
+index 61a465097cb8..ef75a09069a8 100644
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c
+@@ -694,6 +694,7 @@ bool xgene_ring_mgr_init(struct xgene_enet_pdata *p)
+ static int xgene_enet_reset(struct xgene_enet_pdata *pdata)
+ {
+ 	struct device *dev = &pdata->pdev->dev;
++	acpi_status status;
+ 
+ 	if (!xgene_ring_mgr_init(pdata))
+ 		return -ENODEV;
+@@ -712,11 +713,9 @@ static int xgene_enet_reset(struct xgene_enet_pdata *pdata)
+ 		udelay(5);
+ 	} else {
+ #ifdef CONFIG_ACPI
+-		if (acpi_has_method(ACPI_HANDLE(&pdata->pdev->dev), "_RST")) {
+-			acpi_evaluate_object(ACPI_HANDLE(&pdata->pdev->dev),
++		status = acpi_evaluate_object(ACPI_HANDLE(&pdata->pdev->dev),
+ 					     "_RST", NULL, NULL);
+-		} else if (acpi_has_method(ACPI_HANDLE(&pdata->pdev->dev),
+-					 "_INI")) {
++		if (ACPI_FAILURE(status)) {
+ 			acpi_evaluate_object(ACPI_HANDLE(&pdata->pdev->dev),
+ 					     "_INI", NULL, NULL);
+ 		}
+diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_sgmac.c b/drivers/net/ethernet/apm/xgene/xgene_enet_sgmac.c
+index 6453fc2ebb1f..6237a2cfd703 100644
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_sgmac.c
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_sgmac.c
+@@ -437,6 +437,7 @@ static void xgene_sgmac_tx_disable(struct xgene_enet_pdata *p)
+ static int xgene_enet_reset(struct xgene_enet_pdata *p)
+ {
+ 	struct device *dev = &p->pdev->dev;
++	acpi_status status;
+ 
+ 	if (!xgene_ring_mgr_init(p))
+ 		return -ENODEV;
+@@ -460,14 +461,13 @@ static int xgene_enet_reset(struct xgene_enet_pdata *p)
+ 		}
+ 	} else {
+ #ifdef CONFIG_ACPI
+-		if (acpi_has_method(ACPI_HANDLE(&p->pdev->dev), "_RST"))
+-			acpi_evaluate_object(ACPI_HANDLE(&p->pdev->dev),
+-					     "_RST", NULL, NULL);
+-		else if (acpi_has_method(ACPI_HANDLE(&p->pdev->dev), "_INI"))
++		status = acpi_evaluate_object(ACPI_HANDLE(&p->pdev->dev),
++			 		      "_RST", NULL, NULL);
++		if (ACPI_FAILURE(status)) {
+ 			acpi_evaluate_object(ACPI_HANDLE(&p->pdev->dev),
+ 					     "_INI", NULL, NULL);
++		}
+ #endif
+-	}
+ 
+ 	if (!p->port_id) {
+ 		xgene_enet_ecc_init(p);
+diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_xgmac.c b/drivers/net/ethernet/apm/xgene/xgene_enet_xgmac.c
+index 133eb91c542e..fede3bfe4d68 100644
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_xgmac.c
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_xgmac.c
+@@ -380,6 +380,7 @@ static void xgene_xgmac_tx_disable(struct xgene_enet_pdata *pdata)
+ static int xgene_enet_reset(struct xgene_enet_pdata *pdata)
+ {
+ 	struct device *dev = &pdata->pdev->dev;
++	acpi_status status;
+ 
+ 	if (!xgene_ring_mgr_init(pdata))
+ 		return -ENODEV;
+@@ -393,11 +394,9 @@ static int xgene_enet_reset(struct xgene_enet_pdata *pdata)
+ 		udelay(5);
+ 	} else {
+ #ifdef CONFIG_ACPI
+-		if (acpi_has_method(ACPI_HANDLE(&pdata->pdev->dev), "_RST")) {
+-			acpi_evaluate_object(ACPI_HANDLE(&pdata->pdev->dev),
+-					     "_RST", NULL, NULL);
+-		} else if (acpi_has_method(ACPI_HANDLE(&pdata->pdev->dev),
+-					   "_INI")) {
++		status = acpi_evaluate_object(ACPI_HANDLE(&pdata->pdev->dev),
++				 	      "_RST", NULL, NULL);
++		if (ACPI_FAILURE(status)) {
+ 			acpi_evaluate_object(ACPI_HANDLE(&pdata->pdev->dev),
+ 					     "_INI", NULL, NULL);
+ 		}
 -- 
-2.17.1
+2.20.1
 
