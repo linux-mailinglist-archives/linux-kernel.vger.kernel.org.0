@@ -2,81 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F7686FBBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 11:07:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D76D86FBC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 11:07:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728696AbfGVJHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 05:07:34 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56962 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725989AbfGVJHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 05:07:34 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728746AbfGVJHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 05:07:55 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39664 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728722AbfGVJHy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 05:07:54 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8A9DE6179C; Mon, 22 Jul 2019 09:07:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1563786473;
+        bh=UeDyAtIWpA7gei3U6JuRRJQg255isa7UX8RScXF9Kpw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=knipq++ssmpp4LKg/tcKSCR0AKpR6wehnCmvyCnD+BPUWvzsaGzRpNOeHtgOtb5W1
+         eD8FPHWkfpuL3NB2azx/zZ9p96lZYE8OqTnwqlxJ+Og1f93Z5PUrfaUicO3C+KkeX3
+         Fd4EfASTmyEYoOW0Q7UHwRelnpKTThgK0MjQwvng=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from amasule-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 44B6E308429D;
-        Mon, 22 Jul 2019 09:07:34 +0000 (UTC)
-Received: from localhost (ovpn-117-250.ams2.redhat.com [10.36.117.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B9C45D71B;
-        Mon, 22 Jul 2019 09:07:31 +0000 (UTC)
-Date:   Mon, 22 Jul 2019 10:07:30 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org,
-        Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: [PATCH v4 5/5] vsock/virtio: change the maximum packet size
- allowed
-Message-ID: <20190722090730.GE24934@stefanha-x1.localdomain>
-References: <20190717113030.163499-1-sgarzare@redhat.com>
- <20190717113030.163499-6-sgarzare@redhat.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Qz2CZ664xQdCRdPu"
-Content-Disposition: inline
-In-Reply-To: <20190717113030.163499-6-sgarzare@redhat.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 22 Jul 2019 09:07:34 +0000 (UTC)
+        (Authenticated sender: amasule@codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 904BA6119F;
+        Mon, 22 Jul 2019 09:07:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1563786472;
+        bh=UeDyAtIWpA7gei3U6JuRRJQg255isa7UX8RScXF9Kpw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JYi7SBQM8wkDBvY/+evuQojlTJ/36TKPr4+9MJt1OgaOWeRS9tsk1Ygth66vjw/xS
+         VXaqQ0I+4P0Ilq3o4ES7Nq6DcT9hn/TguhI+nqhqqHbzu3ng93DntdaHfUpR5a7nFX
+         NbzzmH/GyzBPkW6eladUMtNkJ2IfH+1N8ZIQoXcI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 904BA6119F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=amasule@codeaurora.org
+From:   Aniket Masule <amasule@codeaurora.org>
+To:     linux-media@vger.kernel.org, stanimir.varbanov@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        vgarodia@codeaurora.org, Aniket Masule <amasule@codeaurora.org>
+Subject: [PATCH v6 2/4] media: venus: Update clock scaling
+Date:   Mon, 22 Jul 2019 14:37:30 +0530
+Message-Id: <1563786452-22188-2-git-send-email-amasule@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1563786452-22188-1-git-send-email-amasule@codeaurora.org>
+References: <1563786452-22188-1-git-send-email-amasule@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Current clock scaling calculations are same for vpu4 and
+previous versions. For vpu4, Clock scaling calculations
+are updated with cycles/mb. This helps in getting precise
+clock required.
 
---Qz2CZ664xQdCRdPu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Aniket Masule <amasule@codeaurora.org>
+---
+ drivers/media/platform/qcom/venus/helpers.c | 91 +++++++++++++++++++++++++++--
+ 1 file changed, 87 insertions(+), 4 deletions(-)
 
-On Wed, Jul 17, 2019 at 01:30:30PM +0200, Stefano Garzarella wrote:
-> Since now we are able to split packets, we can avoid limiting
-> their sizes to VIRTIO_VSOCK_DEFAULT_RX_BUF_SIZE.
-> Instead, we can use VIRTIO_VSOCK_MAX_PKT_BUF_SIZE as the max
-> packet size.
->=20
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> ---
->  net/vmw_vsock/virtio_transport_common.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+index 7492373..2c976e4 100644
+--- a/drivers/media/platform/qcom/venus/helpers.c
++++ b/drivers/media/platform/qcom/venus/helpers.c
+@@ -348,8 +348,9 @@ static u32 load_per_type(struct venus_core *core, u32 session_type)
+ 	return mbs_per_sec;
+ }
+ 
+-static int load_scale_clocks(struct venus_core *core)
++static int scale_clocks(struct venus_inst *inst)
+ {
++	struct venus_core *core = inst->core;
+ 	const struct freq_tbl *table = core->res->freq_tbl;
+ 	unsigned int num_rows = core->res->freq_tbl_size;
+ 	unsigned long freq = table[0].freq;
+@@ -398,6 +399,89 @@ static int load_scale_clocks(struct venus_core *core)
+ 	return ret;
+ }
+ 
++static unsigned long calculate_vpp_freq(struct venus_inst *inst)
++{
++	unsigned long vpp_freq = 0;
++	u32 mbs_per_sec;
++
++	mbs_per_sec = load_per_instance(inst);
++	vpp_freq = mbs_per_sec * inst->clk_data.codec_freq_data->vpp_freq;
++	/* 21 / 20 is overhead factor */
++	vpp_freq += vpp_freq / 20;
++
++	return vpp_freq;
++}
++
++static int scale_clocks_v4(struct venus_inst *inst)
++{
++	struct venus_core *core = inst->core;
++	const struct freq_tbl *table = core->res->freq_tbl;
++	unsigned int num_rows = core->res->freq_tbl_size;
++	struct clk *clk = core->clks[0];
++	struct device *dev = core->dev;
++	unsigned int i;
++	unsigned long freq = 0, freq_core1 = 0, freq_core2 = 0;
++	int ret;
++
++	freq = calculate_vpp_freq(inst);
++
++	if (freq > table[0].freq)
++		dev_warn(dev, "HW is overloaded, needed: %lu max: %lu\n",
++			 freq, table[0].freq);
++
++	for (i = 0; i < num_rows; i++) {
++		if (freq > table[i].freq)
++			break;
++		freq = table[i].freq;
++	}
++
++	inst->clk_data.freq = freq;
++
++	mutex_lock(&core->lock);
++	list_for_each_entry(inst, &core->instances, list) {
++		if (inst->clk_data.core_id == VIDC_CORE_ID_1) {
++			freq_core1 += inst->clk_data.freq;
++		} else if (inst->clk_data.core_id == VIDC_CORE_ID_2) {
++			freq_core2 += inst->clk_data.freq;
++		} else if (inst->clk_data.core_id == VIDC_CORE_ID_3) {
++			freq_core1 += inst->clk_data.freq;
++			freq_core2 += inst->clk_data.freq;
++		}
++	}
++	mutex_unlock(&core->lock);
++
++	freq = max(freq_core1, freq_core2);
++
++	ret = clk_set_rate(clk, freq);
++	if (ret)
++		goto err;
++
++	ret = clk_set_rate(core->core0_clk, freq);
++	if (ret)
++		goto err;
++
++	ret = clk_set_rate(core->core1_clk, freq);
++	if (ret)
++		goto err;
++
++	return 0;
++
++err:
++	dev_err(dev, "failed to set clock rate %lu (%d)\n", freq, ret);
++	return ret;
++}
++
++static int load_scale_clocks(struct venus_inst *inst)
++{
++	if (IS_V4(inst->core))
++		return scale_clocks_v4(inst);
++
++	if (inst->state == INST_START)
++		return 0;
++
++	return scale_clocks(inst);
++}
++
+ static void fill_buffer_desc(const struct venus_buffer *buf,
+ 			     struct hfi_buffer_desc *bd, bool response)
+ {
+@@ -1053,7 +1137,7 @@ void venus_helper_vb2_stop_streaming(struct vb2_queue *q)
+ 
+ 		venus_helper_free_dpb_bufs(inst);
+ 
+-		load_scale_clocks(core);
++		load_scale_clocks(inst);
+ 		INIT_LIST_HEAD(&inst->registeredbufs);
+ 	}
+ 
+@@ -1070,7 +1154,6 @@ void venus_helper_vb2_stop_streaming(struct vb2_queue *q)
+ 
+ int venus_helper_vb2_start_streaming(struct venus_inst *inst)
+ {
+-	struct venus_core *core = inst->core;
+ 	int ret;
+ 
+ 	ret = intbufs_alloc(inst);
+@@ -1081,7 +1164,7 @@ int venus_helper_vb2_start_streaming(struct venus_inst *inst)
+ 	if (ret)
+ 		goto err_bufs_free;
+ 
+-	load_scale_clocks(core);
++	load_scale_clocks(inst);
+ 
+ 	ret = hfi_session_load_res(inst);
+ 	if (ret)
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-
---Qz2CZ664xQdCRdPu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl01fNIACgkQnKSrs4Gr
-c8jlPwf+K8D7nnRfxW5Y5W22bqktswfcGjAt29NMC9KGkYjL0hM745Dg5G6LG8tD
-FuJQqW0Daerwk5vC3b0d9iyF1MtAQlMCm4XhIEHi0aGS2blFtrra2M9IpTqnQ/t+
-sGwMqmUWbCjBAFZQb1QNCgLXxwMXIabNCgSFY/cBsHMWyOKbTlTVaGstCA8Tp3RW
-TKqUGWseTe9K1WQcX2el2klhhir+K+XMN4iIxmtJks7dRB6wci+G2JDKaYtjm6t3
-0kdIjyRhhj4I4WOHq7vvZyHYAj0oT4odRHTKF8aNa+oUhoo8PHJ5VeHah3+wciCp
-MDed3Aanbck3Tmyq/YcOBNMozk1KcQ==
-=xu6B
------END PGP SIGNATURE-----
-
---Qz2CZ664xQdCRdPu--
