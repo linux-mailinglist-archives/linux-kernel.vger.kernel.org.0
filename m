@@ -2,75 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B90970B61
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 23:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25D3170B65
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 23:31:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732613AbfGVVbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 17:31:00 -0400
-Received: from smtprelay0154.hostedemail.com ([216.40.44.154]:57761 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728016AbfGVVbA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 17:31:00 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id E622EC1DCA0;
-        Mon, 22 Jul 2019 21:30:58 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2897:2919:3138:3139:3140:3141:3142:3352:3622:3865:3871:3872:4250:4321:4362:4605:5007:7514:7576:7903:7904:10004:10400:10848:11026:11232:11658:11914:12048:12296:12297:12740:12760:12895:13069:13095:13311:13357:13439:14181:14659:14721:21080:21433:21451:21611:21627:21740:30054:30056:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: berry89_86aa08292963
-X-Filterd-Recvd-Size: 2129
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 22 Jul 2019 21:30:57 +0000 (UTC)
-Message-ID: <f686e93180d2f91c78801be124e8aac36145d9b0.camel@perches.com>
-Subject: Re: [PATCH v2 3/3] HID: core: only warn once of oversize hid report
-From:   Joe Perches <joe@perches.com>
-To:     stillcompiling@gmail.com, Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Mon, 22 Jul 2019 14:30:55 -0700
-In-Reply-To: <20190722212613.24906-3-stillcompiling@gmail.com>
-References: <20190722163642.10417-2-stillcompiling@gmail.com>
-         <20190722212613.24906-1-stillcompiling@gmail.com>
-         <20190722212613.24906-3-stillcompiling@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        id S1732653AbfGVVbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 17:31:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36912 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728016AbfGVVbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 17:31:02 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADF8821900;
+        Mon, 22 Jul 2019 21:31:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563831061;
+        bh=xJwOs8eh6wnbncGoeTw21vj4R8KhLdFsORfmYU7Lf3I=;
+        h=In-Reply-To:References:Subject:To:Cc:From:Date:From;
+        b=kpTa1yt4tICwzZeizjpF+rNU5ZHlEd3hIlkvTx1ZNFktON55CgJqXfZNpayZordNk
+         0f0ThtuDVcxi9Q1qoh6BQ/PakL8QUg2aHzgwfmgP1Fe9jvEYYyOFf4RImt37Rh5/fJ
+         XRrUy30G71WYl4dtSBHyIQuswTqvNUcSuskK3NbU=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190705045612.27665-5-Anson.Huang@nxp.com>
+References: <20190705045612.27665-1-Anson.Huang@nxp.com> <20190705045612.27665-5-Anson.Huang@nxp.com>
+Subject: Re: [PATCH 5/6] clk: imx8mq: Remove CLK_IS_CRITICAL flag for IMX8MQ_CLK_TMU_ROOT
+To:     Anson.Huang@nxp.com, abel.vesa@nxp.com, agx@sigxcpu.org,
+        andrew.smirnov@gmail.com, angus@akkea.ca, ccaione@baylibre.com,
+        daniel.lezcano@linaro.org, devicetree@vger.kernel.org,
+        edubezval@gmail.com, festevam@gmail.com, kernel@pengutronix.de,
+        l.stach@pengutronix.de, leonard.crestez@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
+        rui.zhang@intel.com, s.hauer@pengutronix.de, shawnguo@kernel.org
+Cc:     Linux-imx@nxp.com
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Mon, 22 Jul 2019 14:31:00 -0700
+Message-Id: <20190722213101.ADF8821900@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-07-22 at 15:26 -0600, stillcompiling@gmail.com wrote:
-> From: Joshua Clayton <stillcompiling@gmail.com>
+Quoting Anson.Huang@nxp.com (2019-07-04 21:56:11)
+> From: Anson Huang <Anson.Huang@nxp.com>
+>=20
+> IMX8MQ_CLK_TMU_ROOT is ONLY used for thermal module, the driver
+> should manage this clock, so no need to have CLK_IS_CRITICAL flag
+> set.
+>=20
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
 
-Thanks Joshua
-
-> On HP spectre x360 convertible the message:
-> hid-sensor-hub 001F:8087:0AC2.0002: hid_field_extract() called with n (192) > 32! (kworker/1:2)
-> is continually printed many times per second, crowding out all else
-> Protect dmesg by printing the warning only one time.
-[]
-> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-[]
-> @@ -1311,8 +1311,8 @@ u32 hid_field_extract(const struct hid_device *hid, u8 *report,
->  			unsigned offset, unsigned n)
->  {
->  	if (n > 32) {
-> -		hid_warn(hid, "hid_field_extract() called with n (%d) > 32! (%s)\n",
-> -			 n, current->comm);
-> +		hid_warn_once(hid, "%s() called with n (%d) > 32! (%s)\n",
-> +			      __func__ ,n , current->comm);
-
-All the other bits are fine, but this line is oddly written
-with unusual spacing around 'n'.
-
-Normally it'd be something like:
-
-		hid_warn_once(hid, "%s: called with n (%d) > 32! (%s)\n",
-			      __func__, n, current->comm);
-
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
