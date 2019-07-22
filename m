@@ -2,45 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC8B2703B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:26:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43311703BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:27:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728968AbfGVP0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 11:26:40 -0400
-Received: from verein.lst.de ([213.95.11.211]:33275 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728320AbfGVP0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 11:26:40 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 3C11868B20; Mon, 22 Jul 2019 17:26:38 +0200 (CEST)
-Date:   Mon, 22 Jul 2019 17:26:38 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Eric Auger <eric.auger@redhat.com>
-Cc:     eric.auger.pro@gmail.com, hch@lst.de, m.szyprowski@samsung.com,
-        robin.murphy@arm.com, mst@redhat.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dma-mapping: Protect dma_addressing_limited
- against NULL dma_mask
-Message-ID: <20190722152637.GA3780@lst.de>
-References: <20190722145509.1284-1-eric.auger@redhat.com> <20190722145509.1284-2-eric.auger@redhat.com>
+        id S1728985AbfGVP1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 11:27:03 -0400
+Received: from mail-vk1-f172.google.com ([209.85.221.172]:44992 "EHLO
+        mail-vk1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728385AbfGVP1C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 11:27:02 -0400
+Received: by mail-vk1-f172.google.com with SMTP id w186so7916519vkd.11
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 08:27:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9fFSW3MtnFG1vgXzyH4/3x+0Vpm+vDrL59dvaPAFK60=;
+        b=ms5K2o3zppDIp0xReLN5y/RFuJeMBDR+pjBlQ29CXXv61pzwrKI0eW92RJXuWDzW5u
+         usuFdcGKBYnckjeAjl0w2/2BHHhxAyxO6lHGqM3g1c3Un2u7CHOZ0ymu6hW81n780gvp
+         elXOYse/tJh8KnO2NPTVhD+A10nqSGeGggnPufaTyBSITyDNe8Rd8msToJumwhBCxVFn
+         eXceMEb++YjYWripjjoeKfe7xvbXQ/06yA15bNgCrf1u8YgwgLZ4ORS4zjNmr+1o8UY0
+         GolnqtYlgVj8EYxYUJ8Hdhm7HfRz62aAEQBzacd+Qg2+wXBkf9Hy2TOIIYRnqoW9EtAe
+         RnnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9fFSW3MtnFG1vgXzyH4/3x+0Vpm+vDrL59dvaPAFK60=;
+        b=Blq+fyBgMZzNZd+DtV8hAsRHTkEDlWL6ikKqghwO3sdf1K4yHn+AhgZ0qFk8S3bUxE
+         N8p1P9k32EQiFzyRo5NbV2ZIgcQCoIuNwgEyb5F1OrkHVsMfjaIIjrmiKp6rdGBUjID0
+         nN/55Qni+kQJllb7xjYTQfkFtL4czbAB7JyKQazVxfV+RZAkPc2doEgm9zIHU+x8/73t
+         6oHiOS2UqLKYGC0QrfitqYvQ0jFItoRRkCGpS4KfGMeUv4haH53JmBHyiYBdr7z7ezh5
+         u60KlOKUPrG/tvOtQx1xNIufTmN3kR9jgdKEceB1cW2BvN4Qb37w605YiMSmK2ee4yEn
+         3Ewg==
+X-Gm-Message-State: APjAAAUect3dZjuepU7ANBuSaAqBHHWuUdUTXLFBBvbzt+H2NU6eQJ4W
+        HFBnXq1NrPKs/Vu/OpjbtLKr6/eUBJOpLw==
+X-Google-Smtp-Source: APXvYqwKmXaXKwn648l2BX/4Vui36L8YiKHD/p8j6Drku1qUj6wXiQ/SJlOqZVMT03zl3PN7212BYA==
+X-Received: by 2002:a1f:e586:: with SMTP id c128mr21069024vkh.44.1563809221452;
+        Mon, 22 Jul 2019 08:27:01 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id h61sm8519740uah.18.2019.07.22.08.27.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 22 Jul 2019 08:27:00 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hpaDM-0004pT-5F; Mon, 22 Jul 2019 12:27:00 -0300
+Date:   Mon, 22 Jul 2019 12:27:00 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Maksym Planeta <mplaneta@os.inf.tu-dresden.de>
+Cc:     Moni Shoua <monis@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/10] Fix reference counting for rxe tasklets
+Message-ID: <20190722152700.GE7607@ziepe.ca>
+References: <20190722151426.5266-1-mplaneta@os.inf.tu-dresden.de>
+ <20190722151426.5266-6-mplaneta@os.inf.tu-dresden.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190722145509.1284-2-eric.auger@redhat.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190722151426.5266-6-mplaneta@os.inf.tu-dresden.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->  static inline bool dma_addressing_limited(struct device *dev)
+On Mon, Jul 22, 2019 at 05:14:21PM +0200, Maksym Planeta wrote:
+>  
+>  int rxe_init_task(void *obj, struct rxe_task *task,
+> -		  void *arg, int (*func)(void *), char *name)
+> +		  struct rxe_qp *qp, int (*func)(void *), char *name)
 >  {
-> -	return min_not_zero(*dev->dma_mask, dev->bus_dma_mask) <
-> -		dma_get_required_mask(dev);
-> +	return WARN_ON_ONCE(!dev->dma_mask) ? false :
-> +		min_not_zero(*dev->dma_mask, dev->bus_dma_mask) <
-> +			dma_get_required_mask(dev);
+>  	task->obj	= obj;
+> -	task->arg	= arg;
+> +	task->arg	= qp;
+>  	task->func	= func;
+>  	snprintf(task->name, sizeof(task->name), "%s", name);
+>  	task->destroyed	= false;
+>  
+> +	rxe_add_ref(&qp->pelem);
 
-This should really use a separate if statement, but I can fix that
-up when applying it.
+Please put the kref incrs near the copy of the pointer. Those things
+are logically related - copy the pointer, incr the kref.
+
+Jason
