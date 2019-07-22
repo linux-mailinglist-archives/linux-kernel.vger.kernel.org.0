@@ -2,110 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76A9170246
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 16:26:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 745407023E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 16:24:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730840AbfGVO0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 10:26:03 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:56205 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbfGVO0C (ORCPT
+        id S1730824AbfGVOYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 10:24:09 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:62942 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728083AbfGVOYI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 10:26:02 -0400
-Received: by mail-wm1-f65.google.com with SMTP id a15so35389849wmj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 07:26:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MSSG+/SPzy4dXqjSfDAF61vds83VEHomtFtlG6NVWCM=;
-        b=NpyIgKdV7f7bde7xQbG/M3QiHf9/GjR0/rkrYOmJXU1I5elJ8P9PaSvQIxo+ZYHGSq
-         vaDOB4Ht6EywdynGGeXW0KxBvlepXQnmdxhncg1tajY8pqZD7vD+Z5IWQ+70JEGjbCs8
-         nOFjvRpLwdCpUbrZ63fIWeP1nEeAi7jxrKf+ZDupj06EaGQzWoPi4LeqNC7i9NY5Jy1J
-         zlHts0hamZwcT653XwN1lghUIzuhDWZZDqqZVCShutAQ/Df8TVZ734qi0pmQhE/dc75b
-         njomznYmB7pXlQ4tU1pYmv/JiS15gw3VrrUOkhRD96P/NWjSviyc1acQeIGNIJqUyNOn
-         2BjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MSSG+/SPzy4dXqjSfDAF61vds83VEHomtFtlG6NVWCM=;
-        b=VnKUjw7gOiM17ox+aZyR1V214dIpBIYowbMOC3ZEh54zg+w7hs7tqxAIm0PQysjuYu
-         RrKCXbvY4i7D7IDiTSp8xyrkLx6iEgEs+b0KWY1Fs5fsib6dr2kSEVaUoeEvxJ2moVSa
-         /67GxUMaqKXWJ+eRmbBojerKLBHj2EWb6svKNpPEtKjs4jQUn5NoRfMfNPtDBG3L1UX4
-         S4zE6C0fqNcXAVNWeFII7vwPXFdwSvvoREJ/ojulaQbQ4cQ2yXnmLTDJRw7Rx8/PkJCF
-         3vjVdad/YJt498jes5Ejm9Twr9zC8JHbM1qUlNgF9MMP5vnJDAkJA8jcsvooY32ApcNd
-         9xgA==
-X-Gm-Message-State: APjAAAWm8bVwGR43jMgUajF8109zpzttfFj1UMmKQ1mHCgMx6EJTrvj9
-        J5ST0jri/DiyKZC1JbJ/ttc=
-X-Google-Smtp-Source: APXvYqzcX3cd8YqK8GLkwwC4FaQWzXKuFq07UGXLTjQWfd0zeJDrfqoVabNOYoUrs4LwXjPuL3e9lQ==
-X-Received: by 2002:a05:600c:20d:: with SMTP id 13mr64401057wmi.141.1563805559521;
-        Mon, 22 Jul 2019 07:25:59 -0700 (PDT)
-Received: from localhost.localdomain ([213.220.153.21])
-        by smtp.gmail.com with ESMTPSA id x185sm28552203wmg.46.2019.07.22.07.25.58
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 07:25:58 -0700 (PDT)
-From:   Christian Brauner <christian@brauner.io>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, oleg@redhat.com, surenb@google.com,
-        joel@joelfernandes.org
-Subject: [GIT PULL] pidfd fixes
-Date:   Mon, 22 Jul 2019 16:22:41 +0200
-Message-Id: <20190722142238.16129-1-christian@brauner.io>
-X-Mailer: git-send-email 2.22.0
+        Mon, 22 Jul 2019 10:24:08 -0400
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x6MENt1U028190;
+        Mon, 22 Jul 2019 23:23:56 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x6MENt1U028190
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1563805436;
+        bh=3ZfWItRLOnV63S6AGRS3B2hVnUmtHS2K0MQ3z/GNBLI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=aTimKetZ9a/8ET7Y+BeYKMFQgVxFBEyIEzIpiBSmOy7tj37eLWk7fGO/bGzzHj+S4
+         P18YoGFRULxx7f2gDmQW0KDkOQgc2wQy6ZB5VFcE5+19D0p40lWPP9LF2pzjUGJD72
+         2WAeZxkTyA5rlWn0kqRWW4di2xuZcsK0twL645xguADCc2zikCpPUfor2jlN3JzMg9
+         9GTgN1FYBGl5qKGMrUgplp+9MYqG0F/44ugiAmYO6p48KBg5k/BPNIP1TLFKdlM5uZ
+         i4M+WtKlHoopz1McjsyVbYrKGYoqF6ktPsZiFAES892GrmDoDXUupa1EyyOm4Va++C
+         HoQT3MTFQ/kLA==
+X-Nifty-SrcIP: [209.85.217.52]
+Received: by mail-vs1-f52.google.com with SMTP id r3so26178514vsr.13;
+        Mon, 22 Jul 2019 07:23:56 -0700 (PDT)
+X-Gm-Message-State: APjAAAXkbFsnqyhQVAaed/cqyXwOXsfw2dFpSSgS7+tZaqDcTd5LVLaQ
+        4hjmvpbUGID0wbHJQE20uqrkSntRoBsgqG7BbMA=
+X-Google-Smtp-Source: APXvYqyyUvjKdhYx03OMr4hDMFoJSyNIvpdnvpFBiZefZ1BW1DeU5VQpjrbER7S2MSpLIS3Df1zGzQhYosAQar7DCR4=
+X-Received: by 2002:a67:8e0a:: with SMTP id q10mr19275682vsd.215.1563805434968;
+ Mon, 22 Jul 2019 07:23:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190721142008.30093-1-yamada.masahiro@socionext.com> <20190722123009.GA5864@osiris>
+In-Reply-To: <20190722123009.GA5864@osiris>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 22 Jul 2019 23:23:18 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARSq=vchY4CT_17zHzJgv8a=Gtow599gJKq2HbM4Ffguw@mail.gmail.com>
+Message-ID: <CAK7LNARSq=vchY4CT_17zHzJgv8a=Gtow599gJKq2HbM4Ffguw@mail.gmail.com>
+Subject: Re: [PATCH] s390: use __u{16,32,64} instead of uint{16,32,64}_t in
+ uapi header
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon, Jul 22, 2019 at 9:30 PM Heiko Carstens
+<heiko.carstens@de.ibm.com> wrote:
+>
+> On Sun, Jul 21, 2019 at 11:20:08PM +0900, Masahiro Yamada wrote:
+> > When CONFIG_UAPI_HEADER_TEST=y, exported headers are compile-tested to
+> > make sure they can be included from user-space.
+> >
+> > Currently, zcrypt.h is excluded from the test coverage. To make it
+> > join the compile-test, we need to fix the build errors attached below.
+> >
+> > For a case like this, we decided to use __u{8,16,32,64} variable types
+> > in this discussion:
+> >
+> >   https://lkml.org/lkml/2019/6/5/18
+> ...
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> >  arch/s390/include/uapi/asm/zcrypt.h | 35 +++++++++++++++--------------
+> >  1 file changed, 18 insertions(+), 17 deletions(-)
+>
+> Applied, thanks!
 
-This contains a fix for pidfd polling. It ensures that the task's exit
-state is visible to all waiters:
+Thanks.
 
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+> I also added the patch below:
+>
+> From b312d5e2244f635f83cbf19b850e26c1c443f465 Mon Sep 17 00:00:00 2001
+> From: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Date: Mon, 22 Jul 2019 14:16:46 +0200
+> Subject: [PATCH 2/2] kbuild: enable arch/s390/include/uapi/asm/zcrypt.h for
+>  uapi header test
+>
+> Masahiro Yamada changed the zcrypt.h header file to use __u{16,32,64}
+> instead of uint{16,32,64}_t with ("s390: use __u{16,32,64} instead of
+> uint{16,32,64}_t in uapi header").
+>
+> This makes all s390 header files pass - remove zcrypt.h from the blacklist.
+>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
 
-are available in the Git repository at:
+Yeah, I had noticed this.
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/for-linus-20190722
+I am sending out various patches to various subsystems.
 
-for you to fetch changes up to b191d6491be67cef2b3fa83015561caca1394ab9:
+To avoid potential conflicts, my plan was to sync the blacklist
+from time to time, like the following commit:
 
-  pidfd: fix a poll race when setting exit_state (2019-07-22 16:02:03 +0200)
+commit 67bf47452ea00edd90e796054229b651e64b82c1
+Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed Jul 17 15:29:13 2019 +0900
 
-/* Summary */
-The pidfd polling code suffered from a race condition. A waiter could be
-notified via do_notify_pidfd() without the task's exit state being set and
-thus not visible to the waiter. This would cause the waiter to be blocked
-indefinitely. The following schematic illustrates how this could happen:
+    kbuild: update compile-test header list for v5.3-rc1
 
-    CPU 0                            CPU 1
-    ------------------------------------------------
-    exit_notify
-      do_notify_parent
-        do_notify_pidfd
-                                       pidfd_poll
-                                          if (tsk->exit_state)
-      tsk->exit_state = EXIT_DEAD
 
-This is fixed by ensuring that the task's exit state is set before calling
-into do_notify_pidfd(). 
+For this particular case, probably a merge conflict will not happen,
+so either is fine.
 
-Please consider pulling from the signed for-linus-20190722 tag.
 
-Thanks!
-Christian
 
-----------------------------------------------------------------
-for-linus-20190722
 
-----------------------------------------------------------------
-Suren Baghdasaryan (1):
-      pidfd: fix a poll race when setting exit_state
 
- kernel/exit.c | 1 +
- 1 file changed, 1 insertion(+)
+
+> ---
+>  usr/include/Makefile | 4 ----
+>  1 file changed, 4 deletions(-)
+>
+> diff --git a/usr/include/Makefile b/usr/include/Makefile
+> index aa316d99e035..1fb6abe29b2f 100644
+> --- a/usr/include/Makefile
+> +++ b/usr/include/Makefile
+> @@ -101,10 +101,6 @@ ifeq ($(SRCARCH),riscv)
+>  header-test- += linux/bpf_perf_event.h
+>  endif
+>
+> -ifeq ($(SRCARCH),s390)
+> -header-test- += asm/zcrypt.h
+> -endif
+> -
+>  ifeq ($(SRCARCH),sparc)
+>  header-test- += asm/stat.h
+>  header-test- += asm/uctx.h
+> --
+> 2.17.1
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
