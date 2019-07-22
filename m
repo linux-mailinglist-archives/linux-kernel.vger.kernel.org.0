@@ -2,82 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46E556F934
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 07:57:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEA2C6F948
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 08:02:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727714AbfGVF5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 01:57:38 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2695 "EHLO huawei.com"
+        id S1726991AbfGVGCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 02:02:33 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2733 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726024AbfGVF5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 01:57:38 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E75CC2E21CA5AA7E315C;
-        Mon, 22 Jul 2019 13:57:35 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Mon, 22 Jul 2019
- 13:57:26 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <james.qian.wang@arm.com>, <liviu.dudau@arm.com>,
-        <brian.starkey@arm.com>, <airlied@linux.ie>
-CC:     <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <daniel@ffwll.ch>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v2 -next] drm/komeda: remove set but not used variable 'old'
-Date:   Mon, 22 Jul 2019 13:56:27 +0800
-Message-ID: <20190722055627.38008-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20190709135808.56388-1-yuehaibing@huawei.com>
-References: <20190709135808.56388-1-yuehaibing@huawei.com>
+        id S1725879AbfGVGCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 02:02:32 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D98A4B0725B57E8EB4CC;
+        Mon, 22 Jul 2019 14:02:30 +0800 (CST)
+Received: from localhost.localdomain (10.67.165.24) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 22 Jul 2019 14:02:19 +0800
+From:   Yonglong Liu <liuyonglong@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
+        <yisen.zhuang@huawei.com>, <shiju.jose@huawei.com>
+Subject: [PATCH net] net: hns: fix LED configuration for marvell phy
+Date:   Mon, 22 Jul 2019 13:59:12 +0800
+Message-ID: <1563775152-21369-1-git-send-email-liuyonglong@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
+X-Originating-IP: [10.67.165.24]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Since commit(net: phy: marvell: change default m88e1510 LED configuration),
+the active LED of Hip07 devices is always off, because Hip07 just
+use 2 LEDs.
+This patch adds a phy_register_fixup_for_uid() for m88e1510 to
+correct the LED configuration.
 
-drivers/gpu/drm/arm/display/komeda/komeda_plane.c:
- In function komeda_plane_atomic_duplicate_state:
-drivers/gpu/drm/arm/display/komeda/komeda_plane.c:161:35:
- warning: variable old set but not used [-Wunused-but-set-variable
-
-It is not used since commit 990dee3aa456 ("drm/komeda:
-Computing image enhancer internally")
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 077772468ec1 ("net: phy: marvell: change default m88e1510 LED configuration")
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Reviewed-by: linyunsheng <linyunsheng@huawei.com>
 ---
-v2: fix compile err
----
- drivers/gpu/drm/arm/display/komeda/komeda_plane.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/ethernet/hisilicon/hns/hns_enet.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
-index c095af1..98e915e 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
-@@ -158,7 +158,7 @@ static void komeda_plane_reset(struct drm_plane *plane)
- static struct drm_plane_state *
- komeda_plane_atomic_duplicate_state(struct drm_plane *plane)
- {
--	struct komeda_plane_state *new, *old;
-+	struct komeda_plane_state *new;
- 
- 	if (WARN_ON(!plane->state))
- 		return NULL;
-@@ -169,8 +169,6 @@ komeda_plane_atomic_duplicate_state(struct drm_plane *plane)
- 
- 	__drm_atomic_helper_plane_duplicate_state(plane, &new->base);
- 
--	old = to_kplane_st(plane->state);
--
- 	return &new->base;
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+index 2235dd5..5b213eb 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+@@ -11,6 +11,7 @@
+ #include <linux/io.h>
+ #include <linux/ip.h>
+ #include <linux/ipv6.h>
++#include <linux/marvell_phy.h>
+ #include <linux/module.h>
+ #include <linux/phy.h>
+ #include <linux/platform_device.h>
+@@ -1149,6 +1150,13 @@ static void hns_nic_adjust_link(struct net_device *ndev)
+ 	}
  }
  
++static int hns_phy_marvell_fixup(struct phy_device *phydev)
++{
++	phydev->dev_flags |= MARVELL_PHY_LED0_LINK_LED1_ACTIVE;
++
++	return 0;
++}
++
+ /**
+  *hns_nic_init_phy - init phy
+  *@ndev: net device
+@@ -1174,6 +1182,16 @@ int hns_nic_init_phy(struct net_device *ndev, struct hnae_handle *h)
+ 	if (h->phy_if != PHY_INTERFACE_MODE_XGMII) {
+ 		phy_dev->dev_flags = 0;
+ 
++		/* register the PHY fixup (for Marvell 88E1510) */
++		ret = phy_register_fixup_for_uid(MARVELL_PHY_ID_88E1510,
++						 MARVELL_PHY_ID_MASK,
++						 hns_phy_marvell_fixup);
++		/* we can live without it, so just issue a warning */
++		if (ret)
++			netdev_warn(ndev,
++				    "Cannot register PHY fixup, ret=%d\n",
++				    ret);
++
+ 		ret = phy_connect_direct(ndev, phy_dev, hns_nic_adjust_link,
+ 					 h->phy_if);
+ 	} else {
+@@ -2430,8 +2448,11 @@ static int hns_nic_dev_remove(struct platform_device *pdev)
+ 		hns_nic_uninit_ring_data(priv);
+ 	priv->ring_data = NULL;
+ 
+-	if (ndev->phydev)
++	if (ndev->phydev) {
++		phy_unregister_fixup_for_uid(MARVELL_PHY_ID_88E1510,
++					     MARVELL_PHY_ID_MASK);
+ 		phy_disconnect(ndev->phydev);
++	}
+ 
+ 	if (!IS_ERR_OR_NULL(priv->ae_handle))
+ 		hnae_put_handle(priv->ae_handle);
 -- 
-2.7.4
-
+2.8.1
 
