@@ -2,154 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7386570695
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:14:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 636387069B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:16:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731209AbfGVROY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 13:14:24 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33276 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730910AbfGVROX (ORCPT
+        id S1731230AbfGVRQR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 13:16:17 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43167 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729058AbfGVRQR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 13:14:23 -0400
-Received: by mail-pf1-f194.google.com with SMTP id g2so17690524pfq.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 10:14:23 -0700 (PDT)
+        Mon, 22 Jul 2019 13:16:17 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f25so17956027pgv.10
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 10:16:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=av4K/5qGstnWqT+KixOJAjwc0aMoucfv3grHM7d8Df0=;
-        b=Wg10sjwFDrllJKJWxerqg4KKcL8ekXXK42Di7QNalFV497CwGVno10FhlasPHk49sl
-         IV7vL8Dbzypt9dWVNA4vJa+/N4jlaRgHUidWrvK6DapIHk8SieQP1JC14XnkdLdUUCtF
-         +/IU9fno39aKBOoLBl8OYqHjuBQCIbqFNp3RE=
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=fH7Lv8U2QXpKv+6l1maxett1Ga5XuZ9aclc7EGbHLSs=;
+        b=flsNQ3Dsii/uCXgHxUflRqXrr6R4pyXbDfBYL0/QgeQDPFDEm0/f2hbvvLWc9IjfsW
+         f1PUrlvmpCbfs9VpuQ0nV6RnGJZZNppxf92XN6YrFzT6DpD3K3QhT1ZOfio3RWodM/VW
+         kt+TmBTTsdwlMKHctvwfDAFnkpZpcehATjUww=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=av4K/5qGstnWqT+KixOJAjwc0aMoucfv3grHM7d8Df0=;
-        b=q6GO/yH+4SzqEUotZnRpChn12K+yqgfgNr/gXBYnk+hRZQYpsrIwmaCpSJTZYRt+iY
-         ZQaj9Q7IVzKLFEmsw1QF5jQUExZfqjbS1exKzjCaMJP9pfe6kKE7b31Q8+LvOaNuCfcb
-         jABoFDhcFhJPfI8QXG6Yuh4t+0v5kysPJ5T1H4YSCnULSzPq4AJEQPGKwp9N5ZyhCNgk
-         ITxRVgWjafMhXMgFxL9HPJNFcXZgOC+Flcig2sVYgiAbcnf/4SiIqTzkmok8BKq3nwn4
-         9PcAwRPFiaFdXWDjR4Ijwt4cEH7elkPMKGkvzuLiwKhF8+tX99nfRk0oM8pulgcujfqm
-         B9Lw==
-X-Gm-Message-State: APjAAAVhdAPE756PR491+nOYM7ffvqUvAiKs2sc+V2tbgFMdx+yroKwh
-        zRfqiN2YLFQy9P9eQKArOwmB3g==
-X-Google-Smtp-Source: APXvYqwJhYH8OvAHF279yVgzP5VkN43swUuVvnPethKepZeaQvFKh9nQKqMeYTjVFkGMTa5HY3te1g==
-X-Received: by 2002:a62:2ad3:: with SMTP id q202mr1310794pfq.161.1563815662866;
-        Mon, 22 Jul 2019 10:14:22 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id b29sm69161896pfr.159.2019.07.22.10.14.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jul 2019 10:14:21 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 10:14:18 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 6/7] dt-bindings: net: realtek: Add property to
- configure LED mode
-Message-ID: <20190722171418.GV250418@google.com>
-References: <20190703193724.246854-1-mka@chromium.org>
- <20190703193724.246854-6-mka@chromium.org>
- <e8fe7baf-e4e0-c713-7b93-07a3859c33c6@gmail.com>
- <20190703232331.GL250418@google.com>
- <CAL_JsqL_AU+JV0c2mNbXiPh2pvfYbPbLV-2PHHX0hC3vUH4QWg@mail.gmail.com>
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=fH7Lv8U2QXpKv+6l1maxett1Ga5XuZ9aclc7EGbHLSs=;
+        b=DQswEeqqELJizNAOeTGV2n1Ohsh+3VUIHt5h1spXdXH5v7EiuOXK0NwuHGGWUzb2fo
+         9WHnAgAY72mtpifDGFGjX56yaiqCBGjbrOS12VVq+laiS0KprDgld+vhmilcbuMYaBOR
+         vQEwRNaGNDxT9ktZzqi58Pm+oDRFWcHuYFPw4qYrltsPiLFQZdLH//HQR6v82HeHmSHa
+         CQxl5YA+sip7DNCtrrGknTi6bxDCLVesNUnjauNx16y/M+Fp1TMR99DnnH2JYuzZVaZ6
+         1Jx/d/c8vtt93YlhIlXiRQ+VKQXWR32wzATkeInt/Ej7uURT+fTBJHPqPXBYVsxW0Q7H
+         YKag==
+X-Gm-Message-State: APjAAAX2A/5sl61wcx8ZJqF8k9FCWwCmz7HAgX+6cQdi4v/Wu/Or1l7S
+        QXFLSdJ74ZefQZa31+5UWSJ+hXUGiyY=
+X-Google-Smtp-Source: APXvYqyNGNSLAs87MVqlRkjxdi8obg6zaKaz2Xu8ahiy2RTJA7OrP286HVB+L7JWD1PNieNAvDkHbA==
+X-Received: by 2002:a63:7455:: with SMTP id e21mr67380411pgn.439.1563815776492;
+        Mon, 22 Jul 2019 10:16:16 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id r1sm38032877pgv.70.2019.07.22.10.16.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 22 Jul 2019 10:16:15 -0700 (PDT)
+Date:   Mon, 22 Jul 2019 10:16:14 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [5.2 REGRESSION] Generic vDSO breaks seccomp-enabled userspace
+ on i386
+Message-ID: <201907221012.41504DCD@keescook>
+References: <20190719170343.GA13680@linux.intel.com>
+ <19EF7AC8-609A-4E86-B45E-98DFE965DAAB@amacapital.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAL_JsqL_AU+JV0c2mNbXiPh2pvfYbPbLV-2PHHX0hC3vUH4QWg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <19EF7AC8-609A-4E86-B45E-98DFE965DAAB@amacapital.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 09:55:12AM -0600, Rob Herring wrote:
-> On Wed, Jul 3, 2019 at 5:23 PM Matthias Kaehlcke <mka@chromium.org> wrote:
-> >
-> > Hi Florian,
-> >
-> > On Wed, Jul 03, 2019 at 02:37:47PM -0700, Florian Fainelli wrote:
-> > > On 7/3/19 12:37 PM, Matthias Kaehlcke wrote:
-> > > > The LED behavior of some Realtek PHYs is configurable. Add the
-> > > > property 'realtek,led-modes' to specify the configuration of the
-> > > > LEDs.
-> > > >
-> > > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > > > ---
-> > > > Changes in v2:
-> > > > - patch added to the series
-> > > > ---
-> > > >  .../devicetree/bindings/net/realtek.txt         |  9 +++++++++
-> > > >  include/dt-bindings/net/realtek.h               | 17 +++++++++++++++++
-> > > >  2 files changed, 26 insertions(+)
-> > > >  create mode 100644 include/dt-bindings/net/realtek.h
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/net/realtek.txt b/Documentation/devicetree/bindings/net/realtek.txt
-> > > > index 71d386c78269..40b0d6f9ee21 100644
-> > > > --- a/Documentation/devicetree/bindings/net/realtek.txt
-> > > > +++ b/Documentation/devicetree/bindings/net/realtek.txt
-> > > > @@ -9,6 +9,12 @@ Optional properties:
-> > > >
-> > > >     SSC is only available on some Realtek PHYs (e.g. RTL8211E).
-> > > >
-> > > > +- realtek,led-modes: LED mode configuration.
-> > > > +
-> > > > +   A 0..3 element vector, with each element configuring the operating
-> > > > +   mode of an LED. Omitted LEDs are turned off. Allowed values are
-> > > > +   defined in "include/dt-bindings/net/realtek.h".
-> > >
-> > > This should probably be made more general and we should define LED modes
-> > > that makes sense regardless of the PHY device, introduce a set of
-> > > generic functions for validating and then add new function pointer for
-> > > setting the LED configuration to the PHY driver. This would allow to be
-> > > more future proof where each PHY driver could expose standard LEDs class
-> > > devices to user-space, and it would also allow facilities like: ethtool
-> > > -p to plug into that.
-> > >
-> > > Right now, each driver invents its own way of configuring LEDs, that
-> > > does not scale, and there is not really a good reason for that other
-> > > than reviewing drivers in isolation and therefore making it harder to
-> > > extract the commonality. Yes, I realize that since you are the latest
-> > > person submitting something in that area, you are being selected :)
+On Fri, Jul 19, 2019 at 01:40:13PM -0400, Andy Lutomirski wrote:
+> > On Jul 19, 2019, at 1:03 PM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> > 
+> > The generic vDSO implementation, starting with commit
+> > 
+> >   7ac870747988 ("x86/vdso: Switch to generic vDSO implementation")
+> > 
+> > breaks seccomp-enabled userspace on 32-bit x86 (i386) kernels.  Prior to
+> > the generic implementation, the x86 vDSO used identical code for both
+> > x86_64 and i386 kernels, which worked because it did all calcuations using
+> > structs with naturally sized variables, i.e. didn't use __kernel_timespec.
+> > 
+> > The generic vDSO does its internal calculations using __kernel_timespec,
+> > which in turn requires the i386 fallback syscall to use the 64-bit
+> > variation, __NR_clock_gettime64.
 > 
-> I agree.
-> 
-> > I see the merit of your proposal to come up with a generic mechanism
-> > to configure Ethernet LEDs, however I can't justify spending much of
-> > my work time on this. If it is deemed useful I'm happy to send another
-> > version of the current patchset that addresses the reviewer's comments,
-> > but if the implementation of a generic LED configuration interface is
-> > a requirement I will have to abandon at least the LED configuration
-> > part of this series.
-> 
-> Can you at least define a common binding for this. Maybe that's just
-> removing 'realtek'. While the kernel side can evolve to a common
-> infrastructure, the DT bindings can't.
+> This is basically doomed to break eventually, right?
 
-I'm working on a generic binding.
+Just so I'm understanding: the vDSO change introduced code to make an
+actual syscall on i386, which for most seccomp filters would be rejected?
 
-I wonder what is the best process for reviewing/landing it, I'm
-doubting between two options:
+> I’ve occasionally considered adding a concept of “seccomp aliases”.  The idea is that, if a filter returns anything other than ALLOW, we re-run it with a different nr that we dig out it a small list of such cases. This would be limited to cases where the new syscall does the same thing with the same arguments.
 
-a) only post the binding doc and the generic PHY code that reads
-   the configuration from the DT. Post Realtek patches once
-   the binding/generic code has been acked.
+Would that help here? The kernel just sees this a direct syscall. I
+guess it could whitelist it by checking the return address?
 
-   pros: no churn from Realtek specific patches
-   cons: initially no (real) user of the new binding
+> I want this for restart_syscall: I want to renumber it.
 
-b) post generic and Realtek changes together
+Oh man, don't get me started on restart_syscall. Some architectures make
+it invisible to seccomp and others don't. ugh.
 
-   pros: the binding has a user initially
-   cons: churn from Realtek specific patches
-
-I can do either, depending on what maintainers/reviewers prefer. I'm
-slightly inclined towards a)
+-- 
+Kees Cook
