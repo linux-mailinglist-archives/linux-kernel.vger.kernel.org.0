@@ -2,135 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77367701F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 16:11:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ACDF701FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 16:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730776AbfGVOLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 10:11:55 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46926 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729083AbfGVOLy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 10:11:54 -0400
-Received: by mail-qt1-f195.google.com with SMTP id h21so38583073qtn.13
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 07:11:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LtBWSYY5RJyJ5bjGuD8GT1ULGrE6M+cxt5l8yU6kpN0=;
-        b=AqJLL2tAQ8qmfza+BbBBA30hBmiEi4pm7Bd30lUGLJdSyVKKuDWuxFlP7RyECIj17b
-         XJpeqNQH2wamruofikS+opbhHXR87C/2P4+HHr/txKjdnmmTrCfU3/FvIDauFeGsqdLX
-         9N8TDemI/FqJTetBBb+eMeMhgwvnuJ3+QSjcM18BJqZFbPTYbz22jGuEVhjAl1NeRhMe
-         gMsST/gm4oj7anPp1NAGwwTiAl7EGdHZhvi9wPgzVP0639DiVRWlp0mKEsh+gaWi/vPE
-         9sF4SdwiKYxgei4G8H6O23RQvFqbuu976015rHkp6asEVORyBSYPRzufJqJdiSfpQaVD
-         Edlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LtBWSYY5RJyJ5bjGuD8GT1ULGrE6M+cxt5l8yU6kpN0=;
-        b=nIBagqAOt4p2ZiHX05hHY195pG9qLeR9ethpnIsp2huBt2OD944YLKGW8ZlgebGjBe
-         LXNh/Gw2GliK/7OEo7HOZYQU+fVXe5skDLiTugYz81uBjxQFMfWm4/OZLMMBUdfZwYUa
-         cww8hoO4Y9/tPXW9hs5cXX0u/5jyJTqG55NLcrFlb1FBg6C45H6WtqgvbWpGdjcXuoKl
-         Je//vDWirefFDUvQGRMhxR3m302OvahRVh0Rz9t+RbCFbC1MXYfWLL/JtmhJAUHEOkzr
-         4VQuMzyIXRn66NACSh6LeGgqKH2RcsEjZYEFJEG3ovQWLFh0y6l/FToDdZBCQr2jx4tg
-         Zu6Q==
-X-Gm-Message-State: APjAAAUIibSvPRP8KCz91Y1N1mIGfSq8qPsYL/sCxRkXq8mgYmAFKTTJ
-        ETmfRl2XsudsChO0pxDqsva7cg==
-X-Google-Smtp-Source: APXvYqzJhWJh0JG/V+RW4LMQbSCenJcJXUz5oFlysoNrpAnk6aDKO1gmwVookMZq2D7vPB1tr+gYAg==
-X-Received: by 2002:ac8:3794:: with SMTP id d20mr49622645qtc.392.1563804713889;
-        Mon, 22 Jul 2019 07:11:53 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id x46sm25518922qtx.96.2019.07.22.07.11.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Jul 2019 07:11:53 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hpZ2e-0003yO-Ou; Mon, 22 Jul 2019 11:11:52 -0300
-Date:   Mon, 22 Jul 2019 11:11:52 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     syzbot <syzbot+e58112d71f77113ddb7b@syzkaller.appspotmail.com>,
-        aarcange@redhat.com, akpm@linux-foundation.org,
-        christian@brauner.io, davem@davemloft.net, ebiederm@xmission.com,
-        elena.reshetova@intel.com, guro@fb.com, hch@infradead.org,
-        james.bottomley@hansenpartnership.com, jasowang@redhat.com,
-        jglisse@redhat.com, keescook@chromium.org, ldv@altlinux.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
-        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
-        namit@vmware.com, peterz@infradead.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        wad@chromium.org
-Subject: Re: WARNING in __mmdrop
-Message-ID: <20190722141152.GA13711@ziepe.ca>
-References: <0000000000008dd6bb058e006938@google.com>
- <000000000000964b0d058e1a0483@google.com>
- <20190721044615-mutt-send-email-mst@kernel.org>
+        id S1729437AbfGVONy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 10:13:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50824 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727880AbfGVONy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 10:13:54 -0400
+Received: from localhost (unknown [223.226.98.106])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD30921911;
+        Mon, 22 Jul 2019 14:13:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563804833;
+        bh=b4iTL+3agj7PdCdScIUEXy95wqTx7S+Qv3Dd4gllawk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eyU0TbjkLPjAt4SKfuS+Oy2g29st+OImzk3jxkbNVHbnCXheuvi9j/H5VgAjS9b9I
+         lgkyLvQ0q+ytR4rjQnJRJml0i1R9Z/6g2q13TUNUPrvJm7f0aktVS3Sei390FQ0Dfc
+         gyqkdZuJOpJ66NWOODc3HNZDmt4y4VCGU+x3YVAg=
+Date:   Mon, 22 Jul 2019 19:42:40 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
+Subject: Re: [PATCH 1/2] [RESEND] dmaengine: omap-dma: make
+ omap_dma_filter_fn private
+Message-ID: <20190722141240.GT12733@vkoul-mobl.Dlink>
+References: <20190722081705.2084961-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190721044615-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190722081705.2084961-1-arnd@arndb.de>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 21, 2019 at 06:02:52AM -0400, Michael S. Tsirkin wrote:
-> On Sat, Jul 20, 2019 at 03:08:00AM -0700, syzbot wrote:
-> > syzbot has bisected this bug to:
-> > 
-> > commit 7f466032dc9e5a61217f22ea34b2df932786bbfc
-> > Author: Jason Wang <jasowang@redhat.com>
-> > Date:   Fri May 24 08:12:18 2019 +0000
-> > 
-> >     vhost: access vq metadata through kernel virtual address
-> > 
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=149a8a20600000
-> > start commit:   6d21a41b Add linux-next specific files for 20190718
-> > git tree:       linux-next
-> > final crash:    https://syzkaller.appspot.com/x/report.txt?x=169a8a20600000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=129a8a20600000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3430a151e1452331
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=e58112d71f77113ddb7b
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10139e68600000
-> > 
-> > Reported-by: syzbot+e58112d71f77113ddb7b@syzkaller.appspotmail.com
-> > Fixes: 7f466032dc9e ("vhost: access vq metadata through kernel virtual
-> > address")
-> > 
-> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+On 22-07-19, 10:16, Arnd Bergmann wrote:
+> With the audio driver no longer referring to this function, it
+> can be made private to the dmaengine driver itself, and the
+> header file removed.
 > 
-> 
-> OK I poked at this for a bit, I see several things that
-> we need to fix, though I'm not yet sure it's the reason for
-> the failures:
+> Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> Link: https://lore.kernel.org/lkml/20190307151646.1016966-1-arnd@arndb.de/
 
-This stuff looks quite similar to the hmm_mirror use model and other
-places in the kernel. I'm still hoping we can share this code a bit more.
+This seems to point to older rev, my script updated it to latest one.
 
-There is another bug, this sequence here:
-
-vhost_vring_set_num_addr()
-   mmu_notifier_unregister()
-   [..]
-   mmu_notifier_register()
-
-Which I think is trying to create a lock to protect dev->vqs..
-
-Has the problem that mmu_notifier_unregister() doesn't guarantee that
-invalidate_start/end are fully paired.
-
-So after any unregister the code has to clean up any resulting
-unbalanced invalidate_count before it can call mmu_notifier_register
-again. ie zero the invalidate_count.
-
-It also seems really weird that vhost_map_prefetch() can fail, ie due
-to __get_user_pages_fast needing to block, but that just silently
-(permanently?) disables the optimization?? At least the usage here
-would be better done with a seqcount lock and a normal blocking call
-to get_user_pages_fast()...
-
-Jason
+Applied both, thanks
+-- 
+~Vinod
