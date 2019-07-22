@@ -2,106 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 966936FF11
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 13:56:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59F266FF14
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 13:57:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730096AbfGVL4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 07:56:50 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43020 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727507AbfGVL4t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 07:56:49 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 828CF80342; Mon, 22 Jul 2019 13:56:35 +0200 (CEST)
-Date:   Mon, 22 Jul 2019 13:56:45 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc:     Pawel Laszczak <pawell@cadence.com>,
-        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "rogerq@ti.com" <rogerq@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Jayshri Dajiram Pawar <jpawar@cadence.com>,
-        Rahul Kumar <kurahul@cadence.com>,
-        Anil Joy Varughese <aniljoy@cadence.com>
-Subject: Re: [PATCH v10 0/6] Introduced new Cadence USBSS DRD Driver.
-Message-ID: <20190722115644.GA12069@amd>
-References: <1563733939-21214-1-git-send-email-pawell@cadence.com>
- <20190721190335.GA19831@xo-6d-61-c0.localdomain>
- <BYAPR07MB470904ACCD1ED91B10BB6BEFDDC40@BYAPR07MB4709.namprd07.prod.outlook.com>
- <20190722114839.GA10515@kroah.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
-Content-Disposition: inline
-In-Reply-To: <20190722114839.GA10515@kroah.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1730119AbfGVL5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 07:57:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44768 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727507AbfGVL5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 07:57:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D711BB019;
+        Mon, 22 Jul 2019 11:57:03 +0000 (UTC)
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Mauro Rossi <issor.oruam@gmail.com>,
+        Chih-Wei Huang <cwhuang@android-x86.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] firmware: fix build errors in paged buffer handling code
+Date:   Mon, 22 Jul 2019 13:56:56 +0200
+Message-Id: <20190722115656.10883-1-tiwai@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Mauro Rossi <issor.oruam@gmail.com>
 
---OXfL5xGRrasGEqWY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+fw_{grow,map}_paged_buf() need to be defined as static inline
+when CONFIG_FW_LOADER_PAGED_BUF is not enabled,
+infact fw_free_paged_buf() is also defined as static inline
+when CONFIG_FW_LOADER_PAGED_BUF is not enabled.
 
-Hi!
+Fixes the following mutiple definition building errors for Android kernel:
 
-> > >> This patch introduce new Cadence USBSS DRD driver to linux kernel.
-> > >>
-> > >> The Cadence USBSS DRD Controller is a highly configurable IP Core wh=
-ich
-> > >> can be instantiated as Dual-Role Device (DRD), Peripheral Only and
-> > >> Host Only (XHCI)configurations.
-> > >
-> > >I see you are using debugfs to select between DRD, peripheral-onlyh an=
-d XHCI...
-> > >
-> > >Is that good idea?
-> >=20
-> > Yes driver allows selecting dr_mode by debugfs. Controller also support=
- such functionality=20
-> > so I don't understand why would it not be a good idea.=20
-> >=20
-> > I personally use this for testing but it can be used to limit controlle=
-r functionality without=20
-> > recompiling kernel.=20
->=20
-> debugfs is ONLY for debugging, never rely on it being enabled, or
-> mounted, on a system in order to have any normal operation happen.
->=20
-> So for testing, yes, this is fine.  If this is going to be the normal
-> api/interface for how to control this driver, no, that is not acceptable
-> at all.
+drivers/base/firmware_loader/fallback_efi.o: In function `fw_grow_paged_buf':
+fallback_efi.c:(.text+0x0): multiple definition of `fw_grow_paged_buf'
+drivers/base/firmware_loader/main.o:(.text+0x73b): first defined here
+drivers/base/firmware_loader/fallback_efi.o: In function `fw_map_paged_buf':
+fallback_efi.c:(.text+0xf): multiple definition of `fw_map_paged_buf'
+drivers/base/firmware_loader/main.o:(.text+0x74a): first defined here
 
-It makes a lot of sense for end-user to toggle this... for example
-when he is lacking right cable for proper otg detection. As it is
-third driver offering this functionality, I believe we should stop
-treating it as debugging.
+[ slightly corrected the patch description -- tiwai ]
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Fixes: 5342e7093ff2 ("firmware: Factor out the paged buffer handling code")
+Fixes: 82fd7a8142a1 ("firmware: Add support for loading compressed files")
+Signed-off-by: Mauro Rossi <issor.oruam@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+---
+v1->v2: Fixed the mistakenly dropped inline, as done in Mauro's original
+        patch
 
---OXfL5xGRrasGEqWY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+ drivers/base/firmware_loader/firmware.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+diff --git a/drivers/base/firmware_loader/firmware.h b/drivers/base/firmware_loader/firmware.h
+index 7048a41973ed..7ecd590e67fe 100644
+--- a/drivers/base/firmware_loader/firmware.h
++++ b/drivers/base/firmware_loader/firmware.h
+@@ -141,8 +141,8 @@ int fw_grow_paged_buf(struct fw_priv *fw_priv, int pages_needed);
+ int fw_map_paged_buf(struct fw_priv *fw_priv);
+ #else
+ static inline void fw_free_paged_buf(struct fw_priv *fw_priv) {}
+-int fw_grow_paged_buf(struct fw_priv *fw_priv, int pages_needed) { return -ENXIO; }
+-int fw_map_paged_buf(struct fw_priv *fw_priv) { return -ENXIO; }
++static inline int fw_grow_paged_buf(struct fw_priv *fw_priv, int pages_needed) { return -ENXIO; }
++static inline int fw_map_paged_buf(struct fw_priv *fw_priv) { return -ENXIO; }
+ #endif
+ 
+ #endif /* __FIRMWARE_LOADER_H */
+-- 
+2.16.4
 
-iEYEARECAAYFAl01pHwACgkQMOfwapXb+vIDNQCgwTTLQIqZhxOPwF0uWn3pcLMd
-9qQAnjloOlNoULIYu4F5WNb9967eMecO
-=BZoL
------END PGP SIGNATURE-----
-
---OXfL5xGRrasGEqWY--
