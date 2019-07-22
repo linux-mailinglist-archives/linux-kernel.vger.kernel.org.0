@@ -2,152 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF32F709D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 21:40:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02F7F709FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 21:44:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732232AbfGVTkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 15:40:05 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:33943 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726443AbfGVTkE (ORCPT
+        id S1729818AbfGVToF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 15:44:05 -0400
+Received: from gateway36.websitewelcome.com ([192.185.193.12]:43758 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728505AbfGVToE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 15:40:04 -0400
-Received: by mail-yb1-f195.google.com with SMTP id q5so3217300ybp.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 12:40:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XiPi6NLGAihhHoJX1TQVxa/qSyYbhC/5nUBfiRfN5To=;
-        b=DatuO7iFd/gwaby0zE8VcAJc0UoFQHqT7eYDhZPJsVPEYuFar3ijTDWGJZ/oMnBCdn
-         NCp5AOREUGLNU/Dl5ElDs7B8Z7kfIDKXdHCT8XENb09BHD9P/OIaYVJ4LvZYQgqy3twJ
-         4VZ9Lx+eg6JJesZbxJFhpffym4RjzaZWqh8RchQ4bJWciVRW4DSxxFF1fVwXJngqdsji
-         efB18StPJsYCrMvpMIa7gFnp2t7n3WT/xrib079dw3FlU/KE03xS0q5vJO8MR/2y6IWI
-         U+0TeStphc7eDtcZZTx90NjrQ0y8Bv3ZJk6WPPbv+jhO6rFnmSUaNQEa40RruUxZGmWo
-         PeEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XiPi6NLGAihhHoJX1TQVxa/qSyYbhC/5nUBfiRfN5To=;
-        b=VgqlY8doPfZpJEevvyaXtg/3mqoa8mBGAuW6vLbcaUjqABqBBGkZTyt76CDg0jY+0b
-         DiWNI38mmhhqvJlEs13jkDkUbMVXUqbMF4q+6tQxT5WVrOxjH6anuqDC7uOpdHkb5Nkt
-         3NQJWYF+kvhhqOJH6WPjJqnDT60C6ysm4x83pg+h08Z18tnkEVtd01UR/PzgHCCCdYJq
-         Akv2X5xuwMnoLJynuk8K3vcZkaKh1B+emW0iR0MEa7JXkaBG3kpOj9gziW81f7sl+Csb
-         dU0Mpe+N4os6goiF5XDybMHdWZoouET70iqzXNFssqFgIkp7pN6rwcut95SSGmtHAexk
-         ZrKA==
-X-Gm-Message-State: APjAAAXCrMrLWOs/wApJ9cnQITkrVk2ri3C9s4jrVaejxzt8xYh19+gU
-        tAEHO5YPZgJbQM3aFjSV+gPpIQ==
-X-Google-Smtp-Source: APXvYqz5SZD7hxqVmR3c0a4NmWzRdFT0snKaXz6JaYvHegDZWvbV9kes8na9VWp1p6aIBtO6/WGxtg==
-X-Received: by 2002:a25:e003:: with SMTP id x3mr40966402ybg.225.1563824403688;
-        Mon, 22 Jul 2019 12:40:03 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id t201sm9586068ywc.87.2019.07.22.12.40.02
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 12:40:02 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 15:40:02 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Rob Clark <robdclark@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>, Sean Paul <sean@poorly.run>,
+        Mon, 22 Jul 2019 15:44:04 -0400
+X-Greylist: delayed 1446 seconds by postgrey-1.27 at vger.kernel.org; Mon, 22 Jul 2019 15:44:03 EDT
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 6ED10400C84DC
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 13:43:37 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id pdqmhlxPdiQerpdqmhCNcm; Mon, 22 Jul 2019 14:19:56 -0500
+X-Authority-Reason: nr=8
+Received: from cablelink149-185.telefonia.intercable.net ([201.172.149.185]:47848 helo=[192.168.1.79])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hpdql-002j3v-Sa; Mon, 22 Jul 2019 14:19:55 -0500
+Subject: Re: [PATCH] drm/amdkfd: Fix missing break in switch statement
+To:     Alex Deucher <alexdeucher@gmail.com>
+Cc:     Philip Cox <Philip.Cox@amd.com>,
+        Oded Gabbay <oded.gabbay@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
         David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm: stop abusing dma_map/unmap for cache
-Message-ID: <20190722194002.GI104440@art_vandelay>
-References: <20190630124735.27786-1-robdclark@gmail.com>
+        Daniel Vetter <daniel@ffwll.ch>,
+        Kees Cook <keescook@chromium.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190721214935.GA910@embeddedor>
+ <CADnq5_OTmx==m+1fJbf1PxPhPM0H0O8GRjq4eWeX6sw889YPrA@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <181c1bc9-4cf9-057f-a6e6-e6d62ddbc347@embeddedor.com>
+Date:   Mon, 22 Jul 2019 14:19:53 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190630124735.27786-1-robdclark@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CADnq5_OTmx==m+1fJbf1PxPhPM0H0O8GRjq4eWeX6sw889YPrA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.149.185
+X-Source-L: No
+X-Exim-ID: 1hpdql-002j3v-Sa
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: cablelink149-185.telefonia.intercable.net ([192.168.1.79]) [201.172.149.185]:47848
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 24
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 30, 2019 at 05:47:22AM -0700, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> Recently splats like this started showing up:
-> 
->    WARNING: CPU: 4 PID: 251 at drivers/iommu/dma-iommu.c:451 __iommu_dma_unmap+0xb8/0xc0
->    Modules linked in: ath10k_snoc ath10k_core fuse msm ath mac80211 uvcvideo cfg80211 videobuf2_vmalloc videobuf2_memops vide
->    CPU: 4 PID: 251 Comm: kworker/u16:4 Tainted: G        W         5.2.0-rc5-next-20190619+ #2317
->    Hardware name: LENOVO 81JL/LNVNB161216, BIOS 9UCN23WW(V1.06) 10/25/2018
->    Workqueue: msm msm_gem_free_work [msm]
->    pstate: 80c00005 (Nzcv daif +PAN +UAO)
->    pc : __iommu_dma_unmap+0xb8/0xc0
->    lr : __iommu_dma_unmap+0x54/0xc0
->    sp : ffff0000119abce0
->    x29: ffff0000119abce0 x28: 0000000000000000
->    x27: ffff8001f9946648 x26: ffff8001ec271068
->    x25: 0000000000000000 x24: ffff8001ea3580a8
->    x23: ffff8001f95ba010 x22: ffff80018e83ba88
->    x21: ffff8001e548f000 x20: fffffffffffff000
->    x19: 0000000000001000 x18: 00000000c00001fe
->    x17: 0000000000000000 x16: 0000000000000000
->    x15: ffff000015b70068 x14: 0000000000000005
->    x13: 0003142cc1be1768 x12: 0000000000000001
->    x11: ffff8001f6de9100 x10: 0000000000000009
->    x9 : ffff000015b78000 x8 : 0000000000000000
->    x7 : 0000000000000001 x6 : fffffffffffff000
->    x5 : 0000000000000fff x4 : ffff00001065dbc8
->    x3 : 000000000000000d x2 : 0000000000001000
->    x1 : fffffffffffff000 x0 : 0000000000000000
->    Call trace:
->     __iommu_dma_unmap+0xb8/0xc0
->     iommu_dma_unmap_sg+0x98/0xb8
->     put_pages+0x5c/0xf0 [msm]
->     msm_gem_free_work+0x10c/0x150 [msm]
->     process_one_work+0x1e0/0x330
->     worker_thread+0x40/0x438
->     kthread+0x12c/0x130
->     ret_from_fork+0x10/0x18
->    ---[ end trace afc0dc5ab81a06bf ]---
-> 
-> Not quite sure what triggered that, but we really shouldn't be abusing
-> dma_{map,unmap}_sg() for cache maint.
-> 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
 
-Applied to -misc-fixes
 
-Thanks,
-
-Sean
-
-> ---
->  drivers/gpu/drm/msm/msm_gem.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On 7/22/19 2:10 PM, Alex Deucher wrote:
+> On Sun, Jul 21, 2019 at 6:12 PM Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>>
+>> Add missing break statement in order to prevent the code from falling
+>> through to case CHIP_NAVI10.
+>>
+>> This bug was found thanks to the ongoing efforts to enable
+>> -Wimplicit-fallthrough.
+>>
+>> Fixes: 14328aa58ce5 ("drm/amdkfd: Add navi10 support to amdkfd. (v3)")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > 
-> diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
-> index d31d9f927887..3b84cbdcafa3 100644
-> --- a/drivers/gpu/drm/msm/msm_gem.c
-> +++ b/drivers/gpu/drm/msm/msm_gem.c
-> @@ -108,7 +108,7 @@ static struct page **get_pages(struct drm_gem_object *obj)
->  		 * because display controller, GPU, etc. are not coherent:
->  		 */
->  		if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
-> -			dma_map_sg(dev->dev, msm_obj->sgt->sgl,
-> +			dma_sync_sg_for_device(dev->dev, msm_obj->sgt->sgl,
->  					msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
->  	}
->  
-> @@ -138,7 +138,7 @@ static void put_pages(struct drm_gem_object *obj)
->  			 * GPU, etc. are not coherent:
->  			 */
->  			if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
-> -				dma_unmap_sg(obj->dev->dev, msm_obj->sgt->sgl,
-> +				dma_sync_sg_for_cpu(obj->dev->dev, msm_obj->sgt->sgl,
->  					     msm_obj->sgt->nents,
->  					     DMA_BIDIRECTIONAL);
->  
-> -- 
-> 2.20.1
+> Applied.  Thanks!
 > 
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+By the way, Alex, I'm planning to add these fixes to my tree. I want
+to send a pull-request to Linus for v5.3-rc2 this afternoon. We want
+to have the -Wimplicit-fallthrough option globally enabled in v5.3,
+and these are some of the last fall-through warnings remaining in
+the kernel.
+
+Can I have your Ack or Signed-off-by for all these drm patches?
+
+Thanks!
+--
+Gustavo
