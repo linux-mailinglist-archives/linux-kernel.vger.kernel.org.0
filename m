@@ -2,117 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1124E6F92E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 07:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46E556F934
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 07:57:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727619AbfGVF5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 01:57:20 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44855 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727589AbfGVF5R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 01:57:17 -0400
-Received: by mail-ed1-f68.google.com with SMTP id k8so39452486edr.11
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2019 22:57:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=JWav04oSOMMfjnrIfRfnbnhq134i7LRODNuQ+JDA4d8=;
-        b=iAeg5YAbgEc4aYUgaNNECEsRpX+e9jc1I5YBQtLvCy5UcbJE62lDIR8qMw5Uo0URLB
-         OR5S1U843vWDtFQk2NDReGy4Qxb7N98CbYzYs19BsFtoqLD5DWV07b8V1JPSFcBXbjyW
-         HWYtON8kw3CBY7KNYNNyGUBHFOA2grIb+ldo42JgaM/4i3ZcSJ6dGqY8b5ov1FKoVBoE
-         u87X+cv6T+p3shg/9BvIHVmZMWjV6L+fwDaG0iRgxd82oLNaJqJYY0HpMvnJNy+GF4+3
-         1xdSCLtQ22Jf1yyhsfFqpq9MU4Nvy6SLNJPh91tNdAwCOX3JwyfS85HihQlxDN91dRgF
-         e32w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references;
-        bh=JWav04oSOMMfjnrIfRfnbnhq134i7LRODNuQ+JDA4d8=;
-        b=YS5qXYoHfhcKQ3jUpe/uVMzXsKdv8mzwWZohJLguGg+GV2cke1lhVfkQyUE4do8RQ/
-         3PkAebFArLNKML2ibOf/Bn9PpP9YfVSduFlm4kKE19ulr0eO/i3JSrUndNLY7RfB+0Oy
-         i4lBbc/26GSFdBvmUP0QUlzFsNpXNZtwCVXqmj65o90sA5x3+jAnmALG14G2W+mk/Do7
-         2rq4lhq7v19WEiZY3EXkMjZGDxLV4AQvHfIaf4m578oGxu4Y5un2nlc3BSz8c8hvr+g7
-         4G75ocab8tUieKBr2xlCy+NutgvR1FruCfxAFr1I1eSStMOW4kEIZ/MoVxC90Lhzenii
-         u85w==
-X-Gm-Message-State: APjAAAU8T3AutSwTd1Lf51Hv0ZLoKvJjlArCPcFsLp4BOR5WBl7eckU7
-        SQu/o2QYZsZaMRpRDnM9ttE=
-X-Google-Smtp-Source: APXvYqzUeEvZzXubeuDVswHFU5kKDVfDWDqDmcg24fW79naD2l793eQa7IXung57mhGRdtZ8MAtoew==
-X-Received: by 2002:a50:89b4:: with SMTP id g49mr58295914edg.39.1563775036035;
-        Sun, 21 Jul 2019 22:57:16 -0700 (PDT)
-Received: from opensdev.fritz.box (business-178-015-117-054.static.arcor-ip.net. [178.15.117.54])
-        by smtp.gmail.com with ESMTPSA id a6sm10351725eds.19.2019.07.21.22.57.14
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 21 Jul 2019 22:57:15 -0700 (PDT)
-From:   shiva.linuxworks@gmail.com
-X-Google-Original-From: sshivamurthy@micron.com
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Shivamurthy Shastri <sshivamurthy@micron.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jeff Kletsky <git-commits@allycomm.com>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        liaoweixiong <liaoweixiong@allwinnertech.com>
-Subject: [PATCH 8/8] mtd: spinand: micron: Enable micron flashes with multi-die
-Date:   Mon, 22 Jul 2019 07:56:21 +0200
-Message-Id: <20190722055621.23526-9-sshivamurthy@micron.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190722055621.23526-1-sshivamurthy@micron.com>
-References: <20190722055621.23526-1-sshivamurthy@micron.com>
+        id S1727714AbfGVF5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 01:57:38 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2695 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726024AbfGVF5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 01:57:38 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id E75CC2E21CA5AA7E315C;
+        Mon, 22 Jul 2019 13:57:35 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Mon, 22 Jul 2019
+ 13:57:26 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <james.qian.wang@arm.com>, <liviu.dudau@arm.com>,
+        <brian.starkey@arm.com>, <airlied@linux.ie>
+CC:     <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <daniel@ffwll.ch>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2 -next] drm/komeda: remove set but not used variable 'old'
+Date:   Mon, 22 Jul 2019 13:56:27 +0800
+Message-ID: <20190722055627.38008-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20190709135808.56388-1-yuehaibing@huawei.com>
+References: <20190709135808.56388-1-yuehaibing@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shivamurthy Shastri <sshivamurthy@micron.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Some of the Micron flashes has multi-die, and need to select the die
-each time while accessing it.
+drivers/gpu/drm/arm/display/komeda/komeda_plane.c:
+ In function komeda_plane_atomic_duplicate_state:
+drivers/gpu/drm/arm/display/komeda/komeda_plane.c:161:35:
+ warning: variable old set but not used [-Wunused-but-set-variable
 
-Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
+It is not used since commit 990dee3aa456 ("drm/komeda:
+Computing image enhancer internally")
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/mtd/nand/spi/micron.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+v2: fix compile err
+---
+ drivers/gpu/drm/arm/display/komeda/komeda_plane.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
-index 1e28ea3d1362..fa2b43caf39d 100644
---- a/drivers/mtd/nand/spi/micron.c
-+++ b/drivers/mtd/nand/spi/micron.c
-@@ -90,6 +90,19 @@ static int micron_ecc_get_status(struct spinand_device *spinand,
- 	return -EINVAL;
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
+index c095af1..98e915e 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
+@@ -158,7 +158,7 @@ static void komeda_plane_reset(struct drm_plane *plane)
+ static struct drm_plane_state *
+ komeda_plane_atomic_duplicate_state(struct drm_plane *plane)
+ {
+-	struct komeda_plane_state *new, *old;
++	struct komeda_plane_state *new;
+ 
+ 	if (WARN_ON(!plane->state))
+ 		return NULL;
+@@ -169,8 +169,6 @@ komeda_plane_atomic_duplicate_state(struct drm_plane *plane)
+ 
+ 	__drm_atomic_helper_plane_duplicate_state(plane, &new->base);
+ 
+-	old = to_kplane_st(plane->state);
+-
+ 	return &new->base;
  }
  
-+static int micron_select_target(struct spinand_device *spinand,
-+				unsigned int target)
-+{
-+	struct spi_mem_op op = SPINAND_SET_FEATURE_OP(0xd0,
-+						      spinand->scratchbuf);
-+
-+	if (target == 1)
-+		target = 0x40;
-+
-+	*spinand->scratchbuf = target;
-+	return spi_mem_exec_op(spinand->spimem, &op);
-+}
-+
- static int micron_spinand_detect(struct spinand_device *spinand)
- {
- 	const struct spi_mem_op *op;
-@@ -105,6 +118,7 @@ static int micron_spinand_detect(struct spinand_device *spinand)
- 	spinand->flags = 0;
- 	spinand->eccinfo.get_status = micron_ecc_get_status;
- 	spinand->eccinfo.ooblayout = &micron_ooblayout_ops;
-+	spinand->select_target = micron_select_target;
- 
- 	op = spinand_select_op_variant(spinand,
- 				       &read_cache_variants);
 -- 
-2.17.1
+2.7.4
+
 
