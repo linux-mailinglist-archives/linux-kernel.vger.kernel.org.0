@@ -2,144 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEE42707BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:42:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95A07707A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:41:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731991AbfGVRmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 13:42:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46410 "EHLO mail.kernel.org"
+        id S1731826AbfGVRkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 13:40:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731777AbfGVRkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 13:40:37 -0400
+        id S1729903AbfGVRkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 13:40:40 -0400
 Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 565DD2190D;
-        Mon, 22 Jul 2019 17:40:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF83C21955;
+        Mon, 22 Jul 2019 17:40:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563817236;
-        bh=q1DbIInn9askfcnlT4d9h4V4aMp7JEtDvvjVLjwdUHA=;
+        s=default; t=1563817240;
+        bh=zO2YznnBiAt5YWzqBE6v2EXnEulNY9aTwrWFby96fvA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aAZ8AA/sjOzCH80MjV0O/iUdP94obyXx1KHs8qvyZYrtTz1Z9dwbGr5AnGqFSgXUE
-         gnaSlxRuqQ1pzxcok1AqbIpn15lqMnDUAcMw024xngqqzJrIvu4TEqis8WLQlzfb7A
-         8WiEZbiOH3Xx4nyVq1xdvxNv+nd4Zi4rgH1b+kGk=
+        b=HxRx8XSDUu8ceKQSq5GC+UwoyuLLrPen+FS+dwJqsw6v+vUY7tVDQeAQgLZUoPJdl
+         XGqdngU/EvR/ePs3O4Uoszyn2i7VXLdTmsI+CA6K8Bz+g95/CjQFboj55xGu81vRk1
+         M3CHTSRKGbxXEXwF5g7+OVc0xD4SFc0n/O6E8uDg=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
-        <lclaudio@redhat.com>
-Subject: [PATCH 15/37] perf augmented_raw_syscalls: Rename augmented_args_filename to augmented_args_payload
-Date:   Mon, 22 Jul 2019 14:38:17 -0300
-Message-Id: <20190722173839.22898-16-acme@kernel.org>
+        Andi Kleen <ak@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 16/37] perf script: Fix --max-blocks man page description
+Date:   Mon, 22 Jul 2019 14:38:18 -0300
+Message-Id: <20190722173839.22898-17-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190722173839.22898-1-acme@kernel.org>
 References: <20190722173839.22898-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Andi Kleen <ak@linux.intel.com>
 
-It'll get other stuff in there than just filenames, starting with
-sockaddr for 'connect' and 'bind'.
+The --max-blocks description was using the old name brstackasm.  Use
+brstackinsn instead.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-bsexidtsn91ehdpzcd6n5fm9@git.kernel.org
+Link: http://lkml.kernel.org/r/20190711181922.18765-1-andi@firstfloor.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- .../examples/bpf/augmented_raw_syscalls.c     | 22 ++++++++++---------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ tools/perf/Documentation/perf-script.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-index df52d92e1c69..77bb6a0edce3 100644
---- a/tools/perf/examples/bpf/augmented_raw_syscalls.c
-+++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-@@ -67,13 +67,15 @@ struct augmented_filename {
+diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
+index d4e2e18a5881..042b9e5dcc32 100644
+--- a/tools/perf/Documentation/perf-script.txt
++++ b/tools/perf/Documentation/perf-script.txt
+@@ -384,7 +384,7 @@ include::itrace.txt[]
+ 	perf script --time 0%-10%,30%-40%
  
- pid_filter(pids_filtered);
+ --max-blocks::
+-	Set the maximum number of program blocks to print with brstackasm for
++	Set the maximum number of program blocks to print with brstackinsn for
+ 	each sample.
  
--struct augmented_args_filename {
-+struct augmented_args_payload {
-        struct syscall_enter_args args;
--       struct augmented_filename filename;
--       struct augmented_filename filename2;
-+       struct {
-+	       struct augmented_filename filename;
-+	       struct augmented_filename filename2;
-+       };
- };
- 
--bpf_map(augmented_filename_map, PERCPU_ARRAY, int, struct augmented_args_filename, 1);
-+bpf_map(augmented_args_tmp, PERCPU_ARRAY, int, struct augmented_args_payload, 1);
- 
- static inline
- unsigned int augmented_filename__read(struct augmented_filename *augmented_filename,
-@@ -111,7 +113,7 @@ int syscall_unaugmented(struct syscall_enter_args *args)
- 
- /*
-  * This will be tail_called from SEC("raw_syscalls:sys_enter"), so will find in
-- * augmented_filename_map what was read by that raw_syscalls:sys_enter and go
-+ * augmented_args_tmp what was read by that raw_syscalls:sys_enter and go
-  * on from there, reading the first syscall arg as a string, i.e. open's
-  * filename.
-  */
-@@ -119,7 +121,7 @@ SEC("!syscalls:sys_enter_open")
- int sys_enter_open(struct syscall_enter_args *args)
- {
- 	int key = 0;
--	struct augmented_args_filename *augmented_args = bpf_map_lookup_elem(&augmented_filename_map, &key);
-+	struct augmented_args_payload *augmented_args = bpf_map_lookup_elem(&augmented_args_tmp, &key);
- 	const void *filename_arg = (const void *)args->args[0];
- 	unsigned int len = sizeof(augmented_args->args);
- 
-@@ -136,7 +138,7 @@ SEC("!syscalls:sys_enter_openat")
- int sys_enter_openat(struct syscall_enter_args *args)
- {
- 	int key = 0;
--	struct augmented_args_filename *augmented_args = bpf_map_lookup_elem(&augmented_filename_map, &key);
-+	struct augmented_args_payload *augmented_args = bpf_map_lookup_elem(&augmented_args_tmp, &key);
- 	const void *filename_arg = (const void *)args->args[1];
- 	unsigned int len = sizeof(augmented_args->args);
- 
-@@ -153,7 +155,7 @@ SEC("!syscalls:sys_enter_renameat")
- int sys_enter_renameat(struct syscall_enter_args *args)
- {
- 	int key = 0;
--	struct augmented_args_filename *augmented_args = bpf_map_lookup_elem(&augmented_filename_map, &key);
-+	struct augmented_args_payload *augmented_args = bpf_map_lookup_elem(&augmented_args_tmp, &key);
- 	const void *oldpath_arg = (const void *)args->args[1],
- 		   *newpath_arg = (const void *)args->args[3];
- 	unsigned int len = sizeof(augmented_args->args), oldpath_len;
-@@ -171,7 +173,7 @@ int sys_enter_renameat(struct syscall_enter_args *args)
- SEC("raw_syscalls:sys_enter")
- int sys_enter(struct syscall_enter_args *args)
- {
--	struct augmented_args_filename *augmented_args;
-+	struct augmented_args_payload *augmented_args;
- 	/*
- 	 * We start len, the amount of data that will be in the perf ring
- 	 * buffer, if this is not filtered out by one of pid_filter__has(),
-@@ -185,7 +187,7 @@ int sys_enter(struct syscall_enter_args *args)
- 	struct syscall *syscall;
- 	int key = 0;
- 
--        augmented_args = bpf_map_lookup_elem(&augmented_filename_map, &key);
-+        augmented_args = bpf_map_lookup_elem(&augmented_args_tmp, &key);
-         if (augmented_args == NULL)
-                 return 1;
- 
+ --reltime::
 -- 
 2.21.0
 
