@@ -2,140 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C00F57014F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:42:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5A6370146
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:41:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730173AbfGVNm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 09:42:29 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:36863 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726925AbfGVNm2 (ORCPT
+        id S1729831AbfGVNlz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 09:41:55 -0400
+Received: from mail-qk1-f176.google.com ([209.85.222.176]:44048 "EHLO
+        mail-qk1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726925AbfGVNlz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 09:42:28 -0400
-Received: by mail-vs1-f68.google.com with SMTP id y16so26090639vsc.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 06:42:28 -0700 (PDT)
+        Mon, 22 Jul 2019 09:41:55 -0400
+Received: by mail-qk1-f176.google.com with SMTP id d79so28571544qke.11
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 06:41:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qoQdDffqX8NBzaTkQfhvAHhztASiaANiufyf578HpGA=;
-        b=hlf36gHZhD/tS5G06dvQKalHNMkuU0cPoYxvqMowCMiM9+5PuvZs+04mLOqMz2VeuW
-         U8dAGoQv9k54c85MyxcwsDF2A+inBvqw62id8DJVpiPw7bvZbXA/njP/C0RrYsZMy3tG
-         wpjnT74c3n53mUIeMtdr+TaEKIMxUwRK6caFdudW0oLatFOWjv7hKp5H2M2hUTQi+BwB
-         ESp1bk+Fpi1F+8T/ue3qVOEWi4Oyjp7xADz8+qOfUpHdXJNxyfNoDoE/2S/6G4j2pOZ4
-         idBpfMzjfaoP3PkIyenxLmYvTqcyTF1J3Pool3TykdtIKk1c0OWr8xEPfoWWYVvviyqa
-         NPJg==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=r7jurWEbcB87wkHM6FBIF/d6ZCsIeD3qrag1BaWvzr0=;
+        b=ctSiEsOEiyiwu0n3CEQABL3/Tosruh5w/+6uzF92xLW34JmyfhThCGBMfVUaYt9dcx
+         eW2R16GiG0XcoxTfHQmNNe2NbtDmD4V4zDlbn3sIafmR+axGp5w7q8jG/t+N5A5vd1+2
+         T8limk/5bxxJguypRZGjOMgCVjJ3UuJ440SlT4VBiuew99yPu+wjBAGDyiX6h7A0CwOA
+         dwL0M70N/ZKBJ7e/9dDovVWnU15MNgA7ZpwwgLu6rerH2A7rFP/VNIWBW0CDFkWJkGIk
+         02tVH4RCMUcpMeH+V7LrZ4lwFpUMFWob0uRUx2w20StfeAVPWAbvrasBs/AM3w8QAsz1
+         Qvkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qoQdDffqX8NBzaTkQfhvAHhztASiaANiufyf578HpGA=;
-        b=BOZ03deh4xIPO3HuztmCiAA67itaPmWICUaJd0ohZYAi4fR6fub9Mith2kLj8Al9FJ
-         FSCF7Xf6mEaXHiA4A7Lql3q6Je0F0sDmTMlKc2StAGhB0A2Z4oqvPAxkNA69jIG4eX34
-         lZIlJIjtpmkJmis3g9J1DW756bxLiQG+Qlw2rEnJlYgnRoZ48mNEFitW3xmTq6Klvwl5
-         fuzhJolWfXVwyJ7RD6nVj5Xv6T0G6vDUZg26IXu+Wuc4XavzHELeyXshD0H/rzqfebB/
-         7jH1k/NppwI9nmw4RR4/1sL7o5yvV+OmCbWwmrfAj1OB2ZAZT8tlak1baonH+Uj8df4N
-         Smxw==
-X-Gm-Message-State: APjAAAX86SI8gS7Fyro6DD+CAFiycEEbH0qZZTtsmBzfXoQDQq5D1+E+
-        0OcQeM/qOy6ZLQASUQPZp5DF3wjdd5EhSRB7J5Nnew==
-X-Google-Smtp-Source: APXvYqxbn8CFIXmBHNgvuCDDcp2KcviU5e69X/Dns7ukIv9wF0j92U/Jl2H0QImdSFYkQRQTfAnh2+VcAVwgZp1J98Y=
-X-Received: by 2002:a67:7a90:: with SMTP id v138mr41898336vsc.200.1563802947659;
- Mon, 22 Jul 2019 06:42:27 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=r7jurWEbcB87wkHM6FBIF/d6ZCsIeD3qrag1BaWvzr0=;
+        b=EE3YVWRws8tBPLovmiLG6itbMuKa8LNdH5JFG/2/GzWgeDUjihGgrmgINephSezh95
+         puvh5seFwFgl22HVPcHBh3WKwDBGhBMPBL79x2vRVdgHfDw3niB5jyP5Eqt13GVfxOpQ
+         NIO8miMvSi762B1/dO9RXjUAOhqv8Uav1jMZBnQPHPSNv03SiWkRZIVzMJMD8mn4T58U
+         6lTHrymHu6aDY9KNRZ8We0uUeM3141yyJNjN3jOjZ9rREe5z0L+jrvde6ngts04Uxi8a
+         Mjv52VmMsPkU4ckCEpO+rN3kqOZOG44QZq5wd9Wnk3CacoY6UVeELFkA+DpAFy6reF3C
+         LYow==
+X-Gm-Message-State: APjAAAV4PvIg7z8ApqrN8IFiNF5ODUTNIjFMGRuYOGGW66XXWNLQWaXt
+        zD3acuzcEaG5caEkXwYNK1LVLw==
+X-Google-Smtp-Source: APXvYqxGgJ5n0Ggl2+5KtjzE7HLyY29aRN+3J2KTmJj1bDyPcTuyXmhCmMkJ3yMp7O1QI/DGhNTc3w==
+X-Received: by 2002:a37:a6d8:: with SMTP id p207mr42748278qke.387.1563802913858;
+        Mon, 22 Jul 2019 06:41:53 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id x8sm17451291qkl.27.2019.07.22.06.41.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 22 Jul 2019 06:41:52 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hpYZc-0003Vr-7E; Mon, 22 Jul 2019 10:41:52 -0300
+Date:   Mon, 22 Jul 2019 10:41:52 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>, aarcange@redhat.com,
+        akpm@linux-foundation.org, christian@brauner.io,
+        davem@davemloft.net, ebiederm@xmission.com,
+        elena.reshetova@intel.com, guro@fb.com, hch@infradead.org,
+        james.bottomley@hansenpartnership.com, jasowang@redhat.com,
+        jglisse@redhat.com, keescook@chromium.org, ldv@altlinux.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
+        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
+        namit@vmware.com, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        wad@chromium.org
+Subject: Re: RFC: call_rcu_outstanding (was Re: WARNING in __mmdrop)
+Message-ID: <20190722134152.GA13013@ziepe.ca>
+References: <0000000000008dd6bb058e006938@google.com>
+ <000000000000964b0d058e1a0483@google.com>
+ <20190721044615-mutt-send-email-mst@kernel.org>
+ <20190721081933-mutt-send-email-mst@kernel.org>
+ <20190721131725.GR14271@linux.ibm.com>
+ <20190721210837.GC363@bombadil.infradead.org>
+ <20190721233113.GV14271@linux.ibm.com>
+ <20190722035042-mutt-send-email-mst@kernel.org>
+ <20190722115149.GY14271@linux.ibm.com>
 MIME-Version: 1.0
-References: <20190708195613.205729-1-dianders@chromium.org>
-In-Reply-To: <20190708195613.205729-1-dianders@chromium.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 22 Jul 2019 15:41:51 +0200
-Message-ID: <CAPDyKFqcbFZWiMc3zLFP7cvkNG0hMB91rfy6T=dbrFks9EWMsQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: dw_mmc: Fix occasional hang after tuning on eMMC
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Jaehoon Chung <jh80.chung@samsung.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Sonny Rao <sonnyrao@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Alim Akhtar <alim.akhtar@gmail.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190722115149.GY14271@linux.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 8 Jul 2019 at 21:56, Douglas Anderson <dianders@chromium.org> wrote:
->
-> In commit 46d179525a1f ("mmc: dw_mmc: Wait for data transfer after
-> response errors.") we fixed a tuning-induced hang that I saw when
-> stress testing tuning on certain SD cards.  I won't re-hash that whole
-> commit, but the summary is that as a normal part of tuning you need to
-> deal with transfer errors and there were cases where these transfer
-> errors was putting my system into a bad state causing all future
-> transfers to fail.  That commit fixed handling of the transfer errors
-> for me.
->
-> In downstream Chrome OS my fix landed and had the same behavior for
-> all SD/MMC commands.  However, it looks like when the commit landed
-> upstream we limited it to only SD tuning commands.  Presumably this
-> was to try to get around problems that Alim Akhtar reported on exynos
-> [1].
->
-> Unfortunately while stress testing reboots (and suspend/resume) on
-> some rk3288-based Chromebooks I found the same problem on the eMMC on
-> some of my Chromebooks (the ones with Hynix eMMC).  Since the eMMC
-> tuning command is different (MMC_SEND_TUNING_BLOCK_HS200
-> vs. MMC_SEND_TUNING_BLOCK) we were basically getting back into the
-> same situation.
->
-> I'm hoping that whatever problems exynos was having in the past are
-> somehow magically fixed now and we can make the behavior the same for
-> all commands.
->
-> [1] https://lkml.kernel.org/r/CAGOxZ53WfNbaMe0_AM0qBqU47kAfgmPBVZC8K8Y-_J3mDMqW4A@mail.gmail.com
->
-> Fixes: 46d179525a1f ("mmc: dw_mmc: Wait for data transfer after response errors.")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Alim Akhtar <alim.akhtar@gmail.com>
-> Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+On Mon, Jul 22, 2019 at 04:51:49AM -0700, Paul E. McKenney wrote:
 
-Applied for fixes and by adding a stable tag, thanks!
+> > > > Would it make sense to have call_rcu() check to see if there are many
+> > > > outstanding requests on this CPU and if so process them before returning?
+> > > > That would ensure that frequent callers usually ended up doing their
+> > > > own processing.
+> > > 
+> > > Unfortunately, no.  Here is a code fragment illustrating why:
 
-Kind regards
-Uffe
+That is only true in the general case though, kfree_rcu() doesn't have
+this problem since we know what the callback is doing. In general a
+caller of kfree_rcu() should not need to hold any locks while calling
+it.
 
+We could apply the same idea more generally and have some
+'call_immediate_or_rcu()' which has restrictions on the caller's
+context.
 
-> ---
-> Marek (or anyone else using exynos): is it easy for you to test this
-> and check if things are still broken when we land this patch?  If so,
-> I guess we could have a quirk to have different behavior for just
-> Rockchip SoCs but I'd rather avoid that if possible.
->
-> NOTE: I'm not hoping totally in vain here.  It is possible that some
-> of the CTO/DTO timers that landed could be the magic that would get
-> exynos unstuck.
->
->  drivers/mmc/host/dw_mmc.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index b53b6b7d4dd4..60c3a06e3469 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -2034,8 +2034,7 @@ static void dw_mci_tasklet_func(unsigned long priv)
->                                  * delayed. Allowing the transfer to take place
->                                  * avoids races and keeps things simple.
->                                  */
-> -                               if ((err != -ETIMEDOUT) &&
-> -                                   (cmd->opcode == MMC_SEND_TUNING_BLOCK)) {
-> +                               if (err != -ETIMEDOUT) {
->                                         state = STATE_SENDING_DATA;
->                                         continue;
->                                 }
-> --
-> 2.22.0.410.gd8fdbe21b5-goog
->
+I think if we have some kind of problem here it would be better to
+handle it inside the core code and only require that callers use the
+correct RCU API.
+
+I can think of many places where kfree_rcu() is being used under user
+control..
+
+Jason
