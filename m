@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94ECC707A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:41:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90971707AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:41:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731775AbfGVRkq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 13:40:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46492 "EHLO mail.kernel.org"
+        id S1727541AbfGVRkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 13:40:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728292AbfGVRkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 13:40:45 -0400
+        id S1729259AbfGVRku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 13:40:50 -0400
 Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD73021903;
-        Mon, 22 Jul 2019 17:40:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2667621901;
+        Mon, 22 Jul 2019 17:40:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563817244;
-        bh=iWw8WjW7t/Xogrxr28Hix4tdM3kV2pKhLX8g+mvoGrs=;
+        s=default; t=1563817249;
+        bh=a07mUGGtDLw1O/GxAlCS3+F+irmF9H3XDmJT+P6GoAo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NuzHevRT1DbKucsOAkcEWwa+SpDH80extcNUXBxpKCejl84tL6m3cebIEJmHGLzyU
-         wm7/QOAo97zkR1pwNxt+WELnYKjFooP/pX9tEjIiljh+ikoSjOUsgKH+5uHg8Zi8g3
-         ZWhSQjIPOIgUrPgfTHv3Of8k2vUp2wtt+zde3xO4=
+        b=P2FaiNEJCnexeibp1hVncA+XMZ8NckS9Lqb24Kbta66NS4GibFY7bCt44n210/fng
+         ls2z9e6nm40rQmLdPrED5MVdvZdn/Glbn2uy1VdMqna8dyJp5JRUKNCLyI609RQdy8
+         CptxnUmHw4ahZ6Kn6P9pVJXPz3PmAaIELI7mYw9U=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -30,10 +30,11 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Andi Kleen <ak@linux.intel.com>,
+        Denis Bakhvalov <denis.bakhvalov@intel.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 17/37] perf script: Improve man page description of metrics
-Date:   Mon, 22 Jul 2019 14:38:19 -0300
-Message-Id: <20190722173839.22898-18-acme@kernel.org>
+Subject: [PATCH 18/37] perf script: Fix off by one in brstackinsn IPC computation
+Date:   Mon, 22 Jul 2019 14:38:20 -0300
+Message-Id: <20190722173839.22898-19-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190722173839.22898-1-acme@kernel.org>
 References: <20190722173839.22898-1-acme@kernel.org>
@@ -46,36 +47,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-Clarify that a metric is based on events, not referring to itself. Also
-some improvements with the sentences.
+When we hit the end of a program block, need to count the last
+instruction too for the IPC computation. This caused large errors for
+small blocks.
 
+  % perf script -b ls / > /dev/null
+
+Before:
+
+  % perf script -F +brstackinsn --xed
+  ...
+        00007f94c9ac70d8                        jz 0x7f94c9ac70e3                       # PRED 3 cycles [36] 4.33 IPC
+        00007f94c9ac70e3                        testb  $0x20, 0x31d(%rbx)
+        00007f94c9ac70ea                        jnz 0x7f94c9ac70b0
+        00007f94c9ac70ec                        testb  $0x8, 0x205ad(%rip)
+        00007f94c9ac70f3                        jz 0x7f94c9ac6ff0               # PRED 1 cycles [37] 3.00 IPC
+
+After:
+
+  % perf script -F +brstackinsn --xed
+  ...
+        00007f94c9ac70d8                        jz 0x7f94c9ac70e3                       # PRED 3 cycles [15] 4.67 IPC
+        00007f94c9ac70e3                        testb  $0x20, 0x31d(%rbx)
+        00007f94c9ac70ea                        jnz 0x7f94c9ac70b0
+        00007f94c9ac70ec                        testb  $0x8, 0x205ad(%rip)
+        00007f94c9ac70f3                        jz 0x7f94c9ac6ff0               # PRED 1 cycles [16] 4.00 IPC
+
+Suggested-by: Denis Bakhvalov <denis.bakhvalov@intel.com>
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20190711181922.18765-3-andi@firstfloor.org
+Link: http://lkml.kernel.org/r/20190711181922.18765-2-andi@firstfloor.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-script.txt | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/builtin-script.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index 042b9e5dcc32..caaab28f8400 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -228,11 +228,11 @@ OPTIONS
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 8f24865596af..0140ddb8dd0b 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -1059,7 +1059,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
  
- 	With the metric option perf script can compute metrics for
- 	sampling periods, similar to perf stat. This requires
--	specifying a group with multiple metrics with the :S option
-+	specifying a group with multiple events defining metrics with the :S option
- 	for perf record. perf will sample on the first event, and
--	compute metrics for all the events in the group. Please note
-+	print computed metrics for all the events in the group. Please note
- 	that the metric computed is averaged over the whole sampling
--	period, not just for the sample point.
-+	period (since the last sample), not just for the sample point.
- 
- 	For sample events it's possible to display misc field with -F +misc option,
- 	following letters are displayed for each bit:
+ 			printed += ip__fprintf_sym(ip, thread, x.cpumode, x.cpu, &lastsym, attr, fp);
+ 			if (ip == end) {
+-				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, insn, fp,
++				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, ++insn, fp,
+ 							    &total_cycles);
+ 				if (PRINT_FIELD(SRCCODE))
+ 					printed += print_srccode(thread, x.cpumode, ip);
 -- 
 2.21.0
 
