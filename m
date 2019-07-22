@@ -2,108 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BDB66FCF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 11:51:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DEFF6FCDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 11:51:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729509AbfGVJve (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 05:51:34 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:58112 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729367AbfGVJuw (ORCPT
+        id S1729456AbfGVJvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 05:51:04 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43284 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729430AbfGVJvC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 05:50:52 -0400
-X-UUID: c45950b4dc394bb492ec60abafe0491e-20190722
-X-UUID: c45950b4dc394bb492ec60abafe0491e-20190722
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <neal.liu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 208432879; Mon, 22 Jul 2019 17:50:44 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 22 Jul 2019 17:50:43 +0800
-Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 22 Jul 2019 17:50:42 +0800
-Message-ID: <1563789042.14676.3.camel@mtkswgap22>
-Subject: Re: [PATCH v4 0/3] MediaTek Security random number generator support
-From:   Neal Liu <neal.liu@mediatek.com>
-To:     Matt Mackall <mpm@selenic.com>, Rob Herring <robh+dt@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Sean Wang" <sean.wang@kernel.org>
-CC:     Neal Liu <neal.liu@mediatek.com>,
-        Crystal Guo =?UTF-8?Q?=28=E9=83=AD=E6=99=B6=29?= 
-        <Crystal.Guo@mediatek.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        wsd_upstream <wsd_upstream@mediatek.com>
-Date:   Mon, 22 Jul 2019 17:50:42 +0800
-In-Reply-To: <1561361052-13072-1-git-send-email-neal.liu@mediatek.com>
-References: <1561361052-13072-1-git-send-email-neal.liu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK:  N
+        Mon, 22 Jul 2019 05:51:02 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p13so38667654wru.10
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 02:51:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=bWP5xS/4YYzdQVyLQ3+texqZ8kAemNHSwaQHX5jsQwQ=;
+        b=nHHruWm11yckWxNykJfOsz9XcXvSNUyeaA7NSVCJWFqG9us6WcySaPabt7WprIsSUR
+         wP9dWNuHAhwiU91FTYXvRMDCopEmn1534xz5aLuB7yd/AaZZUlse3dknne1Y++W7Q4iu
+         hMDxPdDMlCisFkNrrgkVS9FdiwRBJ4ispJGxHc5GYJKotyiDkL3PF32gZ8OGntUkjZjx
+         YN+yzZa/akUwMmGOtCPqBcQLNFeUW1hbFi4gwgFHns88vo1oQzKHvgL1iCvzuEaTBoIi
+         kijywq1IvG3ywooo4YsmAt9jQi7ZRc+zqt1bAzCqxVAyr+uMSXlgZ6OVSDuZ9fsEX1DL
+         qShA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bWP5xS/4YYzdQVyLQ3+texqZ8kAemNHSwaQHX5jsQwQ=;
+        b=EmWCSG2vgb+N1NbUagVant29Zv7caXZr0ZrxcH4Po5r/0t9mjbuSqmU0Tf73IFMNt6
+         Zydn1QGVFzYSnpH1uin5qQeP0Axicvece8qp+tS0fYGWg0G5HRxoXSFzvsKx6/LFnoFE
+         WKZ3SH/CV+NqxU8yUF7FGRrIkXfh7sAP29BknQagghxme5MiZAoKMYkvawAwtE/YdQ2R
+         fbnrClpKoVPmyt7ITDf0sczXam22xw3pN5wqpYG56ipry1OtfC1MwLteqa+p5IBlyMUw
+         JP50BTWGUq7W4QCuwX9JfNSbxtirLR3U1Ox6qSKzICgLgcKZxXyNNdbR+26iBv+OB7VX
+         b7BQ==
+X-Gm-Message-State: APjAAAV+hfwNRdRIwqf0E2fjGoiF17lVd3l8rFgCLU5Dp9reFE/qYBg2
+        GShe+T4jzWgc+8cbJ8H4i+Uryg==
+X-Google-Smtp-Source: APXvYqy1nKso+GnHov2Vamg3HX7qKDmtTy9gNOQdWWtffkvp3JgGap0R3bk+1lQNEs186TKMf9sKBQ==
+X-Received: by 2002:adf:b64b:: with SMTP id i11mr73312101wre.205.1563789060893;
+        Mon, 22 Jul 2019 02:51:00 -0700 (PDT)
+Received: from pop-os.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id o3sm31050738wrs.59.2019.07.22.02.50.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Jul 2019 02:51:00 -0700 (PDT)
+From:   Alexandre Mergnat <amergnat@baylibre.com>
+To:     jbrunet@baylibre.com
+Cc:     khilman@baylibre.com, sboyd@kernel.org, narmstrong@baylibre.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        baylibre-upstreaming@groups.io,
+        Alexandre Mergnat <amergnat@baylibre.com>
+Subject: [PATCH 0/4] clk: meson: ao: use the new parent description method
+Date:   Mon, 22 Jul 2019 11:50:49 +0200
+Message-Id: <20190722095053.14104-1-amergnat@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Matthias, Rob, Mark,
-	Just gentle ping.
-	Thanks
+Meson SoCs clock controllers use the string comparison method to describe
+parent relation between the clocks, which is not optimized.
 
+Its also use bypass clock made from device-tree clock to provide an input
+clock which can be access through global name, but it still not optimal.
 
-On Mon, 2019-06-24 at 15:24 +0800, Neal Liu wrote:
-> These patch series introduce a generic rng driver for Trustzone
-> based kernel driver which would like to communicate with ATF
-> SIP services.
-> 
-> Patch #1 initials SMC fid table for Mediatek SIP interfaces and
-> adds HWRNG related SMC call.
-> 
-> Patch #2..3 adds mtk-sec-rng kernel driver for Trustzone based SoCs.
-> For MediaTek SoCs on ARMv8 with TrustZone enabled, peripherals like
-> entropy sources is not accessible from normal world (linux) and
-> rather accessible from secure world (ATF/TEE) only. This driver aims
-> to provide a generic interface to ATF rng service.
-> 
-> 
-> changes since v1:
-> - rename mt67xx-rng to mtk-sec-rng since all MediaTek ARMv8 SoCs
-> can reuse this driver.
-> - refine coding style and unnecessary check.
-> 
-> changes since v2:
-> - remove unused comments.
-> - remove redundant variable.
-> 
-> changes since v3:
-> - add dt-bindings for MediaTek rng with TrustZone enabled
-> - revise HWRNG SMC call fid
-> 
-> 
-> Neal Liu (3):
->   soc: mediatek: add SMC fid table for SIP interface
->   dt-bindings: rng: add bindings for MediaTek ARMv8 SoCs
->   hwrng: add mtk-sec-rng driver
-> 
->  .../devicetree/bindings/rng/mtk-sec-rng.txt   | 10 ++
->  drivers/char/hw_random/Kconfig                | 16 +++
->  drivers/char/hw_random/Makefile               |  1 +
->  drivers/char/hw_random/mtk-sec-rng.c          | 97 +++++++++++++++++++
->  include/linux/soc/mediatek/mtk_sip_svc.h      | 33 +++++++
->  5 files changed, 157 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rng/mtk-sec-rng.txt
->  create mode 100644 drivers/char/hw_random/mtk-sec-rng.c
->  create mode 100644 include/linux/soc/mediatek/mtk_sip_svc.h
-> 
+A recent patch [0] allows parents to be directly specified with
+device-tree clock name or without string names from localy declared clocks.
 
+This patchset replaces clock string names by clock pointers (as possible),
+removes bypass clocks and uses directly device-tree clock names in parent
+assignment.
+
+Tested on GXL, GXBB, Meson8b, AXG SoCs by comparing the clock summary
+(orphan too) before and after migration.
+
+[0] commit fc0c209c147f ("clk: Allow parents to be specified without string names")
+
+Alexandre Mergnat (4):
+  clk: meson: g12a-aoclk: migrate to the new parent description method
+  clk: meson: gxbb-aoclk: migrate to the new parent description method
+  clk: meson: axg-aoclk: migrate to the new parent description method
+  clk: meson: remove ao input bypass clocks
+
+ drivers/clk/meson/Kconfig       |  1 -
+ drivers/clk/meson/axg-aoclk.c   | 63 ++++++++++++++-----------
+ drivers/clk/meson/g12a-aoclk.c  | 81 ++++++++++++++++++++-------------
+ drivers/clk/meson/gxbb-aoclk.c  | 55 +++++++++++-----------
+ drivers/clk/meson/meson-aoclk.c | 37 ---------------
+ drivers/clk/meson/meson-aoclk.h |  8 ----
+ 6 files changed, 114 insertions(+), 131 deletions(-)
+
+-- 
+2.17.1
 
