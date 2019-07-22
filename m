@@ -2,85 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 640977052B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 18:14:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3880D70531
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 18:15:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730721AbfGVQOl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 12:14:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:41430 "EHLO foss.arm.com"
+        id S1730805AbfGVQPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 12:15:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48386 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728762AbfGVQOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 12:14:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA2E028;
-        Mon, 22 Jul 2019 09:14:39 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 746C83F694;
-        Mon, 22 Jul 2019 09:14:38 -0700 (PDT)
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     linux-acpi@vger.kernel.org
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        LAKML <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH] ACPI/IORT: Rename arm_smmu_v3_set_proximity() 'node' local variable
-Date:   Mon, 22 Jul 2019 17:14:33 +0100
-Message-Id: <20190722161433.23027-1-lorenzo.pieralisi@arm.com>
-X-Mailer: git-send-email 2.21.0
+        id S1730829AbfGVQPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 12:15:33 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8B3EEC057F88;
+        Mon, 22 Jul 2019 16:15:32 +0000 (UTC)
+Received: from redhat.com (ovpn-124-54.rdu2.redhat.com [10.10.124.54])
+        by smtp.corp.redhat.com (Postfix) with SMTP id E40705D9D3;
+        Mon, 22 Jul 2019 16:15:23 +0000 (UTC)
+Date:   Mon, 22 Jul 2019 12:15:22 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>, aarcange@redhat.com,
+        akpm@linux-foundation.org, christian@brauner.io,
+        davem@davemloft.net, ebiederm@xmission.com,
+        elena.reshetova@intel.com, guro@fb.com, hch@infradead.org,
+        james.bottomley@hansenpartnership.com, jasowang@redhat.com,
+        jglisse@redhat.com, keescook@chromium.org, ldv@altlinux.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
+        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
+        namit@vmware.com, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        wad@chromium.org
+Subject: Re: RFC: call_rcu_outstanding (was Re: WARNING in __mmdrop)
+Message-ID: <20190722121441-mutt-send-email-mst@kernel.org>
+References: <20190721044615-mutt-send-email-mst@kernel.org>
+ <20190721081933-mutt-send-email-mst@kernel.org>
+ <20190721131725.GR14271@linux.ibm.com>
+ <20190721210837.GC363@bombadil.infradead.org>
+ <20190721233113.GV14271@linux.ibm.com>
+ <20190722035042-mutt-send-email-mst@kernel.org>
+ <20190722115149.GY14271@linux.ibm.com>
+ <20190722134152.GA13013@ziepe.ca>
+ <20190722155235.GF14271@linux.ibm.com>
+ <20190722160448.GH7607@ziepe.ca>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190722160448.GH7607@ziepe.ca>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 22 Jul 2019 16:15:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 36a2ba07757d ("ACPI/IORT: Reject platform device creation on NUMA
-node mapping failure") introduced a local variable 'node' in
-arm_smmu_v3_set_proximity() that shadows the struct acpi_iort_node
-pointer function parameter.
+On Mon, Jul 22, 2019 at 01:04:48PM -0300, Jason Gunthorpe wrote:
+> On Mon, Jul 22, 2019 at 08:52:35AM -0700, Paul E. McKenney wrote:
+> > So why then is there a problem?
+> 
+> I'm not sure there is a real problem, I thought Michael was just
+> asking how to design with RCU in the case where the user controls the
+> kfree_rcu??
 
-Execution was unaffected but it is prone to errors and can lead
-to subtle bugs.
 
-Rename the local variable to prevent any issue.
+Right it's all based on documentation saying we should worry :)
 
-Reported-by: Will Deacon <will@kernel.org>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Hanjun Guo <guohanjun@huawei.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- drivers/acpi/arm64/iort.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index d4551e33fa71..15dbfd657d82 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -1256,12 +1256,12 @@ static int  __init arm_smmu_v3_set_proximity(struct device *dev,
- 
- 	smmu = (struct acpi_iort_smmu_v3 *)node->node_data;
- 	if (smmu->flags & ACPI_IORT_SMMU_V3_PXM_VALID) {
--		int node = acpi_map_pxm_to_node(smmu->pxm);
-+		int dev_node = acpi_map_pxm_to_node(smmu->pxm);
- 
--		if (node != NUMA_NO_NODE && !node_online(node))
-+		if (dev_node != NUMA_NO_NODE && !node_online(dev_node))
- 			return -EINVAL;
- 
--		set_dev_node(dev, node);
-+		set_dev_node(dev, dev_node);
- 		pr_info("SMMU-v3[%llx] Mapped to Proximity domain %d\n",
- 			smmu->base_address,
- 			smmu->pxm);
--- 
-2.21.0
-
+> Sounds like the answer is "don't worry about it" ?
+> 
+> Thanks,
+> Jason
