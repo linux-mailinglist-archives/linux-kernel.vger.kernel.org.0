@@ -2,97 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83F3E70313
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5A2570382
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:20:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbfGVPES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 11:04:18 -0400
-Received: from verein.lst.de ([213.95.11.211]:32994 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726713AbfGVPER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 11:04:17 -0400
-Received: by verein.lst.de (Postfix, from userid 2005)
-        id 9F97668B20; Mon, 22 Jul 2019 17:04:14 +0200 (CEST)
-From:   Torsten Duwe <duwe@lst.de>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Harald Geyer <harald@ccbib.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Bcc:duwe"@lst.de
-Subject: [PATCH v2 0/7] Add anx6345 DP/eDP bridge for Olimex Teres-I
-Message-Id: <20190722150414.9F97668B20@verein.lst.de>
-Date:   Mon, 22 Jul 2019 17:04:14 +0200 (CEST)
+        id S1728571AbfGVPUC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 11:20:02 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:39691 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727036AbfGVPUC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 11:20:02 -0400
+X-Greylist: delayed 952 seconds by postgrey-1.27 at vger.kernel.org; Mon, 22 Jul 2019 11:20:01 EDT
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id x6MF2i0e032709;
+        Mon, 22 Jul 2019 18:02:44 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id DEFE561FD1; Mon, 22 Jul 2019 18:02:43 +0300 (IDT)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     mpm@selenic.com, herbert@gondor.apana.org.au, arnd@arndb.de,
+        gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, avifishman70@gmail.com,
+        tali.perry1@gmail.com, venture@google.com, yuenn@google.com,
+        benjaminfair@google.com, sumit.garg@linaro.org,
+        jens.wiklander@linaro.org, vkoul@kernel.org, tglx@linutronix.de,
+        joel@jms.id.au
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, openbmc@lists.ozlabs.org,
+        Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v1 0/2] hwrng: npcm: add NPCM RNG driver support
+Date:   Mon, 22 Jul 2019 18:02:39 +0300
+Message-Id: <20190722150241.345609-1-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ANX6345 LVTTL->eDP video bridge, driver with device tree bindings.
+This patch set adds Randon Number Generator (RNG) support 
+for the Nuvoton NPCM Baseboard Management Controller (BMC).
 
-Changes from v2:
+The RNG driver we use power consumption when the RNG 
+is not required.
 
-* use SPDX-IDs throughout
+The NPCM RNG driver tested on NPCM750 evaluation board.
 
-* removed the panel output again, as it was not what Maxime had in mind.
-  At least the Teres-I does very well without. No connector spec, no "quirks"[1],
-  just plain EDID at work.
+Tomer Maimon (2):
+  dt-binding: hwrng: add NPCM RNG documentation
+  hwrng: npcm: add NPCM RNG driver
 
-* binding clarifications and cosmetic changes as suggested by Andrzej
+ .../bindings/rng/nuvoton,npcm-rng.txt         |  17 ++
+ drivers/char/hw_random/Kconfig                |  13 ++
+ drivers/char/hw_random/Makefile               |   1 +
+ drivers/char/hw_random/npcm-rng.c             | 207 ++++++++++++++++++
+ 4 files changed, 238 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rng/nuvoton,npcm-rng.txt
+ create mode 100644 drivers/char/hw_random/npcm-rng.c
 
-Changes from v1:
+-- 
+2.18.0
 
-* fixed up copyright information. Most code changes are only moves and thus
-  retain copyright and module ownership. Even the new analogix-anx6345.c originates
-  from the old 1495-line analogix-anx78xx.c, with 306 insertions and 987 deletions
-  (ignoring the trivial anx78xx -> anx6345 replacements) 306 new vs. 508 old...
-
-* fixed all minor formatting issues brought up
-
-* merged previously separate new analogix_dp_i2c module into existing analogix_dp
-
-* split additional defines into a preparatory patch
-
-* renamed the factored-out common functions anx_aux_* -> anx_dp_aux_*, because
-  anx_...aux_transfer was exported globally. Besides, it is now GPL-only exported.
-
-* moved chip ID read into a separate function.
-
-* keep the chip powered after a successful probe.
-  (There's a good chance that this is the only display during boot!)
-
-* updated the binding document: LVTTL input is now required, only the output side
-  description is optional.
-
- Laurent: I have also looked into the drm_panel_bridge infrastructure,
- but it's not that trivial to convert these drivers to it.
-
-Changes from the respective previous versions:
-
-* the reset polarity is corrected in DT and the driver;
-  things should be clearer now.
-
-* as requested, add a panel (the known innolux,n116bge) and connect
-  the ports.
-
-* renamed dvdd?? to *-supply to match the established scheme
-
-* trivial update to the #include list, to make it compile in 5.2
-
---------------
-[1] I hesitate to associate information about a connected panel with that term.
-    But should it be neccessary for maximum power saving (e.g. pinebooks),
-    it would be good to have something here, regardless of nomenclature.
-
-	Torsten
