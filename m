@@ -2,136 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAD67709E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 21:41:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5A1D709DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 21:41:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732296AbfGVTlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 15:41:40 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33685 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732261AbfGVTlc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 15:41:32 -0400
-Received: by mail-pf1-f194.google.com with SMTP id g2so17871908pfq.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 12:41:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ATbFy1aIdbWHFM03S3oai17NaO/neBJFfQYViTxrNMs=;
-        b=fLXr6gDQl11kx/gfLPu/pKAYQ3oWpeGmz6q8QFeSzDdvzyBV3Jixq5ya13oHO5dqfo
-         Nt5xcerqY4a9O3JWvuPb94Tyrayne1SI5T6+UGeut3CsFAKBfhZw9yU7Q5/RHukXvoYY
-         cqcqRPZNeTl+YDf2PzrHdCfdrC3TgIUq6fJSI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ATbFy1aIdbWHFM03S3oai17NaO/neBJFfQYViTxrNMs=;
-        b=gkxwjkBXNF+BKNPg0LQPU8xr11EbUs3a3Bq+drYX//0WpvCOXOiK8cYN3tScK3ck0v
-         UqESA0gAnjMJQIZs+f3mwDLqATsq0JNcbwrgt3Tpjezieqd/Ur8DNICjCI6+FHhsn3/k
-         k7NWhXGIIlFha+clbBOnjhe2MkAVPBMogRVJclgVy1BuOP4QmT4M8EFhW4reO6uZM0J/
-         gCWLHKK49VhPNKP0sma4dPQewXupG/jzVZXun0T/Ms3Vr7r+BISabUAh/by0gCK7OV+Q
-         4YfFfCCzf6FncgA9MGNqprffr47SN8FCNRI5lrGPZeMXjdyTLoXo5ceFY20mAXVuZxkO
-         mGxw==
-X-Gm-Message-State: APjAAAXqGcCXH1U2CocfdHjr4BdAepLoV5o2ayOJ54vqkF1yOD2GTkza
-        b4muqLoqtCtRJJWCUSidA+uicQ==
-X-Google-Smtp-Source: APXvYqxe3jk2Td0NZ3MiOAVs4zOozU2NCyEe4BhAwMABU222PrrTzeC4C4T+vjjW5dwEp508Pc+S0A==
-X-Received: by 2002:a17:90a:ba93:: with SMTP id t19mr77532204pjr.139.1563824491627;
-        Mon, 22 Jul 2019 12:41:31 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id z4sm29838803pgp.80.2019.07.22.12.41.30
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 12:41:31 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Ganapathi Bhat <gbhat@marvell.com>, linux-wireless@vger.kernel.org,
-        Andreas Fenkart <afenkart@gmail.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        linux-rockchip@lists.infradead.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        netdev@vger.kernel.org, Avri Altman <avri.altman@wdc.com>,
-        linux-mmc@vger.kernel.org, davem@davemloft.net,
-        Xinming Hu <huxinming820@gmail.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] mwifiex: Make use of the new sdio_trigger_replug() API to reset
-Date:   Mon, 22 Jul 2019 12:39:39 -0700
-Message-Id: <20190722193939.125578-3-dianders@chromium.org>
-X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
-In-Reply-To: <20190722193939.125578-1-dianders@chromium.org>
-References: <20190722193939.125578-1-dianders@chromium.org>
+        id S1732236AbfGVTl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 15:41:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45964 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726443AbfGVTl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 15:41:28 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6AE96308424C;
+        Mon, 22 Jul 2019 19:41:28 +0000 (UTC)
+Received: from x1.home (ovpn-116-35.phx2.redhat.com [10.3.116.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 522D0600C4;
+        Mon, 22 Jul 2019 19:41:25 +0000 (UTC)
+Date:   Mon, 22 Jul 2019 13:41:24 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     "Lu, Kechen" <kechen.lu@intel.com>
+Cc:     "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Zhang, Tina" <tina.zhang@intel.com>,
+        "kraxel@redhat.com" <kraxel@redhat.com>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "Lv, Zhiyuan" <zhiyuan.lv@intel.com>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "Yuan, Hang" <hang.yuan@intel.com>
+Subject: Re: [RFC PATCH v4 2/6] vfio: Introduce vGPU display irq type
+Message-ID: <20190722134124.16c55c2f@x1.home>
+In-Reply-To: <31185F57AF7C4B4F87C41E735C23A6FE64E06F@shsmsx102.ccr.corp.intel.com>
+References: <20190718155640.25928-1-kechen.lu@intel.com>
+        <20190718155640.25928-3-kechen.lu@intel.com>
+        <20190719102516.60af527f@x1.home>
+        <31185F57AF7C4B4F87C41E735C23A6FE64E06F@shsmsx102.ccr.corp.intel.com>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 22 Jul 2019 19:41:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As described in the patch ("mmc: core: Add sdio_trigger_replug()
-API"), the current mwifiex_sdio_card_reset() is broken in the cases
-where we're running Bluetooth on a second SDIO func on the same card
-as WiFi.  The problem goes away if we just use the
-sdio_trigger_replug() API call.
+On Mon, 22 Jul 2019 05:28:35 +0000
+"Lu, Kechen" <kechen.lu@intel.com> wrote:
 
-NOTE: Even though with this new solution there is less of a reason to
-do our work from a workqueue (the unplug / plug mechanism we're using
-is possible for a human to perform at any time so the stack is
-supposed to handle it without it needing to be called from a special
-context), we still need a workqueue because the Marvell reset function
-could called from a context where sleeping is invalid and thus we
-can't claim the host.  One example is Marvell's wakeup_timer_fn().
+> Hi, 
+> 
+> > -----Original Message-----
+> > From: Alex Williamson [mailto:alex.williamson@redhat.com]
+> > Sent: Saturday, July 20, 2019 12:25 AM
+> > To: Lu, Kechen <kechen.lu@intel.com>
+> > Cc: intel-gvt-dev@lists.freedesktop.org; kvm@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; Zhang, Tina <tina.zhang@intel.com>;
+> > kraxel@redhat.com; zhenyuw@linux.intel.com; Lv, Zhiyuan
+> > <zhiyuan.lv@intel.com>; Wang, Zhi A <zhi.a.wang@intel.com>; Tian, Kevin
+> > <kevin.tian@intel.com>; Yuan, Hang <hang.yuan@intel.com>
+> > Subject: Re: [RFC PATCH v4 2/6] vfio: Introduce vGPU display irq type
+> > 
+> > On Thu, 18 Jul 2019 23:56:36 +0800
+> > Kechen Lu <kechen.lu@intel.com> wrote:
+> >   
+> > > From: Tina Zhang <tina.zhang@intel.com>
+> > >
+> > > Introduce vGPU specific irq type VFIO_IRQ_TYPE_GFX, and
+> > > VFIO_IRQ_SUBTYPE_GFX_DISPLAY_IRQ as the subtype for vGPU display
+> > >
+> > > Signed-off-by: Tina Zhang <tina.zhang@intel.com>
+> > > ---
+> > >  include/uapi/linux/vfio.h | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > >
+> > > diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> > > index be6adab4f759..df28b17a6e2e 100644
+> > > --- a/include/uapi/linux/vfio.h
+> > > +++ b/include/uapi/linux/vfio.h
+> > > @@ -469,6 +469,9 @@ struct vfio_irq_info_cap_type {
+> > >  	__u32 subtype;  /* type specific */
+> > >  };
+> > >
+> > > +#define VFIO_IRQ_TYPE_GFX				(1)
+> > > +#define VFIO_IRQ_SUBTYPE_GFX_DISPLAY_IRQ		(1)
+> > > +  
+> > 
+> > Please include a description defining exactly what this IRQ is intended to signal.
+> > For instance, if another vGPU vendor wanted to implement this in their driver
+> > and didn't have the QEMU code for reference to what it does with the IRQ, what
+> > would they need to know?  Thanks,
+> > 
+> > Alex
+> >   
+> 
+> Yes, that makes more sense. I'll add the description for it at next version patch.
+> 
+> BTW, may I have one more question? In the current design ideas, we partitioned 
+> the vGPU display eventfd counted 8-byte value into at most 8 events to deliver 
+> multiple display events, so we need different increasement counter value to 
+> differentiate the events. As this is the exposed thing the QEMU has to know, we
+> plan adds a macro here VFIO_IRQ_SUBTYPE_GFX_DISPLAY_EVENTFD_BASE_SHIFT to
+> make sure the partitions shift in 1 byte, does it make sense putting here? Looking  
+> forward to your and Gerd's comments. Thanks!
 
-Cc: Andreas Fenkart <afenkart@gmail.com>
-Cc: Brian Norris <briannorris@chromium.org>
-Fixes: b4336a282db8 ("mwifiex: sdio: reset adapter using mmc_hw_reset")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Brian Norris <briannorris@chromium.org>
----
+Couldn't you expose this as another capability within the IRQ_INFO
+return data?  If you were to define it as a macro, I assume that means
+it would be hard coded, in which case this probably becomes an Intel
+specific IRQ, rather than what appears to be framed as a generic
+graphics IRQ extension.  A new capability could instead allow the
+vendor to specify their own value, where we could define how userspace
+should interpret and make use of this value.  Thanks,
 
-Changes in v2:
-- Removed clear_bit() calls and old comment (Brian Norris).
-- Explicit CC of Andreas Fenkart.
-- Explicit CC of Brian Norris.
-- Add "Fixes" pointing at the commit Brian talked about.
-- Add Brian's Reviewed-by tag.
-
- drivers/net/wireless/marvell/mwifiex/sdio.c | 16 +---------------
- 1 file changed, 1 insertion(+), 15 deletions(-)
-
-diff --git a/drivers/net/wireless/marvell/mwifiex/sdio.c b/drivers/net/wireless/marvell/mwifiex/sdio.c
-index 24c041dad9f6..7ec5068f6ffd 100644
---- a/drivers/net/wireless/marvell/mwifiex/sdio.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sdio.c
-@@ -2218,24 +2218,10 @@ static void mwifiex_sdio_card_reset_work(struct mwifiex_adapter *adapter)
- {
- 	struct sdio_mmc_card *card = adapter->card;
- 	struct sdio_func *func = card->func;
--	int ret;
--
--	mwifiex_shutdown_sw(adapter);
- 
--	/* power cycle the adapter */
- 	sdio_claim_host(func);
--	mmc_hw_reset(func->card->host);
-+	sdio_trigger_replug(func);
- 	sdio_release_host(func);
--
--	/* Previous save_adapter won't be valid after this. We will cancel
--	 * pending work requests.
--	 */
--	clear_bit(MWIFIEX_IFACE_WORK_DEVICE_DUMP, &card->work_flags);
--	clear_bit(MWIFIEX_IFACE_WORK_CARD_RESET, &card->work_flags);
--
--	ret = mwifiex_reinit_sw(adapter);
--	if (ret)
--		dev_err(&func->dev, "reinit failed: %d\n", ret);
- }
- 
- /* This function read/write firmware */
--- 
-2.22.0.657.g960e92d24f-goog
-
+Alex
