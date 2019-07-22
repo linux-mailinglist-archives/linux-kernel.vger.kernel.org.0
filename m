@@ -2,82 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FDCD6FF44
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83B486FF4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:11:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbfGVMJV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 08:09:21 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:39705 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727164AbfGVMJV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 08:09:21 -0400
-Received: from orion.localdomain ([77.2.59.209]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MekGB-1iNDJv36EX-00amPr; Mon, 22 Jul 2019 14:09:14 +0200
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com,
-        linux-leds@vger.kernel.org
-Subject: [PATCH v2] leds: apu: fix error message on probing failure
-Date:   Mon, 22 Jul 2019 14:08:51 +0200
-Message-Id: <1563797331-20993-1-git-send-email-info@metux.net>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <f54bb3f1-2699-1213-f568-b2c529488306@gmail.com>
-References: <f54bb3f1-2699-1213-f568-b2c529488306@gmail.com>
-X-Provags-ID: V03:K1:twfbsdyrMY1t8hU0eBnLydbY1wE9g/y95PqHR65xBHZZmB6WuWu
- OdEdXmyaLgx31ljrxTvBh2exohkXbLJ6FTsrK+5+GOF/TcbW65DpnGLpfNkpiq6KXF5B7JG
- mCZD36RJPaUWOVi/A+a1qGiu8SqTS5gntKe9+wohlUQ+P+n1KVPKR1pH+5i/84kaxJHwM9K
- w1JD4Hm77TStf2SpDKy9Q==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:wPAEYyhkoC8=:wgNty8SQYgWNjCgY6oUu9c
- ySl77B1ICFcqAvTuW6xJpuCzSBu9fueX/YPb+WMqJOWKz5ZLpA/FWDs3mqyjbMFcmRUJYWTTL
- 4i1Uei15et+oqi6G8nJSe2FIger3PzkRqFpvhlBWEhTuTzwpeUAcBtans4of/R4zGV5qjcBmM
- w0YfMC8MXkLYadC0H0xuCUmsE28YqlSufaNzBel2Yzm7K+9FeKcq2WM+ro3YDYKdtJaLxpqcX
- y9l4qDissfZJbYcww71HF9QGa41UIJGbFkKjV+rwQdVOZ3tRcpfyALXbTrOFCnWDfgkTRP3SU
- dvhnARiyrIqvr9YMsFL26gpJvovrcobDkHXib/quSO312ipLhVqTjY+RrfbTCFtuFZlV0z8Sk
- /iJAIUlG7I71Gsdjg46bAJgTthOQBB3v2ze5ZF1WGxwEqsyDMxIGOYFf82gwzZS4XXeL/tK10
- oUd5X9FRqYr/r9Prebz6fxQAr+emRXFtgtBseB8VwdnfNJhEBqYxqQmm3umBgAMWEuCvGqAFb
- jMNYuspItKGJKLliftd0Vwd/1hTpxKFgC1T+dBEWBPHpYlJhet2Be5onvdO/OqP9T1IcZSx6r
- ke0fKNIfixdmLuZAA6alhJWXvwBA0c613FPOFeLI3Ap26S0mbViptI4LHp3R6zYsnTCKglsKG
- DdbuqlVjPEKlWXFM13fj5B5ZtO4e2V6klEwB2EVm/D0YFDuvtWAljj2QTOXW0muW0rB0gwQLY
- 0rpnMQZ7CnjIF1AjVa8Wvdwi1t7u6IOG/kUNAw==
+        id S1729231AbfGVMLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 08:11:15 -0400
+Received: from mga14.intel.com ([192.55.52.115]:23024 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727164AbfGVMLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 08:11:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jul 2019 05:11:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,295,1559545200"; 
+   d="scan'208";a="180378524"
+Received: from khuang2-desk.gar.corp.intel.com ([10.254.182.119])
+  by orsmga002.jf.intel.com with ESMTP; 22 Jul 2019 05:11:12 -0700
+From:   Kai Huang <kai.huang@linux.intel.com>
+To:     viro@ZenIV.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai Huang <kai.huang@linux.intel.com>
+Subject: [PATCH] anon_inodes: remove redundant file->f_mapping initialization
+Date:   Tue, 23 Jul 2019 00:09:58 +1200
+Message-Id: <20190722120958.9179-1-kai.huang@linux.intel.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Enrico Weigelt <info@metux.net>
+In anon_inode_getfile(), file->f_mapping is redundantly initialized to
+anon_inode_inode->i_mapping, since it has already been initialized in
+alloc_file_pseudo() -> alloc_file(), so remove the initialization in
+anon_inode_getfile().
 
-The current error message on failed probing tends to be a bit
-misleading. Fix it to tell exactly that an APU v1 was not found.
-
-Signed-off-by: Enrico Weigelt <info@metux.net>
+Signed-off-by: Kai Huang <kai.huang@linux.intel.com>
 ---
- drivers/leds/leds-apu.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ fs/anon_inodes.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/leds/leds-apu.c b/drivers/leds/leds-apu.c
-index 451cb9f..d794f49 100644
---- a/drivers/leds/leds-apu.c
-+++ b/drivers/leds/leds-apu.c
-@@ -170,13 +170,9 @@ static int __init apu_led_init(void)
- 	struct platform_device *pdev;
- 	int err;
+diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+index 89714308c25b..b8b77066a1b9 100644
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -93,8 +93,6 @@ struct file *anon_inode_getfile(const char *name,
+ 	if (IS_ERR(file))
+ 		goto err;
  
--	if (!dmi_match(DMI_SYS_VENDOR, "PC Engines")) {
--		pr_err("No PC Engines board detected\n");
--		return -ENODEV;
--	}
--	if (!(dmi_match(DMI_PRODUCT_NAME, "APU"))) {
--		pr_err("Unknown PC Engines board: %s\n",
--				dmi_get_system_info(DMI_PRODUCT_NAME));
-+	if (!(dmi_match(DMI_SYS_VENDOR, "PC Engines") &&
-+	      dmi_match(DMI_PRODUCT_NAME, "APU"))) {
-+		pr_err("No PC Engines APUv1 board detected. For APUv2,3 support, enable CONFIG_PCENGINES_APU2\n");
- 		return -ENODEV;
- 	}
+-	file->f_mapping = anon_inode_inode->i_mapping;
+-
+ 	file->private_data = priv;
  
+ 	return file;
 -- 
-1.9.1
+2.13.6
 
