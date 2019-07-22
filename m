@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31FB070025
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:49:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B69FC70024
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:49:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730529AbfGVMt2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 08:49:28 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:51198 "EHLO inva020.nxp.com"
+        id S1730521AbfGVMtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 08:49:20 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:39544 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729869AbfGVMsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 08:48:53 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6889D1A0174;
-        Mon, 22 Jul 2019 14:48:51 +0200 (CEST)
+        id S1729877AbfGVMsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 08:48:54 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2F5E02002E1;
+        Mon, 22 Jul 2019 14:48:52 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 59FF31A0108;
-        Mon, 22 Jul 2019 14:48:51 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 21AF02002E0;
+        Mon, 22 Jul 2019 14:48:52 +0200 (CEST)
 Received: from fsr-ub1864-103.ea.freescale.net (fsr-ub1864-103.ea.freescale.net [10.171.82.17])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id A1202205DB;
-        Mon, 22 Jul 2019 14:48:50 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 69390205DB;
+        Mon, 22 Jul 2019 14:48:51 +0200 (CEST)
 From:   Daniel Baluta <daniel.baluta@nxp.com>
 To:     broonie@kernel.org
 Cc:     festevam@gmail.com, perex@perex.cz, tiwai@suse.com,
@@ -29,9 +29,9 @@ Cc:     festevam@gmail.com, perex@perex.cz, tiwai@suse.com,
         shengjiu.wang@nxp.com, angus@akkea.ca, kernel@pengutronix.de,
         l.stach@pengutronix.de, viorel.suman@nxp.com,
         Daniel Baluta <daniel.baluta@nxp.com>
-Subject: [PATCH 04/10] ASoC: fsl_sai: Update Tx/Rx channel enable mask
-Date:   Mon, 22 Jul 2019 15:48:27 +0300
-Message-Id: <20190722124833.28757-5-daniel.baluta@nxp.com>
+Subject: [PATCH 05/10] ASoC: fsl_sai: Add support to enable multiple data lines
+Date:   Mon, 22 Jul 2019 15:48:28 +0300
+Message-Id: <20190722124833.28757-6-daniel.baluta@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190722124833.28757-1-daniel.baluta@nxp.com>
 References: <20190722124833.28757-1-daniel.baluta@nxp.com>
@@ -41,55 +41,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tx channel enable (TCE) / Rx channel enable (RCE) bits
-enable corresponding data channel for Tx/Rx operation.
+SAI supports up to 8 Rx/Tx data lines which can be enabled
+using TCE/RCE bits of TCR3/RCR3 registers.
 
-Because SAI supports up the 8 channels TCE/RCE occupy
-up the 8 bits inside TCR3/RCR3 registers we need to extend
-the mask to reflect this.
+Data lines to be enabled are read from DT fsl,dl_mask property.
+By default (if no DT entry is provided) only data line 0 is enabled.
+
+Note:
+We can only enable consecutive data lines starting with data line #0.
 
 Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
 ---
- sound/soc/fsl/fsl_sai.c | 6 ++++--
- sound/soc/fsl/fsl_sai.h | 1 +
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ sound/soc/fsl/fsl_sai.c | 10 +++++++++-
+ sound/soc/fsl/fsl_sai.h |  6 ++++--
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
-index 7f8823fe4b90..768341608695 100644
+index 768341608695..d0fa02188b7c 100644
 --- a/sound/soc/fsl/fsl_sai.c
 +++ b/sound/soc/fsl/fsl_sai.c
-@@ -599,7 +599,8 @@ static int fsl_sai_startup(struct snd_pcm_substream *substream,
- 	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
- 	int ret;
+@@ -601,7 +601,7 @@ static int fsl_sai_startup(struct snd_pcm_substream *substream,
  
--	regmap_update_bits(sai->regmap, FSL_SAI_xCR3(tx), FSL_SAI_CR3_TRCE,
-+	regmap_update_bits(sai->regmap, FSL_SAI_xCR3(tx),
-+			   FSL_SAI_CR3_TRCE_MASK,
- 			   FSL_SAI_CR3_TRCE);
+ 	regmap_update_bits(sai->regmap, FSL_SAI_xCR3(tx),
+ 			   FSL_SAI_CR3_TRCE_MASK,
+-			   FSL_SAI_CR3_TRCE);
++			   FSL_SAI_CR3_TRCE(sai->soc_data->dl_mask[tx]);
  
  	ret = snd_pcm_hw_constraint_list(substream->runtime, 0,
-@@ -614,7 +615,8 @@ static void fsl_sai_shutdown(struct snd_pcm_substream *substream,
- 	struct fsl_sai *sai = snd_soc_dai_get_drvdata(cpu_dai);
- 	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
+ 			SNDRV_PCM_HW_PARAM_RATE, &fsl_sai_rate_constraints);
+@@ -887,6 +887,14 @@ static int fsl_sai_probe(struct platform_device *pdev)
+ 		}
+ 	}
  
--	regmap_update_bits(sai->regmap, FSL_SAI_xCR3(tx), FSL_SAI_CR3_TRCE, 0);
-+	regmap_update_bits(sai->regmap, FSL_SAI_xCR3(tx),
-+			   FSL_SAI_CR3_TRCE_MASK, 0);
- }
- 
- static const struct snd_soc_dai_ops fsl_sai_pcm_dai_ops = {
++	/* active data lines mask for TX/RX, defaults to 1 (only the first
++	 * data line is enabled
++	 */
++	sai->dl_mask[RX] = 1;
++	sai->dl_mask[TX] = 1;
++	of_property_read_u32_index(np, "fsl,dl_mask", RX, &sai->dl_mask[RX]);
++	of_property_read_u32_index(np, "fsl,dl_mask", TX, &sai->dl_mask[TX]);
++
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		dev_err(&pdev->dev, "no irq for node %s\n", pdev->name);
 diff --git a/sound/soc/fsl/fsl_sai.h b/sound/soc/fsl/fsl_sai.h
-index 4bb478041d67..b1abeed2f78e 100644
+index b1abeed2f78e..6d32f0950ec5 100644
 --- a/sound/soc/fsl/fsl_sai.h
 +++ b/sound/soc/fsl/fsl_sai.h
-@@ -110,6 +110,7 @@
+@@ -109,8 +109,8 @@
+ #define FSL_SAI_CR2_DIV_MASK	0xff
  
  /* SAI Transmit and Receive Configuration 3 Register */
- #define FSL_SAI_CR3_TRCE	BIT(16)
-+#define FSL_SAI_CR3_TRCE_MASK	GENMASK(16, 23)
+-#define FSL_SAI_CR3_TRCE	BIT(16)
+-#define FSL_SAI_CR3_TRCE_MASK	GENMASK(16, 23)
++#define FSL_SAI_CR3_TRCE(x)	((x) << 16)
++#define FSL_SAI_CR3_TRCE_MASK	GENMASK(23, 16)
  #define FSL_SAI_CR3_WDFL(x)	(x)
  #define FSL_SAI_CR3_WDFL_MASK	0x1f
  
+@@ -176,6 +176,8 @@ struct fsl_sai {
+ 	unsigned int slots;
+ 	unsigned int slot_width;
+ 
++	unsigned int dl_mask[2];
++
+ 	const struct fsl_sai_soc_data *soc_data;
+ 	struct snd_dmaengine_dai_dma_data dma_params_rx;
+ 	struct snd_dmaengine_dai_dma_data dma_params_tx;
 -- 
 2.17.1
 
