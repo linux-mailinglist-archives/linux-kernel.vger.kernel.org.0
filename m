@@ -2,95 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4889B6FE14
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 12:48:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D83296FE16
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 12:48:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729731AbfGVKr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 06:47:59 -0400
-Received: from mail-eopbgr60093.outbound.protection.outlook.com ([40.107.6.93]:35719
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728120AbfGVKr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 06:47:59 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=D54YGq/tiEcs/+cYXMNzadzrOsdNDdViTPHWx5Z56RKpQ6LSDLvvV1maTPCUzGY/bDBw6UnqI8BhQTiawMFqo49b8uhjLbOBECa7DTa4MpCKIjOaCVaebhAXj5Hi6PzKRrNsYEd5PxpWQU9CUCWa3LBkEml8ZKYXI/45vmDyceartHVLYj68gnNv6k/j1ap+L5wcIBol9dMBzyz48b8t/V/oEPrxcdeFgTT9+hcg0Fx7TqwHUZzo/PrV/8/k0m98cIQXP2kQQPKjeZhoouudkq3QR7CxJmFGMc/vyMJx47NwMtJ6spm0bz2sdp+T4g6P63KD4W+cX4fA3cRUJsCeqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Sck/LJ1/3rzr5OMCa4dsg5GVJ0QsIbTlBN3M3sW41zI=;
- b=aIayjzcNMt06g3x0lxFGMHQQYTwAIe6CUedsqtupgVdnIoWc4FrJDaNUfjxozWypcWsye252X37+CPqevC/4HG6mT6hwME5RQFPqjHM2shKaQkZKFTS4O9C3bbF4tbpd/MkbcIg2OCwGfweSrlAnZMrQCG8Sb/ZOQUo3CgqO7i8pqqLIY6ZbyVtKDIdT+MXqm9r6HqVFbuYLJXfXRwbhRu5r5Bdwz+5D7hoDtKFTW6DhgVauY7HRGSoPjjtt4+uVXujD4lyJJwa3eH//VnEurDdcCO94I1nirUw9rs138l8LUdhh8OU5ZnrAl3BVkBCtW97nhoyfAtLynubt67oBjw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=habana.ai;dmarc=pass action=none
- header.from=habana.ai;dkim=pass header.d=habana.ai;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=habanalabs.onmicrosoft.com; s=selector1-habanalabs-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Sck/LJ1/3rzr5OMCa4dsg5GVJ0QsIbTlBN3M3sW41zI=;
- b=hu00z93654wL4SdX3wpQ2sgjPTSpy7hrm5qseOQn1F+xSswtbG8PxTU/qysoXjkcaQURAPuKVD0wadTNymSpmjTKbrR+w4akSVtwgbv+hm4M52laeCoEmPjeQ+AqTgOjby58YB5NByuHr62ZGDlchSlhvDrbxus+KIExnmT+1lw=
-Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com (52.133.8.16) by
- AM6PR0202MB3384.eurprd02.prod.outlook.com (52.133.10.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.16; Mon, 22 Jul 2019 10:47:55 +0000
-Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com
- ([fe80::85d6:dc30:6af9:37a0]) by AM6PR0202MB3382.eurprd02.prod.outlook.com
- ([fe80::85d6:dc30:6af9:37a0%3]) with mapi id 15.20.2094.013; Mon, 22 Jul 2019
- 10:47:55 +0000
-From:   Omer Shpigelman <oshpigelman@habana.ai>
-To:     Oded Gabbay <oded.gabbay@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tomer Tayar <ttayar@habana.ai>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: RE: [PATCH] habanalabs: power management through sysfs is only for
- GOYA
-Thread-Topic: [PATCH] habanalabs: power management through sysfs is only for
- GOYA
-Thread-Index: AQHVP9D1WzGQCbu9O0C5efLr3hBsn6bWde3w
-Date:   Mon, 22 Jul 2019 10:47:55 +0000
-Message-ID: <AM6PR0202MB3382F4DA9AB3B471AB248E99B8C40@AM6PR0202MB3382.eurprd02.prod.outlook.com>
-References: <20190721143112.26273-1-oded.gabbay@gmail.com>
-In-Reply-To: <20190721143112.26273-1-oded.gabbay@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=oshpigelman@habana.ai; 
-x-originating-ip: [31.154.190.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: dbf063d7-81f5-419c-2da9-08d70e920dfa
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:AM6PR0202MB3384;
-x-ms-traffictypediagnostic: AM6PR0202MB3384:
-x-microsoft-antispam-prvs: <AM6PR0202MB3384FD304F980F322A754DCEB8C40@AM6PR0202MB3384.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5516;
-x-forefront-prvs: 01068D0A20
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(376002)(39840400004)(136003)(189003)(199004)(81166006)(14454004)(305945005)(4744005)(7696005)(99286004)(26005)(5660300002)(6246003)(446003)(53936002)(68736007)(7736002)(11346002)(2906002)(3846002)(6116002)(81156014)(55016002)(86362001)(8936002)(9686003)(76176011)(66556008)(66066001)(66446008)(64756008)(110136005)(256004)(6436002)(102836004)(25786009)(316002)(71190400001)(33656002)(71200400001)(4326008)(476003)(76116006)(66946007)(74316002)(186003)(66476007)(478600001)(52536014)(486006)(6636002)(229853002)(8676002)(2501003)(6506007);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR0202MB3384;H:AM6PR0202MB3382.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: habana.ai does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: xGyGMVmiIWk4ik7Gl85U9VaBSGVqQXx1ebtbEg2lXyizJsSVkPWljBQuFLFCR04HKx/ihCB1cNwNil5UKKgIORmuFFePiY+wfpvEAEt7jlROEsuQMal2mqu7IHMMQ9YjLVlRTw4N806EM/6ltj4NUDj1vNWIY3U8rOAGZVdmPdpjC2JtZ6YgglRaZigzcrw83GoGV5aFllBXdoXqW1f88cQPGBRdpZ/zkisc2OtvEfhVRynmc/JcEorrTygFD3ZXkDA4bNEi2j5t7b2mV+tOYlx47Lb2mA1kcN1DrLzxa2CD88seLmijcWNupD0ipfO38bOSph9OVfIASR3gGvSYFVOd96mBo5tMzWY5HoND/FydgHIZaDQyux+tm3krVe8RoICAhRo5z96goR9IPHCoPrCJ2yldaTiYBcfwclDmukM=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1729741AbfGVKs0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 06:48:26 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:43244 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727310AbfGVKs0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 06:48:26 -0400
+Received: by mail-qk1-f193.google.com with SMTP id m14so2522101qka.10
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 03:48:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ptJ26MvlaRt4VkcC7ihkvbPVm3VliBbM0BJH3L/2g2c=;
+        b=MY5OF7pAGl2WoETTngy0vBnHyYa2TmKcKvxvE1Zu7El1lCjkrNufWzkf5EiXJ4XxN5
+         9JNx91Dr1NFzNBxB/0tBDTiidrKOPIlfLuPqz1MUH54nNNNnUsvSc7xs8nov1X+y+Gy0
+         zl8bAisUGIW4su8kWAp0RudOq8lM/V51jtLMjK8f1Xo+0bmog8rIlYDDlXGTJN0Utg8B
+         e/CsgiCrR50aEZIzKe04dsnzzv5DvXEs+EX0hSMOZerf3WAvt4zGfY5r1vqhihCEx/DU
+         TsCjSVrUjQUclrFIrYGnmDIPK0mVMLfZxE5YmQbxyP5Ml22lvux6WkPUZkMuJDAnXfdl
+         8pdg==
+X-Gm-Message-State: APjAAAVytHnXdAcsy+slkE57WeBmQNAIjFRIVi/b/THHMMIK09vOEOJS
+        1G8L5BXztJwR6ya+3e2w88QnbSfcDS7WERc2XE4=
+X-Google-Smtp-Source: APXvYqzxtcAqz4bSxc8nm4TP5i62NaUmgS/Rlxiv4Sl82qujheNOGzRQ6t8AlZYNuaJ6qRprS++3xGM6vk966FnFKfk=
+X-Received: by 2002:a37:4ac3:: with SMTP id x186mr44445628qka.138.1563792505294;
+ Mon, 22 Jul 2019 03:48:25 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: habana.ai
-X-MS-Exchange-CrossTenant-Network-Message-Id: dbf063d7-81f5-419c-2da9-08d70e920dfa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jul 2019 10:47:55.7948
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oshpigelman@habana.ai
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0202MB3384
+References: <20190710130206.1670830-1-arnd@arndb.de> <33511b0e-6d7b-c156-c415-7a609b049567@arm.com>
+ <CAK8P3a1EBaWdbAEzirFDSgHVJMtWjuNt2HGG8z+vpXeNHwETFQ@mail.gmail.com>
+ <alpine.DEB.2.21.1907221207000.1782@nanos.tec.linutronix.de> <8f01be52-3235-644d-4afc-df979bfce25e@suse.com>
+In-Reply-To: <8f01be52-3235-644d-4afc-df979bfce25e@suse.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 22 Jul 2019 12:48:08 +0200
+Message-ID: <CAK8P3a0_rEkWYgH_Tc7jwpYOYMy5wA+X0zchQcsXYi62kUG61A@mail.gmail.com>
+Subject: Re: [PATCH] vsyscall: use __iter_div_u64_rem()
+To:     Jan Beulich <JBeulich@suse.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogT2RlZCBHYWJiYXkgPG9kZWQuZ2FiYmF5QGdtYWlsLmNvbT4NClNlbnQ6IFN1bmRheSwg
-MjEgSnVseSAyMDE5IDE3OjMxDQoNCj4gVGhlIGFiaWxpdHkgb2Ygc2V0dGluZyBwb3dlciBtYW5h
-Z2VtZW50IHByb3BlcnRpZXMgYnkgdGhlIHN5c3RlbQ0KPiBhZG1pbmlzdHJhdG9yICh0aHJvdWdo
-IHN5c2ZzIHByb3BlcnRpZXMpIGlzIG9ubHkgcmVsZXZhbnQgZm9yIHRoZSBHT1lBIEFTSUMuDQo+
-IFRoZXJlZm9yZSwgbW92ZSB0aGUgcmVsZXZhbnQgc3lzZnMgcHJvcGVydGllcyB0byB0aGUgR09Z
-QSBzeXNmcyBzcGVjaWZpYyBmaWxlLA0KPiB0byBtYWtlIHRoZSBwcm9wZXJ0aWVzIGFwcGVhciBp
-biBzeXNmcyBvbmx5IGZvciBHT1lBIGNhcmRzLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogT2RlZCBH
-YWJiYXkgPG9kZWQuZ2FiYmF5QGdtYWlsLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IE9tZXIgU2hwaWdl
-bG1hbiA8b3NocGlnZWxtYW5AaGFiYW5hLmFpPg0KDQoNCg==
+On Mon, Jul 22, 2019 at 12:39 PM Jan Beulich <JBeulich@suse.com> wrote:
+> On 22.07.2019 12:10, Thomas Gleixner wrote:
+> > On Thu, 11 Jul 2019, Arnd Bergmann wrote:
+> "q" was used in that commit exclusively for byte sized operands, simply
+> because that _is_ the constraint to use in such cases. Using "r" is
+> wrong on 32-bit, as it would include inaccessible byte portions of %sp,
+> %bp, %si, and %di. This is how it's described in gcc sources / docs:
+>
+>   "Any register accessible as @code{@var{r}l}.  In 32-bit mode, @code{a},
+>    @code{b}, @code{c}, and @code{d}; in 64-bit mode, any integer register."
+>
+> What I'm struggling with is why clang would evaluate that asm() in the
+> first place when a 64-bit field (perf_ctr_virt_mask) is being accessed.
+
+clang does the optimization and warning checking in a different order,
+in this case the argument type checks for the inline assembly is done
+before it eliminates the dead code.
+
+        Arnd
