@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E645700D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:19:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DA2B700D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:19:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729811AbfGVNSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 09:18:01 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53889 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728856AbfGVNR5 (ORCPT
+        id S1730551AbfGVNSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 09:18:32 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34572 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729658AbfGVNR6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 09:17:57 -0400
-Received: by mail-wm1-f65.google.com with SMTP id x15so35148499wmj.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 06:17:56 -0700 (PDT)
+        Mon, 22 Jul 2019 09:17:58 -0400
+Received: by mail-wr1-f67.google.com with SMTP id 31so39436563wrm.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 06:17:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7QzkaTCV3I7NgoLWSlqzvltTcK62DUmr4R57ORffNTM=;
-        b=mkotl6aKmS6IdISEAzL4effKL/yQ4f6Bflxe7dR33J3CkOqOXN/0ikxRpbq4KKx9W3
-         /1mj4oIHUAzy52gQp4Zp+PzmgW0uZAS3wgBOZ2iL/HdgMOborcG8TouHXo166FX8K2OM
-         yudmdMwNeMOfKrbPArt0B8WcxGvdTeEvBf/pqCjAviSWPCZiAMPFXOlX3QUF8hVeDpjL
-         RzTgxAlNRTBum3vlSnwA7WzklbPJKUW5/o9yzmFBF1ZfmwK4suB0IU95C9bohcv5vzZx
-         /KUPAaYzUzjWVaE6N5wDF5fzFlwCbnLW2o0ySguPGm3TnMu66TsKZrS5TdNwjS30RiBU
-         584g==
+        bh=i1AJwx99L7FOyjXOzW3yVuzHOgblADWD2c7KtmC/N3c=;
+        b=pIoC9oM2SJ5bTQ+eRC7d6ReZipWlFuv8mhyOuLWGmoiM8hihjKDbcYzk6hANScrgJN
+         rW05dvNGO4vHZr4dMUEDVyGjjjkB2g5tV8ivnNDEywzlkYWYyP/3Vlq6BTNwMjUcC6DY
+         stoKLsBEJ9Kpf12vzhujsvcYIhPxHMZfEuKIPQBcLMVeL32Lml1EKxjHmsp6ic+ayM0X
+         R6xwxui+6Mp9JKkkz1/pKDBpveHOE12dVpW70c1oXe+UbW+C4k8HFEDPISpAj+uiGS1i
+         BpS1re/U9WlWq6XGrylr1Xep7OvA/lahP+EhtkjgH1pAZ3T4a+2opzxxmr/W+wrv/oCB
+         QmXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7QzkaTCV3I7NgoLWSlqzvltTcK62DUmr4R57ORffNTM=;
-        b=agXfQ4ECLUCjCOVl4vLY0WKlPOJeke+D7MnghxkeVbI5Twh8ruEVyF/6hpd5Vtuqkd
-         7kKaxw7/14hrT6UA3XUL6c6syQUCYascHwyq1A+ZF595O86Oh3tCqcVjScKw6aW0hAWg
-         RQ7mD8kAiaZuCf4lQMt7B8moADKKwIeXhuY93ysOeklgUdskba8lzFgCwKo3BfBs+TjV
-         G7xqn8nXcg0t/IXgbyNQNKjDAghUGgrh8CsNAUwA04DCIT2ceJCHopq5y+EwqlWrID8q
-         C9pf1o9xnFDRfOo4m3nzhVZifA9LNDeUJCfhqEWLx7ASjUoeJheArsKh0QqL7RVwItLB
-         D26Q==
-X-Gm-Message-State: APjAAAX21p9IKfTBqUSCD0poQequnfFCpTuMCJUAQKxzumjY/rtS80n7
-        1SuGdePwVOoiIR8TxCs5VNk=
-X-Google-Smtp-Source: APXvYqxw087DX8W4z4K8oPGRqejCwotCKfuU4fP4ThXxJdSTKyrurerZBfN0BApuTQqtr0i1pjtIRg==
-X-Received: by 2002:a7b:c247:: with SMTP id b7mr66573345wmj.13.1563801475995;
-        Mon, 22 Jul 2019 06:17:55 -0700 (PDT)
+        bh=i1AJwx99L7FOyjXOzW3yVuzHOgblADWD2c7KtmC/N3c=;
+        b=ctRP2Ooi/khCtt4xkEDNOFflduNcL4umOANip2Z1bdT77v8Cf4gslzWHjnBvaA278N
+         qnps7C28VKBUlEQz7qYvXt2sOHHx5TvGx+aQOFMH/wC1Zv/6NhESxbbVymu3lTuNoHx4
+         jB50JpjkMmxFWM6MsG6VQTMr5xPxgf7KT/SwaPfoW7ou+SPdQ+Z6GLAYyt4ioxDzrAMk
+         0+L6klEl+5GKPwdIAkI+9U9Nr5i1TMzMwEeJ9duYTJW3oKVlY7V2dABAJ002GC4m4mZB
+         9kp8qQBh8qj8Mjz6yHVvA7/huqvV3w8LeCs1+EFT450WrScxGFMVbHgmkdcLxGY3l0qp
+         fy5Q==
+X-Gm-Message-State: APjAAAXHtqXCD6l91dEdTfLSDhJowDnvDvJC9XECkU9ahwXeBlAjCu8d
+        fWCIb4xLeywNKvsUiRSJg2Q=
+X-Google-Smtp-Source: APXvYqz3On9bPHv79/RsBc+0dwicwKP6apaQW2ZmacAnsdUnKzLS+lJLsX2BS/W4UpcSrcRApRCn9g==
+X-Received: by 2002:a5d:4e4d:: with SMTP id r13mr25919456wrt.295.1563801477023;
+        Mon, 22 Jul 2019 06:17:57 -0700 (PDT)
 Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id z6sm34156657wrw.2.2019.07.22.06.17.55
+        by smtp.gmail.com with ESMTPSA id z6sm34156657wrw.2.2019.07.22.06.17.56
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 06:17:55 -0700 (PDT)
+        Mon, 22 Jul 2019 06:17:56 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         David Lechner <david@lechnology.com>
-Subject: [RESEND PATCH 04/10] ARM: davinci: da830: switch to using the clocksource driver
-Date:   Mon, 22 Jul 2019 15:17:42 +0200
-Message-Id: <20190722131748.30319-5-brgl@bgdev.pl>
+Subject: [RESEND PATCH 05/10] ARM: davinci: move timer definitions to davinci.h
+Date:   Mon, 22 Jul 2019 15:17:43 +0200
+Message-Id: <20190722131748.30319-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190722131748.30319-1-brgl@bgdev.pl>
 References: <20190722131748.30319-1-brgl@bgdev.pl>
@@ -65,97 +65,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We now have a proper clocksource driver for davinci. Switch the da830
-platform to using it.
+Boards from the dm* family rely on register offset definitions from
+arch/arm/mach-davinci/include/mach/time.h. We'll be removing this file
+soon, so move the required defines to davinci.h where the rest of such
+constants live.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Reviewed-by: David Lechner <david@lechnology.com>
 ---
- arch/arm/mach-davinci/da830.c | 41 ++++++++++++-----------------------
- 1 file changed, 14 insertions(+), 27 deletions(-)
+ arch/arm/mach-davinci/davinci.h           | 3 +++
+ arch/arm/mach-davinci/include/mach/time.h | 2 --
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 220e99438ae0..018ab4b549f1 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -21,7 +21,8 @@
- #include <mach/common.h>
- #include <mach/cputype.h>
- #include <mach/da8xx.h>
--#include <mach/time.h>
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index 56c1835c42e5..208d7a4d3597 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -60,6 +60,9 @@ void davinci_map_sysmod(void);
+ #define DAVINCI_GPIO_BASE 0x01C67000
+ int davinci_gpio_register(struct resource *res, int size, void *pdata);
+ 
++#define DAVINCI_TIMER0_BASE		(IO_PHYS + 0x21400)
++#define DAVINCI_WDOG_BASE		(IO_PHYS + 0x21C00)
 +
-+#include <clocksource/timer-davinci.h>
+ /* DM355 base addresses */
+ #define DM355_ASYNC_EMIF_CONTROL_BASE	0x01e10000
+ #define DM355_ASYNC_EMIF_DATA_CE0_BASE	0x02000000
+diff --git a/arch/arm/mach-davinci/include/mach/time.h b/arch/arm/mach-davinci/include/mach/time.h
+index 1c971d8d8ba8..ba913736990f 100644
+--- a/arch/arm/mach-davinci/include/mach/time.h
++++ b/arch/arm/mach-davinci/include/mach/time.h
+@@ -11,9 +11,7 @@
+ #ifndef __ARCH_ARM_MACH_DAVINCI_TIME_H
+ #define __ARCH_ARM_MACH_DAVINCI_TIME_H
  
- #include "irqs.h"
- #include "mux.h"
-@@ -676,32 +677,17 @@ int __init da830_register_gpio(void)
- 	return da8xx_register_gpio(&da830_gpio_platform_data);
- }
+-#define DAVINCI_TIMER0_BASE		(IO_PHYS + 0x21400)
+ #define DAVINCI_TIMER1_BASE		(IO_PHYS + 0x21800)
+-#define DAVINCI_WDOG_BASE		(IO_PHYS + 0x21C00)
  
--static struct davinci_timer_instance da830_timer_instance[2] = {
--	{
--		.base		= DA8XX_TIMER64P0_BASE,
--		.bottom_irq	= DAVINCI_INTC_IRQ(IRQ_DA8XX_TINT12_0),
--		.top_irq	= DAVINCI_INTC_IRQ(IRQ_DA8XX_TINT34_0),
--		.cmp_off	= DA830_CMP12_0,
--		.cmp_irq	= DAVINCI_INTC_IRQ(IRQ_DA830_T12CMPINT0_0),
--	},
--	{
--		.base		= DA8XX_TIMER64P1_BASE,
--		.bottom_irq	= DAVINCI_INTC_IRQ(IRQ_DA8XX_TINT12_1),
--		.top_irq	= DAVINCI_INTC_IRQ(IRQ_DA8XX_TINT34_1),
--		.cmp_off	= DA830_CMP12_0,
--		.cmp_irq	= DAVINCI_INTC_IRQ(IRQ_DA830_T12CMPINT0_1),
--	},
--};
--
- /*
-- * T0_BOT: Timer 0, bottom		: Used for clock_event & clocksource
-- * T0_TOP: Timer 0, top			: Used by DSP
-- * T1_BOT, T1_TOP: Timer 1, bottom & top: Used for watchdog timer
-+ * Bottom half of timer0 is used both for clock even and clocksource.
-+ * Top half is used by DSP.
-  */
--static struct davinci_timer_info da830_timer_info = {
--	.timers		= da830_timer_instance,
--	.clockevent_id	= T0_BOT,
--	.clocksource_id	= T0_BOT,
-+static const struct davinci_timer_cfg da830_timer_cfg = {
-+	.reg = DEFINE_RES_IO(DA8XX_TIMER64P0_BASE, SZ_4K),
-+	.irq = {
-+		DEFINE_RES_IRQ(DAVINCI_INTC_IRQ(IRQ_DA830_T12CMPINT0_0)),
-+		DEFINE_RES_IRQ(DAVINCI_INTC_IRQ(IRQ_DA8XX_TINT12_0)),
-+	},
-+	.cmp_off = DA830_CMP12_0,
- };
- 
- static const struct davinci_soc_info davinci_soc_info_da830 = {
-@@ -713,7 +699,6 @@ static const struct davinci_soc_info davinci_soc_info_da830 = {
- 	.pinmux_base		= DA8XX_SYSCFG0_BASE + 0x120,
- 	.pinmux_pins		= da830_pins,
- 	.pinmux_pins_num	= ARRAY_SIZE(da830_pins),
--	.timer_info		= &da830_timer_info,
- 	.emac_pdata		= &da8xx_emac_pdata,
- };
- 
-@@ -743,6 +728,7 @@ void __init da830_init_time(void)
- {
- 	void __iomem *pll;
- 	struct clk *clk;
-+	int rv;
- 
- 	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
- 
-@@ -756,7 +742,8 @@ void __init da830_init_time(void)
- 		return;
- 	}
- 
--	davinci_timer_init(clk);
-+	rv = davinci_timer_register(clk, &da830_timer_cfg);
-+	WARN(rv, "Unable to register the timer: %d\n", rv);
- }
- 
- static struct resource da830_psc0_resources[] = {
+ enum {
+ 	T0_BOT,
 -- 
 2.21.0
 
