@@ -2,194 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69B8570016
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8579070005
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:48:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729833AbfGVMsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 08:48:22 -0400
-Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:49432 "EHLO
-        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729793AbfGVMsQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 08:48:16 -0400
-Received: from pps.filterd (m0167090.ppops.net [127.0.0.1])
-        by mx0b-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6MCSQNw007812;
-        Mon, 22 Jul 2019 08:48:11 -0400
-Received: from nam02-cy1-obe.outbound.protection.outlook.com (mail-cys01nam02lp2057.outbound.protection.outlook.com [104.47.37.57])
-        by mx0b-00128a01.pphosted.com with ESMTP id 2tuyk45x3c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 22 Jul 2019 08:48:11 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nlOMM1CtMNVBBk3+q3t9x96GDGHo56nXlAk2hC0MSEieu8PcSIyn6Q4SegKiE+bEVChCteLwekXLXzLWK11aYrtmuGm/hspYazqKzQYrnTxy/x2RN/AQw+ggSl8q069R48DX3oC6Ig1nhDg9n+S5BCwneQaMtOBvmHuqR7IzpYqGSJIQYuhAcO5x2hz+7QwuE2Lwo2UG3uMBgPRTY0b3Xn2rM/Kn+2denEBJrycPhWsV9w4r0aWSAdB2+5N6BlGL/4S+9slnJy0g8t+YVGyyuXh4NYMTkYTAxl/VziRdRZb/DGBgwENTTyBfSJaSRczTKHs281L8pfSgWN9q0lmMCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W1Cy+XqSTzYxLZasC0xbwdhc3iPRPLhhzTRXBxWFSsA=;
- b=WZs9IAf/4MdWGKI1bEL69FqHm48l3AcHFaslN6VdnJcO1UNQ9+HtVQkSmvftztrUuYqU33MujuSfa1RsoSj1ZsrOYgSg8EJDwkcUDH3ZrGpS8JcIujKT0l4DOjncc2MAfVyPhnAu0djJIAfxPKQgocWl2hNEUet+UN9REmCxUg7jqsKSIh6wmZgc2AtxwEvX250/ztHXQHknUkXE2dAneMiilOuSrQi9jaNIC1LR+9nvDIEWZ/yT4vBDTLMgav1DfGkCIhlRfU3nXrYlmFVA2Grv8ctoOQquFo6KzSUj2umPqwlbzxMMsOW34vjkB7/OG+JGEW+Rrpe3+nivVoFuTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass (sender ip is
- 137.71.25.55) smtp.rcpttodomain=vger.kernel.org
- smtp.mailfrom=analog.com;dmarc=bestguesspass action=none
- header.from=analog.com;dkim=none (message not signed);arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W1Cy+XqSTzYxLZasC0xbwdhc3iPRPLhhzTRXBxWFSsA=;
- b=9iZ/pK5MtNsAY2entfSa1lusVpEnmwQ+y1QVG2DcH4wocI1EGhM9Yt0ugMufGWycL+pwWuvbISnHcNoAP9o+ddT05C/mt5zFVrsBRBDwqSJb8yt/efIaluvhD+/xJoYvj4ADenSwcZ/96BbO2glZ1dHOURv+QDXxMYpQjryhzCA=
-Received: from BYAPR03CA0018.namprd03.prod.outlook.com (2603:10b6:a02:a8::31)
- by DM6PR03MB3833.namprd03.prod.outlook.com (2603:10b6:5:4f::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2094.17; Mon, 22 Jul
- 2019 12:48:09 +0000
-Received: from SN1NAM02FT051.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::202) by BYAPR03CA0018.outlook.office365.com
- (2603:10b6:a02:a8::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2094.11 via Frontend
- Transport; Mon, 22 Jul 2019 12:48:09 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- SN1NAM02FT051.mail.protection.outlook.com (10.152.73.103) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2052.25
- via Frontend Transport; Mon, 22 Jul 2019 12:48:05 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x6MCm146019654
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Mon, 22 Jul 2019 05:48:01 -0700
-Received: from saturn.ad.analog.com (10.48.65.145) by
- NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 22 Jul 2019 08:48:03 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <broonie@kernel.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 4/4][V3] dt-bindings: iio: imu: add bindings for ADIS16460
-Date:   Mon, 22 Jul 2019 15:47:47 +0300
-Message-ID: <20190722124747.4792-5-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190722124747.4792-1-alexandru.ardelean@analog.com>
-References: <20190722124747.4792-1-alexandru.ardelean@analog.com>
+        id S1729727AbfGVMsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 08:48:06 -0400
+Received: from foss.arm.com ([217.140.110.172]:36918 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729085AbfGVMsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 08:48:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09B87344;
+        Mon, 22 Jul 2019 05:48:05 -0700 (PDT)
+Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E7EAE3F71A;
+        Mon, 22 Jul 2019 05:48:02 -0700 (PDT)
+Subject: Re: [PATCH 1/3] printk: Allow architecture-specific timestamping
+ function
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190722103330.255312-1-marc.zyngier@arm.com>
+ <20190722103330.255312-2-marc.zyngier@arm.com>
+ <20190722112543.5quvqgerpyvfgbxq@pathway.suse.cz>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+ Z46HaNmN2hZS/oJ69c1DI5Rcww==
+Organization: ARM Ltd
+Message-ID: <493e2c0b-9536-ce6d-b59e-d169693085da@arm.com>
+Date:   Mon, 22 Jul 2019 13:47:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(396003)(346002)(136003)(39860400002)(2980300002)(189003)(199004)(54906003)(106002)(44832011)(110136005)(50466002)(486006)(6666004)(8676002)(50226002)(356004)(47776003)(426003)(6306002)(316002)(246002)(2616005)(48376002)(7636002)(305945005)(446003)(11346002)(1076003)(86362001)(476003)(126002)(336012)(4326008)(478600001)(966005)(186003)(53376002)(2201001)(36756003)(70206006)(2870700001)(70586007)(8936002)(51416003)(7696005)(2906002)(76176011)(26005)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR03MB3833;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8acc9dd4-0bd2-423a-e040-08d70ea2d844
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:DM6PR03MB3833;
-X-MS-TrafficTypeDiagnostic: DM6PR03MB3833:
-X-MS-Exchange-PUrlCount: 4
-X-Microsoft-Antispam-PRVS: <DM6PR03MB38330DD0A8E8DB3A4F4D72D7F9C40@DM6PR03MB3833.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2449;
-X-Forefront-PRVS: 01068D0A20
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: J8NuKCtqFFFQxBhL3Po+rObmra/wMoNC+olmJ283cGQ0cDa2Q4rFMgLOkCuheIZtlEGXiyDJl8Dkb5E64lKznN3+8DaT/4Qg4ZPd77QbG6U2qLp+WnwWzloSsmkh/x6UnOIyRHl7lmSZ78olnZPgrW3jGGHuK9nlaAugVhL5BtTB57j4YJ0pLuBjJBDbFegWR/+4BaF5WRn4LtddNEur8+mEwUesqE9kA0FmBH6t5SSHWAd57tGqNbW10DjF628vb/ljuh/ZwSjANGDAIzmy9VO6s9UFvS1pPpgA50FH2RfCuuNSjejWarkemCH8K4pJ+u+qdww2PWMf8d0l7/G7+aXxXjLkWspx7uNOFj5F3Tu7ePSmCREd8B/4HX876WcTr/lMSmlcFzus20oLuB8FcDldrcYykq6qizu+t2g3p50=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2019 12:48:05.3652
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8acc9dd4-0bd2-423a-e040-08d70ea2d844
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR03MB3833
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-22_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907220147
+In-Reply-To: <20190722112543.5quvqgerpyvfgbxq@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change adds device-tree bindings for the ADIS16460.
+On 22/07/2019 12:25, Petr Mladek wrote:
+> On Mon 2019-07-22 11:33:28, Marc Zyngier wrote:
+>> printk currently relies on local_clock to time-stamp the kernel
+>> messages. In order to allow the timestamping (and only that)
+>> to be overridden by architecture-specific code, let's declare
+>> a new timestamp_clock() function, which gets used by the printk
+>> code. Architectures willing to make use of this facility will
+>> have to define CONFIG_ARCH_HAS_TIMESTAMP_CLOCK.
+>>
+>> The default is of course to return local_clock(), so that the
+>> existing behaviour stays unchanged.
+>>
+>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>> ---
+>>  include/linux/sched/clock.h | 13 +++++++++++++
+>>  kernel/printk/printk.c      |  4 ++--
+>>  2 files changed, 15 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/linux/sched/clock.h b/include/linux/sched/clock.h
+>> index 867d588314e0..3cf4b2a8ce18 100644
+>> --- a/include/linux/sched/clock.h
+>> +++ b/include/linux/sched/clock.h
+>> @@ -98,4 +98,17 @@ static inline void enable_sched_clock_irqtime(void) {}
+>>  static inline void disable_sched_clock_irqtime(void) {}
+>>  #endif
+>>  
+>> +#ifdef CONFIG_ARCH_HAS_TIMESTAMP_CLOCK
+>> +/* Special need architectures can provide their timestamping function */
+> 
+> The commit message and the above comment should be more specific
+> about what are the special needs.
+> 
+> It must be clear how and why the clock differs from the other
+> clocks, especially from lock_clock().
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- .../bindings/iio/imu/adi,adis16460.yaml       | 53 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- 2 files changed, 54 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml
+Fair enough. How about something along the lines of:
 
-diff --git a/Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml b/Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml
-new file mode 100644
-index 000000000000..0c53009ba7d6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml
-@@ -0,0 +1,53 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/imu/adi,adis16460.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Analog Devices ADIS16460 and similar IMUs
-+
-+maintainers:
-+  - Dragos Bogdan <dragos.bogdan@analog.com>
-+
-+description: |
-+  Analog Devices ADIS16460 and similar IMUs
-+  https://www.analog.com/media/en/technical-documentation/data-sheets/ADIS16460.pdf
-+
-+properties:
-+  compatible:
-+    enum:
-+      - adi,adis16460
-+
-+  reg:
-+    maxItems: 1
-+
-+  spi-cpha: true
-+
-+  spi-cpol: true
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    spi0 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        imu@0 {
-+            compatible = "adi,adis16460";
-+            reg = <0>;
-+            spi-max-frequency = <5000000>;
-+            spi-cpol;
-+            spi-cpha;
-+            interrupt-parent = <&gpio0>;
-+            interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
-+        };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8e679504c087..c44fbe8e91e9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -943,6 +943,7 @@ S:	Supported
- L:	linux-iio@vger.kernel.org
- W:	http://ez.analog.com/community/linux-device-drivers
- F:	drivers/iio/imu/adis16460.c
-+F:	Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml
- 
- ANALOG DEVICES INC ADP5061 DRIVER
- M:	Stefan Popa <stefan.popa@analog.com>
+"An architecture can override the timestamp clock (which defaults to
+local_clock) if local_clock is not significant early enough (sched_clock
+being available too late)."
+
+> Also the first mail says that timestamp_clock() might be
+> unstable. Is this true only during the early boot or all
+> the time?
+
+With the current proposal, the instability period only exists until
+sched_clock gets initialized, at which point it takes over and the
+timestamping becomes stable.
+
+Note that this is the arm64 implementation, and not something that is
+currently guaranteed by just selecting CONFIG_ARCH_HAS_TIMESTAMP_CLOCK.
+
+> 
+> The timestamp helps to order the events. An unstable clock
+> might be better than nothing during the boot. But it would
+> look strange to use it all the time, especially when it was
+> unrelated to any other clock used by the system.
+
+And that's exactly what patch #3 implements. Once local_clock() returns
+something significant, we use that.
+
+Thanks,
+
+	M.
 -- 
-2.20.1
-
+Jazz is not dead. It just smells funny...
