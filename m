@@ -2,100 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E55356FE8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 13:12:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 299FC6FE93
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 13:15:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbfGVLMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 07:12:03 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52798 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbfGVLMD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 07:12:03 -0400
-Received: by mail-wm1-f68.google.com with SMTP id s3so34724534wms.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 04:12:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bofh-nu.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ugRN07ELNBGju0FZXfeTINwMh3Eu6S1IN6qjdKCIFBE=;
-        b=gFpS54Ax3j5KsNqU6isZdGlE+UrqmTn1H7kDrcDfPtz5MDBUHiilO+ZhfhdUYaCeeU
-         rnEF6ZKsuR9+Iv9LsEGoAaEVzSJuQ9SY3MRzFskJQjMVNJtpIQo5TVJC2A470Fnv5WKA
-         Kkwh4Qvq5M8KWeAHKby9Ab4DdLCxK9kvQlmG+LVcXjze03oJ9l16KEKk7AfepwwSlUmB
-         4PCxmpKH72WnymNl5ig50UJfK/N7j5HIxINywTZieue+9SYmx5xcD735gsjHwAFt1cX0
-         5yC2/bv/9IG7OT2uIPZuVOkzW+kwc0AoBZclZ7h01TmKpUOxv2kH86Bx5WGN7FOca3nn
-         oKVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ugRN07ELNBGju0FZXfeTINwMh3Eu6S1IN6qjdKCIFBE=;
-        b=FgD0FrS31qxxdd2e8t76S5qzhzkAGqxHHOROmU0OjTfzYZMDtM9E0sDS8huFUdwPJA
-         utYXcPaOzwoJsDOlawWPRGOZqqfSepJ2FYm/dGGmq3N3RBZoS7VzRDBltsnHF7GdqO4j
-         YaxcYvz52CZUxQRwyBKV8mMorYMBvb0TiqwIjlqTUcHBBoAPxHetLgYYfOQ01GAYGtaY
-         H6ZypjNNDEzt7lIAJDPPF/v9jeHOR5ur7pasjM7m8Si8Y2wtTYVVcdZC+93Q7pLSqiQL
-         7s3moVGD9F3Vn+79ykYmTIsTpbjpi4b+6vg2/1gFjP2+sqAkEboYBuz6mzYt6RUuQKVE
-         uKhg==
-X-Gm-Message-State: APjAAAU0Ar9F1tbHUoVPQfps2sgL56Ek7RPfJLspIn0iL67QmBUep1ed
-        Up8zThLLTJ3tO2kRsEK/IKLH84W1zYRAspFuF1E=
-X-Google-Smtp-Source: APXvYqyMOVi1QeBfQY7y3XFV+dCnJfmPmLUDhkHjFCy6dBRz6GZNepCI13S7cLN1oIlGT7gkQSUn4ppFimfg0qTYAS4=
-X-Received: by 2002:a05:600c:24a:: with SMTP id 10mr64703351wmj.7.1563793921410;
- Mon, 22 Jul 2019 04:12:01 -0700 (PDT)
+        id S1728353AbfGVLPP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 07:15:15 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54168 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728154AbfGVLPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 07:15:15 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 52D4FC057E29;
+        Mon, 22 Jul 2019 11:15:15 +0000 (UTC)
+Received: from laptop.redhat.com (ovpn-116-45.ams2.redhat.com [10.36.116.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DA13E5D704;
+        Mon, 22 Jul 2019 11:15:10 +0000 (UTC)
+From:   Eric Auger <eric.auger@redhat.com>
+To:     eric.auger.pro@gmail.com, eric.auger@redhat.com, hch@lst.de,
+        m.szyprowski@samsung.com, robin.murphy@arm.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dma-mapping: Protect dma_addressing_limited against NULL dma_mask
+Date:   Mon, 22 Jul 2019 13:14:49 +0200
+Message-Id: <20190722111449.29258-1-eric.auger@redhat.com>
 MIME-Version: 1.0
-References: <cover.1562149883.git.joabreu@synopsys.com> <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
- <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com> <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
- <20190722101830.GA24948@apalos>
-In-Reply-To: <20190722101830.GA24948@apalos>
-From:   Lars Persson <lists@bofh.nu>
-Date:   Mon, 22 Jul 2019 13:11:50 +0200
-Message-ID: <CADnJP=thexf2sWcVVOLWw14rpteEj0RrfDdY8ER90MpbNN4-oA@mail.gmail.com>
-Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page Pool
-To:     Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 22 Jul 2019 11:15:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 12:18 PM Ilias Apalodimas
-<ilias.apalodimas@linaro.org> wrote:
->
-> On Thu, Jul 18, 2019 at 07:48:04AM +0000, Jose Abreu wrote:
-> > From: Jon Hunter <jonathanh@nvidia.com>
-> > Date: Jul/17/2019, 19:58:53 (UTC+00:00)
-> >
-> > > Let me know if you have any thoughts.
-> >
-> > Can you try attached patch ?
-> >
->
-> The log says  someone calls panic() right?
-> Can we trye and figure were that happens during the stmmac init phase?
->
+There are cases when the helper gets called when the dma_mask is NULL.
 
-The reason for the panic is hidden in this one line of the kernel logs:
-Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+This is observed when running virtio-block-pci devices protected by
+a virtual IOMMU. Guest crashes with NULL pointer dereference.
 
-The init process is killed by SIGSEGV (signal 11 = 0xb).
+Fixes: b866455423e0 ("dma-mapping: add a dma_addressing_limited helper")
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+---
+ include/linux/dma-mapping.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I would suggest you look for data corruption bugs in the RX path. If
-the code is fetched from the NFS mount then a corrupt RX buffer can
-trigger a crash in userspace.
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index e11b115dd0e4..5e7f386fe0d2 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -689,8 +689,8 @@ static inline int dma_coerce_mask_and_coherent(struct device *dev, u64 mask)
+  */
+ static inline bool dma_addressing_limited(struct device *dev)
+ {
+-	return min_not_zero(*dev->dma_mask, dev->bus_dma_mask) <
+-		dma_get_required_mask(dev);
++	return dev->dma_mask ? min_not_zero(*dev->dma_mask, dev->bus_dma_mask) <
++		dma_get_required_mask(dev) : false;
+ }
+ 
+ #ifdef CONFIG_ARCH_HAS_SETUP_DMA_OPS
+-- 
+2.20.1
 
-/Lars
