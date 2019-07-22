@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6557370116
+	by mail.lfdr.de (Postfix) with ESMTP id CE27D70117
 	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:33:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730579AbfGVNdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 09:33:24 -0400
+        id S1730591AbfGVNd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 09:33:27 -0400
 Received: from bhuna.collabora.co.uk ([46.235.227.227]:36392 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730345AbfGVNdU (ORCPT
+        with ESMTP id S1730426AbfGVNdW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 09:33:20 -0400
+        Mon, 22 Jul 2019 09:33:22 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id B0E6028B0BE
+        with ESMTPSA id 6081328AF32
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Jonathan Corbet <corbet@lwn.net>,
@@ -38,9 +38,9 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         Collabora kernel ML <kernel@collabora.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Gwendal Grignou <gwendal@chromium.org>
-Subject: [PATCH v5 07/11] mfd: cros_ec: Use kzalloc and cros_ec_cmd_xfer_status helper
-Date:   Mon, 22 Jul 2019 15:32:53 +0200
-Message-Id: <20190722133257.9336-8-enric.balletbo@collabora.com>
+Subject: [PATCH v5 08/11] mfd: cros_ec: Add convenience struct to define dedicated CrOS EC MCUs
+Date:   Mon, 22 Jul 2019 15:32:54 +0200
+Message-Id: <20190722133257.9336-9-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190722133257.9336-1-enric.balletbo@collabora.com>
 References: <20190722133257.9336-1-enric.balletbo@collabora.com>
@@ -51,9 +51,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch makes use of cros_ec_cmd_xfer_status() instead of
-cros_ec_cmd_xfer() so we can remove some redundant code. It also uses
-kzalloc instead of kmalloc so we can remove more redundant code.
+With the increasing use of dedicated CrOS EC MCUs, it takes a fair amount
+of boiler plate code to add those devices, add a struct that can be used
+to specify a dedicated CrOS EC MCU so we can just add a new item to it to
+define a new dedicated MCU.
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
@@ -66,57 +67,123 @@ Changes in v4: None
 Changes in v3: None
 Changes in v2: None
 
- drivers/mfd/cros_ec_dev.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ drivers/mfd/cros_ec_dev.c | 87 +++++++++++++++++++++------------------
+ 1 file changed, 48 insertions(+), 39 deletions(-)
 
 diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index 4300ad919d74..c6bf52d795f2 100644
+index c6bf52d795f2..e0e18c0eb9f5 100644
 --- a/drivers/mfd/cros_ec_dev.c
 +++ b/drivers/mfd/cros_ec_dev.c
-@@ -29,18 +29,15 @@ static int cros_ec_check_features(struct cros_ec_dev *ec, int feature)
+@@ -22,6 +22,41 @@ static struct class cros_class = {
+ 	.name           = "chromeos",
+ };
  
- 	if (ec->features[0] == -1U && ec->features[1] == -1U) {
- 		/* features bitmap not read yet */
++/**
++ * cros_feature_to_name - CrOS feature id to name/short description.
++ * @id: The feature identifier.
++ * @name: Device name associated with the feature id.
++ * @desc: Short name that will be displayed.
++ */
++struct cros_feature_to_name {
++	unsigned int id;
++	const char *name;
++	const char *desc;
++};
++
++static const struct cros_feature_to_name cros_mcu_devices[] = {
++	{
++		.id	= EC_FEATURE_FINGERPRINT,
++		.name	= CROS_EC_DEV_FP_NAME,
++		.desc	= "Fingerprint",
++	},
++	{
++		.id	= EC_FEATURE_ISH,
++		.name	= CROS_EC_DEV_ISH_NAME,
++		.desc	= "Integrated Sensor Hub",
++	},
++	{
++		.id	= EC_FEATURE_SCP,
++		.name	= CROS_EC_DEV_SCP_NAME,
++		.desc	= "System Control Processor",
++	},
++	{
++		.id	= EC_FEATURE_TOUCHPAD,
++		.name	= CROS_EC_DEV_TP_NAME,
++		.desc	= "Touchpad",
++	},
++};
++
+ static int cros_ec_check_features(struct cros_ec_dev *ec, int feature)
+ {
+ 	struct cros_ec_command *msg;
+@@ -278,6 +313,7 @@ static int ec_device_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct cros_ec_platform *ec_platform = dev_get_platdata(dev);
+ 	struct cros_ec_dev *ec = kzalloc(sizeof(*ec), GFP_KERNEL);
++	int i;
+ 
+ 	if (!ec)
+ 		return retval;
+@@ -290,47 +326,20 @@ static int ec_device_probe(struct platform_device *pdev)
+ 	ec->features[1] = -1U; /* Not cached yet */
+ 	device_initialize(&ec->class_dev);
+ 
+-	/* Check whether this is actually a Fingerprint MCU rather than an EC */
+-	if (cros_ec_check_features(ec, EC_FEATURE_FINGERPRINT)) {
+-		dev_info(dev, "CrOS Fingerprint MCU detected.\n");
+-		/*
+-		 * Help userspace differentiating ECs from FP MCU,
+-		 * regardless of the probing order.
+-		 */
+-		ec_platform->ec_name = CROS_EC_DEV_FP_NAME;
+-	}
 -
--		msg = kmalloc(sizeof(*msg) + sizeof(ec->features), GFP_KERNEL);
-+		msg = kzalloc(sizeof(*msg) + sizeof(ec->features), GFP_KERNEL);
- 		if (!msg)
- 			return -ENOMEM;
+-	/*
+-	 * Check whether this is actually an Integrated Sensor Hub (ISH)
+-	 * rather than an EC.
+-	 */
+-	if (cros_ec_check_features(ec, EC_FEATURE_ISH)) {
+-		dev_info(dev, "CrOS ISH MCU detected.\n");
+-		/*
+-		 * Help userspace differentiating ECs from ISH MCU,
+-		 * regardless of the probing order.
+-		 */
+-		ec_platform->ec_name = CROS_EC_DEV_ISH_NAME;
+-	}
+-
+-	/* Check whether this is actually a Touchpad MCU rather than an EC */
+-	if (cros_ec_check_features(ec, EC_FEATURE_TOUCHPAD)) {
+-		dev_info(dev, "CrOS Touchpad MCU detected.\n");
++	for (i = 0; i < ARRAY_SIZE(cros_mcu_devices); i++) {
+ 		/*
+-		 * Help userspace differentiating ECs from TP MCU,
+-		 * regardless of the probing order.
++		 * Check whether this is actually a dedicated MCU rather
++		 * than an standard EC.
+ 		 */
+-		ec_platform->ec_name = CROS_EC_DEV_TP_NAME;
+-	}
+-
+-	/* Check whether this is actually a SCP rather than an EC. */
+-	if (cros_ec_check_features(ec, EC_FEATURE_SCP)) {
+-		dev_info(dev, "CrOS SCP MCU detected.\n");
+-		/*
+-		 * Help userspace differentiating ECs from SCP,
+-		 * regardless of the probing order.
+-		 */
+-		ec_platform->ec_name = CROS_EC_DEV_SCP_NAME;
++		if (cros_ec_check_features(ec, cros_mcu_devices[i].id)) {
++			dev_info(dev, "CrOS %s MCU detected\n",
++				 cros_mcu_devices[i].desc);
++			/*
++			 * Help userspace differentiating ECs from other MCU,
++			 * regardless of the probing order.
++			 */
++			ec_platform->ec_name = cros_mcu_devices[i].name;
++		}
+ 	}
  
--		msg->version = 0;
- 		msg->command = EC_CMD_GET_FEATURES + ec->cmd_offset;
- 		msg->insize = sizeof(ec->features);
--		msg->outsize = 0;
- 
--		ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
--		if (ret < 0 || msg->result != EC_RES_SUCCESS) {
-+		ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
-+		if (ret < 0) {
- 			dev_warn(ec->dev, "cannot get EC features: %d/%d\n",
- 				 ret, msg->result);
- 			memset(ec->features, 0, sizeof(ec->features));
-@@ -89,8 +86,8 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
- 	params = (struct ec_params_motion_sense *)msg->data;
- 	params->cmd = MOTIONSENSE_CMD_DUMP;
- 
--	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
--	if (ret < 0 || msg->result != EC_RES_SUCCESS) {
-+	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
-+	if (ret < 0) {
- 		dev_warn(ec->dev, "cannot get EC sensor information: %d/%d\n",
- 			 ret, msg->result);
- 		goto error;
-@@ -117,8 +114,8 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
- 	for (i = 0; i < sensor_num; i++) {
- 		params->cmd = MOTIONSENSE_CMD_INFO;
- 		params->info.sensor_num = i;
--		ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
--		if (ret < 0 || msg->result != EC_RES_SUCCESS) {
-+		ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
-+		if (ret < 0) {
- 			dev_warn(ec->dev, "no info for EC sensor %d : %d/%d\n",
- 				 i, ret, msg->result);
- 			continue;
+ 	/*
 -- 
 2.20.1
 
