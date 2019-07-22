@@ -2,120 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5A1D709DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 21:41:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86C09709F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 21:43:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732236AbfGVTl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 15:41:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45964 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726443AbfGVTl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 15:41:28 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6AE96308424C;
-        Mon, 22 Jul 2019 19:41:28 +0000 (UTC)
-Received: from x1.home (ovpn-116-35.phx2.redhat.com [10.3.116.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 522D0600C4;
-        Mon, 22 Jul 2019 19:41:25 +0000 (UTC)
-Date:   Mon, 22 Jul 2019 13:41:24 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     "Lu, Kechen" <kechen.lu@intel.com>
-Cc:     "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Zhang, Tina" <tina.zhang@intel.com>,
-        "kraxel@redhat.com" <kraxel@redhat.com>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "Lv, Zhiyuan" <zhiyuan.lv@intel.com>,
-        "Wang, Zhi A" <zhi.a.wang@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "Yuan, Hang" <hang.yuan@intel.com>
-Subject: Re: [RFC PATCH v4 2/6] vfio: Introduce vGPU display irq type
-Message-ID: <20190722134124.16c55c2f@x1.home>
-In-Reply-To: <31185F57AF7C4B4F87C41E735C23A6FE64E06F@shsmsx102.ccr.corp.intel.com>
-References: <20190718155640.25928-1-kechen.lu@intel.com>
-        <20190718155640.25928-3-kechen.lu@intel.com>
-        <20190719102516.60af527f@x1.home>
-        <31185F57AF7C4B4F87C41E735C23A6FE64E06F@shsmsx102.ccr.corp.intel.com>
-Organization: Red Hat
+        id S1730259AbfGVTnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 15:43:08 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43499 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727905AbfGVTnI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 15:43:08 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y17so14181406ljk.10
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 12:43:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dev-mellanox-co-il.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yDcZGwhuKZu3iHdLJjjZrDjT2mDiJYa3/PCuflSwhmE=;
+        b=JH+WTPvGR1uJXOfkLig+2OnrW2RKgN80CBOlHfHzmzd4O+bmVrzCRVv79MtxWactpN
+         5AQJgh8/hKUCP0JLKzw9h/Ia3Zucxwt24sq0z1NWzgC9D7F9JM39IuPnlfeD8HuVZjgZ
+         df1gbXNdbJqX60F6+Y/PKNW/1fE0l4GJwD+5qqqbYRcIBhraAj8DB6QvLVW+D4BcwoSy
+         XbY47a81+I07ouFEfhrSnksjfYHY98ImOhSJYDBYtWMQ1Mjelr3fU9T1Oy9gC9xOVFkv
+         9z7hQlZHI374PYI2T6OQwIYP1EKvSEMpTqTekwepqb6IjDkwfgi3/YVva8PPoL2m8Qmh
+         Yl4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yDcZGwhuKZu3iHdLJjjZrDjT2mDiJYa3/PCuflSwhmE=;
+        b=sblPfUvAa/MT6jMvR7WUZNV4axxyXbS5ggkxOKloJ7LuKt08FZMsY3tyTMV55ms1IH
+         y4SDonN3j1iVE+ib4dC+uYKKX2gfkGXW0WCjc9+akLrQA7JvgY7xXzexx6dazb9MhfEm
+         Wft6r7Yi7146TS9ZIm0LZSEsfV1VGIPcBSyr5fBaxvYNWM3fS/v9EqNbLuv9jbt+KGJ/
+         jNFggXbYVrKr1r3LTgPE9yCsJM7Mv08Fb3uBSA+UlHrdX/7nwB25/vdVLvAScI/LjBzC
+         /39Hn/iP7LeWviu1uctB05KNpc0Fy9hewp/5SpHthRjKvwKUOVslFa7LEaWHAtUHeWoi
+         ylEA==
+X-Gm-Message-State: APjAAAXhLlQHGuKmTWzF8u2B230lkRYfKYouICi+FPXnsCU3u5B0KyNF
+        p//lQn+G7CWFOE6Ygsi1BnA7tcuLeWfhy8vbQTs=
+X-Google-Smtp-Source: APXvYqxYj26MsmsL+EUr6K7HJeh4VOAk6pAdE7CkRMdt0FiDft3k4b/ODkmGcqVb0AGyHNqMuSc+O0XivAmJeX8kyWM=
+X-Received: by 2002:a2e:3604:: with SMTP id d4mr36892450lja.85.1563824585693;
+ Mon, 22 Jul 2019 12:43:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 22 Jul 2019 19:41:28 +0000 (UTC)
+References: <1563820482-10302-1-git-send-email-cai@lca.pw> <20190722.120901.1770656295609872438.davem@davemloft.net>
+In-Reply-To: <20190722.120901.1770656295609872438.davem@davemloft.net>
+From:   Saeed Mahameed <saeedm@dev.mellanox.co.il>
+Date:   Mon, 22 Jul 2019 12:42:54 -0700
+Message-ID: <CALzJLG81NvsSbv7Qv11QnX3pvogeSmO-vsn1uYP13p5T14irig@mail.gmail.com>
+Subject: Re: [PATCH] net/mlx5: fix -Wtype-limits compilation warnings
+To:     David Miller <davem@davemloft.net>
+Cc:     Qian Cai <cai@lca.pw>, Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 22 Jul 2019 05:28:35 +0000
-"Lu, Kechen" <kechen.lu@intel.com> wrote:
+On Mon, Jul 22, 2019 at 12:09 PM David Miller <davem@davemloft.net> wrote:
+>
+> From: Qian Cai <cai@lca.pw>
+> Date: Mon, 22 Jul 2019 14:34:42 -0400
+>
+> > The commit b9a7ba556207 ("net/mlx5: Use event mask based on device
+> > capabilities") introduced a few compilation warnings due to it bumps
+> > MLX5_EVENT_TYPE_MAX from 0x27 to 0x100 which is always greater than
+> > an "struct {mlx5_eqe|mlx5_nb}.type" that is an "u8".
+> >
+> > drivers/net/ethernet/mellanox/mlx5/core/eq.c: In function
+> > 'mlx5_eq_notifier_register':
+> > drivers/net/ethernet/mellanox/mlx5/core/eq.c:948:21: warning: comparison
+> > is always false due to limited range of data type [-Wtype-limits]
+> >   if (nb->event_type >= MLX5_EVENT_TYPE_MAX)
+> >                      ^~
+> > drivers/net/ethernet/mellanox/mlx5/core/eq.c: In function
+> > 'mlx5_eq_notifier_unregister':
+> > drivers/net/ethernet/mellanox/mlx5/core/eq.c:959:21: warning: comparison
+> > is always false due to limited range of data type [-Wtype-limits]
+> >   if (nb->event_type >= MLX5_EVENT_TYPE_MAX)
+> >
+> > Fix them by removing unnecessary checkings.
+> >
+> > Fixes: b9a7ba556207 ("net/mlx5: Use event mask based on device capabilities")
+> > Signed-off-by: Qian Cai <cai@lca.pw>
+>
+> Saeed, I am assuming that you will take this.
 
-> Hi, 
-> 
-> > -----Original Message-----
-> > From: Alex Williamson [mailto:alex.williamson@redhat.com]
-> > Sent: Saturday, July 20, 2019 12:25 AM
-> > To: Lu, Kechen <kechen.lu@intel.com>
-> > Cc: intel-gvt-dev@lists.freedesktop.org; kvm@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; Zhang, Tina <tina.zhang@intel.com>;
-> > kraxel@redhat.com; zhenyuw@linux.intel.com; Lv, Zhiyuan
-> > <zhiyuan.lv@intel.com>; Wang, Zhi A <zhi.a.wang@intel.com>; Tian, Kevin
-> > <kevin.tian@intel.com>; Yuan, Hang <hang.yuan@intel.com>
-> > Subject: Re: [RFC PATCH v4 2/6] vfio: Introduce vGPU display irq type
-> > 
-> > On Thu, 18 Jul 2019 23:56:36 +0800
-> > Kechen Lu <kechen.lu@intel.com> wrote:
-> >   
-> > > From: Tina Zhang <tina.zhang@intel.com>
-> > >
-> > > Introduce vGPU specific irq type VFIO_IRQ_TYPE_GFX, and
-> > > VFIO_IRQ_SUBTYPE_GFX_DISPLAY_IRQ as the subtype for vGPU display
-> > >
-> > > Signed-off-by: Tina Zhang <tina.zhang@intel.com>
-> > > ---
-> > >  include/uapi/linux/vfio.h | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> > > index be6adab4f759..df28b17a6e2e 100644
-> > > --- a/include/uapi/linux/vfio.h
-> > > +++ b/include/uapi/linux/vfio.h
-> > > @@ -469,6 +469,9 @@ struct vfio_irq_info_cap_type {
-> > >  	__u32 subtype;  /* type specific */
-> > >  };
-> > >
-> > > +#define VFIO_IRQ_TYPE_GFX				(1)
-> > > +#define VFIO_IRQ_SUBTYPE_GFX_DISPLAY_IRQ		(1)
-> > > +  
-> > 
-> > Please include a description defining exactly what this IRQ is intended to signal.
-> > For instance, if another vGPU vendor wanted to implement this in their driver
-> > and didn't have the QEMU code for reference to what it does with the IRQ, what
-> > would they need to know?  Thanks,
-> > 
-> > Alex
-> >   
-> 
-> Yes, that makes more sense. I'll add the description for it at next version patch.
-> 
-> BTW, may I have one more question? In the current design ideas, we partitioned 
-> the vGPU display eventfd counted 8-byte value into at most 8 events to deliver 
-> multiple display events, so we need different increasement counter value to 
-> differentiate the events. As this is the exposed thing the QEMU has to know, we
-> plan adds a macro here VFIO_IRQ_SUBTYPE_GFX_DISPLAY_EVENTFD_BASE_SHIFT to
-> make sure the partitions shift in 1 byte, does it make sense putting here? Looking  
-> forward to your and Gerd's comments. Thanks!
+Yes, will take it.
+The patch LGTM, though not applying it yet so others get the chance to
+review it.
+will apply it in a couple of days.
 
-Couldn't you expose this as another capability within the IRQ_INFO
-return data?  If you were to define it as a macro, I assume that means
-it would be hard coded, in which case this probably becomes an Intel
-specific IRQ, rather than what appears to be framed as a generic
-graphics IRQ extension.  A new capability could instead allow the
-vendor to specify their own value, where we could define how userspace
-should interpret and make use of this value.  Thanks,
-
-Alex
+Thanks,
+Saeed.
