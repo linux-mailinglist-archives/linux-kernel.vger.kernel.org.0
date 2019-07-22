@@ -2,65 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22F1D70C7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 00:24:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9266870C80
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 00:24:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733104AbfGVWY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 18:24:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38466 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726544AbfGVWY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 18:24:27 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4980221985;
-        Mon, 22 Jul 2019 22:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563834266;
-        bh=RUAzHw0HpGhBGFpbCBz+OfMJci0eEv0tJXsUiAyM2b4=;
-        h=In-Reply-To:References:Subject:To:Cc:From:Date:From;
-        b=07kCOgSUTdS6inhLNy0uXWAxPcaTixm+GwHsak258pxkb3aHsqvt495qaSZND9jWM
-         +6w2jVAkrag/ewmWIj0rrqBY29HHLqQlLv3Bs59eHQaatcXVMDRt7tjMpaFJaTBraH
-         d+riC4kTN0Uidc088dIa2S4lE1V79WAKBrEqCQjk=
-Content-Type: text/plain; charset="utf-8"
+        id S1733116AbfGVWYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 18:24:38 -0400
+Received: from smtprelay0172.hostedemail.com ([216.40.44.172]:59822 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726544AbfGVWYi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 18:24:38 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id C970C18224D99;
+        Mon, 22 Jul 2019 22:24:36 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3353:3622:3865:3867:3868:3870:3871:3872:3873:3874:4321:5007:7903:10004:10400:10848:10967:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21627:30054:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: dress20_280f7ba920e31
+X-Filterd-Recvd-Size: 2494
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 22 Jul 2019 22:24:35 +0000 (UTC)
+Message-ID: <512d8977fb0d0b3eef7b6ea1753fb4c33fbc43e8.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: Added warnings in favor of strscpy().
+From:   Joe Perches <joe@perches.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Stephen Kitt <steve@sk2.org>, Kees Cook <keescook@chromium.org>,
+        Nitin Gote <nitin.r.gote@intel.com>, jannh@google.com,
+        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Date:   Mon, 22 Jul 2019 15:24:33 -0700
+In-Reply-To: <20190722155730.08dfd4e3@lwn.net>
+References: <1561722948-28289-1-git-send-email-nitin.r.gote@intel.com>
+         <20190629181537.7d524f7d@sk2.org> <201907021024.D1C8E7B2D@keescook>
+         <20190706144204.15652de7@heffalump.sk2.org>
+         <201907221047.4895D35B30@keescook>
+         <15f2be3cde69321f4f3a48d60645b303d66a600b.camel@perches.com>
+         <20190722230102.442137dc@heffalump.sk2.org>
+         <d96cf801c5cf68e785e8dfd9dba0994fcff20017.camel@perches.com>
+         <20190722155730.08dfd4e3@lwn.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <a92ca50d-b33e-8779-294c-301535d0f0d5@wanadoo.fr>
-References: <20190701165020.19840-1-colin.king@canonical.com> <20190722212414.6EF8D21900@mail.kernel.org> <d1cd2b10-8fd4-f224-3bcd-5b938f72d249@wanadoo.fr> <20190722215314.9F4F121951@mail.kernel.org> <a92ca50d-b33e-8779-294c-301535d0f0d5@wanadoo.fr>
-Subject: Re: [PATCH][next] clk: Si5341/Si5340: remove redundant assignment to n_den
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Colin King <colin.king@canonical.com>,
-        linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Mon, 22 Jul 2019 15:24:25 -0700
-Message-Id: <20190722222426.4980221985@mail.kernel.org>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Christophe JAILLET (2019-07-22 15:00:24)
->
-> I don't use it explicitly, but the suggestions I get include some git=20
-> history, so I guess that it is on by default.
->=20
-> I was thinking at parsing files to see if MODULE_AUTHOR includes an email.
->=20
+On Mon, 2019-07-22 at 15:57 -0600, Jonathan Corbet wrote:
+> On Mon, 22 Jul 2019 14:50:09 -0700
+> Joe Perches <joe@perches.com> wrote:
+> 
+> > On Mon, 2019-07-22 at 23:01 +0200, Stephen Kitt wrote:
+> > > How about you submit your current patch set, and I follow up with the above
+> > > adapted to stracpy?  
+> > 
+> > OK, I will shortly after I figure out how to add kernel-doc
+> > for stracpy/stracpy_pad to lib/string.c.
+> > 
+> > It doesn't seem appropriate to add the kernel-doc to string.h
+> > as it would be separated from the others in string.c
+> > 
+> > Anyone got a clue here?  Jonathan?
+> 
+> If the functions themselves are fully defined in the .h file, I'd just add
+> the kerneldoc there as well.  That's how it's usually done, and you want
+> to keep the documentation and the prototypes together.
 
-Ok. Feel free to write a patch. Just know that MODULE_AUTHOR isn't
-always there so it's not a substitute for looking at git history or git
-blame to figure out who wrote the code.
+In this case, it's a macro and yes, the kernel-doc could
+easily be set around the macro in the .h, but my desire
+is to keep all the string function kernel-doc output
+together so it should be added to lib/string.c
 
-I suspect it's better to try to work on code and infrastructure to make
-these sorts of patches and questions irrelevant by detecting these
-problems before the code is merged, instead of after, by trawling the
-mailing lists and trying to apply patches and test them for common
-problems and then notifying the people working on the code. I don't have
-unlimited time in my life, so getting patches like this just makes me
-spend more time doing mundane tasks I don't want to do.
-
-TL;DR: Please help automate this sort of stuff!
+Are you suggesting I move all the lib/string.c kernel-doc
+to include/linux/string.h ?
 
