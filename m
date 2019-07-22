@@ -2,86 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB08B708BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:37:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEF74708C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:37:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731471AbfGVSgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 14:36:11 -0400
-Received: from mail-vk1-f174.google.com ([209.85.221.174]:44934 "EHLO
-        mail-vk1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731265AbfGVSgL (ORCPT
+        id S1731168AbfGVSh0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 14:37:26 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:37886 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730788AbfGVSh0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 14:36:11 -0400
-Received: by mail-vk1-f174.google.com with SMTP id w186so8104934vkd.11
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 11:36:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AaGq+Qn5ipyvNclhgXPtbHGUf3PKYP2ypbtdsfvuGPE=;
-        b=osk9Sq49PC6jweSqvDPGNpTawDqfETyCe1tAbu9VOkLFzFTsAr+zL99VHezfFVOUWF
-         3YFzTuckiUTd/d0mXDXqH1R9tfxs9b1EljM+F3B0BoKUyUkupKr37Di0RpbFTk3+LnlC
-         pSrnYiutyvFubFi4x0xaJbbIpXT97zAd05k0WFYQ6oHIpMqOpkhI7Yxb/hdOCxZcDBV9
-         dxiYxnYhoJb9leiHgnlMbjMOPnPvG1au8vSgXPvNh74s8sPUxdGJiM/f/r8IVZlCbWKv
-         LMXx07kFL2gb6EnB9xQcZQR7mVet8ltHHkeK2Rr/ge8mbCaCnFpwvcDZsc5hkxe0p7mp
-         k1Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AaGq+Qn5ipyvNclhgXPtbHGUf3PKYP2ypbtdsfvuGPE=;
-        b=OaEWiSZD3Qhrd3auberE/W2E42KcRepkfKBZJ7t95gXt06BVKbi3VN9lkd+U0fHY2a
-         IFMCBh1pj4430w5gpskmqiGXYRqAhC4JB3mzybeT8sy1OWs7YomYfFPUJJQYJlBOz0JT
-         rnJi50kShEOK3pTdtYnAEAdwLS1IqMN7MHJTOa3n8r60w4Fh+V4E4Fjot6DfPXyt2J/a
-         BKnCJXWh9i/Gaj8NvOZaPhky+Yf03Q/rHxOnQ+SpZb7qT8zamIKFOFBCW4J8jUV0wF79
-         Xv0SV81holNpC1ZOR/c3b9BRLR4xu+cAQB0dpJouVdLp42CIiH0dBUSj+I51ed9O96+d
-         pMbw==
-X-Gm-Message-State: APjAAAVB8WlOt6Hs/yuFUx3J+X0vNgPhJqWcfLqkXH+KJ4CEWFa3qmlq
-        +Ff4EQUZSXyWA5gFieDXsn0+0w==
-X-Google-Smtp-Source: APXvYqzg05DBMl1FiOOEi+BcDj9oMatgFoRzOcxe2TWC1iSrYrMwZsPdQYO2OOGlW8dYgZ2eC5r1aA==
-X-Received: by 2002:a1f:5945:: with SMTP id n66mr26924124vkb.58.1563820570049;
-        Mon, 22 Jul 2019 11:36:10 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id w12sm15578233vso.32.2019.07.22.11.36.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Jul 2019 11:36:09 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hpdAO-00068P-L1; Mon, 22 Jul 2019 15:36:08 -0300
-Date:   Mon, 22 Jul 2019 15:36:08 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Mao Wenan <maowenan@huawei.com>
-Cc:     bmt@zurich.ibm.com, dledford@redhat.com,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] infiniband: siw: remove set but not used variables
- 'rv'
-Message-ID: <20190722183608.GA23553@ziepe.ca>
-References: <20190719012938.100628-1-maowenan@huawei.com>
+        Mon, 22 Jul 2019 14:37:26 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hpdBY-0001gp-2Q; Mon, 22 Jul 2019 20:37:20 +0200
+Date:   Mon, 22 Jul 2019 20:37:19 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     Nadav Amit <namit@vmware.com>, Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH v3 1/9] smp: Run functions concurrently in
+ smp_call_function_many()
+In-Reply-To: <20190722182159.GB6698@worktop.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1907222033200.1659@nanos.tec.linutronix.de>
+References: <20190719005837.4150-1-namit@vmware.com> <20190719005837.4150-2-namit@vmware.com> <20190722182159.GB6698@worktop.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190719012938.100628-1-maowenan@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 19, 2019 at 09:29:38AM +0800, Mao Wenan wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/infiniband/sw/siw/siw_cm.c: In function siw_cep_set_inuse:
-> drivers/infiniband/sw/siw/siw_cm.c:223:6: warning: variable rv set but not used [-Wunused-but-set-variable]
-> 
-> It is not used since commit 6c52fdc244b5("rdma/siw: connection management")
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->  drivers/infiniband/sw/siw/siw_cm.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+On Mon, 22 Jul 2019, Peter Zijlstra wrote:
 
-Applied to for-rc
+> On Thu, Jul 18, 2019 at 05:58:29PM -0700, Nadav Amit wrote:
+> > +/*
+> > + * Call a function on all processors.  May be used during early boot while
+> > + * early_boot_irqs_disabled is set.
+> > + */
+> > +static inline void on_each_cpu(smp_call_func_t func, void *info, int wait)
+> > +{
+> > +	on_each_cpu_mask(cpu_online_mask, func, info, wait);
+> > +}
+> 
+> I'm thinking that one if buggy, nothing protects online mask here.
+
+The current implementation has preemption disabled before touching
+cpu_online_mask which at least protects against a CPU going away as that
+prevents the stomp machine thread from getting on the CPU. But it's not
+protected against a CPU coming online concurrently.
 
 Thanks,
-Jason
+
+	tglx
+
