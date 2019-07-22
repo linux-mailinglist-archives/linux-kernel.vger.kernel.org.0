@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04AFD7001C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:48:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DEDD7001E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:49:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729890AbfGVMsx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 08:48:53 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:51132 "EHLO inva020.nxp.com"
+        id S1729924AbfGVMsy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 08:48:54 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:51170 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728596AbfGVMsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726339AbfGVMsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 22 Jul 2019 08:48:51 -0400
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1E0291A00DB;
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D141C1A000B;
         Mon, 22 Jul 2019 14:48:49 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1058B1A00AA;
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C46291A0108;
         Mon, 22 Jul 2019 14:48:49 +0200 (CEST)
 Received: from fsr-ub1864-103.ea.freescale.net (fsr-ub1864-103.ea.freescale.net [10.171.82.17])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 60ADD205DB;
-        Mon, 22 Jul 2019 14:48:48 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 21127205DB;
+        Mon, 22 Jul 2019 14:48:49 +0200 (CEST)
 From:   Daniel Baluta <daniel.baluta@nxp.com>
 To:     broonie@kernel.org
 Cc:     festevam@gmail.com, perex@perex.cz, tiwai@suse.com,
@@ -28,9 +28,9 @@ Cc:     festevam@gmail.com, perex@perex.cz, tiwai@suse.com,
         linux-kernel@vger.kernel.org, linux-imx@nxp.com,
         shengjiu.wang@nxp.com, angus@akkea.ca, kernel@pengutronix.de,
         l.stach@pengutronix.de, viorel.suman@nxp.com
-Subject: [PATCH 01/10] ASoC: fsl_sai: add of_match data
-Date:   Mon, 22 Jul 2019 15:48:24 +0300
-Message-Id: <20190722124833.28757-2-daniel.baluta@nxp.com>
+Subject: [PATCH 02/10] ASoC: fsl_sai: derive TX FIFO watermark from FIFO depth
+Date:   Mon, 22 Jul 2019 15:48:25 +0300
+Message-Id: <20190722124833.28757-3-daniel.baluta@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190722124833.28757-1-daniel.baluta@nxp.com>
 References: <20190722124833.28757-1-daniel.baluta@nxp.com>
@@ -42,102 +42,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lucas Stach <l.stach@pengutronix.de>
 
-New revisions of the SAI IP block have even more differences that need
-be taken into account by the driver. To avoid sprinking compatible
-checks all over the driver move the current differences into of_match_data.
+The DMA request schould be triggered as soon as the FIFO has space
+for another burst. As different versions of the SAI block have
+different FIFO sizes, the watrmark level needs to be derived from
+version specific data.
 
 Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 ---
- sound/soc/fsl/fsl_sai.c | 22 ++++++++++++++--------
- sound/soc/fsl/fsl_sai.h |  6 +++++-
- 2 files changed, 19 insertions(+), 9 deletions(-)
+ sound/soc/fsl/fsl_sai.c | 4 +++-
+ sound/soc/fsl/fsl_sai.h | 1 +
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
-index d58cc3ae90d8..ed0432e7327a 100644
+index ed0432e7327a..1d1a447163e3 100644
 --- a/sound/soc/fsl/fsl_sai.c
 +++ b/sound/soc/fsl/fsl_sai.c
-@@ -9,6 +9,7 @@
- #include <linux/dmaengine.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
-@@ -788,10 +789,7 @@ static int fsl_sai_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+@@ -640,7 +640,7 @@ static int fsl_sai_dai_probe(struct snd_soc_dai *cpu_dai)
+ 	regmap_write(sai->regmap, FSL_SAI_RCSR, 0);
  
- 	sai->pdev = pdev;
--
--	if (of_device_is_compatible(np, "fsl,imx6sx-sai") ||
--	    of_device_is_compatible(np, "fsl,imx6ul-sai"))
--		sai->sai_on_imx = true;
-+	sai->soc_data = of_device_get_match_data(&pdev->dev);
+ 	regmap_update_bits(sai->regmap, FSL_SAI_TCR1, FSL_SAI_CR1_RFW_MASK,
+-			   FSL_SAI_MAXBURST_TX * 2);
++			   sai->soc_data->fifo_depth - FSL_SAI_MAXBURST_TX);
+ 	regmap_update_bits(sai->regmap, FSL_SAI_RCR1, FSL_SAI_CR1_RFW_MASK,
+ 			   FSL_SAI_MAXBURST_RX - 1);
  
- 	sai->is_lsb_first = of_property_read_bool(np, "lsb-first");
+@@ -913,10 +913,12 @@ static int fsl_sai_remove(struct platform_device *pdev)
  
-@@ -900,7 +898,7 @@ static int fsl_sai_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	if (sai->sai_on_imx)
-+	if (sai->soc_data->use_imx_pcm)
- 		return imx_pcm_dma_init(pdev, IMX_SAI_DMABUF_SIZE);
- 	else
- 		return devm_snd_dmaengine_pcm_register(&pdev->dev, NULL, 0);
-@@ -913,10 +911,18 @@ static int fsl_sai_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct fsl_sai_soc_data fsl_sai_vf610_data = {
-+	.use_imx_pcm = false,
-+};
-+
-+static const struct fsl_sai_soc_data fsl_sai_imx6sx_data = {
-+	.use_imx_pcm = true,
-+};
-+
- static const struct of_device_id fsl_sai_ids[] = {
--	{ .compatible = "fsl,vf610-sai", },
--	{ .compatible = "fsl,imx6sx-sai", },
--	{ .compatible = "fsl,imx6ul-sai", },
-+	{ .compatible = "fsl,vf610-sai", .data = &fsl_sai_vf610_data },
-+	{ .compatible = "fsl,imx6sx-sai", .data = &fsl_sai_imx6sx_data },
-+	{ .compatible = "fsl,imx6ul-sai", .data = &fsl_sai_imx6sx_data },
- 	{ /* sentinel */ }
+ static const struct fsl_sai_soc_data fsl_sai_vf610_data = {
+ 	.use_imx_pcm = false,
++	.fifo_depth = 32,
  };
- MODULE_DEVICE_TABLE(of, fsl_sai_ids);
+ 
+ static const struct fsl_sai_soc_data fsl_sai_imx6sx_data = {
+ 	.use_imx_pcm = true,
++	.fifo_depth = 32,
+ };
+ 
+ static const struct of_device_id fsl_sai_ids[] = {
 diff --git a/sound/soc/fsl/fsl_sai.h b/sound/soc/fsl/fsl_sai.h
-index 24cb156bf995..83e2bfe05b1b 100644
+index 83e2bfe05b1b..7c1ef671da28 100644
 --- a/sound/soc/fsl/fsl_sai.h
 +++ b/sound/soc/fsl/fsl_sai.h
-@@ -126,6 +126,10 @@
- #define FSL_SAI_MAXBURST_TX 6
- #define FSL_SAI_MAXBURST_RX 6
+@@ -128,6 +128,7 @@
  
-+struct fsl_sai_soc_data {
-+	bool use_imx_pcm;
-+};
-+
- struct fsl_sai {
- 	struct platform_device *pdev;
- 	struct regmap *regmap;
-@@ -135,7 +139,6 @@ struct fsl_sai {
- 	bool is_slave_mode;
- 	bool is_lsb_first;
- 	bool is_dsp_mode;
--	bool sai_on_imx;
- 	bool synchronous[2];
- 
- 	unsigned int mclk_id[2];
-@@ -143,6 +146,7 @@ struct fsl_sai {
- 	unsigned int slots;
- 	unsigned int slot_width;
- 
-+	const struct fsl_sai_soc_data *soc_data;
- 	struct snd_dmaengine_dai_dma_data dma_params_rx;
- 	struct snd_dmaengine_dai_dma_data dma_params_tx;
+ struct fsl_sai_soc_data {
+ 	bool use_imx_pcm;
++	unsigned int fifo_depth;
  };
+ 
+ struct fsl_sai {
 -- 
 2.17.1
 
