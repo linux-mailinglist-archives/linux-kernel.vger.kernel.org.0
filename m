@@ -2,129 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D75370754
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:32:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C46647075A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:34:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbfGVRck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 13:32:40 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:59751 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726590AbfGVRck (ORCPT
+        id S1727600AbfGVReB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 13:34:01 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:37644 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726590AbfGVReB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 13:32:40 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190722173237euoutp0199dddaa5a060b119797553e01d57ecbb~zyw5PB6CM2844428444euoutp01O
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 17:32:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190722173237euoutp0199dddaa5a060b119797553e01d57ecbb~zyw5PB6CM2844428444euoutp01O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1563816757;
-        bh=85hIYZIUSz2sajlTBWW2bBjChuGeN2EeF//kqgRb2D0=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=q+g/GyIiCSk+dVn1nzJwAjrNZSpMtXOg1/tllmmhS+Sl5i/AI++KYFiXiYyibiv53
-         luWvZA4BcDUY9WYWRQNXBTHEtk4I7BgIuv8ZYVZ3DOItfhounaTih+HQ7jhVHCpsQH
-         htkEQ5CuzsBAJXSbtre8VCiCrk+9cKxD3SZkFt0M=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190722173237eucas1p16e96da4835c4f0ac84c47c31cefda747~zyw4Z8IC11305913059eucas1p1v;
-        Mon, 22 Jul 2019 17:32:37 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id C8.DC.04298.433F53D5; Mon, 22
-        Jul 2019 18:32:36 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190722173236eucas1p171299dfaa34f3124622df488bfe57a89~zyw3m9yeP0714007140eucas1p1l;
-        Mon, 22 Jul 2019 17:32:36 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190722173235eusmtrp1a484cb96a4f7d585c54b0134f26c21d9~zyw3Y7q9v0411704117eusmtrp1g;
-        Mon, 22 Jul 2019 17:32:35 +0000 (GMT)
-X-AuditID: cbfec7f2-f13ff700000010ca-73-5d35f334eb5c
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 54.47.04146.333F53D5; Mon, 22
-        Jul 2019 18:32:35 +0100 (BST)
-Received: from AMDC2765.DIGITAL.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190722173235eusmtip1e2c9e2516c30587a1479aaf27bb423bc~zyw3DIbIi0484004840eusmtip15;
-        Mon, 22 Jul 2019 17:32:35 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2] phy: core: document phy_calibrate()
-Date:   Mon, 22 Jul 2019 19:32:23 +0200
-Message-Id: <20190722173223.19518-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIIsWRmVeSWpSXmKPExsWy7djPc7omn01jDQ4tNbDYOGM9q8WFpz1s
-        Fpd3zWGzmHF+H5PFomWtzBZrj9xld2Dz6NuyitHj+I3tTB6fN8kFMEdx2aSk5mSWpRbp2yVw
-        ZUy7OYelYBNnxZy7s1gbGG+xdzFyckgImEhM3nmRtYuRi0NIYAWjxK65z1kgnC+MEp8X3oPK
-        fGaUWPhxGStMy/nOzUwQieWMEhMbTyO0bNiwlwmkik3AUKLrbRcbiC0i4CCxZOkdNpAiZoH1
-        jBIrF38H2y4sYC4x4e9RMJtFQFWi988LRhCbV8BWYuW7WUwQ6+QlVm84wAzSLCGwh03i28of
-        UHe4SExo+gVVJCzx6vgWqJdkJE5P7mGBaGhmlHh4bi07hNPDKHG5aQYjRJW1xOHjII9zAN2k
-        KbF+lz5E2FFiTdt+dpCwhACfxI23giBhZiBz0rbpzBBhXomONiGIajWJWcfXwa09eOESVImH
-        RPNcdZCwkECsRM+T5ywTGOVmIaxawMi4ilE8tbQ4Nz212DAvtVyvODG3uDQvXS85P3cTIzDi
-        T/87/mkH49dLSYcYBTgYlXh4N+wxjRViTSwrrsw9xCjBwawkwptnABTiTUmsrEotyo8vKs1J
-        LT7EKM3BoiTOW83wIFpIID2xJDU7NbUgtQgmy8TBKdXAmNtpXhiw2+D63eMyIXE5zhFOpYx/
-        Q5UUxW2i3N9GdbPPcPoWvu/r7gQ1o0tnH88/VfDX5vhGPgV11W9P8316WPwlmy+dkp8uH29w
-        OyN9daS5pAz/qbhprz0FpzwNrv8c/OaLQKFfM0PaIXmjhRLnrpff90ncdksvj3lRiopol+Xs
-        a0Elc/SVWIozEg21mIuKEwEGbCqh9AIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOLMWRmVeSWpSXmKPExsVy+t/xu7rGn01jDXY/NLfYOGM9q8WFpz1s
-        Fpd3zWGzmHF+H5PFomWtzBZrj9xld2Dz6NuyitHj+I3tTB6fN8kFMEfp2RTll5akKmTkF5fY
-        KkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZUy7OYelYBNnxZy7s1gbGG+x
-        dzFyckgImEic79zM1MXIxSEksJRRYvKZs2wQCRmJk9MaWCFsYYk/17rYIIo+MUrM3/YOLMEm
-        YCjR9bYLrEFEwEmic+1psCJmgY2MEk93XmUESQgLmEtM+HsUbB2LgKpE758XYHFeAVuJle9m
-        MUFskJdYveEA8wRGngWMDKsYRVJLi3PTc4sN9YoTc4tL89L1kvNzNzECA23bsZ+bdzBe2hh8
-        iFGAg1GJh3fDHtNYIdbEsuLK3EOMEhzMSiK8eQZAId6UxMqq1KL8+KLSnNTiQ4ymQMsnMkuJ
-        JucDoyCvJN7Q1NDcwtLQ3Njc2MxCSZy3Q+BgjJBAemJJanZqakFqEUwfEwenVAMj08RpOdnM
-        ht8Vs7mXrcucurDo/P0cbiFzr6kMs94stvv22k3t3KJdR+bum3HlbM6cvKJ1QcY8P840f4rI
-        X1t06p707F1SjqfrZZWVH71LfpqxNyPQsmzOEWcbWZNvsam9yrqvq1b3L9vY5BaRLiQ8bS67
-        8pQV/e8+Rr7Z8zb4MYOdgm2PvMIlJZbijERDLeai4kQA5ftaukoCAAA=
-X-CMS-MailID: 20190722173236eucas1p171299dfaa34f3124622df488bfe57a89
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190722173236eucas1p171299dfaa34f3124622df488bfe57a89
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190722173236eucas1p171299dfaa34f3124622df488bfe57a89
-References: <CGME20190722173236eucas1p171299dfaa34f3124622df488bfe57a89@eucas1p1.samsung.com>
+        Mon, 22 Jul 2019 13:34:01 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.92)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1hpcC7-0003HL-TG; Mon, 22 Jul 2019 13:33:51 -0400
+From:   Rik van Riel <riel@surriel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@fb.com, pjt@google.com, dietmar.eggemann@arm.com,
+        peterz@infradead.org, mingo@redhat.com, morten.rasmussen@arm.com,
+        tglx@linutronix.de, mgorman@techsingularity.net,
+        vincent.guittot@linaro.org
+Subject: [PATCH RFC v3 0/14] sched,fair: flatten CPU controller runqueues
+Date:   Mon, 22 Jul 2019 13:33:34 -0400
+Message-Id: <20190722173348.9241-1-riel@surriel.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 36914111e682 ("drivers: phy: add calibrate method") added support
-for generic phy_calibrate() method, but it didn't explain in detail when
-such method is supposed to be called. Add some more documentation directly
-to the phy.h to make it clean that it is intended to be called after every
-host controller reset.
+The current implementation of the CPU controller uses hierarchical
+runqueues, where on wakeup a task is enqueued on its group's runqueue,
+the group is enqueued on the runqueue of the group above it, etc.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/phy/phy-core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+This increases a fairly large amount of overhead for workloads that
+do a lot of wakeups a second, especially given that the default systemd
+hierarchy is 2 or 3 levels deep.
 
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index e3880c4a15f2..b04f4fe85ac2 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -394,6 +394,16 @@ int phy_reset(struct phy *phy)
- }
- EXPORT_SYMBOL_GPL(phy_reset);
- 
-+/**
-+ * phy_calibrate() - Tunes the phy hw parameters for current configuration
-+ * @phy: the phy returned by phy_get()
-+ *
-+ * Used to calibrate phy hardware, typically by adjusting some parameters in
-+ * runtime, which are otherwise lost after host controller reset and cannot
-+ * be applied in phy_init() or phy_power_on().
-+ *
-+ * Returns: 0 if successful, an negative error code otherwise
-+ */
- int phy_calibrate(struct phy *phy)
- {
- 	int ret;
--- 
-2.17.1
+This patch series is an attempt at reducing that overhead, by placing
+all the tasks on the same runqueue, and scaling the task priority by
+the priority of the group, which is calculated periodically.
+
+My main TODO items for the next period of time are likely going to
+be testing, testing, and testing. I hope to find and flush out any
+corner case I can find, and make sure performance does not regress
+with any workloads, and hopefully improves some.
+
+Other TODO items:
+- More code cleanups.
+- Remove some more now unused code.
+- Reimplement CONFIG_CFS_BANDWIDTH.
+
+Plan for the CONFIG_CFS_BANDWIDTH reimplementation:
+- When a cgroup gets throttled, mark the cgroup and its children
+  as throttled.
+- When pick_next_entity finds a task that is on a throttled cgroup,
+  stash it on the cgroup runqueue (which is not used for runnable
+  tasks any more). Leave the vruntime unchanged, and adjust that
+  runqueue's vruntime to be that of the left-most task.
+- When a cgroup gets unthrottled, and has tasks on it, place it on
+  a vruntime ordered heap separate from the main runqueue.
+- Have pick_next_task_fair grab one task off that heap every time it
+  is called, and the min vruntime of that heap is lower than the
+  vruntime of the CPU's cfs_rq (or the CPU has no other runnable tasks).
+- Place that selected task on the CPU's cfs_rq, renormalizing its
+  vruntime with the GENTLE_FAIR_SLEEPERS logic. That should help
+  interleave the already runnable tasks with the recently unthrottled
+  group, and prevent thundering herd issues.
+- If the group gets throttled again before all of its task had a chance
+  to run, vruntime sorting ensures all the tasks in the throttled cgroup
+  get a chance to run over time.
+
+
+Changes from v2:
+- fixed the web server performance regression, in a way vaguely similar
+  to what Josef Bacik suggested (blame me for the implementation)
+- removed some code duplication so the diffstat is redder than before
+- propagate sum_exec_runtime up the tree, in preparation for CFS_BANDWIDTH
+- small cleanups left and right
+
+Changes from v1:
+- use task_se_h_weight instead of task_se_h_load in calc_delta_fair
+  and sched_slice, this seems to improve performance a little, but
+  I still have some remaining regression to chase with our web server
+  workload
+- implement a number of the changes suggested by Dietmar Eggemann
+  (still holding out for a better name for group_cfs_rq_of_parent)
+
+This series applies on top of 5.2
+
+ include/linux/sched.h |    7 
+ kernel/sched/core.c   |    3 
+ kernel/sched/debug.c  |   17 -
+ kernel/sched/fair.c   |  780 ++++++++++++++++++++------------------------------
+ kernel/sched/pelt.c   |   69 ++--
+ kernel/sched/pelt.h   |    3 
+ kernel/sched/sched.h  |   11 
+ 7 files changed, 372 insertions(+), 518 deletions(-)
+
 
