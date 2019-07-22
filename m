@@ -2,112 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38B276FAA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 09:47:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 970D66FAA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 09:48:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727491AbfGVHrS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 03:47:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60614 "EHLO mail.kernel.org"
+        id S1727875AbfGVHsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 03:48:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725773AbfGVHrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 03:47:18 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        id S1727164AbfGVHsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 03:48:31 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36766206DD;
-        Mon, 22 Jul 2019 07:47:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B96182199C;
+        Mon, 22 Jul 2019 07:48:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563781637;
-        bh=vEMJsRu+hSQRQqRPW0cmugNwU1SYjS9MxSsBCPTWbnI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xotim+n+wM0Hu89/V2xWYrX8FUQG201U2Q81aMxSaDsHlXDAQjS61nF+13n6fgG9C
-         vTc4UudTpeZEyo7FgRZoOvzI3JdwUB7KuveEJj6kKWRN7cUaGJ6oVUjjmUZENigSDc
-         bj31bj8Ili5ODSDRuZnGlw5Vv65YEDW9FXrzD3Cc=
-Date:   Mon, 22 Jul 2019 15:46:49 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Fancy Fang <chen.fang@nxp.com>
-Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 1/2] clk: imx8mm: rename lcdif pixel clock
-Message-ID: <20190722074648.GF3738@dragon>
-References: <20190709071942.18109-1-chen.fang@nxp.com>
+        s=default; t=1563781710;
+        bh=fCm+twhupd0sfoMKl3+oPJY6FX4/EFcymfZefTFmLO8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=F8zFyZIrS/zpZQrHnC9mXaN0J0K7HeaiyybgnJ9mwyxw3fFiCElwLVA8qUy2OEfe+
+         OzJ+k34UT+jduVM2DYe4wVtgUGWd03QtNcjydt4XV7KxaZFh3kF2LOK6k2XcgI7cRj
+         37ibeZlJlREutUvtOi0ttksrQWxTXenUeUZysu+4=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     mhiramat@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Dan Rue <dan.rue@linaro.org>,
+        Matt Hart <matthew.hart@linaro.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Daniel Diaz <daniel.diaz@linaro.org>
+Subject: [PATCH v2 0/4] arm64: kprobes: Fix some bugs in arm64 kprobes 
+Date:   Mon, 22 Jul 2019 16:48:24 +0900
+Message-Id: <156378170297.12011.17385386326930403235.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190709071942.18109-1-chen.fang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 07:17:56AM +0000, Fancy Fang wrote:
-> Rename 'lcdif' pixel clock related names to 'disp' names, since:
-> 
-> First, the lcdif pixel clock is not supplied to LCDIF controller
-> directly, but to some LPCG clock in display mix. So rename it to
-> 'disp' pixel clock is more accurate.
-> 
-> Second, in the imx8mn CCM specification which is designed after
-> imx8mm, this same pixel root clock name has been modified from
-> 'LCDIF_PIXEL_CLK_ROOT' to 'DISPLAY_PIXEL_CLK_ROOT'.
+Hi,
 
-We should simply name the clock after i.MX8MM reference manual.  What is
-the clock name in there?
+Here are the v2 patches which fixes kprobe bugs on arm64.
 
-Shawn
+Naresh reported that recently ftracetest crashes kernel, and I found
+there are 3 different bugs around the crash. In v1 thread, we found
+one another bug of RCU and debug exception.
 
-> 
-> Signed-off-by: Fancy Fang <chen.fang@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx8mm.c             | 4 ++--
->  include/dt-bindings/clock/imx8mm-clock.h | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-> index 6b8e75df994d..42f1227a4952 100644
-> --- a/drivers/clk/imx/clk-imx8mm.c
-> +++ b/drivers/clk/imx/clk-imx8mm.c
-> @@ -210,7 +210,7 @@ static const char *imx8mm_pcie1_aux_sels[] = {"osc_24m", "sys_pll2_200m", "sys_p
->  static const char *imx8mm_dc_pixel_sels[] = {"osc_24m", "video_pll1_out", "audio_pll2_out", "audio_pll1_out",
->  					     "sys_pll1_800m", "sys_pll2_1000m", "sys_pll3_out", "clk_ext4", };
->  
-> -static const char *imx8mm_lcdif_pixel_sels[] = {"osc_24m", "video_pll1_out", "audio_pll2_out", "audio_pll1_out",
-> +static const char *imx8mm_disp_pixel_sels[] = {"osc_24m", "video_pll1_out", "audio_pll2_out", "audio_pll1_out",
->  						"sys_pll1_800m", "sys_pll2_1000m", "sys_pll3_out", "clk_ext4", };
->  
->  static const char *imx8mm_sai1_sels[] = {"osc_24m", "audio_pll1_out", "audio_pll2_out", "video_pll1_out",
-> @@ -535,7 +535,7 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
->  	clks[IMX8MM_CLK_PCIE1_PHY] = imx8m_clk_composite("pcie1_phy", imx8mm_pcie1_phy_sels, base + 0xa380);
->  	clks[IMX8MM_CLK_PCIE1_AUX] = imx8m_clk_composite("pcie1_aux", imx8mm_pcie1_aux_sels, base + 0xa400);
->  	clks[IMX8MM_CLK_DC_PIXEL] = imx8m_clk_composite("dc_pixel", imx8mm_dc_pixel_sels, base + 0xa480);
-> -	clks[IMX8MM_CLK_LCDIF_PIXEL] = imx8m_clk_composite("lcdif_pixel", imx8mm_lcdif_pixel_sels, base + 0xa500);
-> +	clks[IMX8MM_CLK_DISP_PIXEL] = imx8m_clk_composite("disp_pixel", imx8mm_disp_pixel_sels, base + 0xa500);
->  	clks[IMX8MM_CLK_SAI1] = imx8m_clk_composite("sai1", imx8mm_sai1_sels, base + 0xa580);
->  	clks[IMX8MM_CLK_SAI2] = imx8m_clk_composite("sai2", imx8mm_sai2_sels, base + 0xa600);
->  	clks[IMX8MM_CLK_SAI3] = imx8m_clk_composite("sai3", imx8mm_sai3_sels, base + 0xa680);
-> diff --git a/include/dt-bindings/clock/imx8mm-clock.h b/include/dt-bindings/clock/imx8mm-clock.h
-> index 07e6c686f3ef..91ef77efebd9 100644
-> --- a/include/dt-bindings/clock/imx8mm-clock.h
-> +++ b/include/dt-bindings/clock/imx8mm-clock.h
-> @@ -119,7 +119,7 @@
->  #define IMX8MM_CLK_PCIE1_PHY			104
->  #define IMX8MM_CLK_PCIE1_AUX			105
->  #define IMX8MM_CLK_DC_PIXEL			106
-> -#define IMX8MM_CLK_LCDIF_PIXEL			107
-> +#define IMX8MM_CLK_DISP_PIXEL			107
->  #define IMX8MM_CLK_SAI1				108
->  #define IMX8MM_CLK_SAI2				109
->  #define IMX8MM_CLK_SAI3				110
-> -- 
-> 2.17.1
-> 
+- Kprobes on arm64 doesn't recover pstate.D mask after single stepping.
+  This causes a real kernel crash if a kprobe is unexpectedly nested.
+- Some symbols which are called from blacklisted function, are not
+  blacklisted.
+- Debug exception is not visible to RCU, thus rcu_read_lock() cause
+  a warning inside it.
+- Debug exception handlers on arm64 is using rcu_read_lock(), but
+  that is not needed because interrupts are disabled.
+
+This series includes fixes for above bugs.
+
+Thank you,
+
+---
+
+Masami Hiramatsu (4):
+      arm64: kprobes: Recover pstate.D in single-step exception handler
+      arm64: unwind: Prohibit probing on return_address()
+      arm64: Make debug exception handlers visible from RCU
+      arm64: Remove unneeded rcu_read_lock from debug handlers
+
+
+ arch/arm64/kernel/debug-monitors.c |   14 +++++++-----
+ arch/arm64/kernel/probes/kprobes.c |   41 ++++++------------------------------
+ arch/arm64/kernel/return_address.c |    4 +++-
+ arch/arm64/kernel/stacktrace.c     |    3 +++
+ arch/arm64/mm/fault.c              |   40 +++++++++++++++++++++++++++++++++++
+ 5 files changed, 61 insertions(+), 41 deletions(-)
+
+--
+Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
