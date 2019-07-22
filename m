@@ -2,119 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D3BE6FB7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:40:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFAD86FB87
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:42:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728599AbfGVIkf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 04:40:35 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:41632 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbfGVIkf (ORCPT
+        id S1728524AbfGVIly (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 04:41:54 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:59150 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726481AbfGVIly (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 04:40:35 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6M8eOsg070238;
-        Mon, 22 Jul 2019 03:40:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1563784824;
-        bh=TviAWhiRP3zQTB51r4gI+gZaJWkaHb/tZnv/A5V5Vec=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=iGDD/T/krkpcQWBLx7cJN+bhSHCfkTJfr4zmFgdjTROeqVqtmjIOb2TjaQPaq+Ew+
-         xyJxkc12dBMvkmGrPryQRTAN9G3loNxthgqkCX4HiiAz/oKPGD8R6XUYsBor0MTDvW
-         BnRcmxfHPb/gfiXi3HEXO0qiVt4aFZyBll1kTGao=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6M8eOaw058289
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 22 Jul 2019 03:40:24 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 22
- Jul 2019 03:40:23 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 22 Jul 2019 03:40:23 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6M8eIZk028120;
-        Mon, 22 Jul 2019 03:40:19 -0500
-Subject: Re: [PATCH] staging: media/davinci_vpfe: fix pinmux setup compilation
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Lad Prabhakar <prabhakar.csengg@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Ioannis Valasakis <code@wizofe.uk>,
-        Arushi Singhal <arushisinghal19971997@gmail.com>,
-        <linux-media@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190722081243.2084226-1-arnd@arndb.de>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <35b6ec33-f3d7-54ec-e9a0-3748ee9eb343@ti.com>
-Date:   Mon, 22 Jul 2019 14:10:18 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20190722081243.2084226-1-arnd@arndb.de>
-Content-Type: text/plain; charset="utf-8"
+        Mon, 22 Jul 2019 04:41:54 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6M8fJ6b016279;
+        Mon, 22 Jul 2019 10:41:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=imr2sIFk1Lgr/a7SvJT94lfftuDU4y9CMeO9VDYfTXQ=;
+ b=hXez6iMHUuSntwF3oWe4Pl4zkYYP/Wx1TRbHa/Tc3cTMlkjqjCpCbtty7PHFUQzp5L30
+ T9jc1AyDAzUTRbSMzK0qqVsObdAduryEQWSP75hreQ6iIpI8ymUVfeUCaxjiNN5pEWPg
+ uaQCobSLRVELHWEVau2R/DJc8Ic4dDMdAF3D5Y6SdayS4E53DrsjyBYhoaiKlLDU0SCC
+ 2cf42Eas/XaQ/PoKw7D7SgkFRNOtDmC+B4nscaUxMnUJkED45MHI/jyqX9TMHXHeNAXt
+ KmbYMsPSd3LoLBvOyDGPFy8SKXFWxvBFSNC2nxc+BHg5tCOpOL0P/is42mtPKYwCWHm6 3g== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2ture1ajgs-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 22 Jul 2019 10:41:34 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2E18543;
+        Mon, 22 Jul 2019 08:41:33 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag7node1.st.com [10.75.127.19])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9506F270C;
+        Mon, 22 Jul 2019 08:41:32 +0000 (GMT)
+Received: from SFHDAG7NODE2.st.com (10.75.127.20) by SFHDAG7NODE1.st.com
+ (10.75.127.19) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 22 Jul
+ 2019 10:41:32 +0200
+Received: from SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090]) by
+ SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090%20]) with mapi id
+ 15.00.1473.003; Mon, 22 Jul 2019 10:41:32 +0200
+From:   Loic PALLARDY <loic.pallardy@st.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Clement Leger <cleger@kalray.eu>, Ohad Ben-Cohen <ohad@wizery.com>,
+        "Bjorn Andersson" <bjorn.andersson@linaro.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] remoteproc: copy parent dma_pfn_offset for vdev
+Thread-Topic: [PATCH v2] remoteproc: copy parent dma_pfn_offset for vdev
+Thread-Index: AQHVL9sMjAFFqcSPYUOpD1xKQA9Tl6a3MSeAgAAqZ/CACZ3pAIAQfN4AgAT4THA=
+Date:   Mon, 22 Jul 2019 08:41:32 +0000
+Message-ID: <3c2c98e785704969a862715ab52ce2de@SFHDAG7NODE2.st.com>
+References: <20190612095521.4703-1-cleger@kalray.eu>
+ <20190701070245.32083-1-cleger@kalray.eu>
+ <20190702132229.GA8100@infradead.org>
+ <58c8b8bd30a949678c027eb42a1b1bbb@SFHDAG7NODE2.st.com>
+ <20190708184546.GA20670@infradead.org> <20190719063250.GA9545@infradead.org>
+In-Reply-To: <20190719063250.GA9545@infradead.org>
+Accept-Language: fr-FR, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.45]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-22_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
 
-On 22/07/19 1:42 PM, Arnd Bergmann wrote:
-> The dm365_isif staging driver uses an odd method for configuring its
-> pin muxing by calling directly into low-level davinci platform specific
-> code, even when being compile-tested for other platforms.
-> 
-> As we want davinci to be part of a multi-platform kernel, this will
-> cause a build failure when those headers are no longer exported even
-> for davinci:
-> 
-> drivers/staging/media/davinci_vpfe/dm365_isif.c: In function 'vpfe_isif_init':
-> drivers/staging/media/davinci_vpfe/dm365_isif.c:2031:2: error: implicit declaration of function 'davinci_cfg_reg'; did you mean 'omap_cfg_reg'? [-Werror=implicit-function-declaration]
->   davinci_cfg_reg(DM365_VIN_CAM_WEN);
->   ^~~~~~~~~~~~~~~
->   omap_cfg_reg
-> drivers/staging/media/davinci_vpfe/dm365_isif.c:2031:18: error: 'DM365_VIN_CAM_WEN' undeclared (first use in this function); did you mean 'DM365_ISIF_MAX_CLDC'?
->   davinci_cfg_reg(DM365_VIN_CAM_WEN);
->                   ^~~~~~~~~~~~~~~~~
-> 
-> Digging further, it seems that the platform data structures defined
-> in drivers/staging/media/davinci_vpfe/vpfe.h are an incompatible
-> version of the same structures in include/media/davinci/vpfe_capture.h,
-> which is the version that is used by the platform code, so the
-> combination that exists in the mainline kernel cannot be used.
-> 
-> The platform code already has an abstraction for the pinmux,
-> in the form of the dm365_isif_setup_pinmux() helper. If we want
-> to ever get to use the staging driver again, this needs to be
-> read from the platform data passed to this driver, or rewritten
-> to use the pinmux framework.
-> 
-> For the moment, pretend we pass the helper function in the
-> staging platform driver to get it to build cleanly. I could
-> not figure out how the staging driver relates to the code
-> in drivers/media/platform/davinci/, some clarification on that
-> would be helpful to decide what the long-term plan on this
-> should be to either remove the staging driver as obsolete or
-> integrate it with the rest in a way that actually works.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-I looked at the history of updates on this driver over last 4 years.
-None of them are towards fixing some issue found with the driver during
-actual usage or for improving its design to move it out of staging.
+> -----Original Message-----
+> From: Christoph Hellwig <hch@infradead.org>
+> Sent: vendredi 19 juillet 2019 08:33
+> To: Loic PALLARDY <loic.pallardy@st.com>
+> Cc: Christoph Hellwig <hch@infradead.org>; Clement Leger
+> <cleger@kalray.eu>; Ohad Ben-Cohen <ohad@wizery.com>; Bjorn
+> Andersson <bjorn.andersson@linaro.org>; linux-
+> remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH v2] remoteproc: copy parent dma_pfn_offset for vdev
+>=20
+> On Mon, Jul 08, 2019 at 11:45:46AM -0700, Christoph Hellwig wrote:
+> > > But that's breaking legacy as all platforms will have to add a virtio=
+ device
+> node in
+> > > their DT file...
+> > >
+> > > Is it aligned with your view ?
+> >
+> > Yes, that is how I'd assume it works.  But given that until recently
+> > you did now have these subdevices for dma coherent purposes we can't
+> > really break anything older than that, so I might still be missing
+> > something.
+>=20
+> Any chance we could expedite this?  remoteproc is the only driver
+> inheriting dma ops to subdevices, and the only one using
+> dma_declare_coherent_memory.  I'd really like to clean this mess up
+> rather sooner than later.
 
-I think no one is really using it or working on moving it out of
-staging. Perhaps the right thing to do would be to delete it.
-
-Thanks,
-Sekhar
+Ongoing...
+Two topics to clean up:
+- Sub device creation and DMA ops inheritance --> need to use platform_devi=
+ce or device tree
+- dma_declare_coherent_memory use --> it has been introduced to support int=
+ernal memories declared via reg field.
+I propose to migrate existing drivers on reserved memory usage and so remov=
+e dma_declare_coherent call from remoteproc core.
