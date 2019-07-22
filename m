@@ -2,153 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F36C6FA88
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 09:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 438FF6FAA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 09:48:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbfGVHol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 03:44:41 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25648 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725888AbfGVHok (ORCPT
+        id S1727823AbfGVHrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 03:47:55 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:60781 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727164AbfGVHrz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 03:44:40 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6M7gs2h023771
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 03:44:39 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tw8nb91ht-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 03:44:39 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Mon, 22 Jul 2019 08:44:37 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 22 Jul 2019 08:44:35 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6M7iY0647054978
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Jul 2019 07:44:34 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 11DDD11C05E;
-        Mon, 22 Jul 2019 07:44:34 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BAE9911C04C;
-        Mon, 22 Jul 2019 07:44:33 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.152.224.116])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 22 Jul 2019 07:44:33 +0000 (GMT)
-Subject: Re: [PATCH] s390/hypfs: fix a typo in the name of a function
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        heiko.carstens@de.ibm.com, Vasily Gorbik <gor@linux.ibm.com>,
-        gregkh@linuxfoundation.org
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20190721123321.12879-1-christophe.jaillet@wanadoo.fr>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- mQINBE6cPPgBEAC2VpALY0UJjGmgAmavkL/iAdqul2/F9ONz42K6NrwmT+SI9CylKHIX+fdf
- J34pLNJDmDVEdeb+brtpwC9JEZOLVE0nb+SR83CsAINJYKG3V1b3Kfs0hydseYKsBYqJTN2j
- CmUXDYq9J7uOyQQ7TNVoQejmpp5ifR4EzwIFfmYDekxRVZDJygD0wL/EzUr8Je3/j548NLyL
- 4Uhv6CIPf3TY3/aLVKXdxz/ntbLgMcfZsDoHgDk3lY3r1iwbWwEM2+eYRdSZaR4VD+JRD7p8
- 0FBadNwWnBce1fmQp3EklodGi5y7TNZ/CKdJ+jRPAAnw7SINhSd7PhJMruDAJaUlbYaIm23A
- +82g+IGe4z9tRGQ9TAflezVMhT5J3ccu6cpIjjvwDlbxucSmtVi5VtPAMTLmfjYp7VY2Tgr+
- T92v7+V96jAfE3Zy2nq52e8RDdUo/F6faxcumdl+aLhhKLXgrozpoe2nL0Nyc2uqFjkjwXXI
- OBQiaqGeWtxeKJP+O8MIpjyGuHUGzvjNx5S/592TQO3phpT5IFWfMgbu4OreZ9yekDhf7Cvn
- /fkYsiLDz9W6Clihd/xlpm79+jlhm4E3xBPiQOPCZowmHjx57mXVAypOP2Eu+i2nyQrkapaY
- IdisDQfWPdNeHNOiPnPS3+GhVlPcqSJAIWnuO7Ofw1ZVOyg/jwARAQABtDRDaHJpc3RpYW4g
- Qm9ybnRyYWVnZXIgKElCTSkgPGJvcm50cmFlZ2VyQGRlLmlibS5jb20+iQI4BBMBAgAiBQJO
- nDz4AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRARe7yAtaYcfOYVD/9sqc6ZdYKD
- bmDIvc2/1LL0g7OgiA8pHJlYN2WHvIhUoZUIqy8Sw2EFny/nlpPVWfG290JizNS2LZ0mCeGZ
- 80yt0EpQNR8tLVzLSSr0GgoY0lwsKhAnx3p3AOrA8WXsPL6prLAu3yJI5D0ym4MJ6KlYVIjU
- ppi4NLWz7ncA2nDwiIqk8PBGxsjdc/W767zOOv7117rwhaGHgrJ2tLxoGWj0uoH3ZVhITP1z
- gqHXYaehPEELDV36WrSKidTarfThCWW0T3y4bH/mjvqi4ji9emp1/pOWs5/fmd4HpKW+44tD
- Yt4rSJRSa8lsXnZaEPaeY3nkbWPcy3vX6qafIey5d8dc8Uyaan39WslnJFNEx8cCqJrC77kI
- vcnl65HaW3y48DezrMDH34t3FsNrSVv5fRQ0mbEed8hbn4jguFAjPt4az1xawSp0YvhzwATJ
- YmZWRMa3LPx/fAxoolq9cNa0UB3D3jmikWktm+Jnp6aPeQ2Db3C0cDyxcOQY/GASYHY3KNra
- z8iwS7vULyq1lVhOXg1EeSm+lXQ1Ciz3ub3AhzE4c0ASqRrIHloVHBmh4favY4DEFN19Xw1p
- 76vBu6QjlsJGjvROW3GRKpLGogQTLslbjCdIYyp3AJq2KkoKxqdeQYm0LZXjtAwtRDbDo71C
- FxS7i/qfvWJv8ie7bE9A6Wsjn7kCDQROnDz4ARAAmPI1e8xB0k23TsEg8O1sBCTXkV8HSEq7
- JlWz7SWyM8oFkJqYAB7E1GTXV5UZcr9iurCMKGSTrSu3ermLja4+k0w71pLxws859V+3z1jr
- nhB3dGzVZEUhCr3EuN0t8eHSLSMyrlPL5qJ11JelnuhToT6535cLOzeTlECc51bp5Xf6/XSx
- SMQaIU1nDM31R13o98oRPQnvSqOeljc25aflKnVkSfqWSrZmb4b0bcWUFFUKVPfQ5Z6JEcJg
- Hp7qPXHW7+tJTgmI1iM/BIkDwQ8qe3Wz8R6rfupde+T70NiId1M9w5rdo0JJsjKAPePKOSDo
- RX1kseJsTZH88wyJ30WuqEqH9zBxif0WtPQUTjz/YgFbmZ8OkB1i+lrBCVHPdcmvathknAxS
- bXL7j37VmYNyVoXez11zPYm+7LA2rvzP9WxR8bPhJvHLhKGk2kZESiNFzP/E4r4Wo24GT4eh
- YrDo7GBHN82V4O9JxWZtjpxBBl8bH9PvGWBmOXky7/bP6h96jFu9ZYzVgIkBP3UYW+Pb1a+b
- w4A83/5ImPwtBrN324bNUxPPqUWNW0ftiR5b81ms/rOcDC/k/VoN1B+IHkXrcBf742VOLID4
- YP+CB9GXrwuF5KyQ5zEPCAjlOqZoq1fX/xGSsumfM7d6/OR8lvUPmqHfAzW3s9n4lZOW5Jfx
- bbkAEQEAAYkCHwQYAQIACQUCTpw8+AIbDAAKCRARe7yAtaYcfPzbD/9WNGVf60oXezNzSVCL
- hfS36l/zy4iy9H9rUZFmmmlBufWOATjiGAXnn0rr/Jh6Zy9NHuvpe3tyNYZLjB9pHT6mRZX7
- Z1vDxeLgMjTv983TQ2hUSlhRSc6e6kGDJyG1WnGQaqymUllCmeC/p9q5m3IRxQrd0skfdN1V
- AMttRwvipmnMduy5SdNayY2YbhWLQ2wS3XHJ39a7D7SQz+gUQfXgE3pf3FlwbwZhRtVR3z5u
- aKjxqjybS3Ojimx4NkWjidwOaUVZTqEecBV+QCzi2oDr9+XtEs0m5YGI4v+Y/kHocNBP0myd
- pF3OoXvcWdTb5atk+OKcc8t4TviKy1WCNujC+yBSq3OM8gbmk6NwCwqhHQzXCibMlVF9hq5a
- FiJb8p4QKSVyLhM8EM3HtiFqFJSV7F+h+2W0kDyzBGyE0D8z3T+L3MOj3JJJkfCwbEbTpk4f
- n8zMboekuNruDw1OADRMPlhoWb+g6exBWx/YN4AY9LbE2KuaScONqph5/HvJDsUldcRN3a5V
- RGIN40QWFVlZvkKIEkzlzqpAyGaRLhXJPv/6tpoQaCQQoSAc5Z9kM/wEd9e2zMeojcWjUXgg
- oWj8A/wY4UXExGBu+UCzzP/6sQRpBiPFgmqPTytrDo/gsUGqjOudLiHQcMU+uunULYQxVghC
- syiRa+UVlsKmx1hsEg==
-Date:   Mon, 22 Jul 2019 09:44:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Mon, 22 Jul 2019 03:47:55 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MSbov-1i04vK0nhx-00T03d; Mon, 22 Jul 2019 09:47:07 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [v3] xen: avoid link error on ARM
+Date:   Mon, 22 Jul 2019 09:46:29 +0200
+Message-Id: <20190722074705.2082153-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <20190721123321.12879-1-christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19072207-0016-0000-0000-000002950C9A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19072207-0017-0000-0000-000032F2F52F
-Message-Id: <fef3c70c-5c36-ea73-b52a-252656b46457@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-22_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=944 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907220093
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:3EdOY3EUnlUpz1I3SU7SExGgM9Np4XJCmPkMfsKvDxZfzJkaD2X
+ f9IRekbqSDJcE1EVqjNOA9BdXcMErvJxelu1521l2QAetrl5ETmalOPD0QL4Zcvom9mSXyc
+ uRLbnfLZv+hDj2noZweapQyB7LLryFnru7t9yiXOb1r6C6biY4aLRZtuZ9KBYat1oJPr5p+
+ RDIU7ZjihuLGcHKObaqdg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:oeVD7OeF3dY=:wxlNhsi0rCLsy/PPJPNYuB
+ w26Lnf05qvb2AdLALuGE2FvIUZkDZtgpoU6R8YB9hoqyzcezCEjXqZfCtnWSxB7Xd5r0zYrGV
+ vQgqb+8zmFG973E4Xn/5KB9dzReifXqBPS9DwprfNIaxW952EkjWCZWkJiv9mZ53kuyXupCYu
+ BH4Z2Yazmzn+S9axnkq6V+//UJLH62xLvYX5HrecVy9r11BIMk4AhFwVxRT74f+ABJos42aR4
+ c0KR9ItikEembbodxyYbGQKk6LU1xlZ+nRLqT0JZwWpcuNAHYFBTMjJieq+mM2AC1m3bZ+S7/
+ lW2FOeUhQhrfktt/vryAYwEmU2pR7Iv7GbFhZPXZgMvuxqKEyTj4WOPWg1bTn/32HA4xVd8Ks
+ XezYmPel78/F1PXEN5U9XaXolkKia3orRT+Gw6MVhHpBiyYFFiC5jNifG7bchp0bVtujzRDgT
+ gaE3Mf7ImSTATrDw2BHDOY9qSJsP3mHXnRJiHiTlQwweOHI0pQK1ylxvqEeq1iOsxlh3Bc8us
+ GMbXaRMYAe/sK2ZmmNyPlc2pmfJCkvQK/L+NAKGJNrzHD5VmQlTsHDEW0py9v/jtxEX7ftRuX
+ Hs9gFyNnwJxyktB+BwksaAfS2L9CeavlqqyuA736zO4tju9QTXgDzzE5rmY4ZNmOpixszww+5
+ Jpy+8fuI3MnGH4RWdSGmk9RaFDzxdeI5PVYLYa7nQYum1fWu+P4eg7xG/CqH74ZYUJOd26EHa
+ XMLWYPQ8+CG6T24kqI6rhBECg/v+6XhkuUwLSQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-thanks, applied.
+Building the privcmd code as a loadable module on ARM, we get
+a link error due to the private cache management functions:
 
-On 21.07.19 14:33, Christophe JAILLET wrote:
-> Everything is about hypfs_..., except 'hpyfs_vm_create_guest()'
-> s/hpy/hyp/
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  arch/s390/hypfs/hypfs_vm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/s390/hypfs/hypfs_vm.c b/arch/s390/hypfs/hypfs_vm.c
-> index 42f2375c203e..e1fcc03159ef 100644
-> --- a/arch/s390/hypfs/hypfs_vm.c
-> +++ b/arch/s390/hypfs/hypfs_vm.c
-> @@ -118,7 +118,7 @@ do { \
->  		return PTR_ERR(rc); \
->  } while(0)
->  
-> -static int hpyfs_vm_create_guest(struct dentry *systems_dir,
-> +static int hypfs_vm_create_guest(struct dentry *systems_dir,
->  				 struct diag2fc_data *data)
->  {
->  	char guest_name[NAME_LEN + 1] = {};
-> @@ -219,7 +219,7 @@ int hypfs_vm_create_files(struct dentry *root)
->  	}
->  
->  	for (i = 0; i < count; i++) {
-> -		rc = hpyfs_vm_create_guest(dir, &(data[i]));
-> +		rc = hypfs_vm_create_guest(dir, &(data[i]));
->  		if (rc)
->  			goto failed;
->  	}
-> 
+ERROR: "__sync_icache_dcache" [drivers/xen/xen-privcmd.ko] undefined!
+
+Move the code into a new that is always built in when Xen is enabled,
+as suggested by Juergen Gross and Boris Ostrovsky.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v2: rename mm.o to xen-builtin.o, make it unconditional
+v3: move new code into xlate_mmu as suggested by Boris Ostrovsky.
+    sorry for the long delay since v2, I lost track of this.
+---
+ drivers/xen/privcmd.c   | 35 +++++------------------------------
+ drivers/xen/xlate_mmu.c | 32 ++++++++++++++++++++++++++++++++
+ include/xen/xen-ops.h   |  3 +++
+ 3 files changed, 40 insertions(+), 30 deletions(-)
+
+diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
+index 2f5ce7230a43..c6070e70dd73 100644
+--- a/drivers/xen/privcmd.c
++++ b/drivers/xen/privcmd.c
+@@ -724,25 +724,6 @@ static long privcmd_ioctl_restrict(struct file *file, void __user *udata)
+ 	return 0;
+ }
+ 
+-struct remap_pfn {
+-	struct mm_struct *mm;
+-	struct page **pages;
+-	pgprot_t prot;
+-	unsigned long i;
+-};
+-
+-static int remap_pfn_fn(pte_t *ptep, unsigned long addr, void *data)
+-{
+-	struct remap_pfn *r = data;
+-	struct page *page = r->pages[r->i];
+-	pte_t pte = pte_mkspecial(pfn_pte(page_to_pfn(page), r->prot));
+-
+-	set_pte_at(r->mm, addr, ptep, pte);
+-	r->i++;
+-
+-	return 0;
+-}
+-
+ static long privcmd_ioctl_mmap_resource(struct file *file, void __user *udata)
+ {
+ 	struct privcmd_data *data = file->private_data;
+@@ -774,7 +755,8 @@ static long privcmd_ioctl_mmap_resource(struct file *file, void __user *udata)
+ 		goto out;
+ 	}
+ 
+-	if (xen_feature(XENFEAT_auto_translated_physmap)) {
++	if (IS_ENABLED(CONFIG_XEN_AUTO_XLATE) &&
++	    xen_feature(XENFEAT_auto_translated_physmap)) {
+ 		unsigned int nr = DIV_ROUND_UP(kdata.num, XEN_PFN_PER_PAGE);
+ 		struct page **pages;
+ 		unsigned int i;
+@@ -808,16 +790,9 @@ static long privcmd_ioctl_mmap_resource(struct file *file, void __user *udata)
+ 	if (rc)
+ 		goto out;
+ 
+-	if (xen_feature(XENFEAT_auto_translated_physmap)) {
+-		struct remap_pfn r = {
+-			.mm = vma->vm_mm,
+-			.pages = vma->vm_private_data,
+-			.prot = vma->vm_page_prot,
+-		};
+-
+-		rc = apply_to_page_range(r.mm, kdata.addr,
+-					 kdata.num << PAGE_SHIFT,
+-					 remap_pfn_fn, &r);
++	if (IS_ENABLED(CONFIG_XEN_AUTO_XLATE) &&
++	    xen_feature(XENFEAT_auto_translated_physmap)) {
++		rc = xen_remap_vma_range(vma, kdata.addr, kdata.num << PAGE_SHIFT);
+ 	} else {
+ 		unsigned int domid =
+ 			(xdata.flags & XENMEM_rsrc_acq_caller_owned) ?
+diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
+index ba883a80b3c0..7b1077f0abcb 100644
+--- a/drivers/xen/xlate_mmu.c
++++ b/drivers/xen/xlate_mmu.c
+@@ -262,3 +262,35 @@ int __init xen_xlate_map_ballooned_pages(xen_pfn_t **gfns, void **virt,
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(xen_xlate_map_ballooned_pages);
++
++struct remap_pfn {
++	struct mm_struct *mm;
++	struct page **pages;
++	pgprot_t prot;
++	unsigned long i;
++};
++
++static int remap_pfn_fn(pte_t *ptep, unsigned long addr, void *data)
++{
++	struct remap_pfn *r = data;
++	struct page *page = r->pages[r->i];
++	pte_t pte = pte_mkspecial(pfn_pte(page_to_pfn(page), r->prot));
++
++	set_pte_at(r->mm, addr, ptep, pte);
++	r->i++;
++
++	return 0;
++}
++
++/* Used by the privcmd module, but has to be built-in on ARM */
++int xen_remap_vma_range(struct vm_area_struct *vma, unsigned long addr, unsigned long len)
++{
++	struct remap_pfn r = {
++		.mm = vma->vm_mm,
++		.pages = vma->vm_private_data,
++		.prot = vma->vm_page_prot,
++	};
++
++	return apply_to_page_range(vma->vm_mm, addr, len, remap_pfn_fn, &r);
++}
++EXPORT_SYMBOL_GPL(xen_remap_vma_range);
+diff --git a/include/xen/xen-ops.h b/include/xen/xen-ops.h
+index 4969817124a8..98b30c1613b2 100644
+--- a/include/xen/xen-ops.h
++++ b/include/xen/xen-ops.h
+@@ -109,6 +109,9 @@ static inline int xen_xlate_unmap_gfn_range(struct vm_area_struct *vma,
+ }
+ #endif
+ 
++int xen_remap_vma_range(struct vm_area_struct *vma, unsigned long addr,
++			unsigned long len);
++
+ /*
+  * xen_remap_domain_gfn_array() - map an array of foreign frames by gfn
+  * @vma:     VMA to map the pages into
+-- 
+2.20.0
 
