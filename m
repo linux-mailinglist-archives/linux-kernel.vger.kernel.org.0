@@ -2,167 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E68CD6F7E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 05:23:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A87846F7E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 05:22:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbfGVDXQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 21 Jul 2019 23:23:16 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:48060 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726749AbfGVDXP (ORCPT
+        id S1727802AbfGVDWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 21 Jul 2019 23:22:15 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:37299 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726749AbfGVDWP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Jul 2019 23:23:15 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6M3J2WK091282;
-        Mon, 22 Jul 2019 03:22:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=bKQhUIwcPyqKlsiS6x+9R5sqKFbs4BHgdjnU5G7EHlc=;
- b=DSd3O0zQ4FRuEjIau9hjPInOC22IFeXHKkPNWBaycJAbDHtCgMnpC0R1qzzazWNn2RUp
- EJzbnMEVutxkhqtjKo1/+F7bc7ijlOUIzsjGpFuoKM8xPSBE+8KBvKfL6COUGBASbIlR
- NdLk9dXDx8Uen+1SYPrcWtbJqaHAVmhKu/mftrglskgSnxq5VwlqTejE4ywdch5Z1ze0
- oArggfQEIHPkpkIJv/Fc/TQAjoa9W4LqjYoP3FIT/KA2VJsi50HmO/BadAEYf2tYhq6J
- A7dQ1qX9Mtp9egiAdbo7amW9Ap4/oWGzGcus5DRjghh4qJZRMF+MX0wvshHrZMwhEg9C gA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2tuukqbw6h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Jul 2019 03:22:47 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6M3I18c139244;
-        Mon, 22 Jul 2019 03:20:46 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2tuts2g8uc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Jul 2019 03:20:46 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6M3KdXA015002;
-        Mon, 22 Jul 2019 03:20:39 GMT
-Received: from [192.168.0.110] (/73.243.10.6)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 21 Jul 2019 20:20:38 -0700
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3566.0.1\))
-Subject: Re: [PATCH 2/3] sgi-gru: Remove CONFIG_HUGETLB_PAGE ifdef
-From:   William Kucharski <william.kucharski@oracle.com>
-In-Reply-To: <1563724685-6540-3-git-send-email-linux.bhar@gmail.com>
-Date:   Sun, 21 Jul 2019 21:20:38 -0600
-Cc:     arnd@arndb.de, sivanich@sgi.com, gregkh@linuxfoundation.org,
-        ira.weiny@intel.com, jhubbard@nvidia.com, jglisse@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <1BA84A99-4EB5-4520-BFBD-CD60D5B7AED9@oracle.com>
-References: <1563724685-6540-1-git-send-email-linux.bhar@gmail.com>
- <1563724685-6540-3-git-send-email-linux.bhar@gmail.com>
-To:     Bharath Vedartham <linux.bhar@gmail.com>
-X-Mailer: Apple Mail (2.3566.0.1)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9325 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1907220037
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9325 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1907220037
+        Sun, 21 Jul 2019 23:22:15 -0400
+Received: by mail-lf1-f67.google.com with SMTP id c9so25461677lfh.4
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2019 20:22:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aAm6iRQPlrqd77BVpOEOx8I7+PSe0NwGfNRgqs6nZII=;
+        b=cDdCMvSvKcnIW2NfjF1EyVuXtQjnzbihephboKIpmrwDerjhDGgQKdb/SnbaEVfSee
+         4ukWvo0ljAj17DWU4/xeE1Z3yHnsUu93h7dVOcq+3QLg7tNXviQxtnwI9fT9mDmPSo68
+         Xo1e8bSuPtgjuLwBJxduxee6B0j21J4FQ2EBWYF6dFYIihonnxuWrYEGMtm39LnmeX+C
+         5UfrJiUfVYOqwWUnpnuxClsg8vmQx4roUu/yl4FQmsQORNKs+b05js9CpsV7JdaZ1Ecw
+         kvEN1ynEMW7C+iX11ZeF1VC3ez/JQTlYhAQHK4gHyczkHflRb+Bgn7NcXb8dCA8hshDn
+         kKgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aAm6iRQPlrqd77BVpOEOx8I7+PSe0NwGfNRgqs6nZII=;
+        b=MkCf8Lw3e/RpGxWcN6W+6vyKD6XwuLHjdAB3F6ZoB7Z7Q5ALL8v46UxJ5Ew7qHxlWD
+         On7FB7QADFmo9sCaSjIqXgvfX+2aNXm8xGCvE/9nfXsVzRV6F5mZOdKtUUw9QIkOjSK4
+         OHToaGmbkYjZZWGzBtWR0u0kmNwGDQRDTqHfLbEHir5H9MYxF5vmkUDgq9YPWY/vIZ/+
+         /fardJb63ASbmaemdZ/XnLQs60aKb3cjDHyBvek7j1eoYGXjC04WcseNnwLdL6IZVw3r
+         X/JP4XIR9Xqgmx9LPy6AKC3HNf4VkGzeRpAKowkVUBj86HR+B4CFkU/MgpzdDNPYUhiW
+         5L5A==
+X-Gm-Message-State: APjAAAWCAH77aDzADZZfysJVDIBKYV0Mf4x11zso8+8LIkzmxLczpeRL
+        r0U+4PF6I5XEElkKdYsreVtEhJI4F1f54rn21t2CWQ==
+X-Google-Smtp-Source: APXvYqyNQFGODO1SuMBqEAOd91JrLxVN2pAN3l5K5e8lAiCRTWWBg8b2Me7gxUe9Dn1e/ZSWpTXjRWWu7Q9OKThwmzc=
+X-Received: by 2002:a19:ca4b:: with SMTP id h11mr29019214lfj.162.1563765733032;
+ Sun, 21 Jul 2019 20:22:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190719133135.32418-1-lifei.shirley@bytedance.com> <20190719110852-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20190719110852-mutt-send-email-mst@kernel.org>
+From:   =?UTF-8?B?5p2O6I+y?= <lifei.shirley@bytedance.com>
+Date:   Mon, 22 Jul 2019 11:22:02 +0800
+Message-ID: <CA+=e4K5rn7-avNT3e07dfXkh=ZO2+RvthjqW15gZv-uFYrCs3A@mail.gmail.com>
+Subject: Re: [External Email] Re: [PATCH v1 0/2] virtio-mmio: support multiple
+ interrupt vectors
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        virtio-dev@lists.oasis-open.org
+Cc:     linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Fam Zheng <zhengfeiran@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I suspect I'm being massively pedantic here, but the comments for =
-atomic_pte_lookup() note:
+On Fri, Jul 19, 2019 at 11:14 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+>
+> On Fri, Jul 19, 2019 at 09:31:33PM +0800, Fei Li wrote:
+> > Hi,
+> >
+> > This patch series implements multiple interrupt vectors support for
+> > virtio-mmio device. This is especially useful for multiqueue vhost-net
+> > device when using firecracker micro-vms as the guest.
+> >
+> > Test result:
+> > With 8 vcpus & 8 net queues set, one vhost-net device with 8 irqs can
+> > receive 9 times more pps comparing with only one irq:
+> > - 564830.38 rxpck/s for 8 irqs on
+> > - 67665.06 rxpck/s for 1 irq on
+> >
+> > Please help to review, thanks!
+> >
+> > Have a nice day
+> > Fei
+>
+>
+> Interesting. The spec says though:
+>
+>         4.2.3.4
+>         Notifications From The Device
+>         The memory mapped virtio device is using a single, dedicated interrupt signal, which is asserted when at
+>         least one of the bits described in the description of InterruptStatus is set. This is how the device sends a
+>         used buffer notification or a configuration change notification to the device.
+>
+Yes, the spec needs to be updated if we want to use mult-irqs.
+>
+> So I'm guessing we need to change the host/guest interface?
+Just to confirm, does the "the host/guest interface" you mentioned mean how to
+pass the irq information from the user space tool to guest kernel?
+In this patch, we do this by passing the [irq_start, irq_end]
+interface via setting guest
+kernel command line, that is done in vm_cmdline_set().
+Also there is another way to do this: add two new registers describing irq info
+(irq_start & irq_end OR irq_start & irq_numbers) to the virtio config space.
 
- * Only supports Intel large pages (2MB only) on x86_64.
- *	ZZZ - hugepage support is incomplete
+Which one do you prefer?
 
-That makes me wonder how many systems using this hardware are actually =
-configured with CONFIG_HUGETLB_PAGE.
+> If true pls cc virtio-dev.
+Sure.
+>
+> Also, do we need to update dt bindings documentation?
+You mean the following doc? Sure. :)
+https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/virtio/mmio.txt
 
-I ask as in the most common case, this is likely introducing a few extra =
-instructions and possibly an additional branch to a routine that is =
-called per-fault.
+Thanks for the review!
 
-So the nit-picky questions are:
-
-1) Does the code really need to be cleaned up in this way?
-
-2) If it does, does it make more sense (given the way pmd_large() is =
-handled now in atomic_pte_lookup()) for this to be coded as:
-
-if (unlikely(is_vm_hugetlb_page(vma)))
-	*pageshift =3D HPAGE_SHIFT;
-else
-	*pageshift =3D PAGE_SHIFT;
-
-In all likelihood, these questions are no-ops, and the optimizer may =
-even make my questions completely moot, but I thought I might as well =
-ask anyway.
+Have a nice day
+Fei
 
 
-> On Jul 21, 2019, at 9:58 AM, Bharath Vedartham <linux.bhar@gmail.com> =
-wrote:
->=20
-> is_vm_hugetlb_page has checks for whether CONFIG_HUGETLB_PAGE is =
-defined
-> or not. If CONFIG_HUGETLB_PAGE is not defined is_vm_hugetlb_page will
-> always return false. There is no need to have an uneccessary
-> CONFIG_HUGETLB_PAGE check in the code.
->=20
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Dimitri Sivanich <sivanich@sgi.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
-> ---
-> drivers/misc/sgi-gru/grufault.c | 11 +++--------
-> 1 file changed, 3 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/misc/sgi-gru/grufault.c =
-b/drivers/misc/sgi-gru/grufault.c
-> index 61b3447..75108d2 100644
-> --- a/drivers/misc/sgi-gru/grufault.c
-> +++ b/drivers/misc/sgi-gru/grufault.c
-> @@ -180,11 +180,8 @@ static int non_atomic_pte_lookup(struct =
-vm_area_struct *vma,
-> {
-> 	struct page *page;
->=20
-> -#ifdef CONFIG_HUGETLB_PAGE
-> 	*pageshift =3D is_vm_hugetlb_page(vma) ? HPAGE_SHIFT : =
-PAGE_SHIFT;
-> -#else
-> -	*pageshift =3D PAGE_SHIFT;
-> -#endif
-> +
-> 	if (get_user_pages(vaddr, 1, write ? FOLL_WRITE : 0, &page, =
-NULL) <=3D 0)
-> 		return -EFAULT;
-> 	*paddr =3D page_to_phys(page);
-> @@ -238,11 +235,9 @@ static int atomic_pte_lookup(struct =
-vm_area_struct *vma, unsigned long vaddr,
-> 		return 1;
->=20
-> 	*paddr =3D pte_pfn(pte) << PAGE_SHIFT;
-> -#ifdef CONFIG_HUGETLB_PAGE
-> +
-> 	*pageshift =3D is_vm_hugetlb_page(vma) ? HPAGE_SHIFT : =
-PAGE_SHIFT;
-> -#else
-> -	*pageshift =3D PAGE_SHIFT;
-> -#endif
-> +
-> 	return 0;
->=20
-> err:
-> --=20
-> 2.7.4
->=20
-
+>
+> >
+> > Fam Zheng (1):
+> >   virtio-mmio: Process vrings more proactively
+> >
+> > Fei Li (1):
+> >   virtio-mmio: support multiple interrupt vectors
+> >
+> >  drivers/virtio/virtio_mmio.c | 238 +++++++++++++++++++++++++++++++++++--------
+> >  1 file changed, 196 insertions(+), 42 deletions(-)
+> >
+> > --
+> > 2.11.0
