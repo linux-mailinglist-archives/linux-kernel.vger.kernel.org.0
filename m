@@ -2,123 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65FDC70758
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:33:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A661D70765
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:35:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbfGVRdm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 13:33:42 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43712 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726590AbfGVRdl (ORCPT
+        id S1728568AbfGVReo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 13:34:44 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:37892 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727996AbfGVReY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 13:33:41 -0400
-Received: by mail-pl1-f193.google.com with SMTP id 4so12498909pld.10
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 10:33:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ax8I1mb7UwIFxfCmMJfuzkJQZA4WbZ7Ek1Ds9PvMQYU=;
-        b=ZowcOjJMdxosv2QSzqf2eI08qVemvBx1XFUBmEfS4sU/PraJBWF671A5zObKnz4TfD
-         zk/CQmr2CoQ/bq7hFwV/jk7C4Zl+sLHE/NGWoR8qwxKIwHpxQQ4RjoUJThjmRHvGEZgo
-         CUZMefdwNypT9GNU3PI/XXImbp4GU9RlYE3TQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ax8I1mb7UwIFxfCmMJfuzkJQZA4WbZ7Ek1Ds9PvMQYU=;
-        b=KVo+nXE+hp5FPOScIxMKTnRSVG73khxbi/wVvjfMEBRR9D4Lr+Mpv9PfKHRlUNKZ2I
-         zxQ48c0hjrislQJ8ae153p92TUj3BTUSyYtJhmKB/Ar8PC/vH2zXUj4Vpc/lDfTBecPw
-         T0Ljz75HDmV8f6st7NAXUQdvvo5Kq9HPPoBnjZ7Oo6bWZK3fDgeg66xzOLshG/C73BSU
-         +e2Zq/fHHW+vumHA3eYElKKoe60VZh2IoRiDFQ39DUh3Kt6vUyljRkOvdfM8PbJ0e/yb
-         2zz8ldQt5c8ATV+jiTF/1t3sfPbQv220htnxXZUuCWNDrPC96g7xWSAy7zMeXfN+iIbP
-         LXLw==
-X-Gm-Message-State: APjAAAVJBR/EZ8lrFhP+T8JMS+5SzuVQegD6nP11YnQ8+TD3tZOiNPII
-        FSqjlvW0bFTyel4xaQ1s458Z2g==
-X-Google-Smtp-Source: APXvYqyX5Rkq79yH7MiGBYeJZggeb9zVsBWnRCFtyBj046jkmfMHzDiZGrpNESNeWOyNSE0LXKj3OA==
-X-Received: by 2002:a17:902:7043:: with SMTP id h3mr48081374plt.10.1563816821309;
-        Mon, 22 Jul 2019 10:33:41 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id n98sm41097264pjc.26.2019.07.22.10.33.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Jul 2019 10:33:40 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 10:33:39 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Nitin Gote <nitin.r.gote@intel.com>, akpm@linux-foundation.org,
-        corbet@lwn.net, apw@canonical.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Subject: Re: [RFC PATCH] string.h: Add stracpy/stracpy_pad (was: Re: [PATCH]
- checkpatch: Added warnings in favor of strscpy().)
-Message-ID: <201907221031.8B87A9DE@keescook>
-References: <1562219683-15474-1-git-send-email-nitin.r.gote@intel.com>
- <f6a4c2b601bb59179cb2e3b8f4d836a1c11379a3.camel@perches.com>
- <d1524130f91d7cfd61bc736623409693d2895f57.camel@perches.com>
+        Mon, 22 Jul 2019 13:34:24 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.92)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1hpcC8-0003HL-7G; Mon, 22 Jul 2019 13:33:52 -0400
+From:   Rik van Riel <riel@surriel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@fb.com, pjt@google.com, dietmar.eggemann@arm.com,
+        peterz@infradead.org, mingo@redhat.com, morten.rasmussen@arm.com,
+        tglx@linutronix.de, mgorman@techsingularity.net,
+        vincent.guittot@linaro.org, Rik van Riel <riel@surriel.com>
+Subject: [PATCH 06/14] sched,cfs: use explicit cfs_rq of parent se helper
+Date:   Mon, 22 Jul 2019 13:33:40 -0400
+Message-Id: <20190722173348.9241-7-riel@surriel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190722173348.9241-1-riel@surriel.com>
+References: <20190722173348.9241-1-riel@surriel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d1524130f91d7cfd61bc736623409693d2895f57.camel@perches.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 05:15:57PM -0700, Joe Perches wrote:
-> On Thu, 2019-07-04 at 13:46 -0700, Joe Perches wrote:
-> > On Thu, 2019-07-04 at 11:24 +0530, Nitin Gote wrote:
-> > > Added warnings in checkpatch.pl script to :
-> > > 
-> > > 1. Deprecate strcpy() in favor of strscpy().
-> > > 2. Deprecate strlcpy() in favor of strscpy().
-> > > 3. Deprecate strncpy() in favor of strscpy() or strscpy_pad().
-> > > 
-> > > Updated strncpy() section in Documentation/process/deprecated.rst
-> > > to cover strscpy_pad() case.
-> 
-> []
-> 
-> I sent a patch series for some strscpy/strlcpy misuses.
-> 
-> How about adding a macro helper to avoid the misuses like:
-> ---
->  include/linux/string.h | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/include/linux/string.h b/include/linux/string.h
-> index 4deb11f7976b..ef01bd6f19df 100644
-> --- a/include/linux/string.h
-> +++ b/include/linux/string.h
-> @@ -35,6 +35,22 @@ ssize_t strscpy(char *, const char *, size_t);
->  /* Wraps calls to strscpy()/memset(), no arch specific code required */
->  ssize_t strscpy_pad(char *dest, const char *src, size_t count);
->  
-> +#define stracpy(to, from)					\
-> +({								\
-> +	size_t size = ARRAY_SIZE(to);				\
-> +	BUILD_BUG_ON(!__same_type(typeof(*to), char));		\
-> +								\
-> +	strscpy(to, from, size);				\
-> +})
-> +
-> +#define stracpy_pad(to, from)					\
-> +({								\
-> +	size_t size = ARRAY_SIZE(to);				\
-> +	BUILD_BUG_ON(!__same_type(typeof(*to), char));		\
-> +								\
-> +	strscpy_pad(to, from, size);				\
-> +})
-> +
->  #ifndef __HAVE_ARCH_STRCAT
->  extern char * strcat(char *, const char *);
->  #endif
+Use an explicit "cfs_rq of parent sched_entity" helper in a few
+strategic places, where cfs_rq_of(se) may no longer point at the
+right runqueue once we flatten the hierarchical cgroup runqueues.
 
-This seems like a reasonable addition, yes. I think Coccinelle might
-actually be able to find all the existing strscpy(dst, src, sizeof(dst))
-cases to jump-start this conversion.
+No functional change.
 
-Devil's advocate: this adds yet more string handling functions... will
-this cause even more confusion?
+Signed-off-by: Rik van Riel <riel@surriel.com>
+---
+ kernel/sched/fair.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index d6a8aa78a948..39f7a2d810e1 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -276,6 +276,15 @@ static inline struct cfs_rq *group_cfs_rq(struct sched_entity *grp)
+ 	return grp->my_q;
+ }
+ 
++/* runqueue owned by the parent entity; the root cfs_rq for a top level se */
++static inline struct cfs_rq *group_cfs_rq_of_parent(struct sched_entity *se)
++{
++	if (se->parent)
++		return group_cfs_rq(se->parent);
++
++	return cfs_rq_of(se);
++}
++
+ static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+ {
+ 	struct rq *rq = rq_of(cfs_rq);
+@@ -3317,7 +3326,7 @@ static inline int propagate_entity_load_avg(struct sched_entity *se)
+ 
+ 	gcfs_rq->propagate = 0;
+ 
+-	cfs_rq = cfs_rq_of(se);
++	cfs_rq = group_cfs_rq_of_parent(se);
+ 
+ 	add_tg_cfs_propagate(cfs_rq, gcfs_rq->prop_runnable_sum);
+ 
+@@ -7794,7 +7803,7 @@ static void update_cfs_rq_h_load(struct cfs_rq *cfs_rq)
+ 
+ 	WRITE_ONCE(cfs_rq->h_load_next, NULL);
+ 	for_each_sched_entity(se) {
+-		cfs_rq = cfs_rq_of(se);
++		cfs_rq = group_cfs_rq_of_parent(se);
+ 		WRITE_ONCE(cfs_rq->h_load_next, se);
+ 		if (cfs_rq->last_h_load_update == now)
+ 			break;
+@@ -7817,7 +7826,7 @@ static void update_cfs_rq_h_load(struct cfs_rq *cfs_rq)
+ 
+ static unsigned long task_se_h_load(struct sched_entity *se)
+ {
+-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
++	struct cfs_rq *cfs_rq = group_cfs_rq_of_parent(se);
+ 
+ 	update_cfs_rq_h_load(cfs_rq);
+ 	return div64_ul(se->avg.load_avg * cfs_rq->h_load,
+@@ -10164,7 +10173,7 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+ 	struct sched_entity *se = &curr->se;
+ 
+ 	for_each_sched_entity(se) {
+-		cfs_rq = cfs_rq_of(se);
++		cfs_rq = group_cfs_rq_of_parent(se);
+ 		entity_tick(cfs_rq, se, queued);
+ 	}
+ 
 -- 
-Kees Cook
+2.20.1
+
