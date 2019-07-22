@@ -2,92 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95A6870269
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 16:36:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABA737026C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 16:38:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729776AbfGVOgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 10:36:40 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:38148 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbfGVOgk (ORCPT
+        id S1729052AbfGVOhr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 10:37:47 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35570 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbfGVOhr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 10:36:40 -0400
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id x6MEaU6s027805
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 23:36:31 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x6MEaU6s027805
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1563806191;
-        bh=97xkgWS+1emOr9o4Y+tbx8rUVVkeFCfWt/pH2eQTRwY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=K64SEYclpAkwxjkXxXgCfY4/t/xjClYY37/tL4YdsmsM74m7r5YaMU8rM+c7Z5lA7
-         6DvXrxYQAmxDII+tlzNl4f7F3AgAvz+jKud0lLA/jqWoXMouKRN+EEypIC2vQ653Bo
-         pOZSrNQ0yu1dbsvpA6PrkvVi3OTOsaWN9VnDuaKQtU/k9RViDEAzUlnbMy7lTB4Gp9
-         thvBPg3175J362C/9ckxVtCLgu6nyws/yw2zx3wPXk3ILqmF9jxVqQPeD5pFHtdxuW
-         Q6//I5c8MC0gStLL3FG7n/aNg950wzGBOkpDy2frOzAsr9BnsXg1IrCzJbWoE3He9D
-         s6GIxg28Mq8Wg==
-X-Nifty-SrcIP: [209.85.217.44]
-Received: by mail-vs1-f44.google.com with SMTP id a186so24612749vsd.7
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 07:36:31 -0700 (PDT)
-X-Gm-Message-State: APjAAAXYjJu6Y2dgJqKHp8HzvWvF2a/yq7dlqymTSsJgvwMeHVkcX2Ix
-        SRolLWfeQu60hoMQ3cUSfoc0gPx9W3pNcMr/bNc=
-X-Google-Smtp-Source: APXvYqyAnMeozdA27fgOHdSsZiQ81FCIIL8bkY8/1xNO//qimbuzyBzmbPcQGvwOpaXgOQDbcMrVdz2BRZZSK6Fup0Y=
-X-Received: by 2002:a67:cd1a:: with SMTP id u26mr42296834vsl.155.1563806190088;
- Mon, 22 Jul 2019 07:36:30 -0700 (PDT)
+        Mon, 22 Jul 2019 10:37:47 -0400
+Received: by mail-lj1-f194.google.com with SMTP id x25so37894299ljh.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 07:37:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SUH6arJbp14IVMjbkeZ0K94NO/z20TDutwCqOxsq4Fw=;
+        b=cNYsnnjVLguyuhcKHqqxp7hSA5M3S1DZvaBoF80d1MZLvyCLSsdsxyzbqp+hAugfqB
+         La4mTA+QaSN25eS7kR5jYbs5x37bIW38yuFEe9LoQUhA4BKZbg7G89i02FTdSaoa/LHD
+         0/lmUGsZBZhSpFQ3CDG0yu7d0XOEvaaddpieq56zgY56JIdUSioPyWlIQN+Coy+AXBhh
+         i8jmWmQqzLzSlVGdTV2hn84KzjVBQl4pbwsL+KCS9KIx6GA7hL+D2ZJUFh8ilWXmzYh/
+         dAZFYOljbOddCkc8Zmh16FrOyiTux9Y7iKOyUucQi77FVxvyJCXpJp2vmP1KIUydFgVE
+         61bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SUH6arJbp14IVMjbkeZ0K94NO/z20TDutwCqOxsq4Fw=;
+        b=To6Z3sFQCxUEZ8swOxTQbUpFcHl6LqFbqPPNczypSCR6KyCYe+jW5cimXbBBPKIV30
+         /iPPE9RNaCTd9UeE9Y/FbLVDL5XUfA1KQv02sq7L0t7NdsAn/Sd/9y3QLq8+G2O1nepz
+         PaCsvausSPx6Jc7NeZcaFMd22iPXlix86FN2++E0MNCDgEcNaELCvHsLzukYAHPDrrGu
+         OMFwB/VrRA3XIx1JcpRvXtKO4XioPvjCnJTPOuyn2JSvcw/nQ+1VWbvnxhVxZUUlHFAS
+         1QK7zYY71EwGMKg/rWlqTwVFs56rJsyUKUXaCBeDmjiW+mJ/ZhgDexrAlOcpWGplknF2
+         Kb/g==
+X-Gm-Message-State: APjAAAUN4pkS4pEoSYuEjHu0ZbIXzKB8g7qj7cgmbflu5SRSuZhGWi8+
+        sgjxI2uo/CO9L5A49TtjowytPZb9jjZ2nLET8U1Z8gsL
+X-Google-Smtp-Source: APXvYqyUuyVhvpPVyaK0EtT6IHNJ3TNJikX6jVZCPNEmd7vcNDjv9sQO2bgfO2wFUz2CiCOMPgV4do0itfHJJ3iI0ko=
+X-Received: by 2002:a2e:b009:: with SMTP id y9mr25605680ljk.152.1563806265548;
+ Mon, 22 Jul 2019 07:37:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190721142308.30306-1-yamada.masahiro@socionext.com> <CAK8P3a01MzCTJnk_fuMgWsRBa3u_CEZegZqH37G7qLiquHWncA@mail.gmail.com>
-In-Reply-To: <CAK8P3a01MzCTJnk_fuMgWsRBa3u_CEZegZqH37G7qLiquHWncA@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 22 Jul 2019 23:35:53 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATSrD-toRZFmQw8cO4D2mRomc=Xw=topA1Ry-0yM=ackg@mail.gmail.com>
-Message-ID: <CAK7LNATSrD-toRZFmQw8cO4D2mRomc=Xw=topA1Ry-0yM=ackg@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: SOF: use __u32 instead of uint32_t in uapi headers
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Mark Brown <broonie@kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190722094426.18563-1-hch@lst.de> <20190722094426.18563-2-hch@lst.de>
+In-Reply-To: <20190722094426.18563-2-hch@lst.de>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Mon, 22 Jul 2019 20:07:33 +0530
+Message-ID: <CAFqt6zY8zWAmc-VTrZ1KxQPBCdbTxmZy_tq2-OkUi3TVrfp7Og@mail.gmail.com>
+Subject: Re: [PATCH 1/6] mm: always return EBUSY for invalid ranges in hmm_range_{fault,snapshot}
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Linux-MM <linux-mm@kvack.org>, nouveau@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Felix Kuehling <Felix.Kuehling@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 10:40 PM Arnd Bergmann <arnd@arndb.de> wrote:
+On Mon, Jul 22, 2019 at 3:14 PM Christoph Hellwig <hch@lst.de> wrote:
 >
-> On Sun, Jul 21, 2019 at 4:25 PM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> >
-> >  struct snd_sof_blk_hdr {
-> >         enum snd_sof_fw_blk_type type;
-> > -       uint32_t size;          /* bytes minus this header */
-> > -       uint32_t offset;        /* offset from base */
-> > +       __u32 size;             /* bytes minus this header */
-> > +       __u32 offset;           /* offset from base */
-> >  } __packed;
-> >
+> We should not have two different error codes for the same condition.  In
+> addition this really complicates the code due to the special handling of
+> EAGAIN that drops the mmap_sem due to the FAULT_FLAG_ALLOW_RETRY logic
+> in the core vm.
 >
-> On a related note: Using an 'enum' in an ABI structure is not portable
-> across architectures. This is probably fine in a UAPI as long as user
-> and kernel space agree on the size of an enum, but if the same
-> structure is used to talk to the firmware, it won't work on architectures
-> that have a different size for the first field.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
+> Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
+> ---
+>  Documentation/vm/hmm.rst |  2 +-
+>  mm/hmm.c                 | 10 ++++------
+>  2 files changed, 5 insertions(+), 7 deletions(-)
+>
+> diff --git a/Documentation/vm/hmm.rst b/Documentation/vm/hmm.rst
+> index 7d90964abbb0..710ce1c701bf 100644
+> --- a/Documentation/vm/hmm.rst
+> +++ b/Documentation/vm/hmm.rst
+> @@ -237,7 +237,7 @@ The usage pattern is::
+>        ret = hmm_range_snapshot(&range);
+>        if (ret) {
+>            up_read(&mm->mmap_sem);
+> -          if (ret == -EAGAIN) {
+> +          if (ret == -EBUSY) {
+>              /*
+>               * No need to check hmm_range_wait_until_valid() return value
+>               * on retry we will get proper error with hmm_range_snapshot()
+> diff --git a/mm/hmm.c b/mm/hmm.c
+> index e1eedef129cf..16b6731a34db 100644
+> --- a/mm/hmm.c
+> +++ b/mm/hmm.c
+> @@ -946,7 +946,7 @@ EXPORT_SYMBOL(hmm_range_unregister);
+>   * @range: range
+>   * Return: -EINVAL if invalid argument, -ENOMEM out of memory, -EPERM invalid
+>   *          permission (for instance asking for write and range is read only),
+> - *          -EAGAIN if you need to retry, -EFAULT invalid (ie either no valid
+> + *          -EBUSY if you need to retry, -EFAULT invalid (ie either no valid
+>   *          vma or it is illegal to access that range), number of valid pages
+>   *          in range->pfns[] (from range start address).
+>   *
+> @@ -967,7 +967,7 @@ long hmm_range_snapshot(struct hmm_range *range)
+>         do {
+>                 /* If range is no longer valid force retry. */
+>                 if (!range->valid)
+> -                       return -EAGAIN;
+> +                       return -EBUSY;
+>
+>                 vma = find_vma(hmm->mm, start);
+>                 if (vma == NULL || (vma->vm_flags & device_vma))
+> @@ -1062,10 +1062,8 @@ long hmm_range_fault(struct hmm_range *range, bool block)
+>
+>         do {
+>                 /* If range is no longer valid force retry. */
+> -               if (!range->valid) {
+> -                       up_read(&hmm->mm->mmap_sem);
+> -                       return -EAGAIN;
+> -               }
+> +               if (!range->valid)
+> +                       return -EBUSY;
 
-Both comments from Arnd make sense.
+Is it fine to remove  up_read(&hmm->mm->mmap_sem) ?
 
-If this header does not need to be in uapi/,
-moving it out is fine.
-
-But, looks like Mark has already picked up this.
-(His review is so quick)
-
-
-
-
---
-Best Regards
-Masahiro Yamada
+>
+>                 vma = find_vma(hmm->mm, start);
+>                 if (vma == NULL || (vma->vm_flags & device_vma))
+> --
+> 2.20.1
+>
