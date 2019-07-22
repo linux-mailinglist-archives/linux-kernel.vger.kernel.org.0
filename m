@@ -2,71 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17DB0703C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:29:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A3427038E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:20:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729082AbfGVP3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 11:29:13 -0400
-Received: from mga07.intel.com ([134.134.136.100]:36808 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728385AbfGVP3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 11:29:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jul 2019 08:19:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,295,1559545200"; 
-   d="scan'208";a="177015340"
-Received: from agalla-mobl1.amr.corp.intel.com (HELO [10.254.103.46]) ([10.254.103.46])
-  by FMSMGA003.fm.intel.com with ESMTP; 22 Jul 2019 08:19:53 -0700
-Subject: Re: [alsa-devel] [PATCH] ASoC: SOF: use __u32 instead of uint32_t in
- uapi headers
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190721142308.30306-1-yamada.masahiro@socionext.com>
- <CAK8P3a01MzCTJnk_fuMgWsRBa3u_CEZegZqH37G7qLiquHWncA@mail.gmail.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <fdd24e93-efad-0132-e1ff-b7f5f87e8efc@linux.intel.com>
-Date:   Mon, 22 Jul 2019 10:19:53 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728680AbfGVPUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 11:20:49 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36979 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727036AbfGVPUs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 11:20:48 -0400
+Received: by mail-wm1-f68.google.com with SMTP id f17so35728899wme.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 08:20:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rcQE3lqQ7qHdpTliGnphmcGBT5sq5T1i6sYO3p/vgc8=;
+        b=V+zBb66mMoZKT+uP6vSPu6gSa0cocMmWscUDuipWZQXinBTzJl0+/SZPTSnx/eG+W7
+         M2gj/SB4fPiH3QDjf67mfQ8Nq5e0taThlxRK+Pbv7iY6AjFz4MRd5WmNbZAH+RPBNaXn
+         oOJ3sPFg2QfJ4sHMHeXZKOUX6YXHy+63u7p2v9E8LBX9VH9uUxjd8OySrTsVephTd/5R
+         zd5znXce9+FzwhGw8znDlGTMr6/pjW832Gw97gSXXtorFOujysfZYyCcISGscjrm85Yj
+         kuuLzWhOidE+E7wuLCQSBOYLTMQtQx0W6tctgLTMOj716nlnXLGkUcDWZPCJqLVA93M9
+         0vbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rcQE3lqQ7qHdpTliGnphmcGBT5sq5T1i6sYO3p/vgc8=;
+        b=ltldXkyd+99ncCkD0529vYOTllP/uPVdtyw/CWlELiGrp05OYoZ5ljGGYat8CILfrb
+         Js+3QafTowUUT96phzP1eYFQchd99/SqFT7jFVmO6VoPExFWOks50k8ju9h3elLXWA+U
+         P9Vz15NOAvZqxwnGuBNQPmbKnVW6522VyX+fRAU6D0oiyh/FgCZGbDpXmHZ6y7nx28wK
+         30Oe6zqAk34LZ5oerYCws5QkyzNltvPQs9avtYumlhFa1KWvcXfEkp0zaea9yq9Y8R9S
+         UCtd6zLw52Zi2SvyPC9aeKrq5/2kicIFuLZINUI+6Di2qt2itSEDS5TOQMGiC66dkkLC
+         YlbA==
+X-Gm-Message-State: APjAAAU4hDjZVCAqr6ewtlWbw+IB5MMsViV/mEtZ0rIvWYCGB2I3JJn3
+        5r1yqr5qzxrXNVwYNKQRoUxPHg==
+X-Google-Smtp-Source: APXvYqxCxsboFZaheGk5qi4oj8GmwA1c5IhO90rjs/b8WLMO0LzRMCPUTyNiuTec/jgg8DLQfEd8uA==
+X-Received: by 2002:a7b:cc04:: with SMTP id f4mr65955957wmh.125.1563808846569;
+        Mon, 22 Jul 2019 08:20:46 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id a81sm39805102wmh.3.2019.07.22.08.20.45
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 22 Jul 2019 08:20:45 -0700 (PDT)
+Date:   Mon, 22 Jul 2019 16:20:44 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 5/7] backlight: gpio: remove dev from struct
+ gpio_backlight
+Message-ID: <20190722152044.7zwf2xtzbpesjrmv@holly.lan>
+References: <20190722150302.29526-1-brgl@bgdev.pl>
+ <20190722150302.29526-6-brgl@bgdev.pl>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a01MzCTJnk_fuMgWsRBa3u_CEZegZqH37G7qLiquHWncA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190722150302.29526-6-brgl@bgdev.pl>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 7/22/19 8:39 AM, Arnd Bergmann wrote:
-> On Sun, Jul 21, 2019 at 4:25 PM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->>
->>   struct snd_sof_blk_hdr {
->>          enum snd_sof_fw_blk_type type;
->> -       uint32_t size;          /* bytes minus this header */
->> -       uint32_t offset;        /* offset from base */
->> +       __u32 size;             /* bytes minus this header */
->> +       __u32 offset;           /* offset from base */
->>   } __packed;
->>
+On Mon, Jul 22, 2019 at 05:03:00PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> On a related note: Using an 'enum' in an ABI structure is not portable
-> across architectures. This is probably fine in a UAPI as long as user
-> and kernel space agree on the size of an enum, but if the same
-> structure is used to talk to the firmware, it won't work on architectures
-> that have a different size for the first field.
+> This field is unused. Remove it.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-yes, we've removed all enums in SOF and missed this one. This should be 
-changed, thanks for the note.
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+
+
+> ---
+>  drivers/video/backlight/gpio_backlight.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
+> index 01262186fa1e..70882556f047 100644
+> --- a/drivers/video/backlight/gpio_backlight.c
+> +++ b/drivers/video/backlight/gpio_backlight.c
+> @@ -19,9 +19,7 @@
+>  #include <linux/slab.h>
+>  
+>  struct gpio_backlight {
+> -	struct device *dev;
+>  	struct device *fbdev;
+> -
+>  	struct gpio_desc *gpiod;
+>  	int def_value;
+>  };
+> @@ -69,8 +67,6 @@ static int gpio_backlight_probe(struct platform_device *pdev)
+>  	if (gbl == NULL)
+>  		return -ENOMEM;
+>  
+> -	gbl->dev = &pdev->dev;
+> -
+>  	if (pdata)
+>  		gbl->fbdev = pdata->fbdev;
+>  
+> -- 
+> 2.21.0
+> 
