@@ -2,123 +2,412 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9398708C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 327B2708BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:36:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731053AbfGVSgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 14:36:36 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:42134 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730788AbfGVSgf (ORCPT
+        id S1730393AbfGVSfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 14:35:25 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38209 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727744AbfGVSfZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 14:36:35 -0400
-Received: by mail-vs1-f65.google.com with SMTP id 190so26932740vsf.9
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 11:36:35 -0700 (PDT)
+        Mon, 22 Jul 2019 14:35:25 -0400
+Received: by mail-pf1-f195.google.com with SMTP id y15so17790572pfn.5;
+        Mon, 22 Jul 2019 11:35:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=u4izuYmo+kNsiUwAXM6ygOEvVOhLNkyI5KbJVUzFn+o=;
-        b=OE9sSa6dSyW4rlvqEDZqiHHMx+zdjcFF4nHX2Nq43G5o3nY4FdO7e6I5aDPhCLSA63
-         ezt/SzN3dDHfet/eOU6H0EwFFnIcgIn8Mjfh66eKyeV5oWlAxjhxaTz0hE2HqekLlPSJ
-         v1t0e3jrQjruBL+j5X+5YBkMZzQSkFre1JrXIf1BtoMXFFST5cZ41eoq3IFLJDcmhC8t
-         1oxieSfa81Ww5oADkfMC4Cu5tYy3XVMCNC2nZ6OTdHqoW2hJVjoR5wCjqwHbAqZVVHrJ
-         GyOEtxyjdVMQIEQmZ7BdOdNO5pCQvhDFVVY1aWkta8d7V37HJuj2RG60UxVtTEfxsVrm
-         F7Vg==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZvKX1n+pRbwdwmkbAvRdkhqHzETPBbuvkZpv6xUMk4Y=;
+        b=KXymgly1tLbiJJTn3kj4fLT5hodvOy620VRtbaqkAKBxAekrqOWQdXPrDo5n5Ey9xC
+         G/lCDUEVJIQI/7dzG8ht4/ozuO8JfNsK6m5Y8RsJawzLXk3YJqt9DvdgWtcgjfiTuyfz
+         PrKX4LWI9HpIb+4gswVFyKqv6o/jNDkuWkJmMf6SDytgpWpvifx7vYTXVVe6Q490g7uS
+         1JsF+jQmK4XgAiXzmknvQGrJGd2ohHAxVycm+OBHAD40Bimdn5VoYhoaf7v8RFyCn26N
+         hxJmNRVaU5g/givrJrKzbhU8CV8iCkL22ilzN6TGcll8PXeXCuZ4e0IByd+hbBsIP+9V
+         mbWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=u4izuYmo+kNsiUwAXM6ygOEvVOhLNkyI5KbJVUzFn+o=;
-        b=l0sKgXzQcseFVfwk7uZW6nO7wXZ81yLyDo7PPUGMjRV7N4y4o4tuu5t1Ye1pw9tcTh
-         To7uErwMjBfq5wfY1qI8xJuymnNnbIsN54SZCreUwg0y01O7ZBhmsbZyfKJNJQIRWvos
-         KTBjnrF5du1X5yMqBhOSeq0GGNfKNVev1x6hCX4i15PusrnprLbFkYpr70MZVypzitii
-         P727KUGIAfLCCWD88F/u/a234Pi7mQ/iAllH6V24q8VD6+VDEKkm/dbeiaksxsfk7x4+
-         SCmuisgvpgk+0FHKgW4wiuQ5gGl6mcXYFQuf7YdoF7evW0jly6r31gliDonF2Cjlkqm4
-         ErRQ==
-X-Gm-Message-State: APjAAAW4Ww8wAWDbnJZBq+2edxtikmCpiU6uwcLp8e2Qg270aVVjrZsD
-        27WXpAb/IvpFcAb3naVwKLAiW+35e06N5Q==
-X-Google-Smtp-Source: APXvYqy8GqANbo1n0A4eT5yNcA1w8us81IfhVKmDbX5eAg+yaJE5Y3SUHdM77HMytoD0nZomDxDIug==
-X-Received: by 2002:a67:8cc7:: with SMTP id o190mr44487527vsd.24.1563820594813;
-        Mon, 22 Jul 2019 11:36:34 -0700 (PDT)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id 10sm15371158vkl.33.2019.07.22.11.36.32
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZvKX1n+pRbwdwmkbAvRdkhqHzETPBbuvkZpv6xUMk4Y=;
+        b=q/+ly/8mwNXOYGc724iRDX897+SPdAQyvQfWQ7Somj7ctS1adfdJ+ZTsCyVL0kskrp
+         WmcGZxU7VyXoksfvtesjETGoEvqCicShA9A8Z5ak85/H3kS2oZwN9ClWperklhWhBzJU
+         oDn6IGScirsgWSgCdG9qY1s0u7andiAXD7CU4RhJZmzLhSTYzKVaxHHdYTXFkfwfZQxp
+         tu5hS1SpM5tyKcgraFJ2dRwpmJFXR7UwK8hJt2lCSDIQUSTmIgYjPkFST2vr2XKXdRze
+         clHmpCsnZ7ZN1CUx2yFJCSBvz1uCMnDKQx96hBmGjTfyujDkiIqOFe5wvev2QYudsE4e
+         jiPw==
+X-Gm-Message-State: APjAAAX5/nSCVQmKrtAfsKye+WtZlKPNnx/Yiznk0IKqRn/DaSLbPgtE
+        BHIDAXa4dUFnLFCiTFf/zyj5t445
+X-Google-Smtp-Source: APXvYqy73MAipaG+76GHf1r68WlljKaZpWHyYZf+GA62pnDJrokp7+meFXXzsBOfg43sCAxpq1tIbA==
+X-Received: by 2002:a17:90a:30e4:: with SMTP id h91mr75301019pjb.37.1563820524227;
+        Mon, 22 Jul 2019 11:35:24 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 23sm43942566pfn.176.2019.07.22.11.35.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jul 2019 11:36:33 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     saeedm@mellanox.com, leonro@mellanox.com
-Cc:     yishaih@mellanox.com, davem@davemloft.net, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH] net/mlx5: fix -Wtype-limits compilation warnings
-Date:   Mon, 22 Jul 2019 14:34:42 -0400
-Message-Id: <1563820482-10302-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        Mon, 22 Jul 2019 11:35:23 -0700 (PDT)
+Date:   Mon, 22 Jul 2019 11:35:22 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Grant McEwan <grant.mcewan@alliedtelesis.co.nz>
+Cc:     jdelvare@suse.com, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] hwmon: (adt7475) Convert to use
+ hwmon_device_register_with_groups()
+Message-ID: <20190722183522.GA17207@roeck-us.net>
+References: <20190721225530.28799-1-grant.mcewan@alliedtelesis.co.nz>
+ <20190721225530.28799-2-grant.mcewan@alliedtelesis.co.nz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190721225530.28799-2-grant.mcewan@alliedtelesis.co.nz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit b9a7ba556207 ("net/mlx5: Use event mask based on device
-capabilities") introduced a few compilation warnings due to it bumps
-MLX5_EVENT_TYPE_MAX from 0x27 to 0x100 which is always greater than
-an "struct {mlx5_eqe|mlx5_nb}.type" that is an "u8".
+On Mon, Jul 22, 2019 at 10:55:30AM +1200, Grant McEwan wrote:
+> hwmon_device_register() is a deprecated function and produces a warning.
+> 
+> Converting the driver to use the hwmon_device_register_with_groups()
+> instead.
+> 
+> Signed-off-by: Grant McEwan <grant.mcewan@alliedtelesis.co.nz>
 
-drivers/net/ethernet/mellanox/mlx5/core/eq.c: In function
-'mlx5_eq_notifier_register':
-drivers/net/ethernet/mellanox/mlx5/core/eq.c:948:21: warning: comparison
-is always false due to limited range of data type [-Wtype-limits]
-  if (nb->event_type >= MLX5_EVENT_TYPE_MAX)
-                     ^~
-drivers/net/ethernet/mellanox/mlx5/core/eq.c: In function
-'mlx5_eq_notifier_unregister':
-drivers/net/ethernet/mellanox/mlx5/core/eq.c:959:21: warning: comparison
-is always false due to limited range of data type [-Wtype-limits]
-  if (nb->event_type >= MLX5_EVENT_TYPE_MAX)
+Applied to hwmon-next.
 
-Fix them by removing unnecessary checkings.
+Thanks,
+Guenter
 
-Fixes: b9a7ba556207 ("net/mlx5: Use event mask based on device capabilities")
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- drivers/net/ethernet/mellanox/mlx5/core/eq.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-index 41f25ea2e8d9..2df9aaa421c6 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-@@ -215,11 +215,7 @@ static int mlx5_eq_async_int(struct notifier_block *nb,
- 		 */
- 		dma_rmb();
- 
--		if (likely(eqe->type < MLX5_EVENT_TYPE_MAX))
--			atomic_notifier_call_chain(&eqt->nh[eqe->type], eqe->type, eqe);
--		else
--			mlx5_core_warn_once(dev, "notifier_call_chain is not setup for eqe: %d\n", eqe->type);
--
-+		atomic_notifier_call_chain(&eqt->nh[eqe->type], eqe->type, eqe);
- 		atomic_notifier_call_chain(&eqt->nh[MLX5_EVENT_TYPE_NOTIFY_ANY], eqe->type, eqe);
- 
- 		++eq->cons_index;
-@@ -945,9 +941,6 @@ int mlx5_eq_notifier_register(struct mlx5_core_dev *dev, struct mlx5_nb *nb)
- {
- 	struct mlx5_eq_table *eqt = dev->priv.eq_table;
- 
--	if (nb->event_type >= MLX5_EVENT_TYPE_MAX)
--		return -EINVAL;
--
- 	return atomic_notifier_chain_register(&eqt->nh[nb->event_type], &nb->nb);
- }
- EXPORT_SYMBOL(mlx5_eq_notifier_register);
-@@ -956,9 +949,6 @@ int mlx5_eq_notifier_unregister(struct mlx5_core_dev *dev, struct mlx5_nb *nb)
- {
- 	struct mlx5_eq_table *eqt = dev->priv.eq_table;
- 
--	if (nb->event_type >= MLX5_EVENT_TYPE_MAX)
--		return -EINVAL;
--
- 	return atomic_notifier_chain_unregister(&eqt->nh[nb->event_type], &nb->nb);
- }
- EXPORT_SYMBOL(mlx5_eq_notifier_unregister);
--- 
-1.8.3.1
-
+> ---
+>  drivers/hwmon/adt7475.c | 146 ++++++++++++++--------------------------
+>  1 file changed, 50 insertions(+), 96 deletions(-)
+> 
+> diff --git a/drivers/hwmon/adt7475.c b/drivers/hwmon/adt7475.c
+> index c3c6031a7285..6c64d50c9aae 100644
+> --- a/drivers/hwmon/adt7475.c
+> +++ b/drivers/hwmon/adt7475.c
+> @@ -187,7 +187,7 @@ static const struct of_device_id __maybe_unused adt7475_of_match[] = {
+>  MODULE_DEVICE_TABLE(of, adt7475_of_match);
+>  
+>  struct adt7475_data {
+> -	struct device *hwmon_dev;
+> +	struct i2c_client *client;
+>  	struct mutex lock;
+>  
+>  	unsigned long measure_updated;
+> @@ -212,6 +212,7 @@ struct adt7475_data {
+>  
+>  	u8 vid;
+>  	u8 vrm;
+> +	const struct attribute_group *groups[9];
+>  };
+>  
+>  static struct i2c_driver adt7475_driver;
+> @@ -346,8 +347,8 @@ static ssize_t voltage_store(struct device *dev,
+>  {
+>  
+>  	struct sensor_device_attribute_2 *sattr = to_sensor_dev_attr_2(attr);
+> -	struct i2c_client *client = to_i2c_client(dev);
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> +	struct adt7475_data *data = dev_get_drvdata(dev);
+> +	struct i2c_client *client = data->client;
+>  	unsigned char reg;
+>  	long val;
+>  
+> @@ -440,8 +441,8 @@ static ssize_t temp_store(struct device *dev, struct device_attribute *attr,
+>  			  const char *buf, size_t count)
+>  {
+>  	struct sensor_device_attribute_2 *sattr = to_sensor_dev_attr_2(attr);
+> -	struct i2c_client *client = to_i2c_client(dev);
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> +	struct adt7475_data *data = dev_get_drvdata(dev);
+> +	struct i2c_client *client = data->client;
+>  	unsigned char reg = 0;
+>  	u8 out;
+>  	int temp;
+> @@ -542,8 +543,7 @@ static ssize_t temp_st_show(struct device *dev, struct device_attribute *attr,
+>  			    char *buf)
+>  {
+>  	struct sensor_device_attribute_2 *sattr = to_sensor_dev_attr_2(attr);
+> -	struct i2c_client *client = to_i2c_client(dev);
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> +	struct adt7475_data *data = dev_get_drvdata(dev);
+>  	long val;
+>  
+>  	switch (sattr->index) {
+> @@ -570,8 +570,8 @@ static ssize_t temp_st_store(struct device *dev,
+>  			     size_t count)
+>  {
+>  	struct sensor_device_attribute_2 *sattr = to_sensor_dev_attr_2(attr);
+> -	struct i2c_client *client = to_i2c_client(dev);
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> +	struct adt7475_data *data = dev_get_drvdata(dev);
+> +	struct i2c_client *client = data->client;
+>  	unsigned char reg;
+>  	int shift, idx;
+>  	ulong val;
+> @@ -647,8 +647,8 @@ static ssize_t point2_show(struct device *dev, struct device_attribute *attr,
+>  static ssize_t point2_store(struct device *dev, struct device_attribute *attr,
+>  			    const char *buf, size_t count)
+>  {
+> -	struct i2c_client *client = to_i2c_client(dev);
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> +	struct adt7475_data *data = dev_get_drvdata(dev);
+> +	struct i2c_client *client = data->client;
+>  	struct sensor_device_attribute_2 *sattr = to_sensor_dev_attr_2(attr);
+>  	int temp;
+>  	long val;
+> @@ -710,8 +710,8 @@ static ssize_t tach_store(struct device *dev, struct device_attribute *attr,
+>  {
+>  
+>  	struct sensor_device_attribute_2 *sattr = to_sensor_dev_attr_2(attr);
+> -	struct i2c_client *client = to_i2c_client(dev);
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> +	struct adt7475_data *data = dev_get_drvdata(dev);
+> +	struct i2c_client *client = data->client;
+>  	unsigned long val;
+>  
+>  	if (kstrtoul(buf, 10, &val))
+> @@ -769,8 +769,8 @@ static ssize_t pwm_store(struct device *dev, struct device_attribute *attr,
+>  {
+>  
+>  	struct sensor_device_attribute_2 *sattr = to_sensor_dev_attr_2(attr);
+> -	struct i2c_client *client = to_i2c_client(dev);
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> +	struct adt7475_data *data = dev_get_drvdata(dev);
+> +	struct i2c_client *client = data->client;
+>  	unsigned char reg = 0;
+>  	long val;
+>  
+> @@ -818,8 +818,8 @@ static ssize_t stall_disable_show(struct device *dev,
+>  				  struct device_attribute *attr, char *buf)
+>  {
+>  	struct sensor_device_attribute_2 *sattr = to_sensor_dev_attr_2(attr);
+> -	struct i2c_client *client = to_i2c_client(dev);
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> +	struct adt7475_data *data = dev_get_drvdata(dev);
+> +
+>  	u8 mask = BIT(5 + sattr->index);
+>  
+>  	return sprintf(buf, "%d\n", !!(data->enh_acoustics[0] & mask));
+> @@ -830,8 +830,8 @@ static ssize_t stall_disable_store(struct device *dev,
+>  				   const char *buf, size_t count)
+>  {
+>  	struct sensor_device_attribute_2 *sattr = to_sensor_dev_attr_2(attr);
+> -	struct i2c_client *client = to_i2c_client(dev);
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> +	struct adt7475_data *data = dev_get_drvdata(dev);
+> +	struct i2c_client *client = data->client;
+>  	long val;
+>  	u8 mask = BIT(5 + sattr->index);
+>  
+> @@ -914,8 +914,8 @@ static ssize_t pwmchan_store(struct device *dev,
+>  			     size_t count)
+>  {
+>  	struct sensor_device_attribute_2 *sattr = to_sensor_dev_attr_2(attr);
+> -	struct i2c_client *client = to_i2c_client(dev);
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> +	struct adt7475_data *data = dev_get_drvdata(dev);
+> +	struct i2c_client *client = data->client;
+>  	int r;
+>  	long val;
+>  
+> @@ -938,8 +938,8 @@ static ssize_t pwmctrl_store(struct device *dev,
+>  			     size_t count)
+>  {
+>  	struct sensor_device_attribute_2 *sattr = to_sensor_dev_attr_2(attr);
+> -	struct i2c_client *client = to_i2c_client(dev);
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> +	struct adt7475_data *data = dev_get_drvdata(dev);
+> +	struct i2c_client *client = data->client;
+>  	int r;
+>  	long val;
+>  
+> @@ -982,8 +982,8 @@ static ssize_t pwmfreq_store(struct device *dev,
+>  			     size_t count)
+>  {
+>  	struct sensor_device_attribute_2 *sattr = to_sensor_dev_attr_2(attr);
+> -	struct i2c_client *client = to_i2c_client(dev);
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> +	struct adt7475_data *data = dev_get_drvdata(dev);
+> +	struct i2c_client *client = data->client;
+>  	int out;
+>  	long val;
+>  
+> @@ -1022,8 +1022,8 @@ static ssize_t pwm_use_point2_pwm_at_crit_store(struct device *dev,
+>  					struct device_attribute *devattr,
+>  					const char *buf, size_t count)
+>  {
+> -	struct i2c_client *client = to_i2c_client(dev);
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> +	struct adt7475_data *data = dev_get_drvdata(dev);
+> +	struct i2c_client *client = data->client;
+>  	long val;
+>  
+>  	if (kstrtol(buf, 10, &val))
+> @@ -1342,26 +1342,6 @@ static int adt7475_detect(struct i2c_client *client,
+>  	return 0;
+>  }
+>  
+> -static void adt7475_remove_files(struct i2c_client *client,
+> -				 struct adt7475_data *data)
+> -{
+> -	sysfs_remove_group(&client->dev.kobj, &adt7475_attr_group);
+> -	if (data->has_fan4)
+> -		sysfs_remove_group(&client->dev.kobj, &fan4_attr_group);
+> -	if (data->has_pwm2)
+> -		sysfs_remove_group(&client->dev.kobj, &pwm2_attr_group);
+> -	if (data->has_voltage & (1 << 0))
+> -		sysfs_remove_group(&client->dev.kobj, &in0_attr_group);
+> -	if (data->has_voltage & (1 << 3))
+> -		sysfs_remove_group(&client->dev.kobj, &in3_attr_group);
+> -	if (data->has_voltage & (1 << 4))
+> -		sysfs_remove_group(&client->dev.kobj, &in4_attr_group);
+> -	if (data->has_voltage & (1 << 5))
+> -		sysfs_remove_group(&client->dev.kobj, &in5_attr_group);
+> -	if (data->has_vid)
+> -		sysfs_remove_group(&client->dev.kobj, &vid_attr_group);
+> -}
+> -
+>  static int adt7475_update_limits(struct i2c_client *client)
+>  {
+>  	struct adt7475_data *data = i2c_get_clientdata(client);
+> @@ -1489,7 +1469,8 @@ static int adt7475_probe(struct i2c_client *client,
+>  	};
+>  
+>  	struct adt7475_data *data;
+> -	int i, ret = 0, revision;
+> +	struct device *hwmon_dev;
+> +	int i, ret = 0, revision, group_num = 0;
+>  	u8 config2, config3;
+>  
+>  	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
+> @@ -1497,6 +1478,7 @@ static int adt7475_probe(struct i2c_client *client,
+>  		return -ENOMEM;
+>  
+>  	mutex_init(&data->lock);
+> +	data->client = client;
+>  	i2c_set_clientdata(client, data);
+>  
+>  	if (client->dev.of_node)
+> @@ -1590,52 +1572,40 @@ static int adt7475_probe(struct i2c_client *client,
+>  		break;
+>  	}
+>  
+> -	ret = sysfs_create_group(&client->dev.kobj, &adt7475_attr_group);
+> -	if (ret)
+> -		return ret;
+> +	data->groups[group_num++] = &adt7475_attr_group;
+>  
+>  	/* Features that can be disabled individually */
+>  	if (data->has_fan4) {
+> -		ret = sysfs_create_group(&client->dev.kobj, &fan4_attr_group);
+> -		if (ret)
+> -			goto eremove;
+> +		data->groups[group_num++] = &fan4_attr_group;
+>  	}
+>  	if (data->has_pwm2) {
+> -		ret = sysfs_create_group(&client->dev.kobj, &pwm2_attr_group);
+> -		if (ret)
+> -			goto eremove;
+> +		data->groups[group_num++] = &pwm2_attr_group;
+>  	}
+>  	if (data->has_voltage & (1 << 0)) {
+> -		ret = sysfs_create_group(&client->dev.kobj, &in0_attr_group);
+> -		if (ret)
+> -			goto eremove;
+> +		data->groups[group_num++] = &in0_attr_group;
+>  	}
+>  	if (data->has_voltage & (1 << 3)) {
+> -		ret = sysfs_create_group(&client->dev.kobj, &in3_attr_group);
+> -		if (ret)
+> -			goto eremove;
+> +		data->groups[group_num++] = &in3_attr_group;
+>  	}
+>  	if (data->has_voltage & (1 << 4)) {
+> -		ret = sysfs_create_group(&client->dev.kobj, &in4_attr_group);
+> -		if (ret)
+> -			goto eremove;
+> +		data->groups[group_num++] = &in4_attr_group;
+>  	}
+>  	if (data->has_voltage & (1 << 5)) {
+> -		ret = sysfs_create_group(&client->dev.kobj, &in5_attr_group);
+> -		if (ret)
+> -			goto eremove;
+> +		data->groups[group_num++] = &in5_attr_group;
+>  	}
+>  	if (data->has_vid) {
+>  		data->vrm = vid_which_vrm();
+> -		ret = sysfs_create_group(&client->dev.kobj, &vid_attr_group);
+> -		if (ret)
+> -			goto eremove;
+> +		data->groups[group_num] = &vid_attr_group;
+>  	}
+>  
+> -	data->hwmon_dev = hwmon_device_register(&client->dev);
+> -	if (IS_ERR(data->hwmon_dev)) {
+> -		ret = PTR_ERR(data->hwmon_dev);
+> -		goto eremove;
+> +	/* register device with all the acquired attributes */
+> +	hwmon_dev = devm_hwmon_device_register_with_groups(&client->dev,
+> +							   client->name, data,
+> +							   data->groups);
+> +
+> +	if (IS_ERR(hwmon_dev)) {
+> +		ret = PTR_ERR(hwmon_dev);
+> +		return ret;
+>  	}
+>  
+>  	dev_info(&client->dev, "%s device, revision %d\n",
+> @@ -1657,21 +1627,7 @@ static int adt7475_probe(struct i2c_client *client,
+>  	/* Limits and settings, should never change update more than once */
+>  	ret = adt7475_update_limits(client);
+>  	if (ret)
+> -		goto eremove;
+> -
+> -	return 0;
+> -
+> -eremove:
+> -	adt7475_remove_files(client, data);
+> -	return ret;
+> -}
+> -
+> -static int adt7475_remove(struct i2c_client *client)
+> -{
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> -
+> -	hwmon_device_unregister(data->hwmon_dev);
+> -	adt7475_remove_files(client, data);
+> +		return ret;
+>  
+>  	return 0;
+>  }
+> @@ -1683,7 +1639,6 @@ static struct i2c_driver adt7475_driver = {
+>  		.of_match_table = of_match_ptr(adt7475_of_match),
+>  	},
+>  	.probe		= adt7475_probe,
+> -	.remove		= adt7475_remove,
+>  	.id_table	= adt7475_id,
+>  	.detect		= adt7475_detect,
+>  	.address_list	= normal_i2c,
+> @@ -1757,8 +1712,8 @@ static void adt7475_read_pwm(struct i2c_client *client, int index)
+>  
+>  static int adt7475_update_measure(struct device *dev)
+>  {
+> -	struct i2c_client *client = to_i2c_client(dev);
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> +	struct adt7475_data *data = dev_get_drvdata(dev);
+> +	struct i2c_client *client = data->client;
+>  	u16 ext;
+>  	int i;
+>  	int ret;
+> @@ -1854,8 +1809,7 @@ static int adt7475_update_measure(struct device *dev)
+>  
+>  static struct adt7475_data *adt7475_update_device(struct device *dev)
+>  {
+> -	struct i2c_client *client = to_i2c_client(dev);
+> -	struct adt7475_data *data = i2c_get_clientdata(client);
+> +	struct adt7475_data *data = dev_get_drvdata(dev);
+>  	int ret;
+>  
+>  	mutex_lock(&data->lock);
