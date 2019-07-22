@@ -2,174 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5278670B21
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 23:18:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAD5170B06
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 23:10:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbfGVVSh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 17:18:37 -0400
-Received: from 8.mo178.mail-out.ovh.net ([46.105.74.227]:47687 "EHLO
-        8.mo178.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728441AbfGVVSg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 17:18:36 -0400
-X-Greylist: delayed 601 seconds by postgrey-1.27 at vger.kernel.org; Mon, 22 Jul 2019 17:18:35 EDT
-Received: from player735.ha.ovh.net (unknown [10.109.143.183])
-        by mo178.mail-out.ovh.net (Postfix) with ESMTP id 9C1F572F9C
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 23:01:13 +0200 (CEST)
-Received: from sk2.org (gw.sk2.org [88.186.243.14])
-        (Authenticated sender: steve@sk2.org)
-        by player735.ha.ovh.net (Postfix) with ESMTPSA id 51167836AA7B;
-        Mon, 22 Jul 2019 21:01:03 +0000 (UTC)
-Date:   Mon, 22 Jul 2019 23:01:02 +0200
-From:   Stephen Kitt <steve@sk2.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Nitin Gote <nitin.r.gote@intel.com>, jannh@google.com,
-        kernel-hardening@lists.openwall.com, corbet@lwn.net,
-        linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Subject: Re: [PATCH] checkpatch: Added warnings in favor of strscpy().
-Message-ID: <20190722230102.442137dc@heffalump.sk2.org>
-In-Reply-To: <15f2be3cde69321f4f3a48d60645b303d66a600b.camel@perches.com>
-References: <1561722948-28289-1-git-send-email-nitin.r.gote@intel.com>
-        <20190629181537.7d524f7d@sk2.org>
-        <201907021024.D1C8E7B2D@keescook>
-        <20190706144204.15652de7@heffalump.sk2.org>
-        <201907221047.4895D35B30@keescook>
-        <15f2be3cde69321f4f3a48d60645b303d66a600b.camel@perches.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1730879AbfGVVKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 17:10:23 -0400
+Received: from mail-eopbgr140054.outbound.protection.outlook.com ([40.107.14.54]:19355
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727845AbfGVVKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 17:10:23 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DQmM33AcqVZR9ymNXZfXUbczxP4A/2zTnxDvAQoVljCztimZfbTs7nn9lUYHMqvbvTrVd4mk5baTjSKBugJC2xSzi/1vVQGfg1FY3VOiWpgfpzTEl1D/k8GyJiDOdhErxy9GRYb1Yq6SfFFVSQojol7TfehIS+1UdoK9dQqbXnhZCpOpsF4R6s0Krrs5+MmGfiQjmOsKknoa+xAMXHt4NRi+T54CnK2nY65MqUMMDdKLp1aMhFedPFdC6flElsnySUBENFl2NyECZwc844+yKGhYk6DOKlMnJm48IDJqjzUegPsAkjHAgsUb9rHZvDSL6Dx1lnAHD/dzyj84GeBKTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Tn2JNqzYzp8DjztDfkV0KlmQfeV/I2QA3KN8fa3l/jg=;
+ b=Elw/kgqgz9wM+j7t9d8K+QcKVFHJG6ZVym5GmdvCZHW+/JlO2O36jmPFyxdDg4EsPrWHThDMg72JLRbpzo7XKlUVMLGKA4+iezm3N57yk06V9HmLs4e5tvD40wmHDWmZJfE5KmdKytl5XmHitRXzQt9d/n/w/0s/MUQ0cz2ZWtroeVfeGY/mS/Ri5j6hsFXS8gwL9QnoQa+41OqiMC6D3Fm0Z7Qmjoiie+ZMdVhs+V+LlZBVNjr4m2axCuDzK8FGbPDESkd5fuc8aXVK3qTCu0TZ+qXESK6WdgP8qsJfF0hmOoRNHd9wZEA6kl4RWfzcexOk5+QmULg36UQZ7UwV/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=mellanox.com;dmarc=pass action=none
+ header.from=mellanox.com;dkim=pass header.d=mellanox.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Tn2JNqzYzp8DjztDfkV0KlmQfeV/I2QA3KN8fa3l/jg=;
+ b=HpzeZ869ye6l/N8UZKb/sDxGyLX54CLkxXWNJ+2RwG1SmZ8kggYGrYepTHFmhIY1IzcfpKJ3rIbALQBH0wGAsZGrpPtjQ50IiM0U0MHIFhp0267Qr36zcNFUm1BD2zHQW+YHksmGiJeUBE73BIFqa0rcIgzy8ER1lNbh0Prkp90=
+Received: from DB6PR0501MB2759.eurprd05.prod.outlook.com (10.172.227.7) by
+ DB6PR0501MB2391.eurprd05.prod.outlook.com (10.168.75.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2094.16; Mon, 22 Jul 2019 21:10:16 +0000
+Received: from DB6PR0501MB2759.eurprd05.prod.outlook.com
+ ([fe80::7148:ecd4:3a7f:f3f]) by DB6PR0501MB2759.eurprd05.prod.outlook.com
+ ([fe80::7148:ecd4:3a7f:f3f%11]) with mapi id 15.20.2094.011; Mon, 22 Jul 2019
+ 21:10:16 +0000
+From:   Saeed Mahameed <saeedm@mellanox.com>
+To:     "cai@lca.pw" <cai@lca.pw>, Tal Gilboa <talgi@mellanox.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH] linux/dim: fix -Wunused-const-variable warnings
+Thread-Topic: [PATCH] linux/dim: fix -Wunused-const-variable warnings
+Thread-Index: AQHVQI6jkFUY13+GzUeRyX7u/3rECqbXIpgA
+Date:   Mon, 22 Jul 2019 21:10:16 +0000
+Message-ID: <4749e75cd6f2045cfcdeb5cc9f8978ab1c036300.camel@mellanox.com>
+References: <1563800923-15441-1-git-send-email-cai@lca.pw>
+In-Reply-To: <1563800923-15441-1-git-send-email-cai@lca.pw>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=saeedm@mellanox.com; 
+x-originating-ip: [209.116.155.178]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9a742267-8db1-4584-31c4-08d70ee8fef0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB6PR0501MB2391;
+x-ms-traffictypediagnostic: DB6PR0501MB2391:
+x-microsoft-antispam-prvs: <DB6PR0501MB23916512C8ADBD317A5DFD37BEC40@DB6PR0501MB2391.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 01068D0A20
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(366004)(346002)(396003)(39860400002)(189003)(199004)(66946007)(66556008)(64756008)(81156014)(66446008)(66066001)(66476007)(91956017)(76116006)(86362001)(8936002)(36756003)(99286004)(256004)(25786009)(4326008)(14444005)(81166006)(478600001)(446003)(316002)(14454004)(110136005)(58126008)(54906003)(486006)(476003)(76176011)(6246003)(305945005)(26005)(5660300002)(2906002)(6436002)(53936002)(229853002)(102836004)(6506007)(11346002)(186003)(6636002)(71190400001)(71200400001)(2501003)(118296001)(8676002)(6486002)(3846002)(6512007)(7736002)(6116002)(68736007)(2616005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0501MB2391;H:DB6PR0501MB2759.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: sz4u36LxC8Blt0Q2g7aD2JZS72n7VmJXuw8t8AjOKq0gGaxrh9VNyV1hhe1CqCN6hLTyn6c2/PK3r1LvngNw5qUvF77uZIoQtPOJJJ/Txsu+jHYC5Wumc+8Z8P+hkLQNwI5poL2OmQ/h0i7IRiqZuCm/F2/FzzPFOLbS0vBWIM7R7qS7XN8jN3CVTyahqf3v9dbc4WP/r9L78RPl2q3u6mNCTDGMArpPHBCn4kLiXXt/BPmqsYxNwLJTAr15adm0UGvC4qDZLaqzdqGWD3/B7uydE7Y0MNrArMnuMGFBn6/Cfgm3icGBgRIdZOs5x6Op1U2aTQgoEzDs6B63e+q78V6PVvW4V2EWQekvQb9a6qORPTZnzRrtHGrAXv14YYdiRrIKeF/VIIMfP/dYmTz7UjBwNFr91j5zXrRJ7OZntmM=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D6A8F1ACD9FB1D4B93175F05C87592A0@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/_Z99aAs_wWSXS_RmNzhv7m="; protocol="application/pgp-signature"
-X-Ovh-Tracer-Id: 2601110263553084917
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduvddrjeeggdduiedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a742267-8db1-4584-31c4-08d70ee8fef0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jul 2019 21:10:16.7170
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: saeedm@mellanox.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0501MB2391
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/_Z99aAs_wWSXS_RmNzhv7m=
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, 22 Jul 2019 10:59:00 -0700, Joe Perches <joe@perches.com> wrote:
-> On Mon, 2019-07-22 at 10:50 -0700, Kees Cook wrote:
-> > On Sat, Jul 06, 2019 at 02:42:04PM +0200, Stephen Kitt wrote: =20
-> > > On Tue, 2 Jul 2019 10:25:04 -0700, Kees Cook <keescook@chromium.org>
-> > > wrote: =20
-> > > > On Sat, Jun 29, 2019 at 06:15:37PM +0200, Stephen Kitt wrote: =20
-> > > > > On Fri, 28 Jun 2019 17:25:48 +0530, Nitin Gote
-> > > > > <nitin.r.gote@intel.com> wrote:   =20
-> > > > > > 1. Deprecate strcpy() in favor of strscpy().   =20
-> > > > >=20
-> > > > > This isn=E2=80=99t a comment =E2=80=9Cagainst=E2=80=9D this patch=
-, but something I=E2=80=99ve been
-> > > > > wondering recently and which raises a question about how to handle
-> > > > > strcpy=E2=80=99s deprecation in particular. There is still one sc=
-enario
-> > > > > where strcpy is useful: when GCC replaces it with its builtin,
-> > > > > inline version...
-> > > > >=20
-> > > > > Would it be worth introducing a macro for
-> > > > > strcpy-from-constant-string, which would check that GCC=E2=80=99s=
- builtin
-> > > > > is being used (when building with GCC), and fall back to strscpy
-> > > > > otherwise?   =20
-> > > >=20
-> > > > How would you suggest it operate? A separate API, or something like
-> > > > the existing overloaded strcpy() macros in string.h? =20
-> > >=20
-> > > The latter; in my mind the point is to simplify the thought process f=
-or
-> > > developers, so strscpy should be the =E2=80=9Cobvious=E2=80=9D choice=
- in all cases,
-> > > even when dealing with constant strings in hot paths. Something like
-> > >=20
-> > > __FORTIFY_INLINE ssize_t strscpy(char *dest, const char *src, size_t
-> > > count) {
-> > > 	size_t dest_size =3D __builtin_object_size(dest, 0);
-> > > 	size_t src_size =3D __builtin_object_size(src, 0);
-> > > 	if (__builtin_constant_p(count) &&
-> > > 	    __builtin_constant_p(src_size) &&
-> > > 	    __builtin_constant_p(dest_size) &&
-> > > 	    src_size <=3D count &&
-> > > 	    src_size <=3D dest_size &&
-> > > 	    src[src_size - 1] =3D=3D '\0') {
-> > > 		strcpy(dest, src);
-> > > 		return src_size - 1;
-> > > 	} else {
-> > > 		return __strscpy(dest, src, count);
-> > > 	}
-> > > }
-> > >=20
-> > > with the current strscpy renamed to __strscpy. I imagine it=E2=80=99s=
- not
-> > > necessary to tie this to FORTIFY =E2=80=94 __OPTIMIZE__ should be suf=
-ficient,
-> > > shouldn=E2=80=99t it? Although building on top of the fortified strcp=
-y is
-> > > reassuring, and I might be missing something. I=E2=80=99m also not su=
-re how to
-> > > deal with the backing strscpy: weak symbol, or something else... At
-> > > least there aren=E2=80=99t (yet) any arch-specific implementations of=
- strscpy
-> > > to deal with, but obviously they=E2=80=99d still need to be supportab=
-le.
-> > >=20
-> > > In my tests, this all gets optimised away, and we end up with code su=
-ch
-> > > as
-> > >=20
-> > > 	strscpy(raead.type, "aead", sizeof(raead.type));
-> > >=20
-> > > being compiled down to
-> > >=20
-> > > 	movl    $1684104545, 4(%rsp)
-> > >=20
-> > > on x86-64, and non-constant code being compiled down to a direct
-> > > __strscpy call. =20
-> >=20
-> > Thanks for the details! Yeah, that seems nice. I wonder if there is a
-> > sensible way to combine these also with the stracpy*() proposal[1], so =
-the
-> > call in your example above could just be:
-> >=20
-> > 	stracpy(raead.type, "aead");
-> >=20
-> > (It seems both proposals together would have the correct result...)
-> >=20
-> > [1] https://lkml.kernel.org/r/201907221031.8B87A9DE@keescook =20
->=20
-> Easy enough to do.
-
-How about you submit your current patch set, and I follow up with the above
-adapted to stracpy?
-
-Regards,
-
-Stephen
-
---Sig_/_Z99aAs_wWSXS_RmNzhv7m=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEnPVX/hPLkMoq7x0ggNMC9Yhtg5wFAl02JA4ACgkQgNMC9Yht
-g5ycxg//VDIjlBNpWaXHad+UEWucVHIXXVMmCChalfG8jqBFBwzmxOYy0Gkyh3mQ
-RwEkCBJSrsj/VltKzQRW6B5E6RDqujOEnuq03U54o9FAVTp35OSaaIuLSudEI5/b
-jh19jnx8NDX25EMQoUjP2vOt76pdnVg1ClJ92JKxFfXfVJGNpTqXpJrXlxK+RYkV
-79SLtnJHpjdIjsSY6emwayV4ueOXgnF2RsxYQPqR3+QwWw6u94xIhl9Kb21r8/5d
-+QyAxX+fXLSy43MBr/uAHIx7sqG6FSf0F917PjoP0A+Ki7IHUyKmonQXOPxx2aHJ
-S0a8ZMdcAsHmF4nrcgPxAtrTS4jJA6HRAZ+ExgsYcGjaw6mD6jIYbO0pnpsWzZtr
-jDQJB+0qlnMhxSGM/kd31yu8qgG/B+HNBA09u17+A+/p+PRMUXIsJ0G6A4Tp3YqW
-VPQ01Zf0FUGczzZtB5uPvbLFIYhFaBec4Awj3MCQu9YYxCroLzkDqSrthgvPvw26
-Ry/Que1fEFOCPEtK4l3KXu2sZlYUR+1VuOKW5Dshy/fPONtl2KgRHFZl2sykEcp0
-gksTutJ/icOkzoGj0rM7OZiFogS5nv7YnfJJ56pvIi99tLVf6IlZ8sylxvn0arXr
-RVHS3wjbHNK9gHUSrQvmGsRWiIZjQ4t7giNhdC/hKgQazQ0QOts=
-=da33
------END PGP SIGNATURE-----
-
---Sig_/_Z99aAs_wWSXS_RmNzhv7m=--
+T24gTW9uLCAyMDE5LTA3LTIyIGF0IDA5OjA4IC0wNDAwLCBRaWFuIENhaSB3cm90ZToNCj4gVGhl
+cmUgYXJlIGEgbG90IG9mIGNvbXBpbGF0aW9uIHdhcm5pbmdzIGR1ZSB0byB0eF9wcm9maWxlW10g
+YW5kDQo+IHJ4X3Byb2ZpbGVbXSBhcmUgb25seSB1c2VkIGluIGxpYi9kaW0vbmV0X2RpbS5jIGJ1
+dA0KPiBpbmNsdWRlL2xpbnV4L2RpbS5oDQo+IGlzIGluY2x1ZGVkIGVsc2V3aGVyZS4NCj4gDQo+
+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSAuL2luY2x1ZGUvcmRtYS9pYl92ZXJicy5oOjY0LA0KPiAg
+ICAgICAgICAgICAgICAgIGZyb20gLi9pbmNsdWRlL2xpbnV4L21seDUvZGV2aWNlLmg6MzcsDQo+
+ICAgICAgICAgICAgICAgICAgZnJvbSAuL2luY2x1ZGUvbGludXgvbWx4NS9kcml2ZXIuaDo1MSwN
+Cj4gICAgICAgICAgICAgICAgICBmcm9tDQo+IGRyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94
+L21seDUvY29yZS9wYWdlYWxsb2MuYzozNzoNCj4gLi9pbmNsdWRlL2xpbnV4L2RpbS5oOjMyNjox
+OiB3YXJuaW5nOiAndHhfcHJvZmlsZScgZGVmaW5lZCBidXQgbm90DQo+IHVzZWQNCj4gWy1XdW51
+c2VkLWNvbnN0LXZhcmlhYmxlPV0NCj4gIHR4X3Byb2ZpbGVbRElNX0NRX1BFUklPRF9OVU1fTU9E
+RVNdW05FVF9ESU1fUEFSQU1TX05VTV9QUk9GSUxFU10gPSB7DQo+ICBefn5+fn5+fn5+DQo+IC4v
+aW5jbHVkZS9saW51eC9kaW0uaDozMjA6MTogd2FybmluZzogJ3J4X3Byb2ZpbGUnIGRlZmluZWQg
+YnV0IG5vdA0KPiB1c2VkDQo+IFstV3VudXNlZC1jb25zdC12YXJpYWJsZT1dDQo+ICByeF9wcm9m
+aWxlW0RJTV9DUV9QRVJJT0RfTlVNX01PREVTXVtORVRfRElNX1BBUkFNU19OVU1fUFJPRklMRVNd
+ID0gew0KPiAgXn5+fn5+fn5+fg0KPiANCj4gRml4IHRoZW0gYnkgbW92aW5nIHR4X3Byb2ZpbGVb
+XSBhbmQgcnhfcHJvZmlsZVtdIGludG8NCj4gbGliL2RpbS9uZXRfZGltLmMNCj4gaW5zdGVhZC4N
+Cj4gDQo+IFNpZ25lZC1vZmYtYnk6IFFpYW4gQ2FpIDxjYWlAbGNhLnB3Pg0KPiAtLS0NCj4gIGlu
+Y2x1ZGUvbGludXgvZGltLmggfCAxMiAtLS0tLS0tLS0tLS0NCj4gIGxpYi9kaW0vbmV0X2RpbS5j
+ICAgfCAxMiArKysrKysrKysrKysNCj4gIDIgZmlsZXMgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygr
+KSwgMTIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9kaW0u
+aCBiL2luY2x1ZGUvbGludXgvZGltLmgNCj4gaW5kZXggZDNhMGZiZmZmMmJiLi5kNWYzYjEwZmU2
+ZTEgMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvZGltLmgNCj4gKysrIGIvaW5jbHVkZS9s
+aW51eC9kaW0uaA0KPiBAQCAtMzE2LDE4ICszMTYsNiBAQCB2b2lkIGRpbV9jYWxjX3N0YXRzKHN0
+cnVjdCBkaW1fc2FtcGxlICpzdGFydCwNCj4gc3RydWN0IGRpbV9zYW1wbGUgKmVuZCwNCj4gIAl7
+NjQsIDMyfSAgIFwNCj4gIH0NCj4gIA0KPiAtc3RhdGljIGNvbnN0IHN0cnVjdCBkaW1fY3FfbW9k
+ZXINCj4gLXJ4X3Byb2ZpbGVbRElNX0NRX1BFUklPRF9OVU1fTU9ERVNdW05FVF9ESU1fUEFSQU1T
+X05VTV9QUk9GSUxFU10gPSB7DQo+IC0JTkVUX0RJTV9SWF9FUUVfUFJPRklMRVMsDQo+IC0JTkVU
+X0RJTV9SWF9DUUVfUFJPRklMRVMsDQo+IC19Ow0KPiAtDQo+IC1zdGF0aWMgY29uc3Qgc3RydWN0
+IGRpbV9jcV9tb2Rlcg0KPiAtdHhfcHJvZmlsZVtESU1fQ1FfUEVSSU9EX05VTV9NT0RFU11bTkVU
+X0RJTV9QQVJBTVNfTlVNX1BST0ZJTEVTXSA9IHsNCj4gLQlORVRfRElNX1RYX0VRRV9QUk9GSUxF
+UywNCj4gLQlORVRfRElNX1RYX0NRRV9QUk9GSUxFUywNCj4gLX07DQo+IC0NCj4gIC8qKg0KPiAg
+ICoJbmV0X2RpbV9nZXRfcnhfbW9kZXJhdGlvbiAtIHByb3ZpZGUgYSBDUSBtb2RlcmF0aW9uIG9i
+amVjdCBmb3INCj4gdGhlIGdpdmVuIFJYIHByb2ZpbGUNCj4gICAqCUBjcV9wZXJpb2RfbW9kZTog
+Q1EgcGVyaW9kIG1vZGUNCj4gZGlmZiAtLWdpdCBhL2xpYi9kaW0vbmV0X2RpbS5jIGIvbGliL2Rp
+bS9uZXRfZGltLmMNCj4gaW5kZXggNWJjYzkwMmM1Mzg4Li5mMmE4Njc0NzIxY2YgMTAwNjQ0DQo+
+IC0tLSBhL2xpYi9kaW0vbmV0X2RpbS5jDQo+ICsrKyBiL2xpYi9kaW0vbmV0X2RpbS5jDQo+IEBA
+IC01LDYgKzUsMTggQEANCj4gIA0KPiAgI2luY2x1ZGUgPGxpbnV4L2RpbS5oPg0KPiAgDQo+ICtz
+dGF0aWMgY29uc3Qgc3RydWN0IGRpbV9jcV9tb2Rlcg0KPiArcnhfcHJvZmlsZVtESU1fQ1FfUEVS
+SU9EX05VTV9NT0RFU11bTkVUX0RJTV9QQVJBTVNfTlVNX1BST0ZJTEVTXSA9IHsNCj4gKwlORVRf
+RElNX1JYX0VRRV9QUk9GSUxFUywNCj4gKwlORVRfRElNX1JYX0NRRV9QUk9GSUxFUywNCj4gK307
+DQo+ICsNCj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgZGltX2NxX21vZGVyDQo+ICt0eF9wcm9maWxl
+W0RJTV9DUV9QRVJJT0RfTlVNX01PREVTXVtORVRfRElNX1BBUkFNU19OVU1fUFJPRklMRVNdID0g
+ew0KPiArCU5FVF9ESU1fVFhfRVFFX1BST0ZJTEVTLA0KPiArCU5FVF9ESU1fVFhfQ1FFX1BST0ZJ
+TEVTLA0KPiArfTsNCj4gKw0KDQpIaSBRaWFuLA0KDQppdCB3b3J0aCBtb3ZpbmcgdGhlIHN0cnVj
+dHMgYW5kIHRoZWlyIGRlcGVuZGVuY2llcywgdGhlIHdob2xlIGJlbG93DQpjb2RlIGJsb2NrIHNo
+b3VsZCBtb3ZlIHRvIG5ldF9kaW0uYyBhbHRvZ2V0aGVyLg0KDQovKiBOZXQgRElNICovDQoNCi8q
+DQogKiBOZXQgRElNIHByb2ZpbGVzOg0KICogICAgICAgIFRoZXJlIGFyZSBkaWZmZXJlbnQgc2V0
+IG9mIHByb2ZpbGVzIGZvciBlYWNoIENRIHBlcmlvZCBtb2RlLg0KICogICAgICAgIFRoZXJlIGFy
+ZSBkaWZmZXJlbnQgc2V0IG9mIHByb2ZpbGVzIGZvciBSWC9UWCBDUXMuDQogKiAgICAgICAgRWFj
+aCBwcm9maWxlIHNpemUgbXVzdCBiZSBvZiBORVRfRElNX1BBUkFNU19OVU1fUFJPRklMRVMNCiAq
+Lw0KI2RlZmluZSBORVRfRElNX1BBUkFNU19OVU1fUFJPRklMRVMgNQ0KI2RlZmluZSBORVRfRElN
+X0RFRkFVTFRfUlhfQ1FfTU9ERVJBVElPTl9QS1RTX0ZST01fRVFFIDI1Ng0KI2RlZmluZSBORVRf
+RElNX0RFRkFVTFRfVFhfQ1FfTU9ERVJBVElPTl9QS1RTX0ZST01fRVFFIDEyOA0KI2RlZmluZSBO
+RVRfRElNX0RFRl9QUk9GSUxFX0NRRSAxDQojZGVmaW5lIE5FVF9ESU1fREVGX1BST0ZJTEVfRVFF
+IDENCg0KI2RlZmluZSBORVRfRElNX1JYX0VRRV9QUk9GSUxFUyB7IFwNCgl7MSwgICBORVRfRElN
+X0RFRkFVTFRfUlhfQ1FfTU9ERVJBVElPTl9QS1RTX0ZST01fRVFFfSwgXA0KCXs4LCAgIE5FVF9E
+SU1fREVGQVVMVF9SWF9DUV9NT0RFUkFUSU9OX1BLVFNfRlJPTV9FUUV9LCBcDQoJezY0LCAgTkVU
+X0RJTV9ERUZBVUxUX1JYX0NRX01PREVSQVRJT05fUEtUU19GUk9NX0VRRX0sIFwNCgl7MTI4LCBO
+RVRfRElNX0RFRkFVTFRfUlhfQ1FfTU9ERVJBVElPTl9QS1RTX0ZST01fRVFFfSwgXA0KCXsyNTYs
+IE5FVF9ESU1fREVGQVVMVF9SWF9DUV9NT0RFUkFUSU9OX1BLVFNfRlJPTV9FUUV9LCBcDQp9DQoN
+CiNkZWZpbmUgTkVUX0RJTV9SWF9DUUVfUFJPRklMRVMgeyBcDQoJezIsICAyNTZ9LCAgICAgICAg
+ICAgICBcDQoJezgsICAxMjh9LCAgICAgICAgICAgICBcDQoJezE2LCA2NH0sICAgICAgICAgICAg
+ICBcDQoJezMyLCA2NH0sICAgICAgICAgICAgICBcDQoJezY0LCA2NH0gICAgICAgICAgICAgICBc
+DQp9DQoNCiNkZWZpbmUgTkVUX0RJTV9UWF9FUUVfUFJPRklMRVMgeyBcDQoJezEsICAgTkVUX0RJ
+TV9ERUZBVUxUX1RYX0NRX01PREVSQVRJT05fUEtUU19GUk9NX0VRRX0sICBcDQoJezgsICAgTkVU
+X0RJTV9ERUZBVUxUX1RYX0NRX01PREVSQVRJT05fUEtUU19GUk9NX0VRRX0sICBcDQoJezMyLCAg
+TkVUX0RJTV9ERUZBVUxUX1RYX0NRX01PREVSQVRJT05fUEtUU19GUk9NX0VRRX0sICBcDQoJezY0
+LCAgTkVUX0RJTV9ERUZBVUxUX1RYX0NRX01PREVSQVRJT05fUEtUU19GUk9NX0VRRX0sICBcDQoJ
+ezEyOCwgTkVUX0RJTV9ERUZBVUxUX1RYX0NRX01PREVSQVRJT05fUEtUU19GUk9NX0VRRX0gICBc
+DQp9DQoNCiNkZWZpbmUgTkVUX0RJTV9UWF9DUUVfUFJPRklMRVMgeyBcDQoJezUsICAxMjh9LCAg
+XA0KCXs4LCAgNjR9LCAgXA0KCXsxNiwgMzJ9LCAgXA0KCXszMiwgMzJ9LCAgXA0KCXs2NCwgMzJ9
+ICAgXA0KfQ0KDQpzdGF0aWMgY29uc3Qgc3RydWN0IGRpbV9jcV9tb2Rlcg0KcnhfcHJvZmlsZVtE
+SU1fQ1FfUEVSSU9EX05VTV9NT0RFU11bTkVUX0RJTV9QQVJBTVNfTlVNX1BST0ZJTEVTXSA9IHsN
+CglORVRfRElNX1JYX0VRRV9QUk9GSUxFUywNCglORVRfRElNX1JYX0NRRV9QUk9GSUxFUywNCn07
+DQoNCnN0YXRpYyBjb25zdCBzdHJ1Y3QgZGltX2NxX21vZGVyDQp0eF9wcm9maWxlW0RJTV9DUV9Q
+RVJJT0RfTlVNX01PREVTXVtORVRfRElNX1BBUkFNU19OVU1fUFJPRklMRVNdID0gew0KCU5FVF9E
+SU1fVFhfRVFFX1BST0ZJTEVTLA0KCU5FVF9ESU1fVFhfQ1FFX1BST0ZJTEVTLA0KfTsNCg0KDQpp
+biBjYXNlIHlvdSBhcmUgZ29pbmcgdG8gc3VibWl0IGEgVjIsIGNhbiB5b3UgY2MgbmV0ZGV2IG1h
+aWxpbmcgbGlzdCBhcw0Kd2VsbCA/IA0KDQo+ICBzdHJ1Y3QgZGltX2NxX21vZGVyDQo+ICBuZXRf
+ZGltX2dldF9yeF9tb2RlcmF0aW9uKHU4IGNxX3BlcmlvZF9tb2RlLCBpbnQgaXgpDQo+ICB7DQo=
