@@ -2,144 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93DD170873
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54A5E7087F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:27:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731761AbfGVSY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 14:24:59 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45673 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731715AbfGVSY4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 14:24:56 -0400
-Received: by mail-pg1-f195.google.com with SMTP id o13so18043056pgp.12
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 11:24:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uk+4XtkOOEybIk+H0HjUDGStzTJm5yLDzlE/r6X1gHU=;
-        b=H7vAswfmjbNIp10/Qjdr82Twf9GVzUkIj1Rpa10i0rAr69zAbm9T0yhZS6dvaFIQNr
-         Pg5dq+LFa5aP8BAYmnQzjwA4aUh+HCqKPXMw1QocJFvowUP2uf0dzI6UIqV/wzzVPLGo
-         h5W6ZUuRkkixyAK7kOP43bmPaw/HdiZiPfc4rpUFJq+yUqxNzyuOql0W+rbfARsA2WR+
-         zGOYSMMTOfPh02Yuh/subchPJbISia+5lvY3kBWY53z9zSZLPGvfhH9kA5JIOkd2OlCs
-         Bhe32fHuoIzTG+Nbd0KWE9zHz7041q5YMQeR/XxoSL5utY4crQwciXePfDo/EpeNevYG
-         wRZQ==
-X-Gm-Message-State: APjAAAVQIKNxgKW+eo8lQTO7usykF01lfZY6fvjLIWNpM+7fPZoAHOHf
-        emOmxPQeecR4uXOAj8ZcE7U=
-X-Google-Smtp-Source: APXvYqy+adPT8p44KMGPwUA6SNK0rOwrBo7t0HUDsrQprMo+4WIVdB0y++tL1HD5i0wfLyuQdvDHGg==
-X-Received: by 2002:a65:62c4:: with SMTP id m4mr71171165pgv.243.1563819895639;
-        Mon, 22 Jul 2019 11:24:55 -0700 (PDT)
-Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
-        by smtp.gmail.com with ESMTPSA id p23sm44556008pfn.10.2019.07.22.11.24.54
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 11:24:54 -0700 (PDT)
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Bart Van Assche <bvanassche@acm.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH 4/4] locking/lockdep: Report more stack trace statistics
-Date:   Mon, 22 Jul 2019 11:24:43 -0700
-Message-Id: <20190722182443.216015-5-bvanassche@acm.org>
-X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
-In-Reply-To: <20190722182443.216015-1-bvanassche@acm.org>
-References: <20190722182443.216015-1-bvanassche@acm.org>
+        id S1732035AbfGVSZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 14:25:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33310 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731678AbfGVSYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 14:24:54 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74E6F2190D;
+        Mon, 22 Jul 2019 18:24:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563819893;
+        bh=d/tEmvkiAsbuh59I3c0+nGapaMRLa5TzYZx3yFSOv0M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ICGvJ3MCKpv8zqtrQLwbkGxPs1lLpIZLGhiMbXmqS2fqB5I4W9qT29c14PcuZ1yF3
+         WjE3d7qNe3ayUOFrb5cMiv53eX3SV9M9t2cMUuaxiAv0yC2vduBseTlt6c9sIUQE+O
+         AUS82cAcPu7wEje0vyiq+jsSK1iPmZkRYMbJnUqA=
+Date:   Mon, 22 Jul 2019 20:24:51 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Ravi Chandra Sadineni <ravisadineni@chromium.org>
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, rjw@rjwysocki.net, pavel@ucw.cz,
+        len.brown@intel.com, bhe@redhat.com, dyoung@redhat.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        tbroch@chromium.org
+Subject: Re: [PATCH] power: sysfs: Remove wakeup_abort_count attribute.
+Message-ID: <20190722182451.GB24412@kroah.com>
+References: <20190722170407.217178-1-ravisadineni@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190722170407.217178-1-ravisadineni@chromium.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Report the number of stack traces and the number of stack trace hash
-chains. These two numbers are useful because these allow to estimate
-the number of stack trace hash collisions.
+On Mon, Jul 22, 2019 at 10:04:07AM -0700, Ravi Chandra Sadineni wrote:
+> wakeup_abort_count and wakeup_count sysfs entries print the
+> same (wakeup_count) attribute. This patch removes the duplicate
+> wakeup_abort_count sysfs entry.
+> 
+> Signed-off-by: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+> ---
+>  Documentation/ABI/testing/sysfs-devices-power | 25 ++++++-------------
+>  drivers/base/power/sysfs.c                    | 19 --------------
+>  2 files changed, 7 insertions(+), 37 deletions(-)
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Waiman Long <longman@redhat.com>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- kernel/locking/lockdep.c           | 29 +++++++++++++++++++++++++++++
- kernel/locking/lockdep_internals.h |  4 ++++
- kernel/locking/lockdep_proc.c      |  6 ++++++
- 3 files changed, 39 insertions(+)
+Isn't this the attribute you add back in a later patch?
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 19eace34b5fa..320346b3bdbb 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -516,6 +516,35 @@ static struct lock_trace *save_trace(void)
- 
- 	return trace;
- }
-+
-+/* Return the number of stack traces in the stack_trace[] array. */
-+u64 lockdep_stack_trace_count(void)
-+{
-+	struct lock_trace *trace;
-+	u64 c = 0;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(stack_trace_hash); i++) {
-+		hlist_for_each_entry(trace, &stack_trace_hash[i], hash_entry) {
-+			c++;
-+		}
-+	}
-+
-+	return c;
-+}
-+
-+/* Return the number of stack hash chains that have at least one stack trace. */
-+u64 lockdep_stack_hash_count(void)
-+{
-+	u64 c = 0;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(stack_trace_hash); i++)
-+		if (!hlist_empty(&stack_trace_hash[i]))
-+			c++;
-+
-+	return c;
-+}
- #endif
- 
- unsigned int nr_hardirq_chains;
-diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
-index 93a008bf77db..18d85aebbb57 100644
---- a/kernel/locking/lockdep_internals.h
-+++ b/kernel/locking/lockdep_internals.h
-@@ -140,6 +140,10 @@ extern unsigned int max_bfs_queue_depth;
- #ifdef CONFIG_PROVE_LOCKING
- extern unsigned long lockdep_count_forward_deps(struct lock_class *);
- extern unsigned long lockdep_count_backward_deps(struct lock_class *);
-+#ifdef CONFIG_TRACE_IRQFLAGS
-+u64 lockdep_stack_trace_count(void);
-+u64 lockdep_stack_hash_count(void);
-+#endif
- #else
- static inline unsigned long
- lockdep_count_forward_deps(struct lock_class *class)
-diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-index 1ba5780182e7..64b5b47ab117 100644
---- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -284,6 +284,12 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
- 			nr_process_chains);
- 	seq_printf(m, " stack-trace entries:           %11lu [max: %lu]\n",
- 			nr_stack_trace_entries, MAX_STACK_TRACE_ENTRIES);
-+#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING)
-+	seq_printf(m, " number of stack traces:        %llu\n",
-+		   lockdep_stack_trace_count());
-+	seq_printf(m, " number of stack hash chains:   %llu\n",
-+		   lockdep_stack_hash_count());
-+#endif
- 	seq_printf(m, " combined max dependencies:     %11u\n",
- 			(nr_hardirq_chains + 1) *
- 			(nr_softirq_chains + 1) *
--- 
-2.22.0.657.g960e92d24f-goog
+If you have 2 patches that touch the same file, always make a patch
+series so we have a chance to guess as to what patch comes first.
 
+thanks,
+
+greg k-h
