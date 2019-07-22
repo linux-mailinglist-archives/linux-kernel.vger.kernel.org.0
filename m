@@ -2,66 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB5377087A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A25217086F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:26:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732003AbfGVSZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 14:25:10 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33211 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731993AbfGVSZI (ORCPT
+        id S1731650AbfGVSYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 14:24:51 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44437 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbfGVSYv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 14:25:08 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f20so8825848pgj.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 11:25:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6lPTFkPAyVmuitAa4mWi4F3NQrNbt8SbSytM3vpn0a4=;
-        b=HbRHDvfM0apfHIujyRj3077zDqjerxdCRfAZo6YgD6vz6Zsc15GjN+7nPgKerlEBLN
-         4yAfZGf9Wq/qgGh8pvCNUq3+QtBcnC3ykrSvr7kATX6tqP81wL1yoSc8P/qF2fL4tWaR
-         hi05VT7unfKPLXhDchw25LWu4Cufs7dF1a/eM=
+        Mon, 22 Jul 2019 14:24:51 -0400
+Received: by mail-pf1-f193.google.com with SMTP id t16so17751695pfe.11
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 11:24:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6lPTFkPAyVmuitAa4mWi4F3NQrNbt8SbSytM3vpn0a4=;
-        b=TCStL0spPferWKm4T0TAnIcdem6IzUGPhAudeOsy1tBh/tXzlYehmYcz0Lpk3SqJu2
-         tsW6G+uX4tlseh/s/I2VbumxX/Bsngqy0CWbdKrcUsBMmTE2fekullP7R1X9C3BgVsHk
-         KEj6sqFH2J/Y/hvIsQ+fcdvWxNabgKnMVZ/uVMcH85s+W8/U+S2UwI90PsEyZoNfjmZ0
-         nIai1M0w4CwBi1Zg/bo2yfTqP36oqo6oVD6e46JfSykqNVcDEHm1nMJml9vg1ezPBDVD
-         8kgQlzSGM55aHneAg7IqwQxDEKK0wIBZvsTpxd9mfRPsFjscVIDtB+VJ7kRuckVowQBU
-         U8hw==
-X-Gm-Message-State: APjAAAVL/8BCpWZblOoOvC5OpR0rWcI2wUhoHwUgwbHP9sl2AFgRQ6Zu
-        nDQ2al5cOdWvlxW76tLI/FZ9IQ==
-X-Google-Smtp-Source: APXvYqwI+vy0ViASrIf3xCLwt0/dbuCnHEOUXK68q+q6D/Uk77Ehyv/s9HJa76vJ9R6YVsvovtfFjg==
-X-Received: by 2002:a63:5a4b:: with SMTP id k11mr13577531pgm.143.1563819907864;
-        Mon, 22 Jul 2019 11:25:07 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id a3sm36117683pfl.145.2019.07.22.11.25.07
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Buvwdc6bVgaISm+g6FWfaaalfuYElof6jhW4XAj/6pM=;
+        b=M1VTGcJHnAx/nPKJtOs0xX8HXAzV9mTtnSx32tovrnWDgdqzLeeFj4t6FoTo3z7I9Z
+         ofTiiolzxIHBXUuBRjJqGTXe9N4KFCVDjwf/KyATqnyEHLKljrymba4r2Fl2Fb+ILvd7
+         PS86igmoMiE0InuRdjs4e8/bCeW+M1ECm0VE2UU6nKkBw+9p9NrJbd8wy5MbVJM68eOt
+         yypI6qYnwLjKqXBLxSVQggFljhnnyxmZmFGLmwQsleqFMfgWC2Mz1WFjnETFS1nvcLPF
+         uXX7SPPN8Qw1Z6wq2/3+TSGEwl9dDgS5cfBd4r828KbMZ13EUCTQNjg89H6Aucp4/ycs
+         Rb8A==
+X-Gm-Message-State: APjAAAUg4/dl+83Y8h9yXn/JJkwRKHTZbKuFftEHvV685t0ICFInfF0+
+        uDrf1/lUtgfCfQZ3ELAp1Es=
+X-Google-Smtp-Source: APXvYqwi5pkLIF5g+F/BmVn5Fbxs/dBaG1ZhIt7DbRhCk4Nq6yGuQ1ng/NQHXFCxI+twCrfwwrKBLQ==
+X-Received: by 2002:a62:770e:: with SMTP id s14mr1496700pfc.150.1563819890357;
+        Mon, 22 Jul 2019 11:24:50 -0700 (PDT)
+Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
+        by smtp.gmail.com with ESMTPSA id p23sm44556008pfn.10.2019.07.22.11.24.49
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 11:25:07 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>
-Cc:     David Airlie <airlied@linux.ie>, linux-fbdev@vger.kernel.org,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        dri-devel@lists.freedesktop.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Douglas Anderson <dianders@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] video: amba-clcd: Spout an error if of_get_display_timing() gives an error
+        Mon, 22 Jul 2019 11:24:49 -0700 (PDT)
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: [PATCH 0/4] Lockdep: Reduce stack trace memory usage
 Date:   Mon, 22 Jul 2019 11:24:39 -0700
-Message-Id: <20190722182439.44844-5-dianders@chromium.org>
+Message-Id: <20190722182443.216015-1-bvanassche@acm.org>
 X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
-In-Reply-To: <20190722182439.44844-1-dianders@chromium.org>
-References: <20190722182439.44844-1-dianders@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -69,38 +49,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the patch ("video: of: display_timing: Don't yell if no timing node
-is present") we'll stop spouting an error directly in
-of_get_display_timing() if no node is present.  Presumably amba-clcd
-should take charge of spouting its own error now.
+Hi Peter,
 
-NOTE: we'll print two errors if the node was present but there were
-problems parsing the timing node (one in of_parse_display_timing() and
-this new one).  Since this is a fatal error for the driver's probe
-(and presumably someone will be debugging), this should be OK.
+An unfortunate side effect of commit 669de8bda87b ("kernel/workqueue: Use
+dynamic lockdep keys for workqueues") is that all stack traces associated
+with the lockdep key are leaked when a workqueue is destroyed. Fix this by
+storing each unique stack trace once. Please consider this patch series
+for Linux kernel v5.4.
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+Thanks,
 
- drivers/video/fbdev/amba-clcd.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Bart.
 
-diff --git a/drivers/video/fbdev/amba-clcd.c b/drivers/video/fbdev/amba-clcd.c
-index 89324e42a033..7de43be6ef2c 100644
---- a/drivers/video/fbdev/amba-clcd.c
-+++ b/drivers/video/fbdev/amba-clcd.c
-@@ -561,8 +561,10 @@ static int clcdfb_of_get_dpi_panel_mode(struct device_node *node,
- 	struct videomode video;
- 
- 	err = of_get_display_timing(node, "panel-timing", &timing);
--	if (err)
-+	if (err) {
-+		pr_err("%pOF: problems parsing panel-timing (%d)\n", node, err);
- 		return err;
-+	}
- 
- 	videomode_from_timing(&timing, &video);
- 
+Bart Van Assche (4):
+  locking/lockdep: Make it clear that what lock_class::key points at is
+    not modified
+  stacktrace: Constify 'entries' arguments
+  locking/lockdep: Reduce space occupied by stack traces
+  locking/lockdep: Report more stack trace statistics
+
+ include/linux/lockdep.h            |  11 +-
+ include/linux/stacktrace.h         |   4 +-
+ kernel/locking/lockdep.c           | 159 ++++++++++++++++++++++-------
+ kernel/locking/lockdep_internals.h |   9 +-
+ kernel/locking/lockdep_proc.c      |   8 +-
+ kernel/stacktrace.c                |   4 +-
+ 6 files changed, 143 insertions(+), 52 deletions(-)
+
 -- 
 2.22.0.657.g960e92d24f-goog
 
