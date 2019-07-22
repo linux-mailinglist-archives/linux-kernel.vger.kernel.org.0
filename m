@@ -2,140 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA78C6FEC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 13:35:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B22B06FEC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 13:33:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729912AbfGVLfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 07:35:39 -0400
-Received: from mga04.intel.com ([192.55.52.120]:3457 "EHLO mga04.intel.com"
+        id S1729886AbfGVLds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 07:33:48 -0400
+Received: from shell.v3.sk ([90.176.6.54]:59556 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728034AbfGVLfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 07:35:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jul 2019 04:35:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,294,1559545200"; 
-   d="scan'208";a="159853965"
-Received: from ngote-system-product-name.iind.intel.com ([10.106.124.92])
-  by orsmga007.jf.intel.com with ESMTP; 22 Jul 2019 04:35:33 -0700
-From:   NitinGote <nitin.r.gote@intel.com>
-To:     keescook@chromium.org
-Cc:     kernel-hardening@lists.openwall.com, paul@paul-moore.com,
-        sds@tycho.nsa.gov, eparis@parisplace.org, omosnace@redhat.com,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        NitinGote <nitin.r.gote@intel.com>
-Subject: [PATCH] selinux: convert struct sidtab count to refcount_t
-Date:   Mon, 22 Jul 2019 17:01:51 +0530
-Message-Id: <20190722113151.1584-1-nitin.r.gote@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1728823AbfGVLdr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 07:33:47 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id A7EA9493BC;
+        Mon, 22 Jul 2019 13:33:44 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id XcO2OS7kd5o7; Mon, 22 Jul 2019 13:33:41 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 8462D493BD;
+        Mon, 22 Jul 2019 13:33:41 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id SDNL2wXi2afC; Mon, 22 Jul 2019 13:33:40 +0200 (CEST)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 5D13B493BC;
+        Mon, 22 Jul 2019 13:33:40 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH] media: marvell-ccic: mmp: add MODULE_DEVICE_TABLE
+Date:   Mon, 22 Jul 2019 13:33:10 +0200
+Message-Id: <20190722113310.719399-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-refcount_t type and corresponding API should be
-used instead of atomic_t when the variable is used as
-a reference counter. This allows to avoid accidental
-refcounter overflows that might lead to use-after-free
-situations.
+This fixes autoloading the module by the OF compatible string.
 
-Signed-off-by: NitinGote <nitin.r.gote@intel.com>
+Fixes: 83c40e6611ec ("media: marvell-ccic/mmp: add devicetree support")
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- security/selinux/ss/sidtab.c | 16 ++++++++--------
- security/selinux/ss/sidtab.h |  2 +-
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/media/platform/marvell-ccic/mmp-driver.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
-index e63a90ff2728..20fe235c6c71 100644
---- a/security/selinux/ss/sidtab.c
-+++ b/security/selinux/ss/sidtab.c
-@@ -29,7 +29,7 @@ int sidtab_init(struct sidtab *s)
- 	for (i = 0; i < SECINITSID_NUM; i++)
- 		s->isids[i].set = 0;
-
--	atomic_set(&s->count, 0);
-+	refcount_set(&s->count, 0);
-
- 	s->convert = NULL;
-
-@@ -130,7 +130,7 @@ static struct context *sidtab_do_lookup(struct sidtab *s, u32 index, int alloc)
-
- static struct context *sidtab_lookup(struct sidtab *s, u32 index)
+diff --git a/drivers/media/platform/marvell-ccic/mmp-driver.c b/drivers/m=
+edia/platform/marvell-ccic/mmp-driver.c
+index 10559492e09ed..92b92255dac66 100644
+--- a/drivers/media/platform/marvell-ccic/mmp-driver.c
++++ b/drivers/media/platform/marvell-ccic/mmp-driver.c
+@@ -372,6 +372,7 @@ static const struct of_device_id mmpcam_of_match[] =3D=
  {
--	u32 count = (u32)atomic_read(&s->count);
-+	u32 count = refcount_read(&s->count);
-
- 	if (index >= count)
- 		return NULL;
-@@ -245,7 +245,7 @@ static int sidtab_reverse_lookup(struct sidtab *s, struct context *context,
- 				 u32 *index)
- {
- 	unsigned long flags;
--	u32 count = (u32)atomic_read(&s->count);
-+	u32 count = (u32)refcount_read(&s->count);
- 	u32 count_locked, level, pos;
- 	struct sidtab_convert_params *convert;
- 	struct context *dst, *dst_convert;
-@@ -272,7 +272,7 @@ static int sidtab_reverse_lookup(struct sidtab *s, struct context *context,
- 	spin_lock_irqsave(&s->lock, flags);
-
- 	convert = s->convert;
--	count_locked = (u32)atomic_read(&s->count);
-+	count_locked = (u32)refcount_read(&s->count);
- 	level = sidtab_level_from_count(count_locked);
-
- 	/* if count has changed before we acquired the lock, then catch up */
-@@ -315,7 +315,7 @@ static int sidtab_reverse_lookup(struct sidtab *s, struct context *context,
- 		}
-
- 		/* at this point we know the insert won't fail */
--		atomic_set(&convert->target->count, count + 1);
-+		refcount_set(&convert->target->count, count + 1);
- 	}
-
- 	if (context->len)
-@@ -328,7 +328,7 @@ static int sidtab_reverse_lookup(struct sidtab *s, struct context *context,
- 	/* write entries before writing new count */
- 	smp_wmb();
-
--	atomic_set(&s->count, count + 1);
-+	refcount_set(&s->count, count + 1);
-
- 	rc = 0;
- out_unlock:
-@@ -418,7 +418,7 @@ int sidtab_convert(struct sidtab *s, struct sidtab_convert_params *params)
- 		return -EBUSY;
- 	}
-
--	count = (u32)atomic_read(&s->count);
-+	count = (u32)refcount_read(&s->count);
- 	level = sidtab_level_from_count(count);
-
- 	/* allocate last leaf in the new sidtab (to avoid race with
-@@ -431,7 +431,7 @@ int sidtab_convert(struct sidtab *s, struct sidtab_convert_params *params)
- 	}
-
- 	/* set count in case no new entries are added during conversion */
--	atomic_set(&params->target->count, count);
-+	refcount_set(&params->target->count, count);
-
- 	/* enable live convert of new entries */
- 	s->convert = params;
-diff --git a/security/selinux/ss/sidtab.h b/security/selinux/ss/sidtab.h
-index bbd5c0d1f3bd..68dd96a5beba 100644
---- a/security/selinux/ss/sidtab.h
-+++ b/security/selinux/ss/sidtab.h
-@@ -70,7 +70,7 @@ struct sidtab_convert_params {
-
- struct sidtab {
- 	union sidtab_entry_inner roots[SIDTAB_MAX_LEVEL + 1];
--	atomic_t count;
-+	refcount_t count;
- 	struct sidtab_convert_params *convert;
- 	spinlock_t lock;
-
---
-2.17.1
+ 	{ .compatible =3D "marvell,mmp2-ccic", },
+ 	{},
+ };
++MODULE_DEVICE_TABLE(of, mmpcam_of_match);
+=20
+ static struct platform_driver mmpcam_driver =3D {
+ 	.probe		=3D mmpcam_probe,
+--=20
+2.21.0
 
