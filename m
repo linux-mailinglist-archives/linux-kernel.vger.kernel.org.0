@@ -2,49 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC7296FF7F
+	by mail.lfdr.de (Postfix) with ESMTP id 093556FF7D
 	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:23:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730425AbfGVMXO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 08:23:14 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58654 "EHLO
+        id S1730406AbfGVMXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 08:23:06 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58692 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730260AbfGVMWT (ORCPT
+        with ESMTP id S1730262AbfGVMWU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 08:22:19 -0400
+        Mon, 22 Jul 2019 08:22:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=+TMbBa7jX8uUjOd/fKTs9EqZROGbLGEuI+x5vkFsDS0=; b=V/2VuKZT47Kh
-        O+jYSXtZR1BrviwdbYuBXd1mQF0VUZH2JP3Z+jT3CZ6gMFbVN8syi62KcsbfETBfGrGFr2jUGdzO6
-        kvds68WwxTjwoWLNdiVLThez58ITzVgDJjsxY+OsiRtFpXmV4bbYy8bK5vliEAd2jcPd/tvavX1e3
-        ipIcE=;
+        List-Archive; bh=1YYrtFyJ0Ttd+Xvk2FDy/peCTQJ9kNEyVkmLdHZHaaw=; b=GNzBsxDEPi6a
+        xf9G6VnPq18D+IFFzeNvK+3XopxYY/oi5xJEomTbe5BEZrOG9l1lQ2nXvivuRnRVkFgLMZ4gFWaFV
+        oZI/RBCQ8QJYngoR6l9HLqJQ8csD+UMJk4Sq1IRiGo0CL79BYlbM1H/DFU8/ypDZx7/QKTyeou7Zl
+        eileM=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hpXKU-0007dq-JT; Mon, 22 Jul 2019 12:22:10 +0000
+        id 1hpXKa-0007fa-Dq; Mon, 22 Jul 2019 12:22:16 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 1A0462740463; Mon, 22 Jul 2019 13:22:10 +0100 (BST)
+        id D4340274046A; Mon, 22 Jul 2019 13:22:15 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     alsa-devel@alsa-project.org,
-        Collabora Kernel ML <kernel@collabora.com>,
-        cychiang@chromium.org, dianders@chromium.org,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Subject: Applied "SoC: rockchip: rockchip_max98090: Enable MICBIAS for headset keypress detection" to the asoc tree
-In-Reply-To: <20190719173929.24065-1-enric.balletbo@collabora.com>
+To:     Axel Lin <axel.lin@ingics.com>
+Cc:     Dan Murphy <dmurphy@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Milo Kim <milo.kim@ti.com>
+Subject: Applied "regulator: lm363x: Fix n_voltages setting for lm36274" to the regulator tree
+In-Reply-To: <20190626132632.32629-2-axel.lin@ingics.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190722122210.1A0462740463@ypsilon.sirena.org.uk>
-Date:   Mon, 22 Jul 2019 13:22:10 +0100 (BST)
+Message-Id: <20190722122215.D4340274046A@ypsilon.sirena.org.uk>
+Date:   Mon, 22 Jul 2019 13:22:15 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -52,11 +46,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   SoC: rockchip: rockchip_max98090: Enable MICBIAS for headset keypress detection
+   regulator: lm363x: Fix n_voltages setting for lm36274
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -77,92 +71,78 @@ to this mail.
 Thanks,
 Mark
 
-From f86621cd6c6f54edfdd62da347b2bbb8d7fddc8d Mon Sep 17 00:00:00 2001
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Date: Fri, 19 Jul 2019 19:39:29 +0200
-Subject: [PATCH] SoC: rockchip: rockchip_max98090: Enable MICBIAS for headset
- keypress detection
+From 962f170d9344e5d9edb3903971c591f42d55e226 Mon Sep 17 00:00:00 2001
+From: Axel Lin <axel.lin@ingics.com>
+Date: Wed, 26 Jun 2019 21:26:32 +0800
+Subject: [PATCH] regulator: lm363x: Fix n_voltages setting for lm36274
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The TS3A227E says that the headset keypress detection needs the MICBIAS
-power in order to report the key events to ensure proper operation
-The headset keypress detection needs the MICBIAS power in order to report
-the key events all the time as long as MIC is present. So MICBIAS pin
-is forced on when a MICROPHONE is detected.
+According to the datasheet http://www.ti.com/lit/ds/symlink/lm36274.pdf:
+Table 23. VPOS Bias Register Field Descriptions VPOS[5:0]:
+VPOS voltage (50-mV steps): VPOS = 4 V + (Code × 50 mV), 6.5 V max
+000000 = 4 V
+000001 = 4.05 V
+:
+011110 = 5.5 V (Default)
+:
+110010 = 6.5 V
+110011 to 111111 map to 6.5 V
 
-On Veyron Minnie I observed that if the MICBIAS power is not present and
-the key press detection is activated (just because it is enabled when you
-insert a headset), it randomly reports a keypress on insert.
-E.g. (KEY_PLAYPAUSE)
+So the LM36274_LDO_VSEL_MAX should be 0b110010 (0x32).
+The valid selectors are 0 ... LM36274_LDO_VSEL_MAX, n_voltages should be
+LM36274_LDO_VSEL_MAX + 1. Similarly, the n_voltages should be
+LM36274_BOOST_VSEL_MAX + 1 for LM36274_BOOST.
 
- Event: (SW_HEADPHONE_INSERT), value 1
- Event: (SW_MICROPHONE_INSERT), value 1
- Event: -------------- SYN_REPORT ------------
- Event: (KEY_PLAYPAUSE), value 1
-
-Userspace thinks that KEY_PLAYPAUSE is pressed and produces the annoying
-effect that the media player starts a play/pause loop.
-
-Note that, although most of the time the key reported is the one
-associated with BTN_0, not always this is true. On my tests I also saw
-different keys reported
-
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Link: https://lore.kernel.org/r/20190719173929.24065-1-enric.balletbo@collabora.com
+Fixes: bff5e8071533 ("regulator: lm363x: Add support for LM36274")
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Link: https://lore.kernel.org/r/20190626132632.32629-2-axel.lin@ingics.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/rockchip/rockchip_max98090.c | 32 ++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/regulator/lm363x-regulator.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/rockchip/rockchip_max98090.c b/sound/soc/rockchip/rockchip_max98090.c
-index c5fc24675a33..782e534d4c0d 100644
---- a/sound/soc/rockchip/rockchip_max98090.c
-+++ b/sound/soc/rockchip/rockchip_max98090.c
-@@ -61,6 +61,37 @@ static const struct snd_kcontrol_new rk_mc_controls[] = {
- 	SOC_DAPM_PIN_SWITCH("Speaker"),
- };
+diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/lm363x-regulator.c
+index e4a27d63bf90..4b9f618b07e9 100644
+--- a/drivers/regulator/lm363x-regulator.c
++++ b/drivers/regulator/lm363x-regulator.c
+@@ -36,7 +36,7 @@
  
-+static int rk_jack_event(struct notifier_block *nb, unsigned long event,
-+			 void *data)
-+{
-+	struct snd_soc_jack *jack = (struct snd_soc_jack *)data;
-+	struct snd_soc_dapm_context *dapm = &jack->card->dapm;
-+
-+	if (event & SND_JACK_MICROPHONE)
-+		snd_soc_dapm_force_enable_pin(dapm, "MICBIAS");
-+	else
-+		snd_soc_dapm_disable_pin(dapm, "MICBIAS");
-+
-+	snd_soc_dapm_sync(dapm);
-+
-+	return 0;
-+}
-+
-+static struct notifier_block rk_jack_nb = {
-+	.notifier_call = rk_jack_event,
-+};
-+
-+static int rk_init(struct snd_soc_pcm_runtime *runtime)
-+{
-+	/*
-+	 * The jack has already been created in the rk_98090_headset_init()
-+	 * function.
-+	 */
-+	snd_soc_jack_notifier_register(&headset_jack, &rk_jack_nb);
-+
-+	return 0;
-+}
-+
- static int rk_aif1_hw_params(struct snd_pcm_substream *substream,
- 			     struct snd_pcm_hw_params *params)
- {
-@@ -119,6 +150,7 @@ SND_SOC_DAILINK_DEFS(hifi,
- static struct snd_soc_dai_link rk_dailink = {
- 	.name = "max98090",
- 	.stream_name = "Audio",
-+	.init = rk_init,
- 	.ops = &rk_aif1_ops,
- 	/* set max98090 as slave */
- 	.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
+ /* LM36274 */
+ #define LM36274_BOOST_VSEL_MAX		0x3f
+-#define LM36274_LDO_VSEL_MAX		0x34
++#define LM36274_LDO_VSEL_MAX		0x32
+ #define LM36274_VOLTAGE_MIN		4000000
+ 
+ /* Common */
+@@ -226,7 +226,7 @@ static const struct regulator_desc lm363x_regulator_desc[] = {
+ 		.of_match	= "vboost",
+ 		.id             = LM36274_BOOST,
+ 		.ops            = &lm363x_boost_voltage_table_ops,
+-		.n_voltages     = LM36274_BOOST_VSEL_MAX,
++		.n_voltages     = LM36274_BOOST_VSEL_MAX + 1,
+ 		.min_uV         = LM36274_VOLTAGE_MIN,
+ 		.uV_step        = LM363X_STEP_50mV,
+ 		.type           = REGULATOR_VOLTAGE,
+@@ -239,7 +239,7 @@ static const struct regulator_desc lm363x_regulator_desc[] = {
+ 		.of_match	= "vpos",
+ 		.id             = LM36274_LDO_POS,
+ 		.ops            = &lm363x_regulator_voltage_table_ops,
+-		.n_voltages     = LM36274_LDO_VSEL_MAX,
++		.n_voltages     = LM36274_LDO_VSEL_MAX + 1,
+ 		.min_uV         = LM36274_VOLTAGE_MIN,
+ 		.uV_step        = LM363X_STEP_50mV,
+ 		.type           = REGULATOR_VOLTAGE,
+@@ -254,7 +254,7 @@ static const struct regulator_desc lm363x_regulator_desc[] = {
+ 		.of_match	= "vneg",
+ 		.id             = LM36274_LDO_NEG,
+ 		.ops            = &lm363x_regulator_voltage_table_ops,
+-		.n_voltages     = LM36274_LDO_VSEL_MAX,
++		.n_voltages     = LM36274_LDO_VSEL_MAX + 1,
+ 		.min_uV         = LM36274_VOLTAGE_MIN,
+ 		.uV_step        = LM363X_STEP_50mV,
+ 		.type           = REGULATOR_VOLTAGE,
 -- 
 2.20.1
 
