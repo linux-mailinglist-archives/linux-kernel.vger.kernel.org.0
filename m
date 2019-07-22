@@ -2,102 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7F3A6FA66
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 09:31:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7370A6FA6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 09:37:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727733AbfGVHbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 03:31:48 -0400
-Received: from mail-io1-f47.google.com ([209.85.166.47]:36052 "EHLO
-        mail-io1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbfGVHbs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 03:31:48 -0400
-Received: by mail-io1-f47.google.com with SMTP id o9so71864042iom.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 00:31:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=goM7DFQaf6yBihv7hYKIqrgRbj96aT6x15Ur8xgtkLU=;
-        b=e/C/QyeeWDa6zq+nDkcLUZ5Exo4cc7mnQg9NAgvaz/ZyM1R6o28D2ZEv26f9ZTWUBL
-         iHu76n6WOhKYmjVoS8rN01eVUUGVKnGiSqh2KcJ3xnQz5OSa3GafZFXARBPLK3i+3pZ7
-         COdo9q+mP/JKIQDIH4hyek/cbxEeeqxhcJv8JunZgUDvI2lYHQ+qbWq37a+uoWiHxa7A
-         XCm4m01SMs7QwH6zhwzjiRmKoYdAstz/4cppv/p9Uxd+BR9E3vgTfjTnVujYA5Fp7kM3
-         JBG5AacCR2DOqhiBvsGz+kPkCgAL3/HO49rWOthn+2jBUJ6t5TG13JkXryYrxMeWV4KP
-         Y84g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=goM7DFQaf6yBihv7hYKIqrgRbj96aT6x15Ur8xgtkLU=;
-        b=W6NcC5PUH/OU/r4G4y/nOZvltWycUc6NJi6ZmL3ufq/JXiquMjIj9Ygl6GdPMI1JEm
-         pRDLWwK688ZsE0u89bQSNFbg399Tr11kKDn5Fw0lHrGtXAP5J5kQt3ZfkZ8sHcbW6EWw
-         qHPMDJZzeqjvff5/tth9G1ojrfXSC7gtPv1VHwPud57hBCrQhv4n5dlNRufZuH75T//X
-         BMLcw+5SuKBnwlXVOkUJ0eiKXmUSEr+kheKEkf7UL/7CzvmYnMnVc7usLdF+iYDkbqTf
-         zMqicEu0/iCQRcLJxWjbsJyt0sEMIGAxT9ZZ0FRKw2y7KK3thONMzKaWUGnemejc16S0
-         fHYg==
-X-Gm-Message-State: APjAAAWwMLrITzo+RfS9e/72Mk7TZg4XXPvDJts+E+WyYdePS8lFZOyA
-        OgiuUi3DFZyxpux0e/UZfpYvPV8TtTH87RqUqiA=
-X-Google-Smtp-Source: APXvYqzz19Lo/4a4R605hYUOywL4Adj3EdnkvL66AHSn4jeJsq/EpCbHEulJWsRKqwZcAY2Q16lQD7xW/cl7a5YfLAM=
-X-Received: by 2002:a05:6638:281:: with SMTP id c1mr70371567jaq.43.1563780707278;
- Mon, 22 Jul 2019 00:31:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <CABXGCsN9mYmBD-4GaaeW_NrDu+FDXLzr_6x+XNxfmFV6QkYCDg@mail.gmail.com>
- <CAC=cRTMz5S636Wfqdn3UGbzwzJ+v_M46_juSfoouRLS1H62orQ@mail.gmail.com>
-In-Reply-To: <CAC=cRTMz5S636Wfqdn3UGbzwzJ+v_M46_juSfoouRLS1H62orQ@mail.gmail.com>
-From:   Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date:   Mon, 22 Jul 2019 12:31:36 +0500
-Message-ID: <CABXGCsOo-4CJicvTQm4jF4iDSqM8ic+0+HEEqP+632KfCntU+w@mail.gmail.com>
-Subject: Re: kernel BUG at mm/swap_state.c:170!
-To:     huang ying <huang.ying.caritas@gmail.com>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, Huang Ying <ying.huang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727951AbfGVHhE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 03:37:04 -0400
+Received: from out1.zte.com.cn ([202.103.147.172]:50030 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726120AbfGVHhE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 03:37:04 -0400
+Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
+        by Forcepoint Email with ESMTPS id 8DEAFB8D5B9EA263227B;
+        Mon, 22 Jul 2019 15:36:58 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse-fl2.zte.com.cn with ESMTP id x6M7alam028721;
+        Mon, 22 Jul 2019 15:36:47 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019072215365173-2482797 ;
+          Mon, 22 Jul 2019 15:36:51 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     pbonzini@redhat.com
+Cc:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
+        wang.yi59@zte.com.cn, up2wing@gmail.com, wang.liang82@zte.com.cn
+Subject: [PATCH] kvm: x86: Use DEFINE_DEBUGFS_ATTRIBUTE for debugfs files
+Date:   Mon, 22 Jul 2019 15:33:59 +0800
+Message-Id: <1563780839-14739-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-07-22 15:36:51,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-07-22 15:36:48,
+        Serialize complete at 2019-07-22 15:36:48
+X-MAIL: mse-fl2.zte.com.cn x6M7alam028721
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 22 Jul 2019 at 06:37, huang ying <huang.ying.caritas@gmail.com> wrote:
->
-> I am trying to reproduce this bug.  Can you give me some information
-> about your test case?
+We got these coccinelle warning:
+./arch/x86/kvm/debugfs.c:23:0-23: WARNING: vcpu_timer_advance_ns_fops
+should be defined with DEFINE_DEBUGFS_ATTRIBUTE
+./arch/x86/kvm/debugfs.c:32:0-23: WARNING: vcpu_tsc_offset_fops should
+be defined with DEFINE_DEBUGFS_ATTRIBUTE
+./arch/x86/kvm/debugfs.c:41:0-23: WARNING: vcpu_tsc_scaling_fops should
+be defined with DEFINE_DEBUGFS_ATTRIBUTE
+./arch/x86/kvm/debugfs.c:49:0-23: WARNING: vcpu_tsc_scaling_frac_fops
+should be defined with DEFINE_DEBUGFS_ATTRIBUTE
 
-It not easy, but I try to explain:
+Use DEFINE_DEBUGFS_ATTRIBUTE() rather than DEFINE_SIMPLE_ATTRIBUTE()
+to fix this.
 
-1. I have the system with 32Gb RAM, 64GB swap and after boot, I always
-launch follow applications:
-    a. Google Chrome dev channel
-        Note: here you should have 3 windows full of tabs on my
-monitor 118 tabs in each window.
-        Don't worry modern Chrome browser is wise and load tabs only on demand.
-        We will use this feature later (on the last step).
-    b. Firefox Nightly ASAN this build with enabled address sanitizer.
-    c. Virtual Machine Manager (virt-manager) and start a virtual
-machine with Windows 10 (2048 MiB RAM allocated)
-    d. Evolution
-    e. Steam client
-    f. Telegram client
-    g. DeadBeef music player
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+---
+ arch/x86/kvm/debugfs.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-After all launched applications 15GB RAM should be allocated.
+diff --git a/arch/x86/kvm/debugfs.c b/arch/x86/kvm/debugfs.c
+index 329361b..24016fb 100644
+--- a/arch/x86/kvm/debugfs.c
++++ b/arch/x86/kvm/debugfs.c
+@@ -20,7 +20,7 @@ static int vcpu_get_timer_advance_ns(void *data, u64 *val)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(vcpu_timer_advance_ns_fops, vcpu_get_timer_advance_ns, NULL, "%llu\n");
++DEFINE_DEBUGFS_ATTRIBUTE(vcpu_timer_advance_ns_fops, vcpu_get_timer_advance_ns, NULL, "%llu\n");
+ 
+ static int vcpu_get_tsc_offset(void *data, u64 *val)
+ {
+@@ -29,7 +29,7 @@ static int vcpu_get_tsc_offset(void *data, u64 *val)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(vcpu_tsc_offset_fops, vcpu_get_tsc_offset, NULL, "%lld\n");
++DEFINE_DEBUGFS_ATTRIBUTE(vcpu_tsc_offset_fops, vcpu_get_tsc_offset, NULL, "%lld\n");
+ 
+ static int vcpu_get_tsc_scaling_ratio(void *data, u64 *val)
+ {
+@@ -38,7 +38,7 @@ static int vcpu_get_tsc_scaling_ratio(void *data, u64 *val)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(vcpu_tsc_scaling_fops, vcpu_get_tsc_scaling_ratio, NULL, "%llu\n");
++DEFINE_DEBUGFS_ATTRIBUTE(vcpu_tsc_scaling_fops, vcpu_get_tsc_scaling_ratio, NULL, "%llu\n");
+ 
+ static int vcpu_get_tsc_scaling_frac_bits(void *data, u64 *val)
+ {
+@@ -46,20 +46,20 @@ static int vcpu_get_tsc_scaling_frac_bits(void *data, u64 *val)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(vcpu_tsc_scaling_frac_fops, vcpu_get_tsc_scaling_frac_bits, NULL, "%llu\n");
++DEFINE_DEBUGFS_ATTRIBUTE(vcpu_tsc_scaling_frac_fops, vcpu_get_tsc_scaling_frac_bits, NULL, "%llu\n");
+ 
+ int kvm_arch_create_vcpu_debugfs(struct kvm_vcpu *vcpu)
+ {
+ 	struct dentry *ret;
+ 
+-	ret = debugfs_create_file("tsc-offset", 0444,
++	ret = debugfs_create_file_unsafe("tsc-offset", 0444,
+ 							vcpu->debugfs_dentry,
+ 							vcpu, &vcpu_tsc_offset_fops);
+ 	if (!ret)
+ 		return -ENOMEM;
+ 
+ 	if (lapic_in_kernel(vcpu)) {
+-		ret = debugfs_create_file("lapic_timer_advance_ns", 0444,
++		ret = debugfs_create_file_unsafe("lapic_timer_advance_ns", 0444,
+ 								vcpu->debugfs_dentry,
+ 								vcpu, &vcpu_timer_advance_ns_fops);
+ 		if (!ret)
+@@ -67,12 +67,12 @@ int kvm_arch_create_vcpu_debugfs(struct kvm_vcpu *vcpu)
+ 	}
+ 
+ 	if (kvm_has_tsc_control) {
+-		ret = debugfs_create_file("tsc-scaling-ratio", 0444,
++		ret = debugfs_create_file_unsafe("tsc-scaling-ratio", 0444,
+ 							vcpu->debugfs_dentry,
+ 							vcpu, &vcpu_tsc_scaling_fops);
+ 		if (!ret)
+ 			return -ENOMEM;
+-		ret = debugfs_create_file("tsc-scaling-ratio-frac-bits", 0444,
++		ret = debugfs_create_file_unsafe("tsc-scaling-ratio-frac-bits", 0444,
+ 							vcpu->debugfs_dentry,
+ 							vcpu, &vcpu_tsc_scaling_frac_fops);
+ 		if (!ret)
+-- 
+1.8.3.1
 
-2. This step the most difficult, because we should by using Firefox
-allocated 27-28GB RAM.
-    I use the infinite scroll on sites Facebook, VK, Pinterest, Tumblr
-and open many tabs in Firefox as I could.
-    Note: our goal is 27-28GB allocated RAM in the system.
-
-3. When we hit our goal in the second step now go to Google Chrome and
-click as fast as you can on all unloaded tabs.
-    As usual, after 60 tabs this issue usually happens. 100%
-reproducible for me.
-
-Of course, I tried to simplify my workflow case by using stress-ng but
-without success.
-
-I hope it will help to make autotests.
-
---
-Best Regards,
-Mike Gavrilov.
