@@ -2,132 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2E467039A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:22:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C9D6703A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:24:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbfGVPWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 11:22:11 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40729 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728288AbfGVPWK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 11:22:10 -0400
-Received: by mail-wm1-f66.google.com with SMTP id v19so35765569wmj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 08:22:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CjN06kskuSN63zvz3I8U6ASqKJRxwYLJel4cw/9K0lw=;
-        b=SW2BLq/I4O/PnHgn1NA2q1TeVho/oHOeDcYpL3qFIQggNojxG22k4aZiFGmAg3qjZw
-         sNH03/H7fUd1hP+JYWFhSUX8oVoTRU3bnRNRtsbc1lJviN3M++fuo80AkU9hWv+dRbu6
-         mg0kIKTw66qN8Z3uRv1t8IVBOT8WAVgLsmzb74vtLhqfx+4hcnmk6kNrJvkgbtcno8JY
-         0FDCNFNg9zgMDxr5NKN1TXvrZYwVniccPCYF6S1oN3eH/gHp9jUbauxk12vI4YbezNDT
-         UsyQt5Z+DG/nC780HdW0gYFTNsc/rKkiLemjOICIiX9L0i2dF+lRJlhDPXFtvtYGgReH
-         kIiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CjN06kskuSN63zvz3I8U6ASqKJRxwYLJel4cw/9K0lw=;
-        b=dWgQPSKD1JnCQyqOouY/7jIlOMzKkZXrjC8CiE9+cSFtBzrLTvAXe9pLQVcUm14TuO
-         AoYrSaPndJzlSqCscpDiZBWhana1s5E0xLgJgraQnbUeewLquiH6dzx/apTgCxdFCCas
-         2foPtUcFV0DAR2gWm5aS4zCSyGGpHER15QV6kkvzhawWgEz7OGo3FsBPBGMlHJGyWQL3
-         dhC8N16PAydoQSASgtQVMoXv6dUT1QydCVqfbsTUJ8g/vt/2L67VWj2xMaOKSvVyp4Bu
-         X3otbYARFewKdDSOIKw0dkArImHRc+vQdX8ECvlngCTvO750Fp/0VTMQc0deDco6Tv7F
-         Gd8Q==
-X-Gm-Message-State: APjAAAX58xbWrpH3rksQQI4y80VUKGr2iJz55vWZHIGn9+vfH7ocke8G
-        PMn6OTzkOPwtsn5XYtkSiRHoGw==
-X-Google-Smtp-Source: APXvYqxEqJt2WlO+GoY0nM0FoV0BovseVpbAQSrNlFd4NlDuP4uXJmvali/FscgOt4YbJnNBVzR6bg==
-X-Received: by 2002:a7b:c74a:: with SMTP id w10mr61057896wmk.99.1563808928497;
-        Mon, 22 Jul 2019 08:22:08 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id i18sm51360450wrp.91.2019.07.22.08.22.07
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 08:22:07 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 16:22:06 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 6/7] backlight: gpio: remove def_value from struct
- gpio_backlight
-Message-ID: <20190722152206.bfjlws53yknq3xv4@holly.lan>
-References: <20190722150302.29526-1-brgl@bgdev.pl>
- <20190722150302.29526-7-brgl@bgdev.pl>
+        id S1728885AbfGVPYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 11:24:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49382 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728474AbfGVPYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 11:24:30 -0400
+Received: from localhost (unknown [223.226.98.106])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A74F2084D;
+        Mon, 22 Jul 2019 15:24:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563809069;
+        bh=nRZoH4xwtPYcCRpqCTX6tj1SFiPFkQ6nWJP4CJHJpAI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kdiQlr7NQEHX5Y8VohEbyIP/GE59TUXoXpuEB/4ncjPGpDv6Fxw8ycYnAFN3ERFGV
+         llygx3szbdHDSbFFo4uuiGJsMsVbQ1tyx1SlyzcmruLxDAIKl2b56FbPuuW+hq6xU8
+         vWIOxm0UKWkzXa+IbDVma6OH6IvkpSlx65A0AH7o=
+Date:   Mon, 22 Jul 2019 20:53:15 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dmaengine@vger.kernel.org
+Subject: Re: [PATCH 1/2] [RESEND] dmaengine: omap-dma: make
+ omap_dma_filter_fn private
+Message-ID: <20190722152315.GY12733@vkoul-mobl.Dlink>
+References: <20190722081705.2084961-1-arnd@arndb.de>
+ <20190722141240.GT12733@vkoul-mobl.Dlink>
+ <CAK8P3a0tHRyjwwHk3tGFA=3dByH4g7R4FobrGC874bW5DJCnNw@mail.gmail.com>
+ <20190722143533.GX12733@vkoul-mobl.Dlink>
+ <CAK8P3a1P4LyOieH1ii0vn_5rdj-NC4ft6JKCKs6YX88Qdk5SSg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190722150302.29526-7-brgl@bgdev.pl>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAK8P3a1P4LyOieH1ii0vn_5rdj-NC4ft6JKCKs6YX88Qdk5SSg@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 05:03:01PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On 22-07-19, 16:44, Arnd Bergmann wrote:
+> On Mon, Jul 22, 2019 at 4:36 PM Vinod Koul <vkoul@kernel.org> wrote:
+> > On 22-07-19, 16:22, Arnd Bergmann wrote:
+> > > On Mon, Jul 22, 2019 at 4:13 PM Vinod Koul <vkoul@kernel.org> wrote:
+> > > >
+> > > > On 22-07-19, 10:16, Arnd Bergmann wrote:
+> > > > > With the audio driver no longer referring to this function, it
+> > > > > can be made private to the dmaengine driver itself, and the
+> > > > > header file removed.
+> > > > >
+> > > > > Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> > > > > Link: https://lore.kernel.org/lkml/20190307151646.1016966-1-arnd@arndb.de/
+> > > >
+> > > > This seems to point to older rev, my script updated it to latest one.
+> > >
+> > > That was intentional, to see the replies to the last time it got
+> > > posted. I'm not sure if that's the best way to do it, would you
+> > > rather not have that included?
+> >
+> > That's a valid point, but should we add both the links or just relevant
+> > one, common sense says former, scripting tends to add so keep both...?
+> >
+> > I am thinking of not changing the one submitted and let my
+> > script append. Is that fine?
 > 
-> This field is unused outside of probe(). There's no need to store it.
-> We can make it into a local variable.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> I think adding both is best then.
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Ok, updated!
 
-> ---
->  drivers/video/backlight/gpio_backlight.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
-> index 70882556f047..cd6a75bca9cc 100644
-> --- a/drivers/video/backlight/gpio_backlight.c
-> +++ b/drivers/video/backlight/gpio_backlight.c
-> @@ -21,7 +21,6 @@
->  struct gpio_backlight {
->  	struct device *fbdev;
->  	struct gpio_desc *gpiod;
-> -	int def_value;
->  };
->  
->  static int gpio_backlight_update_status(struct backlight_device *bl)
-> @@ -61,7 +60,7 @@ static int gpio_backlight_probe(struct platform_device *pdev)
->  	struct backlight_device *bl;
->  	struct gpio_backlight *gbl;
->  	enum gpiod_flags flags;
-> -	int ret;
-> +	int ret, def_value;
->  
->  	gbl = devm_kzalloc(&pdev->dev, sizeof(*gbl), GFP_KERNEL);
->  	if (gbl == NULL)
-> @@ -70,8 +69,8 @@ static int gpio_backlight_probe(struct platform_device *pdev)
->  	if (pdata)
->  		gbl->fbdev = pdata->fbdev;
->  
-> -	gbl->def_value = device_property_read_bool(&pdev->dev, "default-on");
-> -	flags = gbl->def_value ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
-> +	def_value = device_property_read_bool(&pdev->dev, "default-on");
-> +	flags = def_value ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
->  
->  	gbl->gpiod = devm_gpiod_get(&pdev->dev, NULL, flags);
->  	if (IS_ERR(gbl->gpiod)) {
-> @@ -94,7 +93,7 @@ static int gpio_backlight_probe(struct platform_device *pdev)
->  		return PTR_ERR(bl);
->  	}
->  
-> -	bl->props.brightness = gbl->def_value;
-> +	bl->props.brightness = def_value;
->  	backlight_update_status(bl);
->  
->  	platform_set_drvdata(pdev, bl);
-> -- 
-> 2.21.0
-> 
+-- 
+~Vinod
