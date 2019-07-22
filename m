@@ -2,64 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62C6A6FB27
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFD956FB2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:22:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbfGVIVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 04:21:05 -0400
-Received: from foss.arm.com ([217.140.110.172]:33424 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726944AbfGVIVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 04:21:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7C41344;
-        Mon, 22 Jul 2019 01:21:04 -0700 (PDT)
-Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6CC003F71F;
-        Mon, 22 Jul 2019 01:21:02 -0700 (PDT)
-Subject: Re: [PATCH v9 2/8] sched/core: Streamlining calls to task_rq_unlock()
-To:     Juri Lelli <juri.lelli@redhat.com>, peterz@infradead.org,
-        mingo@redhat.com, rostedt@goodmis.org, tj@kernel.org
-Cc:     linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
-        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
-        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
-        longman@redhat.com, cgroups@vger.kernel.org
-References: <20190719140000.31694-1-juri.lelli@redhat.com>
- <20190719140000.31694-3-juri.lelli@redhat.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <50f00347-ffb3-285c-5a7d-3a9c5f813950@arm.com>
-Date:   Mon, 22 Jul 2019 10:21:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728299AbfGVIWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 04:22:23 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49271 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726944AbfGVIWX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 04:22:23 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6M8M7Qx3738567
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 22 Jul 2019 01:22:07 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6M8M7Qx3738567
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1563783727;
+        bh=nFpwrdz1VhHsf706FAhPrB/XMWMkiW2mKtHJjosrQXY=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=aPmQCUAh30tRZ++lBoVTQZ1sohn72DmxY/m1d30G6yZdY/MaVEuuIlk0tHNzcXI3D
+         T0xCGS9zO80fIKRV2DJQUD00cy1PSKZ2JuhqaRUuyWTHFyFPjDFXJI4ahbTu8x9rI+
+         yvuFIbRcOB07qpEhjtzicTP9mCx6yDlWLLS8NrZv9axUctqxb5ANcvs7932tVfAFbX
+         UDYDH50Rqv+OUrIeW05G6+EPvvtsPeoaCslrNHHEtFoxvOOI/O4wrz/KwRfcRKSU+d
+         T6Ojb0DmKR/FPMLiMz4tdTCCPmLhDA+IMccvWCRoHSr7wJZEXE9ToCZAkMXz9bK8wb
+         UxBbeSgFo3/Og==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6M8M6aC3738564;
+        Mon, 22 Jul 2019 01:22:06 -0700
+Date:   Mon, 22 Jul 2019 01:22:06 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
+Message-ID: <tip-51b75b5b563a2637f9d8dc5bd02a31b2ff9e5ea0@git.kernel.org>
+Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+        jroedel@suse.de
+Reply-To: hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
+          jroedel@suse.de, linux-kernel@vger.kernel.org,
+          dave.hansen@linux.intel.com
+In-Reply-To: <20190719184652.11391-2-joro@8bytes.org>
+References: <20190719184652.11391-2-joro@8bytes.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/mm: Check for pfn instead of page in
+ vmalloc_sync_one()
+Git-Commit-ID: 51b75b5b563a2637f9d8dc5bd02a31b2ff9e5ea0
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20190719140000.31694-3-juri.lelli@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/19/19 3:59 PM, Juri Lelli wrote:
-> From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Commit-ID:  51b75b5b563a2637f9d8dc5bd02a31b2ff9e5ea0
+Gitweb:     https://git.kernel.org/tip/51b75b5b563a2637f9d8dc5bd02a31b2ff9e5ea0
+Author:     Joerg Roedel <jroedel@suse.de>
+AuthorDate: Fri, 19 Jul 2019 20:46:50 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 22 Jul 2019 10:18:30 +0200
 
-[...]
+x86/mm: Check for pfn instead of page in vmalloc_sync_one()
 
-> @@ -4269,8 +4269,8 @@ static int __sched_setscheduler(struct task_struct *p,
->  			 */
->  			if (!cpumask_subset(span, &p->cpus_allowed) ||
+Do not require a struct page for the mapped memory location because it
+might not exist. This can happen when an ioremapped region is mapped with
+2MB pages.
 
-This doesn't apply cleanly on v5.3-rc1 anymore due to commit
-3bd3706251ee ("sched/core: Provide a pointer to the valid CPU mask").
+Fixes: 5d72b4fba40ef ('x86, mm: support huge I/O mapping capability I/F')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+Link: https://lkml.kernel.org/r/20190719184652.11391-2-joro@8bytes.org
 
->  			    rq->rd->dl_bw.bw == 0) {
-> -				task_rq_unlock(rq, p, &rf);
-> -				return -EPERM;
-> +				retval = -EPERM;
-> +				goto unlock;
->  			}
->  		}
->  #endif
+---
+ arch/x86/mm/fault.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[...]
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 6c46095cd0d9..e64173db4970 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -183,7 +183,7 @@ static inline pmd_t *vmalloc_sync_one(pgd_t *pgd, unsigned long address)
+ 	if (!pmd_present(*pmd))
+ 		set_pmd(pmd, *pmd_k);
+ 	else
+-		BUG_ON(pmd_page(*pmd) != pmd_page(*pmd_k));
++		BUG_ON(pmd_pfn(*pmd) != pmd_pfn(*pmd_k));
+ 
+ 	return pmd_k;
+ }
