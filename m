@@ -2,120 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D84E6FF76
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:23:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74BED6FF8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:25:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730356AbfGVMWm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 08:22:42 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58882 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730297AbfGVMWZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 08:22:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=rbq4z9FIHUxfRqS1kr/ag+iCawHd1ro5ob0Hwbc6bws=; b=no7LZiAil3YZ
-        1Wm0MIGdBM2BW72hSwNthuJRdgDI5UH63s6uX/jCq9o0lnZp6Gm8qp4RExJgQfcYIR2YmgJOIZRel
-        BM6rxu9N5Lt44jqWgWwwH2k4eEMzKqWVrH4A2S5i3fMgDcbHdlHvuFZFWy9DXGkDkmvMKfUsywn3J
-        TA24I=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hpXKf-0007ge-Sq; Mon, 22 Jul 2019 12:22:21 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 4CCCE27416CB; Mon, 22 Jul 2019 13:22:21 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Applied "spi: pxa2xx: Balance runtime PM enable/disable on error" to the spi tree
-In-Reply-To: <20190719122713.3444318-1-lkundrak@v3.sk>
-X-Patchwork-Hint: ignore
-Message-Id: <20190722122221.4CCCE27416CB@ypsilon.sirena.org.uk>
-Date:   Mon, 22 Jul 2019 13:22:21 +0100 (BST)
+        id S1728908AbfGVMZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 08:25:19 -0400
+Received: from relay.sw.ru ([185.231.240.75]:41606 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727040AbfGVMZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 08:25:19 -0400
+Received: from [172.16.25.12]
+        by relay.sw.ru with esmtp (Exim 4.92)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1hpXNO-0001ko-UQ; Mon, 22 Jul 2019 15:25:11 +0300
+Subject: Re: [PATCH] ubsan: build ubsan.c more conservatively
+To:     Arnd Bergmann <arnd@arndb.de>, akpm@linux-foundation.org
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, stable@vger.kernel.org,
+        Sodagudi Prasad <psodagud@codeaurora.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+References: <20190722091050.2188664-1-arnd@arndb.de>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <c7da8503-93bc-c130-2e50-918996abe6c7@virtuozzo.com>
+Date:   Mon, 22 Jul 2019 15:25:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190722091050.2188664-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
 
-   spi: pxa2xx: Balance runtime PM enable/disable on error
 
-has been applied to the spi tree at
+On 7/22/19 12:10 PM, Arnd Bergmann wrote:
+> objtool points out several conditions that it does not like, depending
+> on the combination with other configuration options and compiler
+> variants:
+> 
+> stack protector:
+> lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch()+0xbf: call to __stack_chk_fail() with UACCESS enabled
+> lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch_v1()+0xbe: call to __stack_chk_fail() with UACCESS enabled
+> 
+> stackleak plugin:
+> lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch()+0x4a: call to stackleak_track_stack() with UACCESS enabled
+> lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch_v1()+0x4a: call to stackleak_track_stack() with UACCESS enabled
+> 
+> kasan:
+> lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch()+0x25: call to memcpy() with UACCESS enabled
+> lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch_v1()+0x25: call to memcpy() with UACCESS enabled
+> 
+> The stackleak and kasan options just need to be disabled for this file
+> as we do for other files already. For the stack protector, we already
+> attempt to disable it, but this fails on clang because the check is
+> mixed with the gcc specific -fno-conserve-stack option, so we need to
+> test them separately.
+> 
+> Fixes: 42440c1f9911 ("lib/ubsan: add type mismatch handler for new GCC/Clang")
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.3
+There was no uaccess validataion at that time, so the right fixes line is probably this:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Fixes: d08965a27e84 ("x86/uaccess, ubsan: Fix UBSAN vs. SMAP")
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> Link: https://lore.kernel.org/lkml/20190617123109.667090-1-arnd@arndb.de/t/
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  lib/Makefile | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/Makefile b/lib/Makefile
+> index 095601ce371d..320e3b632dd3 100644
+> --- a/lib/Makefile
+> +++ b/lib/Makefile
+> @@ -279,7 +279,8 @@ obj-$(CONFIG_UCS2_STRING) += ucs2_string.o
+>  obj-$(CONFIG_UBSAN) += ubsan.o
+>  
+>  UBSAN_SANITIZE_ubsan.o := n
+> -CFLAGS_ubsan.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
+> +KASAN_SANITIZE_ubsan.o := n
+> +CFLAGS_ubsan.o := $(call cc-option, -fno-conserve-stack) $(call cc-option, -fno-stack-protector) $(DISABLE_STACKLEAK_PLUGIN)
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+$(call cc-option, -fno-conserve-stack) can be removed entirely. It's just copy paste from kasan Makefile.
+It was added in kasan purely for performance reasons.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 1274204542f683e1d8491ebe9cc86284d5a8ebcc Mon Sep 17 00:00:00 2001
-From: Lubomir Rintel <lkundrak@v3.sk>
-Date: Fri, 19 Jul 2019 14:27:13 +0200
-Subject: [PATCH] spi: pxa2xx: Balance runtime PM enable/disable on error
-
-Don't undo the PM initialization if we error out before we managed to
-initialize it. The call to pm_runtime_disable() without being preceded
-by pm_runtime_enable() would disturb the balance of the Force.
-
-In practice, this happens if we fail to allocate any of the GPIOS ("cs",
-"ready") due to -EPROBE_DEFER because we're getting probled before the
-GPIO driver.
-
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Link: https://lore.kernel.org/r/20190719122713.3444318-1-lkundrak@v3.sk
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-pxa2xx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-index fc7ab4b26880..22513caf2000 100644
---- a/drivers/spi/spi-pxa2xx.c
-+++ b/drivers/spi/spi-pxa2xx.c
-@@ -1831,14 +1831,16 @@ static int pxa2xx_spi_probe(struct platform_device *pdev)
- 	status = devm_spi_register_controller(&pdev->dev, controller);
- 	if (status != 0) {
- 		dev_err(&pdev->dev, "problem registering spi controller\n");
--		goto out_error_clock_enabled;
-+		goto out_error_pm_runtime_enabled;
- 	}
- 
- 	return status;
- 
--out_error_clock_enabled:
-+out_error_pm_runtime_enabled:
- 	pm_runtime_put_noidle(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
-+
-+out_error_clock_enabled:
- 	clk_disable_unprepare(ssp->clk);
- 
- out_error_dma_irq_alloc:
--- 
-2.20.1
-
+Not sure that it's needed even in kasan Makefile, the code which was
+the reason for adding fno-conserve-stack might not get into the final version of KASAN patches.
