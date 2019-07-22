@@ -2,95 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7E27707C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:43:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0138D70797
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:40:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731483AbfGVRnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 13:43:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47940 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726130AbfGVRnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 13:43:02 -0400
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 282C42190D;
-        Mon, 22 Jul 2019 17:42:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563817380;
-        bh=J4QDGPm/HqiSCuR1xHuJRjaQQzQhDnzCGrNpfv9LO+I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V/rCM62keRnAQCVqoR1oKSv25g3BeDbso904GjLPs8qpsXw7647NLa/Zcf216Y9Np
-         TwYawGr3anNeD+OiQnP1i5I5BsD9I0HzuhInuP8r77Fepl+DwN0ddF+SjO2SlArpji
-         796Hxm1ogH6WC04br98RlS5PB1D76A7PSYyJHEJs=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Subject: [PATCH 37/37] perf build: Do not use -Wshadow on gcc < 4.8
-Date:   Mon, 22 Jul 2019 14:38:39 -0300
-Message-Id: <20190722173839.22898-38-acme@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190722173839.22898-1-acme@kernel.org>
-References: <20190722173839.22898-1-acme@kernel.org>
+        id S1729598AbfGVRjn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 13:39:43 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:33239 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729483AbfGVRji (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 13:39:38 -0400
+Received: by mail-io1-f66.google.com with SMTP id z3so75838742iog.0;
+        Mon, 22 Jul 2019 10:39:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yuyB8pILujpflF/Q/M9APeaT5IXpHOGkbQKNsVipriU=;
+        b=YMnDDGpqtihngU2XWC4e9SLK1sLrK28a7LKJBSpEwCjcLouedXzcTGrHou65W6SfSV
+         rHMHML8qaNGPuIJ3wcIi3ZVgx7puk8T5kviG53nnYuqNcaTiXROyL2NYDe3F31XQcutI
+         peVgLKOXOhBoor2j+PgkQg5mqK5LmDOv6hKUAGT87MAWb/oGSpWrm6jL5x+cgo8WoL6d
+         evleacvElgPIEumo3tWSRJxbL30GBZqmVfa37En8q7cLC2UiFo0ocoS2KDgDP38A2/fG
+         wYXjR9RPSD6i8vyrJWy/yOIHU92Z7rn4mPSOswrCSZIjhOfiMHQj+8r4qB8gayCRwF+W
+         xtag==
+X-Gm-Message-State: APjAAAX/JE0yrEk0c+62p54U3IXsY3s4ZHyj9RWdMsGNo1uKLKsTbuYg
+        xL0qmQdE+byfGfXLKL8tPg==
+X-Google-Smtp-Source: APXvYqxNSkCw3W+oC2a+dAbLpos4fIcmpa8N1UVKkDaxst8+m0rwQM+coXmVvshQIkATlSLf6D7EeA==
+X-Received: by 2002:a02:b713:: with SMTP id g19mr74167358jam.77.1563817177425;
+        Mon, 22 Jul 2019 10:39:37 -0700 (PDT)
+Received: from localhost ([64.188.179.254])
+        by smtp.gmail.com with ESMTPSA id i3sm37295539ion.9.2019.07.22.10.39.36
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 22 Jul 2019 10:39:36 -0700 (PDT)
+Date:   Mon, 22 Jul 2019 11:39:36 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jitao Shi <jitao.shi@mediatek.com>
+Cc:     Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        linux-pwm@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Jitao Shi <jitao.shi@mediatek.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Ajay Kumar <ajaykumar.rs@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Rahul Sharma <rahul.sharma@samsung.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vincent Palatin <vpalatin@chromium.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        Sascha Hauer <kernel@pengutronix.de>,
+        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
+        cawa.cheng@mediatek.com, bibby.hsieh@mediatek.com,
+        ck.hu@mediatek.com, stonea168@163.com,
+        Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: [v3 3/4] dt-bindings: display: panel: add auo kd101n80-45na
+ panel bindings
+Message-ID: <20190722173936.GA26950@bogus>
+References: <20190626025400.109567-1-jitao.shi@mediatek.com>
+ <20190626025400.109567-4-jitao.shi@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190626025400.109567-4-jitao.shi@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+On Wed, 26 Jun 2019 10:53:59 +0800, Jitao Shi wrote:
+> Add documentation for auo kd101n80-45na panel.
+> 
+> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
+> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+> ---
+>  .../display/panel/auo,kd101n80-45na.txt       | 34 +++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/auo,kd101n80-45na.txt
+> 
 
-As it is too strict, see https://lkml.org/lkml/2006/11/28/253 and
-https://gcc.gnu.org/gcc-4.8/changes.html, that takes into account
-Linus's comments (search for Wshadow) for the reasoning about -Wshadow
-not being interesting before gcc 4.8.
-
-Acked-by: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/r/20190719183417.GQ3624@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/scripts/Makefile.include | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/tools/scripts/Makefile.include b/tools/scripts/Makefile.include
-index 495066bafbe3..ded7a950dc40 100644
---- a/tools/scripts/Makefile.include
-+++ b/tools/scripts/Makefile.include
-@@ -32,7 +32,6 @@ EXTRA_WARNINGS += -Wno-system-headers
- EXTRA_WARNINGS += -Wold-style-definition
- EXTRA_WARNINGS += -Wpacked
- EXTRA_WARNINGS += -Wredundant-decls
--EXTRA_WARNINGS += -Wshadow
- EXTRA_WARNINGS += -Wstrict-prototypes
- EXTRA_WARNINGS += -Wswitch-default
- EXTRA_WARNINGS += -Wswitch-enum
-@@ -69,8 +68,16 @@ endif
- # will do for now and keep the above -Wstrict-aliasing=3 in place
- # in newer systems.
- # Needed for the __raw_cmpxchg in tools/arch/x86/include/asm/cmpxchg.h
-+#
-+# See https://lkml.org/lkml/2006/11/28/253 and https://gcc.gnu.org/gcc-4.8/changes.html,
-+# that takes into account Linus's comments (search for Wshadow) for the reasoning about
-+# -Wshadow not being interesting before gcc 4.8.
-+
- ifneq ($(filter 3.%,$(MAKE_VERSION)),)  # make-3
- EXTRA_WARNINGS += -fno-strict-aliasing
-+EXTRA_WARNINGS += -Wno-shadow
-+else
-+EXTRA_WARNINGS += -Wshadow
- endif
- 
- ifneq ($(findstring $(MAKEFLAGS), w),w)
--- 
-2.21.0
-
+Reviewed-by: Rob Herring <robh@kernel.org>
