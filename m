@@ -2,118 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36A486FF3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:08:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FDCD6FF44
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:09:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730194AbfGVMIH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 08:08:07 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45996 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728721AbfGVMIG (ORCPT
+        id S1728792AbfGVMJV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 08:09:21 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:39705 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727164AbfGVMJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 08:08:06 -0400
-Received: by mail-ot1-f65.google.com with SMTP id x21so1471472otq.12
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 05:08:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=Af5q3pzK8YbyMu7eQ7nJoeAsxaw9gztCkAyDW9JfpLo=;
-        b=SvIhmUBljR/y/mJDvo1nweHOZauQYZW5XcZ1uXh1Ct7xsOq4RYZ9uxdt06THY5BE79
-         VI4tzvsruDWfNbHKCUjWWWBuiHiOzPsAnj6ip/WZL3QzKkeRqzrLuGfLJ9gKYs5GbPcn
-         25YWB89fXiwTJ8gUFfXlya8x77sS/o13L7CZkt+K3MGiCeynNEGIZP3jW0IS4tUDw3Wd
-         gyIRjoWBgYs8FHixHGJj5g3x6wZfWnybFYi9Am/+vnNiV5B27VRaelnzajMYh6AoZfaV
-         +BfGoZtyeTvqATDahdMG0Xo43k+R8ZWMiWY4LWirAHavVIoFuU6B7q8X98DhhSFk5R5i
-         9d7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=Af5q3pzK8YbyMu7eQ7nJoeAsxaw9gztCkAyDW9JfpLo=;
-        b=hCvso6qtnPKyo0L8pQg70EZBftG+PCCayiL/QmpYVPbyiQQ66m3qe8ECDukb/qBlXI
-         x2jaCrCZ1F3gPZ27pNtCwM3NhUDAymQ+uWPgm6yjd5yCmUJmZw00xsaFSvPR9JQyOKfL
-         Bc5SKHM5q0NFw1bpL9mpVvbadWFVikbQ96YDi6/RBVkmMUdHJbc0ISWQ5zI3+lhHfJkP
-         Xty3fduNFlNQKigHTmCYF6JTlYF1yzywW1KoU45a+Qp5t9haKXpeiTDT3w4VMFpv5aWl
-         TdIk196JGhdi9+1jAPInHLX/jVOyiGqBAAAXKYMtwBEmZTnV5RPKRNk4MKDfDet/wyqg
-         8iig==
-X-Gm-Message-State: APjAAAUrc4M3DOhGK66eItiDuQ+ABzecQqRfpXZkmPmKyCziGQIsF3rj
-        Ogot02dp60PU/ue+O+GPDg5S3Uy5AyEvISCUUgg=
-X-Google-Smtp-Source: APXvYqxMkGhfE8XaC92SClqSe6ymQZ87E5SS27+Ild3GYVciQj5aYVn6YOG9MbjorvIvTxeDm0P8eLf4Y4P/f9jlMog=
-X-Received: by 2002:a9d:7c8f:: with SMTP id q15mr24546661otn.24.1563797285784;
- Mon, 22 Jul 2019 05:08:05 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a05:6830:2043:0:0:0:0 with HTTP; Mon, 22 Jul 2019 05:08:04
- -0700 (PDT)
-Reply-To: abdellatife56jouahri@aol.com
-From:   "mr.Abdellatife Jouahri" <chintuwathankgodchisom@gmail.com>
-Date:   Mon, 22 Jul 2019 05:08:04 -0700
-Message-ID: <CAGVsEK-8ewvHOm2V1CZi28M8-QyK0e50hpYzUtokaY=JM9ScBg@mail.gmail.com>
-Subject: VERRY VERRY URGENT
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 22 Jul 2019 08:09:21 -0400
+Received: from orion.localdomain ([77.2.59.209]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MekGB-1iNDJv36EX-00amPr; Mon, 22 Jul 2019 14:09:14 +0200
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com,
+        linux-leds@vger.kernel.org
+Subject: [PATCH v2] leds: apu: fix error message on probing failure
+Date:   Mon, 22 Jul 2019 14:08:51 +0200
+Message-Id: <1563797331-20993-1-git-send-email-info@metux.net>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <f54bb3f1-2699-1213-f568-b2c529488306@gmail.com>
+References: <f54bb3f1-2699-1213-f568-b2c529488306@gmail.com>
+X-Provags-ID: V03:K1:twfbsdyrMY1t8hU0eBnLydbY1wE9g/y95PqHR65xBHZZmB6WuWu
+ OdEdXmyaLgx31ljrxTvBh2exohkXbLJ6FTsrK+5+GOF/TcbW65DpnGLpfNkpiq6KXF5B7JG
+ mCZD36RJPaUWOVi/A+a1qGiu8SqTS5gntKe9+wohlUQ+P+n1KVPKR1pH+5i/84kaxJHwM9K
+ w1JD4Hm77TStf2SpDKy9Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:wPAEYyhkoC8=:wgNty8SQYgWNjCgY6oUu9c
+ ySl77B1ICFcqAvTuW6xJpuCzSBu9fueX/YPb+WMqJOWKz5ZLpA/FWDs3mqyjbMFcmRUJYWTTL
+ 4i1Uei15et+oqi6G8nJSe2FIger3PzkRqFpvhlBWEhTuTzwpeUAcBtans4of/R4zGV5qjcBmM
+ w0YfMC8MXkLYadC0H0xuCUmsE28YqlSufaNzBel2Yzm7K+9FeKcq2WM+ro3YDYKdtJaLxpqcX
+ y9l4qDissfZJbYcww71HF9QGa41UIJGbFkKjV+rwQdVOZ3tRcpfyALXbTrOFCnWDfgkTRP3SU
+ dvhnARiyrIqvr9YMsFL26gpJvovrcobDkHXib/quSO312ipLhVqTjY+RrfbTCFtuFZlV0z8Sk
+ /iJAIUlG7I71Gsdjg46bAJgTthOQBB3v2ze5ZF1WGxwEqsyDMxIGOYFf82gwzZS4XXeL/tK10
+ oUd5X9FRqYr/r9Prebz6fxQAr+emRXFtgtBseB8VwdnfNJhEBqYxqQmm3umBgAMWEuCvGqAFb
+ jMNYuspItKGJKLliftd0Vwd/1hTpxKFgC1T+dBEWBPHpYlJhet2Be5onvdO/OqP9T1IcZSx6r
+ ke0fKNIfixdmLuZAA6alhJWXvwBA0c613FPOFeLI3Ap26S0mbViptI4LHp3R6zYsnTCKglsKG
+ DdbuqlVjPEKlWXFM13fj5B5ZtO4e2V6klEwB2EVm/D0YFDuvtWAljj2QTOXW0muW0rB0gwQLY
+ 0rpnMQZ7CnjIF1AjVa8Wvdwi1t7u6IOG/kUNAw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FROM Mr.ABDELLATIFE JOUAHRI
-AUDIT& ACCOUNT MANAGER
-BANK OF AFRICA (B.O.A)
-OUAGADOUGOU BURKINA FASO
-WEST AFRICA.
+From: Enrico Weigelt <info@metux.net>
 
-Dear Friend,
-With due respect, I have decided to contact you on a business
-transaction that will be beneficial to both of us. At the bank last
-account and auditing evaluation, my staffs came across an old account
-which was being maintained by a foreign client who we learn was among
-the deceased passengers of motor accident on November.2003, the
-deceased was unable to run this account since his death. The account
-has remained dormant without the knowledge of his family since
-it was put in a safe deposit account in the bank for future investment
-by the client.
-Since his demise, even the members of his family haven't applied for
-claims over this fund and it has been in the safe deposit account
-until I discovered that it cannot be claimed since our client is
-A foreign national and we are sure that he has no next of kin here to
-file claims over the money. As the director of the department, this
-discovery was brought to my office so as to decide what is to be done
-.I decided to seek ways through which to transfer this money out of
-the bank and out of the country too.
-The total amount in the account is 18.6 million with my positions as
-staffs of the bank, I am handicapped because I cannot operate foreign
-accounts and cannot lay strong claim over this money. The client was a
-foreign national and you will only be asked to act as his next of kin
-and I will supply you with all the necessary information and bank data
-to assist you in being able to transfer this money to any bank of
-your choice where this money could be transferred into .The total sum
-will be shared as follows: 50% for me, 50% for you and expenses
-incidental occur during the transfer will be incur by both of us. The
-transfer is risk free on both sides hence you are going to follow my
-instruction till the fund transfer to your account. Since I work in
-this bank that is why you should be confident in the success of this
-transaction because you will be updated with information as at when
-desired.
-I will wish you to keep this transaction secret and confidential as I
-am hoping to retire with my share of this money at the end of
-transaction which will be when this money is safety in your account. I
-will then come over to your country for sharing according to the
-previously agreed percentages. You might even have to advise me on
-possibilities of investment in your country or elsewhere of our
-choice. May God help you to help me to a restive retirement, Amen, And
-You have to contact me through my private e-mail at
-(abdellatife56jouahri@aol.com)Please for further information and
-inquires feel free to contact me back immediately for more explanation
-and better understanding I want you to assure me your capability of
-handling this project with trust by providing me your following
-information details such as:
+The current error message on failed probing tends to be a bit
+misleading. Fix it to tell exactly that an APU v1 was not found.
 
-(1)NAME..............
-(2)AGE:................
-(3)SEX:.....................
-(4)PHONE NUMBER:.................
-(5)OCCUPATION:.....................
-(6)YOUR COUNTRY:.....................
+Signed-off-by: Enrico Weigelt <info@metux.net>
+---
+ drivers/leds/leds-apu.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-Yours sincerely,
+diff --git a/drivers/leds/leds-apu.c b/drivers/leds/leds-apu.c
+index 451cb9f..d794f49 100644
+--- a/drivers/leds/leds-apu.c
++++ b/drivers/leds/leds-apu.c
+@@ -170,13 +170,9 @@ static int __init apu_led_init(void)
+ 	struct platform_device *pdev;
+ 	int err;
+ 
+-	if (!dmi_match(DMI_SYS_VENDOR, "PC Engines")) {
+-		pr_err("No PC Engines board detected\n");
+-		return -ENODEV;
+-	}
+-	if (!(dmi_match(DMI_PRODUCT_NAME, "APU"))) {
+-		pr_err("Unknown PC Engines board: %s\n",
+-				dmi_get_system_info(DMI_PRODUCT_NAME));
++	if (!(dmi_match(DMI_SYS_VENDOR, "PC Engines") &&
++	      dmi_match(DMI_PRODUCT_NAME, "APU"))) {
++		pr_err("No PC Engines APUv1 board detected. For APUv2,3 support, enable CONFIG_PCENGINES_APU2\n");
+ 		return -ENODEV;
+ 	}
+ 
+-- 
+1.9.1
 
-Mr.Abdellatife Jouahri
