@@ -2,71 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3706D6FEC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 13:35:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D1326FECC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 13:36:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729903AbfGVLfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 07:35:06 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:38285 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728824AbfGVLfF (ORCPT
+        id S1729925AbfGVLgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 07:36:36 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:55717 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728034AbfGVLgg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 07:35:05 -0400
-Received: by mail-qk1-f194.google.com with SMTP id a27so28299579qkk.5;
-        Mon, 22 Jul 2019 04:35:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L01qCkz8R2xosfyuEZvp1ctsvHkk0ZS7YXCL1fbHTTg=;
-        b=V1xDSGptsNrwk6a8CB9xAxQJOKSDbpUeYEDDId/RmKPnCpn7dzP2n5AYEed6GxEHvE
-         V9+J3BclTiHr/ztPgCUQxrCfb9gm+qCFMQ6mGlaUesqePuEu49l/SPGK+GkZP0abE3CE
-         BgmePsM1YMRIluOue31ZeUkYPPucZrQJcOVbozhLod9WeOY+Zm1zy9hk6fUz/I1y2pgu
-         nS0SGgHNwNHuaUKCd9bopZatU2Dxjr/A1JGxggaHyxoG4oQ9V4PGwScSCzPu/iYQkhP6
-         3Z+OR0JdUthnErx8/Oa/YvarAwegdP5VrIsA1dZWJrhBTzWjvOAQLMJgwzQYqhL06Dwu
-         XBAw==
-X-Gm-Message-State: APjAAAW/FSLcFxK1tRNoWxUwVm0gX7PqIGSF44rpYMw+5JO8DLT9sscF
-        613t+h7XWRLwTkuChxRcQ6DcspXav9bai5DyjDNSmF5N
-X-Google-Smtp-Source: APXvYqwRV3AHra+9bgdoKzmcZiOOOQxgoLcbky0BTTL3fo7ZF95gQIxNo++LmeKMMuuvz8KOxwtMm3o9h+tRgxz0bGg=
-X-Received: by 2002:a37:4ac3:: with SMTP id x186mr44586497qka.138.1563795304533;
- Mon, 22 Jul 2019 04:35:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <87ftmys3un.fsf@oldenburg2.str.redhat.com>
-In-Reply-To: <87ftmys3un.fsf@oldenburg2.str.redhat.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 22 Jul 2019 13:34:48 +0200
-Message-ID: <CAK8P3a0hC4wvjwCi4=DCET3C4qARMY6c58ffjwG3b1ZPM6kr-A@mail.gmail.com>
-Subject: Re: [PATCH glibc] Linux: Include <linux/sockios.h> in <bits/socket.h>
- under __USE_MISC
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     GNU C Library <libc-alpha@sourceware.org>,
-        Sergei Trofimovich <slyfox@gentoo.org>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        linux-man <linux-man@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 22 Jul 2019 07:36:36 -0400
+Received: from orion.localdomain ([77.2.59.209]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MDyoU-1hfeiF40Ps-009zPi; Mon, 22 Jul 2019 13:36:29 +0200
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     info@metux.net, dvhart@infradead.org, andy@infradead.org,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH] platform/x86/pcengines-apuv2: use KEY_RESTART for front button
+Date:   Mon, 22 Jul 2019 13:36:19 +0200
+Message-Id: <1563795379-7521-1-git-send-email-info@metux.net>
+X-Mailer: git-send-email 1.9.1
+X-Provags-ID: V03:K1:xv3sdLlicg7odtFSbhiPyDIZ4SM9Cjl3T8XzhC+XWA/0cfZY1Cl
+ sFwRqDGry7kIUVRTYAu5Dy33cBbLvV/iajDRT9GaSfhMxA1Tk/Ck5uctL6lsUdmO9gnzTRV
+ rNB4f/ByQteTZHuhgCqqp/dKW4YoFZpnVMdnJBs4+iIIMGETOOdzT01mc/dOkaM16BBTPvn
+ nYEPeS5q8rZgNxiLUThpg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5egK05G+yqo=:ir1F/wdYyU858FWrWL6L40
+ lSZ4Wd8kiYnJoVUpHcTvi/PG1FfnEMCFSvVEkOGJP3vk4MY5/w+QliEcsqFVrfk+779/B0p6N
+ x8v1WuhEqhsaf3+im5nPhWaxOU+X496chuFgjf5dpRzWzlablLuivmn6kxfzNBanJF9cwFFso
+ 76BuvgwOxVroONDCpipC5oCwZ7gPaaL+PvCUFnP29Js4mCJ4wbgYUBg93rUgaOgB9DncBnSsE
+ HIYBifwvzufn+7k8oHxEw54IVgm66jEA2y/ATwlJV8iSAOTYO/mv3q6Ty37HvmmIjm/1NtbN1
+ kvQX/0o/UjkWrYn93uzBZH14tLt5uQ7xHA732nEtK4L1Ab6k78+AuHDR4gAL5CQ6G+ZhjVk57
+ NGl3iJBwk7LbqPT4ab28c5EQZFYbJu0dPJUVqimjAURdxG05KKA1QSor6GonnHmzff93TwaBs
+ 7SIV+FRTAsBHPK5LhIlqNA1TaOZab9J+C5qJTq19TCQfuneeKLBn5n9LTbHeqNtIIuUQT9RXe
+ QFObKwqxt8RxdQQ0I78/3NYM9MiH1SB/I2vdHHcs0VI5ZypKrhqDhL2U4MuhHkJC8lO2Nlctn
+ x/Pec7zyXYnqBpgDt/SZN2qCWCnRpcIUsZz+AovfLZ/lMoShHH5LcR5AbtyLZZf4Fx12DKKIZ
+ beK17y6yLABF2sYs5VlpYvuyGXLbOjx7+trs+WO7MJDmacbxa5oR5H2QMavAxpb3lryeZrVyY
+ FhaTXscXDpnQprm3H23Y7EjesiwpdWXTH6lUYg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 1:31 PM Florian Weimer <fweimer@redhat.com> wrote:
->
-> Historically, <asm/socket.h> (which is included from <bits/socket.h>)
-> provided ioctl operations for sockets.  User code accessed them
-> through <sys/socket.h>.  The kernel UAPI headers have removed these
-> definitions in favor of <linux/sockios.h>.  This commit makes them
-> available via <sys/socket.h> again.
+From: Enrico Weigelt <info@metux.net>
 
-Looks good to me.
+The keycode KEY_RESTART is more appropriate for the front button,
+as most people use it for things like restart or factory reset.
 
-I wonder if we should still do these two changes in the kernel:
+Signed-off-by: Enrico Weigelt <info@metux.net>
+---
+ drivers/platform/x86/pcengines-apuv2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- include asm/socket.h from linux/socket.h for consistency
-- move the defines that got moved from asm/sockios.h to linux/sockios.h
-  back to the previous location to help anyone who is user
-  newer kernel headers with older glibc headers.
+diff --git a/drivers/platform/x86/pcengines-apuv2.c b/drivers/platform/x86/pcengines-apuv2.c
+index b0d3110..4138007c 100644
+--- a/drivers/platform/x86/pcengines-apuv2.c
++++ b/drivers/platform/x86/pcengines-apuv2.c
+@@ -93,7 +93,7 @@
+ 
+ static struct gpio_keys_button apu2_keys_buttons[] = {
+ 	{
+-		.code			= KEY_SETUP,
++		.code			= KEY_RESTART,
+ 		.active_low		= 1,
+ 		.desc			= "front button",
+ 		.type			= EV_KEY,
+-- 
+1.9.1
 
-      Arnd
