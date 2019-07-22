@@ -2,108 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FF62708B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:35:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9398708C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:37:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730197AbfGVSe0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 14:34:26 -0400
-Received: from mail-eopbgr680068.outbound.protection.outlook.com ([40.107.68.68]:64738
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727855AbfGVSe0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 14:34:26 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=k4z4avDFHMFNPhyDBllFg7KZ9V/GjG2lASbofCrfAZa4NkSGPqNI6CtSHYlF+awIEe7udLQixqoY43LGiwyZ/wq9k5xJT39IlAKpVij2WP+vLqARyBG8U19BYya/Vy5WXRIb2pOB+ZmsQQdxgFv1XDsHU1NW7CZM67CVQcY0LOQsIwxjF5DFg8Mh4+BRFHzRkyBPfbrlLyIVRBa/A36EM1vUvm1BYB0O8hedxRwReHlOp8xBueYepB1l2zlCZ3Cn+FpVOY+JbDDCBnmR4GLDuGbvAUDd8vJXrixqRWbrqqZQJB8/3ASEMBvgYji7pBjPD0NpGtMr+bXIxCBuQzBMpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j+whafBv6dvP4kqssG21n82+bw58Xj1lDtfyufnenwc=;
- b=gPjghOXec04ZPggwousBCYf7+E5CvFu5yH5TabyUsKE7hRTrMWhvdDU+h52TK1bWT8HKykrx31Bkcxoe/zdM2L3iWfZLUTZo0MUJ/w2ttHW7ebOcshU8VXrr6ZQJoU87oO+SsAD4bZDKQkHJIP9Hjs8Ny5GtWvdJ1hSBSF2TdhoDZPjkl4/guLgDiY5pFWyYuU+L00jJnm/IU98YNc0qbY3yUje9GUu3I+SVyqx4du88p1ebVOs+aAnTpGFNjssRoWSvUbmH2sq7Yzszae7ipEgiodRAWqV5DkncUmoCGgsNYW+/HuYETlGUzHiPvAaNu2Ng0L5j+77fIKyVqCl9cg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=vmware.com;dmarc=pass action=none
- header.from=vmware.com;dkim=pass header.d=vmware.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j+whafBv6dvP4kqssG21n82+bw58Xj1lDtfyufnenwc=;
- b=bANGXbCvypER1/DNkWS4vB98eXuoS/6q1mnareOi/k0QSrprCuOVye7t8b3UtSfqYQjQCi6TWsplfB8f7BH9TwJG/UsxpFZld+b3s6skoQ3dM5QoAzHOoKiE03PCeM9ztQ4ozIuZ3VvsXjtXOMCDPKCc9fW69OEynS7+WIClsAk=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB3943.namprd05.prod.outlook.com (52.135.195.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.10; Mon, 22 Jul 2019 18:34:23 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::e00b:cb41:8ed6:b718]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::e00b:cb41:8ed6:b718%2]) with mapi id 15.20.2115.005; Mon, 22 Jul 2019
- 18:34:23 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH v3 1/9] smp: Run functions concurrently in
- smp_call_function_many()
-Thread-Topic: [PATCH v3 1/9] smp: Run functions concurrently in
- smp_call_function_many()
-Thread-Index: AQHVPc0owCZu4w44l0OVUg4r6D6Gu6bW+RmAgAADdQA=
-Date:   Mon, 22 Jul 2019 18:34:22 +0000
-Message-ID: <C93C241E-E078-4825-8C59-39C84D30F9CB@vmware.com>
-References: <20190719005837.4150-1-namit@vmware.com>
- <20190719005837.4150-2-namit@vmware.com>
- <20190722182159.GB6698@worktop.programming.kicks-ass.net>
-In-Reply-To: <20190722182159.GB6698@worktop.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [66.170.99.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8620cf3f-50bc-4508-3e01-08d70ed337c3
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR05MB3943;
-x-ms-traffictypediagnostic: BYAPR05MB3943:
-x-microsoft-antispam-prvs: <BYAPR05MB3943F2973349179A5881AFE1D0C40@BYAPR05MB3943.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1332;
-x-forefront-prvs: 01068D0A20
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(396003)(39860400002)(376002)(366004)(199004)(189003)(229853002)(6116002)(2616005)(476003)(76176011)(186003)(71190400001)(71200400001)(53546011)(81166006)(36756003)(5660300002)(11346002)(33656002)(7736002)(102836004)(4326008)(81156014)(3846002)(6506007)(6916009)(64756008)(66476007)(76116006)(66556008)(66446008)(66946007)(14454004)(26005)(86362001)(53936002)(68736007)(99286004)(66066001)(446003)(478600001)(6512007)(6246003)(2906002)(6486002)(25786009)(316002)(4744005)(8936002)(256004)(54906003)(14444005)(8676002)(305945005)(486006)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB3943;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: GMF21qDiLXjS/Pazm2146TUKZF/NNrzkaND/1SxgRpP9qiTixIMvAzbktxvtd3JXDi0LWri0Hn7lgJ/MJjRS+v2tn8kVDyVZ8BwDSUCMlc1j4yWaZFrV5oh275QxxcsEB31HRxgjUvAx/Xyk5ZyIg8/70ZagEpTEIPFMowKT8lYSPvhpsCCBXuSThuTdUtgsmOuQ6X+AnacIPn6A5reymlyELdcrQjQunKQKK9UGe7soOjXsTq1n/SZSKmceBOoylhekBvCkFXX+m41RUr5fDeY/nnkMhAzEz5I9CaCTM/FYHEMJsuiou4zoVazYqZO/RFzHdM317D3OdsiaHhqX9Y2duGoVgQ7f3srXcKDO+7HGID2Vi4qgKqiM2vpqkFaeoLRBWVAhklcnCy5HSRB2d4OkbW46ZzSVznBL9VsZS34=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1CA8EDC67F4B37449680634FF20D1F0D@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8620cf3f-50bc-4508-3e01-08d70ed337c3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jul 2019 18:34:23.0066
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: namit@vmware.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB3943
+        id S1731053AbfGVSgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 14:36:36 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:42134 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730788AbfGVSgf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 14:36:35 -0400
+Received: by mail-vs1-f65.google.com with SMTP id 190so26932740vsf.9
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 11:36:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=u4izuYmo+kNsiUwAXM6ygOEvVOhLNkyI5KbJVUzFn+o=;
+        b=OE9sSa6dSyW4rlvqEDZqiHHMx+zdjcFF4nHX2Nq43G5o3nY4FdO7e6I5aDPhCLSA63
+         ezt/SzN3dDHfet/eOU6H0EwFFnIcgIn8Mjfh66eKyeV5oWlAxjhxaTz0hE2HqekLlPSJ
+         v1t0e3jrQjruBL+j5X+5YBkMZzQSkFre1JrXIf1BtoMXFFST5cZ41eoq3IFLJDcmhC8t
+         1oxieSfa81Ww5oADkfMC4Cu5tYy3XVMCNC2nZ6OTdHqoW2hJVjoR5wCjqwHbAqZVVHrJ
+         GyOEtxyjdVMQIEQmZ7BdOdNO5pCQvhDFVVY1aWkta8d7V37HJuj2RG60UxVtTEfxsVrm
+         F7Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=u4izuYmo+kNsiUwAXM6ygOEvVOhLNkyI5KbJVUzFn+o=;
+        b=l0sKgXzQcseFVfwk7uZW6nO7wXZ81yLyDo7PPUGMjRV7N4y4o4tuu5t1Ye1pw9tcTh
+         To7uErwMjBfq5wfY1qI8xJuymnNnbIsN54SZCreUwg0y01O7ZBhmsbZyfKJNJQIRWvos
+         KTBjnrF5du1X5yMqBhOSeq0GGNfKNVev1x6hCX4i15PusrnprLbFkYpr70MZVypzitii
+         P727KUGIAfLCCWD88F/u/a234Pi7mQ/iAllH6V24q8VD6+VDEKkm/dbeiaksxsfk7x4+
+         SCmuisgvpgk+0FHKgW4wiuQ5gGl6mcXYFQuf7YdoF7evW0jly6r31gliDonF2Cjlkqm4
+         ErRQ==
+X-Gm-Message-State: APjAAAW4Ww8wAWDbnJZBq+2edxtikmCpiU6uwcLp8e2Qg270aVVjrZsD
+        27WXpAb/IvpFcAb3naVwKLAiW+35e06N5Q==
+X-Google-Smtp-Source: APXvYqy8GqANbo1n0A4eT5yNcA1w8us81IfhVKmDbX5eAg+yaJE5Y3SUHdM77HMytoD0nZomDxDIug==
+X-Received: by 2002:a67:8cc7:: with SMTP id o190mr44487527vsd.24.1563820594813;
+        Mon, 22 Jul 2019 11:36:34 -0700 (PDT)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id 10sm15371158vkl.33.2019.07.22.11.36.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Jul 2019 11:36:33 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     saeedm@mellanox.com, leonro@mellanox.com
+Cc:     yishaih@mellanox.com, davem@davemloft.net, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH] net/mlx5: fix -Wtype-limits compilation warnings
+Date:   Mon, 22 Jul 2019 14:34:42 -0400
+Message-Id: <1563820482-10302-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiBKdWwgMjIsIDIwMTksIGF0IDExOjIxIEFNLCBQZXRlciBaaWpsc3RyYSA8cGV0ZXJ6QGlu
-ZnJhZGVhZC5vcmc+IHdyb3RlOg0KPiANCj4gT24gVGh1LCBKdWwgMTgsIDIwMTkgYXQgMDU6NTg6
-MjlQTSAtMDcwMCwgTmFkYXYgQW1pdCB3cm90ZToNCj4+ICsvKg0KPj4gKyAqIENhbGwgYSBmdW5j
-dGlvbiBvbiBhbGwgcHJvY2Vzc29ycy4gIE1heSBiZSB1c2VkIGR1cmluZyBlYXJseSBib290IHdo
-aWxlDQo+PiArICogZWFybHlfYm9vdF9pcnFzX2Rpc2FibGVkIGlzIHNldC4NCj4+ICsgKi8NCj4+
-ICtzdGF0aWMgaW5saW5lIHZvaWQgb25fZWFjaF9jcHUoc21wX2NhbGxfZnVuY190IGZ1bmMsIHZv
-aWQgKmluZm8sIGludCB3YWl0KQ0KPj4gK3sNCj4+ICsJb25fZWFjaF9jcHVfbWFzayhjcHVfb25s
-aW5lX21hc2ssIGZ1bmMsIGluZm8sIHdhaXQpOw0KPj4gK30NCj4gDQo+IEknbSB0aGlua2luZyB0
-aGF0IG9uZSBpZiBidWdneSwgbm90aGluZyBwcm90ZWN0cyBvbmxpbmUgbWFzayBoZXJlLg0KDQpv
-bl9lYWNoX2NwdV9tYXNrKCkgY2FsbHMgX19vbl9lYWNoX2NwdV9tYXNrKCkgd2hpY2ggd291bGQg
-ZGlzYWJsZSBwcmVlbXB0aW9uLg0KVGhlIG1hc2sgbWlnaHQgY2hhbmdlLCBidXQgYW55aG93IF9f
-c21wX2NhbGxfZnVuY3Rpb25fbWFueSgpIHdvdWxkIOKAnGFuZOKAnSBpdCwNCmFmdGVyIGRpc2Fi
-bGluZyBwcmVlbXB0aW9uLCB3aXRoICh0aGUgcG90ZW50aWFsbHkgdXBkYXRlZCkgY3B1X29ubGlu
-ZV9tYXNrLg0KDQpXaGF0IGlzIHlvdXIgY29uY2Vybj8=
+The commit b9a7ba556207 ("net/mlx5: Use event mask based on device
+capabilities") introduced a few compilation warnings due to it bumps
+MLX5_EVENT_TYPE_MAX from 0x27 to 0x100 which is always greater than
+an "struct {mlx5_eqe|mlx5_nb}.type" that is an "u8".
+
+drivers/net/ethernet/mellanox/mlx5/core/eq.c: In function
+'mlx5_eq_notifier_register':
+drivers/net/ethernet/mellanox/mlx5/core/eq.c:948:21: warning: comparison
+is always false due to limited range of data type [-Wtype-limits]
+  if (nb->event_type >= MLX5_EVENT_TYPE_MAX)
+                     ^~
+drivers/net/ethernet/mellanox/mlx5/core/eq.c: In function
+'mlx5_eq_notifier_unregister':
+drivers/net/ethernet/mellanox/mlx5/core/eq.c:959:21: warning: comparison
+is always false due to limited range of data type [-Wtype-limits]
+  if (nb->event_type >= MLX5_EVENT_TYPE_MAX)
+
+Fix them by removing unnecessary checkings.
+
+Fixes: b9a7ba556207 ("net/mlx5: Use event mask based on device capabilities")
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/eq.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+index 41f25ea2e8d9..2df9aaa421c6 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+@@ -215,11 +215,7 @@ static int mlx5_eq_async_int(struct notifier_block *nb,
+ 		 */
+ 		dma_rmb();
+ 
+-		if (likely(eqe->type < MLX5_EVENT_TYPE_MAX))
+-			atomic_notifier_call_chain(&eqt->nh[eqe->type], eqe->type, eqe);
+-		else
+-			mlx5_core_warn_once(dev, "notifier_call_chain is not setup for eqe: %d\n", eqe->type);
+-
++		atomic_notifier_call_chain(&eqt->nh[eqe->type], eqe->type, eqe);
+ 		atomic_notifier_call_chain(&eqt->nh[MLX5_EVENT_TYPE_NOTIFY_ANY], eqe->type, eqe);
+ 
+ 		++eq->cons_index;
+@@ -945,9 +941,6 @@ int mlx5_eq_notifier_register(struct mlx5_core_dev *dev, struct mlx5_nb *nb)
+ {
+ 	struct mlx5_eq_table *eqt = dev->priv.eq_table;
+ 
+-	if (nb->event_type >= MLX5_EVENT_TYPE_MAX)
+-		return -EINVAL;
+-
+ 	return atomic_notifier_chain_register(&eqt->nh[nb->event_type], &nb->nb);
+ }
+ EXPORT_SYMBOL(mlx5_eq_notifier_register);
+@@ -956,9 +949,6 @@ int mlx5_eq_notifier_unregister(struct mlx5_core_dev *dev, struct mlx5_nb *nb)
+ {
+ 	struct mlx5_eq_table *eqt = dev->priv.eq_table;
+ 
+-	if (nb->event_type >= MLX5_EVENT_TYPE_MAX)
+-		return -EINVAL;
+-
+ 	return atomic_notifier_chain_unregister(&eqt->nh[nb->event_type], &nb->nb);
+ }
+ EXPORT_SYMBOL(mlx5_eq_notifier_unregister);
+-- 
+1.8.3.1
+
