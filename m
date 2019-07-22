@@ -2,82 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CA837045B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:46:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C5767044F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:46:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730230AbfGVPqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 11:46:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45894 "EHLO mx1.redhat.com"
+        id S1729198AbfGVPqU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 11:46:20 -0400
+Received: from vern.gendns.com ([98.142.107.122]:44082 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728681AbfGVPpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 11:45:35 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9E684C034DF3;
-        Mon, 22 Jul 2019 15:45:35 +0000 (UTC)
-Received: from redhat.com (ovpn-124-54.rdu2.redhat.com [10.10.124.54])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 954295B681;
-        Mon, 22 Jul 2019 15:45:28 +0000 (UTC)
-Date:   Mon, 22 Jul 2019 11:45:22 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
-        hch@lst.de, m.szyprowski@samsung.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] virtio/virtio_ring: Fix the dma_max_mapping_size call
-Message-ID: <20190722114117-mutt-send-email-mst@kernel.org>
-References: <20190722145509.1284-1-eric.auger@redhat.com>
- <20190722145509.1284-3-eric.auger@redhat.com>
- <e4a288f2-a93a-5ce4-32da-f5434302551f@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e4a288f2-a93a-5ce4-32da-f5434302551f@arm.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 22 Jul 2019 15:45:35 +0000 (UTC)
+        id S1727123AbfGVPqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 11:46:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=1innLmemI1YK9z1CEeqUt59/OsFQDgFrRWTZveqQDFo=; b=et8rX0i0bdlwCoihML2rE8CE+n
+        WJlLtDVFMTum0shQ6D8BN1OfsfGGA/hRMaI+G0RP5LhKxJppFjFfSHj9OA57O+cbWy71lYBShYBO0
+        p0lEpgEGkLFZETJw6lwqJ3Oe5UF9Z9RJHiilz4oN0ZWwBnhHUHLaOgBj+c2M0ASps2h2ymfgNsu8d
+        /gyna72Cyg9n5ldNIAg3DIOJZ838RwxBiZQiC3sqBFTHQ+98Gfod4Axeum0HDsUGZV7Q3uWgTba/j
+        f38J10it5JtaduHPEn2eqWoX061t+RFBZbCHkgXp2nxLj1yDC4QvFT+aEMYnVwADJtNg0B9P4CBHJ
+        HLlDiGzA==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:44690 helo=freyr.lechnology.com)
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <david@lechnology.com>)
+        id 1hpaW1-006p1O-CJ; Mon, 22 Jul 2019 11:46:17 -0400
+From:   David Lechner <david@lechnology.com>
+To:     linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     David Lechner <david@lechnology.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: [PATCH 0/4] new driver for TI eQEP
+Date:   Mon, 22 Jul 2019 10:45:34 -0500
+Message-Id: <20190722154538.5314-1-david@lechnology.com>
+X-Mailer: git-send-email 2.17.1
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 04:36:09PM +0100, Robin Murphy wrote:
-> On 22/07/2019 15:55, Eric Auger wrote:
-> > Do not call dma_max_mapping_size for devices that have no DMA
-> > mask set, otherwise we can hit a NULL pointer dereference.
-> > 
-> > This occurs when a virtio-blk-pci device is protected with
-> > a virtual IOMMU.
-> > 
-> > Fixes: e6d6dd6c875e ("virtio: Introduce virtio_max_dma_size()")
-> > Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> > Suggested-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> >   drivers/virtio/virtio_ring.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > index c8be1c4f5b55..37c143971211 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -262,7 +262,7 @@ size_t virtio_max_dma_size(struct virtio_device *vdev)
-> >   {
-> >   	size_t max_segment_size = SIZE_MAX;
-> > -	if (vring_use_dma_api(vdev))
-> > +	if (vring_use_dma_api(vdev) && vdev->dev.dma_mask)
-> 
-> Hmm, might it make sense to roll that check up into vring_use_dma_api()
-> itself? After all, if the device has no mask then it's likely that other DMA
-> API ops wouldn't really work as expected either.
-> 
-> Robin.
+This series adds device tree bindings and a new counter driver for the Texas
+Instruments Enhanced Quadrature Encoder Pulse (eQEP).
 
-Nope, Eric pointed out it's just dma_addressing_limited that is broken.
+As mentioned in one of the commit messages, to start with, the driver only
+supports reading the current counter value and setting the min/max values.
+Other features can be added on an as-needed basis.
 
-Other APIs call dma_get_mask which handles the NULL mask case fine.
+The only other feature I am interested in is adding is getting time data in
+order to calculate the rotational speed of a motor. However, there probably
+needs to be a higher level discussion of how this can fit into the counter
+subsystem in general first.
 
+This series has been tested on a BeagleBone Blue with the following script:
 
-> >   		max_segment_size = dma_max_mapping_size(&vdev->dev);
-> >   	return max_segment_size;
-> > 
+#!/usr/bin/env python3
+
+from os import path
+from time import sleep
+
+COUNTER_PATH = '/sys/bus/counter/devices'
+COUNTERS = ['counter0', 'counter1', 'counter2']
+COUNT0 = 'count0'
+COUNT = 'count'
+CEILING = 'ceiling'
+FLOOR = 'floor'
+ENABLE = 'enable'
+
+cnts = []
+
+for c in COUNTERS:
+    enable_path = path.join(COUNTER_PATH, c, COUNT0, ENABLE)
+    with open(enable_path, 'w') as f:
+        f.write('1')
+    ceiling_path = path.join(COUNTER_PATH, c, COUNT0, CEILING)
+    with open(ceiling_path, 'w') as f:
+        f.write(str(0xffffffff))
+
+    cnt_path = path.join(COUNTER_PATH, c, COUNT0, COUNT)
+    cnts.append(open(cnt_path, 'r'))
+
+while True:
+    for c in cnts:
+        c.seek(0)
+        val = int(c.read())
+        if val >= 0x80000000:
+            val -= 0x100000000
+        print(val, end=' ')
+    print()
+    sleep(1)
+
+David Lechner (4):
+  dt-bindings: counter: new bindings for TI eQEP
+  counter: new TI eQEP driver
+  ARM: dts: am33xx: Add nodes for eQEP
+  ARM: dts: am335x-boneblue: Enable eQEP
+
+ .../devicetree/bindings/counter/ti-eqep.txt   |  18 +
+ MAINTAINERS                                   |   6 +
+ arch/arm/boot/dts/am335x-boneblue.dts         |  54 +++
+ arch/arm/boot/dts/am33xx-l4.dtsi              |  27 ++
+ drivers/counter/Kconfig                       |  12 +
+ drivers/counter/Makefile                      |   1 +
+ drivers/counter/ti-eqep.c                     | 381 ++++++++++++++++++
+ drivers/pwm/Kconfig                           |   2 +-
+ 8 files changed, 500 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/counter/ti-eqep.txt
+ create mode 100644 drivers/counter/ti-eqep.c
+
+-- 
+2.17.1
+
