@@ -2,135 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7B596F7DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 05:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E68CD6F7E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 05:23:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbfGVDTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 21 Jul 2019 23:19:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33548 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727767AbfGVDTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 21 Jul 2019 23:19:47 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD48421926;
-        Mon, 22 Jul 2019 03:19:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563765585;
-        bh=o9ug2UGWvRNfm5yi/YzSxu10Y1TaJv2KLaYjJ/mfy0Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QgUn3Rj4Aed2n2RovpV4pioNUoW2LcC3GtRy+3THrGzonOpPTFoYCy02l7V5upYjT
-         atHVlacFtwY7jCkSzTBDM4UY73DNKHTkqhxA+s6CBDulL6HsPLWJqH6w3i81D94jKv
-         Vg2NwDzTz3Lub6sWRazgE01R03KHX6XW+KMCbV6Y=
-Date:   Mon, 22 Jul 2019 11:19:16 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: Re: [PATCH 1/4] arm64: Enable TIMER_IMX_SYS_CTR for ARCH_MXC
- platforms
-Message-ID: <20190722031914.GU3738@dragon>
-References: <20190621070720.12395-1-Anson.Huang@nxp.com>
- <20190624022200.GN3800@dragon>
- <20190624022713.GO3800@dragon>
- <DB3PR0402MB39162662C69B45BDB948D002F5E00@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <20190722020026.GQ3738@dragon>
- <AM6PR0402MB39113A76EE8A63F9C9F589C1F5C40@AM6PR0402MB3911.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM6PR0402MB39113A76EE8A63F9C9F589C1F5C40@AM6PR0402MB3911.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1727855AbfGVDXQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 21 Jul 2019 23:23:16 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48060 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726749AbfGVDXP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 21 Jul 2019 23:23:15 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6M3J2WK091282;
+        Mon, 22 Jul 2019 03:22:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=bKQhUIwcPyqKlsiS6x+9R5sqKFbs4BHgdjnU5G7EHlc=;
+ b=DSd3O0zQ4FRuEjIau9hjPInOC22IFeXHKkPNWBaycJAbDHtCgMnpC0R1qzzazWNn2RUp
+ EJzbnMEVutxkhqtjKo1/+F7bc7ijlOUIzsjGpFuoKM8xPSBE+8KBvKfL6COUGBASbIlR
+ NdLk9dXDx8Uen+1SYPrcWtbJqaHAVmhKu/mftrglskgSnxq5VwlqTejE4ywdch5Z1ze0
+ oArggfQEIHPkpkIJv/Fc/TQAjoa9W4LqjYoP3FIT/KA2VJsi50HmO/BadAEYf2tYhq6J
+ A7dQ1qX9Mtp9egiAdbo7amW9Ap4/oWGzGcus5DRjghh4qJZRMF+MX0wvshHrZMwhEg9C gA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2tuukqbw6h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Jul 2019 03:22:47 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6M3I18c139244;
+        Mon, 22 Jul 2019 03:20:46 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2tuts2g8uc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Jul 2019 03:20:46 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6M3KdXA015002;
+        Mon, 22 Jul 2019 03:20:39 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 21 Jul 2019 20:20:38 -0700
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3566.0.1\))
+Subject: Re: [PATCH 2/3] sgi-gru: Remove CONFIG_HUGETLB_PAGE ifdef
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <1563724685-6540-3-git-send-email-linux.bhar@gmail.com>
+Date:   Sun, 21 Jul 2019 21:20:38 -0600
+Cc:     arnd@arndb.de, sivanich@sgi.com, gregkh@linuxfoundation.org,
+        ira.weiny@intel.com, jhubbard@nvidia.com, jglisse@redhat.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1BA84A99-4EB5-4520-BFBD-CD60D5B7AED9@oracle.com>
+References: <1563724685-6540-1-git-send-email-linux.bhar@gmail.com>
+ <1563724685-6540-3-git-send-email-linux.bhar@gmail.com>
+To:     Bharath Vedartham <linux.bhar@gmail.com>
+X-Mailer: Apple Mail (2.3566.0.1)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9325 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1907220037
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9325 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907220037
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 02:15:10AM +0000, Anson Huang wrote:
-> Hi, Shawn
-> 
-> > On Mon, Jun 24, 2019 at 02:35:10AM +0000, Anson Huang wrote:
-> > > Hi, Shawn
-> > >
-> > > > -----Original Message-----
-> > > > From: Shawn Guo <shawnguo@kernel.org>
-> > > > Sent: Monday, June 24, 2019 10:27 AM
-> > > > To: Anson Huang <anson.huang@nxp.com>
-> > > > Cc: mark.rutland@arm.com; Aisheng Dong <aisheng.dong@nxp.com>;
-> > Peng
-> > > > Fan <peng.fan@nxp.com>; festevam@gmail.com; Jacky Bai
-> > > > <ping.bai@nxp.com>; devicetree@vger.kernel.org; sboyd@kernel.org;
-> > > > catalin.marinas@arm.com; s.hauer@pengutronix.de; linux-
-> > > > kernel@vger.kernel.org; Daniel Baluta <daniel.baluta@nxp.com>;
-> > > > linux- clk@vger.kernel.org; robh+dt@kernel.org; dl-linux-imx <linux-
-> > > > imx@nxp.com>; kernel@pengutronix.de; Leonard Crestez
-> > > > <leonard.crestez@nxp.com>; will@kernel.org; mturquette@baylibre.com;
-> > > > linux-arm-kernel@lists.infradead.org; Abel Vesa <abel.vesa@nxp.com>
-> > > > Subject: Re: [PATCH 1/4] arm64: Enable TIMER_IMX_SYS_CTR for
-> > > > ARCH_MXC platforms
-> > > >
-> > > > On Mon, Jun 24, 2019 at 10:22:01AM +0800, Shawn Guo wrote:
-> > > > > On Fri, Jun 21, 2019 at 03:07:17PM +0800, Anson.Huang@nxp.com
-> > wrote:
-> > > > > > From: Anson Huang <Anson.Huang@nxp.com>
-> > > > > >
-> > > > > > ARCH_MXC platforms needs system counter as broadcast timer to
-> > > > > > support cpuidle, enable it by default.
-> > > > > >
-> > > > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > > > > > ---
-> > > > > >  arch/arm64/Kconfig.platforms | 1 +
-> > > > > >  1 file changed, 1 insertion(+)
-> > > > > >
-> > > > > > diff --git a/arch/arm64/Kconfig.platforms
-> > > > > > b/arch/arm64/Kconfig.platforms index 4778c77..f5e623f 100644
-> > > > > > --- a/arch/arm64/Kconfig.platforms
-> > > > > > +++ b/arch/arm64/Kconfig.platforms
-> > > > > > @@ -173,6 +173,7 @@ config ARCH_MXC
-> > > > > >  	select PM
-> > > > > >  	select PM_GENERIC_DOMAINS
-> > > > > >  	select SOC_BUS
-> > > > > > +	select TIMER_IMX_SYS_CTR
-> > > > >
-> > > > > Where is that driver?
-> > > >
-> > > > Okay, just found it in the mailbox.  They seem to be sent in the wrong
-> > order.
-> > > > Really, you should send this series only after the driver lands on mainline.
-> > >
-> > > OK, just noticed that mainline does NOT have it, since I did it based on next
-> > tree.
-> > > I will resend the patch series after the system counter driver landing on
-> > mainline.
-> > 
-> > I just picked the series up, so no need to resend.
-> 
-> Something changed for this series, the system counter clock related implementation
-> are changed after some comments from maintainer, so I think you should picked up
-> below patch series instead, and drop this series,
-> 
-> https://patchwork.kernel.org/patch/11037953/
+I suspect I'm being massively pedantic here, but the comments for =
+atomic_pte_lookup() note:
 
-Okay, dropped clk and dts patches.  arch/arm64/Kconfig.platforms one is kept.
+ * Only supports Intel large pages (2MB only) on x86_64.
+ *	ZZZ - hugepage support is incomplete
 
-Shawn
+That makes me wonder how many systems using this hardware are actually =
+configured with CONFIG_HUGETLB_PAGE.
+
+I ask as in the most common case, this is likely introducing a few extra =
+instructions and possibly an additional branch to a routine that is =
+called per-fault.
+
+So the nit-picky questions are:
+
+1) Does the code really need to be cleaned up in this way?
+
+2) If it does, does it make more sense (given the way pmd_large() is =
+handled now in atomic_pte_lookup()) for this to be coded as:
+
+if (unlikely(is_vm_hugetlb_page(vma)))
+	*pageshift =3D HPAGE_SHIFT;
+else
+	*pageshift =3D PAGE_SHIFT;
+
+In all likelihood, these questions are no-ops, and the optimizer may =
+even make my questions completely moot, but I thought I might as well =
+ask anyway.
+
+
+> On Jul 21, 2019, at 9:58 AM, Bharath Vedartham <linux.bhar@gmail.com> =
+wrote:
+>=20
+> is_vm_hugetlb_page has checks for whether CONFIG_HUGETLB_PAGE is =
+defined
+> or not. If CONFIG_HUGETLB_PAGE is not defined is_vm_hugetlb_page will
+> always return false. There is no need to have an uneccessary
+> CONFIG_HUGETLB_PAGE check in the code.
+>=20
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Dimitri Sivanich <sivanich@sgi.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+> ---
+> drivers/misc/sgi-gru/grufault.c | 11 +++--------
+> 1 file changed, 3 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/misc/sgi-gru/grufault.c =
+b/drivers/misc/sgi-gru/grufault.c
+> index 61b3447..75108d2 100644
+> --- a/drivers/misc/sgi-gru/grufault.c
+> +++ b/drivers/misc/sgi-gru/grufault.c
+> @@ -180,11 +180,8 @@ static int non_atomic_pte_lookup(struct =
+vm_area_struct *vma,
+> {
+> 	struct page *page;
+>=20
+> -#ifdef CONFIG_HUGETLB_PAGE
+> 	*pageshift =3D is_vm_hugetlb_page(vma) ? HPAGE_SHIFT : =
+PAGE_SHIFT;
+> -#else
+> -	*pageshift =3D PAGE_SHIFT;
+> -#endif
+> +
+> 	if (get_user_pages(vaddr, 1, write ? FOLL_WRITE : 0, &page, =
+NULL) <=3D 0)
+> 		return -EFAULT;
+> 	*paddr =3D page_to_phys(page);
+> @@ -238,11 +235,9 @@ static int atomic_pte_lookup(struct =
+vm_area_struct *vma, unsigned long vaddr,
+> 		return 1;
+>=20
+> 	*paddr =3D pte_pfn(pte) << PAGE_SHIFT;
+> -#ifdef CONFIG_HUGETLB_PAGE
+> +
+> 	*pageshift =3D is_vm_hugetlb_page(vma) ? HPAGE_SHIFT : =
+PAGE_SHIFT;
+> -#else
+> -	*pageshift =3D PAGE_SHIFT;
+> -#endif
+> +
+> 	return 0;
+>=20
+> err:
+> --=20
+> 2.7.4
+>=20
+
