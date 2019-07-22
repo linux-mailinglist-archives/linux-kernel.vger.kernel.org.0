@@ -2,26 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17DDD7071D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:29:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4BD670723
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:29:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731756AbfGVR2p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 13:28:45 -0400
-Received: from sauhun.de ([88.99.104.3]:42260 "EHLO pokefinder.org"
+        id S1731770AbfGVR3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 13:29:02 -0400
+Received: from sauhun.de ([88.99.104.3]:42188 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731389AbfGVR0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 13:26:21 -0400
+        id S1731377AbfGVR0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 13:26:18 -0400
 Received: from localhost (p54B33E22.dip0.t-ipconnect.de [84.179.62.34])
-        by pokefinder.org (Postfix) with ESMTPSA id 09FE54A149A;
-        Mon, 22 Jul 2019 19:26:19 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id A83C44A1494;
+        Mon, 22 Jul 2019 19:26:16 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 0/4] rtc: convert subsystem to i2c_new_dummy_device()
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] misc: convert subsystem to i2c_new_dummy_device()
 Date:   Mon, 22 Jul 2019 19:26:14 +0200
-Message-Id: <20190722172618.4061-1-wsa+renesas@sang-engineering.com>
+Message-Id: <20190722172616.3982-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -46,17 +45,13 @@ Some drivers still need to be manually converted. Patches for those will be
 sent out individually.
 
 
-Wolfram Sang (4):
-  rtc: isl12026: convert to i2c_new_dummy_device
-  rtc: max77686: convert to i2c_new_dummy_device
-  rtc: s35390a: convert to i2c_new_dummy_device
-  rtc: s5m: convert to i2c_new_dummy_device
+Wolfram Sang (2):
+  misc: eeprom: ee1004: convert to i2c_new_dummy_device
+  misc: eeprom: max6875: convert to i2c_new_dummy_device
 
- drivers/rtc/rtc-isl12026.c | 6 +++---
- drivers/rtc/rtc-max77686.c | 6 +++---
- drivers/rtc/rtc-s35390a.c  | 6 +++---
- drivers/rtc/rtc-s5m.c      | 6 +++---
- 4 files changed, 12 insertions(+), 12 deletions(-)
+ drivers/misc/eeprom/ee1004.c  | 6 +++---
+ drivers/misc/eeprom/max6875.c | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
 -- 
 2.20.1
