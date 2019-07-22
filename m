@@ -2,118 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DBD8707AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:41:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8941E707CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:44:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731796AbfGVRks convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 22 Jul 2019 13:40:48 -0400
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:52886 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729903AbfGVRkp (ORCPT
+        id S1730000AbfGVRn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 13:43:56 -0400
+Received: from smtprelay0231.hostedemail.com ([216.40.44.231]:60993 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727510AbfGVRnz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 13:40:45 -0400
-X-AuditID: c0a8fbf4-519ff700000014c1-d5-5d35f51b4352
-Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 35.55.05313.B15F53D5; Mon, 22 Jul 2019 19:40:43 +0200 (CEST)
-Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
- WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
- 14.03.0439.000; Mon, 22 Jul 2019 19:40:43 +0200
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     Shawn Guo <shawnguo@kernel.org>,
-        Andra Danciu <andradanciu1997@gmail.com>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "leoyang.li@nxp.com" <leoyang.li@nxp.com>,
-        "Fabio Estevam" <festevam@gmail.com>,
-        "aisheng.dong@nxp.com" <aisheng.dong@nxp.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "angus@akkea.ca" <angus@akkea.ca>,
-        "vabhav.sharma@nxp.com" <vabhav.sharma@nxp.com>,
-        "pankaj.bansal@nxp.com" <pankaj.bansal@nxp.com>,
-        "bhaskar.upadhaya@nxp.com" <bhaskar.upadhaya@nxp.com>,
-        "ping.bai@nxp.com" <ping.bai@nxp.com>,
-        "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>,
-        Richard Hu <richard.hu@technexion.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>
-Subject: RE: [PATCH v2] arm64: dts: fsl: pico-pi: Add a device tree for the
- PICO-PI-IMX8M
-Thread-Topic: [PATCH v2] arm64: dts: fsl: pico-pi: Add a device tree for the
- PICO-PI-IMX8M
-Thread-Index: AQHVK1JOWCo7Ia8Nb0OT9XMV6ZJPCKbPwRwAgAB6AQCABbAbAIABJkHh
-Date:   Mon, 22 Jul 2019 17:40:43 +0000
-Message-ID: <042F8805D2046347BB8420BEAE397A40749E9BDA@WILL-MAIL002.REu.RohmEu.com>
-References: <20190625123407.15888-1-andradanciu1997@gmail.com>
- <20190718035523.GD11324@X250>
- <CAJNLGszB239AHpD+kRCPRWZaToTYHiq5YUHRjfRwTqknwHMdMA@mail.gmail.com>,<20190722020345.GR3738@dragon>
-In-Reply-To: <20190722020345.GR3738@dragon>
-Accept-Language: en-US, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [176.93.194.89]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 22 Jul 2019 13:43:55 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 25AE1837F24D;
+        Mon, 22 Jul 2019 17:43:54 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2693:2828:2895:3138:3139:3140:3141:3142:3355:3622:3865:3866:3867:3868:3870:3871:3872:3874:4321:5007:6119:6120:7875:8603:10004:10400:10471:10848:11026:11232:11473:11658:11914:12043:12297:12555:12740:12760:12895:13019:13141:13200:13229:13230:13255:13439:14096:14097:14181:14659:14721:21080:21324:21433:21451:21627:21740:30012:30054:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
+X-HE-Tag: cart38_3ee779eddd660
+X-Filterd-Recvd-Size: 3679
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 22 Jul 2019 17:43:52 +0000 (UTC)
+Message-ID: <b9bb5550b264d4b29b2b20f7ff8b1b40d20def6a.camel@perches.com>
+Subject: Re: [RFC PATCH] string.h: Add stracpy/stracpy_pad (was: Re: [PATCH]
+ checkpatch: Added warnings in favor of strscpy().)
+From:   Joe Perches <joe@perches.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Nitin Gote <nitin.r.gote@intel.com>, akpm@linux-foundation.org,
+        corbet@lwn.net, apw@canonical.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Date:   Mon, 22 Jul 2019 10:43:50 -0700
+In-Reply-To: <201907221031.8B87A9DE@keescook>
+References: <1562219683-15474-1-git-send-email-nitin.r.gote@intel.com>
+         <f6a4c2b601bb59179cb2e3b8f4d836a1c11379a3.camel@perches.com>
+         <d1524130f91d7cfd61bc736623409693d2895f57.camel@perches.com>
+         <201907221031.8B87A9DE@keescook>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0hTURzHOffe3d3ZbpzmbCdNoYFRVqZRcMAIe1C3SDIjiNLsLm9utYfc
-        zdAiMHrpIjQoyJX5wMzWKlqlaZa6Bj1ZlFpZrQdapElYsyDD7F7Xw3/O+XK+v+/vcw78DkNq
-        AnQ0Y7I6BNHKm/V0BNVW/9M7J+bbgqykUOUMPHS8mcTVR4ZI3PPmJcAtI+UUvtwSpHGlP6DA
-        77rW4LcV3QT27WsjsHP4HIk7mk/ROLi/RIHPPHtM4P7qtwQ+H2in8eiHVoAP3PQr8cerOlza
-        8IlKjeSOO+sB5zntAVyTK6jkvO4Smnv1tIXmLn++TnClI0ncyJ1jJBfyxqWrNk5YaOAdO9eZ
-        cq1zF22ZYGwPfQF5B9kC/9GPoAh4IpxAxSA4H5Ueu004QQSjgU8BGuh2U7KhgXcBuvUBOwHD
-        0HAhcnYrZamFaejr4Qy5nIQNNNrXeFMpl0fCTai0sxfIWgsz0eCbxj96OWqo6ByroWA8qmit
-        VciahRmoy/36D9cPUFNNcCyggrNQZefzsTsAGItKij4TsiahDr3orSTCl4aotuURGdZRqK/n
-        lyKsp6Ey7w8qXD8bVd34Sof1LFRX/YkMgyehe+W9VBmIco1r6xoXcY2LuMZFqgDlBsjCm8y5
-        vENIThSF/ETRZrRI21abxQvCszB0HYz6VvoAZIBezV75siBLo+B32gstPjCFIfRRbP0N6Wii
-        wZZTaOTtxmwx3yzYfQAxpF7LWpMkj83hC3cJou2vFcNQeh07nR3O1ECZvEMQ8gTxrzuVYfSI
-        DYSk4CRRyBUKtpnMjv82wajk5hHRWrtgzRFEPt9hzJbHItsuzYVsqSXu0iGZa8/jLdJpOHof
-        JDNlfRU1JDNwrlZaq65Jq4ay2qxCtI6NkXlQDhjzrf9w/UAnvTqSXSS7aumT/OvWL4EICdST
-        OE8GOfj/VnQRyDT8Ut+d+yDNM3O5N3ZDX6qwZYVBO1Bz4lWKqnx4tXpwt39t8ZztF5WZgfSU
-        hy8TCy4d7n5usn2v6QotGy0+dMEwfXNdii4vY/OTk4vTzrZqu6je9PP4STBOzNLGezIssX2b
-        Tq1a8mJ+8fvJg1gVWE/sdQ+ndpg7ElY3xTma61bu0VN2I5+cQIp2/jczX8Rm4QMAAA==
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry for top posting. I'm replying using mobile phone and outlook web app... 
+On Mon, 2019-07-22 at 10:33 -0700, Kees Cook wrote:
+> On Thu, Jul 04, 2019 at 05:15:57PM -0700, Joe Perches wrote:
+> > On Thu, 2019-07-04 at 13:46 -0700, Joe Perches wrote:
+> > > On Thu, 2019-07-04 at 11:24 +0530, Nitin Gote wrote:
+> > > > Added warnings in checkpatch.pl script to :
+> > > > 
+> > > > 1. Deprecate strcpy() in favor of strscpy().
+> > > > 2. Deprecate strlcpy() in favor of strscpy().
+> > > > 3. Deprecate strncpy() in favor of strscpy() or strscpy_pad().
+> > > > 
+> > > > Updated strncpy() section in Documentation/process/deprecated.rst
+> > > > to cover strscpy_pad() case.
+> > 
+> > []
+> > 
+> > I sent a patch series for some strscpy/strlcpy misuses.
+> > 
+> > How about adding a macro helper to avoid the misuses like:
+> > ---
+> >  include/linux/string.h | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> > 
+> > diff --git a/include/linux/string.h b/include/linux/string.h
+> > index 4deb11f7976b..ef01bd6f19df 100644
+> > --- a/include/linux/string.h
+> > +++ b/include/linux/string.h
+> > @@ -35,6 +35,22 @@ ssize_t strscpy(char *, const char *, size_t);
+> >  /* Wraps calls to strscpy()/memset(), no arch specific code required */
+> >  ssize_t strscpy_pad(char *dest, const char *src, size_t count);
+> >  
+> > +#define stracpy(to, from)					\
+> > +({								\
+> > +	size_t size = ARRAY_SIZE(to);				\
+> > +	BUILD_BUG_ON(!__same_type(typeof(*to), char));		\
+> > +								\
+> > +	strscpy(to, from, size);				\
+> > +})
+> > +
+> > +#define stracpy_pad(to, from)					\
+> > +({								\
+> > +	size_t size = ARRAY_SIZE(to);				\
+> > +	BUILD_BUG_ON(!__same_type(typeof(*to), char));		\
+> > +								\
+> > +	strscpy_pad(to, from, size);				\
+> > +})
+> > +
+> >  #ifndef __HAVE_ARCH_STRCAT
+> >  extern char * strcat(char *, const char *);
+> >  #endif
+> 
+> This seems like a reasonable addition, yes. I think Coccinelle might
+> actually be able to find all the existing strscpy(dst, src, sizeof(dst))
+> cases to jump-start this conversion.
 
-gpio_intr is not needed. Irq must be given using the standard irq property. gpio_intr has been used in an old draft driver - I assume the dts originates from NXP bsp which used the old driver.
+I did that.  It works.  It's a lot of conversions.
 
-Br,
-Matti Vaittinen
+$ cat str.cpy.cocci
+@@
+expression e1;
+expression e2;
+@@
 
---
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+- strscpy(e1, e2, sizeof(e1))
++ stracpy(e1, e2)
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+@@
+expression e1;
+expression e2;
+@@
+
+- strlcpy(e1, e2, sizeof(e1))
++ stracpy(e1, e2)
+
+> Devil's advocate: this adds yet more string handling functions... will
+> this cause even more confusion?
+
+Documentation is good.
+Actual in-kernel use and examples better.
 
 
-________________________________________
-From: Shawn Guo [shawnguo@kernel.org]
-Sent: Monday, July 22, 2019 5:03 AM
-To: Andra Danciu
-Cc: robh+dt@kernel.org; mark.rutland@arm.com; leoyang.li@nxp.com; Fabio Estevam; aisheng.dong@nxp.com; l.stach@pengutronix.de; angus@akkea.ca; vabhav.sharma@nxp.com; pankaj.bansal@nxp.com; bhaskar.upadhaya@nxp.com; ping.bai@nxp.com; Manivannan Sadhasivam; Richard Hu; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Vaittinen, Matti; linux-imx@nxp.com; Daniel Baluta
-Subject: Re: [PATCH v2] arm64: dts: fsl: pico-pi: Add a device tree for the PICO-PI-IMX8M
 
-On Thu, Jul 18, 2019 at 02:12:10PM +0300, Andra Danciu wrote:
-...
-> > > +     pmic: pmic@4b {
-> > > +             reg = <0x4b>;
-> > > +             compatible = "rohm,bd71837";
-> > > +             /* PMIC BD71837 PMIC_nINT GPIO1_IO12 */
-> > > +             pinctrl-0 = <&pinctrl_pmic>;
-> > > +             gpio_intr = <&gpio1 3 GPIO_ACTIVE_LOW>;
-> >
-> > Where is the bindings for this property?
-> Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-
-I do not see property 'gpio_intr' in there.
-
-Shawn
