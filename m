@@ -2,107 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB40A70905
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:58:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44F1270917
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 21:00:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730856AbfGVS5t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 14:57:49 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:42067 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732052AbfGVS5L (ORCPT
+        id S1729464AbfGVS6f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 14:58:35 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38024 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726253AbfGVS5A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 14:57:11 -0400
-Received: by mail-vs1-f65.google.com with SMTP id 190so26989752vsf.9
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 11:57:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=G3LydhjrGZyGaJaE+altqgbzUT7GXQbjY/6XoX/pvZc=;
-        b=Rj0FpiVegyhkEFGvH5FwPsP+HS2oOwKd3h+1as5pPLM1XprqjfBJZax8/KoJAv6NEl
-         ATF9b5ukrKTAShLbuniOdv+bex1gZBZs5vunpMsmJWGm1MtMSEtdCW2Xmuqo/BTzkP0E
-         KeSaLDJayhuO0HqKXiJlVPbr0zXbj7kMddeSDB5eGSAoTwfmzxeoJB2gyYvoHXDAEljT
-         JYpagba4Ge7AzgtT21LwkiwmMmJfoxn3giE3jvKdaGKntkIwWMPfdgo4H5VJ5jwgt+cb
-         rfS0dARCYA1RQcofaWdW1fvgXPcboqkhIA1I4X+2rEJv1bzHo06eiXtc5AX5Y9FDUjuu
-         uEVg==
-X-Gm-Message-State: APjAAAWcp76wDlr/IR3nxAxV96KMUvGOmn6XLvQykbFgtXRC7JtjLSUb
-        NQxGIzgWokyCS/p5nlCUaWrqzw==
-X-Google-Smtp-Source: APXvYqzW0y3QVeCN9/3wXCNVqVYfu/ELakwZssJ444dY3sQr1CJFwY193H4yB3WcP4zsonz0yfKcug==
-X-Received: by 2002:a67:8c84:: with SMTP id o126mr44506592vsd.122.1563821830405;
-        Mon, 22 Jul 2019 11:57:10 -0700 (PDT)
-Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
-        by smtp.gmail.com with ESMTPSA id l129sm38783525vki.45.2019.07.22.11.57.07
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 11:57:09 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 14:57:04 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Auger Eric <eric.auger@redhat.com>
-Cc:     eric.auger.pro@gmail.com, hch@lst.de, m.szyprowski@samsung.com,
-        robin.murphy@arm.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dma-mapping: Use dma_get_mask in
- dma_addressing_limited
-Message-ID: <20190722145639-mutt-send-email-mst@kernel.org>
-References: <20190722165149.3763-1-eric.auger@redhat.com>
- <77ba1061-08b6-421e-a6dd-d5db9851325b@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77ba1061-08b6-421e-a6dd-d5db9851325b@redhat.com>
+        Mon, 22 Jul 2019 14:57:00 -0400
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hpdUX-0002OL-GV; Mon, 22 Jul 2019 20:56:57 +0200
+Message-Id: <20190722104705.550071814@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Mon, 22 Jul 2019 20:47:05 +0200
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Feng Tang <feng.tang@intel.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>
+Subject: [patch V3 00/25] x86/apic: Support for IPI shorthands
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 06:56:49PM +0200, Auger Eric wrote:
-> Hi Christoph,
-> 
-> On 7/22/19 6:51 PM, Eric Auger wrote:
-> > We currently have cases where the dma_addressing_limited() gets
-> > called with dma_mask unset. This causes a NULL pointer dereference.
-> > 
-> > Use dma_get_mask() accessor to prevent the crash.
-> > 
-> > Fixes: b866455423e0 ("dma-mapping: add a dma_addressing_limited helper")
-> > Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> 
-> As a follow-up of my last email, here is a patch featuring
-> dma_get_mask(). But you don't have the WARN_ON_ONCE anymore, pointing
-> out suspect users.
+This is merily a refresh of V2.
 
-OTOH these users then simply become okay so no need for WARN_ON_ONCE
-then :)
+Changes vs. V2 (https://lkml.kernel.org/r/20190704155145.617706117@linutronix.de)
 
-> Feel free to pick up your preferred approach
-> 
-> Thanks
-> 
-> Eric
-> > 
-> > ---
-> > 
-> > v1 -> v2:
-> > - was [PATCH 1/2] dma-mapping: Protect dma_addressing_limited
-> >   against NULL dma_mask
-> > - Use dma_get_mask
-> > ---
-> >  include/linux/dma-mapping.h | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-> > index e11b115dd0e4..f7d1eea32c78 100644
-> > --- a/include/linux/dma-mapping.h
-> > +++ b/include/linux/dma-mapping.h
-> > @@ -689,8 +689,8 @@ static inline int dma_coerce_mask_and_coherent(struct device *dev, u64 mask)
-> >   */
-> >  static inline bool dma_addressing_limited(struct device *dev)
-> >  {
-> > -	return min_not_zero(*dev->dma_mask, dev->bus_dma_mask) <
-> > -		dma_get_required_mask(dev);
-> > +	return min_not_zero(dma_get_mask(dev), dev->bus_dma_mask) <
-> > +			    dma_get_required_mask(dev);
-> >  }
-> >  
-> >  #ifdef CONFIG_ARCH_HAS_SETUP_DMA_OPS
-> > 
+  - Fix the NMI_VECTOR/VECTOR_NMI typo in kgdb
+
+  - Remove the misleading vector 0-31 wording
+
+It applies on top of:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/apic
+
+The series is also available from git:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.x86/ipi
+
+Thanks,
+
+	tglx
+
+8<------------
+ a/arch/x86/include/asm/apic_flat_64.h |    8 -
+ a/arch/x86/include/asm/ipi.h          |  109 ---------------------
+ a/arch/x86/kernel/apic/x2apic.h       |    9 -
+ arch/x86/include/asm/apic.h           |   11 +-
+ arch/x86/include/asm/bugs.h           |    2 
+ arch/x86/include/asm/processor.h      |    2 
+ arch/x86/include/asm/smp.h            |    1 
+ arch/x86/kernel/apic/apic.c           |  157 +++++++++++++++++++------------
+ arch/x86/kernel/apic/apic_flat_64.c   |   66 ++-----------
+ arch/x86/kernel/apic/apic_noop.c      |   18 ---
+ arch/x86/kernel/apic/apic_numachip.c  |    8 -
+ arch/x86/kernel/apic/bigsmp_32.c      |    9 -
+ arch/x86/kernel/apic/ipi.c            |  170 +++++++++++++++++++++++++---------
+ arch/x86/kernel/apic/probe_32.c       |   41 --------
+ arch/x86/kernel/apic/probe_64.c       |   21 ----
+ arch/x86/kernel/apic/x2apic_cluster.c |   20 +---
+ arch/x86/kernel/apic/x2apic_phys.c    |   25 ++---
+ arch/x86/kernel/apic/x2apic_uv_x.c    |   30 +-----
+ arch/x86/kernel/cpu/bugs.c            |    2 
+ arch/x86/kernel/cpu/common.c          |   11 ++
+ arch/x86/kernel/kgdb.c                |    2 
+ arch/x86/kernel/nmi.c                 |    3 
+ arch/x86/kernel/reboot.c              |    7 -
+ arch/x86/kernel/smp.c                 |   44 --------
+ arch/x86/kernel/smpboot.c             |   13 ++
+ b/arch/x86/kernel/apic/local.h        |   68 +++++++++++++
+ include/linux/bitmap.h                |   23 ++++
+ include/linux/cpumask.h               |   16 +++
+ kernel/cpu.c                          |   11 +-
+ lib/bitmap.c                          |   20 ++++
+ 30 files changed, 450 insertions(+), 477 deletions(-)
+
+
+
