@@ -2,64 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44CC770C31
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 23:57:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B59570C3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 00:00:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbfGVV5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 17:57:33 -0400
-Received: from ms.lwn.net ([45.79.88.28]:43576 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726252AbfGVV5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 17:57:32 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id D114E7DA;
-        Mon, 22 Jul 2019 21:57:31 +0000 (UTC)
-Date:   Mon, 22 Jul 2019 15:57:30 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Joe Perches <joe@perches.com>
-Cc:     Stephen Kitt <steve@sk2.org>, Kees Cook <keescook@chromium.org>,
-        Nitin Gote <nitin.r.gote@intel.com>, jannh@google.com,
-        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Subject: Re: [PATCH] checkpatch: Added warnings in favor of strscpy().
-Message-ID: <20190722155730.08dfd4e3@lwn.net>
-In-Reply-To: <d96cf801c5cf68e785e8dfd9dba0994fcff20017.camel@perches.com>
-References: <1561722948-28289-1-git-send-email-nitin.r.gote@intel.com>
-        <20190629181537.7d524f7d@sk2.org>
-        <201907021024.D1C8E7B2D@keescook>
-        <20190706144204.15652de7@heffalump.sk2.org>
-        <201907221047.4895D35B30@keescook>
-        <15f2be3cde69321f4f3a48d60645b303d66a600b.camel@perches.com>
-        <20190722230102.442137dc@heffalump.sk2.org>
-        <d96cf801c5cf68e785e8dfd9dba0994fcff20017.camel@perches.com>
-Organization: LWN.net
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1732924AbfGVWAf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 18:00:35 -0400
+Received: from 195-159-176-226.customer.powertech.no ([195.159.176.226]:39278
+        "EHLO blaine.gmane.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731495AbfGVWAd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 18:00:33 -0400
+Received: from list by blaine.gmane.org with local (Exim 4.89)
+        (envelope-from <glk-linux-kernel-4@m.gmane.org>)
+        id 1hpgMB-000FcE-GA
+        for linux-kernel@vger.kernel.org; Tue, 23 Jul 2019 00:00:31 +0200
+X-Injected-Via-Gmane: http://gmane.org/
+To:     linux-kernel@vger.kernel.org
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH][next] clk: Si5341/Si5340: remove redundant assignment to
+ n_den
+Date:   Tue, 23 Jul 2019 00:00:24 +0200
+Message-ID: <a92ca50d-b33e-8779-294c-301535d0f0d5@wanadoo.fr>
+References: <20190701165020.19840-1-colin.king@canonical.com>
+ <20190722212414.6EF8D21900@mail.kernel.org>
+ <d1cd2b10-8fd4-f224-3bcd-5b938f72d249@wanadoo.fr>
+ <20190722215314.9F4F121951@mail.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+In-Reply-To: <20190722215314.9F4F121951@mail.kernel.org>
+Content-Language: en-US
+Cc:     linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 22 Jul 2019 14:50:09 -0700
-Joe Perches <joe@perches.com> wrote:
+Le 22/07/2019 à 23:53, Stephen Boyd a écrit :
+> Quoting Christophe JAILLET (2019-07-22 14:43:32)
+>> Le 22/07/2019 à 23:24, Stephen Boyd a écrit :
+>>> Please Cc authors of drivers so they can ack/review.
+>>>
+>>> Adding Mike to take a look.
+>>>
+>>> Quoting Colin King (2019-07-01 09:50:20)
+>>>> From: Colin Ian King <colin.king@canonical.com>
+>>>>
+>>>> The variable n_den is initialized however that value is never read
+>>>> as n_den is re-assigned a little later in the two paths of a
+>>>> following if-statement.  Remove the redundant assignment.
+>>>>
+>>>> Addresses-Coverity: ("Unused value")
+>>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>>>> ---
+>>>>    drivers/clk/clk-si5341.c | 1 -
+>>>>    1 file changed, 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
+>>>> index 72424eb7e5f8..6e780c2a9e6b 100644
+>>>> --- a/drivers/clk/clk-si5341.c
+>>>> +++ b/drivers/clk/clk-si5341.c
+>>>> @@ -547,7 +547,6 @@ static int si5341_synth_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+>>>>           bool is_integer;
+>>>>    
+>>>>           n_num = synth->data->freq_vco;
+>>>> -       n_den = rate;
+>>>>    
+>>>>           /* see if there's an integer solution */
+>>>>           r = do_div(n_num, rate);
+>> Hi,
+>>
+>> I got the same advise from some else no later than yesterday (i.e. email
+>> the author...)
+>> Maybe 'get_maintainer.pl' could be improved to search for it and propose
+>> the mail automatically?
+>>
+>> just my 2c.
+>>
+> Use --git option of get_maintainer.pl?
+>
+>
+I don't use it explicitly, but the suggestions I get include some git 
+history, so I guess that it is on by default.
 
-> On Mon, 2019-07-22 at 23:01 +0200, Stephen Kitt wrote:
-> > How about you submit your current patch set, and I follow up with the above
-> > adapted to stracpy?  
-> 
-> OK, I will shortly after I figure out how to add kernel-doc
-> for stracpy/stracpy_pad to lib/string.c.
-> 
-> It doesn't seem appropriate to add the kernel-doc to string.h
-> as it would be separated from the others in string.c
-> 
-> Anyone got a clue here?  Jonathan?
+I was thinking at parsing files to see if MODULE_AUTHOR includes an email.
 
-If the functions themselves are fully defined in the .h file, I'd just add
-the kerneldoc there as well.  That's how it's usually done, and you want
-to keep the documentation and the prototypes together.
+CJ
 
-jon
+
+
