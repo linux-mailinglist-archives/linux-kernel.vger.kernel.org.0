@@ -2,132 +2,273 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B19D6FB1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:17:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ABF66FB17
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:17:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728258AbfGVIRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 04:17:31 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:33887 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727507AbfGVIRa (ORCPT
+        id S1728204AbfGVIRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 04:17:07 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35747 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727507AbfGVIRG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 04:17:30 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Md6dH-1iP5RM2jn1-00aFLR; Mon, 22 Jul 2019 10:17:19 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
-Subject: [PATCH 2/2] [RESEND] dmaengine: edma: make edma_filter_fn private
-Date:   Mon, 22 Jul 2019 10:16:45 +0200
-Message-Id: <20190722081705.2084961-2-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190722081705.2084961-1-arnd@arndb.de>
-References: <20190722081705.2084961-1-arnd@arndb.de>
+        Mon, 22 Jul 2019 04:17:06 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6M8GuDa3737047
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 22 Jul 2019 01:16:56 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6M8GuDa3737047
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1563783416;
+        bh=hXRHs9Z77OQX7vQzzQmFqwMUsOVy+Scu6X57KVPyJdY=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=4flJojG51JXdao85uio/HAs3cZ4BZNNRadBQIdoKrR53iuPFgU1FZnHHcm1wrrr1m
+         kaQef/F1a9+SbPRkX5uSrRyiASstzBJYzWB9OPWrDEl0FQqcH58NCvm6xi8LSdH/mx
+         J/Mx2UnTj39qH1sGlIC31VhOYIaWZAqCUx/qRAF3EeRa+6KmlY3SmwNiWnrOGdSzw9
+         gfAI3kHo2O5/v5WefvRZPWce2ZLpvINEOzYJlgIhXTAXyKbS/vXp5o6ojbfOi0WFNQ
+         WX6ROatM8LYQWMnwF+4eq5O1QgxbatQ7hdm6R4ZiekJR2hOAS0z9+aAOYzBx4sLfIR
+         YiEyxPK0SRhLw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6M8GtPN3737044;
+        Mon, 22 Jul 2019 01:16:55 -0700
+Date:   Mon, 22 Jul 2019 01:16:55 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andrew Cooper <tipbot@zytor.com>
+Message-ID: <tip-83b584d9c6a1494170abd3a8b24f41939b23d625@git.kernel.org>
+Cc:     andrew.cooper3@citrix.com, hpa@zytor.com, mingo@kernel.org,
+        tglx@linutronix.de, jgross@suse.com, linux-kernel@vger.kernel.org
+Reply-To: hpa@zytor.com, mingo@kernel.org, andrew.cooper3@citrix.com,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de, jgross@suse.com
+In-Reply-To: <20190715151641.29210-1-andrew.cooper3@citrix.com>
+References: <20190715151641.29210-1-andrew.cooper3@citrix.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/apic] x86/paravirt: Drop {read,write}_cr8() hooks
+Git-Commit-ID: 83b584d9c6a1494170abd3a8b24f41939b23d625
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Dnr5n+ZItdHytTchgOkzFl+KTT+XSHwDwbPeg+P7EMEMi4HQWHS
- NtjJDJQK5Nl0CZMrhaENiYUQ6y/NdV5X1Ki2oAhiwkHDdr9kQVU6956cR9tw7Bbk0QIvOsr
- EU4KMoXlP7kD6k0sdJE6VfeTesAXOdaY8TmS0qKTmj4LD11rDUjIKKUbUXwTwR/DtfD8eSm
- t0aouriRLQKQkYLtStXwA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:c/l2lO7keco=:m9a6Mm+tfPiM4ACkSiJbuX
- ASYKmmC//imkpregzHbJz+IgnbO8+7qZcXDz7QvHhy5gvOUcz8ZKANfcAFVobYV+R2Dm5XCqU
- noEeq+0ccMUGc6/np3/94r3S+hV8+zDGCxC6UlOckq8hH94jvMQVZZypj4yJceP1u8GkfBoRn
- dsVtu6uTllWxXRxVzMeG4FzxcW44Gnc9Pcwm6snFpIJB5YqNLqNv21/L6kt/2GcLl2uhOvp1E
- 1mmDqSf95ADz3lM4wgnHuwXbGhvo2RwrsAP/HJBO/wtGBA4r2Ihr7YNgt9cl94ZTWWZOFiI5H
- DMLGBV9uHo8Ne8uRjqS0oJQtePX1hxEgVIxT0st/aHixUZf8QHIZN2Zd1Svw57ndBNtNtGJye
- ZPQnxgTruse15JTdOoWowqHUajDRhmNOW3FkvRs/TkApCSSSQCyIPwwk+FuEmpTXjjluGL6BJ
- q9uWuUOv61irCz8TMjhR7RbcjbXfjANrIfa7Te8hp6PPHh6TV3DddUanokK2zhjbZ5HEFuMcP
- xlI5dFonS+aYvSX/pJhg5mrONIwNzU4OGKQbsmOoFLks1VS4vMgVCzTBnRo4bm0nkDuNfk38N
- uPDXiWc67hZQuXVUBE2F4dmrcG6dPw/DMdBIQ1Ywg9l8351TBk/bDs/sGdZjqkddtFN8iyW2o
- wbsxVFBfUBjlbL8dLGQWdeajGtAELWp2Oq+sHjGsu4JAL3lYscmXvck1qdSWfTkXWtN/QivMv
- 9yCD9UWv9ibycEN4lec+BXuZ01qzXCsvJl+yNA==
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the audio driver no longer referring to this function, it
-can be made private to the dmaengine driver itself, and the
-header file removed.
+Commit-ID:  83b584d9c6a1494170abd3a8b24f41939b23d625
+Gitweb:     https://git.kernel.org/tip/83b584d9c6a1494170abd3a8b24f41939b23d625
+Author:     Andrew Cooper <andrew.cooper3@citrix.com>
+AuthorDate: Mon, 15 Jul 2019 16:16:41 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 22 Jul 2019 10:12:33 +0200
 
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+x86/paravirt: Drop {read,write}_cr8() hooks
+
+There is a lot of infrastructure for functionality which is used
+exclusively in __{save,restore}_processor_state() on the suspend/resume
+path.
+
+cr8 is an alias of APIC_TASKPRI, and APIC_TASKPRI is saved/restored by
+lapic_{suspend,resume}().  Saving and restoring cr8 independently of the
+rest of the Local APIC state isn't a clever thing to be doing.
+
+Delete the suspend/resume cr8 handling, which shrinks the size of struct
+saved_context, and allows for the removal of both PVOPS.
+
+Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Link: https://lkml.kernel.org/r/20190715151641.29210-1-andrew.cooper3@citrix.com
+
 ---
- drivers/dma/ti/edma.c |  5 +++--
- include/linux/edma.h  | 29 -----------------------------
- 2 files changed, 3 insertions(+), 31 deletions(-)
- delete mode 100644 include/linux/edma.h
+ arch/x86/include/asm/paravirt.h       | 12 ------------
+ arch/x86/include/asm/paravirt_types.h |  5 -----
+ arch/x86/include/asm/special_insns.h  | 24 ------------------------
+ arch/x86/include/asm/suspend_64.h     |  2 +-
+ arch/x86/kernel/asm-offsets_64.c      |  1 -
+ arch/x86/kernel/paravirt.c            |  4 ----
+ arch/x86/power/cpu.c                  |  4 ----
+ arch/x86/xen/enlighten_pv.c           | 15 ---------------
+ 8 files changed, 1 insertion(+), 66 deletions(-)
 
-diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
-index ceabdea40ae0..f2549ee3fb49 100644
---- a/drivers/dma/ti/edma.c
-+++ b/drivers/dma/ti/edma.c
-@@ -15,7 +15,6 @@
- 
- #include <linux/dmaengine.h>
- #include <linux/dma-mapping.h>
--#include <linux/edma.h>
- #include <linux/err.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-@@ -2185,6 +2184,8 @@ static struct dma_chan *of_edma_xlate(struct of_phandle_args *dma_spec,
+diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
+index dce26f1d13e1..69089d46f128 100644
+--- a/arch/x86/include/asm/paravirt.h
++++ b/arch/x86/include/asm/paravirt.h
+@@ -139,18 +139,6 @@ static inline void __write_cr4(unsigned long x)
+ 	PVOP_VCALL1(cpu.write_cr4, x);
  }
- #endif
  
-+static bool edma_filter_fn(struct dma_chan *chan, void *param);
-+
- static int edma_probe(struct platform_device *pdev)
- {
- 	struct edma_soc_info	*info = pdev->dev.platform_data;
-@@ -2524,7 +2525,7 @@ static struct platform_driver edma_tptc_driver = {
- 	},
- };
- 
--bool edma_filter_fn(struct dma_chan *chan, void *param)
-+static bool edma_filter_fn(struct dma_chan *chan, void *param)
- {
- 	bool match = false;
- 
-diff --git a/include/linux/edma.h b/include/linux/edma.h
-deleted file mode 100644
-index a1307e7827e8..000000000000
---- a/include/linux/edma.h
-+++ /dev/null
-@@ -1,29 +0,0 @@
--/*
-- * TI EDMA DMA engine driver
-- *
-- * Copyright 2012 Texas Instruments
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License as
-- * published by the Free Software Foundation version 2.
-- *
-- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-- * kind, whether express or implied; without even the implied warranty
-- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
--#ifndef __LINUX_EDMA_H
--#define __LINUX_EDMA_H
--
--struct dma_chan;
--
--#if defined(CONFIG_TI_EDMA) || defined(CONFIG_TI_EDMA_MODULE)
--bool edma_filter_fn(struct dma_chan *, void *);
--#else
--static inline bool edma_filter_fn(struct dma_chan *chan, void *param)
+-#ifdef CONFIG_X86_64
+-static inline unsigned long read_cr8(void)
 -{
--	return false;
+-	return PVOP_CALL0(unsigned long, cpu.read_cr8);
+-}
+-
+-static inline void write_cr8(unsigned long x)
+-{
+-	PVOP_VCALL1(cpu.write_cr8, x);
 -}
 -#endif
 -
+ static inline void arch_safe_halt(void)
+ {
+ 	PVOP_VCALL0(irq.safe_halt);
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 639b2df445ee..70b654f3ffe5 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -119,11 +119,6 @@ struct pv_cpu_ops {
+ 
+ 	void (*write_cr4)(unsigned long);
+ 
+-#ifdef CONFIG_X86_64
+-	unsigned long (*read_cr8)(void);
+-	void (*write_cr8)(unsigned long);
 -#endif
--- 
-2.20.0
-
+-
+ 	/* Segment descriptor handling */
+ 	void (*load_tr_desc)(void);
+ 	void (*load_gdt)(const struct desc_ptr *);
+diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
+index 219be88a59d2..6d37b8fcfc77 100644
+--- a/arch/x86/include/asm/special_insns.h
++++ b/arch/x86/include/asm/special_insns.h
+@@ -73,20 +73,6 @@ static inline unsigned long native_read_cr4(void)
+ 
+ void native_write_cr4(unsigned long val);
+ 
+-#ifdef CONFIG_X86_64
+-static inline unsigned long native_read_cr8(void)
+-{
+-	unsigned long cr8;
+-	asm volatile("movq %%cr8,%0" : "=r" (cr8));
+-	return cr8;
+-}
+-
+-static inline void native_write_cr8(unsigned long val)
+-{
+-	asm volatile("movq %0,%%cr8" :: "r" (val) : "memory");
+-}
+-#endif
+-
+ #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+ static inline u32 rdpkru(void)
+ {
+@@ -200,16 +186,6 @@ static inline void wbinvd(void)
+ 
+ #ifdef CONFIG_X86_64
+ 
+-static inline unsigned long read_cr8(void)
+-{
+-	return native_read_cr8();
+-}
+-
+-static inline void write_cr8(unsigned long x)
+-{
+-	native_write_cr8(x);
+-}
+-
+ static inline void load_gs_index(unsigned selector)
+ {
+ 	native_load_gs_index(selector);
+diff --git a/arch/x86/include/asm/suspend_64.h b/arch/x86/include/asm/suspend_64.h
+index a7af9f53c0cb..35bb35d28733 100644
+--- a/arch/x86/include/asm/suspend_64.h
++++ b/arch/x86/include/asm/suspend_64.h
+@@ -34,7 +34,7 @@ struct saved_context {
+ 	 */
+ 	unsigned long kernelmode_gs_base, usermode_gs_base, fs_base;
+ 
+-	unsigned long cr0, cr2, cr3, cr4, cr8;
++	unsigned long cr0, cr2, cr3, cr4;
+ 	u64 misc_enable;
+ 	bool misc_enable_saved;
+ 	struct saved_msrs saved_msrs;
+diff --git a/arch/x86/kernel/asm-offsets_64.c b/arch/x86/kernel/asm-offsets_64.c
+index d3d075226c0a..8b54d8e3a561 100644
+--- a/arch/x86/kernel/asm-offsets_64.c
++++ b/arch/x86/kernel/asm-offsets_64.c
+@@ -62,7 +62,6 @@ int main(void)
+ 	ENTRY(cr2);
+ 	ENTRY(cr3);
+ 	ENTRY(cr4);
+-	ENTRY(cr8);
+ 	ENTRY(gdt_desc);
+ 	BLANK();
+ #undef ENTRY
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index 0aa6256eedd8..59d3d2763a9e 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -311,10 +311,6 @@ struct paravirt_patch_template pv_ops = {
+ 	.cpu.read_cr0		= native_read_cr0,
+ 	.cpu.write_cr0		= native_write_cr0,
+ 	.cpu.write_cr4		= native_write_cr4,
+-#ifdef CONFIG_X86_64
+-	.cpu.read_cr8		= native_read_cr8,
+-	.cpu.write_cr8		= native_write_cr8,
+-#endif
+ 	.cpu.wbinvd		= native_wbinvd,
+ 	.cpu.read_msr		= native_read_msr,
+ 	.cpu.write_msr		= native_write_msr,
+diff --git a/arch/x86/power/cpu.c b/arch/x86/power/cpu.c
+index 24b079e94bc2..1c58d8982728 100644
+--- a/arch/x86/power/cpu.c
++++ b/arch/x86/power/cpu.c
+@@ -122,9 +122,6 @@ static void __save_processor_state(struct saved_context *ctxt)
+ 	ctxt->cr2 = read_cr2();
+ 	ctxt->cr3 = __read_cr3();
+ 	ctxt->cr4 = __read_cr4();
+-#ifdef CONFIG_X86_64
+-	ctxt->cr8 = read_cr8();
+-#endif
+ 	ctxt->misc_enable_saved = !rdmsrl_safe(MSR_IA32_MISC_ENABLE,
+ 					       &ctxt->misc_enable);
+ 	msr_save_context(ctxt);
+@@ -207,7 +204,6 @@ static void notrace __restore_processor_state(struct saved_context *ctxt)
+ #else
+ /* CONFIG X86_64 */
+ 	wrmsrl(MSR_EFER, ctxt->efer);
+-	write_cr8(ctxt->cr8);
+ 	__write_cr4(ctxt->cr4);
+ #endif
+ 	write_cr3(ctxt->cr3);
+diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+index 7ceb32821093..58f79ab32358 100644
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -877,16 +877,6 @@ static void xen_write_cr4(unsigned long cr4)
+ 
+ 	native_write_cr4(cr4);
+ }
+-#ifdef CONFIG_X86_64
+-static inline unsigned long xen_read_cr8(void)
+-{
+-	return 0;
+-}
+-static inline void xen_write_cr8(unsigned long val)
+-{
+-	BUG_ON(val);
+-}
+-#endif
+ 
+ static u64 xen_read_msr_safe(unsigned int msr, int *err)
+ {
+@@ -1023,11 +1013,6 @@ static const struct pv_cpu_ops xen_cpu_ops __initconst = {
+ 
+ 	.write_cr4 = xen_write_cr4,
+ 
+-#ifdef CONFIG_X86_64
+-	.read_cr8 = xen_read_cr8,
+-	.write_cr8 = xen_write_cr8,
+-#endif
+-
+ 	.wbinvd = native_wbinvd,
+ 
+ 	.read_msr = xen_read_msr,
