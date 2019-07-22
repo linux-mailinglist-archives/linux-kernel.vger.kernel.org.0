@@ -2,63 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1F6C7016F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:44:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CF1C7017D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:45:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730650AbfGVNnu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 09:43:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37754 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730026AbfGVNnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 09:43:47 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD5F72166E;
-        Mon, 22 Jul 2019 13:43:45 +0000 (UTC)
-Date:   Mon, 22 Jul 2019 09:43:43 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "George G. Davis" <george_davis@mentor.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tracing: kmem: convert call_site addresses to user
- friendly symbols
-Message-ID: <20190722094343.1e9a5920@gandalf.local.home>
-In-Reply-To: <1563589361-18337-1-git-send-email-george_davis@mentor.com>
-References: <1563589361-18337-1-git-send-email-george_davis@mentor.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1730654AbfGVNol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 09:44:41 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38123 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728637AbfGVNol (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 09:44:41 -0400
+Received: by mail-wr1-f68.google.com with SMTP id g17so39498139wrr.5
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 06:44:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6OE2vgUPZ5yWbUkDxF2/EfNu3Dftuv+SUPLz3txgSn0=;
+        b=jDRY8s9DB/0Rdp9EuXO3MDPJTyhubw2FhY+I8rkA7gKejbLftYHvixid1ZPoPkn7ts
+         A9Nt0ELbEQ+/mnmPAbuZJmaKi0ux4J1MO9XL/EyAnVRDeRvZfwqvUc++Ubl3EYf8e3Sy
+         5kQgt3VZWaBETd569WwmaFNrKER5ta73sPjxhbRBvYk4TMIt9TU1tH/jJx/xRDpxl6ND
+         cqVIo0A69rGe/3GNQFG+6aa4luSVqjzMBWjvzxHiwouptlDVdrwOcKzz1Xa7JljTKa+m
+         /AEYM3KnHHCq1RbWGM9tJ6BQTPX5Jy7r16BNc/owfeuNU3e+zArBIS8uq8uVLMstI3w2
+         M4Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6OE2vgUPZ5yWbUkDxF2/EfNu3Dftuv+SUPLz3txgSn0=;
+        b=RKxfIhvZUMprbI4MyvA3iJLObHJsnBp/UBuqZJUomHwst0n2Rv3Y0FIBa4LLRWurAE
+         VVZoGwIVXpjoX29jqj1Z9pLj/QtP2tY2oTpwHnCu6mmzrg9GcJtqGJIMkIeSwL5LqTmL
+         Xc3Wp2z4zrL9uOPlJpoQSSdslvUWpBTmzDkgin+/aCV2WVAqsBh+/vaTzRHz/7+LNXFu
+         l7nkuBzKkk2ayKhU8Km9nogKY9zm+fQ+0rdRmdU+azO6cs8HHiegg2cSdgWIQFeFrTgF
+         7sA98FCtCSjAraPPTqwetvP1AIxAhOiOoHiOXQ5/pY0fvlukTDJ7NBWTKGEjxSKpAdwU
+         W4Bg==
+X-Gm-Message-State: APjAAAVnKKjN73+lag1ezwoGvWPFx8eAv5818imoNzL0iv9ooWcnUYmQ
+        1ILr4KAG6PN8iiS40LhXWW0=
+X-Google-Smtp-Source: APXvYqwvf5snwzuBm1QlzKK/QuN97vn9/tXDk4UIUnMrk9mGyCSxLMLSb1VOWE60YCYGqOxJSBkzkg==
+X-Received: by 2002:adf:f246:: with SMTP id b6mr47585965wrp.92.1563803079035;
+        Mon, 22 Jul 2019 06:44:39 -0700 (PDT)
+Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
+        by smtp.gmail.com with ESMTPSA id p6sm40652484wrq.97.2019.07.22.06.44.38
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 22 Jul 2019 06:44:38 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        David Lechner <david@lechnology.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-fbdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 0/9] ARM: davinci: da850-evm: remove more legacy GPIO calls
+Date:   Mon, 22 Jul 2019 15:44:14 +0200
+Message-Id: <20190722134423.26555-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Looking at the kbuild report...
+This is another small step on the path to liberating davinci from legacy
+GPIO API calls and shrinking the davinci GPIO driver by not having to
+support the base GPIO number anymore.
 
-On Fri, 19 Jul 2019 22:22:40 -0400
-"George G. Davis" <george_davis@mentor.com> wrote:
+This time we're removing the legacy calls used indirectly by the LCDC
+fbdev driver.
 
-> diff --git a/include/trace/events/kmem.h b/include/trace/events/kmem.h
-> index eb57e3037deb..ae18e61fa1c0 100644
-> --- a/include/trace/events/kmem.h
-> +++ b/include/trace/events/kmem.h
-> @@ -35,7 +35,7 @@ DECLARE_EVENT_CLASS(kmem_alloc,
->  		__entry->gfp_flags	= gfp_flags;
->  	),
->  
-> -	TP_printk("call_site=%lx ptr=%p bytes_req=%zu bytes_alloc=%zu gfp_flags=%s",
-> +	TP_printk("call_site=%pS ptr=%p bytes_req=%zu bytes_alloc=%zu gfp_flags=%s",
+First two patches enable the GPIO backlight driver in
+davinci_all_defconfig.
 
-Note, %lx expects an unsigned long, %pS expects a pointer.
+Patch 3/12 models the backlight GPIO as an actual GPIO backlight device.
 
->  		__entry->call_site,
+Patches 4-6 extend the fbdev driver with regulator support and convert
+the da850-evm board file to using it.
 
-You need to change the above to: (void *)__entry->call_site,
+Last three patches are improvements to the da8xx fbdev driver since
+we're already touching it in this series.
 
--- Steve
+v1 -> v2:
+- dopped the gpio-backlight patches from this series as since v5.3-rc1 we
+  can probe the module with neither the OF node nor platform data
+- collected review and ack tags
+- rebased on top of v5.3-rc1
 
->  		__entry->ptr,
->  		__entry->bytes_req,
+Bartosz Golaszewski (9):
+  ARM: davinci: refresh davinci_all_defconfig
+  ARM: davinci_all_defconfig: enable GPIO backlight
+  ARM: davinci: da850-evm: model the backlight GPIO as an actual device
+  fbdev: da8xx: add support for a regulator
+  ARM: davinci: da850-evm: switch to using a fixed regulator for lcdc
+  fbdev: da8xx: remove panel_power_ctrl() callback from platform data
+  fbdev: da8xx-fb: use devm_platform_ioremap_resource()
+  fbdev: da8xx-fb: drop a redundant if
+  fbdev: da8xx: use resource management for dma
+
+ arch/arm/configs/davinci_all_defconfig  |  27 ++----
+ arch/arm/mach-davinci/board-da850-evm.c |  90 +++++++++++++-----
+ drivers/video/fbdev/da8xx-fb.c          | 118 +++++++++++++-----------
+ include/video/da8xx-fb.h                |   1 -
+ 4 files changed, 141 insertions(+), 95 deletions(-)
+
+-- 
+2.21.0
+
