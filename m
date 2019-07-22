@@ -2,26 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4BD670723
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:29:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D828706E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:27:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731770AbfGVR3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 13:29:02 -0400
-Received: from sauhun.de ([88.99.104.3]:42188 "EHLO pokefinder.org"
+        id S1730709AbfGVR0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 13:26:51 -0400
+Received: from sauhun.de ([88.99.104.3]:42386 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731377AbfGVR0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 13:26:18 -0400
+        id S1731460AbfGVR03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 13:26:29 -0400
 Received: from localhost (p54B33E22.dip0.t-ipconnect.de [84.179.62.34])
-        by pokefinder.org (Postfix) with ESMTPSA id A83C44A1494;
-        Mon, 22 Jul 2019 19:26:16 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id 923A94A14A2;
+        Mon, 22 Jul 2019 19:26:28 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] misc: convert subsystem to i2c_new_dummy_device()
-Date:   Mon, 22 Jul 2019 19:26:14 +0200
-Message-Id: <20190722172616.3982-1-wsa+renesas@sang-engineering.com>
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH 08/14] mfd: max77843: convert to i2c_new_dummy_device
+Date:   Mon, 22 Jul 2019 19:26:15 +0200
+Message-Id: <20190722172623.4166-9-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190722172623.4166-1-wsa+renesas@sang-engineering.com>
+References: <20190722172623.4166-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -29,30 +31,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series is part of a tree-wide movement to replace the I2C API call
-'i2c_new_dummy' which returns NULL with its new counterpart returning an
-ERRPTR.
+Move from i2c_new_dummy() to i2c_new_dummy_device(), so we now get an
+ERRPTR which we use in error handling.
 
-The series was generated with coccinelle (audited afterwards, of course) and
-build tested by me and by buildbot. No tests on HW have been performed.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-The branch is based on v5.3-rc1. A branch (with some more stuff included) can
-be found here:
+Generated with coccinelle. Build tested by me and buildbot. Not tested on HW.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/new_dummy
+ drivers/mfd/max77843.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Some drivers still need to be manually converted. Patches for those will be
-sent out individually.
-
-
-Wolfram Sang (2):
-  misc: eeprom: ee1004: convert to i2c_new_dummy_device
-  misc: eeprom: max6875: convert to i2c_new_dummy_device
-
- drivers/misc/eeprom/ee1004.c  | 6 +++---
- drivers/misc/eeprom/max6875.c | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/mfd/max77843.c b/drivers/mfd/max77843.c
+index 25cbb2242b26..209ee24d9ce1 100644
+--- a/drivers/mfd/max77843.c
++++ b/drivers/mfd/max77843.c
+@@ -70,11 +70,11 @@ static int max77843_chg_init(struct max77693_dev *max77843)
+ {
+ 	int ret;
+ 
+-	max77843->i2c_chg = i2c_new_dummy(max77843->i2c->adapter, I2C_ADDR_CHG);
+-	if (!max77843->i2c_chg) {
++	max77843->i2c_chg = i2c_new_dummy_device(max77843->i2c->adapter, I2C_ADDR_CHG);
++	if (IS_ERR(max77843->i2c_chg)) {
+ 		dev_err(&max77843->i2c->dev,
+ 				"Cannot allocate I2C device for Charger\n");
+-		return -ENODEV;
++		return PTR_ERR(max77843->i2c_chg);
+ 	}
+ 	i2c_set_clientdata(max77843->i2c_chg, max77843);
+ 
 -- 
 2.20.1
 
