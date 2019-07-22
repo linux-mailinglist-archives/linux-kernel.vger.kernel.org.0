@@ -2,137 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C162705C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 18:52:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFA9F70642
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 18:57:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730747AbfGVQwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 12:52:35 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38671 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730740AbfGVQwc (ORCPT
+        id S1730026AbfGVQ52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 12:57:28 -0400
+Received: from scorn.kernelslacker.org ([45.56.101.199]:36182 "EHLO
+        scorn.kernelslacker.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729728AbfGVQ51 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 12:52:32 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f5so9112882pgu.5
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 09:52:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=D5i5eeVRTyq7Qm2OPmoZkgOgQ/VLsd39M3tEbxvABCE=;
-        b=lMVKoC32q6jdc5s52CXFaKProF9HEK95pIIg8BJ02KRdMo2T+G1UQFwnI3hhGF8+qU
-         sA+I2b5X4bmmD3l4DMPwDW82vI93F3KlS+ABw8rfpPxwGuJjlU4ikbVcjw+QJS8Ok0+k
-         NfKpy3LGpTZr6M9s+RV94qzCTTn8uIg1TOEHY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=D5i5eeVRTyq7Qm2OPmoZkgOgQ/VLsd39M3tEbxvABCE=;
-        b=iXpB4/7p6fD+Om9j99UgrtoKdn7ABQQ/RaNKuwWSQpmFWi7lWCCForUPdULZDs3w72
-         RmVbdWltkU16gcSJlPgvWwnVP0sHP1dQSk04srq47b8ELrrAj8FBIep9VPFy04wx659T
-         t/7n6dREAVPWknH25xMxncpru+jYrJQQ/S53YjfNfJxW9GwjimesajMyomtOfEMAsENn
-         e1fmtxfg1Hjmx9mlTzPQ0NPZBqEUl5obSeiDNm8zXVFlqGqAKipmviTquK9mqbt99SnJ
-         4u3Y98Ub43wkt1bBbvBgImKfHFmcPP4zvnQokNnJ3tYXj9UDbZHRsnZ91QnDnJXJ3JUt
-         27cg==
-X-Gm-Message-State: APjAAAXSzfq7ng0ScwsfgpEZ4wCVvd4FMRGVlSBGgA+L0WIYPD4nYq3b
-        q8ruOXvivb0ztvfEEmCTb8fVdw==
-X-Google-Smtp-Source: APXvYqx5EPVBdAZB9hQMVYd5b0pm0ScpmGtAOsQZBAbG8Ghj6g8EOLpHTo6yIfQxYVdOh6K7G5nb9g==
-X-Received: by 2002:a63:7b4d:: with SMTP id k13mr70901703pgn.182.1563814351931;
-        Mon, 22 Jul 2019 09:52:31 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id d8sm36678029pgh.45.2019.07.22.09.52.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Jul 2019 09:52:31 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 09:52:30 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Roland Kammerer <roland.kammerer@linbit.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Eric Biggers <ebiggers@google.com>, drbd-dev@lists.linbit.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] [v2] drbd: dynamically allocate shash descriptor
-Message-ID: <201907220952.EA05EEE9FC@keescook>
-References: <20190722122647.351002-1-arnd@arndb.de>
+        Mon, 22 Jul 2019 12:57:27 -0400
+X-Greylist: delayed 1166 seconds by postgrey-1.27 at vger.kernel.org; Mon, 22 Jul 2019 12:57:27 EDT
+Received: from [2601:196:4600:6634:ae9e:17ff:feb7:72ca] (helo=wopr.kernelslacker.org)
+        by scorn.kernelslacker.org with esmtp (Exim 4.92)
+        (envelope-from <davej@codemonkey.org.uk>)
+        id 1hpbK3-0000th-Ut; Mon, 22 Jul 2019 12:38:00 -0400
+Received: by wopr.kernelslacker.org (Postfix, from userid 1026)
+        id 9239D5601D8; Mon, 22 Jul 2019 12:37:59 -0400 (EDT)
+Date:   Mon, 22 Jul 2019 12:37:59 -0400
+From:   Dave Jones <davej@codemonkey.org.uk>
+To:     Linux Kernel <linux-kernel@vger.kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>
+Subject: 5.3-rc1 panic in dma_direct_max_mapping_size
+Message-ID: <20190722163759.GA28686@codemonkey.org.uk>
+Mail-Followup-To: Dave Jones <davej@codemonkey.org.uk>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190722122647.351002-1-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Note: SpamAssassin invocation failed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 02:26:34PM +0200, Arnd Bergmann wrote:
-> Building with clang and KASAN, we get a warning about an overly large
-> stack frame on 32-bit architectures:
-> 
-> drivers/block/drbd/drbd_receiver.c:921:31: error: stack frame size of 1280 bytes in function 'conn_connect'
->       [-Werror,-Wframe-larger-than=]
-> 
-> We already allocate other data dynamically in this function, so
-> just do the same for the shash descriptor, which makes up most of
-> this memory.
-> 
-> Link: https://lore.kernel.org/lkml/20190617132440.2721536-1-arnd@arndb.de/
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+only got a partial panic, but when I threw 5.3-rc1 on a linode vm,
+it hit this:
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+ bus_add_driver+0x1a9/0x1c0
+ ? scsi_init_sysctl+0x22/0x22
+ driver_register+0x6b/0xa6
+ ? scsi_init_sysctl+0x22/0x22
+ init+0x86/0xcc
+ do_one_initcall+0x69/0x334
+ kernel_init_freeable+0x367/0x3ff
+ ? rest_init+0x247/0x247
+ kernel_init+0xa/0xf9
+ ret_from_fork+0x3a/0x50
+CR2: 0000000000000000
+---[ end trace 2967cd16f7b1a303 ]---
+RIP: 0010:dma_direct_max_mapping_size+0x21/0x71
+Code: 0f b6 c0 c3 0f 1f 44 00 00 0f 1f 44 00 00 55 53 48 89 fb e8 21 0e 00 00 84 c0 74 2c 48 8b 83 20 03 00 00 48 8b ab
+30 03 00 00 <48> 8b 00 48 85 c0 75 20 48 89 df e8 ff f3 ff ff 48 39 e8 77 2c 83
+RSP: 0018:ffffb58f00013ae8 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: ffffa35ff8914ac8 RCX: ffffb58f00013a1c
+RDX: ffffa35ff81d4658 RSI: 000000000000007e RDI: ffffa35ff8914ac8
+RBP: 0000000000000000 R08: ffffa35ff81d4cc0 R09: ffffa35ff82e3bc8
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffa35ff8914ac8
+R13: 000000000000ffff R14: ffffa35ff826c160 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffffa35ffba00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000012d220001 CR4: 00000000003606f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+Kernel Offset: 0x1b000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
 
--Kees
 
-> ---
-> v2:
-> - don't try to zero a NULL descriptor pointer,
->   based on review from Roland Kammerer.
-> ---
->  drivers/block/drbd/drbd_receiver.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-> index 90ebfcae0ce6..2b3103c30857 100644
-> --- a/drivers/block/drbd/drbd_receiver.c
-> +++ b/drivers/block/drbd/drbd_receiver.c
-> @@ -5417,7 +5417,7 @@ static int drbd_do_auth(struct drbd_connection *connection)
->  	unsigned int key_len;
->  	char secret[SHARED_SECRET_MAX]; /* 64 byte */
->  	unsigned int resp_size;
-> -	SHASH_DESC_ON_STACK(desc, connection->cram_hmac_tfm);
-> +	struct shash_desc *desc;
->  	struct packet_info pi;
->  	struct net_conf *nc;
->  	int err, rv;
-> @@ -5430,6 +5430,13 @@ static int drbd_do_auth(struct drbd_connection *connection)
->  	memcpy(secret, nc->shared_secret, key_len);
->  	rcu_read_unlock();
->  
-> +	desc = kmalloc(sizeof(struct shash_desc) +
-> +		       crypto_shash_descsize(connection->cram_hmac_tfm),
-> +		       GFP_KERNEL);
-> +	if (!desc) {
-> +		rv = -1;
-> +		goto fail;
-> +	}
->  	desc->tfm = connection->cram_hmac_tfm;
->  
->  	rv = crypto_shash_setkey(connection->cram_hmac_tfm, (u8 *)secret, key_len);
-> @@ -5571,7 +5578,10 @@ static int drbd_do_auth(struct drbd_connection *connection)
->  	kfree(peers_ch);
->  	kfree(response);
->  	kfree(right_response);
-> -	shash_desc_zero(desc);
-> +	if (desc) {
-> +		shash_desc_zero(desc);
-> +		kfree(desc);
-> +	}
->  
->  	return rv;
->  }
-> -- 
-> 2.20.0
-> 
+Will try and get some more debug info this evening if it isn't obvious
+from the above.
 
--- 
-Kees Cook
+	Dave
