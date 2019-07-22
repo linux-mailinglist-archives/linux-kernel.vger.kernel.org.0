@@ -2,179 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9117E70D16
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 01:10:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9EBE70D46
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 01:22:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729370AbfGVXKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 19:10:04 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:40284 "EHLO ale.deltatee.com"
+        id S1727109AbfGVXV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 19:21:59 -0400
+Received: from ozlabs.org ([203.11.71.1]:58339 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733222AbfGVXJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 19:09:15 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1hphQb-0002k3-Dj; Mon, 22 Jul 2019 17:09:14 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1hphQW-0001R2-CF; Mon, 22 Jul 2019 17:09:04 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Eric Pilmore <epilmore@gigaio.com>,
-        Stephen Bates <sbates@raithlin.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Mon, 22 Jul 2019 17:08:54 -0600
-Message-Id: <20190722230859.5436-10-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190722230859.5436-1-logang@deltatee.com>
-References: <20190722230859.5436-1-logang@deltatee.com>
+        id S1726120AbfGVXV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 19:21:59 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45syLF0b78z9s4Y;
+        Tue, 23 Jul 2019 09:21:57 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH v2] powerpc: slightly improve cache helpers
+In-Reply-To: <20190722151801.GC20882@gate.crashing.org>
+References: <45hnfp6SlLz9sP0@ozlabs.org> <20190708191416.GA21442@archlinux-threadripper> <a5864549-40c3-badd-8c41-d5b7bf3c4f3c@c-s.fr> <20190709064952.GA40851@archlinux-threadripper> <20190719032456.GA14108@archlinux-threadripper> <20190719152303.GA20882@gate.crashing.org> <20190719160455.GA12420@archlinux-threadripper> <20190721075846.GA97701@archlinux-threadripper> <20190721180150.GN20882@gate.crashing.org> <87imru74ul.fsf@concordia.ellerman.id.au> <20190722151801.GC20882@gate.crashing.org>
+Date:   Tue, 23 Jul 2019 09:21:53 +1000
+Message-ID: <875znt7izy.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, bhelgaas@google.com, hch@lst.de, Christian.Koenig@amd.com, jgg@mellanox.com, sagi@grimberg.me, kbusch@kernel.org, axboe@fb.com, dan.j.williams@intel.com, epilmore@gigaio.com, sbates@raithlin.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_FREE,MYRULES_NO_TEXT autolearn=ham
-        autolearn_force=no version=3.4.2
-Subject: [PATCH 09/14] PCI/P2PDMA: Introduce pci_p2pdma_unmap_sg()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add pci_p2pdma_unmap_sg() to the two places that call
-pci_p2pdma_map_sg().
+Segher Boessenkool <segher@kernel.crashing.org> writes:
+> On Mon, Jul 22, 2019 at 08:15:14PM +1000, Michael Ellerman wrote:
+>> Segher Boessenkool <segher@kernel.crashing.org> writes:
+>> > On Sun, Jul 21, 2019 at 12:58:46AM -0700, Nathan Chancellor wrote:
+>> >> 0000017c clear_user_page:
+>> >>      17c: 94 21 ff f0                  	stwu 1, -16(1)
+>> >>      180: 38 80 00 80                  	li 4, 128
+>> >>      184: 38 63 ff e0                  	addi 3, 3, -32
+>> >>      188: 7c 89 03 a6                  	mtctr 4
+>> >>      18c: 38 81 00 0f                  	addi 4, 1, 15
+>> >>      190: 8c c3 00 20                  	lbzu 6, 32(3)
+>> >>      194: 98 c1 00 0f                  	stb 6, 15(1)
+>> >>      198: 7c 00 27 ec                  	dcbz 0, 4
+>> >>      19c: 42 00 ff f4                  	bdnz .+65524
+>> >
+>> > Uh, yeah, well, I have no idea what clang tried here, but that won't
+>> > work.  It's copying a byte from each target cache line to the stack,
+>> > and then does clears the cache line containing that byte on the stack.
+>> 
+>> So it seems like this is a clang bug.
+>> 
+>> None of the distros we support use clang, but we would still like to
+>> keep it working if we can.
+>
+> Which version?  Which versions *are* broken?
 
-This is a prep patch to introduce correct mappings for p2pdma
-transactions that go through the root complex.
+AFAIK clang 8 is the first version that we could build with, without
+hacks.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
----
- drivers/infiniband/core/rw.c |  6 ++++--
- drivers/nvme/host/pci.c      |  6 ++++--
- drivers/pci/p2pdma.c         | 18 +++++++++++++++++-
- include/linux/pci-p2pdma.h   | 13 +++++++++++++
- 4 files changed, 38 insertions(+), 5 deletions(-)
+>> Looking at the original patch, the only upside is that the compiler
+>> can use both RA and RB to compute the address, rather than us forcing RA
+>> to 0.
+>> 
+>> But at least with my compiler here (GCC 8 vintage) I don't actually see
+>> GCC ever using both GPRs even with the patch. Or at least, there's no
+>> difference before/after the patch as far as I can see.
+>
+> The benefit is small, certainly.
 
-diff --git a/drivers/infiniband/core/rw.c b/drivers/infiniband/core/rw.c
-index dce06108c8c3..5337393d4dfe 100644
---- a/drivers/infiniband/core/rw.c
-+++ b/drivers/infiniband/core/rw.c
-@@ -583,8 +583,10 @@ void rdma_rw_ctx_destroy(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 port_num,
- 		break;
- 	}
- 
--	/* P2PDMA contexts do not need to be unmapped */
--	if (!is_pci_p2pdma_page(sg_page(sg)))
-+	if (is_pci_p2pdma_page(sg_page(sg)))
-+		pci_p2pdma_unmap_sg(qp->pd->device->dma_device, sg,
-+				    sg_cnt, dir);
-+	else
- 		ib_dma_unmap_sg(qp->pd->device, sg, sg_cnt, dir);
- }
- EXPORT_SYMBOL(rdma_rw_ctx_destroy);
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 7747712054cd..2348b15f6bd0 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -547,8 +547,10 @@ static void nvme_unmap_data(struct nvme_dev *dev, struct request *req)
- 
- 	WARN_ON_ONCE(!iod->nents);
- 
--	/* P2PDMA requests do not need to be unmapped */
--	if (!is_pci_p2pdma_page(sg_page(iod->sg)))
-+	if (is_pci_p2pdma_page(sg_page(iod->sg)))
-+		pci_p2pdma_unmap_sg(dev->dev, iod->sg, iod->nents,
-+				    rq_dma_dir(req));
-+	else
- 		dma_unmap_sg(dev->dev, iod->sg, iod->nents, rq_dma_dir(req));
- 
- 
-diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-index ce361e287543..d3ced8eee30a 100644
---- a/drivers/pci/p2pdma.c
-+++ b/drivers/pci/p2pdma.c
-@@ -793,7 +793,8 @@ EXPORT_SYMBOL_GPL(pci_p2pmem_publish);
-  * @dir: DMA direction
-  * @attrs: dma attributes passed to dma_map_sg() (if called)
-  *
-- * Scatterlists mapped with this function should not be unmapped in any way.
-+ * Scatterlists mapped with this function should be unmapped using
-+ * pci_p2pdma_unmap_sg_attrs().
-  *
-  * Returns the number of SG entries mapped or 0 on error.
-  */
-@@ -827,6 +828,21 @@ int pci_p2pdma_map_sg_attrs(struct device *dev, struct scatterlist *sg,
- }
- EXPORT_SYMBOL_GPL(pci_p2pdma_map_sg_attrs);
- 
-+/**
-+ * pci_p2pdma_unmap_sg - unmap a PCI peer-to-peer scatterlist that was
-+ *	mapped with pci_p2pdma_map_sg()
-+ * @dev: device doing the DMA request
-+ * @sg: scatter list to map
-+ * @nents: number of elements returned by pci_p2pdma_map_sg()
-+ * @dir: DMA direction
-+ * @attrs: dma attributes passed to dma_unmap_sg() (if called)
-+ */
-+void pci_p2pdma_unmap_sg_attrs(struct device *dev, struct scatterlist *sg,
-+		int nents, enum dma_data_direction dir, unsigned long attrs)
-+{
-+}
-+EXPORT_SYMBOL_GPL(pci_p2pdma_unmap_sg_attrs);
-+
- /**
-  * pci_p2pdma_enable_store - parse a configfs/sysfs attribute store
-  *		to enable p2pdma
-diff --git a/include/linux/pci-p2pdma.h b/include/linux/pci-p2pdma.h
-index 7fd51954f93a..8318a97c9c61 100644
---- a/include/linux/pci-p2pdma.h
-+++ b/include/linux/pci-p2pdma.h
-@@ -32,6 +32,8 @@ void pci_p2pmem_free_sgl(struct pci_dev *pdev, struct scatterlist *sgl);
- void pci_p2pmem_publish(struct pci_dev *pdev, bool publish);
- int pci_p2pdma_map_sg_attrs(struct device *dev, struct scatterlist *sg,
- 		int nents, enum dma_data_direction dir, unsigned long attrs);
-+void pci_p2pdma_unmap_sg_attrs(struct device *dev, struct scatterlist *sg,
-+		int nents, enum dma_data_direction dir, unsigned long attrs);
- int pci_p2pdma_enable_store(const char *page, struct pci_dev **p2p_dev,
- 			    bool *use_p2pdma);
- ssize_t pci_p2pdma_enable_show(char *page, struct pci_dev *p2p_dev,
-@@ -87,6 +89,11 @@ static inline int pci_p2pdma_map_sg_attrs(struct device *dev,
- {
- 	return 0;
- }
-+static inline void pci_p2pdma_unmap_sg_attrs(struct device *dev,
-+		struct scatterlist *sg, int nents, enum dma_data_direction dir,
-+		unsigned long attrs)
-+{
-+}
- static inline int pci_p2pdma_enable_store(const char *page,
- 		struct pci_dev **p2p_dev, bool *use_p2pdma)
- {
-@@ -118,4 +125,10 @@ static inline int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg,
- 	return pci_p2pdma_map_sg_attrs(dev, sg, nents, dir, 0);
- }
- 
-+static inline void pci_p2pdma_unmap_sg(struct device *dev,
-+		struct scatterlist *sg, int nents, enum dma_data_direction dir)
-+{
-+	pci_p2pdma_unmap_sg_attrs(dev, sg, nents, dir, 0);
-+}
-+
- #endif /* _LINUX_PCI_P2P_H */
--- 
-2.20.1
+Zero is small, but I guess some things are smaller? :P
 
+>> So my inclination is to revert the original patch. We can try again in a
+>> few years :D
+>> 
+>> Thoughts?
+>
+> I think you should give the clang people time to figure out what is
+> going on.
+
+Yeah fair enough, will wait and see what their diagnosis is.
+
+cheers
