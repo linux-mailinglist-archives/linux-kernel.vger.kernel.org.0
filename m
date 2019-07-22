@@ -2,47 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 210CE6FB8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:44:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DFCA6FB91
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:46:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbfGVIoA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 04:44:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34357 "EHLO
+        id S1728506AbfGVIqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 04:46:12 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39529 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727699AbfGVIn7 (ORCPT
+        with ESMTP id S1725989AbfGVIqL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 04:43:59 -0400
+        Mon, 22 Jul 2019 04:46:11 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6M8hr5X3745124
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6M8k4xL3747427
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 22 Jul 2019 01:43:53 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6M8hr5X3745124
+        Mon, 22 Jul 2019 01:46:04 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6M8k4xL3747427
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1563785034;
-        bh=CS1azoszph5hEAVXSC7iyTdwY2pVw8kAHb+rJAfhovw=;
+        s=2019071901; t=1563785165;
+        bh=52RxQEACFNHpKKDiBYwtFQzgC/9MJCvBPNDWb/0PFbA=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=h2ul/eMbOwgT/QTtyeMCLgQGyEZLBPLI793O2tLGn7dr13QZw/ZaT7oBLCSjc821C
-         9rJPxtLs4UDzR1r65XeF3b9mdJ4YA5fsxqLxiwA3WLJVZUV9EftDLJQL6Ou/lV9gqJ
-         YHricN8LAjqt1OT1t52BCRzPh/b3hftnnSIxsANhGRhCeYS0EQsQBT+cuPgUuGlcxE
-         Nf12Oi6bQoi14+keG6ZFR7RJFoCD9S4zzRUG73JYHR2GaNY0WZPa3cXlVw22JeoO25
-         wyFebkHQHj3zs9+cxmeVKlxHxa1gHcEiXV3RLAJI0OXvtvEZmhK7PlY7RE6r8yv5Ol
-         nrqx6gtsiwHAA==
+        b=rUfzbbSQzojaElFWJESDMaJyHPDRPPmHOgtbySaG7PUoipYSzYsHcPmx+5zDnEfbo
+         G9c7mRfa0mf5jKO6oI1tOXKZj21aP0BLh93kkeQO7SlhA8jqQIgJyJO9qKSSSVnp3Z
+         kGlbWWA0BTNFHcRxjmK+qqYeoO0BTc+NYGjIQVI4hyXF9KXEnI4zEwhp2lvFvQj+8u
+         7oDd3Hw+lJo2lQGuTLTwlyiyEqp8BM4nDQG5OHnTT8mgaMu1jDvakJPg1lg8tRkxlO
+         P2H6KKWNXCF2ryXEQIp/Zb5QfjC20lwDenVQR6CeH+QOArDKM8f9L1FDmOmPTzsNki
+         Iy5gt77hhwEFA==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6M8hqN23745120;
-        Mon, 22 Jul 2019 01:43:52 -0700
-Date:   Mon, 22 Jul 2019 01:43:52 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6M8k4OZ3747424;
+        Mon, 22 Jul 2019 01:46:04 -0700
+Date:   Mon, 22 Jul 2019 01:46:04 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Gayatri Kammela <tipbot@zytor.com>
-Message-ID: <tip-018ebca8bd704f18d56f8fff38e2c3d76d7d39fb@git.kernel.org>
-Cc:     mingo@kernel.org, hpa@zytor.com, gayatri.kammela@intel.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          gayatri.kammela@intel.com, hpa@zytor.com, mingo@kernel.org
-In-Reply-To: <20190717234632.32673-3-gayatri.kammela@intel.com>
-References: <20190717234632.32673-3-gayatri.kammela@intel.com>
+From:   tip-bot for Eiichi Tsukata <tipbot@zytor.com>
+Message-ID: <tip-2af7c85714d8cafadf925d55441458eae312cd6b@git.kernel.org>
+Cc:     hpa@zytor.com, juri.lelli@gmail.com, mingo@kernel.org,
+        tglx@linutronix.de, devel@etsukata.com,
+        linux-kernel@vger.kernel.org
+Reply-To: hpa@zytor.com, juri.lelli@gmail.com, devel@etsukata.com,
+          tglx@linutronix.de, mingo@kernel.org,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20190722083216.16192-2-devel@etsukata.com>
+References: <20190722083216.16192-2-devel@etsukata.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] x86/cpufeatures: Enable a new AVX512 CPU feature
-Git-Commit-ID: 018ebca8bd704f18d56f8fff38e2c3d76d7d39fb
+Subject: [tip:x86/urgent] x86/stacktrace: Prevent access_ok() warnings in
+ arch_stack_walk_user()
+Git-Commit-ID: 2af7c85714d8cafadf925d55441458eae312cd6b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -51,64 +54,76 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Status: No, score=1.8 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  018ebca8bd704f18d56f8fff38e2c3d76d7d39fb
-Gitweb:     https://git.kernel.org/tip/018ebca8bd704f18d56f8fff38e2c3d76d7d39fb
-Author:     Gayatri Kammela <gayatri.kammela@intel.com>
-AuthorDate: Wed, 17 Jul 2019 16:46:32 -0700
+Commit-ID:  2af7c85714d8cafadf925d55441458eae312cd6b
+Gitweb:     https://git.kernel.org/tip/2af7c85714d8cafadf925d55441458eae312cd6b
+Author:     Eiichi Tsukata <devel@etsukata.com>
+AuthorDate: Mon, 22 Jul 2019 17:32:16 +0900
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Mon, 22 Jul 2019 10:38:25 +0200
+CommitDate: Mon, 22 Jul 2019 10:42:36 +0200
 
-x86/cpufeatures: Enable a new AVX512 CPU feature
+x86/stacktrace: Prevent access_ok() warnings in arch_stack_walk_user()
 
-Add a new AVX512 instruction group/feature for enumeration in
-/proc/cpuinfo: AVX512_VP2INTERSECT.
+When arch_stack_walk_user() is called from atomic contexts, access_ok() can
+trigger the following warning if compiled with CONFIG_DEBUG_ATOMIC_SLEEP=y.
 
-CPUID.(EAX=7,ECX=0):EDX[bit 8]  AVX512_VP2INTERSECT
+Reproducer:
 
-Detailed information of CPUID bits for this feature can be found in
-the Intel Architecture Intsruction Set Extensions Programming Reference
-document (refer to Table 1-2). A copy of this document is available at
-https://bugzilla.kernel.org/show_bug.cgi?id=204215.
+  // CONFIG_DEBUG_ATOMIC_SLEEP=y
+  # cd /sys/kernel/debug/tracing
+  # echo 1 > options/userstacktrace
+  # echo 1 > events/irq/irq_handler_entry/enable
 
-Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
+  WARNING: CPU: 0 PID: 2649 at arch/x86/kernel/stacktrace.c:103 arch_stack_walk_user+0x6e/0xf6
+  CPU: 0 PID: 2649 Comm: bash Not tainted 5.3.0-rc1+ #99
+  RIP: 0010:arch_stack_walk_user+0x6e/0xf6
+  Call Trace:
+   <IRQ>
+   stack_trace_save_user+0x10a/0x16d
+   trace_buffer_unlock_commit_regs+0x185/0x240
+   trace_event_buffer_commit+0xec/0x330
+   trace_event_raw_event_irq_handler_entry+0x159/0x1e0
+   __handle_irq_event_percpu+0x22d/0x440
+   handle_irq_event_percpu+0x70/0x100
+   handle_irq_event+0x5a/0x8b
+   handle_edge_irq+0x12f/0x3f0
+   handle_irq+0x34/0x40
+   do_IRQ+0xa6/0x1f0
+   common_interrupt+0xf/0xf
+   </IRQ>
+
+Fix it by calling __range_not_ok() directly instead of access_ok() as
+copy_from_user_nmi() does. This is fine here because the actual copy is
+inside a pagefault disabled region.
+
+Reported-by: Juri Lelli <juri.lelli@gmail.com>
+Signed-off-by: Eiichi Tsukata <devel@etsukata.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190717234632.32673-3-gayatri.kammela@intel.com
+Link: https://lkml.kernel.org/r/20190722083216.16192-2-devel@etsukata.com
 
 ---
- arch/x86/include/asm/cpufeatures.h | 1 +
- arch/x86/kernel/cpu/cpuid-deps.c   | 1 +
- 2 files changed, 2 insertions(+)
+ arch/x86/kernel/stacktrace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 998c2cc08363..56f53bf3bbbf 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -353,6 +353,7 @@
- /* Intel-defined CPU features, CPUID level 0x00000007:0 (EDX), word 18 */
- #define X86_FEATURE_AVX512_4VNNIW	(18*32+ 2) /* AVX-512 Neural Network Instructions */
- #define X86_FEATURE_AVX512_4FMAPS	(18*32+ 3) /* AVX-512 Multiply Accumulation Single precision */
-+#define X86_FEATURE_AVX512_VP2INTERSECT (18*32+ 8) /* AVX-512 Intersect for D/Q */
- #define X86_FEATURE_MD_CLEAR		(18*32+10) /* VERW clears CPU buffers */
- #define X86_FEATURE_TSX_FORCE_ABORT	(18*32+13) /* "" TSX_FORCE_ABORT */
- #define X86_FEATURE_PCONFIG		(18*32+18) /* Intel PCONFIG */
-diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
-index 630a9f77fb6b..3cbe24ca80ab 100644
---- a/arch/x86/kernel/cpu/cpuid-deps.c
-+++ b/arch/x86/kernel/cpu/cpuid-deps.c
-@@ -64,6 +64,7 @@ static const struct cpuid_dep cpuid_deps[] = {
- 	{ X86_FEATURE_AVX512_4VNNIW,		X86_FEATURE_AVX512F   },
- 	{ X86_FEATURE_AVX512_4FMAPS,		X86_FEATURE_AVX512F   },
- 	{ X86_FEATURE_AVX512_VPOPCNTDQ,		X86_FEATURE_AVX512F   },
-+	{ X86_FEATURE_AVX512_VP2INTERSECT,	X86_FEATURE_AVX512VL  },
- 	{ X86_FEATURE_CQM_OCCUP_LLC,		X86_FEATURE_CQM_LLC   },
- 	{ X86_FEATURE_CQM_MBM_TOTAL,		X86_FEATURE_CQM_LLC   },
- 	{ X86_FEATURE_CQM_MBM_LOCAL,		X86_FEATURE_CQM_LLC   },
+diff --git a/arch/x86/kernel/stacktrace.c b/arch/x86/kernel/stacktrace.c
+index 4f36d3241faf..2d6898c2cb64 100644
+--- a/arch/x86/kernel/stacktrace.c
++++ b/arch/x86/kernel/stacktrace.c
+@@ -100,7 +100,7 @@ copy_stack_frame(const void __user *fp, struct stack_frame_user *frame)
+ {
+ 	int ret;
+ 
+-	if (!access_ok(fp, sizeof(*frame)))
++	if (__range_not_ok(fp, sizeof(*frame), TASK_SIZE))
+ 		return 0;
+ 
+ 	ret = 1;
