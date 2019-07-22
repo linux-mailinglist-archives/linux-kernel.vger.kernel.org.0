@@ -2,47 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95C6D6FB2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:23:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC9FA6FB3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:24:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728310AbfGVIW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 04:22:58 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34695 "EHLO
+        id S1728398AbfGVIXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 04:23:51 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50289 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbfGVIW6 (ORCPT
+        with ESMTP id S1726571AbfGVIXt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 04:22:58 -0400
+        Mon, 22 Jul 2019 04:23:49 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6M8MphL3738614
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6M8Nat33738684
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 22 Jul 2019 01:22:51 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6M8MphL3738614
+        Mon, 22 Jul 2019 01:23:36 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6M8Nat33738684
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1563783771;
-        bh=do8rKCgK34eZi9UvSjJY/LddM6qNTjKJd+DgwItJOvo=;
+        s=2019071901; t=1563783816;
+        bh=UnylQ2uIKauxwDTMbH02wxKZYqGV7EC4IvB+0V+WZ5g=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=bmuBwTTSt1jO7He7hw6KJR7ljuEgEu0oOQfvRu1WKRjm8jtYSvCVQgjGhhkgbEwYx
-         xv2QQcvCpS7bbEX4Vukfh2BkKlFEYsxbiBGv2hwJvZ+wvvq0RTXc5GWnCGcnsIEAKm
-         12fSVNKgH/VpFIax1AzUv/8YBjBY7qQikYMOtj3FpTDz4nbm8W56n+0Q07ZTOePyTw
-         r/0JawLYWX17qLnzAPgdd1/V2rkWo0YwzoYN87+i6unwIkqMqKoPohfCZSKbKn/2UD
-         hcpC9JUtpJjKoG4onWBhZ1QqWlO3HhCmc96Z40tDzPOJttCG5KleyXl2tkIEQm7w3b
-         9MhD5R6wwGucQ==
+        b=d5YgKXtn7tTEDdQmzXUyng6+FfttbaRGYKhDd8pH3VA+ECBYQcsIG7VSMb8yfFK6u
+         QH8295Z0VAojeqrqEEu8xRo/hjlrbAzT872cbrvqgMjlfgSTOZwivQbFcuDxJs4OPB
+         w5A4rL3/qLuP9wlbcpbkUFAF92/RnhYUbp0i3OzMW8Rqyu6m6RtnHP3DqsJPxSZsqa
+         F6rsSMejUKNvzUCny2/iC6otKDtIIK+cTi8Ry287qPOIbcUJ2S/1PTR3EUa1K0fNd2
+         9mwNqg7iOgqp04xhEBS7QIyi/XuksWqkXWMUcjSiHOM5G1lyLZKPx8X0aU8+6rv7Az
+         gq5jTYVSHCc4Q==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6M8Mo353738611;
-        Mon, 22 Jul 2019 01:22:50 -0700
-Date:   Mon, 22 Jul 2019 01:22:50 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6M8NZZO3738680;
+        Mon, 22 Jul 2019 01:23:35 -0700
+Date:   Mon, 22 Jul 2019 01:23:35 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
-Message-ID: <tip-8e998fc24de47c55b47a887f6c95ab91acd4a720@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, jroedel@suse.de, hpa@zytor.com,
+Message-ID: <tip-3f8fd02b1bf1d7ba964485a56f2f4b53ae88c167@git.kernel.org>
+Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org, jroedel@suse.de,
         dave.hansen@linux.intel.com, mingo@kernel.org, tglx@linutronix.de
-Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org, jroedel@suse.de,
-          dave.hansen@linux.intel.com, tglx@linutronix.de, hpa@zytor.com
-In-Reply-To: <20190719184652.11391-3-joro@8bytes.org>
-References: <20190719184652.11391-3-joro@8bytes.org>
+Reply-To: dave.hansen@linux.intel.com, tglx@linutronix.de,
+          mingo@kernel.org, jroedel@suse.de, linux-kernel@vger.kernel.org,
+          hpa@zytor.com
+In-Reply-To: <20190719184652.11391-4-joro@8bytes.org>
+References: <20190719184652.11391-4-joro@8bytes.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/mm: Sync also unmappings in vmalloc_sync_all()
-Git-Commit-ID: 8e998fc24de47c55b47a887f6c95ab91acd4a720
+Subject: [tip:x86/urgent] mm/vmalloc: Sync unmappings in
+ __purge_vmap_area_lazy()
+Git-Commit-ID: 3f8fd02b1bf1d7ba964485a56f2f4b53ae88c167
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,69 +62,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8e998fc24de47c55b47a887f6c95ab91acd4a720
-Gitweb:     https://git.kernel.org/tip/8e998fc24de47c55b47a887f6c95ab91acd4a720
+Commit-ID:  3f8fd02b1bf1d7ba964485a56f2f4b53ae88c167
+Gitweb:     https://git.kernel.org/tip/3f8fd02b1bf1d7ba964485a56f2f4b53ae88c167
 Author:     Joerg Roedel <jroedel@suse.de>
-AuthorDate: Fri, 19 Jul 2019 20:46:51 +0200
+AuthorDate: Fri, 19 Jul 2019 20:46:52 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Mon, 22 Jul 2019 10:18:30 +0200
 
-x86/mm: Sync also unmappings in vmalloc_sync_all()
+mm/vmalloc: Sync unmappings in __purge_vmap_area_lazy()
 
-With huge-page ioremap areas the unmappings also need to be synced between
-all page-tables. Otherwise it can cause data corruption when a region is
-unmapped and later re-used.
+On x86-32 with PTI enabled, parts of the kernel page-tables are not shared
+between processes. This can cause mappings in the vmalloc/ioremap area to
+persist in some page-tables after the region is unmapped and released.
 
-Make the vmalloc_sync_one() function ready to sync unmappings and make sure
-vmalloc_sync_all() iterates over all page-tables even when an unmapped PMD
-is found.
+When the region is re-used the processes with the old mappings do not fault
+in the new mappings but still access the old ones.
 
+This causes undefined behavior, in reality often data corruption, kernel
+oopses and panics and even spontaneous reboots.
+
+Fix this problem by activly syncing unmaps in the vmalloc/ioremap area to
+all page-tables in the system before the regions can be re-used.
+
+References: https://bugzilla.suse.com/show_bug.cgi?id=1118689
 Fixes: 5d72b4fba40ef ('x86, mm: support huge I/O mapping capability I/F')
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-Link: https://lkml.kernel.org/r/20190719184652.11391-3-joro@8bytes.org
+Link: https://lkml.kernel.org/r/20190719184652.11391-4-joro@8bytes.org
 
 ---
- arch/x86/mm/fault.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ mm/vmalloc.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index e64173db4970..9ceacd1156db 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -177,11 +177,12 @@ static inline pmd_t *vmalloc_sync_one(pgd_t *pgd, unsigned long address)
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 4fa8d84599b0..e0fc963acc41 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1258,6 +1258,12 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
+ 	if (unlikely(valist == NULL))
+ 		return false;
  
- 	pmd = pmd_offset(pud, address);
- 	pmd_k = pmd_offset(pud_k, address);
--	if (!pmd_present(*pmd_k))
--		return NULL;
- 
--	if (!pmd_present(*pmd))
-+	if (pmd_present(*pmd) != pmd_present(*pmd_k))
- 		set_pmd(pmd, *pmd_k);
++	/*
++	 * First make sure the mappings are removed from all page-tables
++	 * before they are freed.
++	 */
++	vmalloc_sync_all();
 +
-+	if (!pmd_present(*pmd_k))
-+		return NULL;
- 	else
- 		BUG_ON(pmd_pfn(*pmd) != pmd_pfn(*pmd_k));
- 
-@@ -203,17 +204,13 @@ void vmalloc_sync_all(void)
- 		spin_lock(&pgd_lock);
- 		list_for_each_entry(page, &pgd_list, lru) {
- 			spinlock_t *pgt_lock;
--			pmd_t *ret;
- 
- 			/* the pgt_lock only for Xen */
- 			pgt_lock = &pgd_page_get_mm(page)->page_table_lock;
- 
- 			spin_lock(pgt_lock);
--			ret = vmalloc_sync_one(page_address(page), address);
-+			vmalloc_sync_one(page_address(page), address);
- 			spin_unlock(pgt_lock);
--
--			if (!ret)
--				break;
- 		}
- 		spin_unlock(&pgd_lock);
- 	}
+ 	/*
+ 	 * TODO: to calculate a flush range without looping.
+ 	 * The list can be up to lazy_max_pages() elements.
+@@ -3038,6 +3044,9 @@ EXPORT_SYMBOL(remap_vmalloc_range);
+ /*
+  * Implement a stub for vmalloc_sync_all() if the architecture chose not to
+  * have one.
++ *
++ * The purpose of this function is to make sure the vmalloc area
++ * mappings are identical in all page-tables in the system.
+  */
+ void __weak vmalloc_sync_all(void)
+ {
