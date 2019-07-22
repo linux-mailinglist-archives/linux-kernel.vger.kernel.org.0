@@ -2,150 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1ADB703A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:23:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73109703AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:26:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728845AbfGVPXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 11:23:52 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39214 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728518AbfGVPXv (ORCPT
+        id S1728927AbfGVP0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 11:26:02 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:46529 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728850AbfGVP0B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 11:23:51 -0400
-Received: by mail-wm1-f67.google.com with SMTP id u25so25389748wmc.4
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 08:23:50 -0700 (PDT)
+        Mon, 22 Jul 2019 11:26:01 -0400
+Received: by mail-vs1-f65.google.com with SMTP id r3so26337207vsr.13
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 08:26:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=ziepe.ca; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=dt/YdbkdtXbQfI//Db8fFkJDny3N1lhFKp8D2tIZAQw=;
-        b=cQ2I7j835ew5ZusitfiizKVXsv2ms/Nc0gSb5CrVHW/lFCaI9Gv70gdA4oadY9nnnt
-         22rHq7NOp1P54r4QTN05DnoO5Vzk7n5pOqdpjljYIGB6p/c5/nb5/NE7ssI4cnM5+uMW
-         re3SrKpnRzNArReAT73AICGdFbuEJXjev/94JuhOADB6QIJg6lsQY73ChYKd5Ay955n8
-         n/282J2Tet1cmlYWPRfz4nrpYUJ3ON+x0+U8/9RSfLmrAUYjyYD408Dv0NWz2VfZl9v7
-         0EV1HGfx/k9CthCvh6voCMuiR+51PFNtlUlVSLG1xJXZPSpw9f/DV0Y7wom93U6fLsF+
-         EEYA==
+        bh=Qpgr4YRrDo+cYEiDdr1Ey4/KK+ijOMZHdWn8ArLcPCs=;
+        b=eZ5/5v39C0Q7G62sp0kjVZq3sfqQqOwZ3299bCJEMfZ7R+d6gVbklh2UXaT5K2bNkf
+         898/FCdClVFx1r9hIp8wJNcCe01qwi6557vSDRMc7yoTnjPUHJTcrXZOee7Bc6RLeMul
+         qkLZAZ/CVPS5WFwldM5eV24aR1yBU9+GreFfS2muIC3xlcCy67kiR5FXuPzoKzmwOZ+W
+         cTaN9ECJ7Ua3rBIDeuk1w+T4TedyUiuqjPdR8nwTS4ZolzgoVatlpfdy5xXII/FtAKNx
+         2m5NtRziPKh4oOX+K2yIqXdPrJaW6tnHB4gOmlvXAqNrhk5I+vbBscwiVapeam4TQ32x
+         IP7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dt/YdbkdtXbQfI//Db8fFkJDny3N1lhFKp8D2tIZAQw=;
-        b=DcwTH/5+QjWF4rMCcAwvU/HRWM/lsTzEgQIxNCA6zMB/Xj3gfwylO/ZcNwQB0Vie6e
-         cmQ+A1ZSr2w1lZt3iVWEfyzpyd5Mx1nIkBYb7ACYvIT8QirmhJlupjNRVArbdNUoZE8U
-         atZGFjIS1CcqS5e4gxwafQYtwP79rUQbsCqSi3z4ud2LTAu+LIWrdL8V7yd6Pz24tUg/
-         o0en9GvDIlnCvcWD1RFdMztjvf+U5jLplMBbqeFe+c6C5AmcjK99Z1CYbDe9rxP9pMSg
-         ZihBOWQYmp9b9vQtsYl+3to2G8xDPmb4dZYigIk4wkFRMsH5/DqJQg6PEXPIkf5h8kyy
-         7pHg==
-X-Gm-Message-State: APjAAAXFtM7QNiEYRMHcQczaAYxUEPxr0rruMb7cCqWv6Ze0A9XR19cW
-        thEkmGIkbiw1VafZVf9rU3YG0A==
-X-Google-Smtp-Source: APXvYqygZB7malLkPMeQEKMwJy8+ylJrhDjDfHPzerIG3eAhjzAGq3TdPyRHRcEw3vxVe2mikWslSQ==
-X-Received: by 2002:a1c:f409:: with SMTP id z9mr57074124wma.176.1563809029501;
-        Mon, 22 Jul 2019 08:23:49 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id n2sm27256412wmi.38.2019.07.22.08.23.48
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 08:23:48 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 16:23:47 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 7/7] backlight: gpio: use a helper variable for
- &pdev->dev
-Message-ID: <20190722152347.fuar2lezfhp7iuyy@holly.lan>
-References: <20190722150302.29526-1-brgl@bgdev.pl>
- <20190722150302.29526-8-brgl@bgdev.pl>
+        bh=Qpgr4YRrDo+cYEiDdr1Ey4/KK+ijOMZHdWn8ArLcPCs=;
+        b=JHeHKLWY9QmCdNhNDh3uv16yK0dwJuAFXVIp6eTMc8t1tS2+L5hB5GgzMRIhA/3FMJ
+         m3m8bzemZZLHA280v9s8kbCAN1jPs8bB8wqgw3XBsjgXFwFLIdazm+GWt169EdMiq52S
+         EjilcvxKardFXf4phsq/tbWQH32FuNBztPYgLO3eU+ICV/pL4KwDRk0ctimmdzDsjMyn
+         ibmFztl1xM5F4S2hljZptBdHQAOA4DIldN4n0kIk49eyuR/TaUDkrlJNZo7TjHIIjdg5
+         UcpHhZ7xPMz0eHQsxzUIMqSqjmRadUH0rEiuBWsMnoLT9V2LDZRRron6cCet4xJX4OuG
+         Um7w==
+X-Gm-Message-State: APjAAAVOdK6gTac3lGD2qxA6dQDz99uGdgT7B9vEMvgeT707H1ac8M5i
+        kxPCvMzE8lF4VicXDbsblFwsHg==
+X-Google-Smtp-Source: APXvYqyEgFwa9PqOLbukPoHFWkcWbRjVTyWDfX3UbJmWvQ5wKfb6JqX+zCaZ9zh2TleSJBYuK6cwdg==
+X-Received: by 2002:a67:e3d5:: with SMTP id k21mr42154034vsm.172.1563809160771;
+        Mon, 22 Jul 2019 08:26:00 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id b30sm8824082vkk.22.2019.07.22.08.26.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 22 Jul 2019 08:26:00 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hpaCN-0004p6-MM; Mon, 22 Jul 2019 12:25:59 -0300
+Date:   Mon, 22 Jul 2019 12:25:59 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Maksym Planeta <mplaneta@os.inf.tu-dresden.de>
+Cc:     Moni Shoua <monis@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/10] Protect kref_put with the lock
+Message-ID: <20190722152559.GD7607@ziepe.ca>
+References: <20190722151426.5266-1-mplaneta@os.inf.tu-dresden.de>
+ <20190722151426.5266-5-mplaneta@os.inf.tu-dresden.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190722150302.29526-8-brgl@bgdev.pl>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190722151426.5266-5-mplaneta@os.inf.tu-dresden.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 05:03:02PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Jul 22, 2019 at 05:14:20PM +0200, Maksym Planeta wrote:
+> Need to ensure that kref_put does not run concurrently with the loop
+> inside rxe_pool_get_key.
+>
+> Signed-off-by: Maksym Planeta <mplaneta@os.inf.tu-dresden.de>
+>  drivers/infiniband/sw/rxe/rxe_pool.c | 18 ++++++++++++++++++
+>  drivers/infiniband/sw/rxe/rxe_pool.h |  4 +---
+>  2 files changed, 19 insertions(+), 3 deletions(-)
 > 
-> Instead of dereferencing pdev each time, use a helper variable for
-> the associated device pointer.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-
-
-> ---
->  drivers/video/backlight/gpio_backlight.c | 22 ++++++++++++----------
->  1 file changed, 12 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
-> index cd6a75bca9cc..091ff799659a 100644
-> --- a/drivers/video/backlight/gpio_backlight.c
-> +++ b/drivers/video/backlight/gpio_backlight.c
-> @@ -54,29 +54,32 @@ static const struct backlight_ops gpio_backlight_ops = {
->  
->  static int gpio_backlight_probe(struct platform_device *pdev)
->  {
-> -	struct gpio_backlight_platform_data *pdata =
-> -		dev_get_platdata(&pdev->dev);
-> +	struct gpio_backlight_platform_data *pdata;
->  	struct backlight_properties props;
->  	struct backlight_device *bl;
->  	struct gpio_backlight *gbl;
->  	enum gpiod_flags flags;
-> +	struct device *dev;
->  	int ret, def_value;
->  
-> -	gbl = devm_kzalloc(&pdev->dev, sizeof(*gbl), GFP_KERNEL);
-> +	dev = &pdev->dev;
-> +	pdata = dev_get_platdata(dev);
+> diff --git a/drivers/infiniband/sw/rxe/rxe_pool.c b/drivers/infiniband/sw/rxe/rxe_pool.c
+> index efa9bab01e02..30a887cf9200 100644
+> +++ b/drivers/infiniband/sw/rxe/rxe_pool.c
+> @@ -536,3 +536,21 @@ void *rxe_pool_get_key(struct rxe_pool *pool, void *key)
+>  	read_unlock_irqrestore(&pool->pool_lock, flags);
+>  	return node ? elem : NULL;
+>  }
 > +
-> +	gbl = devm_kzalloc(dev, sizeof(*gbl), GFP_KERNEL);
->  	if (gbl == NULL)
->  		return -ENOMEM;
->  
->  	if (pdata)
->  		gbl->fbdev = pdata->fbdev;
->  
-> -	def_value = device_property_read_bool(&pdev->dev, "default-on");
-> +	def_value = device_property_read_bool(dev, "default-on");
->  	flags = def_value ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
->  
-> -	gbl->gpiod = devm_gpiod_get(&pdev->dev, NULL, flags);
-> +	gbl->gpiod = devm_gpiod_get(dev, NULL, flags);
->  	if (IS_ERR(gbl->gpiod)) {
->  		ret = PTR_ERR(gbl->gpiod);
->  		if (ret != -EPROBE_DEFER) {
-> -			dev_err(&pdev->dev,
-> +			dev_err(dev,
->  				"Error: The gpios parameter is missing or invalid.\n");
->  		}
->  		return ret;
-> @@ -85,11 +88,10 @@ static int gpio_backlight_probe(struct platform_device *pdev)
->  	memset(&props, 0, sizeof(props));
->  	props.type = BACKLIGHT_RAW;
->  	props.max_brightness = 1;
-> -	bl = devm_backlight_device_register(&pdev->dev, dev_name(&pdev->dev),
-> -					&pdev->dev, gbl, &gpio_backlight_ops,
-> -					&props);
-> +	bl = devm_backlight_device_register(dev, dev_name(dev), dev, gbl,
-> +					    &gpio_backlight_ops, &props);
->  	if (IS_ERR(bl)) {
-> -		dev_err(&pdev->dev, "failed to register backlight\n");
-> +		dev_err(dev, "failed to register backlight\n");
->  		return PTR_ERR(bl);
->  	}
->  
-> -- 
-> 2.21.0
-> 
+> +static void rxe_dummy_release(struct kref *kref)
+> +{
+> +}
+> +
+> +void rxe_drop_ref(struct rxe_pool_entry *pelem)
+> +{
+> +	int res;
+> +	struct rxe_pool *pool = pelem->pool;
+> +	unsigned long flags;
+> +
+> +	write_lock_irqsave(&pool->pool_lock, flags);
+> +	res = kref_put(&pelem->ref_cnt, rxe_dummy_release);
+> +	write_unlock_irqrestore(&pool->pool_lock, flags);
+
+This doesn't make sense..
+
+If something is making the kref go to 0 while the node is still in the
+RB tree then that is a bug.
+
+You should never need to add locking around a kref_put.
+
+Jason
