@@ -2,98 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40A65704EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 18:04:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48B8E70509
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 18:06:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730349AbfGVQEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 12:04:52 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42127 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729594AbfGVQEv (ORCPT
+        id S1730603AbfGVQGr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 12:06:47 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:62576 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730423AbfGVQGi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 12:04:51 -0400
-Received: by mail-qt1-f193.google.com with SMTP id h18so39025011qtm.9
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 09:04:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vwvk1p704PvrHoU3x+syVrBIr03+GtruOtffq5nOmqI=;
-        b=eCJDQVgp/TUa3SJDw5YNpJdxoRLDUf0uKWF8HiEN2E6tOilw6te7IXdJ74mZFUYqp/
-         9cs4iQsc0KiVAOncyf/4OEnDeZsuNdAdxwUKQmiZzySVbAR5OjTuhXiGRkV1rgBYswjM
-         IQx0Ulu4NMDBwDAviDS9g4pKXJW+xpv+Iy8d6aVLlz84ufr1JzYd1aeEamQT0VorPgKU
-         QT1i21qMa2c8H2+8UBfm4o25QcGgTYS7VKw/3eTMHAe7UkpWzGXLekAdlCSWusHGhsa8
-         cEkwa4My8xWUN30i19bWw4qGMFPnC91vuvyuUJqr/Slt5ziIHR7WpgLw+5d/ULuZjsfk
-         lFPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vwvk1p704PvrHoU3x+syVrBIr03+GtruOtffq5nOmqI=;
-        b=fGti9HJ5QufHUazqB18gmViIsVf5QmZnRfLDZ4mH5pKFj9tZsHmN6YQi6oVqdEvruR
-         HnFrsaoIysQOVlWJEavzLgGvlQ0kxElo2ATvnyltEO+o0KLamI8zx/HQbrtMHiF4c+qo
-         NdQRHinV5tMlCRUiLsB8oKp6iyN3s8KOpKx7afsxzvWL8F17WQPv/WJ5RdBfmLwRBFzO
-         u3uLv261byFeYHQA+9IKd3HoHInKc76kfhrd7ROlGSN+FPZAEOcyUHY0tgixdmVZHX87
-         0iIFaFpnWep2yma2mUKrtJfrBycbNZi8Zt2g1R6nzc/zg8A0LIOrucCf7z520qPV5yUn
-         zZKQ==
-X-Gm-Message-State: APjAAAV+b1jPXEPV/x4+VGVnXi4SRKK3klewx1m7e1zLuwXHXoK9bXP5
-        cbYC3HhOD5XwC3GMRsbRDt0L9w==
-X-Google-Smtp-Source: APXvYqwAqmiUCOGD8gRTdb/gKf382wokrezGvhSEToPpHN31WEGoX97JjGxgPReHba9ZDH0CrbO+rw==
-X-Received: by 2002:ac8:431e:: with SMTP id z30mr50035442qtm.291.1563811490053;
-        Mon, 22 Jul 2019 09:04:50 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id y3sm20100502qtj.46.2019.07.22.09.04.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 22 Jul 2019 09:04:49 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hpanw-00059A-U7; Mon, 22 Jul 2019 13:04:48 -0300
-Date:   Mon, 22 Jul 2019 13:04:48 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, aarcange@redhat.com,
-        akpm@linux-foundation.org, christian@brauner.io,
-        davem@davemloft.net, ebiederm@xmission.com,
-        elena.reshetova@intel.com, guro@fb.com, hch@infradead.org,
-        james.bottomley@hansenpartnership.com, jasowang@redhat.com,
-        jglisse@redhat.com, keescook@chromium.org, ldv@altlinux.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
-        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
-        namit@vmware.com, peterz@infradead.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        wad@chromium.org
-Subject: Re: RFC: call_rcu_outstanding (was Re: WARNING in __mmdrop)
-Message-ID: <20190722160448.GH7607@ziepe.ca>
-References: <000000000000964b0d058e1a0483@google.com>
- <20190721044615-mutt-send-email-mst@kernel.org>
- <20190721081933-mutt-send-email-mst@kernel.org>
- <20190721131725.GR14271@linux.ibm.com>
- <20190721210837.GC363@bombadil.infradead.org>
- <20190721233113.GV14271@linux.ibm.com>
- <20190722035042-mutt-send-email-mst@kernel.org>
- <20190722115149.GY14271@linux.ibm.com>
- <20190722134152.GA13013@ziepe.ca>
- <20190722155235.GF14271@linux.ibm.com>
+        Mon, 22 Jul 2019 12:06:38 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6MG65hm016172;
+        Mon, 22 Jul 2019 18:06:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=tUyFF2dLFUND6HSCHRKN4a+J8+L0QNOSCuz5edjnQdI=;
+ b=pVx177ZLmPbDmrPaz6AKQXlRGdiOL2ctfNMtl4BiexOt4zilvs7BIDxCJ9Je/mc5xavj
+ YVcLd1nqYnoce0RRHqe4bwpGRxaQ30NyAg9OFc0Nk+GJuDYmREeeH3amg70dt/5zK1R8
+ p6trXidCt/SvztRTcJUI/nq6reKG2KUcMIyepuX5jO85rOaG/4EdaDYQ6VYzo1XgVwkG
+ PGRyU0QnYt1s0d56InkKqqHXUuOS0xKUBL74Fb0gI5xaNm0X746TGeXN9ItMycjjKq+8
+ rM4tVMBhw+PK/MCGYq7g2lsDOZmZ8t2zQLnhoDsGUPbipQ4xBE5NlQLoK4Slx4HvspAv 1A== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2ture1chdq-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 22 Jul 2019 18:06:05 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2982631;
+        Mon, 22 Jul 2019 16:06:02 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C274452BB;
+        Mon, 22 Jul 2019 16:06:02 +0000 (GMT)
+Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 22 Jul
+ 2019 18:06:02 +0200
+Received: from localhost (10.201.23.16) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 22 Jul 2019 18:06:02
+ +0200
+From:   Olivier Moysan <olivier.moysan@st.com>
+To:     <a.hajda@samsung.com>, <narmstrong@baylibre.com>,
+        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+        <jernej.skrabec@siol.net>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@st.com>, <alexandre.torgue@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <olivier.moysan@st.com>, <jsarha@ti.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 0/3] drm/bridge: sii902x: fix audio mclk management
+Date:   Mon, 22 Jul 2019 18:05:57 +0200
+Message-ID: <1563811560-29589-1-git-send-email-olivier.moysan@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190722155235.GF14271@linux.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.16]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-22_12:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 08:52:35AM -0700, Paul E. McKenney wrote:
-> So why then is there a problem?
+Fix audio master clock use for Silab sii902x HDMI transceiver.
+Make audio master clock optional, as this clock is not mandatory.
 
-I'm not sure there is a real problem, I thought Michael was just
-asking how to design with RCU in the case where the user controls the
-kfree_rcu??
+Changes in v2:
+- Rely on clk framework to manage undefined mclk case.
+- Use devm_clk_get_optional instead of devm_clk_get.
 
-Sounds like the answer is "don't worry about it" ?
+Olivier Moysan (3):
+  drm/bridge: sii902x: fix missing reference to mclk clock
+  dt-bindings: display: sii902x: Change audio mclk binding
+  drm/bridge: sii902x: make audio mclk optional
 
-Thanks,
-Jason
+ .../devicetree/bindings/display/bridge/sii902x.txt     |  5 ++---
+ drivers/gpu/drm/bridge/sii902x.c                       | 18 ++++++++++--------
+ 2 files changed, 12 insertions(+), 11 deletions(-)
+
+-- 
+2.7.4
+
