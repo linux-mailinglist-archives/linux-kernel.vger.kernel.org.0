@@ -2,163 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88C1D700AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:11:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F306700B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:13:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730549AbfGVNKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 09:10:36 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43177 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730264AbfGVNKd (ORCPT
+        id S1728031AbfGVNMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 09:12:37 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40234 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727123AbfGVNMh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 09:10:33 -0400
-Received: by mail-pf1-f193.google.com with SMTP id i189so17358155pfg.10
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 06:10:33 -0700 (PDT)
+        Mon, 22 Jul 2019 09:12:37 -0400
+Received: by mail-lf1-f66.google.com with SMTP id b17so26606789lff.7
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 06:12:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=5gE1kPucNU7X7KwlYwjXGQ4fueRicQdt9vfmEisPxts=;
-        b=ph38PZ7Y9AtcECthPxVps5SsED9G6pKFmujg75ViiaOlYhdOPrBAJNn3tK6eiAa3fh
-         DYzCb+S90IgJSetgzH9n0FctUAsoMgjHHzBMRDmIXw+MmJA6YL2MkZQR9L1QS+lDn19T
-         gXxtoBimqBUIzr54st7Pd8Gkld7+xryX1jgRYuNqSUIQT4k7wQ4hWhc+NLiQXaI8dAdT
-         QCK4ickkpiZUQqfaoWf5SR/LH7iDKx/D9UEL8UY946rrspmBDIrP/AjPDRQFS+pTid1M
-         FI/0L1JRYZg9zfIoL2D0b3KheG8D04BAptY/xQNx9+WSKUlsR6pbvVzjGCv2iLHk1HZy
-         K5+A==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=9Jupluo6BgmV8ERwMDVbIijp69X7k5zhTVNRH5lHiVw=;
+        b=q8k9KJJeoML2GEESOCy9Yuf2QRSEUp6KzQ9jNn+t/WK38otpYwqIutVG7lD8uWNOZi
+         f9fOH4GWQ8lhI+hYBorhuJh/l8Lk51df2C33zfGqoOVI7JZcI/Jpk/dsw00Pl1cgMl5D
+         MC8YS66rKRzStaLqii8LUd6XoDeo7yeNo9Aw6rll3C87NwA8P5rYC8pKWGjjUDVDBqrm
+         AmizEEA0bJU3/oE2tbjDObB+sJK2ax20Y4esjJKrZimZGcd9J6WCgyTl+vvZNo+cagF7
+         TksR8KpIkKdsBK/eEopLUvi26hQKWkhSQj71O9DQicSwSv3OpEBZHRe/USSNHUMIUp1K
+         pd1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=5gE1kPucNU7X7KwlYwjXGQ4fueRicQdt9vfmEisPxts=;
-        b=kozBQUWnITnAsmm81nHcqM4OO6QnE06pq1wx1Yve0xXj9V85yOIynD2WhhfHAvC7K7
-         FC2QFVSHDyjQpssyNkCCol23Y+sJMuQg9fl9GkpzZq0OMTUf3E/kgtUpA4yhzIPkDp+p
-         24lVjESmsVYBOjrEJirvt+/cSVsjcUoXe1GQpkMOeRbymdkPj+H7QibYr6sQGZbW4AWK
-         efMleyRNLIh34AGHBcbskQH9xewWDm3ViWikY1qRDgiuKhZBfycUIxjGoYR49bTtJKi6
-         WT8QTiC/lRuPaHTcAaz8eFQgWCP1Pk6ccf+A6IeiUnfs08sEoRqW+02hGCSH30yRk6AP
-         sNFQ==
-X-Gm-Message-State: APjAAAVOI3hK6vm2vmsDsdN5wSircfNLK4+IxExwP4UC28yj6AuLEZ1v
-        4s5H2FSsO7VAuz0YoGu6YsrUPw==
-X-Google-Smtp-Source: APXvYqzRhLjIapIqH0UMUrEoXd56afqIa+SxEOgoehkHR9Jquyty05DcnJnGC+qh3AYMXetDdtvHpw==
-X-Received: by 2002:a17:90a:9f4a:: with SMTP id q10mr76886330pjv.95.1563801033086;
-        Mon, 22 Jul 2019 06:10:33 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id p19sm47013192pfn.99.2019.07.22.06.10.29
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 22 Jul 2019 06:10:32 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     axboe@kernel.dk, adrian.hunter@intel.com, ulf.hansson@linaro.org
-Cc:     zhang.lyra@gmail.com, orsonzhai@gmail.com, arnd@arndb.de,
-        linus.walleij@linaro.org, baolin.wang@linaro.org,
-        vincent.guittot@linaro.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: [RFC PATCH 7/7] mmc: host: sdhci-sprd: Add MMC packed request support
-Date:   Mon, 22 Jul 2019 21:09:42 +0800
-Message-Id: <8331abb05ff0587f01093884cc2ba4f0d2a377cc.1563782844.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1563782844.git.baolin.wang@linaro.org>
-References: <cover.1563782844.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1563782844.git.baolin.wang@linaro.org>
-References: <cover.1563782844.git.baolin.wang@linaro.org>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=9Jupluo6BgmV8ERwMDVbIijp69X7k5zhTVNRH5lHiVw=;
+        b=pzS7XlX0wxsXrwwpxOkFmMtf2HZQiE9SEJjunUIdf7awnkWDUvoUGq2RuTWKlhEU6U
+         xkTlj56jbFNEt1MQpLyXWnjqF266IUi76eqD8qKauiR3yAKl840rSGp9ggcXv/zghL8y
+         OlNwC0mE/JLcGHdycj8JLSXFR59XZY7PZ84hXttn4kyUoPazknvewDG4yWZ4MSgzYVXW
+         S54pCFwdskM/s0luYXYPDfEpuw8HKs3g6vus1fWjF7KgW3QtnSM9CV59unrbZBdDouW9
+         OpTmun3Rz2pRGBvxz/cD9lOWk9zsChQ+8GpXQWewzas6BIpfN/H5AzTM91ehBeLbgkZp
+         I+8A==
+X-Gm-Message-State: APjAAAXhw0CQTMjLHhOnNPWIN4ge9Xy6ws82N15yxQUl17RY1OXPv/nZ
+        VcJkssubVos/0VL3SN0rXth13bzu+3IyTO7kSQU=
+X-Google-Smtp-Source: APXvYqy03U7P7h3dWPZtYBdtKKzLJNTGHhbMjwbxgPjXZA1JXzO58NKIMttoUCZDo8XKnDfbTxo4FvWi6J4B8VKx4rQ=
+X-Received: by 2002:ac2:514f:: with SMTP id q15mr32429820lfd.145.1563801154380;
+ Mon, 22 Jul 2019 06:12:34 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a19:c113:0:0:0:0:0 with HTTP; Mon, 22 Jul 2019 06:12:33
+ -0700 (PDT)
+Reply-To: attorney.cavedo@gmail.com
+From:   John CAVEDO <muleichristopher1@gmail.com>
+Date:   Mon, 22 Jul 2019 13:12:33 +0000
+Message-ID: <CA+zLT9YGHCQJd8VK8ha42ea5VgG+PVEx6BZtRKAoEaAFo782vQ@mail.gmail.com>
+Subject: Very urgent AREAS OF INVESTMENT.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the ADMA3 transfer mode as well as adding packed operations
-to support MMC packed requests to improve IO performance.
-
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/mmc/host/Kconfig      |    1 +
- drivers/mmc/host/sdhci-sprd.c |   22 ++++++++++++++++++++--
- 2 files changed, 21 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 14d89a1..44ea3cc 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -619,6 +619,7 @@ config MMC_SDHCI_SPRD
- 	depends on ARCH_SPRD
- 	depends on MMC_SDHCI_PLTFM
- 	select MMC_SDHCI_IO_ACCESSORS
-+	select MMC_PACKED
- 	help
- 	  This selects the SDIO Host Controller in Spreadtrum
- 	  SoCs, this driver supports R11(IP version: R11P0).
-diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-index 80a9055..e5651fd 100644
---- a/drivers/mmc/host/sdhci-sprd.c
-+++ b/drivers/mmc/host/sdhci-sprd.c
-@@ -524,10 +524,18 @@ static void sdhci_sprd_phy_param_parse(struct sdhci_sprd_host *sprd_host,
- static const struct sdhci_pltfm_data sdhci_sprd_pdata = {
- 	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK,
- 	.quirks2 = SDHCI_QUIRK2_BROKEN_HS200 |
--		   SDHCI_QUIRK2_USE_32BIT_BLK_CNT,
-+		   SDHCI_QUIRK2_USE_32BIT_BLK_CNT |
-+		   SDHCI_QUIRK2_USE_ADMA3_SUPPORT,
- 	.ops = &sdhci_sprd_ops,
- };
- 
-+static const struct mmc_packed_ops packed_ops = {
-+	.packed_algo = mmc_packed_algo_rw,
-+	.prepare_hardware = sdhci_prepare_packed,
-+	.unprepare_hardware = sdhci_unprepare_packed,
-+	.packed_request = sdhci_packed_request,
-+};
-+
- static int sdhci_sprd_probe(struct platform_device *pdev)
- {
- 	struct sdhci_host *host;
-@@ -642,10 +650,14 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
- 
- 	sprd_host->flags = host->flags;
- 
--	ret = __sdhci_add_host(host);
-+	ret = mmc_packed_init(host->mmc, &packed_ops, 10);
- 	if (ret)
- 		goto err_cleanup_host;
- 
-+	ret = __sdhci_add_host(host);
-+	if (ret)
-+		goto err_packed;
-+
- 	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
- 
-@@ -653,6 +665,9 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
- 		__func__, host->version);
- 	return 0;
- 
-+err_packed:
-+	mmc_packed_exit(host->mmc);
-+
- err_cleanup_host:
- 	sdhci_cleanup_host(host);
- 
-@@ -680,6 +695,7 @@ static int sdhci_sprd_remove(struct platform_device *pdev)
- 	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
- 	struct mmc_host *mmc = host->mmc;
- 
-+	mmc_packed_exit(mmc);
- 	mmc_remove_host(mmc);
- 	clk_disable_unprepare(sprd_host->clk_sdio);
- 	clk_disable_unprepare(sprd_host->clk_enable);
-@@ -702,6 +718,7 @@ static int sdhci_sprd_runtime_suspend(struct device *dev)
- 	struct sdhci_host *host = dev_get_drvdata(dev);
- 	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
- 
-+	mmc_packed_queue_stop(host->mmc->packed);
- 	sdhci_runtime_suspend_host(host);
- 
- 	clk_disable_unprepare(sprd_host->clk_sdio);
-@@ -730,6 +747,7 @@ static int sdhci_sprd_runtime_resume(struct device *dev)
- 		goto clk_disable;
- 
- 	sdhci_runtime_resume_host(host);
-+	mmc_packed_queue_start(host->mmc->packed);
- 	return 0;
- 
- clk_disable:
--- 
-1.7.9.5
-
+Sir/madam,I humbly seek your consent for an investment in your
+country.I need to invest in the following areas by your candid advice
+and supervision; industrial, petroleum energy , land farming..More
+details of this will be sent following your INVESTMENT suggestion and
+interest. I am deeply sorry for disturbing your privacy Regards,John.
