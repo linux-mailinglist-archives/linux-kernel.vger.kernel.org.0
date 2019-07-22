@@ -2,128 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B01D70C1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 23:54:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E06570C26
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 23:55:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728975AbfGVVyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 17:54:10 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46200 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732997AbfGVVyG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 17:54:06 -0400
-Received: by mail-io1-f65.google.com with SMTP id i10so77336061iol.13;
-        Mon, 22 Jul 2019 14:54:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+/tFZBmBqzo/zPORNqy/FURXPMyOxXiM7Nwwcf4TGGM=;
-        b=AzNkjmVaMFiMzdY0wulQWK0sc9DN+zQy8pyPfcVYB651ytv58A7zuosdPRz+zQr8GC
-         P2MMqn/JbMcO16ghUSJ/hhpX7w5afBYiKYF3lCJBkslof6GfsGTKpdgm0lbiy7gyoi8p
-         aujpOdiF3HzNmfyTTfhxFXIokA2Eo+AFm78iCfiFKIauMM9GuNfIfEXSXORPIoLfh7/K
-         XSIHlpQy0PJwdysENMk5TvVAhdmjgYZ6zBFkYigbF3uAlJ9VcwmFinUw5VjZR+wLUT2z
-         4Cp3O631wiJbjm4RASfNlRqDFIhQKEiQrFPR/goB/cdtjUeIp5m7EI62HhpJYVoh5zQW
-         S0CA==
-X-Gm-Message-State: APjAAAXFnCZ+gDd4I8xxiFPP5LHkjPKwNs6sO+7e8nEBaXNywIfYbRZ4
-        XOf9myHhUEm5Ui5fdu7TEw==
-X-Google-Smtp-Source: APXvYqyUL19XUYrZJxeGwxCR1U5Xwb7mxgpPlG0YNI4SIrs8fiL5rMGhTWsuUHHsuUiVX5EpIhEE/Q==
-X-Received: by 2002:a5e:8f08:: with SMTP id c8mr67180363iok.52.1563832445617;
-        Mon, 22 Jul 2019 14:54:05 -0700 (PDT)
-Received: from localhost ([64.188.179.254])
-        by smtp.gmail.com with ESMTPSA id s4sm52874406iop.25.2019.07.22.14.54.04
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 14:54:05 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 15:54:04 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Manish Narani <manish.narani@xilinx.com>
-Cc:     ulf.hansson@linaro.org, mark.rutland@arm.com, heiko@sntech.de,
-        michal.simek@xilinx.com, adrian.hunter@intel.com,
-        christoph.muellner@theobroma-systems.com,
-        philipp.tomsich@theobroma-systems.com, viresh.kumar@linaro.org,
-        scott.branden@broadcom.com, ayaka@soulik.info, kernel@esmil.dk,
-        tony.xie@rock-chips.com, rajan.vaja@xilinx.com,
-        jolly.shah@xilinx.com, nava.manne@xilinx.com, mdf@kernel.org,
-        olof@lixom.net, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 01/11] dt-bindings: mmc: arasan: Update documentation
- for SD Card Clock
-Message-ID: <20190722215404.GA28292@bogus>
-References: <1561958991-21935-1-git-send-email-manish.narani@xilinx.com>
- <1561958991-21935-2-git-send-email-manish.narani@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1561958991-21935-2-git-send-email-manish.narani@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1731445AbfGVVzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 17:55:12 -0400
+Received: from gate.crashing.org ([63.228.1.57]:51075 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726519AbfGVVzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 17:55:11 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x6MLsoj3012638;
+        Mon, 22 Jul 2019 16:54:51 -0500
+Message-ID: <00f7a7e127467c0de98b114f2fe38f836601eef8.camel@kernel.crashing.org>
+Subject: Re: [PATCH v3] nvme-pci: Support shared tags across queues for
+ Apple 2018 controllers
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Paul Pawlowski <paul@mrarm.io>, Jens Axboe <axboe@fb.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Minwoo Im <minwoo.im.dev@gmail.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>
+Date:   Tue, 23 Jul 2019 07:54:49 +1000
+In-Reply-To: <91ef44522140bf83720f6c377648b307964d34e4.camel@kernel.crashing.org>
+References: <b1f9bdf0294b8d87d292de3c7462c8e99551b02d.camel@kernel.crashing.org>
+         <20190719122859.GA30193@lst.de>
+         <91ef44522140bf83720f6c377648b307964d34e4.camel@kernel.crashing.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 01, 2019 at 10:59:41AM +0530, Manish Narani wrote:
-> The clock handling is to be updated in the Arasan SDHCI. As the
-> 'devm_clk_register' is deprecated in the clock framework, this needs to
-> specify one more clock named 'clk_sdcard' to get the clock in the driver
-> via 'devm_clk_get()'. This clock represents the clock from controller to
-> the card.
-
-Please explain why in terms of the binding, not some driver calls.
-
- 
-> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> ---
->  Documentation/devicetree/bindings/mmc/arasan,sdhci.txt | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
+On Fri, 2019-07-19 at 23:51 +1000, Benjamin Herrenschmidt wrote:
+> On Fri, 2019-07-19 at 14:28 +0200, Christoph Hellwig wrote:
+> > Yikes, that things looks worse and worse.  I think at this point
+> > we'll
+> > have to defer the support to 5.4 unfortunately as it is getting more
+> > and more involved..
 > 
-> diff --git a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-> index 1edbb04..15c6397 100644
-> --- a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-> +++ b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-> @@ -23,6 +23,10 @@ Required Properties:
->    - reg: From mmc bindings: Register location and length.
->    - clocks: From clock bindings: Handles to clock inputs.
->    - clock-names: From clock bindings: Tuple including "clk_xin" and "clk_ahb"
-> +		 Apart from these two there is one more optional clock which
-> +		 is "clk_sdcard". This clock represents output clock from
-> +		 controller and card. This must be specified when #clock-cells
-> +		 is specified.
->    - interrupts: Interrupt specifier
->  
->  Required Properties for "arasan,sdhci-5.1":
-> @@ -36,9 +40,10 @@ Optional Properties:
->    - clock-output-names: If specified, this will be the name of the card clock
->      which will be exposed by this device.  Required if #clock-cells is
->      specified.
-> -  - #clock-cells: If specified this should be the value <0>.  With this property
-> -    in place we will export a clock representing the Card Clock.  This clock
-> -    is expected to be consumed by our PHY.  You must also specify
-> +  - #clock-cells: If specified this should be the value <0>. With this
-> +    property in place we will export one clock representing the Card
-> +    Clock. This clock is expected to be consumed by our PHY. You must also
-> +    specify
-
-specify what?
-
-The 3rd clock input I assume? This statement means any existing users 
-with 2 clock inputs and #clock-cells are in error now. Is that correct? 
-
->    - xlnx,fails-without-test-cd: when present, the controller doesn't work when
->      the CD line is not connected properly, and the line is not connected
->      properly. Test mode can be used to force the controller to function.
-> @@ -70,8 +75,8 @@ Example:
->  		compatible = "rockchip,rk3399-sdhci-5.1", "arasan,sdhci-5.1";
->  		reg = <0x0 0xfe330000 0x0 0x10000>;
->  		interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-> -		clocks = <&cru SCLK_EMMC>, <&cru ACLK_EMMC>;
-> -		clock-names = "clk_xin", "clk_ahb";
-> +		clocks = <&cru SCLK_EMMC>, <&cru ACLK_EMMC>, <&sdhci 0>;
-> +		clock-names = "clk_xin", "clk_ahb", "clk_sdcard";
->  		arasan,soc-ctl-syscon = <&grf>;
->  		assigned-clocks = <&cru SCLK_EMMC>;
->  		assigned-clock-rates = <200000000>;
-> -- 
-> 2.1.1
+> Well, at least v3 of that patch, thanks to Damien's idea, isn't
+> particularly invasive and I've hammered the SSD with it over night with
+> a combination of IOs and smart commands, it's solid.
 > 
+> But if you prefer waiting for 5.4, no worries.
+
+BTW. It's been solid for 3 days now, so I think that was the last of it
+(famous last words...)
+
+Cheers,
+Ben.
+
+
