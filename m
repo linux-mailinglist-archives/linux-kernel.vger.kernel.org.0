@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD8D8700C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:18:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E40C700D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:19:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729859AbfGVNSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 09:18:03 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37749 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729708AbfGVNSA (ORCPT
+        id S1730502AbfGVNS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 09:18:27 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34993 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729744AbfGVNSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 22 Jul 2019 09:18:00 -0400
-Received: by mail-wr1-f67.google.com with SMTP id n9so14323369wrr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 06:17:58 -0700 (PDT)
+Received: by mail-wr1-f68.google.com with SMTP id y4so39414874wrm.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 06:17:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zOhvfud1UplL6dXW+3V5RKRSj+/QqrgOZPNk1aW9k94=;
-        b=PQw+pP1iXX72GVQ9kohjgqtP+wTw65TQAgRYVrUlgLjAVsRxK4c4+l/lntTh00Q9M3
-         8teC3SYE0xetvNP5nkU6e4YBh4V4GrB3q+Lq0BP4EqB2/wLVtArQllQ+r4GMx1RlKBBd
-         puuo7oASjqffQkBoxzRoQkZtvjPdz2ZeysMOf+8UE5BM202tQ3SVxz7nl+GUjon+AEbI
-         cUMLG2f1a00E9Hp4Szm87vNMnwxnJanc041SLIt4+l+9rU/XP4mOI5RDFmWLjEjorkPe
-         pMLYh8h/tOOkwTzFMwBXpg9yuYlnTB00OPzHStXOCmQrEbb/lLFLR4Fx9+lPAKaV+zQX
-         t9Nw==
+        bh=19fYL7Z8mI6tfJg545F0VQ6RS/+NjmhdJgfi1UhO5UU=;
+        b=DsDrdUquw3YNnBzyEWqWdI+Cnfy6Fuvtlxefcq7vLIqQu9bYaNFyXVPtdG0VhmtOt1
+         jPjkrCH4S9jJwJIUfomAlL35Jg+buseKoulSgicwy7YtYH0aLc5gMNd5buv6y7ufo5fP
+         /jM319NAu7NqGRg5qnv+LPCISXZ2vCD8SP5JNc/Gszn3x2SI0qBV2aQ4LdoM6GpHnybs
+         Iy8jYLrMqWUDEOQ5miMz5tfL1PBoX9GCwLOozl9sqv7rRhgBS0BueM0N+t4lR0YqqXlo
+         mbkfrhlSdzEW47X2cvAz20UX0YtCRcafjiQmVcUbseybZ7AU02C+j/4igUBBI/Gbmens
+         HP7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zOhvfud1UplL6dXW+3V5RKRSj+/QqrgOZPNk1aW9k94=;
-        b=rN5o05B+bCx3d5BF7MOTMzXmH6u8ps+fENUQKut/p8WdDMGb+8CZ9nt7Uz3mnveWXk
-         Ax4wE7BXoQBy5TthneksF3DocbsZtb19r9I9XVAWeBCuHvnHDL0e4xXgIGDBTZpm7jjb
-         T8rXKa+OQ2wBuASoPsFRdVvVd3WAeV2PjwWZG78O+833uT31yD2301z9Ezcbg5s2H4v5
-         8gZh1ON9gMq0sS2VBs1QGYP/0caBn44PIQg/iLlJR0ySpRXrdOfV7zwcqY9X8P0xgrYT
-         pY36l5Y98wrOtqjxVWCHh+zs0bGIddwWlv5xYbo1qgQL6KwYEW0nyKaa5CpIJb6UUoMH
-         t+Ng==
-X-Gm-Message-State: APjAAAUCxHEf1ICp7poy1h9XHc1RC6NxdqMVPT9WRVrcf/Tjn5KTQ9hR
-        8AQM+Ir7BxRtxuCqE0vZ8Ts=
-X-Google-Smtp-Source: APXvYqw5kSAQACR7OW4MuKFZ+QqrkrmM83HBxycXSdQYRQePn0m/CpYbJW8RlJw372HR07CxxdrZxQ==
-X-Received: by 2002:a5d:6709:: with SMTP id o9mr19402007wru.301.1563801477974;
-        Mon, 22 Jul 2019 06:17:57 -0700 (PDT)
+        bh=19fYL7Z8mI6tfJg545F0VQ6RS/+NjmhdJgfi1UhO5UU=;
+        b=sFERAiZvrjjgmfsXkomrJipkXuEMrVEGuKxj4zw7r19mCh7c2QbsEh50xPTAvIOQNi
+         lssZTVOwo2nAtULKIlIXv4bZe2QfeLpB+39AcD+3LCNmztiUxJFCeyViruw2XFipssdd
+         FkFePh/cpGkEelsfdi2FqncqngIQEVyPMvAWjBnODtNTUYcSs6BXtjpSkXhpCEXIh9sd
+         7nFzwDD41uRM77XXx3dUU6/TeR5zm3A4i6cMRidOXIuxjffRNGYCA6oYH/H4sx/+aGVr
+         vb8C1eJz6VpNGE7LLHb9YnGmrd2Wr+H3PRilTM0JGTUH188pnZbbQLspKJy2aRKHOFVh
+         EUag==
+X-Gm-Message-State: APjAAAVTtjxUOk2Bn7AsQjZ7w1JXZVWgOoJXupZPYB07ad0Y/E/AADCN
+        k48mMWgp6Cl29xNycKCw+5o=
+X-Google-Smtp-Source: APXvYqx03dcJEB7dW7BRLPq2VnDhGkGWV+spKrTYqsXZx5pmb7YimlWrjM6/E+UJDvKDOeIoVr/LYA==
+X-Received: by 2002:adf:f348:: with SMTP id e8mr77592071wrp.76.1563801478939;
+        Mon, 22 Jul 2019 06:17:58 -0700 (PDT)
 Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id z6sm34156657wrw.2.2019.07.22.06.17.57
+        by smtp.gmail.com with ESMTPSA id z6sm34156657wrw.2.2019.07.22.06.17.58
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 06:17:57 -0700 (PDT)
+        Mon, 22 Jul 2019 06:17:58 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         David Lechner <david@lechnology.com>
-Subject: [RESEND PATCH 06/10] ARM: davinci: dm355: switch to using the clocksource driver
-Date:   Mon, 22 Jul 2019 15:17:44 +0200
-Message-Id: <20190722131748.30319-7-brgl@bgdev.pl>
+Subject: [RESEND PATCH 07/10] ARM: davinci: dm365: switch to using the clocksource driver
+Date:   Mon, 22 Jul 2019 15:17:45 +0200
+Message-Id: <20190722131748.30319-8-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190722131748.30319-1-brgl@bgdev.pl>
 References: <20190722131748.30319-1-brgl@bgdev.pl>
@@ -65,20 +65,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We now have a proper clocksource driver for davinci. Switch the dm355
+We now have a proper clocksource driver for davinci. Switch the dm365
 platform to using it.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Reviewed-by: David Lechner <david@lechnology.com>
 ---
- arch/arm/mach-davinci/dm355.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+ arch/arm/mach-davinci/dm365.c | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
-index a38a3648345b..5de72d2fa8f0 100644
---- a/arch/arm/mach-davinci/dm355.c
-+++ b/arch/arm/mach-davinci/dm355.c
-@@ -30,7 +30,8 @@
+diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
+index 8062412be70f..2299ca445c0e 100644
+--- a/arch/arm/mach-davinci/dm365.c
++++ b/arch/arm/mach-davinci/dm365.c
+@@ -35,7 +35,8 @@
  #include <mach/cputype.h>
  #include <mach/mux.h>
  #include <mach/serial.h>
@@ -88,22 +88,19 @@ index a38a3648345b..5de72d2fa8f0 100644
  
  #include "asp.h"
  #include "davinci.h"
-@@ -620,15 +621,15 @@ static struct davinci_id dm355_ids[] = {
+@@ -660,10 +661,16 @@ static struct davinci_id dm365_ids[] = {
+ 	},
  };
  
- /*
-- * T0_BOT: Timer 0, bottom:  clockevent source for hrtimers
-- * T0_TOP: Timer 0, top   :  clocksource for generic timekeeping
-- * T1_BOT: Timer 1, bottom:  (used by DSP in TI DSPLink code)
-- * T1_TOP: Timer 1, top   :  <unused>
-+ * Bottom half of timer0 is used for clockevent, top half is used for
-+ * clocksource.
-  */
--static struct davinci_timer_info dm355_timer_info = {
+-static struct davinci_timer_info dm365_timer_info = {
 -	.timers		= davinci_timer_instance,
 -	.clockevent_id	= T0_BOT,
 -	.clocksource_id	= T0_TOP,
-+static const struct davinci_timer_cfg dm355_timer_cfg = {
++/*
++ * Bottom half of timer0 is used for clockevent, top half is used for
++ * clocksource.
++ */
++static const struct davinci_timer_cfg dm365_timer_cfg = {
 +	.reg = DEFINE_RES_IO(DAVINCI_TIMER0_BASE, SZ_4K),
 +	.irq = {
 +		DEFINE_RES_IRQ(DAVINCI_INTC_IRQ(IRQ_TINT0_TINT12)),
@@ -111,33 +108,33 @@ index a38a3648345b..5de72d2fa8f0 100644
 +	},
  };
  
- static struct plat_serial8250_port dm355_serial0_platform_data[] = {
-@@ -706,7 +707,6 @@ static const struct davinci_soc_info davinci_soc_info_dm355 = {
+ #define DM365_UART1_BASE	(IO_PHYS + 0x106000)
+@@ -723,7 +730,6 @@ static const struct davinci_soc_info davinci_soc_info_dm365 = {
  	.pinmux_base		= DAVINCI_SYSTEM_MODULE_BASE,
- 	.pinmux_pins		= dm355_pins,
- 	.pinmux_pins_num	= ARRAY_SIZE(dm355_pins),
--	.timer_info		= &dm355_timer_info,
+ 	.pinmux_pins		= dm365_pins,
+ 	.pinmux_pins_num	= ARRAY_SIZE(dm365_pins),
+-	.timer_info		= &dm365_timer_info,
+ 	.emac_pdata		= &dm365_emac_pdata,
  	.sram_dma		= 0x00010000,
  	.sram_len		= SZ_32K,
- };
-@@ -733,6 +733,7 @@ void __init dm355_init_time(void)
+@@ -771,6 +777,7 @@ void __init dm365_init_time(void)
  {
- 	void __iomem *pll1, *psc;
+ 	void __iomem *pll1, *pll2, *psc;
  	struct clk *clk;
 +	int rv;
  
- 	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM355_REF_FREQ);
+ 	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM365_REF_FREQ);
  
-@@ -748,7 +749,8 @@ void __init dm355_init_time(void)
+@@ -789,7 +796,8 @@ void __init dm365_init_time(void)
  		return;
  	}
  
 -	davinci_timer_init(clk);
-+	rv = davinci_timer_register(clk, &dm355_timer_cfg);
++	rv = davinci_timer_register(clk, &dm365_timer_cfg);
 +	WARN(rv, "Unable to register the timer: %d\n", rv);
  }
  
- static struct resource dm355_pll2_resources[] = {
+ void __init dm365_register_clocks(void)
 -- 
 2.21.0
 
