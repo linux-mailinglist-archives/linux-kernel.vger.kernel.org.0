@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F309170903
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 259EC708FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:58:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732141AbfGVS5k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 14:57:40 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:38170 "EHLO
+        id S1732106AbfGVS5S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 14:57:18 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38176 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732063AbfGVS5N (ORCPT
+        with ESMTP id S1729343AbfGVS5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 14:57:13 -0400
+        Mon, 22 Jul 2019 14:57:14 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hpdUl-0002SO-Ku; Mon, 22 Jul 2019 20:57:11 +0200
-Message-Id: <20190722105220.768238809@linutronix.de>
+        id 1hpdUm-0002Sd-Bu; Mon, 22 Jul 2019 20:57:12 +0200
+Message-Id: <20190722105220.860244707@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Mon, 22 Jul 2019 20:47:26 +0200
+Date:   Mon, 22 Jul 2019 20:47:27 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
@@ -26,7 +26,7 @@ Cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
         Stephane Eranian <eranian@google.com>,
         Feng Tang <feng.tang@intel.com>,
         Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: [patch V3 21/25] x86/smp: Enhance native_send_call_func_ipi()
+Subject: [patch V3 22/25] x86/apic: Remove the shorthand decision logic
 References: <20190722104705.550071814@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -35,68 +35,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nadav noticed that the cpumask allocations in native_send_call_func_ipi()
-are noticeable in microbenchmarks.
+All callers of apic->send_IPI_all() and apic->send_IPI_allbutself() contain
+the decision logic for shorthand invocation already and invoke
+send_IPI_mask() if the prereqisites are not satisfied.
 
-Use the new cpumask_or_equal() function to simplify the decision whether
-the supplied target CPU mask is either equal to cpu_online_mask or equal to
-cpu_online_mask except for the CPU on which the function is invoked.
+Remove the now redundant decision logic in the 32bit implementation.
 
-cpumask_or_equal() or's the target mask and the cpumask of the current CPU
-together and compares it to cpu_online_mask.
-
-If the result is false, use the mask based IPI function, otherwise check
-whether the current CPU is set in the target mask and invoke either the
-send_IPI_all() or the send_IPI_allbutselt() APIC callback.
-
-Make the shorthand decision also depend on the static key which enables
-shorthand mode. That allows to remove the extra cpumask comparison with
-cpu_callout_mask.
-
-Reported-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
-V2: New patch
+V2: Remove the decision logic now that it is already done in the callers
 ---
- arch/x86/kernel/apic/ipi.c |   24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ arch/x86/kernel/apic/ipi.c |   27 +++------------------------
+ 1 file changed, 3 insertions(+), 24 deletions(-)
 
 --- a/arch/x86/kernel/apic/ipi.c
 +++ b/arch/x86/kernel/apic/ipi.c
-@@ -83,23 +83,21 @@ void native_send_call_func_single_ipi(in
+@@ -8,13 +8,7 @@
+ DEFINE_STATIC_KEY_FALSE(apic_use_ipi_shorthand);
  
- void native_send_call_func_ipi(const struct cpumask *mask)
+ #ifdef CONFIG_SMP
+-#ifdef CONFIG_HOTPLUG_CPU
+-#define DEFAULT_SEND_IPI	(1)
+-#else
+-#define DEFAULT_SEND_IPI	(0)
+-#endif
+-
+-static int apic_ipi_shorthand_off __ro_after_init = DEFAULT_SEND_IPI;
++static int apic_ipi_shorthand_off __ro_after_init;
+ 
+ static __init int apic_ipi_shorthand(char *str)
  {
--	cpumask_var_t allbutself;
-+	if (static_branch_likely(&apic_use_ipi_shorthand)) {
-+		unsigned int cpu = smp_processor_id();
+@@ -293,27 +287,12 @@ void default_send_IPI_mask_logical(const
  
--	if (!alloc_cpumask_var(&allbutself, GFP_ATOMIC)) {
--		apic->send_IPI_mask(mask, CALL_FUNCTION_VECTOR);
-+		if (!cpumask_or_equal(mask, cpumask_of(cpu), cpu_online_mask))
-+			goto sendmask;
-+
-+		if (cpumask_test_cpu(cpu, mask))
-+			apic->send_IPI_all(CALL_FUNCTION_VECTOR);
-+		else if (num_online_cpus() > 1)
-+			apic->send_IPI_allbutself(CALL_FUNCTION_VECTOR);
- 		return;
- 	}
- 
--	cpumask_copy(allbutself, cpu_online_mask);
--	__cpumask_clear_cpu(smp_processor_id(), allbutself);
+ void default_send_IPI_allbutself(int vector)
+ {
+-	/*
+-	 * if there are no other CPUs in the system then we get an APIC send
+-	 * error if we try to broadcast, thus avoid sending IPIs in this case.
+-	 */
+-	if (num_online_cpus() < 2)
+-		return;
 -
--	if (cpumask_equal(mask, allbutself) &&
--	    cpumask_equal(cpu_online_mask, cpu_callout_mask))
--		apic->send_IPI_allbutself(CALL_FUNCTION_VECTOR);
--	else
--		apic->send_IPI_mask(mask, CALL_FUNCTION_VECTOR);
--
--	free_cpumask_var(allbutself);
-+sendmask:
-+	apic->send_IPI_mask(mask, CALL_FUNCTION_VECTOR);
+-	if (apic_ipi_shorthand_off || vector == NMI_VECTOR) {
+-		apic->send_IPI_mask_allbutself(cpu_online_mask, vector);
+-	} else {
+-		__default_send_IPI_shortcut(APIC_DEST_ALLBUT, vector);
+-	}
++	__default_send_IPI_shortcut(APIC_DEST_ALLBUT, vector);
  }
  
- #endif /* CONFIG_SMP */
+ void default_send_IPI_all(int vector)
+ {
+-	if (apic_ipi_shorthand_off || vector == NMI_VECTOR) {
+-		apic->send_IPI_mask(cpu_online_mask, vector);
+-	} else {
+-		__default_send_IPI_shortcut(APIC_DEST_ALLINC, vector);
+-	}
++	__default_send_IPI_shortcut(APIC_DEST_ALLINC, vector);
+ }
+ 
+ void default_send_IPI_self(int vector)
 
 
