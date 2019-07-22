@@ -2,195 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADBEE7004B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:57:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1247D70031
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:52:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730057AbfGVM45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 08:56:57 -0400
-Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:9059 "EHLO
-        SELDSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727164AbfGVM45 (ORCPT
+        id S1728825AbfGVMwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 08:52:23 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:58069 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbfGVMwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 08:56:57 -0400
-X-Greylist: delayed 603 seconds by postgrey-1.27 at vger.kernel.org; Mon, 22 Jul 2019 08:56:55 EDT
-Subject: Re: [PATCH] mm, slab: Extend slab/shrink to shrink all the memcg
- caches
-To:     Waiman Long <longman@redhat.com>, Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
+        Mon, 22 Jul 2019 08:52:23 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MysBI-1icPK53l90-00vyTP; Mon, 22 Jul 2019 14:51:48 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        akpm@linux-foundation.org
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org,
+        Borislav Petkov <bp@alien8.de>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-CC:     <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <cgroups@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-References: <20190702183730.14461-1-longman@redhat.com>
-From:   peter enderborg <peter.enderborg@sony.com>
-Message-ID: <71ab6307-9484-fdd3-fe6d-d261acf7c4a5@sony.com>
-Date:   Mon, 22 Jul 2019 14:46:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Matthew Wilcox <willy@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: [PATCH] [v2] ubsan: build ubsan.c more conservatively
+Date:   Mon, 22 Jul 2019 14:50:44 +0200
+Message-Id: <20190722125139.1335385-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <20190702183730.14461-1-longman@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-X-SEG-SpamProfiler-Analysis: v=2.3 cv=L6RjvNb8 c=1 sm=1 tr=0 a=T5MYTZSj1jWyQccoVcawfw==:117 a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=IkcTkHD0fZMA:10 a=0o9FgrsRnhwA:10 a=20KFwNOVAAAA:8 a=Z4Rwk6OoAAAA:8 a=hTz6g4Jj1mwQyzJQMEoA:9 a=QEXdDO2ut3YA:10 a=aA9c7OsbRBYA:10 a=HkZW87K1Qel5hWWM3VKY:22
-X-SEG-SpamProfiler-Score: 0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:ZbSfErMSYT0XZps8vqU+FdzxiZIIfdRsVbwo2+ZwWA6bzGC/I+J
+ KFdIEBcdZUW8aDO6RrtMhqauXy0rH/NfKjfGmJdkiNOSJ6sdejYtP9dfLjtgYCLslrunH9o
+ 19YhL4jj2fsSiGKT2n+rbI92yJSkhdQoS9MC8aZW/5hAa6/MYJaW1MjL7ikoW258MJ1j+PP
+ b0qBCormfF0Ay2Iq69rrg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Fru7WA/0SPY=:vO4Aj/PjqBmpCCbNqTzdyt
+ Q6nVC4CU8ncCdVXbm8ukI4ZyQqE//Fg1Ah2aNRoJ4DfapUAnRfr1osMWBFxLya51TxOtb9NUk
+ GRz40FOeFIx80pOUfvhhF+tx/IhFoWY1cK9WEr39vVn62G6WnMIrhK4T5oq9yygamIX04E4yR
+ 3kFacJ7KQyfHeyqShHR9REb1f9viZ6l1kmal0m2hqrw9PEqJIWE5Bxjh+MOyVoPmw95XVh+OW
+ VrrwGM3ns9CIUB5rc+G1dMmIKeu6u+QQp845bHrq7/CUrcV7YHW4k710EaRMydfRBhSCaGCVP
+ NShVaXH78Fgcg580XfZm/K2WcFynGrXCTzNg8vRBlv0fSGb0BEQL46NMg6vndTS2vY2U215r/
+ qIF9/HM+mXd0mRbAyQdvmV+rCXPWw8p6Wp3eIswYqqjAmdJb7zjm836JsIf6bjqFNrXjuCbNo
+ jOQEmaLNsk/VnQE0An7GL9XlPpJXfMqIaL2xG0xYImPrxEIWPGKtXE+U/U5f10ZCxJDCEYgSs
+ vy2KkPtfigdXkAwDKmW61IgWgYn7r+Ptu1K2rXv9y9UsxbivKSGDx0zVfFpFoVYqUwLcNqlwH
+ gob87cPAZ07kHesQoQ/N52T+bj3X9YKlof11u9Ui/6L5f76bITDEdlluo6uRX0rCWjmpGSSM1
+ gmqdS4siGLsLPVxRZaVA0hJRPw0OtnP/hCs9JRG/UNiI1rbgwSOZKiJXXiEDrT+YvQRC+MZx0
+ qzcwZ+nCd8IvJ43W5K8v4dkSbNg7ahYvXvLqSQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/2/19 8:37 PM, Waiman Long wrote:
-> Currently, a value of '1" is written to /sys/kernel/slab/<slab>/shrink
-> file to shrink the slab by flushing all the per-cpu slabs and free
-> slabs in partial lists. This applies only to the root caches, though.
->
-> Extends this capability by shrinking all the child memcg caches and
-> the root cache when a value of '2' is written to the shrink sysfs file.
->
-> On a 4-socket 112-core 224-thread x86-64 system after a parallel kernel
-> build, the the amount of memory occupied by slabs before shrinking
-> slabs were:
->
->  # grep task_struct /proc/slabinfo
->  task_struct         7114   7296   7744    4    8 : tunables    0    0
->  0 : slabdata   1824   1824      0
->  # grep "^S[lRU]" /proc/meminfo
->  Slab:            1310444 kB
->  SReclaimable:     377604 kB
->  SUnreclaim:       932840 kB
->
-> After shrinking slabs:
->
->  # grep "^S[lRU]" /proc/meminfo
->  Slab:             695652 kB
->  SReclaimable:     322796 kB
->  SUnreclaim:       372856 kB
->  # grep task_struct /proc/slabinfo
->  task_struct         2262   2572   7744    4    8 : tunables    0    0
->  0 : slabdata    643    643      0
+objtool points out several conditions that it does not like, depending
+on the combination with other configuration options and compiler
+variants:
 
+stack protector:
+lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch()+0xbf: call to __stack_chk_fail() with UACCESS enabled
+lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch_v1()+0xbe: call to __stack_chk_fail() with UACCESS enabled
 
-What is the time between this measurement points? Should not the shrinked memory show up as reclaimable?
+stackleak plugin:
+lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch()+0x4a: call to stackleak_track_stack() with UACCESS enabled
+lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch_v1()+0x4a: call to stackleak_track_stack() with UACCESS enabled
 
+kasan:
+lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch()+0x25: call to memcpy() with UACCESS enabled
+lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch_v1()+0x25: call to memcpy() with UACCESS enabled
 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  Documentation/ABI/testing/sysfs-kernel-slab | 10 +++--
->  mm/slab.h                                   |  1 +
->  mm/slab_common.c                            | 43 +++++++++++++++++++++
->  mm/slub.c                                   |  2 +
->  4 files changed, 52 insertions(+), 4 deletions(-)
->
-> diff --git a/Documentation/ABI/testing/sysfs-kernel-slab b/Documentation/ABI/testing/sysfs-kernel-slab
-> index 29601d93a1c2..2a3d0fc4b4ac 100644
-> --- a/Documentation/ABI/testing/sysfs-kernel-slab
-> +++ b/Documentation/ABI/testing/sysfs-kernel-slab
-> @@ -429,10 +429,12 @@ KernelVersion:	2.6.22
->  Contact:	Pekka Enberg <penberg@cs.helsinki.fi>,
->  		Christoph Lameter <cl@linux-foundation.org>
->  Description:
-> -		The shrink file is written when memory should be reclaimed from
-> -		a cache.  Empty partial slabs are freed and the partial list is
-> -		sorted so the slabs with the fewest available objects are used
-> -		first.
-> +		A value of '1' is written to the shrink file when memory should
-> +		be reclaimed from a cache.  Empty partial slabs are freed and
-> +		the partial list is sorted so the slabs with the fewest
-> +		available objects are used first.  When a value of '2' is
-> +		written, all the corresponding child memory cgroup caches
-> +		should be shrunk as well.  All other values are invalid.
->  
->  What:		/sys/kernel/slab/cache/slab_size
->  Date:		May 2007
-> diff --git a/mm/slab.h b/mm/slab.h
-> index 3b22931bb557..a16b2c7ff4dd 100644
-> --- a/mm/slab.h
-> +++ b/mm/slab.h
-> @@ -174,6 +174,7 @@ int __kmem_cache_shrink(struct kmem_cache *);
->  void __kmemcg_cache_deactivate(struct kmem_cache *s);
->  void __kmemcg_cache_deactivate_after_rcu(struct kmem_cache *s);
->  void slab_kmem_cache_release(struct kmem_cache *);
-> +int kmem_cache_shrink_all(struct kmem_cache *s);
->  
->  struct seq_file;
->  struct file;
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 464faaa9fd81..493697ba1da5 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -981,6 +981,49 @@ int kmem_cache_shrink(struct kmem_cache *cachep)
->  }
->  EXPORT_SYMBOL(kmem_cache_shrink);
->  
-> +/**
-> + * kmem_cache_shrink_all - shrink a cache and all its memcg children
-> + * @s: The root cache to shrink.
-> + *
-> + * Return: 0 if successful, -EINVAL if not a root cache
-> + */
-> +int kmem_cache_shrink_all(struct kmem_cache *s)
-> +{
-> +	struct kmem_cache *c;
-> +
-> +	if (!IS_ENABLED(CONFIG_MEMCG_KMEM)) {
-> +		kmem_cache_shrink(s);
-> +		return 0;
-> +	}
-> +	if (!is_root_cache(s))
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * The caller should have a reference to the root cache and so
-> +	 * we don't need to take the slab_mutex. We have to take the
-> +	 * slab_mutex, however, to iterate the memcg caches.
-> +	 */
-> +	get_online_cpus();
-> +	get_online_mems();
-> +	kasan_cache_shrink(s);
-> +	__kmem_cache_shrink(s);
-> +
-> +	mutex_lock(&slab_mutex);
-> +	for_each_memcg_cache(c, s) {
-> +		/*
-> +		 * Don't need to shrink deactivated memcg caches.
-> +		 */
-> +		if (s->flags & SLAB_DEACTIVATED)
-> +			continue;
-> +		kasan_cache_shrink(c);
-> +		__kmem_cache_shrink(c);
-> +	}
-> +	mutex_unlock(&slab_mutex);
-> +	put_online_mems();
-> +	put_online_cpus();
-> +	return 0;
-> +}
-> +
->  bool slab_is_available(void)
->  {
->  	return slab_state >= UP;
-> diff --git a/mm/slub.c b/mm/slub.c
-> index a384228ff6d3..5d7b0004c51f 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -5298,6 +5298,8 @@ static ssize_t shrink_store(struct kmem_cache *s,
->  {
->  	if (buf[0] == '1')
->  		kmem_cache_shrink(s);
-> +	else if (buf[0] == '2')
-> +		kmem_cache_shrink_all(s);
->  	else
->  		return -EINVAL;
->  	return length;
+The stackleak and kasan options just need to be disabled for this file
+as we do for other files already. For the stack protector, we already
+attempt to disable it, but this fails on clang because the check is
+mixed with the gcc specific -fno-conserve-stack option. According
+to Andrey Ryabinin, that option is not even needed, dropping it here
+fixes the stackprotector issue.
 
+Fixes: d08965a27e84 ("x86/uaccess, ubsan: Fix UBSAN vs. SMAP")
+Link: https://lore.kernel.org/lkml/20190617123109.667090-1-arnd@arndb.de/t/
+Link: https://lore.kernel.org/lkml/20190722091050.2188664-1-arnd@arndb.de/t/
+Cc: stable@vger.kernel.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v2:
+- drop  -fno-conserve-stack
+- fix the Fixes: line
+---
+ lib/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/lib/Makefile b/lib/Makefile
+index 095601ce371d..29c02a924973 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -279,7 +279,8 @@ obj-$(CONFIG_UCS2_STRING) += ucs2_string.o
+ obj-$(CONFIG_UBSAN) += ubsan.o
+ 
+ UBSAN_SANITIZE_ubsan.o := n
+-CFLAGS_ubsan.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
++KASAN_SANITIZE_ubsan.o := n
++CFLAGS_ubsan.o := $(call cc-option, -fno-stack-protector) $(DISABLE_STACKLEAK_PLUGIN)
+ 
+ obj-$(CONFIG_SBITMAP) += sbitmap.o
+ 
+-- 
+2.20.0
 
