@@ -2,112 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8050970902
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8900D708E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:51:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732135AbfGVS51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 14:57:27 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:38200 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732076AbfGVS5Q (ORCPT
+        id S1731262AbfGVSvr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 14:51:47 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37590 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727821AbfGVSvq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 14:57:16 -0400
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hpdUo-0002TC-CO; Mon, 22 Jul 2019 20:57:14 +0200
-Message-Id: <20190722105221.134696837@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Mon, 22 Jul 2019 20:47:30 +0200
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Feng Tang <feng.tang@intel.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: [patch V3 25/25] x86/apic/x2apic: Implement IPI shorthands support
-References: <20190722104705.550071814@linutronix.de>
+        Mon, 22 Jul 2019 14:51:46 -0400
+Received: by mail-ot1-f66.google.com with SMTP id s20so41324438otp.4;
+        Mon, 22 Jul 2019 11:51:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xjJupYIc6xWc8gLFfPCwhmNtFxBF1s29Cj+SrhBx5Is=;
+        b=bm8hR45ywmygZ8NW0eNp6YDk/NoCpAjuyMaoMf5JVUbHHpaC7V+k2GEyK/Sxbub2Io
+         10P9Eqp7mwTpApV9roRtHUIppuq9fRxcVehIInvSLpuWNk3JdidqKDG7RO5zsMfYiz04
+         M2CRABNHRuqfxifSuEgV7kO5xBzUcuv5s0n3ma/hI9X3iO+XsAlF6LZjgFeAQMq1mlNZ
+         q7C/CD1aTbdIdyP0ZkBhU+q765+neevpRfJfRG/X7YJSC3P2MuuwZ/Ulup6VUHuwLSEi
+         JMn8Jt2ACGXiSOJ6H/2giqHKf7zjFeZtRoF1Fw7MhYblXHt0DLaYrP42uXq1SO9Rz01j
+         qpYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xjJupYIc6xWc8gLFfPCwhmNtFxBF1s29Cj+SrhBx5Is=;
+        b=ndYDKpWaZYgPZgF97g5OS5u6K5Lnb1QQilFfIqzw7ivYggGrHEcByDIkeQhH2p3BSE
+         Y1L8Mm6Uqm77VijwhpFoIZPkFlbXmRynQAbBAnli8d8KhgJmYoWpMOVStyy1Pic3kT8j
+         3q6haUt5QShBX0ndva/LaHxUZZ08C3Flg4UNmvcRBDbBchjCPisYWTi6gYaaSN58lOu3
+         Aw53r/JgLPuDN+gJ+X8PwSdwQXL6me2mhOipRvoGsw54Gh9xSUbLGRScmMWEmoA1VKSG
+         cTkTI3pn9oafVt5VYs/b8lALGLqHH8brx22uDaHfF8Gz7XkesN+bqIZgl51Pgp+9wg49
+         CEHQ==
+X-Gm-Message-State: APjAAAV54ibBel9qpp8BQXmf+x2tVU+9Otwry3WsgUoQeR8uc1S5On+k
+        lrDoTR3UfEJnzZ8VmLueqaLL83mwF/2rAorBG4M=
+X-Google-Smtp-Source: APXvYqxJ1cmuAUD5O0KF/ePYZbRJdJ5aTWAG9K+yO/+94qQbz28EEpCc4OtsYtwRR4vQw7JKfy3sOGJoQP+tXdUEhp8=
+X-Received: by 2002:a9d:4b02:: with SMTP id q2mr16501766otf.312.1563821505561;
+ Mon, 22 Jul 2019 11:51:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20190722151202.5506768B20@verein.lst.de>
+In-Reply-To: <20190722151202.5506768B20@verein.lst.de>
+From:   Vasily Khoruzhick <anarsoul@gmail.com>
+Date:   Mon, 22 Jul 2019 11:51:36 -0700
+Message-ID: <CA+E=qVdu3Hf7ufst-t_CiWkquximGFX8B2RcoQ1x0m++cc8n8Q@mail.gmail.com>
+Subject: Re: [PATCH v3 6/7] dt-bindings: Add ANX6345 DP/eDP transmitter binding
+To:     Torsten Duwe <duwe@lst.de>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Sean Paul <seanpaul@chromium.org>,
+        Harald Geyer <harald@ccbib.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        arm-linux <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All callers of apic->send_IPI_all() and apic->send_IPI_allbutself() contain
-the decision logic for shorthand invocation already and invoke
-send_IPI_mask() if the prereqisites are not satisfied.
+On Mon, Jul 22, 2019 at 8:12 AM Torsten Duwe <duwe@lst.de> wrote:
+>
+> The anx6345 is an ultra-low power DisplayPort/eDP transmitter designed
+> for portable devices.
+>
+> Add a binding document for it.
 
-Implement shorthand support for x2apic.
+I believe you'll have to convert it to yaml format.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
-V2: Remove the decision logic now that it is already done in the callers
----
- arch/x86/kernel/apic/local.h          |    1 +
- arch/x86/kernel/apic/x2apic_cluster.c |    4 ++--
- arch/x86/kernel/apic/x2apic_phys.c    |   12 ++++++++++--
- 3 files changed, 13 insertions(+), 4 deletions(-)
-
---- a/arch/x86/kernel/apic/local.h
-+++ b/arch/x86/kernel/apic/local.h
-@@ -23,6 +23,7 @@ unsigned int x2apic_get_apic_id(unsigned
- u32 x2apic_set_apic_id(unsigned int id);
- int x2apic_phys_pkg_id(int initial_apicid, int index_msb);
- void x2apic_send_IPI_self(int vector);
-+void __x2apic_send_IPI_shorthand(int vector, u32 which);
- 
- /* IPI */
- 
---- a/arch/x86/kernel/apic/x2apic_cluster.c
-+++ b/arch/x86/kernel/apic/x2apic_cluster.c
-@@ -82,12 +82,12 @@ x2apic_send_IPI_mask_allbutself(const st
- 
- static void x2apic_send_IPI_allbutself(int vector)
- {
--	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLBUT);
-+	__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLBUT);
- }
- 
- static void x2apic_send_IPI_all(int vector)
- {
--	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLINC);
-+	__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLINC);
- }
- 
- static u32 x2apic_calc_apicid(unsigned int cpu)
---- a/arch/x86/kernel/apic/x2apic_phys.c
-+++ b/arch/x86/kernel/apic/x2apic_phys.c
-@@ -75,12 +75,12 @@ static void
- 
- static void x2apic_send_IPI_allbutself(int vector)
- {
--	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLBUT);
-+	__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLBUT);
- }
- 
- static void x2apic_send_IPI_all(int vector)
- {
--	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLINC);
-+	__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLINC);
- }
- 
- static void init_x2apic_ldr(void)
-@@ -112,6 +112,14 @@ void __x2apic_send_IPI_dest(unsigned int
- 	native_x2apic_icr_write(cfg, apicid);
- }
- 
-+void __x2apic_send_IPI_shorthand(int vector, u32 which)
-+{
-+	unsigned long cfg = __prepare_ICR(which, vector, 0);
-+
-+	x2apic_wrmsr_fence();
-+	native_x2apic_icr_write(cfg, 0);
-+}
-+
- unsigned int x2apic_get_apic_id(unsigned long id)
- {
- 	return id;
-
-
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Torsten Duwe <duwe@suse.de>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+>  .../devicetree/bindings/display/bridge/anx6345.txt | 57 ++++++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/anx6345.txt
+>
+> diff --git a/Documentation/devicetree/bindings/display/bridge/anx6345.txt b/Documentation/devicetree/bindings/display/bridge/anx6345.txt
+> new file mode 100644
+> index 000000000000..0af092d101c5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/anx6345.txt
+> @@ -0,0 +1,57 @@
+> +Analogix ANX6345 eDP Transmitter
+> +--------------------------------
+> +
+> +The ANX6345 is an ultra-low power Full-HD eDP transmitter designed for
+> +portable devices.
+> +
+> +Required properties:
+> +
+> + - compatible          : "analogix,anx6345"
+> + - reg                 : I2C address of the device
+> + - reset-gpios         : Which GPIO to use for reset (active low)
+> + - dvdd12-supply       : Regulator for 1.2V digital core power.
+> + - dvdd25-supply       : Regulator for 2.5V digital core power.
+> + - Video port 0 for LVTTL input, using the DT bindings defined in [1].
+> +
+> +Optional properties:
+> +
+> + - Video port 1 for eDP output (panel or connector) using the DT bindings
+> +   defined in [1].
+> +
+> +[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
+> +
+> +Example:
+> +
+> +anx6345: anx6345@38 {
+> +       compatible = "analogix,anx6345";
+> +       reg = <0x38>;
+> +       reset-gpios = <&pio 3 24 GPIO_ACTIVE_LOW>; /* PD24 */
+> +       dvdd25-supply = <&reg_dldo2>;
+> +       dvdd12-supply = <&reg_fldo1>;
+> +
+> +       ports {
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               anx6345_in: port@0 {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +                       reg = <0>;
+> +                       anx6345_in_tcon0: endpoint@0 {
+> +                               reg = <0>;
+> +                               remote-endpoint = <&tcon0_out_anx6345>;
+> +                       };
+> +               };
+> +
+> +               anx6345_out: port@1 {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +                       reg = <1>;
+> +
+> +                       anx6345_out_panel: endpoint@0 {
+> +                               reg = <0>;
+> +                               remote-endpoint = <&panel_in_edp>;
+> +                       };
+> +               };
+> +       };
+> +};
+> --
+> 2.16.4
+>
