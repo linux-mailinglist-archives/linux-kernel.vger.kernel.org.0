@@ -2,86 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EECB70B1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 23:15:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5471E70B24
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 23:19:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731055AbfGVVPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 17:15:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35454 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729697AbfGVVPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 17:15:46 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1822221955;
-        Mon, 22 Jul 2019 21:15:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563830145;
-        bh=AIZzoT5ZYNcjgOzxp5tAPR6+/rNuqLReT3uMdcYoavY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iRJji6EcKDZ3rNaenkThR3bEKTYeoPbgWZ5Em5QbX6S3sLNUNEmwShKrkD3Iz3et3
-         fsrBVi68W2MImveoLTFgx5nNRgtbWMIZ1mkJwIql8NEci4tBOmN/WV7j/Dk+txETd1
-         yDQ84WnlNQ4e7tkMX4/PwhqFjwh4AxDCeiZyQqhA=
-Date:   Mon, 22 Jul 2019 16:15:42 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Chocron, Jonathan" <jonnyc@amazon.com>
-Cc:     "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Gustavo.Pimentel@synopsys.com" <Gustavo.Pimentel@synopsys.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        "Hanoch, Uri" <hanochu@amazon.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "Wasserstrom, Barak" <barakw@amazon.com>,
-        "Saidi, Ali" <alisaidi@amazon.com>,
-        "Hawa, Hanna" <hhhawa@amazon.com>,
-        "Shenhar, Talel" <talel@amazon.com>,
-        "Krupnik, Ronen" <ronenk@amazon.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>
-Subject: Re: [PATCH v2 6/8] PCI: al: Add support for DW based driver type
-Message-ID: <20190722211542.GB203187@google.com>
-References: <20190718094531.21423-1-jonnyc@amazon.com>
- <20190718094718.25083-2-jonnyc@amazon.com>
- <DM6PR12MB4010913E5408349A600762CADACB0@DM6PR12MB4010.namprd12.prod.outlook.com>
- <d323007c6bf14cb9f90a497a26b66dac151164fc.camel@amazon.com>
+        id S1730751AbfGVVTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 17:19:20 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50960 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728441AbfGVVTU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 17:19:20 -0400
+Received: by mail-wm1-f66.google.com with SMTP id v15so36556118wml.0;
+        Mon, 22 Jul 2019 14:19:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lcHpQo876d02CYFiHQVItlAaSl/jfjKPiU6RN4TFprw=;
+        b=I1UeEi17GMEIe6au5rGLh3RvbccB2FY6dbNa1E9vsdRutTAF/j5zsxlFYgg12ObK85
+         u81bgOZDMP5ZBKa4ky4ep7OZgij8yIoNiw9ZNh4oH/XoqwCwDRnq/J6nxwpvlv6GRMrI
+         Ljsn6kcmeb5e/RdA+MlQ4AIUgSZMvzHQH6N0RRHnRcBrAy5c65FKe+6IL3CUSJa1R7Mv
+         qn1BkFvwOSGXF74VZsKGyEyaSwuA81rwkQTSIzlqFBI+w+tLgLCL3MgoZOOwo01o7ozR
+         OB0yw7PZRW75RY0lVv0FzfXdTrlkOVlTNcpE++qbI2eTPr2sIQE+njdtr8mljRzka2Nk
+         Nq5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lcHpQo876d02CYFiHQVItlAaSl/jfjKPiU6RN4TFprw=;
+        b=RBRy/WqKR/PKQfVZJxYFEUkxfm2Qlmo/oFsDKJjrIKraJ83pWvtwA6N6V+6CNALgEU
+         9PSa8spHn0quXUF7999i/kw1RQayYQ4moUmw/S6gyKT6/tuxnUJga84cPFbc097BpMn6
+         zQMI/Tus7OPio3KQp2+l8H+P7KPfTHSC4zbFedbomyj7QMhptJFfMGMAL4aaJLxa7GxK
+         dMlGtHoDgdQOj2vZf8iOFHJ7kr3rjrlAbnl0pfL2CZWADX85fkgzuvbmt0TvXea3GAUi
+         U+YOpenRuIl5LmIGmStTFed18cnFrgorEX5Jd6wbWg/7AcZt9iQS7+xGqpAQqiBBa0Op
+         TzCA==
+X-Gm-Message-State: APjAAAXEkDrpMEfdGyc/8AIbKWy7l0NKat8CMSs67W+AQARZtz+cJt0G
+        W2y/xRwRsg3onBjU1zQ8PK/+JZXE+YZuXg/oIK0=
+X-Google-Smtp-Source: APXvYqz7N07i6ohLv6+0gi1iEmrCQkPrVsOixoIwNWebkS9RIprupSjMey4srEFKt2qONF8zx4PlqSB9BaObesJr6Ck=
+X-Received: by 2002:a1c:c188:: with SMTP id r130mr61772280wmf.73.1563830358070;
+ Mon, 22 Jul 2019 14:19:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d323007c6bf14cb9f90a497a26b66dac151164fc.camel@amazon.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190625123407.15888-1-andradanciu1997@gmail.com>
+ <20190718035523.GD11324@X250> <CAJNLGszB239AHpD+kRCPRWZaToTYHiq5YUHRjfRwTqknwHMdMA@mail.gmail.com>
+ <20190722020345.GR3738@dragon> <042F8805D2046347BB8420BEAE397A40749E9BDA@WILL-MAIL002.REu.RohmEu.com>
+In-Reply-To: <042F8805D2046347BB8420BEAE397A40749E9BDA@WILL-MAIL002.REu.RohmEu.com>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Tue, 23 Jul 2019 00:19:06 +0300
+Message-ID: <CAEnQRZDDjvMA5imQK5cEfycMUm3DiJ6i=0uuoHma2PfY3cqS-Q@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: fsl: pico-pi: Add a device tree for the PICO-PI-IMX8M
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Andra Danciu <andradanciu1997@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "leoyang.li@nxp.com" <leoyang.li@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        "aisheng.dong@nxp.com" <aisheng.dong@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "angus@akkea.ca" <angus@akkea.ca>,
+        "vabhav.sharma@nxp.com" <vabhav.sharma@nxp.com>,
+        "pankaj.bansal@nxp.com" <pankaj.bansal@nxp.com>,
+        "bhaskar.upadhaya@nxp.com" <bhaskar.upadhaya@nxp.com>,
+        "ping.bai@nxp.com" <ping.bai@nxp.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Richard Hu <richard.hu@technexion.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-imx@nxp.com" <linux-imx@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 21, 2019 at 03:08:18PM +0000, Chocron, Jonathan wrote:
-> On Fri, 2019-07-19 at 08:55 +0000, Gustavo Pimentel wrote:
-> > On Thu, Jul 18, 2019 at 10:47:16, Jonathan Chocron <jonnyc@amazon.com> wrote:
+On Mon, Jul 22, 2019 at 9:30 PM Vaittinen, Matti
+<Matti.Vaittinen@fi.rohmeurope.com> wrote:
+>
+> Sorry for top posting. I'm replying using mobile phone and outlook web app...
+>
+> gpio_intr is not needed. Irq must be given using the standard irq property. gpio_intr has been used in an old draft driver - I assume the dts originates from NXP bsp which used the old driver.
 
-> > > +static int al_pcie_probe(struct platform_device *pdev)
-> > > +{
-> > > +	struct device *dev = &pdev->dev;
-> > > +	struct al_pcie *al_pcie;
-> > > +	struct dw_pcie *pci;
-> > > +	struct resource *dbi_res;
-> > > +	struct resource *controller_res;
-> > > +	struct resource *ecam_res;
-> > > +	int ret;
-> > 
-> > Please sort the variables following the reverse tree order.
-> > 
-> Done. 
-> 
-> I'd think that it would make sense to group variables which have a
-> common characteristic (e.g. resources read from the DT), even if it
-> mildly breaks the convention (as long as the general frame is longest
-> to shortest). Does this sound ok?
-> 
-> BTW, I couldn't find any documentation regarding the reverse-tree
-> convention, do you have a pointer to some?
+Thanks Matti for your observation! We already fixed this as we are now
+on v6 of the patches for review :).
 
-What I personally do is sort declarations in the order they're used.
+yes the dts originates form TechNexion bsp tree which is based on NXP tree :).
+
+Daniel.
