@@ -2,114 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E6A66FB77
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:40:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F0C36FB7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:40:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728557AbfGVIjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1728578AbfGVIkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 04:40:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48780 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728177AbfGVIjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 22 Jul 2019 04:39:53 -0400
-Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:45708 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728351AbfGVIjw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 04:39:52 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id EE79AC1229;
-        Mon, 22 Jul 2019 08:39:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1563784792; bh=yGAQYcxlEpE1qJEzwwdp1Ab0QN/5jmO1Cs2waCXk0JQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=ZhV4Ck3PJZWZNhsDBpAKMNSCZQLjIbXp8jiLjVW1RdZG9LvwYFsCgGFB1mYa2JeoB
-         jV1+MltoMmR5u689/H4+BERca4XdwjXnVZa6RlHoE3HoBVvxc1eG8i17f5dhmUqG7p
-         F+cJF11Y8BL9i6GxpkKO6oR86tMGZnecNsyRtnJc+Jq3av7nka4YwkIln8xIl6Vfzc
-         yHIGCOrqX84sg5bU30AanVYPisc9aROYwMRj64fyQ19OxFQBad1VyrwsA0gZooe03Y
-         y/If28nd4JM5q6csZ6/+xVhZQL15qkJG7MwohR8MZ02j9nzbwKYMQxfmuzqMJaTcZ9
-         Mfu8hTvQpF0cg==
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 6C8D3A0061;
-        Mon, 22 Jul 2019 08:39:50 +0000 (UTC)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     netdev@vger.kernel.org
-Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net 2/2] net: stmmac: Use kcalloc() instead of kmalloc_array()
-Date:   Mon, 22 Jul 2019 10:39:31 +0200
-Message-Id: <95ab7c8083e5cd42cf6d4c5e1531e30cab540ff2.1563784666.git.joabreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1563784666.git.joabreu@synopsys.com>
-References: <cover.1563784666.git.joabreu@synopsys.com>
-In-Reply-To: <cover.1563784666.git.joabreu@synopsys.com>
-References: <cover.1563784666.git.joabreu@synopsys.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 749F93E2D3;
+        Mon, 22 Jul 2019 08:39:52 +0000 (UTC)
+Received: from redhat.com (ovpn-120-233.rdu2.redhat.com [10.10.120.233])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B365B1001B09;
+        Mon, 22 Jul 2019 08:39:49 +0000 (UTC)
+Date:   Mon, 22 Jul 2019 04:39:47 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     =?utf-8?B?5p2O6I+y?= <lifei.shirley@bytedance.com>
+Cc:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        Jason Wang <jasowang@redhat.com>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Fam Zheng <zhengfeiran@bytedance.com>
+Subject: Re: [External Email] Re: [PATCH v1 0/2] virtio-mmio: support
+ multiple interrupt vectors
+Message-ID: <20190722043707-mutt-send-email-mst@kernel.org>
+References: <20190719133135.32418-1-lifei.shirley@bytedance.com>
+ <20190719110852-mutt-send-email-mst@kernel.org>
+ <CA+=e4K5rn7-avNT3e07dfXkh=ZO2+RvthjqW15gZv-uFYrCs3A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+=e4K5rn7-avNT3e07dfXkh=ZO2+RvthjqW15gZv-uFYrCs3A@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 22 Jul 2019 08:39:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need the memory to be zeroed upon allocation so use kcalloc()
-instead.
+On Mon, Jul 22, 2019 at 11:22:02AM +0800, 李菲 wrote:
+> On Fri, Jul 19, 2019 at 11:14 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > On Fri, Jul 19, 2019 at 09:31:33PM +0800, Fei Li wrote:
+> > > Hi,
+> > >
+> > > This patch series implements multiple interrupt vectors support for
+> > > virtio-mmio device. This is especially useful for multiqueue vhost-net
+> > > device when using firecracker micro-vms as the guest.
+> > >
+> > > Test result:
+> > > With 8 vcpus & 8 net queues set, one vhost-net device with 8 irqs can
+> > > receive 9 times more pps comparing with only one irq:
+> > > - 564830.38 rxpck/s for 8 irqs on
+> > > - 67665.06 rxpck/s for 1 irq on
+> > >
+> > > Please help to review, thanks!
+> > >
+> > > Have a nice day
+> > > Fei
+> >
+> >
+> > Interesting. The spec says though:
+> >
+> >         4.2.3.4
+> >         Notifications From The Device
+> >         The memory mapped virtio device is using a single, dedicated interrupt signal, which is asserted when at
+> >         least one of the bits described in the description of InterruptStatus is set. This is how the device sends a
+> >         used buffer notification or a configuration change notification to the device.
+> >
+> Yes, the spec needs to be updated if we want to use mult-irqs.
+> >
+> > So I'm guessing we need to change the host/guest interface?
+> Just to confirm, does the "the host/guest interface" you mentioned mean how to
+> pass the irq information from the user space tool to guest kernel?
+> In this patch, we do this by passing the [irq_start, irq_end]
+> interface via setting guest
+> kernel command line, that is done in vm_cmdline_set().
+> Also there is another way to do this: add two new registers describing irq info
+> (irq_start & irq_end OR irq_start & irq_numbers) to the virtio config space.
+> 
+> Which one do you prefer?
 
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+I'm not sure - so far irq was passed on the command line, right?
 
----
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose Abreu <joabreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+The first step in implementing any spec change would be to update qemu
+code to virtio 1. Which is not a huge project but so far no one
+bothered.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 5f1294ce0216..0ac79f3e2cee 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -1555,9 +1555,8 @@ static int alloc_dma_rx_desc_resources(struct stmmac_priv *priv)
- 			goto err_dma;
- 		}
- 
--		rx_q->buf_pool = kmalloc_array(DMA_RX_SIZE,
--					       sizeof(*rx_q->buf_pool),
--					       GFP_KERNEL);
-+		rx_q->buf_pool = kcalloc(DMA_RX_SIZE, sizeof(*rx_q->buf_pool),
-+					 GFP_KERNEL);
- 		if (!rx_q->buf_pool)
- 			goto err_dma;
- 
-@@ -1608,15 +1607,15 @@ static int alloc_dma_tx_desc_resources(struct stmmac_priv *priv)
- 		tx_q->queue_index = queue;
- 		tx_q->priv_data = priv;
- 
--		tx_q->tx_skbuff_dma = kmalloc_array(DMA_TX_SIZE,
--						    sizeof(*tx_q->tx_skbuff_dma),
--						    GFP_KERNEL);
-+		tx_q->tx_skbuff_dma = kcalloc(DMA_TX_SIZE,
-+					      sizeof(*tx_q->tx_skbuff_dma),
-+					      GFP_KERNEL);
- 		if (!tx_q->tx_skbuff_dma)
- 			goto err_dma;
- 
--		tx_q->tx_skbuff = kmalloc_array(DMA_TX_SIZE,
--						sizeof(struct sk_buff *),
--						GFP_KERNEL);
-+		tx_q->tx_skbuff = kcalloc(DMA_TX_SIZE,
-+					  sizeof(struct sk_buff *),
-+					  GFP_KERNEL);
- 		if (!tx_q->tx_skbuff)
- 			goto err_dma;
- 
--- 
-2.7.4
 
+> > If true pls cc virtio-dev.
+> Sure.
+> >
+> > Also, do we need to update dt bindings documentation?
+> You mean the following doc? Sure. :)
+> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/virtio/mmio.txt
+> 
+> Thanks for the review!
+> 
+> Have a nice day
+> Fei
+> 
+> 
+> >
+> > >
+> > > Fam Zheng (1):
+> > >   virtio-mmio: Process vrings more proactively
+> > >
+> > > Fei Li (1):
+> > >   virtio-mmio: support multiple interrupt vectors
+> > >
+> > >  drivers/virtio/virtio_mmio.c | 238 +++++++++++++++++++++++++++++++++++--------
+> > >  1 file changed, 196 insertions(+), 42 deletions(-)
+> > >
+> > > --
+> > > 2.11.0
