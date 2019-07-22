@@ -2,85 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F36F16FB54
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:31:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADA016FB57
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:32:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728449AbfGVIbY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 04:31:24 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35256 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727304AbfGVIbY (ORCPT
+        id S1728468AbfGVIcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 04:32:00 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:46788 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727304AbfGVIb7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 04:31:24 -0400
-Received: by mail-ot1-f68.google.com with SMTP id j19so906159otq.2;
-        Mon, 22 Jul 2019 01:31:23 -0700 (PDT)
+        Mon, 22 Jul 2019 04:31:59 -0400
+Received: by mail-qt1-f195.google.com with SMTP id h21so37605359qtn.13;
+        Mon, 22 Jul 2019 01:31:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qH9X5iNUAvdfUeKpd2p6uIpK5xHWBxmzhoraupHL3oQ=;
-        b=sMenGcp3OTQN/G7+T0j7duv8w8jRGa3Tzbw72xbmVz5KMxSYNxv5IMVATO0rP+7F1C
-         bK9IQwtWZeaGOcXyReF3FSpk7ZLVQuGK1ffQzMX92dYAVpEH6MHwcWwN5NhRu3QJLKkS
-         wrQIOxrlJ2E7bNC2sL8/aEF5HHt223MZqS6oLG4zxSF3eR+wrwJrXFQcWErB6eWzeX5l
-         qY6PWhuPw+Oiqrrdfgrk+7XLmbnpmljzAGg/hKFk0BvkvLyqKwLXFHHI8FzrysK3G3dW
-         l9+zaDndADHJXSlFbJcjsrhOzEmxiAhqTc2ZZSiADLeTIsVlKZHKEn8qNg/+KgRucgXs
-         MRFw==
-X-Gm-Message-State: APjAAAXpq/wQmLtl2WjomEAXZS5kglXRed+pooCtnnaxU7X26WUGK4mI
-        0mltvOaDgTFjvgzLZNeFzd7g1HDWpebeWF5QLwI=
-X-Google-Smtp-Source: APXvYqwVqSP5V8Tus+6+2dAP0uhrF6qtZQqEUYrU6BBe3c5Fb5++tjEKA8b6i/rttuFeFAwAF1qfTViUfKgP2vgQwfw=
-X-Received: by 2002:a05:6830:8a:: with SMTP id a10mr21838380oto.167.1563784283215;
- Mon, 22 Jul 2019 01:31:23 -0700 (PDT)
+        bh=dP0nbmsifYCzd3jNOn99GVAeFmpNunbIC0Kq27beutY=;
+        b=qVGx5L0T069oIZxymtCc4y8q+X2ok5sT/W9e4+u7KgL7knQ3FRlYNcHG+/Tgv4sWqs
+         LJU1uStSwUoWiOY+PTGQRYDPgxtHvJo8CDBom8jK05WD8NAFLISY8eJvWkNrA/8b/JhU
+         r99NNQLeOQy8qayG6/9YdKF5YL0N/6JOpEFDnsNHreRYxKJuW2v+ImOyW/YShMCfaCz1
+         W4VrTw9BceQn+nLSv7UswAG2nH79eWN0u4/AMHAAux5CR1lmp8oLBhx3U9m+pDFV+M+Q
+         8/mFKHF/3X1+h5PJbQLlldEV4d3inC1J4KSP6rTcz0NzrCSVimcoFYdaX8x8X6KKNWmI
+         iB0w==
+X-Gm-Message-State: APjAAAV7T8weJCW2/lpCazisp+G5hB7KIMg+tYyUMWL7BkE8MgxpMHOU
+        P8gPK67pyFxj3srYvniT16hmmMWFhwWDyEUzJTk=
+X-Google-Smtp-Source: APXvYqwY6NELHyjo5eYsa2GKjeVYDwJoABufs2FhlniZMp1qxhCMv3/4XbgcYi75VOd2ow9DACzkH64S8Ak0YGx1hLg=
+X-Received: by 2002:ac8:5311:: with SMTP id t17mr47240030qtn.304.1563784318805;
+ Mon, 22 Jul 2019 01:31:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190722023530.67676-1-skunberg.kelsey@gmail.com> <20190722023530.67676-2-skunberg.kelsey@gmail.com>
-In-Reply-To: <20190722023530.67676-2-skunberg.kelsey@gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 22 Jul 2019 10:31:11 +0200
-Message-ID: <CAJZ5v0gRzu0bVL+7L9NhbWu5OxveEP8H8v5qpiW-FeOtoOepiw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ACPI: Remove acpi_has_method() call from acpi_adxl.c
-To:     Kelsey Skunberg <skunberg.kelsey@gmail.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+References: <20190722081705.2084961-1-arnd@arndb.de>
+In-Reply-To: <20190722081705.2084961-1-arnd@arndb.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 22 Jul 2019 10:31:42 +0200
+Message-ID: <CAK8P3a39YBEueSGo-DpVOH3nE88T7DyarcoT29XZ13onCRP1Aw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] [RESEND] dmaengine: omap-dma: make omap_dma_filter_fn private
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Dan Williams <dan.j.williams@intel.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org, bjorn@helgaas.com
+        dmaengine@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 4:36 AM Kelsey Skunberg
-<skunberg.kelsey@gmail.com> wrote:
->
-> acpi_check_dsm() will already return an error if the DSM method does not
-> exist. Checking if the DSM method exists before the acpi_check_dsm() call
-> is not needed. Remove acpi_has_method() call to avoid additional work.
->
-> Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
-> ---
->  drivers/acpi/acpi_adxl.c | 5 -----
->  1 file changed, 5 deletions(-)
->
-> diff --git a/drivers/acpi/acpi_adxl.c b/drivers/acpi/acpi_adxl.c
-> index 13c8f7b50c46..89aac15663fd 100644
-> --- a/drivers/acpi/acpi_adxl.c
-> +++ b/drivers/acpi/acpi_adxl.c
-> @@ -148,11 +148,6 @@ static int __init adxl_init(void)
->                 return -ENODEV;
->         }
->
-> -       if (!acpi_has_method(handle, "_DSM")) {
-> -               pr_info("No DSM method\n");
+On Mon, Jul 22, 2019 at 10:17 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> +++ /dev/null
+> @@ -1,21 +0,0 @@
+> -/*
+> - * OMAP DMA Engine support
+> - *
 
-And why is printing the message not useful?
 
-> -               return -ENODEV;
-> -       }
-> -
->         if (!acpi_check_dsm(handle, &adxl_guid, ADXL_REVISION,
->                             ADXL_IDX_GET_ADDR_PARAMS |
->                             ADXL_IDX_FORWARD_TRANSLATE)) {
-> --
-> 2.20.1
->
+I noticed this causes a trivial merge conflict (the file change but still
+needs to get removed), let me know if you need me to resend the patch.
+
+      Arnd
