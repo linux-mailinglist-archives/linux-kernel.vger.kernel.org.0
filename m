@@ -2,73 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 931866FC59
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 11:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E36566FC6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 11:43:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729086AbfGVJiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 05:38:24 -0400
-Received: from verein.lst.de ([213.95.11.211]:58841 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728311AbfGVJiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 05:38:24 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 1925268C4E; Mon, 22 Jul 2019 11:38:23 +0200 (CEST)
-Date:   Mon, 22 Jul 2019 11:38:22 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Ralph Campbell <rcampbell@nvidia.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Jan Kara <jack@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>
-Subject: Re: [PATCH v2 2/3] mm/hmm: fix ZONE_DEVICE anon page mapping reuse
-Message-ID: <20190722093822.GF29538@lst.de>
-References: <20190719192955.30462-1-rcampbell@nvidia.com> <20190719192955.30462-3-rcampbell@nvidia.com>
+        id S1728727AbfGVJnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 05:43:42 -0400
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:35528 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728021AbfGVJnl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 05:43:41 -0400
+X-Greylist: delayed 449 seconds by postgrey-1.27 at vger.kernel.org; Mon, 22 Jul 2019 05:43:40 EDT
+Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 8EF252E1251;
+        Mon, 22 Jul 2019 12:36:09 +0300 (MSK)
+Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [2a02:6b8:0:1a2d::30])
+        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id piK2rewsgT-a8Nmo53U;
+        Mon, 22 Jul 2019 12:36:09 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1563788169; bh=DL5UzA+B5XRB4qh0F2iWC5P1iVbcg0/rElIhEVtbXfg=;
+        h=Message-ID:Date:To:From:Subject:Cc;
+        b=C4FclbtDQ5b7smwavzXfTwnAGBDtyvoKz3qJxF/M76PisgHI1mGKIvG4cGohU069H
+         I+8pkq99Gy18EG8atUE+4MtHJf7ZK+4vWOcIFCuhSSGHIaGhFtECkYzI0ajGXe82Ox
+         ixtwBZaI7SGYRKn+koCY2zzBmM5SBCVGXhL8BdLI=
+Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:38b3:1cdf:ad1a:1fe1])
+        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id tCVKM0ss34-a8I48tMX;
+        Mon, 22 Jul 2019 12:36:08 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH 1/2] mm/filemap: don't initiate writeback if mapping has no
+ dirty pages
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Date:   Mon, 22 Jul 2019 12:36:08 +0300
+Message-ID: <156378816804.1087.8607636317907921438.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190719192955.30462-3-rcampbell@nvidia.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +		/*
-> +		 * When a device_private page is freed, the page->mapping field
-> +		 * may still contain a (stale) mapping value. For example, the
-> +		 * lower bits of page->mapping may still identify the page as
-> +		 * an anonymous page. Ultimately, this entire field is just
-> +		 * stale and wrong, and it will cause errors if not cleared.
-> +		 * One example is:
-> +		 *
-> +		 *  migrate_vma_pages()
-> +		 *    migrate_vma_insert_page()
-> +		 *      page_add_new_anon_rmap()
-> +		 *        __page_set_anon_rmap()
-> +		 *          ...checks page->mapping, via PageAnon(page) call,
-> +		 *            and incorrectly concludes that the page is an
-> +		 *            anonymous page. Therefore, it incorrectly,
-> +		 *            silently fails to set up the new anon rmap.
-> +		 *
-> +		 * For other types of ZONE_DEVICE pages, migration is either
-> +		 * handled differently or not done at all, so there is no need
-> +		 * to clear page->mapping.
-> +		 */
-> +		if (is_device_private_page(page))
-> +			page->mapping = NULL;
-> +
+Functions like filemap_write_and_wait_range() should do nothing if inode
+has no dirty pages or pages currently under writeback. But they anyway
+construct struct writeback_control and this does some atomic operations
+if CONFIG_CGROUP_WRITEBACK=y - on fast path it locks inode->i_lock and
+updates state of writeback ownership, on slow path might be more work.
+Current this path is safely avoided only when inode mapping has no pages.
 
-Thanks, especially for the long comment.
+For example generic_file_read_iter() calls filemap_write_and_wait_range()
+at each O_DIRECT read - pretty hot path.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+This patch skips starting new writeback if mapping has no dirty tags set.
+If writeback is already in progress filemap_write_and_wait_range() will
+wait for it.
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ mm/filemap.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index d0cf700bf201..d9572593e5c7 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -408,7 +408,8 @@ int __filemap_fdatawrite_range(struct address_space *mapping, loff_t start,
+ 		.range_end = end,
+ 	};
+ 
+-	if (!mapping_cap_writeback_dirty(mapping))
++	if (!mapping_cap_writeback_dirty(mapping) ||
++	    !mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
+ 		return 0;
+ 
+ 	wbc_attach_fdatawrite_inode(&wbc, mapping->host);
+
