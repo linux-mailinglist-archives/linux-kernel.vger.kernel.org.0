@@ -2,215 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75ED570AAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 22:27:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2347E70AB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 22:29:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732573AbfGVU1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 16:27:52 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53919 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732467AbfGVU1o (ORCPT
+        id S1729552AbfGVU3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 16:29:23 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44026 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727647AbfGVU3X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 16:27:44 -0400
-Received: by mail-wm1-f66.google.com with SMTP id x15so36421132wmj.3;
-        Mon, 22 Jul 2019 13:27:42 -0700 (PDT)
+        Mon, 22 Jul 2019 16:29:23 -0400
+Received: by mail-pg1-f194.google.com with SMTP id f25so18190966pgv.10;
+        Mon, 22 Jul 2019 13:29:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=EtB/DTm1uD1Rg5+zm/eSP0XMOL8UCk05lIAwopsyDqA=;
-        b=CKq3ulYO+MEWXTte0ER8EmkP38GBqgAl/VpxL2p+IdNUGPDb/gXSpN0SZRXC77cl7u
-         AbLQIWiyD2bgEwYTC42wKlecHcvi7RvwzHJKDRP0MgwYpPeNOkSLFPmUdLsRjwZ/+OYl
-         hC5Tq2li9pN+eGxZ5GSzHhCQw+y2KNgpZgrq86DsySEjN90pFsMV+StWT0EKdsCWRhfy
-         VxVSBzX64Z9/BqSyV1m416ovWyIwlNw+aKhjJcE920UcI5thI6yYG7GELMnqk4pGfdFW
-         UhEyDcuuQkqg66Ax/MbCo5PLvLcZ582pfFgXaRVXgwklddFYYydeVVimkFG6c+Ng9IL9
-         iWCA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nCZL8NW+CQJDJhz/9d6wrGsYH8X/ZdiJlsRqT5zJ18M=;
+        b=ecUJKzI5CGYU2VRUOO4wPZGQIFrlFq5mcssQY8loS7b4ri7Qe1ZADcezUwC6rRVJQM
+         6OcQd5eJ+/nhNQR8V/NrnmHBVc/3CsXte5tajITmvSn0qSuOdRBNXVwhOif2ic7wMMOa
+         AxG1LfiTrSJ60ExfVKPoYI2n6IayQ99hzmmhw3EggUgB86WoNH99RTAJmeCpp2Gbbziv
+         m569ffJb4oFVxs8PgmoLjP9k+90D21yWQfppvk90Xfs5w3BemdMTNLlO4GrSKWAUPh8j
+         V0dyokeaiCg7yWCo33r4TV0OBIJr1DQD7wtz9RzPX1oQ3gHah0qHHm8a2wjrpGq6ZhZT
+         Fe7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=EtB/DTm1uD1Rg5+zm/eSP0XMOL8UCk05lIAwopsyDqA=;
-        b=jmn+QfLOESLTF8r0qL/QpzcFA3F4SOIL3qfdWHHsdHKBLQwNmuLwSJiLhqsOuR8Ws8
-         89U9wHv9ULfxeL2Mr+4jfeV3bB7EV7uYKhkB2+KB69n+TSRlSe/4+ePN1NGwH/FenPzE
-         F0fOlSLA1OrQWO949/uTk8yhnQ1n4K0Dk4hBn/R1HCr5Uy/6oiZ4wCJU+bm8FF/e5kj6
-         Bp61rGXb3AyuyqmCDK5sFv6/WqI80oIrO7O9vlwW2HaShFRvy80rDODVbBVmNjXfsH9j
-         l42JYqSZIFSZ+3a81rCBRbZDhiZBCpSDrhkGJ0Gzagk6gkp+9hRCQlhKQlXEb4incH6b
-         Gjqw==
-X-Gm-Message-State: APjAAAWLlDDAQydEeqPM/S6RmkJHMFMry3S8JCLTtnq7zin2Z1SLmvIH
-        pU8oJuDM2bllPwn8aAfIFA==
-X-Google-Smtp-Source: APXvYqzYm93d4oBepMPOMBNBV5rCzSEHDsUHRuhIfTV44A2tZfCQJvG0gRdvQkrgF2m8nm41aYq+qw==
-X-Received: by 2002:a7b:c104:: with SMTP id w4mr67629301wmi.42.1563827261388;
-        Mon, 22 Jul 2019 13:27:41 -0700 (PDT)
-Received: from localhost.localdomain ([46.53.253.254])
-        by smtp.gmail.com with ESMTPSA id f1sm28028413wml.28.2019.07.22.13.27.40
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nCZL8NW+CQJDJhz/9d6wrGsYH8X/ZdiJlsRqT5zJ18M=;
+        b=asTsYQDXjcpw9OCe3AfgBxYcogrPb0ZMjMM5SSsr6L1FBckmnh7KETnCP1DM2dCvlZ
+         qeaeZ6ZzyMzy396ZQswBwBVG/adDacGpbm23LQgGNXUr9P12SmRGMZE1YecBirM72mSJ
+         wYimZkwI8AW1CWV5JRO16CkWsIez7K3KeaUGmjYtgxVAjaJ/oj+1nEVRiqlrrlJMiUZv
+         UghwJHX4+Z6EOaG58RkUloL5D2/Fu1YIbKGRB4yMBBZbWTPqlXBgNLYhbuttzN2niwsQ
+         hQFUwoHOXuXiqClrqkuOb3ImTdQsTuxIh+LdAFMHZrxfv3hXeMyqUf0yaRB7IiQKnULp
+         gqVA==
+X-Gm-Message-State: APjAAAUCCxyF7mmAlVjGMp/KFVNjvsEQR2XcIKfT4TL1q5pKXhC768Fi
+        oSa5UpSdBWWQar8gReRp3ylkZqQp
+X-Google-Smtp-Source: APXvYqzp0Fk1CGr9xMouwqONLh91BN1ApqCJEeFJcR6Md3Sy2g7vsRebMcZQNFqdER3Vrv6DPGoJjQ==
+X-Received: by 2002:a17:90a:c588:: with SMTP id l8mr77576503pjt.16.1563827362635;
+        Mon, 22 Jul 2019 13:29:22 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id g18sm68596624pgm.9.2019.07.22.13.29.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jul 2019 13:27:40 -0700 (PDT)
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, adobriyan@gmail.com,
-        linux-kbuild@vger.kernel.org, yamada.masahiro@socionext.com,
-        michal.lkml@markovi.net
-Subject: [PATCH 5/5] x86_64, -march=native: MOVBE support
-Date:   Mon, 22 Jul 2019 23:27:23 +0300
-Message-Id: <20190722202723.13408-5-adobriyan@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190722202723.13408-1-adobriyan@gmail.com>
-References: <20190722202723.13408-1-adobriyan@gmail.com>
+        Mon, 22 Jul 2019 13:29:22 -0700 (PDT)
+Date:   Mon, 22 Jul 2019 13:29:20 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hsin-Yi Wang <hsinyi@google.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] bfq: Check if bfqq is NULL in bfq_insert_request
+Message-ID: <20190722202920.GA18431@roeck-us.net>
+References: <1563816648-12057-1-git-send-email-linux@roeck-us.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1563816648-12057-1-git-send-email-linux@roeck-us.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use MOVBE if it is available.
+On Mon, Jul 22, 2019 at 10:30:48AM -0700, Guenter Roeck wrote:
+> In bfq_insert_request(), bfqq is initialized with:
+> 	bfqq = bfq_init_rq(rq);
+> In bfq_init_rq(), we find:
+> 	if (unlikely(!rq->elv.icq))
+> 		return NULL;
+> Indeed, rq->elv.icq can be NULL if the memory allocation in
+> create_task_io_context() failed.
+> 
 
-Internally MOVBE probably translates to MOV+BSWAP anyway, but who knows.
+The above function should have been ioc_create_icq(), sorry.
 
-Do it because it is easy to do...
+Guenter
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
- arch/x86/crypto/des3_ede-asm_64.S | 28 ++++++++++++++++++++++++++++
- arch/x86/kernel/verify_cpu.S      |  7 +++++++
- scripts/kconfig/cpuid.c           |  5 +++++
- scripts/march-native.sh           |  1 +
- 4 files changed, 41 insertions(+)
-
-diff --git a/arch/x86/crypto/des3_ede-asm_64.S b/arch/x86/crypto/des3_ede-asm_64.S
-index 7fca43099a5f..2fd310e98b0b 100644
---- a/arch/x86/crypto/des3_ede-asm_64.S
-+++ b/arch/x86/crypto/des3_ede-asm_64.S
-@@ -150,6 +150,15 @@
- 
- #define dummy2(a, b) /*_*/
- 
-+#ifdef CONFIG_MARCH_NATIVE_MOVBE
-+#define read_block(io, left, right) \
-+	movbe	 (io), left##d; \
-+	movbe	4(io), right##d;
-+
-+#define write_block(io, left, right) \
-+	movbe	left##d,   (io); \
-+	movbe	right##d, 4(io);
-+#else
- #define read_block(io, left, right) \
- 	movl    (io), left##d; \
- 	movl   4(io), right##d; \
-@@ -161,6 +170,7 @@
- 	bswapl right##d; \
- 	movl   left##d,   (io); \
- 	movl   right##d, 4(io);
-+#endif
- 
- ENTRY(des3_ede_x86_64_crypt_blk)
- 	/* input:
-@@ -434,6 +444,14 @@ ENTRY(des3_ede_x86_64_crypt_blk_3way)
- 	pushq %rsi /* dst */
- 
- 	/* load input */
-+#ifdef CONFIG_MARCH_NATIVE_MOVBE
-+	movbe 0 * 4(%rdx), RL0d;
-+	movbe 1 * 4(%rdx), RR0d;
-+	movbe 2 * 4(%rdx), RL1d;
-+	movbe 3 * 4(%rdx), RR1d;
-+	movbe 4 * 4(%rdx), RL2d;
-+	movbe 5 * 4(%rdx), RR2d;
-+#else
- 	movl 0 * 4(%rdx), RL0d;
- 	movl 1 * 4(%rdx), RR0d;
- 	movl 2 * 4(%rdx), RL1d;
-@@ -447,6 +465,7 @@ ENTRY(des3_ede_x86_64_crypt_blk_3way)
- 	bswapl RR1d;
- 	bswapl RL2d;
- 	bswapl RR2d;
-+#endif
- 
- 	initial_permutation3(RL, RR);
- 
-@@ -507,6 +526,14 @@ ENTRY(des3_ede_x86_64_crypt_blk_3way)
- 
- 	final_permutation3(RR, RL);
- 
-+#ifdef CONFIG_MARCH_NATIVE_MOVBE
-+	movbe RR0d, 0 * 4(%rsi);
-+	movbe RL0d, 1 * 4(%rsi);
-+	movbe RR1d, 2 * 4(%rsi);
-+	movbe RL1d, 3 * 4(%rsi);
-+	movbe RR2d, 4 * 4(%rsi);
-+	movbe RL2d, 5 * 4(%rsi);
-+#else
- 	bswapl RR0d;
- 	bswapl RL0d;
- 	bswapl RR1d;
-@@ -521,6 +548,7 @@ ENTRY(des3_ede_x86_64_crypt_blk_3way)
- 	movl RL1d, 3 * 4(%rsi);
- 	movl RR2d, 4 * 4(%rsi);
- 	movl RL2d, 5 * 4(%rsi);
-+#endif
- 
- 	popq %r15;
- 	popq %r14;
-diff --git a/arch/x86/kernel/verify_cpu.S b/arch/x86/kernel/verify_cpu.S
-index d3f3370e7dab..f8ff130edfb3 100644
---- a/arch/x86/kernel/verify_cpu.S
-+++ b/arch/x86/kernel/verify_cpu.S
-@@ -142,6 +142,13 @@ ENTRY(verify_cpu)
- 	jnc	.Lverify_cpu_no_longmode
- #endif
- 
-+#ifdef CONFIG_MARCH_NATIVE_MOVBE
-+	mov	$1, %eax
-+	cpuid
-+	bt	$22, %ecx
-+	jnc	.Lverify_cpu_no_longmode
-+#endif
-+
- #if defined(CONFIG_MARCH_NATIVE_REP_MOVSB) || defined(CONFIG_MARCH_NATIVE_REP_STOSB)
- 	xor	%eax, %eax
- 	cpuid
-diff --git a/scripts/kconfig/cpuid.c b/scripts/kconfig/cpuid.c
-index 58d09bda61e5..0da1142a59da 100644
---- a/scripts/kconfig/cpuid.c
-+++ b/scripts/kconfig/cpuid.c
-@@ -43,6 +43,7 @@ static inline void cpuid2(uint32_t eax0, uint32_t ecx0, uint32_t *eax, uint32_t
- 	);
- }
- 
-+static bool movbe	= false;
- static bool popcnt	= false;
- static bool rep_movsb	= false;
- static bool rep_stosb	= false;
-@@ -57,6 +58,9 @@ static void intel(void)
- 		cpuid(1, &eax, &ecx, &edx, &ebx);
- //		printf("%08x %08x %08x %08x\n", eax, ecx, edx, ebx);
- 
-+		if (ecx & (1 << 22)) {
-+			movbe = true;
-+		}
- 		if (ecx & (1 << 23)) {
- 			popcnt = true;
- 		}
-@@ -89,6 +93,7 @@ int main(int argc, char *argv[])
- 	}
- 
- #define _(x)	if (streq(opt, #x)) return x ? EXIT_SUCCESS : EXIT_FAILURE
-+	_(movbe);
- 	_(popcnt);
- 	_(rep_movsb);
- 	_(rep_stosb);
-diff --git a/scripts/march-native.sh b/scripts/march-native.sh
-index a41a15a64df4..530bac22fa07 100755
---- a/scripts/march-native.sh
-+++ b/scripts/march-native.sh
-@@ -41,6 +41,7 @@ COLLECT_GCC_OPTIONS=$(
- )
- echo "-march=native: $COLLECT_GCC_OPTIONS"
- 
-+"$CPUID" movbe		&& option "CONFIG_MARCH_NATIVE_MOVBE"
- "$CPUID" popcnt		&& option "CONFIG_MARCH_NATIVE_POPCNT"
- "$CPUID" rep_movsb	&& option "CONFIG_MARCH_NATIVE_REP_MOVSB"
- "$CPUID" rep_stosb	&& option "CONFIG_MARCH_NATIVE_REP_STOSB"
--- 
-2.21.0
-
+> A comment in bfq_insert_request() suggests that bfqq is supposed to be
+> non-NULL if 'at_head || blk_rq_is_passthrough(rq)' is false. Yet, as
+> debugging and practical experience shows, this is not the case in the
+> above situation.
+> 
+> This results in the following crash.
+> 
+> Unable to handle kernel NULL pointer dereference
+> 	at virtual address 00000000000001b0
+> ...
+> Call trace:
+>  bfq_setup_cooperator+0x44/0x134
+>  bfq_insert_requests+0x10c/0x630
+>  blk_mq_sched_insert_requests+0x60/0xb4
+>  blk_mq_flush_plug_list+0x290/0x2d4
+>  blk_flush_plug_list+0xe0/0x230
+>  blk_finish_plug+0x30/0x40
+>  generic_writepages+0x60/0x94
+>  blkdev_writepages+0x24/0x30
+>  do_writepages+0x74/0xac
+>  __filemap_fdatawrite_range+0x94/0xc8
+>  file_write_and_wait_range+0x44/0xa0
+>  blkdev_fsync+0x38/0x68
+>  vfs_fsync_range+0x68/0x80
+>  do_fsync+0x44/0x80
+> 
+> The problem is relatively easy to reproduce by running an image with
+> failslab enabled, such as with:
+> 
+> cd /sys/kernel/debug/failslab
+> echo 10 > probability
+> echo 300 > times
+> 
+> Avoid the problem by checking if bfqq is NULL before using it. With the
+> NULL check in place, requests with missing io context are queued
+> immediately, and the crash is no longer seen.
+> 
+> Fixes: 18e5a57d79878 ("block, bfq: postpone rq preparation to insert or merge")
+> Reported-by: Hsin-Yi Wang  <hsinyi@google.com>
+> Cc: Hsin-Yi Wang <hsinyi@google.com>
+> Cc: Nicolas Boichat <drinkcat@chromium.org>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>  block/bfq-iosched.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+> index 72860325245a..56f3f4227010 100644
+> --- a/block/bfq-iosched.c
+> +++ b/block/bfq-iosched.c
+> @@ -5417,7 +5417,7 @@ static void bfq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
+>  
+>  	spin_lock_irq(&bfqd->lock);
+>  	bfqq = bfq_init_rq(rq);
+> -	if (at_head || blk_rq_is_passthrough(rq)) {
+> +	if (!bfqq || at_head || blk_rq_is_passthrough(rq)) {
+>  		if (at_head)
+>  			list_add(&rq->queuelist, &bfqd->dispatch);
+>  		else
+> -- 
+> 2.7.4
+> 
