@@ -2,132 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F7116FCA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 11:47:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9744D6FCAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 11:48:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729260AbfGVJrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 05:47:42 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:42283 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729282AbfGVJrg (ORCPT
+        id S1729337AbfGVJry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 05:47:54 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:57732 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729314AbfGVJrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 05:47:36 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190722094735euoutp0292b4dd57e4440a86579ca7ae521634cc~zsa21uiLa2848028480euoutp02C
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 09:47:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190722094735euoutp0292b4dd57e4440a86579ca7ae521634cc~zsa21uiLa2848028480euoutp02C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1563788855;
-        bh=WNEl3Tg78F0IeuBzIomZpFxDfnKkZ4Oivfi2xCmRXSc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vASJA9fWTnF/J3+Nm9+UrkdoAY4Klk8mtRDVag8YvHSt38E712QDh4jw9fykbPf+H
-         RNPUz8xykrWNGV2CZ45FQfhryXWYxrkT5WNpj8ZJ87mIAi8mRjgKnDRuLqYGSRrMVe
-         JX0c3CC7gm9kYKP0wy3yBRF/bJaupWvHL3jSq6es=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190722094734eucas1p2c5558704bd0eb076b2dcae60e2a26b31~zsa2Anq_-2046920469eucas1p2W;
-        Mon, 22 Jul 2019 09:47:34 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 4C.26.04377.536853D5; Mon, 22
-        Jul 2019 10:47:34 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190722094733eucas1p1a0294a332b11aed42124308c5d204e62~zsa1Gwlo_1117211172eucas1p1h;
-        Mon, 22 Jul 2019 09:47:33 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190722094733eusmtrp11788dbdbdd4af3ae1b30c543af5067fd~zsa04e_L73266032660eusmtrp17;
-        Mon, 22 Jul 2019 09:47:33 +0000 (GMT)
-X-AuditID: cbfec7f4-12dff70000001119-11-5d35863578cd
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 4D.2A.04140.536853D5; Mon, 22
-        Jul 2019 10:47:33 +0100 (BST)
-Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190722094732eusmtip2ce3d5db50cf4fef014f8718630e8a754~zsaz2Ukqt0863408634eusmtip2p;
-        Mon, 22 Jul 2019 09:47:32 +0000 (GMT)
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
-        mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
-        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
-        willy.mh.wolff.ml@gmail.com,
-        Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v12 9/9] ARM: exynos_defconfig: enable DMC driver
-Date:   Mon, 22 Jul 2019 11:46:46 +0200
-Message-Id: <20190722094646.13342-10-l.luba@partner.samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190722094646.13342-1-l.luba@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0WSa1BMYRjHvefeTtscq9GbWzM7GWKqRcw7w7gMZo6GmRo+ocmW02W0G3uE
-        8GFpCl1EqXbaQnZSttJ1miRS7cgItZFSIq2mUJt0cUnRdja+/Z/f8/z/zzPvvAwus5KLmHD1
-        cV6jVkbIKQlR+fhns+eGuPUBilwVKtUVk6h9rJ9EN0wvSFQwYgEoxlBModSn2Rh6lqBCyZYv
-        OGpuLqHR8/ODNOrULkEjie9I9LI6i0KjSSaAdM0PMVRk6qZRbrsZQ+anO1HXuXwKxT4w0ahh
-        8AKJpl+XEqj2lS/qmnRCE096wVZXrvB6IeAmxlMIbrgjlub0WjPB3cvsprky4yWKq80upLmk
-        GCvF1VlrMO5yhRFw5U1nuNGyZX6O+yWbDvMR4Sd4jffmQ5Kw8ok2cHSYPPWt9hapBWlkPHBg
-        IOsDn/dYqHggYWRsPoAt2kukWIwB+P5NBy4WowBOZGaDOUvO91ZMbOQB2G1opf5Zsq61z3QY
-        hmK9YJXxmM3gzOoA1A/stc3g7AccXi7Kmk1awG6DdQbT7CEEuxzWWeNnuZTdCs26IkLc5gYL
-        Sh7htkyHGf6pUSXiXAbGfgU2DNkdUHsBF/EC+Lmxghb1EtiUmmhPEaA2Kcd+/1loSc62z2yE
-        DY1m0haDsx6wuNpbxNvgj2EDIaY7wY6h+TaMz8iUygxcxFJ4MU4mTq+EFYktmKgXwrzCdHs4
-        B/tjpu0vmApgTl8MfgW4Zf5fdhMAI3DhowRVKC+sVfMnvQSlSohSh3oFR6rKwMwvbJpuHKsC
-        1b+D6gHLALmjVFHpEyAjlSeEaFU9gAwud5aqFesDZNLDyujTvCYyUBMVwQv1YDFDyF2kZ+b1
-        HJCxocrj/BGeP8pr5roY47BICw4KRNueO+4GvzSNZbdLBu2/KyRyXYZ7ywujdco3dDvhHSR1
-        /bPjZs3HCMe3+ruyq6D4V7CvzisoszNB7ZN8MmT84GpL73a/an3bvvvOGNAX+S+dlCQY3g/8
-        msyfIpM8bw8JeQFl7S+dV+iDFaNmPRYo8yjZMq7pq0pJ72mdKpUTQphyzSpcIyj/AuKojZmB
-        AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t/xe7qmbaaxBlMvslhsnLGe1eL6l+es
-        FvOPnGO1WP3xMaNF8+L1bBaTT81lsjjTnWvR//g1s8X58xvYLc42vWG3uNUgY/Gx5x6rxeVd
-        c9gsPvceYbSYcX4fk8XaI3fZLZZev8hkcfGUq8XtxhVsFq17j7BbHH7Tzmrx79pGFov9V7ws
-        bv/ms/h24hGjg6THmnlrGD2+fZ3E4vH+Riu7x+yGiyweO2fdZffYtKqTzWP/3DXsHr3N79g8
-        Dr7bw+TRt2UVo8fm09UenzfJBfBE6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZ
-        mSrp29mkpOZklqUW6dsl6GVs/naVseA9a8Wn/YtYGxinsnYxcnJICJhILPx+iamLkYtDSGAp
-        o8SsmbOYIRJiEpP2bWeHsIUl/lzrYoMo+sQo8W/PFaAEBwebgJ7EjlWFIHERgTmMEj+7tjGC
-        OMwCv5klDt7tB+sWFnCUOLj4CNg6FgFViYPvuhhBbF4BB4mLM9ayQGyQl1i94QAzyFBOoPjL
-        47kgYSEBe4n9L7YzTmDkW8DIsIpRJLW0ODc9t9hIrzgxt7g0L10vOT93EyMwRrcd+7llB2PX
-        u+BDjAIcjEo8vDc2m8QKsSaWFVfmHmKU4GBWEuHNMzCNFeJNSaysSi3Kjy8qzUktPsRoCnTT
-        RGYp0eR8YPrIK4k3NDU0t7A0NDc2NzazUBLn7RA4GCMkkJ5YkpqdmlqQWgTTx8TBKdXAaLDc
-        u3jlodkLbA/vmHFFhvnChYdzp2nvdY1L1do+0cPt/mFjT6431w+1X3Lb83b2yb5Ax9X8jbtM
-        9it5y7qoTAivEy0+9bFh+/zJf/ikv+4+vs24gafdpeH9tv4rKu+eZvyylfpyhWe9aZb7b66X
-        Vz9ocpVXvY4ufr00cJnsooT9Jjw1mWn7zyuxFGckGmoxFxUnAgAX9MER5wIAAA==
-X-CMS-MailID: 20190722094733eucas1p1a0294a332b11aed42124308c5d204e62
-X-Msg-Generator: CA
+        Mon, 22 Jul 2019 05:47:51 -0400
+Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 959CFC0C17;
+        Mon, 22 Jul 2019 09:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1563788870; bh=hq6gJ+K6N4pn/7PhWA2I1CQUMqIfpkRR26n8J4BBq9Q=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=hzU4UymHml3WqCGbSv5OB1Mw5Oqy6as082mZzZgWYGGDOb78+1jVcLatFVZL6OI13
+         gf9L1qgphzvHby/Ppc60G5zmMJBBRY7h/U4o60T+9tKVdFjeeEcaVThMPC5WKQemEG
+         SG93M6hwdNbaM0c/LsvdZGmNQiBByOdVcj+FpaLy21H49kqMbfFDjS5iTAY3UmZjka
+         GhJ9f89EX6AHALz++I/XGd88WMOkubYuHxYablpnF1ojV31GybtBI8wcYa8EEAUlYu
+         bOem/fCvQqYZ1v6i53EVJiTgqcPvjP7z1eQ3Ug/16Jny1PlVQFthjPY1JoDxh0dpR4
+         g33lNfry5iUPg==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id CF355A00A3;
+        Mon, 22 Jul 2019 09:47:47 +0000 (UTC)
+Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 22 Jul 2019 02:47:47 -0700
+Received: from NAM01-SN1-obe.outbound.protection.outlook.com (10.13.134.195)
+ by mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Mon, 22 Jul 2019 02:47:47 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=D+VybMxTBN+wF1jz6PKye6JOWuva8BcAfDz7vCYbTyJJG5qmRLkEx47jbXr3NbpgfjdNmVuRHLEpOFizQNuFzVHwWtplNNbxuczfaOgUntUGziu1U6MFPeEkZ63AuvHAypeWt7u4MiFqHJ/G/LXZpjFwLpg8Kx8HRr+RwgbB5yVbuxpYb7kDYISpgK2UBr/GYKOv8vf58RNFi3YDmFV7ZKy6+hOkq7rj0g8ennjGWaSr5UkFbGchwrpNojaDUzzTF9y51VJuK7uzg3NDy/sr6I0PP7FSlt08hAzf8yS3Fca2ocA11nqmXT1ThRCGWNITzqe33oipy5qvj2xrI2Qe+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hq6gJ+K6N4pn/7PhWA2I1CQUMqIfpkRR26n8J4BBq9Q=;
+ b=ObTB4Lg96VzVijeoLDIn0ZBTxhWWiwkYv7QVDIrWwME2G5RzhrcwG66cCuBonOn8Yg4JeuiLNuzNR++uenwaNdENAHmaDpHBKM5+d6bBG33LI9QTcEBjoTNyoS9258FY+uYoroNW43PHGwGFrjJNZPTjzEpsUhbh+G7LrAYaM1qOZs1QqocHqjdHS84oZMNsqYH8YlQKLwFQBOXI2tEqOISIyzjnOqcXAOHp1tYCO4C+Dq/rEQaqqM78IivIMOZo4L6dJdCvQ7jDvj/OHtcT9TBdaEfXAFWx10O9j11Mz6NzYzY6Nu7L+5CnjK6y1vpQ4bLb4qaHLKvS6G1lh/tttA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=synopsys.com;dmarc=pass action=none
+ header.from=synopsys.com;dkim=pass header.d=synopsys.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=synopsys.onmicrosoft.com; s=selector1-synopsys-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hq6gJ+K6N4pn/7PhWA2I1CQUMqIfpkRR26n8J4BBq9Q=;
+ b=BqBMuba0cBxTtgru6iq8CBud3JfYzIxKZ+Uf946xpsxcwx1nGFFtw6+wBAheSBTKK1RvWfXfr/pLftCsVO2ZWj9yRWXQ4UdGWUY7C+FWpb+m8F8VYR4cgbiN1J0D1qSY2fXNe2Hi2D5BXwBMUve/VnxemcOHmTHnnoc2MGvnA0Q=
+Received: from BN8PR12MB3266.namprd12.prod.outlook.com (20.179.66.159) by
+ BN8PR12MB3476.namprd12.prod.outlook.com (20.178.212.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2073.14; Mon, 22 Jul 2019 09:47:46 +0000
+Received: from BN8PR12MB3266.namprd12.prod.outlook.com
+ ([fe80::61ef:5598:59e0:fc9d]) by BN8PR12MB3266.namprd12.prod.outlook.com
+ ([fe80::61ef:5598:59e0:fc9d%5]) with mapi id 15.20.2094.013; Mon, 22 Jul 2019
+ 09:47:44 +0000
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Thread-Topic: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Thread-Index: AQHVMYtq2Zx4WVoG/U2kL8GCK0bP/abPQEOAgADTx+CAABvLAIABeX5ggAAOFICAAAG4AIAAAXQAgAAaB/CAACO4AIAAAIsAgAAR0ACABE5q0IAAJe0AgAAA9wA=
+Date:   Mon, 22 Jul 2019 09:47:44 +0000
+Message-ID: <BN8PR12MB3266362102CCB6B4DDE4BEA0D3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
+References: <cover.1562149883.git.joabreu@synopsys.com>
+ <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
+ <29dcc161-f7c8-026e-c3cc-5adb04df128c@nvidia.com>
+ <BN8PR12MB32661E919A8DEBC7095BAA12D3C80@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <6a6bac84-1d29-2740-1636-d3adb26b6bcc@nvidia.com>
+ <BN8PR12MB3266960A104A7CDBB4E59192D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <bc9ab3c5-b1b9-26d4-7b73-01474328eafa@nvidia.com>
+ <BN8PR12MB3266989D15E017A789E14282D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <4db855e4-1d59-d30b-154c-e7a2aa1c9047@nvidia.com>
+ <BN8PR12MB3266FD9CF18691EDEF05A4B8D3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <64e37224-6661-ddb0-4394-83a16e1ccb61@nvidia.com>
+ <BN8PR12MB3266E1FAC5B7874EFA69DD7BD3CB0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <25512348-5b98-aeb7-a6fb-f90376e66a84@nvidia.com>
+ <BN8PR12MB32665C1A106D3DCBF89CEA54D3C40@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <49efad87-2f74-5804-af4c-33730f865c41@nvidia.com>
+In-Reply-To: <49efad87-2f74-5804-af4c-33730f865c41@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=joabreu@synopsys.com; 
+x-originating-ip: [83.174.63.141]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7e9aa974-9723-4a8d-3f35-08d70e89a576
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN8PR12MB3476;
+x-ms-traffictypediagnostic: BN8PR12MB3476:
+x-microsoft-antispam-prvs: <BN8PR12MB34765947837CC7AAD9A305CBD3C40@BN8PR12MB3476.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 01068D0A20
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(376002)(39860400002)(136003)(396003)(52314003)(199004)(189003)(5660300002)(3846002)(7416002)(2906002)(54906003)(478600001)(74316002)(66446008)(7736002)(305945005)(81156014)(2501003)(66946007)(110136005)(64756008)(66476007)(229853002)(6116002)(52536014)(5024004)(81166006)(8676002)(68736007)(316002)(8936002)(76116006)(6506007)(446003)(55016002)(256004)(26005)(6436002)(53936002)(76176011)(476003)(66556008)(2201001)(4326008)(71200400001)(102836004)(186003)(7696005)(86362001)(53546011)(66066001)(71190400001)(25786009)(33656002)(11346002)(6246003)(14444005)(9686003)(99286004)(486006)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR12MB3476;H:BN8PR12MB3266.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: obzIGZdfAOdYS3pYXkcFl2DGm3bMttg7JDCY+aqQspFZNBBbzjgdTTODsiHU4Vakh51KTvhh679NLqttwrPvz59mWuLfGWutrkBfOnuq3hatU6sUyJ/xmBnP8lMYYZhBIxfWPL7kzLFDRMKeqV0WuBwjO/5wJvIXo+QgKRXG59CiwaDfHKCBc5otpWpju/ByWmubcgancfSIfM2dz4jfYIBY6UPObbnXKqCa9sN489op3f3OFp0M/j5YrjbqcFqJUzEPmzIuwfXAMis8bqejleXB3VGttGKYtgTVNJFGsFlWdNEYLpHjqNFhChoeeNWuxGVrMD/odP3hX8FzfSQQC37tXBqc10vKoW+up1ORYv70WWiDf3wLl9j5UEgOd1H6iW1o95zeN8ymuLEGIqtmxOXQR65B5pmDScvxqAhxYmM=
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190722094733eucas1p1a0294a332b11aed42124308c5d204e62
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190722094733eucas1p1a0294a332b11aed42124308c5d204e62
-References: <20190722094646.13342-1-l.luba@partner.samsung.com>
-        <CGME20190722094733eucas1p1a0294a332b11aed42124308c5d204e62@eucas1p1.samsung.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e9aa974-9723-4a8d-3f35-08d70e89a576
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jul 2019 09:47:44.4533
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: joabreu@synopsys.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3476
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable driver for Exynos5422 Dynamic Memory Controller supporting
-dynamic frequency and voltage scaling in Exynos5422 SoCs.
-
-Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
----
- arch/arm/configs/exynos_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 2e6a863d25aa..ebed93236a47 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -291,6 +291,7 @@ CONFIG_DEVFREQ_GOV_PERFORMANCE=y
- CONFIG_DEVFREQ_GOV_POWERSAVE=y
- CONFIG_DEVFREQ_GOV_USERSPACE=y
- CONFIG_ARM_EXYNOS_BUS_DEVFREQ=y
-+CONFIG_EXYNOS5422_DMC=y
- CONFIG_DEVFREQ_EVENT_EXYNOS_NOCP=y
- CONFIG_EXTCON=y
- CONFIG_EXTCON_MAX14577=y
--- 
-2.17.1
-
+RnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQpEYXRlOiBKdWwvMjIvMjAx
+OSwgMTA6Mzc6MTggKFVUQyswMDowMCkNCg0KPiANCj4gT24gMjIvMDcvMjAxOSAwODoyMywgSm9z
+ZSBBYnJldSB3cm90ZToNCj4gPiBGcm9tOiBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNv
+bT4NCj4gPiBEYXRlOiBKdWwvMTkvMjAxOSwgMTQ6MzU6NTIgKFVUQyswMDowMCkNCj4gPiANCj4g
+Pj4NCj4gPj4gT24gMTkvMDcvMjAxOSAxMzozMiwgSm9zZSBBYnJldSB3cm90ZToNCj4gPj4+IEZy
+b206IEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPg0KPiA+Pj4gRGF0ZTogSnVsLzE5
+LzIwMTksIDEzOjMwOjEwIChVVEMrMDA6MDApDQo+ID4+Pg0KPiA+Pj4+IEkgYm9vdGVkIHRoZSBi
+b2FyZCB3aXRob3V0IHVzaW5nIE5GUyBhbmQgdGhlbiBzdGFydGVkIHVzZWQgZGhjbGllbnQgdG8N
+Cj4gPj4+PiBicmluZyB1cCB0aGUgbmV0d29yayBpbnRlcmZhY2UgYW5kIGl0IGFwcGVhcnMgdG8g
+YmUgd29ya2luZyBmaW5lLiBJIGNhbg0KPiA+Pj4+IGV2ZW4gbW91bnQgdGhlIE5GUyBzaGFyZSBm
+aW5lLiBTbyBpdCBkb2VzIGFwcGVhciB0byBiZSBwYXJ0aWN1bGFyIHRvDQo+ID4+Pj4gdXNpbmcg
+TkZTIHRvIG1vdW50IHRoZSByb290ZnMuDQo+ID4+Pg0KPiA+Pj4gRGFtbi4gQ2FuIHlvdSBzZW5k
+IG1lIHlvdXIgLmNvbmZpZyA/DQo+ID4+DQo+ID4+IFllcyBubyBwcm9ibGVtLiBBdHRhY2hlZC4N
+Cj4gPiANCj4gPiBDYW4geW91IGNvbXBpbGUgeW91ciBpbWFnZSB3aXRob3V0IG1vZHVsZXMgKGku
+ZS4gYWxsIGJ1aWx0LWluKSBhbmQgbGV0IA0KPiA+IG1lIGtub3cgaWYgdGhlIGVycm9yIHN0aWxs
+IGhhcHBlbnMgPw0KPiANCj4gSSBzaW1wbHkgcmVtb3ZlZCB0aGUgL2xpYi9tb2R1bGVzIGRpcmVj
+dG9yeSBmcm9tIHRoZSBORlMgc2hhcmUgYW5kDQo+IHZlcmlmaWVkIHRoYXQgSSBzdGlsbCBzZWUg
+dGhlIHNhbWUgaXNzdWUuIFNvIGl0IGlzIG5vdCBsb2FkaW5nIHRoZQ0KPiBtb2R1bGVzIHRoYXQg
+aXMgYSBwcm9ibGVtLg0KDQpXZWxsLCBJIG1lYW50IHRoYXQgbG9hZGluZyBtb2R1bGVzIGNhbiBi
+ZSBhbiBpc3N1ZSBidXQgdGhhdCdzIG5vdCB0aGUgDQp3YXkgdG8gdmVyaWZ5IHRoYXQuDQoNCllv
+dSBuZWVkIHRvIGhhdmUgYWxsIG1vZHVsZXMgYnVpbHQtaW4gc28gdGhhdCBpdCBwcm92ZXMgdGhh
+dCBubyBtb2R1bGUgDQp3aWxsIHRyeSB0byBiZSBsb2FkZWQuDQoNCkFueXdheSwgdGhpcyBpcyBw
+cm9iYWJseSBub3QgdGhlIGNhdXNlIGFzIHlvdSB3b3VsZG4ndCBldmVuIGJlIGFibGUgdG8gDQpj
+b21waWxlIGtlcm5lbCBpZiB5b3UgbmVlZCBhIHN5bWJvbCBmcm9tIGEgbW9kdWxlIHdpdGggc3Rt
+bWFjIGJ1aWx0LWluLiANCktjb25maWcgd291bGQgY29tcGxhaW4gYWJvdXQgdGhhdC4NCg0KVGhl
+IG90aGVyIGNhdXNlIGNvdWxkIGJlIGRhdGEgY29ycnVwdGlvbiBpbiB0aGUgUlggcGF0aC4gQXJl
+IHlvdSBhYmxlIHRvIA0Kc2VuZCBtZSBwYWNrZXQgZHVtcCBieSBydW5uaW5nIHdpcmVzaGFyayBl
+aXRoZXIgaW4gdGhlIHRyYW5zbWl0dGVyIHNpZGUgDQooaS5lLiBORlMgc2VydmVyKSwgb3IgdXNp
+bmcgc29tZSBraW5kIG9mIHN3aXRjaCA/DQoNCi0tLQ0KVGhhbmtzLA0KSm9zZSBNaWd1ZWwgQWJy
+ZXUNCg==
