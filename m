@@ -2,85 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21944708E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:51:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7794C708F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 20:57:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731799AbfGVSvu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 14:51:50 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38554 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727821AbfGVSvs (ORCPT
+        id S1731881AbfGVS5B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 14:57:01 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:38028 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728890AbfGVS5A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 14:51:48 -0400
-Received: by mail-pl1-f193.google.com with SMTP id az7so19544290plb.5
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 11:51:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=reply2setup-com.20150623.gappssmtp.com; s=20150623;
-        h=to:subject:from:message-id:disposition-notification-to:date
-         :user-agent:mime-version:content-transfer-encoding:content-language;
-        bh=CkPTLp1+mLr2WEfeyAA98TPYjmGNdrnGzYHbmZtdlPc=;
-        b=Er1whEjJ4kNYucyXbVOdIhrBNUD6NqjK/gBR+omL5PT370IIwZKZtMupePvJy7ntqU
-         MuB3auJKkJSqLFoBHOumNxaIDprhkQOj5pPjReQvgDrZOLlp9Q3lNCelPfUaa4CeQ/g6
-         1KVpuHzOxxJk9ow3+gidRwjh9DT1XCEfx3HEJmisgfAdc7EYTfTPWy4RNLFBzLch1mmc
-         7xi6/0ewr5lpG7oA/3ZL96EZ5B8oEZoHxcbTPx8hiVQZa2K245djnaRYDaOod3QFplnW
-         uw2jRlb/UAPCh4eeWMtcq/Cyy+cQh8xvsabdMrUmiBQA2/xIaUIsO0h3MfDpo3XWWolE
-         RxYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:subject:from:message-id
-         :disposition-notification-to:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=CkPTLp1+mLr2WEfeyAA98TPYjmGNdrnGzYHbmZtdlPc=;
-        b=ktKzs9JClxXRRgZpOo+CfVKx52APKzT7ooBaekUHWxytjsP0MjLT48x/8mr5nyfw2C
-         zR7VuUDbCj+b0oFZdyXvU9pDOSD1AD2xjqtj931d2d6PSvzGHDbQjjHVdIs68ekNiGzj
-         SVtZmoY/dMp/FyAw8EqPHEs53VjmuBiYN19ii0Z+hyT6uZbEs3eZVKwErNEthlrGqeBC
-         0Iiqreg8tNtRcXTv6QlHwb/FlE0v6zZMInfq8R4XbevaACMLc5ZPN5z8pTRFXox5MPfr
-         UPe+pQZ4Yo/oipJBI0ZGJSCiuRcL4pzHW0gtln0ECKsB1WevfiGzwsNHmO9KKQndKDbP
-         TCaw==
-X-Gm-Message-State: APjAAAVs7oHCd4/oSbpxtBOf0p3v1Vw2D+BShRWxnMQo6NHX3JTL4265
-        mBIP+a1la5qbGquPrwf03208kn0G
-X-Google-Smtp-Source: APXvYqxm8U0feXuxfSWfxLubfRTvs1pbMHcnkOb4MXmMeW89K1c9aX+6YdjZMlDFY0s/NYZGQkQ9pg==
-X-Received: by 2002:a17:902:6b85:: with SMTP id p5mr73556286plk.225.1563821507341;
-        Mon, 22 Jul 2019 11:51:47 -0700 (PDT)
-Received: from [192.168.0.13] ([103.253.170.188])
-        by smtp.gmail.com with ESMTPSA id p67sm48316622pfg.124.2019.07.22.11.51.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jul 2019 11:51:46 -0700 (PDT)
-To:     linux-kernel@vger.kernel.org
-Subject: Wine Enthusiasts
-From:   Leslie Arthur <larthur@reply2setup.com>
-Message-ID: <c54758c2-20be-ef3e-014b-5364844dfe95@reply2setup.com>
-Date:   Mon, 22 Jul 2019 13:43:48 -0400
-User-Agent: Mozilla/5.0 (Windows NT 6.3; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 22 Jul 2019 14:57:00 -0400
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hpdUY-0002OR-K4; Mon, 22 Jul 2019 20:56:58 +0200
+Message-Id: <20190722105218.962517234@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Mon, 22 Jul 2019 20:47:07 +0200
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Nadav Amit <namit@vmware.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Feng Tang <feng.tang@intel.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>
+Subject: [patch V3 02/25] x86/apic: Invoke perf_events_lapic_init() after
+ enabling APIC
+References: <20190722104705.550071814@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Antivirus: Avast (VPS 190722-4, 07/22/2019), Outbound message
-X-Antivirus-Status: Clean
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If the APIC is soft disabled then unmasking an LVT entry does not work and
+the write is ignored. perf_events_lapic_init() tries to do so.
 
-Hello,
+Move the invocation after the point where the APIC has been enabled.
 
-Would you be interested in acquiring an email list of "Wine Enthusiasts" from USA?
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ arch/x86/kernel/apic/apic.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-We also have data for Golfers, Alcohol Enthusiasts, Beer Enthusiasts, Chocolate Enthusiasts, Foodies, Travelers, Gift Buyers, Spa and Resort Visitors, Sports Enthusiasts, Android Users and many more..
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1517,7 +1517,6 @@ static void setup_local_APIC(void)
+ 	int logical_apicid, ldr_apicid;
+ #endif
+ 
+-
+ 	if (disable_apic) {
+ 		disable_ioapic_support();
+ 		return;
+@@ -1532,8 +1531,6 @@ static void setup_local_APIC(void)
+ 		apic_write(APIC_ESR, 0);
+ 	}
+ #endif
+-	perf_events_lapic_init();
+-
+ 	/*
+ 	 * Double-check whether this APIC is really registered.
+ 	 * This is meaningless in clustered apic mode, so we skip it.
+@@ -1614,6 +1611,8 @@ static void setup_local_APIC(void)
+ 	value |= SPURIOUS_APIC_VECTOR;
+ 	apic_write(APIC_SPIV, value);
+ 
++	perf_events_lapic_init();
++
+ 	/*
+ 	 * Set up LVT0, LVT1:
+ 	 *
 
-Each record in the list contains Contact Name (First, Middle and Last Name), Mailing Address, List type and Opt-in email address.
-
-All the contacts are opt-in verified, 100% permission based and can be used for unlimited multi-channel marketing.
-
-Please let me know your thoughts towards procuring the Wine Enthusiasts List.
-
-Best Regards,
-Leslie Arthur
-Research Analyst
-
-We respect your privacy, if you do not wish to receive any further emails from our end, please reply with a subject "Remove".
 
