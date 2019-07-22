@@ -2,136 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDEA370D95
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 01:47:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A05D70D98
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 01:48:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731757AbfGVXru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 19:47:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40236 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728655AbfGVXru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 19:47:50 -0400
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 946F421E70
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 23:47:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563839269;
-        bh=ZJaWlqPi2cdZE2l3aFe+zt2XP8rCoSUqW+jNvs+HvNM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=EkqROvek39weM/EmV7A0thZwlX/NAlBfawlc0NcqiZY01njUcGWhiGpUMo9HvH9sR
-         m1Ne/VIJ8ORlqcwW+/RnvQ36aDp9zUbe5ZqOUOok9fgOWLBjA8krGJ5kGrN1+eHoKX
-         qZHPRnp/qin31xajsOh4DCjVxwZkDB0kqGfZTyaw=
-Received: by mail-wr1-f51.google.com with SMTP id 31so41175413wrm.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 16:47:49 -0700 (PDT)
-X-Gm-Message-State: APjAAAXWu/ovbXMjoMGYbQ9atnPjrVdhSAVZxOgPckhQSgFj46bZ8EUB
-        OMTLdGYbgmtp0X46QqeX2sbzDyzX52JmjO8bEsybPQ==
-X-Google-Smtp-Source: APXvYqwAIA+zz6u6QBDVlYPUQTRuAj5apJ1OiftcFR+jI3UsI3EoxsU+6lP/gtGZ+idzIBt7brzF/57apW17CzjlCL0=
-X-Received: by 2002:a5d:4309:: with SMTP id h9mr74387750wrq.221.1563839268042;
- Mon, 22 Jul 2019 16:47:48 -0700 (PDT)
+        id S1731988AbfGVXsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 19:48:13 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37349 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731206AbfGVXsM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 19:48:12 -0400
+Received: by mail-io1-f67.google.com with SMTP id q22so77894065iog.4;
+        Mon, 22 Jul 2019 16:48:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Z5dGHdXeC8C6M1Pe5s8pfnDnKQmDihjKHC9kjuo+Il4=;
+        b=TPS9eLE75C/acSYjsS4+bFKW36G/Fb/TBuEi5+AokIIQuUohFur43qyJ0NM7ujDQsv
+         9clgZ+6SrkGYRaNY/hXful+4tSekd5EirifGwNtKOfe9RLQo9dO95ralMJ8ZLrYVtctI
+         idZkBWMW8f5kebV8iB9zS+WIlx0ZQyJ+Qht7E6FPI5v1vdtLJ8WDTBGikYNfAH1RGKmD
+         e2igpsn+3gL6H91palTq1uJAv6xOc0xV4lnXdq2SRVwFaou8fu2R1OFin74std090kPR
+         cexc1lh2e227HVE0lzeB39vRvesdZc8KKK+OXawrb+Cit/MyYpChnTO9asLqvyXxvHrZ
+         8msQ==
+X-Gm-Message-State: APjAAAVvMxu+5rZ/DZvCrW8Tdz63uWLRSweqhRH06hXpQ2sgdtB8nDpA
+        0tEfVPowZNesiKxMtDN3bg==
+X-Google-Smtp-Source: APXvYqw4b2UbLlSXGAhGzcm+i9ZSSI5DoDGtdkU/i/35wi+A6iRGqdOoCN9TZMz4vEDsJGzUqNOo0w==
+X-Received: by 2002:a02:bb08:: with SMTP id y8mr31151132jan.51.1563839291717;
+        Mon, 22 Jul 2019 16:48:11 -0700 (PDT)
+Received: from localhost ([64.188.179.254])
+        by smtp.gmail.com with ESMTPSA id j25sm53735053ioj.67.2019.07.22.16.48.10
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 22 Jul 2019 16:48:11 -0700 (PDT)
+Date:   Mon, 22 Jul 2019 17:48:10 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     mchehab@kernel.org, robh+dt@kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        c.barrett@framos.com, a.brela@framos.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH 1/3] dt-bindings: media: i2c: Add IMX290 CMOS sensor
+ binding
+Message-ID: <20190722234810.GA22419@bogus>
+References: <20190703190230.12392-1-manivannan.sadhasivam@linaro.org>
+ <20190703190230.12392-2-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-References: <20190719170343.GA13680@linux.intel.com> <19EF7AC8-609A-4E86-B45E-98DFE965DAAB@amacapital.net>
- <201907221012.41504DCD@keescook> <alpine.DEB.2.21.1907222027090.1659@nanos.tec.linutronix.de>
- <201907221135.2C2D262D8@keescook> <CALCETrVnV8o_jqRDZua1V0s_fMYweP2J2GbwWA-cLxqb_PShog@mail.gmail.com>
- <201907221620.F31B9A082@keescook>
-In-Reply-To: <201907221620.F31B9A082@keescook>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 22 Jul 2019 16:47:36 -0700
-X-Gmail-Original-Message-ID: <CALCETrWqu-S3rrg8kf6aqqkXg9Z+TFQHbUgpZEiUU+m8KRARqg@mail.gmail.com>
-Message-ID: <CALCETrWqu-S3rrg8kf6aqqkXg9Z+TFQHbUgpZEiUU+m8KRARqg@mail.gmail.com>
-Subject: Re: [5.2 REGRESSION] Generic vDSO breaks seccomp-enabled userspace on i386
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190703190230.12392-2-manivannan.sadhasivam@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 4:28 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Mon, Jul 22, 2019 at 12:17:16PM -0700, Andy Lutomirski wrote:
-> > On Mon, Jul 22, 2019 at 11:39 AM Kees Cook <keescook@chromium.org> wrote:
-> > >
-> > > On Mon, Jul 22, 2019 at 08:31:32PM +0200, Thomas Gleixner wrote:
-> > > > On Mon, 22 Jul 2019, Kees Cook wrote:
-> > > > > Just so I'm understanding: the vDSO change introduced code to make an
-> > > > > actual syscall on i386, which for most seccomp filters would be rejected?
-> > > >
-> > > > No. The old x86 specific VDSO implementation had a fallback syscall as
-> > > > well, i.e. clock_gettime(). On 32bit clock_gettime() uses the y2038
-> > > > endangered timespec.
-> > > >
-> > > > So when the VDSO was made generic we changed the internal data structures
-> > > > to be 2038 safe right away. As a consequence the fallback syscall is not
-> > > > clock_gettime(), it's clock_gettime64(). which seems to surprise seccomp.
-> > >
-> > > Okay, it's didn't add a syscall, it just changed it. Results are the
-> > > same: conservative filters suddenly start breaking due to the different
-> > > call. (And now I see why Andy's alias suggestion would help...)
-> > >
-> > > I'm not sure which direction to do with this. It seems like an alias
-> > > list is a large hammer for this case, and a "seccomp-bypass when calling
-> > > from vDSO" solution seems too fragile?
-> > >
-> >
-> > I don't like the seccomp bypass at all.  If someone uses seccomp to
-> > disallow all clock_gettime() variants, there shouldn't be a back door
-> > to learn the time.
-> >
-> > Here's the restart_syscall() logic that makes me want aliases: we have
-> > different syscall numbers for restart_syscall() on 32-bit and 64-bit.
-> > The logic to decide which one to use is dubious at best.  I'd like to
-> > introduce a restart_syscall2() that is identical to restart_syscall()
-> > except that it has the same number on both variants.
->
-> I've built a straw-man for this idea... but I have to say I don't
-> like it. This can lead to really unexpected behaviors if someone
-> were to have differing filters for the two syscalls. For example,
-> let's say someone was doing a paranoid audit of 2038-unsafe clock usage
-> and marked clock_gettime() with RET_KILL and marked clock_gettime64()
-> with RET_LOG. This aliasing would make clock_gettime64() trigger with
-> RET_KILL...
+On Thu,  4 Jul 2019 00:32:28 +0530, Manivannan Sadhasivam wrote:
+> Add devicetree binding for IMX290 CMOS image sensor.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  .../devicetree/bindings/media/i2c/imx290.txt  | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/imx290.txt
+> 
 
-This particular issue is solvable:
-
-> +       /* Handle syscall aliases when result is not SECCOMP_RET_ALLOW. */
-> +       if (unlikely(action != SECCOMP_RET_ALLOW)) {
-> +               int alias;
-> +
-> +               alias = seccomp_syscall_alias(sd->arch, sd->nr);
-> +               if (unlikely(alias != -1)) {
-> +                       /* Use sd_local for an aliased syscall. */
-> +                       if (sd != &sd_local) {
-> +                               sd_local = *sd;
-> +                               sd = &sd_local;
-> +                       }
-> +                       sd_local.nr = alias;
-> +
-> +                       /* Run again, with the alias, accepting the results. */
-> +                       filter_ret = seccomp_run_filters(sd, &match);
-> +                       data = filter_ret & SECCOMP_RET_DATA;
-> +                       action = filter_ret & SECCOMP_RET_ACTION_FULL;
-
-How about:
-
-new_data = ...;
-new_action = ...;
-if (new_action == SECCOMP_RET_ALLOW) {
-  data = new_data;
-  action = new_action;
-}
-
-It might also be nice to allow a filter to say "hey, I want to set
-this result and I do *not* want compatibility aliases applied", but
-I'm not quite sure how to express that.
-
-I don't love this whole concept, but I also don't have a better idea.
-
-
---Andy
+Reviewed-by: Rob Herring <robh@kernel.org>
