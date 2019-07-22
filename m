@@ -2,89 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0138D70797
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:40:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EFC0707AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:41:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729598AbfGVRjn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 13:39:43 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:33239 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729483AbfGVRji (ORCPT
+        id S1731846AbfGVRkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 13:40:55 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43184 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729259AbfGVRkw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 13:39:38 -0400
-Received: by mail-io1-f66.google.com with SMTP id z3so75838742iog.0;
-        Mon, 22 Jul 2019 10:39:37 -0700 (PDT)
+        Mon, 22 Jul 2019 13:40:52 -0400
+Received: by mail-pl1-f194.google.com with SMTP id 4so12505861pld.10
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 10:40:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GYfzslaWulTFr0xM3TKG5/yZQnVIHkJch0xVtez9k0w=;
+        b=df+2EoaAYbHuE4qZhyMXCJ2/XHW6oy3ksUiV7wnxQ+uTiRGCoE6EgC0RxbUzaksfBw
+         tNmx6nleN7Ts6xN7Q6rgK1qye5hmLp+tWni+mbXYj5CQAPkmj7QwstOaVlJd8miVKKC6
+         cVws66RR3SHBzqNrVU3D4Kc4ORYNtsj7mnzgnH/f9xFDhWmR//tWcPuJjezt9VJfUMrI
+         clsGcfozCH6hPB+GwSo4o7Wy6GM7j2GehRUxV6lEoWngxLuMQt3KgeaXSd9IT/1or6c9
+         yC+tpAmREowCZVsbTh8Eky2NOCWSd0jgynSVfZWEfRmdRqCp79lNhsit44PCE1zXFxYd
+         PHfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yuyB8pILujpflF/Q/M9APeaT5IXpHOGkbQKNsVipriU=;
-        b=YMnDDGpqtihngU2XWC4e9SLK1sLrK28a7LKJBSpEwCjcLouedXzcTGrHou65W6SfSV
-         rHMHML8qaNGPuIJ3wcIi3ZVgx7puk8T5kviG53nnYuqNcaTiXROyL2NYDe3F31XQcutI
-         peVgLKOXOhBoor2j+PgkQg5mqK5LmDOv6hKUAGT87MAWb/oGSpWrm6jL5x+cgo8WoL6d
-         evleacvElgPIEumo3tWSRJxbL30GBZqmVfa37En8q7cLC2UiFo0ocoS2KDgDP38A2/fG
-         wYXjR9RPSD6i8vyrJWy/yOIHU92Z7rn4mPSOswrCSZIjhOfiMHQj+8r4qB8gayCRwF+W
-         xtag==
-X-Gm-Message-State: APjAAAX/JE0yrEk0c+62p54U3IXsY3s4ZHyj9RWdMsGNo1uKLKsTbuYg
-        xL0qmQdE+byfGfXLKL8tPg==
-X-Google-Smtp-Source: APXvYqxNSkCw3W+oC2a+dAbLpos4fIcmpa8N1UVKkDaxst8+m0rwQM+coXmVvshQIkATlSLf6D7EeA==
-X-Received: by 2002:a02:b713:: with SMTP id g19mr74167358jam.77.1563817177425;
-        Mon, 22 Jul 2019 10:39:37 -0700 (PDT)
-Received: from localhost ([64.188.179.254])
-        by smtp.gmail.com with ESMTPSA id i3sm37295539ion.9.2019.07.22.10.39.36
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 10:39:36 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 11:39:36 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jitao Shi <jitao.shi@mediatek.com>
-Cc:     Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        linux-pwm@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jitao Shi <jitao.shi@mediatek.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Rahul Sharma <rahul.sharma@samsung.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vincent Palatin <vpalatin@chromium.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        Sascha Hauer <kernel@pengutronix.de>,
-        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
-        cawa.cheng@mediatek.com, bibby.hsieh@mediatek.com,
-        ck.hu@mediatek.com, stonea168@163.com,
-        Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: [v3 3/4] dt-bindings: display: panel: add auo kd101n80-45na
- panel bindings
-Message-ID: <20190722173936.GA26950@bogus>
-References: <20190626025400.109567-1-jitao.shi@mediatek.com>
- <20190626025400.109567-4-jitao.shi@mediatek.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GYfzslaWulTFr0xM3TKG5/yZQnVIHkJch0xVtez9k0w=;
+        b=OU0dk5NI3aa3CGy0Zv0ibWKn6mXakNXcaeT/2rtkIgZDy8WrRT/Iy6qWfTbZwgZMQG
+         e9aKmJrLWsOY5FUGTOQ+XobT2W1t+Oe5XS/IPYyJRxYdWiugtaHbKp5SCz5Fc78y+rS/
+         rQP4BLHX3R0Ijl0r9WSM+V9DLh779NyYEA+jflfU744giO9uTcn/8iA3Jd7uV2Rk8SXS
+         sqkXqW0IKGaRs9ixHJeM/3zj/AixitUGAPVQizfuPwEpv5S4kmz4dxzZD+zn6tewcNoY
+         1CRTeog+3qTymKtvSi0O5jjUEb3/LMeDzMpE60Vq/KBlXV+kRV1xAKu/D4uLWVO+tgmh
+         s0GQ==
+X-Gm-Message-State: APjAAAUC4o1OdP+TvgvMvU3KHqJK7yo6YuTLwWmJELaHG0rtzHZ4O+dO
+        2xat0JbPnAqrceyXqZ6Dx0BFfPhQ1qiJhU7PIwfY8lgPrROrpQ==
+X-Google-Smtp-Source: APXvYqx4+xtrOszTxdbwMjjZxdFHkrqWHgPpK/6/Qd315mVt5H5fxqHOXY82vPusbgwgagNfayPARa52vgkOLZSaxA4=
+X-Received: by 2002:a17:902:9f93:: with SMTP id g19mr75631504plq.223.1563817251308;
+ Mon, 22 Jul 2019 10:40:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190626025400.109567-4-jitao.shi@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <201907192038.AEF9B52@keescook>
+In-Reply-To: <201907192038.AEF9B52@keescook>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 22 Jul 2019 10:40:40 -0700
+Message-ID: <CAKwvOdkkqhwHz_yLN5VjAdENj3qtwdJ080QKpQ9vr--F1xQPhA@mail.gmail.com>
+Subject: Re: [PATCH] libata: zpodd: Fix small read overflow in zpodd_get_mech_type()
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Tejun Heo <tj@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        tobin@kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Jun 2019 10:53:59 +0800, Jitao Shi wrote:
-> Add documentation for auo kd101n80-45na panel.
-> 
-> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-> ---
->  .../display/panel/auo,kd101n80-45na.txt       | 34 +++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/auo,kd101n80-45na.txt
-> 
+On Fri, Jul 19, 2019 at 8:41 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> Much like commit 18c9a99bce2a ("libata: zpodd: small read overflow in
+> eject_tray()"), this fixes a cdb[] buffer length, this time in
+> zpodd_get_mech_type():
+>
+> We read from the cdb[] buffer in ata_exec_internal_sg(). It has to be
+> ATAPI_CDB_LEN (16) bytes long, but this buffer is only 12 bytes.
+>
+> The KASAN report was:
+>
+> BUG: KASAN: global-out-of-bounds in ata_exec_internal_sg+0x50f/0xc70
+> Read of size 16 at addr ffffffff91f41f80 by task scsi_eh_1/149
+> ...
+> The buggy address belongs to the variable:
+>  cdb.48319+0x0/0x40
+>
+> Reported-by: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+> Fixes: afe759511808c ("libata: identify and init ZPODD devices")
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Interesting, both initializer lists are less than ATAPI_CDB_LEN (16)
+elements, yet ata_exec_internal_sg() in drivers/ata/libata-core.c very
+clearly has a ATAPI_CDB_LEN byte memcpy on that element.  Probably
+both initializer lists should just lead off the trailing zero's or
+provide the entire 16 elements.  For now, thank you for the patch.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+
+> ---
+>  drivers/ata/libata-zpodd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/ata/libata-zpodd.c b/drivers/ata/libata-zpodd.c
+> index 173e6f2dd9af..eefda51f97d3 100644
+> --- a/drivers/ata/libata-zpodd.c
+> +++ b/drivers/ata/libata-zpodd.c
+> @@ -56,7 +56,7 @@ static enum odd_mech_type zpodd_get_mech_type(struct ata_device *dev)
+>         unsigned int ret;
+>         struct rm_feature_desc *desc;
+>         struct ata_taskfile tf;
+> -       static const char cdb[] = {  GPCMD_GET_CONFIGURATION,
+> +       static const char cdb[ATAPI_CDB_LEN] = {  GPCMD_GET_CONFIGURATION,
+>                         2,      /* only 1 feature descriptor requested */
+>                         0, 3,   /* 3, removable medium feature */
+>                         0, 0, 0,/* reserved */
+> --
+> 2.17.1
+>
+>
+> --
+> Kees Cook
+
+
+
+-- 
+Thanks,
+~Nick Desaulniers
