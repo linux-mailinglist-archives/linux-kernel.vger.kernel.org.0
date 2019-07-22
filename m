@@ -2,99 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89E936FFD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:36:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC82B6FFBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:34:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730484AbfGVMgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 08:36:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36012 "EHLO mail.kernel.org"
+        id S1729488AbfGVMel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 08:34:41 -0400
+Received: from foss.arm.com ([217.140.110.172]:36810 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730462AbfGVMgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 08:36:09 -0400
-Received: from localhost.localdomain (unknown [223.226.98.106])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF6D9218EA;
-        Mon, 22 Jul 2019 12:36:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563798968;
-        bh=1PLvDY/QA297kMSesie+GVrZ3hCS68jBy8NwFMw4DJg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OZiFduZ7bHBj8TlLdO9xK3v0ZWsKGWhjFIICaizGZxTuwNVEdtXHDTgiHux3vhDFo
-         roSj9ChIL3txUsLd7d7EjStfjOxz6h2yYPZiuPKJGRgnanwJ+JpdMy/Ch+EjRRbZb2
-         c0M8aowUprVYGOhbL0NO5ZI2I1XIUn4EDi7oSiLw=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Andy Gross <agross@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1728369AbfGVMel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 08:34:41 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A33AF344;
+        Mon, 22 Jul 2019 05:34:40 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BBAAC3F71A;
+        Mon, 22 Jul 2019 05:34:39 -0700 (PDT)
+Date:   Mon, 22 Jul 2019 13:34:37 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] arm64: dts: qcom: sdm845-cheza: remove macro from unit name
-Date:   Mon, 22 Jul 2019 18:04:22 +0530
-Message-Id: <20190722123422.4571-6-vkoul@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190722123422.4571-1-vkoul@kernel.org>
-References: <20190722123422.4571-1-vkoul@kernel.org>
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [for-next][PATCH 12/16] kprobes: Initialize kprobes at
+ postcore_initcall
+Message-ID: <20190722123437.GE60625@arrakis.emea.arm.com>
+References: <20190526191828.466305460@goodmis.org>
+ <20190526191848.266163206@goodmis.org>
+ <20190702165008.GC34718@lakrids.cambridge.arm.com>
+ <20190703100205.0b58f3bf@gandalf.local.home>
+ <20190709213049.f84b4df6562250ac6ef0b51d@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190709213049.f84b4df6562250ac6ef0b51d@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unit name is supposed to be a number, using a macro with hex value is
-not recommended, so add the value in unit name.
+On Tue, Jul 09, 2019 at 09:30:49PM +0900, Masami Hiramatsu wrote:
+> On Wed, 3 Jul 2019 10:02:05 -0400 Steven Rostedt <rostedt@goodmis.org>
+> wrote:
+> > On Tue, 2 Jul 2019 17:50:09 +0100 Mark Rutland
+> > <mark.rutland@arm.com> wrote:
+> > > On Sun, May 26, 2019 at 03:18:40PM -0400, Steven Rostedt wrote:
+> > > > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > > > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > > > ---
+> > > >  kernel/kprobes.c | 3 +--
+> > > >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> > > > index b1ea30a5540e..54aaaad00a47 100644
+> > > > --- a/kernel/kprobes.c
+> > > > +++ b/kernel/kprobes.c
+> > > > @@ -2289,6 +2289,7 @@ static int __init init_kprobes(void)
+> > > >  		init_test_probes();
+> > > >  	return err;
+> > > >  }
+> > > > +postcore_initcall(init_kprobes);  
+[...]
+> > > On arm64 kprobes depends on the BRK handler we register in
+> > > debug_traps_init(), which is an arch_initcall.
+> > > 
+> > > As of this change, init_krprobes() calls init_test_probes() before
+> > > that's registered, so we end up hitting a BRK before we can handle it.
+[...]
+> > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> > index 5471efbeb937..0ca6f53c8505 100644
+> > --- a/kernel/kprobes.c
+> > +++ b/kernel/kprobes.c
+> > @@ -2235,6 +2235,8 @@ static struct notifier_block kprobe_module_nb = {
+> >  extern unsigned long __start_kprobe_blacklist[];
+> >  extern unsigned long __stop_kprobe_blacklist[];
+> >  
+> > +static bool run_kprobe_tests __initdata;
+> > +
+> >  static int __init init_kprobes(void)
+> >  {
+> >  	int i, err = 0;
+> > @@ -2286,11 +2288,18 @@ static int __init init_kprobes(void)
+> >  	kprobes_initialized = (err == 0);
+> >  
+> >  	if (!err)
+> > -		init_test_probes();
+> > +		run_kprobe_tests = true;
+> >  	return err;
+> >  }
+> >  subsys_initcall(init_kprobes);
+> 
+> Just out of curious, if arm64's handler code initialized in arch_initcall,
+> why this subsys_initcall() function causes a problem?
 
-arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi:966.16-969.4: Warning (unit_address_format): /soc@0/spmi@c440000/pmic@0/adc@3100/adc-chan@0x4d: unit name should not have leading "0x"
-arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi:971.16-974.4: Warning (unit_address_format): /soc@0/spmi@c440000/pmic@0/adc@3100/adc-chan@0x4e: unit name should not have leading "0x"
-arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi:976.16-979.4: Warning (unit_address_format): /soc@0/spmi@c440000/pmic@0/adc@3100/adc-chan@0x4f: unit name should not have leading "0x"
-arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi:981.16-984.4: Warning (unit_address_format): /soc@0/spmi@c440000/pmic@0/adc@3100/adc-chan@0x50: unit name should not have leading "0x"
-arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi:986.16-989.4: Warning (unit_address_format): /soc@0/spmi@c440000/pmic@0/adc@3100/adc-chan@0x51: unit name should not have leading "0x"
+It doesn't but patch 12/16 in this series changes it to
+postcore_initcall().
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
-index 1ebbd568dfd7..9b27b8346ba1 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
-@@ -963,27 +963,27 @@ ap_ts_i2c: &i2c14 {
- };
- 
- &pm8998_adc {
--	adc-chan@ADC5_AMUX_THM1_100K_PU {
-+	adc-chan@4d {
- 		reg = <ADC5_AMUX_THM1_100K_PU>;
- 		label = "sdm_temp";
- 	};
- 
--	adc-chan@ADC5_AMUX_THM2_100K_PU {
-+	adc-chan@4e {
- 		reg = <ADC5_AMUX_THM2_100K_PU>;
- 		label = "quiet_temp";
- 	};
- 
--	adc-chan@ADC5_AMUX_THM3_100K_PU {
-+	adc-chan@4f {
- 		reg = <ADC5_AMUX_THM3_100K_PU>;
- 		label = "lte_temp_1";
- 	};
- 
--	adc-chan@ADC5_AMUX_THM4_100K_PU {
-+	adc-chan@50 {
- 		reg = <ADC5_AMUX_THM4_100K_PU>;
- 		label = "lte_temp_2";
- 	};
- 
--	adc-chan@ADC5_AMUX_THM5_100K_PU {
-+	adc-chan@51 {
- 		reg = <ADC5_AMUX_THM5_100K_PU>;
- 		label = "charger_temp";
- 	};
 -- 
-2.20.1
-
+Catalin
