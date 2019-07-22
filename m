@@ -2,84 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E36566FC6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 11:43:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C3836FC5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 11:41:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728727AbfGVJnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 05:43:42 -0400
-Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:35528 "EHLO
-        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728021AbfGVJnl (ORCPT
+        id S1729066AbfGVJlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 05:41:40 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:36121 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728311AbfGVJlk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 05:43:41 -0400
-X-Greylist: delayed 449 seconds by postgrey-1.27 at vger.kernel.org; Mon, 22 Jul 2019 05:43:40 EDT
-Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
-        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 8EF252E1251;
-        Mon, 22 Jul 2019 12:36:09 +0300 (MSK)
-Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [2a02:6b8:0:1a2d::30])
-        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id piK2rewsgT-a8Nmo53U;
-        Mon, 22 Jul 2019 12:36:09 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1563788169; bh=DL5UzA+B5XRB4qh0F2iWC5P1iVbcg0/rElIhEVtbXfg=;
-        h=Message-ID:Date:To:From:Subject:Cc;
-        b=C4FclbtDQ5b7smwavzXfTwnAGBDtyvoKz3qJxF/M76PisgHI1mGKIvG4cGohU069H
-         I+8pkq99Gy18EG8atUE+4MtHJf7ZK+4vWOcIFCuhSSGHIaGhFtECkYzI0ajGXe82Ox
-         ixtwBZaI7SGYRKn+koCY2zzBmM5SBCVGXhL8BdLI=
-Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:38b3:1cdf:ad1a:1fe1])
-        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id tCVKM0ss34-a8I48tMX;
-        Mon, 22 Jul 2019 12:36:08 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-Subject: [PATCH 1/2] mm/filemap: don't initiate writeback if mapping has no
- dirty pages
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Mon, 22 Jul 2019 05:41:40 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hpUp0-0003F7-7p; Mon, 22 Jul 2019 11:41:30 +0200
+Date:   Mon, 22 Jul 2019 11:41:29 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Pingfan Liu <kernelfans@gmail.com>
+cc:     x86@kernel.org, "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Kosina <jkosina@suse.cz>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
         linux-kernel@vger.kernel.org
-Cc:     Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Date:   Mon, 22 Jul 2019 12:36:08 +0300
-Message-ID: <156378816804.1087.8607636317907921438.stgit@buzz>
-User-Agent: StGit/0.17.1-dirty
+Subject: Re: [PATCH] smp: force all cpu to boot once under maxcpus option
+In-Reply-To: <1562747823-16972-1-git-send-email-kernelfans@gmail.com>
+Message-ID: <alpine.DEB.2.21.1907221137090.1782@nanos.tec.linutronix.de>
+References: <1562747823-16972-1-git-send-email-kernelfans@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Functions like filemap_write_and_wait_range() should do nothing if inode
-has no dirty pages or pages currently under writeback. But they anyway
-construct struct writeback_control and this does some atomic operations
-if CONFIG_CGROUP_WRITEBACK=y - on fast path it locks inode->i_lock and
-updates state of writeback ownership, on slow path might be more work.
-Current this path is safely avoided only when inode mapping has no pages.
+On Wed, 10 Jul 2019, Pingfan Liu wrote:
+>  
+> +static inline bool maxcpus_allowed(unsigned int cpu)
+> +{
+> +	/* maxcpus only takes effect during system bootup */
+> +	if (smp_boot_done)
+> +		return true;
+> +	if (num_online_cpus() < setup_max_cpus)
+> +		return true;
+> +	/*
+> +	 * maxcpus should allow cpu to set CR4.MCE asap, otherwise the set may
+> +	 * be deferred indefinitely.
+> +	 */
+> +	if (!per_cpu(cpuhp_state, cpu).booted_once)
+> +		return true;
 
-For example generic_file_read_iter() calls filemap_write_and_wait_range()
-at each O_DIRECT read - pretty hot path.
+As this is a x86 only issue, you cannot inflict this magic on every
+architecture.
 
-This patch skips starting new writeback if mapping has no dirty tags set.
-If writeback is already in progress filemap_write_and_wait_range() will
-wait for it.
+Aside of that this does not solve the problem at all because smp_init()
+still does:
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
----
- mm/filemap.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+        for_each_present_cpu(cpu) {
+                if (num_online_cpus() >= setup_max_cpus)
+                        break;
+                if (!cpu_online(cpu))
+                        cpu_up(cpu);
+        }
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d0cf700bf201..d9572593e5c7 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -408,7 +408,8 @@ int __filemap_fdatawrite_range(struct address_space *mapping, loff_t start,
- 		.range_end = end,
- 	};
- 
--	if (!mapping_cap_writeback_dirty(mapping))
-+	if (!mapping_cap_writeback_dirty(mapping) ||
-+	    !mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
- 		return 0;
- 
- 	wbc_attach_fdatawrite_inode(&wbc, mapping->host);
+So the remaining CPUs are not onlined at all.
 
+Thanks,
+
+	tglx
