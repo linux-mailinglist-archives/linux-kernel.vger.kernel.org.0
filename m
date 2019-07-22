@@ -2,102 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC82B6FFBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:34:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 846FE6FFDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:38:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729488AbfGVMel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 08:34:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:36810 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728369AbfGVMel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 08:34:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A33AF344;
-        Mon, 22 Jul 2019 05:34:40 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BBAAC3F71A;
-        Mon, 22 Jul 2019 05:34:39 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 13:34:37 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [for-next][PATCH 12/16] kprobes: Initialize kprobes at
- postcore_initcall
-Message-ID: <20190722123437.GE60625@arrakis.emea.arm.com>
-References: <20190526191828.466305460@goodmis.org>
- <20190526191848.266163206@goodmis.org>
- <20190702165008.GC34718@lakrids.cambridge.arm.com>
- <20190703100205.0b58f3bf@gandalf.local.home>
- <20190709213049.f84b4df6562250ac6ef0b51d@kernel.org>
+        id S1729290AbfGVMiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 08:38:11 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:35885 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727547AbfGVMiI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 08:38:08 -0400
+Received: by mail-io1-f71.google.com with SMTP id k21so43367318ioj.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 05:38:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=XN7mQ/LbwS2GODYkDwnmvqmvNwPxxRZ0Psf5NFa9KBE=;
+        b=sOxxWil9UJvKNuZPRp4J27mfcd8r/fjMjAb2IDolWORaUbbbRJazcvaMNjhCqddygP
+         hEFXyrXyjzd81LuQVsJx4wgJ4KBGa7xTlGdWTZ8StxXkk49Ph6QiDnegiOjpFFeYJ4I8
+         nrPaNt2qU0Nll2p0o/hFl/TIfrrqInNFry212sw6V0RYXQinTXc1ZXKMqAJh/Nx2Jhr2
+         /JYk0NJ4muX/CG+bX+MJuZfSU76bhneqlkJVaGnje8s5GRgmWEzwdBt9+5lb5VF4UFkB
+         fdVlogj7TMaCc4Cwixqq2e1RunzBeFTbWaip0TWYaPTmDdt0QOKe+CXtBWmbMRoEX+8H
+         5agg==
+X-Gm-Message-State: APjAAAVqgUbpYxaHnY1SwhlXNsmQcO5K/dZbanU4EX+Wx3+Jodu8kwCY
+        UCt6Uv2+b4se6orK2QRhzfP/XTGTJOLZwhSs0YQPjr6YJfNm
+X-Google-Smtp-Source: APXvYqzLgm7H+0s4vjrNik4iYDGcdItZNbvxNBMTEFEnQ3ka+wAyuLJOjfoii/Kln7+76lgFX66PYizRZuXfL4C3T/GD3RYvn5c2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190709213049.f84b4df6562250ac6ef0b51d@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a5d:9749:: with SMTP id c9mr67412596ioo.258.1563799086829;
+ Mon, 22 Jul 2019 05:38:06 -0700 (PDT)
+Date:   Mon, 22 Jul 2019 05:38:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000121ea5058e445936@google.com>
+Subject: WARNING in shark_write_val/usb_submit_urb
+From:   syzbot <syzbot+1cb937c125adb93fad2d@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 09:30:49PM +0900, Masami Hiramatsu wrote:
-> On Wed, 3 Jul 2019 10:02:05 -0400 Steven Rostedt <rostedt@goodmis.org>
-> wrote:
-> > On Tue, 2 Jul 2019 17:50:09 +0100 Mark Rutland
-> > <mark.rutland@arm.com> wrote:
-> > > On Sun, May 26, 2019 at 03:18:40PM -0400, Steven Rostedt wrote:
-> > > > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > > > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > > > ---
-> > > >  kernel/kprobes.c | 3 +--
-> > > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> > > > index b1ea30a5540e..54aaaad00a47 100644
-> > > > --- a/kernel/kprobes.c
-> > > > +++ b/kernel/kprobes.c
-> > > > @@ -2289,6 +2289,7 @@ static int __init init_kprobes(void)
-> > > >  		init_test_probes();
-> > > >  	return err;
-> > > >  }
-> > > > +postcore_initcall(init_kprobes);  
-[...]
-> > > On arm64 kprobes depends on the BRK handler we register in
-> > > debug_traps_init(), which is an arch_initcall.
-> > > 
-> > > As of this change, init_krprobes() calls init_test_probes() before
-> > > that's registered, so we end up hitting a BRK before we can handle it.
-[...]
-> > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> > index 5471efbeb937..0ca6f53c8505 100644
-> > --- a/kernel/kprobes.c
-> > +++ b/kernel/kprobes.c
-> > @@ -2235,6 +2235,8 @@ static struct notifier_block kprobe_module_nb = {
-> >  extern unsigned long __start_kprobe_blacklist[];
-> >  extern unsigned long __stop_kprobe_blacklist[];
-> >  
-> > +static bool run_kprobe_tests __initdata;
-> > +
-> >  static int __init init_kprobes(void)
-> >  {
-> >  	int i, err = 0;
-> > @@ -2286,11 +2288,18 @@ static int __init init_kprobes(void)
-> >  	kprobes_initialized = (err == 0);
-> >  
-> >  	if (!err)
-> > -		init_test_probes();
-> > +		run_kprobe_tests = true;
-> >  	return err;
-> >  }
-> >  subsys_initcall(init_kprobes);
-> 
-> Just out of curious, if arm64's handler code initialized in arch_initcall,
-> why this subsys_initcall() function causes a problem?
+Hello,
 
-It doesn't but patch 12/16 in this series changes it to
-postcore_initcall().
+syzbot found the following crash on:
 
--- 
-Catalin
+HEAD commit:    6a3599ce usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=138da9d0600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=700ca426ab83faae
+dashboard link: https://syzkaller.appspot.com/bug?extid=1cb937c125adb93fad2d
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=159ab958600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177bd6afa00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+1cb937c125adb93fad2d@syzkaller.appspotmail.com
+
+usb 1-1: string descriptor 0 read error: -22
+usb 1-1: New USB device found, idVendor=077d, idProduct=627a, bcdDevice=  
+0.01
+usb 1-1: New USB device strings: Mfr=1, Product=64, SerialNumber=255
+------------[ cut here ]------------
+usb 1-1: BOGUS urb xfer, pipe 1 != type 3
+WARNING: CPU: 1 PID: 21 at drivers/usb/core/urb.c:477  
+usb_submit_urb+0x1188/0x13b0 /drivers/usb/core/urb.c:477
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 21 Comm: kworker/1:1 Not tainted 5.2.0-rc6+ #15
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+  __dump_stack /lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e /lib/dump_stack.c:113
+  panic+0x292/0x6c9 /kernel/panic.c:219
+  __warn.cold+0x20/0x4b /kernel/panic.c:576
+  report_bug+0x262/0x2a0 /lib/bug.c:186
+  fixup_bug /arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug /arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x12b/0x1e0 /arch/x86/kernel/traps.c:272
+  do_invalid_op+0x32/0x40 /arch/x86/kernel/traps.c:291
+  invalid_op+0x14/0x20 /arch/x86/entry/entry_64.S:986
+RIP: 0010:usb_submit_urb+0x1188/0x13b0 /drivers/usb/core/urb.c:477
+Code: 4d 85 ed 74 2c e8 f8 d3 f4 fd 4c 89 f7 e8 a0 51 1c ff 41 89 d8 44 89  
+e1 4c 89 ea 48 89 c6 48 c7 c7 00 0e f7 85 e8 83 98 ca fd <0f> 0b e9 20 f4  
+ff ff e8 cc d3 f4 fd 4c 89 f2 48 b8 00 00 00 00 00
+RSP: 0018:ffff8881d9efefe0 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8127ef3d RDI: ffffed103b3dfdee
+RBP: ffff8881d41e5e60 R08: ffff8881d9e36000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
+R13: ffff8881cff4cbd0 R14: ffff8881d7b33c20 R15: ffff8881d41c9b00
+  usb_start_wait_urb+0x108/0x2b0 /drivers/usb/core/message.c:57
+  usb_bulk_msg+0x228/0x550 /drivers/usb/core/message.c:253
+  shark_write_val+0x20b/0x310 /drivers/media/radio/radio-shark.c:94
+  snd_tea575x_write+0x78/0x330 /drivers/media/radio/tea575x.c:88
+  snd_tea575x_hw_init+0x8d/0x170 /drivers/media/radio/tea575x.c:506
+  snd_tea575x_init+0x1f/0x6b8 /drivers/media/radio/tea575x.c:521
+  usb_shark_probe+0x5e1/0x770 /drivers/media/radio/radio-shark.c:353
+  usb_probe_interface+0x305/0x7a0 /drivers/usb/core/driver.c:361
+  really_probe+0x281/0x660 /drivers/base/dd.c:509
+  driver_probe_device+0x104/0x210 /drivers/base/dd.c:670
+  __device_attach_driver+0x1c2/0x220 /drivers/base/dd.c:777
+  bus_for_each_drv+0x15c/0x1e0 /drivers/base/bus.c:454
+  __device_attach+0x217/0x360 /drivers/base/dd.c:843
+  bus_probe_device+0x1e4/0x290 /drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 /drivers/base/core.c:2111
+  usb_set_configuration+0xdf6/0x1670 /drivers/usb/core/message.c:2023
+  generic_probe+0x9d/0xd5 /drivers/usb/core/generic.c:210
+  usb_probe_device+0x99/0x100 /drivers/usb/core/driver.c:266
+  really_probe+0x281/0x660 /drivers/base/dd.c:509
+  driver_probe_device+0x104/0x210 /drivers/base/dd.c:670
+  __device_attach_driver+0x1c2/0x220 /drivers/base/dd.c:777
+  bus_for_each_drv+0x15c/0x1e0 /drivers/base/bus.c:454
+  __device_attach+0x217/0x360 /drivers/base/dd.c:843
+  bus_probe_device+0x1e4/0x290 /drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 /drivers/base/core.c:2111
+  usb_new_device.cold+0x6a4/0xe61 /drivers/usb/core/hub.c:2536
+  hub_port_connect /drivers/usb/core/hub.c:5098 [inline]
+  hub_port_connect_change /drivers/usb/core/hub.c:5213 [inline]
+  port_event /drivers/usb/core/hub.c:5359 [inline]
+  hub_event+0x1abd/0x3550 /drivers/usb/core/hub.c:5441
+  process_one_work+0x905/0x1570 /kernel/workqueue.c:2269
+  worker_thread+0x96/0xe20 /kernel/workqueue.c:2415
+  kthread+0x30b/0x410 /kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 /arch/x86/entry/entry_64.S:352
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
