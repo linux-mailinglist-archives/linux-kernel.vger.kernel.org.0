@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FC8770186
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:45:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D53E70188
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:45:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730713AbfGVNop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 09:44:45 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52751 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730674AbfGVNoo (ORCPT
+        id S1730728AbfGVNor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 09:44:47 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40672 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730691AbfGVNoq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 09:44:44 -0400
-Received: by mail-wm1-f67.google.com with SMTP id s3so35241995wms.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 06:44:42 -0700 (PDT)
+        Mon, 22 Jul 2019 09:44:46 -0400
+Received: by mail-wm1-f65.google.com with SMTP id v19so35418103wmj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 06:44:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=xwe8A6dusI8g3EU+MAhcchYTHGl9r3ZdFpQ26N/cCWM=;
-        b=x1y+r829Kmv8VT1o1u/ml65RFsTDcW6H6q+k8jsc1IUXKtlf4+M9LoIwaGxdwsfBVW
-         Maly7KAB6TUaNZNDKKWV+kRUXaWjeWkZboVfA7iRMdtBWECjwEKT712uBvKcbEvioykk
-         v4WelV8e3g8+3hPq0saqdrlgmL9usULnfe3K3kxi8tCuqfp4eGGDq399czY+1ZOngK6u
-         rrNGU9nUoH/7JXXEgcFVvbBFYZawUqs1hRmS48zFpX7BvADm64dbGx6C6ppPaDNHGl4S
-         wwGAX0GfIFRa037mnj6e0VNOg4oaqSr8E0sHYjAvnwB0uMmdm4LcUZEIosdh/rMF38lP
-         qE1Q==
+        bh=cl5zg39Cl4/S2kfGv0jRvRdfNEoBv9uo7wZVLIOvXqk=;
+        b=y+M/5CbcGEIcdNqV/egICb8FrMGtXtBlVWgihxudOjk7jXnywoD0EJ7gf1ju1xOY5z
+         BZ/InXQHyjacAMLVMndKUElyjiV/6aC5yi5/fAMI2Ol1F9LCRflw6BCKS5NiyKOXbQhW
+         qPdSpM8wzu6+VaUwrYZD/0FLn9SkrGgAJRvXQ+I4Fr94EOGmKZn2xWqF5UiMHuouyDGk
+         P2/CV86gu8IkCxYLgkutWOZuAwWlHvwIgF1UcIhVvLQD4FySvHqClk7D4IMQohdyK9Hk
+         5sSuBJ7k8eplpR26QtX+rE+c3SugRg55Ru+rAvcY7e06KJ7mTpLn4Z+gWgw67ELmM52D
+         2j1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=xwe8A6dusI8g3EU+MAhcchYTHGl9r3ZdFpQ26N/cCWM=;
-        b=ASHPgNds+2HTgruVrerX7W96Cko9CD1KASNmS39MnGBsCM0UUs6pNacvyrUMEG9PVb
-         9/xwgs1YUuQkuazUw1Nsm6qsYg5LR13WRUaFbDoJ7Z8zH1OJmvo/5Gpoo5egQ6CSoqij
-         uY4mu6cyJy4fkuXf7QRIjL7HpldjaI+tBHeE3CKCEo4YrDct6bEKnUr8z3Jqu8fG0MlR
-         2k0KSkFV4XS0TSFtdQc64SPpu9v/MBffglshVuYhr53DI9Hodzbj0paJiH+rRmCSGZ8H
-         Lv76XiFBQBA+RfuavmEMfSo2rVSkIo9WkllDsjWSjMgimMHEF8+cN2cpCTqy3YelJicX
-         kwPA==
-X-Gm-Message-State: APjAAAXNLxHWgFoj6ilTNYuj5LrUreK3KQQrm9CvcOYbknChVraVoV1w
-        qEUMkFL5Xvsy8gOgtd1ntZw=
-X-Google-Smtp-Source: APXvYqzo/YYqTVi5D8NUKu0A6bOHmsiYuaGRepo2J0qmuAZjjv4mu5dWS7KsdCNQdsEJsW5c/D2z1Q==
-X-Received: by 2002:a1c:b604:: with SMTP id g4mr65270937wmf.111.1563803082072;
-        Mon, 22 Jul 2019 06:44:42 -0700 (PDT)
+        bh=cl5zg39Cl4/S2kfGv0jRvRdfNEoBv9uo7wZVLIOvXqk=;
+        b=KXX+jmSQtCLLv4AwlHh8mHvgzooAMZk282NCaAhtAM1aCVU85dbIAoT8cNwycvln49
+         sOUtiARMJ+0AmsCAlDgWFTQBiz6tRByFFXW6a/0rmwTwMZbRE5Cz+XAN0u6f2Me+vqhw
+         w6Ch3xDwmBs2HTKQZZf5CX7ea44U0pphjPDR00SU720mw6qmup9xCIl+eoYF8kUQ/r6F
+         v0PHah4Vyhzz8eXluaFUw6crpcsZJxPMQEZVGOQt0uFI+1ws4srmU/k+y0k2219G6sr5
+         PPdBZIJWmlwqBljJq//UysAY6Vv92k+6dwWJPXs5TyHII9kJdN+ltoPjwS5QrtNxZfwj
+         dseA==
+X-Gm-Message-State: APjAAAXMU9Kim4eqnZJ0ELKjH+syssNs/gWkJN0oChgsblZbgwY4u5nV
+        FtqZrafj8wbRir1AXiYEEBs=
+X-Google-Smtp-Source: APXvYqzuRR4VH4AgMsKrgc/zg95SeYIfM1iEAfQMM+gfLXFvSgu0o01EWinF+4CxRTgRk8PZ9l+AjQ==
+X-Received: by 2002:a7b:c212:: with SMTP id x18mr62608436wmi.77.1563803083203;
+        Mon, 22 Jul 2019 06:44:43 -0700 (PDT)
 Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id p6sm40652484wrq.97.2019.07.22.06.44.41
+        by smtp.gmail.com with ESMTPSA id p6sm40652484wrq.97.2019.07.22.06.44.42
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 06:44:41 -0700 (PDT)
+        Mon, 22 Jul 2019 06:44:42 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
@@ -53,9 +53,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-fbdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 3/9] ARM: davinci: da850-evm: model the backlight GPIO as an actual device
-Date:   Mon, 22 Jul 2019 15:44:17 +0200
-Message-Id: <20190722134423.26555-4-brgl@bgdev.pl>
+Subject: [PATCH v2 4/9] fbdev: da8xx: add support for a regulator
+Date:   Mon, 22 Jul 2019 15:44:18 +0200
+Message-Id: <20190722134423.26555-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190722134423.26555-1-brgl@bgdev.pl>
 References: <20190722134423.26555-1-brgl@bgdev.pl>
@@ -68,90 +68,150 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Instead of enabling the panel backlight in a callback defined in board
-file using deprecated legacy GPIO API calls, model the line as a GPIO
-backlight device.
+We want to remove the hacky platform data callback for power control.
+Add a regulator to the driver data and enable/disable it next to
+the current panel_power_ctrl() calls. We will use it in subsequent
+patch on da850-evm.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- arch/arm/mach-davinci/board-da850-evm.c | 40 +++++++++++++++++--------
- 1 file changed, 28 insertions(+), 12 deletions(-)
+ drivers/video/fbdev/da8xx-fb.c | 54 ++++++++++++++++++++++++++++++----
+ 1 file changed, 49 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
-index 0628e7d7dcf3..ac05d4838f1e 100644
---- a/arch/arm/mach-davinci/board-da850-evm.c
-+++ b/arch/arm/mach-davinci/board-da850-evm.c
-@@ -36,6 +36,7 @@
- #include <linux/platform_data/ti-aemif.h>
- #include <linux/platform_data/spi-davinci.h>
- #include <linux/platform_data/uio_pruss.h>
-+#include <linux/property.h>
- #include <linux/regulator/machine.h>
- #include <linux/regulator/tps6507x.h>
- #include <linux/regulator/fixed.h>
-@@ -804,34 +805,49 @@ static const short da850_evm_mmcsd0_pins[] __initconst = {
- 
- static void da850_panel_power_ctrl(int val)
+diff --git a/drivers/video/fbdev/da8xx-fb.c b/drivers/video/fbdev/da8xx-fb.c
+index b1cf248f3291..02dfe9e32eed 100644
+--- a/drivers/video/fbdev/da8xx-fb.c
++++ b/drivers/video/fbdev/da8xx-fb.c
+@@ -19,6 +19,7 @@
+ #include <linux/clk.h>
+ #include <linux/cpufreq.h>
+ #include <linux/console.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/spinlock.h>
+ #include <linux/slab.h>
+ #include <linux/delay.h>
+@@ -165,6 +166,7 @@ struct da8xx_fb_par {
+ #endif
+ 	unsigned int		lcdc_clk_rate;
+ 	void (*panel_power_ctrl)(int);
++	struct regulator	*lcd_supply;
+ 	u32 pseudo_palette[16];
+ 	struct fb_videomode	mode;
+ 	struct lcd_ctrl_config	cfg;
+@@ -1066,6 +1068,7 @@ static void lcd_da8xx_cpufreq_deregister(struct da8xx_fb_par *par)
+ static int fb_remove(struct platform_device *dev)
  {
--	/* lcd backlight */
--	gpio_set_value(DA850_LCD_BL_PIN, val);
--
- 	/* lcd power */
- 	gpio_set_value(DA850_LCD_PWR_PIN, val);
- }
+ 	struct fb_info *info = dev_get_drvdata(&dev->dev);
++	int ret;
  
-+static struct property_entry da850_lcd_backlight_props[] = {
-+	PROPERTY_ENTRY_BOOL("default-on"),
-+	{ }
-+};
+ 	if (info) {
+ 		struct da8xx_fb_par *par = info->par;
+@@ -1073,8 +1076,13 @@ static int fb_remove(struct platform_device *dev)
+ #ifdef CONFIG_CPU_FREQ
+ 		lcd_da8xx_cpufreq_deregister(par);
+ #endif
+-		if (par->panel_power_ctrl)
++		if (par->panel_power_ctrl) {
+ 			par->panel_power_ctrl(0);
++		} else if (par->lcd_supply) {
++			ret = regulator_disable(par->lcd_supply);
++			if (ret)
++				return ret;
++		}
+ 
+ 		lcd_disable_raster(DA8XX_FRAME_WAIT);
+ 		lcdc_write(0, LCD_RASTER_CTRL_REG);
+@@ -1179,15 +1187,25 @@ static int cfb_blank(int blank, struct fb_info *info)
+ 	case FB_BLANK_UNBLANK:
+ 		lcd_enable_raster();
+ 
+-		if (par->panel_power_ctrl)
++		if (par->panel_power_ctrl) {
+ 			par->panel_power_ctrl(1);
++		} else if (par->lcd_supply) {
++			ret = regulator_enable(par->lcd_supply);
++			if (ret)
++				return ret;
++		}
+ 		break;
+ 	case FB_BLANK_NORMAL:
+ 	case FB_BLANK_VSYNC_SUSPEND:
+ 	case FB_BLANK_HSYNC_SUSPEND:
+ 	case FB_BLANK_POWERDOWN:
+-		if (par->panel_power_ctrl)
++		if (par->panel_power_ctrl) {
+ 			par->panel_power_ctrl(0);
++		} else if (par->lcd_supply) {
++			ret = regulator_disable(par->lcd_supply);
++			if (ret)
++				return ret;
++		}
+ 
+ 		lcd_disable_raster(DA8XX_FRAME_WAIT);
+ 		break;
+@@ -1400,6 +1418,20 @@ static int fb_probe(struct platform_device *device)
+ 		par->panel_power_ctrl(1);
+ 	}
+ 
++	par->lcd_supply = devm_regulator_get_optional(&device->dev, "lcd");
++	if (IS_ERR(par->lcd_supply)) {
++		if (PTR_ERR(par->lcd_supply) == -EPROBE_DEFER) {
++			ret = -EPROBE_DEFER;
++			goto err_pm_runtime_disable;
++		}
 +
-+static struct gpiod_lookup_table da850_lcd_backlight_gpio_table = {
-+	.dev_id		= "gpio-backlight",
-+	.table = {
-+		GPIO_LOOKUP("davinci_gpio", DA850_LCD_BL_PIN, NULL, 0),
-+		{ }
-+	},
-+};
++		par->lcd_supply = NULL;
++	} else {
++		ret = regulator_enable(par->lcd_supply);
++		if (ret)
++			goto err_pm_runtime_disable;
++	}
 +
-+static const struct platform_device_info da850_lcd_backlight_info = {
-+	.name		= "gpio-backlight",
-+	.id		= PLATFORM_DEVID_NONE,
-+	.properties	= da850_lcd_backlight_props,
-+};
-+
- static int da850_lcd_hw_init(void)
+ 	fb_videomode_to_var(&da8xx_fb_var, lcdc_info);
+ 	par->cfg = *lcd_cfg;
+ 
+@@ -1603,10 +1635,16 @@ static int fb_suspend(struct device *dev)
  {
-+	struct platform_device *backlight;
- 	int status;
+ 	struct fb_info *info = dev_get_drvdata(dev);
+ 	struct da8xx_fb_par *par = info->par;
++	int ret;
  
--	status = gpio_request(DA850_LCD_BL_PIN, "lcd bl");
--	if (status < 0)
--		return status;
-+	gpiod_add_lookup_table(&da850_lcd_backlight_gpio_table);
-+	backlight = platform_device_register_full(&da850_lcd_backlight_info);
-+	if (IS_ERR(backlight))
-+		return PTR_ERR(backlight);
+ 	console_lock();
+-	if (par->panel_power_ctrl)
++	if (par->panel_power_ctrl) {
+ 		par->panel_power_ctrl(0);
++	} else if (par->lcd_supply) {
++		ret = regulator_disable(par->lcd_supply);
++		if (ret)
++			return ret;
++	}
  
- 	status = gpio_request(DA850_LCD_PWR_PIN, "lcd pwr");
--	if (status < 0) {
--		gpio_free(DA850_LCD_BL_PIN);
-+	if (status < 0)
- 		return status;
--	}
+ 	fb_set_suspend(info, 1);
+ 	lcd_disable_raster(DA8XX_FRAME_WAIT);
+@@ -1620,6 +1658,7 @@ static int fb_resume(struct device *dev)
+ {
+ 	struct fb_info *info = dev_get_drvdata(dev);
+ 	struct da8xx_fb_par *par = info->par;
++	int ret;
  
--	gpio_direction_output(DA850_LCD_BL_PIN, 0);
- 	gpio_direction_output(DA850_LCD_PWR_PIN, 0);
+ 	console_lock();
+ 	pm_runtime_get_sync(dev);
+@@ -1627,8 +1666,13 @@ static int fb_resume(struct device *dev)
+ 	if (par->blank == FB_BLANK_UNBLANK) {
+ 		lcd_enable_raster();
  
--	/* Switch off panel power and backlight */
-+	/* Switch off panel power */
- 	da850_panel_power_ctrl(0);
+-		if (par->panel_power_ctrl)
++		if (par->panel_power_ctrl) {
+ 			par->panel_power_ctrl(1);
++		} else if (par->lcd_supply) {
++			ret = regulator_enable(par->lcd_supply);
++			if (ret)
++				return ret;
++		}
+ 	}
  
--	/* Switch on panel power and backlight */
-+	/* Switch on panel power */
- 	da850_panel_power_ctrl(1);
- 
- 	return 0;
+ 	fb_set_suspend(info, 0);
 -- 
 2.21.0
 
