@@ -2,137 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2DCD70A68
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 22:12:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E97670A6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 22:13:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732511AbfGVUMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 16:12:55 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:38358 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbfGVUMz (ORCPT
+        id S1732532AbfGVUN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 16:13:28 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36949 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728133AbfGVUN0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 16:12:55 -0400
-Received: by mail-io1-f66.google.com with SMTP id j6so1669691ioa.5
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 13:12:54 -0700 (PDT)
+        Mon, 22 Jul 2019 16:13:26 -0400
+Received: by mail-io1-f67.google.com with SMTP id q22so76806639iog.4
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 13:13:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=5VssAIpTuFKmj2zUfyBOJyi8Rg6YT/l3GL1/5vXR4ZQ=;
-        b=dhcAjgoi9+qQzUWcowFh6AlTVc+cXX7gatGHZHks9JeKOOGWGHE25dYo58g5iTWmrD
-         3G/gh1KuafpOXHyPB3O9Kx6l0P+HUGpADF788Pho/ArJ54Y6THO8vkWWltGAd20KH+rG
-         +YCXOMQ1JrFmhW9LQuw9Gn91Qi5wwFKaVWueo=
+        bh=7l2Wn+FJ2BG0j9D1JF5TbgHPijVR0AsIZvIp2BLcK5g=;
+        b=Da2jcKUDozDPsXerQ0RRbZ0Kiy8fI8o4wDzBSauzAKL2ZDmDxnbuy57mb8AJZBI3Rj
+         UdTbSFpfOT8v/ncvU5jBApagtN/BgoEM5N8WV5Yh2POwDGHjoYOSysWJEbDGyKGyfKkb
+         BkpcRHyIo+/mU3nI8r658R5M3v18lRbVET3vE6PBKb/9usAwEp/IzE45DhfJJrip9uG1
+         I+7rvOP/0gtgv/BYXgwc5GWRYDCtyKdZAASvnnLIgmAXtEw0zVwgGpxeKv1WVRXY73SG
+         Opniqmwjov6YdZyINl32tlYFrbgGgCI4MX25cuAxXXnAkNaj/IoFJijL8IDSZxcC9KXl
+         g65A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5VssAIpTuFKmj2zUfyBOJyi8Rg6YT/l3GL1/5vXR4ZQ=;
-        b=A3MH//6xSP6Poj2060QyXewsUwkatDCnABTOnrfax71XNzumMSda17kAZMLZh4pz3g
-         MjYnIBLBmTAZu8+PCVRa1dOU8t4jwjR/RdVfrpvL2Ytv3ahh1J5WZMNlPFE0P/SSeMOe
-         S0AvJsWhkPIysqSAQQhsoKVtZ5RZRcmBxBLgf1R+JwsVqQBzVoRLYSoE8Wb1RJY2Tx1Z
-         sSyAt6bRLCbyxwGgheDGmS1S1FUIn88Yvq9ehL2b/M66tUl7x6oePhPwTb+xwE+g4HqU
-         wkfZaGxAx52oRheyHgvzFbbRyKnB6k00MLU/jyi3/MFJ8YzLH+KM/tlb388PUtfgLz6c
-         zeig==
-X-Gm-Message-State: APjAAAVCsOXgKBo3PO3lCn8KhkFtMBgsJLOwxvFXoY5ETVeqUolGZ9cc
-        EtQIsFoIIohYgVmYGPuNdBcjUIMpfwI=
-X-Google-Smtp-Source: APXvYqyKgA6gzWM71js4GQuvA/a3ttv99Um3nFdJ78iW2AgF7fR2kAOtvLpQ2egC4ZG+PMbHxWIdZg==
-X-Received: by 2002:a02:300b:: with SMTP id q11mr76505551jaq.54.1563826374123;
-        Mon, 22 Jul 2019 13:12:54 -0700 (PDT)
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com. [209.85.166.42])
-        by smtp.gmail.com with ESMTPSA id j5sm30977223iom.69.2019.07.22.13.12.53
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jul 2019 13:12:53 -0700 (PDT)
-Received: by mail-io1-f42.google.com with SMTP id e20so46449133iob.9
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 13:12:53 -0700 (PDT)
-X-Received: by 2002:a5e:8f08:: with SMTP id c8mr66758646iok.52.1563826372789;
- Mon, 22 Jul 2019 13:12:52 -0700 (PDT)
+        bh=7l2Wn+FJ2BG0j9D1JF5TbgHPijVR0AsIZvIp2BLcK5g=;
+        b=gstG8347lSYDFHAkMLr8bobKjlpZ0tP6+EFJggCWZs/hoONW21webCBIWPh8lsdHdc
+         qg/vl76d5OVVjGk7nwQAypZ5/G5bpmq/J1TALUtrhd4iQbPVSwT+Zcc0Kp//OMPa+gNo
+         aUuTo9gJwanQuqEvaluJPi0jp/fn1xxIa8ok2BZvHBFcM/187jVVNooySHJmgb/L5Nzi
+         djkbiwzDB5lYaDS/rf44u5KmBYmIgIyWVHcteX/iapoMbb8WG/XoFpMOEqTP53CfRryg
+         plrPvx5XDzOmZjXlIUzFZfodROHMdNIY+HEZIskWoDH9+kDwCthZ6WTJxMPy6j8tydyk
+         Gheg==
+X-Gm-Message-State: APjAAAWsXMKEXpLncVvd9VA/eieZwFmmGiGgUCYBSDYID0Fi0mPpIc5O
+        +4fVNALHwF37drUmkjU9JNcxvqp+TtU9mpEQCu1gCeq59po=
+X-Google-Smtp-Source: APXvYqyiAVhxu4nXny5pvNFjsFJ+z38F8yOUB1vGVezA4DDforKOQu16+Eoz95HvdgDnQBbS1HWonhdzq+Y9/TyPPXs=
+X-Received: by 2002:a02:6a22:: with SMTP id l34mr76706311jac.126.1563826405473;
+ Mon, 22 Jul 2019 13:13:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190722181945.244395-1-mka@chromium.org>
-In-Reply-To: <20190722181945.244395-1-mka@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 22 Jul 2019 13:12:40 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XP=3z9GWPU+K15jmzHeOWT9uzqgaC6zL3M+Wm7b4jOhQ@mail.gmail.com>
-Message-ID: <CAD=FV=XP=3z9GWPU+K15jmzHeOWT9uzqgaC6zL3M+Wm7b4jOhQ@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/bridge: dw-hdmi: Refuse DDC/CI transfers on the
- internal I2C controller
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Adam Jackson <ajax@redhat.com>
+References: <20190415202501.941196-1-arnd@arndb.de> <2424c672-e3fb-4c32-4c24-fafc59d03a96@uclinux.org>
+ <CACRpkdaJ+2bub_nDp9=5b4kyKjWDnOGKscWg3KsEVixDpk8rzA@mail.gmail.com>
+ <20190503170613.GA1783@roeck-us.net> <d8d81aca-722d-8b5f-cd5f-30cc3e4e407b@kernel.org>
+ <CAK8P3a0StV==jMq1L9k91qEsvRD1Cw2FB1V25wr1AQqzmjsTVw@mail.gmail.com>
+In-Reply-To: <CAK8P3a0StV==jMq1L9k91qEsvRD1Cw2FB1V25wr1AQqzmjsTVw@mail.gmail.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Mon, 22 Jul 2019 13:13:14 -0700
+Message-ID: <CAOesGMjFgR3CWcVF__=nvhHzMsdBDriPJTLX6pqq4PHMDS_OxQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] ARM: ks8695: watchdog: stop using mach/*.h
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Greg Ungerer <gerg@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        arm-soc <arm@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Jul 22, 2019 at 7:44 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Sat, May 4, 2019 at 4:27 PM Greg Ungerer <gerg@kernel.org> wrote:
+> > On 4/5/19 3:06 am, Guenter Roeck wrote:
+> > > On Fri, May 03, 2019 at 08:16:05AM +0100, Linus Walleij wrote:
+> > >> On Fri, May 3, 2019 at 8:02 AM Greg Ungerer <gerg@uclinux.org> wrote:
+> > >>> Ultimately though I am left wondering if the ks8695 support in the
+> > >>> kernel is useful to anyone the way it is at the moment. With a minimal
+> > >>> kernel configuration I can boot up to a shell - but the system is
+> > >>> really unreliable if you try to interactively use it. I don't think
+> > >>> it is the hardware - it seems to run reliably with the old code
+> > >>> it has running from flash on it. I am only testing the new kernel,
+> > >>> running with the existing user space root filesystem on it (which
+> > >>> dates from 2004 :-)
+> > >>
+> > >> Personally I think it is a bad sign that this subarch and boards do
+> > >> not have active OpenWrt support, they are routers after all (right?)
+> > >> and any active use of networking equipment should use a recent
+> > >> userspace as well, given all the security bugs that popped up over
+> > >> the years.
+>
+> Looking around on the internet, I found that Micrel at some point
+> had their own openwrt fork for ks8695, but I can't find a copy
+> any more, as the micrel.com domain is no longer used after the
+> acquisition by Microchip.
+>
+> https://wikidevi.com/wiki/Micrel has a list of devices based on
+> ks8695, and it seems that most of these are rather memory
+> limited, which is a problem for recent openwrt builds.
+>
+> Only two of the 17 listed devices have the absolute minimum of 4MB
+> flash and 32MB RAM for openwrt, two more have 8/32 and one
+> or two have 4/64, but all these configurations are too limited for the
+> web U/I now.
+>
+> > >> With IXP4xx, Gemini and EP93xx we have found active users and
+> > >> companies selling the chips and reference designs and even
+> > >> recommending it for new products (!) at times.  If this is not the
+> > >> case with KS8695 and no hobbyists are willing to submit it
+> > >> to OpenWrt and modernize it to use device tree I think it should be
+> > >> deleted from the kernel.
+> > >>
+> > >
+> > > That may be the best approach if indeed no one is using it,
+> > > much less maintaining it.
+> >
+> > Well, I for one don't really use it any more. So I don't have a lot
+> > of motivation to maintain it any longer.
+>
+> I came across my patches while rebasing my backlog to 5.3-rc1.
+>
+> Should I save the (very small) trouble of sending them out again
+> and just remove the platform then?
 
-On Mon, Jul 22, 2019 at 11:19 AM Matthias Kaehlcke <mka@chromium.org> wrote:
->
-> The DDC/CI protocol involves sending a multi-byte request to the
-> display via I2C, which is typically followed by a multi-byte
-> response. The internal I2C controller only allows single byte
-> reads/writes or reads of 8 sequential bytes, hence DDC/CI is not
-> supported when the internal I2C controller is used. The I2C
-> transfers complete without errors, however the data in the response
-> is garbage. Abort transfers to/from slave address 0x37 (DDC) with
-> -EOPNOTSUPP, to make it evident that the communication is failing.
->
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> Changes in v2:
-> - changed DDC_I2C_ADDR to DDC_CI_ADDR
-> ---
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> index 045b1b13fd0e..28933629f3c7 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> @@ -35,6 +35,7 @@
->
->  #include <media/cec-notifier.h>
->
-> +#define DDC_CI_ADDR            0x37
->  #define DDC_SEGMENT_ADDR       0x30
->
->  #define HDMI_EDID_LEN          512
-> @@ -322,6 +323,13 @@ static int dw_hdmi_i2c_xfer(struct i2c_adapter *adap,
->         u8 addr = msgs[0].addr;
->         int i, ret = 0;
->
-> +       if (addr == DDC_CI_ADDR)
-> +               /*
-> +                * The internal I2C controller does not support the multi-byte
-> +                * read and write operations needed for DDC/CI.
-> +                */
-> +               return -EOPNOTSUPP;
-> +
+Given the lack of response/interest from users, I'm OK with removing it.
 
-In theory we could also solve this by detecting (in other parts of the
-function) the bad multi-byte read/write operations.  That would maybe
-be more generic (AKA it would more properly handle random userspace
-tools fiddling with i2c-dev) but add complexity to the code.
-
-...possibly a better long-term solution is to just totally stop
-emulating a regular i2c adapter when the hardware just doesn't support
-that.  In theory we could remove the "drm_get_edid()" call in
-dw_hdmi_connector_get_modes() and replace it with a direct call to
-drm_do_get_edid() if we're using the built-in adapter.  Possibly
-"tda998x_drv.c" would be a good reference.  If we did that, we could
-remove all the weird / hacky i2c code in this driver.
+If someone shows up wanting support, we'll have a good opportunity to
+discuss testing/modernization involving someone actively using the
+hardware.
 
 
-Since the bigger cleanup seems like a bit much to ask, I'm OK with
-this as a stopgap to at least prevent userspace tools from getting
-confused.  Thus:
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+-Olof
