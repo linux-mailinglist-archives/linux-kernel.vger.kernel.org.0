@@ -2,148 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 388CC70002
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:46:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 275C17001A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:48:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729703AbfGVMqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 08:46:44 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:45607 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbfGVMqn (ORCPT
+        id S1729848AbfGVMs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 08:48:28 -0400
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:21052 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728596AbfGVMsG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 08:46:43 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M4K2r-1hpGix19KD-000MNv; Mon, 22 Jul 2019 14:46:18 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Joao Pinto <jpinto@synopsys.com>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] [v2] dmaengine: dw-edma: fix endianess confusion
-Date:   Mon, 22 Jul 2019 14:44:45 +0200
-Message-Id: <20190722124457.1093886-3-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190722124457.1093886-1-arnd@arndb.de>
-References: <20190722124457.1093886-1-arnd@arndb.de>
+        Mon, 22 Jul 2019 08:48:06 -0400
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6MCShHn011804;
+        Mon, 22 Jul 2019 08:47:59 -0400
+Received: from nam04-sn1-obe.outbound.protection.outlook.com (mail-sn1nam04lp2054.outbound.protection.outlook.com [104.47.44.54])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2tuyv3wv1j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Jul 2019 08:47:59 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eE9iLm81U9bJ07cxLinppz48DhGju65r1lBafbX4bI2vbVUDGBxB8tV9N8yFzqhbDOUmwP9/sPAPZCL7ALzC/KFqhRBHNS/plgf2BQ1mcK9Oz6c7f2utSE5+t0l2RKJelnJyf7Z0h2mcpo/2T+91fF+SJ10nWyyELK+2QIi4IuKwCiyhTh9PAVIFSlcnMWlq7EJYaMcQjTPp07rDPeIjUmJGNi7QtlyDSBJPjzLUhU4RPQIFLuM4VGG8HqiKik1vAvOkWCps2rZtHABwkT8+bydxRM/pV2pNAw6V2aots9ryLQb02Ql1S/acX1HjQtwoIXt+aHPzND1o5QrPfCgjjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hZQ17OTmhxC8xUM6JXeYhXizhO83gBVH6BbgQRYxqpE=;
+ b=eWUT+KqKyKZLlZ2kdd3qK0Q/dCBfiPgljboNpwyxe7w2gnHAL4QXlaYPIgijgdUQQtdcJBpjT9nNp0droRX8Du58qFtY0qW5WjnBxytud0utK8FHhWB6ipj8/RvJmgEKCTDqn7XK0YDm/TGKqH6EJ/EWPqP3eOrdC09SbEy8hz9G6sgElywc2oIZOFiwzxVxSrWDbQrPN7FO9mn8s8tW/4PeGK42c6DuqZUfDXlFzL5WBuvrrZUOA4/cdIWgtQPCQ0nCu8PU6+rDxwGFAf0icrFv1NU3RPIma5/5zsIJ3oVvip/5HkBTVGfVFvTLlcF64TRjM3fJ2KssJx38B4FxnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass (sender ip is
+ 137.71.25.55) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=analog.com;dmarc=bestguesspass action=none
+ header.from=analog.com;dkim=none (message not signed);arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hZQ17OTmhxC8xUM6JXeYhXizhO83gBVH6BbgQRYxqpE=;
+ b=VqKGelrvzaOYdrLJ2ihKqfg/uR8z7vPbQyXMyM5sSDHjsRWNvVFlG6wqzk7DUxo5g4jtRIXfU7FWIKZPlPjvNF5Rgzfi/bPe/pJwvT9uvuDP0c0RnxmQjZ7WNvSTw8UMSNqOTY8M3iNHtcyIPxY32VRpSD7qBBCHHW5yXTzyfuA=
+Received: from BN6PR03CA0004.namprd03.prod.outlook.com (2603:10b6:404:23::14)
+ by DM6PR03MB4714.namprd03.prod.outlook.com (2603:10b6:5:181::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2094.17; Mon, 22 Jul
+ 2019 12:47:56 +0000
+Received: from SN1NAM02FT004.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::202) by BN6PR03CA0004.outlook.office365.com
+ (2603:10b6:404:23::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2094.15 via Frontend
+ Transport; Mon, 22 Jul 2019 12:47:56 +0000
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
+Received: from nwd2mta1.analog.com (137.71.25.55) by
+ SN1NAM02FT004.mail.protection.outlook.com (10.152.72.175) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2052.25
+ via Frontend Transport; Mon, 22 Jul 2019 12:47:55 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x6MClqfr019615
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Mon, 22 Jul 2019 05:47:52 -0700
+Received: from saturn.ad.analog.com (10.48.65.145) by
+ NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 22 Jul 2019 08:47:54 -0400
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-iio@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <jic23@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <broonie@kernel.org>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH 0/4][V3] iio: imu: Add support for the ADIS16460 IMU
+Date:   Mon, 22 Jul 2019 15:47:43 +0300
+Message-ID: <20190722124747.4792-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:d5Lm4PYixfA8pbB02g2GgIjlRZdQahOKJAn4tWmkzSjHCHZz+0c
- mGByyd10vU6PjkFtT1c9Tv8zXEsWOBlurLMYYOe42GCRa3RycR4Fs37aYZDPSiXmWn+Uu+y
- jv1BzF7UXgTBBv8JeWwEGrn15D6CtjU7Sh1iDVnb2VD2B5ZqQQ8/PBuFNJDPaDvbiQjMSdB
- 9GCuhCcNGKxdwrlC6eD+Q==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:rySnjGhQpRQ=:wCX8tZwzY2BNeINq7MDHz8
- eUWe8HmswCc/zzGV8LbVpGXmOdN8AiOSUYnJ/nbNtrDJTJkGPC4OvD2O8mKTvWEY62iC+diqy
- DEYWROsD7mOAClAHGC7Vx6X9G7FqiEkAqTu2uNvkVwCWm3mjAT6iYuM6S+vKn56XXr6ZXtQWx
- YQZDeE1OfsTwjbH1b2aY51w88Tw8BvRgI0jZPr4uYOD2SB3cagIwaV2sLhno2KPwvwtt85oLE
- yus0TuRnN3ANz+EzbHQdUDV1xH28sOcN4S+JoqcdKmFeI9pLowxMW0XfCQNTPD6Mcv0Hz4t9x
- bIzmnNMCm4Yg3ULjB9KGlW02Erv9aelWqImrQlmDY/Q/w4op1YjS7L0asNeGiWI/hnCo61/Jw
- q3W/EqMUXL6GDxFdZLYh3EsKXhqZufsS3DlmQYiEpiaVzVec59sfrcDR88OfqsCIyt+NGzWbg
- SYrzk95YQgr9gssxV9wL/ujvECJ4tT6M49KjHCv4dFcQ/FXPMMHBtLwhEN5nYXoptuZXsMSaE
- Qg1lQ+FaW9c1CRN88DrMqxK6NrhaJ3SnHGkbZHIr9gDCk94CsWkgndUPYNHjhq2Xop98taXB8
- ljnxDhYUrpyPA5xt0dZ0zw74ou+Ifzsme2o/CbblGO/t6D0C1d8+x7YjZD0nGRBzZPb3ewyev
- Z9IoZ0JI5XrwozWgfpigS83KIk8fzHiAT21na6CxnVeYx/8FGKkKy39ONRJVi8ytXxsk8wAse
- lljaNp6U10E0LI2vRY0A+2uG+jqcqFhgaJJ6eQ==
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(376002)(346002)(396003)(2980300002)(54534003)(199004)(189003)(336012)(107886003)(246002)(50226002)(2906002)(14444005)(316002)(486006)(110136005)(54906003)(106002)(2201001)(26005)(126002)(44832011)(966005)(186003)(8936002)(8676002)(51416003)(7696005)(4326008)(1076003)(86362001)(50466002)(48376002)(305945005)(5660300002)(426003)(476003)(70206006)(36756003)(2616005)(47776003)(478600001)(356004)(6306002)(70586007)(7636002)(2870700001)(6666004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR03MB4714;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 11132758-a20f-4c2f-2bbd-08d70ea2d185
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:DM6PR03MB4714;
+X-MS-TrafficTypeDiagnostic: DM6PR03MB4714:
+X-MS-Exchange-PUrlCount: 1
+X-Microsoft-Antispam-PRVS: <DM6PR03MB4714D7B9633843E7D79020BDF9C40@DM6PR03MB4714.namprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-Forefront-PRVS: 01068D0A20
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: P14AwspHzirCSORe2R5a5h4rr70bhtUtAhuxoz4posE778ZQ+msJ0axcFOmr70pfCCNYxcAnPhFBabx8yCy+11gRcW9R87edJ3FTiSivCCYQja+jxIJRIUGSo0MimnWrzH0V9urHefHq1LFeCcXsWKBT7ljo2vIrgqHcihSuX5ZC1J7eR+W30Xmr3kcMDpp7WnhymehAqMGo4IFLeLy8H6+DvSSaS8RatqayALEu47E3b8T1OFoJiV5EDq7g4GVSgcyeiXkww92py89ubtU6YQpQ0NIlTuzqgHPSelHh8kzVNY2FLz4q7W132zIacB4meJSFbKMQQg2Stu/C9zJXOKZe+EAXaQncRn30X6m7jdewajkuA0zPXh3odqltpLEiFYAjLx+26cq6XsVXQaFIMTq5OuDZdBYiEpkFfJBFIKc=
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2019 12:47:55.5057
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11132758-a20f-4c2f-2bbd-08d70ea2d185
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR03MB4714
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-22_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907220147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building with 'make C=1', sparse reports an endianess bug:
+This changeset adds support for the ADIS16460.
 
-drivers/dma/dw-edma/dw-edma-v0-debugfs.c:60:30: warning: cast removes address space of expression
-drivers/dma/dw-edma/dw-edma-v0-debugfs.c:86:24: warning: incorrect type in argument 1 (different address spaces)
-drivers/dma/dw-edma/dw-edma-v0-debugfs.c:86:24:    expected void const volatile [noderef] <asn:2>*addr
-drivers/dma/dw-edma/dw-edma-v0-debugfs.c:86:24:    got void *[assigned] ptr
-drivers/dma/dw-edma/dw-edma-v0-debugfs.c:86:24: warning: incorrect type in argument 1 (different address spaces)
-drivers/dma/dw-edma/dw-edma-v0-debugfs.c:86:24:    expected void const volatile [noderef] <asn:2>*addr
-drivers/dma/dw-edma/dw-edma-v0-debugfs.c:86:24:    got void *[assigned] ptr
-drivers/dma/dw-edma/dw-edma-v0-debugfs.c:86:24: warning: incorrect type in argument 1 (different address spaces)
-drivers/dma/dw-edma/dw-edma-v0-debugfs.c:86:24:    expected void const volatile [noderef] <asn:2>*addr
-drivers/dma/dw-edma/dw-edma-v0-debugfs.c:86:24:    got void *[assigned] ptr
+Support for this chip, requires changes in both IIO & SPI, in order to
+support configurable/longer CS change delays.
 
-The current code is clearly wrong, as it passes an endian-swapped word
-into a register function where it gets swapped again. Just pass the variables
-directly into lower_32_bits()/upper_32_bits().
+The default CS change delay is 10 uS, while the ADIS16460 requires a
+minimum of 16 uS. In order to accomodate this, the SPI transfer struct
+requires a `cs_change_delay_usecs` parameter that is used when `cs_change`
+is set.
 
-Fixes: 7e4b8a4fbe2c ("dmaengine: Add Synopsys eDMA IP version 0 support")
-Link: https://lore.kernel.org/lkml/20190617131820.2470686-1-arnd@arndb.de/
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: remove unneeded local variables
----
- drivers/dma/dw-edma/dw-edma-v0-core.c | 24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+The ADIS library also requires a small update to support the new SPI
+`cs_change_delay_usecs`, and after that, support for ADIS16460 is added,
+since all the required parts for operating the chip are in the kernel.
 
-diff --git a/drivers/dma/dw-edma/dw-edma-v0-core.c b/drivers/dma/dw-edma/dw-edma-v0-core.c
-index 97e3fd41c8a8..692de47b1670 100644
---- a/drivers/dma/dw-edma/dw-edma-v0-core.c
-+++ b/drivers/dma/dw-edma/dw-edma-v0-core.c
-@@ -195,7 +195,6 @@ static void dw_edma_v0_core_write_chunk(struct dw_edma_chunk *chunk)
- 	struct dw_edma_v0_lli __iomem *lli;
- 	struct dw_edma_v0_llp __iomem *llp;
- 	u32 control = 0, i = 0;
--	u64 sar, dar, addr;
- 	int j;
- 
- 	lli = chunk->ll_region.vaddr;
-@@ -214,13 +213,11 @@ static void dw_edma_v0_core_write_chunk(struct dw_edma_chunk *chunk)
- 		/* Transfer size */
- 		SET_LL(&lli[i].transfer_size, child->sz);
- 		/* SAR - low, high */
--		sar = cpu_to_le64(child->sar);
--		SET_LL(&lli[i].sar_low, lower_32_bits(sar));
--		SET_LL(&lli[i].sar_high, upper_32_bits(sar));
-+		SET_LL(&lli[i].sar_low, lower_32_bits(child->sar));
-+		SET_LL(&lli[i].sar_high, upper_32_bits(child->sar));
- 		/* DAR - low, high */
--		dar = cpu_to_le64(child->dar);
--		SET_LL(&lli[i].dar_low, lower_32_bits(dar));
--		SET_LL(&lli[i].dar_high, upper_32_bits(dar));
-+		SET_LL(&lli[i].dar_low, lower_32_bits(child->dar));
-+		SET_LL(&lli[i].dar_high, upper_32_bits(child->dar));
- 		i++;
- 	}
- 
-@@ -232,9 +229,8 @@ static void dw_edma_v0_core_write_chunk(struct dw_edma_chunk *chunk)
- 	/* Channel control */
- 	SET_LL(&llp->control, control);
- 	/* Linked list  - low, high */
--	addr = cpu_to_le64(chunk->ll_region.paddr);
--	SET_LL(&llp->llp_low, lower_32_bits(addr));
--	SET_LL(&llp->llp_high, upper_32_bits(addr));
-+	SET_LL(&llp->llp_low, lower_32_bits(chunk->ll_region.paddr));
-+	SET_LL(&llp->llp_high, upper_32_bits(chunk->ll_region.paddr));
- }
- 
- void dw_edma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
-@@ -242,7 +238,6 @@ void dw_edma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
- 	struct dw_edma_chan *chan = chunk->chan;
- 	struct dw_edma *dw = chan->chip->dw;
- 	u32 tmp;
--	u64 llp;
- 
- 	dw_edma_v0_core_write_chunk(chunk);
- 
-@@ -262,9 +257,10 @@ void dw_edma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
- 		SET_CH(dw, chan->dir, chan->id, ch_control1,
- 		       (DW_EDMA_V0_CCS | DW_EDMA_V0_LLE));
- 		/* Linked list - low, high */
--		llp = cpu_to_le64(chunk->ll_region.paddr);
--		SET_CH(dw, chan->dir, chan->id, llp_low, lower_32_bits(llp));
--		SET_CH(dw, chan->dir, chan->id, llp_high, upper_32_bits(llp));
-+		SET_CH(dw, chan->dir, chan->id, llp_low,
-+		       lower_32_bits(chunk->ll_region.paddr));
-+		SET_CH(dw, chan->dir, chan->id, llp_high,
-+		       upper_32_bits(chunk->ll_region.paddr));
- 	}
- 	/* Doorbell */
- 	SET_RW(dw, chan->dir, doorbell,
+Continuing discussion from:
+  https://lore.kernel.org/lkml/20190717115109.15168-5-alexandru.ardelean@analog.com/T/
+
+Changelog v2 -> v3:
+* for SPI:
+  * used `cs_change_delay` instead of `cs_change_delay_usecs` (i.e. removed
+    `_usecs` suffix
+  * used SPI specific subject line for SPI patch
+* for ADIS lib:
+  * updated to use the `cs_change_delay`
+* for DT:
+  * added Rob's `Reviewed-by` tag
+
+Changelog v1 -> v2:
+* for SPI:
+  * renamed `cs_change_stall_delay_us` -> `cs_change_delay_usecs`
+    initial recommendation was `cs_change_delay`, but decided to name this
+    `cs_change_delay_usecs`, since the convention for these delays seems
+    to add the `_usecs` suffix
+* for ADIS lib:
+  * renamed `stall_delay` -> `cs_change_delay`
+  * removed some assignments of `cs_change_delay`
+    where `cs_change` is not set
+* for ADIS16460 driver:
+  * fixed license
+  * adjusted to new `cs_change_delay[_usecs]`
+
+Alexandru Ardelean (4):
+  spi: Add optional stall delay between cs_change transfers
+  iio: imu: adis: Add support for SPI transfer cs_change_delay
+  iio: imu: Add support for the ADIS16460 IMU
+  dt-bindings: iio: imu: add bindings for ADIS16460
+
+ .../bindings/iio/imu/adi,adis16460.yaml       |  53 ++
+ MAINTAINERS                                   |   8 +
+ drivers/iio/imu/Kconfig                       |  12 +
+ drivers/iio/imu/Makefile                      |   1 +
+ drivers/iio/imu/adis.c                        |   6 +
+ drivers/iio/imu/adis16460.c                   | 489 ++++++++++++++++++
+ drivers/spi/spi.c                             |   3 +-
+ include/linux/iio/imu/adis.h                  |   2 +
+ include/linux/spi/spi.h                       |   2 +
+ 9 files changed, 575 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16460.yaml
+ create mode 100644 drivers/iio/imu/adis16460.c
+
 -- 
-2.20.0
+2.20.1
 
