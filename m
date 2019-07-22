@@ -2,63 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 048D370182
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:45:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B48D3701A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:48:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730687AbfGVNon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 09:44:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40296 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729418AbfGVNom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 09:44:42 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2EB874627A;
-        Mon, 22 Jul 2019 13:44:42 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (dhcp-192-200.str.redhat.com [10.33.192.200])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4726B60497;
-        Mon, 22 Jul 2019 13:44:40 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, nd <nd@arm.com>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        "Sergei Trofimovich" <slyfox@gentoo.org>,
-        Networking <netdev@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        linux-man <linux-man@vger.kernel.org>
-Subject: Re: [PATCH glibc] Linux: Include <linux/sockios.h> in <bits/socket.h> under __USE_MISC
-References: <87ftmys3un.fsf@oldenburg2.str.redhat.com>
-        <CAK8P3a0hC4wvjwCi4=DCET3C4qARMY6c58ffjwG3b1ZPM6kr-A@mail.gmail.com>
-        <2431941f-3aac-d31f-e6f5-8ed2ed7b2e5c@arm.com>
-Date:   Mon, 22 Jul 2019 15:44:39 +0200
-In-Reply-To: <2431941f-3aac-d31f-e6f5-8ed2ed7b2e5c@arm.com> (Szabolcs Nagy's
-        message of "Mon, 22 Jul 2019 13:41:07 +0000")
-Message-ID: <87lfwqqj3s.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+        id S1730590AbfGVNsu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 09:48:50 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2735 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727805AbfGVNsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 09:48:50 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B47831F73539573CC4C6;
+        Mon, 22 Jul 2019 21:48:46 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Mon, 22 Jul 2019
+ 21:48:39 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <sakari.ailus@linux.intel.com>, <mchehab@kernel.org>,
+        <gregkh@linuxfoundation.org>, <yong.zhi@intel.com>,
+        <digetx@gmail.com>, <hverkuil-cisco@xs4all.nl>
+CC:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        <linux-media@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] media: staging: ipu3: Enable IOVA API only when IOMMU support is enabled
+Date:   Mon, 22 Jul 2019 21:47:49 +0800
+Message-ID: <20190722134749.21580-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 22 Jul 2019 13:44:42 +0000 (UTC)
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Szabolcs Nagy:
+If IOMMU_SUPPORT is not set, ipu3 driver may select IOMMU_IOVA to m.
+But for many drivers, they use "select IOMMU_IOVA if IOMMU_SUPPORT"
+in the Kconfig, for example, CONFIG_TEGRA_VDE is set to y but IOMMU_IOVA
+is m, then the building fails like this:
 
-> (note: in musl these ioctl macros are in sys/ioctl.h
-> which is not a posix header so namespace rules are
-> less strict than for sys/socket.h and users tend to
-> include it for ioctl())
+drivers/staging/media/tegra-vde/iommu.o: In function `tegra_vde_iommu_map':
+iommu.c:(.text+0x41): undefined reference to `alloc_iova'
+iommu.c:(.text+0x56): undefined reference to `__free_iova'
 
-<sys/ioctl.h> can be confusing because some of the constants may depend
-on types that aren't declared by including the header.  This makes their
-macros unusable.  Defining ioctl constants in headers which also provide
-the matching types avoids that problem at least, also it can introduce
-namespace issues.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 7fc7af649ca7 ("media: staging/intel-ipu3: Add imgu top level pci device driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/staging/media/ipu3/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Florian
+diff --git a/drivers/staging/media/ipu3/Kconfig b/drivers/staging/media/ipu3/Kconfig
+index 4b51c67..b7df18f 100644
+--- a/drivers/staging/media/ipu3/Kconfig
++++ b/drivers/staging/media/ipu3/Kconfig
+@@ -4,7 +4,7 @@ config VIDEO_IPU3_IMGU
+ 	depends on PCI && VIDEO_V4L2
+ 	depends on MEDIA_CONTROLLER && VIDEO_V4L2_SUBDEV_API
+ 	depends on X86
+-	select IOMMU_IOVA
++	select IOMMU_IOVA if IOMMU_SUPPORT
+ 	select VIDEOBUF2_DMA_SG
+ 	help
+ 	  This is the Video4Linux2 driver for Intel IPU3 image processing unit,
+-- 
+2.7.4
+
+
