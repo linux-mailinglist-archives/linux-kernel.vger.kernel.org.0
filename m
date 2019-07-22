@@ -2,90 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E510C70C1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 23:54:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B01D70C1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 23:54:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732994AbfGVVyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 17:54:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36820 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732976AbfGVVx5 (ORCPT
+        id S1728975AbfGVVyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 17:54:10 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46200 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732997AbfGVVyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 17:53:57 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1095161797; Mon, 22 Jul 2019 21:53:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1563832437;
-        bh=WpCgEOoGvhbJ0VBx0zgHnAYDeYg4fRD+EEEeXF83K7c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kigNPpsLEDWvA2sOZdchiIzG5y+kYbkgspozzhWGmMnXP2bzip3Rse+vP+DO4TD/b
-         0T1b1GWC5hhksYodKN8KHA7kTv1KyJ0ilr9TgmuVl81Zo0ShHqT1kpbwUcUw5U4uea
-         YNZGY/YaysLIbLKu+x8PhXOVbWoqNBrtYmn27p0c=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 641E861779;
-        Mon, 22 Jul 2019 21:53:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1563832436;
-        bh=WpCgEOoGvhbJ0VBx0zgHnAYDeYg4fRD+EEEeXF83K7c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=StB3Yl4TvVkl2cyDH2O50knw+oTV/Xm/C4wMqyWFR24GVSuJFQQ0bfUH91o/v1xBN
-         gMRQ1wIppWk7O9qozF/dXTec0c9c2Eh1wWfWwF1Qr2Uayj+SYTvlhuVNH2UGTnbA28
-         YS1hChsyqMaDnU7SQfuFl2gki915JFFK/VnI54LY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 641E861779
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org, swboyd@chromium.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, dianders@chromium.org,
-        mkshah@codeaurora.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH V2 4/4] drivers: qcom: rpmh-rsc: remove redundant register access
-Date:   Mon, 22 Jul 2019 15:53:40 -0600
-Message-Id: <20190722215340.3071-4-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190722215340.3071-1-ilina@codeaurora.org>
-References: <20190722215340.3071-1-ilina@codeaurora.org>
+        Mon, 22 Jul 2019 17:54:06 -0400
+Received: by mail-io1-f65.google.com with SMTP id i10so77336061iol.13;
+        Mon, 22 Jul 2019 14:54:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+/tFZBmBqzo/zPORNqy/FURXPMyOxXiM7Nwwcf4TGGM=;
+        b=AzNkjmVaMFiMzdY0wulQWK0sc9DN+zQy8pyPfcVYB651ytv58A7zuosdPRz+zQr8GC
+         P2MMqn/JbMcO16ghUSJ/hhpX7w5afBYiKYF3lCJBkslof6GfsGTKpdgm0lbiy7gyoi8p
+         aujpOdiF3HzNmfyTTfhxFXIokA2Eo+AFm78iCfiFKIauMM9GuNfIfEXSXORPIoLfh7/K
+         XSIHlpQy0PJwdysENMk5TvVAhdmjgYZ6zBFkYigbF3uAlJ9VcwmFinUw5VjZR+wLUT2z
+         4Cp3O631wiJbjm4RASfNlRqDFIhQKEiQrFPR/goB/cdtjUeIp5m7EI62HhpJYVoh5zQW
+         S0CA==
+X-Gm-Message-State: APjAAAXFnCZ+gDd4I8xxiFPP5LHkjPKwNs6sO+7e8nEBaXNywIfYbRZ4
+        XOf9myHhUEm5Ui5fdu7TEw==
+X-Google-Smtp-Source: APXvYqyUL19XUYrZJxeGwxCR1U5Xwb7mxgpPlG0YNI4SIrs8fiL5rMGhTWsuUHHsuUiVX5EpIhEE/Q==
+X-Received: by 2002:a5e:8f08:: with SMTP id c8mr67180363iok.52.1563832445617;
+        Mon, 22 Jul 2019 14:54:05 -0700 (PDT)
+Received: from localhost ([64.188.179.254])
+        by smtp.gmail.com with ESMTPSA id s4sm52874406iop.25.2019.07.22.14.54.04
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 22 Jul 2019 14:54:05 -0700 (PDT)
+Date:   Mon, 22 Jul 2019 15:54:04 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Manish Narani <manish.narani@xilinx.com>
+Cc:     ulf.hansson@linaro.org, mark.rutland@arm.com, heiko@sntech.de,
+        michal.simek@xilinx.com, adrian.hunter@intel.com,
+        christoph.muellner@theobroma-systems.com,
+        philipp.tomsich@theobroma-systems.com, viresh.kumar@linaro.org,
+        scott.branden@broadcom.com, ayaka@soulik.info, kernel@esmil.dk,
+        tony.xie@rock-chips.com, rajan.vaja@xilinx.com,
+        jolly.shah@xilinx.com, nava.manne@xilinx.com, mdf@kernel.org,
+        olof@lixom.net, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v2 01/11] dt-bindings: mmc: arasan: Update documentation
+ for SD Card Clock
+Message-ID: <20190722215404.GA28292@bogus>
+References: <1561958991-21935-1-git-send-email-manish.narani@xilinx.com>
+ <1561958991-21935-2-git-send-email-manish.narani@xilinx.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1561958991-21935-2-git-send-email-manish.narani@xilinx.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since drv->tcs_in_use is updated when the DRV_STATUS is updated, we
-could simply use the former to determine if the TCS is idle or not.
-Therefore, remove redundant TCS register read.
+On Mon, Jul 01, 2019 at 10:59:41AM +0530, Manish Narani wrote:
+> The clock handling is to be updated in the Arasan SDHCI. As the
+> 'devm_clk_register' is deprecated in the clock framework, this needs to
+> specify one more clock named 'clk_sdcard' to get the clock in the driver
+> via 'devm_clk_get()'. This clock represents the clock from controller to
+> the card.
 
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
----
- drivers/soc/qcom/rpmh-rsc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Please explain why in terms of the binding, not some driver calls.
 
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index add5e84751c9..b04cd2d2910c 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -93,8 +93,7 @@ static void write_tcs_reg_sync(struct rsc_drv *drv, int reg, int tcs_id,
  
- static bool tcs_is_free(struct rsc_drv *drv, int tcs_id)
- {
--	return !test_bit(tcs_id, drv->tcs_in_use) &&
--	       read_tcs_reg(drv, RSC_DRV_STATUS, tcs_id, 0);
-+	return !test_bit(tcs_id, drv->tcs_in_use);
- }
- 
- static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
+> ---
+>  Documentation/devicetree/bindings/mmc/arasan,sdhci.txt | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
+> index 1edbb04..15c6397 100644
+> --- a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
+> +++ b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
+> @@ -23,6 +23,10 @@ Required Properties:
+>    - reg: From mmc bindings: Register location and length.
+>    - clocks: From clock bindings: Handles to clock inputs.
+>    - clock-names: From clock bindings: Tuple including "clk_xin" and "clk_ahb"
+> +		 Apart from these two there is one more optional clock which
+> +		 is "clk_sdcard". This clock represents output clock from
+> +		 controller and card. This must be specified when #clock-cells
+> +		 is specified.
+>    - interrupts: Interrupt specifier
+>  
+>  Required Properties for "arasan,sdhci-5.1":
+> @@ -36,9 +40,10 @@ Optional Properties:
+>    - clock-output-names: If specified, this will be the name of the card clock
+>      which will be exposed by this device.  Required if #clock-cells is
+>      specified.
+> -  - #clock-cells: If specified this should be the value <0>.  With this property
+> -    in place we will export a clock representing the Card Clock.  This clock
+> -    is expected to be consumed by our PHY.  You must also specify
+> +  - #clock-cells: If specified this should be the value <0>. With this
+> +    property in place we will export one clock representing the Card
+> +    Clock. This clock is expected to be consumed by our PHY. You must also
+> +    specify
 
+specify what?
+
+The 3rd clock input I assume? This statement means any existing users 
+with 2 clock inputs and #clock-cells are in error now. Is that correct? 
+
+>    - xlnx,fails-without-test-cd: when present, the controller doesn't work when
+>      the CD line is not connected properly, and the line is not connected
+>      properly. Test mode can be used to force the controller to function.
+> @@ -70,8 +75,8 @@ Example:
+>  		compatible = "rockchip,rk3399-sdhci-5.1", "arasan,sdhci-5.1";
+>  		reg = <0x0 0xfe330000 0x0 0x10000>;
+>  		interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+> -		clocks = <&cru SCLK_EMMC>, <&cru ACLK_EMMC>;
+> -		clock-names = "clk_xin", "clk_ahb";
+> +		clocks = <&cru SCLK_EMMC>, <&cru ACLK_EMMC>, <&sdhci 0>;
+> +		clock-names = "clk_xin", "clk_ahb", "clk_sdcard";
+>  		arasan,soc-ctl-syscon = <&grf>;
+>  		assigned-clocks = <&cru SCLK_EMMC>;
+>  		assigned-clock-rates = <200000000>;
+> -- 
+> 2.1.1
+> 
