@@ -2,60 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD59F70245
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 16:26:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81ED87024D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 16:27:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730828AbfGVOZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 10:25:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54876 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725907AbfGVOZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 10:25:58 -0400
-Received: from localhost (unknown [223.226.98.106])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 623302171F;
-        Mon, 22 Jul 2019 14:25:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563805558;
-        bh=wuhTsZIObGWDG2QzWvOgk7IFTgkRJ2Atch9ilONi/HI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=roEaUJSgM2YJgzNoyPsqezUm4dic3X2NV9saH90TLvV0rPQj8PbmHyLhvcEMzafLT
-         Hk8pK8aLzQsEQGfsN4cr+47FuIMEzSlhs9LsUGGWeZq7EhDDIOdPvKvxUDWGK4Olk+
-         0bjK+thA1SDg8vh99WIJ/AYSYY5qjPLsuW0fvdpg=
-Date:   Mon, 22 Jul 2019 19:54:45 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] dma: ste_dma40: fix unneeded variable warning
-Message-ID: <20190722142445.GV12733@vkoul-mobl.Dlink>
-References: <20190712091357.744515-1-arnd@arndb.de>
+        id S1730867AbfGVO05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 10:26:57 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:43083 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbfGVO05 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 10:26:57 -0400
+Received: by mail-qk1-f193.google.com with SMTP id m14so3052827qka.10;
+        Mon, 22 Jul 2019 07:26:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ah6GZe+0UgXZUd+jkutuNIUFv66KlGrmYWfNByDcOvg=;
+        b=YiHIKSd/Y12Jj4HEZ/c0CIq4VcU7J+EREpXOgiwu0Z4dZsNHvJBBw+WciCnsCvxQph
+         Tr+5vm38/wzhGyAAJ5FzbImSVr7MXLUNOyX/HVq/dmBeZo1JwELWlqXtrAkDfYx+GbkD
+         xV5ndf8EGQ5+wdtQaAxTtzsAwsSU8Z8FjjYtound6momZ3YVtjRybrz9puAXZ/xyF64g
+         SioWnE08q9GeLNLvfELhmvn5+GWM7o8esz+PJcN15q+nqcLK23rry8tkx4l2kFpX1xMA
+         wcSBvbd9xH2iXW51hjXbOGhtocwzTeF6Ox7WNdC7xGxkVIk8C4loro46mAV0jIqriaYC
+         2KLg==
+X-Gm-Message-State: APjAAAVvq37G0+pbbFuAZtRjVpi3u0kyYKN/ZTF50JweCIydaeJg1PMm
+        vAumt2BXhk+yWiO5vdSCQ4pYmBnfm7xbL574kXA=
+X-Google-Smtp-Source: APXvYqzV66V/n6SbUhF6RDSLieeP6SB8mXvDJ9CDlP2FV1DOr+tPhe6IyteNQRDa+DJx1zn2b70XAfY2PzNKTYedJIM=
+X-Received: by 2002:a05:620a:b:: with SMTP id j11mr13035375qki.352.1563805616319;
+ Mon, 22 Jul 2019 07:26:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190712091357.744515-1-arnd@arndb.de>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190722114134.3123901-1-arnd@arndb.de> <CAG_fn=UxowACw5w+erKaAPRr4SWk3WbLTfAgJj=cOL4HgZHK=Q@mail.gmail.com>
+In-Reply-To: <CAG_fn=UxowACw5w+erKaAPRr4SWk3WbLTfAgJj=cOL4HgZHK=Q@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 22 Jul 2019 16:26:40 +0200
+Message-ID: <CAK8P3a28c5V5VnsFrttgtCC5+i87yuAT-G5xx50KOsKUJ6-VKg@mail.gmail.com>
+Subject: Re: [PATCH] [RESEND v2] structleak: disable STRUCTLEAK_BYREF in
+ combination with KASAN_STACK
+To:     Alexander Potapenko <glider@google.com>
+Cc:     Dmitriy Vyukov <dvyukov@google.com>,
+        Marco Elver <elver@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12-07-19, 11:13, Arnd Bergmann wrote:
-> clang-9 points out that there are two variables that depending on the
-> configuration may only be used in an ARRAY_SIZE() expression but not
-> referenced:
-> 
-> drivers/dma/ste_dma40.c:145:12: error: variable 'd40_backup_regs' is not needed and will not be emitted [-Werror,-Wunneeded-internal-declaration]
-> static u32 d40_backup_regs[] = {
->            ^
-> drivers/dma/ste_dma40.c:214:12: error: variable 'd40_backup_regs_chan' is not needed and will not be emitted [-Werror,-Wunneeded-internal-declaration]
-> static u32 d40_backup_regs_chan[] = {
-> 
-> Mark these __maybe_unused to shut up the warning.
+On Mon, Jul 22, 2019 at 3:43 PM Alexander Potapenko <glider@google.com> wrote:
+> On Mon, Jul 22, 2019 at 1:41 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > KASAN_STACK is currently implied by KASAN on gcc, but could be made a
+> > user selectable option if we want to allow combining (non-stack) KASAN
+> > with GCC_PLUGIN_STRUCTLEAK_BYREF.
+> >
+> > Note that it would be possible to specifically address the files that
+> > print the warning, but presumably the overall stack usage is still
+> > significantly higher than in other configurations, so this would not
+> > address the full problem.
+> >
+> > I could not test this with CONFIG_INIT_STACK_ALL, which may or may not
+> > suffer from a similar problem.
+> We would love to be able to run KASAN together with
+> CONFIG_INIT_STACK_ALL on syzbot, as this will potentially reduce the
+> number of flaky errors.
 
-Applied, thanks
+Doesn't that just limit the usefulness of KASAN, as you no longer catch
+actual accesses to unintialized variables that KASAN is designed to find?
 
--- 
-~Vinod
+> Given that we already increase the stack size in KASAN builds, how big
+> of a problem are these warnings?
+> Perhaps it's better to disable them in this configuration, or push the limit up?
+
+I'm really hoping to lower the per-function limit for 'allmodconfig' builds,
+since both a high limit and lots of bogus warnings prevent us from
+noticing any newly introduced functions that use a lot of kernel stack
+without KASAN.
+
+An allmodconfig build (and ideally also any randconfig build) should always
+complete without warnings to be useful for compile testing.
+
+       Arnd
