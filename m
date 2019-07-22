@@ -2,149 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 224586FF0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 13:54:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 290616FF0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 13:55:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729104AbfGVLyj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 07:54:39 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:46093 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728265AbfGVLyi (ORCPT
+        id S1728265AbfGVLz2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 07:55:28 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:46629 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730062AbfGVLz2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 07:54:38 -0400
-Received: by mail-ua1-f65.google.com with SMTP id o19so15177508uap.13
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 04:54:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=c+jcqREf0y9aZZyOwn61TZepULbNlwtiLvYl1u1X4h0=;
-        b=jYgsjNrm5DLwDRKga2G6kbcDqPs0WqeGaCaUJTW71luxttK/AKH8nd1s3ahL10ppLc
-         fOeSvqncdR7y5Zkoz03hM5q5wLRrTfRijStSrb2iKT0btXaqEkkkX2hbuiLV+qwbFE81
-         Ezs30ZYWr3O8Hdy2HZZobySjUci7JPRa+7P8ccen9AI982wZSqGfQJVzoiNbhje0z7o9
-         eP1htrnKA5GUIuym0D5NhwEP9Vt45b1t4sKWVXDB2mzKb+BMCyQnQ1KIJvMmsG7Y7IP8
-         C8B3+6b+v4OiIGMR7Pz8eDZp12559FVVBADFYIsc/0mwjyyEZctgDkf8g1IaCNU8iM8M
-         amvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c+jcqREf0y9aZZyOwn61TZepULbNlwtiLvYl1u1X4h0=;
-        b=BRaslM/Kxm6RePeEqsgBNEBCR7fWgkYPXTFhFaozQdR13/DEN8LD3RxuZ55bGTYeXU
-         GKJmf3SFSxpmToxFy5QHIAD6oGiPBtjzYBwEOrk1gOuQujgLOyoXRJBSPJW0q6wTWttx
-         u6/WDT/Gvs3S7PGEAwfkQ7R3AvpCc3f8ihLioqqtfdjk7IUnC6aJglVJjOu9ezv7VGJw
-         imEh5w6VyW6uRNBHW1ybpBXaL+GS3pumV24xu7xLGMqLT/15BGWTyiI4Y7eD53LQTqvI
-         jYo7LN5PCUeQOzfq5a9nG9bFsXsABzNGCNZStpUsiCoLUtd2A2STPAzAoODP5Ql4U0Qv
-         6tRw==
-X-Gm-Message-State: APjAAAUp3wE/62ruL8/Wvm5EMb6AHY2w5/vcIgXqKvKPDGvU6EY4vmer
-        3JEbmu3JXSgsK0tzmc+THp0cDBT7SIGtyXBKsDOC7A==
-X-Google-Smtp-Source: APXvYqyER+QheiF65Y24ygl+OAmEAkNJ0+BDjyOfafxC+aFcXzqZpZP/NHU00/dvkHkEZnPUIEUhDuaRlU44tBGPerU=
-X-Received: by 2002:a9f:31a2:: with SMTP id v31mr41180854uad.15.1563796477559;
- Mon, 22 Jul 2019 04:54:37 -0700 (PDT)
+        Mon, 22 Jul 2019 07:55:28 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MSbov-1i0IYV27p3-00T06j; Mon, 22 Jul 2019 13:55:22 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] [v3] page flags: prioritize kasan bits over last-cpuid
+Date:   Mon, 22 Jul 2019 13:55:13 +0200
+Message-Id: <20190722115520.3743282-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-References: <89c3ef495c367d58ca3abe99a1f82c48f8c08705.1563274904.git.baolin.wang@linaro.org>
-In-Reply-To: <89c3ef495c367d58ca3abe99a1f82c48f8c08705.1563274904.git.baolin.wang@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 22 Jul 2019 13:54:01 +0200
-Message-ID: <CAPDyKFq1y6xVfA=b1ybWvA1+e9h9aSteHAHjBbXvXGVJx95FQA@mail.gmail.com>
-Subject: Re: [PATCH v4] mmc: host: sdhci-sprd: Fix the incorrect soft reset
- operation when runtime resuming
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:HYCKKaWem6pMuWADqfMV+oLPSrN4UO4x5g8SpZTmnBVDkynf91r
+ u4QKrrDHUt8/L0iJAYkC0sRQIH8sGZT1eJYIG0RPerjoOSnjqfL1TguSBpVTT8B9g4uHjy2
+ ZA7aKQ0OaZsIg/+/qG90Abp81/nRdkOh+m8yzTAL5In48TozJn5YF/lF8b78mymIdIBLg76
+ s1Hfb6QgTM1V/YP9cUn6w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:vBG3mOLaeAU=:guUWUZc8D6eSdeLn+5NxyV
+ 1FMBdMbh3gfxEpkKl3SogitvEh4ZH7K7U4/jUzUNa/++1/ahkInucQ4Wp76voSBRSmB8m2vNS
+ L2gNOH5AwqAfUaCeOXgMOqAt0L6Ntuf/8hgo6yk9Hm453wrU6n+Pm+0KV/G+A1WIh2Xy5jmGf
+ R3rgQgHvnEaY1ohRQjKuZCSUjtUc2LY+9JLdN0vISYYZNRGV755z01ENjHpJVM4xt7q+rNxp6
+ y+3rts1GL0ouI3sqefSAowCCzvoTch3Y1gRiLlME//e5bhN0JKGVdClvHm/9E9BL80DpB83WC
+ iPNxNapVXGRh2uHmpbnOIYW7ZGrdyl6t+0blZdiGIUWPP1H8/FyH8JoIvIe2Jmd8eNfOkCf5E
+ S5tMStUvUkq3wtjBtRDONd6duaWXY8FlRO2Qv7LKqCumTzTGdYpoQZB2IN2vxrCgCg46FgSVF
+ DSzonEV7wj7LJPopGNJ2J6mJlGnmd3zPZ50rjqjEV15LS+mC02VPFuGgZN7kMCgcfGKeHwR6h
+ tIq+LnCkSJc8WHXAIu4MEDfx3H9QP+PdGhMBlu99bqLHDmgI/X/l2e1tuzSs3rtoVR8SMTrXw
+ KKx+rC3bRbg9NrHq6BufmAM8d0T2HHOvwja85N+EEYRaV5Ts671eu8BnXKzBtu2pQH6VLxhdh
+ h0iiZ/LuZBX7xI2Uk8kJrumpV239WjEPOr088W+bx2TwIuDtPQH1oEWyN17dRXFyYKq5a9iwd
+ D/d4aQQNRDHKRk3la1/JZMErAPiRinswvmESMA==
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 17 Jul 2019 at 04:29, Baolin Wang <baolin.wang@linaro.org> wrote:
->
-> In sdhci_runtime_resume_host() function, we will always do software reset
-> for all, which will cause Spreadtrum host controller work abnormally after
-> resuming.
+ARM64 randdconfig builds regularly run into a build error, especially
+when NUMA_BALANCING and SPARSEMEM are enabled but not SPARSEMEM_VMEMMAP:
 
-What does "software reset for all" means?
+ #error "KASAN: not enough bits in page flags for tag"
 
->
-> Thus for Spreadtrum platform that will not power down the SD/eMMC card during
-> runtime suspend, we should not do software reset for all.
+The last-cpuid bits are already contitional on the available space,
+so the result of the calculation is a bit random on whether they
+were already left out or not.
 
-Normally, sdhci hosts that enters runtime suspend doesn't power off
-the card (there are some exceptions like PCI variants).
+Adding the kasan tag bits before last-cpuid makes it much more likely
+to end up with a successful build here, and should be reliable for
+randconfig at least, as long as that does not randomize NR_CPUS
+or NODES_SHIFT but uses the defaults.
 
-So, what's so special here and how does the reset come into play? I
-don't see sdhci doing a reset in sdhci_runtime_suspend|resume_host()
-and nor doesn the callback from the sdhci-sprd.c variant doing it.
+In order for the modified check to not trigger in the x86 vdso32 code
+where all constants are wrong (building with -m32), enclose all the
+definitions with an #ifdef.
 
-> To fix this
-> issue, adding a specific reset operation that adds one condition to validate
-> the power mode to decide if we can do software reset for all or just reset
-> command and data lines.
->
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> ---
-> Changess from v3:
->  - Use ios.power_mode to validate if the card is power down or not.
->
-> Changes from v2:
->  - Simplify the sdhci_sprd_reset() by issuing sdhci_reset().
->
-> Changes from v1:
->  - Add a specific reset operation instead of changing the core to avoid
->  affecting other hardware.
-> ---
->  drivers/mmc/host/sdhci-sprd.c |   19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-> index 603a5d9..94f9726 100644
-> --- a/drivers/mmc/host/sdhci-sprd.c
-> +++ b/drivers/mmc/host/sdhci-sprd.c
-> @@ -373,6 +373,23 @@ static unsigned int sdhci_sprd_get_max_timeout_count(struct sdhci_host *host)
->         return 1 << 31;
->  }
->
-> +static void sdhci_sprd_reset(struct sdhci_host *host, u8 mask)
-> +{
-> +       struct mmc_host *mmc = host->mmc;
-> +
-> +       /*
-> +        * When try to reset controller after runtime suspend, we should not
-> +        * reset for all if the SD/eMMC card is not power down, just reset
-> +        * command and data lines instead. Otherwise will meet some strange
-> +        * behaviors for Spreadtrum host controller.
-> +        */
-> +       if (host->runtime_suspended && (mask & SDHCI_RESET_ALL) &&
-> +           mmc->ios.power_mode == MMC_POWER_ON)
-> +               mask = SDHCI_RESET_CMD | SDHCI_RESET_DATA;
+Fixes: 2813b9c02962 ("kasan, mm, arm64: tag non slab memory allocated via pagealloc")
+Link: https://lore.kernel.org/lkml/20190618095347.3850490-1-arnd@arndb.de/
+Reviewed-by: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v3: rework the #error message to make more sense
+v2: fix a build regression with vdso32
+---
+ include/linux/page-flags-layout.h | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-Can sdhci_sprd_reset() be called when the host is runtime suspended?
-That sounds like a bug to me, no?
+diff --git a/include/linux/page-flags-layout.h b/include/linux/page-flags-layout.h
+index 1dda31825ec4..71283739ffd2 100644
+--- a/include/linux/page-flags-layout.h
++++ b/include/linux/page-flags-layout.h
+@@ -32,6 +32,7 @@
+ 
+ #endif /* CONFIG_SPARSEMEM */
+ 
++#ifndef BUILD_VDSO32_64
+ /*
+  * page->flags layout:
+  *
+@@ -76,20 +77,22 @@
+ #define LAST_CPUPID_SHIFT 0
+ #endif
+ 
+-#if SECTIONS_WIDTH+ZONES_WIDTH+NODES_SHIFT+LAST_CPUPID_SHIFT <= BITS_PER_LONG - NR_PAGEFLAGS
++#ifdef CONFIG_KASAN_SW_TAGS
++#define KASAN_TAG_WIDTH 8
++#else
++#define KASAN_TAG_WIDTH 0
++#endif
++
++#if SECTIONS_WIDTH+ZONES_WIDTH+NODES_SHIFT+LAST_CPUPID_SHIFT+KASAN_TAG_WIDTH \
++	<= BITS_PER_LONG - NR_PAGEFLAGS
+ #define LAST_CPUPID_WIDTH LAST_CPUPID_SHIFT
+ #else
+ #define LAST_CPUPID_WIDTH 0
+ #endif
+ 
+-#ifdef CONFIG_KASAN_SW_TAGS
+-#define KASAN_TAG_WIDTH 8
+ #if SECTIONS_WIDTH+NODES_WIDTH+ZONES_WIDTH+LAST_CPUPID_WIDTH+KASAN_TAG_WIDTH \
+ 	> BITS_PER_LONG - NR_PAGEFLAGS
+-#error "KASAN: not enough bits in page flags for tag"
+-#endif
+-#else
+-#define KASAN_TAG_WIDTH 0
++#error "Not enough bits in page flags"
+ #endif
+ 
+ /*
+@@ -104,4 +107,5 @@
+ #define LAST_CPUPID_NOT_IN_PAGE_FLAGS
+ #endif
+ 
++#endif
+ #endif /* _LINUX_PAGE_FLAGS_LAYOUT */
+-- 
+2.20.0
 
-> +
-> +       sdhci_reset(host, mask);
-> +}
-> +
->  static struct sdhci_ops sdhci_sprd_ops = {
->         .read_l = sdhci_sprd_readl,
->         .write_l = sdhci_sprd_writel,
-> @@ -381,7 +398,7 @@ static unsigned int sdhci_sprd_get_max_timeout_count(struct sdhci_host *host)
->         .get_max_clock = sdhci_sprd_get_max_clock,
->         .get_min_clock = sdhci_sprd_get_min_clock,
->         .set_bus_width = sdhci_set_bus_width,
-> -       .reset = sdhci_reset,
-> +       .reset = sdhci_sprd_reset,
->         .set_uhs_signaling = sdhci_sprd_set_uhs_signaling,
->         .hw_reset = sdhci_sprd_hw_reset,
->         .get_max_timeout_count = sdhci_sprd_get_max_timeout_count,
-> --
-> 1.7.9.5
->
-
-Kind regards
-Uffe
