@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DD5370CAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 00:33:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E027370CB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 00:33:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729808AbfGVWdl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 18:33:41 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43077 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727381AbfGVWdl (ORCPT
+        id S1733211AbfGVWdp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 18:33:45 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42269 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726653AbfGVWdm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 18:33:41 -0400
-Received: by mail-pf1-f194.google.com with SMTP id i189so18054977pfg.10
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 15:33:40 -0700 (PDT)
+        Mon, 22 Jul 2019 18:33:42 -0400
+Received: by mail-pg1-f194.google.com with SMTP id t132so18327362pgb.9
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 15:33:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=OiNiLucFHzcy62Q/uV7Rl20nKJBchzgLzRjk8lPRvTI=;
-        b=EM1IgF0DVayCa3ZHqu5MQDHFJSfM22gDk5jlUi2ZxHVKw4BV+5cVEkxIY1MV8UfbfF
-         3rOaf+MSnOe8YwY66/Uptf55irntWYTmMTcnr0/ZptEkCnX6Gesp19VgY45q++QW2LbI
-         6yDY21e3Pb8fFwKbQEVg44xtGV5fQyPv6X3Tc=
+        bh=WWFTKtpGRlvvtiWS/Mg0wAkpilGgkx7X1cSC4y5EWxE=;
+        b=R2/O16xw6Vk/KNoxUlhUa5Y+bXgLiwKgbdav7p8y4DZGly/uyjCTGTMmALhIz+umS2
+         BzWjpf90ZaYSY/iJRimrYmRKxNKa5lfLyYlUtkqPpeXJE1zQboA2EQf93zE2W+kDjXt5
+         XiLOxoYWuYSBNhATVp5D+auF3i3e+jHCk2Ttg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=OiNiLucFHzcy62Q/uV7Rl20nKJBchzgLzRjk8lPRvTI=;
-        b=NEC4F4kC7GnymlMIxUFn5pLN6UZHCaLjFwHFBY9VeOic0IVPdubweirhO5kYxmTHID
-         HVn+DKM//BS3+TShT2hH4g4rp1URy2XYbmHjEyVGtjjWg3czobZoJV45+MotCzqD76F/
-         oUTHpoSsdvW00U41ZoMiE51gcJVvcKzj5vX0/7YmzsrHUBzt7+fgkrPhzY20o+hwdwqh
-         TLykUxsfkVxxEc3sbaa6c5AY3LJToIcxj20J9Cx+IWm1ouLyxC5j+nWXL0wVGreOKpiQ
-         kYtZCEYKOM29m+bZZbl13vWFmvpzYKk9CROLi+LZ5c0amdxAlGKuwQBe0QqPfZLdymDS
-         drEA==
-X-Gm-Message-State: APjAAAWiVlAGEKdLUhLb8V05LI1o3SgfJv8xYXox6cjhHFdPfLNQmKJD
-        y9RohUnaMCA5FiYpprNPm8tJYg==
-X-Google-Smtp-Source: APXvYqyVI6/r2/2vccLiPS9z4xcidbOTHjITUeNO/JzPjKOnDzA7LRMstmsIGWAscqES/rL2AkAPiQ==
-X-Received: by 2002:a17:90a:cb8e:: with SMTP id a14mr30424267pju.124.1563834820452;
-        Mon, 22 Jul 2019 15:33:40 -0700 (PDT)
+        bh=WWFTKtpGRlvvtiWS/Mg0wAkpilGgkx7X1cSC4y5EWxE=;
+        b=hpZDCOy0JCbUPfPFfsl6Nr9TLAwmFl769VtfUCsjzwRiaaMeMA0NLS6U6pLeLdCFIE
+         fPrFjE2EQkkGro0BgdslvWEOu3vJbXCIn06aD2ZF8lCneJJZVeFl61q1/O+LWPmuhucC
+         xl4qUlD+Spag02/aVbJp4MlsLZY98e5TdaOikwtN9iGQwIYVzDd3GzEtzTdkLwOMivx3
+         oXs4pvcCERz66XbngfIrcvsGOV6JZt3XoKKeeH/MPM8gY8JzJubUGjHESa0EcN1hs3MF
+         v2Q0Viy3Tg/+mC/55TKmNO8atPIhHALFrBz7x74py4QfNSS2hJyRDDz2+uCDSQ4hhbnE
+         481Q==
+X-Gm-Message-State: APjAAAV16p3JMVRZAgQHJ/tPxgTmG5Cb8CcaWs/jvNWnhb+KbiD3PiPy
+        88+Rv112lCHhJr2Oj/zqXAkojA==
+X-Google-Smtp-Source: APXvYqzjNkKn9xJVfs5xGw8cpI55YmF3SpQ0/H+z0hmLe5p5Yj86uEZ+s3rh1vxlzdvzJ8lbYTj9ug==
+X-Received: by 2002:a17:90a:b011:: with SMTP id x17mr79797580pjq.113.1563834822065;
+        Mon, 22 Jul 2019 15:33:42 -0700 (PDT)
 Received: from ravisadineni0.mtv.corp.google.com ([2620:15c:202:1:98d2:1663:78dd:3593])
-        by smtp.gmail.com with ESMTPSA id k186sm20614285pga.68.2019.07.22.15.33.39
+        by smtp.gmail.com with ESMTPSA id k186sm20614285pga.68.2019.07.22.15.33.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 22 Jul 2019 15:33:39 -0700 (PDT)
+        Mon, 22 Jul 2019 15:33:41 -0700 (PDT)
 From:   Ravi Chandra Sadineni <ravisadineni@chromium.org>
 To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
         x86@kernel.org, rjw@rjwysocki.net, pavel@ucw.cz,
@@ -49,12 +49,13 @@ To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
         ravisadineni@chromium.org, bhe@redhat.com, dyoung@redhat.com,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         tbroch@chromium.org
-Subject: [PATCH 0/2] power: Refactor device level sysfs.
-Date:   Mon, 22 Jul 2019 15:33:35 -0700
-Message-Id: <20190722223337.36199-1-ravisadineni@chromium.org>
+Subject: [PATCH 1/2 V2] power: sysfs: Remove wakeup_abort_count attribute.
+Date:   Mon, 22 Jul 2019 15:33:36 -0700
+Message-Id: <20190722223337.36199-2-ravisadineni@chromium.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190722182451.GB24412@kroah.com>
+In-Reply-To: <20190722223337.36199-1-ravisadineni@chromium.org>
 References: <20190722182451.GB24412@kroah.com>
+ <20190722223337.36199-1-ravisadineni@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,19 +63,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wakeup_abort_count and wakeup_count attributes print the
-same (wakeup_count) variable. Thus this patchset removes the
-duplicate wakeup_abort_count sysfs attribute. This patchset also
-exposes event_count as a sysfs attribute.
+wakeup_abort_count and wakeup_count sysfs entries print the
+same (wakeup_count) attribute. This patch removes the duplicate
+wakeup_abort_count sysfs entry.
 
-Ravi Chandra Sadineni (2):
-  power: sysfs: Remove wakeup_abort_count attribute.
-  power:sysfs: Expose device wakeup_event_count.
+Signed-off-by: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+---
+ Documentation/ABI/testing/sysfs-devices-power | 25 ++++++-------------
+ drivers/base/power/sysfs.c                    | 19 --------------
+ 2 files changed, 7 insertions(+), 37 deletions(-)
 
- Documentation/ABI/testing/sysfs-devices-power | 36 +++++++++----------
- drivers/base/power/sysfs.c                    | 27 +++++++-------
- 2 files changed, 33 insertions(+), 30 deletions(-)
-
+diff --git a/Documentation/ABI/testing/sysfs-devices-power b/Documentation/ABI/testing/sysfs-devices-power
+index 80a00f7b6667..1ca04b4f0489 100644
+--- a/Documentation/ABI/testing/sysfs-devices-power
++++ b/Documentation/ABI/testing/sysfs-devices-power
+@@ -81,12 +81,13 @@ What:		/sys/devices/.../power/wakeup_count
+ Date:		September 2010
+ Contact:	Rafael J. Wysocki <rjw@rjwysocki.net>
+ Description:
+-		The /sys/devices/.../wakeup_count attribute contains the number
+-		of signaled wakeup events associated with the device.  This
+-		attribute is read-only.  If the device is not capable to wake up
+-		the system from sleep states, this attribute is not present.
+-		If the device is not enabled to wake up the system from sleep
+-		states, this attribute is empty.
++		The /sys/devices/.../wakeup_count attribute contains the
++		number of times the processing of a wakeup event associated with
++		the device might have aborted system transition into a sleep
++		state in progress. This attribute is read-only. If the device
++		is not capable to wake up the system from sleep states, this
++		attribute is not present. If the device is not enabled to wake
++		up the system from sleep states, this attribute is empty.
+ 
+ What:		/sys/devices/.../power/wakeup_active_count
+ Date:		September 2010
+@@ -100,18 +101,6 @@ Description:
+ 		the device is not enabled to wake up the system from sleep
+ 		states, this attribute is empty.
+ 
+-What:		/sys/devices/.../power/wakeup_abort_count
+-Date:		February 2012
+-Contact:	Rafael J. Wysocki <rjw@rjwysocki.net>
+-Description:
+-		The /sys/devices/.../wakeup_abort_count attribute contains the
+-		number of times the processing of a wakeup event associated with
+-		the device might have aborted system transition into a sleep
+-		state in progress.  This attribute is read-only.  If the device
+-		is not capable to wake up the system from sleep states, this
+-		attribute is not present.  If the device is not enabled to wake
+-		up the system from sleep states, this attribute is empty.
+-
+ What:		/sys/devices/.../power/wakeup_expire_count
+ Date:		February 2012
+ Contact:	Rafael J. Wysocki <rjw@rjwysocki.net>
+diff --git a/drivers/base/power/sysfs.c b/drivers/base/power/sysfs.c
+index 1b9c281cbe41..f42044d9711c 100644
+--- a/drivers/base/power/sysfs.c
++++ b/drivers/base/power/sysfs.c
+@@ -375,24 +375,6 @@ static ssize_t wakeup_active_count_show(struct device *dev,
+ 
+ static DEVICE_ATTR_RO(wakeup_active_count);
+ 
+-static ssize_t wakeup_abort_count_show(struct device *dev,
+-				       struct device_attribute *attr,
+-				       char *buf)
+-{
+-	unsigned long count = 0;
+-	bool enabled = false;
+-
+-	spin_lock_irq(&dev->power.lock);
+-	if (dev->power.wakeup) {
+-		count = dev->power.wakeup->wakeup_count;
+-		enabled = true;
+-	}
+-	spin_unlock_irq(&dev->power.lock);
+-	return enabled ? sprintf(buf, "%lu\n", count) : sprintf(buf, "\n");
+-}
+-
+-static DEVICE_ATTR_RO(wakeup_abort_count);
+-
+ static ssize_t wakeup_expire_count_show(struct device *dev,
+ 					struct device_attribute *attr,
+ 					char *buf)
+@@ -580,7 +562,6 @@ static struct attribute *wakeup_attrs[] = {
+ 	&dev_attr_wakeup.attr,
+ 	&dev_attr_wakeup_count.attr,
+ 	&dev_attr_wakeup_active_count.attr,
+-	&dev_attr_wakeup_abort_count.attr,
+ 	&dev_attr_wakeup_expire_count.attr,
+ 	&dev_attr_wakeup_active.attr,
+ 	&dev_attr_wakeup_total_time_ms.attr,
 -- 
 2.20.1
 
