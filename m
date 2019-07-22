@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EC4770437
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:43:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01A4F70424
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 17:43:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729892AbfGVPm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 11:42:57 -0400
-Received: from foss.arm.com ([217.140.110.172]:40294 "EHLO foss.arm.com"
+        id S1729918AbfGVPm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 11:42:58 -0400
+Received: from foss.arm.com ([217.140.110.172]:40328 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729862AbfGVPmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 11:42:54 -0400
+        id S1729886AbfGVPm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 11:42:57 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98F461509;
-        Mon, 22 Jul 2019 08:42:53 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 65B0B1596;
+        Mon, 22 Jul 2019 08:42:56 -0700 (PDT)
 Received: from e112269-lin.arm.com (e112269-lin.cambridge.arm.com [10.1.196.133])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0FAD03F694;
-        Mon, 22 Jul 2019 08:42:50 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CECB03F694;
+        Mon, 22 Jul 2019 08:42:53 -0700 (PDT)
 From:   Steven Price <steven.price@arm.com>
 To:     linux-mm@kvack.org
 Cc:     Steven Price <steven.price@arm.com>,
@@ -36,9 +36,9 @@ Cc:     Steven Price <steven.price@arm.com>,
         Mark Rutland <Mark.Rutland@arm.com>,
         "Liang, Kan" <kan.liang@linux.intel.com>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v9 10/21] mm: Add generic p?d_leaf() macros
-Date:   Mon, 22 Jul 2019 16:41:59 +0100
-Message-Id: <20190722154210.42799-11-steven.price@arm.com>
+Subject: [PATCH v9 11/21] mm: pagewalk: Add p4d_entry() and pgd_entry()
+Date:   Mon, 22 Jul 2019 16:42:00 +0100
+Message-Id: <20190722154210.42799-12-steven.price@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190722154210.42799-1-steven.price@arm.com>
 References: <20190722154210.42799-1-steven.price@arm.com>
@@ -49,47 +49,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Exposing the pud/pgd levels of the page tables to walk_page_range() means
-we may come across the exotic large mappings that come with large areas
-of contiguous memory (such as the kernel's linear map).
+pgd_entry() and pud_entry() were removed by commit 0b1fbfe50006c410
+("mm/pagewalk: remove pgd_entry() and pud_entry()") because there were
+no users. We're about to add users so reintroduce them, along with
+p4d_entry() as we now have 5 levels of tables.
 
-For architectures that don't provide all p?d_leaf() macros, provide
-generic do nothing default that are suitable where there cannot be leaf
-pages that that level.
+Note that commit a00cc7d9dd93d66a ("mm, x86: add support for
+PUD-sized transparent hugepages") already re-added pud_entry() but with
+different semantics to the other callbacks. Since there have never
+been upstream users of this, revert the semantics back to match the
+other callbacks. This means pud_entry() is called for all entries, not
+just transparent huge pages.
 
 Signed-off-by: Steven Price <steven.price@arm.com>
 ---
- include/asm-generic/pgtable.h | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ include/linux/mm.h | 15 +++++++++------
+ mm/pagewalk.c      | 27 ++++++++++++++++-----------
+ 2 files changed, 25 insertions(+), 17 deletions(-)
 
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index 75d9d68a6de7..46275896ca66 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -1188,4 +1188,23 @@ static inline bool arch_has_pfn_modify_check(void)
- #define mm_pmd_folded(mm)	__is_defined(__PAGETABLE_PMD_FOLDED)
- #endif
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 0334ca97c584..b22799129128 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1432,15 +1432,14 @@ void unmap_vmas(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
  
-+/*
-+ * p?d_leaf() - true if this entry is a final mapping to a physical address.
-+ * This differs from p?d_huge() by the fact that they are always available (if
-+ * the architecture supports large pages at the appropriate level) even
-+ * if CONFIG_HUGETLB_PAGE is not defined.
-+ */
-+#ifndef pgd_leaf
-+#define pgd_leaf(x)	0
-+#endif
-+#ifndef p4d_leaf
-+#define p4d_leaf(x)	0
-+#endif
-+#ifndef pud_leaf
-+#define pud_leaf(x)	0
-+#endif
-+#ifndef pmd_leaf
-+#define pmd_leaf(x)	0
-+#endif
-+
- #endif /* _ASM_GENERIC_PGTABLE_H */
+ /**
+  * mm_walk - callbacks for walk_page_range
+- * @pud_entry: if set, called for each non-empty PUD (2nd-level) entry
+- *	       this handler should only handle pud_trans_huge() puds.
+- *	       the pmd_entry or pte_entry callbacks will be used for
+- *	       regular PUDs.
+- * @pmd_entry: if set, called for each non-empty PMD (3rd-level) entry
++ * @pgd_entry: if set, called for each non-empty PGD (top-level) entry
++ * @p4d_entry: if set, called for each non-empty P4D entry
++ * @pud_entry: if set, called for each non-empty PUD entry
++ * @pmd_entry: if set, called for each non-empty PMD entry
+  *	       this handler is required to be able to handle
+  *	       pmd_trans_huge() pmds.  They may simply choose to
+  *	       split_huge_page() instead of handling it explicitly.
+- * @pte_entry: if set, called for each non-empty PTE (4th-level) entry
++ * @pte_entry: if set, called for each non-empty PTE (lowest-level) entry
+  * @pte_hole: if set, called for each hole at all levels
+  * @hugetlb_entry: if set, called for each hugetlb entry
+  * @test_walk: caller specific callback function to determine whether
+@@ -1455,6 +1454,10 @@ void unmap_vmas(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
+  * (see the comment on walk_page_range() for more details)
+  */
+ struct mm_walk {
++	int (*pgd_entry)(pgd_t *pgd, unsigned long addr,
++			 unsigned long next, struct mm_walk *walk);
++	int (*p4d_entry)(p4d_t *p4d, unsigned long addr,
++			 unsigned long next, struct mm_walk *walk);
+ 	int (*pud_entry)(pud_t *pud, unsigned long addr,
+ 			 unsigned long next, struct mm_walk *walk);
+ 	int (*pmd_entry)(pmd_t *pmd, unsigned long addr,
+diff --git a/mm/pagewalk.c b/mm/pagewalk.c
+index c3084ff2569d..98373a9f88b8 100644
+--- a/mm/pagewalk.c
++++ b/mm/pagewalk.c
+@@ -90,15 +90,9 @@ static int walk_pud_range(p4d_t *p4d, unsigned long addr, unsigned long end,
+ 		}
+ 
+ 		if (walk->pud_entry) {
+-			spinlock_t *ptl = pud_trans_huge_lock(pud, walk->vma);
+-
+-			if (ptl) {
+-				err = walk->pud_entry(pud, addr, next, walk);
+-				spin_unlock(ptl);
+-				if (err)
+-					break;
+-				continue;
+-			}
++			err = walk->pud_entry(pud, addr, next, walk);
++			if (err)
++				break;
+ 		}
+ 
+ 		split_huge_pud(walk->vma, pud, addr);
+@@ -131,7 +125,12 @@ static int walk_p4d_range(pgd_t *pgd, unsigned long addr, unsigned long end,
+ 				break;
+ 			continue;
+ 		}
+-		if (walk->pmd_entry || walk->pte_entry)
++		if (walk->p4d_entry) {
++			err = walk->p4d_entry(p4d, addr, next, walk);
++			if (err)
++				break;
++		}
++		if (walk->pud_entry || walk->pmd_entry || walk->pte_entry)
+ 			err = walk_pud_range(p4d, addr, next, walk);
+ 		if (err)
+ 			break;
+@@ -157,7 +156,13 @@ static int walk_pgd_range(unsigned long addr, unsigned long end,
+ 				break;
+ 			continue;
+ 		}
+-		if (walk->pmd_entry || walk->pte_entry)
++		if (walk->pgd_entry) {
++			err = walk->pgd_entry(pgd, addr, next, walk);
++			if (err)
++				break;
++		}
++		if (walk->p4d_entry || walk->pud_entry || walk->pmd_entry ||
++				walk->pte_entry)
+ 			err = walk_p4d_range(pgd, addr, next, walk);
+ 		if (err)
+ 			break;
 -- 
 2.20.1
 
