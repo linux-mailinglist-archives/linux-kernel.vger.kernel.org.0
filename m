@@ -2,50 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47EC270232
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 16:22:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76A9170246
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 16:26:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730624AbfGVOWm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 10:22:42 -0400
-Received: from 8bytes.org ([81.169.241.247]:44758 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730178AbfGVOWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 10:22:42 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 8CE321F2; Mon, 22 Jul 2019 16:22:40 +0200 (CEST)
-Date:   Mon, 22 Jul 2019 16:22:38 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, kevin.tian@intel.com,
-        ashok.raj@intel.com, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, cai@lca.pw,
-        jacob.jun.pan@intel.com
-Subject: Re: [PATCH v2 7/7] iommu/vt-d: Consolidate domain_init() to avoid
- duplication
-Message-ID: <20190722142238.GA12009@8bytes.org>
-References: <20190612002851.17103-1-baolu.lu@linux.intel.com>
- <20190612002851.17103-8-baolu.lu@linux.intel.com>
- <20190718171615.2ed56280@x1.home>
- <f56599a6-77ac-e1ef-4843-51167b1284b3@linux.intel.com>
- <20190719091952.58255c47@x1.home>
- <13294960-c040-c501-c279-aa61d780d25e@linux.intel.com>
+        id S1730840AbfGVO0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 10:26:03 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:56205 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbfGVO0C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 10:26:02 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a15so35389849wmj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 07:26:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MSSG+/SPzy4dXqjSfDAF61vds83VEHomtFtlG6NVWCM=;
+        b=NpyIgKdV7f7bde7xQbG/M3QiHf9/GjR0/rkrYOmJXU1I5elJ8P9PaSvQIxo+ZYHGSq
+         vaDOB4Ht6EywdynGGeXW0KxBvlepXQnmdxhncg1tajY8pqZD7vD+Z5IWQ+70JEGjbCs8
+         nOFjvRpLwdCpUbrZ63fIWeP1nEeAi7jxrKf+ZDupj06EaGQzWoPi4LeqNC7i9NY5Jy1J
+         zlHts0hamZwcT653XwN1lghUIzuhDWZZDqqZVCShutAQ/Df8TVZ734qi0pmQhE/dc75b
+         njomznYmB7pXlQ4tU1pYmv/JiS15gw3VrrUOkhRD96P/NWjSviyc1acQeIGNIJqUyNOn
+         2BjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MSSG+/SPzy4dXqjSfDAF61vds83VEHomtFtlG6NVWCM=;
+        b=VnKUjw7gOiM17ox+aZyR1V214dIpBIYowbMOC3ZEh54zg+w7hs7tqxAIm0PQysjuYu
+         RrKCXbvY4i7D7IDiTSp8xyrkLx6iEgEs+b0KWY1Fs5fsib6dr2kSEVaUoeEvxJ2moVSa
+         /67GxUMaqKXWJ+eRmbBojerKLBHj2EWb6svKNpPEtKjs4jQUn5NoRfMfNPtDBG3L1UX4
+         S4zE6C0fqNcXAVNWeFII7vwPXFdwSvvoREJ/ojulaQbQ4cQ2yXnmLTDJRw7Rx8/PkJCF
+         3vjVdad/YJt498jes5Ejm9Twr9zC8JHbM1qUlNgF9MMP5vnJDAkJA8jcsvooY32ApcNd
+         9xgA==
+X-Gm-Message-State: APjAAAWm8bVwGR43jMgUajF8109zpzttfFj1UMmKQ1mHCgMx6EJTrvj9
+        J5ST0jri/DiyKZC1JbJ/ttc=
+X-Google-Smtp-Source: APXvYqzcX3cd8YqK8GLkwwC4FaQWzXKuFq07UGXLTjQWfd0zeJDrfqoVabNOYoUrs4LwXjPuL3e9lQ==
+X-Received: by 2002:a05:600c:20d:: with SMTP id 13mr64401057wmi.141.1563805559521;
+        Mon, 22 Jul 2019 07:25:59 -0700 (PDT)
+Received: from localhost.localdomain ([213.220.153.21])
+        by smtp.gmail.com with ESMTPSA id x185sm28552203wmg.46.2019.07.22.07.25.58
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 22 Jul 2019 07:25:58 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, oleg@redhat.com, surenb@google.com,
+        joel@joelfernandes.org
+Subject: [GIT PULL] pidfd fixes
+Date:   Mon, 22 Jul 2019 16:22:41 +0200
+Message-Id: <20190722142238.16129-1-christian@brauner.io>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <13294960-c040-c501-c279-aa61d780d25e@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 20, 2019 at 09:15:58AM +0800, Lu Baolu wrote:
-> Okay. I agree wit you. Let's revert this commit first.
+Hi Linus,
 
-Reverted the patch and queued it to my iommu/fixes branch.
+This contains a fix for pidfd polling. It ensures that the task's exit
+state is visible to all waiters:
 
+The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
 
-Regards,
+  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
 
-	Joerg
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/for-linus-20190722
+
+for you to fetch changes up to b191d6491be67cef2b3fa83015561caca1394ab9:
+
+  pidfd: fix a poll race when setting exit_state (2019-07-22 16:02:03 +0200)
+
+/* Summary */
+The pidfd polling code suffered from a race condition. A waiter could be
+notified via do_notify_pidfd() without the task's exit state being set and
+thus not visible to the waiter. This would cause the waiter to be blocked
+indefinitely. The following schematic illustrates how this could happen:
+
+    CPU 0                            CPU 1
+    ------------------------------------------------
+    exit_notify
+      do_notify_parent
+        do_notify_pidfd
+                                       pidfd_poll
+                                          if (tsk->exit_state)
+      tsk->exit_state = EXIT_DEAD
+
+This is fixed by ensuring that the task's exit state is set before calling
+into do_notify_pidfd(). 
+
+Please consider pulling from the signed for-linus-20190722 tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+for-linus-20190722
+
+----------------------------------------------------------------
+Suren Baghdasaryan (1):
+      pidfd: fix a poll race when setting exit_state
+
+ kernel/exit.c | 1 +
+ 1 file changed, 1 insertion(+)
