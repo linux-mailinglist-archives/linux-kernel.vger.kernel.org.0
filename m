@@ -2,61 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BAEA6FF4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 349F16FF4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729179AbfGVMKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 08:10:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54146 "EHLO mail.kernel.org"
+        id S1729282AbfGVMLX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 08:11:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727164AbfGVMKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 08:10:08 -0400
+        id S1728413AbfGVMLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 08:11:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17D332190D;
-        Mon, 22 Jul 2019 12:10:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 096412190D;
+        Mon, 22 Jul 2019 12:11:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563797407;
-        bh=D7rucIM9C6qwRkiitS0j2IO+oWqEriXBgi9bZmKHDGI=;
+        s=default; t=1563797481;
+        bh=7/4GGkbSj/BIq0gPMtDTgby1bEClkS3rXbv3+CaxRj0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=US93ZFRVZojVgd4+Oz1dHGM3ahkrIvhMPrq7wiEQppuTtQKNlTe9OZMT7avn6kSAS
-         iVMs4PDWZqs3EY/oA0pkCrKOAyQuln2xqEGnzAzYkwxdW6hy56lva9h6HepYe+1UKV
-         ijW+TLtNq9l4vBkp43GmX/I71sl3VbEm0f9kvY7Q=
-Date:   Mon, 22 Jul 2019 14:10:05 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Oded Gabbay <oded.gabbay@gmail.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [git pull] habanalabs fixes for 5.3-rc2
-Message-ID: <20190722121005.GA21997@kroah.com>
-References: <20190722072621.GA26079@ogabbay-VM>
+        b=E/45y5utMHS76gj+/OZzr0orMa3o8x7cTZ/fsUoKlaM+CKlmpNv8OiNUk40QmXIql
+         YNBt2DsE/pLGp2n1usNQV3Tz87lvNu8VOfuJ33ROfhSqYZlZhXXkttks4VI9mOgNTw
+         H7tIQ9/ZuPZ96thOespCgXoaFUU9Pm7VeVxvpQNY=
+Date:   Mon, 22 Jul 2019 14:11:18 +0200
+From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To:     Pavel Machek <pavel@denx.de>
+Cc:     Pawel Laszczak <pawell@cadence.com>,
+        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "rogerq@ti.com" <rogerq@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Jayshri Dajiram Pawar <jpawar@cadence.com>,
+        Rahul Kumar <kurahul@cadence.com>,
+        Anil Joy Varughese <aniljoy@cadence.com>
+Subject: Re: [PATCH v10 0/6] Introduced new Cadence USBSS DRD Driver.
+Message-ID: <20190722121118.GA31543@kroah.com>
+References: <1563733939-21214-1-git-send-email-pawell@cadence.com>
+ <20190721190335.GA19831@xo-6d-61-c0.localdomain>
+ <BYAPR07MB470904ACCD1ED91B10BB6BEFDDC40@BYAPR07MB4709.namprd07.prod.outlook.com>
+ <20190722114839.GA10515@kroah.com>
+ <20190722115644.GA12069@amd>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190722072621.GA26079@ogabbay-VM>
+In-Reply-To: <20190722115644.GA12069@amd>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 10:26:21AM +0300, Oded Gabbay wrote:
-> Hello Greg,
+On Mon, Jul 22, 2019 at 01:56:45PM +0200, Pavel Machek wrote:
+> Hi!
 > 
-> This is habanalabs fixes pull request for 5.3-rc2. 
-> It contains two minor fixes, nothing too exciting.
+> > > >> This patch introduce new Cadence USBSS DRD driver to linux kernel.
+> > > >>
+> > > >> The Cadence USBSS DRD Controller is a highly configurable IP Core which
+> > > >> can be instantiated as Dual-Role Device (DRD), Peripheral Only and
+> > > >> Host Only (XHCI)configurations.
+> > > >
+> > > >I see you are using debugfs to select between DRD, peripheral-onlyh and XHCI...
+> > > >
+> > > >Is that good idea?
+> > > 
+> > > Yes driver allows selecting dr_mode by debugfs. Controller also support such functionality 
+> > > so I don't understand why would it not be a good idea. 
+> > > 
+> > > I personally use this for testing but it can be used to limit controller functionality without 
+> > > recompiling kernel. 
+> > 
+> > debugfs is ONLY for debugging, never rely on it being enabled, or
+> > mounted, on a system in order to have any normal operation happen.
+> > 
+> > So for testing, yes, this is fine.  If this is going to be the normal
+> > api/interface for how to control this driver, no, that is not acceptable
+> > at all.
 > 
-> Thanks,
-> Oded
-> 
-> The following changes since commit c8917b8ff09e8a4d6ef77e32ce0052f7158baa1f:
-> 
->   firmware: fix build errors in paged buffer handling code (2019-07-22 08:44:40 +0200)
-> 
-> are available in the Git repository at:
-> 
->   git://people.freedesktop.org/~gabbayo/linux tags/misc-habanalabs-fixes-2019-07-22
+> It makes a lot of sense for end-user to toggle this... for example
+> when he is lacking right cable for proper otg detection. As it is
+> third driver offering this functionality, I believe we should stop
+> treating it as debugging.
 
-Pulled and pushed out, thanks.
+Then it needs to get out of debugfs, as again, that can not be used for
+any normal end-user operation.
+
+thanks,
 
 greg k-h
