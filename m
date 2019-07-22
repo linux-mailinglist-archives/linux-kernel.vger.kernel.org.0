@@ -2,116 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 492C1706DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:27:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E233570751
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 19:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730718AbfGVR1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 13:27:03 -0400
-Received: from sauhun.de ([88.99.104.3]:42368 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731516AbfGVR0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 13:26:38 -0400
-Received: from localhost (p54B33E22.dip0.t-ipconnect.de [84.179.62.34])
-        by pokefinder.org (Postfix) with ESMTPSA id 58AE44A148F;
-        Mon, 22 Jul 2019 19:26:36 +0200 (CEST)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] mfd: tps80031: convert to devm_i2c_new_dummy_device
-Date:   Mon, 22 Jul 2019 19:26:35 +0200
-Message-Id: <20190722172636.4589-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726710AbfGVRaw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 13:30:52 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46733 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbfGVRaw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 13:30:52 -0400
+Received: by mail-pg1-f195.google.com with SMTP id i8so17969022pgm.13;
+        Mon, 22 Jul 2019 10:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=3WkrBlhQGLRNnJo/MXZZ7vnmbCcs74q4XJirvLk0V8M=;
+        b=sMnH79elSRWNVhT7udK5QBveox3svU97zhfgWSuiCqRHFr423/n22/TjxOGShUPHJ5
+         glbE8Wkj/A91exHCpMAiiYFTrwYE2AYlLInM/cMkICuEY06qwxfkjqDZbyNJBstapcx5
+         jKcRXT60w04z9Fuv0T7Bl0HZFY83C7lrE63T4HC9+vEZpE/7LWqKKAYCwhmr6rJN+SUw
+         XYRSydbnF0NZE1keAvOjfQZLePK/QKpKaaLs3BLj750WLkx5I+SCHdGWB4dRiF2KsziF
+         242EFmmgJr+o1jBWMLck5PWTILTWnu3nKdEzqlxRK01QVEQjJTWjocpHmG4mHeaufh/z
+         OzDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=3WkrBlhQGLRNnJo/MXZZ7vnmbCcs74q4XJirvLk0V8M=;
+        b=azr9CHQ59Ig9F7Pwh67GYzOFuTlgaehW/DVteIICL3dDq28jIXEbH7x2Sr6JW7xh83
+         YRyGesMjfYC5jOmQ9BUySq6xj9gWOiDklB/eCYQwVsm4UOGhyW7ih/zhIRCwN+Xphq9J
+         gFx2Bni/UicE69xhdrgLLIQDvwG9qqAKCRr7u68qn4bsCOj8GnTvOKqNYwGNdDqsAVmn
+         miBr6V539URHCFSZuXPbgMP5RoE5ton7h4i2EpyLZWZhPqrNhi9IYb10Y5Lr6vEC6nqu
+         WACSMsZLlxApxwYro4dYPgqyKNTK5R+WwRLywWR2SCnAjgj3qo9ZxxAj3glnF7hoDk7R
+         mITA==
+X-Gm-Message-State: APjAAAVDjllKVoMA47IEoSxv/h8s/+VS+N+UpCelRLShFOB7MdoQj1nH
+        GwXkZyfHv9RBVGLZgXft6qBMjCzJ
+X-Google-Smtp-Source: APXvYqybia81FEHbBtIsKy2f17+dgZLRK5oM7wUDCFjbIJnf2XyxwwRcQFfFwNNfePBYPs7mNxd6QQ==
+X-Received: by 2002:aa7:8d98:: with SMTP id i24mr1343890pfr.199.1563816651231;
+        Mon, 22 Jul 2019 10:30:51 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id o12sm30748558pjr.22.2019.07.22.10.30.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Jul 2019 10:30:50 -0700 (PDT)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Hsin-Yi Wang <hsinyi@google.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Doug Anderson <dianders@chromium.org>
+Subject: [PATCH] bfq: Check if bfqq is NULL in bfq_insert_request
+Date:   Mon, 22 Jul 2019 10:30:48 -0700
+Message-Id: <1563816648-12057-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move from i2c_new_dummy() to devm_i2c_new_dummy_device(). So, we now get
-an ERRPTR which we use in error handling and we can skip removal of the
-created devices.
+In bfq_insert_request(), bfqq is initialized with:
+	bfqq = bfq_init_rq(rq);
+In bfq_init_rq(), we find:
+	if (unlikely(!rq->elv.icq))
+		return NULL;
+Indeed, rq->elv.icq can be NULL if the memory allocation in
+create_task_io_context() failed.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+A comment in bfq_insert_request() suggests that bfqq is supposed to be
+non-NULL if 'at_head || blk_rq_is_passthrough(rq)' is false. Yet, as
+debugging and practical experience shows, this is not the case in the
+above situation.
+
+This results in the following crash.
+
+Unable to handle kernel NULL pointer dereference
+	at virtual address 00000000000001b0
+...
+Call trace:
+ bfq_setup_cooperator+0x44/0x134
+ bfq_insert_requests+0x10c/0x630
+ blk_mq_sched_insert_requests+0x60/0xb4
+ blk_mq_flush_plug_list+0x290/0x2d4
+ blk_flush_plug_list+0xe0/0x230
+ blk_finish_plug+0x30/0x40
+ generic_writepages+0x60/0x94
+ blkdev_writepages+0x24/0x30
+ do_writepages+0x74/0xac
+ __filemap_fdatawrite_range+0x94/0xc8
+ file_write_and_wait_range+0x44/0xa0
+ blkdev_fsync+0x38/0x68
+ vfs_fsync_range+0x68/0x80
+ do_fsync+0x44/0x80
+
+The problem is relatively easy to reproduce by running an image with
+failslab enabled, such as with:
+
+cd /sys/kernel/debug/failslab
+echo 10 > probability
+echo 300 > times
+
+Avoid the problem by checking if bfqq is NULL before using it. With the
+NULL check in place, requests with missing io context are queued
+immediately, and the crash is no longer seen.
+
+Fixes: 18e5a57d79878 ("block, bfq: postpone rq preparation to insert or merge")
+Reported-by: Hsin-Yi Wang  <hsinyi@google.com>
+Cc: Hsin-Yi Wang <hsinyi@google.com>
+Cc: Nicolas Boichat <drinkcat@chromium.org>
+Cc: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
+ block/bfq-iosched.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Only build tested. Part of a tree-wide move to deprecate
-i2c_new_dummy().
-
- drivers/mfd/tps80031.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/mfd/tps80031.c b/drivers/mfd/tps80031.c
-index 865257ade8ac..907452b86e32 100644
---- a/drivers/mfd/tps80031.c
-+++ b/drivers/mfd/tps80031.c
-@@ -437,12 +437,11 @@ static int tps80031_probe(struct i2c_client *client,
- 		if (tps80031_slave_address[i] == client->addr)
- 			tps80031->clients[i] = client;
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index 72860325245a..56f3f4227010 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -5417,7 +5417,7 @@ static void bfq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
+ 
+ 	spin_lock_irq(&bfqd->lock);
+ 	bfqq = bfq_init_rq(rq);
+-	if (at_head || blk_rq_is_passthrough(rq)) {
++	if (!bfqq || at_head || blk_rq_is_passthrough(rq)) {
+ 		if (at_head)
+ 			list_add(&rq->queuelist, &bfqd->dispatch);
  		else
--			tps80031->clients[i] = i2c_new_dummy(client->adapter,
--						tps80031_slave_address[i]);
--		if (!tps80031->clients[i]) {
-+			tps80031->clients[i] = devm_i2c_new_dummy_device(&client->dev,
-+						client->adapter, tps80031_slave_address[i]);
-+		if (IS_ERR(tps80031->clients[i])) {
- 			dev_err(&client->dev, "can't attach client %d\n", i);
--			ret = -ENOMEM;
--			goto fail_client_reg;
-+			return PTR_ERR(tps80031->clients[i]);
- 		}
- 
- 		i2c_set_clientdata(tps80031->clients[i], tps80031);
-@@ -452,7 +451,7 @@ static int tps80031_probe(struct i2c_client *client,
- 			ret = PTR_ERR(tps80031->regmap[i]);
- 			dev_err(&client->dev,
- 				"regmap %d init failed, err %d\n", i, ret);
--			goto fail_client_reg;
-+			return ret;
- 		}
- 	}
- 
-@@ -461,7 +460,7 @@ static int tps80031_probe(struct i2c_client *client,
- 	if (ret < 0) {
- 		dev_err(&client->dev,
- 			"Silicon version number read failed: %d\n", ret);
--		goto fail_client_reg;
-+		return ret;
- 	}
- 
- 	ret = tps80031_read(&client->dev, TPS80031_SLAVE_ID3,
-@@ -469,7 +468,7 @@ static int tps80031_probe(struct i2c_client *client,
- 	if (ret < 0) {
- 		dev_err(&client->dev,
- 			"Silicon eeprom version read failed: %d\n", ret);
--		goto fail_client_reg;
-+		return ret;
- 	}
- 
- 	dev_info(&client->dev, "ES version 0x%02x and EPROM version 0x%02x\n",
-@@ -482,7 +481,7 @@ static int tps80031_probe(struct i2c_client *client,
- 	ret = tps80031_irq_init(tps80031, client->irq, pdata->irq_base);
- 	if (ret) {
- 		dev_err(&client->dev, "IRQ init failed: %d\n", ret);
--		goto fail_client_reg;
-+		return ret;
- 	}
- 
- 	tps80031_pupd_init(tps80031, pdata);
-@@ -506,12 +505,6 @@ static int tps80031_probe(struct i2c_client *client,
- 
- fail_mfd_add:
- 	regmap_del_irq_chip(client->irq, tps80031->irq_data);
--
--fail_client_reg:
--	for (i = 0; i < TPS80031_NUM_SLAVES; i++) {
--		if (tps80031->clients[i]  && (tps80031->clients[i] != client))
--			i2c_unregister_device(tps80031->clients[i]);
--	}
- 	return ret;
- }
- 
 -- 
-2.20.1
+2.7.4
 
