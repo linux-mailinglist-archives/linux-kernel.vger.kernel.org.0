@@ -2,46 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8B126FF79
+	by mail.lfdr.de (Postfix) with ESMTP id 3EEDD6FF78
 	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 14:23:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730386AbfGVMW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 08:22:58 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58708 "EHLO
+        id S1730377AbfGVMWs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 08:22:48 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59488 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730269AbfGVMWU (ORCPT
+        with ESMTP id S1729475AbfGVMWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 08:22:20 -0400
+        Mon, 22 Jul 2019 08:22:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=4wnoQnjXvnfh9OuN8zDIKomjeOlWzLxv+ayQyClMX1Y=; b=C49o/KLa+cBx
-        z9v6ErUOQkKoAXf7+/wQSZeiJAc6RR70z6iypfbsWyScVddB/Qh7fZPu3kOx0goMiU1CfOxCDgpEQ
-        ogC8dkhjglMUjfxQl84RgiC4PKpfG2w1zKqCGkmkN78xY7DB/8tDmd3Jna4phltvYsIumogdw9Wfk
-        f6spc=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        List-Archive; bh=JJpZPkthDVnJ6TY2XdoAQSEqby2Z3IUOmsq+vRsOEbo=; b=bxxtTfz5nVd3
+        +/VEz1ID4bsD0o9a8o8tEwAueovWU4wGIAdNUbCwJXoG+DpwHLZbeBFqV4D6xqx3H4AYKIo9zAT9f
+        FQMktGBfvtS5CjUpNmYovX07YmBNhUAoLsfN25cWoaxmlzzNn1Z7t8j5wo90j1NiXYGK4AFmFpU2U
+        y9kXI=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hpXKU-0007dj-Gq; Mon, 22 Jul 2019 12:22:10 +0000
+        id 1hpXKT-0007dV-QJ; Mon, 22 Jul 2019 12:22:09 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id DB22327416CB; Mon, 22 Jul 2019 13:22:09 +0100 (BST)
+        id 3392127429FC; Mon, 22 Jul 2019 13:22:09 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: SOF: use __u32 instead of uint32_t in uapi headers" to the asoc tree
-In-Reply-To: <20190721142308.30306-1-yamada.masahiro@socionext.com>
+To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org, lars@metafoo.de,
+        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, perex@perex.cz,
+        tiwai@suse.com, Tzung-Bi Shih <tzungbi@google.com>
+Subject: Applied "ASoC: codecs: ad193x: Use regmap_multi_reg_write() when initializing" to the asoc tree
+In-Reply-To: <20190710105119.22987-1-codrin.ciubotariu@microchip.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190722122209.DB22327416CB@ypsilon.sirena.org.uk>
+Message-Id: <20190722122209.3392127429FC@ypsilon.sirena.org.uk>
 Date:   Mon, 22 Jul 2019 13:22:09 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,11 +47,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: SOF: use __u32 instead of uint32_t in uapi headers
+   ASoC: codecs: ad193x: Use regmap_multi_reg_write() when initializing
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -75,160 +72,71 @@ to this mail.
 Thanks,
 Mark
 
-From 62ec3d13601bd626ca7a0edef6d45dbb753d94e8 Mon Sep 17 00:00:00 2001
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sun, 21 Jul 2019 23:23:08 +0900
-Subject: [PATCH] ASoC: SOF: use __u32 instead of uint32_t in uapi headers
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From eaba5585944e6d692828bca701c9362f60172b8a Mon Sep 17 00:00:00 2001
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Date: Wed, 10 Jul 2019 13:51:19 +0300
+Subject: [PATCH] ASoC: codecs: ad193x: Use regmap_multi_reg_write() when
+ initializing
 
-When CONFIG_UAPI_HEADER_TEST=y, exported headers are compile-tested to
-make sure they can be included from user-space.
+Using regmap_multi_reg_write() when we set the default values for our
+registers makes the code smaller and easier to read.
 
-Currently, header.h and fw.h are excluded from the test coverage.
-To make them join the compile-test, we need to fix the build errors
-attached below.
-
-For a case like this, we decided to use __u{8,16,32,64} variable types
-in this discussion:
-
-  https://lkml.org/lkml/2019/6/5/18
-
-Build log:
-
-  CC      usr/include/sound/sof/header.h.s
-  CC      usr/include/sound/sof/fw.h.s
-In file included from <command-line>:32:0:
-./usr/include/sound/sof/header.h:19:2: error: unknown type name ‘uint32_t’
-  uint32_t magic;  /**< 'S', 'O', 'F', '\0' */
-  ^~~~~~~~
-./usr/include/sound/sof/header.h:20:2: error: unknown type name ‘uint32_t’
-  uint32_t type;  /**< component specific type */
-  ^~~~~~~~
-./usr/include/sound/sof/header.h:21:2: error: unknown type name ‘uint32_t’
-  uint32_t size;  /**< size in bytes of data excl. this struct */
-  ^~~~~~~~
-./usr/include/sound/sof/header.h:22:2: error: unknown type name ‘uint32_t’
-  uint32_t abi;  /**< SOF ABI version */
-  ^~~~~~~~
-./usr/include/sound/sof/header.h:23:2: error: unknown type name ‘uint32_t’
-  uint32_t reserved[4]; /**< reserved for future use */
-  ^~~~~~~~
-./usr/include/sound/sof/header.h:24:2: error: unknown type name ‘uint32_t’
-  uint32_t data[0]; /**< Component data - opaque to core */
-  ^~~~~~~~
-In file included from <command-line>:32:0:
-./usr/include/sound/sof/fw.h:49:2: error: unknown type name ‘uint32_t’
-  uint32_t size;  /* bytes minus this header */
-  ^~~~~~~~
-./usr/include/sound/sof/fw.h:50:2: error: unknown type name ‘uint32_t’
-  uint32_t offset; /* offset from base */
-  ^~~~~~~~
-./usr/include/sound/sof/fw.h:64:2: error: unknown type name ‘uint32_t’
-  uint32_t size;  /* bytes minus this header */
-  ^~~~~~~~
-./usr/include/sound/sof/fw.h:65:2: error: unknown type name ‘uint32_t’
-  uint32_t num_blocks; /* number of blocks */
-  ^~~~~~~~
-./usr/include/sound/sof/fw.h:73:2: error: unknown type name ‘uint32_t’
-  uint32_t file_size; /* size of file minus this header */
-  ^~~~~~~~
-./usr/include/sound/sof/fw.h:74:2: error: unknown type name ‘uint32_t’
-  uint32_t num_modules; /* number of modules */
-  ^~~~~~~~
-./usr/include/sound/sof/fw.h:75:2: error: unknown type name ‘uint32_t’
-  uint32_t abi;  /* version of header format */
-  ^~~~~~~~
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Link: https://lore.kernel.org/r/20190721142308.30306-1-yamada.masahiro@socionext.com
+Suggested-by: Tzung-Bi Shih <tzungbi@google.com>
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Reviewed-by: Tzung-Bi Shih <tzungbi@google.com>
+Link: https://lore.kernel.org/r/20190710105119.22987-1-codrin.ciubotariu@microchip.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- include/uapi/sound/sof/fw.h     | 16 +++++++++-------
- include/uapi/sound/sof/header.h | 14 ++++++++------
- 2 files changed, 17 insertions(+), 13 deletions(-)
+ sound/soc/codecs/ad193x.c | 19 +++++--------------
+ 1 file changed, 5 insertions(+), 14 deletions(-)
 
-diff --git a/include/uapi/sound/sof/fw.h b/include/uapi/sound/sof/fw.h
-index 1afca973eb09..e9f697467a86 100644
---- a/include/uapi/sound/sof/fw.h
-+++ b/include/uapi/sound/sof/fw.h
-@@ -13,6 +13,8 @@
- #ifndef __INCLUDE_UAPI_SOF_FW_H__
- #define __INCLUDE_UAPI_SOF_FW_H__
+diff --git a/sound/soc/codecs/ad193x.c b/sound/soc/codecs/ad193x.c
+index 80dab5df9633..fb04c9379b71 100644
+--- a/sound/soc/codecs/ad193x.c
++++ b/sound/soc/codecs/ad193x.c
+@@ -413,15 +413,10 @@ static struct snd_soc_dai_driver ad193x_no_adc_dai = {
+ 	.ops = &ad193x_dai_ops,
+ };
  
-+#include <linux/types.h>
-+
- #define SND_SOF_FW_SIG_SIZE	4
- #define SND_SOF_FW_ABI		1
- #define SND_SOF_FW_SIG		"Reef"
-@@ -46,8 +48,8 @@ enum snd_sof_fw_blk_type {
+-struct ad193x_reg_default {
+-	unsigned int reg;
+-	unsigned int val;
+-};
+-
+ /* codec register values to set after reset */
+ static void ad193x_reg_default_init(struct ad193x_priv *ad193x)
+ {
+-	const struct ad193x_reg_default reg_init[] = {
++	const struct reg_sequence reg_init[] = {
+ 		{  0, 0x99 },	/* PLL_CLK_CTRL0: pll input: mclki/xi 12.288Mhz */
+ 		{  1, 0x04 },	/* PLL_CLK_CTRL1: no on-chip Vref */
+ 		{  2, 0x40 },	/* DAC_CTRL0: TDM mode */
+@@ -437,21 +432,17 @@ static void ad193x_reg_default_init(struct ad193x_priv *ad193x)
+ 		{ 12, 0x00 },	/* DAC_L4_VOL: no attenuation */
+ 		{ 13, 0x00 },	/* DAC_R4_VOL: no attenuation */
+ 	};
+-	const struct ad193x_reg_default reg_adc_init[] = {
++	const struct reg_sequence reg_adc_init[] = {
+ 		{ 14, 0x03 },	/* ADC_CTRL0: high-pass filter enable */
+ 		{ 15, 0x43 },	/* ADC_CTRL1: sata delay=1, adc aux mode */
+ 		{ 16, 0x00 },	/* ADC_CTRL2: reset */
+ 	};
+-	int i;
  
- struct snd_sof_blk_hdr {
- 	enum snd_sof_fw_blk_type type;
--	uint32_t size;		/* bytes minus this header */
--	uint32_t offset;	/* offset from base */
-+	__u32 size;		/* bytes minus this header */
-+	__u32 offset;		/* offset from base */
- } __packed;
+-	for (i = 0; i < ARRAY_SIZE(reg_init); i++)
+-		regmap_write(ad193x->regmap, reg_init[i].reg, reg_init[i].val);
++	regmap_multi_reg_write(ad193x->regmap, reg_init, ARRAY_SIZE(reg_init));
  
- /*
-@@ -61,8 +63,8 @@ enum snd_sof_fw_mod_type {
+ 	if (ad193x_has_adc(ad193x)) {
+-		for (i = 0; i < ARRAY_SIZE(reg_adc_init); i++) {
+-			regmap_write(ad193x->regmap, reg_adc_init[i].reg,
+-				     reg_adc_init[i].val);
+-		}
++		regmap_multi_reg_write(ad193x->regmap, reg_adc_init,
++				       ARRAY_SIZE(reg_adc_init));
+ 	}
+ }
  
- struct snd_sof_mod_hdr {
- 	enum snd_sof_fw_mod_type type;
--	uint32_t size;		/* bytes minus this header */
--	uint32_t num_blocks;	/* number of blocks */
-+	__u32 size;		/* bytes minus this header */
-+	__u32 num_blocks;	/* number of blocks */
- } __packed;
- 
- /*
-@@ -70,9 +72,9 @@ struct snd_sof_mod_hdr {
-  */
- struct snd_sof_fw_header {
- 	unsigned char sig[SND_SOF_FW_SIG_SIZE]; /* "Reef" */
--	uint32_t file_size;	/* size of file minus this header */
--	uint32_t num_modules;	/* number of modules */
--	uint32_t abi;		/* version of header format */
-+	__u32 file_size;	/* size of file minus this header */
-+	__u32 num_modules;	/* number of modules */
-+	__u32 abi;		/* version of header format */
- } __packed;
- 
- #endif
-diff --git a/include/uapi/sound/sof/header.h b/include/uapi/sound/sof/header.h
-index 7868990b0d6f..5f4518e7a972 100644
---- a/include/uapi/sound/sof/header.h
-+++ b/include/uapi/sound/sof/header.h
-@@ -9,6 +9,8 @@
- #ifndef __INCLUDE_UAPI_SOUND_SOF_USER_HEADER_H__
- #define __INCLUDE_UAPI_SOUND_SOF_USER_HEADER_H__
- 
-+#include <linux/types.h>
-+
- /*
-  * Header for all non IPC ABI data.
-  *
-@@ -16,12 +18,12 @@
-  * Used by any bespoke component data structures or binary blobs.
-  */
- struct sof_abi_hdr {
--	uint32_t magic;		/**< 'S', 'O', 'F', '\0' */
--	uint32_t type;		/**< component specific type */
--	uint32_t size;		/**< size in bytes of data excl. this struct */
--	uint32_t abi;		/**< SOF ABI version */
--	uint32_t reserved[4];	/**< reserved for future use */
--	uint32_t data[0];	/**< Component data - opaque to core */
-+	__u32 magic;		/**< 'S', 'O', 'F', '\0' */
-+	__u32 type;		/**< component specific type */
-+	__u32 size;		/**< size in bytes of data excl. this struct */
-+	__u32 abi;		/**< SOF ABI version */
-+	__u32 reserved[4];	/**< reserved for future use */
-+	__u32 data[0];		/**< Component data - opaque to core */
- }  __packed;
- 
- #endif
 -- 
 2.20.1
 
