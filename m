@@ -2,273 +2,227 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ABF66FB17
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:17:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DADD6FB1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 10:17:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728204AbfGVIRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 04:17:07 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35747 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727507AbfGVIRG (ORCPT
+        id S1728268AbfGVIRt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 04:17:49 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:33503 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727507AbfGVIRs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 04:17:06 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6M8GuDa3737047
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 22 Jul 2019 01:16:56 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6M8GuDa3737047
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1563783416;
-        bh=hXRHs9Z77OQX7vQzzQmFqwMUsOVy+Scu6X57KVPyJdY=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=4flJojG51JXdao85uio/HAs3cZ4BZNNRadBQIdoKrR53iuPFgU1FZnHHcm1wrrr1m
-         kaQef/F1a9+SbPRkX5uSrRyiASstzBJYzWB9OPWrDEl0FQqcH58NCvm6xi8LSdH/mx
-         J/Mx2UnTj39qH1sGlIC31VhOYIaWZAqCUx/qRAF3EeRa+6KmlY3SmwNiWnrOGdSzw9
-         gfAI3kHo2O5/v5WefvRZPWce2ZLpvINEOzYJlgIhXTAXyKbS/vXp5o6ojbfOi0WFNQ
-         WX6ROatM8LYQWMnwF+4eq5O1QgxbatQ7hdm6R4ZiekJR2hOAS0z9+aAOYzBx4sLfIR
-         YiEyxPK0SRhLw==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6M8GtPN3737044;
-        Mon, 22 Jul 2019 01:16:55 -0700
-Date:   Mon, 22 Jul 2019 01:16:55 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andrew Cooper <tipbot@zytor.com>
-Message-ID: <tip-83b584d9c6a1494170abd3a8b24f41939b23d625@git.kernel.org>
-Cc:     andrew.cooper3@citrix.com, hpa@zytor.com, mingo@kernel.org,
-        tglx@linutronix.de, jgross@suse.com, linux-kernel@vger.kernel.org
-Reply-To: hpa@zytor.com, mingo@kernel.org, andrew.cooper3@citrix.com,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de, jgross@suse.com
-In-Reply-To: <20190715151641.29210-1-andrew.cooper3@citrix.com>
-References: <20190715151641.29210-1-andrew.cooper3@citrix.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/apic] x86/paravirt: Drop {read,write}_cr8() hooks
-Git-Commit-ID: 83b584d9c6a1494170abd3a8b24f41939b23d625
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 22 Jul 2019 04:17:48 -0400
+Received: by mail-lf1-f66.google.com with SMTP id x3so26034330lfc.0;
+        Mon, 22 Jul 2019 01:17:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=B3z2y6DiNEDzyCnuBCeFgib1GvCFW5U7hl89KClyMMA=;
+        b=RP24Cxrb5nRAy02O/Fv+y5ZXisRkexQWPX+sc0F4THtUla8EUf7Hm8gW7/caqxHIoD
+         2i26kaBu0oKA1leaT4TVpDvuy2+2PsO9rgJ08EaEGcq+X/BQnDCF7aRteV0cmmRHm1p6
+         N6Lp4nDp5KUd8PKRJg+J1G7LO7PnWUTmRrS2ekwdV8z58ShVN0+B3tpwyMfwUay1q7V5
+         /j2zSop2733aP5x0F+6zqasb5Z44biqAdh2Xc7jouev2q8NxdR5zQAf7eGMtpmoB72I3
+         P4yFgV3Nztlp366/GM1r9UlPhUEafns78e3ZhXMsiUdMFZ5f41Hzqp7I56iQTtGMN/o7
+         LJRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=B3z2y6DiNEDzyCnuBCeFgib1GvCFW5U7hl89KClyMMA=;
+        b=Yi+H5ibffgU1Kk9DqJqB/mWOEig1KVuG4m1v5hOPQDvBnf3yqaycahhcvtfabFJb05
+         uIW7XrqveeXXwOfx59Vr5IZ2tOZBbjJeFW/MGEExCgjF9akQTh0LwQh6V27wTTp5Ywd+
+         QlHn/xpDibDmoUKrxlJpi/fVKnTqz1TDjNMVs42jc9sVbYNnZqXQlCfAegmJuCZh57AH
+         9ce6ZjwVPW36AJ/GcyklzKihx0vLXUZO+WRFztumUBrbQSR+LMXXiwY3kj2wOMOX3kj1
+         U1IHD59SVW0hVoS8Nrqo8pWMGdDmvrBaMhUlnZixGn05+I1zTNDdNdce8C7Ub3z4bu6c
+         aCug==
+X-Gm-Message-State: APjAAAVDdAYcjqZ4ikh/Oe6eTfaqlb5zLZ0JOIhhLuzkUJEdKZ8aL9iq
+        f6n27FhovaRsyXDlL9sr2iY=
+X-Google-Smtp-Source: APXvYqzPe8/XMAkrBJpupIhejmA8ZMAaQU5mUD7lT3WVR72QRpWQ0PgS7JuSTafInarUHtsMroK5RA==
+X-Received: by 2002:ac2:418f:: with SMTP id z15mr29532862lfh.177.1563783465457;
+        Mon, 22 Jul 2019 01:17:45 -0700 (PDT)
+Received: from localhost ([188.170.223.67])
+        by smtp.gmail.com with ESMTPSA id 63sm7491060ljs.84.2019.07.22.01.17.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 22 Jul 2019 01:17:44 -0700 (PDT)
+Date:   Mon, 22 Jul 2019 11:17:39 +0300
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Your Name <you@example.com>
+Subject: Re: [PATCH v3] Input: elantech: Enable SMBus on new (2018+) systems
+Message-ID: <20190722081739.GA804@penguin>
+References: <20190121070258.1844-1-kai.heng.feng@canonical.com>
+ <20190722074055.22427-1-kai.heng.feng@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <20190722074055.22427-1-kai.heng.feng@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  83b584d9c6a1494170abd3a8b24f41939b23d625
-Gitweb:     https://git.kernel.org/tip/83b584d9c6a1494170abd3a8b24f41939b23d625
-Author:     Andrew Cooper <andrew.cooper3@citrix.com>
-AuthorDate: Mon, 15 Jul 2019 16:16:41 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Mon, 22 Jul 2019 10:12:33 +0200
+Hi Kai-Heng,
 
-x86/paravirt: Drop {read,write}_cr8() hooks
+On Mon, Jul 22, 2019 at 03:40:55PM +0800, Kai-Heng Feng wrote:
+> There are some new HP laptops with Elantech touchpad don't support
+> multitouch.
+> 
+> Currently we use ETP_NEW_IC_SMBUS_HOST_NOTIFY() to check if SMBus is
+> supported, but in addition to firmware version, the bus type also
+> informs us if the IC can support SMBus, so also check that.
+> 
+> In case of breaking old ICs, only enables SMBus on systems manufactured
+> after 2018, alongsides aforementioned checks.
+> 
+> Lastly, consolidats all check into elantech_use_host_notify() and use it
+> to determine whether to use PS/2 or SMBus.
+> 
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> Signed-off-by: Your Name <you@example.com>
 
-There is a lot of infrastructure for functionality which is used
-exclusively in __{save,restore}_processor_state() on the suspend/resume
-path.
+I do not think "Your Name" should be signing DCO here :)
 
-cr8 is an alias of APIC_TASKPRI, and APIC_TASKPRI is saved/restored by
-lapic_{suspend,resume}().  Saving and restoring cr8 independently of the
-rest of the Local APIC state isn't a clever thing to be doing.
+> +static bool elantech_use_host_notify(struct psmouse *psmouse,
+> +				     struct elantech_device_info *info)
+> +{
+> +	bool host_notify = false;
+> +
+> +	if (ETP_NEW_IC_SMBUS_HOST_NOTIFY(info->fw_version))
+> +		host_notify = true;
+> +	else {
+> +		switch (info->bus) {
+> +		case ETP_BUS_PS2_ONLY:
+> +			/* expected case */
+> +			break;
+> +		case ETP_BUS_SMB_ALERT_ONLY:
+> +			/* fall-through  */
+> +		case ETP_BUS_PS2_SMB_ALERT:
+> +			psmouse_dbg(psmouse, "Ignoring SMBus provider through alert protocol.\n");
+> +			break;
+> +		case ETP_BUS_SMB_HST_NTFY_ONLY:
+> +			/* fall-through  */
+> +		case ETP_BUS_PS2_SMB_HST_NTFY:
+> +			/* SMbus implementation is stable since 2018 */
+> +			if (dmi_get_bios_year() >= 2018)
+> +				host_notify = true;
+> +			break;
+> +		default:
+> +			psmouse_dbg(psmouse,
+> +				    "Ignoring SMBus bus provider %d.\n",
+> +				    info->bus);
+> +		}
+> +	}
 
-Delete the suspend/resume cr8 handling, which shrinks the size of struct
-saved_context, and allows for the removal of both PVOPS.
+I think this is way too verbose. How about a bit more condensed form:
 
-Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Link: https://lkml.kernel.org/r/20190715151641.29210-1-andrew.cooper3@citrix.com
 
+Input: elantech - enable SMBus on new (2018+) systems
+
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+
+There are some new HP laptops with Elantech touchpad that don't support
+multitouch.
+
+Currently we use ETP_NEW_IC_SMBUS_HOST_NOTIFY() to check if SMBus is supported,
+but in addition to firmware version, the bus type also informs us whether the IC
+can support SMBus. To avoid breaking old ICs, we will only enable SMbus support
+based the bus type on systems manufactured after 2018.
+
+Lastly, let's consolidate all checks into elantech_use_host_notify() and use it
+to determine whether to use PS/2 or SMBus.
+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- arch/x86/include/asm/paravirt.h       | 12 ------------
- arch/x86/include/asm/paravirt_types.h |  5 -----
- arch/x86/include/asm/special_insns.h  | 24 ------------------------
- arch/x86/include/asm/suspend_64.h     |  2 +-
- arch/x86/kernel/asm-offsets_64.c      |  1 -
- arch/x86/kernel/paravirt.c            |  4 ----
- arch/x86/power/cpu.c                  |  4 ----
- arch/x86/xen/enlighten_pv.c           | 15 ---------------
- 8 files changed, 1 insertion(+), 66 deletions(-)
+ drivers/input/mouse/elantech.c |   54 +++++++++++++++++++---------------------
+ 1 file changed, 25 insertions(+), 29 deletions(-)
 
-diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-index dce26f1d13e1..69089d46f128 100644
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -139,18 +139,6 @@ static inline void __write_cr4(unsigned long x)
- 	PVOP_VCALL1(cpu.write_cr4, x);
+diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
+index 2d8434b7b623..73544776a9ed 100644
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1827,6 +1827,30 @@ static int elantech_create_smbus(struct psmouse *psmouse,
+ 				  leave_breadcrumbs);
  }
  
--#ifdef CONFIG_X86_64
--static inline unsigned long read_cr8(void)
--{
--	return PVOP_CALL0(unsigned long, cpu.read_cr8);
--}
--
--static inline void write_cr8(unsigned long x)
--{
--	PVOP_VCALL1(cpu.write_cr8, x);
--}
--#endif
--
- static inline void arch_safe_halt(void)
- {
- 	PVOP_VCALL0(irq.safe_halt);
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 639b2df445ee..70b654f3ffe5 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -119,11 +119,6 @@ struct pv_cpu_ops {
- 
- 	void (*write_cr4)(unsigned long);
- 
--#ifdef CONFIG_X86_64
--	unsigned long (*read_cr8)(void);
--	void (*write_cr8)(unsigned long);
--#endif
--
- 	/* Segment descriptor handling */
- 	void (*load_tr_desc)(void);
- 	void (*load_gdt)(const struct desc_ptr *);
-diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index 219be88a59d2..6d37b8fcfc77 100644
---- a/arch/x86/include/asm/special_insns.h
-+++ b/arch/x86/include/asm/special_insns.h
-@@ -73,20 +73,6 @@ static inline unsigned long native_read_cr4(void)
- 
- void native_write_cr4(unsigned long val);
- 
--#ifdef CONFIG_X86_64
--static inline unsigned long native_read_cr8(void)
--{
--	unsigned long cr8;
--	asm volatile("movq %%cr8,%0" : "=r" (cr8));
--	return cr8;
--}
--
--static inline void native_write_cr8(unsigned long val)
--{
--	asm volatile("movq %0,%%cr8" :: "r" (val) : "memory");
--}
--#endif
--
- #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
- static inline u32 rdpkru(void)
- {
-@@ -200,16 +186,6 @@ static inline void wbinvd(void)
- 
- #ifdef CONFIG_X86_64
- 
--static inline unsigned long read_cr8(void)
--{
--	return native_read_cr8();
--}
--
--static inline void write_cr8(unsigned long x)
--{
--	native_write_cr8(x);
--}
--
- static inline void load_gs_index(unsigned selector)
- {
- 	native_load_gs_index(selector);
-diff --git a/arch/x86/include/asm/suspend_64.h b/arch/x86/include/asm/suspend_64.h
-index a7af9f53c0cb..35bb35d28733 100644
---- a/arch/x86/include/asm/suspend_64.h
-+++ b/arch/x86/include/asm/suspend_64.h
-@@ -34,7 +34,7 @@ struct saved_context {
- 	 */
- 	unsigned long kernelmode_gs_base, usermode_gs_base, fs_base;
- 
--	unsigned long cr0, cr2, cr3, cr4, cr8;
-+	unsigned long cr0, cr2, cr3, cr4;
- 	u64 misc_enable;
- 	bool misc_enable_saved;
- 	struct saved_msrs saved_msrs;
-diff --git a/arch/x86/kernel/asm-offsets_64.c b/arch/x86/kernel/asm-offsets_64.c
-index d3d075226c0a..8b54d8e3a561 100644
---- a/arch/x86/kernel/asm-offsets_64.c
-+++ b/arch/x86/kernel/asm-offsets_64.c
-@@ -62,7 +62,6 @@ int main(void)
- 	ENTRY(cr2);
- 	ENTRY(cr3);
- 	ENTRY(cr4);
--	ENTRY(cr8);
- 	ENTRY(gdt_desc);
- 	BLANK();
- #undef ENTRY
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 0aa6256eedd8..59d3d2763a9e 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -311,10 +311,6 @@ struct paravirt_patch_template pv_ops = {
- 	.cpu.read_cr0		= native_read_cr0,
- 	.cpu.write_cr0		= native_write_cr0,
- 	.cpu.write_cr4		= native_write_cr4,
--#ifdef CONFIG_X86_64
--	.cpu.read_cr8		= native_read_cr8,
--	.cpu.write_cr8		= native_write_cr8,
--#endif
- 	.cpu.wbinvd		= native_wbinvd,
- 	.cpu.read_msr		= native_read_msr,
- 	.cpu.write_msr		= native_write_msr,
-diff --git a/arch/x86/power/cpu.c b/arch/x86/power/cpu.c
-index 24b079e94bc2..1c58d8982728 100644
---- a/arch/x86/power/cpu.c
-+++ b/arch/x86/power/cpu.c
-@@ -122,9 +122,6 @@ static void __save_processor_state(struct saved_context *ctxt)
- 	ctxt->cr2 = read_cr2();
- 	ctxt->cr3 = __read_cr3();
- 	ctxt->cr4 = __read_cr4();
--#ifdef CONFIG_X86_64
--	ctxt->cr8 = read_cr8();
--#endif
- 	ctxt->misc_enable_saved = !rdmsrl_safe(MSR_IA32_MISC_ENABLE,
- 					       &ctxt->misc_enable);
- 	msr_save_context(ctxt);
-@@ -207,7 +204,6 @@ static void notrace __restore_processor_state(struct saved_context *ctxt)
- #else
- /* CONFIG X86_64 */
- 	wrmsrl(MSR_EFER, ctxt->efer);
--	write_cr8(ctxt->cr8);
- 	__write_cr4(ctxt->cr4);
- #endif
- 	write_cr3(ctxt->cr3);
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index 7ceb32821093..58f79ab32358 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -877,16 +877,6 @@ static void xen_write_cr4(unsigned long cr4)
- 
- 	native_write_cr4(cr4);
++static bool elantech_use_host_notify(struct psmouse *psmouse,
++				     struct elantech_device_info *info)
++{
++	if (ETP_NEW_IC_SMBUS_HOST_NOTIFY(info->fw_version))
++		return true;
++
++	switch (info->bus) {
++	case ETP_BUS_PS2_ONLY:
++		/* expected case */
++		break;
++	case ETP_BUS_SMB_HST_NTFY_ONLY:
++	case ETP_BUS_PS2_SMB_HST_NTFY:
++		/* SMbus implementation is stable since 2018 */
++		if (dmi_get_bios_year() >= 2018)
++			return true;
++	default:
++		psmouse_dbg(psmouse,
++			    "Ignoring SMBus bus provider %d\n", info->bus);
++		break;
++	}
++
++	return false;
++}
++
+ /**
+  * elantech_setup_smbus - called once the PS/2 devices are enumerated
+  * and decides to instantiate a SMBus InterTouch device.
+@@ -1846,7 +1870,7 @@ static int elantech_setup_smbus(struct psmouse *psmouse,
+ 		 * i2c_blacklist_pnp_ids.
+ 		 * Old ICs are up to the user to decide.
+ 		 */
+-		if (!ETP_NEW_IC_SMBUS_HOST_NOTIFY(info->fw_version) ||
++		if (!elantech_use_host_notify(psmouse, info) ||
+ 		    psmouse_matches_pnp_id(psmouse, i2c_blacklist_pnp_ids))
+ 			return -ENXIO;
+ 	}
+@@ -1866,34 +1890,6 @@ static int elantech_setup_smbus(struct psmouse *psmouse,
+ 	return 0;
  }
--#ifdef CONFIG_X86_64
--static inline unsigned long xen_read_cr8(void)
+ 
+-static bool elantech_use_host_notify(struct psmouse *psmouse,
+-				     struct elantech_device_info *info)
 -{
--	return 0;
--}
--static inline void xen_write_cr8(unsigned long val)
--{
--	BUG_ON(val);
--}
--#endif
- 
- static u64 xen_read_msr_safe(unsigned int msr, int *err)
- {
-@@ -1023,11 +1013,6 @@ static const struct pv_cpu_ops xen_cpu_ops __initconst = {
- 
- 	.write_cr4 = xen_write_cr4,
- 
--#ifdef CONFIG_X86_64
--	.read_cr8 = xen_read_cr8,
--	.write_cr8 = xen_write_cr8,
--#endif
+-	if (ETP_NEW_IC_SMBUS_HOST_NOTIFY(info->fw_version))
+-		return true;
 -
- 	.wbinvd = native_wbinvd,
- 
- 	.read_msr = xen_read_msr,
+-	switch (info->bus) {
+-	case ETP_BUS_PS2_ONLY:
+-		/* expected case */
+-		break;
+-	case ETP_BUS_SMB_ALERT_ONLY:
+-		/* fall-through  */
+-	case ETP_BUS_PS2_SMB_ALERT:
+-		psmouse_dbg(psmouse, "Ignoring SMBus provider through alert protocol.\n");
+-		break;
+-	case ETP_BUS_SMB_HST_NTFY_ONLY:
+-		/* fall-through  */
+-	case ETP_BUS_PS2_SMB_HST_NTFY:
+-		return true;
+-	default:
+-		psmouse_dbg(psmouse,
+-			    "Ignoring SMBus bus provider %d.\n",
+-			    info->bus);
+-	}
+-
+-	return false;
+-}
+-
+ int elantech_init_smbus(struct psmouse *psmouse)
+ {
+ 	struct elantech_device_info info;
+
+Thanks.
+
+-- 
+Dmitry
