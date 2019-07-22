@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DA2B700D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:19:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD8D8700C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2019 15:18:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730551AbfGVNSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 09:18:32 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34572 "EHLO
+        id S1729859AbfGVNSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 09:18:03 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37749 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729658AbfGVNR6 (ORCPT
+        with ESMTP id S1729708AbfGVNSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 09:17:58 -0400
-Received: by mail-wr1-f67.google.com with SMTP id 31so39436563wrm.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 06:17:57 -0700 (PDT)
+        Mon, 22 Jul 2019 09:18:00 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n9so14323369wrr.4
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 06:17:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=i1AJwx99L7FOyjXOzW3yVuzHOgblADWD2c7KtmC/N3c=;
-        b=pIoC9oM2SJ5bTQ+eRC7d6ReZipWlFuv8mhyOuLWGmoiM8hihjKDbcYzk6hANScrgJN
-         rW05dvNGO4vHZr4dMUEDVyGjjjkB2g5tV8ivnNDEywzlkYWYyP/3Vlq6BTNwMjUcC6DY
-         stoKLsBEJ9Kpf12vzhujsvcYIhPxHMZfEuKIPQBcLMVeL32Lml1EKxjHmsp6ic+ayM0X
-         R6xwxui+6Mp9JKkkz1/pKDBpveHOE12dVpW70c1oXe+UbW+C4k8HFEDPISpAj+uiGS1i
-         BpS1re/U9WlWq6XGrylr1Xep7OvA/lahP+EhtkjgH1pAZ3T4a+2opzxxmr/W+wrv/oCB
-         QmXw==
+        bh=zOhvfud1UplL6dXW+3V5RKRSj+/QqrgOZPNk1aW9k94=;
+        b=PQw+pP1iXX72GVQ9kohjgqtP+wTw65TQAgRYVrUlgLjAVsRxK4c4+l/lntTh00Q9M3
+         8teC3SYE0xetvNP5nkU6e4YBh4V4GrB3q+Lq0BP4EqB2/wLVtArQllQ+r4GMx1RlKBBd
+         puuo7oASjqffQkBoxzRoQkZtvjPdz2ZeysMOf+8UE5BM202tQ3SVxz7nl+GUjon+AEbI
+         cUMLG2f1a00E9Hp4Szm87vNMnwxnJanc041SLIt4+l+9rU/XP4mOI5RDFmWLjEjorkPe
+         pMLYh8h/tOOkwTzFMwBXpg9yuYlnTB00OPzHStXOCmQrEbb/lLFLR4Fx9+lPAKaV+zQX
+         t9Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=i1AJwx99L7FOyjXOzW3yVuzHOgblADWD2c7KtmC/N3c=;
-        b=ctRP2Ooi/khCtt4xkEDNOFflduNcL4umOANip2Z1bdT77v8Cf4gslzWHjnBvaA278N
-         qnps7C28VKBUlEQz7qYvXt2sOHHx5TvGx+aQOFMH/wC1Zv/6NhESxbbVymu3lTuNoHx4
-         jB50JpjkMmxFWM6MsG6VQTMr5xPxgf7KT/SwaPfoW7ou+SPdQ+Z6GLAYyt4ioxDzrAMk
-         0+L6klEl+5GKPwdIAkI+9U9Nr5i1TMzMwEeJ9duYTJW3oKVlY7V2dABAJ002GC4m4mZB
-         9kp8qQBh8qj8Mjz6yHVvA7/huqvV3w8LeCs1+EFT450WrScxGFMVbHgmkdcLxGY3l0qp
-         fy5Q==
-X-Gm-Message-State: APjAAAXHtqXCD6l91dEdTfLSDhJowDnvDvJC9XECkU9ahwXeBlAjCu8d
-        fWCIb4xLeywNKvsUiRSJg2Q=
-X-Google-Smtp-Source: APXvYqz3On9bPHv79/RsBc+0dwicwKP6apaQW2ZmacAnsdUnKzLS+lJLsX2BS/W4UpcSrcRApRCn9g==
-X-Received: by 2002:a5d:4e4d:: with SMTP id r13mr25919456wrt.295.1563801477023;
+        bh=zOhvfud1UplL6dXW+3V5RKRSj+/QqrgOZPNk1aW9k94=;
+        b=rN5o05B+bCx3d5BF7MOTMzXmH6u8ps+fENUQKut/p8WdDMGb+8CZ9nt7Uz3mnveWXk
+         Ax4wE7BXoQBy5TthneksF3DocbsZtb19r9I9XVAWeBCuHvnHDL0e4xXgIGDBTZpm7jjb
+         T8rXKa+OQ2wBuASoPsFRdVvVd3WAeV2PjwWZG78O+833uT31yD2301z9Ezcbg5s2H4v5
+         8gZh1ON9gMq0sS2VBs1QGYP/0caBn44PIQg/iLlJR0ySpRXrdOfV7zwcqY9X8P0xgrYT
+         pY36l5Y98wrOtqjxVWCHh+zs0bGIddwWlv5xYbo1qgQL6KwYEW0nyKaa5CpIJb6UUoMH
+         t+Ng==
+X-Gm-Message-State: APjAAAUCxHEf1ICp7poy1h9XHc1RC6NxdqMVPT9WRVrcf/Tjn5KTQ9hR
+        8AQM+Ir7BxRtxuCqE0vZ8Ts=
+X-Google-Smtp-Source: APXvYqw5kSAQACR7OW4MuKFZ+QqrkrmM83HBxycXSdQYRQePn0m/CpYbJW8RlJw372HR07CxxdrZxQ==
+X-Received: by 2002:a5d:6709:: with SMTP id o9mr19402007wru.301.1563801477974;
         Mon, 22 Jul 2019 06:17:57 -0700 (PDT)
 Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id z6sm34156657wrw.2.2019.07.22.06.17.56
+        by smtp.gmail.com with ESMTPSA id z6sm34156657wrw.2.2019.07.22.06.17.57
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 06:17:56 -0700 (PDT)
+        Mon, 22 Jul 2019 06:17:57 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         David Lechner <david@lechnology.com>
-Subject: [RESEND PATCH 05/10] ARM: davinci: move timer definitions to davinci.h
-Date:   Mon, 22 Jul 2019 15:17:43 +0200
-Message-Id: <20190722131748.30319-6-brgl@bgdev.pl>
+Subject: [RESEND PATCH 06/10] ARM: davinci: dm355: switch to using the clocksource driver
+Date:   Mon, 22 Jul 2019 15:17:44 +0200
+Message-Id: <20190722131748.30319-7-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190722131748.30319-1-brgl@bgdev.pl>
 References: <20190722131748.30319-1-brgl@bgdev.pl>
@@ -65,46 +65,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Boards from the dm* family rely on register offset definitions from
-arch/arm/mach-davinci/include/mach/time.h. We'll be removing this file
-soon, so move the required defines to davinci.h where the rest of such
-constants live.
+We now have a proper clocksource driver for davinci. Switch the dm355
+platform to using it.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Reviewed-by: David Lechner <david@lechnology.com>
 ---
- arch/arm/mach-davinci/davinci.h           | 3 +++
- arch/arm/mach-davinci/include/mach/time.h | 2 --
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/mach-davinci/dm355.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index 56c1835c42e5..208d7a4d3597 100644
---- a/arch/arm/mach-davinci/davinci.h
-+++ b/arch/arm/mach-davinci/davinci.h
-@@ -60,6 +60,9 @@ void davinci_map_sysmod(void);
- #define DAVINCI_GPIO_BASE 0x01C67000
- int davinci_gpio_register(struct resource *res, int size, void *pdata);
- 
-+#define DAVINCI_TIMER0_BASE		(IO_PHYS + 0x21400)
-+#define DAVINCI_WDOG_BASE		(IO_PHYS + 0x21C00)
+diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
+index a38a3648345b..5de72d2fa8f0 100644
+--- a/arch/arm/mach-davinci/dm355.c
++++ b/arch/arm/mach-davinci/dm355.c
+@@ -30,7 +30,8 @@
+ #include <mach/cputype.h>
+ #include <mach/mux.h>
+ #include <mach/serial.h>
+-#include <mach/time.h>
 +
- /* DM355 base addresses */
- #define DM355_ASYNC_EMIF_CONTROL_BASE	0x01e10000
- #define DM355_ASYNC_EMIF_DATA_CE0_BASE	0x02000000
-diff --git a/arch/arm/mach-davinci/include/mach/time.h b/arch/arm/mach-davinci/include/mach/time.h
-index 1c971d8d8ba8..ba913736990f 100644
---- a/arch/arm/mach-davinci/include/mach/time.h
-+++ b/arch/arm/mach-davinci/include/mach/time.h
-@@ -11,9 +11,7 @@
- #ifndef __ARCH_ARM_MACH_DAVINCI_TIME_H
- #define __ARCH_ARM_MACH_DAVINCI_TIME_H
++#include <clocksource/timer-davinci.h>
  
--#define DAVINCI_TIMER0_BASE		(IO_PHYS + 0x21400)
- #define DAVINCI_TIMER1_BASE		(IO_PHYS + 0x21800)
--#define DAVINCI_WDOG_BASE		(IO_PHYS + 0x21C00)
+ #include "asp.h"
+ #include "davinci.h"
+@@ -620,15 +621,15 @@ static struct davinci_id dm355_ids[] = {
+ };
  
- enum {
- 	T0_BOT,
+ /*
+- * T0_BOT: Timer 0, bottom:  clockevent source for hrtimers
+- * T0_TOP: Timer 0, top   :  clocksource for generic timekeeping
+- * T1_BOT: Timer 1, bottom:  (used by DSP in TI DSPLink code)
+- * T1_TOP: Timer 1, top   :  <unused>
++ * Bottom half of timer0 is used for clockevent, top half is used for
++ * clocksource.
+  */
+-static struct davinci_timer_info dm355_timer_info = {
+-	.timers		= davinci_timer_instance,
+-	.clockevent_id	= T0_BOT,
+-	.clocksource_id	= T0_TOP,
++static const struct davinci_timer_cfg dm355_timer_cfg = {
++	.reg = DEFINE_RES_IO(DAVINCI_TIMER0_BASE, SZ_4K),
++	.irq = {
++		DEFINE_RES_IRQ(DAVINCI_INTC_IRQ(IRQ_TINT0_TINT12)),
++		DEFINE_RES_IRQ(DAVINCI_INTC_IRQ(IRQ_TINT0_TINT34)),
++	},
+ };
+ 
+ static struct plat_serial8250_port dm355_serial0_platform_data[] = {
+@@ -706,7 +707,6 @@ static const struct davinci_soc_info davinci_soc_info_dm355 = {
+ 	.pinmux_base		= DAVINCI_SYSTEM_MODULE_BASE,
+ 	.pinmux_pins		= dm355_pins,
+ 	.pinmux_pins_num	= ARRAY_SIZE(dm355_pins),
+-	.timer_info		= &dm355_timer_info,
+ 	.sram_dma		= 0x00010000,
+ 	.sram_len		= SZ_32K,
+ };
+@@ -733,6 +733,7 @@ void __init dm355_init_time(void)
+ {
+ 	void __iomem *pll1, *psc;
+ 	struct clk *clk;
++	int rv;
+ 
+ 	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM355_REF_FREQ);
+ 
+@@ -748,7 +749,8 @@ void __init dm355_init_time(void)
+ 		return;
+ 	}
+ 
+-	davinci_timer_init(clk);
++	rv = davinci_timer_register(clk, &dm355_timer_cfg);
++	WARN(rv, "Unable to register the timer: %d\n", rv);
+ }
+ 
+ static struct resource dm355_pll2_resources[] = {
 -- 
 2.21.0
 
