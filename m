@@ -2,91 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BE6171C30
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 17:50:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40E8A71C39
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 17:52:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732156AbfGWPuq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 11:50:46 -0400
-Received: from smtprelay0123.hostedemail.com ([216.40.44.123]:37570 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731114AbfGWPup (ORCPT
+        id S1732298AbfGWPwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 11:52:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53208 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728497AbfGWPwi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 11:50:45 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 64E1F180A8134;
-        Tue, 23 Jul 2019 15:50:44 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3353:3865:3866:3867:3868:3870:3871:3873:3874:4321:5007:7576:7875:8603:10004:10400:10848:11232:11658:11914:12048:12297:12740:12760:12895:13069:13311:13357:13439:14659:21080:21451:21627:30012:30034:30054:30070:30079:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:38,LUA_SUMMARY:none
-X-HE-Tag: jewel94_62725d90e75d
-X-Filterd-Recvd-Size: 2781
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf18.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 23 Jul 2019 15:50:42 +0000 (UTC)
-Message-ID: <f6186ebd726a53484a4c7269a6ab448f76b9e864.camel@perches.com>
-Subject: Re: [PATCH 1/2] string: Add stracpy and stracpy_pad mechanisms
-From:   Joe Perches <joe@perches.com>
-To:     David Laight <David.Laight@ACULAB.COM>,
-        'Rasmus Villemoes' <linux@rasmusvillemoes.dk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chris Metcalf <cmetcalf@ezchip.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Stephen Kitt <steve@sk2.org>,
-        Kees Cook <keescook@chromium.org>,
-        Nitin Gote <nitin.r.gote@intel.com>,
-        "jannh@google.com" <jannh@google.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Date:   Tue, 23 Jul 2019 08:50:40 -0700
-In-Reply-To: <5ffdbf4f87054b47a2daf23a6afabecf@AcuMS.aculab.com>
-References: <cover.1563841972.git.joe@perches.com>
-         <7ab8957eaf9b0931a59eff6e2bd8c5169f2f6c41.1563841972.git.joe@perches.com>
-         <eec901c6-ca51-89e4-1887-1ccab0288bee@rasmusvillemoes.dk>
-         <5ffdbf4f87054b47a2daf23a6afabecf@AcuMS.aculab.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Tue, 23 Jul 2019 11:52:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=tvYLzMxQOS+0VzYPNU7SkuEzCyO8+2yot/ohF+n2sKo=; b=jYMIZXOksfIBOyMmh7uCKgVA7
+        KMyeZxAA4C3bAl6ESGjtpGCeL1V+Rw4Ws4nts51kkidOdqpffUsMieNNdqscnW9GwFwHB31kl4PNg
+        YdLpM+NdDKbnrM6Wm/ilD6KeL+tdnkVNgwMzBjJ0t8ON8twfvasY8bemhIiocYllgpo4ZZ+WEZpAs
+        rRM1qOGCSRpsRbJ6vlup8GqZd+2oPzgbX06M44wo9zMRv6Pv3LO9qvezUsMCt5R7Bb+hFU5I563qI
+        3o1NUO/yyBYJhTQzk7QKNLS9iBz6haIJnpLNpWChhC2aSUck0qoaOndkvcscUtIyfU3Sl9OU0eM+t
+        /y3Dq/NXQ==;
+Received: from 177.41.98.220.dynamic.adsl.gvt.net.br ([177.41.98.220] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hpx5e-0007zr-HR; Tue, 23 Jul 2019 15:52:34 +0000
+Date:   Tue, 23 Jul 2019 12:52:30 -0300
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Message-ID: <20190723125230.1ca56edd@coco.lan>
+In-Reply-To: <13b14eb9475de71b408d1eed3c5e69fe089deeb0.camel@collabora.com>
+References: <20190723101341.751596b2@canb.auug.org.au>
+        <13b14eb9475de71b408d1eed3c5e69fe089deeb0.camel@collabora.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(adding Chris Metcalf)
+Em Tue, 23 Jul 2019 12:14:20 -0300
+Ezequiel Garcia <ezequiel@collabora.com> escreveu:
 
-On Tue, 2019-07-23 at 15:41 +0000, David Laight wrote:
-> From: Rasmus Villemoes
-> > Sent: 23 July 2019 07:56
-> ...
-> > > +/**
-> > > + * stracpy - Copy a C-string into an array of char
-> > > + * @to: Where to copy the string, must be an array of char and not a pointer
-> > > + * @from: String to copy, may be a pointer or const char array
-> > > + *
-> > > + * Helper for strscpy.
-> > > + * Copies a maximum of sizeof(@to) bytes of @from with %NUL termination.
-> > > + *
-> > > + * Returns:
-> > > + * * The number of characters copied (not including the trailing %NUL)
-> > > + * * -E2BIG if @to is a zero size array.
+> On Tue, 2019-07-23 at 10:13 +1000, Stephen Rothwell wrote:
+> > Hi all,
 > > 
-> > Well, yes, but more importantly and generally: -E2BIG if the copy
-> > including %NUL didn't fit. [The zero size array thing could be made into
-> > a build bug for these stra* variants if one thinks that might actually
-> > occur in real code.]
+> > After merging the v4l-dvb tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > In file included from <command-line>:
+> > include/media/vp8-ctrls.h:25:2: error: unknown type name '__s8'
+> >   __s8 quant_update[4];
+> >   ^~~~
+> > include/media/vp8-ctrls.h:26:2: error: unknown type name '__s8'
+> >   __s8 lf_update[4];
+> >   ^~~~
+> > include/media/vp8-ctrls.h:27:2: error: unknown type name '__u8'
+> >   __u8 segment_probs[3];
+> >   ^~~~
+> > include/media/vp8-ctrls.h:28:2: error: unknown type name '__u8'
+> >   __u8 padding;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:29:2: error: unknown type name '__u32'
+> >   __u32 flags;
+> >   ^~~~~
+> > include/media/vp8-ctrls.h:36:2: error: unknown type name '__s8'
+> >   __s8 ref_frm_delta[4];
+> >   ^~~~
+> > include/media/vp8-ctrls.h:37:2: error: unknown type name '__s8'
+> >   __s8 mb_mode_delta[4];
+> >   ^~~~
+> > include/media/vp8-ctrls.h:38:2: error: unknown type name '__u8'
+> >   __u8 sharpness_level;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:39:2: error: unknown type name '__u8'
+> >   __u8 level;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:40:2: error: unknown type name '__u16'
+> >   __u16 padding;
+> >   ^~~~~
+> > include/media/vp8-ctrls.h:41:2: error: unknown type name '__u32'
+> >   __u32 flags;
+> >   ^~~~~
+> > include/media/vp8-ctrls.h:45:2: error: unknown type name '__u8'
+> >   __u8 y_ac_qi;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:46:2: error: unknown type name '__s8'
+> >   __s8 y_dc_delta;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:47:2: error: unknown type name '__s8'
+> >   __s8 y2_dc_delta;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:48:2: error: unknown type name '__s8'
+> >   __s8 y2_ac_delta;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:49:2: error: unknown type name '__s8'
+> >   __s8 uv_dc_delta;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:50:2: error: unknown type name '__s8'
+> >   __s8 uv_ac_delta;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:51:2: error: unknown type name '__u16'
+> >   __u16 padding;
+> >   ^~~~~
+> > include/media/vp8-ctrls.h:55:2: error: unknown type name '__u8'
+> >   __u8 coeff_probs[4][8][3][11];
+> >   ^~~~
+> > include/media/vp8-ctrls.h:56:2: error: unknown type name '__u8'
+> >   __u8 y_mode_probs[4];
+> >   ^~~~
+> > include/media/vp8-ctrls.h:57:2: error: unknown type name '__u8'
+> >   __u8 uv_mode_probs[3];
+> >   ^~~~
+> > include/media/vp8-ctrls.h:58:2: error: unknown type name '__u8'
+> >   __u8 mv_probs[2][19];
+> >   ^~~~
+> > include/media/vp8-ctrls.h:59:2: error: unknown type name '__u8'
+> >   __u8 padding[3];
+> >   ^~~~
+> > include/media/vp8-ctrls.h:63:2: error: unknown type name '__u8'
+> >   __u8 range;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:64:2: error: unknown type name '__u8'
+> >   __u8 value;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:65:2: error: unknown type name '__u8'
+> >   __u8 bit_count;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:66:2: error: unknown type name '__u8'
+> >   __u8 padding;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:86:2: error: unknown type name '__u16'
+> >   __u16 width;
+> >   ^~~~~
+> > include/media/vp8-ctrls.h:87:2: error: unknown type name '__u16'
+> >   __u16 height;
+> >   ^~~~~
+> > include/media/vp8-ctrls.h:89:2: error: unknown type name '__u8'
+> >   __u8 horizontal_scale;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:90:2: error: unknown type name '__u8'
+> >   __u8 vertical_scale;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:92:2: error: unknown type name '__u8'
+> >   __u8 version;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:93:2: error: unknown type name '__u8'
+> >   __u8 prob_skip_false;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:94:2: error: unknown type name '__u8'
+> >   __u8 prob_intra;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:95:2: error: unknown type name '__u8'
+> >   __u8 prob_last;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:96:2: error: unknown type name '__u8'
+> >   __u8 prob_gf;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:97:2: error: unknown type name '__u8'
+> >   __u8 num_dct_parts;
+> >   ^~~~
+> > include/media/vp8-ctrls.h:99:2: error: unknown type name '__u32'
+> >   __u32 first_part_size;
+> >   ^~~~~
+> > include/media/vp8-ctrls.h:100:2: error: unknown type name '__u32'
+> >   __u32 first_part_header_bits;
+> >   ^~~~~
+> > include/media/vp8-ctrls.h:101:2: error: unknown type name '__u32'
+> >   __u32 dct_part_sizes[8];
+> >   ^~~~~
+> > include/media/vp8-ctrls.h:103:2: error: unknown type name '__u64'
+> >   __u64 last_frame_ts;
+> >   ^~~~~
+> > include/media/vp8-ctrls.h:104:2: error: unknown type name '__u64'
+> >   __u64 golden_frame_ts;
+> >   ^~~~~
+> > include/media/vp8-ctrls.h:105:2: error: unknown type name '__u64'
+> >   __u64 alt_frame_ts;
+> >   ^~~~~
+> > include/media/vp8-ctrls.h:107:2: error: unknown type name '__u64'
+> >   __u64 flags;
+> >   ^~~~~
+> > 
+> > Caused by commit
+> > 
+> >   a57d6acaf352 ("media: uapi: Add VP8 stateless decoder API")
+> > 
+> > I have added the following fix patch for today.
+> >   
 > 
-> Probably better is to return the size of the destination if the copy didn't fit
-> (zero if the buffer is zero length).
-> This allows code to do repeated:
-> 	offset += str*cpy(buf + offset, src, sizeof buf - offset);
+> Looks good, thanks for the fix. I wonder why this
+> got triggered with VP8 only, and not with MPEG-2.
 
+I suspect that this got triggered by some change at linux-next, as
+it built fine here on the top of 5.3-rc1.
 
-> and do a final check for overflow after all the copies.
-> 
-> The same is true for a snprintf()like function
+Patch was applied earlier today.
 
-Chris?  You added this function.
-Do you have an opinion here?
-
-
+Thanks,
+Mauro
