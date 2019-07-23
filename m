@@ -2,65 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 433AA716FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 13:28:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB2DE71703
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 13:29:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389437AbfGWL2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 07:28:40 -0400
-Received: from muru.com ([72.249.23.125]:55670 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389427AbfGWL2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 07:28:35 -0400
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id A654F81BC;
-        Tue, 23 Jul 2019 11:28:59 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     linux-omap@vger.kernel.org
-Cc:     Dave Gerlach <d-gerlach@ti.com>, Faiz Abbas <faiz_abbas@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 8/8] ARM: dts: Fix lcdc sysc flags for am3
-Date:   Tue, 23 Jul 2019 04:28:11 -0700
-Message-Id: <20190723112811.44381-9-tony@atomide.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190723112811.44381-1-tony@atomide.com>
-References: <20190723112811.44381-1-tony@atomide.com>
+        id S2387596AbfGWL3C convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 23 Jul 2019 07:29:02 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:65146 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727826AbfGWL3B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 07:29:01 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 17532238-1500050 
+        for multiple; Tue, 23 Jul 2019 12:28:49 +0100
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DC7C082@hasmsx108.ger.corp.intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "C, Ramalingam" <ramalingam.c@intel.com>
+References: <20190723111913.20475-1-chris@chris-wilson.co.uk>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DC7C082@hasmsx108.ger.corp.intel.com>
+Message-ID: <156388132716.31349.11822559564861280475@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: RE: [PATCH] mei: Abort writes if incomplete after 1s
+Date:   Tue, 23 Jul 2019 12:28:47 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LCDC controller on am335x has a sysconfig register without a
-SOFTRESET bit. Let's configure that by setting ti,sysc-mask = <0>
-as otherwise we get the following warning:
+Quoting Winkler, Tomas (2019-07-23 12:25:14)
+> > 
+> > During i915 unload, it appears that it may get stuck waiting on a workqueue
+> > being hogged by mei:
+> 
+> Thanks for the bug report, but this is not a proper fix, we will try to work it out.
 
-ti-sysc 4830e000.target-module: idlemodes 00000087 != 00000007
+Perfect :)
 
-And the legacy platform data has LCDC midle unconfigured so let's
-remove that property.
-
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- arch/arm/boot/dts/am33xx-l4.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/am33xx-l4.dtsi b/arch/arm/boot/dts/am33xx-l4.dtsi
---- a/arch/arm/boot/dts/am33xx-l4.dtsi
-+++ b/arch/arm/boot/dts/am33xx-l4.dtsi
-@@ -2038,7 +2038,7 @@
- 			reg = <0xe000 0x4>,
- 			      <0xe054 0x4>;
- 			reg-names = "rev", "sysc";
--			ti,sysc-midle ;
-+			ti,sysc-mask = <0>;
- 			ti,sysc-sidle = <SYSC_IDLE_FORCE>,
- 					<SYSC_IDLE_NO>,
- 					<SYSC_IDLE_SMART>;
--- 
-2.21.0
+It's only happened a couple of times in the last week or so, but if you
+want to throw patches at intel-gfx-trybot@lists.freedesktop.org to try
+and grab more information, please feel free to.
+-Chris
