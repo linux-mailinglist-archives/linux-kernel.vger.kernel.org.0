@@ -2,91 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 927ED71ACD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 16:51:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA3D671AD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 16:52:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390752AbfGWOvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 10:51:04 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41475 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732750AbfGWOvD (ORCPT
+        id S2388352AbfGWOwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 10:52:11 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43708 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729058AbfGWOwL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 10:51:03 -0400
-Received: by mail-pl1-f196.google.com with SMTP id m9so20618304pls.8
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 07:51:03 -0700 (PDT)
+        Tue, 23 Jul 2019 10:52:11 -0400
+Received: by mail-wr1-f68.google.com with SMTP id p13so43484972wru.10;
+        Tue, 23 Jul 2019 07:52:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:cc:from:user-agent:date;
-        bh=wAI/J73/SuEViXJgIx3ykUez6skqEEMGxVLWdHqure4=;
-        b=mcwiGo0OGGnJmwu5VoILB9JjAAEwKiRmKy5Mmd7RXzj9gztUWFbEKtOc6GS2tAtuQB
-         o/1laoHwe7qm1trcOSkzADOtUNucB8RKLWKbNZQ8ELkEsyHrBkWU3ZHmQiuX1T4rSsuk
-         K8xYICMVYZY7/oyotpkOnAkngAxmFjO0cpMCw=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kYSaq/H0a1K5O6GgVQzeldJnwoS+ik7bLUeJy2mAJ1A=;
+        b=aukX6NjY5vGXcUMBB7dCljUvzTQzh3KCQ2SsVn4v4prgUDICht9MtYvmKH0taCJILB
+         Qx7krhdvRr84zDCfJ0YoBYkHbyFxT9T7R+0390Ib53rvGYIVdAoU4ukd6T54zwDgFhXf
+         kURlWc2HSpFdNz0eW+lDZ5c+PqgGo8CKmHpO5GL4TZGiyTql3rylP4hDxUWcObDdeeao
+         /AG6a+NawBkABpAV71zqHa4SErX4S9AzbJWlObwK+3R4P3vn/p2zMIgDwHzdwi5tR2JY
+         MCX3OIjhTDn5/sMtwm3fmWWZEu6J1nNF2JpNROAUXgRDGtxt789Kmc2H4lZTbCDqIf+E
+         teIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:cc:from
-         :user-agent:date;
-        bh=wAI/J73/SuEViXJgIx3ykUez6skqEEMGxVLWdHqure4=;
-        b=jLobenqpzngrHzmzByZxn3fiMVWCq8TeZvKNKf148sCRK7/BUm4P1MWv83YThqpyaS
-         3xoA/BZ4HeD/nHJOMcM+SCY465QFx5NWwJCJd5xe0bMS+YTFSUDJ3OGtB2pCU6EXwgV8
-         gg8EVHbdNmgzaSDtZwN+3XTC36Fm1WzsYCt9Udy6r+Pa6MFop3aJO25UmJH7ddISlA5E
-         iAQXPl/X+H6MC/MR1t2jx9Ey5Xs+9uHsILHprsaNOjXXm+zYN3mGrZYCbxW6pVIW6Xpv
-         BDfwUQanxQJ5VKbksgZLhlWROmBmNtuCNrPoJWz5xK059jsMl0VFMRGbHEdgr8kWg338
-         TI1Q==
-X-Gm-Message-State: APjAAAXh4tbXs2KRm/zlZAmvLGvDaaC4EBBDLlTuTpW+qLu4ugdKLgIA
-        aGiNNHCdxrotURK3Gb7SKQGgOFNIyxw=
-X-Google-Smtp-Source: APXvYqxhQml7Fo7GvVBVokUNUbCU97SfpUUqIjvBFdu2bgd8A5/MQr4G8gO8K0I8YLE1r+Mz9DuBBA==
-X-Received: by 2002:a17:902:9349:: with SMTP id g9mr79624502plp.262.1563893463330;
-        Tue, 23 Jul 2019 07:51:03 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id b37sm71455423pjc.15.2019.07.23.07.51.02
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kYSaq/H0a1K5O6GgVQzeldJnwoS+ik7bLUeJy2mAJ1A=;
+        b=Ke+/BGvX+a+5W1Cd+PLjbvdoSP8DLclhYo+Zwc1aytp0EaiSbkt2Gp5yXf+CBeFyAs
+         y/RUFv0d/hr44TIFD6clc6wn4rAqUn8m1PGpPSCDAfbRv2AIUumkAlYZM3il8gr2y9qb
+         IqLoWbHuviv9DBXpwiAaAxNTXvM92Ua0iZsu2DFKHeNSMgSYogPQlkax4V0Zdc8URWT3
+         zCWwL0GNoPZ5PPlCtXawUnJlU9a2ecP/QZLPf2UfxtBfYNvKOGZfGssQ4D+b4wKHZ5pV
+         DFWJNtqazxeOTUdhysRpr0vdCcecKsmvdz5NUEz3cLKMy34WrYH7qqL/vLkuRvScFQJr
+         Veow==
+X-Gm-Message-State: APjAAAXHGrgD+vsIIS6Np8cHRrzj2zUu5DbDl0oU1ii9o9j3ZIs2jF9+
+        ilfEXgVWJoLEv4j2BWAg7VvIZuGLYwQ=
+X-Google-Smtp-Source: APXvYqwq0DLfDr/GEx8Ioo9rXYOVzEw+HqTLlypdVOTwN/scxJ1hlwnITW1gc8tynJDxNVNwzem68Q==
+X-Received: by 2002:a5d:4090:: with SMTP id o16mr7929232wrp.292.1563893529374;
+        Tue, 23 Jul 2019 07:52:09 -0700 (PDT)
+Received: from localhost ([197.211.57.129])
+        by smtp.gmail.com with ESMTPSA id c78sm62424451wmd.16.2019.07.23.07.52.06
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 07:51:02 -0700 (PDT)
-Message-ID: <5d371ed6.1c69fb81.1ea1c.47f1@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Tue, 23 Jul 2019 07:52:08 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 15:52:01 +0100
+From:   Sheriff Esseson <sheriffesseson@gmail.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "supporter:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] Documentation: filesystem: fix "Removed Sysctls" table
+Message-ID: <20190723145201.GA20658@localhost>
+References: <20190723114813.GA14870@localhost>
+ <20190723074218.4532737f@lwn.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190722123422.4571-6-vkoul@kernel.org>
-References: <20190722123422.4571-1-vkoul@kernel.org> <20190722123422.4571-6-vkoul@kernel.org>
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: sdm845-cheza: remove macro from unit name
-To:     Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Tue, 23 Jul 2019 07:51:02 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190723074218.4532737f@lwn.net>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Vinod Koul (2019-07-22 05:34:22)
-> Unit name is supposed to be a number, using a macro with hex value is
-> not recommended, so add the value in unit name.
->=20
-> arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi:966.16-969.4: Warning (unit_ad=
-dress_format): /soc@0/spmi@c440000/pmic@0/adc@3100/adc-chan@0x4d: unit name=
- should not have leading "0x"
-> arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi:971.16-974.4: Warning (unit_ad=
-dress_format): /soc@0/spmi@c440000/pmic@0/adc@3100/adc-chan@0x4e: unit name=
- should not have leading "0x"
-> arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi:976.16-979.4: Warning (unit_ad=
-dress_format): /soc@0/spmi@c440000/pmic@0/adc@3100/adc-chan@0x4f: unit name=
- should not have leading "0x"
-> arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi:981.16-984.4: Warning (unit_ad=
-dress_format): /soc@0/spmi@c440000/pmic@0/adc@3100/adc-chan@0x50: unit name=
- should not have leading "0x"
-> arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi:986.16-989.4: Warning (unit_ad=
-dress_format): /soc@0/spmi@c440000/pmic@0/adc@3100/adc-chan@0x51: unit name=
- should not have leading "0x"
->=20
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
+On Tue, Jul 23, 2019 at 07:42:18AM -0600, Jonathan Corbet wrote:
+> On Tue, 23 Jul 2019 12:48:13 +0100
+> Sheriff Esseson <sheriffesseson@gmail.com> wrote:
+> 
+> > the "Removed Sysctls" section is a table - bring it alive with ReST.
+> > 
+> > Signed-off-by: Sheriff Esseson <sheriffesseson@gmail.com>
+> 
+> So this appears to be identical to the patch you sent three days ago; is
+> there a reason why you are sending it again now?
+> 
+> Thanks,
+> 
+> jon
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-
+Sorry, I was think the patch went unnoticed during the merge window - I could
+not find a response.
