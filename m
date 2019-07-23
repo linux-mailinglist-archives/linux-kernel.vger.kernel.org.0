@@ -2,96 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 394497170D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 13:29:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 204067171A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 13:30:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389489AbfGWL3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 07:29:33 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42221 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727826AbfGWL3c (ORCPT
+        id S1731705AbfGWLaM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 07:30:12 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:63182 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727983AbfGWLaL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 07:29:32 -0400
-Received: by mail-wr1-f67.google.com with SMTP id x1so27789687wrr.9;
-        Tue, 23 Jul 2019 04:29:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=f8H6U0+3Sk4VYW6Aa+OCSbWW6bgtEY44sozfQ1JdKIY=;
-        b=emqkyIl67MRV4609gb6UHgsPFJpQTqlY4AIKr/P6xdna1LnwSmTV4o+KTXRKbgKxJO
-         mqNeikCn49SdlGW+GBw61Y+n265yxRMms2f7q1XcqsSBSdSZkGBlSWI1FvVEuSvrQCMR
-         K5GNF5WX5EIMFNTL6wuv7rFLTPby8/mx2C/265t6R0/uuzT5ZP9jX8Jnzrnzw+M5P2oH
-         Kh5y9HyxFL0lRtqdeUKc4S0VrXuNDEpjv6DTSzz4NMGg2wvjHXtAUBCUjTe66k5w+PaF
-         3OgAQPu303zjhz+oXRI01G/vfdFYlK/tWYr710+6b3DtsOtsfaRYfN0R8wDC6s62Vi0S
-         Aq4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=f8H6U0+3Sk4VYW6Aa+OCSbWW6bgtEY44sozfQ1JdKIY=;
-        b=Zyr2nLKU9tEl4DVNtJP9IRDHW4tDEcav+WL9imX7Xk7K+zD+47WcCPigG8RLkVLGow
-         62VsbCMGdM3H6qdAEooV0PPUMVUMwCWmEC36q8QenGsIh/XCff6fjNP08Ipdc86ftlq2
-         6V1kcAAftuWu/ddG1ZVM5fsWnxouHM+pOpswfD98wZjhBo6rQQ6mBQKa60aI5s9uZ/+M
-         8OxxdweItfI3pMQU4oKBY1M3oXDw/YmBzvPFzVyzQFuW4UGzAv95nrI5IRQa8eRJIeha
-         9RRVXzkt9f7wZjk6jdii0fG4AggDBtgkKkyiEF3schY1SEH1rzw3YDUG9B0GhW0OdgPR
-         HCRA==
-X-Gm-Message-State: APjAAAVFmlXsXgFPrLosU3HUVntpxMNL77s6e4B/qhhZFRniVFmNQMNR
-        2AN3X4qx5J5tmpwl3xH6AoU=
-X-Google-Smtp-Source: APXvYqyRhaDv6KIgHD/AiOmbAATBBVRRDSQIUYC9zkJu06oXfg1tQ7o6XRww3imaVKsQ687Ybt6GfQ==
-X-Received: by 2002:adf:f204:: with SMTP id p4mr2251248wro.317.1563881370004;
-        Tue, 23 Jul 2019 04:29:30 -0700 (PDT)
-Received: from [192.168.2.202] (pD9E5A8B2.dip0.t-ipconnect.de. [217.229.168.178])
-        by smtp.gmail.com with ESMTPSA id t13sm52324256wrr.0.2019.07.23.04.29.28
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Jul 2019 04:29:29 -0700 (PDT)
-Subject: Re: [PATCH v3 2/2] Input: soc_button_array - Add support for newer
- surface devices
-To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-References: <20190720150511.95076-1-luzmaximilian@gmail.com>
- <20190720150511.95076-3-luzmaximilian@gmail.com>
- <a2f75544-54ce-abce-56a4-ca226dbed51f@metux.net>
-From:   Maximilian Luz <luzmaximilian@gmail.com>
-Message-ID: <901b9b74-4c59-9c6a-ce41-404d8885cb83@gmail.com>
-Date:   Tue, 23 Jul 2019 13:29:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <a2f75544-54ce-abce-56a4-ca226dbed51f@metux.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 23 Jul 2019 07:30:11 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id x6NBTT9t009036;
+        Tue, 23 Jul 2019 20:29:30 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x6NBTT9t009036
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1563881370;
+        bh=pnEKyqfOAohbNR2Gvql1ZArOB+TAbhx27FzF/o9Fefw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PdVCcOmgrIK98mD62eH5TYnpnYxkPnNxQXMzBqssPyBsvhlH0A+G3uSD7SRVQM0Xh
+         5NJqxMGP4RgedFyZpmY/zrg8JPTHUSz7ukuoKj/z2gV6OeB7wTlJaYrVb3Guh03Lwp
+         0vH0qvfUeDIaWF7DbnuOuUphHV4pxpMKeY3X/ATYAaBZviMApHs1IZ7YRNj9o2PoCu
+         Cjz7K3+tTCGS3VrYjKAkWujGkqvsAEsW7+Dy80A1RYR1hIRLNNsMcGcE6FN+v8Bauq
+         zDW1fMBbdgM+QkKO1ccNKAhBz9BPFurNIVlSQAV+ltWxlqRBUXBeZRp3NfMM/375Tw
+         pRzsdLROehVhg==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-arm-kernel@lists.infradead.org,
+        Will Deacon <will.deacon@arm.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: remove unneeded uapi/asm/stat.h
+Date:   Tue, 23 Jul 2019 20:29:22 +0900
+Message-Id: <20190723112922.14315-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/22/19 10:00 AM, Enrico Weigelt, metux IT consult wrote:
-> On 20.07.19 17:05, Maximilian Luz wrote:
->> Power and volume button support for 5th and 6th generation Microsoft
->> Surface devices via soc_button_array.
->>
->> Note that these devices use the same MSHW0040 device as on the Surface
->> Pro 4, however the implementation is different (GPIOs vs. ACPI
->> notifications). Thus some checking is required to ensure we only load
->> this driver on the correct devices.
-> 
-> Could this also used on the older (pre pro4) devices (also using the
-> gpios directly, and leave off acpi notifications) ?
+stat.h is listed in include/uapi/asm-generic/Kbuild, so Kbuild will
+automatically generate it.
 
-As far as I can tell, no. The Pro 4 and Pro 3 don't have any GPIOs on
-MSHW0028/MSHW0040. Book 1 has GPIOs but for a different purpose. The Pro
-2 has a standard PNP0C0C power button (no idea how the volume buttons
-are handled there, but also seems to be different from what I can gather
-from DSDT). I can't say anything for the Pro 1 and non-Pro devices.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Maximilian
+ arch/arm64/include/uapi/asm/stat.h | 17 -----------------
+ 1 file changed, 17 deletions(-)
+ delete mode 100644 arch/arm64/include/uapi/asm/stat.h
+
+diff --git a/arch/arm64/include/uapi/asm/stat.h b/arch/arm64/include/uapi/asm/stat.h
+deleted file mode 100644
+index 313325fa22fa..000000000000
+--- a/arch/arm64/include/uapi/asm/stat.h
++++ /dev/null
+@@ -1,17 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-/*
+- * Copyright (C) 2012 ARM Ltd.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- */
+-#include <asm-generic/stat.h>
+-- 
+2.17.1
+
