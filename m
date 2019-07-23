@@ -2,71 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1993714A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 11:09:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5805A714E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 11:19:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388780AbfGWJJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 05:09:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36958 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729427AbfGWJJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 05:09:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 890A3AF79;
-        Tue, 23 Jul 2019 09:09:09 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 3D87CE0E22; Tue, 23 Jul 2019 11:09:08 +0200 (CEST)
-Date:   Tue, 23 Jul 2019 11:09:08 +0200
-From:   Michal Kubecek <mkubecek@suse.cz>
-To:     netdev@vger.kernel.org
-Cc:     Thomas Haller <thaller@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        David Ahern <dsahern@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 3/3] netlink: add validation of NLA_F_NESTED
- flag
-Message-ID: <20190723090908.GA2204@unicorn.suse.cz>
-References: <cover.1556806084.git.mkubecek@suse.cz>
- <6b6ead21c5d8436470b82ab40355f6bd7dbbf14b.1556806084.git.mkubecek@suse.cz>
- <0fc58a4883f6656208b9250876e53d723919e342.camel@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0fc58a4883f6656208b9250876e53d723919e342.camel@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1729735AbfGWJTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 05:19:45 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:57436 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725848AbfGWJTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 05:19:44 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CD23620034E;
+        Tue, 23 Jul 2019 11:19:41 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 97256200307;
+        Tue, 23 Jul 2019 11:19:38 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 92891402FC;
+        Tue, 23 Jul 2019 17:19:34 +0800 (SGT)
+From:   Robin Gong <yibin.gong@nxp.com>
+To:     vkoul@kernel.org, dan.j.williams@intel.com
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com
+Subject: [RESEND PATCH v6] dmaengine: fsl-edma: add i.mx7ulp edma2 version support
+Date:   Tue, 23 Jul 2019 16:57:42 +0800
+Message-Id: <1563872262-18376-1-git-send-email-yibin.gong@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 10:57:54AM +0200, Thomas Haller wrote:
-> Does this flag and strict validation really provide any value?
-> Commonly a netlink message is a plain TLV blob, and the meaning
-> depends entirely on the policy.
-> 
-> What I mean is that for example
-> 
->   NLA_PUT_U32 (msg, ATTR_IFINDEX, (uint32_t) ifindex)
->   NLA_PUT_STRING (msg, ATTR_IFNAME, "net")
-> 
-> results in a 4 bytes payload that does not encode whether the data is
-> a number or a string.
-> 
-> Why is it valuable in this case to encode additional type information
-> inside the message, when it's commonly not done and also not
-> necessary?
+Add edma2 for i.mx7ulp by version v3, since v2 has already
+been used by mcf-edma.
+The big changes based on v1 are belows:
+1. only one dmamux.
+2. another clock dma_clk except dmamux clk.
+3. 16 independent interrupts instead of only one interrupt for
+all channels.
 
-One big advantage of having nested attributes explicitly marked is that
-it allows parsers not aware of the semantics to recognize nested
-attributes and parse their inner structure.
+Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+---
+Change from v5(https://lkml.org/lkml/2019/6/25/444):
+Fix below build issue, replace platform_irq_count() instead
+of of_irq_count():
+https://lkml.org/lkml/2019/7/8/5
 
-This is very important e.g. for debugging purposes as without the flag,
-wireshark can only recurse into nested attributes if it understands the
-protocol and knows they are nested, otherwise it displays them only as
-an opaque blob (which is what happens for most netlink based protocols).
-Another example is mnl_nlmsg_fprintf() function from libmnl which is
-also a valuable debugging aid but without NLA_F_NESTED flags it cannot
-show message structure properly.
+ drivers/dma/fsl-edma-common.c | 18 +++++++++++-
+ drivers/dma/fsl-edma-common.h |  4 +++
+ drivers/dma/fsl-edma.c        | 66 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 87 insertions(+), 1 deletion(-)
 
-Michal Kubecek
+diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
+index 26952f5..26c7e0f 100644
+--- a/drivers/dma/fsl-edma-common.c
++++ b/drivers/dma/fsl-edma-common.c
+@@ -90,6 +90,19 @@ static void mux_configure8(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
+ 	iowrite8(val8, addr + off);
+ }
+ 
++void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
++		     u32 off, u32 slot, bool enable)
++{
++	u32 val;
++
++	if (enable)
++		val = EDMAMUX_CHCFG_ENBL << 24 | slot;
++	else
++		val = EDMAMUX_CHCFG_DIS;
++
++	iowrite32(val, addr + off * 4);
++}
++
+ void fsl_edma_chan_mux(struct fsl_edma_chan *fsl_chan,
+ 			unsigned int slot, bool enable)
+ {
+@@ -108,7 +121,10 @@ void fsl_edma_chan_mux(struct fsl_edma_chan *fsl_chan,
+ 	muxaddr = fsl_chan->edma->muxbase[ch / chans_per_mux];
+ 	slot = EDMAMUX_CHCFG_SOURCE(slot);
+ 
+-	mux_configure8(fsl_chan, muxaddr, ch_off, slot, enable);
++	if (fsl_chan->edma->drvdata->version == v3)
++		mux_configure32(fsl_chan, muxaddr, ch_off, slot, enable);
++	else
++		mux_configure8(fsl_chan, muxaddr, ch_off, slot, enable);
+ }
+ EXPORT_SYMBOL_GPL(fsl_edma_chan_mux);
+ 
+diff --git a/drivers/dma/fsl-edma-common.h b/drivers/dma/fsl-edma-common.h
+index 4e17556..5eaa290 100644
+--- a/drivers/dma/fsl-edma-common.h
++++ b/drivers/dma/fsl-edma-common.h
+@@ -125,6 +125,7 @@ struct fsl_edma_chan {
+ 	dma_addr_t			dma_dev_addr;
+ 	u32				dma_dev_size;
+ 	enum dma_data_direction		dma_dir;
++	char				chan_name[16];
+ };
+ 
+ struct fsl_edma_desc {
+@@ -139,11 +140,13 @@ struct fsl_edma_desc {
+ enum edma_version {
+ 	v1, /* 32ch, Vybrid, mpc57x, etc */
+ 	v2, /* 64ch Coldfire */
++	v3, /* 32ch, i.mx7ulp */
+ };
+ 
+ struct fsl_edma_drvdata {
+ 	enum edma_version	version;
+ 	u32			dmamuxs;
++	bool			has_dmaclk;
+ 	int			(*setup_irq)(struct platform_device *pdev,
+ 					     struct fsl_edma_engine *fsl_edma);
+ };
+@@ -153,6 +156,7 @@ struct fsl_edma_engine {
+ 	void __iomem		*membase;
+ 	void __iomem		*muxbase[DMAMUX_NR];
+ 	struct clk		*muxclk[DMAMUX_NR];
++	struct clk		*dmaclk;
+ 	struct mutex		fsl_edma_mutex;
+ 	const struct fsl_edma_drvdata *drvdata;
+ 	u32			n_chans;
+diff --git a/drivers/dma/fsl-edma.c b/drivers/dma/fsl-edma.c
+index fcbad6a..54cbdfd 100644
+--- a/drivers/dma/fsl-edma.c
++++ b/drivers/dma/fsl-edma.c
+@@ -162,6 +162,50 @@ fsl_edma_irq_init(struct platform_device *pdev, struct fsl_edma_engine *fsl_edma
+ 	return 0;
+ }
+ 
++static int
++fsl_edma2_irq_init(struct platform_device *pdev,
++		   struct fsl_edma_engine *fsl_edma)
++{
++	struct device_node *np = pdev->dev.of_node;
++	int i, ret, irq;
++	int count;
++
++	count = platform_irq_count(pdev);
++	dev_dbg(&pdev->dev, "%s Found %d interrupts\r\n", __func__, count);
++	if (count <= 2) {
++		dev_err(&pdev->dev, "Interrupts in DTS not correct.\n");
++		return -EINVAL;
++	}
++	/*
++	 * 16 channel independent interrupts + 1 error interrupt on i.mx7ulp.
++	 * 2 channel share one interrupt, for example, ch0/ch16, ch1/ch17...
++	 * For now, just simply request irq without IRQF_SHARED flag, since 16
++	 * channels are enough on i.mx7ulp whose M4 domain own some peripherals.
++	 */
++	for (i = 0; i < count; i++) {
++		irq = platform_get_irq(pdev, i);
++		if (irq < 0)
++			return -ENXIO;
++
++		sprintf(fsl_edma->chans[i].chan_name, "eDMA2-CH%02d", i);
++
++		/* The last IRQ is for eDMA err */
++		if (i == count - 1)
++			ret = devm_request_irq(&pdev->dev, irq,
++						fsl_edma_err_handler,
++						0, "eDMA2-ERR", fsl_edma);
++		else
++			ret = devm_request_irq(&pdev->dev, irq,
++						fsl_edma_tx_handler, 0,
++						fsl_edma->chans[i].chan_name,
++						fsl_edma);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
+ static void fsl_edma_irq_exit(
+ 		struct platform_device *pdev, struct fsl_edma_engine *fsl_edma)
+ {
+@@ -187,8 +231,16 @@ static struct fsl_edma_drvdata vf610_data = {
+ 	.setup_irq = fsl_edma_irq_init,
+ };
+ 
++static struct fsl_edma_drvdata imx7ulp_data = {
++	.version = v3,
++	.dmamuxs = 1,
++	.has_dmaclk = true,
++	.setup_irq = fsl_edma2_irq_init,
++};
++
+ static const struct of_device_id fsl_edma_dt_ids[] = {
+ 	{ .compatible = "fsl,vf610-edma", .data = &vf610_data},
++	{ .compatible = "fsl,imx7ulp-edma", .data = &imx7ulp_data},
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, fsl_edma_dt_ids);
+@@ -236,6 +288,20 @@ static int fsl_edma_probe(struct platform_device *pdev)
+ 	fsl_edma_setup_regs(fsl_edma);
+ 	regs = &fsl_edma->regs;
+ 
++	if (drvdata->has_dmaclk) {
++		fsl_edma->dmaclk = devm_clk_get(&pdev->dev, "dma");
++		if (IS_ERR(fsl_edma->dmaclk)) {
++			dev_err(&pdev->dev, "Missing DMA block clock.\n");
++			return PTR_ERR(fsl_edma->dmaclk);
++		}
++
++		ret = clk_prepare_enable(fsl_edma->dmaclk);
++		if (ret) {
++			dev_err(&pdev->dev, "DMA clk block failed.\n");
++			return ret;
++		}
++	}
++
+ 	for (i = 0; i < fsl_edma->drvdata->dmamuxs; i++) {
+ 		char clkname[32];
+ 
+-- 
+2.7.4
+
