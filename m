@@ -2,66 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B132670ECC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 03:49:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5F5E70EC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 03:48:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731953AbfGWBtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 21:49:09 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:36442 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731922AbfGWBtI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 21:49:08 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 3523DDCD025E4E7C7BA0;
-        Tue, 23 Jul 2019 09:49:07 +0800 (CST)
-Received: from [127.0.0.1] (10.177.223.23) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 23 Jul 2019
- 09:49:02 +0800
-Subject: Re: [PATCH] ACPI/IORT: Fix off-by-one check in iort_dev_find_its_id()
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        <linux-acpi@vger.kernel.org>
-CC:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Will Deacon <will@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        LAKML <linux-arm-kernel@lists.infradead.org>
-References: <20190722162548.23610-1-lorenzo.pieralisi@arm.com>
-From:   Hanjun Guo <guohanjun@huawei.com>
-Message-ID: <1d18ce4f-ecd5-4295-60ea-aff5a0d83cb2@huawei.com>
-Date:   Tue, 23 Jul 2019 09:48:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1731875AbfGWBss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 21:48:48 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34139 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728086AbfGWBsr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 21:48:47 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n9so12321998pgc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 18:48:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tSmnjYLr4XnnXcZ+h5qygzO/vu9yBr7SlvfWk0oPsHs=;
+        b=bqWosns6ku3Fc2lvihluziKAZVN5g9VBJGwdBeEg0niOa9coayRBgsZDKeNrrOGuRM
+         1ys7oqabOhX396o7/uZgRtvsq+RrHfJPAzz4LMmYFniinIFq6DcopcyIKUruknf/iuXw
+         mXVOugoYmvLSn3rg8nZ9e7Yj39W2wS8wj1q5swlqeZuKRIWIOafWcCH7jhheay8dMc/O
+         sLsA9O5eIoQMDMKOlnvPy2nB5b1UhFtNUInIvlZ/jVC4uK3jESSTdRQPSKJQIIMYkZQI
+         pSUgqeWC5dONoRzZSzfBpAWTj36R4kWNXVFiTrcaGQH2EoCrlQS09pjY0RAtlZScIcl6
+         lVHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tSmnjYLr4XnnXcZ+h5qygzO/vu9yBr7SlvfWk0oPsHs=;
+        b=BhqfneqZ0qKV6aa9V+19xTPbVxHdrUpj72fJyPw2myB2Ax+Nlwav5wDAWGozlxGXIn
+         M9cUNPY21uWDG9zY4+bLipX49I+hQHj//Osy6+6ozAr4cfP3ZUY0ey4KPZnrqW9tkSCB
+         Tjcxykl0B1pN8e0Nk/6HUmbBULreMJsQr6vrWmI2ybb2Y3k3dENqUlnuWDXrC0CAz1JV
+         2iAL//a0LhCkcga2TzBzTi7pWerR+OT/PI4cUFvRDYqMOppEKIUh/1R93uvsp4q7nSU1
+         SRgr0ZB7TbLdF6mlEHhrWvJmvZHR8XlNbDWsiwtGn+lBiC+HX/L9MZO6Q1E2CM/DMf7C
+         Yw/g==
+X-Gm-Message-State: APjAAAUFLOPf2fDjck0r1pnCqyY+tRPQcU1kr3+nfO5as11PEl8mCo6a
+        TLS7eAIhki1HRQQ/RcNpvDQaBA==
+X-Google-Smtp-Source: APXvYqyxp0cHGLs8U/L2DtyISYxwUziJvpXuvUsf8zTcnWojfKIhYVspEl2HKfU7BL6HG2uLn/m/1g==
+X-Received: by 2002:a62:d45d:: with SMTP id u29mr3161818pfl.135.1563846527114;
+        Mon, 22 Jul 2019 18:48:47 -0700 (PDT)
+Received: from localhost ([122.172.28.117])
+        by smtp.gmail.com with ESMTPSA id o14sm33661343pjp.19.2019.07.22.18.48.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Jul 2019 18:48:45 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 07:18:41 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     k.konieczny@partner.samsung.com
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] opp: core: add regulators enable and disable
+Message-ID: <20190723014841.yyttacgagktbkwg2@vireshk-i7>
+References: <20190719150535.15501-1-k.konieczny@partner.samsung.com>
+ <CGME20190719150554eucas1p2f4c9e4d2767ab740d419c42d4aeed6d5@eucas1p2.samsung.com>
+ <20190719150535.15501-3-k.konieczny@partner.samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20190722162548.23610-1-lorenzo.pieralisi@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.223.23]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190719150535.15501-3-k.konieczny@partner.samsung.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/7/23 0:25, Lorenzo Pieralisi wrote:
-> Static analysis identified that index comparison against ITS entries in
-> iort_dev_find_its_id() is off by one.
+On 19-07-19, 17:05, k.konieczny@partner.samsung.com wrote:
+> Add enable regulators to dev_pm_opp_set_regulators() and disable
+> regulators to dev_pm_opp_put_regulators(). Even if bootloader
+> leaves regulators enabled, they should be enabled in kernel in
+> order to increase the reference count.
 > 
-> Update the comparison condition and clarify the resulting error
-> message.
+> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> ---
+> Changes in v3:
+> - corrected error path in enable
+> - improved commit message
+> Changes in v2:
+> - move regulator enable and disable into loop
+> ---
+>  drivers/opp/core.c | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
 > 
-> Fixes: 4bf2efd26d76 ("ACPI: Add new IORT functions to support MSI domain handling")
-> Link: https://lore.kernel.org/linux-arm-kernel/20190613065410.GB16334@mwanda/
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Dan Carpenter <dan.carpenter@oracle.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Hanjun Guo <guohanjun@huawei.com>
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Robin Murphy <robin.murphy@arm.com>
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 0e7703fe733f..a8a480cdabab 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -1570,6 +1570,12 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
+>  			goto free_regulators;
+>  		}
+>  
+> +		ret = regulator_enable(reg);
+> +		if (ret < 0) {
+> +			regulator_put(reg);
+> +			goto free_regulators;
+> +		}
+> +
+>  		opp_table->regulators[i] = reg;
+>  	}
+>  
+> @@ -1583,8 +1589,10 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
+>  	return opp_table;
+>  
+>  free_regulators:
+> -	while (i != 0)
+> -		regulator_put(opp_table->regulators[--i]);
+> +	while (i--) {
+> +		regulator_disable(opp_table->regulators[i]);
+> +		regulator_put(opp_table->regulators[i]);
+> +	}
+>  
+>  	kfree(opp_table->regulators);
+>  	opp_table->regulators = NULL;
+> @@ -1610,8 +1618,10 @@ void dev_pm_opp_put_regulators(struct opp_table *opp_table)
+>  	/* Make sure there are no concurrent readers while updating opp_table */
+>  	WARN_ON(!list_empty(&opp_table->opp_list));
+>  
+> -	for (i = opp_table->regulator_count - 1; i >= 0; i--)
+> +	for (i = opp_table->regulator_count - 1; i >= 0; i--) {
+> +		regulator_disable(opp_table->regulators[i]);
+>  		regulator_put(opp_table->regulators[i]);
+> +	}
+>  
+>  	_free_set_opp_data(opp_table);
 
-Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
+Applied. Thanks.
 
+-- 
+viresh
