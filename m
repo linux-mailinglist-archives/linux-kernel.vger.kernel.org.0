@@ -2,113 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B5097108B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 06:29:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25F92710A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 06:31:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731302AbfGWE3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 00:29:10 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39577 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbfGWE3K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 00:29:10 -0400
-Received: by mail-pg1-f193.google.com with SMTP id u17so18726189pgi.6
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 21:29:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=22UJjcRk/2lGT/hRSqJ5/S0+j7kZgg6IKXcxM0YiLpc=;
-        b=MR5t3N1gfMiPWm1cNEY+2hpVL8X7WUEuq9PC+iLdIp3vivoR4JihR4hn2oH+B8LG8Q
-         TLpw01uk07hfJU8J4mkmHusSM2HJRIZpJjQ4GpoDORuCxdpGD/CDaHqTPAw0ssi/AaXS
-         gZALUDzuohgUR6Ahvc+HTgMRN9ZxkIoCKcroGELR6nGFO810uSqk6VAaRXiXmCzKsqFa
-         u/j6E5vSrkjUpCgs29a1Qm2GyJuovxcP657v/Uf55j13ocmAN/dJ356qY1nlWi6w+nHe
-         OUuzR0K0vJs4xvpBQqY6EhRpmvJ784/Zr8KxPiDmvOjn0BT96Jtt4AMx30eU2idiO1Lh
-         QU0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=22UJjcRk/2lGT/hRSqJ5/S0+j7kZgg6IKXcxM0YiLpc=;
-        b=JPSGHB6wv9ZXeh5ZEvwn4/gqndYwYsLX7CuA7MuWzj5vHVvUM+zodDDDg2cpTARvSh
-         VaR/hbaFXd0+QzjjlwdPrbDyzi4JOa5fMp8r2Iwqyu5oDzhIRlwNDRRcOY+8YxvH95m8
-         Bpv7yyoCSWozpl55KB6pAxwOCNEIVDdmObpRhhkQsVuWFiuNjAxY0nC/7IzOZwjiBV4f
-         4FozQkj3jErdoMKwgzf5uWT3GsxGXmbwsxq7zLsDTAJAGjHz8CoxdiJbVymruqkMR5Ts
-         w/L3G33Z7byrrGiNuglzVEZ+tWz5Vdf8mW/HvzB63pE0qR/7V9GdzBo85p2YEoOvFaWN
-         jjRg==
-X-Gm-Message-State: APjAAAWr3cw4nY8h6+2623umMc09aJt9+P/sc1RCb2t7yPWFX72dqf4B
-        +dVI8/7p5ObDh2Ha+7zPbPVmQQiK2nw=
-X-Google-Smtp-Source: APXvYqzQOzHav8ChLR+nm5Shbhp87uosgWeoO2wTb0paGo7XmBntv7hWu6eWMMIeC9QYcngLF1adlA==
-X-Received: by 2002:a63:9e54:: with SMTP id r20mr39915106pgo.64.1563856149447;
-        Mon, 22 Jul 2019 21:29:09 -0700 (PDT)
-Received: from localhost.localdomain ([49.205.217.198])
-        by smtp.gmail.com with ESMTPSA id q69sm56424119pjb.0.2019.07.22.21.29.03
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 21:29:08 -0700 (PDT)
-From:   Kaiwan N Billimoria <kaiwan.billimoria@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Kaiwan N Billimoria <kaiwan.billimoria@gmail.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Waiman Long <longman@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Dennis Zhou <dennis@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: cgroups v2: issues faced attempting to setup cpu limiting
-Date:   Tue, 23 Jul 2019 09:58:05 +0530
-Message-Id: <20190723042803.21485-1-kaiwan.billimoria@gmail.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1732243AbfGWEbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 00:31:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43928 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732028AbfGWEbd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 00:31:33 -0400
+Received: from localhost (unknown [23.100.24.84])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 556EC2239E;
+        Tue, 23 Jul 2019 04:31:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563856292;
+        bh=Wwn7yxrLGk/utWQ17mVT/x50WAlz/xuOFG4qv+F12VI=;
+        h=Date:From:To:To:To:Cc:Cc:Cc:Subject:In-Reply-To:References:From;
+        b=dJcP4WDobdtr3hhBFMeerB7mUEoeq9/VHqEthwhZ3oQWXUpRjKZQQdI/KocwiqU6R
+         4NFi6Po5l1BQBW1IX5gCGjJVXxZQwMkr6npl9RwKN+UzUbpSnh5irqhFAlBWSCh02A
+         RlvHghqIyMSVnJ1/RkG52zPfrUUlwJZOpYWC29dw=
+Date:   Tue, 23 Jul 2019 04:31:31 +0000
+From:   Sasha Levin <sashal@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     stable@vger.kernel.org
+Cc:     stable@vger.kernel.org
+Cc:     stable@vger.kernel.org
+Subject: Re: [PATCH] Revert "kvm: x86: Use task structs fpu field for user"
+In-Reply-To: <1563796594-25317-1-git-send-email-pbonzini@redhat.com>
+References: <1563796594-25317-1-git-send-email-pbonzini@redhat.com>
+Message-Id: <20190723043132.556EC2239E@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+Hi,
 
-Am facing some issues getting CPU limiting working with cgroups v2. Pl read on
-for the details; a solution is much appreciated!
+[This is an automated email]
+
+This commit has been processed because it contains a "Fixes:" tag,
+fixing commit: 240c35a3783a kvm: x86: Use task structs fpu field for user.
+
+The bot has tested the following trees: v5.2.2, v5.1.19.
+
+v5.2.2: Build OK!
+v5.1.19: Failed to apply! Possible dependencies:
+    0cecca9d03c9 ("x86/fpu: Eager switch PKRU state")
+    2722146eb784 ("x86/fpu: Remove fpu->initialized")
+    4ee91519e1dc ("x86/fpu: Add an __fpregs_load_activate() internal helper")
+    5f409e20b794 ("x86/fpu: Defer FPU state load until return to userspace")
 
 
-Env: 5.0.0 Linux kernel on x86_64 Fedora 29
+NOTE: The patch will not be queued to stable trees until it is upstream.
 
-When attempting to setup CPU limiting using cgroups v2, I effectively
-disabled cgroups v1 by passing
+How should we proceed with this patch?
 
-cgroup_no_v1=all
-
-as a kernel cmdline option. That seems fine and now various controllers (cpu,
-io, memory, ...) show up under /sys/fs/cgroup/unified/cgroup.controllers.
-
-However, doing:
-
-# mkdir /sys/fs/cgroup/unified/test1
-# echo "+cpu " > /sys/fs/cgroup/unified/test1/cgroup.subtree_control
-bash: echo: write error: No such file or directory
-#
-
-I understand that this is expected, as the man page on cgroups(7) mentions:
-
-"... As at Linux 4.15, the cgroups v2 cpu controller does not support
-control of realtime processes, and the controller can be enabled in the
-root cgroup only if all realtime threads are in the root cgroup. (If there
-are realtime processes in nonroot cgroups, then a write(2) of the string
-"+cpu" to the cgroup.subtree_control file fails with the error EINVAL.
-However, on some systems, systemd(1) places certain realtime processes in
-nonroot cgroups in the v2 hierarchy. On such systems, these processes must
-first be moved to the root cgroup before the cpu controller can be
-enabled. ..."
-
-My questions are (forgive them if too basic!): how exactly does one
-'move realtime processes to the root cgroup'? What are the commands?
-
-Next, how does one identify which processes? The ones that have sched policy
-SCHED_FIFO or SCHED_RR? Would using a utility wrapper make this simpler?
-(libcgroup, cgmanager, etc) - do they play well with cgroups2?
-
-TIA!
-
-Regards,
-Kaiwan.
----
-amazon author page: https://www.amazon.com/-/e/B07KNJSRJX
+--
+Thanks,
+Sasha
