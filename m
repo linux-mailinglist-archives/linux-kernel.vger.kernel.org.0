@@ -2,59 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD7A71F8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 20:48:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C29E071F90
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 20:49:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403838AbfGWSsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 14:48:05 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34662 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728243AbfGWSsF (ORCPT
+        id S2403844AbfGWStH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 14:49:07 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50273 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728243AbfGWStH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 14:48:05 -0400
-Received: by mail-wr1-f67.google.com with SMTP id 31so44313178wrm.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 11:48:04 -0700 (PDT)
+        Tue, 23 Jul 2019 14:49:07 -0400
+Received: by mail-wm1-f65.google.com with SMTP id v15so39557553wml.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 11:49:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=LIXup0fVFWNf86/DVnHha31m2DWJ3Zw6X12AGN8eLZA=;
-        b=oHdcACKPK/OVOvIbPpPDuS1Z9gmvTd1eQ0qLtJL6QJToRs78djHD1kV87A4mI4VdVI
-         iVHKyScper77gwAvQatz4D0ofZBDWqK0cjPJPyt8oSc4uv1jpAKnY/lHROw6AunN6csn
-         qdSdEWRgnwNRwlymecJhNTaiBoGRTUp2VbGPXRiml3PipaGvOhjWO+YIZ5GcTznU6baB
-         qzhtinDaIGFYGgwwn5d95YeFQKaqVmvL7n8uZQAzXhh5cyz1ShYGATUewp/aBzR3CxMY
-         aoXF7zXaLGyyQCPUT+JZYBzl1rDMwlHF2K5EVjAHc9p8F0YSlg0OCnfGW9f8oaU2e6Rz
-         iihQ==
+        bh=50RPD9GLsElecVaxEmMiICG57vQta+1Z/U/1fgFGurI=;
+        b=kngDeBL36QOC6g0JB7S6cR1lhpzLh4otWj87pagk/hSxoPfkAndr5cH4/zmDAli2AW
+         cUoCnBxw+utC2sshc7SB2UL281hJy/Ti+dwzeOCuF40/ARDSPiEI/YDfhudVDoyhrZ0Z
+         ZsPbtuXe8KQtx4Ez/0YtuX3NZBfXLXwZn7UlsTguuCPmsXA39d792G18XFG0n2yR7SNY
+         BzkFr47/947Tfaz2eO/kaQsroOs1iFrBUKKai5hUv/1YCLKWHTRIBga747rT8oYtJH2E
+         ChgD3vpjkhHdBdjwK158ckcINm4Zc/37GjZSN6UhYfLjv7J89ujaFKcr7u567HLut6/F
+         WCnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=LIXup0fVFWNf86/DVnHha31m2DWJ3Zw6X12AGN8eLZA=;
-        b=LuR1h4+jO4KKei5PDXA7fAnk62RpWLgVkMpRGNTyaeGh3HbuyNLP6pz2EfpbhFsGnW
-         mJTGFLbOXvG1CEGESeqOQsMI+XznADPUUZ4c6bKWybfH3Au768soRrzEG3G0zhSW32me
-         kUG78gEjDJZZIPwiwDxGrGoAQ7IMscGsk+I/m3QY8waUMPMb0mVeyUfzGLRzfN1v3C4g
-         b8usGGSpdXLytc74utsSzS0yPuFZYG8WFZomeRAyj3z03xe29EXr21t03Fs7BksNQiXF
-         k1XHpevCvK4fKWqQgEGdEOaveaps40mshvkjYgAq4IJAM5zctdAAg0SoNH+7AShSVbd/
-         80ug==
-X-Gm-Message-State: APjAAAVPUZCxNhvFO1oB28JpcEGu9exrNbjaUQ56t1ZKQggnKe2Hnr7D
-        hnKRnozZmf5eGikA1Yl7Hd9i32qIeGriLKR5DjQ=
-X-Google-Smtp-Source: APXvYqz1JerMQNiG9+nU4ckH/5uEF5Rq8FAnFBLfDITDfzQH7v2qkrPMy4xlkOiEkhquFMr6Or+LY62Gb/nDkBD/mIE=
-X-Received: by 2002:adf:a299:: with SMTP id s25mr75095757wra.74.1563907683302;
- Tue, 23 Jul 2019 11:48:03 -0700 (PDT)
+        bh=50RPD9GLsElecVaxEmMiICG57vQta+1Z/U/1fgFGurI=;
+        b=etIIPb9MhbbTvZh3kEsdGeSEw3eXd5BKh1zBXZch2eMgoTlk04eZG2pZHwuajwbKVa
+         7GdGIW4KCCLovsrNQ0AkHmCDPev3xO+H6ZpnFVRfKZcgFxGYhjn4U4NcFqzO3MTbEim9
+         F0vV0iCNQ61HM3++UeLCO0n7irabrOYiHKwdTAHkYExHi4b53hHreILYDEsRLZKT9jBU
+         /KQKYGQZ44bx0kzQapJ88uGitDGojGHYn9vs9BgMAVrqg/m30VkdXjysDi8I+uZy2v0s
+         yP3vQdnAmr7FLJmZJyPQswKJo164TE/PX5doEWVAXSvmoQ/hnViIQ0AQ7XZ8/cJST0J+
+         I+KQ==
+X-Gm-Message-State: APjAAAVugwJc4vJX/O/B6+Uwe0aippLhxvBLsVc220VIihPX2ucvNPmu
+        6lq1FdUmO0jjZvh7MQuT/cxl0s9J1LbuZTY3cRE=
+X-Google-Smtp-Source: APXvYqwfFCxzxMG4Rw0FkgyLPquRnXTJljFQ0apnOe1Uic6Ota67JuvnbXBpFbgYNAhVzHzyYRhqESyOM8sHO7spKkQ=
+X-Received: by 2002:a1c:a1c5:: with SMTP id k188mr70227662wme.102.1563907745335;
+ Tue, 23 Jul 2019 11:49:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190723090449.27589-1-hslester96@gmail.com>
-In-Reply-To: <20190723090449.27589-1-hslester96@gmail.com>
+References: <20190723090421.27532-1-hslester96@gmail.com>
+In-Reply-To: <20190723090421.27532-1-hslester96@gmail.com>
 From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 23 Jul 2019 14:47:52 -0400
-Message-ID: <CADnq5_Py-Bj0947A_aj4ORDyg6UA3R5y=3v5FLttzL6nBvixkA@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: Use dev_get_drvdata where possible
+Date:   Tue, 23 Jul 2019 14:48:54 -0400
+Message-ID: <CADnq5_P02i=5uBqTun1-CoX9hiHzYiJD3zGYGjnct+MAcpTs=w@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: Use dev_get_drvdata
 To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>,
+Cc:     David Zhou <David1.Zhou@amd.com>, Leo Li <sunpeng.li@amd.com>,
         LKML <linux-kernel@vger.kernel.org>,
         amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
         Maling list - DRI developers 
         <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>,
         Alex Deucher <alexander.deucher@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
         =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,83 +76,23 @@ Applied.  thanks!
 Alex
 
 > ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 27 +++++++++----------------
->  1 file changed, 10 insertions(+), 17 deletions(-)
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-> index f2e8b4238efd..df82091a29d3 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-> @@ -1097,16 +1097,14 @@ amdgpu_pci_shutdown(struct pci_dev *pdev)
->
->  static int amdgpu_pmops_suspend(struct device *dev)
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> index 4a29f72334d0..524e1e19017e 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> @@ -2428,8 +2428,7 @@ static ssize_t s3_debug_store(struct device *device,
 >  {
-> -       struct pci_dev *pdev = to_pci_dev(dev);
-> +       struct drm_device *drm_dev = dev_get_drvdata(dev);
->
+>         int ret;
+>         int s3_state;
+> -       struct pci_dev *pdev = to_pci_dev(device);
 > -       struct drm_device *drm_dev = pci_get_drvdata(pdev);
->         return amdgpu_device_suspend(drm_dev, true, true);
->  }
+> +       struct drm_device *drm_dev = dev_get_drvdata(device);
+>         struct amdgpu_device *adev = drm_dev->dev_private;
 >
->  static int amdgpu_pmops_resume(struct device *dev)
->  {
-> -       struct pci_dev *pdev = to_pci_dev(dev);
-> -       struct drm_device *drm_dev = pci_get_drvdata(pdev);
-> +       struct drm_device *drm_dev = dev_get_drvdata(dev);
->
->         /* GPU comes up enabled by the bios on resume */
->         if (amdgpu_device_is_px(drm_dev)) {
-> @@ -1120,33 +1118,29 @@ static int amdgpu_pmops_resume(struct device *dev)
->
->  static int amdgpu_pmops_freeze(struct device *dev)
->  {
-> -       struct pci_dev *pdev = to_pci_dev(dev);
-> -
-> -       struct drm_device *drm_dev = pci_get_drvdata(pdev);
-> +       struct drm_device *drm_dev = dev_get_drvdata(dev);
-> +
->         return amdgpu_device_suspend(drm_dev, false, true);
->  }
->
->  static int amdgpu_pmops_thaw(struct device *dev)
->  {
-> -       struct pci_dev *pdev = to_pci_dev(dev);
-> -
-> -       struct drm_device *drm_dev = pci_get_drvdata(pdev);
-> +       struct drm_device *drm_dev = dev_get_drvdata(dev);
-> +
->         return amdgpu_device_resume(drm_dev, false, true);
->  }
->
->  static int amdgpu_pmops_poweroff(struct device *dev)
->  {
-> -       struct pci_dev *pdev = to_pci_dev(dev);
-> -
-> -       struct drm_device *drm_dev = pci_get_drvdata(pdev);
-> +       struct drm_device *drm_dev = dev_get_drvdata(dev);
-> +
->         return amdgpu_device_suspend(drm_dev, true, true);
->  }
->
->  static int amdgpu_pmops_restore(struct device *dev)
->  {
-> -       struct pci_dev *pdev = to_pci_dev(dev);
-> +       struct drm_device *drm_dev = dev_get_drvdata(dev);
->
-> -       struct drm_device *drm_dev = pci_get_drvdata(pdev);
->         return amdgpu_device_resume(drm_dev, false, true);
->  }
->
-> @@ -1205,8 +1199,7 @@ static int amdgpu_pmops_runtime_resume(struct device *dev)
->
->  static int amdgpu_pmops_runtime_idle(struct device *dev)
->  {
-> -       struct pci_dev *pdev = to_pci_dev(dev);
-> -       struct drm_device *drm_dev = pci_get_drvdata(pdev);
-> +       struct drm_device *drm_dev = dev_get_drvdata(dev);
->         struct drm_crtc *crtc;
->
->         if (!amdgpu_device_is_px(drm_dev)) {
+>         ret = kstrtoint(buf, 0, &s3_state);
 > --
 > 2.20.1
 >
