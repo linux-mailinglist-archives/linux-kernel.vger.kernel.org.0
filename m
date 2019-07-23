@@ -2,86 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D39671779
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 13:51:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C397471782
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 13:54:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387807AbfGWLvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 07:51:09 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35171 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387759AbfGWLvI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 07:51:08 -0400
-Received: by mail-pf1-f194.google.com with SMTP id u14so19045058pfn.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 04:51:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YvPnEK3SdKCAjuBX9biBCB7NVxnEYLiW7bXQBnDMmug=;
-        b=aeafSVZv6bp61rtpugTLNYFumeoxNXomiqF7jkupIYTNhO2Ot76Zu4sYtmhAq8TWX0
-         Ye5Krtmc0lE3NeSUmpQPVcZIg6dyY4DTMDrvDQ2UNj9Bp+7Tiy6i73GaA8HjZwx37sl/
-         cEZaWMzbOF4UEGrFr49gTyvtW+DjAFaV/DgwHviIoEOXnVhMnacbaDiBMpPguGFdzV9n
-         Ape3asxJIyVEhqBnWEzbj4kqV+bGdBW/Cm6yevmNf88qnPDcrFRRfOkDKllRpuUKxjyc
-         nIU6QebT8IrprUcP4UKsZVJXqJ3iyhQxQLxToGJBYqAPLT6TTb6gAV9sg9ZEguIxDVBR
-         m6kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YvPnEK3SdKCAjuBX9biBCB7NVxnEYLiW7bXQBnDMmug=;
-        b=PTNFdW4HJhcTg8ki5YDSwBeXraJgN2o4rnDH7++PitIGybkUNpNF+YzknO0vqLZsml
-         FfI3THM7dym6gv0Vpz8vpcNA3IYW2Q5LuPd3litHF7BWY9vDPbBKNegNj8qAwhtoX0fh
-         qk7cnhMROId2o7Y9HE2nfxuF5bYZ4GVeE6iM1bFjxM0WKZswUuzcd3pq43tBIAAbjvCu
-         2vm0/2Am3DRoFOqfaDbfMeojzNRuGCpBgN6QdbW0pY7izQpYnNhe4+fwl4eJQ+IeIIik
-         Ix6QC1DiNb1nkMPa5VPIV4W6o05qfYoGh0vhOmv0vnw3BAfqFCPtkbUsdrbF6vUIVsS9
-         dOyQ==
-X-Gm-Message-State: APjAAAU2FiIZkP9KsldHMEo0xGc9tCGh3X3RgP2J8S5VlKN266V8kGNa
-        NJCIs4ajfF4yj5UkysbVq+8=
-X-Google-Smtp-Source: APXvYqz0vZcxpn5l3V7J6D7+6xEYMUmp1v4COLoSJ7UOlRZZeHJuXIixNHxSUKeEcBVG4R2I9QrNng==
-X-Received: by 2002:aa7:8c52:: with SMTP id e18mr5592458pfd.233.1563882668054;
-        Tue, 23 Jul 2019 04:51:08 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id z20sm67878647pfk.72.2019.07.23.04.51.06
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 04:51:07 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] mfd: timberdale: Use dev_get_drvdata
-Date:   Tue, 23 Jul 2019 19:51:03 +0800
-Message-Id: <20190723115103.18647-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S2387838AbfGWLyI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 07:54:08 -0400
+Received: from muru.com ([72.249.23.125]:55696 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728765AbfGWLyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 07:54:08 -0400
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id 2C1F0808C;
+        Tue, 23 Jul 2019 11:54:32 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     Peter Hurley <peter@hurleysoftware.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Vignesh R <vigneshr@ti.com>, linux-serial@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH] serial: 8250_omap: Fix idling for unloaded serdev drivers
+Date:   Tue, 23 Jul 2019 04:54:00 -0700
+Message-Id: <20190723115400.46432-1-tony@atomide.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of using to_pci_dev + pci_get_drvdata,
-use dev_get_drvdata to make code simpler.
+For many years omap variants have been setting the runtime PM
+autosuspend delay to -1 to prevent unsafe policy with lossy first
+character on wake-up. The user must specifically enable the timeout
+for UARTs if desired.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+We must not enable the workaround for serdev devices though. It leads
+into UARTs not idling if no serdev devices are loaded and there is no
+sysfs entry to configure the UART in that case. And this means that
+my PM may not work unless the serdev modules are loaded.
+
+We can detect a serdev device being configured based on a dts child
+node, and we can simply skip the workround in that case. And the
+serdev driver can idle the port during runtime when suitable if an
+out-of-band wake-up GPIO line exists for example.
+
+Let's also add some comments to the workaround while at it.
+
+Cc: Johan Hovold <johan@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/mfd/timberdale.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/tty/serial/8250/8250_omap.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/timberdale.c b/drivers/mfd/timberdale.c
-index 60c122e9b39f..faecbca6dba3 100644
---- a/drivers/mfd/timberdale.c
-+++ b/drivers/mfd/timberdale.c
-@@ -626,8 +626,7 @@ static const struct mfd_cell timberdale_cells_bar2[] = {
- static ssize_t show_fw_ver(struct device *dev, struct device_attribute *attr,
- 	char *buf)
- {
--	struct pci_dev *pdev = to_pci_dev(dev);
--	struct timberdale_device *priv = pci_get_drvdata(pdev);
-+	struct timberdale_device *priv = dev_get_drvdata(dev);
+diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -1234,7 +1234,16 @@ static int omap8250_probe(struct platform_device *pdev)
  
- 	return sprintf(buf, "%d.%d.%d\n", priv->fw.major, priv->fw.minor,
- 		priv->fw.config);
+ 	device_init_wakeup(&pdev->dev, true);
+ 	pm_runtime_use_autosuspend(&pdev->dev);
+-	pm_runtime_set_autosuspend_delay(&pdev->dev, -1);
++
++	/*
++	 * Disable runtime PM until autosuspend delay unless specifically
++	 * enabled by the user via sysfs. This is the historic way to
++	 * prevent an unsafe default policy with lossy characters on wake-up.
++	 * For serdev devices this is not needed, the policy can be managed by
++	 * the serdev driver.
++	 */
++	if (!of_get_available_child_count(pdev->dev.of_node))
++		pm_runtime_set_autosuspend_delay(&pdev->dev, -1);
+ 
+ 	pm_runtime_irq_safe(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
 -- 
-2.20.1
-
+2.21.0
