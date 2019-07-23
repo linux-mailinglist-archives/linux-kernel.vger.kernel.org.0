@@ -2,137 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F310271146
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 07:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00F9371151
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 07:44:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730982AbfGWFkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 01:40:15 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40868 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729349AbfGWFkO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 01:40:14 -0400
-Received: by mail-pg1-f194.google.com with SMTP id w10so18820890pgj.7
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 22:40:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5nt2VugXjt5XrF3/XOR/oWFILicVPJkaeDN7wxmTV7U=;
-        b=X1YvonD3R6khALL7BjDbSfmeGb+oxFB0Yn8oSaY7vanh6Hs83Ohqkwv+euiD632z1e
-         WUi+KeGNsw5+gmHJ2bO3XJtc3mZljXxy/qpui12TO4jz7CXB1bJ5mp+gpodlkI/nWOGZ
-         rvBzo8LIOFkvjxQPflC17XaQI+Nac3FzfcryjNzEMEa/lBJaIfFQlHbopWUR9bxrQYVe
-         yyZbHJZ9JDSg1IJiGqx08/WiG2+5rN1fnAMpz9u+jrvGJ7hI0uaQVmqsi/vLyEGS+/bI
-         7oTzNegr32gKDR7QbPUd95mr8UIc1mbTEL0WjBsM42uJSRveXhwWwQbwSO4QRy/U0YVd
-         1o+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5nt2VugXjt5XrF3/XOR/oWFILicVPJkaeDN7wxmTV7U=;
-        b=s2l9LbE5etKbTZiBaARQqKVZNNS+WmIgFu8ioBK5Z9CKhfD5a9iz+DMUxwHYXYmAJ3
-         lZNqIJpcVG/ZGbvzamGrpHcgSHVXEKLfWmKoYMkwWznP4Coe92RJDDwQ0RHL4QLQoRMp
-         E5709D2GZgMD00zjABMfXXMdu0sQ5y+O0b2lG1Fw1z3BRpLj1DLJXMSrszrugz4fLV+q
-         MdO7uozGbZJrUMTUljta7sMvwTYuL/YQxIPjc7DDIVRiouEHMD8F0qNMW9vWnoEUy1eE
-         bTmjBZBzgiTG6RvIpIs+GM4q6SAw0iqBl/p2fWITGZL2DjT2JYfD+pUl3QvaB387rNbc
-         f7vA==
-X-Gm-Message-State: APjAAAXsLanMM+kLeyzb+2WYLJufl5uUtaXwhUVxaTRsmylTcHiUGMp2
-        a4iqYDKLuX1YeJxMxaZvT0G36g==
-X-Google-Smtp-Source: APXvYqwjjiGZqVdQpH4aZpzAsDjcY/hTViotRsKielUAYMaE/4MmwKXQ8bmTu5CBoKt30B6QXiYCJg==
-X-Received: by 2002:a63:c03:: with SMTP id b3mr10469564pgl.23.1563860413423;
-        Mon, 22 Jul 2019 22:40:13 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a15sm46535560pfg.102.2019.07.22.22.40.12
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 22:40:12 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 22:41:36 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Amit Kucheria <amit.kucheria@verdurent.com>,
-        Andy Gross <agross@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: sdm845-cheza: remove macro from
- unit name
-Message-ID: <20190723054136.GK7234@tuxbook-pro>
-References: <20190722123422.4571-1-vkoul@kernel.org>
- <20190722123422.4571-6-vkoul@kernel.org>
- <CAHLCerPC0thO9gsaDAxc+XaexinrzG6JGJ8BhB4bFFuQ-P9Jxg@mail.gmail.com>
- <20190723051426.GZ12733@vkoul-mobl.Dlink>
+        id S1731844AbfGWFok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 01:44:40 -0400
+Received: from mga09.intel.com ([134.134.136.24]:55269 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725788AbfGWFoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 01:44:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jul 2019 22:44:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,297,1559545200"; 
+   d="scan'208";a="163392678"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by orsmga008.jf.intel.com with ESMTP; 22 Jul 2019 22:44:38 -0700
+Received: from fmsmsx163.amr.corp.intel.com (10.18.125.72) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 22 Jul 2019 22:44:37 -0700
+Received: from bgsmsx104.gar.corp.intel.com (10.223.4.190) by
+ fmsmsx163.amr.corp.intel.com (10.18.125.72) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 22 Jul 2019 22:44:36 -0700
+Received: from bgsmsx101.gar.corp.intel.com ([169.254.1.176]) by
+ BGSMSX104.gar.corp.intel.com ([169.254.5.156]) with mapi id 14.03.0439.000;
+ Tue, 23 Jul 2019 11:14:31 +0530
+From:   "Gote, Nitin R" <nitin.r.gote@intel.com>
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+CC:     Kees Cook <keescook@chromium.org>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] selinux: convert struct sidtab count to refcount_t
+Thread-Topic: [PATCH] selinux: convert struct sidtab count to refcount_t
+Thread-Index: AQHVQIGaAIpBwRsLTUq40fonHwZflqbWQoqAgAFqC9A=
+Date:   Tue, 23 Jul 2019 05:44:30 +0000
+Message-ID: <12356C813DFF6F479B608F81178A561587AAD1@BGSMSX101.gar.corp.intel.com>
+References: <20190722113151.1584-1-nitin.r.gote@intel.com>
+ <CAFqZXNs5vdQwoy2k=_XLiGRdyZCL=n8as6aL01Dw-U62amFREA@mail.gmail.com>
+In-Reply-To: <CAFqZXNs5vdQwoy2k=_XLiGRdyZCL=n8as6aL01Dw-U62amFREA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjRmYTYxNzItYTgyYS00ZWY0LTlmNDEtN2Q3MWMxMzk3ZmQ2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiUXR5T2NaYVliaVlzMG9aZ2tIQTBWbkNjOWpRR1ZXS1BiQnZLNWlCMmxVaEJHelhNdWFIS2UxdFwvTXI5T3M5WXMifQ==
+x-originating-ip: [10.223.10.10]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190723051426.GZ12733@vkoul-mobl.Dlink>
-User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 22 Jul 22:14 PDT 2019, Vinod Koul wrote:
-
-> On 23-07-19, 10:38, Amit Kucheria wrote:
-> > On Mon, Jul 22, 2019 at 6:06 PM Vinod Koul <vkoul@kernel.org> wrote:
-> > >
-> > > Unit name is supposed to be a number, using a macro with hex value is
-> > 
-> > /s/name/address?
-> 
-> Right, will fix.
-> 
-> > > not recommended, so add the value in unit name.
-> > >
-> > > arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi:966.16-969.4: Warning (unit_address_format): /soc@0/spmi@c440000/pmic@0/adc@3100/adc-chan@0x4d: unit name should not have leading "0x"
-> > > arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi:971.16-974.4: Warning (unit_address_format): /soc@0/spmi@c440000/pmic@0/adc@3100/adc-chan@0x4e: unit name should not have leading "0x"
-> > > arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi:976.16-979.4: Warning (unit_address_format): /soc@0/spmi@c440000/pmic@0/adc@3100/adc-chan@0x4f: unit name should not have leading "0x"
-> > > arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi:981.16-984.4: Warning (unit_address_format): /soc@0/spmi@c440000/pmic@0/adc@3100/adc-chan@0x50: unit name should not have leading "0x"
-> > > arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi:986.16-989.4: Warning (unit_address_format): /soc@0/spmi@c440000/pmic@0/adc@3100/adc-chan@0x51: unit name should not have leading "0x"
-> > >
-> > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi | 10 +++++-----
-> > >  1 file changed, 5 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
-> > > index 1ebbd568dfd7..9b27b8346ba1 100644
-> > > --- a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
-> > > +++ b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
-> > > @@ -963,27 +963,27 @@ ap_ts_i2c: &i2c14 {
-> > >  };
-> > >
-> > >  &pm8998_adc {
-> > > -       adc-chan@ADC5_AMUX_THM1_100K_PU {
-> > > +       adc-chan@4d {
-> > >                 reg = <ADC5_AMUX_THM1_100K_PU>;
-
-When I read this define I instantly know which channel we're referring
-to. The 4d above is simply there for syntactical purposes and needs only
-to be cared about if the reg is ever changed.
-
-So I like this form.
-
-> > 
-> > I'm a little conflicted about this change. If we're replacing the
-> > address with actual values, perhaps we should do that same for the reg
-> > property to keep them in sync? Admittedly though, it is a bit easier
-> > to read the macro name and figure out its meaning.
-> 
-> Well this was how Bjorn suggested, am okay if we do in any
-> other way. This fixes warning but keeps it bit readable too
-> 
-> Other way would be to make defines decimal values instead of hex
-> 
-
-While the ePAPRR states that the unit address must match the first reg,
-dtc enforces that the unit address string matches "%x" of the reg.
-
-Regards,
-Bjorn
-
-> Any better suggestions :)
-> 
-> -- 
-> ~Vinod
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogT25kcmVqIE1vc25hY2Vr
+IFttYWlsdG86b21vc25hY2VAcmVkaGF0LmNvbV0NCj4gU2VudDogTW9uZGF5LCBKdWx5IDIyLCAy
+MDE5IDY6NDggUE0NCj4gVG86IEdvdGUsIE5pdGluIFIgPG5pdGluLnIuZ290ZUBpbnRlbC5jb20+
+DQo+IENjOiBLZWVzIENvb2sgPGtlZXNjb29rQGNocm9taXVtLm9yZz47IGtlcm5lbC0NCj4gaGFy
+ZGVuaW5nQGxpc3RzLm9wZW53YWxsLmNvbTsgUGF1bCBNb29yZSA8cGF1bEBwYXVsLW1vb3JlLmNv
+bT47DQo+IFN0ZXBoZW4gU21hbGxleSA8c2RzQHR5Y2hvLm5zYS5nb3Y+OyBFcmljIFBhcmlzIDxl
+cGFyaXNAcGFyaXNwbGFjZS5vcmc+Ow0KPiBTRWxpbnV4IGxpc3QgPHNlbGludXhAdmdlci5rZXJu
+ZWwub3JnPjsgTGludXgga2VybmVsIG1haWxpbmcgbGlzdCA8bGludXgtDQo+IGtlcm5lbEB2Z2Vy
+Lmtlcm5lbC5vcmc+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIHNlbGludXg6IGNvbnZlcnQgc3Ry
+dWN0IHNpZHRhYiBjb3VudCB0byByZWZjb3VudF90DQo+IA0KPiBPbiBNb24sIEp1bCAyMiwgMjAx
+OSBhdCAxOjM1IFBNIE5pdGluR290ZSA8bml0aW4uci5nb3RlQGludGVsLmNvbT4gd3JvdGU6DQo+
+ID4gcmVmY291bnRfdCB0eXBlIGFuZCBjb3JyZXNwb25kaW5nIEFQSSBzaG91bGQgYmUgdXNlZCBp
+bnN0ZWFkIG9mDQo+ID4gYXRvbWljX3Qgd2hlbiB0aGUgdmFyaWFibGUgaXMgdXNlZCBhcyBhIHJl
+ZmVyZW5jZSBjb3VudGVyLiBUaGlzIGFsbG93cw0KPiA+IHRvIGF2b2lkIGFjY2lkZW50YWwgcmVm
+Y291bnRlciBvdmVyZmxvd3MgdGhhdCBtaWdodCBsZWFkIHRvDQo+ID4gdXNlLWFmdGVyLWZyZWUg
+c2l0dWF0aW9ucy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IE5pdGluR290ZSA8bml0aW4uci5n
+b3RlQGludGVsLmNvbT4NCj4gDQo+IE5hY2suDQo+IA0KPiBUaGUgJ2NvdW50JyB2YXJpYWJsZSBp
+cyBub3QgdXNlZCBhcyBhIHJlZmVyZW5jZSBjb3VudGVyIGhlcmUuIEl0IHRyYWNrcyB0aGUNCj4g
+bnVtYmVyIG9mIGVudHJpZXMgaW4gc2lkdGFiLCB3aGljaCBpcyBhIHZlcnkgc3BlY2lmaWMgbG9v
+a3VwIHRhYmxlIHRoYXQgY2FuDQo+IG9ubHkgZ3JvdyAodGhlIGNvdW50IG5ldmVyIGRlY3JlYXNl
+cykuIEkgb25seSBtYWRlIGl0IGF0b21pYyBiZWNhdXNlIHRoZQ0KPiB2YXJpYWJsZSBpcyByZWFk
+IG91dHNpZGUgb2YgdGhlIHNpZHRhYidzIHNwaW4gbG9jayBhbmQgdGh1cyB0aGUgcmVhZHMgYW5k
+DQo+IHdyaXRlcyB0byBpdCBuZWVkIHRvIGJlIGd1YXJhbnRlZWQgdG8gYmUgYXRvbWljLiBUaGUg
+Y291bnRlciBpcyBvbmx5IHVwZGF0ZWQNCj4gdW5kZXIgdGhlIHNwaW4gbG9jaywgc28gaW5zZXJ0
+aW9ucyBkbyBub3QgcmFjZSB3aXRoIGVhY2ggb3RoZXIuDQoNCkFncmVlZC4gVGhhbmtzIGZvciBj
+bGFyaWZpY2F0aW9uLiANCkknbSBnb2luZyB0byBkaXNjb250aW51ZSB0aGlzIHBhdGNoLg0KDQo+
+IA0KPiBZb3VyIHBhdGNoLCBob3dldmVyLCBsZWFkIG1lIHRvIHJlYWxpemUgdGhhdCBJIGZvcmdv
+dCB0byBndWFyZCBhZ2FpbnN0DQo+IG92ZXJmbG93IGFib3ZlIFNJRFRBQl9NQVggd2hlbiBhIG5l
+dyBlbnRyeSBpcyBiZWluZyBpbnNlcnRlZC4gSXQgaXMNCj4gZXh0cmVtZWx5IHVubGlrZWx5IHRv
+IGhhcHBlbiBpbiBwcmFjdGljZSwgYnV0IHNob3VsZCBiZSBmaXhlZCBhbnl3YXkuDQo+IEknbGwg
+c2VuZCBhIHBhdGNoIHNob3J0bHkuDQo+IA0KDQpUaGFuayB5b3UuDQoNCj4gPiAtLS0NCj4gPiAg
+c2VjdXJpdHkvc2VsaW51eC9zcy9zaWR0YWIuYyB8IDE2ICsrKysrKysrLS0tLS0tLS0NCj4gPiBz
+ZWN1cml0eS9zZWxpbnV4L3NzL3NpZHRhYi5oIHwgIDIgKy0NCj4gPiAgMiBmaWxlcyBjaGFuZ2Vk
+LCA5IGluc2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEv
+c2VjdXJpdHkvc2VsaW51eC9zcy9zaWR0YWIuYw0KPiA+IGIvc2VjdXJpdHkvc2VsaW51eC9zcy9z
+aWR0YWIuYyBpbmRleCBlNjNhOTBmZjI3MjguLjIwZmUyMzVjNmM3MSAxMDA2NDQNCj4gPiAtLS0g
+YS9zZWN1cml0eS9zZWxpbnV4L3NzL3NpZHRhYi5jDQo+ID4gKysrIGIvc2VjdXJpdHkvc2VsaW51
+eC9zcy9zaWR0YWIuYw0KPiA+IEBAIC0yOSw3ICsyOSw3IEBAIGludCBzaWR0YWJfaW5pdChzdHJ1
+Y3Qgc2lkdGFiICpzKQ0KPiA+ICAgICAgICAgZm9yIChpID0gMDsgaSA8IFNFQ0lOSVRTSURfTlVN
+OyBpKyspDQo+ID4gICAgICAgICAgICAgICAgIHMtPmlzaWRzW2ldLnNldCA9IDA7DQo+ID4NCj4g
+PiAtICAgICAgIGF0b21pY19zZXQoJnMtPmNvdW50LCAwKTsNCj4gPiArICAgICAgIHJlZmNvdW50
+X3NldCgmcy0+Y291bnQsIDApOw0KPiA+DQo+ID4gICAgICAgICBzLT5jb252ZXJ0ID0gTlVMTDsN
+Cj4gPg0KPiA+IEBAIC0xMzAsNyArMTMwLDcgQEAgc3RhdGljIHN0cnVjdCBjb250ZXh0ICpzaWR0
+YWJfZG9fbG9va3VwKHN0cnVjdA0KPiA+IHNpZHRhYiAqcywgdTMyIGluZGV4LCBpbnQgYWxsb2Mp
+DQo+ID4NCj4gPiAgc3RhdGljIHN0cnVjdCBjb250ZXh0ICpzaWR0YWJfbG9va3VwKHN0cnVjdCBz
+aWR0YWIgKnMsIHUzMiBpbmRleCkgIHsNCj4gPiAtICAgICAgIHUzMiBjb3VudCA9ICh1MzIpYXRv
+bWljX3JlYWQoJnMtPmNvdW50KTsNCj4gPiArICAgICAgIHUzMiBjb3VudCA9IHJlZmNvdW50X3Jl
+YWQoJnMtPmNvdW50KTsNCj4gPg0KPiA+ICAgICAgICAgaWYgKGluZGV4ID49IGNvdW50KQ0KPiA+
+ICAgICAgICAgICAgICAgICByZXR1cm4gTlVMTDsNCj4gPiBAQCAtMjQ1LDcgKzI0NSw3IEBAIHN0
+YXRpYyBpbnQgc2lkdGFiX3JldmVyc2VfbG9va3VwKHN0cnVjdCBzaWR0YWIgKnMsDQo+IHN0cnVj
+dCBjb250ZXh0ICpjb250ZXh0LA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IHUzMiAqaW5kZXgpDQo+ID4gIHsNCj4gPiAgICAgICAgIHVuc2lnbmVkIGxvbmcgZmxhZ3M7DQo+
+ID4gLSAgICAgICB1MzIgY291bnQgPSAodTMyKWF0b21pY19yZWFkKCZzLT5jb3VudCk7DQo+ID4g
+KyAgICAgICB1MzIgY291bnQgPSAodTMyKXJlZmNvdW50X3JlYWQoJnMtPmNvdW50KTsNCj4gPiAg
+ICAgICAgIHUzMiBjb3VudF9sb2NrZWQsIGxldmVsLCBwb3M7DQo+ID4gICAgICAgICBzdHJ1Y3Qg
+c2lkdGFiX2NvbnZlcnRfcGFyYW1zICpjb252ZXJ0Ow0KPiA+ICAgICAgICAgc3RydWN0IGNvbnRl
+eHQgKmRzdCwgKmRzdF9jb252ZXJ0Ow0KPiA+IEBAIC0yNzIsNyArMjcyLDcgQEAgc3RhdGljIGlu
+dCBzaWR0YWJfcmV2ZXJzZV9sb29rdXAoc3RydWN0IHNpZHRhYiAqcywNCj4gc3RydWN0IGNvbnRl
+eHQgKmNvbnRleHQsDQo+ID4gICAgICAgICBzcGluX2xvY2tfaXJxc2F2ZSgmcy0+bG9jaywgZmxh
+Z3MpOw0KPiA+DQo+ID4gICAgICAgICBjb252ZXJ0ID0gcy0+Y29udmVydDsNCj4gPiAtICAgICAg
+IGNvdW50X2xvY2tlZCA9ICh1MzIpYXRvbWljX3JlYWQoJnMtPmNvdW50KTsNCj4gPiArICAgICAg
+IGNvdW50X2xvY2tlZCA9ICh1MzIpcmVmY291bnRfcmVhZCgmcy0+Y291bnQpOw0KPiA+ICAgICAg
+ICAgbGV2ZWwgPSBzaWR0YWJfbGV2ZWxfZnJvbV9jb3VudChjb3VudF9sb2NrZWQpOw0KPiA+DQo+
+ID4gICAgICAgICAvKiBpZiBjb3VudCBoYXMgY2hhbmdlZCBiZWZvcmUgd2UgYWNxdWlyZWQgdGhl
+IGxvY2ssIHRoZW4gY2F0Y2ggdXAgKi8NCj4gPiBAQCAtMzE1LDcgKzMxNSw3IEBAIHN0YXRpYyBp
+bnQgc2lkdGFiX3JldmVyc2VfbG9va3VwKHN0cnVjdCBzaWR0YWIgKnMsDQo+IHN0cnVjdCBjb250
+ZXh0ICpjb250ZXh0LA0KPiA+ICAgICAgICAgICAgICAgICB9DQo+ID4NCj4gPiAgICAgICAgICAg
+ICAgICAgLyogYXQgdGhpcyBwb2ludCB3ZSBrbm93IHRoZSBpbnNlcnQgd29uJ3QgZmFpbCAqLw0K
+PiA+IC0gICAgICAgICAgICAgICBhdG9taWNfc2V0KCZjb252ZXJ0LT50YXJnZXQtPmNvdW50LCBj
+b3VudCArIDEpOw0KPiA+ICsgICAgICAgICAgICAgICByZWZjb3VudF9zZXQoJmNvbnZlcnQtPnRh
+cmdldC0+Y291bnQsIGNvdW50ICsgMSk7DQo+ID4gICAgICAgICB9DQo+ID4NCj4gPiAgICAgICAg
+IGlmIChjb250ZXh0LT5sZW4pDQo+ID4gQEAgLTMyOCw3ICszMjgsNyBAQCBzdGF0aWMgaW50IHNp
+ZHRhYl9yZXZlcnNlX2xvb2t1cChzdHJ1Y3Qgc2lkdGFiICpzLA0KPiBzdHJ1Y3QgY29udGV4dCAq
+Y29udGV4dCwNCj4gPiAgICAgICAgIC8qIHdyaXRlIGVudHJpZXMgYmVmb3JlIHdyaXRpbmcgbmV3
+IGNvdW50ICovDQo+ID4gICAgICAgICBzbXBfd21iKCk7DQo+ID4NCj4gPiAtICAgICAgIGF0b21p
+Y19zZXQoJnMtPmNvdW50LCBjb3VudCArIDEpOw0KPiA+ICsgICAgICAgcmVmY291bnRfc2V0KCZz
+LT5jb3VudCwgY291bnQgKyAxKTsNCj4gPg0KPiA+ICAgICAgICAgcmMgPSAwOw0KPiA+ICBvdXRf
+dW5sb2NrOg0KPiA+IEBAIC00MTgsNyArNDE4LDcgQEAgaW50IHNpZHRhYl9jb252ZXJ0KHN0cnVj
+dCBzaWR0YWIgKnMsIHN0cnVjdA0KPiBzaWR0YWJfY29udmVydF9wYXJhbXMgKnBhcmFtcykNCj4g
+PiAgICAgICAgICAgICAgICAgcmV0dXJuIC1FQlVTWTsNCj4gPiAgICAgICAgIH0NCj4gPg0KPiA+
+IC0gICAgICAgY291bnQgPSAodTMyKWF0b21pY19yZWFkKCZzLT5jb3VudCk7DQo+ID4gKyAgICAg
+ICBjb3VudCA9ICh1MzIpcmVmY291bnRfcmVhZCgmcy0+Y291bnQpOw0KPiA+ICAgICAgICAgbGV2
+ZWwgPSBzaWR0YWJfbGV2ZWxfZnJvbV9jb3VudChjb3VudCk7DQo+ID4NCj4gPiAgICAgICAgIC8q
+IGFsbG9jYXRlIGxhc3QgbGVhZiBpbiB0aGUgbmV3IHNpZHRhYiAodG8gYXZvaWQgcmFjZSB3aXRo
+DQo+ID4gQEAgLTQzMSw3ICs0MzEsNyBAQCBpbnQgc2lkdGFiX2NvbnZlcnQoc3RydWN0IHNpZHRh
+YiAqcywgc3RydWN0DQo+IHNpZHRhYl9jb252ZXJ0X3BhcmFtcyAqcGFyYW1zKQ0KPiA+ICAgICAg
+ICAgfQ0KPiA+DQo+ID4gICAgICAgICAvKiBzZXQgY291bnQgaW4gY2FzZSBubyBuZXcgZW50cmll
+cyBhcmUgYWRkZWQgZHVyaW5nIGNvbnZlcnNpb24gKi8NCj4gPiAtICAgICAgIGF0b21pY19zZXQo
+JnBhcmFtcy0+dGFyZ2V0LT5jb3VudCwgY291bnQpOw0KPiA+ICsgICAgICAgcmVmY291bnRfc2V0
+KCZwYXJhbXMtPnRhcmdldC0+Y291bnQsIGNvdW50KTsNCj4gPg0KPiA+ICAgICAgICAgLyogZW5h
+YmxlIGxpdmUgY29udmVydCBvZiBuZXcgZW50cmllcyAqLw0KPiA+ICAgICAgICAgcy0+Y29udmVy
+dCA9IHBhcmFtczsNCj4gPiBkaWZmIC0tZ2l0IGEvc2VjdXJpdHkvc2VsaW51eC9zcy9zaWR0YWIu
+aCBiL3NlY3VyaXR5L3NlbGludXgvc3Mvc2lkdGFiLmgNCj4gPiBpbmRleCBiYmQ1YzBkMWYzYmQu
+LjY4ZGQ5NmE1YmViYSAxMDA2NDQNCj4gPiAtLS0gYS9zZWN1cml0eS9zZWxpbnV4L3NzL3NpZHRh
+Yi5oDQo+ID4gKysrIGIvc2VjdXJpdHkvc2VsaW51eC9zcy9zaWR0YWIuaA0KPiA+IEBAIC03MCw3
+ICs3MCw3IEBAIHN0cnVjdCBzaWR0YWJfY29udmVydF9wYXJhbXMgew0KPiA+DQo+ID4gIHN0cnVj
+dCBzaWR0YWIgew0KPiA+ICAgICAgICAgdW5pb24gc2lkdGFiX2VudHJ5X2lubmVyIHJvb3RzW1NJ
+RFRBQl9NQVhfTEVWRUwgKyAxXTsNCj4gPiAtICAgICAgIGF0b21pY190IGNvdW50Ow0KPiA+ICsg
+ICAgICAgcmVmY291bnRfdCBjb3VudDsNCj4gPiAgICAgICAgIHN0cnVjdCBzaWR0YWJfY29udmVy
+dF9wYXJhbXMgKmNvbnZlcnQ7DQo+ID4gICAgICAgICBzcGlubG9ja190IGxvY2s7DQo+ID4NCj4g
+PiAtLQ0KPiA+IDIuMTcuMQ0KPiA+DQo+IA0KPiBUaGFua3MsDQo+IA0KPiAtLQ0KPiBPbmRyZWog
+TW9zbmFjZWsgPG9tb3NuYWNlIGF0IHJlZGhhdCBkb3QgY29tPg0KPiBTb2Z0d2FyZSBFbmdpbmVl
+ciwgU2VjdXJpdHkgVGVjaG5vbG9naWVzDQo+IFJlZCBIYXQsIEluYy4NCg==
