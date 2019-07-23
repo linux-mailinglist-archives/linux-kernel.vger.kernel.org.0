@@ -2,143 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB1BC71E42
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 19:59:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1308F71E2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 19:59:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391365AbfGWR7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 13:59:40 -0400
-Received: from mail-qt1-f202.google.com ([209.85.160.202]:34465 "EHLO
-        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391346AbfGWR7g (ORCPT
+        id S2391085AbfGWR67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 13:58:59 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37677 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbfGWR67 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 13:59:36 -0400
-Received: by mail-qt1-f202.google.com with SMTP id p34so39172529qtp.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 10:59:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=bNeVrTrPvpjyJWHVtXYqgQlj6F1/0IzkZ0bc3aEFST0=;
-        b=uWaCwrDkBN5GRSLhaw7WQwMKcK3AhPqO/fzElVN3JcPy98UFLj7JeXsg8P+SLlr/8N
-         uTaOa6VggUuncDHcvq/dm+VjbWoXQVCEMVj3yqEv0lzhkp6ZqhxIJZIXWJox0QqwZPpw
-         oblQlXNCYt4tHVrvlJypYdteLVvehIkVLfAlFHjgdjHvnPpCAD6GJOEurxmklM0IOqwa
-         r3we5GB8/FJKwWzwzqUCJtO6E9+uXUbwxjMkihzlNrMKNzLhjZggf+0ZB/LMAafHfS91
-         EJUlnCmBt8+isj3aFtdbAWI7Fy268Gzi52Ek2+IZaH/c0AJ5vAsChMY+9qCOx6dYD5bK
-         14lw==
+        Tue, 23 Jul 2019 13:58:59 -0400
+Received: by mail-wm1-f68.google.com with SMTP id f17so39272063wme.2;
+        Tue, 23 Jul 2019 10:58:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=bNeVrTrPvpjyJWHVtXYqgQlj6F1/0IzkZ0bc3aEFST0=;
-        b=azACug3LgJknBdDmmsf4Jla8W9Mu2nd/YuY7bnnvOthqmEUG+++ZWR5Yw+DBZrtqk2
-         58zapJr2yGLSpPG81VtXJWlVpw7MiosP1sFOTC4mfhTlrMN3aSW/veJJH/eUdXSVBMCA
-         xvhCpWyDRX9ksf5Zx8i7JABmZPbCMtMfQd1A9KbXbm2aWlnXhWAwLOlXNTFapVD/MLNp
-         NocGKNj66Yf+FHh0qRmHqWsIYu6/Qz8WiMNcqGflLMHoOdiUwO4rrpp3Qv5Ajh4e9k3P
-         W2wPiDx2ERon+jUcO52nLhejRmgp2CE4/Suz44RKDPCUaN0u3Dzv/LbEXWA8lcPscF7v
-         Z5Mg==
-X-Gm-Message-State: APjAAAWYmyKlSJHxP+0L0H6h5dGRiYRGXC0sNG8SS6iICqaOiz4llKnN
-        /tG+MGkS3C85DnlxKEglAIXd3UXTNbXqieBj
-X-Google-Smtp-Source: APXvYqyRt/sslYOExeWvOFH4KfKnKxW+V8w8qG436u1Li2H+fm4BIS46hHRf2O8j3VSTAztC1lSBD2N1vfHNfs72
-X-Received: by 2002:a05:620a:522:: with SMTP id h2mr54247961qkh.329.1563904775319;
- Tue, 23 Jul 2019 10:59:35 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 19:58:46 +0200
-In-Reply-To: <cover.1563904656.git.andreyknvl@google.com>
-Message-Id: <d684e1df08f2ecb6bc292e222b64fa9efbc26e69.1563904656.git.andreyknvl@google.com>
-Mime-Version: 1.0
-References: <cover.1563904656.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
-Subject: [PATCH v19 09/15] drm/amdgpu: untag user pointers
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CFpgVgUuyNvxrMZCyKWuK3LuxqE0J5JekFNJ3K5eJds=;
+        b=K5GeyaF3MQzyfh8HKPHkp7UVdhhleiUyCDOpzd6uOWw/WuP+BP0sKx60NcAI75X5pW
+         +tMKLg647jsKWxebnxW9Upm3ewV4KelzdIRyQ3cEntTXNHuHC1DlhA0CXtJ8tXMsZfqS
+         KA2T8k3PnDujoXy3oeRJfZUymWKvo+wPbgMbUbODEwO723x3JSCwk+8/rARpNWxI5t6C
+         KduPQL+WvmVh0Dq7F3p/0h/lP75ABdD/diowYfQr+RdVPA1eQrjb/9OdEwWvzt9IOHOp
+         oJLCEfUW8LhzIS9fGNhyDGq4U4VsDFO5q0T2lMvUMIpwrO/sqLsTRstkCSg9z6juA5MT
+         9xjQ==
+X-Gm-Message-State: APjAAAX5LC1VIORWAgc56qTUgB81yFAY5zjxzdqdrL87NA6A6b7ZBQ1B
+        5QIgvPHWy+4S/xli7PEunhI=
+X-Google-Smtp-Source: APXvYqxGy6ti+aro/+Ugouk2LFlHDkwecPIxNJNr4s2bexkT5TLGoN0A8azJ3yLVlYBc1LN2slYaiA==
+X-Received: by 2002:a05:600c:291:: with SMTP id 17mr68446436wmk.32.1563904736737;
+        Tue, 23 Jul 2019 10:58:56 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.239])
+        by smtp.googlemail.com with ESMTPSA id o26sm84382672wro.53.2019.07.23.10.58.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 23 Jul 2019 10:58:55 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 19:58:53 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com, kgene@kernel.org,
+        willy.mh.wolff.ml@gmail.com
+Subject: Re: [PATCH v4 5/5] DT: arm: exynos4412: add event data type which is
+ monitored
+Message-ID: <20190723175853.GA29195@kozik-lap>
+References: <20190605091236.24263-1-l.luba@partner.samsung.com>
+ <CGME20190605091305eucas1p136332cc3d1a299d90617bddcb365bee0@eucas1p1.samsung.com>
+ <20190605091236.24263-6-l.luba@partner.samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190605091236.24263-6-l.luba@partner.samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is a part of a series that extends kernel ABI to allow to pass
-tagged user pointers (with the top byte set to something else other than
-0x00) as syscall arguments.
+On Wed, Jun 05, 2019 at 11:12:36AM +0200, Lukasz Luba wrote:
+> The patch adds new field in the PPMU event which shows explicitly
+> what kind of data the event is monitoring. It is possible to change it
+> using defined values in exynos_ppmu.h file.
+> 
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4412-ppmu-common.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
 
-In amdgpu_gem_userptr_ioctl() and amdgpu_amdkfd_gpuvm.c/init_user_pages()
-an MMU notifier is set up with a (tagged) userspace pointer. The untagged
-address should be used so that MMU notifiers for the untagged address get
-correctly matched up with the right BO. This patch untag user pointers in
-amdgpu_gem_userptr_ioctl() for the GEM case and in amdgpu_amdkfd_gpuvm_
-alloc_memory_of_gpu() for the KFD case. This also makes sure that an
-untagged pointer is passed to amdgpu_ttm_tt_get_user_pages(), which uses
-it for vma lookups.
+I tried to apply this... but prerequisites were not merged into
+v5.3-rc1. This one will have to wait then till next release.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Suggested-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Acked-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c | 2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c          | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-index 1d3ee9c42f7e..00468ebf8b76 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-@@ -1103,7 +1103,7 @@ int amdgpu_amdkfd_gpuvm_alloc_memory_of_gpu(
- 		alloc_flags = 0;
- 		if (!offset || !*offset)
- 			return -EINVAL;
--		user_addr = *offset;
-+		user_addr = untagged_addr(*offset);
- 	} else if (flags & (ALLOC_MEM_FLAGS_DOORBELL |
- 			ALLOC_MEM_FLAGS_MMIO_REMAP)) {
- 		domain = AMDGPU_GEM_DOMAIN_GTT;
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-index 939f8305511b..d7855842fd51 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-@@ -291,6 +291,8 @@ int amdgpu_gem_userptr_ioctl(struct drm_device *dev, void *data,
- 	uint32_t handle;
- 	int r;
- 
-+	args->addr = untagged_addr(args->addr);
-+
- 	if (offset_in_page(args->addr | args->size))
- 		return -EINVAL;
- 
--- 
-2.22.0.709.g102302147b-goog
+Best regards,
+Krzysztof
 
