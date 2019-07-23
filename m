@@ -2,59 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23E14711B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 08:14:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68892711B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 08:15:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388172AbfGWGOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 02:14:52 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35041 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388163AbfGWGOr (ORCPT
+        id S2388196AbfGWGPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 02:15:01 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43096 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732457AbfGWGOu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 02:14:47 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u14so18595079pfn.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 23:14:46 -0700 (PDT)
+        Tue, 23 Jul 2019 02:14:50 -0400
+Received: by mail-pl1-f194.google.com with SMTP id 4so13192023pld.10
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 23:14:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rUdeKFVKj/j46aY/YcoOji4W0Ij6fg/KFJvYkeK7wzw=;
-        b=YdOCMHbEQbXw8KubWzfOBaz7EB1B9f22y/t/+FTFKWx6jaFEuKDB5E3Sdj+cgk/DqY
-         C9cxtOOhSrNaS0qcgK+e3peT5VxHr1x8GRySc1B8JNaI4BFnBdNZKAcPcQwlFhAuZnHM
-         fVZrfoQqSU7JY3To8jmisIml+v18EtMwAP2mG9m2TZV0803DLrB/agmYbIynLjJbpWGf
-         CEx548oc6YgKawUdx4hUVc63pqEnTiPyaA84BAupYaEGnhrc2rFI0wqFtyI4YVcC2EqM
-         TcblXyTlgI5zs0HecA/SZBqEEZyaW8DH0Iy3gUTOjqAgrxmynKEqKoeWUy9kWzXO4Cue
-         ThYQ==
+        bh=JQKPSfuw5DbCIirqqIDBXsU1/ucOSKObdNO60ntwNTU=;
+        b=qbj5m+n+BO01X6WUkYr4iIMz44Y5GyxzX+56ztB2cxEWQkOK7JTj1U9C3bTi7wjFO5
+         gI6KcNWalrFLBhnNf2g+ZrY3CcSUIMqWjE+2GBvLOr2Qwp/etwXraRoCuZ3Np5xXtnMc
+         9yTiJMilFZPro7O2f7rKeBI3jkL06KgxtaltLd4Hb/3dVL6XUagNimPY7FRW6F7e/Zrn
+         gBhR2T4h1ncAB26r3+OmIMgtVoKviA7DmWi60tCiEZ4ULUgs/h1e+sXufTX0Cjkuem4s
+         Qv1+cqKo4bWNtrAWCgh6IjhnB6Q7KSTfAMz4wOWUDpAG0y7sVSrS2/E8S33Ol0geJpJ+
+         M2sQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rUdeKFVKj/j46aY/YcoOji4W0Ij6fg/KFJvYkeK7wzw=;
-        b=RVpk614eGCmdXfVla3NDjfVXoTvNZkK96pbWT6e2RJUzlMPL3r2ZDaaj9Fy03ySkaA
-         0LuTqmChOe/TZDqf9FyFHfiFwwJ5OX/HOqQ4h20R2Z3Z3aqmUR8erHdshl+NbSVpVKGd
-         9U+g8jAGnQWLWSf2w3No14ijw2AZmhKtUvQPl3uGRGhipVoYQ8P/KrrwaharBM+i6V8o
-         Smf7zNaIOyrMOIw0Fseh7G9j9zpV0UkfoOw6sSJI1rR6SpwSJQNFhi9UTiL91bkplwOe
-         pY8BlrDl5DpmF+4xnHm16JSKyPGoor64EV6SB0R5ZgoRGPWkJEA9Fdh/JTj4aGHQT+rr
-         4pZA==
-X-Gm-Message-State: APjAAAUrCGITyBj04ZMNz8Ui/LKhXVE4H8yrQl8wKpvc+WKt8rNBDRPr
-        +ynJANdOi5hJBUm/Y27wEKkObg==
-X-Google-Smtp-Source: APXvYqzYmC0czirjB9JZaCwmGJpEhIA8u9rhpfNc/1Lkv6/WiUNTY1TurBq8xS5qTAzrc9zunXfj2g==
-X-Received: by 2002:a63:2148:: with SMTP id s8mr73371962pgm.336.1563862486415;
-        Mon, 22 Jul 2019 23:14:46 -0700 (PDT)
+        bh=JQKPSfuw5DbCIirqqIDBXsU1/ucOSKObdNO60ntwNTU=;
+        b=Nz73IGJjjg/oJTz9B/VBRbbcTMhqvUOMyNKHgTWH6/vqvylHJ8JPyHNeaSVDrVmuon
+         t9Yt8p0a0dBU889SAKE1/5+MYtaEECoaGabP4ebVQB9ZJzEuWPECL92N9NW8htT6JtAF
+         8ThpKA83LXxE0dpb2vNcBuN+ue5//w0AEVF5svKJp8Aq42wdU3jfvIUksb8BNLD7pMfD
+         qIHt5EuqpzbaSAZdQ18acBcFDdVhSr/HfcYihg0xGOccBcfJDjRXN7uHXzkCxWcnezZP
+         mQjxqEPps7tiVTPSuhXa+OmZxMSRR2/7lEHrBEhzBREpbpm+mcwpGyrRXL2TQqi2uBMD
+         yfow==
+X-Gm-Message-State: APjAAAUI2Up+Ekni/DJwts3FMvnjPcy6sMnF0ai+HgIUghhpCdGLz5C1
+        RDC16Am/IEJpgzTR5zOsVg/DlQ==
+X-Google-Smtp-Source: APXvYqzvUFuULJQ5jQbKRLhXSxe3muRcBX6FJSmHDzxEXzQwOKWxUdsU878arFEOVwke8ZW5ImjvMA==
+X-Received: by 2002:a17:902:e582:: with SMTP id cl2mr79536058plb.60.1563862489459;
+        Mon, 22 Jul 2019 23:14:49 -0700 (PDT)
 Received: from localhost ([122.172.28.117])
-        by smtp.gmail.com with ESMTPSA id j10sm3176159pfn.188.2019.07.22.23.14.45
+        by smtp.gmail.com with ESMTPSA id 64sm43449485pfe.128.2019.07.22.23.14.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jul 2019 23:14:45 -0700 (PDT)
+        Mon, 22 Jul 2019 23:14:48 -0700 (PDT)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Rafael Wysocki <rjw@rjwysocki.net>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V2 08/10] video: pxafb: Remove cpufreq policy notifier
-Date:   Tue, 23 Jul 2019 11:44:08 +0530
-Message-Id: <56ea0fb68b99d343b093bc517024356a18f780e7.1563862014.git.viresh.kumar@linaro.org>
+Subject: [PATCH V2 09/10] cpufreq: Remove CPUFREQ_ADJUST and CPUFREQ_NOTIFY policy notifier events
+Date:   Tue, 23 Jul 2019 11:44:09 +0530
+Message-Id: <0b9220ad282d38922d968be278da3e5aa9ca5895.1563862014.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.21.0.rc0.269.g1a574e7a288b
 In-Reply-To: <cover.1563862014.git.viresh.kumar@linaro.org>
 References: <cover.1563862014.git.viresh.kumar@linaro.org>
@@ -65,76 +64,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cpufreq policy notifier's CPUFREQ_ADJUST notification is going to
-get removed soon.
+No driver makes reference to these events now, remove them and the code
+related to them.
 
-The notifier callback pxafb_freq_policy() isn't doing anything apart
-from printing a debug message on CPUFREQ_ADJUST notification. There is
-no point in keeping an otherwise empty callback and registering the
-notifier.
-
-Remove it.
-
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/video/fbdev/pxafb.c | 21 ---------------------
- drivers/video/fbdev/pxafb.h |  1 -
- 2 files changed, 22 deletions(-)
+ drivers/cpufreq/cpufreq.c | 36 +++++++-----------------------------
+ include/linux/cpufreq.h   |  6 ++----
+ 2 files changed, 9 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
-index 4282cb117b92..f70c9f79622e 100644
---- a/drivers/video/fbdev/pxafb.c
-+++ b/drivers/video/fbdev/pxafb.c
-@@ -1678,24 +1678,6 @@ pxafb_freq_transition(struct notifier_block *nb, unsigned long val, void *data)
- 	}
- 	return 0;
- }
--
--static int
--pxafb_freq_policy(struct notifier_block *nb, unsigned long val, void *data)
--{
--	struct pxafb_info *fbi = TO_INF(nb, freq_policy);
--	struct fb_var_screeninfo *var = &fbi->fb.var;
--	struct cpufreq_policy *policy = data;
--
--	switch (val) {
--	case CPUFREQ_ADJUST:
--		pr_debug("min dma period: %d ps, "
--			"new clock %d kHz\n", pxafb_display_dma_period(var),
--			policy->max);
--		/* TODO: fill in min/max values */
--		break;
--	}
--	return 0;
--}
- #endif
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index c13dcb59b30c..e0ee23895497 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -2360,15 +2360,13 @@ EXPORT_SYMBOL(cpufreq_get_policy);
+  * @policy: Policy object to modify.
+  * @new_policy: New policy data.
+  *
+- * Pass @new_policy to the cpufreq driver's ->verify() callback, run the
+- * installed policy notifiers for it with the CPUFREQ_ADJUST value, pass it to
+- * the driver's ->verify() callback again and run the notifiers for it again
+- * with the CPUFREQ_NOTIFY value.  Next, copy the min and max parameters
+- * of @new_policy to @policy and either invoke the driver's ->setpolicy()
+- * callback (if present) or carry out a governor update for @policy.  That is,
+- * run the current governor's ->limits() callback (if the governor field in
+- * @new_policy points to the same object as the one in @policy) or replace the
+- * governor for @policy with the new one stored in @new_policy.
++ * Pass @new_policy to the cpufreq driver's ->verify() callback. Next, copy the
++ * min and max parameters of @new_policy to @policy and either invoke the
++ * driver's ->setpolicy() callback (if present) or carry out a governor update
++ * for @policy.  That is, run the current governor's ->limits() callback (if the
++ * governor field in @new_policy points to the same object as the one in
++ * @policy) or replace the governor for @policy with the new one stored in
++ * @new_policy.
+  *
+  * The cpuinfo part of @policy is not updated by this function.
+  */
+@@ -2396,26 +2394,6 @@ int cpufreq_set_policy(struct cpufreq_policy *policy,
+ 	if (ret)
+ 		return ret;
  
- #ifdef CONFIG_PM
-@@ -2400,11 +2382,8 @@ static int pxafb_probe(struct platform_device *dev)
+-	/*
+-	 * The notifier-chain shall be removed once all the users of
+-	 * CPUFREQ_ADJUST are moved to use the QoS framework.
+-	 */
+-	/* adjust if necessary - all reasons */
+-	blocking_notifier_call_chain(&cpufreq_policy_notifier_list,
+-			CPUFREQ_ADJUST, new_policy);
+-
+-	/*
+-	 * verify the cpu speed can be set within this limit, which might be
+-	 * different to the first one
+-	 */
+-	ret = cpufreq_driver->verify(new_policy);
+-	if (ret)
+-		return ret;
+-
+-	/* notification of the new policy */
+-	blocking_notifier_call_chain(&cpufreq_policy_notifier_list,
+-			CPUFREQ_NOTIFY, new_policy);
+-
+ 	policy->min = new_policy->min;
+ 	policy->max = new_policy->max;
+ 	trace_cpu_frequency_limits(policy);
+diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+index afc10384a681..c57e88e85c41 100644
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -456,10 +456,8 @@ static inline void cpufreq_resume(void) {}
+ #define CPUFREQ_POSTCHANGE		(1)
+ 
+ /* Policy Notifiers  */
+-#define CPUFREQ_ADJUST			(0)
+-#define CPUFREQ_NOTIFY			(1)
+-#define CPUFREQ_CREATE_POLICY		(2)
+-#define CPUFREQ_REMOVE_POLICY		(3)
++#define CPUFREQ_CREATE_POLICY		(0)
++#define CPUFREQ_REMOVE_POLICY		(1)
  
  #ifdef CONFIG_CPU_FREQ
- 	fbi->freq_transition.notifier_call = pxafb_freq_transition;
--	fbi->freq_policy.notifier_call = pxafb_freq_policy;
- 	cpufreq_register_notifier(&fbi->freq_transition,
- 				CPUFREQ_TRANSITION_NOTIFIER);
--	cpufreq_register_notifier(&fbi->freq_policy,
--				CPUFREQ_POLICY_NOTIFIER);
- #endif
- 
- 	/*
-diff --git a/drivers/video/fbdev/pxafb.h b/drivers/video/fbdev/pxafb.h
-index b641289c8a99..86b1e9ab1a38 100644
---- a/drivers/video/fbdev/pxafb.h
-+++ b/drivers/video/fbdev/pxafb.h
-@@ -162,7 +162,6 @@ struct pxafb_info {
- 
- #ifdef CONFIG_CPU_FREQ
- 	struct notifier_block	freq_transition;
--	struct notifier_block	freq_policy;
- #endif
- 
- 	struct regulator *lcd_supply;
+ int cpufreq_register_notifier(struct notifier_block *nb, unsigned int list);
 -- 
 2.21.0.rc0.269.g1a574e7a288b
 
