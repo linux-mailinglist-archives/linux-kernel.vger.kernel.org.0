@@ -2,79 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1308F71E2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 19:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FA0771E82
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 20:01:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391085AbfGWR67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 13:58:59 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37677 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbfGWR67 (ORCPT
+        id S2391244AbfGWR7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 13:59:15 -0400
+Received: from mail-yb1-f202.google.com ([209.85.219.202]:52444 "EHLO
+        mail-yb1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbfGWR7K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 13:58:59 -0400
-Received: by mail-wm1-f68.google.com with SMTP id f17so39272063wme.2;
-        Tue, 23 Jul 2019 10:58:57 -0700 (PDT)
+        Tue, 23 Jul 2019 13:59:10 -0400
+Received: by mail-yb1-f202.google.com with SMTP id e66so26489176ybe.19
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 10:59:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=uxuxpoqA/C7rk06bc2rM9al5Hb55km4kp2za7lpV0D8=;
+        b=gvBkOkwzaYNLh+oGcJAVB7MjFm6ggJ16J7ZtFWSs5smrgxbyTgnFANakPKwfHBaKJo
+         Z3AeBj5hFUm+GIYoHcLDXyEq448i3WGfVM80s/ZYt3Ff7Lnffb2whFy1iyiq0vNB8tme
+         ZgEAhcj6PmMNwScnzwOlSrD9vrs9BWD5XfY+Jc7tfz6fIGBdIIOc361XhF1FnJ2J5gIc
+         R3XqyRsgPc72AURET11IAyvFYp4TC8kAAhKarnjk3baGMHuxZXMV89tXjZO+C8I9PfEc
+         YEGyFP+vd3pK7Yts8v+bEOrkzxv2fC0rSmwv0ECVx3Gypru+tBZwBnoAh4W0hQ7k4cn/
+         8ScQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CFpgVgUuyNvxrMZCyKWuK3LuxqE0J5JekFNJ3K5eJds=;
-        b=K5GeyaF3MQzyfh8HKPHkp7UVdhhleiUyCDOpzd6uOWw/WuP+BP0sKx60NcAI75X5pW
-         +tMKLg647jsKWxebnxW9Upm3ewV4KelzdIRyQ3cEntTXNHuHC1DlhA0CXtJ8tXMsZfqS
-         KA2T8k3PnDujoXy3oeRJfZUymWKvo+wPbgMbUbODEwO723x3JSCwk+8/rARpNWxI5t6C
-         KduPQL+WvmVh0Dq7F3p/0h/lP75ABdD/diowYfQr+RdVPA1eQrjb/9OdEwWvzt9IOHOp
-         oJLCEfUW8LhzIS9fGNhyDGq4U4VsDFO5q0T2lMvUMIpwrO/sqLsTRstkCSg9z6juA5MT
-         9xjQ==
-X-Gm-Message-State: APjAAAX5LC1VIORWAgc56qTUgB81yFAY5zjxzdqdrL87NA6A6b7ZBQ1B
-        5QIgvPHWy+4S/xli7PEunhI=
-X-Google-Smtp-Source: APXvYqxGy6ti+aro/+Ugouk2LFlHDkwecPIxNJNr4s2bexkT5TLGoN0A8azJ3yLVlYBc1LN2slYaiA==
-X-Received: by 2002:a05:600c:291:: with SMTP id 17mr68446436wmk.32.1563904736737;
-        Tue, 23 Jul 2019 10:58:56 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.239])
-        by smtp.googlemail.com with ESMTPSA id o26sm84382672wro.53.2019.07.23.10.58.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Jul 2019 10:58:55 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 19:58:53 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com, kgene@kernel.org,
-        willy.mh.wolff.ml@gmail.com
-Subject: Re: [PATCH v4 5/5] DT: arm: exynos4412: add event data type which is
- monitored
-Message-ID: <20190723175853.GA29195@kozik-lap>
-References: <20190605091236.24263-1-l.luba@partner.samsung.com>
- <CGME20190605091305eucas1p136332cc3d1a299d90617bddcb365bee0@eucas1p1.samsung.com>
- <20190605091236.24263-6-l.luba@partner.samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190605091236.24263-6-l.luba@partner.samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=uxuxpoqA/C7rk06bc2rM9al5Hb55km4kp2za7lpV0D8=;
+        b=Jk9XuBC9HEI+nYPBqo74So/7JjNg+IyI76EdJ73rT2EDPoxKUlVgXWCAAXXcHhiYGF
+         CkQ5wqL/UUAtaXIPk1APevDXqI4fDfXBkFgnrni88sOoYhkLNl8XYVOJ3irz5T2bmUYC
+         2PHeHsLkLfFUvjHk9sjf7tpJ+T5Jgx+z+WfqAFvjNzMuREXKxllCajH1Y61GuixcWSSO
+         khLte55KNH838zy2CsVRoHtp2QEbDe2ziOhKnJ00L4ut8mMALHk10AlQHXyff40s+Sjg
+         V4HlA4IVgf1eQGuzxt2UUFS+ydhVlbJqTp+NI77MIuWmopLa802njSohju+GBLHJ7saz
+         HUCw==
+X-Gm-Message-State: APjAAAWeLIsVcSQCnpTU0wcH7rcNLG04XcepuTcO4RG3PeSwtEYJsZA3
+        Ec0CDnVvGKo50btLNs1iy/IKKcZnrn9OjFIM
+X-Google-Smtp-Source: APXvYqw9DwaHVI19t/YbteMrcIZMKltNbSnI88dDsWcfp8XIUhxn9zscDjBOZxYqaezV+ZapgNfd0Az5q5SxMU+h
+X-Received: by 2002:a5b:951:: with SMTP id x17mr48178059ybq.511.1563904749116;
+ Tue, 23 Jul 2019 10:59:09 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 19:58:38 +0200
+In-Reply-To: <cover.1563904656.git.andreyknvl@google.com>
+Message-Id: <bc53284e2c95fd5b65809a1fb8169d4c1618c61b.1563904656.git.andreyknvl@google.com>
+Mime-Version: 1.0
+References: <cover.1563904656.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
+Subject: [PATCH v19 01/15] arm64: untag user pointers in access_ok and __uaccess_mask_ptr
+From:   Andrey Konovalov <andreyknvl@google.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 11:12:36AM +0200, Lukasz Luba wrote:
-> The patch adds new field in the PPMU event which shows explicitly
-> what kind of data the event is monitoring. It is possible to change it
-> using defined values in exynos_ppmu.h file.
-> 
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4412-ppmu-common.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
+This patch is a part of a series that extends kernel ABI to allow to pass
+tagged user pointers (with the top byte set to something else other than
+0x00) as syscall arguments.
 
-I tried to apply this... but prerequisites were not merged into
-v5.3-rc1. This one will have to wait then till next release.
+copy_from_user (and a few other similar functions) are used to copy data
+from user memory into the kernel memory or vice versa. Since a user can
+provided a tagged pointer to one of the syscalls that use copy_from_user,
+we need to correctly handle such pointers.
 
-Best regards,
-Krzysztof
+Do this by untagging user pointers in access_ok and in __uaccess_mask_ptr,
+before performing access validity checks.
+
+Note, that this patch only temporarily untags the pointers to perform the
+checks, but then passes them as is into the kernel internals.
+
+Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+---
+ arch/arm64/include/asm/uaccess.h | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
+index 5a1c32260c1f..a138e3b4f717 100644
+--- a/arch/arm64/include/asm/uaccess.h
++++ b/arch/arm64/include/asm/uaccess.h
+@@ -62,6 +62,8 @@ static inline unsigned long __range_ok(const void __user *addr, unsigned long si
+ {
+ 	unsigned long ret, limit = current_thread_info()->addr_limit;
+ 
++	addr = untagged_addr(addr);
++
+ 	__chk_user_ptr(addr);
+ 	asm volatile(
+ 	// A + B <= C + 1 for all A,B,C, in four easy steps:
+@@ -215,7 +217,8 @@ static inline void uaccess_enable_not_uao(void)
+ 
+ /*
+  * Sanitise a uaccess pointer such that it becomes NULL if above the
+- * current addr_limit.
++ * current addr_limit. In case the pointer is tagged (has the top byte set),
++ * untag the pointer before checking.
+  */
+ #define uaccess_mask_ptr(ptr) (__typeof__(ptr))__uaccess_mask_ptr(ptr)
+ static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
+@@ -223,10 +226,11 @@ static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
+ 	void __user *safe_ptr;
+ 
+ 	asm volatile(
+-	"	bics	xzr, %1, %2\n"
++	"	bics	xzr, %3, %2\n"
+ 	"	csel	%0, %1, xzr, eq\n"
+ 	: "=&r" (safe_ptr)
+-	: "r" (ptr), "r" (current_thread_info()->addr_limit)
++	: "r" (ptr), "r" (current_thread_info()->addr_limit),
++	  "r" (untagged_addr(ptr))
+ 	: "cc");
+ 
+ 	csdb();
+-- 
+2.22.0.709.g102302147b-goog
 
