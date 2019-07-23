@@ -2,149 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07D2271843
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 14:30:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 202A571854
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 14:34:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731753AbfGWMab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 08:30:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45866 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726438AbfGWMaa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 08:30:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6BAE3AD7B;
-        Tue, 23 Jul 2019 12:30:28 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 3BB05DA7D5; Tue, 23 Jul 2019 14:31:05 +0200 (CEST)
-Date:   Tue, 23 Jul 2019 14:31:05 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Gao Xiang <hsiangkao@aol.com>
-Cc:     dsterba@suse.cz, Gao Xiang <gaoxiang25@huawei.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v3 23/24] erofs: introduce cached decompression
-Message-ID: <20190723123104.GB2868@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Gao Xiang <hsiangkao@aol.com>,
-        Gao Xiang <gaoxiang25@huawei.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org,
-        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>, Fang Wei <fangwei1@huawei.com>
-References: <20190722025043.166344-1-gaoxiang25@huawei.com>
- <20190722025043.166344-24-gaoxiang25@huawei.com>
- <20190722101818.GN20977@twin.jikos.cz>
- <41f1659a-0d16-4316-34fc-335b7d142d5c@aol.com>
+        id S1732327AbfGWMeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 08:34:07 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37488 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726438AbfGWMeG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 08:34:06 -0400
+Received: by mail-qt1-f194.google.com with SMTP id y26so41699683qto.4
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 05:34:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4z6g9JExYRcJA0cyMB6yiS2IpKsEL90puRfSbLhNOYM=;
+        b=XGStVuHcJ4wYu5EkGucnWz0qyLQPnOTtZqcARydulA7t9Ltx1lhLXGgV8Z2XduZicZ
+         xd5wu0OKMXkjcax/8x3LH30ryZwpioRAwsQ3V7xMq1Ciepu12twvmW8XlTTwtYCXolge
+         D91/c66cXBLOyYAMwxtWBJregnyDRwWMGle1KoOI3dX3A/2obklREelH5IVhrUXHvTw3
+         8tOemeLX+4Uln09N0Cg06tdLBr/VhglARToykSGyCF2NSFuHW0gZY1pjNOzLpZiRFfnB
+         uHVhv2+8uyrIUtD1uutViUZvSabCMm1x0Md5hfEA2mGZrPd1bqG1XIagtJ9qph2alxj4
+         tMHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4z6g9JExYRcJA0cyMB6yiS2IpKsEL90puRfSbLhNOYM=;
+        b=RuvEn6KDs8hfnOQTsT21DkgQm5cx8V0A/p8VEMSjZj0Ke5w/i8HTfqKq4JQVBmfr8n
+         CWLYdtChAYj2PXTHEeMzPKTREp1hVl3lj823MriCm5surGhmqWoWjoHuVbjGr3QuriDp
+         /RXZJ0tvtHHJLP+LrYodTRAPJJTAwQi/gk34/9MgNGjbyBIIcBqOo51O7Lb0Knaip7xz
+         XCMltoPLT7QeyMRCgHQDL08ZkX9V20Ff6FvkQLPwHQknRlDrFYrcMLxTYG8LHt4zzH9/
+         ZBSD6fFQn/OY4OGURQ29yUSX0bRvretcprBfaDqMuqNXaBjzuDQVNZkRvkHPrLwHUU46
+         DWQQ==
+X-Gm-Message-State: APjAAAVTWIWVinO5/Jzu04iygraSpm2M7zqHWXwjmw4kIGvIeEgpvI5u
+        u8d+F/T0z1PJzEn2Eq5kPgDGxA==
+X-Google-Smtp-Source: APXvYqwgtwYpT9cg3gaUoASZePIHM0GUXAfGQxCkQc4zdvADS6YRLfKQfN5B+6njowjdg51XBm6tUg==
+X-Received: by 2002:ac8:6c31:: with SMTP id k17mr51817374qtu.253.1563885245559;
+        Tue, 23 Jul 2019 05:34:05 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id i62sm20099024qke.52.2019.07.23.05.34.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 23 Jul 2019 05:34:04 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hptzW-0004mn-JO; Tue, 23 Jul 2019 09:34:02 -0300
+Date:   Tue, 23 Jul 2019 09:34:02 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Leon Romanovsky <leon@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>, oulijun@huawei.com,
+        xavier.huwei@huawei.com, dledford@redhat.com,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH] RDMA/hns: Fix build error for hip08
+Message-ID: <20190723123402.GA15357@ziepe.ca>
+References: <20190723024908.11876-1-yuehaibing@huawei.com>
+ <20190723074339.GJ5125@mtr-leonro.mtl.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <41f1659a-0d16-4316-34fc-335b7d142d5c@aol.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+In-Reply-To: <20190723074339.GJ5125@mtr-leonro.mtl.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 06:58:59PM +0800, Gao Xiang wrote:
-> On 2019/7/22 ????6:18, David Sterba wrote:
-> > On Mon, Jul 22, 2019 at 10:50:42AM +0800, Gao Xiang wrote:
-> >> +choice
-> >> +	prompt "EROFS Data Decompression mode"
-> >> +	depends on EROFS_FS_ZIP
-> >> +	default EROFS_FS_ZIP_CACHE_READAROUND
-> >> +	help
-> >> +	  EROFS supports three options for decompression.
-> >> +	  "In-place I/O Only" consumes the minimum memory
-> >> +	  with lowest random read.
-> >> +
-> >> +	  "Cached Decompression for readaround" consumes
-> >> +	  the maximum memory with highest random read.
-> >> +
-> >> +	  If unsure, select "Cached Decompression for readaround"
-> >> +
-> >> +config EROFS_FS_ZIP_CACHE_DISABLED
-> >> +	bool "In-place I/O Only"
-> >> +	help
-> >> +	  Read compressed data into page cache and do in-place
-> >> +	  I/O decompression directly.
-> >> +
-> >> +config EROFS_FS_ZIP_CACHE_READAHEAD
-> >> +	bool "Cached Decompression for readahead"
-> >> +	help
-> >> +	  For each request, it caches the last compressed page
-> >> +	  for further reading.
-> >> +	  It still does in-place I/O for the rest compressed pages.
-> >> +
-> >> +config EROFS_FS_ZIP_CACHE_READAROUND
-> >> +	bool "Cached Decompression for readaround"
-> >> +	help
-> >> +	  For each request, it caches the both end compressed pages
-> >> +	  for further reading.
-> >> +	  It still does in-place I/O for the rest compressed pages.
-> >> +
-> >> +	  Recommended for performance priority.
-> > 
-> > The number of individual Kconfig options is quite high, are you sure you
-> > need them to be split like that?
+On Tue, Jul 23, 2019 at 10:43:39AM +0300, Leon Romanovsky wrote:
+> On Tue, Jul 23, 2019 at 10:49:08AM +0800, YueHaibing wrote:
+> > If INFINIBAND_HNS_HIP08 is selected and HNS3 is m,
+> > but INFINIBAND_HNS is y, building fails:
+> >
+> > drivers/infiniband/hw/hns/hns_roce_hw_v2.o: In function `hns_roce_hw_v2_exit':
+> > hns_roce_hw_v2.c:(.exit.text+0xd): undefined reference to `hnae3_unregister_client'
+> > drivers/infiniband/hw/hns/hns_roce_hw_v2.o: In function `hns_roce_hw_v2_init':
+> > hns_roce_hw_v2.c:(.init.text+0xd): undefined reference to `hnae3_register_client'
 > 
-> You mean the above? these are 3 cache strategies, which impact the
-> runtime memory consumption and performance. I tend to leave the above
-> as it-is...
-
-No, I mean all Kconfig options, they're scattered over several patches,
-best seen in the checked out branch. The cache strategies are actually
-just one config option (choice).
-
-> I'm not sure vm_map_ram() is always better than vmap() for all
-> platforms (it has noticeable performance impact). However that
-> seems true for my test machines (x86-64, arm64).
+> It means that you have a problem with header files of your hns3.
 > 
-> If vm_map_ram() is always the optimal choice compared with vmap(),
-> I will remove vmap() entirely, that is OK. But I am not sure for
-> every platforms though.
-
-You can select the implementation by platform, I don't know what are the
-criteria like cpu type etc, but I expect it's something that can be
-determined at module load time. Eventually a module parameter can be the
-the way to set it.
-
-> > And so on. I'd suggest to go through all the options and reconsider them
-> > to be built-in, or runtime settings. Debugging features like the fault
-> > injections could be useful on non-debugging builds too, so a separate
-> > option is fine, otherwise grouping other debugging options under the
-> > main EROFS_FS_DEBUG would look more logical.
+> >
+> > Reported-by: Hulk Robot <hulkci@huawei.com>
+> > Fixes: dd74282df573 ("RDMA/hns: Initialize the PCI device for hip08 RoCE")
+> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> >  drivers/infiniband/hw/hns/Kconfig | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/infiniband/hw/hns/Kconfig b/drivers/infiniband/hw/hns/Kconfig
+> > index b59da5d..4371c80 100644
+> > +++ b/drivers/infiniband/hw/hns/Kconfig
+> > @@ -23,7 +23,8 @@ config INFINIBAND_HNS_HIP06
+> >
+> >  config INFINIBAND_HNS_HIP08
+> >  	bool "Hisilicon Hip08 Family RoCE support"
+> > -	depends on INFINIBAND_HNS && PCI && HNS3
+> > +	depends on INFINIBAND_HNS && (INFINIBAND_HNS = HNS3)
 > 
-> The remaining one is EROFS_FS_CLUSTER_PAGE_LIMIT. It impacts the total
-> size of z_erofs_pcluster structure. It's a hard limit, and should be
-> configured as small as possible. I can remove it right now since multi-block
-> compression is not available now. However, it will be added again after
-> multi-block compression is supported.
-> 
-> So, How about leave it right now and use the default value?
+> This is wrong.
 
-From the Kconfig and build-time settings perspective I think it's
-misplaced. This affects testing, you'd have to rebuild and reinstall the
-module to test any change, while it's "just" a number that can be either
-module parameter, sysfs knob, mount option or special ioctl.
+It is tricky. It is asserting that the IB side is built as a module if
+the ethernet side is a module..
 
-But I may be wrong, EROFS is a special purpose filesystem, so the
-fine-grained build options might make sense (eg. due to smaller code).
-The question should be how does each option affect typical production
-build targets. Fewer is IMHO better.
+It is kind of a weird pattern as the module config is INFINIBAND_HNS
+and these others are just bool opens what to include, but I think it
+is OK..
+
+Jason
