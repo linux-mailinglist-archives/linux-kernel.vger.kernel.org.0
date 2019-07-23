@@ -2,200 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 458D570E24
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 02:32:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0083670E2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 02:34:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729103AbfGWAcd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 20:32:33 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43858 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726291AbfGWAcc (ORCPT
+        id S1731452AbfGWAe0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 20:34:26 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:42162 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726770AbfGWAeZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 20:32:32 -0400
-Received: by mail-pf1-f195.google.com with SMTP id i189so18174969pfg.10
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 17:32:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vuvO2vdByXr9tZ4gIUtMWHJb47SWaOs3dPS9JirOd8A=;
-        b=Zl9GjnPN0xA37eJPDX7MMY5U59qIMhaH0oHaFDaQC5kc56db6tSm1k92X8vD9olKQv
-         OxaZTUgiRL7QcEtCdRCTPLyfWDQhRyOXO/nSFoU6NA2mvCQcdvEZ0WClLYkrEms7tZo/
-         izrTbbctUhAN1VB9J0Q7y+pRVPXmJcR9HPRnbtizx6ihsgsakAq/rgha1JCGMsgY2RiH
-         PJ1yTUdO8H1C8vedwH16edJ6CisD7/Lc2QkWysnWnCsUClX9aMwTBEN+KsRdmKr24KRk
-         pqLlahy+9/ouBHzutT221O182aQu5jXOaH8IgOSQxKXVRStd+1V11liNjuOCoEoDcsOL
-         bt9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vuvO2vdByXr9tZ4gIUtMWHJb47SWaOs3dPS9JirOd8A=;
-        b=bzz6/aUHDi81P4SoF5LnNVH9LA+kWMOb4FQAHqIXzJJFq0tLd6hFwATRwscn8DkXI6
-         asOMWuOF0OWSGXVOq+rJd+O44LoKX0Y+gaQvdkuDZHlZcxd20xMazxCOSlwijVIpc/xJ
-         +L+JdeirJ/F4JaXAe87bBwBhmwnUjuBE0nw4pRyh7xINeQDSB7znifY/vAdg50uwCSdq
-         H3XVYY5zbUtAWfpqkxgW4ZrfT02SQRZVSH6a5C8Opi+Iznz7s9NW8ZySE8Zw+w6s+M2n
-         LQL2ZbiAOTWNyb2Z9OLNGZk2CfLv+KYNAbccgHIZcEgO8GXF61jLpSNOyfW0Amce4+hW
-         GERA==
-X-Gm-Message-State: APjAAAULXSY1kA+pZ/yeGYBM8vmjzbtmY//wbLvg6MT78X22s+QivW3Y
-        QNZBuEYXMHtBj3m5ZcJZTpbQzISlnk4beIHsBBAzQA==
-X-Google-Smtp-Source: APXvYqxh+VUvsGh5iLsrxoHbLc3jsob++DVglc3Oa483B1QKCacTy9ml6NDURiDh9l6nBgWwR+AIwjhgcbpU33mL7Pc=
-X-Received: by 2002:aa7:9191:: with SMTP id x17mr2893489pfa.23.1563841951086;
- Mon, 22 Jul 2019 17:32:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190712081744.87097-1-brendanhiggins@google.com>
- <CAFd5g47ikJmA0uGoavAFsh+hQvDmgsOi26tyii0612R=rt7iiw@mail.gmail.com>
- <CAFd5g44_axVHNMBzxSURQB_-R+Rif7cZcg7PyZ_SS+5hcy5jZA@mail.gmail.com>
- <20190716175021.9CA412173C@mail.kernel.org> <CAFd5g453vXeSUCZenCk_CzJ-8a1ym9RaPo0NVF=FujF9ac-5Ag@mail.gmail.com>
- <20190718175024.C3EC421019@mail.kernel.org> <CAFd5g46a7C1+R6ZcE_SkqaYqgrH5Rx3M=X7orFyaMgFLDbeYYA@mail.gmail.com>
- <20190719000834.GA3228@google.com> <20190722200347.261D3218C9@mail.kernel.org>
- <CAFd5g45hdCxEavSxirr0un_uLzo5Z-J4gHRA06qjzcQrTzmjVg@mail.gmail.com> <20190722235411.06C1320840@mail.kernel.org>
-In-Reply-To: <20190722235411.06C1320840@mail.kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Mon, 22 Jul 2019 17:32:19 -0700
-Message-ID: <CAFd5g46h9XSRfA1H4kZR7u0Eh_F-fgPjoLPzqzLgFTXxeb105g@mail.gmail.com>
-Subject: Re: [PATCH v9 04/18] kunit: test: add kunit_stream a std::stream like logger
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Mon, 22 Jul 2019 20:34:25 -0400
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6N0ElE2016652;
+        Mon, 22 Jul 2019 17:33:50 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=4Tszt1wueN+u4x7Vd41pROxqw2h3Ubjgu5PvqSIcAb0=;
+ b=p0541Pby89M8yVdZREy2dpsoG8mN9vm8Eyx/OkKuiRkCGexEultPSsVU7Y3tyxFWW4RP
+ hao8LX7YhKp/OlKaZGc0ZnW12wM5HVYW7XksgVNUdOngLD2cSRe4NEBH1t3ai6ZGf/Rh
+ NM/KQE1w68DoRPMN0KHUWPckKTXK0K2OwkY= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2twg6a9sdv-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 22 Jul 2019 17:33:49 -0700
+Received: from ash-exhub202.TheFacebook.com (2620:10d:c0a8:83::6) by
+ ash-exhub101.TheFacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 22 Jul 2019 17:33:41 -0700
+Received: from NAM01-BY2-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Mon, 22 Jul 2019 17:33:41 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UfGB9EurNZJIBvWAlTkxLF6gzvo3DaokbqnBbTTqq75noVQPpcG+YPsNvxOjy5AHcffLeLGPdKEmtOqYp2smWAc1f4NboaYFfPV3MgHP0wDmzFQBa5jNf49nP5N9fMO+PUbP+Ih6LwfEjAuNZJ2nJPSIC92PxdK/Lbk4cGHfppKz0HtY59QWQfFsaMY3rbTAXmz6gHMBPbKM5lzfCV+W8ZzyOQitj/Csu1fPO4KXWjLXzyTlnbayPcADx5RImqFdJ90sLCCWNPytkA2+zrHJvoMtYqIGnf1DvxXT2IMxhKTD82BpX7U8lPsKxzPC2ibz8BnRcLR8keIZXtP6yIZjNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4Tszt1wueN+u4x7Vd41pROxqw2h3Ubjgu5PvqSIcAb0=;
+ b=iaS5ZOzL+Ns4MQMpqVOXmEyVOjtjFo+WLH4gSUvGH2p2rYET4woR/aHQIw4y2SojF5bwHYSMSRshQCCLYWp8EkyLPeijwZOCTOqkia6Kvmm9QeCYWv75gXpm50d2PJfhsg8O5kreyUxPomlqAFvnPh/HXjo6laznFl8JGu9mKyPRO96TzjiutX32PaclPapZSIal0Q/zx8f+kOMyAzTGP2kcIza7fbFBs66d7+e4PSohEMaWiY2ij8LpoyWBmheMFUU4Ul+FtjwDC1ipu8dN06oym5lqRUdpqnVcHBJs+K5IGnVS1+6J3tVOt4yUwGmUXpA8wUdOk5qSKg9JoAxQ3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=fb.com;dmarc=pass action=none header.from=fb.com;dkim=pass
+ header.d=fb.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4Tszt1wueN+u4x7Vd41pROxqw2h3Ubjgu5PvqSIcAb0=;
+ b=jBPndC30afjdvhMHi37Ls9Kt3U+mMzS5qRHa/M2AJ17iyP2vJW+YRRY6ZKJ7wO6O14DVXQuju/1UE6qZRcyMqQ/cqWV48HaGHPeV5RyEItYI3OEZAX78JwZ6o0N+1sgbtZSppUHx+eRSxdh69VGoFdg+RrHbVm2mU9Jy6gPQw3g=
+Received: from CY4PR15MB1269.namprd15.prod.outlook.com (10.172.177.11) by
+ CY4PR15MB1447.namprd15.prod.outlook.com (10.172.155.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2073.14; Tue, 23 Jul 2019 00:33:40 +0000
+Received: from CY4PR15MB1269.namprd15.prod.outlook.com
+ ([fe80::fce3:df83:1cbf:e65e]) by CY4PR15MB1269.namprd15.prod.outlook.com
+ ([fe80::fce3:df83:1cbf:e65e%12]) with mapi id 15.20.2094.013; Tue, 23 Jul
+ 2019 00:33:40 +0000
+From:   Vijay Khemka <vijaykhemka@fb.com>
+To:     Andrew Jeffery <andrew@aj.id.au>, Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
         Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>
+CC:     "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>,
+        Sai Dasari <sdasari@fb.com>
+Subject: Re: [PATCH 1/2] ARM: dts: aspeed: tiogapass: Add VR devices
+Thread-Topic: [PATCH 1/2] ARM: dts: aspeed: tiogapass: Add VR devices
+Thread-Index: AQHVQMVnpxBga6eEj0K8KvUFIYW0cKbXVMQA//+Q44A=
+Date:   Tue, 23 Jul 2019 00:33:40 +0000
+Message-ID: <69DFAF50-E181-4C7A-910A-C45E6E151F8E@fb.com>
+References: <20190722192451.1947348-1-vijaykhemka@fb.com>
+ <802c5419-08ec-4a0e-8a50-ad4a1bbf7f3a@www.fastmail.com>
+In-Reply-To: <802c5419-08ec-4a0e-8a50-ad4a1bbf7f3a@www.fastmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2620:10d:c090:200::3:693e]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d2ea710e-27c5-4f8d-9bf6-08d70f0568b5
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY4PR15MB1447;
+x-ms-traffictypediagnostic: CY4PR15MB1447:
+x-microsoft-antispam-prvs: <CY4PR15MB14472FE1516475D228CEC036DDC70@CY4PR15MB1447.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1091;
+x-forefront-prvs: 0107098B6C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(39860400002)(136003)(376002)(366004)(189003)(199004)(476003)(2201001)(6486002)(316002)(110136005)(81166006)(6506007)(5660300002)(186003)(46003)(86362001)(7736002)(81156014)(2906002)(54906003)(446003)(11346002)(8936002)(25786009)(71190400001)(2616005)(71200400001)(36756003)(8676002)(256004)(6436002)(14454004)(99286004)(305945005)(229853002)(102836004)(53936002)(2501003)(66556008)(6116002)(486006)(66946007)(6512007)(66446008)(66476007)(478600001)(7416002)(33656002)(64756008)(76116006)(76176011)(4326008)(6246003)(68736007)(91956017)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR15MB1447;H:CY4PR15MB1269.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: enj2984x9Rqw3JFvh3qO+/iVdfR7XIwqUS0AywnFi0oFIm7Wqqs+wNGXn21C1PDAVmNLrShwXjM7yKn2uuglI7fu2lDEdOQaxyzKvWgRGmEG5dwL3hnpxPD/JLCcuGeZP03pU7cSJfdaNds08Wd4fZJyoNj/FVIUBl9lKlcEBMVDdLBfeGuyOSKTGhd0N1F2I0F8iVNtTa2yO89XOsuJ9c4mHdRRZn1Lj8/7QZK4g8lrDmCE4jyx3Ym8U++tXd0nbLphBDfmASTo/DvquutmLaWEDLzJWHG0R/eKJuuVJiVEOxZACTzcplhuK9xzHXMEXFN8+zYC0gvG0Mrdjy466EilfQYWU/7hsI0FMzwP7YHSWndAQNzMnxoAYhqF0IhDlDfky0kE5ZI6gLcu2cf1EmVrA3uLhMJEQZ8+UsiOGA8=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <515ADAC7575AC24CABAC6D61534CEFDB@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2ea710e-27c5-4f8d-9bf6-08d70f0568b5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2019 00:33:40.1030
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vijaykhemka@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1447
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-22_16:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907230000
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 4:54 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Brendan Higgins (2019-07-22 15:30:49)
-> > On Mon, Jul 22, 2019 at 1:03 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > >
-> > >
-> > > What's the calling context of the assertions and expectations? I still
-> > > don't like the fact that string stream needs to allocate buffers and
-> > > throw them into a list somewhere because the calling context matters
-> > > there.
-> >
-> > The calling context is the same as before, which is anywhere.
->
-> Ok. That's concerning then.
-
-Yeah. Luis suggested just not supporting the IRQ context until later.
-See my later comment.
-
-> > > I'd prefer we just wrote directly to the console/log via printk
-> > > instead. That way things are simple because we use the existing
-> > > buffering path of printk, but maybe there's some benefit to the string
-> > > stream that I don't see? Right now it looks like it builds a string and
-> > > then dumps it to printk so I'm sort of lost what the benefit is over
-> > > just writing directly with printk.
-> >
-> > It's just buffering it so the whole string gets printed uninterrupted.
-> > If we were to print out piecemeal to printk, couldn't we have another
-> > call to printk come in causing it to garble the KUnit message we are
-> > in the middle of printing?
->
-> Yes, printing piecemeal by calling printk many times could lead to
-> interleaving of messages if something else comes in such as an interrupt
-> printing something. Printk has some support to hold "records" but I'm
-> not sure how that would work here because KERN_CONT talks about only
-> being used early on in boot code. I haven't looked at printk in detail
-> though so maybe I'm all wrong and KERN_CONT just works?
-
-It says KERN_CONT is not SMP safe, and it isn't supposed to contain
-newlines, so it doesn't sound like it does any buffering for you. I
-looked at it a while ago and those comments agreed with my
-understanding of the code, but I could be wrong.
-
-> Can printk be called once with whatever is in the struct?
-
-Unfortunately, no. That is part of what I was trying to illustrate
-with this patch. Most of the messages are deterministic, but
-hardcoding all the possible message types would lead to a massive
-number of hard coded strings. However, even this would break down for
-the mocking formatters. All the different ways a function can be
-called are just too complex to encode into a finite set of hard coded
-fmt strings.
-
-> Otherwise if
-> this is about making printk into a structured log then maybe printk
-> isn't the proper solution anyway. Maybe a dev interface should be used
-> instead that can handle starting and stopping tests (via ioctl) in
-> addition to reading test results, records, etc. with read() and a
-> clearing of the records. Then the seqfile API works naturally. All of
-
-Ehhh...I wouldn't mind providing such an interface, but I would really
-like to be able to provide the results without having to depend on a
-userland doing something to get test results. That has always been a
-pretty important goal for me.
-
-> this is a bit premature, but it looks like you're going down the path of
-> making something akin to ftrace that stores binary formatted
-> assertion/expectation records in a lockless ring buffer that then
-> formats those records when the user asks for them.
-
-Like you said, I think it is a bit premature to go that far.
-
-In anycase, I don't see a way to get rid of string_stream, without
-significantly sacrificing usability.
-
-> I can imagine someone wanting to write unit tests that check conditions
-> from a simulated hardirq context via irq works (a driver mock
-> framework?), so this doesn't seem far off.
-
-Yep, I actually presented the first pieces of that in the RFC v1 that
-I linked to you earlier in this discussion. I have a more fleshed out
-example here:
-
-https://kunit.googlesource.com/linux/+/e10484ad2f9fc7926412ec84739fe105981b4771/drivers/i2c/busses/i2c-aspeed-test.c
-
-I actually already have some people at Google playing around with it.
-So yeah, not far off at all! However, in these cases we are not
-actually running in the IRQ context (despite the fact that we are
-testing IRQ code) because we provide a fake IRQ chip, or some other
-fake mechanism that triggers the IRQ. Still, I could see someone
-wanting to do it in a non-fake-IRQ context.
-
-Luis' suggestion was just to hold off on the IRQ safe stuff at the
-outset, since that is going to require a lot more effort to review. I
-know that's kind of the future coding argument again, but maybe the
-answer will be to just restrict what features an IRQ user has access
-to (maybe just really simple expectations, for example). I mean, we
-will probably have to restrict what they are allowed to use anyway.
-
-Luis, do you have any ideas?
-
-Cheers
+DQoNCu+7v09uIDcvMjIvMTksIDU6MTIgUE0sICJBbmRyZXcgSmVmZmVyeSIgPGFuZHJld0Bhai5p
+ZC5hdT4gd3JvdGU6DQoNCiAgICBIaSBWaWpheSwNCiAgICANCiAgICBBIGZldyBuaXRwaWNrcy4N
+CiAgICANCiAgICBPbiBUdWUsIDIzIEp1bCAyMDE5LCBhdCAwNToxMCwgVmlqYXkgS2hlbWthIHdy
+b3RlOg0KICAgID4gQWRkZXMNCiAgICANCiAgICBUeXBvOiBBZGRzDQpBY2sNCiAgICANCiAgICA+
+IFZvbHRhZ2UNCiAgICANCiAgICBVbm5lY2Vzc2FyeSBjYXBpdGFsaXNhdGlvbi4NCkFjaw0KICAg
+IA0KICAgID4gcmVndWxhdG9ycyBJbmZpbmVvbiBweGUxNjEwIGRldmljZXMgdG8gRmFjZWJvb2sN
+CiAgICA+IHRpb2dhcGFzcyBwbGF0Zm9ybS4NCiAgICA+IA0KICAgID4gU2lnbmVkLW9mZi1ieTog
+VmlqYXkgS2hlbWthIDx2aWpheWtoZW1rYUBmYi5jb20+DQogICAgPiAtLS0NCiAgICA+ICAuLi4v
+ZHRzL2FzcGVlZC1ibWMtZmFjZWJvb2stdGlvZ2FwYXNzLmR0cyAgICAgfCAzNiArKysrKysrKysr
+KysrKysrKysrDQogICAgPiAgMSBmaWxlIGNoYW5nZWQsIDM2IGluc2VydGlvbnMoKykNCiAgICA+
+IA0KICAgID4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2FzcGVlZC1ibWMtZmFjZWJv
+b2stdGlvZ2FwYXNzLmR0cyANCiAgICA+IGIvYXJjaC9hcm0vYm9vdC9kdHMvYXNwZWVkLWJtYy1m
+YWNlYm9vay10aW9nYXBhc3MuZHRzDQogICAgPiBpbmRleCBjNDUyMWVkYTc4N2MuLmI3NzgzODMz
+YTU4YyAxMDA2NDQNCiAgICA+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2FzcGVlZC1ibWMtZmFj
+ZWJvb2stdGlvZ2FwYXNzLmR0cw0KICAgID4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvYXNwZWVk
+LWJtYy1mYWNlYm9vay10aW9nYXBhc3MuZHRzDQogICAgPiBAQCAtMTQ0LDYgKzE0NCw0MiBAQA0K
+ICAgID4gICZpMmM1IHsNCiAgICA+ICAJc3RhdHVzID0gIm9rYXkiOw0KICAgID4gIAkvLyBDUFUg
+Vm9sdGFnZSByZWd1bGF0b3JzDQogICAgPiArCXZyQDQ4IHsNCiAgICANCiAgICBUaGUgcmVjb21t
+ZW5kZWQgZ2VuZXJpYyBuYW1lIGlzICdyZWd1bGF0b3InLCBzbyBlLmcuIHJlZ3VsYXRvckA0OA0K
+QWNrOiBTdWJtaXR0ZWQgdjIgZm9yIHRoaXMgcGF0Y2guDQogICAgDQogICAgPiArCQljb21wYXRp
+YmxlID0gImluZmluZW9uLHB4ZTE2MTAiOw0KICAgID4gKwkJcmVnID0gPDB4NDg+Ow0KICAgID4g
+Kwl9Ow0KICAgID4gKwl2ckA0YSB7DQogICAgPiArCQljb21wYXRpYmxlID0gImluZmluZW9uLHB4
+ZTE2MTAiOw0KICAgID4gKwkJcmVnID0gPDB4NGE+Ow0KICAgID4gKwl9Ow0KICAgID4gKwl2ckA1
+MCB7DQogICAgPiArCQljb21wYXRpYmxlID0gImluZmluZW9uLHB4ZTE2MTAiOw0KICAgID4gKwkJ
+cmVnID0gPDB4NTA+Ow0KICAgID4gKwl9Ow0KICAgID4gKwl2ckA1MiB7DQogICAgPiArCQljb21w
+YXRpYmxlID0gImluZmluZW9uLHB4ZTE2MTAiOw0KICAgID4gKwkJcmVnID0gPDB4NTI+Ow0KICAg
+ID4gKwl9Ow0KICAgID4gKwl2ckA1OCB7DQogICAgPiArCQljb21wYXRpYmxlID0gImluZmluZW9u
+LHB4ZTE2MTAiOw0KICAgID4gKwkJcmVnID0gPDB4NTg+Ow0KICAgID4gKwl9Ow0KICAgID4gKwl2
+ckA1YSB7DQogICAgPiArCQljb21wYXRpYmxlID0gImluZmluZW9uLHB4ZTE2MTAiOw0KICAgID4g
+KwkJcmVnID0gPDB4NWE+Ow0KICAgID4gKwl9Ow0KICAgID4gKwl2ckA2OCB7DQogICAgPiArCQlj
+b21wYXRpYmxlID0gImluZmluZW9uLHB4ZTE2MTAiOw0KICAgID4gKwkJcmVnID0gPDB4Njg+Ow0K
+ICAgID4gKwl9Ow0KICAgID4gKwl2ckA3MCB7DQogICAgPiArCQljb21wYXRpYmxlID0gImluZmlu
+ZW9uLHB4ZTE2MTAiOw0KICAgID4gKwkJcmVnID0gPDB4NzA+Ow0KICAgID4gKwl9Ow0KICAgID4g
+Kwl2ckA3MiB7DQogICAgPiArCQljb21wYXRpYmxlID0gImluZmluZW9uLHB4ZTE2MTAiOw0KICAg
+ID4gKwkJcmVnID0gPDB4NzI+Ow0KICAgID4gKwl9Ow0KICAgID4gIH07DQogICAgPiAgDQogICAg
+PiAgJmkyYzYgew0KICAgID4gLS0gDQogICAgPiAyLjE3LjENCiAgICA+IA0KICAgID4NCiAgICAN
+Cg0K
