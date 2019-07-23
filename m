@@ -2,47 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4B7472060
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 22:03:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA85C72069
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 22:05:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403946AbfGWUDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 16:03:35 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:35938 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403932AbfGWUDe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 16:03:34 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 72E16153BAE87;
-        Tue, 23 Jul 2019 13:03:34 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 13:03:34 -0700 (PDT)
-Message-Id: <20190723.130334.857369744482967463.davem@davemloft.net>
-To:     hslester96@gmail.com
-Cc:     cooldavid@cooldavid.org, netdev@vger.kernel.org,
+        id S1731714AbfGWUFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 16:05:00 -0400
+Received: from mga02.intel.com ([134.134.136.20]:38267 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729886AbfGWUE7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 16:04:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2019 13:04:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,300,1559545200"; 
+   d="scan'208";a="174648671"
+Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.84])
+  by orsmga006.jf.intel.com with ESMTP; 23 Jul 2019 13:04:57 -0700
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, mingo@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: jme: Use dev_get_drvdata
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190723141642.5968-1-hslester96@gmail.com>
-References: <20190723141642.5968-1-hslester96@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 23 Jul 2019 13:03:34 -0700 (PDT)
+Cc:     ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] perf/x86/intel: Fix SLOTS pebs event constraint
+Date:   Tue, 23 Jul 2019 13:04:29 -0700
+Message-Id: <20190723200429.8180-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
-Date: Tue, 23 Jul 2019 22:16:42 +0800
+From: Kan Liang <kan.liang@linux.intel.com>
 
-> Instead of using to_pci_dev + pci_get_drvdata,
-> use dev_get_drvdata to make code simpler.
-> 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Sampling SLOTS event and ref-cycles event in a group on Icelake gives
+EINVAL.
 
-Applied.
+SLOTS event is the event stands for the fixed counter 3, not fixed
+counter 2. Wrong mask was set to SLOTS event in
+intel_icl_pebs_event_constraints[].
+
+Fixes: 6017608936c1 ("perf/x86/intel: Add Icelake support")
+Reported-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Cc: stable@vger.kernel.org
+---
+ arch/x86/events/intel/ds.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index 505c73dc6a73..6601b8759c92 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -851,7 +851,7 @@ struct event_constraint intel_skl_pebs_event_constraints[] = {
+ 
+ struct event_constraint intel_icl_pebs_event_constraints[] = {
+ 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x1c0, 0x100000000ULL),	/* INST_RETIRED.PREC_DIST */
+-	INTEL_FLAGS_UEVENT_CONSTRAINT(0x0400, 0x400000000ULL),	/* SLOTS */
++	INTEL_FLAGS_UEVENT_CONSTRAINT(0x0400, 0x800000000ULL),	/* SLOTS */
+ 
+ 	INTEL_PLD_CONSTRAINT(0x1cd, 0xff),			/* MEM_TRANS_RETIRED.LOAD_LATENCY */
+ 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_LD(0x1d0, 0xf),	/* MEM_INST_RETIRED.LOAD */
+-- 
+2.17.1
+
