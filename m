@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A61B711FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 08:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19DD0711F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 08:38:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732973AbfGWGi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 02:38:26 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:39781 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730554AbfGWGiI (ORCPT
+        id S1732528AbfGWGiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 02:38:08 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:45906 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732262AbfGWGiI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 23 Jul 2019 02:38:08 -0400
-Received: by mail-io1-f72.google.com with SMTP id y13so46113174iol.6
+Received: by mail-io1-f69.google.com with SMTP id e20so45829718ioe.12
         for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 23:38:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=VtwjPtxAlVXauGMeVYt1rLfnKZJypk9o8bxTNuNI9X0=;
-        b=ZdF5OtLgv8sj85fKUtiBmFpuRjrwdakuIsnNczftQninV/tArLeGiDQq5c2pY3h/z6
-         Pzpxn1mXo3HlURvYHVzR+S3hoIxghTFgP4r5awmQr6jlfrL24m83iqutP5c+Gbr3W9H5
-         6Jqaq8n1/5BKaRZ5P2YiIVObE4NqLjvxgA7RdT9enMD736EC8Neun/K8meU3GwewbbcM
-         YpklfKLAOpK+zLlUk/2sZyKcV0rDZ0Yt36YaN1bjOrVnml98zBkYQjrT/9rHTv1v/jkQ
-         PXS6kSj/87Avg6U3kS0xO2AcTaNtMthPkJrZOoaHQ64fP738msSADLTCBDdNc22wQ2eb
-         HRdw==
-X-Gm-Message-State: APjAAAV/jET6Tc46FC4F//Xp8uLOU96ZwWEXJv8WdHOW7X3UqpgNsua4
-        Y4fGzNNnxQ/yAe7IB+yFN/bxUgH0PrmsscRHRh1F4CzfgWKY
-X-Google-Smtp-Source: APXvYqztoCnNdBiqYq3UU1IvsM191wxM2a6Hcee2KGmpGq8uK4HwnGeyeTa7bWpKgQ+CFMxrT7kRegDSF6NWF1D5RkHUk7Of6MlD
+        bh=xbht1NN8zOyddyHNJWwi5KZ9M+lgJDfrNB+ZIF3fMLI=;
+        b=j2XMyjr+ibb2xqqk9LDHLV7vreDIFre4jCvWvmh0RcnnRpfcJOi7Z+Pk7saG7UOD4w
+         abIexUjBuq65XdJ/8C4JvotgFR/62mcRoMae1xaFUZRLdgP2esRCS5pHBip+qCqR2Qzr
+         7wTQCocpm6UslxGZC2g6LORhC77f8udhtwMAirRxqzYBgyvktr5bFMNbjVhHzOng5BeP
+         WVXpHck1fImljb+zXie6oVKBxg9AUE/X0oQUjqq5xSvynjoYEKCxA2RZRxeXOIk/9via
+         E/Cos72GmzXBUosIl2SLHxLmvV9AWhBQUoZt+yYtQWxOIeG1Xp93Gim+sHEhHfHEUyi2
+         AajA==
+X-Gm-Message-State: APjAAAVMPUpRlpY0piiKS3+GYbalhMjWdVM1IILyh3NPAOELVmGfZDTX
+        Fw3ns8r8kEyuYgdOCqM0Uq8yIyey2zGbjAeT91ATAG5mzrsS
+X-Google-Smtp-Source: APXvYqwNTx50EX3j4qm8miiEz5NUy2fq5/LZaXGZNJ3FXjoIzwaTrDJ6LLpfWBQEzAYWARuHbfujxrkzlpsdWqtP+so6DQLo5lnc
 MIME-Version: 1.0
-X-Received: by 2002:a6b:c803:: with SMTP id y3mr56225497iof.275.1563863886838;
- Mon, 22 Jul 2019 23:38:06 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 23:38:06 -0700
+X-Received: by 2002:a6b:e30a:: with SMTP id u10mr48360977ioc.39.1563863887129;
+ Mon, 22 Jul 2019 23:38:07 -0700 (PDT)
+Date:   Mon, 22 Jul 2019 23:38:07 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000073c94b058e536fc4@google.com>
-Subject: net-next boot error: WARNING: workqueue cpumask: online intersect >
+Message-ID: <00000000000078388a058e536fbd@google.com>
+Subject: net boot error: WARNING: workqueue cpumask: online intersect >
  possible intersect (2)
-From:   syzbot <syzbot+3055cb4fd9eb553bd76c@syzkaller.appspotmail.com>
+From:   syzbot <syzbot+5afa6eb0187aa0db10d0@syzkaller.appspotmail.com>
 To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
@@ -49,17 +49,17 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    7b5cf701 Merge branch 'sched-urgent-for-linus' of git://gi..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=145c4d34600000
+HEAD commit:    12185dfe bonding: Force slave speed check after link state..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=1299b07c600000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=9aec8cb13b5f7389
-dashboard link: https://syzkaller.appspot.com/bug?extid=3055cb4fd9eb553bd76c
+dashboard link: https://syzkaller.appspot.com/bug?extid=5afa6eb0187aa0db10d0
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3055cb4fd9eb553bd76c@syzkaller.appspotmail.com
+Reported-by: syzbot+5afa6eb0187aa0db10d0@syzkaller.appspotmail.com
 
 smpboot: CPU0: Intel(R) Xeon(R) CPU @ 2.30GHz (family: 0x6, model: 0x3f,  
 stepping: 0x0)
@@ -81,7 +81,7 @@ clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns:
 19112604462750000 ns
 futex hash table entries: 512 (order: 4, 65536 bytes, vmalloc)
 xor: automatically using best checksumming function   avx
-PM: RTC time: 20:26:57, date: 2019-07-22
+PM: RTC time: 23:29:51, date: 2019-07-22
 NET: Registered protocol family 16
 audit: initializing netlink subsys (disabled)
 cpuidle: using governor menu
@@ -92,20 +92,20 @@ WARNING: workqueue cpumask: online intersect > possible intersect
 HugeTLB registered 1.00 GiB page size, pre-allocated 0 pages
 HugeTLB registered 2.00 MiB page size, pre-allocated 0 pages
 cryptd: max_cpu_qlen set to 1000
-raid6: avx2x4   gen() 10942 MB/s
-raid6: avx2x4   xor()  6383 MB/s
-raid6: avx2x2   gen()  6482 MB/s
-raid6: avx2x2   xor()  3541 MB/s
-raid6: avx2x1   gen()  3326 MB/s
-raid6: avx2x1   xor()  1978 MB/s
-raid6: sse2x4   gen()  5350 MB/s
-raid6: sse2x4   xor()  3129 MB/s
-raid6: sse2x2   gen()  3754 MB/s
-raid6: sse2x2   xor()  1760 MB/s
-raid6: sse2x1   gen()  1702 MB/s
-raid6: sse2x1   xor()   988 MB/s
-raid6: using algorithm avx2x4 gen() 10942 MB/s
-raid6: .... xor() 6383 MB/s, rmw enabled
+raid6: avx2x4   gen() 12501 MB/s
+raid6: avx2x4   xor()  6221 MB/s
+raid6: avx2x2   gen()  4903 MB/s
+raid6: avx2x2   xor()  3850 MB/s
+raid6: avx2x1   gen()  1521 MB/s
+raid6: avx2x1   xor()  2163 MB/s
+raid6: sse2x4   gen()  6232 MB/s
+raid6: sse2x4   xor()  3408 MB/s
+raid6: sse2x2   gen()  3865 MB/s
+raid6: sse2x2   xor()  1956 MB/s
+raid6: sse2x1   gen()  1278 MB/s
+raid6: sse2x1   xor()   961 MB/s
+raid6: using algorithm avx2x4 gen() 12501 MB/s
+raid6: .... xor() 6221 MB/s, rmw enabled
 raid6: using avx2x2 recovery algorithm
 ACPI: Added _OSI(Module Device)
 ACPI: Added _OSI(Processor Device)
@@ -282,87 +282,32 @@ nfcsim 0.2 initialized
 Loading iSCSI transport class v2.0-870.
 scsi host0: Virtio SCSI HBA
 st: Version 20160209, fixed bufsize 32768, s/g segs 256
-kobject: 'st' (000000004c8d7e58): fill_kobj_path: path  
-= '/bus/scsi/drivers/st'
-kobject: 'scsi_disk' (00000000bdfbce9c): kobject_add_internal:  
-parent: 'class', set: 'class'
-kobject: 'scsi_disk' (00000000bdfbce9c): kobject_uevent_env
-kobject: 'scsi_disk' (00000000bdfbce9c): fill_kobj_path: path  
-= '/class/scsi_disk'
-kobject: 'sd' (0000000055985a2d): kobject_add_internal: parent: 'drivers',  
-set: 'drivers'
-kobject: 'sd' (0000000055985a2d): kobject_uevent_env
-kobject: 'sd' (0000000055985a2d): fill_kobj_path: path  
+kobject: 'sd' (00000000e065d5f3): kobject_uevent_env
+kobject: 'sd' (00000000e065d5f3): fill_kobj_path: path  
 = '/bus/scsi/drivers/sd'
-kobject: 'sr' (000000004054170b): kobject_add_internal: parent: 'drivers',  
+kobject: 'sr' (00000000bcad56ad): kobject_add_internal: parent: 'drivers',  
 set: 'drivers'
-kobject: 'sr' (000000004054170b): kobject_uevent_env
-kobject: 'sr' (000000004054170b): fill_kobj_path: path  
+kobject: 'sr' (00000000bcad56ad): kobject_uevent_env
+kobject: 'sr' (00000000bcad56ad): fill_kobj_path: path  
 = '/bus/scsi/drivers/sr'
-kobject: 'scsi_generic' (0000000098f3b229): kobject_add_internal:  
+kobject: 'scsi_generic' (0000000071c7cad3): kobject_add_internal:  
 parent: 'class', set: 'class'
-kobject: 'scsi_generic' (0000000098f3b229): kobject_uevent_env
-kobject: 'scsi_generic' (0000000098f3b229): fill_kobj_path: path  
+kobject: 'scsi_generic' (0000000071c7cad3): kobject_uevent_env
+kobject: 'scsi_generic' (0000000071c7cad3): fill_kobj_path: path  
 = '/class/scsi_generic'
-kobject: 'nvme-wq' (00000000270c2331): kobject_add_internal:  
+kobject: 'nvme-wq' (000000003997c013): kobject_add_internal:  
 parent: 'workqueue', set: 'devices'
-kobject: 'nvme-wq' (00000000270c2331): kobject_uevent_env
-kobject: 'nvme-wq' (00000000270c2331): kobject_uevent_env: uevent_suppress  
+kobject: 'nvme-wq' (000000003997c013): kobject_uevent_env
+kobject: 'nvme-wq' (000000003997c013): kobject_uevent_env: uevent_suppress  
 caused the event to drop!
-kobject: 'nvme-wq' (00000000270c2331): kobject_uevent_env
-kobject: 'nvme-wq' (00000000270c2331): fill_kobj_path: path  
+kobject: 'nvme-wq' (000000003997c013): kobject_uevent_env
+kobject: 'nvme-wq' (000000003997c013): fill_kobj_path: path  
 = '/devices/virtual/workqueue/nvme-wq'
-kobject: 'nvme-reset-wq' (000000003e1ba3d5): kobject_add_internal:  
+kobject: 'nvme-reset-wq' (0000000085d6a1b9): kobject_add_internal:  
 parent: 'workqueue', set: 'devices'
-kobject: 'nvme-reset-wq' (000000003e1ba3d5): kobject_uevent_env
-kobject: 'nvme-reset-wq' (000000003e1ba3d5): kobject_uevent_env:  
+kobject: 'nvme-reset-wq' (0000000085d6a1b9): kobject_uevent_env
+kobject: 'nvme-reset-wq' (0000000085d6a1b9): kobject_uevent_env:  
 uevent_suppress caused the event to drop!
-kobject: 'nvme-reset-wq' (000000003e1ba3d5): kobject_uevent_env
-kobject: 'nvme-reset-wq' (000000003e1ba3d5): fill_kobj_path: path  
-= '/devices/virtual/workqueue/nvme-reset-wq'
-kobject: 'nvme-delete-wq' (000000005497d244): kobject_add_internal:  
-parent: 'workqueue', set: 'devices'
-kobject: 'nvme-delete-wq' (000000005497d244): kobject_uevent_env
-kobject: 'nvme-delete-wq' (000000005497d244): kobject_uevent_env:  
-uevent_suppress caused the event to drop!
-kobject: 'nvme-delete-wq' (000000005497d244): kobject_uevent_env
-kobject: 'nvme-delete-wq' (000000005497d244): fill_kobj_path: path  
-= '/devices/virtual/workqueue/nvme-delete-wq'
-kobject: 'nvme' (000000008e6a29d7): kobject_add_internal: parent: 'class',  
-set: 'class'
-kobject: 'nvme' (000000008e6a29d7): kobject_uevent_env
-kobject: 'nvme' (000000008e6a29d7): fill_kobj_path: path = '/class/nvme'
-kobject: 'nvme-subsystem' (000000001563dbee): kobject_add_internal:  
-parent: 'class', set: 'class'
-kobject: 'nvme-subsystem' (000000001563dbee): kobject_uevent_env
-kobject: 'nvme-subsystem' (000000001563dbee): fill_kobj_path: path  
-= '/class/nvme-subsystem'
-kobject: 'nvme' (00000000c52b7e0e): kobject_add_internal:  
-parent: 'drivers', set: 'drivers'
-kobject: 'drivers' (00000000f6d3710d): kobject_add_internal:  
-parent: 'nvme', set: '<NULL>'
-kobject: 'nvme' (00000000c52b7e0e): kobject_uevent_env
-kobject: 'nvme' (00000000c52b7e0e): fill_kobj_path: path  
-= '/bus/pci/drivers/nvme'
-kobject: 'ahci' (00000000a29e777d): kobject_add_internal:  
-parent: 'drivers', set: 'drivers'
-kobject: 'drivers' (000000003ed63ce6): kobject_add_internal:  
-parent: 'ahci', set: '<NULL>'
-kobject: 'ahci' (00000000a29e777d): kobject_uevent_env
-kobject: 'ahci' (00000000a29e777d): fill_kobj_path: path  
-= '/bus/pci/drivers/ahci'
-kobject: 'ata_piix' (0000000087185d26): kobject_add_internal:  
-parent: 'drivers', set: 'drivers'
-kobject: 'drivers' (000000004a065e79): kobject_add_internal:  
-parent: 'ata_piix', set: '<NULL>'
-kobject: 'ata_piix' (0000000087185d26): kobject_uevent_env
-kobject: 'ata_piix' (0000000087185d26): fill_kobj_path: path  
-= '/bus/pci/drivers/ata_piix'
-kobject: 'pata_amd' (00000000519c7b49): kobject_add_internal:  
-parent: 'drivers', set: 'drivers'
-kobject: 'drivers' (00000000cb24f8fd): kobject_add_internal:  
-parent: 'pata_amd', set: '<NULL>'
-kobject: 'pata_amd' (00000000519c7b49): kobject_uevent_env
 
 
 ---
