@@ -2,186 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10B1270F81
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 05:05:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F225A70F91
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 05:08:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732351AbfGWDFi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 23:05:38 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:38009 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726687AbfGWDFh (ORCPT
+        id S2387922AbfGWDIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 23:08:48 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:45387 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387905AbfGWDIp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 23:05:37 -0400
-Received: by mail-oi1-f196.google.com with SMTP id v186so31196012oie.5
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 20:05:36 -0700 (PDT)
+        Mon, 22 Jul 2019 23:08:45 -0400
+Received: by mail-qk1-f196.google.com with SMTP id s22so30107001qkj.12
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 20:08:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6z23ihiLa0fqOtrIntj5/XpQ6+8uIAMB4pCR65GZk7I=;
-        b=wd/XVqFBZQ9/Qq6IEXQdUYgKeLYB1zy4zG7Q9ijPL8LcKG1qSoZawPTzbjWzZOp3vd
-         AEIzUKaWCaNTImgCXWT94Hl5gVQZsbXQSx2yJWeg9zoTgo0kadqM2VxvrgemS7ghOjV6
-         IywrSncmS0WlVy6eRLWSXQuCeTd6935TrECAGBnTgmSU8CLjdR+hYTbINNg/jWtfQiT8
-         cdKY6UEFHJHpM/X5vpgxvWZp2hixaLmIZcZTOSXIaXTyLeOOB6PPbZVWWzN+C5DgmVM/
-         /gA+7OzRqzT7rkLSSrTdmF36koiWTIYLg/cftPJutMtkZRrn0vqxmSliyshgK5EvQH6Y
-         hcgQ==
+        d=lca.pw; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=O2LzIiKDY4d/HsG0eNgmi387YcnYg6wKjUrMRiQ2aBI=;
+        b=cQVGQ4Lo+reBiq8dbjN5yriOzZVvY96vvAv9q8SsuYXMB9Uau30z5v7ourRopELAFV
+         HrSuYt9L9h2jrveEkYTf5QYuw4n3uzgINqxIf9oaP4qrM3vxOSfbI/eyebdNEedw9sF9
+         fnyXYmfKAQzMfGVsedovuQq8f4im3Cjf+KHSjHeyXl9m3EHsftdM5tHH+4KSxI9JW1Lm
+         GX63sOgrwRVMD9cuOq0weGCDiiNaTCz17G7XnDt4HMCr7J7pvWTufHH7/U0V/19leICN
+         5WI55ujo/WvPH3ihrWHlYoNRj8G0G/etpXi9XaiBLtfuQoiIQ3IH4houeVK4ZQbWq6us
+         h5mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6z23ihiLa0fqOtrIntj5/XpQ6+8uIAMB4pCR65GZk7I=;
-        b=N6C2Xo1J/fc1x8gYfRJPL/9Uh+Tb24uxOdNgb9RQ6gIxCjp5kk1FebUWCEP7SgYw3u
-         KkXPa11kdcs+/VzXyRpGRwGQOz3q4PN0hlYpvmG3AUiuvn8AGQfWpyniNsv1i7KMqN5K
-         UEfs+rq1IRzcu2aPM3CRs2uHJYutemrf/7QAmmW8d+ar2IXd9/q5O/oHtgqE4h5gzclK
-         qFmB95yQLO9dqI7y4cGZ0WpSdeDpSxYqtLBZbpvWc5RpX19QOFR9flTCi9Y8h8kd+eYT
-         crwAfsoX3TJseJ1AGRdjJH6YGI+nBNj+GgUOPjfwWwLN3w1YvrX2e0g4brk7qeKva2Tj
-         Oxsg==
-X-Gm-Message-State: APjAAAXjYraLJguq4Ap9p348Os5rEi+V6Mn0cr6zvyigM2w0qBxRvvYQ
-        L4ySJsUjytFskQL0YjB2MYDIiQM8+Z5qeg0mQ9dgbQ==
-X-Google-Smtp-Source: APXvYqww+xoxfeT7kmslr9nl3L4GnIvOsf2Lq/6zAIyCWWt3SskCzSv1T5QEEwhUaVJJB+EI3ZjeZO/fmuL++WUhSlw=
-X-Received: by 2002:aca:4c16:: with SMTP id z22mr617585oia.57.1563851136490;
- Mon, 22 Jul 2019 20:05:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <89c3ef495c367d58ca3abe99a1f82c48f8c08705.1563274904.git.baolin.wang@linaro.org>
- <CAPDyKFq1y6xVfA=b1ybWvA1+e9h9aSteHAHjBbXvXGVJx95FQA@mail.gmail.com>
-In-Reply-To: <CAPDyKFq1y6xVfA=b1ybWvA1+e9h9aSteHAHjBbXvXGVJx95FQA@mail.gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Tue, 23 Jul 2019 11:05:23 +0800
-Message-ID: <CAMz4kuKraOb_o0LFWnqkS7m0Xd3QGrw1P+md0YBNbbbp1967OA@mail.gmail.com>
-Subject: Re: [PATCH v4] mmc: host: sdhci-sprd: Fix the incorrect soft reset
- operation when runtime resuming
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=O2LzIiKDY4d/HsG0eNgmi387YcnYg6wKjUrMRiQ2aBI=;
+        b=RZ+n/9J1LfE6mNplTfTVxr8RaeHjEglqzW45F4TWVuALlVWT2ogvDqIXvldAD0nM2c
+         mgDOSDLm/7srT5gB0p2/hlee6YMbxqK3cD0VNseI39phOGcIUT7m9KjogIuSduahJNjk
+         QfocI1GMGY2XZOooFa2e7uYWkVHPlFbVrGAIE60+Bt5JqPh9Kg1TC+UyERXOjGfz8Oec
+         cLM5eaKGpjOp8kvELjaslEkhQPLHHb8eJbkE2OWLlMA06gcFJ9cbZMamjwkNJDL6pD3D
+         wHg8fn+PvY5Zs3/0/GfGHcCIIb/8rcgV8wD1GXAU4z6E+3PmQbAaiYafYu9szM/CSRbl
+         ljIQ==
+X-Gm-Message-State: APjAAAXJOhNsnbNsLYdmvEyCiFfI5QWDwByKbRn9N/T1q9dDbQQjg2rd
+        6H3xL3XBNHhIaauGAbmiBe1/Mw==
+X-Google-Smtp-Source: APXvYqyEMbHHfJqTE4TPKv38rNlMBE0t64ORiqa8pvqXPFdfxygujZ+CnHtEvxlGD+SsVbzsY099gA==
+X-Received: by 2002:a37:a7d6:: with SMTP id q205mr46498779qke.44.1563851324361;
+        Mon, 22 Jul 2019 20:08:44 -0700 (PDT)
+Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id x46sm26242144qtx.96.2019.07.22.20.08.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 22 Jul 2019 20:08:43 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH] be2net: fix adapter->big_page_size miscaculation
+From:   Qian Cai <cai@lca.pw>
+In-Reply-To: <CAA2zVHqXDuMzBC6dD5AbepZc63nPdJ3WLYmjinjq01erqH+HXA@mail.gmail.com>
+Date:   Mon, 22 Jul 2019 23:08:41 -0400
+Cc:     David Miller <davem@davemloft.net>,
+        Bill Wendling <morbo@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        sathya.perla@broadcom.com, ajit.khaparde@broadcom.com,
+        sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, netdev@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        natechancellor@gmail.com, Jakub Jelinek <jakub@redhat.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <BE0991D9-65E7-43CA-A4B4-D3547D96291A@lca.pw>
+References: <CAKwvOdkCfqfpJYYX+iu2nLCUUkeDorDdVP3e7koB9NYsRwgCNw@mail.gmail.com>
+ <CAGG=3QUvdwJs1wW1w+5Mord-qFLa=_WkjTsiZuwGfcjkoEJGNQ@mail.gmail.com>
+ <75B428FC-734C-4B15-B1A7-A3FC5F9F2FE5@lca.pw>
+ <20190718.162928.124906203979938369.davem@davemloft.net>
+ <1563572871.11067.2.camel@lca.pw> <1563829996.11067.4.camel@lca.pw>
+ <CAA2zVHqXDuMzBC6dD5AbepZc63nPdJ3WLYmjinjq01erqH+HXA@mail.gmail.com>
+To:     James Y Knight <jyknight@google.com>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ulf,
+The original issue,
 
-On Mon, 22 Jul 2019 at 19:54, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> On Wed, 17 Jul 2019 at 04:29, Baolin Wang <baolin.wang@linaro.org> wrote:
-> >
-> > In sdhci_runtime_resume_host() function, we will always do software reset
-> > for all, which will cause Spreadtrum host controller work abnormally after
-> > resuming.
->
-> What does "software reset for all" means?
+=
+https://lore.kernel.org/netdev/1562959401-19815-1-git-send-email-cai@lca.p=
+w/
 
-The SD host controller specification defines 3 types software reset:
-software reset for data line, software reset for command line and
-software reset for all.
-Software reset for all means this reset affects the entire Host
-controller except for the card detection circuit.
-
->
-> >
-> > Thus for Spreadtrum platform that will not power down the SD/eMMC card during
-> > runtime suspend, we should not do software reset for all.
->
-> Normally, sdhci hosts that enters runtime suspend doesn't power off
-> the card (there are some exceptions like PCI variants).
-
-Yes, same as our controller.
-
->
-> So, what's so special here and how does the reset come into play? I
-> don't see sdhci doing a reset in sdhci_runtime_suspend|resume_host()
-> and nor doesn the callback from the sdhci-sprd.c variant doing it.
-
-In sdhci_runtime_resume_host(), it will issue sdhci_init(host, 0) to
-issue software reset for all.
-
->
-> > To fix this
-> > issue, adding a specific reset operation that adds one condition to validate
-> > the power mode to decide if we can do software reset for all or just reset
-> > command and data lines.
-> >
-> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> > ---
-> > Changess from v3:
-> >  - Use ios.power_mode to validate if the card is power down or not.
-> >
-> > Changes from v2:
-> >  - Simplify the sdhci_sprd_reset() by issuing sdhci_reset().
-> >
-> > Changes from v1:
-> >  - Add a specific reset operation instead of changing the core to avoid
-> >  affecting other hardware.
-> > ---
-> >  drivers/mmc/host/sdhci-sprd.c |   19 ++++++++++++++++++-
-> >  1 file changed, 18 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-> > index 603a5d9..94f9726 100644
-> > --- a/drivers/mmc/host/sdhci-sprd.c
-> > +++ b/drivers/mmc/host/sdhci-sprd.c
-> > @@ -373,6 +373,23 @@ static unsigned int sdhci_sprd_get_max_timeout_count(struct sdhci_host *host)
-> >         return 1 << 31;
-> >  }
-> >
-> > +static void sdhci_sprd_reset(struct sdhci_host *host, u8 mask)
-> > +{
-> > +       struct mmc_host *mmc = host->mmc;
-> > +
-> > +       /*
-> > +        * When try to reset controller after runtime suspend, we should not
-> > +        * reset for all if the SD/eMMC card is not power down, just reset
-> > +        * command and data lines instead. Otherwise will meet some strange
-> > +        * behaviors for Spreadtrum host controller.
-> > +        */
-> > +       if (host->runtime_suspended && (mask & SDHCI_RESET_ALL) &&
-> > +           mmc->ios.power_mode == MMC_POWER_ON)
-> > +               mask = SDHCI_RESET_CMD | SDHCI_RESET_DATA;
->
-> Can sdhci_sprd_reset() be called when the host is runtime suspended?
-
-When host tries to runtime resume in sdhci_runtime_resume_host(), it
-will call reset operation to do software reset.
-
-> That sounds like a bug to me, no?
-
-Since our controller will meet some strange behaviors if we do
-software reset for all in sdhci_runtime_resume_host(), and try to
-avoid changing the core logic of sdhci_runtime_resume_host() used by
-other hardware controllers, thus I introduced a specific reset ops and
-added some condition to make sure we just do software reset command
-and data lines from runtime suspend state.
-
->
-> > +
-> > +       sdhci_reset(host, mask);
-> > +}
-> > +
-> >  static struct sdhci_ops sdhci_sprd_ops = {
-> >         .read_l = sdhci_sprd_readl,
-> >         .write_l = sdhci_sprd_writel,
-> > @@ -381,7 +398,7 @@ static unsigned int sdhci_sprd_get_max_timeout_count(struct sdhci_host *host)
-> >         .get_max_clock = sdhci_sprd_get_max_clock,
-> >         .get_min_clock = sdhci_sprd_get_min_clock,
-> >         .set_bus_width = sdhci_set_bus_width,
-> > -       .reset = sdhci_reset,
-> > +       .reset = sdhci_sprd_reset,
-> >         .set_uhs_signaling = sdhci_sprd_set_uhs_signaling,
-> >         .hw_reset = sdhci_sprd_hw_reset,
-> >         .get_max_timeout_count = sdhci_sprd_get_max_timeout_count,
-> > --
-> > 1.7.9.5
-> >
->
-> Kind regards
-> Uffe
+The debugging so far seems point to that the compilers get confused by =
+the
+module sections. During module_param(), it stores =
+=E2=80=9C__param_rx_frag_size"
+as a =E2=80=9Cstruct kernel_param=E2=80=9D into the __param section. =
+Later, load_module()
+obtains all =E2=80=9Ckernel_param=E2=80=9D from the __param section and =
+compare against the
+user-input module parameters from the command-line.  If there is a =
+match, it
+calls params[i].ops->set(&params[I]) to replace the value.  If compilers =
+can=E2=80=99t
+see that params[i].ops->set(&params[I]) could potentially change the =
+value
+of rx_frag_size, it will wrongly optimize it as a constant.
 
 
+For example (it is not
+compilable yet as I have not able to extract variable from the __param =
+section
+like find_module_sections()),
 
--- 
-Baolin Wang
-Best Regards
+#include <stdio.h>
+#include <string.h>
+
+#define __module_param_call(name, ops, arg) \
+        static struct kernel_param __param_##name \
+         __attribute__ ((unused,__section__ =
+("__param"),aligned(sizeof(void *)))) =3D { \
+                #name, ops, { arg } }
+
+struct kernel_param {
+        const char *name;
+        const struct kernel_param_ops *ops;
+        union {
+                int *arg;
+        };
+};
+
+struct kernel_param_ops {
+        int (*set)(const struct kernel_param *kp);
+};
+
+#define STANDARD_PARAM_DEF(name) \
+        int param_set_##name(const struct kernel_param *kp) \
+        { \
+                *kp->arg =3D 2; \
+        } \
+        const struct kernel_param_ops param_ops_##name =3D { \
+                .set =3D param_set_##name, \
+        };
+
+STANDARD_PARAM_DEF(ushort);
+static int rx =3D 1;
+__module_param_call(rx_frag_siz, &param_ops_ushort, &rx_frag_size);
+
+int main(int argc, char *argv[])
+{
+        const struct kernel_param *params =3D <<< Get all kernel_param =
+from the __param section >>>;
+        int i;
+
+        if (__builtin_constant_p(rx_frag_size))
+                printf("rx_frag_size is a const.\n");
+
+        for (i =3D 0; i < num_param; i++) {
+                if (!strcmp(params[I].name, argv[1])) {
+                        params[i].ops->set(&params[i]);
+                        break;
+                }
+        }
+
+        printf("rx_frag_size =3D %d\n", rx_frag_size);
+
+        return 0;
+}
+
