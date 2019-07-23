@@ -2,117 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 105127225B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 00:25:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA7567223A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 00:20:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392521AbfGWWZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 18:25:09 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36249 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729617AbfGWWZH (ORCPT
+        id S2392372AbfGWWUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 18:20:07 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37705 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727821AbfGWWUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 18:25:07 -0400
-Received: by mail-io1-f67.google.com with SMTP id o9so85382986iom.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 15:25:06 -0700 (PDT)
+        Tue, 23 Jul 2019 18:20:06 -0400
+Received: by mail-io1-f68.google.com with SMTP id q22so85260524iog.4;
+        Tue, 23 Jul 2019 15:20:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cwfou+bwYvh+NgeiS9WMeMU0g5CDhL3xxSGMHlwshUw=;
-        b=aYpuS5OTuXHnpMldiw3wqJiOvQAhmm3oc5rZGWUiRn9QhULPccYSGlqFNQInmVVeT9
-         hji/G16nV9YMdPg5Hq2vpl3tEYwV9pb0CUNRoJfxup+s5HcUtJtOGXp12/GWht5aGMxc
-         mSRRN0m+wMh9vfPIVQO8R93K+k5alY9suQ6P4=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=pl9nO+hunkGocGh4P+3+7RACb7n3AOCHKdRk3PRyj78=;
+        b=jClr9tGO0M2uPdTqgL+wilDjNYPCY1lHULxJyU4k5vGRMTiCplHDR9talFGARjm7fM
+         WaQzedbOLIChWY2xd0aavGY1YIl0rc4yFY1QjuAdhFpLnHbnquNpQhnyWdCtpD/yh0wj
+         mic0mlosfXm6fh2jHggFADTo3xWjod0o0w9F7sh+It2QAgSNWfwcfcRKhDg4DFqN94+h
+         ji0X4ENlzZZuWoW70qUl9zRrs75DGINQ0bLoXjHq010Tx1Ahq71E4+ryf93RiyEK95rp
+         YvkGkm2a3vss0Nk42AMTYFrs7VsYkuxBS7APMVVSARpeApcEDLQ/NmTZMcXqTLfb6OxH
+         OCfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cwfou+bwYvh+NgeiS9WMeMU0g5CDhL3xxSGMHlwshUw=;
-        b=TgAEWlb6xPvx387Zp3EooY14ozpdI4y8vNlXz4PstNbDCHWo6ypNdQJWjvmDbvR/KO
-         uR3YvUzZGc8XmnAAbypwke/rUbVHbe46IubYdfHB9k6xgkj+Zd7S7M4OvHZeJNm7dWCM
-         TPRh7AFFzJkxxljTCcssfN9Sxqy4q9d9FMuHpkpdZhb1MJOY83pfBycWnqn7J/WzFFqu
-         YQ3VhpfnH09o2SO21QFAUGKYcWE314bh7+Srh9iYMToZqvvv3CiDCZC/SABhGzca29j3
-         FJO3Zhmg3sg92kRrjSEYft0w1F+oK2pQRUFaoFHsyz0n4rkapKOivWn8aRtoFLkqk5Uw
-         vQ3Q==
-X-Gm-Message-State: APjAAAX6xB/DCg46YxiuATXdlnkwAhEms/yjKZ4XfMq9VuGVCtgKTDaJ
-        jFMOBlp9CE29+AXF71JmHyRuLCfVdNM=
-X-Google-Smtp-Source: APXvYqyfAWoTouZN1l2vtyGcX2QKXktFuWHAfJdc4THSLG2MA7Tv9Bmaj8FzqMLhkbb46ZcoJK7XFA==
-X-Received: by 2002:a02:8663:: with SMTP id e90mr80872192jai.98.1563920705980;
-        Tue, 23 Jul 2019 15:25:05 -0700 (PDT)
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com. [209.85.166.52])
-        by smtp.gmail.com with ESMTPSA id z17sm62115573iol.73.2019.07.23.15.25.05
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Jul 2019 15:25:05 -0700 (PDT)
-Received: by mail-io1-f52.google.com with SMTP id k20so85264970ios.10
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 15:25:05 -0700 (PDT)
-X-Received: by 2002:a5d:96d8:: with SMTP id r24mr10971823iol.269.1563920265159;
- Tue, 23 Jul 2019 15:17:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190723072605.103456-1-drinkcat@chromium.org>
- <CACT4Y+bi5KkZ8igSeYVxjwtr8t0Vjz55gzWfAu_c8VMAqw0zPA@mail.gmail.com>
- <CANMq1KB8ECeRqNhSWyUf3amAkF7qvAmS3aU6rGNnZ=kUV3LC5Q@mail.gmail.com> <CACT4Y+YkjCpEdH0rvgp8b1hqAWfo66FY76qhn1xj_yNAER-XoQ@mail.gmail.com>
-In-Reply-To: <CACT4Y+YkjCpEdH0rvgp8b1hqAWfo66FY76qhn1xj_yNAER-XoQ@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 23 Jul 2019 15:17:33 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Wse7tGi-RP5Rq1314AdLqMS3JNy6a-gFbmVZuroSWozw@mail.gmail.com>
-Message-ID: <CAD=FV=Wse7tGi-RP5Rq1314AdLqMS3JNy6a-gFbmVZuroSWozw@mail.gmail.com>
-Subject: Re: [PATCH] kmemleak: Increase maximum early log entries to 1000000
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Manoj Gupta <manojgupta@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=pl9nO+hunkGocGh4P+3+7RACb7n3AOCHKdRk3PRyj78=;
+        b=cZSQ1ymJOy2X/xkGh0cvvKuov+L6j5K/GMoQjbV8MCDhB4kHd6sxqexUaU8uK+mmVe
+         XlenphHDTpDqh5pMWhdDwsTWWoywYlIDjTmaR1HRt7y/mreLelPNlGTqGjvU7ONFR7eJ
+         Rl8cK46GpH5vCUGZ7lAfXH526Im3U9R77rUgvwkrrTDFAn3k3vYk7Je7x5aD6LnC+P7n
+         lN3vW18UQflGGrVR/HMZfGF+0Za/5On2FfbckbB7KmqTYMLRskuiYn9Y4jnXG04/ucJl
+         BmolN/r+K72FLAB6fNVsBX71w58neOfQ0LSR2vS3x60taSEAoHikqcYdJ3b6sW/GgJ9w
+         +jRw==
+X-Gm-Message-State: APjAAAUqo0mM0+S1z9lxxmMgQFoDviDNkl1XNMAAu0IdAFbMcmtvK5Xv
+        xubjzGcDZnkaNZsiWUZE7ow=
+X-Google-Smtp-Source: APXvYqzWffs9myy9EKo6r23AJN8vEydCexjw2y+Jif/lnPMEBM5O8yaoI59b8eVQgRLAxQMFdQQJNQ==
+X-Received: by 2002:a5e:c241:: with SMTP id w1mr68853307iop.58.1563920405893;
+        Tue, 23 Jul 2019 15:20:05 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id x22sm33378952iob.84.2019.07.23.15.20.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Jul 2019 15:20:05 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
+        secalert@redhat.com, Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Jakub Kicinski <kubakici@wp.pl>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mt76_init_sband_2g: null check the allocation
+Date:   Tue, 23 Jul 2019 17:19:54 -0500
+Message-Id: <20190723221954.9233-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+devm_kzalloc may fail and return NULL. So the null check is needed.
 
-On Tue, Jul 23, 2019 at 1:21 AM Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> On Tue, Jul 23, 2019 at 10:13 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
-> >
-> > On Tue, Jul 23, 2019 at 3:46 PM Dmitry Vyukov <dvyukov@google.com> wrote:
-> > >
-> > > On Tue, Jul 23, 2019 at 9:26 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
-> > > >
-> > > > When KASan is enabled, a lot of memory is allocated early on,
-> > > > and kmemleak complains (this is on a 4GB RAM system):
-> > > > kmemleak: Early log buffer exceeded (129846), please increase
-> > > >   DEBUG_KMEMLEAK_EARLY_LOG_SIZE
-> > > >
-> > > > Let's increase the upper limit to 1M entry. That would take up
-> > > > 160MB of RAM at init (each early_log entry is 160 bytes), but
-> > > > the memory would later be freed (early_log is __initdata).
-> > >
-> > > Interesting. Is it on an arm64 system?
-> >
-> > Yes arm64. And this is chromiumos-4.19 tree. I didn't try to track
-> > down where these allocations come from...
->
-> So perhaps it's due to arm64, or you have even more configs, or maybe
-> running on real hardware. But I guess it's fine as is, just wondered
-> why such a radical difference. Thanks.
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+ drivers/net/wireless/mediatek/mt7601u/init.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-If I had to guess I'd guess gcc vs. clang.  I think we've noticed a
-few places where clang+kasan produces much bloatier code than
-gcc+kasan.  Oh look, I just invented a new word: bloatier.  :-P
+diff --git a/drivers/net/wireless/mediatek/mt7601u/init.c b/drivers/net/wireless/mediatek/mt7601u/init.c
+index 9bfac9f1d47f..cada48800928 100644
+--- a/drivers/net/wireless/mediatek/mt7601u/init.c
++++ b/drivers/net/wireless/mediatek/mt7601u/init.c
+@@ -557,6 +557,9 @@ mt76_init_sband_2g(struct mt7601u_dev *dev)
+ {
+ 	dev->sband_2g = devm_kzalloc(dev->dev, sizeof(*dev->sband_2g),
+ 				     GFP_KERNEL);
++	if (!dev->sband_2g)
++		return -ENOMEM;
++
+ 	dev->hw->wiphy->bands[NL80211_BAND_2GHZ] = dev->sband_2g;
+ 
+ 	WARN_ON(dev->ee->reg.start - 1 + dev->ee->reg.num >
+-- 
+2.17.1
 
-...could you try building with gcc and see if that explains the problems?
-
--Doug
