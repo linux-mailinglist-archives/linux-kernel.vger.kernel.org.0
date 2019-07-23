@@ -2,74 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E9BA719B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 15:48:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23432719C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 15:52:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390408AbfGWNsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 09:48:25 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:59330 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732774AbfGWNsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 09:48:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=hh700sFheglasLLwhcaql8zIvJCDfQNvUkZLvzNr77M=; b=rwbrHRGLTh8/q3qq4bi0P8giyV
-        dGkAgmemiQF4xTuTzXHhu43MU4nDRHn2CYLWkyJ0J09bgrsrb92qBcgIQvB00g1cJsVu4/fgiaBQK
-        0AGXfsj/CLhXQwS96LeJ4N4f+kQoRmlJuSKbp/EB5b4KedfL9VYvDcrvrTDQI7leqMto=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hpv9N-0001IR-0Z; Tue, 23 Jul 2019 15:48:17 +0200
-Date:   Tue, 23 Jul 2019 15:48:17 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Evgeny Kolesnikov <evgenyz@gmail.com>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 5/5] ARM: dts: armada385-wd-mcex2u: Add DTS file for WD
- My Cloud EX2 Ultra
-Message-ID: <20190723134817.GB2381@lunn.ch>
-References: <cover.1563822216.git.evgenyz@gmail.com>
- <fd2a97d627c21a7e92a9a1aa15cf26c608d1e383.1563822216.git.evgenyz@gmail.com>
+        id S1732623AbfGWNwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 09:52:53 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35918 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbfGWNwx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 09:52:53 -0400
+Received: by mail-pg1-f196.google.com with SMTP id l21so19475400pgm.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 06:52:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dynamicaims-com.20150623.gappssmtp.com; s=20150623;
+        h=to:subject:from:message-id:disposition-notification-to:date
+         :user-agent:mime-version:content-transfer-encoding:content-language;
+        bh=9N8Qc+rRBbnfa+Ir61SRMq5lDQDDnvbN1u/t4PPmBYw=;
+        b=elzyr1bIHEPrDvEWT2HkjNVXlDHSuea3NkIIKK8bj3o+bnzr5N4dvt18+BPlWVsFTx
+         WmRGv3CDw7keFPvI5qtVGpC9JZ7iNAb0eH9lkdriodMertnbIjQkImmBcTKckoPoXTeO
+         q0h4PoOSqBsrH+eIDkZ+5TkC1PrjJMK1c218hukHWsPmdoGfpAgHUuR30Bw2cVj0U5Y+
+         NCbBHLbTgf/PhmUyaEs0HYJcgiezcj+QLkgd+4FS43F7arpgaYod+n8R/NjcuWjUI8Q0
+         G+/pg3sL/rZ3Qdm7DLfxLFfhA8r0xDHR+cE3/A7dZLLtTQhgbBbUf4DkLQ9UGwfLeq2L
+         OsCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:subject:from:message-id
+         :disposition-notification-to:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=9N8Qc+rRBbnfa+Ir61SRMq5lDQDDnvbN1u/t4PPmBYw=;
+        b=MoefXTK4kaL065MqrS8311baEdWyLqcX/mZjl3Tf/llJcu1PCW8wNk1E2tFPicqIGr
+         VHusfptlBzSXqXHamnciBc5aHx1v0AJYQQ7iubtTSX1pb4nusQsYCb9Q3mWx42ATZFmr
+         0mkO3bu2WckNg9h3eVG4X3lyZLIADqIUVtkyF3qr5lqOlUQ9aO0xj1MV4u0NIcMq5dsa
+         MC7oZ65EkPH0CNno5UlLZGY49cJqMdp2Wkpl3QGClTgVPPn9fPVXLzQJ9p0ptrs8CEln
+         hsWBeY+Ga9Fo0Qx4sacREMnozj+OVX7y1uEG4kRqlfD1A83fLKeEznl+EGJmo1CGxHsI
+         RCiA==
+X-Gm-Message-State: APjAAAVARwZOG0rCHhcRsDM/zU5AqV7lEovIAUde1HXKsS7fruOB508/
+        OwtjVuKGBQOP4gEYu/v+L2UWcMlI
+X-Google-Smtp-Source: APXvYqzfdCh9eF8jDRCCTT3rnn3O1p36O9O5DcQII/shAgEUDq0raKLoJWdkG/vnDHQLKUtgSmZxOg==
+X-Received: by 2002:a62:1515:: with SMTP id 21mr6093852pfv.100.1563889972168;
+        Tue, 23 Jul 2019 06:52:52 -0700 (PDT)
+Received: from [192.168.0.13] ([122.182.204.68])
+        by smtp.gmail.com with ESMTPSA id b37sm71023544pjc.15.2019.07.23.06.52.50
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Jul 2019 06:52:51 -0700 (PDT)
+To:     linux-kernel@vger.kernel.org
+Subject: Wine Enthusiasts
+From:   Denna Ross <dennar@dynamicaims.com>
+Message-ID: <1d92f8f5-af64-4a6c-a423-7d71941cd96d@dynamicaims.com>
+Date:   Tue, 23 Jul 2019 08:44:36 -0400
+User-Agent: Mozilla/5.0 (Windows NT 6.3; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd2a97d627c21a7e92a9a1aa15cf26c608d1e383.1563822216.git.evgenyz@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Antivirus: Avast (VPS 190723-0, 07/23/2019), Outbound message
+X-Antivirus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +		internal-regs {
-> +			timer@c200 {
-> +				status = "disabled";
-> +			};
-> +
-> +			i2c0: i2c@11000 {
-> +				status = "okay";
-> +				clock-frequency = <100000>;
-> +			};
-> +
-> +			i2c1: i2c@11100 {
-> +				status = "okay";
-> +				clock-frequency = <100000>;
-> +			};
 
-It is a bit unusual to enable i2c busses when there is nothing on
-them.
+Hello,
 
-> +			ethernet@34000 {
-> +				phy = <&phy0>;
+Would you be interested in acquiring an email list of "Wine Enthusiasts" from USA?
 
-phy has been deprecated. Please use phy-handle.
+We also have data for Golfers, Alcohol Enthusiasts, Beer Enthusiasts, Chocolate Enthusiasts, Foodies, Travelers, Gift Buyers, Spa and Resort Visitors, Sports Enthusiasts, Android Users and many more..
 
-    Andrew
+Each record in the list contains Contact Name (First, Middle and Last Name), Mailing Address, List type and Opt-in email address.
+
+All the contacts are opt-in verified, 100% permission based and can be used for unlimited multi-channel marketing.
+
+Please let me know your thoughts towards procuring the Wine Enthusiasts List.
+
+Best Regards,
+Denna Ross
+Research Analyst
+
+We respect your privacy, if you do not wish to receive any further emails from our end, please reply with a subject "Remove".
+
