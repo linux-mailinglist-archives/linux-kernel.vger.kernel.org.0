@@ -2,221 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5805A714E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 11:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7F61714B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 11:12:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729735AbfGWJTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 05:19:45 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:57436 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725848AbfGWJTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 05:19:44 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CD23620034E;
-        Tue, 23 Jul 2019 11:19:41 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 97256200307;
-        Tue, 23 Jul 2019 11:19:38 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 92891402FC;
-        Tue, 23 Jul 2019 17:19:34 +0800 (SGT)
-From:   Robin Gong <yibin.gong@nxp.com>
-To:     vkoul@kernel.org, dan.j.williams@intel.com
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-imx@nxp.com
-Subject: [RESEND PATCH v6] dmaengine: fsl-edma: add i.mx7ulp edma2 version support
-Date:   Tue, 23 Jul 2019 16:57:42 +0800
-Message-Id: <1563872262-18376-1-git-send-email-yibin.gong@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729111AbfGWJMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 05:12:05 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33104 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726352AbfGWJMF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 05:12:05 -0400
+Received: by mail-ed1-f67.google.com with SMTP id i11so43131863edq.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 02:12:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CUaLpMwjN+04mbedwWGjJycg6zciRce+Wx0QmHNnWG4=;
+        b=TfONsWXYMwUcKzbOc8dKiNMQy8TYUdmIoQw/WUQlxLxyyqCngcQdKbl1KNZvwnRRmf
+         V0Maw3YkBT1ufYSMhG0xxoGE+vXwEZjs2ykDFBEW8e+OelNOqTpqhvG0uYj8FmXI5E8H
+         QEYLqpAvH3nB6cOCBYZ4iWkKi/bSmbObu2coI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=CUaLpMwjN+04mbedwWGjJycg6zciRce+Wx0QmHNnWG4=;
+        b=K2MgcpPfn2PepPuv7njSP432x6mXgQNVSKlgBZQiQby1FNlP9mIFPXeK7pZC/0/yyS
+         FA22l2pqWRPn2V8qDcOZPf6swkaSTSgXqBdbJf6Q1qYYfq9OO9XbgSqAlk3ixDI6xQHe
+         d0U0KkjX1kNfmOHYNBooOpcBG/8QhUdiDc8H6ieJEmij2MkqyIx+W7C5bSKyHH++og3X
+         jcCdkzp3C/4d0dFf+m1+/TZ7/J88+FM8TJHEcljwqnGtBBo/alH9WbWhUUl0vXwA+mHZ
+         UAyxQpww9HxOeeM3rOkgv53uOfJYt2Adn1O8r7rS0XkmgV/qxoJ4KNN9dKyBEJ3UGOJk
+         +6ig==
+X-Gm-Message-State: APjAAAUOCxHDsMi6PO0GssTNNYQXyQ3qJfW038/y/f9JHm6w9v3aalbg
+        zh2CZDzW+rTSErjwX5gTTqM=
+X-Google-Smtp-Source: APXvYqyaNJ3RQfSE2Pc1ybxHU3JCZh30J9KHaIqNg/prriesBVnHAogUbD1aX5HDn5wGSbe77/RVoQ==
+X-Received: by 2002:a17:906:802:: with SMTP id e2mr56439719ejd.59.1563873123345;
+        Tue, 23 Jul 2019 02:12:03 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id j7sm12201109eda.97.2019.07.23.02.12.01
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 23 Jul 2019 02:12:02 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 11:12:00 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     james.qian.wang@arm.com, liviu.dudau@arm.com,
+        brian.starkey@arm.com, airlied@linux.ie,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        daniel@ffwll.ch
+Subject: Re: [PATCH v2 -next] drm/komeda: remove set but not used variable
+ 'old'
+Message-ID: <20190723091200.GV15868@phenom.ffwll.local>
+Mail-Followup-To: YueHaibing <yuehaibing@huawei.com>,
+        james.qian.wang@arm.com, liviu.dudau@arm.com, brian.starkey@arm.com,
+        airlied@linux.ie, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <20190709135808.56388-1-yuehaibing@huawei.com>
+ <20190722055627.38008-1-yuehaibing@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190722055627.38008-1-yuehaibing@huawei.com>
+X-Operating-System: Linux phenom 4.19.0-5-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add edma2 for i.mx7ulp by version v3, since v2 has already
-been used by mcf-edma.
-The big changes based on v1 are belows:
-1. only one dmamux.
-2. another clock dma_clk except dmamux clk.
-3. 16 independent interrupts instead of only one interrupt for
-all channels.
+On Mon, Jul 22, 2019 at 01:56:27PM +0800, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/gpu/drm/arm/display/komeda/komeda_plane.c:
+>  In function komeda_plane_atomic_duplicate_state:
+> drivers/gpu/drm/arm/display/komeda/komeda_plane.c:161:35:
+>  warning: variable old set but not used [-Wunused-but-set-variable
+> 
+> It is not used since commit 990dee3aa456 ("drm/komeda:
+> Computing image enhancer internally")
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+> v2: fix compile err
 
-Signed-off-by: Robin Gong <yibin.gong@nxp.com>
----
-Change from v5(https://lkml.org/lkml/2019/6/25/444):
-Fix below build issue, replace platform_irq_count() instead
-of of_irq_count():
-https://lkml.org/lkml/2019/7/8/5
+Ok this one worked, applied.
 
- drivers/dma/fsl-edma-common.c | 18 +++++++++++-
- drivers/dma/fsl-edma-common.h |  4 +++
- drivers/dma/fsl-edma.c        | 66 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 87 insertions(+), 1 deletion(-)
+Thanks, Daniel
 
-diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
-index 26952f5..26c7e0f 100644
---- a/drivers/dma/fsl-edma-common.c
-+++ b/drivers/dma/fsl-edma-common.c
-@@ -90,6 +90,19 @@ static void mux_configure8(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
- 	iowrite8(val8, addr + off);
- }
- 
-+void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
-+		     u32 off, u32 slot, bool enable)
-+{
-+	u32 val;
-+
-+	if (enable)
-+		val = EDMAMUX_CHCFG_ENBL << 24 | slot;
-+	else
-+		val = EDMAMUX_CHCFG_DIS;
-+
-+	iowrite32(val, addr + off * 4);
-+}
-+
- void fsl_edma_chan_mux(struct fsl_edma_chan *fsl_chan,
- 			unsigned int slot, bool enable)
- {
-@@ -108,7 +121,10 @@ void fsl_edma_chan_mux(struct fsl_edma_chan *fsl_chan,
- 	muxaddr = fsl_chan->edma->muxbase[ch / chans_per_mux];
- 	slot = EDMAMUX_CHCFG_SOURCE(slot);
- 
--	mux_configure8(fsl_chan, muxaddr, ch_off, slot, enable);
-+	if (fsl_chan->edma->drvdata->version == v3)
-+		mux_configure32(fsl_chan, muxaddr, ch_off, slot, enable);
-+	else
-+		mux_configure8(fsl_chan, muxaddr, ch_off, slot, enable);
- }
- EXPORT_SYMBOL_GPL(fsl_edma_chan_mux);
- 
-diff --git a/drivers/dma/fsl-edma-common.h b/drivers/dma/fsl-edma-common.h
-index 4e17556..5eaa290 100644
---- a/drivers/dma/fsl-edma-common.h
-+++ b/drivers/dma/fsl-edma-common.h
-@@ -125,6 +125,7 @@ struct fsl_edma_chan {
- 	dma_addr_t			dma_dev_addr;
- 	u32				dma_dev_size;
- 	enum dma_data_direction		dma_dir;
-+	char				chan_name[16];
- };
- 
- struct fsl_edma_desc {
-@@ -139,11 +140,13 @@ struct fsl_edma_desc {
- enum edma_version {
- 	v1, /* 32ch, Vybrid, mpc57x, etc */
- 	v2, /* 64ch Coldfire */
-+	v3, /* 32ch, i.mx7ulp */
- };
- 
- struct fsl_edma_drvdata {
- 	enum edma_version	version;
- 	u32			dmamuxs;
-+	bool			has_dmaclk;
- 	int			(*setup_irq)(struct platform_device *pdev,
- 					     struct fsl_edma_engine *fsl_edma);
- };
-@@ -153,6 +156,7 @@ struct fsl_edma_engine {
- 	void __iomem		*membase;
- 	void __iomem		*muxbase[DMAMUX_NR];
- 	struct clk		*muxclk[DMAMUX_NR];
-+	struct clk		*dmaclk;
- 	struct mutex		fsl_edma_mutex;
- 	const struct fsl_edma_drvdata *drvdata;
- 	u32			n_chans;
-diff --git a/drivers/dma/fsl-edma.c b/drivers/dma/fsl-edma.c
-index fcbad6a..54cbdfd 100644
---- a/drivers/dma/fsl-edma.c
-+++ b/drivers/dma/fsl-edma.c
-@@ -162,6 +162,50 @@ fsl_edma_irq_init(struct platform_device *pdev, struct fsl_edma_engine *fsl_edma
- 	return 0;
- }
- 
-+static int
-+fsl_edma2_irq_init(struct platform_device *pdev,
-+		   struct fsl_edma_engine *fsl_edma)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	int i, ret, irq;
-+	int count;
-+
-+	count = platform_irq_count(pdev);
-+	dev_dbg(&pdev->dev, "%s Found %d interrupts\r\n", __func__, count);
-+	if (count <= 2) {
-+		dev_err(&pdev->dev, "Interrupts in DTS not correct.\n");
-+		return -EINVAL;
-+	}
-+	/*
-+	 * 16 channel independent interrupts + 1 error interrupt on i.mx7ulp.
-+	 * 2 channel share one interrupt, for example, ch0/ch16, ch1/ch17...
-+	 * For now, just simply request irq without IRQF_SHARED flag, since 16
-+	 * channels are enough on i.mx7ulp whose M4 domain own some peripherals.
-+	 */
-+	for (i = 0; i < count; i++) {
-+		irq = platform_get_irq(pdev, i);
-+		if (irq < 0)
-+			return -ENXIO;
-+
-+		sprintf(fsl_edma->chans[i].chan_name, "eDMA2-CH%02d", i);
-+
-+		/* The last IRQ is for eDMA err */
-+		if (i == count - 1)
-+			ret = devm_request_irq(&pdev->dev, irq,
-+						fsl_edma_err_handler,
-+						0, "eDMA2-ERR", fsl_edma);
-+		else
-+			ret = devm_request_irq(&pdev->dev, irq,
-+						fsl_edma_tx_handler, 0,
-+						fsl_edma->chans[i].chan_name,
-+						fsl_edma);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static void fsl_edma_irq_exit(
- 		struct platform_device *pdev, struct fsl_edma_engine *fsl_edma)
- {
-@@ -187,8 +231,16 @@ static struct fsl_edma_drvdata vf610_data = {
- 	.setup_irq = fsl_edma_irq_init,
- };
- 
-+static struct fsl_edma_drvdata imx7ulp_data = {
-+	.version = v3,
-+	.dmamuxs = 1,
-+	.has_dmaclk = true,
-+	.setup_irq = fsl_edma2_irq_init,
-+};
-+
- static const struct of_device_id fsl_edma_dt_ids[] = {
- 	{ .compatible = "fsl,vf610-edma", .data = &vf610_data},
-+	{ .compatible = "fsl,imx7ulp-edma", .data = &imx7ulp_data},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, fsl_edma_dt_ids);
-@@ -236,6 +288,20 @@ static int fsl_edma_probe(struct platform_device *pdev)
- 	fsl_edma_setup_regs(fsl_edma);
- 	regs = &fsl_edma->regs;
- 
-+	if (drvdata->has_dmaclk) {
-+		fsl_edma->dmaclk = devm_clk_get(&pdev->dev, "dma");
-+		if (IS_ERR(fsl_edma->dmaclk)) {
-+			dev_err(&pdev->dev, "Missing DMA block clock.\n");
-+			return PTR_ERR(fsl_edma->dmaclk);
-+		}
-+
-+		ret = clk_prepare_enable(fsl_edma->dmaclk);
-+		if (ret) {
-+			dev_err(&pdev->dev, "DMA clk block failed.\n");
-+			return ret;
-+		}
-+	}
-+
- 	for (i = 0; i < fsl_edma->drvdata->dmamuxs; i++) {
- 		char clkname[32];
- 
+> ---
+>  drivers/gpu/drm/arm/display/komeda/komeda_plane.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
+> index c095af1..98e915e 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
+> @@ -158,7 +158,7 @@ static void komeda_plane_reset(struct drm_plane *plane)
+>  static struct drm_plane_state *
+>  komeda_plane_atomic_duplicate_state(struct drm_plane *plane)
+>  {
+> -	struct komeda_plane_state *new, *old;
+> +	struct komeda_plane_state *new;
+>  
+>  	if (WARN_ON(!plane->state))
+>  		return NULL;
+> @@ -169,8 +169,6 @@ komeda_plane_atomic_duplicate_state(struct drm_plane *plane)
+>  
+>  	__drm_atomic_helper_plane_duplicate_state(plane, &new->base);
+>  
+> -	old = to_kplane_st(plane->state);
+> -
+>  	return &new->base;
+>  }
+>  
+> -- 
+> 2.7.4
+> 
+> 
+
 -- 
-2.7.4
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
