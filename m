@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A0E071E72
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 20:00:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96B2471E47
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 20:00:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388702AbfGWSAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 14:00:39 -0400
-Received: from mail-ua1-f74.google.com ([209.85.222.74]:52809 "EHLO
-        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391294AbfGWR71 (ORCPT
+        id S2391393AbfGWR7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 13:59:44 -0400
+Received: from mail-yb1-f201.google.com ([209.85.219.201]:54278 "EHLO
+        mail-yb1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391361AbfGWR7j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 13:59:27 -0400
-Received: by mail-ua1-f74.google.com with SMTP id u24so4327781uah.19
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 10:59:26 -0700 (PDT)
+        Tue, 23 Jul 2019 13:59:39 -0400
+Received: by mail-yb1-f201.google.com with SMTP id e71so27435951ybh.21
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 10:59:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=/huzVrn6iDinNK3gESNF6fMWuVj1J0a8E8YliY+JUMI=;
-        b=Y7zAf+EqSsPzgFlPRtHiU2eaf3uvF3mBfxNqtK2dkyuo3VTBYXjjpviaGnsQe0yYUQ
-         RZjdFooS3ZC7uUt58aVI/4cdpsAs60vswb3AsNKQ+PFZtVBvzHw5kY0TqkqeCmyj7riF
-         mtQh5FnaNVG9iaAtW+G98/NdplTTfZ9IkSgAzb8usp7NHgKVNq41drkIZNhCHbFrZwbP
-         oh8Z0GVIBTZb34XQapQJ/Cc8NMSc6thxgEsgQUYNQcR1lgRqwCY4KcosdJFpWo+DlmgQ
-         eRBAMO05IGodFWFysR4D+7FGT50746wIbh4QySN2wsOGOenRi1KIej0OqRFaxZbG5kzF
-         UnOg==
+        bh=JHpRt1iV1Yui2063ArtK5NZw3fPfTbQsXHZ/X8tSe2c=;
+        b=a1WmmrmprQZ/rcrg4bnGXYSWuW8VRJo8q/rb7ZTLQKZa1K7I67ixfos045Wbs17Hsc
+         4ubobzNkIuAipJMS7ZPZPbwqhOEcQBYGSdXPH8NmRc6nBI3x8EfWx1KUwQ8GdoHMrOVu
+         pQBBRoSlOoWQvrJK6Ndgh0M+u5SrtS+Z7XLFtzHXYzmOZcoQreZcqxEy8gyvJGE0ittV
+         1ErCh2wjdbyE4mfBH/bts1VkhHwv8KlRuO+94TszgBwo8vjAMA7AFwRnm9ELenbWUlad
+         Ar6m6acLtYRugfggNK1CttVM0dqBedFHVAahPgUmqPuarVGgg9aYEhjvXatkNn9RUbXS
+         DjvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=/huzVrn6iDinNK3gESNF6fMWuVj1J0a8E8YliY+JUMI=;
-        b=X3A+koqHf6+cf3B/uLM6DqimjTjcixplc7CDckgpo+0gaEYU9SjSwz+6r98g48t2Iv
-         xX0aQ5Y3M8ktM+vZtB+VyEUj9IWCa4kmkn6uZVsqexrRrMDJNOP2VUL9CVpM8QZjPD38
-         wenjdB2hkvjg49/lDEThRUf+pBv7rcycIMbi5/QVMjEKduCQtK6dJmRtq8PDtcz8R7x3
-         r2h+o9pi892szg1z2YU4AWOTfOk9MqRZ2uSCSp2HrMhAXE+jmBHIY5FkRgQjbZiJn+Xa
-         mIafSOvQJK4gp9MtFu3BHI9zyXNEcntquHJLLm3SMSstmREF5dj4AtTAaY22Mr19kK8S
-         F1ag==
-X-Gm-Message-State: APjAAAVr1HMkzBgdvEbk398BpbGY0KfOBcbDloCI7iai2IGQ3UGtydlc
-        3mbhJ2p99lMKVFBwg/Ppo/kPq/6R7FRfEGeX
-X-Google-Smtp-Source: APXvYqza4RkKEiX9RSMJ4O0WeYRSe7jZPKwJC2E9aqA1oTke3kgtphbjO4en0GBzP/IdlZCHDhS+pYVnwN9x8xEl
-X-Received: by 2002:ab0:1c2:: with SMTP id 60mr34283049ual.78.1563904765450;
- Tue, 23 Jul 2019 10:59:25 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 19:58:43 +0200
+        bh=JHpRt1iV1Yui2063ArtK5NZw3fPfTbQsXHZ/X8tSe2c=;
+        b=I6bj2L7lX9ArfYDT2i/Zyt7PtPM44w+qqsg+YB41AfLXXDc1QgsOxslpXoH1IEKklL
+         1hTrbe3GKhUtsZGe/YHQiIx4ysixNFLp8EwTJfjz1Fv4ThqmnzTmIGJHgPqcauN8yEoW
+         uBkSbU9UasKx0E5UMD90ZNn4Ev+X9fz7PifO+vFcVBEAWw96LQR5ebatJDCra+A1SXVy
+         daRXOWpANdQES+weV2NCGtdvj3mZYk7JsXO9PpPGA0tMOUSzD/uzFD8u/WIUJIrOwlaZ
+         6Vi+TEKB3SRmxtZRi4vYK6e1oi7mSQUAZ+99LP11pZN63ZHjNzq8II44n2Y/Xwj0uQ4S
+         wyLQ==
+X-Gm-Message-State: APjAAAUI9i2JfQGSmkSk1rA0xcl/1kCIp1LKQEOkAzcmpd9/TaBUTOHq
+        pf7lfl4zkcj7mA2K1yqwwrSa2WWS3FTYcMZa
+X-Google-Smtp-Source: APXvYqzQ4z/ZiuFK+6sqRZERC5QgYRRFA4U1Dnbp9V3f1PKQeQRLZSu3TG/nr3g90hvkMvcrT8eNvmOVLDqS9X26
+X-Received: by 2002:a0d:d616:: with SMTP id y22mr43437325ywd.365.1563904778592;
+ Tue, 23 Jul 2019 10:59:38 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 19:58:47 +0200
 In-Reply-To: <cover.1563904656.git.andreyknvl@google.com>
-Message-Id: <28f05e49c92b2a69c4703323d6c12208f3d881fe.1563904656.git.andreyknvl@google.com>
+Message-Id: <c856babeb67195b35603b8d5ba386a2819cec5ff.1563904656.git.andreyknvl@google.com>
 Mime-Version: 1.0
 References: <cover.1563904656.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
-Subject: [PATCH v19 06/15] mm: untag user pointers in get_vaddr_frames
+Subject: [PATCH v19 10/15] drm/radeon: untag user pointers in radeon_gem_userptr_ioctl
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
@@ -95,32 +95,37 @@ This patch is a part of a series that extends kernel ABI to allow to pass
 tagged user pointers (with the top byte set to something else other than
 0x00) as syscall arguments.
 
-get_vaddr_frames uses provided user pointers for vma lookups, which can
-only by done with untagged pointers. Instead of locating and changing
-all callers of this function, perform untagging in it.
+In radeon_gem_userptr_ioctl() an MMU notifier is set up with a (tagged)
+userspace pointer. The untagged address should be used so that MMU
+notifiers for the untagged address get correctly matched up with the right
+BO. This funcation also calls radeon_ttm_tt_pin_userptr(), which uses
+provided user pointers for vma lookups, which can only by done with
+untagged pointers.
+
+This patch untags user pointers in radeon_gem_userptr_ioctl().
 
 Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
-Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
+Suggested-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Acked-by: Felix Kuehling <Felix.Kuehling@amd.com>
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- mm/frame_vector.c | 2 ++
+ drivers/gpu/drm/radeon/radeon_gem.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/mm/frame_vector.c b/mm/frame_vector.c
-index c64dca6e27c2..c431ca81dad5 100644
---- a/mm/frame_vector.c
-+++ b/mm/frame_vector.c
-@@ -46,6 +46,8 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
- 	if (WARN_ON_ONCE(nr_frames > vec->nr_allocated))
- 		nr_frames = vec->nr_allocated;
+diff --git a/drivers/gpu/drm/radeon/radeon_gem.c b/drivers/gpu/drm/radeon/radeon_gem.c
+index d8bc5d2dfd61..89353098b627 100644
+--- a/drivers/gpu/drm/radeon/radeon_gem.c
++++ b/drivers/gpu/drm/radeon/radeon_gem.c
+@@ -296,6 +296,8 @@ int radeon_gem_userptr_ioctl(struct drm_device *dev, void *data,
+ 	uint32_t handle;
+ 	int r;
  
-+	start = untagged_addr(start);
++	args->addr = untagged_addr(args->addr);
 +
- 	down_read(&mm->mmap_sem);
- 	locked = 1;
- 	vma = find_vma_intersection(mm, start, start + 1);
+ 	if (offset_in_page(args->addr | args->size))
+ 		return -EINVAL;
+ 
 -- 
 2.22.0.709.g102302147b-goog
 
