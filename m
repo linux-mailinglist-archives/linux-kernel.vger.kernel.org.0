@@ -2,172 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57F0B7209B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 22:19:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20FA6720A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 22:24:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731250AbfGWUTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 16:19:01 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39004 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728389AbfGWUTA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 16:19:00 -0400
-Received: by mail-pf1-f194.google.com with SMTP id f17so15696188pfn.6
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 13:19:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:cc:from:user-agent:date;
-        bh=j+oQw2jdtWVrhOuLyebLNsd7ea1r8/8WD8EWU9cDAVo=;
-        b=NSMsF/ZhLMfKzsKJ2MspdGWNCHdp7/PJbl+7N68yde2T9b7DjaJfjPc857JDqwI1qG
-         ztbRuSuLw0ZiEngAIk2lr7lgbNw92V5Ke9JI45W9JpPLiUqz9GAyeFXMO/N0XaYJLgVe
-         Usz6WsyTsIwMMnJcc6EmsOhMRqeNtKrfT2vWA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:cc:from
-         :user-agent:date;
-        bh=j+oQw2jdtWVrhOuLyebLNsd7ea1r8/8WD8EWU9cDAVo=;
-        b=O3GivmWSmQYZHUT7DB5vo8Z7L/NoDHnX4mHX//+voZVWO7J7cRrOxgkvzDYsjSf291
-         3Nh3c5pYwc63+HSCZ+Pza7c5oCFjYv89iKJo0UrmNYMDdTiVpqMRWh5aaeEKxlXYp0RE
-         7HCyOD8+4xjpctHiOuNirP+8/JUMTZDHqfWxQ7FckyPBwymOEy/y8K+cf9u0NygY5ySq
-         wxyX4UVY8iBHyRm4iHCnNXGraKx0BGXfwH7bPycTBTIUDwA18FhrkInzDPiBksyj97AR
-         7lHs4EynWkltmoGN8Cs4rKHJ5GRNhcr3XL4VB5seaR9M9ELC+Rb98/C8Jq2guMl34nXc
-         wBHQ==
-X-Gm-Message-State: APjAAAUetRSwZvRLQVQYjDhmTCnRzS9v/NMBiplG1AzDqGUwAQKXqsJz
-        1sC1sW8QnW9p7tEX0rvIRdoNXQ==
-X-Google-Smtp-Source: APXvYqy9POj2+Xo/YOz/WRQitO0yZSvOEN3J5hTLe0FEyZ6UIHk6V8VuYl0CMgI/lhCvoIzz8gSysw==
-X-Received: by 2002:a63:c748:: with SMTP id v8mr46673106pgg.418.1563913140016;
-        Tue, 23 Jul 2019 13:19:00 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id k6sm53132496pfi.12.2019.07.23.13.18.59
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 13:18:59 -0700 (PDT)
-Message-ID: <5d376bb3.1c69fb81.2bb4e.7771@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        id S1733312AbfGWUY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 16:24:29 -0400
+Received: from mga12.intel.com ([192.55.52.136]:31967 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727247AbfGWUY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 16:24:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2019 13:24:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,300,1559545200"; 
+   d="scan'208";a="369028998"
+Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
+  by fmsmga006.fm.intel.com with ESMTP; 23 Jul 2019 13:24:27 -0700
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     bhelgaas@google.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com,
+        sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v5 0/9] Add Error Disconnect Recover (EDR) support
+Date:   Tue, 23 Jul 2019 13:21:42 -0700
+Message-Id: <cover.1563912591.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190723192159.GA18620@codeaurora.org>
-References: <20190722215340.3071-1-ilina@codeaurora.org> <5d375054.1c69fb81.7ce3f.3591@mx.google.com> <20190723192159.GA18620@codeaurora.org>
-Subject: Re: [PATCH V2 1/4] drivers: qcom: rpmh-rsc: simplify TCS locking
-To:     Lina Iyer <ilina@codeaurora.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, dianders@chromium.org,
-        mkshah@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Tue, 23 Jul 2019 13:18:58 -0700
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lina Iyer (2019-07-23 12:21:59)
-> On Tue, Jul 23 2019 at 12:22 -0600, Stephen Boyd wrote:
-> >Quoting Lina Iyer (2019-07-22 14:53:37)
-> >> From: "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-> >>
-> >> The tcs->lock was introduced to serialize access with in TCS group. Bu=
-t,
-> >> drv->lock is still needed to synchronize core aspects of the
-> >> communication. This puts the drv->lock in the critical and high latency
-> >> path of sending a request. drv->lock provides the all necessary
-> >> synchronization. So remove locking around TCS group and simply use the
-> >> drv->lock instead.
-> >
-> >This doesn't talk about removing the irq saving and restoring though.
-> You mean for drv->lock? It was not an _irqsave/_irqrestore anyways and
-> we were only removing the tcs->lock.
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-Yes drv->lock wasn't an irqsave/restore variant because it was a
-spinlock inside of an obviously already irqsaved region of code because
-the tcs->lock was outside the drv->lock and that was saving the irq
-flags.
+This patchset adds support for following features:
 
->=20
-> >Can you keep irq saving and restoring in this patch and then remove that
-> >in the next patch with reasoning? It probably isn't safe if the lock is
-> >taken in interrupt context anyway.
-> >
-> Yes, the drv->lock should have been irqsave/irqrestore, but it hasn't
-> been changed by this patch.
+1. Error Disconnect Recover (EDR) support.
+2. _OSC based negotiation support for DPC.
 
-It needs to be changed to maintain the irqsaving/restoring of the code.
+You can find EDR spec in the following link.
 
-> >> @@ -349,41 +349,35 @@ static int tcs_write(struct rsc_drv *drv, const =
-struct tcs_request *msg)
-> >>  {
-> >>         struct tcs_group *tcs;
-> >>         int tcs_id;
-> >> -       unsigned long flags;
-> >>         int ret;
-> >>
-> >>         tcs =3D get_tcs_for_msg(drv, msg);
-> >>         if (IS_ERR(tcs))
-> >>                 return PTR_ERR(tcs);
-> >>
-> >> -       spin_lock_irqsave(&tcs->lock, flags);
-> >>         spin_lock(&drv->lock);
-> >>         /*
-> >>          * The h/w does not like if we send a request to the same addr=
-ess,
-> >>          * when one is already in-flight or being processed.
-> >>          */
-> >>         ret =3D check_for_req_inflight(drv, tcs, msg);
-> >> -       if (ret) {
-> >> -               spin_unlock(&drv->lock);
-> >> +       if (ret)
-> >>                 goto done_write;
-> >> -       }
-> >>
-> >>         tcs_id =3D find_free_tcs(tcs);
-> >>         if (tcs_id < 0) {
-> >>                 ret =3D tcs_id;
-> >> -               spin_unlock(&drv->lock);
-> >>                 goto done_write;
-> >>         }
-> >>
-> >>         tcs->req[tcs_id - tcs->offset] =3D msg;
-> >>         set_bit(tcs_id, drv->tcs_in_use);
-> >> -       spin_unlock(&drv->lock);
-> >>
-> >>         __tcs_buffer_write(drv, tcs_id, 0, msg);
-> >>         __tcs_trigger(drv, tcs_id);
-> >>
-> >>  done_write:
-> >> -       spin_unlock_irqrestore(&tcs->lock, flags);
-> >> +       spin_unlock(&drv->lock);
-> >>         return ret;
-> >>  }
-> >>
-> >> @@ -481,19 +475,18 @@ static int tcs_ctrl_write(struct rsc_drv *drv, c=
-onst struct tcs_request *msg)
-> >>  {
-> >>         struct tcs_group *tcs;
-> >>         int tcs_id =3D 0, cmd_id =3D 0;
-> >> -       unsigned long flags;
-> >>         int ret;
-> >>
-> >>         tcs =3D get_tcs_for_msg(drv, msg);
-> >>         if (IS_ERR(tcs))
-> >>                 return PTR_ERR(tcs);
-> >>
-> >> -       spin_lock_irqsave(&tcs->lock, flags);
-> >> +       spin_lock(&drv->lock);
-> >>         /* find the TCS id and the command in the TCS to write to */
-> >>         ret =3D find_slots(tcs, msg, &tcs_id, &cmd_id);
-> >>         if (!ret)
-> >>                 __tcs_buffer_write(drv, tcs_id, cmd_id, msg);
-> >> -       spin_unlock_irqrestore(&tcs->lock, flags);
-> >> +       spin_unlock(&drv->lock);
-> >>
-> >
-> >These ones, just leave them doing the irq save restore for now?
-> >
-> drv->lock ??
->=20
+https://members.pcisig.com/wg/PCI-SIG/document/12614
 
-Yes, it should have irq save/restore still.
+Changes since v1:
+ * Rebased on top of v5.1-rc1
+
+Changes since v2:
+ * Split EDR support patch into multiple patches.
+ * Addressed Bjorn comments.
+
+Changes since v3:
+ * Moved EDR related ACPI functions/definitions to pci-acpi.c
+ * Modified commit history in few patches to include spec reference.
+ * Added support to handle DPC triggered by NON_FATAL errors.
+ * Added edr_lock to protect PCI device receiving duplicate EDR notifications.
+ * Addressed Bjorn comments.
+
+Changes since v4:
+ * Rebased on top of v5.3-rc1
+ * Fixed lock/unlock issue in edr_handle_event().
+ * Merged "Update error status after reset_link()" patch into this patchset.
+
+Kuppuswamy Sathyanarayanan (9):
+  PCI/ERR: Update error status after reset_link()
+  PCI/ACPI: Add _OSC based negotiation support for DPC
+  PCI/ACPI: Expose EDR support via _OSC to BIOS
+  PCI/DPC: Allow dpc_probe() even if firmware first mode is enabled
+  PCI/DPC: Add dpc_process_error() wrapper function
+  PCI/DPC: Add Error Disconnect Recover (EDR) support
+  PCI/AER: Allow clearing Error Status Register in FF mode
+  PCI/DPC: Add support for DPC recovery on NON_FATAL errors
+  PCI/DPC: Clear AER registers in EDR mode
+
+ drivers/acpi/pci_root.c         |   9 ++
+ drivers/pci/pci-acpi.c          |  91 +++++++++++++++
+ drivers/pci/pcie/Kconfig        |  10 ++
+ drivers/pci/pcie/aer.c          |   9 --
+ drivers/pci/pcie/dpc.c          | 201 +++++++++++++++++++++++++++++---
+ drivers/pci/pcie/err.c          |  11 +-
+ drivers/pci/pcie/portdrv_core.c |   8 +-
+ drivers/pci/probe.c             |   1 +
+ include/linux/acpi.h            |   4 +-
+ include/linux/pci-acpi.h        |  11 ++
+ include/linux/pci.h             |   2 +-
+ 11 files changed, 323 insertions(+), 34 deletions(-)
+
+-- 
+2.21.0
 
