@@ -2,111 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7956F71576
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 11:47:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A3597157B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 11:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729768AbfGWJrH convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 23 Jul 2019 05:47:07 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.168]:13133 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbfGWJrH (ORCPT
+        id S1730924AbfGWJsa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 05:48:30 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:23442 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfGWJsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 05:47:07 -0400
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDlaYXAcKqg=="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 44.24 DYNA|AUTH)
-        with ESMTPSA id j00b6dv6N9knLWx
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Tue, 23 Jul 2019 11:46:49 +0200 (CEST)
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH v2 02/10] iio: document bindings for mounting matrices
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <CACRpkdZ5Z9VY457Fywt6X=K5XONgiPVcwbwSkwL_U+GCqZ+u5g@mail.gmail.com>
-Date:   Tue, 23 Jul 2019 11:46:49 +0200
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Song Qiang <songqiang1304521@gmail.com>,
-        Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>,
-        Martin Kelly <mkelly@xevo.com>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Brian Masney <masneyb@onstation.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Gregor Boirie <gregor.boirie@parrot.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Samu Onkalo <samu.onkalo@intel.com>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <4C901747-1657-47AD-A9D7-10E41AFB35CB@goldelico.com>
-References: <cover.1550768574.git.hns@goldelico.com> <32025b2a8ccc97cc01f8115ee962529eb5990f00.1550768574.git.hns@goldelico.com> <CACRpkdZ5Z9VY457Fywt6X=K5XONgiPVcwbwSkwL_U+GCqZ+u5g@mail.gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-X-Mailer: Apple Mail (2.3124)
+        Tue, 23 Jul 2019 05:48:30 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x6N9m2fe009018;
+        Tue, 23 Jul 2019 18:48:02 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x6N9m2fe009018
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1563875283;
+        bh=GhMsfcEGMdo7a2JHO9NEXRnzfvlVBKPP4W3vxfX4aPo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AyXw9ZsFdwqTHQzzXKMEAEk1i47hd8FA31ANoRJ/n+p1wW5X9oX94dF5QDQ48RjbY
+         ct8UKjMIjvjHYKmmVGs7S96+r/d1+aBt0t02OlceDAItDkSzxfTQaiitkdLnTFhYxB
+         msMKZKA433x/wX+2iMNJQmtLmbG0cRH0HxgeOc0GiBcpg6BthaBsxqFKbFibgf33nb
+         8rbeyAlt+h9s7TNVJkxw1xmD9gSgWIYd8k9R4u2q/38vQgt2Uk/jJpXygs9Z1Psi+o
+         CpJyeFb/bJDNKA9HB0rRXT0JBeBPljBFrqMFRXGvC8d+2z4Afsd19VHN8u2yVhvyeO
+         yFCm4nLpjHQXw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] parisc: rename default_defconfig to defconfig
+Date:   Tue, 23 Jul 2019 18:47:51 +0900
+Message-Id: <20190723094751.463-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+'default_defconfig' is an awkward name since 'defconfig' is the default.
+Let's simply say 'defconfig' like other architectures. You can drop the
+KBUILD_DEFCONFIG define by following the standard naming.
 
-> Am 23.07.2019 um 09:42 schrieb Linus Walleij <linus.walleij@linaro.org>:
-> 
-> Hi H. Nikolaus,
-> 
-> On Thu, Feb 21, 2019 at 6:03 PM H. Nikolaus Schaller <hns@goldelico.com> wrote:
-> 
->> From: Linus Walleij <linus.walleij@linaro.org>
-> 
-> It is fair for you to change authorship to yourself at this point.
-> Just keeping my Signed-off-by is sufficient.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Well, I think my contribution is less than yours :)
+ arch/parisc/Makefile                                 | 2 --
+ arch/parisc/configs/{default_defconfig => defconfig} | 0
+ 2 files changed, 2 deletions(-)
+ rename arch/parisc/configs/{default_defconfig => defconfig} (100%)
 
-> 
->> The mounting matrix for sensors was introduced in
->> commit dfc57732ad38 ("iio:core: mounting matrix support")
->> 
->> However the device tree bindings are very terse and since this is
->> a widely applicable property, we need a proper binding for it
->> that the other bindings can reference. This will also be useful
->> for other operating systems and sensor engineering at large.
->> 
->> I think all 3D sensors should support it, the current situation
->> is probably that the mounting information is confined in magic
->> userspace components rather than using the mounting matrix, which
->> is not good for portability and reuse.
->> 
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Gregor Boirie <gregor.boirie@parrot.com>
->> Cc: Sebastian Reichel <sre@kernel.org>
->> Cc: Samu Onkalo <samu.onkalo@intel.com>
->> Cc: devicetree@vger.kernel.org
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> 
-> Did this patch fall off somewhere? I think it's really neat, even in this
-> form it is great help for developers. If you want I can try picking up the
-> comments and resend it.
-
-Well, I had planned to review it again and promised to send out a new
-version. But as usual this ToDo becomes hidden by always more important
-tasks.
-
-So I am fine if you can pick comments and resend it. I think there will
-be others who help to make it even better in the future if the mount matrix
-is more widely used.
-
-BR,
-Nikolaus
+diff --git a/arch/parisc/Makefile b/arch/parisc/Makefile
+index 8acb8fa1f8d6..b10a1179291a 100644
+--- a/arch/parisc/Makefile
++++ b/arch/parisc/Makefile
+@@ -19,8 +19,6 @@
+ 
+ KBUILD_IMAGE := vmlinuz
+ 
+-KBUILD_DEFCONFIG := default_defconfig
+-
+ NM		= sh $(srctree)/arch/parisc/nm
+ CHECKFLAGS	+= -D__hppa__=1
+ LIBGCC		= $(shell $(CC) $(KBUILD_CFLAGS) -print-libgcc-file-name)
+diff --git a/arch/parisc/configs/default_defconfig b/arch/parisc/configs/defconfig
+similarity index 100%
+rename from arch/parisc/configs/default_defconfig
+rename to arch/parisc/configs/defconfig
+-- 
+2.17.1
 
