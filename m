@@ -2,91 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF0E871EE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 20:17:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27C2871EEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 20:18:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388702AbfGWSRY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 14:17:24 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:38441 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730906AbfGWSRY (ORCPT
+        id S2391329AbfGWSSA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 14:18:00 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:60744 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726989AbfGWSSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 14:17:24 -0400
-Received: by mail-ua1-f68.google.com with SMTP id j2so17334427uaq.5
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 11:17:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=82d9c75d2N5edHNgI510WWQsvw//3O8L7Akked9Pdus=;
-        b=hXReIxZrRnD1TqXU0vlEWk6jzlmDLpgM0IMU0/QsxPFfyftBuYsmhFuHJxqiuTFAUi
-         prSYvMNSOyATO9LAspoPhPCRFVKo79B9UfqDzaVh3FsOYxirUViCGTJE9C7FnzyyNnAp
-         kqXyFHIHz04iGyjQBM79sfXLnwPTIghYjsud4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=82d9c75d2N5edHNgI510WWQsvw//3O8L7Akked9Pdus=;
-        b=o7kevoVBZIYqqk4SPzU0/7vWjPoGVjetAWZsvaJXMCfL6N3rrhdzK81szDP8LBitnR
-         VDvOimrwMI0Ay6jfo9J7T+v044TEBggpP9WqKWQS4YqqtkhH6jTdXxB2kA3H1k/cq2BU
-         dKOOVRl6YJhwpHWMKrM8HusI6UMoTz2bxLT/diXM6r5O5uiyiLED7Fjp+MOMs4InZ3iV
-         uUwkfV9TJuA/7SYjVWBeAzfzW8dxmwn/vrEdtThIR5vNIydPWN8du9fFqSDCub2S+Yd9
-         lRIiZlbgAy+F5GEWp72qqV+L1P2I7DqVNBJbqt/5MUsEiNcgB3JDbpciBF9PJWpUpN+b
-         Y7fw==
-X-Gm-Message-State: APjAAAVlPEuuzCPD2VnsBMwiL9kqDm5h1Xr1ES4imlTJ9WsGHxdna/qv
-        BoOKvW5f6f9+tR/mPOCrWc35/vc9KXWlRcaqaZOaHA==
-X-Google-Smtp-Source: APXvYqyYqdC0VtXJ1fmDprfj3PHJhgNn1E+lUKXbEwOkrnpKi3XLMDgYKQw8xVEM+dv1QiaoM9bLy9iF/y4lCSZphUY=
-X-Received: by 2002:ab0:4993:: with SMTP id e19mr49852000uad.2.1563905843320;
- Tue, 23 Jul 2019 11:17:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190720215840.23831-1-colin.king@canonical.com>
-In-Reply-To: <20190720215840.23831-1-colin.king@canonical.com>
-From:   Sumit Saxena <sumit.saxena@broadcom.com>
-Date:   Tue, 23 Jul 2019 23:47:11 +0530
-Message-ID: <CAL2rwxp_MNBiouBmAEXidEVxoLmb74dZWbGTPyTazH+MRe_sFg@mail.gmail.com>
-Subject: Re: [PATCH][next] scsi: megaraid_sas: fix spelling mistake
- "megarid_sas" -> "megaraid_sas"
-To:     Colin King <colin.king@canonical.com>
-Cc:     Kashyap Desai <kashyap.desai@broadcom.com>,
-        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "PDL,MEGARAIDLINUX" <megaraidlinux.pdl@broadcom.com>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
+        Tue, 23 Jul 2019 14:18:00 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1hpzMD-0003HF-HK; Tue, 23 Jul 2019 20:17:49 +0200
+Message-ID: <5f6c264c75f3ffe6c2cbcab2d174ad2c4c4c0bd6.camel@sipsolutions.net>
+Subject: Re: [PATCH net-next v2 3/3] netlink: add validation of NLA_F_NESTED
+ flag
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Stephen Hemminger <stephen@networkplumber.org>,
+        Michal Kubecek <mkubecek@suse.cz>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        David Ahern <dsahern@gmail.com>, linux-kernel@vger.kernel.org
+Date:   Tue, 23 Jul 2019 20:17:47 +0200
+In-Reply-To: <20190723110206.4cb1f6b1@hermes.lan> (sfid-20190723_200215_305541_DF26DFA5)
+References: <cover.1556806084.git.mkubecek@suse.cz>
+         <6b6ead21c5d8436470b82ab40355f6bd7dbbf14b.1556806084.git.mkubecek@suse.cz>
+         <20190723110206.4cb1f6b1@hermes.lan> (sfid-20190723_200215_305541_DF26DFA5)
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 21, 2019 at 3:28 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Fix spelling mistake in kernel warning message and replace
-> printk with with pr_warn.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
-> ---
->  drivers/scsi/megaraid/megaraid_sas_base.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-> index b2339d04a700..2590746c81e3 100644
-> --- a/drivers/scsi/megaraid/megaraid_sas_base.c
-> +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-> @@ -8763,7 +8763,7 @@ static int __init megasas_init(void)
->
->         if ((event_log_level < MFI_EVT_CLASS_DEBUG) ||
->             (event_log_level > MFI_EVT_CLASS_DEAD)) {
-> -               printk(KERN_WARNING "megarid_sas: provided event log level is out of range, setting it to default 2(CLASS_CRITICAL), permissible range is: -2 to 4\n");
-> +               pr_warn("megaraid_sas: provided event log level is out of range, setting it to default 2(CLASS_CRITICAL), permissible range is: -2 to 4\n");
->                 event_log_level = MFI_EVT_CLASS_CRITICAL;
->         }
->
-> --
-> 2.20.1
->
+On Tue, 2019-07-23 at 11:02 -0700, Stephen Hemminger wrote:
+> 
+> There are some cases where netlink related to IPv4 does not send nested
+> flag. You risk breaking older iproute2 and other tools being used on newer
+> kernel. I.e this patch may break binary compatibility. Have you tried running
+> with this on a very old distro (like Redhat Linux 9)?
+
+
+There are *tons* of places where this (and other things) wasn't done
+right, but the validation is only added for
+
+ * all attributes on _new operations_ (that old userspace couldn't have
+   been using since they're introduced after this patch)
+ * _new attributes_ (dito, if the policy 'strict start' is filled)
+
+johannes
+
