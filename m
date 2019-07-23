@@ -2,120 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A11971769
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 13:49:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A7AB7176F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 13:49:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387554AbfGWLtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 07:49:24 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46839 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbfGWLtX (ORCPT
+        id S2387624AbfGWLtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 07:49:53 -0400
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:42146 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731620AbfGWLtw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 07:49:23 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6NBnGib063219
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 23 Jul 2019 04:49:16 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6NBnGib063219
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1563882556;
-        bh=p1Etw7krL6uQykP6NhEeknasvHGapeeSGpZqH0Q43mE=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=mOyiZFzhuNJCyJJoo8QFxS1bu+N6NZaaBO7tmoO/Hwhv3ySyxzdU/r2OaO6dwFbGV
-         HSZSdXJSKGQuCaPrhwFjWEZnXHX72AbnMdFQOPaBxEmwOtksuf+Q3etwN637Z9JbvV
-         OToXHFHULW+ezFzPQC/fOON1SjaqPrPMEMUeAAYW7H8cMsXQO7Li/suXFFdn+mn/NH
-         IMSt6mZIuwMGa4misCcSHBnMCmjvBIox3mHy7kvAmheU4nDq1m9mAuTVa4Yc/P4n4o
-         3mvttg33M+AKJzTiFfhBemrqldroePBdn9BJMvANaAWDH/O42fSUdnhNQm70DRjbZH
-         URfLmpYLtxBCQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6NBnFZP063214;
-        Tue, 23 Jul 2019 04:49:15 -0700
-Date:   Tue, 23 Jul 2019 04:49:15 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Masahiro Yamada <tipbot@zytor.com>
-Message-ID: <tip-bdd50d7421b2f8fd99f953e1f747e0cb3f3bed64@git.kernel.org>
-Cc:     yamada.masahiro@socionext.com, mingo@kernel.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
-          mingo@kernel.org, yamada.masahiro@socionext.com
-In-Reply-To: <20190723074415.26811-1-yamada.masahiro@socionext.com>
-References: <20190723074415.26811-1-yamada.masahiro@socionext.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cleanups] x86/bitops: Use __builtin_constant_p() directly
- instead of IS_IMMEDIATE()
-Git-Commit-ID: bdd50d7421b2f8fd99f953e1f747e0cb3f3bed64
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 23 Jul 2019 07:49:52 -0400
+Received: by mail-vk1-f196.google.com with SMTP id 130so8587062vkn.9
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 04:49:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eCc8oz4uiY5oWVmZXIo5sT3kYxDAiMvuCiy1W2eyWGs=;
+        b=IcKy60K678v+J0heI68tZHz8GPQxO3NxVDFj7+zJrF5AlvdfaU4g7QvRBm4WzK2N23
+         pDKiRHpCNnOLUYPIN99LoT+yt2FC3qBbHHQCKxLUEjiAu1+4X7mxR23Ke87joLy6cjbI
+         s3/6QiwZIo4K0jxG1wUGV+ZYdWyrhdjWi+nN9ZjiCyoRpATnDAt+2ggPiQacmFtWkrVD
+         BrcbtUmBD1XehP1guAAKJcsNS9FBV6Hj/B9IQZitsYgSfyYPTwanhyZrQB7wwo4flyGj
+         NNhILO8zBbNZ6oupsz5WyUKBloxPApdSZeMXiRE1p5gl+NEcbn5V4bIv7J/i7P9twUoG
+         bIcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eCc8oz4uiY5oWVmZXIo5sT3kYxDAiMvuCiy1W2eyWGs=;
+        b=H2dOyTBtujl/8jhR9ucP3TDjwxbe5IQla5ZVTGtIzcx1sciroyu3bmmMzCwVRHFydT
+         gIAOL2F+8FSvl+Wk88FwXQlgSV3yMhBSuEl4rL3yUppkmYeJJ7evqvzMI5mhwY+9KsF2
+         gTjda6+MukCFG2w23kybXuiFTMAX33lUILwkx+kJxsw86DPIC/+bvAcT8wSUM+MOvcXy
+         G7jsgsz4r6pSjEMMGWCZ36XHXR9N9le9SyhyTCee1YjsV4pTEizgcelgNEeGFdkRIxPZ
+         Z7dObkLXXkt5Kyp3AOI1f+uaAWopu5rFERuPPdSjN6mJsYZhnXU5jA4nk8uJ7QNhZGCs
+         FdKg==
+X-Gm-Message-State: APjAAAVUYXUTSRrmShMwv4wuJP4ydC7YsW2R+uOYxl8hRspv6M1RJOib
+        NRmiYPDfT/rwhR7svT+SDRyDU2HX2YSz2Rrcy1ax4w==
+X-Google-Smtp-Source: APXvYqzQew1R0hp4RpT558NdXJ2lVRHSHKaFuji8MnNl0ExroDkpLeuQgO9KGA19hr8dIxNU/dxd/h2ROvbh8X67rj0=
+X-Received: by 2002:ac5:c2d2:: with SMTP id i18mr27496163vkk.36.1563882591235;
+ Tue, 23 Jul 2019 04:49:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+References: <20190722153745.32446-1-lorenzo.pieralisi@arm.com>
+In-Reply-To: <20190722153745.32446-1-lorenzo.pieralisi@arm.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 23 Jul 2019 13:49:15 +0200
+Message-ID: <CAPDyKFqAMhx_8T5FF7MujYc7HuNVAfCYx4j1UEfesuCc-TE-rw@mail.gmail.com>
+Subject: Re: [PATCH 0/6] ARM: psci: cpuidle: PSCI CPUidle rework
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Linux PM <linux-pm@vger.kernel.org>, Will Deacon <will@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        LAKML <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bdd50d7421b2f8fd99f953e1f747e0cb3f3bed64
-Gitweb:     https://git.kernel.org/tip/bdd50d7421b2f8fd99f953e1f747e0cb3f3bed64
-Author:     Masahiro Yamada <yamada.masahiro@socionext.com>
-AuthorDate: Tue, 23 Jul 2019 16:44:15 +0900
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 23 Jul 2019 13:44:18 +0200
+On Mon, 22 Jul 2019 at 17:37, Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+>
+> Current PSCI CPUidle driver is built on top of the generic ARM
+> CPUidle infrastructure that relies on the architectural back-end
+> idle operations to initialize and enter idle states.
+>
+> On ARM64 systems, PSCI is the only interface the kernel ever uses
+> to enter idle states, so, having to rely on a generic ARM CPUidle
+> driver when there is and there will always be only one method
+> for entering idle states proved to be overkill, more so given
+> that on ARM 32-bit systems (that can also enable the generic
+> ARM CPUidle driver) only one additional idle back-end was
+> ever added:
+>
+> drivers/soc/qcom/spm.c
+>
+> and it can be easily converted to a full-fledged CPUidle driver
+> without requiring the generic ARM CPUidle framework.
+>
+> Furthermore, the generic ARM CPUidle infrastructure forces the
+> PSCI firmware layer to keep CPUidle specific information in it,
+> which does not really fit its purpose that should be kernel
+> control/data structure agnostic.
+>
+> Lastly, the interface between the generic ARM CPUidle driver and
+> the arch back-end requires an idle state index to be passed to
+> suspend operations, with idle states back-end internals (such
+> as idle state parameters) hidden in architectural back-ends and
+> not available to the generic ARM CPUidle driver.
+>
+> To improve the above mentioned shortcomings, implement a stand
+> alone PSCI CPUidle driver; this improves the current kernel
+> code from several perspective:
+>
+> - Move CPUidle internal knowledge into CPUidle driver out of
+>   the PSCI firmware interface
+> - Give the PSCI CPUidle driver control over power state parameters,
+>   in particular in preparation for PSCI OSI support
+> - Remove generic CPUidle operations infrastructure from the kernel
+>
+> This patchset does not go as far as removing the generic ARM CPUidle
+> infrastructure in order to collect feedback on the new approach
+> before completing the removal from the kernel, the generic and PSCI
+> CPUidle driver are left to co-exist.
 
-x86/bitops: Use __builtin_constant_p() directly instead of IS_IMMEDIATE()
+I like the approach and I think this series definitely moves things in
+the right direction.
 
-__builtin_constant_p(nr) is used everywhere now. It does not make much
-sense to define IS_IMMEDIATE() as its alias.
+Of course, some additional cleanups/re-works on top are needed to show
+its full benefit, but step by step we reach that point.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190723074415.26811-1-yamada.masahiro@socionext.com
+>
+> Tested on Juno platform with both DT and ACPI boot firmwares.
+>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+>
+> Lorenzo Pieralisi (6):
+>   ARM: cpuidle: Remove useless header include
+>   ARM: cpuidle: Remove overzealous error logging
+>   drivers: firmware: psci: Decouple checker from generic ARM CPUidle
+>   ARM: psci: cpuidle: Introduce PSCI CPUidle driver
+>   ARM: psci: cpuidle: Enable PSCI CPUidle driver
+>   PSCI: cpuidle: Refactor CPU suspend power_state parameter handling
+>
+>  MAINTAINERS                          |   8 +
+>  arch/arm/configs/imx_v6_v7_defconfig |   1 +
+>  arch/arm64/configs/defconfig         |   1 +
+>  arch/arm64/kernel/cpuidle.c          |  50 +++++-
+>  arch/arm64/kernel/psci.c             |   4 -
+>  drivers/cpuidle/Kconfig.arm          |   7 +
+>  drivers/cpuidle/Makefile             |   1 +
+>  drivers/cpuidle/cpuidle-arm.c        |  13 +-
+>  drivers/cpuidle/cpuidle-psci.c       | 235 +++++++++++++++++++++++++++
+>  drivers/firmware/psci/psci.c         | 167 +------------------
+>  drivers/firmware/psci/psci_checker.c |  16 +-
+>  include/linux/cpuidle.h              |  17 +-
+>  include/linux/psci.h                 |   4 +-
+>  13 files changed, 338 insertions(+), 186 deletions(-)
+>  create mode 100644 drivers/cpuidle/cpuidle-psci.c
+>
+> --
+> 2.21.0
+>
 
----
- arch/x86/include/asm/bitops.h | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+For the series, besides the minor comments I had on patch 4, feel free to add:
 
-diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
-index ba15d53c1ca7..7d1f6a49bfae 100644
---- a/arch/x86/include/asm/bitops.h
-+++ b/arch/x86/include/asm/bitops.h
-@@ -45,14 +45,13 @@
-  * We do the locked ops that don't return the old value as
-  * a mask operation on a byte.
-  */
--#define IS_IMMEDIATE(nr)		(__builtin_constant_p(nr))
- #define CONST_MASK_ADDR(nr, addr)	WBYTE_ADDR((void *)(addr) + ((nr)>>3))
- #define CONST_MASK(nr)			(1 << ((nr) & 7))
- 
- static __always_inline void
- arch_set_bit(long nr, volatile unsigned long *addr)
- {
--	if (IS_IMMEDIATE(nr)) {
-+	if (__builtin_constant_p(nr)) {
- 		asm volatile(LOCK_PREFIX "orb %1,%0"
- 			: CONST_MASK_ADDR(nr, addr)
- 			: "iq" ((u8)CONST_MASK(nr))
-@@ -72,7 +71,7 @@ arch___set_bit(long nr, volatile unsigned long *addr)
- static __always_inline void
- arch_clear_bit(long nr, volatile unsigned long *addr)
- {
--	if (IS_IMMEDIATE(nr)) {
-+	if (__builtin_constant_p(nr)) {
- 		asm volatile(LOCK_PREFIX "andb %1,%0"
- 			: CONST_MASK_ADDR(nr, addr)
- 			: "iq" ((u8)~CONST_MASK(nr)));
-@@ -123,7 +122,7 @@ arch___change_bit(long nr, volatile unsigned long *addr)
- static __always_inline void
- arch_change_bit(long nr, volatile unsigned long *addr)
- {
--	if (IS_IMMEDIATE(nr)) {
-+	if (__builtin_constant_p(nr)) {
- 		asm volatile(LOCK_PREFIX "xorb %1,%0"
- 			: CONST_MASK_ADDR(nr, addr)
- 			: "iq" ((u8)CONST_MASK(nr)));
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
