@@ -2,115 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F832715A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 12:02:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77DB871596
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 12:00:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732827AbfGWKCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 06:02:17 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41483 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728557AbfGWKCQ (ORCPT
+        id S1730627AbfGWKAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 06:00:11 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:44981 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726686AbfGWKAL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 06:02:16 -0400
-Received: by mail-ot1-f65.google.com with SMTP id o101so43420925ota.8
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 03:02:16 -0700 (PDT)
+        Tue, 23 Jul 2019 06:00:11 -0400
+Received: by mail-io1-f66.google.com with SMTP id s7so80419213iob.11;
+        Tue, 23 Jul 2019 03:00:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=casparzhang-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=30UXoZPM+9RE8an6O7xxTToknZxq9ZoH5S52VkZVUZY=;
-        b=C34havDI1qpeD/ZbDajYiieBd3DQOuEyEZEm9XmYNVpHFkHU0xEGyOyTeTRn1glKGu
-         L0w5sgjbRZUXHzM2tAO+Xud81v/YfKGyHGMfdsvnIdYcy1o3634QYl1MEtA/dospRrPs
-         CUA18mjO4f6mrVUW/5XCy46Z6j2OA6wqA54s+X9ytuwN7cdVjEB/Qro1JnxG38nUkgrU
-         l1kehUwaz2eM5uU2sKPtS29DgVvaiyZp/S33ee7fOZ5L/pCSVwOVwOH4VL/hzXjCYB/W
-         4qkExEWmA5Q9U2xOAuNUxHzMdhfWZUJFhOrC/j3oWXszWZbBlbFMcBaCS7Q0Oj3QyFJI
-         aFNg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yRd2vWX6PjNWErbTd9Y15sIa044i0uHH/q4p9H5/fi4=;
+        b=vVi/DRqBsj29Ez902sLsvEs2zFpgpQvo802HHGufSwSOhqoxLyq1sy2+99AYGHj5To
+         ZwxTxrlbjFnQl5q95LxS3wuFF87TS7tWgj4328oi60PGyWH7l6CEwnO+xjnEQGvZCSzi
+         AS/p+P39qQOjA11t0zEBTK0KV7Tppgk0KcEXqD7lth+pcxdJfN9iaeLPPfQlsE5Cxkzg
+         J1VikUYHWX0CpMcq0ICV6oEsZX+i4HPs73bWuouf8zBUfYcMknfT0vseEeY49cUEUKLG
+         MqOF3tp/CHFR9ynhqHW1sUIXgrtVSk3UtBGIlvqko1xMTEv9RKX+b5higQFio4m3g8pN
+         viSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=30UXoZPM+9RE8an6O7xxTToknZxq9ZoH5S52VkZVUZY=;
-        b=hmj9cCE5ELLHSlwXkFLLf/5VY5ktGNKcU+3XA8nFoTxsDaOGHTMdiW6bVv22+opooI
-         eEELnhqJ6qbYch8moBJwPhLsXENLeQKqVStyJVh7YZD1stKPiJc35Q7pdehPdQcwjkdf
-         eAY5otlj4pEG6BuYZ6zNg1KrmUwr1pDhpdsJdx3Vk9B3039ZknHppBA7f+9FyFbiYX+z
-         cHVWQhlc67jpPyXhN9OW9ZbS6BjeSqbllzRLy3uGvMDo666qrf5Tt/ObiW1x0DX26AVZ
-         UoJ3JXEL4aZHCn0oOtRjeB4vAopAFQmW69xVwPLBG3h1UbKfjAmhoyHOMhe+wTd3PTm+
-         ET3w==
-X-Gm-Message-State: APjAAAWFo028At1f8KOiI+KskqsSzl8bTkWIio4SXismkHAZqBGGkz7P
-        qFp6X1EZduunpFGV9+7kL3SnaYzvbGk=
-X-Google-Smtp-Source: APXvYqzxufKEXHQJFf9Zix4DWVvcjwlo4dsXaNVQdUuvIwurDnDzszSzb4mGi34w6ZGACrPcGn4gaA==
-X-Received: by 2002:a9d:4809:: with SMTP id c9mr21699259otf.199.1563876135310;
-        Tue, 23 Jul 2019 03:02:15 -0700 (PDT)
-Received: from casparzhang.com ([240e:390:e6f:dc80:cdd6:529c:3a94:95d7])
-        by smtp.gmail.com with ESMTPSA id w139sm15235606oiw.0.2019.07.23.03.02.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Jul 2019 03:02:13 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 18:02:09 +0800
-From:   Caspar Zhang <caspar@casparzhang.com>
-To:     Jason Xing <kerneljasonxing@linux.alibaba.com>
-Cc:     hannes@cmpxchg.org, surenb@google.com, mingo@redhat.com,
-        peterz@infradead.org, dennis@kernel.org, axboe@kernel.dk,
-        lizefan@huawei.com, tj@kernel.org, linux-kernel@vger.kernel.org,
-        caspar@linux.alibaba.com, joseph.qi@linux.alibaba.com
-Subject: Re: [PATCH] psi: get poll_work to run when calling poll syscall next
- time
-Message-ID: <20190723100209.GA78446@casparzhang.com>
-References: <1563864339-2621-1-git-send-email-kerneljasonxing@linux.alibaba.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yRd2vWX6PjNWErbTd9Y15sIa044i0uHH/q4p9H5/fi4=;
+        b=uQSv9uLNgQT3ZkZ1V63bAAhqfil6awlsDTKUlAp1hyByfcBxnz0hlRNEOQBmFuSTGn
+         PykFs6KOdx8ldRJa+cyiVxOO+eHQ0Ggim9JzffppgwDvO2t2YKO9igRjUO+VdUWim5pY
+         rEqIZXabJlGHqIpJ3CTON+Fvmb1AcpfotJJu98mCFwBSPL50WM+QG5BkGYtZZ204VSc8
+         VCp4O4hYJx4vn5WQV/l+Q8b/wa1rXbXijpuSD51Jp3yE9YTibASEqAFQ2FkAYx9xyq+m
+         YD+j45DxT+ywb691jZ21zWUHY+kQTu+tC9CPkuhhNr8TYoyUCH4iPp3HmAw3iJCS4ePr
+         L1Rw==
+X-Gm-Message-State: APjAAAXDJeNA25fyAX9s/QFdczF2dbKSJSAHj+/7zPG7UOVFCU/MmJNh
+        Q+eJu91P8srcZL0VzSTfnqsKU2Lce/erVUgKMvUOn2y/
+X-Google-Smtp-Source: APXvYqxo+LtxYWcgl7DtLOVxiPXWXG5erEpaefSWnG39Fn6WBuhde+K7k6eQZmIqngE1X15d8GmTFvvGD1F7iT5Kf1g=
+X-Received: by 2002:a5e:d817:: with SMTP id l23mr58776iok.282.1563876010293;
+ Tue, 23 Jul 2019 03:00:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1563864339-2621-1-git-send-email-kerneljasonxing@linux.alibaba.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190719143222.16058-1-lhenriques@suse.com> <ab5ccaa05994e2eef05bdb54510e6b017db2d807.camel@kernel.org>
+In-Reply-To: <ab5ccaa05994e2eef05bdb54510e6b017db2d807.camel@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 23 Jul 2019 12:02:57 +0200
+Message-ID: <CAOi1vP86qVeMV9hJPCP7sHfimMv08j-znSGyhcYdd1TC_Gn19A@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Sleeping functions in invalid context bug fixes
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Luis Henriques <lhenriques@suse.com>, Sage Weil <sage@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 02:45:39PM +0800, Jason Xing wrote:
-> Only when calling the poll syscall the first time can user
-> receive POLLPRI correctly. After that, user always fails to
-> acquire the event signal.
+On Fri, Jul 19, 2019 at 5:20 PM Jeff Layton <jlayton@kernel.org> wrote:
 >
-> Reproduce case:
-> 1. Get the monitor code in Documentation/accounting/psi.txt
-> 2. Run it, and wait for the event triggered.
-> 3. Kill and restart the process.
+> On Fri, 2019-07-19 at 15:32 +0100, Luis Henriques wrote:
+> > Hi,
+> >
+> > I'm sending three "sleeping function called from invalid context" bug
+> > fixes that I had on my TODO for a while.  All of them are ceph_buffer_put
+> > related, and all the fixes follow the same pattern: delay the operation
+> > until the ci->i_ceph_lock is released.
+> >
+> > The first patch simply allows ceph_buffer_put to receive a NULL buffer so
+> > that the NULL check doesn't need to be performed in all the other patches.
+> > IOW, it's not really required, just convenient.
+> >
+> > (Note: maybe these patches should all be tagged for stable.)
+> >
+> > Luis Henriques (4):
+> >   libceph: allow ceph_buffer_put() to receive a NULL ceph_buffer
+> >   ceph: fix buffer free while holding i_ceph_lock in __ceph_setxattr()
+> >   ceph: fix buffer free while holding i_ceph_lock in
+> >     __ceph_build_xattrs_blob()
+> >   ceph: fix buffer free while holding i_ceph_lock in fill_inode()
+> >
+> >  fs/ceph/caps.c              |  5 ++++-
+> >  fs/ceph/inode.c             |  7 ++++---
+> >  fs/ceph/snap.c              |  4 +++-
+> >  fs/ceph/super.h             |  2 +-
+> >  fs/ceph/xattr.c             | 19 ++++++++++++++-----
+> >  include/linux/ceph/buffer.h |  3 ++-
+> >  6 files changed, 28 insertions(+), 12 deletions(-)
 >
-> If the user doesn't kill the monitor process, it seems the
-> poll_work works fine. After killing and restarting the monitor,
-> the poll_work in kernel will never run again due to the wrong
-> value of poll_scheduled. Therefore, we should reset the value
-> as group_init() does after the last trigger is destroyed.
+> This all looks good to me. I'll plan to merge these into the testing
+> branch soon, and tag them for stable.
 >
-> Signed-off-by: Jason Xing <kerneljasonxing@linux.alibaba.com>
+> PS: On a related note (and more of a question for Ilya)...
+>
+> I'm wondering if we get any benefit from having our own ceph_kvmalloc
+> routine. Why are we not better off using the stock kvmalloc routine
+> instead? Forcing a vmalloc just because we've gone above 32k allocation
+> doesn't seem like the right thing to do.
 
-Reviewed-by: Caspar Zhang <caspar@linux.alibaba.com>
+I don't remember off the top of my head and can't check right now.
+Could be that kvmalloc() didn't exist back then.  I'll add that to my
+TODO list.
 
-> ---
->  kernel/sched/psi.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-> index 7acc632..66f4385 100644
-> --- a/kernel/sched/psi.c
-> +++ b/kernel/sched/psi.c
-> @@ -1133,6 +1133,12 @@ static void psi_trigger_destroy(struct kref *ref)
->  	if (kworker_to_destroy) {
->  		kthread_cancel_delayed_work_sync(&group->poll_work);
->  		kthread_destroy_worker(kworker_to_destroy);
-> +		/*
-> +		 * The poll_work should have the chance to be put into the
-> +		 * kthread queue when calling poll syscall next time. So
-> +		 * reset poll_scheduled to zero as group_init() does
-> +		 */
-> +		atomic_set(&group->poll_scheduled, 0);
->  	}
->  	kfree(t);
->  }
-> --
-> 1.8.3.1
->
+Thanks,
 
---
-        Thanks,
-        Caspar
+                Ilya
