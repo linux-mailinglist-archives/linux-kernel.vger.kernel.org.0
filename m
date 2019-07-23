@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C9C37188E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 14:48:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80EA071895
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 14:48:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389925AbfGWMsM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 08:48:12 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:38686 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389876AbfGWMsJ (ORCPT
+        id S2389947AbfGWMsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 08:48:22 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:51156 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389901AbfGWMsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 08:48:09 -0400
-Received: by mail-io1-f69.google.com with SMTP id h4so47186131iol.5
+        Tue, 23 Jul 2019 08:48:10 -0400
+Received: by mail-io1-f70.google.com with SMTP id m26so47081981ioh.17
         for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 05:48:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=t+YWD8TtbpdqccHCrrP62enFfLxTdbJeCf2c+ry+YR4=;
-        b=Mh4Vv9JI7sEDSpqcsxxu8ddbxXZeJCDwSbV4iP/0X2yhaVZVrsHCuD/ZD+rPZOZEAz
-         LjKcdHtJgPPS4TO6Rodx76l5xft3IKnD9H7Lj1tVXr2fMOOzCNZXs35ChVi3tG9nJaAa
-         Pl7wIz5cNaNnZoAljpwDPtuZUEeG0c7XJnm/HslaZm5bupf821fvvQa/89Nh4q7n6v5I
-         kidAlisE87K6T9juMV1iDhT4ssOiMZApnx4NsstFp6qzFNuA0QJuKKc8UptiN2aCdHen
-         GQk2fJOTxtz4bjL/ymfbySyfA7Fh5mhgr8UhYU7zP6xnT1k0Hcr1Kzf6QTP/RyjUEA9a
-         FG/g==
-X-Gm-Message-State: APjAAAXbD/xlvJ9OAMD9Lqsr68Wa+uRxrB2c1E55RrLv0dbg2kB15LWE
-        zGKFqAEUjz4q1CG2RejNEcRGg9Sy0+j1U5mSnZWulWSV3Cke
-X-Google-Smtp-Source: APXvYqyJvgapzmep02x2R/yw6+ozhJuRJ8ynEeOBtTNPKbuYXM0yIdE5zzc69CYIQHIUAKHY/YxLcPWwRIFEhI3F+YRS2nPtyjFg
+        bh=4Spdy1qvNiVkDHr6PaSqfmJPGt94X3/NZ3iZIpTv2C4=;
+        b=dFFWmJnwo+ez714bi7L2haq3Fb+ZFvU5UL/cDgcTV6JGlvdYgF1t58Xcn0sbt2h/CV
+         KHdbcCaOfQt4Tjlvi+/Vu5tSvuR8jTgqswVQ1dqKVfXvzLH3Sz3Mv/r3QZ4kbCDDOVzu
+         NjV3VLw7gHjXNImBgtcAV9+0BnjMlncelvQmOOTy44w4RPa1E1t4tr7BLXn68xsV1opP
+         1jJQEmUB8UWZMX9YG37HjIACNRdqIgj1nZPoYvgEDeur5D30l5jYsQIOzY25TgURFDNs
+         8bYxT0P/8ZTeBkL5rbYsTcMFO5VOz/YFvGMFKyfm5BlzHI2dZrItwG60Gsm1I9Tsth2J
+         H0iQ==
+X-Gm-Message-State: APjAAAVZ3usnOCzgaEerhm2d9AOkUkDOq9UhX3nkq4eXFp0lCcAk9mac
+        LxZMTfCUi1X5sm5Gw04eys/bMsedWvU54978qgpWwOCRvE4W
+X-Google-Smtp-Source: APXvYqxStT9VJHlkE0FtszQ7kpOKM/QGSzQ0nF7Dkzh/N9ZkbvRl5OtJXiW7BtFPihAshZWVreVzQzbG+u5FlJX/8vTYMc0ezyw2
 MIME-Version: 1.0
-X-Received: by 2002:a6b:6f09:: with SMTP id k9mr7633031ioc.223.1563886088898;
- Tue, 23 Jul 2019 05:48:08 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 05:48:08 -0700
+X-Received: by 2002:a5d:8794:: with SMTP id f20mr2216710ion.128.1563886089233;
+ Tue, 23 Jul 2019 05:48:09 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 05:48:09 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cc4fbc058e589a10@google.com>
-Subject: WARNING: ODEBUG bug in smsusb_term_device
-From:   syzbot <syzbot+25ddf1bb485cd9400ca4@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, linux-kernel@vger.kernel.org,
+Message-ID: <000000000000d16cc7058e589afa@google.com>
+Subject: WARNING in ati_remote_sendpacket/usb_submit_urb
+From:   syzbot <syzbot+998261c2ae5932458f6c@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, linux-kernel@vger.kernel.org,
         linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -50,24 +51,28 @@ syzbot found the following crash on:
 
 HEAD commit:    6a3599ce usb-fuzzer: main usb gadget fuzzer driver
 git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=14d4a74c600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14a3cf4c600000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=700ca426ab83faae
-dashboard link: https://syzkaller.appspot.com/bug?extid=25ddf1bb485cd9400ca4
+dashboard link: https://syzkaller.appspot.com/bug?extid=998261c2ae5932458f6c
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13fc4d34600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e7b678600000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12bb21f4600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15cf5c64600000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+25ddf1bb485cd9400ca4@syzkaller.appspotmail.com
+Reported-by: syzbot+998261c2ae5932458f6c@syzkaller.appspotmail.com
 
-smsusb:smsusb_init_device: smscore_start_device(...) failed
+usb 1-1: config 0 interface 7 altsetting 0 endpoint 0xF has invalid  
+maxpacket 368, setting to 64
+usb 1-1: New USB device found, idVendor=0bc7, idProduct=0003,  
+bcdDevice=2f.f7
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
 ------------[ cut here ]------------
-ODEBUG: free active (active state 0) object type: work_struct hint:  
-do_submit_urb+0x0/0x60 /drivers/media/usb/siano/smsusb.c:155
-WARNING: CPU: 1 PID: 22 at lib/debugobjects.c:325  
-debug_print_object+0x160/0x250 /lib/debugobjects.c:325
+usb 1-1: BOGUS urb xfer, pipe 1 != type 3
+WARNING: CPU: 1 PID: 21 at drivers/usb/core/urb.c:477  
+usb_submit_urb+0x1188/0x13b0 /drivers/usb/core/urb.c:477
 Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 22 Comm: kworker/1:1 Not tainted 5.2.0-rc6+ #15
+CPU: 1 PID: 21 Comm: kworker/1:1 Not tainted 5.2.0-rc6+ #15
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Workqueue: usb_hub_wq hub_event
@@ -82,25 +87,19 @@ Call Trace:
   do_error_trap+0x12b/0x1e0 /arch/x86/kernel/traps.c:272
   do_invalid_op+0x32/0x40 /arch/x86/kernel/traps.c:291
   invalid_op+0x14/0x20 /arch/x86/entry/entry_64.S:986
-RIP: 0010:debug_print_object+0x160/0x250 /lib/debugobjects.c:325
-Code: dd e0 16 ba 85 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 bf 00 00 00 48  
-8b 14 dd e0 16 ba 85 48 c7 c7 c0 0c ba 85 e8 db c7 33 ff <0f> 0b 83 05 03  
-6e 86 05 01 48 83 c4 20 5b 5d 41 5c 41 5d c3 48 89
-RSP: 0018:ffff8881d9f8efb8 EFLAGS: 00010082
+RIP: 0010:usb_submit_urb+0x1188/0x13b0 /drivers/usb/core/urb.c:477
+Code: 4d 85 ed 74 2c e8 f8 d3 f4 fd 4c 89 f7 e8 a0 51 1c ff 41 89 d8 44 89  
+e1 4c 89 ea 48 89 c6 48 c7 c7 00 0e f7 85 e8 83 98 ca fd <0f> 0b e9 20 f4  
+ff ff e8 cc d3 f4 fd 4c 89 f2 48 b8 00 00 00 00 00
+RSP: 0018:ffff8881d9eff130 EFLAGS: 00010282
 RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8127ef3d RDI: ffffed103b3f1de9
-RBP: 0000000000000001 R08: ffff8881d9f80000 R09: ffffed103b663ed7
-R10: ffffed103b663ed6 R11: ffff8881db31f6b7 R12: ffffffff86ac9ea0
-R13: ffffffff81187f60 R14: ffffffff88f0e3e8 R15: ffff8881cf581bc0
-  __debug_check_no_obj_freed /lib/debugobjects.c:785 [inline]
-  debug_check_no_obj_freed+0x2a3/0x42e /lib/debugobjects.c:817
-  slab_free_hook /mm/slub.c:1418 [inline]
-  slab_free_freelist_hook /mm/slub.c:1448 [inline]
-  slab_free /mm/slub.c:2994 [inline]
-  kfree+0x101/0x280 /mm/slub.c:3949
-  smsusb_term_device+0xc2/0x120 /drivers/media/usb/siano/smsusb.c:350
-  smsusb_init_device+0x987/0x9d5 /drivers/media/usb/siano/smsusb.c:487
-  smsusb_probe+0x986/0xa24 /drivers/media/usb/siano/smsusb.c:566
+RDX: 0000000000000000 RSI: ffffffff8127ef3d RDI: ffffed103b3dfe18
+RBP: ffff8881d40c7150 R08: ffff8881d9e36000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
+R13: ffff8881c7bb6450 R14: ffff8881d05d3c20 R15: ffff8881d409da00
+  ati_remote_sendpacket+0x1ee/0x540 /drivers/media/rc/ati_remote.c:416
+  ati_remote_initialize /drivers/media/rc/ati_remote.c:797 [inline]
+  ati_remote_probe+0x1254/0x1fda /drivers/media/rc/ati_remote.c:889
   usb_probe_interface+0x305/0x7a0 /drivers/usb/core/driver.c:361
   really_probe+0x281/0x660 /drivers/base/dd.c:509
   driver_probe_device+0x104/0x210 /drivers/base/dd.c:670
@@ -128,8 +127,8 @@ R13: ffffffff81187f60 R14: ffffffff88f0e3e8 R15: ffff8881cf581bc0
   worker_thread+0x96/0xe20 /kernel/workqueue.c:2415
   kthread+0x30b/0x410 /kernel/kthread.c:255
   ret_from_fork+0x24/0x30 /arch/x86/entry/entry_64.S:352
-
-======================================================
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
