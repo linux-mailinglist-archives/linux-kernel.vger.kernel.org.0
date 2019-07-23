@@ -2,99 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DF1871A97
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 16:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6304271A93
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 16:38:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390682AbfGWOj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 10:39:56 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55920 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727819AbfGWOjz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 10:39:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3kwHf4dclNlMO326pKn0fOIoYBdYFcKGvDxeiHwT1Qg=; b=W+hzEGqsxK4WKooZJNtUpklx6
-        FsNDdQXDP8iUrin6WzO2OIhaaUxNOZLl616HN1NigAfst5yrzVAe46qBoj4Dx93r7aLghZi8O69EA
-        x0cPRYRiTNe7HsOeXUWq8ieyYvnID48DYbt0kFIuZQoTltqlRPywX/7rIup42dxsIfJwg=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hpvxJ-0003vk-HF; Tue, 23 Jul 2019 14:39:53 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id CBC242742B59; Tue, 23 Jul 2019 15:39:52 +0100 (BST)
-Date:   Tue, 23 Jul 2019 15:39:52 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
-Subject: Re: [PATCH] regulator: act8865: support regulator-pull-down property
-Message-ID: <20190723143952.GG5365@sirena.org.uk>
-References: <d02d7285ef26f59ce43a3097e342eea081b98444.1563819128.git.mirq-linux@rere.qmqm.pl>
- <20190723105432.GB5365@sirena.org.uk>
- <20190723120938.GC14036@qmqm.qmqm.pl>
+        id S2390670AbfGWOil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 10:38:41 -0400
+Received: from mga17.intel.com ([192.55.52.151]:35444 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730165AbfGWOil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 10:38:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2019 07:38:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,299,1559545200"; 
+   d="scan'208";a="197143796"
+Received: from tthayer-hp-z620.an.intel.com (HELO [10.122.105.146]) ([10.122.105.146])
+  by fmsmga002.fm.intel.com with ESMTP; 23 Jul 2019 07:38:40 -0700
+From:   Thor Thayer <thor.thayer@linux.intel.com>
+Subject: Re: [PATCHv2 2/3] fpga: altera-cvp: Preparation for V2 parts.
+Reply-To: thor.thayer@linux.intel.com
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     richard.gong@linux.intel.com, agust@denx.de,
+        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1563317287-18834-1-git-send-email-thor.thayer@linux.intel.com>
+ <1563317287-18834-3-git-send-email-thor.thayer@linux.intel.com>
+ <20190722005938.GB2583@archbook>
+Message-ID: <6e54c0ee-b8ec-4f95-cf81-70aacc82c72e@linux.intel.com>
+Date:   Tue, 23 Jul 2019 09:40:51 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="L+ofChggJdETEG3Y"
-Content-Disposition: inline
-In-Reply-To: <20190723120938.GC14036@qmqm.qmqm.pl>
-X-Cookie: Avoid contact with eyes.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190722005938.GB2583@archbook>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Moritz,
 
---L+ofChggJdETEG3Y
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 7/21/19 7:59 PM, Moritz Fischer wrote:
+> Thor,
+> 
+> On Tue, Jul 16, 2019 at 05:48:06PM -0500, thor.thayer@linux.intel.com wrote:
+>> From: Thor Thayer <thor.thayer@linux.intel.com>
+>>
+>> In preparation for adding newer V2 parts that use a FIFO,
+>> reorganize altera_cvp_chk_error() and change the write
+>> function to block based.
+>> V2 parts have a block size matching the FIFO while older
+>> V1 parts write a 32 bit word at a time.
+>>
+>> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+>> ---
+>> v2 Remove inline function declaration
+>>     Reverse Christmas Tree format for local variables
+>> ---
+>>   drivers/fpga/altera-cvp.c | 72 ++++++++++++++++++++++++++++++-----------------
+>>   1 file changed, 46 insertions(+), 26 deletions(-)
+>>
+>> diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+>> index b78c90580071..37419d6b9915 100644
+>> --- a/drivers/fpga/altera-cvp.c
+>> +++ b/drivers/fpga/altera-cvp.c
+>> @@ -140,6 +140,41 @@ static int altera_cvp_wait_status(struct altera_cvp_conf *conf, u32 status_mask,
+>>   	return -ETIMEDOUT;
+>>   }
+>>   
+>> +static int altera_cvp_chk_error(struct fpga_manager *mgr, size_t bytes)
+>> +{
+>> +	struct altera_cvp_conf *conf = mgr->priv;
+>> +	u32 val;
+>> +
+>> +	/* STEP 10 (optional) - check CVP_CONFIG_ERROR flag */
+>> +	altera_read_config_dword(conf, VSE_CVP_STATUS, &val);
+> Same as in the other email, why can we ignore return values here. I
+> think the original code probably did that already.
 
-On Tue, Jul 23, 2019 at 02:09:38PM +0200, Micha=C5=82 Miros=C5=82aw wrote:
-> On Tue, Jul 23, 2019 at 11:54:32AM +0100, Mark Brown wrote:
-> > On Mon, Jul 22, 2019 at 08:13:29PM +0200, Micha=C5=82 Miros=C5=82aw wro=
-te:
-> > > AC8865 has internal 1.5k pull-down resistor that can be enabled when =
-LDO
-> > > is shut down.
+Yes, I actually didn't make any changes to this function. You can see I 
+moved it from below since it is used in the following function.
 
-> > This changelog...
+I'm not checking the return code from any of the read/write functions 
+since the original driver didn't. Would you prefer I check and issue a 
+warning?
 
-> > >  static const struct regulator_ops act8865_ldo_ops =3D {
-> > > +	.list_voltage		=3D regulator_list_voltage_linear_range,
-> > > +	.map_voltage		=3D regulator_map_voltage_linear_range,
-> > > +	.get_voltage_sel	=3D regulator_get_voltage_sel_regmap,
-> > > +	.set_voltage_sel	=3D regulator_set_voltage_sel_regmap,
+Thanks for reviewing!
 
-> > ...doesn't obviously match this code change which looks to be
-> > implementing voltage setting (as well as the pull down stuff but still).
+>> +	if (val & VSE_CVP_STATUS_CFG_ERR) {
+>> +		dev_err(&mgr->dev, "CVP_CONFIG_ERROR after %zu bytes!\n",
+>> +			bytes);
+>> +		return -EPROTO;
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>> +static int altera_cvp_send_block(struct altera_cvp_conf *conf,
+>> +				 const u32 *data, size_t len)
+>> +{
+>> +	u32 mask, words = len / sizeof(u32);
+>> +	int i, remainder;
+>> +
+>> +	for (i = 0; i < words; i++)
+>> +		conf->write_data(conf, *data++);
+>> +
+>> +	/* write up to 3 trailing bytes, if any */
+>> +	remainder = len % sizeof(u32);
+>> +	if (remainder) {
+>> +		mask = BIT(remainder * 8) - 1;
+>> +		if (mask)
+>> +			conf->write_data(conf, *data & mask);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static int altera_cvp_teardown(struct fpga_manager *mgr,
+>>   			       struct fpga_image_info *info)
+>>   {
+>> @@ -262,39 +297,29 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
+>>   	return 0;
+>>   }
+>>   
+>> -static inline int altera_cvp_chk_error(struct fpga_manager *mgr, size_t bytes)
+>> -{
+>> -	struct altera_cvp_conf *conf = mgr->priv;
+>> -	u32 val;
+>> -
+>> -	/* STEP 10 (optional) - check CVP_CONFIG_ERROR flag */
+>> -	altera_read_config_dword(conf, VSE_CVP_STATUS, &val);
+>> -	if (val & VSE_CVP_STATUS_CFG_ERR) {
+>> -		dev_err(&mgr->dev, "CVP_CONFIG_ERROR after %zu bytes!\n",
+>> -			bytes);
+>> -		return -EPROTO;
+>> -	}
+>> -	return 0;
+>> -}
+>> -
+>>   static int altera_cvp_write(struct fpga_manager *mgr, const char *buf,
+>>   			    size_t count)
+>>   {
+>>   	struct altera_cvp_conf *conf = mgr->priv;
+>> +	size_t done, remaining, len;
+>>   	const u32 *data;
+>> -	size_t done, remaining;
+>>   	int status = 0;
+>> -	u32 mask;
+>>   
+>>   	/* STEP 9 - write 32-bit data from RBF file to CVP data register */
+>>   	data = (u32 *)buf;
+>>   	remaining = count;
+>>   	done = 0;
+>>   
+>> -	while (remaining >= 4) {
+>> -		conf->write_data(conf, *data++);
+>> -		done += 4;
+>> -		remaining -= 4;
+>> +	while (remaining) {
+>> +		if (remaining >= sizeof(u32))
+>> +			len = sizeof(u32);
+>> +		else
+>> +			len = remaining;
+>> +
+>> +		altera_cvp_send_block(conf, data, len);
+>> +		data++;
+>> +		done += len;
+>> +		remaining -= len;
+>>   
+>>   		/*
+>>   		 * STEP 10 (optional) and STEP 11
+>> @@ -312,11 +337,6 @@ static int altera_cvp_write(struct fpga_manager *mgr, const char *buf,
+>>   		}
+>>   	}
+>>   
+>> -	/* write up to 3 trailing bytes, if any */
+>> -	mask = BIT(remaining * 8) - 1;
+>> -	if (mask)
+>> -		conf->write_data(conf, *data & mask);
+>> -
+>>   	if (altera_cvp_chkcfg)
+>>   		status = altera_cvp_chk_error(mgr, count);
+>>   
+>> -- 
+>> 2.7.4
+>>
+> Cheers,
+> Moritz
+> 
 
-> It's just an diff-artifact of changing act8865_ldo_ops meaning. It's
-> now a copy of act8865_ops with .set_pull_down added. Previous
-> act8865_ldo_ops is act8865_fixed_ldo_ops now.
-
-If there's that big a refactoring it probably warrants a separate patch,
-and it definitely should be called out in the changelog.  Like I say the
-changbelog does not describe the change at all well.
-
---L+ofChggJdETEG3Y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl03HDgACgkQJNaLcl1U
-h9DXWgf+McinK+M4V+1QaBFtsXFUXStLZ53MAvnbruJJP+pXpNr05ZHhFEfrSiwY
-wiQPc/lKK0eOPpAp5azy0sRS6cvzdrD0tHWG1rsfE94WlH2rA73rZZ7jCAb4A0nL
-m38lc/J+3RNe/8CPU/wcDMUh7plJUJ6JafrOrOhQIi979NJpAvjps6nfaXsTmMow
-6Znn6XpSVS8TMRh12ZwBYoX4lJpmejEn2/RvP/j7dNovLBMebYk5EAoaueFNGjwt
-nSvG6gywLZa/7upxUOzwSvJPDuKm4ciLlRoXvjz+gQubsVlPJDXKeMr5JOtL1d//
-mOvualWBLUuX8jwDZvL/QLyzrLuF2Q==
-=QgBn
------END PGP SIGNATURE-----
-
---L+ofChggJdETEG3Y--
