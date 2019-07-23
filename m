@@ -2,96 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9720671EE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 20:16:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF0E871EE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 20:17:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403822AbfGWSQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 14:16:44 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:39494 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403792AbfGWSQi (ORCPT
+        id S2388702AbfGWSRY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 14:17:24 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:38441 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730906AbfGWSRY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 14:16:38 -0400
-Received: by mail-vs1-f65.google.com with SMTP id u3so29480974vsh.6
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 11:16:37 -0700 (PDT)
+        Tue, 23 Jul 2019 14:17:24 -0400
+Received: by mail-ua1-f68.google.com with SMTP id j2so17334427uaq.5
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 11:17:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=MSkiUPoJaljsYuDHJ6lt9nP9z02pxAFNV5R95iqHyrI=;
-        b=OvduF8VyLrORhFzZ1ICw0D8FhVCvU2bPRyb4Ovqq9bl4q+R6wqLjH6WHPV55cdEiI5
-         zM+CE5EdZxz0bq9V7zR5EFyG0WHBWsoIopM6nOO/EJ33ylQtjloy+c6HAjHpiwbtd6S/
-         7mTniaqNbKTBlMerJ3blS4uYtKo9NpbFYTNao=
+        bh=82d9c75d2N5edHNgI510WWQsvw//3O8L7Akked9Pdus=;
+        b=hXReIxZrRnD1TqXU0vlEWk6jzlmDLpgM0IMU0/QsxPFfyftBuYsmhFuHJxqiuTFAUi
+         prSYvMNSOyATO9LAspoPhPCRFVKo79B9UfqDzaVh3FsOYxirUViCGTJE9C7FnzyyNnAp
+         kqXyFHIHz04iGyjQBM79sfXLnwPTIghYjsud4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=MSkiUPoJaljsYuDHJ6lt9nP9z02pxAFNV5R95iqHyrI=;
-        b=F3yjW9Kntr4p/BixPDwoAJAtvtZGjG/mBP3afXMyYAJEWHjifJJCNAN0L20Kya8vQ0
-         b7lyUwrVD8bJUoB75rWpdOIDe6MR1OdKbqr80wdAMaeCz1/AD+cq7RidxPGsYQG4Grdd
-         dJrLI0DN8/T6bUowlcUo/8qYiqkPGqTjq5NUOn18e255T1/RwRzTXtaj1vCv5ijMPE2O
-         jsrQwQOR8P0P0R09nnlsL/sbwglpl7d/VyPfJJq17yhjRDt/DRujZ3PUao4OZj03jxSh
-         pj+0iOfsBmvm8XJJsVULCIPJgGE8Wn3fjXetlTdbkhUQwcidWqmxj7LW/UwiFUPNryJY
-         a6IA==
-X-Gm-Message-State: APjAAAUmYxdNEWASrxBDA7tBhaj9aZdnYYM8MJmFrrdlEcxntJrcOtdx
-        yi9vFrRQ/58fgri8MbeCB4GbANUGQBGmirOmK13fpg==
-X-Google-Smtp-Source: APXvYqyIN5bGa/H7JHUbriHAu46jJ6x4alh+YsFWKmuC9+cT9DqsufkF9rej2EVnd6D+auRAci555vkg8ezzzLV9Bds=
-X-Received: by 2002:a67:c496:: with SMTP id d22mr9422716vsk.205.1563905797030;
- Tue, 23 Jul 2019 11:16:37 -0700 (PDT)
+        bh=82d9c75d2N5edHNgI510WWQsvw//3O8L7Akked9Pdus=;
+        b=o7kevoVBZIYqqk4SPzU0/7vWjPoGVjetAWZsvaJXMCfL6N3rrhdzK81szDP8LBitnR
+         VDvOimrwMI0Ay6jfo9J7T+v044TEBggpP9WqKWQS4YqqtkhH6jTdXxB2kA3H1k/cq2BU
+         dKOOVRl6YJhwpHWMKrM8HusI6UMoTz2bxLT/diXM6r5O5uiyiLED7Fjp+MOMs4InZ3iV
+         uUwkfV9TJuA/7SYjVWBeAzfzW8dxmwn/vrEdtThIR5vNIydPWN8du9fFqSDCub2S+Yd9
+         lRIiZlbgAy+F5GEWp72qqV+L1P2I7DqVNBJbqt/5MUsEiNcgB3JDbpciBF9PJWpUpN+b
+         Y7fw==
+X-Gm-Message-State: APjAAAVlPEuuzCPD2VnsBMwiL9kqDm5h1Xr1ES4imlTJ9WsGHxdna/qv
+        BoOKvW5f6f9+tR/mPOCrWc35/vc9KXWlRcaqaZOaHA==
+X-Google-Smtp-Source: APXvYqyYqdC0VtXJ1fmDprfj3PHJhgNn1E+lUKXbEwOkrnpKi3XLMDgYKQw8xVEM+dv1QiaoM9bLy9iF/y4lCSZphUY=
+X-Received: by 2002:ab0:4993:: with SMTP id e19mr49852000uad.2.1563905843320;
+ Tue, 23 Jul 2019 11:17:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190722161524.23192-1-junxiao.bi@oracle.com>
-In-Reply-To: <20190722161524.23192-1-junxiao.bi@oracle.com>
+References: <20190720215840.23831-1-colin.king@canonical.com>
+In-Reply-To: <20190720215840.23831-1-colin.king@canonical.com>
 From:   Sumit Saxena <sumit.saxena@broadcom.com>
-Date:   Tue, 23 Jul 2019 23:46:25 +0530
-Message-ID: <CAL2rwxoGqznXyi_bdV-ODoHE2Mhv6gT=PH=3jXkQXPnUJrEUNw@mail.gmail.com>
-Subject: Re: [PATCH RESEND] scsi: megaraid_sas: fix panic on loading firmware crashdump
-To:     Junxiao Bi <junxiao.bi@oracle.com>
-Cc:     "PDL,MEGARAIDLINUX" <megaraidlinux.pdl@broadcom.com>,
+Date:   Tue, 23 Jul 2019 23:47:11 +0530
+Message-ID: <CAL2rwxp_MNBiouBmAEXidEVxoLmb74dZWbGTPyTazH+MRe_sFg@mail.gmail.com>
+Subject: Re: [PATCH][next] scsi: megaraid_sas: fix spelling mistake
+ "megarid_sas" -> "megaraid_sas"
+To:     Colin King <colin.king@canonical.com>
+Cc:     Kashyap Desai <kashyap.desai@broadcom.com>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "PDL,MEGARAIDLINUX" <megaraidlinux.pdl@broadcom.com>,
         Linux SCSI List <linux-scsi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
-        Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 9:45 PM Junxiao Bi <junxiao.bi@oracle.com> wrote:
+On Sun, Jul 21, 2019 at 3:28 AM Colin King <colin.king@canonical.com> wrote:
 >
-> While loading fw crashdump in function fw_crash_buffer_show(),
-> left bytes in one dma chunk was not checked, if copying size
-> over it, overflow access will cause kernel panic.
+> From: Colin Ian King <colin.king@canonical.com>
 >
-> Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
+> Fix spelling mistake in kernel warning message and replace
+> printk with with pr_warn.
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
 > ---
->  drivers/scsi/megaraid/megaraid_sas_base.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/scsi/megaraid/megaraid_sas_base.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
 > diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-> index 80ab9700f1de..3eef0858fa8e 100644
+> index b2339d04a700..2590746c81e3 100644
 > --- a/drivers/scsi/megaraid/megaraid_sas_base.c
 > +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-> @@ -3153,6 +3153,7 @@ fw_crash_buffer_show(struct device *cdev,
->                 (struct megasas_instance *) shost->hostdata;
->         u32 size;
->         unsigned long dmachunk = CRASH_DMA_BUF_SIZE;
-> +       unsigned long chunk_left_bytes;
->         unsigned long src_addr;
->         unsigned long flags;
->         u32 buff_offset;
-> @@ -3176,6 +3177,8 @@ fw_crash_buffer_show(struct device *cdev,
+> @@ -8763,7 +8763,7 @@ static int __init megasas_init(void)
+>
+>         if ((event_log_level < MFI_EVT_CLASS_DEBUG) ||
+>             (event_log_level > MFI_EVT_CLASS_DEAD)) {
+> -               printk(KERN_WARNING "megarid_sas: provided event log level is out of range, setting it to default 2(CLASS_CRITICAL), permissible range is: -2 to 4\n");
+> +               pr_warn("megaraid_sas: provided event log level is out of range, setting it to default 2(CLASS_CRITICAL), permissible range is: -2 to 4\n");
+>                 event_log_level = MFI_EVT_CLASS_CRITICAL;
 >         }
 >
->         size = (instance->fw_crash_buffer_size * dmachunk) - buff_offset;
-> +       chunk_left_bytes = dmachunk - (buff_offset % dmachunk);
-> +       size = (size > chunk_left_bytes) ? chunk_left_bytes : size;
->         size = (size >= PAGE_SIZE) ? (PAGE_SIZE - 1) : size;
->
->         src_addr = (unsigned long)instance->crash_buf[buff_offset / dmachunk] +
 > --
-> 2.17.1
+> 2.20.1
 >
