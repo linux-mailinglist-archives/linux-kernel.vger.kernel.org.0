@@ -2,128 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAFAF7170A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 13:29:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82C4E71711
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 13:29:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389476AbfGWL3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 07:29:30 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46410 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727826AbfGWL30 (ORCPT
+        id S2389493AbfGWL3n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 07:29:43 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:42065 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728671AbfGWL3k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 07:29:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Gc5GLXyF8cKvljRTkgH1UFhNedj29JjDLTkvJDEc7W0=; b=xuXgz1dXWP4t
-        ClDwPye7sG3zp5ovMYhmDPi/WooqCY3oP/c0ZrHG+LsPnZMNABCTAMxvuqWcJwEhzYNBhjfaAk8Ti
-        FvypW+1YDmqFjWDRhtxv0IgACyLnZ0YcWYPyCTEGGVMJgnkPaYTSvKNY6Z/fLOri18vFBEhyc97fO
-        tpNuE=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hpsyw-0003Lw-3U; Tue, 23 Jul 2019 11:29:22 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 859742742B59; Tue, 23 Jul 2019 12:29:21 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: stm32-booster: Remove .min_uV and .list_voltage for fixed regulator" to the regulator tree
-In-Reply-To: <20190723014102.25103-1-axel.lin@ingics.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190723112921.859742742B59@ypsilon.sirena.org.uk>
-Date:   Tue, 23 Jul 2019 12:29:21 +0100 (BST)
+        Tue, 23 Jul 2019 07:29:40 -0400
+Received: by mail-qt1-f195.google.com with SMTP id h18so41496291qtm.9;
+        Tue, 23 Jul 2019 04:29:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KXa/pdiz35ep+mLCr28bqiNqSRHbUGvdnUMCdkRJY1Y=;
+        b=cUyin+8NmP6Kz7ItookwxAVzJLEtQIAgc2TAZ6DfyUGnHm9QQKwwrEFQTHwgAM9MNl
+         buGfYjyB8QYShPYlJBW4Xn9h2EL/3y0o6PpKiBFPc8LuutzTaOTBq9vwe9CB4ZGUkR3O
+         TLEZJvVFKVRMqSyLC+bzQw5eNUb390atQ/6Bg+ldwGE8Oww9YV/8oAoebbgQFeFifh9X
+         UyvHMYnRy8jmYoljcp2b2oJaeZCDF6gVpRxAE8r5JnoX1fnRuatMecYoAOlPO6wabHH0
+         siT5vEvgho9+EhtYUprlf9NA860JhSL0sIfwBdttDWsXfHkAs4R+Wov6n/vfORBKbbe1
+         3NLg==
+X-Gm-Message-State: APjAAAWjAl6kzYMiSu//FhjSAj4vyLiMRPZ3CaphbgQWIL0g+XCLkJPV
+        XcDBR4Q/IX6vrZBFM9o9vSCwj8qpPMTDzaMzyeg=
+X-Google-Smtp-Source: APXvYqx1EU51FbX6+2XlA6KUG+F0dUz/vT1YeDqdoz4SzLZTi5S2qTafHd5AE2c3/8DfMvsxeTXs4OM5qOYjY9x4kYQ=
+X-Received: by 2002:a0c:ba2c:: with SMTP id w44mr53689627qvf.62.1563881379713;
+ Tue, 23 Jul 2019 04:29:39 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190708125554.3863901-1-arnd@arndb.de> <543fa599-8ea1-dbc8-d94a-f90af2069edd@mellanox.com>
+ <535ebf16-c523-0799-3ffe-6cfbeee3ac57@mellanox.com>
+In-Reply-To: <535ebf16-c523-0799-3ffe-6cfbeee3ac57@mellanox.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 23 Jul 2019 13:29:23 +0200
+Message-ID: <CAK8P3a2z=h02_1ybRzL1DpW26-Qn-v22=Fdf_Z_C02fYg9OFgQ@mail.gmail.com>
+Subject: Re: [PATCH] [net-next] net/mlx5e: xsk: dynamically allocate mlx5e_channel_param
+To:     Maxim Mikityanskiy <maximmi@mellanox.com>
+Cc:     Saeed Mahameed <saeedm@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "xdp-newbies@vger.kernel.org" <xdp-newbies@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Tue, Jul 23, 2019 at 1:21 PM Maxim Mikityanskiy <maximmi@mellanox.com> wrote:
+> On 2019-07-08 18:16, Maxim Mikityanskiy wrote:
+> > On 2019-07-08 15:55, Arnd Bergmann wrote:
+> >> -    mlx5e_build_xsk_cparam(priv, params, xsk, &cparam);
+> >> +    cparam = kzalloc(sizeof(*cparam), GFP_KERNEL);
+> >
+> > Similar code in mlx5e_open_channels (en_main.c) uses kvzalloc. Although
+> > the struct is currently smaller than a page anyway, and there should be
+> > no difference in behavior now, I suggest using the same alloc function
+> > to keep code uniform.
+> >
+> >>      /* Create a dedicated SQ for posting NOPs whenever we need an IRQ to be
+> >>       * triggered and NAPI to be called on the correct CPU.
+> >>       */
+> >> -    err = mlx5e_open_icosq(c, params, &cparam.icosq, &c->xskicosq);
+> >> +    err = mlx5e_open_icosq(c, params, &cparam->icosq, &c->xskicosq);
+> >>      if (unlikely(err))
+> >>              goto err_close_icocq;
+> >>
+> >
+> > Here is kfree missing. It's a memory leak in the good path.
+>
+> Arnd, I'm going to take over your patch and respin it, addressing my own
+> comments, because it's been quite a while, and we want to have this fix.
+>
+> Thanks for spotting it.
 
-   regulator: stm32-booster: Remove .min_uV and .list_voltage for fixed regulator
+Thanks for taking care of it now. I was planning to do a respin, but
+the reply got lost in the depth of my inbox so I forgot about it.
 
-has been applied to the regulator tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.4
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 03b77f0b8587a9a0f9d2f1503da3d120aa6fe730 Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Tue, 23 Jul 2019 09:41:02 +0800
-Subject: [PATCH] regulator: stm32-booster: Remove .min_uV and .list_voltage
- for fixed regulator
-
-Setting .n_voltages = 1 and .fixed_uV is enough for fixed regulator,
-remove the redundant .min_uV and .list_voltage settings.
-
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Acked-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Link: https://lore.kernel.org/r/20190723014102.25103-1-axel.lin@ingics.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/stm32-booster.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/regulator/stm32-booster.c b/drivers/regulator/stm32-booster.c
-index 2a897666c650..03f162ffd144 100644
---- a/drivers/regulator/stm32-booster.c
-+++ b/drivers/regulator/stm32-booster.c
-@@ -20,7 +20,6 @@
- #define STM32MP1_SYSCFG_EN_BOOSTER_MASK	BIT(8)
- 
- static const struct regulator_ops stm32h7_booster_ops = {
--	.list_voltage	= regulator_list_voltage_linear,
- 	.enable		= regulator_enable_regmap,
- 	.disable	= regulator_disable_regmap,
- 	.is_enabled	= regulator_is_enabled_regmap,
-@@ -31,7 +30,6 @@ static const struct regulator_desc stm32h7_booster_desc = {
- 	.supply_name = "vdda",
- 	.n_voltages = 1,
- 	.type = REGULATOR_VOLTAGE,
--	.min_uV = 3300000,
- 	.fixed_uV = 3300000,
- 	.ramp_delay = 66000, /* up to 50us to stabilize */
- 	.ops = &stm32h7_booster_ops,
-@@ -53,7 +51,6 @@ static int stm32mp1_booster_disable(struct regulator_dev *rdev)
- }
- 
- static const struct regulator_ops stm32mp1_booster_ops = {
--	.list_voltage	= regulator_list_voltage_linear,
- 	.enable		= stm32mp1_booster_enable,
- 	.disable	= stm32mp1_booster_disable,
- 	.is_enabled	= regulator_is_enabled_regmap,
-@@ -64,7 +61,6 @@ static const struct regulator_desc stm32mp1_booster_desc = {
- 	.supply_name = "vdda",
- 	.n_voltages = 1,
- 	.type = REGULATOR_VOLTAGE,
--	.min_uV = 3300000,
- 	.fixed_uV = 3300000,
- 	.ramp_delay = 66000,
- 	.ops = &stm32mp1_booster_ops,
--- 
-2.20.1
-
+      Arnd
