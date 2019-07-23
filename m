@@ -2,73 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4594B72042
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 21:56:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD87D7204C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 22:02:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391749AbfGWT44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 15:56:56 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:44969 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730398AbfGWT4z (ORCPT
+        id S2391772AbfGWUC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 16:02:56 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:35858 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbfGWUC4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 15:56:55 -0400
-Received: by mail-oi1-f194.google.com with SMTP id e189so33155207oib.11;
-        Tue, 23 Jul 2019 12:56:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1AFUHPs3ukSumhoc36+Xs1ZNvtbenSv/4Q8Xj7E9MYM=;
-        b=PtdD/d1uwfy+AGDVmKWOA8frDABiK2A++eRyYAVYStYpKoEWO2MA4dEA9ma/lT1l79
-         YkRZTu2r+noblhGiQQjjFXO6na8fz4GLS7CHZeZK+CSQQCMkIGn3mPhq386VtrkuxkLV
-         mq/fLFxurYfJC9h8r3A6xlevEJRLDzScem1/uxlXjpddnEVGFSIxDs1zLHRuOjXyxl/7
-         CNqhVXT0hjKxfndknoi1FZWthsMAoLgqendB5zfaig7Ae7eE2jTyXEPkyrMpqtuI8wd+
-         2SeD0E8vVvpqEx3tBkyWniwzYTPHmH/aLQtXYE/zmq5kJOgIci2wl42P4PrwmDQnbJsI
-         8Drg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1AFUHPs3ukSumhoc36+Xs1ZNvtbenSv/4Q8Xj7E9MYM=;
-        b=eypH2oEEPHzUvG68Za2DluMrXcRT61+eozbP80JTxW0XRwnd3+uySoSwbtUTKTkeBg
-         snCASeTz5/bwWbB6bCii9qlLQLe1uGYf9RMr//ezPC+nIBq6Usj+psLsxCaf665SuUMj
-         J/K9s58SWkwk3hh2w+haXQLtnsDThIy5SNccgrlm2gdveHa9pQsOoauS1F165skW3bJ6
-         DDC3RO41flkaXU6/2UWzaMmaEgYB4auofqjU++RpOia5GutlV6ATyEYcUIO7Abh3hNrK
-         uxXE6NO8pClBZ/n3ss2hou+pRHmnbjBV2J5LFcs0bB42ttQr6ptG5KOKQGZAazCkgwyn
-         Ngzg==
-X-Gm-Message-State: APjAAAWeTBBKx6l7iarKXBWnW/s6mSfSMgy82UdiCeWwaDmN1IzoIyUf
-        +5FTpwVanpA+QwSxfJUezochBxIeWTt96aaKC1IJNRME
-X-Google-Smtp-Source: APXvYqzQoRR4HmY0uZaFXa1cGF2QLM7M5Wd2+IL8+k4pMdzEWKP3+vqYccZqRa0yFdkE3KLi2sQWXeCqITjQ+r99uKw=
-X-Received: by 2002:aca:4ad2:: with SMTP id x201mr38072383oia.129.1563911814391;
- Tue, 23 Jul 2019 12:56:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190718093623.23598-1-jbrunet@baylibre.com>
-In-Reply-To: <20190718093623.23598-1-jbrunet@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 23 Jul 2019 21:56:43 +0200
-Message-ID: <CAFBinCBefuCvTL0E_zf=EQDLyTjE5sQD-TkHNj2vQ2UOCsmtkA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: meson8b: add ethernet fifo sizes
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 23 Jul 2019 16:02:56 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1EA91153BA91B;
+        Tue, 23 Jul 2019 13:02:56 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 13:02:55 -0700 (PDT)
+Message-Id: <20190723.130255.1457219322916298145.davem@davemloft.net>
+To:     hslester96@gmail.com
+Cc:     3chas3@gmail.com, linux-atm-general@lists.sourceforge.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] atm: Use dev_get_drvdata
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190723081313.18552-1-hslester96@gmail.com>
+References: <20190723081313.18552-1-hslester96@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 23 Jul 2019 13:02:56 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 11:36 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
->
-> If unspecified in DT, the fifo sizes are not automatically detected by
-> the dwmac1000 dma driver and the reported fifo sizes default to 0.
-> Because of this, flow control will be turned off on the device.
->
-> Add the fifo sizes provided by the datasheet in the SoC in DT so
-> flow control may be enabled if necessary.
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Chuhong Yuan <hslester96@gmail.com>
+Date: Tue, 23 Jul 2019 16:13:14 +0800
 
-I wonder if this "fixes" some of the performance issues on Odroid-C1
-testing this is now on my TODO-list for the weekend
+> Instead of using to_pci_dev + pci_get_drvdata,
+> use dev_get_drvdata to make code simpler.
+> 
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+
+Applied.
