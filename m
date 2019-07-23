@@ -2,57 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CAD971654
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 12:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69F6571656
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 12:40:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389160AbfGWKj6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 06:39:58 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35662 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbfGWKj6 (ORCPT
+        id S2389166AbfGWKkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 06:40:23 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34798 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727381AbfGWKkX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 06:39:58 -0400
-Received: by mail-pf1-f193.google.com with SMTP id u14so18955420pfn.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 03:39:58 -0700 (PDT)
+        Tue, 23 Jul 2019 06:40:23 -0400
+Received: by mail-pg1-f193.google.com with SMTP id n9so13006787pgc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 03:40:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=Di0g6EEgkUa8jtL/xEkGliBvl02Xk0g05krGCQwF+C0=;
-        b=FwOqdcTPuWHslyIqWCg0jHZvRxaESjUl1kVvzINTDBMD1Pz/t53rxJBG58X7IdmmWL
-         sGPB4oaAXM8veLfN8/TaJNN+KxLHZkIOAR5uX4uMCbJ9LDlpub0BP6KTl6wxxfmqcUe/
-         0LJHP+CtHakkxv+3kGR0t0gqiArmXgtJezB9n6LryYiAW8ZKDk38hbqSOMgZyZwZN2H4
-         G9QmrsvgHnufM9U8QHoa7FWJCypNLOPhGtDJRp3efrzHoDH+otqKwqbdKcrmXHv+768T
-         KGU9mla+HYsr2XwDu2bMhs4PCzy876fa0Ik209o4naJVpmHOklGN6E9wmwEgjEHWLpX+
-         KWTw==
+        bh=PK0IBZUbQHnyOZDtUqj2prrcS6SHRWpLkmBXJgDEKWo=;
+        b=JJEGgQaULMIyBtsF9Zmew5QKL6iwU5DJsa+yzl56UpjBCSjzgnjbTm1D8sUg4zA1fo
+         Rqvm5clXYIpVWuG3UvJ9Guhup1h3dWDqi38rpeBx/FQY9fMC+0kHJ/8HCq7soKQOzCxx
+         nwgn3YjizCPCQ+Qi1XLpVkmwNITnKWINbFnzbGrSoayK4iQeWX6AjULlyQGLwmHCQtVV
+         amlHgx7MOvg5GCeXx3OWz4VxnjAET5qyqL22PCCiUT9Jg/TO7ESxfPptPJhKRwX6ycIF
+         GmOZ/RysLc2ZGHYfZv3DeeT+V/3DXyPwVvAGE2FKJKioGkfe9H/X7N7azeOk2u9XISBs
+         q4Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=Di0g6EEgkUa8jtL/xEkGliBvl02Xk0g05krGCQwF+C0=;
-        b=OvXpFo3SZ28+8i8LBapA3N8jIRJsEMUoQ5vVmqextRkCeLVQx8FQdcLYBeub6Yh8Kw
-         bX38Y1M8CBtRorYFzOR5MWgH+eb2TrVfkxSOZIu/47gVmWgPdViEYIlBJ0slFsPvyMIB
-         9zmnIVY5y6Xo27K38+gmzafyGcYMW7aTjM4ImfA/NAlPT0zOCIyL44pLeZU2tOfPFOAl
-         M6LUhJCDHyRk/mqztRc8/gVrTYtsVVFVz2Os+GL2fG7yB3/1pGz2rQyJbgWkXehotxRr
-         JVid3xVb2ixM3R1REhAHe0CFenqbjeO7uddO/clTgpfAZE1Fl5HI22aSPXOl4a569gee
-         o1bQ==
-X-Gm-Message-State: APjAAAVNIKGsGqZbKdBOjXIOW3k5MH0HXaAjZPD+0paycrFb3LYdWp/T
-        vUqlHbgUZ4Sklt+IaiuQaBU=
-X-Google-Smtp-Source: APXvYqy7Kjo9yItNbo9h6YPST0TITXU2NUUbMtA2mboZtD4dEoR9nnh4uwzcJcZLdh/lBbE4uEC2vQ==
-X-Received: by 2002:a63:20d:: with SMTP id 13mr64729846pgc.253.1563878397922;
-        Tue, 23 Jul 2019 03:39:57 -0700 (PDT)
+        bh=PK0IBZUbQHnyOZDtUqj2prrcS6SHRWpLkmBXJgDEKWo=;
+        b=ZapIzNnsPz5hp+GYwcM4AYwCJ6wehrpANu3ClVIp9lDxydOC5IKHBGUmEOYIerc+QM
+         d2XvEVhJWh1RdynS8Nu8uBrC06S07VAenmuwqc9OPDKNZuOTaBbgMvaTQNN7Nb0UCLgU
+         mtGPb6TA6X3wvKtwVHvvkpgHfpaZ5Zu+3pulZ759pxLX/io0b2zSL6pJXqbRsNqcp6J4
+         r0DcVXcvzSjqXOuWCXflka5DLNkygT9gMiS1bgGLJhDbikfi8+Bv8IU2zXiEBQ4sbqpu
+         W2uGBicRWobYc+EwqBraNxKtvFjQcjVOel8MZR96LWb0V3x7cd5YFigIvoDNlWTs92Lf
+         6Mtg==
+X-Gm-Message-State: APjAAAWVCLR6PmX4G+dycdrQyAa4XvCT71+duzhXtxlzQTSZyLoVd6rf
+        5XgRGJEOQBbKTnMCy1DDn18=
+X-Google-Smtp-Source: APXvYqxNi+SizBMl+BpgOlGEa4wEMzr8MJSUWRsgRL/2x6RHFUOsxCW0h9hrMpeXnwK8haoe2AWQXQ==
+X-Received: by 2002:a17:90a:1a45:: with SMTP id 5mr83413685pjl.43.1563878422662;
+        Tue, 23 Jul 2019 03:40:22 -0700 (PDT)
 Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id x9sm20574868pgp.75.2019.07.23.03.39.55
+        by smtp.gmail.com with ESMTPSA id c8sm47990214pjq.2.2019.07.23.03.40.19
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 03:39:57 -0700 (PDT)
+        Tue, 23 Jul 2019 03:40:22 -0700 (PDT)
 From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
+Cc:     Dave Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] drm/nouveau: Use dev_get_drvdata where possible
-Date:   Tue, 23 Jul 2019 18:39:39 +0800
-Message-Id: <20190723103938.4021-1-hslester96@gmail.com>
+Subject: [PATCH] drm/qxl: Use dev_get_drvdata where possible
+Date:   Tue, 23 Jul 2019 18:40:00 +0800
+Message-Id: <20190723103959.4078-1-hslester96@gmail.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -67,32 +70,32 @@ use dev_get_drvdata to make code simpler.
 
 Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_drm.c | 6 ++----
+ drivers/gpu/drm/qxl/qxl_drv.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index 7c2fcaba42d6..23203dae2137 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -883,16 +883,14 @@ nouveau_pmops_resume(struct device *dev)
- static int
- nouveau_pmops_freeze(struct device *dev)
+diff --git a/drivers/gpu/drm/qxl/qxl_drv.c b/drivers/gpu/drm/qxl/qxl_drv.c
+index f33e349c4ec5..af1e2b377945 100644
+--- a/drivers/gpu/drm/qxl/qxl_drv.c
++++ b/drivers/gpu/drm/qxl/qxl_drv.c
+@@ -206,16 +206,14 @@ static int qxl_pm_resume(struct device *dev)
+ 
+ static int qxl_pm_thaw(struct device *dev)
  {
 -	struct pci_dev *pdev = to_pci_dev(dev);
 -	struct drm_device *drm_dev = pci_get_drvdata(pdev);
 +	struct drm_device *drm_dev = dev_get_drvdata(dev);
- 	return nouveau_do_suspend(drm_dev, false);
+ 
+ 	return qxl_drm_resume(drm_dev, true);
  }
  
- static int
- nouveau_pmops_thaw(struct device *dev)
+ static int qxl_pm_freeze(struct device *dev)
  {
 -	struct pci_dev *pdev = to_pci_dev(dev);
 -	struct drm_device *drm_dev = pci_get_drvdata(pdev);
 +	struct drm_device *drm_dev = dev_get_drvdata(dev);
- 	return nouveau_do_resume(drm_dev, false);
- }
  
+ 	return qxl_drm_freeze(drm_dev);
+ }
 -- 
 2.20.1
 
