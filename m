@@ -2,118 +2,329 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BF8C71481
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 11:00:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C56371487
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 11:03:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387723AbfGWJAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 05:00:55 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48808 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727748AbfGWJAz (ORCPT
+        id S2388753AbfGWJDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 05:03:12 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36474 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732079AbfGWJDL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 05:00:55 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0209561157; Tue, 23 Jul 2019 09:00:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1563872454;
-        bh=EVKnOWzRkie6voTuz/y+NN9iApwRNseO39HZ9ZaKztA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=iu7/PaC6J/cQuDrieBBS2cua4nRXyV5klWe1RXJRLji2Um8rYBpk99MlHvC49XUDQ
-         7jPng3hAcfOQGDaaMrqDg6t6ML1ZmjKjofeMYdQxyWLtDJmwtHYbehUCdgPKsubiPx
-         pfnFWlk21nrSCFTP8mRgsZ+MfA7OIl05MKdMJ98g=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 49C1A60850;
-        Tue, 23 Jul 2019 09:00:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1563872453;
-        bh=EVKnOWzRkie6voTuz/y+NN9iApwRNseO39HZ9ZaKztA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=f7h8K/NXZds7GQUIs+jKmAA2h8iL4yr4lRdC+V4qjGHGWXw0VvECrsvNDsWId3+G6
-         ulKshuZncQcWC87abYZ9AzrF7r6uHyTrCP5E+ZkCM1FuAGtXOU6+Mzfl/KIwAP9ajN
-         yNFTL6WfS/lGUdL/GuGirdsDVtO2TV9geClo2koE=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 23 Jul 2019 14:30:53 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        Chris Lew <clew@codeaurora.org>
-Subject: Re: [PATCH] remoteproc: qcom: Move glink_ssr notification after stop
-In-Reply-To: <20190716050327.8866-1-bjorn.andersson@linaro.org>
-References: <20190716050327.8866-1-bjorn.andersson@linaro.org>
-Message-ID: <6259ebabc6183efb0045f9f990747d5e@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Tue, 23 Jul 2019 05:03:11 -0400
+Received: by mail-pf1-f194.google.com with SMTP id r7so18810778pfl.3;
+        Tue, 23 Jul 2019 02:03:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ff//iqoikAdsi6nNJlh84Wod7YDmZ2vL6WZ5tYQOJLU=;
+        b=SPTrYxWy0WMQgkh3WTYk8fbvsJwnX5yL20SHpNV225AUV6TEqvsI7OgeB68DbXgd38
+         4m7ppeeFqxKgOjDTe0YIoS4hMj1dnxhQZvEbnTNMttYCP6q4e7TcyZky6O1ZVivbHa1Y
+         eRKeM0MCoMwU60hKWK/zX80wemwkNuSyCbRjHPxPoA6ujOJLtq6yXmuPb0vIeYXI8kgk
+         +eSD9mu16Y2KBnWTcyHdgVv8wq0ZlWJTZn6Id6Q0jLNYCXeQRwRHtzL8vY6puPaITqGv
+         nPwD1KFEgnyW0V9lw5ItAnG+pr3/uGRv8tolqW8OUWYb6soNVEZMPHn5pmm8jAN/jQHU
+         SrIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ff//iqoikAdsi6nNJlh84Wod7YDmZ2vL6WZ5tYQOJLU=;
+        b=SxGcAyZpGbhvCNsgxoy8HnbtNiwzcX8r1BkMiFiYdHBskOq6MEDoUFV8hze/Fd14T2
+         IZv7zoiD6yAvqQALxOtN7wAcjf5MnkmnCkFi+bUp9Z+KFUO5Gjcwsql544NWmwnBFa04
+         rWgpZb+ZCdoO+BZczGybwbTulYRc5s2n6K7U3MM99+SqOL8qJTtie4fvq2eNAuwgeAt5
+         MJlFD61HHbeAye0tf5WH8ilIk0ZaMi00m0q+iuJKQ+SgYb/soMJiXO2kt2cfwQ7Xmvyt
+         uocGp1wQulGmFNrsYG1UUnowQAE9f2YGRS9+oeGJd4d2bwmbsm27x6MQlDQuCqIfmhVu
+         puHw==
+X-Gm-Message-State: APjAAAX/TMJfmVVyeZ4m+mU8mG9FXTINg7kJNr4CtOgW0gvNDZNrDDrC
+        EGzoY9/16NOD/wqSi6Qfyhs=
+X-Google-Smtp-Source: APXvYqxSZIXkCdVKfCdiL0IOgK3PJ2b7BELEkM7lz4riY+0hEcyJbiQiD8X138WmsiDLas9OLHnpsw==
+X-Received: by 2002:a17:90a:b104:: with SMTP id z4mr80993230pjq.102.1563872590393;
+        Tue, 23 Jul 2019 02:03:10 -0700 (PDT)
+Received: from localhost (59-120-186-245.HINET-IP.hinet.net. [59.120.186.245])
+        by smtp.gmail.com with ESMTPSA id u16sm41405442pjb.2.2019.07.23.02.03.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Jul 2019 02:03:09 -0700 (PDT)
+From:   "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
+X-Google-Original-From: "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
+To:     wg@grandegger.com, mkl@pengutronix.de, peter_hong@fintek.com.tw
+Cc:     davem@davemloft.net, f.suligoi@asem.it,
+        linux-kernel@vger.kernel.org, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org,
+        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
+Subject: [PATCH V3 1/1] can: sja1000: f81601: add Fintek F81601 support
+Date:   Tue, 23 Jul 2019 17:03:06 +0800
+Message-Id: <1563872586-30870-1-git-send-email-hpeter+linux_kernel@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
-Tested-by: Sibi Sankar <sibis@codeaurora.org>
+This patch add support for Fintek PCIE to 2 CAN controller support
 
-On 2019-07-16 10:33, Bjorn Andersson wrote:
-> glink_ssr is used to signal a remote processor "A" about the stopping 
-> of
-> another remote processor "B", so that in the event that remote 
-> processor
-> B is ever booted again the fifos of the glink channel between A and B 
-> is
-> in a known state.
-> 
-> But if remote processor A receives this notification before B is
-> actually stopped the newly reset fifo indices will be interpreted as
-> there being "data" on the channel and either side of the channel will
-> enter a fatal error handler.
-> 
-> Move the glink_ssr notification to the "unprepare" state of the
-> rproc_subdev to avoid this issue.
-> 
-> This has the side effect of us not notifying the dying remote processor
-> itself about its fate, which has been seen to block in certain resource
-> constraint scenarios.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/remoteproc/qcom_common.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_common.c 
-> b/drivers/remoteproc/qcom_common.c
-> index 6a448429f223..60650bcc8c67 100644
-> --- a/drivers/remoteproc/qcom_common.c
-> +++ b/drivers/remoteproc/qcom_common.c
-> @@ -200,7 +200,7 @@ void qcom_unregister_ssr_notifier(struct 
-> notifier_block *nb)
->  }
->  EXPORT_SYMBOL_GPL(qcom_unregister_ssr_notifier);
-> 
-> -static void ssr_notify_stop(struct rproc_subdev *subdev, bool crashed)
-> +static void ssr_notify_unprepare(struct rproc_subdev *subdev)
->  {
->  	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
-> 
-> @@ -220,7 +220,7 @@ void qcom_add_ssr_subdev(struct rproc *rproc,
-> struct qcom_rproc_ssr *ssr,
->  			 const char *ssr_name)
->  {
->  	ssr->name = ssr_name;
-> -	ssr->subdev.stop = ssr_notify_stop;
-> +	ssr->subdev.unprepare = ssr_notify_unprepare;
-> 
->  	rproc_add_subdev(rproc, &ssr->subdev);
->  }
+Signed-off-by: Ji-Ze Hong (Peter Hong) <hpeter+linux_kernel@gmail.com>
+---
+v3:
+	1: Fix module parameter "internal_clk" default from 1 to true.
+	2: Remove non-usable pcim_iounmap().
 
+v2:
+	1: Fix comment on the spinlock with write access.
+	2: Use ARRAY_SIZE instead of F81601_PCI_MAX_CHAN.
+	3: Check the strap pin outside the loop.
+	4: Fix the cleanup issue in f81601_pci_add_card().
+	5: Remove unused "channels" in struct f81601_pci_card.
+
+ drivers/net/can/sja1000/Kconfig  |   8 ++
+ drivers/net/can/sja1000/Makefile |   1 +
+ drivers/net/can/sja1000/f81601.c | 213 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 222 insertions(+)
+ create mode 100644 drivers/net/can/sja1000/f81601.c
+
+diff --git a/drivers/net/can/sja1000/Kconfig b/drivers/net/can/sja1000/Kconfig
+index f6dc89927ece..8588323c5138 100644
+--- a/drivers/net/can/sja1000/Kconfig
++++ b/drivers/net/can/sja1000/Kconfig
+@@ -101,4 +101,12 @@ config CAN_TSCAN1
+ 	  IRQ numbers are read from jumpers JP4 and JP5,
+ 	  SJA1000 IO base addresses are chosen heuristically (first that works).
+ 
++config CAN_F81601
++	tristate "Fintek F81601 PCIE to 2 CAN Controller"
++	depends on PCI
++	help
++	  This driver adds support for Fintek F81601 PCIE to 2 CAN Controller.
++	  It had internal 24MHz clock source, but it can be changed by
++	  manufacturer. We can use modinfo to get usage for parameters.
++	  Visit http://www.fintek.com.tw to get more information.
+ endif
+diff --git a/drivers/net/can/sja1000/Makefile b/drivers/net/can/sja1000/Makefile
+index 9253aaf9e739..6f6268543bd9 100644
+--- a/drivers/net/can/sja1000/Makefile
++++ b/drivers/net/can/sja1000/Makefile
+@@ -13,3 +13,4 @@ obj-$(CONFIG_CAN_PEAK_PCMCIA) += peak_pcmcia.o
+ obj-$(CONFIG_CAN_PEAK_PCI) += peak_pci.o
+ obj-$(CONFIG_CAN_PLX_PCI) += plx_pci.o
+ obj-$(CONFIG_CAN_TSCAN1) += tscan1.o
++obj-$(CONFIG_CAN_F81601) += f81601.o
+diff --git a/drivers/net/can/sja1000/f81601.c b/drivers/net/can/sja1000/f81601.c
+new file mode 100644
+index 000000000000..3d0436efead9
+--- /dev/null
++++ b/drivers/net/can/sja1000/f81601.c
+@@ -0,0 +1,213 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Fintek F81601 PCIE to 2 CAN controller driver
++ *
++ * Copyright (C) 2019 Peter Hong <peter_hong@fintek.com.tw>
++ * Copyright (C) 2019 Linux Foundation
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/interrupt.h>
++#include <linux/netdevice.h>
++#include <linux/delay.h>
++#include <linux/slab.h>
++#include <linux/pci.h>
++#include <linux/can/dev.h>
++#include <linux/io.h>
++#include <linux/version.h>
++
++#include "sja1000.h"
++
++#define F81601_PCI_MAX_CHAN		2
++
++#define F81601_DECODE_REG		0x209
++#define F81601_IO_MODE			BIT(7)
++#define F81601_MEM_MODE			BIT(6)
++#define F81601_CFG_MODE			BIT(5)
++#define F81601_CAN2_INTERNAL_CLK	BIT(3)
++#define F81601_CAN1_INTERNAL_CLK	BIT(2)
++#define F81601_CAN2_EN			BIT(1)
++#define F81601_CAN1_EN			BIT(0)
++
++#define F81601_TRAP_REG			0x20a
++#define F81601_CAN2_HAS_EN		BIT(4)
++
++struct f81601_pci_card {
++	void __iomem *addr;
++	spinlock_t lock;	/* use this spin lock only for write access */
++	struct pci_dev *dev;
++	struct net_device *net_dev[F81601_PCI_MAX_CHAN];
++};
++
++static const struct pci_device_id f81601_pci_tbl[] = {
++	{ PCI_DEVICE(0x1c29, 0x1703) },
++	{},
++};
++
++MODULE_DEVICE_TABLE(pci, f81601_pci_tbl);
++
++static bool internal_clk = true;
++module_param(internal_clk, bool, 0444);
++MODULE_PARM_DESC(internal_clk, "Use internal clock, default true (24MHz)");
++
++static unsigned int external_clk;
++module_param(external_clk, uint, 0444);
++MODULE_PARM_DESC(external_clk, "External clock when internal_clk disabled");
++
++static u8 f81601_pci_read_reg(const struct sja1000_priv *priv, int port)
++{
++	return readb(priv->reg_base + port);
++}
++
++static void f81601_pci_write_reg(const struct sja1000_priv *priv, int port,
++				 u8 val)
++{
++	struct f81601_pci_card *card = priv->priv;
++	unsigned long flags;
++
++	spin_lock_irqsave(&card->lock, flags);
++	writeb(val, priv->reg_base + port);
++	readb(priv->reg_base);
++	spin_unlock_irqrestore(&card->lock, flags);
++}
++
++static void f81601_pci_del_card(struct pci_dev *pdev)
++{
++	struct f81601_pci_card *card = pci_get_drvdata(pdev);
++	struct net_device *dev;
++	int i = 0;
++
++	for (i = 0; i < ARRAY_SIZE(card->net_dev); i++) {
++		dev = card->net_dev[i];
++		if (!dev)
++			continue;
++
++		dev_info(&pdev->dev, "%s: Removing %s\n", __func__, dev->name);
++
++		unregister_sja1000dev(dev);
++		free_sja1000dev(dev);
++	}
++}
++
++/* Probe F81601 based device for the SJA1000 chips and register each
++ * available CAN channel to SJA1000 Socket-CAN subsystem.
++ */
++static int f81601_pci_add_card(struct pci_dev *pdev,
++			       const struct pci_device_id *ent)
++{
++	struct sja1000_priv *priv;
++	struct net_device *dev;
++	struct f81601_pci_card *card;
++	int err, i, count;
++	u8 tmp;
++
++	if (pcim_enable_device(pdev) < 0) {
++		dev_err(&pdev->dev, "Failed to enable PCI device\n");
++		return -ENODEV;
++	}
++
++	dev_info(&pdev->dev, "Detected card at slot #%i\n",
++		 PCI_SLOT(pdev->devfn));
++
++	card = devm_kzalloc(&pdev->dev, sizeof(*card), GFP_KERNEL);
++	if (!card)
++		return -ENOMEM;
++
++	card->dev = pdev;
++	spin_lock_init(&card->lock);
++
++	pci_set_drvdata(pdev, card);
++
++	tmp = F81601_IO_MODE | F81601_MEM_MODE | F81601_CFG_MODE |
++		F81601_CAN2_EN | F81601_CAN1_EN;
++
++	if (internal_clk) {
++		tmp |= F81601_CAN2_INTERNAL_CLK | F81601_CAN1_INTERNAL_CLK;
++
++		dev_info(&pdev->dev,
++			 "F81601 running with internal clock: 24Mhz\n");
++	} else {
++		dev_info(&pdev->dev,
++			 "F81601 running with external clock: %dMhz\n",
++			 external_clk / 1000000);
++	}
++
++	pci_write_config_byte(pdev, F81601_DECODE_REG, tmp);
++
++	card->addr = pcim_iomap(pdev, 0, pci_resource_len(pdev, 0));
++
++	if (!card->addr) {
++		err = -ENOMEM;
++		dev_err(&pdev->dev, "%s: Failed to remap BAR\n", __func__);
++		goto failure_cleanup;
++	}
++
++	/* read CAN2_HW_EN strap pin to detect how many CANBUS do we have */
++	count = ARRAY_SIZE(card->net_dev);
++	pci_read_config_byte(pdev, F81601_TRAP_REG, &tmp);
++	if (!(tmp & F81601_CAN2_HAS_EN))
++		count = 1;
++
++	/* Detect available channels */
++	for (i = 0; i < count; i++) {
++		dev = alloc_sja1000dev(0);
++		if (!dev) {
++			err = -ENOMEM;
++			goto failure_cleanup;
++		}
++
++		priv = netdev_priv(dev);
++		priv->priv = card;
++		priv->irq_flags = IRQF_SHARED;
++		priv->reg_base = card->addr + 0x80 * i;
++		priv->read_reg = f81601_pci_read_reg;
++		priv->write_reg = f81601_pci_write_reg;
++
++		if (internal_clk)
++			priv->can.clock.freq = 24000000 / 2;
++		else
++			priv->can.clock.freq = external_clk / 2;
++
++		priv->ocr = OCR_TX0_PUSHPULL | OCR_TX1_PUSHPULL;
++		priv->cdr = CDR_CBP;
++
++		SET_NETDEV_DEV(dev, &pdev->dev);
++		dev->dev_id = i;
++		dev->irq = pdev->irq;
++
++		/* Register SJA1000 device */
++		err = register_sja1000dev(dev);
++		if (err) {
++			dev_err(&pdev->dev,
++				"%s: Registering device failed: %x\n", __func__,
++				err);
++			free_sja1000dev(dev);
++			goto failure_cleanup;
++		}
++
++		card->net_dev[i] = dev;
++		dev_info(&pdev->dev, "Channel #%d, %s at 0x%p, irq %d\n", i,
++			 dev->name, priv->reg_base, dev->irq);
++	}
++
++	return 0;
++
++failure_cleanup:
++	dev_err(&pdev->dev, "%s: failed: %d. Cleaning Up.\n", __func__, err);
++	f81601_pci_del_card(pdev);
++
++	return err;
++}
++
++static struct pci_driver f81601_pci_driver = {
++	.name =		"f81601",
++	.id_table =	f81601_pci_tbl,
++	.probe =	f81601_pci_add_card,
++	.remove =	f81601_pci_del_card,
++};
++
++MODULE_DESCRIPTION("Fintek F81601 PCIE to 2 CANBUS adaptor driver");
++MODULE_AUTHOR("Peter Hong <peter_hong@fintek.com.tw>");
++MODULE_LICENSE("GPL v2");
++
++module_pci_driver(f81601_pci_driver);
 -- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+2.7.4
+
