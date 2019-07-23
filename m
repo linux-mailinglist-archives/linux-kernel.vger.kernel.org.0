@@ -2,148 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0D5071A74
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 16:35:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EA6E71A80
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 16:35:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387404AbfGWOfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 10:35:00 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36062 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730148AbfGWOe7 (ORCPT
+        id S2390616AbfGWOfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 10:35:51 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55092 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387987AbfGWOfv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 10:34:59 -0400
-Received: by mail-pf1-f193.google.com with SMTP id r7so19252747pfl.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 07:34:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=11EGKG6b5hoi9YzMa3B9zcamZozuOz9TYFdeDHSi/VQ=;
-        b=WLqofMgKgwX+GBBcQ17R0iUnyDTfMjIuZc7IpLN2ckGPX+hUVUkkKoMZj9FhwUiZKT
-         AdminwPznOb1OAPsVPVbdpz5CvE0xheQ+a2Fa7GnwReA17UPZf46ynImqYVTMnImoysB
-         TvEXipsHmJVKm9XkI32JDbIEWcb+EWSJ+gYkY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=11EGKG6b5hoi9YzMa3B9zcamZozuOz9TYFdeDHSi/VQ=;
-        b=s0MJF3CTC7/0Wxd0/FUA/uHgA5VPa+nHrrEvn0EzUQfTJP8aHpqv/vXmXbEpwuJORw
-         XqU0/kLZcz6tOjGtbz4mqsBY/U4OjqsexLNEZcrXMoeTPBFZV0k0sitYb4n48exV4T/W
-         B9KeyV/x2Y8hhivVBlxRuPrnTKCg1M8QeMBspnxSQdFQpMF/4XHaDLKdxLOEjy5lKKJr
-         efS3bottXLO2E47YzS8vQDsptYE5bV7jVkiqHSbgC9X65CmVw7SBQ8WZWRsNQ9ybkfP2
-         tqtV5aly2Wgez3PElOYO7hyO9QFe2zbSptofAqt8O2QTMxBWbIjeciPEEEvBpl9YDlKK
-         EiCw==
-X-Gm-Message-State: APjAAAWbaPCwpyqj/wOnY9oWRkLvMTd4RlhHE0UDuQzRlDz3P5SbX/ko
-        SsHJSWsMwKZy+iQTz0Gqxt8=
-X-Google-Smtp-Source: APXvYqxOGRZiTbW/QTUYHoxI40F9UeoHJjkS/MqxYprvHRJGH4uUkNovTWILl0d4sr9ylHebOwhw0w==
-X-Received: by 2002:a63:d852:: with SMTP id k18mr5381517pgj.313.1563892498725;
-        Tue, 23 Jul 2019 07:34:58 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id r1sm48527298pfq.100.2019.07.23.07.34.57
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 07:34:57 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 10:34:56 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, vdavydov.dev@gmail.com,
-        Brendan Gregg <bgregg@netflix.com>, kernel-team@android.com,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        carmenjackson@google.com, Christian Hansen <chansen3@cisco.com>,
-        Colin Ian King <colin.king@canonical.com>, dancol@google.com,
-        David Howells <dhowells@redhat.com>, fmayer@google.com,
-        joaodias@google.com, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Mike Rapoport <rppt@linux.ibm.com>,
-        minchan@google.com, minchan@kernel.org, namhyung@google.com,
-        sspatil@google.com, surenb@google.com,
-        Thomas Gleixner <tglx@linutronix.de>, timmurray@google.com,
-        tkjos@google.com, Vlastimil Babka <vbabka@suse.cz>, wvw@google.com,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] mm/page_idle: Add support for per-pid page_idle
- using virtual indexing
-Message-ID: <20190723143456.GE104199@google.com>
-References: <20190722213205.140845-1-joel@joelfernandes.org>
- <20190723060525.GA4552@dhcp22.suse.cz>
+        Tue, 23 Jul 2019 10:35:51 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6NEVEkd023990;
+        Tue, 23 Jul 2019 10:35:27 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tx2eqw34c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Jul 2019 10:35:26 -0400
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x6NEWHn3032587;
+        Tue, 23 Jul 2019 10:35:26 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2tx2eqw33b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Jul 2019 10:35:25 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x6NEYbu5003257;
+        Tue, 23 Jul 2019 14:35:24 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma01dal.us.ibm.com with ESMTP id 2twhrb60qc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Jul 2019 14:35:24 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6NEZNpH49283478
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Jul 2019 14:35:23 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DD1D8B2066;
+        Tue, 23 Jul 2019 14:35:23 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D6065B205F;
+        Tue, 23 Jul 2019 14:35:22 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.85.152.234])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 23 Jul 2019 14:35:22 +0000 (GMT)
+Subject: Re: [PATCH 2/2] powerpc: expose secure variables via sysfs
+To:     Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@ozlabs.org,
+        linux-efi@vger.kernel.org, "Oliver O'Halloran" <oohall@gmail.com>
+Cc:     Nayna Jain <nayna@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Elaine Palmer <erpalmer@us.ibm.com>,
+        Eric Ricther <erichte@linux.ibm.com>
+References: <1560459027-5248-1-git-send-email-nayna@linux.ibm.com>
+ <1560459027-5248-3-git-send-email-nayna@linux.ibm.com>
+ <87o92910fg.fsf@concordia.ellerman.id.au>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Message-ID: <6d2988c1-9b89-448b-4537-c3c6673b6dd1@linux.vnet.ibm.com>
+Date:   Tue, 23 Jul 2019 10:35:22 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190723060525.GA4552@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87o92910fg.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-23_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1907230144
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 08:05:25AM +0200, Michal Hocko wrote:
-> [Cc linux-api - please always do CC this list when introducing a user
->  visible API]
 
-Sorry, will do.
 
-> On Mon 22-07-19 17:32:04, Joel Fernandes (Google) wrote:
-> > The page_idle tracking feature currently requires looking up the pagemap
-> > for a process followed by interacting with /sys/kernel/mm/page_idle.
-> > This is quite cumbersome and can be error-prone too. If between
-> > accessing the per-PID pagemap and the global page_idle bitmap, if
-> > something changes with the page then the information is not accurate.
-> > More over looking up PFN from pagemap in Android devices is not
-> > supported by unprivileged process and requires SYS_ADMIN and gives 0 for
-> > the PFN.
-> > 
-> > This patch adds support to directly interact with page_idle tracking at
-> > the PID level by introducing a /proc/<pid>/page_idle file. This
-> > eliminates the need for userspace to calculate the mapping of the page.
-> > It follows the exact same semantics as the global
-> > /sys/kernel/mm/page_idle, however it is easier to use for some usecases
-> > where looking up PFN is not needed and also does not require SYS_ADMIN.
-> > It ended up simplifying userspace code, solving the security issue
-> > mentioned and works quite well. SELinux does not need to be turned off
-> > since no pagemap look up is needed.
-> > 
-> > In Android, we are using this for the heap profiler (heapprofd) which
-> > profiles and pin points code paths which allocates and leaves memory
-> > idle for long periods of time.
-> > 
-> > Documentation material:
-> > The idle page tracking API for virtual address indexing using virtual page
-> > frame numbers (VFN) is located at /proc/<pid>/page_idle. It is a bitmap
-> > that follows the same semantics as /sys/kernel/mm/page_idle/bitmap
-> > except that it uses virtual instead of physical frame numbers.
-> > 
-> > This idle page tracking API can be simpler to use than physical address
-> > indexing, since the pagemap for a process does not need to be looked up
-> > to mark or read a page's idle bit. It is also more accurate than
-> > physical address indexing since in physical address indexing, address
-> > space changes can occur between reading the pagemap and reading the
-> > bitmap. In virtual address indexing, the process's mmap_sem is held for
-> > the duration of the access.
-> 
-> I didn't get to read the actual code but the overall idea makes sense to
-> me. I can see this being useful for userspace memory management (along
-> with remote MADV_PAGEOUT, MADV_COLD).
+On 07/05/2019 02:05 AM, Michael Ellerman wrote:
+> Hi Nayna,
 
-Thanks.
+Hi Michael, Oliver,
 
-> Normally I would object that a cumbersome nature of the existing
-> interface can be hidden in a userspace but I do agree that rowhammer has
-> made this one close to unusable for anything but a privileged process.
 
-Agreed, this is one of the primary motivations for the patch as you said.
+>
+> Nayna Jain <nayna@linux.ibm.com> writes:
+>> As part of PowerNV secure boot support, OS verification keys are stored
+>> and controlled by OPAL as secure variables. These need to be exposed to
+>> the userspace so that sysadmins can perform key management tasks.
+>>
+>> This patch adds the support to expose secure variables via a sysfs
+>> interface It reuses the the existing efi defined hooks and backend in
+>> order to maintain the compatibility with the userspace tools.
+> Which tools? Can you include a log demonstrating how they're used, ie.
+> so that I can test the sequence of commands.
+>
+>> Though it reuses a great deal of efi, POWER platforms do not use EFI.
+>> A new config, POWER_SECVAR_SYSFS, is defined to enable this new sysfs
+>> interface.
+> Sorry I haven't been able to keep up with all the discussions, but I
+> thought the consensus was that pretending to be EFI-like was a bad idea,
+> because we don't have actual EFI and we're not implementing an entirely
+> compatible scheme to EFI anyway.
+>
+> Greg suggested just putting the variables in sysfs, why does that not
+> work? Matthew mentioned "complex semantics around variable deletion and
+> immutability" but do we have to emulate those semantics on powerpc?
 
-> I do not think you can make any argument about accuracy because
-> the information will never be accurate. Sure the race window is smaller
-> in principle but you can hardly say anything about how much or whether
-> at all.
+Sorry for the delay in the response.
 
-Sure, fair enough. That is why I wasn't beating the drum too much on the
-accuracy point. However, this surprisingly does work quite well.
+Yes, I agree. The purpose of the v2 version of the patchset was to try 
+and quickly address Matthew's concerns. This version of the patchset:
+* is not using any EFI configs
+* is not exposing secure variables via efivarfs
+* is based on Greg's suggestion to use sysfs
+* is STILL using some of the existing EFI code, that is used by EFI to 
+expose its variables via sysfs, to avoid code duplication.
+* is using efivar hooks to expose secure variables for tool compatibility
 
-thanks,
+Assuming we all are in agreement, the next version of this patchset will 
+further improve upon these changes. It will refactor some of the sysfs 
+code from drivers/firmware/efi that is common to both EFI and POWER.  
+Since we do not have to emulate the complex semantics of efi on powerpc, 
+the sysfs interface should work for us.
 
- - Joel
+As per the tool, it will be efivar. I will provide the log demonstrating 
+how it is used with the next version.
 
+Is there something I missed in my understanding ?
+
+Thanks & Regards,
+      - Nayna
