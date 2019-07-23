@@ -2,97 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C00F71BB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 17:34:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2BE971BBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 17:35:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387629AbfGWPec (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 11:34:32 -0400
-Received: from mga11.intel.com ([192.55.52.93]:23892 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726467AbfGWPec (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 11:34:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2019 08:34:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,299,1559545200"; 
-   d="scan'208";a="174578077"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by orsmga006.jf.intel.com with ESMTP; 23 Jul 2019 08:34:28 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hpwo6-0004It-9g; Tue, 23 Jul 2019 18:34:26 +0300
-Date:   Tue, 23 Jul 2019 18:34:26 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-sh@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S2387762AbfGWPfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 11:35:11 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:50882 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387672AbfGWPfK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 11:35:10 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190723153508euoutp017555c068d76c73a91184e098c8eb07f0~0EzmCnY9F1160911609euoutp01p
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 15:35:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190723153508euoutp017555c068d76c73a91184e098c8eb07f0~0EzmCnY9F1160911609euoutp01p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1563896108;
+        bh=3524MG5ykI7x6NMGcwx0EKgHUZ9KtyeSNKu7ggZci18=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=g21nJ5dPzOpMuc3DMpwdNuHOSFeWhYHFmFbDgbvVZODf1/pXFXK/GfufzUVJvC78/
+         FbB8QcDPHC/D5nw+yopTMRHL6mHYZ4i/L7nssvWb7B/cRfsuoj/Q24LEjLJDsGSu8W
+         TmFcKmZsDT2CkWBGMfnLfvfkM3nHj8QJ0aSSn2hM=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190723153507eucas1p1d113b6a5d1fbfbe7740887de7f218a6f~0EzlEUweA1181411814eucas1p1E;
+        Tue, 23 Jul 2019 15:35:07 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 64.84.04298.A29273D5; Tue, 23
+        Jul 2019 16:35:06 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190723153506eucas1p2f9344c53f8b25fb9d89a1f0ee5dddae0~0EzkYliZO0645406454eucas1p20;
+        Tue, 23 Jul 2019 15:35:06 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190723153506eusmtrp2994761be7e7e6d9a011678c88f89e277~0EzkKhiqr0483104831eusmtrp2Q;
+        Tue, 23 Jul 2019 15:35:06 +0000 (GMT)
+X-AuditID: cbfec7f2-f13ff700000010ca-77-5d37292a17cc
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id A3.B1.04140.A29273D5; Tue, 23
+        Jul 2019 16:35:06 +0100 (BST)
+Received: from [106.120.51.71] (unknown [106.120.51.71]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190723153505eusmtip1bfa1c18450b588d77194751d9bb262dd~0EzjowehC1210512105eusmtip1U;
+        Tue, 23 Jul 2019 15:35:05 +0000 (GMT)
+Subject: Re: [PATCH] fbmem: remove redundant assignment to err
+To:     Colin King <colin.king@canonical.com>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
         dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 7/7] backlight: gpio: use a helper variable for
- &pdev->dev
-Message-ID: <20190723153426.GL9224@smile.fi.intel.com>
-References: <20190722150302.29526-1-brgl@bgdev.pl>
- <20190722150302.29526-8-brgl@bgdev.pl>
- <20190722160908.GZ9224@smile.fi.intel.com>
- <CAMRc=McGTk+i0SzWN7AvGu3deYbXX_rJX=7+dKRpKFPKM_qxDA@mail.gmail.com>
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <72586381-9cf1-a401-b9bd-5705ebbaf937@samsung.com>
+Date:   Tue, 23 Jul 2019 17:35:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=McGTk+i0SzWN7AvGu3deYbXX_rJX=7+dKRpKFPKM_qxDA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190624223724.13629-1-colin.king@canonical.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHKsWRmVeSWpSXmKPExsWy7djPc7pamuaxBh+3W1v8Xt3LZrHw4V1m
+        iytf37NZbL0lbXGi7wOrxeVdc9gc2DxmNfSyeez9toDF4373cSaPz5vkAliiuGxSUnMyy1KL
+        9O0SuDKuLb/OVPCQuWLFb50GxnbmLkZODgkBE4ntz3eydjFycQgJrGCU+HiilRHC+cIo0f9m
+        BRNIlZDAZ0aJR18EYTpmLDzLDlG0nFHi6fvbUB1vGSU2fDrGAlIlLGAn8ev4DCCbg0NEQFPi
+        /LkikBpmgdWMEqs+TwOrYROwkpjYvooRxOYFqj/0ej47iM0ioCox8d85sLioQITE/WMbWCFq
+        BCVOznwC1ssJVP/15GQwm1lAXOLWk/lMELa8xPa3c6B+W8QucfWpI4TtItHyaA4ThC0s8er4
+        FnYIW0bi/06QXi4gex2jxN+OF8wQznZGieWT/7FBVFlLHD5+kRXkG2agb9bv0ocIO0oceQ4y
+        iAPI5pO48VYQ4gY+iUnbpjNDhHklOtqEIKrVJDYs28AGs7Zr50rmCYxKs5B8NgvJN7OQfDML
+        Ye8CRpZVjOKppcW56anFhnmp5XrFibnFpXnpesn5uZsYganm9L/jn3Ywfr2UdIhRgINRiYe3
+        gsk8Vog1say4MvcQowQHs5IIb2CDWawQb0piZVVqUX58UWlOavEhRmkOFiVx3mqGB9FCAumJ
+        JanZqakFqUUwWSYOTqkGxiVLbi/bdDXzfvvUQLcUcYMVLpUrE0Nn/N27tzJG4K72zE0tk9cV
+        LuGr6C7PcLF49/WTbUVas+X1CJf2K/HnBS7nhzguPCN1/v5nqxcbjFTun7v35uDplSu1Kl+E
+        ZSuarF/vH1KWah4j/OWGTdu53a4TC4s31h5bePuIULTUZM6vn112WmRwtSmxFGckGmoxFxUn
+        AgBK1RwOMQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAIsWRmVeSWpSXmKPExsVy+t/xu7pamuaxBq9OCFj8Xt3LZrHw4V1m
+        iytf37NZbL0lbXGi7wOrxeVdc9gc2DxmNfSyeez9toDF4373cSaPz5vkAlii9GyK8ktLUhUy
+        8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DKuLb/OVPCQuWLFb50G
+        xnbmLkZODgkBE4kZC8+yg9hCAksZJU79zepi5ACKy0gcX18GUSIs8edaF1sXIxdQyWtGiXkf
+        vzOCJIQF7CR+HZ/BAlIvIqApcf5cEUgNs8BqRolP8/ewQDRMZJR4NWUVK0gDm4CVxMT2VWDN
+        vEDNh17PB1vMIqAqMfHfObC4qECExJn3K1ggagQlTs58AmZzAtV/PTkZzGYWUJf4M+8SM4Qt
+        LnHryXwmCFteYvvbOcwTGIVmIWmfhaRlFpKWWUhaFjCyrGIUSS0tzk3PLTbSK07MLS7NS9dL
+        zs/dxAiMrW3Hfm7Zwdj1LvgQowAHoxIPbwWTeawQa2JZcWXuIUYJDmYlEd7ABrNYId6UxMqq
+        1KL8+KLSnNTiQ4ymQM9NZJYSTc4Hxn1eSbyhqaG5haWhubG5sZmFkjhvh8DBGCGB9MSS1OzU
+        1ILUIpg+Jg5OqQbGpr6Vsz5PrBCVnTzRrypBVF97YtViZuZqzbhDDZG17oGvfl5RXsQs/fzA
+        4qPqEq+VBNQ3XK6QyVF+tPWsyMH95noJt07JmeTUWcZp+5z03md9pGVbbOLKe7fvnF3gkSe2
+        q9nAquDpPSaewKutnd4tZlWGU/a921l3cFXhrmMzlpyaNtNEzC5WiaU4I9FQi7moOBEALFwa
+        O8MCAAA=
+X-CMS-MailID: 20190723153506eucas1p2f9344c53f8b25fb9d89a1f0ee5dddae0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190624223730epcas2p4d2b1ad1200c11a472ba327ee39ede08b
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190624223730epcas2p4d2b1ad1200c11a472ba327ee39ede08b
+References: <CGME20190624223730epcas2p4d2b1ad1200c11a472ba327ee39ede08b@epcas2p4.samsung.com>
+        <20190624223724.13629-1-colin.king@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 08:29:52AM +0200, Bartosz Golaszewski wrote:
-> pon., 22 lip 2019 o 18:09 Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> napisał(a):
-> >
-> > On Mon, Jul 22, 2019 at 05:03:02PM +0200, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >
-> > > Instead of dereferencing pdev each time, use a helper variable for
-> > > the associated device pointer.
-> >
-> > >  static int gpio_backlight_probe(struct platform_device *pdev)
-> > >  {
-> > > -     struct gpio_backlight_platform_data *pdata =
-> > > -             dev_get_platdata(&pdev->dev);
-> > > +     struct gpio_backlight_platform_data *pdata;
-> > >       struct backlight_properties props;
-> > >       struct backlight_device *bl;
-> > >       struct gpio_backlight *gbl;
-> > >       enum gpiod_flags flags;
-> > > +     struct device *dev;
-> >
-> > Can't we do
-> >
-> >         struct device dev = &pdev->dev;
-> >         struct gpio_backlight_platform_data *pdata = dev_get_platdata(dev);
-> >
-> > ? It fits 80 nicely.
-> >
+
+On 6/25/19 12:37 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> IMO it's more readable like that with the reverse christmas tree layout.
+> Variable err is initialized to a value that is never read and it
+> is re-assigned later.  The initialization is redundant and can
+> be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-It makes more churn in the original code and for initializers the order is
-defined by its nature.
+Patch queued for v5.4, thanks.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
