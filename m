@@ -2,104 +2,248 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DAE872255
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 00:23:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99C5572256
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 00:25:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392496AbfGWWXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 18:23:45 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41522 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389328AbfGWWXp (ORCPT
+        id S2387595AbfGWWY5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 18:24:57 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52054 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729463AbfGWWY4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 18:23:45 -0400
-Received: by mail-pf1-f194.google.com with SMTP id m30so19839633pff.8
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 15:23:44 -0700 (PDT)
+        Tue, 23 Jul 2019 18:24:56 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 207so39972951wma.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 15:24:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=4dVf29ZcpSVwk+wf2XXFiYUsmnLURtHLTcUwHGDctgs=;
-        b=mKfQrgZH4urgsDsGJ7VgdXJjU2+ey7ZEBJRkId+E9EA2DwPgMTfd0w3mx0YpvYbDBk
-         6Hxb19kjJn2P4LmT8RVunb3SWGwQWWhltD9hoYDBYN3DpVaNH6GaaQ4HA2jd3H5zko8v
-         YS4q7hEUaVQPsvfTWmeAQMxIusbVsmM4WuUU8=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ycFVF6PULvBjNz8AdZGy8PuycX5V7CruUR+NdGiRv3Q=;
+        b=DC+LOqW8HDUKuSISwKU1Icnv77rhum8xl7oSHv3Etmp8OgvlsfFcSkiIFD8J5ZWIMu
+         5jhLWpzhU8XD45oobipXrstgm+rc7D2uWwYo7PaHBE6LvGqtNqIY9UFQYceuzA2fKaXG
+         zwvj7pba8f3EzPQ5XacRdbMFYlGruLImGXneDE1uYY0xzUMrWK+pK1GluZ+Kx0+UIELA
+         wU2q+UDmt7+fAna0aWlXZVCjPhRevfvehGKzoWTvVFEi/b2nPZufwbLMAqoOLOt5w5FX
+         Ysa6FonWr1E4bl7hCWxToBEKsG8WA9c/WBHKYQQYaOTMuwKLH+yN77J2plGBHgT2rWpD
+         VrwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=4dVf29ZcpSVwk+wf2XXFiYUsmnLURtHLTcUwHGDctgs=;
-        b=Je0rKx3kkCVDksHwDANDLP3ZJ1yO1JPjrsXExNO/e1bADUXOCNnhLjQDysSrFYXA0y
-         rhxrwXQ3NHWM0xydR/ActlZOiDqkRLQo99Sq+0PHfJ34qSdi+uB7rtEitNv/lgFY9u8g
-         TrtedqCzJBj+mFiCEQGBMQz5IH6bt7WmL/H5722Hm4FB/Y9jzqdvMSmHJ62iKhtS42xo
-         KG+aVk/ms/m1wzjJR3/u+9oQv89V3kMQmqbychcu0/8C0MvQRMaaIopmWUmaBNFVU3qr
-         5qyPbyeeTdQBkLCtswZ67M7Qiq81SaK/n/7dAK0xB9VsVn6AB6FgDE42UfYlBtLbkQiR
-         6Glg==
-X-Gm-Message-State: APjAAAX9mIfHpnx853zmkUoKohJ3BrmW5TE7HlNGotmzqFDuV8zIJffd
-        SNL8zbCr6bBh8GccWFI4cIeWMw==
-X-Google-Smtp-Source: APXvYqy9WkSt/8srF0QZ3mt1p4nRA9Uc/JH89PMYcwm6549t32se0npxhWekUjS1CiDtbevVGfSTOQ==
-X-Received: by 2002:a17:90a:974b:: with SMTP id i11mr83444934pjw.21.1563920624498;
-        Tue, 23 Jul 2019 15:23:44 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id u16sm42936978pjb.2.2019.07.23.15.23.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Jul 2019 15:23:43 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 15:23:42 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Solar Designer <solar@openwall.com>
-Cc:     Sasha Levin <sashal@kernel.org>, corbet@lwn.net, will@kernel.org,
-        peterz@infradead.org, gregkh@linuxfoundation.org,
-        tyhicks@canonical.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Documentation/security-bugs: provide more information
- about linux-distros
-Message-ID: <201907231520.D659BD32@keescook>
-References: <20190717231103.13949-1-sashal@kernel.org>
- <201907181457.D61AC061C@keescook>
- <20190719003919.GC4240@sasha-vm>
- <201907181833.EF0D93C@keescook>
- <20190719084215.GA24691@openwall.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ycFVF6PULvBjNz8AdZGy8PuycX5V7CruUR+NdGiRv3Q=;
+        b=getK7Gh874NHC7H7rr3HJzJpYZH7136jCoEjgjO/gxSd28bc97RQykf3TpVeZ+gSWM
+         lsqKGEltdROXDOUodaVNmV3lieFi/1l39SIqpbYjLCdIXf5frZ8pAJn8tOag8Gr48Zks
+         WSyejng6mvct7TkhnAlKCM7vVOSwXdtX2tREQL9de2zixmPVrOPaGHxvQi/BSuQe2R5J
+         kiKzjaQ5cqttH+llqfGExdv7aXp2rZIbz+9CNACWNFU2luFckgsVjZt+xgXmx9VU2Ead
+         /OnUW3ncH926zz8Si5ZtybkLvf2XW4ph+h1motoaYcb4YR5d53DTZNdMXSzEp1vJ3V84
+         1jbA==
+X-Gm-Message-State: APjAAAUcxXmA1piYwAmZXFabgDjjZPcwasqweqgZJNCdKzFj2B2PSCn7
+        oU9dX2i7LO6P9JFQKXGe+glu51VUF7/z3o317uXW
+X-Google-Smtp-Source: APXvYqx6QBr0zClP8sJ9l5lcsqVKECo/is0ATH/J+vN1rOqJqrCCcGSyjkIL9AVFxX/ijzj/vZLMWK5KeARcWMYO1o4=
+X-Received: by 2002:a1c:a101:: with SMTP id k1mr72310390wme.98.1563920692824;
+ Tue, 23 Jul 2019 15:24:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190719084215.GA24691@openwall.com>
+References: <20190723221838.12024-1-suzuki.poulose@arm.com> <20190723221838.12024-7-suzuki.poulose@arm.com>
+In-Reply-To: <20190723221838.12024-7-suzuki.poulose@arm.com>
+From:   Bjorn Helgaas <bhelgaas@google.com>
+Date:   Tue, 23 Jul 2019 17:24:40 -0500
+Message-ID: <CAErSpo5odia1KWnkADJ7NNbWKs5C1nRzZCiANfNrGQdNVVkP6g@mail.gmail.com>
+Subject: Re: [PATCH v3 6/7] drivers: Add generic helper to match any device
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-arm <linux-arm-kernel@lists.infradead.org>,
+        Elie Morisse <syniurge@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Nehal Shah <nehal-bakulchandra.shah@amd.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Shyam Sundar S K <shyam-sundar.s-k@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 19, 2019 at 10:42:15AM +0200, Solar Designer wrote:
-> - The reporter having been directed to post from elsewhere (and I
-> suspect this documentation file) without being aware of list policy.
+On Tue, Jul 23, 2019 at 5:19 PM Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+>
+> Add a generic helper to match any/all devices. Using this
+> introduce new wrappers {bus/driver/class}_find_next_device().
+>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Elie Morisse <syniurge@gmail.com>
+> Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
+> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+> Cc: Nehal Shah <nehal-bakulchandra.shah@amd.com>
+> Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+> Cc: Shyam Sundar S K <shyam-sundar.s-k@amd.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-Perhaps specify "linux-distros@" without a domain, so it's more clear?
-Or re-split the Wiki into two pages to avoid confusion?
+Acked-by: Bjorn Helgaas <bhelgaas@google.com> # PCI
 
-> - The reporter not mentioning (and sometimes not replying even when
-> asked) whether they're also coordinating with security@k.o or whether
-> they want someone on linux-distros to help coordinate with security@k.o.
-> (Maybe this is something we want to write about here.)
-
-Yeah, that seems useful to include in both places.
-
-> - The Linux kernel bug having been introduced too recently to be of much
-> interest to distros.
-
-Right; that'd be good to add as well. I see a lot of panic on twitter,
-for example, about bugs that only ever existed in -rc releases.
-
-> > Sending to the distros@ list risks exposing Linux-only flaws to non-Linux
-> > distros.
-> 
-> Right.
-> 
-> > This has caused leaks in the past
-> 
-> Do you mean leaks to *BSD security teams or to the public?  I'm not
-> aware of past leaks to the public via the non-Linux distros present on
-> the distros@ list.  Are you?
-
-I don't know the origin of the leaks, but it only happened when distros@
-was used instead of linux-distros@. I think this happened with DirtyCOW,
-specifically.
-
--- 
-Kees Cook
+> ---
+>  drivers/base/core.c                  |  6 ++++++
+>  drivers/i2c/busses/i2c-amd-mp2-pci.c |  8 +-------
+>  drivers/pci/probe.c                  |  7 +------
+>  drivers/s390/cio/ccwgroup.c          |  8 +-------
+>  drivers/scsi/scsi_proc.c             |  9 ++-------
+>  include/linux/device.h               | 17 +++++++++++++++++
+>  6 files changed, 28 insertions(+), 27 deletions(-)
+>
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 57d71bc2c559..e22e29b3dc97 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -3379,3 +3379,9 @@ int device_match_acpi_dev(struct device *dev, const void *adev)
+>         return ACPI_COMPANION(dev) == adev;
+>  }
+>  EXPORT_SYMBOL(device_match_acpi_dev);
+> +
+> +int device_match_any(struct device *dev, const void *unused)
+> +{
+> +       return 1;
+> +}
+> +EXPORT_SYMBOL_GPL(device_match_any);
+> diff --git a/drivers/i2c/busses/i2c-amd-mp2-pci.c b/drivers/i2c/busses/i2c-amd-mp2-pci.c
+> index c7fe3b44a860..5e4800d72e00 100644
+> --- a/drivers/i2c/busses/i2c-amd-mp2-pci.c
+> +++ b/drivers/i2c/busses/i2c-amd-mp2-pci.c
+> @@ -457,18 +457,12 @@ static struct pci_driver amd_mp2_pci_driver = {
+>  };
+>  module_pci_driver(amd_mp2_pci_driver);
+>
+> -static int amd_mp2_device_match(struct device *dev, const void *data)
+> -{
+> -       return 1;
+> -}
+> -
+>  struct amd_mp2_dev *amd_mp2_find_device(void)
+>  {
+>         struct device *dev;
+>         struct pci_dev *pci_dev;
+>
+> -       dev = driver_find_device(&amd_mp2_pci_driver.driver, NULL, NULL,
+> -                                amd_mp2_device_match);
+> +       dev = driver_find_next_device(&amd_mp2_pci_driver.driver, NULL);
+>         if (!dev)
+>                 return NULL;
+>
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index a3c7338fad86..dbeeb385fb9f 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -64,11 +64,6 @@ static struct resource *get_pci_domain_busn_res(int domain_nr)
+>         return &r->res;
+>  }
+>
+> -static int find_anything(struct device *dev, const void *data)
+> -{
+> -       return 1;
+> -}
+> -
+>  /*
+>   * Some device drivers need know if PCI is initiated.
+>   * Basically, we think PCI is not initiated when there
+> @@ -79,7 +74,7 @@ int no_pci_devices(void)
+>         struct device *dev;
+>         int no_devices;
+>
+> -       dev = bus_find_device(&pci_bus_type, NULL, NULL, find_anything);
+> +       dev = bus_find_next_device(&pci_bus_type, NULL);
+>         no_devices = (dev == NULL);
+>         put_device(dev);
+>         return no_devices;
+> diff --git a/drivers/s390/cio/ccwgroup.c b/drivers/s390/cio/ccwgroup.c
+> index d843e362c167..0005ec9285aa 100644
+> --- a/drivers/s390/cio/ccwgroup.c
+> +++ b/drivers/s390/cio/ccwgroup.c
+> @@ -581,11 +581,6 @@ int ccwgroup_driver_register(struct ccwgroup_driver *cdriver)
+>  }
+>  EXPORT_SYMBOL(ccwgroup_driver_register);
+>
+> -static int __ccwgroup_match_all(struct device *dev, const void *data)
+> -{
+> -       return 1;
+> -}
+> -
+>  /**
+>   * ccwgroup_driver_unregister() - deregister a ccw group driver
+>   * @cdriver: driver to be deregistered
+> @@ -597,8 +592,7 @@ void ccwgroup_driver_unregister(struct ccwgroup_driver *cdriver)
+>         struct device *dev;
+>
+>         /* We don't want ccwgroup devices to live longer than their driver. */
+> -       while ((dev = driver_find_device(&cdriver->driver, NULL, NULL,
+> -                                        __ccwgroup_match_all))) {
+> +       while ((dev = driver_find_next_device(&cdriver->driver, NULL))) {
+>                 struct ccwgroup_device *gdev = to_ccwgroupdev(dev);
+>
+>                 ccwgroup_ungroup(gdev);
+> diff --git a/drivers/scsi/scsi_proc.c b/drivers/scsi/scsi_proc.c
+> index c074631086a4..5b313226f11c 100644
+> --- a/drivers/scsi/scsi_proc.c
+> +++ b/drivers/scsi/scsi_proc.c
+> @@ -372,15 +372,10 @@ static ssize_t proc_scsi_write(struct file *file, const char __user *buf,
+>         return err;
+>  }
+>
+> -static int always_match(struct device *dev, const void *data)
+> -{
+> -       return 1;
+> -}
+> -
+>  static inline struct device *next_scsi_device(struct device *start)
+>  {
+> -       struct device *next = bus_find_device(&scsi_bus_type, start, NULL,
+> -                                             always_match);
+> +       struct device *next = bus_find_next_device(&scsi_bus_type, start);
+> +
+>         put_device(start);
+>         return next;
+>  }
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 7514ef3d3f1a..8ae3f4b47293 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -169,6 +169,7 @@ int device_match_of_node(struct device *dev, const void *np);
+>  int device_match_fwnode(struct device *dev, const void *fwnode);
+>  int device_match_devt(struct device *dev, const void *pdevt);
+>  int device_match_acpi_dev(struct device *dev, const void *adev);
+> +int device_match_any(struct device *dev, const void *unused);
+>
+>  int bus_for_each_dev(struct bus_type *bus, struct device *start, void *data,
+>                      int (*fn)(struct device *dev, void *data));
+> @@ -225,6 +226,16 @@ static inline struct device *bus_find_device_by_devt(struct bus_type *bus,
+>         return bus_find_device(bus, NULL, &devt, device_match_devt);
+>  }
+>
+> +/**
+> + * bus_find_next_device - Find the next device after a given device in a
+> + * given bus.
+> + */
+> +static inline struct device *
+> +bus_find_next_device(struct bus_type *bus,struct device *cur)
+> +{
+> +       return bus_find_device(bus, cur, NULL, device_match_any);
+> +}
+> +
+>  #ifdef CONFIG_ACPI
+>  struct acpi_device;
+>
+> @@ -465,6 +476,12 @@ static inline struct device *driver_find_device_by_devt(struct device_driver *dr
+>         return driver_find_device(drv, NULL, &devt, device_match_devt);
+>  }
+>
+> +static inline struct device *driver_find_next_device(struct device_driver *drv,
+> +                                                    struct device *start)
+> +{
+> +       return driver_find_device(drv, start, NULL, device_match_any);
+> +}
+> +
+>  #ifdef CONFIG_ACPI
+>  /**
+>   * driver_find_device_by_acpi_dev : device iterator for locating a particular
+> --
+> 2.21.0
+>
