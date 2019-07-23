@@ -2,55 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2AFA72140
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 23:06:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D5BD72147
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 23:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391967AbfGWVGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 17:06:48 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:36780 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729542AbfGWVGr (ORCPT
+        id S2391998AbfGWVHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 17:07:48 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34829 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391987AbfGWVHs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 17:06:47 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D3B69153BF123;
-        Tue, 23 Jul 2019 14:06:46 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 14:06:46 -0700 (PDT)
-Message-Id: <20190723.140646.505566792140054611.davem@davemloft.net>
-To:     skunberg.kelsey@gmail.com
-Cc:     iyappan@os.amperecomputing.com, keyur@os.amperecomputing.com,
-        quan@os.amperecomputing.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bjorn@helgaas.com,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v2] drivers: net: xgene: Remove acpi_has_method() calls
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190723185811.8548-1-skunberg.kelsey@gmail.com>
-References: <20190722030401.69563-1-skunberg.kelsey@gmail.com>
-        <20190723185811.8548-1-skunberg.kelsey@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 23 Jul 2019 14:06:47 -0700 (PDT)
+        Tue, 23 Jul 2019 17:07:48 -0400
+Received: by mail-pf1-f193.google.com with SMTP id u14so19764422pfn.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 14:07:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=eXdJyX/5y1/FGa+5JWyiUL+IHdXyD6YsS6A0RC/riP0=;
+        b=krorYgFC8c4EEHktVPMM8Uc7p10JFe0m3Uh5Z7ygeHlBHaZoO9KsDsqrGfKaOQ5n45
+         Uu4t0n4z/SGQkouCaz5dv002xNN8r2wM56rDbp6+ZTVvamypB6MVSsqNBUzlCunbD8JI
+         DmdBacuJcpJxjt2ybAFvHIpYgMHnUYIG12DWQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=eXdJyX/5y1/FGa+5JWyiUL+IHdXyD6YsS6A0RC/riP0=;
+        b=mMDto500e8az3VU783Pk7w3UmVKbnuOKStKUSAeVVr/q2zXQDqlMDBgpcNHY9iGFKa
+         EnFjKc/mgVAndhWkEh+VrVSGUyhtCXQjn3nUfSPiP6nEN0A2CWvlWbImqf+9w3Jl9+nd
+         B2HUgim5U1xm4Chg2Z9wUTAhbGIz4NbGVDbzkHZBBcNnCnSdWHf8FepqRuNVUo/ygk/p
+         FvvICnjY8QXhV3+5XSvh14NV7e76jLii6EZ9j3p4MzgZG2uY/3R1wv36RJ1BGpV+VsEz
+         F61qrJ49F5E52yACQycDZDINsp911xdBVckTcxmYLT2vEMfYC9AK/H+NiViKEzRYcU6X
+         nbng==
+X-Gm-Message-State: APjAAAWr0Yhuk4MABnwl7DLGBx8GqzRBj2Tu2d4oWazc2SCCN1cllWC9
+        lqoMXICcjbo6HjM3HrSdQ1WyVg==
+X-Google-Smtp-Source: APXvYqx+RlfYYF9BsUFYetL+eK6XXW+0RaA14tPNlGA5LsYqVrZUzX7sAKiZK0j2exSKPYRkMQRd9Q==
+X-Received: by 2002:a63:c008:: with SMTP id h8mr75676650pgg.427.1563916066868;
+        Tue, 23 Jul 2019 14:07:46 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::1:48f4])
+        by smtp.gmail.com with ESMTPSA id l31sm69890987pgm.63.2019.07.23.14.07.46
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 23 Jul 2019 14:07:46 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 17:07:37 -0400
+From:   Chris Down <chris@chrisdown.name>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
+        Roman Gushchin <guro@fb.com>, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-mm@kvack.org, kernel-team@fb.com
+Subject: [PATCH] cgroup: kselftest: Relax fs_spec checks
+Message-ID: <20190723210737.GA487@chrisdown.name>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kelsey Skunberg <skunberg.kelsey@gmail.com>
-Date: Tue, 23 Jul 2019 12:58:11 -0600
+On my laptop most memcg kselftests were being skipped because it claimed
+cgroup v2 hierarchy wasn't mounted, but this isn't correct. Instead, it
+seems current systemd HEAD mounts it with the name "cgroup2" instead of
+"cgroup":
 
-> acpi_evaluate_object will already return an error if the needed method
-> does not exist. Remove unnecessary acpi_has_method() calls and check the
-> returned acpi_status for failure instead.
-> 
-> Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
-> ---
-> Changes in v2:
-> 	- Fixed white space warnings and errors
+    % grep cgroup /proc/mounts
+    cgroup2 /sys/fs/cgroup cgroup2 rw,nosuid,nodev,noexec,relatime,nsdelegate 0 0
 
-Applied to net-next.
+I can't think of a reason to need to check fs_spec explicitly
+since it's arbitrary, so we can just rely on fs_vfstype.
+
+After these changes, `make TARGETS=cgroup kselftest` actually runs the
+cgroup v2 tests in more cases.
+
+Signed-off-by: Chris Down <chris@chrisdown.name>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: cgroups@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: kernel-team@fb.com
+---
+ tools/testing/selftests/cgroup/cgroup_util.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/cgroup/cgroup_util.c b/tools/testing/selftests/cgroup/cgroup_util.c
+index 4c223266299a..bdb69599c4bd 100644
+--- a/tools/testing/selftests/cgroup/cgroup_util.c
++++ b/tools/testing/selftests/cgroup/cgroup_util.c
+@@ -191,8 +191,7 @@ int cg_find_unified_root(char *root, size_t len)
+ 		strtok(NULL, delim);
+ 		strtok(NULL, delim);
+ 
+-		if (strcmp(fs, "cgroup") == 0 &&
+-		    strcmp(type, "cgroup2") == 0) {
++		if (strcmp(type, "cgroup2") == 0) {
+ 			strncpy(root, mount, len);
+ 			return 0;
+ 		}
+-- 
+2.22.0
+
