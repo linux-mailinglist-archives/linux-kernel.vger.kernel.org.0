@@ -2,226 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38CB372337
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 01:58:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC6397233B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 02:00:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbfGWX55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 19:57:57 -0400
-Received: from mail-eopbgr150089.outbound.protection.outlook.com ([40.107.15.89]:2425
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726593AbfGWX55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 19:57:57 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Fz+GTKquN1B0r1UsoyOgaNoEgVUiJ/oIQxPWssFSa3d/+/aYHrXBgxfbE7vB6wpQvXw+RwtkhB0nqVRuW5rpYN0fCMxh+NkwQ7bnDkyz/7NrtvazUuio6qWEkX38mCb2VYu0nUK7SOp4OIB2FbBkvb2OsOPFl7NZ6FSOvUgNzDlvXiPyZOLosOS2R5rIab044U6suzHfzOCASa0bBGijw5/889IBCuAsFaEbj12IwMnYu1P/t/T5ZMjq6PGri2RT0Ms4ljD5YBElB1d69aQ1EmD/b2rUxKSojxajjwuCmmPi94i5kMOD5k6ExLTxQFfSQ0j56lqmu0MGE3E9SDczdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dfbE91tPg3qoZ5tvCt0S1fLEh+x8NOe8dVKXjYHbtos=;
- b=hK+OOqnQcA5HRngpSQj2d5YkDw66txWr8Gc7rVzbRAszPtvH+J/JnGU0DDIsel/O/9ip9JiauX8UGKHQmtt1vFFmgxzuRo2c8r4LHhcsLcsYI6Np9cGoMFY5Zj3hUem4rP2nGs3Dz8JfuGfJ4djI4Z24+9eKO+oLPTPDn79bteDbGbQDnJdHzbAUzadp3t0APF1liI2URW0NfrAwukWgaQE3ZL8gzWPpPHKa29EkCighF2Hlh7mXK4ZraJI55MfWTe0JAIW5P4hFh0gRKp9NqnkZO0cUIVyvD5a1kaJPFDybqjFO5VNzqOTUywEVeB47lKteze2ZEaor7FGT1YF+UQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=mellanox.com;dmarc=pass action=none
- header.from=mellanox.com;dkim=pass header.d=mellanox.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dfbE91tPg3qoZ5tvCt0S1fLEh+x8NOe8dVKXjYHbtos=;
- b=GphKr1rtJJEDecXAWp1/nIcT1rRkqGDiTrBWMzLOX2TEHNtMpTfAq4PBaT+pYd4AwE2ne/+MgyL4cOG/zyXvpbKDKFJ4L7wTVfB++S7S4prVjz+5rMqL48C/jrAr9K7JJdBLU9TxAu9K6LpXZq2B05C1rLks/AvrNBzlPLqL/30=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB5037.eurprd05.prod.outlook.com (20.177.52.74) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.16; Tue, 23 Jul 2019 23:57:52 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::5c6f:6120:45cd:2880]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::5c6f:6120:45cd:2880%4]) with mapi id 15.20.2094.013; Tue, 23 Jul 2019
- 23:57:52 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Ralph Campbell <rcampbell@nvidia.com>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        =?iso-8859-1?Q?J=E9r=F4me_Glisse?= <jglisse@redhat.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 1/2] mm/hmm: a few more C style and comment clean ups
-Thread-Topic: [PATCH 1/2] mm/hmm: a few more C style and comment clean ups
-Thread-Index: AQHVQa6ccTnGbJ4iyUKRepNq/WEUcqbY4X2A
-Date:   Tue, 23 Jul 2019 23:57:52 +0000
-Message-ID: <20190723235747.GP15331@mellanox.com>
-References: <20190723233016.26403-1-rcampbell@nvidia.com>
- <20190723233016.26403-2-rcampbell@nvidia.com>
-In-Reply-To: <20190723233016.26403-2-rcampbell@nvidia.com>
+        id S1727453AbfGWX76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 19:59:58 -0400
+Received: from mga04.intel.com ([192.55.52.120]:34173 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726527AbfGWX76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 19:59:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jul 2019 16:59:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,300,1559545200"; 
+   d="scan'208";a="369081710"
+Received: from pgsmsx104.gar.corp.intel.com ([10.221.44.91])
+  by fmsmga006.fm.intel.com with ESMTP; 23 Jul 2019 16:59:55 -0700
+Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.46]) by
+ PGSMSX104.gar.corp.intel.com ([169.254.3.64]) with mapi id 14.03.0439.000;
+ Wed, 24 Jul 2019 07:59:54 +0800
+From:   "Huang, Kai" <kai.huang@intel.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "songliubraving@fb.com" <songliubraving@fb.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+CC:     "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "hdanton@sina.com" <hdanton@sina.com>,
+        "kernel-team@fb.com" <kernel-team@fb.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>
+Subject: Re: [PATCH v9 5/6] mm,thp: add read-only THP support for
+ (non-shmem) FS
+Thread-Topic: [PATCH v9 5/6] mm,thp: add read-only THP support for
+ (non-shmem) FS
+Thread-Index: AQHVKurXe0zlPpLJvUiiyeP9CKzbqKbYiXyA
+Date:   Tue, 23 Jul 2019 23:59:54 +0000
+Message-ID: <1563926391.8456.1.camel@intel.com>
+References: <20190625001246.685563-1-songliubraving@fb.com>
+         <20190625001246.685563-6-songliubraving@fb.com>
+In-Reply-To: <20190625001246.685563-6-songliubraving@fb.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: BL0PR02CA0048.namprd02.prod.outlook.com
- (2603:10b6:207:3d::25) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:4d::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [156.34.55.100]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2d870704-40c9-48e3-545d-08d70fc992a8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB5037;
-x-ms-traffictypediagnostic: VI1PR05MB5037:
-x-microsoft-antispam-prvs: <VI1PR05MB50374C489F4CF0EB5003882ECFC70@VI1PR05MB5037.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0107098B6C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(136003)(39860400002)(346002)(376002)(189003)(199004)(7736002)(486006)(14454004)(305945005)(8936002)(81156014)(2616005)(14444005)(256004)(229853002)(1076003)(8676002)(71190400001)(36756003)(66066001)(5660300002)(71200400001)(6486002)(386003)(6916009)(316002)(446003)(11346002)(86362001)(54906003)(478600001)(99286004)(3846002)(68736007)(66946007)(66446008)(76176011)(64756008)(476003)(52116002)(6512007)(186003)(66476007)(66556008)(6436002)(53936002)(6116002)(102836004)(25786009)(53546011)(26005)(4326008)(6506007)(33656002)(2906002)(6246003)(81166006)(334744003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5037;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: YsYw+TXrljd5KVznr5GNkrWU0koHjVRt9/Hg7Dq39UbN9i08nNtB4qlVNo5BNV2Bi6PST7LmG3GWRF3dMwZWG7SYj7JZqbFoG7TSfF5IVWM/1TGCmxTLL8RJM/3WOfCOosDRB4jycVYsNwvz+ucdl17NI+fS/SPOdgX5aiJ26PT6WsWRoF44wHlmfTD0zHMwteU1xssHMhXGqR3tvJmf3eYG86OzE6RIQBo6ma/NQarvxhQ+YtqO69xHV6/qE6edjCoNRUkj8wzAFRxbkSVl4aS+IItdEbSHHrgAUV1JS4D0XBFT5KCfZWVeoNhUYi7CUdg7gd0DOWFBYcJLYrk62/FFSeRPTjPOWZGMXJzOtEa+O+g5Jnil50fuu8sTzXdp6up+hya5n4eCq7zWhClGJsRuGPeR2wD9zKK06dYLH1g=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <0ADC3FCB7798D64EAEAEF7472C17BC21@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+x-originating-ip: [10.254.182.119]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <90FB8C841C327D44B3083EA689DE73AE@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d870704-40c9-48e3-545d-08d70fc992a8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2019 23:57:52.2021
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5037
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 04:30:15PM -0700, Ralph Campbell wrote:
-> -	if (pmd_huge(pmd) && (range->vma->vm_flags & VM_HUGETLB))
-> +	if (pmd_huge(pmd) && is_vm_hugetlb_page(vma))
->  		return hmm_pfns_bad(start, end, walk);
-
-This one is not a minor cleanup.. I think it should be done on its
-own commit, and more comletely, maybe based on the below..
-
-If vma is always the same as the the first vma, then your hunk above
-here is much better than introducing a hugetlb flag as I did below..
-
-Although I don't understand why we have this test when it does seem to
-support huge pages, and the commit log suggests hugetlbfs was
-deliberately supported. So a comment (or deletion) sure would be nice.
-
-So maybe sequence this into your series?
-
-Jason
-
-From 6ea7cd2565b5b660d22a659b71b62614e66bc345 Mon Sep 17 00:00:00 2001
-From: Jason Gunthorpe <jgg@mellanox.com>
-Date: Tue, 23 Jul 2019 12:28:32 -0300
-Subject: [PATCH] mm/hmm: remove hmm_range vma
-
-This value is only read inside hmm_vma_walk_pmd() and all the callers,
-through walk_page_range(), always set the value. The proper place for
-per-walk data is in hmm_vma_walk, and since the only usage is a vm_flags
-test just precompute and store that.
-
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
----
- drivers/gpu/drm/nouveau/nouveau_svm.c |  7 +++----
- include/linux/hmm.h                   |  1 -
- mm/hmm.c                              | 11 ++++++-----
- 3 files changed, 9 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c b/drivers/gpu/drm/nouvea=
-u/nouveau_svm.c
-index a9c5c58d425b3d..4f4bec40b887a6 100644
---- a/drivers/gpu/drm/nouveau/nouveau_svm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
-@@ -495,12 +495,12 @@ nouveau_range_fault(struct hmm_mirror *mirror, struct=
- hmm_range *range)
- 				 range->start, range->end,
- 				 PAGE_SHIFT);
- 	if (ret) {
--		up_read(&range->vma->vm_mm->mmap_sem);
-+		up_read(&range->hmm->mm->mmap_sem);
- 		return (int)ret;
- 	}
-=20
- 	if (!hmm_range_wait_until_valid(range, HMM_RANGE_DEFAULT_TIMEOUT)) {
--		up_read(&range->vma->vm_mm->mmap_sem);
-+		up_read(&range->hmm->mm->mmap_sem);
- 		return -EBUSY;
- 	}
-=20
-@@ -508,7 +508,7 @@ nouveau_range_fault(struct hmm_mirror *mirror, struct h=
-mm_range *range)
- 	if (ret <=3D 0) {
- 		if (ret =3D=3D 0)
- 			ret =3D -EBUSY;
--		up_read(&range->vma->vm_mm->mmap_sem);
-+		up_read(&range->hmm->mm->mmap_sem);
- 		hmm_range_unregister(range);
- 		return ret;
- 	}
-@@ -681,7 +681,6 @@ nouveau_svm_fault(struct nvif_notify *notify)
- 			 args.i.p.addr + args.i.p.size, fn - fi);
-=20
- 		/* Have HMM fault pages within the fault window to the GPU. */
--		range.vma =3D vma;
- 		range.start =3D args.i.p.addr;
- 		range.end =3D args.i.p.addr + args.i.p.size;
- 		range.pfns =3D args.phys;
-diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-index 9f32586684c9c3..d4b89f655817cd 100644
---- a/include/linux/hmm.h
-+++ b/include/linux/hmm.h
-@@ -164,7 +164,6 @@ enum hmm_pfn_value_e {
-  */
- struct hmm_range {
- 	struct hmm		*hmm;
--	struct vm_area_struct	*vma;
- 	struct list_head	list;
- 	unsigned long		start;
- 	unsigned long		end;
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 16b6731a34db79..3d8cdfb67a6ab8 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -285,8 +285,9 @@ struct hmm_vma_walk {
- 	struct hmm_range	*range;
- 	struct dev_pagemap	*pgmap;
- 	unsigned long		last;
--	bool			fault;
--	bool			block;
-+	bool			fault : 1;
-+	bool			block : 1;
-+	bool			hugetlb : 1;
- };
-=20
- static int hmm_vma_do_fault(struct mm_walk *walk, unsigned long addr,
-@@ -635,7 +636,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 	if (pmd_none(pmd))
- 		return hmm_vma_walk_hole(start, end, walk);
-=20
--	if (pmd_huge(pmd) && (range->vma->vm_flags & VM_HUGETLB))
-+	if (pmd_huge(pmd) && hmm_vma_walk->hugetlb)
- 		return hmm_pfns_bad(start, end, walk);
-=20
- 	if (thp_migration_supported() && is_pmd_migration_entry(pmd)) {
-@@ -994,7 +995,7 @@ long hmm_range_snapshot(struct hmm_range *range)
- 			return -EPERM;
- 		}
-=20
--		range->vma =3D vma;
-+		hmm_vma_walk.hugetlb =3D vma->vm_flags & VM_HUGETLB;
- 		hmm_vma_walk.pgmap =3D NULL;
- 		hmm_vma_walk.last =3D start;
- 		hmm_vma_walk.fault =3D false;
-@@ -1090,7 +1091,7 @@ long hmm_range_fault(struct hmm_range *range, bool bl=
-ock)
- 			return -EPERM;
- 		}
-=20
--		range->vma =3D vma;
-+		hmm_vma_walk.hugetlb =3D vma->vm_flags & VM_HUGETLB;
- 		hmm_vma_walk.pgmap =3D NULL;
- 		hmm_vma_walk.last =3D start;
- 		hmm_vma_walk.fault =3D true;
---=20
-2.22.0
-
+T24gTW9uLCAyMDE5LTA2LTI0IGF0IDE3OjEyIC0wNzAwLCBTb25nIExpdSB3cm90ZToNCj4gVGhp
+cyBwYXRjaCBpcyAoaG9wZWZ1bGx5KSB0aGUgZmlyc3Qgc3RlcCB0byBlbmFibGUgVEhQIGZvciBu
+b24tc2htZW0NCj4gZmlsZXN5c3RlbXMuDQo+IA0KPiBUaGlzIHBhdGNoIGVuYWJsZXMgYW4gYXBw
+bGljYXRpb24gdG8gcHV0IHBhcnQgb2YgaXRzIHRleHQgc2VjdGlvbnMgdG8gVEhQDQo+IHZpYSBt
+YWR2aXNlLCBmb3IgZXhhbXBsZToNCj4gDQo+ICAgICBtYWR2aXNlKCh2b2lkICopMHg2MDAwMDAs
+IDB4MjAwMDAwLCBNQURWX0hVR0VQQUdFKTsNCj4gDQo+IFdlIHRyaWVkIHRvIHJldXNlIHRoZSBs
+b2dpYyBmb3IgVEhQIG9uIHRtcGZzLg0KPiANCj4gQ3VycmVudGx5LCB3cml0ZSBpcyBub3Qgc3Vw
+cG9ydGVkIGZvciBub24tc2htZW0gVEhQLiBraHVnZXBhZ2VkIHdpbGwgb25seQ0KPiBwcm9jZXNz
+IHZtYSB3aXRoIFZNX0RFTllXUklURS4gc3lzX21tYXAoKSBpZ25vcmVzIFZNX0RFTllXUklURSBy
+ZXF1ZXN0cw0KPiAoc2VlIGtzeXNfbW1hcF9wZ29mZikuIFRoZSBvbmx5IHdheSB0byBjcmVhdGUg
+dm1hIHdpdGggVk1fREVOWVdSSVRFIGlzDQo+IGV4ZWN2ZSgpLiBUaGlzIHJlcXVpcmVtZW50IGxp
+bWl0cyBub24tc2htZW0gVEhQIHRvIHRleHQgc2VjdGlvbnMuDQo+IA0KPiBUaGUgbmV4dCBwYXRj
+aCB3aWxsIGhhbmRsZSB3cml0ZXMsIHdoaWNoIHdvdWxkIG9ubHkgaGFwcGVuIHdoZW4gdGhlIGFs
+bA0KPiB0aGUgdm1hcyB3aXRoIFZNX0RFTllXUklURSBhcmUgdW5tYXBwZWQuDQo+IA0KPiBBbiBF
+WFBFUklNRU5UQUwgY29uZmlnLCBSRUFEX09OTFlfVEhQX0ZPUl9GUywgaXMgYWRkZWQgdG8gZ2F0
+ZSB0aGlzDQo+IGZlYXR1cmUuDQo+IA0KPiBBY2tlZC1ieTogUmlrIHZhbiBSaWVsIDxyaWVsQHN1
+cnJpZWwuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBTb25nIExpdSA8c29uZ2xpdWJyYXZpbmdAZmIu
+Y29tPg0KPiAtLS0NCj4gIG1tL0tjb25maWcgICAgICB8IDExICsrKysrKw0KPiAgbW0vZmlsZW1h
+cC5jICAgIHwgIDQgKy0tDQo+ICBtbS9raHVnZXBhZ2VkLmMgfCA5NCArKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tDQo+ICBtbS9ybWFwLmMgICAgICAgfCAx
+MiArKysrLS0tDQo+ICA0IGZpbGVzIGNoYW5nZWQsIDEwMCBpbnNlcnRpb25zKCspLCAyMSBkZWxl
+dGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9tbS9LY29uZmlnIGIvbW0vS2NvbmZpZw0KPiBp
+bmRleCBmMGM3NmJhNDc2OTUuLjBhOGZkNTg5NDA2ZCAxMDA2NDQNCj4gLS0tIGEvbW0vS2NvbmZp
+Zw0KPiArKysgYi9tbS9LY29uZmlnDQo+IEBAIC03NjIsNiArNzYyLDE3IEBAIGNvbmZpZyBHVVBf
+QkVOQ0hNQVJLDQo+ICANCj4gIAkgIFNlZSB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy92bS9ndXBf
+YmVuY2htYXJrLmMNCj4gIA0KPiArY29uZmlnIFJFQURfT05MWV9USFBfRk9SX0ZTDQo+ICsJYm9v
+bCAiUmVhZC1vbmx5IFRIUCBmb3IgZmlsZXN5c3RlbXMgKEVYUEVSSU1FTlRBTCkiDQo+ICsJZGVw
+ZW5kcyBvbiBUUkFOU1BBUkVOVF9IVUdFX1BBR0VDQUNIRSAmJiBTSE1FTQ0KDQpIaSwNCg0KTWF5
+YmUgYSBzdHVwaWQgcXVlc3Rpb24gc2luY2UgSSBhbSBuZXcsIGJ1dCB3aHkgZG9lcyBpdCBkZXBl
+bmQgb24gU0hNRU0/DQoNClRoYW5rcywNCi1LYWk=
