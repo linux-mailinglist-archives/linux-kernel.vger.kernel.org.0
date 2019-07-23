@@ -2,196 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07D4A71F07
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 20:22:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 650A371F38
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 20:24:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391420AbfGWSWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 14:22:33 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:41902 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733219AbfGWSWc (ORCPT
+        id S2391469AbfGWSYp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 14:24:45 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:46216 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391458AbfGWSYo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 14:22:32 -0400
-Received: by mail-vk1-f196.google.com with SMTP id u64so8849771vku.8
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 11:22:32 -0700 (PDT)
+        Tue, 23 Jul 2019 14:24:44 -0400
+Received: by mail-ua1-f66.google.com with SMTP id o19so17343826uap.13
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 11:24:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=g2TuUDb+cbDlJb1CcmjRJgoW+PPf4FRjIQWj89hrcAI=;
-        b=bsrBTIGwdheinL1kf92PRexRZFy2EFU93ZC/0biGWGKiSn3NfNGLvKJ11e57dBGbbI
-         zs+v2qiU6SZAaCEJJrJLNrxK5JUcT7g+al+3r9rDCPIoCGFdj+qmanISatk4NkGr+sfw
-         iMP2+IPYLxPPX2pXRHOdkFAjpzY0dioP53FaM=
+        bh=2LM8ziNL3CjgvMJTgYt5n9A1u1GBpSBnH6t18zKFSsY=;
+        b=dxwu/bjdyI5X0wkqDq4wvOZ2cgg85jGFAhDCjX4xY961JAzWPrWz8jRCox4IeAiTQe
+         htUEExMwEN2xa6pU0eeuHLmFtROYIvA+KY46RqTVDKL0DMNG8f/ZrZYx4kQFKSROfM9D
+         anTaec2xnlEoQZ3jLHkriu6aeuYEmnWZypEGlnHDGCGddHoYWW43+wqBeZC51eebDMuK
+         nnY2IXNtXVImBNX1JSwDacrvAIdkb+37L6l7QRTlm2nKDmiDqAx2vSwVoBWNQclf938l
+         9YGv8FSVg2QH/MbGx3RLtS2tYQtMwJ2+5LC1okLfHry+M2pSh3ccGC53S5pzUUEaXkYt
+         eRaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=g2TuUDb+cbDlJb1CcmjRJgoW+PPf4FRjIQWj89hrcAI=;
-        b=JF1gBpzIHbsotgPfxsbvhEWhk9GkuEQVQIwNRtKITamRKCXZHr4nMk0c9FE3ocfcBA
-         4pCunPFnSuOV4aiJsy6yxSOghKwk+eWVuYjZpKojnQSvxEcHQ8/WnxYQHKZHoz7I/L2w
-         SV7h3pBjpiUUsJZmv5xdfZLtGBn9u5LEw2YBvsjxZ97W79cCSQ1eU2DKY5gbtRM4VNdi
-         EXsMQMTWAgNE+m4KO93ZTMzSh2ZJ79M/VYN2125r7RWU7Nja/C+1171wxPZlaGKPV1KA
-         aLOIsbs6i3szr/PdzPoL8jbuxjULGgJS2pQMJX8zXu0pPeSZg9fUplIQwQ3Qi2So+smG
-         Tz9Q==
-X-Gm-Message-State: APjAAAUXQhLfrEm396UMa/SyudqpibLS1O1pef6vc1WrKzypAOoO44R3
-        ihvbQX41GXNEk31WlXwTO9QAyjt/f4E6d/XQKV3/Ug==
-X-Google-Smtp-Source: APXvYqzUCSg04pkSjhBLbI+JQpTMn9imHUAevkK2QEgI+jbWlmx9Y0F6xoBI3+IEn10ojveNqT1RgG/5O/nr/BoTNWM=
-X-Received: by 2002:ac5:c4cc:: with SMTP id a12mr8150601vkl.28.1563906151394;
- Tue, 23 Jul 2019 11:22:31 -0700 (PDT)
+        bh=2LM8ziNL3CjgvMJTgYt5n9A1u1GBpSBnH6t18zKFSsY=;
+        b=BVsAfE20AfGQ1AK6w1TO/vLQZcZb5RM+xdgI6nJmlmn41Yj7VzPdsjg/jCAR1O0x/D
+         ftYbKc/fEp/WGsXEV05YD7pjOCXJsUPcKAfNWL8jkKiOxL+g/18YqDurtlbDP4FpHcwk
+         IJjxTDI5LXqJuBfn63bbNCJM1AwEnMiZrRE0hlxgED0EEwBdQfdA8g5dfVWnACRTtZV8
+         pg70SSOJYytS6/tp2vOfLUEIJo8uQQl/m0HVxnTpGkOPq4urgc97mhJFOAwcuY2xYuxa
+         mGM8QKj+yIh9y3eiu5ny+lOn6vhFRCqEMoq+hFueU3cpV58HERaQid14vh9Nnw0TZPfm
+         Ek0g==
+X-Gm-Message-State: APjAAAUrTLO1hpyOM/yaO75A3LRrg24/Y43/mmsLDkfT5drSybj/5maW
+        TujbVfhehKX5rrA/1zAiCmq/mnvVaHfjfL1uz58=
+X-Google-Smtp-Source: APXvYqyehGC65PVaY+0eH4p3T4O9QClKnlD0GY/7lFy3Bk8wqhtz1YDy/+KqzXFlndu/if6IdKDgDZ9FcaOhQQ0nw4Y=
+X-Received: by 2002:ab0:6798:: with SMTP id v24mr20659759uar.43.1563906283854;
+ Tue, 23 Jul 2019 11:24:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190723143450.33916-1-yuehaibing@huawei.com>
-In-Reply-To: <20190723143450.33916-1-yuehaibing@huawei.com>
-From:   Sumit Saxena <sumit.saxena@broadcom.com>
-Date:   Tue, 23 Jul 2019 23:52:19 +0530
-Message-ID: <CAL2rwxph0kNT2Vwf90La_=5uDgcHgKo-RJ+vrsXVWSXeJRWd_A@mail.gmail.com>
-Subject: Re: [PATCH -next] scsi: megaraid_sas: Make some functions static
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Kashyap Desai <kashyap.desai@broadcom.com>,
-        Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        "PDL,MEGARAIDLINUX" <megaraidlinux.pdl@broadcom.com>
+References: <20190723124608.24617-1-hslester96@gmail.com>
+In-Reply-To: <20190723124608.24617-1-hslester96@gmail.com>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Tue, 23 Jul 2019 21:24:18 +0300
+Message-ID: <CAFCwf11Y_wxeWdjy_838+Br_vPmMh-dZ0++TKapa6ib_swwbOA@mail.gmail.com>
+Subject: Re: [PATCH v2] habanalabs: Use dev_get_drvdata
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 8:05 PM YueHaibing <yuehaibing@huawei.com> wrote:
+On Tue, Jul 23, 2019 at 3:46 PM Chuhong Yuan <hslester96@gmail.com> wrote:
 >
-> Fix sparse warnings:
+> Instead of using to_pci_dev + pci_get_drvdata,
+> use dev_get_drvdata to make code simpler.
 >
-> drivers/scsi/megaraid/megaraid_sas_fusion.c:541:1: warning: symbol 'megasas_alloc_cmdlist_fusion' was not declared. Should it be static?
-> drivers/scsi/megaraid/megaraid_sas_fusion.c:580:1: warning: symbol 'megasas_alloc_request_fusion' was not declared. Should it be static?
-> drivers/scsi/megaraid/megaraid_sas_fusion.c:661:1: warning: symbol 'megasas_alloc_reply_fusion' was not declared. Should it be static?
-> drivers/scsi/megaraid/megaraid_sas_fusion.c:738:1: warning: symbol 'megasas_alloc_rdpq_fusion' was not declared. Should it be static?
-> drivers/scsi/megaraid/megaraid_sas_fusion.c:920:1: warning: symbol 'megasas_alloc_cmds_fusion' was not declared. Should it be static?
-> drivers/scsi/megaraid/megaraid_sas_fusion.c:1740:1: warning: symbol 'megasas_init_adapter_fusion' was not declared. Should it be static?
-> drivers/scsi/megaraid/megaraid_sas_fusion.c:1966:1: warning: symbol 'map_cmd_status' was not declared. Should it be static?
-> drivers/scsi/megaraid/megaraid_sas_fusion.c:2379:1: warning: symbol 'megasas_set_pd_lba' was not declared. Should it be static?
-> drivers/scsi/megaraid/megaraid_sas_fusion.c:2718:1: warning: symbol 'megasas_build_ldio_fusion' was not declared. Should it be static?
-> drivers/scsi/megaraid/megaraid_sas_fusion.c:3215:1: warning: symbol 'megasas_build_io_fusion' was not declared. Should it be static?
-> drivers/scsi/megaraid/megaraid_sas_fusion.c:3328:6: warning: symbol 'megasas_prepare_secondRaid1_IO' was not declared. Should it be static?
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 > ---
->  drivers/scsi/megaraid/megaraid_sas_fusion.c | 27 ++++++++++++++-------------
->  1 file changed, 14 insertions(+), 13 deletions(-)
+> Changes in v2:
+>   - Split v1 into different subsystems
 >
-> diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-> index a32b3f0..120e3c4 100644
-> --- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-> +++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-> @@ -537,7 +537,7 @@ static int megasas_create_sg_sense_fusion(struct megasas_instance *instance)
->         return 0;
->  }
+>  drivers/misc/habanalabs/habanalabs_drv.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 >
-> -int
-> +static int
->  megasas_alloc_cmdlist_fusion(struct megasas_instance *instance)
->  {
->         u32 max_mpt_cmd, i, j;
-> @@ -576,7 +576,8 @@ megasas_alloc_cmdlist_fusion(struct megasas_instance *instance)
+> diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
+> index 6f6dbe93f1df..678f61646ca9 100644
+> --- a/drivers/misc/habanalabs/habanalabs_drv.c
+> +++ b/drivers/misc/habanalabs/habanalabs_drv.c
+> @@ -295,8 +295,7 @@ void destroy_hdev(struct hl_device *hdev)
 >
->         return 0;
->  }
-> -int
-> +
-> +static int
->  megasas_alloc_request_fusion(struct megasas_instance *instance)
+>  static int hl_pmops_suspend(struct device *dev)
 >  {
->         struct fusion_context *fusion;
-> @@ -657,7 +658,7 @@ megasas_alloc_request_fusion(struct megasas_instance *instance)
->         return 0;
->  }
+> -       struct pci_dev *pdev = to_pci_dev(dev);
+> -       struct hl_device *hdev = pci_get_drvdata(pdev);
+> +       struct hl_device *hdev = dev_get_drvdata(dev);
 >
-> -int
-> +static int
->  megasas_alloc_reply_fusion(struct megasas_instance *instance)
->  {
->         int i, count;
-> @@ -734,7 +735,7 @@ megasas_alloc_reply_fusion(struct megasas_instance *instance)
->         return 0;
->  }
+>         pr_debug("Going to suspend PCI device\n");
 >
-> -int
-> +static int
->  megasas_alloc_rdpq_fusion(struct megasas_instance *instance)
->  {
->         int i, j, k, msix_count;
-> @@ -916,7 +917,7 @@ megasas_free_reply_fusion(struct megasas_instance *instance) {
->   * and is used as SMID of the cmd.
->   * SMID value range is from 1 to max_fw_cmds.
->   */
-> -int
-> +static int
->  megasas_alloc_cmds_fusion(struct megasas_instance *instance)
->  {
->         int i;
-> @@ -1736,7 +1737,7 @@ static inline void megasas_free_ioc_init_cmd(struct megasas_instance *instance)
->   *
->   * This is the main function for initializing firmware.
->   */
-> -u32
-> +static u32
->  megasas_init_adapter_fusion(struct megasas_instance *instance)
->  {
->         struct fusion_context *fusion;
-> @@ -1962,7 +1963,7 @@ megasas_fusion_stop_watchdog(struct megasas_instance *instance)
->   * @ext_status :       ext status of cmd returned by FW
->   */
+> @@ -310,8 +309,7 @@ static int hl_pmops_suspend(struct device *dev)
 >
-> -void
-> +static void
->  map_cmd_status(struct fusion_context *fusion,
->                 struct scsi_cmnd *scmd, u8 status, u8 ext_status,
->                 u32 data_length, u8 *sense)
-> @@ -2375,7 +2376,7 @@ int megasas_make_sgl(struct megasas_instance *instance, struct scsi_cmnd *scp,
->   *
->   * Used to set the PD LBA in CDB for FP IOs
->   */
-> -void
-> +static void
->  megasas_set_pd_lba(struct MPI2_RAID_SCSI_IO_REQUEST *io_request, u8 cdb_len,
->                    struct IO_REQUEST_INFO *io_info, struct scsi_cmnd *scp,
->                    struct MR_DRV_RAID_MAP_ALL *local_map_ptr, u32 ref_tag)
-> @@ -2714,7 +2715,7 @@ megasas_set_raidflag_cpu_affinity(struct fusion_context *fusion,
->   * Prepares the io_request and chain elements (sg_frame) for IO
->   * The IO can be for PD (Fast Path) or LD
->   */
-> -void
-> +static void
->  megasas_build_ldio_fusion(struct megasas_instance *instance,
->                           struct scsi_cmnd *scp,
->                           struct megasas_cmd_fusion *cmd)
-> @@ -3211,7 +3212,7 @@ megasas_build_syspd_fusion(struct megasas_instance *instance,
->   * Invokes helper functions to prepare request frames
->   * and sets flags appropriate for IO/Non-IO cmd
->   */
-> -int
-> +static int
->  megasas_build_io_fusion(struct megasas_instance *instance,
->                         struct scsi_cmnd *scp,
->                         struct megasas_cmd_fusion *cmd)
-> @@ -3325,9 +3326,9 @@ megasas_get_request_descriptor(struct megasas_instance *instance, u16 index)
->  /* megasas_prepate_secondRaid1_IO
->   *  It prepares the raid 1 second IO
->   */
-> -void megasas_prepare_secondRaid1_IO(struct megasas_instance *instance,
-> -                           struct megasas_cmd_fusion *cmd,
-> -                           struct megasas_cmd_fusion *r1_cmd)
-> +static void megasas_prepare_secondRaid1_IO(struct megasas_instance *instance,
-> +                                          struct megasas_cmd_fusion *cmd,
-> +                                          struct megasas_cmd_fusion *r1_cmd)
+>  static int hl_pmops_resume(struct device *dev)
 >  {
->         union MEGASAS_REQUEST_DESCRIPTOR_UNION *req_desc, *req_desc2 = NULL;
->         struct fusion_context *fusion;
+> -       struct pci_dev *pdev = to_pci_dev(dev);
+> -       struct hl_device *hdev = pci_get_drvdata(pdev);
+> +       struct hl_device *hdev = dev_get_drvdata(dev);
+>
+>         pr_debug("Going to resume PCI device\n");
+>
 > --
-> 2.7.4
+> 2.20.1
 >
->
+
+This patch is:
+Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
+And pushed to -next
+
+Thanks,
+Oded
