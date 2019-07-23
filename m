@@ -2,170 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7758071CA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 18:16:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F57971CAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 18:18:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730520AbfGWQQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 12:16:23 -0400
-Received: from UCOL19PA34.eemsg.mail.mil ([214.24.24.194]:29763 "EHLO
-        UCOL19PA34.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728180AbfGWQQW (ORCPT
+        id S1728815AbfGWQSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 12:18:07 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:46564 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730480AbfGWQSH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 12:16:22 -0400
-X-EEMSG-check-017: 612692|UCOL19PA34_ESA_OUT01.csd.disa.mil
-X-IronPort-AV: E=Sophos;i="5.64,299,1559520000"; 
-   d="scan'208";a="612692"
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by UCOL19PA34.eemsg.mail.mil with ESMTP; 23 Jul 2019 16:16:08 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1563898568; x=1595434568;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=VzouGgOn7bxXwD7qWHawlSBqaPeVOs5RApSCI+ZHzBI=;
-  b=YnYL2f0+4Z/nKFePQ+QUZEaS1/B9K1SpYEhEld2+XjmPJ3mhmFI0lZZu
-   p1+UF79ya38n7LY6RzqvTrHuU1Gt1bLPIGDdmC8US+no/YGYK42l+880F
-   t4gMCkOJ/osOaZJHuCXNpl2d5hjn9YaPISgJI57lbNpozNenhO9en7qY6
-   /Swe5v9+eUS9kJT+8Yz2bHjnS7l9Ip05fM1lZaYrA/olPlBAkX2cneESj
-   kvcOdwE/eInIJbGJA/DpYzkPUn/vWlElvcPLknx8Gw97qoFbNVJzQc8Lb
-   Drbx4rOIqp3OBEk3BXeQZpH7U/fpthszw1UcqRK9isnmGpRUQS/BDKCL+
-   A==;
-X-IronPort-AV: E=Sophos;i="5.64,299,1559520000"; 
-   d="scan'208";a="26002930"
-IronPort-PHdr: =?us-ascii?q?9a23=3A8rDe7RNExpsWrz4t0Dgl6mtUPXoX/o7sNwtQ0K?=
- =?us-ascii?q?IMzox0K//7pcbcNUDSrc9gkEXOFd2Cra4d0ayJ4+uxCSQp2tWoiDg6aptCVh?=
- =?us-ascii?q?sI2409vjcLJ4q7M3D9N+PgdCcgHc5PBxdP9nC/NlVJSo6lPwWB6nK94iQPFR?=
- =?us-ascii?q?rhKAF7Ovr6GpLIj8Swyuu+54Dfbx9HiTagf79+Nhe7oAbeusQSgoZpN7o8xA?=
- =?us-ascii?q?bOrnZUYepd2HlmJUiUnxby58ew+IBs/iFNsP8/9MBOTLv3cb0gQbNXEDopPW?=
- =?us-ascii?q?Y15Nb2tRbYVguA+mEcUmQNnRVWBQXO8Qz3UY3wsiv+sep9xTWaMMjrRr06RT?=
- =?us-ascii?q?iu86FmQwLzhSwZKzA27n3Yis1ojKJavh2hoQB/w5XJa42RLfZyY7/Rcc8fSW?=
- =?us-ascii?q?dHUMlRTShBCZ6iYYUJAeQKIOJUo5D9qlYKqBezAxSnCuHyxT9SnnL4wLM00+?=
- =?us-ascii?q?ohHw/F0gIvEd0Bv3bIo9v6L6oSTeK4wbPUwTnfYf5b2zHw45XIfBA7pvGMWK?=
- =?us-ascii?q?p9fNbLxkk1EAPFiEibp43iPzOUy+sCrWyb5PdnWO21l2EnpAZxojmyycgykY?=
- =?us-ascii?q?TJmoIUxUzE9SV+2oo1I8a4R1Rhbd6rF5tQqTiXOo1rSc0hW2FloDs2x7IJtJ?=
- =?us-ascii?q?KhfCUG1Y4rywDQZvCZaYSE/xTuX/uLLzhinnJqYre/ig638Uin1+LzSNG50E?=
- =?us-ascii?q?1PripZitnMsW0N1wDL5siHVPR9+kCh1C6T1w/J8OFEIF00lbHBJ549wr8/ip?=
- =?us-ascii?q?oTsUPZEi/whEr2l7OZel8h+uip7+TrerTmppmCOI9okgzyL6sjl8OlDek4Lw?=
- =?us-ascii?q?QCRXaX9Oui2LH54EH1WLBKgec3kqndvpDaP8MbpquhDgBPzokj5BG/Dza739?=
- =?us-ascii?q?sGhnQHMFJEdw6Hj4juIV3OJuv4Au2lj1Sjlzdr2ejKPqf9DZXVMnjDjLDhcK?=
- =?us-ascii?q?5n5E5ZyQoz19JS6pxVCrEFO//zVUrxu8bZDh89KQC73+HnCNBl3IMERW2PGr?=
- =?us-ascii?q?OZML/VsVKQ/uIgOfSMZIsOtTblMfcl+vrugWY8mV8aeqmpx4UYZGqkEfRhJk?=
- =?us-ascii?q?WTeWDsjcsZEWcWogo+S/TniEacXj5XZnayWb885z4gBYK4AofMWJqtjKaC3C?=
- =?us-ascii?q?ilBJ1WYH5JClSWHXfvbYWEVO8GaDiOLc95jjwESb+hRpcl1RGvsg/61rVmIv?=
- =?us-ascii?q?PP+iIGqZ3jycJ15+zPlRAy7DB0CsOd3HyQT2FwgGwFXCE23K9hrkxn0FuD0r?=
- =?us-ascii?q?Z3g+ZeFdNN4/NFSAA6NYTTz+ZiEdD9RhrBfsuVSFahWtimBTAxTtQsw94Bek?=
- =?us-ascii?q?p9Fc6igQ3d0Cq0HbAVk6eGBII78q3CxXj9PcV9xGjc1KknkVYmRtFDNWq8hq?=
- =?us-ascii?q?5w7wLTHZLGk12Fl6a2cqQRxDPC9GeEzWuAok5YVApwUb7eUHAFeETZsNT56V?=
- =?us-ascii?q?neT7O0FbsnNQ5Bw9aYKqRWct3pkUlGRPD7NdTceW2+h2SwCA2TxrORd4rlZX?=
- =?us-ascii?q?8R0zncCUIciQAc4W6GNRQiBiemu2/eDjluFVX1Y0P28Ol+s2i2TkkuwAGPcU?=
- =?us-ascii?q?Jh1qC5+hkPhfyTU/kTxK4LuD89qzVoG1awx9bWC9uGpwp8c6RQeNA970ld1W?=
- =?us-ascii?q?LfqQN9OoetL75thlEAaQR7pUDu2AttCoVGj8cqqGkmzA1oKaKXgxt9cGax2J?=
- =?us-ascii?q?HqcpLQLmXp4B2ubeaC01TfyonN+6Mn5/ExqlGltwasQBkM6XJihvBcyXyarr?=
- =?us-ascii?q?rNDQYfVdqlW0048Bl2qpnGcyI94MXSznQqPq6q5GyRk+k1Dfcon07zN+xUN7?=
- =?us-ascii?q?mJQUqrTpwX?=
-X-IPAS-Result: =?us-ascii?q?A2BqCgBGMjdd/wHyM5BmHQEBBQEHBQGBZ4FtKoE+ATIqh?=
- =?us-ascii?q?B2SFlABAQEGgQktiWKRFwkBAQEBAQEBAQE0AQIBAYRAAoJOIzgTAQMBAQEEA?=
- =?us-ascii?q?QEBAQUBAWyFKoI6KQGCZwECAyMEET8CEAsYAgIfBwICVwYNBgIBAYJfP4F3F?=
- =?us-ascii?q?Kp8fzOFR4MxgUiBDCiLXxd4gQeBOIJrPodPglgEjkWGLJVyCYIblAYGG4Ith?=
- =?us-ascii?q?yWEDIospxQhgVgrCAIYCCEPgyeBEoFnjikjAzCBBgEBjl4BAQ?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 23 Jul 2019 16:16:08 +0000
-Received: from moss-callisto.infosec.tycho.ncsc.mil (moss-callisto [192.168.25.136])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x6NGG404027057;
-        Tue, 23 Jul 2019 12:16:04 -0400
-Subject: Re: [Non-DoD Source] Re: [RFC PATCH v2] fanotify, inotify, dnotify,
- security: add security hook for fs notifications
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20190718143042.11059-1-acgoide@tycho.nsa.gov>
- <CAOQ4uxjCR76nbV_Lmoegaq6NqovWZD-XWEVS-X3e=BtDdjKkXQ@mail.gmail.com>
-From:   Aaron Goidel <acgoide@tycho.nsa.gov>
-Message-ID: <c74ad814-f188-37c6-9b3a-51178b538a2b@tycho.nsa.gov>
-Date:   Tue, 23 Jul 2019 12:16:04 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Tue, 23 Jul 2019 12:18:07 -0400
+Received: by mail-io1-f69.google.com with SMTP id s83so47728112iod.13
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 09:18:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=kQSG0beHyO6uv0xVHKgcfkX+wkja0UWMo+b5ugy8hC8=;
+        b=jHLo6zhOLdD7zyhCU0XXSj5pj3mhBhpFRbYKEtMLNuiLgu34A2qtKdZS4WSCP7IyEq
+         ZrorV1L4P3U7m44/DOKFPv42rRWlU0jqJHWBDOdauVOrtKYGnBKXotTkPBE7/jWVlo7R
+         7zx5r4iIWUMshJU60z4JCRd4KXXqLO3eaVUfsJHfZxYOt7lqHPN1Aq/v1gsuoc5qXjh1
+         UWXznVDJ9jKgNsJydi/odllEKfIBUM9UgDpg1SMz8NRq4xCWwx/B9NNAH/xJU6mpvg02
+         rErHVK5/ZmGn6iOnYB/Uzp6+HTuSN4JkJcvSh7wJ81ePzSxXvsqfEC++HiQD7TLKaWh6
+         KiXA==
+X-Gm-Message-State: APjAAAUMxzdDX39zXQFPdfY3wtMD9v1jufAiViLSpOThNjuVv8ZsKEFW
+        tC9lXvCO7CtPyvInjuuB78mwAUkcO/uj6j1CVE1bOzGap0aY
+X-Google-Smtp-Source: APXvYqz5H3uVOWGK8GQuU9zEBEhD8aFl6f6mDaeAPKJq0g+44A03rgs1+DiLao4BJImt1K2EC4ta0HhztrxP1kHh0xSLVfpnzD+e
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxjCR76nbV_Lmoegaq6NqovWZD-XWEVS-X3e=BtDdjKkXQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a6b:f406:: with SMTP id i6mr1490130iog.110.1563898686541;
+ Tue, 23 Jul 2019 09:18:06 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 09:18:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ad1dfe058e5b89ab@google.com>
+Subject: memory leak in rds_send_probe
+From:   syzbot <syzbot+5134cdf021c4ed5aaa5f@syzkaller.appspotmail.com>
+To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/18/19 12:16 PM, Amir Goldstein wrote:
-> On Thu, Jul 18, 2019 at 5:31 PM Aaron Goidel <acgoide@tycho.nsa.gov> wrote:
->>
->> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
->> index a90bb19dcfa2..9e3137badb6b 100644
->> --- a/fs/notify/fanotify/fanotify_user.c
->> +++ b/fs/notify/fanotify/fanotify_user.c
->> @@ -528,9 +528,10 @@ static const struct file_operations fanotify_fops = {
->>   };
->>
->>   static int fanotify_find_path(int dfd, const char __user *filename,
->> -                             struct path *path, unsigned int flags)
->> +                             struct path *path, unsigned int flags, __u64 mask)
->>   {
->>          int ret;
->> +       unsigned int mark_type;
->>
->>          pr_debug("%s: dfd=%d filename=%p flags=%x\n", __func__,
->>                   dfd, filename, flags);
->> @@ -567,8 +568,30 @@ static int fanotify_find_path(int dfd, const char __user *filename,
->>
->>          /* you can only watch an inode if you have read permissions on it */
->>          ret = inode_permission(path->dentry->d_inode, MAY_READ);
->> +       if (ret) {
->> +               path_put(path);
->> +               goto out;
->> +       }
->> +
->> +       switch (flags & FANOTIFY_MARK_TYPE_BITS) {
->> +       case FAN_MARK_MOUNT:
->> +               mark_type = FSNOTIFY_OBJ_TYPE_VFSMOUNT;
->> +               break;
->> +       case FAN_MARK_FILESYSTEM:
->> +               mark_type = FSNOTIFY_OBJ_TYPE_SB;
->> +               break;
->> +       case FAN_MARK_INODE:
->> +               mark_type = FSNOTIFY_OBJ_TYPE_INODE;
->> +               break;
->> +       default:
->> +               ret = -EINVAL;
->> +               goto out;
->> +       }
->> +
->> +       ret = security_inode_notify(path->dentry->d_inode, mask, mark_type);
-> 
-> If you prefer 3 hooks security_{inode,mount,sb}_notify()
-> please place them in fanotify_add_{inode,mount,sb}_mark().
-> 
-> If you prefer single hook with path argument, please pass path
-> down to fanotify_add_mark() and call security_path_notify() from there,
-> where you already have the object type argument.
-> 
-I'm not clear on why you want me to move the hook call down to 
-fanotify_add_mark(). I'd prefer to keep it adjacent to the existing 
-inode_permission() call so that all the security checking occurs from 
-one place. Moving it down requires adding a path arg to that entire call 
-chain, even though it wouldn't otherwise be needed. And that raises the 
-question of whether to continue passing the mnt_sb, mnt, or inode 
-separately or just extract all those from the path inside of 
-fanotify_add_*_mark().
+Hello,
 
-It also seems to destroy the parallelism with fanotify_remove_*_mark(). 
-I also don't see any real benefit in splitting into three separate 
-hooks, especially as some security modules will want the path or inode 
-even for the mount or superblock cases, since they may have no relevant 
-security information for vfsmounts or superblocks.
+syzbot found the following crash on:
 
--- 
-Aaron
+HEAD commit:    c6dd78fc Merge branch 'x86-urgent-for-linus' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14be98c8600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8de7d700ea5ac607
+dashboard link: https://syzkaller.appspot.com/bug?extid=5134cdf021c4ed5aaa5f
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=145df0c8600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=170001f4600000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+5134cdf021c4ed5aaa5f@syzkaller.appspotmail.com
+
+BUG: memory leak
+unreferenced object 0xffff8881234e9c00 (size 512):
+   comm "kworker/u4:2", pid 286, jiffies 4294948041 (age 7.750s)
+   hex dump (first 32 bytes):
+     01 00 00 00 00 00 00 00 08 9c 4e 23 81 88 ff ff  ..........N#....
+     08 9c 4e 23 81 88 ff ff 18 9c 4e 23 81 88 ff ff  ..N#......N#....
+   backtrace:
+     [<0000000032e378fa>] kmemleak_alloc_recursive  
+/./include/linux/kmemleak.h:43 [inline]
+     [<0000000032e378fa>] slab_post_alloc_hook /mm/slab.h:522 [inline]
+     [<0000000032e378fa>] slab_alloc /mm/slab.c:3319 [inline]
+     [<0000000032e378fa>] __do_kmalloc /mm/slab.c:3653 [inline]
+     [<0000000032e378fa>] __kmalloc+0x16d/0x2d0 /mm/slab.c:3664
+     [<0000000015bc9536>] kmalloc /./include/linux/slab.h:557 [inline]
+     [<0000000015bc9536>] kzalloc /./include/linux/slab.h:748 [inline]
+     [<0000000015bc9536>] rds_message_alloc+0x3e/0xc0 /net/rds/message.c:291
+     [<00000000a806d18d>] rds_send_probe.constprop.0+0x42/0x2f0  
+/net/rds/send.c:1419
+     [<00000000794a00cc>] rds_send_pong+0x1e/0x23 /net/rds/send.c:1482
+     [<00000000b2a248d0>] rds_recv_incoming+0x27e/0x460 /net/rds/recv.c:343
+     [<00000000ea1503db>] rds_loop_xmit+0x86/0x100 /net/rds/loop.c:96
+     [<00000000a9857f5a>] rds_send_xmit+0x524/0x9a0 /net/rds/send.c:355
+     [<00000000557b0101>] rds_send_worker+0x3c/0xd0 /net/rds/threads.c:200
+     [<000000004ba94868>] process_one_work+0x23f/0x490  
+/kernel/workqueue.c:2269
+     [<00000000e793f811>] worker_thread+0x195/0x580 /kernel/workqueue.c:2415
+     [<000000003ee8c1a1>] kthread+0x13e/0x160 /kernel/kthread.c:255
+     [<000000004cd53c81>] ret_from_fork+0x1f/0x30  
+/arch/x86/entry/entry_64.S:352
+
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
