@@ -2,125 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A843770FB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 05:13:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC0B570FB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 05:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729260AbfGWDNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 23:13:10 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41797 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbfGWDNK (ORCPT
+        id S1730356AbfGWDNw convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 22 Jul 2019 23:13:52 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:49058 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbfGWDNv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 23:13:10 -0400
-Received: by mail-ot1-f68.google.com with SMTP id o101so42539721ota.8
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 20:13:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qRk0XCUOOeLhkURXIsrcmBZYRHclzXxoMPAdT26EhIw=;
-        b=x4Y4KhhmBcGhMNRZHlH8uiKQqB7vPuwd9a3vzI/zUfipkeumIIxotuiLo/omBUZo1V
-         I4yEENG2NJUeqgWbP1S7e+ALHfprLJHn0HSpbkd3gTfSAJAhc7mDQvXrKA9zm1A2m786
-         /cvOT/9UgYlY1auQIn+F0rRuWUy1Qdqd5ONcxYNl502flymtImq5ZwDi9EUAlsslM6FR
-         +L5kCSnrHL8qYuXoSb8ERiW3n5QlIqnThtyaAS1MAm7K+zC/omTtboVBCT/izDVm35/7
-         6cdpMss5uZ4caCUgvGkE+eHNrp1Kki6vY7MNrEXIPrHCfePxLgKg+ccP5BOClq03YZiN
-         odIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qRk0XCUOOeLhkURXIsrcmBZYRHclzXxoMPAdT26EhIw=;
-        b=C0t1Gll1v5u67v4Z35auFPcU+ie5ObpTVgFm2N2/VoEqqI51G0oXPwea49wqIPQ2MB
-         4JVCA9mjj1OcG7t8j/bfD2tKJVWtoA8GqYWxmlvm9kidZmC7zXgZKccJOmysUNbd87vX
-         K1U7P37IGHR1agOs0qwiwzE8Zz0XsxPAKtq+eccbWZcKmTjqrXjMSgKQkBctwtw9Fx4/
-         ZJRq7syVbCZA6sgQby1NGSYomnxX+mc90MiBgbriv1i0UFi6QuMnY7ObPaSr5dxAMyWJ
-         IpuSY5BiPugyWxG1/bhIG/AhKEqMpcoEwjuQt2xpAxhwHlrZ1P+iMIrjFraWhcj6HBZH
-         UHjA==
-X-Gm-Message-State: APjAAAU+TAzCeFbpKRkoEao+jzKBbXTV+sXGJogY1A1kJIpsvrVjfOXi
-        IbGM3TpY6Te8FKQA+cRaSSYXuxo+8/efL4VO+oSALQ==
-X-Google-Smtp-Source: APXvYqy1vfQdOXDImruQOKc6WqzDViO9H0BO7gpFE3uIOrbEzPmKXH6lGJp5FeQx/o3OtwHJ/PUcvdKi5AteHgD6TkQ=
-X-Received: by 2002:a9d:590d:: with SMTP id t13mr38048922oth.281.1563851589136;
- Mon, 22 Jul 2019 20:13:09 -0700 (PDT)
+        Mon, 22 Jul 2019 23:13:51 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x6N3DcZF028915, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCAS11.realtek.com.tw[172.21.6.12])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x6N3DcZF028915
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 23 Jul 2019 11:13:38 +0800
+Received: from RTITMBSVM04.realtek.com.tw ([fe80::e404:880:2ef1:1aa1]) by
+ RTITCAS11.realtek.com.tw ([fe80::7c6d:ced5:c4ff:8297%15]) with mapi id
+ 14.03.0439.000; Tue, 23 Jul 2019 11:13:38 +0800
+From:   Pkshih <pkshih@realtek.com>
+To:     David Binderman <dcb314@hotmail.com>,
+        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: linux-5.2.2/drivers/net/wireless/realtek/rtlwifi/rtl8*/sw.c: many redundant assignments ?
+Thread-Topic: linux-5.2.2/drivers/net/wireless/realtek/rtlwifi/rtl8*/sw.c:
+ many redundant assignments ?
+Thread-Index: AQHVQGUFo+pdPg0s6Um56sOsyVqY46bXh/kA
+Date:   Tue, 23 Jul 2019 03:13:37 +0000
+Message-ID: <5B2DA6FDDF928F4E855344EE0A5C39D1D5C1BC7F@RTITMBSVM04.realtek.com.tw>
+References: <DB7PR08MB38011180E04CCB548A2316159CC40@DB7PR08MB3801.eurprd08.prod.outlook.com>
+In-Reply-To: <DB7PR08MB38011180E04CCB548A2316159CC40@DB7PR08MB3801.eurprd08.prod.outlook.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.69.114]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <cover.1563782844.git.baolin.wang@linaro.org> <94a0d20e6304b909391abd9a425c71c376cad964.1563782844.git.baolin.wang@linaro.org>
- <20190722141940.GA26528@ming.t460p>
-In-Reply-To: <20190722141940.GA26528@ming.t460p>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Tue, 23 Jul 2019 11:12:57 +0800
-Message-ID: <CAMz4ku+R8OdAQ2S91Xe=V-nZL1Nu5g=_xpHqQCzNF6JeBHY3rw@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/7] blk-mq: Export blk_mq_hctx_has_pending() function
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ming,
 
-On Mon, 22 Jul 2019 at 22:19, Ming Lei <ming.lei@redhat.com> wrote:
->
-> On Mon, Jul 22, 2019 at 09:09:36PM +0800, Baolin Wang wrote:
-> > Some SD/MMC host controllers can support packed command or packed request,
-> > that means we can package several requests to host controller at one time
-> > to improve performence. And this patch set will introduce MMC packed function
-> > to support this feature by following patches.
-> >
-> > To support MMC packed function, the MMC layer need to know if there are
-> > requests are pending now in hardware queue to help to combine requests
-> > as much as possible. If we know there are requests pending in hardware
-> > queue, then we should not package requests to host controller immediately,
-> > instead we should collect more requests into MMC packed queue to be packed
-> > to host controller with packed condition.
-> >
-> > Thus export this function for MMC packed function.
-> >
-> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> > ---
-> >  block/blk-mq.c         |    3 ++-
-> >  include/linux/blk-mq.h |    1 +
-> >  2 files changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/block/blk-mq.c b/block/blk-mq.c
-> > index b038ec6..5bd4ef9 100644
-> > --- a/block/blk-mq.c
-> > +++ b/block/blk-mq.c
-> > @@ -63,12 +63,13 @@ static int blk_mq_poll_stats_bkt(const struct request *rq)
-> >   * Check if any of the ctx, dispatch list or elevator
-> >   * have pending work in this hardware queue.
-> >   */
-> > -static bool blk_mq_hctx_has_pending(struct blk_mq_hw_ctx *hctx)
-> > +bool blk_mq_hctx_has_pending(struct blk_mq_hw_ctx *hctx)
-> >  {
-> >       return !list_empty_careful(&hctx->dispatch) ||
-> >               sbitmap_any_bit_set(&hctx->ctx_map) ||
-> >                       blk_mq_sched_has_work(hctx);
-> >  }
-> > +EXPORT_SYMBOL_GPL(blk_mq_hctx_has_pending);
->
-> Just wondering why you don't use the 'last' field of 'struct blk_mq_queue_data',
-> which is passed to .queue_rq(), and supposed for implementing batch submission.
+> -----Original Message-----
+> From: David Binderman [mailto:dcb314@hotmail.com]
+> Sent: Monday, July 22, 2019 4:12 PM
+> To: Pkshih; kvalo@codeaurora.org; davem@davemloft.net; linux-wireless@vger.kernel.org;
+> netdev@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: linux-5.2.2/drivers/net/wireless/realtek/rtlwifi/rtl8*/sw.c: many redundant assignments ?
+> 
+> Hello there,
+> 
+> > [linux-5.2.2/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c:120]: (warning) Redundant
+> assignment of 'rtlpriv->cfg->mod_params->disable_watchdog' to itself.
+> > [linux-5.2.2/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c:134]: (warning) Redundant
+> assignment of 'rtlpriv->cfg->mod_params->disable_watchdog' to itself.
+> > [linux-5.2.2/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c:133]: (warning) Redundant
+> assignment of 'rtlpriv->cfg->mod_params->disable_watchdog' to itself.
+> > [linux-5.2.2/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c:150]: (warning) Redundant
+> assignment of 'rtlpriv->cfg->mod_params->disable_watchdog' to itself.
+> > [linux-5.2.2/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c:118]: (warning) Redundant
+> assignment of 'rtlpriv->cfg->mod_params->sw_crypto' to itself.
+> > [linux-5.2.2/drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c:116]: (warning) Redundant
+> assignment of 'rtlpriv->cfg->mod_params->sw_crypto' to itself.
+> > [linux-5.2.2/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c:42]: (warning) Redundant
+> assignment of 'rtlpriv->cfg->mod_params->sw_crypto' to itself.
+> > [linux-5.2.2/drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c:164]: (warning) Redundant
+> assignment of 'rtlpriv->cfg->mod_params->sw_crypto' to itself.
+> > [linux-5.2.2/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c:132]: (warning) Redundant
+> assignment of 'rtlpriv->cfg->mod_params->sw_crypto' to itself.
+> > [linux-5.2.2/drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c:131]: (warning) Redundant
+> assignment of 'rtlpriv->cfg->mod_params->sw_crypto' to itself.
+> > [linux-5.2.2/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c:148]: (warning) Redundant
+> assignment of 'rtlpriv->cfg->mod_params->sw_crypto' to itself.
+> 
+> Might be worth a look
+> 
 
-The 'last' field of 'struct blk_mq_queue_data' does not indicate the
-last request in the hardware queue, since we want to collect more
-requests from block layer as much as possible to be packed later.
+I send a patch to fix it.
+https://patchwork.kernel.org/patch/11053745/
 
-And from blk_mq_do_dispatch_sched()--->blk_mq_dispatch_rq_list()--->
-queue_rq(), I always get 'bd.last = true', which is not useful to
-combine requests for MMC packed queue. Maybe I missed anything?
+Thank you.
 
-Thanks for your comments.
+---
+PK
 
--- 
-Baolin Wang
-Best Regards
