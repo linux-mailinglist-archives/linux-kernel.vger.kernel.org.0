@@ -2,63 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBAE07132A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 09:44:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A4AD71325
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 09:43:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388491AbfGWHoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 03:44:20 -0400
-Received: from mail.lunchcard.eu ([176.107.133.213]:41069 "EHLO lunchcard.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730893AbfGWHoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 03:44:17 -0400
-X-Greylist: delayed 355 seconds by postgrey-1.27 at vger.kernel.org; Tue, 23 Jul 2019 03:44:16 EDT
-Received: by lunchcard.eu (Postfix, from userid 1001)
-        id 7964F883BF; Tue, 23 Jul 2019 09:34:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lunchcard.eu; s=mail;
-        t=1563867500; bh=Px3inMCiDAVEjQlYwbfy6i6vMp+P5hI6lpZ4ctHC6M0=;
-        h=Date:From:To:Subject:From;
-        b=fj59zcjjuMRb5Ew8AZa8t6z3wQm+C933qRVDy+y7RNH7CTp4J9v8ehlnR5wPSObW/
-         FPK0e0ixnPpllrAM9oR7jX856ZnMmNeCBv+g1uFu7xFV8rzOJA/ws0zZDV0+HeGW5h
-         kLBnYZ427e3/X8Erpmy4jHGzxN8TkKbMxc4j9oS4=
-Received: by mail.lunchcard.eu for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 07:34:29 GMT
-Message-ID: <20190723084500-0.1.4e.1088.0.ugxeg161in@lunchcard.eu>
-Date:   Tue, 23 Jul 2019 07:34:29 GMT
-From:   =?UTF-8?Q? "Kapolcs_M=C3=A1ty=C3=A1s" ?= 
-        <kapolcs.matyas@lunchcard.eu>
-To:     <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?Q?Dolgoz=C3=B3i_juttat=C3=A1sok?=
-X-Mailer: mail.lunchcard.eu
+        id S2388468AbfGWHnN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 03:43:13 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40364 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732983AbfGWHnM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 03:43:12 -0400
+Received: by mail-lj1-f194.google.com with SMTP id m8so6477308lji.7
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 00:43:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=npbXQAsUfiZBLcbkpCR3x+7qby8hxGom1+tEjhLtF84=;
+        b=w2FX51BoqEBTS87kh8KgQ128Lnm4K7aScbKp7p7KG0RZvuFmQ5ZeRyaNckPGbvdFfd
+         8orXXAGJ+J4pQFnxBaEEcLCgF22+U7W9tc/Se+sTjW+wVQ+cOPmne1a6xgAVBwrxyiNh
+         TyzT6LtLmqQi2itKyV/WpgOyRuHQxcy1se2WY8AB/7q/Rf5go+whVPWnNJF7t+VWEMBd
+         pmuUhr5pgIWRD+HapcglpyXMp8CBvQlzcP+LVXe8O4I1jpUnUpCl39BNcbsU3tOVat/t
+         SQFR3NgezXOd3vPtIE3FCFrwJ8jp7bjOIR2zd0+zta18H2ppvKmMQYo682YAvS+adqMp
+         YIVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=npbXQAsUfiZBLcbkpCR3x+7qby8hxGom1+tEjhLtF84=;
+        b=UWnZyQideCb6Wbk8VaOkauHCFrLt8y8Dup8Bg106E52iInb0TqQ+9OTVDXsZaGFXS3
+         32Qyj5ESFrUxQnd1Lum8kGzi4GxJH5b/uCW+m+djIoe1FqgWJCg+MYzendtnPJdoI9C+
+         3ChuytDClTzsoTb0pG8Ba6HDbWUPRARBy4m7CkZlscQXDCE4jpcGlSnnPNM9dUWHI/23
+         gHm+0eRq60RXDdJXtc24hnNR+Gief/LLXq0uV9UdpwF5ov/1s0frZ6YnmBGVzlr4eVOc
+         O8f2Zow2UQe1s4NoTkPUwBkwczy/aGQrbMXm9Cq4zj3g5L6JujxSJH4UYwi1Aoux1MHG
+         xK1w==
+X-Gm-Message-State: APjAAAU9gVpAJUaTBiM41M1m5zMV5YcZrmKiDgxzuArFmGMe3UjBqYDR
+        bTN+Jl/fmAHG9iGqdPUC+SLwxaywWe4ZHYkgjLT76g==
+X-Google-Smtp-Source: APXvYqztHvJTCupc2FazH78NnbhNbFFXwlBZr0o8C796oaMUffxQHCWl5TXPmgAEdCLgwY6Sn/kLyvB5/v3zH9bxp3k=
+X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr17161946ljm.180.1563867790559;
+ Tue, 23 Jul 2019 00:43:10 -0700 (PDT)
 MIME-Version: 1.0
+References: <cover.1550768574.git.hns@goldelico.com> <32025b2a8ccc97cc01f8115ee962529eb5990f00.1550768574.git.hns@goldelico.com>
+In-Reply-To: <32025b2a8ccc97cc01f8115ee962529eb5990f00.1550768574.git.hns@goldelico.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 23 Jul 2019 09:42:59 +0200
+Message-ID: <CACRpkdZ5Z9VY457Fywt6X=K5XONgiPVcwbwSkwL_U+GCqZ+u5g@mail.gmail.com>
+Subject: Re: [PATCH v2 02/10] iio: document bindings for mounting matrices
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Song Qiang <songqiang1304521@gmail.com>,
+        Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>,
+        Martin Kelly <mkelly@xevo.com>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Brian Masney <masneyb@onstation.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Gregor Boirie <gregor.boirie@parrot.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Samu Onkalo <samu.onkalo@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C3=9Cdv=C3=B6zl=C3=B6m!
+Hi H. Nikolaus,
 
-2019-t=C5=91l majdnem az =C3=B6sszes kieg=C3=A9sz=C3=ADt=C5=91 juttat=C3=A1=
-s j=C3=B6vedelemk=C3=A9nt fog ad=C3=B3zni (kiv=C3=A9ve a SZ=C3=89P k=C3=A1=
-rty=C3=A1t).
+On Thu, Feb 21, 2019 at 6:03 PM H. Nikolaus Schaller <hns@goldelico.com> wrote:
 
-Szeretn=C3=A9m az =C3=96n=C3=B6k figyelm=C3=A9be aj=C3=A1nlani juttat=C3=A1=
-s k=C3=A1rty=C3=A1inkat, melyek az =C3=BAj tehets=C3=A9gek megnyer=C3=A9s=
-=C3=A9nek =C3=A9s a dolgoz=C3=B3k megtart=C3=A1s=C3=A1nak =C3=A9s motiv=C3=
-=A1l=C3=A1s=C3=A1nak versenyk=C3=A9pes eszk=C3=B6zei.
+> From: Linus Walleij <linus.walleij@linaro.org>
 
-A SZ=C3=89P k=C3=A1rtya megold=C3=A1sait=C3=B3l elt=C3=A9r=C5=91en a mi k=
-=C3=A1rty=C3=A1inkat a munkav=C3=A1llal=C3=B3 tetsz=C5=91leges c=C3=A9lok=
-ra haszn=C3=A1lhatja fel: =C3=A9lelmiszer v=C3=A1s=C3=A1rl=C3=A1sra, eg=C3=
-=A9szs=C3=A9g=C3=BCgyi ell=C3=A1t=C3=A1sra, elektronik=C3=A1ra, sz=C3=A1l=
-l=C3=A1sra, oktat=C3=A1sra =C3=A9s egy=C3=A9b c=C3=A9lokra, vagy ak=C3=A1=
-r k=C3=A9szp=C3=A9nzfelv=C3=A9teli lehet=C5=91s=C3=A9get is v=C3=A1laszth=
-at.=20
+It is fair for you to change authorship to yourself at this point.
+Just keeping my Signed-off-by is sufficient.
 
-Szeretn=C3=A9k megismerni juttat=C3=A1s k=C3=A1rty=C3=A1ink felhaszn=C3=A1=
-l=C3=A1si lehet=C5=91s=C3=A9geit a c=C3=A9g=C3=BCkn=C3=A9l?
+> The mounting matrix for sensors was introduced in
+> commit dfc57732ad38 ("iio:core: mounting matrix support")
+>
+> However the device tree bindings are very terse and since this is
+> a widely applicable property, we need a proper binding for it
+> that the other bindings can reference. This will also be useful
+> for other operating systems and sensor engineering at large.
+>
+> I think all 3D sensors should support it, the current situation
+> is probably that the mounting information is confined in magic
+> userspace components rather than using the mounting matrix, which
+> is not good for portability and reuse.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Gregor Boirie <gregor.boirie@parrot.com>
+> Cc: Sebastian Reichel <sre@kernel.org>
+> Cc: Samu Onkalo <samu.onkalo@intel.com>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 
-Sz=C3=A9p napot! =20
+Did this patch fall off somewhere? I think it's really neat, even in this
+form it is great help for developers. If you want I can try picking up the
+comments and resend it.
 
-Kapolcs M=C3=A1ty=C3=A1s
-Hungary Team Leader
+Linus Walleij
