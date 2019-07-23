@@ -2,94 +2,244 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EC5F70DF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 02:13:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9490670DFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 02:14:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387613AbfGWANP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 20:13:15 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46206 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbfGWANO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 20:13:14 -0400
-Received: by mail-lf1-f68.google.com with SMTP id z15so23689005lfh.13;
-        Mon, 22 Jul 2019 17:13:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LBMdeaTsY0pPgf4dXuXwZy/ZM28JIwMWj2aWUvIsuFk=;
-        b=Ec3YSPyGQPGcAblGkEb1XPltApveiCEstIQFulsNWFASf0mlIpR36wujEZYYDZ6BBF
-         6FpPT93wG+RJiqKn3r6U9VU4IpZs/HeyMEW+BqhHVJTGDiuHU7yKsqLpkBzcKYW1vl/T
-         RcqQ+ucqs4ksSEiOzhrjle7763UugbNnk9hIMwIjREidkOMeZ5l1fFgk4YGTS/jqEFb9
-         WVvOJYJqIBy1qZVHZNTCL/FsHVVxncFaz3dSOLawOUJgltcdyDPgJ/a+9jVxsKbjwAuh
-         W5Yf36HovAgKArT1VSPfhOzP7/iNprMJTyTCaqSC8lhHDuw6JD8C/fd98uPowyIs2Ayz
-         O4fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LBMdeaTsY0pPgf4dXuXwZy/ZM28JIwMWj2aWUvIsuFk=;
-        b=ujzlHqPoJzRvhWPNzlq+gJ9tyU1WQ3XEp4vris/oX6wHJg2lfbz11yxNqtzu67BEI6
-         jx/emTVXpuxKQ5Yl4iNuApUVr1XcE2d8791jsA0Kn6qopw5YfFREg2c4nHgvOfY/ReUV
-         ZHzn89xXFgSGsVOtLTrlYY4kPHsjT/QK91adUmr9M+mkTckqHDYezb0zp64rvPNBTh3Y
-         H22lit/Mv8++0UNuyTu4NmnimTpYkkarWudAiUd65S2fjTiMUGM56CUUk7vNMJauW54q
-         pVP8+7pGzEeMmljxMStOT5YW0o71YUcEWeM6uFFKkYrng6GzG84jYh1Sl3Vb/ps9s4dm
-         8PeQ==
-X-Gm-Message-State: APjAAAV711EyJWW39tvwWLZ0hDjZTjxxrnjNglaIp7BJHOpy4qeOb53f
-        CJEoFeaqtnngFkPeSvTQUzTmADMn
-X-Google-Smtp-Source: APXvYqzv2maXC6SAnxCYuJoQMqenoi1rUSc6zysEoErcQCtSYyXWKRfE09iUdPsEY+ahW3urwqy41Q==
-X-Received: by 2002:a19:ca1e:: with SMTP id a30mr32634001lfg.163.1563840792040;
-        Mon, 22 Jul 2019 17:13:12 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.googlemail.com with ESMTPSA id p9sm7813053lji.107.2019.07.22.17.13.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jul 2019 17:13:11 -0700 (PDT)
-Subject: Re: [PATCH v1 1/2] clk: tegra: divider: Fix missing check for
- enable-bit on rate's recalculation
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190715173527.5719-1-digetx@gmail.com>
- <20190717200821.A77A120818@mail.kernel.org>
- <ca05abf7-1486-ceb7-91d6-266640eea69e@gmail.com>
- <20190722215554.DA23D21951@mail.kernel.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <2dca58c1-b44c-1396-6ede-22642d047b25@gmail.com>
-Date:   Tue, 23 Jul 2019 03:13:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S2387631AbfGWAOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 20:14:05 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:50945 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726283AbfGWAOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 20:14:04 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45szVJ64tXz9s3Z;
+        Tue, 23 Jul 2019 10:14:00 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1563840841;
+        bh=vxPSh/IsBG0RLSVqqoMz7eABCbPSkHkd4zA2cI05eSw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Rz2HmPfZaLg6QJji/HcqKPA6qPmi26+eSEmQcXBvCFITJasflOZuZCmXl4Q+kGSF1
+         7wkFBh+epYu6rj8mJadoU2kGTdKiWO2f3tmgtsSKEpyiQcP4Gim9bAjF9Q8PrnPojG
+         K71s+STv6GFp/Btn5XWVezDws4Hrgyzk00q1KRRpnBWyA/cJXRTjW4sh8eaYZo3PoW
+         /5EQzPRU7mDbjk5nL4kLcfDZgn0Cd4D9akKUYBBtYvitU2nkAXcfGvPS0CxKmiPrIO
+         bfGf8TL7I5P2ezx4G4BuvuYuVFB4RxnM0HKaUNFq7okxGVrVOYOcjsjwdHb2LPDo1F
+         2OVEDzxDXkb6w==
+Date:   Tue, 23 Jul 2019 10:13:41 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Message-ID: <20190723101341.751596b2@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190722215554.DA23D21951@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/b+3piXOgcVYq24xfgHN+cdY";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-23.07.2019 0:55, Stephen Boyd пишет:
-> Quoting Dmitry Osipenko (2019-07-17 14:33:36)
->> 17.07.2019 23:08, Stephen Boyd пишет:
->>> Quoting Dmitry Osipenko (2019-07-15 10:35:26)
->>>> Unset "enable" bit means that divider is in bypass mode, hence it doesn't
->>>> have any effect in that case.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>
->>> Any Fixes tags for these patches?
->>
->> I'm not aware of any actual bugs that this change fixes. Probably better
->> to just s/Fix/Add/ in the commit's title?
-> 
-> Sounds fine to me.
-> 
+--Sig_/b+3piXOgcVYq24xfgHN+cdY
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Okay, I'll re-spin these patches.
+Hi all,
+
+After merging the v4l-dvb tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+In file included from <command-line>:
+include/media/vp8-ctrls.h:25:2: error: unknown type name '__s8'
+  __s8 quant_update[4];
+  ^~~~
+include/media/vp8-ctrls.h:26:2: error: unknown type name '__s8'
+  __s8 lf_update[4];
+  ^~~~
+include/media/vp8-ctrls.h:27:2: error: unknown type name '__u8'
+  __u8 segment_probs[3];
+  ^~~~
+include/media/vp8-ctrls.h:28:2: error: unknown type name '__u8'
+  __u8 padding;
+  ^~~~
+include/media/vp8-ctrls.h:29:2: error: unknown type name '__u32'
+  __u32 flags;
+  ^~~~~
+include/media/vp8-ctrls.h:36:2: error: unknown type name '__s8'
+  __s8 ref_frm_delta[4];
+  ^~~~
+include/media/vp8-ctrls.h:37:2: error: unknown type name '__s8'
+  __s8 mb_mode_delta[4];
+  ^~~~
+include/media/vp8-ctrls.h:38:2: error: unknown type name '__u8'
+  __u8 sharpness_level;
+  ^~~~
+include/media/vp8-ctrls.h:39:2: error: unknown type name '__u8'
+  __u8 level;
+  ^~~~
+include/media/vp8-ctrls.h:40:2: error: unknown type name '__u16'
+  __u16 padding;
+  ^~~~~
+include/media/vp8-ctrls.h:41:2: error: unknown type name '__u32'
+  __u32 flags;
+  ^~~~~
+include/media/vp8-ctrls.h:45:2: error: unknown type name '__u8'
+  __u8 y_ac_qi;
+  ^~~~
+include/media/vp8-ctrls.h:46:2: error: unknown type name '__s8'
+  __s8 y_dc_delta;
+  ^~~~
+include/media/vp8-ctrls.h:47:2: error: unknown type name '__s8'
+  __s8 y2_dc_delta;
+  ^~~~
+include/media/vp8-ctrls.h:48:2: error: unknown type name '__s8'
+  __s8 y2_ac_delta;
+  ^~~~
+include/media/vp8-ctrls.h:49:2: error: unknown type name '__s8'
+  __s8 uv_dc_delta;
+  ^~~~
+include/media/vp8-ctrls.h:50:2: error: unknown type name '__s8'
+  __s8 uv_ac_delta;
+  ^~~~
+include/media/vp8-ctrls.h:51:2: error: unknown type name '__u16'
+  __u16 padding;
+  ^~~~~
+include/media/vp8-ctrls.h:55:2: error: unknown type name '__u8'
+  __u8 coeff_probs[4][8][3][11];
+  ^~~~
+include/media/vp8-ctrls.h:56:2: error: unknown type name '__u8'
+  __u8 y_mode_probs[4];
+  ^~~~
+include/media/vp8-ctrls.h:57:2: error: unknown type name '__u8'
+  __u8 uv_mode_probs[3];
+  ^~~~
+include/media/vp8-ctrls.h:58:2: error: unknown type name '__u8'
+  __u8 mv_probs[2][19];
+  ^~~~
+include/media/vp8-ctrls.h:59:2: error: unknown type name '__u8'
+  __u8 padding[3];
+  ^~~~
+include/media/vp8-ctrls.h:63:2: error: unknown type name '__u8'
+  __u8 range;
+  ^~~~
+include/media/vp8-ctrls.h:64:2: error: unknown type name '__u8'
+  __u8 value;
+  ^~~~
+include/media/vp8-ctrls.h:65:2: error: unknown type name '__u8'
+  __u8 bit_count;
+  ^~~~
+include/media/vp8-ctrls.h:66:2: error: unknown type name '__u8'
+  __u8 padding;
+  ^~~~
+include/media/vp8-ctrls.h:86:2: error: unknown type name '__u16'
+  __u16 width;
+  ^~~~~
+include/media/vp8-ctrls.h:87:2: error: unknown type name '__u16'
+  __u16 height;
+  ^~~~~
+include/media/vp8-ctrls.h:89:2: error: unknown type name '__u8'
+  __u8 horizontal_scale;
+  ^~~~
+include/media/vp8-ctrls.h:90:2: error: unknown type name '__u8'
+  __u8 vertical_scale;
+  ^~~~
+include/media/vp8-ctrls.h:92:2: error: unknown type name '__u8'
+  __u8 version;
+  ^~~~
+include/media/vp8-ctrls.h:93:2: error: unknown type name '__u8'
+  __u8 prob_skip_false;
+  ^~~~
+include/media/vp8-ctrls.h:94:2: error: unknown type name '__u8'
+  __u8 prob_intra;
+  ^~~~
+include/media/vp8-ctrls.h:95:2: error: unknown type name '__u8'
+  __u8 prob_last;
+  ^~~~
+include/media/vp8-ctrls.h:96:2: error: unknown type name '__u8'
+  __u8 prob_gf;
+  ^~~~
+include/media/vp8-ctrls.h:97:2: error: unknown type name '__u8'
+  __u8 num_dct_parts;
+  ^~~~
+include/media/vp8-ctrls.h:99:2: error: unknown type name '__u32'
+  __u32 first_part_size;
+  ^~~~~
+include/media/vp8-ctrls.h:100:2: error: unknown type name '__u32'
+  __u32 first_part_header_bits;
+  ^~~~~
+include/media/vp8-ctrls.h:101:2: error: unknown type name '__u32'
+  __u32 dct_part_sizes[8];
+  ^~~~~
+include/media/vp8-ctrls.h:103:2: error: unknown type name '__u64'
+  __u64 last_frame_ts;
+  ^~~~~
+include/media/vp8-ctrls.h:104:2: error: unknown type name '__u64'
+  __u64 golden_frame_ts;
+  ^~~~~
+include/media/vp8-ctrls.h:105:2: error: unknown type name '__u64'
+  __u64 alt_frame_ts;
+  ^~~~~
+include/media/vp8-ctrls.h:107:2: error: unknown type name '__u64'
+  __u64 flags;
+  ^~~~~
+
+Caused by commit
+
+  a57d6acaf352 ("media: uapi: Add VP8 stateless decoder API")
+
+I have added the following fix patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 23 Jul 2019 10:07:40 +1000
+Subject: [PATCH] media: uapi: new file needs types.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/media/vp8-ctrls.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/media/vp8-ctrls.h b/include/media/vp8-ctrls.h
+index 6cc2eeea4c90..53cba826e482 100644
+--- a/include/media/vp8-ctrls.h
++++ b/include/media/vp8-ctrls.h
+@@ -11,6 +11,8 @@
+ #ifndef _VP8_CTRLS_H_
+ #define _VP8_CTRLS_H_
+=20
++#include <linux/types.h>
++
+ #define V4L2_PIX_FMT_VP8_FRAME v4l2_fourcc('V', 'P', '8', 'F')
+=20
+ #define V4L2_CID_MPEG_VIDEO_VP8_FRAME_HEADER (V4L2_CID_MPEG_BASE + 2000)
+--=20
+2.20.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/b+3piXOgcVYq24xfgHN+cdY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl02UTUACgkQAVBC80lX
+0GyKSAf/Y11rsVPac4eRmBDk874SiM/KGcfQUr0pEd+2vC3Dl5/SxK/4lJhGuvah
+T73n6tuY3icTmz2xkgW7j/Dk8jEsOzb+4lxKyWflMBCk0zKsCfWfk7+19U+CRlRS
+MrKMp8hNXo3DwQWBOt6dJXRmuMRr2DwFk5/ePSMTUZKerWvLSjRIgWQrY7b3jPWi
+OL0u8s+DeQTY1QqxmlWFdfNzT27LPdzrFdajpMKhgdKXkJiIRsJwlAcECA41sVwL
+xkaFDgqpjHG8BjmTEYut9n/ZOdFM8rGNXUox0BOccRY5WcXkZhySiYFiFvemjkT/
+u26sviFVkpG5+DaPdihkFDbRfaF+8w==
+=tFqD
+-----END PGP SIGNATURE-----
+
+--Sig_/b+3piXOgcVYq24xfgHN+cdY--
