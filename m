@@ -2,109 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FF8670EBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 03:41:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF07B70EC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 03:41:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387820AbfGWBlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 21:41:16 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38990 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728086AbfGWBlQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 21:41:16 -0400
-Received: by mail-pf1-f195.google.com with SMTP id f17so14255102pfn.6
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 18:41:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mtyYjbvYT2heRj7zhIigfjHr2V0fIIPHdJF4vL3wig8=;
-        b=MuKW8WXbMGjrX3CvBpqSseFDEOZDQW5PQK9D0KNskjLQ0aZ2dUIi5OT6AxazSiKm5r
-         VRHqkMAxaNb8aF0gGwvHpRZdAbO4RUdKJK1rcARlUsQpIv4C8NCx1G6S71pMzO/qVVCp
-         CB91Fv1KROPWBTMvGjyP4FHZKXsf5KtCDCf6br11IX/DJqu3GkBJcHEZKYE8mdX5FEDq
-         /O9iqMwsksX/rxEg5uMhmrj6IVc+CaxzSYJrfdCTRc0jKQHUblRuiktHBrLq0KwbBiYQ
-         MaZFiBvB/VcXJt6VSuSqWYyLotKi0BRJpbGO0zkVQPxyLz5S2PtWZGfWQsW9+TVBPS9u
-         KNTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mtyYjbvYT2heRj7zhIigfjHr2V0fIIPHdJF4vL3wig8=;
-        b=j5N5ptHKSLyLsldYgr+L6QpYlQwG+Bgoh0hu395t9jj02bYMANithoHHtdA9uGJlRM
-         mGCNuQOUFezFwDoWOnzm9lmUEPbWTgeV8Ev+jPybwCrJNOxTDfbVaybwU2WKIaI4HseD
-         u4UHyNHYIxgIzUWndFSZQDpqbsRfkAR8DCdU91uGKIbHnzUtLJFrdapUuxHj58f5D8qD
-         F0RVOkjukfeH6/ma+7SEPIW+rusYeXgOsbRWNKmYXPfRkWySTWb806GRR7Jv+3kWi6wp
-         Nkn866YjRT9L0CYHCuWK3NGlhqFaJMlK3gg8L9ziV12eJyU4dvQ/zEu+3/twuNO1C3gA
-         x0AQ==
-X-Gm-Message-State: APjAAAXcn1WqCqKY9ltw6y8LopXCtwrdHgvgH67LAkqCFLBC8dVIW0jV
-        BIQXe2p03tlxpk3akt4tHgzdvsk/
-X-Google-Smtp-Source: APXvYqy4owgCkNgFMI1V1j9i5eSd+HQLB/Rq4zAanIolUeAWZNYQnTbq9WyTNE1TBctUXR8odXTyZg==
-X-Received: by 2002:a63:101b:: with SMTP id f27mr71422412pgl.291.1563846074972;
-        Mon, 22 Jul 2019 18:41:14 -0700 (PDT)
-Received: from localhost.localdomain (118-171-128-147.dynamic-ip.hinet.net. [118.171.128.147])
-        by smtp.gmail.com with ESMTPSA id q22sm36525440pgh.49.2019.07.22.18.41.12
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 18:41:14 -0700 (PDT)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] regulator: stm32-booster: Remove .min_uV and .list_voltage for fixed regulator
-Date:   Tue, 23 Jul 2019 09:41:02 +0800
-Message-Id: <20190723014102.25103-1-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.20.1
+        id S2387848AbfGWBlr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 21:41:47 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56806 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728086AbfGWBlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 21:41:47 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7D0567083CA7C08087D1;
+        Tue, 23 Jul 2019 09:41:44 +0800 (CST)
+Received: from [127.0.0.1] (10.177.223.23) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Tue, 23 Jul 2019
+ 09:41:34 +0800
+Subject: Re: [PATCH] ACPI/IORT: Rename arm_smmu_v3_set_proximity() 'node'
+ local variable
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        <linux-acpi@vger.kernel.org>
+CC:     Will Deacon <will@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        LAKML <linux-arm-kernel@lists.infradead.org>
+References: <20190722161433.23027-1-lorenzo.pieralisi@arm.com>
+From:   Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <7743b3e7-da5f-667d-9222-7ecab5a20876@huawei.com>
+Date:   Tue, 23 Jul 2019 09:41:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190722161433.23027-1-lorenzo.pieralisi@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Setting .n_voltages = 1 and .fixed_uV is enough for fixed regulator,
-remove the redundant .min_uV and .list_voltage settings.
+On 2019/7/23 0:14, Lorenzo Pieralisi wrote:
+> Commit 36a2ba07757d ("ACPI/IORT: Reject platform device creation on NUMA
+> node mapping failure") introduced a local variable 'node' in
+> arm_smmu_v3_set_proximity() that shadows the struct acpi_iort_node
+> pointer function parameter.
+> 
+> Execution was unaffected but it is prone to errors and can lead
+> to subtle bugs.
+> 
+> Rename the local variable to prevent any issue.
+> 
+> Reported-by: Will Deacon <will@kernel.org>
+> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Hanjun Guo <guohanjun@huawei.com>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
+> ---
+>  drivers/acpi/arm64/iort.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/regulator/stm32-booster.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/regulator/stm32-booster.c b/drivers/regulator/stm32-booster.c
-index 2a897666c650..03f162ffd144 100644
---- a/drivers/regulator/stm32-booster.c
-+++ b/drivers/regulator/stm32-booster.c
-@@ -20,7 +20,6 @@
- #define STM32MP1_SYSCFG_EN_BOOSTER_MASK	BIT(8)
- 
- static const struct regulator_ops stm32h7_booster_ops = {
--	.list_voltage	= regulator_list_voltage_linear,
- 	.enable		= regulator_enable_regmap,
- 	.disable	= regulator_disable_regmap,
- 	.is_enabled	= regulator_is_enabled_regmap,
-@@ -31,7 +30,6 @@ static const struct regulator_desc stm32h7_booster_desc = {
- 	.supply_name = "vdda",
- 	.n_voltages = 1,
- 	.type = REGULATOR_VOLTAGE,
--	.min_uV = 3300000,
- 	.fixed_uV = 3300000,
- 	.ramp_delay = 66000, /* up to 50us to stabilize */
- 	.ops = &stm32h7_booster_ops,
-@@ -53,7 +51,6 @@ static int stm32mp1_booster_disable(struct regulator_dev *rdev)
- }
- 
- static const struct regulator_ops stm32mp1_booster_ops = {
--	.list_voltage	= regulator_list_voltage_linear,
- 	.enable		= stm32mp1_booster_enable,
- 	.disable	= stm32mp1_booster_disable,
- 	.is_enabled	= regulator_is_enabled_regmap,
-@@ -64,7 +61,6 @@ static const struct regulator_desc stm32mp1_booster_desc = {
- 	.supply_name = "vdda",
- 	.n_voltages = 1,
- 	.type = REGULATOR_VOLTAGE,
--	.min_uV = 3300000,
- 	.fixed_uV = 3300000,
- 	.ramp_delay = 66000,
- 	.ops = &stm32mp1_booster_ops,
--- 
-2.20.1
+Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
 
