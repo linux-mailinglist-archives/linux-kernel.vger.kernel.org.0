@@ -2,76 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE8E171516
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 11:27:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF09871528
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 11:28:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730141AbfGWJ1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 05:27:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55350 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727408AbfGWJ1U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 05:27:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=iGOng1nK2tteDL9Gsnzl+UsVfoooOvN9ZoRg2+d2ilw=; b=Tp7DHuUAJlzSf6P4KtvwjChc7
-        c5qrgpBua1VXye3VXufVT37jbn7IS+f994XRj2sqlb2i/AS2ZjLpo7xrbUqAs7mrwPJ/rRlVLMfc9
-        Vf1uhm/5plou3tAEsDVHf/xPz3OiQW0c2E1CFvkdM6kXqVc8uoxMH/txzl+dSq87q21t3oBOEbjW4
-        ju4ngtsB6ejw/pJbrDVh5ejyG/z9dLGyKNeuSlTeUp+XQ89t5AHrP+EAVllf4jj8i3GfPhmxyu7kX
-        ttwJclT/iqCEt4yyC7BTqfgblTu15Z7oA5V+dBciKU/eo426eQrz/ZNYcKLTftSH8uAutn6ahCxyZ
-        OxAVTZuPQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hpr4l-00021J-OG; Tue, 23 Jul 2019 09:27:16 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 285AE20A291EC; Tue, 23 Jul 2019 11:27:14 +0200 (CEST)
-Date:   Tue, 23 Jul 2019 11:27:14 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] Lockdep: Reduce stack trace memory usage
-Message-ID: <20190723092714.GA3402@hirez.programming.kicks-ass.net>
-References: <20190722182443.216015-1-bvanassche@acm.org>
+        id S1730290AbfGWJ2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 05:28:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41860 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726930AbfGWJ2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 05:28:13 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 718A4308421A;
+        Tue, 23 Jul 2019 09:28:12 +0000 (UTC)
+Received: from ovpn-117-106.ams2.redhat.com (ovpn-117-106.ams2.redhat.com [10.36.117.106])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8B1F15D9C5;
+        Tue, 23 Jul 2019 09:28:09 +0000 (UTC)
+Message-ID: <d797ed8522bd37f2f01002b26a06ee146ebe2b90.camel@redhat.com>
+Subject: Re: [PATCH net-next v2 3/3] netlink: add validation of NLA_F_NESTED
+ flag
+From:   Thomas Haller <thaller@redhat.com>
+To:     Michal Kubecek <mkubecek@suse.cz>, netdev@vger.kernel.org
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        David Ahern <dsahern@gmail.com>, linux-kernel@vger.kernel.org
+Date:   Tue, 23 Jul 2019 11:28:03 +0200
+In-Reply-To: <20190723090908.GA2204@unicorn.suse.cz>
+References: <cover.1556806084.git.mkubecek@suse.cz>
+         <6b6ead21c5d8436470b82ab40355f6bd7dbbf14b.1556806084.git.mkubecek@suse.cz>
+         <0fc58a4883f6656208b9250876e53d723919e342.camel@redhat.com>
+         <20190723090908.GA2204@unicorn.suse.cz>
+Organization: Red Hat
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-uB+G14xSU2RvYRVTrtZV"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190722182443.216015-1-bvanassche@acm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 23 Jul 2019 09:28:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 11:24:39AM -0700, Bart Van Assche wrote:
-> Hi Peter,
-> 
-> An unfortunate side effect of commit 669de8bda87b ("kernel/workqueue: Use
-> dynamic lockdep keys for workqueues") is that all stack traces associated
-> with the lockdep key are leaked when a workqueue is destroyed. Fix this by
-> storing each unique stack trace once. Please consider this patch series
-> for Linux kernel v5.4.
-> 
-> Thanks,
-> 
-> Bart.
-> 
-> Bart Van Assche (4):
->   locking/lockdep: Make it clear that what lock_class::key points at is
->     not modified
->   stacktrace: Constify 'entries' arguments
->   locking/lockdep: Reduce space occupied by stack traces
->   locking/lockdep: Report more stack trace statistics
-> 
->  include/linux/lockdep.h            |  11 +-
->  include/linux/stacktrace.h         |   4 +-
->  kernel/locking/lockdep.c           | 159 ++++++++++++++++++++++-------
->  kernel/locking/lockdep_internals.h |   9 +-
->  kernel/locking/lockdep_proc.c      |   8 +-
->  kernel/stacktrace.c                |   4 +-
->  6 files changed, 143 insertions(+), 52 deletions(-)
 
-Thanks a lot for doing this Bart, excellent stuff!
+--=-uB+G14xSU2RvYRVTrtZV
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, 2019-07-23 at 11:09 +0200, Michal Kubecek wrote:
+> On Tue, Jul 23, 2019 at 10:57:54AM +0200, Thomas Haller wrote:
+> > Does this flag and strict validation really provide any value?
+> > Commonly a netlink message is a plain TLV blob, and the meaning
+> > depends entirely on the policy.
+> >=20
+> > What I mean is that for example
+> >=20
+> >   NLA_PUT_U32 (msg, ATTR_IFINDEX, (uint32_t) ifindex)
+> >   NLA_PUT_STRING (msg, ATTR_IFNAME, "net")
+> >=20
+> > results in a 4 bytes payload that does not encode whether the data
+> > is
+> > a number or a string.
+> >=20
+> > Why is it valuable in this case to encode additional type
+> > information
+> > inside the message, when it's commonly not done and also not
+> > necessary?
+>=20
+> One big advantage of having nested attributes explicitly marked is
+> that
+> it allows parsers not aware of the semantics to recognize nested
+> attributes and parse their inner structure.
+>=20
+> This is very important e.g. for debugging purposes as without the
+> flag,
+> wireshark can only recurse into nested attributes if it understands
+> the
+> protocol and knows they are nested, otherwise it displays them only
+> as
+> an opaque blob (which is what happens for most netlink based
+> protocols).
+> Another example is mnl_nlmsg_fprintf() function from libmnl which is
+> also a valuable debugging aid but without NLA_F_NESTED flags it
+> cannot
+> show message structure properly.
+
+Hi,
+
+I don't question the use of the flag. I question whether it's necessary
+for kernel to strictly require the sending side to aid debuggability.
+
+"e.g. for debugging purposes" makes it sound like it would be important
+for something else. I wonder what else.
+
+
+Anyway. What you elaborate makes sense!! Thanks
+
+
+My main point was to raise awareness that this is a problem for libnl3.
+
+
+best,
+Thomas
+
+--=-uB+G14xSU2RvYRVTrtZV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEESep8Zw4IUOdBlRT2KcI2bk38VygFAl020yMACgkQKcI2bk38
+Vygegg//bjBYvpsSC7cGBhu9f7Eysloqq9pL8gVujgicZwpVU/vtK3MlieaUEoYU
+Dm04WNKYXh7cIiD6k0BBvKnyG9wB3xEUr90PvvFn7Q5hUqLipO4boZ4fvNy5R9qA
+bfteE9nfcwuz65XxIHgjZGnKoR8Xf3N4F9SuLNJIs0hyJLBeEyjjrcHDw0vwnvDF
+z838zDyY9QnOlNYrpFKjeanRv+Wk3sdvKAfuXEcs8v/JV+wj6N7K+WM04Tx1x1XW
+pC+Pw4JTj3mqO3wRWzyDJKkVQcwf1MJlhJEpHRXNQlINJ0OUNacretzySMA7Q1uG
+6sChzfMK9mt3KjjyN17qZYlAz4PxqXarl9Q+j6nix5zRDsXy6xsjTigAZIH0j9zN
+DPh9Q8htI4Re1m6GXhwaNthpHJgjyMRhWVJ5FJRRtnUHsMRUBREiDmSsoAEZe7ac
+BXVffSYtfaT78NaIubqUT3D5Ab0pJPNPqjf15779nI/UAyCByXZFnCo3fJYnC1JC
+6Yv7hlJY9KneSSmbJ/Iz0D0VMJQi9FhoboMLCvAD0yJO0MS6X8q9ozWRSFeIsNJ8
+CeO9/JKIORS7cyQb8s6DnkUrGIW121lxCmzzHWViZXBQ+VXe2jc2gWzKK0NY8N0F
+EegOD736E/ZkOlEQBBR7QJ63tkc97q1xAg14hRL2rQWH2FH3z5I=
+=poN7
+-----END PGP SIGNATURE-----
+
+--=-uB+G14xSU2RvYRVTrtZV--
+
