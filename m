@@ -2,175 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F2007222D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 00:19:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 105127225B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 00:25:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392467AbfGWWT0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 18:19:26 -0400
-Received: from foss.arm.com ([217.140.110.172]:60816 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392453AbfGWWTY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 18:19:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B1579168F;
-        Tue, 23 Jul 2019 15:19:23 -0700 (PDT)
-Received: from dawn-kernel.cambridge.arm.com (unknown [10.1.197.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5CB553F694;
-        Tue, 23 Jul 2019 15:19:22 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Eric Anholt <eric@anholt.net>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        Inki Dae <inki.dae@samsung.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>
-Subject: [PATCH v3 7/7] platform: Add platform_find_device_by_driver() helper
-Date:   Tue, 23 Jul 2019 23:18:38 +0100
-Message-Id: <20190723221838.12024-8-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190723221838.12024-1-suzuki.poulose@arm.com>
-References: <20190723221838.12024-1-suzuki.poulose@arm.com>
+        id S2392521AbfGWWZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 18:25:09 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36249 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729617AbfGWWZH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 18:25:07 -0400
+Received: by mail-io1-f67.google.com with SMTP id o9so85382986iom.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 15:25:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cwfou+bwYvh+NgeiS9WMeMU0g5CDhL3xxSGMHlwshUw=;
+        b=aYpuS5OTuXHnpMldiw3wqJiOvQAhmm3oc5rZGWUiRn9QhULPccYSGlqFNQInmVVeT9
+         hji/G16nV9YMdPg5Hq2vpl3tEYwV9pb0CUNRoJfxup+s5HcUtJtOGXp12/GWht5aGMxc
+         mSRRN0m+wMh9vfPIVQO8R93K+k5alY9suQ6P4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cwfou+bwYvh+NgeiS9WMeMU0g5CDhL3xxSGMHlwshUw=;
+        b=TgAEWlb6xPvx387Zp3EooY14ozpdI4y8vNlXz4PstNbDCHWo6ypNdQJWjvmDbvR/KO
+         uR3YvUzZGc8XmnAAbypwke/rUbVHbe46IubYdfHB9k6xgkj+Zd7S7M4OvHZeJNm7dWCM
+         TPRh7AFFzJkxxljTCcssfN9Sxqy4q9d9FMuHpkpdZhb1MJOY83pfBycWnqn7J/WzFFqu
+         YQ3VhpfnH09o2SO21QFAUGKYcWE314bh7+Srh9iYMToZqvvv3CiDCZC/SABhGzca29j3
+         FJO3Zhmg3sg92kRrjSEYft0w1F+oK2pQRUFaoFHsyz0n4rkapKOivWn8aRtoFLkqk5Uw
+         vQ3Q==
+X-Gm-Message-State: APjAAAX6xB/DCg46YxiuATXdlnkwAhEms/yjKZ4XfMq9VuGVCtgKTDaJ
+        jFMOBlp9CE29+AXF71JmHyRuLCfVdNM=
+X-Google-Smtp-Source: APXvYqyfAWoTouZN1l2vtyGcX2QKXktFuWHAfJdc4THSLG2MA7Tv9Bmaj8FzqMLhkbb46ZcoJK7XFA==
+X-Received: by 2002:a02:8663:: with SMTP id e90mr80872192jai.98.1563920705980;
+        Tue, 23 Jul 2019 15:25:05 -0700 (PDT)
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com. [209.85.166.52])
+        by smtp.gmail.com with ESMTPSA id z17sm62115573iol.73.2019.07.23.15.25.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Jul 2019 15:25:05 -0700 (PDT)
+Received: by mail-io1-f52.google.com with SMTP id k20so85264970ios.10
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 15:25:05 -0700 (PDT)
+X-Received: by 2002:a5d:96d8:: with SMTP id r24mr10971823iol.269.1563920265159;
+ Tue, 23 Jul 2019 15:17:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190723072605.103456-1-drinkcat@chromium.org>
+ <CACT4Y+bi5KkZ8igSeYVxjwtr8t0Vjz55gzWfAu_c8VMAqw0zPA@mail.gmail.com>
+ <CANMq1KB8ECeRqNhSWyUf3amAkF7qvAmS3aU6rGNnZ=kUV3LC5Q@mail.gmail.com> <CACT4Y+YkjCpEdH0rvgp8b1hqAWfo66FY76qhn1xj_yNAER-XoQ@mail.gmail.com>
+In-Reply-To: <CACT4Y+YkjCpEdH0rvgp8b1hqAWfo66FY76qhn1xj_yNAER-XoQ@mail.gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 23 Jul 2019 15:17:33 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Wse7tGi-RP5Rq1314AdLqMS3JNy6a-gFbmVZuroSWozw@mail.gmail.com>
+Message-ID: <CAD=FV=Wse7tGi-RP5Rq1314AdLqMS3JNy6a-gFbmVZuroSWozw@mail.gmail.com>
+Subject: Re: [PATCH] kmemleak: Increase maximum early log entries to 1000000
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Nicolas Boichat <drinkcat@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Manoj Gupta <manojgupta@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a helper to lookup platform devices by matching device
-driver in order to avoid drivers trying to use platform bus
-internals.
+Hi,
 
-Cc: Eric Anholt <eric@anholt.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Heiko Stübner" <heiko@sntech.de>
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Sandy Huang <hjc@rock-chips.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- drivers/base/platform.c                     | 14 ++++++++++++++
- drivers/gpu/drm/exynos/exynos_drm_drv.c     |  9 +++------
- drivers/gpu/drm/mcde/mcde_drv.c             |  3 +--
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c |  3 +--
- drivers/gpu/drm/vc4/vc4_drv.c               |  3 +--
- include/linux/platform_device.h             |  3 +++
- 6 files changed, 23 insertions(+), 12 deletions(-)
+On Tue, Jul 23, 2019 at 1:21 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Tue, Jul 23, 2019 at 10:13 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
+> >
+> > On Tue, Jul 23, 2019 at 3:46 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+> > >
+> > > On Tue, Jul 23, 2019 at 9:26 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
+> > > >
+> > > > When KASan is enabled, a lot of memory is allocated early on,
+> > > > and kmemleak complains (this is on a 4GB RAM system):
+> > > > kmemleak: Early log buffer exceeded (129846), please increase
+> > > >   DEBUG_KMEMLEAK_EARLY_LOG_SIZE
+> > > >
+> > > > Let's increase the upper limit to 1M entry. That would take up
+> > > > 160MB of RAM at init (each early_log entry is 160 bytes), but
+> > > > the memory would later be freed (early_log is __initdata).
+> > >
+> > > Interesting. Is it on an arm64 system?
+> >
+> > Yes arm64. And this is chromiumos-4.19 tree. I didn't try to track
+> > down where these allocations come from...
+>
+> So perhaps it's due to arm64, or you have even more configs, or maybe
+> running on real hardware. But I guess it's fine as is, just wondered
+> why such a radical difference. Thanks.
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 506a0175a5a7..a174ce5ea17c 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -1197,6 +1197,20 @@ struct bus_type platform_bus_type = {
- };
- EXPORT_SYMBOL_GPL(platform_bus_type);
- 
-+/**
-+ * platform_find_device_by_driver - Find a platform device with a given
-+ * driver.
-+ * @start: The device to start the search from.
-+ * @drv: The device driver to look for.
-+ */
-+struct device *platform_find_device_by_driver(struct device *start,
-+					      const struct device_driver *drv)
-+{
-+	return bus_find_device(&platform_bus_type, start, drv,
-+			       (void *)platform_match);
-+}
-+EXPORT_SYMBOL_GPL(platform_find_device_by_driver);
-+
- int __init platform_bus_init(void)
- {
- 	int error;
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index 58baf49d9926..badab94be2d6 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -242,9 +242,7 @@ static struct component_match *exynos_drm_match_add(struct device *dev)
- 		if (!info->driver || !(info->flags & DRM_COMPONENT_DRIVER))
- 			continue;
- 
--		while ((d = bus_find_device(&platform_bus_type, p,
--					    &info->driver->driver,
--					    (void *)platform_bus_type.match))) {
-+		while ((d = platform_find_device_by_driver(p, &info->driver->driver))) {
- 			put_device(p);
- 
- 			if (!(info->flags & DRM_FIMC_DEVICE) ||
-@@ -412,9 +410,8 @@ static void exynos_drm_unregister_devices(void)
- 		if (!info->driver || !(info->flags & DRM_VIRTUAL_DEVICE))
- 			continue;
- 
--		while ((dev = bus_find_device(&platform_bus_type, NULL,
--					    &info->driver->driver,
--					    (void *)platform_bus_type.match))) {
-+		while ((dev = platform_find_device_by_driver(NULL,
-+						&info->driver->driver))) {
- 			put_device(dev);
- 			platform_device_unregister(to_platform_device(dev));
- 		}
-diff --git a/drivers/gpu/drm/mcde/mcde_drv.c b/drivers/gpu/drm/mcde/mcde_drv.c
-index baf63fb6850a..c07abf9e201c 100644
---- a/drivers/gpu/drm/mcde/mcde_drv.c
-+++ b/drivers/gpu/drm/mcde/mcde_drv.c
-@@ -477,8 +477,7 @@ static int mcde_probe(struct platform_device *pdev)
- 		struct device_driver *drv = &mcde_component_drivers[i]->driver;
- 		struct device *p = NULL, *d;
- 
--		while ((d = bus_find_device(&platform_bus_type, p, drv,
--					    (void *)platform_bus_type.match))) {
-+		while ((d = platform_find_device_by_driver(p, drv))) {
- 			put_device(p);
- 			component_match_add(dev, &match, mcde_compare_dev, d);
- 			p = d;
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-index 53d2c5bd61dc..38dc26376961 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -330,8 +330,7 @@ static struct component_match *rockchip_drm_match_add(struct device *dev)
- 		struct device *p = NULL, *d;
- 
- 		do {
--			d = bus_find_device(&platform_bus_type, p, &drv->driver,
--					    (void *)platform_bus_type.match);
-+			d = platform_find_device_by_driver(p, &drv->driver);
- 			put_device(p);
- 			p = d;
- 
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
-index bf11930e40e1..1551c8253bec 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.c
-+++ b/drivers/gpu/drm/vc4/vc4_drv.c
-@@ -237,8 +237,7 @@ static void vc4_match_add_drivers(struct device *dev,
- 		struct device_driver *drv = &drivers[i]->driver;
- 		struct device *p = NULL, *d;
- 
--		while ((d = bus_find_device(&platform_bus_type, p, drv,
--					    (void *)platform_bus_type.match))) {
-+		while ((d = platform_find_device_by_driver(p, drv))) {
- 			put_device(p);
- 			component_match_add(dev, match, compare_dev, d);
- 			p = d;
-diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-index 9bc36b589827..37e15a935a42 100644
---- a/include/linux/platform_device.h
-+++ b/include/linux/platform_device.h
-@@ -51,6 +51,9 @@ extern struct device platform_bus;
- extern void arch_setup_pdev_archdata(struct platform_device *);
- extern struct resource *platform_get_resource(struct platform_device *,
- 					      unsigned int, unsigned int);
-+extern struct device *
-+platform_find_device_by_driver(struct device *start,
-+			       const struct device_driver *drv);
- extern void __iomem *
- devm_platform_ioremap_resource(struct platform_device *pdev,
- 			       unsigned int index);
--- 
-2.21.0
+If I had to guess I'd guess gcc vs. clang.  I think we've noticed a
+few places where clang+kasan produces much bloatier code than
+gcc+kasan.  Oh look, I just invented a new word: bloatier.  :-P
 
+...could you try building with gcc and see if that explains the problems?
+
+-Doug
