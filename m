@@ -2,112 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D342B71B56
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 17:17:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCB6471B62
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 17:18:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733002AbfGWPRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 11:17:07 -0400
-Received: from mail-qt1-f174.google.com ([209.85.160.174]:44437 "EHLO
-        mail-qt1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbfGWPRG (ORCPT
+        id S1733144AbfGWPSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 11:18:39 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:60730 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726405AbfGWPSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 11:17:06 -0400
-Received: by mail-qt1-f174.google.com with SMTP id 44so11273969qtg.11
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 08:17:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=I2AwJ8y+pZph/vCLaCeuPDunR8vxlIs6nTXakQYneRY=;
-        b=kl/aEFfnnLfxx2j7Jbx6USZ5alpNgcU+bpYEspSnr8UdEal9SuZ9MsOOZPZb7gfqKp
-         Ek9Lhs45DX11V65WexDENltrzryHLLePKS1Koi7cb7gjo1mNOA7VNOXaZaWwE3Hj1i2g
-         4Ch5N42nzznmt30c8yx8jG7BbcfiecGRRbSC04wjX1Up0AzhGH604Xw05tx6VnHu1bDb
-         tYjc+fiEr2mUK9fpM0Tn4PuOEGUvPRQtAD65dPdKAem5A20FNrQb2cDYpd6bWFpROixi
-         MAPqyM3onHhZLCprjWhVwaXDMM+WlnyggDm3+k3XyV0zGOIYv/GGa+fCkQHeZBE+otPc
-         Q1Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=I2AwJ8y+pZph/vCLaCeuPDunR8vxlIs6nTXakQYneRY=;
-        b=tW4BPY8RJzqh3hkpkS9qK+32/aFIVOUWlirvgvYHbBo7Dmhd0EqDpA+ayoioWJUwgE
-         xhxtSg16i9mpNiqksLcGZd2mXTSHFzx6WBXAkA3LWJ2JtUgdFEhucZ2CmkzsHR4JNz3Y
-         0HGlaUR68Z/dElkylroLZ5+AOuKJB+5499FFQEwXXpBz1koAil40LFNKsDAGGrOMuHdU
-         zCD3AQ0Xeq3iN2rRt97n+ZeLXOY5SvTRaTulwgo+HHft5bmh0I6Hk0aEPnXTgeL+0MOi
-         9ziP0/nm+iu3dNc2O5LJ7EeCveugsAjkeKzdmlnD6ICgzeQ0NRKvSTE+qNR9dyAx3/Ao
-         9ZaA==
-X-Gm-Message-State: APjAAAXeTsFmzIr5hhcoh0bN5WQdu770AayyOWUDelV0QDjiioBcsMFm
-        RBfp001Hz9LEw8s+dWDPgBg=
-X-Google-Smtp-Source: APXvYqw1iEcAIMelwupx09TFjVrlCj7+zKVOLA9NZ7t/jY4K5mR6K46JJRW22mfZVOu66bCDn1tShA==
-X-Received: by 2002:a0c:ad7a:: with SMTP id v55mr53810661qvc.130.1563895025505;
-        Tue, 23 Jul 2019 08:17:05 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.11])
-        by smtp.gmail.com with ESMTPSA id z18sm18311078qki.110.2019.07.23.08.17.04
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 08:17:04 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 84E3340340; Tue, 23 Jul 2019 12:17:02 -0300 (-03)
-Date:   Tue, 23 Jul 2019 12:17:02 -0300
-To:     Vince Weaver <vincent.weaver@maine.edu>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [patch] perf tool divide by zero error if f_header.attr_size==0
-Message-ID: <20190723151702.GA8129@kernel.org>
-References: <alpine.DEB.2.21.1907231100440.14532@macbook-air>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1907231100440.14532@macbook-air>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        Tue, 23 Jul 2019 11:18:38 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id B9407C0C7D;
+        Tue, 23 Jul 2019 15:18:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1563895118; bh=+h2vDYvKU/Eqz/lBSbkDj8osIUzT6k7dY1OtU9w00zg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lbgYaMQqZ9QqkfRQhzZ7pfqbF7+akNRNRB1qLjwphTRETosy78vv2HxZBhWcFFfmr
+         3hVLNPL+rq2VeMpc9O012q0rLnVqHaDxb4J/QaXp2KU2GtopnJzHCH0Yf3/P7VpC2x
+         595COp3jj9op/VALiB4cTtoc1y0qdc+Djp+2+yzi9dF2kkFp//bU8GylNZKkOBEbz+
+         sEfwXxe/2+1MUJNf7tlZZZuZO7G/lpL/nQTwKMsgk24aW3AKxWuiTgylXQVzwSaj7D
+         sMnxoqPlA+Vwr0i4zMwSU7ZjHdt1Fl6XTI05PTbAdDyODWFzYDshfBOEKrbAsvbtP0
+         Jbqll+MubWTcg==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 14946A0057;
+        Tue, 23 Jul 2019 15:18:36 +0000 (UTC)
+From:   Luis Oliveira <Luis.Oliveira@synopsys.com>
+To:     p.zabel@pengutronix.de, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Joao.Pinto@synopsys.com, Luis Oliveira <Luis.Oliveira@synopsys.com>
+Subject: [RESEND V2 0/2] Add DesignWare IP support to simple reset
+Date:   Tue, 23 Jul 2019 17:17:26 +0200
+Message-Id: <1563895048-30038-1-git-send-email-luis.oliveira@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jul 23, 2019 at 11:06:01AM -0400, Vince Weaver escreveu:
-> Hello
-> 
-> so I have been having lots of trouble with hand-crafted perf.data files 
-> causing segfaults and the like, so I have started fuzzing the perf tool.
-> 
-> First issue found:
-> 
-> If f_header.attr_size is 0 in the perf.data file, then perf will crash
-> with a divide-by-zero error.
+This patch series adds a reset-simple compatible string for DesignWare
+IPs allowing active high and low resets inputs.
 
-Thanks for the patch, will be in my next perf/urgent pull req.
+Also adds the corresponding documentation.
 
-- Arnaldo
- 
-> Signed-off-by: Vince Weaver <vincent.weaver@maine.edu>
-> 
-> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-> index c24db7f4909c..26df60ee9460 100644
-> --- a/tools/perf/util/header.c
-> +++ b/tools/perf/util/header.c
-> @@ -3559,6 +3559,10 @@ int perf_session__read_header(struct perf_session *session)
->  			   data->file.path);
->  	}
->  
-> +	if (f_header.attr_size == 0) {
-> +		return -EINVAL;
-> +	}
-> +
->  	nr_attrs = f_header.attrs.size / f_header.attr_size;
->  	lseek(fd, f_header.attrs.offset, SEEK_SET);
+Gustavo Pimentel (1):
+  reset: Add DesignWare IP support to simple reset
 
+Luis Oliveira (1):
+  dt-bindings: Document the DesignWare IP reset bindings
 
+ .../devicetree/bindings/reset/snps,dw-reset.txt    | 30 ++++++++++++++++++++++
+ drivers/reset/Kconfig                              |  2 +-
+ drivers/reset/reset-simple.c                       |  3 +++
+ 3 files changed, 34 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/reset/snps,dw-reset.txt
 
-
-
-
-
-
+-- 
+2.7.4
 
