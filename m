@@ -2,107 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77DB871596
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 12:00:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66942715A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 12:04:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730627AbfGWKAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 06:00:11 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44981 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbfGWKAL (ORCPT
+        id S1729854AbfGWKEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 06:04:10 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33021 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726578AbfGWKEJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 06:00:11 -0400
-Received: by mail-io1-f66.google.com with SMTP id s7so80419213iob.11;
-        Tue, 23 Jul 2019 03:00:10 -0700 (PDT)
+        Tue, 23 Jul 2019 06:04:09 -0400
+Received: by mail-pl1-f193.google.com with SMTP id c14so20362680plo.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 03:04:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yRd2vWX6PjNWErbTd9Y15sIa044i0uHH/q4p9H5/fi4=;
-        b=vVi/DRqBsj29Ez902sLsvEs2zFpgpQvo802HHGufSwSOhqoxLyq1sy2+99AYGHj5To
-         ZwxTxrlbjFnQl5q95LxS3wuFF87TS7tWgj4328oi60PGyWH7l6CEwnO+xjnEQGvZCSzi
-         AS/p+P39qQOjA11t0zEBTK0KV7Tppgk0KcEXqD7lth+pcxdJfN9iaeLPPfQlsE5Cxkzg
-         J1VikUYHWX0CpMcq0ICV6oEsZX+i4HPs73bWuouf8zBUfYcMknfT0vseEeY49cUEUKLG
-         MqOF3tp/CHFR9ynhqHW1sUIXgrtVSk3UtBGIlvqko1xMTEv9RKX+b5higQFio4m3g8pN
-         viSA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YpUM1Im+XRL13SexNhkl9pzwji5CXQiG7CSz3y2BWPQ=;
+        b=il988Img6c4wKh6uWkXOX+qoaDNsC08/nBXqNp0wwfCmRJqGOdbpGusPcc2mDBESgw
+         sbnGpJRaaADtKWcAW9g3X3AmyKTqoJKf+M7vRurOB9HCyRnbGRyM6KVJ1sGbXILS+xD6
+         +ehsGxDQjMiGKyaqnyPB6TcpLU88zycboAIrGszRmf+/cUKXS0yqivUvA+ikFN+rh2Ma
+         RE0mI9sdVaUpK5epaNfKafiYZjh4T4+Baf7BToZFR5BbDRNa6GvzY7xMzpllTEoDG4OS
+         ECy30v1BWaYlim2sft1qt8Pavn3QIj+9YBuUOLDvTu9RVqqWp5GoCDjhOGVQDuhiDy4Q
+         q5nA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yRd2vWX6PjNWErbTd9Y15sIa044i0uHH/q4p9H5/fi4=;
-        b=uQSv9uLNgQT3ZkZ1V63bAAhqfil6awlsDTKUlAp1hyByfcBxnz0hlRNEOQBmFuSTGn
-         PykFs6KOdx8ldRJa+cyiVxOO+eHQ0Ggim9JzffppgwDvO2t2YKO9igRjUO+VdUWim5pY
-         rEqIZXabJlGHqIpJ3CTON+Fvmb1AcpfotJJu98mCFwBSPL50WM+QG5BkGYtZZ204VSc8
-         VCp4O4hYJx4vn5WQV/l+Q8b/wa1rXbXijpuSD51Jp3yE9YTibASEqAFQ2FkAYx9xyq+m
-         YD+j45DxT+ywb691jZ21zWUHY+kQTu+tC9CPkuhhNr8TYoyUCH4iPp3HmAw3iJCS4ePr
-         L1Rw==
-X-Gm-Message-State: APjAAAXDJeNA25fyAX9s/QFdczF2dbKSJSAHj+/7zPG7UOVFCU/MmJNh
-        Q+eJu91P8srcZL0VzSTfnqsKU2Lce/erVUgKMvUOn2y/
-X-Google-Smtp-Source: APXvYqxo+LtxYWcgl7DtLOVxiPXWXG5erEpaefSWnG39Fn6WBuhde+K7k6eQZmIqngE1X15d8GmTFvvGD1F7iT5Kf1g=
-X-Received: by 2002:a5e:d817:: with SMTP id l23mr58776iok.282.1563876010293;
- Tue, 23 Jul 2019 03:00:10 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YpUM1Im+XRL13SexNhkl9pzwji5CXQiG7CSz3y2BWPQ=;
+        b=GQpKohhD+MPvbYuvkYeQDjIMe2OL9FuEg6evQVyO6Rz0AF+d1kgQsf+p0bzqZCt+FK
+         Vx1BpazRki0VHeWd+jQ+SaquW/wOp2fPNO6ctsuKYweqSBRtDwU5INE81lMDTKSDxIUw
+         Ssjyu9euQH7b0UAI4USET5GJDfijHvQmzbKpc16Mpc6SQP/1aWEaHtDWL7ZDpUnDgqQO
+         vO4dbI+kHheSeMBwHwuhtiGDXJ9xewbv8iTXYfkxzGp5/1dwzRynsYHatMYQ+gzxO/2r
+         eCciFjVsPhyvqPSdBjVbjPzoloech2QHSErlKiqtIB7aJ8I/vRpJrVnTBigKg8bnVR7I
+         bqgA==
+X-Gm-Message-State: APjAAAVEPiR4T43OrjvP1uKaWWoHePejAQvUPdZ+D+p622wwFdgY7529
+        X5aSqYcljEJ8916975h4r1c5ow==
+X-Google-Smtp-Source: APXvYqxL20ZsFOnKLphiCT4Vy4tslrXNuQ4Q67ehYKSMAxdeRlDY8/KD73Moz7KT7p/7p+Ul845UmQ==
+X-Received: by 2002:a17:902:788f:: with SMTP id q15mr81217864pll.236.1563876249250;
+        Tue, 23 Jul 2019 03:04:09 -0700 (PDT)
+Received: from localhost ([122.172.28.117])
+        by smtp.gmail.com with ESMTPSA id r9sm23763629pjq.3.2019.07.23.03.04.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Jul 2019 03:04:08 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 15:34:06 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sibi Sankar <sibis@codeaurora.org>, kernel-team@android.com,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] PM / devfreq: Add required OPPs support to
+ passive governor
+Message-ID: <20190723100406.7zchvflrmoaipxek@vireshk-i7>
+References: <20190717222340.137578-1-saravanak@google.com>
+ <20190717222340.137578-6-saravanak@google.com>
 MIME-Version: 1.0
-References: <20190719143222.16058-1-lhenriques@suse.com> <ab5ccaa05994e2eef05bdb54510e6b017db2d807.camel@kernel.org>
-In-Reply-To: <ab5ccaa05994e2eef05bdb54510e6b017db2d807.camel@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 23 Jul 2019 12:02:57 +0200
-Message-ID: <CAOi1vP86qVeMV9hJPCP7sHfimMv08j-znSGyhcYdd1TC_Gn19A@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Sleeping functions in invalid context bug fixes
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Luis Henriques <lhenriques@suse.com>, Sage Weil <sage@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190717222340.137578-6-saravanak@google.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 19, 2019 at 5:20 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> On Fri, 2019-07-19 at 15:32 +0100, Luis Henriques wrote:
-> > Hi,
-> >
-> > I'm sending three "sleeping function called from invalid context" bug
-> > fixes that I had on my TODO for a while.  All of them are ceph_buffer_put
-> > related, and all the fixes follow the same pattern: delay the operation
-> > until the ci->i_ceph_lock is released.
-> >
-> > The first patch simply allows ceph_buffer_put to receive a NULL buffer so
-> > that the NULL check doesn't need to be performed in all the other patches.
-> > IOW, it's not really required, just convenient.
-> >
-> > (Note: maybe these patches should all be tagged for stable.)
-> >
-> > Luis Henriques (4):
-> >   libceph: allow ceph_buffer_put() to receive a NULL ceph_buffer
-> >   ceph: fix buffer free while holding i_ceph_lock in __ceph_setxattr()
-> >   ceph: fix buffer free while holding i_ceph_lock in
-> >     __ceph_build_xattrs_blob()
-> >   ceph: fix buffer free while holding i_ceph_lock in fill_inode()
-> >
-> >  fs/ceph/caps.c              |  5 ++++-
-> >  fs/ceph/inode.c             |  7 ++++---
-> >  fs/ceph/snap.c              |  4 +++-
-> >  fs/ceph/super.h             |  2 +-
-> >  fs/ceph/xattr.c             | 19 ++++++++++++++-----
-> >  include/linux/ceph/buffer.h |  3 ++-
-> >  6 files changed, 28 insertions(+), 12 deletions(-)
->
-> This all looks good to me. I'll plan to merge these into the testing
-> branch soon, and tag them for stable.
->
-> PS: On a related note (and more of a question for Ilya)...
->
-> I'm wondering if we get any benefit from having our own ceph_kvmalloc
-> routine. Why are we not better off using the stock kvmalloc routine
-> instead? Forcing a vmalloc just because we've gone above 32k allocation
-> doesn't seem like the right thing to do.
+On 17-07-19, 15:23, Saravana Kannan wrote:
+> Look at the required OPPs of the "parent" device to determine the OPP that
+> is required from the slave device managed by the passive governor. This
+> allows having mappings between a parent device and a slave device even when
+> they don't have the same number of OPPs.
+> 
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  drivers/devfreq/governor_passive.c | 20 +++++++++++++++-----
+>  1 file changed, 15 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
+> index 58308948b863..24ce94c80f06 100644
+> --- a/drivers/devfreq/governor_passive.c
+> +++ b/drivers/devfreq/governor_passive.c
+> @@ -19,7 +19,7 @@ static int devfreq_passive_get_target_freq(struct devfreq *devfreq,
+>  			= (struct devfreq_passive_data *)devfreq->data;
+>  	struct devfreq *parent_devfreq = (struct devfreq *)p_data->parent;
+>  	unsigned long child_freq = ULONG_MAX;
+> -	struct dev_pm_opp *opp;
+> +	struct dev_pm_opp *opp = NULL, *p_opp = NULL;
 
-I don't remember off the top of my head and can't check right now.
-Could be that kvmalloc() didn't exist back then.  I'll add that to my
-TODO list.
+This won't be required if ...
 
-Thanks,
+>  	int i, count, ret = 0;
+>  
+>  	/*
+> @@ -56,13 +56,20 @@ static int devfreq_passive_get_target_freq(struct devfreq *devfreq,
+>  	 * list of parent device. Because in this case, *freq is temporary
+>  	 * value which is decided by ondemand governor.
+>  	 */
+> -	opp = devfreq_recommended_opp(parent_devfreq->dev.parent, freq, 0);
+> -	if (IS_ERR(opp)) {
+> -		ret = PTR_ERR(opp);
+> +	p_opp = devfreq_recommended_opp(parent_devfreq->dev.parent, freq, 0);
+> +	if (IS_ERR(p_opp)) {
+> +		ret = PTR_ERR(p_opp);
+>  		goto out;
+>  	}
+>  
+> -	dev_pm_opp_put(opp);
+> +	if (devfreq->opp_table && parent_devfreq->opp_table)
+> +		opp = dev_pm_opp_xlate_opp(parent_devfreq->opp_table,
+> +					   devfreq->opp_table, p_opp);
 
-                Ilya
+you put p_opp right here.
+
+Also shouldn't you try to get p_opp under the above if block only? As
+that is the only user of it ?
+
+> +	if (opp) {
+> +		*freq = dev_pm_opp_get_freq(opp);
+> +		dev_pm_opp_put(opp);
+> +		goto out;
+> +	}
+>  
+>  	/*
+>  	 * Get the OPP table's index of decided freqeuncy by governor
+> @@ -89,6 +96,9 @@ static int devfreq_passive_get_target_freq(struct devfreq *devfreq,
+>  	*freq = child_freq;
+>  
+>  out:
+> +	if (!IS_ERR_OR_NULL(opp))
+> +		dev_pm_opp_put(p_opp);
+> +
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.22.0.510.g264f2c817a-goog
+
+-- 
+viresh
