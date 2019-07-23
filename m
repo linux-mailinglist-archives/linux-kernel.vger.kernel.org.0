@@ -2,101 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2992A70FC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 05:14:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A843770FB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 05:13:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732529AbfGWDOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 23:14:31 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34127 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728981AbfGWDOZ (ORCPT
+        id S1729260AbfGWDNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 23:13:10 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41797 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbfGWDNK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 23:14:25 -0400
-Received: by mail-lf1-f66.google.com with SMTP id b29so20972910lfq.1;
-        Mon, 22 Jul 2019 20:14:23 -0700 (PDT)
+        Mon, 22 Jul 2019 23:13:10 -0400
+Received: by mail-ot1-f68.google.com with SMTP id o101so42539721ota.8
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 20:13:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3ErUctKt9CJ3rgf9ZExT4u2Tmx1X1fVjtqY74IUmVOo=;
-        b=DxYDVOlEl8rKPL/ci93EyfaVTzc+8yfCy73tJKidJg7VeFXytimKbtwyICs1HRGMxm
-         XRL4JqEAdjDJshHTDNcGfxVYmqCjC3TpPD7Bumwy4iV0dS9giQbhNzpQrAkK5cd5ZHJ4
-         PibluzbmQH/HKBVyOngsS7cqH6RSALeHrxFeJHyIx4EXA+X4pIVh2uMR99V7vZZ0Qe2D
-         HXW80+XNFiVMtseFgcMku/iw1GVMvi2rdy8BJHcqMaPCWfdxvDYODk4f3mxtDFMjsTj0
-         adyNs9JDk9PFef6Lf1LDJl2Upy+PSPv49r+4lQsivVc/nN3t20ERfhqKT2x+TZYmaCZo
-         MwVw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qRk0XCUOOeLhkURXIsrcmBZYRHclzXxoMPAdT26EhIw=;
+        b=x4Y4KhhmBcGhMNRZHlH8uiKQqB7vPuwd9a3vzI/zUfipkeumIIxotuiLo/omBUZo1V
+         I4yEENG2NJUeqgWbP1S7e+ALHfprLJHn0HSpbkd3gTfSAJAhc7mDQvXrKA9zm1A2m786
+         /cvOT/9UgYlY1auQIn+F0rRuWUy1Qdqd5ONcxYNl502flymtImq5ZwDi9EUAlsslM6FR
+         +L5kCSnrHL8qYuXoSb8ERiW3n5QlIqnThtyaAS1MAm7K+zC/omTtboVBCT/izDVm35/7
+         6cdpMss5uZ4caCUgvGkE+eHNrp1Kki6vY7MNrEXIPrHCfePxLgKg+ccP5BOClq03YZiN
+         odIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3ErUctKt9CJ3rgf9ZExT4u2Tmx1X1fVjtqY74IUmVOo=;
-        b=L5V/JXEDf6j0iCxf/elJYJAggcPRRPq+uyTNoB+2yM7/8eQJoJdiTPe7wQmwgqstks
-         q9spnqHoreZyfhw0c8HQ+MPzafKoYbkDkHNY5KkRzamQkQchpJNmEFyK1kI+mbp2y/ZR
-         pfNTZAD3fEoNTxe38W/8BBAyeDcqmuphLd5+RNRyLZPaKFdruNf6DgwgmN0jetz3SBxU
-         VEp1ec7WsSYPkk3i0MkjuBmVnz/B6R6AIVjXdRxniVI+JzL+nAL7CB/d29gmuuVAE298
-         dMf/haZzmxNcx5E9IK0HrlzddeDC/yfFgc9SBxVunAS2QxcFuP0Nv8N6YaP5MQ52pPA/
-         KoAg==
-X-Gm-Message-State: APjAAAXOMgyN3w7ucUFCtlsisH2p0+dWgYBUw00lTGJKjIZPzClPf+Wd
-        F8051fvVayMK7OSKeuVuYms=
-X-Google-Smtp-Source: APXvYqy87FUsdrBC9bcR/my9clPr+8z90WPQYgpWUjHc6ywygY0we4FwIZK1EKQB2a+QS7KfLaja6A==
-X-Received: by 2002:ac2:5a1c:: with SMTP id q28mr22515369lfn.131.1563851663068;
-        Mon, 22 Jul 2019 20:14:23 -0700 (PDT)
-Received: from localhost.localdomain (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.gmail.com with ESMTPSA id u18sm6217184lfe.65.2019.07.22.20.14.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jul 2019 20:14:22 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 15/15] ARM: dts: tegra30: Add External Memory Controller node
-Date:   Tue, 23 Jul 2019 06:12:47 +0300
-Message-Id: <20190723031247.31932-16-digetx@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190723031247.31932-1-digetx@gmail.com>
-References: <20190723031247.31932-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qRk0XCUOOeLhkURXIsrcmBZYRHclzXxoMPAdT26EhIw=;
+        b=C0t1Gll1v5u67v4Z35auFPcU+ie5ObpTVgFm2N2/VoEqqI51G0oXPwea49wqIPQ2MB
+         4JVCA9mjj1OcG7t8j/bfD2tKJVWtoA8GqYWxmlvm9kidZmC7zXgZKccJOmysUNbd87vX
+         K1U7P37IGHR1agOs0qwiwzE8Zz0XsxPAKtq+eccbWZcKmTjqrXjMSgKQkBctwtw9Fx4/
+         ZJRq7syVbCZA6sgQby1NGSYomnxX+mc90MiBgbriv1i0UFi6QuMnY7ObPaSr5dxAMyWJ
+         IpuSY5BiPugyWxG1/bhIG/AhKEqMpcoEwjuQt2xpAxhwHlrZ1P+iMIrjFraWhcj6HBZH
+         UHjA==
+X-Gm-Message-State: APjAAAU+TAzCeFbpKRkoEao+jzKBbXTV+sXGJogY1A1kJIpsvrVjfOXi
+        IbGM3TpY6Te8FKQA+cRaSSYXuxo+8/efL4VO+oSALQ==
+X-Google-Smtp-Source: APXvYqy1vfQdOXDImruQOKc6WqzDViO9H0BO7gpFE3uIOrbEzPmKXH6lGJp5FeQx/o3OtwHJ/PUcvdKi5AteHgD6TkQ=
+X-Received: by 2002:a9d:590d:: with SMTP id t13mr38048922oth.281.1563851589136;
+ Mon, 22 Jul 2019 20:13:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1563782844.git.baolin.wang@linaro.org> <94a0d20e6304b909391abd9a425c71c376cad964.1563782844.git.baolin.wang@linaro.org>
+ <20190722141940.GA26528@ming.t460p>
+In-Reply-To: <20190722141940.GA26528@ming.t460p>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Tue, 23 Jul 2019 11:12:57 +0800
+Message-ID: <CAMz4ku+R8OdAQ2S91Xe=V-nZL1Nu5g=_xpHqQCzNF6JeBHY3rw@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/7] blk-mq: Export blk_mq_hctx_has_pending() function
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add External Memory Controller node to the device-tree.
+Hi Ming,
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra30.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+On Mon, 22 Jul 2019 at 22:19, Ming Lei <ming.lei@redhat.com> wrote:
+>
+> On Mon, Jul 22, 2019 at 09:09:36PM +0800, Baolin Wang wrote:
+> > Some SD/MMC host controllers can support packed command or packed request,
+> > that means we can package several requests to host controller at one time
+> > to improve performence. And this patch set will introduce MMC packed function
+> > to support this feature by following patches.
+> >
+> > To support MMC packed function, the MMC layer need to know if there are
+> > requests are pending now in hardware queue to help to combine requests
+> > as much as possible. If we know there are requests pending in hardware
+> > queue, then we should not package requests to host controller immediately,
+> > instead we should collect more requests into MMC packed queue to be packed
+> > to host controller with packed condition.
+> >
+> > Thus export this function for MMC packed function.
+> >
+> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > ---
+> >  block/blk-mq.c         |    3 ++-
+> >  include/linux/blk-mq.h |    1 +
+> >  2 files changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/block/blk-mq.c b/block/blk-mq.c
+> > index b038ec6..5bd4ef9 100644
+> > --- a/block/blk-mq.c
+> > +++ b/block/blk-mq.c
+> > @@ -63,12 +63,13 @@ static int blk_mq_poll_stats_bkt(const struct request *rq)
+> >   * Check if any of the ctx, dispatch list or elevator
+> >   * have pending work in this hardware queue.
+> >   */
+> > -static bool blk_mq_hctx_has_pending(struct blk_mq_hw_ctx *hctx)
+> > +bool blk_mq_hctx_has_pending(struct blk_mq_hw_ctx *hctx)
+> >  {
+> >       return !list_empty_careful(&hctx->dispatch) ||
+> >               sbitmap_any_bit_set(&hctx->ctx_map) ||
+> >                       blk_mq_sched_has_work(hctx);
+> >  }
+> > +EXPORT_SYMBOL_GPL(blk_mq_hctx_has_pending);
+>
+> Just wondering why you don't use the 'last' field of 'struct blk_mq_queue_data',
+> which is passed to .queue_rq(), and supposed for implementing batch submission.
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index e074258d4518..8355264e2265 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -732,6 +732,15 @@
- 		#reset-cells = <1>;
- 	};
- 
-+	memory-controller@7000f400 {
-+		compatible = "nvidia,tegra30-emc";
-+		reg = <0x7000f400 0x400>;
-+		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA30_CLK_EMC>;
-+
-+		nvidia,memory-controller = <&mc>;
-+	};
-+
- 	fuse@7000f800 {
- 		compatible = "nvidia,tegra30-efuse";
- 		reg = <0x7000f800 0x400>;
+The 'last' field of 'struct blk_mq_queue_data' does not indicate the
+last request in the hardware queue, since we want to collect more
+requests from block layer as much as possible to be packed later.
+
+And from blk_mq_do_dispatch_sched()--->blk_mq_dispatch_rq_list()--->
+queue_rq(), I always get 'bd.last = true', which is not useful to
+combine requests for MMC packed queue. Maybe I missed anything?
+
+Thanks for your comments.
+
 -- 
-2.22.0
-
+Baolin Wang
+Best Regards
