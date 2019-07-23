@@ -2,73 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79160711C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 08:15:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C6097119D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 08:10:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730132AbfGWGPz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 02:15:55 -0400
-Received: from smtp-as-02-09.vtxnet.net ([194.38.175.148]:33826 "EHLO
-        smtp-as-02.vtxnet.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725837AbfGWGPy (ORCPT
+        id S2388053AbfGWGKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 02:10:14 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:39508 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388040AbfGWGKO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 02:15:54 -0400
-X-Greylist: delayed 392 seconds by postgrey-1.27 at vger.kernel.org; Tue, 23 Jul 2019 02:15:53 EDT
-X-Spam-Flag: NO
-X-Spam-Score: 1.199
-X-Spam-Level: *
-X-Spam-Status: No, score=1.199 tagged_above=-999 required=999
-        tests=[FREEMAIL_FORGED_REPLYTO=1.199] autolearn=no
-Received: from smtp-02.datacomm.ch (smtp-02-5.datacomm.ch [212.40.2.22])
-        by smtp-as-02.vtxnet.net (Postfix) with ESMTP id E0412451CC;
-        Tue, 23 Jul 2019 08:09:18 +0200 (CEST)
-Received: from webmail.vtx.ch (bas-flu-webmail-01.vtxnet.net [212.40.2.41])
-        by smtp-02.datacomm.ch (VTX Datacomm AG) with ESMTP id 12A3D120038;
-        Tue, 23 Jul 2019 08:09:18 +0200 (CEST)
-Received: from [41.82.65.33]
- by webmail.vtx.ch
- with HTTP (HTTP/1.1 POST); Tue, 23 Jul 2019 08:09:17 +0200
+        Tue, 23 Jul 2019 02:10:14 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R971e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TXbg848_1563862209;
+Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TXbg848_1563862209)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 23 Jul 2019 14:10:09 +0800
+Subject: Re: [PATCH v3 1/2] cputime: remove duplicate code in
+ account_process_tick
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org
+References: <20190722073840.32613-1-alex.shi@linux.alibaba.com>
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Message-ID: <ed371595-b5b8-5376-5962-f2a2e91be12d@linux.alibaba.com>
+Date:   Tue, 23 Jul 2019 14:10:09 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+In-Reply-To: <20190722073840.32613-1-alex.shi@linux.alibaba.com>
+Content-Type: text/plain; charset=gbk
 Content-Transfer-Encoding: 8bit
-Date:   Tue, 23 Jul 2019 08:09:17 +0200
-From:   Norton Finance <ursulaleibundgut@vtxmail.ch>
-To:     undisclosed-recipients:;
-Subject: Dringendes Darlehensangebot
-Reply-To: nortonfinance@hotmail.com
-Mail-Reply-To: nortonfinance@hotmail.com
-Message-ID: <4e9b9b50c263320d06038599d41db38f@vtxmail.ch>
-X-Sender: ursulaleibundgut@vtxmail.ch
-User-Agent: Roundcube Webmail/1.2.7
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+Forget this patchset. I sent out a new 3 patches.
 
--- 
-Guten Tag.
-BenÃ¶tigen Sie ein dringendes Darlehen fÃ¼r GeschÃ¤ft, Investition und 
-Projekt?
-Wir kÃ¶nnen Ihre Kreditgenehmigung in weniger als 24 Stunden bearbeiten. 
-Und unsere Darlehensverzinsung betrÃ¤gt 1,3% jÃ¤hrlich.
-Kontaktieren Sie uns jetzt, indem Sie sich unten bewerben:
+Thanks
+Alex
 
-VollstÃ¤ndiger Name:..............................
-Land:..............................
-Darlehensbetrag: ..............................
-Darlehen Zweck: ..............................
-Leihdauer: ..............................
-Telefon:..............................
 
-Wir senden Ihnen umgehend Informationen zu, sobald wir Ihre E-Mail 
-erhalten haben.
-
-Wir erwarten Ihre schnelle Antwort
-
-Freundliche GrÃ¼ÃŸe.
-
-Scott Bailey
-Customer Service / Consultant
-Norton Finance UK
+ÔÚ 2019/7/22 ÏÂÎç3:38, Alex Shi Ð´µÀ:
+> The irqtime_account_process_tick path was introduced for precise ns irq
+> time account from commit abb74cefa9c6 ("sched: Export ns irqtimes
+> through /proc/stat") while account_process_tick still use jiffes. This
+> divide isn't necessary especially now both paths are ns precison.
+> 
+> Move out the irqtime_account_process_tick func from IRQ_TIME_ACCOUNTING.
+> So it do generally same things as account_process_tick whenever if
+> IRQ_TIME_ACCOUNTING set or if sched_clock_irqtime enabled.
