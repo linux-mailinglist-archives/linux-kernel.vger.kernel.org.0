@@ -2,192 +2,527 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4B2971455
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 10:49:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEA1C7145A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 10:49:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731774AbfGWItH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 04:49:07 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:36482 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727994AbfGWItG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 04:49:06 -0400
-Received: by mail-io1-f71.google.com with SMTP id k21so46472815ioj.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 01:49:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=zK84h6QU5epES3W4KTjWKMKe3m3wTviU6kKTu275Q48=;
-        b=s2wZBdrSrpgKJaANNKUI1ve17SAPt3uQcsYEvleVYKiRMx2QDR7xiKwI83lTAVdfDD
-         RkxQ4yB0SQ2DjqmxvuVZCoHNIiC+OKRRQI0Z/OKff3XwlAIWFXgz8GZrAluLLVEdL0Oj
-         dqvu5KLl1EGYr2763HLX7yNs2UrUovdV5I6tZdulUNWIHNxy4sELIgoWgnw6nTQE63HR
-         5MWObL42MQ3do5vfJDaqhjWnw2QkaZ7UuZSr1ziR9ia8CIiK1UixHAB7AKw1o05mBCJf
-         NiSz0HxYuUqR2YmNQ8n1wQjElRy2hd9bUxCefkmdzhClx8TUDza0EIz9MHE7LL2gOtjv
-         ZKqQ==
-X-Gm-Message-State: APjAAAWTu1/DS4i6MW9XsaFYo+wL3eWqhJRGYYjd7xEDso4j+oRAJUGY
-        uzduYtcos06dGEAB+lPVWW8/9L+VzV96jGDzS/x7wA+ukBPs
-X-Google-Smtp-Source: APXvYqzAyE1adC0QpUJCs8Ye23sqiotvMVlnP2cgk6HkuRMvwt0vb++YWRxrBQhUYpikArq14m2iCEvP0iVrKUCfa85NFv8zMkVn
+        id S2387440AbfGWItQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 04:49:16 -0400
+Received: from foss.arm.com ([217.140.110.172]:51164 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727994AbfGWItN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 04:49:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF74F344;
+        Tue, 23 Jul 2019 01:49:11 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A3C953F71F;
+        Tue, 23 Jul 2019 01:49:11 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id 687B1680457; Tue, 23 Jul 2019 09:49:10 +0100 (BST)
+Date:   Tue, 23 Jul 2019 09:49:10 +0100
+From:   Liviu Dudau <Liviu.Dudau@arm.com>
+To:     "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
+Cc:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "seanpaul@chromium.org" <seanpaul@chromium.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>
+Subject: Re: [PATCH] drm/komeda: Adds error event print functionality
+Message-ID: <20190723084910.GF15612@e110455-lin.cambridge.arm.com>
+References: <1561604994-26925-1-git-send-email-lowry.li@arm.com>
+ <20190718131737.GD5942@e110455-lin.cambridge.arm.com>
+ <20190719090816.GA4133@lowry.li@arm.com>
+ <20190719114009.GA16673@e110455-lin.cambridge.arm.com>
+ <20190722111506.GA8212@jamwan02-TSP300>
+ <20190722161800.GE15612@e110455-lin.cambridge.arm.com>
+ <20190723073623.GA32666@lowry.li@arm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:13c3:: with SMTP id 186mr76485877jaz.30.1563871745940;
- Tue, 23 Jul 2019 01:49:05 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 01:49:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e42667058e554371@google.com>
-Subject: KASAN: use-after-free Read in nr_rx_frame (2)
-From:   syzbot <syzbot+701728447042217b67c1@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190723073623.GA32666@lowry.li@arm.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, Jul 23, 2019 at 07:37:42AM +0000, Lowry Li (Arm Technology China) wrote:
+> On Mon, Jul 22, 2019 at 04:18:01PM +0000, Liviu Dudau wrote:
+> > On Mon, Jul 22, 2019 at 11:15:12AM +0000, james qian wang (Arm Technology China) wrote:
+> > > On Fri, Jul 19, 2019 at 11:40:11AM +0000, Liviu Dudau wrote:
+> > > > On Fri, Jul 19, 2019 at 09:09:30AM +0000, Lowry Li (Arm Technology China) wrote:
+> > > > > Hi Liviu,
+> > > > > 
+> > > > > On Thu, Jul 18, 2019 at 01:17:37PM +0000, Liviu Dudau wrote:
+> > > > > > On Thu, Jun 27, 2019 at 04:10:36AM +0100, Lowry Li (Arm Technology China) wrote:
+> > > > > > > Adds to print the event message when error happens and the same event
+> > > > > > > will not be printed until next vsync.
+> > > > > > > 
+> > > > > > > Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
+> > > > > > > ---
+> > > > > > >  drivers/gpu/drm/arm/display/komeda/Makefile       |   1 +
+> > > > > > >  drivers/gpu/drm/arm/display/komeda/komeda_dev.h   |  13 ++
+> > > > > > >  drivers/gpu/drm/arm/display/komeda/komeda_event.c | 144 ++++++++++++++++++++++
+> > > > > > >  drivers/gpu/drm/arm/display/komeda/komeda_kms.c   |   2 +
+> > > > > > >  4 files changed, 160 insertions(+)
+> > > > > > >  create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_event.c
+> > > > > > > 
+> > > > > > > diff --git a/drivers/gpu/drm/arm/display/komeda/Makefile b/drivers/gpu/drm/arm/display/komeda/Makefile
+> > > > > > > index 38aa584..3f53d2d 100644
+> > > > > > > --- a/drivers/gpu/drm/arm/display/komeda/Makefile
+> > > > > > > +++ b/drivers/gpu/drm/arm/display/komeda/Makefile
+> > > > > > > @@ -7,6 +7,7 @@ ccflags-y := \
+> > > > > > >  komeda-y := \
+> > > > > > >  	komeda_drv.o \
+> > > > > > >  	komeda_dev.o \
+> > > > > > > +	komeda_event.o \
+> > > > > > >  	komeda_format_caps.o \
+> > > > > > >  	komeda_coeffs.o \
+> > > > > > >  	komeda_color_mgmt.o \
+> > > > > > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
+> > > > > > > index 096f9f7..e863ec3 100644
+> > > > > > > --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
+> > > > > > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
+> > > > > > > @@ -40,6 +40,17 @@
+> > > > > > >  #define KOMEDA_ERR_TTNG			BIT_ULL(30)
+> > > > > > >  #define KOMEDA_ERR_TTF			BIT_ULL(31)
+> > > > > > >  
+> > > > > > > +#define KOMEDA_ERR_EVENTS	\
+> > > > > > > +	(KOMEDA_EVENT_URUN	| KOMEDA_EVENT_IBSY	| KOMEDA_EVENT_OVR |\
+> > > > > > > +	KOMEDA_ERR_TETO		| KOMEDA_ERR_TEMR	| KOMEDA_ERR_TITR |\
+> > > > > > > +	KOMEDA_ERR_CPE		| KOMEDA_ERR_CFGE	| KOMEDA_ERR_AXIE |\
+> > > > > > > +	KOMEDA_ERR_ACE0		| KOMEDA_ERR_ACE1	| KOMEDA_ERR_ACE2 |\
+> > > > > > > +	KOMEDA_ERR_ACE3		| KOMEDA_ERR_DRIFTTO	| KOMEDA_ERR_FRAMETO |\
+> > > > > > > +	KOMEDA_ERR_ZME		| KOMEDA_ERR_MERR	| KOMEDA_ERR_TCF |\
+> > > > > > > +	KOMEDA_ERR_TTNG		| KOMEDA_ERR_TTF)
+> > > > > > > +
+> > > > > > > +#define KOMEDA_WARN_EVENTS	KOMEDA_ERR_CSCE
+> > > > > > > +
+> > > > > > >  /* malidp device id */
+> > > > > > >  enum {
+> > > > > > >  	MALI_D71 = 0,
+> > > > > > > @@ -207,6 +218,8 @@ struct komeda_dev {
+> > > > > > >  
+> > > > > > >  struct komeda_dev *dev_to_mdev(struct device *dev);
+> > > > > > >  
+> > > > > > > +void komeda_print_events(struct komeda_events *evts);
+> > > > > > > +
+> > > > > > >  int komeda_dev_resume(struct komeda_dev *mdev);
+> > > > > > >  int komeda_dev_suspend(struct komeda_dev *mdev);
+> > > > > > >  #endif /*_KOMEDA_DEV_H_*/
+> > > > > > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_event.c b/drivers/gpu/drm/arm/display/komeda/komeda_event.c
+> > > > > > > new file mode 100644
+> > > > > > > index 0000000..309dbe2
+> > > > > > > --- /dev/null
+> > > > > > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_event.c
+> > > > > > > @@ -0,0 +1,144 @@
+> > > > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > > > +/*
+> > > > > > > + * (C) COPYRIGHT 2019 ARM Limited. All rights reserved.
+> > > > > > > + * Author: James.Qian.Wang <james.qian.wang@arm.com>
+> > > > > > > + *
+> > > > > > > + */
+> > > > > > > +#include <drm/drm_print.h>
+> > > > > > > +
+> > > > > > > +#include "komeda_dev.h"
+> > > > > > > +
+> > > > > > > +struct komeda_str {
+> > > > > > > +	char *str;
+> > > > > > > +	u32 sz;
+> > > > > > > +	u32 len;
+> > > > > > > +};
+> > > > > > > +
+> > > > > > > +/* return 0 on success,  < 0 on no space.
+> > > > > > > + */
+> > > > > > > +static int komeda_sprintf(struct komeda_str *str, const char *fmt, ...)
+> > > > > > > +{
+> > > > > > > +	va_list args;
+> > > > > > > +	int num, free_sz;
+> > > > > > > +	int err;
+> > > > > > > +
+> > > > > > > +	free_sz = str->sz - str->len;
+> > > > > > > +	if (free_sz <= 0)
+> > > > > > > +		return -ENOSPC;
+> > > > > > > +
+> > > > > > > +	va_start(args, fmt);
+> > > > > > > +
+> > > > > > > +	num = vsnprintf(str->str + str->len, free_sz, fmt, args);
+> > > > > > > +
+> > > > > > > +	va_end(args);
+> > > > > > > +
+> > > > > > > +	if (num <= free_sz) {
+> > > > > > > +		str->len += num;
+> > > > > > > +		err = 0;
+> > > > > > > +	} else {
+> > > > > > > +		str->len = str->sz;
+> > > > > > > +		err = -ENOSPC;
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	return err;
+> > > > > > > +}
+> > > > > > > +
+> > > > > > > +static void evt_sprintf(struct komeda_str *str, u64 evt, const char *msg)
+> > > > > > > +{
+> > > > > > > +	if (evt)
+> > > > > > > +		komeda_sprintf(str, msg);
+> > > > > > > +}
+> > > > > > 
+> > > > > > Why do we need this wrapper?
+> > > > > The komeda_sprintf is a generic function and will be used by other
+> > > > > places, while evt_sprintf is working for the detail event msg.
+> > > > 
+> > > > Yeah, I'm not buying this argument any more. We should not create new functions
+> > > > just because we want to save typing one if () condition. evt_sprintf does
+> > > > nothing with the extra evt argument other than checking that it is not zero.
+> > > 
+> > > Hi Liviu
+> > > 
+> > > But I think we'd better to have this function which can remove
+> > > many duplicate if () checks, and makes the code elegant and easy to
+> > > read. and I think that why the concept of function has been
+> > > introduced.
+> > > 
+> > > And in linux we can see lot of functions or MACRO that just for save one
+> > > word like:
+> > > 
+> > >   static inline void *kzalloc(size_t size, gfp_t flags)
+> > >   {
+> > > 	return kmalloc(size, flags | __GFP_ZERO);
+> > >   }
+> > 
+> > This is a different (and valid use) of creating macros. kzalloc() does
+> > something specific (initialises allocated memory with zeros) by using the
+> > generic kmalloc() function. The added __GFP_ZERO has a specific outcome to the
+> > invocation of the wrapped function. evt_sprintf() does nothing of this sort and
+> > it is arguably wrong, as it drops any possibility of passing arguments to the
+> > format string that komeda_sprintf() allows.
+> 
+> komeda_sprintf(struct komeda_str *str, const char *fmt, ...), will be
+> treated as a generic function, which may be called from other places,
+> with the possiblity support of passing arguments to the format string
+> of it.
+> 
+> evt_sprintf(struct komeda_str *str, u64 evt, const char *msg), is
+> a wrapper aim to to remove so many duplicate if() checks and make
+> the code elegant and easy to read.
+> 
+> About "drops any possibility of passing arguments to the format string
+> that komeda_sprintf() allows". In this wrapper, the 2nd parameter *msg
+> is already be set and no possible to be a format string, even it calls
+> komeda_sprintf, which supports passing arguments to the format string.
 
-syzbot found the following crash on:
+Should this not be documented above the function?
 
-HEAD commit:    3bfe1fc4 Merge tag 'for-5.3/dm-changes-2' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10413e34600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=21511d77e11db3cb
-dashboard link: https://syzkaller.appspot.com/bug?extid=701728447042217b67c1
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
+Anyway, I think we are getting side-tracked. My main argument is that we don't
+need this function and evt_str() function *at all*. We should just expose the
+events value into debugfs and let userspace decode the bit values.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> There are 27 places need check before calling into komeda_sprintf().
+> So I still think this wrapper is reasonable. It can make the code
+> elegant and easy to read. May I give another example:
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+701728447042217b67c1@syzkaller.appspotmail.com
+Those 27 calls are also made in an interrupt handler.
 
-==================================================================
-BUG: KASAN: use-after-free in atomic_read  
-/./include/asm-generic/atomic-instrumented.h:26 [inline]
-BUG: KASAN: use-after-free in refcount_inc_not_zero_checked+0x7c/0x280  
-/lib/refcount.c:123
-Read of size 4 at addr ffff88808ee52080 by task swapper/1/0
+Best regards,
+Liviu
 
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.2.0+ #35
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack /lib/dump_stack.c:77 [inline]
-  dump_stack+0x1d8/0x2f8 /lib/dump_stack.c:113
-  print_address_description+0x75/0x5b0 /mm/kasan/report.c:351
-  __kasan_report+0x14b/0x1c0 /mm/kasan/report.c:482
-  kasan_report+0x26/0x50 /mm/kasan/common.c:612
-  check_memory_region_inline /mm/kasan/generic.c:182 [inline]
-  check_memory_region+0x2cf/0x2e0 /mm/kasan/generic.c:192
-  __kasan_check_read+0x11/0x20 /mm/kasan/common.c:92
-  atomic_read /./include/asm-generic/atomic-instrumented.h:26 [inline]
-  refcount_inc_not_zero_checked+0x7c/0x280 /lib/refcount.c:123
-  refcount_inc_checked+0x15/0x50 /lib/refcount.c:156
-  sock_hold /./include/net/sock.h:649 [inline]
-  sk_add_node /./include/net/sock.h:701 [inline]
-  nr_insert_socket /net/netrom/af_netrom.c:137 [inline]
-  nr_rx_frame+0x17bc/0x1e40 /net/netrom/af_netrom.c:1023
-  nr_loopback_timer+0x6a/0x140 /net/netrom/nr_loopback.c:59
-  call_timer_fn+0xec/0x200 /kernel/time/timer.c:1322
-  expire_timers /kernel/time/timer.c:1366 [inline]
-  __run_timers+0x7cd/0x9c0 /kernel/time/timer.c:1685
-  run_timer_softirq+0x4a/0x90 /kernel/time/timer.c:1698
-  __do_softirq+0x333/0x7c4 /./arch/x86/include/asm/paravirt.h:777
-  invoke_softirq /kernel/softirq.c:373 [inline]
-  irq_exit+0x227/0x230 /kernel/softirq.c:413
-  exiting_irq /./arch/x86/include/asm/apic.h:537 [inline]
-  smp_apic_timer_interrupt+0x113/0x280 /arch/x86/kernel/apic/apic.c:1095
-  apic_timer_interrupt+0xf/0x20 /arch/x86/entry/entry_64.S:828
-  </IRQ>
-RIP: 0010:native_safe_halt+0xe/0x10 /./arch/x86/include/asm/irqflags.h:61
-Code: 06 fa eb ae 89 d9 80 e1 07 80 c1 03 38 c1 7c ba 48 89 df e8 c4 41 06  
-fa eb b0 90 90 e9 07 00 00 00 0f 00 2d 76 67 56 00 fb f4 <c3> 90 e9 07 00  
-00 00 0f 00 2d 66 67 56 00 f4 c3 90 90 55 48 89 e5
-RSP: 0018:ffff8880a98cfd38 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-RAX: 1ffffffff11950db RBX: ffff8880a98bc340 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: ffffffff812d193a RDI: ffff8880a98bcb78
-RBP: ffff8880a98cfd40 R08: ffff8880a98bcb90 R09: ffffed1015317869
-R10: ffffed1015317869 R11: 0000000000000000 R12: 0000000000000001
-R13: 1ffff11015317868 R14: dffffc0000000000 R15: dffffc0000000000
-  arch_cpu_idle+0xa/0x10 /arch/x86/kernel/process.c:571
-  default_idle_call+0x59/0xa0 /kernel/sched/idle.c:94
-  cpuidle_idle_call /kernel/sched/idle.c:154 [inline]
-  do_idle+0x180/0x780 /kernel/sched/idle.c:263
-  cpu_startup_entry+0x25/0x30 /kernel/sched/idle.c:354
-  start_secondary+0x3f4/0x490 /arch/x86/kernel/smpboot.c:264
-  secondary_startup_64+0xa4/0xb0 /arch/x86/kernel/head_64.S:243
+> 
+> void drm_property_blob_put(struct drm_property_blob *blob)
+> {
+>         if (!blob)
+>                 return;
+> 
+>         drm_mode_object_put(&blob->base);
+> }
+> 
+> Best regards,
+> Lowry
+> 
+> > > 
+> > > And for this "if () check" specific, I think this is also very popular
+> > > in linux like:
+> > > 
+> > >   static inline void __rcu_read_lock(void)
+> > >   {
+> > >  	if (IS_ENABLED(CONFIG_PREEMPT_COUNT))
+> > > 		preempt_disable();
+> > >   }
+> > > 
+> > >   static inline void __rcu_read_unlock(void)
+> > >   {
+> > > 	if (IS_ENABLED(CONFIG_PREEMPT_COUNT))
+> > > 		preempt_enable();
+> > >   }
+> > 
+> > These are inline functions wrapping around the fact that a config option might
+> > be disabled. Not really the same thing with what we are talking here.
+> > 
+> > > 
+> > > thanks
+> > > James
+> > > 
+> > > > > 
+> > > > > > > +
+> > > > > > > +static void evt_str(struct komeda_str *str, u64 events)
+> > > > > > > +{
+> > > > > > > +	if (events == 0ULL) {
+> > > > > > > +		evt_sprintf(str, 1, "None");
+> > > > > > > +		return;
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_EVENT_VSYNC, "VSYNC|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_EVENT_FLIP, "FLIP|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_EVENT_EOW, "EOW|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_EVENT_MODE, "OP-MODE|");
+> > > > > > > +
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_EVENT_URUN, "UNDERRUN|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_EVENT_OVR, "OVERRUN|");
+> > > > > > > +
+> > > > > > > +	/* GLB error */
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_MERR, "MERR|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_FRAMETO, "FRAMETO|");
+> > > > > > > +
+> > > > > > > +	/* DOU error */
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_DRIFTTO, "DRIFTTO|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_FRAMETO, "FRAMETO|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_TETO, "TETO|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_CSCE, "CSCE|");
+> > > > > > > +
+> > > > > > > +	/* LPU errors or events */
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_EVENT_IBSY, "IBSY|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_AXIE, "AXIE|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_ACE0, "ACE0|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_ACE1, "ACE1|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_ACE2, "ACE2|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_ACE3, "ACE3|");
+> > > > > > > +
+> > > > > > > +	/* LPU TBU errors*/
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_TCF, "TCF|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_TTNG, "TTNG|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_TITR, "TITR|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_TEMR, "TEMR|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_TTF, "TTF|");
+> > > > > > > +
+> > > > > > > +	/* CU errors*/
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_CPE, "COPROC|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_ZME, "ZME|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_CFGE, "CFGE|");
+> > > > > > > +	evt_sprintf(str, events & KOMEDA_ERR_TEMR, "TEMR|");
+> > > > > > > +
+> > > > > > > +	if (str->len > 0 && (str->str[str->len - 1] == '|')) {
+> > > > > > > +		str->str[str->len - 1] = 0;
+> > > > > > > +		str->len--;
+> > > > > > > +	}
+> > > > > > > +}
+> > > > > > > +
+> > > > > > > +static bool is_new_frame(struct komeda_events *a)
+> > > > > > > +{
+> > > > > > > +	return (a->pipes[0] | a->pipes[1]) & KOMEDA_EVENT_FLIP;
+> > > > > > > +}
+> > > > > > > +
+> > > > > > > +void komeda_print_events(struct komeda_events *evts)
+> > > > > > > +{
+> > > > > > > +	u64 print_evts = KOMEDA_ERR_EVENTS;
+> > > > > > > +	static bool en_print = true;
+> > > > > > > +
+> > > > > > > +	/* reduce the same msg print, only print the first evt for one frame */
+> > > > > > > +	if (evts->global || is_new_frame(evts))
+> > > > > > > +		en_print = true;
+> > > > > > > +	if (!en_print)
+> > > > > > > +		return;
+> > > > > > 
+> > > > > > When does en_print ever get false?
+> > > > > Once the events printed, it will be set false (pls find at the last
+> > > > > line of this function).
+> > > > 
+> > > > What is the point of making en_print a static variable? We print all the time
+> > > > when we have a global event anyway.
+> > > 
+> > > Hi Liviu:
+> > > 
+> > > | why make en_print a static.
+> > > 
+> > > Consider you commit a scene which may leads a UNDERUN. and it will
+> > > trigger HW UNDERRUN in every vsync peroid untill this sceen have been
+> > > replace by another scene. for a scene it will trigger same error again
+> > > and again. we don't need print them all for a scene one msg is enough.
+> > 
+> > The same can be achieved by removing en_print entirely and inverting the top
+> > condition:
+> > 
+> > 	if (!evts->global && !is_new_frame(evts))
+> > 		return;
+> 
+> It looks better and will change to this. Thanks a lot for this.
+> > > 
+> > > | we print all the time when we have a global event.
+> > > Since we only reduce the duplicate error, but want print all different error.
+> > > And per our HW design, the event reported by different component.
+> > > this global for collect the GCU error. the pipeline_event is for
+> > > LPU/CU/DOU. like UNDERUN which is only DOU error.
+> > > 
+> > > and current GCU only have one error type: opmode change error which only
+> > > can be happened on when we call change_opmode in crtc_enable/disable.
+> > > 
+> > > So don't worry, globl event which can not make en_print has been set to
+> > > true in every irq handling.
+> > 
+> > And that's the reason I'm asking why make en_print static if we reset it in
+> > every irq_handling (i.e. when we actually want to print). Does it really need
+> > to be static when we don't actually use the stored state?
+> > 
+> > Best regards,
+> > Liviu
+> > 
+> > 
+> > > 
+> > > Thanks
+> > > James
+> > > 
+> > > > 
+> > > > > > > +
+> > > > > > > +#ifdef DEBUG
+> > > > > > > +	print_evts |= KOMEDA_WARN_EVENTS;
+> > > > > > > +#endif
+> > > > > > > +
+> > > > > > > +	if ((evts->global | evts->pipes[0] | evts->pipes[1]) & print_evts) {
+> > > > > > > +		#define STR_SZ		128
+> > > > > > > +		char msg[STR_SZ];
+> > > > > > 
+> > > > > > I've counted about 27 evt_sprintf() calls in evt_str() function, with an
+> > > > > > average of 5 characters each, so thats 135 characters printed into a buffer
+> > > > > > that is only 128 bytes. Please don't do this!
+> > > > > komeda_sprintf() will check the size and also I thought those evt
+> > > > > will not populat together. But yes, I'd better change this to 256.
+> > > > > Will change this.
+> > > > > 
+> > > > > > > +		struct komeda_str str;
+> > > > > > > +
+> > > > > > > +		str.str = msg;
+> > > > > > > +		str.sz  = STR_SZ;
+> > > > > > > +		str.len = 0;
+> > > > > > > +
+> > > > > > > +		komeda_sprintf(&str, "gcu: ");
+> > > > > > > +		evt_str(&str, evts->global);
+> > > > > > > +		komeda_sprintf(&str, ", pipes[0]: ");
+> > > > > > > +		evt_str(&str, evts->pipes[0]);
+> > > > > > > +		komeda_sprintf(&str, ", pipes[1]: ");
+> > > > > > > +		evt_str(&str, evts->pipes[1]);
+> > > > > > > +
+> > > > > > > +		DRM_ERROR("err detect: %s\n", msg);
+> > > > > > > +
+> > > > > > > +		en_print = false;
+> > > > > > > +	}
+> > > > > > > +}
+> > > > > > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+> > > > > > > index 647bce5..1462bac 100644
+> > > > > > > --- a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+> > > > > > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+> > > > > > > @@ -47,6 +47,8 @@ static irqreturn_t komeda_kms_irq_handler(int irq, void *data)
+> > > > > > >  	memset(&evts, 0, sizeof(evts));
+> > > > > > >  	status = mdev->funcs->irq_handler(mdev, &evts);
+> > > > > > >  
+> > > > > > > +	komeda_print_events(&evts);
+> > > > > > 
+> > > > > > Calling this function from the IRQ handler is a bad idea. We should use debugfs
+> > > > > > if you really want to have a trace of the events, but I personally don't see
+> > > > > > value in having this functionality in the kernel at all. You can expose the
+> > > > > > value of the evts->global and evts->pipes[] as integers and decode that in
+> > > > > > userspace or as a debugfs entry.
+> > > > > > 
+> > > > > > Best regards,
+> > > > > > Liviu
+> > > > > 
+> > > > > The name of this function is misleading, but this is printing out the
+> > > > > hardware detected errors, from which we can know directly once the
+> > > > > errors happened on the hardware. Like if the driver code was at
+> > > > > bring-up stage, the logs from this layer is helpful. So can we keep
+> > > > > this?
+> > > > 
+> > > > We should probably just collect the global and pipes values and expose
+> > > > them to userspace so that the printing and decoding of the messages happens
+> > > > there.
+> > > > 
+> > > > Best regards,
+> > > > Liviu
+> > > 
+> > > Hi Liviu:
+> > > 
+> > > Any special resons.
+> > > 
+> > > Since such error print is not only wanted by us, mostly it is required
+> > > and used by our customer to easily capture the problem.
+> > > If no special reasons, I want to keep it for avoiding the complaint
+> > > from our customer. 
+> > > 
+> > > Thanks
+> > > James
+> > > > 
+> > > > > 
+> > > > > Best regards,
+> > > > > Lowry
+> > > > > 
+> > > > > > > +
+> > > > > > >  	/* Notify the crtc to handle the events */
+> > > > > > >  	for (i = 0; i < kms->n_crtcs; i++)
+> > > > > > >  		komeda_crtc_handle_event(&kms->crtcs[i], &evts);
+> > > > > > > -- 
+> > > > > > > 1.9.1
+> > > > > > > 
+> > > > > > 
+> > > > > > -- 
+> > > > > > ====================
+> > > > > > | I would like to |
+> > > > > > | fix the world,  |
+> > > > > > | but they're not |
+> > > > > > | giving me the   |
+> > > > > >  \ source code!  /
+> > > > > >   ---------------
+> > > > > >     ¯\_(ツ)_/¯
+> > > > > 
+> > > > > -- 
+> > > > > Regards,
+> > > > > Lowry
+> > > > 
+> > > > -- 
+> > > > ====================
+> > > > | I would like to |
+> > > > | fix the world,  |
+> > > > | but they're not |
+> > > > | giving me the   |
+> > > >  \ source code!  /
+> > > >   ---------------
+> > > >     ¯\_(ツ)_/¯
+> > 
+> > -- 
+> > ====================
+> > | I would like to |
+> > | fix the world,  |
+> > | but they're not |
+> > | giving me the   |
+> >  \ source code!  /
+> >   ---------------
+> >     ¯\_(ツ)_/¯
+> 
+> -- 
+> Regards,
+> Lowry
 
-Allocated by task 0:
-  save_stack /mm/kasan/common.c:69 [inline]
-  set_track /mm/kasan/common.c:77 [inline]
-  __kasan_kmalloc+0x11c/0x1b0 /mm/kasan/common.c:487
-  kasan_kmalloc+0x9/0x10 /mm/kasan/common.c:501
-  __do_kmalloc /mm/slab.c:3655 [inline]
-  __kmalloc+0x254/0x340 /mm/slab.c:3664
-  kmalloc /./include/linux/slab.h:557 [inline]
-  sk_prot_alloc+0xb0/0x290 /net/core/sock.c:1603
-  sk_alloc+0x38/0x950 /net/core/sock.c:1657
-  nr_make_new /net/netrom/af_netrom.c:476 [inline]
-  nr_rx_frame+0xabc/0x1e40 /net/netrom/af_netrom.c:959
-  nr_loopback_timer+0x6a/0x140 /net/netrom/nr_loopback.c:59
-  call_timer_fn+0xec/0x200 /kernel/time/timer.c:1322
-  expire_timers /kernel/time/timer.c:1366 [inline]
-  __run_timers+0x7cd/0x9c0 /kernel/time/timer.c:1685
-  run_timer_softirq+0x4a/0x90 /kernel/time/timer.c:1698
-  __do_softirq+0x333/0x7c4 /./arch/x86/include/asm/paravirt.h:777
-
-Freed by task 4044:
-  save_stack /mm/kasan/common.c:69 [inline]
-  set_track /mm/kasan/common.c:77 [inline]
-  __kasan_slab_free+0x12a/0x1e0 /mm/kasan/common.c:449
-  kasan_slab_free+0xe/0x10 /mm/kasan/common.c:457
-  __cache_free /mm/slab.c:3425 [inline]
-  kfree+0x115/0x200 /mm/slab.c:3756
-  sk_prot_free /net/core/sock.c:1640 [inline]
-  __sk_destruct+0x567/0x660 /net/core/sock.c:1726
-  sk_destruct /net/core/sock.c:1734 [inline]
-  __sk_free+0x317/0x3e0 /net/core/sock.c:1745
-  sk_free /net/core/sock.c:1756 [inline]
-  sock_put /./include/net/sock.h:1725 [inline]
-  sock_efree+0x60/0x80 /net/core/sock.c:2042
-  skb_release_head_state+0x100/0x220 /net/core/skbuff.c:652
-  skb_release_all /net/core/skbuff.c:663 [inline]
-  __kfree_skb+0x25/0x170 /net/core/skbuff.c:679
-  kfree_skb+0x6f/0xb0 /net/core/skbuff.c:697
-  nr_accept+0x4ef/0x650 /net/netrom/af_netrom.c:819
-  __sys_accept4+0x5bc/0x9a0 /net/socket.c:1750
-  __do_sys_accept /net/socket.c:1791 [inline]
-  __se_sys_accept /net/socket.c:1788 [inline]
-  __x64_sys_accept+0x7d/0x90 /net/socket.c:1788
-  do_syscall_64+0xfe/0x140 /arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff88808ee52000
-  which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 128 bytes inside of
-  2048-byte region [ffff88808ee52000, ffff88808ee52800)
-The buggy address belongs to the page:
-page:ffffea00023b9480 refcount:1 mapcount:0 mapping:ffff8880aa400e00  
-index:0xffff88808ee53100 compound_mapcount: 0
-flags: 0x1fffc0000010200(slab|head)
-raw: 01fffc0000010200 ffffea0001732108 ffffea00025f5588 ffff8880aa400e00
-raw: ffff88808ee53100 ffff88808ee52000 0000000100000002 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff88808ee51f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff88808ee52000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff88808ee52080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                    ^
-  ffff88808ee52100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff88808ee52180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
