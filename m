@@ -2,75 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D77D71019
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 05:31:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C99F271020
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 05:31:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730458AbfGWDbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 23:31:05 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:49973 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726610AbfGWDbF (ORCPT
+        id S1731369AbfGWDbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 23:31:14 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45572 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731320AbfGWDbN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 23:31:05 -0400
-X-IronPort-AV: E=Sophos;i="5.64,297,1559491200"; 
-   d="scan'208";a="71998694"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 23 Jul 2019 11:31:03 +0800
-Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
-        by cn.fujitsu.com (Postfix) with ESMTP id B8E3B4CDCEBD;
-        Tue, 23 Jul 2019 11:30:59 +0800 (CST)
-Received: from localhost.localdomain (10.167.215.46) by
- G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.439.0; Tue, 23 Jul 2019 11:30:57 +0800
-From:   Yang Xu <xuyang2018.jy@cn.fujitsu.com>
-To:     <akpm@linux-foundation.org>, <gorcunov@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        Yang Xu <xuyang2018.jy@cn.fujitsu.com>
-Subject: [PATCH] sys_prctl(): simplify arg2 judgment when calling PR_SET_TIMERSLACK
-Date:   Tue, 23 Jul 2019 11:30:53 +0800
-Message-ID: <1563852653-2382-1-git-send-email-xuyang2018.jy@cn.fujitsu.com>
-X-Mailer: git-send-email 1.8.3.1
+        Mon, 22 Jul 2019 23:31:13 -0400
+Received: by mail-ot1-f67.google.com with SMTP id x21so4127761otq.12
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 20:31:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZuJsOMP1sWOzyNRASKm1FqxCyfBszTFRMXUcxGZKlTM=;
+        b=YhkuphGhxPljuSFa78sx3nQhoK6Y5gGMfv3ar3Rbe9ZOT/1wCT4+pTRYS6yRMkxshj
+         +gJmzWnBfUkaRf9LlPDIhag5hAvraMpoMVwTisQyHKSnU0GdET9s7/qSZ5/FXb04n6gw
+         xo0AHA5Ln7X+f2s6w0dmuyQo1BJDUv/u9MBPp7LeNhR9xaWMg+/Nl7dNrfXdr9Ciqyu+
+         MHE29CgWWIbCK2+lqVPANNs0GLoOBQmrw+uar5N4wW6Vd+PALXN1X0uSWkAii9PWrNPg
+         Bn1yKxmcEmCFE3dQggDm0hAhVJyXuLp5K/43TfMKi0Vmtpfsrr3Liiu99maJm/iN5Q6A
+         h9wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZuJsOMP1sWOzyNRASKm1FqxCyfBszTFRMXUcxGZKlTM=;
+        b=cmzPf/9d20ZBTELI8WzQOkwCqr0Xzc86TMKryZ4sm/apRaIF/SNiD/37FtXmSuL0EJ
+         9BUjNYwgQ3D6JFsozE+Lv5UcKdLcAd/ltaMkizm/nTN6vcNJtKdPeXCHpo0sqVQHW/P6
+         DPZ7poYsCKzd8EVHuuCxplma8H2XMTVbIOAFOJSCEVXrcaYemLr/WG7p1iaN5JXH1dLj
+         Kq9VLOQ+iMGOW4NzSdC+1X6/FmdU2tM18k8YlRW1nzgGs9TRNHrR+/8E/Qjg/6cn648v
+         escryfYI9KLF8d7ZtMeoJzuYAafJ8I5fJDTtjOQNp3bi7GF23ubeJL6pVpMTPpZ+LFPC
+         00ew==
+X-Gm-Message-State: APjAAAWJrfyAIx2iXrHYeLwgDK/1s8eS4UzIUvUjVEms5LsCKaWZ95Kf
+        eT5U4hgpbHL+ldR5v4m09dr9hSSXWjVUZyeEPVEQig==
+X-Google-Smtp-Source: APXvYqzsAwVOYSW7/1SB7VSKWgabK9ejyGUFaHieaEx7LWJg+Q7uKdonWAt70NYTeBDXz22RgLCiyyE53Fv3qO0Zlhs=
+X-Received: by 2002:a9d:7a8b:: with SMTP id l11mr20925635otn.247.1563852672027;
+ Mon, 22 Jul 2019 20:31:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.215.46]
-X-yoursite-MailScanner-ID: B8E3B4CDCEBD.A3A49
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: xuyang2018.jy@cn.fujitsu.com
-X-Spam-Status: No
+References: <89c3ef495c367d58ca3abe99a1f82c48f8c08705.1563274904.git.baolin.wang@linaro.org>
+ <CAPDyKFq1y6xVfA=b1ybWvA1+e9h9aSteHAHjBbXvXGVJx95FQA@mail.gmail.com>
+ <CAMz4kuKraOb_o0LFWnqkS7m0Xd3QGrw1P+md0YBNbbbp1967OA@mail.gmail.com> <CAAfSe-s=Lae-JV_ogAyd355U6X2q0Zr-fhHcMm1=y=So=UTpxw@mail.gmail.com>
+In-Reply-To: <CAAfSe-s=Lae-JV_ogAyd355U6X2q0Zr-fhHcMm1=y=So=UTpxw@mail.gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Tue, 23 Jul 2019 11:30:59 +0800
+Message-ID: <CAMz4kuLz8UnREy=rMv0OH1tjOD3v=PYtVuM91HkcS=j7Lia=ZQ@mail.gmail.com>
+Subject: Re: [PATCH v4] mmc: host: sdhci-sprd: Fix the incorrect soft reset
+ operation when runtime resuming
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arg2 will never < 0, for its type is 'unsigned long'. So negative
-judgment is meaningless.
+On Tue, 23 Jul 2019 at 11:21, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+>
+> On Tue, 23 Jul 2019 at 11:05, Baolin Wang <baolin.wang@linaro.org> wrote:
+> >
+> > Hi Ulf,
+> >
+> > On Mon, 22 Jul 2019 at 19:54, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > >
+> > > On Wed, 17 Jul 2019 at 04:29, Baolin Wang <baolin.wang@linaro.org> wrote:
+> > > >
+> > > > In sdhci_runtime_resume_host() function, we will always do software reset
+> > > > for all, which will cause Spreadtrum host controller work abnormally after
+> > > > resuming.
+> > >
+> > > What does "software reset for all" means?
+> >
+> > The SD host controller specification defines 3 types software reset:
+> > software reset for data line, software reset for command line and
+> > software reset for all.
+> > Software reset for all means this reset affects the entire Host
+> > controller except for the card detection circuit.
+> >
+> > >
+> > > >
+> > > > Thus for Spreadtrum platform that will not power down the SD/eMMC card during
+> > > > runtime suspend, we should not do software reset for all.
+> > >
+> > > Normally, sdhci hosts that enters runtime suspend doesn't power off
+> > > the card (there are some exceptions like PCI variants).
+> >
+> > Yes, same as our controller.
+> >
+> > >
+> > > So, what's so special here and how does the reset come into play? I
+> > > don't see sdhci doing a reset in sdhci_runtime_suspend|resume_host()
+> > > and nor doesn the callback from the sdhci-sprd.c variant doing it.
+> >
+> > In sdhci_runtime_resume_host(), it will issue sdhci_init(host, 0) to
+> > issue software reset for all.
+> >
+> > >
+> > > > To fix this
+> > > > issue, adding a specific reset operation that adds one condition to validate
+> > > > the power mode to decide if we can do software reset for all or just reset
+> > > > command and data lines.
+> > > >
+> > > > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > > > ---
+> > > > Changess from v3:
+> > > >  - Use ios.power_mode to validate if the card is power down or not.
+> > > >
+> > > > Changes from v2:
+> > > >  - Simplify the sdhci_sprd_reset() by issuing sdhci_reset().
+> > > >
+> > > > Changes from v1:
+> > > >  - Add a specific reset operation instead of changing the core to avoid
+> > > >  affecting other hardware.
+> > > > ---
+> > > >  drivers/mmc/host/sdhci-sprd.c |   19 ++++++++++++++++++-
+> > > >  1 file changed, 18 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
+> > > > index 603a5d9..94f9726 100644
+> > > > --- a/drivers/mmc/host/sdhci-sprd.c
+> > > > +++ b/drivers/mmc/host/sdhci-sprd.c
+> > > > @@ -373,6 +373,23 @@ static unsigned int sdhci_sprd_get_max_timeout_count(struct sdhci_host *host)
+> > > >         return 1 << 31;
+> > > >  }
+> > > >
+> > > > +static void sdhci_sprd_reset(struct sdhci_host *host, u8 mask)
+> > > > +{
+> > > > +       struct mmc_host *mmc = host->mmc;
+> > > > +
+> > > > +       /*
+> > > > +        * When try to reset controller after runtime suspend, we should not
+> > > > +        * reset for all if the SD/eMMC card is not power down, just reset
+> > > > +        * command and data lines instead. Otherwise will meet some strange
+> > > > +        * behaviors for Spreadtrum host controller.
+> > > > +        */
+> > > > +       if (host->runtime_suspended && (mask & SDHCI_RESET_ALL) &&
+> > > > +           mmc->ios.power_mode == MMC_POWER_ON)
+> > > > +               mask = SDHCI_RESET_CMD | SDHCI_RESET_DATA;
+> > >
+> > > Can sdhci_sprd_reset() be called when the host is runtime suspended?
+> >
+> > When host tries to runtime resume in sdhci_runtime_resume_host(), it
+> > will call reset operation to do software reset.
+> >
+> > > That sounds like a bug to me, no?
+> >
+> > Since our controller will meet some strange behaviors if we do
+> > software reset for all in sdhci_runtime_resume_host(), and try to
+> > avoid changing the core logic of sdhci_runtime_resume_host() used by
+> > other hardware controllers, thus I introduced a specific reset ops and
+> > added some condition to make sure we just do software reset command
+> > and data lines from runtime suspend state.
+>
+> I can make a verification on sprd's SC9863A, but that would take a
+> little time, since I need to make sd card registered with sdhci-sprd.c
+> first :)
 
-Signed-off-by: Yang Xu <xuyang2018.jy@cn.fujitsu.com>
----
- kernel/sys.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Great, you can try it on your board. Thanks.
 
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 2969304c29fe..399457d26bef 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2372,11 +2372,11 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 			error = current->timer_slack_ns;
- 		break;
- 	case PR_SET_TIMERSLACK:
--		if (arg2 <= 0)
-+		if (arg2)
-+			current->timer_slack_ns = arg2;
-+		else
- 			current->timer_slack_ns =
- 					current->default_timer_slack_ns;
--		else
--			current->timer_slack_ns = arg2;
- 		break;
- 	case PR_MCE_KILL:
- 		if (arg4 | arg5)
 -- 
-2.18.1
-
-
-
+Baolin Wang
+Best Regards
