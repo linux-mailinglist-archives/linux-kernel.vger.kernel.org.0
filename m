@@ -2,56 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B86C4721D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 23:50:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AEC5721D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 23:51:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403987AbfGWVuI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 17:50:08 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42629 "EHLO
+        id S2392220AbfGWVvM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 17:51:12 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:32947 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731612AbfGWVuH (ORCPT
+        with ESMTP id S1731976AbfGWVvM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 17:50:07 -0400
+        Tue, 23 Jul 2019 17:51:12 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6NLnJ2K253396
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6NLo4H2253471
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 23 Jul 2019 14:49:19 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6NLnJ2K253396
+        Tue, 23 Jul 2019 14:50:04 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6NLo4H2253471
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1563918560;
-        bh=jEZ7ALSLtumeLXXb+vgVcxrPJSkSgkio94KoNbEl4Ew=;
+        s=2019071901; t=1563918605;
+        bh=z7GsT5U770crz5ukSnI1EjzNJ7SHob0/daeGGzsaBHQ=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=llunZeFSkgQsQV59HA+bgYcTUHzoospJ7Ox8OUtx6gQSgTmRXP2bHcUuN51nAateN
-         5BeLe1vz/uEHq01ZiXh4hErJJ0qajk1jp+A//KZ1AAb6N4IpHcGfg2sEYI6AUdGbnK
-         gm7i/BVScv77eIGtynKOs9T8PYbqYE8OYYCpIE3F/IP0W+2DE/uJ9fQhH5fkC2+Ynw
-         u1GB0uJkUnmzz2dyiBlC7uhRR81DUZZucM1Pu8PqXtKOc4sFn1iWi8yxqptmcUCDqX
-         HzXZuCYRpkS9Kd/qie04H2pRb+3LcoiXzwR1FS/Qz1bvhYsWJwUEosgm2o4J5Czwjn
-         mE92PZ8EFfVUA==
+        b=i1Ft/gO5HOhR1hg7xN8qEN6CVgWnqlbuI0jE/zfwpcGZKXdjhly4z1Z7deRQX4Tte
+         2S+ViuGNbpRwCeGCztPuaK5KgKc052v4tK5Cnd8sl/sXAR3LrxinfcrJsBhD4QrsVG
+         deNP4u89BCyjqv5KOMTIMht8MlANrlPyLjQj+eLMOFhWPDpzWXUgV48i4okGixFVOU
+         6oQGWcgVo6R49xP3f9Rqwx6KRbMoEHkiaTjUamm7jE+OReQ7oDj/yIYYc7e8wGDOK4
+         e0zVYq/yrXLGglm1eg9Bvi6RQyv/YhfIGoDMElSIU259MiiYd3pUzjz+KvV9HoeJHQ
+         iu+U8XGD3R/XQ==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6NLnIcZ253393;
-        Tue, 23 Jul 2019 14:49:18 -0700
-Date:   Tue, 23 Jul 2019 14:49:18 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6NLo4R7253468;
+        Tue, 23 Jul 2019 14:50:04 -0700
+Date:   Tue, 23 Jul 2019 14:50:04 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-08ef3af1579d0446db1c1bd08e2c42565addf10f@git.kernel.org>
-Cc:     jolsa@redhat.com, eranian@google.com, peterz@infradead.org,
-        songliubraving@fb.com, mbd@fb.com, tglx@linutronix.de,
-        mingo@kernel.org, irogers@google.com,
-        alexander.shishkin@linux.intel.com, nums@google.com,
-        linux-kernel@vger.kernel.org, jolsa@kernel.org, hpa@zytor.com,
-        acme@redhat.com, namhyung@kernel.org
-Reply-To: peterz@infradead.org, jolsa@redhat.com, eranian@google.com,
-          mingo@kernel.org, tglx@linutronix.de, mbd@fb.com,
-          songliubraving@fb.com, linux-kernel@vger.kernel.org,
-          nums@google.com, irogers@google.com,
-          alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-          acme@redhat.com, hpa@zytor.com, jolsa@kernel.org
-In-Reply-To: <20190715142121.GC6032@krava>
-References: <20190715142121.GC6032@krava>
+From:   tip-bot for Cong Wang <tipbot@zytor.com>
+Message-ID: <tip-146540fb545b8464ba1be298e3392daca0d183a2@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
+        acme@redhat.com, tglx@linutronix.de, xiyou.wangcong@gmail.com,
+        ak@linux.intel.com, jolsa@kernel.org
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+          jolsa@kernel.org, xiyou.wangcong@gmail.com, ak@linux.intel.com,
+          tglx@linutronix.de, acme@redhat.com
+In-Reply-To: <20190517221039.8975-1-xiyou.wangcong@gmail.com>
+References: <20190517221039.8975-1-xiyou.wangcong@gmail.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf stat: Fix segfault for event group in repeat
- mode
-Git-Commit-ID: 08ef3af1579d0446db1c1bd08e2c42565addf10f
+Subject: [tip:perf/urgent] perf stat: Always separate stalled cycles per
+ insn
+Git-Commit-ID: 146540fb545b8464ba1be298e3392daca0d183a2
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,100 +54,63 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Status: No, score=1.8 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  08ef3af1579d0446db1c1bd08e2c42565addf10f
-Gitweb:     https://git.kernel.org/tip/08ef3af1579d0446db1c1bd08e2c42565addf10f
-Author:     Jiri Olsa <jolsa@redhat.com>
-AuthorDate: Mon, 15 Jul 2019 16:21:21 +0200
+Commit-ID:  146540fb545b8464ba1be298e3392daca0d183a2
+Gitweb:     https://git.kernel.org/tip/146540fb545b8464ba1be298e3392daca0d183a2
+Author:     Cong Wang <xiyou.wangcong@gmail.com>
+AuthorDate: Fri, 17 May 2019 15:10:39 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 23 Jul 2019 09:00:05 -0300
+CommitDate: Tue, 23 Jul 2019 09:03:46 -0300
 
-perf stat: Fix segfault for event group in repeat mode
+perf stat: Always separate stalled cycles per insn
 
-Numfor Mbiziwo-Tiapo reported segfault on stat of event group in repeat
-mode:
+The "stalled cycles per insn" is appended to "instructions" when the CPU
+has this hardware counter directly. We should always make it a separate
+line, which also aligns to the output when we hit the "if (total &&
+avg)" branch.
 
-  # perf stat -e '{cycles,instructions}' -r 10 ls
+Before:
 
-It's caused by memory corruption due to not cleaned evsel's id array and
-index, which needs to be rebuilt in every stat iteration. Currently the
-ids index grows, while the array (which is also not freed) has the same
-size.
+  $ sudo perf stat --all-cpus --field-separator , --log-fd 1 -einstructions,cycles -- sleep 1
+  4565048704,,instructions,64114578096,100.00,1.34,insn per cycle,,
+  3396325133,,cycles,64146628546,100.00,,
 
-Fixing this by releasing id array and zeroing ids index in
-perf_evsel__close function.
+After:
 
-We also need to keep the evsel_list alive for stat record (which is
-disabled in repeat mode).
+  $ sudo ./tools/perf/perf stat --all-cpus --field-separator , --log-fd 1 -einstructions,cycles -- sleep 1
+  6721924,,instructions,24026790339,100.00,0.22,insn per cycle
+  ,,,,,0.00,stalled cycles per insn
+  30939953,,cycles,24025512526,100.00,,
 
-Reported-by: Numfor Mbiziwo-Tiapo <nums@google.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Mark Drayton <mbd@fb.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Stephane Eranian <eranian@google.com>
-Link: http://lkml.kernel.org/r/20190715142121.GC6032@krava
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Link: http://lkml.kernel.org/r/20190517221039.8975-1-xiyou.wangcong@gmail.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-stat.c | 9 ++++++++-
- tools/perf/util/evsel.c   | 2 ++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ tools/perf/util/stat-shadow.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index b55a534b4de0..352cf39d7c2f 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -607,7 +607,13 @@ try_again:
- 	 * group leaders.
- 	 */
- 	read_counters(&(struct timespec) { .tv_nsec = t1-t0 });
--	perf_evlist__close(evsel_list);
-+
-+	/*
-+	 * We need to keep evsel_list alive, because it's processed
-+	 * later the evsel_list will be closed after.
-+	 */
-+	if (!STAT_RECORD)
-+		perf_evlist__close(evsel_list);
- 
- 	return WEXITSTATUS(status);
- }
-@@ -1997,6 +2003,7 @@ int cmd_stat(int argc, const char **argv)
- 			perf_session__write_header(perf_stat.session, evsel_list, fd, true);
+diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
+index 656065af4971..accb1bf1cfd8 100644
+--- a/tools/perf/util/stat-shadow.c
++++ b/tools/perf/util/stat-shadow.c
+@@ -819,7 +819,8 @@ void perf_stat__print_shadow_stats(struct perf_stat_config *config,
+ 					"stalled cycles per insn",
+ 					ratio);
+ 		} else if (have_frontend_stalled) {
+-			print_metric(config, ctxp, NULL, NULL,
++			out->new_line(config, ctxp);
++			print_metric(config, ctxp, NULL, "%7.2f ",
+ 				     "stalled cycles per insn", 0);
  		}
- 
-+		perf_evlist__close(evsel_list);
- 		perf_session__delete(perf_stat.session);
- 	}
- 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index ebb46da4dfe5..52459dd5ad0c 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1291,6 +1291,7 @@ static void perf_evsel__free_id(struct perf_evsel *evsel)
- 	xyarray__delete(evsel->sample_id);
- 	evsel->sample_id = NULL;
- 	zfree(&evsel->id);
-+	evsel->ids = 0;
- }
- 
- static void perf_evsel__free_config_terms(struct perf_evsel *evsel)
-@@ -2077,6 +2078,7 @@ void perf_evsel__close(struct perf_evsel *evsel)
- 
- 	perf_evsel__close_fd(evsel);
- 	perf_evsel__free_fd(evsel);
-+	perf_evsel__free_id(evsel);
- }
- 
- int perf_evsel__open_per_cpu(struct perf_evsel *evsel,
+ 	} else if (perf_evsel__match(evsel, HARDWARE, HW_BRANCH_MISSES)) {
