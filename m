@@ -2,206 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F06EF7119A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 08:09:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79160711C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 08:15:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387969AbfGWGJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 02:09:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53736 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726961AbfGWGJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 02:09:38 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA5DC2166E;
-        Tue, 23 Jul 2019 06:09:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563862176;
-        bh=/kARUSyN2/vHu5EuNEtGXnui2mUiC8G7Ccr7GExrD3Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EZN7ts2yqkmJy8viZ+LHCJRvOkzwLSg+tmGHWShqKwYqnroVQdPC+sijDISPogCn4
-         I8g+Hy9ngZsBMC7yygchoLllEHyH5bZARrDUyhxkidDp7vzzYFOGUVVZI8uKrM6vIn
-         mifcPvQc/1GY+N0ytgckBX+Oq0OmNqPbjwcO+PeQ=
-Date:   Tue, 23 Jul 2019 14:09:06 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>, Stephen Boyd <sboyd@kernel.org>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] clk: imx8mm: Switch to platform driver
-Message-ID: <20190723060905.GA15632@dragon>
-References: <1562682003-20951-1-git-send-email-abel.vesa@nxp.com>
+        id S1730132AbfGWGPz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 02:15:55 -0400
+Received: from smtp-as-02-09.vtxnet.net ([194.38.175.148]:33826 "EHLO
+        smtp-as-02.vtxnet.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725837AbfGWGPy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 02:15:54 -0400
+X-Greylist: delayed 392 seconds by postgrey-1.27 at vger.kernel.org; Tue, 23 Jul 2019 02:15:53 EDT
+X-Spam-Flag: NO
+X-Spam-Score: 1.199
+X-Spam-Level: *
+X-Spam-Status: No, score=1.199 tagged_above=-999 required=999
+        tests=[FREEMAIL_FORGED_REPLYTO=1.199] autolearn=no
+Received: from smtp-02.datacomm.ch (smtp-02-5.datacomm.ch [212.40.2.22])
+        by smtp-as-02.vtxnet.net (Postfix) with ESMTP id E0412451CC;
+        Tue, 23 Jul 2019 08:09:18 +0200 (CEST)
+Received: from webmail.vtx.ch (bas-flu-webmail-01.vtxnet.net [212.40.2.41])
+        by smtp-02.datacomm.ch (VTX Datacomm AG) with ESMTP id 12A3D120038;
+        Tue, 23 Jul 2019 08:09:18 +0200 (CEST)
+Received: from [41.82.65.33]
+ by webmail.vtx.ch
+ with HTTP (HTTP/1.1 POST); Tue, 23 Jul 2019 08:09:17 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1562682003-20951-1-git-send-email-abel.vesa@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Tue, 23 Jul 2019 08:09:17 +0200
+From:   Norton Finance <ursulaleibundgut@vtxmail.ch>
+To:     undisclosed-recipients:;
+Subject: Dringendes Darlehensangebot
+Reply-To: nortonfinance@hotmail.com
+Mail-Reply-To: nortonfinance@hotmail.com
+Message-ID: <4e9b9b50c263320d06038599d41db38f@vtxmail.ch>
+X-Sender: ursulaleibundgut@vtxmail.ch
+User-Agent: Roundcube Webmail/1.2.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 05:20:03PM +0300, Abel Vesa wrote:
-> There is no strong reason for this to use CLK_OF_DECLARE instead
-> of being a platform driver. Plus, this will now be aligned with the
-> other i.MX8M clock drivers which are platform drivers.
-> 
-> In order to make the clock provider a platform driver
-> all the data and code needs to be outside of .init section.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
-> 
-> Changes since v1:
->  * Switched to platform driver memory mapping API
->  * Removed extra newline
->  * Added an explanation of why this change is done
->    in the commit message
 
-Hi Stephen,
 
-Are you fine with this version?
+-- 
+Guten Tag.
+Benötigen Sie ein dringendes Darlehen für Geschäft, Investition und 
+Projekt?
+Wir können Ihre Kreditgenehmigung in weniger als 24 Stunden bearbeiten. 
+Und unsere Darlehensverzinsung beträgt 1,3% jährlich.
+Kontaktieren Sie uns jetzt, indem Sie sich unten bewerben:
 
-Shawn
+Vollständiger Name:..............................
+Land:..............................
+Darlehensbetrag: ..............................
+Darlehen Zweck: ..............................
+Leihdauer: ..............................
+Telefon:..............................
 
-> 
->  drivers/clk/imx/clk-imx8mm.c | 57 ++++++++++++++++++++++++++++----------------
->  1 file changed, 36 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-> index 6b8e75d..7a8e713 100644
-> --- a/drivers/clk/imx/clk-imx8mm.c
-> +++ b/drivers/clk/imx/clk-imx8mm.c
-> @@ -68,43 +68,43 @@ static const struct imx_pll14xx_rate_table imx8mm_drampll_tbl[] = {
->  	PLL_1443X_RATE(650000000U, 325, 3, 2, 0),
->  };
->  
-> -static struct imx_pll14xx_clk imx8mm_audio_pll __initdata = {
-> +static struct imx_pll14xx_clk imx8mm_audio_pll = {
->  		.type = PLL_1443X,
->  		.rate_table = imx8mm_audiopll_tbl,
->  		.rate_count = ARRAY_SIZE(imx8mm_audiopll_tbl),
->  };
->  
-> -static struct imx_pll14xx_clk imx8mm_video_pll __initdata = {
-> +static struct imx_pll14xx_clk imx8mm_video_pll = {
->  		.type = PLL_1443X,
->  		.rate_table = imx8mm_videopll_tbl,
->  		.rate_count = ARRAY_SIZE(imx8mm_videopll_tbl),
->  };
->  
-> -static struct imx_pll14xx_clk imx8mm_dram_pll __initdata = {
-> +static struct imx_pll14xx_clk imx8mm_dram_pll = {
->  		.type = PLL_1443X,
->  		.rate_table = imx8mm_drampll_tbl,
->  		.rate_count = ARRAY_SIZE(imx8mm_drampll_tbl),
->  };
->  
-> -static struct imx_pll14xx_clk imx8mm_arm_pll __initdata = {
-> +static struct imx_pll14xx_clk imx8mm_arm_pll = {
->  		.type = PLL_1416X,
->  		.rate_table = imx8mm_pll1416x_tbl,
->  		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
->  };
->  
-> -static struct imx_pll14xx_clk imx8mm_gpu_pll __initdata = {
-> +static struct imx_pll14xx_clk imx8mm_gpu_pll = {
->  		.type = PLL_1416X,
->  		.rate_table = imx8mm_pll1416x_tbl,
->  		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
->  };
->  
-> -static struct imx_pll14xx_clk imx8mm_vpu_pll __initdata = {
-> +static struct imx_pll14xx_clk imx8mm_vpu_pll = {
->  		.type = PLL_1416X,
->  		.rate_table = imx8mm_pll1416x_tbl,
->  		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
->  };
->  
-> -static struct imx_pll14xx_clk imx8mm_sys_pll __initdata = {
-> +static struct imx_pll14xx_clk imx8mm_sys_pll = {
->  		.type = PLL_1416X,
->  		.rate_table = imx8mm_pll1416x_tbl,
->  		.rate_count = ARRAY_SIZE(imx8mm_pll1416x_tbl),
-> @@ -374,7 +374,7 @@ static const char *imx8mm_clko1_sels[] = {"osc_24m", "sys_pll1_800m", "osc_27m",
->  static struct clk *clks[IMX8MM_CLK_END];
->  static struct clk_onecell_data clk_data;
->  
-> -static struct clk ** const uart_clks[] __initconst = {
-> +static struct clk ** const uart_clks[] = {
->  	&clks[IMX8MM_CLK_UART1_ROOT],
->  	&clks[IMX8MM_CLK_UART2_ROOT],
->  	&clks[IMX8MM_CLK_UART3_ROOT],
-> @@ -382,19 +382,20 @@ static struct clk ** const uart_clks[] __initconst = {
->  	NULL
->  };
->  
-> -static int __init imx8mm_clocks_init(struct device_node *ccm_node)
-> +static int imx8mm_clocks_probe(struct platform_device *pdev)
->  {
-> -	struct device_node *np;
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
->  	void __iomem *base;
->  	int ret;
->  
->  	clks[IMX8MM_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
-> -	clks[IMX8MM_CLK_24M] = of_clk_get_by_name(ccm_node, "osc_24m");
-> -	clks[IMX8MM_CLK_32K] = of_clk_get_by_name(ccm_node, "osc_32k");
-> -	clks[IMX8MM_CLK_EXT1] = of_clk_get_by_name(ccm_node, "clk_ext1");
-> -	clks[IMX8MM_CLK_EXT2] = of_clk_get_by_name(ccm_node, "clk_ext2");
-> -	clks[IMX8MM_CLK_EXT3] = of_clk_get_by_name(ccm_node, "clk_ext3");
-> -	clks[IMX8MM_CLK_EXT4] = of_clk_get_by_name(ccm_node, "clk_ext4");
-> +	clks[IMX8MM_CLK_24M] = of_clk_get_by_name(np, "osc_24m");
-> +	clks[IMX8MM_CLK_32K] = of_clk_get_by_name(np, "osc_32k");
-> +	clks[IMX8MM_CLK_EXT1] = of_clk_get_by_name(np, "clk_ext1");
-> +	clks[IMX8MM_CLK_EXT2] = of_clk_get_by_name(np, "clk_ext2");
-> +	clks[IMX8MM_CLK_EXT3] = of_clk_get_by_name(np, "clk_ext3");
-> +	clks[IMX8MM_CLK_EXT4] = of_clk_get_by_name(np, "clk_ext4");
->  
->  	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mm-anatop");
->  	base = of_iomap(np, 0);
-> @@ -480,10 +481,10 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
->  	clks[IMX8MM_SYS_PLL2_500M] = imx_clk_fixed_factor("sys_pll2_500m", "sys_pll2_out", 1, 2);
->  	clks[IMX8MM_SYS_PLL2_1000M] = imx_clk_fixed_factor("sys_pll2_1000m", "sys_pll2_out", 1, 1);
->  
-> -	np = ccm_node;
-> -	base = of_iomap(np, 0);
-> -	if (WARN_ON(!base))
-> -		return -ENOMEM;
-> +	np = dev->of_node;
-> +	base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (WARN_ON(IS_ERR(base)))
-> +		return PTR_ERR(base);
->  
->  	/* Core Slice */
->  	clks[IMX8MM_CLK_A53_SRC] = imx_clk_mux2("arm_a53_src", base + 0x8000, 24, 3, imx8mm_a53_sels, ARRAY_SIZE(imx8mm_a53_sels));
-> @@ -682,4 +683,18 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
->  
->  	return 0;
->  }
-> -CLK_OF_DECLARE_DRIVER(imx8mm, "fsl,imx8mm-ccm", imx8mm_clocks_init);
-> +
-> +static const struct of_device_id imx8mm_clk_of_match[] = {
-> +	{ .compatible = "fsl,imx8mm-ccm" },
-> +	{ /* Sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(of, imx8mm_clk_of_match);
-> +
-> +static struct platform_driver imx8mm_clk_driver = {
-> +	.probe = imx8mm_clocks_probe,
-> +	.driver = {
-> +		.name = "imx8mm-ccm",
-> +		.of_match_table = of_match_ptr(imx8mm_clk_of_match),
-> +	},
-> +};
-> +module_platform_driver(imx8mm_clk_driver);
-> -- 
-> 2.7.4
-> 
+Wir senden Ihnen umgehend Informationen zu, sobald wir Ihre E-Mail 
+erhalten haben.
+
+Wir erwarten Ihre schnelle Antwort
+
+Freundliche Grüße.
+
+Scott Bailey
+Customer Service / Consultant
+Norton Finance UK
