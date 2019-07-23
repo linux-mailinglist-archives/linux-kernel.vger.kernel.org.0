@@ -2,125 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3392271169
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 07:53:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 930907116D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 07:54:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732674AbfGWFxw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 01:53:52 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2700 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732403AbfGWFxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 01:53:52 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id DB94EAB89D521717DF39;
-        Tue, 23 Jul 2019 13:53:49 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 23 Jul 2019 13:53:44 +0800
-From:   Hanjun Guo <guohanjun@huawei.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Jia He" <hejianet@gmail.com>, Mike Rapoport <rppt@linux.ibm.com>,
-        Will Deacon <will@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, Hanjun Guo <guohanjun@huawei.com>
-Subject: [PATCH v12 2/2] mm: page_alloc: reduce unnecessary binary search in memblock_next_valid_pfn
-Date:   Tue, 23 Jul 2019 13:51:13 +0800
-Message-ID: <1563861073-47071-3-git-send-email-guohanjun@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1563861073-47071-1-git-send-email-guohanjun@huawei.com>
-References: <1563861073-47071-1-git-send-email-guohanjun@huawei.com>
+        id S2387571AbfGWFyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 01:54:07 -0400
+Received: from verein.lst.de ([213.95.11.211]:38712 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725788AbfGWFyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 01:54:04 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 3D38F68B20; Tue, 23 Jul 2019 07:53:59 +0200 (CEST)
+Date:   Tue, 23 Jul 2019 07:53:59 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     john.hubbard@gmail.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Boaz Harrosh <boaz@plexistor.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ilya Dryomov <idryomov@gmail.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Ming Lei <ming.lei@redhat.com>, Sage Weil <sage@redhat.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Yan Zheng <zyan@redhat.com>, netdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH 1/3] mm/gup: introduce __put_user_pages()
+Message-ID: <20190723055359.GC17148@lst.de>
+References: <20190722223415.13269-1-jhubbard@nvidia.com> <20190722223415.13269-2-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190722223415.13269-2-jhubbard@nvidia.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia He <hejianet@gmail.com>
+On Mon, Jul 22, 2019 at 03:34:13PM -0700, john.hubbard@gmail.com wrote:
+> +enum pup_flags_t {
+> +	PUP_FLAGS_CLEAN		= 0,
+> +	PUP_FLAGS_DIRTY		= 1,
+> +	PUP_FLAGS_LOCK		= 2,
+> +	PUP_FLAGS_DIRTY_LOCK	= 3,
+> +};
 
-After skipping some invalid pfns in memmap_init_zone(), there is still
-some room for improvement.
+Well, the enum defeats the ease of just being able to pass a boolean
+expression to the function, which would simplify a lot of the caller,
+so if we need to support the !locked version I'd rather see that as
+a separate helper.
 
-E.g. if pfn and pfn+1 are in the same memblock region, we can simply pfn++
-instead of doing the binary search in memblock_next_valid_pfn.
-
-Furthermore, if the pfn is in a gap of two memory region, skip to next
-region directly to speedup the binary search.
-
-Signed-off-by: Jia He <hejianet@gmail.com>
-Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
----
- mm/memblock.c | 37 +++++++++++++++++++++++++++++++------
- 1 file changed, 31 insertions(+), 6 deletions(-)
-
-diff --git a/mm/memblock.c b/mm/memblock.c
-index d57ba51bb9cd..95d5916716a0 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1256,28 +1256,53 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
- unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
- {
- 	struct memblock_type *type = &memblock.memory;
-+	struct memblock_region *regions = type->regions;
- 	unsigned int right = type->cnt;
- 	unsigned int mid, left = 0;
-+	unsigned long start_pfn, end_pfn, next_start_pfn;
- 	phys_addr_t addr = PFN_PHYS(++pfn);
-+	static int early_region_idx __initdata_memblock = -1;
- 
-+	/* fast path, return pfn+1 if next pfn is in the same region */
-+	if (early_region_idx != -1) {
-+		start_pfn = PFN_DOWN(regions[early_region_idx].base);
-+		end_pfn = PFN_DOWN(regions[early_region_idx].base +
-+				regions[early_region_idx].size);
-+
-+		if (pfn >= start_pfn && pfn < end_pfn)
-+			return pfn;
-+
-+		/* try slow path */
-+		if (++early_region_idx == type->cnt)
-+			goto slow_path;
-+
-+		next_start_pfn = PFN_DOWN(regions[early_region_idx].base);
-+
-+		if (pfn >= end_pfn && pfn <= next_start_pfn)
-+			return next_start_pfn;
-+	}
-+
-+slow_path:
-+	/* slow path, do the binary searching */
- 	do {
- 		mid = (right + left) / 2;
- 
--		if (addr < type->regions[mid].base)
-+		if (addr < regions[mid].base)
- 			right = mid;
--		else if (addr >= (type->regions[mid].base +
--				  type->regions[mid].size))
-+		else if (addr >= (regions[mid].base + regions[mid].size))
- 			left = mid + 1;
- 		else {
--			/* addr is within the region, so pfn is valid */
-+			early_region_idx = mid;
- 			return pfn;
- 		}
- 	} while (left < right);
- 
- 	if (right == type->cnt)
- 		return -1UL;
--	else
--		return PHYS_PFN(type->regions[right].base);
-+
-+	early_region_idx = right;
-+
-+	return PHYS_PFN(regions[early_region_idx].base);
- }
- EXPORT_SYMBOL(memblock_next_valid_pfn);
- #endif /* CONFIG_HAVE_MEMBLOCK_PFN_VALID */
--- 
-2.19.1
-
+But do we actually have callers where not using the _lock version is
+not a bug?  set_page_dirty makes sense in the context of a file systems
+that have a reference to the inode the page hangs off, but that is
+(almost?) never the case for get_user_pages.
