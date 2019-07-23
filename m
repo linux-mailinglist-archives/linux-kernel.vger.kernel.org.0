@@ -2,197 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0587721D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 23:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B86C4721D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 23:50:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403965AbfGWVsq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 17:48:46 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57028 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387536AbfGWVsq (ORCPT
+        id S2403987AbfGWVuI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 17:50:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42629 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731612AbfGWVuH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 17:48:46 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6300D616B9; Tue, 23 Jul 2019 21:48:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1563918524;
-        bh=5ix73QHqveowLXL16nuaNqEWRnZIi/XLIasDmiBAzrc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=icosjBBYXilZ22YSaViYQIThCfNYIolHFhna54owpNC1coDY6r319hsNEY8zKD4MT
-         60gtJMjPYVEfDKuxCspGps0JOiZ9shEPZ3OcOhyxEUAoqKuzeAf2iH/h/IPSQBwJbI
-         +vVBV8wpUPMHiPivll6iAQJ8tQPm2KzcjE7fPg2I=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [10.46.162.237] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: daidavid1@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9F17560ACE;
-        Tue, 23 Jul 2019 21:48:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1563918523;
-        bh=5ix73QHqveowLXL16nuaNqEWRnZIi/XLIasDmiBAzrc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=d4BQoIRc0GXboHLejSCzWqnFfrATSWbEXMuQbJPf/GLEvwfHDIYLoyaPUhHhuemZt
-         iOObIA2Rq3UzuS2PDXIJPzgNZCwQlEp4Dq6DwZxGzy6BAbIRGF2fTCuUIbiaBCIDpI
-         AKH4MAVqLmQhreqZuXLC/OleintuvaY1aRo8QTGE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9F17560ACE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=daidavid1@codeaurora.org
-Subject: Re: [PATCH 1/2] dt-bindings: interconnect: Update Qualcomm SDM845 DT
- bindings
-To:     Stephen Boyd <swboyd@chromium.org>, bjorn.andersson@linaro.org,
-        georgi.djakov@linaro.org, robh+dt@kernel.org
-Cc:     evgreen@google.com, ilina@codeaurora.org, seansw@qti.qualcomm.com,
-        elder@linaro.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <1563568344-1274-1-git-send-email-daidavid1@codeaurora.org>
- <1563568344-1274-2-git-send-email-daidavid1@codeaurora.org>
- <5d371ce7.1c69fb81.9650.8239@mx.google.com>
-From:   David Dai <daidavid1@codeaurora.org>
-Message-ID: <8c181f08-559b-5d77-a617-65cfd3d5da55@codeaurora.org>
-Date:   Tue, 23 Jul 2019 14:48:42 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 23 Jul 2019 17:50:07 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6NLnJ2K253396
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 23 Jul 2019 14:49:19 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6NLnJ2K253396
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1563918560;
+        bh=jEZ7ALSLtumeLXXb+vgVcxrPJSkSgkio94KoNbEl4Ew=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=llunZeFSkgQsQV59HA+bgYcTUHzoospJ7Ox8OUtx6gQSgTmRXP2bHcUuN51nAateN
+         5BeLe1vz/uEHq01ZiXh4hErJJ0qajk1jp+A//KZ1AAb6N4IpHcGfg2sEYI6AUdGbnK
+         gm7i/BVScv77eIGtynKOs9T8PYbqYE8OYYCpIE3F/IP0W+2DE/uJ9fQhH5fkC2+Ynw
+         u1GB0uJkUnmzz2dyiBlC7uhRR81DUZZucM1Pu8PqXtKOc4sFn1iWi8yxqptmcUCDqX
+         HzXZuCYRpkS9Kd/qie04H2pRb+3LcoiXzwR1FS/Qz1bvhYsWJwUEosgm2o4J5Czwjn
+         mE92PZ8EFfVUA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6NLnIcZ253393;
+        Tue, 23 Jul 2019 14:49:18 -0700
+Date:   Tue, 23 Jul 2019 14:49:18 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-08ef3af1579d0446db1c1bd08e2c42565addf10f@git.kernel.org>
+Cc:     jolsa@redhat.com, eranian@google.com, peterz@infradead.org,
+        songliubraving@fb.com, mbd@fb.com, tglx@linutronix.de,
+        mingo@kernel.org, irogers@google.com,
+        alexander.shishkin@linux.intel.com, nums@google.com,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org, hpa@zytor.com,
+        acme@redhat.com, namhyung@kernel.org
+Reply-To: peterz@infradead.org, jolsa@redhat.com, eranian@google.com,
+          mingo@kernel.org, tglx@linutronix.de, mbd@fb.com,
+          songliubraving@fb.com, linux-kernel@vger.kernel.org,
+          nums@google.com, irogers@google.com,
+          alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+          acme@redhat.com, hpa@zytor.com, jolsa@kernel.org
+In-Reply-To: <20190715142121.GC6032@krava>
+References: <20190715142121.GC6032@krava>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf stat: Fix segfault for event group in repeat
+ mode
+Git-Commit-ID: 08ef3af1579d0446db1c1bd08e2c42565addf10f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <5d371ce7.1c69fb81.9650.8239@mx.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the feedback Stephen, much appreciated!
+Commit-ID:  08ef3af1579d0446db1c1bd08e2c42565addf10f
+Gitweb:     https://git.kernel.org/tip/08ef3af1579d0446db1c1bd08e2c42565addf10f
+Author:     Jiri Olsa <jolsa@redhat.com>
+AuthorDate: Mon, 15 Jul 2019 16:21:21 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 23 Jul 2019 09:00:05 -0300
 
-On 7/23/2019 7:42 AM, Stephen Boyd wrote:
-> Quoting David Dai (2019-07-19 13:32:23)
->> Redefine the Network-on-Chip devices to more accurately describe
->> the interconnect topology on Qualcomm's SDM845 platform. Each
->> interconnect device can communicate with different instances of the
->> RPMh hardware which are described as RSCs(Resource State Coordinators).
->>
->> Signed-off-by: David Dai <daidavid1@codeaurora.org>
->> ---
->> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,bcm-voter.txt b/Documentation/devicetree/bindings/interconnect/qcom,bcm-voter.txt
->> new file mode 100644
->> index 0000000..2cf7da2
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/interconnect/qcom,bcm-voter.txt
->> @@ -0,0 +1,32 @@
->> +Qualcomm BCM-Voter interconnect driver binding
->> +-----------------------------------------------------------
->> +
->> +The Bus Clock Manager (BCM) is a dedicated hardware accelerator
->> +that manages shared system resources by aggregating requests
->> +from multiple Resource State Coordinators (RSC). Interconnect
->> +providers are able to vote for aggregated thresholds values from
->> +consumers by communicating through their respective RSCs.
->> +
->> +Required properties :
->> +- compatible : shall contain only one of the following:
->> +                       "qcom,sdm845-bcm-voter",
->> +
->> +Examples:
->> +
->> +apps_rsc: rsc@179c0000 {
-> But there isn't a reg property.
-I'll change this to the generic example with just apps_rsc: rsc {
->
->> +       label = "apps_rsc";
-> Is label required?
->
->> +       compatible = "qcom,rpmh-rsc";
->> +
->> +       apps_bcm_voter: bcm_voter {
->> +               compatible = "qcom,sdm845-bcm-voter";
->> +       };
->> +}
->> +
->> +disp_rsc: rsc@179d0000 {
->> +       label = "disp_rsc";
->> +       compatible = "qcom,rpmh-rsc";
->> +
->> +       disp_bcm_voter: bcm_voter {
->> +               compatible = "qcom,sdm845-bcm-voter";
->> +       };
->> +}
->> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt b/Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
->> index 5c4f1d9..27f9ed9 100644
->> --- a/Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
->> +++ b/Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
->> @@ -4,21 +4,43 @@ Qualcomm SDM845 Network-On-Chip interconnect driver binding
->>   SDM845 interconnect providers support system bandwidth requirements through
->>   RPMh hardware accelerators known as Bus Clock Manager (BCM). The provider is
->>   able to communicate with the BCM through the Resource State Coordinator (RSC)
->> -associated with each execution environment. Provider nodes must reside within
->> -an RPMh device node pertaining to their RSC and each provider maps to a single
->> -RPMh resource.
->> +associated with each execution environment. Provider nodes must point to at
->> +least one RPMh device child node pertaining to their RSC and each provider
->> +can map to multiple RPMh resources.
->>   
->>   Required properties :
->>   - compatible : shall contain only one of the following:
->> -                       "qcom,sdm845-rsc-hlos"
->> +                       "qcom,sdm845-aggre1_noc",
->> +                       "qcom,sdm845-aggre2_noc",
->> +                       "qcom,sdm845-config_noc",
->> +                       "qcom,sdm845-dc_noc",
->> +                       "qcom,sdm845-gladiator_noc",
->> +                       "qcom,sdm845-mem_noc",
->> +                       "qcom,sdm845-mmss_noc",
->> +                       "qcom,sdm845-system_noc",
->>   - #interconnect-cells : should contain 1
->> +- reg : shall contain base register location and length
->> +- qcom,bcm-voter : shall contain phandles to bcm voters
->>   
->>   Examples:
->>   
->> -apps_rsc: rsc {
->> -       rsc_hlos: interconnect {
->> -               compatible = "qcom,sdm845-rsc-hlos";
->> -               #interconnect-cells = <1>;
->> -       };
->> +aggre1_noc: interconnect@16e0000 {
->> +       compatible = "qcom,sdm845-aggre1_noc";
->> +       reg = <0x16e0000 0xd080>;
->> +       interconnect-cells = <1>;
->> +       qcom,bcm-voter = <&apps_bcm_voter>;
->>   };
->>   
->> +mmss_noc: interconnect@1740000 {
->> +       compatible = "qcom,sdm845-mmss_noc";
->> +       reg = <0x1740000 0x1c1000>;
->> +       interconnect-cells = <1>;
->> +       qcom,bcm-voter = <&apps_bcm_voter>, <&disp_bcm_voter>;
->> +};
->> +
->> +mem_noc: interconnect@1380000 {
->> +       compatible = "qcom,sdm845-mem_noc";
->> +       reg = <0 0x1380000 0 0x27200>;
->> +       #interconnect-cells = <1>;
->> +       qcom,bcm-voter = <&apps_bcm_voter>, <&disp_bcm_voter>;
->> +};
-> How does a consumer target a particular RSC? For example, how can
-> display decide to use the disp_bcm_voter node from mem_noc here? Maybe
-> you can add that consumer to the example?
+perf stat: Fix segfault for event group in repeat mode
 
-I was thinking that the association between the bcm voters and the icc 
-nodes would be handled by the interconnect provider, and that there 
-would be a set of display specific icc nodes with their own unique IDs 
-that the consumers could reference. I will mention this as part of the 
-description and provide an example.
+Numfor Mbiziwo-Tiapo reported segfault on stat of event group in repeat
+mode:
 
-Ex: interconnects = <&mmss_noc MASTER_MDP0_DISP &mem_noc SLAVE_EBI_DISP>;
+  # perf stat -e '{cycles,instructions}' -r 10 ls
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+It's caused by memory corruption due to not cleaned evsel's id array and
+index, which needs to be rebuilt in every stat iteration. Currently the
+ids index grows, while the array (which is also not freed) has the same
+size.
 
+Fixing this by releasing id array and zeroing ids index in
+perf_evsel__close function.
+
+We also need to keep the evsel_list alive for stat record (which is
+disabled in repeat mode).
+
+Reported-by: Numfor Mbiziwo-Tiapo <nums@google.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Mark Drayton <mbd@fb.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lkml.kernel.org/r/20190715142121.GC6032@krava
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-stat.c | 9 ++++++++-
+ tools/perf/util/evsel.c   | 2 ++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index b55a534b4de0..352cf39d7c2f 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -607,7 +607,13 @@ try_again:
+ 	 * group leaders.
+ 	 */
+ 	read_counters(&(struct timespec) { .tv_nsec = t1-t0 });
+-	perf_evlist__close(evsel_list);
++
++	/*
++	 * We need to keep evsel_list alive, because it's processed
++	 * later the evsel_list will be closed after.
++	 */
++	if (!STAT_RECORD)
++		perf_evlist__close(evsel_list);
+ 
+ 	return WEXITSTATUS(status);
+ }
+@@ -1997,6 +2003,7 @@ int cmd_stat(int argc, const char **argv)
+ 			perf_session__write_header(perf_stat.session, evsel_list, fd, true);
+ 		}
+ 
++		perf_evlist__close(evsel_list);
+ 		perf_session__delete(perf_stat.session);
+ 	}
+ 
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index ebb46da4dfe5..52459dd5ad0c 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1291,6 +1291,7 @@ static void perf_evsel__free_id(struct perf_evsel *evsel)
+ 	xyarray__delete(evsel->sample_id);
+ 	evsel->sample_id = NULL;
+ 	zfree(&evsel->id);
++	evsel->ids = 0;
+ }
+ 
+ static void perf_evsel__free_config_terms(struct perf_evsel *evsel)
+@@ -2077,6 +2078,7 @@ void perf_evsel__close(struct perf_evsel *evsel)
+ 
+ 	perf_evsel__close_fd(evsel);
+ 	perf_evsel__free_fd(evsel);
++	perf_evsel__free_id(evsel);
+ }
+ 
+ int perf_evsel__open_per_cpu(struct perf_evsel *evsel,
