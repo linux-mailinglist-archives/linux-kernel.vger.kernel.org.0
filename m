@@ -2,124 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B603170F33
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 04:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F3B070F38
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 04:43:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731924AbfGWChx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 22:37:53 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:39724 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726220AbfGWChw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 22:37:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=lVluyFxlWoQ8eDqcaFLRysRoh7uf4b+K1Wbi1vRctJo=; b=ZnsoVOKlS95iZQP0O/qhtvLwAN
-        RvpLaZC6gsCchkAzeno/6E0161JdBy0y4O64bBszrm2U8N+Lt/zNqg/2LmGlSUcQbAfbbuhheDYIU
-        YHhJAPpnPnbrIeEQ9j0ZJQbNS0q4dopoyDe0yvCM22buHVJx/TL/NbPPE5TB0jJFz/YBGk3RyqVmb
-        9WM/Q6yCdMxXNMK/K+t2d9lOy0Lvvtj7ZlUsEp0sVrTmE8bZq2UAiCDU5nLSPhvJ54kUktz1illmg
-        DBPiDMiWI5IY20O04ti7prMTRumsnBG7FOxklnSooOQ7n4hq0yFrMomGgp7wo+u/eDri1aiByPA8T
-        VUgguiNg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hpkgY-0001ji-H4; Tue, 23 Jul 2019 02:37:50 +0000
-Subject: Re: scsi_debug module panic
-To:     Murphy Zhou <jencce.kernel@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        linux-scsi <linux-scsi@vger.kernel.org>
-References: <20190722233906.5kkmqjcoapw4ev62@XZHOUW.usersys.redhat.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <cd82bbd5-a8b4-3aa4-e342-ac888273923f@infradead.org>
-Date:   Mon, 22 Jul 2019 19:37:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1731293AbfGWCm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 22:42:59 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2697 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726284AbfGWCm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 22 Jul 2019 22:42:59 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 35986DA5A63EAACD6368;
+        Tue, 23 Jul 2019 10:42:57 +0800 (CST)
+Received: from [127.0.0.1] (10.177.223.23) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 23 Jul 2019
+ 10:42:55 +0800
+Subject: Re: [PATCH 0/3] arm64: Allow early timestamping of kernel log
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Petr Mladek <pmladek@suse.com>,
+        "Sergey Senozhatsky" <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190722103330.255312-1-marc.zyngier@arm.com>
+From:   Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <83634882-a528-a05d-f38c-cd0f58d1e6ee@huawei.com>
+Date:   Tue, 23 Jul 2019 10:42:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190722233906.5kkmqjcoapw4ev62@XZHOUW.usersys.redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190722103330.255312-1-marc.zyngier@arm.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[add linux-scsi]
+On 2019/7/22 18:33, Marc Zyngier wrote:
+> So far, we've let the arm64 kernel start its meaningful time stamping
+> of the kernel log pretty late, which is caused by sched_clock() being
+> initialised rather late compared to other architectures.
+> 
+> Pavel Tatashin proposed[1] to move the initialisation of sched_clock
+> much earlier, which I had objections to. The reason for initialising
+> sched_clock late is that a number of systems have broken counters, and
+> we need to apply all kind of terrifying workarounds to avoid time
+> going backward on the affected platforms. Being able to identify the
+> right workaround comes pretty late in the kernel boot, and providing
+> an unreliable sched_clock, even for a short period of time, isn't an
+> appealing prospect.
+> 
+> To address this, I'm proposing that we allow an architecture to chose
+> to (1) divorce time stamping and sched_clock during the early phase of
+> booting, and (2) inherit the time stamping clock as the new epoch the
+> first time a sched_sched clock gets registered.
+> 
+> (1) would allow arm64 to provide a time stamping clock, however
+> unreliable it might be, while (2) would allow sched_clock to provide
+> time stamps that are continuous with the time-stamping clock.
+> 
+> The last patch in the series adds the necessary logic to arm64,
+> allowing the (potentially unreliable) time stamping of early kernel
+> messages.
+> 
+> Tested on a bunch of arm64 systems, both bare-metal and in VMs. Boot
+> tested on a x86 guest.
 
-On 7/22/19 4:39 PM, Murphy Zhou wrote:
-> 
-> Hi,
-> 
-> It reproduces every time. It's ok on v5.2. So it's a regression in v5.3-rc1.
-> 
-> Thanks,
-> M
-> 
-> [root@7u ~]# modprobe scsi_debug
-> [  244.084203] scsi host2: scsi_debug: version 0188 [20190125]
-> [  244.084203]   dev_size_mb=8, opts=0x0, submit_queues=1, statistics=0
-> [  244.093098] BUG: kernel NULL pointer dereference, address: 0000000000000000
-> [  244.097625] #PF: supervisor read access in kernel mode
-> [  244.101175] #PF: error_code(0x0000) - not-present page
-> [  244.104670] PGD 0 P4D 0
-> [  244.106381] Oops: 0000 [#1] SMP PTI
-> [  244.108738] CPU: 17 PID: 182 Comm: kworker/u64:1 Not tainted 5.3.0-rc1-master-5f9e832 #112
-> [  244.114161] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
-> [  244.117854] Workqueue: events_unbound async_run_entry_fn
-> [  244.121025] RIP: 0010:dma_direct_max_mapping_size+0x2b/0x65
-> [  244.124324] Code: 66 66 66 90 55 53 48 89 fb e8 f1 14 00 00 84 c0 75 0a 5b 48 c7 c0 ff ff ff ff 5d c3 48 8b 83 28 02 00 00 48 8b ab 38 02 00 00 <48> 8b 00 48 89 ea 48 85 c0 74 0f 48 85 d2 48 89 c5 74 07 48 39 d0
-> [  244.135752] RSP: 0018:ffffb3bd40733bf8 EFLAGS: 00010202
-> [  244.139237] RAX: 0000000000000000 RBX: ffffa027feb50c18 RCX: 0000000000000000
-> [  244.143966] RDX: 0000000000000800 RSI: 0000000000000800 RDI: ffffa027feb50c18
-> [  244.148748] RBP: 0000000000000000 R08: 00000000000300e0 R09: ffffa028104dd280
-> [  244.153399] R10: ffffa028104dd280 R11: ffffffffffffffa0 R12: ffffa027feb50c18
-> [  244.157982] R13: 00000000ffffffff R14: ffffa0280513c828 R15: 0000000000000000
-> [  244.162375] FS:  0000000000000000(0000) GS:ffffa02894640000(0000) knlGS:0000000000000000
-> [  244.167286] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  244.170876] CR2: 0000000000000000 CR3: 000000003c20a000 CR4: 00000000000006e0
-> [  244.175116] Call Trace:
-> [  244.176622]  __scsi_init_queue+0x7a/0x130
-> [  244.178788]  scsi_mq_alloc_queue+0x34/0x50
-> [  244.181015]  scsi_alloc_sdev+0x1e4/0x2b0
-> [  244.183150]  scsi_probe_and_add_lun+0x8af/0xd60
-> [  244.185628]  ? kobject_set_name_vargs+0x6e/0x90
-> [  244.188168]  ? dev_set_name+0x53/0x70
-> [  244.190258]  ? _cond_resched+0x15/0x30
-> [  244.192416]  ? mutex_lock+0xe/0x30
-> [  244.194284]  __scsi_scan_target+0xf4/0x250
-> [  244.196527]  scsi_scan_channel.part.13+0x52/0x70
-> [  244.198830]  scsi_scan_host_selected+0xe3/0x190
-> [  244.201159]  ? __switch_to_asm+0x40/0x70
-> [  244.203124]  do_scan_async+0x17/0x180
-> [  244.204961]  async_run_entry_fn+0x39/0x160
-> [  244.207012]  process_one_work+0x171/0x380
-> [  244.209007]  worker_thread+0x49/0x3f0
-> [  244.210840]  kthread+0xf8/0x130
-> [  244.212419]  ? max_active_store+0x80/0x80
-> [  244.214426]  ? kthread_bind+0x10/0x10
-> [  244.216264]  ret_from_fork+0x35/0x40
-> [  244.218075] Modules linked in: scsi_debug sunrpc snd_hda_codec_generic ledtrig_audio snd_hda_intel snd_hda_codec crct10dif_pclmul snd_hda_core crc32_pclmul snd_hwdep ghash_clmulni_intel snd_seq snd_seq_device snd_pcm aesni_intel crypto_simd snd_timer cryptd snd glue_helper sg pcspkr soundcore joydev virtio_balloon i2c_piix4 ip_tables xfs libcrc32c qxl drm_kms_helper syscopyarea sysfillrect sd_mod sysimgblt fb_sys_fops ttm ata_generic pata_acpi drm virtio_console 8139too ata_piix libata virtio_pci 8139cp virtio_ring crc32c_intel serio_raw mii virtio floppy dm_mirror dm_region_hash dm_log dm_mod
-> [  244.243647] CR2: 0000000000000000
-> [  244.245274] ---[ end trace 1209311dc64cb7fa ]---
-> [  244.247399] RIP: 0010:dma_direct_max_mapping_size+0x2b/0x65
-> [  244.250145] Code: 66 66 66 90 55 53 48 89 fb e8 f1 14 00 00 84 c0 75 0a 5b 48 c7 c0 ff ff ff ff 5d c3 48 8b 83 28 02 00 00 48 8b ab 38 02 00 00 <48> 8b 00 48 89 ea 48 85 c0 74 0f 48 85 d2 48 89 c5 74 07 48 39 d0
-> [  244.258533] RSP: 0018:ffffb3bd40733bf8 EFLAGS: 00010202
-> [  244.260749] RAX: 0000000000000000 RBX: ffffa027feb50c18 RCX: 0000000000000000
-> [  244.263777] RDX: 0000000000000800 RSI: 0000000000000800 RDI: ffffa027feb50c18
-> [  244.266798] RBP: 0000000000000000 R08: 00000000000300e0 R09: ffffa028104dd280
-> [  244.269901] R10: ffffa028104dd280 R11: ffffffffffffffa0 R12: ffffa027feb50c18
-> [  244.272899] R13: 00000000ffffffff R14: ffffa0280513c828 R15: 0000000000000000
-> [  244.275909] FS:  0000000000000000(0000) GS:ffffa02894640000(0000) knlGS:0000000000000000
-> [  244.279131] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  244.281655] CR2: 0000000000000000 CR3: 000000003c20a000 CR4: 00000000000006e0
-> [  244.284554] Kernel panic - not syncing: Fatal exception
-> [  244.287052] Kernel Offset: 0x22c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-> [  244.291412] ---[ end Kernel panic - not syncing: Fatal exception ]---
-> 
+This makes the boot log more useful and I can debug some time consuming
+issue easier before the arch timer initialization, tested on my ARM64
+server, I can see the timestamping from the start [1],
+
+Tested-by: Hanjun Guo <guohanjun@huawei.com>
+
+Thanks
+Hanjun
+
+[1]:
+[    0.000000] Booting Linux on physical CPU 0x0000080000 [0x481fd010]
+[    0.000000] Linux version 5.2.0+ (root@localhost.localdomain) (gcc version 9.0.1 20190312 (Red Hat 9.0.1-0.10) (GCC)) #45 SMP Tue Jul 23 09:17:48 CST 2019
+[    0.000000] Using timestamp clock @100MHz
+[    0.000074] efi: Getting EFI parameters from FDT:
+[    0.000082] efi: EFI v2.70 by EDK II
+[    0.000083] efi:  ACPI 2.0=0x3a300000  SMBIOS 3.0=0x39f80000  MEMATTR=0x30996018  MEMRESERVE=0x30997e18
+[    0.000122] crashkernel reserved: 0x000000000ba00000 - 0x000000002ba00000 (512 MB)
+[    0.000126] cma: Failed to reserve 512 MiB
+[    0.185111] ACPI: Early table checksum verification disabled
+[    0.185115] ACPI: RSDP 0x000000003A300000 000024 (v02 HISI  )
+[    0.185120] ACPI: XSDT 0x000000003A270000 00009C (v01 HISI   HIP08    00000000      01000013)
+[    0.185127] ACPI: FACP 0x0000000039B10000 000114 (v06 HISI   HIP08    00000000 HISI 20151124)
+[    0.185134] ACPI: DSDT 0x0000000039AB0000 0084E4 (v02 HISI   HIP08    00000000 INTL 20181213)
+[    0.185139] ACPI: PCCT 0x0000000039FB0000 00008A (v01 HISI   HIP08    00000000 HISI 20151124)
+[    0.185143] ACPI: SSDT 0x0000000039F90000 01021A (v02 HISI   HIP07    00000000 INTL 20181213)
+[    0.185147] ACPI: BERT 0x0000000039F50000 000030 (v01 HISI   HIP08    00000000 HISI 20151124)
+[    0.185150] ACPI: HEST 0x0000000039F30000 000308 (v01 HISI   HIP08    00000000 HISI 20151124)
+[    0.185154] ACPI: ERST 0x0000000039EF0000 000230 (v01 HISI   HIP08    00000000 HISI 20151124)
+[    0.185158] ACPI: EINJ 0x0000000039EE0000 000170 (v01 HISI   HIP08    00000000 HISI 20151124)
+[    0.185162] ACPI: SLIT 0x0000000039B30000 00003C (v01 HISI   HIP08    00000000 HISI 20151124)
+[    0.185166] ACPI: GTDT 0x0000000039B00000 00007C (v02 HISI   HIP08    00000000 HISI 20151124)
+[    0.185169] ACPI: MCFG 0x0000000039AF0000 00003C (v01 HISI   HIP08    00000000 HISI 20151124)
+[    0.185173] ACPI: SPCR 0x0000000039AE0000 000050 (v02 HISI   HIP08    00000000 HISI 20151124)
+[    0.185177] ACPI: SRAT 0x0000000039AD0000 0007D0 (v03 HISI   HIP08    00000000 HISI 20151124)
+[    0.185181] ACPI: APIC 0x0000000039AC0000 001E6C (v04 HISI   HIP08    00000000 HISI 20151124)
+[    0.185185] ACPI: IORT 0x0000000039AA0000 001310 (v00 HISI   HIP08    00000000 INTL 20181213)
+[    0.185189] ACPI: PPTT 0x0000000030970000 0031B0 (v01 HISI   HIP08    00000000 HISI 20151124)
+[    0.185196] ACPI: SPCR: console: pl011,mmio32,0x94080000,115200
+[    0.185208] ACPI: SRAT: Node 0 PXM 0 [mem 0x2080000000-0x2fffffffff]
+[    0.185210] ACPI: SRAT: Node 1 PXM 1 [mem 0x3000000000-0x3fffffffff]
+[    0.185212] ACPI: SRAT: Node 0 PXM 0 [mem 0x00000000-0x7fffffff]
+[    0.185213] ACPI: SRAT: Node 2 PXM 2 [mem 0x202000000000-0x202fffffffff]
+[    0.185215] ACPI: SRAT: Node 3 PXM 3 [mem 0x203000000000-0x203fffffffff]
+[    0.185221] NUMA: NODE_DATA [mem 0x2fffffe3c0-0x2fffffffff]
+[    0.185224] NUMA: NODE_DATA [mem 0x3fffffe3c0-0x3fffffffff]
+[    0.185226] NUMA: NODE_DATA [mem 0x202fffffe3c0-0x202fffffffff]
+[    0.185229] NUMA: NODE_DATA [mem 0x203ffdfde3c0-0x203ffdfdffff]
 
 
--- 
-~Randy
