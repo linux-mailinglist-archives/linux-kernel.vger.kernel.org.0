@@ -2,140 +2,300 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5F5E70EC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 03:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 794C770ED2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 03:52:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731875AbfGWBss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 21:48:48 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34139 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728086AbfGWBsr (ORCPT
+        id S1732028AbfGWBwm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 21:52:42 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37605 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727851AbfGWBwl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 21:48:47 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n9so12321998pgc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 18:48:47 -0700 (PDT)
+        Mon, 22 Jul 2019 21:52:41 -0400
+Received: by mail-lj1-f196.google.com with SMTP id z28so39513199ljn.4;
+        Mon, 22 Jul 2019 18:52:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tSmnjYLr4XnnXcZ+h5qygzO/vu9yBr7SlvfWk0oPsHs=;
-        b=bqWosns6ku3Fc2lvihluziKAZVN5g9VBJGwdBeEg0niOa9coayRBgsZDKeNrrOGuRM
-         1ys7oqabOhX396o7/uZgRtvsq+RrHfJPAzz4LMmYFniinIFq6DcopcyIKUruknf/iuXw
-         mXVOugoYmvLSn3rg8nZ9e7Yj39W2wS8wj1q5swlqeZuKRIWIOafWcCH7jhheay8dMc/O
-         sLsA9O5eIoQMDMKOlnvPy2nB5b1UhFtNUInIvlZ/jVC4uK3jESSTdRQPSKJQIIMYkZQI
-         pSUgqeWC5dONoRzZSzfBpAWTj36R4kWNXVFiTrcaGQH2EoCrlQS09pjY0RAtlZScIcl6
-         lVHQ==
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jUxkqjLcm9ogY/pHNxdAOjo5WMjyM33/CcwVvPRSmWQ=;
+        b=Ee9PPcUM8WTjyBj/F6OgWN/LnZ1RBFXwB5eDCr/YaVrH4I3gBY++DXmAtO8jG0hVXf
+         zkfTN7H1kNOKg8I+/rVKsaqt6sL2mu9CrVGrWMC11Nyzm8jhNPBJx65efdeacY1u/+ml
+         VsoEJXCn/jgmVh+aqZHVE4/dSzgZIprEpaYiqArjGD7/3pbFynRdx7ZgYRXEkb3kyyGW
+         y73THKhTErWFs9vSdL+LoF2JuelOsaq+rrcTfjab0CWULOj4eBfQloadTdqBXhnEoAGG
+         XkPWKL4hd/VguaReo93AS4Rd4iqbtFR+VvOscYAd1W8KFIKNdRoPdAPc5VtR+k2hSiWH
+         CvgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tSmnjYLr4XnnXcZ+h5qygzO/vu9yBr7SlvfWk0oPsHs=;
-        b=BhqfneqZ0qKV6aa9V+19xTPbVxHdrUpj72fJyPw2myB2Ax+Nlwav5wDAWGozlxGXIn
-         M9cUNPY21uWDG9zY4+bLipX49I+hQHj//Osy6+6ozAr4cfP3ZUY0ey4KPZnrqW9tkSCB
-         Tjcxykl0B1pN8e0Nk/6HUmbBULreMJsQr6vrWmI2ybb2Y3k3dENqUlnuWDXrC0CAz1JV
-         2iAL//a0LhCkcga2TzBzTi7pWerR+OT/PI4cUFvRDYqMOppEKIUh/1R93uvsp4q7nSU1
-         SRgr0ZB7TbLdF6mlEHhrWvJmvZHR8XlNbDWsiwtGn+lBiC+HX/L9MZO6Q1E2CM/DMf7C
-         Yw/g==
-X-Gm-Message-State: APjAAAUFLOPf2fDjck0r1pnCqyY+tRPQcU1kr3+nfO5as11PEl8mCo6a
-        TLS7eAIhki1HRQQ/RcNpvDQaBA==
-X-Google-Smtp-Source: APXvYqyxp0cHGLs8U/L2DtyISYxwUziJvpXuvUsf8zTcnWojfKIhYVspEl2HKfU7BL6HG2uLn/m/1g==
-X-Received: by 2002:a62:d45d:: with SMTP id u29mr3161818pfl.135.1563846527114;
-        Mon, 22 Jul 2019 18:48:47 -0700 (PDT)
-Received: from localhost ([122.172.28.117])
-        by smtp.gmail.com with ESMTPSA id o14sm33661343pjp.19.2019.07.22.18.48.44
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jUxkqjLcm9ogY/pHNxdAOjo5WMjyM33/CcwVvPRSmWQ=;
+        b=g2tEMZ3yUUwyI0GWuYxaSt3ZYp3Cf5psVsrhHc3+AFkwcdDYCjeNz+cM31hNtp47aa
+         uUZOXNvTzSCYrK9XrWU7SxkYLf9qhOA5vZg//ens5BBjneTCX/3QMSnQyWNxXKK6rnPs
+         lkd57K6+CwEk/rh/ARKgV4GzqOZmpE0Eq1Sm1N9YmbODo36LU5vCMBa1LCPpfRHVnR5P
+         v1xkqBtON+GY5Iq4t7vZZeEfIK7h1qRKHiWy++2BtLMvj4aZJ7ZpjrdRE+nMAkjo3FKR
+         vqnoK/pgn/A6zGI1dBQL4cGCi3oglLuQq2uw5rg1yKA0lj3efJ+2mFzty6dg236heAgh
+         1r5A==
+X-Gm-Message-State: APjAAAXS5yyD8R9juZ751eeOIoekcMvRVlmsH0Rxvy7k3HT8TyL/eO06
+        CvR3OgO7JFdRLKMTpEMyXxTVgwh8
+X-Google-Smtp-Source: APXvYqxEbzQ+ly3I0SDUWaV5GeAaq4bDoN4l+WddzujJo2bYAGTqZRtpTIH+K0XjyxzFHYVc8jryqA==
+X-Received: by 2002:a2e:720b:: with SMTP id n11mr39025740ljc.213.1563846758113;
+        Mon, 22 Jul 2019 18:52:38 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.googlemail.com with ESMTPSA id t1sm7767003lji.52.2019.07.22.18.52.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jul 2019 18:48:45 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 07:18:41 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     k.konieczny@partner.samsung.com
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] opp: core: add regulators enable and disable
-Message-ID: <20190723014841.yyttacgagktbkwg2@vireshk-i7>
-References: <20190719150535.15501-1-k.konieczny@partner.samsung.com>
- <CGME20190719150554eucas1p2f4c9e4d2767ab740d419c42d4aeed6d5@eucas1p2.samsung.com>
- <20190719150535.15501-3-k.konieczny@partner.samsung.com>
+        Mon, 22 Jul 2019 18:52:37 -0700 (PDT)
+Subject: Re: [PATCH V6 16/21] soc/tegra: pmc: Add pmc wake support for
+ tegra210
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
+ <1563738060-30213-17-git-send-email-skomatineni@nvidia.com>
+ <0b3d08ea-4633-8a54-ba66-c3f3146a1ece@gmail.com>
+ <ca32c2d8-d752-3ecd-3a3f-232366730c7b@gmail.com>
+ <b575ca93-9f34-b07a-1234-ef1ea2a6ddee@gmail.com>
+Message-ID: <66535c01-7079-0192-c992-c25a4d7cdbb9@gmail.com>
+Date:   Tue, 23 Jul 2019 04:52:36 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190719150535.15501-3-k.konieczny@partner.samsung.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <b575ca93-9f34-b07a-1234-ef1ea2a6ddee@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-07-19, 17:05, k.konieczny@partner.samsung.com wrote:
-> Add enable regulators to dev_pm_opp_set_regulators() and disable
-> regulators to dev_pm_opp_put_regulators(). Even if bootloader
-> leaves regulators enabled, they should be enabled in kernel in
-> order to increase the reference count.
+23.07.2019 4:41, Dmitry Osipenko пишет:
+> 23.07.2019 4:08, Dmitry Osipenko пишет:
+>> 23.07.2019 3:58, Dmitry Osipenko пишет:
+>>> 21.07.2019 22:40, Sowjanya Komatineni пишет:
+>>>> This patch implements PMC wakeup sequence for Tegra210 and defines
+>>>> common used RTC alarm wake event.
+>>>>
+>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>> ---
+>>>>  drivers/soc/tegra/pmc.c | 111 ++++++++++++++++++++++++++++++++++++++++++++++++
+>>>>  1 file changed, 111 insertions(+)
+>>>>
+>>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>>> index 91c84d0e66ae..c556f38874e1 100644
+>>>> --- a/drivers/soc/tegra/pmc.c
+>>>> +++ b/drivers/soc/tegra/pmc.c
+>>>> @@ -57,6 +57,12 @@
+>>>>  #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
+>>>>  #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
+>>>>  #define  PMC_CNTRL_MAIN_RST		BIT(4)
+>>>> +#define  PMC_CNTRL_LATCH_WAKEUPS	BIT(5)
+>>
+>> Please follow the TRM's bits naming.
+>>
+>> PMC_CNTRL_LATCHWAKE_EN
+>>
+>>>> +#define PMC_WAKE_MASK			0x0c
+>>>> +#define PMC_WAKE_LEVEL			0x10
+>>>> +#define PMC_WAKE_STATUS			0x14
+>>>> +#define PMC_SW_WAKE_STATUS		0x18
+>>>>  
+>>>>  #define DPD_SAMPLE			0x020
+>>>>  #define  DPD_SAMPLE_ENABLE		BIT(0)
+>>>> @@ -87,6 +93,11 @@
+>>>>  
+>>>>  #define PMC_SCRATCH41			0x140
+>>>>  
+>>>> +#define PMC_WAKE2_MASK			0x160
+>>>> +#define PMC_WAKE2_LEVEL			0x164
+>>>> +#define PMC_WAKE2_STATUS		0x168
+>>>> +#define PMC_SW_WAKE2_STATUS		0x16c
+>>>> +
+>>>>  #define PMC_SENSOR_CTRL			0x1b0
+>>>>  #define  PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
+>>>>  #define  PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
+>>>> @@ -1922,6 +1933,55 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
+>>>>  	.alloc = tegra_pmc_irq_alloc,
+>>>>  };
+>>>>  
+>>>> +static int tegra210_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>>>> +{
+>>>> +	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>>>> +	unsigned int offset, bit;
+>>>> +	u32 value;
+>>>> +
+>>>> +	if (data->hwirq == ULONG_MAX)
+>>>> +		return 0;
+>>>> +
+>>>> +	offset = data->hwirq / 32;
+>>>> +	bit = data->hwirq % 32;
+>>>> +
+>>>> +	/*
+>>>> +	 * Latch wakeups to SW_WAKE_STATUS register to capture events
+>>>> +	 * that would not make it into wakeup event register during LP0 exit.
+>>>> +	 */
+>>>> +	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+>>>> +	value |= PMC_CNTRL_LATCH_WAKEUPS;
+>>>> +	tegra_pmc_writel(pmc, value, PMC_CNTRL);
+>>>> +	udelay(120);
+>>>
+>>> Why it takes so much time to latch the values? Shouldn't some status-bit
+>>> be polled for the completion of latching?
+>>>
+>>> Is this register-write really getting buffered in the PMC?
+>>>
+>>>> +	value &= ~PMC_CNTRL_LATCH_WAKEUPS;
+>>>> +	tegra_pmc_writel(pmc, value, PMC_CNTRL);
+>>>> +	udelay(120);
+>>>
+>>> 120 usecs to remove latching, really?
+>>>
+>>>> +	tegra_pmc_writel(pmc, 0, PMC_SW_WAKE_STATUS);
+>>>> +	tegra_pmc_writel(pmc, 0, PMC_SW_WAKE2_STATUS);
+>>>> +
+>>>> +	tegra_pmc_writel(pmc, 0, PMC_WAKE_STATUS);
+>>>> +	tegra_pmc_writel(pmc, 0, PMC_WAKE2_STATUS);
+>>>> +
+>>>> +	/* enable PMC wake */
+>>>> +	if (data->hwirq >= 32)
+>>>> +		offset = PMC_WAKE2_MASK;
+>>>> +	else
+>>>> +		offset = PMC_WAKE_MASK;
+>>>> +
+>>>> +	value = tegra_pmc_readl(pmc, offset);
+>>>> +
+>>>> +	if (on)
+>>>> +		value |= 1 << bit;
+>>>> +	else
+>>>> +		value &= ~(1 << bit);
+>>>> +
+>>>> +	tegra_pmc_writel(pmc, value, offset);
+>>>
+>>> Why the latching is done *before* writing into the WAKE registers? What
+>>> it is latching then?
+>>
+>> I'm looking at the TRM doc and it says that latching should be done
+>> *after* writing to the WAKE_MASK / LEVEL registers.
+>>
+>> Secondly it says that it's enough to do:
+>>
+>> value = tegra_pmc_readl(pmc, PMC_CNTRL);
+>> value |= PMC_CNTRL_LATCH_WAKEUPS;
+>> tegra_pmc_writel(pmc, value, PMC_CNTRL);
+>>
+>> in order to latch. There is no need for the delay and to remove the
+>> "LATCHWAKE_EN" bit, it should be a oneshot action.
 > 
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> ---
-> Changes in v3:
-> - corrected error path in enable
-> - improved commit message
-> Changes in v2:
-> - move regulator enable and disable into loop
-> ---
->  drivers/opp/core.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
+> Although, no. TRM says "stops latching on transition from 1
+> to 0 (sequence - set to 1,set to 0)", so it's not a oneshot action.
 > 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 0e7703fe733f..a8a480cdabab 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -1570,6 +1570,12 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
->  			goto free_regulators;
->  		}
->  
-> +		ret = regulator_enable(reg);
-> +		if (ret < 0) {
-> +			regulator_put(reg);
-> +			goto free_regulators;
-> +		}
-> +
->  		opp_table->regulators[i] = reg;
->  	}
->  
-> @@ -1583,8 +1589,10 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
->  	return opp_table;
->  
->  free_regulators:
-> -	while (i != 0)
-> -		regulator_put(opp_table->regulators[--i]);
-> +	while (i--) {
-> +		regulator_disable(opp_table->regulators[i]);
-> +		regulator_put(opp_table->regulators[i]);
-> +	}
->  
->  	kfree(opp_table->regulators);
->  	opp_table->regulators = NULL;
-> @@ -1610,8 +1618,10 @@ void dev_pm_opp_put_regulators(struct opp_table *opp_table)
->  	/* Make sure there are no concurrent readers while updating opp_table */
->  	WARN_ON(!list_empty(&opp_table->opp_list));
->  
-> -	for (i = opp_table->regulator_count - 1; i >= 0; i--)
-> +	for (i = opp_table->regulator_count - 1; i >= 0; i--) {
-> +		regulator_disable(opp_table->regulators[i]);
->  		regulator_put(opp_table->regulators[i]);
-> +	}
->  
->  	_free_set_opp_data(opp_table);
+> Have you tested this code at all? I'm wondering how it happens to work
+> without a proper latching.
 
-Applied. Thanks.
+Okay, I re-read the TRM and apparently "latching" just means storing of
+WAKE-event bit in the WAKE-status register if latching is enabled. Hence
+the PMC_CNTRL_LATCHWAKE_EN should be enabled in tegra_pmc_suspend() and
+unset in tegra_pmc_resume().
 
--- 
-viresh
+Also, apparently, on resume from suspend the interrupt should be
+re-triggered in accordance to the WAKE-status, then the WAKE-status need
+to be cleared.
+
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>>  static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>>>>  {
+>>>>  	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>>>> @@ -1954,6 +2014,49 @@ static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>>>>  	return 0;
+>>>>  }
+>>>>  
+>>>> +static int tegra210_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+>>>> +{
+>>>> +	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>>>> +	unsigned int offset, bit;
+>>>> +	u32 value;
+>>>> +
+>>>> +	if (data->hwirq == ULONG_MAX)
+>>>> +		return 0;
+>>>> +
+>>>> +	offset = data->hwirq / 32;
+>>>> +	bit = data->hwirq % 32;
+>>>> +
+>>>> +	if (data->hwirq >= 32)
+>>>> +		offset = PMC_WAKE2_LEVEL;
+>>>> +	else
+>>>> +		offset = PMC_WAKE_LEVEL;
+>>>> +
+>>>> +	value = tegra_pmc_readl(pmc, offset);
+>>>> +
+>>>> +	switch (type) {
+>>>> +	case IRQ_TYPE_EDGE_RISING:
+>>>> +	case IRQ_TYPE_LEVEL_HIGH:
+>>>> +		value |= 1 << bit;
+>>>> +		break;
+>>>> +
+>>>> +	case IRQ_TYPE_EDGE_FALLING:
+>>>> +	case IRQ_TYPE_LEVEL_LOW:
+>>>> +		value &= ~(1 << bit);
+>>>> +		break;
+>>>> +
+>>>> +	case IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING:
+>>>> +		value ^= 1 << bit;
+>>>> +		break;
+>>>> +
+>>>> +	default:
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>> +
+>>>> +	tegra_pmc_writel(pmc, value, offset);
+>>>
+>>> Shouldn't the WAKE_LEVEL be latched as well?
+>>>
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>>  static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+>>>>  {
+>>>>  	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+>>>> @@ -2540,6 +2643,10 @@ static const struct pinctrl_pin_desc tegra210_pin_descs[] = {
+>>>>  	TEGRA210_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
+>>>>  };
+>>>>  
+>>>> +static const struct tegra_wake_event tegra210_wake_events[] = {
+>>>> +	TEGRA_WAKE_IRQ("rtc", 16, 2),
+>>>> +};
+>>>> +
+>>>>  static const struct tegra_pmc_soc tegra210_pmc_soc = {
+>>>>  	.num_powergates = ARRAY_SIZE(tegra210_powergates),
+>>>>  	.powergates = tegra210_powergates,
+>>>> @@ -2557,10 +2664,14 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+>>>>  	.regs = &tegra20_pmc_regs,
+>>>>  	.init = tegra20_pmc_init,
+>>>>  	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
+>>>> +	.irq_set_wake = tegra210_pmc_irq_set_wake,
+>>>> +	.irq_set_type = tegra210_pmc_irq_set_type,
+>>>>  	.reset_sources = tegra210_reset_sources,
+>>>>  	.num_reset_sources = ARRAY_SIZE(tegra210_reset_sources),
+>>>>  	.reset_levels = NULL,
+>>>>  	.num_reset_levels = 0,
+>>>> +	.num_wake_events = ARRAY_SIZE(tegra210_wake_events),
+>>>> +	.wake_events = tegra210_wake_events,
+>>>>  };
+>>>>  
+>>>>  #define TEGRA186_IO_PAD_TABLE(_pad)					     \
+>>>>
+>>>
+>>
+> 
+
