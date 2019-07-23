@@ -2,82 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C5E9719F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 16:08:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AC61719F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 16:09:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732313AbfGWOIV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 23 Jul 2019 10:08:21 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:37081 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbfGWOIV (ORCPT
+        id S2390453AbfGWOJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 10:09:23 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:44556 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbfGWOJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 10:08:21 -0400
-Received: from xps13 (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id C74AC100010;
-        Tue, 23 Jul 2019 14:08:18 +0000 (UTC)
-Date:   Tue, 23 Jul 2019 16:08:18 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Cc:     kishon@ti.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: marvell: phy-mvebu-a3700-comphy: Add of_node_put()
- before return
-Message-ID: <20190723160818.2bf7eb80@xps13>
-In-Reply-To: <20190723105108.8306-1-nishkadg.linux@gmail.com>
-References: <20190723105108.8306-1-nishkadg.linux@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 23 Jul 2019 10:09:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0cYM+DTV87A8Im7WmiAo3ahAlUZLht+ioCM/P9jm3xs=; b=0+NQ0ipbp40HPoN0bwsD2IYm7
+        TfJzAW4ifIJutuHCj6ueh2ldmzZ2/b4fFjh9Rty4XUAJdKZOhbBSSfXc6vuslcM3pv9jCc3m5JT2K
+        Vy4g0XeRl5LpHOoRHY3+3nUFth7JciMPKdQuve2eQ4nA/EoTdcX5ULyz9/HZ01mB8rcA1Sc7Nj1DW
+        c8rBo7GW97AHCT03RP7HZPWZminaufXvmV/BPldP0NxR3NdHKRmz+uQwt3XWhDO/9tCpfkKfb/bnj
+        HqZOnp7k5hDi9CCP5P3ciVZ2+8LBnPIJbDqVD4/mzxP/efxhqfIBQlPrS8J5IgH11MI6te7Ehoms6
+        6l8oJv2MA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hpvTY-0008UM-66; Tue, 23 Jul 2019 14:09:08 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A2636201A93DD; Tue, 23 Jul 2019 16:09:05 +0200 (CEST)
+Date:   Tue, 23 Jul 2019 16:09:05 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Matt Fleming <matt@codeblueprint.co.uk>,
+        linux-kernel@vger.kernel.org,
+        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH v3] sched/topology: Improve load balancing on AMD EPYC
+Message-ID: <20190723140905.GF3402@hirez.programming.kicks-ass.net>
+References: <20190723104830.26623-1-matt@codeblueprint.co.uk>
+ <20190723114248.GJ24383@techsingularity.net>
+ <20190723120030.GN3419@hirez.programming.kicks-ass.net>
+ <20190723130321.GK24383@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190723130321.GK24383@techsingularity.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nishka,
-
-Nishka Dasgupta <nishkadg.linux@gmail.com> wrote on Tue, 23 Jul 2019
-16:21:08 +0530:
-
-> Each iteration of for_each_available_child_of_node puts the previous
-> node, but in the case of a return from the middle of the loop, there is
-> no put, thus causing a memory leak. Hence add an of_node_put before the
-> return in two places.
-> Issue found with Coccinelle.
+On Tue, Jul 23, 2019 at 02:03:21PM +0100, Mel Gorman wrote:
+> On Tue, Jul 23, 2019 at 02:00:30PM +0200, Peter Zijlstra wrote:
+> > On Tue, Jul 23, 2019 at 12:42:48PM +0100, Mel Gorman wrote:
+> > > On Tue, Jul 23, 2019 at 11:48:30AM +0100, Matt Fleming wrote:
+> > > > Signed-off-by: Matt Fleming <matt@codeblueprint.co.uk>
+> > > > Cc: "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
+> > > > Cc: Mel Gorman <mgorman@techsingularity.net>
+> > > > Cc: "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+> > > > Cc: Borislav Petkov <bp@alien8.de>
+> > > 
+> > > Acked-by: Mel Gorman <mgorman@techsingularity.net>
+> > > 
+> > > The only caveat I can think of is that a future generation of Zen might
+> > > take a different magic number than 32 as their remote distance. If or
+> > > when this happens, it'll need additional smarts but lacking a crystal
+> > > ball, we can cross that bridge when we come to it.
+> > 
+> > I just suggested to Matt on IRC we could do something along these lines,
+> > but we can do that later.
+> > 
 > 
-> Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
-> ---
->  drivers/phy/marvell/phy-mvebu-a3700-comphy.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/phy/marvell/phy-mvebu-a3700-comphy.c b/drivers/phy/marvell/phy-mvebu-a3700-comphy.c
-> index 8812a104c233..0ebac46435bd 100644
-> --- a/drivers/phy/marvell/phy-mvebu-a3700-comphy.c
-> +++ b/drivers/phy/marvell/phy-mvebu-a3700-comphy.c
-> @@ -277,13 +277,17 @@ static int mvebu_a3700_comphy_probe(struct platform_device *pdev)
->  		}
->  
->  		lane = devm_kzalloc(&pdev->dev, sizeof(*lane), GFP_KERNEL);
-> -		if (!lane)
-> +		if (!lane) {
-> +			of_node_put(child);
->  			return -ENOMEM;
-> +		}
->  
->  		phy = devm_phy_create(&pdev->dev, child,
->  				      &mvebu_a3700_comphy_ops);
-> -		if (IS_ERR(phy))
-> +		if (IS_ERR(phy)) {
-> +			of_node_put(child);
->  			return PTR_ERR(phy);
-> +		}
->  
->  		lane->dev = &pdev->dev;
->  		lane->mode = PHY_MODE_INVALID;
+> That would seem fair but I do think it's something that could be done
+> later (maybe 1 release away?) to avoid a false bisection to this patch by
+> accident.
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Quite agreed; changing reclaim_distance like that will affect a lot of
+hardware, while the current patch limits the impact to just AMD-Zen
+based bits.
 
+> I don't *think* there are any machines out there with a 1-hop
+> distance of 14 but if there is, your patch would make a difference to
+> MM behaviour.  In the same context, it might make sense to rename the
+> value to somewhat reflective of the fact that "reclaim distance" affects
+> scheduler placement. No good name springs to mind at the moment.
 
-Thanks,
-Miquèl
+Yeah, naming sucks. Let us pain this bicycle shed blue!
