@@ -2,126 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDD1071953
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 15:34:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D192E7195F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 15:36:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732816AbfGWNej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 09:34:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47346 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725827AbfGWNei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 09:34:38 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E9D3785365;
-        Tue, 23 Jul 2019 13:34:37 +0000 (UTC)
-Received: from [10.72.12.26] (ovpn-12-26.pek2.redhat.com [10.72.12.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4DB5A1001B29;
-        Tue, 23 Jul 2019 13:34:24 +0000 (UTC)
-Subject: Re: WARNING in __mmdrop
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     syzbot <syzbot+e58112d71f77113ddb7b@syzkaller.appspotmail.com>,
-        aarcange@redhat.com, akpm@linux-foundation.org,
-        christian@brauner.io, davem@davemloft.net, ebiederm@xmission.com,
-        elena.reshetova@intel.com, guro@fb.com, hch@infradead.org,
-        james.bottomley@hansenpartnership.com, jglisse@redhat.com,
-        keescook@chromium.org, ldv@altlinux.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
-        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
-        namit@vmware.com, peterz@infradead.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        wad@chromium.org
-References: <0000000000008dd6bb058e006938@google.com>
- <000000000000964b0d058e1a0483@google.com>
- <20190721044615-mutt-send-email-mst@kernel.org>
- <75c43998-3a1c-676f-99ff-3d04663c3fcc@redhat.com>
- <20190722035657-mutt-send-email-mst@kernel.org>
- <cfcd330d-5f4a-835a-69f7-c342d5d0d52d@redhat.com>
- <20190723010156-mutt-send-email-mst@kernel.org>
- <124be1a2-1c53-8e65-0f06-ee2294710822@redhat.com>
- <20190723032800-mutt-send-email-mst@kernel.org>
- <e2e01a05-63d8-4388-2bcd-b2be3c865486@redhat.com>
- <20190723062221-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <9baa4214-67fd-7ad2-cbad-aadf90bbfc20@redhat.com>
-Date:   Tue, 23 Jul 2019 21:34:29 +0800
+        id S2390311AbfGWNgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 09:36:03 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:56042 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbfGWNgC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 09:36:02 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6NDZjpQ018789;
+        Tue, 23 Jul 2019 08:35:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1563888945;
+        bh=6Dck4gO4V5pnVJYCW/w9BCIIyokmJANz2CsTs7Xl2Y0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=umYZMvAKS0FeHtrhOnvVhYaa883PV5QS5KaqSE/finBhJKdSpfmREJxUSllYNZjr0
+         DfdUJA6FaH8VNbuOv67vBN1K3sO/14ERt02jHbutq6VLntshkC4bh7zzOW/nKDTXJ/
+         6J54n3/b/RsXw5B054GW9ld8onhV++nOJR1Zd4IE=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6NDZj9C037519
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 23 Jul 2019 08:35:45 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 23
+ Jul 2019 08:35:45 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 23 Jul 2019 08:35:45 -0500
+Received: from [172.24.190.117] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6NDZgYw073346;
+        Tue, 23 Jul 2019 08:35:43 -0500
+Subject: Re: [PATCH 3/9] dt-bindings: interrupt-controller: arm, gic-v3:
+ Describe ESPI range support
+To:     Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190723104437.154403-1-maz@kernel.org>
+ <20190723104437.154403-4-maz@kernel.org>
+ <04e80def-c8e3-a403-036e-2a64db935ed4@ti.com>
+ <e67ff715-9625-6aec-5e1f-28f7c9df66f6@kernel.org>
+From:   Lokesh Vutla <lokeshvutla@ti.com>
+Message-ID: <2c331e5a-d47f-ceac-1c17-412816ff7369@ti.com>
+Date:   Tue, 23 Jul 2019 19:05:01 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190723062221-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <e67ff715-9625-6aec-5e1f-28f7c9df66f6@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 23 Jul 2019 13:34:38 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 2019/7/23 下午6:27, Michael S. Tsirkin wrote:
->> Yes, since there could be multiple co-current invalidation requests. We need
->> count them to make sure we don't pin wrong pages.
+
+On 23/07/19 6:45 PM, Marc Zyngier wrote:
+> On 23/07/2019 13:59, Lokesh Vutla wrote:
 >>
 >>
->>> I also wonder about ordering. kvm has this:
->>>          /*
->>>            * Used to check for invalidations in progress, of the pfn that is
->>>            * returned by pfn_to_pfn_prot below.
->>>            */
->>>           mmu_seq = kvm->mmu_notifier_seq;
->>>           /*
->>>            * Ensure the read of mmu_notifier_seq isn't reordered with PTE reads in
->>>            * gfn_to_pfn_prot() (which calls get_user_pages()), so that we don't
->>>            * risk the page we get a reference to getting unmapped before we have a
->>>            * chance to grab the mmu_lock without mmu_notifier_retry() noticing.
->>>            *
->>>            * This smp_rmb() pairs with the effective smp_wmb() of the combination
->>>            * of the pte_unmap_unlock() after the PTE is zapped, and the
->>>            * spin_lock() in kvm_mmu_notifier_invalidate_<page|range_end>() before
->>>            * mmu_notifier_seq is incremented.
->>>            */
->>>           smp_rmb();
+>> On 23/07/19 4:14 PM, Marc Zyngier wrote:
+>>> GICv3.1 introduces support for new interrupt ranges, one of them being
+>>> the Extended SPI range (ESPI). The DT binding is extended to deal with
+>>> it as a new interrupt class.
 >>>
->>> does this apply to us? Can't we use a seqlock instead so we do
->>> not need to worry?
->> I'm not familiar with kvm MMU internals, but we do everything under of
->> mmu_lock.
+>>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+>>> ---
+>>>  .../devicetree/bindings/interrupt-controller/arm,gic-v3.yaml | 5 +++--
+>>>  1 file changed, 3 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
+>>> index c34df35a25fc..98a3ecda8e07 100644
+>>> --- a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
+>>> +++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
+>>> @@ -44,11 +44,12 @@ properties:
+>>>        be at least 4.
+>>>  
+>>>        The 1st cell is the interrupt type; 0 for SPI interrupts, 1 for PPI
+>>> -      interrupts. Other values are reserved for future use.
+>>> +      interrupts, 2 for interrupts in the Extended SPI range. Other values
+>>> +      are reserved for future use.
 >>
->> Thanks
-> I don't think this helps at all.
->
-> There's no lock between checking the invalidate counter and
-> get user pages fast within vhost_map_prefetch. So it's possible
-> that get user pages fast reads PTEs speculatively before
-> invalidate is read.
->
-> -- 
+>> Any reason why hardware did not consider extending SPIs from 1020:2043? This way
+>> only EPPI would have been introduced. Just a thought.
+> 
+> First, 1020-1023 is the special INTID range. You can't have anything
+> else there.
+> 
+> Then, making the range contiguous could imply that the range is also
+> contiguous in the register space, which isn't possible (note that the
+> EPPI range does it the other way around -- it is discontinuous in the
+> INTID space, and yet continuous in the register space).
+> 
+> Finally, the decision to push the numbering out towards the LPI range
+> allows the ESPI space to be grown easily up to 4k.
 
+okay, got it.
 
-In vhost_map_prefetch() we do:
+> 
+> But frankly, none of that really matters. They are just numbers.
+> 
+>> Either ways, just to be consistent with hardware numbering can ESPI range be 3
+>> and EPPI range be 2?
+> 
+> Well, the way I see it is that it is more logical for the binding
+> itself. We already have 0 for SPIs and 1 for PPIs, despite PPIs being
+> before SPIs in the INTID space.
 
-         spin_lock(&vq->mmu_lock);
+Agreed. Patch looks good to me. FWIW:
 
-         ...
+Reviewed-by: Lokesh Vutla <lokeshvutla@ti.com>
 
-         err = -EFAULT;
-         if (vq->invalidate_count)
-                 goto err;
+Thanks and regards,
+Lokesh
 
-         ...
-
-         npinned = __get_user_pages_fast(uaddr->uaddr, npages,
-                                         uaddr->write, pages);
-
-         ...
-
-         spin_unlock(&vq->mmu_lock);
-
-Is this not sufficient?
-
-Thanks
-
+> 
+> Thanks,
+> 
+> 	M.
+> 
