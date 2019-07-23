@@ -2,150 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D05B7716EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 13:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE5C2716EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 13:26:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389350AbfGWL2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 07:28:09 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:60391 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731276AbfGWL2I (ORCPT
+        id S2389335AbfGWL0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 07:26:51 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41818 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728103AbfGWL0v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 07:28:08 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id x6NBQnvI029674;
-        Tue, 23 Jul 2019 20:26:49 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x6NBQnvI029674
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1563881210;
-        bh=3lce18p30EVbzN2Od3dU003VSnCw95GOlTmNeM4rzHo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=rKpO/nrixQwf62Bd1Ttes+I2TQ7C9/mZ/vBuffZejUq2aIT03WCwK3LKcv0nhrczR
-         8fLwiGhRBiGhVAaF9o3LMOD4AGw444YI4QqgD6pkxaL7j2BH/wvaHdGYMrA0plOlYd
-         8BXfF3QquJmo3HLKD3N3QSSvygbhs1H88JMLyjHQoBmCWTLdAO7ZiTy4YKDwzRZ/VR
-         72mtFtR0MfdlKa6kCR7ZeikXOyzuE5tQnBv0REUtvhhE8E4D1JKCzr3PVlpKQNkgBC
-         HwCqu+0LbACcasMn4LRT8BXeC/LsyBd4ZFhWgeJoFEmTlnnWOs1YAacQuAJDmKV4xb
-         aeh2cOpma/Geg==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/build: remove unneeded uapi asm-generic wrappers
-Date:   Tue, 23 Jul 2019 20:26:45 +0900
-Message-Id: <20190723112646.14046-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 23 Jul 2019 07:26:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=yOXMGjU8R02usJeRrCSEH5GjIu9VADCOGFNXyp1tq8E=; b=FJh9DDi+t8cfKRwBBt3F3veQO
+        bPPJACg8GMFBkLuUjsxxYvhFtASh+vhPSJ+dLHEMgIas8jc/ad/L3XvAJvK+ju03XgzVxKwYSodye
+        HWicgGW2YytmjFnwKYjp2NCxpxwYiQjvCXWLYvd5CIcAaK2eCjjHxKMKzmU2bjlQEftSw=;
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hpswT-0003IB-2m; Tue, 23 Jul 2019 11:26:49 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id E12ED2742B59; Tue, 23 Jul 2019 12:26:47 +0100 (BST)
+Date:   Tue, 23 Jul 2019 12:26:47 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Axel Lin <axel.lin@ingics.com>
+Cc:     Keerthy <j-keerthy@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFT] regulator: lp87565: Fix probe failure for
+ "ti,lp87565"
+Message-ID: <20190723112647.GE5365@sirena.org.uk>
+References: <20190711113517.26077-1-axel.lin@ingics.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="HeFlAV5LIbMFYYuh"
+Content-Disposition: inline
+In-Reply-To: <20190711113517.26077-1-axel.lin@ingics.com>
+X-Cookie: Avoid contact with eyes.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These are listed in include/uapi/asm-generic/Kbuild, so Kbuild will
-automatically generate them.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+--HeFlAV5LIbMFYYuh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- arch/x86/include/uapi/asm/errno.h    | 1 -
- arch/x86/include/uapi/asm/fcntl.h    | 1 -
- arch/x86/include/uapi/asm/ioctl.h    | 1 -
- arch/x86/include/uapi/asm/ioctls.h   | 1 -
- arch/x86/include/uapi/asm/ipcbuf.h   | 1 -
- arch/x86/include/uapi/asm/param.h    | 1 -
- arch/x86/include/uapi/asm/resource.h | 1 -
- arch/x86/include/uapi/asm/termbits.h | 1 -
- arch/x86/include/uapi/asm/termios.h  | 1 -
- arch/x86/include/uapi/asm/types.h    | 7 -------
- 10 files changed, 16 deletions(-)
- delete mode 100644 arch/x86/include/uapi/asm/errno.h
- delete mode 100644 arch/x86/include/uapi/asm/fcntl.h
- delete mode 100644 arch/x86/include/uapi/asm/ioctl.h
- delete mode 100644 arch/x86/include/uapi/asm/ioctls.h
- delete mode 100644 arch/x86/include/uapi/asm/ipcbuf.h
- delete mode 100644 arch/x86/include/uapi/asm/param.h
- delete mode 100644 arch/x86/include/uapi/asm/resource.h
- delete mode 100644 arch/x86/include/uapi/asm/termbits.h
- delete mode 100644 arch/x86/include/uapi/asm/termios.h
- delete mode 100644 arch/x86/include/uapi/asm/types.h
+On Thu, Jul 11, 2019 at 07:35:17PM +0800, Axel Lin wrote:
+> The "ti,lp87565" compatible string is still in of_lp87565_match_table,
+> but current code will return -EINVAL because lp87565->dev_type is unknown.
+> This was working in earlier kernel versions, so fix it.
 
-diff --git a/arch/x86/include/uapi/asm/errno.h b/arch/x86/include/uapi/asm/errno.h
-deleted file mode 100644
-index 4c82b503d92f..000000000000
---- a/arch/x86/include/uapi/asm/errno.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/errno.h>
-diff --git a/arch/x86/include/uapi/asm/fcntl.h b/arch/x86/include/uapi/asm/fcntl.h
-deleted file mode 100644
-index 46ab12db5739..000000000000
---- a/arch/x86/include/uapi/asm/fcntl.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/fcntl.h>
-diff --git a/arch/x86/include/uapi/asm/ioctl.h b/arch/x86/include/uapi/asm/ioctl.h
-deleted file mode 100644
-index b279fe06dfe5..000000000000
---- a/arch/x86/include/uapi/asm/ioctl.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/ioctl.h>
-diff --git a/arch/x86/include/uapi/asm/ioctls.h b/arch/x86/include/uapi/asm/ioctls.h
-deleted file mode 100644
-index ec34c760665e..000000000000
---- a/arch/x86/include/uapi/asm/ioctls.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/ioctls.h>
-diff --git a/arch/x86/include/uapi/asm/ipcbuf.h b/arch/x86/include/uapi/asm/ipcbuf.h
-deleted file mode 100644
-index 84c7e51cb6d0..000000000000
---- a/arch/x86/include/uapi/asm/ipcbuf.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/ipcbuf.h>
-diff --git a/arch/x86/include/uapi/asm/param.h b/arch/x86/include/uapi/asm/param.h
-deleted file mode 100644
-index 965d45427975..000000000000
---- a/arch/x86/include/uapi/asm/param.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/param.h>
-diff --git a/arch/x86/include/uapi/asm/resource.h b/arch/x86/include/uapi/asm/resource.h
-deleted file mode 100644
-index 04bc4db8921b..000000000000
---- a/arch/x86/include/uapi/asm/resource.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/resource.h>
-diff --git a/arch/x86/include/uapi/asm/termbits.h b/arch/x86/include/uapi/asm/termbits.h
-deleted file mode 100644
-index 3935b106de79..000000000000
---- a/arch/x86/include/uapi/asm/termbits.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/termbits.h>
-diff --git a/arch/x86/include/uapi/asm/termios.h b/arch/x86/include/uapi/asm/termios.h
-deleted file mode 100644
-index 280d78a9d966..000000000000
---- a/arch/x86/include/uapi/asm/termios.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/termios.h>
-diff --git a/arch/x86/include/uapi/asm/types.h b/arch/x86/include/uapi/asm/types.h
-deleted file mode 100644
-index 9d5c11a24279..000000000000
---- a/arch/x86/include/uapi/asm/types.h
-+++ /dev/null
-@@ -1,7 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#ifndef _ASM_X86_TYPES_H
--#define _ASM_X86_TYPES_H
--
--#include <asm-generic/types.h>
--
--#endif /* _ASM_X86_TYPES_H */
--- 
-2.17.1
+This doesn't seem to apply against current code, please check and
+resend.
 
+--HeFlAV5LIbMFYYuh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl027vcACgkQJNaLcl1U
+h9BF/Af/biVlvgCp+T640qvVuGZuazoEbeDtbfysHcXmFp3yNNVpvbfcEjtP1yHu
+aVHQ6O8mpwkZ9wh+thr0MLJXuOpuvC8Z9KXGN2lvf+upLZkdhNLteiXHoywOK33X
+Qge7PRNd/Ov3b981W4jQb7a8OvntZR5G81LAauK9vvbDPbCxOSthbCUPZZ/Ltlgs
+WpLwkkbgx//bGxpfrSqsW7hPXp93e8s3jsdUNkzadRYcDtnbcAM2iyR8pUzFWmku
+S9TIoOHgimd5o8V3xCxc/wRwxL1YVBr6eMHsb9pHkwenDyS/ykCdJFUzsf0RcCVF
+H1tyUBzfSw4d6XD36sfv3t07oqOXoQ==
+=ilLO
+-----END PGP SIGNATURE-----
+
+--HeFlAV5LIbMFYYuh--
