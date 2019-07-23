@@ -2,144 +2,224 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA6E171896
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 14:48:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A87AF7189F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 14:49:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389958AbfGWMsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 08:48:24 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:38692 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389902AbfGWMsK (ORCPT
+        id S2389798AbfGWMth (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 08:49:37 -0400
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:46850 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726186AbfGWMth (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 08:48:10 -0400
-Received: by mail-io1-f72.google.com with SMTP id h4so47186171iol.5
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 05:48:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=kQbHTv12UWJ75r48zbBLw3Y6lUFzP91zXHFCNF2crgY=;
-        b=Fg8diEVZlg9UAKEwiI/xRFZP6JZBv67fpXcKRP64AeKHZ+NBLHnMJeEXOcLkAs1CSR
-         Hs8nD1scOORcwFuCYwzJdMl4vN/vj9tJ6KStezw9ipE4f1sOvYjg2Tl+EsnpcQWdbseW
-         VF/6eWml1Q/+eWgCl72R/5eQPMO2PDBvms6XTohWJpjcb2MF5RaG/e2Bdj4G7afZgBIQ
-         Vm/2XwNvYZtI55X2DGeUe/atonPiHnGxDusN4jLfuJzAmKXoYBQ58In/78+cjJ6/lQ59
-         VvNK33DOt1z8iDzRW0xTA60/R3+/CE4VSB2ATy42RWgU50zWsIhWUgjNMWylVk3Tnxi/
-         9Wbg==
-X-Gm-Message-State: APjAAAXM9j3taYNPUpAz/3HkH2aMGBkxq251GPB5oJQB/BHQ7cgbC5Zw
-        ZIAVOgjbJYCTKuidmC1UCeZxgB72oGdzmnMpymuHxlplt+So
-X-Google-Smtp-Source: APXvYqyHjYV9xpc7g0W38YsQCuopju9KIve1wsoLO+Nr624Nb4j2UPzeOYHu79ZXHFo0HDjVpFujRQ8Of9pknXJ4Am4c+Anp2r3A
+        Tue, 23 Jul 2019 08:49:37 -0400
+Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 1C2922E14BD;
+        Tue, 23 Jul 2019 15:49:33 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id fmQPnrek3M-nWNePTP1;
+        Tue, 23 Jul 2019 15:49:33 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1563886173; bh=zurua77u+0xi6TbhWif5eKYYbACOpA6ckuYdIyXtbcw=;
+        h=Message-ID:Date:To:From:Subject;
+        b=SxAiEfbMTe6g9rgjKAYpYyEw55A0/Cpf/8g/VkVC2mITNAE9pvdqSLU2VYWVp8Lkl
+         0Pbz4BSHklhJhaDSvJbL/2kwJxymf9bSMWsd/Qj9XGAs1qI+mLpTe+FsKgU2gWpDM7
+         PWIgws5dlKgyWtMCh/8WPswvwbcAOiLtGgIAc8wg=
+Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:38b3:1cdf:ad1a:1fe1])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id TrvRdaTa6V-nW6KTqe5;
+        Tue, 23 Jul 2019 15:49:32 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH] mm/backing-dev: show state of all bdi_writeback in debugfs
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Tue, 23 Jul 2019 15:49:32 +0300
+Message-ID: <156388617236.3608.2194886130557491278.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9047:: with SMTP id v7mr3057021ioq.18.1563886089437;
- Tue, 23 Jul 2019 05:48:09 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 05:48:09 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d48965058e589a94@google.com>
-Subject: kernel BUG at drivers/usb/wusbcore/wusbhc.c:LINE!
-From:   syzbot <syzbot+fd2bd7df88c606eea4ef@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, gregkh@linuxfoundation.org, joe@perches.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        louis@kragniz.eu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Currently /sys/kernel/debug/bdi/$maj:$min/stats shows only root bdi wb.
+With CONFIG_CGROUP_WRITEBACK=y there is one for each memory cgroup.
 
-syzbot found the following crash on:
+This patch shows here state of each bdi_writeback in form:
 
-HEAD commit:    6a3599ce usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=1417be94600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=700ca426ab83faae
-dashboard link: https://syzkaller.appspot.com/bug?extid=fd2bd7df88c606eea4ef
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d5d25c600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c29358600000
+<global state>
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+fd2bd7df88c606eea4ef@syzkaller.appspotmail.com
+Id: 1
+Cgroup: /
+<root wb state>
 
-usb 1-1: BUG? WUSB host has no security descriptors
-hwa-hc 1-1:0.66: Wireless USB HWA host controller
-hwa-hc 1-1:0.66: new USB bus registered, assigned bus number 11
-hwa-hc 1-1:0.66: Cannot set WUSB Cluster ID to 0xfe: -71
-hwa-hc 1-1:0.66: Wireless USB Cluster ID set to 0xfe
-------------[ cut here ]------------
-kernel BUG at drivers/usb/wusbcore/wusbhc.c:385!
-invalid opcode: 0000 [#1] SMP KASAN
-CPU: 1 PID: 21 Comm: kworker/1:1 Not tainted 5.2.0-rc6+ #15
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
-RIP: 0010:wusb_cluster_id_put+0x6b/0x80 /drivers/usb/wusbcore/wusbhc.c:385
-Code: 7b 9d ce fd 40 84 ed 74 23 e8 41 9c ce fd f0 48 0f b3 1d e8 d6 0e 06  
-5b 48 c7 c7 60 1b 06 87 5d e9 8a 3c e9 01 e8 25 9c ce fd <0f> 0b e8 1e 9c  
-ce fd 0f 0b eb d4 66 2e 0f 1f 84 00 00 00 00 00 41
-RSP: 0018:ffff8881d9eff0e8 EFLAGS: 00010293
-RAX: ffff8881d9e36000 RBX: 00000000ffffffff RCX: ffffffff836e3f37
-RDX: 0000000000000000 RSI: ffffffff836e3f8b RDI: 0000000000000001
-RBP: 00000000000000fe R08: ffff8881d9e36000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 00000000ffffffb9
-R13: ffff8881d4a52600 R14: ffff8881d0b5d530 R15: 00000000000000fe
-FS:  0000000000000000(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007efcea69e000 CR3: 00000001d4f3a000 CR4: 00000000001406e0
-Call Trace:
-  hwahc_op_start.cold+0x159/0x183 /drivers/usb/host/hwa-hc.c:162
-  usb_add_hcd.cold+0xaac/0x15a1 /drivers/usb/core/hcd.c:2887
-  hwahc_probe.cold+0xef/0x48b /drivers/usb/host/hwa-hc.c:810
-  usb_probe_interface+0x305/0x7a0 /drivers/usb/core/driver.c:361
-  really_probe+0x281/0x660 /drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 /drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 /drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 /drivers/base/bus.c:454
-  __device_attach+0x217/0x360 /drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 /drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 /drivers/base/core.c:2111
-  usb_set_configuration+0xdf6/0x1670 /drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 /drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 /drivers/usb/core/driver.c:266
-  really_probe+0x281/0x660 /drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 /drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 /drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 /drivers/base/bus.c:454
-  __device_attach+0x217/0x360 /drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 /drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 /drivers/base/core.c:2111
-  usb_new_device.cold+0x6a4/0xe61 /drivers/usb/core/hub.c:2536
-  hub_port_connect /drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change /drivers/usb/core/hub.c:5213 [inline]
-  port_event /drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x1abd/0x3550 /drivers/usb/core/hub.c:5441
-  process_one_work+0x905/0x1570 /kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 /kernel/workqueue.c:2415
-  kthread+0x30b/0x410 /kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 /arch/x86/entry/entry_64.S:352
-Modules linked in:
----[ end trace 328f1b9a8fbb35b6 ]---
-RIP: 0010:wusb_cluster_id_put+0x6b/0x80 /drivers/usb/wusbcore/wusbhc.c:385
-Code: 7b 9d ce fd 40 84 ed 74 23 e8 41 9c ce fd f0 48 0f b3 1d e8 d6 0e 06  
-5b 48 c7 c7 60 1b 06 87 5d e9 8a 3c e9 01 e8 25 9c ce fd <0f> 0b e8 1e 9c  
-ce fd 0f 0b eb d4 66 2e 0f 1f 84 00 00 00 00 00 41
-RSP: 0018:ffff8881d9eff0e8 EFLAGS: 00010293
-RAX: ffff8881d9e36000 RBX: 00000000ffffffff RCX: ffffffff836e3f37
-RDX: 0000000000000000 RSI: ffffffff836e3f8b RDI: 0000000000000001
-RBP: 00000000000000fe R08: ffff8881d9e36000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 00000000ffffffb9
-R13: ffff8881d4a52600 R14: ffff8881d0b5d530 R15: 00000000000000fe
-FS:  0000000000000000(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007efcea69e000 CR3: 00000001d4f3a000 CR4: 00000000001406e0
+Id: xxx
+Cgroup: /path
+<cgroup wb state>
 
+Id: yyy
+Cgroup: /path2
+<cgroup wb state>
 
+...
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ mm/backing-dev.c |  106 +++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 93 insertions(+), 13 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index e8e89158adec..3e752c4bafaf 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -45,7 +45,7 @@ static void bdi_debug_init(void)
+ static int bdi_debug_stats_show(struct seq_file *m, void *v)
+ {
+ 	struct backing_dev_info *bdi = m->private;
+-	struct bdi_writeback *wb = &bdi->wb;
++	struct bdi_writeback *wb = v;
+ 	unsigned long background_thresh;
+ 	unsigned long dirty_thresh;
+ 	unsigned long wb_thresh;
+@@ -65,43 +65,123 @@ static int bdi_debug_stats_show(struct seq_file *m, void *v)
+ 			nr_dirty_time++;
+ 	spin_unlock(&wb->list_lock);
+ 
+-	global_dirty_limits(&background_thresh, &dirty_thresh);
+-	wb_thresh = wb_calc_thresh(wb, dirty_thresh);
+-
+ #define K(x) ((x) << (PAGE_SHIFT - 10))
++
++	/* global state */
++	if (wb == &bdi->wb) {
++		global_dirty_limits(&background_thresh, &dirty_thresh);
++		wb_thresh = wb_calc_thresh(wb, dirty_thresh);
++		seq_printf(m,
++			   "BdiDirtyThresh:     %10lu kB\n"
++			   "DirtyThresh:        %10lu kB\n"
++			   "BackgroundThresh:   %10lu kB\n"
++			   "bdi_list:           %10u\n",
++			   K(wb_thresh),
++			   K(dirty_thresh),
++			   K(background_thresh),
++			   !list_empty(&bdi->bdi_list));
++	}
++
++	/* cgroup header */
++#ifdef CONFIG_CGROUP_WRITEBACK
++	if (bdi->capabilities & BDI_CAP_CGROUP_WRITEBACK) {
++		size_t buflen, len;
++		char *buf;
++
++		seq_printf(m, "\nId: %d\nCgroup: ", wb->memcg_css->id);
++		buflen = seq_get_buf(m, &buf);
++		if (buf) {
++			len = cgroup_path(wb->memcg_css->cgroup, buf, buflen);
++			seq_commit(m, len <= buflen ? len : -1);
++			seq_putc(m, '\n');
++		}
++	}
++#endif /* CONFIG_CGROUP_WRITEBACK */
++
+ 	seq_printf(m,
+ 		   "BdiWriteback:       %10lu kB\n"
+ 		   "BdiReclaimable:     %10lu kB\n"
+-		   "BdiDirtyThresh:     %10lu kB\n"
+-		   "DirtyThresh:        %10lu kB\n"
+-		   "BackgroundThresh:   %10lu kB\n"
+ 		   "BdiDirtied:         %10lu kB\n"
+ 		   "BdiWritten:         %10lu kB\n"
+ 		   "BdiWriteBandwidth:  %10lu kBps\n"
++		   "BdiAvgWriteBwidth:  %10lu kBps\n"
+ 		   "b_dirty:            %10lu\n"
+ 		   "b_io:               %10lu\n"
+ 		   "b_more_io:          %10lu\n"
+ 		   "b_dirty_time:       %10lu\n"
+-		   "bdi_list:           %10u\n"
+ 		   "state:              %10lx\n",
+ 		   (unsigned long) K(wb_stat(wb, WB_WRITEBACK)),
+ 		   (unsigned long) K(wb_stat(wb, WB_RECLAIMABLE)),
+-		   K(wb_thresh),
+-		   K(dirty_thresh),
+-		   K(background_thresh),
+ 		   (unsigned long) K(wb_stat(wb, WB_DIRTIED)),
+ 		   (unsigned long) K(wb_stat(wb, WB_WRITTEN)),
+ 		   (unsigned long) K(wb->write_bandwidth),
++		   (unsigned long) K(wb->avg_write_bandwidth),
+ 		   nr_dirty,
+ 		   nr_io,
+ 		   nr_more_io,
+ 		   nr_dirty_time,
+-		   !list_empty(&bdi->bdi_list), bdi->wb.state);
++		   wb->state);
+ #undef K
+ 
+ 	return 0;
+ }
+-DEFINE_SHOW_ATTRIBUTE(bdi_debug_stats);
++
++static void *bdi_debug_stats_start(struct seq_file *m, loff_t *ppos)
++{
++	struct backing_dev_info *bdi = m->private;
++	struct bdi_writeback *wb;
++	loff_t pos = *ppos;
++
++	rcu_read_lock();
++	list_for_each_entry_rcu(wb, &bdi->wb_list, bdi_node)
++		if (pos-- == 0)
++			return wb;
++	return NULL;
++}
++
++static void *bdi_debug_stats_next(struct seq_file *m, void *v, loff_t *ppos)
++{
++	struct backing_dev_info *bdi = m->private;
++	struct bdi_writeback *wb = v;
++
++	list_for_each_entry_continue_rcu(wb, &bdi->wb_list, bdi_node) {
++		++*ppos;
++		return wb;
++	}
++	return NULL;
++}
++
++static void bdi_debug_stats_stop(struct seq_file *m, void *v)
++{
++	rcu_read_unlock();
++}
++
++static const struct seq_operations bdi_debug_stats_seq_ops = {
++	.start	= bdi_debug_stats_start,
++	.next	= bdi_debug_stats_next,
++	.stop	= bdi_debug_stats_stop,
++	.show	= bdi_debug_stats_show,
++};
++
++static int bdi_debug_stats_open(struct inode *inode, struct file *file)
++{
++	struct seq_file *m;
++	int ret;
++
++	ret = seq_open(file, &bdi_debug_stats_seq_ops);
++	if (!ret) {
++		m = file->private_data;
++		m->private = inode->i_private;
++	}
++	return ret;
++}
++
++static const struct file_operations bdi_debug_stats_fops = {
++	.open		= bdi_debug_stats_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= seq_release,
++};
+ 
+ static void bdi_debug_register(struct backing_dev_info *bdi, const char *name)
+ {
+
