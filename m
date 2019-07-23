@@ -2,195 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E67671E59
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 20:00:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91D9571E8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 20:02:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391446AbfGWSAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 14:00:02 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:55214 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391437AbfGWR74 (ORCPT
+        id S1733199AbfGWSCO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 14:02:14 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:32837 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726000AbfGWSCN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 13:59:56 -0400
-Received: by mail-pg1-f202.google.com with SMTP id m17so17512500pgh.21
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 10:59:56 -0700 (PDT)
+        Tue, 23 Jul 2019 14:02:13 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f20so10566031pgj.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 11:02:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=jOShWl3tVsknYDB/YoUvrUIV3eQMt6LYV5d/jQUs6fk=;
-        b=h3Kq7We2lcnT64/ZTs7I4tdBthajlqrQq0s3uG0rcdUUGUvc4KeWtl8Lap+IaEU0xC
-         yYJQXzHFT7D2Jqscee4HDCwPCbx8Wu4vGwr8iHjoxORK9KGqLusafVkNZ/vi+rdiyHeG
-         jdIKwPH4OSoAMEvF/wL6dPzkou8jWXYcRntfsmvla/c6SEeJlZfF2ghZPEbGkeY9ptz1
-         cvZXKirYuxY3KSRTfpbbshoiYk3G2vA59VITNzPxXSGn8hhh7sloFpM7Eqe6wa8z0eYK
-         HPQ0vNQ1FWKABTpWUeLw9Zvt3IMDsn825fB13HkZ/3l6+zJgRTNpYSRvvg1VGXgpvW9L
-         /8xQ==
+        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=KlX8mnc2TLKGzdYuaVA7PerYYgEg13kGbXM6bN4nXSw=;
+        b=djQaLMYDSvS5ovODS2W3nM9t/QQHs8PEXoTjQ3wOqww5bxOB6jjf2EvKlkBc/5fE3q
+         BJjyIgQgUmj4qSXtatSBNLNHCmzSkvEYiIb+UotUf0YhghHTj01C7r+20ybsUeFWYY2E
+         apbhNSfYemvuIuXIs5Ma8RWBRtklH0JsONLwwptCeU/CqOa5qpN5hpRh4fLR464kGsCR
+         uvOGT6jxC6avBpOIJg7ktKk6tThvF/XQS9JyVGenM6lYOJFeCTzlfOmlZSfIub/ef3H/
+         +xqDfJbZj53J7/gr6UucKldZYnWMREF+dKF3NJiMCHT+MCVaTozd76SVcQFGcamAbYeY
+         c9mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=jOShWl3tVsknYDB/YoUvrUIV3eQMt6LYV5d/jQUs6fk=;
-        b=AiUYvxyWupWv0i52xL0ylAptwfRZOiGHa/+9EQMYhmOxrKkPQv15NVuFbKMy7hJImH
-         qz1NTnXRJ739eIYEh8s8TGWQWK9MHM+VNVx+dCrMDh6abEYE29Q1d9uB+q1F0lxoUHv0
-         C/R35sqm8VOl/UQLT7odX/cRJR8xk+4Nvo58Cecufo/l6ekb/oIuYSBMCR+2y/6p75gu
-         L3iippCbnmfr8XXd8SBegDild+w11ZhFIs+CmTb4MzAsEa0TMpNt35WjnLLDpvczq5Ba
-         hH0kcMrKHkxd0b8Z3uxs6ss9zpQHgVoUv+ky0AusazFU2LmxpO8NA0a5v+LnFVvt2SoY
-         QmOg==
-X-Gm-Message-State: APjAAAXv89LauofpuaJcRvXQnhRHZxhhU0hzbc4ObBPF6pvMrjkaP9fw
-        Z7thv3+LtkjT6J+Euo6ehCZ+Ff5CKcxgAGoD
-X-Google-Smtp-Source: APXvYqxAti31RDws7lqydpjpU2QNSIYIBexpp6X7xTgogP1B1IYuH3vnzKrv44nIChFaGEFwrbMkdTHOIZSmLzhz
-X-Received: by 2002:a65:5a44:: with SMTP id z4mr77715645pgs.41.1563904795339;
- Tue, 23 Jul 2019 10:59:55 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 19:58:52 +0200
-In-Reply-To: <cover.1563904656.git.andreyknvl@google.com>
-Message-Id: <c1e6aad230658bc175b42d92daeff2e30050302a.1563904656.git.andreyknvl@google.com>
-Mime-Version: 1.0
-References: <cover.1563904656.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
-Subject: [PATCH v19 15/15] selftests, arm64: add a selftest for passing tagged
- pointers to kernel
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=KlX8mnc2TLKGzdYuaVA7PerYYgEg13kGbXM6bN4nXSw=;
+        b=pSstiSjBI5rdJvCw8UGLhS++6jYujuWSQxsMGSe++MOxL9hCVVHy25IMx2yYtY1+wQ
+         PyJ1ROKgAHrpvetgQQck/gxKxdLH34ywyU3eEdkpgLzc4XaNs++Igan6Hyh+UGpSWyIL
+         J/u3JTMWoCZ2zzc7P3Z7si7Yn0+B5hHi/6yaRGLT2v2LL930IYVu8lnYXsLzTaapZWPN
+         lT+Mo6DfaIAgzUJjrWpGZAFBashsJDjivQEXX/c8Iso5YbrAnjbaWzKgyY4esCoIKyrV
+         CnUOZiLEdt6drpZnk+adjuI8XIswkR+bfmUmfedMv95EgBW5YJOpRDPG7D+rahm2pfH4
+         TJZA==
+X-Gm-Message-State: APjAAAXBJsUE49rldEkE0Q9pUvAIpL27/Yu+k2nFIWNo0DBz5jyjMxRU
+        9YN2TfYj/5hIIzpVEw2kyYI=
+X-Google-Smtp-Source: APXvYqzIgBXnU6wzzkXzpwwGZURWO1rt0vC60ojlkFvbhS21CULv5JVdD3dQkiUF4DvD9dfeKE+qJQ==
+X-Received: by 2002:a62:3c3:: with SMTP id 186mr6989648pfd.21.1563904933318;
+        Tue, 23 Jul 2019 11:02:13 -0700 (PDT)
+Received: from hermes.lan (204-195-22-127.wavecable.com. [204.195.22.127])
+        by smtp.gmail.com with ESMTPSA id z6sm15486251pgk.18.2019.07.23.11.02.12
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 23 Jul 2019 11:02:13 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 11:02:06 -0700
+From:   Stephen Hemminger <stephen@networkplumber.org>
+To:     Michal Kubecek <mkubecek@suse.cz>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Johannes Berg <johannes@sipsolutions.net>,
+        David Ahern <dsahern@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 3/3] netlink: add validation of NLA_F_NESTED
+ flag
+Message-ID: <20190723110206.4cb1f6b1@hermes.lan>
+In-Reply-To: <6b6ead21c5d8436470b82ab40355f6bd7dbbf14b.1556806084.git.mkubecek@suse.cz>
+References: <cover.1556806084.git.mkubecek@suse.cz>
+        <6b6ead21c5d8436470b82ab40355f6bd7dbbf14b.1556806084.git.mkubecek@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is a part of a series that extends kernel ABI to allow to pass
-tagged user pointers (with the top byte set to something else other than
-0x00) as syscall arguments.
+On Thu,  2 May 2019 16:15:10 +0200 (CEST)
+Michal Kubecek <mkubecek@suse.cz> wrote:
 
-This patch adds a simple test, that calls the uname syscall with a
-tagged user pointer as an argument. Without the kernel accepting tagged
-user pointers the test fails with EFAULT.
+> Add new validation flag NL_VALIDATE_NESTED which adds three consistency
+> checks of NLA_F_NESTED_FLAG:
+> 
+>   - the flag is set on attributes with NLA_NESTED{,_ARRAY} policy
+>   - the flag is not set on attributes with other policies except NLA_UNSPEC
+>   - the flag is set on attribute passed to nla_parse_nested()
+> 
+> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+> 
+> v2: change error messages to mention NLA_F_NESTED explicitly
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- tools/testing/selftests/arm64/.gitignore      |  1 +
- tools/testing/selftests/arm64/Makefile        | 11 +++++++
- .../testing/selftests/arm64/run_tags_test.sh  | 12 ++++++++
- tools/testing/selftests/arm64/tags_test.c     | 29 +++++++++++++++++++
- 4 files changed, 53 insertions(+)
- create mode 100644 tools/testing/selftests/arm64/.gitignore
- create mode 100644 tools/testing/selftests/arm64/Makefile
- create mode 100755 tools/testing/selftests/arm64/run_tags_test.sh
- create mode 100644 tools/testing/selftests/arm64/tags_test.c
-
-diff --git a/tools/testing/selftests/arm64/.gitignore b/tools/testing/selftests/arm64/.gitignore
-new file mode 100644
-index 000000000000..e8fae8d61ed6
---- /dev/null
-+++ b/tools/testing/selftests/arm64/.gitignore
-@@ -0,0 +1 @@
-+tags_test
-diff --git a/tools/testing/selftests/arm64/Makefile b/tools/testing/selftests/arm64/Makefile
-new file mode 100644
-index 000000000000..a61b2e743e99
---- /dev/null
-+++ b/tools/testing/selftests/arm64/Makefile
-@@ -0,0 +1,11 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# ARCH can be overridden by the user for cross compiling
-+ARCH ?= $(shell uname -m 2>/dev/null || echo not)
-+
-+ifneq (,$(filter $(ARCH),aarch64 arm64))
-+TEST_GEN_PROGS := tags_test
-+TEST_PROGS := run_tags_test.sh
-+endif
-+
-+include ../lib.mk
-diff --git a/tools/testing/selftests/arm64/run_tags_test.sh b/tools/testing/selftests/arm64/run_tags_test.sh
-new file mode 100755
-index 000000000000..745f11379930
---- /dev/null
-+++ b/tools/testing/selftests/arm64/run_tags_test.sh
-@@ -0,0 +1,12 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+
-+echo "--------------------"
-+echo "running tags test"
-+echo "--------------------"
-+./tags_test
-+if [ $? -ne 0 ]; then
-+	echo "[FAIL]"
-+else
-+	echo "[PASS]"
-+fi
-diff --git a/tools/testing/selftests/arm64/tags_test.c b/tools/testing/selftests/arm64/tags_test.c
-new file mode 100644
-index 000000000000..22a1b266e373
---- /dev/null
-+++ b/tools/testing/selftests/arm64/tags_test.c
-@@ -0,0 +1,29 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <stdint.h>
-+#include <sys/prctl.h>
-+#include <sys/utsname.h>
-+
-+#define SHIFT_TAG(tag)		((uint64_t)(tag) << 56)
-+#define SET_TAG(ptr, tag)	(((uint64_t)(ptr) & ~SHIFT_TAG(0xff)) | \
-+					SHIFT_TAG(tag))
-+
-+int main(void)
-+{
-+	static int tbi_enabled = 0;
-+	struct utsname *ptr, *tagged_ptr;
-+	int err;
-+
-+	if (prctl(PR_SET_TAGGED_ADDR_CTRL, PR_TAGGED_ADDR_ENABLE, 0, 0, 0) == 0)
-+		tbi_enabled = 1;
-+	ptr = (struct utsname *)malloc(sizeof(*ptr));
-+	if (tbi_enabled)
-+		tagged_ptr = (struct utsname *)SET_TAG(ptr, 0x42);
-+	err = uname(tagged_ptr);
-+	free(ptr);
-+
-+	return err;
-+}
--- 
-2.22.0.709.g102302147b-goog
+There are some cases where netlink related to IPv4 does not send nested
+flag. You risk breaking older iproute2 and other tools being used on newer
+kernel. I.e this patch may break binary compatibility. Have you tried running
+with this on a very old distro (like Redhat Linux 9)?
 
