@@ -2,329 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C5F0711F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 08:38:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4B6A711FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 08:38:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732713AbfGWGiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 02:38:09 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:39784 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732355AbfGWGiI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 02:38:08 -0400
-Received: by mail-io1-f72.google.com with SMTP id y13so46113189iol.6
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 23:38:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=aL3tMcwrH2bL1/qPLH2B5fpmBvj9WpSeCI7o4aW8USc=;
-        b=BKwj21SqQ0J5H0qzjTOCamcokTaK3AdcYr8mpqsdHU+C0DT9jTJy3YYuuyeh54yxlx
-         AoQCyf0rrSiOc1nHd60h5wGVzIe8O3LTwSB3kjn2ZqEhzRImY+UpgkbceXoY0C4jFh/S
-         4fMzaW/ZHJTdNjtoP/P84QmINzAwV5UuaAodDcvexbchDdttdSPCpkMBh3anugQYNhcs
-         quyyThWY+Lj7Yo990hYgjxu8/mXR8giGNh+vSUz16X0uwvBjF2nzVp5Ncb41AzTABK+d
-         hFWToGYN6tCgjTOqFqtrn9OHyp04yiw2EXOXi7japsWp8JI1vskB4EBOosCHbD6D7SFg
-         vYrQ==
-X-Gm-Message-State: APjAAAXYe3i+kyFdO2HsrG9zEbPQQe1BWuU32W5lQLs2ixnEZgom2+pk
-        7Ah8F6pKNEwV/MAup8d2UKsvu5KtDXmGL5LNX09QlRRH7Iak
-X-Google-Smtp-Source: APXvYqzI8OhEYS84AvC6wy+HyzyUov7wbBHy2y5gBkTMGe8o+EwrHZLwr3tCSazPuGAkqOnzIohJH5fyIOD/9EdUJgbmhg7Wobs1
+        id S2387997AbfGWGiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 02:38:54 -0400
+Received: from foss.arm.com ([217.140.110.172]:49360 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732836AbfGWGiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 02:38:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CDAE344;
+        Mon, 22 Jul 2019 23:38:53 -0700 (PDT)
+Received: from [10.162.40.183] (p8cg001049571a15.blr.arm.com [10.162.40.183])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 502D83F71F;
+        Mon, 22 Jul 2019 23:40:51 -0700 (PDT)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: Re: [PATCH v9 00/21] Generic page walk and ptdump
+To:     Steven Price <steven.price@arm.com>, linux-mm@kvack.org
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        "Liang, Kan" <kan.liang@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20190722154210.42799-1-steven.price@arm.com>
+Message-ID: <835a0f2e-328d-7f7f-e52a-b754137789f9@arm.com>
+Date:   Tue, 23 Jul 2019 12:09:25 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Received: by 2002:a5e:8412:: with SMTP id h18mr70561071ioj.268.1563863887424;
- Mon, 22 Jul 2019 23:38:07 -0700 (PDT)
-Date:   Mon, 22 Jul 2019 23:38:07 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007cb5e7058e536fbe@google.com>
-Subject: bpf-next boot error: WARNING: workqueue cpumask: online intersect >
- possible intersect (2)
-From:   syzbot <syzbot+88c042e36cde4bcbd19b@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20190722154210.42799-1-steven.price@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hello Steven,
 
-syzbot found the following crash on:
+On 07/22/2019 09:11 PM, Steven Price wrote:
+> This is a slight reworking and extension of my previous patch set
+> (Convert x86 & arm64 to use generic page walk), but I've continued the
+> version numbering as most of the changes are the same. In particular
+> this series ends with a generic PTDUMP implemention for arm64 and x86.
+> 
+> Many architectures current have a debugfs file for dumping the kernel
+> page tables. Currently each architecture has to implement custom
+> functions for this because the details of walking the page tables used
+> by the kernel are different between architectures.
+> 
+> This series extends the capabilities of walk_page_range() so that it can
+> deal with the page tables of the kernel (which have no VMAs and can
+> contain larger huge pages than exist for user space). A generic PTDUMP
+> implementation is the implemented making use of the new functionality of
+> walk_page_range() and finally arm64 and x86 are switch to using it,
+> removing the custom table walkers.
 
-HEAD commit:    66b5f1c4 net-ipv6-ndisc: add support for RFC7710 RA Captiv..
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15513e78600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9aec8cb13b5f7389
-dashboard link: https://syzkaller.appspot.com/bug?extid=88c042e36cde4bcbd19b
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+Could other architectures just enable this new generic PTDUMP feature if
+required without much problem ?
 
-Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> To enable a generic page table walker to walk the unusual mappings of
+> the kernel we need to implement a set of functions which let us know
+> when the walker has reached the leaf entry. After a suggestion from Will
+> Deacon I've chosen the name p?d_leaf() as this (hopefully) describes
+> the purpose (and is a new name so has no historic baggage). Some
+> architectures have p?d_large macros but this is easily confused with
+> "large pages".
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+88c042e36cde4bcbd19b@syzkaller.appspotmail.com
+I have not been following the previous version of the series closely, hence
+might be missing something here. But p?d_large() which identifies large
+mappings on a given level can only signify a leaf entry. Large pages on the
+table exist only as leaf entries. So what is the problem for it being used
+directly instead. Is there any possibility in the kernel mapping when these
+large pages are not leaf entries ?
 
-smpboot: CPU0: Intel(R) Xeon(R) CPU @ 2.30GHz (family: 0x6, model: 0x3f,  
-stepping: 0x0)
-Performance Events: unsupported p6 CPU model 63 no PMU driver, software  
-events only.
-rcu: Hierarchical SRCU implementation.
-NMI watchdog: Perf NMI watchdog permanently disabled
-smp: Bringing up secondary CPUs ...
-x86: Booting SMP configuration:
-.... node  #0, CPUs:      #1
-MDS CPU bug present and SMT on, data leak possible. See  
-https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/mds.html for  
-more details.
-smp: Brought up 2 nodes, 2 CPUs
-smpboot: Max logical packages: 1
-smpboot: Total of 2 processors activated (9200.00 BogoMIPS)
-devtmpfs: initialized
-clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns:  
-19112604462750000 ns
-futex hash table entries: 512 (order: 4, 65536 bytes, vmalloc)
-xor: automatically using best checksumming function   avx
-PM: RTC time: 00:21:51, date: 2019-07-23
-NET: Registered protocol family 16
-audit: initializing netlink subsys (disabled)
-cpuidle: using governor menu
-ACPI: bus type PCI registered
-dca service started, version 1.12.1
-PCI: Using configuration type 1 for base access
-WARNING: workqueue cpumask: online intersect > possible intersect
-HugeTLB registered 1.00 GiB page size, pre-allocated 0 pages
-HugeTLB registered 2.00 MiB page size, pre-allocated 0 pages
-cryptd: max_cpu_qlen set to 1000
-raid6: avx2x4   gen() 12057 MB/s
-raid6: avx2x4   xor()  6485 MB/s
-raid6: avx2x2   gen()  5976 MB/s
-raid6: avx2x2   xor()  3848 MB/s
-raid6: avx2x1   gen()   921 MB/s
-raid6: avx2x1   xor()  2173 MB/s
-raid6: sse2x4   gen()  6202 MB/s
-raid6: sse2x4   xor()  3397 MB/s
-raid6: sse2x2   gen()  3875 MB/s
-raid6: sse2x2   xor()  1961 MB/s
-raid6: sse2x1   gen()   789 MB/s
-raid6: sse2x1   xor()   964 MB/s
-raid6: using algorithm avx2x4 gen() 12057 MB/s
-raid6: .... xor() 6485 MB/s, rmw enabled
-raid6: using avx2x2 recovery algorithm
-ACPI: Added _OSI(Module Device)
-ACPI: Added _OSI(Processor Device)
-ACPI: Added _OSI(3.0 _SCP Extensions)
-ACPI: Added _OSI(Processor Aggregator Device)
-ACPI: Added _OSI(Linux-Dell-Video)
-ACPI: Added _OSI(Linux-Lenovo-NV-HDMI-Audio)
-ACPI: Added _OSI(Linux-HPI-Hybrid-Graphics)
-ACPI: 2 ACPI AML tables successfully acquired and loaded
-ACPI: Interpreter enabled
-ACPI: (supports S0 S3 S4 S5)
-ACPI: Using IOAPIC for interrupt routing
-PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and  
-report a bug
-ACPI: Enabled 16 GPEs in block 00 to 0F
-ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
-acpi PNP0A03:00: _OSC: OS supports [ASPM ClockPM Segments MSI HPX-Type3]
-acpi PNP0A03:00: fail to add MMCONFIG information, can't access extended  
-PCI configuration space under this bridge.
-PCI host bridge to bus 0000:00
-pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
-pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
-pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
-pci_bus 0000:00: root bus resource [mem 0xc0000000-0xfebfffff window]
-pci_bus 0000:00: root bus resource [bus 00-ff]
-pci 0000:00:00.0: [8086:1237] type 00 class 0x060000
-pci 0000:00:01.0: [8086:7110] type 00 class 0x060100
-pci 0000:00:01.3: [8086:7113] type 00 class 0x068000
-pci 0000:00:01.3: quirk: [io  0xb000-0xb03f] claimed by PIIX4 ACPI
-pci 0000:00:03.0: [1af4:1004] type 00 class 0x000000
-pci 0000:00:03.0: reg 0x10: [io  0xc000-0xc03f]
-pci 0000:00:03.0: reg 0x14: [mem 0xfebfe000-0xfebfe07f]
-pci 0000:00:04.0: [1af4:1000] type 00 class 0x020000
-pci 0000:00:04.0: reg 0x10: [io  0xc040-0xc07f]
-pci 0000:00:04.0: reg 0x14: [mem 0xfebff000-0xfebff07f]
-ACPI: PCI Interrupt Link [LNKA] (IRQs 5 *10 11)
-ACPI: PCI Interrupt Link [LNKB] (IRQs 5 *10 11)
-ACPI: PCI Interrupt Link [LNKC] (IRQs 5 10 *11)
-ACPI: PCI Interrupt Link [LNKD] (IRQs 5 10 *11)
-ACPI: PCI Interrupt Link [LNKS] (IRQs *9)
-vgaarb: loaded
-SCSI subsystem initialized
-ACPI: bus type USB registered
-usbcore: registered new interface driver usbfs
-usbcore: registered new interface driver hub
-usbcore: registered new device driver usb
-mc: Linux media interface: v0.10
-videodev: Linux video capture interface: v2.00
-pps_core: LinuxPPS API ver. 1 registered
-pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti  
-<giometti@linux.it>
-PTP clock support registered
-EDAC MC: Ver: 3.0.0
-Advanced Linux Sound Architecture Driver Initialized.
-PCI: Using ACPI for IRQ routing
-Bluetooth: Core ver 2.22
-NET: Registered protocol family 31
-Bluetooth: HCI device and connection manager initialized
-Bluetooth: HCI socket layer initialized
-Bluetooth: L2CAP socket layer initialized
-Bluetooth: SCO socket layer initialized
-NET: Registered protocol family 8
-NET: Registered protocol family 20
-NetLabel: Initializing
-NetLabel:  domain hash size = 128
-NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
-NetLabel:  unlabeled traffic allowed by default
-nfc: nfc_init: NFC Core ver 0.1
-NET: Registered protocol family 39
-clocksource: Switched to clocksource kvm-clock
-VFS: Disk quotas dquot_6.6.0
-VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
-FS-Cache: Loaded
-*** VALIDATE hugetlbfs ***
-CacheFiles: Loaded
-TOMOYO: 2.6.0
-Mandatory Access Control activated.
-AppArmor: AppArmor Filesystem Enabled
-pnp: PnP ACPI init
-pnp: PnP ACPI: found 7 devices
-thermal_sys: Registered thermal governor 'step_wise'
-thermal_sys: Registered thermal governor 'user_space'
-clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns:  
-2085701024 ns
-pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
-pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
-pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
-pci_bus 0000:00: resource 7 [mem 0xc0000000-0xfebfffff window]
-NET: Registered protocol family 2
-tcp_listen_portaddr_hash hash table entries: 4096 (order: 6, 294912 bytes,  
-vmalloc)
-TCP established hash table entries: 65536 (order: 7, 524288 bytes, vmalloc)
-TCP bind hash table entries: 65536 (order: 10, 4194304 bytes, vmalloc)
-TCP: Hash tables configured (established 65536 bind 65536)
-UDP hash table entries: 4096 (order: 7, 655360 bytes, vmalloc)
-UDP-Lite hash table entries: 4096 (order: 7, 655360 bytes, vmalloc)
-NET: Registered protocol family 1
-RPC: Registered named UNIX socket transport module.
-RPC: Registered udp transport module.
-RPC: Registered tcp transport module.
-RPC: Registered tcp NFSv4.1 backchannel transport module.
-NET: Registered protocol family 44
-pci 0000:00:00.0: Limiting direct PCI/PCI transfers
-PCI: CLS 0 bytes, default 64
-PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
-software IO TLB: mapped [mem 0xaa800000-0xae800000] (64MB)
-RAPL PMU: API unit is 2^-32 Joules, 0 fixed counters, 10737418240 ms ovfl  
-timer
-kvm: already loaded the other module
-clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x212735223b2,  
-max_idle_ns: 440795277976 ns
-clocksource: Switched to clocksource tsc
-mce: Machine check injector initialized
-check: Scanning for low memory corruption every 60 seconds
-Initialise system trusted keyrings
-workingset: timestamp_bits=40 max_order=21 bucket_order=0
-zbud: loaded
-DLM installed
-squashfs: version 4.0 (2009/01/31) Phillip Lougher
-FS-Cache: Netfs 'nfs' registered for caching
-NFS: Registering the id_resolver key type
-Key type id_resolver registered
-Key type id_legacy registered
-nfs4filelayout_init: NFSv4 File Layout Driver Registering...
-Installing knfsd (copyright (C) 1996 okir@monad.swb.de).
-ntfs: driver 2.1.32 [Flags: R/W].
-fuse: init (API version 7.31)
-JFS: nTxBlock = 8192, nTxLock = 65536
-SGI XFS with ACLs, security attributes, realtime, no debug enabled
-9p: Installing v9fs 9p2000 file system support
-FS-Cache: Netfs '9p' registered for caching
-gfs2: GFS2 installed
-FS-Cache: Netfs 'ceph' registered for caching
-ceph: loaded (mds proto 32)
-NET: Registered protocol family 38
-async_tx: api initialized (async)
-Key type asymmetric registered
-Asymmetric key parser 'x509' registered
-Asymmetric key parser 'pkcs8' registered
-Key type pkcs7_test registered
-Asymmetric key parser 'tpm_parser' registered
-Block layer SCSI generic (bsg) driver version 0.4 loaded (major 246)
-io scheduler mq-deadline registered
-io scheduler kyber registered
-io scheduler bfq registered
-input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
-ACPI: Power Button [PWRF]
-input: Sleep Button as /devices/LNXSYSTM:00/LNXSLPBN:00/input/input1
-ACPI: Sleep Button [SLPF]
-ioatdma: Intel(R) QuickData Technology Driver 5.00
-PCI Interrupt Link [LNKC] enabled at IRQ 11
-virtio-pci 0000:00:03.0: virtio_pci: leaving for legacy driver
-PCI Interrupt Link [LNKD] enabled at IRQ 10
-virtio-pci 0000:00:04.0: virtio_pci: leaving for legacy driver
-HDLC line discipline maxframe=4096
-N_HDLC line discipline registered.
-Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
-00:03: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
-00:04: ttyS1 at I/O 0x2f8 (irq = 3, base_baud = 115200) is a 16550A
-00:05: ttyS2 at I/O 0x3e8 (irq = 6, base_baud = 115200) is a 16550A
-00:06: ttyS3 at I/O 0x2e8 (irq = 7, base_baud = 115200) is a 16550A
-Non-volatile memory driver v1.3
-Linux agpgart interface v0.103
-[drm] Initialized vgem 1.0.0 20120112 for vgem on minor 0
-[drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-[drm] Driver supports precise vblank timestamp query.
-[drm] Initialized vkms 1.0.0 20180514 for vkms on minor 1
-usbcore: registered new interface driver udl
-brd: module loaded
-loop: module loaded
-zram: Added device: zram0
-null: module loaded
-nfcsim 0.2 initialized
-Loading iSCSI transport class v2.0-870.
-scsi host0: Virtio SCSI HBA
-st: Version 20160209, fixed bufsize 32768, s/g segs 256
-kobject: 'sd' (00000000062140f2): kobject_uevent_env
-kobject: 'sd' (00000000062140f2): fill_kobj_path: path  
-= '/bus/scsi/drivers/sd'
-kobject: 'sr' (00000000ef64c50b): kobject_add_internal: parent: 'drivers',  
-set: 'drivers'
-kobject: 'sr' (00000000ef64c50b): kobject_uevent_env
-kobject: 'sr' (00000000ef64c50b): fill_kobj_path: path  
-= '/bus/scsi/drivers/sr'
-kobject: 'scsi_generic' (00000000007b57bc): kobject_add_internal:  
-parent: 'class', set: 'class'
-kobject: 'scsi_generic' (00000000007b57bc): kobject_uevent_env
-kobject: 'scsi_generic' (00000000007b57bc): fill_kobj_path: path  
-= '/class/scsi_generic'
-kobject: 'nvme-wq' (00000000b79e19cd): kobject_add_internal:  
-parent: 'workqueue', set: 'devices'
-kobject: 'nvme-wq' (00000000b79e19cd): kobject_uevent_env
-kobject: 'nvme-wq' (00000000b79e19cd): kobject_uevent_env: uevent_suppress  
-caused the event to drop!
-kobject: 'nvme-wq' (00000000b79e19cd): kobject_uevent_env
-kobject: 'nvme-wq' (00000000b79e19cd): fill_kobj_path: path  
-= '/devices/virtual/workqueue/nvme-wq'
-kobject: 'nvme-reset-wq' (0000000070597663): kobject_add_internal:  
-parent: 'workqueue', set: 'devices'
-kobject: 'nvme-reset-wq' (0000000070597663): kobject_uevent_env
-kobject: 'nvme-reset-wq' (0000000070597663): kobject_uevent_env:  
-uevent_suppress caused the event to drop!
-kobject: 'nvme-reset-wq' (0000000070597663): kobject_uevent_env
-kobject: 'nvme-reset-wq' (0000000070597663): fill_kobj_path: path  
-= '/devices/virtual/workqueue/nvme-reset-wq'
-kobject: 'nvme-delete-wq' (00000000c9ed28dd): kobject_add_internal:  
-parent: 'workqueue', set: 'devices'
-kobject: 'nvme-delete-wq' (00000000c9ed28dd): kobject_uevent_env
-kobject: 'nvme-delete-wq' (00000000c9ed28dd): kobject_uevent_env:  
-uevent_suppress caused the event to drop!
-kobject: 'nvme-delete-wq' (00000000c9ed28dd): kobject_uevent_env
-kobject: 'nvme-delete-wq' (00000000c9ed28dd): fill_kobj_path: path  
-= '/devices/virtual/workqueue/nvme-delete-wq'
+> 
+> Mostly this is a clean up and there should be very little functional
+> change. The exceptions are:
+> 
+> * x86 PTDUMP debugfs output no longer display pages which aren't
+>   present (patch 14).
 
+Hmm, kernel mappings pages which are not present! which ones are those ?
+Just curious.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> * arm64 has the ability to efficiently process KASAN pages (which
+>   previously only x86 implemented). This means that the combination of
+>   KASAN and DEBUG_WX is now useable.
+> 
+> Also available as a git tree:
+> git://linux-arm.org/linux-sp.git walk_page_range/v9
+> 
+> Changes since v8:
+> https://lore.kernel.org/lkml/20190403141627.11664-1-steven.price@arm.com/
+>  * Rename from p?d_large() to p?d_leaf()
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+As mentioned before wondering if this is actually required or it is even a
+good idea to introduce something like this which expands page table helper
+semantics scope further in generic MM.
+
+>  * Dropped patches migrating arm64/x86 custom walkers to
+>    walk_page_range() in favour of adding a generic PTDUMP implementation
+>    and migrating arm64/x86 to that instead.
+>  * Rebased to v5.3-rc1
+
+Creating a generic PTDUMP implementation is definitely a better idea.
