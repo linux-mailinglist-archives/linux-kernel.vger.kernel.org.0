@@ -2,97 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2602710A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 06:33:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AF48710A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 06:35:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732384AbfGWEdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 00:33:14 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36947 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732028AbfGWEdO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 00:33:14 -0400
-Received: by mail-io1-f65.google.com with SMTP id q22so78991654iog.4;
-        Mon, 22 Jul 2019 21:33:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qk5U3bA3qzqu+IynLlWRQEOBAZ7N1ou8AjhC6QEx5u0=;
-        b=eAaCUH2GDO3sHWHaMhz8jJtzV7jW+BiUeGImVRvQzC/HkO/ePhOmBL6V+3w7RvWvju
-         1xXhjNCfMO2w1bVdjSwRyvk970tveUNzXQEtvso3ebs79zQaGzj6zYMhMBs3/x8MGWWR
-         qaw7VDW7sDC5eieCOhpn2EBVf6uGWddX8jW+UeD8QOcH4Y0wAUIRqZcQ5SHOW+mupeta
-         m3XxXRjDWwBQV6vnriWza+9xiQt3hTAl05kdNPy9AEoeMwvpmuBqvE8rlxUVcMFS/TLw
-         9p/w0l84R/dJ0/kn1yOfELe4AwF1LEjk9TiJeGg1ZM37psFZmk4aVaodRogWibVwHPWS
-         E8RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qk5U3bA3qzqu+IynLlWRQEOBAZ7N1ou8AjhC6QEx5u0=;
-        b=OyYDzYrjoH9uR4Ab543UJlrRTFPjaTBiGNdB+WWPoRlRPB6l7qrTMoa4bEknPoLKSf
-         2h4U4BmWN2VvkUMz9Bdqor6QXyPPF09bNHQjWh7wKXLVMMRMVKA4tp02I+GHIZCG+8iO
-         xKt2NvNE887yoy8rmHOgfTVY3B3sJOcKdRqJ2UJ6aRtM0K/qBtOvkeOg8KdqI23kBS5B
-         7GpfMRjtCbP20fISpG2CtHFWWo+0lbmQ/tHp7BhfzhMosrS/nAJb50DRmF2ZGfd+2wSq
-         iXWpnNCICDf0GfOYQVcT2+VWoGof99IREW3w2SMsjIVz2eKKteRf/FKYkhN+VtlUvm8U
-         4X5A==
-X-Gm-Message-State: APjAAAVYdtIV9NTfM+1BPBoYCBN+SgUWDOGLuJIzIhk7qwigqNtOi4PN
-        hUJfFGGKbQ01kKZHUjbIgiwNR6iIf6jNdwAjutw=
-X-Google-Smtp-Source: APXvYqypWk0MoPSm5Ekj3ag8N4aYiKFddHyRSOhwJTVjabMMbXz/iRZaSJJJvO9mdCygUH+Vv3eCygCT2npGFTLY+Zg=
-X-Received: by 2002:a5e:8e4a:: with SMTP id r10mr58528805ioo.100.1563856393341;
- Mon, 22 Jul 2019 21:33:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <1562317967-16329-1-git-send-email-gkulkarni@marvell.com>
-In-Reply-To: <1562317967-16329-1-git-send-email-gkulkarni@marvell.com>
-From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
-Date:   Tue, 23 Jul 2019 10:03:02 +0530
-Message-ID: <CAKTKpr5H=QCEx_pL272jCQKdaNwQoRAHVyo93YFa62Z2SZJVCw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] Add CCPI2 PMU support
-To:     Ganapatrao Kulkarni <gkulkarni@marvell.com>
-Cc:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "Will.Deacon@arm.com" <Will.Deacon@arm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        Jayachandran Chandrasekharan Nair <jnair@marvell.com>,
-        "rrichter@marvell.coma" <rrichter@marvell.coma>,
-        Jan Glauber <jglauber@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1732511AbfGWEf3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 00:35:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45630 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727251AbfGWEf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 00:35:28 -0400
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C1092239E;
+        Tue, 23 Jul 2019 04:35:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563856527;
+        bh=AQsp9oSHDzpg8J1OlQ5PcMgGVnkDTGm7+PlHh0iIzGo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=EhNhxh+G/R7iHdl9olwT2jJMO290P22pFxI4m+8/TVXtNhohSKKQWJwwkMk24ufOc
+         m5mpCkj8b8w4CgZAoql0aZ9wbzRrjh5iDAWE9RhRp1TOf4VO4QvYoHAtDnqhwM73Nu
+         XkgYNlcpF9aw4SPADa8wNfh/ix8qJAqFOoDZQycc=
+Date:   Mon, 22 Jul 2019 21:35:27 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Stephen Kitt <steve@sk2.org>,
+        Kees Cook <keescook@chromium.org>,
+        Nitin Gote <nitin.r.gote@intel.com>, jannh@google.com,
+        kernel-hardening@lists.openwall.com,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Subject: Re: [PATCH 1/2] string: Add stracpy and stracpy_pad mechanisms
+Message-Id: <20190722213527.18deeaf07ae036cce57035ea@linux-foundation.org>
+In-Reply-To: <7ab8957eaf9b0931a59eff6e2bd8c5169f2f6c41.1563841972.git.joe@perches.com>
+References: <cover.1563841972.git.joe@perches.com>
+        <7ab8957eaf9b0931a59eff6e2bd8c5169f2f6c41.1563841972.git.joe@perches.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+On Mon, 22 Jul 2019 17:38:15 -0700 Joe Perches <joe@perches.com> wrote:
 
-Any further comments for this patch?
+> Several uses of strlcpy and strscpy have had defects because the
+> last argument of each function is misused or typoed.
+> 
+> Add macro mechanisms to avoid this defect.
+> 
+> stracpy (copy a string to a string array) must have a string
+> array as the first argument (to) and uses sizeof(to) as the
+> size.
+> 
+> These mechanisms verify that the to argument is an array of
+> char or other compatible types like u8 or unsigned char.
+> 
+> A BUILD_BUG is emitted when the type of to is not compatible.
+> 
 
-On Fri, Jul 5, 2019 at 2:43 PM Ganapatrao Kulkarni
-<gkulkarni@marvell.com> wrote:
->
-> Add Cavium Coherent Processor Interconnect (CCPI2) PMU
-> support in ThunderX2 Uncore driver.
->
-> v2: Updated with review comments [1]
->
-> [1] https://lkml.org/lkml/2019/6/14/965
->
-> v1: initial patch
->
-> Ganapatrao Kulkarni (2):
->   Documentation: perf: Update documentation for ThunderX2 PMU uncore
->     driver
->   drivers/perf: Add CCPI2 PMU support in ThunderX2 UNCORE driver.
->
->  Documentation/perf/thunderx2-pmu.txt |  20 ++-
->  drivers/perf/thunderx2_pmu.c         | 248 +++++++++++++++++++++++----
->  2 files changed, 225 insertions(+), 43 deletions(-)
->
-> --
-> 2.17.1
->
+It would be nice to include some conversions.  To demonstrate the need,
+to test the code, etc.
 
-Thanks,
-Ganapat
