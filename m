@@ -2,54 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16ECA721D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 23:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F178721DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 23:51:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392204AbfGWVvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 17:51:01 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48103 "EHLO
+        id S2392227AbfGWVvj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 17:51:39 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56733 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392189AbfGWVvA (ORCPT
+        with ESMTP id S1729088AbfGWVvj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 17:51:00 -0400
+        Tue, 23 Jul 2019 17:51:39 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6NLomZh253519
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6NLpV9F253820
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 23 Jul 2019 14:50:48 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6NLomZh253519
+        Tue, 23 Jul 2019 14:51:31 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6NLpV9F253820
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1563918649;
-        bh=IEij/GnBGNnp56JzgSfaId2G9nO0kTiOaD0kP2MqF+g=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=iDA4cLJlR6/sPXdNXUuSrIKcGXVO/aryLNevxPk5vUb0ZGLKzbxfP5pVjeFaDNe/k
-         0AqOhiw44VINUxz56+3yKflaP9fsGbSmQZQ8taIWeVqN0viFbmFc4cNDBFgocg3WhT
-         Eev3irIrXCEgckl13mNVF9sMjxEfCy7LLqxEMpelhmidmk+T9RDge/GZIhn8W/F8ix
-         uvUJrvwJAjspYh4lzg3pctu2Ncj6AOyO5HDfbxj2Ok5WYPaBcKaLaGflTgRurLCKO5
-         Ko9JgUjU/Jmq8xOnFZPRnppNXQbn35us3RS0avzxmapWnmqfI3Bgf6Le40DQMdBztr
-         KhtGmYrgxa4Kg==
+        s=2019071901; t=1563918692;
+        bh=1CgbBfzWEoK3oJI9gH8Yh7qkJkmMu8inz+QHn0Ty6HY=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=cGGzu4phIkk8LVMcnZXOPqIq33+iN0vnr7/8EKu0c/UrwR9oTc+HIdAFZOHA5XKEz
+         50xxdWUJdOpMPPCVD2Ak0kk8b30kkWRPV9tNcr6blL6dF1nkaI1z40/DCmf+bv2opZ
+         /+Yu60eQScPr8XpdpwJcDqRxAndQVREdgSbKNqZ+R/IBst8vpSWbSEUHqZxIXlztvq
+         XsFL5sQolMLTQyKaMAZ6DrHzMZXmJEYm97uEv0Jbt9GlDGG13xtGPCL+hPKWNWVfe2
+         IA+AH6FIwmY4InbHy/wYnSMNn67wPNyIvlHY49cDUQW+Leb74N00OtuAzaWHXJ25nD
+         WzKBB7/9/6tUw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6NLom7x253516;
-        Tue, 23 Jul 2019 14:50:48 -0700
-Date:   Tue, 23 Jul 2019 14:50:48 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6NLpVpD253817;
+        Tue, 23 Jul 2019 14:51:31 -0700
+Date:   Tue, 23 Jul 2019 14:51:31 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Alexey Budankov <tipbot@zytor.com>
-Message-ID: <tip-872c8ee8f0f47222f7b10da96eea84d0486540a3@git.kernel.org>
-Cc:     jolsa@kernel.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, acme@redhat.com,
-        alexey.budankov@linux.intel.com, namhyung@kernel.org,
-        hpa@zytor.com, tglx@linutronix.de, ak@linux.intel.com,
-        alexander.shishkin@linux.intel.com
-Reply-To: hpa@zytor.com, tglx@linutronix.de, acme@redhat.com,
-          alexey.budankov@linux.intel.com, namhyung@kernel.org,
-          alexander.shishkin@linux.intel.com, ak@linux.intel.com,
-          peterz@infradead.org, jolsa@kernel.org,
-          linux-kernel@vger.kernel.org, mingo@kernel.org
-In-Reply-To: <4d839e1b-9c48-89c4-9702-a12217420611@linux.intel.com>
-References: <4d839e1b-9c48-89c4-9702-a12217420611@linux.intel.com>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-802f2jypnwqsvyavvivs8464@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+        tglx@linutronix.de, acme@redhat.com, adrian.hunter@intel.com,
+        hpa@zytor.com, namhyung@kernel.org, jolsa@kernel.org,
+        mingo@kernel.org
+Reply-To: hpa@zytor.com, adrian.hunter@intel.com, jolsa@kernel.org,
+          mingo@kernel.org, namhyung@kernel.org,
+          linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+          acme@redhat.com, tglx@linutronix.de
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf session: Fix loading of compressed data
- split across adjacent records
-Git-Commit-ID: 872c8ee8f0f47222f7b10da96eea84d0486540a3
+Subject: [tip:perf/urgent] perf probe: Set pev->nargs to zero after freeing
+ pev->args entries
+Git-Commit-ID: df8350ed56a26f502a9636f37faf699a12ee906e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -67,134 +63,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  872c8ee8f0f47222f7b10da96eea84d0486540a3
-Gitweb:     https://git.kernel.org/tip/872c8ee8f0f47222f7b10da96eea84d0486540a3
-Author:     Alexey Budankov <alexey.budankov@linux.intel.com>
-AuthorDate: Tue, 9 Jul 2019 17:48:14 +0300
+Commit-ID:  df8350ed56a26f502a9636f37faf699a12ee906e
+Gitweb:     https://git.kernel.org/tip/df8350ed56a26f502a9636f37faf699a12ee906e
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 18 Jul 2019 11:22:58 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 23 Jul 2019 09:04:03 -0300
+CommitDate: Tue, 23 Jul 2019 09:04:25 -0300
 
-perf session: Fix loading of compressed data split across adjacent records
+perf probe: Set pev->nargs to zero after freeing pev->args entries
 
-Fix decompression failure found during the loading of compressed trace
-collected on larger scale systems (>48 cores).
+So that, when perf_add_probe_events() fails, like in:
 
-The error happened due to lack of decompression space for a mmaped
-buffer data chunk split across adjacent PERF_RECORD_COMPRESSED records.
+  # perf probe icmp_rcv:64 "type=icmph->type"
+  Failed to find 'icmph' in this function.
+    Error: Failed to add events.
+  Segmentation fault (core dumped)
+  #
 
-  $ perf report -i bt.16384.data --stats
-  failed to decompress (B): 63869 -> 0 : Destination buffer is too small
-  user stack dump failure
-  Can't parse sample, err = -14
-  0x2637e436 [0x4080]: failed to process type: 9
-  Error:
-  failed to process sample
+We don't segfault.
 
-  $ perf test 71
-  71: Zstd perf.data compression/decompression              : Ok
+clear_perf_probe_event() was zeroing the whole pev, and since the switch
+to zfree() for the members in the pev, that memset() was removed, which
+left nargs with its original value, in the above case 1.
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
+With the memset the same pev could be passed to clear_perf_probe_event()
+multiple times, since all it would have would be zeroes, and free()
+accepts zero, the loop would not happen and we would just memset it
+again to zeroes.
+
+Without it we got that segfault, so zero nargs to keep it like it was,
+next cset will avoid calling clear_perf_probe_event() for the same pevs
+in case of failure.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/4d839e1b-9c48-89c4-9702-a12217420611@linux.intel.com
+Fixes: d8f9da240495 ("perf tools: Use zfree() where applicable")
+Link: https://lkml.kernel.org/n/tip-802f2jypnwqsvyavvivs8464@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/session.c | 22 ++++++++++++++--------
- tools/perf/util/session.h |  1 +
- tools/perf/util/zstd.c    |  4 ++--
- 3 files changed, 17 insertions(+), 10 deletions(-)
+ tools/perf/util/probe-event.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index d0fd6c614e68..37efa1f43d8b 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -36,10 +36,16 @@ static int perf_session__process_compressed_event(struct perf_session *session,
- 	void *src;
- 	size_t decomp_size, src_size;
- 	u64 decomp_last_rem = 0;
--	size_t decomp_len = session->header.env.comp_mmap_len;
-+	size_t mmap_len, decomp_len = session->header.env.comp_mmap_len;
- 	struct decomp *decomp, *decomp_last = session->decomp_last;
- 
--	decomp = mmap(NULL, sizeof(struct decomp) + decomp_len, PROT_READ|PROT_WRITE,
-+	if (decomp_last) {
-+		decomp_last_rem = decomp_last->size - decomp_last->head;
-+		decomp_len += decomp_last_rem;
-+	}
-+
-+	mmap_len = sizeof(struct decomp) + decomp_len;
-+	decomp = mmap(NULL, mmap_len, PROT_READ|PROT_WRITE,
- 		      MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
- 	if (decomp == MAP_FAILED) {
- 		pr_err("Couldn't allocate memory for decompression\n");
-@@ -47,10 +53,10 @@ static int perf_session__process_compressed_event(struct perf_session *session,
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index 0c3b55d0617d..4acd3457d39d 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -2219,6 +2219,7 @@ void clear_perf_probe_event(struct perf_probe_event *pev)
+ 			field = next;
+ 		}
  	}
- 
- 	decomp->file_pos = file_offset;
-+	decomp->mmap_len = mmap_len;
- 	decomp->head = 0;
- 
--	if (decomp_last) {
--		decomp_last_rem = decomp_last->size - decomp_last->head;
-+	if (decomp_last_rem) {
- 		memcpy(decomp->data, &(decomp_last->data[decomp_last->head]), decomp_last_rem);
- 		decomp->size = decomp_last_rem;
- 	}
-@@ -61,7 +67,7 @@ static int perf_session__process_compressed_event(struct perf_session *session,
- 	decomp_size = zstd_decompress_stream(&(session->zstd_data), src, src_size,
- 				&(decomp->data[decomp_last_rem]), decomp_len - decomp_last_rem);
- 	if (!decomp_size) {
--		munmap(decomp, sizeof(struct decomp) + decomp_len);
-+		munmap(decomp, mmap_len);
- 		pr_err("Couldn't decompress data\n");
- 		return -1;
- 	}
-@@ -255,15 +261,15 @@ static void perf_session__delete_threads(struct perf_session *session)
- static void perf_session__release_decomp_events(struct perf_session *session)
- {
- 	struct decomp *next, *decomp;
--	size_t decomp_len;
-+	size_t mmap_len;
- 	next = session->decomp;
--	decomp_len = session->header.env.comp_mmap_len;
- 	do {
- 		decomp = next;
- 		if (decomp == NULL)
- 			break;
- 		next = decomp->next;
--		munmap(decomp, decomp_len + sizeof(struct decomp));
-+		mmap_len = decomp->mmap_len;
-+		munmap(decomp, mmap_len);
- 	} while (1);
++	pev->nargs = 0;
+ 	zfree(&pev->args);
  }
  
-diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
-index dd8920b745bc..863dbad87849 100644
---- a/tools/perf/util/session.h
-+++ b/tools/perf/util/session.h
-@@ -46,6 +46,7 @@ struct perf_session {
- struct decomp {
- 	struct decomp *next;
- 	u64 file_pos;
-+	size_t mmap_len;
- 	u64 head;
- 	size_t size;
- 	char data[];
-diff --git a/tools/perf/util/zstd.c b/tools/perf/util/zstd.c
-index 23bdb9884576..d2202392ffdb 100644
---- a/tools/perf/util/zstd.c
-+++ b/tools/perf/util/zstd.c
-@@ -99,8 +99,8 @@ size_t zstd_decompress_stream(struct zstd_data *data, void *src, size_t src_size
- 	while (input.pos < input.size) {
- 		ret = ZSTD_decompressStream(data->dstream, &output, &input);
- 		if (ZSTD_isError(ret)) {
--			pr_err("failed to decompress (B): %ld -> %ld : %s\n",
--			       src_size, output.size, ZSTD_getErrorName(ret));
-+			pr_err("failed to decompress (B): %ld -> %ld, dst_size %ld : %s\n",
-+			       src_size, output.size, dst_size, ZSTD_getErrorName(ret));
- 			break;
- 		}
- 		output.dst  = dst + output.pos;
