@@ -2,112 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7907371167
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 07:50:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 514B77116A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 07:53:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732378AbfGWFuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 01:50:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47166 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725788AbfGWFub (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 01:50:31 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 672BC2229A;
-        Tue, 23 Jul 2019 05:50:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563861030;
-        bh=X9bwV9KQ0C2xh1Si9PIyaiK/1l55d3v6Empbinif5Zo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=C3w7CafeqVLS3SThwm3ee45OdUjeJps03yo9EBaoC7uPaZH+8gINJE2AZGjA8TGus
-         fdTyIyyPvOeXIFKeWqZulPXfmqP8bQGAGKl2+M3VYe2PCz9XoS9/zEOmbdm2ixriHc
-         RoGwTCrjL+Aoyo5DiqMa4TfmOtBXp+YrbONRbn4E=
-Date:   Tue, 23 Jul 2019 13:49:58 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Fancy Fang <chen.fang@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [RESEND PATCH 1/2] clk: imx8mm: rename lcdif pixel clock
-Message-ID: <20190723054957.GO3738@dragon>
-References: <20190710041546.23422-1-chen.fang@nxp.com>
+        id S1732423AbfGWFxw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 01:53:52 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2699 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732295AbfGWFxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 01:53:52 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D4A5E6E6D5A9386D9C48;
+        Tue, 23 Jul 2019 13:53:49 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 23 Jul 2019 13:53:42 +0800
+From:   Hanjun Guo <guohanjun@huawei.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Jia He" <hejianet@gmail.com>, Mike Rapoport <rppt@linux.ibm.com>,
+        Will Deacon <will@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, Hanjun Guo <guohanjun@huawei.com>
+Subject: [PATCH v12 0/2] introduce memblock_next_valid_pfn() (again) for arm64
+Date:   Tue, 23 Jul 2019 13:51:11 +0800
+Message-ID: <1563861073-47071-1-git-send-email-guohanjun@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190710041546.23422-1-chen.fang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 04:13:37AM +0000, Fancy Fang wrote:
-> Rename 'lcdif' pixel clock related names to 'disp' names, since:
-> 
-> First, the lcdif pixel clock is not supplied to LCDIF controller
-> directly, but to some LPCG clock in display mix. So rename it to
-> 'disp' pixel clock is more accurate.
-> 
-> Second, in the imx8mn CCM specification which is designed after
-> imx8mm, this same pixel root clock name has been modified from
-> 'LCDIF_PIXEL_CLK_ROOT' to 'DISPLAY_PIXEL_CLK_ROOT'.
-> 
-> Signed-off-by: Fancy Fang <chen.fang@nxp.com>
-> ---
+Here is new version of "[PATCH v11 0/3] remain and optimize
+memblock_next_valid_pfn on arm and arm64" from Jia He, which is suggested
+by Ard to respin this patch set [1].
 
-When you resend patches, please state the reason for resending.
+In the new version, I squashed patch 1/3 and patch 2/3 in v11 into
+one patch, fixed a bug for possible out of bound accessing the
+regions, and just introduce memblock_next_valid_pfn() for arm64 only
+as I don't have a arm32 platform to test.
 
-Shawn
+Ard asked to "with the new data points added for documentation, and
+crystal clear about how the meaning of PFN validity differs between
+ARM and other architectures, and why the assumptions that the
+optimization is based on are guaranteed to hold", to be honest, I
+didn't see PFN validity differs between ARM and x86 architecture,
+but there is a bug in commit b92df1de5d28 ("mm: page_alloc: skip over
+regions of invalid pfns where possible") which has a possible out of
+bound accessing the regions as well, so not sure that is the root cause.
 
->  drivers/clk/imx/clk-imx8mm.c             | 4 ++--
->  include/dt-bindings/clock/imx8mm-clock.h | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-> index 6b8e75df994d..42f1227a4952 100644
-> --- a/drivers/clk/imx/clk-imx8mm.c
-> +++ b/drivers/clk/imx/clk-imx8mm.c
-> @@ -210,7 +210,7 @@ static const char *imx8mm_pcie1_aux_sels[] = {"osc_24m", "sys_pll2_200m", "sys_p
->  static const char *imx8mm_dc_pixel_sels[] = {"osc_24m", "video_pll1_out", "audio_pll2_out", "audio_pll1_out",
->  					     "sys_pll1_800m", "sys_pll2_1000m", "sys_pll3_out", "clk_ext4", };
->  
-> -static const char *imx8mm_lcdif_pixel_sels[] = {"osc_24m", "video_pll1_out", "audio_pll2_out", "audio_pll1_out",
-> +static const char *imx8mm_disp_pixel_sels[] = {"osc_24m", "video_pll1_out", "audio_pll2_out", "audio_pll1_out",
->  						"sys_pll1_800m", "sys_pll2_1000m", "sys_pll3_out", "clk_ext4", };
->  
->  static const char *imx8mm_sai1_sels[] = {"osc_24m", "audio_pll1_out", "audio_pll2_out", "video_pll1_out",
-> @@ -535,7 +535,7 @@ static int __init imx8mm_clocks_init(struct device_node *ccm_node)
->  	clks[IMX8MM_CLK_PCIE1_PHY] = imx8m_clk_composite("pcie1_phy", imx8mm_pcie1_phy_sels, base + 0xa380);
->  	clks[IMX8MM_CLK_PCIE1_AUX] = imx8m_clk_composite("pcie1_aux", imx8mm_pcie1_aux_sels, base + 0xa400);
->  	clks[IMX8MM_CLK_DC_PIXEL] = imx8m_clk_composite("dc_pixel", imx8mm_dc_pixel_sels, base + 0xa480);
-> -	clks[IMX8MM_CLK_LCDIF_PIXEL] = imx8m_clk_composite("lcdif_pixel", imx8mm_lcdif_pixel_sels, base + 0xa500);
-> +	clks[IMX8MM_CLK_DISP_PIXEL] = imx8m_clk_composite("disp_pixel", imx8mm_disp_pixel_sels, base + 0xa500);
->  	clks[IMX8MM_CLK_SAI1] = imx8m_clk_composite("sai1", imx8mm_sai1_sels, base + 0xa580);
->  	clks[IMX8MM_CLK_SAI2] = imx8m_clk_composite("sai2", imx8mm_sai2_sels, base + 0xa600);
->  	clks[IMX8MM_CLK_SAI3] = imx8m_clk_composite("sai3", imx8mm_sai3_sels, base + 0xa680);
-> diff --git a/include/dt-bindings/clock/imx8mm-clock.h b/include/dt-bindings/clock/imx8mm-clock.h
-> index 07e6c686f3ef..91ef77efebd9 100644
-> --- a/include/dt-bindings/clock/imx8mm-clock.h
-> +++ b/include/dt-bindings/clock/imx8mm-clock.h
-> @@ -119,7 +119,7 @@
->  #define IMX8MM_CLK_PCIE1_PHY			104
->  #define IMX8MM_CLK_PCIE1_AUX			105
->  #define IMX8MM_CLK_DC_PIXEL			106
-> -#define IMX8MM_CLK_LCDIF_PIXEL			107
-> +#define IMX8MM_CLK_DISP_PIXEL			107
->  #define IMX8MM_CLK_SAI1				108
->  #define IMX8MM_CLK_SAI2				109
->  #define IMX8MM_CLK_SAI3				110
-> -- 
-> 2.17.1
-> 
+Testing on a HiSilicon ARM64 server (a 4 sockets system), I can get
+pretty much speedup for bootmem_init() at boot:
+    
+with 384G memory,
+before: 13310ms
+after:  1415ms
+   
+with 1T memory,
+before: 20s
+after:  2s
+
+[1]: https://lkml.org/lkml/2019/6/10/412
+
+Jia He (2):
+  mm: page_alloc: introduce memblock_next_valid_pfn() (again) for arm64
+  mm: page_alloc: reduce unnecessary binary search in
+    memblock_next_valid_pfn
+
+ arch/arm64/Kconfig     |  1 +
+ include/linux/mmzone.h |  9 +++++++
+ mm/Kconfig             |  3 +++
+ mm/memblock.c          | 56 ++++++++++++++++++++++++++++++++++++++++++
+ mm/page_alloc.c        |  4 ++-
+ 5 files changed, 72 insertions(+), 1 deletion(-)
+
+-- 
+2.19.1
+
