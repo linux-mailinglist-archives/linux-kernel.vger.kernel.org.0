@@ -2,99 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03E2071D2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 18:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E99EF71D29
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 18:55:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388143AbfGWQ5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 12:57:08 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:43392 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730940AbfGWQ5H (ORCPT
+        id S2390922AbfGWQzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 12:55:55 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:54927 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390765AbfGWQzy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 12:57:07 -0400
-Received: by mail-qt1-f193.google.com with SMTP id w17so42572736qto.10
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 09:57:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bctZIRJmF0Tt66epBoIW8Nv3zbBghWNg0cSJA3lvz58=;
-        b=m/AmoBeOCFr0QaZjltESdsZE4fOROqUL06GHXh0L+7fh+af27xkAW20v/yQphJ2PRI
-         6VjowW5mw+hZQYU1tset+mrRNA/vq5KMxhiR3MJetGBuySXEu80cNuztkUafdZ1Fr5uI
-         Ow1mCKVOl7XYDOObd5P0WXvNLA6IvVjUBX8vw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bctZIRJmF0Tt66epBoIW8Nv3zbBghWNg0cSJA3lvz58=;
-        b=JIezuTgbHmgmmZDdPiHQhLWB599o0lySt3+4Mw/jiZRYapr1+AOqLCSCdn/xN8z0LE
-         CtOglGbir6BHPvnWlK2rHxuPNKQ1y1NNI2CXyKzBrOGUyazI7lcRGZSTDl3yKDCxTP+D
-         N1K7WtlzpP6gzSfhIb/4NiQ8fwsm6QzhbRMZvyQdB3/HjZKMOmklNtfPBhY7zUsR2D8c
-         +5LkQEp7THpsv8L/FB5+To48F5PDu3LV1s0gQQqg7Ira49V+PSY8ta6/0TZ1YLlVVROF
-         apW8hb9WYFPLiXoMfetTx65a7GhF7Qgqp6aOVy7l2IDNQGKTjYdEJM3fOJXLpHOS5fHq
-         NrkQ==
-X-Gm-Message-State: APjAAAVcRDep81STVW8R66aJQtdP3LQNI68AT2Kvtux3ghvCCY6qaBjw
-        dPTaio81jtga4f+HedN3a7r8kqAld5yhnFayx/cfnw==
-X-Google-Smtp-Source: APXvYqx7dnBZ7AYtOXCbCEB1ql70DdqBWrp5Cp3QwgfTdYFMK1cTaFd7Gg8L91xqsBe3NjLBTDRcue8FC5XAS9tIjrM=
-X-Received: by 2002:aed:3742:: with SMTP id i60mr53528186qtb.376.1563901026650;
- Tue, 23 Jul 2019 09:57:06 -0700 (PDT)
+        Tue, 23 Jul 2019 12:55:54 -0400
+X-Originating-IP: 2.224.242.101
+Received: from uno.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 7A35E40005;
+        Tue, 23 Jul 2019 16:55:49 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, fabrizio.castro@bp.renesas.com
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
+        linux-renesas-soc@vger.kernel.org (open list:DRM DRIVERS FOR RENESAS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm: rcar_lvds: Fix dual link mode operations
+Date:   Tue, 23 Jul 2019 18:57:00 +0200
+Message-Id: <20190723165700.13124-1-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20190722182451.GB24412@kroah.com> <20190722223337.36199-1-ravisadineni@chromium.org>
- <CAJZ5v0ikknRGPg0fhPRB2oLxtC0kD=8DX=6Z9MgtAYTO+YZ3ng@mail.gmail.com>
-In-Reply-To: <CAJZ5v0ikknRGPg0fhPRB2oLxtC0kD=8DX=6Z9MgtAYTO+YZ3ng@mail.gmail.com>
-From:   Ravi Chandra Sadineni <ravisadineni@chromium.org>
-Date:   Tue, 23 Jul 2019 09:56:55 -0700
-Message-ID: <CAEZbON5aC+iYzg58YH59rvfvcUYkjwQyjA9wAJstFEQvUei_-A@mail.gmail.com>
-Subject: Re: [PATCH 0/2] power: Refactor device level sysfs.
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Todd Broch <tbroch@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+The R-Car LVDS encoder units support dual-link operations by splitting
+the pixel output between the primary encoder and the companion one.
 
-https://patchwork.kernel.org/patch/11045069/ seems to create a virtual
-device under wakeup class with the same name as the actual device. I
-don't see a way to reliably map these virtual devices to the actual
-device sysfs node. For example if we have to know if a particular
-input device has triggered a wake event, we have to look for a virtual
-device under /sys/class/wakeup with the same name. I am afraid that
-depending just on the name might be too risky as there can be multiple
-devices under different buses with the same name.  Am I missing
-something?
+In order for the primary encoder to succesfully control the companion's
+operations this should not fail at probe time and register itself its
+associated drm bridge so that the primary one can find it.
 
-Thanks,
-Ravi
+Currently the companion encoder fails at probe time, causing the
+registration of the primary to fail preventing the whole DU unit to be
+registered correctly.
 
-On Tue, Jul 23, 2019 at 12:44 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Tue, Jul 23, 2019 at 12:33 AM Ravi Chandra Sadineni
-> <ravisadineni@chromium.org> wrote:
-> >
-> > wakeup_abort_count and wakeup_count attributes print the
-> > same (wakeup_count) variable. Thus this patchset removes the
-> > duplicate wakeup_abort_count sysfs attribute. This patchset also
-> > exposes event_count as a sysfs attribute.
-> >
-> > Ravi Chandra Sadineni (2):
-> >   power: sysfs: Remove wakeup_abort_count attribute.
-> >   power:sysfs: Expose device wakeup_event_count.
->
-> I don't think you need this at all, because
-> https://patchwork.kernel.org/patch/11045069/ is exposing what you need
-> already.
->
-> Thanks!
+Fixes: fa440d870358 ("drm: rcar-du: lvds: Add support for dual-link mode")
+Reported-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+
+---
+The "Fixes" tag refers to a patch currently part of the
+renesas-drivers-2019-07-09-v5.2 branch of Geert's renesas-drivers tree.
+
+ drivers/gpu/drm/rcar-du/rcar_lvds.c | 31 +++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+index bada7ee98544..8b015ba95895 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
++++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+@@ -767,14 +767,29 @@ static int rcar_lvds_parse_dt(struct rcar_lvds *lvds)
+ 	of_node_put(remote_input);
+ 	of_node_put(remote);
+
+-	/*
+-	 * On D3/E3 the LVDS encoder provides a clock to the DU, which can be
+-	 * used for the DPAD output even when the LVDS output is not connected.
+-	 * Don't fail probe in that case as the DU will need the bridge to
+-	 * control the clock.
+-	 */
+-	if (lvds->info->quirks & RCAR_LVDS_QUIRK_EXT_PLL)
+-		return ret == -ENODEV ? 0 : ret;
++	switch (ret) {
++	case -ENODEV:
++		/*
++		 * On D3/E3 the LVDS encoder provides a clock to the DU, which
++		 * can be used for the DPAD output even when the LVDS output is
++		 * not connected. Don't fail probe in that case as the DU will
++		 * need the bridge to control the clock.
++		 */
++		if (lvds->info->quirks & RCAR_LVDS_QUIRK_EXT_PLL)
++			ret = 0;
++		break;
++	case -ENXIO:
++		/*
++		 * When the LVDS output is used in dual link mode, the
++		 * companion encoder fails at
++		 * 'rcar_lvds_parse_dt_companion()'. Don't fail probe in
++		 * that case as the master encoder will need the companion's
++		 * bridge to control its operations.
++		 */
++		if (lvds->info->quirks & RCAR_LVDS_QUIRK_DUAL_LINK)
++			ret = 0;
++		break;
++	}
+
+ 	return ret;
+ }
+--
+2.22.0
+
