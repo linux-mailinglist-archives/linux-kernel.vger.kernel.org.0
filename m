@@ -2,95 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E07E71484
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 11:01:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BF8C71481
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 11:00:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387789AbfGWJBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 05:01:46 -0400
-Received: from inca-roads.misterjones.org ([213.251.177.50]:59981 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387734AbfGWJBp (ORCPT
+        id S2387723AbfGWJAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 05:00:55 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48808 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727748AbfGWJAz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 05:01:45 -0400
-X-Greylist: delayed 2135 seconds by postgrey-1.27 at vger.kernel.org; Tue, 23 Jul 2019 05:01:45 EDT
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1hpq7Z-0006kD-Aa; Tue, 23 Jul 2019 10:26:05 +0200
-To:     Julien Thierry <julien.thierry@arm.com>
-Subject: Re: [PATCH v2] KVM: arm/arm64: Introduce =?UTF-8?Q?kvm=5Fpmu=5Fvc?=  =?UTF-8?Q?pu=5Finit=28=29=20to=20setup=20PMU=20counter=20idx?=
-X-PHP-Originating-Script: 0:main.inc
+        Tue, 23 Jul 2019 05:00:55 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0209561157; Tue, 23 Jul 2019 09:00:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1563872454;
+        bh=EVKnOWzRkie6voTuz/y+NN9iApwRNseO39HZ9ZaKztA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=iu7/PaC6J/cQuDrieBBS2cua4nRXyV5klWe1RXJRLji2Um8rYBpk99MlHvC49XUDQ
+         7jPng3hAcfOQGDaaMrqDg6t6ML1ZmjKjofeMYdQxyWLtDJmwtHYbehUCdgPKsubiPx
+         pfnFWlk21nrSCFTP8mRgsZ+MfA7OIl05MKdMJ98g=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 49C1A60850;
+        Tue, 23 Jul 2019 09:00:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1563872453;
+        bh=EVKnOWzRkie6voTuz/y+NN9iApwRNseO39HZ9ZaKztA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=f7h8K/NXZds7GQUIs+jKmAA2h8iL4yr4lRdC+V4qjGHGWXw0VvECrsvNDsWId3+G6
+         ulKshuZncQcWC87abYZ9AzrF7r6uHyTrCP5E+ZkCM1FuAGtXOU6+Mzfl/KIwAP9ajN
+         yNFTL6WfS/lGUdL/GuGirdsDVtO2TV9geClo2koE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
+Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 23 Jul 2019 09:26:04 +0100
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     Zenghui Yu <yuzenghui@huawei.com>, <kvmarm@lists.cs.columbia.edu>,
-        <linux-arm-kernel@lists.infradead.org>, <james.morse@arm.com>,
-        <suzuki.poulose@arm.com>, <julien.thierry.kdev@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <wanghaibin.wang@huawei.com>,
-        <andrew.murray@arm.com>
-In-Reply-To: <f3f6f9a9-9735-e253-7b5b-3ccf97619a16@arm.com>
-References: <1563437710-30756-1-git-send-email-yuzenghui@huawei.com>
- <f3f6f9a9-9735-e253-7b5b-3ccf97619a16@arm.com>
-Message-ID: <d5c0d757232935c6446aeaca9afe4416@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: julien.thierry@arm.com, yuzenghui@huawei.com, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org, james.morse@arm.com, suzuki.poulose@arm.com, julien.thierry.kdev@gmail.com, linux-kernel@vger.kernel.org, wanghaibin.wang@huawei.com, andrew.murray@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Date:   Tue, 23 Jul 2019 14:30:53 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Arun Kumar Neelakantam <aneela@codeaurora.org>,
+        Chris Lew <clew@codeaurora.org>
+Subject: Re: [PATCH] remoteproc: qcom: Move glink_ssr notification after stop
+In-Reply-To: <20190716050327.8866-1-bjorn.andersson@linaro.org>
+References: <20190716050327.8866-1-bjorn.andersson@linaro.org>
+Message-ID: <6259ebabc6183efb0045f9f990747d5e@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-07-23 09:17, Julien Thierry wrote:
-> Hi Zenghui,
->
-> On 18/07/2019 09:15, Zenghui Yu wrote:
->> We use "pmc->idx" and the "chained" bitmap to determine if the pmc 
->> is
->> chained, in kvm_pmu_pmc_is_chained().  But idx might be 
->> uninitialized
->> (and random) when we doing this decision, through a 
->> KVM_ARM_VCPU_INIT
->> ioctl -> kvm_pmu_vcpu_reset(). And the test_bit() against this 
->> random
->> idx will potentially hit a KASAN BUG [1].
->>
->> In general, idx is the static property of a PMU counter that is not
->> expected to be modified across resets, as suggested by Julien.  It
->> looks more reasonable if we can setup the PMU counter idx for a vcpu
->> in its creation time. Introduce a new function - kvm_pmu_vcpu_init()
->> for this basic setup. Oh, and the KASAN BUG will get fixed this way.
->>
->> [1] https://www.spinics.net/lists/kvm-arm/msg36700.html
->>
->> Fixes: 80f393a23be6 ("KVM: arm/arm64: Support chained PMU counters")
->> Suggested-by: Andrew Murray <andrew.murray@arm.com>
->> Suggested-by: Julien Thierry <julien.thierry@arm.com>
->> Cc: Marc Zyngier <maz@kernel.org>
->> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
->> ---
->>
->> Changes since v1:
->>  - Introduce kvm_pmu_vcpu_init() in vcpu's creation time, move the
->>    assignment of pmc->idx into it.
->>  - Thus change the subject. The old one is "KVM: arm/arm64: Assign
->>    pmc->idx before kvm_pmu_stop_counter()".
->>
->> Julien, I haven't collected your Acked-by into this version. If 
->> you're
->> still happy with the change, please Ack again. Thanks!
->>
->
-> Thanks for making the change. This looks good to me:
->
-> Acked-by: Julien Thierry <julien.thierry@arm.com>
+Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+Tested-by: Sibi Sankar <sibis@codeaurora.org>
 
-Applied, thanks both.
+On 2019-07-16 10:33, Bjorn Andersson wrote:
+> glink_ssr is used to signal a remote processor "A" about the stopping 
+> of
+> another remote processor "B", so that in the event that remote 
+> processor
+> B is ever booted again the fifos of the glink channel between A and B 
+> is
+> in a known state.
+> 
+> But if remote processor A receives this notification before B is
+> actually stopped the newly reset fifo indices will be interpreted as
+> there being "data" on the channel and either side of the channel will
+> enter a fatal error handler.
+> 
+> Move the glink_ssr notification to the "unprepare" state of the
+> rproc_subdev to avoid this issue.
+> 
+> This has the side effect of us not notifying the dying remote processor
+> itself about its fate, which has been seen to block in certain resource
+> constraint scenarios.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/remoteproc/qcom_common.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_common.c 
+> b/drivers/remoteproc/qcom_common.c
+> index 6a448429f223..60650bcc8c67 100644
+> --- a/drivers/remoteproc/qcom_common.c
+> +++ b/drivers/remoteproc/qcom_common.c
+> @@ -200,7 +200,7 @@ void qcom_unregister_ssr_notifier(struct 
+> notifier_block *nb)
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_unregister_ssr_notifier);
+> 
+> -static void ssr_notify_stop(struct rproc_subdev *subdev, bool crashed)
+> +static void ssr_notify_unprepare(struct rproc_subdev *subdev)
+>  {
+>  	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
+> 
+> @@ -220,7 +220,7 @@ void qcom_add_ssr_subdev(struct rproc *rproc,
+> struct qcom_rproc_ssr *ssr,
+>  			 const char *ssr_name)
+>  {
+>  	ssr->name = ssr_name;
+> -	ssr->subdev.stop = ssr_notify_stop;
+> +	ssr->subdev.unprepare = ssr_notify_unprepare;
+> 
+>  	rproc_add_subdev(rproc, &ssr->subdev);
+>  }
 
-         M.
 -- 
-Jazz is not dead. It just smells funny...
+-- Sibi Sankar --
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
