@@ -2,168 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 469CA719AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 15:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A84C719AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 15:47:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390376AbfGWNrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 09:47:22 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25460 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390366AbfGWNrW (ORCPT
+        id S2390401AbfGWNrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 09:47:51 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36521 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390379AbfGWNrt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 09:47:22 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6NDhfuQ122867
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 09:47:21 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tx25fks1m-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 09:47:20 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 23 Jul 2019 14:47:19 +0100
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 23 Jul 2019 14:47:15 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6NDlFLl51380614
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Jul 2019 13:47:15 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EBF5EB206B;
-        Tue, 23 Jul 2019 13:47:14 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B784DB2067;
-        Tue, 23 Jul 2019 13:47:14 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.189.166])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 23 Jul 2019 13:47:14 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id A223C16C2E3A; Tue, 23 Jul 2019 06:47:17 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 06:47:17 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Byungchul Park <max.byungchul.park@gmail.com>,
-        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-team@lge.com
-Subject: Re: [PATCH] rcu: Make jiffies_till_sched_qs writable
-Reply-To: paulmck@linux.ibm.com
-References: <20190713154257.GE133650@google.com>
- <20190713174111.GG26519@linux.ibm.com>
- <CAEXW_YTcL-nOfJXkChGhvQtqqfSLpAYr327PLu1SmGEEADCevw@mail.gmail.com>
- <20190719003942.GA28226@X58A-UD3R>
- <CAEXW_YQij-N2-NFjUQtsmYxVLtWxcQk_Kb16fGBzzPAZtWg+sg@mail.gmail.com>
- <20190719074329.GY14271@linux.ibm.com>
- <CANrsvRM7ehvqcPtKMV7RyRCiXwe_R_TsLZiNtxBPY_qnSg2LNQ@mail.gmail.com>
- <20190719195728.GF14271@linux.ibm.com>
- <CAEXW_YQADrPRtJW7yJZyROH1_d2yOA7_1HVgm50wxpOC80+=Wg@mail.gmail.com>
- <20190723110521.GA28883@X58A-UD3R>
+        Tue, 23 Jul 2019 09:47:49 -0400
+Received: by mail-pg1-f194.google.com with SMTP id l21so19468709pgm.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 06:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Y4bJNUBVZG75Wm6fTCb90iILIxIQdsm+YFE3cN2CDj8=;
+        b=Zmts+InMHsGjlJGme/8wFfX+TuhCwWTW+otdQ5V8txyciEL0cqRu54oilSH2RbNNAF
+         VWdY0Y/WyGvj48CrXvtBZLJzvdZFqixczAL7t2xx2vgMiD6TpktWsVIczAVKZN0pibRE
+         X3xgb5a1uRr0Khp6dguCzf7wxkuf0OkwWPAOo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Y4bJNUBVZG75Wm6fTCb90iILIxIQdsm+YFE3cN2CDj8=;
+        b=qltKFAG/lqMlo1WdPiOA7cls20PiWP2b/VrixlLzbDffGx7mBCBlomSniFK8aACdaB
+         ePFrZtQs5YuAagiSbBT0BnHjNTsz/ach7fRZNR+Izj1AYakus/NQ370++8NbkXoKldd8
+         r80zLHLNb0jfH5qJkF6O1NyUfDC3r5N5aVGEIi+3gu/SGAFnf5qu9dZqVz19zjUequZi
+         U+MW7Wm9vQe7R2y9A/pGN3WNO6fzQM4dv3mrsWdYXJlCRuqHKKMeq8S6fsIBi6B56+Zc
+         RwsEFzUUI6COqH2cizQBkT9ozKOfmgvIxFautbQOnmDdOe+V+14/b28DP23N0+Lo7hju
+         STcA==
+X-Gm-Message-State: APjAAAX+TG1qUyPLkwbR0zB51paVbsOCLBie/MRg5llsQHBGbSM4Walz
+        hYWRuXYrAqj3LpFUbDBQzMs=
+X-Google-Smtp-Source: APXvYqy1yaJdw72Q0Nn6ojy3Q+rfO8ub0HIQhJmz+v+fs5k97MSDA2l1FqDyB6T38VJefPW//aW01A==
+X-Received: by 2002:a63:20d:: with SMTP id 13mr65441358pgc.253.1563889668469;
+        Tue, 23 Jul 2019 06:47:48 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id v126sm11955926pgb.23.2019.07.23.06.47.47
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 23 Jul 2019 06:47:47 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 09:47:46 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     linux-kernel@vger.kernel.org, vdavydov.dev@gmail.com,
+        Brendan Gregg <bgregg@netflix.com>, kernel-team@android.com,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        carmenjackson@google.com, Christian Hansen <chansen3@cisco.com>,
+        Colin Ian King <colin.king@canonical.com>, dancol@google.com,
+        David Howells <dhowells@redhat.com>, fmayer@google.com,
+        joaodias@google.com, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.ibm.com>, minchan@google.com,
+        minchan@kernel.org, namhyung@google.com, sspatil@google.com,
+        surenb@google.com, Thomas Gleixner <tglx@linutronix.de>,
+        timmurray@google.com, tkjos@google.com,
+        Vlastimil Babka <vbabka@suse.cz>, wvw@google.com
+Subject: Re: [PATCH v1 1/2] mm/page_idle: Add support for per-pid page_idle
+ using virtual indexing
+Message-ID: <20190723134746.GB104199@google.com>
+References: <20190722213205.140845-1-joel@joelfernandes.org>
+ <01568524-ed97-36c9-61f7-e95084658f5b@yandex-team.ru>
+ <8b15dac6-f776-ac9a-8377-ae38f5c9007f@yandex-team.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190723110521.GA28883@X58A-UD3R>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19072313-0060-0000-0000-000003646153
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011481; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000287; SDB=6.01236309; UDB=6.00651599; IPR=6.01017666;
- MB=3.00027852; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-23 13:47:17
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19072313-0061-0000-0000-00004A42B60A
-Message-Id: <20190723134717.GT14271@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-23_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907230137
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8b15dac6-f776-ac9a-8377-ae38f5c9007f@yandex-team.ru>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 08:05:21PM +0900, Byungchul Park wrote:
-> On Fri, Jul 19, 2019 at 04:33:56PM -0400, Joel Fernandes wrote:
-> > On Fri, Jul 19, 2019 at 3:57 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
-> > >
-> > > On Fri, Jul 19, 2019 at 06:57:58PM +0900, Byungchul Park wrote:
-> > > > On Fri, Jul 19, 2019 at 4:43 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
-> > > > >
-> > > > > On Thu, Jul 18, 2019 at 08:52:52PM -0400, Joel Fernandes wrote:
-> > > > > > On Thu, Jul 18, 2019 at 8:40 PM Byungchul Park <byungchul.park@lge.com> wrote:
-> > > > > > [snip]
-> > > > > > > > - There is a bug in the CPU stopper machinery itself preventing it
-> > > > > > > > from scheduling the stopper on Y. Even though Y is not holding up the
-> > > > > > > > grace period.
-> > > > > > >
-> > > > > > > Or any thread on Y is busy with preemption/irq disabled preventing the
-> > > > > > > stopper from being scheduled on Y.
-> > > > > > >
-> > > > > > > Or something is stuck in ttwu() to wake up the stopper on Y due to any
-> > > > > > > scheduler locks such as pi_lock or rq->lock or something.
-> > > > > > >
-> > > > > > > I think what you mentioned can happen easily.
-> > > > > > >
-> > > > > > > Basically we would need information about preemption/irq disabled
-> > > > > > > sections on Y and scheduler's current activity on every cpu at that time.
-> > > > > >
-> > > > > > I think all that's needed is an NMI backtrace on all CPUs. An ARM we
-> > > > > > don't have NMI solutions and only IPI or interrupt based backtrace
-> > > > > > works which should at least catch and the preempt disable and softirq
-> > > > > > disable cases.
-> > > > >
-> > > > > True, though people with systems having hundreds of CPUs might not
-> > > > > thank you for forcing an NMI backtrace on each of them.  Is it possible
-> > > > > to NMI only the ones that are holding up the CPU stopper?
-> > > >
-> > > > What a good idea! I think it's possible!
-> > > >
-> > > > But we need to think about the case NMI doesn't work when the
-> > > > holding-up was caused by IRQ disabled.
-> > > >
-> > > > Though it's just around the corner of weekend, I will keep thinking
-> > > > on it during weekend!
-> > >
-> > > Very good!
+On Tue, Jul 23, 2019 at 01:10:05PM +0300, Konstantin Khlebnikov wrote:
+> On 23.07.2019 11:43, Konstantin Khlebnikov wrote:
+> > On 23.07.2019 0:32, Joel Fernandes (Google) wrote:
+> > > The page_idle tracking feature currently requires looking up the pagemap
+> > > for a process followed by interacting with /sys/kernel/mm/page_idle.
+> > > This is quite cumbersome and can be error-prone too. If between
+> > > accessing the per-PID pagemap and the global page_idle bitmap, if
+> > > something changes with the page then the information is not accurate.
+> > > More over looking up PFN from pagemap in Android devices is not
+> > > supported by unprivileged process and requires SYS_ADMIN and gives 0 for
+> > > the PFN.
+> > > 
+> > > This patch adds support to directly interact with page_idle tracking at
+> > > the PID level by introducing a /proc/<pid>/page_idle file. This
+> > > eliminates the need for userspace to calculate the mapping of the page.
+> > > It follows the exact same semantics as the global
+> > > /sys/kernel/mm/page_idle, however it is easier to use for some usecases
+> > > where looking up PFN is not needed and also does not require SYS_ADMIN.
+> > > It ended up simplifying userspace code, solving the security issue
+> > > mentioned and works quite well. SELinux does not need to be turned off
+> > > since no pagemap look up is needed.
+> > > 
+> > > In Android, we are using this for the heap profiler (heapprofd) which
+> > > profiles and pin points code paths which allocates and leaves memory
+> > > idle for long periods of time.
+> > > 
+> > > Documentation material:
+> > > The idle page tracking API for virtual address indexing using virtual page
+> > > frame numbers (VFN) is located at /proc/<pid>/page_idle. It is a bitmap
+> > > that follows the same semantics as /sys/kernel/mm/page_idle/bitmap
+> > > except that it uses virtual instead of physical frame numbers.
+> > > 
+> > > This idle page tracking API can be simpler to use than physical address
+> > > indexing, since the pagemap for a process does not need to be looked up
+> > > to mark or read a page's idle bit. It is also more accurate than
+> > > physical address indexing since in physical address indexing, address
+> > > space changes can occur between reading the pagemap and reading the
+> > > bitmap. In virtual address indexing, the process's mmap_sem is held for
+> > > the duration of the access.
 > > 
-> > Me too will think more about it ;-) Agreed with point about 100s of
-> > CPUs usecase,
+> > Maybe integrate this into existing interface: /proc/pid/clear_refs and
+> > /proc/pid/pagemap ?
 > > 
-> > Thanks, have a great weekend,
+> > I.e.  echo X > /proc/pid/clear_refs clears reference bits in ptes and
+> > marks pages idle only for pages mapped in this process.
+> > And idle bit in /proc/pid/pagemap tells that page is still idle in this process.
+> > This is faster - we don't need to walk whole rmap for that.
 > 
-> BTW, if there's any long code section with irq/preemption disabled, then
-> the problem would be not only about RCU stall. And we can also use
-> latency tracer or something to detect the bad situation.
-> 
-> So in this case, sending ipi/nmi to the CPUs where the stoppers cannot
-> to be scheduled does not give us additional meaningful information.
-> 
-> I think Paul started to think about this to solve some real problem. I
-> seriously love to help RCU and it's my pleasure to dig deep into kind of
-> RCU stuff, but I've yet to define exactly what problem is. Sorry.
-> 
-> Could you share the real issue? I think you don't have to reproduce it.
-> Just sharing the issue that you got inspired from is enough. Then I
-> might be able to develop 'how' with Joel! :-) It's our pleasure!
+> Moreover, this is so cheap so could be counted and shown in smaps.
+> Unlike to clearing real access bits this does not disrupt memory reclaimer.
+> Killer feature.
 
-It is unfortunately quite intermittent.  I was hoping to find a way
-to make it happen more often.  Part of the underlying problem appears
-to be lock contention, in that reducing contention made it even more
-intermittent.  Which is good in general, but not for exercising the
-CPU-stopper issue.
-
-But perhaps your hardware will make this happen more readily than does
-mine.  The repeat-by is simple, namely run TREE04 on branch "dev" on an
-eight-CPU system.  It appear that the number of CPUs used by the test
-should match the number available on the system that you are running on,
-though perhaps affinity could allow mismatches.
-
-So why not try it and see what happens?
-
-							Thanx, Paul
+I replied to your patch:
+https://lore.kernel.org/lkml/20190723134647.GA104199@google.com/T/#med8992e75c32d9c47f95b119d24a43ded36420bc
 
