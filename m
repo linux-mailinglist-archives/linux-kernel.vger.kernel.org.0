@@ -2,120 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4BA87135F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 09:57:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6995471383
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 10:00:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388619AbfGWH52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 03:57:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35118 "EHLO mail.kernel.org"
+        id S1727076AbfGWIAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 04:00:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388605AbfGWH51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 03:57:27 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726265AbfGWIAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 04:00:08 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2467A2239E;
-        Tue, 23 Jul 2019 07:57:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 927C82239F;
+        Tue, 23 Jul 2019 07:59:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563868646;
-        bh=raesEJUrKUUjIY47oo0d7Am8Mms/YmjXGF8ELt5JU0k=;
+        s=default; t=1563868808;
+        bh=E5hVssuZ6CZ0pvbWaiPrRrdaj4qYQ6lYexAw+U+Hh3Q=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yyalUf2YIUgBilePpnS3sBf6REYxD18aL8zOEZSw0XNEaG7ucE/Q3ipoUm4T3nHA4
-         h4qLkxVTZEjh8PRY+nO8KIIouncngiAOJ5A+XW0K5GBpzwxwyeRXUdU4yyJMU7wWHU
-         wnTpEzTHqjs6fl/nVs+XxIK4QhpblnNaHCznZ+bY=
-Date:   Tue, 23 Jul 2019 09:57:24 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2] driver core: Remove device link creation limitation
-Message-ID: <20190723075724.GB27243@kroah.com>
-References: <2305283.AStDPdUUnE@kreacher>
- <CAJZ5v0h-nWr1vie61U6BzDxns+qmj_3EOFztE_X-CGgtzkz=ZA@mail.gmail.com>
+        b=GMM8HxVuSR3M8pB/0rGd6k6eRPUBVkSqyXXiy61KPH3sCjw8KUaUaIswX9dwgho/t
+         KVfifc7d6BIWadcvqeZLLmgxBcAEqezt1eZmUQAsAGaWulswknuy+7UMslfAzKwf20
+         gGl7Yit5O5oEPN/nrG9RfHCyU2hxnlGw2crJ6f5Q=
+Date:   Tue, 23 Jul 2019 15:59:34 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Daniel Baluta <daniel.baluta@nxp.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        shengjiu.wang@nxp.com, paul.olaru@nxp.com, aisheng.dong@nxp.com,
+        leonard.crestez@nxp.com, anson.huang@nxp.com, peng.fan@nxp.com,
+        Frank.Li@nxp.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        sound-open-firmware@alsa-project.org
+Subject: Re: [PATCH 1/3] clk: imx8: Add DSP related clocks
+Message-ID: <20190723075933.GN15632@dragon>
+References: <20190718151346.3523-1-daniel.baluta@nxp.com>
+ <20190718151346.3523-2-daniel.baluta@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0h-nWr1vie61U6BzDxns+qmj_3EOFztE_X-CGgtzkz=ZA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190718151346.3523-2-daniel.baluta@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 09:34:54AM +0200, Rafael J. Wysocki wrote:
-> Hi Greg,
+On Thu, Jul 18, 2019 at 06:13:44PM +0300, Daniel Baluta wrote:
+> i.MX8QXP contains Hifi4 DSP. There are four clocks
+> associated with DSP:
+>   * dsp_lpcg_core_clk
+>   * dsp_lpcg_ipg_clk
+>   * dsp_lpcg_adb_aclk
+>   * ocram_lpcg_ipg_clk
 > 
-> On Tue, Jul 16, 2019 at 5:21 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> >
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Subject: [PATCH] driver core: Remove device link creation limitation
-> >
-> > If device_link_add() is called for a consumer/supplier pair with an
-> > existing device link between them and the existing link's type is
-> > not in agreement with the flags passed to that function by its
-> > caller, NULL will be returned.  That is seriously inconvenient,
-> > because it forces the callers of device_link_add() to worry about
-> > what others may or may not do even if that is not relevant to them
-> > for any other reasons.
-> >
-> > It turns out, however, that this limitation can be made go away
-> > relatively easily.
-> >
-> > The underlying observation is that if DL_FLAG_STATELESS has been
-> > passed to device_link_add() in flags for the given consumer/supplier
-> > pair at least once, calling either device_link_del() or
-> > device_link_remove() to release the link returned by it should work,
-> > but there are no other requirements associated with that flag.  In
-> > turn, if at least one of the callers of device_link_add() for the
-> > given consumer/supplier pair has not passed DL_FLAG_STATELESS to it
-> > in flags, the driver core should track the status of the link and act
-> > on it as appropriate (ie. the link should be treated as "managed").
-> > This means that DL_FLAG_STATELESS needs to be set for managed device
-> > links and it should be valid to call device_link_del() or
-> > device_link_remove() to drop references to them in certain
-> > sutiations.
-> >
-> > To allow that to happen, introduce a new (internal) device link flag
-> > called DL_FLAG_MANAGED and make device_link_add() set it automatically
-> > whenever DL_FLAG_STATELESS is not passed to it.  Also make it take
-> > additional references to existing device links that were previously
-> > stateless (that is, with DL_FLAG_STATELESS set and DL_FLAG_MANAGED
-> > unset) and will need to be managed going forward and initialize
-> > their status (which has been DL_STATE_NONE so far).
-> >
-> > Accordingly, when a managed device link is dropped automatically
-> > by the driver core, make it clear DL_FLAG_MANAGED, reset the link's
-> > status back to DL_STATE_NONE and drop the reference to it associated
-> > with DL_FLAG_MANAGED instead of just deleting it right away (to
-> > allow it to stay around in case it still needs to be released
-> > explicitly by someone).
-> >
-> > With that, since setting DL_FLAG_STATELESS doesn't mean that the
-> > device link in question is not managed any more, replace all of the
-> > status-tracking checks against DL_FLAG_STATELESS with analogous
-> > checks against DL_FLAG_MANAGED and update the documentation to
-> > reflect these changes.
-> >
-> > While at it, make device_link_add() reject flags that it does not
-> > recognize, including DL_FLAG_MANAGED.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Reviewed-by: Saravana Kannan <saravanak@google.com>
-> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> Do I need to resend this?
-> 
-> I know that posting new things during a merge window is not most
-> convenient, sorry about that.
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-No, it's in my queue, give me a few days to dig out from my huge pending
-patch list, no need to resend it.
+I already picked this one up, so you do not need to include it in the
+series any more.
 
-thanks,
-
-greg k-h
+Shawn
