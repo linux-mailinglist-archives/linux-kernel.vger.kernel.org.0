@@ -2,133 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D192E7195F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 15:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4F9D7195B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 15:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390311AbfGWNgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 09:36:03 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:56042 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbfGWNgC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 09:36:02 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6NDZjpQ018789;
-        Tue, 23 Jul 2019 08:35:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1563888945;
-        bh=6Dck4gO4V5pnVJYCW/w9BCIIyokmJANz2CsTs7Xl2Y0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=umYZMvAKS0FeHtrhOnvVhYaa883PV5QS5KaqSE/finBhJKdSpfmREJxUSllYNZjr0
-         DfdUJA6FaH8VNbuOv67vBN1K3sO/14ERt02jHbutq6VLntshkC4bh7zzOW/nKDTXJ/
-         6J54n3/b/RsXw5B054GW9ld8onhV++nOJR1Zd4IE=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6NDZj9C037519
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 23 Jul 2019 08:35:45 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 23
- Jul 2019 08:35:45 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 23 Jul 2019 08:35:45 -0500
-Received: from [172.24.190.117] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6NDZgYw073346;
-        Tue, 23 Jul 2019 08:35:43 -0500
-Subject: Re: [PATCH 3/9] dt-bindings: interrupt-controller: arm, gic-v3:
- Describe ESPI range support
-To:     Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190723104437.154403-1-maz@kernel.org>
- <20190723104437.154403-4-maz@kernel.org>
- <04e80def-c8e3-a403-036e-2a64db935ed4@ti.com>
- <e67ff715-9625-6aec-5e1f-28f7c9df66f6@kernel.org>
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-Message-ID: <2c331e5a-d47f-ceac-1c17-412816ff7369@ti.com>
-Date:   Tue, 23 Jul 2019 19:05:01 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1732976AbfGWNfp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 09:35:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51678 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725827AbfGWNfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 09:35:44 -0400
+Received: from localhost (unknown [193.47.165.251])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDAD222543;
+        Tue, 23 Jul 2019 13:35:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563888943;
+        bh=OO8nJomSEO2D++ABdtc/+QNB5Q/xBy1hdo/4xmkUvD4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YFGNdhTnVi9OKRQLmpNipDJlG933tuuZwTDDwKTK35bjSW4mvlHyhaj7g9/XYn1gy
+         N2C/W66/LLvWcPB4fXxCfA1V7xj5sJYGvhWUGgVRTm7I3eu+jPGH2YL7QBjmLKfWag
+         RM1jQ2I34WRSOuuRhTrecSKgmTYuuaYY9kHZ3iN4=
+Date:   Tue, 23 Jul 2019 16:35:40 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     YueHaibing <yuehaibing@huawei.com>, oulijun@huawei.com,
+        xavier.huwei@huawei.com, dledford@redhat.com,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH] RDMA/hns: Fix build error for hip08
+Message-ID: <20190723133540.GM5125@mtr-leonro.mtl.com>
+References: <20190723024908.11876-1-yuehaibing@huawei.com>
+ <20190723074339.GJ5125@mtr-leonro.mtl.com>
+ <20190723123402.GA15357@ziepe.ca>
 MIME-Version: 1.0
-In-Reply-To: <e67ff715-9625-6aec-5e1f-28f7c9df66f6@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190723123402.GA15357@ziepe.ca>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jul 23, 2019 at 09:34:02AM -0300, Jason Gunthorpe wrote:
+> On Tue, Jul 23, 2019 at 10:43:39AM +0300, Leon Romanovsky wrote:
+> > On Tue, Jul 23, 2019 at 10:49:08AM +0800, YueHaibing wrote:
+> > > If INFINIBAND_HNS_HIP08 is selected and HNS3 is m,
+> > > but INFINIBAND_HNS is y, building fails:
+> > >
+> > > drivers/infiniband/hw/hns/hns_roce_hw_v2.o: In function `hns_roce_hw_v2_exit':
+> > > hns_roce_hw_v2.c:(.exit.text+0xd): undefined reference to `hnae3_unregister_client'
+> > > drivers/infiniband/hw/hns/hns_roce_hw_v2.o: In function `hns_roce_hw_v2_init':
+> > > hns_roce_hw_v2.c:(.init.text+0xd): undefined reference to `hnae3_register_client'
+> >
+> > It means that you have a problem with header files of your hns3.
+> >
+> > >
+> > > Reported-by: Hulk Robot <hulkci@huawei.com>
+> > > Fixes: dd74282df573 ("RDMA/hns: Initialize the PCI device for hip08 RoCE")
+> > > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > >  drivers/infiniband/hw/hns/Kconfig | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/infiniband/hw/hns/Kconfig b/drivers/infiniband/hw/hns/Kconfig
+> > > index b59da5d..4371c80 100644
+> > > +++ b/drivers/infiniband/hw/hns/Kconfig
+> > > @@ -23,7 +23,8 @@ config INFINIBAND_HNS_HIP06
+> > >
+> > >  config INFINIBAND_HNS_HIP08
+> > >  	bool "Hisilicon Hip08 Family RoCE support"
+> > > -	depends on INFINIBAND_HNS && PCI && HNS3
+> > > +	depends on INFINIBAND_HNS && (INFINIBAND_HNS = HNS3)
+> >
+> > This is wrong.
+>
+> It is tricky. It is asserting that the IB side is built as a module if
+> the ethernet side is a module..
+>
+> It is kind of a weird pattern as the module config is INFINIBAND_HNS
+> and these others are just bool opens what to include, but I think it
+> is OK..
 
+select ???
 
-On 23/07/19 6:45 PM, Marc Zyngier wrote:
-> On 23/07/2019 13:59, Lokesh Vutla wrote:
->>
->>
->> On 23/07/19 4:14 PM, Marc Zyngier wrote:
->>> GICv3.1 introduces support for new interrupt ranges, one of them being
->>> the Extended SPI range (ESPI). The DT binding is extended to deal with
->>> it as a new interrupt class.
->>>
->>> Signed-off-by: Marc Zyngier <maz@kernel.org>
->>> ---
->>>  .../devicetree/bindings/interrupt-controller/arm,gic-v3.yaml | 5 +++--
->>>  1 file changed, 3 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
->>> index c34df35a25fc..98a3ecda8e07 100644
->>> --- a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
->>> +++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
->>> @@ -44,11 +44,12 @@ properties:
->>>        be at least 4.
->>>  
->>>        The 1st cell is the interrupt type; 0 for SPI interrupts, 1 for PPI
->>> -      interrupts. Other values are reserved for future use.
->>> +      interrupts, 2 for interrupts in the Extended SPI range. Other values
->>> +      are reserved for future use.
->>
->> Any reason why hardware did not consider extending SPIs from 1020:2043? This way
->> only EPPI would have been introduced. Just a thought.
-> 
-> First, 1020-1023 is the special INTID range. You can't have anything
-> else there.
-> 
-> Then, making the range contiguous could imply that the range is also
-> contiguous in the register space, which isn't possible (note that the
-> EPPI range does it the other way around -- it is discontinuous in the
-> INTID space, and yet continuous in the register space).
-> 
-> Finally, the decision to push the numbering out towards the LPI range
-> allows the ESPI space to be grown easily up to 4k.
-
-okay, got it.
-
-> 
-> But frankly, none of that really matters. They are just numbers.
-> 
->> Either ways, just to be consistent with hardware numbering can ESPI range be 3
->> and EPPI range be 2?
-> 
-> Well, the way I see it is that it is more logical for the binding
-> itself. We already have 0 for SPIs and 1 for PPIs, despite PPIs being
-> before SPIs in the INTID space.
-
-Agreed. Patch looks good to me. FWIW:
-
-Reviewed-by: Lokesh Vutla <lokeshvutla@ti.com>
-
-Thanks and regards,
-Lokesh
-
-> 
-> Thanks,
-> 
-> 	M.
-> 
+>
+> Jason
