@@ -2,59 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A8C37176C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 13:49:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6621C71771
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 13:50:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387591AbfGWLtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 07:49:41 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37410 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbfGWLtl (ORCPT
+        id S2387697AbfGWLt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 07:49:58 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40597 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729103AbfGWLt6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 07:49:41 -0400
-Received: by mail-pg1-f196.google.com with SMTP id i70so8574510pgd.4;
-        Tue, 23 Jul 2019 04:49:40 -0700 (PDT)
+        Tue, 23 Jul 2019 07:49:58 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w10so19319566pgj.7;
+        Tue, 23 Jul 2019 04:49:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=syzUAD4b6NAbqJrzy/Iszf3QeWwTBpf8xpKc8pmUJvM=;
-        b=gAkjQjbGsxZAVFFI07LFZTvvr3LOWst12OhUKeU/tIiwO5vTBb6nG13uVp3icDjNxV
-         tqhsAp/vTDOD4ooePcT7aDlNSFVr/3czsHpZdgvsUek8Oj4VtIRiN01Hk2ZWQ5Hi7jcw
-         kwab/CHaO6tBrWPRaA7jc1/GbPCm0B+tI2/f0FiNTYfp7JuKj42c8KR43sW/ekuBB8nJ
-         kX45uRn4Lb9z1dUvQYPab/w1haGvEs3+kVMyM3iDc86eTEa9wdxEpr34SpURr+2LFHgJ
-         yHapWTDR54LA7P/dIrsSdAMZEk1OCSqBOAdGw/dxTpy+egedR3sURzzFRqOFzXAH07zA
-         pN9g==
+        bh=DGvbd2q6eGtnWqAZsNzO8Yn4NZ3NS3NJ9Bz/BH58Y+c=;
+        b=YQXvudmhXOHyhL2x/1WiQQqxEMf+Cr9awQOk0uSKa0PW3zkpfkEvG+ukhVkjCv7u6S
+         PG15yQbkRc97wV1/bJwd8xfn9s5dGb25jWrX8Qci3QVQJkWE1T0UtR/HWKk6JHzkt18z
+         gDbmxDaPCSuqzAhpT67rYjNetdTR0QL4itRE1Dx8iSW+GL5i89gIEzaqdjH0XQY38aFB
+         w2cEmQyQSHOo20dyVuoVNO7UDs3LfHFs/eshwn7a3Hrtj14KyblIVMlf9kcFAMNxRdLc
+         We+Pm1wokR3Md1bg7Gk2IZJ2Pe7jkhdfhhY5WUssXvc43deigQ1zcszBT9SXbg779A3g
+         QTJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=syzUAD4b6NAbqJrzy/Iszf3QeWwTBpf8xpKc8pmUJvM=;
-        b=bI02K5gdsF0B8HMTC4Y0VxRVZBSwncUCUDgL+XiN5FaIa6b5cQxIqB0Q2rKQE6tvMa
-         jFR+4s0bQqf0wj2fC6oalcLhDIl+wm++Bg1jgP35w61nSq5XPuj7uO+UpFszPXPohsKY
-         2shTxuN0oZn5mq2pqNLCMXY6bpR+qYR1BbLv49/pvrm8Cq3qF9pQvgWPjuss7R03H8Br
-         95wjj8ql6c2wgG9IjpbnYxCVoMFB7j5rN1TanjUjNLqjBlxFpM2xHkGAPPwQ+PAuCf3S
-         oXqds3d2rfc2Daeg/udlBHSUgtb1VRQwhW0v101T4O5lL1ZrmG2s/1trK8kyDzyIByOl
-         GMKA==
-X-Gm-Message-State: APjAAAVC/9Vkb9JLQZ1iadC5XmLhOX763+ba4WQYpY3vfDrmJtPz/C/H
-        BkYRZWVYqPLtRWikKGsUMsE=
-X-Google-Smtp-Source: APXvYqwH1P575+7W1z01EgvvIi1DBxfc38jLsMjUnO/4ANwxA6kLic4BllPlqHVSUHTl/k+cyyVwbw==
-X-Received: by 2002:a63:f959:: with SMTP id q25mr75867179pgk.357.1563882580349;
-        Tue, 23 Jul 2019 04:49:40 -0700 (PDT)
+        bh=DGvbd2q6eGtnWqAZsNzO8Yn4NZ3NS3NJ9Bz/BH58Y+c=;
+        b=lkKMAf571eEa8rdXFzZto2q/9+PJGgVoyZtNom5FhbACt/QNK8/2Z8UpSrU1i1GzOo
+         6kUaRwbUn4fffZHTUu5NJYfvoQQWBTeTjDCmaqN7WE4rpli8oCbEAulgf/LidzPplHJ/
+         25+lHT9NuphPwh62JaaSH2OKsw68dJErEMEpUanr9lm7my2XH82BYr3CzcA6sLOhG3VW
+         frjg9Ay0CMiFfz8O/vWhRUtojCzaXvyI4qo086eLdk8xvEShby/cr3KlJpRHobCdZnnv
+         BXlYNe59NPkm6+CwDIhYhBytDbxX7hewaqFGapVdUTTmNhNLvuhVSupkTALfpug3doXW
+         lbYw==
+X-Gm-Message-State: APjAAAXc0C/oAIZIQ2aqed+N5vgJ6TRtTpdUotv3STTjeHRhXFv70180
+        f0xv5KZtjdG6AaCiIH8PpIU=
+X-Google-Smtp-Source: APXvYqz+ywXLdq7r79WSZpl2EnS/xxpoiuDtZ47hComJ7Gc+pjlazHcIOeIvSdu2h1TWB6LLmdsoBg==
+X-Received: by 2002:a17:90a:26e4:: with SMTP id m91mr82196367pje.93.1563882597619;
+        Tue, 23 Jul 2019 04:49:57 -0700 (PDT)
 Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id k186sm22464204pga.68.2019.07.23.04.49.37
+        by smtp.gmail.com with ESMTPSA id s5sm16985795pfm.97.2019.07.23.04.49.55
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 04:49:39 -0700 (PDT)
+        Tue, 23 Jul 2019 04:49:57 -0700 (PDT)
 From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Christian Benvenuti <benve@cisco.com>,
-        Nelson Escobar <neescoba@cisco.com>,
-        Parvi Kaustubhi <pkaustub@cisco.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] IB/usnic: Use dev_get_drvdata
-Date:   Tue, 23 Jul 2019 19:49:28 +0800
-Message-Id: <20190723114928.18424-1-hslester96@gmail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH] ide: Use dev_get_drvdata where possible
+Date:   Tue, 23 Jul 2019 19:49:52 +0800
+Message-Id: <20190723114952.18483-1-hslester96@gmail.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -69,22 +66,38 @@ use dev_get_drvdata to make code simpler.
 
 Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 ---
- drivers/infiniband/hw/usnic/usnic_ib_verbs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ide/siimage.c   | 3 +--
+ drivers/ide/via82cxxx.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/infiniband/hw/usnic/usnic_ib_verbs.c b/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
-index eeb07b245ef9..a354c7c86547 100644
---- a/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
-+++ b/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
-@@ -194,7 +194,7 @@ find_free_vf_and_create_qp_grp(struct usnic_ib_dev *us_ibdev,
- 			return ERR_CAST(dev_list);
- 		for (i = 0; dev_list[i]; i++) {
- 			dev = dev_list[i];
--			vf = pci_get_drvdata(to_pci_dev(dev));
-+			vf = dev_get_drvdata(dev);
- 			spin_lock(&vf->lock);
- 			vnic = vf->vnic;
- 			if (!usnic_vnic_check_room(vnic, res_spec)) {
+diff --git a/drivers/ide/siimage.c b/drivers/ide/siimage.c
+index 57eea5a9047f..c4b20f350b84 100644
+--- a/drivers/ide/siimage.c
++++ b/drivers/ide/siimage.c
+@@ -648,8 +648,7 @@ static void sil_quirkproc(ide_drive_t *drive)
+ 
+ static void init_iops_siimage(ide_hwif_t *hwif)
+ {
+-	struct pci_dev *dev = to_pci_dev(hwif->dev);
+-	struct ide_host *host = pci_get_drvdata(dev);
++	struct ide_host *host = dev_get_drvdata(hwif->dev);
+ 
+ 	hwif->hwif_data = NULL;
+ 
+diff --git a/drivers/ide/via82cxxx.c b/drivers/ide/via82cxxx.c
+index 977cb00398b0..63a3aca506fc 100644
+--- a/drivers/ide/via82cxxx.c
++++ b/drivers/ide/via82cxxx.c
+@@ -175,8 +175,7 @@ static void via_set_speed(ide_hwif_t *hwif, u8 dn, struct ide_timing *timing)
+ static void via_set_drive(ide_hwif_t *hwif, ide_drive_t *drive)
+ {
+ 	ide_drive_t *peer = ide_get_pair_dev(drive);
+-	struct pci_dev *dev = to_pci_dev(hwif->dev);
+-	struct ide_host *host = pci_get_drvdata(dev);
++	struct ide_host *host = dev_get_drvdata(hwif->dev);
+ 	struct via82cxxx_dev *vdev = host->host_priv;
+ 	struct ide_timing t, p;
+ 	unsigned int T, UT;
 -- 
 2.20.1
 
