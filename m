@@ -2,163 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69EF671857
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 14:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 333AD7185A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 14:39:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387821AbfGWMgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 08:36:02 -0400
-Received: from sonic312-25.consmr.mail.ir2.yahoo.com ([77.238.178.96]:37008
-        "EHLO sonic312-25.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728845AbfGWMgB (ORCPT
+        id S1731264AbfGWMjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 08:39:10 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:33766 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbfGWMjK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 08:36:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1563885358; bh=KjKGiq/tr9NN0mgK6YCZSOGLZC65Q3KkqnZKDVp3POs=; h=Date:From:Reply-To:Subject:From:Subject; b=t0Rp2zQPqhHB1NhMVOHynT8/eq93TL6n3Ab/lPzQhb7JOwl9gqGEVs9tsUptVDir7UK4ayRIfX7F6Ycs5pjgZpPKGPB8OqMn5yestBVovLLzJJm5u4QQ65sJZsh34bRCzkX6OSXio9rj2l2Y/VVoNHPwr4+kOkeuhjz+SCmiiNGucniVjuQFqggejsTOmXHyd/HBXwcLgPWU99c6DFIgfWBVpTpB6AFdUrrM4ZHtCSyozNyx0qctSOZERdktn3pcCaT34aJac83jkYa7jic6c+eVG28BEj+BUFrEM4mYVfTF5X0XVGTKYJxqb0Ms0fKrKjfgWl1C3n8CbUODF4BoQw==
-X-YMail-OSG: x_P.FhoVM1k7mIJVGNxURCrvax3d0gCm82yDiGglSDZztWh1oHR4_g7e5YX6Qbh
- LxHFD6pcgTa1jk7ETl20tBwoZYs2DmdP1hkJJqZ.qT4xXFTKx5OIYzTniNqPnoh_6RXFrK7HguMs
- _bxCO78iqqN7IeUNijI03zWBcPKE3i99_OfbB2la6dLuqVnp_sKj_SZDm5CUpMdRpmM0AlHdC64Y
- 4YLhaPnUDfwQ708iC6ZdJ5hvgp0jaEyIrcDku90bcYhl.fkKeDEe8fJoICburERTM_tWOo.a6Ro5
- 1KEmoNaCyFttAc801xmicG9OS1J3S7guU_PG1cZRRtFYN.XiYcKex_z81_5k4_7mPvA.aLmMh6gK
- eRicWPa.CV4ZQDf._AT3ct52QUrKF8YTILsDB1Mw3NotOTyLxxAncrZ1_xtNIYdIIBNEd4gNPzG2
- ugZpZTFBtSnmwWMIuuktlwf5Rep9z_OPJEWcrJ9h.yw8tGmxFXPMUUdZfXqo0dEsXezfkSbf9xkF
- y1V__AJ1QG2q881WHGoj1jQDnis9p9Pq_ZuWCLHSl7B9E67Ub3RSy0bLS9YEtZAjVvMAh91YRmhP
- ieUs7tlQHY8UTtDkt401nSUMpY0iDfvTGoTTHirpWE3zAVwu3K48TUjqRp2p7dw5GgG3LuWn8VCi
- QlH1uufwM42BFfoeoa6_4kjHevESgoAWW.JhmT3uowXG91L89OsAJ0eypjcZZJ2gaOqrX6_hqtNH
- ..lkiKwxyRho_T6EK8sQMznIehKV.neSiGiKHoWjQhFY5XU5ZNao0PNR6afdjqsPmMzH0Gl2eg7s
- MQfM6GxXP_XJPDtZRbERe8CpJirevtKjwsKh1KiUJpLXVZYnFKWT4SEIUWpmpV3g3rBpTxE3IdKh
- 0Tw1yf0zWzFw0exVwvD0b.wvo3J_QgN4__dDI0znBJZTwpMNDALjHn7qc70KFNy0I5.464NrzPC6
- dvSepYmK4QuRxohj.qIQGd3mSDWW75PIgcvYhR5IYs.ij5kVYposbMoVxF__zqOt_43LxM8X7gQD
- KOILBLjWzJ69KjXLDXb99xOMtM7AhXrrwvDoe7hH1mWAuwsbKEbgJfZkaRyiu0fhJdBrCxqvxOQD
- 5Kj1l87Z3d0fBbORFAtDEmvFcRAedHDgpwuTt5EXwk8.O9udIgY3NXHTftDko6vLIfMWcgSEUOtV
- sZyeYhOvhgTiDjL6anaK35mnoAEccAh.p8IFTsQzMCGm638vwVvnMpsAbzV56PyQCguM9BodjkfA
- -
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ir2.yahoo.com with HTTP; Tue, 23 Jul 2019 12:35:58 +0000
-Date:   Tue, 23 Jul 2019 12:35:55 +0000 (UTC)
-From:   Abdoul Moussa <mabdoul865@gmail.com>
-Reply-To: mabdoul865@gmail.com
-Message-ID: <546671560.7622052.1563885355185@mail.yahoo.com>
-Subject: HELLO! PLEASE TRY AND RESPOND SOONEST
+        Tue, 23 Jul 2019 08:39:10 -0400
+Received: by mail-vs1-f67.google.com with SMTP id m8so28746377vsj.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 05:39:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hDYKhmxn2J0UWXf4pkGZBo1Wis9vp9LCh83FPTIg9xw=;
+        b=Gm1n02YyhumxOu44VutgphyUY0n/RR1S8owJG9yQ0GmeHh7N9cJSFQ631OOBk1Qc7c
+         gI5UOhSj6Qn99wHnZjWwGAJ7+v5vBzFa+7b738mylE8LVLvIp6j6DvUdB7qfwXHoX3/x
+         IK/A1eQGXq02wD0hFBumhKtp+dRsnlIqkHxAONzI3tXzWG7rR658NMbUO0Y8dcnxBmG6
+         LWCNr1CiSNjBwA5Pgg302OWmh+0P9rEMDsuJ3vwtmCTa8D6+ljOm4xQ6W69gmCcysvXM
+         4/CjFoobaIgpg03OcQVPzJkymyoZHaiFmXGSHUCM3O+R/G5qqxGg7kjMeoeAznl3JItE
+         BnFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hDYKhmxn2J0UWXf4pkGZBo1Wis9vp9LCh83FPTIg9xw=;
+        b=c5omqicn4Rj5Wk9ekVtLPUiNX/+yr7Yvs/miPbA9LKo5VJO6mAGpXIjjilV0j8VGWe
+         0ivVywNssZCOopxC9rgxQ4CNTNrlda4d1+ASl6jLxUv95P3ec+3sJ/hu/yqeWAqr/jbl
+         q0MJTGKStJX7TY3dd6+6/v36BU/128V279gnskRBL3OnpBQqv5lsVRsbPWStjJxh+oNL
+         TzEQaga1VBp7a24L3gw/bZiIvV8OOaOfgyI6IfvtFbiZgY8mpLOBTA0Gzipl/by4K8hi
+         lPXTBEt+tACYkKsE+Mjf3gZeeTReKxkvt41zJQddorVG8y3iZBdUJ7xN36lkDTiWzm5O
+         oPvA==
+X-Gm-Message-State: APjAAAVxZ1wNKyP1ZCd0fhpecDwDM7ZuhLZCndTALgHipYnVNzowc/Ef
+        MISTyE4NjOL/L1ZAjPfXXXdn7bdIMnhV3l70aFymKA==
+X-Google-Smtp-Source: APXvYqzgFinaVXeLa7jK9PF7ADRfyuxYnSzPolOg4LPHWfB39Tpvbn78W8VKGgqIErHegad/uytElZfEtUvmfX09z38=
+X-Received: by 2002:a67:e454:: with SMTP id n20mr48233154vsm.34.1563885549183;
+ Tue, 23 Jul 2019 05:39:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-To:     unlisted-recipients:; (no To-header on input)
+References: <89c3ef495c367d58ca3abe99a1f82c48f8c08705.1563274904.git.baolin.wang@linaro.org>
+ <CAPDyKFq1y6xVfA=b1ybWvA1+e9h9aSteHAHjBbXvXGVJx95FQA@mail.gmail.com> <CAMz4kuKraOb_o0LFWnqkS7m0Xd3QGrw1P+md0YBNbbbp1967OA@mail.gmail.com>
+In-Reply-To: <CAMz4kuKraOb_o0LFWnqkS7m0Xd3QGrw1P+md0YBNbbbp1967OA@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 23 Jul 2019 14:38:32 +0200
+Message-ID: <CAPDyKFpy5JeGZ2w1KJN0ECB6jPG=UTZXbPRjMQQs8+NdK4rxuQ@mail.gmail.com>
+Subject: Re: [PATCH v4] mmc: host: sdhci-sprd: Fix the incorrect soft reset
+ operation when runtime resuming
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My Dear Friend,
+On Tue, 23 Jul 2019 at 05:05, Baolin Wang <baolin.wang@linaro.org> wrote:
+>
+> Hi Ulf,
+>
+> On Mon, 22 Jul 2019 at 19:54, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >
+> > On Wed, 17 Jul 2019 at 04:29, Baolin Wang <baolin.wang@linaro.org> wrote:
+> > >
+> > > In sdhci_runtime_resume_host() function, we will always do software reset
+> > > for all, which will cause Spreadtrum host controller work abnormally after
+> > > resuming.
+> >
+> > What does "software reset for all" means?
+>
+> The SD host controller specification defines 3 types software reset:
+> software reset for data line, software reset for command line and
+> software reset for all.
+> Software reset for all means this reset affects the entire Host
+> controller except for the card detection circuit.
 
-Before I introduce myself, I wish to inform you that this letter is not a h=
-oax mail and I urge you to treat it=20
+Thanks for clarifying, please update the changelog accordingly.
 
-serious. This letter must come to you as a big surprise, but I believe it i=
-s only a day that people meet and=20
+>
+> >
+> > >
+> > > Thus for Spreadtrum platform that will not power down the SD/eMMC card during
+> > > runtime suspend, we should not do software reset for all.
+> >
+> > Normally, sdhci hosts that enters runtime suspend doesn't power off
+> > the card (there are some exceptions like PCI variants).
+>
+> Yes, same as our controller.
+>
+> >
+> > So, what's so special here and how does the reset come into play? I
+> > don't see sdhci doing a reset in sdhci_runtime_suspend|resume_host()
+> > and nor doesn the callback from the sdhci-sprd.c variant doing it.
+>
+> In sdhci_runtime_resume_host(), it will issue sdhci_init(host, 0) to
+> issue software reset for all.
 
-become great friends and business partners. Please I want you to read this =
-letter very carefully and I must=20
+Aha, I didn't read the code carefully enough. Apologize for the noise.
 
-apologize for barging this message into your mailbox without any formal int=
-roduction due to the urgency and=20
+>
+> >
+> > > To fix this
+> > > issue, adding a specific reset operation that adds one condition to validate
+> > > the power mode to decide if we can do software reset for all or just reset
+> > > command and data lines.
+> > >
+> > > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > > ---
+> > > Changess from v3:
+> > >  - Use ios.power_mode to validate if the card is power down or not.
+> > >
+> > > Changes from v2:
+> > >  - Simplify the sdhci_sprd_reset() by issuing sdhci_reset().
+> > >
+> > > Changes from v1:
+> > >  - Add a specific reset operation instead of changing the core to avoid
+> > >  affecting other hardware.
+> > > ---
+> > >  drivers/mmc/host/sdhci-sprd.c |   19 ++++++++++++++++++-
+> > >  1 file changed, 18 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
+> > > index 603a5d9..94f9726 100644
+> > > --- a/drivers/mmc/host/sdhci-sprd.c
+> > > +++ b/drivers/mmc/host/sdhci-sprd.c
+> > > @@ -373,6 +373,23 @@ static unsigned int sdhci_sprd_get_max_timeout_count(struct sdhci_host *host)
+> > >         return 1 << 31;
+> > >  }
+> > >
+> > > +static void sdhci_sprd_reset(struct sdhci_host *host, u8 mask)
+> > > +{
+> > > +       struct mmc_host *mmc = host->mmc;
+> > > +
+> > > +       /*
+> > > +        * When try to reset controller after runtime suspend, we should not
+> > > +        * reset for all if the SD/eMMC card is not power down, just reset
+> > > +        * command and data lines instead. Otherwise will meet some strange
+> > > +        * behaviors for Spreadtrum host controller.
+> > > +        */
+> > > +       if (host->runtime_suspended && (mask & SDHCI_RESET_ALL) &&
+> > > +           mmc->ios.power_mode == MMC_POWER_ON)
+> > > +               mask = SDHCI_RESET_CMD | SDHCI_RESET_DATA;
+> >
+> > Can sdhci_sprd_reset() be called when the host is runtime suspended?
+>
+> When host tries to runtime resume in sdhci_runtime_resume_host(), it
+> will call reset operation to do software reset.
 
-confidentiality of this business and I know that this message will come to =
-you as a surprise. Please this is=20
+Right, I see that now, thanks for clarifying.
 
-not a joke and I will not like you to joke with it ok, with due respect to =
-your person and much sincerity of=20
+However, there are still some weird things going on in
+sdhci_runtime_resume_host(). Like why is host->ops->enable_dma()
+called first, directly from sdhci_runtime_resume_host(), then again in
+sdhci_do_reset(), after host->ops->reset() has been called. Looks like
+the first call to ->enable_dma() doesn't make sense?
 
-purpose, I make this contact with you as I believe that you can be of great=
- assistance to me. My name is=20
+>
+> > That sounds like a bug to me, no?
+>
+> Since our controller will meet some strange behaviors if we do
+> software reset for all in sdhci_runtime_resume_host(), and try to
+> avoid changing the core logic of sdhci_runtime_resume_host() used by
+> other hardware controllers, thus I introduced a specific reset ops and
+> added some condition to make sure we just do software reset command
+> and data lines from runtime suspend state.
 
-Mr.Abdoul Moussa, from Burkina Faso, West Africa. I work in United Bank for=
- Africa (UBA) as telex manager,=20
+I understand, but perhaps it would become more clear if
+sdhci_runtime_resume_host() is re-factored a bit. Maybe the caller can
+give it some new parameter to let it decide if a SDHCI_RESET_ALL shall
+be done or not.
 
-please see this as a confidential message and do not reveal it to another p=
-erson and let me know whether you=20
+>
+> >
+> > > +
+> > > +       sdhci_reset(host, mask);
+> > > +}
+> > > +
+> > >  static struct sdhci_ops sdhci_sprd_ops = {
+> > >         .read_l = sdhci_sprd_readl,
+> > >         .write_l = sdhci_sprd_writel,
+> > > @@ -381,7 +398,7 @@ static unsigned int sdhci_sprd_get_max_timeout_count(struct sdhci_host *host)
+> > >         .get_max_clock = sdhci_sprd_get_max_clock,
+> > >         .get_min_clock = sdhci_sprd_get_min_clock,
+> > >         .set_bus_width = sdhci_set_bus_width,
+> > > -       .reset = sdhci_reset,
+> > > +       .reset = sdhci_sprd_reset,
+> > >         .set_uhs_signaling = sdhci_sprd_set_uhs_signaling,
+> > >         .hw_reset = sdhci_sprd_hw_reset,
+> > >         .get_max_timeout_count = sdhci_sprd_get_max_timeout_count,
+> > > --
+> > > 1.7.9.5
+> > >
 
-can be of assistance regarding my proposal below because it is top secret.
-
-I am about to retire from active Banking service to start a new life but I =
-am sceptical to reveal this=20
-
-particular secret to a stranger. You must assure me that everything will be=
- handled confidentially because we=20
-
-are not going to suffer again in life. It has been 10 years now that most o=
-f the greedy African Politicians=20
-
-used our bank to launder money overseas through the help of their Political=
- advisers. Most of the funds which=20
-
-they transferred out of the shores of Africa were gold and oil money that w=
-as supposed to have been used to=20
-
-develop the continent. Their Political advisers always inflated the amounts=
- before transferring to foreign=20
-
-accounts, so I also used the opportunity to divert part of the funds hence =
-I am aware that there is no official=20
-
-trace of how much was transferred as all the accounts used for such transfe=
-rs were being closed after transfer.=20
-
-I acted as the Bank Officer to most of the politicians and when I discovere=
-d that they were using me to succeed=20
-
-in their greedy act; I also cleaned some of their banking records from the =
-Bank files and no one cared to ask=20
-
-me because the money was too much for them to control. They laundered over =
-$5billion Dollars during the=20
-
-process.
-
-Before I send this message to you, I have already diverted ($10.5million Do=
-llars) to an escrow account=20
-
-belonging to no one in the bank. The bank is anxious now to know who the be=
-neficiary to the funds is because=20
-
-they have made a lot of profits with the funds. It is more than eight years=
- now and most of the politicians are=20
-
-no longer using our bank to transfer funds overseas. The ($10.5million Doll=
-ars) has been laying waste in our=20
-
-bank and I don=E2=80=99t want to retire from the bank without transferring =
-the funds to a foreign account to enable me=20
-
-to share the proceeds with the receiver (a foreigner). The money will be sh=
-ared 60% for me and 40% for you.=20
-
-There is no one coming to ask you about the funds because I secured everyth=
-ing. I only want you to assist me by=20
-
-providing a reliable bank account where the funds can be transferred.
-
-You are not to face any difficulties or legal implications as I am going to=
- handle the transfer personally. If=20
-
-you are capable of receiving the funds, do let me know immediately to enabl=
-e me to give you detailed=20
-
-information on what to do. For me, I have not stolen the money from anyone =
-because the other people that took=20
-
-the whole money did not face any problems. This is my chance to grab my own=
- life opportunity but you must keep=20
-
-the details of the funds secret to avoid any leakages as no one in the bank=
- knows about my plans. Please get=20
-
-back to me if you are interested and capable to handle this project, I shal=
-l intimate you on what to do when I=20
-
-hear from your confirmation and acceptance. If you are capable of being my =
-trusted associate, do declare your=20
-
-consent to me I am looking forward to hearing from you immediately for furt=
-her information. Make Sure You Reply=20
-
-To My private email: mabdoul865@gmail.com=20
-
-Thanks with my best regards.
+Kind regards
+Uffe
