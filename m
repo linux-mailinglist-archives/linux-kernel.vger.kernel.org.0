@@ -2,101 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B398871A5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 16:30:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EE1E71A6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 16:33:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390590AbfGWOaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 10:30:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53898 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731652AbfGWOaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 10:30:12 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3914781F18;
-        Tue, 23 Jul 2019 14:30:11 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1EBAC600D1;
-        Tue, 23 Jul 2019 14:30:08 +0000 (UTC)
-Subject: Re: [PATCH] mm, slab: Extend slab/shrink to shrink all the memcg
- caches
-To:     peter enderborg <peter.enderborg@sony.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc:     linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-References: <20190702183730.14461-1-longman@redhat.com>
- <71ab6307-9484-fdd3-fe6d-d261acf7c4a5@sony.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <f878a00c-5d84-534b-deac-5736534a61cd@redhat.com>
-Date:   Tue, 23 Jul 2019 10:30:07 -0400
+        id S1732486AbfGWOdd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 10:33:33 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:52042 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728318AbfGWOdc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 10:33:32 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190723143330euoutp0264be6f13c0bae5072bf7d83d7de9bfda~0D9xzaOEO1069310693euoutp02Q
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 14:33:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190723143330euoutp0264be6f13c0bae5072bf7d83d7de9bfda~0D9xzaOEO1069310693euoutp02Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1563892410;
+        bh=3dI4WSCN1Syoio6H4JGJkxvn3KNeiKfNxDeEQLSlaYU=;
+        h=From:Subject:To:Cc:Date:References:From;
+        b=UiUhSzPc5CZRddVea4ybmGKb4JwVOOvz0Mt83DAxjdekSa7lxt1nJDsmiqIKVqUIB
+         a5OuIK63D8rvPOHEs8X7EvI9gCf+HExIzliDCO5jz2VKCHDdoDMxXnX9TP966IsNgk
+         TcxTBhqH7Chy5Y3kvulrLKyNQHMyrVAdb0aJIddU=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190723143329eucas1p117643dc9e4f58b19fc3fd45658457b65~0D9xcUAJL2227822278eucas1p1d;
+        Tue, 23 Jul 2019 14:33:29 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 8F.18.04325.9BA173D5; Tue, 23
+        Jul 2019 15:33:29 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190723143329eucas1p211688de2902dbac72998fda9e694083d~0D9wxcVoa0227002270eucas1p2P;
+        Tue, 23 Jul 2019 14:33:29 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190723143328eusmtrp1d686ad3f98ed2c4ffbc8cd8ff46ef3cd~0D9wm7S621424814248eusmtrp1z;
+        Tue, 23 Jul 2019 14:33:28 +0000 (GMT)
+X-AuditID: cbfec7f5-b75ff700000010e5-f4-5d371ab91671
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id C2.4B.04140.8BA173D5; Tue, 23
+        Jul 2019 15:33:28 +0100 (BST)
+Received: from [106.120.51.71] (unknown [106.120.51.71]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190723143328eusmtip2bca043c67d7707bbc87be382fc4714f6~0D9wYHACG0251202512eusmtip2B;
+        Tue, 23 Jul 2019 14:33:28 +0000 (GMT)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] MAINTAINERS: handle fbdev changes through drm-misc tree
+To:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Message-ID: <d449f697-ed25-8a3f-16d5-b981f1a52217@samsung.com>
+Date:   Tue, 23 Jul 2019 16:33:27 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <71ab6307-9484-fdd3-fe6d-d261acf7c4a5@sony.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 23 Jul 2019 14:30:12 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRj227nsOJwcj4YvK7oMChK8lKGjbGT0Y/0r0Ahj5NSDim7ajvNS
+        EKMfTVaEusochgrm3LxmNm+oOdFZgiUaRJAXMlHT0ua84KWcR8l/z/t8z/N+z/PxURhTQEio
+        VE0Wq9Wo0qWkCLf3r38MbpNEKsNqlySyislvmGzU/ZuUDTxZJGQj7aXkJVzRuVKOK8YfOQUK
+        V9PRa1icKCqJTU/NZrWh8nhRyrv5eizTKsydbPog0KMa0oi8KaDPgd1mEBqRiGLoagRDHba9
+        YRlB67QBeVQM7UIwtpW471j/7CZ4kQVB8/YG4ocFBD0uF+5RkfR5KDTYdt3+tAL6ZheFHhxA
+        x0N18YtdHqODYG1iZjeHmJZD3c+BHZ6icPok9M1Ee+hD9E0Y728keIkfvC+ZwnlrIHydKhPw
+        +Bi0LJRingxAr5Lw/UcX6dkD9BXYfCDlQ/vDnLNZyOMjMGh6jPP6egRb+TN75hYEFtP23sNc
+        gF7nMOFZhNGnoaE9lKejwb24RvD7feHLgh+fwReK7MUYT4sh/yHDq09BY1UjuX+tsc2K8VgB
+        RssYWYBOmA80Mx9oZj7QzPw/QznCbSiQ1XHqZJYL17A5IZxKzek0ySGJGeomtPNPBred7lbU
+        tZngQDSFpD7iXEGkkiFU2Vye2oGAwqQB4uv6CCUjTlLl3WW1Gbe1unSWc6DDFC4NFN/zmrjF
+        0MmqLDaNZTNZ7f6pgPKW6JHV0JOHjE/dr33e6JiY8O7pv8o/DaGZNypedSrQ8rPL5YxluBWT
+        bywl5hTVREW12+djRQUjb+ueX53YCpfH39ms1MekCI/fD0G93aaVUZjrEwgjimdLNB2/gi/S
+        3FCOQ3L2ZVbluFcVfKpNWy3srdKHrZvKrHFkLBWZUEJIcS5FdSYI03Kqf8WIJhsjAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42I5/e/4Pd0dUuaxBg9uGVgsfHiX2eLK1/ds
+        Fif6PrBaXN41h82BxWPvtwUsHve7jzN5fN4kF8AcpWdTlF9akqqQkV9cYqsUbWhhpGdoaaFn
+        ZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJdx4M065oKV7BUPN51iamBczdbFyMkhIWAi8fPq
+        V9YuRi4OIYGljBJPT95l6WLkAErISBxfXwZRIyzx51oXG0TNa0aJ/RtmM4Mk2ASsJCa2r2IE
+        sYUFPCSOvvzADmKLCCRIPH09H2wBs4CWxI8HL8BsXgE7ibWvTzCCzGcRUJU4+sIRJCwqECFx
+        5v0KFogSQYmTM5+wQLSqS/yZd4kZwhaXuPVkPhOELS+x/e0c5gmMArOQtMxC0jILScssJC0L
+        GFlWMYqklhbnpucWG+kVJ+YWl+al6yXn525iBMbDtmM/t+xg7HoXfIhRgINRiYe3gsk8Vog1
+        say4MvcQowQHs5IIb2CDWawQb0piZVVqUX58UWlOavEhRlOgfyYyS4km5wNjNa8k3tDU0NzC
+        0tDc2NzYzEJJnLdD4GCMkEB6YklqdmpqQWoRTB8TB6dUA+OuFfGf769+2HZRo0G5p23x3qTf
+        N02DVDVOGy9Pv7lZ/KLsEQn3cNeX26YVv9nhpvtLpOrplodZwrmhU78ybi58d2yJ8WLTF/9n
+        aTovdra/HPy1w4eZRftI6o/Wd3su+qa/s5tQyz3JpXVX5Yo112Kvnuis/PZBVNfx2w5Xu+mx
+        D4z2LGhaHKCkxFKckWioxVxUnAgAtVDmyZ0CAAA=
+X-CMS-MailID: 20190723143329eucas1p211688de2902dbac72998fda9e694083d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190723143329eucas1p211688de2902dbac72998fda9e694083d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190723143329eucas1p211688de2902dbac72998fda9e694083d
+References: <CGME20190723143329eucas1p211688de2902dbac72998fda9e694083d@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/22/19 8:46 AM, peter enderborg wrote:
-> On 7/2/19 8:37 PM, Waiman Long wrote:
->> Currently, a value of '1" is written to /sys/kernel/slab/<slab>/shrink
->> file to shrink the slab by flushing all the per-cpu slabs and free
->> slabs in partial lists. This applies only to the root caches, though.
->>
->> Extends this capability by shrinking all the child memcg caches and
->> the root cache when a value of '2' is written to the shrink sysfs file.
->>
->> On a 4-socket 112-core 224-thread x86-64 system after a parallel kernel
->> build, the the amount of memory occupied by slabs before shrinking
->> slabs were:
->>
->>  # grep task_struct /proc/slabinfo
->>  task_struct         7114   7296   7744    4    8 : tunables    0    0
->>  0 : slabdata   1824   1824      0
->>  # grep "^S[lRU]" /proc/meminfo
->>  Slab:            1310444 kB
->>  SReclaimable:     377604 kB
->>  SUnreclaim:       932840 kB
->>
->> After shrinking slabs:
->>
->>  # grep "^S[lRU]" /proc/meminfo
->>  Slab:             695652 kB
->>  SReclaimable:     322796 kB
->>  SUnreclaim:       372856 kB
->>  # grep task_struct /proc/slabinfo
->>  task_struct         2262   2572   7744    4    8 : tunables    0    0
->>  0 : slabdata    643    643      0
->
-> What is the time between this measurement points? Should not the shrinked memory show up as reclaimable?
+fbdev patches will now go to upstream through drm-misc tree (IOW
+starting with v5.4 merge window fbdev changes will be included in
+DRM pull request) for improved maintainership and better integration
+testing. Update MAINTAINERS file accordingly.
 
-In this case, I echoed '2' to all the shrink sysfs files under
-/sys/kernel/slab. The purpose of shrinking caches is to reclaim as much
-unused memory slabs from all the caches, irrespective if they are
-reclaimable or not. We do not reclaim any used objects. That is why we
-see the numbers were reduced in both cases.
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ MAINTAINERS |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
-Longman
+Index: b/MAINTAINERS
+===================================================================
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6389,7 +6389,7 @@ FRAMEBUFFER LAYER
+ M:	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+ L:	dri-devel@lists.freedesktop.org
+ L:	linux-fbdev@vger.kernel.org
+-T:	git git://github.com/bzolnier/linux.git
++T:	git git://anongit.freedesktop.org/drm/drm-misc
+ Q:	http://patchwork.kernel.org/project/linux-fbdev/list/
+ S:	Maintained
+ F:	Documentation/fb/
