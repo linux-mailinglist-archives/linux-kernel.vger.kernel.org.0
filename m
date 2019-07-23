@@ -2,76 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83C3C712F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 09:35:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 263D9712F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 09:35:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388390AbfGWHfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 03:35:13 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39171 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731234AbfGWHfK (ORCPT
+        id S2388411AbfGWHf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 03:35:27 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:42163 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388285AbfGWHf0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 03:35:10 -0400
-Received: by mail-wm1-f66.google.com with SMTP id u25so27146460wmc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 00:35:08 -0700 (PDT)
+        Tue, 23 Jul 2019 03:35:26 -0400
+Received: by mail-io1-f66.google.com with SMTP id e20so49417586iob.9
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 00:35:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iMJt7LYpGZYAS3qDDFAugtw9Yp/06nPuXjE/LheYSLE=;
+        b=K6jrhJo253IdbXHUQ2A27o9l6p5GATnAvxI8zT3N0y6X+QAGISnKFWgEul1wxcxXGM
+         PeDkddGcyjMaJoMx9RBdkn4BfmkMZj8kFiWcvSOX5j7ZOSbvxSaKvwcVJALnECsiV1NV
+         Z25LOuY8DcmviCyU/Q5C/DzjpoNMRfUKHg8TWzZu6YHqw8gpswZx7yWdR0/3XGKuLisr
+         d8uaaxIP4y7dZnuWe50t82UvtrxC5qBk1X7vYhT08svGoWBPQsS4UDSVJE3kb/A65+HU
+         ucqlw77a6ABvZaKPt28RJAjoCQptAPZKkeJj4AYa+44K3U8HjFkfAb9G1SOmNEdgUAWw
+         cXNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=weeVjf/Jly+Inq7rrMi7gHQ0j/OuLTL5EFdg7avawSo=;
-        b=fXMSDMYaCepUAKwBuWlvLl5h/OTWWxtudttNMn8mGJ0lrJb6HRjoEXi4BgbtSOdNf5
-         GMh40MFe64N4zeTDC+QjDfXQXx6mSdvmx1zY4x9LdIwUQNFUXZlTZlxXyEOGnuqwXdeK
-         kOqlrpvUK3eKhfrJHaq/dh54iBPBKkIuOJ60+HQzaxUPFB9++5zXFKj9S38d4U+LBAJI
-         CIgdZdu0nzTiXb1AWygR35pvEwyixnhABu9tYer5P2ZElid6K5inDOXaVlcuwUOrLQkn
-         28g8jg2+iUdLx0/EM4Xheozp+DOkn8sdqknpkJc+f+fnZMus+U/M6O3CqZoweatzsG9N
-         tjsQ==
-X-Gm-Message-State: APjAAAVrGVCHDAq5cqad5UE45lQuVpaFGvr7Hf+tktpr7DQyaDPerKOh
-        Xij60YhURkPS3hC1qbHFtKdLYw==
-X-Google-Smtp-Source: APXvYqyWvaMO5IsmxLwfIf/M3f3J+BPyluUZ9RtI3u69i6rj0Wg7FwJpPmGYV2DVsW5IwZS6ldTMwg==
-X-Received: by 2002:a1c:3cc4:: with SMTP id j187mr64455922wma.36.1563867307765;
-        Tue, 23 Jul 2019 00:35:07 -0700 (PDT)
-Received: from [10.201.49.73] (nat-pool-mxp-u.redhat.com. [149.6.153.187])
-        by smtp.gmail.com with ESMTPSA id r14sm37030867wrx.57.2019.07.23.00.35.06
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Jul 2019 00:35:07 -0700 (PDT)
-Subject: Re: [PATCH] Revert "kvm: x86: Use task structs fpu field for user"
-To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     stable@vger.kernel.org
-References: <1563796594-25317-1-git-send-email-pbonzini@redhat.com>
- <20190723043132.556EC2239E@mail.kernel.org>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <e30db831-6498-95df-031d-908b18cf37f3@redhat.com>
-Date:   Tue, 23 Jul 2019 09:35:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iMJt7LYpGZYAS3qDDFAugtw9Yp/06nPuXjE/LheYSLE=;
+        b=VFnYiYpQptd3cXckgHR0dlSUivc0TkazK4XpWSI5/hzCKnIru1WEth9p9u9+kEfpUa
+         H1r3TUc8hLJs30DXTDea4NTDA/298QpDvk2ZOe2H3laYRKnMMkQvS0kO3OqrXBjLcFsa
+         DaeLMNy/5+DLKi7LWTGNVcEemED3pZmTa1fa4g0D23t9s7WJhDJDD3ix2ZNx0r+LRSOQ
+         b/zRveOk3r6+qnb6JCfFo/GgTjn7vxcBsreYy8BFpm5JzHYiXFYKzBYSTMX24uAJ1l6C
+         /YOmLPgadfFnVRKHMnpztt/q/JCkkCl0ufbFmlody3rOzEqypdSZ1jTTQAqMcG1inmUI
+         OQ8Q==
+X-Gm-Message-State: APjAAAWfp0M9DoWMInPV1e4v/aRlfb5qJ9+IOB+E/C/iFixKDNJMHech
+        XJy6sALZwl8Zr3wqL9j6OAbMbKXSKVjUshmEfDeXgYX+Y18FcQ==
+X-Google-Smtp-Source: APXvYqwo3nEQtK25A6u2jl/OWx72I0xFP+EZmhFdqZw8kcmY6COIeDdHSlCvnyVYiaHf7SdPzJX1ISu7/izvxj92zSE=
+X-Received: by 2002:a6b:4101:: with SMTP id n1mr42213427ioa.138.1563867325471;
+ Tue, 23 Jul 2019 00:35:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190723043132.556EC2239E@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <000000000000d8b010058e03aaf8@google.com> <000000000000fcdf6c058e076819@google.com>
+In-Reply-To: <000000000000fcdf6c058e076819@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 23 Jul 2019 09:35:14 +0200
+Message-ID: <CACT4Y+Z7r7iLnccJtZGJhmEY=EESw6XYKTJZwGXwvSKVNfHW1Q@mail.gmail.com>
+Subject: Re: BUG: unable to handle kernel paging request in corrupted (2)
+To:     syzbot <syzbot+08b7a2c58acdfa12c82d@syzkaller.appspotmail.com>
+Cc:     dave.stevenson@raspberrypi.org, David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        unglinuxdriver@microchip.com, woojung.huh@microchip.com,
+        John Fastabend <john.fastabend@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/07/19 06:31, Sasha Levin wrote:
-> 
-> v5.2.2: Build OK!
-> v5.1.19: Failed to apply! Possible dependencies:
->     0cecca9d03c9 ("x86/fpu: Eager switch PKRU state")
->     2722146eb784 ("x86/fpu: Remove fpu->initialized")
->     4ee91519e1dc ("x86/fpu: Add an __fpregs_load_activate() internal helper")
->     5f409e20b794 ("x86/fpu: Defer FPU state load until return to userspace")
-> 
-> 
-> NOTE: The patch will not be queued to stable trees until it is upstream.
-> 
-> How should we proceed with this patch?
+On Fri, Jul 19, 2019 at 1:56 PM syzbot
+<syzbot+08b7a2c58acdfa12c82d@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has bisected this bug to:
+>
+> commit 9343ac87f2a4e09bf6e27b5f31e72e9e3a82abff
+> Author: Dave Stevenson <dave.stevenson@raspberrypi.org>
+> Date:   Mon Jun 25 14:07:15 2018 +0000
+>
+>      net: lan78xx: Use s/w csum check on VLANs without tag stripping
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=102feb84600000
+> start commit:   49d05fe2 ipv6: rt6_check should return NULL if 'from' is N..
+> git tree:       net
+> final crash:    https://syzkaller.appspot.com/x/report.txt?x=122feb84600000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=142feb84600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=87305c3ca9c25c70
+> dashboard link: https://syzkaller.appspot.com/bug?extid=08b7a2c58acdfa12c82d
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=143a78f4600000
+>
+> Reported-by: syzbot+08b7a2c58acdfa12c82d@syzkaller.appspotmail.com
+> Fixes: 9343ac87f2a4 ("net: lan78xx: Use s/w csum check on VLANs without tag
+> stripping")
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-I have 5-6 pending stable patches and I will send a backport for all of
-them.
+From the repro it looks like the same bpf stack overflow bug. +John
+We need to dup them onto some canonical report for this bug, or this
+becomes unmanageable.
 
-Paolo
+#syz dup: kernel panic: corrupted stack end in dput
