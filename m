@@ -2,137 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA768715C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 12:11:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 152CC715C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 12:12:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387936AbfGWKLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 06:11:12 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:6448 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732954AbfGWKLL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 06:11:11 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d36dd3f0000>; Tue, 23 Jul 2019 03:11:11 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 23 Jul 2019 03:11:10 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 23 Jul 2019 03:11:10 -0700
-Received: from [10.25.72.214] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 23 Jul
- 2019 10:11:08 +0000
-Subject: Re: [PATCH v2] drm/tegra: sor: Enable HDA interrupts at plugin
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-CC:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1563787632-19762-1-git-send-email-viswanathl@nvidia.com>
- <11288075-f34a-222c-66da-2bfd13db987c@gmail.com>
-From:   Viswanath L <viswanathl@nvidia.com>
-Message-ID: <fe7a0f13-4e85-56db-7629-92c6a8f67014@nvidia.com>
-Date:   Tue, 23 Jul 2019 15:41:05 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2388913AbfGWKMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 06:12:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55977 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388794AbfGWKMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 06:12:51 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 70ACC30C1351;
+        Tue, 23 Jul 2019 10:12:51 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 3E56B60BEC;
+        Tue, 23 Jul 2019 10:12:50 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 23 Jul 2019 12:12:51 +0200 (CEST)
+Date:   Tue, 23 Jul 2019 12:12:49 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christian Brauner <christian@brauner.io>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: [GIT PULL] pidfd fixes
+Message-ID: <20190723101249.GA8994@redhat.com>
+References: <20190722142238.16129-1-christian@brauner.io>
+ <CAHk-=wigcxGFR2szue4wavJtH5cYTTeNES=toUBVGsmX0rzX+g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <11288075-f34a-222c-66da-2bfd13db987c@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1563876671; bh=TrDkC7hsFFcEl4fFQwj2yJrxHnLvANWklBQezwVn45M=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=STMumYTjuQ59pk4DtURsj11uADdFVJMqM26OY1UrP8Sm1C9yLu2I6YnwZ8035SmY8
-         mtbuwEFCzmwj7jQRRjTLWZeGb2pYQ3TcOHRfsQcy5a6Gvj06na0kKlNYlYkhuM72EL
-         bmb8Dek5nTPO/FK0DUKaGzxqZFAjMwm9V5F0LNm2mQC81FhK8pZnyiZnZ9Yizszpe4
-         NJP4caAFZsIlBi6pldh/I6RXJVhAOXBKkRAaj1HczD8SpXJYTv5+g8KH/8leFDkRda
-         fYWOiqfP741uoeLIqjespDjldVE079J6XDehaMCqcY5Iq3Hctrn9iJdQtKL/IZBZNZ
-         8feLpogYx22ew==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wigcxGFR2szue4wavJtH5cYTTeNES=toUBVGsmX0rzX+g@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 23 Jul 2019 10:12:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for your comments, Dmitry. Please see my responses inline.
+On 07/22, Linus Torvalds wrote:
+>
+> So if we set EXIT_ZOMBIE early, then I think we should change the
+> EXIT_DEAD case too. IOW, do something like this on top:
+> 
+>   --- a/kernel/exit.c
+>   +++ b/kernel/exit.c
+>   @@ -734,9 +734,10 @@ static void exit_notify(struct task_struct
+> *tsk, int group_dead)
+>                 autoreap = true;
+>         }
+> 
+>   -     tsk->exit_state = autoreap ? EXIT_DEAD : EXIT_ZOMBIE;
+>   -     if (tsk->exit_state == EXIT_DEAD)
+>   +     if (autoreap) {
+>   +             tsk->exit_state = EXIT_DEAD;
+>                 list_add(&tsk->ptrace_entry, &dead);
+>   +     }
 
-On 7/23/2019 6:00 AM, Dmitry Osipenko wrote:
-> 22.07.2019 12:27, Viswanath L =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> HDMI plugout calls runtime suspend, which clears interrupt registers
->> and causes audio functionality to break on subsequent plugin; setting
->> interrupt registers in sor_audio_prepare() solves the issue
-> Hello Viswanath,
->
-> A dot should be in the end of sentence, please. And should be better to
-> s/plugin/plug-in/ in the commit's message/title because 'plugin' sounds
-> as a noun.
-[VL] Yes, I'll make the above changes.
->
-> Please don't version patch as v2 if v1 wasn't ever sent out.
-[VL] Now that I have sent v2, shall I continue with v2 for the next=20
-patch? Apologies for this oversight.
->
-> You should add a stable tag here to get patch backported into stable
-> kernel versions:
->
-> Cc: <stable@vger.kernel.org>
-[VL] Yes, will add.
->
->> Signed-off-by: Viswanath L <viswanathl@nvidia.com>
-> The kernel upstreaming rules require a full name. I'm pretty sure that L
-> isn't yours surname.
-[VL] My name appears as "Viswanath L" in all company records and email=20
-lists. I would strongly prefer to keep it this way, unless that is an=20
-absolute no-no.
->> ---
->>   drivers/gpu/drm/tegra/sor.c | 18 +++++++++---------
->>   1 file changed, 9 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
->> index 5be5a08..0470cfe 100644
->> --- a/drivers/gpu/drm/tegra/sor.c
->> +++ b/drivers/gpu/drm/tegra/sor.c
->> @@ -2164,6 +2164,15 @@ static void tegra_sor_audio_prepare(struct tegra_=
-sor *sor)
->>  =20
->>   	value =3D SOR_AUDIO_HDA_PRESENSE_ELDV | SOR_AUDIO_HDA_PRESENSE_PD;
->>   	tegra_sor_writel(sor, value, SOR_AUDIO_HDA_PRESENSE);
->> +
->> +	/*
->> +	 * Enable and unmask the HDA codec SCRATCH0 register interrupt. This
->> +	 * is used for interoperability between the HDA codec driver and the
->> +	 * HDMI/DP driver.
->> +	 */
->> +	value =3D SOR_INT_CODEC_SCRATCH1 | SOR_INT_CODEC_SCRATCH0;
->> +	tegra_sor_writel(sor, value, SOR_INT_ENABLE);
->> +	tegra_sor_writel(sor, value, SOR_INT_MASK);
->>   }
->>  =20
->>   static void tegra_sor_audio_unprepare(struct tegra_sor *sor)
->> @@ -2913,15 +2922,6 @@ static int tegra_sor_init(struct host1x_client *c=
-lient)
->>   	if (err < 0)
->>   		return err;
->>  =20
->> -	/*
->> -	 * Enable and unmask the HDA codec SCRATCH0 register interrupt. This
->> -	 * is used for interoperability between the HDA codec driver and the
->> -	 * HDMI/DP driver.
->> -	 */
->> -	value =3D SOR_INT_CODEC_SCRATCH1 | SOR_INT_CODEC_SCRATCH0;
->> -	tegra_sor_writel(sor, value, SOR_INT_ENABLE);
->> -	tegra_sor_writel(sor, value, SOR_INT_MASK);
->> -
->>   	return 0;
->>   }
->>  =20
->>
+Yes, this needs cleanups. Actually I was going to suggest another change
+below, this way do_notify_pidfd() is only called when it is really needed.
+But then I decided a trivial one-liner makes more sense for the start.
+
+I'll try to think. Perhaps we should also change do_notify_parent() to set
+p->exit_state, at least if autoreap. Then the early exit_state = EXIT_ZOMBIE
+won't look so confusing and we can do more (minor) cleanups.
+
+Oleg.
+
+--- x/kernel/exit.c
++++ x/kernel/exit.c
+@@ -182,6 +182,13 @@ static void delayed_put_task_struct(struct rcu_head *rhp)
+ 	put_task_struct(tsk);
+ }
+ 
++static void do_notify_pidfd(struct task_struct *task)
++{
++	struct pid *pid;
++
++	pid = task_pid(task);
++	wake_up_all(&pid->wait_pidfd);
++}
+ 
+ void release_task(struct task_struct *p)
+ {
+@@ -218,6 +225,8 @@ void release_task(struct task_struct *p)
+ 		zap_leader = do_notify_parent(leader, leader->exit_signal);
+ 		if (zap_leader)
+ 			leader->exit_state = EXIT_DEAD;
++
++		do_notify_pidfd(leader);
+ 	}
+ 
+ 	write_unlock_irq(&tasklist_lock);
+@@ -710,7 +719,7 @@ static void forget_original_parent(struct task_struct *father,
+  */
+ static void exit_notify(struct task_struct *tsk, int group_dead)
+ {
+-	bool autoreap;
++	bool autoreap, xxx;
+ 	struct task_struct *p, *n;
+ 	LIST_HEAD(dead);
+ 
+@@ -720,23 +729,22 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
+ 	if (group_dead)
+ 		kill_orphaned_pgrp(tsk->group_leader, NULL);
+ 
+-	if (unlikely(tsk->ptrace)) {
+-		int sig = thread_group_leader(tsk) &&
+-				thread_group_empty(tsk) &&
+-				!ptrace_reparented(tsk) ?
+-			tsk->exit_signal : SIGCHLD;
++	autoreap = true;
++	xxx = thread_group_leader(tsk) && thread_group_empty(tsk);
++
++	if (xxx || unlikely(tsk->ptrace)) {
++		int sig = xxx && !ptrace_reparented(tsk)
++			? tsk->exit_signal : SIGCHLD;
+ 		autoreap = do_notify_parent(tsk, sig);
+-	} else if (thread_group_leader(tsk)) {
+-		autoreap = thread_group_empty(tsk) &&
+-			do_notify_parent(tsk, tsk->exit_signal);
+-	} else {
+-		autoreap = true;
+ 	}
+ 
+ 	tsk->exit_state = autoreap ? EXIT_DEAD : EXIT_ZOMBIE;
+ 	if (tsk->exit_state == EXIT_DEAD)
+ 		list_add(&tsk->ptrace_entry, &dead);
+ 
++	if (xxx)
++		do_notify_pidfd(tsk);
++
+ 	/* mt-exec, de_thread() is waiting for group leader */
+ 	if (unlikely(tsk->signal->notify_count < 0))
+ 		wake_up_process(tsk->signal->group_exit_task);
+--- x/kernel/signal.c
++++ x/kernel/signal.c
+@@ -1881,14 +1881,6 @@ int send_sigqueue(struct sigqueue *q, struct pid *pid, enum pid_type type)
+ 	return ret;
+ }
+ 
+-static void do_notify_pidfd(struct task_struct *task)
+-{
+-	struct pid *pid;
+-
+-	pid = task_pid(task);
+-	wake_up_all(&pid->wait_pidfd);
+-}
+-
+ /*
+  * Let a parent know about the death of a child.
+  * For a stopped/continued status change, use do_notify_parent_cldstop instead.
+@@ -1912,9 +1904,6 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
+ 	BUG_ON(!tsk->ptrace &&
+ 	       (tsk->group_leader != tsk || !thread_group_empty(tsk)));
+ 
+-	/* Wake up all pidfd waiters */
+-	do_notify_pidfd(tsk);
+-
+ 	if (sig != SIGCHLD) {
+ 		/*
+ 		 * This is only possible if parent == real_parent.
+
