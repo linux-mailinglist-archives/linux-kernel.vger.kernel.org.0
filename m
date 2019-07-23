@@ -2,63 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A61771620
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 12:32:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 394BC7164C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 12:38:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389098AbfGWKcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 06:32:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54518 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbfGWKcN (ORCPT
+        id S2389123AbfGWKiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 06:38:51 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40986 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389114AbfGWKiv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 06:32:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ukEYKf1M4OnYfTjpJ4fZ7m2Aul+YT4ndGqZQ09dQPek=; b=NlVgJao63MTknlityhkCvzh5T
-        ehimb3P8DcG2W6DP3KqD4/nRB/JDEefAQXmKf7TlYbeanZDSsqy2zbqoBzQnA/MenmpkBlKiG6Eqf
-        rdCbPoiHfFqiNKruyCddvYsbrex8cxoWFTJyMHluSsI42YFf4x5yeBHY0dZkP5csVc2AuMGVbU3KO
-        BIkVam+4cerr+gAABO3z0mPWf9uVUQ5D6vCU4bKsqRQNl6VTJ7zBWi55ZmhRMBXltw8sldi1Gt3qS
-        ONbOvudcpXhZ49MsU2RY5JAVwN9Ng90VMMgDY08puCIodAeqGnymVZRLs3aMFjk1is0yX0ksacf/B
-        EqwuuCOtg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hps5S-0003nn-JH; Tue, 23 Jul 2019 10:32:02 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C6029201A9429; Tue, 23 Jul 2019 12:32:00 +0200 (CEST)
-Date:   Tue, 23 Jul 2019 12:32:00 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     Juri Lelli <juri.lelli@redhat.com>, mingo@redhat.com,
-        rostedt@goodmis.org, tj@kernel.org, linux-kernel@vger.kernel.org,
-        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
-        tommaso.cucinotta@santannapisa.it, bristot@redhat.com,
-        mathieu.poirier@linaro.org, lizefan@huawei.com, longman@redhat.com,
-        cgroups@vger.kernel.org
-Subject: Re: [PATCH v9 2/8] sched/core: Streamlining calls to task_rq_unlock()
-Message-ID: <20190723103200.GC3402@hirez.programming.kicks-ass.net>
-References: <20190719140000.31694-1-juri.lelli@redhat.com>
- <20190719140000.31694-3-juri.lelli@redhat.com>
- <50f00347-ffb3-285c-5a7d-3a9c5f813950@arm.com>
- <20190722083214.GF25636@localhost.localdomain>
- <b18f1ec3-46a1-e65e-2c6e-85729031c996@arm.com>
+        Tue, 23 Jul 2019 06:38:51 -0400
+Received: by mail-pf1-f196.google.com with SMTP id m30so18946474pff.8
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 03:38:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oJJwPLAueXtxcGlCD6Tbo/0lOc3eLv/7iWCoapVa8ow=;
+        b=H74A0OkK53PNTxp+3xX64AB7CmCxmHA9QmUrMj5pVW2BzDEsAI/QE3sNuR/4YdN+Bm
+         sBycghr3u74CwximQ0nefQymZWIsB4MyyIN/sMlX8OnH1nKxQGGJPymLXlDyuFrMTG+S
+         LDOeAPkSsMznr0JQ5eIiWZ+T8LTZOzgyn8xJ60yUGySCDHLhCYH/1j0Ln+zuvxwvVZKj
+         YpEw6wstepCt+tGrVAShqHeJxBppgBGWCUnQDMHEWEn1jUypBsPuf1wX0IFA7r21732F
+         fzAQcjTy8in38a56QucG6+PWrZELrxmn8jQSEmeSGjJ4hCAa69KPE8OloZqJTqu8dDgM
+         7QOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oJJwPLAueXtxcGlCD6Tbo/0lOc3eLv/7iWCoapVa8ow=;
+        b=Kk1bHEEW+HM83qSWDD5Y+dFGCj54WKnWMZC9fNSa+6BwFSmWXNV52e+U/nZroFXuPs
+         S+GuoGC5ocLILfWYrsplEqkOWu+GtqF7o27FWr0BB0WRj5hjsq6820cY/i+f+TAX2wZC
+         ohJZPidA7lrNlVWB+TqxwK/U3TcM+6dip4EF7JFvI1mLHIFPL4lnsnyXO2SWsCqTzXZ0
+         wLeSal/08ZYSx4/lxKhLEKuwye8ATp0fO+rJJhsiBGEDcToukMTbnmnofQsMSACFB91A
+         iFuPWEza46+DN8FJmRzZncBZTBMbPDK0ajYiZM9HPjG5ObyQWKt8rQJDipOUs+lu5b2Y
+         0mGg==
+X-Gm-Message-State: APjAAAVHyskkjwa2jKEUCi7P2j0IsAM9HvwLGT0SjJdloPlmOCHTk9J5
+        DJ21tsyNY7udPxsExE4QrWs=
+X-Google-Smtp-Source: APXvYqzuYXp35SrBzLoGEon+ubsLDyfehTkzqhmAJ+MDwKId9H+Ph/4X3ofmDJXq+sAICpnXj/cxVg==
+X-Received: by 2002:a17:90a:d14b:: with SMTP id t11mr81701030pjw.79.1563878330481;
+        Tue, 23 Jul 2019 03:38:50 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
+        by smtp.gmail.com with ESMTPSA id o11sm72345572pfh.114.2019.07.23.03.38.47
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 23 Jul 2019 03:38:49 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH] drm/gma500: Use dev_get_drvdata where possible
+Date:   Tue, 23 Jul 2019 18:38:30 +0800
+Message-Id: <20190723103829.3848-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b18f1ec3-46a1-e65e-2c6e-85729031c996@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 11:08:17AM +0200, Dietmar Eggemann wrote:
+Instead of using to_pci_dev + pci_get_drvdata,
+use dev_get_drvdata to make code simpler.
 
-> Not sure, there is another little issue on 3/8 since uclamp is in
-> v5.3-rc1 as well commit 69842cba9ace8 ("sched/uclamp: Add CPU's clamp
-> buckets refcounting").
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+ drivers/gpu/drm/gma500/power.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Also, 8/8, but all conflicts are trivial and I've fixed them up.
+diff --git a/drivers/gpu/drm/gma500/power.c b/drivers/gpu/drm/gma500/power.c
+index bea8578846d1..d67e01ce7766 100644
+--- a/drivers/gpu/drm/gma500/power.c
++++ b/drivers/gpu/drm/gma500/power.c
+@@ -308,7 +308,7 @@ int psb_runtime_resume(struct device *dev)
+ 
+ int psb_runtime_idle(struct device *dev)
+ {
+-	struct drm_device *drmdev = pci_get_drvdata(to_pci_dev(dev));
++	struct drm_device *drmdev = dev_get_drvdata(dev);
+ 	struct drm_psb_private *dev_priv = drmdev->dev_private;
+ 	if (dev_priv->display_count)
+ 		return 0;
+-- 
+2.20.1
+
