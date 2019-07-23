@@ -2,214 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66E83715FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 12:25:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF7E471602
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 12:26:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732193AbfGWKZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 06:25:51 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50549 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbfGWKZv (ORCPT
+        id S1733148AbfGWK0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 06:26:34 -0400
+Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:39806 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726680AbfGWK0d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 06:25:51 -0400
-Received: by mail-wm1-f68.google.com with SMTP id v15so37987538wml.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 03:25:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PHxhFQt1zapvaqaSkTVoRirg4u/DymzfJXL7JSj+Zko=;
-        b=bYqDWz3t5xdPBZs2HwRWiBqi33++e0IuplenCOUJpSWJOc4YewI34ueEeSTu3/zigI
-         oYIHNFKqgTs3tZNw1W7x7ZxeONPx3/S+gA6/yDf0wHkyBqeP8FIuzpdLk2dp2Z6+a+aE
-         q+uHOvD1oYBcujn+fx+wsP7ip9EPptpEK0wyjJ2urD+idJ8dV3rGIT/bUquZhdaNKCxV
-         8uK6dQFElfnlqTNbCdrufsFFXBHlIAIpdHBA+fgHUnxKdzFJwf6H1bJX1ebUrQRRAQMS
-         PPBs6FNeCHRLRVR9niOFuEXjYyxGp6hQCMoHwaYVxqDN8P63QZcWDF0Zg0PQ15ohgi5U
-         oU0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PHxhFQt1zapvaqaSkTVoRirg4u/DymzfJXL7JSj+Zko=;
-        b=IBWYVrozDg3BLjNMIIPzoFetztGZHb+Ub6u5OUcD6jqbZUdN2zjGNjfdIdsRThgXoG
-         yU0YTPIOMbyTe0smH7JIN2rcS1Yfdzv1qB+6fA/Mo39weuAvfJ5Hfo5I6d5jeATOg023
-         DgOD31//fjvEDyiw2GiTLgD5eyg9Smcb06Xuxh36x5H3TV+K4s4EOPxHm8NnwD9urFXS
-         ztI8E3ecrNqc+KT0b5NpLzYCtowYVMl7g3oXBGpGfcYzlN6VnC/4xTrOJO+hk5FEfBSA
-         lVfSHpSz86u+aSMXMOvxJbKGovkr5CkLI9Ob6KNeVx8VNjUBS45R2iNXHqku9I8t/GOy
-         mGoA==
-X-Gm-Message-State: APjAAAWGwFla2lWp00/IN5Iz1/QRzxfJFop7D/Tm9U9ZmQ4HIIxrREOz
-        hNQQQuXOVUxOTxpW+HmuesQ=
-X-Google-Smtp-Source: APXvYqziErWJLj+mI3+RvUrbyqbn4AZW6CeNE0C9JKmFr1inzFDRdyWk37UoS/nz5tIydGWd/VWHJg==
-X-Received: by 2002:a1c:be05:: with SMTP id o5mr69535390wmf.52.1563877548220;
-        Tue, 23 Jul 2019 03:25:48 -0700 (PDT)
-Received: from brauner.io ([213.220.153.21])
-        by smtp.gmail.com with ESMTPSA id s188sm33669288wmf.40.2019.07.23.03.25.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 03:25:47 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 12:25:46 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [GIT PULL] pidfd fixes
-Message-ID: <20190723102545.3sotcok2tqjjntea@brauner.io>
-References: <20190722142238.16129-1-christian@brauner.io>
- <CAHk-=wigcxGFR2szue4wavJtH5cYTTeNES=toUBVGsmX0rzX+g@mail.gmail.com>
- <20190723101249.GA8994@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190723101249.GA8994@redhat.com>
-User-Agent: NeoMutt/20180716
+        Tue, 23 Jul 2019 06:26:33 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 5351FC0BA6;
+        Tue, 23 Jul 2019 10:26:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1563877593; bh=hEN4MJmGoL8TyECNjNPp/0o3tB1vSRkRU+f8lSs6bsc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MJeyBx+91l87v0/GWugseqxgiUzuWlD6Ql3fB0LSS0Q7HD7OEv2CoWcDZvdO/3W7Q
+         BTuHPXPc6Ik2oqq+ge9sveWLU3rfxJRJbUU6iTRHpZsZWljeMbzEppkpPdB+X/EXwB
+         Y1MvDkntpfx/t0u2esyeN8MJl+6/GVrp+CoeA124CldW5PWoo5lI/uYr85HacU4voh
+         oNSR+HuzTbifssmWEFkSdBlMFntZ17IfxU7swhLX1oX9OR4kUnGNJ+XJqVHRh3+T4+
+         +DYpbVu/7tp/gW0POZusZB0mirAVK0HcEZShCqRXec6G2YaaylSrLQ/A0w8zTEngFf
+         L/qxQxpQMf9RQ==
+Received: from de02arcdev1.internal.synopsys.com (de02arcdev1.internal.synopsys.com [10.225.22.192])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 8ADB1A0057;
+        Tue, 23 Jul 2019 10:26:30 +0000 (UTC)
+From:   Mischa Jonker <Mischa.Jonker@synopsys.com>
+To:     Vineet.Gupta1@synopsys.com, Alexey.Brodkin@synopsys.com,
+        kstewart@linuxfoundation.org, tglx@linutronix.de,
+        robh+dt@kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Mischa Jonker <Mischa.Jonker@synopsys.com>
+Subject: [PATCH 1/2] ARCv2: IDU-intc: Add support for edge-triggered interrupts
+Date:   Tue, 23 Jul 2019 12:26:05 +0200
+Message-Id: <20190723102606.309089-1-mischa.jonker@synopsys.com>
+X-Mailer: git-send-email 2.8.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 12:12:49PM +0200, Oleg Nesterov wrote:
-> On 07/22, Linus Torvalds wrote:
-> >
-> > So if we set EXIT_ZOMBIE early, then I think we should change the
-> > EXIT_DEAD case too. IOW, do something like this on top:
-> > 
-> >   --- a/kernel/exit.c
-> >   +++ b/kernel/exit.c
-> >   @@ -734,9 +734,10 @@ static void exit_notify(struct task_struct
-> > *tsk, int group_dead)
-> >                 autoreap = true;
-> >         }
-> > 
-> >   -     tsk->exit_state = autoreap ? EXIT_DEAD : EXIT_ZOMBIE;
-> >   -     if (tsk->exit_state == EXIT_DEAD)
-> >   +     if (autoreap) {
-> >   +             tsk->exit_state = EXIT_DEAD;
-> >                 list_add(&tsk->ptrace_entry, &dead);
-> >   +     }
-> 
-> Yes, this needs cleanups. Actually I was going to suggest another change
-> below, this way do_notify_pidfd() is only called when it is really needed.
-> But then I decided a trivial one-liner makes more sense for the start.
+This adds support for an optional extra interrupt cell to specify edge
+vs level triggered. It is backward compatible with dts files with only
+one cell, and will default to level-triggered in such a case.
 
-Yeah, that was my thinking exactly.
+Signed-off-by: Mischa Jonker <mischa.jonker@synopsys.com>
+---
+ arch/arc/kernel/mcip.c | 56 ++++++++++++++++++++++++++++++++++++++++++++------
+ include/soc/arc/mcip.h | 11 ++++++++++
+ 2 files changed, 61 insertions(+), 6 deletions(-)
 
-> 
-> I'll try to think. Perhaps we should also change do_notify_parent() to set
-> p->exit_state, at least if autoreap. Then the early exit_state = EXIT_ZOMBIE
-> won't look so confusing and we can do more (minor) cleanups.
+diff --git a/arch/arc/kernel/mcip.c b/arch/arc/kernel/mcip.c
+index 18b493d..fc45564 100644
+--- a/arch/arc/kernel/mcip.c
++++ b/arch/arc/kernel/mcip.c
+@@ -202,8 +202,8 @@ static void idu_set_dest(unsigned int cmn_irq, unsigned int cpu_mask)
+ 	__mcip_cmd_data(CMD_IDU_SET_DEST, cmn_irq, cpu_mask);
+ }
+ 
+-static void idu_set_mode(unsigned int cmn_irq, unsigned int lvl,
+-			   unsigned int distr)
++static void idu_set_mode(unsigned int cmn_irq, bool set_lvl, unsigned int lvl,
++			 bool set_distr, unsigned int distr)
+ {
+ 	union {
+ 		unsigned int word;
+@@ -212,8 +212,11 @@ static void idu_set_mode(unsigned int cmn_irq, unsigned int lvl,
+ 		};
+ 	} data;
+ 
+-	data.distr = distr;
+-	data.lvl = lvl;
++	data.word = __mcip_cmd_read(CMD_IDU_READ_MODE, cmn_irq);
++	if (set_distr)
++		data.distr = distr;
++	if (set_lvl)
++		data.lvl = lvl;
+ 	__mcip_cmd_data(CMD_IDU_SET_MODE, cmn_irq, data.word);
+ }
+ 
+@@ -240,6 +243,25 @@ static void idu_irq_unmask(struct irq_data *data)
+ 	raw_spin_unlock_irqrestore(&mcip_lock, flags);
+ }
+ 
++static void idu_irq_ack(struct irq_data *data)
++{
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&mcip_lock, flags);
++	__mcip_cmd(CMD_IDU_ACK_CIRQ, data->hwirq);
++	raw_spin_unlock_irqrestore(&mcip_lock, flags);
++}
++
++static void idu_irq_mask_ack(struct irq_data *data)
++{
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&mcip_lock, flags);
++	__mcip_cmd_data(CMD_IDU_SET_MASK, data->hwirq, 1);
++	__mcip_cmd(CMD_IDU_ACK_CIRQ, data->hwirq);
++	raw_spin_unlock_irqrestore(&mcip_lock, flags);
++}
++
+ static int
+ idu_irq_set_affinity(struct irq_data *data, const struct cpumask *cpumask,
+ 		     bool force)
+@@ -263,13 +285,32 @@ idu_irq_set_affinity(struct irq_data *data, const struct cpumask *cpumask,
+ 	else
+ 		distribution_mode = IDU_M_DISTRI_RR;
+ 
+-	idu_set_mode(data->hwirq, IDU_M_TRIG_LEVEL, distribution_mode);
++	idu_set_mode(data->hwirq, false, 0, true, distribution_mode);
+ 
+ 	raw_spin_unlock_irqrestore(&mcip_lock, flags);
+ 
+ 	return IRQ_SET_MASK_OK;
+ }
+ 
++static int idu_irq_set_type(struct irq_data *data, u32 type)
++{
++	unsigned long flags;
++
++	if (type & ~(IRQ_TYPE_EDGE_RISING | IRQ_TYPE_LEVEL_HIGH))
++		return -EINVAL;
++
++	raw_spin_lock_irqsave(&mcip_lock, flags);
++
++	idu_set_mode(data->hwirq, true,
++		     type & IRQ_TYPE_EDGE_RISING ? IDU_M_TRIG_EDGE :
++						   IDU_M_TRIG_LEVEL,
++		     false, 0);
++
++	raw_spin_unlock_irqrestore(&mcip_lock, flags);
++
++	return 0;
++}
++
+ static void idu_irq_enable(struct irq_data *data)
+ {
+ 	/*
+@@ -289,7 +330,10 @@ static struct irq_chip idu_irq_chip = {
+ 	.name			= "MCIP IDU Intc",
+ 	.irq_mask		= idu_irq_mask,
+ 	.irq_unmask		= idu_irq_unmask,
++	.irq_ack		= idu_irq_ack,
++	.irq_mask_ack		= idu_irq_mask_ack,
+ 	.irq_enable		= idu_irq_enable,
++	.irq_set_type		= idu_irq_set_type,
+ #ifdef CONFIG_SMP
+ 	.irq_set_affinity       = idu_irq_set_affinity,
+ #endif
+@@ -317,7 +361,7 @@ static int idu_irq_map(struct irq_domain *d, unsigned int virq, irq_hw_number_t
+ }
+ 
+ static const struct irq_domain_ops idu_irq_ops = {
+-	.xlate	= irq_domain_xlate_onecell,
++	.xlate	= irq_domain_xlate_onetwocell,
+ 	.map	= idu_irq_map,
+ };
+ 
+diff --git a/include/soc/arc/mcip.h b/include/soc/arc/mcip.h
+index 50f49e0..d1a93c7 100644
+--- a/include/soc/arc/mcip.h
++++ b/include/soc/arc/mcip.h
+@@ -46,7 +46,9 @@ struct mcip_cmd {
+ #define CMD_IDU_ENABLE			0x71
+ #define CMD_IDU_DISABLE			0x72
+ #define CMD_IDU_SET_MODE		0x74
++#define CMD_IDU_READ_MODE		0x75
+ #define CMD_IDU_SET_DEST		0x76
++#define CMD_IDU_ACK_CIRQ		0x79
+ #define CMD_IDU_SET_MASK		0x7C
+ 
+ #define IDU_M_TRIG_LEVEL		0x0
+@@ -119,4 +121,13 @@ static inline void __mcip_cmd_data(unsigned int cmd, unsigned int param,
+ 	__mcip_cmd(cmd, param);
+ }
+ 
++/*
++ * Read MCIP register
++ */
++static inline unsigned int __mcip_cmd_read(unsigned int cmd, unsigned int param)
++{
++	__mcip_cmd(cmd, param);
++	return read_aux_reg(ARC_REG_MCIP_READBACK);
++}
++
+ #endif
+-- 
+2.8.3
 
-You mind sending that as a proper patch?
-I also have a few more cleanups for other parts I intend to send later
-this week. I'd pick this one up too.
-
-> 
-> Oleg.
-> 
-> --- x/kernel/exit.c
-> +++ x/kernel/exit.c
-> @@ -182,6 +182,13 @@ static void delayed_put_task_struct(struct rcu_head *rhp)
->  	put_task_struct(tsk);
->  }
->  
-> +static void do_notify_pidfd(struct task_struct *task)
-> +{
-> +	struct pid *pid;
-> +
-> +	pid = task_pid(task);
-> +	wake_up_all(&pid->wait_pidfd);
-> +}
->  
->  void release_task(struct task_struct *p)
->  {
-> @@ -218,6 +225,8 @@ void release_task(struct task_struct *p)
->  		zap_leader = do_notify_parent(leader, leader->exit_signal);
->  		if (zap_leader)
->  			leader->exit_state = EXIT_DEAD;
-> +
-> +		do_notify_pidfd(leader);
->  	}
->  
->  	write_unlock_irq(&tasklist_lock);
-> @@ -710,7 +719,7 @@ static void forget_original_parent(struct task_struct *father,
->   */
->  static void exit_notify(struct task_struct *tsk, int group_dead)
->  {
-> -	bool autoreap;
-> +	bool autoreap, xxx;
-
-In case you don't mind the length of it how about:
-
-bool autoreap, leading_empty_thread_group;
-
-It's not the prettiest names but having rather descriptive var names in
-these codepaths seems like a good idea to me.
-It also reads very naturally further below:
-
-if (leading_empty_thread_group || unlikely(tsk->ptrace)) {
- 	int sig = leading_empty_thread_group && !ptrace_reparented(tsk)
- 		? tsk->exit_signal : SIGCHLD;
-
->  	struct task_struct *p, *n;
->  	LIST_HEAD(dead);
->  
-> @@ -720,23 +729,22 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
->  	if (group_dead)
->  		kill_orphaned_pgrp(tsk->group_leader, NULL);
->  
-> -	if (unlikely(tsk->ptrace)) {
-> -		int sig = thread_group_leader(tsk) &&
-> -				thread_group_empty(tsk) &&
-> -				!ptrace_reparented(tsk) ?
-> -			tsk->exit_signal : SIGCHLD;
-> +	autoreap = true;
-> +	xxx = thread_group_leader(tsk) && thread_group_empty(tsk);
-> +
-> +	if (xxx || unlikely(tsk->ptrace)) {
-> +		int sig = xxx && !ptrace_reparented(tsk)
-> +			? tsk->exit_signal : SIGCHLD;
->  		autoreap = do_notify_parent(tsk, sig);
-> -	} else if (thread_group_leader(tsk)) {
-> -		autoreap = thread_group_empty(tsk) &&
-> -			do_notify_parent(tsk, tsk->exit_signal);
-> -	} else {
-> -		autoreap = true;
->  	}
->  
->  	tsk->exit_state = autoreap ? EXIT_DEAD : EXIT_ZOMBIE;
->  	if (tsk->exit_state == EXIT_DEAD)
->  		list_add(&tsk->ptrace_entry, &dead);
->  
-> +	if (xxx)
-> +		do_notify_pidfd(tsk);
-> +
->  	/* mt-exec, de_thread() is waiting for group leader */
->  	if (unlikely(tsk->signal->notify_count < 0))
->  		wake_up_process(tsk->signal->group_exit_task);
-> --- x/kernel/signal.c
-> +++ x/kernel/signal.c
-> @@ -1881,14 +1881,6 @@ int send_sigqueue(struct sigqueue *q, struct pid *pid, enum pid_type type)
->  	return ret;
->  }
->  
-> -static void do_notify_pidfd(struct task_struct *task)
-> -{
-> -	struct pid *pid;
-> -
-> -	pid = task_pid(task);
-> -	wake_up_all(&pid->wait_pidfd);
-> -}
-> -
->  /*
->   * Let a parent know about the death of a child.
->   * For a stopped/continued status change, use do_notify_parent_cldstop instead.
-> @@ -1912,9 +1904,6 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
->  	BUG_ON(!tsk->ptrace &&
->  	       (tsk->group_leader != tsk || !thread_group_empty(tsk)));
->  
-> -	/* Wake up all pidfd waiters */
-> -	do_notify_pidfd(tsk);
-> -
->  	if (sig != SIGCHLD) {
->  		/*
->  		 * This is only possible if parent == real_parent.
-> 
