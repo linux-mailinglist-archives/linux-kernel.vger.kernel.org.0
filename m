@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7110A71E74
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 20:00:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58C6071E76
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 20:00:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391290AbfGWR7Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 13:59:25 -0400
-Received: from mail-yb1-f202.google.com ([209.85.219.202]:39683 "EHLO
-        mail-yb1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391249AbfGWR7Q (ORCPT
+        id S2391294AbfGWSAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 14:00:49 -0400
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:33399 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391275AbfGWR7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 13:59:16 -0400
-Received: by mail-yb1-f202.google.com with SMTP id 199so33628608ybe.6
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 10:59:16 -0700 (PDT)
+        Tue, 23 Jul 2019 13:59:23 -0400
+Received: by mail-qk1-f202.google.com with SMTP id t196so37160218qke.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 10:59:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=JFgaWDMGqAls6G489iThigfOi0kr7eFjggN3NFe6qBQ=;
-        b=bdR5/fk0JGKoW7w0SFkFyWDsbkS1I0veDFpzyivmTwHIiT1ZA97yr7ZNBj0H2AShr3
-         pJNPC/lixw/WX323ImP4bsjq93mjJZOu3XmkpNpFXgCiVzkeEYaOnJlxDz/E8gDEr+0Z
-         7c+WyXnemQpO1dfLw6iPwN48OpAMyrI2pHKz9BmhLCsXRKcJ8hMZ0q56McGVdIPQVUpC
-         wU6S0XoQlY0qPAb6VoXtHP5wFmiEaCJNy21C3scQNSBD97gIywyYsw0LYzCg0A9GdhDR
-         +widw+4UdtR8VyNJh7brTEfaRq+BSrao4/hRns/7LOx28RgrtCz6SeEtUQ8FFyTY31id
-         9AMg==
+        bh=4Wn1GFyfxt3NCYf4PGNTFvqYM1MN1tNvgEFxNqktnk8=;
+        b=XwZfpnbXFN1ibF12kJh4UX27GKqgHpAYVMgncvRg2XMsGuyHBAM2BbcbV2FMLG6KI2
+         Eail8AtVvVEkdWyRNAKDAPdYJBEXOQRcSGAF4Z+pO2ORJP6spfMGKAIf7M0K0GlZ5J+x
+         8yVEMOwDv+oyp2b+30vvjnV2SNVEvVcKU1T+4yjg+W1ok7J01teWzQ68jS7jmU8ro/kC
+         Oxn9FlCYKBVtK3Jwi5MWr/zhUNuljezL1OPreJbqbiZZtnxrZ1CQ3LvL2shMV2iJ2vVT
+         olnzEJp2mTvJs0fngbdCdc/sbDwJUI9/28M468SMn/xpTOjrRZ2LIWF7gDkmDS+GMcl9
+         Q1sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=JFgaWDMGqAls6G489iThigfOi0kr7eFjggN3NFe6qBQ=;
-        b=Ll4csGL358TV4pq0xG2uEuWsS3LiDuHPr0kXLvIIYzp5aCNhdhOa6s4SjlvvHIQGxq
-         M1E8srtnUdMjEZ/6tSGMlLGHlYVFDWDPcBQihhJosJIF8l00JljEEJWcK0CHZXzUN5qB
-         /LZALqJ2Vm55Jp0SPKueQtkMSJtsoLFswdeoQwMJBBtIE32Wo+jdpx0/dy/wtilgWtoI
-         c9McFjJo88bNj9dtG8N3zvRvDTuTcozsA/hOG/VlpDJ9TpxiQ2jtwperP8POMpePK5dW
-         INIFyXKgK56VCIs3zvVHdEAz9Z6FuVpHZ27bUTgyNSj9qfPrNrmny+4qJ5ZpWQgF0L33
-         WazA==
-X-Gm-Message-State: APjAAAVNCrXhNiQ+3qDQtiuuUO2wMmg6jlygYTs3qryEmyYCSF008Jki
-        kXrvF45dqw06Sthlf+lqyXR8ybuiXpz27pSn
-X-Google-Smtp-Source: APXvYqyP8TuTil7EZTQQhTgA2DwZYNvsIYk2hVJOr9gyh7gqwx0FC8mj4nBRBXxdbEE2muRKlx89y5GRj7Mj4rf4
-X-Received: by 2002:a81:9c0b:: with SMTP id m11mr45173898ywa.3.1563904755656;
- Tue, 23 Jul 2019 10:59:15 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 19:58:40 +0200
+        bh=4Wn1GFyfxt3NCYf4PGNTFvqYM1MN1tNvgEFxNqktnk8=;
+        b=JExVvg+2kCZz9b36C7jb4uPNYsVicbe5Hh0dghbp6BEIV6HPWoDznKamhRwfAA7PZc
+         /rp8aqQ/9bRVXHNmY36sKlwbUdATaIaD3ae0V671Tt0bScK4kOd/rz39INKu7VSvh+2T
+         emm6cVhcAPlnoXUKQ5G1xRkGpa1PQj+YHVa60geiwLxDEXhBVhSO04CPrRQNpToZFkE9
+         kEOs6uAU5J/y6fvRkzF8d+EzgZutfijFBbriz7G/js5ScYPdi/FWZmUSqVnl2t+ohm8e
+         cc31JFhqCgPTibqUSjVQ8WUDY0+4nLyappDx4i444umBdTLFBvHNbVAmaQgdjfI5ZGVb
+         Gs4Q==
+X-Gm-Message-State: APjAAAVZKFQb3gL42Pz1Z3Kn441MD6k4x33RnVJDAgtEf2fo/xUDUnc9
+        g3TshOgujlaQ0BHjOw3lFGUh7jcNMz2ghr7L
+X-Google-Smtp-Source: APXvYqy0Hkccu8SUSwSAcf0RwepBseg9rSnBcrNaRpXVNhE8d6jRb6uSi4vWmbN3MkxTqVVfEdk8tSl4b+EbX0xe
+X-Received: by 2002:a37:4f47:: with SMTP id d68mr50765232qkb.104.1563904762211;
+ Tue, 23 Jul 2019 10:59:22 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 19:58:42 +0200
 In-Reply-To: <cover.1563904656.git.andreyknvl@google.com>
-Message-Id: <c5a78bcad3e94d6cda71fcaa60a423231ae71e4c.1563904656.git.andreyknvl@google.com>
+Message-Id: <4731bddba3c938658c10ff4ed55cc01c60f4c8f8.1563904656.git.andreyknvl@google.com>
 Mime-Version: 1.0
 References: <cover.1563904656.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
-Subject: [PATCH v19 03/15] lib: untag user pointers in strn*_user
+Subject: [PATCH v19 05/15] mm: untag user pointers in mm/gup.c
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
@@ -95,67 +95,44 @@ This patch is a part of a series that extends kernel ABI to allow to pass
 tagged user pointers (with the top byte set to something else other than
 0x00) as syscall arguments.
 
-strncpy_from_user and strnlen_user accept user addresses as arguments, and
-do not go through the same path as copy_from_user and others, so here we
-need to handle the case of tagged user addresses separately.
+mm/gup.c provides a kernel interface that accepts user addresses and
+manipulates user pages directly (for example get_user_pages, that is used
+by the futex syscall). Since a user can provided tagged addresses, we need
+to handle this case.
 
-Untag user pointers passed to these functions.
+Add untagging to gup.c functions that use user addresses for vma lookups.
 
-Note, that this patch only temporarily untags the pointers to perform
-validity checks, but then uses them as is to perform user memory accesses.
-
-Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
-Acked-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- lib/strncpy_from_user.c | 3 ++-
- lib/strnlen_user.c      | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ mm/gup.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
-index 023ba9f3b99f..dccb95af6003 100644
---- a/lib/strncpy_from_user.c
-+++ b/lib/strncpy_from_user.c
-@@ -6,6 +6,7 @@
- #include <linux/uaccess.h>
- #include <linux/kernel.h>
- #include <linux/errno.h>
-+#include <linux/mm.h>
- 
- #include <asm/byteorder.h>
- #include <asm/word-at-a-time.h>
-@@ -108,7 +109,7 @@ long strncpy_from_user(char *dst, const char __user *src, long count)
+diff --git a/mm/gup.c b/mm/gup.c
+index 98f13ab37bac..1c1c97ec63df 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -799,6 +799,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 	if (!nr_pages)
  		return 0;
  
- 	max_addr = user_addr_max();
--	src_addr = (unsigned long)src;
-+	src_addr = (unsigned long)untagged_addr(src);
- 	if (likely(src_addr < max_addr)) {
- 		unsigned long max = max_addr - src_addr;
- 		long retval;
-diff --git a/lib/strnlen_user.c b/lib/strnlen_user.c
-index 7f2db3fe311f..28ff554a1be8 100644
---- a/lib/strnlen_user.c
-+++ b/lib/strnlen_user.c
-@@ -2,6 +2,7 @@
- #include <linux/kernel.h>
- #include <linux/export.h>
- #include <linux/uaccess.h>
-+#include <linux/mm.h>
++	start = untagged_addr(start);
++
+ 	VM_BUG_ON(!!pages != !!(gup_flags & FOLL_GET));
  
- #include <asm/word-at-a-time.h>
+ 	/*
+@@ -961,6 +963,8 @@ int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
+ 	struct vm_area_struct *vma;
+ 	vm_fault_t ret, major = 0;
  
-@@ -109,7 +110,7 @@ long strnlen_user(const char __user *str, long count)
- 		return 0;
++	address = untagged_addr(address);
++
+ 	if (unlocked)
+ 		fault_flags |= FAULT_FLAG_ALLOW_RETRY;
  
- 	max_addr = user_addr_max();
--	src_addr = (unsigned long)str;
-+	src_addr = (unsigned long)untagged_addr(str);
- 	if (likely(src_addr < max_addr)) {
- 		unsigned long max = max_addr - src_addr;
- 		long retval;
 -- 
 2.22.0.709.g102302147b-goog
 
