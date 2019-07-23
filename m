@@ -2,76 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B41E7194B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 15:33:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24D417194E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 15:34:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732680AbfGWNdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 09:33:54 -0400
-Received: from smtprelay0178.hostedemail.com ([216.40.44.178]:37552 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732181AbfGWNdy (ORCPT
+        id S2390291AbfGWNeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 09:34:05 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46366 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732718AbfGWNeC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 09:33:54 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id D6461180273E0;
-        Tue, 23 Jul 2019 13:33:52 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:5007:10004:10400:10848:11232:11658:11914:12296:12297:12740:12760:12895:13069:13071:13311:13357:13439:14180:14181:14659:14721:21060:21080:21627:21740:30046:30054:30060:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: boys93_78379f489d811
-X-Filterd-Recvd-Size: 2231
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 23 Jul 2019 13:33:45 +0000 (UTC)
-Message-ID: <269b4b895d64deef4a6d0033dcbed48da11fbce0.camel@perches.com>
-Subject: Re: get_maintainers.pl subsystem output
-From:   Joe Perches <joe@perches.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     "Duda, Sebastian" <sebastian.duda@fau.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        Wolfgang Mauerer <wolfgang.mauerer@oth-regensburg.de>
-Date:   Tue, 23 Jul 2019 06:33:44 -0700
-In-Reply-To: <CAKXUXMym7Sd28gVxVXj60XS+aoqM4DAtEp2aA7BUUu06YQYufg@mail.gmail.com>
-References: <2c912379f96f502080bfcc79884cdc35@fau.de>
-         <5a468c6cbba8ceeed6bbeb8d19ca2d46cb749a47.camel@perches.com>
-         <2835dfa18922905ffabafb11fca7e1d2@fau.de>
-         <CAKXUXMwfd133rv0bMert-BBftaqxxr_93dUHpaUjEwE8RE_wwA@mail.gmail.com>
-         <8016ee9b5ee38fae0c782420ca449f863270cca9.camel@perches.com>
-         <CAKXUXMym7Sd28gVxVXj60XS+aoqM4DAtEp2aA7BUUu06YQYufg@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Tue, 23 Jul 2019 09:34:02 -0400
+Received: by mail-pl1-f193.google.com with SMTP id c2so20601502plz.13;
+        Tue, 23 Jul 2019 06:34:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=w9+ZmzMTvq2iSo2ujhpLGpBEFet1WMn1gqo2dfrjb/E=;
+        b=MSNTvFrZdBuTkcv6J2c6zOvMJXPHLl2nsaaSqrUy2hsatnWGr5v3RhzF5Qv/2HSSoB
+         FiBL0ucr8akcV/auBmb36ZqMaEXHkmF4I9TXRksG6QZFRIrha8lxDGZPIi7fxrsOPKTq
+         M97+AkClcvMWEMYg2e5hfjhbZ76x6Wh3yhCue68czqoOL4Ao0Pz1QNtmxzYfrjf+97OB
+         BjFyvKFbrj6zwXH4VDAjgNDoG6t0ylgO90UrUYG85x036+ywDTX+n3KkSf956+vhYweo
+         7i6xIGGN//Fo5oWiCyXJF94IA4Fl25mbT576y+Xi5A3MN8SBr4RhhnXDPslisLwvCzDc
+         Ocpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=w9+ZmzMTvq2iSo2ujhpLGpBEFet1WMn1gqo2dfrjb/E=;
+        b=etZO09hmND/Lt2V9jUXVkvxO6NW52S4dJlwqNxbCUnvVv4gJJOHcrlCeD0hoifD/wp
+         /OInGoBk4CTkD4/9+EOc2KSJvDh3sDF8maDMukAvvTT2GEpdM/wm2EvQB5hbghhG7Bdf
+         hG/LVnU7PU1I7rFp/LnoFTAotpV7CtCJyBZaSK1mFa/6E3qqbvSjbL5t03b/aq3oncj2
+         I9o3R+lzM3xa2x5asFzUPiKlYNGnfpzgJI1Ju2rxjytWByBfuAdHhRAAvSLgSJBhLOPN
+         U5yY5mFipX5eS6HIrHxrVa04G8uC43y2jnlPcOoXxscYa8fojyExGMJNR62IcQzOBHmH
+         G8Fw==
+X-Gm-Message-State: APjAAAVQbdL0BhGmISyA8WSfP2TUPlCLvuf42bedqY3kJ8q3jQmgTHRn
+        t8PDgCZ0R1cyMxEtE0YWyw0=
+X-Google-Smtp-Source: APXvYqxna/HiWFKj4QIrOWVI0xdv7iyo5CoL30GT9u3tN6dvHQdEsTVYdRn8y+YgGhdlOi/5ydEDOQ==
+X-Received: by 2002:a17:902:f216:: with SMTP id gn22mr78826259plb.118.1563888841134;
+        Tue, 23 Jul 2019 06:34:01 -0700 (PDT)
+Received: from localhost ([123.213.206.190])
+        by smtp.gmail.com with ESMTPSA id h26sm46900292pfq.64.2019.07.23.06.33.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 23 Jul 2019 06:34:00 -0700 (PDT)
+Date:   Tue, 23 Jul 2019 22:33:58 +0900
+From:   Minwoo Im <minwoo.im.dev@gmail.com>
+To:     Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+        Hannes Reinecke <hare@suse.de>
+Cc:     minwoo.im@samsung.com,
+        "sathya.prakash@broadcom.com" <sathya.prakash@broadcom.com>,
+        "suganath-prabu.subramani@broadcom.com" 
+        <suganath-prabu.subramani@broadcom.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "MPT-FusionLinux.pdl@broadcom.com" <MPT-FusionLinux.pdl@broadcom.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Euihyeok Kwon <eh81.kwon@samsung.com>,
+        Sarah Cho <sohyeon.jo@samsung.com>,
+        Sanggwan Lee <sanggwan.lee@samsung.com>,
+        Gyeongmin Nam <gm.nam@samsung.com>,
+        Sungjun Park <sj1228.park@samsung.com>,
+        Minwoo Im <minwoo.im.dev@gmail.com>
+Subject: Re: [PATCH V2] mpt3sas: support target smid for [abort|query] task
+Message-ID: <20190723133358.GB7148@minwoo-desktop>
+References: <CGME20190714034415epcms2p25f9787cb71993a30f58524d2f355b543@epcms2p2>
+ <20190714034415epcms2p25f9787cb71993a30f58524d2f355b543@epcms2p2>
+ <860cc8cf-6419-c649-b2d9-19b82f6ebc99@suse.de>
+ <CAK=zhgocY3Ute_6RiowaWsOROx3+Nzq6+WvkobmR_SB0Rt9_1g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAK=zhgocY3Ute_6RiowaWsOROx3+Nzq6+WvkobmR_SB0Rt9_1g@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-07-23 at 15:25 +0200, Lukas Bulwahn wrote:
-> Hi Joe,
-
-Hi again.
-
-> On Tue, Jul 23, 2019 at 1:18 PM Joe Perches <joe@perches.com> wrote:
-> > On Tue, 2019-07-23 at 10:42 +0200, Lukas Bulwahn wrote:
-> [...]
-> > > Joe, would you support and would you accept if we extend
-> > > get_maintainer.pl to provide output of the status in such a way that
-> > > the status output can be clearly mapped to the subsystem?
-> > 
-> > Not really, no.  I don't see much value in your
-> > request to others.  It seems you are doing some
-> > academic work rather than actually using it for
-> > sending patches.
-> > 
+On 19-07-23 16:57:49, Sreekanth Reddy wrote:
+> On Mon, Jul 15, 2019 at 11:43 AM Hannes Reinecke <hare@suse.de> wrote:
+> >
+> > On 7/14/19 5:44 AM, Minwoo Im wrote:
+> > > We can request task management IOCTL command(MPI2_FUNCTION_SCSI_TASK_MGMT)
+> > > to /dev/mpt3ctl.  If the given task_type is either abort task or query
+> > > task, it may need a field named "Initiator Port Transfer Tag to Manage"
+> > > in the IU.
+> > >
+> > > Current code does not support to check target IPTT tag from the
+> > > tm_request.  This patch introduces to check TaskMID given from the
+> > > userspace as a target tag.  We have a rule of relationship between
+> > > (struct request *req->tag) and smid in mpt3sas_base.c:
+> > >
+> > > 3318 u16
+> > > 3319 mpt3sas_base_get_smid_scsiio(struct MPT3SAS_ADAPTER *ioc, u8 cb_idx,
+> > > 3320         struct scsi_cmnd *scmd)
+> > > 3321 {
+> > > 3322         struct scsiio_tracker *request = scsi_cmd_priv(scmd);
+> > > 3323         unsigned int tag = scmd->request->tag;
+> > > 3324         u16 smid;
+> > > 3325
+> > > 3326         smid = tag + 1;
+> > >
+> > > So if we want to abort a request tagged #X, then we can pass (X + 1) to
+> > > this IOCTL handler.  Otherwise, user space just can pass 0 TaskMID to
+> > > abort the first outstanding smid which is legacy behaviour.
+> > >
+> > > Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+> > > Cc: Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
+> > > Cc: Sathya Prakash <sathya.prakash@broadcom.com>
+> > > Cc: James E.J. Bottomley <jejb@linux.ibm.com>
+> > > Cc: Martin K. Petersen <martin.petersen@oracle.com>
+> > > Cc: MPT-FusionLinux.pdl@broadcom.com
+> > > Signed-off-by: Minwoo Im <minwoo.im@samsung.com>
+> > > ---
+> > >  drivers/scsi/mpt3sas/mpt3sas_ctl.c | 12 ++++++++++--
+> > >  1 file changed, 10 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+> > > index b2bb47c14d35..f6b8fd90610a 100644
+> > > --- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+> > > +++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+> > > @@ -596,8 +596,16 @@ _ctl_set_task_mid(struct MPT3SAS_ADAPTER *ioc, struct mpt3_ioctl_command *karg,
+> > >               if (priv_data->sas_target->handle != handle)
+> > >                       continue;
+> > >               st = scsi_cmd_priv(scmd);
+> > > -             tm_request->TaskMID = cpu_to_le16(st->smid);
+> > > -             found = 1;
+> > > +
+> > > +             /*
+> > > +              * If the given TaskMID from the user space is zero, then the
+> > > +              * first outstanding smid will be picked up.  Otherwise,
+> > > +              * targeted smid will be the one.
+> > > +              */
+> > > +             if (!tm_request->TaskMID || tm_request->TaskMID == st->smid) {
+> > > +                     tm_request->TaskMID = cpu_to_le16(st->smid);
+> > > +                     found = 1;
+> > > +             }
+> > >       }
+> > >
+> > >       if (!found) {
+> > >
+> > I think this is fundamentally wrong.
+> > ABORT_TASK is used to abort a single task, which of course has to be
+> > known beforehand. If you don't know the task, what exactly do you hope
+> > to achieve here? Aborting random I/O?
+> > Or, even worse, aborting I/O the driver uses internally and corrupt the
+> > internal workflow of the driver?
+> >
+> > We should simply disallow any ABORT TASK from userspace if the TaskMID
+> > is zero. And I would even argue to disabllow ABORT TASK from userspace
+> > completely, as the smid is never relayed to userland, and as such the
+> > user cannot know which task should be aborted.
 > 
-> Thank you for that indication. It is good to know that our use case is
-> too special to be covered in the existing tool and serves no one else
-> besides our research work.
+> Hannes,
+> 
+> This interface was added long time back in mpt2sas driver and I don't
+> have exact reason of adding this interface at that time.
+> But I know that this interface is still used by BRCM test team & few
+> customers only for some functionality and regression testing.
 
-Seems a bit harsh a description, and yes, I've
-not ever seen a single request similar to yours
-to use get_maintainer in such a manner.
+Actually I have sent this patch for the testing purpose for the SAS storage
+that I'm working with now.  Some of test platform could figure out which
+command has to be aborted or queried via debugfs and information from the
+device itself with some other methods.  If the mpt3sas driver supports
+the targeted TMF for a single command, then it would be great for the
+testing.
 
-
+Thanks,
+	Minwoo Im
