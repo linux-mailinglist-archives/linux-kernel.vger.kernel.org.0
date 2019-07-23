@@ -2,56 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B49ED71880
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 14:46:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C38D71888
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 14:47:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389777AbfGWMqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 08:46:55 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37589 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727724AbfGWMqy (ORCPT
+        id S2389858AbfGWMrO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 08:47:14 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40097 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389797AbfGWMrN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 08:46:54 -0400
-Received: by mail-pf1-f194.google.com with SMTP id 19so19099822pfa.4
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 05:46:54 -0700 (PDT)
+        Tue, 23 Jul 2019 08:47:13 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w10so19391253pgj.7;
+        Tue, 23 Jul 2019 05:47:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=3W2vUCM0wvNgzTeL3WR1yMUrLTtodWyEHuD05I9UfiE=;
-        b=bblXs8Iryxe4c9QnYmHEWzU0wgtJEPjhtXzTIT05gFLVDkuqYn06uMXR2zZDNmHm51
-         ziiq8BqH4W39jL+XXl/3e1IXB2Hnq/DV7/IAmZ22UouIDHQuV7YmM5g7ArwLxo174Ap6
-         R5U9THVfkBrBycrrpc9hlyotyPe+HI7kcUEbd21WVmgM4ZwIW2tJp27WTJX7/o8uuB8t
-         9NOgOShWkv31HN1DjAGEGTIQ8WNUUSg7pUxo4gv0ngcH6oTqCZhBZzklv732CFrMjn7H
-         7tRDDwd9QgQmBiLJ4GCHIVM7dfMJmK9fOUk563eKrFipd0IGgQiOXo7swuuzNFIfFcJf
-         8eoQ==
+        bh=RvJTgF+BOn0RoftzxFYR6bLO76ZgRwKBwjddXUMQ278=;
+        b=mdO+FpwFctnohKCWuCH49mHKxqMsQRapR01Af2NxzrcvDyxseTNc7eUWdkK/utUCHY
+         a1rhqK8OJ8cwvhXB3dn6ojcTJq2G8rRAkiJF6ecFGdgIdb58pOscSftnbcMR21itm0Gg
+         pCtNfgAaUbQNy57nooxSvcv+25test50QR6cj7+8TiPEyW93TLUAOozBqpA0RrNe7ped
+         hsh9hj2l049LdLUYeQWTyk/M2rFypoDEz4PnM3LBrYP0oCgbgtb64bpq7ixorNfE/Cy9
+         A/aHpkVI7vcUkK9KlOBu1oNIxc9DoPhDZPe+uZ2nmsErEto2wFdiLfjTSaOtVaFwRMqy
+         YREQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=3W2vUCM0wvNgzTeL3WR1yMUrLTtodWyEHuD05I9UfiE=;
-        b=lkiOVK2E/hBSAWh5fTh8RRL+MsqE4bBcbEL9smQISm/SnVQg7aiH8jP6UgIhox2YiA
-         hddJb82FQbkO0Cj7WDxK54IK24pm4TgCTPCV4it6pSFj/mHj51+v8kIBwolMXGDi9Mz0
-         VEfmnkvtkEjbNZ93qPtXLHsrfRQPz0hHwHX/6Pnw+0PeYX0+7o8bnxBVb5QjSsWvBGzP
-         KY8xvTyjglvATv6cYf+9k00SbJ0LQdkLGd7glBXbmmPfDD47OhqblLvKA8Fqkkz5NwEd
-         PuNNGDE7jGxlsyz7EfzPbK0bPwkTy6MVuOJTrqkMyyTO/v8jNEjay8uoTM9NcIpPDCS6
-         denA==
-X-Gm-Message-State: APjAAAW4BDHg0TV8WU+9hmIjBAZwR/j3chFC+Js/EoapQjC7EWdiAFdT
-        g0ZhvI3w3RPesHaDZFjvObtTVAp7hok=
-X-Google-Smtp-Source: APXvYqyIjPDzX1Qi2TEbGFlRK/Gr/NN2lw0TRG+D2XwP2M/V58xoTRmmoymkbMCCeYCGBcVMgSTPVA==
-X-Received: by 2002:aa7:8641:: with SMTP id a1mr5631326pfo.177.1563886014151;
-        Tue, 23 Jul 2019 05:46:54 -0700 (PDT)
+        bh=RvJTgF+BOn0RoftzxFYR6bLO76ZgRwKBwjddXUMQ278=;
+        b=AaQ8AkTox92YhZxRHqDcNXyeb1wUfPt8CGb/6VLkik5NSL+80A6qFbxgoQwvbcp81u
+         /7cVTiQiKuMUVIfGBB3K+wa2ROuHQR1chysaCYfbGQKyzDBvPf5i4tYMDx2yJ1qsYr7H
+         wR17vReXte1EimYmzlAKtE1yW2NNr2rHhAIy6kbXmio+QmiR0DULSIB7gQgiO2AMI1PK
+         fMqslVvJ91turwP3LezU8iUz7um9MpU+2j+QVLJ7AbcqcgitGmQPD9/ZiwQGehkbfW/G
+         b6T1e5ixIYUMnjBwlfad/NqW6K7P4Z1ODuqmQI5F/HUNWx1PGIkpb6wfoYjIn2Iu+F00
+         4Xgw==
+X-Gm-Message-State: APjAAAWAixdin7/WHeOglz6Tqk6Fpv5Ngs+p7GT2iiwZqzva8WNtYoPT
+        EFwhxS37B8WuhjQr6VU6zyM=
+X-Google-Smtp-Source: APXvYqxcn0WFoYb8j7/TG4ohUCx982Olky66Q6qucS0ygw8/QdHxp5v3aoNavIwttB/3aRAs8TGeyA==
+X-Received: by 2002:aa7:9dc7:: with SMTP id g7mr5407603pfq.170.1563886032549;
+        Tue, 23 Jul 2019 05:47:12 -0700 (PDT)
 Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id o11sm72746953pfh.114.2019.07.23.05.46.52
+        by smtp.gmail.com with ESMTPSA id w1sm36278872pjt.30.2019.07.23.05.47.10
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 05:46:53 -0700 (PDT)
+        Tue, 23 Jul 2019 05:47:11 -0700 (PDT)
 From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH v2] misc: alcor_pci: Use dev_get_drvdata
-Date:   Tue, 23 Jul 2019 20:46:49 +0800
-Message-Id: <20190723124649.24728-1-hslester96@gmail.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH] mmc: sdhci-pci: Use dev_get_drvdata
+Date:   Tue, 23 Jul 2019 20:47:07 +0800
+Message-Id: <20190723124707.24782-1-hslester96@gmail.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -66,36 +67,53 @@ use dev_get_drvdata to make code simpler.
 
 Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 ---
-Changes in v2:
-  - Split v1 into different subsystems
+ drivers/mmc/host/sdhci-pci-core.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
- drivers/misc/cardreader/alcor_pci.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/misc/cardreader/alcor_pci.c b/drivers/misc/cardreader/alcor_pci.c
-index bcb10fa4bc3a..259fe1dfec03 100644
---- a/drivers/misc/cardreader/alcor_pci.c
-+++ b/drivers/misc/cardreader/alcor_pci.c
-@@ -334,8 +334,7 @@ static void alcor_pci_remove(struct pci_dev *pdev)
+diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+index 4041878eb0f3..d10aceed5bb7 100644
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -1759,8 +1759,7 @@ static const struct sdhci_ops sdhci_pci_ops = {
  #ifdef CONFIG_PM_SLEEP
- static int alcor_suspend(struct device *dev)
+ static int sdhci_pci_suspend(struct device *dev)
  {
 -	struct pci_dev *pdev = to_pci_dev(dev);
--	struct alcor_pci_priv *priv = pci_get_drvdata(pdev);
-+	struct alcor_pci_priv *priv = dev_get_drvdata(dev);
+-	struct sdhci_pci_chip *chip = pci_get_drvdata(pdev);
++	struct sdhci_pci_chip *chip = dev_get_drvdata(dev);
  
- 	alcor_pci_aspm_ctrl(priv, 1);
- 	return 0;
-@@ -344,8 +343,7 @@ static int alcor_suspend(struct device *dev)
- static int alcor_resume(struct device *dev)
+ 	if (!chip)
+ 		return 0;
+@@ -1773,8 +1772,7 @@ static int sdhci_pci_suspend(struct device *dev)
+ 
+ static int sdhci_pci_resume(struct device *dev)
  {
- 
 -	struct pci_dev *pdev = to_pci_dev(dev);
--	struct alcor_pci_priv *priv = pci_get_drvdata(pdev);
-+	struct alcor_pci_priv *priv = dev_get_drvdata(dev);
+-	struct sdhci_pci_chip *chip = pci_get_drvdata(pdev);
++	struct sdhci_pci_chip *chip = dev_get_drvdata(dev);
  
- 	alcor_pci_aspm_ctrl(priv, 0);
- 	return 0;
+ 	if (!chip)
+ 		return 0;
+@@ -1789,8 +1787,7 @@ static int sdhci_pci_resume(struct device *dev)
+ #ifdef CONFIG_PM
+ static int sdhci_pci_runtime_suspend(struct device *dev)
+ {
+-	struct pci_dev *pdev = to_pci_dev(dev);
+-	struct sdhci_pci_chip *chip = pci_get_drvdata(pdev);
++	struct sdhci_pci_chip *chip = dev_get_drvdata(dev);
+ 
+ 	if (!chip)
+ 		return 0;
+@@ -1803,8 +1800,7 @@ static int sdhci_pci_runtime_suspend(struct device *dev)
+ 
+ static int sdhci_pci_runtime_resume(struct device *dev)
+ {
+-	struct pci_dev *pdev = to_pci_dev(dev);
+-	struct sdhci_pci_chip *chip = pci_get_drvdata(pdev);
++	struct sdhci_pci_chip *chip = dev_get_drvdata(dev);
+ 
+ 	if (!chip)
+ 		return 0;
 -- 
 2.20.1
 
