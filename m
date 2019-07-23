@@ -2,152 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F4B87217C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 23:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E84E872180
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 23:28:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392048AbfGWV2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 17:28:18 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37082 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731025AbfGWV2R (ORCPT
+        id S2392085AbfGWV24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 17:28:56 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:37038 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728967AbfGWV2z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 17:28:17 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 19so19770368pfa.4
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 14:28:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=KE15xa18tTRocyVLkAyTsFK/CogeXePSTfih4gTWWqE=;
-        b=SDygoRUsTxW6TTuRaBj1iYCmOY2pEXsrRSkgpjtWINcS2KHYINYnEh3sSHGXM/Z9Z0
-         0UyPSL9FtaaX+eeg83GXipQUkmsgtEgfQewcrGVaqRRdVJdawtWqHD6+XrBoSfVPlUOT
-         VyahDnFtfgqFF5DeeFH4Q+q4WnnGIpZ9zjvdM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=KE15xa18tTRocyVLkAyTsFK/CogeXePSTfih4gTWWqE=;
-        b=BFqJLBP5mIvlXfI7YnbvSJey0tNviDFQKPTlj/4UCzqSMs+4HbctAz5PNVvijCenC8
-         /nnLSmWFmwKdc7uu29B+/kawAc9RNgDFL/z7myzhjf5ViC+sSAwC5Hn30st8fbXOwVrD
-         AGX7j0VwuYzGTPM2Up/c0HV16lJjWZhhLr1nZNgRbckBAVgtH8nbG2joHVdhKSBrwAq+
-         MIoA/1E+4N1B4/fwjcirEjL+1w4h7fSazmckXM5+N2170qqxyPwIHHWMAQgn9YcTUlxk
-         wE/Kjfo1kUSlPLoeWFeCzUwXSvJVhsHNR/5WnpKdu25ZaSLhl1q5T+/W2dot5nk2RAbA
-         AxuA==
-X-Gm-Message-State: APjAAAVRxFnMWbTbgJ0YfIzYoQ8V+lfGuvlLNIlKeGKA8Qjhd144INHb
-        fHX4GT5f6iZQIvjl4zlVKSEpvQ==
-X-Google-Smtp-Source: APXvYqz47GoGURJ0taiC0XhIJxWtE1YOy/l5OZWV402tGZ0JRjtYHPc39Jdba1gAyo/qTxfnfJeItA==
-X-Received: by 2002:a17:90a:1a45:: with SMTP id 5mr85961043pjl.43.1563917297050;
-        Tue, 23 Jul 2019 14:28:17 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id v10sm44579780pfe.163.2019.07.23.14.28.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 23 Jul 2019 14:28:16 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 14:28:15 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Stephen Kitt <steve@sk2.org>,
-        Nitin Gote <nitin.r.gote@intel.com>, jannh@google.com,
-        kernel-hardening@lists.openwall.com,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/2] kernel-doc: core-api: Include string.h into core-api
-Message-ID: <201907231428.6154FA6E04@keescook>
-References: <cover.1563841972.git.joe@perches.com>
- <224a6ebf39955f4107c0c376d66155d970e46733.1563841972.git.joe@perches.com>
+        Tue, 23 Jul 2019 17:28:55 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6NLO9Ur031514;
+        Tue, 23 Jul 2019 21:28:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=jXLXRJ/Y6JfH9vX4QoNP0NAjE2AgrDuly2eL+QibNhM=;
+ b=VqyK1OKp7TR230/YHVBc0GtEfo9JHhY1dZLbJ6VYPvkgkjnID5sJgWr5e+PClmv+dNau
+ xAJm6kFOUOaQwPnYrkrhWIKCG3qT0fYVS0C05oHn8V5dVB7+rZ6YdR3fGU8USIFnA/NX
+ O0a0IV1s2w3ljnfv04vltT0hfIVYfakFjPTAfJv5PhuOchItpFaAqWlCCHQkAnvZEJHv
+ B1BpbDZGw8TRRYT7e9M0HkhQRwjxN7I3JL2LPclkc93O/itlqfKkjoywx1s73P0RKeV7
+ 7wnhYM++zelSqD+3lkA6cCm30B0dtgUq2uU6HwFA+/4yJjNaAdY1VgeoG77AGyGeJflJ OQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2tx61bsbub-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Jul 2019 21:28:24 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6NLRpRf082842;
+        Tue, 23 Jul 2019 21:28:23 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2tx60xekek-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Jul 2019 21:28:23 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6NLSJDo024157;
+        Tue, 23 Jul 2019 21:28:19 GMT
+Received: from dhcp-10-132-91-225.usdhcp.oraclecorp.com (/10.132.91.225)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 23 Jul 2019 14:28:19 -0700
+Subject: Re: [PATCH] KVM: x86: init x2apic_enabled() once
+To:     luferry@163.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190723130608.26528-1-luferry@163.com>
+From:   Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Message-ID: <a86b536b-71ad-1112-9968-54136a9229d9@oracle.com>
+Date:   Tue, 23 Jul 2019 14:28:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <224a6ebf39955f4107c0c376d66155d970e46733.1563841972.git.joe@perches.com>
+In-Reply-To: <20190723130608.26528-1-luferry@163.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9327 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907230216
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9327 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907230216
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 05:38:16PM -0700, Joe Perches wrote:
-> core-api should show all the various string functions including the
-> newly added stracpy and stracpy_pad.
-> 
-> Miscellanea:
-> 
-> o Update the Returns: value for strscpy
-> o fix a defect with %NUL)
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
 
--Kees
-
+On 07/23/2019 06:06 AM, luferry@163.com wrote:
+> From: luferry <luferry@163.com>
+>
+> x2apic_eanbled() costs about 200 cycles
+> when guest trigger halt pretty high, pi ops in hotpath
+>
+> Signed-off-by: luferry <luferry@163.com>
 > ---
->  Documentation/core-api/kernel-api.rst |  3 +++
->  include/linux/string.h                |  5 +++--
->  lib/string.c                          | 10 ++++++----
->  3 files changed, 12 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/core-api/kernel-api.rst b/Documentation/core-api/kernel-api.rst
-> index 08af5caf036d..f77de49b1d51 100644
-> --- a/Documentation/core-api/kernel-api.rst
-> +++ b/Documentation/core-api/kernel-api.rst
-> @@ -42,6 +42,9 @@ String Manipulation
->  .. kernel-doc:: lib/string.c
->     :export:
->  
-> +.. kernel-doc:: include/linux/string.h
-> +   :internal:
+>   arch/x86/kvm/vmx/vmx.c | 10 +++++++---
+>   1 file changed, 7 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index d98eac371c0a..e17dbf011e47 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -186,6 +186,8 @@ static DEFINE_STATIC_KEY_FALSE(vmx_l1d_should_flush);
+>   static DEFINE_STATIC_KEY_FALSE(vmx_l1d_flush_cond);
+>   static DEFINE_MUTEX(vmx_l1d_flush_mutex);
+>   
+> +static int __read_mostly host_x2apic_enabled;
 > +
->  .. kernel-doc:: mm/util.c
->     :functions: kstrdup kstrdup_const kstrndup kmemdup kmemdup_nul memdup_user
->                 vmemdup_user strndup_user memdup_user_nul
-> diff --git a/include/linux/string.h b/include/linux/string.h
-> index f80b0973f0e5..329188fffc11 100644
-> --- a/include/linux/string.h
-> +++ b/include/linux/string.h
-> @@ -515,8 +515,9 @@ static inline void memcpy_and_pad(void *dest, size_t dest_len,
->   * But this can lead to bugs due to typos, or if prefix is a pointer
->   * and not a constant. Instead use str_has_prefix().
->   *
-> - * Returns: 0 if @str does not start with @prefix
-> -         strlen(@prefix) if @str does start with @prefix
-> + * Returns:
-> + * * strlen(@prefix) if @str starts with @prefix
-> + * * 0 if @str does not start with @prefix
->   */
->  static __always_inline size_t str_has_prefix(const char *str, const char *prefix)
->  {
-> diff --git a/lib/string.c b/lib/string.c
-> index 461fb620f85f..53582b6dce2a 100644
-> --- a/lib/string.c
-> +++ b/lib/string.c
-> @@ -173,8 +173,9 @@ EXPORT_SYMBOL(strlcpy);
->   * doesn't unnecessarily force the tail of the destination buffer to be
->   * zeroed.  If zeroing is desired please use strscpy_pad().
->   *
-> - * Return: The number of characters copied (not including the trailing
-> - *         %NUL) or -E2BIG if the destination buffer wasn't big enough.
-> + * Returns:
-> + * * The number of characters copied (not including the trailing %NUL)
-> + * * -E2BIG if count is 0.
->   */
->  ssize_t strscpy(char *dest, const char *src, size_t count)
->  {
-> @@ -253,8 +254,9 @@ EXPORT_SYMBOL(strscpy);
->   * For full explanation of why you may want to consider using the
->   * 'strscpy' functions please see the function docstring for strscpy().
->   *
-> - * Return: The number of characters copied (not including the trailing
-> - *         %NUL) or -E2BIG if the destination buffer wasn't big enough.
-> + * Returns:
-> + * * The number of characters copied (not including the trailing %NUL)
-> + * * -E2BIG if count is 0.
->   */
->  ssize_t strscpy_pad(char *dest, const char *src, size_t count)
->  {
-> -- 
-> 2.15.0
-> 
+>   /* Storage for pre module init parameter parsing */
+>   static enum vmx_l1d_flush_state __read_mostly vmentry_l1d_flush_param = VMENTER_L1D_FLUSH_AUTO;
+>   
+> @@ -1204,7 +1206,7 @@ static void vmx_vcpu_pi_load(struct kvm_vcpu *vcpu, int cpu)
+>   
+>   		dest = cpu_physical_id(cpu);
+>   
+> -		if (x2apic_enabled())
+> +		if (host_x2apic_enabled)
+>   			new.ndst = dest;
+>   		else
+>   			new.ndst = (dest << 8) & 0xFF00;
+> @@ -7151,7 +7153,7 @@ static void __pi_post_block(struct kvm_vcpu *vcpu)
+>   
+>   		dest = cpu_physical_id(vcpu->cpu);
+>   
+> -		if (x2apic_enabled())
+> +		if (host_x2apic_enabled)
+>   			new.ndst = dest;
+>   		else
+>   			new.ndst = (dest << 8) & 0xFF00;
+> @@ -7221,7 +7223,7 @@ static int pi_pre_block(struct kvm_vcpu *vcpu)
+>   		 */
+>   		dest = cpu_physical_id(vcpu->pre_pcpu);
+>   
+> -		if (x2apic_enabled())
+> +		if (host_x2apic_enabled)
+>   			new.ndst = dest;
+>   		else
+>   			new.ndst = (dest << 8) & 0xFF00;
+> @@ -7804,6 +7806,8 @@ static int __init vmx_init(void)
+>   	}
+>   #endif
+>   
+> +	host_x2apic_enabled = x2apic_enabled();
+> +
+>   	r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
+>   		     __alignof__(struct vcpu_vmx), THIS_MODULE);
+>   	if (r)
 
--- 
-Kees Cook
+Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
