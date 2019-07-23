@@ -2,50 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 209B2721CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 23:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD995721D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 23:49:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392206AbfGWVr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 17:47:56 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36251 "EHLO
+        id S2403974AbfGWVt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 17:49:56 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58691 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387539AbfGWVr4 (ORCPT
+        with ESMTP id S1731612AbfGWVt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 17:47:56 -0400
+        Tue, 23 Jul 2019 17:49:56 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6NLllPA253046
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6NLmYpu253323
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 23 Jul 2019 14:47:47 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6NLllPA253046
+        Tue, 23 Jul 2019 14:48:34 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6NLmYpu253323
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1563918468;
-        bh=u4RDWDypJDchH1SwnWJOJfGC57FMLGZ4vRb8EMK3emU=;
+        s=2019071901; t=1563918515;
+        bh=omeHcK3ImAUZ8za7Md9AG8k6yV0W5yQr/qgxm45Del4=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=hdTfU/+QpN4iAgGyinfMOj82vBablSDoR4VmvwK6fh+GWt0qznF3pkUJw0gZB10r3
-         X7IkSixLtGyZ2PdrUBru0OTMYVNuLmdvB9EAqiIAwOaQZR5O7JORooxRiMAh3UqQCg
-         x0TCOBk2QNAayIb679S1yMt0MG8SIikJkh9hSzFBnDCK/j6cVLqIRBQY3l9JpLDg+z
-         hGdcdTY46wBAicZncLlKrdDeDlkjfn/vgA4UoaiZ3sbEe00Koa4KWMMBQvLwfsLXXY
-         LexNWaicKB5QBa+lFLO2MqjtroTln3A3INJzuw3jq7S4u0uVuSTeGq6YGnKNkImBnX
-         9PmfzFD0XOLDA==
+        b=iHYdPp/oic3KgpPCvB2Rm18KN9e+4lIDwbab1+nTRhuEl9MbBb8DDn7w4H2XC9QJ4
+         u59W78O7Xpr3WAAFUMWwgh3eWtuqFiwk8u+AsLdgu9uaKn+AsTL1krytdbMp4Wsb21
+         mYaop6Q91dMOUOIibv35oHALUj4X5GCrivmWfLGdGLwEarSjdKi45IHpx9bh1RdgQ6
+         NWQXbNZHvnPQvHm4tFpWY2ScZXPO0HJ+JUGoc64dtlQY+Z4770tmLEoZR5UlasbWio
+         lAe+NURnzIIKMiwesNllZlLLpMweHv1Ivn5gIYWEj5DCJzT6ds39pBkEytA46DnJKx
+         FrreHB1IxhtTg==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6NLllEp253043;
-        Tue, 23 Jul 2019 14:47:47 -0700
-Date:   Tue, 23 Jul 2019 14:47:47 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6NLmXk4253320;
+        Tue, 23 Jul 2019 14:48:33 -0700
+Date:   Tue, 23 Jul 2019 14:48:33 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andi Kleen <tipbot@zytor.com>
-Message-ID: <tip-dde4e732a5b02fa5599c2c0e6c48a0c11789afc4@git.kernel.org>
-Cc:     mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        acme@redhat.com, hpa@zytor.com, jolsa@kernel.org,
-        denis.bakhvalov@intel.com, ak@linux.intel.com
-Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, acme@redhat.com, hpa@zytor.com,
-          jolsa@kernel.org, denis.bakhvalov@intel.com, ak@linux.intel.com
-In-Reply-To: <20190711181922.18765-2-andi@firstfloor.org>
-References: <20190711181922.18765-2-andi@firstfloor.org>
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-79b2fe5e756163897175a8f57d66b26cd9befd59@git.kernel.org>
+Cc:     alexander.shishkin@linux.intel.com, davidcc@google.com,
+        kan.liang@linux.intel.com, acme@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        jolsa@kernel.org, mingo@kernel.org, namhyung@kernel.org,
+        songliubraving@fb.com
+Reply-To: songliubraving@fb.com, hpa@zytor.com, jolsa@kernel.org,
+          mingo@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, peterz@infradead.org,
+          acme@redhat.com, kan.liang@linux.intel.com, davidcc@google.com,
+          alexander.shishkin@linux.intel.com
+In-Reply-To: <20190715140426.32509-1-jolsa@kernel.org>
+References: <20190715140426.32509-1-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf script: Fix off by one in brstackinsn IPC
- computation
-Git-Commit-ID: dde4e732a5b02fa5599c2c0e6c48a0c11789afc4
+Subject: [tip:perf/urgent] perf tools: Fix proper buffer size for feature
+ processing
+Git-Commit-ID: 79b2fe5e756163897175a8f57d66b26cd9befd59
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,60 +67,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  dde4e732a5b02fa5599c2c0e6c48a0c11789afc4
-Gitweb:     https://git.kernel.org/tip/dde4e732a5b02fa5599c2c0e6c48a0c11789afc4
-Author:     Andi Kleen <ak@linux.intel.com>
-AuthorDate: Thu, 11 Jul 2019 11:19:21 -0700
+Commit-ID:  79b2fe5e756163897175a8f57d66b26cd9befd59
+Gitweb:     https://git.kernel.org/tip/79b2fe5e756163897175a8f57d66b26cd9befd59
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Mon, 15 Jul 2019 16:04:26 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 23 Jul 2019 08:59:37 -0300
+CommitDate: Tue, 23 Jul 2019 08:59:49 -0300
 
-perf script: Fix off by one in brstackinsn IPC computation
+perf tools: Fix proper buffer size for feature processing
 
-When we hit the end of a program block, need to count the last
-instruction too for the IPC computation. This caused large errors for
-small blocks.
+After Song Liu's segfault fix for pipe mode, Arnaldo reported following
+error:
 
-  % perf script -b ls / > /dev/null
+  # perf record -o - | perf script
+  0x514 [0x1ac]: failed to process type: 80
 
-Before:
+It's caused by wrong buffer size setup in feature processing, which
+makes cpu topology feature fail, because it's using buffer size to
+recognize its header version.
 
-  % perf script -F +brstackinsn --xed
-  ...
-        00007f94c9ac70d8                        jz 0x7f94c9ac70e3                       # PRED 3 cycles [36] 4.33 IPC
-        00007f94c9ac70e3                        testb  $0x20, 0x31d(%rbx)
-        00007f94c9ac70ea                        jnz 0x7f94c9ac70b0
-        00007f94c9ac70ec                        testb  $0x8, 0x205ad(%rip)
-        00007f94c9ac70f3                        jz 0x7f94c9ac6ff0               # PRED 1 cycles [37] 3.00 IPC
-
-After:
-
-  % perf script -F +brstackinsn --xed
-  ...
-        00007f94c9ac70d8                        jz 0x7f94c9ac70e3                       # PRED 3 cycles [15] 4.67 IPC
-        00007f94c9ac70e3                        testb  $0x20, 0x31d(%rbx)
-        00007f94c9ac70ea                        jnz 0x7f94c9ac70b0
-        00007f94c9ac70ec                        testb  $0x8, 0x205ad(%rip)
-        00007f94c9ac70f3                        jz 0x7f94c9ac6ff0               # PRED 1 cycles [16] 4.00 IPC
-
-Suggested-by: Denis Bakhvalov <denis.bakhvalov@intel.com>
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20190711181922.18765-2-andi@firstfloor.org
+Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Carrillo-Cisneros <davidcc@google.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
+Fixes: e9def1b2e74e ("perf tools: Add feature header record to pipe-mode")
+Link: http://lkml.kernel.org/r/20190715140426.32509-1-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-script.c | 2 +-
+ tools/perf/util/header.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 8f24865596af..0140ddb8dd0b 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1059,7 +1059,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index c24db7f4909c..20111f8da5cb 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -3747,7 +3747,7 @@ int perf_event__process_feature(struct perf_session *session,
+ 		return 0;
  
- 			printed += ip__fprintf_sym(ip, thread, x.cpumode, x.cpu, &lastsym, attr, fp);
- 			if (ip == end) {
--				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, insn, fp,
-+				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, ++insn, fp,
- 							    &total_cycles);
- 				if (PRINT_FIELD(SRCCODE))
- 					printed += print_srccode(thread, x.cpumode, ip);
+ 	ff.buf  = (void *)fe->data;
+-	ff.size = event->header.size - sizeof(event->header);
++	ff.size = event->header.size - sizeof(*fe);
+ 	ff.ph = &session->header;
+ 
+ 	if (feat_ops[feat].process(&ff, NULL))
