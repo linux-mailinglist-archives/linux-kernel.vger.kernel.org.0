@@ -2,89 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A72D17195D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 15:35:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17FDE7196C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 15:37:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390304AbfGWNft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 09:35:49 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41167 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbfGWNfp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 09:35:45 -0400
-Received: by mail-pf1-f196.google.com with SMTP id m30so19176203pff.8
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 06:35:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=U/rIdHk59Y26MP5OXK9CvV9HfQIDnItcRiOtBbdSbMQ=;
-        b=y4uhVeOBrDTO/fWLGANwFQ5WbdfHqk0C3/9TA4Xqj6oaoxU4upVOcL3Jwc7pOKVpNQ
-         jvwpqpGDcfUB/YN5IEPy7WIeXpG//IQCBQCmGghrtYY/EuKSvIevTqGPJtakh0LoO/Tk
-         wtaS6ABQOdbx4zCVCvVSpwo4dVKDS2vLDYJq1GOf5e8qDIZy1OLZjP8iZ8+juoa3nbTO
-         Ry+rreTVmTnPNGUOdX7PKSil7d1tIGK/Y0WImVn9y2OgmzbzZk9P9Ms0Z8ZkVVA6MXhi
-         fgVWNl4lfjsR8SD40LuLvlZ8TXLj7jTpoYttudPDPha42ZNstoa0gF6lXXi6ULka99pT
-         ylxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=U/rIdHk59Y26MP5OXK9CvV9HfQIDnItcRiOtBbdSbMQ=;
-        b=WGxepWaR1rcp9v/ot23+4of2KRacRksJtp40DwL8s145q7g62ari6+eRmoy3Gt/8if
-         iT9a9RPMyTsPkEhuZSbLXuOiCQNUUCpGkaF3HUHlJeuWLA9iTpWwaIxWZOZI+Hq46xlE
-         KIdQr/SX/QvNAX25rjYbadmZlnY30r0EeTb+xyLjRXxTd/QhlM/SGIGrDSEwbzdqH1gm
-         c3YaGNp2xktbb0FVgmbc3ZOMJYSMqEnqIuBiTDtwX8Z6hwvaHM9M76wXBoP2OafcqcBu
-         7kHfPNTV3rYsdS4+MjpgeR/tHhf8/1pGr5+Z9j+oFWbKN1iQhsikGd50hchKJJA3BpaP
-         3zHw==
-X-Gm-Message-State: APjAAAXzectO/mohLLSJxvCSHKNkt1ljEknrqSUwge9SAWBpl5Y4Xejz
-        /cat03w1QYZAcauPKD11hAATMTbTGbA=
-X-Google-Smtp-Source: APXvYqyZXqUqAa7v+mXbcPVtleQm/zArV5YEyo8rLa6bVPAOCH2Ab1hiVN80dUJspZkEVeaO9Om9wg==
-X-Received: by 2002:a65:654f:: with SMTP id a15mr74534244pgw.73.1563888945184;
-        Tue, 23 Jul 2019 06:35:45 -0700 (PDT)
-Received: from [192.168.1.121] (66.29.164.166.static.utbb.net. [66.29.164.166])
-        by smtp.gmail.com with ESMTPSA id bo20sm32429908pjb.23.2019.07.23.06.35.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Jul 2019 06:35:44 -0700 (PDT)
-Subject: Re: [PATCH] [v2] drbd: dynamically allocate shash descriptor
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>
-Cc:     Roland Kammerer <roland.kammerer@linbit.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Eric Biggers <ebiggers@google.com>,
-        Kees Cook <keescook@chromium.org>, drbd-dev@lists.linbit.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-References: <20190722122647.351002-1-arnd@arndb.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <2675f963-6d67-7802-4f8a-eab423688419@kernel.dk>
-Date:   Tue, 23 Jul 2019 07:35:41 -0600
+        id S2390264AbfGWNht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 09:37:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51142 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729782AbfGWNhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 09:37:48 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4B9B230C34D1;
+        Tue, 23 Jul 2019 13:37:48 +0000 (UTC)
+Received: from [10.72.12.26] (ovpn-12-26.pek2.redhat.com [10.72.12.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D55375D9C5;
+        Tue, 23 Jul 2019 13:37:18 +0000 (UTC)
+Subject: Re: WARNING in __mmdrop
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     syzbot <syzbot+e58112d71f77113ddb7b@syzkaller.appspotmail.com>,
+        aarcange@redhat.com, akpm@linux-foundation.org,
+        christian@brauner.io, davem@davemloft.net, ebiederm@xmission.com,
+        elena.reshetova@intel.com, guro@fb.com, hch@infradead.org,
+        james.bottomley@hansenpartnership.com, jglisse@redhat.com,
+        keescook@chromium.org, ldv@altlinux.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
+        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
+        namit@vmware.com, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        wad@chromium.org
+References: <0000000000008dd6bb058e006938@google.com>
+ <000000000000964b0d058e1a0483@google.com>
+ <20190721044615-mutt-send-email-mst@kernel.org>
+ <75c43998-3a1c-676f-99ff-3d04663c3fcc@redhat.com>
+ <20190722035657-mutt-send-email-mst@kernel.org>
+ <cfcd330d-5f4a-835a-69f7-c342d5d0d52d@redhat.com>
+ <20190723010156-mutt-send-email-mst@kernel.org>
+ <124be1a2-1c53-8e65-0f06-ee2294710822@redhat.com>
+ <20190723032800-mutt-send-email-mst@kernel.org>
+ <e2e01a05-63d8-4388-2bcd-b2be3c865486@redhat.com>
+ <20190723062842-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <025aa12a-c789-7eac-ba96-48e4dd3dd551@redhat.com>
+Date:   Tue, 23 Jul 2019 21:37:23 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190722122647.351002-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190723062842-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 23 Jul 2019 13:37:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/22/19 6:26 AM, Arnd Bergmann wrote:
-> Building with clang and KASAN, we get a warning about an overly large
-> stack frame on 32-bit architectures:
-> 
-> drivers/block/drbd/drbd_receiver.c:921:31: error: stack frame size of 1280 bytes in function 'conn_connect'
->        [-Werror,-Wframe-larger-than=]
-> 
-> We already allocate other data dynamically in this function, so
-> just do the same for the shash descriptor, which makes up most of
-> this memory.
 
-Applied, thanks.
+On 2019/7/23 下午6:42, Michael S. Tsirkin wrote:
+> On Tue, Jul 23, 2019 at 04:42:19PM +0800, Jason Wang wrote:
+>>> So how about this: do exactly what you propose but as a 2 patch series:
+>>> start with the slow safe patch, and add then return uaddr optimizations
+>>> on top. We can then more easily reason about whether they are safe.
+>>
+>> If you stick, I can do this.
+> So I definitely don't insist but I'd like us to get back to where
+> we know existing code is very safe (if not super fast) and
+> optimizing from there.  Bugs happen but I'd like to see a bisect
+> giving us "oh it's because of XYZ optimization" and not the
+> general "it's somewhere within this driver" that we are getting
+> now.
 
--- 
-Jens Axboe
+
+Syzbot has bisected to the commit of metadata acceleration in fact :)
+
+
+>
+> Maybe the way to do this is to revert for this release cycle
+> and target the next one. What do you think?
+
+
+I would try to fix the issues consider packed virtqueue which may use 
+this for a good performance number. But if you insist, I'm ok to revert. 
+Or maybe introduce a config option to disable it by default (almost all 
+optimized could be ruled out).
+
+Thanks
 
