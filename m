@@ -2,85 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23432719C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 15:52:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA285719BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 15:51:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732623AbfGWNwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 09:52:53 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35918 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbfGWNwx (ORCPT
+        id S2390074AbfGWNv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 09:51:29 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36834 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbfGWNv3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 09:52:53 -0400
-Received: by mail-pg1-f196.google.com with SMTP id l21so19475400pgm.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 06:52:52 -0700 (PDT)
+        Tue, 23 Jul 2019 09:51:29 -0400
+Received: by mail-pg1-f193.google.com with SMTP id l21so19473605pgm.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 06:51:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dynamicaims-com.20150623.gappssmtp.com; s=20150623;
-        h=to:subject:from:message-id:disposition-notification-to:date
-         :user-agent:mime-version:content-transfer-encoding:content-language;
-        bh=9N8Qc+rRBbnfa+Ir61SRMq5lDQDDnvbN1u/t4PPmBYw=;
-        b=elzyr1bIHEPrDvEWT2HkjNVXlDHSuea3NkIIKK8bj3o+bnzr5N4dvt18+BPlWVsFTx
-         WmRGv3CDw7keFPvI5qtVGpC9JZ7iNAb0eH9lkdriodMertnbIjQkImmBcTKckoPoXTeO
-         q0h4PoOSqBsrH+eIDkZ+5TkC1PrjJMK1c218hukHWsPmdoGfpAgHUuR30Bw2cVj0U5Y+
-         NCbBHLbTgf/PhmUyaEs0HYJcgiezcj+QLkgd+4FS43F7arpgaYod+n8R/NjcuWjUI8Q0
-         G+/pg3sL/rZ3Qdm7DLfxLFfhA8r0xDHR+cE3/A7dZLLtTQhgbBbUf4DkLQ9UGwfLeq2L
-         OsCw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=iieAYOuoQNwyrS3dY4/FXtAdVnIv4y3zEt6WfnxberI=;
+        b=QBi2yLUHpAPrxVmIpm/So8E76VZkVKgKQcUchzNQ3F1+wpsRGN4CV2XRnMhmZIJfEz
+         6zBaRa3wzEBgZK/TXJ4Jt69RuxOpBVo4HYvMxIRE85lKV/yqrs5OwKo/HwV9xivvdHWZ
+         +FdiDnRN/6xO7MI0K2lNaPgIEGxK5mZDJCIdYYPYlQD/MoLxUFSShEXYz8XQOdPrEm9y
+         OuC7zvaZ1dRddcDNYaptRuyybKnf+T+8GASIkZeze7kLcRpauuCM4vq1TZk2EFW9/Eqz
+         n6OqYPipcMGnjXRTtCA6ojoDIe90pGcN0ln3VTmEkv0fxhu6NQWCOgpTtuJR7AhLkhbD
+         WnuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:subject:from:message-id
-         :disposition-notification-to:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=9N8Qc+rRBbnfa+Ir61SRMq5lDQDDnvbN1u/t4PPmBYw=;
-        b=MoefXTK4kaL065MqrS8311baEdWyLqcX/mZjl3Tf/llJcu1PCW8wNk1E2tFPicqIGr
-         VHusfptlBzSXqXHamnciBc5aHx1v0AJYQQ7iubtTSX1pb4nusQsYCb9Q3mWx42ATZFmr
-         0mkO3bu2WckNg9h3eVG4X3lyZLIADqIUVtkyF3qr5lqOlUQ9aO0xj1MV4u0NIcMq5dsa
-         MC7oZ65EkPH0CNno5UlLZGY49cJqMdp2Wkpl3QGClTgVPPn9fPVXLzQJ9p0ptrs8CEln
-         hsWBeY+Ga9Fo0Qx4sacREMnozj+OVX7y1uEG4kRqlfD1A83fLKeEznl+EGJmo1CGxHsI
-         RCiA==
-X-Gm-Message-State: APjAAAVARwZOG0rCHhcRsDM/zU5AqV7lEovIAUde1HXKsS7fruOB508/
-        OwtjVuKGBQOP4gEYu/v+L2UWcMlI
-X-Google-Smtp-Source: APXvYqzfdCh9eF8jDRCCTT3rnn3O1p36O9O5DcQII/shAgEUDq0raKLoJWdkG/vnDHQLKUtgSmZxOg==
-X-Received: by 2002:a62:1515:: with SMTP id 21mr6093852pfv.100.1563889972168;
-        Tue, 23 Jul 2019 06:52:52 -0700 (PDT)
-Received: from [192.168.0.13] ([122.182.204.68])
-        by smtp.gmail.com with ESMTPSA id b37sm71023544pjc.15.2019.07.23.06.52.50
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=iieAYOuoQNwyrS3dY4/FXtAdVnIv4y3zEt6WfnxberI=;
+        b=RErRy4iWX7ewcYs0Py2aKdxgubCRt/tIFvODC/OWqBD001Vf+npv2OxJriROCblIrg
+         F2jn414DCi/g/sw/kxcT7yZE4x+BzKyJ6mKFS1a3nG9P+63Uq2eymW4RIMakrK5OsHiC
+         0QgP6ToZYR10CTP1PU1+vSc+FEZPdEwfgmCsYfvyf50VcX9ClcXnpwvSxt4s4RGTizxO
+         DHISXwBXT5hw2gycWzOK0peS9IB/y2xYvvli7GWVYZrCjJb568zpcuipyqw40lhOyWKB
+         3y/DM5hqxut7h7xQ6mlznNOql0AhEoSq9wTiLGUQPID8AYYVKM8pTFLXVvl98V4Ql4GN
+         4U/A==
+X-Gm-Message-State: APjAAAUMe3m7GuGWg0GghP6DtopqPzoqkPe9kR0k6tOQnzUNIpzJEPZV
+        4KNvknhbBmWU3Zzy8xaRj2XikpkE
+X-Google-Smtp-Source: APXvYqyJm6C/KHEou+VhElLDQqxp0NqTiGzqbfFqyUUCsrST+UYbYP4pqzkywRDeV55i1NZGYphPbA==
+X-Received: by 2002:a62:2b81:: with SMTP id r123mr5701513pfr.108.1563889888708;
+        Tue, 23 Jul 2019 06:51:28 -0700 (PDT)
+Received: from ?IPv6:2402:f000:4:72:808::177e? ([2402:f000:4:72:808::177e])
+        by smtp.gmail.com with ESMTPSA id q21sm27138226pgb.48.2019.07.23.06.51.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Jul 2019 06:52:51 -0700 (PDT)
-To:     linux-kernel@vger.kernel.org
-Subject: Wine Enthusiasts
-From:   Denna Ross <dennar@dynamicaims.com>
-Message-ID: <1d92f8f5-af64-4a6c-a423-7d71941cd96d@dynamicaims.com>
-Date:   Tue, 23 Jul 2019 08:44:36 -0400
-User-Agent: Mozilla/5.0 (Windows NT 6.3; rv:60.0) Gecko/20100101
+        Tue, 23 Jul 2019 06:51:28 -0700 (PDT)
+Subject: Re: [PATCH] ALSA: isa: gus: Fix a possible null-pointer dereference
+ in snd_gf1_mem_xfree()
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     huangfq.daxian@gmail.com, tglx@linutronix.de, allison@lohutok.net,
+        perex@perex.cz, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+References: <20190723134020.25972-1-baijiaju1990@gmail.com>
+ <s5htvbc50cc.wl-tiwai@suse.de>
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Message-ID: <57696d77-922b-51d6-0623-5c6f4fe2b972@gmail.com>
+Date:   Tue, 23 Jul 2019 21:51:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <s5htvbc50cc.wl-tiwai@suse.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Antivirus: Avast (VPS 190723-0, 07/23/2019), Outbound message
-X-Antivirus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thanks for the quick reply :)
+I think you are right, and I did not consider "if (alloc->last == block)"
+Sorry for the false report...
 
-Hello,
 
-Would you be interested in acquiring an email list of "Wine Enthusiasts" from USA?
+Best wishes,
+Jia-Ju Bai
 
-We also have data for Golfers, Alcohol Enthusiasts, Beer Enthusiasts, Chocolate Enthusiasts, Foodies, Travelers, Gift Buyers, Spa and Resort Visitors, Sports Enthusiasts, Android Users and many more..
-
-Each record in the list contains Contact Name (First, Middle and Last Name), Mailing Address, List type and Opt-in email address.
-
-All the contacts are opt-in verified, 100% permission based and can be used for unlimited multi-channel marketing.
-
-Please let me know your thoughts towards procuring the Wine Enthusiasts List.
-
-Best Regards,
-Denna Ross
-Research Analyst
-
-We respect your privacy, if you do not wish to receive any further emails from our end, please reply with a subject "Remove".
+On 2019/7/23 21:47, Takashi Iwai wrote:
+> On Tue, 23 Jul 2019 15:40:20 +0200,
+> Jia-Ju Bai wrote:
+>> In snd_gf1_mem_xfree(), there is an if statement on line 72 and line 74
+>> to check whether block->next is NULL:
+>>      if (block->next)
+>>
+>> When block->next is NULL, block->next is used on line 84:
+>>      block->next->prev = block->prev;
+>>
+>> Thus, a possible null-pointer dereference may occur in this case.
+> There is already a check beforehand:
+>
+> 	if (alloc->last == block) {
+>
+> and the code path you're referring to is only after this check fails,
+> i.e. it's no last entry, hence block->next can be never NULL.
+>
+> So the current code is OK.
+>
+>
+> thanks,
+>
+> Takashi
+>
+>> To fix this possible bug, block->next is checked before using it.
+>>
+>> This bug is found by a static analysis tool STCheck written by us.
+>>
+>> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+>> ---
+>>   sound/isa/gus/gus_mem.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/sound/isa/gus/gus_mem.c b/sound/isa/gus/gus_mem.c
+>> index cb02d18dde60..ed6205b88057 100644
+>> --- a/sound/isa/gus/gus_mem.c
+>> +++ b/sound/isa/gus/gus_mem.c
+>> @@ -81,7 +81,8 @@ int snd_gf1_mem_xfree(struct snd_gf1_mem * alloc, struct snd_gf1_mem_block * blo
+>>   		if (block->prev)
+>>   			block->prev->next = NULL;
+>>   	} else {
+>> -		block->next->prev = block->prev;
+>> +		if (block->next)
+>> +			block->next->prev = block->prev;
+>>   		if (block->prev)
+>>   			block->prev->next = block->next;
+>>   	}
+>> -- 
+>> 2.17.0
+>>
+>>
 
