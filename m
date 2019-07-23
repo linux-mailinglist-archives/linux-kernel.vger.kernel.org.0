@@ -2,104 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B4D171579
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 11:48:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA3D071583
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 11:50:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730714AbfGWJsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 05:48:13 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45178 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbfGWJsN (ORCPT
+        id S1731003AbfGWJt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 05:49:58 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44351 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfGWJt6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 05:48:13 -0400
-Received: by mail-lj1-f196.google.com with SMTP id m23so40343730lje.12
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 02:48:12 -0700 (PDT)
+        Tue, 23 Jul 2019 05:49:58 -0400
+Received: by mail-ot1-f66.google.com with SMTP id b7so4940769otl.11
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 02:49:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qGX6IuhNcRSi9X6/a2qMSk1y8inVeGuBF+eTHUQ+bWY=;
-        b=tsa3wQwWVkiJ7WVoTIb0mGXxzhr+rtgVeVb1p2POWR3Nye0ykLEq0Jqwb5nl+qKYcW
-         gNtymOO5HvFleCtrRdTNTgbibysHwuhIIDazUdcgtZ3Hc3yAsrwgvEJaeqf7fHvMqLV5
-         TzhsVBYeKj8hdamyObhwyRrdzG1d5yAdwwRgpZvQKXoIA+F0bD7ERjXigIIHjMQ6WFse
-         kIW1aoYtQArsgYJ9PHGHHag79EY3mHtN0B5MQfcfMyi+qCQMgHck9ObeJ9cjVF0Mju77
-         mgENJnXZ09oupkvGkgGUNuIt1uLUG5tpeeUkb/hPcStDHrpsA9GbSy7BZNhYjZ75kZrn
-         TTpA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=sh8Gc/dDBQF/6zDo3pKFTalGj99cpIcGxIJ53WfTdj0=;
+        b=nke0MrUX3OvwZpA1bB9noPZ3vMbhXdQw+Cz3LO/mmo/787/8QWtACjGrTkwx8pggC0
+         x0MzMTWbECWPn/YZ1n4y+tzbUdlwpZFUXDBGX2Nqlcd8APDfD/jilQGorn3ax9AtXNlv
+         ex6ECuI1kIPDkry1PxIyIIWG4V3buANHA6NGp41bQaq1sT5vHdzq+6rsB4qQH5wkpowi
+         dQhYNRDEiJQvkD7dvdr/F1wHeXIFbdB0R4ybMnh/D2som7n+C5pN2wEdn4AvlgDlmnmI
+         IvD082Y3295uyUC5JuH8yCaFpVWpHnhuljaRwWGGUoj75LBwhqRbiqk5fliVQaCSXk1Q
+         sY3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qGX6IuhNcRSi9X6/a2qMSk1y8inVeGuBF+eTHUQ+bWY=;
-        b=ORHQ4LZi7ZOtWOY1xKqiCOgf0GirYY1GIOdR1HlzLDIkfq8yx5QYcZpttqk5zWy0Da
-         JYAmq41dRkn6Z8yQMgr2pLC2OmSObQ1YM8CJ+Xd01uD0Z4YtecK5nlzN1RhqRWQ6lcYm
-         qrwE9S062rajmSljplNoer0bViZrFNzewrQ9kCtgpHblgYXajEMD3Q5N17eTdhStOVjn
-         +bXZZ7MjJX9ws6VSunpUb7xrcC7o5rfjapRyNXX1FUFMz+ybIjGVXPaTzskkA85Ikx4/
-         OVrpMUydiysqdtoD13irSTrZGGuEEJ62Mu3berkMrRL9qDLznIXho922+qbUe3jFNZou
-         4NLA==
-X-Gm-Message-State: APjAAAUnWKoVng0Ir08GIQnK6QudW0ip5myVXzVfKW8EtUu02nKXWhyN
-        bomA9eHGFyM0ZktUE0D5TO0=
-X-Google-Smtp-Source: APXvYqx2KdFZ2X7fHRLTwQtjNLDqLUc5b3VWLVVUUpHBi/CuGq6RIWEyl1H6gKJWRqt9VAJ4OphOnQ==
-X-Received: by 2002:a2e:9209:: with SMTP id k9mr38066017ljg.96.1563875290418;
-        Tue, 23 Jul 2019 02:48:10 -0700 (PDT)
-Received: from uranus.localdomain ([5.18.103.226])
-        by smtp.gmail.com with ESMTPSA id y29sm7920315ljd.43.2019.07.23.02.48.09
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 02:48:09 -0700 (PDT)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id 2B1244606E8; Tue, 23 Jul 2019 12:48:09 +0300 (MSK)
-Date:   Tue, 23 Jul 2019 12:48:09 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Yang Xu <xuyang2018.jy@cn.fujitsu.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sys_prctl(): simplify arg2 judgment when calling
- PR_SET_TIMERSLACK
-Message-ID: <20190723094809.GE4832@uranus.lan>
-References: <1563852653-2382-1-git-send-email-xuyang2018.jy@cn.fujitsu.com>
- <20190723072338.GD4832@uranus.lan>
- <5D36C11D.1070804@cn.fujitsu.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=sh8Gc/dDBQF/6zDo3pKFTalGj99cpIcGxIJ53WfTdj0=;
+        b=gYOFLqm+6X4/LfUrKoCWK1AZPPz2aAMqRmB+xudYf6XmppM6KO3JTZLeCo0IMEggMg
+         uRZdHDR0icS77UnAkDlPCDhWBNx599aYmixBoD6tfsaqm6+hwjchIsKIdMkZu56iYJof
+         VWrbxQ/yQ3vIxfIkMo1zCJTq1RN3nMC4MkvLV8zF7k3R7nhBx+TUWToQhLhiiiPM41u5
+         FSXE895mfYvTkKdYc+zvedQRBxGnwbD6FjM/Fvzp2ytw3/xbemNGRLZzHq6SPupW4OPL
+         5v1iy5fd3Q607HT+kNGAITMVuPCoi46W+yT8rX2+UxM7XL3j4sZb+7nIIqXBFjOYzRLo
+         JWBQ==
+X-Gm-Message-State: APjAAAUg9RlbuHfaMN6wZr1BSwewU3z7oP+c/tEnmXJQR30LyOmU4s+t
+        vCiFXOUSsWIh/ktaXrXl5MLDqFSu5PMP/uPkQzXCMQ==
+X-Google-Smtp-Source: APXvYqxoGqbzcMIgzth28GEyHqRvFwSXNNCEIipw0pQipVSlS7MWKe0DATd4V4qHqhQUT8PK/ZL2FxatleMtVIqj/5M=
+X-Received: by 2002:a9d:7352:: with SMTP id l18mr51709290otk.292.1563875397393;
+ Tue, 23 Jul 2019 02:49:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5D36C11D.1070804@cn.fujitsu.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <20190723083923.21392-1-hslester96@gmail.com>
+In-Reply-To: <20190723083923.21392-1-hslester96@gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Tue, 23 Jul 2019 11:49:46 +0200
+Message-ID: <CAMpxmJXkg8wiLOj9rQs+aNx+_oqb_tUWeELmrWQd7GXi-qAueA@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: pch: Use dev_get_drvdata
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 04:11:09PM +0800, Yang Xu wrote:
-> > 2) according to man page passing negative value should be acceptable,
-> >     though it never worked as expected. I've been grepping "git log"
-> >     for this file and the former API is coming from
-> > 
-> > commit 6976675d94042fbd446231d1bd8b7de71a980ada
-> > Author: Arjan van de Ven<arjan@linux.intel.com>
-> > Date:   Mon Sep 1 15:52:40 2008 -0700
-> > 
-> >      hrtimer: create a "timer_slack" field in the task struct
-> > 
-> > which is 11 years old by now. Nobody complained so far even when man
-> > page is saying pretty obviously
-> > 
-> >         PR_SET_TIMERSLACK (since Linux 2.6.28)
-> >                Each thread has two associated timer slack values:  a  "default"
-> >                value, and a "current" value.  This operation sets the "current"
-> >                timer slack value for the calling  thread.   If  the  nanosecond
-> >                value  supplied in arg2 is greater than zero, then the "current"
-> >                value is set to this value.  If arg2 is less than  or  equal  to
-> >                zero,  the  "current"  timer  slack  is  reset  to  the thread's
-> >                "default" timer slack value.
-> > 
-> > So i think to match the man page (and assuming that accepting negative value
-> > has been supposed) we should rather do
-> > 
-> > 	if ((long)arg2<  0)
-> Looks correct. But if we set a ULONG_MAX(PR_GET_TIMERSLACK also limits ULONG_MAX)
-> value(about 4s) on 32bit machine, this code will think this value is a negative value and use default value.
-> 
-> I guess man page was written as "less than or equal to zero" because of this confusing code(arg2<=0, but arg2
-> is an unsinged long value).
-> I think we can change this man page and also add bounds value description.
+wt., 23 lip 2019 o 10:39 Chuhong Yuan <hslester96@gmail.com> napisa=C5=82(a=
+):
+>
+> Instead of using to_pci_dev + pci_get_drvdata,
+> use dev_get_drvdata to make code simpler.
+>
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> ---
+> Changes in v2:
+>   - Change the subject line to gpio: pch: ...
+>
+>  drivers/gpio/gpio-pch.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
+> index 1d99293096f2..3f3d9a94b709 100644
+> --- a/drivers/gpio/gpio-pch.c
+> +++ b/drivers/gpio/gpio-pch.c
+> @@ -409,8 +409,7 @@ static int pch_gpio_probe(struct pci_dev *pdev,
+>
+>  static int __maybe_unused pch_gpio_suspend(struct device *dev)
+>  {
+> -       struct pci_dev *pdev =3D to_pci_dev(dev);
+> -       struct pch_gpio *chip =3D pci_get_drvdata(pdev);
+> +       struct pch_gpio *chip =3D dev_get_drvdata(dev);
+>         unsigned long flags;
+>
+>         spin_lock_irqsave(&chip->spinlock, flags);
+> @@ -422,8 +421,7 @@ static int __maybe_unused pch_gpio_suspend(struct dev=
+ice *dev)
+>
+>  static int __maybe_unused pch_gpio_resume(struct device *dev)
+>  {
+> -       struct pci_dev *pdev =3D to_pci_dev(dev);
+> -       struct pch_gpio *chip =3D pci_get_drvdata(pdev);
+> +       struct pch_gpio *chip =3D dev_get_drvdata(dev);
+>         unsigned long flags;
+>
+>         spin_lock_irqsave(&chip->spinlock, flags);
+> --
+> 2.20.1
+>
 
-OK, seems reasonable. I think we should use comparision with zero
-and simply update a man page.
+Acked-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
