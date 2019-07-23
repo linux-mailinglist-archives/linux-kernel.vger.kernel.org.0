@@ -2,162 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F225A70F91
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 05:08:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2749E70F84
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 05:07:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387922AbfGWDIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 23:08:48 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:45387 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387905AbfGWDIp (ORCPT
+        id S1732379AbfGWDHo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 23:07:44 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:12294 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726687AbfGWDHo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 23:08:45 -0400
-Received: by mail-qk1-f196.google.com with SMTP id s22so30107001qkj.12
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2019 20:08:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=O2LzIiKDY4d/HsG0eNgmi387YcnYg6wKjUrMRiQ2aBI=;
-        b=cQVGQ4Lo+reBiq8dbjN5yriOzZVvY96vvAv9q8SsuYXMB9Uau30z5v7ourRopELAFV
-         HrSuYt9L9h2jrveEkYTf5QYuw4n3uzgINqxIf9oaP4qrM3vxOSfbI/eyebdNEedw9sF9
-         fnyXYmfKAQzMfGVsedovuQq8f4im3Cjf+KHSjHeyXl9m3EHsftdM5tHH+4KSxI9JW1Lm
-         GX63sOgrwRVMD9cuOq0weGCDiiNaTCz17G7XnDt4HMCr7J7pvWTufHH7/U0V/19leICN
-         5WI55ujo/WvPH3ihrWHlYoNRj8G0G/etpXi9XaiBLtfuQoiIQ3IH4houeVK4ZQbWq6us
-         h5mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=O2LzIiKDY4d/HsG0eNgmi387YcnYg6wKjUrMRiQ2aBI=;
-        b=RZ+n/9J1LfE6mNplTfTVxr8RaeHjEglqzW45F4TWVuALlVWT2ogvDqIXvldAD0nM2c
-         mgDOSDLm/7srT5gB0p2/hlee6YMbxqK3cD0VNseI39phOGcIUT7m9KjogIuSduahJNjk
-         QfocI1GMGY2XZOooFa2e7uYWkVHPlFbVrGAIE60+Bt5JqPh9Kg1TC+UyERXOjGfz8Oec
-         cLM5eaKGpjOp8kvELjaslEkhQPLHHb8eJbkE2OWLlMA06gcFJ9cbZMamjwkNJDL6pD3D
-         wHg8fn+PvY5Zs3/0/GfGHcCIIb/8rcgV8wD1GXAU4z6E+3PmQbAaiYafYu9szM/CSRbl
-         ljIQ==
-X-Gm-Message-State: APjAAAXJOhNsnbNsLYdmvEyCiFfI5QWDwByKbRn9N/T1q9dDbQQjg2rd
-        6H3xL3XBNHhIaauGAbmiBe1/Mw==
-X-Google-Smtp-Source: APXvYqyEMbHHfJqTE4TPKv38rNlMBE0t64ORiqa8pvqXPFdfxygujZ+CnHtEvxlGD+SsVbzsY099gA==
-X-Received: by 2002:a37:a7d6:: with SMTP id q205mr46498779qke.44.1563851324361;
-        Mon, 22 Jul 2019 20:08:44 -0700 (PDT)
-Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id x46sm26242144qtx.96.2019.07.22.20.08.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jul 2019 20:08:43 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH] be2net: fix adapter->big_page_size miscaculation
-From:   Qian Cai <cai@lca.pw>
-In-Reply-To: <CAA2zVHqXDuMzBC6dD5AbepZc63nPdJ3WLYmjinjq01erqH+HXA@mail.gmail.com>
-Date:   Mon, 22 Jul 2019 23:08:41 -0400
-Cc:     David Miller <davem@davemloft.net>,
-        Bill Wendling <morbo@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        sathya.perla@broadcom.com, ajit.khaparde@broadcom.com,
-        sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, netdev@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        natechancellor@gmail.com, Jakub Jelinek <jakub@redhat.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <BE0991D9-65E7-43CA-A4B4-D3547D96291A@lca.pw>
-References: <CAKwvOdkCfqfpJYYX+iu2nLCUUkeDorDdVP3e7koB9NYsRwgCNw@mail.gmail.com>
- <CAGG=3QUvdwJs1wW1w+5Mord-qFLa=_WkjTsiZuwGfcjkoEJGNQ@mail.gmail.com>
- <75B428FC-734C-4B15-B1A7-A3FC5F9F2FE5@lca.pw>
- <20190718.162928.124906203979938369.davem@davemloft.net>
- <1563572871.11067.2.camel@lca.pw> <1563829996.11067.4.camel@lca.pw>
- <CAA2zVHqXDuMzBC6dD5AbepZc63nPdJ3WLYmjinjq01erqH+HXA@mail.gmail.com>
-To:     James Y Knight <jyknight@google.com>
-X-Mailer: Apple Mail (2.3445.104.11)
+        Mon, 22 Jul 2019 23:07:44 -0400
+Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Mon, 22 Jul 2019 20:07:24 -0700
+Received: from akaher-lnx-dev.eng.vmware.com (unknown [10.110.19.203])
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id DCBFFB28A8;
+        Mon, 22 Jul 2019 23:07:38 -0400 (EDT)
+From:   Ajay Kaher <akaher@vmware.com>
+To:     <gregkh@linuxfoundation.org>
+CC:     <torvalds@linux-foundation.org>, <aarcange@redhat.com>,
+        <hughd@google.com>, <dave.hansen@intel.com>, <mgorman@suse.de>,
+        <riel@redhat.com>, <mhocko@suse.cz>, <jannh@google.com>,
+        <linux-kernel@vger.kernel.org>, <stable@kernel.org>,
+        <stable@vger.kernel.org>, <srivatsab@vmware.com>,
+        <srivatsa@csail.mit.edu>, <amakhalov@vmware.com>,
+        <srinidhir@vmware.com>, <bvikas@vmware.com>, <srostedt@vmware.com>,
+        <akaher@vmware.com>
+Subject: [PATCH 0/8] Backported fixes for 4.4 stable tree
+Date:   Tue, 23 Jul 2019 16:38:23 +0530
+Message-ID: <1563880111-19058-1-git-send-email-akaher@vmware.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: akaher@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The original issue,
+These patches include few backported fixes for the 4.4 stable
+tree.
+I would appreciate if you could kindly consider including them in the
+next release.
 
-=
-https://lore.kernel.org/netdev/1562959401-19815-1-git-send-email-cai@lca.p=
-w/
+Ajay
 
-The debugging so far seems point to that the compilers get confused by =
-the
-module sections. During module_param(), it stores =
-=E2=80=9C__param_rx_frag_size"
-as a =E2=80=9Cstruct kernel_param=E2=80=9D into the __param section. =
-Later, load_module()
-obtains all =E2=80=9Ckernel_param=E2=80=9D from the __param section and =
-compare against the
-user-input module parameters from the command-line.  If there is a =
-match, it
-calls params[i].ops->set(&params[I]) to replace the value.  If compilers =
-can=E2=80=99t
-see that params[i].ops->set(&params[I]) could potentially change the =
-value
-of rx_frag_size, it will wrongly optimize it as a constant.
+---
+[PATCH 1/8]:
+Backporting of upstream commit f958d7b528b1:
+mm: make page ref count overflow check tighter and more explicit
 
+[PATCH 2/8]:
+Backporting of upstream commit 88b1a17dfc3e:
+mm: add 'try_get_page()' helper function
 
-For example (it is not
-compilable yet as I have not able to extract variable from the __param =
-section
-like find_module_sections()),
+[PATCH 3/8]:
+Backporting of upstream commit 7aef4172c795:
+mm: handle PTE-mapped tail pages in gerneric fast gup implementaiton
 
-#include <stdio.h>
-#include <string.h>
+[PATCH 4/8]:
+Backporting of upstream commit a3e328556d41:
+mm, gup: remove broken VM_BUG_ON_PAGE compound check for hugepages
 
-#define __module_param_call(name, ops, arg) \
-        static struct kernel_param __param_##name \
-         __attribute__ ((unused,__section__ =
-("__param"),aligned(sizeof(void *)))) =3D { \
-                #name, ops, { arg } }
+[PATCH 5/8]:
+Backporting of upstream commit d63206ee32b6:
+mm, gup: ensure real head page is ref-counted when using hugepages
 
-struct kernel_param {
-        const char *name;
-        const struct kernel_param_ops *ops;
-        union {
-                int *arg;
-        };
-};
+[PATCH 6/8]:
+Backporting of upstream commit 8fde12ca79af:
+mm: prevent get_user_pages() from overflowing page refcount
 
-struct kernel_param_ops {
-        int (*set)(const struct kernel_param *kp);
-};
+[PATCH 7/8]:
+Backporting of upstream commit 7bf2d1df8082:
+pipe: add pipe_buf_get() helper
 
-#define STANDARD_PARAM_DEF(name) \
-        int param_set_##name(const struct kernel_param *kp) \
-        { \
-                *kp->arg =3D 2; \
-        } \
-        const struct kernel_param_ops param_ops_##name =3D { \
-                .set =3D param_set_##name, \
-        };
-
-STANDARD_PARAM_DEF(ushort);
-static int rx =3D 1;
-__module_param_call(rx_frag_siz, &param_ops_ushort, &rx_frag_size);
-
-int main(int argc, char *argv[])
-{
-        const struct kernel_param *params =3D <<< Get all kernel_param =
-from the __param section >>>;
-        int i;
-
-        if (__builtin_constant_p(rx_frag_size))
-                printf("rx_frag_size is a const.\n");
-
-        for (i =3D 0; i < num_param; i++) {
-                if (!strcmp(params[I].name, argv[1])) {
-                        params[i].ops->set(&params[i]);
-                        break;
-                }
-        }
-
-        printf("rx_frag_size =3D %d\n", rx_frag_size);
-
-        return 0;
-}
+[PATCH 8/8]:
+Backporting of upstream commit 15fab63e1e57:
+fs: prevent page refcount overflow in pipe_buf_get
 
