@@ -2,127 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C605471014
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 05:27:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D77D71019
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 05:31:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731060AbfGWD1K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 22 Jul 2019 23:27:10 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43378 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727314AbfGWD1K (ORCPT
+        id S1730458AbfGWDbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 22 Jul 2019 23:31:05 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:49973 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726610AbfGWDbF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 22 Jul 2019 23:27:10 -0400
-Received: by mail-pl1-f196.google.com with SMTP id 4so13029234pld.10;
-        Mon, 22 Jul 2019 20:27:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GRP7pr2OOjgRbOreV1kxricoKxpbSE+Edva7aK+xUiQ=;
-        b=fXGWiznkmj5kwTl4LV/rK/UBc1vKdzE/lRoCKq2t+H/nwZ+31Zb/87eCxxnntMNXC4
-         Ph7DVYIQDdsW7B9IdxUUP2d41s0ZptBlSBiyPKUYGi8nzCy3/+HR+r/cM5W1LObSTVRx
-         wI7NiisdUYMAswy8bUMhvbgac9PvnvrGN4olGHx1HVUg+PmfRC+esU4b9Axvinr+RCsV
-         qMGaxca7LFrVw1jTVn2XMplUmkEkmAJ8kRep3E1KE8zTKTUBnoF9dhmjz14E1Ixk8PkC
-         QBw9y3LFeWF17J428KZQQ3OecqQCsSrHX4lxq9PArrBrahu+J4VMsjPePdn21cOEgaux
-         qtoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GRP7pr2OOjgRbOreV1kxricoKxpbSE+Edva7aK+xUiQ=;
-        b=BMGPrQaz9BgqXxbvu3IES7furEJmAMRMacqc3by4M785Mf7X5GhykJNwMNOUdrqNrS
-         wXbjxv9ZdrHeWhEK7Dq8HUMmeR9akyI1oBGjznqk5R7nQSu6914jal64u0JNznN64EiJ
-         p4awuia/4RqDVc56Q2iqfSJ8j3c6lbRD3fWnF8FyiSTea8vhRvrrXAcPNuftpTbXMUNj
-         AWKRDYI2OgWWUraZDbmETuqZn6eVnIRd31TWMWjamU3iqzgp55zeBFUr9MVyJL1kBo4/
-         NbYyLBm6zdT+4SWadJLnLYWtRyAe6PPZ8VlbI9nF7xzZ2Dja1Wl+Tsew5dRQhp/SeNxO
-         HW8w==
-X-Gm-Message-State: APjAAAWjkL+UoCBso30j8JfpdcaP51kDJ3tE+5HYVWcfQg5YOfpqB+uL
-        vSyqik8Xd4jhgh+mKO8lvJ0oexIGI6s=
-X-Google-Smtp-Source: APXvYqwenlVjDz1d39lyo7MCi5QM1hoS6SK/Ormll0gf7flg5s/iUBUYNWcrAH7mNe6wAuXm4J8zpw==
-X-Received: by 2002:a17:902:a607:: with SMTP id u7mr78983045plq.43.1563852429181;
-        Mon, 22 Jul 2019 20:27:09 -0700 (PDT)
-Received: from continental.prv.suse.net ([191.248.110.143])
-        by smtp.gmail.com with ESMTPSA id h1sm51552956pfo.152.2019.07.22.20.27.06
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 22 Jul 2019 20:27:08 -0700 (PDT)
-From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        axboe@kernel.dk
-Cc:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Omar Sandoval <osandov@fb.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH v2] block: blk-mq: Remove blk_mq_sched_started_request and started_request
-Date:   Tue, 23 Jul 2019 00:27:41 -0300
-Message-Id: <20190723032743.10552-1-marcos.souza.org@gmail.com>
-X-Mailer: git-send-email 2.22.0
+        Mon, 22 Jul 2019 23:31:05 -0400
+X-IronPort-AV: E=Sophos;i="5.64,297,1559491200"; 
+   d="scan'208";a="71998694"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 23 Jul 2019 11:31:03 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id B8E3B4CDCEBD;
+        Tue, 23 Jul 2019 11:30:59 +0800 (CST)
+Received: from localhost.localdomain (10.167.215.46) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.439.0; Tue, 23 Jul 2019 11:30:57 +0800
+From:   Yang Xu <xuyang2018.jy@cn.fujitsu.com>
+To:     <akpm@linux-foundation.org>, <gorcunov@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        Yang Xu <xuyang2018.jy@cn.fujitsu.com>
+Subject: [PATCH] sys_prctl(): simplify arg2 judgment when calling PR_SET_TIMERSLACK
+Date:   Tue, 23 Jul 2019 11:30:53 +0800
+Message-ID: <1563852653-2382-1-git-send-email-xuyang2018.jy@cn.fujitsu.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.167.215.46]
+X-yoursite-MailScanner-ID: B8E3B4CDCEBD.A3A49
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: xuyang2018.jy@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-blk_mq_sched_completed_request is a function that checks if the elevator
-related to the request has started_request implemented, but currently, none of
-the available IO schedulers implement started_request, so remove both.
+arg2 will never < 0, for its type is 'unsigned long'. So negative
+judgment is meaningless.
 
-Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+Signed-off-by: Yang Xu <xuyang2018.jy@cn.fujitsu.com>
 ---
- Changes from v1:
- This was previously two patches, one removing blk_mq_sched_completed_request 
- and another one removing started_request, but now they are merged into this
- commit.
+ kernel/sys.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- block/blk-mq-sched.h     | 9 ---------
- block/blk-mq.c           | 2 --
- include/linux/elevator.h | 1 -
- 3 files changed, 12 deletions(-)
-
-diff --git a/block/blk-mq-sched.h b/block/blk-mq-sched.h
-index cf22ab00fefb..126021fc3a11 100644
---- a/block/blk-mq-sched.h
-+++ b/block/blk-mq-sched.h
-@@ -61,15 +61,6 @@ static inline void blk_mq_sched_completed_request(struct request *rq, u64 now)
- 		e->type->ops.completed_request(rq, now);
- }
- 
--static inline void blk_mq_sched_started_request(struct request *rq)
--{
--	struct request_queue *q = rq->q;
--	struct elevator_queue *e = q->elevator;
--
--	if (e && e->type->ops.started_request)
--		e->type->ops.started_request(rq);
--}
--
- static inline void blk_mq_sched_requeue_request(struct request *rq)
- {
- 	struct request_queue *q = rq->q;
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index b038ec680e84..3e8902714253 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -669,8 +669,6 @@ void blk_mq_start_request(struct request *rq)
- {
- 	struct request_queue *q = rq->q;
- 
--	blk_mq_sched_started_request(rq);
--
- 	trace_block_rq_issue(q, rq);
- 
- 	if (test_bit(QUEUE_FLAG_STATS, &q->queue_flags)) {
-diff --git a/include/linux/elevator.h b/include/linux/elevator.h
-index 17cd0078377c..1dd014c9c87b 100644
---- a/include/linux/elevator.h
-+++ b/include/linux/elevator.h
-@@ -45,7 +45,6 @@ struct elevator_mq_ops {
- 	struct request *(*dispatch_request)(struct blk_mq_hw_ctx *);
- 	bool (*has_work)(struct blk_mq_hw_ctx *);
- 	void (*completed_request)(struct request *, u64);
--	void (*started_request)(struct request *);
- 	void (*requeue_request)(struct request *);
- 	struct request *(*former_request)(struct request_queue *, struct request *);
- 	struct request *(*next_request)(struct request_queue *, struct request *);
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 2969304c29fe..399457d26bef 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2372,11 +2372,11 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 			error = current->timer_slack_ns;
+ 		break;
+ 	case PR_SET_TIMERSLACK:
+-		if (arg2 <= 0)
++		if (arg2)
++			current->timer_slack_ns = arg2;
++		else
+ 			current->timer_slack_ns =
+ 					current->default_timer_slack_ns;
+-		else
+-			current->timer_slack_ns = arg2;
+ 		break;
+ 	case PR_MCE_KILL:
+ 		if (arg4 | arg5)
 -- 
-2.22.0
+2.18.1
+
+
 
