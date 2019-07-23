@@ -2,388 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 483C47132B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 09:44:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A29C71330
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 09:45:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388502AbfGWHoZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 03:44:25 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36531 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730807AbfGWHoX (ORCPT
+        id S1732965AbfGWHpi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 03:45:38 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:42702 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730807AbfGWHph (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 03:44:23 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n4so42086800wrs.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 00:44:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U0TLIYkO8uumi3GBhJE5lfTt9elr+issvmsKItiIQNs=;
-        b=h3e4xd/3csB+FEz9ZFAL3Knn0E+wmwKhHl+FpqObJOWcpo+A4RKKGE48OXvgz5dnj5
-         uEgl7ryLdc6BwaEu13KYLpCJkvwn9WQUx7j+ropAIEbU0m17pBXGIrt13avhd0dJ+XNB
-         Mc9vr6g3zSem9Pw40/dbHbR/f4T1aUscpfKqLmt4rX09OW0UMShV5asiVkwX7cOwPAlb
-         RWMhHx0nzY4OkmFENkkY4+dGWKYqwZHKGngWob628IvH7VM3eUVL6rkB8LB3B/zRBp8c
-         xbhdu65++VvqR1YUI/261IpyYg/VorMW+eb7EadLHNT9BYTFHd5gozJwT95xoqL5g0SE
-         XUyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U0TLIYkO8uumi3GBhJE5lfTt9elr+issvmsKItiIQNs=;
-        b=WTdZQYMe4S1SC/6/3okpRvM9U+a1h2j4+vHK+NXFOdx5hsb3d/0BeMY7n4EsQVPqLv
-         PPS8UcxfEgpGeVZR8EL5e5p9or0VWiUvPpVLgbMrLhqIrSN3MIVrHKerv+gdX4ZRQl1i
-         qaKlFP2SFibqCMireRBMMxQuO2vqcw8aE8MaPxHnYS02+FFfkpXCxtXCVAZoCggZ9y7K
-         QCp9xX8rmYbTM/U3lr11m4Shl9KNu5poQxzjUnXPwEEhRwqYP0SWjl3kekS21vdO2Ps4
-         1vgYSnj6Ai/M2q4FRDJHiTfP9cW+gwKu/f4sy54ijj2TEfR20tx091j3viXQOjIWZbPI
-         aSfg==
-X-Gm-Message-State: APjAAAVG2Oqm54HfoNgxw500QURLDR/WElN1sAFqd8rJEMC3by5UaA9I
-        aN4tlpLBYRICUYR7eiByrkTa1oPgPwO3Bt+0vjU=
-X-Google-Smtp-Source: APXvYqyw1OuXBt3NTkk2OHYVFEhCrIaNB7tPzd27J71ZmyBFih4o1v/+pNe9nv+wfLPlxzuSkU8cpTrdoNCWvXUd8fs=
-X-Received: by 2002:adf:f450:: with SMTP id f16mr48066341wrp.335.1563867860853;
- Tue, 23 Jul 2019 00:44:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190718081943.10272-1-daniel.baluta@nxp.com>
-In-Reply-To: <20190718081943.10272-1-daniel.baluta@nxp.com>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Tue, 23 Jul 2019 10:44:09 +0300
-Message-ID: <CAEnQRZDwBBR5qQT9NQX7c6kyrjp2Mw_so=QgkARw-gUgj3VeEA@mail.gmail.com>
-Subject: Re: [PATCH] firmware: imx: Add DSP IPC protocol interface
-To:     Daniel Baluta <daniel.baluta@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Oleksij Rempel <o.rempel@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 23 Jul 2019 03:45:37 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id x6N7iKrX025153;
+        Tue, 23 Jul 2019 16:44:20 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x6N7iKrX025153
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1563867861;
+        bh=wwv9Z4pZlsh4ouUjX2bu7iJJkEhowNuVCO6yDuN4jeI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BhHsw2xNxb2pM2O70xKTlcZzAINovN12204RlfSQTdJTCYPWJGlu1UDXPnR7IdUpT
+         p5k6mccVpfiq7h+oFeuiA60ael6+5nifdZPsCIzAyIZijccu9FQGBj4uvJR5GdNKd/
+         4TNeZS2U4Lc7JmmECIvgOPCM63Jj+0Sq+GMmykmxJiW9LqrePde1mmKHlLqFt9VUrg
+         wb8vagV/CQCk0xgtgXLrIy9znauqxm5XJERORZMCKUkERo/DvqNsP/l8ILakvykm66
+         kVAfV8VuGm/ig6Be6SY9Vvcn8Hr/aiDYl/1Z02hRVPbHUL2A2j/4UZKk62291x1UVB
+         pnr5X3oE64wEg==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86: use __builtin_constant_p() directly instead of IS_IMMEDIATE()
+Date:   Tue, 23 Jul 2019 16:44:15 +0900
+Message-Id: <20190723074415.26811-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just realized that for this patch I forgot to add [PATCH v3]. Shawn,
-should I resend?
+__builtin_constant_p(nr) is used everywhere now. It does not make
+much sense to define IS_IMMEDIATE() as its alias.
 
-Oleksij, care to have a look at this v3. It has a minor modification
-but basically
-all your review in v1 is still addressed.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
+ arch/x86/include/asm/bitops.h | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
+diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
+index ba15d53c1ca7..7d1f6a49bfae 100644
+--- a/arch/x86/include/asm/bitops.h
++++ b/arch/x86/include/asm/bitops.h
+@@ -45,14 +45,13 @@
+  * We do the locked ops that don't return the old value as
+  * a mask operation on a byte.
+  */
+-#define IS_IMMEDIATE(nr)		(__builtin_constant_p(nr))
+ #define CONST_MASK_ADDR(nr, addr)	WBYTE_ADDR((void *)(addr) + ((nr)>>3))
+ #define CONST_MASK(nr)			(1 << ((nr) & 7))
+ 
+ static __always_inline void
+ arch_set_bit(long nr, volatile unsigned long *addr)
+ {
+-	if (IS_IMMEDIATE(nr)) {
++	if (__builtin_constant_p(nr)) {
+ 		asm volatile(LOCK_PREFIX "orb %1,%0"
+ 			: CONST_MASK_ADDR(nr, addr)
+ 			: "iq" ((u8)CONST_MASK(nr))
+@@ -72,7 +71,7 @@ arch___set_bit(long nr, volatile unsigned long *addr)
+ static __always_inline void
+ arch_clear_bit(long nr, volatile unsigned long *addr)
+ {
+-	if (IS_IMMEDIATE(nr)) {
++	if (__builtin_constant_p(nr)) {
+ 		asm volatile(LOCK_PREFIX "andb %1,%0"
+ 			: CONST_MASK_ADDR(nr, addr)
+ 			: "iq" ((u8)~CONST_MASK(nr)));
+@@ -123,7 +122,7 @@ arch___change_bit(long nr, volatile unsigned long *addr)
+ static __always_inline void
+ arch_change_bit(long nr, volatile unsigned long *addr)
+ {
+-	if (IS_IMMEDIATE(nr)) {
++	if (__builtin_constant_p(nr)) {
+ 		asm volatile(LOCK_PREFIX "xorb %1,%0"
+ 			: CONST_MASK_ADDR(nr, addr)
+ 			: "iq" ((u8)CONST_MASK(nr)));
+-- 
+2.17.1
 
-On Thu, Jul 18, 2019 at 11:21 AM Daniel Baluta <daniel.baluta@nxp.com> wrote:
->
-> Some of i.MX8 processors (e.g i.MX8QM, i.MX8QXP) contain
-> the Tensilica HiFi4 DSP for advanced pre- and post-audio
-> processing.
->
-> The communication between Host CPU and DSP firmware is
-> taking place using a shared memory area for message passing
-> and a dedicated Messaging Unit for notifications.
->
-> DSP IPC protocol offers a doorbell interface using
-> imx-mailbox API.
->
-> We use 4 MU channels (2 x TXDB, 2 x RXDB) to implement a
-> request-reply protocol.
->
-> Connection 0 (txdb0, rxdb0):
->         - Host writes messasge to shared memory [SHMEM]
->         - Host sends a request [MU]
->         - DSP handles request [SHMEM]
->         - DSP sends reply [MU]
->
-> Connection 1 (txdb1, rxdb1):
->         - DSP writes a message to shared memory [SHMEM]
->         - DSP sends a request [MU]
->         - Host handles request [SHMEM]
->         - Host sends reply [MU]
->
-> The protocol interface will be used by a Host client to
-> communicate with the DSP. First client will be the i.MX8
-> part from Sound Open Firmware infrastructure.
->
-> The protocol offers the following interface:
->
-> On Tx:
->    - imx_dsp_ring_doorbell, will be called to notify the DSP
->    that it needs to handle a request.
->
-> On Rx:
->    - clients need to provide two callbacks:
->         .handle_reply
->         .handle_request
->   - the callbacks will be used by the protocol on
->     notification arrival from DSP.
->
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-> ---
-> Changes since v2:
->         - remove DSP IPC own DT node as per Rob comments
->         - make dsp responsability to add MU nodes
->         - already got a Reviewed-by from Oleksij but won't add it
->         here since he might have some comments about new changes.
->         - drop dt-bindings patch since the DSP IPC no longer have
->         an associated DT node
->
->  drivers/firmware/imx/Kconfig     |  11 +++
->  drivers/firmware/imx/Makefile    |   1 +
->  drivers/firmware/imx/imx-dsp.c   | 138 +++++++++++++++++++++++++++++++
->  include/linux/firmware/imx/dsp.h |  67 +++++++++++++++
->  4 files changed, 217 insertions(+)
->  create mode 100644 drivers/firmware/imx/imx-dsp.c
->  create mode 100644 include/linux/firmware/imx/dsp.h
->
-> diff --git a/drivers/firmware/imx/Kconfig b/drivers/firmware/imx/Kconfig
-> index 42b566f8903f..0dbee32da4c6 100644
-> --- a/drivers/firmware/imx/Kconfig
-> +++ b/drivers/firmware/imx/Kconfig
-> @@ -1,4 +1,15 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> +config IMX_DSP
-> +       bool "IMX DSP Protocol driver"
-> +       depends on IMX_MBOX
-> +       help
-> +         This enables DSP IPC protocol between host AP (Linux)
-> +         and the firmware running on DSP.
-> +         DSP exists on some i.MX8 processors (e.g i.MX8QM, i.MX8QXP).
-> +
-> +         It acts like a doorbell. Client might use shared memory to
-> +         exchange information with DSP side.
-> +
->  config IMX_SCU
->         bool "IMX SCU Protocol driver"
->         depends on IMX_MBOX
-> diff --git a/drivers/firmware/imx/Makefile b/drivers/firmware/imx/Makefile
-> index 802c4ad8e8f9..08bc9ddfbdfb 100644
-> --- a/drivers/firmware/imx/Makefile
-> +++ b/drivers/firmware/imx/Makefile
-> @@ -1,3 +1,4 @@
->  # SPDX-License-Identifier: GPL-2.0
-> +obj-$(CONFIG_IMX_DSP)          += imx-dsp.o
->  obj-$(CONFIG_IMX_SCU)          += imx-scu.o misc.o imx-scu-irq.o
->  obj-$(CONFIG_IMX_SCU_PD)       += scu-pd.o
-> diff --git a/drivers/firmware/imx/imx-dsp.c b/drivers/firmware/imx/imx-dsp.c
-> new file mode 100644
-> index 000000000000..b05bdb06662e
-> --- /dev/null
-> +++ b/drivers/firmware/imx/imx-dsp.c
-> @@ -0,0 +1,138 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright 2019 NXP
-> + *  Author: Daniel Baluta <daniel.baluta@nxp.com>
-> + *
-> + * Implementation of the DSP IPC interface (host side)
-> + */
-> +
-> +#include <linux/firmware/imx/dsp.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mailbox_client.h>
-> +#include <linux/module.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +/*
-> + * imx_dsp_ring_doorbell - triggers an interrupt on the other side (DSP)
-> + *
-> + * @dsp: DSP IPC handle
-> + * @chan_idx: index of the channel where to trigger the interrupt
-> + *
-> + * Returns non-negative value for success, negative value for error
-> + */
-> +int imx_dsp_ring_doorbell(struct imx_dsp_ipc *ipc, unsigned int idx)
-> +{
-> +       int ret;
-> +       struct imx_dsp_chan *dsp_chan;
-> +
-> +       if (idx >= DSP_MU_CHAN_NUM)
-> +               return -EINVAL;
-> +
-> +       dsp_chan = &ipc->chans[idx];
-> +       ret = mbox_send_message(dsp_chan->ch, NULL);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL(imx_dsp_ring_doorbell);
-> +
-> +/*
-> + * imx_dsp_handle_rx - rx callback used by imx mailbox
-> + *
-> + * @c: mbox client
-> + * @msg: message received
-> + *
-> + * Users of DSP IPC will need to privde handle_reply and handle_request
-> + * callbacks.
-> + */
-> +static void imx_dsp_handle_rx(struct mbox_client *c, void *msg)
-> +{
-> +       struct imx_dsp_chan *chan = container_of(c, struct imx_dsp_chan, cl);
-> +
-> +       if (chan->idx == 0) {
-> +               chan->ipc->ops->handle_reply(chan->ipc);
-> +       } else {
-> +               chan->ipc->ops->handle_request(chan->ipc);
-> +               imx_dsp_ring_doorbell(chan->ipc, 1);
-> +       }
-> +}
-> +
-> +static int imx_dsp_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct imx_dsp_ipc *dsp_ipc;
-> +       struct imx_dsp_chan *dsp_chan;
-> +       struct mbox_client *cl;
-> +       char *chan_name;
-> +       int ret;
-> +       int i, j;
-> +
-> +       device_set_of_node_from_dev(&pdev->dev, pdev->dev.parent);
-> +
-> +       dsp_ipc = devm_kzalloc(dev, sizeof(*dsp_ipc), GFP_KERNEL);
-> +       if (!dsp_ipc)
-> +               return -ENOMEM;
-> +
-> +       for (i = 0; i < DSP_MU_CHAN_NUM; i++) {
-> +               if (i < 2)
-> +                       chan_name = kasprintf(GFP_KERNEL, "txdb%d", i);
-> +               else
-> +                       chan_name = kasprintf(GFP_KERNEL, "rxdb%d", i - 2);
-> +
-> +               if (!chan_name)
-> +                       return -ENOMEM;
-> +
-> +               dsp_chan = &dsp_ipc->chans[i];
-> +               cl = &dsp_chan->cl;
-> +               cl->dev = dev;
-> +               cl->tx_block = false;
-> +               cl->knows_txdone = true;
-> +               cl->rx_callback = imx_dsp_handle_rx;
-> +
-> +               dsp_chan->ipc = dsp_ipc;
-> +               dsp_chan->idx = i % 2;
-> +               dsp_chan->ch = mbox_request_channel_byname(cl, chan_name);
-> +               if (IS_ERR(dsp_chan->ch)) {
-> +                       ret = PTR_ERR(dsp_chan->ch);
-> +                       if (ret != -EPROBE_DEFER)
-> +                               dev_err(dev, "Failed to request mbox chan %s ret %d\n",
-> +                                       chan_name, ret);
-> +                       goto out;
-> +               }
-> +
-> +               dev_dbg(dev, "request mbox chan %s\n", chan_name);
-> +               /* chan_name is not used anymore by framework */
-> +               kfree(chan_name);
-> +       }
-> +
-> +       dsp_ipc->dev = dev;
-> +
-> +       dev_set_drvdata(dev, dsp_ipc);
-> +
-> +       dev_info(dev, "NXP i.MX DSP IPC initialized\n");
-> +
-> +       return devm_of_platform_populate(dev);
-> +out:
-> +       kfree(chan_name);
-> +       for (j = 0; j < i; j++) {
-> +               dsp_chan = &dsp_ipc->chans[j];
-> +               mbox_free_channel(dsp_chan->ch);
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +static struct platform_driver imx_dsp_driver = {
-> +       .driver = {
-> +               .name = "imx-dsp",
-> +       },
-> +       .probe = imx_dsp_probe,
-> +};
-> +builtin_platform_driver(imx_dsp_driver);
-> +
-> +MODULE_AUTHOR("Daniel Baluta <daniel.baluta@nxp.com>");
-> +MODULE_DESCRIPTION("IMX DSP IPC protocol driver");
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/include/linux/firmware/imx/dsp.h b/include/linux/firmware/imx/dsp.h
-> new file mode 100644
-> index 000000000000..7562099c9e46
-> --- /dev/null
-> +++ b/include/linux/firmware/imx/dsp.h
-> @@ -0,0 +1,67 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +/*
-> + * Copyright 2019 NXP
-> + *
-> + * Header file for the DSP IPC implementation
-> + */
-> +
-> +#ifndef _IMX_DSP_IPC_H
-> +#define _IMX_DSP_IPC_H
-> +
-> +#include <linux/device.h>
-> +#include <linux/types.h>
-> +#include <linux/mailbox_client.h>
-> +
-> +#define DSP_MU_CHAN_NUM                4
-> +
-> +struct imx_dsp_chan {
-> +       struct imx_dsp_ipc *ipc;
-> +       struct mbox_client cl;
-> +       struct mbox_chan *ch;
-> +       char *name;
-> +       int idx;
-> +};
-> +
-> +struct imx_dsp_ops {
-> +       void (*handle_reply)(struct imx_dsp_ipc *ipc);
-> +       void (*handle_request)(struct imx_dsp_ipc *ipc);
-> +};
-> +
-> +struct imx_dsp_ipc {
-> +       /* Host <-> DSP communication uses 2 txdb and 2 rxdb channels */
-> +       struct imx_dsp_chan chans[DSP_MU_CHAN_NUM];
-> +       struct device *dev;
-> +       struct imx_dsp_ops *ops;
-> +       void *private_data;
-> +};
-> +
-> +static inline void imx_dsp_set_data(struct imx_dsp_ipc *ipc, void *data)
-> +{
-> +       if (!ipc)
-> +               return;
-> +
-> +       ipc->private_data = data;
-> +}
-> +
-> +static inline void *imx_dsp_get_data(struct imx_dsp_ipc *ipc)
-> +{
-> +       if (!ipc)
-> +               return NULL;
-> +
-> +       return ipc->private_data;
-> +}
-> +
-> +#if IS_ENABLED(CONFIG_IMX_DSP)
-> +
-> +int imx_dsp_ring_doorbell(struct imx_dsp_ipc *dsp, unsigned int chan_idx);
-> +
-> +#else
-> +
-> +static inline int imx_dsp_ring_doorbell(struct imx_dsp_ipc *ipc,
-> +                                       unsigned int chan_idx)
-> +{
-> +       return -ENOTSUPP;
-> +}
-> +
-> +#endif
-> +#endif /* _IMX_DSP_IPC_H */
-> --
-> 2.17.1
->
