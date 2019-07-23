@@ -2,172 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 129197158E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 11:57:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCB497159A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 12:00:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732540AbfGWJ5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 05:57:54 -0400
-Received: from foss.arm.com ([217.140.110.172]:52008 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731566AbfGWJ5x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 05:57:53 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D39B8337;
-        Tue, 23 Jul 2019 02:57:52 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 639E93F71A;
-        Tue, 23 Jul 2019 02:57:50 -0700 (PDT)
-Date:   Tue, 23 Jul 2019 10:57:48 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Steven Price <steven.price@arm.com>
-Cc:     linux-mm@kvack.org, Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v9 19/21] mm: Add generic ptdump
-Message-ID: <20190723095747.GB8085@lakrids.cambridge.arm.com>
-References: <20190722154210.42799-1-steven.price@arm.com>
- <20190722154210.42799-20-steven.price@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190722154210.42799-20-steven.price@arm.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+        id S1732573AbfGWKA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 06:00:27 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40102 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727467AbfGWKA1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 06:00:27 -0400
+Received: by mail-pg1-f194.google.com with SMTP id w10so19179947pgj.7;
+        Tue, 23 Jul 2019 03:00:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=5OAJErAik0xYRiczuYg/dRLWg9Npudu/HIsd564SyVk=;
+        b=dhRz0o072/BEcOUJhWA52ddEU/HGgqq6LhasWoT8YOHZvsSAKW337oGxSi0e93Owmv
+         6gfiwJMkzuSfycOhKDP4LWw9AhI8zzemt+PzF79gQzp56Sg/Tgm7ISHSaeGb4WskrkUi
+         xaTvVKQRFv7b+kYCFZvV/kPT+Wy7tSPKys6ePiwR9iLwLt1hpZbT3IRLqkIiBCW+OmX4
+         sXqqE9VSlc9lgZw4se9BbU0eJT3ptv6hDXYK7eSRFjogawuIMDoYud8ZcBWHSFmIhjsq
+         G0WpoR6K0MDB6d22cK3/kN0vix1CS7MmYZcKmd289zUZa601dz29++rdaoheisl04ilp
+         f04A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5OAJErAik0xYRiczuYg/dRLWg9Npudu/HIsd564SyVk=;
+        b=oSDmCr33i52B/Ydy3j/17BwEiimMvJgl6H/73MtmNsdE8x9efm8LI2IJJWTb91uhbl
+         iT3FdVXhBfK0c4DYhxoXlFz+EtwwoMU0rJKpb31njqAJaKJeTpbaHjW9uSBVtKael+32
+         3rspw5wuXF6Ae0RsPvYSNsybhuXaigThfe7nSQ0oEP9+R6UM8kKBq7f6um2vU6R827IT
+         Fx/+dgvotnPvlECWzc3CacnA/vGMoBeRcTZbDvbEJeM6a1w9Du8/qcOhLfpJZsOXJXCj
+         doBnUxYfp+GJcs1XJhgBAYVqOKU3b8h63CKkvh/WvWzQkQhrbdU7GWxDVnm3VeaCwHMO
+         QhXg==
+X-Gm-Message-State: APjAAAXLxXIYf/ldvDtO5WsoAhuZdpOnutO9qccU09e3yK2u7hPKODbj
+        KOEAZw0+cU2K0HnpSd0p0UE=
+X-Google-Smtp-Source: APXvYqwNWVAJYmjCW8kEPfETxNjyljUixVn9J0Y+PXozl+eLiUNPjvrPnnaCEuVfF1e4zAq/uJX/Mw==
+X-Received: by 2002:a17:90a:ca11:: with SMTP id x17mr82284773pjt.107.1563876026282;
+        Tue, 23 Jul 2019 03:00:26 -0700 (PDT)
+Received: from oslab.tsinghua.edu.cn ([2402:f000:4:72:808::3ca])
+        by smtp.gmail.com with ESMTPSA id y12sm50328188pfn.187.2019.07.23.03.00.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Jul 2019 03:00:25 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     casey@schaufler-ca.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] security: smack: Fix possible null-pointer dereferences in smack_socket_sock_rcv_skb()
+Date:   Tue, 23 Jul 2019 18:00:15 +0800
+Message-Id: <20190723100015.5400-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 04:42:08PM +0100, Steven Price wrote:
-> Add a generic version of page table dumping that architectures can
-> opt-in to
-> 
-> Signed-off-by: Steven Price <steven.price@arm.com>
+In smack_socket_sock_rcv_skb(), there is an if statement 
+on line 3920 to check whether skb is NULL:
+    if (skb && skb->secmark != 0)
 
-[...]
+This check indicates skb can be NULL in some cases.
 
-> +#ifdef CONFIG_KASAN
-> +/*
-> + * This is an optimization for KASAN=y case. Since all kasan page tables
-> + * eventually point to the kasan_early_shadow_page we could call note_page()
-> + * right away without walking through lower level page tables. This saves
-> + * us dozens of seconds (minutes for 5-level config) while checking for
-> + * W+X mapping or reading kernel_page_tables debugfs file.
-> + */
-> +static inline bool kasan_page_table(struct ptdump_state *st, void *pt,
-> +				    unsigned long addr)
-> +{
-> +	if (__pa(pt) == __pa(kasan_early_shadow_pmd) ||
-> +#ifdef CONFIG_X86
-> +	    (pgtable_l5_enabled() &&
-> +			__pa(pt) == __pa(kasan_early_shadow_p4d)) ||
-> +#endif
-> +	    __pa(pt) == __pa(kasan_early_shadow_pud)) {
-> +		st->note_page(st, addr, 5, pte_val(kasan_early_shadow_pte[0]));
-> +		return true;
-> +	}
-> +	return false;
+But on lines 3931 and 3932, skb is used:
+    ad.a.u.net->netif = skb->skb_iif;
+    ipv6_skb_to_auditdata(skb, &ad.a, NULL);
 
-Having you tried this with CONFIG_DEBUG_VIRTUAL?
+Thus, possible null-pointer dereferences may occur when skb is NULL.
 
-The kasan_early_shadow_pmd is a kernel object rather than a linear map
-object, so you should use __pa_symbol for that.
+To fix these possible bugs, an if statement is added to check skb.
 
-It's a bit horrid to have to test multiple levels in one function; can't
-we check the relevant level inline in each of the test_p?d funcs?
+These bugs are found by a static analysis tool STCheck written by us.
 
-They're optional anyway, so they only need to be defined for
-CONFIG_KASAN.
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ security/smack/smack_lsm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks,
-Mark.
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 4c5e5a438f8b..5c9fc8ba6e57 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -3925,6 +3925,8 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+ 			skp = smack_ipv6host_label(&sadd);
+ 		if (skp == NULL)
+ 			skp = smack_net_ambient;
++		if (skb == NULL)
++			break;
+ #ifdef CONFIG_AUDIT
+ 		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
+ 		ad.a.u.net->family = family;
+-- 
+2.17.0
 
-> +}
-> +#else
-> +static inline bool kasan_page_table(struct ptdump_state *st, void *pt,
-> +				    unsigned long addr)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
-> +static int ptdump_test_p4d(unsigned long addr, unsigned long next,
-> +			   p4d_t *p4d, struct mm_walk *walk)
-> +{
-> +	struct ptdump_state *st = walk->private;
-> +
-> +	if (kasan_page_table(st, p4d, addr))
-> +		return 1;
-> +	return 0;
-> +}
-> +static int ptdump_test_pud(unsigned long addr, unsigned long next,
-> +			   pud_t *pud, struct mm_walk *walk)
-> +{
-> +	struct ptdump_state *st = walk->private;
-> +
-> +	if (kasan_page_table(st, pud, addr))
-> +		return 1;
-> +	return 0;
-> +}
-> +
-> +static int ptdump_test_pmd(unsigned long addr, unsigned long next,
-> +			   pmd_t *pmd, struct mm_walk *walk)
-> +{
-> +	struct ptdump_state *st = walk->private;
-> +
-> +	if (kasan_page_table(st, pmd, addr))
-> +		return 1;
-> +	return 0;
-> +}
-> +
-> +static int ptdump_hole(unsigned long addr, unsigned long next,
-> +		       struct mm_walk *walk)
-> +{
-> +	struct ptdump_state *st = walk->private;
-> +
-> +	st->note_page(st, addr, -1, 0);
-> +
-> +	return 0;
-> +}
-> +
-> +void ptdump_walk_pgd(struct ptdump_state *st, struct mm_struct *mm)
-> +{
-> +	struct mm_walk walk = {
-> +		.mm		= mm,
-> +		.pgd_entry	= ptdump_pgd_entry,
-> +		.p4d_entry	= ptdump_p4d_entry,
-> +		.pud_entry	= ptdump_pud_entry,
-> +		.pmd_entry	= ptdump_pmd_entry,
-> +		.pte_entry	= ptdump_pte_entry,
-> +		.test_p4d	= ptdump_test_p4d,
-> +		.test_pud	= ptdump_test_pud,
-> +		.test_pmd	= ptdump_test_pmd,
-> +		.pte_hole	= ptdump_hole,
-> +		.private	= st
-> +	};
-> +	const struct ptdump_range *range = st->range;
-> +
-> +	down_read(&mm->mmap_sem);
-> +	while (range->start != range->end) {
-> +		walk_page_range(range->start, range->end, &walk);
-> +		range++;
-> +	}
-> +	up_read(&mm->mmap_sem);
-> +
-> +	/* Flush out the last page */
-> +	st->note_page(st, 0, 0, 0);
-> +}
-> -- 
-> 2.20.1
-> 
