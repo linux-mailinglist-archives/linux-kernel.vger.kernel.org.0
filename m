@@ -2,120 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3595972257
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 00:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 915017225A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 00:25:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731503AbfGWWY4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 18:24:56 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35182 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729617AbfGWWYz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 18:24:55 -0400
-Received: by mail-pl1-f193.google.com with SMTP id w24so21150564plp.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 15:24:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:cc:from:user-agent:date;
-        bh=x9OpYleRntUaHxSfhcj52OHNmH6BLBDkmaW+Lv5uD5c=;
-        b=RcdbOXyU0ZK3AX9x6aeatipyU2M/+Mjr/0xvpE/vy1iDNuo5rIR7vFUxZFzAwUe8Df
-         X1pphTzHcQonYP9Vx11jY7RLxkEzC9ZUcxw8ZNCuB8Y1IbhEXwcT6xvU0ku5H1AgM69J
-         xaECHEFbK2Ycqqg2eT8unHKci/RKo/sOxsDKo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:cc:from
-         :user-agent:date;
-        bh=x9OpYleRntUaHxSfhcj52OHNmH6BLBDkmaW+Lv5uD5c=;
-        b=UGAOTrglqFXuPnLx3IZ+srpc/bGti8wt7vd5VARezJ8b8TJb+aqn5N+EvixUy7SeXh
-         oxo9kHo1U1lUsvJYRZjRLJQoHGzpYMIZ+o1EqNp0A0vSxy2PnUc9vKhO6dxfXm9+Tleq
-         iFUbYqiYIR5HRzwyZ/+GXEwZQex3FvrURoVPFMZXg5BmC0/RH8SUmHTFmTfuTE8wcJl6
-         nMFlkVOgfbGEkunUySovZAc7IpHI7WkMw3cUdU9gd8cyq9YegZ+iCBf3/yfrpK3llVl/
-         9NCeTpcU+iyUc9O+WF5wCp+Gv6IwCugzj+blsFts+hMPw9MhkPL05kXrQuFnf201A73W
-         7DbQ==
-X-Gm-Message-State: APjAAAXaMweO71MVf2/2a5LPHeBBE3yAoM6hG+0WCYI7aJK1fInx5HYZ
-        pV9s91aMvuuigsIwWKi8vSKHBA==
-X-Google-Smtp-Source: APXvYqytRvhn5XjfBP9p7cSY4JzQXSkKOnlLWMvNeL1LUfuhByvkDyBTpzF8k8rdkJ0Sk9svLOGnsw==
-X-Received: by 2002:a17:902:968c:: with SMTP id n12mr86656114plp.59.1563920694907;
-        Tue, 23 Jul 2019 15:24:54 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id b26sm48563520pfo.129.2019.07.23.15.24.54
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 15:24:54 -0700 (PDT)
-Message-ID: <5d378936.1c69fb81.2ee3b.0089@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        id S2392505AbfGWWZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 18:25:01 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:60662 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729617AbfGWWY6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 18:24:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=JBjWPZFWOr2ZDHDrYZ3UsWyBFtkPoXj28/OnBpUt3GQ=; b=jf5frP/e/9v9AkZbCfEO1L6WHG
+        stJcK+9H+bc3VfDJ5aFprTTmZFD7CoLUusKuhuF6EPbqfVtpw152T6zfk5purm9QXR0LU46OaYxzu
+        VLIWYChioB4lOP9a2ZTjH6ma77mxIHPt7PK5Wx0eAX/A4Mt4/urbLGxvC+8oqHXfEgQY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hq3DK-0003xn-Oo; Wed, 24 Jul 2019 00:24:54 +0200
+Date:   Wed, 24 Jul 2019 00:24:54 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Claudiu Manoil <claudiu.manoil@nxp.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, netdev@vger.kernel.org,
+        alexandru.marginean@nxp.com, linux-kernel@vger.kernel.org,
+        Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next 1/3] enetc: Add mdio bus driver for the PCIe
+ MDIO endpoint
+Message-ID: <20190723222454.GE13517@lunn.ch>
+References: <1563894955-545-1-git-send-email-claudiu.manoil@nxp.com>
+ <1563894955-545-2-git-send-email-claudiu.manoil@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAL_JsqKMmQdvQmybXbGf_CZkvd1TTeMBPyk3uEUOK9Vz1+9PNg@mail.gmail.com>
-References: <20190723181624.203864-1-swboyd@chromium.org> <20190723181624.203864-3-swboyd@chromium.org> <CAL_JsqKMmQdvQmybXbGf_CZkvd1TTeMBPyk3uEUOK9Vz1+9PNg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] treewide: Remove dev_err() usage after platform_get_irq()
-To:     Rob Herring <robh@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Mark Brown <broonie@kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Tue, 23 Jul 2019 15:24:53 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1563894955-545-2-git-send-email-claudiu.manoil@nxp.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rob Herring (2019-07-23 12:30:48)
-> On Tue, Jul 23, 2019 at 12:16 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> >
-> > We don't need dev_err() messages when platform_get_irq() fails now that
-> > platform_get_irq() prints an error message itself when something goes
-> > wrong. Let's remove these prints with a simple semantic patch.
->=20
-> Nice. Would be nice to see this for other commonly called functions in
-> probe though we have deal with cases of failure being okay.
->=20
-> >
-> > // <smpl>
-> > @@
-> > expression ret;
-> > struct platform_device *E;
-> > @@
-> >
-> > ret =3D
-> > (
-> > platform_get_irq(E, ...)
-> > |
-> > platform_get_irq_byname(E, ...)
-> > );
-> >
-> > if ( \( ret < 0 \| ret <=3D 0 \) )
-> > {
-> > (
-> > -if (ret !=3D -EPROBE_DEFER)
-> > -{ ...
-> > -dev_err(...);
-> > -... }
-> > |
-> > ...
-> > -dev_err(...);
->=20
-> What about cases of pr_err, pr_warn, etc.? And the subsystem specific
-> prints like edac_printk and DRM_ERROR/DRM_DEV_ERROR.
+> +	bus = mdiobus_alloc_size(sizeof(u32 *));
+> +	if (!bus)
+> +		return -ENOMEM;
+> +
 
-I can add more variants to the script and maybe catch some more prints.
-Is that what you're asking for?
+> +	bus->priv = pci_iomap_range(pdev, 0, ENETC_MDIO_REG_OFFSET, 0);
 
->=20
-> There's also some cases that the irq seems to be optional. They use
-> dev_info, but will now have an error level print. That's fine with me,
-> but some may complain...
+This got me confused for a while. You allocate space for a u32
+pointer. bus->priv will point to this space. However, you are not
+using this space, you {ab}use the pointer to directly hold the return
+from pci_iomap_range(). This works, but sparse is probably unhappy,
+and you are wasting the space the u32 pointer takes.
 
-Yeah I wonder if there should be a platform_get_irq_optional() API that
-more explicitly indicates this and then doesn't print a warning when the
-irq isn't there.
-
+    Andrew
