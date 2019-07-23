@@ -2,111 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FA8271872
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 14:45:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 893537187D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2019 14:46:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389696AbfGWMo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 08:44:58 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47924 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731264AbfGWMo5 (ORCPT
+        id S1731748AbfGWMqO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 08:46:14 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39301 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727724AbfGWMqO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 08:44:57 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: andrzej.p)
-        with ESMTPSA id 0B2192610F4
-Subject: Re: [PATCH v4 14/23] drm/tilcdc: Provide ddc symlink in connector
- sysfs directory
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Shawn Guo <shawnguo@kernel.org>, kernel@collabora.com,
-        linux-samsung-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, Sean Paul <sean@poorly.run>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Jonas Karlman <jonas@kwiboo.se>, linux-arm-msm@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, Jyri Sarha <jsarha@ti.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        amd-gfx@lists.freedesktop.org,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Tue, 23 Jul 2019 08:46:14 -0400
+Received: by mail-pl1-f193.google.com with SMTP id b7so20611569pls.6
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 05:46:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AqD68kCeUjLnMnjMcDvk6An8PGKZbr6I3VjMH7CQavU=;
+        b=ioqX3pf2AXx4+ruf7u0grl5/sg5w01GEnvz5hinkDg93S923RNmBKgqlFYtXXDbB0i
+         uShMa1QoNj2Rl0KlhwyK5XFKu6fvKFmwl5fS0XaeNV4nQZItdxtC9GsPtab/yDZ0U5sE
+         bKaD1L0QdfUxUJMOrGkMIfgCGKR7dhfV/LBk61jEs6lFP+5NVd+6slpb5yuyf0Zu/JZl
+         r5og3oTOYf+T53l2JFTtXtgYeBN4giGTqKasFBQmX+/FwwQm2+2SQkOstqF8Db0eWx7V
+         IjwRFlHQu8TgY6oKO+lvCP57Re3pX/zCPFp1jOhVZyFSwfc4Ilq5lsZz6Yyyf56ZBWx1
+         6xhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AqD68kCeUjLnMnjMcDvk6An8PGKZbr6I3VjMH7CQavU=;
+        b=i/MD1AER0TZw9b/9KK+W1YCjk0N2GerZIsqGtRsDYQMDy1OSsEQfdCsMIiD5iIw8Ek
+         Ki1K0dAc9ldXKX8f3V/EoC+56F8LgfbwW5gHXu1xg0diZZm/IbICCs0vuvQ+mrjQCkSk
+         4Dio+6acAq92OuMkWpSuScX1pq0eSm/XjcK951JgfKTVhRj/Evf739hT4TOpNxB/PlaE
+         5pfWyENsmInDD6F711tAkaft32Y1Gi7+Ci5rnQdkPC5tqH16xWRNrGb2c8HF8iijZ8gV
+         EExkQDOIXc0OsCGC8jPi7U4MBaeukfLEeyyU8P/mdeiFnIH9Owx+nW07cbTuzKvYFsHz
+         VqOg==
+X-Gm-Message-State: APjAAAV677LRWjc3okSoCswyPZjtchrDJCd4V9hYAV1wZ08qCv7ElNa4
+        AmrTKCrCYibAC5JwpQ7MW5Q=
+X-Google-Smtp-Source: APXvYqyYoaqOvvayMf1QJzwsCxHgUGQSldq4g+XATVpQhRkgrl987jQ3qFZvjwCYRGvAQjXJNzCpdQ==
+X-Received: by 2002:a17:902:bd06:: with SMTP id p6mr82641670pls.189.1563885973897;
+        Tue, 23 Jul 2019 05:46:13 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
+        by smtp.gmail.com with ESMTPSA id l26sm31702686pgb.90.2019.07.23.05.46.11
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 23 Jul 2019 05:46:13 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Oded Gabbay <oded.gabbay@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Huang Rui <ray.huang@amd.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        freedreno@lists.freedesktop.org,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Gerd Hoffmann <kraxel@redhat.com>
-References: <cover.1562843413.git.andrzej.p@collabora.com>
- <d1d415022c598fb7acd033f0f322dd67250adaa9.1562843413.git.andrzej.p@collabora.com>
- <20190723090532.GA787@ravnborg.org>
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Message-ID: <3ad60be5-49cf-4017-4b74-53a2d6272deb@collabora.com>
-Date:   Tue, 23 Jul 2019 14:44:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH v2] habanalabs: Use dev_get_drvdata
+Date:   Tue, 23 Jul 2019 20:46:08 +0800
+Message-Id: <20190723124608.24617-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190723090532.GA787@ravnborg.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sam,
+Instead of using to_pci_dev + pci_get_drvdata,
+use dev_get_drvdata to make code simpler.
 
-W dniu 23.07.2019 o 11:05, Sam Ravnborg pisze:
-> Hi Andrzej
-> 
-> On Thu, Jul 11, 2019 at 01:26:41PM +0200, Andrzej Pietrasiewicz wrote:
->> Use the ddc pointer provided by the generic connector.
->>
->> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
->> ---
->>   drivers/gpu/drm/tilcdc/tilcdc_tfp410.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
->> index 62d014c20988..c373edb95666 100644
->> --- a/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
->> +++ b/drivers/gpu/drm/tilcdc/tilcdc_tfp410.c
->> @@ -219,6 +219,7 @@ static struct drm_connector *tfp410_connector_create(struct drm_device *dev,
->>   	tfp410_connector->mod = mod;
->>   
->>   	connector = &tfp410_connector->base;
->> +	connector->ddc = mod->i2c;
->>   
->>   	drm_connector_init(dev, connector, &tfp410_connector_funcs,
->>   			DRM_MODE_CONNECTOR_DVID);
-> 
-> When reading this code, it looks strange that we set connector->ddc
-> *before* the call to init the connector.
-> One could risk that drm_connector_init() used memset(..) to clear all
-> fields or so, and it would break this order.
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+Changes in v2:
+  - Split v1 into different subsystems
 
-I verified the code of drm_connector_init() and cannot find any memset()
-invocations there. What is your actual concern?
+ drivers/misc/habanalabs/habanalabs_drv.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Andrzej
+diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
+index 6f6dbe93f1df..678f61646ca9 100644
+--- a/drivers/misc/habanalabs/habanalabs_drv.c
++++ b/drivers/misc/habanalabs/habanalabs_drv.c
+@@ -295,8 +295,7 @@ void destroy_hdev(struct hl_device *hdev)
+ 
+ static int hl_pmops_suspend(struct device *dev)
+ {
+-	struct pci_dev *pdev = to_pci_dev(dev);
+-	struct hl_device *hdev = pci_get_drvdata(pdev);
++	struct hl_device *hdev = dev_get_drvdata(dev);
+ 
+ 	pr_debug("Going to suspend PCI device\n");
+ 
+@@ -310,8 +309,7 @@ static int hl_pmops_suspend(struct device *dev)
+ 
+ static int hl_pmops_resume(struct device *dev)
+ {
+-	struct pci_dev *pdev = to_pci_dev(dev);
+-	struct hl_device *hdev = pci_get_drvdata(pdev);
++	struct hl_device *hdev = dev_get_drvdata(dev);
+ 
+ 	pr_debug("Going to resume PCI device\n");
+ 
+-- 
+2.20.1
+
