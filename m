@@ -2,117 +2,244 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43CAD73D4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:16:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF53573D41
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:15:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404045AbfGXTv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:51:57 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:47037 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391707AbfGXTvw (ORCPT
+        id S2391734AbfGXTw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:52:27 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:35156 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388294AbfGXTwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:51:52 -0400
-Received: by mail-ed1-f65.google.com with SMTP id d4so48167940edr.13;
-        Wed, 24 Jul 2019 12:51:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2p2ZfklHVEaOI9/2iCtD+yerzjFCKwVXOTunjKilUyg=;
-        b=bFoeW529ejuAL1azYCFXDwwZiIKojlT53AEBYIQE493V9F2hmIMpWNNMYMyuedouB6
-         Sfs0q/fXYDTeMHxjBC9GbtUNpcM4en6eXqDvF4577koXwZhd2X7v9WrYl5LrP83rTQxF
-         a0jgfQxns67iKj6MkzBaqU4xi+tKgBQmYCFx/Tqx+cRGcA2h5LJzwhUMurzbBeqtryIq
-         dyruxHxkK6fIJBZP8GQ8JLrVMKKv/TGpGloP8VPiYz3eQAyx/qlFaFkGqL3L9y2i/9D5
-         MbrIySIPL4sGxM9qz07W9sBGzrSQCUc7sT+3+6FBbv/JRJfFjYIPrwa8x1b8vmo5aT/W
-         fz+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2p2ZfklHVEaOI9/2iCtD+yerzjFCKwVXOTunjKilUyg=;
-        b=smN3qBO1sdjsXT7HUfFydkIDbkuAr6/02YufkbaXdu+3XWAzI25KL0vwwtzJr3fTAU
-         k/7uSSMFCKb0zt8o5n+LX9J3IKixEoJ50YvRc6E/l4F/VVz/dNv+ahYI8E6D0wvjPglC
-         lv+VWADLbm82iqoVcZTq2LEeM2guFrX4oS84MJE0VLQvbBhREvl/gObTzbO7HsnWNZNU
-         1fW3ZvPK+GilkEK9oI3Ohb/x/SH1RtYzI/mkZvsAL9tKJjRNcFqev8oH12W6SDN9wrN6
-         LWyksY2hV6Vkk9HZP4wAUT8u3HUzEUpgn63n6TqV2EpsNbU3EolUkk1AL8zcRX+6NZl/
-         hCPw==
-X-Gm-Message-State: APjAAAUOSnUZ40MS/2RdlhswDRNHBSfO4AAyPuUcr2OsTWoyJOx5I81U
-        WnYqgxF2rA+NTIarUEan3H3raaJsNdOaMciVAVs=
-X-Google-Smtp-Source: APXvYqz6lDBsK7IbvQCQQ8DzdG95VM5F+tel/b9fEJ/VBGexchGp+5i3AhySanNozFo55HqE6Gklar0VK6DseEVJEtg=
-X-Received: by 2002:a50:eb8f:: with SMTP id y15mr73599212edr.31.1563997910491;
- Wed, 24 Jul 2019 12:51:50 -0700 (PDT)
+        Wed, 24 Jul 2019 15:52:23 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <benjamin@sipsolutions.net>)
+        id 1hqNJ5-0004Yr-16; Wed, 24 Jul 2019 21:52:11 +0200
+Message-ID: <7f13681e20034516103a9559d394289a6975aed4.camel@sipsolutions.net>
+Subject: Re: [PATCH] drivers: thermal: processor_thermal_device: Export
+ sysfs inteface for TCC offset
+From:   Benjamin Berg <benjamin@sipsolutions.net>
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        rui.zhang@intel.com, edubezval@gmail.com
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 24 Jul 2019 21:52:06 +0200
+In-Reply-To: <20190723010302.18048-1-srinivas.pandruvada@linux.intel.com>
+References: <20190723010302.18048-1-srinivas.pandruvada@linux.intel.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-Gs75zxF5lC00YPwVB/aa"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-References: <20190724165803.87470-1-brianvv@google.com> <20190724165803.87470-5-brianvv@google.com>
-In-Reply-To: <20190724165803.87470-5-brianvv@google.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Wed, 24 Jul 2019 15:51:14 -0400
-Message-ID: <CAF=yD-LgN3-a1LtoN+EffvBYzw+7c29AUy5yVGJ1-iBpS0s2=w@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 4/6] libbpf: support BPF_MAP_DUMP command
-To:     Brian Vazquez <brianvv@google.com>
-Cc:     Brian Vazquez <brianvv.kernel@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stanislav Fomichev <sdf@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Petar Penkov <ppenkov@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 1:10 PM Brian Vazquez <brianvv@google.com> wrote:
->
-> Make libbpf aware of new BPF_MAP_DUMP command and add bpf_map_dump and
-> bpf_map_dump_flags to use them from the library.
->
-> Suggested-by: Stanislav Fomichev <sdf@google.com>
-> Signed-off-by: Brian Vazquez <brianvv@google.com>
+
+--=-Gs75zxF5lC00YPwVB/aa
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Tested-by: Benjamin Berg <bberg@redhat.com>
+
+Hi,
+
+this patch allows performance improvements of some machines. It would
+be nice if this could still make 5.3.
+
+Benjamin
+
+On Mon, 2019-07-22 at 18:03 -0700, Srinivas Pandruvada wrote:
+> This change exports an interface to read tcc offset and allow writing if
+> the platform is not locked.
+>=20
+> Refer to Intel SDM for details on the MSR: MSR_TEMPERATURE_TARGET.
+> Here TCC Activation Offset (R/W) bits allow temperature offset in degrees
+> in relation to TjMAX.
+>=20
+> This change will be useful for improving performance from user space for
+> some platforms, if the current offset is not optimal.
+>=20
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 > ---
->  tools/lib/bpf/bpf.c | 28 ++++++++++++++++++++++++++++
->  tools/lib/bpf/bpf.h |  4 ++++
->  2 files changed, 32 insertions(+)
->
-> diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-> index c7d7993c44bb0..c1139b7db756a 100644
-> --- a/tools/lib/bpf/bpf.c
-> +++ b/tools/lib/bpf/bpf.c
-> @@ -368,6 +368,34 @@ int bpf_map_update_elem(int fd, const void *key, const void *value,
->         return sys_bpf(BPF_MAP_UPDATE_ELEM, &attr, sizeof(attr));
+>  .../processor_thermal_device.c                | 91
+> ++++++++++++++++++-
+>  1 file changed, 87 insertions(+), 4 deletions(-)
+>=20
+> diff --git
+> a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+> b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+> index 213ab3cc6b80..a35635129fed 100644
+> ---
+> a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+> +++
+> b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+> @@ -137,6 +137,72 @@ static const struct attribute_group
+> power_limit_attribute_group =3D {
+>  	.name =3D "power_limits"
+>  };
+> =20
+> +static ssize_t tcc_offset_degree_celsius_show(struct device *dev,
+> +			       struct device_attribute *attr, char
+> *buf)
+> +{
+> +	u64 val;
+> +	int err;
+> +
+> +	err =3D rdmsrl_safe(MSR_IA32_TEMPERATURE_TARGET, &val);
+> +	if (err)
+> +		return err;
+> +
+> +	val =3D (val >> 24) & 0xff;
+> +	return sprintf(buf, "%d\n", (int)val);
+> +}
+> +
+> +static int tcc_offset_update(int tcc)
+> +{
+> +	u64 val;
+> +	int err;
+> +
+> +	if (!tcc)
+> +		return -EINVAL;
+> +
+> +	err =3D rdmsrl_safe(MSR_IA32_TEMPERATURE_TARGET, &val);
+> +	if (err)
+> +		return err;
+> +
+> +	val =3D ~GENMASK_ULL(31, 24);
+> +	val =3D (tcc & 0xff) << 24;
+> +
+> +	err =3D wrmsrl_safe(MSR_IA32_TEMPERATURE_TARGET, val);
+> +	if (err)
+> +		return err;
+> +
+> +	return 0;
+> +}
+> +
+> +static int tcc_offset_save;
+> +
+> +static ssize_t tcc_offset_degree_celsius_store(struct device *dev,
+> +				struct device_attribute *attr, const
+> char *buf,
+> +				size_t count)
+> +{
+> +	u64 val;
+> +	int tcc, err;
+> +
+> +	err =3D rdmsrl_safe(MSR_PLATFORM_INFO, &val);
+> +	if (err)
+> +		return err;
+> +
+> +	if (!(val & BIT(30)))
+> +		return -EACCES;
+> +
+> +	if (kstrtoint(buf, 0, &tcc))
+> +		return -EINVAL;
+> +
+> +	err =3D tcc_offset_update(tcc);
+> +	if (err)
+> +		return err;
+> +
+> +	tcc_offset_save =3D tcc;
+> +
+> +	return count;
+> +}
+> +
+> +static DEVICE_ATTR_RW(tcc_offset_degree_celsius);
+> +
+>  static int stored_tjmax; /* since it is fixed, we can have local
+> storage */
+> =20
+>  static int get_tjmax(void)
+> @@ -332,6 +398,7 @@ static void proc_thermal_remove(struct
+> proc_thermal_device *proc_priv)
+>  	acpi_remove_notify_handler(proc_priv->adev->handle,
+>  				   ACPI_DEVICE_NOTIFY,
+> proc_thermal_notify);
+>  	int340x_thermal_zone_remove(proc_priv->int340x_zone);
+> +	sysfs_remove_file(&proc_priv->dev->kobj,
+> &dev_attr_tcc_offset_degree_celsius.attr);
+>  	sysfs_remove_group(&proc_priv->dev->kobj,
+>  			   &power_limit_attribute_group);
 >  }
->
-> +int bpf_map_dump(int fd, const void *prev_key, void *buf, void *buf_len)
-> +{
-> +       union bpf_attr attr;
+> @@ -355,8 +422,15 @@ static int int3401_add(struct platform_device
+> *pdev)
+> =20
+>  	dev_info(&pdev->dev, "Creating sysfs group for
+> PROC_THERMAL_PLATFORM_DEV\n");
+> =20
+> -	return sysfs_create_group(&pdev->dev.kobj,
+> -					 &power_limit_attribute_group);
+> +	ret =3D sysfs_create_file(&pdev->dev.kobj,
+> &dev_attr_tcc_offset_degree_celsius.attr);
+> +	if (ret)
+> +		return ret;
 > +
-> +       memset(&attr, 0, sizeof(attr));
-> +       attr.dump.map_fd = fd;
-> +       attr.dump.prev_key = ptr_to_u64(prev_key);
-> +       attr.dump.buf = ptr_to_u64(buf);
-> +       attr.dump.buf_len = ptr_to_u64(buf_len);
+> +	ret =3D sysfs_create_group(&pdev->dev.kobj,
+> &power_limit_attribute_group);
+> +	if (ret)
+> +		sysfs_remove_file(&pdev->dev.kobj,
+> &dev_attr_tcc_offset_degree_celsius.attr);
 > +
-> +       return sys_bpf(BPF_MAP_DUMP, &attr, sizeof(attr));
-> +}
+> +	return ret;
+>  }
+> =20
+>  static int int3401_remove(struct platform_device *pdev)
+> @@ -584,8 +658,15 @@ static int  proc_thermal_pci_probe(struct
+> pci_dev *pdev,
+> =20
+>  	dev_info(&pdev->dev, "Creating sysfs group for
+> PROC_THERMAL_PCI\n");
+> =20
+> -	return sysfs_create_group(&pdev->dev.kobj,
+> -					 &power_limit_attribute_group);
+> +	ret =3D sysfs_create_file(&pdev->dev.kobj,
+> &dev_attr_tcc_offset_degree_celsius.attr);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D sysfs_create_group(&pdev->dev.kobj,
+> &power_limit_attribute_group);
+> +	if (ret)
+> +		sysfs_remove_file(&pdev->dev.kobj,
+> &dev_attr_tcc_offset_degree_celsius.attr);
+> +
+> +	return ret;
+>  }
+> =20
+>  static void  proc_thermal_pci_remove(struct pci_dev *pdev)
+> @@ -611,6 +692,8 @@ static int proc_thermal_resume(struct device
+> *dev)
+>  	proc_dev =3D dev_get_drvdata(dev);
+>  	proc_thermal_read_ppcc(proc_dev);
+> =20
+> +	tcc_offset_update(tcc_offset_save);
+> +
+>  	return 0;
+>  }
+>  #else
 
-This can call bpf_map_dump_flags internally to avoid code duplication?
+--=-Gs75zxF5lC00YPwVB/aa
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-> +
-> +int bpf_map_dump_flags(int fd, const void *prev_key, void *buf, void *buf_len,
-> +                      __u64 flags)
-> +{
-> +       union bpf_attr attr;
-> +
-> +       memset(&attr, 0, sizeof(attr));
-> +       attr.dump.map_fd = fd;
-> +       attr.dump.prev_key = ptr_to_u64(prev_key);
-> +       attr.dump.buf = ptr_to_u64(buf);
-> +       attr.dump.buf_len = ptr_to_u64(buf_len);
-> +       attr.dump.flags = flags;
-> +
-> +       return sys_bpf(BPF_MAP_DUMP, &attr, sizeof(attr));
-> +}
-> +
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEED2NO4vMS33W8E4AFq6ZWhpmFY3AFAl04tucACgkQq6ZWhpmF
+Y3B3WQ//TVtdQypLx4QvRa7Z/y/chYF/Drv92Xz0YIGh4SyxvEY7/6NWsRZnllqc
+RG9iQ4HtyEFO5oJK47kGTF86VQFPhAqXLMsG6J90mQTJfaVLhXfee8t2tPTxFwcd
+HLmRYbIPea1ImO6joVy9L0TEZdh6mNgxuD6Kh2o5HFhYwA0e78nidHnv+e2oAV+m
+ppOWRZnGHPfColTCyCL8yjL5Z1R3lWjtMVJ1tnP8wI9evcoQ7CMs4qJNglsoW6LP
+/cfHkUb9O2ALBcmj1UIxJaQWAlmp0gn34g9OBylUq1zfQGGYhPw+f5gUmejl8/3J
+71cE3qV0O45/0i+zn97xNC2drGxCB0aDoaSO/03/ssL0j/SIB/WQrax0husFB3LO
+ndisfMQQ4wYRZxzz2v7AXzJVDNKrYAYqj3NA/s7eW/4SrZB9zj0hnYzhAcYk4wLT
+NdMKzasuPIPMLhNJ9WdnjH9nA9dtP0nlFydh54SZyylH64c8fUxiIW7VI9vrxOwL
+dp1DB0Aqz8eTwEwRsu3EVXyGWvlXoE+bHMV+NFlkpw36/+EGWzFuJ/pBlJHHxny/
+gBsTJSUJHueIE0XhxM+cIg5jtgzsooO9QCDzwTV8/bSLiDXJkBMlfSOJIWDqyoLL
+SALSHulh/zeduG9rNvACWMl1ihxNOwbysRjgn694nfOtwtgbmys=
+=QUhc
+-----END PGP SIGNATURE-----
+
+--=-Gs75zxF5lC00YPwVB/aa--
+
