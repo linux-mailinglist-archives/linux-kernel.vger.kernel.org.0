@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A7CE73CE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:13:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0268E73CE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:13:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404726AbfGXT44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:56:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41720 "EHLO mail.kernel.org"
+        id S2404750AbfGXT5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:57:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404466AbfGXT4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:56:54 -0400
+        id S2404735AbfGXT5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:57:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9B8421873;
-        Wed, 24 Jul 2019 19:56:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90E02205C9;
+        Wed, 24 Jul 2019 19:57:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563998213;
-        bh=2HnvleEuQXWEcpKX9BILP/+xkRxnVYQLF0R4G6X7+yo=;
+        s=default; t=1563998222;
+        bh=wbVlz+lNNSlKBw+7wFwYYZ5/Bl/2DUfbAVwc6ldaETY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=evZ4iP3StSPWUZe4K+vPQgpU0LdSOVEfo4GtI3T5XVvEnSsS4uptWfj4rMEUSrtC1
-         FAketQ58xTWv1K440HFRDVSWo30cqjSrpkOOt6vfAuMfk8VPQbdnj8ySpWcyDN/hpw
-         PYP9C0CXuutrcANpB7UG5LBXRntS9nPctElhB+Ro=
+        b=yulcr0z63iOgX7jNqvDHUUaT0JNyp1VZCV02jdLvvpsF1r7wttXkM/38Pv7dzM2uh
+         fBs6iLkTz5zfgFB5oO9j0DlCEqWvPZ/RtT4p2/TF4aH6JtEOMki5/q0hNWSImHdYCx
+         MkZvNNF2m09O+Q8ofGwElOPfiFNyqlfn/2whXB0Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.1 285/371] ASoC: core: Adapt for debugfs API change
-Date:   Wed, 24 Jul 2019 21:20:37 +0200
-Message-Id: <20190724191745.736560057@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.1 288/371] ALSA: hda - Dont resume forcibly i915 HDMI/DP codec
+Date:   Wed, 24 Jul 2019 21:20:40 +0200
+Message-Id: <20190724191745.998061403@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -42,66 +42,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Brown <broonie@kernel.org>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit c2c928c93173f220955030e8440517b87ec7df92 upstream.
+commit 4914da2fb0c89205790503f20dfdde854f3afdd8 upstream.
 
-Back in ff9fb72bc07705c (debugfs: return error values, not NULL) the
-debugfs APIs were changed to return error pointers rather than NULL
-pointers on error, breaking the error checking in ASoC. Update the
-code to use IS_ERR() and log the codes that are returned as part of
-the error messages.
+We apply the codec resume forcibly at system resume callback for
+updating and syncing the jack detection state that may have changed
+during sleeping.  This is, however, superfluous for the codec like
+Intel HDMI/DP, where the jack detection is managed via the audio
+component notification; i.e. the jack state change shall be reported
+sooner or later from the graphics side at mode change.
 
-Fixes: ff9fb72bc07705c (debugfs: return error values, not NULL)
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
+This patch changes the codec resume callback to avoid the forcible
+resume conditionally with a new flag, codec->relaxed_resume, for
+reducing the resume time.  The flag is set in the codec probe.
+
+Although this doesn't fix the entire bug mentioned in the bugzilla
+entry below, it's still a good optimization and some improvements are
+seen.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201901
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/soc-core.c |   16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ include/sound/hda_codec.h  |    2 ++
+ sound/pci/hda/hda_codec.c  |    8 ++++++--
+ sound/pci/hda/patch_hdmi.c |    6 +++++-
+ 3 files changed, 13 insertions(+), 3 deletions(-)
 
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -158,9 +158,10 @@ static void soc_init_component_debugfs(s
- 				component->card->debugfs_card_root);
- 	}
+--- a/include/sound/hda_codec.h
++++ b/include/sound/hda_codec.h
+@@ -262,6 +262,8 @@ struct hda_codec {
+ 	unsigned int auto_runtime_pm:1; /* enable automatic codec runtime pm */
+ 	unsigned int force_pin_prefix:1; /* Add location prefix */
+ 	unsigned int link_down_at_suspend:1; /* link down at runtime suspend */
++	unsigned int relaxed_resume:1;	/* don't resume forcibly for jack */
++
+ #ifdef CONFIG_PM
+ 	unsigned long power_on_acct;
+ 	unsigned long power_off_acct;
+--- a/sound/pci/hda/hda_codec.c
++++ b/sound/pci/hda/hda_codec.c
+@@ -2955,15 +2955,19 @@ static int hda_codec_runtime_resume(stru
+ #ifdef CONFIG_PM_SLEEP
+ static int hda_codec_force_resume(struct device *dev)
+ {
++	struct hda_codec *codec = dev_to_hda_codec(dev);
++	bool forced_resume = !codec->relaxed_resume;
+ 	int ret;
  
--	if (!component->debugfs_root) {
-+	if (IS_ERR(component->debugfs_root)) {
- 		dev_warn(component->dev,
--			"ASoC: Failed to create component debugfs directory\n");
-+			"ASoC: Failed to create component debugfs directory: %ld\n",
-+			PTR_ERR(component->debugfs_root));
- 		return;
- 	}
- 
-@@ -212,18 +213,21 @@ static void soc_init_card_debugfs(struct
- 
- 	card->debugfs_card_root = debugfs_create_dir(card->name,
- 						     snd_soc_debugfs_root);
--	if (!card->debugfs_card_root) {
-+	if (IS_ERR(card->debugfs_card_root)) {
- 		dev_warn(card->dev,
--			 "ASoC: Failed to create card debugfs directory\n");
-+			 "ASoC: Failed to create card debugfs directory: %ld\n",
-+			 PTR_ERR(card->debugfs_card_root));
-+		card->debugfs_card_root = NULL;
- 		return;
- 	}
- 
- 	card->debugfs_pop_time = debugfs_create_u32("dapm_pop_time", 0644,
- 						    card->debugfs_card_root,
- 						    &card->pop_time);
--	if (!card->debugfs_pop_time)
-+	if (IS_ERR(card->debugfs_pop_time))
- 		dev_warn(card->dev,
--			 "ASoC: Failed to create pop time debugfs file\n");
-+			 "ASoC: Failed to create pop time debugfs file: %ld\n",
-+			 PTR_ERR(card->debugfs_pop_time));
+ 	/* The get/put pair below enforces the runtime resume even if the
+ 	 * device hasn't been used at suspend time.  This trick is needed to
+ 	 * update the jack state change during the sleep.
+ 	 */
+-	pm_runtime_get_noresume(dev);
++	if (forced_resume)
++		pm_runtime_get_noresume(dev);
+ 	ret = pm_runtime_force_resume(dev);
+-	pm_runtime_put(dev);
++	if (forced_resume)
++		pm_runtime_put(dev);
+ 	return ret;
  }
  
- static void soc_cleanup_card_debugfs(struct snd_soc_card *card)
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -2304,8 +2304,10 @@ static void generic_hdmi_free(struct hda
+ 	struct hdmi_spec *spec = codec->spec;
+ 	int pin_idx, pcm_idx;
+ 
+-	if (codec_has_acomp(codec))
++	if (codec_has_acomp(codec)) {
+ 		snd_hdac_acomp_register_notifier(&codec->bus->core, NULL);
++		codec->relaxed_resume = 0;
++	}
+ 
+ 	for (pin_idx = 0; pin_idx < spec->num_pins; pin_idx++) {
+ 		struct hdmi_spec_per_pin *per_pin = get_pin(spec, pin_idx);
+@@ -2578,6 +2580,8 @@ static void register_i915_notifier(struc
+ 	spec->drm_audio_ops.pin_eld_notify = intel_pin_eld_notify;
+ 	snd_hdac_acomp_register_notifier(&codec->bus->core,
+ 					&spec->drm_audio_ops);
++	/* no need for forcible resume for jack check thanks to notifier */
++	codec->relaxed_resume = 1;
+ }
+ 
+ /* setup_stream ops override for HSW+ */
 
 
