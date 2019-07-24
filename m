@@ -2,113 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E401D725D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 06:20:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B975725D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 06:21:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725944AbfGXEUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 00:20:04 -0400
-Received: from smtprelay0245.hostedemail.com ([216.40.44.245]:46845 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725810AbfGXEUD (ORCPT
+        id S1726023AbfGXEVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 00:21:37 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:46678 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725855AbfGXEVh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 00:20:03 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 48986180A8124;
-        Wed, 24 Jul 2019 04:20:02 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:69:355:379:599:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1801:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3871:3872:4321:4605:5007:6119:7904:9121:10004:10394:10400:10848:11026:11232:11233:11473:11658:11914:12043:12295:12297:12438:12679:12683:12740:12760:12895:13069:13161:13229:13311:13357:13439:14095:14181:14659:14721:21080:21324:21433:21627:21740:21789:30054:30075:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:29,LUA_SUMMARY:none
-X-HE-Tag: bath23_345d3f3e610
-X-Filterd-Recvd-Size: 2618
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 24 Jul 2019 04:20:01 +0000 (UTC)
-Message-ID: <d5993902fd44ce89915fab94f4db03f5081c3c8e.camel@perches.com>
-Subject: Re: [Fwd: [PATCH 1/2] string: Add stracpy and stracpy_pad
- mechanisms]
-From:   Joe Perches <joe@perches.com>
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     cocci <cocci@systeme.lip6.fr>, LKML <linux-kernel@vger.kernel.org>
-Date:   Tue, 23 Jul 2019 21:19:57 -0700
-In-Reply-To: <alpine.DEB.2.21.1907232252260.2539@hadrien>
-References: <7ab8957eaf9b0931a59eff6e2bd8c5169f2f6c41.1563841972.git.joe@perches.com>
-         <66fcdbf607d7d0bea41edb39e5579d63b62b7d84.camel@perches.com>
-         <alpine.DEB.2.21.1907231546090.2551@hadrien>
-         <0f3ba090dfc956f5651e6c7c430abdba94ddcb8b.camel@perches.com>
-         <alpine.DEB.2.21.1907232252260.2539@hadrien>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Wed, 24 Jul 2019 00:21:37 -0400
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6O4IdnS005481;
+        Tue, 23 Jul 2019 21:21:12 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=Wk97K/FpChliCnAWp8qRZILMqltAYsa7445Kk2ubOFc=;
+ b=Qp5hsXLHFO/7Gcsdvw0Aylf/mR/ycl7N028073VKfsUN4vgdj+acnXLV2TRGzwcgTSip
+ mTbYccW78UeHQ1x8PgUHZwwjg7V+h2hFFXTZYCYWRqf960+rIFjf0EfN1P/V3/Rm3s62
+ +aIJ+FOW9VuPuq0cV13s8wLtG/AWlgOGHGI= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2tx621ja2h-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 23 Jul 2019 21:21:12 -0700
+Received: from mmullins-1.thefacebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::128) with Microsoft SMTP Server id
+ 15.1.1713.5; Tue, 23 Jul 2019 21:21:10 -0700
+From:   Matt Mullins <mmullins@fb.com>
+To:     <peterz@infradead.org>, <tglx@linutronix.de>, <luto@kernel.org>
+CC:     Matt Mullins <mmullins@fb.com>, Ingo Molnar <mingo@redhat.com>,
+        "Borislav Petkov" <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        <x86@kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] x86/entry/32: pass cr2 to do_async_page_fault
+Date:   Tue, 23 Jul 2019 21:20:58 -0700
+Message-ID: <20190724042058.24506-1-mmullins@fb.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [2620:10d:c081:10::13]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-24_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1907240047
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-07-23 at 22:54 -0500, Julia Lawall wrote:
-> A seantic patch and the resulting output for the case where the third
-> arugument is a constant is attached.  Likewise the resulting output on a
-> recent linux-next.
-> 
-> julia
+Commit a0d14b8909de ("x86/mm, tracing: Fix CR2 corruption") added the
+address parameter to do_async_page_fault, but does not pass it from the
+32-bit entry point.  To plumb it through, factor-out
+common_exception_read_cr2 in the same fashion as common_exception, and
+uses it from both page_fault and async_page_fault.
 
-Nice.  Thanks Julia
+For a 32-bit KVM guest, this fixes:
 
-A couple issues:
+[    1.148669][    T1] Run /sbin/init as init process
+[    1.153328][    T1] Starting init: /sbin/init exists but couldn't execute it (error -14)
 
-There is a problem with conversions with assignments
-of strlcpy() so ideally the cocci script should make sure
-any return value was not used before conversion.
+Fixes: a0d14b8909de ("x86/mm, tracing: Fix CR2 corruption")
+Signed-off-by: Matt Mullins <mmullins@fb.com>
+---
+ arch/x86/entry/entry_32.S | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-This is not a provably good conversion:
-
-drivers/s390/char/sclp_ftp.c
-@@ -114,8 +114,7 @@ static int sclp_ftp_et7(const struct hmc
-        sccb->evbuf.mdd.ftp.length = ftp->len;
-        sccb->evbuf.mdd.ftp.bufaddr = virt_to_phys(ftp->buf);
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 2bb986f305ac..4f86928246e7 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -1443,8 +1443,12 @@ BUILD_INTERRUPT3(hv_stimer0_callback_vector, HYPERV_STIMER0_VECTOR,
  
--       len = strlcpy(sccb->evbuf.mdd.ftp.fident, ftp->fname,
--                     HMCDRV_FTP_FIDENT_MAX);
-+       len = stracpy(sccb->evbuf.mdd.ftp.fident, ftp->fname);
-
-And:
-
-I would have expected the bit below to find and convert uses like
-	drivers/hwmon/adc128d818.c:     strlcpy(info->type, "adc128d818", I2C_NAME_SIZE);
-but it seems none of those were converted.
-
-I don't know why.
-
-//------------------------------------------
-@r1@
-struct i1 *e1;
-expression e2;
-identifier f,i1,i2;
-position p;
-@@
-\(strscpy\|strlcpy\)(e1->f, e2, i2)@p
-
-@@
-identifier r1.i1,r1.i2;
-type T;
-@@
-struct i1 { ... T i1[i2]; ... }
-
-@@
-identifier f,i2;
-expression e1,e2;
-position r1.p;
-@@
-(
--strscpy
-+stracpy
-|
--strlcpy
-+stracpy
-)(e1->f, e2
--    , i2
-  )@p
-//------------------------------------------
-
-to find
+ ENTRY(page_fault)
+ 	ASM_CLAC
+-	pushl	$0; /* %gs's slot on the stack */
++	pushl	$do_page_fault
++	jmp	common_exception_read_cr2
++END(page_fault)
+ 
++common_exception_read_cr2:
++	/* the function address is in %gs's slot on the stack */
+ 	SAVE_ALL switch_stacks=1 skip_gs=1
+ 
+ 	ENCODE_FRAME_POINTER
+@@ -1452,6 +1456,7 @@ ENTRY(page_fault)
+ 
+ 	/* fixup %gs */
+ 	GS_TO_REG %ecx
++	movl	PT_GS(%esp), %edi
+ 	REG_TO_PTGS %ecx
+ 	SET_KERNEL_GS %ecx
+ 
+@@ -1463,9 +1468,9 @@ ENTRY(page_fault)
+ 
+ 	TRACE_IRQS_OFF
+ 	movl	%esp, %eax			# pt_regs pointer
+-	call	do_page_fault
++	CALL_NOSPEC %edi
+ 	jmp	ret_from_exception
+-END(page_fault)
++END(common_exception_read_cr2)
+ 
+ common_exception:
+ 	/* the function address is in %gs's slot on the stack */
+@@ -1595,7 +1600,7 @@ END(general_protection)
+ ENTRY(async_page_fault)
+ 	ASM_CLAC
+ 	pushl	$do_async_page_fault
+-	jmp	common_exception
++	jmp	common_exception_read_cr2
+ END(async_page_fault)
+ #endif
+ 
+-- 
+2.17.1
 
