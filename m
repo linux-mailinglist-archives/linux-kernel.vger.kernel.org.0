@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6698373E2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:23:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6849E73E7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:25:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391091AbfGXUW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:22:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45286 "EHLO mail.kernel.org"
+        id S2392719AbfGXUXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:23:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389917AbfGXTnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:43:13 -0400
+        id S2390455AbfGXTnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:43:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A454217D4;
-        Wed, 24 Jul 2019 19:43:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D975217D4;
+        Wed, 24 Jul 2019 19:43:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997392;
-        bh=kEHKA4EUTrNeERxwRQ+APkr3hFEhUC2gW5svMuPHzJY=;
+        s=default; t=1563997381;
+        bh=VltBhbdy74LnTiTl4GmMoLuBwsHAQoHiannhCfbtOuc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jnOkvbQav2/wUCQBVMX40adWS54pCPbB2dn1wNDLH+QrEiS7rUnmNLtbdw/oNaIox
-         2ajNOIPpAx5qjnrP6JBGLpQIr6U7lR7TxyRmFTkuvzSYAuXkrJhPXJvMYnmTwBtNBU
-         A3BedW0TnbiTiybhr1k2F7chJNI6JzNyPUGuSKpE=
+        b=ZV0qC7SCOrMi4MzSdUXa1jdfmfhdzMfjYRPyjl975k9s6dF3O/vv2wjBT7uWl06+Q
+         UIQKenXUAmCeqJhZKhmg3NBWhEQahEKmPa8WGKnl3RL3y3h4P/1q8e4KlZc7ODeOdI
+         TBBSLLa16Ip82mC5SWB4fCC8zxwEXigX/uHsDEjU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rolf Eike Beer <eike-kernel@sf-tec.de>,
-        Helge Deller <deller@gmx.de>
-Subject: [PATCH 5.2 384/413] parisc: Ensure userspace privilege for ptraced processes in regset functions
-Date:   Wed, 24 Jul 2019 21:21:15 +0200
-Message-Id: <20190724191802.501947632@linuxfoundation.org>
+        stable@vger.kernel.org, Greg Kurz <groug@kaod.org>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.2 390/413] powerpc/powernv/npu: Fix reference leak
+Date:   Wed, 24 Jul 2019 21:21:21 +0200
+Message-Id: <20190724191802.795248602@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -43,41 +44,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Helge Deller <deller@gmx.de>
+From: Greg Kurz <groug@kaod.org>
 
-commit 34c32fc603311a72cb558e5e337555434f64c27b upstream.
+commit 02c5f5394918b9b47ff4357b1b18335768cd867d upstream.
 
-On parisc the privilege level of a process is stored in the lowest two bits of
-the instruction pointers (IAOQ0 and IAOQ1). On Linux we use privilege level 0
-for the kernel and privilege level 3 for user-space. So userspace should not be
-allowed to modify IAOQ0 or IAOQ1 of a ptraced process to change it's privilege
-level to e.g. 0 to try to gain kernel privileges.
+Since 902bdc57451c, get_pci_dev() calls pci_get_domain_bus_and_slot(). This
+has the effect of incrementing the reference count of the PCI device, as
+explained in drivers/pci/search.c:
 
-This patch prevents such modifications in the regset support functions by
-always setting the two lowest bits to one (which relates to privilege level 3
-for user-space) if IAOQ0 or IAOQ1 are modified via ptrace regset calls.
+ * Given a PCI domain, bus, and slot/function number, the desired PCI
+ * device is located in the list of PCI devices. If the device is
+ * found, its reference count is increased and this function returns a
+ * pointer to its data structure.  The caller must decrement the
+ * reference count by calling pci_dev_put().  If no device is found,
+ * %NULL is returned.
 
-Link: https://bugs.gentoo.org/481768
-Cc: <stable@vger.kernel.org> # v4.7+
-Tested-by: Rolf Eike Beer <eike-kernel@sf-tec.de>
-Signed-off-by: Helge Deller <deller@gmx.de>
+Nothing was done to call pci_dev_put() and the reference count of GPU and
+NPU PCI devices rockets up.
+
+A natural way to fix this would be to teach the callers about the change,
+so that they call pci_dev_put() when done with the pointer. This turns
+out to be quite intrusive, as it affects many paths in npu-dma.c,
+pci-ioda.c and vfio_pci_nvlink2.c. Also, the issue appeared in 4.16 and
+some affected code got moved around since then: it would be problematic
+to backport the fix to stable releases.
+
+All that code never cared for reference counting anyway. Call pci_dev_put()
+from get_pci_dev() to revert to the previous behavior.
+
+Fixes: 902bdc57451c ("powerpc/powernv/idoa: Remove unnecessary pcidev from pci_dn")
+Cc: stable@vger.kernel.org # v4.16
+Signed-off-by: Greg Kurz <groug@kaod.org>
+Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/parisc/kernel/ptrace.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/powerpc/platforms/powernv/npu-dma.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
---- a/arch/parisc/kernel/ptrace.c
-+++ b/arch/parisc/kernel/ptrace.c
-@@ -496,7 +496,8 @@ static void set_reg(struct pt_regs *regs
- 			return;
- 	case RI(iaoq[0]):
- 	case RI(iaoq[1]):
--			regs->iaoq[num - RI(iaoq[0])] = val;
-+			/* set 2 lowest bits to ensure userspace privilege: */
-+			regs->iaoq[num - RI(iaoq[0])] = val | 3;
- 			return;
- 	case RI(sar):	regs->sar = val;
- 			return;
+--- a/arch/powerpc/platforms/powernv/npu-dma.c
++++ b/arch/powerpc/platforms/powernv/npu-dma.c
+@@ -28,9 +28,22 @@ static DEFINE_SPINLOCK(npu_context_lock)
+ static struct pci_dev *get_pci_dev(struct device_node *dn)
+ {
+ 	struct pci_dn *pdn = PCI_DN(dn);
++	struct pci_dev *pdev;
+ 
+-	return pci_get_domain_bus_and_slot(pci_domain_nr(pdn->phb->bus),
++	pdev = pci_get_domain_bus_and_slot(pci_domain_nr(pdn->phb->bus),
+ 					   pdn->busno, pdn->devfn);
++
++	/*
++	 * pci_get_domain_bus_and_slot() increased the reference count of
++	 * the PCI device, but callers don't need that actually as the PE
++	 * already holds a reference to the device. Since callers aren't
++	 * aware of the reference count change, call pci_dev_put() now to
++	 * avoid leaks.
++	 */
++	if (pdev)
++		pci_dev_put(pdev);
++
++	return pdev;
+ }
+ 
+ /* Given a NPU device get the associated PCI device. */
 
 
