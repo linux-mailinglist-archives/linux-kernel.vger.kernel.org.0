@@ -2,119 +2,313 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 703F073A1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:46:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A946A73A2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:47:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390428AbfGXTqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:46:55 -0400
-Received: from mail-eopbgr40087.outbound.protection.outlook.com ([40.107.4.87]:38214
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391140AbfGXTqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:46:49 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aLT16O9q/3e40J41VahKDncfkM4AdHQscOBJKz3KEJxOFYbQzF71GnwhKsqdMS2qBdt5qNWWXQzDMhazFdfRrMb4n9FPue61fXO2CSLbvYtHEIdcTWXLsbppnR+lPi+hqnlwmFogzBz4TdHVOHxudyg5M7PgREVHleGbgifPxLP5j8rTprs6y28FtbrVi0BOrWMCPUCH6IrjxZRDL3Il95xA9w5Wv14tygGe0RyJsFqCPdzaw1VdKlq/TVOFb8ZqBgerkMmV/M0u+351pcFhHOanvKJDoqzhQYY0vKt2UcHdZbPQijB2s3G23vmVJCon3FihHUwrHxjkTfFBVBxcpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wNx2i5pcvH3aziJMHgWvHv6xGl85BzDYQN5G2r9Uzpc=;
- b=BL+/EZBVNPUmdjmn+/GyA4Yq7B0pqyvWyZ5lvTFPxE7L6VpVQkqUp/ZV4QFoGTR/xNhAY7DUf8N9jdgZkn42BrpmDtLsGxuP2cKk+zLrEt32/3qN7iZvftcMe4QAQg2jMo9sV7VxjcqTXmWRrf+MnagdbV9O8ZlcWB8omY9kyY7IdVfiJfWif5P/2h2cGzdmk5uNhxdyYtpt5Q7nsvGqZN5zc5MLRVzgkjkqIDgHg+0UxtM9S65OV2HYhXmi6xjzycjZnlsIBrv8I6W3c352dF5cKS5jKv25S55c2kDfTCR28jfo1q4kEe4klO6+mUdvCE9ZRc8pqepaMuv3QAzRyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=mellanox.com;dmarc=pass action=none
- header.from=mellanox.com;dkim=pass header.d=mellanox.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wNx2i5pcvH3aziJMHgWvHv6xGl85BzDYQN5G2r9Uzpc=;
- b=KidWAxScORetCOoc+xc8BkkRA2AByobi0hZcBzw93Tc6qSsDaFi/q6Y23sS5OkKl1qC26kr8o7OzgaUsUIufx7EbuSY1NsH50xAdkvmfXPx/eh+nqZfYqS5CPzD7JgamCjM1lE4Ph1rlF1Bi6aVOJOHjwq8ZkmZ1H/U9c5R18GQ=
-Received: from DB6PR0501MB2759.eurprd05.prod.outlook.com (10.172.227.7) by
- DB6PR0501MB2165.eurprd05.prod.outlook.com (10.168.55.134) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.16; Wed, 24 Jul 2019 19:46:46 +0000
-Received: from DB6PR0501MB2759.eurprd05.prod.outlook.com
- ([fe80::7148:ecd4:3a7f:f3f]) by DB6PR0501MB2759.eurprd05.prod.outlook.com
- ([fe80::7148:ecd4:3a7f:f3f%11]) with mapi id 15.20.2094.011; Wed, 24 Jul 2019
- 19:46:46 +0000
-From:   Saeed Mahameed <saeedm@mellanox.com>
-To:     "peter_hong@fintek.com.tw" <peter_hong@fintek.com.tw>,
-        "wg@grandegger.com" <wg@grandegger.com>,
-        "mkl@pengutronix.de" <mkl@pengutronix.de>,
-        "hpeter@gmail.com" <hpeter@gmail.com>
-CC:     "hpeter+linux_kernel@gmail.com" <hpeter+linux_kernel@gmail.com>,
-        "f.suligoi@asem.it" <f.suligoi@asem.it>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH V2 1/1] can: sja1000: f81601: add Fintek F81601 support
-Thread-Topic: [PATCH V2 1/1] can: sja1000: f81601: add Fintek F81601 support
-Thread-Index: AQHVQFXSPZ8Kh66+kkKJ1rNLgBa/e6bYvVkAgACAvICAAPJKAA==
-Date:   Wed, 24 Jul 2019 19:46:45 +0000
-Message-ID: <bbe907bf7fa1ebe1adfd6bdc9887e4c41ff624bd.camel@mellanox.com>
-References: <1563776521-28317-1-git-send-email-hpeter+linux_kernel@gmail.com>
-         <bb38703fa94f19578ac67f763bb1a0ad34196757.camel@mellanox.com>
-         <37a8be8d-3ce7-e983-93da-35413cfb5da1@gmail.com>
-In-Reply-To: <37a8be8d-3ce7-e983-93da-35413cfb5da1@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.32.4 (3.32.4-1.fc30) 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=saeedm@mellanox.com; 
-x-originating-ip: [209.116.155.178]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9ae5a4cf-b173-41e7-3b6e-08d7106fa923
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB6PR0501MB2165;
-x-ms-traffictypediagnostic: DB6PR0501MB2165:
-x-microsoft-antispam-prvs: <DB6PR0501MB21652FACF9AAC8A9040F0446BEC60@DB6PR0501MB2165.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5516;
-x-forefront-prvs: 0108A997B2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(366004)(346002)(39860400002)(396003)(54534003)(51914003)(189003)(199004)(66946007)(2201001)(66066001)(66556008)(76176011)(81166006)(66476007)(66446008)(81156014)(446003)(76116006)(91956017)(64756008)(8936002)(4326008)(25786009)(7416002)(86362001)(14444005)(256004)(14454004)(54906003)(316002)(58126008)(478600001)(36756003)(110136005)(486006)(99286004)(53936002)(5660300002)(2906002)(6246003)(305945005)(476003)(6436002)(26005)(229853002)(6486002)(6506007)(102836004)(186003)(71200400001)(2501003)(68736007)(118296001)(6512007)(2616005)(3846002)(7736002)(6116002)(11346002)(8676002)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0501MB2165;H:DB6PR0501MB2759.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: /80DZ7n80xaMlcvA21GS2cn8WSzL67z6PGMGV9AfJSIIFk5m3AciS1QuQaCnUYUB14wEDdD+yY15yk5Y3caGes4dgvexbblFps8aXHFGg53wlCswI9LdIdF/mm3gE4vNU/wP9u5rEunEn2kXB59nk+XniC6PUYaFiHrrkCc9JoJ03eZhrvSULCqwuNzPBCteNURlCCkZLGvTk27MmwfgAw40zT67GtYZ/yQThWF23VyeabncGvinuIg9JzTxUrOeo8KmLAuwGpaTX1DxW+Pq7Sn2nZQKVGn4ypGLAD6XVDPItCad3xlZMqnca5mVu+B9XOPu9TPNH0uBZ/PJPrrq6pO/gal0BQnNw+NUyt3oY3hPBViuFH8le/JoFE9xz2/L5694tjRUmr0EQX81hu6XditScQUNEQ0zpJ7I2SoyDoI=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <18B299C888EC964D8E66BC19C63FE5D5@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S2390347AbfGXTrc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:47:32 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:35002 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391250AbfGXTr2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:47:28 -0400
+Received: by mail-qt1-f196.google.com with SMTP id d23so46759722qto.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:47:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zQFfFaN4S19jIM07tkNyIGV4UlSrkqk8y/x0NsRJHfo=;
+        b=gsTVdL8w56Sf87pYIC7aPOzfMDHijVZb3kW+rtWXqmYTt09V5qiQyckILuY9IBwmHJ
+         Gtt+o3A1M6a4innZo+QoUs/JFSE21WLXsz72aq1V40YU6L67zaUEZ2aKFmlQtArS0Yab
+         /RYGQC8RUjIVtKI+8xy5hmBWRefTfqkzpXko5G5Za1hucuZUkNy5K6r25iTB199GWaUY
+         jaTP+jMyeeYgBP3JsZWClbEAd9CiBN0MEZzewJ/zW0RawtU70pVHLCgVip246wJPPxoO
+         QFJfjU0iO1aqRIXS8NwIIjTomqnZc1eRa9JFWi3coNtob/dv0BGoR9Uek9EBv7OyUgpq
+         xKrw==
+X-Gm-Message-State: APjAAAU2UlI5YcbpoIaDZunwfQnN6lSNIYPoNvKlO0I6YyslyZ6qrMSd
+        dXBuGPQHsIkCaXsX7DfC7LsIOA==
+X-Google-Smtp-Source: APXvYqw2dwpoJegyks6v2Bb6MSdjFwoLUS2vTs3LkTq1TKtkmQD76uS9WlH9tR7ttNVa1xL82b37Ag==
+X-Received: by 2002:ad4:55a9:: with SMTP id f9mr60419979qvx.133.1563997646338;
+        Wed, 24 Jul 2019 12:47:26 -0700 (PDT)
+Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
+        by smtp.gmail.com with ESMTPSA id t197sm20634053qke.2.2019.07.24.12.47.20
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 12:47:25 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 15:47:18 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Nitesh Narayan Lal <nitesh@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, pbonzini@redhat.com, lcapitulino@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com, yang.zhang.wz@gmail.com,
+        riel@surriel.com, david@redhat.com, dodgen@google.com,
+        konrad.wilk@oracle.com, dhildenb@redhat.com, aarcange@redhat.com,
+        alexander.duyck@gmail.com, john.starks@microsoft.com,
+        dave.hansen@intel.com, mhocko@suse.com
+Subject: Re: [RFC][Patch v11 2/2] virtio-balloon: page_hinting: reporting to
+ the host
+Message-ID: <20190724153951-mutt-send-email-mst@kernel.org>
+References: <20190710195158.19640-1-nitesh@redhat.com>
+ <20190710195158.19640-3-nitesh@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ae5a4cf-b173-41e7-3b6e-08d7106fa923
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2019 19:46:46.0077
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: saeedm@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0501MB2165
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190710195158.19640-3-nitesh@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE5LTA3LTI0IGF0IDEzOjE5ICswODAwLCBKaS1aZSBIb25nIChQZXRlciBIb25n
-KSB3cm90ZToNCj4gSGksDQo+IA0KPiBTYWVlZCBNYWhhbWVlZCDmlrwgMjAxOS83LzI0IOS4iuWN
-iCAwNTozOCDlr6vpgZM6DQo+ID4gT24gTW9uLCAyMDE5LTA3LTIyIGF0IDE0OjIyICswODAwLCBK
-aS1aZSBIb25nIChQZXRlciBIb25nKSB3cm90ZToNCj4gPiA+IFRoaXMgcGF0Y2ggYWRkIHN1cHBv
-cnQgZm9yIEZpbnRlayBQQ0lFIHRvIDIgQ0FOIGNvbnRyb2xsZXINCj4gPiA+IHN1cHBvcnQNCj4g
-PiA+IA0KPiA+ID4gU2lnbmVkLW9mZi1ieTogSmktWmUgSG9uZyAoUGV0ZXIgSG9uZykgPA0KPiA+
-ID4gaHBldGVyK2xpbnV4X2tlcm5lbEBnbWFpbC5jb20NCj4gPiA+IC0tLQ0KPiA+ID4gQ2hhbmdl
-bG9nOg0KPiA+ID4gdjI6DQo+ID4gPiAJMTogRml4IGNvbW1lbnQgb24gdGhlIHNwaW5sb2NrIHdp
-dGggd3JpdGUgYWNjZXNzLg0KPiA+ID4gCTI6IFVzZSBBUlJBWV9TSVpFIGluc3RlYWQgb2YgRjgx
-NjAxX1BDSV9NQVhfQ0hBTi4NCj4gPiA+IAkzOiBDaGVjayB0aGUgc3RyYXAgcGluIG91dHNpZGUg
-dGhlIGxvb3AuDQo+ID4gPiAJNDogRml4IHRoZSBjbGVhbnVwIGlzc3VlIGluIGY4MTYwMV9wY2lf
-YWRkX2NhcmQoKS4NCj4gPiA+IAk1OiBSZW1vdmUgdW51c2VkICJjaGFubmVscyIgaW4gc3RydWN0
-IGY4MTYwMV9wY2lfY2FyZC4NCj4gPiA+IA0KPiA+ID4gICBkcml2ZXJzL25ldC9jYW4vc2phMTAw
-MC9LY29uZmlnICB8ICAgOCArKw0KPiA+ID4gICBkcml2ZXJzL25ldC9jYW4vc2phMTAwMC9NYWtl
-ZmlsZSB8ICAgMSArDQo+ID4gPiAgIGRyaXZlcnMvbmV0L2Nhbi9zamExMDAwL2Y4MTYwMS5jIHwg
-MjE1DQo+ID4gPiANCg0KWy4uLl0gDQoNCj4gPiA+IA0KPiA+ID4gKwkvKiBEZXRlY3QgYXZhaWxh
-YmxlIGNoYW5uZWxzICovDQo+ID4gPiArCWZvciAoaSA9IDA7IGkgPCBjb3VudDsgaSsrKSB7DQo+
-ID4gPiArCQlkZXYgPSBhbGxvY19zamExMDAwZGV2KDApOw0KPiA+ID4gKwkJaWYgKCFkZXYpIHsN
-Cj4gPiA+ICsJCQllcnIgPSAtRU5PTUVNOw0KPiA+ID4gKwkJCWdvdG8gZmFpbHVyZV9jbGVhbnVw
-Ow0KPiA+ID4gKwkJfQ0KPiA+ID4gKw0KPiA+IA0KPiA+IGRvbid0IHlvdSBuZWVkIHRvIHJvbGxi
-YWNrIGFuZCBjbGVhbnVwL3VucmVnaXN0ZXIgcHJldmlvdXNseQ0KPiA+IGFsbG9jYXRlZA0KPiA+
-IGRldnMgPw0KPiA+IA0KPiANCj4gSSdsbCBkbyBjbGVhbnVwIHdoZW4gZXJyb3JzIGp1bXAgdG8g
-ZmFpbHVyZV9jbGVhbnVwIGxhYmVsIGFuZCBkbw0KPiBmODE2MDFfcGNpX2RlbF9jYXJkKCkuDQo+
-IA0KDQpSaWdodCAhLCB0aGFua3MgZm9yIHRoZSBjbGFyaWZpY2F0aW9uLiANCg==
+On Wed, Jul 10, 2019 at 03:51:58PM -0400, Nitesh Narayan Lal wrote:
+> Enables the kernel to negotiate VIRTIO_BALLOON_F_HINTING feature with the
+> host. If it is available and page_hinting_flag is set to true, page_hinting
+> is enabled and its callbacks are configured along with the max_pages count
+> which indicates the maximum number of pages that can be isolated and hinted
+> at a time. Currently, only free pages of order >= (MAX_ORDER - 2) are
+> reported. To prevent any false OOM max_pages count is set to 16.
+> 
+> By default page_hinting feature is enabled and gets loaded as soon
+> as the virtio-balloon driver is loaded. However, it could be disabled
+> by writing the page_hinting_flag which is a virtio-balloon parameter.
+> 
+> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
+> ---
+>  drivers/virtio/Kconfig              |  1 +
+>  drivers/virtio/virtio_balloon.c     | 91 ++++++++++++++++++++++++++++-
+>  include/uapi/linux/virtio_balloon.h | 11 ++++
+>  3 files changed, 102 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
+> index 023fc3bc01c6..dcc0cb4269a5 100644
+> --- a/drivers/virtio/Kconfig
+> +++ b/drivers/virtio/Kconfig
+> @@ -47,6 +47,7 @@ config VIRTIO_BALLOON
+>  	tristate "Virtio balloon driver"
+>  	depends on VIRTIO
+>  	select MEMORY_BALLOON
+> +	select PAGE_HINTING
+>  	---help---
+>  	 This driver supports increasing and decreasing the amount
+>  	 of memory within a KVM guest.
+> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+> index 44339fc87cc7..1fb0eb0b2c20 100644
+> --- a/drivers/virtio/virtio_balloon.c
+> +++ b/drivers/virtio/virtio_balloon.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/mount.h>
+>  #include <linux/magic.h>
+> +#include <linux/page_hinting.h>
+>  
+>  /*
+>   * Balloon device works in 4K page units.  So each page is pointed to by
+> @@ -35,6 +36,12 @@
+>  /* The size of a free page block in bytes */
+>  #define VIRTIO_BALLOON_FREE_PAGE_SIZE \
+>  	(1 << (VIRTIO_BALLOON_FREE_PAGE_ORDER + PAGE_SHIFT))
+> +/* Number of isolated pages to be reported to the host at a time.
+> + * TODO:
+> + * 1. Set it via host.
+> + * 2. Find an optimal value for this.
+> + */
+> +#define PAGE_HINTING_MAX_PAGES	16
+>  
+>  #ifdef CONFIG_BALLOON_COMPACTION
+>  static struct vfsmount *balloon_mnt;
+> @@ -45,6 +52,7 @@ enum virtio_balloon_vq {
+>  	VIRTIO_BALLOON_VQ_DEFLATE,
+>  	VIRTIO_BALLOON_VQ_STATS,
+>  	VIRTIO_BALLOON_VQ_FREE_PAGE,
+> +	VIRTIO_BALLOON_VQ_HINTING,
+>  	VIRTIO_BALLOON_VQ_MAX
+>  };
+>  
+> @@ -54,7 +62,8 @@ enum virtio_balloon_config_read {
+>  
+>  struct virtio_balloon {
+>  	struct virtio_device *vdev;
+> -	struct virtqueue *inflate_vq, *deflate_vq, *stats_vq, *free_page_vq;
+> +	struct virtqueue *inflate_vq, *deflate_vq, *stats_vq, *free_page_vq,
+> +			 *hinting_vq;
+>  
+>  	/* Balloon's own wq for cpu-intensive work items */
+>  	struct workqueue_struct *balloon_wq;
+> @@ -112,6 +121,9 @@ struct virtio_balloon {
+>  
+>  	/* To register a shrinker to shrink memory upon memory pressure */
+>  	struct shrinker shrinker;
+> +
+> +	/* Array object pointing at the isolated pages ready for hinting */
+> +	struct isolated_memory isolated_pages[PAGE_HINTING_MAX_PAGES];
+>  };
+>  
+>  static struct virtio_device_id id_table[] = {
+> @@ -119,6 +131,66 @@ static struct virtio_device_id id_table[] = {
+>  	{ 0 },
+>  };
+>  
+> +static struct page_hinting_config page_hinting_conf;
+> +bool page_hinting_flag = true;
+> +struct virtio_balloon *hvb;
+> +module_param(page_hinting_flag, bool, 0444);
+> +MODULE_PARM_DESC(page_hinting_flag, "Enable page hinting");
+> +
+> +static int page_hinting_report(void)
+> +{
+> +	struct virtqueue *vq = hvb->hinting_vq;
+> +	struct scatterlist sg;
+> +	int err = 0, unused;
+> +
+> +	mutex_lock(&hvb->balloon_lock);
+> +	sg_init_one(&sg, hvb->isolated_pages, sizeof(hvb->isolated_pages[0]) *
+> +		    PAGE_HINTING_MAX_PAGES);
+> +	err = virtqueue_add_outbuf(vq, &sg, 1, hvb, GFP_KERNEL);
+
+In Alex's patch, I really like it that he's passing pages as sg
+entries. IMHO that's both cleaner and allows seamless
+support for arbitrary page sizes.
+
+In particular ....
+
+> +	if (!err)
+> +		virtqueue_kick(hvb->hinting_vq);
+> +	wait_event(hvb->acked, virtqueue_get_buf(vq, &unused));
+> +	mutex_unlock(&hvb->balloon_lock);
+> +	return err;
+> +}
+> +
+> +void hint_pages(struct list_head *pages)
+> +{
+> +	struct device *dev = &hvb->vdev->dev;
+> +	struct page *page, *next;
+> +	int idx = 0, order, err;
+> +	unsigned long pfn;
+> +
+> +	list_for_each_entry_safe(page, next, pages, lru) {
+> +		pfn = page_to_pfn(page);
+> +		order = page_private(page);
+> +		hvb->isolated_pages[idx].phys_addr = pfn << PAGE_SHIFT;
+> +		hvb->isolated_pages[idx].size = (1 << order) * PAGE_SIZE;
+> +		idx++;
+
+... passing native endian-ness values to host creates pain for
+cross-endian configurations.
+
+> +	}
+> +	err = page_hinting_report();
+> +	if (err < 0)
+> +		dev_err(dev, "Failed to hint pages, err = %d\n", err);
+> +}
+> +
+> +static void page_hinting_init(struct virtio_balloon *vb)
+> +{
+> +	struct device *dev = &vb->vdev->dev;
+> +	int err;
+> +
+> +	page_hinting_conf.hint_pages = hint_pages;
+> +	page_hinting_conf.max_pages = PAGE_HINTING_MAX_PAGES;
+> +	err = page_hinting_enable(&page_hinting_conf);
+> +	if (err < 0) {
+> +		dev_err(dev, "Failed to enable page-hinting, err = %d\n", err);
+
+It would be nicer to disable the feature bit then, or fail probe
+completely.
+
+> +		page_hinting_flag = false;
+> +		page_hinting_conf.hint_pages = NULL;
+> +		page_hinting_conf.max_pages = 0;
+> +		return;
+> +	}
+> +	hvb = vb;
+> +}
+> +
+>  static u32 page_to_balloon_pfn(struct page *page)
+>  {
+>  	unsigned long pfn = page_to_pfn(page);
+> @@ -475,6 +547,7 @@ static int init_vqs(struct virtio_balloon *vb)
+>  	names[VIRTIO_BALLOON_VQ_DEFLATE] = "deflate";
+>  	names[VIRTIO_BALLOON_VQ_STATS] = NULL;
+>  	names[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
+> +	names[VIRTIO_BALLOON_VQ_HINTING] = NULL;
+>  
+>  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
+>  		names[VIRTIO_BALLOON_VQ_STATS] = "stats";
+> @@ -486,11 +559,18 @@ static int init_vqs(struct virtio_balloon *vb)
+>  		callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
+>  	}
+>  
+> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING)) {
+> +		names[VIRTIO_BALLOON_VQ_HINTING] = "hinting_vq";
+> +		callbacks[VIRTIO_BALLOON_VQ_HINTING] = balloon_ack;
+> +	}
+>  	err = vb->vdev->config->find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX,
+>  					 vqs, callbacks, names, NULL, NULL);
+>  	if (err)
+>  		return err;
+>  
+> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING))
+> +		vb->hinting_vq = vqs[VIRTIO_BALLOON_VQ_HINTING];
+> +
+>  	vb->inflate_vq = vqs[VIRTIO_BALLOON_VQ_INFLATE];
+>  	vb->deflate_vq = vqs[VIRTIO_BALLOON_VQ_DEFLATE];
+>  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
+> @@ -929,6 +1009,9 @@ static int virtballoon_probe(struct virtio_device *vdev)
+>  		if (err)
+>  			goto out_del_balloon_wq;
+>  	}
+> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING) &&
+> +	    page_hinting_flag)
+> +		page_hinting_init(vb);
+>  	virtio_device_ready(vdev);
+>  
+>  	if (towards_target(vb))
+> @@ -976,6 +1059,10 @@ static void virtballoon_remove(struct virtio_device *vdev)
+>  		destroy_workqueue(vb->balloon_wq);
+>  	}
+>  
+> +	if (!page_hinting_flag) {
+> +		hvb = NULL;
+> +		page_hinting_disable();
+> +	}
+>  	remove_common(vb);
+>  #ifdef CONFIG_BALLOON_COMPACTION
+>  	if (vb->vb_dev_info.inode)
+> @@ -1030,8 +1117,10 @@ static unsigned int features[] = {
+>  	VIRTIO_BALLOON_F_MUST_TELL_HOST,
+>  	VIRTIO_BALLOON_F_STATS_VQ,
+>  	VIRTIO_BALLOON_F_DEFLATE_ON_OOM,
+> +	VIRTIO_BALLOON_F_HINTING,
+>  	VIRTIO_BALLOON_F_FREE_PAGE_HINT,
+>  	VIRTIO_BALLOON_F_PAGE_POISON,
+> +	VIRTIO_BALLOON_F_HINTING,
+>  };
+>  
+>  static struct virtio_driver virtio_balloon_driver = {
+> diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
+> index a1966cd7b677..29eed0ec83d3 100644
+> --- a/include/uapi/linux/virtio_balloon.h
+> +++ b/include/uapi/linux/virtio_balloon.h
+> @@ -36,6 +36,8 @@
+>  #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM	2 /* Deflate balloon on OOM */
+>  #define VIRTIO_BALLOON_F_FREE_PAGE_HINT	3 /* VQ to report free pages */
+>  #define VIRTIO_BALLOON_F_PAGE_POISON	4 /* Guest is using page poisoning */
+> +/* TODO: Find a better name to avoid any confusion with FREE_PAGE_HINT */
+> +#define VIRTIO_BALLOON_F_HINTING	5 /* Page hinting virtqueue */
+>  
+>  /* Size of a PFN in the balloon interface. */
+>  #define VIRTIO_BALLOON_PFN_SHIFT 12
+> @@ -108,4 +110,13 @@ struct virtio_balloon_stat {
+>  	__virtio64 val;
+>  } __attribute__((packed));
+>  
+> +/*
+> + * struct isolated_memory- holds the pages which will be reported to the host.
+> + * @phys_add:	physical address associated with a page.
+> + * @size:	total size of memory to be reported.
+> + */
+> +struct isolated_memory {
+> +	__virtio64 phys_addr;
+> +	__virtio64 size;
+> +};
+>  #endif /* _LINUX_VIRTIO_BALLOON_H */
+> -- 
+> 2.21.0
