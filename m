@@ -2,211 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60B1D73450
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 18:57:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 768027347E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:00:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728208AbfGXQ5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 12:57:13 -0400
-Received: from mga01.intel.com ([192.55.52.88]:29580 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbfGXQ5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 12:57:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 09:57:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
-   d="scan'208";a="193519956"
-Received: from tthayer-hp-z620.an.intel.com (HELO [10.122.105.146]) ([10.122.105.146])
-  by fmsmga004.fm.intel.com with ESMTP; 24 Jul 2019 09:57:12 -0700
-Reply-To: thor.thayer@linux.intel.com
-Subject: Re: [PATCHv2 2/3] fpga: altera-cvp: Preparation for V2 parts.
-To:     Moritz Fischer <mdf@kernel.org>
-Cc:     richard.gong@linux.intel.com, agust@denx.de,
-        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1563317287-18834-1-git-send-email-thor.thayer@linux.intel.com>
- <1563317287-18834-3-git-send-email-thor.thayer@linux.intel.com>
- <20190722005938.GB2583@archbook>
- <6e54c0ee-b8ec-4f95-cf81-70aacc82c72e@linux.intel.com>
- <20190724145704.GB24455@archbox>
-From:   Thor Thayer <thor.thayer@linux.intel.com>
-Message-ID: <b52ea6f3-a547-ebce-88f5-6256501a7e99@linux.intel.com>
-Date:   Wed, 24 Jul 2019 11:59:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2387712AbfGXRAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 13:00:43 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44956 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727789AbfGXRAl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 13:00:41 -0400
+Received: by mail-io1-f68.google.com with SMTP id s7so90976712iob.11;
+        Wed, 24 Jul 2019 10:00:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:date:message-id:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=H5uePaAnfho3jP4O84y/TR/d85pMr1PHhHfJNr70LiM=;
+        b=kHN1iP7zA3FJ74YxjzC8lHyl0JgV6YH25zYfaGW5aYOffgySOf1QKp+KZSQHNEMZFn
+         GKh2kTELEzLGxrmnDZLQUmt0ykjoIDF3onJTscviyJA5ehSAC5J/5UW+6OaSP+iS5bu/
+         1xU8vU3Z2VYVFmXfnmjeHFfNhPttjVDYToOKq1rg678rqHxcm0f7g0tiQhJpl/xRi+Wd
+         hxAt6HjXkfC9jvuYIpfnwcVzdP5pFdL9Cf7F6GyLICGbk9RmPEUy6b4Qcp04eardBWx/
+         jknqRgy69k+O7wjc/qY01mpJ20yzKRb5wPGzFCtmmEbEQ6QD7AfuECV7TisOSvi+bo3l
+         Y7Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=H5uePaAnfho3jP4O84y/TR/d85pMr1PHhHfJNr70LiM=;
+        b=Ouj7+48xLx8xxC/3hrv/3u8iPvVsXEERwc49aQESMcXao6pIjVEZaI20MS9qM5JRL8
+         tTNK3c8UpvQxyl4WSnReiVASL2r1hEDrm42yD8dYIQhntu+0e4k1IvPJmzs6KhyBway2
+         lxslRlR0TC7JRx+un1XZnGNS9YXmSrY+baV/xouNjmURJ+wi1RmIpUFRwyo6Q8AJ8S1C
+         s9szJUg5RtM2SDPymhw4mvNlTFhYNJDIO/T8vzZEh1i5npMDzhpWfVJHwxbUIK4HGChy
+         ebQuxolOP31ST3I8iehr/jVZYBtV/1leBCaOcP65EPcJonKJb9kAc2/EDJ6bGXVGNPuG
+         7UgA==
+X-Gm-Message-State: APjAAAXdIBFF2vN118kIC7Tmxc7edqz2fNABaBNCsdBp3guQXa47Hmv0
+        m7LjyM5rLXsBOSC2JzNjthM=
+X-Google-Smtp-Source: APXvYqx+6Zi+RypFO68n1WeSfP+QuoinYaHM4/PZrw3z9TvZURJv9ULbWB+7BvwlnKgD1QoYlHaN3g==
+X-Received: by 2002:a02:6d24:: with SMTP id m36mr87555505jac.87.1563987640301;
+        Wed, 24 Jul 2019 10:00:40 -0700 (PDT)
+Received: from localhost.localdomain (50-39-177-61.bvtn.or.frontiernet.net. [50.39.177.61])
+        by smtp.gmail.com with ESMTPSA id b8sm38161917ioj.16.2019.07.24.10.00.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Jul 2019 10:00:39 -0700 (PDT)
+Subject: [PATCH v2 2/5] mm: Move set/get_pcppage_migratetype to mmzone.h
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+To:     nitesh@redhat.com, kvm@vger.kernel.org, david@redhat.com,
+        mst@redhat.com, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org
+Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
+        konrad.wilk@oracle.com, lcapitulino@redhat.com,
+        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
+        dan.j.williams@intel.com, alexander.h.duyck@linux.intel.com
+Date:   Wed, 24 Jul 2019 09:58:30 -0700
+Message-ID: <20190724165830.6685.51110.stgit@localhost.localdomain>
+In-Reply-To: <20190724165158.6685.87228.stgit@localhost.localdomain>
+References: <20190724165158.6685.87228.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20190724145704.GB24455@archbox>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Moritz,
+From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-On 7/24/19 9:57 AM, Moritz Fischer wrote:
-> On Tue, Jul 23, 2019 at 09:40:51AM -0500, Thor Thayer wrote:
->> Hi Moritz,
->>
->> On 7/21/19 7:59 PM, Moritz Fischer wrote:
->>> Thor,
->>>
->>> On Tue, Jul 16, 2019 at 05:48:06PM -0500, thor.thayer@linux.intel.com wrote:
->>>> From: Thor Thayer <thor.thayer@linux.intel.com>
->>>>
->>>> In preparation for adding newer V2 parts that use a FIFO,
->>>> reorganize altera_cvp_chk_error() and change the write
->>>> function to block based.
->>>> V2 parts have a block size matching the FIFO while older
->>>> V1 parts write a 32 bit word at a time.
->>>>
->>>> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
->>>> ---
->>>> v2 Remove inline function declaration
->>>>      Reverse Christmas Tree format for local variables
->>>> ---
->>>>    drivers/fpga/altera-cvp.c | 72 ++++++++++++++++++++++++++++++-----------------
->>>>    1 file changed, 46 insertions(+), 26 deletions(-)
->>>>
->>>> diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
->>>> index b78c90580071..37419d6b9915 100644
->>>> --- a/drivers/fpga/altera-cvp.c
->>>> +++ b/drivers/fpga/altera-cvp.c
->>>> @@ -140,6 +140,41 @@ static int altera_cvp_wait_status(struct altera_cvp_conf *conf, u32 status_mask,
->>>>    	return -ETIMEDOUT;
->>>>    }
->>>> +static int altera_cvp_chk_error(struct fpga_manager *mgr, size_t bytes)
->>>> +{
->>>> +	struct altera_cvp_conf *conf = mgr->priv;
->>>> +	u32 val;
->>>> +
->>>> +	/* STEP 10 (optional) - check CVP_CONFIG_ERROR flag */
->>>> +	altera_read_config_dword(conf, VSE_CVP_STATUS, &val);
->>> Same as in the other email, why can we ignore return values here. I
->>> think the original code probably did that already.
->>
->> Yes, I actually didn't make any changes to this function. You can see I
->> moved it from below since it is used in the following function.
->>
->> I'm not checking the return code from any of the read/write functions since
->> the original driver didn't. Would you prefer I check and issue a warning?
-> 
-> Not sure a warning would change much here. We should probably look at
-> why it was ok in the first place.
+In order to support page aeration it will be necessary to store and
+retrieve the migratetype of a page. To enable that I am moving the set and
+get operations for pcppage_migratetype into the mm/internal.h header so
+that they can be used outside of the page_alloc.c file.
 
-A quick grep of the drivers directory shows that an overwhelming 
-majority of pci_read_config_dword() and pci_write_config_dword() calls 
-do not check the return code.
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+---
+ mm/internal.h   |   18 ++++++++++++++++++
+ mm/page_alloc.c |   18 ------------------
+ 2 files changed, 18 insertions(+), 18 deletions(-)
 
-For robustness, I agree with you that checking and returning the return 
-code in this error checking function is important. I will return the 
-error code if the read fails.
+diff --git a/mm/internal.h b/mm/internal.h
+index e32390802fd3..e432c7d5940d 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -549,6 +549,24 @@ static inline bool is_migrate_highatomic_page(struct page *page)
+ 	return get_pageblock_migratetype(page) == MIGRATE_HIGHATOMIC;
+ }
+ 
++/*
++ * A cached value of the page's pageblock's migratetype, used when the page is
++ * put on a pcplist. Used to avoid the pageblock migratetype lookup when
++ * freeing from pcplists in most cases, at the cost of possibly becoming stale.
++ * Also the migratetype set in the page does not necessarily match the pcplist
++ * index, e.g. page might have MIGRATE_CMA set but be on a pcplist with any
++ * other index - this ensures that it will be put on the correct CMA freelist.
++ */
++static inline int get_pcppage_migratetype(struct page *page)
++{
++	return page->index;
++}
++
++static inline void set_pcppage_migratetype(struct page *page, int migratetype)
++{
++	page->index = migratetype;
++}
++
+ void setup_zone_pageset(struct zone *zone);
+ extern struct page *alloc_new_node_page(struct page *page, unsigned long node);
+ #endif	/* __MM_INTERNAL_H */
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 1c4644b6cdc3..3d612a6b1771 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -185,24 +185,6 @@ static int __init early_init_on_free(char *buf)
+ }
+ early_param("init_on_free", early_init_on_free);
+ 
+-/*
+- * A cached value of the page's pageblock's migratetype, used when the page is
+- * put on a pcplist. Used to avoid the pageblock migratetype lookup when
+- * freeing from pcplists in most cases, at the cost of possibly becoming stale.
+- * Also the migratetype set in the page does not necessarily match the pcplist
+- * index, e.g. page might have MIGRATE_CMA set but be on a pcplist with any
+- * other index - this ensures that it will be put on the correct CMA freelist.
+- */
+-static inline int get_pcppage_migratetype(struct page *page)
+-{
+-	return page->index;
+-}
+-
+-static inline void set_pcppage_migratetype(struct page *page, int migratetype)
+-{
+-	page->index = migratetype;
+-}
+-
+ #ifdef CONFIG_PM_SLEEP
+ /*
+  * The following functions are used by the suspend/hibernate code to temporarily
 
-It shouldn't be necessary to change the rest of the code though unless 
-you feel strongly about updating the existing codebase.
-
->>
->> Thanks for reviewing!
->>
->>>> +	if (val & VSE_CVP_STATUS_CFG_ERR) {
->>>> +		dev_err(&mgr->dev, "CVP_CONFIG_ERROR after %zu bytes!\n",
->>>> +			bytes);
->>>> +		return -EPROTO;
->>>> +	}
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static int altera_cvp_send_block(struct altera_cvp_conf *conf,
->>>> +				 const u32 *data, size_t len)
->>>> +{
->>>> +	u32 mask, words = len / sizeof(u32);
->>>> +	int i, remainder;
->>>> +
->>>> +	for (i = 0; i < words; i++)
->>>> +		conf->write_data(conf, *data++);
->>>> +
->>>> +	/* write up to 3 trailing bytes, if any */
->>>> +	remainder = len % sizeof(u32);
->>>> +	if (remainder) {
->>>> +		mask = BIT(remainder * 8) - 1;
->>>> +		if (mask)
->>>> +			conf->write_data(conf, *data & mask);
->>>> +	}
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>>    static int altera_cvp_teardown(struct fpga_manager *mgr,
->>>>    			       struct fpga_image_info *info)
->>>>    {
->>>> @@ -262,39 +297,29 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
->>>>    	return 0;
->>>>    }
->>>> -static inline int altera_cvp_chk_error(struct fpga_manager *mgr, size_t bytes)
->>>> -{
->>>> -	struct altera_cvp_conf *conf = mgr->priv;
->>>> -	u32 val;
->>>> -
->>>> -	/* STEP 10 (optional) - check CVP_CONFIG_ERROR flag */
->>>> -	altera_read_config_dword(conf, VSE_CVP_STATUS, &val);
->>>> -	if (val & VSE_CVP_STATUS_CFG_ERR) {
->>>> -		dev_err(&mgr->dev, "CVP_CONFIG_ERROR after %zu bytes!\n",
->>>> -			bytes);
->>>> -		return -EPROTO;
->>>> -	}
->>>> -	return 0;
->>>> -}
->>>> -
->>>>    static int altera_cvp_write(struct fpga_manager *mgr, const char *buf,
->>>>    			    size_t count)
->>>>    {
->>>>    	struct altera_cvp_conf *conf = mgr->priv;
->>>> +	size_t done, remaining, len;
->>>>    	const u32 *data;
->>>> -	size_t done, remaining;
->>>>    	int status = 0;
->>>> -	u32 mask;
->>>>    	/* STEP 9 - write 32-bit data from RBF file to CVP data register */
->>>>    	data = (u32 *)buf;
->>>>    	remaining = count;
->>>>    	done = 0;
->>>> -	while (remaining >= 4) {
->>>> -		conf->write_data(conf, *data++);
->>>> -		done += 4;
->>>> -		remaining -= 4;
->>>> +	while (remaining) {
->>>> +		if (remaining >= sizeof(u32))
->>>> +			len = sizeof(u32);
->>>> +		else
->>>> +			len = remaining;
->>>> +
->>>> +		altera_cvp_send_block(conf, data, len);
->>>> +		data++;
->>>> +		done += len;
->>>> +		remaining -= len;
->>>>    		/*
->>>>    		 * STEP 10 (optional) and STEP 11
->>>> @@ -312,11 +337,6 @@ static int altera_cvp_write(struct fpga_manager *mgr, const char *buf,
->>>>    		}
->>>>    	}
->>>> -	/* write up to 3 trailing bytes, if any */
->>>> -	mask = BIT(remaining * 8) - 1;
->>>> -	if (mask)
->>>> -		conf->write_data(conf, *data & mask);
->>>> -
->>>>    	if (altera_cvp_chkcfg)
->>>>    		status = altera_cvp_chk_error(mgr, count);
->>>> -- 
->>>> 2.7.4
->>>>
->>> Cheers,
->>> Moritz
->>>
->>
-> 
-> Moritz
-> 
-Thor
