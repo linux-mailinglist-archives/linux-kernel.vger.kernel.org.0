@@ -2,36 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E89E73A79
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:50:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4642773A7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:50:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391598AbfGXTub (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:50:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59118 "EHLO mail.kernel.org"
+        id S2403841AbfGXTuf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:50:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403826AbfGXTuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:50:24 -0400
+        id S2391586AbfGXTu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:50:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDDDA20659;
-        Wed, 24 Jul 2019 19:50:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E8A820659;
+        Wed, 24 Jul 2019 19:50:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997824;
-        bh=VG4bOefSbu9JU1+/k2ddiRZLki9YxON5ve0MJmluFIs=;
+        s=default; t=1563997827;
+        bh=PnkC2LTDZuIcwwAJ99NHnnP7Cmp2QjzGZpMgYPKqKtE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DgM7GY3SFhY6+e30J1rHc4QdYgJb9IUd9fceSu8EL9Q6E9Q54scDwTlVDi5b8eXJJ
-         +h++KPpTPjXxeiaO4z/l9Hc49LlQYkthgs2ny1Xp4YiGCuxdw6Zhhs1M6+lzu8YN+T
-         0yfU7jSgFc0X5pAoYUy9A4E3QGpW84lBAsgaSHpQ=
+        b=lMieNJkW+5jG3ulFW87/qWE9a/HKKCMR+cA/q4vVlbxprxaH1Uy9A+K8ZWfFZ87rh
+         tKL8vnfvdsxiW2YjuJiQEmKoi9OHuZSk0diRw1i7Rr9WNnU35qI/z3DG5B6lLQ68U6
+         4ckkFeidODMoZfG8FmEM8oATbwHhxA395/Zzp0+8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>,
-        Felix Kaechele <felix@kaechele.ca>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 155/371] netfilter: ctnetlink: Fix regression in conntrack entry deletion
-Date:   Wed, 24 Jul 2019 21:18:27 +0200
-Message-Id: <20190724191736.848545063@linuxfoundation.org>
+Subject: [PATCH 5.1 156/371] xsk: Properly terminate assignment in xskq_produce_flush_desc
+Date:   Wed, 24 Jul 2019 21:18:28 +0200
+Message-Id: <20190724191736.917136789@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -44,62 +49,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e7600865db32b69deb0109b8254244dca592adcf ]
+[ Upstream commit f7019b7b0ad14bde732b8953161994edfc384953 ]
 
-Commit f8e608982022 ("netfilter: ctnetlink: Resolve conntrack
-L3-protocol flush regression") introduced a regression in which deletion
-of conntrack entries would fail because the L3 protocol information
-is replaced by AF_UNSPEC. As a result the search for the entry to be
-deleted would turn up empty due to the tuple used to perform the search
-is now different from the tuple used to initially set up the entry.
+Clang warns:
 
-For flushing the conntrack table we do however want to keep the option
-for nfgenmsg->version to have a non-zero value to allow for newer
-user-space tools to request treatment under the new behavior. With that
-it is possible to independently flush tables for a defined L3 protocol.
-This was introduced with the enhancements in in commit 59c08c69c278
-("netfilter: ctnetlink: Support L3 protocol-filter on flush").
+In file included from net/xdp/xsk_queue.c:10:
+net/xdp/xsk_queue.h:292:2: warning: expression result unused
+[-Wunused-value]
+        WRITE_ONCE(q->ring->producer, q->prod_tail);
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/linux/compiler.h:284:6: note: expanded from macro 'WRITE_ONCE'
+        __u.__val;                                      \
+        ~~~ ^~~~~
+1 warning generated.
 
-Older user-space tools will retain the behavior of flushing all tables
-regardless of defined L3 protocol.
+The q->prod_tail assignment has a comma at the end, not a semi-colon.
+Fix that so clang no longer warns and everything works as expected.
 
-Fixes: f8e608982022 ("netfilter: ctnetlink: Resolve conntrack L3-protocol flush regression")
-Suggested-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Felix Kaechele <felix@kaechele.ca>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: c497176cb2e4 ("xsk: add Rx receive functions and poll support")
+Link: https://github.com/ClangBuiltLinux/linux/issues/544
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Nick Desaulniers <ndesaulniers@google.com>
+Acked-by: Jonathan Lemon <jonathan.lemon@gmail.com>
+Acked-by: Björn Töpel <bjorn.topel@intel.com>
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_conntrack_netlink.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ net/xdp/xsk_queue.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
-index d2715b4d2e72..061bdab37b1a 100644
---- a/net/netfilter/nf_conntrack_netlink.c
-+++ b/net/netfilter/nf_conntrack_netlink.c
-@@ -1254,7 +1254,6 @@ static int ctnetlink_del_conntrack(struct net *net, struct sock *ctnl,
- 	struct nf_conntrack_tuple tuple;
- 	struct nf_conn *ct;
- 	struct nfgenmsg *nfmsg = nlmsg_data(nlh);
--	u_int8_t u3 = nfmsg->version ? nfmsg->nfgen_family : AF_UNSPEC;
- 	struct nf_conntrack_zone zone;
- 	int err;
+diff --git a/net/xdp/xsk_queue.h b/net/xdp/xsk_queue.h
+index 610c0bdc0c2b..cd333701f4bf 100644
+--- a/net/xdp/xsk_queue.h
++++ b/net/xdp/xsk_queue.h
+@@ -240,7 +240,7 @@ static inline void xskq_produce_flush_desc(struct xsk_queue *q)
+ 	/* Order producer and data */
+ 	smp_wmb();
  
-@@ -1264,11 +1263,13 @@ static int ctnetlink_del_conntrack(struct net *net, struct sock *ctnl,
+-	q->prod_tail = q->prod_head,
++	q->prod_tail = q->prod_head;
+ 	WRITE_ONCE(q->ring->producer, q->prod_tail);
+ }
  
- 	if (cda[CTA_TUPLE_ORIG])
- 		err = ctnetlink_parse_tuple(cda, &tuple, CTA_TUPLE_ORIG,
--					    u3, &zone);
-+					    nfmsg->nfgen_family, &zone);
- 	else if (cda[CTA_TUPLE_REPLY])
- 		err = ctnetlink_parse_tuple(cda, &tuple, CTA_TUPLE_REPLY,
--					    u3, &zone);
-+					    nfmsg->nfgen_family, &zone);
- 	else {
-+		u_int8_t u3 = nfmsg->version ? nfmsg->nfgen_family : AF_UNSPEC;
-+
- 		return ctnetlink_flush_conntrack(net, cda,
- 						 NETLINK_CB(skb).portid,
- 						 nlmsg_report(nlh), u3);
 -- 
 2.20.1
 
