@@ -2,115 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9FD4728DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 09:10:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77E4F728DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 09:11:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbfGXHKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 03:10:34 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35027 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbfGXHKe (ORCPT
+        id S1726405AbfGXHLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 03:11:03 -0400
+Received: from smtprelay0241.hostedemail.com ([216.40.44.241]:33830 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725944AbfGXHLD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 03:10:34 -0400
-Received: by mail-io1-f68.google.com with SMTP id m24so87430080ioo.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 00:10:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8YismThz5V4muUnYY1qClW5cinII46QirkdsyCteNKI=;
-        b=fFWIepymAOxZ/7wsNjuQYgFw7/AFh4OeZs9PLI6q7actDNgju38LCDscCD+3xLy1ML
-         hhaYzpx3Ov81IZbLeVAiNP9q6Eo7Zw+0MX2zcFfVE6WF+K4AsHQN9eDj/kb4mebdtPiS
-         2OubBKh97eKYSeevJonbzZ657KizutJMzx1ktgHbQFGQ9/GOSVmyntIIwqUx0+lfN28G
-         RovqyEUT/yFHTgEHHuCU1yc/SsgZfiGFcfeyFctev9LyjkDiIjuEzu2w0Vg8DH3ONND4
-         4lWDyBhPG33PgQQcXfj1N4aYzMcloWMOkoNV/r2z03xIiGLEZQzkoKzoVcTZ/XbZzvje
-         sl7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8YismThz5V4muUnYY1qClW5cinII46QirkdsyCteNKI=;
-        b=HOECnL3CzMTB/V3u/U3FvCRakR//gExTy1S7iF/x8lNHELjjJkLZT1MrLjjP1Dk/mA
-         ikrq8Z8ouKuIKtTIKFhBBRxE+uHMQtzhvgsmcuM4/+rW348IQCj5kekpv4n1UQBV71Tu
-         CvBgHwAnbMkoNQlC9S9mtPc5crWmQkX2VMRSU4WNdtlhq7BvNbuUKoFpPdV8I2AJRWpd
-         sBc1sTcA/j9kGaQk83C0ejbVIGaRNZkG+7Fd1SHQuzIr/q58Z0/P3IWyL7wjCxnwNO0+
-         NL3Te5tXI83PzILqoDzXAUvp63uUE1OJ4j8FNcG5xTBxfk5NCp+wdElyH79ybfmn50IP
-         ZOaw==
-X-Gm-Message-State: APjAAAWwxm/t/9VWQl6xYKvWDYs6P+ti58dECC/ySqY40D51vLyWlNna
-        X6zRcMuSAs6p1gIpoUkhIipRP6+DNplzbhWVP19G5g==
-X-Google-Smtp-Source: APXvYqxHdpFMRacX1s10/jFEl/RqUhU/RvbDgwRNkcYPJYPsoUjzZxCmFjC3DO2XATDtqVvUKMxTnJS1q0b6hTimPeo=
-X-Received: by 2002:a5e:c241:: with SMTP id w1mr70546096iop.58.1563952233103;
- Wed, 24 Jul 2019 00:10:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190723072605.103456-1-drinkcat@chromium.org>
- <CACT4Y+bi5KkZ8igSeYVxjwtr8t0Vjz55gzWfAu_c8VMAqw0zPA@mail.gmail.com>
- <CANMq1KB8ECeRqNhSWyUf3amAkF7qvAmS3aU6rGNnZ=kUV3LC5Q@mail.gmail.com>
- <CACT4Y+YkjCpEdH0rvgp8b1hqAWfo66FY76qhn1xj_yNAER-XoQ@mail.gmail.com> <CAD=FV=Wse7tGi-RP5Rq1314AdLqMS3JNy6a-gFbmVZuroSWozw@mail.gmail.com>
-In-Reply-To: <CAD=FV=Wse7tGi-RP5Rq1314AdLqMS3JNy6a-gFbmVZuroSWozw@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 24 Jul 2019 09:10:20 +0200
-Message-ID: <CACT4Y+a2REA5quUgOLr50LV7KGCvwBQMy77kk2aVPAPr4R+Y7w@mail.gmail.com>
-Subject: Re: [PATCH] kmemleak: Increase maximum early log entries to 1000000
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wed, 24 Jul 2019 03:11:03 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 13EEA182CF673;
+        Wed, 24 Jul 2019 07:11:02 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1560:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:2914:3138:3139:3140:3141:3142:3622:3865:3867:3871:4321:5007:10004:10400:10848:11026:11232:11473:11658:11914:12297:12740:12760:12895:13069:13161:13229:13311:13357:13439:14659:14721:21080:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
+X-HE-Tag: sail18_25ca87690f746
+X-Filterd-Recvd-Size: 1645
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf20.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 24 Jul 2019 07:10:59 +0000 (UTC)
+Message-ID: <023c0194641abe411c2338e4eed9eec876888e48.camel@perches.com>
+Subject: Re: [PATCH V2 1/2] string: Add stracpy and stracpy_pad mechanisms
+From:   Joe Perches <joe@perches.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Jonathan Corbet <corbet@lwn.net>, Stephen Kitt <steve@sk2.org>,
         Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Manoj Gupta <manojgupta@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Nitin Gote <nitin.r.gote@intel.com>, jannh@google.com,
+        kernel-hardening@lists.openwall.com,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Wed, 24 Jul 2019 00:10:58 -0700
+In-Reply-To: <dab1b433-93c0-09ab-cceb-3db91b6ef353@rasmusvillemoes.dk>
+References: <cover.1563889130.git.joe@perches.com>
+         <ed4611a4a96057bf8076856560bfbf9b5e95d390.1563889130.git.joe@perches.com>
+         <ce1320d8-60df-7c54-2348-6aabac63c24d@rasmusvillemoes.dk>
+         <c9ef2b56eaf36c8e5449b751ab6e5971b6b34311.camel@perches.com>
+         <dab1b433-93c0-09ab-cceb-3db91b6ef353@rasmusvillemoes.dk>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 12:17 AM Doug Anderson <dianders@chromium.org> wrote:
->
-> Hi,
->
-> On Tue, Jul 23, 2019 at 1:21 AM Dmitry Vyukov <dvyukov@google.com> wrote:
-> >
-> > On Tue, Jul 23, 2019 at 10:13 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
-> > >
-> > > On Tue, Jul 23, 2019 at 3:46 PM Dmitry Vyukov <dvyukov@google.com> wrote:
-> > > >
-> > > > On Tue, Jul 23, 2019 at 9:26 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
-> > > > >
-> > > > > When KASan is enabled, a lot of memory is allocated early on,
-> > > > > and kmemleak complains (this is on a 4GB RAM system):
-> > > > > kmemleak: Early log buffer exceeded (129846), please increase
-> > > > >   DEBUG_KMEMLEAK_EARLY_LOG_SIZE
-> > > > >
-> > > > > Let's increase the upper limit to 1M entry. That would take up
-> > > > > 160MB of RAM at init (each early_log entry is 160 bytes), but
-> > > > > the memory would later be freed (early_log is __initdata).
-> > > >
-> > > > Interesting. Is it on an arm64 system?
-> > >
-> > > Yes arm64. And this is chromiumos-4.19 tree. I didn't try to track
-> > > down where these allocations come from...
-> >
-> > So perhaps it's due to arm64, or you have even more configs, or maybe
-> > running on real hardware. But I guess it's fine as is, just wondered
-> > why such a radical difference. Thanks.
->
-> If I had to guess I'd guess gcc vs. clang.  I think we've noticed a
-> few places where clang+kasan produces much bloatier code than
-> gcc+kasan.  Oh look, I just invented a new word: bloatier.  :-P
->
-> ...could you try building with gcc and see if that explains the problems?
+On Wed, 2019-07-24 at 08:53 +0200, Rasmus Villemoes wrote:
+> BUILD_BUG_ON(!__same_type())
+> strscpy(dst, src, ARRAY_SIZE(dst))
 
-Just in case, there is no problem per se. There is just a difference :)
-Whom have you asked? We use gcc with KEMEMLEAK atm. But compiler
-should not affect number of kernel heap allocations.
+Doing this without the temporary is less legible to read
+the compiler error when someone improperly does:
+
+	char *foo;
+	char *bar;
+
+	stracpy(foo, bar);
+
+
