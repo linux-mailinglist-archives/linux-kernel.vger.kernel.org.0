@@ -2,45 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4447A727FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:10:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34772727AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:01:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726211AbfGXGJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 02:09:58 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:60499 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725894AbfGXGJ6 (ORCPT
+        id S1726343AbfGXGBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 02:01:20 -0400
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:23551 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbfGXGBT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 02:09:58 -0400
-X-Originating-IP: 79.86.19.127
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 226A060008;
-        Wed, 24 Jul 2019 06:09:52 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH REBASE v4 10/14] mips: Use STACK_TOP when computing mmap base address
-Date:   Wed, 24 Jul 2019 01:58:46 -0400
-Message-Id: <20190724055850.6232-11-alex@ghiti.fr>
+        Wed, 24 Jul 2019 02:01:19 -0400
+Received: from localhost.localdomain ([92.140.204.221])
+        by mwinf5d09 with ME
+        id gW1F2000A4n7eLC03W1Gqa; Wed, 24 Jul 2019 08:01:17 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 24 Jul 2019 08:01:17 +0200
+X-ME-IP: 92.140.204.221
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     brian.austin@cirrus.com, Paul.Handrigan@cirrus.com,
+        lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
+        tiwai@suse.com
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] ASoC: cs4271: Fix a typo in the CS4171_NR_RATIOS
+Date:   Wed, 24 Jul 2019 08:00:23 +0200
+Message-Id: <20190724060023.31302-1-christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190724055850.6232-1-alex@ghiti.fr>
-References: <20190724055850.6232-1-alex@ghiti.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,38 +37,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mmap base address must be computed wrt stack top address, using TASK_SIZE
-is wrong since STACK_TOP and TASK_SIZE are not equivalent.
+This should be CS4271_NR_RATIOS.
+Fix it and use it.
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Paul Burton <paul.burton@mips.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/mips/mm/mmap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/cs4271.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/mips/mm/mmap.c b/arch/mips/mm/mmap.c
-index f5c778113384..a7e84b2e71d7 100644
---- a/arch/mips/mm/mmap.c
-+++ b/arch/mips/mm/mmap.c
-@@ -22,7 +22,7 @@ EXPORT_SYMBOL(shm_align_mask);
+diff --git a/sound/soc/codecs/cs4271.c b/sound/soc/codecs/cs4271.c
+index 1d03a1348162..04b86a51e055 100644
+--- a/sound/soc/codecs/cs4271.c
++++ b/sound/soc/codecs/cs4271.c
+@@ -334,7 +334,7 @@ static struct cs4271_clk_cfg cs4271_clk_tab[] = {
+ 	{0, CS4271_MODE1_MODE_4X, 256,  CS4271_MODE1_DIV_2},
+ };
  
- /* gap between mmap and stack */
- #define MIN_GAP		(128*1024*1024UL)
--#define MAX_GAP		((TASK_SIZE)/6*5)
-+#define MAX_GAP		((STACK_TOP)/6*5)
- #define STACK_RND_MASK	(0x7ff >> (PAGE_SHIFT - 12))
+-#define CS4171_NR_RATIOS ARRAY_SIZE(cs4271_clk_tab)
++#define CS4271_NR_RATIOS ARRAY_SIZE(cs4271_clk_tab)
  
- static int mmap_is_legacy(struct rlimit *rlim_stack)
-@@ -54,7 +54,7 @@ static unsigned long mmap_base(unsigned long rnd, struct rlimit *rlim_stack)
- 	else if (gap > MAX_GAP)
- 		gap = MAX_GAP;
+ static int cs4271_hw_params(struct snd_pcm_substream *substream,
+ 			    struct snd_pcm_hw_params *params,
+@@ -383,13 +383,13 @@ static int cs4271_hw_params(struct snd_pcm_substream *substream,
+ 		val = CS4271_MODE1_MODE_4X;
  
--	return PAGE_ALIGN(TASK_SIZE - gap - rnd);
-+	return PAGE_ALIGN(STACK_TOP - gap - rnd);
- }
+ 	ratio = cs4271->mclk / cs4271->rate;
+-	for (i = 0; i < CS4171_NR_RATIOS; i++)
++	for (i = 0; i < CS4271_NR_RATIOS; i++)
+ 		if ((cs4271_clk_tab[i].master == cs4271->master) &&
+ 		    (cs4271_clk_tab[i].speed_mode == val) &&
+ 		    (cs4271_clk_tab[i].ratio == ratio))
+ 			break;
  
- #define COLOUR_ALIGN(addr, pgoff)				\
+-	if (i == CS4171_NR_RATIOS) {
++	if (i == CS4271_NR_RATIOS) {
+ 		dev_err(component->dev, "Invalid sample rate\n");
+ 		return -EINVAL;
+ 	}
 -- 
 2.20.1
 
