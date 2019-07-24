@@ -2,154 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71FE5731D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEB48731E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:40:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728320AbfGXOii (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 10:38:38 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41702 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbfGXOih (ORCPT
+        id S1728294AbfGXOkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 10:40:00 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:40267 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbfGXOkA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 10:38:37 -0400
-Received: by mail-pg1-f196.google.com with SMTP id x15so10994954pgg.8;
-        Wed, 24 Jul 2019 07:38:37 -0700 (PDT)
+        Wed, 24 Jul 2019 10:40:00 -0400
+Received: by mail-qk1-f193.google.com with SMTP id s145so33914790qke.7
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 07:39:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=0iznxlynbk39CbIbmo83U4Zr8dPr0WxLvC+oe7K53eQ=;
-        b=JN+C3fqBlkbxgvkb+ckuifgolUKHpLW7Ztn31ZM5bou89Wqtx74x+Sn3o83iXzQlYo
-         iUrLaGPsGq2M5Z2xGMPaQXkPJ64jxNVoSLEVGoCAdcnW9TDB6/NFaAk1MzPKLI6k6Dsk
-         /A2w4diGZuW55NVXsZjesK6rvLstiNG2QjdBeiprBzj39rPuNJTdoQoxter2D7MmYkV9
-         oYV+rxC6sw8DNqC1Ub0yO3ozOXapUhnvCe0J+YH4GIGEBbuYDOwntxqFNHu8YkgstcHr
-         suBApW9o0c0xWjjdWqkpBDlsZrDnsITZ91rh4UYjaNRUgxzFerVn8/2lVVgDc7S1HNQF
-         8hpA==
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=U2Vjt/ngoWwRTHJ/HnXQ3A5kSE9G176ORXuJs7Iic5c=;
+        b=c/JyPMzwHZygBTC3mWa6rTYaWyQuO3bxyVlM+XuwF+yUAYgtIFu0TMUvtqVhCP3dnM
+         EP2Kp3JAC2nBUlzAmzRYQFtKsqYcAkyfMhn+Kmcdu0QWBxHblRMwWoBWuNoSEXt720Q2
+         ZFmL4IuyWEHYnVkPYFkmLm/bDYGV820xfI3Cuw+Eont5+V7HAJx1lTNibQsdrHAH2AtB
+         sLQGF71NqzVdqOqNx0BGh4eIMC4o2D82asu2ne9nvIcgOVY/v7NwaPe7lqwQwKgjPouC
+         CAvDDyWt+2axBFYQTNtGswDLH3LiXn0xVL4LfevY0DWbUqbcV3FChH7+M0gPEfdo2YfJ
+         MMlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=0iznxlynbk39CbIbmo83U4Zr8dPr0WxLvC+oe7K53eQ=;
-        b=oEqhsxaVFtOkTMdS0A1ifIYs27CCzFk85b6Mv+Reh9iIY+ORQLdejDNcVHhnJ8S8ZP
-         Fb3GJ7iZrWNKgXIX2Yut3puBkbz7KHD8rfMLJFhi4WhJdEOTjX2k2m4oPdqUovIHlTAk
-         FkEiX3TxUIw7djAKIOkhwvLQj8g6094FrxE1PlQdWa5NmdyzBONgmWs5rRblBLmsdOvU
-         3wS+TiIpGe9AloFLhQbd/9fI1AGdKivDTclc7FBNtYkXbWGbCGNeFpGM9bwu5/14sbWt
-         7hYCOgCs0Kp78rYpuA0r3gea1cwXOccQVl051G/A4hK5k5WU/055vmtZVUyeAWRDJlVI
-         wJwg==
-X-Gm-Message-State: APjAAAXbscnuZk7bRRgxJOtyeY86lH8cYHC5ww9VimzcbnZGeDVDR1rP
-        Q/L1ZpjuCfbPOIGp7Psh6c8=
-X-Google-Smtp-Source: APXvYqyPZVcUWxK6eV6RiLAGeroO6wC5AeE1qigo5TrI1yz/eURowZFNBPZgKQXwzArOrZixf5Ab3g==
-X-Received: by 2002:a17:90a:8a0b:: with SMTP id w11mr87505460pjn.125.1563979116714;
-        Wed, 24 Jul 2019 07:38:36 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id a3sm49391326pfi.63.2019.07.24.07.38.35
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=U2Vjt/ngoWwRTHJ/HnXQ3A5kSE9G176ORXuJs7Iic5c=;
+        b=R1svQDwqQcfbXyG8x6pnuBtNrjxWiCezupcW1xkRee15DejLmZSbVdnhR1IcDZRJYy
+         gYoyOeMNAlzcqmy5/nxPd0MfCGCArcfg+6C7E/yNfCHfWJLMl9KsXeEuf1NCST9qEuUX
+         U3VDWTtjsA55UiuEVYgKT3RpeeL9+jqj9SKJGjHSoy2L8jwrgqLi78ex+f8k2HvjPx36
+         EgZy36cwm+XYIKVfO5qnZgKNwpHwAUNiyO7eizYb3lMVwlKFK57N7koteBQB16y24zWH
+         BVydGgAR6XVgdldda+LEjMS1clYdXCmnCak22WBvoKdFcdcfwphYidYnK0PGM1TVHUgk
+         fKAQ==
+X-Gm-Message-State: APjAAAWjw9ZwP+SRAobrUVhn8/wBKORh9K347qf0MM/UgSF1Qhj4Mfuv
+        i3jLYDP8Q19omaL7/YfM6HZvTA==
+X-Google-Smtp-Source: APXvYqwf4BmGuxpej+hiJipFUX2lSUMntbGtB+6M1IebjkBK9UhvMa2Di7AUYtTWOVvfSZSTGvy5DA==
+X-Received: by 2002:a37:dc1:: with SMTP id 184mr54711685qkn.10.1563979199355;
+        Wed, 24 Jul 2019 07:39:59 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id l6sm19603999qkc.89.2019.07.24.07.39.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 07:38:36 -0700 (PDT)
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>,
-        Douglas Gilbert <dgilbert@interlog.com>
-Subject: [PATCH v2] usb: typec: tcpm: Add NULL check before dereferencing config
-Date:   Wed, 24 Jul 2019 07:38:32 -0700
-Message-Id: <1563979112-22483-1-git-send-email-linux@roeck-us.net>
-X-Mailer: git-send-email 2.7.4
+        Wed, 24 Jul 2019 07:39:58 -0700 (PDT)
+Message-ID: <1563979197.11067.11.camel@lca.pw>
+Subject: Re: [PATCH] acpica: fix -Wnull-pointer-arithmetic warnings
+From:   Qian Cai <cai@lca.pw>
+To:     "Moore, Robert" <robert.moore@intel.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        "Schmauss, Erik" <erik.schmauss@intel.com>,
+        "jkim@freebsd.org" <jkim@freebsd.org>, Len Brown <lenb@kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "devel@acpica.org" <devel@acpica.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Wed, 24 Jul 2019 10:39:57 -0400
+In-Reply-To: <94F2FBAB4432B54E8AACC7DFDE6C92E3B96618DB@ORSMSX110.amr.corp.intel.com>
+References: <20190717033807.1207-1-cai@lca.pw>
+         <CAKwvOdmPX2DsUawcA0SzaFacjz==ACcfD8yDsbaS4eP4Es=Wzw@mail.gmail.com>
+         <73A4565B-837B-4E13-8B72-63F69BF408E7@lca.pw>
+         <94F2FBAB4432B54E8AACC7DFDE6C92E3B9661869@ORSMSX110.amr.corp.intel.com>
+         <1563975605.11067.8.camel@lca.pw>
+         <94F2FBAB4432B54E8AACC7DFDE6C92E3B96618DB@ORSMSX110.amr.corp.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When instantiating tcpm on an NXP OM 13588 board with NXP PTN5110,
-the following crash is seen when writing into the 'preferred_role'
-sysfs attribute.
+On Wed, 2019-07-24 at 14:17 +0000, Moore, Robert wrote:
+> 
+> -----Original Message-----
+> From: Qian Cai [mailto:cai@lca.pw] 
+> Sent: Wednesday, July 24, 2019 6:40 AM
+> To: Moore, Robert <robert.moore@intel.com>; Nick Desaulniers <ndesaulniers@goo
+> gle.com>
+> Cc: Wysocki, Rafael J <rafael.j.wysocki@intel.com>; Schmauss, Erik <erik.schma
+> uss@intel.com>; jkim@freebsd.org; Len Brown <lenb@kernel.org>; linux-acpi@vger
+> .kernel.org; devel@acpica.org; clang-built-linux <clang-built-linux@googlegrou
+> ps.com>; LKML <linux-kernel@vger.kernel.org>
+> Subject: Re: [PATCH] acpica: fix -Wnull-pointer-arithmetic warnings
+> 
+> On Tue, 2019-07-23 at 20:49 +0000, Moore, Robert wrote:
+> > > > Signed-off-by: Qian Cai <cai@lca.pw>
+> > > > ---
+> > > > include/acpi/actypes.h | 4 ++--
+> > > > 1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/include/acpi/actypes.h b/include/acpi/actypes.h index
+> > > > ad6892a24015..25b4a32da177 100644
+> > > > --- a/include/acpi/actypes.h
+> > > > +++ b/include/acpi/actypes.h
+> > > > @@ -500,13 +500,13 @@ typedef u64 acpi_integer;
+> > > > 
+> > > > #define ACPI_CAST_PTR(t, p)             ((t *) (acpi_uintptr_t) 
+> > > > (p)) #define ACPI_CAST_INDIRECT_PTR(t, p)    ((t **) 
+> > > > (acpi_uintptr_t) (p)) -#define ACPI_ADD_PTR(t, a, b)           
+> > > > ACPI_CAST_PTR (t, (ACPI_CAST_PTR (u8, (a)) + (acpi_size)(b)))
+> > > > +#define ACPI_ADD_PTR(t, a, b)           ACPI_CAST_PTR (t, (a) +
+> > > > (acpi_size)(b))
+> > 
+> > We have some questions concerning this change. If (a) is not cast to a 
+> > u8, the addition will be in whatever units are appropriate for (a) 
+> > i.e., the type of (a). However, we want ACPI_ADD_PTR (And 
+> > ACPI_SUB_PTR) to simply perform a byte addition or subtraction - thus 
+> > the cast to u8. I believe that is the original thinking behind the macros.
+> 
+> I posted a v2 a while ago, and should clear this concern.
+> 
+> OK then this change only affects ACPI_TO_POINTER?
+> 
+> +#define ACPI_TO_POINTER(i)              ACPI_CAST_PTR (void, i)
 
-Unable to handle kernel NULL pointer dereference at virtual address 00000028
-pgd = f69149ad
-[00000028] *pgd=00000000
-Internal error: Oops: 5 [#1] THUMB2
-Modules linked in: tcpci tcpm
-CPU: 0 PID: 1882 Comm: bash Not tainted 5.1.18-sama5-armv7-r2 #4
-Hardware name: Atmel SAMA5
-PC is at tcpm_try_role+0x3a/0x4c [tcpm]
-LR is at tcpm_try_role+0x15/0x4c [tcpm]
-pc : [<bf8000e2>]    lr : [<bf8000bd>]    psr: 60030033
-sp : dc1a1e88  ip : c03fb47d  fp : 00000000
-r10: dc216190  r9 : dc1a1f78  r8 : 00000001
-r7 : df4ae044  r6 : dd032e90  r5 : dd1ce340  r4 : df4ae054
-r3 : 00000000  r2 : 00000000  r1 : 00000000  r0 : df4ae044
-Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA Thumb  Segment none
-Control: 50c53c7d  Table: 3efec059  DAC: 00000051
-Process bash (pid: 1882, stack limit = 0x6a6d4aa5)
-Stack: (0xdc1a1e88 to 0xdc1a2000)
-1e80:                   dd05d808 dd1ce340 00000001 00000007 dd1ce340 c03fb4a7
-1ea0: 00000007 00000007 dc216180 00000000 00000000 c01e1e03 00000000 00000000
-1ec0: c0907008 dee98b40 c01e1d5d c06106c4 00000000 00000000 00000007 c0194e8b
-1ee0: 0000000a 00000400 00000000 c01a97db dc22bf00 ffffe000 df4b6a00 df745900
-1f00: 00000001 00000001 000000dd c01a9c2f 7aeab3be c0907008 00000000 dc22bf00
-1f20: c0907008 00000000 00000000 00000000 00000000 7aeab3be 00000007 dee98b40
-1f40: 005dc318 dc1a1f78 00000000 00000000 00000007 c01969f7 0000000a c01a20cb
-1f60: dee98b40 c0907008 dee98b40 005dc318 00000000 c0196b9b 00000000 00000000
-1f80: dee98b40 7aeab3be 00000074 005dc318 b6f3bdb0 00000004 c0101224 dc1a0000
-1fa0: 00000004 c0101001 00000074 005dc318 00000001 005dc318 00000007 00000000
-1fc0: 00000074 005dc318 b6f3bdb0 00000004 00000007 00000007 00000000 00000000
-1fe0: 00000004 be800880 b6ed35b3 b6e5c746 60030030 00000001 00000000 00000000
-[<bf8000e2>] (tcpm_try_role [tcpm]) from [<c03fb4a7>] (preferred_role_store+0x2b/0x5c)
-[<c03fb4a7>] (preferred_role_store) from [<c01e1e03>] (kernfs_fop_write+0xa7/0x150)
-[<c01e1e03>] (kernfs_fop_write) from [<c0194e8b>] (__vfs_write+0x1f/0x104)
-[<c0194e8b>] (__vfs_write) from [<c01969f7>] (vfs_write+0x6b/0x104)
-[<c01969f7>] (vfs_write) from [<c0196b9b>] (ksys_write+0x43/0x94)
-[<c0196b9b>] (ksys_write) from [<c0101001>] (ret_fast_syscall+0x1/0x62)
+Yes.
 
-Since commit 96232cbc6c994 ("usb: typec: tcpm: support get typec and pd
-config from device properties"), the 'config' pointer in struct tcpc_dev
-is optional when registering a Type-C port. Since it is optional, we have
-to check if it is NULL before dereferencing it.
-
-Reported-by: Douglas Gilbert <dgilbert@interlog.com>
-Cc: Douglas Gilbert <dgilbert@interlog.com>
-Fixes: 96232cbc6c994 ("usb: typec: tcpm: support get typec and pd config from device properties")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
-v2: Added missing Cc:. Sorry for the noise.
-
-Doug:
-    I didn't add your Tested-by: since I added more code.
-    It would be great if you can re-test.
-
- drivers/usb/typec/tcpm/tcpm.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-index fba32d84e578..77f71f602f73 100644
---- a/drivers/usb/typec/tcpm/tcpm.c
-+++ b/drivers/usb/typec/tcpm/tcpm.c
-@@ -379,7 +379,8 @@ static enum tcpm_state tcpm_default_state(struct tcpm_port *port)
- 			return SNK_UNATTACHED;
- 		else if (port->try_role == TYPEC_SOURCE)
- 			return SRC_UNATTACHED;
--		else if (port->tcpc->config->default_role == TYPEC_SINK)
-+		else if (port->tcpc->config &&
-+			 port->tcpc->config->default_role == TYPEC_SINK)
- 			return SNK_UNATTACHED;
- 		/* Fall through to return SRC_UNATTACHED */
- 	} else if (port->port_type == TYPEC_PORT_SNK) {
-@@ -4114,7 +4115,7 @@ static int tcpm_try_role(const struct typec_capability *cap, int role)
- 	mutex_lock(&port->lock);
- 	if (tcpc->try_role)
- 		ret = tcpc->try_role(tcpc, role);
--	if (!ret && !tcpc->config->try_role_hw)
-+	if (!ret && (!tcpc->config || !tcpc->config->try_role_hw))
- 		port->try_role = role;
- 	port->try_src_count = 0;
- 	port->try_snk_count = 0;
-@@ -4701,7 +4702,7 @@ static int tcpm_copy_caps(struct tcpm_port *port,
- 	port->typec_caps.prefer_role = tcfg->default_role;
- 	port->typec_caps.type = tcfg->type;
- 	port->typec_caps.data = tcfg->data;
--	port->self_powered = port->tcpc->config->self_powered;
-+	port->self_powered = tcfg->self_powered;
- 
- 	return 0;
- }
--- 
-2.7.4
-
+> 
+> 
+> > 
+> > > > #define ACPI_SUB_PTR(t, a, b)           ACPI_CAST_PTR (t, 
+> > > > (ACPI_CAST_PTR (u8, (a)) - (acpi_size)(b))) #define 
+> > > > ACPI_PTR_DIFF(a, b)             ((acpi_size) (ACPI_CAST_PTR (u8,
+> > > > (a)) - ACPI_CAST_PTR (u8, (b))))
+> > > > 
+> > > > /* Pointer/Integer type conversions */
+> > > > 
+> > > > -#define ACPI_TO_POINTER(i)              ACPI_ADD_PTR (void, (void 
+> > > > *) 0,
+> > > > (acpi_size) (i))
+> > > > +#define ACPI_TO_POINTER(i)              ACPI_ADD_PTR (void, 0,
+> > > > (acpi_size) (i))
+> > > 
+> > > IIUC, these are adding `i` to NULL (or (void*)0)? X + 0 == X ?
+> > > --
+> > > Thanks,
+> > > ~Nick Desaulniers
+> > 
+> > 
