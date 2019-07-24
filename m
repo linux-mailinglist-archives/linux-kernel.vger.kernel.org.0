@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD83173F53
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:32:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED3C573F3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:32:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388442AbfGXUbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:31:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50152 "EHLO mail.kernel.org"
+        id S2388375AbfGXTae (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:30:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728486AbfGXTaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:30:14 -0400
+        id S2387927AbfGXTa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:30:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BE5D20659;
-        Wed, 24 Jul 2019 19:30:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1311A20659;
+        Wed, 24 Jul 2019 19:30:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996613;
-        bh=w4us00/9sn9R8EktR5DtQjHif2aVMiSmqh/+yBf/PJM=;
+        s=default; t=1563996627;
+        bh=2tlj+gJUZ0QsrlOhryzgMPlsWNUYQBRxuajkAnYEg8s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=on9a/NUna4d0iRN7PPXfCLS9agB9xyiE9qJ6VK7EgYVdNDAr6NUkbg5QO5YCrFj4a
-         a4R7LtjEkGmJ69xVoYhY6xnUfa1sukhsNSeDxgHKNO+6XhV7UEECyrHzZxjukOnAyc
-         qavGPzi4N+gpjfvpUayjWwgh0Js8detaA/uNjmEo=
+        b=WYgnOO7FCiHwuVmplft86TZY7WaTWV8U0e2W9Nn0FwN0c6z5Gg27Bes50kOQ54y81
+         xgCkuyrI2rCm68ZOLZPDng7/CvU98KdJ9//aXSYDJaycKm0fVkvF6ThYklNURI3Bl7
+         E60eq3hWddHa9rhOEP33uNLpYrGw41akNSQm9hW4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        stable@vger.kernel.org, Claire Chang <tientzu@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 156/413] x86/build: Add set -e to mkcapflags.sh to delete broken capflags.c
-Date:   Wed, 24 Jul 2019 21:17:27 +0200
-Message-Id: <20190724191746.228619650@linuxfoundation.org>
+Subject: [PATCH 5.2 160/413] ath10k: add missing error handling
+Date:   Wed, 24 Jul 2019 21:17:31 +0200
+Message-Id: <20190724191746.527234230@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -46,50 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit bc53d3d777f81385c1bb08b07bd1c06450ecc2c1 ]
+[ Upstream commit 4b553f3ca4cbde67399aa3a756c37eb92145b8a1 ]
 
-Without 'set -e', shell scripts continue running even after any
-error occurs. The missed 'set -e' is a typical bug in shell scripting.
+In function ath10k_sdio_mbox_rx_alloc() [sdio.c],
+ath10k_sdio_mbox_alloc_rx_pkt() is called without handling the error cases.
+This will make the driver think the allocation for skb is successful and
+try to access the skb. If we enable failslab, system will easily crash with
+NULL pointer dereferencing.
 
-For example, when a disk space shortage occurs while this script is
-running, it actually ends up with generating a truncated capflags.c.
+Call trace of CONFIG_FAILSLAB:
+ath10k_sdio_irq_handler+0x570/0xa88 [ath10k_sdio]
+process_sdio_pending_irqs+0x4c/0x174
+sdio_run_irqs+0x3c/0x64
+sdio_irq_work+0x1c/0x28
 
-Yet, mkcapflags.sh continues running and exits with 0. So, the build
-system assumes it has succeeded.
-
-It will not be re-generated in the next invocation of Make since its
-timestamp is newer than that of any of the source files.
-
-Add 'set -e' so that any error in this script is caught and propagated
-to the build system.
-
-Since 9c2af1c7377a ("kbuild: add .DELETE_ON_ERROR special target"),
-make automatically deletes the target on any failure. So, the broken
-capflags.c will be deleted automatically.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Link: https://lkml.kernel.org/r/20190625072622.17679-1-yamada.masahiro@socionext.com
+Fixes: d96db25d2025 ("ath10k: add initial SDIO support")
+Signed-off-by: Claire Chang <tientzu@chromium.org>
+Reviewed-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/mkcapflags.sh | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/ath/ath10k/sdio.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/mkcapflags.sh b/arch/x86/kernel/cpu/mkcapflags.sh
-index d0dfb892c72f..aed45b8895d5 100644
---- a/arch/x86/kernel/cpu/mkcapflags.sh
-+++ b/arch/x86/kernel/cpu/mkcapflags.sh
-@@ -4,6 +4,8 @@
- # Generate the x86_cap/bug_flags[] arrays from include/asm/cpufeatures.h
- #
+diff --git a/drivers/net/wireless/ath/ath10k/sdio.c b/drivers/net/wireless/ath/ath10k/sdio.c
+index fae56c67766f..73ef3e75d199 100644
+--- a/drivers/net/wireless/ath/ath10k/sdio.c
++++ b/drivers/net/wireless/ath/ath10k/sdio.c
+@@ -602,6 +602,10 @@ static int ath10k_sdio_mbox_rx_alloc(struct ath10k *ar,
+ 						    full_len,
+ 						    last_in_bundle,
+ 						    last_in_bundle);
++		if (ret) {
++			ath10k_warn(ar, "alloc_rx_pkt error %d\n", ret);
++			goto err;
++		}
+ 	}
  
-+set -e
-+
- IN=$1
- OUT=$2
- 
+ 	ar_sdio->n_rx_pkts = i;
 -- 
 2.20.1
 
