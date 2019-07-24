@@ -2,105 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AD4C72EC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 14:23:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D297B72EDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 14:29:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbfGXMX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 08:23:26 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36230 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728289AbfGXMXZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 08:23:25 -0400
-Received: by mail-pl1-f194.google.com with SMTP id k8so21966033plt.3;
-        Wed, 24 Jul 2019 05:23:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=M65x0rcjdQ+L+xMxfa4ktYvbjy7eRRieI4KAgQxJ2Bo=;
-        b=X18Azr3FSYrvMf2tklpGL/Bg3aJ2xBIQDt9JQUBcx05HLo8w7qR1MvNQW7ReZlsAKO
-         7yPVxgYH4v7drBG86eJ+4ivpSILcV9ILklLbO9uyrgj+W+A7P+E4SraFN45jQypXqQ3r
-         8c8Pknc4LR/pN63Mf8cpPp/mTRJ7+mDPsmff0z/VoPsRLoCAEtAGWWLHSC1/SoB22rSi
-         6rFh7fNYTlMJgr8i8TXdY03W6SKZNCwsjNFg6z4iue5EVVoV/fZxtslILEz83y+Zvc11
-         07ElYodQKsRsyy32cTQfC48yKMxbfr4OKS1qlBWdhYG/f8jtZOEVBb+fnCg5hQchX9Mm
-         CFoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=M65x0rcjdQ+L+xMxfa4ktYvbjy7eRRieI4KAgQxJ2Bo=;
-        b=I2paR2PDkD+/gkjPfWsN348ML36rYE/WqrL5Gxn9/njTY+IOmbRaJ6hndEUGHmGOg/
-         ycdb776Xk1pqnsN0UmeVy/8pHzE3n8Sh9W+DJTFDRWcUXmN+p8Pq1iehIjTz4bVR5Cv+
-         S8KoIkXP8yW0euy4O0ZeDB7vExkdFcyGJZh6OcA8+x8GZQJPA+n0DFPI+yToyQ1pZCuw
-         aHId3q3mNDaIYCbr9o4ihOzumlhHH7gjiTtwLrIeImwkj+kZgA2Ux91tQye2IavkuQ+o
-         cmriid06KQEu1WjR7PbWfVn2Lq7WI5oTEPl2VJoBcLkiAn3repvfuhYCoSydbjfOatFn
-         cOnw==
-X-Gm-Message-State: APjAAAWj9GZROS6MaZol2+ObrErnKni9+vvR0MJ05gv7DnhFReIrB0Z2
-        7EefPWzoH8WAPcB7YM6UhW5xhXfg834=
-X-Google-Smtp-Source: APXvYqw3LHYiOOlsx6rep3pBSVg9nqey/WKzm8bvaToKW7kZWye9i/l9w0dT+8jdGO5g27bwQ42BYg==
-X-Received: by 2002:a17:902:740a:: with SMTP id g10mr85999960pll.82.1563971005247;
-        Wed, 24 Jul 2019 05:23:25 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id u9sm13675245pgc.5.2019.07.24.05.23.22
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 05:23:24 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] platform/x86: ISST: Use dev_get_drvdata
-Date:   Wed, 24 Jul 2019 20:23:20 +0800
-Message-Id: <20190724122320.21802-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S1728258AbfGXM3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 08:29:37 -0400
+Received: from mx2.freebsd.org ([96.47.72.81]:60526 "EHLO mx2.freebsd.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726115AbfGXM3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 08:29:37 -0400
+Received: from mx1.freebsd.org (mx1.freebsd.org [96.47.72.80])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client CN "mx1.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
+        by mx2.freebsd.org (Postfix) with ESMTPS id 36C4E6BAB6;
+        Wed, 24 Jul 2019 12:23:42 +0000 (UTC)
+        (envelope-from manu@freebsd.org)
+Received: from smtp.freebsd.org (smtp.freebsd.org [IPv6:2610:1c1:1:606c::24b:4])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         server-signature RSA-PSS (4096 bits)
+         client-signature RSA-PSS (4096 bits) client-digest SHA256)
+        (Client CN "smtp.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
+        by mx1.freebsd.org (Postfix) with ESMTPS id C907D77C77;
+        Wed, 24 Jul 2019 12:23:41 +0000 (UTC)
+        (envelope-from manu@freebsd.org)
+Received: from localhost.localdomain (ip-9.net-89-3-105.rev.numericable.fr [89.3.105.9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: manu)
+        by smtp.freebsd.org (Postfix) with ESMTPSA id B0E682BB03;
+        Wed, 24 Jul 2019 12:23:40 +0000 (UTC)
+        (envelope-from manu@freebsd.org)
+From:   Emmanuel Vadot <manu@freebsd.org>
+To:     bcousson@baylibre.com, tony@atomide.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-omap@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Emmanuel Vadot <manu@freebsd.org>
+Subject: [PATCH 0/1] ARM: dts: am335x: Fix UARTs length
+Date:   Wed, 24 Jul 2019 14:23:28 +0200
+Message-Id: <20190724122329.21231-1-manu@freebsd.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+X-Rspamd-Queue-Id: C907D77C77
+X-Spamd-Bar: --
+Authentication-Results: mx1.freebsd.org
+X-Spamd-Result: default: False [-2.94 / 15.00];
+         TAGGED_RCPT(0.00)[dt];
+         local_wl_from(0.00)[freebsd.org];
+         NEURAL_HAM_SHORT(-0.94)[-0.940,0];
+         NEURAL_HAM_MEDIUM(-1.00)[-1.000,0];
+         ASN(0.00)[asn:11403, ipnet:2610:1c1:1::/48, country:US];
+         NEURAL_HAM_LONG(-1.00)[-1.000,0]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of using to_pci_dev + pci_get_drvdata,
-use dev_get_drvdata to make code simpler.
+For some reason the uart region size were set to 0x2000 while the TRM clearly
+specify that the size is 0x1000.
+I guess this is not a problem on Linux but for FreeBSD the resource manager will
+not allow the mapping when the region declared in the parents is less that the one
+declared in the child.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
- drivers/platform/x86/intel_speed_select_if/isst_if_mmio.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Emmanuel Vadot (1):
+  ARM: dts: am335x: Fix UARTs length
 
-diff --git a/drivers/platform/x86/intel_speed_select_if/isst_if_mmio.c b/drivers/platform/x86/intel_speed_select_if/isst_if_mmio.c
-index f7266a115a08..ad8c7c0df4d9 100644
---- a/drivers/platform/x86/intel_speed_select_if/isst_if_mmio.c
-+++ b/drivers/platform/x86/intel_speed_select_if/isst_if_mmio.c
-@@ -132,11 +132,9 @@ static void isst_if_remove(struct pci_dev *pdev)
- 
- static int __maybe_unused isst_if_suspend(struct device *device)
- {
--	struct pci_dev *pdev = to_pci_dev(device);
--	struct isst_if_device *punit_dev;
-+	struct isst_if_device *punit_dev = dev_get_drvdata(device);
- 	int i;
- 
--	punit_dev = pci_get_drvdata(pdev);
- 	for (i = 0; i < ARRAY_SIZE(punit_dev->range_0); ++i)
- 		punit_dev->range_0[i] = readl(punit_dev->punit_mmio +
- 						mmio_range[0].beg + 4 * i);
-@@ -149,11 +147,9 @@ static int __maybe_unused isst_if_suspend(struct device *device)
- 
- static int __maybe_unused isst_if_resume(struct device *device)
- {
--	struct pci_dev *pdev = to_pci_dev(device);
--	struct isst_if_device *punit_dev;
-+	struct isst_if_device *punit_dev = dev_get_drvdata(device);
- 	int i;
- 
--	punit_dev = pci_get_drvdata(pdev);
- 	for (i = 0; i < ARRAY_SIZE(punit_dev->range_0); ++i)
- 		writel(punit_dev->range_0[i], punit_dev->punit_mmio +
- 						mmio_range[0].beg + 4 * i);
+ arch/arm/boot/dts/am33xx-l4.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
 -- 
-2.20.1
+2.22.0
 
