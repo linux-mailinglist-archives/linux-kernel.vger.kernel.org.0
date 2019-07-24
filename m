@@ -2,210 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50FA87311C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:07:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADCEE73122
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:09:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387426AbfGXOHr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 10:07:47 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52857 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbfGXOHr (ORCPT
+        id S2387429AbfGXOJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 10:09:00 -0400
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:33716 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbfGXOJA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 10:07:47 -0400
-Received: by mail-wm1-f68.google.com with SMTP id s3so41970905wms.2;
-        Wed, 24 Jul 2019 07:07:44 -0700 (PDT)
+        Wed, 24 Jul 2019 10:09:00 -0400
+Received: by mail-vk1-f194.google.com with SMTP id y130so9428793vkc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 07:08:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=xqT523zLyX/bJP9CuRkC2BVuJj/iwqDDCMSCHLkAsAc=;
-        b=EaV8MZ2djXJqSlFJjwsdmPUP7aze3h5ePefgEBGCwuqaLlZdobTAuByonNgHsK0ExO
-         wpSJsmhZ5fnptPcxMH5oe/KQFz/JPisQuLRnI5R8Xdvopy2LHxAkffQ/el78bYrojDZb
-         kIvyXZ9OnKRJrMUEOe56oCQuQXH4y0+2WQyZNbTmamqW1z7Sux9Xocs4rR+0zMPX8YJs
-         Yn+UuGQNnspbZ9n674pEzJMNJkdhKiKc1Cvnb0olKWn7RxFS6n3RQWKj5rTV1Ic/mou9
-         RqyJmQHqPMa3WU0rQkcSn8WykIb1HNQnEpj49XQnPRbD7qU3lxH9H9cgXyUanC0jlLtU
-         kz9Q==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pNyKSw1b0BFH7hEBuSw7mVMVxq7kJcdNkxyS+Cg9xks=;
+        b=vdCnmLQCv+4BvDXwhMgI6Ezf0AWqLvQCi/K3hs6ht/mhZhj+xdcSEFByJ3lXJ3Dcsb
+         8EKOOv/TNekiq9c3b0qWQJHeU+FaR0kOWqx/kACuNFBJMqrqA2jkKmjJHTo0bivU/dZt
+         AZyfKI7NsourdpaRrA7HXeCCH2hYx0Cfex+5BgQRHGfHHrkhlB+B5ZKIkUy6xn3yS7i1
+         G2/GQf3mj4/4FVpS+fb9cYCFYA8hT01ifLqSHnrGdbrIB58fEOJXEyFVA7KQTvbmfdDd
+         IdJdB9fS0ZoGeYasxWgjgqwgmapdB/Vzb2kBJFTOuXfSUnFHA4E+ezXmXhWJKcGIiH6y
+         wBpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xqT523zLyX/bJP9CuRkC2BVuJj/iwqDDCMSCHLkAsAc=;
-        b=Uz+sat8QJPrldQPPzwKlpibpzUEky/Su18ENrbZUEB+oF4g2+co0XVRD8VzBVN3uEb
-         yFbcPq37wgbH37FuV/lo+eYaOmY+Qee7T31J/X5Fnm8yOg6fDHu3AzC2GvW75wO0tk0E
-         Gw2giJeLMh4K59NvpDnw+w6YR15CjdtXsijYDor1yL6PJB2GHl2c7F9Rlt3J9GNyWJRx
-         8KIGdbDXDzqnCZW81OSVpjgoBl+tYY6AwAFBxUxiWrc7a8nyRkRojs4Z7qkYT+n5WI6p
-         wb3M/rFHx7yEPwGaL0soh6hEqeUlv6SrujUM2oUBbnH7WcssmMpcmKIognGZ6utzL+dr
-         9m0g==
-X-Gm-Message-State: APjAAAU0Vg3V0bsAh6wqUoKEs+hxyz7dfjhUMF5BdTdy+51F0Pn66paH
-        NnDsY1cKeJYrtXgcQYRTyWWeE9eV
-X-Google-Smtp-Source: APXvYqyCNQzat1BeB39JNIXjyYI3LLwyVh3vsC5lsyrL7PEBO+qhsZr2rsB0IkoAopaaKm4RDxFp2g==
-X-Received: by 2002:a1c:2015:: with SMTP id g21mr73215299wmg.33.1563977263774;
-        Wed, 24 Jul 2019 07:07:43 -0700 (PDT)
-Received: from [192.168.8.147] (192.169.185.81.rev.sfr.net. [81.185.169.192])
-        by smtp.gmail.com with ESMTPSA id o20sm117045721wrh.8.2019.07.24.07.07.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 07:07:42 -0700 (PDT)
-Subject: Re: [PATCH 4.4 stable net] net: tcp: Fix use-after-free in
- tcp_write_xmit
-To:     maowenan <maowenan@huawei.com>, davem@davemloft.net,
-        gregkh@linuxfoundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190724091715.137033-1-maowenan@huawei.com>
- <2e09f4d1-8a47-27e9-60f9-63d3b19a98ec@gmail.com>
- <13ffa2fe-d064-9786-bc52-e4281d26ed1d@huawei.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <44f0ba0d-fd19-d44b-9c5c-686e2f8ef988@gmail.com>
-Date:   Wed, 24 Jul 2019 16:07:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pNyKSw1b0BFH7hEBuSw7mVMVxq7kJcdNkxyS+Cg9xks=;
+        b=VFPXKKx0VErTwylL+FbCuXv2w/LJ9HkFzAy+hUeAfrO0jmNQAhyBjfgkvkvKhVzLax
+         9Zruf76pAJ5X+b662B7FKxaST6pvhMK7vf9EkqILdDt3qSp2u8TCcqWs8IqA+4L/aS4h
+         aBjabNITODpuzhpP/tA2aUNuh6F1YebC6M15CLhpMTee5oqZOeXdAQ6gG67ct5uhxG0s
+         FUd4A+nHilSoHjfOWSRQb44vHzMf8XB5jUW9iCZQrama7QQuo6iqTH4cQ+sonDSIUbto
+         EFfu3gxdtcIhCS6G47DjNJE9molPZR8r4TP5YNxYYJXRIVCuMwHYHecNgBpnPuSi370Y
+         lDvg==
+X-Gm-Message-State: APjAAAVEsMAt+moZD37kqd3q71ni9rm+IePRmKdLe4RMUVj6sVU2m5J6
+        8RxH7Pc3nh9Vd2meaRhCAH/KxQHJdS2YPKB+MdPALw==
+X-Google-Smtp-Source: APXvYqyBfk3A+DBmRnUUMwpnWBfD1DwKsmcBdqRA0G1REeo/kgh1iwrZk/v6EipnNbTYHcYk7ZE6K39Cn6yKh0Dqxec=
+X-Received: by 2002:a1f:9f06:: with SMTP id i6mr32052907vke.52.1563977339258;
+ Wed, 24 Jul 2019 07:08:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <13ffa2fe-d064-9786-bc52-e4281d26ed1d@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190723115044.18591-1-hslester96@gmail.com>
+In-Reply-To: <20190723115044.18591-1-hslester96@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 24 Jul 2019 16:08:23 +0200
+Message-ID: <CAPDyKFpThB0Ktyp5a=ZrLST=VvztbGEvdHr1HHzouOa23+nN0w@mail.gmail.com>
+Subject: Re: [PATCH] memstick: r592: Use dev_get_drvdata
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Maxim Levitsky <maximlevitsky@gmail.com>,
+        Alex Dubov <oakad@yahoo.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 23 Jul 2019 at 13:50, Chuhong Yuan <hslester96@gmail.com> wrote:
+>
+> Instead of using to_pci_dev + pci_get_drvdata,
+> use dev_get_drvdata to make code simpler.
+>
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 
+Applied for next, thanks!
 
-On 7/24/19 12:46 PM, maowenan wrote:
-> 
-> 
-> On 2019/7/24 17:45, Eric Dumazet wrote:
->>
->>
->> On 7/24/19 11:17 AM, Mao Wenan wrote:
->>> There is one report about tcp_write_xmit use-after-free with version 4.4.136:
->>>
->>> BUG: KASAN: use-after-free in tcp_skb_pcount include/net/tcp.h:796 [inline]
->>> BUG: KASAN: use-after-free in tcp_init_tso_segs net/ipv4/tcp_output.c:1619 [inline]
->>> BUG: KASAN: use-after-free in tcp_write_xmit+0x3fc2/0x4cb0 net/ipv4/tcp_output.c:2056
->>> Read of size 2 at addr ffff8801d6fc87b0 by task syz-executor408/4195
->>>
->>> CPU: 0 PID: 4195 Comm: syz-executor408 Not tainted 4.4.136-gfb7e319 #59
->>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->>>  0000000000000000 7d8f38ecc03be946 ffff8801d73b7710 ffffffff81e0edad
->>>  ffffea00075bf200 ffff8801d6fc87b0 0000000000000000 ffff8801d6fc87b0
->>>  dffffc0000000000 ffff8801d73b7748 ffffffff815159b6 ffff8801d6fc87b0
->>> Call Trace:
->>>  [<ffffffff81e0edad>] __dump_stack lib/dump_stack.c:15 [inline]
->>>  [<ffffffff81e0edad>] dump_stack+0xc1/0x124 lib/dump_stack.c:51
->>>  [<ffffffff815159b6>] print_address_description+0x6c/0x216 mm/kasan/report.c:252
->>>  [<ffffffff81515cd5>] kasan_report_error mm/kasan/report.c:351 [inline]
->>>  [<ffffffff81515cd5>] kasan_report.cold.7+0x175/0x2f7 mm/kasan/report.c:408
->>>  [<ffffffff814f9784>] __asan_report_load2_noabort+0x14/0x20 mm/kasan/report.c:427
->>>  [<ffffffff83286582>] tcp_skb_pcount include/net/tcp.h:796 [inline]
->>>  [<ffffffff83286582>] tcp_init_tso_segs net/ipv4/tcp_output.c:1619 [inline]
->>>  [<ffffffff83286582>] tcp_write_xmit+0x3fc2/0x4cb0 net/ipv4/tcp_output.c:2056
->>>  [<ffffffff83287a40>] __tcp_push_pending_frames+0xa0/0x290 net/ipv4/tcp_output.c:2307
->>>  [<ffffffff8328e966>] tcp_send_fin+0x176/0xab0 net/ipv4/tcp_output.c:2883
->>>  [<ffffffff8324c0d0>] tcp_close+0xca0/0xf70 net/ipv4/tcp.c:2112
->>>  [<ffffffff832f8d0f>] inet_release+0xff/0x1d0 net/ipv4/af_inet.c:435
->>>  [<ffffffff82f1a156>] sock_release+0x96/0x1c0 net/socket.c:586
->>>  [<ffffffff82f1a296>] sock_close+0x16/0x20 net/socket.c:1037
->>>  [<ffffffff81522da5>] __fput+0x235/0x6f0 fs/file_table.c:208
->>>  [<ffffffff815232e5>] ____fput+0x15/0x20 fs/file_table.c:244
->>>  [<ffffffff8118bd7f>] task_work_run+0x10f/0x190 kernel/task_work.c:115
->>>  [<ffffffff81135285>] exit_task_work include/linux/task_work.h:21 [inline]
->>>  [<ffffffff81135285>] do_exit+0x9e5/0x26b0 kernel/exit.c:759
->>>  [<ffffffff8113b1d1>] do_group_exit+0x111/0x330 kernel/exit.c:889
->>>  [<ffffffff8115e5cc>] get_signal+0x4ec/0x14b0 kernel/signal.c:2321
->>>  [<ffffffff8100e02b>] do_signal+0x8b/0x1d30 arch/x86/kernel/signal.c:712
->>>  [<ffffffff8100360a>] exit_to_usermode_loop+0x11a/0x160 arch/x86/entry/common.c:248
->>>  [<ffffffff81006535>] prepare_exit_to_usermode arch/x86/entry/common.c:283 [inline]
->>>  [<ffffffff81006535>] syscall_return_slowpath+0x1b5/0x1f0 arch/x86/entry/common.c:348
->>>  [<ffffffff838c29b5>] int_ret_from_sys_call+0x25/0xa3
->>>
->>> Allocated by task 4194:
->>>  [<ffffffff810341d6>] save_stack_trace+0x26/0x50 arch/x86/kernel/stacktrace.c:63
->>>  [<ffffffff814f8873>] save_stack+0x43/0xd0 mm/kasan/kasan.c:512
->>>  [<ffffffff814f8b57>] set_track mm/kasan/kasan.c:524 [inline]
->>>  [<ffffffff814f8b57>] kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:616
->>>  [<ffffffff814f9122>] kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:554
->>>  [<ffffffff814f4c1e>] slab_post_alloc_hook mm/slub.c:1349 [inline]
->>>  [<ffffffff814f4c1e>] slab_alloc_node mm/slub.c:2615 [inline]
->>>  [<ffffffff814f4c1e>] slab_alloc mm/slub.c:2623 [inline]
->>>  [<ffffffff814f4c1e>] kmem_cache_alloc+0xbe/0x2a0 mm/slub.c:2628
->>>  [<ffffffff82f380a6>] kmem_cache_alloc_node include/linux/slab.h:350 [inline]
->>>  [<ffffffff82f380a6>] __alloc_skb+0xe6/0x600 net/core/skbuff.c:218
->>>  [<ffffffff832466c3>] alloc_skb_fclone include/linux/skbuff.h:856 [inline]
->>>  [<ffffffff832466c3>] sk_stream_alloc_skb+0xa3/0x5d0 net/ipv4/tcp.c:833
->>>  [<ffffffff83249164>] tcp_sendmsg+0xd34/0x2b00 net/ipv4/tcp.c:1178
->>>  [<ffffffff83300ef3>] inet_sendmsg+0x203/0x4d0 net/ipv4/af_inet.c:755
->>>  [<ffffffff82f1e1fc>] sock_sendmsg_nosec net/socket.c:625 [inline]
->>>  [<ffffffff82f1e1fc>] sock_sendmsg+0xcc/0x110 net/socket.c:635
->>>  [<ffffffff82f1eedc>] SYSC_sendto+0x21c/0x370 net/socket.c:1665
->>>  [<ffffffff82f21560>] SyS_sendto+0x40/0x50 net/socket.c:1633
->>>  [<ffffffff838c2825>] entry_SYSCALL_64_fastpath+0x22/0x9e
->>>
->>> Freed by task 4194:
->>>  [<ffffffff810341d6>] save_stack_trace+0x26/0x50 arch/x86/kernel/stacktrace.c:63
->>>  [<ffffffff814f8873>] save_stack+0x43/0xd0 mm/kasan/kasan.c:512
->>>  [<ffffffff814f91a2>] set_track mm/kasan/kasan.c:524 [inline]
->>>  [<ffffffff814f91a2>] kasan_slab_free+0x72/0xc0 mm/kasan/kasan.c:589
->>>  [<ffffffff814f632e>] slab_free_hook mm/slub.c:1383 [inline]
->>>  [<ffffffff814f632e>] slab_free_freelist_hook mm/slub.c:1405 [inline]
->>>  [<ffffffff814f632e>] slab_free mm/slub.c:2859 [inline]
->>>  [<ffffffff814f632e>] kmem_cache_free+0xbe/0x340 mm/slub.c:2881
->>>  [<ffffffff82f3527f>] kfree_skbmem+0xcf/0x100 net/core/skbuff.c:635
->>>  [<ffffffff82f372fd>] __kfree_skb+0x1d/0x20 net/core/skbuff.c:676
->>>  [<ffffffff83288834>] sk_wmem_free_skb include/net/sock.h:1447 [inline]
->>>  [<ffffffff83288834>] tcp_write_queue_purge include/net/tcp.h:1460 [inline]
->>>  [<ffffffff83288834>] tcp_connect_init net/ipv4/tcp_output.c:3122 [inline]
->>>  [<ffffffff83288834>] tcp_connect+0xb24/0x30c0 net/ipv4/tcp_output.c:3261
->>>  [<ffffffff8329b991>] tcp_v4_connect+0xf31/0x1890 net/ipv4/tcp_ipv4.c:246
->>>  [<ffffffff832f9ca9>] __inet_stream_connect+0x2a9/0xc30 net/ipv4/af_inet.c:615
->>>  [<ffffffff832fa685>] inet_stream_connect+0x55/0xa0 net/ipv4/af_inet.c:676
->>>  [<ffffffff82f1eb78>] SYSC_connect+0x1b8/0x300 net/socket.c:1557
->>>  [<ffffffff82f214b4>] SyS_connect+0x24/0x30 net/socket.c:1538
->>>  [<ffffffff838c2825>] entry_SYSCALL_64_fastpath+0x22/0x9e
->>>
->>> Syzkaller reproducer():
->>> r0 = socket$packet(0x11, 0x3, 0x300)
->>> r1 = socket$inet_tcp(0x2, 0x1, 0x0)
->>> bind$inet(r1, &(0x7f0000000300)={0x2, 0x4e21, @multicast1}, 0x10)
->>> connect$inet(r1, &(0x7f0000000140)={0x2, 0x1000004e21, @loopback}, 0x10)
->>> recvmmsg(r1, &(0x7f0000001e40)=[{{0x0, 0x0, &(0x7f0000000100)=[{&(0x7f00000005c0)=""/88, 0x58}], 0x1}}], 0x1, 0x40000000, 0x0)
->>> sendto$inet(r1, &(0x7f0000000000)="e2f7ad5b661c761edf", 0x9, 0x8080, 0x0, 0x0)
->>> r2 = fcntl$dupfd(r1, 0x0, r0)
->>> connect$unix(r2, &(0x7f00000001c0)=@file={0x0, './file0\x00'}, 0x6e)
->>>
->>> C repro link: https://syzkaller.appspot.com/text?tag=ReproC&x=14db474f800000
->>>
->>> This is because when tcp_connect_init call tcp_write_queue_purge, it will
->>> kfree all the skb in the write_queue, but the sk->sk_send_head forget to set NULL,
->>> then tcp_write_xmit try to send skb, which has freed in tcp_write_queue_purge, UAF happens.
->>>
->>> Signed-off-by: Mao Wenan <maowenan@huawei.com>
->>> ---
->>>  include/net/tcp.h | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/include/net/tcp.h b/include/net/tcp.h
->>> index bf8a0dae977a..8f8aace28cf8 100644
->>> --- a/include/net/tcp.h
->>> +++ b/include/net/tcp.h
->>> @@ -1457,6 +1457,7 @@ static inline void tcp_write_queue_purge(struct sock *sk)
->>>  
->>>  	while ((skb = __skb_dequeue(&sk->sk_write_queue)) != NULL)
->>>  		sk_wmem_free_skb(sk, skb);
->>> +	sk->sk_send_head = NULL;
->>>  	sk_mem_reclaim(sk);
->>>  	tcp_clear_all_retrans_hints(tcp_sk(sk));
->>>  	inet_csk(sk)->icsk_backoff = 0;
->>>
->>
->> This is strange, because tcp_init_send_head() is called from tcp_disconnect()
->> which is the syzkaller way to trigger this kind of bugs.
->>
-> 
-> syzkaller reproduce program duplicate one socket that have multiple skb in write queue,
-> and new socket have purged skb but original socket still try to send skb. In this program,
-> it does not call tcp_disconnect?
+Kind regards
+Uffe
 
-
-It does call tcp_disconnect(), by one of the connect() call.
-
+> ---
+>  drivers/memstick/host/r592.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/memstick/host/r592.c b/drivers/memstick/host/r592.c
+> index 2932f421b3ea..dd3a1f3dcc19 100644
+> --- a/drivers/memstick/host/r592.c
+> +++ b/drivers/memstick/host/r592.c
+> @@ -847,8 +847,7 @@ static void r592_remove(struct pci_dev *pdev)
+>  #ifdef CONFIG_PM_SLEEP
+>  static int r592_suspend(struct device *core_dev)
+>  {
+> -       struct pci_dev *pdev = to_pci_dev(core_dev);
+> -       struct r592_device *dev = pci_get_drvdata(pdev);
+> +       struct r592_device *dev = dev_get_drvdata(core_dev);
+>
+>         r592_clear_interrupts(dev);
+>         memstick_suspend_host(dev->host);
+> @@ -858,8 +857,7 @@ static int r592_suspend(struct device *core_dev)
+>
+>  static int r592_resume(struct device *core_dev)
+>  {
+> -       struct pci_dev *pdev = to_pci_dev(core_dev);
+> -       struct r592_device *dev = pci_get_drvdata(pdev);
+> +       struct r592_device *dev = dev_get_drvdata(core_dev);
+>
+>         r592_clear_interrupts(dev);
+>         r592_enable_device(dev, false);
+> --
+> 2.20.1
+>
