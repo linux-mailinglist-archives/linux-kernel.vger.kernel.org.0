@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FC5373F59
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:32:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA0F473F55
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:32:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729278AbfGXUcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:32:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48716 "EHLO mail.kernel.org"
+        id S2388819AbfGXUbw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:31:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388361AbfGXT31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:29:27 -0400
+        id S1729354AbfGXT3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:29:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 084B6229F4;
-        Wed, 24 Jul 2019 19:29:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66100229FA;
+        Wed, 24 Jul 2019 19:29:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996566;
-        bh=xPh9hZ4D2KzU9QsTw+RRvyIX/frDF/JzpZJPjwEQ9Ks=;
+        s=default; t=1563996584;
+        bh=qrB5kfjoyVh2sPmkyHE/OtAOTCt8vxYhmexMrBsbF6E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ueqD7TUyI5w4pHXmZUyTWpHegp0a6OhwycOTCRFzAW/XQlQqC87Qk7JaNR/qHR3NH
-         tTxEhc4odE9P2j0x5zVDT4CnUCUIyVyjekXfQDFP7z2BSdqf+Da6kfb49Kl/81j0zR
-         crOWPk8BQpPJUvlpkKLRdMGCoE7Yp7ev2qKSAapo=
+        b=dzNpB8x2eyNOfpsz/I4oWkFAVTSAzlKw8KwdVVCcC3OB49rX8vVYg7ZbPp5iVzfj1
+         gitnbAOFTJpfm9m+6OnqI11JbyIIE6n4K0xjF/X1/3IozT1Np5ViLWy6+UGE/DcLkc
+         TgsmHZLY4sT+pwUDVR4nYqjxW4X5buYH0WmM5ZOE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Graeme Gregory <graeme.gregory@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 141/413] media: s5p-mfc: Make additional clocks optional
-Date:   Wed, 24 Jul 2019 21:17:12 +0200
-Message-Id: <20190724191745.084539991@linuxfoundation.org>
+Subject: [PATCH 5.2 147/413] acpi/arm64: ignore 5.1 FADTs that are reported as 5.0
+Date:   Wed, 24 Jul 2019 21:17:18 +0200
+Message-Id: <20190724191745.459972974@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -46,42 +49,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e08efef8fe7db87206314c19b341612c719f891a ]
+[ Upstream commit 2af22f3ec3ca452f1e79b967f634708ff01ced8a ]
 
-Since the beginning the second clock ('special', 'sclk') was optional and
-it is not available on some variants of Exynos SoCs (i.e. Exynos5420 with
-v7 of MFC hardware).
+Some Qualcomm Snapdragon based laptops built to run Microsoft Windows
+are clearly ACPI 5.1 based, given that that is the first ACPI revision
+that supports ARM, and introduced the FADT 'arm_boot_flags' field,
+which has a non-zero field on those systems.
 
-However commit 1bce6fb3edf1 ("[media] s5p-mfc: Rework clock handling")
-made handling of all specified clocks mandatory. This patch restores
-original behavior of the driver and fixes its operation on
-Exynos5420 SoCs.
+So in these cases, infer from the ARM boot flags that the FADT must be
+5.1 or later, and treat it as 5.1.
 
-Fixes: 1bce6fb3edf1 ("[media] s5p-mfc: Rework clock handling")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Tested-by: Lee Jones <lee.jones@linaro.org>
+Reviewed-by: Graeme Gregory <graeme.gregory@linaro.org>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Hanjun Guo <guohanjun@huawei.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc_pm.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/kernel/acpi.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-index 2e62f8721fa5..7d52431c2c83 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-@@ -34,6 +34,11 @@ int s5p_mfc_init_pm(struct s5p_mfc_dev *dev)
- 	for (i = 0; i < pm->num_clocks; i++) {
- 		pm->clocks[i] = devm_clk_get(pm->device, pm->clk_names[i]);
- 		if (IS_ERR(pm->clocks[i])) {
-+			/* additional clocks are optional */
-+			if (i && PTR_ERR(pm->clocks[i]) == -ENOENT) {
-+				pm->clocks[i] = NULL;
-+				continue;
-+			}
- 			mfc_err("Failed to get clock: %s\n",
- 				pm->clk_names[i]);
- 			return PTR_ERR(pm->clocks[i]);
+diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+index 2804330c95dc..3a58e9db5cfe 100644
+--- a/arch/arm64/kernel/acpi.c
++++ b/arch/arm64/kernel/acpi.c
+@@ -152,10 +152,14 @@ static int __init acpi_fadt_sanity_check(void)
+ 	 */
+ 	if (table->revision < 5 ||
+ 	   (table->revision == 5 && fadt->minor_revision < 1)) {
+-		pr_err("Unsupported FADT revision %d.%d, should be 5.1+\n",
++		pr_err(FW_BUG "Unsupported FADT revision %d.%d, should be 5.1+\n",
+ 		       table->revision, fadt->minor_revision);
+-		ret = -EINVAL;
+-		goto out;
++
++		if (!fadt->arm_boot_flags) {
++			ret = -EINVAL;
++			goto out;
++		}
++		pr_err("FADT has ARM boot flags set, assuming 5.1\n");
+ 	}
+ 
+ 	if (!(fadt->flags & ACPI_FADT_HW_REDUCED)) {
 -- 
 2.20.1
 
