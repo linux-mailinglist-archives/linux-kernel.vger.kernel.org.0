@@ -2,34 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81EEC73CDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:12:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E48B73CD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:12:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392242AbfGXUMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:12:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42390 "EHLO mail.kernel.org"
+        id S2391961AbfGXT51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:57:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391998AbfGXT5O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:57:14 -0400
+        id S2391917AbfGXT5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:57:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A1AF214AF;
-        Wed, 24 Jul 2019 19:57:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B87922ADC;
+        Wed, 24 Jul 2019 19:57:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563998233;
-        bh=qqWM4xerq2JWLgzBCdBVsA4X/c84rf+75c3uH+euxUo=;
+        s=default; t=1563998244;
+        bh=gJLQAtZw1C/+PfpyYuzgkc+A8g7f3VcKj88GMkkkEdY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o+KrdEOz/9GHKez9d2osA9QCrWfhmxqKlcHvZA77Foa4zWiv2/C44YfBZr169fcCu
-         VHrHgqqKS8+V2TA5hE8w4xCIG8G8e54YnwiKYFOv0y0r5KE5ka4iYteOlRFXjkQrWM
-         P1nrbls1xlTSWXi2rrVx/Fy6nt2wPScAj02E9KrE=
+        b=yUEnbyFpBEVClEfH1gKgup+q7u8mcXDXCGqjl2sAZTqFvvb0rcK0IIkhfjxOFY9L/
+         cTfUUDR/eEnhObYUKYjE8ejQ4FJr+he+p3UUUU/KPjnSBI14ec2sgnIXpjreMI3LIp
+         Dn3xOT8Zj4PEitAenRrSdJajs4/Lo00OIVbpwnAk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.1 291/371] ALSA: hda/hdmi - Remove duplicated define
-Date:   Wed, 24 Jul 2019 21:20:43 +0200
-Message-Id: <20190724191746.244219189@linuxfoundation.org>
+        stable@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 5.1 295/371] media: coda: Remove unbalanced and unneeded mutex unlock
+Date:   Wed, 24 Jul 2019 21:20:47 +0200
+Message-Id: <20190724191746.543515467@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -42,31 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Ezequiel Garcia <ezequiel@collabora.com>
 
-commit eb4177116bf568a413c544eca3f4446cb4064be9 upstream.
+commit 766b9b168f6c75c350dd87c3e0bc6a9b322f0013 upstream.
 
-INTEL_GET_VENDOR_VERB is defined twice identically.
-Let's remove a superfluous line.
+The mutex unlock in the threaded interrupt handler is not paired
+with any mutex lock. Remove it.
 
-Fixes: b0d8bc50b9f2 ("ALSA: hda: hdmi - add Icelake support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+This bug has been here for a really long time, so it applies
+to any stable repo.
+
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: stable@vger.kernel.org
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_hdmi.c |    1 -
+ drivers/media/platform/coda/coda-bit.c |    1 -
  1 file changed, 1 deletion(-)
 
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -2431,7 +2431,6 @@ static void intel_haswell_fixup_connect_
- }
+--- a/drivers/media/platform/coda/coda-bit.c
++++ b/drivers/media/platform/coda/coda-bit.c
+@@ -2314,7 +2314,6 @@ irqreturn_t coda_irq_handler(int irq, vo
+ 	if (ctx == NULL) {
+ 		v4l2_err(&dev->v4l2_dev,
+ 			 "Instance released before the end of transaction\n");
+-		mutex_unlock(&dev->coda_mutex);
+ 		return IRQ_HANDLED;
+ 	}
  
- #define INTEL_GET_VENDOR_VERB	0xf81
--#define INTEL_GET_VENDOR_VERB	0xf81
- #define INTEL_SET_VENDOR_VERB	0x781
- #define INTEL_EN_DP12		0x02	/* enable DP 1.2 features */
- #define INTEL_EN_ALL_PIN_CVTS	0x01	/* enable 2nd & 3rd pins and convertors */
 
 
