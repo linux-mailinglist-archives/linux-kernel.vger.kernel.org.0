@@ -2,92 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E01273618
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:51:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BF6A73621
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:52:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbfGXRvM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 13:51:12 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42295 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfGXRvM (ORCPT
+        id S1728186AbfGXRwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 13:52:40 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:59926 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbfGXRwj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 13:51:12 -0400
-Received: by mail-lf1-f66.google.com with SMTP id s19so32566348lfb.9
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 10:51:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=95+Ojj8whLDzTQfSvFpUfZPQNS2ad16YlfE2wY3FNvs=;
-        b=Q1otmVXyrcOvARrNHCq3mme+hGOPc0EnMeptu7eG3VCcjT/HkP54TR+dyDnM4qL9d5
-         FonTz95jDa6pthaSmRyHWkpw1Tde3zEXeGdzrSTuS5RS8pvNtLbrl34+D57HnUjtTzDS
-         e7q295+fYzIVl3K0F+jR//YtMKvddGwPmrsD4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=95+Ojj8whLDzTQfSvFpUfZPQNS2ad16YlfE2wY3FNvs=;
-        b=UgrKL4R/VQVw9nGFsrPn/C7UaG2TM8LIcgjTDsyXKEjRfVLYQKmqvt2tV5sHnK5JB4
-         L9bMpRPbB2rprlb/3TTizddTvrC0UKEVpXmdrkpEys6aPP2E4ZxLHfTLM/9mYaawuguw
-         LMBOHAOtlriu4aznk3+YNn/iqbcDI0+ELoqhAP2PF2wL1Cu8Rozu83fQsP52Lu8s8Cff
-         KX75sGAsRSQdYJ9p3GRyH680otVF82bZsNMrnfTsWxnV7EHGru64xAEe3JcSyRYBQXW+
-         61gWyqMCU2Wy3J87CY3SF9qLP7nGT6iOk+vlWiqyN5EN13T8WqmqppAwNtay/n91mgFC
-         SU9g==
-X-Gm-Message-State: APjAAAVxIKC1WIba/Tyw4xXneoyIcyJulsSMrwojbmu+Z/7RwHG6KMGL
-        avhI0dSZDuEMRk816uFSFdP7L0cAsHE=
-X-Google-Smtp-Source: APXvYqxIxULzOvLISGIW3oZN0fdWm+avt+gNfmiMWg29+O9YNo7tDNgHfOaFNYqNBQDDRgRlcYmoMg==
-X-Received: by 2002:a19:c7ca:: with SMTP id x193mr37923518lff.151.1563990669551;
-        Wed, 24 Jul 2019 10:51:09 -0700 (PDT)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id p5sm8697586ljb.91.2019.07.24.10.51.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 10:51:09 -0700 (PDT)
-Received: by mail-lj1-f180.google.com with SMTP id x25so45406839ljh.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 10:51:09 -0700 (PDT)
-X-Received: by 2002:a2e:9bc6:: with SMTP id w6mr44841672ljj.156.1563990354068;
- Wed, 24 Jul 2019 10:45:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190724144651.28272-1-christian@brauner.io> <20190724144651.28272-3-christian@brauner.io>
-In-Reply-To: <20190724144651.28272-3-christian@brauner.io>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 24 Jul 2019 10:45:38 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whZPKzbPQftNGFB=iaSZGTSXNkhUASWF2V53MwB+A4zAQ@mail.gmail.com>
-Message-ID: <CAHk-=whZPKzbPQftNGFB=iaSZGTSXNkhUASWF2V53MwB+A4zAQ@mail.gmail.com>
-Subject: Re: [PATCH 2/5] pidfd: add pidfd_wait()
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tejun Heo <tj@kernel.org>, David Howells <dhowells@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        Andrew Lutomirski <luto@kernel.org>,
+        Wed, 24 Jul 2019 13:52:39 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6OHde6B049688;
+        Wed, 24 Jul 2019 17:52:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2018-07-02; bh=ijqWqbTQS+mO3BG8eUkyRBif1gJVoINohHHt0HHU2LM=;
+ b=tup7p8NclfqJa8HNUqc3r507Q+5d5c4/aRy/NdyxP+wvdiYSD1QTyx+qJ3sVlK2w61oa
+ /8aL4/T0MK/QwIQYhZUuPHUZtnMFaHKDwfvodoE3lwcHbZEdeQKrK95iB5wp3dQF4Jjt
+ Qrvq2pJrRa4oIqvapHFz0oln13nyP3xnTKqZ2FRosyKvNT3T6FSzEGKNNF2mJ2Ljr1wU
+ Rhr6EUlHq8ayFK6cUHVjTHzbplH8Gkry5a3eHkWHJS9P4KjOUjPpZ5NsgUUiseifT0KO
+ zqOS7u4WCOMTmfW6V0K8L3f3fWuC379XJ4fwuQaoQhBWryFiL2qLEqdCJokb/HDjCdbP Zg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2tx61by13q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Jul 2019 17:52:28 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6OHcAo4188438;
+        Wed, 24 Jul 2019 17:50:28 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2tx60y698g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Jul 2019 17:50:28 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6OHoMOj019819;
+        Wed, 24 Jul 2019 17:50:22 GMT
+Received: from monkey.oracle.com (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 24 Jul 2019 10:50:22 -0700
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Hillf Danton <hdanton@sina.com>, Michal Hocko <mhocko@kernel.org>,
+        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [RFC PATCH 0/3] fix hugetlb page allocation stalls
+Date:   Wed, 24 Jul 2019 10:50:11 -0700
+Message-Id: <20190724175014.9935-1-mike.kravetz@oracle.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9328 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907240191
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9328 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907240191
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 7:47 AM Christian Brauner <christian@brauner.io> wrote:
->
-> This adds the pidfd_wait() syscall.
+Allocation of hugetlb pages via sysctl or procfs can stall for minutes
+or hours.  A simple example on a two node system with 8GB of memory is
+as follows:
 
-I despise this patch.
+echo 4096 > /sys/devices/system/node/node1/hugepages/hugepages-2048kB/nr_hugepages
+echo 4096 > /proc/sys/vm/nr_hugepages
 
-Why can't this just be a new P_PIDFD flag, and then use
-"waitid(P_PIDFD, pidfd, ...);"
+Obviously, both allocation attempts will fall short of their 8GB goal.
+However, one or both of these commands may stall and not be interruptible.
+The issues were discussed in this thread [1].
 
-Yes, yes, yes, I realize that "pidfd" is of type "int", and waitid()
-takes an argument of type pid_t, but it's the same type in the end,
-and it does seem like the whole *point* of "waitid()" is that
-"idtype_t idtype" which tells you what kind of ID you're passing it.
+This series attempts to address the issues causing the stalls.  There are
+two distinct issues, and an optimization.  For the reclaim and compaction
+issues, suggestions were made to simply remove some existing code.  However,
+the impact of such changes would be hard to address.  This series takes a
+more conservative approach in an attempt to minimally impact existing
+workloads.  The question of which approach is better is debatable, hence the
+RFC designation.  Patches in the series address these issues:
 
-               Linus
+1) Should_continue_reclaim returns true too often.
+   Michal Hocko suggested removing the special casing for __GFP_RETRY_MAYFAIL
+   in should_continue_reclaim.  This does indeed address the hugetlb
+   allocations, but may impact other users.  Hillf Danton restructured
+   the code in such a way to preserve much of the original semantics.  Hillf's
+   patch also addresses hugetlb allocation issues and is included here.
+
+2) With 1) addressed, should_compact_retry returns true too often.
+   Mel Gorman suggested the removal of the compaction_zonelist_suitable() call.
+   This routine/call was introduced by Michal Hocko for a specific use case.
+   Therefore, removal would likely break that use case.  While examining the
+   reasons for compaction_withdrawn() as in [2], it appears that there are
+   several places where we should be using MIN_COMPACT_COSTLY_PRIORITY instead
+   of MIN_COMPACT_PRIORITY for costly allocations.  This patch makes those
+   changes which also causes more appropriate should_compact_retry behavior
+   for hugetlb allocations.
+
+3) This is simply an optimization of the allocation code for hugetlb pool
+   pages.  After first __GFP_RETRY_MAYFAIL allocation failure on a node,
+   it drops the __GFP_RETRY_MAYFAIL flag.
+
+
+[1] http://lkml.kernel.org/r/d38a095e-dc39-7e82-bb76-2c9247929f07@oracle.com
+[2] http://lkml.kernel.org/r/6377c199-2b9e-e30d-a068-c304d8a3f706@oracle.com
+
+Hillf Danton (1):
+  mm, reclaim: make should_continue_reclaim perform dryrun detection
+
+Mike Kravetz (2):
+  mm, compaction: use MIN_COMPACT_COSTLY_PRIORITY everywhere for costly
+    orders
+  hugetlbfs: don't retry when pool page allocations start to fail
+
+ mm/compaction.c | 18 +++++++---
+ mm/hugetlb.c    | 87 +++++++++++++++++++++++++++++++++++++++++++------
+ mm/vmscan.c     | 28 ++++++++--------
+ 3 files changed, 105 insertions(+), 28 deletions(-)
+
+-- 
+2.20.1
+
