@@ -2,309 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 297E072B2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 11:12:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 883FB72B36
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 11:13:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbfGXJME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 05:12:04 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:47103 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbfGXJME (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 05:12:04 -0400
-Received: by mail-io1-f68.google.com with SMTP id i10so87960705iol.13
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 02:12:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6sRlylSNczuEnN2aNH3I85pbG0P7MfDaMqfGAEipuRs=;
-        b=fiyK4t8LNXVZ8Wts4XLlCcQP+wWMU13USI8AilCSgciD91VrKhYTGpinAS8z1SY7Ly
-         GUT2NNu1yc1UhVS5OJn2OvVshu/Rw4he4dIr3wazgKAAP6F9pbImM8Z7Zvt3HlLored1
-         SVfZ4FcRO/LqCv2+6rmj/gfEV7WLOC0s1aLDf4oxHghX0izzR602S7K4VrKjNszbKUd4
-         FRN3tbFDZzZZfhHYqLmKVMa7cr49ORE0esnOE5nEvbUJym9boLQ6dBkV/aEJ3POHIsyh
-         0opcUxaMnSgr+Y0RUsbZpdo5pu8ABk747iG9aeM/P9pc23BS/vwPjXvuenrnI1bV1NIV
-         Odbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6sRlylSNczuEnN2aNH3I85pbG0P7MfDaMqfGAEipuRs=;
-        b=nvm8zpSe5SORFfVopfbSXK6rDW2RygDcF+x2VIfe2U1/Zi0lAxM85MVHS18lC49PTw
-         9Y0SiuVPhtdKoH9Ano03qNpH3BG/yzj1KKKK7uOZtYB8t6LMc8B6Z33Rz90rqFyAr884
-         BsP8Lw7SqWT7pSxk3k+acCTClBIv+9BSf82opsuoBfFHf8kHvxTBAKLqCkeiam2CJTQb
-         oS2ND+1uJgDJ+t79hDzEAwjF0RcXqeTB/QAQ3Ob/fvOAD6K+sYJJQGV87nCRorrrlco7
-         cDChWphVS2QDzImo4tYIczLFiMClF8MCvRI26vqxlH4dz4jP7dFUwxGOLSbLMxEwlbY6
-         U2sQ==
-X-Gm-Message-State: APjAAAXt/J40+09y6GS71nn166/UbV3aM4S2BIe96vYdYgg1iEsD3jdP
-        OZovfptTnsKh4yGW6INhBEZ3g2/6Ulg6pFh2LqKRuvBppizC0g==
-X-Google-Smtp-Source: APXvYqw565UdWyxGdRP/kSKtDh8SC/tc0vvWCMy7/Xq1lFsi5A2aEQ+NyAcFXQXCdIw7+0m6wI1Iawc7yBMRYy2j5ak=
-X-Received: by 2002:a5e:c241:: with SMTP id w1mr70964257iop.58.1563959522535;
- Wed, 24 Jul 2019 02:12:02 -0700 (PDT)
+        id S1726714AbfGXJNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 05:13:38 -0400
+Received: from mail-eopbgr140093.outbound.protection.outlook.com ([40.107.14.93]:19781
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725999AbfGXJNh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 05:13:37 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JrJisL6phg6AdFkDXcsefW6EJwKToBH6WinkSo9b4g62dgOaQAlgChJZrdDSSR01UJuK22ZhsGsxkYU2pbIhgU42ExZqNiOBdluxOJ7vZadTbnJGwMGsEsX2yZ8C2vf/Z8aoi0diJu1Ghk59Jsa5mcghWLxeEV8sY14aMpJVDydcXrK2ybnJLm+xro+ZI2jMPifzrH6U5fzHLT3YEEQg57lt/nhm6ctZwvq6TECtyien+e5812hZfrSQLx2+dUOs+rHvt1Bs/rV9vtbdTXYNQPajTq86vv2ZQfAV/1Iw5DxvDZqFBg/U7v627JfZ9eKSSFt79jkX+qOKdF+4pxfClQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+1pIX+8NerxS/QgEascF7MQDhRbiFP+di7q09Hgfv6c=;
+ b=EO06GPd02Pj29LXN2xXuVxdy42o+TrQAM8IVVn7QFMaEwtxy7BpnIzQ/G4J0r2Bo+lKXjfOjsfMIhGW/9vseSSyXoytfoQAdGeC6bHyqUdRr3SH/uLggm7VLHRpGbXJ8NZP4IoH+o+KAtTgrb9WULISAvFGc+SoZaJdY72Kd8MqIsH90qdJYeHGgw4Osmir/xiTzMhJOgRF+A53y6gaMrCPI9M59jEfIpvnvPOvuCl5FcXGFasmpMPo3CxoMeelG3QKqhxlrSxSS7oLtlz8rQBGZeB1MLyusudzKjEsmRQhc9kTPjYnibVP/UVApkRL60dkbt7Tnah17Ne5rPlQhtQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=victronenergy.com;dmarc=pass action=none
+ header.from=victronenergy.com;dkim=pass header.d=victronenergy.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=victronenergy.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+1pIX+8NerxS/QgEascF7MQDhRbiFP+di7q09Hgfv6c=;
+ b=ckih0CMzhRbUPknbNPK1OidgOfdAZUyYxe2+GpqSk5LA4LOb2eE9hqKJYaGJaEE/bO+HSmLvofrJHOBNGpHxNziMQFaeChTmIhOL2louhYebWX5fJ+2z9QUy8JzbwGz8/044rhsw0FGE9OE56SeIPX0d9Wwdfzn9tgNl4po1WFw=
+Received: from VI1PR0702MB3661.eurprd07.prod.outlook.com (52.134.1.159) by
+ VI1PR0702MB3757.eurprd07.prod.outlook.com (52.134.7.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.9; Wed, 24 Jul 2019 09:13:30 +0000
+Received: from VI1PR0702MB3661.eurprd07.prod.outlook.com
+ ([fe80::b168:9c5f:9e05:92c6]) by VI1PR0702MB3661.eurprd07.prod.outlook.com
+ ([fe80::b168:9c5f:9e05:92c6%5]) with mapi id 15.20.2094.009; Wed, 24 Jul 2019
+ 09:13:30 +0000
+From:   Jeroen Hofstee <jhofstee@victronenergy.com>
+To:     Marc Kleine-Budde <mkl@pengutronix.de>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>
+CC:     Anant Gole <anantgole@ti.com>, AnilKumar Ch <anilkumar@ti.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] can: ti_hecc: use timestamp based rx-offloading
+Thread-Topic: [PATCH] can: ti_hecc: use timestamp based rx-offloading
+Thread-Index: AQHU/oOQxrziEdIHYkKLtad3jyL4gabZ9dQAgAANP4A=
+Date:   Wed, 24 Jul 2019 09:13:30 +0000
+Message-ID: <ea314ae5-f063-394a-6105-2f5ab4614e1d@victronenergy.com>
+References: <1556539376-20932-1-git-send-email-jhofstee@victronenergy.com>
+ <5881cb80-883b-a96b-2939-973150cfc196@pengutronix.de>
+In-Reply-To: <5881cb80-883b-a96b-2939-973150cfc196@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+x-originating-ip: [2001:1c01:3b04:4900::5]
+x-clientproxiedby: AM0PR06CA0032.eurprd06.prod.outlook.com
+ (2603:10a6:208:ab::45) To VI1PR0702MB3661.eurprd07.prod.outlook.com
+ (2603:10a6:803:3::31)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jhofstee@victronenergy.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1dc20f6a-e65e-4a7f-224b-08d7101731ba
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR0702MB3757;
+x-ms-traffictypediagnostic: VI1PR0702MB3757:
+x-ms-exchange-purlcount: 6
+x-microsoft-antispam-prvs: <VI1PR0702MB3757CDA1F1E428D31E34EAA7C0C60@VI1PR0702MB3757.eurprd07.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3383;
+x-forefront-prvs: 0108A997B2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(39850400004)(136003)(366004)(346002)(396003)(189003)(199004)(55674003)(81166006)(66946007)(81156014)(476003)(66556008)(5660300002)(14454004)(66446008)(66476007)(8676002)(6306002)(4326008)(8936002)(64756008)(53376002)(6246003)(68736007)(71200400001)(71190400001)(6512007)(53936002)(36756003)(7736002)(76176011)(305945005)(65956001)(110136005)(229853002)(316002)(58126008)(65806001)(54906003)(256004)(102836004)(6436002)(2906002)(2501003)(14444005)(65826007)(31686004)(446003)(478600001)(186003)(386003)(6506007)(6116002)(46003)(25786009)(11346002)(99286004)(53546011)(52116002)(486006)(6486002)(31696002)(966005)(86362001)(2616005)(64126003)(2004002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0702MB3757;H:VI1PR0702MB3661.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: victronenergy.com does not
+ designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: yFSor5dII//g7PozAjD6F+YOUYbXsiBWiV56lsM1BMBeOv9TnYJ1dBr3lZqW07+PXLHeBERxe8Liain04A6mVkqUpJhAoP2qfIDY9odsfeaQkmfhsOSMa6RzVl0n+dVnmQ/7jTkenRhJbKGyPxeJmajBrOPQ4CLFoac6blwuESPnfojh9vJ9uATU2/KTYKjBiePZUBfvk00O30XTUqQrOcjNFli5fXroWrue/+uarrsS55EFoL2eRBNXpLtfyayKEu8AQEFrXkx+EGt6qMsJNW5EuacDIpW6Egqf+p9OXlNrrO/Ame6gkVX6UuhYEHlD+QbzrJzI0nD9xH2liv/RStXv3xGVKsRfFPmrwGGOdlCXHGYfkcEHExB88Zv+oyGjkCDxCjSNH8ikSpVNPjI/EHi96POwIV1/eZxbEQpIxCY=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <368B2A57D103B44DABA3D02E15BC8EFD@eurprd07.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190719132818.40258-1-elver@google.com> <20190723164115.GB56959@lakrids.cambridge.arm.com>
-In-Reply-To: <20190723164115.GB56959@lakrids.cambridge.arm.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 24 Jul 2019 11:11:49 +0200
-Message-ID: <CACT4Y+Y47_030eX-JiE1hFCyP5RiuTCSLZNKpTjuHwA5jQJ3+w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] kernel/fork: Add support for stack-end guard page
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Marco Elver <elver@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: victronenergy.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1dc20f6a-e65e-4a7f-224b-08d7101731ba
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2019 09:13:30.3227
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 60b95f08-3558-4e94-b0f8-d690c498e225
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: JHofstee@victronenergy.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0702MB3757
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 6:41 PM Mark Rutland <mark.rutland@arm.com> wrote:
->
-> On Fri, Jul 19, 2019 at 03:28:17PM +0200, Marco Elver wrote:
-> > Enabling STACK_GUARD_PAGE helps catching kernel stack overflows immediately
-> > rather than causing difficult-to-diagnose corruption. Note that, unlike
-> > virtually-mapped kernel stacks, this will effectively waste an entire page of
-> > memory; however, this feature may provide extra protection in cases that cannot
-> > use virtually-mapped kernel stacks, at the cost of a page.
-> >
-> > The motivation for this patch is that KASAN cannot use virtually-mapped kernel
-> > stacks to detect stack overflows. An alternative would be implementing support
-> > for vmapped stacks in KASAN, but would add significant extra complexity.
->
-> Do we have an idea as to how much additional complexity?
-
-We would need to map/unmap shadow for vmalloc region on stack
-allocation/deallocation. We may need to track shadow pages that cover
-both stack and an unused memory, or 2 different stacks, which are
-mapped/unmapped at different times. This may have some concurrency
-concerns.  Not sure what about page tables for other CPU, I've seen
-some code that updates pages tables for vmalloc region lazily on page
-faults. Not sure what about TLBs. Probably also some problems that I
-can't thought about now.
-
-
-> > While the stack-end guard page approach here wastes a page, it is
-> > significantly simpler than the alternative.  We assume that the extra
-> > cost of a page can be justified in the cases where STACK_GUARD_PAGE
-> > would be enabled.
-> >
-> > Note that in an earlier prototype of this patch, we used
-> > 'set_memory_{ro,rw}' functions, which flush the TLBs. This, however,
-> > turned out to be unacceptably expensive, especially when run with
-> > fuzzers such as Syzkaller, as the kernel would encounter frequent RCU
-> > timeouts. The current approach of not flushing the TLB is therefore
-> > best-effort, but works in the test cases considered -- any comments on
-> > better alternatives or improvements are welcome.
->
-> Ouch. I don't think that necessarily applies to other architectures, and
-> from my PoV it would be nicer if we could rely on regular vmap'd stacks.
-> That way we have one code path, and we can rely on the fault.
->
-> >
-> > Signed-off-by: Marco Elver <elver@google.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> > Cc: Alexander Potapenko <glider@google.com>
-> > Cc: Dmitry Vyukov <dvyukov@google.com>
-> > Cc: Andrey Konovalov <andreyknvl@google.com>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: x86@kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: kasan-dev@googlegroups.com
-> > ---
-> >  arch/Kconfig                         | 15 +++++++++++++++
-> >  arch/x86/include/asm/page_64_types.h |  8 +++++++-
-> >  include/linux/sched/task_stack.h     | 11 +++++++++--
-> >  kernel/fork.c                        | 22 +++++++++++++++++++++-
-> >  4 files changed, 52 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/arch/Kconfig b/arch/Kconfig
-> > index e8d19c3cb91f..cca3258fff1f 100644
-> > --- a/arch/Kconfig
-> > +++ b/arch/Kconfig
-> > @@ -935,6 +935,21 @@ config LOCK_EVENT_COUNTS
-> >         the chance of application behavior change because of timing
-> >         differences. The counts are reported via debugfs.
-> >
-> > +config STACK_GUARD_PAGE
-> > +     default n
-> > +     bool "Use stack-end page as guard page"
-> > +     depends on !VMAP_STACK && ARCH_HAS_SET_DIRECT_MAP && THREAD_INFO_IN_TASK && !STACK_GROWSUP
-> > +     help
-> > +       Enable this if you want to use the stack-end page as a guard page.
-> > +       This causes kernel stack overflows to be caught immediately rather
-> > +       than causing difficult-to-diagnose corruption. Note that, unlike
-> > +       virtually-mapped kernel stacks, this will effectively waste an entire
-> > +       page of memory; however, this feature may provide extra protection in
-> > +       cases that cannot use virtually-mapped kernel stacks, at the cost of
-> > +       a page. Note that, this option does not implicitly increase the
-> > +       default stack size. The main use-case is for KASAN to avoid reporting
-> > +       misleading bugs due to stack overflow.
->
-> These dependencies can also be satisfied on arm64, but I don't believe
-> this will work correctly there, and we'll need something like a
-> ARCH_HAS_STACK_GUARD_PAGE symbol so that x86 can opt-in.
->
-> On arm64 our exception vectors don't specify an alternative stack, so we
-> don't have a direct equivalent to x86 double-fault handler. Our kernel
-> stack overflow handling requires explicit tests in the entry assembly
-> that are only built (or valid) when VMAP_STACK is selected.
->
-> > +
-> >  source "kernel/gcov/Kconfig"
-> >
-> >  source "scripts/gcc-plugins/Kconfig"
-> > diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/page_64_types.h
-> > index 288b065955b7..b218b5713c02 100644
-> > --- a/arch/x86/include/asm/page_64_types.h
-> > +++ b/arch/x86/include/asm/page_64_types.h
-> > @@ -12,8 +12,14 @@
-> >  #define KASAN_STACK_ORDER 0
-> >  #endif
-> >
-> > +#ifdef CONFIG_STACK_GUARD_PAGE
-> > +#define STACK_GUARD_SIZE PAGE_SIZE
-> > +#else
-> > +#define STACK_GUARD_SIZE 0
-> > +#endif
-> > +
-> >  #define THREAD_SIZE_ORDER    (2 + KASAN_STACK_ORDER)
-> > -#define THREAD_SIZE  (PAGE_SIZE << THREAD_SIZE_ORDER)
-> > +#define THREAD_SIZE  ((PAGE_SIZE << THREAD_SIZE_ORDER) - STACK_GUARD_SIZE)
->
-> I'm pretty sure that common code relies on THREAD_SIZE being a
-> power-of-two. I also know that if we wanted to enable this on arm64 that
-> would very likely be a requirement.
->
-> For example, in kernel/trace/trace_stack.c we have:
->
-> | this_size = ((unsigned long)stack) & (THREAD_SIZE-1);
->
-> ... and INIT_TASK_DATA() allocates the initial task stack using
-> THREAD_SIZE, so that may require special care, as it might not be sized
-> or aligned as you expect.
-
-
-We've built it, booted it, stressed it, everything looked fine... that
-should have been a build failure.
-Is it a property that we need to preserve? Or we could fix the uses
-that assume power-of-2?
-
-
-> >  #define EXCEPTION_STACK_ORDER (0 + KASAN_STACK_ORDER)
-> >  #define EXCEPTION_STKSZ (PAGE_SIZE << EXCEPTION_STACK_ORDER)
-> > diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
-> > index 2413427e439c..7ee86ad0a282 100644
-> > --- a/include/linux/sched/task_stack.h
-> > +++ b/include/linux/sched/task_stack.h
-> > @@ -11,6 +11,13 @@
-> >
-> >  #ifdef CONFIG_THREAD_INFO_IN_TASK
-> >
-> > +#ifndef STACK_GUARD_SIZE
-> > +#ifdef CONFIG_STACK_GUARD_PAGE
-> > +#error "Architecture not compatible with STACK_GUARD_PAGE"
-> > +#endif
-> > +#define STACK_GUARD_SIZE 0
-> > +#endif
->
-> The core code you add assumes that when enabled, this is PAGE_SIZE, so
-> I think the definition should live in a common header.
->
-> As above, it should not be possible to select CONFIG_STACK_GUARD_PAGE
-> unless the architecture supports it. If nothing else, this avoids
-> getting bug reports on randconfigs.
->
-> Thanks,
-> Mark.
->
-> > +
-> >  /*
-> >   * When accessing the stack of a non-current task that might exit, use
-> >   * try_get_task_stack() instead.  task_stack_page will return a pointer
-> > @@ -18,14 +25,14 @@
-> >   */
-> >  static inline void *task_stack_page(const struct task_struct *task)
-> >  {
-> > -     return task->stack;
-> > +     return task->stack + STACK_GUARD_SIZE;
-> >  }
-> >
-> >  #define setup_thread_stack(new,old)  do { } while(0)
-> >
-> >  static inline unsigned long *end_of_stack(const struct task_struct *task)
-> >  {
-> > -     return task->stack;
-> > +     return task->stack + STACK_GUARD_SIZE;
-> >  }
-> >
-> >  #elif !defined(__HAVE_THREAD_FUNCTIONS)
-> > diff --git a/kernel/fork.c b/kernel/fork.c
-> > index d8ae0f1b4148..22033b03f7da 100644
-> > --- a/kernel/fork.c
-> > +++ b/kernel/fork.c
-> > @@ -94,6 +94,7 @@
-> >  #include <linux/livepatch.h>
-> >  #include <linux/thread_info.h>
-> >  #include <linux/stackleak.h>
-> > +#include <linux/set_memory.h>
-> >
-> >  #include <asm/pgtable.h>
-> >  #include <asm/pgalloc.h>
-> > @@ -249,6 +250,14 @@ static unsigned long *alloc_thread_stack_node(struct task_struct *tsk, int node)
-> >                                            THREAD_SIZE_ORDER);
-> >
-> >       if (likely(page)) {
-> > +             if (IS_ENABLED(CONFIG_STACK_GUARD_PAGE)) {
-> > +                     /*
-> > +                      * Best effort: do not flush TLB to avoid the overhead
-> > +                      * of flushing all TLBs.
-> > +                      */
-> > +                     set_direct_map_invalid_noflush(page);
-> > +             }
-> > +
-> >               tsk->stack = page_address(page);
-> >               return tsk->stack;
-> >       }
-> > @@ -258,6 +267,7 @@ static unsigned long *alloc_thread_stack_node(struct task_struct *tsk, int node)
-> >
-> >  static inline void free_thread_stack(struct task_struct *tsk)
-> >  {
-> > +     struct page* stack_page;
-> >  #ifdef CONFIG_VMAP_STACK
-> >       struct vm_struct *vm = task_stack_vm_area(tsk);
-> >
-> > @@ -285,7 +295,17 @@ static inline void free_thread_stack(struct task_struct *tsk)
-> >       }
-> >  #endif
-> >
-> > -     __free_pages(virt_to_page(tsk->stack), THREAD_SIZE_ORDER);
-> > +     stack_page = virt_to_page(tsk->stack);
-> > +
-> > +     if (IS_ENABLED(CONFIG_STACK_GUARD_PAGE)) {
-> > +             /*
-> > +              * Avoid flushing TLBs, and instead rely on spurious fault
-> > +              * detection of stale TLBs.
-> > +              */
-> > +             set_direct_map_default_noflush(stack_page);
-> > +     }
-> > +
-> > +     __free_pages(stack_page, THREAD_SIZE_ORDER);
-> >  }
-> >  # else
-> >  static struct kmem_cache *thread_stack_cache;
-> > --
-> > 2.22.0.657.g960e92d24f-goog
-> >
+SGVsbG8gTWFyYywNCg0KT24gNy8yNC8xOSAxMDoyNiBBTSwgTWFyYyBLbGVpbmUtQnVkZGUgd3Jv
+dGU6DQo+IE9uIDQvMjkvMTkgMjowMyBQTSwgSmVyb2VuIEhvZnN0ZWUgd3JvdGU6DQo+PiBBcyBh
+bHJlYWR5IG1lbnRpb25lZCBpbiBbMV0gYW5kIGluY2x1ZGVkIGluIFsyXSwgdGhlcmUgaXMgYW4g
+b2ZmIGJ5IG9uZQ0KPj4gaXNzdWUgc2luY2UgdGhlIGhpZ2ggYmFuayBpcyBhbHJlYWR5IGVuYWJs
+ZWQgd2hlbiB0aGUgX25leHRfIG1haWxib3ggdG8NCj4+IGJlIHJlYWQgaGFzIGluZGV4IDEyLCBz
+byB0aGUgbWFpbGJveCBiZWluZyByZWFkIHdhcyAxMy4gVGhlIG1lc3NhZ2UgY2FuDQo+PiB0aGVy
+ZWZvcmUgZ28gaW50byBtYWlsYm94IDMxIGFuZCB0aGUgZHJpdmVyIHdpbGwgYmUgcmVwb2xsZWQg
+dW50aWwgdGhlDQo+PiBtYWlsYm94IDEyIGV2ZW50dWFsbHkgcmVjZWl2ZXMgYSBtc2cuIE9yIHRo
+ZSBtZXNzYWdlIG1pZ2h0IGVuZCB1cCBpbiB0aGUNCj4+IDEydGggbWFpbGJveCwgYnV0IHRoZW4g
+aXQgd291bGQgYmVjb21lIGRpc2FibGVkIGFmdGVyIHJlYWRpbmcgaXQgYW5kIG9ubHkNCj4+IGJl
+IGVuYWJsZWQgYWdhaW4gaW4gdGhlIG5leHQgInJvdW5kIiBhZnRlciBtYWlsYm94IDEzIHdhcyBy
+ZWFkLCB3aGljaCBjYW4NCj4+IGNhdXNlIG91dCBvZiBvcmRlciBtZXNzYWdlcywgc2luY2UgdGhl
+IGxvd2VyIHByaW9yaXR5IG1haWxib3hlcyBjYW4NCj4+IGFjY2VwdCBtZXNzYWdlcyBpbiB0aGUg
+bWVhbnRpbWUuDQo+Pg0KPj4gQXMgbWVudGlvbmVkIGluIFszXSB0aGVyZSBpcyBhIGhhcmR3YXJl
+IHJhY2UgY29uZGl0aW9uIHdoZW4gY2hhbmdpbmcgdGhlDQo+PiBDQU5NRSByZWdpc3RlciB3aGls
+ZSBtZXNzYWdlcyBhcmUgYmVpbmcgcmVjZWl2ZWQuIEV2ZW4gd2hlbiBpbmNsdWRpbmcgYQ0KPj4g
+YnVzeSBwb2xsIG9uIHJlY2VwdGlvbiwgbGlrZSBpbiBbMl0gdGhlcmUgYXJlIHN0aWxsIG92ZXJm
+bG93cyBhbmQgb3V0IG9mDQo+PiBvcmRlciBtZXNzYWdlcyBhdCB0aW1lcywgYnV0IGxlc3MgdGhl
+biB3aXRob3V0IHRoZSBidXN5IGxvb3AgcG9sbGluZy4NCj4+IFVubGlrZSB3aGF0IHRoZSBwYXRj
+aCBzdWdnZXN0cywgdGhlIHBvbGxpbmcgdGltZSBpcyBub3QgaW4gdGhlIG1pY3Jvc2Vjb25kDQo+
+PiByYW5nZSwgYnV0IHRha2VzIGFzIGxvbmcgYXMgYSBjdXJyZW50IENBTiBidXMgcmVjZXB0aW9u
+IG5lZWRzIHRvIGZpbmlzaCwNCj4+IHNvIHR5cGljYWxseSBtb3JlIGluIHRoZSBmcmFjdGlvbiBv
+ZiBtaWxsaXNlY29uZCByYW5nZS4gU2luY2UgdGhlIHRpbWVvdXQNCj4+IGlzIGluIGppZmZpZXMg
+aXQgd29uJ3QgdGltZW91dC4NCj4+DQo+PiBFdmVuIHdpdGggdGhlc2UgYWRkaXRpb25hbCBmaXhl
+cyB0aGUgZHJpdmVyIGlzIHN0aWxsIG5vdCBhYmxlIHRvIHByb3ZpZGUgYQ0KPj4gcHJvcGVyIEZJ
+Rk8gd2hpY2ggZG9lc24ndCBkcm9wIHBhY2thZ2VzLiBTbyBjaGFuZ2UgdGhlIGRyaXZlciB0byB1
+c2UNCj4+IHJ4LW9mZmxvYWQgYW5kIGJhc2Ugb3JkZXIgb24gdGltZXN0YW1wIGluc3RlYWQgb2Yg
+bWVzc2FnZSBib3ggbnVtYmVycy4gQXMNCj4+IGEgc2lkZSBhZmZlY3QsIHRoaXMgYWxzbyBmaXhl
+cyBbNF0gYW5kIFs1XS4NCj4+DQo+PiBCZWZvcmUgdGhpcyBjaGFuZ2UgbWVzc2FnZXMgd2l0aCBh
+IHNpbmdsZSBieXRlIGNvdW50ZXIgd2VyZSBkcm9wcGVkIC8NCj4+IHJlY2VpdmVkIG91dCBvZiBv
+cmRlciBhdCBhIGJpdHJhdGUgb2YgMjUwa2JpdC9zIG9uIGFuIGFtMzUxNy4gV2l0aCB0aGlzDQo+
+PiBwYXRjaCB0aGF0IG5vIGxvbmdlciBvY2N1cnMgdXAgdG8gYW5kIGluY2x1ZGluZyAxTWJpdC9z
+Lg0KPj4NCj4+IFsxXSBodHRwczovL2xpbnV4LWNhbi52Z2VyLmtlcm5lbC5uYXJraXZlLmNvbS96
+Z085aW5WaS9wYXRjaC1jYW4tdGktaGVjYy1maXgtcngtd3Jvbmctc2VxdWVuY2UtaXNzdWUjcG9z
+dDYNCj4+IFsyXSBodHRwOi8vYXJhZ28tcHJvamVjdC5vcmcvZ2l0L3Byb2plY3RzLz9wPWxpbnV4
+LW9tYXAzLmdpdDthPWNvbW1pdDtoPTAyMzQ2ODkyNzc3ZjA3MjQ1ZGU0ZDVhZjY5MjUxM2ViZDg1
+MmRjYjINCj4+IFszXSBodHRwczovL2xpbnV4LWNhbi52Z2VyLmtlcm5lbC5uYXJraXZlLmNvbS96
+Z085aW5WaS9wYXRjaC1jYW4tdGktaGVjYy1maXgtcngtd3Jvbmctc2VxdWVuY2UtaXNzdWUjcG9z
+dDUNCj4+IFs0XSBodHRwczovL3BhdGNod29yay5vemxhYnMub3JnL3BhdGNoLzg5NTk1Ni8NCj4+
+IFs1XSBodHRwczovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9uZXRkZXYvbXNnNDk0OTcxLmh0bWwN
+Cj4+DQo+PiBDYzogQW5hbnQgR29sZSA8YW5hbnRnb2xlQHRpLmNvbT4NCj4+IENjOiBBbmlsS3Vt
+YXIgQ2ggPGFuaWxrdW1hckB0aS5jb20+DQo+PiBTaWduZWQtb2ZmLWJ5OiBKZXJvZW4gSG9mc3Rl
+ZSA8amhvZnN0ZWVAdmljdHJvbmVuZXJneS5jb20+DQo+PiAtLS0NCj4+ICAgZHJpdmVycy9uZXQv
+Y2FuL3RpX2hlY2MuYyB8IDE4OSArKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tDQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCA1MyBpbnNlcnRpb25zKCspLCAxMzYgZGVs
+ZXRpb25zKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2Nhbi90aV9oZWNjLmMg
+Yi9kcml2ZXJzL25ldC9jYW4vdGlfaGVjYy5jDQo+PiBpbmRleCBkYjZlYTkzLi5mZTdmZmZmIDEw
+MDY0NA0KPj4gLS0tIGEvZHJpdmVycy9uZXQvY2FuL3RpX2hlY2MuYw0KPj4gKysrIGIvZHJpdmVy
+cy9uZXQvY2FuL3RpX2hlY2MuYw0KPj4gQEAgLTUsNiArNSw3IEBADQo+PiAgICAqIHNwZWNzIGZv
+ciB0aGUgc2FtZSBpcyBhdmFpbGFibGUgYXQgPGh0dHA6Ly93d3cudGkuY29tPg0KPj4gICAgKg0K
+Pj4gICAgKiBDb3B5cmlnaHQgKEMpIDIwMDkgVGV4YXMgSW5zdHJ1bWVudHMgSW5jb3Jwb3JhdGVk
+IC0gaHR0cDovL3d3dy50aS5jb20vDQo+PiArICogQ29weXJpZ2h0IChDKSAyMDE5IEplcm9lbiBI
+b2ZzdGVlIDxqaG9mc3RlZUB2aWN0cm9uZW5lcmd5LmNvbT4NCj4+ICAgICoNCj4+ICAgICogVGhp
+cyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlIGl0IGFuZC9v
+cg0KPj4gICAgKiBtb2RpZnkgaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2VuZXJhbCBQ
+dWJsaWMgTGljZW5zZSBhcw0KPj4gQEAgLTM0LDYgKzM1LDcgQEANCj4+ICAgI2luY2x1ZGUgPGxp
+bnV4L2Nhbi9kZXYuaD4NCj4+ICAgI2luY2x1ZGUgPGxpbnV4L2Nhbi9lcnJvci5oPg0KPj4gICAj
+aW5jbHVkZSA8bGludXgvY2FuL2xlZC5oPg0KPj4gKyNpbmNsdWRlIDxsaW51eC9jYW4vcngtb2Zm
+bG9hZC5oPg0KPj4gICANCj4+ICAgI2RlZmluZSBEUlZfTkFNRSAidGlfaGVjYyINCj4+ICAgI2Rl
+ZmluZSBIRUNDX01PRFVMRV9WRVJTSU9OICAgICAiMC43Ig0KPj4gQEAgLTYzLDI5ICs2NSwxNiBA
+QCBNT0RVTEVfVkVSU0lPTihIRUNDX01PRFVMRV9WRVJTSU9OKTsNCj4+ICAgI2RlZmluZSBIRUND
+X1RYX1BSSU9fTUFTSwkoTUFYX1RYX1BSSU8gPDwgSEVDQ19NQl9UWF9TSElGVCkNCj4+ICAgI2Rl
+ZmluZSBIRUNDX1RYX01CX01BU0sJCShIRUNDX01BWF9UWF9NQk9YIC0gMSkNCj4+ICAgI2RlZmlu
+ZSBIRUNDX1RYX01BU0sJCSgoSEVDQ19NQVhfVFhfTUJPWCAtIDEpIHwgSEVDQ19UWF9QUklPX01B
+U0spDQo+PiAtI2RlZmluZSBIRUNDX1RYX01CT1hfTUFTSwkofihCSVQoSEVDQ19NQVhfVFhfTUJP
+WCkgLSAxKSkNCj4+IC0jZGVmaW5lIEhFQ0NfREVGX05BUElfV0VJR0hUCUhFQ0NfTUFYX1JYX01C
+T1gNCj4+ICAgDQo+PiAgIC8qDQo+PiAtICogSW1wb3J0YW50IE5vdGU6IFJYIG1haWxib3ggY29u
+ZmlndXJhdGlvbg0KPj4gLSAqIFJYIG1haWxib3hlcyBhcmUgZnVydGhlciBsb2dpY2FsbHkgc3Bs
+aXQgaW50byB0d28gLSBtYWluIGFuZCBidWZmZXINCj4+IC0gKiBtYWlsYm94ZXMuIFRoZSBnb2Fs
+IGlzIHRvIGdldCBhbGwgcGFja2V0cyBpbnRvIG1haW4gbWFpbGJveGVzIGFzDQo+PiAtICogZHJp
+dmVuIGJ5IG1haWxib3ggbnVtYmVyIGFuZCByZWNlaXZlIHByaW9yaXR5IChoaWdoZXIgdG8gbG93
+ZXIpIGFuZA0KPj4gLSAqIGJ1ZmZlciBtYWlsYm94ZXMgYXJlIHVzZWQgdG8gcmVjZWl2ZSBwa3Rz
+IHdoaWxlIG1haW4gbWFpbGJveGVzIGFyZSBiZWluZw0KPj4gLSAqIHByb2Nlc3NlZC4gVGhpcyBl
+bnN1cmVzIGluLW9yZGVyIHBhY2tldCByZWNlcHRpb24uDQo+PiAtICoNCj4+IC0gKiBIZXJlIGFy
+ZSB0aGUgcmVjb21tZW5kZWQgdmFsdWVzIGZvciBidWZmZXIgbWFpbGJveC4gTm90ZSB0aGF0IFJY
+IG1haWxib3hlcw0KPj4gLSAqIHN0YXJ0IGFmdGVyIFRYIG1haWxib3hlczoNCj4+IC0gKg0KPj4g
+LSAqIEhFQ0NfTUFYX1JYX01CT1gJCUhFQ0NfUlhfQlVGRkVSX01CT1gJTm8gb2YgYnVmZmVyIG1h
+aWxib3hlcw0KPj4gLSAqIDI4CQkJCTEyCQkJOA0KPj4gLSAqIDE2CQkJCTIwCQkJNA0KPj4gKyAq
+IFJYIG1haWxib3ggY29uZmlndXJhdGlvbg0KPj4gKyAqIFRoZSByZW1haW5pbmcgbWFpbGJveGVz
+IGFyZSB1c2VkIGZvciByZWNlcHRpb24gYW5kIGFyZSBkZWxpdmVyZWQgYmFzZWQgb24NCj4+ICsg
+KiB0aGVpciB0aW1lc3RhbXAsIHRvIGF2b2lkIGEgaGFyZHdhcmUgcmFjZSB3aGVuIENBTk1FIGlz
+IGNoYW5nZWQgd2hpbGUNCj4+ICsgKiBDQU4tYnVzIHRyYWZmaXggaXMgYmVpbmcgcmVjZWl2ZWQu
+DQo+PiAgICAqLw0KPj4gICANCj4+ICAgI2RlZmluZSBIRUNDX01BWF9SWF9NQk9YCShIRUNDX01B
+WF9NQUlMQk9YRVMgLSBIRUNDX01BWF9UWF9NQk9YKQ0KPj4gLSNkZWZpbmUgSEVDQ19SWF9CVUZG
+RVJfTUJPWAkxMiAvKiBhcyBwZXIgdGFibGUgYWJvdmUgKi8NCj4+ICAgI2RlZmluZSBIRUNDX1JY
+X0ZJUlNUX01CT1gJKEhFQ0NfTUFYX01BSUxCT1hFUyAtIDEpDQo+PiAtI2RlZmluZSBIRUNDX1JY
+X0hJR0hfTUJPWF9NQVNLCSh+KEJJVChIRUNDX1JYX0JVRkZFUl9NQk9YKSAtIDEpKQ0KPj4gICAN
+Cj4+ICAgLyogVEkgSEVDQyBtb2R1bGUgcmVnaXN0ZXJzICovDQo+PiAgICNkZWZpbmUgSEVDQ19D
+QU5NRQkJMHgwCS8qIE1haWxib3ggZW5hYmxlICovDQo+PiBAQCAtMTIzLDYgKzExMiw4IEBAIE1P
+RFVMRV9WRVJTSU9OKEhFQ0NfTU9EVUxFX1ZFUlNJT04pOw0KPj4gICAjZGVmaW5lIEhFQ0NfQ0FO
+TURMCQkweDgNCj4+ICAgI2RlZmluZSBIRUNDX0NBTk1ESAkJMHhDDQo+PiAgIA0KPj4gKyNkZWZp
+bmUgSEVDQ19DQU5NT1RTCQkweDEwMA0KPiBJdCdzIGFjdHVhbGx5IDB4ODANCj4NCj4+ICsNCj4+
+ICAgI2RlZmluZSBIRUNDX1NFVF9SRUcJCTB4RkZGRkZGRkYNCj4+ICAgI2RlZmluZSBIRUNDX0NB
+TklEX01BU0sJCTB4M0ZGCS8qIDE4IGJpdHMgbWFzayBmb3IgZXh0ZW5kZWQgaWQncyAqLw0KPj4g
+ICAjZGVmaW5lIEhFQ0NfQ0NFX1dBSVRfQ09VTlQgICAgIDEwMAkvKiBXYWl0IGZvciB+MSBzZWMg
+Zm9yIENDRSBiaXQgKi8NCj4+IEBAIC0xOTMsNyArMTg0LDcgQEAgc3RhdGljIGNvbnN0IHN0cnVj
+dCBjYW5fYml0dGltaW5nX2NvbnN0IHRpX2hlY2NfYml0dGltaW5nX2NvbnN0ID0gew0KPj4gICAN
+Cj4+ICAgc3RydWN0IHRpX2hlY2NfcHJpdiB7DQo+PiAgIAlzdHJ1Y3QgY2FuX3ByaXYgY2FuOwkv
+KiBNVVNUIGJlIGZpcnN0IG1lbWJlci9maWVsZCAqLw0KPj4gLQlzdHJ1Y3QgbmFwaV9zdHJ1Y3Qg
+bmFwaTsNCj4+ICsJc3RydWN0IGNhbl9yeF9vZmZsb2FkIG9mZmxvYWQ7DQo+PiAgIAlzdHJ1Y3Qg
+bmV0X2RldmljZSAqbmRldjsNCj4+ICAgCXN0cnVjdCBjbGsgKmNsazsNCj4+ICAgCXZvaWQgX19p
+b21lbSAqYmFzZTsNCj4+IEBAIC0yMDMsNyArMTk0LDYgQEAgc3RydWN0IHRpX2hlY2NfcHJpdiB7
+DQo+PiAgIAlzcGlubG9ja190IG1ieF9sb2NrOyAvKiBDQU5NRSByZWdpc3RlciBuZWVkcyBwcm90
+ZWN0aW9uICovDQo+PiAgIAl1MzIgdHhfaGVhZDsNCj4+ICAgCXUzMiB0eF90YWlsOw0KPj4gLQl1
+MzIgcnhfbmV4dDsNCj4+ICAgCXN0cnVjdCByZWd1bGF0b3IgKnJlZ194Y2VpdmVyOw0KPj4gICB9
+Ow0KPj4gICANCj4+IEBAIC0yNjUsNiArMjU1LDExIEBAIHN0YXRpYyBpbmxpbmUgdTMyIGhlY2Nf
+Z2V0X2JpdChzdHJ1Y3QgdGlfaGVjY19wcml2ICpwcml2LCBpbnQgcmVnLCB1MzIgYml0X21hc2sp
+DQo+PiAgIAlyZXR1cm4gKGhlY2NfcmVhZChwcml2LCByZWcpICYgYml0X21hc2spID8gMSA6IDA7
+DQo+PiAgIH0NCj4+ICAgDQo+PiArc3RhdGljIGlubGluZSB1MzIgaGVjY19yZWFkX3N0YW1wKHN0
+cnVjdCB0aV9oZWNjX3ByaXYgKnByaXYsIHUzMiBtYnhubykNCj4+ICt7DQo+PiArCXJldHVybiBf
+X3Jhd19yZWFkbChwcml2LT5oZWNjX3JhbSArIDB4ODAgKyA0ICogbWJ4bm8pOw0KPiBJJ3ZlIGNo
+YW5nZWQgdGhpcyBmdW5jdGlvbiB0byB1c2UgSEVDQ19DQU5NT1RTLg0KPg0KDQpUaGF0IGlzIGNv
+cnJlY3QuIEZvciBjb21wbGV0ZW5lc3MgdGhlIEhFQ0NfQ0FOTU9UUyB3YXNuJ3QNCmV2ZW4gdXNl
+ZCBpbiB0aGUgb3JpZ2luYWwgcGF0Y2gsIHNvIHRoZXJlIGlzIG5vIGZ1bmN0aW9uYWwgZGlmZmVy
+ZW5jZS4NCg0KVGhhbmtzLA0KDQpKZXJvZW4NCg0KDQo=
