@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F0457391F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:37:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D60FF7392B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:37:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389132AbfGXThH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:37:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37060 "EHLO mail.kernel.org"
+        id S2389472AbfGXThb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:37:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726298AbfGXThG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:37:06 -0400
+        id S2389050AbfGXTh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:37:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8081B21873;
-        Wed, 24 Jul 2019 19:37:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FF6E214AF;
+        Wed, 24 Jul 2019 19:37:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997025;
-        bh=i4iMC2HiM7ZuKWoLUuWdkdM6DFGBX4uCqEqwHSAD19c=;
+        s=default; t=1563997045;
+        bh=VxdikZ9i7vR1FMjtOTnb3t5AZ9fGaTGau7hEAMZ9wwE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oTrOTvxxKjdQ7pYLI2LLe4LfDxbhyrv59PekjsUBF2+511Py5+W0w/AHdvxVx5mBH
-         lNM4rM7AAR/QAOp+Lzahvk6TOGIBsKKuw9RzZuJqPVDeKS+05W1SQZ/LpsjGBt69vj
-         1zLVML9Ac2WN9pueDUANCn3xpK9VnkBNrDFuXFTg=
+        b=EANvVDM/QzGoI3L8xobex4JdtwZmeqRP3UlNuTf5tkzyC515HqqW2+03701HIK9aX
+         UZ2G9hFBdeqNGox5/v/KKqsau7t1tfZ/tSR1ZdjZHFDSRxeAdp0SvZhwGprG3GlblU
+         m9d0By/lcboGvoBzNmRZuVRpLFCyiuaNY9QkHT48=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oren Givon <oren.givon@intel.com>,
-        Luciano Coelho <luciano.coelho@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.2 294/413] iwlwifi: add support for hr1 RF ID
-Date:   Wed, 24 Jul 2019 21:19:45 +0200
-Message-Id: <20190724191757.170286760@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>
+Subject: [PATCH 5.2 296/413] iwlwifi: pcie: fix ALIVE interrupt handling for gen2 devices w/o MSI-X
+Date:   Wed, 24 Jul 2019 21:19:47 +0200
+Message-Id: <20190724191757.264601238@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -44,51 +44,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oren Givon <oren.givon@intel.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-commit 498d3eb5bfbb2e05e40005152976a7b9eadfb59c upstream.
+commit ec46ae30245ecb41d73f8254613db07c653fb498 upstream.
 
-The 22000 series FW that was meant to be used with hr is
-also the FW that is used for hr1 and has a different RF ID.
-Add support to load the hr FW when hr1 RF ID is detected.
+We added code to restock the buffer upon ALIVE interrupt
+when MSI-X is disabled. This was added as part of the context
+info code. This code was added only if the ISR debug level
+is set which is very unlikely to be related.
+Move this code to run even when the ISR debug level is not
+set.
 
-Cc: stable@vger.kernel.org # 5.1+
-Signed-off-by: Oren Givon <oren.givon@intel.com>
-Signed-off-by: Luciano Coelho <luciano.coelho@intel.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Note that gen2 devices work with MSI-X in most cases so that
+this path is seldom used.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/iwl-csr.h    |    1 +
- drivers/net/wireless/intel/iwlwifi/pcie/trans.c |    8 +++++---
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/pcie/rx.c |   34 ++++++++++++---------------
+ 1 file changed, 16 insertions(+), 18 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/iwl-csr.h
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-csr.h
-@@ -336,6 +336,7 @@ enum {
- /* RF_ID value */
- #define CSR_HW_RF_ID_TYPE_JF		(0x00105100)
- #define CSR_HW_RF_ID_TYPE_HR		(0x0010A000)
-+#define CSR_HW_RF_ID_TYPE_HR1		(0x0010c100)
- #define CSR_HW_RF_ID_TYPE_HRCDB		(0x00109F00)
- #define CSR_HW_RF_ID_TYPE_GF		(0x0010D000)
- #define CSR_HW_RF_ID_TYPE_GF4		(0x0010E000)
---- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-@@ -3575,9 +3575,11 @@ struct iwl_trans *iwl_trans_pcie_alloc(s
- 			trans->cfg = &iwlax210_2ax_cfg_so_gf4_a0;
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
+@@ -1827,25 +1827,23 @@ irqreturn_t iwl_pcie_irq_handler(int irq
+ 		goto out;
+ 	}
+ 
+-	if (iwl_have_debug_level(IWL_DL_ISR)) {
+-		/* NIC fires this, but we don't use it, redundant with WAKEUP */
+-		if (inta & CSR_INT_BIT_SCD) {
+-			IWL_DEBUG_ISR(trans,
+-				      "Scheduler finished to transmit the frame/frames.\n");
+-			isr_stats->sch++;
+-		}
++	/* NIC fires this, but we don't use it, redundant with WAKEUP */
++	if (inta & CSR_INT_BIT_SCD) {
++		IWL_DEBUG_ISR(trans,
++			      "Scheduler finished to transmit the frame/frames.\n");
++		isr_stats->sch++;
++	}
+ 
+-		/* Alive notification via Rx interrupt will do the real work */
+-		if (inta & CSR_INT_BIT_ALIVE) {
+-			IWL_DEBUG_ISR(trans, "Alive interrupt\n");
+-			isr_stats->alive++;
+-			if (trans->cfg->gen2) {
+-				/*
+-				 * We can restock, since firmware configured
+-				 * the RFH
+-				 */
+-				iwl_pcie_rxmq_restock(trans, trans_pcie->rxq);
+-			}
++	/* Alive notification via Rx interrupt will do the real work */
++	if (inta & CSR_INT_BIT_ALIVE) {
++		IWL_DEBUG_ISR(trans, "Alive interrupt\n");
++		isr_stats->alive++;
++		if (trans->cfg->gen2) {
++			/*
++			 * We can restock, since firmware configured
++			 * the RFH
++			 */
++			iwl_pcie_rxmq_restock(trans, trans_pcie->rxq);
  		}
- 	} else if (cfg == &iwl_ax101_cfg_qu_hr) {
--		if (CSR_HW_RF_ID_TYPE_CHIP_ID(trans->hw_rf_id) ==
--		    CSR_HW_RF_ID_TYPE_CHIP_ID(CSR_HW_RF_ID_TYPE_HR) &&
--		    trans->hw_rev == CSR_HW_REV_TYPE_QNJ_B0) {
-+		if ((CSR_HW_RF_ID_TYPE_CHIP_ID(trans->hw_rf_id) ==
-+		     CSR_HW_RF_ID_TYPE_CHIP_ID(CSR_HW_RF_ID_TYPE_HR) &&
-+		     trans->hw_rev == CSR_HW_REV_TYPE_QNJ_B0) ||
-+		    (CSR_HW_RF_ID_TYPE_CHIP_ID(trans->hw_rf_id) ==
-+		     CSR_HW_RF_ID_TYPE_CHIP_ID(CSR_HW_RF_ID_TYPE_HR1))) {
- 			trans->cfg = &iwl22000_2ax_cfg_qnj_hr_b0;
- 		} else if (CSR_HW_RF_ID_TYPE_CHIP_ID(trans->hw_rf_id) ==
- 		    CSR_HW_RF_ID_TYPE_CHIP_ID(CSR_HW_RF_ID_TYPE_HR)) {
+ 	}
+ 
 
 
