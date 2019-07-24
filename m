@@ -2,74 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 598C972575
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 05:41:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F379172580
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 05:48:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726379AbfGXDlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 23:41:36 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:44548 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725888AbfGXDlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 23:41:36 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id EFDCE8128F21CF914753;
-        Wed, 24 Jul 2019 11:41:34 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Wed, 24 Jul 2019
- 11:41:24 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <oulijun@huawei.com>, <xavier.huwei@huawei.com>,
-        <dledford@redhat.com>, <jgg@ziepe.ca>, <leon@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v2] RDMA/hns: Fix build error for hip08
-Date:   Wed, 24 Jul 2019 11:40:16 +0800
-Message-ID: <20190724034016.15048-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20190723024908.11876-1-yuehaibing@huawei.com>
-References: <20190723024908.11876-1-yuehaibing@huawei.com>
+        id S1726486AbfGXDsy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 23:48:54 -0400
+Received: from mm1.mcn.org ([216.150.240.85]:59864 "EHLO mailbe.mcn.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726024AbfGXDsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 23:48:54 -0400
+X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Tue, 23 Jul 2019 23:48:54 EDT
+Received: (qmail 6297 invoked from network); 24 Jul 2019 03:42:13 -0000
+Received: from 63.0.134.39.8.furtherreach.net (HELO [192.168.1.125]) (joego@mcn.org@8.39.134.63)
+        by mailbe.mcn.org with (AES128-SHA encrypted) SMTP
+        (0558837a-adc5-11e9-92c7-00505681b3bc); Tue, 23 Jul 2019 20:42:13 -0700
+Subject: Re: Reminder: 3 open syzbot bugs in "net/ax25" subsystem
+To:     linux-hams@vger.kernel.org, netdev@vger.kernel.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20190724024049.GC643@sol.localdomain>
+From:   Joe <joego@mcn.org>
+Message-ID: <623ff230-5883-560c-22d0-3e6b0eeaba39@mcn.org>
+Date:   Tue, 23 Jul 2019 20:42:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190724024049.GC643@sol.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-MagicMail-OS: Unknown
+X-MagicMail-UUID: 0558837a-adc5-11e9-92c7-00505681b3bc
+X-MagicMail-Authenticated: joego@mcn.org
+X-MagicMail-SourceIP: 8.39.134.63
+X-MagicMail-RegexMatch: 2
+X-MagicMail-EnvelopeFrom: <joego@mcn.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If INFINIBAND_HNS_HIP08 is selected and HNS3 is m,
-but INFINIBAND_HNS is y, building fails:
+Hi Eric, How do I get off of this thread? When I try to unsubscribe it 
+tells me I'm not a member of the group.
 
-drivers/infiniband/hw/hns/hns_roce_hw_v2.o: In function `hns_roce_hw_v2_exit':
-hns_roce_hw_v2.c:(.exit.text+0xd): undefined reference to `hnae3_unregister_client'
-drivers/infiniband/hw/hns/hns_roce_hw_v2.o: In function `hns_roce_hw_v2_init':
-hns_roce_hw_v2.c:(.init.text+0xd): undefined reference to `hnae3_register_client'
+Thanks in advance,
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Suggested-by: Leon Romanovsky <leon@kernel.org>
-Fixes: dd74282df573 ("RDMA/hns: Initialize the PCI device for hip08 RoCE")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
-v2: select HNS3 to fix this
----
- drivers/infiniband/hw/hns/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Joe G.
 
-diff --git a/drivers/infiniband/hw/hns/Kconfig b/drivers/infiniband/hw/hns/Kconfig
-index 8bf847b..b9dfac0 100644
---- a/drivers/infiniband/hw/hns/Kconfig
-+++ b/drivers/infiniband/hw/hns/Kconfig
-@@ -22,7 +22,8 @@ config INFINIBAND_HNS_HIP06
- 
- config INFINIBAND_HNS_HIP08
- 	bool "Hisilicon Hip08 Family RoCE support"
--	depends on INFINIBAND_HNS && PCI && HNS3
-+	depends on INFINIBAND_HNS && PCI
-+	select HNS3
- 	---help---
- 	  RoCE driver support for Hisilicon RoCE engine in Hisilicon Hip08 SoC.
- 	  The RoCE engine is a PCI device.
--- 
-2.7.4
-
-
+On 7/23/19 7:40 PM, Eric Biggers wrote:
+> [This email was generated by a script.  Let me know if you have any suggestions
+> to make it better, or if you want it re-generated with the latest status.]
+>
+> Of the currently open syzbot reports against the upstream kernel, I've manually
+> marked 3 of them as possibly being bugs in the "net/ax25" subsystem.  I've
+> listed these reports below, sorted by an algorithm that tries to list first the
+> reports most likely to be still valid, important, and actionable.
+>
+> If you believe a bug is no longer valid, please close the syzbot report by
+> sending a '#syz fix', '#syz dup', or '#syz invalid' command in reply to the
+> original thread, as explained at https://goo.gl/tpsmEJ#status
+>
+> If you believe I misattributed a bug to the "net/ax25" subsystem, please let me
+> know, and if possible forward the report to the correct people or mailing list.
+>
+> Here are the bugs:
+>
+> --------------------------------------------------------------------------------
+> Title:              general protection fault in ax25_send_frame
+> Last occurred:      0 days ago
+> Reported:           204 days ago
+> Branches:           Mainline and others
+> Dashboard link:     https://syzkaller.appspot.com/bug?id=1cdd5b120f129364fc8e9b2b027826cf99fa696e
+> Original thread:    https://lkml.kernel.org/lkml/0000000000009ea37c057e58d787@google.com/T/#u
+>
+> Unfortunately, this bug does not have a reproducer.
+>
+> No one replied to the original thread for this bug.
+>
+> If you fix this bug, please add the following tag to the commit:
+>      Reported-by: syzbot+e0b81535a27b8be39502@syzkaller.appspotmail.com
+>
+> If you send any email or patch for this bug, please consider replying to the
+> original thread.  For the git send-email command to use, or tips on how to reply
+> if the thread isn't in your mailbox, see the "Reply instructions" at
+> https://lkml.kernel.org/r/0000000000009ea37c057e58d787@google.com
+>
+> --------------------------------------------------------------------------------
+> Title:              KASAN: stack-out-of-bounds Write in ax25_getname
+> Last occurred:      90 days ago
+> Reported:           206 days ago
+> Branches:           Mainline and others
+> Dashboard link:     https://syzkaller.appspot.com/bug?id=fb195f91dc044978c1b186f1288b1eff61edcc20
+> Original thread:    https://lkml.kernel.org/lkml/000000000000ed4120057e2df0c6@google.com/T/#u
+>
+> This bug has a syzkaller reproducer only.
+>
+> No one replied to the original thread for this bug.
+>
+> If you fix this bug, please add the following tag to the commit:
+>      Reported-by: syzbot+6a29097222b4d3b8617c@syzkaller.appspotmail.com
+>
+> If you send any email or patch for this bug, please consider replying to the
+> original thread.  For the git send-email command to use, or tips on how to reply
+> if the thread isn't in your mailbox, see the "Reply instructions" at
+> https://lkml.kernel.org/r/000000000000ed4120057e2df0c6@google.com
+>
+> --------------------------------------------------------------------------------
+> Title:              inconsistent lock state in ax25_std_heartbeat_expiry
+> Last occurred:      122 days ago
+> Reported:           120 days ago
+> Branches:           net
+> Dashboard link:     https://syzkaller.appspot.com/bug?id=9086a8eac930890b2730d6441093bd478e32913f
+> Original thread:    https://lkml.kernel.org/lkml/0000000000001b07250584efbee3@google.com/T/#u
+>
+> Unfortunately, this bug does not have a reproducer.
+>
+> The original thread for this bug received 2 replies; the last was 119 days ago.
+>
+> If you fix this bug, please add the following tag to the commit:
+>      Reported-by: syzbot+e350b81e95a6a214da8a@syzkaller.appspotmail.com
+>
+> If you send any email or patch for this bug, please consider replying to the
+> original thread.  For the git send-email command to use, or tips on how to reply
+> if the thread isn't in your mailbox, see the "Reply instructions" at
+> https://lkml.kernel.org/r/0000000000001b07250584efbee3@google.com
+>
