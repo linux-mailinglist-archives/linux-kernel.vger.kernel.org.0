@@ -2,85 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F11272AF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 11:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AE4372B01
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 11:02:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726941AbfGXJBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 05:01:17 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:64872 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726824AbfGXJBQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 05:01:16 -0400
-X-UUID: 66cd01796bfa41d598860e4b8dbef898-20190724
-X-UUID: 66cd01796bfa41d598860e4b8dbef898-20190724
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <ryder.lee@kernel.org>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 919272540; Wed, 24 Jul 2019 17:01:03 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 24 Jul 2019 17:01:02 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 24 Jul 2019 17:01:02 +0800
-From:   <ryder.lee@kernel.org>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Weijie Gao <weijie.gao@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH 2/2] dt-bindings: gpu: mali-utgard: add mediatek, mt7623-mali compatible
-Date:   Wed, 24 Jul 2019 17:01:00 +0800
-Message-ID: <efeadefe3895bcadf1d2e9847b82206dd8c7ec35.1563867856.git.ryder.lee@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <af7b5a2e00eb3a4b6262807c378e43afd5f74779.1563867856.git.ryder.lee@mediatek.com>
-References: <af7b5a2e00eb3a4b6262807c378e43afd5f74779.1563867856.git.ryder.lee@mediatek.com>
+        id S1726862AbfGXJCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 05:02:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55758 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726207AbfGXJCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 05:02:09 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id ED048AF59;
+        Wed, 24 Jul 2019 09:02:07 +0000 (UTC)
+Date:   Wed, 24 Jul 2019 11:02:06 +0200
+From:   Jean Delvare <jdelvare@suse.de>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Cooks <acooks@rationali.st>, linux-acpi@vger.kernel.org,
+        platypus-sw@opengear.com, "Tobin C . Harding" <me@tobin.cc>,
+        Will Wagner <willw@carallon.com>
+Subject: Re: [RESEND][PATCH v4 1/3] i2c: piix4: Fix port selection for AMD
+ Family 16h Model 30h
+Message-ID: <20190724110206.3c1ea315@endymion>
+In-Reply-To: <20190724103748.078eab19@endymion>
+References: <cover.1519601860.git.andrew.cooks@opengear.com>
+        <be68c29f603153cf047cd893c6b9d6423073632d.1519601860.git.andrew.cooks@opengear.com>
+        <20190724103748.078eab19@endymion>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+On Wed, 24 Jul 2019 10:37:48 +0200, Jean Delvare wrote:
+> Hi Andrew,
+> 
+> Sorry for the delay... What can I say :(
 
-The MediaTek MT7623 SoC contains a Mali-450, so add a compatible for it
-and define its own vendor-specific properties.
+Unfortunately by now Andrew is gone. So I will be the one rebasing and
+resubmitting this series.
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-index ae63f09fda7d..73021e2dda25 100644
---- a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-+++ b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-@@ -17,6 +17,7 @@ Required properties:
-       + amlogic,meson8b-mali
-       + amlogic,meson-gxbb-mali
-       + amlogic,meson-gxl-mali
-+      + mediatek,mt7623-mali
-       + rockchip,rk3036-mali
-       + rockchip,rk3066-mali
-       + rockchip,rk3188-mali
-@@ -88,6 +89,10 @@ to specify one more vendor-specific compatible, among:
-     Required properties:
-       * resets: phandle to the reset line for the GPU
- 
-+  - mediatek,mt7623-mali
-+     Required properties:
-+      * resets: phandle to the reset line for the GPU
-+
-   - Rockchip variants:
-     Required properties:
-       * resets: phandle to the reset line for the GPU
 -- 
-2.18.0
-
+Jean Delvare
+SUSE L3 Support
