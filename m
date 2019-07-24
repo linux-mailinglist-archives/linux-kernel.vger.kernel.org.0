@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE5E773A31
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:47:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53E9173A32
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:47:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391275AbfGXTri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:47:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54326 "EHLO mail.kernel.org"
+        id S2391286AbfGXTrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:47:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403765AbfGXTre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:47:34 -0400
+        id S2391270AbfGXTri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:47:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E283217D4;
-        Wed, 24 Jul 2019 19:47:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B228214AF;
+        Wed, 24 Jul 2019 19:47:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997653;
-        bh=5D3yfFn+/3+y/J3ySAk8ok97wNIlyjzXzWvzYMdaAGE=;
+        s=default; t=1563997657;
+        bh=AzA4WdxMpZtkrqqrdXJ2IkqzdDsBXqt6CBaqLJbCs7s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G5CuvpAX7z8QN79BzLOXc8oWrYFbSrG/tN0uwSNjIut/j/uvpZIPODl8zi3CGKlvE
-         dAU/Z2fkRMvheHmpkNVqwV5le/ZMynVIkLjQe8UuQKGD+8XxLJ+1RqiazOeddj5LWw
-         UURRjtwGgbZo5Cgf8a/Jvn1m63Wmdt/rN8AdzJFg=
+        b=dIdn8Q9KFCJB0fDlo27TBfKuryjW9C8yhwFTWjgS+S55FHv5RuCaoh0M/DnAdsGQP
+         EK1PNMKMvGDPT0bz88d1UA7FZhR/pyggaEbk6kfK/GEj0b1Dk0QGezArjs2rG3cPVt
+         FFPUvY+x9XfVS096AONesUUinPdEv3v+BpfqfycI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Anirudh Gupta <anirudh.gupta@sophos.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 098/371] blkcg, writeback: dead memcgs shouldnt contribute to writeback ownership arbitration
-Date:   Wed, 24 Jul 2019 21:17:30 +0200
-Message-Id: <20190724191732.210366246@linuxfoundation.org>
+Subject: [PATCH 5.1 099/371] xfrm: fix sa selector validation
+Date:   Wed, 24 Jul 2019 21:17:31 +0200
+Message-Id: <20190724191732.286751896@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -44,52 +46,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6631142229005e1b1c311a09efe9fb3cfdac8559 ]
+[ Upstream commit b8d6d0079757cbd1b69724cfd1c08e2171c68cee ]
 
-wbc_account_io() collects information on cgroup ownership of writeback
-pages to determine which cgroup should own the inode.  Pages can stay
-associated with dead memcgs but we want to avoid attributing IOs to
-dead blkcgs as much as possible as the association is likely to be
-stale.  However, currently, pages associated with dead memcgs
-contribute to the accounting delaying and/or confusing the
-arbitration.
+After commit b38ff4075a80, the following command does not work anymore:
+$ ip xfrm state add src 10.125.0.2 dst 10.125.0.1 proto esp spi 34 reqid 1 \
+  mode tunnel enc 'cbc(aes)' 0xb0abdba8b782ad9d364ec81e3a7d82a1 auth-trunc \
+  'hmac(sha1)' 0xe26609ebd00acb6a4d51fca13e49ea78a72c73e6 96 flag align4
 
-Fix it by ignoring pages associated with dead memcgs.
+In fact, the selector is not mandatory, allow the user to provide an empty
+selector.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: b38ff4075a80 ("xfrm: Fix xfrm sel prefix length validation")
+CC: Anirudh Gupta <anirudh.gupta@sophos.com>
+Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fs-writeback.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ net/xfrm/xfrm_user.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index b16645b417d9..bd9474e82f38 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -714,6 +714,7 @@ void wbc_detach_inode(struct writeback_control *wbc)
- void wbc_account_io(struct writeback_control *wbc, struct page *page,
- 		    size_t bytes)
- {
-+	struct cgroup_subsys_state *css;
- 	int id;
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index ee91f939903e..6abf9625a401 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -166,6 +166,9 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
+ 	}
  
- 	/*
-@@ -725,7 +726,12 @@ void wbc_account_io(struct writeback_control *wbc, struct page *page,
- 	if (!wbc->wb)
- 		return;
- 
--	id = mem_cgroup_css_from_page(page)->id;
-+	css = mem_cgroup_css_from_page(page);
-+	/* dead cgroups shouldn't contribute to inode ownership arbitration */
-+	if (!(css->flags & CSS_ONLINE))
-+		return;
+ 	switch (p->sel.family) {
++	case AF_UNSPEC:
++		break;
 +
-+	id = css->id;
- 
- 	if (id == wbc->wb_id) {
- 		wbc->wb_bytes += bytes;
+ 	case AF_INET:
+ 		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
+ 			goto out;
 -- 
 2.20.1
 
