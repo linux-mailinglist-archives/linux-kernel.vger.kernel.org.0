@@ -2,110 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FF08732FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 17:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64C1C73303
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 17:46:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbfGXPpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 11:45:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59058 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727716AbfGXPpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 11:45:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 79B36AE96;
-        Wed, 24 Jul 2019 15:45:33 +0000 (UTC)
-Date:   Wed, 24 Jul 2019 17:45:32 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v1] mm/memory_hotplug: Remove move_pfn_range()
-Message-ID: <20190724154532.GE5584@dhcp22.suse.cz>
-References: <20190724142324.3686-1-david@redhat.com>
+        id S1728526AbfGXPqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 11:46:39 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:53094 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727680AbfGXPqi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 11:46:38 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6OFk3g0070578;
+        Wed, 24 Jul 2019 10:46:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1563983163;
+        bh=lOtsy9iEeGzWh5ylO4v/a04ehlOrwbMbdn7UL2Ddbrg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=VzLnvQJdtFsU8gh8xZW4og7tS+2gLDEUOpGiPoFQzpyWkyjuKjgzj0Vh2fnuO2eeU
+         91AiiB3Nwjs5rCppmcOgWSZJSm/aGHM+7v5odY7mugVWv05rjXMDQSF+9yVBR4FZOS
+         QNVaFQCsOSQwQaOSYDxuLwyfM8iTvRK1+DHxihl8=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6OFk3jV046078
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 24 Jul 2019 10:46:03 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 24
+ Jul 2019 10:46:03 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 24 Jul 2019 10:46:03 -0500
+Received: from [10.250.86.29] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6OFk2qF032690;
+        Wed, 24 Jul 2019 10:46:02 -0500
+Subject: Re: [PATCH v6 4/5] dma-buf: heaps: Add CMA heap to dmabuf heaps
+To:     Christoph Hellwig <hch@infradead.org>,
+        John Stultz <john.stultz@linaro.org>
+CC:     lkml <linux-kernel@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Liam Mark <lmark@codeaurora.org>,
+        Pratik Patel <pratikp@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Vincent Donnefort <Vincent.Donnefort@arm.com>,
+        Sudipto Paul <Sudipto.Paul@arm.com>,
+        Xu YiPing <xuyiping@hisilicon.com>,
+        "Chenfeng (puck)" <puck.chen@hisilicon.com>,
+        butao <butao@hisilicon.com>,
+        "Xiaqing (A)" <saberlily.xia@hisilicon.com>,
+        Yudongbin <yudongbin@hisilicon.com>,
+        Chenbo Feng <fengc@google.com>,
+        Alistair Strachan <astrachan@google.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+References: <20190624194908.121273-1-john.stultz@linaro.org>
+ <20190624194908.121273-5-john.stultz@linaro.org>
+ <20190718100840.GB19666@infradead.org>
+ <CALAqxLWLx_tHVjZqrSNWfQ_M2RGGqh4qth3hi9GGRdSPov-gcw@mail.gmail.com>
+ <20190724065958.GC16225@infradead.org>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <8e6f8e4f-20fc-1f1f-2228-f4fd7c7c5c1f@ti.com>
+Date:   Wed, 24 Jul 2019 11:46:01 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190724142324.3686-1-david@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190724065958.GC16225@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 24-07-19 16:23:24, David Hildenbrand wrote:
-> Let's remove this indirection. We need the zone in the caller either
-> way, so let's just detect it there. Add some documentation for
-> move_pfn_range_to_zone() instead.
+On 7/24/19 2:59 AM, Christoph Hellwig wrote:
+> On Mon, Jul 22, 2019 at 10:04:06PM -0700, John Stultz wrote:
+>> Apologies, I'm not sure I'm understanding your suggestion here.
+>> dma_alloc_contiguous() does have some interesting optimizations
+>> (avoiding allocating single page from cma), though its focus on
+>> default area vs specific device area doesn't quite match up the usage
+>> model for dma heaps.  Instead of allocating memory for a single
+>> device, we want to be able to allow userland, for a given usage mode,
+>> to be able to allocate a dmabuf from a specific heap of memory which
+>> will satisfy the usage mode for that buffer pipeline (across multiple
+>> devices).
+>>
+>> Now, indeed, the system and cma heaps in this patchset are a bit
+>> simple/trivial (though useful with my devices that require contiguous
+>> buffers for the display driver), but more complex ION heaps have
+>> traditionally stayed out of tree in vendor code, in many cases making
+>> incompatible tweaks to the ION core dmabuf exporter logic.
 > 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  mm/memory_hotplug.c | 23 +++++++----------------
->  1 file changed, 7 insertions(+), 16 deletions(-)
+> So what would the more complicated heaps be?
 > 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index efa5283be36c..e7c3b219a305 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -715,7 +715,11 @@ static void __meminit resize_pgdat_range(struct pglist_data *pgdat, unsigned lon
->  
->  	pgdat->node_spanned_pages = max(start_pfn + nr_pages, old_end_pfn) - pgdat->node_start_pfn;
->  }
-> -
-> +/*
-> + * Associate the pfn range with the given zone, initializing the memmaps
-> + * and resizing the pgdat/zone data to span the added pages. After this
-> + * call, all affected pages are PG_reserved.
-> + */
->  void __ref move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
->  		unsigned long nr_pages, struct vmem_altmap *altmap)
->  {
-> @@ -804,20 +808,6 @@ struct zone * zone_for_pfn_range(int online_type, int nid, unsigned start_pfn,
->  	return default_zone_for_pfn(nid, start_pfn, nr_pages);
->  }
->  
-> -/*
-> - * Associates the given pfn range with the given node and the zone appropriate
-> - * for the given online type.
-> - */
-> -static struct zone * __meminit move_pfn_range(int online_type, int nid,
-> -		unsigned long start_pfn, unsigned long nr_pages)
-> -{
-> -	struct zone *zone;
-> -
-> -	zone = zone_for_pfn_range(online_type, nid, start_pfn, nr_pages);
-> -	move_pfn_range_to_zone(zone, start_pfn, nr_pages, NULL);
-> -	return zone;
-> -}
-> -
->  int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_type)
->  {
->  	unsigned long flags;
-> @@ -840,7 +830,8 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
->  	put_device(&mem->dev);
->  
->  	/* associate pfn range with the zone */
-> -	zone = move_pfn_range(online_type, nid, pfn, nr_pages);
-> +	zone = zone_for_pfn_range(online_type, nid, pfn, nr_pages);
-> +	move_pfn_range_to_zone(zone, pfn, nr_pages, NULL);
->  
->  	arg.start_pfn = pfn;
->  	arg.nr_pages = nr_pages;
-> -- 
-> 2.21.0
 
--- 
-Michal Hocko
-SUSE Labs
+
+https://patchwork.kernel.org/patch/10863957/
+
+It's actually a more simple heap type IMHO, but the logic inside is
+incompatible with the system/CMA heaps, if you move any of their code
+into the core framework then this heap stops working. Leading to out of
+tree hacks on the core to get it back functional. I see the same for the
+"complex" heaps with ION.
+
+Andrew
+
+
+>> That's why
+>> dmabuf heaps is trying to destage ION in a way that allows heaps to
+>> implement their exporter logic themselves, so we can start pulling
+>> those more complicated heaps out of their vendor hidey-holes and get
+>> some proper upstream review.
+>>
+>> But I suspect I just am confused as to what your suggesting. Maybe
+>> could you expand a bit? Apologies for being a bit dense.
+> 
+> My suggestion is to merge the system and CMA heaps.  CMA (at least
+> the system-wide CMA area) is really just an optimization to get
+> large contigous regions more easily.  We should make use of it as
+> transparent as possible, just like we do in the DMA code.
+> 
