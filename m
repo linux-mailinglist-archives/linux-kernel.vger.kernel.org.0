@@ -2,163 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 331E672BE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 11:59:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95F2B72BEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 12:01:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfGXJ7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 05:59:35 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42163 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbfGXJ7f (ORCPT
+        id S1726952AbfGXKBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 06:01:06 -0400
+Received: from mail177-5.suw61.mandrillapp.com ([198.2.177.5]:24447 "EHLO
+        mail177-5.suw61.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726853AbfGXKBG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 05:59:35 -0400
-Received: by mail-io1-f67.google.com with SMTP id e20so57934603iob.9
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 02:59:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dVYaoBPqlKUhxllRn3ei8bCvScMlLdKVTkxfBLFkDN4=;
-        b=rNFp80JGiZF3aHM81XjqStXEZ7MWlub8Oyl5NIDpGiATZHdiNrbNjoFmV+mV02XD2D
-         pR3HloKLhIie016OdZKCo3d+4wlcM+rTIp/YbS0J7smhaP0BAwDcuxnR8KQ3UcBR+3tw
-         H7jsSnNa/iL3YyzEPmRULDEqwJJQ13JjBoCfAcrPVctVU+roaGPkYP7fSZ+mvKbzq+7l
-         JDZd3dwu6quLF3T1ouADFFkqAGF2BN1/Zi06PGuq+uN3umHYegmnnB0/ymel8kiy4QEQ
-         WLzbQ4Ch5FlzBl2D7tJnMRfV24RndmzmmXvup1TL7ScvxtHwwhCPXZvnuqDBAlN2Xavs
-         343w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dVYaoBPqlKUhxllRn3ei8bCvScMlLdKVTkxfBLFkDN4=;
-        b=le+OICdpT2SrQXAsWGgZeDPq+7BQexoovMsj9V699w4T36lwY1wGFF2HsvfD99sCZY
-         N+zc+QyEyRM21R6db6k1t4S1qTvwCdyWgm8fP91gNFJHUsYabfLAr40D2y/4GQawPbdZ
-         gSdx5iPAwNLFoF9H3W9vfCdSxXFFP5IW5aREcHulGPHKn7R1LknPDsf25hoH3K1o6Hml
-         V/KsXdYgGglM+sheFz+c8qXncDuzM50Y0GHSZ/n+u0H9giUmlyn/EnGk1OVFKvsg9W6s
-         +yAQ2daweKaEdtDaCwiqboPTJEQgJAgCHTF81zinAtV+apkK581tQzt3LBBtSi3j1RRB
-         aovw==
-X-Gm-Message-State: APjAAAUP5ZpAVUrqAnMaGjJO0paPKgOBwYOVYQGuMEpRK0Lx5G6N5g8B
-        gk6LrAKgvDZ9uRnwrDwL3Nvau5SQbCLbsiZ9i8Tg4A==
-X-Google-Smtp-Source: APXvYqzQNpC90SVOqihvRr3heJAJXheST8iwqv8aQr1+tvn2hL2yHhHkvlqsghUtClMCm1IQedqR0FP+4ZKbvuZi6BM=
-X-Received: by 2002:a05:6638:303:: with SMTP id w3mr30078738jap.103.1563962373340;
- Wed, 24 Jul 2019 02:59:33 -0700 (PDT)
+        Wed, 24 Jul 2019 06:01:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
+ h=From:Subject:To:Cc:Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
+ bh=wSTQf2dBxrCf6rtywumr/ODjq4xB0I2umV1t8dtD2Fg=;
+ b=UajI+5GBbQ6huJSri0F1zYm9FXBAhKMXsfu0KvvTmYM9NBXOrRxnaMRYYt20YovM7D57y4VSq7PH
+   +Apj7D0AP46PpQqlkZ93iveEHC/SJbjYeigyOCGjdazrjANtTYx4RbAXTafJIFbMeO2vR5fgDj3g
+   Mq9Y+2KHXtK1Sfr54yk=
+Received: from pmta06.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail177-5.suw61.mandrillapp.com id h70m6022rtkk for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 09:46:03 +0000 (envelope-from <bounce-md_31050260.5d3828db.v1-0a28de090c674703b7953324f92f0beb@mandrillapp.com>)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
+ i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1563961563; h=From : 
+ Subject : To : Cc : Message-Id : Date : MIME-Version : Content-Type : 
+ Content-Transfer-Encoding : From : Subject : Date : X-Mandrill-User : 
+ List-Unsubscribe; bh=wSTQf2dBxrCf6rtywumr/ODjq4xB0I2umV1t8dtD2Fg=; 
+ b=aZrrTzWDxZMFEnB91KfBtF9S/0lxAffsWD0KEMVQKy0GsDlpcNvqjOLgNYbAQWp0dNODcK
+ jK73APNQ2u4nfv74ocWcl7N5X8N0SBG8KhrDbqDc/tiNicC3JBix9wCh8Oy6D7/obS22g+fK
+ FCCeC12u1/EPKSW6/zTlS3DmXxLlw=
+From:   Kirill Smelkov <kirr@nexedi.com>
+Subject: [PATCH, RESEND3] fuse: require /dev/fuse reads to have enough buffer capacity (take 2)
+Received: from [87.98.221.171] by mandrillapp.com id 0a28de090c674703b7953324f92f0beb; Wed, 24 Jul 2019 09:46:03 +0000
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Cc:     Kirill Smelkov <kirr@nexedi.com>, <gluster-devel@gluster.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sander Eikelenboom <linux@eikelenboom.it>,
+        Han-Wen Nienhuys <hanwen@google.com>,
+        Jakob Unterwurzacher <jakobunt@gmail.com>
+Message-Id: <20190724094556.GA19383@deco.navytux.spb.ru>
+X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
+X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.0a28de090c674703b7953324f92f0beb
+X-Mandrill-User: md_31050260
+Date:   Wed, 24 Jul 2019 09:46:03 +0000
 MIME-Version: 1.0
-References: <000000000000b68e04058e6a3421@google.com>
-In-Reply-To: <000000000000b68e04058e6a3421@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 24 Jul 2019 11:59:22 +0200
-Message-ID: <CACT4Y+ZJpqR9HtDXfEv-nGM_pP4_hSRu1odRX3LBdNq+_Dp=tw@mail.gmail.com>
-Subject: Re: memory leak in dma_buf_ioctl
-To:     syzbot <syzbot+b2098bc44728a4efb3e9@syzkaller.appspotmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        linux-media@vger.kernel.org, DRI <dri-devel@lists.freedesktop.org>,
-        linaro-mm-sig@lists.linaro.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 11:48 AM syzbot
-<syzbot+b2098bc44728a4efb3e9@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    abdfd52a Merge tag 'armsoc-defconfig' of git://git.kernel...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=131441d0600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d31de3d88059b7fa
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b2098bc44728a4efb3e9
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12526e58600000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=161784f0600000
+Miklos,
 
-+drivers/dma-buf/dma-buf.c maintainers
+I was sending this patch for ~1.5 month without any feedback from you[1,2,3].
+The patch was tested by Sander Eikelenboom (original GlusterFS problem
+reporter)[4], and you said that it will be ok to retry for next
+cycle[5]. I was hoping for this patch to be picked up for 5.3 and queued
+to Linus's tree, but in despite several resends from me (the same patch;
+just reminders) nothing is happening. v5.3-rc1 came out on last Sunday,
+which, in my understanding, denotes the close of 5.3 merge window. What
+is going on? Could you please pick up the patch and handle it?
 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+b2098bc44728a4efb3e9@syzkaller.appspotmail.com
->
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> BUG: memory leak
-> unreferenced object 0xffff888114034680 (size 32):
->    comm "syz-executor110", pid 6894, jiffies 4294947136 (age 13.580s)
->    hex dump (first 32 bytes):
->      00 64 6d 61 62 75 66 3a 00 00 00 00 00 00 00 00  .dmabuf:........
->      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->    backtrace:
->      [<00000000d259834b>] kmemleak_alloc_recursive
-> /./include/linux/kmemleak.h:43 [inline]
->      [<00000000d259834b>] slab_post_alloc_hook /mm/slab.h:522 [inline]
->      [<00000000d259834b>] slab_alloc /mm/slab.c:3319 [inline]
->      [<00000000d259834b>] __do_kmalloc /mm/slab.c:3653 [inline]
->      [<00000000d259834b>] __kmalloc_track_caller+0x165/0x300 /mm/slab.c:3670
->      [<00000000ab207ec1>] memdup_user+0x26/0xa0 /mm/util.c:165
->      [<00000000c0909d36>] strndup_user+0x62/0x80 /mm/util.c:224
->      [<00000000a34a2d25>] dma_buf_set_name /drivers/dma-buf/dma-buf.c:331
-> [inline]
->      [<00000000a34a2d25>] dma_buf_ioctl+0x60/0x1b0
-> /drivers/dma-buf/dma-buf.c:391
->      [<00000000d7817662>] vfs_ioctl /fs/ioctl.c:46 [inline]
->      [<00000000d7817662>] file_ioctl /fs/ioctl.c:509 [inline]
->      [<00000000d7817662>] do_vfs_ioctl+0x62a/0x810 /fs/ioctl.c:696
->      [<00000000d24a671a>] ksys_ioctl+0x86/0xb0 /fs/ioctl.c:713
->      [<00000000bd810f5d>] __do_sys_ioctl /fs/ioctl.c:720 [inline]
->      [<00000000bd810f5d>] __se_sys_ioctl /fs/ioctl.c:718 [inline]
->      [<00000000bd810f5d>] __x64_sys_ioctl+0x1e/0x30 /fs/ioctl.c:718
->      [<000000005a8e86d5>] do_syscall_64+0x76/0x1a0
-> /arch/x86/entry/common.c:296
->      [<000000007d83529f>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
->
-> BUG: memory leak
-> unreferenced object 0xffff888113b044a0 (size 32):
->    comm "syz-executor110", pid 6895, jiffies 4294947728 (age 7.660s)
->    hex dump (first 32 bytes):
->      00 64 6d 61 62 75 66 3a 00 00 00 00 00 00 00 00  .dmabuf:........
->      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->    backtrace:
->      [<00000000d259834b>] kmemleak_alloc_recursive
-> /./include/linux/kmemleak.h:43 [inline]
->      [<00000000d259834b>] slab_post_alloc_hook /mm/slab.h:522 [inline]
->      [<00000000d259834b>] slab_alloc /mm/slab.c:3319 [inline]
->      [<00000000d259834b>] __do_kmalloc /mm/slab.c:3653 [inline]
->      [<00000000d259834b>] __kmalloc_track_caller+0x165/0x300 /mm/slab.c:3670
->      [<00000000ab207ec1>] memdup_user+0x26/0xa0 /mm/util.c:165
->      [<00000000c0909d36>] strndup_user+0x62/0x80 /mm/util.c:224
->      [<00000000a34a2d25>] dma_buf_set_name /drivers/dma-buf/dma-buf.c:331
-> [inline]
->      [<00000000a34a2d25>] dma_buf_ioctl+0x60/0x1b0
-> /drivers/dma-buf/dma-buf.c:391
->      [<00000000d7817662>] vfs_ioctl /fs/ioctl.c:46 [inline]
->      [<00000000d7817662>] file_ioctl /fs/ioctl.c:509 [inline]
->      [<00000000d7817662>] do_vfs_ioctl+0x62a/0x810 /fs/ioctl.c:696
->      [<00000000d24a671a>] ksys_ioctl+0x86/0xb0 /fs/ioctl.c:713
->      [<00000000bd810f5d>] __do_sys_ioctl /fs/ioctl.c:720 [inline]
->      [<00000000bd810f5d>] __se_sys_ioctl /fs/ioctl.c:718 [inline]
->      [<00000000bd810f5d>] __x64_sys_ioctl+0x1e/0x30 /fs/ioctl.c:718
->      [<000000005a8e86d5>] do_syscall_64+0x76/0x1a0
-> /arch/x86/entry/common.c:296
->      [<000000007d83529f>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
->
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000b68e04058e6a3421%40google.com.
+Thanks beforehand (again),
+Kirill
+
+[1] https://lore.kernel.org/linux-fsdevel/20190612141220.GA25389@deco.navytux.spb.ru/
+[2] https://lore.kernel.org/linux-fsdevel/20190623072619.31037-1-kirr@nexedi.com/
+[3] https://lore.kernel.org/linux-fsdevel/20190708170314.27982-1-kirr@nexedi.com/
+[4] https://lore.kernel.org/linux-fsdevel/f79ff13f-701b-89d8-149c-e53bb880bb77@eikelenboom.it/
+[5] https://lore.kernel.org/linux-fsdevel/CAOssrKfj-MDujX0_t_fgobL_KwpuG2fxFmT=4nURuJA=sUvYYg@mail.gmail.com/
+
+---- 8< ----
+
+[ This retries commit d4b13963f217 which was reverted in 766741fcaa1f.
+
+  In this version we require only `sizeof(fuse_in_header) + sizeof(fuse_write_in)`
+  instead of 4K for FUSE request header room, because, contrary to
+  libfuse and kernel client behaviour, GlusterFS actually provides only
+  so much room for request header. ]
+
+A FUSE filesystem server queues /dev/fuse sys_read calls to get
+filesystem requests to handle. It does not know in advance what would be
+that request as it can be anything that client issues - LOOKUP, READ,
+WRITE, ... Many requests are short and retrieve data from the
+filesystem. However WRITE and NOTIFY_REPLY write data into filesystem.
+
+Before getting into operation phase, FUSE filesystem server and kernel
+client negotiate what should be the maximum write size the client will
+ever issue. After negotiation the contract in between server/client is
+that the filesystem server then should queue /dev/fuse sys_read calls with
+enough buffer capacity to receive any client request - WRITE in
+particular, while FUSE client should not, in particular, send WRITE
+requests with > negotiated max_write payload. FUSE client in kernel and
+libfuse historically reserve 4K for request header. However an existing
+filesystem server - GlusterFS - was found which reserves only 80 bytes
+for header room (= `sizeof(fuse_in_header) + sizeof(fuse_write_in)`).
+
+https://lore.kernel.org/linux-fsdevel/20190611202738.GA22556@deco.navytux.spb.ru/
+https://github.com/gluster/glusterfs/blob/v3.8.15-0-gd174f021a/xlators/mount/fuse/src/fuse-bridge.c#L4894
+
+Since
+
+	`sizeof(fuse_in_header) + sizeof(fuse_write_in)` ==
+	`sizeof(fuse_in_header) + sizeof(fuse_read_in)`  ==
+	`sizeof(fuse_in_header) + sizeof(fuse_notify_retrieve_in)`
+
+is the absolute minimum any sane filesystem should be using for header
+room, the contract is that filesystem server should queue sys_reads with
+`sizeof(fuse_in_header) + sizeof(fuse_write_in)` + max_write buffer.
+
+If the filesystem server does not follow this contract, what can happen
+is that fuse_dev_do_read will see that request size is > buffer size,
+and then it will return EIO to client who issued the request but won't
+indicate in any way that there is a problem to filesystem server.
+This can be hard to diagnose because for some requests, e.g. for
+NOTIFY_REPLY which mimics WRITE, there is no client thread that is
+waiting for request completion and that EIO goes nowhere, while on
+filesystem server side things look like the kernel is not replying back
+after successful NOTIFY_RETRIEVE request made by the server.
+
+We can make the problem easy to diagnose if we indicate via error return to
+filesystem server when it is violating the contract.  This should not
+practically cause problems because if a filesystem server is using shorter
+buffer, writes to it were already very likely to cause EIO, and if the
+filesystem is read-only it should be too following FUSE_MIN_READ_BUFFER
+minimum buffer size.
+
+Please see [1] for context where the problem of stuck filesystem was hit
+for real (because kernel client was incorrectly sending more than
+max_write data with NOTIFY_REPLY; see also previous patch), how the
+situation was traced and for more involving patch that did not make it
+into the tree.
+
+[1] https://marc.info/?l=linux-fsdevel&m=155057023600853&w=2
+
+Signed-off-by: Kirill Smelkov <kirr@nexedi.com>
+Tested-by: Sander Eikelenboom <linux@eikelenboom.it>
+Cc: Han-Wen Nienhuys <hanwen@google.com>
+Cc: Jakob Unterwurzacher <jakobunt@gmail.com>
+---
+ fs/fuse/dev.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index ea8237513dfa..b2b2344eadcf 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1317,6 +1317,26 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
+ 	unsigned reqsize;
+ 	unsigned int hash;
+ 
++	/*
++	 * Require sane minimum read buffer - that has capacity for fixed part
++	 * of any request header + negotiated max_write room for data. If the
++	 * requirement is not satisfied return EINVAL to the filesystem server
++	 * to indicate that it is not following FUSE server/client contract.
++	 * Don't dequeue / abort any request.
++	 *
++	 * Historically libfuse reserves 4K for fixed header room, but e.g.
++	 * GlusterFS reserves only 80 bytes
++	 *
++	 *	= `sizeof(fuse_in_header) + sizeof(fuse_write_in)`
++	 *
++	 * which is the absolute minimum any sane filesystem should be using
++	 * for header room.
++	 */
++	if (nbytes < max_t(size_t, FUSE_MIN_READ_BUFFER,
++			   sizeof(struct fuse_in_header) + sizeof(struct fuse_write_in) +
++				fc->max_write))
++		return -EINVAL;
++
+  restart:
+ 	spin_lock(&fiq->waitq.lock);
+ 	err = -EAGAIN;
+-- 
+2.20.1
