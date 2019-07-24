@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86BA973A89
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:51:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D0F573A6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:50:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391627AbfGXTvL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:51:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60172 "EHLO mail.kernel.org"
+        id S1728762AbfGXTuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:50:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391471AbfGXTvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:51:03 -0400
+        id S2403826AbfGXTt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:49:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 659A022ADA;
-        Wed, 24 Jul 2019 19:51:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B964E22ADA;
+        Wed, 24 Jul 2019 19:49:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997862;
-        bh=5sL5sNipRlKuOhvsrpXGDhQ+5j45f7ZCdwTRlXdn5II=;
+        s=default; t=1563997798;
+        bh=Fv1GO9PlmjTooBqbuFhXyMTElMJv3FrPLNhYlG03CHM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mDvyyy1vUoH9ej0MEAiCt3kF672T2Pd0i7Bliq4VzO8+ay+VJSfkMn2eJ5m5XOx3g
-         /0j63NrLW+Zb72/g6FBNQ6UPn2MPdp6Hp1ETO2j1nlgJ25CJArF5WfcPyJAQEcBpqh
-         s/Vq4PXBsaXeYEiRvDQBqIH9+45WpS3/0BWOxTho=
+        b=TJ19pM9mvNx/P+WGvoBsoro4X6VPmo31BZV2RP9F8LrZsBL1r6TNibqSvUxmTexc0
+         /ASSjGPhjOiVONsCNEizduQYmm56GQG5dEByxJoHLXZNB29A3zTUFDLN+0rfnoSa6T
+         ugRrFhyFdS73q8ogadFbgEWUApOULalXDxQOWS58=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 117/371] spi: fix ctrl->num_chipselect constraint
-Date:   Wed, 24 Jul 2019 21:17:49 +0200
-Message-Id: <20190724191733.628145439@linuxfoundation.org>
+        stable@vger.kernel.org, Anton Eidelman <anton@lightbitslabs.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 120/371] nvme: fix possible io failures when removing multipathed ns
+Date:   Wed, 24 Jul 2019 21:17:52 +0200
+Message-Id: <20190724191733.868806918@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -45,63 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f9481b08220d7dc1ff21e296a330ee8b721b44e4 ]
+[ Upstream commit 2181e455612a8db2761eabbf126640552a451e96 ]
 
-at91sam9g25ek showed the following error at probe:
-atmel_spi f0000000.spi: Using dma0chan2 (tx) and dma0chan3 (rx)
-for DMA transfers
-atmel_spi: probe of f0000000.spi failed with error -22
+When a shared namespace is removed, we call blk_cleanup_queue()
+when the device can still be accessed as the current path and this can
+result in submission to a dying queue. Hence, direct_make_request()
+called by our mpath device may fail (propagating the failure to userspace).
+Instead, we want to failover this I/O to a different path if one exists.
+Thus, before we cleanup the request queue, we make sure that the device is
+cleared from the current path nor it can be selected again as such.
 
-Commit 0a919ae49223 ("spi: Don't call spi_get_gpio_descs() before device name is set")
-moved the calling of spi_get_gpio_descs() after ctrl->dev is set,
-but didn't move the !ctrl->num_chipselect check. When there are
-chip selects in the device tree, the spi-atmel driver lets the
-SPI core discover them when registering the SPI master.
-The ctrl->num_chipselect is thus expected to be set by
-spi_get_gpio_descs().
+Fix this by:
+- clear the ns from the head->list and synchronize rcu to make sure there is
+  no concurrent path search that restores it as the current path
+- clear the mpath current path in order to trigger a subsequent path search
+  and sync srcu to wait for any ongoing request submissions
+- safely continue to namespace removal and blk_cleanup_queue
 
-Move the !ctlr->num_chipselect after spi_get_gpio_descs() as it was
-before the aforementioned commit. While touching this block, get rid
-of the explicit comparison with 0 and update the commenting style.
-
-Fixes: 0a919ae49223 ("spi: Don't call spi_get_gpio_descs() before device name is set")
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Anton Eidelman <anton@lightbitslabs.com>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/nvme/host/core.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index a83fcddf1dad..7f6fb383d7a7 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -2281,11 +2281,6 @@ int spi_register_controller(struct spi_controller *ctlr)
- 	if (status)
- 		return status;
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 3a390b2c7540..cbbdd3dae5a1 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -3341,6 +3341,14 @@ static void nvme_ns_remove(struct nvme_ns *ns)
+ 		return;
  
--	/* even if it's just one always-selected device, there must
--	 * be at least one chipselect
--	 */
--	if (ctlr->num_chipselect == 0)
--		return -EINVAL;
- 	if (ctlr->bus_num >= 0) {
- 		/* devices with a fixed bus num must check-in with the num */
- 		mutex_lock(&board_lock);
-@@ -2356,6 +2351,13 @@ int spi_register_controller(struct spi_controller *ctlr)
- 		}
+ 	nvme_fault_inject_fini(ns);
++
++	mutex_lock(&ns->ctrl->subsys->lock);
++	list_del_rcu(&ns->siblings);
++	mutex_unlock(&ns->ctrl->subsys->lock);
++	synchronize_rcu(); /* guarantee not available in head->list */
++	nvme_mpath_clear_current_path(ns);
++	synchronize_srcu(&ns->head->srcu); /* wait for concurrent submissions */
++
+ 	if (ns->disk && ns->disk->flags & GENHD_FL_UP) {
+ 		del_gendisk(ns->disk);
+ 		blk_cleanup_queue(ns->queue);
+@@ -3348,16 +3356,10 @@ static void nvme_ns_remove(struct nvme_ns *ns)
+ 			blk_integrity_unregister(ns->disk);
  	}
  
-+	/*
-+	 * Even if it's just one always-selected device, there must
-+	 * be at least one chipselect.
-+	 */
-+	if (!ctlr->num_chipselect)
-+		return -EINVAL;
-+
- 	status = device_add(&ctlr->dev);
- 	if (status < 0) {
- 		/* free bus id */
+-	mutex_lock(&ns->ctrl->subsys->lock);
+-	list_del_rcu(&ns->siblings);
+-	nvme_mpath_clear_current_path(ns);
+-	mutex_unlock(&ns->ctrl->subsys->lock);
+-
+ 	down_write(&ns->ctrl->namespaces_rwsem);
+ 	list_del_init(&ns->list);
+ 	up_write(&ns->ctrl->namespaces_rwsem);
+ 
+-	synchronize_srcu(&ns->head->srcu);
+ 	nvme_mpath_check_last_path(ns);
+ 	nvme_put_ns(ns);
+ }
 -- 
 2.20.1
 
