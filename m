@@ -2,73 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4311D73123
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 834CD73128
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:09:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbfGXOJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 10:09:04 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2753 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726178AbfGXOJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 10:09:03 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B2EAF9EA050138488E51;
-        Wed, 24 Jul 2019 22:09:02 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Wed, 24 Jul 2019
- 22:08:56 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <boris.ostrovsky@oracle.com>, <jgross@suse.com>,
-        <sstabellini@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] xen/pciback: remove set but not used variable 'old_state'
-Date:   Wed, 24 Jul 2019 22:08:50 +0800
-Message-ID: <20190724140850.10760-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S2387484AbfGXOJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 10:09:14 -0400
+Received: from foss.arm.com ([217.140.110.172]:41720 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727029AbfGXOJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 10:09:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4428D28;
+        Wed, 24 Jul 2019 07:09:13 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CB3973F71A;
+        Wed, 24 Jul 2019 07:09:10 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 15:09:08 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Steven Price <steven.price@arm.com>
+Cc:     x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        James Morse <james.morse@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "Liang, Kan" <kan.liang@linux.intel.com>
+Subject: Re: [PATCH v9 11/21] mm: pagewalk: Add p4d_entry() and pgd_entry()
+Message-ID: <20190724140908.GE2624@lakrids.cambridge.arm.com>
+References: <20190722154210.42799-1-steven.price@arm.com>
+ <20190722154210.42799-12-steven.price@arm.com>
+ <20190723101432.GC8085@lakrids.cambridge.arm.com>
+ <60ee20ef-62a3-5df1-6e24-24973b69be70@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <60ee20ef-62a3-5df1-6e24-24973b69be70@arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Wed, Jul 24, 2019 at 02:53:04PM +0100, Steven Price wrote:
+> On 23/07/2019 11:14, Mark Rutland wrote:
+> > On Mon, Jul 22, 2019 at 04:42:00PM +0100, Steven Price wrote:
+> >> pgd_entry() and pud_entry() were removed by commit 0b1fbfe50006c410
+> >> ("mm/pagewalk: remove pgd_entry() and pud_entry()") because there were
+> >> no users. We're about to add users so reintroduce them, along with
+> >> p4d_entry() as we now have 5 levels of tables.
+> >>
+> >> Note that commit a00cc7d9dd93d66a ("mm, x86: add support for
+> >> PUD-sized transparent hugepages") already re-added pud_entry() but with
+> >> different semantics to the other callbacks. Since there have never
+> >> been upstream users of this, revert the semantics back to match the
+> >> other callbacks. This means pud_entry() is called for all entries, not
+> >> just transparent huge pages.
+> >>
+> >> Signed-off-by: Steven Price <steven.price@arm.com>
+> >> ---
+> >>  include/linux/mm.h | 15 +++++++++------
+> >>  mm/pagewalk.c      | 27 ++++++++++++++++-----------
+> >>  2 files changed, 25 insertions(+), 17 deletions(-)
+> >>
+> >> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> >> index 0334ca97c584..b22799129128 100644
+> >> --- a/include/linux/mm.h
+> >> +++ b/include/linux/mm.h
+> >> @@ -1432,15 +1432,14 @@ void unmap_vmas(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
+> >>  
+> >>  /**
+> >>   * mm_walk - callbacks for walk_page_range
+> >> - * @pud_entry: if set, called for each non-empty PUD (2nd-level) entry
+> >> - *	       this handler should only handle pud_trans_huge() puds.
+> >> - *	       the pmd_entry or pte_entry callbacks will be used for
+> >> - *	       regular PUDs.
+> >> - * @pmd_entry: if set, called for each non-empty PMD (3rd-level) entry
+> >> + * @pgd_entry: if set, called for each non-empty PGD (top-level) entry
+> >> + * @p4d_entry: if set, called for each non-empty P4D entry
+> >> + * @pud_entry: if set, called for each non-empty PUD entry
+> >> + * @pmd_entry: if set, called for each non-empty PMD entry
+> > 
+> > How are these expected to work with folding?
+> > 
+> > For example, on arm64 with 64K pages and 42-bit VA, you can have 2-level
+> > tables where the PGD is P4D, PUD, and PMD. IIUC we'd invoke the
+> > callbacks for each of those levels where we found an entry in the pgd.
+> > 
+> > Either the callee handle that, or we should inhibit the callbacks when
+> > levels are folded, and I think that needs to be explcitly stated either
+> > way.
+> > 
+> > IIRC on x86 the p4d folding is dynamic depending on whether the HW
+> > supports 5-level page tables. Maybe that implies the callee has to
+> > handle that.
+> 
+> Yes, my assumption is that it has to be up to the callee to handle that
+> because folding can be dynamic. I believe this also was how these
+> callbacks work before they were removed. However I'll add a comment
+> explaining that here as it's probably non-obvious.
 
-drivers/xen/xen-pciback/conf_space_capability.c: In function pm_ctrl_write:
-drivers/xen/xen-pciback/conf_space_capability.c:119:25: warning:
- variable old_state set but not used [-Wunused-but-set-variable]
+That sounds good to me.
 
-It is never used so can be removed.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/xen/xen-pciback/conf_space_capability.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/xen/xen-pciback/conf_space_capability.c b/drivers/xen/xen-pciback/conf_space_capability.c
-index 73427d8..e569413 100644
---- a/drivers/xen/xen-pciback/conf_space_capability.c
-+++ b/drivers/xen/xen-pciback/conf_space_capability.c
-@@ -116,13 +116,12 @@ static int pm_ctrl_write(struct pci_dev *dev, int offset, u16 new_value,
- {
- 	int err;
- 	u16 old_value;
--	pci_power_t new_state, old_state;
-+	pci_power_t new_state;
- 
- 	err = pci_read_config_word(dev, offset, &old_value);
- 	if (err)
- 		goto out;
- 
--	old_state = (pci_power_t)(old_value & PCI_PM_CTRL_STATE_MASK);
- 	new_state = (pci_power_t)(new_value & PCI_PM_CTRL_STATE_MASK);
- 
- 	new_value &= PM_OK_BITS;
--- 
-2.7.4
-
-
+Thanks,
+Mark.
