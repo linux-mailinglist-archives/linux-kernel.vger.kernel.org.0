@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53ECC73FDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:36:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C72C673FCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:35:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388916AbfGXUfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:35:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42532 "EHLO mail.kernel.org"
+        id S2390784AbfGXUfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:35:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388058AbfGXTZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:25:40 -0400
+        id S1729182AbfGXTZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:25:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E91CB229ED;
-        Wed, 24 Jul 2019 19:25:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C363F22387;
+        Wed, 24 Jul 2019 19:25:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996339;
-        bh=7x5uqPwcLPoDTZF6cLw3c7iz9svtdhqhoJcH03CK8ZE=;
+        s=default; t=1563996345;
+        bh=LLsn1vSm6soRTfCSedJcFt0xyr09Q9XPovx2QhngdIE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qubO+LVUIUht3XqNhA4aBwYzWpxqocfoSNTblT+nnRr/yfw9ZBpXzcF7/j8Wb60bS
-         ohjK7Tc61KosQoUClHCMBoRztI9fJZzhNlEVVPPG7aGUMTboJUSR+301KICzS2jmFQ
-         oA14lZZrbv0HK86e9ABF+ONALJ1pGGTkDfufpG44=
+        b=Y6OlBe6stm/lsFxvxCpyLx7X76BS8vIfhXPaBjySbHit6u9oDwmDl7adcrJMXzf6e
+         p+t82a77TgTWNJIjy28D/ZoDozXeGQarV6jjW/v2+5HVhhaw+d+hxA19d7e68Xd3tx
+         wOftXN8gGgmD6aqLGsHlKduqNpmWgDer4PlfR4Co=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Weihang Li <liweihang@hisilicon.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Abhishek Goel <huntbag@linux.vnet.ibm.com>,
+        Thomas Renninger <trenn@suse.de>,
+        Shuah Khan <skhan@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 061/413] net: hns3: add a check to pointer in error_detected and slot_reset
-Date:   Wed, 24 Jul 2019 21:15:52 +0200
-Message-Id: <20190724191739.647808700@linuxfoundation.org>
+Subject: [PATCH 5.2 063/413] cpupower : frequency-set -r option misses the last cpu in related cpu list
+Date:   Wed, 24 Jul 2019 21:15:54 +0200
+Message-Id: <20190724191739.744017758@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -46,51 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 661262bc3e0ecc9a1aed39c6b2a99766da2c22e2 ]
+[ Upstream commit 04507c0a9385cc8280f794a36bfff567c8cc1042 ]
 
-If we add a VF without loading hclgevf.ko and then there is a RAS error
-occurs, PCIe AER will call error_detected and slot_reset of all functions,
-and will get a NULL pointer when we check ad_dev->ops->handle_hw_ras_error.
-This will cause a call trace and failures on handling of follow-up RAS
-errors.
+To set frequency on specific cpus using cpupower, following syntax can
+be used :
+cpupower -c #i frequency-set -f #f -r
 
-This patch check ae_dev and ad_dev->ops at first to solve above issues.
+While setting frequency using cpupower frequency-set command, if we use
+'-r' option, it is expected to set frequency for all cpus related to
+cpu #i. But it is observed to be missing the last cpu in related cpu
+list. This patch fixes the problem.
 
-Signed-off-by: Weihang Li <liweihang@hisilicon.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
+Reviewed-by: Thomas Renninger <trenn@suse.de>
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ tools/power/cpupower/utils/cpufreq-set.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index cd59c0cc636a..5611b990ac34 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1916,9 +1916,9 @@ static pci_ers_result_t hns3_error_detected(struct pci_dev *pdev,
- 	if (state == pci_channel_io_perm_failure)
- 		return PCI_ERS_RESULT_DISCONNECT;
- 
--	if (!ae_dev) {
-+	if (!ae_dev || !ae_dev->ops) {
- 		dev_err(&pdev->dev,
--			"Can't recover - error happened during device init\n");
-+			"Can't recover - error happened before device initialized\n");
- 		return PCI_ERS_RESULT_NONE;
+diff --git a/tools/power/cpupower/utils/cpufreq-set.c b/tools/power/cpupower/utils/cpufreq-set.c
+index f49bc4aa2a08..6ed82fba5aaa 100644
+--- a/tools/power/cpupower/utils/cpufreq-set.c
++++ b/tools/power/cpupower/utils/cpufreq-set.c
+@@ -305,6 +305,8 @@ int cmd_freq_set(int argc, char **argv)
+ 				bitmask_setbit(cpus_chosen, cpus->cpu);
+ 				cpus = cpus->next;
+ 			}
++			/* Set the last cpu in related cpus list */
++			bitmask_setbit(cpus_chosen, cpus->cpu);
+ 			cpufreq_put_related_cpus(cpus);
+ 		}
  	}
- 
-@@ -1937,6 +1937,9 @@ static pci_ers_result_t hns3_slot_reset(struct pci_dev *pdev)
- 
- 	dev_info(dev, "requesting reset due to PCI error\n");
- 
-+	if (!ae_dev || !ae_dev->ops)
-+		return PCI_ERS_RESULT_NONE;
-+
- 	/* request the reset */
- 	if (ae_dev->ops->reset_event) {
- 		if (!ae_dev->override_pci_need_reset)
 -- 
 2.20.1
 
