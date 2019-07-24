@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A5DF73DA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:18:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86E9573D83
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:18:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403909AbfGXTsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:48:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55516 "EHLO mail.kernel.org"
+        id S2403967AbfGXTto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:49:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391034AbfGXTsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:48:19 -0400
+        id S2391523AbfGXTt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:49:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB21C21873;
-        Wed, 24 Jul 2019 19:48:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BDA1205C9;
+        Wed, 24 Jul 2019 19:49:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997698;
-        bh=9emZkSTCwyNtMvzp8juiAJBq7YHr93QN1SGkx+lKNoM=;
+        s=default; t=1563997767;
+        bh=q+ot2fxsXnPozpPYSz+QkVHJLk2RXJQAoDWjkYnihxE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N+Gz4S5zGifu4cf2r2iEw0kceeMutCMsMeoc26k16wXJzO3k+DvpHgUDjXx9rXarA
-         ZRDXqyOpazn9vfrwU/Jbr/EEdZuwHZpLKmCzdV2aMDbmsPXj5OM/w6tPdoqIWSNB96
-         E9yW/Y8gHEjMhFHaf9RX+7ncIr+O7TIOgbkUE1tU=
+        b=tgA3NA1U+evtADLPcNL2hxr0NwI2qn6GtKcm5VivW7NAXvSRXyX1dhhMtIoJ4DhME
+         /abynDmFmlgyfKEWIs7OsABUEUf7w0t1OgHpZ6pa+0u4cx3oplnVOgHMTltPblj+u3
+         aXXaWVGHewqv5pmvhnxh2Un+SltX3mJp40FOEMAs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Borislav Petkov <bp@suse.de>,
+        James Morse <james.morse@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 111/371] bpf: fix callees pruning callers
-Date:   Wed, 24 Jul 2019 21:17:43 +0200
-Message-Id: <20190724191733.191660682@linuxfoundation.org>
+Subject: [PATCH 5.1 119/371] EDAC/sysfs: Fix memory leak when creating a csrow object
+Date:   Wed, 24 Jul 2019 21:17:51 +0200
+Message-Id: <20190724191733.794859491@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -44,60 +47,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit eea1c227b9e9bad295e8ef984004a9acf12bb68c ]
+[ Upstream commit 585fb3d93d32dbe89e718b85009f9c322cc554cd ]
 
-The commit 7640ead93924 partially resolved the issue of callees
-incorrectly pruning the callers.
-With introduction of bounded loops and jmps_processed heuristic
-single verifier state may contain multiple branches and calls.
-It's possible that new verifier state (for future pruning) will be
-allocated inside callee. Then callee will exit (still within the same
-verifier state). It will go back to the caller and there R6-R9 registers
-will be read and will trigger mark_reg_read. But the reg->live for all frames
-but the top frame is not set to LIVE_NONE. Hence mark_reg_read will fail
-to propagate liveness into parent and future walking will incorrectly
-conclude that the states are equivalent because LIVE_READ is not set.
-In other words the rule for parent/live should be:
-whenever register parentage chain is set the reg->live should be set to LIVE_NONE.
-is_state_visited logic already follows this rule for spilled registers.
+In edac_create_csrow_object(), the reference to the object is not
+released when adding the device to the device hierarchy fails
+(device_add()). This may result in a memory leak.
 
-Fixes: 7640ead93924 ("bpf: verifier: make sure callees don't prune with caller differences")
-Fixes: f4d7e40a5b71 ("bpf: introduce function calls (verification)")
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: James Morse <james.morse@arm.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: https://lkml.kernel.org/r/1555554438-103953-1-git-send-email-bianpan2016@163.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/verifier.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/edac/edac_mc_sysfs.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 4ff130ddfbf6..cbc03f051598 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -6197,17 +6197,18 @@ static int is_state_visited(struct bpf_verifier_env *env, int insn_idx)
- 	 * the state of the call instruction (with WRITTEN set), and r0 comes
- 	 * from callee with its full parentage chain, anyway.
- 	 */
--	for (j = 0; j <= cur->curframe; j++)
--		for (i = j < cur->curframe ? BPF_REG_6 : 0; i < BPF_REG_FP; i++)
--			cur->frame[j]->regs[i].parent = &new->frame[j]->regs[i];
- 	/* clear write marks in current state: the writes we did are not writes
- 	 * our child did, so they don't screen off its reads from us.
- 	 * (There are no read marks in current state, because reads always mark
- 	 * their parent and current state never has children yet.  Only
- 	 * explored_states can get read marks.)
- 	 */
--	for (i = 0; i < BPF_REG_FP; i++)
--		cur->frame[cur->curframe]->regs[i].live = REG_LIVE_NONE;
-+	for (j = 0; j <= cur->curframe; j++) {
-+		for (i = j < cur->curframe ? BPF_REG_6 : 0; i < BPF_REG_FP; i++)
-+			cur->frame[j]->regs[i].parent = &new->frame[j]->regs[i];
-+		for (i = 0; i < BPF_REG_FP; i++)
-+			cur->frame[j]->regs[i].live = REG_LIVE_NONE;
-+	}
+diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
+index bf9273437e3f..7c01e1cc030c 100644
+--- a/drivers/edac/edac_mc_sysfs.c
++++ b/drivers/edac/edac_mc_sysfs.c
+@@ -404,6 +404,8 @@ static inline int nr_pages_per_csrow(struct csrow_info *csrow)
+ static int edac_create_csrow_object(struct mem_ctl_info *mci,
+ 				    struct csrow_info *csrow, int index)
+ {
++	int err;
++
+ 	csrow->dev.type = &csrow_attr_type;
+ 	csrow->dev.groups = csrow_dev_groups;
+ 	device_initialize(&csrow->dev);
+@@ -415,7 +417,11 @@ static int edac_create_csrow_object(struct mem_ctl_info *mci,
+ 	edac_dbg(0, "creating (virtual) csrow node %s\n",
+ 		 dev_name(&csrow->dev));
  
- 	/* all stack frames are accessible from callee, clear them all */
- 	for (j = 0; j <= cur->curframe; j++) {
+-	return device_add(&csrow->dev);
++	err = device_add(&csrow->dev);
++	if (err)
++		put_device(&csrow->dev);
++
++	return err;
+ }
+ 
+ /* Create a CSROW object under specifed edac_mc_device */
 -- 
 2.20.1
 
