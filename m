@@ -2,176 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13EF173735
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:03:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E82373736
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:03:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387677AbfGXTDG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:03:06 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45620 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbfGXTDG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:03:06 -0400
-Received: by mail-qt1-f195.google.com with SMTP id x22so41656981qtp.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:03:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=p/O/eoxQhBRc771PITXPNeSklEhzUdVEBJF9ZJTsHJ8=;
-        b=Yq/sndn+rMVYUjvgdUVXtzEm8gPnWFb7cWXAFJ3hDgez88G153VElFFm9GnCQSdnrb
-         CWQPN3gvro3F2zpSO+1omvdfJbVggcLpM+Dxe2Dz/EJ+ps9CgGMey83zv6yN7w7epjfz
-         FuX/P/2AeuX+ktHSdAz7tPopU4bZ/c57M+EHBjvxi74YFkHfh0qT8LZ24yg98Zaa1MP9
-         4/FlsZPEfR8jvvJ6aKmCOkw+Ijujlr6Fi5npdD+bzeZ5b6AAhdlKXwnz+B6BH4rVQwtV
-         pl1JkRpcMtPFR/BGF7rSNbQozlRI1LlxvpxpjwiGVZghsnmwKPXIoy949sTw+izOng4i
-         1oCw==
-X-Gm-Message-State: APjAAAWMV5zFjC7ukIf6slulwNVBsnEqI5NdnOS93+B0UFzxHlRESo4X
-        a5UVILDmAGEWAzx/P6dF2N5LOw==
-X-Google-Smtp-Source: APXvYqxLYZw8rlw3oqXg+jJiwN6HmesmFY8Q4kNnFppIrK1HvwN2j54BYbLPwLmiMExxvUpkuvzfMw==
-X-Received: by 2002:ac8:1ba9:: with SMTP id z38mr59884346qtj.176.1563994984575;
-        Wed, 24 Jul 2019 12:03:04 -0700 (PDT)
-Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
-        by smtp.gmail.com with ESMTPSA id v1sm21056496qkj.19.2019.07.24.12.02.59
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 12:03:03 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 15:02:56 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     nitesh@redhat.com, kvm@vger.kernel.org, david@redhat.com,
-        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
-        konrad.wilk@oracle.com, lcapitulino@redhat.com,
-        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
-        dan.j.williams@intel.com, alexander.h.duyck@linux.intel.com
-Subject: Re: [PATCH v2 QEMU] virtio-balloon: Provide a interface for "bubble
- hinting"
-Message-ID: <20190724150224-mutt-send-email-mst@kernel.org>
-References: <20190724165158.6685.87228.stgit@localhost.localdomain>
- <20190724171050.7888.62199.stgit@localhost.localdomain>
+        id S1728832AbfGXTDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:03:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45594 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727777AbfGXTDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:03:09 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 076BB22ADB;
+        Wed, 24 Jul 2019 19:03:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563994988;
+        bh=W7Y9oN9/ybRA+889iyJc8Sp46nGRbSZs546N0y4ccAw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=P/sgd1WEfA1UzlKSlOlf5voa5IZ7DiREeZ6+nCqBiUNNj0aKJB2qaE1zen4VO+9MD
+         g40O+XGAtxBTh28lguakyP8uQ4bme4YGIAtcT8dvQZa4WjSMcW8R5HWJxYZWHbQUcg
+         HR6eOoDIC35HHu52qFp5VlYGni/vEq//lKPNVIzE=
+Date:   Wed, 24 Jul 2019 12:03:06 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        netdev <netdev@vger.kernel.org>, Florian Westphal <fw@strlen.de>,
+        i.maximets@samsung.com, David Ahern <dsahern@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: Reminder: 99 open syzbot bugs in net subsystem
+Message-ID: <20190724190305.GG213255@gmail.com>
+Mail-Followup-To: Eric Dumazet <edumazet@google.com>,
+        David Miller <davem@davemloft.net>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>, netdev <netdev@vger.kernel.org>,
+        Florian Westphal <fw@strlen.de>, i.maximets@samsung.com,
+        David Ahern <dsahern@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <20190724013813.GB643@sol.localdomain>
+ <63f12327-dd4b-5210-4de2-705af6bc4ba4@gmail.com>
+ <20190724163014.GC673@sol.localdomain>
+ <20190724.111225.2257475150626507655.davem@davemloft.net>
+ <20190724183710.GF213255@gmail.com>
+ <CANn89iKZcdk-YfqZ-F1toHDLW3Etf5oPR78bXOq0FbjwWyiSMQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190724171050.7888.62199.stgit@localhost.localdomain>
+In-Reply-To: <CANn89iKZcdk-YfqZ-F1toHDLW3Etf5oPR78bXOq0FbjwWyiSMQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 10:12:10AM -0700, Alexander Duyck wrote:
-> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+On Wed, Jul 24, 2019 at 08:52:54PM +0200, 'Eric Dumazet' via syzkaller-bugs wrote:
+> On Wed, Jul 24, 2019 at 8:37 PM Eric Biggers <ebiggers@kernel.org> wrote:
 > 
-> Add support for what I am referring to as "bubble hinting". Basically the
-> idea is to function very similar to how the balloon works in that we
-> basically end up madvising the page as not being used. However we don't
-> really need to bother with any deflate type logic since the page will be
-> faulted back into the guest when it is read or written to.
+> > A huge number of valid open bugs are not being fixed, which is a fact.  We can
+> > argue about what words to use to describe this situation, but it doesn't change
+> > the situation itself.
+> >
+> > What is your proposed solution?
 > 
-> This is meant to be a simplification of the existing balloon interface
-> to use for providing hints to what memory needs to be freed. I am assuming
-> this is safe to do as the deflate logic does not actually appear to do very
-> much other than tracking what subpages have been released and which ones
-> haven't.
+> syzbot sends emails, plenty  of them, with many wrong bisection
+> results, increasing the noise.
 > 
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> ---
->  hw/virtio/virtio-balloon.c                      |   40 +++++++++++++++++++++++
->  include/hw/virtio/virtio-balloon.h              |    2 +
->  include/standard-headers/linux/virtio_balloon.h |    1 +
->  3 files changed, 42 insertions(+), 1 deletion(-)
+> If nobody is interested, I am not sure sending copies of them
+> repeatedly will be of any help.
 > 
-> diff --git a/hw/virtio/virtio-balloon.c b/hw/virtio/virtio-balloon.c
-> index 2112874055fb..70c0004c0f88 100644
-> --- a/hw/virtio/virtio-balloon.c
-> +++ b/hw/virtio/virtio-balloon.c
-> @@ -328,6 +328,39 @@ static void balloon_stats_set_poll_interval(Object *obj, Visitor *v,
->      balloon_stats_change_timer(s, 0);
->  }
->  
-> +static void virtio_bubble_handle_output(VirtIODevice *vdev, VirtQueue *vq)
-> +{
-> +    VirtQueueElement *elem;
-> +
-> +    while ((elem = virtqueue_pop(vq, sizeof(VirtQueueElement)))) {
-> +    	unsigned int i;
-> +
-> +        for (i = 0; i < elem->in_num; i++) {
-> +            void *addr = elem->in_sg[i].iov_base;
-> +            size_t size = elem->in_sg[i].iov_len;
-> +            ram_addr_t ram_offset;
-> +            size_t rb_page_size;
-> +            RAMBlock *rb;
-> +
-> +            if (qemu_balloon_is_inhibited())
-> +                continue;
-> +
-> +            rb = qemu_ram_block_from_host(addr, false, &ram_offset);
-> +            rb_page_size = qemu_ram_pagesize(rb);
-> +
-> +            /* For now we will simply ignore unaligned memory regions */
-> +            if ((ram_offset | size) & (rb_page_size - 1))
-> +                continue;
-> +
-> +            ram_block_discard_range(rb, ram_offset, size);
+> Maybe a simple monthly reminder with one URL to go to the list of bugs
+> would be less intrusive.
+> 
 
-I suspect this needs to do like the migration type of
-hinting and get disabled if page poisoning is in effect.
-Right?
+The bogus bisection results is a known issue (which I'm trying to convince
+Dmitry is important enough to fix...), which is why I manually reviewed all of
+them and discarded out all the obviously incorrect ones.  My reminders only
+include manually reviewed bisection results.  Obviously there will still be some
+looked plausible but are actualy wrong, but I suspect the accuracy is around
+80-90% rather than the 40-50% of the raw syzbot bisection results.
 
-> +        }
-> +
-> +        virtqueue_push(vq, elem, 0);
-> +        virtio_notify(vdev, vq);
-> +        g_free(elem);
-> +    }
-> +}
-> +
->  static void virtio_balloon_handle_output(VirtIODevice *vdev, VirtQueue *vq)
->  {
->      VirtIOBalloon *s = VIRTIO_BALLOON(vdev);
-> @@ -782,6 +815,11 @@ static void virtio_balloon_device_realize(DeviceState *dev, Error **errp)
->      s->svq = virtio_add_queue(vdev, 128, virtio_balloon_receive_stats);
->  
->      if (virtio_has_feature(s->host_features,
-> +                           VIRTIO_BALLOON_F_HINTING)) {
-> +        s->hvq = virtio_add_queue(vdev, 128, virtio_bubble_handle_output);
-> +    }
-> +
-> +    if (virtio_has_feature(s->host_features,
->                             VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
->          s->free_page_vq = virtio_add_queue(vdev, VIRTQUEUE_MAX_SIZE,
->                                             virtio_balloon_handle_free_page_vq);
-> @@ -897,6 +935,8 @@ static Property virtio_balloon_properties[] = {
->                      VIRTIO_BALLOON_F_DEFLATE_ON_OOM, false),
->      DEFINE_PROP_BIT("free-page-hint", VirtIOBalloon, host_features,
->                      VIRTIO_BALLOON_F_FREE_PAGE_HINT, false),
-> +    DEFINE_PROP_BIT("guest-page-hinting", VirtIOBalloon, host_features,
-> +                    VIRTIO_BALLOON_F_HINTING, true),
->      DEFINE_PROP_LINK("iothread", VirtIOBalloon, iothread, TYPE_IOTHREAD,
->                       IOThread *),
->      DEFINE_PROP_END_OF_LIST(),
-> diff --git a/include/hw/virtio/virtio-balloon.h b/include/hw/virtio/virtio-balloon.h
-> index 1afafb12f6bc..a58b24fdf29d 100644
-> --- a/include/hw/virtio/virtio-balloon.h
-> +++ b/include/hw/virtio/virtio-balloon.h
-> @@ -44,7 +44,7 @@ enum virtio_balloon_free_page_report_status {
->  
->  typedef struct VirtIOBalloon {
->      VirtIODevice parent_obj;
-> -    VirtQueue *ivq, *dvq, *svq, *free_page_vq;
-> +    VirtQueue *ivq, *dvq, *svq, *free_page_vq, *hvq;
->      uint32_t free_page_report_status;
->      uint32_t num_pages;
->      uint32_t actual;
-> diff --git a/include/standard-headers/linux/virtio_balloon.h b/include/standard-headers/linux/virtio_balloon.h
-> index 9375ca2a70de..f9e3e8256261 100644
-> --- a/include/standard-headers/linux/virtio_balloon.h
-> +++ b/include/standard-headers/linux/virtio_balloon.h
-> @@ -36,6 +36,7 @@
->  #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM	2 /* Deflate balloon on OOM */
->  #define VIRTIO_BALLOON_F_FREE_PAGE_HINT	3 /* VQ to report free pages */
->  #define VIRTIO_BALLOON_F_PAGE_POISON	4 /* Guest is using page poisoning */
-> +#define VIRTIO_BALLOON_F_HINTING	5 /* Page hinting virtqueue */
->  
->  /* Size of a PFN in the balloon interface. */
->  #define VIRTIO_BALLOON_PFN_SHIFT 12
+- Eric
