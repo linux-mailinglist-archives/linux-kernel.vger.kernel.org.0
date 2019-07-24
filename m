@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DC0D73E45
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:23:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1957D73E43
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:23:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390954AbfGXUXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:23:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44238 "EHLO mail.kernel.org"
+        id S2389964AbfGXTmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:42:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387897AbfGXTmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:42:31 -0400
+        id S2390034AbfGXTme (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:42:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31FEB22ADA;
-        Wed, 24 Jul 2019 19:42:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C09CD20665;
+        Wed, 24 Jul 2019 19:42:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997350;
-        bh=ikudbIaHF+TQIA27wylt1DWHxq8QWyo2t/AkcsVrBNg=;
+        s=default; t=1563997353;
+        bh=RHYioeNC3dV2V+H2e0J3LjQcp19XulmQk7E8pbneulw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PhIrYAVlS4FckuEqxmc0B6Gp1R6WOqOpNRoe6ixbeMGHX7BKpTFKsEVP6vs8/ERjl
-         2xhKMm/sowi3qXob8nN5orbHde9tjPzDWcmeH6kwme1/Ds4UtQsFqXTGzAMuBtLV55
-         5x3ClijA+UWZ47QwcRCgOB43y39mnmiZaugB0Ywk=
+        b=TB4F+VnJ/WymhuRQr3EBM4ZIvBad9VzTtpIOHMPHsoSDNAElWjrEZItytyJWkdgp+
+         mpcBJO8lT4rXa1FvO4E8knTZyWrrGJ6ZDtYtUHIKCYFK9dbc7gMCD/PYIg2kjsKikE
+         zeTBmZbbyFeIKZjCIOMIfuwkGBucMhIOPI8aquwY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
         Josef Bacik <jbacik@fb.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.2 406/413] blk-iolatency: clear use_delay when io.latency is set to zero
-Date:   Wed, 24 Jul 2019 21:21:37 +0200
-Message-Id: <20190724191803.688554541@linuxfoundation.org>
+Subject: [PATCH 5.2 407/413] blkcg: update blkcg_print_stat() to handle larger outputs
+Date:   Wed, 24 Jul 2019 21:21:38 +0200
+Message-Id: <20190724191803.727475960@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -45,37 +45,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tejun Heo <tj@kernel.org>
 
-commit 5de0073fcd50cc1f150895a7bb04d3cf8067b1d7 upstream.
+commit f539da82f2158916e154d206054e0efd5df7ab61 upstream.
 
-If use_delay was non-zero when the latency target of a cgroup was set
-to zero, it will stay stuck until io.latency is enabled on the cgroup
-again.  This keeps readahead disabled for the cgroup impacting
-performance negatively.
+Depending on the number of devices, blkcg stats can go over the
+default seqfile buf size.  seqfile normally retries with a larger
+buffer but since the ->pd_stat() addition, blkcg_print_stat() doesn't
+tell seqfile that overflow has happened and the output gets printed
+truncated.  Fix it by calling seq_commit() w/ -1 on possible
+overflows.
 
 Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Josef Bacik <jbacik@fb.com>
-Fixes: d70675121546 ("block: introduce blk-iolatency io controller")
+Fixes: 903d23f0a354 ("blk-cgroup: allow controllers to output their own stats")
 Cc: stable@vger.kernel.org # v4.19+
+Cc: Josef Bacik <jbacik@fb.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-iolatency.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ block/blk-cgroup.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/block/blk-iolatency.c
-+++ b/block/blk-iolatency.c
-@@ -759,8 +759,10 @@ static int iolatency_set_min_lat_nsec(st
- 
- 	if (!oldval && val)
- 		return 1;
--	if (oldval && !val)
-+	if (oldval && !val) {
-+		blkcg_clear_delay(blkg);
- 		return -1;
-+	}
- 	return 0;
- }
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -1006,8 +1006,12 @@ static int blkcg_print_stat(struct seq_f
+ 		}
+ next:
+ 		if (has_stats) {
+-			off += scnprintf(buf+off, size-off, "\n");
+-			seq_commit(sf, off);
++			if (off < size - 1) {
++				off += scnprintf(buf+off, size-off, "\n");
++				seq_commit(sf, off);
++			} else {
++				seq_commit(sf, -1);
++			}
+ 		}
+ 	}
  
 
 
