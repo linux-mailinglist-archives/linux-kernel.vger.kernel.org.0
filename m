@@ -2,93 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83C1972C56
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 12:30:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABC1772C5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 12:33:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbfGXKa2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 06:30:28 -0400
-Received: from mga07.intel.com ([134.134.136.100]:13272 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726203AbfGXKa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 06:30:28 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 03:30:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,302,1559545200"; 
-   d="scan'208";a="172260139"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga003.jf.intel.com with ESMTP; 24 Jul 2019 03:30:25 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 3BBF122217; Wed, 24 Jul 2019 13:30:28 +0300 (EEST)
-Date:   Wed, 24 Jul 2019 13:30:28 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     mchehab@kernel.org, gregkh@linuxfoundation.org, yong.zhi@intel.com,
-        digetx@gmail.com, hverkuil-cisco@xs4all.nl,
-        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-media@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: Re: [PATCH] media: staging: ipu3: Enable IOVA API only when IOMMU
- support is enabled
-Message-ID: <20190724103027.GD21370@paasikivi.fi.intel.com>
-References: <20190722134749.21580-1-yuehaibing@huawei.com>
+        id S1726952AbfGXKdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 06:33:14 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:43563 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbfGXKdO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 06:33:14 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hqEa0-0004EB-AS; Wed, 24 Jul 2019 12:33:04 +0200
+Date:   Wed, 24 Jul 2019 12:33:03 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+cc:     mingo@redhat.com, bp@alien8.de, peterz@infradead.org,
+        clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org,
+        yamada.masahiro@socionext.com, stable@vger.kernel.org,
+        Vaibhav Rustagi <vaibhavrustagi@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Alistair Delva <adelva@google.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Enrico Weigelt <info@metux.net>,
+        Allison Randal <allison@lohutok.net>,
+        Uros Bizjak <ubizjak@gmail.com>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexios Zavras <alexios.zavras@intel.com>
+Subject: Re: [PATCH v3 1/2] x86/purgatory: do not use __builtin_memcpy and
+ __builtin_memset
+In-Reply-To: <20190723212418.36379-1-ndesaulniers@google.com>
+Message-ID: <alpine.DEB.2.21.1907241231480.1972@nanos.tec.linutronix.de>
+References: <20190723212418.36379-1-ndesaulniers@google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190722134749.21580-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yue,
-
-On Mon, Jul 22, 2019 at 09:47:49PM +0800, YueHaibing wrote:
-> If IOMMU_SUPPORT is not set, ipu3 driver may select IOMMU_IOVA to m.
-> But for many drivers, they use "select IOMMU_IOVA if IOMMU_SUPPORT"
-> in the Kconfig, for example, CONFIG_TEGRA_VDE is set to y but IOMMU_IOVA
-> is m, then the building fails like this:
+On Tue, 23 Jul 2019, Nick Desaulniers wrote:
+> Instead, reuse an implementation from arch/x86/boot/compressed/string.c
+> if we define warn as a symbol. Also, Clang may lower memcmp's that
+> compare against 0 to bcmp's, so add a small definition, too. See also:
+> commit 5f074f3e192f ("lib/string.c: implement a basic bcmp")
 > 
-> drivers/staging/media/tegra-vde/iommu.o: In function `tegra_vde_iommu_map':
-> iommu.c:(.text+0x41): undefined reference to `alloc_iova'
-> iommu.c:(.text+0x56): undefined reference to `__free_iova'
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: 7fc7af649ca7 ("media: staging/intel-ipu3: Add imgu top level pci device driver")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/staging/media/ipu3/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/media/ipu3/Kconfig b/drivers/staging/media/ipu3/Kconfig
-> index 4b51c67..b7df18f 100644
-> --- a/drivers/staging/media/ipu3/Kconfig
-> +++ b/drivers/staging/media/ipu3/Kconfig
-> @@ -4,7 +4,7 @@ config VIDEO_IPU3_IMGU
->  	depends on PCI && VIDEO_V4L2
->  	depends on MEDIA_CONTROLLER && VIDEO_V4L2_SUBDEV_API
->  	depends on X86
-> -	select IOMMU_IOVA
-> +	select IOMMU_IOVA if IOMMU_SUPPORT
+> Cc: stable@vger.kernel.org
+> Fixes: 8fc5b4d4121c ("purgatory: core purgatory functionality")
+> Link: https://bugs.chromium.org/p/chromium/issues/detail?id=984056
+> Reported-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
+> Debugged-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
+> Debugged-by: Manoj Gupta <manojgupta@google.com>
+> Suggested-by: Alistair Delva <adelva@google.com>
+> Signed-off-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 
-This doesn't seem right: the ipu3-cio2 driver needs IOMMU_IOVA
-independently of IOMMU_SUPPORT.
+That SOB chain is weird. Is Vaibhav the author?
 
-Looking at tegra-vde, it seems to depend on IOMMU_SUPPORT but that's not
-declared in its Kconfig entry. I wonder if adding that would be the right
-way to fix this.
+> +/*
+> + * Clang may lower `memcmp == 0` to `bcmp == 0`.
+> + */
+> +int bcmp(const void *s1, const void *s2, size_t len) {
+> +	return memcmp(s1, s2, len);
+> +}
 
-Cc'ing the IOMMU list.
+foo()
+{
+}
 
->  	select VIDEOBUF2_DMA_SG
->  	help
->  	  This is the Video4Linux2 driver for Intel IPU3 image processing unit,
+please.
 
--- 
-Regards,
+Thanks,
 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+	tglx
