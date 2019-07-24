@@ -2,98 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB37F72FB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 15:19:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD21472FC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 15:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728602AbfGXNTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 09:19:06 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39188 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727528AbfGXNTG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 09:19:06 -0400
-Received: by mail-pg1-f196.google.com with SMTP id u17so21230409pgi.6;
-        Wed, 24 Jul 2019 06:19:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=187+tifTVmT8+OOjO9Brc7YUyKXShVPSiDjBCP8NPi4=;
-        b=N8bju59PXmAonbSc85iXGzLL6y3xg2uZwJKtZPnFLv2O7xjuyo9lHS8oDnWzmq4ncq
-         0o8YIkXVsfExVs9ti4kRZJ3/TCeFj37VJoH6+hI0pGlIgW3mkjTuiZNpKxltae0N6KiL
-         RXKBrP2eZX5p1zCL/os4C9yuaav6QIabBWUAOfjrmiZplNtGdFLaCFalUkp6TumrfJrP
-         81AMW8WP9t9LQ487Y2BP/a4Ip3pQqkZkLJ317FXDwta6EUMVlnFTuW1e6hQpF2lW501Z
-         4oN2b2VSNda87QCtFOHyKWHS/jmg7bCH/GIUI/zgfN6A1xNFvWEkMssC6kwI+u3fWG8g
-         QQfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=187+tifTVmT8+OOjO9Brc7YUyKXShVPSiDjBCP8NPi4=;
-        b=e05SLjwj0eVf+IjVyOkXy6WBeVtY/yxB/Eu4vYzKWJNaFC/Uj5oMwxeV/mS7j+eHaR
-         hh4iJEyXuMCiicCCR5bS+TONXBppUWs7+/KpgPWL3i4pkFfNesYtttcEzXfpjvXEcBtl
-         ZJDUxUGdDZumpCwiGBZDS0buxWIbW4rsBqcWjJVF7NUuP+ce7c2cmx9mfojRCQIYmEhk
-         kWyJrLHfDbuIuP/EoGM5or308lCQ+tiF/+x3UtC0jUtGFMw4NfQuyLxVyRvQsivwHJMl
-         la9ALEUw2iF1yozU7kavo8r/FkasKu32/RvY6ZYHgJSQbdh+fZ7ok+OhURwdNKQ0QdvT
-         A2Og==
-X-Gm-Message-State: APjAAAWUtOqVmarkGVNnEWg5E5W/k6VyS/GEOc9wxl1jyvDUckDetN9k
-        jh0tjIEWaWY8V3v+vZVPwA0=
-X-Google-Smtp-Source: APXvYqx0xnEr8N9RRGfndLrAHVr4nivY1lnSIq0jSryfTg4ogib6Ugw9VmUngELr/aWPiMAGKtw5SQ==
-X-Received: by 2002:a17:90a:3344:: with SMTP id m62mr87950008pjb.135.1563974345617;
-        Wed, 24 Jul 2019 06:19:05 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id a5sm39888253pjv.21.2019.07.24.06.19.03
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 06:19:05 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] video: fbdev: aty: Use dev_get_drvdata
-Date:   Wed, 24 Jul 2019 21:19:00 +0800
-Message-Id: <20190724131900.2039-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727841AbfGXNUs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 09:20:48 -0400
+Received: from mga04.intel.com ([192.55.52.120]:13080 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726981AbfGXNUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 09:20:47 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 06:20:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
+   d="scan'208";a="368787055"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by fmsmga005.fm.intel.com with ESMTP; 24 Jul 2019 06:20:44 -0700
+Date:   Wed, 24 Jul 2019 21:03:47 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, atull@kernel.org,
+        Xu Yilun <yilun.xu@intel.com>
+Subject: Re: [PATCH v3 09/12] fpga: dfl: afu: add STP (SignalTap) support
+Message-ID: <20190724130346.GA8463@hao-dev>
+References: <1563857495-26692-1-git-send-email-hao.wu@intel.com>
+ <1563857495-26692-10-git-send-email-hao.wu@intel.com>
+ <20190724101109.GE29532@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190724101109.GE29532@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of using to_pci_dev + pci_get_drvdata,
-use dev_get_drvdata to make code simpler.
+On Wed, Jul 24, 2019 at 12:11:09PM +0200, Greg KH wrote:
+> On Tue, Jul 23, 2019 at 12:51:32PM +0800, Wu Hao wrote:
+> > STP (SignalTap) is one of the private features under the port for
+> > debugging. This patch adds private feature driver support for it
+> > to allow userspace applications to mmap related mmio region and
+> > provide STP service.
+> > 
+> > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+> > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> > Acked-by: Moritz Fischer <mdf@kernel.org>
+> > Acked-by: Alan Tull <atull@kernel.org>
+> > Signed-off-by: Moritz Fischer <mdf@kernel.org>
+> > ---
+> >  drivers/fpga/dfl-afu-main.c | 34 ++++++++++++++++++++++++++++++++++
+> >  1 file changed, 34 insertions(+)
+> > 
+> > diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
+> > index 15dd4cb..395f96e 100644
+> > --- a/drivers/fpga/dfl-afu-main.c
+> > +++ b/drivers/fpga/dfl-afu-main.c
+> > @@ -514,6 +514,36 @@ static void port_afu_uinit(struct platform_device *pdev,
+> >  	.uinit = port_afu_uinit,
+> >  };
+> >  
+> > +static int port_stp_init(struct platform_device *pdev,
+> > +			 struct dfl_feature *feature)
+> > +{
+> > +	struct resource *res = &pdev->resource[feature->resource_index];
+> > +
+> > +	dev_dbg(&pdev->dev, "PORT STP Init.\n");
+> 
+> ftrace is your friend, no need to do a lot of "look I am here!"
+> messages.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
- drivers/video/fbdev/aty/radeon_base.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Hi Greg,
 
-diff --git a/drivers/video/fbdev/aty/radeon_base.c b/drivers/video/fbdev/aty/radeon_base.c
-index 6f891d82eebe..5d042653e9bd 100644
---- a/drivers/video/fbdev/aty/radeon_base.c
-+++ b/drivers/video/fbdev/aty/radeon_base.c
-@@ -2217,8 +2217,7 @@ static ssize_t radeon_show_edid1(struct file *filp, struct kobject *kobj,
- 				 char *buf, loff_t off, size_t count)
- {
- 	struct device *dev = container_of(kobj, struct device, kobj);
--	struct pci_dev *pdev = to_pci_dev(dev);
--        struct fb_info *info = pci_get_drvdata(pdev);
-+		struct fb_info *info = dev_get_drvdata(dev);
-         struct radeonfb_info *rinfo = info->par;
- 
- 	return radeon_show_one_edid(buf, off, count, rinfo->mon1_EDID);
-@@ -2230,8 +2229,7 @@ static ssize_t radeon_show_edid2(struct file *filp, struct kobject *kobj,
- 				 char *buf, loff_t off, size_t count)
- {
- 	struct device *dev = container_of(kobj, struct device, kobj);
--	struct pci_dev *pdev = to_pci_dev(dev);
--        struct fb_info *info = pci_get_drvdata(pdev);
-+		struct fb_info *info = dev_get_drvdata(dev);
-         struct radeonfb_info *rinfo = info->par;
- 
- 	return radeon_show_one_edid(buf, off, count, rinfo->mon2_EDID);
--- 
-2.20.1
+Thanks for the code review!
 
+Sure, let me remove them.
+
+> 
+> > +
+> > +	return afu_mmio_region_add(dev_get_platdata(&pdev->dev),
+> > +				   DFL_PORT_REGION_INDEX_STP,
+> > +				   resource_size(res), res->start,
+> > +				   DFL_PORT_REGION_MMAP | DFL_PORT_REGION_READ |
+> > +				   DFL_PORT_REGION_WRITE);
+> > +}
+> > +
+> > +static void port_stp_uinit(struct platform_device *pdev,
+> > +			   struct dfl_feature *feature)
+> > +{
+> > +	dev_dbg(&pdev->dev, "PORT STP UInit.\n");
+> 
+> Same here.
+> 
+> Why have this function at all if it does not do anything?
+
+Let me remove them in the next version. actually uinit callback is
+always required in current code, i will add one more patch to change
+it, and remove all uinit functions who do nothing, it does save code.
+
+Thanks for the comments.
+Hao
+
+> 
+> 
+> thanks,
+> 
+> greg k-h
