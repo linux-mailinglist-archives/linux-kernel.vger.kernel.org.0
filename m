@@ -2,36 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7209A739F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:45:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB448739F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:45:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390974AbfGXTpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:45:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48994 "EHLO mail.kernel.org"
+        id S2391036AbfGXTph (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:45:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390955AbfGXTpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:45:19 -0400
+        id S2390998AbfGXTpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:45:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21A66214AF;
-        Wed, 24 Jul 2019 19:45:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4144E2083B;
+        Wed, 24 Jul 2019 19:45:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997518;
-        bh=Y1zAGay3jd5KEF4g9LhG4qBCznX9Lm/z+6299vg+c1U=;
+        s=default; t=1563997529;
+        bh=jCtpTfNh13ZUGbSO67B0XjquZfXcdMfE4RQOKKUtUag=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f38EpKniPyexfYU5AoxSOGerAMAqk6nFdYfITjhl4gtcrigi8jGF8DbNybi2c4Fmm
-         CPGq/F0CJdrsWi8B9A4QUDq1/RAMFCgHEWTSaXlp3qudyBHksiXXnHrdFUGRp6glNS
-         D4nXJblRgaYbYsehHXT39sTGOaorTY6K8l/yHOjo=
+        b=aguf+uNAapXAyhEFGW9Pp2MgztIhmpLvd3HmTJOGpRNjulq53ibPxp0aH1QAwqNMa
+         LEv8CKorSzDbTp9ZxmREsuDXloW3z8nQYuNKFRHuYh/9P3Aoc/iOdZluoRvoY7WuIT
+         IrZ7Q8jFN0Xth4/K/t5DrxUEb2lQLDe+2a/ei7Xw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 051/371] crypto: talitos - Align SEC1 accesses to 32 bits boundaries.
-Date:   Wed, 24 Jul 2019 21:16:43 +0200
-Message-Id: <20190724191728.553343881@linuxfoundation.org>
+        stable@vger.kernel.org, Imre Deak <imre.deak@intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 055/371] locking/lockdep: Fix merging of hlocks with non-zero references
+Date:   Wed, 24 Jul 2019 21:16:47 +0200
+Message-Id: <20190724191728.939232221@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -44,40 +49,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c9cca7034b34a2d82e9a03b757de2485c294851c ]
+[ Upstream commit d9349850e188b8b59e5322fda17ff389a1c0cd7d ]
 
-The MPC885 reference manual states:
+The sequence
 
-SEC Lite-initiated 8xx writes can occur only on 32-bit-word boundaries, but
-reads can occur on any byte boundary. Writing back a header read from a
-non-32-bit-word boundary will yield unpredictable results.
+	static DEFINE_WW_CLASS(test_ww_class);
 
-In order to ensure that, cra_alignmask is set to 3 for SEC1.
+	struct ww_acquire_ctx ww_ctx;
+	struct ww_mutex ww_lock_a;
+	struct ww_mutex ww_lock_b;
+	struct ww_mutex ww_lock_c;
+	struct mutex lock_c;
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Fixes: 9c4a79653b35 ("crypto: talitos - Freescale integrated security engine (SEC) driver")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+	ww_acquire_init(&ww_ctx, &test_ww_class);
+
+	ww_mutex_init(&ww_lock_a, &test_ww_class);
+	ww_mutex_init(&ww_lock_b, &test_ww_class);
+	ww_mutex_init(&ww_lock_c, &test_ww_class);
+
+	mutex_init(&lock_c);
+
+	ww_mutex_lock(&ww_lock_a, &ww_ctx);
+
+	mutex_lock(&lock_c);
+
+	ww_mutex_lock(&ww_lock_b, &ww_ctx);
+	ww_mutex_lock(&ww_lock_c, &ww_ctx);
+
+	mutex_unlock(&lock_c);	(*)
+
+	ww_mutex_unlock(&ww_lock_c);
+	ww_mutex_unlock(&ww_lock_b);
+	ww_mutex_unlock(&ww_lock_a);
+
+	ww_acquire_fini(&ww_ctx); (**)
+
+will trigger the following error in __lock_release() when calling
+mutex_release() at **:
+
+	DEBUG_LOCKS_WARN_ON(depth <= 0)
+
+The problem is that the hlock merging happening at * updates the
+references for test_ww_class incorrectly to 3 whereas it should've
+updated it to 4 (representing all the instances for ww_ctx and
+ww_lock_[abc]).
+
+Fix this by updating the references during merging correctly taking into
+account that we can have non-zero references (both for the hlock that we
+merge into another hlock or for the hlock we are merging into).
+
+Signed-off-by: Imre Deak <imre.deak@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Link: https://lkml.kernel.org/r/20190524201509.9199-2-imre.deak@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/talitos.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/locking/lockdep.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
-index 657cf739ee40..82d3625667cd 100644
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -3192,7 +3192,10 @@ static struct talitos_crypto_alg *talitos_alg_alloc(struct device *dev,
- 		alg->cra_priority = t_alg->algt.priority;
- 	else
- 		alg->cra_priority = TALITOS_CRA_PRIORITY;
--	alg->cra_alignmask = 0;
-+	if (has_ftr_sec1(priv))
-+		alg->cra_alignmask = 3;
-+	else
-+		alg->cra_alignmask = 0;
- 	alg->cra_ctxsize = sizeof(struct talitos_ctx);
- 	alg->cra_flags |= CRYPTO_ALG_KERN_DRIVER_ONLY;
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 2ecc12cd11d0..89b3f38a57f3 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -3611,17 +3611,17 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+ 	if (depth) {
+ 		hlock = curr->held_locks + depth - 1;
+ 		if (hlock->class_idx == class_idx && nest_lock) {
+-			if (hlock->references) {
+-				/*
+-				 * Check: unsigned int references:12, overflow.
+-				 */
+-				if (DEBUG_LOCKS_WARN_ON(hlock->references == (1 << 12)-1))
+-					return 0;
++			if (!references)
++				references++;
  
++			if (!hlock->references)
+ 				hlock->references++;
+-			} else {
+-				hlock->references = 2;
+-			}
++
++			hlock->references += references;
++
++			/* Overflow */
++			if (DEBUG_LOCKS_WARN_ON(hlock->references < references))
++				return 0;
+ 
+ 			return 2;
+ 		}
 -- 
 2.20.1
 
