@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5BAA73F03
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:29:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1298673EFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:29:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388969AbfGXU3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:29:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54832 "EHLO mail.kernel.org"
+        id S2389432AbfGXU3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:29:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388794AbfGXTdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:33:11 -0400
+        id S2387685AbfGXTdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:33:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28740229F3;
-        Wed, 24 Jul 2019 19:33:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B930120659;
+        Wed, 24 Jul 2019 19:33:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996790;
-        bh=rabk5HJpjleC/RCsRwYf0b5VguYCDz59AVw06qg5qRE=;
+        s=default; t=1563996818;
+        bh=1UxkEgMDGesnIPbV3F1ENZaDuBaggGu38f6L0zhjtCM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GD6qD68/9lEittBg0u2aP4Z+Erg06p3iz0rlIb7ls5T/o6V5twSXMUuiVJrNkeP3x
-         foU9O6eMu5cZSpp5TDMqzvSannHW0FSpMxjuYiIsSEIwRzI7RuLfiWPGrzSAZuZgcA
-         FiWVn4AiZp98DnDZud9h3CZFBaDYsISef6gC20Bw=
+        b=LiLc3CBb8W6abkTNBRYltzCMfUmt2dNQPHetchdS8z6zbX35vNEwqcYlOnbAVNbWZ
+         Tu/F/0PFwJV44Ca7PGZUQSGLvfe0HVcy1ut4ZJRGRGkTTk55QQ0pQry+d4Qj76TqUb
+         mSh4jVvnx2Z/qxQHU2DsxglRJyTgM0GuIcJoDPOw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrii Nakryiko <andriin@fb.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Yonghong Song <yhs@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Jian Shen <shenjian15@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 218/413] libbpf: fix GCC8 warning for strncpy
-Date:   Wed, 24 Jul 2019 21:18:29 +0200
-Message-Id: <20190724191750.274281968@linuxfoundation.org>
+Subject: [PATCH 5.2 227/413] net: hns3: fix port capbility updating issue
+Date:   Wed, 24 Jul 2019 21:18:38 +0200
+Message-Id: <20190724191751.215518732@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -46,37 +46,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cdfc7f888c2a355b01308e97c6df108f1c2b64e8 ]
+[ Upstream commit 49b1255603de5183c5e377200be3b3afe0dcdb86 ]
 
-GCC8 started emitting warning about using strncpy with number of bytes
-exactly equal destination size, which is generally unsafe, as can lead
-to non-zero terminated string being copied. Use IFNAMSIZ - 1 as number
-of bytes to ensure name is always zero-terminated.
+Currently, the driver queries the media port information, and
+updates the port capability periodically. But it sets an error
+mac->speed_type value, which stops update port capability.
 
-Signed-off-by: Andrii Nakryiko <andriin@fb.com>
-Cc: Magnus Karlsson <magnus.karlsson@intel.com>
-Acked-by: Yonghong Song <yhs@fb.com>
-Acked-by: Magnus Karlsson <magnus.karlsson@intel.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: 88d10bd6f730 ("net: hns3: add support for multiple media type")
+Signed-off-by: Jian Shen <shenjian15@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/bpf/xsk.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/lib/bpf/xsk.c b/tools/lib/bpf/xsk.c
-index 38667b62f1fe..8a7a05bc657d 100644
---- a/tools/lib/bpf/xsk.c
-+++ b/tools/lib/bpf/xsk.c
-@@ -337,7 +337,8 @@ static int xsk_get_max_queues(struct xsk_socket *xsk)
- 
- 	channels.cmd = ETHTOOL_GCHANNELS;
- 	ifr.ifr_data = (void *)&channels;
--	strncpy(ifr.ifr_name, xsk->ifname, IFNAMSIZ);
-+	strncpy(ifr.ifr_name, xsk->ifname, IFNAMSIZ - 1);
-+	ifr.ifr_name[IFNAMSIZ - 1] = '\0';
- 	err = ioctl(fd, SIOCETHTOOL, &ifr);
- 	if (err && errno != EOPNOTSUPP) {
- 		ret = -errno;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index bab04d2d674a..f2bffc05e902 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -2592,6 +2592,7 @@ static int hclge_get_sfp_info(struct hclge_dev *hdev, struct hclge_mac *mac)
+ 		mac->speed_ability = le32_to_cpu(resp->speed_ability);
+ 		mac->autoneg = resp->autoneg;
+ 		mac->support_autoneg = resp->autoneg_ability;
++		mac->speed_type = QUERY_ACTIVE_SPEED;
+ 		if (!resp->active_fec)
+ 			mac->fec_mode = 0;
+ 		else
 -- 
 2.20.1
 
