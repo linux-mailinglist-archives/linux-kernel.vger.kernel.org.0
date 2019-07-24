@@ -2,122 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7129472946
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 09:49:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C35917295A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 09:59:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726467AbfGXHtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 03:49:40 -0400
-Received: from mickerik.phytec.de ([195.145.39.210]:49594 "EHLO
-        mickerik.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfGXHtg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 03:49:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a1; c=relaxed/simple;
-        q=dns/txt; i=@phytec.de; t=1563954574; x=1566546574;
-        h=From:Sender:Reply-To:Subject:Date:Message-Id:To:Cc:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=EqQWA7dLtCGI8kCRV8d94HFWhGW2KPLYNClP0pwmpPY=;
-        b=Mugaxw5xkyEXDda8a7GPEveEXMpOl9ZZFt5S3xlVD7BNp/r5iQ4CUE11WGvWknp3
-        lVzR8ATHvYRpZYPir8Kc6se1LO/falAaulCn9cMri5dtW2KcAWCDkGeM6QU2N6iE
-        vjkiiU7+iv+pOu7UncgHqfPDADoiCto/Tz6tqjdqnAk=;
-X-AuditID: c39127d2-193ff70000001aee-b5-5d380d8dab5e
-Received: from idefix.phytec.de (idefix.phytec.de [172.16.0.10])
-        by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 1D.CA.06894.D8D083D5; Wed, 24 Jul 2019 09:49:33 +0200 (CEST)
-Received: from augenblix2.phytec.de ([172.16.21.122])
-          by idefix.phytec.de (IBM Domino Release 9.0.1FP7)
-          with ESMTP id 2019072409493350-408985 ;
-          Wed, 24 Jul 2019 09:49:33 +0200 
-From:   Stefan Riedmueller <s.riedmueller@phytec.de>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Fabio Estevam <festevam@gmail.com>,
-        Andrew Smirnov <andrew.smirnov@gmail.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        linux-imx@nxp.com, Stefan Riedmueller <s.riedmueller@phytec.de>
-Subject: [PATCH 2/2] dt-bindings: arm: fsl: Add PHYTEC i.MX6 devicetree bindings
-Date:   Wed, 24 Jul 2019 09:49:33 +0200
-Message-Id: <1563954573-370205-2-git-send-email-s.riedmueller@phytec.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1563954573-370205-1-git-send-email-s.riedmueller@phytec.de>
-References: <1563954573-370205-1-git-send-email-s.riedmueller@phytec.de>
-X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 24.07.2019 09:49:33,
-        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
- 24.07.2019 09:49:33,
-        Serialize complete at 24.07.2019 09:49:33
-X-TNEFEvaluated: 1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHLMWRmVeSWpSXmKPExsWyRoCBS7eX1yLW4P11a4vmDluL+UfOsVo8
-        vOpvsenxNVaLrl8rmS0u75rDZnG3pZPVYun1i0wWrXuPsFv83b6JxeLFFnEHbo8189Yweuyc
-        dZfdY9OqTjaPO9f2sHlsXlLvsfHdDiaP/r8GHp83yQVwRHHZpKTmZJalFunbJXBlPDrpWjBb
-        rOLc92aWBsY9/F2MnBwSAiYSRw5vYO1i5OIQEtjBKDGl4wwjhHORUaL9XxMzSBWbgJHEgmmN
-        TCC2iICGxJSux+wgRcwCU5klGv8sZQVJCAsESKz9tJEdxGYRUJU4vOAVI4jNK+AhcezwVkaI
-        dXISN891gg3lFPCUWLpvMRuILQRUs/jYZyaQoRICjUwS7R9Ps0M0CEmcXnyWeQIj3wJGhlWM
-        QrmZydmpRZnZegUZlSWpyXopqZsYgWF6eKL6pR2MfXM8DjEycTAeYpTgYFYS4Q1sMIsV4k1J
-        rKxKLcqPLyrNSS0+xCjNwaIkzruBtyRMSCA9sSQ1OzW1ILUIJsvEwSnVwFg/64NylO1Oxhsl
-        kpcc1+lIum7v/3VvzfIPxnFXMu86Wqa8P1nO6FHevHH3xLSq129yK75fOlRQ1TbD7Kftl6yF
-        PFvO6Plcc53y/8i/Mw3pdSK5P2quzty4yL284ON9dubGqZeWGrw8uG69+HWlexarXD8q/1/8
-        2+NYT8q5bdn3PT/tPrJr/74CJZbijERDLeai4kQAGH3RWkECAAA=
+        id S1726481AbfGXH7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 03:59:46 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:54610 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725851AbfGXH7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 03:59:45 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 13FCA1A0240;
+        Wed, 24 Jul 2019 09:59:44 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C7C801A031A;
+        Wed, 24 Jul 2019 09:59:38 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 17F27402F6;
+        Wed, 24 Jul 2019 15:59:32 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] clk: imx8mn: Keep uart clocks on for early console
+Date:   Wed, 24 Jul 2019 15:50:17 +0800
+Message-Id: <20190724075017.11003-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add devicetree bindings for i.MX6 based phyCORE-i.MX6, phyBOARD-Mira and
-phyFLEX-i.MX6.
+From: Anson Huang <Anson.Huang@nxp.com>
 
-Signed-off-by: Stefan Riedmueller <s.riedmueller@phytec.de>
+Call imx_register_uart_clocks() API to keep uart clocks enabled
+when earlyprintk or earlycon is active.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- Documentation/devicetree/bindings/arm/fsl.yaml | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/clk/imx/clk-imx8mn.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-index 40f007859092..00a037cf5c86 100644
---- a/Documentation/devicetree/bindings/arm/fsl.yaml
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -112,6 +112,13 @@ properties:
-               - fsl,imx6q-sabreauto
-               - fsl,imx6q-sabrelite
-               - fsl,imx6q-sabresd
-+              - phytec,imx6qdl-pcm058     # PHYTEC phyCORE-i.MX6
-+              - phytec,imx6q-pbab01       # PHYTEC phyFLEX carrier board
-+              - phytec,imx6q-pbab01-nand  # PHYTEC phyFLEX eval Kit
-+              - phytec,imx6q-pbac06       # PHYTEC phyBOARD-Mira with i.MX6 Quad
-+              - phytec,imx6q-pbac06-emmc  # PHYTEC phyBOARD-Mira eMMC RDK
-+              - phytec,imx6q-pbac06-nand  # PHYTEC phyBOARD-Mira NAND RDK
-+              - phytec,imx6q-pfla02       # PHYTEC phyFLEX-i.MX6 Quad
-               - technologic,imx6q-ts4900
-               - technologic,imx6q-ts7970
-           - const: fsl,imx6q
-@@ -121,6 +128,9 @@ properties:
-           - enum:
-               - fsl,imx6qp-sabreauto      # i.MX6 Quad Plus SABRE Automotive Board
-               - fsl,imx6qp-sabresd        # i.MX6 Quad Plus SABRE Smart Device Board
-+              - phytec,imx6qdl-pcm058     # PHYTEC phyCORE-i.MX6
-+              - phytec,imx6qp-pbac06      # PHYTEC phyBOARD-Mira with i.MX6 QuadPlus
-+              - phytec,imx6qp-pbac06-nand # PHYTEC phyBOARD-Mira NAND RDK
-           - const: fsl,imx6qp
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index 07481a5..ecd1062 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -355,6 +355,14 @@ static const char * const imx8mn_clko2_sels[] = {"osc_24m", "sys_pll2_200m", "sy
+ static struct clk *clks[IMX8MN_CLK_END];
+ static struct clk_onecell_data clk_data;
  
-       - description: i.MX6DL based Boards
-@@ -131,6 +141,13 @@ properties:
-               - emtrion,emcon-mx6-avari   # emCON-MX6S or emCON-MX6DL SoM on Avari Base
-               - fsl,imx6dl-sabreauto      # i.MX6 DualLite/Solo SABRE Automotive Board
-               - fsl,imx6dl-sabresd        # i.MX6 DualLite SABRE Smart Device Board
-+              - phytec,imx6qdl-pcm058     # PHYTEC phyCORE-i.MX6
-+              - phytec,imx6dl-pbab01      # PHYTEC phyFLEX carrier board
-+              - phytec,imx6dl-pbab01-nand # PHYTEC phyFLEX eval Kit
-+              - phytec,imx6dl-pbac06      # PHYTEC phyBOARD-Mira with i.MX6 DL
-+              - phytec,imx6dl-pbac06-emmc # PHYTEC phyBOARD-Mira eMMC RDK
-+              - phytec,imx6dl-pbac06-nand # PHYTEC phyBOARD-Mira NAND RDK
-+              - phytec,imx6dl-pfla02      # PHYTEC phyFLEX-i.MX6 DL
-               - technologic,imx6dl-ts4900
-               - technologic,imx6dl-ts7970
-               - ysoft,imx6dl-yapp4-draco  # i.MX6 DualLite Y Soft IOTA Draco board
++static struct clk ** const uart_clks[] = {
++	&clks[IMX8MN_CLK_UART1_ROOT],
++	&clks[IMX8MN_CLK_UART2_ROOT],
++	&clks[IMX8MN_CLK_UART3_ROOT],
++	&clks[IMX8MN_CLK_UART4_ROOT],
++	NULL
++};
++
+ static int imx8mn_clocks_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -612,6 +620,8 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
+ 		goto unregister_clks;
+ 	}
+ 
++	imx_register_uart_clocks(uart_clks);
++
+ 	return 0;
+ 
+ unregister_clks:
 -- 
 2.7.4
 
