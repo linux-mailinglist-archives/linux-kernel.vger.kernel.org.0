@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E1547389C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:31:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 794EC7389F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:31:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388100AbfGXTbX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:31:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52114 "EHLO mail.kernel.org"
+        id S2388299AbfGXTb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:31:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388459AbfGXTbS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:31:18 -0400
+        id S2388468AbfGXTbV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:31:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D8E5218EA;
-        Wed, 24 Jul 2019 19:31:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD8CE229F4;
+        Wed, 24 Jul 2019 19:31:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996677;
-        bh=FWreuhMM6Mt1r7S5lDbbQSWGpAelMHeB009HZa6gmmc=;
+        s=default; t=1563996680;
+        bh=CsWXcgn08I4mWMWGsG8L3PA7QZFTJ2l3Vf4NjxU9boE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mscaT6l70CCYVbaaOhLk1Ja5w2WdP/D902cdIetBrjOWiNRFi9/F02yz3AhOS7eWO
-         GJEQJMleZxbnHULg8tjawsXf6V7VP7ZFgHDeg+DBn9trmtZX5HZ32xIDG4YXRZMfcW
-         2VBTwuOw1iIwM6vaMsLTCHWEc9pNXL5jEHhOUGiw=
+        b=h2JaDDMlD+1d34fLH8CuryzvcFvjMO19PqPYIBw4Zs8b7XKw8qSNvUG5GvOm876/S
+         1ycLGxA7QNECMEzZLlYYCGvo+oM839QcoI5S/7PM5wW0z9+DvlasOE6rPdfqN4KH2/
+         wMNaGj6QDRF5sxJs+zapYW8q74SI+kAhAPsVdGgA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@kernel.org>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 180/413] crypto: serpent - mark __serpent_setkey_sbox noinline
-Date:   Wed, 24 Jul 2019 21:17:51 +0200
-Message-Id: <20190724191747.711245129@linuxfoundation.org>
+Subject: [PATCH 5.2 181/413] crypto: asymmetric_keys - select CRYPTO_HASH where needed
+Date:   Wed, 24 Jul 2019 21:17:52 +0200
+Message-Id: <20190724191747.763814357@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -45,45 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 473971187d6727609951858c63bf12b0307ef015 ]
+[ Upstream commit 90acc0653d2bee203174e66d519fbaaa513502de ]
 
-The same bug that gcc hit in the past is apparently now showing
-up with clang, which decides to inline __serpent_setkey_sbox:
+Build testing with some core crypto options disabled revealed
+a few modules that are missing CRYPTO_HASH:
 
-crypto/serpent_generic.c:268:5: error: stack frame size of 2112 bytes in function '__serpent_setkey' [-Werror,-Wframe-larger-than=]
+crypto/asymmetric_keys/x509_public_key.o: In function `x509_get_sig_params':
+x509_public_key.c:(.text+0x4c7): undefined reference to `crypto_alloc_shash'
+x509_public_key.c:(.text+0x5e5): undefined reference to `crypto_shash_digest'
+crypto/asymmetric_keys/pkcs7_verify.o: In function `pkcs7_digest.isra.0':
+pkcs7_verify.c:(.text+0xab): undefined reference to `crypto_alloc_shash'
+pkcs7_verify.c:(.text+0x1b2): undefined reference to `crypto_shash_digest'
+pkcs7_verify.c:(.text+0x3c1): undefined reference to `crypto_shash_update'
+pkcs7_verify.c:(.text+0x411): undefined reference to `crypto_shash_finup'
 
-Marking it 'noinline' reduces the stack usage from 2112 bytes to
-192 and 96 bytes, respectively, and seems to generate more
-useful object code.
+This normally doesn't show up in randconfig tests because there is
+a large number of other options that select CRYPTO_HASH.
 
-Fixes: c871c10e4ea7 ("crypto: serpent - improve __serpent_setkey with UBSAN")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Eric Biggers <ebiggers@kernel.org>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/serpent_generic.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ crypto/asymmetric_keys/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/crypto/serpent_generic.c b/crypto/serpent_generic.c
-index 16f612b6dbca..a9cc0b2aa0d6 100644
---- a/crypto/serpent_generic.c
-+++ b/crypto/serpent_generic.c
-@@ -225,7 +225,13 @@
- 	x4 ^= x2;					\
- 	})
- 
--static void __serpent_setkey_sbox(u32 r0, u32 r1, u32 r2, u32 r3, u32 r4, u32 *k)
-+/*
-+ * both gcc and clang have misoptimized this function in the past,
-+ * producing horrible object code from spilling temporary variables
-+ * on the stack. Forcing this part out of line avoids that.
-+ */
-+static noinline void __serpent_setkey_sbox(u32 r0, u32 r1, u32 r2,
-+					   u32 r3, u32 r4, u32 *k)
- {
- 	k += 100;
- 	S3(r3, r4, r0, r1, r2); store_and_load_keys(r1, r2, r4, r3, 28, 24);
+diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
+index be70ca6c85d3..1f1f004dc757 100644
+--- a/crypto/asymmetric_keys/Kconfig
++++ b/crypto/asymmetric_keys/Kconfig
+@@ -15,6 +15,7 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
+ 	select MPILIB
+ 	select CRYPTO_HASH_INFO
+ 	select CRYPTO_AKCIPHER
++	select CRYPTO_HASH
+ 	help
+ 	  This option provides support for asymmetric public key type handling.
+ 	  If signature generation and/or verification are to be used,
+@@ -65,6 +66,7 @@ config TPM_KEY_PARSER
+ config PKCS7_MESSAGE_PARSER
+ 	tristate "PKCS#7 message parser"
+ 	depends on X509_CERTIFICATE_PARSER
++	select CRYPTO_HASH
+ 	select ASN1
+ 	select OID_REGISTRY
+ 	help
+@@ -87,6 +89,7 @@ config SIGNED_PE_FILE_VERIFICATION
+ 	bool "Support for PE file signature verification"
+ 	depends on PKCS7_MESSAGE_PARSER=y
+ 	depends on SYSTEM_DATA_VERIFICATION
++	select CRYPTO_HASH
+ 	select ASN1
+ 	select OID_REGISTRY
+ 	help
 -- 
 2.20.1
 
