@@ -2,112 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08EBC73EA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9094B73E38
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:23:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390470AbfGXU0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:26:13 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34096 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389199AbfGXThv (ORCPT
+        id S2390874AbfGXUXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:23:17 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36129 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390453AbfGXTnB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:37:51 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n9so15492691pgc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:37:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:cc:from:user-agent:date;
-        bh=QFJC3GS7SLbhEX9yLYIlfgrpJlGsNCGKHcxux2RXL8U=;
-        b=dY9QfISi0mzz6dT2+u7lTmTaFJqWVPPE2AvBBL37m53aXiWDaGr7kR9QlJVDHbRTEh
-         ATjhVFJsyDmAuE96/iaGX2t7d72ebA+veCDxFMlM0aPo2qXoEmzBXOLigAUahjSr2IjC
-         llI517jBkBnLLKkP+GfvnjFsKRltJ6WuuHp84=
+        Wed, 24 Jul 2019 15:43:01 -0400
+Received: by mail-io1-f67.google.com with SMTP id o9so92214717iom.3;
+        Wed, 24 Jul 2019 12:43:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:cc:from
-         :user-agent:date;
-        bh=QFJC3GS7SLbhEX9yLYIlfgrpJlGsNCGKHcxux2RXL8U=;
-        b=Ok+rJgDFuyRrzes+Y0sEo3KVHFm+vyN757KTuAhq12uOmBz0vH4GdyDxeBG9vR3VT9
-         EtHB8r1xFbdjN5IvWVyPxwcAENXmLinMp5K+sAnedAwrM1NzCV2v0xOmNRCJxhC6PIxc
-         e73lbIVr7PkCrIfohXSaMwdbqciDpDXPnTAUf1cdxCPQDdWq6qYzeSMTOl6Q9nqocC7O
-         LuTW7qndncCL0zzrKJq7Ln10om69uk8WfgfqTzYTUh43K2pMm04viyJHUBPa5tFPMq4O
-         QCCH/VgPc9IDn/JJEMrKQ65bMEQGXeL6i1PTl+VYt1/IbB63GEHcI/NSC/AxmK0igZmG
-         264g==
-X-Gm-Message-State: APjAAAWHCJ51ct2YTyXOUiP2ohvGwAlux4QiXIcmDkxe7bBlrdCUYZ+V
-        8DLpKxUtg5cPPRPcPXHgC1XxiA==
-X-Google-Smtp-Source: APXvYqzCSyV3fyjPi8PknWSIPwreP9uODkfgEhhIEkHvblpFYOLy8zWQGA8n4P6AHkBN9fjX0sXPzQ==
-X-Received: by 2002:a65:52c5:: with SMTP id z5mr68804383pgp.118.1563997070692;
-        Wed, 24 Jul 2019 12:37:50 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id 185sm47926192pfd.125.2019.07.24.12.37.50
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XSPJRPecmIkBOwXjOa6IB3IwqosGZbZUtric4Ph4E4o=;
+        b=Uz1vzZMmISM+EBL8D3JE3iB1WEkzLnUcCa+bZq8kQ8vBTZt/CeK49yyuH9VYj/mSQc
+         cKlTho2y9sBe6EHEFFt83JI7+My4kdNg5/+xAF5za2rAOUUBC7D6OFf8Rj9CzLLEbGT6
+         3qYGZyfMMWw74jZBcFkWO/qG5IdITPtAAHdx9Y6orfZRsFu3yyUmMDK0j2G8h16un2Tb
+         YedgapKIVgB3pfSAq9fJZ9cz933OAL0WyWhvAYCj/NQ3bvKRQGeB9H6AWHrzQCS43ezW
+         cSueR2pTrupM5Z8xG9FJBTA22Rt46yyKNWN87IvV2nmEaKWlh/sGqUGiEiR4WzQLKL/u
+         44ZQ==
+X-Gm-Message-State: APjAAAW6XZ70Q2gH8z4pMOEYyTJDuWWAH/kl6D/Fczi/WQ8GNHJqSCwc
+        ze1rvu/wU7y7+fUKcNTvkw==
+X-Google-Smtp-Source: APXvYqwHgt8wZNph+Kfk3NAJ2uOYvBBd1tibxisfgZlYpbdY6CVInbD0nZywDI8EDMJ/YLDUSyHdAw==
+X-Received: by 2002:a5d:885a:: with SMTP id t26mr25104113ios.218.1563997380432;
+        Wed, 24 Jul 2019 12:43:00 -0700 (PDT)
+Received: from localhost ([64.188.179.254])
+        by smtp.gmail.com with ESMTPSA id v13sm38532541ioq.13.2019.07.24.12.42.59
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 12:37:50 -0700 (PDT)
-Message-ID: <5d38b38e.1c69fb81.e8e5d.035b@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Wed, 24 Jul 2019 12:42:59 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 13:42:59 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>, letux-kernel@openphoenux.org,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] DTS: ARM: gta04: introduce legacy spi-cs-high to
+ make display work again
+Message-ID: <20190724194259.GA25847@bogus>
+References: <cover.1562597164.git.hns@goldelico.com>
+ <8ae7cf816b22ef9cecee0d789fcf9e8a06495c39.1562597164.git.hns@goldelico.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190724145251.GB18620@codeaurora.org>
-References: <20190722215340.3071-1-ilina@codeaurora.org> <20190722215340.3071-2-ilina@codeaurora.org> <5d3769df.1c69fb81.55d03.aa33@mx.google.com> <20190724145251.GB18620@codeaurora.org>
-Subject: Re: [PATCH V2 2/4] drivers: qcom: rpmh-rsc: avoid locking in the interrupt handler
-To:     Lina Iyer <ilina@codeaurora.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, dianders@chromium.org,
-        mkshah@codeaurora.org
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Wed, 24 Jul 2019 12:37:49 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8ae7cf816b22ef9cecee0d789fcf9e8a06495c39.1562597164.git.hns@goldelico.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lina Iyer (2019-07-24 07:52:51)
-> On Tue, Jul 23 2019 at 14:11 -0600, Stephen Boyd wrote:
-> >Quoting Lina Iyer (2019-07-22 14:53:38)
-> >> Avoid locking in the interrupt context to improve latency. Since we
-> >> don't lock in the interrupt context, it is possible that we now could
-> >> race with the DRV_CONTROL register that writes the enable register and
-> >> cleared by the interrupt handler. For fire-n-forget requests, the
-> >> interrupt may be raised as soon as the TCS is triggered and the IRQ
-> >> handler may clear the enable bit before the DRV_CONTROL is read back.
-> >>
-> >> Use the non-sync variant when enabling the TCS register to avoid readi=
-ng
-> >> back a value that may been cleared because the interrupt handler ran
-> >> immediately after triggering the TCS.
-> >>
-> >> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> >> ---
-> >
-> >I have to read this patch carefully. The commit text isn't convincing me
-> >that it is actually safe to make this change. It mostly talks about the
-> >performance improvements and how we need to fix __tcs_trigger(), which
-> >is good, but I was hoping to be convinced that not grabbing the lock
-> >here is safe.
-> >
-> >How do we ensure that drv->tcs_in_use is cleared before we call
-> >tcs_write() and try to look for a free bit? Isn't it possible that we'll
-> >get into a situation where the bitmap is all used up but the hardware
-> >has just received an interrupt and is going to clear out a bit and then
-> >an rpmh write fails with -EBUSY?
-> >
-> If we have a situation where there are no available free bits, we retry
-> and that is part of the function. Since we have only 2 TCSes avaialble
-> to write to the hardware and there could be multiple requests coming in,
-> it is a very common situation. We try and acquire the drv->lock and if
-> there are free TCS available and if available mark them busy and send
-> our requests. If there are none available, we keep retrying.
->=20
+On Mon, Jul 08, 2019 at 04:46:05PM +0200, H. Nikolaus Schaller wrote:
+> commit 6953c57ab172 "gpio: of: Handle SPI chipselect legacy bindings"
+> 
+> did introduce logic to centrally handle the legacy spi-cs-high property
+> in combination with cs-gpios. This assumes that the polarity
+> of the CS has to be inverted if spi-cs-high is missing, even
+> and especially if non-legacy GPIO_ACTIVE_HIGH is specified.
+> 
+> The DTS for the GTA04 was orginally introduced under the assumption
+> that there is no need for spi-cs-high if the gpio is defined with
+> proper polarity GPIO_ACTIVE_HIGH.
 
-Ok. I wonder if we need some sort of barriers here too, like an
-smp_mb__after_atomic()? That way we can make sure that the write to
-clear the bit is seen by another CPU that could be spinning forever
-waiting for that bit to be cleared? Before this change the spinlock
-would be guaranteed to make these barriers for us, but now that doesn't
-seem to be the case. I really hope that this whole thing can be changed
-to be a mutex though, in which case we can use the bit_wait() API, etc.
-to put tasks to sleep while RPMh is processing things.
-=20
+Given that spi-cs-high is called legacy, that would imply that DT's 
+should not have to use spi-cs-high.
+
+> This was not a problem until gpiolib changed the interpretation of
+> GPIO_ACTIVE_HIGH and missing spi-cs-high.
+
+Then we should fix gpiolib...
+
+> The effect is that the missing spi-cs-high is now interpreted as CS being
+> low (despite GPIO_ACTIVE_HIGH) which turns off the SPI interface when the
+> panel is to be programmed by the panel driver.
+> 
+> Therefore, we have to add the redundant and legacy spi-cs-high property
+> to properly pass through the legacy handler.
+> 
+> Since this is nowhere documented in the bindings, we add some words of
+> WARNING.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> ---
+>  Documentation/devicetree/bindings/spi/spi-bus.txt | 6 ++++++
+>  arch/arm/boot/dts/omap3-gta04.dtsi                | 1 +
+>  2 files changed, 7 insertions(+)
