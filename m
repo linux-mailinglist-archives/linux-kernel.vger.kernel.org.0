@@ -2,92 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E69A7258E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 05:49:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C3E8725A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 05:57:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726597AbfGXDth (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 23:49:37 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38962 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbfGXDtg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 23:49:36 -0400
-Received: by mail-pg1-f194.google.com with SMTP id u17so20462993pgi.6;
-        Tue, 23 Jul 2019 20:49:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=opj8lnCtN7uVcvkOiHNBMfsILzIZd7HuE+IB/qnbPFs=;
-        b=ltVI7vA+iq01wgiVxnieomCY9v/Tub804FD/gn9yiUjeQMRw2XKJofb5kolEda7nrV
-         v3aQUuQuzvKVF3jveZuBXMoNL+KrzVgCeDLCc8nV9CpqFCUMe6jmzNjNLGf0Khh2pywL
-         sUBhtVnBipvGnWDKC5Yj0crLE61C0zJiSYLjdQ0NaUHBjpCZjuhqnxFDAtLHM91JULXM
-         wQpQxztA9L2D5PGuXsf18W+CJ1pmRMx7lFizLIgDBdmO1w0lUJww65iQgnxFp0cgoJOk
-         K9/XZXQLUrUg/4/AEXqlc24YDF/UFQoFD7z6oxdRGgSqnLksMjaeBMoS6Qzvb3Fr0yiW
-         n/Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=opj8lnCtN7uVcvkOiHNBMfsILzIZd7HuE+IB/qnbPFs=;
-        b=LgedTwpbgCJMGnuJAT/6zYcOQzy7dPGTn9zyYxYIQ8pdGqVZRdOEoAB4OPU7MvKkYb
-         +obUgCQu7fIysX6YqX0gGA24XleiD/AkgtNJDSDDkKBRZ8FilRVx5S/iRbkRr59so+y9
-         HvTrd9J+WoEmVzgeSMDL/Tk5esjMzt4+IPo9r9yaPBGJl5HBYy6AfwVI3fIBI4fUm5go
-         5/JAGcXfovSRxFEuRFXRHxqhGrYGcQzHizZl2qT23PQLGmL9M9SqJmOaq5M6qFBGmJAw
-         Q0rteVTpoXvk7XcmYmkyRnpLSSR4qieEvRui2yqv5JmTOm3wgTsEBNraUoOJqTk2HhpZ
-         8xAg==
-X-Gm-Message-State: APjAAAUDPTYmZ/qcecfCRn5OBiqzkD1tC6P499Fv2JqX23LsZM14xiWN
-        wwlm5u5DG5iWTiDdCGfJWFg=
-X-Google-Smtp-Source: APXvYqyBkgnGLXPPn3Fmhpw5XGZNyK+qjPNJG9xfJlZpUy87glmS6K/MaU7Z+LJJOmGczl64Wayewg==
-X-Received: by 2002:a62:cdc8:: with SMTP id o191mr9130518pfg.74.1563940176347;
-        Tue, 23 Jul 2019 20:49:36 -0700 (PDT)
-Received: from oslab.tsinghua.edu.cn ([2402:f000:4:72:808::3ca])
-        by smtp.gmail.com with ESMTPSA id t11sm51359610pgb.33.2019.07.23.20.49.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Jul 2019 20:49:35 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     philipp.reisner@linbit.com, lars.ellenberg@linbit.com,
-        axboe@kernel.dk
-Cc:     drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 2/2] block: drbd: Fix a possible null-pointer dereference in is_valid_state()
-Date:   Wed, 24 Jul 2019 11:49:26 +0800
-Message-Id: <20190724034926.28755-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S1726546AbfGXD5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 23:57:47 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2745 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725855AbfGXD5r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 23:57:47 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id CEE496E40C58B4D5EB37;
+        Wed, 24 Jul 2019 11:57:45 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 24 Jul 2019 11:57:39 +0800
+From:   Zhou Wang <wangzhou1@hisilicon.com>
+To:     <robert.jarzmik@free.fr>, <axboe@fb.com>
+CC:     <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>
+Subject: [PATCH resend v2] lib: scatterlist: Fix to support no mapped sg
+Date:   Wed, 24 Jul 2019 11:54:23 +0800
+Message-ID: <1563940463-95597-1-git-send-email-wangzhou1@hisilicon.com>
+X-Mailer: git-send-email 2.8.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In is_valid_state(), there is an if statement on line 839 to check
-whether nc is NULL:
-    if (nc)
+In function sg_split, the second sg_calculate_split will return -EINVAL
+when in_mapped_nents is 0.
 
-When nc is NULL, it is used on line 880:
-    (nc->verify_alg[0] == 0)
+Indeed there is no need to do second sg_calculate_split and sg_split_mapped
+when in_mapped_nents is 0, as in_mapped_nents indicates no mapped entry in
+original sgl.
 
-Thus, a possible null-pointer dereference may occur.
-
-To fix this bug, nc is also checked on line 880.
-
-This bug is found by a static analysis tool STCheck written by us.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
 ---
- drivers/block/drbd/drbd_state.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: Just add Acked-by from Robert.
 
-diff --git a/drivers/block/drbd/drbd_state.c b/drivers/block/drbd/drbd_state.c
-index eeaa3b49b264..3cf477e9cf6a 100644
---- a/drivers/block/drbd/drbd_state.c
-+++ b/drivers/block/drbd/drbd_state.c
-@@ -877,7 +877,7 @@ is_valid_state(struct drbd_device *device, union drbd_state ns)
- 		rv = SS_CONNECTED_OUTDATES;
+ lib/sg_split.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/lib/sg_split.c b/lib/sg_split.c
+index 9982c63..60a0bab 100644
+--- a/lib/sg_split.c
++++ b/lib/sg_split.c
+@@ -176,11 +176,13 @@ int sg_split(struct scatterlist *in, const int in_mapped_nents,
+ 	 * The order of these 3 calls is important and should be kept.
+ 	 */
+ 	sg_split_phys(splitters, nb_splits);
+-	ret = sg_calculate_split(in, in_mapped_nents, nb_splits, skip,
+-				 split_sizes, splitters, true);
+-	if (ret < 0)
+-		goto err;
+-	sg_split_mapped(splitters, nb_splits);
++	if (in_mapped_nents) {
++		ret = sg_calculate_split(in, in_mapped_nents, nb_splits, skip,
++					 split_sizes, splitters, true);
++		if (ret < 0)
++			goto err;
++		sg_split_mapped(splitters, nb_splits);
++	}
  
- 	else if ((ns.conn == C_VERIFY_S || ns.conn == C_VERIFY_T) &&
--		 (nc->verify_alg[0] == 0))
-+		 (nc && nc->verify_alg[0] == 0))
- 		rv = SS_NO_VERIFY_ALG;
- 
- 	else if ((ns.conn == C_VERIFY_S || ns.conn == C_VERIFY_T) &&
+ 	for (i = 0; i < nb_splits; i++) {
+ 		out[i] = splitters[i].out_sg;
 -- 
-2.17.0
+2.8.1
 
