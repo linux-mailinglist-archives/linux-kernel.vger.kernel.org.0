@@ -2,119 +2,284 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E31E173011
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 15:40:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D36067301A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 15:41:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfGXNkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 09:40:09 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:46031 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbfGXNkI (ORCPT
+        id S1726764AbfGXNld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 09:41:33 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58586 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725826AbfGXNld (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 09:40:08 -0400
-Received: by mail-qk1-f193.google.com with SMTP id s22so33768203qkj.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 06:40:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5XZ9K/SwxKdddKyC7k0SqQ29rr6lzsU+b9jBDeXxEMs=;
-        b=GFq+S6tSW8wwIf68Zbp/TAZ8HwcvghPgo5lr601U6nGjYYLU4vUEoK8MiMlLTogQeQ
-         aqQwsqTVuzqYmqBLXu+koBwO1c914nYOScc6gEaaKY/yZT3LkLOc/GEqr96Sod+QEDg2
-         PW7wUg7bT8yYKBnB6bAM3cLanp5IODh+LnSokpOEak5aND0qZJrhkFKk1rdUOshFHDRG
-         DYbNeLQV4cuix1guUVumwX3vX+OrmHjY+Ff+tbP3heoLVLaEtVYLiDwSkjP80XfZLnGL
-         wDQWGxbQrMbozIzW+SP/iXxGwMlld9WyuaEf1kef6lM292fuY5ToZdDvi8lOJvAWlR9j
-         1OJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5XZ9K/SwxKdddKyC7k0SqQ29rr6lzsU+b9jBDeXxEMs=;
-        b=iQ0EW0EltfxZYH0CO6jBOZ/rnKXb9zc/uaysWCp6fwyiJlei8PSgLz05BRorqMLCNQ
-         d6h1+WmU9V6SpaLTNawxnH5DiNi5hszCekD0GunvetMl26lY8JfuLH8cL/rCj2eEZC5j
-         oYSft5NCFZeYGF2lW1Ulvp1FyTv80iQQzIs1o7iDOXfKUDdu+sEMVipwJ7iJ+918VHzV
-         BTU5faFYjM0nY3pFNqSxVfBY8WJbnDUE6OebsgaoeiYBbxAtc/EucgyYQqDCjKVd/G+i
-         GhjpzQa4LtKMHp4bP6DMuP9ojn8JFC0AqOc9O7F7sUiSuyoJebCqh8N2WLlQ0MoKN8/S
-         IQaQ==
-X-Gm-Message-State: APjAAAUsUsQMThhh4FZtB6z07+vtAqNlpjE45ap/auS8Fsh2CKPVb+V3
-        o5wP0gw+7uI6+A9AQxj0r57CQQ==
-X-Google-Smtp-Source: APXvYqzUVvLNfaBc8+WcDpyR5QEO2g6mbdd9uJSw4aZ3wmPrlXd92pON1JtRJLfphbEp7hMfagnfXw==
-X-Received: by 2002:a37:484a:: with SMTP id v71mr53222506qka.29.1563975607570;
-        Wed, 24 Jul 2019 06:40:07 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id f133sm22561094qke.62.2019.07.24.06.40.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 06:40:06 -0700 (PDT)
-Message-ID: <1563975605.11067.8.camel@lca.pw>
-Subject: Re: [PATCH] acpica: fix -Wnull-pointer-arithmetic warnings
-From:   Qian Cai <cai@lca.pw>
-To:     "Moore, Robert" <robert.moore@intel.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Cc:     "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        "Schmauss, Erik" <erik.schmauss@intel.com>,
-        "jkim@freebsd.org" <jkim@freebsd.org>, Len Brown <lenb@kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "devel@acpica.org" <devel@acpica.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Wed, 24 Jul 2019 09:40:05 -0400
-In-Reply-To: <94F2FBAB4432B54E8AACC7DFDE6C92E3B9661869@ORSMSX110.amr.corp.intel.com>
-References: <20190717033807.1207-1-cai@lca.pw>
-         <CAKwvOdmPX2DsUawcA0SzaFacjz==ACcfD8yDsbaS4eP4Es=Wzw@mail.gmail.com>
-         <73A4565B-837B-4E13-8B72-63F69BF408E7@lca.pw>
-         <94F2FBAB4432B54E8AACC7DFDE6C92E3B9661869@ORSMSX110.amr.corp.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
+        Wed, 24 Jul 2019 09:41:33 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BE3376037C; Wed, 24 Jul 2019 13:41:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1563975691;
+        bh=DlyWat1S4Yf7vTtyIwtO9heTbUEXLexPXmQ6gXhnAjg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=b8Ry7hp6BidRESveDgtTCER0P857t9jqdy7po3yb4rjCyMZe4QTR8h/Y+yHrc2ZAn
+         4Sjl3gfbwSMvjYfpGfOhADNTklE0O3X6P15+3sIhXWjBBe36zunRXUEFvApvakL5xe
+         sdl/5+phQrBsXGnsIah2P6qSAwh+WfoKgrmFNCkA=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [10.204.79.15] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mojha@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 598FC602BC;
+        Wed, 24 Jul 2019 13:41:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1563975689;
+        bh=DlyWat1S4Yf7vTtyIwtO9heTbUEXLexPXmQ6gXhnAjg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=TDOQ0m8MbqDYTvyiTVK006euAnCwPJaVtejuDYH564d2VpMp+3BdsHtt4CKGhnvmt
+         Gc3ttfE1BxGAESQbXCw2dRidB+WmMHdHXPVaW1x6UajJs4kuuB52Spm2vftXv1PPHa
+         oByCMXIjQvGEr3eOTZPM8s1FnMgU3TK3HN2fQLRQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 598FC602BC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
+Subject: Re: [PATCH v5] driver core: Fix use-after-free and double free on
+ glue directory
+To:     Muchun Song <smuchun@gmail.com>, gregkh@linuxfoundation.org,
+        rafael@kernel.org
+Cc:     benh@kernel.crashing.org, prsood@codeaurora.org,
+        gkohli@codeaurora.org, linux-kernel@vger.kernel.org
+References: <20190718111958.17336-1-smuchun@gmail.com>
+From:   Mukesh Ojha <mojha@codeaurora.org>
+Message-ID: <afd6b116-5d3b-2b5b-2748-164ee388173b@codeaurora.org>
+Date:   Wed, 24 Jul 2019 19:11:05 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190718111958.17336-1-smuchun@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-07-23 at 20:49 +0000, Moore, Robert wrote:
-> > > Signed-off-by: Qian Cai <cai@lca.pw>
-> > > ---
-> > > include/acpi/actypes.h | 4 ++--
-> > > 1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/include/acpi/actypes.h b/include/acpi/actypes.h index 
-> > > ad6892a24015..25b4a32da177 100644
-> > > --- a/include/acpi/actypes.h
-> > > +++ b/include/acpi/actypes.h
-> > > @@ -500,13 +500,13 @@ typedef u64 acpi_integer;
-> > > 
-> > > #define ACPI_CAST_PTR(t, p)             ((t *) (acpi_uintptr_t) (p))
-> > > #define ACPI_CAST_INDIRECT_PTR(t, p)    ((t **) (acpi_uintptr_t) (p))
-> > > -#define ACPI_ADD_PTR(t, a, b)           ACPI_CAST_PTR (t, (ACPI_CAST_PTR
-> > > (u8, (a)) + (acpi_size)(b)))
-> > > +#define ACPI_ADD_PTR(t, a, b)           ACPI_CAST_PTR (t, (a) +
-> > > (acpi_size)(b))
-> 
-> We have some questions concerning this change. If (a) is not cast to a u8, the
-> addition will be in whatever units are appropriate for (a) i.e., the type of
-> (a). However, we want ACPI_ADD_PTR (And ACPI_SUB_PTR) to simply perform a byte
-> addition or subtraction - thus the cast to u8. I believe that is the original
-> thinking behind the macros.
 
-I posted a v2 a while ago, and should clear this concern.
+On 7/18/2019 4:49 PM, Muchun Song wrote:
+> There is a race condition between removing glue directory and adding a new
+> device under the glue directory. It can be reproduced in following test:
+>
+> path 1: Add the child device under glue dir
+> device_add()
+>      get_device_parent()
+>          mutex_lock(&gdp_mutex);
+>          ....
+>          /*find parent from glue_dirs.list*/
+>          list_for_each_entry(k, &dev->class->p->glue_dirs.list, entry)
+>              if (k->parent == parent_kobj) {
+>                  kobj = kobject_get(k);
+>                  break;
+>              }
+>          ....
+>          mutex_unlock(&gdp_mutex);
+>          ....
+>      ....
+>      kobject_add()
+>          kobject_add_internal()
+>              create_dir()
+>                  sysfs_create_dir_ns()
+>                      if (kobj->parent)
+>                          parent = kobj->parent->sd;
+>                      ....
+>                      kernfs_create_dir_ns(parent)
+>                          kernfs_new_node()
+>                              kernfs_get(parent)
+>                          ....
+>                          /* link in */
+>                          rc = kernfs_add_one(kn);
+>                          if (!rc)
+>                              return kn;
+>
+>                          kernfs_put(kn)
+>                              ....
+>                              repeat:
+>                              kmem_cache_free(kn)
+>                              kn = parent;
+>
+>                              if (kn) {
+>                                  if (atomic_dec_and_test(&kn->count))
+>                                      goto repeat;
+>                              }
+>                          ....
+>
+> path2: Remove last child device under glue dir
+> device_del()
+>      cleanup_glue_dir()
+>          mutex_lock(&gdp_mutex);
+>          if (!kobject_has_children(glue_dir))
+>              kobject_del(glue_dir);
+>          kobject_put(glue_dir);
+>          mutex_unlock(&gdp_mutex);
+>
+> Before path2 remove last child device under glue dir, If path1 add a new
+> device under glue dir, the glue_dir kobject reference count will be
+> increase to 2 via kobject_get(k) in get_device_parent(). And path1 has
+> been called kernfs_new_node(), but not call kernfs_get(parent).
+> Meanwhile, path2 call kobject_del(glue_dir) beacause 0 is returned by
+> kobject_has_children(). This result in glue_dir->sd is freed and it's
+> reference count will be 0. Then path1 call kernfs_get(parent) will trigger
+> a warning in kernfs_get()(WARN_ON(!atomic_read(&kn->count))) and increase
+> it's reference count to 1. Because glue_dir->sd is freed by path2, the next
+> call kernfs_add_one() by path1 will fail(This is also use-after-free)
+> and call atomic_dec_and_test() to decrease reference count. Because the
+> reference count is decremented to 0, it will also call kmem_cache_free()
+> to free glue_dir->sd again. This will result in double free.
+>
+> In order to avoid this happening, we also should make sure that kernfs_node
+> for glue_dir is released in path2 only when refcount for glue_dir kobj is
+> 1 to fix this race.
+>
+> The following calltrace is captured in kernel 4.14 with the following patch
+> applied:
+>
+> commit 726e41097920 ("drivers: core: Remove glue dirs from sysfs earlier")
+>
+> --------------------------------------------------------------------------
+> [    3.633703] WARNING: CPU: 4 PID: 513 at .../fs/kernfs/dir.c:494
+>                  Here is WARN_ON(!atomic_read(&kn->count) in kernfs_get().
+> ....
+> [    3.633986] Call trace:
+> [    3.633991]  kernfs_create_dir_ns+0xa8/0xb0
+> [    3.633994]  sysfs_create_dir_ns+0x54/0xe8
+> [    3.634001]  kobject_add_internal+0x22c/0x3f0
+> [    3.634005]  kobject_add+0xe4/0x118
+> [    3.634011]  device_add+0x200/0x870
+> [    3.634017]  _request_firmware+0x958/0xc38
+> [    3.634020]  request_firmware_into_buf+0x4c/0x70
+> ....
+> [    3.634064] kernel BUG at .../mm/slub.c:294!
+>                  Here is BUG_ON(object == fp) in set_freepointer().
+> ....
+> [    3.634346] Call trace:
+> [    3.634351]  kmem_cache_free+0x504/0x6b8
+> [    3.634355]  kernfs_put+0x14c/0x1d8
+> [    3.634359]  kernfs_create_dir_ns+0x88/0xb0
+> [    3.634362]  sysfs_create_dir_ns+0x54/0xe8
+> [    3.634366]  kobject_add_internal+0x22c/0x3f0
+> [    3.634370]  kobject_add+0xe4/0x118
+> [    3.634374]  device_add+0x200/0x870
+> [    3.634378]  _request_firmware+0x958/0xc38
+> [    3.634381]  request_firmware_into_buf+0x4c/0x70
+> --------------------------------------------------------------------------
+>
+> Fixes: 726e41097920 ("drivers: core: Remove glue dirs from sysfs earlier")
+>
+> Signed-off-by: Muchun Song <smuchun@gmail.com>
+> ---
+>
+> Change in v5:
+>         1. Revert to the v1 fix.
+>         2. Add some comment to explain why we need do this in
+>            cleanup_glue_dir().
+> Change in v4:
+>         1. Add some kerneldoc comment.
+>         2. Remove unlock_if_glue_dir().
+>         3. Rename get_device_parent_locked_if_glue_dir() to
+>            get_device_parent_locked.
+>         4. Update commit message.
+> Change in v3:
+>         Add change log.
+> Change in v2:
+>         Fix device_move() also.
+>
+>   drivers/base/core.c | 54 ++++++++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 53 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 4aeaa0c92bda..1a67ee325584 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -1825,7 +1825,59 @@ static void cleanup_glue_dir(struct device *dev, struct kobject *glue_dir)
+>   		return;
+>   
+>   	mutex_lock(&gdp_mutex);
+> -	if (!kobject_has_children(glue_dir))
+> +	/**
+> +	 * There is a race condition between removing glue directory
+> +	 * and adding a new device under the glue directory.
+> +	 *
+> +	 * path 1: Add the child device under glue dir
+> +	 * device_add()
+> +	 *	get_device_parent()
+> +	 *		mutex_lock(&gdp_mutex);
+> +	 *		....
+> +	 *		list_for_each_entry(k, &dev->class->p->glue_dirs.list,
+> +	 *				    entry)
+> +	 *		if (k->parent == parent_kobj) {
+> +	 *			kobj = kobject_get(k);
+> +	 *			break;
+> +	 *		}
+> +	 *		....
+> +	 *		mutex_unlock(&gdp_mutex);
+> +	 *		....
+> +	 *	....
+> +	 *	kobject_add()
+> +	 *		kobject_add_internal()
+> +	 *		create_dir()
+> +	 *			....
+> +	 *			if (kobj->parent)
+> +	 *				parent = kobj->parent->sd;
+> +	 *			....
+> +	 *			kernfs_create_dir_ns(parent)
+> +	 *				....
+> +	 *
+> +	 * path2: Remove last child device under glue dir
+> +	 * device_del()
+> +	 *	cleanup_glue_dir()
+> +	 *		....
+> +	 *		mutex_lock(&gdp_mutex);
+> +	 *		if (!kobject_has_children(glue_dir))
+> +	 *			kobject_del(glue_dir);
+> +	 *		....
+> +	 *		mutex_unlock(&gdp_mutex);
+> +	 *
+> +	 * Before path2 remove last child device under glue dir, if path1 add
+> +	 * a new device under glue dir, the glue_dir kobject reference count
+> +	 * will be increase to 2 via kobject_get(k) in get_device_parent().
+> +	 * And path1 has been called kernfs_create_dir_ns(). Meanwhile,
+> +	 * path2 call kobject_del(glue_dir) beacause 0 is returned by
+> +	 * kobject_has_children(). This result in glue_dir->sd is freed.
+> +	 * Then the path1 will see a stale "empty" but still potentially used
+> +	 * glue dir around.
+> +	 *
+> +	 * In order to avoid this happening, we also should make sure that
+> +	 * kernfs_node for glue_dir is released in path2 only when refcount
+> +	 * for glue_dir kobj is 1.
+> +	 */
+> +	if (!kobject_has_children(glue_dir) && kref_read(&glue_dir->kref) == 1)
+Instead of hardcoding "1 " , can't we check against zero Like Prateek 
+sood did in his patch.https://lkml.org/lkml/2019/5/1/3
 
-> 
-> > > #define ACPI_SUB_PTR(t, a, b)           ACPI_CAST_PTR (t, (ACPI_CAST_PTR
-> > > (u8, (a)) - (acpi_size)(b)))
-> > > #define ACPI_PTR_DIFF(a, b)             ((acpi_size) (ACPI_CAST_PTR (u8,
-> > > (a)) - ACPI_CAST_PTR (u8, (b))))
-> > > 
-> > > /* Pointer/Integer type conversions */
-> > > 
-> > > -#define ACPI_TO_POINTER(i)              ACPI_ADD_PTR (void, (void *) 0,
-> > > (acpi_size) (i))
-> > > +#define ACPI_TO_POINTER(i)              ACPI_ADD_PTR (void, 0,
-> > > (acpi_size) (i))
-> > 
-> > IIUC, these are adding `i` to NULL (or (void*)0)? X + 0 == X ?
-> > --
-> > Thanks,
-> > ~Nick Desaulniers
-> 
-> 
++ref = kref_read(&glue_dir->kref);
++if  (!kobject_has_children(glue_dir) && --ref)
+
+
+We have seen many pattern of this issue which is coming from different 
+driver e.g uinput as well in 4.14 
+kernel.(https://lkml.org/lkml/2019/4/10/146)
+The reason why it  started coming after
+
+726e41097920 ("drivers: core: Remove glue dirs from sysfs earlier")
+
+Looks good to me
+
+Reviewed-by: Mukesh Ojha  <mojha@codeaurora.org>
+
+
+-Mukesh
+
+
+>   		kobject_del(glue_dir);
+>   	kobject_put(glue_dir);
+>   	mutex_unlock(&gdp_mutex);
