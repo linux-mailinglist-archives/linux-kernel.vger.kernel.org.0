@@ -2,108 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A70573647
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 20:04:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60E5773654
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 20:08:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727232AbfGXSEh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 14:04:37 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:35226 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725944AbfGXSEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 14:04:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=UpzgCoPq0Wu6UDjrL//LrXChGIZ8cQyw8Fm5gnrCxag=; b=uSCiCyQURATsR/8rSFcWw4XWAi
-        SFtoSKMVeIDa2RmJc1V6rmyvW0kYyCPDOGcHOCEFtupgRlAqo6wTLZEh5RcntlIn+sspActh0D7CD
-        NIq3MQlbePLbM/hYbTyIJHrJoEsr79jvr7L8959e3/hdG9X/lzK5p3siuZhy8dLeLbXA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hqLcs-0001VX-3i; Wed, 24 Jul 2019 20:04:30 +0200
-Date:   Wed, 24 Jul 2019 20:04:30 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [RFC] dt-bindings: net: phy: Add subnode for LED configuration
-Message-ID: <20190724180430.GB28488@lunn.ch>
-References: <20190722223741.113347-1-mka@chromium.org>
+        id S1727149AbfGXSI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 14:08:56 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35021 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726849AbfGXSI4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 14:08:56 -0400
+Received: by mail-wm1-f66.google.com with SMTP id l2so42432335wmg.0;
+        Wed, 24 Jul 2019 11:08:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=i14fTTw+f051XXIemGb6vJgII9ThG5ePThWv/SW1yYo=;
+        b=BEg2hD7xskXA1YcgoyZRzjhZYnxldpcKnMJBA06U3kXlEBL0f3ZbQSQXUEid5NM2Io
+         Cz5eNJBQ/QYesAtZpqQle4B8tK3MZnx4bw3+Ry/cp1BqzP2ZUwDzoyTe25CdFMuGlZAQ
+         bpRRYe9+5d0STpBUnTSCejFz6wzD4dZ/ir3YKNeM4UsXy+fyQ2aVJBKcg/uRZDN5skXM
+         7OGqB0jRu/5dfHNNRBoj/CTdkbH//ESkBVw9BtMjX4g7YYGJExtUC8Daoy7ryhHeoSDz
+         EhjIpJXii898vtfqcjT7F9R97kldwWFDiRg+L6i5Hw+Zz//eQ7TRPZ9u7Ut059yVuqCO
+         rERQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=i14fTTw+f051XXIemGb6vJgII9ThG5ePThWv/SW1yYo=;
+        b=RgA/JrMDrU97q44VLbfmDFXjciPkiXGSUu6EqO1Zn5zfy7LXwVj0Gwg9WVqaj3BU6H
+         JwBI5JJYDA1cxkqYmoZdViSAt8Q57+bBDHtW/GVFkpcrNSx6gL+ITVStw25A2Dk3rbWF
+         h4ro4xMDt+cf5Bg/erkPANojFwjAU6KMeu3DBuzd2/VVcxWoQ/vNl+sGCt+vkYnWP7iS
+         7cu1TvUNA4U1ukCl082jR58lJ5Is9fUORBhtCFusZFT6Agl9fwR3nl9CkRkIAX+PaPEn
+         vDub65afucS9a4sE9B4qLAFHUZh1AftGL6wfI78sMs+J154upk8PPLfEigj98vX7w97Y
+         aCEQ==
+X-Gm-Message-State: APjAAAVLeh3IFeVlAixWRclbNGUjz7kPt8RUCedDe05yrgpL7KFmLUbO
+        ZxVS40Zvj11sTFCfaH6gdGQ=
+X-Google-Smtp-Source: APXvYqzrdgTgsfgCbbtuX3rU+McvJPj89EX4iVm8NzeO/mjgNSvTNp+bCAmp30fdxTne30D952HDkA==
+X-Received: by 2002:a1c:c188:: with SMTP id r130mr71431610wmf.73.1563991734119;
+        Wed, 24 Jul 2019 11:08:54 -0700 (PDT)
+Received: from localhost.localdomain (2a01-036d-0114-26a3-859c-fac3-f08a-f3a6.pool6.digikabel.hu. [2a01:36d:114:26a3:859c:fac3:f08a:f3a6])
+        by smtp.gmail.com with ESMTPSA id f70sm56183732wme.22.2019.07.24.11.08.53
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 11:08:53 -0700 (PDT)
+From:   =?UTF-8?q?Istv=C3=A1n=20V=C3=A1radi?= <ivaradi@varadiistvan.hu>
+Cc:     =?UTF-8?q?Istv=C3=A1n=20V=C3=A1radi?= <ivaradi@varadiistvan.hu>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] HID: Add Saitek X52 to the HID IDs
+Date:   Wed, 24 Jul 2019 20:08:06 +0200
+Message-Id: <20190724180806.5745-1-ivaradi@varadiistvan.hu>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190722223741.113347-1-mka@chromium.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 03:37:41PM -0700, Matthias Kaehlcke wrote:
-> The LED behavior of some Ethernet PHYs is configurable. Add an
-> optional 'leds' subnode with a child node for each LED to be
-> configured. The binding aims to be compatible with the common
-> LED binding (see devicetree/bindings/leds/common.txt).
-> 
-> A LED can be configured to be 'on' when a link with a certain speed
-> is active, or to blink on RX/TX activity. For the configuration to
-> be effective it needs to be supported by the hardware and the
-> corresponding PHY driver.
-> 
-> Suggested-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> This RFC is a follow up of the discussion on "[PATCH v2 6/7]
-> dt-bindings: net: realtek: Add property to configure LED mode"
-> (https://lore.kernel.org/patchwork/patch/1097185/).
-> 
-> For now posting as RFC to get a basic agreement on the bindings
-> before proceding with the implementation in phylib and a specific
-> driver.
-> ---
->  Documentation/devicetree/bindings/net/phy.txt | 33 +++++++++++++++++++
->  1 file changed, 33 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/phy.txt b/Documentation/devicetree/bindings/net/phy.txt
-> index 9b9e5b1765dd..ad495d3abbbb 100644
-> --- a/Documentation/devicetree/bindings/net/phy.txt
-> +++ b/Documentation/devicetree/bindings/net/phy.txt
-> @@ -46,6 +46,25 @@ Optional Properties:
->    Mark the corresponding energy efficient ethernet mode as broken and
->    request the ethernet to stop advertising it.
->  
-> +- leds: A sub-node which is a container of only LED nodes. Each child
-> +    node represents a PHY LED.
-> +
-> +  Required properties for LED child nodes:
-> +  - reg: The ID number of the LED, typically corresponds to a hardware ID.
-> +
-> +  Optional properties for child nodes:
-> +  - label: The label for this LED. If omitted, the label is taken from the node
-> +    name (excluding the unit address). It has to uniquely identify a device,
-> +    i.e. no other LED class device can be assigned the same label.
+The USB device ID of the Saitek X52 joystick is added as a
+define to hid-ids.h.
 
-Hi Matthias
+Signed-off-by: István Váradi <ivaradi@varadiistvan.hu>
+---
+ drivers/hid/hid-ids.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-I've thought about label a bit more. 
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 0d695f8e1b2c..3a90962614ef 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -989,6 +989,7 @@
+ #define USB_DEVICE_ID_SAITEK_RAT7	0x0cd7
+ #define USB_DEVICE_ID_SAITEK_RAT9	0x0cfa
+ #define USB_DEVICE_ID_SAITEK_MMO7	0x0cd0
++#define USB_DEVICE_ID_SAITEK_X52	0x075c
+ 
+ #define USB_VENDOR_ID_SAMSUNG		0x0419
+ #define USB_DEVICE_ID_SAMSUNG_IR_REMOTE	0x0001
+-- 
+2.20.1
 
-> +			label = "ethphy0:left:green";
-
-We need to be careful with names here. systemd etc renames
-interfaces. ethphy0 could in fact be connected to enp3s0, or eth0
-might get renamed to eth1, etc. So i think we should avoid things like
-ethphy0. Also, i'm not sure we actually need a label, at least not to
-start with.Do we have any way to expose it to the user?
-
-If we do ever make it part of the generic LED framework, we can then
-use the label. At that point, i would probably combine the label with
-the interface name in a dynamic way to avoid issues like this.
-
-    Andrew
