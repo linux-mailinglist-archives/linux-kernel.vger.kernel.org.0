@@ -2,47 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2607272C41
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 12:19:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A27D72C49
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 12:22:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfGXKTo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 06:19:44 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:43543 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbfGXKTo (ORCPT
+        id S1726822AbfGXKWp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 06:22:45 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51451 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726691AbfGXKWp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 06:19:44 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hqEMp-0003mb-SX; Wed, 24 Jul 2019 12:19:27 +0200
-Date:   Wed, 24 Jul 2019 12:19:27 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Jan Kiszka <jan.kiszka@siemens.com>
-cc:     Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86: Optimize load_mm_cr4 to load_mm_cr4_irqsoff
-In-Reply-To: <fe93bc72-74a0-ab39-9d42-9401609594ac@siemens.com>
-Message-ID: <alpine.DEB.2.21.1907241218340.1972@nanos.tec.linutronix.de>
-References: <0fbbcb64-5f26-4ffb-1bb9-4f5f48426893@siemens.com> <fe93bc72-74a0-ab39-9d42-9401609594ac@siemens.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 24 Jul 2019 06:22:45 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6OAMLAE490320
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 24 Jul 2019 03:22:21 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6OAMLAE490320
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1563963741;
+        bh=Cb6E/AEJ31z78Bst6yAAp5yYD+unp+whSXcGVbkFmjM=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=SMLOGUG8Dx/WtB0K6FqYnkQE3FRgHrK+oURXYcyu8lnjRNPe9fctxkZ1NAdqPrpBV
+         rXtJcG3ToUdRMFvT8LiA4eSBQgT+b1n5khe+M5/GttWmabuAzIfC05MD84zRsPcsiu
+         7UnPc7ar7V4/MNBYOgPQc9zhq0hMZ03NNpkX2vGsqSaD5HYn1GTmeoNach+NwRmDtS
+         ZyhjuMQYIxvlIsuHGZmYegwgasqm/LvH/YM8pNPv+OHeEzE/mTtWo3g92Am1TC0093
+         /6G9Supfn4JOlo3lKU5M2ylbMUfpbvy/BqvEB7M695uNOrlFE2EIxZ4focf+ZRewQg
+         OYqvNVpstrOAA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6OAMKlm490317;
+        Wed, 24 Jul 2019 03:22:20 -0700
+Date:   Wed, 24 Jul 2019 03:22:20 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Matt Mullins <tipbot@zytor.com>
+Message-ID: <tip-b8f70953c1251d8b16276995816a95639f598e70@git.kernel.org>
+Cc:     mmullins@fb.com, mingo@kernel.org, peterz@infradead.org,
+        hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org
+Reply-To: tglx@linutronix.de, hpa@zytor.com, mmullins@fb.com,
+          mingo@kernel.org, peterz@infradead.org,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20190724042058.24506-1-mmullins@fb.com>
+References: <20190724042058.24506-1-mmullins@fb.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/entry/32: Pass cr2 to do_async_page_fault()
+Git-Commit-ID: b8f70953c1251d8b16276995816a95639f598e70
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 23 Jul 2019, Jan Kiszka wrote:
-> 
-> Ping. I think the only remark of Dave was answered.
+Commit-ID:  b8f70953c1251d8b16276995816a95639f598e70
+Gitweb:     https://git.kernel.org/tip/b8f70953c1251d8b16276995816a95639f598e70
+Author:     Matt Mullins <mmullins@fb.com>
+AuthorDate: Tue, 23 Jul 2019 21:20:58 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 24 Jul 2019 12:17:39 +0200
 
-It's in that large append only file (TODO) already.
+x86/entry/32: Pass cr2 to do_async_page_fault()
+
+Commit a0d14b8909de ("x86/mm, tracing: Fix CR2 corruption") added the
+address parameter to do_async_page_fault(), but does not pass it from the
+32-bit entry point.  To plumb it through, factor-out
+common_exception_read_cr2 in the same fashion as common_exception, and uses
+it from both page_fault and async_page_fault.
+
+For a 32-bit KVM guest, this fixes:
+
+  Run /sbin/init as init process
+  Starting init: /sbin/init exists but couldn't execute it (error -14)
+
+Fixes: a0d14b8909de ("x86/mm, tracing: Fix CR2 corruption")
+Signed-off-by: Matt Mullins <mmullins@fb.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20190724042058.24506-1-mmullins@fb.com
+
+---
+ arch/x86/entry/entry_32.S | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 2bb986f305ac..4f86928246e7 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -1443,8 +1443,12 @@ BUILD_INTERRUPT3(hv_stimer0_callback_vector, HYPERV_STIMER0_VECTOR,
+ 
+ ENTRY(page_fault)
+ 	ASM_CLAC
+-	pushl	$0; /* %gs's slot on the stack */
++	pushl	$do_page_fault
++	jmp	common_exception_read_cr2
++END(page_fault)
+ 
++common_exception_read_cr2:
++	/* the function address is in %gs's slot on the stack */
+ 	SAVE_ALL switch_stacks=1 skip_gs=1
+ 
+ 	ENCODE_FRAME_POINTER
+@@ -1452,6 +1456,7 @@ ENTRY(page_fault)
+ 
+ 	/* fixup %gs */
+ 	GS_TO_REG %ecx
++	movl	PT_GS(%esp), %edi
+ 	REG_TO_PTGS %ecx
+ 	SET_KERNEL_GS %ecx
+ 
+@@ -1463,9 +1468,9 @@ ENTRY(page_fault)
+ 
+ 	TRACE_IRQS_OFF
+ 	movl	%esp, %eax			# pt_regs pointer
+-	call	do_page_fault
++	CALL_NOSPEC %edi
+ 	jmp	ret_from_exception
+-END(page_fault)
++END(common_exception_read_cr2)
+ 
+ common_exception:
+ 	/* the function address is in %gs's slot on the stack */
+@@ -1595,7 +1600,7 @@ END(general_protection)
+ ENTRY(async_page_fault)
+ 	ASM_CLAC
+ 	pushl	$do_async_page_fault
+-	jmp	common_exception
++	jmp	common_exception_read_cr2
+ END(async_page_fault)
+ #endif
+ 
