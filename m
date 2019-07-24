@@ -2,166 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02C62737A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:18:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A87D1737C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:23:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbfGXTSO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:18:14 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:45932 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728971AbfGXTSJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:18:09 -0400
-Received: by mail-io1-f70.google.com with SMTP id e20so51759578ioe.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:18:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=+12BGyfj5tbWX5WuoPOq9y3PhelyQ+8mPqbDPnhEVzo=;
-        b=gZQOmAm474cEsGFHhlEJz0iGx9cGbljzy5kozJ0LHj404hjEMrdbpvbgKNTJydlAsZ
-         nKl9GP6mclbU8d6fB9eHrz3v2ccbQqdHVzH3rrlBmBA6ROJTOrNw3OYAyP4VngvYH7gG
-         QzdV8QjBGydijI7Ch6ThgHITwvVTQXSi+TZz/xElxf0P4HHVFKyCS9oujPVy7bkQEmV1
-         EFmxfzbF3d/Q8s3ycOxNYEheMzDWZJJ35kFbSV7g4dv3VqTMf3QBvmj5msxOJn52Luuh
-         b89vYFSlS2uql8or7qb6DnpLZFRRMaZSi7RZ8bJHWum78+Pl3FBwQ1DIyoVwXDIr+jZ8
-         0bsw==
-X-Gm-Message-State: APjAAAUSd81WpJb9JrwCjsGGVgwIMccc6kRdiOtCMY26Fn9HAwC4cUEp
-        Q1ZCDghbQZw7q4ncS1abyFOvj0ab9rP8qK+dyv0d11PRBOw/
-X-Google-Smtp-Source: APXvYqzrveDnVjWnhpRCtNoBbE6aQKt12eCs95S1sUGbzWHPCDnySGIySR0fc/DvrPbVKh2/fY3zZXKGAAKFP9BkQi2Ea14TJJKw
+        id S1727987AbfGXTXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:23:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38446 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726470AbfGXTXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:23:00 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 587F0218EA;
+        Wed, 24 Jul 2019 19:22:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563996179;
+        bh=MPPw1uoU0k3SyAgvQYcNjMXtfzBpCdPnQhRHIqRxuuM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gr+X4O+/BB6P1jeiJqTOeuonj/gEs1R9HQgItq5YsEkiTq5FHy5aE52k/ZFa421As
+         NBMJ5wpui2Py8xxgGOuzZEDrru2dyhwJdmQ78Pm/7fNlyHcZH0iLyT5Q7bymTidCZV
+         7XgrlhpxbciIgypxdUpU46JRaNmbbx1KR1FTMlRk=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Yingying Tang <yintang@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 001/413] ath10k: Check tx_stats before use it
+Date:   Wed, 24 Jul 2019 21:14:52 +0200
+Message-Id: <20190724191735.240631663@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
+References: <20190724191735.096702571@linuxfoundation.org>
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-X-Received: by 2002:a6b:b497:: with SMTP id d145mr54785605iof.17.1563995888091;
- Wed, 24 Jul 2019 12:18:08 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 12:18:08 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000057102e058e722bba@google.com>
-Subject: INFO: task hung in perf_event_free_task
-From:   syzbot <syzbot+7692cea7450c97fa2a0a@syzkaller.appspotmail.com>
-To:     acme@kernel.org, alexander.shishkin@linux.intel.com,
-        ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
-        jolsa@redhat.com, kafai@fb.com, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, namhyung@kernel.org, netdev@vger.kernel.org,
-        peterz@infradead.org, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+[ Upstream commit 9e7251fa38978b85108c44743e1436d48e8d0d76 ]
 
-syzbot found the following crash on:
+tx_stats will be freed and set to NULL before debugfs_sta node is
+removed in station disconnetion process. So if read the debugfs_sta
+node there may be NULL pointer error. Add check for tx_stats before
+use it to resove this issue.
 
-HEAD commit:    c6dd78fc Merge branch 'x86-urgent-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10b33b58600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7937b718ddac333b
-dashboard link: https://syzkaller.appspot.com/bug?extid=7692cea7450c97fa2a0a
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e888cc600000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+7692cea7450c97fa2a0a@syzkaller.appspotmail.com
-
-INFO: task syz-executor.0:9658 blocked for more than 143 seconds.
-       Not tainted 5.2.0+ #37
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor.0  D25992  9658   7837 0x00004006
-Call Trace:
-  context_switch kernel/sched/core.c:3254 [inline]
-  __schedule+0x8b7/0xcd0 kernel/sched/core.c:3880
-  schedule+0x12f/0x1d0 kernel/sched/core.c:3944
-  perf_event_free_task+0x52a/0x630 kernel/events/core.c:11606
-  copy_process+0x39bb/0x5a00 kernel/fork.c:2283
-  _do_fork+0x179/0x630 kernel/fork.c:2369
-  __do_sys_clone kernel/fork.c:2524 [inline]
-  __se_sys_clone kernel/fork.c:2505 [inline]
-  __x64_sys_clone+0x247/0x2b0 kernel/fork.c:2505
-  do_syscall_64+0xfe/0x140 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x459829
-Code: dd fe ff ff cc cc cc cc cc cc cc cc cc cc cc cc cc 64 48 8b 0c 25 f8  
-ff ff ff 48 3b 61 10 76 68 48 83 ec 28 48 89 6c 24 20 48 <8d> 6c 24 20 48  
-8b 44 24 30 48 89 04 24 48 8b 4c 24 38 48 89 4c 24
-RSP: 002b:00007f2b371d8c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000459829
-RDX: 9999999999999999 RSI: 0000000000000000 RDI: 0000002102001ffe
-RBP: 000000000075bf20 R08: ffffffffffffffff R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f2b371d96d4
-R13: 00000000004bfce6 R14: 00000000004d17f8 R15: 00000000ffffffff
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/1056:
-  #0: 000000004ef21d86 (rcu_read_lock){....}, at: rcu_lock_acquire+0x4/0x30  
-include/linux/rcupdate.h:207
-1 lock held by rsyslogd/7708:
-  #0: 000000001dbc8cee (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x243/0x2e0  
-fs/file.c:801
-2 locks held by getty/7798:
-  #0: 00000000ad2eb6b3 (&tty->ldisc_sem){++++}, at:  
-tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
-  #1: 0000000067bda1b9 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
-2 locks held by getty/7799:
-  #0: 00000000e86f0102 (&tty->ldisc_sem){++++}, at:  
-tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
-  #1: 00000000f10c3522 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
-2 locks held by getty/7800:
-  #0: 00000000f4a9ed02 (&tty->ldisc_sem){++++}, at:  
-tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
-  #1: 00000000759669da (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
-2 locks held by getty/7801:
-  #0: 00000000c998e0d2 (&tty->ldisc_sem){++++}, at:  
-tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
-  #1: 000000007c9ea7de (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
-2 locks held by getty/7802:
-  #0: 00000000398be820 (&tty->ldisc_sem){++++}, at:  
-tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
-  #1: 00000000deef3632 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
-2 locks held by getty/7803:
-  #0: 00000000fa979d44 (&tty->ldisc_sem){++++}, at:  
-tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
-  #1: 000000003715a25d (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
-2 locks held by getty/7804:
-  #0: 000000009d01c162 (&tty->ldisc_sem){++++}, at:  
-tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:272
-  #1: 0000000010022d29 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x2ee/0x1c80 drivers/tty/n_tty.c:2156
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 PID: 1056 Comm: khungtaskd Not tainted 5.2.0+ #37
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1d8/0x2f8 lib/dump_stack.c:113
-  nmi_cpu_backtrace+0xb0/0x1a0 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x14c/0x240 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x10/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace+0x17/0x20 include/linux/nmi.h:146
-  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
-  watchdog+0xbcc/0xbe0 kernel/hung_task.c:289
-  kthread+0x332/0x350 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1 skipped: idling at native_safe_halt+0xe/0x10  
-arch/x86/include/asm/irqflags.h:60
-
-
+Signed-off-by: Yingying Tang <yintang@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/net/wireless/ath/ath10k/debugfs_sta.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/drivers/net/wireless/ath/ath10k/debugfs_sta.c b/drivers/net/wireless/ath/ath10k/debugfs_sta.c
+index c704ae371c4d..42931a669b02 100644
+--- a/drivers/net/wireless/ath/ath10k/debugfs_sta.c
++++ b/drivers/net/wireless/ath/ath10k/debugfs_sta.c
+@@ -663,6 +663,13 @@ static ssize_t ath10k_dbg_sta_dump_tx_stats(struct file *file,
+ 
+ 	mutex_lock(&ar->conf_mutex);
+ 
++	if (!arsta->tx_stats) {
++		ath10k_warn(ar, "failed to get tx stats");
++		mutex_unlock(&ar->conf_mutex);
++		kfree(buf);
++		return 0;
++	}
++
+ 	spin_lock_bh(&ar->data_lock);
+ 	for (k = 0; k < ATH10K_STATS_TYPE_MAX; k++) {
+ 		for (j = 0; j < ATH10K_COUNTER_TYPE_MAX; j++) {
+-- 
+2.20.1
+
+
+
