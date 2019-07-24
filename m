@@ -2,45 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7027B73A2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE38173A2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:47:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391236AbfGXTrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:47:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53798 "EHLO mail.kernel.org"
+        id S2403771AbfGXTrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:47:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389116AbfGXTrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:47:15 -0400
+        id S2390995AbfGXTrc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:47:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB88220659;
-        Wed, 24 Jul 2019 19:47:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B75FA214AF;
+        Wed, 24 Jul 2019 19:47:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997634;
-        bh=v3MjKObhyjpXhE1fPrp9pGxjjW+gNYX6LJYKcyoeLh4=;
+        s=default; t=1563997651;
+        bh=W6h/1pOSSwoRcvw7rNjxwoX8jdgD0ATu1fsxuOJWkY8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gQPEzn0ksRZSMJV5adnyv6C9a7lK3jLK6/9550DaYSJgZom5SR5mhVtPTDzFutkeU
-         rF7VgEpL2ByQAShRiQ55oCaVTShrqzFNM9ex+OBCbq9oTUpbBLpzhUUPgwSYoAWl7c
-         ge7Okj9TOyZH8t7nu9tkNyGPQkDK8l48c76u5Muc=
+        b=EjoOnjrOd2CyMWf0mZFNqUUr3VDULQJE4ug6v8dbjvwt79aiJI2B3P+WYO/vuryok
+         H3akGxLiV19ZFTd4woG5J7hAdWOhBuvM2khlTA16uWnOgbd2eXxgnZk84roTjKNiDl
+         LdS67Z4u3GUNwm9lYhsJqsKXLqRUfbgkiOdetyWs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaron Lewis <aaronlewis@google.com>,
-        Borislav Petkov <bp@suse.de>,
-        Jim Mattson <jmattson@google.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        marcorr@google.com, Peter Feiner <pfeiner@google.com>,
-        pshier@google.com, Robert Hoo <robert.hu@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 092/371] x86/cpufeatures: Add FDP_EXCPTN_ONLY and ZERO_FCS_FDS
-Date:   Wed, 24 Jul 2019 21:17:24 +0200
-Message-Id: <20190724191731.756820484@linuxfoundation.org>
+        stable@vger.kernel.org, Bob Liu <bob.liu@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 097/371] block: null_blk: fix race condition for null_del_dev
+Date:   Wed, 24 Jul 2019 21:17:29 +0200
+Message-Id: <20190724191732.140038883@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -53,58 +43,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cbb99c0f588737ec98c333558922ce47e9a95827 ]
+[ Upstream commit 7602843fd873cae43a444b83b14dfdd114a9659c ]
 
-Add the CPUID enumeration for Intel's de-feature bits to accommodate
-passing these de-features through to kvm guests.
+Dulicate call of null_del_dev() will trigger null pointer error like below.
+The reason is a race condition between nullb_device_power_store() and
+nullb_group_drop_item().
 
-These de-features are (from SDM vol 1, section 8.1.8):
- - X86_FEATURE_FDP_EXCPTN_ONLY: If CPUID.(EAX=07H,ECX=0H):EBX[bit 6] = 1, the
-   data pointer (FDP) is updated only for the x87 non-control instructions that
-   incur unmasked x87 exceptions.
- - X86_FEATURE_ZERO_FCS_FDS: If CPUID.(EAX=07H,ECX=0H):EBX[bit 13] = 1, the
-   processor deprecates FCS and FDS; it saves each as 0000H.
+  CPU#0                         CPU#1
+  ----------------              -----------------
+  do_rmdir()
+   >configfs_rmdir()
+    >client_drop_item()
+     >nullb_group_drop_item()
+                                nullb_device_power_store()
+				>null_del_dev()
 
-Signed-off-by: Aaron Lewis <aaronlewis@google.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: marcorr@google.com
-Cc: Peter Feiner <pfeiner@google.com>
-Cc: pshier@google.com
-Cc: Robert Hoo <robert.hu@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thomas Lendacky <Thomas.Lendacky@amd.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190605220252.103406-1-aaronlewis@google.com
+      >test_and_clear_bit(NULLB_DEV_FL_UP
+       >null_del_dev()
+       ^^^^^
+       Duplicated null_dev_dev() triger null pointer error
+
+				>clear_bit(NULLB_DEV_FL_UP
+
+The fix could be keep the sequnce of clear NULLB_DEV_FL_UP and null_del_dev().
+
+[  698.613600] BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
+[  698.613608] #PF error: [normal kernel read fault]
+[  698.613611] PGD 0 P4D 0
+[  698.613619] Oops: 0000 [#1] SMP PTI
+[  698.613627] CPU: 3 PID: 6382 Comm: rmdir Not tainted 5.0.0+ #35
+[  698.613631] Hardware name: LENOVO 20LJS2EV08/20LJS2EV08, BIOS R0SET33W (1.17 ) 07/18/2018
+[  698.613644] RIP: 0010:null_del_dev+0xc/0x110 [null_blk]
+[  698.613649] Code: 00 00 00 5b 41 5c 41 5d 41 5e 41 5f 5d c3 0f 0b eb 97 e8 47 bb 2a e8 0f 1f 80 00 00 00 00 0f 1f 44 00 00 55 48 89 e5 41 54 53 <8b> 77 18 48 89 fb 4c 8b 27 48 c7 c7 40 57 1e c1 e8 bf c7 cb e8 48
+[  698.613654] RSP: 0018:ffffb887888bfde0 EFLAGS: 00010286
+[  698.613659] RAX: 0000000000000000 RBX: ffff9d436d92bc00 RCX: ffff9d43a9184681
+[  698.613663] RDX: ffffffffc11e5c30 RSI: 0000000068be6540 RDI: 0000000000000000
+[  698.613667] RBP: ffffb887888bfdf0 R08: 0000000000000001 R09: 0000000000000000
+[  698.613671] R10: ffffb887888bfdd8 R11: 0000000000000f16 R12: ffff9d436d92bc08
+[  698.613675] R13: ffff9d436d94e630 R14: ffffffffc11e5088 R15: ffffffffc11e5000
+[  698.613680] FS:  00007faa68be6540(0000) GS:ffff9d43d14c0000(0000) knlGS:0000000000000000
+[  698.613685] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  698.613689] CR2: 0000000000000018 CR3: 000000042f70c002 CR4: 00000000003606e0
+[  698.613693] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  698.613697] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  698.613700] Call Trace:
+[  698.613712]  nullb_group_drop_item+0x50/0x70 [null_blk]
+[  698.613722]  client_drop_item+0x29/0x40
+[  698.613728]  configfs_rmdir+0x1ed/0x300
+[  698.613738]  vfs_rmdir+0xb2/0x130
+[  698.613743]  do_rmdir+0x1c7/0x1e0
+[  698.613750]  __x64_sys_rmdir+0x17/0x20
+[  698.613759]  do_syscall_64+0x5a/0x110
+[  698.613768]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Signed-off-by: Bob Liu <bob.liu@oracle.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/cpufeatures.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/block/null_blk_main.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 75f27ee2c263..1017b9c7dfe0 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -239,12 +239,14 @@
- #define X86_FEATURE_BMI1		( 9*32+ 3) /* 1st group bit manipulation extensions */
- #define X86_FEATURE_HLE			( 9*32+ 4) /* Hardware Lock Elision */
- #define X86_FEATURE_AVX2		( 9*32+ 5) /* AVX2 instructions */
-+#define X86_FEATURE_FDP_EXCPTN_ONLY	( 9*32+ 6) /* "" FPU data pointer updated only on x87 exceptions */
- #define X86_FEATURE_SMEP		( 9*32+ 7) /* Supervisor Mode Execution Protection */
- #define X86_FEATURE_BMI2		( 9*32+ 8) /* 2nd group bit manipulation extensions */
- #define X86_FEATURE_ERMS		( 9*32+ 9) /* Enhanced REP MOVSB/STOSB instructions */
- #define X86_FEATURE_INVPCID		( 9*32+10) /* Invalidate Processor Context ID */
- #define X86_FEATURE_RTM			( 9*32+11) /* Restricted Transactional Memory */
- #define X86_FEATURE_CQM			( 9*32+12) /* Cache QoS Monitoring */
-+#define X86_FEATURE_ZERO_FCS_FDS	( 9*32+13) /* "" Zero out FPU CS and FPU DS */
- #define X86_FEATURE_MPX			( 9*32+14) /* Memory Protection Extension */
- #define X86_FEATURE_RDT_A		( 9*32+15) /* Resource Director Technology Allocation */
- #define X86_FEATURE_AVX512F		( 9*32+16) /* AVX-512 Foundation */
+diff --git a/drivers/block/null_blk_main.c b/drivers/block/null_blk_main.c
+index d7ac09c092f2..21d0b651b335 100644
+--- a/drivers/block/null_blk_main.c
++++ b/drivers/block/null_blk_main.c
+@@ -326,11 +326,12 @@ static ssize_t nullb_device_power_store(struct config_item *item,
+ 		set_bit(NULLB_DEV_FL_CONFIGURED, &dev->flags);
+ 		dev->power = newp;
+ 	} else if (dev->power && !newp) {
+-		mutex_lock(&lock);
+-		dev->power = newp;
+-		null_del_dev(dev->nullb);
+-		mutex_unlock(&lock);
+-		clear_bit(NULLB_DEV_FL_UP, &dev->flags);
++		if (test_and_clear_bit(NULLB_DEV_FL_UP, &dev->flags)) {
++			mutex_lock(&lock);
++			dev->power = newp;
++			null_del_dev(dev->nullb);
++			mutex_unlock(&lock);
++		}
+ 		clear_bit(NULLB_DEV_FL_CONFIGURED, &dev->flags);
+ 	}
+ 
 -- 
 2.20.1
 
