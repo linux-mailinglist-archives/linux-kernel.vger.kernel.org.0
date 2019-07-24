@@ -2,37 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 840BC73958
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:39:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5456273961
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:39:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389461AbfGXTjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:39:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40316 "EHLO mail.kernel.org"
+        id S2389686AbfGXTjn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:39:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389890AbfGXTjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:39:20 -0400
+        id S2389652AbfGXTjj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:39:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7DC9229F3;
-        Wed, 24 Jul 2019 19:39:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 205E520665;
+        Wed, 24 Jul 2019 19:39:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997159;
-        bh=0KgvDU0XhNL47yNK+Ou6qumBEZgbCbUo9x6GoEBJEdU=;
+        s=default; t=1563997178;
+        bh=K99YGqzcYsRpCLhamngDaWBaSL9BRD0VjzWdGyWWLWA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Da02D36uyrubblU+nMM5odvjKx34No97lpjFXXdxhpXtYCHDdYB6Q8tgcqCtvwLPb
-         X5jBGIqV4FQStjOQSWhcJ8aR3jycR1JJzbi/yMCh83mv2TfWEr+M+9UqV0HQueQAxu
-         2NiFizZVblbzKGaOOvRly+qHJ/DNlysU0deW5RMo=
+        b=VHLnPCCWYPd4o7X5dBgvz6fW0tKlfsDLHv9b0adOd40166OfK1RoRB3gjx4Ebm+lE
+         GvAbBcHetKpSKxFs9TKbkMXEdxlL90BJNp4pJH3oOwN2RJ37vcoh3zDM+gxHaLbT2Z
+         EzlDkpCGqUaM1OWQFiKMkmy2rMdp2Q+uA5ssmHpY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 5.2 339/413] intel_th: msu: Fix unused variable warning on arm64 platform
-Date:   Wed, 24 Jul 2019 21:20:30 +0200
-Message-Id: <20190724191800.091699497@linuxfoundation.org>
+        stable@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 5.2 341/413] signal: Correct namespace fixups of si_pid and si_uid
+Date:   Wed, 24 Jul 2019 21:20:32 +0200
+Message-Id: <20190724191800.223326080@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -45,117 +42,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shaokun Zhang <zhangshaokun@hisilicon.com>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit b96fb368b08f1637cbf780a6b83e36c2c5ed4ff5 upstream.
+commit 7a0cf094944e2540758b7f957eb6846d5126f535 upstream.
 
-Commit ba39bd8306057 ("intel_th: msu: Switch over to scatterlist")
-introduced the following warnings on non-x86 architectures, as a result
-of reordering the multi mode buffer allocation sequence:
+The function send_signal was split from __send_signal so that it would
+be possible to bypass the namespace logic based upon current[1].  As it
+turns out the si_pid and the si_uid fixup are both inappropriate in
+the case of kill_pid_usb_asyncio so move that logic into send_signal.
 
-> drivers/hwtracing/intel_th/msu.c: In function ‘msc_buffer_win_alloc’:
-> drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable ‘i’
-> [-Wunused-variable]
-> int ret = -ENOMEM, i;
->                    ^
-> drivers/hwtracing/intel_th/msu.c: In function ‘msc_buffer_win_free’:
-> drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable ‘i’
-> [-Wunused-variable]
-> int i;
->     ^
+It is difficult to arrange but possible for a signal with an si_code
+of SI_TIMER or SI_SIGIO to be sent across namespace boundaries.  In
+which case tests for when it is ok to change si_pid and si_uid based
+on SI_FROMUSER are incorrect.  Replace the use of SI_FROMUSER with a
+new test has_si_pid_and_used based on siginfo_layout.
 
-Fix this compiler warning by factoring out set_memory sequences and making
-them x86-only.
+Now that the uid fixup is no longer present after expanding
+SEND_SIG_NOINFO properly calculate the si_uid that the target
+task needs to read.
 
-Suggested-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
-Fixes: ba39bd8306057 ("intel_th: msu: Switch over to scatterlist")
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190621161930.60785-2-alexander.shishkin@linux.intel.com
+[1] 7978b567d315 ("signals: add from_ancestor_ns parameter to send_signal()")
+Cc: stable@vger.kernel.org
+Fixes: 6588c1e3ff01 ("signals: SI_USER: Masquerade si_pid when crossing pid ns boundary")
+Fixes: 6b550f949594 ("user namespace: make signal.c respect user namespaces")
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/intel_th/msu.c |   40 ++++++++++++++++++++++++++-------------
- 1 file changed, 27 insertions(+), 13 deletions(-)
+ kernel/signal.c |   67 +++++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 40 insertions(+), 27 deletions(-)
 
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -767,6 +767,30 @@ err_nomem:
- 	return -ENOMEM;
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -1057,27 +1057,6 @@ static inline bool legacy_queue(struct s
+ 	return (sig < SIGRTMIN) && sigismember(&signals->signal, sig);
  }
  
-+#ifdef CONFIG_X86
-+static void msc_buffer_set_uc(struct msc_window *win, unsigned int nr_blocks)
-+{
-+	int i;
-+
-+	for (i = 0; i < nr_blocks; i++)
-+		/* Set the page as uncached */
-+		set_memory_uc((unsigned long)msc_win_block(win, i), 1);
-+}
-+
-+static void msc_buffer_set_wb(struct msc_window *win)
-+{
-+	int i;
-+
-+	for (i = 0; i < win->nr_blocks; i++)
-+		/* Reset the page to write-back */
-+		set_memory_wb((unsigned long)msc_win_block(win, i), 1);
-+}
-+#else /* !X86 */
-+static inline void
-+msc_buffer_set_uc(struct msc_window *win, unsigned int nr_blocks) {}
-+static inline void msc_buffer_set_wb(struct msc_window *win) {}
-+#endif /* CONFIG_X86 */
-+
- /**
-  * msc_buffer_win_alloc() - alloc a window for a multiblock mode
-  * @msc:	MSC device
-@@ -780,7 +804,7 @@ err_nomem:
- static int msc_buffer_win_alloc(struct msc *msc, unsigned int nr_blocks)
- {
- 	struct msc_window *win;
--	int ret = -ENOMEM, i;
-+	int ret = -ENOMEM;
- 
- 	if (!nr_blocks)
- 		return 0;
-@@ -811,11 +835,7 @@ static int msc_buffer_win_alloc(struct m
- 	if (ret < 0)
- 		goto err_nomem;
- 
--#ifdef CONFIG_X86
--	for (i = 0; i < ret; i++)
--		/* Set the page as uncached */
--		set_memory_uc((unsigned long)msc_win_block(win, i), 1);
--#endif
-+	msc_buffer_set_uc(win, ret);
- 
- 	win->nr_blocks = ret;
- 
-@@ -860,8 +880,6 @@ static void __msc_buffer_win_free(struct
-  */
- static void msc_buffer_win_free(struct msc *msc, struct msc_window *win)
- {
--	int i;
+-#ifdef CONFIG_USER_NS
+-static inline void userns_fixup_signal_uid(struct kernel_siginfo *info, struct task_struct *t)
+-{
+-	if (current_user_ns() == task_cred_xxx(t, user_ns))
+-		return;
 -
- 	msc->nr_pages -= win->nr_blocks;
- 
- 	list_del(&win->entry);
-@@ -870,11 +888,7 @@ static void msc_buffer_win_free(struct m
- 		msc->base_addr = 0;
- 	}
- 
--#ifdef CONFIG_X86
--	for (i = 0; i < win->nr_blocks; i++)
--		/* Reset the page to write-back */
--		set_memory_wb((unsigned long)msc_win_block(win, i), 1);
+-	if (SI_FROMKERNEL(info))
+-		return;
+-
+-	rcu_read_lock();
+-	info->si_uid = from_kuid_munged(task_cred_xxx(t, user_ns),
+-					make_kuid(current_user_ns(), info->si_uid));
+-	rcu_read_unlock();
+-}
+-#else
+-static inline void userns_fixup_signal_uid(struct kernel_siginfo *info, struct task_struct *t)
+-{
+-	return;
+-}
 -#endif
-+	msc_buffer_set_wb(win);
+-
+ static int __send_signal(int sig, struct kernel_siginfo *info, struct task_struct *t,
+ 			enum pid_type type, int from_ancestor_ns)
+ {
+@@ -1135,7 +1114,11 @@ static int __send_signal(int sig, struct
+ 			q->info.si_code = SI_USER;
+ 			q->info.si_pid = task_tgid_nr_ns(current,
+ 							task_active_pid_ns(t));
+-			q->info.si_uid = from_kuid_munged(current_user_ns(), current_uid());
++			rcu_read_lock();
++			q->info.si_uid =
++				from_kuid_munged(task_cred_xxx(t, user_ns),
++						 current_uid());
++			rcu_read_unlock();
+ 			break;
+ 		case (unsigned long) SEND_SIG_PRIV:
+ 			clear_siginfo(&q->info);
+@@ -1147,13 +1130,8 @@ static int __send_signal(int sig, struct
+ 			break;
+ 		default:
+ 			copy_siginfo(&q->info, info);
+-			if (from_ancestor_ns)
+-				q->info.si_pid = 0;
+ 			break;
+ 		}
+-
+-		userns_fixup_signal_uid(&q->info, t);
+-
+ 	} else if (!is_si_special(info)) {
+ 		if (sig >= SIGRTMIN && info->si_code != SI_USER) {
+ 			/*
+@@ -1197,6 +1175,28 @@ ret:
+ 	return ret;
+ }
  
- 	__msc_buffer_win_free(msc, win);
++static inline bool has_si_pid_and_uid(struct kernel_siginfo *info)
++{
++	bool ret = false;
++	switch (siginfo_layout(info->si_signo, info->si_code)) {
++	case SIL_KILL:
++	case SIL_CHLD:
++	case SIL_RT:
++		ret = true;
++		break;
++	case SIL_TIMER:
++	case SIL_POLL:
++	case SIL_FAULT:
++	case SIL_FAULT_MCEERR:
++	case SIL_FAULT_BNDERR:
++	case SIL_FAULT_PKUERR:
++	case SIL_SYS:
++		ret = false;
++		break;
++	}
++	return ret;
++}
++
+ static int send_signal(int sig, struct kernel_siginfo *info, struct task_struct *t,
+ 			enum pid_type type)
+ {
+@@ -1206,7 +1206,20 @@ static int send_signal(int sig, struct k
+ 	from_ancestor_ns = si_fromuser(info) &&
+ 			   !task_pid_nr_ns(current, task_active_pid_ns(t));
+ #endif
++	if (!is_si_special(info) && has_si_pid_and_uid(info)) {
++		struct user_namespace *t_user_ns;
++
++		rcu_read_lock();
++		t_user_ns = task_cred_xxx(t, user_ns);
++		if (current_user_ns() != t_user_ns) {
++			kuid_t uid = make_kuid(current_user_ns(), info->si_uid);
++			info->si_uid = from_kuid_munged(t_user_ns, uid);
++		}
++		rcu_read_unlock();
+ 
++		if (!task_pid_nr_ns(current, task_active_pid_ns(t)))
++			info->si_pid = 0;
++	}
+ 	return __send_signal(sig, info, t, type, from_ancestor_ns);
+ }
  
 
 
