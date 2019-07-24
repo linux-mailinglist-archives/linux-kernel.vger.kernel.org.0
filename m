@@ -2,121 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D2973B49
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:59:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3388473B51
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:59:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405093AbfGXT6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:58:33 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40837 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404944AbfGXT6Y (ORCPT
+        id S2404947AbfGXT6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:58:46 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45365 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405108AbfGXT6j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:58:24 -0400
-Received: by mail-pg1-f193.google.com with SMTP id w10so21746768pgj.7;
-        Wed, 24 Jul 2019 12:58:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kGXUJmflPwZDNqZjPGTg/V3j3vLBzx4voLRvsXsS5x0=;
-        b=aD8DzIJr9crHzm0gBBO4cTdLB4JaczjMgE7+gZxVXuGETisB5/Coe/4fDBu6CPDDe5
-         XoBvL/KZGrpqntiZ+kYWIh6OsYxQ8dKcRHRiCEfLwNWeohPX0eWh/OmPBT9iJW9OjTDv
-         p/f/g24wKaYQU7CP6+cx8L1cpjK3yaypyoUX7TzqqdkgahmLctioNhQ4y2WmbzzycJIb
-         Qp371SC/pNl4nosEc3lAytYs/sdVzjpIPXnFY1ghyLle5415/zDIYALelW3tn53SIXEt
-         6DGiFNpJxtrWQ0kDcN9565KswsNxhccwABD4bjnWkoIvo9MlfdU0iZWNHLTkWB3ZOxAw
-         bE1g==
+        Wed, 24 Jul 2019 15:58:39 -0400
+Received: by mail-io1-f68.google.com with SMTP id g20so92196623ioc.12;
+        Wed, 24 Jul 2019 12:58:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kGXUJmflPwZDNqZjPGTg/V3j3vLBzx4voLRvsXsS5x0=;
-        b=uKMcekcsumt6Bej9FEEn1FI+CvhdT+5w2RCe3nhE4FR7gFw392rUuuZ5yBue3txzi0
-         uNET2BfM0W7tirOXlk19P7QmGlNpBMMqQMFwxBqxs972NpWcYvn/+6SpRl2Z+kob+X4R
-         leydJ0K06AWDFG2rTSR19YfGolx+dKy9sVDYRFh+CHBVpN/OStI4k41hYb1tE3JnNkgm
-         8Ev05AHHBcx/CPO+dYdydrdk7Y/Ehg1/52rwMxZZwg19YZ/lyIIXNKz/CcdEAy5osLOz
-         NYA7vRW3V8Sfb8Ps0TGU5Ba9LfYFiQ1YXN6qOHce6yEDikxloRgA8rFkkit5J3Qe/UZs
-         ZZUw==
-X-Gm-Message-State: APjAAAXyjHy6xuOr4i0XltTA2KN8gBntDFzUrVbF15xFxrbPiQYUnepB
-        l2Hl1eS2rAwT2w4rQYoFQwoqKJ5D
-X-Google-Smtp-Source: APXvYqzn7cT7zcsP8mgCbwroZ91teSNZ4cC4OJqPgYJN31TDgaNhbAOo22JdnPmzjE3E17x+IJT+hg==
-X-Received: by 2002:a62:f20b:: with SMTP id m11mr13043335pfh.125.1563998303220;
-        Wed, 24 Jul 2019 12:58:23 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id b6sm41772738pgq.26.2019.07.24.12.58.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 12:58:22 -0700 (PDT)
-Subject: Re: [PATCH 5.3] mwifiex: fix 802.11n/WPA detection
-To:     Brian Norris <briannorris@chromium.org>,
-        Ganapathi Bhat <gbhat@marvell.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        Xinming Hu <huxinming820@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.de>, stable@vger.kernel.org
-References: <20190724194634.205718-1-briannorris@chromium.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <6c6b1d11-f13c-0dde-74ac-93a9e51c4deb@roeck-us.net>
-Date:   Wed, 24 Jul 2019 12:58:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PQGl4LrVkZJQR8JrdRonxvKem1COImKXVs35tCWL8j0=;
+        b=ec0vJIipcZu5LUdn3MYAw1zOEZ4sweRJ8vwbTODhnDrzj7EQmKd0ibIU4uBKh6IBwM
+         UyKuvvkA8fF7XI/X8cDP0L572PcN6m6td48mn60ddRgKR+ElAdFALhxdTm2vdlxBQLL4
+         aL2joV+6bVNEOa2+OwCuObFMJ+4rjsQECGtq7jnWxUTlju5YYbgYnmgGd/hQddS49vFB
+         qZi0AnJ1pHvX17MUDErIiFTbBHPJUootyv/UEGJqS3Ahz2kQ2lL8BTR99X1zl06NEDoF
+         /XjR+N49M13WKztsCv78grt8UO2ATx6ofEFcwPcFxtq5Po72CdwMsgLMA7WXmFR37uGK
+         msqA==
+X-Gm-Message-State: APjAAAU/9OGdXgF2eWbsNqtmcpb4SeLp2RTyyBEF80JY+zZyycGpgKpZ
+        uNtFVOe++APwjTJcuQaJAg==
+X-Google-Smtp-Source: APXvYqxi9X4XWOEfCJ6JS14Ne21ncbmXUxzwspE0k996mu5PRuDKTM96/1vcibyF6K4aFfn+vigdfQ==
+X-Received: by 2002:a02:b68f:: with SMTP id i15mr57425231jam.107.1563998318758;
+        Wed, 24 Jul 2019 12:58:38 -0700 (PDT)
+Received: from localhost ([64.188.179.254])
+        by smtp.gmail.com with ESMTPSA id r5sm43464553iom.42.2019.07.24.12.58.38
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 12:58:38 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 13:58:37 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+        sam@ravnborg.org, airlied@linux.ie, daniel@ffwll.ch,
+        bjorn.andersson@linaro.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: panel: Add Sharp LD-D5116Z01B
+Message-ID: <20190724195837.GA19234@bogus>
+References: <20190708165647.46224-1-jeffrey.l.hugo@gmail.com>
+ <20190708165753.46275-1-jeffrey.l.hugo@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190724194634.205718-1-briannorris@chromium.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190708165753.46275-1-jeffrey.l.hugo@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/24/19 12:46 PM, Brian Norris wrote:
-> Commit 63d7ef36103d ("mwifiex: Don't abort on small, spec-compliant
-> vendor IEs") adjusted the ieee_types_vendor_header struct, which
-> inadvertently messed up the offsets used in
-> mwifiex_is_wpa_oui_present(). Add that offset back in, mirroring
-> mwifiex_is_rsn_oui_present().
+On Mon,  8 Jul 2019 09:57:53 -0700, Jeffrey Hugo wrote:
+> The Sharp LD-D5116Z01B is a 12.3" eDP panel with a 1920X1280 resolution.
 > 
-> As it stands, commit 63d7ef36103d breaks compatibility with WPA (not
-> WPA2) 802.11n networks, since we hit the "info: Disable 11n if AES is
-> not supported by AP" case in mwifiex_is_network_compatible().
-> 
-> Fixes: 63d7ef36103d ("mwifiex: Don't abort on small, spec-compliant vendor IEs")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
+> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
 > ---
->   drivers/net/wireless/marvell/mwifiex/main.h | 1 +
->   drivers/net/wireless/marvell/mwifiex/scan.c | 3 ++-
->   2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/marvell/mwifiex/main.h b/drivers/net/wireless/marvell/mwifiex/main.h
-> index 3e442c7f7882..095837fba300 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/main.h
-> +++ b/drivers/net/wireless/marvell/mwifiex/main.h
-> @@ -124,6 +124,7 @@ enum {
->   
->   #define MWIFIEX_MAX_TOTAL_SCAN_TIME	(MWIFIEX_TIMER_10S - MWIFIEX_TIMER_1S)
->   
-> +#define WPA_GTK_OUI_OFFSET				2
->   #define RSN_GTK_OUI_OFFSET				2
->   
->   #define MWIFIEX_OUI_NOT_PRESENT			0
-> diff --git a/drivers/net/wireless/marvell/mwifiex/scan.c b/drivers/net/wireless/marvell/mwifiex/scan.c
-> index 0d6d41727037..21dda385f6c6 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/scan.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/scan.c
-> @@ -181,7 +181,8 @@ mwifiex_is_wpa_oui_present(struct mwifiex_bssdescriptor *bss_desc, u32 cipher)
->   	u8 ret = MWIFIEX_OUI_NOT_PRESENT;
->   
->   	if (has_vendor_hdr(bss_desc->bcn_wpa_ie, WLAN_EID_VENDOR_SPECIFIC)) {
-> -		iebody = (struct ie_body *) bss_desc->bcn_wpa_ie->data;
-> +		iebody = (struct ie_body *)((u8 *)bss_desc->bcn_wpa_ie->data +
-> +					    WPA_GTK_OUI_OFFSET);
->   		oui = &mwifiex_wpa_oui[cipher][0];
->   		ret = mwifiex_search_oui_in_ie(iebody, oui);
->   		if (ret)
+>  .../display/panel/sharp,ld-d5116z01b.txt      | 26 +++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/sharp,ld-d5116z01b.txt
 > 
 
+Reviewed-by: Rob Herring <robh@kernel.org>
