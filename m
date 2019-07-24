@@ -2,98 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A34E2736F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 20:52:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6AD1736FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 20:53:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728257AbfGXSwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 14:52:32 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:38155 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbfGXSwa (ORCPT
+        id S1728567AbfGXSxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 14:53:02 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:36770 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726179AbfGXSxB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 14:52:30 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1N4z2Y-1iZMDt3sXc-010r7i; Wed, 24 Jul 2019 20:52:10 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     kasan-dev@googlegroups.com,
-        =?UTF-8?q?Stephan=20M=C3=BCller?= <smueller@chronox.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Vitaly Chikunov <vt@altlinux.org>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH] crypto: jitterentropy: build without sanitizer
-Date:   Wed, 24 Jul 2019 20:51:55 +0200
-Message-Id: <20190724185207.4023459-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Wed, 24 Jul 2019 14:53:01 -0400
+Received: from pps.filterd (m0044008.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6OInMH8026088;
+        Wed, 24 Jul 2019 11:52:22 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=aa1yNHhGub2q5giAEw5YCf3oqlsTy4a2Ha1OCMwoAtU=;
+ b=U/B4/BsH+TbZIGHSloph0x+gn8OgEk83PznMCUXCgDhWTQZP1gkOAEGOGsEPm/OFPXRd
+ gtItcoxCEjzA+QiVal1XBJs4hJhRlHGXADi3FoZNALgZwMN0PMfwIM8MGou+651MCbcE
+ nQeS5OsYSh2ggskGMmQpFDGbR5yemRzqOcI= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2txr5nh805-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 24 Jul 2019 11:52:22 -0700
+Received: from prn-mbx07.TheFacebook.com (2620:10d:c081:6::21) by
+ prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Wed, 24 Jul 2019 11:52:21 -0700
+Received: from prn-hub02.TheFacebook.com (2620:10d:c081:35::126) by
+ prn-mbx07.TheFacebook.com (2620:10d:c081:6::21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Wed, 24 Jul 2019 11:52:20 -0700
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Wed, 24 Jul 2019 11:52:20 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=N1VOVF1/xToYqtmwjQr1BbNSIbOR6k//XqrYIrUKeM9OfXuuuMtwaCp2pxnTS5YIcHtna7v+dDk3BH7Yyr6K+2XQZM+rca7RDzkeZPt7kib83xcIm3HihOj4ETMOd5zrDoRu90cDu1OIN2xvzyVHM/XgD2ZH3oc237xele5LKBaigWdgd4RcffvJjn62DviU4oAb2+ev0EFjlzp1LtzcPZ78/+FUfvaRa+TrkM9CiPUtwWKAuZngUg2m3/itcY55vGjidHgo7KphVMCKkBe62FEwD8EzRe9m/Rc5Kp+VQH4VRnXL7eniU4jVpdug33mb85l9XiTySMV314Nxl12qSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aa1yNHhGub2q5giAEw5YCf3oqlsTy4a2Ha1OCMwoAtU=;
+ b=hBngRUTrvnD3mIhTR+VxeCxP3qAqkKnBcj9fAxBPvTJzCk1XHpRr29FXsvQ8HH+B8EdHFgKqSx1etH24Y5Juaa8gmKYBqu+esOECor213w14JbbiZBY38SK86S1KV58Gw1F2Yfq+WftmCamnKGxw2gKOxJ+IWqEE4baw5iszJUDF0nkHxRm5Z/R11ds8mf3bjfTgqaox0Iq9TWNS0aO+29VoMnPvEaVGAG3otRlZr/IqNJcA2cWXk2y2iO2kjR0CJNbEJF48sy6k3vcoWQA7lvIKSRmOdHSJAg9bIUO4N6kX2KTSHvNBtlWY69oiVSSgdS3mI0UEf4iur6xy1eC8eg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=fb.com;dmarc=pass action=none header.from=fb.com;dkim=pass
+ header.d=fb.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aa1yNHhGub2q5giAEw5YCf3oqlsTy4a2Ha1OCMwoAtU=;
+ b=m/tM6G9W32ZbdAMbknK1hPp8rYtAhFTNX8j8R/Euqzem/EmEgbeG4PGP8vIXNMELhc/u0jbf5dZW+2C3rgwcwiyJ3S57qnqHchHnsACOIaOLrGaYfOFsm/sfOD3rdqPMELIZf1ZeexGDoreGK1B3/OJdl45nnqxXpHEtdPBLqk4=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1789.namprd15.prod.outlook.com (10.174.96.8) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.10; Wed, 24 Jul 2019 18:52:20 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::4066:b41c:4397:27b7]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::4066:b41c:4397:27b7%7]) with mapi id 15.20.2094.013; Wed, 24 Jul 2019
+ 18:52:19 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+CC:     lkml <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "Kernel Team" <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>
+Subject: Re: [PATCH v8 2/4] uprobe: use original page when all uprobes are
+ removed
+Thread-Topic: [PATCH v8 2/4] uprobe: use original page when all uprobes are
+ removed
+Thread-Index: AQHVQfsnepoAlMhPK0qmuIU0gpphb6bZpE2AgAB5kgA=
+Date:   Wed, 24 Jul 2019 18:52:19 +0000
+Message-ID: <BCE000B2-3F72-4148-A75C-738274917282@fb.com>
+References: <20190724083600.832091-1-songliubraving@fb.com>
+ <20190724083600.832091-3-songliubraving@fb.com>
+ <20190724113711.GE21599@redhat.com>
+In-Reply-To: <20190724113711.GE21599@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.11)
+x-originating-ip: [2620:10d:c090:180::1:856f]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6f3fbdb3-69ad-42f9-8813-08d710680e4a
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1789;
+x-ms-traffictypediagnostic: MWHPR15MB1789:
+x-microsoft-antispam-prvs: <MWHPR15MB17893F0D7DB172E16EAABA0FB3C60@MWHPR15MB1789.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:605;
+x-forefront-prvs: 0108A997B2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(136003)(396003)(376002)(39860400002)(199004)(189003)(71200400001)(71190400001)(36756003)(5660300002)(14444005)(256004)(57306001)(76116006)(66476007)(66946007)(66446008)(66556008)(64756008)(6116002)(33656002)(6506007)(53546011)(229853002)(102836004)(6916009)(186003)(6246003)(54906003)(316002)(4326008)(76176011)(99286004)(14454004)(6486002)(6436002)(25786009)(11346002)(2616005)(446003)(8676002)(6512007)(7736002)(86362001)(68736007)(81156014)(81166006)(8936002)(46003)(476003)(305945005)(478600001)(50226002)(486006)(53936002)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1789;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: RZX72aB+99LXHP1bXefZKENqiHQ2YcvdUIqmL6a12NlCiFuAjEKTgoLadlF1kNbIC4ywIXgWxoBT0TIDWbaZZofomrU44V+V3dvuzYZlvgblaTYZ78lsMeZP88ulbBKssmTlcz3W5x6zjXFzFAkrXItKQn70edH25yJ9IDr15a6NCimj3/bfag8EehArsS357dlyHi1kz+g7rnq5Z80Zc9SfNzTk+9kehA+K1yBGnIKhERhnO7QQMs5IaYRSZQL38mt3x2Bo1VMWM+2UMalW9GTxNHThS9ge5nAyzQxP7CDj7uIWZtCntUP6xMjJAJqoFS8ff2E9FYruHrEK4MAElpZgQjLSHrEBXlRzjYmokMSDCqAJ5M5uv3hYMXvXHNOsBU7LmsXVs1hC/Rk5quRhicsit0LHHk8j0ddFpn1ol1Q=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <BED125F3441AB64F9DAE1BC94B08C78C@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:2QZYaO519OJxYJsrSQIe/UzdE5AmrOwOkLjXT+CjRW8Dx1lg2Dy
- XV/NNUYdwM3vTfiFDwSD0F4fyLZmjd6jW+NV7AJpT+rAQ/sdhR4X1aKa+ZOReDYN8zdd2t/
- Ox2vDe5VdQRl1nHDLe+c38FlsGf4wYILrfhx66IL+1gIA7RT6JgkxFaiP7CwnYG/V2V5wfs
- fgvfUk/OsccuBGMrqhh/g==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ZAZZZe+kadI=:rnEzG0t1GmceK0/lAFvYax
- Ex+XREoW3yNiDExdl9vfsXIjNkyvMdsCAn1FwWI7ElysOPL8L+Dx/4F9Ep3vW5LunKGgsyQQI
- yv00OJ6maRvK3LcMCmWUJIbWFUE8sskArxmHTlPGR7InwTiBMgZUHuRbnS8StCea9EgLWeL3r
- jy83jMfnVRvdKH7Jth/itcIV/WUhwQe2LDxJ3VuCreyugM/3bTF8MpMl0zcCN//tEyD0w8+xW
- Du4tJ4rFmi+sUNpeyvSGqSVK7gAn9NhOI3H/BVBkMnEhU9bB9J/ZVYxXIcKq+BMhlwE3Ra6k6
- f2Se4X678XzaJuT1ov055sLk0MnEFvD/inMo7rXZ9fDcJ7b1kQ0JLNX4NOapppsAkAxejmo7c
- 9ke/cBlq2BAcDMkWdVfjbZzd+BPR3ORrzjnJu5WLtnJeB1u7q+rieUaCeJY36DgH0hqCNRysh
- 69709d1BQlv3lfq+fXkple66lk7o126EGCSeuuhYxWrxN5PIazkrjeftVuZaUeS6pcCl7sSHd
- EdwAJHRSdgxtUWv6p92aNNsRhFJa0e8Hv43wSqKQrvPVq8xhELBOl5LvAKOcGQ/UKH+h5PJCu
- QYuanTrvsit0f4rxUE0kdYpNix8gPchck9Q8ZXw4Z2wXB/EF0wnfg27WTonImdt4nl/B/yR9b
- X4XrmEhr1kEVinpZHGB0gB/jOW6ftgC8qNgRmY8Ff6uL3Hs1ONFB6V1Ycbez4KvGP6w3j8rzz
- yhQXpQFLY+j8/q6KKgqbwrTRwUd6KVxz+18WNQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f3fbdb3-69ad-42f9-8813-08d710680e4a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2019 18:52:19.1547
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1789
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-24_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1907240200
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recent clang-9 snapshots double the kernel stack usage when building
-this file with -O0 -fsanitize=kernel-hwaddress, compared to clang-8
-and older snapshots, this changed between commits svn364966 and
-svn366056:
 
-crypto/jitterentropy.c:516:5: error: stack frame size of 2640 bytes in function 'jent_entropy_init' [-Werror,-Wframe-larger-than=]
-int jent_entropy_init(void)
-    ^
-crypto/jitterentropy.c:185:14: error: stack frame size of 2224 bytes in function 'jent_lfsr_time' [-Werror,-Wframe-larger-than=]
-static __u64 jent_lfsr_time(struct rand_data *ec, __u64 time, __u64 loop_cnt)
-             ^
 
-I prepared a reduced test case in case any clang developers want to
-take a closer look, but from looking at the earlier output it seems
-that even with clang-8, something was very wrong here.
+> On Jul 24, 2019, at 4:37 AM, Oleg Nesterov <oleg@redhat.com> wrote:
+>=20
+> On 07/24, Song Liu wrote:
+>>=20
+>> 	lock_page(old_page);
+>> @@ -177,15 +180,24 @@ static int __replace_page(struct vm_area_struct *v=
+ma, unsigned long addr,
+>> 	mmu_notifier_invalidate_range_start(&range);
+>> 	err =3D -EAGAIN;
+>> 	if (!page_vma_mapped_walk(&pvmw)) {
+>> -		mem_cgroup_cancel_charge(new_page, memcg, false);
+>> +		if (!orig)
+>> +			mem_cgroup_cancel_charge(new_page, memcg, false);
+>> 		goto unlock;
+>> 	}
+>> 	VM_BUG_ON_PAGE(addr !=3D pvmw.address, old_page);
+>>=20
+>> 	get_page(new_page);
+>> -	page_add_new_anon_rmap(new_page, vma, addr, false);
+>> -	mem_cgroup_commit_charge(new_page, memcg, false, false);
+>> -	lru_cache_add_active_or_unevictable(new_page, vma);
+>> +	if (orig) {
+>> +		lock_page(new_page);  /* for page_add_file_rmap() */
+>> +		page_add_file_rmap(new_page, false);
+>=20
+>=20
+> Shouldn't we re-check new_page->mapping after lock_page() ? Or we can't
+> race with truncate?
 
-Turn off any KASAN and UBSAN sanitizing for this file, as that likely
-clashes with -O0 anyway.  Turning off just KASAN avoids the warning
-already, but I suspect both of these have undesired side-effects
-for jitterentropy.
+We can't race with truncate, because the file is open as binary and=20
+protected with DENYWRITE (ETXTBSY).=20
 
-Link: https://godbolt.org/z/fDcwZ5
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- crypto/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+>=20
+>=20
+> and I am worried this code can try to lock the same page twice...
+> Say, the probed application does MADV_DONTNEED and then writes "int3"
+> into vma->vm_file at the same address to fool verify_opcode().
+>=20
 
-diff --git a/crypto/Makefile b/crypto/Makefile
-index 9479e1a45d8c..176b2623dd68 100644
---- a/crypto/Makefile
-+++ b/crypto/Makefile
-@@ -136,6 +136,8 @@ obj-$(CONFIG_CRYPTO_ANSI_CPRNG) += ansi_cprng.o
- obj-$(CONFIG_CRYPTO_DRBG) += drbg.o
- obj-$(CONFIG_CRYPTO_JITTERENTROPY) += jitterentropy_rng.o
- CFLAGS_jitterentropy.o = -O0
-+KASAN_SANITIZE_jitterentropy.o = n
-+UBSAN_SANITIZE_jitterentropy.o = n
- jitterentropy_rng-y := jitterentropy.o jitterentropy-kcapi.o
- obj-$(CONFIG_CRYPTO_TEST) += tcrypt.o
- obj-$(CONFIG_CRYPTO_GHASH) += ghash-generic.o
--- 
-2.20.0
+Do you mean the case where old_page =3D=3D new_page? I think this won't=20
+happen, because in uprobe_write_opcode() we only do orig_page for=20
+!is_register case.=20
+
+Thanks,
+Song
 
