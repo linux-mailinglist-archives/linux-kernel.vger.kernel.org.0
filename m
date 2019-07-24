@@ -2,132 +2,262 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BDA174242
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 01:40:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F15517424E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 01:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729798AbfGXXjr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 19:39:47 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:36553 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388748AbfGXXjg (ORCPT
+        id S2388320AbfGXXpV convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 24 Jul 2019 19:45:21 -0400
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:50123 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387978AbfGXXpU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 19:39:36 -0400
-Received: by mail-io1-f68.google.com with SMTP id o9so93396958iom.3;
-        Wed, 24 Jul 2019 16:39:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+nfQZ2UdcSDgJjCDwmD/o1yYou6zHrnlrDckfQLhv48=;
-        b=CZB+qQZ+IiCjqbrl3pG1VgfoIKlT1esq374rHCiwoSTr+htDGMMdB25C4Kju1ptnOv
-         Sr0vWDqL1QJ8UxaHm3MSMXR8LZpxI8sSOFGwYpaXvbXoOaNpfJfY+8QnxMoy0sD4c5/G
-         7qLcwiTTCg8VwoMBVrIn2Jjo3NIsaxQZU8ASK/EaGVoGZtibG80it6wU6C6lktP9f5Wt
-         sSCIM70yBh8fL8rsrpffoHwj93kjzxv/1zN/Cv647ellh7AJiCG/dPXcCrWpJSP8U2lB
-         tHP4E6gWavTvF+TOL0eTMooXt7XVQ3+ITlWaQuZTNGAIlCyXmIDsZO5E36ET0q1faLPK
-         qv/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+nfQZ2UdcSDgJjCDwmD/o1yYou6zHrnlrDckfQLhv48=;
-        b=e58DkMqClxTc58FKiC/JFu66D9+cu1JIlmjyhUx7aVSQkUjUzx67el+kxWbQkVBQIC
-         9dk3PMHKCNh70H1O6HutfvEddBbxaoY9tODg0+jnJR7/eswAmFsnGY6sj7IooZITmlJb
-         jhit1cc/nHkRWA8AA/vCp8twUEvJcv0WjbDvjJmf6Ux3ZJ+yQJsZCSJyc15M4vbRsCVl
-         OmiFC3nMBhoAxj3x8b+9hzsEKurUH8O7p+IR0XOFVh11iUu4ycxHgsdDY1/UXRy1XNWw
-         rZAOyvbcOlCk3c4RwUiz1dtEAziYvgQDuOqlYBeJ514NrGkrm5lem5GyHawndpI48gvY
-         fbAg==
-X-Gm-Message-State: APjAAAXNl8uQVG3bnhjntXOZv8PDKNd64pv7MoeTrtbb1ZKUTJgynSIT
-        s/dl7QhvLjrifNap4V+MMhU=
-X-Google-Smtp-Source: APXvYqwz03eSee7Y8W5j7Athc2oOY1acyYH6BBqvdR5E7s99JkIF/tHtBs+1nL70YWEqwyLZFCaI/Q==
-X-Received: by 2002:a6b:2cc7:: with SMTP id s190mr80038806ios.164.1564011576172;
-        Wed, 24 Jul 2019 16:39:36 -0700 (PDT)
-Received: from localhost.localdomain (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
-        by smtp.gmail.com with ESMTPSA id b14sm51612959iod.33.2019.07.24.16.39.34
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 16:39:35 -0700 (PDT)
-From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
-To:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     skunberg.kelsey@gmail.com,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        skhan@linuxfoundation.org
-Subject: [PATCH v2 11/11] PCI: Move pci_*_node() declarations to drivers/pci/pci.h
-Date:   Wed, 24 Jul 2019 17:38:48 -0600
-Message-Id: <20190724233848.73327-12-skunberg.kelsey@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190724233848.73327-1-skunberg.kelsey@gmail.com>
-References: <20190711222341.111556-1-skunberg.kelsey@gmail.com>
- <20190724233848.73327-1-skunberg.kelsey@gmail.com>
+        Wed, 24 Jul 2019 19:45:20 -0400
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x6ONj90V029079
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 25 Jul 2019 08:45:09 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x6ONj9Vd028359;
+        Thu, 25 Jul 2019 08:45:09 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x6ONe3aT011021;
+        Thu, 25 Jul 2019 08:45:09 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.152] [10.38.151.152]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-7087570; Thu, 25 Jul 2019 08:43:26 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC24GP.gisp.nec.co.jp ([10.38.151.152]) with mapi id 14.03.0439.000; Thu,
+ 25 Jul 2019 08:43:25 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Jane Chu <jane.chu@oracle.com>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+Subject: Re: [PATCH v2 1/1] mm/memory-failure: Poison read receives SIGKILL
+ instead of SIGBUS if mmaped more than once
+Thread-Topic: [PATCH v2 1/1] mm/memory-failure: Poison read receives SIGKILL
+ instead of SIGBUS if mmaped more than once
+Thread-Index: AQHVQnAjSKtp5HUwfEeIsgIKjFcsrqbZ12MA
+Date:   Wed, 24 Jul 2019 23:43:25 +0000
+Message-ID: <20190724234318.GA21820@hori.linux.bs1.fc.nec.co.jp>
+References: <1564007603-9655-1-git-send-email-jane.chu@oracle.com>
+ <1564007603-9655-2-git-send-email-jane.chu@oracle.com>
+In-Reply-To: <1564007603-9655-2-git-send-email-jane.chu@oracle.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.150]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <1F5511DB107F864C919C1A6A91C4628E@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pci_*_node() is only called from drivers/pci/. Since these declarations do
-not need to be visible to the rest of the kernel, move to
-drivers/pci/pci.h.
+On Wed, Jul 24, 2019 at 04:33:23PM -0600, Jane Chu wrote:
+> Mmap /dev/dax more than once, then read the poison location using address
+> from one of the mappings. The other mappings due to not having the page
+> mapped in will cause SIGKILLs delivered to the process. SIGKILL succeeds
+> over SIGBUS, so user process looses the opportunity to handle the UE.
+> 
+> Although one may add MAP_POPULATE to mmap(2) to work around the issue,
+> MAP_POPULATE makes mapping 128GB of pmem several magnitudes slower, so
+> isn't always an option.
+> 
+> Details -
+> 
+> ndctl inject-error --block=10 --count=1 namespace6.0
+> 
+> ./read_poison -x dax6.0 -o 5120 -m 2
+> mmaped address 0x7f5bb6600000
+> mmaped address 0x7f3cf3600000
+> doing local read at address 0x7f3cf3601400
+> Killed
+> 
+> Console messages in instrumented kernel -
+> 
+> mce: Uncorrected hardware memory error in user-access at edbe201400
+> Memory failure: tk->addr = 7f5bb6601000
+> Memory failure: address edbe201: call dev_pagemap_mapping_shift
+> dev_pagemap_mapping_shift: page edbe201: no PUD
+> Memory failure: tk->size_shift == 0
+> Memory failure: Unable to find user space address edbe201 in read_poison
+> Memory failure: tk->addr = 7f3cf3601000
+> Memory failure: address edbe201: call dev_pagemap_mapping_shift
+> Memory failure: tk->size_shift = 21
+> Memory failure: 0xedbe201: forcibly killing read_poison:22434 because of failure to unmap corrupted page
+>   => to deliver SIGKILL
+> Memory failure: 0xedbe201: Killing read_poison:22434 due to hardware memory corruption
+>   => to deliver SIGBUS
+> 
+> Signed-off-by: Jane Chu <jane.chu@oracle.com>
+> Suggested-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> ---
+>  mm/memory-failure.c | 62 ++++++++++++++++++++++-------------------------------
+>  1 file changed, 26 insertions(+), 36 deletions(-)
+> 
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index d9cc660..bd4db33 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -199,7 +199,6 @@ struct to_kill {
+>  	struct task_struct *tsk;
+>  	unsigned long addr;
+>  	short size_shift;
+> -	char addr_valid;
+>  };
+>  
+>  /*
+> @@ -304,43 +303,43 @@ static unsigned long dev_pagemap_mapping_shift(struct page *page,
+>  /*
+>   * Schedule a process for later kill.
+>   * Uses GFP_ATOMIC allocations to avoid potential recursions in the VM.
+> - * TBD would GFP_NOIO be enough?
+>   */
+>  static void add_to_kill(struct task_struct *tsk, struct page *p,
+>  		       struct vm_area_struct *vma,
+> -		       struct list_head *to_kill,
+> -		       struct to_kill **tkc)
+> +		       struct list_head *to_kill)
+>  {
+>  	struct to_kill *tk;
+>  
+> -	if (*tkc) {
+> -		tk = *tkc;
+> -		*tkc = NULL;
+> -	} else {
+> -		tk = kmalloc(sizeof(struct to_kill), GFP_ATOMIC);
+> -		if (!tk) {
+> -			pr_err("Memory failure: Out of memory while machine check handling\n");
+> -			return;
+> -		}
+> +	tk = kmalloc(sizeof(struct to_kill), GFP_ATOMIC);
+> +	if (!tk) {
+> +		pr_err("Memory failure: Out of memory while machine check handling\n");
+> +		return;
 
-Signed-off-by: Kelsey Skunberg <skunberg.kelsey@gmail.com>
----
- drivers/pci/pci.h   | 9 +++++++++
- include/linux/pci.h | 8 --------
- 2 files changed, 9 insertions(+), 8 deletions(-)
+As Dan pointed out, the cleanup part can be delivered as a separate patch.
 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 6cdc3500de15..27089a87dfea 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -592,6 +592,10 @@ struct device_node;
- int of_pci_parse_bus_range(struct device_node *node, struct resource *res);
- int of_get_pci_domain_nr(struct device_node *node);
- int of_pci_get_max_link_speed(struct device_node *node);
-+void pci_set_of_node(struct pci_dev *dev);
-+void pci_release_of_node(struct pci_dev *dev);
-+void pci_set_bus_of_node(struct pci_bus *bus);
-+void pci_release_bus_of_node(struct pci_bus *bus);
- 
- #else
- static inline int
-@@ -611,6 +615,11 @@ of_pci_get_max_link_speed(struct device_node *node)
- {
- 	return -EINVAL;
- }
-+
-+static inline void pci_set_of_node(struct pci_dev *dev) { }
-+static inline void pci_release_of_node(struct pci_dev *dev) { }
-+static inline void pci_set_bus_of_node(struct pci_bus *bus) { }
-+static inline void pci_release_bus_of_node(struct pci_bus *bus) { }
- #endif /* CONFIG_OF */
- 
- #if defined(CONFIG_OF_ADDRESS)
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index a483b7598059..d354fbcee5a7 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -2264,10 +2264,6 @@ int pci_vpd_find_info_keyword(const u8 *buf, unsigned int off,
- #ifdef CONFIG_OF
- struct device_node;
- struct irq_domain;
--void pci_set_of_node(struct pci_dev *dev);
--void pci_release_of_node(struct pci_dev *dev);
--void pci_set_bus_of_node(struct pci_bus *bus);
--void pci_release_bus_of_node(struct pci_bus *bus);
- struct irq_domain *pci_host_bridge_of_msi_domain(struct pci_bus *bus);
- int pci_parse_request_of_pci_ranges(struct device *dev,
- 				    struct list_head *resources,
-@@ -2277,10 +2273,6 @@ int pci_parse_request_of_pci_ranges(struct device *dev,
- struct device_node *pcibios_get_phb_of_node(struct pci_bus *bus);
- 
- #else	/* CONFIG_OF */
--static inline void pci_set_of_node(struct pci_dev *dev) { }
--static inline void pci_release_of_node(struct pci_dev *dev) { }
--static inline void pci_set_bus_of_node(struct pci_bus *bus) { }
--static inline void pci_release_bus_of_node(struct pci_bus *bus) { }
- static inline struct irq_domain *
- pci_host_bridge_of_msi_domain(struct pci_bus *bus) { return NULL; }
- static inline int pci_parse_request_of_pci_ranges(struct device *dev,
--- 
-2.20.1
+>  	}
+> +
+>  	tk->addr = page_address_in_vma(p, vma);
+> -	tk->addr_valid = 1;
+>  	if (is_zone_device_page(p))
+>  		tk->size_shift = dev_pagemap_mapping_shift(p, vma);
+>  	else
+>  		tk->size_shift = compound_order(compound_head(p)) + PAGE_SHIFT;
+>  
+>  	/*
+> -	 * In theory we don't have to kill when the page was
+> -	 * munmaped. But it could be also a mremap. Since that's
+> -	 * likely very rare kill anyways just out of paranoia, but use
+> -	 * a SIGKILL because the error is not contained anymore.
+> +	 * Send SIGKILL if "tk->addr == -EFAULT". Also, as
+> +	 * "tk->size_shift" is always non-zero for !is_zone_device_page(),
+> +	 * so "tk->size_shift == 0" effectively checks no mapping on
+> +	 * ZONE_DEVICE. Indeed, when a devdax page is mmapped N times
+> +	 * to a process' address space, it's possible not all N VMAs
+> +	 * contain mappings for the page, but at least one VMA does.
+> +	 * Only deliver SIGBUS with payload derived from the VMA that
+> +	 * has a mapping for the page.
 
+OK, so SIGBUSs are sent M times (where M is the number of mappings
+for the page). Then I'm convinced that we need "else if" block below.
+
+Thanks,
+Naoya Horiguchi
+
+>  	 */
+> -	if (tk->addr == -EFAULT || tk->size_shift == 0) {
+> +	if (tk->addr == -EFAULT) {
+>  		pr_info("Memory failure: Unable to find user space address %lx in %s\n",
+>  			page_to_pfn(p), tsk->comm);
+> -		tk->addr_valid = 0;
+> +	} else if (tk->size_shift == 0) {
+> +		kfree(tk);
+> +		return;
+>  	}
+> +
+>  	get_task_struct(tsk);
+>  	tk->tsk = tsk;
+>  	list_add_tail(&tk->nd, to_kill);
+> @@ -366,7 +365,7 @@ static void kill_procs(struct list_head *to_kill, int forcekill, bool fail,
+>  			 * make sure the process doesn't catch the
+>  			 * signal and then access the memory. Just kill it.
+>  			 */
+> -			if (fail || tk->addr_valid == 0) {
+> +			if (fail || tk->addr == -EFAULT) {
+>  				pr_err("Memory failure: %#lx: forcibly killing %s:%d because of failure to unmap corrupted page\n",
+>  				       pfn, tk->tsk->comm, tk->tsk->pid);
+>  				do_send_sig_info(SIGKILL, SEND_SIG_PRIV,
+> @@ -432,7 +431,7 @@ static struct task_struct *task_early_kill(struct task_struct *tsk,
+>   * Collect processes when the error hit an anonymous page.
+>   */
+>  static void collect_procs_anon(struct page *page, struct list_head *to_kill,
+> -			      struct to_kill **tkc, int force_early)
+> +				int force_early)
+>  {
+>  	struct vm_area_struct *vma;
+>  	struct task_struct *tsk;
+> @@ -457,7 +456,7 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
+>  			if (!page_mapped_in_vma(page, vma))
+>  				continue;
+>  			if (vma->vm_mm == t->mm)
+> -				add_to_kill(t, page, vma, to_kill, tkc);
+> +				add_to_kill(t, page, vma, to_kill);
+>  		}
+>  	}
+>  	read_unlock(&tasklist_lock);
+> @@ -468,7 +467,7 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
+>   * Collect processes when the error hit a file mapped page.
+>   */
+>  static void collect_procs_file(struct page *page, struct list_head *to_kill,
+> -			      struct to_kill **tkc, int force_early)
+> +				int force_early)
+>  {
+>  	struct vm_area_struct *vma;
+>  	struct task_struct *tsk;
+> @@ -492,7 +491,7 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
+>  			 * to be informed of all such data corruptions.
+>  			 */
+>  			if (vma->vm_mm == t->mm)
+> -				add_to_kill(t, page, vma, to_kill, tkc);
+> +				add_to_kill(t, page, vma, to_kill);
+>  		}
+>  	}
+>  	read_unlock(&tasklist_lock);
+> @@ -501,26 +500,17 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
+>  
+>  /*
+>   * Collect the processes who have the corrupted page mapped to kill.
+> - * This is done in two steps for locking reasons.
+> - * First preallocate one tokill structure outside the spin locks,
+> - * so that we can kill at least one process reasonably reliable.
+>   */
+>  static void collect_procs(struct page *page, struct list_head *tokill,
+>  				int force_early)
+>  {
+> -	struct to_kill *tk;
+> -
+>  	if (!page->mapping)
+>  		return;
+>  
+> -	tk = kmalloc(sizeof(struct to_kill), GFP_NOIO);
+> -	if (!tk)
+> -		return;
+>  	if (PageAnon(page))
+> -		collect_procs_anon(page, tokill, &tk, force_early);
+> +		collect_procs_anon(page, tokill, force_early);
+>  	else
+> -		collect_procs_file(page, tokill, &tk, force_early);
+> -	kfree(tk);
+> +		collect_procs_file(page, tokill, force_early);
+>  }
+>  
+>  static const char *action_name[] = {
+> -- 
+> 1.8.3.1
+> 
+> 
