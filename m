@@ -2,108 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7200772A42
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:37:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BAAD72A48
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:39:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726320AbfGXIhx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 04:37:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45558 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726031AbfGXIhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 04:37:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A6585AEBD;
-        Wed, 24 Jul 2019 08:37:51 +0000 (UTC)
-Date:   Wed, 24 Jul 2019 10:37:48 +0200
-From:   Jean Delvare <jdelvare@suse.de>
-To:     Andrew Cooks <andrew.cooks@opengear.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andrew Cooks <acooks@rationali.st>,
-        linux-acpi@vger.kernel.org, platypus-sw@opengear.com,
-        "Tobin C . Harding" <me@tobin.cc>, Will Wagner <willw@carallon.com>
-Subject: Re: [RESEND][PATCH v4 1/3] i2c: piix4: Fix port selection for AMD
- Family 16h Model 30h
-Message-ID: <20190724103748.078eab19@endymion>
-In-Reply-To: <be68c29f603153cf047cd893c6b9d6423073632d.1519601860.git.andrew.cooks@opengear.com>
-References: <cover.1519601860.git.andrew.cooks@opengear.com>
-        <be68c29f603153cf047cd893c6b9d6423073632d.1519601860.git.andrew.cooks@opengear.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1726559AbfGXIjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 04:39:21 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:57034 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725883AbfGXIjV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 04:39:21 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x6O8XmpJ020457;
+        Wed, 24 Jul 2019 03:38:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=kq12ssq+svftp3GaCiDd/DAWyCN0IaOqRChAjOHdgDY=;
+ b=Cmnujevayfe5Qmqny6wB9tF9BcjpfKA9FbE9wTjBP2tDWYwbkVhKMR1r7Harb/grcH53
+ fk/MZd63Sbas/stidiuv+7LrVbmgRgoT8n/zPdF+N+qlY13bZPR4WKbxjoEyxjMxOPfk
+ 4DXekrBvlSBfDtFfNb7Hw2Jw1Dd6Q1McHe9+clJPxrNHDDgCQTOK6RgUtE5cBY3v9kYL
+ nbohTHedhstZv170oqjBTmCr3GVYtbXQBPX5kfu8kdIOIgJXZr1Taf/o74reXiXLjK+8
+ aHgiBcxFbo2Hg9JH9zo6j6ta4M4TkS12yAUDVKEHsBGiJYrs+R7dXdfJ7mkfV2kMcv86 ZQ== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex01.ad.cirrus.com ([87.246.76.36])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2tx61s13ax-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Wed, 24 Jul 2019 03:38:16 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 24 Jul
+ 2019 09:38:14 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Wed, 24 Jul 2019 09:38:14 +0100
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 73DFC45;
+        Wed, 24 Jul 2019 09:38:14 +0100 (BST)
+Date:   Wed, 24 Jul 2019 09:38:14 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+CC:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <gustavo@embeddedor.com>,
+        <patches@opensource.cirrus.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: wm8955: Fix a typo in 'wm8995_pll_factors()'
+ function name
+Message-ID: <20190724083814.GS54126@ediswmail.ad.cirrus.com>
+References: <20190724052632.30476-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190724052632.30476-1-christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=845 suspectscore=0
+ lowpriorityscore=0 malwarescore=0 priorityscore=1501 spamscore=0
+ adultscore=0 bulkscore=0 impostorscore=0 phishscore=0 clxscore=1011
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1906280000 definitions=main-1907240096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
-
-Sorry for the delay... What can I say :(
-
-On Mon, 26 Feb 2018 10:28:43 +1000, Andrew Cooks wrote:
-> Family 16h Model 30h SMBus controller needs the same port selection fix
-> as described and fixed in commit 0fe16195f891 ("i2c: piix4: Fix SMBus port
-> selection for AMD Family 17h chips")
+On Wed, Jul 24, 2019 at 07:26:32AM +0200, Christophe JAILLET wrote:
+> This should be 'wm8955_pll_factors()' instead.
+> Fix it and use it.
 > 
-> commit 6befa3fde65f ("i2c: piix4: Support alternative port selection
-> register") also fixed the port selection for Hudson2, but unfortunately
-> this is not the exact same device and the AMD naming and PCI Device IDs
-> aren't particularly helpful here.
-> 
-> The SMBus port selection register is common to the following Families
-> and models, as documented in AMD's publicly available BIOS and Kernel
-> Developer Guides:
-> 
->  50742 - Family 15h Model 60h-6Fh (PCI_DEVICE_ID_AMD_KERNCZ_SMBUS)
->  55072 - Family 15h Model 70h-7Fh (PCI_DEVICE_ID_AMD_KERNCZ_SMBUS)
->  52740 - Family 16h Model 30h-3Fh (PCI_DEVICE_ID_AMD_HUDSON2_SMBUS)
-> 
-> The Hudson2 PCI Device ID (PCI_DEVICE_ID_AMD_HUDSON2_SMBUS) is shared
-> between Bolton FCH and Family 16h Model 30h, but the location of the
-> SmBus0Sel port selection bits are different:
-> 
->  51192 - Bolton Register Reference Guide
-> 
-> We distinguish between Bolton and Family 16h Model 30h using the PCI
-> Revision ID:
-> 
->   Bolton is device 0x780b, revision 0x15
->   Family 16h Model 30h is device 0x780b, revision 0x1F
->   Family 15h Model 60h and 70h are both device 0x790b, revision 0x4A.
-> 
-> The following additional public AMD BKDG documents were checked and do
-> not share the same port selection register:
-> 
->  42301 - Family 15h Model 00h-0Fh doesn't mention any
->  42300 - Family 15h Model 10h-1Fh doesn't mention any
->  49125 - Family 15h Model 30h-3Fh doesn't mention any
-> 
->  48751 - Family 16h Model 00h-0Fh uses the previously supported
->          index register SB800_PIIX4_PORT_IDX_ALT at 0x2e
-> 
-> Signed-off-by: Andrew Cooks <andrew.cooks@opengear.com>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/i2c/busses/i2c-piix4.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-> (...)
 
-Looks good to me. Unfortunately the patch no longer applies (my fault
-obviously), it needs to be rebased on top of commit
-24beb83ad289c68bce7c01351cb90465bbb1940a ("i2c-piix4: Add Hygon Dhyana
-SMBus support").
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-I also agree with Tobin's suggestion to remove unneeded parentheses.
-
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-
-This patch should also address Will Wagner's (Cc'd) complaint in another
-thread ("[BUG] i2c_piix4: Hudson2 uses wrong port to access SMBus
-controller").
-
-I believe this is stable branch material.
-
--- 
-Jean Delvare
-SUSE L3 Support
+Thanks,
+Charles
