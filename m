@@ -2,244 +2,527 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DC2E73497
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:07:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B318E7348F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:05:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728027AbfGXRHZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 13:07:25 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37416 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727439AbfGXRHZ (ORCPT
+        id S1727541AbfGXRFd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 13:05:33 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:33804 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbfGXRFc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 13:07:25 -0400
-Received: by mail-io1-f68.google.com with SMTP id q22so91123057iog.4;
-        Wed, 24 Jul 2019 10:07:24 -0700 (PDT)
+        Wed, 24 Jul 2019 13:05:32 -0400
+Received: by mail-qk1-f194.google.com with SMTP id t8so34302108qkt.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 10:05:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:date:message-id:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=FMuX0Oym74xCaSWPGFhC4FdIsHBrnIwQJ+1P4e5e/MM=;
-        b=SuKKhppAVNoQv+RiNYwWSYYmFjbIehqdAVmKv+DBxaGoeM8dyFmZcVLjCbLD5C2NSn
-         VRZ2l1ChubLZL943RF6i+FOGqJrzJYNowJK5sSMOxhdnKnIagkm6tNc5Iygp3EptMJOY
-         3OnbWNAOwHDsAQ16TEqtynLwPUHuA2mvFMh1x2W0xcL73pcrQ/0TFzWhurTyhPmczryv
-         Y7xazqPs2k/EytYMzEOT99kKp07G2EuCNrG2fjCSlcKdzVgad9NoM+EsMjJmRoyxNUu8
-         sh3iuEjpV2gdVJ271uL7OhBXRtBsqy+tqPsEFF1vb5qgwpyKnZBBXYpvbseakHe2zJhD
-         ozIg==
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AP65/Wb5+uN6l1ty3c5CNbByMzUTzcCuK4tXfyLwYa4=;
+        b=fB8XTHbCDesvN21iw+euv0FJlU7P8QeV0j5pC99l3sO3XhUrdCKw09H/SLvHb/5NFe
+         JtOjcKmfo3LNYW8irDC2vkxfR54TjVSHvPPX1/lwr9owrPR8tp+UQ9VN4z2wopkFRdc0
+         o369Xj00hl+4AgwRi7MhjecfJNKiZPavsVKnOzfq/jsgqlKKqL2pxMig1bdtWDcqiIgL
+         jgPG3a6NLLpisvMCLVYIdDGMBiPPdUym0jB0oMXmqBIVselZdiFyEnLKHcyqYAufzRfq
+         itWmAkkQIhA4v41/bkYagXyKKpukep80lZwNGue5azBMJNShhAtfvcAkGWWncu0xU3Qg
+         yRFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=FMuX0Oym74xCaSWPGFhC4FdIsHBrnIwQJ+1P4e5e/MM=;
-        b=SyFNyWlzOV+6x6KfFonKgyIPOM1I0WuAwcWRym0cC3yqFkn/YFnVX3rZ3LArRmrmSL
-         Zb2rCsv1l+OBQgN+pDDFxUBZlcHlqCIJBYm4DYB6npieBDcJQMmcUCNMJYNHJtupgUdc
-         TXk/I1FR3qA830Fx0F6/aVPNr0sMdSu6twRAes8Z+ZZssYNjj/2wtZ0r3gzmQIszWks3
-         cOzjWk33+oDTn/G8qOV3vGB2xJavejEgWfKteee6qjEs6C52wCtT7sDItGpeK6THLxd/
-         acxzfkA6DaKcFCafSiIIAvx5qBTl7bkKZmF4tWtwIq1cpEFmz7PHtGNqulJgof8CqBt0
-         JEtg==
-X-Gm-Message-State: APjAAAW/7iVw5F87R/Ndw7XldbhENBQl/ld+jiBCxyNPQUIplW25bYHa
-        tcrQkgFdG5WAp49inHhS6vc=
-X-Google-Smtp-Source: APXvYqyQVX8x9OWRNiHYpwDX440mJ3O8R16Hbv8NfiUZMuzD3UzsPyIWJX9LvTuqfqJZry1nQWTt7w==
-X-Received: by 2002:a02:1607:: with SMTP id a7mr84040654jaa.123.1563988044110;
-        Wed, 24 Jul 2019 10:07:24 -0700 (PDT)
-Received: from localhost.localdomain (50-39-177-61.bvtn.or.frontiernet.net. [50.39.177.61])
-        by smtp.gmail.com with ESMTPSA id n2sm48246215ioa.27.2019.07.24.10.07.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 10:07:23 -0700 (PDT)
-Subject: [PATCH v2 5/5] virtio-balloon: Add support for providing page hints
- to host
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-To:     nitesh@redhat.com, kvm@vger.kernel.org, david@redhat.com,
-        mst@redhat.com, dave.hansen@intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
-        konrad.wilk@oracle.com, lcapitulino@redhat.com,
-        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
-        dan.j.williams@intel.com, alexander.h.duyck@linux.intel.com
-Date:   Wed, 24 Jul 2019 10:05:14 -0700
-Message-ID: <20190724170514.6685.17161.stgit@localhost.localdomain>
-In-Reply-To: <20190724165158.6685.87228.stgit@localhost.localdomain>
-References: <20190724165158.6685.87228.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AP65/Wb5+uN6l1ty3c5CNbByMzUTzcCuK4tXfyLwYa4=;
+        b=dcndn/w/wW/9HFfHIwYBidVxDOh2cjk+Ve5zPy3ceG+Ii2wY6GWgmxDR5dkAdfqAMK
+         H6Ci/yYjLQb+y5WCIv6rQGn9PdsQXXC1ADlA07wY+wTll3baCAtLaLrlqZ1qyytTSjqg
+         HAeQrlJtlNoyxmAdbysKoFZeu3bwbEr4+gdnWmRPSL5U6KpaKEmLJK7m6etrvid75sce
+         Juc8dFPiBoBv2SGHNhPkKlBtPW930s3y8UHrdcaf5Xbr1TU8vulKrr0bLE5AKfc3Qkv1
+         hygzyboXsXBdae90vg9r46jZjHD8dlbwb0tPejxPHc6tX1IxeCE/6Zy/30AYr1OW/2Hp
+         4d7w==
+X-Gm-Message-State: APjAAAUzYQZEUE6hJBa1badE58h3xoVqB7fycRWNBGOs8RZ5Uzmj3/Ns
+        ZXFDl+1JBaWGlXSKRGel4C9SNWjq
+X-Google-Smtp-Source: APXvYqy4L7mcq2dkRJqQ2Z6ktiEKF4mb6tyMa0CHswCLPbHgKdHWSiyneqshisaH85mjCOcQt+TsiQ==
+X-Received: by 2002:a05:620a:5a7:: with SMTP id q7mr56608855qkq.477.1563987930713;
+        Wed, 24 Jul 2019 10:05:30 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id h40sm27130729qth.4.2019.07.24.10.05.29
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 10:05:29 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 190E840340; Wed, 24 Jul 2019 14:05:26 -0300 (-03)
+Date:   Wed, 24 Jul 2019 14:05:26 -0300
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Michael Petlan <mpetlan@redhat.com>
+Subject: Re: [PATCH 54/79] libperf: Add cpus to struct perf_evlist
+Message-ID: <20190724170526.GE5727@kernel.org>
+References: <20190721112506.12306-1-jolsa@kernel.org>
+ <20190721112506.12306-55-jolsa@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190721112506.12306-55-jolsa@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Em Sun, Jul 21, 2019 at 01:24:41PM +0200, Jiri Olsa escreveu:
+> Moving cpus from evlist into perf_evlist struct.
 
-Add support for the page hinting feature provided by virtio-balloon.
-Hinting differs from the regular balloon functionality in that is is
-much less durable than a standard memory balloon. Instead of creating a
-list of pages that cannot be accessed the pages are only inaccessible
-while they are being indicated to the virtio interface. Once the
-interface has acknowledged them they are placed back into their respective
-free lists and are once again accessible by the guest system.
+Fixed up this one:
 
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
----
- drivers/virtio/Kconfig              |    1 +
- drivers/virtio/virtio_balloon.c     |   47 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/virtio_balloon.h |    1 +
- 3 files changed, 49 insertions(+)
+  tools/perf/arch/arm/util/cs-etm.c
+ 
+> Link: http://lkml.kernel.org/n/tip-ds5cpk70kzmpiiut210n2g6i@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/perf/arch/x86/util/intel-bts.c     |  2 +-
+>  tools/perf/arch/x86/util/intel-pt.c      |  4 +--
+>  tools/perf/builtin-ftrace.c              |  2 +-
+>  tools/perf/builtin-record.c              |  2 +-
+>  tools/perf/builtin-stat.c                | 16 +++++------
+>  tools/perf/builtin-top.c                 |  2 +-
+>  tools/perf/lib/include/internal/evlist.h |  9 ++++--
+>  tools/perf/util/auxtrace.c               |  2 +-
+>  tools/perf/util/evlist.c                 | 36 ++++++++++++------------
+>  tools/perf/util/evlist.h                 |  1 -
+>  tools/perf/util/record.c                 |  6 ++--
+>  tools/perf/util/stat-display.c           |  6 ++--
+>  tools/perf/util/stat.c                   |  2 +-
+>  tools/perf/util/top.c                    |  6 ++--
+>  14 files changed, 49 insertions(+), 47 deletions(-)
+> 
+> diff --git a/tools/perf/arch/x86/util/intel-bts.c b/tools/perf/arch/x86/util/intel-bts.c
+> index d8a091266185..7b23318ebd7b 100644
+> --- a/tools/perf/arch/x86/util/intel-bts.c
+> +++ b/tools/perf/arch/x86/util/intel-bts.c
+> @@ -106,7 +106,7 @@ static int intel_bts_recording_options(struct auxtrace_record *itr,
+>  			container_of(itr, struct intel_bts_recording, itr);
+>  	struct perf_pmu *intel_bts_pmu = btsr->intel_bts_pmu;
+>  	struct evsel *evsel, *intel_bts_evsel = NULL;
+> -	const struct perf_cpu_map *cpus = evlist->cpus;
+> +	const struct perf_cpu_map *cpus = evlist->core.cpus;
+>  	bool privileged = geteuid() == 0 || perf_event_paranoid() < 0;
+>  
+>  	btsr->evlist = evlist;
+> diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+> index aada6a2c456a..218a4e694618 100644
+> --- a/tools/perf/arch/x86/util/intel-pt.c
+> +++ b/tools/perf/arch/x86/util/intel-pt.c
+> @@ -365,7 +365,7 @@ static int intel_pt_info_fill(struct auxtrace_record *itr,
+>  			ui__warning("Intel Processor Trace: TSC not available\n");
+>  	}
+>  
+> -	per_cpu_mmaps = !cpu_map__empty(session->evlist->cpus);
+> +	per_cpu_mmaps = !cpu_map__empty(session->evlist->core.cpus);
+>  
+>  	auxtrace_info->type = PERF_AUXTRACE_INTEL_PT;
+>  	auxtrace_info->priv[INTEL_PT_PMU_TYPE] = intel_pt_pmu->type;
+> @@ -557,7 +557,7 @@ static int intel_pt_recording_options(struct auxtrace_record *itr,
+>  	struct perf_pmu *intel_pt_pmu = ptr->intel_pt_pmu;
+>  	bool have_timing_info, need_immediate = false;
+>  	struct evsel *evsel, *intel_pt_evsel = NULL;
+> -	const struct perf_cpu_map *cpus = evlist->cpus;
+> +	const struct perf_cpu_map *cpus = evlist->core.cpus;
+>  	bool privileged = geteuid() == 0 || perf_event_paranoid() < 0;
+>  	u64 tsc_bit;
+>  	int err;
+> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+> index 77989254fdd8..f481a870e728 100644
+> --- a/tools/perf/builtin-ftrace.c
+> +++ b/tools/perf/builtin-ftrace.c
+> @@ -192,7 +192,7 @@ static int set_tracing_cpumask(struct perf_cpu_map *cpumap)
+>  
+>  static int set_tracing_cpu(struct perf_ftrace *ftrace)
+>  {
+> -	struct perf_cpu_map *cpumap = ftrace->evlist->cpus;
+> +	struct perf_cpu_map *cpumap = ftrace->evlist->core.cpus;
+>  
+>  	if (!target__has_cpu(&ftrace->target))
+>  		return 0;
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index 27ff899bed88..d4f0430c2f49 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -1283,7 +1283,7 @@ static int record__synthesize(struct record *rec, bool tail)
+>  		return err;
+>  	}
+>  
+> -	err = perf_event__synthesize_cpu_map(&rec->tool, rec->evlist->cpus,
+> +	err = perf_event__synthesize_cpu_map(&rec->tool, rec->evlist->core.cpus,
+>  					     process_synthesized_event, NULL);
+>  	if (err < 0) {
+>  		pr_err("Couldn't synthesize cpu map.\n");
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 8ad3643d61f9..d81b0b1ef514 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -884,21 +884,21 @@ static int perf_stat_init_aggr_mode(void)
+>  
+>  	switch (stat_config.aggr_mode) {
+>  	case AGGR_SOCKET:
+> -		if (cpu_map__build_socket_map(evsel_list->cpus, &stat_config.aggr_map)) {
+> +		if (cpu_map__build_socket_map(evsel_list->core.cpus, &stat_config.aggr_map)) {
+>  			perror("cannot build socket map");
+>  			return -1;
+>  		}
+>  		stat_config.aggr_get_id = perf_stat__get_socket_cached;
+>  		break;
+>  	case AGGR_DIE:
+> -		if (cpu_map__build_die_map(evsel_list->cpus, &stat_config.aggr_map)) {
+> +		if (cpu_map__build_die_map(evsel_list->core.cpus, &stat_config.aggr_map)) {
+>  			perror("cannot build die map");
+>  			return -1;
+>  		}
+>  		stat_config.aggr_get_id = perf_stat__get_die_cached;
+>  		break;
+>  	case AGGR_CORE:
+> -		if (cpu_map__build_core_map(evsel_list->cpus, &stat_config.aggr_map)) {
+> +		if (cpu_map__build_core_map(evsel_list->core.cpus, &stat_config.aggr_map)) {
+>  			perror("cannot build core map");
+>  			return -1;
+>  		}
+> @@ -906,7 +906,7 @@ static int perf_stat_init_aggr_mode(void)
+>  		break;
+>  	case AGGR_NONE:
+>  		if (term_percore_set()) {
+> -			if (cpu_map__build_core_map(evsel_list->cpus,
+> +			if (cpu_map__build_core_map(evsel_list->core.cpus,
+>  						    &stat_config.aggr_map)) {
+>  				perror("cannot build core map");
+>  				return -1;
+> @@ -926,7 +926,7 @@ static int perf_stat_init_aggr_mode(void)
+>  	 * taking the highest cpu number to be the size of
+>  	 * the aggregation translate cpumap.
+>  	 */
+> -	nr = cpu_map__get_max(evsel_list->cpus);
+> +	nr = cpu_map__get_max(evsel_list->core.cpus);
+>  	stat_config.cpus_aggr_map = cpu_map__empty_new(nr + 1);
+>  	return stat_config.cpus_aggr_map ? 0 : -ENOMEM;
+>  }
+> @@ -1057,21 +1057,21 @@ static int perf_stat_init_aggr_mode_file(struct perf_stat *st)
+>  
+>  	switch (stat_config.aggr_mode) {
+>  	case AGGR_SOCKET:
+> -		if (perf_env__build_socket_map(env, evsel_list->cpus, &stat_config.aggr_map)) {
+> +		if (perf_env__build_socket_map(env, evsel_list->core.cpus, &stat_config.aggr_map)) {
+>  			perror("cannot build socket map");
+>  			return -1;
+>  		}
+>  		stat_config.aggr_get_id = perf_stat__get_socket_file;
+>  		break;
+>  	case AGGR_DIE:
+> -		if (perf_env__build_die_map(env, evsel_list->cpus, &stat_config.aggr_map)) {
+> +		if (perf_env__build_die_map(env, evsel_list->core.cpus, &stat_config.aggr_map)) {
+>  			perror("cannot build die map");
+>  			return -1;
+>  		}
+>  		stat_config.aggr_get_id = perf_stat__get_die_file;
+>  		break;
+>  	case AGGR_CORE:
+> -		if (perf_env__build_core_map(env, evsel_list->cpus, &stat_config.aggr_map)) {
+> +		if (perf_env__build_core_map(env, evsel_list->core.cpus, &stat_config.aggr_map)) {
+>  			perror("cannot build core map");
+>  			return -1;
+>  		}
+> diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+> index 54d06d271bfd..947f83e53272 100644
+> --- a/tools/perf/builtin-top.c
+> +++ b/tools/perf/builtin-top.c
+> @@ -989,7 +989,7 @@ static int perf_top__start_counters(struct perf_top *top)
+>  
+>  	evlist__for_each_entry(evlist, counter) {
+>  try_again:
+> -		if (evsel__open(counter, top->evlist->cpus,
+> +		if (evsel__open(counter, top->evlist->core.cpus,
+>  				     top->evlist->threads) < 0) {
+>  
+>  			/*
+> diff --git a/tools/perf/lib/include/internal/evlist.h b/tools/perf/lib/include/internal/evlist.h
+> index 9964e4a9456e..f9caab1fe3c3 100644
+> --- a/tools/perf/lib/include/internal/evlist.h
+> +++ b/tools/perf/lib/include/internal/evlist.h
+> @@ -2,10 +2,13 @@
+>  #ifndef __LIBPERF_INTERNAL_EVLIST_H
+>  #define __LIBPERF_INTERNAL_EVLIST_H
+>  
+> +struct perf_cpu_map;
+> +
+>  struct perf_evlist {
+> -	struct list_head	entries;
+> -	int			nr_entries;
+> -	bool			has_user_cpus;
+> +	struct list_head	 entries;
+> +	int			 nr_entries;
+> +	bool			 has_user_cpus;
+> +	struct perf_cpu_map	*cpus;
+>  };
+>  
+>  #endif /* __LIBPERF_INTERNAL_EVLIST_H */
+> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+> index 843959f85d6f..67a2afc5d964 100644
+> --- a/tools/perf/util/auxtrace.c
+> +++ b/tools/perf/util/auxtrace.c
+> @@ -130,7 +130,7 @@ void auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp,
+>  	mp->idx = idx;
+>  
+>  	if (per_cpu) {
+> -		mp->cpu = evlist->cpus->map[idx];
+> +		mp->cpu = evlist->core.cpus->map[idx];
+>  		if (evlist->threads)
+>  			mp->tid = thread_map__pid(evlist->threads, 0);
+>  		else
+> diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+> index 5d104678d4d9..c568e64e10ce 100644
+> --- a/tools/perf/util/evlist.c
+> +++ b/tools/perf/util/evlist.c
+> @@ -143,9 +143,9 @@ void evlist__delete(struct evlist *evlist)
+>  
+>  	perf_evlist__munmap(evlist);
+>  	evlist__close(evlist);
+> -	perf_cpu_map__put(evlist->cpus);
+> +	perf_cpu_map__put(evlist->core.cpus);
+>  	perf_thread_map__put(evlist->threads);
+> -	evlist->cpus = NULL;
+> +	evlist->core.cpus = NULL;
+>  	evlist->threads = NULL;
+>  	perf_evlist__purge(evlist);
+>  	perf_evlist__exit(evlist);
+> @@ -161,7 +161,7 @@ static void __perf_evlist__propagate_maps(struct evlist *evlist,
+>  	 */
+>  	if (!evsel->core.own_cpus || evlist->core.has_user_cpus) {
+>  		perf_cpu_map__put(evsel->core.cpus);
+> -		evsel->core.cpus = perf_cpu_map__get(evlist->cpus);
+> +		evsel->core.cpus = perf_cpu_map__get(evlist->core.cpus);
+>  	} else if (evsel->core.cpus != evsel->core.own_cpus) {
+>  		perf_cpu_map__put(evsel->core.cpus);
+>  		evsel->core.cpus = perf_cpu_map__get(evsel->core.own_cpus);
+> @@ -398,7 +398,7 @@ static int perf_evlist__enable_event_thread(struct evlist *evlist,
+>  					    int thread)
+>  {
+>  	int cpu;
+> -	int nr_cpus = cpu_map__nr(evlist->cpus);
+> +	int nr_cpus = cpu_map__nr(evlist->core.cpus);
+>  
+>  	if (!evsel->fd)
+>  		return -EINVAL;
+> @@ -414,7 +414,7 @@ static int perf_evlist__enable_event_thread(struct evlist *evlist,
+>  int perf_evlist__enable_event_idx(struct evlist *evlist,
+>  				  struct evsel *evsel, int idx)
+>  {
+> -	bool per_cpu_mmaps = !cpu_map__empty(evlist->cpus);
+> +	bool per_cpu_mmaps = !cpu_map__empty(evlist->core.cpus);
+>  
+>  	if (per_cpu_mmaps)
+>  		return perf_evlist__enable_event_cpu(evlist, evsel, idx);
+> @@ -424,7 +424,7 @@ int perf_evlist__enable_event_idx(struct evlist *evlist,
+>  
+>  int perf_evlist__alloc_pollfd(struct evlist *evlist)
+>  {
+> -	int nr_cpus = cpu_map__nr(evlist->cpus);
+> +	int nr_cpus = cpu_map__nr(evlist->core.cpus);
+>  	int nr_threads = thread_map__nr(evlist->threads);
+>  	int nfds = 0;
+>  	struct evsel *evsel;
+> @@ -552,8 +552,8 @@ static void perf_evlist__set_sid_idx(struct evlist *evlist,
+>  {
+>  	struct perf_sample_id *sid = SID(evsel, cpu, thread);
+>  	sid->idx = idx;
+> -	if (evlist->cpus && cpu >= 0)
+> -		sid->cpu = evlist->cpus->map[cpu];
+> +	if (evlist->core.cpus && cpu >= 0)
+> +		sid->cpu = evlist->core.cpus->map[cpu];
+>  	else
+>  		sid->cpu = -1;
+>  	if (!evsel->system_wide && evlist->threads && thread >= 0)
+> @@ -720,8 +720,8 @@ static struct perf_mmap *perf_evlist__alloc_mmap(struct evlist *evlist,
+>  	int i;
+>  	struct perf_mmap *map;
+>  
+> -	evlist->nr_mmaps = cpu_map__nr(evlist->cpus);
+> -	if (cpu_map__empty(evlist->cpus))
+> +	evlist->nr_mmaps = cpu_map__nr(evlist->core.cpus);
+> +	if (cpu_map__empty(evlist->core.cpus))
+>  		evlist->nr_mmaps = thread_map__nr(evlist->threads);
+>  	map = zalloc(evlist->nr_mmaps * sizeof(struct perf_mmap));
+>  	if (!map)
+> @@ -759,7 +759,7 @@ static int perf_evlist__mmap_per_evsel(struct evlist *evlist, int idx,
+>  {
+>  	struct evsel *evsel;
+>  	int revent;
+> -	int evlist_cpu = cpu_map__cpu(evlist->cpus, cpu_idx);
+> +	int evlist_cpu = cpu_map__cpu(evlist->core.cpus, cpu_idx);
+>  
+>  	evlist__for_each_entry(evlist, evsel) {
+>  		struct perf_mmap *maps = evlist->mmap;
+> @@ -835,7 +835,7 @@ static int perf_evlist__mmap_per_cpu(struct evlist *evlist,
+>  				     struct mmap_params *mp)
+>  {
+>  	int cpu, thread;
+> -	int nr_cpus = cpu_map__nr(evlist->cpus);
+> +	int nr_cpus = cpu_map__nr(evlist->core.cpus);
+>  	int nr_threads = thread_map__nr(evlist->threads);
+>  
+>  	pr_debug2("perf event ring buffer mmapped per cpu\n");
+> @@ -1014,7 +1014,7 @@ int perf_evlist__mmap_ex(struct evlist *evlist, unsigned int pages,
+>  			 int comp_level)
+>  {
+>  	struct evsel *evsel;
+> -	const struct perf_cpu_map *cpus = evlist->cpus;
+> +	const struct perf_cpu_map *cpus = evlist->core.cpus;
+>  	const struct perf_thread_map *threads = evlist->threads;
+>  	/*
+>  	 * Delay setting mp.prot: set it before calling perf_mmap__mmap.
+> @@ -1116,9 +1116,9 @@ void perf_evlist__set_maps(struct evlist *evlist, struct perf_cpu_map *cpus,
+>  	 * original reference count of 1.  If that is not the case it is up to
+>  	 * the caller to increase the reference count.
+>  	 */
+> -	if (cpus != evlist->cpus) {
+> -		perf_cpu_map__put(evlist->cpus);
+> -		evlist->cpus = perf_cpu_map__get(cpus);
+> +	if (cpus != evlist->core.cpus) {
+> +		perf_cpu_map__put(evlist->core.cpus);
+> +		evlist->core.cpus = perf_cpu_map__get(cpus);
+>  	}
+>  
+>  	if (threads != evlist->threads) {
+> @@ -1398,7 +1398,7 @@ int evlist__open(struct evlist *evlist)
+>  	 * Default: one fd per CPU, all threads, aka systemwide
+>  	 * as sys_perf_event_open(cpu = -1, thread = -1) is EINVAL
+>  	 */
+> -	if (evlist->threads == NULL && evlist->cpus == NULL) {
+> +	if (evlist->threads == NULL && evlist->core.cpus == NULL) {
+>  		err = perf_evlist__create_syswide_maps(evlist);
+>  		if (err < 0)
+>  			goto out_err;
+> @@ -1920,7 +1920,7 @@ int perf_evlist__start_sb_thread(struct evlist *evlist,
+>  		goto out_delete_evlist;
+>  
+>  	evlist__for_each_entry(evlist, counter) {
+> -		if (evsel__open(counter, evlist->cpus,
+> +		if (evsel__open(counter, evlist->core.cpus,
+>  				     evlist->threads) < 0)
+>  			goto out_delete_evlist;
+>  	}
+> diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+> index 35cca0242631..fdd8f83eac2d 100644
+> --- a/tools/perf/util/evlist.h
+> +++ b/tools/perf/util/evlist.h
+> @@ -44,7 +44,6 @@ struct evlist {
+>  	struct perf_mmap *mmap;
+>  	struct perf_mmap *overwrite_mmap;
+>  	struct perf_thread_map *threads;
+> -	struct perf_cpu_map *cpus;
+>  	struct evsel *selected;
+>  	struct events_stats stats;
+>  	struct perf_env	*env;
+> diff --git a/tools/perf/util/record.c b/tools/perf/util/record.c
+> index 03dcdb3f33a7..e59382d99196 100644
+> --- a/tools/perf/util/record.c
+> +++ b/tools/perf/util/record.c
+> @@ -148,7 +148,7 @@ void perf_evlist__config(struct evlist *evlist, struct record_opts *opts,
+>  	if (opts->group)
+>  		perf_evlist__set_leader(evlist);
+>  
+> -	if (evlist->cpus->map[0] < 0)
+> +	if (evlist->core.cpus->map[0] < 0)
+>  		opts->no_inherit = true;
+>  
+>  	use_comm_exec = perf_can_comm_exec();
+> @@ -275,13 +275,13 @@ bool perf_evlist__can_select_event(struct evlist *evlist, const char *str)
+>  
+>  	evsel = perf_evlist__last(temp_evlist);
+>  
+> -	if (!evlist || cpu_map__empty(evlist->cpus)) {
+> +	if (!evlist || cpu_map__empty(evlist->core.cpus)) {
+>  		struct perf_cpu_map *cpus = perf_cpu_map__new(NULL);
+>  
+>  		cpu =  cpus ? cpus->map[0] : 0;
+>  		perf_cpu_map__put(cpus);
+>  	} else {
+> -		cpu = evlist->cpus->map[0];
+> +		cpu = evlist->core.cpus->map[0];
+>  	}
+>  
+>  	while (1) {
+> diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+> index 7c938135398b..4a162858583f 100644
+> --- a/tools/perf/util/stat-display.c
+> +++ b/tools/perf/util/stat-display.c
+> @@ -327,7 +327,7 @@ static int first_shadow_cpu(struct perf_stat_config *config,
+>  	for (i = 0; i < perf_evsel__nr_cpus(evsel); i++) {
+>  		int cpu2 = evsel__cpus(evsel)->map[i];
+>  
+> -		if (config->aggr_get_id(config, evlist->cpus, cpu2) == id)
+> +		if (config->aggr_get_id(config, evlist->core.cpus, cpu2) == id)
+>  			return cpu2;
+>  	}
+>  	return 0;
+> @@ -500,7 +500,7 @@ static void aggr_update_shadow(struct perf_stat_config *config,
+>  		evlist__for_each_entry(evlist, counter) {
+>  			val = 0;
+>  			for (cpu = 0; cpu < perf_evsel__nr_cpus(counter); cpu++) {
+> -				s2 = config->aggr_get_id(config, evlist->cpus, cpu);
+> +				s2 = config->aggr_get_id(config, evlist->core.cpus, cpu);
+>  				if (s2 != id)
+>  					continue;
+>  				val += perf_counts(counter->counts, cpu, 0)->val;
+> @@ -868,7 +868,7 @@ static void print_no_aggr_metric(struct perf_stat_config *config,
+>  	u64 ena, run, val;
+>  	double uval;
+>  
+> -	nrcpus = evlist->cpus->nr;
+> +	nrcpus = evlist->core.cpus->nr;
+>  	for (cpu = 0; cpu < nrcpus; cpu++) {
+>  		bool first = true;
+>  
+> diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
+> index 1e351462ca49..24c9c3015983 100644
+> --- a/tools/perf/util/stat.c
+> +++ b/tools/perf/util/stat.c
+> @@ -514,7 +514,7 @@ int perf_stat_synthesize_config(struct perf_stat_config *config,
+>  		return err;
+>  	}
+>  
+> -	err = perf_event__synthesize_cpu_map(tool, evlist->cpus,
+> +	err = perf_event__synthesize_cpu_map(tool, evlist->core.cpus,
+>  					     process, NULL);
+>  	if (err < 0) {
+>  		pr_err("Couldn't synthesize thread map.\n");
+> diff --git a/tools/perf/util/top.c b/tools/perf/util/top.c
+> index f533f1aac045..e5b690cf2898 100644
+> --- a/tools/perf/util/top.c
+> +++ b/tools/perf/util/top.c
+> @@ -95,15 +95,15 @@ size_t perf_top__header_snprintf(struct perf_top *top, char *bf, size_t size)
+>  
+>  	if (target->cpu_list)
+>  		ret += SNPRINTF(bf + ret, size - ret, ", CPU%s: %s)",
+> -				top->evlist->cpus->nr > 1 ? "s" : "",
+> +				top->evlist->core.cpus->nr > 1 ? "s" : "",
+>  				target->cpu_list);
+>  	else {
+>  		if (target->tid)
+>  			ret += SNPRINTF(bf + ret, size - ret, ")");
+>  		else
+>  			ret += SNPRINTF(bf + ret, size - ret, ", %d CPU%s)",
+> -					top->evlist->cpus->nr,
+> -					top->evlist->cpus->nr > 1 ? "s" : "");
+> +					top->evlist->core.cpus->nr,
+> +					top->evlist->core.cpus->nr > 1 ? "s" : "");
+>  	}
+>  
+>  	perf_top__reset_sample_counters(top);
+> -- 
+> 2.21.0
 
-diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
-index 078615cf2afc..d45556ae1f81 100644
---- a/drivers/virtio/Kconfig
-+++ b/drivers/virtio/Kconfig
-@@ -58,6 +58,7 @@ config VIRTIO_BALLOON
- 	tristate "Virtio balloon driver"
- 	depends on VIRTIO
- 	select MEMORY_BALLOON
-+	select PAGE_HINTING
- 	---help---
- 	 This driver supports increasing and decreasing the amount
- 	 of memory within a KVM guest.
-diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-index 226fbb995fb0..dee9f8f3ad09 100644
---- a/drivers/virtio/virtio_balloon.c
-+++ b/drivers/virtio/virtio_balloon.c
-@@ -19,6 +19,7 @@
- #include <linux/mount.h>
- #include <linux/magic.h>
- #include <linux/pseudo_fs.h>
-+#include <linux/page_hinting.h>
- 
- /*
-  * Balloon device works in 4K page units.  So each page is pointed to by
-@@ -27,6 +28,7 @@
-  */
- #define VIRTIO_BALLOON_PAGES_PER_PAGE (unsigned)(PAGE_SIZE >> VIRTIO_BALLOON_PFN_SHIFT)
- #define VIRTIO_BALLOON_ARRAY_PFNS_MAX 256
-+#define VIRTIO_BALLOON_ARRAY_HINTS_MAX	32
- #define VIRTBALLOON_OOM_NOTIFY_PRIORITY 80
- 
- #define VIRTIO_BALLOON_FREE_PAGE_ALLOC_FLAG (__GFP_NORETRY | __GFP_NOWARN | \
-@@ -46,6 +48,7 @@ enum virtio_balloon_vq {
- 	VIRTIO_BALLOON_VQ_DEFLATE,
- 	VIRTIO_BALLOON_VQ_STATS,
- 	VIRTIO_BALLOON_VQ_FREE_PAGE,
-+	VIRTIO_BALLOON_VQ_HINTING,
- 	VIRTIO_BALLOON_VQ_MAX
- };
- 
-@@ -113,6 +116,10 @@ struct virtio_balloon {
- 
- 	/* To register a shrinker to shrink memory upon memory pressure */
- 	struct shrinker shrinker;
-+
-+	/* Unused page hinting device */
-+	struct virtqueue *hinting_vq;
-+	struct page_hinting_dev_info ph_dev_info;
- };
- 
- static struct virtio_device_id id_table[] = {
-@@ -152,6 +159,22 @@ static void tell_host(struct virtio_balloon *vb, struct virtqueue *vq)
- 
- }
- 
-+void virtballoon_page_hinting_react(struct page_hinting_dev_info *ph_dev_info,
-+				    unsigned int num_hints)
-+{
-+	struct virtio_balloon *vb =
-+		container_of(ph_dev_info, struct virtio_balloon, ph_dev_info);
-+	struct virtqueue *vq = vb->hinting_vq;
-+	unsigned int unused;
-+
-+	/* We should always be able to add these buffers to an empty queue. */
-+	virtqueue_add_inbuf(vq, ph_dev_info->sg, num_hints, vb, GFP_KERNEL);
-+	virtqueue_kick(vq);
-+
-+	/* When host has read buffer, this completes via balloon_ack */
-+	wait_event(vb->acked, virtqueue_get_buf(vq, &unused));
-+}
-+
- static void set_page_pfns(struct virtio_balloon *vb,
- 			  __virtio32 pfns[], struct page *page)
- {
-@@ -476,6 +499,7 @@ static int init_vqs(struct virtio_balloon *vb)
- 	names[VIRTIO_BALLOON_VQ_DEFLATE] = "deflate";
- 	names[VIRTIO_BALLOON_VQ_STATS] = NULL;
- 	names[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
-+	names[VIRTIO_BALLOON_VQ_HINTING] = NULL;
- 
- 	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
- 		names[VIRTIO_BALLOON_VQ_STATS] = "stats";
-@@ -487,11 +511,19 @@ static int init_vqs(struct virtio_balloon *vb)
- 		callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
- 	}
- 
-+	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING)) {
-+		names[VIRTIO_BALLOON_VQ_HINTING] = "hinting_vq";
-+		callbacks[VIRTIO_BALLOON_VQ_HINTING] = balloon_ack;
-+	}
-+
- 	err = vb->vdev->config->find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX,
- 					 vqs, callbacks, names, NULL, NULL);
- 	if (err)
- 		return err;
- 
-+	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING))
-+		vb->hinting_vq = vqs[VIRTIO_BALLOON_VQ_HINTING];
-+
- 	vb->inflate_vq = vqs[VIRTIO_BALLOON_VQ_INFLATE];
- 	vb->deflate_vq = vqs[VIRTIO_BALLOON_VQ_DEFLATE];
- 	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
-@@ -924,12 +956,24 @@ static int virtballoon_probe(struct virtio_device *vdev)
- 		if (err)
- 			goto out_del_balloon_wq;
- 	}
-+
-+	vb->ph_dev_info.react = virtballoon_page_hinting_react;
-+	vb->ph_dev_info.capacity = VIRTIO_BALLOON_ARRAY_HINTS_MAX;
-+	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING)) {
-+		err = page_hinting_startup(&vb->ph_dev_info);
-+		if (err)
-+			goto out_unregister_shrinker;
-+	}
-+
- 	virtio_device_ready(vdev);
- 
- 	if (towards_target(vb))
- 		virtballoon_changed(vdev);
- 	return 0;
- 
-+out_unregister_shrinker:
-+	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
-+		virtio_balloon_unregister_shrinker(vb);
- out_del_balloon_wq:
- 	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT))
- 		destroy_workqueue(vb->balloon_wq);
-@@ -958,6 +1002,8 @@ static void virtballoon_remove(struct virtio_device *vdev)
- {
- 	struct virtio_balloon *vb = vdev->priv;
- 
-+	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING))
-+		page_hinting_shutdown(&vb->ph_dev_info);
- 	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
- 		virtio_balloon_unregister_shrinker(vb);
- 	spin_lock_irq(&vb->stop_update_lock);
-@@ -1027,6 +1073,7 @@ static int virtballoon_validate(struct virtio_device *vdev)
- 	VIRTIO_BALLOON_F_DEFLATE_ON_OOM,
- 	VIRTIO_BALLOON_F_FREE_PAGE_HINT,
- 	VIRTIO_BALLOON_F_PAGE_POISON,
-+	VIRTIO_BALLOON_F_HINTING,
- };
- 
- static struct virtio_driver virtio_balloon_driver = {
-diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
-index a1966cd7b677..2b0f62814e22 100644
---- a/include/uapi/linux/virtio_balloon.h
-+++ b/include/uapi/linux/virtio_balloon.h
-@@ -36,6 +36,7 @@
- #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM	2 /* Deflate balloon on OOM */
- #define VIRTIO_BALLOON_F_FREE_PAGE_HINT	3 /* VQ to report free pages */
- #define VIRTIO_BALLOON_F_PAGE_POISON	4 /* Guest is using page poisoning */
-+#define VIRTIO_BALLOON_F_HINTING	5 /* Page hinting virtqueue */
- 
- /* Size of a PFN in the balloon interface. */
- #define VIRTIO_BALLOON_PFN_SHIFT 12
+-- 
 
+- Arnaldo
