@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EC7473DEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:21:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10F9073E04
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:22:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391025AbfGXTpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:45:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49342 "EHLO mail.kernel.org"
+        id S2391729AbfGXUVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:21:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390983AbfGXTp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:45:27 -0400
+        id S2391006AbfGXTpd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:45:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBC7122ADB;
-        Wed, 24 Jul 2019 19:45:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDAA821873;
+        Wed, 24 Jul 2019 19:45:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997526;
-        bh=IobMaWpt/Moy02lbPFtdN9zmCU702qBqiN5VTOkl4zY=;
+        s=default; t=1563997532;
+        bh=Pq/gww4pZIJwwKlkUf5BoPLMSs2MPmp2kPctMV9N1/E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k+jw523lO845ZxI5Z8CoV9RjMZzziox59hgNOWYNoyROAoq99qPpE5jO5sXEYsFqE
-         VmNXidtV8LT6ILd8IthFmGWBeTv+uxgoV4iKGJvW1sNPCWjZMDtqPrGo6M5qRfsJTz
-         lZjgM/LKTGvJVg3uOuUSoR6/qPEHjEov1+bF5wmE=
+        b=l19YFC6EKvnPTChE7+CbFtE6bw1BJ4Nh4KsNnHyjbry8N4Ch/hvgS0so43W1IIQhu
+         WTxJVRY8KPlWZJb9Uf/AHfjJPgOuq2MnPjF2zSX5iSyScbYlNPJFAbFODKSSDUfUXd
+         I6yo7TwqsD2ac3RGSvFp6RgyUOdgg56LFmV7pThY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Imre Deak <imre.deak@intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        ville.syrjala@linux.intel.com, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        Hulk Robot <hulkci@huawei.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 054/371] locking/lockdep: Fix OOO unlock when hlocks need merging
-Date:   Wed, 24 Jul 2019 21:16:46 +0200
-Message-Id: <20190724191728.845082861@linuxfoundation.org>
+Subject: [PATCH 5.1 056/371] media: wl128x: Fix some error handling in fm_v4l2_init_video_device()
+Date:   Wed, 24 Jul 2019 21:16:48 +0200
+Message-Id: <20190724191729.040101491@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -48,232 +46,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8c8889d8eaf4501ae4aaf870b6f8f55db5d5109a ]
+[ Upstream commit 69fbb3f47327d959830c94bf31893972b8c8f700 ]
 
-The sequence
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
+The fm_v4l2_init_video_device() forget to unregister v4l2/video device
+in the error path, it could lead to UAF issue, eg,
 
-	static DEFINE_WW_CLASS(test_ww_class);
+  BUG: KASAN: use-after-free in atomic64_read include/asm-generic/atomic-instrumented.h:836 [inline]
+  BUG: KASAN: use-after-free in atomic_long_read include/asm-generic/atomic-long.h:28 [inline]
+  BUG: KASAN: use-after-free in __mutex_unlock_slowpath+0x92/0x690 kernel/locking/mutex.c:1206
+  Read of size 8 at addr ffff8881e84a7c70 by task v4l_id/3659
 
-	struct ww_acquire_ctx ww_ctx;
-	struct ww_mutex ww_lock_a;
-	struct ww_mutex ww_lock_b;
-	struct mutex lock_c;
-	struct mutex lock_d;
+  CPU: 1 PID: 3659 Comm: v4l_id Not tainted 5.1.0 #8
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+  Call Trace:
+   __dump_stack lib/dump_stack.c:77 [inline]
+   dump_stack+0xa9/0x10e lib/dump_stack.c:113
+   print_address_description+0x65/0x270 mm/kasan/report.c:187
+   kasan_report+0x149/0x18d mm/kasan/report.c:317
+   atomic64_read include/asm-generic/atomic-instrumented.h:836 [inline]
+   atomic_long_read include/asm-generic/atomic-long.h:28 [inline]
+   __mutex_unlock_slowpath+0x92/0x690 kernel/locking/mutex.c:1206
+   fm_v4l2_fops_open+0xac/0x120 [fm_drv]
+   v4l2_open+0x191/0x390 [videodev]
+   chrdev_open+0x20d/0x570 fs/char_dev.c:417
+   do_dentry_open+0x700/0xf30 fs/open.c:777
+   do_last fs/namei.c:3416 [inline]
+   path_openat+0x7c4/0x2a90 fs/namei.c:3532
+   do_filp_open+0x1a5/0x2b0 fs/namei.c:3563
+   do_sys_open+0x302/0x490 fs/open.c:1069
+   do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  RIP: 0033:0x7f8180c17c8e
+  ...
+  Allocated by task 3642:
+   set_track mm/kasan/common.c:87 [inline]
+   __kasan_kmalloc.constprop.3+0xa0/0xd0 mm/kasan/common.c:497
+   fm_drv_init+0x13/0x1000 [fm_drv]
+   do_one_initcall+0xbc/0x47d init/main.c:901
+   do_init_module+0x1b5/0x547 kernel/module.c:3456
+   load_module+0x6405/0x8c10 kernel/module.c:3804
+   __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
+   do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-	ww_acquire_init(&ww_ctx, &test_ww_class);
+  Freed by task 3642:
+   set_track mm/kasan/common.c:87 [inline]
+   __kasan_slab_free+0x130/0x180 mm/kasan/common.c:459
+   slab_free_hook mm/slub.c:1429 [inline]
+   slab_free_freelist_hook mm/slub.c:1456 [inline]
+   slab_free mm/slub.c:3003 [inline]
+   kfree+0xe1/0x270 mm/slub.c:3958
+   fm_drv_init+0x1e6/0x1000 [fm_drv]
+   do_one_initcall+0xbc/0x47d init/main.c:901
+   do_init_module+0x1b5/0x547 kernel/module.c:3456
+   load_module+0x6405/0x8c10 kernel/module.c:3804
+   __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
+   do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-	ww_mutex_init(&ww_lock_a, &test_ww_class);
-	ww_mutex_init(&ww_lock_b, &test_ww_class);
+Add relevant unregister functions to fix it.
 
-	mutex_init(&lock_c);
-
-	ww_mutex_lock(&ww_lock_a, &ww_ctx);
-
-	mutex_lock(&lock_c);
-
-	ww_mutex_lock(&ww_lock_b, &ww_ctx);
-
-	mutex_unlock(&lock_c);		(*)
-
-	ww_mutex_unlock(&ww_lock_b);
-	ww_mutex_unlock(&ww_lock_a);
-
-	ww_acquire_fini(&ww_ctx);
-
-triggers the following WARN in __lock_release() when doing the unlock at *:
-
-	DEBUG_LOCKS_WARN_ON(curr->lockdep_depth != depth - 1);
-
-The problem is that the WARN check doesn't take into account the merging
-of ww_lock_a and ww_lock_b which results in decreasing curr->lockdep_depth
-by 2 not only 1.
-
-Note that the following sequence doesn't trigger the WARN, since there
-won't be any hlock merging.
-
-	ww_acquire_init(&ww_ctx, &test_ww_class);
-
-	ww_mutex_init(&ww_lock_a, &test_ww_class);
-	ww_mutex_init(&ww_lock_b, &test_ww_class);
-
-	mutex_init(&lock_c);
-	mutex_init(&lock_d);
-
-	ww_mutex_lock(&ww_lock_a, &ww_ctx);
-
-	mutex_lock(&lock_c);
-	mutex_lock(&lock_d);
-
-	ww_mutex_lock(&ww_lock_b, &ww_ctx);
-
-	mutex_unlock(&lock_d);
-
-	ww_mutex_unlock(&ww_lock_b);
-	ww_mutex_unlock(&ww_lock_a);
-
-	mutex_unlock(&lock_c);
-
-	ww_acquire_fini(&ww_ctx);
-
-In general both of the above two sequences are valid and shouldn't
-trigger any lockdep warning.
-
-Fix this by taking the decrement due to the hlock merging into account
-during lock release and hlock class re-setting. Merging can't happen
-during lock downgrading since there won't be a new possibility to merge
-hlocks in that case, so add a WARN if merging still happens then.
-
-Signed-off-by: Imre Deak <imre.deak@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: ville.syrjala@linux.intel.com
-Link: https://lkml.kernel.org/r/20190524201509.9199-1-imre.deak@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/locking/lockdep.c | 41 ++++++++++++++++++++++++++++------------
- 1 file changed, 29 insertions(+), 12 deletions(-)
+ drivers/media/radio/wl128x/fmdrv_v4l2.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index e221be724fe8..2ecc12cd11d0 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -3623,7 +3623,7 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 				hlock->references = 2;
- 			}
+diff --git a/drivers/media/radio/wl128x/fmdrv_v4l2.c b/drivers/media/radio/wl128x/fmdrv_v4l2.c
+index e25fd4d4d280..a1eaea19a81c 100644
+--- a/drivers/media/radio/wl128x/fmdrv_v4l2.c
++++ b/drivers/media/radio/wl128x/fmdrv_v4l2.c
+@@ -550,6 +550,7 @@ int fm_v4l2_init_video_device(struct fmdev *fmdev, int radio_nr)
  
--			return 1;
-+			return 2;
- 		}
+ 	/* Register with V4L2 subsystem as RADIO device */
+ 	if (video_register_device(&gradio_dev, VFL_TYPE_RADIO, radio_nr)) {
++		v4l2_device_unregister(&fmdev->v4l2_dev);
+ 		fmerr("Could not register video device\n");
+ 		return -ENOMEM;
+ 	}
+@@ -563,6 +564,8 @@ int fm_v4l2_init_video_device(struct fmdev *fmdev, int radio_nr)
+ 	if (ret < 0) {
+ 		fmerr("(fmdev): Can't init ctrl handler\n");
+ 		v4l2_ctrl_handler_free(&fmdev->ctrl_handler);
++		video_unregister_device(fmdev->radio_dev);
++		v4l2_device_unregister(&fmdev->v4l2_dev);
+ 		return -EBUSY;
  	}
  
-@@ -3829,22 +3829,33 @@ static struct held_lock *find_held_lock(struct task_struct *curr,
- }
- 
- static int reacquire_held_locks(struct task_struct *curr, unsigned int depth,
--			      int idx)
-+				int idx, unsigned int *merged)
- {
- 	struct held_lock *hlock;
-+	int first_idx = idx;
- 
- 	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
- 		return 0;
- 
- 	for (hlock = curr->held_locks + idx; idx < depth; idx++, hlock++) {
--		if (!__lock_acquire(hlock->instance,
-+		switch (__lock_acquire(hlock->instance,
- 				    hlock_class(hlock)->subclass,
- 				    hlock->trylock,
- 				    hlock->read, hlock->check,
- 				    hlock->hardirqs_off,
- 				    hlock->nest_lock, hlock->acquire_ip,
--				    hlock->references, hlock->pin_count))
-+				    hlock->references, hlock->pin_count)) {
-+		case 0:
- 			return 1;
-+		case 1:
-+			break;
-+		case 2:
-+			*merged += (idx == first_idx);
-+			break;
-+		default:
-+			WARN_ON(1);
-+			return 0;
-+		}
- 	}
- 	return 0;
- }
-@@ -3855,9 +3866,9 @@ __lock_set_class(struct lockdep_map *lock, const char *name,
- 		 unsigned long ip)
- {
- 	struct task_struct *curr = current;
-+	unsigned int depth, merged = 0;
- 	struct held_lock *hlock;
- 	struct lock_class *class;
--	unsigned int depth;
- 	int i;
- 
- 	if (unlikely(!debug_locks))
-@@ -3882,14 +3893,14 @@ __lock_set_class(struct lockdep_map *lock, const char *name,
- 	curr->lockdep_depth = i;
- 	curr->curr_chain_key = hlock->prev_chain_key;
- 
--	if (reacquire_held_locks(curr, depth, i))
-+	if (reacquire_held_locks(curr, depth, i, &merged))
- 		return 0;
- 
- 	/*
- 	 * I took it apart and put it back together again, except now I have
- 	 * these 'spare' parts.. where shall I put them.
- 	 */
--	if (DEBUG_LOCKS_WARN_ON(curr->lockdep_depth != depth))
-+	if (DEBUG_LOCKS_WARN_ON(curr->lockdep_depth != depth - merged))
- 		return 0;
- 	return 1;
- }
-@@ -3897,8 +3908,8 @@ __lock_set_class(struct lockdep_map *lock, const char *name,
- static int __lock_downgrade(struct lockdep_map *lock, unsigned long ip)
- {
- 	struct task_struct *curr = current;
-+	unsigned int depth, merged = 0;
- 	struct held_lock *hlock;
--	unsigned int depth;
- 	int i;
- 
- 	if (unlikely(!debug_locks))
-@@ -3923,7 +3934,11 @@ static int __lock_downgrade(struct lockdep_map *lock, unsigned long ip)
- 	hlock->read = 1;
- 	hlock->acquire_ip = ip;
- 
--	if (reacquire_held_locks(curr, depth, i))
-+	if (reacquire_held_locks(curr, depth, i, &merged))
-+		return 0;
-+
-+	/* Merging can't happen with unchanged classes.. */
-+	if (DEBUG_LOCKS_WARN_ON(merged))
- 		return 0;
- 
- 	/*
-@@ -3932,6 +3947,7 @@ static int __lock_downgrade(struct lockdep_map *lock, unsigned long ip)
- 	 */
- 	if (DEBUG_LOCKS_WARN_ON(curr->lockdep_depth != depth))
- 		return 0;
-+
- 	return 1;
- }
- 
-@@ -3946,8 +3962,8 @@ static int
- __lock_release(struct lockdep_map *lock, int nested, unsigned long ip)
- {
- 	struct task_struct *curr = current;
-+	unsigned int depth, merged = 1;
- 	struct held_lock *hlock;
--	unsigned int depth;
- 	int i;
- 
- 	if (unlikely(!debug_locks))
-@@ -4002,14 +4018,15 @@ __lock_release(struct lockdep_map *lock, int nested, unsigned long ip)
- 	if (i == depth-1)
- 		return 1;
- 
--	if (reacquire_held_locks(curr, depth, i + 1))
-+	if (reacquire_held_locks(curr, depth, i + 1, &merged))
- 		return 0;
- 
- 	/*
- 	 * We had N bottles of beer on the wall, we drank one, but now
- 	 * there's not N-1 bottles of beer left on the wall...
-+	 * Pouring two of the bottles together is acceptable.
- 	 */
--	DEBUG_LOCKS_WARN_ON(curr->lockdep_depth != depth-1);
-+	DEBUG_LOCKS_WARN_ON(curr->lockdep_depth != depth - merged);
- 
- 	/*
- 	 * Since reacquire_held_locks() would have called check_chain_key()
 -- 
 2.20.1
 
