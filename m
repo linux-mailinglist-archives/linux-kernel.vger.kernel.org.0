@@ -2,117 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C77FF73E21
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:22:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D45B573E2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:23:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392556AbfGXUWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:22:41 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45996 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387998AbfGXUWh (ORCPT
+        id S2392860AbfGXUXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:23:00 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:33842 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391354AbfGXUW6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 16:22:37 -0400
-Received: by mail-io1-f66.google.com with SMTP id g20so92342410ioc.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 13:22:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=W7b98j1DYhcpfb7OdCLFp27JFdB3a34V6jagTpBUbfA=;
-        b=emPr0+o12gzDRDVdDGCZkDSc1awT8Sv7j4Y3PHnjX6+BEM8Ev916Ml6Ya5Ixn59rnj
-         bYHRVD4vJpGgnK8uA8ZfT2527Pza1HUFVITP04fOwvVSTVtDbOhp0XyRD+J1U8RCZ7+q
-         cQkjHaLlnu1CLlhPM31Ij364/ILIXnU5UveYQ=
+        Wed, 24 Jul 2019 16:22:58 -0400
+Received: by mail-io1-f65.google.com with SMTP id k8so92431374iot.1;
+        Wed, 24 Jul 2019 13:22:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=W7b98j1DYhcpfb7OdCLFp27JFdB3a34V6jagTpBUbfA=;
-        b=EJhukWEYvjRGds5jeM88kCZslB9biLExDO/bpSnJ/R9nMvC5LjHbn3TR/k3KhOzA5i
-         1vNcyvQCkIX4SEmphGcLio7GBYYznUxAnxB8LiP1Ucm271ON/wRsVMG2Ij6OiRFb3nfX
-         mrdrw5afpMwxgNPsrdcN9l+sQ7YaLXuQoYoBWlolqTjHp4C7hZEu985+MtYe6KrZVf2D
-         GM2Sjorp8J+fV96RD7FNe3lI1hxSrYPtpDRNXB48YaKiiIWSvOA/7PtpG6Hqa0oWt81e
-         KoRcSzPLvlU/s8Sc6q2nMDQIwkyXgqsoyvsal5jKRBJnaYcpILBeAL/yW6c2DarAHdbR
-         82tg==
-X-Gm-Message-State: APjAAAV5cuziJBaADJDDoq3zlX9711cK9aIv/fdBY3ZHPkDcOfONeWxw
-        kedSWt1go5Gi9IIw+Sh0eqr5JCsUNEg=
-X-Google-Smtp-Source: APXvYqwlkv5B3pC1YB3TDlo/J4En9R/atXwgpojRnd0vSAlSZ0ZHU/gIEB8fq4doZe2+F3qTrdAycA==
-X-Received: by 2002:a5d:8253:: with SMTP id n19mr13481383ioo.80.1563999757043;
-        Wed, 24 Jul 2019 13:22:37 -0700 (PDT)
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com. [209.85.166.49])
-        by smtp.gmail.com with ESMTPSA id p10sm64936237iob.54.2019.07.24.13.22.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 13:22:35 -0700 (PDT)
-Received: by mail-io1-f49.google.com with SMTP id m24so92414301ioo.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 13:22:34 -0700 (PDT)
-X-Received: by 2002:a5d:8ccc:: with SMTP id k12mr78564964iot.141.1563999754524;
- Wed, 24 Jul 2019 13:22:34 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uDWllbWAHHQJMizorbNWUIyq7E6utwVtniA+GguMM1I=;
+        b=cVjchWWIPFWeJj0wCibDHhpTCz1Gx11DShGuSE5VxPS3HbJFVJltsdvEjwsLa4/Q92
+         vv319caU6V2UVTpKM9qyHiEqeOzbfZcBmN/G/4RNfbJabTBLVsjazpDrvnT6b2W+IB2S
+         TH1/aHMZF9eKcnXbW/9LZmK31ztD8zyIlP/06JK19JL3D/HWRFPeEqgYU4Ggc2vbgIBM
+         FdueCtFEQjkLLUMt/UzQS9lr6KC/KqQIbtUW9wELbEVY/KVgPEP/xRDcbmKzwfLtfqoH
+         CvGjkQrQ+aioaooiJG7KSKLUryto2F9j1TradUYfRgM0NEW1sB8QkI1c2acFt9ey1u1l
+         H3ig==
+X-Gm-Message-State: APjAAAWrtE8ye0lyUTUNBJWYnrd1SKQpAZiMHMJdB2a6uY+w7QbU4pTA
+        ipSU6Dhfhon+5h1UzTCuVw==
+X-Google-Smtp-Source: APXvYqyQ9siwx0xN6aEL1lklrUj+Z5DeRx/7MB4ml1qvejrwmjU2V5SRYjuEr3YtGaU4tpxw1zPF8g==
+X-Received: by 2002:a6b:c98c:: with SMTP id z134mr39825656iof.276.1563999776985;
+        Wed, 24 Jul 2019 13:22:56 -0700 (PDT)
+Received: from localhost ([64.188.179.254])
+        by smtp.gmail.com with ESMTPSA id l14sm42995882iob.1.2019.07.24.13.22.56
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 13:22:56 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 14:22:55 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Eugen.Hristev@microchip.com
+Cc:     wsa@the-dreams.de, peda@axentia.se, mark.rutland@arm.com,
+        Ludovic.Desroches@microchip.com, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, pierre-yves.mordret@st.com,
+        alexandre.belloni@bootlin.com, robh+dt@kernel.org,
+        Nicolas.Ferre@microchip.com, Eugen.Hristev@microchip.com
+Subject: Re: [PATCH v3 2/9] dt-bindings: i2c: add bindings for i2c analog and
+  digital filter
+Message-ID: <20190724202255.GA32633@bogus>
+References: <1562678049-17581-1-git-send-email-eugen.hristev@microchip.com>
+ <1562678049-17581-3-git-send-email-eugen.hristev@microchip.com>
 MIME-Version: 1.0
-References: <20190722193939.125578-3-dianders@chromium.org> <20190724113508.47A356021C@smtp.codeaurora.org>
-In-Reply-To: <20190724113508.47A356021C@smtp.codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 24 Jul 2019 13:22:22 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WAsrBV9PzUz1qPzQru+AkOYZ5hsaWdhNYRTNqUfDeOmQ@mail.gmail.com>
-Message-ID: <CAD=FV=WAsrBV9PzUz1qPzQru+AkOYZ5hsaWdhNYRTNqUfDeOmQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mwifiex: Make use of the new sdio_trigger_replug()
- API to reset
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ganapathi Bhat <gbhat@marvell.com>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Andreas Fenkart <afenkart@gmail.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        netdev <netdev@vger.kernel.org>,
-        Avri Altman <avri.altman@wdc.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Xinming Hu <huxinming820@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562678049-17581-3-git-send-email-eugen.hristev@microchip.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, 9 Jul 2019 13:19:33 +0000, <Eugen.Hristev@microchip.com> wrote:
+> From: Eugen Hristev <eugen.hristev@microchip.com>
+> 
+> Some i2c controllers have a built-in digital or analog filter.
+> This is specifically required depending on the hardware PCB/board.
+> Some controllers also allow specifying the maximum width of the
+> spikes that can be filtered. The width length can be specified in nanoseconds.
+> 
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/i2c.txt | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
 
-On Wed, Jul 24, 2019 at 4:35 AM Kalle Valo <kvalo@codeaurora.org> wrote:
->
-> Douglas Anderson <dianders@chromium.org> wrote:
->
-> > As described in the patch ("mmc: core: Add sdio_trigger_replug()
-> > API"), the current mwifiex_sdio_card_reset() is broken in the cases
-> > where we're running Bluetooth on a second SDIO func on the same card
-> > as WiFi.  The problem goes away if we just use the
-> > sdio_trigger_replug() API call.
-> >
-> > NOTE: Even though with this new solution there is less of a reason to
-> > do our work from a workqueue (the unplug / plug mechanism we're using
-> > is possible for a human to perform at any time so the stack is
-> > supposed to handle it without it needing to be called from a special
-> > context), we still need a workqueue because the Marvell reset function
-> > could called from a context where sleeping is invalid and thus we
-> > can't claim the host.  One example is Marvell's wakeup_timer_fn().
-> >
-> > Cc: Andreas Fenkart <afenkart@gmail.com>
-> > Cc: Brian Norris <briannorris@chromium.org>
-> > Fixes: b4336a282db8 ("mwifiex: sdio: reset adapter using mmc_hw_reset")
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > Reviewed-by: Brian Norris <briannorris@chromium.org>
->
-> I assume this is going via some other tree so I'm dropping this from my
-> queue. If I should apply this please resend once the dependency is in
-> wireless-drivers-next.
->
-> Patch set to Not Applicable.
-
-Thanks.  For now I'll assume that Ulf will pick it up if/when he is
-happy with patch #1 in this series.  Would you be willing to provide
-your Ack on this patch to make it clear to Ulf you're OK with that?
-
--Doug
+Reviewed-by: Rob Herring <robh@kernel.org>
