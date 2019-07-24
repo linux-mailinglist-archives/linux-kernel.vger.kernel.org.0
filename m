@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1550B7452C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AC5F74512
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:38:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404232AbfGYFjz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:39:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54226 "EHLO mail.kernel.org"
+        id S2390666AbfGYFiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:38:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404214AbfGYFjy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:39:54 -0400
+        id S2403951AbfGYFix (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 01:38:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FFA022BEF;
-        Thu, 25 Jul 2019 05:39:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A0E722BEB;
+        Thu, 25 Jul 2019 05:38:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564033194;
-        bh=WO7lM+upPBvUtwOll1Wkav1Vka6e95b0zA6c7vFYhfk=;
+        s=default; t=1564033133;
+        bh=5Z8GRTxUALK9SVeDf92V2DCm5ShnexJ5W1GDoGweZnU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xrlcp4TWiyzfAxlYCE1s4Y/HSsmMWmY2OmpCrp7JaJwjMci55MUHjkJ9TRkJDrfDO
-         4DE6rE2Kwg9uiPsoTESYl99FrydIDM5gKRntaVujfaOfilxcOTUozJUxdrnijVJs5x
-         QLTh8UJQsaoNShJtOyToepZhYKzs8YjA8L8qwGEg=
+        b=bpwYrk39/mW7jrgDndqgLoBMSIjpsE9002GvgoWD/IVXh/dEN6MU9vmuscVaEYi8e
+         5EZurmcKh3DIbfCN2zWvWONc3p84dXwrbcSnsGXcXu4z2GeSK245b73wTycKSzUeuN
+         aXEQ0yg5l7Bs9Wj0Z4VOZzDGOAR/9WaHkgWR7fH0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dennis Zhou <dennis@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 084/271] blk-iolatency: only account submitted bios
-Date:   Wed, 24 Jul 2019 21:19:13 +0200
-Message-Id: <20190724191702.387111366@linuxfoundation.org>
+        stable@vger.kernel.org, Keith Pyle <kpyle@austin.rr.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 103/271] media: hdpvr: fix locking and a missing msleep
+Date:   Wed, 24 Jul 2019 21:19:32 +0200
+Message-Id: <20190724191704.048747870@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191655.268628197@linuxfoundation.org>
 References: <20190724191655.268628197@linuxfoundation.org>
@@ -44,37 +45,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a3fb01ba5af066521f3f3421839e501bb2c71805 ]
+[ Upstream commit 6bc5a4a1927556ff9adce1aa95ea408c95453225 ]
 
-As is, iolatency recognizes done_bio and cleanup as ending paths. If a
-request is marked REQ_NOWAIT and fails to get a request, the bio is
-cleaned up via rq_qos_cleanup() and ended in bio_wouldblock_error().
-This results in underflowing the inflight counter. Fix this by only
-accounting bios that were actually submitted.
+This driver has three locking issues:
 
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
-Cc: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+- The wait_event_interruptible() condition calls hdpvr_get_next_buffer(dev)
+  which uses a mutex, which is not allowed. Rewrite with list_empty_careful()
+  that doesn't need locking.
+
+- In hdpvr_read() the call to hdpvr_stop_streaming() didn't lock io_mutex,
+  but it should have since stop_streaming expects that.
+
+- In hdpvr_device_release() io_mutex was locked when calling flush_work(),
+  but there it shouldn't take that mutex since the work done by flush_work()
+  also wants to lock that mutex.
+
+There are also two other changes (suggested by Keith):
+
+- msecs_to_jiffies(4000); (a NOP) should have been msleep(4000).
+- Change v4l2_dbg to v4l2_info to always log if streaming had to be restarted.
+
+Reported-by: Keith Pyle <kpyle@austin.rr.com>
+Suggested-by: Keith Pyle <kpyle@austin.rr.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-iolatency.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/media/usb/hdpvr/hdpvr-video.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
-index 6b8396ccb5c4..75df47ad2e79 100644
---- a/block/blk-iolatency.c
-+++ b/block/blk-iolatency.c
-@@ -565,6 +565,10 @@ static void blkcg_iolatency_done_bio(struct rq_qos *rqos, struct bio *bio)
- 	if (!blkg)
- 		return;
+diff --git a/drivers/media/usb/hdpvr/hdpvr-video.c b/drivers/media/usb/hdpvr/hdpvr-video.c
+index 1b89c77bad66..0615996572e4 100644
+--- a/drivers/media/usb/hdpvr/hdpvr-video.c
++++ b/drivers/media/usb/hdpvr/hdpvr-video.c
+@@ -439,7 +439,7 @@ static ssize_t hdpvr_read(struct file *file, char __user *buffer, size_t count,
+ 	/* wait for the first buffer */
+ 	if (!(file->f_flags & O_NONBLOCK)) {
+ 		if (wait_event_interruptible(dev->wait_data,
+-					     hdpvr_get_next_buffer(dev)))
++					     !list_empty_careful(&dev->rec_buff_list)))
+ 			return -ERESTARTSYS;
+ 	}
  
-+	/* We didn't actually submit this bio, don't account it. */
-+	if (bio->bi_status == BLK_STS_AGAIN)
-+		return;
-+
- 	iolat = blkg_to_lat(bio->bi_blkg);
- 	if (!iolat)
- 		return;
+@@ -465,10 +465,17 @@ static ssize_t hdpvr_read(struct file *file, char __user *buffer, size_t count,
+ 				goto err;
+ 			}
+ 			if (!err) {
+-				v4l2_dbg(MSG_INFO, hdpvr_debug, &dev->v4l2_dev,
+-					"timeout: restart streaming\n");
++				v4l2_info(&dev->v4l2_dev,
++					  "timeout: restart streaming\n");
++				mutex_lock(&dev->io_mutex);
+ 				hdpvr_stop_streaming(dev);
+-				msecs_to_jiffies(4000);
++				mutex_unlock(&dev->io_mutex);
++				/*
++				 * The FW needs about 4 seconds after streaming
++				 * stopped before it is ready to restart
++				 * streaming.
++				 */
++				msleep(4000);
+ 				err = hdpvr_start_streaming(dev);
+ 				if (err) {
+ 					ret = err;
+@@ -1133,9 +1140,7 @@ static void hdpvr_device_release(struct video_device *vdev)
+ 	struct hdpvr_device *dev = video_get_drvdata(vdev);
+ 
+ 	hdpvr_delete(dev);
+-	mutex_lock(&dev->io_mutex);
+ 	flush_work(&dev->worker);
+-	mutex_unlock(&dev->io_mutex);
+ 
+ 	v4l2_device_unregister(&dev->v4l2_dev);
+ 	v4l2_ctrl_handler_free(&dev->hdl);
 -- 
 2.20.1
 
