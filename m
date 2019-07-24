@@ -2,107 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23F7173441
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 18:53:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45CBA73449
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 18:56:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbfGXQxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 12:53:49 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43168 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbfGXQxs (ORCPT
+        id S1728120AbfGXQ4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 12:56:12 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44351 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726031AbfGXQ4M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 12:53:48 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f25so21506495pgv.10
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 09:53:48 -0700 (PDT)
+        Wed, 24 Jul 2019 12:56:12 -0400
+Received: by mail-pg1-f194.google.com with SMTP id i18so21523034pgl.11;
+        Wed, 24 Jul 2019 09:56:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=/6dHe5N7XGzJMTeT13e63PRDUIMz76zdv5Ig0oiXBDs=;
-        b=c5R5bL+94MO/tiZpYHceuOOJ4pDqDaAqKI79pGgbQ3hRWblNVPM1wEBpOWShzp4JrW
-         a1eYIt77Xz50jOpTia5iZdau+ynVq7ii3VjX6iGG2J+8izcDXKyGety2ifhyTDjh6jCj
-         Hm5b3zwI2uAYG4yuCpIJxtyQ0g7xlgk4V30vYYhgKBqJl7rZrulpnyUuVd72VokBy4qL
-         HUFBWNShWnvsOXyuCjTdEq3XDeG9lDCKA6thApkomT751L/hvSe7PmkqAq45wV+JE7IU
-         QtuQQw2oTKqIKbMXJ0vPipk/UXD/aCitGR55+kQcwRWmS61BLPcNgL8Rsj1kAi0/j9tJ
-         Wfng==
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=PhVb6RN1Ss2cdB2PwVe0HtBm8bfHqYHCMNa/n92glxA=;
+        b=eWuAulp7lVJApkFKE01P2svmwkQSz+xZKBk4ILTbKSTUXwG6JPCNOThPtpZipJJywM
+         fuowmbFRGkDa4VN4iOGrb0ez3a8/f+PT1HLrK2ycWYe5GcKy2PJft0JrgMFUQkF2bieb
+         ynYDQR9OITwdZktFzeBHzKB6sV1c5twRJTSBsPEnRwP0UGx9fodzsh0b20sSvwmvC2Xi
+         cvRh0qC/t6520YdzswKjIplH1tFaH3L80ZrxvZWu8xdOgdPTNrqVsRj2JinU6lrnNAps
+         IQlQV0ZJRP+Jdf9NjxJl5OKKqIQodIiqsGrqolvaBYG528KyU0W6Dhi7ELw8W4uH1nTa
+         KROQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=/6dHe5N7XGzJMTeT13e63PRDUIMz76zdv5Ig0oiXBDs=;
-        b=slPpDSOrTCtEhGOZkPBWYQC5Q2O1Bpjm5+3DevXswmInw26K0UWNakCmn3Kh1Ir5Mw
-         aI2t8yK9C6vFcVFrY9gEVsSkCQveK5243q4RsLKAefU2cHxRTsSrJQn3Z/VPUmDhLFE2
-         QQxJ0H+hXektuZa+Gnwr7mpXKLuy664KdG8nyDoYjiodTZ1LmHI/nCzmJT4B3Pe1BYV6
-         sTigetkdMowHnxqrMOGHY7/tnrtCGerFJEjwiWlLS2XEMYO882/5U0S6UrmvXjcOPCHh
-         Gx7U6d9Vtl5/KlAnAVPpwzDKHeqNHUmK9CyDZgn4HmcTxnHih2AKmL4JGsNeUXikD/2a
-         R77Q==
-X-Gm-Message-State: APjAAAXOp9LpLAsGSXIZ+CukSiBDrReyqe3pkNxlDr4kK/nkpszkdBSD
-        WJLNot68l281PaTn61oXZuU=
-X-Google-Smtp-Source: APXvYqysLzlNEq51DdxReWz4dfSxNanv1GpI4EeAG7Zf+3MfJV32v94v1OwKZyF1793+7wCG+KmLZQ==
-X-Received: by 2002:aa7:8502:: with SMTP id v2mr11966032pfn.98.1563987227909;
-        Wed, 24 Jul 2019 09:53:47 -0700 (PDT)
-Received: from [25.171.251.59] ([172.58.27.54])
-        by smtp.gmail.com with ESMTPSA id q126sm2974497pfb.56.2019.07.24.09.53.46
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=PhVb6RN1Ss2cdB2PwVe0HtBm8bfHqYHCMNa/n92glxA=;
+        b=HAn4nZYWcrHEvrXcBVbTJ6Hm4TNvEBZzjtG7uZHvDqsF93yyQZfakCz29FoYA2w2eU
+         QkT0ndohqlF7VPcul//bDkGcNIhXvYKBBM5GsMrS+jlBOfsDgu/qib2YtjDUQzc+VlQ2
+         PQvKPuX1N47lMSkV3yaFdl/NC4JEpDBJhDoq7HBbKkBwNC5j7yUXJj8E4kP8mXoZXmDX
+         aRaPll7diYV8/qNvw9ZU2cuYZ+u0zwyPHnbYIlpwkb4aBHOgXI3wE1/16dTKNJSAHpFW
+         JZfLSkG4sd5rK9hP5BmYNkvejkjxizbHBMfG0D712BVUiq8/yFQ5lxLbMg5n5vkmroVZ
+         7tiA==
+X-Gm-Message-State: APjAAAXjawygl3KNZTE1NXKW61UhDqKVEmpXpZumHZUNpOsx0pHaxR6W
+        a579BlbHsSGKQK/ZBJn5Mqo=
+X-Google-Smtp-Source: APXvYqy5FhBKIOIqEhIwqKISuGQ+P1R0oDCuSk0WbIIGBn5tah6kKqrwZ+sY9jBZWmTnJ8zO8szXNw==
+X-Received: by 2002:a63:f304:: with SMTP id l4mr81474308pgh.66.1563987370874;
+        Wed, 24 Jul 2019 09:56:10 -0700 (PDT)
+Received: from localhost.localdomain (50-39-177-61.bvtn.or.frontiernet.net. [50.39.177.61])
+        by smtp.gmail.com with ESMTPSA id r61sm61815112pjb.7.2019.07.24.09.56.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 09:53:47 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 18:53:39 +0200
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190724164816.201099-1-joel@joelfernandes.org>
-References: <20190724164816.201099-1-joel@joelfernandes.org>
+        Wed, 24 Jul 2019 09:56:10 -0700 (PDT)
+Subject: [PATCH v2 0/5] mm / virtio: Provide support for page hinting
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+To:     nitesh@redhat.com, kvm@vger.kernel.org, david@redhat.com,
+        mst@redhat.com, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org
+Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
+        konrad.wilk@oracle.com, lcapitulino@redhat.com,
+        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
+        dan.j.williams@intel.com, alexander.h.duyck@linux.intel.com
+Date:   Wed, 24 Jul 2019 09:54:02 -0700
+Message-ID: <20190724165158.6685.87228.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] pidfd: Add warning if exit_state is 0 during notification
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-From:   Christian Brauner <christian@brauner.io>
-Message-ID: <3724AB8D-81A8-40B7-A025-95CD6BAAA6D8@brauner.io>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On July 24, 2019 6:48:16 PM GMT+02:00, "Joel Fernandes (Google)" <joel@joel=
-fernandes=2Eorg> wrote:
->Previously a condition got missed where the pidfd waiters are awakened
->before the exit_state gets set=2E This can result in a missed
->notification
->[1] and the polling thread waiting forever=2E
->
->It is fixed now, however it would be nice to avoid this kind of issue
->going unnoticed in the future=2E So just add a warning to catch it in the
->future=2E
->
->[1]
->https://lore=2Ekernel=2Eorg/lkml/20190717172100=2E261204-1-joel@joelferna=
-ndes=2Eorg/
->
->Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes=2Eorg>
->---
-> kernel/signal=2Ec | 1 +
-> 1 file changed, 1 insertion(+)
->
->diff --git a/kernel/signal=2Ec b/kernel/signal=2Ec
->index 91b789dd6e72=2E=2E349f5a67f100 100644
->--- a/kernel/signal=2Ec
->+++ b/kernel/signal=2Ec
->@@ -1885,6 +1885,7 @@ static void do_notify_pidfd(struct task_struct
->*task)
-> {
-> 	struct pid *pid;
->=20
->+	WARN_ON(task->exit_state =3D=3D 0);
-> 	pid =3D task_pid(task);
-> 	wake_up_all(&pid->wait_pidfd);
-> }
+This series provides an asynchronous means of hinting to a hypervisor
+that a guest page is no longer in use and can have the data associated
+with it dropped. To do this I have implemented functionality that allows
+for what I am referring to as page hinting
 
-Makes sense to me=2E
-I'm picking this up unless someone sees a problem with this patch=2E
+The functionality for this is fairly simple. When enabled it will allocate
+statistics to track the number of hinted pages in a given free area. When
+the number of free pages exceeds this value plus a high water value,
+currently 32, it will begin performing page hinting which consists of
+pulling pages off of free list and placing them into a scatter list. The
+scatterlist is then given to the page hinting device and it will perform
+the required action to make the pages "hinted", in the case of
+virtio-balloon this results in the pages being madvised as MADV_DONTNEED
+and as such they are forced out of the guest. After this they are placed
+back on the free list, and an additional bit is added if they are not
+merged indicating that they are a hinted buddy page instead of a standard
+buddy page. The cycle then repeats with additional non-hinted pages being
+pulled until the free areas all consist of hinted pages.
 
-Reviewed-by: Christian Brauner <christian@brauner=2Eio>
+I am leaving a number of things hard-coded such as limiting the lowest
+order processed to PAGEBLOCK_ORDER, and have left it up to the guest to
+determine what the limit is on how many pages it wants to allocate to
+process the hints.
+
+My primary testing has just been to verify the memory is being freed after
+allocation by running memhog 79g on a 80g guest and watching the total
+free memory via /proc/meminfo on the host. With this I have verified most
+of the memory is freed after each iteration. As far as performance I have
+been mainly focusing on the will-it-scale/page_fault1 test running with
+16 vcpus. With that I have seen at most a 2% difference between the base
+kernel without these patches and the patches with virtio-balloon disabled.
+With the patches and virtio-balloon enabled with hinting the results
+largely depend on the host kernel. On a 3.10 RHEL kernel I saw up to a 2%
+drop in performance as I approached 16 threads, however on the the lastest
+linux-next kernel I saw roughly a 4% to 5% improvement in performance for
+all tests with 8 or more threads. I believe the difference seen is due to
+the overhead for faulting pages back into the guest and zeroing of memory.
+
+Patch 4 is a bit on the large side at about 600 lines of change, however
+I really didn't see a good way to break it up since each piece feeds into
+the next. So I couldn't add the statistics by themselves as it didn't
+really make sense to add them without something that will either read or
+increment/decrement them, or add the Hinted state without something that
+would set/unset it. As such I just ended up adding the entire thing as
+one patch. It makes it a bit bigger but avoids the issues in the previous
+set where I was referencing things before they had been added.
+
+Changes from the RFC:
+https://lore.kernel.org/lkml/20190530215223.13974.22445.stgit@localhost.localdomain/
+Moved aeration requested flag out of aerator and into zone->flags.
+Moved bounary out of free_area and into local variables for aeration.
+Moved aeration cycle out of interrupt and into workqueue.
+Left nr_free as total pages instead of splitting it between raw and aerated.
+Combined size and physical address values in virtio ring into one 64b value.
+
+Changes from v1:
+https://lore.kernel.org/lkml/20190619222922.1231.27432.stgit@localhost.localdomain/
+Dropped "waste page treatment" in favor of "page hinting"
+Renamed files and functions from "aeration" to "page_hinting"
+Moved from page->lru list to scatterlist
+Replaced wait on refcnt in shutdown with RCU and cancel_delayed_work_sync
+Virtio now uses scatterlist directly instead of intermedate array
+Moved stats out of free_area, now in seperate area and pointed to from zone
+Merged patch 5 into patch 4 to improve reviewability
+Updated various code comments throughout
+
+---
+
+Alexander Duyck (5):
+      mm: Adjust shuffle code to allow for future coalescing
+      mm: Move set/get_pcppage_migratetype to mmzone.h
+      mm: Use zone and order instead of free area in free_list manipulators
+      mm: Introduce Hinted pages
+      virtio-balloon: Add support for providing page hints to host
+
+
+ drivers/virtio/Kconfig              |    1 
+ drivers/virtio/virtio_balloon.c     |   47 ++++++
+ include/linux/mmzone.h              |  116 ++++++++------
+ include/linux/page-flags.h          |    8 +
+ include/linux/page_hinting.h        |  139 ++++++++++++++++
+ include/uapi/linux/virtio_balloon.h |    1 
+ mm/Kconfig                          |    5 +
+ mm/Makefile                         |    1 
+ mm/internal.h                       |   18 ++
+ mm/memory_hotplug.c                 |    1 
+ mm/page_alloc.c                     |  238 ++++++++++++++++++++--------
+ mm/page_hinting.c                   |  298 +++++++++++++++++++++++++++++++++++
+ mm/shuffle.c                        |   24 ---
+ mm/shuffle.h                        |   32 ++++
+ 14 files changed, 796 insertions(+), 133 deletions(-)
+ create mode 100644 include/linux/page_hinting.h
+ create mode 100644 mm/page_hinting.c
+
+--
