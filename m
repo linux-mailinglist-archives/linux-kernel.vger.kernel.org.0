@@ -2,105 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE5AB72E2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 13:50:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6E5072E35
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 13:52:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387410AbfGXLuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 07:50:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34706 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387393AbfGXLuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 07:50:14 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 471DD22387;
-        Wed, 24 Jul 2019 11:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563969012;
-        bh=7cDmvSdXx7R91mdbB8raYepiGCr+m08yAbZBHR6nYms=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=HwI4hRn8vZRUDokkkUOJfg9Xhuenbsj49RncrNPNpO8Cm3fOXbbCqZ6Z3CnpcHfgc
-         JeUw3gNzprlxW6Cu30LDt/Z6yVkERqlH98BtI3dkAqyv8/+qLsql6AG3xxr0h+PrS2
-         mowlt3kiH4Uyld9M6J8Tv5MFawosXYwfPjfQnptw=
-Message-ID: <49ef4b704f7925c584a2bab6650648ba456b5717.camel@kernel.org>
-Subject: Re: [RFC PATCH] ceph: fix directories inode i_blkbits initialization
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.com>
-Cc:     Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 24 Jul 2019 07:50:11 -0400
-In-Reply-To: <874l3b694l.fsf@suse.com>
-References: <20190723155020.17338-1-lhenriques@suse.com>
-         <c657b0d65acd5e8bc9d5d726d68e2ad1fff38b51.camel@kernel.org>
-         <87o91k61sr.fsf@suse.com> <874l3b694l.fsf@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1727747AbfGXLwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 07:52:35 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45841 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727492AbfGXLwe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 07:52:34 -0400
+Received: by mail-lf1-f65.google.com with SMTP id u10so31730868lfm.12
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 04:52:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=nsmCzqfW69iZO/gLCj+ghjUAOH/mpjGEv1Nt02P5FPo=;
+        b=n+1tPjBWic4wIhhnQTeVI+/VF+iX5I/yHbS+kM025TcnQ0Esxq6446HZvvOdy5mJ5w
+         ItJ0qh+a1pkyujoVGHswBIG154CO5ZFy+gKpzr0L+b+9Sqw/87/pOywuH6+Xpp6MMFI2
+         8JtuSZf4gHBn+K0QqPApRdae+miR1fIfwxLqz/Ky6ilWSuHK789iBYdQklApanmVybhN
+         OqYMShhvlRiON0jozcO9Ywb3BWT0uhckiMj1gkMDFFTGBaFhUYrCdd/vF8aLPy3S4GyH
+         l7S/TEjJIKpCj00QzNBt6QjEBW9oouG05xYG50Je5hnBQKbM9poAa9rNk3u08gHMrVWZ
+         AUwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=nsmCzqfW69iZO/gLCj+ghjUAOH/mpjGEv1Nt02P5FPo=;
+        b=E/FLXPsw4+I3DDW2gOPgHljMKWFn/A7PQ2KFE42f0RPIcev/Rcfr8141xaQZE8N/pt
+         Gb0batoy+Fzwo0vkddb+1VSreFNGKf4nT11tCRttKs1eqEjC0eerxzRi9oGlY2luWy93
+         hBQxwrrJx+FVd4hX8WrwRGOyKhT/ttM6RNQV5YMH8jAYnKnA7DNguj9B/G4LkiND+4uf
+         WzEXcZyGRbXQXn0IiROmbN7ZLwi+D8JSajV+b0NmZWnDIiydnC25g8lBWyls1S/GtRD4
+         b4P0sdnyxPCytOUH+QqUW0sVPVv9rHoeyVR+e/2u/MzFEa3oJX3MHPH9+auzfouT/tI4
+         s39g==
+X-Gm-Message-State: APjAAAXh93iVFnIq49sszpFKpD9tUHk/9tjXJ2ygpW4qv4PfioMC6CIx
+        tUtxyUFwMGIJj20xJ44L30vM1Byat0joSdfSDjc=
+X-Google-Smtp-Source: APXvYqwg37D0Fu169EhSSHiO2phLgF/MXH+ju8vh+gE1TizFSnmQG+8bS4RevFDjKVil5L3EmKy9nIIhvQnwzDDh15M=
+X-Received: by 2002:ac2:46ef:: with SMTP id q15mr39051139lfo.63.1563969152879;
+ Wed, 24 Jul 2019 04:52:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ac2:5e8f:0:0:0:0:0 with HTTP; Wed, 24 Jul 2019 04:52:32
+ -0700 (PDT)
+Reply-To: mrsnicolemarois0001@gmail.com
+From:   Nicole Marois <mrjohnmoses8@gmail.com>
+Date:   Wed, 24 Jul 2019 11:52:32 +0000
+Message-ID: <CACkZuE2UO0_57Sg57kv9gyYv0KROZ602qc_aq8EPk7sgVCbWaA@mail.gmail.com>
+Subject: Hello Dear Friend
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-07-24 at 11:04 +0100, Luis Henriques wrote:
-> Luis Henriques <lhenriques@suse.com> writes:
-> 
-> > "Jeff Layton" <jlayton@kernel.org> writes:
-> > 
-> > > On Tue, 2019-07-23 at 16:50 +0100, Luis Henriques wrote:
-> > > > When filling an inode with info from the MDS, i_blkbits is being
-> > > > initialized using fl_stripe_unit, which contains the stripe unit in
-> > > > bytes.  Unfortunately, this doesn't make sense for directories as they
-> > > > have fl_stripe_unit set to '0'.  This means that i_blkbits will be set
-> > > > to 0xff, causing an UBSAN undefined behaviour in i_blocksize():
-> > > > 
-> > > >   UBSAN: Undefined behaviour in ./include/linux/fs.h:731:12
-> > > >   shift exponent 255 is too large for 32-bit type 'int'
-> > > > 
-> > > > Fix this by initializing i_blkbits to CEPH_BLOCK_SHIFT if fl_stripe_unit
-> > > > is zero.
-> > > > 
-> > > > Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> > > > ---
-> > > >  fs/ceph/inode.c | 7 ++++++-
-> > > >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > > > 
-> > > > Hi Jeff,
-> > > > 
-> > > > To be honest, I'm not sure CEPH_BLOCK_SHIFT is the right value to use
-> > > > here, but for sure the one currently being used isn't correct if the
-> > > > inode is a directory.  Using stripe units seems to be a bug that has
-> > > > been there since the beginning, but it definitely became bigger problem
-> > > > after commit 69448867abcb ("fs: shave 8 bytes off of struct inode").
-> > > > 
-> > > > This fix could also be moved into the 'switch' statement later in that
-> > > > function, in the S_IFDIR case, similar to commit 5ba72e607cdb ("ceph:
-> > > > set special inode's blocksize to page size").  Let me know which version
-> > > > you would prefer.
-> > > > 
-> > > 
-> > > What happens with (e.g.) named pipes or symlinks? Do those inodes also
-> > > get this bogus value? Assuming that they do, I'd probably prefer this
-> > > patch since it'd fix things for all inode types, not just directories.
-> > 
-> > I tested symlinks and they seem to be handled correctly (i.e. the stripe
-> > units seems to be the same as the target file).  Regarding pipes, I
-> > didn't test them, but from the code it should be set to PAGE_SHIFT (see
-> > the above mentioned commit 5ba72e607cdb).
-> 
-> Ok, after looking closer at the other inode types and running a few
-> tests with extra debug code, it all seems to be sane -- only directories
-> (root dir is an exception) will cause problems with i_blkbits being set
-> to a bogus value.  So, I'm sticking with my original RFC patch approach,
-> which should be easy to apply to stable kernels.
-> 
-> Cheers,
+HELLO  DEAR.
+I=E2=80=99m Mrs. Nicole Maoris a manager in  HSBC  BANK in   Spain  Madrid,=
+ I
+am sending  this brief letter  to seek for  your partnership and long
+term relationship, I have an important and urgent  issue I want to
+discuss with you privately about transaction fund  worth the sum of
+$9.5m America dollars left by most of the greedy Asia Kuwait
+politician in our bank here in Spain  Madrid.
 
-Sounds good. I'll just plan to merge your RFC patch, after I run some
-more tests on it.
+If you know that you can invest this fund into profitable business in
+your country by the end we shall have 50%50 share each,  kindly get
+back to me for more detail and procedures .
 
-Thanks!
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Your urgent respond will be highly appreciated
+Awaiting to hear from you asap.
+My Regard.
+Mrs. Nicole Maoris=09
+Phone Number:  +34(62) 768 5146
