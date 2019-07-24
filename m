@@ -2,173 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 878FF72990
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:10:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E82B9729A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:13:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726248AbfGXIK1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 04:10:27 -0400
-Received: from mail-eopbgr1400091.outbound.protection.outlook.com ([40.107.140.91]:46142
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725882AbfGXIK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 04:10:27 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IYPW3I89QXai2O/mdhW0K2hgeEW7sQUWZooDGmv5YS9KRIyp/ujmAP3Cb2aDKCKtLMK8p3MLqOgulW2P3OVjZRBK0j92/ua1Lv8rg7+uUPsBWzOz24vkFyTXg3KiqfII9g+Pn/iXMnCUsDRa1oRMyLdgH0BMyoh/7F6TfghCmWbmSoRhH+l/eVWCiC+Iuw0PjRBVcPZCojQJu7Kb9AcJ0adMAUX+g7Eq7cdpG14//78IP00wvFh/6zdCU7swQj83V/SDNETKF/Y4PeUioMwgtnAGt+S1NBxg7nyK8Uiw5vFLKN6q/7rPq5nS2iqiRls/Gs/UzEmle9wnlgg83qdmGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uqwEVaEIv32gUYLSeGQxUIQJawQRamlZQxy38lzmfO0=;
- b=jLQpuTyGXSMeV3LE8XsEixEA0djxq7lASvWJHgwEAoa3qubF6qMK84rVQXaKSPhWKQB79608JtxoRCJzbm+3pLoXdFj6XgObxFjHnc7LbULuZgutiIGMOWJZG32EhBFjw2qrwM9wgjziCYHR2lbIOHRMNbGmH4TKu0cBK+fpdd9MsT+1jzSMf8MkrPRclbSmNj2IZpqa3iVfP6NNvG0ROjaAMnl3nFXI+k4PtjClwRw2qm3zkDhtMnraW4IhA3xSDM3ebfwdgBRn/dMo0Lvt70ns/McnrcUotWWMkNkTx42kq80VIJAwYsID8i3OhaqzfL58KV1BqJYQLYSblVOPOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=bp.renesas.com;dmarc=pass action=none
- header.from=bp.renesas.com;dkim=pass header.d=bp.renesas.com;arc=none
+        id S1726277AbfGXINS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 04:13:18 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38085 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725826AbfGXINP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 04:13:15 -0400
+Received: by mail-ed1-f66.google.com with SMTP id r12so11512750edo.5
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 01:13:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uqwEVaEIv32gUYLSeGQxUIQJawQRamlZQxy38lzmfO0=;
- b=rugvQIZI0b45pjyHGjvQbX4x85ARR7ykgjwH+DRTfHRgIvCSbD/sk0rcOA32BbZ+DwEDpzKXaAdE1+vrcggBcs6do90T4Rx0mwQ8HJriVoUiR/sE1C2XePssyIlXd0AwC3FW3s5Qt16a9m2l1Er+AovvzchQabI+fXBsXHD4j6g=
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.13) by
- TY1PR01MB1706.jpnprd01.prod.outlook.com (52.133.160.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.17; Wed, 24 Jul 2019 08:10:23 +0000
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::d881:cb74:8277:5a16]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::d881:cb74:8277:5a16%7]) with mapi id 15.20.2094.013; Wed, 24 Jul 2019
- 08:10:23 +0000
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-CC:     "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
-        "open list:DRM DRIVERS FOR RENESAS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] drm: rcar_lvds: Fix dual link mode operations
-Thread-Topic: [PATCH] drm: rcar_lvds: Fix dual link mode operations
-Thread-Index: AQHVQXeAkekjE12GhEmxi27aP7D6DKbZarTw
-Date:   Wed, 24 Jul 2019 08:10:22 +0000
-Message-ID: <TY1PR01MB1770980628C5914BC796C47FC0C60@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <20190723165700.13124-1-jacopo+renesas@jmondi.org>
-In-Reply-To: <20190723165700.13124-1-jacopo+renesas@jmondi.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2f64e23a-c273-4972-62f2-08d7100e608c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:TY1PR01MB1706;
-x-ms-traffictypediagnostic: TY1PR01MB1706:
-x-microsoft-antispam-prvs: <TY1PR01MB1706342FC0346FB144E852B9C0C60@TY1PR01MB1706.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0108A997B2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(376002)(346002)(39860400002)(136003)(396003)(199004)(189003)(305945005)(66066001)(54906003)(256004)(14444005)(74316002)(33656002)(6116002)(81166006)(8676002)(86362001)(7736002)(476003)(446003)(68736007)(110136005)(53546011)(8936002)(3846002)(316002)(71200400001)(81156014)(26005)(66476007)(186003)(2906002)(5660300002)(6436002)(52536014)(6506007)(64756008)(66556008)(11346002)(55016002)(71190400001)(66446008)(66946007)(478600001)(9686003)(102836004)(6246003)(76116006)(4326008)(53936002)(486006)(44832011)(14454004)(25786009)(76176011)(229853002)(7696005)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1706;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: jUDIBD/0U0ETu4VQ6bZ/+R4WWKWsQcGwzKEuJvL9/ReXeqzl0l69KuoMSCTjBwfkdOgG4TGdetYaQPwmNkLd5lrfn2bhpr0N0YKDKJyy5mryfeC83SetqA+N0GTSwmjveHasyCmAeRQJ9DmWIw+EKe2kmEXVWMR371ZFo5JTqyUAaoPxhvf/ie2Z2Yauz+1vzyw95Ti1BV3WmWuhRtts0MojXFrkOsY+LLm5L5hA3rX7IQjSRqgKaUvdxzEvTsbdjy2VAcSoOWuBrFN5HKvoq3nEaSa/s5XtXzdIV0nbs/8RlU+Q8v53hk6rmJSiK0kaL3fKPREQS1DtjaU6s7VRMa9lr/ePzwv0SwqovBa6ZicdraFv1dcq1c1SxebkvgBxa9WlGyGMQ6CMa8LYBWREI8PCGbpHXYV0dGlniRFv870=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:cc;
+        bh=+rNRJY68IIsD9nh+g9TvsIleBslPfLPXnzcgzuZEN48=;
+        b=I3P1lO6M7mukJ8KziuxO4lwxZaCAEl58oUX+PO1XCwcZyQwz3JtUDGwgufNide1IPU
+         Q7YNLXYcjqeHdQKGY8/cvpw/sv2h35skgV1k8YlZlW62GNfBPPbi2nnAOeqYJbShHm3v
+         2F0rU4+6x5NgLoN7doN5wb9j0sy1IHdQNCfp9aGSubZjGl9sAGRLy9lZnO6NzIlopx6V
+         RUIjlm5lSh9geksn3AT3RAcweH/lhkcgrj0rPndv/4XXANjOlLSnFo2VDcab+7jus4fg
+         +zCdTioMfVUew0SNjSjaVkFZh4eQItDnlcrwolp7ZBtE4vMSr3/VpMqgYcWfJkk1GGDg
+         bsmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:cc;
+        bh=+rNRJY68IIsD9nh+g9TvsIleBslPfLPXnzcgzuZEN48=;
+        b=tYEJByjbHoaCWu14VLGYPu7DZgt/OI4ZfOcPGYMnIwdZMXH0st4946WHig19H3v31S
+         YEZS89GRnvUPNpeADw12uLzu3Qgj6NvlIqWIN9BJj3zWQBrTHdWs0maJ20CWxiViTD3W
+         T+NP2gIit8g42Hy8uv/iwSXwc8NIlAPQEdL/Yg1ln3pfnNf/cwC4FMmVc4q9RJcGCtTC
+         hU9fMBB6hz1cKtG1nyyUmK38WB6U4ATUNNNewf74PKqXzbsijyMnEfJXnYaCamagzRQ7
+         ViTo1g+0UfeiCDVmrOQHGeWRerwUu+gBrkHpQd+KIYpi1sGJEeqM64MiJRn7zltUzkoB
+         uSAw==
+X-Gm-Message-State: APjAAAUx9p/lI/Nh84BgwO0nSCXvsl/hE9uN4g+yPWVK+qjsrMTJzFu0
+        pPD2p3WH4GSz9z+hxhcF64PWAFhRZCkWI5tmeGc=
+X-Received: by 2002:a05:6402:896:: with SMTP id e22mt65279499edy.202.1563955993753;
+ Wed, 24 Jul 2019 01:13:13 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f64e23a-c273-4972-62f2-08d7100e608c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2019 08:10:23.0075
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fabrizio.castro@bp.renesas.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1706
+References: <20190724060512.23899-1-hslester96@gmail.com>
+In-Reply-To: <20190724060512.23899-1-hslester96@gmail.com>
+From:   Chuhong Yuan <hslester96@gmail.com>
+Date:   Wed, 24 Jul 2019 16:13:03 +0800
+Message-ID: <CANhBUQ0gYF+cF1EjfSA-WVvAKipQHWgkasXN91mphHYsZV+uMQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 0/8] Use dev_get_drvdata where possible
+Cc:     Steffen Klassert <klassert@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jay Cliburn <jcliburn@gmail.com>,
+        Chris Snook <chris.snook@gmail.com>,
+        Rasesh Mody <rmody@marvell.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Siva Reddy Kallam <siva.kallam@broadcom.com>,
+        Prashant Sreedharan <prashant@broadcom.com>,
+        GR-Linux-NIC-Dev@marvell.com,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Guo-Fu Tseng <cooldavid@cooldavid.org>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+On Wed, Jul 24, 2019 at 2:05 PM Chuhong Yuan <hslester96@gmail.com> wrote:
+>
+> These patches use dev_get_drvdata instead of
+> using to_pci_dev + pci_get_drvdata to make
+> code simpler where possible.
+>
+> Changelog:
+>
+> v1 -> v2:
+> - Change pci_set_drvdata to dev_set_drvdata
+>   to keep consistency.
+>
 
-Thank you for your patch!
+Hi all,
+I checked the cases which mentioned the consistency
+of get/set_drvdata usages.
+The cases' commit IDs are
+488d040e3a3452a0dceef5d3ec4f61942262f57f
+b77c98780e682fe780d899b91543769d4cf94585
 
-> From: linux-renesas-soc-owner@vger.kernel.org <linux-renesas-soc-owner@vg=
-er.kernel.org> On Behalf Of Jacopo Mondi
-> Sent: 23 July 2019 17:57
-> Subject: [PATCH] drm: rcar_lvds: Fix dual link mode operations
->=20
-> The R-Car LVDS encoder units support dual-link operations by splitting
-> the pixel output between the primary encoder and the companion one.
->=20
-> In order for the primary encoder to succesfully control the companion's
-> operations this should not fail at probe time and register itself its
-> associated drm bridge so that the primary one can find it.
->=20
-> Currently the companion encoder fails at probe time, causing the
-> registration of the primary to fail preventing the whole DU unit to be
-> registered correctly.
->=20
-> Fixes: fa440d870358 ("drm: rcar-du: lvds: Add support for dual-link mode"=
-)
-> Reported-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+After checking, I think that the consistency problem
+refers to inconsistency between probe and remove.
+But the changes of these patches are not related
+to probe and remove.
 
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Tested-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+So I think the previously sent and applied v1 patches
+which do not change pci_set_drvdata to dev_set_drvdata
+are okay.
+Therefore there may be no need to use these v2 patches.
 
->=20
-> ---
-> The "Fixes" tag refers to a patch currently part of the
-> renesas-drivers-2019-07-09-v5.2 branch of Geert's renesas-drivers tree.
->=20
->  drivers/gpu/drm/rcar-du/rcar_lvds.c | 31 +++++++++++++++++++++--------
->  1 file changed, 23 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-d=
-u/rcar_lvds.c
-> index bada7ee98544..8b015ba95895 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-> @@ -767,14 +767,29 @@ static int rcar_lvds_parse_dt(struct rcar_lvds *lvd=
-s)
->  	of_node_put(remote_input);
->  	of_node_put(remote);
->=20
-> -	/*
-> -	 * On D3/E3 the LVDS encoder provides a clock to the DU, which can be
-> -	 * used for the DPAD output even when the LVDS output is not connected.
-> -	 * Don't fail probe in that case as the DU will need the bridge to
-> -	 * control the clock.
-> -	 */
-> -	if (lvds->info->quirks & RCAR_LVDS_QUIRK_EXT_PLL)
-> -		return ret =3D=3D -ENODEV ? 0 : ret;
-> +	switch (ret) {
-> +	case -ENODEV:
-> +		/*
-> +		 * On D3/E3 the LVDS encoder provides a clock to the DU, which
-> +		 * can be used for the DPAD output even when the LVDS output is
-> +		 * not connected. Don't fail probe in that case as the DU will
-> +		 * need the bridge to control the clock.
-> +		 */
-> +		if (lvds->info->quirks & RCAR_LVDS_QUIRK_EXT_PLL)
-> +			ret =3D 0;
-> +		break;
-> +	case -ENXIO:
-> +		/*
-> +		 * When the LVDS output is used in dual link mode, the
-> +		 * companion encoder fails at
-> +		 * 'rcar_lvds_parse_dt_companion()'. Don't fail probe in
-> +		 * that case as the master encoder will need the companion's
-> +		 * bridge to control its operations.
-> +		 */
-> +		if (lvds->info->quirks & RCAR_LVDS_QUIRK_DUAL_LINK)
-> +			ret =3D 0;
-> +		break;
-> +	}
->=20
->  	return ret;
->  }
+Regards,
+Chuhong
+
+
+> Chuhong Yuan (8):
+>   net: 3com: 3c59x: Use dev_get_drvdata
+>   net: atheros: Use dev_get_drvdata
+>   net: broadcom: Use dev_get_drvdata
+>   e1000e: Use dev_get_drvdata where possible
+>   fm10k: Use dev_get_drvdata
+>   i40e: Use dev_get_drvdata
+>   igb: Use dev_get_drvdata where possible
+>   net: jme: Use dev_get_drvdata
+>
+>  drivers/net/ethernet/3com/3c59x.c               |  8 +++-----
+>  drivers/net/ethernet/atheros/alx/main.c         |  8 +++-----
+>  drivers/net/ethernet/atheros/atl1c/atl1c_main.c | 10 ++++------
+>  drivers/net/ethernet/atheros/atlx/atl1.c        |  8 +++-----
+>  drivers/net/ethernet/broadcom/bnx2.c            |  8 +++-----
+>  drivers/net/ethernet/broadcom/bnxt/bnxt.c       |  8 +++-----
+>  drivers/net/ethernet/broadcom/tg3.c             |  8 +++-----
+>  drivers/net/ethernet/intel/e1000e/netdev.c      |  9 ++++-----
+>  drivers/net/ethernet/intel/fm10k/fm10k_pci.c    |  6 +++---
+>  drivers/net/ethernet/intel/i40e/i40e_main.c     | 10 ++++------
+>  drivers/net/ethernet/intel/igb/igb_main.c       |  5 ++---
+>  drivers/net/ethernet/jme.c                      |  8 +++-----
+>  12 files changed, 38 insertions(+), 58 deletions(-)
+>
 > --
-> 2.22.0
-
+> 2.20.1
+>
