@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87B8F738F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:35:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BD3673901
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:35:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388827AbfGXTfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:35:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57740 "EHLO mail.kernel.org"
+        id S2388934AbfGXTfu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:35:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389115AbfGXTey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:34:54 -0400
+        id S2388884AbfGXTft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:35:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5106F22ADA;
-        Wed, 24 Jul 2019 19:34:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B556A21951;
+        Wed, 24 Jul 2019 19:35:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996893;
-        bh=944oLU8GpRyQbzpH+RUQfTMKBma6bQ/q/t6IGuiHXc0=;
+        s=default; t=1563996948;
+        bh=61i0o/cbhrmmFoEpZj1dE59plEfYxzY8AsKUoGE7LV0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rUcEEJXrCXHpdzBg1L0XJuNPQfzfCT6uSGofn+zykgn4oyUHAGYbRlYvE59ZIlgrt
-         y3noWLl4vb/WI1M6FOi/5JIMuer7JTDodzyTlT/xHgGiBxWKRKEhOHjq+b7FUrotNI
-         Fk1IXu7jYtAQ77hEVDma2xyBY5Dv7GsyCT2GbpZk=
+        b=SLaFwUTcbk06LtTuBbRsQP7yTtSBg7dcnGekvFGHp64DkxIqcw39vrF9ZXPHZfwyD
+         A0CFd0uoZwVcRqBYBKqzA23SGsabi07LFQk/HN8BeJL6aFiGJYRTrzIlqmWmFZh7Iw
+         d8L3kD4Bq4VNujSMUKUd7z/i/F57/tuZxcptRQgI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Efremov <efremov@ispras.ru>,
-        Willy Tarreau <w@1wt.eu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 251/413] floppy: fix out-of-bounds read in copy_buffer
-Date:   Wed, 24 Jul 2019 21:19:02 +0200
-Message-Id: <20190724191753.696056411@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Stan Johnson <userm57@yahoo.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 5.2 254/413] scsi: NCR5380: Handle PDMA failure reliably
+Date:   Wed, 24 Jul 2019 21:19:05 +0200
+Message-Id: <20190724191754.077822287@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -45,52 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit da99466ac243f15fbba65bd261bfc75ffa1532b6 ]
+From: Finn Thain <fthain@telegraphics.com.au>
 
-This fixes a global out-of-bounds read access in the copy_buffer
-function of the floppy driver.
+commit f9dfed1c785734b95b08d67600e05d2092508ab0 upstream.
 
-The FDDEFPRM ioctl allows one to set the geometry of a disk.  The sect
-and head fields (unsigned int) of the floppy_drive structure are used to
-compute the max_sector (int) in the make_raw_rw_request function.  It is
-possible to overflow the max_sector.  Next, max_sector is passed to the
-copy_buffer function and used in one of the memcpy calls.
+A PDMA error is handled in the core driver by setting the device's 'borken'
+flag and aborting the command. Unfortunately, do_abort() is not
+dependable. Perform a SCSI bus reset instead, to make sure that the command
+fails and gets retried.
 
-An unprivileged user could trigger the bug if the device is accessible,
-but requires a floppy disk to be inserted.
+Cc: Michael Schmitz <schmitzmic@gmail.com>
+Cc: stable@vger.kernel.org # v4.20+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-The patch adds the check for the .sect * .head multiplication for not
-overflowing in the set_geometry function.
-
-The bug was found by syzkaller.
-
-Signed-off-by: Denis Efremov <efremov@ispras.ru>
-Tested-by: Willy Tarreau <w@1wt.eu>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/floppy.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/scsi/NCR5380.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-index 671a0ae434b4..fee57f7f3821 100644
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -3233,8 +3233,10 @@ static int set_geometry(unsigned int cmd, struct floppy_struct *g,
- 	int cnt;
- 
- 	/* sanity checking for parameters. */
--	if (g->sect <= 0 ||
--	    g->head <= 0 ||
-+	if ((int)g->sect <= 0 ||
-+	    (int)g->head <= 0 ||
-+	    /* check for overflow in max_sector */
-+	    (int)(g->sect * g->head) <= 0 ||
- 	    /* check for zero in F_SECT_PER_TRACK */
- 	    (unsigned char)((g->sect << 2) >> FD_SIZECODE(g)) == 0 ||
- 	    g->track <= 0 || g->track > UDP->tracks >> STRETCH(g) ||
--- 
-2.20.1
-
+--- a/drivers/scsi/NCR5380.c
++++ b/drivers/scsi/NCR5380.c
+@@ -1761,10 +1761,8 @@ static void NCR5380_information_transfer
+ 						scmd_printk(KERN_INFO, cmd,
+ 							"switching to slow handshake\n");
+ 						cmd->device->borken = 1;
+-						sink = 1;
+-						do_abort(instance);
+-						cmd->result = DID_ERROR << 16;
+-						/* XXX - need to source or sink data here, as appropriate */
++						do_reset(instance);
++						bus_reset_cleanup(instance);
+ 					}
+ 				} else {
+ 					/* Transfer a small chunk so that the
 
 
