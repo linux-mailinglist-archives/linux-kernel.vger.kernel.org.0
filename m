@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 193BD73AFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59FC473AD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:54:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391940AbfGXTzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:55:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39384 "EHLO mail.kernel.org"
+        id S2404285AbfGXTyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:54:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404523AbfGXTzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:55:35 -0400
+        id S2404266AbfGXTyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:54:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA1E4205C9;
-        Wed, 24 Jul 2019 19:55:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AACFB22ADC;
+        Wed, 24 Jul 2019 19:53:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563998134;
-        bh=Qx3p2aY8FmQsvDIKJs05yFhKahVc0zt4Suew8NhSa50=;
+        s=default; t=1563998040;
+        bh=dWZOKqVtBakxRyBVHEfpZ4h5+T0PPtBUpO8yzT8U9ec=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WIbxuGdyRDmkCHsIs8HlIRxRZCHDSxiL+j/2tHbVv3NRsidOC9nHXqiGgC8GaxULo
-         ovmuEKe3HzLts8eb91ZJnCpBnEF8ob0LFM2ooIlMs7LV3IAeuPr6TgpL3OpKbU6RWT
-         Mgt4hQ3ioqHuOV/90ck7PRJO07vtagyrn15leRRo=
+        b=rl6hlPgz8vH3pQo0Yu/iK0vdZ0fsL7bw9HtQYb2u00BkITqiRgm7bHn4UMBd6/v55
+         lSumTjZFnqBquOGBDW7X+Ydfn8ea7vR2ogAumH2vWZjwgwjONAxin+hlIEYySwzfMb
+         dcISbNFHJz6Pt1ujEeCkxfCGw7jfWtZROv01pw0Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Shijith Thotton <sthotton@marvell.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 206/371] Bluetooth: Add new 13d3:3501 QCA_ROME device
-Date:   Wed, 24 Jul 2019 21:19:18 +0200
-Message-Id: <20190724191740.103605694@linuxfoundation.org>
+Subject: [PATCH 5.1 208/371] genirq: Update irq stats from NMI handlers
+Date:   Wed, 24 Jul 2019 21:19:20 +0200
+Message-Id: <20190724191740.214761202@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -45,37 +44,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 881cec4f6b4da78e54b73c046a60f39315964c7d ]
+[ Upstream commit c09cb1293523dd786ae54a12fd88001542cba2f6 ]
 
-Without the QCA ROME setup routine this adapter fails to establish a SCO
-connection.
+The NMI handlers handle_percpu_devid_fasteoi_nmi() and handle_fasteoi_nmi()
+do not update the interrupt counts. Due to that the NMI interrupt count
+does not show up correctly in /proc/interrupts.
 
-T:  Bus=01 Lev=01 Prnt=01 Port=04 Cnt=01 Dev#=  2 Spd=12  MxCh= 0
-D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=13d3 ProdID=3501 Rev=00.01
-C:  #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
-I:  If#=0x0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-I:  If#=0x1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+Add the statistics and treat the NMI handlers in the same way as per cpu
+interrupts and prevent them from updating irq_desc::tot_count as this might
+be corrupted due to concurrency.
 
-Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+[ tglx: Massaged changelog ]
+
+Fixes: 2dcf1fbcad35 ("genirq: Provide NMI handlers")
+Signed-off-by: Shijith Thotton <sthotton@marvell.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/1562313336-11888-1-git-send-email-sthotton@marvell.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bluetooth/btusb.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/irq/chip.c    | 4 ++++
+ kernel/irq/irqdesc.c | 8 +++++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 0e2c86da6479..4c9f11766e82 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -281,6 +281,7 @@ static const struct usb_device_id blacklist_table[] = {
- 	{ USB_DEVICE(0x04ca, 0x301a), .driver_info = BTUSB_QCA_ROME },
- 	{ USB_DEVICE(0x13d3, 0x3491), .driver_info = BTUSB_QCA_ROME },
- 	{ USB_DEVICE(0x13d3, 0x3496), .driver_info = BTUSB_QCA_ROME },
-+	{ USB_DEVICE(0x13d3, 0x3501), .driver_info = BTUSB_QCA_ROME },
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index 04fe4f989bd8..bfac4d6761b3 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -754,6 +754,8 @@ void handle_fasteoi_nmi(struct irq_desc *desc)
+ 	unsigned int irq = irq_desc_get_irq(desc);
+ 	irqreturn_t res;
  
- 	/* Broadcom BCM2035 */
- 	{ USB_DEVICE(0x0a5c, 0x2009), .driver_info = BTUSB_BCM92035 },
++	__kstat_incr_irqs_this_cpu(desc);
++
+ 	trace_irq_handler_entry(irq, action);
+ 	/*
+ 	 * NMIs cannot be shared, there is only one action.
+@@ -968,6 +970,8 @@ void handle_percpu_devid_fasteoi_nmi(struct irq_desc *desc)
+ 	unsigned int irq = irq_desc_get_irq(desc);
+ 	irqreturn_t res;
+ 
++	__kstat_incr_irqs_this_cpu(desc);
++
+ 	trace_irq_handler_entry(irq, action);
+ 	res = action->handler(irq, raw_cpu_ptr(action->percpu_dev_id));
+ 	trace_irq_handler_exit(irq, action, res);
+diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+index 9f8a709337cf..8a93df71673d 100644
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -945,6 +945,11 @@ unsigned int kstat_irqs_cpu(unsigned int irq, int cpu)
+ 			*per_cpu_ptr(desc->kstat_irqs, cpu) : 0;
+ }
+ 
++static bool irq_is_nmi(struct irq_desc *desc)
++{
++	return desc->istate & IRQS_NMI;
++}
++
+ /**
+  * kstat_irqs - Get the statistics for an interrupt
+  * @irq:	The interrupt number
+@@ -962,7 +967,8 @@ unsigned int kstat_irqs(unsigned int irq)
+ 	if (!desc || !desc->kstat_irqs)
+ 		return 0;
+ 	if (!irq_settings_is_per_cpu_devid(desc) &&
+-	    !irq_settings_is_per_cpu(desc))
++	    !irq_settings_is_per_cpu(desc) &&
++	    !irq_is_nmi(desc))
+ 	    return desc->tot_count;
+ 
+ 	for_each_possible_cpu(cpu)
 -- 
 2.20.1
 
