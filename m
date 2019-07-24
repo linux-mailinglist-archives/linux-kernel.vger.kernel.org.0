@@ -2,64 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44DA672BE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 12:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBCB272BEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 12:01:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfGXKAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 06:00:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40254 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726300AbfGXKAc (ORCPT
+        id S1726993AbfGXKBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 06:01:12 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49933 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726973AbfGXKBK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 06:00:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/MAFxUXpNzbi4KjfrTLt3NyDxXRqZOCjaS3pKnzg3rU=; b=ZZcd7Ka0dorUDDVUfi1UN4o90
-        ehVjn6m3vk7MR8Ua7fhH+bVC3Zlb1KGryiDONAa8oLUk8nB9/sTDkh0Y2kNacQmbcSIm2TBnySXRr
-        okBBjJe5S4tOwVJxq07I/I/BvjqhYxDmsXxaAorTlC6dAUG3Bg/DbcKevXJn12r+6/7THzEVZ/Sem
-        V9pwTBvi1nvgWUPttOJLeOwhK/aZphrhxqjXRjPN5FNtxHfTbfuxNRAmbtqWh7SG0lPzgsIj46zY3
-        J2pwtxrHDmAIyWdEwrswzselJRaRh4Cy5Ad05+oNkzxyD9g614WCLy/SWJ0LElxfuWAfzLCZmEeVu
-        5lsXZ0jEQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hqE4U-000222-Nc; Wed, 24 Jul 2019 10:00:30 +0000
-Date:   Wed, 24 Jul 2019 03:00:30 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     rpeterso@redhat.com, agruenba@redhat.com, cluster-devel@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: gfs2: Fix a null-pointer dereference in
- gfs2_alloc_inode()
-Message-ID: <20190724100030.GA2239@infradead.org>
-References: <20190724084303.1236-1-baijiaju1990@gmail.com>
+        Wed, 24 Jul 2019 06:01:10 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id D6A6A8026B; Wed, 24 Jul 2019 12:00:56 +0200 (CEST)
+Date:   Wed, 24 Jul 2019 12:01:07 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, corbet@lwn.net, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: doc: mds: nitpicking and typo fix
+Message-ID: <20190724100107.GA7206@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
 Content-Disposition: inline
-In-Reply-To: <20190724084303.1236-1-baijiaju1990@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 04:43:03PM +0800, Jia-Ju Bai wrote:
-> index 0acc5834f653..c07c3f4f8451 100644
-> --- a/fs/gfs2/super.c
-> +++ b/fs/gfs2/super.c
-> @@ -1728,8 +1728,9 @@ static struct inode *gfs2_alloc_inode(struct super_block *sb)
->  		memset(&ip->i_res, 0, sizeof(ip->i_res));
->  		RB_CLEAR_NODE(&ip->i_res.rs_node);
->  		ip->i_rahead = 0;
-> -	}
-> -	return &ip->i_inode;
-> +		return &ip->i_inode;
-> +	} else
-> +		return NULL;
->  }
 
-No need for an else after a return.  You probably just want to
-return early for the NULL case.
+--y0ulUmNC+osPPQO6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+Consistently end sentences, fix typo.
+
+Signed-off-by: Pavel Machek <pavel@denx.de>
+
+commit 310cb17613f46db97cebbd9dc11187961e4b1c69
+Author: Pavel <pavel@ucw.cz>
+Date:   Mon May 20 10:46:35 2019 +0200
+
+    doc: typo fix, consistency in mds.
+
+diff --git a/Documentation/x86/mds.rst b/Documentation/x86/mds.rst
+index 5d4330b..9983b50 100644
+--- a/Documentation/x86/mds.rst
++++ b/Documentation/x86/mds.rst
+@@ -54,13 +54,13 @@ needed for exploiting MDS requires:
+  - to control the load to trigger a fault or assist
+=20
+  - to have a disclosure gadget which exposes the speculatively accessed
+-   data for consumption through a side channel.
++   data for consumption through a side channel
+=20
+  - to control the pointer through which the disclosure gadget exposes the
+    data
+=20
+ The existence of such a construct in the kernel cannot be excluded with
+-100% certainty, but the complexity involved makes it extremly unlikely.
++100% certainty, but the complexity involved makes it extremely unlikely.
+=20
+ There is one exception, which is untrusted BPF. The functionality of
+ untrusted BPF is limited, but it needs to be thoroughly investigated
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--y0ulUmNC+osPPQO6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl04LGMACgkQMOfwapXb+vKy/ACggc8/sFAL3XP7h6R6psFKzRJG
+99YAnRiMp8OlMfPZS3VgT7gExi+V8kkc
+=+kD3
+-----END PGP SIGNATURE-----
+
+--y0ulUmNC+osPPQO6--
