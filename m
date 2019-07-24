@@ -2,88 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 421C2731EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:42:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 303DB731E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387513AbfGXOmA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 10:42:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37670 "EHLO mail.kernel.org"
+        id S1728217AbfGXOlp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 10:41:45 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:42042 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728233AbfGXOlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 10:41:46 -0400
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5BF922BF3;
-        Wed, 24 Jul 2019 14:41:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563979305;
-        bh=TRtWU5E1r37i55jKNYc0TCw2JQ3luL6jpXOG+dX2+IU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lgy8s5xgg8fDhdv+/4WKp00AmtS2aQqp8aRxNZ+sxzVYDjUUmAwoArGG5xWnRJKP/
-         ednK+UnVAtUIJm5PM11Qy/aaKnUrgfEu44ZyeLTzAvcocH1cyVRXhrQQK3/mfOCp6O
-         8AANZqpxu8TsStU5SVHqBvnC62QWpFyfRlzIm4dQ=
-Received: by mail-qk1-f177.google.com with SMTP id 201so33897184qkm.9;
-        Wed, 24 Jul 2019 07:41:45 -0700 (PDT)
-X-Gm-Message-State: APjAAAXM8smKn5nqXuaKdFBTj4wCKucIoyBwL6NHv2O84w2w+cNAn40u
-        MpIJzENAH6dQXKcImqoubV4BP9Q2eQtm7CUIVg==
-X-Google-Smtp-Source: APXvYqz/M912Dd6lOG1yOuf5yMiMHoEfa2RwVPeNyv1O7z5gz0FAig6V3+V0bVh11Zso2nw1+rCP0tnwMr914vN60fg=
-X-Received: by 2002:a37:a010:: with SMTP id j16mr55849178qke.152.1563979304746;
- Wed, 24 Jul 2019 07:41:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190619055247.35771-1-Anson.Huang@nxp.com> <20190722015043.GP3738@dragon>
-In-Reply-To: <20190722015043.GP3738@dragon>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 24 Jul 2019 08:41:33 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKv39XdFABuRvxwiXg6qQpHSuykwgqTwsGw1g+D2wA1+w@mail.gmail.com>
-Message-ID: <CAL_JsqKv39XdFABuRvxwiXg6qQpHSuykwgqTwsGw1g+D2wA1+w@mail.gmail.com>
-Subject: Re: [PATCH V5 1/5] dt-bindings: imx: Add clock binding doc for i.MX8MN
-To:     Shawn Guo <shawnguo@kernel.org>, Anson Huang <Anson.Huang@nxp.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Olof Johansson <olof@lixom.net>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Bai Ping <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Peng Fan <peng.fan@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <Linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1725870AbfGXOlo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 10:41:44 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BC5E21A037F;
+        Wed, 24 Jul 2019 16:41:42 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AECEA1A038C;
+        Wed, 24 Jul 2019 16:41:42 +0200 (CEST)
+Received: from fsr-ub1664-016.ea.freescale.net (fsr-ub1664-016.ea.freescale.net [10.171.71.216])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 393EC205EE;
+        Wed, 24 Jul 2019 16:41:42 +0200 (CEST)
+From:   Claudiu Manoil <claudiu.manoil@nxp.com>
+To:     "David S . Miller" <davem@davemloft.net>
+Cc:     andrew@lunn.ch, Rob Herring <robh+dt@kernel.org>,
+        Li Yang <leoyang.li@nxp.com>, alexandru.marginean@nxp.com,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v1 0/4] enetc: Add mdio bus driver for the PCIe MDIO endpoint
+Date:   Wed, 24 Jul 2019 17:41:37 +0300
+Message-Id: <1563979301-596-1-git-send-email-claudiu.manoil@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 21, 2019 at 7:51 PM Shawn Guo <shawnguo@kernel.org> wrote:
->
-> On Wed, Jun 19, 2019 at 01:52:43PM +0800, Anson.Huang@nxp.com wrote:
-> > From: Anson Huang <Anson.Huang@nxp.com>
-> >
-> > Add the clock binding doc for i.MX8MN.
-> >
-> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
->
-> Applied all, thanks.
+Second patch just registers the PCIe endpoint device containing
+the MDIO registers as a standalone MDIO bus driver, to allow
+an alternative way to control the MDIO bus.  The same code used
+by the ENETC ports (eth controllers) to manage MDIO via local
+registers applies and is reused.
 
-This breaks building of 'dt_binding_check'. Looks like there are tabs
-in the file which doesn't mix with YAML. Please fix.
+Bindings are provided for the new MDIO node, similarly to ENETC
+port nodes bindings.
 
-Rob
+Last patch enables the ENETC port 1 and its RGMII PHY on the
+LS1028A QDS board, where the MDIO muxing configuration relies
+on the MDIO support provided in the first patch.
+
+Claudiu Manoil (4):
+  enetc: Clean up local mdio bus allocation
+  enetc: Add mdio bus driver for the PCIe MDIO endpoint
+  dt-bindings: net: fsl: enetc: Add bindings for the central MDIO PCIe
+    endpoint
+  arm64: dts: fsl: ls1028a: Enable eth port1 on the ls1028a QDS board
+
+ .../devicetree/bindings/net/fsl-enetc.txt     |  42 ++++++-
+ .../boot/dts/freescale/fsl-ls1028a-qds.dts    |  40 ++++++
+ .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi |   6 +
+ .../net/ethernet/freescale/enetc/enetc_mdio.c | 119 +++++++++++++++---
+ .../net/ethernet/freescale/enetc/enetc_pf.c   |   5 +-
+ 5 files changed, 190 insertions(+), 22 deletions(-)
+
+-- 
+2.17.1
+
