@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EDA073CB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:11:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10C7C73CB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:11:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404337AbfGXT6E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:58:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44116 "EHLO mail.kernel.org"
+        id S2391802AbfGXT6b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:58:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392167AbfGXT6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:58:02 -0400
+        id S2404939AbfGXT6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:58:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEA9222ADF;
-        Wed, 24 Jul 2019 19:58:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FBC9205C9;
+        Wed, 24 Jul 2019 19:58:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563998281;
-        bh=H/DCJBNmixnAmgd2Ovp34xVh7UujKloaqaqF0z11Czc=;
+        s=default; t=1563998301;
+        bh=eO0h03KlQJOXUAo5ZXToyNf4OaRQbcRRIWCrBWlHd+A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hBb0LhjPG+Dbew2BSSqDPQIDkqL8jJtgDTxJ2vWmBYwEIJZW/o0dUBYD6V/xtWKqT
-         FgTHerZ+9e27c7EtqC9nuDnWdQTpFvvoZa3aJqKR3+k4JfnK1nPZhJXiLSV2H7M/Dh
-         1YZAiJE/SmZXOg4D0t9VVa6dQzrmAvekAWiVN54M=
+        b=LVMR/N+TNLw4DkQ7SmXy3nTzHnMRySK6ETIeoUuWoIplqZCxW5nRpdGZ7uQQNdH2k
+         QOWTEtOSuoyxP09iguvfSBl3yIEsuxJAt/QRdA9c6k9QO19pe51X+ZNMyT+GVEsTEy
+         x7giKDNML2Y8i5h9i5adW7U0DTpSBst+vCPuMUKg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitor Soares <vitor.soares@synopsys.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>
-Subject: [PATCH 5.1 311/371] i3c: fix i2c and i3c scl rate by bus mode
-Date:   Wed, 24 Jul 2019 21:21:03 +0200
-Message-Id: <20190724191747.498381400@linuxfoundation.org>
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 5.1 317/371] xen/events: fix binding user event channels to cpus
+Date:   Wed, 24 Jul 2019 21:21:09 +0200
+Message-Id: <20190724191747.858217793@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -44,123 +43,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitor Soares <Vitor.Soares@synopsys.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit ecc8fb54bd443bf69996d9d5ddb8d90a50f14936 upstream.
+commit bce5963bcb4f9934faa52be323994511d59fd13c upstream.
 
-Currently the I3C framework limits SCL frequency to FM speed when
-dealing with a mixed slow bus, even if all I2C devices are FM+ capable.
+When binding an interdomain event channel to a vcpu via
+IOCTL_EVTCHN_BIND_INTERDOMAIN not only the event channel needs to be
+bound, but the affinity of the associated IRQi must be changed, too.
+Otherwise the IRQ and the event channel won't be moved to another vcpu
+in case the original vcpu they were bound to is going offline.
 
-The core was also not accounting for I3C speed limitations when
-operating in mixed slow mode and was erroneously using FM+ speed as the
-max I2C speed when operating in mixed fast mode.
-
-Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
-Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
-Cc: Boris Brezillon <bbrezillon@kernel.org>
-Cc: <stable@vger.kernel.org>
-Cc: <linux-kernel@vger.kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: <stable@vger.kernel.org> # 4.13
+Fixes: c48f64ab472389df ("xen-evtchn: Bind dyn evtchn:qemu-dm interrupt to next online VCPU")
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i3c/master.c |   51 ++++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 38 insertions(+), 13 deletions(-)
+ drivers/xen/events/events_base.c |   12 ++++++++++--
+ drivers/xen/evtchn.c             |    2 +-
+ include/xen/events.h             |    3 ++-
+ 3 files changed, 13 insertions(+), 4 deletions(-)
 
---- a/drivers/i3c/master.c
-+++ b/drivers/i3c/master.c
-@@ -91,6 +91,12 @@ void i3c_bus_normaluse_unlock(struct i3c
- 	up_read(&bus->lock);
+--- a/drivers/xen/events/events_base.c
++++ b/drivers/xen/events/events_base.c
+@@ -1293,7 +1293,7 @@ void rebind_evtchn_irq(int evtchn, int i
  }
  
-+static struct i3c_master_controller *
-+i3c_bus_to_i3c_master(struct i3c_bus *i3cbus)
+ /* Rebind an evtchn so that it gets delivered to a specific cpu */
+-int xen_rebind_evtchn_to_cpu(int evtchn, unsigned tcpu)
++static int xen_rebind_evtchn_to_cpu(int evtchn, unsigned int tcpu)
+ {
+ 	struct evtchn_bind_vcpu bind_vcpu;
+ 	int masked;
+@@ -1327,7 +1327,6 @@ int xen_rebind_evtchn_to_cpu(int evtchn,
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(xen_rebind_evtchn_to_cpu);
+ 
+ static int set_affinity_irq(struct irq_data *data, const struct cpumask *dest,
+ 			    bool force)
+@@ -1341,6 +1340,15 @@ static int set_affinity_irq(struct irq_d
+ 	return ret;
+ }
+ 
++/* To be called with desc->lock held. */
++int xen_set_affinity_evtchn(struct irq_desc *desc, unsigned int tcpu)
 +{
-+	return container_of(i3cbus, struct i3c_master_controller, bus);
++	struct irq_data *d = irq_desc_get_irq_data(desc);
++
++	return set_affinity_irq(d, cpumask_of(tcpu), false);
 +}
++EXPORT_SYMBOL_GPL(xen_set_affinity_evtchn);
 +
- static struct i3c_master_controller *dev_to_i3cmaster(struct device *dev)
+ static void enable_dynirq(struct irq_data *data)
  {
- 	return container_of(dev, struct i3c_master_controller, dev);
-@@ -565,20 +571,38 @@ static const struct device_type i3c_mast
- 	.groups	= i3c_masterdev_groups,
- };
+ 	int evtchn = evtchn_from_irq(data->irq);
+--- a/drivers/xen/evtchn.c
++++ b/drivers/xen/evtchn.c
+@@ -447,7 +447,7 @@ static void evtchn_bind_interdom_next_vc
+ 	this_cpu_write(bind_last_selected_cpu, selected_cpu);
  
--int i3c_bus_set_mode(struct i3c_bus *i3cbus, enum i3c_bus_mode mode)
-+int i3c_bus_set_mode(struct i3c_bus *i3cbus, enum i3c_bus_mode mode,
-+		     unsigned long max_i2c_scl_rate)
+ 	/* unmask expects irqs to be disabled */
+-	xen_rebind_evtchn_to_cpu(evtchn, selected_cpu);
++	xen_set_affinity_evtchn(desc, selected_cpu);
+ 	raw_spin_unlock_irqrestore(&desc->lock, flags);
+ }
+ 
+--- a/include/xen/events.h
++++ b/include/xen/events.h
+@@ -3,6 +3,7 @@
+ #define _XEN_EVENTS_H
+ 
+ #include <linux/interrupt.h>
++#include <linux/irq.h>
+ #ifdef CONFIG_PCI_MSI
+ #include <linux/msi.h>
+ #endif
+@@ -59,7 +60,7 @@ void evtchn_put(unsigned int evtchn);
+ 
+ void xen_send_IPI_one(unsigned int cpu, enum ipi_vector vector);
+ void rebind_evtchn_irq(int evtchn, int irq);
+-int xen_rebind_evtchn_to_cpu(int evtchn, unsigned tcpu);
++int xen_set_affinity_evtchn(struct irq_desc *desc, unsigned int tcpu);
+ 
+ static inline void notify_remote_via_evtchn(int port)
  {
--	i3cbus->mode = mode;
-+	struct i3c_master_controller *master = i3c_bus_to_i3c_master(i3cbus);
- 
--	if (!i3cbus->scl_rate.i3c)
--		i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
-+	i3cbus->mode = mode;
- 
--	if (!i3cbus->scl_rate.i2c) {
--		if (i3cbus->mode == I3C_BUS_MODE_MIXED_SLOW)
--			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_SCL_RATE;
--		else
--			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_PLUS_SCL_RATE;
-+	switch (i3cbus->mode) {
-+	case I3C_BUS_MODE_PURE:
-+		if (!i3cbus->scl_rate.i3c)
-+			i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
-+		break;
-+	case I3C_BUS_MODE_MIXED_FAST:
-+		if (!i3cbus->scl_rate.i3c)
-+			i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
-+		if (!i3cbus->scl_rate.i2c)
-+			i3cbus->scl_rate.i2c = max_i2c_scl_rate;
-+		break;
-+	case I3C_BUS_MODE_MIXED_SLOW:
-+		if (!i3cbus->scl_rate.i2c)
-+			i3cbus->scl_rate.i2c = max_i2c_scl_rate;
-+		if (!i3cbus->scl_rate.i3c ||
-+		    i3cbus->scl_rate.i3c > i3cbus->scl_rate.i2c)
-+			i3cbus->scl_rate.i3c = i3cbus->scl_rate.i2c;
-+		break;
-+	default:
-+		return -EINVAL;
- 	}
- 
-+	dev_dbg(&master->dev, "i2c-scl = %ld Hz i3c-scl = %ld Hz\n",
-+		i3cbus->scl_rate.i2c, i3cbus->scl_rate.i3c);
-+
- 	/*
- 	 * I3C/I2C frequency may have been overridden, check that user-provided
- 	 * values are not exceeding max possible frequency.
-@@ -1966,9 +1990,6 @@ of_i3c_master_add_i2c_boardinfo(struct i
- 	/* LVR is encoded in reg[2]. */
- 	boardinfo->lvr = reg[2];
- 
--	if (boardinfo->lvr & I3C_LVR_I2C_FM_MODE)
--		master->bus.scl_rate.i2c = I3C_BUS_I2C_FM_SCL_RATE;
--
- 	list_add_tail(&boardinfo->node, &master->boardinfo.i2c);
- 	of_node_get(node);
- 
-@@ -2417,6 +2438,7 @@ int i3c_master_register(struct i3c_maste
- 			const struct i3c_master_controller_ops *ops,
- 			bool secondary)
- {
-+	unsigned long i2c_scl_rate = I3C_BUS_I2C_FM_PLUS_SCL_RATE;
- 	struct i3c_bus *i3cbus = i3c_master_get_bus(master);
- 	enum i3c_bus_mode mode = I3C_BUS_MODE_PURE;
- 	struct i2c_dev_boardinfo *i2cbi;
-@@ -2466,9 +2488,12 @@ int i3c_master_register(struct i3c_maste
- 			ret = -EINVAL;
- 			goto err_put_dev;
- 		}
-+
-+		if (i2cbi->lvr & I3C_LVR_I2C_FM_MODE)
-+			i2c_scl_rate = I3C_BUS_I2C_FM_SCL_RATE;
- 	}
- 
--	ret = i3c_bus_set_mode(i3cbus, mode);
-+	ret = i3c_bus_set_mode(i3cbus, mode, i2c_scl_rate);
- 	if (ret)
- 		goto err_put_dev;
- 
 
 
