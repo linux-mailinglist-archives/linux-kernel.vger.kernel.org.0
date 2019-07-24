@@ -2,173 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C8CD731DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57A93731AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:30:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728338AbfGXOjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 10:39:36 -0400
-Received: from mga18.intel.com ([134.134.136.126]:37257 "EHLO mga18.intel.com"
+        id S1728079AbfGXOaR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 10:30:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725870AbfGXOjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 10:39:36 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 07:39:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
-   d="scan'208";a="197519558"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by fmsmga002.fm.intel.com with ESMTP; 24 Jul 2019 07:39:32 -0700
-Date:   Wed, 24 Jul 2019 22:22:35 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, atull@kernel.org,
-        Ananda Ravuri <ananda.ravuri@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>
-Subject: Re: [PATCH v3 01/12] fpga: dfl: fme: support 512bit data width PR
-Message-ID: <20190724142235.GE8463@hao-dev>
-References: <1563857495-26692-1-git-send-email-hao.wu@intel.com>
- <1563857495-26692-2-git-send-email-hao.wu@intel.com>
- <20190724093532.GB29532@kroah.com>
+        id S1727243AbfGXOaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 10:30:17 -0400
+Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1131217F4;
+        Wed, 24 Jul 2019 14:30:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563978616;
+        bh=rIcPLNA+uDJDlrIUJ0agl7S6TInb6IGvxF9wZ4XeCak=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JsWkt6Hxlk0pDJcWDr/0H2LinxuM0ErbKnt4XMSSV4DtD4yrYej2z5KTId4Fy+mxz
+         r4DOpW4GiKfixBQtK+dlYRV4kfEoyYBJNwA9g4HggVqR3JoLImGHHk8y07T2mc5mAC
+         bXDKmMhx2THOQXYgs0lYeyaOrfNv7ML8ZB61tAzE=
+Date:   Wed, 24 Jul 2019 16:30:13 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     fweisbec@gmail.com, tglx@linutronix.de, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+        peterz@infradead.org
+Subject: Re: How to turn scheduler tick on for current nohz_full CPU?
+Message-ID: <20190724143012.GB1029@lenoir>
+References: <20190724115331.GA29059@linux.ibm.com>
+ <20190724132257.GA1029@lenoir>
+ <20190724135219.GY14271@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190724093532.GB29532@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190724135219.GY14271@linux.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 11:35:32AM +0200, Greg KH wrote:
-> On Tue, Jul 23, 2019 at 12:51:24PM +0800, Wu Hao wrote:
-> > In early partial reconfiguration private feature, it only
-> > supports 32bit data width when writing data to hardware for
-> > PR. 512bit data width PR support is an important optimization
-> > for some specific solutions (e.g. XEON with FPGA integrated),
-> > it allows driver to use AVX512 instruction to improve the
-> > performance of partial reconfiguration. e.g. programming one
-> > 100MB bitstream image via this 512bit data width PR hardware
-> > only takes ~300ms, but 32bit revision requires ~3s per test
-> > result.
+On Wed, Jul 24, 2019 at 06:52:19AM -0700, Paul E. McKenney wrote:
+> On Wed, Jul 24, 2019 at 03:22:59PM +0200, Frederic Weisbecker wrote:
+> > On Wed, Jul 24, 2019 at 04:53:31AM -0700, Paul E. McKenney wrote:
+> > > Hello!
+> > > 
+> > > One of the callback-invocation forward-progress issues turns out to
+> > > be nohz_full CPUs not turning their scheduling-clock interrupt back on
+> > > when running in kernel mode.  Given that callback floods can cause RCU's
+> > > callback-invocation loop to run for some time, it would be good for this
+> > > loop to re-enable this interrupt.  Of course, this problem applies to
+> > > pretty much any kernel code that might loop for an extended time period,
+> > > not just RCU.
+> > > 
+> > > I took a quick look at kernel/time/tick-sched.c and the closest thing
+> > > I found was tick_nohz_full_kick_cpu(), except that (1) it isn't clear
+> > > that this does much when invoked on the current CPU and (2) it doesn't
+> > > help in rcutorture TREE04.  In contrast, disabling NO_HZ_FULL and using
+> > > RCU_NOCB_CPU instead works quite well.
+> > > 
+> > > So what should I be calling instead of tick_nohz_full_kick_cpu() to
+> > > re-enable the current CPU's scheduling-clock interrupt?
 > > 
-> > Please note now this optimization is only done on revision 2
-> > of this PR private feature which is only used in integrated
-> > solution that AVX512 is always supported. This revision 2
-> > hardware doesn't support 32bit PR.
+> > Indeed, kernel code is assumed to be quick enough (between two extended grace
+> > periods) to avoid running the tick for RCU. But some long lasting kernel code
+> > may require to tick temporarily.
 > > 
-> > Signed-off-by: Ananda Ravuri <ananda.ravuri@intel.com>
-> > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-> > Signed-off-by: Wu Hao <hao.wu@intel.com>
-> > Acked-by: Alan Tull <atull@kernel.org>
-> > Signed-off-by: Moritz Fischer <mdf@kernel.org>
-> > ---
-> > v2: remove DRV/MODULE_VERSION modifications
-> > ---
-> >  drivers/fpga/dfl-fme-mgr.c | 110 ++++++++++++++++++++++++++++++++++++++-------
-> >  drivers/fpga/dfl-fme-pr.c  |  43 +++++++++++-------
-> >  drivers/fpga/dfl-fme.h     |   2 +
-> >  drivers/fpga/dfl.h         |   5 +++
-> >  4 files changed, 129 insertions(+), 31 deletions(-)
+> > You can use tick_nohz_dep_set_cpu(cpu, TICK_DEP_MASK_RCU) with the
+> > following:
 > > 
-> > diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
-> > index b3f7eee..46e17f0 100644
-> > --- a/drivers/fpga/dfl-fme-mgr.c
-> > +++ b/drivers/fpga/dfl-fme-mgr.c
-> > @@ -22,6 +22,7 @@
-> >  #include <linux/io-64-nonatomic-lo-hi.h>
-> >  #include <linux/fpga/fpga-mgr.h>
+> > diff --git a/include/linux/tick.h b/include/linux/tick.h
+> > index f92a10b5e112..3f476e2a4bf7 100644
+> > --- a/include/linux/tick.h
+> > +++ b/include/linux/tick.h
+> > @@ -108,7 +108,8 @@ enum tick_dep_bits {
+> >  	TICK_DEP_BIT_POSIX_TIMER	= 0,
+> >  	TICK_DEP_BIT_PERF_EVENTS	= 1,
+> >  	TICK_DEP_BIT_SCHED		= 2,
+> > -	TICK_DEP_BIT_CLOCK_UNSTABLE	= 3
+> > +	TICK_DEP_BIT_CLOCK_UNSTABLE	= 3,
+> > +	TICK_DEP_BIT_RCU		= 4
+> >  };
 > >  
-> > +#include "dfl.h"
-> >  #include "dfl-fme-pr.h"
+> >  #define TICK_DEP_MASK_NONE		0
+> > @@ -116,6 +117,7 @@ enum tick_dep_bits {
+> >  #define TICK_DEP_MASK_PERF_EVENTS	(1 << TICK_DEP_BIT_PERF_EVENTS)
+> >  #define TICK_DEP_MASK_SCHED		(1 << TICK_DEP_BIT_SCHED)
+> >  #define TICK_DEP_MASK_CLOCK_UNSTABLE	(1 << TICK_DEP_BIT_CLOCK_UNSTABLE)
+> > +#define TICK_DEP_MASK_RCU		(1 << TICK_DEP_BIT_RCU)
 > >  
-> >  /* FME Partial Reconfiguration Sub Feature Register Set */
-> > @@ -30,6 +31,7 @@
-> >  #define FME_PR_STS		0x10
-> >  #define FME_PR_DATA		0x18
-> >  #define FME_PR_ERR		0x20
-> > +#define FME_PR_512_DATA		0x40 /* Data Register for 512bit datawidth PR */
-> >  #define FME_PR_INTFC_ID_L	0xA8
-> >  #define FME_PR_INTFC_ID_H	0xB0
-> >  
-> > @@ -67,8 +69,43 @@
-> >  #define PR_WAIT_TIMEOUT   8000000
-> >  #define PR_HOST_STATUS_IDLE	0
-> >  
-> > +#if defined(CONFIG_X86) && defined(CONFIG_AS_AVX512)
-> > +
-> > +#include <linux/cpufeature.h>
-> > +#include <asm/fpu/api.h>
-> > +
-> > +static inline int is_cpu_avx512_enabled(void)
-> > +{
-> > +	return cpu_feature_enabled(X86_FEATURE_AVX512F);
-> > +}
+> >  #ifdef CONFIG_NO_HZ_COMMON
+> >  extern bool tick_nohz_enabled;
 > 
-> That's a very arch specific function, why would a driver ever care about
-> this?
+> I will give this a try, thank you!  (Testing will take a few days.)
 
-Yes, this is only applied to a specific FPGA solution, which FPGA
-has been integrated with XEON. Hardware indicates this using register
-to software. As it's cpu integrated solution, so CPU always has this
-AVX512 capability. The only check we do, is make sure this is not
-manually disabled by kernel.
+Sure!
 
-With this hardware, software could use AVX512 to accelerate the FPGA
-partial reconfiguration as mentioned in the patch commit message.
-It brings performance benifits to people who uses it. This is only one
-optimization (512 vs 32bit data write to hw) for a specific hardware.
+For the background: expect a self-IPI to fire which then restart the tick on IRQ exit.
+Once you're later done with the work, don't forget to remove the tick dependency:
 
-For other discrete solutions, e.g. FPGA PCIe Card, this is not used
-at all as driver does check hardware register to avoid any AVX512 code.
+     tick_nohz_dep_clear_cpu(cpu, TICK_DEP_MASK_RCU);
 
-> 
-> > +
-> > +static inline void copy512(const void *src, void __iomem *dst)
-> > +{
-> > +	kernel_fpu_begin();
-> > +
-> > +	asm volatile("vmovdqu64 (%0), %%zmm0;"
-> > +		     "vmovntdq %%zmm0, (%1);"
-> > +		     :
-> > +		     : "r"(src), "r"(dst)
-> > +		     : "memory");
-> > +
-> > +	kernel_fpu_end();
-> > +}
-> 
-> Shouldn't this be an arch-specific function somewhere?  Burying this in
-> a random driver is not ok.  Please make this generic for all systems.
 
-If more people need the same avx operation like this in kernel, then maybe
-this can be moved to some arch-specific lib code somewhere as some common
-functions to everybody, but i am not very sure if this is the case. Let me
-think about this more.
-
-> 
-> > +#else
-> > +static inline int is_cpu_avx512_enabled(void)
-> > +{
-> > +	return 0;
-> > +}
-> > +
-> > +static inline void copy512(const void *src, void __iomem *dst)
-> > +{
-> > +	WARN_ON_ONCE(1);
-> 
-> Are you trying to get reports from syzbot?  :)
-
-Oh.. no.. I will remove it. :)
-
-Thank you very much!
-
-Hao
-
-> 
-> Please fix this all up.
-> 
-> greg k-h
+Thanks.
