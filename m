@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98B6C729ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:25:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA47729FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726490AbfGXIZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 04:25:22 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36866 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726256AbfGXIZR (ORCPT
+        id S1726632AbfGXIZs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 04:25:48 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36463 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726379AbfGXIZT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 04:25:17 -0400
-Received: by mail-wm1-f65.google.com with SMTP id f17so40740352wme.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 01:25:16 -0700 (PDT)
+        Wed, 24 Jul 2019 04:25:19 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n4so46003868wrs.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 01:25:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bZYb/2BvCTI7DdfJeewjmu59+q6QA8Ct5o62NPSlXLQ=;
-        b=eMMmroR7V1M+etXX4tYfPBtj+QEIIIUXtNJYKhwTIwvxfRUNRc3IZfzvWJXAvrNYWU
-         advngdJeEYxOqTd3iZl5xGYkFNxm0CngMKJr18xOtSwvzlW1dOyGy1oMF0bxwqwpA37w
-         977smMjcPWCsg44JwBkhdWtYAWEcH+IT+EP22quG88BckRt4EAY+nM9q2ekhzOHyZB5+
-         wGgvDvDbX2/qq7WwZtSuhRJcSqByopwj1f7ukQWn41YQi/HWvI0u/IC1pTwK5CTvgKhC
-         etBqD7P2AQBsWj+uSkD+VetwheS4bWknvZ6JCCK9BfFIxj4I6ij4mc8vc1cACyjhgPCn
-         imvw==
+        bh=PtXEm5EHLkMfau18VS0/ndTlnG64/pDTlbKgiSCBHXM=;
+        b=pjvnwWlg1S0JJObJ4VAQYglevZH6RzmSr9LO8Vogmks9DNfq/Ol7Vv994gV+BUd3ea
+         BzBvGJRFZG460Sx04z9WdPLd5/AWYUsRQsPfSbsvEdQZbEzWUWAM2vwkxE7EBHXG+iQY
+         h3q3/kwA6euG7dAy9zWHIe292Lm41qMYTqLzrGHC6RXOOWBrDIlBoML4fRdfoSzJrh1v
+         8924F2s+Z5KscpUb/O8kWJ0k9TcHopYH2o18DLKSTopAiitXP7ZveOS4UIOKF6zdZHJm
+         QGVgGP4zLRsWceIkaRs7WzkZzgwaK5qgmUcXdwmgxGYb9fTRcWyQYB+4fwYPsXpV6aCj
+         u2xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bZYb/2BvCTI7DdfJeewjmu59+q6QA8Ct5o62NPSlXLQ=;
-        b=pR96Sl/VfwKOneAMiFUZG9+yfX4lXgROwUi+DBLoVgVyuWUaEtbjRJqh4KmsDavF/k
-         PpbScro7abpZ8dmRwM6LxkKZGgT1E8kSyH1BYJwjjciLKZT8XOuRvCh3hd4V1bx44Yej
-         g/DiVRvWu+wmldrpjNDt+imaguTeMqdUal2FJKi6X/StoXIJ2yMkDUc7NrYhn4bMb/VG
-         2ZDssF1qVg+2HLzUbEIBTdGqYUBj224XzVb6xDbzTGpj0cSOm+4gnynA+i8s8tN7+WEw
-         8o7ldzMAMYO+C0kNu9G+3g3xwJmelDBemhd1GlZCt/ZxqfMAIHhYs0W8ZUeysqeAQatV
-         FoTQ==
-X-Gm-Message-State: APjAAAXs9xLdES3C+O81DD57uLQNQ6X59p768Qiup++IVV1yfV9h5kZs
-        SpVblwZQoVfZbFmFuBQA3W8=
-X-Google-Smtp-Source: APXvYqxOORrgcEepfDSEgrObXsBtxM+8pGNSKgl7s1yaroVXpQpRAWrFwTKiJdvbP27wuH9VC4s4Vg==
-X-Received: by 2002:a1c:f116:: with SMTP id p22mr71783247wmh.70.1563956715936;
-        Wed, 24 Jul 2019 01:25:15 -0700 (PDT)
+        bh=PtXEm5EHLkMfau18VS0/ndTlnG64/pDTlbKgiSCBHXM=;
+        b=h8/hf+zqrzU3Zc1ItQsRQyVDQsJlPPdn+ILP6H/ZGfBjV5unynrI7QQuMueoQq8D14
+         xgeRfhIi4KjoEXuD+OC8qL5LPI85CQx1d8AU0H0v86Rz2hwNuFyzsNYLIPq3ND268KAp
+         +eZTCAnyU8U0B4PVxejHd3xv9p134V060eluWERXsgTp+/ZB40voEkC0vPWIL8XuAA9d
+         NJoK+PVS5GqDll/H43gXq0yLQLgsgf4qKWCyvaH0/ylxqz4lFuvG17Ciz35h5gokhj/5
+         zkbuVgVAArKxlkTQRHRYyd3CaTUTt7kBYQOglYrEXBUXxxtUw5mDBF6Vd0DrMQmrnrDP
+         Jk0Q==
+X-Gm-Message-State: APjAAAWmqR1oXdNgbba7DUq5rODNLDylTUpDjVVi26UYMddHdaJOoQ45
+        OwgkTXr3v0SscMFpn/wr3Fw=
+X-Google-Smtp-Source: APXvYqwzyOuZJqgrEqGk5ckOvAjzeH6Yh+/HufAQdFV4AXpJer4oPxFe3x+2qPBsY0spQGgjJr4fWA==
+X-Received: by 2002:adf:ea45:: with SMTP id j5mr11543282wrn.11.1563956717025;
+        Wed, 24 Jul 2019 01:25:17 -0700 (PDT)
 Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id z7sm42393880wrh.67.2019.07.24.01.25.14
+        by smtp.gmail.com with ESMTPSA id z7sm42393880wrh.67.2019.07.24.01.25.16
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 01:25:15 -0700 (PDT)
+        Wed, 24 Jul 2019 01:25:16 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
         Rich Felker <dalias@libc.org>,
@@ -57,9 +57,9 @@ To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
 Cc:     linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 3/7] sh: ecovec24: don't set unused fields in platform data
-Date:   Wed, 24 Jul 2019 10:25:04 +0200
-Message-Id: <20190724082508.27617-4-brgl@bgdev.pl>
+Subject: [PATCH v3 4/7] backlight: gpio: remove unused fields from platform data
+Date:   Wed, 24 Jul 2019 10:25:05 +0200
+Message-Id: <20190724082508.27617-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190724082508.27617-1-brgl@bgdev.pl>
 References: <20190724082508.27617-1-brgl@bgdev.pl>
@@ -72,29 +72,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Platform data fields other than fbdev are no longer used by the
-backlight driver. Remove them.
+Remove the platform data fields that nobody uses.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- arch/sh/boards/mach-ecovec24/setup.c | 3 ---
+ include/linux/platform_data/gpio_backlight.h | 3 ---
  1 file changed, 3 deletions(-)
 
-diff --git a/arch/sh/boards/mach-ecovec24/setup.c b/arch/sh/boards/mach-ecovec24/setup.c
-index 6926bb3865b9..64a5a1662b6d 100644
---- a/arch/sh/boards/mach-ecovec24/setup.c
-+++ b/arch/sh/boards/mach-ecovec24/setup.c
-@@ -386,9 +386,6 @@ static struct property_entry gpio_backlight_props[] = {
+diff --git a/include/linux/platform_data/gpio_backlight.h b/include/linux/platform_data/gpio_backlight.h
+index 34179d600360..1a8b5b1946fe 100644
+--- a/include/linux/platform_data/gpio_backlight.h
++++ b/include/linux/platform_data/gpio_backlight.h
+@@ -9,9 +9,6 @@ struct device;
  
- static struct gpio_backlight_platform_data gpio_backlight_data = {
- 	.fbdev = &lcdc_device.dev,
--	.gpio = GPIO_PTR1,
--	.def_value = 1,
--	.name = "backlight",
+ struct gpio_backlight_platform_data {
+ 	struct device *fbdev;
+-	int gpio;
+-	int def_value;
+-	const char *name;
  };
  
- static const struct platform_device_info gpio_backlight_device_info = {
+ #endif
 -- 
 2.21.0
 
