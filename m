@@ -2,114 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 782BE72A17
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:28:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CD0172A1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:29:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbfGXI2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 04:28:13 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36714 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726023AbfGXI2M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 04:28:12 -0400
-Received: by mail-pg1-f195.google.com with SMTP id l21so20839006pgm.3;
-        Wed, 24 Jul 2019 01:28:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=0C3QHUgqiz2AWGYc73OVCf2o4dWSm01USkJ0t4N3DX4=;
-        b=Pmja9LryXNERq5j5QPJ7x80n1QFTUD6r3VZAiyBwmifIu8xEmifP7rxzYzadZxiI18
-         Gl8jXyqQpBMvAZHAVnjtxVMM5TS1Bkv3q/lT+kG5iNft1wXvxoDtQpw3lbhdnGfWzoTl
-         pkWjtfzaXv1gji8kUKy+Hews+GB0jMqtswQYfVY3bQR/WIfOTHSAnSJF1Kl0/njmYIBn
-         bm6lW7FxgE/BUzJIJC1sYNq6l2Akcv7f197i0LxXkardtVnWOH7N8SnSlIowe1cSuBRZ
-         By7dMPnzOGCwDR4fJSlbSMxickl78DpEYTWfbz2zdmoQJAM6k4T5MYHE5CPyhxfbpxrS
-         +svg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=0C3QHUgqiz2AWGYc73OVCf2o4dWSm01USkJ0t4N3DX4=;
-        b=cXkHdqO2vl5XjliU6yFXHeDmpr9scAnqi5u590uFxAsQy3np/URLwgRirmUl97KC5T
-         tyuJe9reckt8LxEoz0lRfLHH5uajspUg4DfG83V/aqiIU7N8qK3khkfxxrWtxtrg/fjE
-         gq9cEIBpz95joO1rFpPERIMPlos+jyNvHG89ERED6EUfPjw0guQVGI5hQJeDTfFTvMO4
-         DWOdPi6Uzp8thXUYhvIdpHSKsQWUxEDO4nSQA/dKH2PQmY/zEwjnzRlXRcNZ2xZeWOmf
-         zktNbIn4beCSZGPVbnJomIc4gHfodrxts3C19XLZIHwf030xfRWNq8rNB4DqV6VUUnH0
-         RWSA==
-X-Gm-Message-State: APjAAAXtaJunarFeNgx77yXaxNM+BAbFAEJSMbKuoRaQtWigQP/66yhm
-        ic/WWkNi8IwUk7aNKAjjyqI=
-X-Google-Smtp-Source: APXvYqzgSbHf37RI7NZkA4M+A6+vuXd+IQ7ciaL1Wt7vdxG4DCe7T0DTJhW1UECdpINg0jqXUs9x0A==
-X-Received: by 2002:a17:90a:5887:: with SMTP id j7mr85540151pji.136.1563956892216;
-        Wed, 24 Jul 2019 01:28:12 -0700 (PDT)
-Received: from oslab.tsinghua.edu.cn ([2402:f000:4:72:808::3ca])
-        by smtp.gmail.com with ESMTPSA id b68sm58226735pfb.149.2019.07.24.01.28.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 01:28:11 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     bfields@fieldses.org, chuck.lever@oracle.com
-Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] fs: nfsd: Fix three possible null-pointer dereferences
-Date:   Wed, 24 Jul 2019 16:28:03 +0800
-Message-Id: <20190724082803.1077-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S1726347AbfGXI3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 04:29:38 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2746 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725870AbfGXI3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 04:29:38 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 58B05B3F612EF878FD0E;
+        Wed, 24 Jul 2019 16:29:35 +0800 (CST)
+Received: from [127.0.0.1] (10.177.223.23) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 24 Jul 2019
+ 16:29:32 +0800
+Subject: Re: [PATCH v12 1/2] mm: page_alloc: introduce
+ memblock_next_valid_pfn() (again) for arm64
+To:     Mike Rapoport <rppt@linux.ibm.com>
+CC:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Jia He" <hejianet@gmail.com>, Will Deacon <will@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1563861073-47071-1-git-send-email-guohanjun@huawei.com>
+ <1563861073-47071-2-git-send-email-guohanjun@huawei.com>
+ <20190723083027.GB4896@rapoport-lnx>
+From:   Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <e4668d2a-23d9-c089-c713-a4a0495e8c9e@huawei.com>
+Date:   Wed, 24 Jul 2019 16:29:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <20190723083027.GB4896@rapoport-lnx>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In nfs4_xdr_dec_cb_recall(), nfs4_xdr_dec_cb_layout() and
-nfs4_xdr_dec_cb_notify_lock(), there is an if statement to check whether
-cb is NULL.
+On 2019/7/23 16:30, Mike Rapoport wrote:
+> On Tue, Jul 23, 2019 at 01:51:12PM +0800, Hanjun Guo wrote:
+>> From: Jia He <hejianet@gmail.com>
+>>
+>> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+>> where possible") optimized the loop in memmap_init_zone(). But it causes
+>> possible panic on x86 due to specific memory mapping on x86_64 which will
+>> skip valid pfns as well, so Daniel Vacek reverted it later.
+>>
+>> But as suggested by Daniel Vacek, it is fine to using memblock to skip
+>> gaps and finding next valid frame with CONFIG_HAVE_ARCH_PFN_VALID.
+>>
+>> Daniel said:
+>> "On arm and arm64, memblock is used by default. But generic version of
+>> pfn_valid() is based on mem sections and memblock_next_valid_pfn() does
+>> not always return the next valid one but skips more resulting in some
+>> valid frames to be skipped (as if they were invalid). And that's why
+>> kernel was eventually crashing on some !arm machines."
+> 
+> I think that the crash on x86 was not related to CONFIG_HAVE_ARCH_PFN_VALID
+> but rather to the x86 way to setup memblock.  Some of the x86 reserved
+> memory areas were never added to memblock.memory, which makes memblock's
+> view of the physical memory incomplete and that's why
+> memblock_next_valid_pfn() could skip valid PFNs on x86.
 
-When cb is NULL, the three functions all call:
-    decode_cb_op_status(..., &cb->cb_status);
+Thank you for kindly clarify, I will update the patch with your comments
+in next version.
 
-Thus, possible null-pointer dereferences may occur.
+> 
+>> Introduce a new config option CONFIG_HAVE_MEMBLOCK_PFN_VALID and only
+>> selected for arm64, using the new config option to guard the
+>> memblock_next_valid_pfn().
+>  
+> As far as I can tell, the memblock_next_valid_pfn() should work on most
+> architectures and not only on ARM. For sure there is should be no
+> dependency between CONFIG_HAVE_ARCH_PFN_VALID and memblock_next_valid_pfn().
+> 
+> I believe that the configuration option to guard memblock_next_valid_pfn()
+> should be opt-out and that only x86 will require it.
 
-To fix these possible bugs, -EINVAL is returned when cb is NULL.
+So how about introduce a configuration option, say, CONFIG_HAVE_ARCH_PFN_INVALID,
+selected by x86 and keep it default unselected for all other architecture?
 
-These bugs are found by a static analysis tool STCheck written by us.
+> 
+>> This was tested on a HiSilicon Kunpeng920 based ARM64 server, the speedup
+>> is pretty impressive for bootmem_init() at boot:
+>>
+>> with 384G memory,
+>> before: 13310ms
+>> after:  1415ms
+>>
+>> with 1T memory,
+>> before: 20s
+>> after:  2s
+>>
+>> Suggested-by: Daniel Vacek <neelx@redhat.com>
+>> Signed-off-by: Jia He <hejianet@gmail.com>
+>> Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
+>> ---
+>>  arch/arm64/Kconfig     |  1 +
+>>  include/linux/mmzone.h |  9 +++++++++
+>>  mm/Kconfig             |  3 +++
+>>  mm/memblock.c          | 31 +++++++++++++++++++++++++++++++
+>>  mm/page_alloc.c        |  4 +++-
+>>  5 files changed, 47 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>> index 697ea0510729..058eb26579be 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -893,6 +893,7 @@ config ARCH_FLATMEM_ENABLE
+>>  
+>>  config HAVE_ARCH_PFN_VALID
+>>  	def_bool y
+>> +	select HAVE_MEMBLOCK_PFN_VALID
+>>
+>>  config HW_PERF_EVENTS
+>>  	def_bool y
+>> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+>> index 70394cabaf4e..24cb6bdb1759 100644
+>> --- a/include/linux/mmzone.h
+>> +++ b/include/linux/mmzone.h
+>> @@ -1325,6 +1325,10 @@ static inline int pfn_present(unsigned long pfn)
+>>  #endif
+>>  
+>>  #define early_pfn_valid(pfn)	pfn_valid(pfn)
+>> +#ifdef CONFIG_HAVE_MEMBLOCK_PFN_VALID
+>> +extern unsigned long memblock_next_valid_pfn(unsigned long pfn);
+>> +#define next_valid_pfn(pfn)	memblock_next_valid_pfn(pfn)
+> 
+> Please make it 'static inline' and move out of '#ifdef CONFIG_SPARSEMEM'
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- fs/nfsd/nfs4callback.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+Will do.
 
-diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
-index 397eb7820929..55949a158b6b 100644
---- a/fs/nfsd/nfs4callback.c
-+++ b/fs/nfsd/nfs4callback.c
-@@ -516,7 +516,8 @@ static int nfs4_xdr_dec_cb_recall(struct rpc_rqst *rqstp,
- 		status = decode_cb_sequence4res(xdr, cb);
- 		if (unlikely(status || cb->cb_seq_status))
- 			return status;
--	}
-+	} else
-+		return -EINVAL;
- 
- 	return decode_cb_op_status(xdr, OP_CB_RECALL, &cb->cb_status);
- }
-@@ -608,7 +609,9 @@ static int nfs4_xdr_dec_cb_layout(struct rpc_rqst *rqstp,
- 		status = decode_cb_sequence4res(xdr, cb);
- 		if (unlikely(status || cb->cb_seq_status))
- 			return status;
--	}
-+	} else
-+		return -EINVAL;
-+
- 	return decode_cb_op_status(xdr, OP_CB_LAYOUTRECALL, &cb->cb_status);
- }
- #endif /* CONFIG_NFSD_PNFS */
-@@ -667,7 +670,9 @@ static int nfs4_xdr_dec_cb_notify_lock(struct rpc_rqst *rqstp,
- 		status = decode_cb_sequence4res(xdr, cb);
- 		if (unlikely(status || cb->cb_seq_status))
- 			return status;
--	}
-+	} else
-+		return -EINVAL;
-+	
- 	return decode_cb_op_status(xdr, OP_CB_NOTIFY_LOCK, &cb->cb_status);
- }
- 
--- 
-2.17.0
+> 
+>> +#endif
+>>  void sparse_init(void);
+>>  #else
+>>  #define sparse_init()	do {} while (0)
+>> @@ -1347,6 +1351,11 @@ struct mminit_pfnnid_cache {
+>>  #define early_pfn_valid(pfn)	(1)
+>>  #endif
+>>  
+>> +/* fallback to default definitions */
+>> +#ifndef next_valid_pfn
+>> +#define next_valid_pfn(pfn)	(pfn + 1)
+> 
+> static inline as well.
+
+OK.
+
+> 
+>> +#endif
+>> +
+>>  void memory_present(int nid, unsigned long start, unsigned long end);
+>>  
+>>  /*
+>> diff --git a/mm/Kconfig b/mm/Kconfig
+>> index f0c76ba47695..c578374b6413 100644
+>> --- a/mm/Kconfig
+>> +++ b/mm/Kconfig
+>> @@ -132,6 +132,9 @@ config HAVE_MEMBLOCK_NODE_MAP
+>>  config HAVE_MEMBLOCK_PHYS_MAP
+>>  	bool
+>>  
+>> +config HAVE_MEMBLOCK_PFN_VALID
+>> +	bool
+>> +
+>>  config HAVE_GENERIC_GUP
+>>  	bool
+>>  
+>> diff --git a/mm/memblock.c b/mm/memblock.c
+>> index 7d4f61ae666a..d57ba51bb9cd 100644
+>> --- a/mm/memblock.c
+>> +++ b/mm/memblock.c
+>> @@ -1251,6 +1251,37 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
+>>  	return 0;
+>>  }
+>>  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+>> +
+>> +#ifdef CONFIG_HAVE_MEMBLOCK_PFN_VALID
+>> +unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
+>> +{
+>> +	struct memblock_type *type = &memblock.memory;
+>> +	unsigned int right = type->cnt;
+>> +	unsigned int mid, left = 0;
+>> +	phys_addr_t addr = PFN_PHYS(++pfn);
+>> +
+>> +	do {
+>> +		mid = (right + left) / 2;
+>> +
+>> +		if (addr < type->regions[mid].base)
+>> +			right = mid;
+>> +		else if (addr >= (type->regions[mid].base +
+>> +				  type->regions[mid].size))
+>> +			left = mid + 1;
+>> +		else {
+>> +			/* addr is within the region, so pfn is valid */
+>> +			return pfn;
+>> +		}
+>> +	} while (left < right);
+>> +
+> 
+> We have memblock_search() for this.
+
+I will update my patch as you suggested.
+
+Thanks
+Hanjun
 
