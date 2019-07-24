@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2EFC7361A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:51:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD9A07360F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:50:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727647AbfGXRvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 13:51:43 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:38456 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbfGXRvm (ORCPT
+        id S1727640AbfGXRuo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 13:50:44 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:57472 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbfGXRun (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 13:51:42 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6OHdfUU134750;
+        Wed, 24 Jul 2019 13:50:43 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6OHdh19049727;
         Wed, 24 Jul 2019 17:50:29 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=corp-2018-07-02;
- bh=NX/s/A5OLVDNZD4fNK87u3UpZfdfRBOaB3nXPLcsPas=;
- b=lkP+47eSi6lNelJK4kH8PvDDkmDI4KwgfHOhbC5Lp/E4hBF1MY44i5mbaW+evRfZPfVk
- R0E2hYBeVSx9InL7HjrmIAPY9jsoPtf007rUUpbwwU4kMeu5SwrRL/OaqngDPPnDxpRy
- AejMJlnkqk7kWLvjxvzRIKfTgu0PhLBMNO6svrheEboBLTglFaBcAp8E2cYbg0nGn284
- JFJedRP7waYMAXMhlD29ywDn9b0RVde89rNmiQn3yImeq7Z8T8QNjtY/7dNVqr76HLnN
- PdLeHUc6OyBQYDGzt2p6cj94UzzJYNWaB+pds0fvtZPlZ+ppJhobynJmlWoICT2GKsSF 4w== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2tx61by15s-1
+ bh=xjcDfF8Fr9jyitkNJdHzu+KgDQ97o2yz26S0HowRWGs=;
+ b=nLcnZKWZmIDZkJO16y1rVlECVuxXnpR7rtJtjGqGPqJ2Qg/lJjudSK3kHaSvvH/9tyum
+ x3e1DdU7/YablO/0JGCSCoeO4c+JYMTdssHb9oTEE87kVSmJWlTz3/UBjVUM4NmAie59
+ 3jJ3t5gL+10Iv1TcFHdG0j8ui5+ZL6wVfGNkR3DXw7ipvRWNkRdEI436Arvz/MGFQeGb
+ Zx2x/yjd0MdD1kloFtVfjxUARVLdS2xlmvx+88n7WnxFp5Ix1giYemD4PGpdkXNzhZCM
+ R/oNLLxifaajAOQkUlG5tHiMaWJng58PAMCXH0jKnU8fTlzUwMgTSVFdqrjwCWjVJg3y aQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2tx61by0ug-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 24 Jul 2019 17:50:29 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6OHcEMc018710;
+        Wed, 24 Jul 2019 17:50:28 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6OHcB6L188598;
         Wed, 24 Jul 2019 17:50:28 GMT
 Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2tx60xv7j9-1
+        by userp3020.oracle.com with ESMTP id 2tx60y698f-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Wed, 24 Jul 2019 17:50:28 +0000
 Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6OHoPsb022353;
-        Wed, 24 Jul 2019 17:50:25 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6OHoRTh022364;
+        Wed, 24 Jul 2019 17:50:27 GMT
 Received: from monkey.oracle.com (/71.63.128.209)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 24 Jul 2019 10:50:25 -0700
+        with ESMTP ; Wed, 24 Jul 2019 10:50:27 -0700
 From:   Mike Kravetz <mike.kravetz@oracle.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Hillf Danton <hdanton@sina.com>, Michal Hocko <mhocko@kernel.org>,
@@ -48,9 +48,9 @@ Cc:     Hillf Danton <hdanton@sina.com>, Michal Hocko <mhocko@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [RFC PATCH 1/3] mm, reclaim: make should_continue_reclaim perform dryrun detection
-Date:   Wed, 24 Jul 2019 10:50:12 -0700
-Message-Id: <20190724175014.9935-2-mike.kravetz@oracle.com>
+Subject: [RFC PATCH 2/3] mm, compaction: use MIN_COMPACT_COSTLY_PRIORITY everywhere for costly orders
+Date:   Wed, 24 Jul 2019 10:50:13 -0700
+Message-Id: <20190724175014.9935-3-mike.kravetz@oracle.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190724175014.9935-1-mike.kravetz@oracle.com>
 References: <20190724175014.9935-1-mike.kravetz@oracle.com>
@@ -72,68 +72,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hillf Danton <hdanton@sina.com>
+For PAGE_ALLOC_COSTLY_ORDER allocations, MIN_COMPACT_COSTLY_PRIORITY is
+minimum (highest priority).  Other places in the compaction code key off
+of MIN_COMPACT_PRIORITY.  Costly order allocations will never get to
+MIN_COMPACT_PRIORITY.  Therefore, some conditions will never be met for
+costly order allocations.
 
-Address the issue of should_continue_reclaim continuing true too often
-for __GFP_RETRY_MAYFAIL attempts when !nr_reclaimed and nr_scanned.
-This could happen during hugetlb page allocation causing stalls for
-minutes or hours.
+This was observed when hugetlb allocations could stall for minutes or
+hours when should_compact_retry() would return true more often then it
+should.  Specifically, this was in the case where compact_result was
+COMPACT_DEFERRED and COMPACT_PARTIAL_SKIPPED and no progress was being
+made.
 
-Restructure code so that false will be returned in this case even if
-there are plenty of inactive pages.
-
-Need better description from Hillf Danton
-Need SOB from Hillf Danton
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 ---
- mm/vmscan.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ mm/compaction.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index f4fd02ae233e..484b6b1a954e 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2673,18 +2673,6 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
- 			return false;
- 	}
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 952dc2fb24e5..325b746068d1 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -2294,9 +2294,15 @@ static enum compact_result compact_zone_order(struct zone *zone, int order,
+ 		.alloc_flags = alloc_flags,
+ 		.classzone_idx = classzone_idx,
+ 		.direct_compaction = true,
+-		.whole_zone = (prio == MIN_COMPACT_PRIORITY),
+-		.ignore_skip_hint = (prio == MIN_COMPACT_PRIORITY),
+-		.ignore_block_suitable = (prio == MIN_COMPACT_PRIORITY)
++		.whole_zone = ((order > PAGE_ALLOC_COSTLY_ORDER) ?
++				(prio == MIN_COMPACT_COSTLY_PRIORITY) :
++				(prio == MIN_COMPACT_PRIORITY)),
++		.ignore_skip_hint = ((order > PAGE_ALLOC_COSTLY_ORDER) ?
++				(prio == MIN_COMPACT_COSTLY_PRIORITY) :
++				(prio == MIN_COMPACT_PRIORITY)),
++		.ignore_block_suitable = ((order > PAGE_ALLOC_COSTLY_ORDER) ?
++				(prio == MIN_COMPACT_COSTLY_PRIORITY) :
++				(prio == MIN_COMPACT_PRIORITY))
+ 	};
+ 	struct capture_control capc = {
+ 		.cc = &cc,
+@@ -2338,6 +2344,7 @@ enum compact_result try_to_compact_pages(gfp_t gfp_mask, unsigned int order,
+ 	int may_perform_io = gfp_mask & __GFP_IO;
+ 	struct zoneref *z;
+ 	struct zone *zone;
++	int min_priority;
+ 	enum compact_result rc = COMPACT_SKIPPED;
  
--	/*
--	 * If we have not reclaimed enough pages for compaction and the
--	 * inactive lists are large enough, continue reclaiming
--	 */
--	pages_for_compaction = compact_gap(sc->order);
--	inactive_lru_pages = node_page_state(pgdat, NR_INACTIVE_FILE);
--	if (get_nr_swap_pages() > 0)
--		inactive_lru_pages += node_page_state(pgdat, NR_INACTIVE_ANON);
--	if (sc->nr_reclaimed < pages_for_compaction &&
--			inactive_lru_pages > pages_for_compaction)
--		return true;
--
- 	/* If compaction would go ahead or the allocation would succeed, stop */
- 	for (z = 0; z <= sc->reclaim_idx; z++) {
- 		struct zone *zone = &pgdat->node_zones[z];
-@@ -2700,7 +2688,21 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
- 			;
+ 	/*
+@@ -2350,12 +2357,13 @@ enum compact_result try_to_compact_pages(gfp_t gfp_mask, unsigned int order,
+ 	trace_mm_compaction_try_to_compact_pages(order, gfp_mask, prio);
+ 
+ 	/* Compact each zone in the list */
++	min_priority = (order > PAGE_ALLOC_COSTLY_ORDER) ?
++			MIN_COMPACT_COSTLY_PRIORITY : MIN_COMPACT_PRIORITY;
+ 	for_each_zone_zonelist_nodemask(zone, z, ac->zonelist, ac->high_zoneidx,
+ 								ac->nodemask) {
+ 		enum compact_result status;
+ 
+-		if (prio > MIN_COMPACT_PRIORITY
+-					&& compaction_deferred(zone, order)) {
++		if (prio > min_priority && compaction_deferred(zone, order)) {
+ 			rc = max_t(enum compact_result, COMPACT_DEFERRED, rc);
+ 			continue;
  		}
- 	}
--	return true;
-+
-+	/*
-+	 * If we have not reclaimed enough pages for compaction and the
-+	 * inactive lists are large enough, continue reclaiming
-+	 */
-+	pages_for_compaction = compact_gap(sc->order);
-+	inactive_lru_pages = node_page_state(pgdat, NR_INACTIVE_FILE);
-+	if (get_nr_swap_pages() > 0)
-+		inactive_lru_pages += node_page_state(pgdat, NR_INACTIVE_ANON);
-+
-+	return inactive_lru_pages > pages_for_compaction &&
-+		/*
-+		 * avoid dryrun with plenty of inactive pages
-+		 */
-+		nr_scanned && nr_reclaimed;
- }
- 
- static bool pgdat_memcg_congested(pg_data_t *pgdat, struct mem_cgroup *memcg)
 -- 
 2.20.1
 
