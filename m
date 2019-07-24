@@ -2,94 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE1AF73198
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:28:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94A89731A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:29:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbfGXO16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 10:27:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37172 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725870AbfGXO16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 10:27:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1A8E9AE44;
-        Wed, 24 Jul 2019 14:27:57 +0000 (UTC)
-Message-ID: <3a2f952e090d972b33f62592b12399f9ef3b0513.camel@suse.de>
-Subject: Re: [RFC 3/4] dma-direct: add dma_direct_min_mask
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Christoph Hellwig <hch@lst.de>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Cc:     stefan.wahren@i2se.com, f.fainelli@gmail.com,
-        Robin Murphy <robin.murphy@arm.com>, phil@raspberrypi.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Jisheng.Zhang@synaptics.com, mbrugger@suse.com, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Date:   Wed, 24 Jul 2019 16:27:55 +0200
-In-Reply-To: <20190724135657.GA9075@lst.de>
-References: <20190717153135.15507-1-nsaenzjulienne@suse.de>
-         <20190717153135.15507-4-nsaenzjulienne@suse.de>
-         <20190718091526.GA25321@lst.de>
-         <13dd1a4f33fcf814545f0d93f18429e853de9eaf.camel@suse.de>
-         <58753252bd7964e3b9e9558b633bd325c4a898a1.camel@suse.de>
-         <20190724135124.GA44864@arrakis.emea.arm.com>
-         <20190724135657.GA9075@lst.de>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-m+/FyWNmUHFI+YRB/Gte"
-User-Agent: Evolution 3.32.3 
+        id S2387474AbfGXO3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 10:29:00 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33856 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727296AbfGXO27 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 10:28:59 -0400
+Received: by mail-oi1-f195.google.com with SMTP id l12so35173178oil.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 07:28:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=07WBpiUlOYIZ7+P49JY1jjRjsEVdVyLwuxczlg4O6CI=;
+        b=Hqv8AC23ggzMBGj+XNz87q/bwhtAZqBW9K01CFg1Ke4/U1wAGhKmppexKCc4EGZOyl
+         KrTl6bgaWESUyaEOsfnVY1iFH3FefGe2ETp/hGkkAdl3KKTge7AhOe+NAXu6IwCsvfR6
+         beRC9TM/51Cg2MPPRud6dSvT0IKTOFQha/L7UIs1hoB7whP7edTHVyTP6mVie6n/R6Kh
+         YA+NmOmL5PyVoli5LE8MRCrmBDkOjgYnZcy5rHDoGoc9grpRKF8HOLj5QGncs2JshFZo
+         m9vTH0j8dZ47bJeb/1sn59Q6cmVatCE7m+8hwbuPCkLIyKRIVTtoGquFd4SZtWThYaMF
+         223w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=07WBpiUlOYIZ7+P49JY1jjRjsEVdVyLwuxczlg4O6CI=;
+        b=grhb9+0OWlF0kXIYluY7fgyDjE2p0ynrF3df6xvDFcbs/2J00rBjD8bD9HptSa602R
+         I/ye4x7ZttvTKL2d+myHHNBavTD/APiJ5rQTFDHnhd1QxSPkoAsI3rfJQAyMlaNiCX8b
+         8jyBdkyN1di9yNNlGEwW1O0IbvflzhNkg8GUm6ckG0hj/TEmCQkwbV2W1NaU0ZgFAuh7
+         RNsrgwXmrZpuGhW/d3GJwnWOeWl/LhWd/Goa2dqN/6mCL1ohZKkR/zjysgFQiLUKW5II
+         2iEkZoEumN7K5IMrsid7NvnD1YDOjGhkcWTC6HNrgKGH2Rrx2CxUE+OX3S2lfq+OrQbE
+         Ytrw==
+X-Gm-Message-State: APjAAAX09bHtECVvZec0j4ZC7zHDa9poI6bcAf/nxwefW4+lPHWR3XAJ
+        44HVAar4QYEgaPOYTW4Fcw6RaSHB4ehKX+0hYl8sPA==
+X-Google-Smtp-Source: APXvYqzqMTdf8CPoruUPhw4URkBpdrabgibucjn8aLFByJaBJKYxxZjQtyWMUVa0kX6ewYeRZEUPdgw0udWGwYfMCyA=
+X-Received: by 2002:aca:3dd7:: with SMTP id k206mr37007062oia.47.1563978537976;
+ Wed, 24 Jul 2019 07:28:57 -0700 (PDT)
 MIME-Version: 1.0
+References: <20190722113151.1584-1-nitin.r.gote@intel.com> <CAFqZXNs5vdQwoy2k=_XLiGRdyZCL=n8as6aL01Dw-U62amFREA@mail.gmail.com>
+ <CAG48ez3zRoB7awMdb-koKYJyfP9WifTLevxLxLHioLhH=itZ-A@mail.gmail.com> <201907231516.11DB47AA@keescook>
+In-Reply-To: <201907231516.11DB47AA@keescook>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 24 Jul 2019 16:28:31 +0200
+Message-ID: <CAG48ez2eXJwE+vS2_ahR9Vuc3qD8O4CDZ5Lh6DcrrOq+7VKOYQ@mail.gmail.com>
+Subject: Re: [PATCH] selinux: convert struct sidtab count to refcount_t
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        NitinGote <nitin.r.gote@intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jul 24, 2019 at 12:17 AM Kees Cook <keescook@chromium.org> wrote:
+> On Tue, Jul 23, 2019 at 04:53:47PM +0200, Jann Horn wrote:
+> > On Mon, Jul 22, 2019 at 3:44 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > > On Mon, Jul 22, 2019 at 1:35 PM NitinGote <nitin.r.gote@intel.com> wrote:
+> > > > refcount_t type and corresponding API should be
+> > > > used instead of atomic_t when the variable is used as
+> > > > a reference counter. This allows to avoid accidental
+> > > > refcounter overflows that might lead to use-after-free
+> > > > situations.
+> > > >
+> > > > Signed-off-by: NitinGote <nitin.r.gote@intel.com>
+> > >
+> > > Nack.
+> > >
+> > > The 'count' variable is not used as a reference counter here. It
+> > > tracks the number of entries in sidtab, which is a very specific
+> > > lookup table that can only grow (the count never decreases). I only
+> > > made it atomic because the variable is read outside of the sidtab's
+> > > spin lock and thus the reads and writes to it need to be guaranteed to
+> > > be atomic. The counter is only updated under the spin lock, so
+> > > insertions do not race with each other.
+> >
+> > Probably shouldn't even be atomic_t... quoting Documentation/atomic_t.txt:
+> >
+> > | SEMANTICS
+> > | ---------
+> > |
+> > | Non-RMW ops:
+> > |
+> > | The non-RMW ops are (typically) regular LOADs and STOREs and are canonically
+> > | implemented using READ_ONCE(), WRITE_ONCE(), smp_load_acquire() and
+> > | smp_store_release() respectively. Therefore, if you find yourself only using
+> > | the Non-RMW operations of atomic_t, you do not in fact need atomic_t at all
+> > | and are doing it wrong.
+> >
+> > So I think what you actually want here is a plain "int count", and then:
+> >  - for unlocked reads, either READ_ONCE()+smp_rmb() or smp_load_acquire()
+> >  - for writes, either smp_wmb()+WRITE_ONCE() or smp_store_release()
+> >
+> > smp_load_acquire() and smp_store_release() are probably the nicest
+> > here, since they are semantically clearer than smp_rmb()/smp_wmb().
+>
+> Perhaps we need a "statistics" counter type for these kinds of counters?
+> "counter_t"? I bet there are a lot of atomic_t uses that are just trying
+> to be counters. (likely most of atomic_t that isn't now refcount_t ...)
 
---=-m+/FyWNmUHFI+YRB/Gte
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, 2019-07-24 at 15:56 +0200, Christoph Hellwig wrote:
-> On Wed, Jul 24, 2019 at 02:51:24PM +0100, Catalin Marinas wrote:
-> > I think it may be better if we have both ZONE_DMA and ZONE_DMA32 on
-> > arm64. ZONE_DMA would be based on the smallest dma-ranges as described
-> > in the DT while DMA32 covers the first naturally aligned 4GB of RAM
-> > (unchanged). When a smaller ZONE_DMA is not needed, it could be expande=
-d
-> > to cover what would normally be ZONE_DMA32 (or could we have ZONE_DMA a=
-s
-> > 0-bytes? I don't think GFP_DMA can still allocate memory in this case).
-> >=20
-> > We'd probably have to define ARCH_ZONE_DMA_BITS for arm64 to something
-> > smaller than 32-bit but sufficient to cover the known platforms like
-> > RPi4 (the current 24 is too small, so maybe 30). AFAICT,
-> > __dma_direct_optimal_gfp_mask() figures out whether GFP_DMA or GFP_DMA3=
-2
-> > should be passed.
->=20
-> ARCH_ZONE_DMA_BITS should probably become a variable.  That way we can
-> just initialize it to the default 24 bits in kernel/dma/direct.c and
-> allow architectures to override it in their early boot code.
-
-Thanks both for your feedback. I'll start preparing a proper series.
-
-
---=-m+/FyWNmUHFI+YRB/Gte
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl04ausACgkQlfZmHno8
-x/5nVAf/bB5PkXsWGRSrKIKToRRuuBU3F3Qkczzlf22bZ/BWtFMeSNlTL1Fz2BXY
-fntHM/mLq5eBmbhnOMljQi4PSaNXX09olyWxJl4W6kJuDNyoAQ4+ncqWubT9Sevw
-Kz7S8rqShYPxZT5vdNUHg/11Clx5lB1FkgmErz+Gc5qUunLClW66KuhTy6pls4vt
-Odp5uE2S6j/YXpM1osSK7Ty3psAoyJ8QEGSlDiFFi4Zx69ycqmiKitmWYaAHCLu5
-9a/KvFdyeE8UrF5sALymEDQr/G3V+G3AUtbI+xqsmTacUpCJYMhMJr2xtb3sWb5L
-+UzW6OpVwWRETgf1XlNpbiIHOrAKKA==
-=Tmgu
------END PGP SIGNATURE-----
-
---=-m+/FyWNmUHFI+YRB/Gte--
-
+This isn't a statistics counter though; this thing needs ordered
+memory accesses, which you wouldn't need for statistics.
