@@ -2,99 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 753FD72C28
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 12:11:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6CCA72C2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 12:13:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbfGXKLO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 06:11:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54466 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725776AbfGXKLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 06:11:14 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B986218B8;
-        Wed, 24 Jul 2019 10:11:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563963073;
-        bh=ZReY6BfZr785T/XUU+EfBwuJQvluwwTrNg76KPixSQE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QzGjz/xIlcZOYSnxx51ICns8OYaUNPys5YNOgjZpt4dlwJQDqTO1MxwN4fHeioSA2
-         VG5s8L34uh6X7ITH2KhN5PEz83NkW+3tdwJ03HvGeWCY1liS/Id0b/UcKtNUPBFuFI
-         EyzV1j7S5xUedjFHZ0U7agCWeaQKDSLtiuTcK/Ko=
-Date:   Wed, 24 Jul 2019 12:11:09 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Wu Hao <hao.wu@intel.com>
-Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, atull@kernel.org,
-        Xu Yilun <yilun.xu@intel.com>
-Subject: Re: [PATCH v3 09/12] fpga: dfl: afu: add STP (SignalTap) support
-Message-ID: <20190724101109.GE29532@kroah.com>
-References: <1563857495-26692-1-git-send-email-hao.wu@intel.com>
- <1563857495-26692-10-git-send-email-hao.wu@intel.com>
+        id S1726555AbfGXKNS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 06:13:18 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45907 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726444AbfGXKNR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 06:13:17 -0400
+Received: by mail-wr1-f67.google.com with SMTP id f9so46274244wre.12;
+        Wed, 24 Jul 2019 03:13:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=qP3V0F8WB62jX3gDppOBMqvVTpl8jvF/MWPx//rxH3I=;
+        b=ThQQ5MqPBe7sMVGlJ3OD59ZKMZEhPr15aG3ljbNebMPz0UwruFjqka7INR9MzhFoBZ
+         GL2AzJKsITND9ZiixWnmYR7XQRnaPoEy/oqYhx4UL46zVMseoblqVf77u08Edv1sZStA
+         DOVpf+FRFZGnrlUrsoZ83bIbI3y5URow24Y1VRB+cIW7jjfMhOwVD9tqwefw058DikLG
+         UY1PMy+f/yrH7d+5KOKjJ8ZWqnal2TG4q9+MXCPekMWSIUNHZJgP4KMO7fKbr+AIyjui
+         jnH/sPZ+d1nK6L20ImiQ4wH/NWTkrXmVdwRBAS3JCWctvTyS0VjP8QUEMvtZI4KVe0oM
+         Hfeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qP3V0F8WB62jX3gDppOBMqvVTpl8jvF/MWPx//rxH3I=;
+        b=NkevTcAnr8RR6+XwqB7CUntba0LJf4TnU78y+dLYPwroXbWL/E7xSvlJ5SmS+W7sGJ
+         VXuPTsjrWaDwkJoxu84U/qX6uY0r5utYOB/GleZgFqi6xvABd7yi+NCmVsYurMmcFk/U
+         vqxYYkbJsMj7Znn2RRUxyHaB9DOgzJhWEkv5BSryPH9qTdnk++tmguKy1Te5CybI4P1Y
+         nA6cFime5H76RFFrptLysFkFtjSlaFcEvNT72tubsYhLM+Jz7QZ54U1vcsp9iUcDBZ+X
+         3vuL5LBIKp0aloLJaSiIdNwSyVfz/v4cRXeAUAqBc4KNazG3F/Jpw4p+QtHMrYdfhBY4
+         EYsA==
+X-Gm-Message-State: APjAAAUEc/9ecMNir2vELzQIWVFGIwVo3EC/KX4XnQLzqJTZyfWhEZ74
+        lup9GjISg2xPlKI+K3i1qreF54OL
+X-Google-Smtp-Source: APXvYqwmLY+GQMo5KFT7NcZEEdvYXExGCmeP7Vw8FXB+Xjfx+Kp5yosA+mrSoWnsEOcdeOBMZU/zxw==
+X-Received: by 2002:adf:f84f:: with SMTP id d15mr86190372wrq.53.1563963194380;
+        Wed, 24 Jul 2019 03:13:14 -0700 (PDT)
+Received: from [192.168.8.147] (200.150.22.93.rev.sfr.net. [93.22.150.200])
+        by smtp.gmail.com with ESMTPSA id e3sm42770344wrs.37.2019.07.24.03.13.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Jul 2019 03:13:13 -0700 (PDT)
+Subject: Re: [PATCH 4.4 stable net] net: tcp: Fix use-after-free in
+ tcp_write_xmit
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+To:     Mao Wenan <maowenan@huawei.com>, davem@davemloft.net,
+        gregkh@linuxfoundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190724091715.137033-1-maowenan@huawei.com>
+ <badce2b6-b75e-db01-39c8-d68a0161c101@gmail.com>
+Message-ID: <be1aebb5-fee7-e079-d864-a2e4aa13007f@gmail.com>
+Date:   Wed, 24 Jul 2019 12:13:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1563857495-26692-10-git-send-email-hao.wu@intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <badce2b6-b75e-db01-39c8-d68a0161c101@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 12:51:32PM +0800, Wu Hao wrote:
-> STP (SignalTap) is one of the private features under the port for
-> debugging. This patch adds private feature driver support for it
-> to allow userspace applications to mmap related mmio region and
-> provide STP service.
+
+
+On 7/24/19 12:01 PM, Eric Dumazet wrote:
 > 
-> Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-> Signed-off-by: Wu Hao <hao.wu@intel.com>
-> Acked-by: Moritz Fischer <mdf@kernel.org>
-> Acked-by: Alan Tull <atull@kernel.org>
-> Signed-off-by: Moritz Fischer <mdf@kernel.org>
-> ---
->  drivers/fpga/dfl-afu-main.c | 34 ++++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
 > 
-> diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
-> index 15dd4cb..395f96e 100644
-> --- a/drivers/fpga/dfl-afu-main.c
-> +++ b/drivers/fpga/dfl-afu-main.c
-> @@ -514,6 +514,36 @@ static void port_afu_uinit(struct platform_device *pdev,
->  	.uinit = port_afu_uinit,
->  };
->  
-> +static int port_stp_init(struct platform_device *pdev,
-> +			 struct dfl_feature *feature)
-> +{
-> +	struct resource *res = &pdev->resource[feature->resource_index];
-> +
-> +	dev_dbg(&pdev->dev, "PORT STP Init.\n");
+> On 7/24/19 11:17 AM, Mao Wenan wrote:
+>> There is one report about tcp_write_xmit use-after-free with version 4.4.136:
+> 
+> Current stable 4.4 is 4.4.186
+> 
+> Can you check the bug is still there ?
+> 
 
-ftrace is your friend, no need to do a lot of "look I am here!"
-messages.
+BTW, I tried the C repro and another bug showed up.
 
-> +
-> +	return afu_mmio_region_add(dev_get_platdata(&pdev->dev),
-> +				   DFL_PORT_REGION_INDEX_STP,
-> +				   resource_size(res), res->start,
-> +				   DFL_PORT_REGION_MMAP | DFL_PORT_REGION_READ |
-> +				   DFL_PORT_REGION_WRITE);
-> +}
-> +
-> +static void port_stp_uinit(struct platform_device *pdev,
-> +			   struct dfl_feature *feature)
-> +{
-> +	dev_dbg(&pdev->dev, "PORT STP UInit.\n");
+It looks like 4.4.186 misses other fixes :/
 
-Same here.
+[  180.811610] skbuff: skb_under_panic: text:ffffffff825ec6ea len:156 put:84 head:ffff8837dd1f0990 data:ffff8837dd1f098c tail:0x98 end:0xc0 dev:ip6gre0
+[  180.825037] ------------[ cut here ]------------
+[  180.829688] kernel BUG at net/core/skbuff.c:104!
+[  180.834316] invalid opcode: 0000 [#1] SMP KASAN
+[  180.839305] gsmi: Log Shutdown Reason 0x03
+[  180.843426] Modules linked in: ipip bonding bridge stp llc tun veth w1_therm wire i2c_mux_pca954x i2c_mux cdc_acm ehci_pci ehci_hcd ip_gre mlx4_en ib_uverbs mlx4_ib ib_sa ib_mad ib_core ib_addr mlx4_core
+[  180.862052] CPU: 22 PID: 1619 Comm: kworker/22:1 Not tainted 4.4.186-smp-DEV #41
+[  180.869475] Hardware name: Intel BIOS 2.56.0 10/19/2018
+[  180.876463] Workqueue: ipv6_addrconf addrconf_dad_work
+[  180.881658] task: ffff8837f1f59d80 ti: ffff8837eeeb8000 task.ti: ffff8837eeeb8000
+[  180.889171] RIP: 0010:[<ffffffff821ef26f>]  [<ffffffff821ef26f>] skb_panic+0x14f/0x210
+[  180.897162] RSP: 0018:ffff8837eeebf4b8  EFLAGS: 00010282
+[  180.902504] RAX: 0000000000000088 RBX: ffff8837eeeeb600 RCX: 0000000000000000
+[  180.909645] RDX: 0000000000000000 RSI: 0000000000000246 RDI: ffffffff83508c00
+[  180.916854] RBP: ffff8837eeebf520 R08: 0000000000000016 R09: 0000000000000000
+[  180.924029] R10: ffff881fc8abf038 R11: 0000000000000007 R12: ffff881fc8abe720
+[  180.931213] R13: ffffffff82aa9e80 R14: 00000000000000c0 R15: 0000000000000098
+[  180.938390] FS:  0000000000000000(0000) GS:ffff8837ff280000(0000) knlGS:0000000000000000
+[  180.946519] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  180.952290] CR2: 00007f519426f530 CR3: 00000037d37f2000 CR4: 0000000000160670
+[  180.959447] Stack:
+[  180.961458]  ffff8837dd1f098c 0000000000000098 00000000000000c0 ffff881fc8abe720
+[  180.968909]  ffffea00df747c00 ffff881fff404b40 ffff8837ff2a1a20 ffff8837eeebf5b8
+[  180.976371]  ffff8837eeeeb600 ffffffff825ec6ea 1ffff106fddd7eb6 ffff8837eeeeb600
+[  180.983848] Call Trace:
+[  180.986297]  [<ffffffff825ec6ea>] ? ip6gre_header+0xba/0xd50
+[  180.991962]  [<ffffffff821f0e01>] skb_push+0xc1/0x100
+[  180.997023]  [<ffffffff825ec6ea>] ip6gre_header+0xba/0xd50
+[  181.002519]  [<ffffffff8158dc16>] ? memcpy+0x36/0x40
+[  181.007509]  [<ffffffff825ec630>] ? ip6gre_changelink+0x6d0/0x6d0
+[  181.013629]  [<ffffffff82550741>] ? ndisc_constructor+0x5b1/0x770
+[  181.019728]  [<ffffffff82666861>] ? _raw_write_unlock_bh+0x41/0x50
+[  181.025924]  [<ffffffff8226540b>] ? __neigh_create+0xe6b/0x1670
+[  181.031851]  [<ffffffff8225817f>] neigh_connected_output+0x23f/0x480
+[  181.038219]  [<ffffffff824f61ec>] ip6_finish_output2+0x74c/0x1a90
+[  181.044324]  [<ffffffff810f1d33>] ? print_context_stack+0x73/0xf0
+[  181.050429]  [<ffffffff824f5aa0>] ? ip6_xmit+0x1700/0x1700
+[  181.055933]  [<ffffffff82304a28>] ? nf_hook_slow+0x118/0x1b0
+[  181.061617]  [<ffffffff82502d7a>] ip6_finish_output+0x2ba/0x580
+[  181.067546]  [<ffffffff82503179>] ip6_output+0x139/0x380
+[  181.072884]  [<ffffffff82503040>] ? ip6_finish_output+0x580/0x580
+[  181.079004]  [<ffffffff82502ac0>] ? ip6_fragment+0x31b0/0x31b0
+[  181.084852]  [<ffffffff82251b51>] ? dst_init+0x4b1/0x820
+[  181.090172]  [<ffffffff8158da45>] ? kasan_unpoison_shadow+0x35/0x50
+[  181.096437]  [<ffffffff8158da45>] ? kasan_unpoison_shadow+0x35/0x50
+[  181.102712]  [<ffffffff8254f3ca>] NF_HOOK_THRESH.constprop.22+0xca/0x180
+[  181.109421]  [<ffffffff8254f300>] ? ndisc_alloc_skb+0x340/0x340
+[  181.115338]  [<ffffffff8254d820>] ? compat_ipv6_setsockopt+0x180/0x180
+[  181.121874]  [<ffffffff8254fbc2>] ndisc_send_skb+0x742/0xd10
+[  181.127550]  [<ffffffff8254f480>] ? NF_HOOK_THRESH.constprop.22+0x180/0x180
+[  181.134516]  [<ffffffff821f2440>] ? skb_complete_tx_timestamp+0x280/0x280
+[  181.141311]  [<ffffffff8254e2b3>] ? ndisc_fill_addr_option+0x193/0x260
+[  181.147844]  [<ffffffff82553bd9>] ndisc_send_rs+0x179/0x2d0
+[  181.153426]  [<ffffffff8251e7df>] addrconf_dad_completed+0x41f/0x7c0
+[  181.159795]  [<ffffffff81297f78>] ? pick_next_entity+0x198/0x470
+[  181.165807]  [<ffffffff8251e3c0>] ? addrconf_rs_timer+0x4a0/0x4a0
+[  181.171918]  [<ffffffff81aab928>] ? find_next_bit+0x18/0x20
+[  181.177504]  [<ffffffff81a99ec9>] ? prandom_seed+0xd9/0x160
+[  181.183095]  [<ffffffff8251eef5>] addrconf_dad_work+0x375/0x9e0
+[  181.189024]  [<ffffffff8251eb80>] ? addrconf_dad_completed+0x7c0/0x7c0
+[  181.195576]  [<ffffffff81249d8f>] process_one_work+0x52f/0xf60
+[  181.201468]  [<ffffffff8124a89d>] worker_thread+0xdd/0xe80
+[  181.206977]  [<ffffffff8265cf0a>] ? __schedule+0x73a/0x16d0
+[  181.212550]  [<ffffffff8124a7c0>] ? process_one_work+0xf60/0xf60
+[  181.218572]  [<ffffffff8125a115>] kthread+0x205/0x2b0
+[  181.223633]  [<ffffffff81259f10>] ? kthread_worker_fn+0x4e0/0x4e0
+[  181.229743]  [<ffffffff81259f10>] ? kthread_worker_fn+0x4e0/0x4e0
+[  181.235834]  [<ffffffff8266726f>] ret_from_fork+0x3f/0x70
+[  181.241232]  [<ffffffff81259f10>] ? kthread_worker_fn+0x4e0/0x4e0
 
-Why have this function at all if it does not do anything?
-
-
-thanks,
-
-greg k-h
