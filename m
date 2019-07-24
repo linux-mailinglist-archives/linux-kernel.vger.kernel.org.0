@@ -2,97 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 366EB728AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:55:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B2BF728B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:57:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726431AbfGXGzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 02:55:33 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41128 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbfGXGzd (ORCPT
+        id S1726296AbfGXG5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 02:57:05 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43449 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725970AbfGXG5F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 02:55:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FeQ44avxjhNKGvclmL+IaW/brdwZd48AYHsy5z6HFTA=; b=SRZc6fvQkH2Cx6BKrVs1zG1pG
-        HdVl1GhjX6GW6pHtPOfTP4qzncVkK2k3hGyRQTPK7uTqj4k/v8rlT1OWZCMUsTh+m03nEou75xUL6
-        d4wm73OlcqIqyEn0gXCeqXht0OdExcVR+P9cg8w4yAxVZcAvS2A9wYUs056gY8LM0pQ69uGSnrvyx
-        pdL4AQ/ltJ0Ud6+XTSN2QiBVljMoIq5n16UvtwAhwZS5ruZPx2kmSv0dfmyYsNon2mqUiZHp2h8V6
-        xiQaZm9snI9m+RdBQ0bg9XTDmynrNCE4/ejLCnx309RG/et+4PZjYTHppyDiDhverokz5FMeIUSxv
-        D2kKI3Owg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hqBBS-0006A4-Vh; Wed, 24 Jul 2019 06:55:31 +0000
-Date:   Tue, 23 Jul 2019 23:55:30 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        Pratik Patel <pratikp@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        Vincent Donnefort <Vincent.Donnefort@arm.com>,
-        Sudipto Paul <Sudipto.Paul@arm.com>,
-        "Andrew F . Davis" <afd@ti.com>,
-        Xu YiPing <xuyiping@hisilicon.com>,
-        "Chenfeng (puck)" <puck.chen@hisilicon.com>,
-        butao <butao@hisilicon.com>,
-        "Xiaqing (A)" <saberlily.xia@hisilicon.com>,
-        Yudongbin <yudongbin@hisilicon.com>,
-        Chenbo Feng <fengc@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Hridya Valsaraju <hridya@google.com>
-Subject: Re: [PATCH v6 2/5] dma-buf: heaps: Add heap helpers
-Message-ID: <20190724065530.GA16225@infradead.org>
-References: <20190624194908.121273-1-john.stultz@linaro.org>
- <20190624194908.121273-3-john.stultz@linaro.org>
- <20190718100654.GA19666@infradead.org>
- <CALAqxLX1s4mbitE-_1s1vFPJrbrCKqpyhYoFW0V6hMEqE=eKVw@mail.gmail.com>
- <CAF6AEGuM1+pimGNhyKHbYR0BdH=hH+Sai0es8RjGHE9jKHjngw@mail.gmail.com>
+        Wed, 24 Jul 2019 02:57:05 -0400
+Received: by mail-lf1-f66.google.com with SMTP id c19so31140553lfm.10
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 23:57:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lIeQTvI/rg6NP5pdb+z1gNA3SOY2YpC1Hgmcxc3rkBA=;
+        b=XvHsNPAm5IN+GhcuAdEYiRH4EL+PM7TsT3AShmzzKbaACCQNRMOb3sxWIIRVvLOZzc
+         uGFM6N+//dbgF8afPKqmbDhRfg3HTCucaxwp/EFvHcfBDAUZNfBg7Li618O+Hu2tm2fx
+         NVFMlgC4EMmsiAb6sqXX8cHOI6L3XvvnYqQGEYFPqIuoPt1Vl2TIvLrVatOq4C+lHz9U
+         v/n2B712j5PO+bQZe5UUvvvKI5dnI/8Hejz2Q2rtp00jtnE4wEaU+OcwfL2tJIjjjiGW
+         yH4hMw3ABo0GhqQrNMlVOwhAqjS2pprrwf4x6kBJR/qpxAUzptQGms3F4RwJo1CEe9Nw
+         gvcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lIeQTvI/rg6NP5pdb+z1gNA3SOY2YpC1Hgmcxc3rkBA=;
+        b=rmTnV3ZwnnhDUAa33B/HSZnE5UQGPfNhdvuz6P5bSTq7oYrhxrooN3Fdt6Ms7Cdjr5
+         qo3wchwLgORO0BvVvUn0bgb9FEW8TRAQYtR3LT2Fi1OSfs4f+WUznN1qG0DCR1c1X0j/
+         w7VufC8Ffl+e9oazs7rPu4xkRU8KlFaxo/Bs5pwyaCGrfWpYB2oU1mSXTzuGcC9keHBW
+         uFofRR+gxYFCmqrOny714MdEY/Abfe8psQeC4MaAAGYBI0ZMx0geYjucNXPimjutBmUQ
+         W14XSLvsY4EILpnZs2EL4Sdh89xtcAU1yyP4ks6HqW8efrCr9dBbYoKz1iheHqtUhrL9
+         wvFQ==
+X-Gm-Message-State: APjAAAWM2sJkHUkHq01XvfikhW/gxJzUQm20YyHDRm/uepaPT5Pp8Bl6
+        Twqe0s6mZkIGD64bFjjh1Bk=
+X-Google-Smtp-Source: APXvYqyC+fWp50RlGQnF/y2fkdwpSxZiYSYr30oAzPz7E2yG5a1ENppjsn8lupjuQnQywyKOldpSVw==
+X-Received: by 2002:a19:c80b:: with SMTP id y11mr36579654lff.81.1563951423019;
+        Tue, 23 Jul 2019 23:57:03 -0700 (PDT)
+Received: from uranus.localdomain ([5.18.103.226])
+        by smtp.gmail.com with ESMTPSA id f24sm7750223lfk.72.2019.07.23.23.57.02
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 23 Jul 2019 23:57:02 -0700 (PDT)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id C438A460775; Wed, 24 Jul 2019 09:56:51 +0300 (MSK)
+Date:   Wed, 24 Jul 2019 09:56:51 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Yang Xu <xuyang2018.jy@cn.fujitsu.com>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] sys_prctl(): remove unsigned comparision with less
+ than zero
+Message-ID: <20190724065651.GJ4832@uranus.lan>
+References: <20190723094809.GE4832@uranus.lan>
+ <1563934308-20833-1-git-send-email-xuyang2018.jy@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAF6AEGuM1+pimGNhyKHbYR0BdH=hH+Sai0es8RjGHE9jKHjngw@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <1563934308-20833-1-git-send-email-xuyang2018.jy@cn.fujitsu.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 01:09:55PM -0700, Rob Clark wrote:
-> On Mon, Jul 22, 2019 at 9:09 PM John Stultz <john.stultz@linaro.org> wrote:
-> >
-> > On Thu, Jul 18, 2019 at 3:06 AM Christoph Hellwig <hch@infradead.org> wrote:
-> > >
-> > > Is there any exlusion between mmap / vmap and the device accessing
-> > > the data?  Without that you are going to run into a lot of coherency
-> > > problems.
+On Wed, Jul 24, 2019 at 10:11:48AM +0800, Yang Xu wrote:
+> Currently, when calling prctl(PR_SET_TIMERSLACK, arg2), arg2 is an
+> unsigned long value, arg2 will never < 0. Negative judgment is
+> meaningless, so remove it.
 > 
-> dma_fence is basically the way to handle exclusion between different
-> device access (since device access tends to be asynchronous).  For
-> device<->device access, each driver is expected to take care of any
-> cache(s) that the device might have.  (Ie. device writing to buffer
-> should flush it's caches if needed before signalling fence to let
-> reading device know that it is safe to read, etc.)
-> 
-> _begin/end_cpu_access() is intended to be the exclusion for CPU access
-> (which is synchronous)
-
-What I mean is that we need a clear state machine (preferably including
-ownership tracking ala dma-debug) where a piece of memory has one
-owner at a time that can access it.  Only the owner can access is at
-that time, and at any owner switch we need to flush/invalidate all
-relevant caches.  And with memory that is vmaped and mapped to userspace
-that can get really complicated.
-
-The above sounds like you have some of that in place, but we'll really
-need clear rules to make sure we don't have holes in the scheme.
+> Fixes: 6976675d9404 ("hrtimer: create a "timer_slack" field in the task struct")
+> Signed-off-by: Yang Xu <xuyang2018.jy@cn.fujitsu.com>
+> Cc: Cyrill Gorcunov <gorcunov@gmail.com>
+Acked-by: Cyrill Gorcunov <gorcunov@gmail.com>
