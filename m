@@ -2,201 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64562732C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 17:31:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F28C732D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 17:35:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728471AbfGXPbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 11:31:04 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33872 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727529AbfGXPbE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 11:31:04 -0400
-Received: by mail-lf1-f66.google.com with SMTP id b29so25022670lfq.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 08:31:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=w04TwcBlrwE0OA2QepWCIyollMUBH4W0M6LcA4jtxc4=;
-        b=AjM19knBV84Dn1ZuV7wNvmsmmirz1UY6xC79pbJYVejpy1o6FJZS/OOfMvWLILrYRI
-         KgCiUyz3E+DJLovwOe2ERKXIcw1Gf04vpzKyUS7E9m0aoUwRb8vVLufVFNZJl46ULvZG
-         T9wQyXEzEETSWc+CzxB4t1aV4BBiC2S2RUl9Ie5q2Q3rawXi+CAQj9USLYUsyGCjdDkc
-         4IrpjUX5adig8IFh5u2LmPQH/M+zWLJ6T2VFuF4bXaV1XJ4ZAQetoVjtQJgmKLesbJGJ
-         ql2ydeAfHrPkE7C3b51d3j8VAIlhrNQ1ymJAn1uh0WWgg9mXQXZyeG3w5mZvaDij0fIE
-         Un3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=w04TwcBlrwE0OA2QepWCIyollMUBH4W0M6LcA4jtxc4=;
-        b=q7O+gdBVLA5A9/r2oifnuRUtjPm8pElmaIzDZlgURsxPGJ3fOYxPiyvRErqao71L0n
-         8Wy6m/2bhPNTVERhkCsT5Qhu8cmB6QrW82CtnOy55Jo9eBA9hJ0BUW2IQg8Alj7z17it
-         JO7JZ1lpYVdpMGKi/EqoA1CnEEn73Q+IV3ZKN/hV47ERw4CFlKjYs9Gxvwr99bi3HbrO
-         Io6+3+pP585djlvH078M9KGvT/CM2fTrFCs9upCiZSq6LD/85j5x30ozyRLl+zMVlmhv
-         2C7ZDS613ub3nqs0vWR1WqC14uAajfzI1x1+iLBd2yHOB9QGMBKJu4DXDTQeclBHAr3r
-         KSsQ==
-X-Gm-Message-State: APjAAAVajKVKIXGMmhodBaRAwKLqyD4UAaUD7EC33M44J3DLvzYRa7Rc
-        lxVNNZ5kZG3hmnA5wUZsD5lwuA==
-X-Google-Smtp-Source: APXvYqwZaetBqiZkU3WyKGnWXjAjS11aiAKWTs8GvtiBVKZJwmURwRiQwY55D2YKhy42HTE67eo63g==
-X-Received: by 2002:a05:6512:1d2:: with SMTP id f18mr37896536lfp.173.1563982260973;
-        Wed, 24 Jul 2019 08:31:00 -0700 (PDT)
-Received: from [10.44.66.8] ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id q4sm9720175lje.99.2019.07.24.08.30.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 08:31:00 -0700 (PDT)
-Subject: Re: [PATCH] qcom: Add BCM vote macro to TCS header
-To:     Jordan Crouse <jcrouse@codeaurora.org>,
-        freedreno@lists.freedesktop.org
-Cc:     ilina@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-pm@vger.kernel.org,
-        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>
-References: <1563378793-22023-1-git-send-email-jcrouse@codeaurora.org>
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
- 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
- KEmKjLDvB0pePJkdTw==
-Message-ID: <31e9d2c6-edcd-11b8-4c4b-d51ed2d8f7b7@linaro.org>
-Date:   Wed, 24 Jul 2019 18:30:58 +0300
+        id S1727997AbfGXPfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 11:35:25 -0400
+Received: from mga12.intel.com ([192.55.52.136]:24911 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726591AbfGXPfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 11:35:25 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 08:35:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
+   d="scan'208";a="345136302"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga005.jf.intel.com with ESMTP; 24 Jul 2019 08:35:23 -0700
+Date:   Wed, 24 Jul 2019 09:32:28 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     "Busch, Keith" <keith.busch@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Brice Goglin <Brice.Goglin@inria.fr>
+Subject: Re: [PATCHv2 1/2] hmat: Register memory-side cache after parsing
+Message-ID: <20190724153228.GB5379@localhost.localdomain>
+References: <20190515215444.22256-1-keith.busch@intel.com>
+ <2816033.6i9P6v0dDn@kreacher>
 MIME-Version: 1.0
-In-Reply-To: <1563378793-22023-1-git-send-email-jcrouse@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2816033.6i9P6v0dDn@kreacher>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jordan,
+On Thu, Jun 13, 2019 at 01:27:05PM -0700, Rafael J. Wysocki wrote:
+> On Wednesday, May 15, 2019 11:54:43 PM CEST Keith Busch wrote:
+> > Instead of registering the hmat cache attributes in line with parsing
+> > the table, save the attributes in the memory target and register them
+> > after parsing completes. This will make it easier to register the
+> > attributes later when hot add is supported.
+> > 
+> > Signed-off-by: Keith Busch <keith.busch@intel.com>
+> > ---
+> > v1 -> v2:
+> > 
+> >   Fixed multi-level caches, and no caches. v1 incorrectly assumed only a level
+> >   1 always existed (Brice).
+> > 
+> >  drivers/acpi/hmat/hmat.c | 70 +++++++++++++++++++++++++++++++++++++-----------
+> >  1 file changed, 55 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/drivers/acpi/hmat/hmat.c b/drivers/acpi/hmat/hmat.c
+> > index 96b7d39a97c6..bf23c9a27958 100644
+> > --- a/drivers/acpi/hmat/hmat.c
+> > +++ b/drivers/acpi/hmat/hmat.c
+> > @@ -36,11 +36,17 @@ enum locality_types {
+> >  
+> >  static struct memory_locality *localities_types[4];
+> >  
+> > +struct target_cache {
+> > +	struct list_head node;
+> > +	struct node_cache_attrs cache_attrs;
+> > +};
+> > +
+> >  struct memory_target {
+> >  	struct list_head node;
+> >  	unsigned int memory_pxm;
+> >  	unsigned int processor_pxm;
+> >  	struct node_hmem_attrs hmem_attrs;
+> > +	struct list_head caches;
+> >  };
+> >  
+> >  struct memory_initiator {
+> > @@ -110,6 +116,7 @@ static __init void alloc_memory_target(unsigned int mem_pxm)
+> >  	target->memory_pxm = mem_pxm;
+> >  	target->processor_pxm = PXM_INVAL;
+> >  	list_add_tail(&target->node, &targets);
+> > +	INIT_LIST_HEAD(&target->caches);
+> >  }
+> >  
+> >  static __init const char *hmat_data_type(u8 type)
+> > @@ -314,7 +321,8 @@ static __init int hmat_parse_cache(union acpi_subtable_headers *header,
+> >  				   const unsigned long end)
+> >  {
+> >  	struct acpi_hmat_cache *cache = (void *)header;
+> > -	struct node_cache_attrs cache_attrs;
+> > +	struct memory_target *target;
+> > +	struct target_cache *tcache;
+> >  	u32 attrs;
+> >  
+> >  	if (cache->header.length < sizeof(*cache)) {
+> > @@ -328,37 +336,47 @@ static __init int hmat_parse_cache(union acpi_subtable_headers *header,
+> >  		cache->memory_PD, cache->cache_size, attrs,
+> >  		cache->number_of_SMBIOShandles);
+> >  
+> > -	cache_attrs.size = cache->cache_size;
+> > -	cache_attrs.level = (attrs & ACPI_HMAT_CACHE_LEVEL) >> 4;
+> > -	cache_attrs.line_size = (attrs & ACPI_HMAT_CACHE_LINE_SIZE) >> 16;
+> > +	target = find_mem_target(cache->memory_PD);
+> > +	if (!target)
+> > +		return 0;
+> > +
+> > +	tcache = kzalloc(sizeof(*tcache), GFP_KERNEL);
+> > +	if (!tcache) {
+> > +		pr_notice_once("Failed to allocate HMAT cache info\n");
+> > +		return 0;
+> > +	}
+> > +
+> > +	tcache->cache_attrs.size = cache->cache_size;
+> > +	tcache->cache_attrs.level = (attrs & ACPI_HMAT_CACHE_LEVEL) >> 4;
+> > +	tcache->cache_attrs.line_size = (attrs & ACPI_HMAT_CACHE_LINE_SIZE) >> 16;
+> >  
+> >  	switch ((attrs & ACPI_HMAT_CACHE_ASSOCIATIVITY) >> 8) {
+> >  	case ACPI_HMAT_CA_DIRECT_MAPPED:
+> > -		cache_attrs.indexing = NODE_CACHE_DIRECT_MAP;
+> > +		tcache->cache_attrs.indexing = NODE_CACHE_DIRECT_MAP;
+> >  		break;
+> >  	case ACPI_HMAT_CA_COMPLEX_CACHE_INDEXING:
+> > -		cache_attrs.indexing = NODE_CACHE_INDEXED;
+> > +		tcache->cache_attrs.indexing = NODE_CACHE_INDEXED;
+> >  		break;
+> >  	case ACPI_HMAT_CA_NONE:
+> >  	default:
+> > -		cache_attrs.indexing = NODE_CACHE_OTHER;
+> > +		tcache->cache_attrs.indexing = NODE_CACHE_OTHER;
+> >  		break;
+> >  	}
+> >  
+> >  	switch ((attrs & ACPI_HMAT_WRITE_POLICY) >> 12) {
+> >  	case ACPI_HMAT_CP_WB:
+> > -		cache_attrs.write_policy = NODE_CACHE_WRITE_BACK;
+> > +		tcache->cache_attrs.write_policy = NODE_CACHE_WRITE_BACK;
+> >  		break;
+> >  	case ACPI_HMAT_CP_WT:
+> > -		cache_attrs.write_policy = NODE_CACHE_WRITE_THROUGH;
+> > +		tcache->cache_attrs.write_policy = NODE_CACHE_WRITE_THROUGH;
+> >  		break;
+> >  	case ACPI_HMAT_CP_NONE:
+> >  	default:
+> > -		cache_attrs.write_policy = NODE_CACHE_WRITE_OTHER;
+> > +		tcache->cache_attrs.write_policy = NODE_CACHE_WRITE_OTHER;
+> >  		break;
+> >  	}
+> > +	list_add_tail(&tcache->node, &target->caches);
+> >  
+> > -	node_add_cache(pxm_to_node(cache->memory_PD), &cache_attrs);
+> >  	return 0;
+> >  }
+> >  
+> > @@ -577,20 +595,37 @@ static __init void hmat_register_target_initiators(struct memory_target *target)
+> >  	}
+> >  }
+> >  
+> > +static __init void hmat_register_target_cache(struct memory_target *target)
+> > +{
+> > +	unsigned mem_nid = pxm_to_node(target->memory_pxm);
+> > +	struct target_cache *tcache;
+> > +
+> > +	list_for_each_entry(tcache, &target->caches, node)
+> > +		node_add_cache(mem_nid, &tcache->cache_attrs);
+> > +}
+> > +
+> >  static __init void hmat_register_target_perf(struct memory_target *target)
+> >  {
+> >  	unsigned mem_nid = pxm_to_node(target->memory_pxm);
+> >  	node_set_perf_attrs(mem_nid, &target->hmem_attrs, 0);
+> >  }
+> >  
+> > +static __init void hmat_register_target(struct memory_target *target)
+> > +{
+> > +	if (!node_online(pxm_to_node(target->memory_pxm)))
+> > +		return;
+> > +
+> > +	hmat_register_target_initiators(target);
+> > +	hmat_register_target_cache(target);
+> > +	hmat_register_target_perf(target);
+> > +}
+> > +
+> >  static __init void hmat_register_targets(void)
+> >  {
+> >  	struct memory_target *target;
+> >  
+> > -	list_for_each_entry(target, &targets, node) {
+> > -		hmat_register_target_initiators(target);
+> > -		hmat_register_target_perf(target);
+> > -	}
+> > +	list_for_each_entry(target, &targets, node)
+> > +		hmat_register_target(target);
+> >  }
+> >  
+> >  static __init void hmat_free_structures(void)
+> > @@ -598,8 +633,13 @@ static __init void hmat_free_structures(void)
+> >  	struct memory_target *target, *tnext;
+> >  	struct memory_locality *loc, *lnext;
+> >  	struct memory_initiator *initiator, *inext;
+> > +	struct target_cache *tcache, *cnext;
+> >  
+> >  	list_for_each_entry_safe(target, tnext, &targets, node) {
+> > +		list_for_each_entry_safe(tcache, cnext, &target->caches, node) {
+> > +			list_del(&tcache->node);
+> > +			kfree(tcache);
+> > +		}
+> >  		list_del(&target->node);
+> >  		kfree(target);
+> >  	}
+> > 
+> 
+> Not sure what to do with this patch and the next one in the series.
+> 
+> FWIW, they both are fine by me.
+> 
+> Also ISTR seeing them in a series from Dan. (?)
 
-On 7/17/19 18:53, Jordan Crouse wrote:
-> The A6XX family of Adreno GPUs use a microcontroller to control the
-> GPU clock independently. The microcontroller also has the capability
-> to vote for the bus but doesn't currently do so except for one initial
-> vote that is hard coded [1].
-> 
-> Currently there is no good way to construct a valid TCS command outside
-> of the inner workings of the QCOM interconnect driver which is something
-> that will need to be addressed for the next generation of GPU drivers.
-> 
-> To start the process, this change moves the TCS command macros from the
-> sdm845 interconnect driver into a soc specific header to make it available
-> for future efforts into this area.
-
-I agree that we should move the TCS macros into tsc.h. There is also a similar
-macro in drivers/clk/qcom/clk-rpmh.c. Maybe we can replace both with a common one?
-
-Thanks,
-Georgi
-
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/msm/adreno/a6xx_hfi.c#n219
-> 
-> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
-> ---
-> 
->  drivers/interconnect/qcom/sdm845.c | 17 -----------------
->  include/soc/qcom/tcs.h             | 17 +++++++++++++++++
->  2 files changed, 17 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/interconnect/qcom/sdm845.c b/drivers/interconnect/qcom/sdm845.c
-> index 4915b78..79b6f01 100644
-> --- a/drivers/interconnect/qcom/sdm845.c
-> +++ b/drivers/interconnect/qcom/sdm845.c
-> @@ -20,23 +20,6 @@
->  #include <soc/qcom/rpmh.h>
->  #include <soc/qcom/tcs.h>
->  
-> -#define BCM_TCS_CMD_COMMIT_SHFT		30
-> -#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
-> -#define BCM_TCS_CMD_VALID_SHFT		29
-> -#define BCM_TCS_CMD_VALID_MASK		0x20000000
-> -#define BCM_TCS_CMD_VOTE_X_SHFT		14
-> -#define BCM_TCS_CMD_VOTE_MASK		0x3fff
-> -#define BCM_TCS_CMD_VOTE_Y_SHFT		0
-> -#define BCM_TCS_CMD_VOTE_Y_MASK		0xfffc000
-> -
-> -#define BCM_TCS_CMD(commit, valid, vote_x, vote_y)		\
-> -	(((commit) << BCM_TCS_CMD_COMMIT_SHFT) |		\
-> -	((valid) << BCM_TCS_CMD_VALID_SHFT) |			\
-> -	((cpu_to_le32(vote_x) &					\
-> -	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |	\
-> -	((cpu_to_le32(vote_y) &					\
-> -	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
-> -
->  #define to_qcom_provider(_provider) \
->  	container_of(_provider, struct qcom_icc_provider, provider)
->  
-> diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
-> index 262876a..6012a9e 100644
-> --- a/include/soc/qcom/tcs.h
-> +++ b/include/soc/qcom/tcs.h
-> @@ -53,4 +53,21 @@ struct tcs_request {
->  	struct tcs_cmd *cmds;
->  };
->  
-> +#define BCM_TCS_CMD_COMMIT_SHFT		30
-> +#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
-> +#define BCM_TCS_CMD_VALID_SHFT		29
-> +#define BCM_TCS_CMD_VALID_MASK		0x20000000
-> +#define BCM_TCS_CMD_VOTE_X_SHFT		14
-> +#define BCM_TCS_CMD_VOTE_MASK		0x3fff
-> +#define BCM_TCS_CMD_VOTE_Y_SHFT		0
-> +#define BCM_TCS_CMD_VOTE_Y_MASK		0xfffc000
-> +
-> +#define BCM_TCS_CMD(commit, valid, vote_x, vote_y)		\
-> +	(((commit) << BCM_TCS_CMD_COMMIT_SHFT) |		\
-> +	((valid) << BCM_TCS_CMD_VALID_SHFT) |			\
-> +	((cpu_to_le32(vote_x) &					\
-> +	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |	\
-> +	((cpu_to_le32(vote_y) &					\
-> +	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
-> +
->  #endif /* __SOC_QCOM_TCS_H__ */
-> 
+I see Dan provided a series for EFI specific purpose support, but I
+didn't find anything else touching this part of the code. FWIW, Dan's
+EFI series looks goot to me, and I can rebase the hot-add support this
+series provides on top of that.
