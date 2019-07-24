@@ -2,108 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E19B873641
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 20:01:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 390E173644
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 20:03:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbfGXSB4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 14:01:56 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:42999 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbfGXSB4 (ORCPT
+        id S1726863AbfGXSDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 14:03:40 -0400
+Received: from smtprelay0101.hostedemail.com ([216.40.44.101]:45288 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725944AbfGXSDk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 14:01:56 -0400
-Received: by mail-qt1-f196.google.com with SMTP id h18so46381193qtm.9
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 11:01:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NHrhrhDMfOD8855Z/WzNY5buipYXjy+AC0JGYKIcbF8=;
-        b=dPDOwqvvcar2QZyrIWmnpS9kSbPHrR/wGiHoOguWcVWXL2QB4EbGlIpDh3GEhsu5Ui
-         n8DvGZHMQ345DUYe/IKC+YM0nSeJddxkNt+S0YsC7V+nopWE6ScCmbBtAr9p8b7zuqMS
-         yY6K83rBY7uS/1zb8JLsSuLsaZshzgZRKjMl6YdJRTawKHyG7IfOhH0vdHKybWcVN7ax
-         GxFiQtZPpBb9p7N9LWeYpM2uz0JC6GufyTb6S7aDM2vJh8BzaSTgMbXeFslyg867My9K
-         zrKo9Xi9joxNJiWv358sWE53cKRje+sKwuovXQ00SzRkhk+wqTRybQ1JEfewFmBiBsMW
-         xDjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NHrhrhDMfOD8855Z/WzNY5buipYXjy+AC0JGYKIcbF8=;
-        b=Dvo7Snf0xrqKPFEFxDL23gimjsIO+B2FDyXd/0RV1PE2ho6/g9uWHGsN3A8FP5ZcET
-         1E4c1IQl37cugqbBtXUKdhoff/ZAKsCjgJH418gupiweL+jDDsl/g4VEkOdhw0pHx1tu
-         y6LVRS1nLYDi26U6py3MXIll4JjACjyp0JYdeao2inv7WCGmg9NpBIay758YEhWlBgqG
-         Uu0+yl9EMR7Ixd+RisV1AD/qNqlWJkuFJAFH0bF46GvnltMN09H4jg1bC6lrW/rzUIO9
-         SM+Oe8ip8POitnvC4m3hV7YrtGwcV/xwcVNgOIz4hbc6ppKDmZpYd3Ijd+RfJ/2LqFLC
-         PvcA==
-X-Gm-Message-State: APjAAAV3XeUGc4pYGgwVBNiRcwcy3/D0HnjdlLRH5CmcZWqQK25o602k
-        nU6XEbixJlfu5P91cEw5C3nfjA==
-X-Google-Smtp-Source: APXvYqwh9oIClfhj+Xu8Ca6v+JnH5wuP+h6Sc8J95We/ArJyD9/rby1kOqJsMt32kMVWN+JOLxYozw==
-X-Received: by 2002:a0c:f193:: with SMTP id m19mr60859511qvl.20.1563991315101;
-        Wed, 24 Jul 2019 11:01:55 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id r4sm32015444qta.93.2019.07.24.11.01.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Jul 2019 11:01:54 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hqLaL-0003Qv-NY; Wed, 24 Jul 2019 15:01:53 -0300
-Date:   Wed, 24 Jul 2019 15:01:53 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Subject: Re: [PATCH] mm/hmm: replace hmm_update with mmu_notifier_range
-Message-ID: <20190724180153.GE28493@ziepe.ca>
-References: <20190723210506.25127-1-rcampbell@nvidia.com>
- <20190724070553.GA2523@lst.de>
- <20190724152858.GB28493@ziepe.ca>
- <20190724153305.GA10681@lst.de>
+        Wed, 24 Jul 2019 14:03:40 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 416D2182CF674;
+        Wed, 24 Jul 2019 18:03:39 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2197:2198:2199:2200:2393:2559:2562:2731:2828:3138:3139:3140:3141:3142:3353:3622:3653:3865:3866:3867:3871:3872:3873:4321:4605:5007:6119:7903:10004:10400:10848:11232:11658:11914:12043:12297:12555:12740:12760:12895:13069:13311:13357:13439:14180:14181:14659:14721:21080:21221:21451:21627:30054:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: crush75_3ce39f3b86a14
+X-Filterd-Recvd-Size: 2307
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 24 Jul 2019 18:03:38 +0000 (UTC)
+Message-ID: <4ce25249a42248e7762f22f40d6d9898365024ea.camel@perches.com>
+Subject: Re: [PATCH 01/12] checkpatch: Add GENMASK tests
+From:   Joe Perches <joe@perches.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Andy Whitcroft <apw@canonical.com>
+Cc:     linux-kernel@vger.kernel.org
+Date:   Wed, 24 Jul 2019 11:03:35 -0700
+In-Reply-To: <c5cf9dd30360a395b50514f8fece2231e0180ce1.1562734889.git.joe@perches.com>
+References: <cover.1562734889.git.joe@perches.com>
+         <c5cf9dd30360a395b50514f8fece2231e0180ce1.1562734889.git.joe@perches.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190724153305.GA10681@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 05:33:05PM +0200, Christoph Hellwig wrote:
-> On Wed, Jul 24, 2019 at 12:28:58PM -0300, Jason Gunthorpe wrote:
-> > Humm. Actually having looked this some more, I wonder if this is a
-> > problem:
+On Tue, 2019-07-09 at 22:04 -0700, Joe Perches wrote:
+> This macro is easy to misuse as it's odd argument order.
 > 
-> What a mess.
+> If specified with simple decimal values, make sure the arguments are
+> ordered high then low.
 > 
-> Question: do we even care for the non-blocking events?  The only place
-> where mmu_notifier_invalidate_range_start_nonblock is called is the oom
-> killer, which means the process is about to die and the pagetable will
-> get torn down ASAP.  Should we just skip them unconditionally?  nouveau
-> already does so, but amdgpu currently tries to handle the non-blocking
-> notifications.
+> Also check if any argument is > 32 where instead of GENMASK,
+> GENMASK_ULL should be used.
 
-I think the issue is the pages need to get freed to make the memory
-available without becoming entangled in risky locks and deadlock.
+Hey Andrew, can you add this please.
 
-Presumably if we go to the 'torn down ASAP' things get more risky that
-the whole thing deadlocks?
+> Signed-off-by: Joe Perches <joe@perches.com>
+> ---
+>  scripts/checkpatch.pl | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 6cb99ec62000..d37bbe33524b 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -6368,6 +6368,21 @@ sub process {
+>  			     "switch default: should use break\n" . $herectx);
+>  		}
+>  
+> +# check for misuses of GENMASK
+> +		if ($line =~ /\b(GENMASK(?:_ULL)?)\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)/) {
+> +			my $type = $1;
+> +			my $high = $2;
+> +			my $low = $3;
+> +			if ($high < $low) {
+> +				ERROR("GENMASK",
+> +				      "$type argument order is high then low\n" . $herecurr);
+> +			}
+> +			if ($type eq "GENMASK" && ($high >= 32 || $low >= 32)) {
+> +				ERROR("GENMASK",
+> +				      "$type with arguments >= 32 should use GENMASK_ULL\n" . $herecurr);
+> +			}
+> +		}
+> +
+>  # check for gcc specific __FUNCTION__
+>  		if ($line =~ /\b__FUNCTION__\b/) {
+>  			if (WARN("USE_FUNC",
 
-I'm guessing a bit, but I *think* non-blocking here really means
-something closer to WQ_MEM_RECLAIM, ie you can't do anything that would
-become entangled with locks in the allocator that are pending on OOM??
-
-(if so we really should call this reclaim not non-blocking)
-
-ie for ODP umem_rwsem is held by threads while calling into kmalloc,
-so when we go to do the exit_mmap we still do the
-invalidate_range_start and can still end up blocked on a lock that is
-held by a thread waiting for kmalloc to return.
-
-Would be nice to know if this guess is right or not.
-
-Jason
