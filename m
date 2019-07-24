@@ -2,119 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 217E57291A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 09:39:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B607972926
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 09:43:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725999AbfGXHjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 03:39:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38706 "EHLO mail.kernel.org"
+        id S1726023AbfGXHnA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 03:43:00 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:42942 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725776AbfGXHjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 03:39:20 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A905E2190F;
-        Wed, 24 Jul 2019 07:39:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563953959;
-        bh=3OKqgzs2jnudJmaJ1fcYoQAJqJWDM8bUh9bJQ45NSkI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hA5wQJB8VlSNHaopfRrW7e8DmkAvgmuY5km09VFj+Yq3nKbkU5r4vaq9IyLnNcTim
-         YnSznD43WXE5G8u+azjQMxtazOvFUZud+1Wtv9MKYQ7rIfGTkgRVoqsctKPR55XHyj
-         wPF1nikOuCz6xxX345efpmjyHjkYjNnQBEJciH/g=
-Date:   Wed, 24 Jul 2019 16:39:14 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     James Morse <james.morse@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Dan Rue <dan.rue@linaro.org>,
-        Matt Hart <matthew.hart@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Daniel Diaz <daniel.diaz@linaro.org>
-Subject: Re: [PATCH v2 2/4] arm64: unwind: Prohibit probing on
- return_address()
-Message-Id: <20190724163914.c4a9cea2b5b9df3116e5e694@kernel.org>
-In-Reply-To: <038c4b88-e7ef-aaab-0a79-5d7371719aa5@arm.com>
-References: <156378170297.12011.17385386326930403235.stgit@devnote2>
-        <156378172702.12011.1144595747474511323.stgit@devnote2>
-        <038c4b88-e7ef-aaab-0a79-5d7371719aa5@arm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1725776AbfGXHnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 03:43:00 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F41C9200034;
+        Wed, 24 Jul 2019 09:42:56 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BCA42200032;
+        Wed, 24 Jul 2019 09:42:53 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id B695D402D3;
+        Wed, 24 Jul 2019 15:42:49 +0800 (SGT)
+From:   Robin Gong <yibin.gong@nxp.com>
+To:     vkoul@kernel.org, dan.j.williams@intel.com
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com
+Subject: [RESEND PATCH v7] dmaengine: fsl-edma: add i.mx7ulp edma2 version support
+Date:   Wed, 24 Jul 2019 15:20:34 +0800
+Message-Id: <1563952834-7731-1-git-send-email-yibin.gong@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 23 Jul 2019 17:04:21 +0100
-James Morse <james.morse@arm.com> wrote:
+Add edma2 for i.mx7ulp by version v3, since v2 has already
+been used by mcf-edma.
+The big changes based on v1 are belows:
+1. only one dmamux.
+2. another clock dma_clk except dmamux clk.
+3. 16 independent interrupts instead of only one interrupt for
+all channels.
 
-> Hi,
-> 
-> On 22/07/2019 08:48, Masami Hiramatsu wrote:
-> > Prohibit probing on return_address() and subroutines which
-> > is called from return_address(), since the it is invoked from
-> > trace_hardirqs_off() which is also kprobe blacklisted.
-> 
-> (Nits: "which are called" and "since it is")
+Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+---
+Change from v6:
+Rebase latest linux-next, please ignore v6 sent yesterday.
 
-Thanks!
+Change from v5(https://lkml.org/lkml/2019/6/25/444):
+Fix below build issue, replace platform_irq_count() instead
+of of_irq_count():
+https://lkml.org/lkml/2019/7/8/5
 
-> 
-> 
-> > diff --git a/arch/arm64/kernel/return_address.c b/arch/arm64/kernel/return_address.c
-> > index b21cba90f82d..7f8a143268b0 100644
-> > --- a/arch/arm64/kernel/return_address.c
-> > +++ b/arch/arm64/kernel/return_address.c
-> > @@ -8,6 +8,7 @@
-> >  
-> >  #include <linux/export.h>
-> >  #include <linux/ftrace.h>
-> > +#include <linux/kprobes.h>
-> >  
-> >  #include <asm/stack_pointer.h>
-> >  #include <asm/stacktrace.h>
-> > @@ -17,7 +18,7 @@ struct return_address_data {
-> >  	void *addr;
-> >  };
-> >  
-> > -static int save_return_addr(struct stackframe *frame, void *d)
-> > +static nokprobe_inline int save_return_addr(struct stackframe *frame, void *d)
-> 
-> This nokprobe_inline ends up as __always_inline if kprobes is enabled.
-> What do we expect the compiler to do with this? save_return_addr is passed as a
-> function-pointer to walk_stackframe()... I don't see how the compiler can inline it!
+ drivers/dma/fsl-edma-common.c | 18 +++++++++++-
+ drivers/dma/fsl-edma-common.h |  4 +++
+ drivers/dma/fsl-edma.c        | 65 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 86 insertions(+), 1 deletion(-)
 
-Oops, that's my mistake. Then it should be NOKPROBE_SYMBOL.
-
-> 
-> This would be needed for on_accessible_stack().
-> Should we cover ftrace_graph_get_ret_stack()?, or is that already in hand?
-
-No, that is OK. It just covers that the functions which are involved in
-the kprobe execution path. ftrace_graph_ret_stack() is out of the debug
-exception handler.
-
-Thank you,
-
-> >  {
-> >  	struct return_address_data *data = d;
-> >  
-> > @@ -52,3 +53,4 @@ void *return_address(unsigned int level)
-> >  		return NULL;
-> >  }
-> >  EXPORT_SYMBOL_GPL(return_address);
-> > +NOKPROBE_SYMBOL(return_address);
-> 
-> 
-> Thanks,
-> 
-> James
-
-
+diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
+index 44d92c3..6d6d8a4 100644
+--- a/drivers/dma/fsl-edma-common.c
++++ b/drivers/dma/fsl-edma-common.c
+@@ -90,6 +90,19 @@ static void mux_configure8(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
+ 	iowrite8(val8, addr + off);
+ }
+ 
++void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
++		     u32 off, u32 slot, bool enable)
++{
++	u32 val;
++
++	if (enable)
++		val = EDMAMUX_CHCFG_ENBL << 24 | slot;
++	else
++		val = EDMAMUX_CHCFG_DIS;
++
++	iowrite32(val, addr + off * 4);
++}
++
+ void fsl_edma_chan_mux(struct fsl_edma_chan *fsl_chan,
+ 			unsigned int slot, bool enable)
+ {
+@@ -103,7 +116,10 @@ void fsl_edma_chan_mux(struct fsl_edma_chan *fsl_chan,
+ 	muxaddr = fsl_chan->edma->muxbase[ch / chans_per_mux];
+ 	slot = EDMAMUX_CHCFG_SOURCE(slot);
+ 
+-	mux_configure8(fsl_chan, muxaddr, ch_off, slot, enable);
++	if (fsl_chan->edma->drvdata->version == v3)
++		mux_configure32(fsl_chan, muxaddr, ch_off, slot, enable);
++	else
++		mux_configure8(fsl_chan, muxaddr, ch_off, slot, enable);
+ }
+ EXPORT_SYMBOL_GPL(fsl_edma_chan_mux);
+ 
+diff --git a/drivers/dma/fsl-edma-common.h b/drivers/dma/fsl-edma-common.h
+index 4e17556..5eaa290 100644
+--- a/drivers/dma/fsl-edma-common.h
++++ b/drivers/dma/fsl-edma-common.h
+@@ -125,6 +125,7 @@ struct fsl_edma_chan {
+ 	dma_addr_t			dma_dev_addr;
+ 	u32				dma_dev_size;
+ 	enum dma_data_direction		dma_dir;
++	char				chan_name[16];
+ };
+ 
+ struct fsl_edma_desc {
+@@ -139,11 +140,13 @@ struct fsl_edma_desc {
+ enum edma_version {
+ 	v1, /* 32ch, Vybrid, mpc57x, etc */
+ 	v2, /* 64ch Coldfire */
++	v3, /* 32ch, i.mx7ulp */
+ };
+ 
+ struct fsl_edma_drvdata {
+ 	enum edma_version	version;
+ 	u32			dmamuxs;
++	bool			has_dmaclk;
+ 	int			(*setup_irq)(struct platform_device *pdev,
+ 					     struct fsl_edma_engine *fsl_edma);
+ };
+@@ -153,6 +156,7 @@ struct fsl_edma_engine {
+ 	void __iomem		*membase;
+ 	void __iomem		*muxbase[DMAMUX_NR];
+ 	struct clk		*muxclk[DMAMUX_NR];
++	struct clk		*dmaclk;
+ 	struct mutex		fsl_edma_mutex;
+ 	const struct fsl_edma_drvdata *drvdata;
+ 	u32			n_chans;
+diff --git a/drivers/dma/fsl-edma.c b/drivers/dma/fsl-edma.c
+index fcbad6a..7cc2653 100644
+--- a/drivers/dma/fsl-edma.c
++++ b/drivers/dma/fsl-edma.c
+@@ -162,6 +162,49 @@ fsl_edma_irq_init(struct platform_device *pdev, struct fsl_edma_engine *fsl_edma
+ 	return 0;
+ }
+ 
++static int
++fsl_edma2_irq_init(struct platform_device *pdev,
++		   struct fsl_edma_engine *fsl_edma)
++{
++	int i, ret, irq;
++	int count;
++
++	count = platform_irq_count(pdev);
++	dev_dbg(&pdev->dev, "%s Found %d interrupts\r\n", __func__, count);
++	if (count <= 2) {
++		dev_err(&pdev->dev, "Interrupts in DTS not correct.\n");
++		return -EINVAL;
++	}
++	/*
++	 * 16 channel independent interrupts + 1 error interrupt on i.mx7ulp.
++	 * 2 channel share one interrupt, for example, ch0/ch16, ch1/ch17...
++	 * For now, just simply request irq without IRQF_SHARED flag, since 16
++	 * channels are enough on i.mx7ulp whose M4 domain own some peripherals.
++	 */
++	for (i = 0; i < count; i++) {
++		irq = platform_get_irq(pdev, i);
++		if (irq < 0)
++			return -ENXIO;
++
++		sprintf(fsl_edma->chans[i].chan_name, "eDMA2-CH%02d", i);
++
++		/* The last IRQ is for eDMA err */
++		if (i == count - 1)
++			ret = devm_request_irq(&pdev->dev, irq,
++						fsl_edma_err_handler,
++						0, "eDMA2-ERR", fsl_edma);
++		else
++			ret = devm_request_irq(&pdev->dev, irq,
++						fsl_edma_tx_handler, 0,
++						fsl_edma->chans[i].chan_name,
++						fsl_edma);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
+ static void fsl_edma_irq_exit(
+ 		struct platform_device *pdev, struct fsl_edma_engine *fsl_edma)
+ {
+@@ -187,8 +230,16 @@ static struct fsl_edma_drvdata vf610_data = {
+ 	.setup_irq = fsl_edma_irq_init,
+ };
+ 
++static struct fsl_edma_drvdata imx7ulp_data = {
++	.version = v3,
++	.dmamuxs = 1,
++	.has_dmaclk = true,
++	.setup_irq = fsl_edma2_irq_init,
++};
++
+ static const struct of_device_id fsl_edma_dt_ids[] = {
+ 	{ .compatible = "fsl,vf610-edma", .data = &vf610_data},
++	{ .compatible = "fsl,imx7ulp-edma", .data = &imx7ulp_data},
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, fsl_edma_dt_ids);
+@@ -236,6 +287,20 @@ static int fsl_edma_probe(struct platform_device *pdev)
+ 	fsl_edma_setup_regs(fsl_edma);
+ 	regs = &fsl_edma->regs;
+ 
++	if (drvdata->has_dmaclk) {
++		fsl_edma->dmaclk = devm_clk_get(&pdev->dev, "dma");
++		if (IS_ERR(fsl_edma->dmaclk)) {
++			dev_err(&pdev->dev, "Missing DMA block clock.\n");
++			return PTR_ERR(fsl_edma->dmaclk);
++		}
++
++		ret = clk_prepare_enable(fsl_edma->dmaclk);
++		if (ret) {
++			dev_err(&pdev->dev, "DMA clk block failed.\n");
++			return ret;
++		}
++	}
++
+ 	for (i = 0; i < fsl_edma->drvdata->dmamuxs; i++) {
+ 		char clkname[32];
+ 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.7.4
+
