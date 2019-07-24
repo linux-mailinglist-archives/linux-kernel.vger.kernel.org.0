@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6F2973855
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:28:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4908E7385E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:29:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387481AbfGXT2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:28:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46550 "EHLO mail.kernel.org"
+        id S1728967AbfGXT2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:28:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388233AbfGXT2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:28:21 -0400
+        id S1728886AbfGXT2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:28:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D48B321951;
-        Wed, 24 Jul 2019 19:28:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46EF721951;
+        Wed, 24 Jul 2019 19:28:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996500;
-        bh=+E7l2ji47+QPKyzCYtnJU/gcwcZY0L7QrDYr5U6InH8=;
+        s=default; t=1563996525;
+        bh=9T3ggQroFXS+ozFglygL7PVZfvxOBqLm3bkcwDSiRos=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CBtYh1A4Cf46UhJmYjGAQG1UhwDgmt8EjzO4TkSMfPuQxrLxHSUvg7FGlftOMTK23
-         8pDRHct3Z6oRzcNJkdC71kXj+ZSJ5MUk9SB3vqMrmVFF2bGw72CqmKQXrJ2LkM7Y6J
-         hf32G2FSgdfelruvVYzZfJuDg3bS7cyQO7jgyE9I=
+        b=Fq39ZxkryQRgm1CwOnDeXJb+4KAd0c3uZtH2THMxwYS4dU4KutakBk6PprZVyLnEY
+         pQTtoypUKIqIaPLGblUQqHN+9I1litX7h3N5Vyt9PCPmoLLORKSZV4ZUljIJMHRJvU
+         vjAgLeI3oZssJ8hlMZHbRd4tZ/4MJF1HL1nkFjTA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 116/413] vhost_net: disable zerocopy by default
-Date:   Wed, 24 Jul 2019 21:16:47 +0200
-Message-Id: <20190724191743.595313393@linuxfoundation.org>
+Subject: [PATCH 5.2 120/413] tools build: Fix the zstd test in the test-all.c common case feature test
+Date:   Wed, 24 Jul 2019 21:16:51 +0200
+Message-Id: <20190724191743.821939385@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -45,41 +47,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 098eadce3c622c07b328d0a43dda379b38cf7c5e ]
+[ Upstream commit 3469fa84c1631face938efc42b3f488a2c2504e0 ]
 
-Vhost_net was known to suffer from HOL[1] issues which is not easy to
-fix. Several downstream disable the feature by default. What's more,
-the datapath was split and datacopy path got the support of batching
-and XDP support recently which makes it faster than zerocopy part for
-small packets transmission.
+We were renanimg 'main' to 'main_zstd' but then using 'main_libzstd();'
+in the main() for test-all.c, causing this:
 
-It looks to me that disable zerocopy by default is more
-appropriate. It cold be enabled by default again in the future if we
-fix the above issues.
+  $ cat /tmp/build/perf/feature/test-all.make.output
+  test-all.c: In function ‘main’:
+  test-all.c:236:2: error: implicit declaration of function ‘main_test_libzstd’; did you mean ‘main_test_zstd’? [-Werror=implicit-function-declaration]
+    main_test_libzstd();
+    ^~~~~~~~~~~~~~~~~
+    main_test_zstd
+  cc1: all warnings being treated as errors
+  $
 
-[1] https://patchwork.kernel.org/patch/3787671/
+I.e. what was supposed to be the fast path feature test was _always_
+failing, duh, fix it.
 
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Fixes: 3b1c5d965971 ("tools build: Implement libzstd feature check, LIBZSTD_DIR and NO_LIBZSTD defines")
+Link: https://lkml.kernel.org/n/tip-ma4abk0utroiw4mwpmvnjlru@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vhost/net.c | 2 +-
+ tools/build/feature/test-all.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index d57ebdd616d9..247e5585af5d 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -35,7 +35,7 @@
+diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
+index a59c53705093..939ac2fcc783 100644
+--- a/tools/build/feature/test-all.c
++++ b/tools/build/feature/test-all.c
+@@ -182,7 +182,7 @@
+ # include "test-disassembler-four-args.c"
+ #undef main
  
- #include "vhost.h"
+-#define main main_test_zstd
++#define main main_test_libzstd
+ # include "test-libzstd.c"
+ #undef main
  
--static int experimental_zcopytx = 1;
-+static int experimental_zcopytx = 0;
- module_param(experimental_zcopytx, int, 0444);
- MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
- 		                       " 1 -Enable; 0 - Disable");
 -- 
 2.20.1
 
