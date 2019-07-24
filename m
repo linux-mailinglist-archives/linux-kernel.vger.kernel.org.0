@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B17173B64
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:59:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C63D273B37
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:59:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404979AbfGXT7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:59:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47084 "EHLO mail.kernel.org"
+        id S2392133AbfGXT5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:57:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405016AbfGXT7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:59:41 -0400
+        id S2392107AbfGXT5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:57:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF80820665;
-        Wed, 24 Jul 2019 19:59:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7347D22BED;
+        Wed, 24 Jul 2019 19:57:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563998380;
-        bh=Ngj/6pvjKZW/raTWO60ugt8+TssqU8ljcYQSAYAJuHU=;
+        s=default; t=1563998270;
+        bh=OCAWUr3mFL5eDNWwXHfGhmryRAQg6yZrfx5cYtqBmug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DZUI9LHZzkWTTHINUdc6vu3f9yFm1Qw8e1pW21NgBZoiShFYMomzfShUjdMhJtHFj
-         fxZr7LTVWnpK6ZMP5Ywgc0vYYp12Zx/IRA0zYQtyAYP9WzPOnTmnBPoAilAFW7j3j1
-         NzPx9ijk5wk0/Kd75rtu/p2DW6R5MF7IO6oCDmM4=
+        b=Sog8bEWVZh39TW/DmaG3ak+NZdbpWCu/zZND3vm1609W2OcoHcgkQJLhDluOoxjfZ
+         E+xGeKaJ18joqfN2a7vtYoRCz/SgsOiIJjZRdm+MC9a6h949WFegA1UE/k2alpK6ks
+         J6HmTaFkTog/Dyx0GT16VrA0mR8JU5ULHPavUdc0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Suraj Jitindar Singh <sjitindarsingh@gmail.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.1 304/371] KVM: PPC: Book3S HV: Fix CR0 setting in TM emulation
-Date:   Wed, 24 Jul 2019 21:20:56 +0200
-Message-Id: <20190724191747.099345936@linuxfoundation.org>
+        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 5.1 307/371] arm64: irqflags: Add condition flags to inline asm clobber list
+Date:   Wed, 24 Jul 2019 21:20:59 +0200
+Message-Id: <20190724191747.282263359@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -45,59 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Neuling <mikey@neuling.org>
+From: Julien Thierry <julien.thierry@arm.com>
 
-commit 3fefd1cd95df04da67c83c1cb93b663f04b3324f upstream.
+commit f57065782f245ca96f1472209a485073bbc11247 upstream.
 
-When emulating tsr, treclaim and trechkpt, we incorrectly set CR0. The
-code currently sets:
-    CR0 <- 00 || MSR[TS]
-but according to the ISA it should be:
-    CR0 <-  0 || MSR[TS] || 0
+Some of the inline assembly instruction use the condition flags and need
+to include "cc" in the clobber list.
 
-This fixes the bit shift to put the bits in the correct location.
-
-This is a data integrity issue as CR0 is corrupted.
-
-Fixes: 4bb3c7a0208f ("KVM: PPC: Book3S HV: Work around transactional memory bugs in POWER9")
-Cc: stable@vger.kernel.org # v4.17+
-Tested-by: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
-Signed-off-by: Michael Neuling <mikey@neuling.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 4a503217ce37 ("arm64: irqflags: Use ICC_PMR_EL1 for interrupt masking")
+Cc: <stable@vger.kernel.org> # 5.1.x-
+Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kvm/book3s_hv_tm.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/include/asm/irqflags.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/kvm/book3s_hv_tm.c
-+++ b/arch/powerpc/kvm/book3s_hv_tm.c
-@@ -131,7 +131,7 @@ int kvmhv_p9_tm_emulation(struct kvm_vcp
- 		}
- 		/* Set CR0 to indicate previous transactional state */
- 		vcpu->arch.regs.ccr = (vcpu->arch.regs.ccr & 0x0fffffff) |
--			(((msr & MSR_TS_MASK) >> MSR_TS_S_LG) << 28);
-+			(((msr & MSR_TS_MASK) >> MSR_TS_S_LG) << 29);
- 		/* L=1 => tresume, L=0 => tsuspend */
- 		if (instr & (1 << 21)) {
- 			if (MSR_TM_SUSPENDED(msr))
-@@ -175,7 +175,7 @@ int kvmhv_p9_tm_emulation(struct kvm_vcp
+--- a/arch/arm64/include/asm/irqflags.h
++++ b/arch/arm64/include/asm/irqflags.h
+@@ -92,7 +92,7 @@ static inline unsigned long arch_local_s
+ 			ARM64_HAS_IRQ_PRIO_MASKING)
+ 		: "=&r" (flags), "+r" (daif_bits)
+ 		: "r" ((unsigned long) GIC_PRIO_IRQOFF)
+-		: "memory");
++		: "cc", "memory");
  
- 		/* Set CR0 to indicate previous transactional state */
- 		vcpu->arch.regs.ccr = (vcpu->arch.regs.ccr & 0x0fffffff) |
--			(((msr & MSR_TS_MASK) >> MSR_TS_S_LG) << 28);
-+			(((msr & MSR_TS_MASK) >> MSR_TS_S_LG) << 29);
- 		vcpu->arch.shregs.msr &= ~MSR_TS_MASK;
- 		return RESUME_GUEST;
+ 	return flags;
+ }
+@@ -136,7 +136,7 @@ static inline int arch_irqs_disabled_fla
+ 			ARM64_HAS_IRQ_PRIO_MASKING)
+ 		: "=&r" (res)
+ 		: "r" ((int) flags)
+-		: "memory");
++		: "cc", "memory");
  
-@@ -205,7 +205,7 @@ int kvmhv_p9_tm_emulation(struct kvm_vcp
- 
- 		/* Set CR0 to indicate previous transactional state */
- 		vcpu->arch.regs.ccr = (vcpu->arch.regs.ccr & 0x0fffffff) |
--			(((msr & MSR_TS_MASK) >> MSR_TS_S_LG) << 28);
-+			(((msr & MSR_TS_MASK) >> MSR_TS_S_LG) << 29);
- 		vcpu->arch.shregs.msr = msr | MSR_TS_S;
- 		return RESUME_GUEST;
- 	}
+ 	return res;
+ }
 
 
