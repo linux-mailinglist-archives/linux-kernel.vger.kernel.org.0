@@ -2,97 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15BF373DD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAB1373DE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:21:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392285AbfGXUUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:20:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53784 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389089AbfGXTrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:47:14 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D38521873;
-        Wed, 24 Jul 2019 19:47:13 +0000 (UTC)
-Date:   Wed, 24 Jul 2019 15:47:11 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Masanari Iida <standby24x7@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: [GIT PULL] ktest: Fix some typos in config-bisect.pl
-Message-ID: <20190724154711.2698f244@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S2403963AbfGXUUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:20:44 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44820 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390805AbfGXUUm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 16:20:42 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hqNkZ-00060B-OU; Wed, 24 Jul 2019 22:20:35 +0200
+Date:   Wed, 24 Jul 2019 22:20:34 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Greg KH <gregkh@linuxfoundation.org>
+cc:     "H.J. Lu" <hjl.tools@gmail.com>,
+        Mike Lothian <mike@fireburn.co.uk>,
+        Tom Lendacky <thomas.lendacky@amd.com>, bhe@redhat.com,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, lijiang@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: [PATCH v3 1/2] x86/mm: Identify the end of the kernel area to
+ be reserved
+In-Reply-To: <alpine.DEB.2.21.1907242153320.1791@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1907242208590.1791@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1907151118570.1669@nanos.tec.linutronix.de> <alpine.DEB.2.21.1907151140080.1669@nanos.tec.linutronix.de> <CAMe9rOqMqkQ0LNpm25yE_Yt0FKp05WmHOrwc0aRDb53miFKM+w@mail.gmail.com> <20190723130513.GA25290@kroah.com>
+ <alpine.DEB.2.21.1907231519430.1659@nanos.tec.linutronix.de> <20190723134454.GA7260@kroah.com> <20190724153416.GA27117@kroah.com> <alpine.DEB.2.21.1907241746010.1791@nanos.tec.linutronix.de> <20190724155735.GC5571@kroah.com> <alpine.DEB.2.21.1907241801320.1791@nanos.tec.linutronix.de>
+ <20190724161634.GB10454@kroah.com> <alpine.DEB.2.21.1907242153320.1791@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 24 Jul 2019, Thomas Gleixner wrote:
 
-Linus,
+> On Wed, 24 Jul 2019, Greg KH wrote:
+> > On Wed, Jul 24, 2019 at 06:03:41PM +0200, Thomas Gleixner wrote:
+> > > > Gotta love old tool-chains :(
+> > > 
+> > > Oh yes. /me does archaeology to find a VM with old stuff
+> > 
+> > I can provide a binary if you can't find anything.
+> 
+> Found GNU ld (GNU Binutils for Debian) 2.25 and after fiddling with
+> LD_PRELOAD it builds without failure.
+> 
+> ld.gold from that binutils version dies with a segfault on various files ...
 
-This contains only simple spelling fixes.
+Then tried that old ld.bfd with GCC8 and that causes ld.bfd to segfault on
+every other file.
 
-Ktest has been working well for me, so I'm doing this push now as I do
-not expect to have ktest updates in the near future and do not want
-this change to be forgotten.
+Copied that config to the clang build directory and it causes the same
+explosions with ld.bfd.
 
-
-Please pull the latest ktest-v5.3 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git
-ktest-v5.3
-
-Tag SHA1: 2e337a5fb7f2de16bfee9be63b3cf259dcb847e4
-Head SHA1: aecea57f84b0586b62c010bea946468d77f6bf0f
+What a time waste...
 
 
-Masanari Iida (1):
-      ktest: Fix some typos in config-bisect.pl
 
-----
- tools/testing/ktest/config-bisect.pl | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
----------------------------
-commit aecea57f84b0586b62c010bea946468d77f6bf0f
-Author: Masanari Iida <standby24x7@gmail.com>
-Date:   Tue Jul 23 12:24:45 2019 +0900
-
-    ktest: Fix some typos in config-bisect.pl
-    
-    This patch fixes some spelling typos in config-bisect.pl
-    
-    Link: http://lkml.kernel.org/r/20190723032445.14220-1-standby24x7@gmail.com
-    
-    Acked-by: Randy Dunlap <rdunlap@infradead.org>
-    Signed-off-by: Masanari Iida <standby24x7@gmail.com>
-    Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-diff --git a/tools/testing/ktest/config-bisect.pl b/tools/testing/ktest/config-bisect.pl
-index 72525426654b..6fd864935319 100755
---- a/tools/testing/ktest/config-bisect.pl
-+++ b/tools/testing/ktest/config-bisect.pl
-@@ -663,7 +663,7 @@ while ($#ARGV >= 0) {
-     }
- 
-     else {
--	die "Unknow option $opt\n";
-+	die "Unknown option $opt\n";
-     }
- }
- 
-@@ -732,7 +732,7 @@ if ($start) {
- 	}
-     }
-     run_command "cp $good_start $good" or die "failed to copy to $good\n";
--    run_command "cp $bad_start $bad" or die "faield to copy to $bad\n";
-+    run_command "cp $bad_start $bad" or die "failed to copy to $bad\n";
- } else {
-     if ( ! -f $good ) {
- 	die "Can not find file $good\n";
