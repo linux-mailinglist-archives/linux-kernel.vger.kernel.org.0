@@ -2,106 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E07F674172
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 00:33:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3C1C74178
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 00:34:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729377AbfGXWdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 18:33:20 -0400
-Received: from sonic316-12.consmr.mail.bf2.yahoo.com ([74.6.130.122]:38897
-        "EHLO sonic316-12.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728130AbfGXWdU (ORCPT
+        id S1729425AbfGXWd6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 18:33:58 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40020 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726692AbfGXWd6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 18:33:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.ca; s=s2048; t=1564007598; bh=SPPeLnkU37h6IEEddULHVtoSg4HbUr/YQkJNiVMbBWg=; h=From:To:Cc:Subject:Date:From:Subject; b=GGlDxOWTHfwZvZeIFIyrmy8YWAlFW5Uf/DNumTcpt4L9YGiVM/OkJXnxeeTDZd2eFXOkZwKP9SFFV8qIeJbNkNYfoaXa6yoC0fNdyIM58MbbeUHDPYWtnyhBmfvHK1eEfwlh65NFPsqo8P6rV4W4jdjp//LNlTNOg6S0uHoX82y7/vwlu7yCb3CJkRVIPDyFNEnw5S6hlRpO0cmsI1zwXnmglegxgKytIsWuoHFB58gkqtpcaCnpoLaTRgaDBG3rLMCb8RNOSe4NuonhsfYjBMTx4c+t5ylREzIejvrLh2jXTq2OAPvNz1+nOtZuqW7Jd77XFzXFl5QR1z7NdhSRrA==
-X-YMail-OSG: 2oJ0R5YVM1lFJY_iueNsT5RC81Eh3DXl1dyOyDapLmF5ylx1fBX6DEI9svzdfla
- GOS_cgFPUW3twNxDj4bcf21ddO1PTNtVb6fNZ14vDNj89FU8ipWNjl5Cl.UWsjZ7.ZDInFcQVK3W
- AVhRemfveReK4R3kcwbGRP9oG6HUMOZ.ktbTzQ06g2pqxN0twZJBM7e3Eii57wu_haH.DHqGTeq.
- .wnIwJK_jOVxw2FMRW5Fep3hB.JMNAAID_LPHC7v8ET57gPOTsT3zRgUI.WixNQTw7X1YZ0xpNRp
- nNHwy80eN3ChP_MLeEhaemM8Wufh97JKcEpwg22YjqaOAt.bjZCEu7a9ighfodOpwN_i17hA2tQE
- psoD3ZIZ9f4.TDYx9jvZbCq.5NSHWNoxhMGJ0J6x2L157ukHHHdyb2FKO.jbdk_kae3L2g8fXsKh
- RdSV7WGKhMrwOLPTc483evVzTAQwfuOzV.fDcRjeTuGowLp1.5pbcDFtSg_2zDyWISeg40GaOEo7
- CSTtQchXl2ctGbgONsMlnF81bIVaRCxdv.ikddptOk_vmfnpRFm42sfwGoUp0ekzOfs.01P.KFiV
- SUhDLF1yIXU6x9PCe0kiv.TAKwv_2SA09BMiLM1fqUDXx3lmwgHoaYTnmV_wZRoqHNNNnx.y0TK9
- nhI.zW3cD7VqGc28UfMQbb.sAufH.RLrhi7I6YHpXmv4RdGw6FLHrMVaZuMR1DwhzOyYzqhPEdL5
- OgBZrGEM8IJViRFogPSAZgfrzAeWUFOQt9bD2BUYrbEgv6YPgDHoD8j0_xfw1abIdqOvOagxM7zo
- 4KOkpa838AauLOHcLwwLD25DoBW2MLAn4ZxlC.bqA76CSymsZOc2.Mj_x28PbszFTdYIf5auAWV.
- 7Iw7yMolAJvg1GT3eaIZW3YUMgJffp_IVsNqOntYVBhzumjkbgsvDIcLZWhfwcepVuGooSzOM_Cv
- ZQY1B4AKEa2KpWR.rbY1kpgrZ.RZdiqhfTaBlJpWGRrU1wR0nHkp1jETLA81pl8tAu35y95OYKSa
- r8S.SG.koUHnKt4gpVum6inJHUIJxKftSte.Cyq4Fc6eE1ZDcv5fZxL6B4MHvW5Xa1QxCW05Yhuz
- nScLSnV0D_0Bx.yXjdB_jeV.kQIo1axJDLAzGyUvSC5N1aIKHs8MdE.ODwkPHRSJUTqkBC6BGvfb
- s3XnDkUN8jdmk2xJuluofryClJd.5gtJptY.BmTsIAM6BtLQjTqTftb8O8_aVHpKcR8UYNCuoTNg
- n40hs4MHUYjUk7hsWQ74-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.bf2.yahoo.com with HTTP; Wed, 24 Jul 2019 22:33:18 +0000
-Received: by smtp422.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 43333be216d12705f4c89f176b7fa2c0;
-          Wed, 24 Jul 2019 22:33:16 +0000 (UTC)
-From:   "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
-To:     linux-kernel@vger.kernel.org, tytso@mit.edu
-Cc:     arnd@arndb.de, gregkh@linuxfoundation.org,
-        "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
-Subject: [PATCH] random: print a message when waiting for random
-Date:   Wed, 24 Jul 2019 18:33:13 -0400
-Message-Id: <20190724223313.2498-1-alex_y_xu@yahoo.ca>
-X-Mailer: git-send-email 2.22.0
+        Wed, 24 Jul 2019 18:33:58 -0400
+Received: by mail-ed1-f67.google.com with SMTP id k8so48440476eds.7;
+        Wed, 24 Jul 2019 15:33:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZUFDCZihyOAMtDKIntxfmltlyorITur9aOSpLJwBVKE=;
+        b=ZCyHnpB+wQnxW/kXXzJ5cRZfjRumGcIpmII4Dj48Z+kdowGWJBF9j/26HL6AtqSJcm
+         T1zuq4Q+6vcpQDYCT79O3YVFR1dRP9h+S2T21Qn+rQ/WPPDJsxF9gB6GYZp1hAQ/CiF9
+         Qdgj8LZ75C1g6nc7bdzJmUUwq/YOlmVUG3ZZGUwQiJSYwqB2+GzHq3buC/ya8EUPB6zd
+         /Gk3BqGlW53CY1S17keIxaHOmy2ysh8o2ARWmC2cXoHNUVqHSyZh/MKY0atrMTDGPYcu
+         80kzi+mcJksxOLverKynUSYJFCpvNsNXFixAlCorFjXS5adceFraL0heXqXq1L+z/gXZ
+         Vz/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZUFDCZihyOAMtDKIntxfmltlyorITur9aOSpLJwBVKE=;
+        b=We7/LwGC1M0NXlU1IvejizoVcAkAcYRnqvTLJ+U8PhmZZGO1kSHS7bR7Vw6XiL05Yl
+         9mIZTy3atqeqZH5LlV8Y2Pm4uskqQ5t35aCC4TjH46syWh2ezuDa7KiJ2tz/paepj2vc
+         FGvBmARP/OhiGGs13YSy6YlN2g5iu5nP8kZ4TCdM3YGCtN5cnlz/6tAUFadvubT7jgeI
+         Ps6vePHf1s+o4AhmRiEMBuqI9XA6gnX174No3ITostgm4gRpETwjatpj/hzk96eQmp/Z
+         8iP9iqA6mb1nYndsxmZ3fuGHZNoZCRF8uPda2eATgecPriMJO/BrUT/RGflUVhFLLbD6
+         AuCw==
+X-Gm-Message-State: APjAAAU/+O4WulnZUo8VqSk0uCRDjoLJKgy7juk3+HY0gw+F8enHe8fq
+        5YnJyVDMv7hYyyYObT7/OK1svco525g6oZHLczE=
+X-Google-Smtp-Source: APXvYqzLdObF7V5Na8mrkqM+zbDlECvPoE0A3EfMK3AN+hkYRlMqFXuccmvphAEx5TbsYWR3qyM84NH/spp5rmkJx3s=
+X-Received: by 2002:a50:b1db:: with SMTP id n27mr74572676edd.62.1564007636192;
+ Wed, 24 Jul 2019 15:33:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190724165803.87470-1-brianvv@google.com> <20190724165803.87470-3-brianvv@google.com>
+ <CAF=yD-+a=t_YizdJpb_Q+zxR7iP-V-EarNsp9tjnFTRBjOtFvA@mail.gmail.com> <CABCgpaWCLJtDx8kHNiQZneqYZkZ3fzRGnipT5__kmwMhu01g=w@mail.gmail.com>
+In-Reply-To: <CABCgpaWCLJtDx8kHNiQZneqYZkZ3fzRGnipT5__kmwMhu01g=w@mail.gmail.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Wed, 24 Jul 2019 18:33:20 -0400
+Message-ID: <CAF=yD-L6RpnxptBtcpVGzP4UoPLRxr2JiQGyRCoTca4jHioPXw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 2/6] bpf: add BPF_MAP_DUMP command to dump more
+ than one entry per call
+To:     Brian Vazquez <brianvv.kernel@gmail.com>
+Cc:     Brian Vazquez <brianvv@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stanislav Fomichev <sdf@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Petar Penkov <ppenkov@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-- many programs now use getrandom on startup, including for cases which
-  may not be security-sensitive (e.g. hash tables)
-- boot times are faster than ever with the widespread use of high-speed
-  SSD storage
-- no major distributions currently use RNDADDENTROPY ioctl when
-  restoring the random seed, including systemd and OpenRC. systemd may
-  add this functionality soon
-  (https://github.com/systemd/systemd/pull/13137) but it seems to have
-  some special requirements (systemd-boot) and/or require special
-  opt-in.
-- despite the availability of virtio-rng, many hosts do not offer it,
-  and many/most distributions do not configure rngd by default
+> > > Because maps can be called from userspace and kernel code, this function
+> > > can have a scenario where the next_key was found but by the time we
+> > > try to retrieve the value the element is not there, in this case the
+> > > function continues and tries to get a new next_key value, skipping the
+> > > deleted key. If at some point the function find itself trap in a loop,
+> > > it will return -EINTR.
+> >
+> > Good to point this out! I don't think that unbounded continue;
+> > statements until an interrupt happens is sufficient. Please bound the
+> > number of retries to a low number.
+>
+> And what would it be a good number? Maybe 3 attempts?
 
-in combination, many programs (e.g. sshd, gdm) now block on startup,
-sometimes for many minutes. in the kernel, we can't fix this easily, but
-we should at least notify users why their program is stuck.
+3 sounds good to me.
 
-Signed-off-by: Alex Xu (Hello71) <alex_y_xu@yahoo.ca>
----
- drivers/char/random.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> And in that case what error should be reported?
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 5d5ea4ce1442..e4490c6c9c84 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -511,6 +511,8 @@ static struct ratelimit_state unseeded_warning =
- 	RATELIMIT_STATE_INIT("warn_unseeded_randomness", HZ, 3);
- static struct ratelimit_state urandom_warning =
- 	RATELIMIT_STATE_INIT("warn_urandom_randomness", HZ, 3);
-+static struct ratelimit_state wait_for_random_warning =
-+	RATELIMIT_STATE_INIT("warn_wait_for_random", HZ, 3);
- 
- static int ratelimit_disable __read_mostly;
- 
-@@ -1745,6 +1747,9 @@ int wait_for_random_bytes(void)
- {
- 	if (likely(crng_ready()))
- 		return 0;
-+	if (__ratelimit(&wait_for_random_warning))
-+		pr_info("random: %s: waiting for randomness\n",
-+		       current->comm);
- 	return wait_event_interruptible(crng_init_wait, crng_ready());
- }
- EXPORT_SYMBOL(wait_for_random_bytes);
-@@ -1901,6 +1906,7 @@ int __init rand_initialize(void)
- 	if (ratelimit_disable) {
- 		urandom_warning.interval = 0;
- 		unseeded_warning.interval = 0;
-+		wait_for_random_warning.interval = 0;
- 	}
- 	return 0;
- }
--- 
-2.22.0
+One that's unambiguous and somewhat intuitive for the given issue.
+Perhaps EBUSY?
 
+> > > The function will try to fit as much as possible in the buf provided and
+> > > will return -EINVAL if buf_len is smaller than elem_size.
+> > >
+> > > QUEUE and STACK maps are not supported.
+> > >
+> > > Note that map_dump doesn't guarantee that reading the entire table is
+> > > consistent since this function is always racing with kernel and user code
+> > > but the same behaviour is found when the entire table is walked using
+> > > the current interfaces: map_get_next_key + map_lookup_elem.
+> >
+> > > It is also important to note that with  a locked map, the lock is grabbed
+> > > for 1 entry at the time, meaning that the returned buf might or might not
+> > > be consistent.
+> >
+> > Would it be informative to signal to the caller if the read was
+> > complete and consistent (because the entire table was read while the
+> > lock was held)?
+>
+> Mmm.. not sure how we could signal that to the caller.  But I don't
+> think there's a way to know it was consistent
+
+Okay, that makes for a simple answer :) No need to try to add a signal, then.
