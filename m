@@ -2,94 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BAE4733A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 18:24:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B3B0733B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 18:25:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728837AbfGXQYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 12:24:21 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44028 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728780AbfGXQYR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 12:24:17 -0400
-Received: by mail-wr1-f68.google.com with SMTP id p13so47623852wru.10
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 09:24:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UJ9KDGBOl8aIUqKuxRToZa5/dKJVoJYKCqFTu5LeV1A=;
-        b=tU0u8Kzo4EqYFk+S/PB7XaSJUsAodzLIXYMpL2tWf18qebqFw73F789ZMYL9or9SsK
-         dqKPqCfMrQm/8qtBnymmETaftmj2gXdDTqbZeXG94Gcn5Fb8vfeZiMuiL+siIEU4EZO/
-         chX0PSxfTCfqr/6ho4HEP9cQJ2OvcSntdppRHBL7xpC02MhR5YZN537v2LeeBKtn3aS6
-         B5HCEKhe4Bsa/xsFrKapjdoaJaoSFK7pS35WXAQ5rGtDx/6F5GLO3/LdkR2T/9mTXY2o
-         RR5rolvIqI94A16zqWHC8eg7NqWQBgxATiaOGRqNE18Pf+VU9hDDWW9yyNX5nK4rWcRh
-         S24Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UJ9KDGBOl8aIUqKuxRToZa5/dKJVoJYKCqFTu5LeV1A=;
-        b=l8/tM+fn1FffhGBz+xVgprYiEspM2qXdRcUu7i19Zrg0XS78u1ZrAHwnJzJpaiUr4V
-         ELQTXKktzb6PtpijR4fA8cRRL7RHnXX4WZzaGnFhlNRJz/ntm2t6VUGmYDPWviobKl+g
-         BYJy9wQj3QfpFda3foa2drtUHPLOr73btVd+To3xo3gKFVPZ2Gy44ffsIBKLbMFQ9R8r
-         VFF65CJ1hUlgi/TLsQqgL1OKXaj55mMCaz7PAwJbelSl8vMrUw6F4ca4Nye39yuKB+Fl
-         byoZ6S+zYifImKst2SXeS76lqtCRgd4YZwP5005HV6uGmtpmenckzggUyQu3ZEpkeq9f
-         JlFQ==
-X-Gm-Message-State: APjAAAWLx2H/QaQ4k5DilpfsGSGqLSqL6ITo9argbfod4o00tedxt/x6
-        CnhZMQIbvU00xqkXLtA9eIQDmA==
-X-Google-Smtp-Source: APXvYqzsz5R+uA08ZspQl/NwiF9hq2F7Y6DPHaohqRpu1K0XA0Ds+ppWxCNxwgiM91KqJEfr0XmU8A==
-X-Received: by 2002:adf:da4d:: with SMTP id r13mr57578825wrl.281.1563985455657;
-        Wed, 24 Jul 2019 09:24:15 -0700 (PDT)
-Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id f70sm55688960wme.22.2019.07.24.09.24.14
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 09:24:15 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH 6/6] ASoC: codec2codec: fill some of the runtime stream parameters
-Date:   Wed, 24 Jul 2019 18:24:05 +0200
-Message-Id: <20190724162405.6574-7-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190724162405.6574-1-jbrunet@baylibre.com>
-References: <20190724162405.6574-1-jbrunet@baylibre.com>
-MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+        id S1727559AbfGXQZs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 12:25:48 -0400
+Received: from foss.arm.com ([217.140.110.172]:43326 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726099AbfGXQZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 12:25:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3172428;
+        Wed, 24 Jul 2019 09:25:47 -0700 (PDT)
+Received: from e108454-lin.cambridge.arm.com (e108454-lin.cambridge.arm.com [10.1.196.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B58EA3F71F;
+        Wed, 24 Jul 2019 09:25:45 -0700 (PDT)
+From:   Julien Grall <julien.grall@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu
+Cc:     james.morse@arm.com, marc.zyngier@arm.com, julien.thierry@arm.com,
+        suzuki.poulose@arm.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, Julien Grall <julien.grall@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v3 00/15] kvm/arm: Align the VMID allocation with the arm64 ASID one
+Date:   Wed, 24 Jul 2019 17:25:19 +0100
+Message-Id: <20190724162534.7390-1-julien.grall@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set the information provided struct snd_soc_pcm_stream in the
-struct snd_pcm_runtime of the codec to codec link.
+Hi all,
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- sound/soc/soc-dapm.c | 5 +++++
- 1 file changed, 5 insertions(+)
+This patch series is moving out the ASID allocator in a separate file in order
+to re-use it for the VMID. The benefits are:
+    - CPUs are not forced to exit on a roll-over.
+    - Context invalidation is now per-CPU rather than
+      broadcasted.
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index e0eedff5fe94..a6bc3eda275d 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -3892,6 +3892,11 @@ static int snd_soc_dai_link_event(struct snd_soc_dapm_widget *w,
- 			dapm_update_dai_unlocked(substream, &params, sink);
- 		}
- 
-+		runtime->format = params_format(&params);
-+		runtime->subformat = params_subformat(&params);
-+		runtime->channels = params_channels(&params);
-+		runtime->rate = params_rate(&params);
-+
- 		break;
- 
- 	case SND_SOC_DAPM_POST_PMU:
+There are no performance regression on the fastpath for ASID allocation.
+Actually on the hackbench measurement (300 hackbench) it was .7% faster.
+
+The measurement was made on a Seattle based SoC (8 CPUs), with the
+number of VMID limited to 4-bit. The test involves running concurrently 40
+guests with 2 vCPUs. Each guest will then execute hackbench 5 times
+before exiting.
+
+The performance difference (on 5.1-rc1) between the current algo and the
+new one are:
+    - 2.5% less exit from the guest
+    - 22.4% more flush, although they are now local rather than broadcasted
+    - 0.11% faster (just for the record)
+
+The ASID allocator rework to make it generic has been divided in multiple
+patches to make the review easier.
+
+A branch with the patch based on 5.3-rc1 can be found:
+
+http://xenbits.xen.org/gitweb/?p=people/julieng/linux-arm.git;a=shortlog;h=refs/heads/vmid-rework/v3
+
+For all the changes see in each patch.
+
+Best regards,
+
+Cc: Russell King <linux@armlinux.org.uk>
+
+Julien Grall (15):
+  arm64/mm: Introduce asid_info structure and move
+    asid_generation/asid_map to it
+  arm64/mm: Move active_asids and reserved_asids to asid_info
+  arm64/mm: Move bits to asid_info
+  arm64/mm: Move the variable lock and tlb_flush_pending to asid_info
+  arm64/mm: Remove dependency on MM in new_context
+  arm64/mm: Store the number of asid allocated per context
+  arm64/mm: Introduce NUM_ASIDS
+  arm64/mm: Split asid_inits in 2 parts
+  arm64/mm: Split the function check_and_switch_context in 3 parts
+  arm64/mm: Introduce a callback to flush the local context
+  arm64: Move the ASID allocator code in a separate file
+  arm64/lib: Add an helper to free memory allocated by the ASID
+    allocator
+  arm/kvm: Introduce a new VMID allocator
+  arch/arm64: Introduce a capability to tell whether 16-bit VMID is
+    available
+  kvm/arm: Align the VMID allocation with the arm64 ASID one
+
+ arch/arm/include/asm/kvm_asm.h    |   2 +-
+ arch/arm/include/asm/kvm_host.h   |   5 +-
+ arch/arm/include/asm/kvm_hyp.h    |   1 +
+ arch/arm/include/asm/kvm_mmu.h    |   3 +-
+ arch/arm/include/asm/lib_asid.h   |  79 +++++++++++++++
+ arch/arm/kvm/Makefile             |   1 +
+ arch/arm/kvm/hyp/tlb.c            |   8 +-
+ arch/arm64/include/asm/cpucaps.h  |   3 +-
+ arch/arm64/include/asm/kvm_asid.h |   8 ++
+ arch/arm64/include/asm/kvm_asm.h  |   2 +-
+ arch/arm64/include/asm/kvm_host.h |   5 +-
+ arch/arm64/include/asm/kvm_mmu.h  |   7 +-
+ arch/arm64/include/asm/lib_asid.h |  79 +++++++++++++++
+ arch/arm64/kernel/cpufeature.c    |   9 ++
+ arch/arm64/kvm/hyp/tlb.c          |  10 +-
+ arch/arm64/lib/Makefile           |   2 +
+ arch/arm64/lib/asid.c             | 190 ++++++++++++++++++++++++++++++++++++
+ arch/arm64/mm/context.c           | 200 +++++---------------------------------
+ virt/kvm/arm/arm.c                | 125 +++++++++---------------
+ 19 files changed, 458 insertions(+), 281 deletions(-)
+ create mode 100644 arch/arm/include/asm/lib_asid.h
+ create mode 100644 arch/arm64/include/asm/kvm_asid.h
+ create mode 100644 arch/arm64/include/asm/lib_asid.h
+ create mode 100644 arch/arm64/lib/asid.c
+
 -- 
-2.21.0
+2.11.0
 
