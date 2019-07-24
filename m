@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D19B74653
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 679BA74644
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:50:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729093AbfGYFub (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:50:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57890 "EHLO mail.kernel.org"
+        id S2404869AbfGYFnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:43:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404219AbfGYFmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:42:55 -0400
+        id S2390976AbfGYFm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 01:42:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9485E21850;
-        Thu, 25 Jul 2019 05:42:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2469B22C7C;
+        Thu, 25 Jul 2019 05:42:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564033375;
-        bh=QtlBSosPIGx7NyC+f4ToTQU3coh+S8xMK3YXpkL+5Qc=;
+        s=default; t=1564033378;
+        bh=pmkVIllkbG370/6M52zBITjYZF5DFjYWiNDBziqlTIY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0MuuolXLHYctp+EGHlGKSpRFhnMNKWd3d+HIXmkMBOWzCRoEEEJRR7OCgC8IGVYbg
-         cPMiwrBkaydyJOJJyLdyH1CSzldmaQsOFkNCBhJ73rYEPr0PUrpvqTpiOSYolze94A
-         Our5yB9ul5pyqwwQ06P+wcub9PP3jDGC7f09N4T4=
+        b=gg2rFVOtLXvOoV+At5d5jQ//Utc9ETEI13DMjZP5ttYeY2WF/iyFVchuqDQONrndY
+         ekBka0RDKMxET0WzoQJsCC9vXV2MRyswep8jGo13H+yKOHS7X6OgmxzMDSDDJ7gmWE
+         4O4ubx27cm1BxlahtorZm+NygLhwFN12YhbRkMJY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Jens Axboe <axboe@kernel.dk>,
-        Thorsten Knabe <linux@thorsten-knabe.de>
-Subject: [PATCH 4.19 186/271] bcache: ignore read-ahead request failure on backing device
-Date:   Wed, 24 Jul 2019 21:20:55 +0200
-Message-Id: <20190724191711.066876047@linuxfoundation.org>
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.19 187/271] bcache: fix mistaken sysfs entry for io_error counter
+Date:   Wed, 24 Jul 2019 21:20:56 +0200
+Message-Id: <20190724191711.152341158@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191655.268628197@linuxfoundation.org>
 References: <20190724191655.268628197@linuxfoundation.org>
@@ -46,55 +45,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Coly Li <colyli@suse.de>
 
-commit 578df99b1b0531d19af956530fe4da63d01a1604 upstream.
+commit 5461999848e0462c14f306a62923d22de820a59c upstream.
 
-When md raid device (e.g. raid456) is used as backing device, read-ahead
-requests on a degrading and recovering md raid device might be failured
-immediately by md raid code, but indeed this md raid array can still be
-read or write for normal I/O requests. Therefore such failed read-ahead
-request are not real hardware failure. Further more, after degrading and
-recovering accomplished, read-ahead requests will be handled by md raid
-array again.
+In bch_cached_dev_files[] from driver/md/bcache/sysfs.c, sysfs_errors is
+incorrectly inserted in. The correct entry should be sysfs_io_errors.
 
-For such condition, I/O failures of read-ahead requests don't indicate
-real health status (because normal I/O still be served), they should not
-be counted into I/O error counter dc->io_errors.
+This patch fixes the problem and now I/O errors of cached device can be
+read from /sys/block/bcache<N>/bcache/io_errors.
 
-Since there is no simple way to detect whether the backing divice is a
-md raid device, this patch simply ignores I/O failures for read-ahead
-bios on backing device, to avoid bogus backing device failure on a
-degrading md raid array.
-
-Suggested-and-tested-by: Thorsten Knabe <linux@thorsten-knabe.de>
+Fixes: c7b7bd07404c5 ("bcache: add io_disable to struct cached_dev")
 Signed-off-by: Coly Li <colyli@suse.de>
 Cc: stable@vger.kernel.org
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/bcache/io.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/md/bcache/sysfs.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/md/bcache/io.c
-+++ b/drivers/md/bcache/io.c
-@@ -58,6 +58,18 @@ void bch_count_backing_io_errors(struct
- 
- 	WARN_ONCE(!dc, "NULL pointer of struct cached_dev");
- 
-+	/*
-+	 * Read-ahead requests on a degrading and recovering md raid
-+	 * (e.g. raid6) device might be failured immediately by md
-+	 * raid code, which is not a real hardware media failure. So
-+	 * we shouldn't count failed REQ_RAHEAD bio to dc->io_errors.
-+	 */
-+	if (bio->bi_opf & REQ_RAHEAD) {
-+		pr_warn_ratelimited("%s: Read-ahead I/O failed on backing device, ignore",
-+				    dc->backing_dev_name);
-+		return;
-+	}
-+
- 	errors = atomic_add_return(1, &dc->io_errors);
- 	if (errors < dc->error_limit)
- 		pr_err("%s: IO error on backing device, unrecoverable",
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -175,7 +175,7 @@ SHOW(__bch_cached_dev)
+ 	var_print(writeback_percent);
+ 	sysfs_hprint(writeback_rate,
+ 		     wb ? atomic_long_read(&dc->writeback_rate.rate) << 9 : 0);
+-	sysfs_hprint(io_errors,		atomic_read(&dc->io_errors));
++	sysfs_printf(io_errors,		"%i", atomic_read(&dc->io_errors));
+ 	sysfs_printf(io_error_limit,	"%i", dc->error_limit);
+ 	sysfs_printf(io_disable,	"%i", dc->io_disable);
+ 	var_print(writeback_rate_update_seconds);
+@@ -426,7 +426,7 @@ static struct attribute *bch_cached_dev_
+ 	&sysfs_writeback_rate_p_term_inverse,
+ 	&sysfs_writeback_rate_minimum,
+ 	&sysfs_writeback_rate_debug,
+-	&sysfs_errors,
++	&sysfs_io_errors,
+ 	&sysfs_io_error_limit,
+ 	&sysfs_io_disable,
+ 	&sysfs_dirty_data,
 
 
