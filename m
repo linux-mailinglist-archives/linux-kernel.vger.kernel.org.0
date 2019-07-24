@@ -2,328 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C41BD740D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 23:29:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B88F740DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 23:32:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387629AbfGXV3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 17:29:45 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35009 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbfGXV3o (ORCPT
+        id S1728917AbfGXVcR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 17:32:17 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42496 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbfGXVcR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 17:29:44 -0400
-Received: by mail-wm1-f66.google.com with SMTP id l2so42841735wmg.0;
-        Wed, 24 Jul 2019 14:29:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to;
-        bh=nkQQuYdgc0X5QDD9ENmNkgUO4pU0bBfV1L2f7qAhTY8=;
-        b=JaNNeho0JdzCdDQ4ML1LnJufMt3OOWysTtwv4cGDjwRwXHGgo1/nkeldtO+mGyEwOz
-         0w5/7h/cVByfP/lbaKl++9reXR/U6HezlmD2aDJ88p4S7++HAW3HkD+2wQAAk7QwdiJk
-         sovzA/UnYCId31zyEwOifANFQJMmjITcjbWmO5byDhaMRD571UBIzx8XtQbPh/Tg4cED
-         qgteA6FM+mtiWp1cSLOOR6NuRD8axT9oy1y6nL9H7O6wfwS0WX1xGBg+EvRy8mXSJIJJ
-         63bgciJr+oEmyIa0rHF595j6eYTUU5n/WY1E5unvw24T4zDLZEBOBNui7mtoSTOYXOcJ
-         dQCw==
+        Wed, 24 Jul 2019 17:32:17 -0400
+Received: by mail-qt1-f193.google.com with SMTP id h18so47027296qtm.9
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 14:32:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to;
-        bh=nkQQuYdgc0X5QDD9ENmNkgUO4pU0bBfV1L2f7qAhTY8=;
-        b=Hbzs2hKTJEIvC47IzoIT9lXVenK+5En7ljpzEnJcgdXco4P3zLVRMG8f3F+nzClCBS
-         SNofO+GSoPzI6VB4mKucChdlERubx+aeevza7FJDrx7a8C6SBSE62thR9Bd7P+iDhJSj
-         TQNbO4l3RpF78ZF3yWLbq0x456uqITjv0Czo6v9rTzW5vhnz4brY7ZqjWG2Jhva2XAw8
-         NWPc4vqoPPJSjaqJAnswInNA7FYcC13Q5zgXMDJ0d1ZG7mQ0bAO/vPRe87FMcSMCgL/Q
-         mnjutcL2hYpaGSzHxNUMmkuA4mDiYyu7262Zbm4mVtOXJUyoWlP9pJVqcyL9kUtKBcTQ
-         qEOQ==
-X-Gm-Message-State: APjAAAWeWg9NUdK5lQ/ekhUSam7hiRjV4DgZdHalQSxfGiFU5SRaJ3Ds
-        RJDZsqss6Z6zfg3GSVzdWUmTJui6ZjU=
-X-Google-Smtp-Source: APXvYqzyrBOtE/hNckRfxqw+FU35wuyFrYfx6juAIkbNSptFk+BR5DPL1P6bUZsjVmSznJf/WRLm6w==
-X-Received: by 2002:a1c:f90f:: with SMTP id x15mr73780851wmh.69.1564003780403;
-        Wed, 24 Jul 2019 14:29:40 -0700 (PDT)
-Received: from [192.168.43.214] ([109.126.147.168])
-        by smtp.gmail.com with ESMTPSA id 4sm110980397wro.78.2019.07.24.14.29.38
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 14:29:39 -0700 (PDT)
-Subject: Re: [RFC][PATCH] io_uring: Incapsulate conditional mem accounting
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <ba9abac35d74b11a0e338b478e472107064b738d.1562807210.git.asml.silence@gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
- bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
- 6uqVkK1OMb7qRvKH0i7HYP4WJzYbEWVyLiAxUj611mC9tgd73oqZ2pLYzGTqF2j6a/obaqha
- +hXuWTvpDQXqcOZJXIW43atprH03G1tQs7VwR21Q1eq6Yvy2ESLdc38EqCszBfQRMmKy+cfp
- W3U9Mb1w0L680pXrONcnlDBCN7/sghGeMHjGKfNANjPc+0hzz3rApPxpoE7HC1uRiwC4et83
- CKnncH1l7zgeBT9Oa3qEiBlaa1ZCBqrA4dY+z5fWJYjMpwI1SNp37RtF8fKXbKQg+JuUjAa9
- Y6oXeyEvDHMyJYMcinl6xCqCBAXPHnHmawkMMgjr3BBRzODmMr+CPVvnYe7BFYfoajzqzq+h
- EyXSl3aBf0IDPTqSUrhbmjj5OEOYgRW5p+mdYtY1cXeK8copmd+fd/eTkghok5li58AojCba
- jRjp7zVOLOjDlpxxiKhuFmpV4yWNh5JJaTbwCRSd04sCcDNlJj+TehTr+o1QiORzc2t+N5iJ
- NbILft19Izdn8U39T5oWiynqa1qCLgbuFtnYx1HlUq/HvAm+kwARAQABtDFQYXZlbCBCZWd1
- bmtvdiAoc2lsZW5jZSkgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+iQJOBBMBCAA4FiEE+6Ju
- PTjTbx479o3OWt5b1Glr+6UFAlmKBOQCGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQ
- Wt5b1Glr+6WxZA//QueaKHzgdnOikJ7NA/Vq8FmhRlwgtP0+E+w93kL+ZGLzS/cUCIjn2f4Q
- Mcutj2Neg0CcYPX3b2nJiKr5Vn0rjJ/suiaOa1h1KzyNTOmxnsqE5fmxOf6C6x+NKE18I5Jy
- xzLQoktbdDVA7JfB1itt6iWSNoOTVcvFyvfe5ggy6FSCcP+m1RlR58XxVLH+qlAvxxOeEr/e
- aQfUzrs7gqdSd9zQGEZo0jtuBiB7k98t9y0oC9Jz0PJdvaj1NZUgtXG9pEtww3LdeXP/TkFl
- HBSxVflzeoFaj4UAuy8+uve7ya/ECNCc8kk0VYaEjoVrzJcYdKP583iRhOLlZA6HEmn/+Gh9
- 4orG67HNiJlbFiW3whxGizWsrtFNLsSP1YrEReYk9j1SoUHHzsu+ZtNfKuHIhK0sU07G1OPN
- 2rDLlzUWR9Jc22INAkhVHOogOcc5ajMGhgWcBJMLCoi219HlX69LIDu3Y34uIg9QPZIC2jwr
- 24W0kxmK6avJr7+n4o8m6sOJvhlumSp5TSNhRiKvAHB1I2JB8Q1yZCIPzx+w1ALxuoWiCdwV
- M/azguU42R17IuBzK0S3hPjXpEi2sK/k4pEPnHVUv9Cu09HCNnd6BRfFGjo8M9kZvw360gC1
- reeMdqGjwQ68o9x0R7NBRrtUOh48TDLXCANAg97wjPoy37dQE7e5Ag0EWYoE5AEQAMWS+aBV
- IJtCjwtfCOV98NamFpDEjBMrCAfLm7wZlmXy5I6o7nzzCxEw06P2rhzp1hIqkaab1kHySU7g
- dkpjmQ7Jjlrf6KdMP87mC/Hx4+zgVCkTQCKkIxNE76Ff3O9uTvkWCspSh9J0qPYyCaVta2D1
- Sq5HZ8WFcap71iVO1f2/FEHKJNz/YTSOS/W7dxJdXl2eoj3gYX2UZNfoaVv8OXKaWslZlgqN
- jSg9wsTv1K73AnQKt4fFhscN9YFxhtgD/SQuOldE5Ws4UlJoaFX/yCoJL3ky2kC0WFngzwRF
- Yo6u/KON/o28yyP+alYRMBrN0Dm60FuVSIFafSqXoJTIjSZ6olbEoT0u17Rag8BxnxryMrgR
- dkccq272MaSS0eOC9K2rtvxzddohRFPcy/8bkX+t2iukTDz75KSTKO+chce62Xxdg62dpkZX
- xK+HeDCZ7gRNZvAbDETr6XI63hPKi891GeZqvqQVYR8e+V2725w+H1iv3THiB1tx4L2bXZDI
- DtMKQ5D2RvCHNdPNcZeldEoJwKoA60yg6tuUquvsLvfCwtrmVI2rL2djYxRfGNmFMrUDN1Xq
- F3xozA91q3iZd9OYi9G+M/OA01husBdcIzj1hu0aL+MGg4Gqk6XwjoSxVd4YT41kTU7Kk+/I
- 5/Nf+i88ULt6HanBYcY/+Daeo/XFABEBAAGJAjYEGAEIACAWIQT7om49ONNvHjv2jc5a3lvU
- aWv7pQUCWYoE5AIbDAAKCRBa3lvUaWv7pfmcEACKTRQ28b1y5ztKuLdLr79+T+LwZKHjX++P
- 4wKjEOECCcB6KCv3hP+J2GCXDOPZvdg/ZYZafqP68Yy8AZqkfa4qPYHmIdpODtRzZSL48kM8
- LRzV8Rl7J3ItvzdBRxf4T/Zseu5U6ELiQdCUkPGsJcPIJkgPjO2ROG/ZtYa9DvnShNWPlp+R
- uPwPccEQPWO/NP4fJl2zwC6byjljZhW5kxYswGMLBwb5cDUZAisIukyAa8Xshdan6C2RZcNs
- rB3L7vsg/R8UCehxOH0C+NypG2GqjVejNZsc7bgV49EOVltS+GmGyY+moIzxsuLmT93rqyII
- 5rSbbcTLe6KBYcs24XEoo49Zm9oDA3jYvNpeYD8rDcnNbuZh9kTgBwFN41JHOPv0W2FEEWqe
- JsCwQdcOQ56rtezdCJUYmRAt3BsfjN3Jn3N6rpodi4Dkdli8HylM5iq4ooeb5VkQ7UZxbCWt
- UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
- m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
- OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <a7f8939b-d7c8-7d10-f32c-319f009516b2@gmail.com>
-Date:   Thu, 25 Jul 2019 00:29:37 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ai5coBa0SEbsnkfCobaB/l8UgFxaRhE6zMbrvqUmDKQ=;
+        b=UYG2HakKCkkN0HlrX8wbrBgoVDnsOIoSE3tIXoeSXQvghlxzfwNs4o/iM2aBaddwo7
+         oMIz21NdQa3cj//DDGS4GvDieS2E89n2wnpXr1dIRChaiSNX2m5/SUlPLLTEfgGYtZT7
+         nUNYPbtOGgrmtk2LpUUZwvsr4YeiurQyLKoQtu5/BwIY3evRE2nJF+n4YvwG3dVh3GkA
+         lIggMjCu1gfrIgN4GGhusxsegJdACQOH/+uuIhyiJ/KZyIt5/tUxN/s7pqo4q8Sz/JJY
+         F3pTIStK+PRMha+GOdWWCUlhbbwDOn79OA65d59dUu2VgEJbP50B8ZrgBzQAolAwSs+c
+         K0xg==
+X-Gm-Message-State: APjAAAVy778mXh4DrPGd916GF/z8DmtW4Sxt+VnP7sRhYHMO0aSIeqb+
+        cIIbuzPDpFQVynkYw+Z+KgVYVA==
+X-Google-Smtp-Source: APXvYqyH0YRHgL6uAQpFcl1HZau/89CK88ahnBR6ktX2vEame2RO+xp6GtK5MlfC7dIethbqH316WQ==
+X-Received: by 2002:ac8:2aaa:: with SMTP id b39mr60096621qta.24.1564003936443;
+        Wed, 24 Jul 2019 14:32:16 -0700 (PDT)
+Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
+        by smtp.gmail.com with ESMTPSA id b13sm29314624qtk.55.2019.07.24.14.32.10
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 14:32:15 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 17:32:07 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        kvm@vger.kernel.org, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, yang.zhang.wz@gmail.com,
+        pagupta@redhat.com, riel@surriel.com, konrad.wilk@oracle.com,
+        lcapitulino@redhat.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com,
+        alexander.h.duyck@linux.intel.com
+Subject: Re: [PATCH v2 0/5] mm / virtio: Provide support for page hinting
+Message-ID: <20190724154840-mutt-send-email-mst@kernel.org>
+References: <20190724165158.6685.87228.stgit@localhost.localdomain>
+ <0c520470-4654-cdf2-cf4d-d7c351d25e8b@redhat.com>
+ <f7578309-dd36-bda0-6a30-34a6df21faca@redhat.com>
+ <20190724153003-mutt-send-email-mst@kernel.org>
+ <b3279b70-7a64-a456-cbfa-2a5ec3e9468e@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <ba9abac35d74b11a0e338b478e472107064b738d.1562807210.git.asml.silence@gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="DGktklrolnqzKXHsSgsti6HNrk3xKFtFm"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b3279b70-7a64-a456-cbfa-2a5ec3e9468e@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---DGktklrolnqzKXHsSgsti6HNrk3xKFtFm
-Content-Type: multipart/mixed; boundary="j4JmxJ24fveyJpooCCNqRbUm7uDe041YD";
- protected-headers="v1"
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-ID: <a7f8939b-d7c8-7d10-f32c-319f009516b2@gmail.com>
-Subject: Re: [RFC][PATCH] io_uring: Incapsulate conditional mem accounting
-References: <ba9abac35d74b11a0e338b478e472107064b738d.1562807210.git.asml.silence@gmail.com>
-In-Reply-To: <ba9abac35d74b11a0e338b478e472107064b738d.1562807210.git.asml.silence@gmail.com>
+On Wed, Jul 24, 2019 at 09:47:24PM +0200, David Hildenbrand wrote:
+> On 24.07.19 21:31, Michael S. Tsirkin wrote:
+> > On Wed, Jul 24, 2019 at 08:41:33PM +0200, David Hildenbrand wrote:
+> >> On 24.07.19 20:40, Nitesh Narayan Lal wrote:
+> >>>
+> >>> On 7/24/19 12:54 PM, Alexander Duyck wrote:
+> >>>> This series provides an asynchronous means of hinting to a hypervisor
+> >>>> that a guest page is no longer in use and can have the data associated
+> >>>> with it dropped. To do this I have implemented functionality that allows
+> >>>> for what I am referring to as page hinting
+> >>>>
+> >>>> The functionality for this is fairly simple. When enabled it will allocate
+> >>>> statistics to track the number of hinted pages in a given free area. When
+> >>>> the number of free pages exceeds this value plus a high water value,
+> >>>> currently 32,
+> >>> Shouldn't we configure this to a lower number such as 16?
+> >>>>  it will begin performing page hinting which consists of
+> >>>> pulling pages off of free list and placing them into a scatter list. The
+> >>>> scatterlist is then given to the page hinting device and it will perform
+> >>>> the required action to make the pages "hinted", in the case of
+> >>>> virtio-balloon this results in the pages being madvised as MADV_DONTNEED
+> >>>> and as such they are forced out of the guest. After this they are placed
+> >>>> back on the free list, and an additional bit is added if they are not
+> >>>> merged indicating that they are a hinted buddy page instead of a standard
+> >>>> buddy page. The cycle then repeats with additional non-hinted pages being
+> >>>> pulled until the free areas all consist of hinted pages.
+> >>>>
+> >>>> I am leaving a number of things hard-coded such as limiting the lowest
+> >>>> order processed to PAGEBLOCK_ORDER,
+> >>> Have you considered making this option configurable at the compile time?
+> >>>>  and have left it up to the guest to
+> >>>> determine what the limit is on how many pages it wants to allocate to
+> >>>> process the hints.
+> >>> It might make sense to set the number of pages to be hinted at a time from the
+> >>> hypervisor.
+> >>>>
+> >>>> My primary testing has just been to verify the memory is being freed after
+> >>>> allocation by running memhog 79g on a 80g guest and watching the total
+> >>>> free memory via /proc/meminfo on the host. With this I have verified most
+> >>>> of the memory is freed after each iteration. As far as performance I have
+> >>>> been mainly focusing on the will-it-scale/page_fault1 test running with
+> >>>> 16 vcpus. With that I have seen at most a 2% difference between the base
+> >>>> kernel without these patches and the patches with virtio-balloon disabled.
+> >>>> With the patches and virtio-balloon enabled with hinting the results
+> >>>> largely depend on the host kernel. On a 3.10 RHEL kernel I saw up to a 2%
+> >>>> drop in performance as I approached 16 threads,
+> >>> I think this is acceptable.
+> >>>>  however on the the lastest
+> >>>> linux-next kernel I saw roughly a 4% to 5% improvement in performance for
+> >>>> all tests with 8 or more threads. 
+> >>> Do you mean that with your patches the will-it-scale/page_fault1 numbers were
+> >>> better by 4-5% over an unmodified kernel?
+> >>>> I believe the difference seen is due to
+> >>>> the overhead for faulting pages back into the guest and zeroing of memory.
+> >>> It may also make sense to test these patches with netperf to observe how much
+> >>> performance drop it is introducing.
+> >>>> Patch 4 is a bit on the large side at about 600 lines of change, however
+> >>>> I really didn't see a good way to break it up since each piece feeds into
+> >>>> the next. So I couldn't add the statistics by themselves as it didn't
+> >>>> really make sense to add them without something that will either read or
+> >>>> increment/decrement them, or add the Hinted state without something that
+> >>>> would set/unset it. As such I just ended up adding the entire thing as
+> >>>> one patch. It makes it a bit bigger but avoids the issues in the previous
+> >>>> set where I was referencing things before they had been added.
+> >>>>
+> >>>> Changes from the RFC:
+> >>>> https://lore.kernel.org/lkml/20190530215223.13974.22445.stgit@localhost.localdomain/
+> >>>> Moved aeration requested flag out of aerator and into zone->flags.
+> >>>> Moved bounary out of free_area and into local variables for aeration.
+> >>>> Moved aeration cycle out of interrupt and into workqueue.
+> >>>> Left nr_free as total pages instead of splitting it between raw and aerated.
+> >>>> Combined size and physical address values in virtio ring into one 64b value.
+> >>>>
+> >>>> Changes from v1:
+> >>>> https://lore.kernel.org/lkml/20190619222922.1231.27432.stgit@localhost.localdomain/
+> >>>> Dropped "waste page treatment" in favor of "page hinting"
+> >>> We may still have to try and find a better name for virtio-balloon side changes.
+> >>> As "FREE_PAGE_HINT" and "PAGE_HINTING" are still confusing.
+> >>
+> >> We should have named that free page reporting, but that train already
+> >> has left.
+> > 
+> > I think VIRTIO_BALLOON_F_FREE_PAGE_HINT is different and arguably
+> > actually does provide hints.
+> 
+> I guess it depends on the point of view (e.g., getting all free pages
+> feels more like a report). But I could also live with using the term
+> reporting in this context.
+> 
+> We could go ahead and name it all "page reporting", would also work for me.
 
---j4JmxJ24fveyJpooCCNqRbUm7uDe041YD
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+So there are actually three differences between the machanisms:
+1. VIRTIO_BALLOON_F_FREE_PAGE_HINT sometimes reports pages which might no
+   longer be on the free list (with subtle limitations which sometimes
+   still allow hypervisor to discard the pages)
+2. VIRTIO_BALLOON_F_FREE_PAGE_HINT starts reporting when requested by
+   host
+3. VIRTIO_BALLOON_F_FREE_PAGE_HINT is not incremental: each request
+   by host reports all free memory
 
-ping
-
-On 11/07/2019 04:07, Pavel Begunkov (Silence) wrote:
-> From: Pavel Begunkov <asml.silence@gmail.com>
->=20
-> It's quite tedious and error-prone to manually check before each call
-> to io_{,un}account_mem() whether we need memory accounting. Instead,
-> the functions can work directly with struct io_ring_ctx and handle
-> checks themselves. In any case, they're perfectly inlined.
->=20
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->  fs/io_uring.c | 59 ++++++++++++++++++++++-----------------------------=
-
->  1 file changed, 25 insertions(+), 34 deletions(-)
->=20
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 3fd884b4e0be..f47f7abe19eb 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -2704,14 +2704,19 @@ static int io_sq_offload_start(struct io_ring_c=
-tx *ctx,
->  	return ret;
->  }
-> =20
-> -static void io_unaccount_mem(struct user_struct *user, unsigned long n=
-r_pages)
-> +static void io_unaccount_mem(struct io_ring_ctx *ctx, unsigned long nr=
-_pages)
->  {
-> -	atomic_long_sub(nr_pages, &user->locked_vm);
-> +	if (ctx->account_mem)
-> +		atomic_long_sub(nr_pages, &ctx->user->locked_vm);
->  }
-> =20
-> -static int io_account_mem(struct user_struct *user, unsigned long nr_p=
-ages)
-> +static int io_account_mem(struct io_ring_ctx *ctx, unsigned long nr_pa=
-ges)
->  {
->  	unsigned long page_limit, cur_pages, new_pages;
-> +	struct user_struct *user =3D ctx->user;
-> +
-> +	if (!ctx->account_mem)
-> +		return 0;
-> =20
->  	/* Don't allow more pages than we can safely lock */
->  	page_limit =3D rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
-> @@ -2773,8 +2778,7 @@ static int io_sqe_buffer_unregister(struct io_rin=
-g_ctx *ctx)
->  		for (j =3D 0; j < imu->nr_bvecs; j++)
->  			put_page(imu->bvec[j].bv_page);
-> =20
-> -		if (ctx->account_mem)
-> -			io_unaccount_mem(ctx->user, imu->nr_bvecs);
-> +		io_unaccount_mem(ctx, imu->nr_bvecs);
->  		kvfree(imu->bvec);
->  		imu->nr_bvecs =3D 0;
->  	}
-> @@ -2857,11 +2861,9 @@ static int io_sqe_buffer_register(struct io_ring=
-_ctx *ctx, void __user *arg,
->  		start =3D ubuf >> PAGE_SHIFT;
->  		nr_pages =3D end - start;
-> =20
-> -		if (ctx->account_mem) {
-> -			ret =3D io_account_mem(ctx->user, nr_pages);
-> -			if (ret)
-> -				goto err;
-> -		}
-> +		ret =3D io_account_mem(ctx, nr_pages);
-> +		if (ret)
-> +			goto err;
-> =20
->  		ret =3D 0;
->  		if (!pages || nr_pages > got_pages) {
-> @@ -2874,8 +2876,7 @@ static int io_sqe_buffer_register(struct io_ring_=
-ctx *ctx, void __user *arg,
->  					GFP_KERNEL);
->  			if (!pages || !vmas) {
->  				ret =3D -ENOMEM;
-> -				if (ctx->account_mem)
-> -					io_unaccount_mem(ctx->user, nr_pages);
-> +				io_unaccount_mem(ctx, nr_pages);
->  				goto err;
->  			}
->  			got_pages =3D nr_pages;
-> @@ -2885,8 +2886,7 @@ static int io_sqe_buffer_register(struct io_ring_=
-ctx *ctx, void __user *arg,
->  						GFP_KERNEL);
->  		ret =3D -ENOMEM;
->  		if (!imu->bvec) {
-> -			if (ctx->account_mem)
-> -				io_unaccount_mem(ctx->user, nr_pages);
-> +			io_unaccount_mem(ctx, nr_pages);
->  			goto err;
->  		}
-> =20
-> @@ -2919,8 +2919,7 @@ static int io_sqe_buffer_register(struct io_ring_=
-ctx *ctx, void __user *arg,
->  				for (j =3D 0; j < pret; j++)
->  					put_page(pages[j]);
->  			}
-> -			if (ctx->account_mem)
-> -				io_unaccount_mem(ctx->user, nr_pages);
-> +			io_unaccount_mem(ctx, nr_pages);
->  			kvfree(imu->bvec);
->  			goto err;
->  		}
-> @@ -3009,9 +3008,7 @@ static void io_ring_ctx_free(struct io_ring_ctx *=
-ctx)
->  	io_mem_free(ctx->cq_ring);
-> =20
->  	percpu_ref_exit(&ctx->refs);
-> -	if (ctx->account_mem)
-> -		io_unaccount_mem(ctx->user,
-> -				ring_pages(ctx->sq_entries, ctx->cq_entries));
-> +	io_unaccount_mem(ctx, ring_pages(ctx->sq_entries, ctx->cq_entries));
->  	free_uid(ctx->user);
->  	kfree(ctx);
->  }
-> @@ -3253,7 +3250,6 @@ static int io_uring_create(unsigned entries, stru=
-ct io_uring_params *p)
->  {
->  	struct user_struct *user =3D NULL;
->  	struct io_ring_ctx *ctx;
-> -	bool account_mem;
->  	int ret;
-> =20
->  	if (!entries || entries > IORING_MAX_ENTRIES)
-> @@ -3269,29 +3265,24 @@ static int io_uring_create(unsigned entries, st=
-ruct io_uring_params *p)
->  	p->cq_entries =3D 2 * p->sq_entries;
-> =20
->  	user =3D get_uid(current_user());
-> -	account_mem =3D !capable(CAP_IPC_LOCK);
-> -
-> -	if (account_mem) {
-> -		ret =3D io_account_mem(user,
-> -				ring_pages(p->sq_entries, p->cq_entries));
-> -		if (ret) {
-> -			free_uid(user);
-> -			return ret;
-> -		}
-> -	}
-> =20
->  	ctx =3D io_ring_ctx_alloc(p);
->  	if (!ctx) {
-> -		if (account_mem)
-> -			io_unaccount_mem(user, ring_pages(p->sq_entries,
-> -								p->cq_entries));
->  		free_uid(user);
->  		return -ENOMEM;
->  	}
-> +
->  	ctx->compat =3D in_compat_syscall();
-> -	ctx->account_mem =3D account_mem;
-> +	ctx->account_mem =3D !capable(CAP_IPC_LOCK);
->  	ctx->user =3D user;
-> =20
-> +	ret =3D io_account_mem(ctx, ring_pages(p->sq_entries, p->cq_entries))=
-;
-> +	if (ret) {
-> +		free_uid(user);
-> +		kfree(ctx);
-> +		return ret;
-> +	}
-> +
->  	ret =3D io_allocate_scq_urings(ctx, p);
->  	if (ret)
->  		goto err;
->=20
-
---=20
-Yours sincerely,
-Pavel Begunkov
+By comparison, the proposed patches:
+- always report only actually free pages
+- report at a random time
+- report incrementally
 
 
---j4JmxJ24fveyJpooCCNqRbUm7uDe041YD--
-
---DGktklrolnqzKXHsSgsti6HNrk3xKFtFm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl04zcEACgkQWt5b1Glr
-+6UFaxAAktZZWWVQzpkrIwga2JG2TT9sVAAlJjv6WFS9EDfwY19I7/FfhoTudsPM
-p1tTpvtDY4yiGWrL5oVW3icpZMGWRnZ7wN3PUc1TqT59Fwhr0MtAQpAniQxG0MQ7
-gfxubefqey03V5O6ywPt7MWESTuAwq6qSZvnq+vzblUDtSXybNfyWixJhi5dDb3U
-Xk/3vKbrvONMcyCUEi2MYPaDeT4KoadYjDXF0Cz3SJsRFiGT3ekycjbN3SnAN7x/
-Ac/TPE45RIdwlmf5ysA8jRS//n2BECVvV4oYCbeeJ2xXKNPGCJLHmwx+fhUxl2w0
-+CNyWlGLkaI5NDrY46nFfDuZwvRkA7/06LJ1X7zoxwF9JUMd57eY44+0pFMZ7qmg
-dV8TJGeT70zKfhlYBa4/9T1mNQMjxwrEg1Djf/YrxcOlmX7mVNd+dSf5XDaGylRC
-N7+PppIsGMK0qz1kH2kbJIBAXkEriGRzL3z81zklievMvNJIC4fUVYX26sp5m2UH
-kPQ19J1/p0kpCc8F24nmD0mX61YEi8oLBz9+3mF/Nash2SkRAfMKp8bBvglkrgM5
-t8F5QXPpvj4Y++YUIFIgtGqQOvaHnsql4b4pUhbDMcZ/CQnriJQDHDdiIuA6pUMO
-ntDOB1J1cxqWkuyn3u1NHNM/2MD2TCZjeBB+T1cfWmFdOjhYLgE=
-=+q7w
------END PGP SIGNATURE-----
-
---DGktklrolnqzKXHsSgsti6HNrk3xKFtFm--
+> -- 
+> 
+> Thanks,
+> 
+> David / dhildenb
