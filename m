@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2EDB74573
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:42:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDAEF74577
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:43:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390939AbfGYFmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:42:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57680 "EHLO mail.kernel.org"
+        id S2390970AbfGYFmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:42:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390887AbfGYFmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:42:43 -0400
+        id S2390954AbfGYFmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 01:42:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A38D121850;
-        Thu, 25 Jul 2019 05:42:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 662AF21850;
+        Thu, 25 Jul 2019 05:42:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564033363;
-        bh=r662jml85MiQMgRGSEkOVO10RYOobqyOSejyrb8hO7I=;
+        s=default; t=1564033368;
+        bh=2/S1hdU4cTruU/hKmKnpGuGjMHYqBrbHfZvNHrsHGH0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tTdzPUvrHGzh1PKYjiFIfL1KSKAe8If1EM6lk7j4NzLjOzlcJKeF1L5hRi87VTWAk
-         okUXOD39RFhQTM0LGRx0/UQTKvFrDebDPlmE6v1lq/jNueSkzYO5NMv1hc1zRknwLU
-         xXKAyM2sv7kRnEIR10zEk4ItBeR11Dih5rG9UGgY=
+        b=qEps97Fg4f5FxG2oDx6HUc+98Id6IfbNlxtc8SHmK4XZKGhEhJYrJrgI3k7KKTQJO
+         0qA+9q/xnwnzv2z2cx+NDZaAGWE4eVcYaztatG8oOFaQSaSE7flpiwR4RYGHW3F+JN
+         cATMvNLjytPDrPVcxUD+3BFIuLPkhHvlf46D+/34=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yong Li <mr.liyong@qq.com>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 183/271] Revert "bcache: set CACHE_SET_IO_DISABLE in bch_cached_dev_error()"
-Date:   Wed, 24 Jul 2019 21:20:52 +0200
-Message-Id: <20190724191710.824018675@linuxfoundation.org>
+        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Shenghui Wang <shhuiw@foxmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.19 185/271] bcache: Revert "bcache: free heap cache_set->flush_btree in bch_journal_free"
+Date:   Wed, 24 Jul 2019 21:20:54 +0200
+Message-Id: <20190724191710.984600453@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191655.268628197@linuxfoundation.org>
 References: <20190724191655.268628197@linuxfoundation.org>
@@ -45,63 +46,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Coly Li <colyli@suse.de>
 
-commit 695277f16b3a102fcc22c97fdf2de77c7b19f0b3 upstream.
+commit ba82c1ac1667d6efb91a268edb13fc9cdaecec9b upstream.
 
-This reverts commit 6147305c73e4511ca1a975b766b97a779d442567.
+This reverts commit 6268dc2c4703aabfb0b35681be709acf4c2826c6.
 
-Although this patch helps the failed bcache device to stop faster when
-too many I/O errors detected on corresponding cached device, setting
-CACHE_SET_IO_DISABLE bit to cache set c->flags was not a good idea. This
-operation will disable all I/Os on cache set, which means other attached
-bcache devices won't work neither.
+This patch depends on commit c4dc2497d50d ("bcache: fix high CPU
+occupancy during journal") which is reverted in previous patch. So
+revert this one too.
 
-Without this patch, the failed bcache device can also be stopped
-eventually if internal I/O accomplished (e.g. writeback). Therefore here
-I revert it.
-
-Fixes: 6147305c73e4 ("bcache: set CACHE_SET_IO_DISABLE in bch_cached_dev_error()")
-Reported-by: Yong Li <mr.liyong@qq.com>
+Fixes: 6268dc2c4703 ("bcache: free heap cache_set->flush_btree in bch_journal_free")
 Signed-off-by: Coly Li <colyli@suse.de>
 Cc: stable@vger.kernel.org
+Cc: Shenghui Wang <shhuiw@foxmail.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/bcache/super.c |   17 -----------------
- 1 file changed, 17 deletions(-)
+ drivers/md/bcache/journal.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1423,8 +1423,6 @@ int bch_flash_dev_create(struct cache_se
- 
- bool bch_cached_dev_error(struct cached_dev *dc)
- {
--	struct cache_set *c;
--
- 	if (!dc || test_bit(BCACHE_DEV_CLOSING, &dc->disk.flags))
- 		return false;
- 
-@@ -1435,21 +1433,6 @@ bool bch_cached_dev_error(struct cached_
- 	pr_err("stop %s: too many IO errors on backing device %s\n",
- 		dc->disk.disk->disk_name, dc->backing_dev_name);
- 
--	/*
--	 * If the cached device is still attached to a cache set,
--	 * even dc->io_disable is true and no more I/O requests
--	 * accepted, cache device internal I/O (writeback scan or
--	 * garbage collection) may still prevent bcache device from
--	 * being stopped. So here CACHE_SET_IO_DISABLE should be
--	 * set to c->flags too, to make the internal I/O to cache
--	 * device rejected and stopped immediately.
--	 * If c is NULL, that means the bcache device is not attached
--	 * to any cache set, then no CACHE_SET_IO_DISABLE bit to set.
--	 */
--	c = dc->disk.c;
--	if (c && test_and_set_bit(CACHE_SET_IO_DISABLE, &c->flags))
--		pr_info("CACHE_SET_IO_DISABLE already set");
--
- 	bcache_device_stop(&dc->disk);
- 	return true;
+--- a/drivers/md/bcache/journal.c
++++ b/drivers/md/bcache/journal.c
+@@ -842,7 +842,6 @@ void bch_journal_free(struct cache_set *
+ 	free_pages((unsigned long) c->journal.w[1].data, JSET_BITS);
+ 	free_pages((unsigned long) c->journal.w[0].data, JSET_BITS);
+ 	free_fifo(&c->journal.pin);
+-	free_heap(&c->flush_btree);
  }
+ 
+ int bch_journal_alloc(struct cache_set *c)
 
 
