@@ -2,118 +2,245 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9176E73298
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 17:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C21B0732A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 17:21:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387591AbfGXPTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 11:19:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47626 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387503AbfGXPTp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 11:19:45 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A76E6C024AF3;
-        Wed, 24 Jul 2019 15:19:44 +0000 (UTC)
-Received: from redhat.com (ovpn-123-65.rdu2.redhat.com [10.10.123.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1A5D95D9DE;
-        Wed, 24 Jul 2019 15:19:43 +0000 (UTC)
-Date:   Wed, 24 Jul 2019 11:19:42 -0400
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: kprobes, livepatch and FTRACE_OPS_FL_IPMODIFY
-Message-ID: <20190724151942.GA7205@redhat.com>
+        id S1727469AbfGXPVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 11:21:20 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:33166 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727083AbfGXPVU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 11:21:20 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6OFKXTl129002;
+        Wed, 24 Jul 2019 10:20:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1563981633;
+        bh=kV06TLoVNsUYXenFXygLoD1KHApkQKg0DKnf9mR/P54=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=MsOxbaLsddGg8FBIp7Bu36HN2Mh9pwDYMGDPBW8eyabCV5R4FO8VEDo+1WznZ87Uv
+         EK416RLdiWYKaO8XXSijoygp9AGH0yTfWZKy52cVWyE7nfnIUkzHdYT3PJnp6WeIPJ
+         v5fhFY+Ee+Qn/c1hRF3Kxs5auR6KAImeb8DLo38Y=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6OFKXkl011982
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 24 Jul 2019 10:20:33 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 24
+ Jul 2019 10:20:33 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 24 Jul 2019 10:20:33 -0500
+Received: from [10.250.86.29] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6OFKVIJ026870;
+        Wed, 24 Jul 2019 10:20:32 -0500
+Subject: Re: [PATCH v6 2/5] dma-buf: heaps: Add heap helpers
+To:     Christoph Hellwig <hch@infradead.org>,
+        Rob Clark <robdclark@gmail.com>
+CC:     John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Liam Mark <lmark@codeaurora.org>,
+        Pratik Patel <pratikp@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Vincent Donnefort <Vincent.Donnefort@arm.com>,
+        Sudipto Paul <Sudipto.Paul@arm.com>,
+        Xu YiPing <xuyiping@hisilicon.com>,
+        "Chenfeng (puck)" <puck.chen@hisilicon.com>,
+        butao <butao@hisilicon.com>,
+        "Xiaqing (A)" <saberlily.xia@hisilicon.com>,
+        Yudongbin <yudongbin@hisilicon.com>,
+        Chenbo Feng <fengc@google.com>,
+        Alistair Strachan <astrachan@google.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Hridya Valsaraju <hridya@google.com>
+References: <20190624194908.121273-1-john.stultz@linaro.org>
+ <20190624194908.121273-3-john.stultz@linaro.org>
+ <20190718100654.GA19666@infradead.org>
+ <CALAqxLX1s4mbitE-_1s1vFPJrbrCKqpyhYoFW0V6hMEqE=eKVw@mail.gmail.com>
+ <CAF6AEGuM1+pimGNhyKHbYR0BdH=hH+Sai0es8RjGHE9jKHjngw@mail.gmail.com>
+ <20190724065530.GA16225@infradead.org>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <3966dff1-864d-cad4-565f-7c7120301265@ti.com>
+Date:   Wed, 24 Jul 2019 11:20:31 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 24 Jul 2019 15:19:44 +0000 (UTC)
+In-Reply-To: <20190724065530.GA16225@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masami,
+On 7/24/19 2:55 AM, Christoph Hellwig wrote:
+> On Tue, Jul 23, 2019 at 01:09:55PM -0700, Rob Clark wrote:
+>> On Mon, Jul 22, 2019 at 9:09 PM John Stultz <john.stultz@linaro.org> wrote:
+>>>
+>>> On Thu, Jul 18, 2019 at 3:06 AM Christoph Hellwig <hch@infradead.org> wrote:
+>>>>
+>>>> Is there any exlusion between mmap / vmap and the device accessing
+>>>> the data?  Without that you are going to run into a lot of coherency
+>>>> problems.
+>>
+>> dma_fence is basically the way to handle exclusion between different
+>> device access (since device access tends to be asynchronous).  For
+>> device<->device access, each driver is expected to take care of any
+>> cache(s) that the device might have.  (Ie. device writing to buffer
+>> should flush it's caches if needed before signalling fence to let
+>> reading device know that it is safe to read, etc.)
+>>
+>> _begin/end_cpu_access() is intended to be the exclusion for CPU access
+>> (which is synchronous)
+> 
+> What I mean is that we need a clear state machine (preferably including
+> ownership tracking ala dma-debug) where a piece of memory has one
+> owner at a time that can access it.  Only the owner can access is at
+> that time, and at any owner switch we need to flush/invalidate all
+> relevant caches.  And with memory that is vmaped and mapped to userspace
+> that can get really complicated.
+> 
+> The above sounds like you have some of that in place, but we'll really
+> need clear rules to make sure we don't have holes in the scheme.
+> 
 
-I wanted to revisit FTRACE_OPS_FL_IPMODIFY blocking of kprobes and
-livepatch, at least in cases where kprobe pre_handlers don't modify
-regs->ip.
+Well then lets think on this. A given buffer can have 3 owners states
+(CPU-owned, Device-owned, and Un-owned). These are based on the caching
+state from the CPU perspective.
 
-(We've discussed this previously at part of a kpatch github issue #47:
-https://github.com/dynup/kpatch/issues/47)
+If a buffer is CPU-owned then we (Linux) can write to the buffer safely
+without worry that the data is stale or that it will be accessed by the
+device without having been flushed. Device-owned buffers should not be
+accessed by the CPU, and inter-device synchronization should be handled
+by fencing as Rob points out. Un-owned is how a buffer starts for
+consistency and to prevent unneeded cache operations on unwritten buffers.
 
-The particular use case I was wondering about was perf probing a
-particular function, then attempting to livepatch that same function:
+We also need to track the mapping states, 4 states for this, CPU-mapped,
+Device-mapped, CPU/Device-mapped, unmapped. Should be self explanatory,
+map_dma_buf maps towards the device, mmap/vmap/kmap towards the CPU.
+Leaving a buffer mapped by the CPU while device access takes place is
+safe as long as ownership is taken before any access. One more point, we
+assume reference counting for the below discussion, for instance
+unmap_dma_buf refers to the last device unmapping, map_dma_buf refers
+only to the first.
 
-  % uname -r
-  5.3.0-rc1+
+This gives 12 combined states, if we assume a buffer will always be
+owned when it has someone mapping it, either CPU or device or both, then
+we can drop 3 states. If a buffer is only mapped into one space, then
+that space owns it, this drops 2 cross-owned states. Lastly if not
+mapped by either space then the buffer becomes un-owned (and the backing
+memory can be freed or migrated as needed). Leaving us 5 valid states.
 
-  % dmesg -C
-  % perf probe --add cmdline_proc_show
-  Added new event:
-    probe:cmdline_proc_show (on cmdline_proc_show)
+* Un-Owned Un-Mapped
+* Device-Owned Device-Mapped
+* Device-Owned CPU/Device-Mapped
+* CPU-Owned CPU-Mapped
+* CPU-Owned CPU/Device-Mapped
 
-  You can now use it in all perf tools, such as:
+There are 6 DMA-BUF operations (classes) on a buffer:
 
-          perf record -e probe:cmdline_proc_show -aR sleep 1
+* map_dma_buf
+* unmap_dma_buf
+* begin_cpu_access
+* end_cpu_access
+* mmap/vmap/kmap
+* ummanp/vunmap/kunmap
 
-  % perf record -e probe:cmdline_proc_show -aR sleep 30 &
-  [1] 1007
-  % insmod samples/livepatch/livepatch-sample.ko
-  insmod: ERROR: could not insert module samples/livepatch/livepatch-sample.ko: Device or resource busy
-  % dmesg
-  [  440.913962] livepatch_sample: tainting kernel with TAINT_LIVEPATCH
-  [  440.917123] livepatch_sample: module verification failed: signature and/or required key missing - tainting kernel
-  [  440.942493] livepatch: enabling patch 'livepatch_sample'
-  [  440.943445] livepatch: failed to register ftrace handler for function 'cmdline_proc_show' (-16)
-  [  440.944576] livepatch: failed to patch object 'vmlinux'
-  [  440.945270] livepatch: failed to enable patch 'livepatch_sample'
-  [  440.946085] livepatch: 'livepatch_sample': unpatching complete
+From all this I've suggest the following state-machine(in DOT language):
 
-This same behavior holds in reverse, if we want to probe a livepatched
-function:
+Note: Buffers start in "Un-Owned Un-Mapped" and can only be freed from
+that state.
 
-  % insmod samples/livepatch/livepatch-sample.ko
-  % perf probe --add cmdline_proc_show
-  Added new event:
-    probe:cmdline_proc_show (on cmdline_proc_show)
+Note: Commented out states/transitions are not valid but here to prove
+completeness
 
-  You can now use it in all perf tools, such as:
+-------------------------------------------------------------------
 
-          perf record -e probe:cmdline_proc_show -aR sleep 1
+digraph dma_buf_buffer_states
+{
+	label = "DMA-BUF Buffer states";
 
-  % perf record -e probe:cmdline_proc_show -aR sleep 30
-  Error:
-  The sys_perf_event_open() syscall returned with 16 (Device or resource busy) for event (probe:cmdline_proc_show).
-  /bin/dmesg | grep -i perf may provide additional information.
+	uo_um [ label="Un-Owned\nUn-Mapped" ];
+//	uo_dm [ label="Un-Owned\nDevice-Mapped" ];
+//	uo_cm [ label="Un-Owned\nCPU-Mapped" ];
+//	uo_cdm [ label="Un-Owned\nCPU/Device-Mapped" ];
 
+//	do_um [ label="Device-Owned\nUn-Mapped" ];
+	do_dm [ label="Device-Owned\nDevice-Mapped" ];
+//	do_cm [ label="Device-Owned\nCPU-Mapped" ];
+	do_cdm [ label="Device-Owned\nCPU/Device-Mapped" ];
 
-Now, if I read kernel/trace/trace_kprobe.c :: kprobe_dispatcher()
-correctly, it's only going to return !0 (indicating a modified regs->ip)
-when kprobe_perf_func() returns !0, i.e. regs->ip changes over a call to
-trace_call_bpf().
+//	co_um [ label="CPU-Owned\nUn-Mapped" ];
+//	co_dm [ label="CPU-Owned\nDevice-Mapped" ];
+	co_cm [ label="CPU-Owned\nCPU-Mapped" ];
+	co_cdm [ label="CPU-Owned\nCPU/Device-Mapped" ];
 
-Aside: should kprobe_ftrace_handler() check that FTRACE_OPS_FL_IPMODIFY
-is set when a pre_handler returns !0?
+	/* From Un-Owned Un-Mapped */
+		uo_um -> do_dm		[ label="map_dma_buf" ];
+//		uo_um ->		[ label="unmap_dma_buf" ];
+//		uo_um -> 		[ label="begin_cpu_access" ];
+//		uo_um ->		[ label="end_cpu_access" ];
+		uo_um -> co_cm		[ label="mmap/vmap/kmap" ];
+//		uo_um -> 		[ label="ummanp/vunmap/kunmap" ];
 
-In kpatch #47, Josh suggested:
+	/* From Device-Owned Device-Mapped */
+		do_dm -> do_dm		[ label="map_dma_buf" ];
+		do_dm -> uo_um		[ label="unmap_dma_buf" ];
+//		do_dm -> 		[ label="begin_cpu_access" ];
+//		do_dm ->		[ label="end_cpu_access" ];
+		do_dm -> do_cdm		[ label="mmap/vmap/kmap" ];
+//		do_dm -> 		[ label="ummanp/vunmap/kunmap" ];
 
-- If a kprobe handler needs to modify IP, user sets KPROBE_FLAG_IPMODIFY
-  flag to register_kprobe, and then kprobes sets FTRACE_OPS_FL_IPMODIFY
-  when registering with ftrace for that probe.
+	/* From Device-Owned CPU/Device-Mapped */
+		do_cdm -> do_cdm	[ label="map_dma_buf" ];
+		do_cdm -> co_cm		[ label="unmap_dma_buf" ];
+		do_cdm -> co_cdm	[ label="begin_cpu_access" ];
+//		do_cdm ->		[ label="end_cpu_access" ];
+		do_cdm -> do_cdm	[ label="mmap/vmap/kmap" ];
+		do_cdm -> do_dm		[ label="ummanp/vunmap/kunmap" ];
 
-- If KPROBE_FLAG_IPMODIFY is not used, kprobe_ftrace_handler() can
-  detect when a kprobe handler changes regs->ip and restore it to its
-  original value (regs->ip = ip).
+	/* From CPU-Owned CPU-Mapped */
+		co_cm -> co_cdm		[ label="map_dma_buf" ];
+//		co_cm -> 		[ label="unmap_dma_buf" ];
+//		co_cm -> 		[ label="begin_cpu_access" ];
+		co_cm -> co_cm		[ label="end_cpu_access" ];
+//		co_cm ->		[ label="mmap/vmap/kmap" ];
+		co_cm -> uo_um		[ label="ummanp/vunmap/kunmap" ];
 
-Is this something that could still be supported?  In cases like perf
-probe, could we get away with not setting FTRACE_OPS_FL_IPMODIFY?  The
-current way that we're applying that flag, kprobes and livepatch are
-mutually exclusive (for the same function).
+	/* From CPU-Owned CPU/Device-Mapped */
+		co_cdm -> co_cdm	[ label="map_dma_buf" ];
+		co_cdm -> co_cm		[ label="unmap_dma_buf" ];
+//		co_cdm -> 		[ label="begin_cpu_access" ];
+		co_cdm -> do_cdm	[ label="end_cpu_access" ];
+		co_cdm -> co_cdm	[ label="mmap/vmap/kmap" ];
+//		co_cdm ->		[ label="ummanp/vunmap/kunmap" ];
 
-Regards,
+	{
+		rank = same;
+		co_cm -> do_dm [ style=invis ];
+		rankdir = LR;
+	}
 
--- Joe
+	{
+		rank = same;
+		co_cdm -> do_cdm [ style=invis ];
+		rankdir = LR;
+	}
+}
+
+-------------------------------------------------------------------
+
+If we consider this the "official" model, then we can start optimizing
+cache operations, and start forbidding some nonsensical operations.
+
+What do y'all think?
+
+Andrew
