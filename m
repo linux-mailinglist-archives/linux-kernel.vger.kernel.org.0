@@ -2,114 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 838ED7424D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 01:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A7E274253
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 01:47:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388159AbfGXXpR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 19:45:17 -0400
-Received: from mail-qk1-f202.google.com ([209.85.222.202]:42520 "EHLO
-        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387978AbfGXXpN (ORCPT
+        id S2388466AbfGXXrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 19:47:08 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:37232 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726431AbfGXXrH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 19:45:13 -0400
-Received: by mail-qk1-f202.google.com with SMTP id 199so40874958qkj.9
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 16:45:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=VQaWcfe07h7xkPV4srIxPAegZrqwtOuxXwp48xMCRFw=;
-        b=JVgAaFcP4BXC+4Nk6aWkGbBNbormFNb7B2J2uLoqHwsOLu0+A9xD2RsQs7Jj7XcDz0
-         GWagGjRxlDZK3/Ovx7o5c7c8ffOh8AdWIj6eumKSiSYIy4AXuQDI2YB3HJ6SsJ6Esxgq
-         sGam93Bf/ar1WP2KpXBe4WS8c0gusArStRpbSLDQ3xanZdaFy0k+VBUfhl/nir8kPlDs
-         LB0sWJyIZ3Fh9hqJOkO6/7YzmpjvR52IOA6CzztS5Bl+zY1BcUT+pzJUYJnkWIlanmcl
-         O0C3Xkh6Ema6NvFIGt8IVZuLkrLZ4sO3r3WprP4U6/0qKEQ4qRNRTUd7Q1seDttF8BBI
-         cbOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=VQaWcfe07h7xkPV4srIxPAegZrqwtOuxXwp48xMCRFw=;
-        b=iYrDXYiVNn1NhywQk1DrMm65PoLcNu9ogkU2q1cbmeqTuBO/E0HdGO99DkU+AX4/yJ
-         I3aHQVcRS6MlbDuxrhJuskxGetMFEMHN9QCo+siEs9EcBGl0U4deQzFNaRxXg4Ev5S/N
-         ChzkAl/Wjz6lgd06BYuRhKQ2u0bXYkv65YeRyhfyfBSNN+maleGOOVcrZPNGn5DAKJT5
-         VaB82OWpo72RlRH5CdTWsHHk8zGd+eXZX+1kB4GTHEOOazd6crUiXImVlt9TXUB38Mz+
-         3T2tOqTgVZ0DFUguIjm5BLL4b2hlQciiWKLxhfgdQO5wyzMrkd8GJkQTroE71zW8NLny
-         Mi3g==
-X-Gm-Message-State: APjAAAXGXLc3bAo0wMzBeA5yDUHqTdy2tOAEdr/iazhgl5THTOtdP5se
-        YKhCrdxfRW5GIU4KUZlRjnnwYEgP
-X-Google-Smtp-Source: APXvYqyaU8l40Dg9ugxvYn7JyOeLkVyu0WKdTJ6MCa5Vbl46pXV5IDHVJ5swXoEwQp2v7+3MuJSuNppK
-X-Received: by 2002:a37:b0c6:: with SMTP id z189mr56205530qke.208.1564011911372;
- Wed, 24 Jul 2019 16:45:11 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 16:45:00 -0700
-In-Reply-To: <20190724234500.253358-1-nums@google.com>
-Message-Id: <20190724234500.253358-4-nums@google.com>
-Mime-Version: 1.0
-References: <20190724234500.253358-1-nums@google.com>
-X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
-Subject: [PATCH 3/3] Fix sched-messaging.c use of uninitialized value errors
-From:   Numfor Mbiziwo-Tiapo <nums@google.com>
-To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, songliubraving@fb.com, mbd@fb.com
-Cc:     linux-kernel@vger.kernel.org, irogers@google.com,
-        eranian@google.com, Numfor Mbiziwo-Tiapo <nums@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 24 Jul 2019 19:47:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1564012025; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=ZClIlxQHDoZwcWywOLbFHID80yVsfDEESlYYD3vTm1A=;
+        b=ApP73zZikTLAiqk3L+2+k7tcfe7Oy0F93dpanKKpYQ9eOIf1BFR2c8T6TK8xLY5ii8SHC2
+        jqsL07t2ynNn55vpEnHLP7fbCQ/u5bbSxzPYH2u+dT0emt82vFieQOzYWVzhirGtdIHpiP
+        cRQs2hfAfpQFUvnuO22kwHJC8/VzQ3Q=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        od@zcrc.me, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH] MIPS: Add support for partial kernel mode on Xburst CPUs
+Date:   Wed, 24 Jul 2019 19:46:54 -0400
+Message-Id: <20190724234654.16555-1-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Our local MSAN (Memory Sanitizer) build of perf throws use of
-uninitialized value warnings in "tools/perf/bench/sched-messaging.c"
-when running perf bench.
+Support partial kernel mode of Xburst CPUs found in Ingenic SoCs.
+Partial kernel mode means the userspace applications have access to
+the TCSM0 banks of the VPU, and can execute cache instructions.
 
-The first warning comes from the "ready" function where the "dummy" char
-is declared and then passed into "write" without being initialized.
-Initializing "dummy" to any character silences the warning.
-
-The second warning comes from the "sender" function where a "write" call
-is made to write the contents from the "data" char array when it has not
-yet been initialized. Calling memset on "data" silences the warning.
-
-To reproduce this warning, build perf by running:
-make -C tools/perf CLANG=1 CC=clang EXTRA_CFLAGS="-fsanitize=memory\
- -fsanitize-memory-track-origins"
-
-(Additionally, llvm might have to be installed and clang might have to
-be specified as the compiler - export CC=/usr/bin/clang)
-
-then running: tools/perf/perf bench sched all
-
-Please see the cover letter for why false positive warnings may be
-generated.
-
-Signed-off-by: Numfor Mbiziwo-Tiapo <nums@google.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- tools/perf/bench/sched-messaging.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/mips/Kconfig                | 7 +++++++
+ arch/mips/include/asm/mipsregs.h | 1 +
+ arch/mips/kernel/cpu-probe.c     | 4 ++++
+ 3 files changed, 12 insertions(+)
 
-diff --git a/tools/perf/bench/sched-messaging.c b/tools/perf/bench/sched-messaging.c
-index f9d7641ae833..d22d7b7b591d 100644
---- a/tools/perf/bench/sched-messaging.c
-+++ b/tools/perf/bench/sched-messaging.c
-@@ -69,7 +69,7 @@ static void fdpair(int fds[2])
- /* Block until we're ready to go */
- static void ready(int ready_out, int wakefd)
- {
--	char dummy;
-+	char dummy = 'N';
- 	struct pollfd pollfd = { .fd = wakefd, .events = POLLIN };
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index ac9ed08a7fff..02831908d676 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -2986,6 +2986,13 @@ config MIPS_O32_FP64_SUPPORT
  
- 	/* Tell them we're ready. */
-@@ -87,6 +87,7 @@ static void *sender(struct sender_context *ctx)
- 	char data[DATASIZE];
- 	unsigned int i, j;
+ 	  If unsure, say N.
  
-+	memset(data, 'N', DATASIZE);
- 	ready(ctx->ready_out, ctx->wakefd);
++config MIPS_XBURST_PARTIAL_KERNEL_MODE
++	bool "Partial kernel mode for Xburst CPUs" if MACH_INGENIC
++	help
++	  Support partial kernel mode of Xburst CPUs found in Ingenic SoCs.
++	  Partial kernel mode means the userspace applications have access to
++	  the TCSM0 banks of the VPU, and can execute cache instructions.
++
+ config USE_OF
+ 	bool
+ 	select OF
+diff --git a/arch/mips/include/asm/mipsregs.h b/arch/mips/include/asm/mipsregs.h
+index 1e6966e8527e..01e0fcb1d4c2 100644
+--- a/arch/mips/include/asm/mipsregs.h
++++ b/arch/mips/include/asm/mipsregs.h
+@@ -2813,6 +2813,7 @@ __BUILD_SET_C0(status)
+ __BUILD_SET_C0(cause)
+ __BUILD_SET_C0(config)
+ __BUILD_SET_C0(config5)
++__BUILD_SET_C0(config7)
+ __BUILD_SET_C0(intcontrol)
+ __BUILD_SET_C0(intctl)
+ __BUILD_SET_C0(srsmap)
+diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
+index a9c82338396a..fd275f37cb7c 100644
+--- a/arch/mips/kernel/cpu-probe.c
++++ b/arch/mips/kernel/cpu-probe.c
+@@ -1985,6 +1985,10 @@ static inline void cpu_probe_ingenic(struct cpuinfo_mips *c, unsigned int cpu)
+ 	 */
+ 	if ((c->processor_id & PRID_COMP_MASK) == PRID_COMP_INGENIC_D0)
+ 		c->isa_level &= ~MIPS_CPU_ISA_M32R2;
++
++	/* config7 bit 6 controls the "partial kernel mode" */
++	if (IS_ENABLED(CONFIG_MIPS_XBURST_PARTIAL_KERNEL_MODE))
++		set_c0_config7(BIT(6));
+ }
  
- 	/* Now pump to every receiver. */
+ static inline void cpu_probe_netlogic(struct cpuinfo_mips *c, int cpu)
 -- 
-2.22.0.657.g960e92d24f-goog
+2.21.0.593.g511ec345e18
 
