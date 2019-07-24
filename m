@@ -2,57 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFF8A7415C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 00:26:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DC7E74161
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 00:26:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729277AbfGXW0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 18:26:20 -0400
-Received: from orbyte.nwl.cc ([151.80.46.58]:51970 "EHLO orbyte.nwl.cc"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728027AbfGXW0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 18:26:19 -0400
-Received: from n0-1 by orbyte.nwl.cc with local (Exim 4.91)
-        (envelope-from <n0-1@orbyte.nwl.cc>)
-        id 1hqPi8-0003Jc-2l; Thu, 25 Jul 2019 00:26:12 +0200
-Date:   Thu, 25 Jul 2019 00:26:12 +0200
-From:   Phil Sutter <phil@nwl.cc>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the netfilter
- tree
-Message-ID: <20190724222612.GD14469@orbyte.nwl.cc>
-Mail-Followup-To: Phil Sutter <phil@nwl.cc>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190725071803.6beb44f9@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190725071803.6beb44f9@canb.auug.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1729308AbfGXW0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 18:26:30 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:52772 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728027AbfGXW00 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 18:26:26 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 742691543BD0E;
+        Wed, 24 Jul 2019 15:26:25 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 15:26:12 -0700 (PDT)
+Message-Id: <20190724.152612.864896276004624257.davem@davemloft.net>
+To:     schwab@suse.de
+Cc:     netdev@vger.kernel.org, andrew@lunn.ch, f.fainelli@gmail.com,
+        hkallweit1@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: phy: mscc: initialize stats array
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <mvmh87bih1y.fsf@suse.de>
+References: <mvmh87bih1y.fsf@suse.de>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 24 Jul 2019 15:26:25 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Andreas Schwab <schwab@suse.de>
+Date: Wed, 24 Jul 2019 17:32:57 +0200
 
-On Thu, Jul 25, 2019 at 07:18:03AM +1000, Stephen Rothwell wrote:
-> Commit
+> The memory allocated for the stats array may contain arbitrary data.
 > 
->   5f5ff5ca2e18 ("netfilter: nf_tables: Make nft_meta expression more robust")
-> 
-> is missing a Signed-off-by from its author.
+> Signed-off-by: Andreas Schwab <schwab@suse.de>
 
-Argh, my SoB ended in the changelog I put below the commit message and
-hence was dropped during git-am. Thanks for the heads-up, Stephen!
-
-Pablo, can we fix this somehow?
-
-Sorry for the mess, Phil
+Applied and queued up for -stable.
