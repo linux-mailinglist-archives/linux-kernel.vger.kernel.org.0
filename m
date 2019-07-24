@@ -2,74 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5051B7274B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 07:25:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C91137274D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 07:27:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725957AbfGXFZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 01:25:22 -0400
-Received: from ispman.iskranet.ru ([62.213.33.10]:38342 "EHLO
-        ispman.iskranet.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725813AbfGXFZW (ORCPT
+        id S1726115AbfGXF1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 01:27:31 -0400
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:35179 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbfGXF1a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 01:25:22 -0400
-Received: by ispman.iskranet.ru (Postfix, from userid 8)
-        id 9252E8217E2; Wed, 24 Jul 2019 12:25:19 +0700 (KRAT)
-X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on ispman.iskranet.ru
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=4.0 tests=ALL_TRUSTED,SHORTCIRCUIT
-        shortcircuit=ham autolearn=disabled version=3.3.2
-Received: from KB016249 (unknown [62.213.40.60])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ispman.iskranet.ru (Postfix) with ESMTPS id E31798217E2;
-        Wed, 24 Jul 2019 12:25:18 +0700 (KRAT)
-From:   Arseny Solokha <asolokha@kb.kras.ru>
-To:     christian@brauner.io
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org,
-        mpe@ellerman.id.au
-Subject: Re: [PATCH] powerpc: Wire up clone3 syscall
-In-Reply-To: <20190722133701.g3w5g4crogqb7oi5@brauner.io>
-References: <20190722133701.g3w5g4crogqb7oi5@brauner.io>
-Date:   Wed, 24 Jul 2019 12:25:14 +0700
-Message-ID: <87ftmwknr9.fsf@kb.kras.ru>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+        Wed, 24 Jul 2019 01:27:30 -0400
+Received: from localhost.localdomain ([92.140.204.221])
+        by mwinf5d09 with ME
+        id gVTR2000H4n7eLC03VTRSq; Wed, 24 Jul 2019 07:27:28 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 24 Jul 2019 07:27:28 +0200
+X-ME-IP: 92.140.204.221
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
+        tiwai@suse.com, gustavo@embeddedor.com,
+        patches@opensource.cirrus.com
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] ASoC: wm8955: Fix a typo in 'wm8995_pll_factors()' function name
+Date:   Wed, 24 Jul 2019 07:26:32 +0200
+Message-Id: <20190724052632.30476-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This should be 'wm8955_pll_factors()' instead.
+Fix it and use it.
 
-may I also ask to provide ppc_clone3 symbol also for 32-bit powerpc? Otherwise
-Michael's patch breaks build for me:
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ sound/soc/codecs/wm8955.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  powerpc-e500v2-linux-gnuspe-ld: arch/powerpc/kernel/systbl.o: in function `sys_call_table':
-  (.rodata+0x6cc): undefined reference to `ppc_clone3'
-  make: *** [Makefile:1060: vmlinux] Error 1
+diff --git a/sound/soc/codecs/wm8955.c b/sound/soc/codecs/wm8955.c
+index cd204f79647d..ec82a8fafdf6 100644
+--- a/sound/soc/codecs/wm8955.c
++++ b/sound/soc/codecs/wm8955.c
+@@ -143,7 +143,7 @@ struct pll_factors {
+  * to allow rounding later */
+ #define FIXED_FLL_SIZE ((1 << 22) * 10)
+ 
+-static int wm8995_pll_factors(struct device *dev,
++static int wm8955_pll_factors(struct device *dev,
+ 			      int Fref, int Fout, struct pll_factors *pll)
+ {
+ 	u64 Kpart;
+@@ -282,7 +282,7 @@ static int wm8955_configure_clocking(struct snd_soc_component *component)
+ 
+ 		/* Use the last divider configuration we saw for the
+ 		 * sample rate. */
+-		ret = wm8995_pll_factors(component->dev, wm8955->mclk_rate,
++		ret = wm8955_pll_factors(component->dev, wm8955->mclk_rate,
+ 					 clock_cfgs[sr].mclk, &pll);
+ 		if (ret != 0) {
+ 			dev_err(component->dev,
+-- 
+2.20.1
 
-The patch was tested using Christian's program on a real e500 machine.
-
---- a/arch/powerpc/kernel/entry_32.S
-+++ b/arch/powerpc/kernel/entry_32.S
-@@ -597,6 +597,14 @@ ppc_clone:
- 	stw	r0,_TRAP(r1)		/* register set saved */
- 	b	sys_clone
-
-+	.globl	ppc_clone3
-+ppc_clone3:
-+	SAVE_NVGPRS(r1)
-+	lwz	r0,_TRAP(r1)
-+	rlwinm	r0,r0,0,0,30		/* clear LSB to indicate full */
-+	stw	r0,_TRAP(r1)		/* register set saved */
-+	b	sys_clone3
-+
- 	.globl	ppc_swapcontext
- ppc_swapcontext:
- 	SAVE_NVGPRS(r1)
-
-I don't think this trivial hunk deserves a separate patch submission.
-
-Thanks,
-Arseny
