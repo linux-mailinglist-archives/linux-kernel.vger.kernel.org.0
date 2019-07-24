@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC4A274014
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED8F27400F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:37:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726238AbfGXTXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:23:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39392 "EHLO mail.kernel.org"
+        id S2390981AbfGXUhW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:37:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727593AbfGXTXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:23:37 -0400
+        id S2387884AbfGXTXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:23:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDCC822387;
-        Wed, 24 Jul 2019 19:23:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27B4D22AEC;
+        Wed, 24 Jul 2019 19:23:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996216;
-        bh=bu466d31ZG83S78E9LnHXITEMycjX7VQlNIXd5cHdPs=;
+        s=default; t=1563996233;
+        bh=bRicMM1vr8NVGXlwayavMoeOg8/keyWSP4QV+K4M610=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vCkpt5p+RANTzTqkuKD+EMF/GQ04XS1eO1elG6WkH9Yqbx72mkZYer8pJrTkGJCXa
-         6BNZYcOwy67iloNxqbukY7BPMJixAFL31fHOPg3ik0rI848UlrPiAW7YyyFMdG5z6p
-         BqR/7MDn+IM6kpvhXSLK2mnoAMLaY2gP5FKB/Fpw=
+        b=N9OLhjW8x5/LoJNi4E5chWvqFodVqZSkyMS4yEDX0tNXQkhM97/0Y/i6EqCdduTXS
+         r13t4dXlnpaR9w1f04LkGcio1+RXDoV2XxJMa01FhCypMZq/lxRvg2omR/CFYmi/+A
+         zqq/C3v59MdPbkSzkemRrJq+tBgZISj+4nidOyfo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Brett Creeley <brett.creeley@intel.com>,
+        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 020/413] crypto: talitos - fix skcipher failure due to wrong output IV
-Date:   Wed, 24 Jul 2019 21:15:11 +0200
-Message-Id: <20190724191736.891673121@linuxfoundation.org>
+Subject: [PATCH 5.2 026/413] ice: Gracefully handle reset failure in ice_alloc_vfs()
+Date:   Wed, 24 Jul 2019 21:15:17 +0200
+Message-Id: <20190724191737.336085579@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -45,50 +46,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3e03e792865ae48b8cfc69a0b4d65f02f467389f ]
+[ Upstream commit 72f9c2039859e6303550f202d6cc6b8d8af0178c ]
 
-Selftests report the following:
+Currently if ice_reset_all_vfs() fails in ice_alloc_vfs() we fail to
+free some resources, reset variables, and return an error value.
+Fix this by adding another unroll case to free the pf->vf array, set
+the pf->num_alloc_vfs to 0, and return an error code.
 
-[    2.984845] alg: skcipher: cbc-aes-talitos encryption test failed (wrong output IV) on test vector 0, cfg="in-place"
-[    2.995377] 00000000: 3d af ba 42 9d 9e b4 30 b4 22 da 80 2c 9f ac 41
-[    3.032673] alg: skcipher: cbc-des-talitos encryption test failed (wrong output IV) on test vector 0, cfg="in-place"
-[    3.043185] 00000000: fe dc ba 98 76 54 32 10
-[    3.063238] alg: skcipher: cbc-3des-talitos encryption test failed (wrong output IV) on test vector 0, cfg="in-place"
-[    3.073818] 00000000: 7d 33 88 93 0f 93 b2 42
+Without this, if ice_reset_all_vfs() fails in ice_alloc_vfs() we will
+not be able to do SRIOV without hard rebooting the system because
+rmmod'ing the driver does not work.
 
-This above dumps show that the actual output IV is indeed the input IV.
-This is due to the IV not being copied back into the request.
-
-This patch fixes that.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Brett Creeley <brett.creeley@intel.com>
+Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/talitos.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
-index 8c57c5af0930..396199b2db7d 100644
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -1606,11 +1606,15 @@ static void ablkcipher_done(struct device *dev,
- 			    int err)
- {
- 	struct ablkcipher_request *areq = context;
-+	struct crypto_ablkcipher *cipher = crypto_ablkcipher_reqtfm(areq);
-+	struct talitos_ctx *ctx = crypto_ablkcipher_ctx(cipher);
-+	unsigned int ivsize = crypto_ablkcipher_ivsize(cipher);
- 	struct talitos_edesc *edesc;
+diff --git a/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c b/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
+index a805cbdd69be..81ea77978355 100644
+--- a/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
++++ b/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
+@@ -1134,7 +1134,7 @@ static int ice_alloc_vfs(struct ice_pf *pf, u16 num_alloc_vfs)
+ 			   GFP_KERNEL);
+ 	if (!vfs) {
+ 		ret = -ENOMEM;
+-		goto err_unroll_sriov;
++		goto err_pci_disable_sriov;
+ 	}
+ 	pf->vf = vfs;
  
- 	edesc = container_of(desc, struct talitos_edesc, desc);
+@@ -1154,12 +1154,19 @@ static int ice_alloc_vfs(struct ice_pf *pf, u16 num_alloc_vfs)
+ 	pf->num_alloc_vfs = num_alloc_vfs;
  
- 	common_nonsnoop_unmap(dev, edesc, areq);
-+	memcpy(areq->info, ctx->iv, ivsize);
+ 	/* VF resources get allocated during reset */
+-	if (!ice_reset_all_vfs(pf, true))
++	if (!ice_reset_all_vfs(pf, true)) {
++		ret = -EIO;
+ 		goto err_unroll_sriov;
++	}
  
- 	kfree(edesc);
+ 	goto err_unroll_intr;
  
+ err_unroll_sriov:
++	pf->vf = NULL;
++	devm_kfree(&pf->pdev->dev, vfs);
++	vfs = NULL;
++	pf->num_alloc_vfs = 0;
++err_pci_disable_sriov:
+ 	pci_disable_sriov(pf->pdev);
+ err_unroll_intr:
+ 	/* rearm interrupts here */
 -- 
 2.20.1
 
