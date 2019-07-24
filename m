@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86E9573D83
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:18:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA26273D6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:17:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403967AbfGXTto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:49:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57618 "EHLO mail.kernel.org"
+        id S2403849AbfGXTui (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:50:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391523AbfGXTt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:49:28 -0400
+        id S2391594AbfGXTua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:50:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BDA1205C9;
-        Wed, 24 Jul 2019 19:49:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43BF420665;
+        Wed, 24 Jul 2019 19:50:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997767;
-        bh=q+ot2fxsXnPozpPYSz+QkVHJLk2RXJQAoDWjkYnihxE=;
+        s=default; t=1563997829;
+        bh=PHfpj0Kk7aJ4IC0pjE/zbgjHra14MWgefuEMGmYyf1E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tgA3NA1U+evtADLPcNL2hxr0NwI2qn6GtKcm5VivW7NAXvSRXyX1dhhMtIoJ4DhME
-         /abynDmFmlgyfKEWIs7OsABUEUf7w0t1OgHpZ6pa+0u4cx3oplnVOgHMTltPblj+u3
-         aXXaWVGHewqv5pmvhnxh2Un+SltX3mJp40FOEMAs=
+        b=LRh8q4otRmjnXH7ZmrGblddq4W4ppdYoCaajJG/ye3lgEUoLMKbDslhKXp3CizHcm
+         POj1hrrJ8p5pBnKSffXG8CcLy8YN4LHJBMpBY3/AapR/0VwQdXnDOd0r1n6EY8yRcv
+         skXdTDQoZPQ6HfYjJBphAOQmue7CUBK3DGEu1AL0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Borislav Petkov <bp@suse.de>,
-        James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 119/371] EDAC/sysfs: Fix memory leak when creating a csrow object
-Date:   Wed, 24 Jul 2019 21:17:51 +0200
-Message-Id: <20190724191733.794859491@linuxfoundation.org>
+        stable@vger.kernel.org, Minwoo Im <minwoo.im.dev@gmail.com>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 121/371] nvme-pci: properly report state change failure in nvme_reset_work
+Date:   Wed, 24 Jul 2019 21:17:53 +0200
+Message-Id: <20190724191733.952879949@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -47,50 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 585fb3d93d32dbe89e718b85009f9c322cc554cd ]
+[ Upstream commit cee6c269b016ba89c62e34d6bccb103ee2c7de4f ]
 
-In edac_create_csrow_object(), the reference to the object is not
-released when adding the device to the device hierarchy fails
-(device_add()). This may result in a memory leak.
+If the state change to NVME_CTRL_CONNECTING fails, the dmesg is going to
+be like:
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: James Morse <james.morse@arm.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Link: https://lkml.kernel.org/r/1555554438-103953-1-git-send-email-bianpan2016@163.com
+  [  293.689160] nvme nvme0: failed to mark controller CONNECTING
+  [  293.689160] nvme nvme0: Removing after probe failure status: 0
+
+Even it prints the first line to indicate the situation, the second line
+is not proper because the status is 0 which means normally success of
+the previous operation.
+
+This patch makes it indicate the proper error value when it fails.
+  [   25.932367] nvme nvme0: failed to mark controller CONNECTING
+  [   25.932369] nvme nvme0: Removing after probe failure status: -16
+
+This situation is able to be easily reproduced by:
+  root@target:~# rmmod nvme && modprobe nvme && rmmod nvme
+
+Signed-off-by: Minwoo Im <minwoo.im.dev@gmail.com>
+Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/edac/edac_mc_sysfs.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/nvme/host/pci.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
-index bf9273437e3f..7c01e1cc030c 100644
---- a/drivers/edac/edac_mc_sysfs.c
-+++ b/drivers/edac/edac_mc_sysfs.c
-@@ -404,6 +404,8 @@ static inline int nr_pages_per_csrow(struct csrow_info *csrow)
- static int edac_create_csrow_object(struct mem_ctl_info *mci,
- 				    struct csrow_info *csrow, int index)
- {
-+	int err;
-+
- 	csrow->dev.type = &csrow_attr_type;
- 	csrow->dev.groups = csrow_dev_groups;
- 	device_initialize(&csrow->dev);
-@@ -415,7 +417,11 @@ static int edac_create_csrow_object(struct mem_ctl_info *mci,
- 	edac_dbg(0, "creating (virtual) csrow node %s\n",
- 		 dev_name(&csrow->dev));
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 693f2a856200..21a51a0ff4d7 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2545,6 +2545,7 @@ static void nvme_reset_work(struct work_struct *work)
+ 	if (!nvme_change_ctrl_state(&dev->ctrl, NVME_CTRL_CONNECTING)) {
+ 		dev_warn(dev->ctrl.device,
+ 			"failed to mark controller CONNECTING\n");
++		result = -EBUSY;
+ 		goto out;
+ 	}
  
--	return device_add(&csrow->dev);
-+	err = device_add(&csrow->dev);
-+	if (err)
-+		put_device(&csrow->dev);
-+
-+	return err;
- }
- 
- /* Create a CSROW object under specifed edac_mc_device */
 -- 
 2.20.1
 
