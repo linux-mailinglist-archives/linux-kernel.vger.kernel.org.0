@@ -2,75 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC2CE7293A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 09:47:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D214E7293E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 09:49:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbfGXHrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 03:47:47 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:53564 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbfGXHrq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 03:47:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=abkHvxAJvwMKBCZu1/vRafgARA6Z23deu9xdjglWdiM=; b=ymnAVmy56nkJuvRLehjBGx9s/
-        7CYuMmooDqv0cOw/CHYffsuX4ilCUi+CJsBWYX5Ze2WKn+RWQw70I0Q+ceLPO2hjLhWYNvwlfrpRt
-        vdHEaWGa0kxpBV41dEEX0Rig5NU/dTZaXn/R0ZtGsAfDYSK8LVbaUxTzsJ/RWpykiksU3vEEHlZrI
-        B9pb7TkVxtFPDKGLvWy0bCPBgRgYsEzrfKbHwKzMnsrSuTX2bquMflrBKcqdv7sZcOIHtiEpScZ3e
-        hR7jCRFXXQFZBz/XWyBvVmQyjM4igWnkfEPWFgceoGIxz/LcdZm0QgqgbYxXLHzuU4uEPdqLamMQe
-        iszgh61tA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hqBzq-0001bb-2N; Wed, 24 Jul 2019 07:47:34 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C4B4A20A5F8E5; Wed, 24 Jul 2019 09:47:32 +0200 (CEST)
-Date:   Wed, 24 Jul 2019 09:47:32 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: x86 - clang / objtool status
-Message-ID: <20190724074732.GJ3402@hirez.programming.kicks-ass.net>
-References: <alpine.DEB.2.21.1907182223560.1785@nanos.tec.linutronix.de>
- <20190724023946.yxsz5im22fz4zxrn@treble>
+        id S1726308AbfGXHtf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 03:49:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49420 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725776AbfGXHte (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 03:49:34 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3266F83F51;
+        Wed, 24 Jul 2019 07:49:34 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-49.rdu2.redhat.com [10.10.120.49])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D378919C58;
+        Wed, 24 Jul 2019 07:49:31 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <1563914986-26502-1-git-send-email-cai@lca.pw>
+References: <1563914986-26502-1-git-send-email-cai@lca.pw>
+To:     Qian Cai <cai@lca.pw>
+Cc:     dhowells@redhat.com, akpm@linux-foundation.org,
+        davem@davemloft.net, arnd@arndb.de, jakub@redhat.com,
+        ndesaulniers@google.com, morbo@google.com, jyknight@google.com,
+        natechancellor@gmail.com, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] asm-generic: fix -Wtype-limits compiler warnings
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190724023946.yxsz5im22fz4zxrn@treble>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <31572.1563954571.1@warthog.procyon.org.uk>
+Date:   Wed, 24 Jul 2019 08:49:31 +0100
+Message-ID: <31573.1563954571@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 24 Jul 2019 07:49:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 09:43:24PM -0500, Josh Poimboeuf wrote:
-> On Thu, Jul 18, 2019 at 10:40:09PM +0200, Thomas Gleixner wrote:
-> 
-> >   drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: .altinstr_replacement+0x86: redundant UACCESS disable
-> 
-> Looking at this one, I think I agree with objtool.
-> 
-> PeterZ, Linus, I know y'all discussed this code a few months ago.
-> 
-> __copy_from_user() already does a CLAC in its error path.  So isn't the
-> user_access_end() redundant for the __copy_from_user() error path?
+Qian Cai <cai@lca.pw> wrote:
 
-Hmm, is this a result of your c705cecc8431 ("objtool: Track original function across branches") ?
+> Fix it by moving almost all of this multi-line macro into a proper
+> function __get_order(), and leave get_order() as a single-line macro in
+> order to avoid compilation errors.
 
-I'm thinking it might've 'overlooked' the CLAC in the error path before
-(because it didn't have a related function) and now it sees it and
-worries about it.
+The idea was that you could compile-time initialise a global variable with
+get_order():
 
-Then again, I'm not seeing this warning on my GCC builds; so what's
-happening?
+	int a = get_order(SOME_MACRO);
+
+This is the same reason that ilog2() is a macro:
+
+	int a = ilog2(SOME_MACRO);
+
+See the banner comment on get_order():
+
+ * This function may be used to initialise variables with compile time
+ * evaluations of constants.
+
+If you're moving the constant branch into __get_order(), an inline function,
+then we'll no longer be able to do this and you need to modify the comment
+too.  In fact, would there still be a point in having the get_order() macro?
+
+Also, IIRC, older versions of gcc see __builtin_constant_p(n) == 0 inside an
+function, inline or otherwise, even if the passed-in argument *is* constant.
+
+David
