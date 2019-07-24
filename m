@@ -2,172 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8242372428
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 04:02:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE9407242E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 04:03:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728817AbfGXCCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 22:02:16 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39700 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728776AbfGXCCP (ORCPT
+        id S1728863AbfGXCDB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 22:03:01 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:58356 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728776AbfGXCDB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 22:02:15 -0400
-Received: by mail-pg1-f195.google.com with SMTP id u17so20337918pgi.6;
-        Tue, 23 Jul 2019 19:02:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MHXWLNkBi4IYlJRSCQ7XL9Ay+J09vpF8KwLPUC4SKIU=;
-        b=IESMVaT8yvh5w1FIxv4hRPats+B4/ECJQn4da/rPuLLeeTvwXzcp7WupjkHeGFjVvV
-         zRC1QulnMvcrutEg6lvLQBQwwuFeib0Fkg0t2GQb6QrqyFeQ8d36iJyMFXzo8BoQFRiI
-         0/zYR5iXQ4G9TvZ/pUbbDl0OFZASDij6hig3+YGw5ueZlMdSL/jEF8DzkgkU47dmcEJf
-         57jjFmQie9JXwdMi7BTqla4dNRDdypp9jAKUgddRoGfzbj13X6Hep+X5rj3ClCgjQTnY
-         GMX4/qJHpBFucfV6XDbR9g9QZpEYDdQO8NWzBJXCPWmb1pdmr5d/tvemxr/zTVgoGPza
-         Dnqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MHXWLNkBi4IYlJRSCQ7XL9Ay+J09vpF8KwLPUC4SKIU=;
-        b=VF8xsUFirMq09CFGwORbQ9LSt063yQFcgkQE0zXwBrL4qIUSTbLzovPnoVlc6tuOR+
-         kKIfmcWu2LPaacxJ/9jB4/uF+fRnxG1bapzlOk1Jd0IFp+Ex34wO21irs/wLr4T8a5RV
-         lQyvwuI9sSrJMnk6Pq0s6/0mz+3U+T+OndIQiPjvjSE1ZcIFWsC7To+cVOTDcFbuf2mw
-         MuzGDSsyJ538Qm/4cNjbY8LRP8t55UKyH/WzmIyznFkwTYUDYY+iGd77ibDvDC9WhaUj
-         GQVrxCB4OMSGw3riydge0OfApI1hwy2JnllF74FCauuiE9D1fEiG/mSIYHFyHuNGRQOV
-         fTOQ==
-X-Gm-Message-State: APjAAAUBvWaphJXC33lpUaLJa6DES/JrVOBZI2dLzLW8Ucrb9/9qJGlS
-        /GVbdGYpPakftbTpnN33yaEVtL25xmk=
-X-Google-Smtp-Source: APXvYqwQuaHFKLxA6edw86vkdlDAr++oHybNiK7Mu0IJOTN3gfJ8ZFjCYhs0K/0w8fTrJfDFXIF3tw==
-X-Received: by 2002:a65:4b89:: with SMTP id t9mr10206526pgq.55.1563933734972;
-        Tue, 23 Jul 2019 19:02:14 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id b19sm41008521pgh.57.2019.07.23.19.02.11
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 19:02:14 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Yong Zhi <yong.zhi@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Bingbu Cao <bingbu.cao@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Akihiro Tsukada <tskd08@gmail.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH v2] media: pci: Use dev_get_drvdata where possible
-Date:   Wed, 24 Jul 2019 10:02:06 +0800
-Message-Id: <20190724020206.11044-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+        Tue, 23 Jul 2019 22:03:01 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6O1wZCE029592;
+        Wed, 24 Jul 2019 02:02:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=aPJ/gz+1htaF0JhpGjhp8e3/McToimuUgnVMZqHte9s=;
+ b=Je6bXjfvhms99P77tbjOa/GUP3fCbw+7/Jpcme25tvf+ziqD7j//GF+yZWuPOW+bPSou
+ T507xOemfOsA12Rz1jBR01Z4mwJFdAIh8VUMFDueI5M8ZzS6d8EZBA0pub8og66qm4s6
+ j7labDK7Ph+mSL7gnwObln3ayUujWHZgha8wIxg/dEZ7YOSzINjWbXLhKGKymEEjc7vW
+ kXtNeFjZIsRwrsAWlRPN+C5IONGL/0FAwmfqmRYdX/BJs2gVLG4dgxFJw5A1XQPiiEDU
+ OOEWKi26aD60jxZRcWIR6D1owq6Etx/g4CzqgJQjJM3xKwAQK6A8tLVPdaP3OL3WJ7/s lA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2tx61bt601-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Jul 2019 02:02:24 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6O1vO96057801;
+        Wed, 24 Jul 2019 02:02:23 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2tx60xk9hy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Jul 2019 02:02:23 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6O22LdJ003994;
+        Wed, 24 Jul 2019 02:02:21 GMT
+Received: from [31.133.156.81] (/31.133.156.81)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 23 Jul 2019 19:02:21 -0700
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] rpcrdma_decode_msg: check xdr_inline_decode result
+From:   Chuck Lever <chuck.lever@oracle.com>
+X-Mailer: iPad Mail (16F203)
+In-Reply-To: <20190724015115.3493-1-navid.emamdoost@gmail.com>
+Date:   Tue, 23 Jul 2019 22:02:09 -0400
+Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
+        secalert@redhat.com,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        "David S. Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <AE745E5F-63A8-4377-98E8-512828179FC0@oracle.com>
+References: <20190724015115.3493-1-navid.emamdoost@gmail.com>
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9327 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907240020
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9327 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907240020
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of using to_pci_dev + pci_get_drvdata,
-use dev_get_drvdata to make code simpler.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
-Changes in v2:
-  - Change pci_set_drvdata to dev_set_drvdata
-    to keep consistency.
 
- drivers/media/pci/intel/ipu3/ipu3-cio2.c | 5 ++---
- drivers/media/pci/pt1/pt1.c              | 8 +++-----
- drivers/media/pci/pt3/pt3.c              | 8 +++-----
- 3 files changed, 8 insertions(+), 13 deletions(-)
+> On Jul 23, 2019, at 9:51 PM, Navid Emamdoost <navid.emamdoost@gmail.com> w=
+rote:
+>=20
+> xdr_inline_decode may return NULL, so the check is necessary. The base
+> pointer will be dereferenced later in rpcrdma_inline_fixup.
 
-diff --git a/drivers/media/pci/intel/ipu3/ipu3-cio2.c b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
-index c1d133e17e4b..2b2c77c2fc7e 100644
---- a/drivers/media/pci/intel/ipu3/ipu3-cio2.c
-+++ b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
-@@ -1765,7 +1765,7 @@ static int cio2_pci_probe(struct pci_dev *pci_dev,
- 
- 	cio2->base = iomap[CIO2_PCI_BAR];
- 
--	pci_set_drvdata(pci_dev, cio2);
-+	dev_set_drvdata(&pci_dev->dev, cio2);
- 
- 	pci_set_master(pci_dev);
- 
-@@ -2000,8 +2000,7 @@ static int __maybe_unused cio2_suspend(struct device *dev)
- 
- static int __maybe_unused cio2_resume(struct device *dev)
- {
--	struct pci_dev *pci_dev = to_pci_dev(dev);
--	struct cio2_device *cio2 = pci_get_drvdata(pci_dev);
-+	struct cio2_device *cio2 = dev_get_drvdata(dev);
- 	int r = 0;
- 	struct cio2_queue *q = cio2->cur_queue;
- 
-diff --git a/drivers/media/pci/pt1/pt1.c b/drivers/media/pci/pt1/pt1.c
-index e51c80bc4646..06f25b658a76 100644
---- a/drivers/media/pci/pt1/pt1.c
-+++ b/drivers/media/pci/pt1/pt1.c
-@@ -1217,8 +1217,7 @@ static void pt1_i2c_init(struct pt1 *pt1)
- 
- static int pt1_suspend(struct device *dev)
- {
--	struct pci_dev *pdev = to_pci_dev(dev);
--	struct pt1 *pt1 = pci_get_drvdata(pdev);
-+	struct pt1 *pt1 = dev_get_drvdata(dev);
- 
- 	pt1_init_streams(pt1);
- 	pt1_disable_ram(pt1);
-@@ -1230,8 +1229,7 @@ static int pt1_suspend(struct device *dev)
- 
- static int pt1_resume(struct device *dev)
- {
--	struct pci_dev *pdev = to_pci_dev(dev);
--	struct pt1 *pt1 = pci_get_drvdata(pdev);
-+	struct pt1 *pt1 = dev_get_drvdata(dev);
- 	int ret;
- 	int i;
- 
-@@ -1371,7 +1369,7 @@ static int pt1_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	pt1->regs = regs;
- 	pt1->fe_clk = (pdev->device == 0x211a) ?
- 				PT1_FE_CLK_20MHZ : PT1_FE_CLK_25MHZ;
--	pci_set_drvdata(pdev, pt1);
-+	dev_set_drvdata(&pdev->dev, pt1);
- 
- 	ret = pt1_init_adapters(pt1);
- 	if (ret < 0)
-diff --git a/drivers/media/pci/pt3/pt3.c b/drivers/media/pci/pt3/pt3.c
-index 7a7afae4c84c..ab09e0f2ed99 100644
---- a/drivers/media/pci/pt3/pt3.c
-+++ b/drivers/media/pci/pt3/pt3.c
-@@ -626,8 +626,7 @@ static void pt3_cleanup_adapter(struct pt3_board *pt3, int index)
- 
- static int pt3_suspend(struct device *dev)
- {
--	struct pci_dev *pdev = to_pci_dev(dev);
--	struct pt3_board *pt3 = pci_get_drvdata(pdev);
-+	struct pt3_board *pt3 = dev_get_drvdata(dev);
- 	int i;
- 	struct pt3_adapter *adap;
- 
-@@ -646,8 +645,7 @@ static int pt3_suspend(struct device *dev)
- 
- static int pt3_resume(struct device *dev)
- {
--	struct pci_dev *pdev = to_pci_dev(dev);
--	struct pt3_board *pt3 = pci_get_drvdata(pdev);
-+	struct pt3_board *pt3 = dev_get_drvdata(dev);
- 	int i, ret;
- 	struct pt3_adapter *adap;
- 
-@@ -734,7 +732,7 @@ static int pt3_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		ret = -ENOMEM;
- 		goto err_release_regions;
- 	}
--	pci_set_drvdata(pdev, pt3);
-+	dev_set_drvdata(&pdev->dev, pt3);
- 	pt3->pdev = pdev;
- 	mutex_init(&pt3->lock);
- 	pt3->regs[0] = pci_ioremap_bar(pdev, 0);
--- 
-2.20.1
+NACK. When xdr_inline_decode is passed a zero =E2=80=9Clength=E2=80=9D argum=
+ent, it can never return NULL.
+
+
+> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+> ---
+> net/sunrpc/xprtrdma/rpc_rdma.c | 3 +++
+> 1 file changed, 3 insertions(+)
+>=20
+> diff --git a/net/sunrpc/xprtrdma/rpc_rdma.c b/net/sunrpc/xprtrdma/rpc_rdma=
+.c
+> index 4345e6912392..d0479efe0e72 100644
+> --- a/net/sunrpc/xprtrdma/rpc_rdma.c
+> +++ b/net/sunrpc/xprtrdma/rpc_rdma.c
+> @@ -1160,6 +1160,9 @@ rpcrdma_decode_msg(struct rpcrdma_xprt *r_xprt, stru=
+ct rpcrdma_rep *rep,
+>=20
+>    /* Build the RPC reply's Payload stream in rqst->rq_rcv_buf */
+>    base =3D (char *)xdr_inline_decode(xdr, 0);
+> +    if (!base)
+> +        return -EIO;
+> +
+>    rpclen =3D xdr_stream_remaining(xdr);
+>    r_xprt->rx_stats.fixup_copy_count +=3D
+>        rpcrdma_inline_fixup(rqst, base, rpclen, writelist & 3);
+> --=20
+> 2.17.1
+>=20
 
