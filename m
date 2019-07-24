@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94FEB7465F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:51:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B73974655
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:51:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404755AbfGYFlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:41:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56676 "EHLO mail.kernel.org"
+        id S1729286AbfGYFul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:50:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390784AbfGYFlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:41:50 -0400
+        id S2390890AbfGYFmg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 01:42:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E559322BF5;
-        Thu, 25 Jul 2019 05:41:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0259B22CD3;
+        Thu, 25 Jul 2019 05:42:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564033309;
-        bh=2aEr7WWYA8Y0U79x/9EAC5oOpX9nKKrXz/zsHy13mGw=;
+        s=default; t=1564033355;
+        bh=zQcjsPz9w6oUvjkZNUWQFrnvNiX/hs4lk5lTh3MC5KQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d4FXEn+iiPCa+8r17Vmlegk8JNkeM4S0Ihu0bOIkTOJHQQKMF+68el321T+E7yovX
-         GfqHKXM3QCTU86D9MS+kdnw92LzNXEIugdLY9T+6I4ccFDSrmAxC18E7yKh3sIpgKw
-         e8pXvcTT2V4FjSUPX52Q38tIDUB/uxIyJpPJvwHI=
+        b=U2hiqNUjtbjYjj9taSOi3ZvxnCl51X5rm/icNev4NTm3kA+xlrjYqYEHCaAOCm5MS
+         9KkDXuvlJ6uTsSDVs+PAUAJk8gNvabEFd1kFcGe4p25nTJdKCVWm+Ei2DQL9U9XAYf
+         2ctcV4InfNyU6kuQGZUK+22G7ko8mUnJMDkj1dRU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Efremov <efremov@ispras.ru>,
-        Willy Tarreau <w@1wt.eu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 162/271] floppy: fix invalid pointer dereference in drive_name
-Date:   Wed, 24 Jul 2019 21:20:31 +0200
-Message-Id: <20190724191709.058727058@linuxfoundation.org>
+        stable@vger.kernel.org, Gary R Hook <gary.hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 180/271] crypto: ccp - memset structure fields to zero before reuse
+Date:   Wed, 24 Jul 2019 21:20:49 +0200
+Message-Id: <20190724191710.565637571@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191655.268628197@linuxfoundation.org>
 References: <20190724191655.268628197@linuxfoundation.org>
@@ -45,81 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9b04609b784027968348796a18f601aed9db3789 ]
+From: Hook, Gary <Gary.Hook@amd.com>
 
-This fixes the invalid pointer dereference in the drive_name function of
-the floppy driver.
+commit 20e833dc36355ed642d00067641a679c618303fa upstream.
 
-The native_format field of the struct floppy_drive_params is used as
-floppy_type array index in the drive_name function.  Thus, the field
-should be checked the same way as the autodetect field.
+The AES GCM function reuses an 'op' data structure, which members
+contain values that must be cleared for each (re)use.
 
-To trigger the bug, one could use a value out of range and set the drive
-parameters with the FDSETDRVPRM ioctl.  Next, FDGETDRVTYP ioctl should
-be used to call the drive_name.  A floppy disk is not required to be
-inserted.
+This fix resolves a crypto self-test failure:
+alg: aead: gcm-aes-ccp encryption test failed (wrong result) on test vector 2, cfg="two even aligned splits"
 
-CAP_SYS_ADMIN is required to call FDSETDRVPRM.
+Fixes: 36cf515b9bbe ("crypto: ccp - Enable support for AES GCM on v5 CCPs")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Gary R Hook <gary.hook@amd.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-The patch adds the check for a value of the native_format field to be in
-the '0 <= x < ARRAY_SIZE(floppy_type)' range of the floppy_type array
-indices.
-
-The bug was found by syzkaller.
-
-Signed-off-by: Denis Efremov <efremov@ispras.ru>
-Tested-by: Willy Tarreau <w@1wt.eu>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/floppy.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/crypto/ccp/ccp-ops.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-index dd49737effbf..8d69a8af8b78 100644
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -3391,7 +3391,8 @@ static int fd_getgeo(struct block_device *bdev, struct hd_geometry *geo)
- 	return 0;
- }
+--- a/drivers/crypto/ccp/ccp-ops.c
++++ b/drivers/crypto/ccp/ccp-ops.c
+@@ -625,6 +625,7 @@ static int ccp_run_aes_gcm_cmd(struct cc
  
--static bool valid_floppy_drive_params(const short autodetect[8])
-+static bool valid_floppy_drive_params(const short autodetect[8],
-+		int native_format)
- {
- 	size_t floppy_type_size = ARRAY_SIZE(floppy_type);
- 	size_t i = 0;
-@@ -3402,6 +3403,9 @@ static bool valid_floppy_drive_params(const short autodetect[8])
- 			return false;
+ 	unsigned long long *final;
+ 	unsigned int dm_offset;
++	unsigned int jobid;
+ 	unsigned int ilen;
+ 	bool in_place = true; /* Default value */
+ 	int ret;
+@@ -663,9 +664,11 @@ static int ccp_run_aes_gcm_cmd(struct cc
+ 		p_tag = scatterwalk_ffwd(sg_tag, p_inp, ilen);
  	}
  
-+	if (native_format < 0 || native_format >= floppy_type_size)
-+		return false;
++	jobid = CCP_NEW_JOBID(cmd_q->ccp);
 +
- 	return true;
- }
+ 	memset(&op, 0, sizeof(op));
+ 	op.cmd_q = cmd_q;
+-	op.jobid = CCP_NEW_JOBID(cmd_q->ccp);
++	op.jobid = jobid;
+ 	op.sb_key = cmd_q->sb_key; /* Pre-allocated */
+ 	op.sb_ctx = cmd_q->sb_ctx; /* Pre-allocated */
+ 	op.init = 1;
+@@ -816,6 +819,13 @@ static int ccp_run_aes_gcm_cmd(struct cc
+ 	final[0] = cpu_to_be64(aes->aad_len * 8);
+ 	final[1] = cpu_to_be64(ilen * 8);
  
-@@ -3531,7 +3535,8 @@ static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode, unsigned int
- 		SUPBOUND(size, strlen((const char *)outparam) + 1);
- 		break;
- 	case FDSETDRVPRM:
--		if (!valid_floppy_drive_params(inparam.dp.autodetect))
-+		if (!valid_floppy_drive_params(inparam.dp.autodetect,
-+				inparam.dp.native_format))
- 			return -EINVAL;
- 		*UDP = inparam.dp;
- 		break;
-@@ -3730,7 +3735,7 @@ static int compat_setdrvprm(int drive,
- 		return -EPERM;
- 	if (copy_from_user(&v, arg, sizeof(struct compat_floppy_drive_params)))
- 		return -EFAULT;
--	if (!valid_floppy_drive_params(v.autodetect))
-+	if (!valid_floppy_drive_params(v.autodetect, v.native_format))
- 		return -EINVAL;
- 	mutex_lock(&floppy_mutex);
- 	UDP->cmos = v.cmos;
--- 
-2.20.1
-
++	memset(&op, 0, sizeof(op));
++	op.cmd_q = cmd_q;
++	op.jobid = jobid;
++	op.sb_key = cmd_q->sb_key; /* Pre-allocated */
++	op.sb_ctx = cmd_q->sb_ctx; /* Pre-allocated */
++	op.init = 1;
++	op.u.aes.type = aes->type;
+ 	op.u.aes.mode = CCP_AES_MODE_GHASH;
+ 	op.u.aes.action = CCP_AES_GHASHFINAL;
+ 	op.src.type = CCP_MEMTYPE_SYSTEM;
 
 
