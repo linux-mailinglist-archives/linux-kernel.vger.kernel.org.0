@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9632673D2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:15:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 101DB73CF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:13:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404631AbfGXT4W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:56:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40620 "EHLO mail.kernel.org"
+        id S2404903AbfGXUN1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:13:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404219AbfGXT4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:56:20 -0400
+        id S2404633AbfGXT4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:56:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7654A205C9;
-        Wed, 24 Jul 2019 19:56:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A73C20665;
+        Wed, 24 Jul 2019 19:56:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563998180;
-        bh=RekJmt4P3VwYWask21t40jH6pmqmpa2CiSzNj2xKwLo=;
+        s=default; t=1563998182;
+        bh=CPNZ+QSf1n22rncsUpD/LvnhCTo6fBi49pfftRYaJgI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pjzgw5AncFRsGR7mmcmrPyF7A7DlbEMUwYE0+Jhv5a1srJvLzWoHdmbVudz2E19cc
-         T+HcF4HUOMpj7/4VlMugG6ZxnR204+aQ+2VhMZtQAIgyHifE5CfTayxlmCiUSQ21QN
-         oFKodmk49/h8pbiCErq+ho8RECx600FKjexfLhwo=
+        b=ttVCH86xtMNqFalg7bV2FFaoPZYdz5v2TKalWcuaw1DjeNLiUyC9LInojujbew6jI
+         AcUM71XYwhzb6c8MaB4MwFKUHOyzLJOq70NYgi/pQu6d2GI+M/ihDi8uB9eh26y2XN
+         okZymADsn8tnF00s2mTcFj3r883xTYeFvHQiccTs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 5.1 274/371] iwlwifi: mvm: delay GTK setting in FW in AP mode
-Date:   Wed, 24 Jul 2019 21:20:26 +0200
-Message-Id: <20190724191744.956439706@linuxfoundation.org>
+Subject: [PATCH 5.1 275/371] iwlwifi: mvm: clear rfkill_safe_init_done when we start the firmware
+Date:   Wed, 24 Jul 2019 21:20:27 +0200
+Message-Id: <20190724191745.020427315@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -43,150 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-commit c56e00a3feaee2b46b7d33875fb7f52efd30241f upstream.
+commit 940225628652b340b2bfe99f42f3d2db9fd9ce6c upstream.
 
-In AP (and IBSS) mode, we can only set GTKs to firmware after we have
-sent down the multicast station, but this we can only do after we've
-enabled beaconing, etc.
-
-However, during rfkill exit, hostapd will configure the keys before
-starting the AP, and cfg80211/mac80211 accept it happily.
-
-On earlier devices, this didn't bother us as GTK TX wasn't really
-handled in firmware, we just put the key material into the TX cmd
-and thus it only mattered when we actually transmitted a frame.
-
-On newer devices, however, the firmware needs to track all of this
-and that doesn't work if we add the key before the (multicast) sta
-it belongs to.
-
-To fix this, keep a list of keys to add during AP enable, and call
-the function there.
+Otherwise it'll stay set forever which is clearly buggy.
 
 Cc: stable@vger.kernel.org
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c |   53 +++++++++++++++++++++-
- drivers/net/wireless/intel/iwlwifi/mvm/mvm.h      |    3 +
- 2 files changed, 54 insertions(+), 2 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-@@ -207,6 +207,12 @@ static const struct cfg80211_pmsr_capabi
- 	},
- };
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+@@ -419,6 +419,8 @@ static int iwl_run_unified_mvm_ucode(str
  
-+static int iwl_mvm_mac_set_key(struct ieee80211_hw *hw,
-+			       enum set_key_cmd cmd,
-+			       struct ieee80211_vif *vif,
-+			       struct ieee80211_sta *sta,
-+			       struct ieee80211_key_conf *key);
-+
- void iwl_mvm_ref(struct iwl_mvm *mvm, enum iwl_mvm_ref_type ref_type)
- {
- 	if (!iwl_mvm_is_d0i3_supported(mvm))
-@@ -2535,7 +2541,7 @@ static int iwl_mvm_start_ap_ibss(struct
- {
- 	struct iwl_mvm *mvm = IWL_MAC80211_GET_MVM(hw);
- 	struct iwl_mvm_vif *mvmvif = iwl_mvm_vif_from_mac80211(vif);
--	int ret;
-+	int ret, i;
+ 	lockdep_assert_held(&mvm->mutex);
  
- 	/*
- 	 * iwl_mvm_mac_ctxt_add() might read directly from the device
-@@ -2609,6 +2615,20 @@ static int iwl_mvm_start_ap_ibss(struct
- 	/* must be set before quota calculations */
- 	mvmvif->ap_ibss_active = true;
++	mvm->rfkill_safe_init_done = false;
++
+ 	iwl_init_notification_wait(&mvm->notif_wait,
+ 				   &init_wait,
+ 				   init_complete,
+@@ -537,8 +539,7 @@ int iwl_run_init_mvm_ucode(struct iwl_mv
  
-+	/* send all the early keys to the device now */
-+	for (i = 0; i < ARRAY_SIZE(mvmvif->ap_early_keys); i++) {
-+		struct ieee80211_key_conf *key = mvmvif->ap_early_keys[i];
-+
-+		if (!key)
-+			continue;
-+
-+		mvmvif->ap_early_keys[i] = NULL;
-+
-+		ret = iwl_mvm_mac_set_key(hw, SET_KEY, vif, NULL, key);
-+		if (ret)
-+			goto out_quota_failed;
-+	}
-+
- 	if (vif->type == NL80211_IFTYPE_AP && !vif->p2p) {
- 		iwl_mvm_vif_set_low_latency(mvmvif, true,
- 					    LOW_LATENCY_VIF_TYPE);
-@@ -3378,11 +3398,12 @@ static int iwl_mvm_mac_set_key(struct ie
- 			       struct ieee80211_sta *sta,
- 			       struct ieee80211_key_conf *key)
- {
-+	struct iwl_mvm_vif *mvmvif = iwl_mvm_vif_from_mac80211(vif);
- 	struct iwl_mvm *mvm = IWL_MAC80211_GET_MVM(hw);
- 	struct iwl_mvm_sta *mvmsta;
- 	struct iwl_mvm_key_pn *ptk_pn;
- 	int keyidx = key->keyidx;
--	int ret;
-+	int ret, i;
- 	u8 key_offset;
+ 	lockdep_assert_held(&mvm->mutex);
  
- 	if (iwlwifi_mod_params.swcrypto) {
-@@ -3455,6 +3476,22 @@ static int iwl_mvm_mac_set_key(struct ie
- 				key->hw_key_idx = STA_KEY_IDX_INVALID;
- 				break;
- 			}
-+
-+			if (!mvmvif->ap_ibss_active) {
-+				for (i = 0;
-+				     i < ARRAY_SIZE(mvmvif->ap_early_keys);
-+				     i++) {
-+					if (!mvmvif->ap_early_keys[i]) {
-+						mvmvif->ap_early_keys[i] = key;
-+						break;
-+					}
-+				}
-+
-+				if (i >= ARRAY_SIZE(mvmvif->ap_early_keys))
-+					ret = -ENOSPC;
-+
-+				break;
-+			}
- 		}
+-	if (WARN_ON_ONCE(mvm->rfkill_safe_init_done))
+-		return 0;
++	mvm->rfkill_safe_init_done = false;
  
- 		/* During FW restart, in order to restore the state as it was,
-@@ -3523,6 +3560,18 @@ static int iwl_mvm_mac_set_key(struct ie
+ 	iwl_init_notification_wait(&mvm->notif_wait,
+ 				   &calib_wait,
+@@ -1108,10 +1109,13 @@ static int iwl_mvm_load_rt_fw(struct iwl
  
- 		break;
- 	case DISABLE_KEY:
-+		ret = -ENOENT;
-+		for (i = 0; i < ARRAY_SIZE(mvmvif->ap_early_keys); i++) {
-+			if (mvmvif->ap_early_keys[i] == key) {
-+				mvmvif->ap_early_keys[i] = NULL;
-+				ret = 0;
-+			}
-+		}
-+
-+		/* found in pending list - don't do anything else */
-+		if (ret == 0)
-+			break;
-+
- 		if (key->hw_key_idx == STA_KEY_IDX_INVALID) {
- 			ret = 0;
- 			break;
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
-@@ -498,6 +498,9 @@ struct iwl_mvm_vif {
- 	netdev_features_t features;
+ 	iwl_fw_dbg_apply_point(&mvm->fwrt, IWL_FW_INI_APPLY_EARLY);
  
- 	struct iwl_probe_resp_data __rcu *probe_resp_data;
-+
-+	/* we can only have 2 GTK + 2 IGTK active at a time */
-+	struct ieee80211_key_conf *ap_early_keys[4];
- };
++	mvm->rfkill_safe_init_done = false;
+ 	ret = iwl_mvm_load_ucode_wait_alive(mvm, IWL_UCODE_REGULAR);
+ 	if (ret)
+ 		return ret;
  
- static inline struct iwl_mvm_vif *
++	mvm->rfkill_safe_init_done = true;
++
+ 	iwl_fw_dbg_apply_point(&mvm->fwrt, IWL_FW_INI_APPLY_AFTER_ALIVE);
+ 
+ 	return iwl_init_paging(&mvm->fwrt, mvm->fwrt.cur_fw_img);
 
 
