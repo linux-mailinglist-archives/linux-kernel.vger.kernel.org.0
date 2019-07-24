@@ -2,141 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B4C37450F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:38:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0417B74536
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:40:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403963AbfGYFi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:38:28 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45281 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403951AbfGYFi0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:38:26 -0400
-Received: by mail-pl1-f195.google.com with SMTP id y8so22941940plr.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 22:38:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9KbxETKIL10GKxcPRBcaESnVSFrDSXJGz52Sgbzz7TY=;
-        b=QVIvWHfpVoQwjxa/sbG+597puJK/8e4mjlXaInhXoeUlj86gGaA2JdXs7ym/gt6i0B
-         B4hBuxUbCKgnit1c2mY0EXEpoq40XwGdXtEjvj0JUFw0io5OWUfK2/B2sCW+o2RMIoRg
-         0SFhPVb8Gh0GPk8QBNiRwoG68RDyG+1UX8G1u/Q8TxzSyeU5VfgEYBTcTwvRoOhUuii3
-         piUEjzodony2/N3PvNdf1Gr7EWpLC/BBG+q1r3nfaurq2Thy6D+QHS0yDZHyqKURVOCl
-         IN4cbnD8wSlft20sXgkEuRpj64YfEqV0XR/ixrIsExBjkozjqgBTciqXMQTOeoB8751v
-         kvDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9KbxETKIL10GKxcPRBcaESnVSFrDSXJGz52Sgbzz7TY=;
-        b=cmC97BTguTMK5knV86ehnKOPSJ1qLDbzL6o1bOXsM8eZPCJeGQWwD2Fi2Sw4kAzJx6
-         LFTvT9ZaCFfQd2r/Y4yejJUUBkztgnYgyu9HzREZ7iO8dlDo81Vqf/eDocHIAe5ORQf3
-         vvksKKIZ4w/qG8HiSixg3BV1Ib14BDjq2VwpC0t9IU4BMWbsIDeSptXvAlZvav8ugist
-         4FL0hHi+V6w7ykrq+hW26GHkopnGFKVdh/9y6emRvHDq2tZjNKwJlrF11ZzcUocT+xps
-         zq1e1adD5BifCj4EcUBd9y4RRPr/4hpoTUG2wPEmusZOUsIlhW7dtplo07P76coJThX1
-         NsqQ==
-X-Gm-Message-State: APjAAAWEqHo3ohtL99rjcEB3w9JIbXkY+ZBMkgg4XPlbEi1L+W4xWbEu
-        rDs/iYxbhgp9Opv9T5VvZbMINQ==
-X-Google-Smtp-Source: APXvYqy2oP17uAmGByW/mG2EYEfPXeuWrnrPxGE0ocCWmuE/cKB+F9KVRpeYqx2tU6r6lDZnp0bQ3Q==
-X-Received: by 2002:a17:902:7c05:: with SMTP id x5mr90071191pll.321.1564033105968;
-        Wed, 24 Jul 2019 22:38:25 -0700 (PDT)
-Received: from localhost ([122.172.28.117])
-        by smtp.gmail.com with ESMTPSA id o11sm80515271pfh.114.2019.07.24.22.38.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 22:38:25 -0700 (PDT)
-Date:   Thu, 25 Jul 2019 11:08:23 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/5] OPP: Add function to look up required OPP's for a
- given OPP
-Message-ID: <20190725053823.yqaxnk2a7geebmqw@vireshk-i7>
-References: <20190717222340.137578-1-saravanak@google.com>
- <20190717222340.137578-3-saravanak@google.com>
- <20190723095316.t5ltprixxd5veuj7@vireshk-i7>
- <CAGETcx-r6fZH0xYea-YXyXDwe33pimtfNerLzzBn4UHT2qQVvA@mail.gmail.com>
- <20190725025849.y2xyxmqmgorrny6k@vireshk-i7>
- <CAGETcx8r3C_=Y0vSwqekCZPUeYkNQ6EOUDK4bUJksDHG6zPUjA@mail.gmail.com>
+        id S2404332AbfGYFkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:40:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54476 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404269AbfGYFkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 01:40:05 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0482F22C97;
+        Thu, 25 Jul 2019 05:40:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564033204;
+        bh=djMy0ZkF1cNdzzJkInuRNcFK9iveLhe5RDIiDs8gmkc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=o56kGNCiHeAUCGrnkqOKdKyOhgHRiGhoK8e9h5/OEaWVT70ELg0kuQXhBDfAmUVo0
+         J5SghAuk3rHB7k+xgM8PjS11wmLeAA19h7iBMZdXiAayoxTDMWRTW2GIlMpiHxPlU3
+         9L96mfaP3DBWZdXMWg+NzRTN3YdtO7lV3YA1Tusg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Kan Liang <kan.liang@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, acme@kernel.org,
+        eranian@google.com, Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 078/271] perf/x86/intel/uncore: Handle invalid event coding for free-running counter
+Date:   Wed, 24 Jul 2019 21:19:07 +0200
+Message-Id: <20190724191701.880558315@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190724191655.268628197@linuxfoundation.org>
+References: <20190724191655.268628197@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGETcx8r3C_=Y0vSwqekCZPUeYkNQ6EOUDK4bUJksDHG6zPUjA@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24-07-19, 20:46, Saravana Kannan wrote:
-> On Wed, Jul 24, 2019 at 7:58 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > On 23-07-19, 17:23, Saravana Kannan wrote:
+[ Upstream commit 543ac280b3576c0009e8c0fcd4d6bfc9978d7bd0 ]
 
-> > > I almost said "not sure. Let me just compare pointers".
-> > > I think (not sure) it has to do with the same OPP table being used to
-> > > create multiple OPP table copies if the "shared OPP table" flag isn't
-> > > set?
-> > > Can you confirm if this makes sense? If so, I can add a comment patch
-> > > that adds comments to the existing code and then copies it into this
-> > > function in this patch.
-> >
-> > Right, that was the reason but we also need to fix ...
-> 
-> I know I gave that explanation but I'm still a bit confused by the
-> existing logic. If the same DT OPP table is used to create multiple in
-> memory OPP tables, how do you device which in memory OPP table is the
-> right one to point to?
+Counting with invalid event coding for free-running counter may cause
+OOPs, e.g. uncore_iio_free_running_0/event=1/.
 
-This is a bit broken actually, we don't see any problems right now but
-may eventually have to fix it someday.
+Current code only validate the event with free-running event format,
+event=0xff,umask=0xXY. Non-free-running event format never be checked
+for the PMU with free-running counters.
 
-We pick the first in-memory OPP table that was created using the DT
-OPP table. This is done because the DT doesn't provide any explicit
-linking to the required-opp device right now.
+Add generic hw_config() to check and reject the invalid event coding
+for free-running PMU.
 
-Right now the required-opps is only used for power domains and so it
-is working fine. It may work fine for your case as well. But once we
-have a case we want to use required-opps in a single OPP table for
-both power-domains and master/slave thing you are proposing, we may
-see more problems.
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: acme@kernel.org
+Cc: eranian@google.com
+Fixes: 0f519f0352e3 ("perf/x86/intel/uncore: Support IIO free-running counters on SKX")
+Link: https://lkml.kernel.org/r/1556672028-119221-2-git-send-email-kan.liang@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/x86/events/intel/uncore.h       | 10 ++++++++++
+ arch/x86/events/intel/uncore_snbep.c |  1 +
+ 2 files changed, 11 insertions(+)
 
-> > > > > +                     break;
-> > > > > +     }
-> > > > > +
-> > > > > +     if (unlikely(i == src_table->required_opp_count)) {
-> > > > > +             pr_err("%s: Couldn't find matching OPP table (%p: %p)\n",
-> > > > > +                    __func__, src_table, dst_table);
-> > > > > +             return NULL;
-> > > > > +     }
-> > > > > +
-> > > > > +     mutex_lock(&src_table->lock);
-> > > > > +
-> > > > > +     list_for_each_entry(opp, &src_table->opp_list, node) {
-> > > > > +             if (opp == src_opp) {
-> >
-> > ... this as well. We must be comparing node pointers here as well.
-> 
-> Not really, if an in memory OPP entry is not part of an in memory OPP
-> table list, I don't think it should be considered part of the OPP
-> table just because the node pointer is the same. I think that's
-> explicitly wrong and the above code is correct as is.
-
-I understand what you are saying, but because we match the very first
-OPP table that was there in the list we need to match the DT node here
-as well.
-
-Or somehow we make sure to have the correct in-memory OPP table being
-pointed by the required-opp-table array. Then we don't need the node
-pointer anywhere here.
-
+diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
+index cc6dd4f78158..42fa3974c421 100644
+--- a/arch/x86/events/intel/uncore.h
++++ b/arch/x86/events/intel/uncore.h
+@@ -402,6 +402,16 @@ static inline bool is_freerunning_event(struct perf_event *event)
+ 	       (((cfg >> 8) & 0xff) >= UNCORE_FREERUNNING_UMASK_START);
+ }
+ 
++/* Check and reject invalid config */
++static inline int uncore_freerunning_hw_config(struct intel_uncore_box *box,
++					       struct perf_event *event)
++{
++	if (is_freerunning_event(event))
++		return 0;
++
++	return -EINVAL;
++}
++
+ static inline void uncore_disable_box(struct intel_uncore_box *box)
+ {
+ 	if (box->pmu->type->ops->disable_box)
+diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+index b10e04387f38..8e4e8e423839 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -3585,6 +3585,7 @@ static struct uncore_event_desc skx_uncore_iio_freerunning_events[] = {
+ 
+ static struct intel_uncore_ops skx_uncore_iio_freerunning_ops = {
+ 	.read_counter		= uncore_msr_read_counter,
++	.hw_config		= uncore_freerunning_hw_config,
+ };
+ 
+ static struct attribute *skx_uncore_iio_freerunning_formats_attr[] = {
 -- 
-viresh
+2.20.1
+
+
+
