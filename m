@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73848724D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 04:41:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ABA5724D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 04:42:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726183AbfGXClY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 22:41:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46098 "EHLO mail.kernel.org"
+        id S1726211AbfGXCmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 22:42:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725372AbfGXClY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 22:41:24 -0400
+        id S1725372AbfGXCmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 22:42:24 -0400
 Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8BE22054F;
-        Wed, 24 Jul 2019 02:41:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E236420828;
+        Wed, 24 Jul 2019 02:42:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563936082;
-        bh=4BJpVnz9NtoVGKEWXigcPY+GsDWEePca0cBXnvCEgkM=;
+        s=default; t=1563936144;
+        bh=FbyzKyqD4IuvVM5Rqp413iYqGOWWnKCsasl+YqKFM0M=;
         h=Date:From:To:Cc:Subject:From;
-        b=LSLibIUYCFxOTNdFqOiV8bSMzshK13x3F9+125mPy6j0A4mjE+z/yh+eOQ0EfiaKr
-         +FDmwlluz8UAw4Z0GInpjFZJg7Rl3+aqsoWcQU+O3r11QkfB0wcWUhMrBvlG7AVYxp
-         7rKnZZ2CmRLgMGzf3GGn0KWN44wPsbshqVerSe2s=
-Date:   Tue, 23 Jul 2019 19:41:21 -0700
+        b=fUhlnPwCOsiiaXgdd0cYh53pIDJtLSYo+oHkrOVu44Ofrm/KMiMaPwrtr/4fvwT2Q
+         PzEgJ4s/PrfZGZZeqDWp5CBQn8Tuyx6HcE3dKymQq13Z4+aG7M/zQAt9ljFKM7aUeB
+         fqxxfua2oCXkRADdxsnxFO3V803nIiDPTR0SzcAc=
+Date:   Tue, 23 Jul 2019 19:42:22 -0700
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-input@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To:     linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
 Cc:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Reminder: 3 open syzbot bugs in hid subsystem
-Message-ID: <20190724024121.GD643@sol.localdomain>
-Mail-Followup-To: linux-input@vger.kernel.org,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+Subject: Reminder: 3 open syzbot bugs in "fs/btrfs" subsystem
+Message-ID: <20190724024222.GE643@sol.localdomain>
+Mail-Followup-To: linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -47,82 +47,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 to make it better, or if you want it re-generated with the latest status.]
 
 Of the currently open syzbot reports against the upstream kernel, I've manually
-marked 3 of them as possibly being bugs in the hid subsystem.  I've listed these
-reports below, sorted by an algorithm that tries to list first the reports most
-likely to be still valid, important, and actionable.
+marked 3 of them as possibly being bugs in the "fs/btrfs" subsystem.  I've
+listed these reports below, sorted by an algorithm that tries to list first the
+reports most likely to be still valid, important, and actionable.
 
-Of these 3 bugs, 2 were seen in mainline in the last week.
+Of these 3 bugs, 1 was seen in mainline in the last week.
 
 If you believe a bug is no longer valid, please close the syzbot report by
 sending a '#syz fix', '#syz dup', or '#syz invalid' command in reply to the
 original thread, as explained at https://goo.gl/tpsmEJ#status
 
-If you believe I misattributed a bug to the hid subsystem, please let me know,
-and if possible forward the report to the correct people or mailing list.
+If you believe I misattributed a bug to the "fs/btrfs" subsystem, please let me
+know, and if possible forward the report to the correct people or mailing list.
 
 Here are the bugs:
 
 --------------------------------------------------------------------------------
-Title:              KASAN: use-after-free Read in hidraw_ioctl
-Last occurred:      0 days ago
-Reported:           0 days ago
-Branches:           Mainline (with usb-fuzzer patches)
-Dashboard link:     https://syzkaller.appspot.com/bug?id=c7e345ba243bc4476aae52a3354ccbd2a90e344e
-Original thread:    https://lkml.kernel.org/lkml/000000000000c07378058e589a29@google.com/T/#u
-
-This bug has a C reproducer.
-
-No one has replied to the original thread for this bug yet.
-
-This looks like a bug in a hid USB driver.
-
-If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+ded1794a717e3b235226@syzkaller.appspotmail.com
-
-If you send any email or patch for this bug, please reply to the original
-thread.  For the git send-email command to use, or tips on how to reply if the
-thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/000000000000c07378058e589a29@google.com
-
---------------------------------------------------------------------------------
-Title:              KASAN: use-after-free Read in usbhid_power
-Last occurred:      0 days ago
-Reported:           0 days ago
-Branches:           Mainline (with usb-fuzzer patches)
-Dashboard link:     https://syzkaller.appspot.com/bug?id=36143971c5b9b0341ad4018313375a5a40cb52c8
-Original thread:    https://lkml.kernel.org/lkml/000000000000bb4247058e589a20@google.com/T/#u
-
-This bug has a C reproducer.
-
-No one has replied to the original thread for this bug yet.
-
-This looks like a bug in a hid USB driver.
-
-If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+ef5de9c4f99c4edb4e49@syzkaller.appspotmail.com
-
-If you send any email or patch for this bug, please reply to the original
-thread.  For the git send-email command to use, or tips on how to reply if the
-thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/000000000000bb4247058e589a20@google.com
-
---------------------------------------------------------------------------------
-Title:              INFO: task hung in fsnotify_connector_destroy_workfn (2)
-Last occurred:      32 days ago
-Reported:           311 days ago
+Title:              kernel BUG at fs/btrfs/volumes.c:LINE!
+Last occurred:      2 days ago
+Reported:           412 days ago
 Branches:           Mainline and others
-Dashboard link:     https://syzkaller.appspot.com/bug?id=d6011f00f49a2253c15a60ac102b2ea79e3ee8de
-Original thread:    https://lkml.kernel.org/lkml/0000000000006364200575dfc280@google.com/T/#u
+Dashboard link:     https://syzkaller.appspot.com/bug?id=d50670eeb21302915bde3f25871dfb7ea43db1e4
+Original thread:    https://lkml.kernel.org/lkml/00000000000096009b056df92dc1@google.com/T/#u
 
-This bug has a syzkaller reproducer only.
+Unfortunately, this bug does not have a reproducer.
 
-The original thread for this bug received 7 replies; the last was 301 days ago.
+The original thread for this bug received 6 replies; the last was 42 days ago.
 
 If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+6fb572170402d311dd39@syzkaller.appspotmail.com
+    Reported-by: syzbot+5b658d997a83984507a6@syzkaller.appspotmail.com
 
 If you send any email or patch for this bug, please consider replying to the
 original thread.  For the git send-email command to use, or tips on how to reply
 if the thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/0000000000006364200575dfc280@google.com
+https://lkml.kernel.org/r/00000000000096009b056df92dc1@google.com
+
+--------------------------------------------------------------------------------
+Title:              general protection fault in btrfs_scan_one_device
+Last occurred:      170 days ago
+Reported:           250 days ago
+Branches:           Mainline and others
+Dashboard link:     https://syzkaller.appspot.com/bug?id=b54f2496d4cd5132c35cfc274a72ca9aff353ee5
+Original thread:    https://lkml.kernel.org/lkml/000000000000ad2edc057ab76675@google.com/T/#u
+
+Unfortunately, this bug does not have a reproducer.
+
+No one replied to the original thread for this bug.
+
+If you fix this bug, please add the following tag to the commit:
+    Reported-by: syzbot+46048b9c7ec2fe0d4885@syzkaller.appspotmail.com
+
+If you send any email or patch for this bug, please consider replying to the
+original thread.  For the git send-email command to use, or tips on how to reply
+if the thread isn't in your mailbox, see the "Reply instructions" at
+https://lkml.kernel.org/r/000000000000ad2edc057ab76675@google.com
+
+--------------------------------------------------------------------------------
+Title:              invalid opcode in close_fs_devices
+Last occurred:      81 days ago
+Reported:           236 days ago
+Branches:           Mainline
+Dashboard link:     https://syzkaller.appspot.com/bug?id=5b65d7b852d4fe7f77af72e2f2c7a36837250c67
+Original thread:    https://lkml.kernel.org/lkml/0000000000005852b8057bc8b123@google.com/T/#u
+
+Unfortunately, this bug does not have a reproducer.
+
+The original thread for this bug received 1 reply, 235 days ago.
+
+If you fix this bug, please add the following tag to the commit:
+    Reported-by: syzbot+cabf977d00d3db1fdc37@syzkaller.appspotmail.com
+
+If you send any email or patch for this bug, please consider replying to the
+original thread.  For the git send-email command to use, or tips on how to reply
+if the thread isn't in your mailbox, see the "Reply instructions" at
+https://lkml.kernel.org/r/0000000000005852b8057bc8b123@google.com
 
