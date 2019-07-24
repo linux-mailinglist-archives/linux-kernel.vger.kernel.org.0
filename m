@@ -2,163 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B2A973448
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 18:55:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 041027344B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 18:56:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbfGXQze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 12:55:34 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46742 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbfGXQzd (ORCPT
+        id S1728255AbfGXQ4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 12:56:15 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44562 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728181AbfGXQ4O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 12:55:33 -0400
-Received: by mail-pg1-f196.google.com with SMTP id k189so2478882pgk.13
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 09:55:33 -0700 (PDT)
+        Wed, 24 Jul 2019 12:56:14 -0400
+Received: by mail-ot1-f68.google.com with SMTP id b7so10101349otl.11
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 09:56:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qtRJ8Les6/fJJOzs6Q1HmSL5jEWwx9CtarW4mGfG+uo=;
-        b=BTPWbmn22eLQsf31HdTrv2TJjHIDmoOaHSZBJA7dyaIQbt5PSQyqp5JI2d0hsZNtna
-         lZA3mIcRHBU5/IXzk4g3fogGWm3kFZYYsb0oiOADuzmiAhIGFeF7jpO79LypwxjjZzT2
-         x0inbJo35MBl+nOoYn9AV9iowaK/wMdnsPQU2gdUsm/9Qr09F+8PTAKbL+qi9G4VkMDc
-         0y2yoU9eQfWcdiICcsp6AVWE4bOZa9REJbEEfxTD6aAXU9x+cLt8mdptvVAqRvjqvbJn
-         lu3IbrnLImCxCmX8uUJ7X+7CMUlxSz3TokLPq1GApgNIXzPGmRg4rE2Cy7rnfjtfvvjH
-         2WDw==
+        bh=lj5VxMT7ytpqUXOYqjV0SKU1nsfCOyOUOiGQpNCaobw=;
+        b=Hf5QP/9Gi6ugQidFc1Hm+WBEJpAQIEtpQ7l4tIiLgRnLmI7Jh7/AM3JX+PtpswSZlp
+         AVuLSWocf3cXjTCleGz9CJ4T1PqEUUx5GTyeHTNGwet7kw8n3MkOxUzEGb8QBrP2j60T
+         gXknXyP8eoQbZ++rJWA2iAhdf2EOi6FDOy/V3xOwcji1yFBFBEIfQfgPI/c57puE0urV
+         2c8fsxHE8iGFEyGVuQpMnRWT5/bLME98JycyzMuLxvp0AEsPpBBw44GwmbYPiBqFCDIl
+         gKoV04gnZcdVMOPmVYmPiFQmgt++jK5QKoW+Yfi4Eb+FAwqch1BhT7IGNsl2BXf1KbSl
+         2qXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qtRJ8Les6/fJJOzs6Q1HmSL5jEWwx9CtarW4mGfG+uo=;
-        b=ns74xfcaLlqHJCJbrkM0v9FAd/GRYiLx3TJc7MmQgcT/HECL+mzgT1BNZOMYzgmiKO
-         BiVe4qg+gRTJty+e6IcO5witM51b6Kf18Zj9VEbrli2NRFSJKFY7nCh5zxF5Gs7Ngzqh
-         G+nyFsjiLUhY8rRSlVjcUD/2rkcDYHEeQU7Z3T7J2tQicsNL7v6q4Jr+s2mA50GNJ/X0
-         iPIPifVED1xLtvqMJavIJY7Tit0+aRnRxZsGXpjLbX4z3ZoPBTsgagkgpmM8hZ7thicn
-         Ndi+hPQT/b3W+x0kHqV+Olz/TM49OiCLrrvOg2h1BjMRJ47KDpGqz/eTbTHQb7hg6Jnk
-         MLOw==
-X-Gm-Message-State: APjAAAW6llB4xW5qT3w5Q2UCL87GswVsPLB8SiDW/ea+B7iDcwWAf+VB
-        lMQ/eN+uvYFiUS00vI4BC3gvYh/zG/++jhnFThwfaQ==
-X-Google-Smtp-Source: APXvYqyHceoOKYg0KqQem3avJL09umJctFC8dyr4daJC/ttUQhHRfbz+TLbdwzUCRT5ZsKScHEvokIMzKyBHr15vvXQ=
-X-Received: by 2002:a62:2c8e:: with SMTP id s136mr12419121pfs.3.1563987332380;
- Wed, 24 Jul 2019 09:55:32 -0700 (PDT)
+        bh=lj5VxMT7ytpqUXOYqjV0SKU1nsfCOyOUOiGQpNCaobw=;
+        b=SP9yASakBQ/HGfawVqBn9leomEOgNGQ85aVll7t133eusYdqdUpt6yF3Brwf1uvhLT
+         ult71IKYA4brDQnNLlIXl+EUm51lWRddcQxRvOyKw7Vx+MuB8az8VmBkZ8hGc0H0EL+G
+         pps4h4O8Gl7b7ytD29EQ4NBcQAS5bRqzDwmrQzQmOKpdbn9I5VhdYJL5O2LYXFFoBQKc
+         gvpk/5vAPw501vcygqCWYcSI9qCiEpP0hBPGPrYQF1T+T4OtU2NixayepcL7AqfUZf4A
+         wA0yhh4ZkkzfRa2Rs5TmKqV7BVH6pqxg+R0nW/XF219n4807X+9aDOwd5qxxG3q7wHRM
+         P5Lw==
+X-Gm-Message-State: APjAAAWJkWh/ngBzvOhZBhcs1HWAZNEVwTgEN5bw2ODlRuYWvXxxd5M7
+        HFeEyjzmkm5XRIaYULouXV+lSq+dC1BZLMhL3kVrNA==
+X-Google-Smtp-Source: APXvYqwh6vIcM8Jk1c4NR1KfxKt+DGUENc04BHP7lwI3tYLzzDoMhYrlgtCveTpKvh97oEm0dQAfR9WL3p/kkMmdu68=
+X-Received: by 2002:a9d:774a:: with SMTP id t10mr29134096otl.228.1563987373619;
+ Wed, 24 Jul 2019 09:56:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <alpine.DEB.2.21.1907182223560.1785@nanos.tec.linutronix.de>
- <20190724023946.yxsz5im22fz4zxrn@treble> <20190724074732.GJ3402@hirez.programming.kicks-ass.net>
- <20190724125525.kgybu3nnpvwlcz2c@treble> <20190724133516.GB31381@hirez.programming.kicks-ass.net>
- <20190724141040.GA31425@hirez.programming.kicks-ass.net> <20190724164821.GB31425@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190724164821.GB31425@hirez.programming.kicks-ass.net>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 24 Jul 2019 09:55:21 -0700
-Message-ID: <CAKwvOdnvqX4YtOaHL+B+1FOjdq-4tLZGKbs7LYQA4_SPTbdSqg@mail.gmail.com>
-Subject: Re: [PATCH] objtool: Improve UACCESS coverage
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20190722113151.1584-1-nitin.r.gote@intel.com> <CAFqZXNs5vdQwoy2k=_XLiGRdyZCL=n8as6aL01Dw-U62amFREA@mail.gmail.com>
+ <CAG48ez3zRoB7awMdb-koKYJyfP9WifTLevxLxLHioLhH=itZ-A@mail.gmail.com>
+ <201907231516.11DB47AA@keescook> <CAG48ez2eXJwE+vS2_ahR9Vuc3qD8O4CDZ5Lh6DcrrOq+7VKOYQ@mail.gmail.com>
+ <201907240852.6D10622B2@keescook>
+In-Reply-To: <201907240852.6D10622B2@keescook>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 24 Jul 2019 18:55:47 +0200
+Message-ID: <CAG48ez3-qdbnJaEooFrhfBT8czyAZNDp5YfkDRcy5mLH4BQy2g@mail.gmail.com>
+Subject: Re: [PATCH] selinux: convert struct sidtab count to refcount_t
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        NitinGote <nitin.r.gote@intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 9:48 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Wed, Jul 24, 2019 at 04:10:40PM +0200, Peter Zijlstra wrote:
-> > And that most certainly should trigger...
+On Wed, Jul 24, 2019 at 5:54 PM Kees Cook <keescook@chromium.org> wrote:
+> On Wed, Jul 24, 2019 at 04:28:31PM +0200, Jann Horn wrote:
+> > On Wed, Jul 24, 2019 at 12:17 AM Kees Cook <keescook@chromium.org> wrote:
+> > > Perhaps we need a "statistics" counter type for these kinds of counters?
+> > > "counter_t"? I bet there are a lot of atomic_t uses that are just trying
+> > > to be counters. (likely most of atomic_t that isn't now refcount_t ...)
 > >
-> > Let me gdb that objtool thing.
+> > This isn't a statistics counter though; this thing needs ordered
+> > memory accesses, which you wouldn't need for statistics.
 >
-> ---
-> Subject: objtool: Improve UACCESS coverage
->
-> A clang build reported an (obvious) double CLAC while a GCC build did
-> not; it turns out we only re-visit instructions if the first visit was
-> with AC=0. If OTOH the first visit was with AC=1, we completely ignore
-> any subsequent visit, even when it has AC=0.
->
-> Fix this by using a visited mask, instead of boolean and (explicitly)
-> mark the AC state.
->
-> $ ./objtool check -b --no-fp --retpoline --uaccess ../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o
-> ../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: .altinstr_replacement+0x22: redundant UACCESS disable
-> ../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool:   eb_copy_relocations.isra.34()+0xea: (alt)
-> ../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool:   .altinstr_replacement+0xffffffffffffffff: (branch)
-> ../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool:   eb_copy_relocations.isra.34()+0xd9: (alt)
-> ../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool:   eb_copy_relocations.isra.34()+0xb2: (branch)
-> ../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool:   eb_copy_relocations.isra.34()+0x39: (branch)
-> ../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool:   eb_copy_relocations.isra.34()+0x0: <=== (func)
->
-> Reported-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> Reported-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Okay, it'd be a "very accurate" counter type? It _could_ be used for
+> statistics. I guess what I mean is that there are a lot of places using
+> atomic_t just for upward counting that don't care about wrapping, etc.
 
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+(Accurate) statistics counters need RMW ops, don't need memory
+ordering, usually can't be locked against writes, and may not care
+about wrapping.
+This thing doesn't need RMW ops, does need memory ordering, can be
+locked against writes, and definitely shouldn't wrap.
 
-> ---
->  tools/objtool/check.c | 7 ++++---
->  tools/objtool/check.h | 3 ++-
->  2 files changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-> index 5f26620f13f5..176f2f084060 100644
-> --- a/tools/objtool/check.c
-> +++ b/tools/objtool/check.c
-> @@ -1946,6 +1946,7 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
->         struct alternative *alt;
->         struct instruction *insn, *next_insn;
->         struct section *sec;
-> +       u8 visited;
->         int ret;
->
->         insn = first;
-> @@ -1972,12 +1973,12 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
->                         return 1;
->                 }
->
-> +               visited = 1 << state.uaccess;
->                 if (insn->visited) {
->                         if (!insn->hint && !insn_state_match(insn, &state))
->                                 return 1;
->
-> -                       /* If we were here with AC=0, but now have AC=1, go again */
-> -                       if (insn->state.uaccess || !state.uaccess)
-> +                       if (insn->visited & visited)
->                                 return 0;
->                 }
->
-> @@ -2024,7 +2025,7 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
->                 } else
->                         insn->state = state;
->
-> -               insn->visited = true;
-> +               insn->visited |= visited;
->
->                 if (!insn->ignore_alts) {
->                         bool skip_orig = false;
-> diff --git a/tools/objtool/check.h b/tools/objtool/check.h
-> index b881fafcf55d..6d875ca6fce0 100644
-> --- a/tools/objtool/check.h
-> +++ b/tools/objtool/check.h
-> @@ -33,8 +33,9 @@ struct instruction {
->         unsigned int len;
->         enum insn_type type;
->         unsigned long immediate;
-> -       bool alt_group, visited, dead_end, ignore, hint, save, restore, ignore_alts;
-> +       bool alt_group, dead_end, ignore, hint, save, restore, ignore_alts;
->         bool retpoline_safe;
-> +       u8 visited;
->         struct symbol *call_dest;
->         struct instruction *jump_dest;
->         struct instruction *first_jump_src;
-
-
-
--- 
-Thanks,
-~Nick Desaulniers
+I agree that there are a bunch of statistics counters in the kernel,
+and it's not necessarily a bad idea to use a separate type for them;
+but this is not a statistics counter.
