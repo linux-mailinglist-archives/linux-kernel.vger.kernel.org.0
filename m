@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E28FE73F97
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:34:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3861073F93
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:33:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388109AbfGXT1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:27:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44956 "EHLO mail.kernel.org"
+        id S1729172AbfGXUdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:33:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728748AbfGXT1U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:27:20 -0400
+        id S1728088AbfGXT1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:27:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D333121951;
-        Wed, 24 Jul 2019 19:27:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F126E229F3;
+        Wed, 24 Jul 2019 19:27:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996440;
-        bh=1d6+62kb1Pf/ZAwkeN74tfLs5AAmRHl8t/OHbwtkFGU=;
+        s=default; t=1563996457;
+        bh=Ic/A8kNZeS40Gc0OvdGwgwwBx7unIcFf4oygHMb8BtY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sreKQY1k6tZ1ZA9ZM/HG1pWBM4id2VxYDQTkEif0jIGhI2MYrCVz6IG8mB1zIYbaD
-         WundTms21QHkV8l6KcGQHR6L2W1LOIDlDuRWE1q+QXLdu9OOqkGBSCMaGdyLlOniyi
-         2katpCCJKal8rHJB21pXvtOfsn/SZSF6VmxND7uw=
+        b=xKKjID04RdVsntC3MYGfAwTUwfDjJjX5nfKtdQU4KZKjfSFc4vdPDoxAcHjPGd3Z6
+         FH+Vqv8KxXByrOs3RkMxVci27EKSntrNz8knvnCBGTG1l04B7aaNcFEi3ZZODCPKRw
+         1Fkq8xZATG4lhnJFppSLRXlxPy+ZG7dOasDCUIsY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 097/413] ASoC: meson: axg-tdm: fix sample clock inversion
-Date:   Wed, 24 Jul 2019 21:16:28 +0200
-Message-Id: <20190724191742.031707900@linuxfoundation.org>
+Subject: [PATCH 5.2 103/413] net: hns3: fix for skb leak when doing selftest
+Date:   Wed, 24 Jul 2019 21:16:34 +0200
+Message-Id: <20190724191742.593413313@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -44,36 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cb36ff785e868992e96e8b9e5a0c2822b680a9e2 ]
+[ Upstream commit 8f9eed1a8791b83eb1c54c261d68424717e4111e ]
 
-The content of SND_SOC_DAIFMT_FORMAT_MASK is a number, not a bitfield,
-so the test to check if the format is i2s is wrong. Because of this the
-clock setting may be wrong. For example, the sample clock gets inverted
-in DSP B mode, when it should not.
+If hns3_nic_net_xmit does not return NETDEV_TX_BUSY when doing
+a loopback selftest, the skb is not freed in hns3_clean_tx_ring
+or hns3_nic_net_xmit, which causes skb not freed problem.
 
-Fix the lrclk invert helper function
+This patch fixes it by freeing skb when hns3_nic_net_xmit does
+not return NETDEV_TX_OK.
 
-Fixes: 1a11d88f499c ("ASoC: meson: add tdm formatter base driver")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: c39c4d98dc65 ("net: hns3: Add mac loopback selftest support in hns3 driver")
+
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/meson/axg-tdm.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/meson/axg-tdm.h b/sound/soc/meson/axg-tdm.h
-index e578b6f40a07..5774ce0916d4 100644
---- a/sound/soc/meson/axg-tdm.h
-+++ b/sound/soc/meson/axg-tdm.h
-@@ -40,7 +40,7 @@ struct axg_tdm_iface {
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+index d1588ea6132c..24fce343e7fc 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+@@ -243,11 +243,13 @@ static int hns3_lp_run_test(struct net_device *ndev, enum hnae3_loop mode)
  
- static inline bool axg_tdm_lrclk_invert(unsigned int fmt)
- {
--	return (fmt & SND_SOC_DAIFMT_I2S) ^
-+	return ((fmt & SND_SOC_DAIFMT_FORMAT_MASK) == SND_SOC_DAIFMT_I2S) ^
- 		!!(fmt & (SND_SOC_DAIFMT_IB_IF | SND_SOC_DAIFMT_NB_IF));
- }
- 
+ 		skb_get(skb);
+ 		tx_ret = hns3_nic_net_xmit(skb, ndev);
+-		if (tx_ret == NETDEV_TX_OK)
++		if (tx_ret == NETDEV_TX_OK) {
+ 			good_cnt++;
+-		else
++		} else {
++			kfree_skb(skb);
+ 			netdev_err(ndev, "hns3_lb_run_test xmit failed: %d\n",
+ 				   tx_ret);
++		}
+ 	}
+ 	if (good_cnt != HNS3_NIC_LB_TEST_PKT_NUM) {
+ 		ret_val = HNS3_NIC_LB_TEST_TX_CNT_ERR;
 -- 
 2.20.1
 
