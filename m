@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EC3673EA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:26:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A3AC73E9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:26:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390698AbfGXU0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:26:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37996 "EHLO mail.kernel.org"
+        id S2390439AbfGXU0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:26:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388024AbfGXThn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:37:43 -0400
+        id S2389547AbfGXTh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:37:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05ED9214AF;
-        Wed, 24 Jul 2019 19:37:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B067217D4;
+        Wed, 24 Jul 2019 19:37:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997062;
-        bh=sV39wD+/l0rQLdQ+sWqLjjPoyVdWcxDGkpRKscVQDg4=;
+        s=default; t=1563997078;
+        bh=NULSpw87td665LpMtn15sdnpqlluzsCv6UgNIvgnJ1U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DWtsN/bSGGqdH/kR0e1EQb1BOPB0+/pYqDXuC5n9PVEQqwK0sVnrLPwUe3pAZQTn0
-         nnmx0DB+j2AY5Vz2ebXTxi5PYqyxVo2TZaM7R0aGwAiFpOR8oJ8g5Vmx8XZu4BZmE0
-         1k53wEO38c+uJcMqOangsELn1ew0TlZNu3xbz9tw=
+        b=zjPXPOwsjhA1S5suoBYtS7BAHsLq82QaMrkCnqUMO/iKrXlM5VrTIHux06uf4DYBZ
+         YWcB2t2/k2b7IkPlafI6Ik9dTGH1sSG7lfoZODI0j84WTqamZ7g7dFdx8izRiIJdru
+         xrzgGUNAKmWUl6y3TSuJCuTc5I0WOkQaZyp1CE30=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.2 309/413] lib/scatterlist: Fix mapping iterator when sg->offset is greater than PAGE_SIZE
-Date:   Wed, 24 Jul 2019 21:20:00 +0200
-Message-Id: <20190724191757.864545880@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+97aae04ce27e39cbfca9@syzkaller.appspotmail.com,
+        syzbot+4c595632b98bb8ffcc66@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.2 314/413] ALSA: seq: Break too long mutex context in the write loop
+Date:   Wed, 24 Jul 2019 21:20:05 +0200
+Message-Id: <20190724191758.288107387@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -43,57 +45,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit aeb87246537a83c2aff482f3f34a2e0991e02cbc upstream.
+commit ede34f397ddb063b145b9e7d79c6026f819ded13 upstream.
 
-All mapping iterator logic is based on the assumption that sg->offset
-is always lower than PAGE_SIZE.
+The fix for the racy writes and ioctls to sequencer widened the
+application of client->ioctl_mutex to the whole write loop.  Although
+it does unlock/relock for the lengthy operation like the event dup,
+the loop keeps the ioctl_mutex for the whole time in other
+situations.  This may take quite long time if the user-space would
+give a huge buffer, and this is a likely cause of some weird behavior
+spotted by syzcaller fuzzer.
 
-But there are situations where sg->offset is such that the SG item
-is on the second page. In that case sg_copy_to_buffer() fails
-properly copying the data into the buffer. One of the reason is
-that the data will be outside the kmapped area used to access that
-data.
+This patch puts a simple workaround, just adding a mutex break in the
+loop when a large number of events have been processed.  This
+shouldn't hit any performance drop because the threshold is set high
+enough for usual operations.
 
-This patch fixes the issue by adjusting the mapping iterator
-offset and pgoffset fields such that offset is always lower than
-PAGE_SIZE.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Fixes: 4225fc8555a9 ("lib/scatterlist: use page iterator in the mapping iterator")
-Cc: stable@vger.kernel.org
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 7bd800915677 ("ALSA: seq: More protection for concurrent write and ioctl races")
+Reported-by: syzbot+97aae04ce27e39cbfca9@syzkaller.appspotmail.com
+Reported-by: syzbot+4c595632b98bb8ffcc66@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/scatterlist.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ sound/core/seq/seq_clientmgr.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/lib/scatterlist.c
-+++ b/lib/scatterlist.c
-@@ -676,17 +676,18 @@ static bool sg_miter_get_next_page(struc
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -1021,7 +1021,7 @@ static ssize_t snd_seq_write(struct file
  {
- 	if (!miter->__remaining) {
- 		struct scatterlist *sg;
--		unsigned long pgoffset;
+ 	struct snd_seq_client *client = file->private_data;
+ 	int written = 0, len;
+-	int err;
++	int err, handled;
+ 	struct snd_seq_event event;
  
- 		if (!__sg_page_iter_next(&miter->piter))
- 			return false;
+ 	if (!(snd_seq_file_flags(file) & SNDRV_SEQ_LFLG_OUTPUT))
+@@ -1034,6 +1034,8 @@ static ssize_t snd_seq_write(struct file
+ 	if (!client->accept_output || client->pool == NULL)
+ 		return -ENXIO;
  
- 		sg = miter->piter.sg;
--		pgoffset = miter->piter.sg_pgoffset;
++ repeat:
++	handled = 0;
+ 	/* allocate the pool now if the pool is not allocated yet */ 
+ 	mutex_lock(&client->ioctl_mutex);
+ 	if (client->pool->size > 0 && !snd_seq_write_pool_allocated(client)) {
+@@ -1093,12 +1095,19 @@ static ssize_t snd_seq_write(struct file
+ 						   0, 0, &client->ioctl_mutex);
+ 		if (err < 0)
+ 			break;
++		handled++;
  
--		miter->__offset = pgoffset ? 0 : sg->offset;
-+		miter->__offset = miter->piter.sg_pgoffset ? 0 : sg->offset;
-+		miter->piter.sg_pgoffset += miter->__offset >> PAGE_SHIFT;
-+		miter->__offset &= PAGE_SIZE - 1;
- 		miter->__remaining = sg->offset + sg->length -
--				(pgoffset << PAGE_SHIFT) - miter->__offset;
-+				     (miter->piter.sg_pgoffset << PAGE_SHIFT) -
-+				     miter->__offset;
- 		miter->__remaining = min_t(unsigned long, miter->__remaining,
- 					   PAGE_SIZE - miter->__offset);
+ 	__skip_event:
+ 		/* Update pointers and counts */
+ 		count -= len;
+ 		buf += len;
+ 		written += len;
++
++		/* let's have a coffee break if too many events are queued */
++		if (++handled >= 200) {
++			mutex_unlock(&client->ioctl_mutex);
++			goto repeat;
++		}
  	}
+ 
+  out:
 
 
