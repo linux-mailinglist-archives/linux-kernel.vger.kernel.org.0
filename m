@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5315C737E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:24:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A006737EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:24:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbfGXTYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:24:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40106 "EHLO mail.kernel.org"
+        id S1729037AbfGXTYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:24:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728933AbfGXTYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:24:05 -0400
+        id S1728989AbfGXTYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:24:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB5ED218F0;
-        Wed, 24 Jul 2019 19:24:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E46F1218EA;
+        Wed, 24 Jul 2019 19:24:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996244;
-        bh=9T1K/j99ownobVpfDjcO5E4ydlDMnfWqVQ6G1Al7pOw=;
+        s=default; t=1563996256;
+        bh=gpkOniK76Sb8jC7RArcrweh848Ov1osMfJvD3t4jypE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2qlhOM1dRsp2/rnvb9o7lvwXlsYxQPyZymF9FwmCRO0c9TbZJ0MA9/eNRNXDyamGv
-         2wYje+NgK4nfj6wZlHeYPFbXBOgWCtBnKInZCjd15Fj5jRV3MubV2fMWzCguOu8JNT
-         av9m8z6nNA4Zgxlj3pP9UudhWx6nwmGIuyIDDmzc=
+        b=o70aBtxoMevRLjiL7VLrmq9/iBnRoZi3wHBEe1n8qy/2sHNil/g2Zrj36nq0gU36Z
+         y/a2iGfKk7K8Xy9ulcgiHnPapY3H7P85x48G9mbfqStMADNC8Hd4p9wmYiE3wo4OoT
+         NMf4q8laD1zIwP95BA0zSCQ1dkp+/5d/V4aNLhr0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhi Chen <zhichen@codeaurora.org>,
-        Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>,
-        Sven Eckelmann <sven@narfation.org>,
+        stable@vger.kernel.org, Surabhi Vishnoi <svishnoi@codeaurora.org>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 003/413] ath10k: fix incorrect multicast/broadcast rate setting
-Date:   Wed, 24 Jul 2019 21:14:54 +0200
-Message-Id: <20190724191735.392212794@linuxfoundation.org>
+Subject: [PATCH 5.2 006/413] ath10k: Do not send probe response template for mesh
+Date:   Wed, 24 Jul 2019 21:14:57 +0200
+Message-Id: <20190724191735.665537951@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -46,56 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 93ee3d108fc77e19efeac3ec5aa7d5886711bfef ]
+[ Upstream commit 97354f2c432788e3163134df6bb144f4b6289d87 ]
 
-Invalid rate code is sent to firmware when multicast rate value of 0 is
-sent to driver indicating disabled case, causing broken mesh path.
-so fix that.
+Currently mac80211 do not support probe response template for
+mesh point. When WMI_SERVICE_BEACON_OFFLOAD is enabled, host
+driver tries to configure probe response template for mesh, but
+it fails because the interface type is not NL80211_IFTYPE_AP but
+NL80211_IFTYPE_MESH_POINT.
 
-Tested on QCA9984 with firmware 10.4-3.6.1-00827
+To avoid this failure, skip sending probe response template to
+firmware for mesh point.
 
-Sven tested on IPQ4019 with 10.4-3.5.3-00057 and QCA9888 with 10.4-3.5.3-00053
-(ath10k-firmware) and 10.4-3.6-00140 (linux-firmware 2018-12-16-211de167).
+Tested HW: WCN3990/QCA6174/QCA9984
 
-Fixes: cd93b83ad92 ("ath10k: support for multicast rate control")
-Co-developed-by: Zhi Chen <zhichen@codeaurora.org>
-Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
-Signed-off-by: Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>
-Tested-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Surabhi Vishnoi <svishnoi@codeaurora.org>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/mac.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/wireless/ath/ath10k/mac.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
-index 9c703d287333..e8997e22ceec 100644
+index e8997e22ceec..b500fd427595 100644
 --- a/drivers/net/wireless/ath/ath10k/mac.c
 +++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -5588,8 +5588,8 @@ static void ath10k_bss_info_changed(struct ieee80211_hw *hw,
- 	struct cfg80211_chan_def def;
- 	u32 vdev_param, pdev_param, slottime, preamble;
- 	u16 bitrate, hw_value;
--	u8 rate, basic_rate_idx;
--	int rateidx, ret = 0, hw_rate_code;
-+	u8 rate, basic_rate_idx, rateidx;
-+	int ret = 0, hw_rate_code, mcast_rate;
- 	enum nl80211_band band;
- 	const struct ieee80211_supported_band *sband;
+@@ -1630,6 +1630,10 @@ static int ath10k_mac_setup_prb_tmpl(struct ath10k_vif *arvif)
+ 	if (arvif->vdev_type != WMI_VDEV_TYPE_AP)
+ 		return 0;
  
-@@ -5776,7 +5776,11 @@ static void ath10k_bss_info_changed(struct ieee80211_hw *hw,
- 	if (changed & BSS_CHANGED_MCAST_RATE &&
- 	    !ath10k_mac_vif_chan(arvif->vif, &def)) {
- 		band = def.chan->band;
--		rateidx = vif->bss_conf.mcast_rate[band] - 1;
-+		mcast_rate = vif->bss_conf.mcast_rate[band];
-+		if (mcast_rate > 0)
-+			rateidx = mcast_rate - 1;
-+		else
-+			rateidx = ffs(vif->bss_conf.basic_rates) - 1;
- 
- 		if (ar->phy_capability & WHAL_WLAN_11A_CAPABILITY)
- 			rateidx += ATH10K_MAC_FIRST_OFDM_RATE_IDX;
++	 /* For mesh, probe response and beacon share the same template */
++	if (ieee80211_vif_is_mesh(vif))
++		return 0;
++
+ 	prb = ieee80211_proberesp_get(hw, vif);
+ 	if (!prb) {
+ 		ath10k_warn(ar, "failed to get probe resp template from mac80211\n");
 -- 
 2.20.1
 
