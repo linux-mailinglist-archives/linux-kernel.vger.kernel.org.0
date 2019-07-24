@@ -2,159 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C94273EAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:26:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08EBC73EA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:26:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390061AbfGXU0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:26:41 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:41335 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389369AbfGXThA (ORCPT
+        id S2390470AbfGXU0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:26:13 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34096 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389199AbfGXThv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:37:00 -0400
-Received: by mail-qt1-f196.google.com with SMTP id d17so46612799qtj.8
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:36:59 -0700 (PDT)
+        Wed, 24 Jul 2019 15:37:51 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n9so15492691pgc.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:37:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:cc:from:user-agent:date;
+        bh=QFJC3GS7SLbhEX9yLYIlfgrpJlGsNCGKHcxux2RXL8U=;
+        b=dY9QfISi0mzz6dT2+u7lTmTaFJqWVPPE2AvBBL37m53aXiWDaGr7kR9QlJVDHbRTEh
+         ATjhVFJsyDmAuE96/iaGX2t7d72ebA+veCDxFMlM0aPo2qXoEmzBXOLigAUahjSr2IjC
+         llI517jBkBnLLKkP+GfvnjFsKRltJ6WuuHp84=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Z7pnaGuYc9LFLbT5aUxNfUlnE7ek1gcnJ4zW5L3HylM=;
-        b=AJa24WOUq6QNmfM7o3lefePyApLJXuhnHzamOGyebk6ymmpiolLwxmEuGo5tezWLSx
-         ig6YpsdAxKT6H60lVG9DQ2ec8WehibgI8QLPAa/Y84/QedB5FRiiSUS+5aVEF+MZ1i26
-         p14SMIxISzs+2sjoC+OsIYIaLVtmG4isG2H5Is2DAMWtcow4siohVOIPSStq13IyMCQt
-         I1ES7Dz/kAtl/GdZcTj/G1mpEssieeywF+NLIWweTl5YxjC28KKVXRDcyIStIWNtiYhP
-         NBOXj1zDmtGF/EU8ibDau+HULhL8X1S5oxL0nAZ4YXUKcbWC+9hol9KI2Iczo3tSBrs2
-         aG8Q==
-X-Gm-Message-State: APjAAAV27pGpphHefrD08+ghm1u/wxw2djID6EtPDXGxHB68VSwbIzZr
-        Qc9CEVO3iTlPTtSwdqejOLUolg==
-X-Google-Smtp-Source: APXvYqwNTwfZ7UhOrUsmMJREZDSG4r+F8zrpdIk7pUPLDp8e5SLJxmNngfBQGNr0NG9bBAHOHmh5zA==
-X-Received: by 2002:ac8:1887:: with SMTP id s7mr59031081qtj.220.1563997018800;
-        Wed, 24 Jul 2019 12:36:58 -0700 (PDT)
-Received: from [192.168.1.157] (pool-96-235-39-235.pitbpa.fios.verizon.net. [96.235.39.235])
-        by smtp.gmail.com with ESMTPSA id q17sm16672031qtl.13.2019.07.24.12.36.57
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 12:36:58 -0700 (PDT)
-Subject: Re: Limits for ION Memory Allocator
-To:     alex.popov@linux.com, Sumit Semwal <sumit.semwal@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        arve@android.com, Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <christian@brauner.io>,
-        Riley Andrews <riandrews@android.com>,
-        devel@driverdev.osuosl.org, linaro-mm-sig@lists.linaro.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        dri-devel@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        syzkaller@googlegroups.com, John Stultz <john.stultz@linaro.org>
-References: <3b922aa4-c6d4-e4a4-766d-f324ff77f7b5@linux.com>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <40f8b7d8-fafa-ad99-34fb-9c63e34917e2@redhat.com>
-Date:   Wed, 24 Jul 2019 15:36:57 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:cc:from
+         :user-agent:date;
+        bh=QFJC3GS7SLbhEX9yLYIlfgrpJlGsNCGKHcxux2RXL8U=;
+        b=Ok+rJgDFuyRrzes+Y0sEo3KVHFm+vyN757KTuAhq12uOmBz0vH4GdyDxeBG9vR3VT9
+         EtHB8r1xFbdjN5IvWVyPxwcAENXmLinMp5K+sAnedAwrM1NzCV2v0xOmNRCJxhC6PIxc
+         e73lbIVr7PkCrIfohXSaMwdbqciDpDXPnTAUf1cdxCPQDdWq6qYzeSMTOl6Q9nqocC7O
+         LuTW7qndncCL0zzrKJq7Ln10om69uk8WfgfqTzYTUh43K2pMm04viyJHUBPa5tFPMq4O
+         QCCH/VgPc9IDn/JJEMrKQ65bMEQGXeL6i1PTl+VYt1/IbB63GEHcI/NSC/AxmK0igZmG
+         264g==
+X-Gm-Message-State: APjAAAWHCJ51ct2YTyXOUiP2ohvGwAlux4QiXIcmDkxe7bBlrdCUYZ+V
+        8DLpKxUtg5cPPRPcPXHgC1XxiA==
+X-Google-Smtp-Source: APXvYqzCSyV3fyjPi8PknWSIPwreP9uODkfgEhhIEkHvblpFYOLy8zWQGA8n4P6AHkBN9fjX0sXPzQ==
+X-Received: by 2002:a65:52c5:: with SMTP id z5mr68804383pgp.118.1563997070692;
+        Wed, 24 Jul 2019 12:37:50 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id 185sm47926192pfd.125.2019.07.24.12.37.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 12:37:50 -0700 (PDT)
+Message-ID: <5d38b38e.1c69fb81.e8e5d.035b@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <3b922aa4-c6d4-e4a4-766d-f324ff77f7b5@linux.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190724145251.GB18620@codeaurora.org>
+References: <20190722215340.3071-1-ilina@codeaurora.org> <20190722215340.3071-2-ilina@codeaurora.org> <5d3769df.1c69fb81.55d03.aa33@mx.google.com> <20190724145251.GB18620@codeaurora.org>
+Subject: Re: [PATCH V2 2/4] drivers: qcom: rpmh-rsc: avoid locking in the interrupt handler
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, dianders@chromium.org,
+        mkshah@codeaurora.org
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 24 Jul 2019 12:37:49 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/17/19 12:31 PM, Alexander Popov wrote:
-> Hello!
-> 
-> The syzkaller [1] has a trouble with fuzzing the Linux kernel with ION Memory
-> Allocator.
-> 
-> Syzkaller uses several methods [2] to limit memory consumption of the userspace
-> processes calling the syscalls for testing the kernel:
->   - setrlimit(),
->   - cgroups,
->   - various sysctl.
-> But these methods don't work for ION Memory Allocator, so any userspace process
-> that has access to /dev/ion can bring the system to the out-of-memory state.
-> 
-> An example of a program doing that:
-> 
-> 
-> #include <sys/types.h>
-> #include <sys/stat.h>
-> #include <fcntl.h>
-> #include <stdio.h>
-> #include <linux/types.h>
-> #include <sys/ioctl.h>
-> 
-> #define ION_IOC_MAGIC		'I'
-> #define ION_IOC_ALLOC		_IOWR(ION_IOC_MAGIC, 0, \
-> 				      struct ion_allocation_data)
-> 
-> struct ion_allocation_data {
-> 	__u64 len;
-> 	__u32 heap_id_mask;
-> 	__u32 flags;
-> 	__u32 fd;
-> 	__u32 unused;
-> };
-> 
-> int main(void)
-> {
-> 	unsigned long i = 0;
-> 	int fd = -1;
-> 	struct ion_allocation_data data = {
-> 		.len = 0x13f65d8c,
-> 		.heap_id_mask = 1,
-> 		.flags = 0,
-> 		.fd = -1,
-> 		.unused = 0
-> 	};
-> 
-> 	fd = open("/dev/ion", 0);
-> 	if (fd == -1) {
-> 		perror("[-] open /dev/ion");
-> 		return 1;
-> 	}
-> 
-> 	while (1) {
-> 		printf("iter %lu\n", i);
-> 		ioctl(fd, ION_IOC_ALLOC, &data);
-> 		i++;
-> 	}
-> 
-> 	return 0;
-> }
-> 
-> 
-> I looked through the code of ion_alloc() and didn't find any limit checks.
-> Is it currently possible to limit ION kernel allocations for some process?
-> 
-> If not, is it a right idea to do that?
-> Thanks!
-> 
+Quoting Lina Iyer (2019-07-24 07:52:51)
+> On Tue, Jul 23 2019 at 14:11 -0600, Stephen Boyd wrote:
+> >Quoting Lina Iyer (2019-07-22 14:53:38)
+> >> Avoid locking in the interrupt context to improve latency. Since we
+> >> don't lock in the interrupt context, it is possible that we now could
+> >> race with the DRV_CONTROL register that writes the enable register and
+> >> cleared by the interrupt handler. For fire-n-forget requests, the
+> >> interrupt may be raised as soon as the TCS is triggered and the IRQ
+> >> handler may clear the enable bit before the DRV_CONTROL is read back.
+> >>
+> >> Use the non-sync variant when enabling the TCS register to avoid readi=
+ng
+> >> back a value that may been cleared because the interrupt handler ran
+> >> immediately after triggering the TCS.
+> >>
+> >> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> >> ---
+> >
+> >I have to read this patch carefully. The commit text isn't convincing me
+> >that it is actually safe to make this change. It mostly talks about the
+> >performance improvements and how we need to fix __tcs_trigger(), which
+> >is good, but I was hoping to be convinced that not grabbing the lock
+> >here is safe.
+> >
+> >How do we ensure that drv->tcs_in_use is cleared before we call
+> >tcs_write() and try to look for a free bit? Isn't it possible that we'll
+> >get into a situation where the bitmap is all used up but the hardware
+> >has just received an interrupt and is going to clear out a bit and then
+> >an rpmh write fails with -EBUSY?
+> >
+> If we have a situation where there are no available free bits, we retry
+> and that is part of the function. Since we have only 2 TCSes avaialble
+> to write to the hardware and there could be multiple requests coming in,
+> it is a very common situation. We try and acquire the drv->lock and if
+> there are free TCS available and if available mark them busy and send
+> our requests. If there are none available, we keep retrying.
+>=20
 
-Yes, I do think that's the right approach. We're working on moving Ion
-out of staging and this is something I mentioned to John Stultz. I don't
-think we've thought too hard about how to do the actual limiting so
-suggestions are welcome.
-
-Thanks,
-Laura
-
-> Best regards,
-> Alexander
-> 
-> 
-> [1]: https://github.com/google/syzkaller
-> [2]: https://github.com/google/syzkaller/blob/master/executor/common_linux.h
-> 
-
+Ok. I wonder if we need some sort of barriers here too, like an
+smp_mb__after_atomic()? That way we can make sure that the write to
+clear the bit is seen by another CPU that could be spinning forever
+waiting for that bit to be cleared? Before this change the spinlock
+would be guaranteed to make these barriers for us, but now that doesn't
+seem to be the case. I really hope that this whole thing can be changed
+to be a mutex though, in which case we can use the bit_wait() API, etc.
+to put tasks to sleep while RPMh is processing things.
+=20
