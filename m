@@ -2,134 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 625D973009
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 15:38:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C32D373029
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 15:46:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbfGXNiG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 09:38:06 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:35341 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbfGXNiG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 09:38:06 -0400
-Received: by mail-io1-f69.google.com with SMTP id w17so51126374iom.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 06:38:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=YmlYbeeXg8KipqZm+95RyiuSWYiaWNME9/ZKLNADTzI=;
-        b=cqJ3FN8FrGVDfqhznL7Xr4rhcR9WUrFlLCBmDMiz/3LgDNDnKNyb06vAqPG+MuLpi+
-         0COBJA5owFTTNTHN3E8XCJnYxlvqgak6mqNiSMBAoUnHcFL8YnA1oxETcRne4kjhxhMs
-         ZAPKtB1qnIGdEQW3odVqVKGK5SvUK7K1JR8lFzDVvHZuw5M8G+nUXgu2DwKMnD6nIaRF
-         dJmUMZbaStwZWA9jy489BqXw4fSYDKo5cDhNZkEKtv1VOWBcjFOu5geB9NON6bJrYSoq
-         rHyGD4dXv76Lu8/PZS7ylQmxKDCi1VllwL/uNvvDSwOF5Xp7mzuxmccv6R9ovKr5DK7z
-         iHpQ==
-X-Gm-Message-State: APjAAAUBQgV2LTKsg8dj3AunjjrRlrD8V5JkWpLAjkZ9D6/P3IEnQNuD
-        jTed6h92aaOtPv+YWE8LXEF15xqdG1z+CJ6tVfzGUjtiw8rD
-X-Google-Smtp-Source: APXvYqz2PxYFGpRCTtrjQIXkXtIveQHB4aG4N+6UmgzI6K4L4WM1q80LZoqSsv2AF51hyBZCqSCxZDmCm99YFNaGIo/9e+AxJw1A
+        id S1727223AbfGXNqU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 09:46:20 -0400
+Received: from mga14.intel.com ([192.55.52.115]:17524 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726769AbfGXNqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 09:46:20 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 06:46:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
+   d="scan'208";a="369299427"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by fmsmga006.fm.intel.com with ESMTP; 24 Jul 2019 06:46:17 -0700
+Date:   Wed, 24 Jul 2019 21:29:20 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, atull@kernel.org,
+        Ananda Ravuri <ananda.ravuri@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>
+Subject: Re: [PATCH v3 04/12] fpga: dfl: afu: add AFU state related sysfs
+ interfaces
+Message-ID: <20190724132920.GB8463@hao-dev>
+References: <1563857495-26692-1-git-send-email-hao.wu@intel.com>
+ <1563857495-26692-5-git-send-email-hao.wu@intel.com>
+ <20190724094110.GD29532@kroah.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:c550:: with SMTP id g16mr83081468jaj.49.1563975485145;
- Wed, 24 Jul 2019 06:38:05 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 06:38:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003acc06058e6d6b70@google.com>
-Subject: general protection fault in __pm_runtime_resume
-From:   syzbot <syzbot+3cbe5cd105d2ad56a1df@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
-        len.brown@intel.com, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org, pavel@ucw.cz,
-        rjw@rjwysocki.net, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190724094110.GD29532@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, Jul 24, 2019 at 11:41:10AM +0200, Greg KH wrote:
+> On Tue, Jul 23, 2019 at 12:51:27PM +0800, Wu Hao wrote:
+> > This patch introduces more sysfs interfaces for Accelerated
+> > Function Unit (AFU). These interfaces allow users to read
+> > current AFU Power State (APx), read / clear AFU Power (APx)
+> > events which are sticky to identify transient APx state,
+> > and manage AFU's LTR (latency tolerance reporting).
+> > 
+> > Signed-off-by: Ananda Ravuri <ananda.ravuri@intel.com>
+> > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+> > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> > Acked-by: Alan Tull <atull@kernel.org>
+> > Signed-off-by: Moritz Fischer <mdf@kernel.org>
+> > ---
+> > v2: rebased, and remove DRV/MODULE_VERSION modifications
+> > v3: update kernel version and date in sysfs doc
+> > ---
+> >  Documentation/ABI/testing/sysfs-platform-dfl-port |  30 +++++
+> >  drivers/fpga/dfl-afu-main.c                       | 137 ++++++++++++++++++++++
+> >  drivers/fpga/dfl.h                                |  11 ++
+> >  3 files changed, 178 insertions(+)
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-platform-dfl-port b/Documentation/ABI/testing/sysfs-platform-dfl-port
+> > index 6a92dda..5961fb2 100644
+> > --- a/Documentation/ABI/testing/sysfs-platform-dfl-port
+> > +++ b/Documentation/ABI/testing/sysfs-platform-dfl-port
+> > @@ -14,3 +14,33 @@ Description:	Read-only. User can program different PR bitstreams to FPGA
+> >  		Accelerator Function Unit (AFU) for different functions. It
+> >  		returns uuid which could be used to identify which PR bitstream
+> >  		is programmed in this AFU.
+> > +
+> > +What:		/sys/bus/platform/devices/dfl-port.0/power_state
+> > +Date:		July 2019
+> > +KernelVersion:	5.4
+> > +Contact:	Wu Hao <hao.wu@intel.com>
+> > +Description:	Read-only. It reports the APx (AFU Power) state, different APx
+> > +		means different throttling level. When reading this file, it
+> > +		returns "0" - Normal / "1" - AP1 / "2" - AP2 / "6" - AP6.
+> > +
+> > +What:		/sys/bus/platform/devices/dfl-port.0/ap1_event
+> > +Date:		July 2019
+> > +KernelVersion:	5.4
+> > +Contact:	Wu Hao <hao.wu@intel.com>
+> > +Description:	Read-write. Read or set 1 to clear AP1 (AFU Power State 1)
+> > +		event. It's used to indicate transient AP1 state.
+> 
+> So reading the value changes the state of the system?  That's almost
+> always never a good idea.
+> 
+> Force userspace to write the value to change something.  Otherwise all
+> libraries that use sysfs will be accidentally changing the state of your
+> system without you ever knowing it.
 
-syzbot found the following crash on:
+Oh.. I think the description makes some misunderstanding here, will fix it
+in the next version. This AP1/AP2 event will only be cleared by write 1 to
+it, read will not change the state.
 
-HEAD commit:    6a3599ce usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=15562358600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=700ca426ab83faae
-dashboard link: https://syzkaller.appspot.com/bug?extid=3cbe5cd105d2ad56a1df
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> 
+> > +
+> > +What:		/sys/bus/platform/devices/dfl-port.0/ap2_event
+> > +Date:		July 2019
+> > +KernelVersion:	5.4
+> > +Contact:	Wu Hao <hao.wu@intel.com>
+> > +Description:	Read-write. Read or set 1 to clear AP2 (AFU Power State 2)
+> > +		event. It's used to indicate transient AP2 state.
+> > +
+> > +What:		/sys/bus/platform/devices/dfl-port.0/ltr
+> > +Date:		July 2019
+> > +KernelVersion:	5.4
+> > +Contact:	Wu Hao <hao.wu@intel.com>
+> > +Description:	Read-write. Read and set AFU latency tolerance reporting value.
+> > +		Set ltr to 1 if the AFU can tolerate latency >= 40us or set it
+> > +		to 0 if it is latency sensitive.
+> > diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
+> > index 68b4d08..cb3f73e 100644
+> > --- a/drivers/fpga/dfl-afu-main.c
+> > +++ b/drivers/fpga/dfl-afu-main.c
+> > @@ -141,8 +141,145 @@ static int port_get_id(struct platform_device *pdev)
+> >  }
+> >  static DEVICE_ATTR_RO(id);
+> >  
+> > +static ssize_t
+> > +ltr_show(struct device *dev, struct device_attribute *attr, char *buf)
+> > +{
+> > +	struct dfl_feature_platform_data *pdata = dev_get_platdata(dev);
+> > +	void __iomem *base;
+> > +	u64 v;
+> > +
+> > +	base = dfl_get_feature_ioaddr_by_id(dev, PORT_FEATURE_ID_HEADER);
+> > +
+> > +	mutex_lock(&pdata->lock);
+> > +	v = readq(base + PORT_HDR_CTRL);
+> > +	mutex_unlock(&pdata->lock);
+> 
+> Why do you need a lock to call readq()?  What are you protecting here?
 
-Unfortunately, I don't have any reproducer for this crash yet.
+If this code is running on 32bit machine, readq will be replaced with 2
+readl operation. If that is the case, should we protect the code against
+it?
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3cbe5cd105d2ad56a1df@syzkaller.appspotmail.com
+> 
+> 
+> > +
+> > +	return sprintf(buf, "%x\n", (u8)FIELD_GET(PORT_CTRL_LATENCY, v));
+> > +}
+> > +
+> > +static ssize_t
+> > +ltr_store(struct device *dev, struct device_attribute *attr,
+> > +	  const char *buf, size_t count)
+> > +{
+> > +	struct dfl_feature_platform_data *pdata = dev_get_platdata(dev);
+> > +	void __iomem *base;
+> > +	u8 ltr;
+> > +	u64 v;
+> > +
+> > +	if (kstrtou8(buf, 0, &ltr) || ltr > 1)
+> > +		return -EINVAL;
+> 
+> Are you doing anything with this value?  If not, how about just using
+> the sysfs boolean read function and if it is 1, then do the clearing?
+> 
+> Same for all other show/store functions in here.
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 0 PID: 3715 Comm: syz-executor.3 Not tainted 5.2.0-rc6+ #15
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__pm_runtime_resume+0x49/0x180 drivers/base/power/runtime.c:1069
-Code: ed 74 d5 fe 45 85 ed 0f 85 9a 00 00 00 e8 6f 73 d5 fe 48 8d bd c1 02  
-00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48  
-89 fa 83 e2 07 38 d0 7f 08 84 c0 0f 85 fe 00 00 00
-RSP: 0018:ffff8881d99d78e0 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000020 RCX: ffffc90003f3f000
-RDX: 0000000416d8686d RSI: ffffffff82676841 RDI: 00000020b6c3436a
-RBP: 00000020b6c340a9 R08: ffff8881c6d64800 R09: fffffbfff0e84c25
-R10: ffff8881d99d7940 R11: ffffffff87426127 R12: 0000000000000004
-R13: 0000000000000000 R14: ffff8881d9b94000 R15: ffffffff897f9048
-FS:  00007f047f542700(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b30f21000 CR3: 00000001ca032000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  pm_runtime_get_sync include/linux/pm_runtime.h:226 [inline]
-  usb_autopm_get_interface+0x1b/0x50 drivers/usb/core/driver.c:1707
-  usbhid_power+0x7c/0xe0 drivers/hid/usbhid/hid-core.c:1234
-  hid_hw_power include/linux/hid.h:1038 [inline]
-  hidraw_open+0x20d/0x740 drivers/hid/hidraw.c:282
-  chrdev_open+0x219/0x5c0 fs/char_dev.c:413
-  do_dentry_open+0x497/0x1040 fs/open.c:778
-  do_last fs/namei.c:3416 [inline]
-  path_openat+0x1430/0x3ff0 fs/namei.c:3533
-  do_filp_open+0x1a1/0x280 fs/namei.c:3563
-  do_sys_open+0x3c0/0x580 fs/open.c:1070
-  do_syscall_64+0xb7/0x560 arch/x86/entry/common.c:301
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x413711
-Code: 75 14 b8 02 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 19 00 00 c3 48  
-83 ec 08 e8 0a fa ff ff 48 89 04 24 b8 02 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 53 fa ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007f047f5417a0 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 6666666666666667 RCX: 0000000000413711
-RDX: 0000000000000000 RSI: 0000000000084002 RDI: 00007f047f541850
-RBP: 000000000075bf20 R08: 000000000000000f R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000293 R12: 00007f047f5426d4
-R13: 00000000004c8a7a R14: 00000000004df748 R15: 00000000ffffffff
-Modules linked in:
----[ end trace a2dcf3f649bfec9a ]---
-RIP: 0010:__pm_runtime_resume+0x49/0x180 drivers/base/power/runtime.c:1069
-Code: ed 74 d5 fe 45 85 ed 0f 85 9a 00 00 00 e8 6f 73 d5 fe 48 8d bd c1 02  
-00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48  
-89 fa 83 e2 07 38 d0 7f 08 84 c0 0f 85 fe 00 00 00
-RSP: 0018:ffff8881d99d78e0 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000020 RCX: ffffc90003f3f000
-RDX: 0000000416d8686d RSI: ffffffff82676841 RDI: 00000020b6c3436a
-RBP: 00000020b6c340a9 R08: ffff8881c6d64800 R09: fffffbfff0e84c25
-R10: ffff8881d99d7940 R11: ffffffff87426127 R12: 0000000000000004
-R13: 0000000000000000 R14: ffff8881d9b94000 R15: ffffffff897f9048
-FS:  00007f047f542700(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b30f21000 CR3: 00000001ca032000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Sure, will fix this in the next version.
 
+Thanks a lot for the comments.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Hao
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> thanks,
+> 
+> greg k-h
