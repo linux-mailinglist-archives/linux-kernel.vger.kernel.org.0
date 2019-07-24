@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88DA773E0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:22:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FE3073DF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:21:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391228AbfGXUV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:21:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47666 "EHLO mail.kernel.org"
+        id S2390310AbfGXTpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:45:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727890AbfGXTop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:44:45 -0400
+        id S2390912AbfGXTpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:45:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7BA8217D4;
-        Wed, 24 Jul 2019 19:44:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15CCD217D4;
+        Wed, 24 Jul 2019 19:45:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997485;
-        bh=gYH5yrW6GexiAJGiJu0kgjoNRCvlT+6tT2XM5q6PdiE=;
+        s=default; t=1563997504;
+        bh=DaApVQO7VGpeXUjJist9KkOPOOIL6bB+stuCL0bLK/k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uB73VmYN+pKj2kA94ko2QelCKbq1/A7j8dI2i7UvgpM3ahQPBpHVOpIWZ/KBcFUbY
-         VZutWVq2HAfEhieIveRA6xjRLdezl6bS7UVzQwMpyKcSvwU/SRL+4dv80kXMySO64G
-         bCRiNkif6vY26ZxFUrELc2f00kMTHfwm1TbrOxZs=
+        b=zGSZhHF8m1TqG0we+kG5ORC0IgqCPntB/MyTXRK+K8qJXdxGqQrsKDQYldgT1Jli5
+         BE4WMNR8rCQAu/PZ6rnsle7S8qftZLdY/f2f3SQCSw2LDOzHIPxiDCKrCKhhS3d49u
+         Sy2IH+QFwJkv9p/Pr0ocFX86tL4ql/KHwUpPOC80=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 041/371] media: vim2m: fix two double-free issues
-Date:   Wed, 24 Jul 2019 21:16:33 +0200
-Message-Id: <20190724191727.641331214@linuxfoundation.org>
+Subject: [PATCH 5.1 047/371] media: saa7164: fix remove_proc_entry warning
+Date:   Wed, 24 Jul 2019 21:16:39 +0200
+Message-Id: <20190724191728.235051512@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -48,55 +45,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 20059cbbf981ca954be56f7963ae494d18e2dda1 ]
+[ Upstream commit 50710eeefbc1ed25375942aad0c4d1eb4af0f330 ]
 
-vim2m_device_release() will be called by video_unregister_device() to release
-various objects.
+if saa7164_proc_create() fails, saa7164_fini() will trigger a warning,
 
-There are two double-free issue,
-1. dev->m2m_dev will be freed twice in error_m2m path/vim2m_device_release
-2. the error_v4l2 and error_free path in vim2m_probe() will release
-   same objects, since vim2m_device_release has done.
+name 'saa7164'
+WARNING: CPU: 1 PID: 6311 at fs/proc/generic.c:672 remove_proc_entry+0x1e8/0x3a0
+  ? remove_proc_entry+0x1e8/0x3a0
+  ? try_stop_module+0x7b/0x240
+  ? proc_readdir+0x70/0x70
+  ? rcu_read_lock_sched_held+0xd7/0x100
+  saa7164_fini+0x13/0x1f [saa7164]
+  __x64_sys_delete_module+0x30c/0x480
+  ? __ia32_sys_delete_module+0x480/0x480
+  ? __x64_sys_clock_gettime+0x11e/0x1c0
+  ? __x64_sys_timer_create+0x1a0/0x1a0
+  ? trace_hardirqs_off_caller+0x40/0x180
+  ? do_syscall_64+0x18/0x450
+  do_syscall_64+0x9f/0x450
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Fixes: ea6c7e34f3b2 ("media: vim2m: replace devm_kzalloc by kzalloc")
+Fix it by checking the return of proc_create_single() before
+calling remove_proc_entry().
 
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+[hverkuil-cisco@xs4all.nl: use 0444 instead of S_IRUGO]
+[hverkuil-cisco@xs4all.nl: use pr_info instead of KERN_INFO]
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/vim2m.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/pci/saa7164/saa7164-core.c | 33 ++++++++++++++++--------
+ 1 file changed, 22 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/media/platform/vim2m.c b/drivers/media/platform/vim2m.c
-index dd47821fc661..240327d2a3ad 100644
---- a/drivers/media/platform/vim2m.c
-+++ b/drivers/media/platform/vim2m.c
-@@ -1355,7 +1355,7 @@ static int vim2m_probe(struct platform_device *pdev)
- 						 MEDIA_ENT_F_PROC_VIDEO_SCALER);
- 	if (ret) {
- 		v4l2_err(&dev->v4l2_dev, "Failed to init mem2mem media controller\n");
--		goto error_m2m;
-+		goto error_dev;
- 	}
+diff --git a/drivers/media/pci/saa7164/saa7164-core.c b/drivers/media/pci/saa7164/saa7164-core.c
+index 05f25c9bb308..f5ad3cf207d3 100644
+--- a/drivers/media/pci/saa7164/saa7164-core.c
++++ b/drivers/media/pci/saa7164/saa7164-core.c
+@@ -1122,16 +1122,25 @@ static int saa7164_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
  
- 	ret = media_device_register(&dev->mdev);
-@@ -1369,11 +1369,11 @@ static int vim2m_probe(struct platform_device *pdev)
- #ifdef CONFIG_MEDIA_CONTROLLER
- error_m2m_mc:
- 	v4l2_m2m_unregister_media_controller(dev->m2m_dev);
--error_m2m:
--	v4l2_m2m_release(dev->m2m_dev);
++static struct proc_dir_entry *saa7164_pe;
++
+ static int saa7164_proc_create(void)
+ {
+-	struct proc_dir_entry *pe;
+-
+-	pe = proc_create_single("saa7164", S_IRUGO, NULL, saa7164_proc_show);
+-	if (!pe)
++	saa7164_pe = proc_create_single("saa7164", 0444, NULL, saa7164_proc_show);
++	if (!saa7164_pe)
+ 		return -ENOMEM;
+ 
+ 	return 0;
+ }
++
++static void saa7164_proc_destroy(void)
++{
++	if (saa7164_pe)
++		remove_proc_entry("saa7164", NULL);
++}
++#else
++static int saa7164_proc_create(void) { return 0; }
++static void saa7164_proc_destroy(void) {}
  #endif
- error_dev:
- 	video_unregister_device(&dev->vfd);
-+	/* vim2m_device_release called by video_unregister_device to release various objects */
-+	return ret;
- error_v4l2:
- 	v4l2_device_unregister(&dev->v4l2_dev);
- error_free:
+ 
+ static int saa7164_thread_function(void *data)
+@@ -1503,19 +1512,21 @@ static struct pci_driver saa7164_pci_driver = {
+ 
+ static int __init saa7164_init(void)
+ {
+-	printk(KERN_INFO "saa7164 driver loaded\n");
++	int ret = pci_register_driver(&saa7164_pci_driver);
++
++	if (ret)
++		return ret;
+ 
+-#ifdef CONFIG_PROC_FS
+ 	saa7164_proc_create();
+-#endif
+-	return pci_register_driver(&saa7164_pci_driver);
++
++	pr_info("saa7164 driver loaded\n");
++
++	return 0;
+ }
+ 
+ static void __exit saa7164_fini(void)
+ {
+-#ifdef CONFIG_PROC_FS
+-	remove_proc_entry("saa7164", NULL);
+-#endif
++	saa7164_proc_destroy();
+ 	pci_unregister_driver(&saa7164_pci_driver);
+ }
+ 
 -- 
 2.20.1
 
