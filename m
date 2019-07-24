@@ -2,314 +2,641 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A582073B25
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:58:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0E1573B35
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:59:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404799AbfGXT5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:57:14 -0400
-Received: from mail-eopbgr40081.outbound.protection.outlook.com ([40.107.4.81]:41890
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404732AbfGXT5E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:57:04 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hrVEMlFTD2g+UrQuG5EVggjo8tFVuu3Rnrh+nIDRBa4yR0bIej5DFeD6Sw2amYwurJq39xhoSH8r1AlqpIv8MbeP2QhtI8gQ5qlk1z64DaYLOawLK2Bgn8azrki1CI1CmTEtsIWxzbhjp9XPfx44tpyJyZz2MZL4SEJAyetlsKG+kWplfXk3CJy7Q0uO0K+zditWeLKYurNMvymx1gA2F6Wfdw9Zu55FbFj4KNmOhfkCRsJavl7oTYFLn/BJ2gS+6Hm1NF/D0CF0/9WY+s3sag9Mxk/Datw+fvUoMD1PmEhMsv60WW7UKvyOvTIktakuGBDGsovtHbnyewKPWQEcsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MhMt0UuL1aGHvkMKuj0Xx0hUSiF5A3n9C9GU2qC1o4o=;
- b=OzbBz3Mx/t2nyAc/qfThuo0nzl0rjQznMiW/nwO0zVQJkg9P9CAGeudtzvZmyDURxC1hJNqtH9boTJPGcBZaPYiRBGL17Qo7oO3V8oNGh+NHVaYUAdjiH/chEU8zF7uFchiuI8cMPwNlhe5niC0BpT85LlUMFg29+jHWpEdvNvNiIegp31+nBOzdkwvl2qC88/eGOWLrtq4z2ttnWRJiGQD0WjhdG46wIvrVI4K+4jY8EJUillKBkC9nTmsAusrLmLwiNSHfTuH0T7mV7UHALXIKkfBqw229LOYvCcHB4hrLOgebZ9aURtO39ivrH8wTrRUpW8bgViloBntXmfFv7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=mellanox.com;dmarc=pass action=none
- header.from=mellanox.com;dkim=pass header.d=mellanox.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MhMt0UuL1aGHvkMKuj0Xx0hUSiF5A3n9C9GU2qC1o4o=;
- b=rWodwqBvFjK5S+/2XX+2RKztpEPh5RPWw853XM8P29Vwy+k796oF1j2bk82poY1zoB3S9FMADXbKg4llSo3oD5SR5nRUAxO9F1/JQ7XtoPRri/CBesbyqo9i7Y9wJg8Dowen5atKEmNUu+veFlYr01UqiRUQntxUBjl0OXZc/rI=
-Received: from DB6PR0501MB2759.eurprd05.prod.outlook.com (10.172.227.7) by
- DB6SPR00MB242.eurprd05.prod.outlook.com (10.168.88.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.17; Wed, 24 Jul 2019 19:56:59 +0000
-Received: from DB6PR0501MB2759.eurprd05.prod.outlook.com
- ([fe80::7148:ecd4:3a7f:f3f]) by DB6PR0501MB2759.eurprd05.prod.outlook.com
- ([fe80::7148:ecd4:3a7f:f3f%11]) with mapi id 15.20.2094.011; Wed, 24 Jul 2019
- 19:56:59 +0000
-From:   Saeed Mahameed <saeedm@mellanox.com>
-To:     "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "jhofstee@victronenergy.com" <jhofstee@victronenergy.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "wg@grandegger.com" <wg@grandegger.com>,
-        "anilkumar@ti.com" <anilkumar@ti.com>,
-        "anantgole@ti.com" <anantgole@ti.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "mkl@pengutronix.de" <mkl@pengutronix.de>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH] can: ti_hecc: use timestamp based rx-offloading
-Thread-Topic: [PATCH] can: ti_hecc: use timestamp based rx-offloading
-Thread-Index: AQHU/oOQxrziEdIHYkKLtad3jyL4gabatt0A
-Date:   Wed, 24 Jul 2019 19:56:59 +0000
-Message-ID: <8d93566da4dfa0917ac2aac11866795c3d5761ae.camel@mellanox.com>
-References: <1556539376-20932-1-git-send-email-jhofstee@victronenergy.com>
-In-Reply-To: <1556539376-20932-1-git-send-email-jhofstee@victronenergy.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.32.4 (3.32.4-1.fc30) 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=saeedm@mellanox.com; 
-x-originating-ip: [209.116.155.178]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4df181ed-9f17-4ede-91a4-08d71071168f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB6SPR00MB242;
-x-ms-traffictypediagnostic: DB6SPR00MB242:
-x-ms-exchange-purlcount: 6
-x-microsoft-antispam-prvs: <DB6SPR00MB242C9C4F91001ACEEEA2F77BEC60@DB6SPR00MB242.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0108A997B2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(136003)(366004)(376002)(39860400002)(55674003)(199004)(189003)(6512007)(58126008)(110136005)(71190400001)(71200400001)(14454004)(316002)(91956017)(81166006)(99286004)(66066001)(486006)(8676002)(54906003)(81156014)(68736007)(30864003)(6436002)(6486002)(6306002)(476003)(7736002)(305945005)(14444005)(86362001)(256004)(3846002)(2616005)(446003)(11346002)(229853002)(53936002)(25786009)(2501003)(5660300002)(6116002)(478600001)(186003)(118296001)(76116006)(53376002)(66574012)(36756003)(966005)(26005)(4326008)(6246003)(66446008)(66556008)(64756008)(66476007)(8936002)(6506007)(66946007)(102836004)(2906002)(76176011)(2004002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6SPR00MB242;H:DB6PR0501MB2759.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 4+JCJXFIPMYa8WhESbdzsEO3kpE24sgx308AFXnCFxYQQVE+ubHoWcpcySKFQGJT0RGpvC7l2IUwilgtJwXZGWWSfjRkhm+3n+GhyOF7L5Eh7tgGGalX0vn2n5QAy80HE/c+vBo8xISC0zQk2mexmU2viuzN5gOqk27TtdJLN9s1eBPnfx0GhO8AgCEgfSSn3sDb3er4HJrqyZqVw/kdx3uw3I9dQPNTj4HzKknhVfy9EuYCKgLSObcQa1Tf786Sm2Kk+8deAVoGRQvCfWZUURormdSgUD5Gt57C9aqPWwe+LJyAaPr+fegfhFeRNVraWHgCBRKc8v2avh7kl1yM2SF5e2/wKRavr3rga798wHOjRarinuMxpK8Dagjj26VQzygbX8yD3WlzL51/rMt2Nq5Q8rEhOUhxVe3aFt2OmVk=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <13AFB38E73FCD04FB0A5EB42542B3C52@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S2392119AbfGXT5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:57:51 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36934 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392098AbfGXT5s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:57:48 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 19so21462760pfa.4
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:57:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=GPGMp3Z5tMKTlSIY4+dJ+EwBidIrQV9yOiqz0I+KpuI=;
+        b=N9EtOxCV3Gt0JC1yxlszeEqw4DZKIHiIA8l32BuQmt6ExFUWXDv6AJyIQjTM8DU5E6
+         WlGCmJTIc/L0sDTtjNZTLCUERVUFKeo56J1gnRKLmpGkLlVWz3xVPHcjmnwnLP00mxex
+         Y/jIG/XnMuiZ3JdsPN602FJWmVJvjUg/60aIDIRNhI4FpkSWotFviKfQOVOH6/5Z+eH4
+         bnJUpguzK+BCBSVOgJwHF9u3d4b1Y7hHSUQ6wPZD6xFPzL91Y92+KvS8NZVXx+UAhOeL
+         FiS7oal3j5yx59QRlzs+FTZgnOrJOXl0jG+5z3ShITkjGZ2cCOwxKGGgm252InOtK37e
+         T/Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=GPGMp3Z5tMKTlSIY4+dJ+EwBidIrQV9yOiqz0I+KpuI=;
+        b=UcxOpgqPbBNK5kDIFhmX9D8rVVwrGvXJV8jNxlI8IewmV/zmmIZ3gi6GsR08Gl1Qhb
+         OPxXVy1oDrOe/ID6qFCSeo48VaMxDxQoM1yzoRJZXm+e1+eo3IKzHBY+EZkbnnbhx/oa
+         ZTWmQF49MSpLdbz/Yduqy/WbntkGsIJfGXqnIVXwcDt62PqOQcZnjqPsxxiqk0feczRy
+         J+IvSS3kTj70FNfMG6ZvvRGZ979GScaMt81gEAxdjWKaWqFHOKYPPAUkY0vQesiMZn5O
+         jsCZA4NHtNQmLe/OZYJ0rsR6e14sJ1Kf3GtdHKB63DtnwIL57t2RMxt/mTKsMjgyD6tX
+         uXOA==
+X-Gm-Message-State: APjAAAWKZMCByZojh5y/RE8fRtY+36sLLp3mQQEHgBLS414D/BitEHXN
+        BwZpUECDHDxX2ED6UyIYMy4OYUnL
+X-Google-Smtp-Source: APXvYqyJwFQzJLxFbKWVANgLXI/3zYzrbuzCqQk6pCxCVWrScTR3LPgO3aG4qe30g9x4GfYTlkr0bw==
+X-Received: by 2002:a62:ab18:: with SMTP id p24mr13021944pff.113.1563998267434;
+        Wed, 24 Jul 2019 12:57:47 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
+        by smtp.gmail.com with ESMTPSA id f88sm46307394pjg.5.2019.07.24.12.57.46
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 12:57:47 -0700 (PDT)
+From:   Mark Salyzyn <salyzyn@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-unionfs@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: [PATCH v10 5/5] overlayfs: override_creds=off option bypass creator_cred
+Date:   Wed, 24 Jul 2019 12:57:16 -0700
+Message-Id: <20190724195719.218307-6-salyzyn@android.com>
+X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
+In-Reply-To: <20190724195719.218307-1-salyzyn@android.com>
+References: <20190724195719.218307-1-salyzyn@android.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4df181ed-9f17-4ede-91a4-08d71071168f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2019 19:56:59.0821
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: saeedm@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6SPR00MB242
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE5LTA0LTI5IGF0IDEyOjAzICswMDAwLCBKZXJvZW4gSG9mc3RlZSB3cm90ZToN
-Cj4gQXMgYWxyZWFkeSBtZW50aW9uZWQgaW4gWzFdIGFuZCBpbmNsdWRlZCBpbiBbMl0sIHRoZXJl
-IGlzIGFuIG9mZiBieQ0KPiBvbmUNCj4gaXNzdWUgc2luY2UgdGhlIGhpZ2ggYmFuayBpcyBhbHJl
-YWR5IGVuYWJsZWQgd2hlbiB0aGUgX25leHRfIG1haWxib3gNCj4gdG8NCj4gYmUgcmVhZCBoYXMg
-aW5kZXggMTIsIHNvIHRoZSBtYWlsYm94IGJlaW5nIHJlYWQgd2FzIDEzLiBUaGUgbWVzc2FnZQ0K
-PiBjYW4NCj4gdGhlcmVmb3JlIGdvIGludG8gbWFpbGJveCAzMSBhbmQgdGhlIGRyaXZlciB3aWxs
-IGJlIHJlcG9sbGVkIHVudGlsDQo+IHRoZQ0KPiBtYWlsYm94IDEyIGV2ZW50dWFsbHkgcmVjZWl2
-ZXMgYSBtc2cuIE9yIHRoZSBtZXNzYWdlIG1pZ2h0IGVuZCB1cCBpbg0KPiB0aGUNCj4gMTJ0aCBt
-YWlsYm94LCBidXQgdGhlbiBpdCB3b3VsZCBiZWNvbWUgZGlzYWJsZWQgYWZ0ZXIgcmVhZGluZyBp
-dCBhbmQNCj4gb25seQ0KPiBiZSBlbmFibGVkIGFnYWluIGluIHRoZSBuZXh0ICJyb3VuZCIgYWZ0
-ZXIgbWFpbGJveCAxMyB3YXMgcmVhZCwgd2hpY2gNCj4gY2FuDQo+IGNhdXNlIG91dCBvZiBvcmRl
-ciBtZXNzYWdlcywgc2luY2UgdGhlIGxvd2VyIHByaW9yaXR5IG1haWxib3hlcyBjYW4NCj4gYWNj
-ZXB0IG1lc3NhZ2VzIGluIHRoZSBtZWFudGltZS4NCj4gDQo+IEFzIG1lbnRpb25lZCBpbiBbM10g
-dGhlcmUgaXMgYSBoYXJkd2FyZSByYWNlIGNvbmRpdGlvbiB3aGVuIGNoYW5naW5nDQo+IHRoZQ0K
-PiBDQU5NRSByZWdpc3RlciB3aGlsZSBtZXNzYWdlcyBhcmUgYmVpbmcgcmVjZWl2ZWQuIEV2ZW4g
-d2hlbiBpbmNsdWRpbmcNCj4gYQ0KPiBidXN5IHBvbGwgb24gcmVjZXB0aW9uLCBsaWtlIGluIFsy
-XSB0aGVyZSBhcmUgc3RpbGwgb3ZlcmZsb3dzIGFuZCBvdXQNCj4gb2YNCj4gb3JkZXIgbWVzc2Fn
-ZXMgYXQgdGltZXMsIGJ1dCBsZXNzIHRoZW4gd2l0aG91dCB0aGUgYnVzeSBsb29wIHBvbGxpbmcu
-DQo+IFVubGlrZSB3aGF0IHRoZSBwYXRjaCBzdWdnZXN0cywgdGhlIHBvbGxpbmcgdGltZSBpcyBu
-b3QgaW4gdGhlDQo+IG1pY3Jvc2Vjb25kDQo+IHJhbmdlLCBidXQgdGFrZXMgYXMgbG9uZyBhcyBh
-IGN1cnJlbnQgQ0FOIGJ1cyByZWNlcHRpb24gbmVlZHMgdG8NCj4gZmluaXNoLA0KPiBzbyB0eXBp
-Y2FsbHkgbW9yZSBpbiB0aGUgZnJhY3Rpb24gb2YgbWlsbGlzZWNvbmQgcmFuZ2UuIFNpbmNlIHRo
-ZQ0KPiB0aW1lb3V0DQo+IGlzIGluIGppZmZpZXMgaXQgd29uJ3QgdGltZW91dC4NCj4gDQo+IEV2
-ZW4gd2l0aCB0aGVzZSBhZGRpdGlvbmFsIGZpeGVzIHRoZSBkcml2ZXIgaXMgc3RpbGwgbm90IGFi
-bGUgdG8NCj4gcHJvdmlkZSBhDQo+IHByb3BlciBGSUZPIHdoaWNoIGRvZXNuJ3QgZHJvcCBwYWNr
-YWdlcy4gU28gY2hhbmdlIHRoZSBkcml2ZXIgdG8gdXNlDQo+IHJ4LW9mZmxvYWQgYW5kIGJhc2Ug
-b3JkZXIgb24gdGltZXN0YW1wIGluc3RlYWQgb2YgbWVzc2FnZSBib3gNCj4gbnVtYmVycy4gQXMN
-Cj4gYSBzaWRlIGFmZmVjdCwgdGhpcyBhbHNvIGZpeGVzIFs0XSBhbmQgWzVdLg0KPiANCj4gQmVm
-b3JlIHRoaXMgY2hhbmdlIG1lc3NhZ2VzIHdpdGggYSBzaW5nbGUgYnl0ZSBjb3VudGVyIHdlcmUg
-ZHJvcHBlZCAvDQo+IHJlY2VpdmVkIG91dCBvZiBvcmRlciBhdCBhIGJpdHJhdGUgb2YgMjUwa2Jp
-dC9zIG9uIGFuIGFtMzUxNy4gV2l0aA0KPiB0aGlzDQo+IHBhdGNoIHRoYXQgbm8gbG9uZ2VyIG9j
-Y3VycyB1cCB0byBhbmQgaW5jbHVkaW5nIDFNYml0L3MuDQo+IA0KPiBbMV0gDQo+IGh0dHBzOi8v
-bGludXgtY2FuLnZnZXIua2VybmVsLm5hcmtpdmUuY29tL3pnTzlpblZpL3BhdGNoLWNhbi10aS1o
-ZWNjLWZpeC1yeC13cm9uZy1zZXF1ZW5jZS1pc3N1ZSNwb3N0Ng0KPiBbMl0gDQo+IGh0dHA6Ly9h
-cmFnby1wcm9qZWN0Lm9yZy9naXQvcHJvamVjdHMvP3A9bGludXgtb21hcDMuZ2l0O2E9Y29tbWl0
-O2g9MDIzNDY4OTI3NzdmMDcyNDVkZTRkNWFmNjkyNTEzZWJkODUyZGNiMg0KPiBbM10gDQo+IGh0
-dHBzOi8vbGludXgtY2FuLnZnZXIua2VybmVsLm5hcmtpdmUuY29tL3pnTzlpblZpL3BhdGNoLWNh
-bi10aS1oZWNjLWZpeC1yeC13cm9uZy1zZXF1ZW5jZS1pc3N1ZSNwb3N0NQ0KPiBbNF0gaHR0cHM6
-Ly9wYXRjaHdvcmsub3psYWJzLm9yZy9wYXRjaC84OTU5NTYvDQo+IFs1XSBodHRwczovL3d3dy5z
-cGluaWNzLm5ldC9saXN0cy9uZXRkZXYvbXNnNDk0OTcxLmh0bWwNCj4gDQo+IENjOiBBbmFudCBH
-b2xlIDxhbmFudGdvbGVAdGkuY29tPg0KPiBDYzogQW5pbEt1bWFyIENoIDxhbmlsa3VtYXJAdGku
-Y29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBKZXJvZW4gSG9mc3RlZSA8amhvZnN0ZWVAdmljdHJvbmVu
-ZXJneS5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9uZXQvY2FuL3RpX2hlY2MuYyB8IDE4OSArKysr
-KysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gLS0tLS0tLS0tLQ0KPiAgMSBmaWxl
-IGNoYW5nZWQsIDUzIGluc2VydGlvbnMoKyksIDEzNiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL25ldC9jYW4vdGlfaGVjYy5jIGIvZHJpdmVycy9uZXQvY2FuL3RpX2hl
-Y2MuYw0KPiBpbmRleCBkYjZlYTkzLi5mZTdmZmZmIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25l
-dC9jYW4vdGlfaGVjYy5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L2Nhbi90aV9oZWNjLmMNCj4gQEAg
-LTUsNiArNSw3IEBADQo+ICAgKiBzcGVjcyBmb3IgdGhlIHNhbWUgaXMgYXZhaWxhYmxlIGF0IDxo
-dHRwOi8vd3d3LnRpLmNvbT4NCj4gICAqDQo+ICAgKiBDb3B5cmlnaHQgKEMpIDIwMDkgVGV4YXMg
-SW5zdHJ1bWVudHMgSW5jb3Jwb3JhdGVkIC0gDQo+IGh0dHA6Ly93d3cudGkuY29tLw0KPiArICog
-Q29weXJpZ2h0IChDKSAyMDE5IEplcm9lbiBIb2ZzdGVlIDxqaG9mc3RlZUB2aWN0cm9uZW5lcmd5
-LmNvbT4NCj4gICAqDQo+ICAgKiBUaGlzIHByb2dyYW0gaXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNh
-biByZWRpc3RyaWJ1dGUgaXQgYW5kL29yDQo+ICAgKiBtb2RpZnkgaXQgdW5kZXIgdGhlIHRlcm1z
-IG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSBhcw0KPiBAQCAtMzQsNiArMzUsNyBA
-QA0KPiAgI2luY2x1ZGUgPGxpbnV4L2Nhbi9kZXYuaD4NCj4gICNpbmNsdWRlIDxsaW51eC9jYW4v
-ZXJyb3IuaD4NCj4gICNpbmNsdWRlIDxsaW51eC9jYW4vbGVkLmg+DQo+ICsjaW5jbHVkZSA8bGlu
-dXgvY2FuL3J4LW9mZmxvYWQuaD4NCj4gIA0KPiAgI2RlZmluZSBEUlZfTkFNRSAidGlfaGVjYyIN
-Cj4gICNkZWZpbmUgSEVDQ19NT0RVTEVfVkVSU0lPTiAgICAgIjAuNyINCj4gQEAgLTYzLDI5ICs2
-NSwxNiBAQCBNT0RVTEVfVkVSU0lPTihIRUNDX01PRFVMRV9WRVJTSU9OKTsNCj4gICNkZWZpbmUg
-SEVDQ19UWF9QUklPX01BU0sJKE1BWF9UWF9QUklPIDw8IEhFQ0NfTUJfVFhfU0hJRlQpDQo+ICAj
-ZGVmaW5lIEhFQ0NfVFhfTUJfTUFTSwkJKEhFQ0NfTUFYX1RYX01CT1ggLSAxKQ0KPiAgI2RlZmlu
-ZSBIRUNDX1RYX01BU0sJCSgoSEVDQ19NQVhfVFhfTUJPWCAtIDEpIHwNCj4gSEVDQ19UWF9QUklP
-X01BU0spDQo+IC0jZGVmaW5lIEhFQ0NfVFhfTUJPWF9NQVNLCSh+KEJJVChIRUNDX01BWF9UWF9N
-Qk9YKSAtIDEpKQ0KPiAtI2RlZmluZSBIRUNDX0RFRl9OQVBJX1dFSUdIVAlIRUNDX01BWF9SWF9N
-Qk9YDQo+ICANCj4gIC8qDQo+IC0gKiBJbXBvcnRhbnQgTm90ZTogUlggbWFpbGJveCBjb25maWd1
-cmF0aW9uDQo+IC0gKiBSWCBtYWlsYm94ZXMgYXJlIGZ1cnRoZXIgbG9naWNhbGx5IHNwbGl0IGlu
-dG8gdHdvIC0gbWFpbiBhbmQNCj4gYnVmZmVyDQo+IC0gKiBtYWlsYm94ZXMuIFRoZSBnb2FsIGlz
-IHRvIGdldCBhbGwgcGFja2V0cyBpbnRvIG1haW4gbWFpbGJveGVzIGFzDQo+IC0gKiBkcml2ZW4g
-YnkgbWFpbGJveCBudW1iZXIgYW5kIHJlY2VpdmUgcHJpb3JpdHkgKGhpZ2hlciB0byBsb3dlcikN
-Cj4gYW5kDQo+IC0gKiBidWZmZXIgbWFpbGJveGVzIGFyZSB1c2VkIHRvIHJlY2VpdmUgcGt0cyB3
-aGlsZSBtYWluIG1haWxib3hlcw0KPiBhcmUgYmVpbmcNCj4gLSAqIHByb2Nlc3NlZC4gVGhpcyBl
-bnN1cmVzIGluLW9yZGVyIHBhY2tldCByZWNlcHRpb24uDQo+IC0gKg0KPiAtICogSGVyZSBhcmUg
-dGhlIHJlY29tbWVuZGVkIHZhbHVlcyBmb3IgYnVmZmVyIG1haWxib3guIE5vdGUgdGhhdCBSWA0K
-PiBtYWlsYm94ZXMNCj4gLSAqIHN0YXJ0IGFmdGVyIFRYIG1haWxib3hlczoNCj4gLSAqDQo+IC0g
-KiBIRUNDX01BWF9SWF9NQk9YCQlIRUNDX1JYX0JVRkZFUl9NQk9YCU5vIG9mIGJ1ZmZlcg0KPiBt
-YWlsYm94ZXMNCj4gLSAqIDI4CQkJCTEyCQkJOA0KPiAtICogMTYJCQkJMjAJCQk0DQo+ICsgKiBS
-WCBtYWlsYm94IGNvbmZpZ3VyYXRpb24NCj4gKyAqIFRoZSByZW1haW5pbmcgbWFpbGJveGVzIGFy
-ZSB1c2VkIGZvciByZWNlcHRpb24gYW5kIGFyZSBkZWxpdmVyZWQNCj4gYmFzZWQgb24NCj4gKyAq
-IHRoZWlyIHRpbWVzdGFtcCwgdG8gYXZvaWQgYSBoYXJkd2FyZSByYWNlIHdoZW4gQ0FOTUUgaXMg
-Y2hhbmdlZA0KPiB3aGlsZQ0KPiArICogQ0FOLWJ1cyB0cmFmZml4IGlzIGJlaW5nIHJlY2VpdmVk
-Lg0KPiAgICovDQo+ICANCj4gICNkZWZpbmUgSEVDQ19NQVhfUlhfTUJPWAkoSEVDQ19NQVhfTUFJ
-TEJPWEVTIC0gSEVDQ19NQVhfVFhfTUJPWCkNCj4gLSNkZWZpbmUgSEVDQ19SWF9CVUZGRVJfTUJP
-WAkxMiAvKiBhcyBwZXIgdGFibGUgYWJvdmUgKi8NCj4gICNkZWZpbmUgSEVDQ19SWF9GSVJTVF9N
-Qk9YCShIRUNDX01BWF9NQUlMQk9YRVMgLSAxKQ0KPiAtI2RlZmluZSBIRUNDX1JYX0hJR0hfTUJP
-WF9NQVNLCSh+KEJJVChIRUNDX1JYX0JVRkZFUl9NQk9YKSAtDQo+IDEpKQ0KPiAgDQo+ICAvKiBU
-SSBIRUNDIG1vZHVsZSByZWdpc3RlcnMgKi8NCj4gICNkZWZpbmUgSEVDQ19DQU5NRQkJMHgwCS8q
-IE1haWxib3ggZW5hYmxlICovDQo+IEBAIC0xMjMsNiArMTEyLDggQEAgTU9EVUxFX1ZFUlNJT04o
-SEVDQ19NT0RVTEVfVkVSU0lPTik7DQo+ICAjZGVmaW5lIEhFQ0NfQ0FOTURMCQkweDgNCj4gICNk
-ZWZpbmUgSEVDQ19DQU5NREgJCTB4Qw0KPiAgDQo+ICsjZGVmaW5lIEhFQ0NfQ0FOTU9UUwkJMHgx
-MDANCj4gKw0KPiAgI2RlZmluZSBIRUNDX1NFVF9SRUcJCTB4RkZGRkZGRkYNCj4gICNkZWZpbmUg
-SEVDQ19DQU5JRF9NQVNLCQkweDNGRgkvKiAxOCBiaXRzIG1hc2sgZm9yDQo+IGV4dGVuZGVkIGlk
-J3MgKi8NCj4gICNkZWZpbmUgSEVDQ19DQ0VfV0FJVF9DT1VOVCAgICAgMTAwCS8qIFdhaXQgZm9y
-IH4xIHNlYyBmb3IgQ0NFIGJpdA0KPiAqLw0KPiBAQCAtMTkzLDcgKzE4NCw3IEBAIHN0YXRpYyBj
-b25zdCBzdHJ1Y3QgY2FuX2JpdHRpbWluZ19jb25zdA0KPiB0aV9oZWNjX2JpdHRpbWluZ19jb25z
-dCA9IHsNCj4gIA0KPiAgc3RydWN0IHRpX2hlY2NfcHJpdiB7DQo+ICAJc3RydWN0IGNhbl9wcml2
-IGNhbjsJLyogTVVTVCBiZSBmaXJzdCBtZW1iZXIvZmllbGQgKi8NCj4gLQlzdHJ1Y3QgbmFwaV9z
-dHJ1Y3QgbmFwaTsNCj4gKwlzdHJ1Y3QgY2FuX3J4X29mZmxvYWQgb2ZmbG9hZDsNCj4gIAlzdHJ1
-Y3QgbmV0X2RldmljZSAqbmRldjsNCj4gIAlzdHJ1Y3QgY2xrICpjbGs7DQo+ICAJdm9pZCBfX2lv
-bWVtICpiYXNlOw0KPiBAQCAtMjAzLDcgKzE5NCw2IEBAIHN0cnVjdCB0aV9oZWNjX3ByaXYgew0K
-PiAgCXNwaW5sb2NrX3QgbWJ4X2xvY2s7IC8qIENBTk1FIHJlZ2lzdGVyIG5lZWRzIHByb3RlY3Rp
-b24gKi8NCj4gIAl1MzIgdHhfaGVhZDsNCj4gIAl1MzIgdHhfdGFpbDsNCj4gLQl1MzIgcnhfbmV4
-dDsNCj4gIAlzdHJ1Y3QgcmVndWxhdG9yICpyZWdfeGNlaXZlcjsNCj4gIH07DQo+ICANCj4gQEAg
-LTI2NSw2ICsyNTUsMTEgQEAgc3RhdGljIGlubGluZSB1MzIgaGVjY19nZXRfYml0KHN0cnVjdA0K
-PiB0aV9oZWNjX3ByaXYgKnByaXYsIGludCByZWcsIHUzMiBiaXRfbWFzaykNCj4gIAlyZXR1cm4g
-KGhlY2NfcmVhZChwcml2LCByZWcpICYgYml0X21hc2spID8gMSA6IDA7DQo+ICB9DQo+ICANCj4g
-K3N0YXRpYyBpbmxpbmUgdTMyIGhlY2NfcmVhZF9zdGFtcChzdHJ1Y3QgdGlfaGVjY19wcml2ICpw
-cml2LCB1MzINCj4gbWJ4bm8pDQo+ICt7DQo+ICsJcmV0dXJuIF9fcmF3X3JlYWRsKHByaXYtPmhl
-Y2NfcmFtICsgMHg4MCArIDQgKiBtYnhubyk7DQo+ICt9DQo+ICsNCj4gIHN0YXRpYyBpbnQgdGlf
-aGVjY19zZXRfYnRjKHN0cnVjdCB0aV9oZWNjX3ByaXYgKnByaXYpDQo+ICB7DQo+ICAJc3RydWN0
-IGNhbl9iaXR0aW1pbmcgKmJpdF90aW1pbmcgPSAmcHJpdi0+Y2FuLmJpdHRpbWluZzsNCj4gQEAg
-LTM3NSw3ICszNzAsNiBAQCBzdGF0aWMgdm9pZCB0aV9oZWNjX3N0YXJ0KHN0cnVjdCBuZXRfZGV2
-aWNlDQo+ICpuZGV2KQ0KPiAgCXRpX2hlY2NfcmVzZXQobmRldik7DQo+ICANCj4gIAlwcml2LT50
-eF9oZWFkID0gcHJpdi0+dHhfdGFpbCA9IEhFQ0NfVFhfTUFTSzsNCj4gLQlwcml2LT5yeF9uZXh0
-ID0gSEVDQ19SWF9GSVJTVF9NQk9YOw0KPiAgDQo+ICAJLyogRW5hYmxlIGxvY2FsIGFuZCBnbG9i
-YWwgYWNjZXB0YW5jZSBtYXNrIHJlZ2lzdGVycyAqLw0KPiAgCWhlY2Nfd3JpdGUocHJpdiwgSEVD
-Q19DQU5HQU0sIEhFQ0NfU0VUX1JFRyk7DQo+IEBAIC01MjYsMjEgKzUyMCwxNyBAQCBzdGF0aWMg
-bmV0ZGV2X3R4X3QgdGlfaGVjY194bWl0KHN0cnVjdCBza19idWZmDQo+ICpza2IsIHN0cnVjdCBu
-ZXRfZGV2aWNlICpuZGV2KQ0KPiAgCXJldHVybiBORVRERVZfVFhfT0s7DQo+ICB9DQo+ICANCj4g
-LXN0YXRpYyBpbnQgdGlfaGVjY19yeF9wa3Qoc3RydWN0IHRpX2hlY2NfcHJpdiAqcHJpdiwgaW50
-IG1ieG5vKQ0KPiArc3RhdGljIGlubGluZSBzdHJ1Y3QgdGlfaGVjY19wcml2ICpyeF9vZmZsb2Fk
-X3RvX3ByaXYoc3RydWN0DQo+IGNhbl9yeF9vZmZsb2FkICpvZmZsb2FkKQ0KPiAgew0KPiAtCXN0
-cnVjdCBuZXRfZGV2aWNlX3N0YXRzICpzdGF0cyA9ICZwcml2LT5uZGV2LT5zdGF0czsNCj4gLQlz
-dHJ1Y3QgY2FuX2ZyYW1lICpjZjsNCj4gLQlzdHJ1Y3Qgc2tfYnVmZiAqc2tiOw0KPiAtCXUzMiBk
-YXRhLCBtYnhfbWFzazsNCj4gLQl1bnNpZ25lZCBsb25nIGZsYWdzOw0KPiArCXJldHVybiBjb250
-YWluZXJfb2Yob2ZmbG9hZCwgc3RydWN0IHRpX2hlY2NfcHJpdiwgb2ZmbG9hZCk7DQo+ICt9DQo+
-ICANCj4gLQlza2IgPSBhbGxvY19jYW5fc2tiKHByaXYtPm5kZXYsICZjZik7DQo+IC0JaWYgKCFz
-a2IpIHsNCj4gLQkJaWYgKHByaW50a19yYXRlbGltaXQoKSkNCj4gLQkJCW5ldGRldl9lcnIocHJp
-di0+bmRldiwNCj4gLQkJCQkidGlfaGVjY19yeF9wa3Q6IGFsbG9jX2Nhbl9za2IoKQ0KPiBmYWls
-ZWRcbiIpOw0KPiAtCQlyZXR1cm4gLUVOT01FTTsNCj4gLQl9DQo+ICtzdGF0aWMgdW5zaWduZWQg
-aW50IHRpX2hlY2NfbWFpbGJveF9yZWFkKHN0cnVjdCBjYW5fcnhfb2ZmbG9hZA0KPiAqb2ZmbG9h
-ZCwNCj4gKwkJCQkJIHN0cnVjdCBjYW5fZnJhbWUgKmNmLA0KPiArCQkJCQkgdTMyICp0aW1lc3Rh
-bXAsIHVuc2lnbmVkIGludA0KPiBtYnhubykNCj4gK3sNCj4gKwlzdHJ1Y3QgdGlfaGVjY19wcml2
-ICpwcml2ID0gcnhfb2ZmbG9hZF90b19wcml2KG9mZmxvYWQpOw0KPiArCXUzMiBkYXRhLCBtYnhf
-bWFzazsNCj4gIA0KPiAgCW1ieF9tYXNrID0gQklUKG1ieG5vKTsNCj4gIAlkYXRhID0gaGVjY19y
-ZWFkX21ieChwcml2LCBtYnhubywgSEVDQ19DQU5NSUQpOw0KPiBAQCAtNTU4LDEwMCArNTQ4LDE5
-IEBAIHN0YXRpYyBpbnQgdGlfaGVjY19yeF9wa3Qoc3RydWN0IHRpX2hlY2NfcHJpdg0KPiAqcHJp
-diwgaW50IG1ieG5vKQ0KPiAgCQlkYXRhID0gaGVjY19yZWFkX21ieChwcml2LCBtYnhubywgSEVD
-Q19DQU5NREgpOw0KPiAgCQkqKF9fYmUzMiAqKShjZi0+ZGF0YSArIDQpID0gY3B1X3RvX2JlMzIo
-ZGF0YSk7DQo+ICAJfQ0KPiAtCXNwaW5fbG9ja19pcnFzYXZlKCZwcml2LT5tYnhfbG9jaywgZmxh
-Z3MpOw0KPiAtCWhlY2NfY2xlYXJfYml0KHByaXYsIEhFQ0NfQ0FOTUUsIG1ieF9tYXNrKTsNCj4g
-LQloZWNjX3dyaXRlKHByaXYsIEhFQ0NfQ0FOUk1QLCBtYnhfbWFzayk7DQo+IC0JLyogZW5hYmxl
-IG1haWxib3ggb25seSBpZiBpdCBpcyBwYXJ0IG9mIHJ4IGJ1ZmZlciBtYWlsYm94ZXMgKi8NCj4g
-LQlpZiAocHJpdi0+cnhfbmV4dCA8IEhFQ0NfUlhfQlVGRkVSX01CT1gpDQo+IC0JCWhlY2Nfc2V0
-X2JpdChwcml2LCBIRUNDX0NBTk1FLCBtYnhfbWFzayk7DQo+IC0Jc3Bpbl91bmxvY2tfaXJxcmVz
-dG9yZSgmcHJpdi0+bWJ4X2xvY2ssIGZsYWdzKTsNCj4gIA0KPiAtCXN0YXRzLT5yeF9ieXRlcyAr
-PSBjZi0+Y2FuX2RsYzsNCj4gLQljYW5fbGVkX2V2ZW50KHByaXYtPm5kZXYsIENBTl9MRURfRVZF
-TlRfUlgpOw0KPiAtCW5ldGlmX3JlY2VpdmVfc2tiKHNrYik7DQo+IC0Jc3RhdHMtPnJ4X3BhY2tl
-dHMrKzsNCj4gKwkqdGltZXN0YW1wID0gaGVjY19yZWFkX3N0YW1wKHByaXYsIG1ieG5vKTsNCj4g
-IA0KPiAtCXJldHVybiAwOw0KPiAtfQ0KPiAtDQo+IC0vKg0KPiAtICogdGlfaGVjY19yeF9wb2xs
-IC0gSEVDQyByZWNlaXZlIHBrdHMNCj4gLSAqDQo+IC0gKiBUaGUgcmVjZWl2ZSBtYWlsYm94ZXMg
-c3RhcnQgZnJvbSBoaWdoZXN0IG51bWJlcmVkIG1haWxib3ggdGlsbA0KPiBsYXN0IHhtaXQNCj4g
-LSAqIG1haWxib3guIE9uIENBTiBmcmFtZSByZWNlcHRpb24gdGhlIGhhcmR3YXJlIHBsYWNlcyB0
-aGUgZGF0YSBpbnRvDQo+IGhpZ2hlc3QNCj4gLSAqIG51bWJlcmVkIG1haWxib3ggdGhhdCBtYXRj
-aGVzIHRoZSBDQU4gSUQgZmlsdGVyLiBTaW5jZSBhbGwNCj4gcmVjZWl2ZSBtYWlsYm94ZXMNCj4g
-LSAqIGhhdmUgc2FtZSBmaWx0ZXJpbmcgKEFMTCBDQU4gZnJhbWVzKSBwYWNrZXRzIHdpbGwgYXJy
-aXZlIGluIHRoZQ0KPiBoaWdoZXN0DQo+IC0gKiBhdmFpbGFibGUgUlggbWFpbGJveCBhbmQgd2Ug
-bmVlZCB0byBlbnN1cmUgaW4tb3JkZXIgcGFja2V0DQo+IHJlY2VwdGlvbi4NCj4gLSAqDQo+IC0g
-KiBUbyBlbnN1cmUgdGhlIHBhY2tldHMgYXJlIHJlY2VpdmVkIGluIHRoZSByaWdodCBvcmRlciB3
-ZQ0KPiBsb2dpY2FsbHkgZGl2aWRlDQo+IC0gKiB0aGUgUlggbWFpbGJveGVzIGludG8gbWFpbiBh
-bmQgYnVmZmVyIG1haWxib3hlcy4gUGFja2V0cyBhcmUNCj4gcmVjZWl2ZWQgYXMgcGVyDQo+IC0g
-KiBtYWlsYm94IHByaW90aXR5IChoaWdoZXIgdG8gbG93ZXIpIGluIHRoZSBtYWluIGJhbmsgYW5k
-IG9uY2UgaXQNCj4gaXMgZnVsbCB3ZQ0KPiAtICogZGlzYWJsZSBmdXJ0aGVyIHJlY2VwdGlvbiBp
-bnRvIG1haW4gbWFpbGJveGVzLiBXaGlsZSB0aGUgbWFpbg0KPiBtYWlsYm94ZXMgYXJlDQo+IC0g
-KiBwcm9jZXNzZWQgaW4gTkFQSSwgZnVydGhlciBwYWNrZXRzIGFyZSByZWNlaXZlZCBpbiBidWZm
-ZXINCj4gbWFpbGJveGVzLg0KPiAtICoNCj4gLSAqIFdlIG1haW50YWluIGEgUlggbmV4dCBtYWls
-Ym94IGNvdW50ZXIgdG8gcHJvY2VzcyBwYWNrZXRzIGFuZCBvbmNlDQo+IGFsbCBtYWluDQo+IC0g
-KiBtYWlsYm94ZSBwYWNrZXRzIGFyZSBwYXNzZWQgdG8gdGhlIHVwcGVyIHN0YWNrIHdlIGVuYWJs
-ZSBhbGwgb2YNCj4gdGhlbSBidXQNCj4gLSAqIGNvbnRpbnVlIHRvIHByb2Nlc3MgcGFja2V0cyBy
-ZWNlaXZlZCBpbiBidWZmZXIgbWFpbGJveGVzLiBXaXRoDQo+IGVhY2ggcGFja2V0DQo+IC0gKiBy
-ZWNlaXZlZCBmcm9tIGJ1ZmZlciBtYWlsYm94IHdlIGVuYWJsZSBpdCBpbW1lZGlhdGVseSBzbyBh
-cyB0bw0KPiBoYW5kbGUgdGhlDQo+IC0gKiBvdmVyZmxvdyBmcm9tIGhpZ2hlciBtYWlsYm94ZXMu
-DQo+IC0gKi8NCj4gLXN0YXRpYyBpbnQgdGlfaGVjY19yeF9wb2xsKHN0cnVjdCBuYXBpX3N0cnVj
-dCAqbmFwaSwgaW50IHF1b3RhKQ0KPiAtew0KPiAtCXN0cnVjdCBuZXRfZGV2aWNlICpuZGV2ID0g
-bmFwaS0+ZGV2Ow0KPiAtCXN0cnVjdCB0aV9oZWNjX3ByaXYgKnByaXYgPSBuZXRkZXZfcHJpdihu
-ZGV2KTsNCj4gLQl1MzIgbnVtX3BrdHMgPSAwOw0KPiAtCXUzMiBtYnhfbWFzazsNCj4gLQl1bnNp
-Z25lZCBsb25nIHBlbmRpbmdfcGt0cywgZmxhZ3M7DQo+IC0NCj4gLQlpZiAoIW5ldGlmX3J1bm5p
-bmcobmRldikpDQo+IC0JCXJldHVybiAwOw0KPiAtDQo+IC0Jd2hpbGUgKChwZW5kaW5nX3BrdHMg
-PSBoZWNjX3JlYWQocHJpdiwgSEVDQ19DQU5STVApKSAmJg0KPiAtCQludW1fcGt0cyA8IHF1b3Rh
-KSB7DQo+IC0JCW1ieF9tYXNrID0gQklUKHByaXYtPnJ4X25leHQpOyAvKiBuZXh0IHJ4IG1haWxi
-b3ggdG8NCj4gcHJvY2VzcyAqLw0KPiAtCQlpZiAobWJ4X21hc2sgJiBwZW5kaW5nX3BrdHMpIHsN
-Cj4gLQkJCWlmICh0aV9oZWNjX3J4X3BrdChwcml2LCBwcml2LT5yeF9uZXh0KSA8IDApDQo+IC0J
-CQkJcmV0dXJuIG51bV9wa3RzOw0KPiAtCQkJKytudW1fcGt0czsNCj4gLQkJfSBlbHNlIGlmIChw
-cml2LT5yeF9uZXh0ID4gSEVDQ19SWF9CVUZGRVJfTUJPWCkgew0KPiAtCQkJYnJlYWs7IC8qIHBr
-dCBub3QgcmVjZWl2ZWQgeWV0ICovDQo+IC0JCX0NCj4gLQkJLS1wcml2LT5yeF9uZXh0Ow0KPiAt
-CQlpZiAocHJpdi0+cnhfbmV4dCA9PSBIRUNDX1JYX0JVRkZFUl9NQk9YKSB7DQo+IC0JCQkvKiBl
-bmFibGUgaGlnaCBiYW5rIG1haWxib3hlcyAqLw0KPiAtCQkJc3Bpbl9sb2NrX2lycXNhdmUoJnBy
-aXYtPm1ieF9sb2NrLCBmbGFncyk7DQo+IC0JCQltYnhfbWFzayA9IGhlY2NfcmVhZChwcml2LCBI
-RUNDX0NBTk1FKTsNCj4gLQkJCW1ieF9tYXNrIHw9IEhFQ0NfUlhfSElHSF9NQk9YX01BU0s7DQo+
-IC0JCQloZWNjX3dyaXRlKHByaXYsIEhFQ0NfQ0FOTUUsIG1ieF9tYXNrKTsNCj4gLQkJCXNwaW5f
-dW5sb2NrX2lycXJlc3RvcmUoJnByaXYtPm1ieF9sb2NrLCBmbGFncyk7DQo+IC0JCX0gZWxzZSBp
-ZiAocHJpdi0+cnhfbmV4dCA9PSBIRUNDX01BWF9UWF9NQk9YIC0gMSkgew0KPiAtCQkJcHJpdi0+
-cnhfbmV4dCA9IEhFQ0NfUlhfRklSU1RfTUJPWDsNCj4gLQkJCWJyZWFrOw0KPiAtCQl9DQo+IC0J
-fQ0KPiAtDQo+IC0JLyogRW5hYmxlIHBhY2tldCBpbnRlcnJ1cHQgaWYgYWxsIHBrdHMgYXJlIGhh
-bmRsZWQgKi8NCj4gLQlpZiAoaGVjY19yZWFkKHByaXYsIEhFQ0NfQ0FOUk1QKSA9PSAwKSB7DQo+
-IC0JCW5hcGlfY29tcGxldGUobmFwaSk7DQo+IC0JCS8qIFJlLWVuYWJsZSBSWCBtYWlsYm94IGlu
-dGVycnVwdHMgKi8NCj4gLQkJbWJ4X21hc2sgPSBoZWNjX3JlYWQocHJpdiwgSEVDQ19DQU5NSU0p
-Ow0KPiAtCQltYnhfbWFzayB8PSBIRUNDX1RYX01CT1hfTUFTSzsNCj4gLQkJaGVjY193cml0ZShw
-cml2LCBIRUNDX0NBTk1JTSwgbWJ4X21hc2spOw0KPiAtCX0gZWxzZSB7DQo+IC0JCS8qIHJlcG9s
-bCBpcyBkb25lIG9ubHkgaWYgd2hvbGUgYnVkZ2V0IGlzIHVzZWQgKi8NCj4gLQkJbnVtX3BrdHMg
-PSBxdW90YTsNCj4gLQl9DQo+IC0NCj4gLQlyZXR1cm4gbnVtX3BrdHM7DQo+ICsJcmV0dXJuIDE7
-DQo+ICB9DQo+ICANCj4gIHN0YXRpYyBpbnQgdGlfaGVjY19lcnJvcihzdHJ1Y3QgbmV0X2Rldmlj
-ZSAqbmRldiwgaW50IGludF9zdGF0dXMsDQo+ICAJaW50IGVycl9zdGF0dXMpDQo+ICB7DQo+ICAJ
-c3RydWN0IHRpX2hlY2NfcHJpdiAqcHJpdiA9IG5ldGRldl9wcml2KG5kZXYpOw0KPiAtCXN0cnVj
-dCBuZXRfZGV2aWNlX3N0YXRzICpzdGF0cyA9ICZuZGV2LT5zdGF0czsNCj4gIAlzdHJ1Y3QgY2Fu
-X2ZyYW1lICpjZjsNCj4gIAlzdHJ1Y3Qgc2tfYnVmZiAqc2tiOw0KPiArCXUzMiB0aW1lc3RhbXA7
-DQo+ICANCj4gIAkvKiBwcm9wYWdhdGUgdGhlIGVycm9yIGNvbmRpdGlvbiB0byB0aGUgY2FuIHN0
-YWNrICovDQo+ICAJc2tiID0gYWxsb2NfY2FuX2Vycl9za2IobmRldiwgJmNmKTsNCj4gQEAgLTcz
-Miw5ICs2NDEsOCBAQCBzdGF0aWMgaW50IHRpX2hlY2NfZXJyb3Ioc3RydWN0IG5ldF9kZXZpY2Ug
-Km5kZXYsDQo+IGludCBpbnRfc3RhdHVzLA0KPiAgCQl9DQo+ICAJfQ0KPiAgDQo+IC0Jc3RhdHMt
-PnJ4X3BhY2tldHMrKzsNCj4gLQlzdGF0cy0+cnhfYnl0ZXMgKz0gY2YtPmNhbl9kbGM7DQo+IC0J
-bmV0aWZfcngoc2tiKTsNCj4gKwl0aW1lc3RhbXAgPSBoZWNjX3JlYWQocHJpdiwgSEVDQ19DQU5M
-TlQpOw0KPiArCWNhbl9yeF9vZmZsb2FkX3F1ZXVlX3NvcnRlZCgmcHJpdi0+b2ZmbG9hZCwgc2ti
-LCB0aW1lc3RhbXApOw0KPiAgDQo+ICAJcmV0dXJuIDA7DQo+ICB9DQo+IEBAIC03NDQsOCArNjUy
-LDggQEAgc3RhdGljIGlycXJldHVybl90IHRpX2hlY2NfaW50ZXJydXB0KGludCBpcnEsDQo+IHZv
-aWQgKmRldl9pZCkNCj4gIAlzdHJ1Y3QgbmV0X2RldmljZSAqbmRldiA9IChzdHJ1Y3QgbmV0X2Rl
-dmljZSAqKWRldl9pZDsNCj4gIAlzdHJ1Y3QgdGlfaGVjY19wcml2ICpwcml2ID0gbmV0ZGV2X3By
-aXYobmRldik7DQo+ICAJc3RydWN0IG5ldF9kZXZpY2Vfc3RhdHMgKnN0YXRzID0gJm5kZXYtPnN0
-YXRzOw0KPiAtCXUzMiBtYnhubywgbWJ4X21hc2ssIGludF9zdGF0dXMsIGVycl9zdGF0dXM7DQo+
-IC0JdW5zaWduZWQgbG9uZyBhY2ssIGZsYWdzOw0KPiArCXUzMiBtYnhubywgbWJ4X21hc2ssIGlu
-dF9zdGF0dXMsIGVycl9zdGF0dXMsIHN0YW1wOw0KDQpSZXZlcnNlIHhtYXMgdHJlZS4NCg0K
+By default, all access to the upper, lower and work directories is the
+recorded mounter's MAC and DAC credentials.  The incoming accesses are
+checked against the caller's credentials.
+
+If the principles of least privilege are applied, the mounter's
+credentials might not overlap the credentials of the caller's when
+accessing the overlayfs filesystem.  For example, a file that a lower
+DAC privileged caller can execute, is MAC denied to the generally
+higher DAC privileged mounter, to prevent an attack vector.
+
+We add the option to turn off override_creds in the mount options; all
+subsequent operations after mount on the filesystem will be only the
+caller's credentials.  The module boolean parameter and mount option
+override_creds is also added as a presence check for this "feature",
+existence of /sys/module/overlay/parameters/override_creds.
+
+It was not always this way.  Circa 4.6 there was no recorded mounter's
+credentials, instead privileged access to upper or work directories
+were temporarily increased to perform the operations.  The MAC
+(selinux) policies were caller's in all cases.  override_creds=off
+partially returns us to this older access model minus the insecure
+temporary credential increases.  This is to permit use in a system
+with non-overlapping security models for each executable including
+the agent that mounts the overlayfs filesystem.  In Android
+this is the case since init, which performs the mount operations,
+has a minimal MAC set of privileges to reduce any attack surface,
+and services that use the content have a different set of MAC
+privileges (eg: read, for vendor labelled configuration, execute for
+vendor libraries and modules).  The caveats are not a problem in
+the Android usage model, however they should be fixed for
+completeness and for general use in time.
+
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: linux-unionfs@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-team@android.com
+---
+v10:
+- Rebase (and expand because of increased revert_cred usage)
+
+v9:
+- Add to the caveats
+
+v8:
+- drop pr_warn message after straw poll to remove it.
+- added a use case in the commit message
+
+v7:
+- change name of internal parameter to ovl_override_creds_def
+- report override_creds only if different than default
+
+v6:
+- Drop CONFIG_OVERLAY_FS_OVERRIDE_CREDS.
+- Do better with the documentation.
+- pr_warn message adjusted to report consequences.
+
+v5:
+- beefed up the caveats in the Documentation
+- Is dependent on
+  "overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh"
+  "overlayfs: check CAP_MKNOD before issuing vfs_whiteout"
+- Added prwarn when override_creds=off
+
+v4:
+- spelling and grammar errors in text
+
+v3:
+- Change name from caller_credentials / creator_credentials to the
+  boolean override_creds.
+- Changed from creator to mounter credentials.
+- Updated and fortified the documentation.
+- Added CONFIG_OVERLAY_FS_OVERRIDE_CREDS
+
+v2:
+- Forward port changed attr to stat, resulting in a build error.
+- altered commit message.
+
+a
+---
+ Documentation/filesystems/overlayfs.txt | 23 +++++++++++++++++++++++
+ fs/overlayfs/copy_up.c                  |  2 +-
+ fs/overlayfs/dir.c                      | 11 ++++++-----
+ fs/overlayfs/file.c                     | 20 ++++++++++----------
+ fs/overlayfs/inode.c                    | 18 +++++++++---------
+ fs/overlayfs/namei.c                    |  6 +++---
+ fs/overlayfs/overlayfs.h                |  1 +
+ fs/overlayfs/ovl_entry.h                |  1 +
+ fs/overlayfs/readdir.c                  |  4 ++--
+ fs/overlayfs/super.c                    | 22 +++++++++++++++++++++-
+ fs/overlayfs/util.c                     | 12 ++++++++++--
+ 11 files changed, 87 insertions(+), 33 deletions(-)
+
+diff --git a/Documentation/filesystems/overlayfs.txt b/Documentation/filesystems/overlayfs.txt
+index 1da2f1668f08..d48125076602 100644
+--- a/Documentation/filesystems/overlayfs.txt
++++ b/Documentation/filesystems/overlayfs.txt
+@@ -102,6 +102,29 @@ Only the lists of names from directories are merged.  Other content
+ such as metadata and extended attributes are reported for the upper
+ directory only.  These attributes of the lower directory are hidden.
+ 
++credentials
++-----------
++
++By default, all access to the upper, lower and work directories is the
++recorded mounter's MAC and DAC credentials.  The incoming accesses are
++checked against the caller's credentials.
++
++In the case where caller MAC or DAC credentials do not overlap, a
++use case available in older versions of the driver, the
++override_creds mount flag can be turned off and help when the use
++pattern has caller with legitimate credentials where the mounter
++does not.  Several unintended side effects will occur though.  The
++caller without certain key capabilities or lower privilege will not
++always be able to delete files or directories, create nodes, or
++search some restricted directories.  The ability to search and read
++a directory entry is spotty as a result of the cache mechanism not
++retesting the credentials because of the assumption, a privileged
++caller can fill cache, then a lower privilege can read the directory
++cache.  The uneven security model where cache, upperdir and workdir
++are opened at privilege, but accessed without creating a form of
++privilege escalation, should only be used with strict understanding
++of the side effects and of the security policies.
++
+ whiteouts and opaque directories
+ --------------------------------
+ 
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index b801c6353100..1311ab4aea00 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -886,7 +886,7 @@ int ovl_copy_up_flags(struct dentry *dentry, int flags)
+ 		dput(parent);
+ 		dput(next);
+ 	}
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	return err;
+ }
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index 702aa63f6774..c4b061c3a6ef 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -563,7 +563,8 @@ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
+ 		override_cred->fsgid = inode->i_gid;
+ 		if (!attr->hardlink) {
+ 			err = security_dentry_create_files_as(dentry,
+-					attr->mode, &dentry->d_name, old_cred,
++					attr->mode, &dentry->d_name,
++					old_cred ? old_cred : current_cred(),
+ 					override_cred);
+ 			if (err) {
+ 				put_cred(override_cred);
+@@ -579,7 +580,7 @@ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
+ 			err = ovl_create_over_whiteout(dentry, inode, attr);
+ 	}
+ out_revert_creds:
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 	return err;
+ }
+ 
+@@ -655,7 +656,7 @@ static int ovl_set_link_redirect(struct dentry *dentry)
+ 
+ 	old_cred = ovl_override_creds(dentry->d_sb);
+ 	err = ovl_set_redirect(dentry, false);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	return err;
+ }
+@@ -851,7 +852,7 @@ static int ovl_do_remove(struct dentry *dentry, bool is_dir)
+ 		err = ovl_remove_upper(dentry, is_dir, &list);
+ 	else
+ 		err = ovl_remove_and_whiteout(dentry, &list);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 	if (!err) {
+ 		if (is_dir)
+ 			clear_nlink(dentry->d_inode);
+@@ -1221,7 +1222,7 @@ static int ovl_rename(struct inode *olddir, struct dentry *old,
+ out_unlock:
+ 	unlock_rename(new_upperdir, old_upperdir);
+ out_revert_creds:
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 	if (update_nlink)
+ 		ovl_nlink_end(new);
+ out_drop_write:
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index e235a635d9ec..39a50fad9f7f 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -32,7 +32,7 @@ static struct file *ovl_open_realfile(const struct file *file,
+ 	old_cred = ovl_override_creds(inode->i_sb);
+ 	realfile = open_with_fake_path(&file->f_path, flags, realinode,
+ 				       current_cred());
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
+ 		 file, file, ovl_whatisit(inode, realinode), file->f_flags,
+@@ -176,7 +176,7 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
+ 
+ 	old_cred = ovl_override_creds(inode->i_sb);
+ 	ret = vfs_llseek(real.file, offset, whence);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	file->f_pos = real.file->f_pos;
+ 	inode_unlock(inode);
+@@ -242,7 +242,7 @@ static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+ 	ret = vfs_iter_read(real.file, iter, &iocb->ki_pos,
+ 			    ovl_iocb_to_rwf(iocb));
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	ovl_file_accessed(file);
+ 
+@@ -278,7 +278,7 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 	ret = vfs_iter_write(real.file, iter, &iocb->ki_pos,
+ 			     ovl_iocb_to_rwf(iocb));
+ 	file_end_write(real.file);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	/* Update size */
+ 	ovl_copyattr(ovl_inode_real(inode), inode);
+@@ -305,7 +305,7 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+ 	if (file_inode(real.file) == ovl_inode_upper(file_inode(file))) {
+ 		old_cred = ovl_override_creds(file_inode(file)->i_sb);
+ 		ret = vfs_fsync_range(real.file, start, end, datasync);
+-		revert_creds(old_cred);
++		ovl_revert_creds(old_cred);
+ 	}
+ 
+ 	fdput(real);
+@@ -329,7 +329,7 @@ static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
+ 
+ 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+ 	ret = call_mmap(vma->vm_file, vma);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	if (ret) {
+ 		/* Drop reference count from new vm_file value */
+@@ -357,7 +357,7 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
+ 
+ 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+ 	ret = vfs_fallocate(real.file, mode, offset, len);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	/* Update size */
+ 	ovl_copyattr(ovl_inode_real(inode), inode);
+@@ -379,7 +379,7 @@ static int ovl_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
+ 
+ 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+ 	ret = vfs_fadvise(real.file, offset, len, advice);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	fdput(real);
+ 
+@@ -399,7 +399,7 @@ static long ovl_real_ioctl(struct file *file, unsigned int cmd,
+ 
+ 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+ 	ret = vfs_ioctl(real.file, cmd, arg);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	fdput(real);
+ 
+@@ -589,7 +589,7 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
+ 						flags);
+ 		break;
+ 	}
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	/* Update size */
+ 	ovl_copyattr(ovl_inode_real(inode_out), inode_out);
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index d3b53849615c..6c11c7af5157 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -61,7 +61,7 @@ int ovl_setattr(struct dentry *dentry, struct iattr *attr)
+ 		inode_lock(upperdentry->d_inode);
+ 		old_cred = ovl_override_creds(dentry->d_sb);
+ 		err = notify_change(upperdentry, attr, NULL);
+-		revert_creds(old_cred);
++		ovl_revert_creds(old_cred);
+ 		if (!err)
+ 			ovl_copyattr(upperdentry->d_inode, dentry->d_inode);
+ 		inode_unlock(upperdentry->d_inode);
+@@ -257,7 +257,7 @@ int ovl_getattr(const struct path *path, struct kstat *stat,
+ 		stat->nlink = dentry->d_inode->i_nlink;
+ 
+ out:
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	return err;
+ }
+@@ -291,7 +291,7 @@ int ovl_permission(struct inode *inode, int mask)
+ 		mask |= MAY_READ;
+ 	}
+ 	err = inode_permission(realinode, mask);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	return err;
+ }
+@@ -308,7 +308,7 @@ static const char *ovl_get_link(struct dentry *dentry,
+ 
+ 	old_cred = ovl_override_creds(dentry->d_sb);
+ 	p = vfs_get_link(ovl_dentry_real(dentry), done);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 	return p;
+ }
+ 
+@@ -351,7 +351,7 @@ int ovl_xattr_set(struct dentry *dentry, struct inode *inode, const char *name,
+ 		WARN_ON(flags != XATTR_REPLACE);
+ 		err = vfs_removexattr(realdentry, name);
+ 	}
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	/* copy c/mtime */
+ 	ovl_copyattr(d_inode(realdentry), inode);
+@@ -387,7 +387,7 @@ int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char *name,
+ 
+ 	old_cred = ovl_override_creds(dentry->d_sb);
+ 	res = vfs_getxattr(realdentry, name, value, size);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 	return res;
+ }
+ 
+@@ -411,7 +411,7 @@ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size)
+ 
+ 	old_cred = ovl_override_creds(dentry->d_sb);
+ 	res = vfs_listxattr(realdentry, list, size);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 	if (res <= 0 || size == 0)
+ 		return res;
+ 
+@@ -446,7 +446,7 @@ struct posix_acl *ovl_get_acl(struct inode *inode, int type)
+ 
+ 	old_cred = ovl_override_creds(inode->i_sb);
+ 	acl = get_acl(realinode, type);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	return acl;
+ }
+@@ -484,7 +484,7 @@ static int ovl_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		filemap_write_and_wait(realinode->i_mapping);
+ 
+ 	err = realinode->i_op->fiemap(realinode, fieinfo, start, len);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	return err;
+ }
+diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+index fb6c0cd7b65f..12627018b00a 100644
+--- a/fs/overlayfs/namei.c
++++ b/fs/overlayfs/namei.c
+@@ -1079,7 +1079,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 			goto out_free_oe;
+ 	}
+ 
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 	if (origin_path) {
+ 		dput(origin_path->dentry);
+ 		kfree(origin_path);
+@@ -1106,7 +1106,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+ 	kfree(upperredirect);
+ out:
+ 	kfree(d.redirect);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 	return ERR_PTR(err);
+ }
+ 
+@@ -1160,7 +1160,7 @@ bool ovl_lower_positive(struct dentry *dentry)
+ 			dput(this);
+ 		}
+ 	}
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	return positive;
+ }
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index 82574684a9b6..cdbdb533d3bd 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -205,6 +205,7 @@ int ovl_want_write(struct dentry *dentry);
+ void ovl_drop_write(struct dentry *dentry);
+ struct dentry *ovl_workdir(struct dentry *dentry);
+ const struct cred *ovl_override_creds(struct super_block *sb);
++void ovl_revert_creds(const struct cred *oldcred);
+ ssize_t ovl_vfs_getxattr(struct dentry *dentry, const char *name, void *buf,
+ 			 size_t size);
+ struct super_block *ovl_same_sb(struct super_block *sb);
+diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+index 28a2d12a1029..2637c5aadf7f 100644
+--- a/fs/overlayfs/ovl_entry.h
++++ b/fs/overlayfs/ovl_entry.h
+@@ -17,6 +17,7 @@ struct ovl_config {
+ 	bool nfs_export;
+ 	int xino;
+ 	bool metacopy;
++	bool override_creds;
+ };
+ 
+ struct ovl_sb {
+diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+index 47a91c9733a5..f31ef39e5afa 100644
+--- a/fs/overlayfs/readdir.c
++++ b/fs/overlayfs/readdir.c
+@@ -286,7 +286,7 @@ static int ovl_check_whiteouts(struct dentry *dir, struct ovl_readdir_data *rdd)
+ 		}
+ 		inode_unlock(dir->d_inode);
+ 	}
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ 	return err;
+ }
+@@ -918,7 +918,7 @@ int ovl_check_empty_dir(struct dentry *dentry, struct list_head *list)
+ 
+ 	old_cred = ovl_override_creds(dentry->d_sb);
+ 	err = ovl_dir_read_merged(dentry, list, &root);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 	if (err)
+ 		return err;
+ 
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 82e1130de206..c2ddce5d488c 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -53,6 +53,11 @@ module_param_named(xino_auto, ovl_xino_auto_def, bool, 0644);
+ MODULE_PARM_DESC(xino_auto,
+ 		 "Auto enable xino feature");
+ 
++static bool __read_mostly ovl_override_creds_def = true;
++module_param_named(override_creds, ovl_override_creds_def, bool, 0644);
++MODULE_PARM_DESC(ovl_override_creds_def,
++		 "Use mounter's credentials for accesses");
++
+ static void ovl_entry_stack_free(struct ovl_entry *oe)
+ {
+ 	unsigned int i;
+@@ -362,6 +367,9 @@ static int ovl_show_options(struct seq_file *m, struct dentry *dentry)
+ 	if (ofs->config.metacopy != ovl_metacopy_def)
+ 		seq_printf(m, ",metacopy=%s",
+ 			   ofs->config.metacopy ? "on" : "off");
++	if (ofs->config.override_creds != ovl_override_creds_def)
++		seq_show_option(m, "override_creds",
++				ofs->config.override_creds ? "on" : "off");
+ 	return 0;
+ }
+ 
+@@ -402,6 +410,8 @@ enum {
+ 	OPT_XINO_AUTO,
+ 	OPT_METACOPY_ON,
+ 	OPT_METACOPY_OFF,
++	OPT_OVERRIDE_CREDS_ON,
++	OPT_OVERRIDE_CREDS_OFF,
+ 	OPT_ERR,
+ };
+ 
+@@ -420,6 +430,8 @@ static const match_table_t ovl_tokens = {
+ 	{OPT_XINO_AUTO,			"xino=auto"},
+ 	{OPT_METACOPY_ON,		"metacopy=on"},
+ 	{OPT_METACOPY_OFF,		"metacopy=off"},
++	{OPT_OVERRIDE_CREDS_ON,		"override_creds=on"},
++	{OPT_OVERRIDE_CREDS_OFF,	"override_creds=off"},
+ 	{OPT_ERR,			NULL}
+ };
+ 
+@@ -478,6 +490,7 @@ static int ovl_parse_opt(char *opt, struct ovl_config *config)
+ 	config->redirect_mode = kstrdup(ovl_redirect_mode_def(), GFP_KERNEL);
+ 	if (!config->redirect_mode)
+ 		return -ENOMEM;
++	config->override_creds = ovl_override_creds_def;
+ 
+ 	while ((p = ovl_next_opt(&opt)) != NULL) {
+ 		int token;
+@@ -558,6 +571,14 @@ static int ovl_parse_opt(char *opt, struct ovl_config *config)
+ 			config->metacopy = false;
+ 			break;
+ 
++		case OPT_OVERRIDE_CREDS_ON:
++			config->override_creds = true;
++			break;
++
++		case OPT_OVERRIDE_CREDS_OFF:
++			config->override_creds = false;
++			break;
++
+ 		default:
+ 			pr_err("overlayfs: unrecognized mount option \"%s\" or missing value\n", p);
+ 			return -EINVAL;
+@@ -1690,7 +1711,6 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+ 		       ovl_dentry_lower(root_dentry), NULL);
+ 
+ 	sb->s_root = root_dentry;
+-
+ 	return 0;
+ 
+ out_free_oe:
+diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+index 672459c3cff7..320aad599bcd 100644
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -37,9 +37,17 @@ const struct cred *ovl_override_creds(struct super_block *sb)
+ {
+ 	struct ovl_fs *ofs = sb->s_fs_info;
+ 
++	if (!ofs->config.override_creds)
++		return NULL;
+ 	return override_creds(ofs->creator_cred);
+ }
+ 
++void ovl_revert_creds(const struct cred *old_cred)
++{
++	if (old_cred)
++		revert_creds(old_cred);
++}
++
+ ssize_t ovl_vfs_getxattr(struct dentry *dentry, const char *name, void *buf,
+ 			 size_t size)
+ {
+@@ -797,7 +805,7 @@ int ovl_nlink_start(struct dentry *dentry)
+ 	 * value relative to the upper inode nlink in an upper inode xattr.
+ 	 */
+ 	err = ovl_set_nlink_upper(dentry);
+-	revert_creds(old_cred);
++	ovl_revert_creds(old_cred);
+ 
+ out:
+ 	if (err)
+@@ -815,7 +823,7 @@ void ovl_nlink_end(struct dentry *dentry)
+ 
+ 		old_cred = ovl_override_creds(dentry->d_sb);
+ 		ovl_cleanup_index(dentry);
+-		revert_creds(old_cred);
++		ovl_revert_creds(old_cred);
+ 	}
+ 
+ 	ovl_inode_unlock(inode);
+-- 
+2.22.0.657.g960e92d24f-goog
+
