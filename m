@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0928673AC7
+	by mail.lfdr.de (Postfix) with ESMTP id DC30073AC9
 	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:54:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404186AbfGXTxn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:53:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36162 "EHLO mail.kernel.org"
+        id S2404233AbfGXTxr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:53:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391815AbfGXTxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:53:39 -0400
+        id S2387831AbfGXTxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:53:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFC262147A;
-        Wed, 24 Jul 2019 19:53:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BEAA22ADA;
+        Wed, 24 Jul 2019 19:53:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563998018;
-        bh=9g7CCjjavbfNXhLex0hZ7r+JBm+d9AM+T5LNW3TD2NM=;
+        s=default; t=1563998024;
+        bh=59DPuCb/mN6v6DZt/5oquLDKWXIFy+bD+4goqxHYoSw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=frcS0BzEJtl7uCp3Q4ez2Gq65lyual5k5KHMzoQkupp2mQPG6DyqBzYkMV8LqOT/S
-         5Wn5KvUsL1zzJfpBw/b2LAxkdDxcd2gkTOOQJ6n/Ti7sUcAMBwVVplbO7LqmbhiXAM
-         5QnAJGiPnZCqlHUCXTkXBks7QaGBIDb9z0ylfw/s=
+        b=p1Au8/5SeUNUlaNNDPgTi/DGNy7AeDGobsbsH0N/E4EEiHhbjSaRetpNtMQh3rQI/
+         dFUSVKOolOxnkDpPJ0NVEESzW5FwSGusDauhqI4e1/Pt+aJrsNFu/eCVpd73HYyckk
+         kvPY2WPuGdB5Ou+gSd20i3uxNQz2+Nac7zXRWV8I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josua Mayer <josua@solid-run.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 219/371] net: mvmdio: defer probe of orion-mdio if a clock is not ready
-Date:   Wed, 24 Jul 2019 21:19:31 +0200
-Message-Id: <20190724191741.040965667@linuxfoundation.org>
+Subject: [PATCH 5.1 221/371] iavf: fix dereference of null rx_buffer pointer
+Date:   Wed, 24 Jul 2019 21:19:33 +0200
+Message-Id: <20190724191741.178168684@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -45,43 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 433a06d7d74e677c40b1148c70c48677ff62fb6b ]
+[ Upstream commit 9fe06a51287b2d41baef7ece94df34b5abf19b90 ]
 
-Defer probing of the orion-mdio interface when getting a clock returns
-EPROBE_DEFER. This avoids locking up the Armada 8k SoC when mdio is used
-before all clocks have been enabled.
+A recent commit efa14c3985828d ("iavf: allow null RX descriptors") added
+a null pointer sanity check on rx_buffer, however, rx_buffer is being
+dereferenced before that check, which implies a null pointer dereference
+bug can potentially occur.  Fix this by only dereferencing rx_buffer
+until after the null pointer check.
 
-Signed-off-by: Josua Mayer <josua@solid-run.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Addresses-Coverity: ("Dereference before null check")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/marvell/mvmdio.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/intel/iavf/iavf_txrx.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvmdio.c b/drivers/net/ethernet/marvell/mvmdio.c
-index c5dac6bd2be4..903836e334d8 100644
---- a/drivers/net/ethernet/marvell/mvmdio.c
-+++ b/drivers/net/ethernet/marvell/mvmdio.c
-@@ -321,6 +321,10 @@ static int orion_mdio_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < ARRAY_SIZE(dev->clk); i++) {
- 		dev->clk[i] = of_clk_get(pdev->dev.of_node, i);
-+		if (PTR_ERR(dev->clk[i]) == -EPROBE_DEFER) {
-+			ret = -EPROBE_DEFER;
-+			goto out_clk;
-+		}
- 		if (IS_ERR(dev->clk[i]))
- 			break;
- 		clk_prepare_enable(dev->clk[i]);
-@@ -362,6 +366,7 @@ static int orion_mdio_probe(struct platform_device *pdev)
- 	if (dev->err_interrupt > 0)
- 		writel(0, dev->regs + MVMDIO_ERR_INT_MASK);
- 
-+out_clk:
- 	for (i = 0; i < ARRAY_SIZE(dev->clk); i++) {
- 		if (IS_ERR(dev->clk[i]))
- 			break;
+diff --git a/drivers/net/ethernet/intel/iavf/iavf_txrx.c b/drivers/net/ethernet/intel/iavf/iavf_txrx.c
+index 9cc2a617c9f3..2a261d849d5a 100644
+--- a/drivers/net/ethernet/intel/iavf/iavf_txrx.c
++++ b/drivers/net/ethernet/intel/iavf/iavf_txrx.c
+@@ -1296,7 +1296,7 @@ static struct sk_buff *iavf_construct_skb(struct iavf_ring *rx_ring,
+ 					  struct iavf_rx_buffer *rx_buffer,
+ 					  unsigned int size)
+ {
+-	void *va = page_address(rx_buffer->page) + rx_buffer->page_offset;
++	void *va;
+ #if (PAGE_SIZE < 8192)
+ 	unsigned int truesize = iavf_rx_pg_size(rx_ring) / 2;
+ #else
+@@ -1308,6 +1308,7 @@ static struct sk_buff *iavf_construct_skb(struct iavf_ring *rx_ring,
+ 	if (!rx_buffer)
+ 		return NULL;
+ 	/* prefetch first cache line of first page */
++	va = page_address(rx_buffer->page) + rx_buffer->page_offset;
+ 	prefetch(va);
+ #if L1_CACHE_BYTES < 128
+ 	prefetch(va + L1_CACHE_BYTES);
+@@ -1362,7 +1363,7 @@ static struct sk_buff *iavf_build_skb(struct iavf_ring *rx_ring,
+ 				      struct iavf_rx_buffer *rx_buffer,
+ 				      unsigned int size)
+ {
+-	void *va = page_address(rx_buffer->page) + rx_buffer->page_offset;
++	void *va;
+ #if (PAGE_SIZE < 8192)
+ 	unsigned int truesize = iavf_rx_pg_size(rx_ring) / 2;
+ #else
+@@ -1374,6 +1375,7 @@ static struct sk_buff *iavf_build_skb(struct iavf_ring *rx_ring,
+ 	if (!rx_buffer)
+ 		return NULL;
+ 	/* prefetch first cache line of first page */
++	va = page_address(rx_buffer->page) + rx_buffer->page_offset;
+ 	prefetch(va);
+ #if L1_CACHE_BYTES < 128
+ 	prefetch(va + L1_CACHE_BYTES);
 -- 
 2.20.1
 
