@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1295B74532
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:40:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19F1174568
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:42:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404282AbfGYFkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:40:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54352 "EHLO mail.kernel.org"
+        id S2390818AbfGYFmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:42:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404241AbfGYFj7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:39:59 -0400
+        id S2390802AbfGYFmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 01:42:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B155E22BEF;
-        Thu, 25 Jul 2019 05:39:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B2A222BEB;
+        Thu, 25 Jul 2019 05:42:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564033199;
-        bh=2SuPtkwPkO4qr1b97i+rzqWm8BJ7svTIjfYhjq5vB+M=;
+        s=default; t=1564033336;
+        bh=l9gRyO9IidlNojMDzg1+eyqr6O5J4ZzI0DHcDuMu6wM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eFIuo+42wXpqauJqajL3D6jm3weUdM7ZmrZ/2xrlQPqxTksIW4HksC2KTN+vSvDfm
-         50uuOcVshjxcGAR6MhPPENPDL6z7I8JIPI/jrlfSLikWXLWh6b2cBNUA7f2VuY0mGh
-         GE4V87mGFUCQDsqHmMrjPE61/TlEEYr99elV6qYU=
+        b=gM8/Yf2o7PnG46GYpj2W2tA7SeppZZkK0Uqe3Hixx2Jc580w5XyqB4qV/stpPloWJ
+         k+qhFUx3FFjuMCAuHDX5XGMRmenbxj+ErO2Bl9pCZ1EYwYA18bTQuJCqYrNZm3XklB
+         eAoIXVPShZBOmuhAcUcuNmb0Hh5MgnOC/mcVag8g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Borislav Petkov <bp@suse.de>,
-        James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 086/271] EDAC/sysfs: Fix memory leak when creating a csrow object
-Date:   Wed, 24 Jul 2019 21:19:15 +0200
-Message-Id: <20190724191702.568005838@linuxfoundation.org>
+Subject: [PATCH 4.19 121/271] crypto: asymmetric_keys - select CRYPTO_HASH where needed
+Date:   Wed, 24 Jul 2019 21:19:50 +0200
+Message-Id: <20190724191705.645389360@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191655.268628197@linuxfoundation.org>
 References: <20190724191655.268628197@linuxfoundation.org>
@@ -47,50 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 585fb3d93d32dbe89e718b85009f9c322cc554cd ]
+[ Upstream commit 90acc0653d2bee203174e66d519fbaaa513502de ]
 
-In edac_create_csrow_object(), the reference to the object is not
-released when adding the device to the device hierarchy fails
-(device_add()). This may result in a memory leak.
+Build testing with some core crypto options disabled revealed
+a few modules that are missing CRYPTO_HASH:
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: James Morse <james.morse@arm.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Link: https://lkml.kernel.org/r/1555554438-103953-1-git-send-email-bianpan2016@163.com
+crypto/asymmetric_keys/x509_public_key.o: In function `x509_get_sig_params':
+x509_public_key.c:(.text+0x4c7): undefined reference to `crypto_alloc_shash'
+x509_public_key.c:(.text+0x5e5): undefined reference to `crypto_shash_digest'
+crypto/asymmetric_keys/pkcs7_verify.o: In function `pkcs7_digest.isra.0':
+pkcs7_verify.c:(.text+0xab): undefined reference to `crypto_alloc_shash'
+pkcs7_verify.c:(.text+0x1b2): undefined reference to `crypto_shash_digest'
+pkcs7_verify.c:(.text+0x3c1): undefined reference to `crypto_shash_update'
+pkcs7_verify.c:(.text+0x411): undefined reference to `crypto_shash_finup'
+
+This normally doesn't show up in randconfig tests because there is
+a large number of other options that select CRYPTO_HASH.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/edac/edac_mc_sysfs.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ crypto/asymmetric_keys/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
-index 20374b8248f0..e50610b5bd06 100644
---- a/drivers/edac/edac_mc_sysfs.c
-+++ b/drivers/edac/edac_mc_sysfs.c
-@@ -404,6 +404,8 @@ static inline int nr_pages_per_csrow(struct csrow_info *csrow)
- static int edac_create_csrow_object(struct mem_ctl_info *mci,
- 				    struct csrow_info *csrow, int index)
- {
-+	int err;
-+
- 	csrow->dev.type = &csrow_attr_type;
- 	csrow->dev.bus = mci->bus;
- 	csrow->dev.groups = csrow_dev_groups;
-@@ -416,7 +418,11 @@ static int edac_create_csrow_object(struct mem_ctl_info *mci,
- 	edac_dbg(0, "creating (virtual) csrow node %s\n",
- 		 dev_name(&csrow->dev));
- 
--	return device_add(&csrow->dev);
-+	err = device_add(&csrow->dev);
-+	if (err)
-+		put_device(&csrow->dev);
-+
-+	return err;
- }
- 
- /* Create a CSROW object under specifed edac_mc_device */
+diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
+index f3702e533ff4..d8a73d94bb30 100644
+--- a/crypto/asymmetric_keys/Kconfig
++++ b/crypto/asymmetric_keys/Kconfig
+@@ -15,6 +15,7 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
+ 	select MPILIB
+ 	select CRYPTO_HASH_INFO
+ 	select CRYPTO_AKCIPHER
++	select CRYPTO_HASH
+ 	help
+ 	  This option provides support for asymmetric public key type handling.
+ 	  If signature generation and/or verification are to be used,
+@@ -34,6 +35,7 @@ config X509_CERTIFICATE_PARSER
+ config PKCS7_MESSAGE_PARSER
+ 	tristate "PKCS#7 message parser"
+ 	depends on X509_CERTIFICATE_PARSER
++	select CRYPTO_HASH
+ 	select ASN1
+ 	select OID_REGISTRY
+ 	help
+@@ -56,6 +58,7 @@ config SIGNED_PE_FILE_VERIFICATION
+ 	bool "Support for PE file signature verification"
+ 	depends on PKCS7_MESSAGE_PARSER=y
+ 	depends on SYSTEM_DATA_VERIFICATION
++	select CRYPTO_HASH
+ 	select ASN1
+ 	select OID_REGISTRY
+ 	help
 -- 
 2.20.1
 
