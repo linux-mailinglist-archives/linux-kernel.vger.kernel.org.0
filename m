@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8049E73CA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:10:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC21E73CA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:10:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405381AbfGXUKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:10:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45754 "EHLO mail.kernel.org"
+        id S2392582AbfGXUKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:10:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405008AbfGXT6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:58:51 -0400
+        id S2405070AbfGXT7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:59:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD4F021873;
-        Wed, 24 Jul 2019 19:58:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31F7720665;
+        Wed, 24 Jul 2019 19:59:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563998330;
-        bh=+l/JtDVZXE7La4+a5A8W23d/csoG77VgDQf98Ngqo68=;
+        s=default; t=1563998345;
+        bh=hdPiwWOIh86sapnLw0u7XiSoH7Kj3zi5jtTPZLDP9H0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZkcyJyubaQ46EazFId6nUeGV1F/ngL0qr3mA7tm/p4Qzd7qTBgtESLkxys6q1pqU8
-         /Mol3eOIqJBYgxmygh7HZJvFigZ4hoAyJ+LZKzeUrVYHvU1CBOWUO3xCS2QsuPE/Ph
-         +6lKtPKrhsAJ65EEXFiK7OjNQz4+Lk7BgFZlTydU=
+        b=oLTX/wyZUnX+SOh7kulxi2vGuIK8ceBgLNsYU9zc851QF9X0ydaVfoYUdU0QSg6nj
+         uUBcmE/bIQ6CqJibAaygbwqmU6z08FHqdRVlhni1snDh+hz8R4fr3zcw1iXu/TvQWH
+         q9lMAa9BZdkmVzBfJNXK/NkOiOQXpVxYJRHAuve8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.1 327/371] block: Fix potential overflow in blk_report_zones()
-Date:   Wed, 24 Jul 2019 21:21:19 +0200
-Message-Id: <20190724191748.443843713@linuxfoundation.org>
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>
+Subject: [PATCH 5.1 332/371] PCI: qcom: Ensure that PERST is asserted for at least 100 ms
+Date:   Wed, 24 Jul 2019 21:21:24 +0200
+Message-Id: <20190724191748.756382478@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -43,66 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Damien Le Moal <damien.lemoal@wdc.com>
+From: Niklas Cassel <niklas.cassel@linaro.org>
 
-commit 113ab72ed4794c193509a97d7c6d32a6886e1682 upstream.
+commit 64adde31c8e996a6db6f7a1a4131180e363aa9f2 upstream.
 
-For large values of the number of zones reported and/or large zone
-sizes, the sector increment calculated with
+Currently, there is only a 1 ms sleep after asserting PERST.
 
-blk_queue_zone_sectors(q) * n
+Reading the datasheets for different endpoints, some require PERST to be
+asserted for 10 ms in order for the endpoint to perform a reset, others
+require it to be asserted for 50 ms.
 
-in blk_report_zones() loop can overflow the unsigned int type used for
-the calculation as both "n" and blk_queue_zone_sectors() value are
-unsigned int. E.g. for a device with 256 MB zones (524288 sectors),
-overflow happens with 8192 or more zones reported.
+Several SoCs using this driver uses PCIe Mini Card, where we don't know
+what endpoint will be plugged in.
 
-Changing the return type of blk_queue_zone_sectors() to sector_t, fixes
-this problem and avoids overflow problem for all other callers of this
-helper too. The same change is also applied to the bdev_zone_sectors()
-helper.
+The PCI Express Card Electromechanical Specification r2.0, section
+2.2, "PERST# Signal" specifies:
 
-Fixes: e76239a3748c ("block: add a report_zones method")
-Cc: stable@vger.kernel.org
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+"On power up, the deassertion of PERST# is delayed 100 ms (TPVPERL) from
+the power rails achieving specified operating limits."
+
+Add a sleep of 100 ms before deasserting PERST, in order to ensure that
+we are compliant with the spec.
+
+Fixes: 82a823833f4e ("PCI: qcom: Add Qualcomm PCIe controller driver")
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Stanimir Varbanov <svarbanov@mm-sol.com>
+Cc: stable@vger.kernel.org # 4.5+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-zoned.c      |    2 +-
- include/linux/blkdev.h |    4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/pci/controller/dwc/pcie-qcom.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/block/blk-zoned.c
-+++ b/block/blk-zoned.c
-@@ -69,7 +69,7 @@ EXPORT_SYMBOL_GPL(__blk_req_zone_write_u
- static inline unsigned int __blkdev_nr_zones(struct request_queue *q,
- 					     sector_t nr_sectors)
+--- a/drivers/pci/controller/dwc/pcie-qcom.c
++++ b/drivers/pci/controller/dwc/pcie-qcom.c
+@@ -178,6 +178,8 @@ static void qcom_ep_reset_assert(struct
+ 
+ static void qcom_ep_reset_deassert(struct qcom_pcie *pcie)
  {
--	unsigned long zone_sectors = blk_queue_zone_sectors(q);
-+	sector_t zone_sectors = blk_queue_zone_sectors(q);
- 
- 	return (nr_sectors + zone_sectors - 1) >> ilog2(zone_sectors);
++	/* Ensure that PERST has been asserted for at least 100 ms */
++	msleep(100);
+ 	gpiod_set_value_cansleep(pcie->reset, 0);
+ 	usleep_range(PERST_DELAY_US, PERST_DELAY_US + 500);
  }
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -662,7 +662,7 @@ static inline bool blk_queue_is_zoned(st
- 	}
- }
- 
--static inline unsigned int blk_queue_zone_sectors(struct request_queue *q)
-+static inline sector_t blk_queue_zone_sectors(struct request_queue *q)
- {
- 	return blk_queue_is_zoned(q) ? q->limits.chunk_sectors : 0;
- }
-@@ -1400,7 +1400,7 @@ static inline bool bdev_is_zoned(struct
- 	return false;
- }
- 
--static inline unsigned int bdev_zone_sectors(struct block_device *bdev)
-+static inline sector_t bdev_zone_sectors(struct block_device *bdev)
- {
- 	struct request_queue *q = bdev_get_queue(bdev);
- 
 
 
