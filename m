@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DACA273ECA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:27:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37B1673ED6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:27:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389217AbfGXTfd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:35:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60064 "EHLO mail.kernel.org"
+        id S2389938AbfGXU1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:27:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389195AbfGXTfX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:35:23 -0400
+        id S2389201AbfGXTf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:35:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C97B20659;
-        Wed, 24 Jul 2019 19:35:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C47B421951;
+        Wed, 24 Jul 2019 19:35:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996922;
-        bh=EHcCKHRk1eOz+b0bwItEjZPMk5Rvwz+Yhh/TuND2V/4=;
+        s=default; t=1563996925;
+        bh=4g3R6gamTRzQOqVc+zMXK0Qvwcpv4izx9jeryaWRd/k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JzWkfbU/qHk+plhqJQyXSotj36WByvz+AvMxC9SV3tpFoFsecEfnUZR7rJfL+vNoR
-         sCqUe4u1bmsKRhFYUgsuHZFE+2wiv+LLRpiArbwGpjq7+hAtosHilJHjmctFN9p4lZ
-         2olAQ/MEBkfae3AD3Qv+EaoJmz9m9qTWz0j+E9B0=
+        b=BtfoiRHJnAizXLZuButMETl0kn7uqbo9V+E4sI2z7iT7Shh815LUz9gSgKhq1WAFp
+         E+GAB8tF4Sl/XHwKwqMEsY9Gc8tZrSd66QOhW5Jjpb+B60z/6K6thYJY2Efovlt+Ne
+         aORVxJVx0VhKhzcQIqGpMKJtmL/TLA5G91zshUhw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Robinson <pbrobinson@gmail.com>,
-        Eric Biggers <ebiggers@google.com>,
+        stable@vger.kernel.org, Horia Geanta <horia.geanta@nxp.com>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.2 263/413] crypto: ghash - fix unaligned memory access in ghash_setkey()
-Date:   Wed, 24 Jul 2019 21:19:14 +0200
-Message-Id: <20190724191754.964857112@linuxfoundation.org>
+Subject: [PATCH 5.2 264/413] crypto: caam - limit output IV to CBC to work around CTR mode DMA issue
+Date:   Wed, 24 Jul 2019 21:19:15 +0200
+Message-Id: <20190724191755.063425339@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -44,57 +46,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit 5c6bc4dfa515738149998bb0db2481a4fdead979 upstream.
+commit ed527b13d800dd515a9e6c582f0a73eca65b2e1b upstream.
 
-Changing ghash_mod_init() to be subsys_initcall made it start running
-before the alignment fault handler has been installed on ARM.  In kernel
-builds where the keys in the ghash test vectors happened to be
-misaligned in the kernel image, this exposed the longstanding bug that
-ghash_setkey() is incorrectly casting the key buffer (which can have any
-alignment) to be128 for passing to gf128mul_init_4k_lle().
+The CAAM driver currently violates an undocumented and slightly
+controversial requirement imposed by the crypto stack that a buffer
+referred to by the request structure via its virtual address may not
+be modified while any scatterlists passed via the same request
+structure are mapped for inbound DMA.
 
-Fix this by memcpy()ing the key to a temporary buffer.
+This may result in errors like
 
-Don't fix it by setting an alignmask on the algorithm instead because
-that would unnecessarily force alignment of the data too.
+  alg: aead: decryption failed on test 1 for gcm_base(ctr-aes-caam,ghash-generic): ret=74
+  alg: aead: Failed to load transform for gcm(aes): -2
 
-Fixes: 2cdc6899a88e ("crypto: ghash - Add GHASH digest algorithm for GCM")
-Reported-by: Peter Robinson <pbrobinson@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Tested-by: Peter Robinson <pbrobinson@gmail.com>
+on non-cache coherent systems, due to the fact that the GCM driver
+passes an IV buffer by virtual address which shares a cacheline with
+the auth_tag buffer passed via a scatterlist, resulting in corruption
+of the auth_tag when the IV is updated while the DMA mapping is live.
+
+Since the IV that is returned to the caller is only valid for CBC mode,
+and given that the in-kernel users of CBC (such as CTS) don't trigger the
+same issue as the GCM driver, let's just disable the output IV generation
+for all modes except CBC for the time being.
+
+Fixes: 854b06f76879 ("crypto: caam - properly set IV after {en,de}crypt")
+Cc: Horia Geanta <horia.geanta@nxp.com>
+Cc: Iuliana Prodan <iuliana.prodan@nxp.com>
+Reported-by: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reviewed-by: Horia Geanta <horia.geanta@nxp.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/ghash-generic.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/crypto/caam/caamalg.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/crypto/ghash-generic.c
-+++ b/crypto/ghash-generic.c
-@@ -31,6 +31,7 @@ static int ghash_setkey(struct crypto_sh
- 			const u8 *key, unsigned int keylen)
- {
- 	struct ghash_ctx *ctx = crypto_shash_ctx(tfm);
-+	be128 k;
+--- a/drivers/crypto/caam/caamalg.c
++++ b/drivers/crypto/caam/caamalg.c
+@@ -999,6 +999,7 @@ static void skcipher_encrypt_done(struct
+ 	struct skcipher_request *req = context;
+ 	struct skcipher_edesc *edesc;
+ 	struct crypto_skcipher *skcipher = crypto_skcipher_reqtfm(req);
++	struct caam_ctx *ctx = crypto_skcipher_ctx(skcipher);
+ 	int ivsize = crypto_skcipher_ivsize(skcipher);
  
- 	if (keylen != GHASH_BLOCK_SIZE) {
- 		crypto_shash_set_flags(tfm, CRYPTO_TFM_RES_BAD_KEY_LEN);
-@@ -39,7 +40,12 @@ static int ghash_setkey(struct crypto_sh
+ #ifdef DEBUG
+@@ -1023,9 +1024,9 @@ static void skcipher_encrypt_done(struct
  
- 	if (ctx->gf128)
- 		gf128mul_free_4k(ctx->gf128);
--	ctx->gf128 = gf128mul_init_4k_lle((be128 *)key);
-+
-+	BUILD_BUG_ON(sizeof(k) != GHASH_BLOCK_SIZE);
-+	memcpy(&k, key, GHASH_BLOCK_SIZE); /* avoid violating alignment rules */
-+	ctx->gf128 = gf128mul_init_4k_lle(&k);
-+	memzero_explicit(&k, GHASH_BLOCK_SIZE);
-+
- 	if (!ctx->gf128)
- 		return -ENOMEM;
+ 	/*
+ 	 * The crypto API expects us to set the IV (req->iv) to the last
+-	 * ciphertext block. This is used e.g. by the CTS mode.
++	 * ciphertext block when running in CBC mode.
+ 	 */
+-	if (ivsize)
++	if ((ctx->cdata.algtype & OP_ALG_AAI_MASK) == OP_ALG_AAI_CBC)
+ 		scatterwalk_map_and_copy(req->iv, req->dst, req->cryptlen -
+ 					 ivsize, ivsize, 0);
+ 
+@@ -1843,9 +1844,9 @@ static int skcipher_decrypt(struct skcip
+ 
+ 	/*
+ 	 * The crypto API expects us to set the IV (req->iv) to the last
+-	 * ciphertext block.
++	 * ciphertext block when running in CBC mode.
+ 	 */
+-	if (ivsize)
++	if ((ctx->cdata.algtype & OP_ALG_AAI_MASK) == OP_ALG_AAI_CBC)
+ 		scatterwalk_map_and_copy(req->iv, req->src, req->cryptlen -
+ 					 ivsize, ivsize, 0);
  
 
 
