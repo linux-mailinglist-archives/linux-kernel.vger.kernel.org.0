@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 536ED74698
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:53:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90C627467C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:53:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbfGYFxU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:53:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53750 "EHLO mail.kernel.org"
+        id S2404164AbfGYFjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:39:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404088AbfGYFjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:39:32 -0400
+        id S2404147AbfGYFjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 01:39:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9B3A22BF5;
-        Thu, 25 Jul 2019 05:39:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3EA222CB8;
+        Thu, 25 Jul 2019 05:39:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564033171;
-        bh=IJzPv0efnX/GIfBHuWqn6Dq8wDNwf2eZFUyHWJ0XkP4=;
+        s=default; t=1564033184;
+        bh=8kej9sP2nt2ltefV/7IVyIKRLgLqp6NPbBsCwaR+sLs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q+teFw2IWBXjjAJR3qA7XuAaZb6QrS4LLSHiWrM3BkW5b2WClDMtT7scCSAeBg8Dh
-         gPureYb7wlLtnl3vQjRmXBzXT8p6N7poCJME3XXRNh3mKdSeQioaV1c1bkgYz5oYAn
-         Jhcmw16EAMrPcydnLhX4Flie5ETnYJOiR0ThbXEk=
+        b=Eqsz+HGpUPbL8DY9SOAu2G7T7hXoUAiZ/qasRCP14ncwB/vzUbbw6MEk2LLfGfEeP
+         frX+GzPSE63+NnPQ2y6Odj3i4sJEObqFy9VVHaapBqhrTbHY9dMVR9LZIhiuJHsFGK
+         6pQWl2jiDTtgiNFS2ABQ6PoRQRlHYQa0R+cjbmb8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Mauro S. M. Rodrigues" <maurosr@linux.vnet.ibm.com>,
+        Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 115/271] clocksource/drivers/exynos_mct: Increase priority over ARM arch timer
-Date:   Wed, 24 Jul 2019 21:19:44 +0200
-Message-Id: <20190724191705.092643901@linuxfoundation.org>
+Subject: [PATCH 4.19 119/271] ixgbe: Check DDM existence in transceiver before access
+Date:   Wed, 24 Jul 2019 21:19:48 +0200
+Message-Id: <20190724191705.462413365@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191655.268628197@linuxfoundation.org>
 References: <20190724191655.268628197@linuxfoundation.org>
@@ -47,74 +47,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6282edb72bed5324352522d732080d4c1b9dfed6 ]
+[ Upstream commit 655c91414579d7bb115a4f7898ee726fc18e0984 ]
 
-Exynos SoCs based on CA7/CA15 have 2 timer interfaces: custom Exynos MCT
-(Multi Core Timer) and standard ARM Architected Timers.
+Some transceivers may comply with SFF-8472 but not implement the Digital
+Diagnostic Monitoring (DDM) interface described in it. The existence of
+such area is specified by bit 6 of byte 92, set to 1 if implemented.
 
-There are use cases, where both timer interfaces are used simultanously.
-One of such examples is using Exynos MCT for the main system timer and
-ARM Architected Timers for the KVM and virtualized guests (KVM requires
-arch timers).
+Currently, due to not checking this bit ixgbe fails trying to read SFP
+module's eeprom with the follow message:
 
-Exynos Multi-Core Timer driver (exynos_mct) must be however started
-before ARM Architected Timers (arch_timer), because they both share some
-common hardware blocks (global system counter) and turning on MCT is
-needed to get ARM Architected Timer working properly.
+ethtool -m enP51p1s0f0
+Cannot get Module EEPROM data: Input/output error
 
-To ensure selecting Exynos MCT as the main system timer, increase MCT
-timer rating. To ensure proper starting order of both timers during
-suspend/resume cycle, increase MCT hotplug priority over ARM Archictected
-Timers.
+Because it fails to read the additional 256 bytes in which it was assumed
+to exist the DDM data.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+This issue was noticed using a Mellanox Passive DAC PN 01FT738. The eeprom
+data was confirmed by Mellanox as correct and present in other Passive
+DACs in from other manufacturers.
+
+Signed-off-by: "Mauro S. M. Rodrigues" <maurosr@linux.vnet.ibm.com>
+Reviewed-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clocksource/exynos_mct.c | 4 ++--
- include/linux/cpuhotplug.h       | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c | 3 ++-
+ drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h     | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index d55c30f6981d..aaf5bfa9bd9c 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -211,7 +211,7 @@ static void exynos4_frc_resume(struct clocksource *cs)
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
+index e5a8461fe6a9..8829bd95d0d3 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
+@@ -3223,7 +3223,8 @@ static int ixgbe_get_module_info(struct net_device *dev,
+ 		page_swap = true;
+ 	}
  
- static struct clocksource mct_frc = {
- 	.name		= "mct-frc",
--	.rating		= 400,
-+	.rating		= 450,	/* use value higher than ARM arch timer */
- 	.read		= exynos4_frc_read,
- 	.mask		= CLOCKSOURCE_MASK(32),
- 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
-@@ -466,7 +466,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
- 	evt->set_state_oneshot_stopped = set_state_shutdown;
- 	evt->tick_resume = set_state_shutdown;
- 	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
--	evt->rating = 450;
-+	evt->rating = 500;	/* use value higher than ARM arch timer */
- 
- 	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
- 
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index dec0372efe2e..d67c0035165c 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -116,10 +116,10 @@ enum cpuhp_state {
- 	CPUHP_AP_PERF_ARM_ACPI_STARTING,
- 	CPUHP_AP_PERF_ARM_STARTING,
- 	CPUHP_AP_ARM_L2X0_STARTING,
-+	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
- 	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
- 	CPUHP_AP_ARM_GLOBAL_TIMER_STARTING,
- 	CPUHP_AP_JCORE_TIMER_STARTING,
--	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
- 	CPUHP_AP_ARM_TWD_STARTING,
- 	CPUHP_AP_QCOM_TIMER_STARTING,
- 	CPUHP_AP_ARMADA_TIMER_STARTING,
+-	if (sff8472_rev == IXGBE_SFF_SFF_8472_UNSUP || page_swap) {
++	if (sff8472_rev == IXGBE_SFF_SFF_8472_UNSUP || page_swap ||
++	    !(addr_mode & IXGBE_SFF_DDM_IMPLEMENTED)) {
+ 		/* We have a SFP, but it does not support SFF-8472 */
+ 		modinfo->type = ETH_MODULE_SFF_8079;
+ 		modinfo->eeprom_len = ETH_MODULE_SFF_8079_LEN;
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
+index 64e44e01c973..c56baad04ee6 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
+@@ -45,6 +45,7 @@
+ #define IXGBE_SFF_SOFT_RS_SELECT_10G		0x8
+ #define IXGBE_SFF_SOFT_RS_SELECT_1G		0x0
+ #define IXGBE_SFF_ADDRESSING_MODE		0x4
++#define IXGBE_SFF_DDM_IMPLEMENTED		0x40
+ #define IXGBE_SFF_QSFP_DA_ACTIVE_CABLE		0x1
+ #define IXGBE_SFF_QSFP_DA_PASSIVE_CABLE		0x8
+ #define IXGBE_SFF_QSFP_CONNECTOR_NOT_SEPARABLE	0x23
 -- 
 2.20.1
 
