@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D332737AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:18:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13707737A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:18:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387677AbfGXTSd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:18:33 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:53050 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728968AbfGXTSI (ORCPT
+        id S1728989AbfGXTSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:18:09 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:56766 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728945AbfGXTSH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:18:08 -0400
-Received: by mail-io1-f70.google.com with SMTP id p12so52058987iog.19
+        Wed, 24 Jul 2019 15:18:07 -0400
+Received: by mail-io1-f71.google.com with SMTP id u25so51737767iol.23
         for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:18:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=+Xth2lHyiuRzcaAju3mJNcm0GH89euUPbCyns5kD0e0=;
-        b=De7OdDaiAOaJdfvCMPdjTtfTiz2EBPzmHM77GX6m6SKY6jXkjNk1YTFOzINPE3Yi5X
-         bf/vaH6alpvtXZAqZSJ16XvROdrEwZ9ZcKvU1pGGa6W59unRgAFqtt3pTDJED+22zaxm
-         YEb3v/R0fuW3vjdFJa0OVmQybSDYnLVL+qizkzYP71X52/WKPl5uQ6oUUA6/Vw4lc0cu
-         UKcWD7Mr1ZTSzodr/Pt7RB5tUwL2ipP1teE42Ns/wQMsi9N6HQvdMWDku3raO5cxOXw7
-         Jm7CnoYmnwwLtFTuE7XMWTu75LVR4J1oXAYXT+mrbPWQWZYVOAYfTo1oqZzu3AvCfI/T
-         5Cwg==
-X-Gm-Message-State: APjAAAVQKhVQushUMBYnZyfX4Bpe5TqUntL7ASmakKdNrb4Q9b1FIGX0
-        lAPn3D7bvRr3uU+w2rAtYPwGC5W9HKs8gyUT3IMCk2f5zpwK
-X-Google-Smtp-Source: APXvYqyr5nWHyL3ESeWO4iMGSFO7coGdQMklNN+gKZo+2AakNG9NqgNIpPqh8euffOOiBfVBadblnX0BhPx1ZITB2xWlVw+mfGfL
+        bh=/KbbthRJZk0AxJWbum4pr1UQLrzvmUjB/GqGbUAPhkE=;
+        b=D/5qLrLU/OucHoaTs6JTh6mhD16zUz2FVqF/D6jxkvlhV79uhDpG0i+rrJzdv/c3ZN
+         pZd66drXQ/3be2bWqTfQLTpyxUMw7ZEprtzAb3oL4nI/+q7PLqsBym4/3ol/gBh+uArd
+         GrQKBZYRRWvnmeO50ODlyQsgcxv6KPXkSbUA75+Fk7v5OiJQuuuBsQmkoXURJDwosOkW
+         xuJcBESqZooyzcp2ST8rkcYL4TCzDrXO6fU3GhphscrO5e/NjAWmcnj3Ad2NLV8E2QNd
+         V5XvRma4VFrFbH4wQebsnv7fV34bhySg28Z2Rf/4mJtqmuNVo9JbpkaqdURIzzeiOeK8
+         iMvw==
+X-Gm-Message-State: APjAAAVqwmWqimyq8HahANmBNSHkNpfFl2Ijs7lKjiiziXnB5gjNFV+1
+        hZuveitlM6zN5ysfN7vQ3SRuqxLb2LsbYL/8OkZ+Y6XdBJh3
+X-Google-Smtp-Source: APXvYqyFDeSAO4sa6RZWdMFSrRfA6xw74ThmADE7c0L0BoUD9BTewtNZ1iTIGdPQiciu8ZsPIdTxkSWkapBZnbtOmAfyK9+bJOHK
 MIME-Version: 1.0
-X-Received: by 2002:a6b:fb02:: with SMTP id h2mr53124412iog.289.1563995887565;
+X-Received: by 2002:a5d:8447:: with SMTP id w7mr1629918ior.197.1563995887252;
  Wed, 24 Jul 2019 12:18:07 -0700 (PDT)
 Date:   Wed, 24 Jul 2019 12:18:07 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004f0309058e722b24@google.com>
-Subject: general protection fault in rose_transmit_clear_request
-From:   syzbot <syzbot+a1c743815982d9496393@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000004a3a63058e722b94@google.com>
+Subject: WARNING in ovl_real_fdget_meta
+From:   syzbot <syzbot+032bc63605089a199d30@syzkaller.appspotmail.com>
+To:     linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,90 +50,68 @@ syzbot found the following crash on:
 
 HEAD commit:    c6dd78fc Merge branch 'x86-urgent-for-linus' of git://git...
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10656fa4600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7937b718ddac333b
-dashboard link: https://syzkaller.appspot.com/bug?extid=a1c743815982d9496393
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f6d348600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12cad91fa00000
-
-Bisection is inconclusive: the bug happens on the oldest tested release.
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1164f2f4600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1564f2f4600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1346d53fa00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3c8985c08e1f9727
+dashboard link: https://syzkaller.appspot.com/bug?extid=032bc63605089a199d30
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15855334600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17fcc4c8600000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a1c743815982d9496393@syzkaller.appspotmail.com
+Reported-by: syzbot+032bc63605089a199d30@syzkaller.appspotmail.com
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.2.0+ #37
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 8471 at fs/overlayfs/file.c:55 ovl_change_flags  
+fs/overlayfs/file.c:55 [inline]
+WARNING: CPU: 1 PID: 8471 at fs/overlayfs/file.c:55  
+ovl_real_fdget_meta.cold+0x11/0x1e fs/overlayfs/file.c:106
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 8471 Comm: syz-executor111 Not tainted 5.2.0+ #71
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:rose_send_frame /net/rose/rose_link.c:101 [inline]
-RIP: 0010:rose_transmit_clear_request+0x1ee/0x460 /net/rose/rose_link.c:255
-Code: fc ff df 80 3c 08 00 74 12 4c 89 f7 e8 8b 57 dd fa 48 b9 00 00 00 00  
-00 fc ff df bb 50 03 00 00 49 03 1e 48 89 d8 48 c1 e8 03 <80> 3c 08 00 74  
-12 48 89 df e8 64 57 dd fa 48 b9 00 00 00 00 00 fc
-RSP: 0018:ffff8880aeb09a28 EFLAGS: 00010206
-RAX: 000000000000006a RBX: 0000000000000350 RCX: dffffc0000000000
-RDX: 0000000080000101 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff8880aeb09a70 R08: ffffffff86d3c4c5 R09: ffffed101255690d
-R10: ffffed101255690d R11: 0000000000000000 R12: ffff8882167bec80
-R13: ffff888092ab47dc R14: ffff8882167beca0 R15: ffff888092ab47de
-FS:  0000000000000000(0000) GS:ffff8880aeb00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000190 CR3: 000000009c1e1000 CR4: 00000000001406e0
 Call Trace:
-  <IRQ>
-  rose_rx_call_request+0xadb/0x1b00 /net/rose/af_rose.c:998
-  rose_loopback_timer+0x2f8/0x480 /net/rose/rose_loopback.c:100
-  call_timer_fn+0xec/0x200 /kernel/time/timer.c:1322
-  expire_timers /kernel/time/timer.c:1366 [inline]
-  __run_timers+0x7cd/0x9c0 /kernel/time/timer.c:1685
-  run_timer_softirq+0x1d/0x40 /kernel/time/timer.c:1698
-  __do_softirq+0x307/0x774 /./arch/x86/include/asm/paravirt.h:778
-  invoke_softirq /kernel/softirq.c:373 [inline]
-  irq_exit+0x1e9/0x1f0 /kernel/softirq.c:413
-  exiting_irq /./arch/x86/include/asm/apic.h:537 [inline]
-  smp_apic_timer_interrupt+0xcc/0x220 /arch/x86/kernel/apic/apic.c:1095
-  apic_timer_interrupt+0xf/0x20 /arch/x86/entry/entry_64.S:828
-  </IRQ>
-RIP: 0010:native_safe_halt+0xe/0x10 /./arch/x86/include/asm/irqflags.h:61
-Code: 38 46 0a fa eb ae 89 d9 80 e1 07 80 c1 03 38 c1 7c ba 48 89 df e8 22  
-46 0a fa eb b0 e9 07 00 00 00 0f 00 2d e6 b0 5b 00 fb f4 <c3> 90 e9 07 00  
-00 00 0f 00 2d d6 b0 5b 00 f4 c3 90 90 55 48 89 e5
-RSP: 0018:ffff8880a98c7d38 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-RAX: 1ffffffff11950f3 RBX: ffff8880a98bc340 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: ffffffff812cd3ea RDI: ffff8880a98bcb38
-RBP: ffff8880a98c7d40 R08: ffff8880a98bcb50 R09: ffffed1015317869
-R10: ffffed1015317869 R11: 0000000000000000 R12: 1ffff11015317868
-R13: 0000000000000001 R14: dffffc0000000000 R15: 1ffffffff11950f1
-  arch_cpu_idle+0xa/0x10 /arch/x86/kernel/process.c:571
-  default_idle_call+0x59/0xa0 /kernel/sched/idle.c:94
-  cpuidle_idle_call /kernel/sched/idle.c:154 [inline]
-  do_idle+0x174/0x770 /kernel/sched/idle.c:263
-  cpu_startup_entry+0x25/0x30 /kernel/sched/idle.c:354
-  start_secondary+0x3f4/0x490 /arch/x86/kernel/smpboot.c:264
-  secondary_startup_64+0xa4/0xb0 /arch/x86/kernel/head_64.S:241
-Modules linked in:
----[ end trace fd2ad3b72484e5c3 ]---
-RIP: 0010:rose_send_frame /net/rose/rose_link.c:101 [inline]
-RIP: 0010:rose_transmit_clear_request+0x1ee/0x460 /net/rose/rose_link.c:255
-Code: fc ff df 80 3c 08 00 74 12 4c 89 f7 e8 8b 57 dd fa 48 b9 00 00 00 00  
-00 fc ff df bb 50 03 00 00 49 03 1e 48 89 d8 48 c1 e8 03 <80> 3c 08 00 74  
-12 48 89 df e8 64 57 dd fa 48 b9 00 00 00 00 00 fc
-RSP: 0018:ffff8880aeb09a28 EFLAGS: 00010206
-RAX: 000000000000006a RBX: 0000000000000350 RCX: dffffc0000000000
-RDX: 0000000080000101 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff8880aeb09a70 R08: ffffffff86d3c4c5 R09: ffffed101255690d
-R10: ffffed101255690d R11: 0000000000000000 R12: ffff8882167bec80
-R13: ffff888092ab47dc R14: ffff8882167beca0 R15: ffff888092ab47de
-FS:  0000000000000000(0000) GS:ffff8880aeb00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000190 CR3: 000000009c1e1000 CR4: 00000000001406e0
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x16f/0x1f0 lib/dump_stack.c:113
+  panic+0x2dc/0x755 kernel/panic.c:219
+  __warn.cold+0x20/0x4c kernel/panic.c:576
+  report_bug+0x263/0x2b0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
+  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1026
+RIP: 0010:ovl_change_flags fs/overlayfs/file.c:55 [inline]
+RIP: 0010:ovl_real_fdget_meta.cold+0x11/0x1e fs/overlayfs/file.c:106
+Code: e9 b3 fd ff ff e8 0c 68 4f ff e9 fb fd ff ff e8 02 68 4f ff e9 15 fe  
+ff ff e8 b8 a6 15 ff 48 c7 c7 a0 45 b3 87 e8 c0 db ff fe <0f> 0b 41 bc fb  
+ff ff ff e9 68 c6 ff ff e8 9a a6 15 ff 48 c7 c7 a0
+RSP: 0018:ffff8880a1bffdc0 EFLAGS: 00010286
+RAX: 0000000000000024 RBX: 0000000004048000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff815b9de2 RDI: ffffed101437ffaa
+RBP: ffff8880a1bffdf0 R08: 0000000000000024 R09: ffffed1015d26079
+R10: ffffed1015d26078 R11: ffff8880ae9303c7 R12: 000000000000a000
+R13: ffff88809bc592c0 R14: ffff88809bc59338 R15: ffff8880898e0460
+  ovl_real_fdget fs/overlayfs/file.c:113 [inline]
+  ovl_llseek+0x105/0x3b0 fs/overlayfs/file.c:163
+  vfs_llseek fs/read_write.c:300 [inline]
+  ksys_lseek+0x116/0x1b0 fs/read_write.c:313
+  __do_sys_lseek fs/read_write.c:324 [inline]
+  __se_sys_lseek fs/read_write.c:322 [inline]
+  __x64_sys_lseek+0x73/0xb0 fs/read_write.c:322
+  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x441ce9
+Code: e8 1c b4 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffcff68e398 EFLAGS: 00000246 ORIG_RAX: 0000000000000008
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441ce9
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000402af0 R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
@@ -142,6 +121,5 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 syzbot can test patches for this bug, for details see:
 https://goo.gl/tpsmEJ#testing-patches
