@@ -2,72 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5963B73660
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 20:12:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA1AC73667
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 20:14:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbfGXSM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 14:12:29 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:49410 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726298AbfGXSM3 (ORCPT
+        id S1728127AbfGXSOz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 14:14:55 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42678 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728011AbfGXSOx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 14:12:29 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 69037154082D4;
-        Wed, 24 Jul 2019 11:12:28 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 11:12:25 -0700 (PDT)
-Message-Id: <20190724.111225.2257475150626507655.davem@davemloft.net>
-To:     ebiggers@kernel.org
-Cc:     eric.dumazet@gmail.com, dvyukov@google.com, netdev@vger.kernel.org,
-        fw@strlen.de, i.maximets@samsung.com, edumazet@google.com,
-        dsahern@gmail.com, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: Reminder: 99 open syzbot bugs in net subsystem
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190724163014.GC673@sol.localdomain>
-References: <20190724013813.GB643@sol.localdomain>
-        <63f12327-dd4b-5210-4de2-705af6bc4ba4@gmail.com>
-        <20190724163014.GC673@sol.localdomain>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 24 Jul 2019 11:12:28 -0700 (PDT)
+        Wed, 24 Jul 2019 14:14:53 -0400
+Received: by mail-ot1-f65.google.com with SMTP id l15so48821400otn.9
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 11:14:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qBB4NIUezJfffKo6WArQqxSmCR6R1iK7nA9Imt65nrA=;
+        b=lWNkNy2HocdqrSPSjM86VbsoPLqsarjkWdpIa+rbyfMi2VVwhNVXgnmJbHOpO1W7FT
+         LQMzXGrgksgL9tGb50G9TiUwzlVWVbhzfAN6YgzYvj9m0yrQTGiGJQ6UBv0FRFiUeI0Y
+         0Pu6bKOZZAfkCCJlOZkDOX7Sot7v/XhX7gKi7M6McIRW/+SPegOlDe8lp/F2tcsjSooD
+         yoc081wlkW7WCUVG3wHzzrnhXOxIHoMB4QEeSlGWs5yVG93jDJsFjxlbNrryYK6ptn6i
+         6hV19p7RkJbrSN7B0r9AaIRRx/7XrpljhjtHs8tAhBqO1U4zdzM1POwxhMmkzWwsle0x
+         TalA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qBB4NIUezJfffKo6WArQqxSmCR6R1iK7nA9Imt65nrA=;
+        b=iVidYSagnqQN2NH5D17296fN3lg+ML+yJVvW2HrKlh/L24d6utGsp57JRjHyip58nX
+         fpoYI7lAMal91A51RRIBIqornmuRY6hX6Q5w4CYttUT3F+4vxqOWeh/xL2g2HL0LNWiA
+         Jy28CEqXd87Kozrb9OV27TAg2o1K9p+YlU2FLUhQTNiJADQ79pTiCc9GW1gjFfkYVc2y
+         P4tCnEpDenK2T7clFj8ulqGi6aoGsLbEe0K8MYCZ1jagkIoFJdiWPw5ICLicE5M4KWGC
+         KwwqA5VPt5qKnoAM4Ag8kEQKgrZjPW2rhQZEUxuR4usJHQJpwzV+LupP+Y709aLHDh/v
+         BpRg==
+X-Gm-Message-State: APjAAAXrZcfWSbeAWLhhaRUtkTPgujhiv/8awBM1+uvgRaZHPNfGnvku
+        PbFjHekioR0u9GdqEw/6qq9J3DABR6VTlno0z6TtEw==
+X-Google-Smtp-Source: APXvYqwHy5zLM+W8es+5EDo+pppJ0LUeZRmJbRYgUyIKhGpRl4E7tMR2+zkmduhMX/+diAhhSgIEktJcOUDM+vPLN9k=
+X-Received: by 2002:a05:6830:15cd:: with SMTP id j13mr44476599otr.110.1563992092278;
+ Wed, 24 Jul 2019 11:14:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190724144651.28272-1-christian@brauner.io> <20190724144651.28272-5-christian@brauner.io>
+In-Reply-To: <20190724144651.28272-5-christian@brauner.io>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 24 Jul 2019 20:14:26 +0200
+Message-ID: <CAG48ez3nuY__qvctoOnX7mQbjjP4chEs4K-OPxSQficiPLS18w@mail.gmail.com>
+Subject: Re: [PATCH 4/5] pidfd: add CLONE_WAIT_PID
+To:     Christian Brauner <christian@brauner.io>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tejun Heo <tj@kernel.org>, David Howells <dhowells@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        kernel-team <kernel-team@android.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@kernel.org>
-Date: Wed, 24 Jul 2019 09:30:14 -0700
+On Wed, Jul 24, 2019 at 4:48 PM Christian Brauner <christian@brauner.io> wrote:
+> If CLONE_WAIT_PID is set the newly created process will not be
+> considered by process wait requests that wait generically on children
+> such as:
+>
+>         syscall(__NR_wait4, -1, wstatus, options, rusage)
+>         syscall(__NR_waitpid, -1, wstatus, options)
+>         syscall(__NR_waitid, P_ALL, -1, siginfo, options, rusage)
+>         syscall(__NR_waitid, P_PGID, -1, siginfo, options, rusage)
+>         syscall(__NR_waitpid, -pid, wstatus, options)
+>         syscall(__NR_wait4, -pid, wstatus, options, rusage)
+>
+> A process created with CLONE_WAIT_PID can only be waited upon with a
+> focussed wait call. This ensures that processes can be reaped even if
+> all file descriptors referring to it are closed.
+[...]
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index baaff6570517..a067f3876e2e 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -1910,6 +1910,8 @@ static __latent_entropy struct task_struct *copy_process(
+>         delayacct_tsk_init(p);  /* Must remain after dup_task_struct() */
+>         p->flags &= ~(PF_SUPERPRIV | PF_WQ_WORKER | PF_IDLE);
+>         p->flags |= PF_FORKNOEXEC;
+> +       if (clone_flags & CLONE_WAIT_PID)
+> +               p->flags |= PF_WAIT_PID;
+>         INIT_LIST_HEAD(&p->children);
+>         INIT_LIST_HEAD(&p->sibling);
+>         rcu_copy_process(p);
 
-> On Wed, Jul 24, 2019 at 08:39:05AM +0200, Eric Dumazet wrote:
->> Some of the bugs have been fixed already, before syzbot found them.
->> 
->> Why force human to be gentle to bots and actually replying to them ?
->> 
->> I usually simply wait that syzbot is finding the bug does not repro anymore,
->> but now if you send these emails, we will have even more pressure on us.
->> 
-> 
-> First, based on experience, I'd guess about 30-45 of these are still valid.  17
-> were seen in mainline in the last week, but some others are valid too.  The ones
-> most likely to still be valid are at the beginning of the list.  So let's try
-> not use the presence of outdated bugs as an excuse not to fix current bugs.
-
-So about half of the bugs we are to look at are already fixed and thus
-noise, even as estimated by you.
-
-I agree with Eric, these "reminders" are bad for the people you
-actually want to work on fixing these bugs.
-
-> Since the kernel community is basically in continuous bug bankruptcy and lots of
-
-I don't like this hyperbole.  Please present facts and information we
-can actually use to improve the kernel development and bug fixing
-process.
-
-Thank you.
+This means that if a process with PF_WAIT_PID forks, the child
+inherits the flag, right? That seems unintended? You might have to add
+something like "if (clone_flags & CLONE_THREAD == 0) p->flags &=
+~PF_WAIT_PID;" before this. (I think threads do have to inherit the
+flag so that the case where a non-leader thread of the child goes
+through execve and steals the leader's identity is handled properly.)
+Or you could cram it somewhere into signal_struct instead of on the
+task - that might be a more logical place for it?
