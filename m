@@ -2,129 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 062A67311B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:07:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1015B73120
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:08:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727736AbfGXOHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 10:07:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:41662 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726178AbfGXOHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 10:07:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 449AE28;
-        Wed, 24 Jul 2019 07:07:40 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C7DA53F71A;
-        Wed, 24 Jul 2019 07:07:37 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 15:07:35 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Steven Price <steven.price@arm.com>, x86@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        James Morse <james.morse@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "Liang, Kan" <kan.liang@linux.intel.com>
-Subject: Re: [PATCH v9 00/21] Generic page walk and ptdump
-Message-ID: <20190724140735.GD2624@lakrids.cambridge.arm.com>
-References: <20190722154210.42799-1-steven.price@arm.com>
- <20190723101639.GD8085@lakrids.cambridge.arm.com>
- <e108b8a6-deca-e69c-b338-52a98b14be86@arm.com>
- <alpine.DEB.2.21.1907241541570.1791@nanos.tec.linutronix.de>
+        id S2387447AbfGXOIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 10:08:02 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2752 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726178AbfGXOIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 10:08:01 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 3FD101BF82E4CB908D9F;
+        Wed, 24 Jul 2019 22:07:59 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Wed, 24 Jul 2019
+ 22:07:53 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <akpm@linux-foundation.org>, <kirill.shutemov@linux.intel.com>,
+        <mhocko@suse.com>, <vbabka@suse.cz>, <yang.shi@linux.alibaba.com>,
+        <jannh@google.com>, <walken@google.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] mm/mmap.c: silence variable 'new_start' set but not used
+Date:   Wed, 24 Jul 2019 22:07:39 +0800
+Message-ID: <20190724140739.59532-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1907241541570.1791@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 03:57:33PM +0200, Thomas Gleixner wrote:
-> On Wed, 24 Jul 2019, Steven Price wrote:
-> > On 23/07/2019 11:16, Mark Rutland wrote:
-> > > Are there any visible changes to the arm64 output?
-> > 
-> > arm64 output shouldn't change. I've confirmed that "efi_page_tables" is
-> > identical on a Juno before/after the change. "kernel_page_tables"
-> > obviously will vary depending on the exact layout of memory, but the
-> > format isn't changed.
-> > 
-> > x86 output does change due to patch 14. In this case the change is
-> > removing the lines from the output of the form...
-> > 
-> > > 0xffffffff84800000-0xffffffffa0000000         440M                               pmd
-> > 
-> > ...which are unpopulated areas of the memory map. Populated lines which
-> > have attributes are unchanged.
-> 
-> Having the hole size and the level in the dump is a very conveniant thing.
+'new_start' is used in is_hugepage_only_range(),
+which do nothing in some arch. gcc will warning:
 
-Mhmm; I thought that we logged which level was empty on arm64 (but
-apparently not), since knowing the structure can be important.
+mm/mmap.c: In function acct_stack_growth:
+mm/mmap.c:2311:16: warning: variable new_start set but not used [-Wunused-but-set-variable]
 
-> Right now we have:
-> 
-> 0xffffffffc0427000-0xffffffffc042b000          16K     ro                     NX pte
-> 0xffffffffc042b000-0xffffffffc042e000          12K     RW                     NX pte
-> 0xffffffffc042e000-0xffffffffc042f000           4K                               pte
-> 0xffffffffc042f000-0xffffffffc0430000           4K     ro                     x  pte
-> 0xffffffffc0430000-0xffffffffc0431000           4K     ro                     NX pte
-> 0xffffffffc0431000-0xffffffffc0433000           8K     RW                     NX pte
-> 0xffffffffc0433000-0xffffffffc0434000           4K                               pte
-> 0xffffffffc0434000-0xffffffffc0436000           8K     ro                     x  pte
-> 0xffffffffc0436000-0xffffffffc0438000           8K     ro                     NX pte
-> 0xffffffffc0438000-0xffffffffc043a000           8K     RW                     NX pte
-> 0xffffffffc043a000-0xffffffffc043f000          20K                               pte
-> 0xffffffffc043f000-0xffffffffc0444000          20K     ro                     x  pte
-> 0xffffffffc0444000-0xffffffffc0447000          12K     ro                     NX pte
-> 0xffffffffc0447000-0xffffffffc0449000           8K     RW                     NX pte
-> 0xffffffffc0449000-0xffffffffc044f000          24K                               pte
-> 0xffffffffc044f000-0xffffffffc0450000           4K     ro                     x  pte
-> 0xffffffffc0450000-0xffffffffc0451000           4K     ro                     NX pte
-> 0xffffffffc0451000-0xffffffffc0453000           8K     RW                     NX pte
-> 0xffffffffc0453000-0xffffffffc0458000          20K                               pte
-> 0xffffffffc0458000-0xffffffffc0459000           4K     ro                     x  pte
-> 0xffffffffc0459000-0xffffffffc045b000           8K     ro                     NX pte
-> 
-> with your change this becomes:
-> 
-> 0xffffffffc0427000-0xffffffffc042b000          16K     ro                     NX pte
-> 0xffffffffc042b000-0xffffffffc042e000          12K     RW                     NX pte
-> 0xffffffffc042f000-0xffffffffc0430000           4K     ro                     x  pte
-> 0xffffffffc0430000-0xffffffffc0431000           4K     ro                     NX pte
-> 0xffffffffc0431000-0xffffffffc0433000           8K     RW                     NX pte
-> 0xffffffffc0434000-0xffffffffc0436000           8K     ro                     x  pte
-> 0xffffffffc0436000-0xffffffffc0438000           8K     ro                     NX pte
-> 0xffffffffc0438000-0xffffffffc043a000           8K     RW                     NX pte
-> 0xffffffffc043f000-0xffffffffc0444000          20K     ro                     x  pte
-> 0xffffffffc0444000-0xffffffffc0447000          12K     ro                     NX pte
-> 0xffffffffc0447000-0xffffffffc0449000           8K     RW                     NX pte
-> 0xffffffffc044f000-0xffffffffc0450000           4K     ro                     x  pte
-> 0xffffffffc0450000-0xffffffffc0451000           4K     ro                     NX pte
-> 0xffffffffc0451000-0xffffffffc0453000           8K     RW                     NX pte
-> 0xffffffffc0458000-0xffffffffc0459000           4K     ro                     x  pte
-> 0xffffffffc0459000-0xffffffffc045b000           8K     ro                     NX pte
-> 
-> which is 5 lines less, but a pain to figure out the size of the holes. And
-> it becomes even more painful when the holes go across different mapping
-> levels.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ mm/mmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I agree.
+diff --git a/mm/mmap.c b/mm/mmap.c
+index e2dbed3..56c2a92 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2308,7 +2308,7 @@ static int acct_stack_growth(struct vm_area_struct *vma,
+ 			     unsigned long size, unsigned long grow)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+-	unsigned long new_start;
++	unsigned long __maybe_unused new_start;
+ 
+ 	/* address space limit tests */
+ 	if (!may_expand_vm(mm, vma->vm_flags, grow))
+-- 
+2.7.4
 
-Steven, could you align arm64 with the x86 behaviour here?
 
-Thanks,
-Mark.
