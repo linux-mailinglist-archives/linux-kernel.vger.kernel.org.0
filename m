@@ -2,136 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CF3472C1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 12:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 151BB72C17
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 12:09:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbfGXKJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 06:09:13 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53441 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727137AbfGXKJK (ORCPT
+        id S1727038AbfGXKJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 06:09:04 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:37779 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbfGXKJD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 06:09:10 -0400
-Received: by mail-wm1-f67.google.com with SMTP id x15so41257159wmj.3;
-        Wed, 24 Jul 2019 03:09:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=IFe+jDxbDPAMh5mQn2e4hJUl3LINzr9GC6L5Ez1zNn0=;
-        b=i2p/M+LAeRvbUKD/68s1cgVD0YtEqDlKcBKcUOyC/tbJRQUhvvkKqYCfsSTAjPesLz
-         +gQ75RPq4quMzyB3yVhjrtKY8tXRFi9hbTIIwD4XGiSH5i3iP9lo+iYebcQBnKsk+wwc
-         NzGbxf90py4HBCmAMupj0N3ro/zBDn4uQ/wuc3KAWhHqB+fn++YjcO+luLtepCNRjzku
-         Cv3FIUldnZAAFytcBF89rpDJOV6lpOelKVujF2O0sLMDiE/W1/9ps7Ls1X/OSnftLQ+f
-         Z27Ppufku+RgxxEPmbTDUU6nHuTgHG89KUnZJJX7zQffHudGzGBZjP3yxcw9zfFY/UW7
-         4MKA==
-X-Gm-Message-State: APjAAAUKJ6WQhvt1pDQ6ED+w9uC8r0ftCN8ASDcHbinJuq177VAOZU7T
-        i8Ad0lvM9w5WQhgu6xnSSKFtgFYu
-X-Google-Smtp-Source: APXvYqwZZOAkqi9LeSfBkupGAm4lvglO0LKKV1ME5x1F2x4o1JGGT8stdCf+/ZjTACw/PDgrFu+zLQ==
-X-Received: by 2002:a1c:480a:: with SMTP id v10mr73284060wma.120.1563962947927;
-        Wed, 24 Jul 2019 03:09:07 -0700 (PDT)
-Received: from ?IPv6:2a0b:e7c0:0:107::ee2? ([2a0b:e7c0:0:107::ee2])
-        by smtp.gmail.com with ESMTPSA id c7sm39149158wro.70.2019.07.24.03.09.06
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 03:09:07 -0700 (PDT)
-Subject: Re: [PATCH] tty/isicom: remove redundant assignment to variable
- word_count
-To:     Colin King <colin.king@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190723150314.14513-1-colin.king@canonical.com>
-From:   Jiri Slaby <jslaby@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jslaby@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <90da3a1d-ff0f-937b-d212-bb5428486768@suse.com>
-Date:   Wed, 24 Jul 2019 12:09:06 +0200
+        Wed, 24 Jul 2019 06:09:03 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190724100901epoutp03b87169cceaa0b66d691a2799cf8b552b~0UAJgEB9N3154031540epoutp03W
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 10:09:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190724100901epoutp03b87169cceaa0b66d691a2799cf8b552b~0UAJgEB9N3154031540epoutp03W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1563962941;
+        bh=M76xakPDx2OTv/uYhsVSzoNlBCf/2Sk7P7BT1WxznQ0=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Ao7/EbTdhhogTxPVyoaPgTDPTki+xUjmLoEEocZ1FSXtgL7ml+h9wpR4txVpRvm+W
+         sCbktKAKAQR19+ZXGFOQIVNf3FjpVMPlWuoTI5apzkwMNg4jZQZdZu929Xrupz3/Yu
+         zdWa+QZaSjKAgItsiC6pt03WirMtVo7bf97gIQuc=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20190724100901epcas1p45d07e4fc95975aa4404b76b1c6792c17~0UAJMsrJg0488304883epcas1p4_;
+        Wed, 24 Jul 2019 10:09:01 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.156]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 45trfM2nWGzMqYkV; Wed, 24 Jul
+        2019 10:08:59 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E0.BB.04160.B3E283D5; Wed, 24 Jul 2019 19:08:59 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190724100858epcas1p3e612bfe234c495208efbf160fe61e05a~0UAG8IsOh1360913609epcas1p3b;
+        Wed, 24 Jul 2019 10:08:58 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190724100858epsmtrp23a8d686322ef42d79e3dcc62ba5b13a5~0UAG7V4NS0817208172epsmtrp20;
+        Wed, 24 Jul 2019 10:08:58 +0000 (GMT)
+X-AuditID: b6c32a38-b4bff70000001040-17-5d382e3b6f66
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        89.42.03706.A3E283D5; Wed, 24 Jul 2019 19:08:58 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190724100858epsmtip15f6cb6fc9f00891c14a64916c9e8b837~0UAGwpD0D1096010960epsmtip1M;
+        Wed, 24 Jul 2019 10:08:58 +0000 (GMT)
+Subject: Re: [PATCH] extcon: fsa9480: Support the FSA880 variant
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Mike Lockwood <lockwood@google.com>,
+        devicetree@vger.kernel.org,
+        "cpgs (cpgs@samsung.com)" <cpgs@samsung.com>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <2e832c87-71ea-af32-211d-a301cf58cb04@samsung.com>
+Date:   Wed, 24 Jul 2019 19:12:01 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190723150314.14513-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190723174301.31278-1-linus.walleij@linaro.org>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHJsWRmVeSWpSXmKPExsWy7bCmnq61nkWswb73QhYvD2lazD9yjtVi
+        yp/lTBab5/9htLi8aw6bxetFa9gtbjeuYHNg91iwqdTjzrU9bB59W1YxenzeJBfAEpVtk5Ga
+        mJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQO0X0mhLDGnFCgU
+        kFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYFmgV5yYW1yal66XnJ9rZWhgYGQKVJiQnXFv4UKW
+        gv98FXufdbI2MM7j6WLk4JAQMJHYN4exi5GLQ0hgB6NE7/aHrBDOJ0aJE1e2sUM43xglJnTf
+        Z+li5ATr6G9ezAaR2MsoMWNjD1T/e0aJ+9umMoFUCQs4SJxf1MEIYosIhEvsO3aAGaSIWWA9
+        o8TfOXPYQBJsAloS+1/cALP5BRQlrv54DNbAK2AnseTpYlYQm0VAVeLjknNgcVGBCIlPDw6z
+        QtQISpyc+YQF5AlOoPqupWDXMQuIS9x6Mp8JwpaXaN46G2yvhMBzNomjt36wQ7zgInFh6mJG
+        CFtY4tXxLVBxKYnP7/ayQdjVEitPHmGDaO5glNiy/wIrRMJYYv/SyUwgi5kFNCXW79KHCCtK
+        7Pw9F2omr0TDxt/sEEfwSbz72sMKCWxeiY42IYgSZYnLD+4yTWBUnoXkm1lIXpiF5IVZCMsW
+        MLKsYhRLLSjOTU8tNiwwQY7tTYzgtKllsYNxzzmfQ4wCHIxKPLwKDOaxQqyJZcWVuYcYJTiY
+        lUR4AxvMYoV4UxIrq1KL8uOLSnNSiw8xmgIDeyKzlGhyPjCl55XEG5oaGRsbW5gYmpkaGiqJ
+        8877oxkrJJCeWJKanZpakFoE08fEwSnVwFiloHuz5GcEc81ThzrjZ4b/NqU8M1ebs+vyqcM9
+        5QuFCo90P+V9+bZ/ntTquZdtxdebuJ64m3/hbN/UtoZw5jmCc1cut0k6uTomc3fCm8dbmxh/
+        uTw5fe7IwcNeGzpLug71HC/wKghkdqt2+sBT8jEnkiPa4mbXxrD1B08Ghld6Nwf7JMUdXqrE
+        UpyRaKjFXFScCAD/nDuWsQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42LZdlhJTtdKzyLW4ECHucXLQ5oW84+cY7WY
+        8mc5k8Xm+X8YLS7vmsNm8XrRGnaL240r2BzYPRZsKvW4c20Pm0ffllWMHp83yQWwRHHZpKTm
+        ZJalFunbJXBl3Fu4kKXgP1/F3medrA2M83i6GDk5JARMJPqbF7N1MXJxCAnsZpT4eOwGI0RC
+        UmLaxaPMXYwcQLawxOHDxRA1bxklvqzcxgZSIyzgIHF+UQdYvYhAuMTsBe+ZQYqYBdYzSqxv
+        WsgOkhASmMgosWmjCojNJqAlsf/FDbBmfgFFias/HoM18wrYSSx5upgVxGYRUJX4uOQcWFxU
+        IELi8I5ZUDWCEidnPmEBOYgTqL5rKQtImFlAXeLPvEvMELa4xK0n85kgbHmJ5q2zmScwCs9C
+        0j0LScssJC2zkLQsYGRZxSiZWlCcm55bbFhgmJdarlecmFtcmpeul5yfu4kRHD9amjsYLy+J
+        P8QowMGoxMOrwGAeK8SaWFZcmXuIUYKDWUmEN7DBLFaINyWxsiq1KD++qDQntfgQozQHi5I4
+        79O8Y5FCAumJJanZqakFqUUwWSYOTqkGRsEXBku2PGTq9Ps8w/XimeKsspD3e37+2n+4c+st
+        wcrowh+u8u+O8EZfc1CXUVMXV7fZdOv+vCXmO8QXuV5+kiT5OK9x654fImZ2/9s3hNx4+trd
+        aJm2zCQ2kT/zVe5Xu3/zyuLaLcz4j/OiiKmm0ZkJMu+ltLOFXB5dvOrALpXCVH4k8sAnGSWW
+        4oxEQy3mouJEAHtipjGbAgAA
+X-CMS-MailID: 20190724100858epcas1p3e612bfe234c495208efbf160fe61e05a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+X-CPGSPASS: Y
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190723174344epcas3p4dc935720d75f93a5ca0181662bc8036f
+References: <CGME20190723174344epcas3p4dc935720d75f93a5ca0181662bc8036f@epcas3p4.samsung.com>
+        <20190723174301.31278-1-linus.walleij@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23. 07. 19, 17:03, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 19. 7. 24. 오전 2:43, Linus Walleij wrote:
+> The older compatible variant of this chip is called FSA880
+> and works the same way, if we need some quirks in the future,
+> it is good to let it have its own compatible string.
 > 
-> The variable word_count is being assigned a value that is never read before
-> a return, the assignment is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Looks good, it predates git. Maybe the while loop wanted to use
-word_count originally.
-
-Acked-by: Jiri Slaby <jslaby@suse.cz>
-
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
->  drivers/tty/isicom.c | 1 -
->  1 file changed, 1 deletion(-)
+>  Documentation/devicetree/bindings/extcon/extcon-fsa9480.txt | 4 +++-
+>  drivers/extcon/extcon-fsa9480.c                             | 1 +
+>  2 files changed, 4 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/tty/isicom.c b/drivers/tty/isicom.c
-> index e04a43e89f6b..fc38f96475bf 100644
-> --- a/drivers/tty/isicom.c
-> +++ b/drivers/tty/isicom.c
-> @@ -553,7 +553,6 @@ static irqreturn_t isicom_interrupt(int irq, void *dev_id)
+> diff --git a/Documentation/devicetree/bindings/extcon/extcon-fsa9480.txt b/Documentation/devicetree/bindings/extcon/extcon-fsa9480.txt
+> index d592c21245f2..624bd76f468e 100644
+> --- a/Documentation/devicetree/bindings/extcon/extcon-fsa9480.txt
+> +++ b/Documentation/devicetree/bindings/extcon/extcon-fsa9480.txt
+> @@ -5,7 +5,9 @@ controlled using I2C and enables USB data, stereo and mono audio, video,
+>  microphone, and UART data to use a common connector port.
 >  
->  	tty = tty_port_tty_get(&port->port);
->  	if (tty == NULL) {
-> -		word_count = byte_count >> 1;
->  		while (byte_count > 1) {
->  			inw(base);
->  			byte_count -= 2;
+>  Required properties:
+> - - compatible : Must be "fcs,fsa9480"
+> + - compatible : Must be one of
+> +   "fcs,fsa9480"
+> +   "fcs,fsa880"
+>   - reg : Specifies i2c slave address. Must be 0x25.
+>   - interrupts : Should contain one entry specifying interrupt signal of
+>     interrupt parent to which interrupt pin of the chip is connected.
+> diff --git a/drivers/extcon/extcon-fsa9480.c b/drivers/extcon/extcon-fsa9480.c
+> index 350fb34abfa0..8405512f5199 100644
+> --- a/drivers/extcon/extcon-fsa9480.c
+> +++ b/drivers/extcon/extcon-fsa9480.c
+> @@ -363,6 +363,7 @@ MODULE_DEVICE_TABLE(i2c, fsa9480_id);
+>  
+>  static const struct of_device_id fsa9480_of_match[] = {
+>  	{ .compatible = "fcs,fsa9480", },
+> +	{ .compatible = "fcs,fsa880", },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, fsa9480_of_match);
 > 
 
+Applied it. Thanks.
 
 -- 
-js
-suse labs
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
