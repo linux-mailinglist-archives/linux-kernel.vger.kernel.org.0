@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E7E773891
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:30:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E52A73884
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:30:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388427AbfGXTaw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:30:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51152 "EHLO mail.kernel.org"
+        id S1726691AbfGXTaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:30:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388007AbfGXTas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:30:48 -0400
+        id S2388084AbfGXTaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:30:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7844E229F3;
-        Wed, 24 Jul 2019 19:30:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C57420659;
+        Wed, 24 Jul 2019 19:30:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996648;
-        bh=UYhVJVotaj7fsqpZY+NOnNwcCkeqGoDS+hWkdm5bLjo=;
+        s=default; t=1563996607;
+        bh=v2te+FB3cPa4ATAQblpzTsQNb9tOHmqLNNYRWqN8L+Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oDxROgpGrxEAzJcL2CgHkghbcuHeuuPqk2ddq9ElA8PYjCH/45q6k9grg3AlqpcVJ
-         pmZHouCqjHYMGqHUDKegtwyrQxKQnz10WhCt/KuNWlXxcSiKxLuQ8T3iOQK6pQQM4z
-         5o9JRflDxbnmLiSWJQJ+P9uBuYnCWVKtc8mzCagk=
+        b=lKdj/1UM+n9Erc1Rv4yO/RHZKrcN5LQN1UfPKgdXU+Hi+bZSrNQAXEBpCIQ372IzW
+         GZa/x15fC+H1DmPCvAB5Bn1TPy0xg59oxXteJGi51v6RkHwyYR0FgyjMvUskeZ+Uh5
+         n89A1YHvZhmPZXU7MO8Xp8vu4aHRRo0mupURbvrk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
+        syzbot+1fcc5ef45175fc774231@syzkaller.appspotmail.com,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 128/413] spi: fix ctrl->num_chipselect constraint
-Date:   Wed, 24 Jul 2019 21:16:59 +0200
-Message-Id: <20190724191744.262506567@linuxfoundation.org>
+Subject: [PATCH 5.2 154/413] rtlwifi: rtl8192cu: fix error handle when usb probe failed
+Date:   Wed, 24 Jul 2019 21:17:25 +0200
+Message-Id: <20190724191746.049215509@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -45,63 +47,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f9481b08220d7dc1ff21e296a330ee8b721b44e4 ]
+[ Upstream commit 6c0ed66f1a5b84e2a812c7c2d6571a5621bf3396 ]
 
-at91sam9g25ek showed the following error at probe:
-atmel_spi f0000000.spi: Using dma0chan2 (tx) and dma0chan3 (rx)
-for DMA transfers
-atmel_spi: probe of f0000000.spi failed with error -22
+rtl_usb_probe() must do error handle rtl_deinit_core() only if
+rtl_init_core() is done, otherwise goto error_out2.
 
-Commit 0a919ae49223 ("spi: Don't call spi_get_gpio_descs() before device name is set")
-moved the calling of spi_get_gpio_descs() after ctrl->dev is set,
-but didn't move the !ctrl->num_chipselect check. When there are
-chip selects in the device tree, the spi-atmel driver lets the
-SPI core discover them when registering the SPI master.
-The ctrl->num_chipselect is thus expected to be set by
-spi_get_gpio_descs().
+| usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+| rtl_usb: reg 0xf0, usbctrl_vendorreq TimeOut! status:0xffffffb9 value=0x0
+| rtl8192cu: Chip version 0x10
+| rtl_usb: reg 0xa, usbctrl_vendorreq TimeOut! status:0xffffffb9 value=0x0
+| rtl_usb: Too few input end points found
+| INFO: trying to register non-static key.
+| the code is fine but needs lockdep annotation.
+| turning off the locking correctness validator.
+| CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.1.0-rc4-319354-g9a33b36 #3
+| Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+| Google 01/01/2011
+| Workqueue: usb_hub_wq hub_event
+| Call Trace:
+|   __dump_stack lib/dump_stack.c:77 [inline]
+|   dump_stack+0xe8/0x16e lib/dump_stack.c:113
+|   assign_lock_key kernel/locking/lockdep.c:786 [inline]
+|   register_lock_class+0x11b8/0x1250 kernel/locking/lockdep.c:1095
+|   __lock_acquire+0xfb/0x37c0 kernel/locking/lockdep.c:3582
+|   lock_acquire+0x10d/0x2f0 kernel/locking/lockdep.c:4211
+|   __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+|   _raw_spin_lock_irqsave+0x44/0x60 kernel/locking/spinlock.c:152
+|   rtl_c2hcmd_launcher+0xd1/0x390
+| drivers/net/wireless/realtek/rtlwifi/base.c:2344
+|   rtl_deinit_core+0x25/0x2d0 drivers/net/wireless/realtek/rtlwifi/base.c:574
+|   rtl_usb_probe.cold+0x861/0xa70
+| drivers/net/wireless/realtek/rtlwifi/usb.c:1093
+|   usb_probe_interface+0x31d/0x820 drivers/usb/core/driver.c:361
+|   really_probe+0x2da/0xb10 drivers/base/dd.c:509
+|   driver_probe_device+0x21d/0x350 drivers/base/dd.c:671
+|   __device_attach_driver+0x1d8/0x290 drivers/base/dd.c:778
+|   bus_for_each_drv+0x163/0x1e0 drivers/base/bus.c:454
+|   __device_attach+0x223/0x3a0 drivers/base/dd.c:844
+|   bus_probe_device+0x1f1/0x2a0 drivers/base/bus.c:514
+|   device_add+0xad2/0x16e0 drivers/base/core.c:2106
+|   usb_set_configuration+0xdf7/0x1740 drivers/usb/core/message.c:2021
+|   generic_probe+0xa2/0xda drivers/usb/core/generic.c:210
+|   usb_probe_device+0xc0/0x150 drivers/usb/core/driver.c:266
+|   really_probe+0x2da/0xb10 drivers/base/dd.c:509
+|   driver_probe_device+0x21d/0x350 drivers/base/dd.c:671
+|   __device_attach_driver+0x1d8/0x290 drivers/base/dd.c:778
+|   bus_for_each_drv+0x163/0x1e0 drivers/base/bus.c:454
+|   __device_attach+0x223/0x3a0 drivers/base/dd.c:844
+|   bus_probe_device+0x1f1/0x2a0 drivers/base/bus.c:514
+|   device_add+0xad2/0x16e0 drivers/base/core.c:2106
+|   usb_new_device.cold+0x537/0xccf drivers/usb/core/hub.c:2534
+|   hub_port_connect drivers/usb/core/hub.c:5089 [inline]
+|   hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+|   port_event drivers/usb/core/hub.c:5350 [inline]
+|   hub_event+0x138e/0x3b00 drivers/usb/core/hub.c:5432
+|   process_one_work+0x90f/0x1580 kernel/workqueue.c:2269
+|   worker_thread+0x9b/0xe20 kernel/workqueue.c:2415
+|   kthread+0x313/0x420 kernel/kthread.c:253
+|   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
 
-Move the !ctlr->num_chipselect after spi_get_gpio_descs() as it was
-before the aforementioned commit. While touching this block, get rid
-of the explicit comparison with 0 and update the commenting style.
-
-Fixes: 0a919ae49223 ("spi: Don't call spi_get_gpio_descs() before device name is set")
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reported-by: syzbot+1fcc5ef45175fc774231@syzkaller.appspotmail.com
+Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
+Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/usb.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 5e4654032bfa..29916e446143 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -2286,11 +2286,6 @@ int spi_register_controller(struct spi_controller *ctlr)
- 	if (status)
- 		return status;
- 
--	/* even if it's just one always-selected device, there must
--	 * be at least one chipselect
--	 */
--	if (ctlr->num_chipselect == 0)
--		return -EINVAL;
- 	if (ctlr->bus_num >= 0) {
- 		/* devices with a fixed bus num must check-in with the num */
- 		mutex_lock(&board_lock);
-@@ -2361,6 +2356,13 @@ int spi_register_controller(struct spi_controller *ctlr)
- 		}
+diff --git a/drivers/net/wireless/realtek/rtlwifi/usb.c b/drivers/net/wireless/realtek/rtlwifi/usb.c
+index e24fda5e9087..34d68dbf4b4c 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/usb.c
++++ b/drivers/net/wireless/realtek/rtlwifi/usb.c
+@@ -1064,13 +1064,13 @@ int rtl_usb_probe(struct usb_interface *intf,
+ 	rtlpriv->cfg->ops->read_eeprom_info(hw);
+ 	err = _rtl_usb_init(hw);
+ 	if (err)
+-		goto error_out;
++		goto error_out2;
+ 	rtl_usb_init_sw(hw);
+ 	/* Init mac80211 sw */
+ 	err = rtl_init_core(hw);
+ 	if (err) {
+ 		pr_err("Can't allocate sw for mac80211\n");
+-		goto error_out;
++		goto error_out2;
  	}
+ 	if (rtlpriv->cfg->ops->init_sw_vars(hw)) {
+ 		pr_err("Can't init_sw_vars\n");
+@@ -1091,6 +1091,7 @@ int rtl_usb_probe(struct usb_interface *intf,
  
-+	/*
-+	 * Even if it's just one always-selected device, there must
-+	 * be at least one chipselect.
-+	 */
-+	if (!ctlr->num_chipselect)
-+		return -EINVAL;
-+
- 	status = device_add(&ctlr->dev);
- 	if (status < 0) {
- 		/* free bus id */
+ error_out:
+ 	rtl_deinit_core(hw);
++error_out2:
+ 	_rtl_usb_io_handler_release(hw);
+ 	usb_put_dev(udev);
+ 	complete(&rtlpriv->firmware_loading_complete);
 -- 
 2.20.1
 
