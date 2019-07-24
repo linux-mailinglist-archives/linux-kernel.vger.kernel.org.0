@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3598F73A81
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:50:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF4D173A95
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:51:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403990AbfGXTuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:50:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59672 "EHLO mail.kernel.org"
+        id S2391414AbfGXTvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:51:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391237AbfGXTuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:50:46 -0400
+        id S2391664AbfGXTvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:51:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27E6C21873;
-        Wed, 24 Jul 2019 19:50:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42F6320665;
+        Wed, 24 Jul 2019 19:51:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997845;
-        bh=h46tTBy1jDObjGMx8TOvjf/Yq0nJPoA42gT/VMcxr+Y=;
+        s=default; t=1563997898;
+        bh=CsWXcgn08I4mWMWGsG8L3PA7QZFTJ2l3Vf4NjxU9boE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FaYYX3IUv5Y/L7guG99t1aqHZrslxf5NSGMyyz7QujBaVTd+loL/XWnAP5FEdHvyi
-         UMdeP2epCukoUXLbR4flLfGVM2ibOQdzp8mOIV7gsaIwo4MXyW92JIDdUxOzSyi07E
-         Xiq33mTL1hVRu12LZ5LI0DNj42eGwB3cIDbCNM+Y=
+        b=w794YpKV44rPL4BlCcSAUz1g4MqVfj2SdSkZiWBK+XYiAc4U5yDNmP3lbJ0LLneha
+         ZVI7H4ydo3v542yebOq7kB7/mVX3ML/Q1has/EjgEcPfXY04Kh2zqzci9vrFILZFsS
+         SWKKxI6hOVaVmkCNtcvfRcBgkjR1Zqb0laxSICd8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianbo Liu <jianbol@mellanox.com>,
-        Oz Shlomo <ozsh@mellanox.com>,
-        Eli Britstein <elibr@mellanox.com>,
-        Roi Dayan <roid@mellanox.com>, Mark Bloch <markb@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 161/371] net/mlx5: Get vport ACL namespace by vport index
-Date:   Wed, 24 Jul 2019 21:18:33 +0200
-Message-Id: <20190724191737.286066789@linuxfoundation.org>
+Subject: [PATCH 5.1 164/371] crypto: asymmetric_keys - select CRYPTO_HASH where needed
+Date:   Wed, 24 Jul 2019 21:18:36 +0200
+Message-Id: <20190724191737.533236529@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -47,47 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f53297d67800feb5fafd94abd926c889aefee690 ]
+[ Upstream commit 90acc0653d2bee203174e66d519fbaaa513502de ]
 
-The ingress and egress ACL root namespaces are created per vport and
-stored into arrays. However, the vport number is not the same as the
-index. Passing the array index, instead of vport number, to get the
-correct ingress and egress acl namespace.
+Build testing with some core crypto options disabled revealed
+a few modules that are missing CRYPTO_HASH:
 
-Fixes: 9b93ab981e3b ("net/mlx5: Separate ingress/egress namespaces for each vport")
-Signed-off-by: Jianbo Liu <jianbol@mellanox.com>
-Reviewed-by: Oz Shlomo <ozsh@mellanox.com>
-Reviewed-by: Eli Britstein <elibr@mellanox.com>
-Reviewed-by: Roi Dayan <roid@mellanox.com>
-Reviewed-by: Mark Bloch <markb@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+crypto/asymmetric_keys/x509_public_key.o: In function `x509_get_sig_params':
+x509_public_key.c:(.text+0x4c7): undefined reference to `crypto_alloc_shash'
+x509_public_key.c:(.text+0x5e5): undefined reference to `crypto_shash_digest'
+crypto/asymmetric_keys/pkcs7_verify.o: In function `pkcs7_digest.isra.0':
+pkcs7_verify.c:(.text+0xab): undefined reference to `crypto_alloc_shash'
+pkcs7_verify.c:(.text+0x1b2): undefined reference to `crypto_shash_digest'
+pkcs7_verify.c:(.text+0x3c1): undefined reference to `crypto_shash_update'
+pkcs7_verify.c:(.text+0x411): undefined reference to `crypto_shash_finup'
+
+This normally doesn't show up in randconfig tests because there is
+a large number of other options that select CRYPTO_HASH.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ crypto/asymmetric_keys/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-index 8a67fd197b79..16ed6ebd31ee 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-@@ -950,7 +950,7 @@ static int esw_vport_enable_egress_acl(struct mlx5_eswitch *esw,
- 		  vport->vport, MLX5_CAP_ESW_EGRESS_ACL(dev, log_max_ft_size));
- 
- 	root_ns = mlx5_get_flow_vport_acl_namespace(dev, MLX5_FLOW_NAMESPACE_ESW_EGRESS,
--						    vport->vport);
-+			mlx5_eswitch_vport_num_to_index(esw, vport->vport));
- 	if (!root_ns) {
- 		esw_warn(dev, "Failed to get E-Switch egress flow namespace for vport (%d)\n", vport->vport);
- 		return -EOPNOTSUPP;
-@@ -1068,7 +1068,7 @@ static int esw_vport_enable_ingress_acl(struct mlx5_eswitch *esw,
- 		  vport->vport, MLX5_CAP_ESW_INGRESS_ACL(dev, log_max_ft_size));
- 
- 	root_ns = mlx5_get_flow_vport_acl_namespace(dev, MLX5_FLOW_NAMESPACE_ESW_INGRESS,
--						    vport->vport);
-+			mlx5_eswitch_vport_num_to_index(esw, vport->vport));
- 	if (!root_ns) {
- 		esw_warn(dev, "Failed to get E-Switch ingress flow namespace for vport (%d)\n", vport->vport);
- 		return -EOPNOTSUPP;
+diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
+index be70ca6c85d3..1f1f004dc757 100644
+--- a/crypto/asymmetric_keys/Kconfig
++++ b/crypto/asymmetric_keys/Kconfig
+@@ -15,6 +15,7 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
+ 	select MPILIB
+ 	select CRYPTO_HASH_INFO
+ 	select CRYPTO_AKCIPHER
++	select CRYPTO_HASH
+ 	help
+ 	  This option provides support for asymmetric public key type handling.
+ 	  If signature generation and/or verification are to be used,
+@@ -65,6 +66,7 @@ config TPM_KEY_PARSER
+ config PKCS7_MESSAGE_PARSER
+ 	tristate "PKCS#7 message parser"
+ 	depends on X509_CERTIFICATE_PARSER
++	select CRYPTO_HASH
+ 	select ASN1
+ 	select OID_REGISTRY
+ 	help
+@@ -87,6 +89,7 @@ config SIGNED_PE_FILE_VERIFICATION
+ 	bool "Support for PE file signature verification"
+ 	depends on PKCS7_MESSAGE_PARSER=y
+ 	depends on SYSTEM_DATA_VERIFICATION
++	select CRYPTO_HASH
+ 	select ASN1
+ 	select OID_REGISTRY
+ 	help
 -- 
 2.20.1
 
