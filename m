@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 422AF73CF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9632673D2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:15:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392114AbfGXUNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:13:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40227 "EHLO mail.kernel.org"
+        id S2404631AbfGXT4W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:56:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404589AbfGXT4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:56:06 -0400
+        id S2404219AbfGXT4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:56:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9129E217D4;
-        Wed, 24 Jul 2019 19:56:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7654A205C9;
+        Wed, 24 Jul 2019 19:56:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563998165;
-        bh=PAXPEwO2rUh1sVRSm5DvD0MwnfOcHcoH7M6v3dcmo0c=;
+        s=default; t=1563998180;
+        bh=RekJmt4P3VwYWask21t40jH6pmqmpa2CiSzNj2xKwLo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X+vFkkL4/tQITYQk2V2cbaXZGhu1uz3s4kZVeqkQxdbNcf/pxvyFZHMtEo2nZzSbr
-         /O+lnO9/Fw7WTnRD+2DNeqO4D8CHhkDTR0Ppi05zy88fRLSiLpBvIhvRnTzIi3/fh6
-         1TyEuR3FrfqnLBZpn8i+1iIK0AH1yZ9EzkluVwR0=
+        b=pjzgw5AncFRsGR7mmcmrPyF7A7DlbEMUwYE0+Jhv5a1srJvLzWoHdmbVudz2E19cc
+         T+HcF4HUOMpj7/4VlMugG6ZxnR204+aQ+2VhMZtQAIgyHifE5CfTayxlmCiUSQ21QN
+         oFKodmk49/h8pbiCErq+ho8RECx600FKjexfLhwo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 5.1 270/371] iwlwifi: pcie: dont service an interrupt that was masked
-Date:   Wed, 24 Jul 2019 21:20:22 +0200
-Message-Id: <20190724191744.625291835@linuxfoundation.org>
+Subject: [PATCH 5.1 274/371] iwlwifi: mvm: delay GTK setting in FW in AP mode
+Date:   Wed, 24 Jul 2019 21:20:26 +0200
+Message-Id: <20190724191744.956439706@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -44,72 +43,150 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit 3b57a10ca14c619707398dc58fe5ece18c95b20b upstream.
+commit c56e00a3feaee2b46b7d33875fb7f52efd30241f upstream.
 
-Sometimes the register status can include interrupts that
-were masked. We can, for example, get the RF-Kill bit set
-in the interrupt status register although this interrupt
-was masked. Then if we get the ALIVE interrupt (for example)
-that was not masked, we need to *not* service the RF-Kill
-interrupt.
-Fix this in the MSI-X interrupt handler.
+In AP (and IBSS) mode, we can only set GTKs to firmware after we have
+sent down the multicast station, but this we can only do after we've
+enabled beaconing, etc.
+
+However, during rfkill exit, hostapd will configure the keys before
+starting the AP, and cfg80211/mac80211 accept it happily.
+
+On earlier devices, this didn't bother us as GTK TX wasn't really
+handled in firmware, we just put the key material into the TX cmd
+and thus it only mattered when we actually transmitted a frame.
+
+On newer devices, however, the firmware needs to track all of this
+and that doesn't work if we add the key before the (multicast) sta
+it belongs to.
+
+To fix this, keep a list of keys to add during AP enable, and call
+the function there.
 
 Cc: stable@vger.kernel.org
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/rx.c |   27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c |   53 +++++++++++++++++++++-
+ drivers/net/wireless/intel/iwlwifi/mvm/mvm.h      |    3 +
+ 2 files changed, 54 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-@@ -2113,10 +2113,18 @@ irqreturn_t iwl_pcie_irq_msix_handler(in
- 		return IRQ_NONE;
- 	}
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
+@@ -207,6 +207,12 @@ static const struct cfg80211_pmsr_capabi
+ 	},
+ };
  
--	if (iwl_have_debug_level(IWL_DL_ISR))
--		IWL_DEBUG_ISR(trans, "ISR inta_fh 0x%08x, enabled 0x%08x\n",
--			      inta_fh,
-+	if (iwl_have_debug_level(IWL_DL_ISR)) {
-+		IWL_DEBUG_ISR(trans,
-+			      "ISR inta_fh 0x%08x, enabled (sw) 0x%08x (hw) 0x%08x\n",
-+			      inta_fh, trans_pcie->fh_mask,
- 			      iwl_read32(trans, CSR_MSIX_FH_INT_MASK_AD));
-+		if (inta_fh & ~trans_pcie->fh_mask)
-+			IWL_DEBUG_ISR(trans,
-+				      "We got a masked interrupt (0x%08x)\n",
-+				      inta_fh & ~trans_pcie->fh_mask);
++static int iwl_mvm_mac_set_key(struct ieee80211_hw *hw,
++			       enum set_key_cmd cmd,
++			       struct ieee80211_vif *vif,
++			       struct ieee80211_sta *sta,
++			       struct ieee80211_key_conf *key);
++
+ void iwl_mvm_ref(struct iwl_mvm *mvm, enum iwl_mvm_ref_type ref_type)
+ {
+ 	if (!iwl_mvm_is_d0i3_supported(mvm))
+@@ -2535,7 +2541,7 @@ static int iwl_mvm_start_ap_ibss(struct
+ {
+ 	struct iwl_mvm *mvm = IWL_MAC80211_GET_MVM(hw);
+ 	struct iwl_mvm_vif *mvmvif = iwl_mvm_vif_from_mac80211(vif);
+-	int ret;
++	int ret, i;
+ 
+ 	/*
+ 	 * iwl_mvm_mac_ctxt_add() might read directly from the device
+@@ -2609,6 +2615,20 @@ static int iwl_mvm_start_ap_ibss(struct
+ 	/* must be set before quota calculations */
+ 	mvmvif->ap_ibss_active = true;
+ 
++	/* send all the early keys to the device now */
++	for (i = 0; i < ARRAY_SIZE(mvmvif->ap_early_keys); i++) {
++		struct ieee80211_key_conf *key = mvmvif->ap_early_keys[i];
++
++		if (!key)
++			continue;
++
++		mvmvif->ap_early_keys[i] = NULL;
++
++		ret = iwl_mvm_mac_set_key(hw, SET_KEY, vif, NULL, key);
++		if (ret)
++			goto out_quota_failed;
 +	}
 +
-+	inta_fh &= trans_pcie->fh_mask;
+ 	if (vif->type == NL80211_IFTYPE_AP && !vif->p2p) {
+ 		iwl_mvm_vif_set_low_latency(mvmvif, true,
+ 					    LOW_LATENCY_VIF_TYPE);
+@@ -3378,11 +3398,12 @@ static int iwl_mvm_mac_set_key(struct ie
+ 			       struct ieee80211_sta *sta,
+ 			       struct ieee80211_key_conf *key)
+ {
++	struct iwl_mvm_vif *mvmvif = iwl_mvm_vif_from_mac80211(vif);
+ 	struct iwl_mvm *mvm = IWL_MAC80211_GET_MVM(hw);
+ 	struct iwl_mvm_sta *mvmsta;
+ 	struct iwl_mvm_key_pn *ptk_pn;
+ 	int keyidx = key->keyidx;
+-	int ret;
++	int ret, i;
+ 	u8 key_offset;
  
- 	if ((trans_pcie->shared_vec_mask & IWL_SHARED_IRQ_NON_RX) &&
- 	    inta_fh & MSIX_FH_INT_CAUSES_Q0) {
-@@ -2156,11 +2164,18 @@ irqreturn_t iwl_pcie_irq_msix_handler(in
- 	}
- 
- 	/* After checking FH register check HW register */
--	if (iwl_have_debug_level(IWL_DL_ISR))
-+	if (iwl_have_debug_level(IWL_DL_ISR)) {
- 		IWL_DEBUG_ISR(trans,
--			      "ISR inta_hw 0x%08x, enabled 0x%08x\n",
--			      inta_hw,
-+			      "ISR inta_hw 0x%08x, enabled (sw) 0x%08x (hw) 0x%08x\n",
-+			      inta_hw, trans_pcie->hw_mask,
- 			      iwl_read32(trans, CSR_MSIX_HW_INT_MASK_AD));
-+		if (inta_hw & ~trans_pcie->hw_mask)
-+			IWL_DEBUG_ISR(trans,
-+				      "We got a masked interrupt 0x%08x\n",
-+				      inta_hw & ~trans_pcie->hw_mask);
-+	}
+ 	if (iwlwifi_mod_params.swcrypto) {
+@@ -3455,6 +3476,22 @@ static int iwl_mvm_mac_set_key(struct ie
+ 				key->hw_key_idx = STA_KEY_IDX_INVALID;
+ 				break;
+ 			}
 +
-+	inta_hw &= trans_pcie->hw_mask;
++			if (!mvmvif->ap_ibss_active) {
++				for (i = 0;
++				     i < ARRAY_SIZE(mvmvif->ap_early_keys);
++				     i++) {
++					if (!mvmvif->ap_early_keys[i]) {
++						mvmvif->ap_early_keys[i] = key;
++						break;
++					}
++				}
++
++				if (i >= ARRAY_SIZE(mvmvif->ap_early_keys))
++					ret = -ENOSPC;
++
++				break;
++			}
+ 		}
  
- 	/* Alive notification via Rx interrupt will do the real work */
- 	if (inta_hw & MSIX_HW_INT_CAUSES_REG_ALIVE) {
+ 		/* During FW restart, in order to restore the state as it was,
+@@ -3523,6 +3560,18 @@ static int iwl_mvm_mac_set_key(struct ie
+ 
+ 		break;
+ 	case DISABLE_KEY:
++		ret = -ENOENT;
++		for (i = 0; i < ARRAY_SIZE(mvmvif->ap_early_keys); i++) {
++			if (mvmvif->ap_early_keys[i] == key) {
++				mvmvif->ap_early_keys[i] = NULL;
++				ret = 0;
++			}
++		}
++
++		/* found in pending list - don't do anything else */
++		if (ret == 0)
++			break;
++
+ 		if (key->hw_key_idx == STA_KEY_IDX_INVALID) {
+ 			ret = 0;
+ 			break;
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
+@@ -498,6 +498,9 @@ struct iwl_mvm_vif {
+ 	netdev_features_t features;
+ 
+ 	struct iwl_probe_resp_data __rcu *probe_resp_data;
++
++	/* we can only have 2 GTK + 2 IGTK active at a time */
++	struct ieee80211_key_conf *ap_early_keys[4];
+ };
+ 
+ static inline struct iwl_mvm_vif *
 
 
