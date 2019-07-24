@@ -2,159 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FC247319E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:28:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C8CD731DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:39:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387429AbfGXO2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 10:28:54 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44942 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbfGXO2y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 10:28:54 -0400
-Received: by mail-lj1-f196.google.com with SMTP id k18so44697824ljc.11;
-        Wed, 24 Jul 2019 07:28:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=a8adFHytHBTsJftWOAZexTFr5WjQ4+eUKt3ZlK8cE/Y=;
-        b=klbseCMCkn55eIImdEW1DX/nC888w41MonWoWNZdmbsu+Xc8JOxrl5yE2W71Tv65o+
-         2BPSm/oN9PHr0w+MjelFN+TBWC8jjH+1yFn18bfVnCZMnQsHvHMzuJfaCtigjYVCmd13
-         X0i5zWVC9xhSjEmEFsW0aWcR5b4hs0pAvHsnWf6ElJoZMkTjS1xUDRpmjb5BkrCOCPYu
-         6MwTSQultvbfWthAa7fZmSP7YOYx3EufLper+mcE0aGJponeyVlGJQH64jCniOqbe3hb
-         ML5m6yVvC16Xs9VOXIWZwxkyJEVMSM7f+FGrS9O60h0pyYJ71fFWc24l3ZDa4+VIFbs7
-         sUWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=a8adFHytHBTsJftWOAZexTFr5WjQ4+eUKt3ZlK8cE/Y=;
-        b=IPeLkoF927Ze97W5i3q3cff3a2yP3Ded5RcTTbLc981TZAK0FLon/ARmbKSD7iI38A
-         C+coxjdQWRKGPaZMXNtCL41zJyRbWliG2V0AADFJLFhpx6mUbqocAUSc9Fig34aYAk6d
-         dfO7lFXk+7422s4R5Gf0LdyB1kEp+QWaFlpvNev9PnlRql+rqXx1vzmKXFlMgIIQZ+w0
-         fwjlawacPkH8xf2AABduh2vwqHVtDiErMZbbMFdp+MOkzOn7kI445GpD1p87A8EPYs2X
-         FJYuyDc38OUN5NUkm6HxZDoDwMXUziKFadKdKKCUoPC2PKYFhzI9DWZqU7US05WkrV+F
-         NenA==
-X-Gm-Message-State: APjAAAUCe9xXeeEZxBfj7tquooAhdd5UaeLxGhf6eqC36ax0MFLA0qiY
-        T2rvNb8mM6EUR/sdcxW22JM=
-X-Google-Smtp-Source: APXvYqzYVIyHbPQXFWnL98erzAUeU8oyIbBaN4a7OiAXSepJRjVkXKAD4PtiNbFuP/Z4sy6b4cdsjA==
-X-Received: by 2002:a2e:b003:: with SMTP id y3mr43747276ljk.72.1563978531475;
-        Wed, 24 Jul 2019 07:28:51 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.googlemail.com with ESMTPSA id j11sm7098446lfm.29.2019.07.24.07.28.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 07:28:50 -0700 (PDT)
-Subject: Re: [PATCH] media: staging: ipu3: Enable IOVA API only when IOMMU
- support is enabled
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Yuehaibing <yuehaibing@huawei.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, hverkuil-cisco@xs4all.nl,
-        mchehab@kernel.org, yong.zhi@intel.com
-References: <20190722134749.21580-1-yuehaibing@huawei.com>
- <20190724103027.GD21370@paasikivi.fi.intel.com>
- <e48fc180-06cc-eac7-d8ca-9be1699c8677@arm.com>
- <0c08bdae-facc-0f28-0e58-17a65172587a@huawei.com>
- <491dbca1-8a58-b26e-cf56-a1a419da288f@gmail.com>
- <eaf521ff-7dc6-70ae-0473-9c994def602b@arm.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <dc354ede-5963-cd7f-ee53-f3df3061d39a@gmail.com>
-Date:   Wed, 24 Jul 2019 17:28:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1728338AbfGXOjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 10:39:36 -0400
+Received: from mga18.intel.com ([134.134.136.126]:37257 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725870AbfGXOjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 10:39:36 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 07:39:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
+   d="scan'208";a="197519558"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by fmsmga002.fm.intel.com with ESMTP; 24 Jul 2019 07:39:32 -0700
+Date:   Wed, 24 Jul 2019 22:22:35 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, atull@kernel.org,
+        Ananda Ravuri <ananda.ravuri@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>
+Subject: Re: [PATCH v3 01/12] fpga: dfl: fme: support 512bit data width PR
+Message-ID: <20190724142235.GE8463@hao-dev>
+References: <1563857495-26692-1-git-send-email-hao.wu@intel.com>
+ <1563857495-26692-2-git-send-email-hao.wu@intel.com>
+ <20190724093532.GB29532@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <eaf521ff-7dc6-70ae-0473-9c994def602b@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190724093532.GB29532@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-24.07.2019 17:23, Robin Murphy пишет:
-> On 24/07/2019 15:09, Dmitry Osipenko wrote:
->> 24.07.2019 17:03, Yuehaibing пишет:
->>> On 2019/7/24 21:49, Robin Murphy wrote:
->>>> On 24/07/2019 11:30, Sakari Ailus wrote:
->>>>> Hi Yue,
->>>>>
->>>>> On Mon, Jul 22, 2019 at 09:47:49PM +0800, YueHaibing wrote:
->>>>>> If IOMMU_SUPPORT is not set, ipu3 driver may select IOMMU_IOVA to m.
->>>>>> But for many drivers, they use "select IOMMU_IOVA if IOMMU_SUPPORT"
->>>>>> in the Kconfig, for example, CONFIG_TEGRA_VDE is set to y but
->>>>>> IOMMU_IOVA
->>>>>> is m, then the building fails like this:
->>>>>>
->>>>>> drivers/staging/media/tegra-vde/iommu.o: In function
->>>>>> `tegra_vde_iommu_map':
->>>>>> iommu.c:(.text+0x41): undefined reference to `alloc_iova'
->>>>>> iommu.c:(.text+0x56): undefined reference to `__free_iova'
->>>>>>
->>>>>> Reported-by: Hulk Robot <hulkci@huawei.com>
->>>>>> Fixes: 7fc7af649ca7 ("media: staging/intel-ipu3: Add imgu top
->>>>>> level pci device driver")
->>>>>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->>>>>> ---
->>>>>>    drivers/staging/media/ipu3/Kconfig | 2 +-
->>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/drivers/staging/media/ipu3/Kconfig
->>>>>> b/drivers/staging/media/ipu3/Kconfig
->>>>>> index 4b51c67..b7df18f 100644
->>>>>> --- a/drivers/staging/media/ipu3/Kconfig
->>>>>> +++ b/drivers/staging/media/ipu3/Kconfig
->>>>>> @@ -4,7 +4,7 @@ config VIDEO_IPU3_IMGU
->>>>>>        depends on PCI && VIDEO_V4L2
->>>>>>        depends on MEDIA_CONTROLLER && VIDEO_V4L2_SUBDEV_API
->>>>>>        depends on X86
->>>>>> -    select IOMMU_IOVA
->>>>>> +    select IOMMU_IOVA if IOMMU_SUPPORT
->>>>>
->>>>> This doesn't seem right: the ipu3-cio2 driver needs IOMMU_IOVA
->>>>> independently of IOMMU_SUPPORT.
->>>>>
->>>>> Looking at tegra-vde, it seems to depend on IOMMU_SUPPORT but
->>>>> that's not
->>>>> declared in its Kconfig entry. I wonder if adding that would be the
->>>>> right
->>>>> way to fix this.
->>>>>
->>>>> Cc'ing the IOMMU list.
->> IOMMU_SUPPORT is optional for the Tegra-VDE driver.
->>
->>>> Right, I also had the impression that we'd made the IOVA library
->>>> completely standalone. And what does the IPU3 driver's Kconfig have
->>>> to do with some *other* driver failing to link anyway?
->>
->> I can see it failing if IPU3 is compiled as a loadable module, while
->> Tegra-VDE is a built-in driver. Hence IOVA lib should be also a kernel
->> module and thus the IOVA symbols will be missing during of linkage of
->> the VDE driver.
->>
->>> Oh, I misunderstand that IOMMU_IOVA is depend on IOMMU_SUPPORT, thank
->>> you for clarification.
->>>
->>> I will try to fix this in tegra-vde.
->>
->> Probably IOVA could be selected independently of IOMMU_SUPPORT, but IOVA
->> library isn't needed for the VDE driver if IOMMU_SUPPORT is disabled.
+On Wed, Jul 24, 2019 at 11:35:32AM +0200, Greg KH wrote:
+> On Tue, Jul 23, 2019 at 12:51:24PM +0800, Wu Hao wrote:
+> > In early partial reconfiguration private feature, it only
+> > supports 32bit data width when writing data to hardware for
+> > PR. 512bit data width PR support is an important optimization
+> > for some specific solutions (e.g. XEON with FPGA integrated),
+> > it allows driver to use AVX512 instruction to improve the
+> > performance of partial reconfiguration. e.g. programming one
+> > 100MB bitstream image via this 512bit data width PR hardware
+> > only takes ~300ms, but 32bit revision requires ~3s per test
+> > result.
+> > 
+> > Please note now this optimization is only done on revision 2
+> > of this PR private feature which is only used in integrated
+> > solution that AVX512 is always supported. This revision 2
+> > hardware doesn't support 32bit PR.
+> > 
+> > Signed-off-by: Ananda Ravuri <ananda.ravuri@intel.com>
+> > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+> > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> > Acked-by: Alan Tull <atull@kernel.org>
+> > Signed-off-by: Moritz Fischer <mdf@kernel.org>
+> > ---
+> > v2: remove DRV/MODULE_VERSION modifications
+> > ---
+> >  drivers/fpga/dfl-fme-mgr.c | 110 ++++++++++++++++++++++++++++++++++++++-------
+> >  drivers/fpga/dfl-fme-pr.c  |  43 +++++++++++-------
+> >  drivers/fpga/dfl-fme.h     |   2 +
+> >  drivers/fpga/dfl.h         |   5 +++
+> >  4 files changed, 129 insertions(+), 31 deletions(-)
+> > 
+> > diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
+> > index b3f7eee..46e17f0 100644
+> > --- a/drivers/fpga/dfl-fme-mgr.c
+> > +++ b/drivers/fpga/dfl-fme-mgr.c
+> > @@ -22,6 +22,7 @@
+> >  #include <linux/io-64-nonatomic-lo-hi.h>
+> >  #include <linux/fpga/fpga-mgr.h>
+> >  
+> > +#include "dfl.h"
+> >  #include "dfl-fme-pr.h"
+> >  
+> >  /* FME Partial Reconfiguration Sub Feature Register Set */
+> > @@ -30,6 +31,7 @@
+> >  #define FME_PR_STS		0x10
+> >  #define FME_PR_DATA		0x18
+> >  #define FME_PR_ERR		0x20
+> > +#define FME_PR_512_DATA		0x40 /* Data Register for 512bit datawidth PR */
+> >  #define FME_PR_INTFC_ID_L	0xA8
+> >  #define FME_PR_INTFC_ID_H	0xB0
+> >  
+> > @@ -67,8 +69,43 @@
+> >  #define PR_WAIT_TIMEOUT   8000000
+> >  #define PR_HOST_STATUS_IDLE	0
+> >  
+> > +#if defined(CONFIG_X86) && defined(CONFIG_AS_AVX512)
+> > +
+> > +#include <linux/cpufeature.h>
+> > +#include <asm/fpu/api.h>
+> > +
+> > +static inline int is_cpu_avx512_enabled(void)
+> > +{
+> > +	return cpu_feature_enabled(X86_FEATURE_AVX512F);
+> > +}
 > 
-> Oh, I think I get the problem now - tegra-vde/iommu.c is built
-> unconditionally and relies on the static inline stubs for IOMMU and IOVA
-> calls if !IOMMU_SUPPORT, but in a compile-test config where IOVA=m for
-> other reasons, it then picks up the real declarations from linux/iova.h
-> instead of the stubs, and things go downhill from there. So there is a
-> real issue, but indeed it's Tegra-VDE which needs to be restructured to
-> cope with such configurations, and not IPU3's (or anyone else who may
-> select IOVA=m in future) job to work around it.
+> That's a very arch specific function, why would a driver ever care about
+> this?
 
-I guess it could be:
+Yes, this is only applied to a specific FPGA solution, which FPGA
+has been integrated with XEON. Hardware indicates this using register
+to software. As it's cpu integrated solution, so CPU always has this
+AVX512 capability. The only check we do, is make sure this is not
+manually disabled by kernel.
 
-	select IOMMU_IOVA if (IOMMU_SUPPORT || COMPILE_TEST)
+With this hardware, software could use AVX512 to accelerate the FPGA
+partial reconfiguration as mentioned in the patch commit message.
+It brings performance benifits to people who uses it. This is only one
+optimization (512 vs 32bit data write to hw) for a specific hardware.
 
-as a workaround.
+For other discrete solutions, e.g. FPGA PCIe Card, this is not used
+at all as driver does check hardware register to avoid any AVX512 code.
+
+> 
+> > +
+> > +static inline void copy512(const void *src, void __iomem *dst)
+> > +{
+> > +	kernel_fpu_begin();
+> > +
+> > +	asm volatile("vmovdqu64 (%0), %%zmm0;"
+> > +		     "vmovntdq %%zmm0, (%1);"
+> > +		     :
+> > +		     : "r"(src), "r"(dst)
+> > +		     : "memory");
+> > +
+> > +	kernel_fpu_end();
+> > +}
+> 
+> Shouldn't this be an arch-specific function somewhere?  Burying this in
+> a random driver is not ok.  Please make this generic for all systems.
+
+If more people need the same avx operation like this in kernel, then maybe
+this can be moved to some arch-specific lib code somewhere as some common
+functions to everybody, but i am not very sure if this is the case. Let me
+think about this more.
+
+> 
+> > +#else
+> > +static inline int is_cpu_avx512_enabled(void)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> > +static inline void copy512(const void *src, void __iomem *dst)
+> > +{
+> > +	WARN_ON_ONCE(1);
+> 
+> Are you trying to get reports from syzbot?  :)
+
+Oh.. no.. I will remove it. :)
+
+Thank you very much!
+
+Hao
+
+> 
+> Please fix this all up.
+> 
+> greg k-h
