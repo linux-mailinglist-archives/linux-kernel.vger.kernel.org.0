@@ -2,148 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C503872BF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 12:01:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BB0C72C07
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 12:05:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbfGXKBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 06:01:46 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:34610 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbfGXKBq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 06:01:46 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190724100143epoutp03d7ccabc271a8941a04a18f060a45f8a8~0T5w-Up0l2461424614epoutp03_
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 10:01:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190724100143epoutp03d7ccabc271a8941a04a18f060a45f8a8~0T5w-Up0l2461424614epoutp03_
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1563962503;
-        bh=c5ptV5HA49sNH19sxY9DMgig1lliijWYCMj8k/TIqIM=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=G8gdkDUlJGmTWEwPsXs3ZA14lUyjxL7AIdU+3BYrYZMVhO348JB5AukwSIPUpEaJl
-         P7yb34SoxnRWA1f1uQ1gBSdY/onc5r6eJkVyzhJCGHf9KAt2zx+ySGs/6jAEEXr2Db
-         XR990k2AcbokFSthX1FsZP7hu+Jee4DKNySvAYMA=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20190724100142epcas1p3eabb061cc801a35fc86f8af3ae0e2e5b~0T5wriZpM1150511505epcas1p3Q;
-        Wed, 24 Jul 2019 10:01:42 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 45trTv5h9czMqYkk; Wed, 24 Jul
-        2019 10:01:39 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CE.27.04066.47C283D5; Wed, 24 Jul 2019 19:01:24 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190724100124epcas1p19d46da4028d1867b2fd02d13f4a90ec9~0T5fPdCgd1979719797epcas1p14;
-        Wed, 24 Jul 2019 10:01:24 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190724100124epsmtrp2c438f08135858e7f655cffab024b05a1~0T5fO0mVW0318803188epsmtrp2e;
-        Wed, 24 Jul 2019 10:01:24 +0000 (GMT)
-X-AuditID: b6c32a37-e27ff70000000fe2-4c-5d382c74ebeb
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        97.E1.03706.37C283D5; Wed, 24 Jul 2019 19:01:23 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190724100123epsmtip2b9a9d037afa2bedcb1db49d892d3d299~0T5fHj5Ar2396923969epsmtip2O;
-        Wed, 24 Jul 2019 10:01:23 +0000 (GMT)
-Subject: Re: [PATCH 1/1] extcon: extcon-max77843: convert to
- i2c_new_dummy_device
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <6bff5707-c460-c7e8-d913-bbc4d8fd5447@samsung.com>
-Date:   Wed, 24 Jul 2019 19:04:27 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+        id S1727268AbfGXKFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 06:05:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50286 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726070AbfGXKFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 06:05:01 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8C551AC67;
+        Wed, 24 Jul 2019 10:04:59 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.com>
+To:     "Jeff Layton" <jlayton@kernel.org>
+Cc:     "Ilya Dryomov" <idryomov@gmail.com>, "Sage Weil" <sage@redhat.com>,
+        <ceph-devel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] ceph: fix directories inode i_blkbits initialization
+References: <20190723155020.17338-1-lhenriques@suse.com>
+        <c657b0d65acd5e8bc9d5d726d68e2ad1fff38b51.camel@kernel.org>
+        <87o91k61sr.fsf@suse.com>
+Date:   Wed, 24 Jul 2019 11:04:58 +0100
+In-Reply-To: <87o91k61sr.fsf@suse.com> (Luis Henriques's message of "Tue, 23
+        Jul 2019 19:31:00 +0100")
+Message-ID: <874l3b694l.fsf@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <20190722172601.3506-2-wsa+renesas@sang-engineering.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmk+LIzCtJLcpLzFFi42LZdlhTV7dExyLWYMEHdYuOv18YLS7vmsNm
-        cbtxBZtF3zl3BxaPvi2rGD2eLVzP4vF5k1wAc1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7yp
-        mYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QMiWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJq
-        QUpOgWWBXnFibnFpXrpecn6ulaGBgZEpUGFCdsbcI7wF3VwVy/uusDYwLufoYuTkkBAwkZgy
-        ZTNzFyMXh5DADkaJppmv2SGcT0BO32s2COcbo8SqG/2MMC3LFt9ggkjsZZS4fu8cC4TznlFi
-        1re3TCBVwgLBEv8/tLCB2CICARIT/i9kBbGZBTwl+ma0g8XZBLQk9r+4AWbzCyhKXP3xGGwD
-        r4CdxOv5t8DmsAioSjR8mgrWKyoQIfHpwWFWiBpBiZMzn7CA2JwCrhKXtm6Gmi8ucevJfCYI
-        W16ieetssOckBA6wSfw//4Qd4gUXia3zfkPZwhKvjm+BsqUkPr/bywZhV0usPHmEDaK5g1Fi
-        y/4LrBAJY4n9SycDbeAA2qApsX6XPkRYUWLn77mMEIv5JN597WEFKZEQ4JXoaBOCKFGWuPzg
-        LhOELSmxuL2TbQKj0iwk78xC8sIsJC/MQli2gJFlFaNYakFxbnpqsWGBMXJsb2IEJ0Qt8x2M
-        G875HGIU4GBU4uFVYDCPFWJNLCuuzD3EKMHBrCTCG9hgFivEm5JYWZValB9fVJqTWnyI0RQY
-        2hOZpUST84HJOq8k3tDUyNjY2MLE0MzU0FBJnHfeH81YIYH0xJLU7NTUgtQimD4mDk6pBsbc
-        NWcvCtUb73iU2cP7ZnGlqQsn3x2HTxr3c40eZUt9nLE68e6J52snNSkemnn/e/KJxtzjuQ9v
-        BwZMCTMTeOv+dK9fA3v11Fq56PP9Gz8ITC40UPELcG8/x/LYcfKSh1OXe6mdjeE+FCD9JL+D
-        i/9+K3d9xpPtxg8Ldy1ddWtdzr1j057JisgosRRnJBpqMRcVJwIAtwqq154DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKLMWRmVeSWpSXmKPExsWy7bCSvG6xjkWswYT/NhYdf78wWlzeNYfN
-        4nbjCjaLvnPuDiwefVtWMXo8W7iexePzJrkA5igum5TUnMyy1CJ9uwSujLlHeAu6uSqW911h
-        bWBcztHFyMkhIWAisWzxDaYuRi4OIYHdjBJNO88zQyQkJaZdPApkcwDZwhKHDxdD1LxllOg/
-        fZkRpEZYIFji/4cWNhBbRMBP4tCyd2C9zAKeEn0z2tkgGi4zSsxdMJcVJMEmoCWx/8UNsAZ+
-        AUWJqz8egw3iFbCTeD3/FhOIzSKgKtHwaSpYvahAhMThHbOgagQlTs58wgJicwq4SlzaupkV
-        Ypm6xJ95l6AWi0vcejKfCcKWl2jeOpt5AqPwLCTts5C0zELSMgtJywJGllWMkqkFxbnpucWG
-        BYZ5qeV6xYm5xaV56XrJ+bmbGMGRoaW5g/HykvhDjAIcjEo8vAoM5rFCrIllxZW5hxglOJiV
-        RHgDG8xihXhTEiurUovy44tKc1KLDzFKc7AoifM+zTsWKSSQnliSmp2aWpBaBJNl4uCUamDs
-        /HtskUV0Vm5LfeleT60NE0xmfTlYcGjBfM3KheHNU9946S9TDfinWZ4mf/1u0U1lL6WAqO4v
-        jFVPvK5nF3dskua86JTNXtPBHifqP3dH/KL4fzzyN95eZpp7wM1B8qXF7dg3Av/ywtWD2OVa
-        uOUMv1o86TZ5lnNqy0Zf0URhtRztaVM0HJVYijMSDbWYi4oTAfscDPqIAgAA
-X-CMS-MailID: 20190724100124epcas1p19d46da4028d1867b2fd02d13f4a90ec9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190722172604epcas5p4ce41ff3eda1b28ae07eef332808780ac
-References: <20190722172601.3506-1-wsa+renesas@sang-engineering.com>
-        <CGME20190722172604epcas5p4ce41ff3eda1b28ae07eef332808780ac@epcas5p4.samsung.com>
-        <20190722172601.3506-2-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19. 7. 23. 오전 2:26, Wolfram Sang wrote:
-> Move from i2c_new_dummy() to i2c_new_dummy_device(), so we now get an
-> ERRPTR which we use in error handling.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Generated with coccinelle. Build tested by me and buildbot. Not tested on HW.
-> 
->  drivers/extcon/extcon-max77843.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/extcon/extcon-max77843.c b/drivers/extcon/extcon-max77843.c
-> index a343a6ef3506..e6b50ca83008 100644
-> --- a/drivers/extcon/extcon-max77843.c
-> +++ b/drivers/extcon/extcon-max77843.c
-> @@ -774,12 +774,12 @@ static int max77843_init_muic_regmap(struct max77693_dev *max77843)
->  {
->  	int ret;
->  
-> -	max77843->i2c_muic = i2c_new_dummy(max77843->i2c->adapter,
-> +	max77843->i2c_muic = i2c_new_dummy_device(max77843->i2c->adapter,
->  			I2C_ADDR_MUIC);
-> -	if (!max77843->i2c_muic) {
-> +	if (IS_ERR(max77843->i2c_muic)) {
->  		dev_err(&max77843->i2c->dev,
->  				"Cannot allocate I2C device for MUIC\n");
-> -		return -ENOMEM;
-> +		return PTR_ERR(max77843->i2c_muic);
->  	}
->  
->  	i2c_set_clientdata(max77843->i2c_muic, max77843);
-> 
+Luis Henriques <lhenriques@suse.com> writes:
 
-Applied it. Thanks.
+> "Jeff Layton" <jlayton@kernel.org> writes:
+>
+>> On Tue, 2019-07-23 at 16:50 +0100, Luis Henriques wrote:
+>>> When filling an inode with info from the MDS, i_blkbits is being
+>>> initialized using fl_stripe_unit, which contains the stripe unit in
+>>> bytes.  Unfortunately, this doesn't make sense for directories as they
+>>> have fl_stripe_unit set to '0'.  This means that i_blkbits will be set
+>>> to 0xff, causing an UBSAN undefined behaviour in i_blocksize():
+>>> 
+>>>   UBSAN: Undefined behaviour in ./include/linux/fs.h:731:12
+>>>   shift exponent 255 is too large for 32-bit type 'int'
+>>> 
+>>> Fix this by initializing i_blkbits to CEPH_BLOCK_SHIFT if fl_stripe_unit
+>>> is zero.
+>>> 
+>>> Signed-off-by: Luis Henriques <lhenriques@suse.com>
+>>> ---
+>>>  fs/ceph/inode.c | 7 ++++++-
+>>>  1 file changed, 6 insertions(+), 1 deletion(-)
+>>> 
+>>> Hi Jeff,
+>>> 
+>>> To be honest, I'm not sure CEPH_BLOCK_SHIFT is the right value to use
+>>> here, but for sure the one currently being used isn't correct if the
+>>> inode is a directory.  Using stripe units seems to be a bug that has
+>>> been there since the beginning, but it definitely became bigger problem
+>>> after commit 69448867abcb ("fs: shave 8 bytes off of struct inode").
+>>> 
+>>> This fix could also be moved into the 'switch' statement later in that
+>>> function, in the S_IFDIR case, similar to commit 5ba72e607cdb ("ceph:
+>>> set special inode's blocksize to page size").  Let me know which version
+>>> you would prefer.
+>>> 
+>>
+>> What happens with (e.g.) named pipes or symlinks? Do those inodes also
+>> get this bogus value? Assuming that they do, I'd probably prefer this
+>> patch since it'd fix things for all inode types, not just directories.
+>
+> I tested symlinks and they seem to be handled correctly (i.e. the stripe
+> units seems to be the same as the target file).  Regarding pipes, I
+> didn't test them, but from the code it should be set to PAGE_SHIFT (see
+> the above mentioned commit 5ba72e607cdb).
 
+Ok, after looking closer at the other inode types and running a few
+tests with extra debug code, it all seems to be sane -- only directories
+(root dir is an exception) will cause problems with i_blkbits being set
+to a bogus value.  So, I'm sticking with my original RFC patch approach,
+which should be easy to apply to stable kernels.
+
+Cheers,
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Luis
+
+>
+> Anyway, I can change the code to do *all* the i_blkbits initialization
+> inside the switch statement.  Something like:
+>
+> switch (inode->i_mode & S_IFMT) {
+> case S_IFIFO:
+> case S_IFBLK:
+> case S_IFCHR:
+> case S_IFSOCK:
+> 	inode->i_blkbits = PAGE_SHIFT;
+>         ...
+> case S_IFREG:
+> 	inode->i_blkbits = fls(le32_to_cpu(info->layout.fl_stripe_unit)) - 1;
+> 	...
+> case S_IFLNK:
+> 	inode->i_blkbits = fls(le32_to_cpu(info->layout.fl_stripe_unit)) - 1;
+> 	...
+> case S_IFDIR:
+> 	inode->i_blkbits = CEPH_BLOCK_SHIFT;
+> 	...
+> default:
+> 	pr_err();
+>         ...
+> }
+>
+> This would add some code duplication (S_IFREG and S_IFLNK cases), but
+> maybe it's a bit more clear.  The other option would be obviously to
+> leave the initialization outside the switch and only change the
+> i_blkbits value in the S_IF{IFO,BLK,CHR,SOCK,DIR} cases.
+>
+> Cheers,
