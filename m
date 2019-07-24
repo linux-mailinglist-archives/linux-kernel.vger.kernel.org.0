@@ -2,122 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C23672F3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 14:53:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9087272F50
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 14:56:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbfGXMx2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 08:53:28 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:38614 "EHLO inva021.nxp.com"
+        id S2387447AbfGXM41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 08:56:27 -0400
+Received: from mga14.intel.com ([192.55.52.115]:14394 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725776AbfGXMx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 08:53:28 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C139F200254;
-        Wed, 24 Jul 2019 14:53:25 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B2DDD200214;
-        Wed, 24 Jul 2019 14:53:25 +0200 (CEST)
-Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 0857B205EE;
-        Wed, 24 Jul 2019 14:53:24 +0200 (CEST)
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org, Frank Li <Frank.li@nxp.com>
-Subject: [PATCH] perf/core: Fix creating kernel counters for PMUs that override event->cpu
-Date:   Wed, 24 Jul 2019 15:53:24 +0300
-Message-Id: <c4ebe0503623066896d7046def4d6b1e06e0eb2e.1563972056.git.leonard.crestez@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726312AbfGXM40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 08:56:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 05:56:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,302,1559545200"; 
+   d="scan'208";a="345093126"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
+  by orsmga005.jf.intel.com with ESMTP; 24 Jul 2019 05:56:23 -0700
+Subject: Re: [PATCH v4] mmc: host: sdhci-sprd: Fix the incorrect soft reset
+ operation when runtime resuming
+To:     Baolin Wang <baolin.wang@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Chunyan Zhang <zhang.lyra@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <89c3ef495c367d58ca3abe99a1f82c48f8c08705.1563274904.git.baolin.wang@linaro.org>
+ <CAPDyKFq1y6xVfA=b1ybWvA1+e9h9aSteHAHjBbXvXGVJx95FQA@mail.gmail.com>
+ <CAMz4kuKraOb_o0LFWnqkS7m0Xd3QGrw1P+md0YBNbbbp1967OA@mail.gmail.com>
+ <CAPDyKFpy5JeGZ2w1KJN0ECB6jPG=UTZXbPRjMQQs8+NdK4rxuQ@mail.gmail.com>
+ <CAMz4ku+ZTtnJdonZVAPVuvAiGCmCESvM8SbYKjwpNUgE4bO3gA@mail.gmail.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <d9e90c5f-1939-b07a-ba85-8b61e3df10c6@intel.com>
+Date:   Wed, 24 Jul 2019 15:55:04 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAMz4ku+ZTtnJdonZVAPVuvAiGCmCESvM8SbYKjwpNUgE4bO3gA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some hardware PMU drivers will override perf_event.cpu inside their
-event_init callback. This causes a lockdep splat when initialized through
-the kernel API:
+On 24/07/19 5:21 AM, Baolin Wang wrote:
+> On Tue, 23 Jul 2019 at 20:39, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>
+>> On Tue, 23 Jul 2019 at 05:05, Baolin Wang <baolin.wang@linaro.org> wrote:
+>>>
+>>> Hi Ulf,
+>>>
+>>> On Mon, 22 Jul 2019 at 19:54, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>>>
+>>>> On Wed, 17 Jul 2019 at 04:29, Baolin Wang <baolin.wang@linaro.org> wrote:
+>>>>>
+>>>>> In sdhci_runtime_resume_host() function, we will always do software reset
+>>>>> for all, which will cause Spreadtrum host controller work abnormally after
+>>>>> resuming.
+>>>>
+>>>> What does "software reset for all" means?
+>>>
+>>> The SD host controller specification defines 3 types software reset:
+>>> software reset for data line, software reset for command line and
+>>> software reset for all.
+>>> Software reset for all means this reset affects the entire Host
+>>> controller except for the card detection circuit.
+>>
+>> Thanks for clarifying, please update the changelog accordingly.
+> 
+> Sure, sorry for confusing.
+> 
+>>
+>>>
+>>>>
+>>>>>
+>>>>> Thus for Spreadtrum platform that will not power down the SD/eMMC card during
+>>>>> runtime suspend, we should not do software reset for all.
+>>>>
+>>>> Normally, sdhci hosts that enters runtime suspend doesn't power off
+>>>> the card (there are some exceptions like PCI variants).
+>>>
+>>> Yes, same as our controller.
+>>>
+>>>>
+>>>> So, what's so special here and how does the reset come into play? I
+>>>> don't see sdhci doing a reset in sdhci_runtime_suspend|resume_host()
+>>>> and nor doesn the callback from the sdhci-sprd.c variant doing it.
+>>>
+>>> In sdhci_runtime_resume_host(), it will issue sdhci_init(host, 0) to
+>>> issue software reset for all.
+>>
+>> Aha, I didn't read the code carefully enough. Apologize for the noise.
+> 
+> No worries :)
+> 
+>>>
+>>>>
+>>>>> To fix this
+>>>>> issue, adding a specific reset operation that adds one condition to validate
+>>>>> the power mode to decide if we can do software reset for all or just reset
+>>>>> command and data lines.
+>>>>>
+>>>>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>>>>> ---
+>>>>> Changess from v3:
+>>>>>  - Use ios.power_mode to validate if the card is power down or not.
+>>>>>
+>>>>> Changes from v2:
+>>>>>  - Simplify the sdhci_sprd_reset() by issuing sdhci_reset().
+>>>>>
+>>>>> Changes from v1:
+>>>>>  - Add a specific reset operation instead of changing the core to avoid
+>>>>>  affecting other hardware.
+>>>>> ---
+>>>>>  drivers/mmc/host/sdhci-sprd.c |   19 ++++++++++++++++++-
+>>>>>  1 file changed, 18 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
+>>>>> index 603a5d9..94f9726 100644
+>>>>> --- a/drivers/mmc/host/sdhci-sprd.c
+>>>>> +++ b/drivers/mmc/host/sdhci-sprd.c
+>>>>> @@ -373,6 +373,23 @@ static unsigned int sdhci_sprd_get_max_timeout_count(struct sdhci_host *host)
+>>>>>         return 1 << 31;
+>>>>>  }
+>>>>>
+>>>>> +static void sdhci_sprd_reset(struct sdhci_host *host, u8 mask)
+>>>>> +{
+>>>>> +       struct mmc_host *mmc = host->mmc;
+>>>>> +
+>>>>> +       /*
+>>>>> +        * When try to reset controller after runtime suspend, we should not
+>>>>> +        * reset for all if the SD/eMMC card is not power down, just reset
+>>>>> +        * command and data lines instead. Otherwise will meet some strange
+>>>>> +        * behaviors for Spreadtrum host controller.
+>>>>> +        */
+>>>>> +       if (host->runtime_suspended && (mask & SDHCI_RESET_ALL) &&
+>>>>> +           mmc->ios.power_mode == MMC_POWER_ON)
+>>>>> +               mask = SDHCI_RESET_CMD | SDHCI_RESET_DATA;
+>>>>
+>>>> Can sdhci_sprd_reset() be called when the host is runtime suspended?
+>>>
+>>> When host tries to runtime resume in sdhci_runtime_resume_host(), it
+>>> will call reset operation to do software reset.
+>>
+>> Right, I see that now, thanks for clarifying.
+>>
+>> However, there are still some weird things going on in
+>> sdhci_runtime_resume_host(). Like why is host->ops->enable_dma()
+>> called first, directly from sdhci_runtime_resume_host(), then again in
+>> sdhci_do_reset(), after host->ops->reset() has been called. Looks like
+>> the first call to ->enable_dma() doesn't make sense?
+> 
+> I am mot sure, since our host did not supply enable_dma() operation.
+> This logic was used by some other hardware and worked well, I am not
+> sure if it can reveal some issues if we change the logic here.
+> 
+> Adrian, could you help to explain why we put enable_dma() in front of
+> software reset?
 
-WARNING: CPU: 0 PID: 250 at kernel/events/core.c:2917 ctx_sched_out+0x78/0x208
-CPU: 0 PID: 250 Comm: systemd-udevd Not tainted 5.3.0-rc1-next-20190723-00024-g94e04593c88a #80
-Hardware name: FSL i.MX8MM EVK board (DT)
-pstate: 40000085 (nZcv daIf -PAN -UAO)
-pc : ctx_sched_out+0x78/0x208
-lr : ctx_sched_out+0x78/0x208
-sp : ffff0000127a3750
-x29: ffff0000127a3750 x28: 0000000000000000
-x27: ffff00001162bf20 x26: ffff000008cf3310
-x25: ffff0000127a3de0 x24: ffff0000115ff808
-x23: ffff7dffbff851b8 x22: 0000000000000004
-x21: ffff7dffbff851b0 x20: 0000000000000000
-x19: ffff7dffbffc51b0 x18: 0000000000000010
-x17: 0000000000000001 x16: 0000000000000007
-x15: 2e8ba2e8ba2e8ba3 x14: 0000000000005114
-x13: ffff0000117d5e30 x12: ffff000011898378
-x11: 0000000000000000 x10: ffff0000117d5000
-x9 : 0000000000000045 x8 : 0000000000000000
-x7 : ffff000010168194 x6 : ffff0000117d59d0
-x5 : 0000000000000001 x4 : ffff80007db56128
-x3 : ffff80007db56128 x2 : 0d9c118347a77600
-x1 : 0000000000000000 x0 : 0000000000000024
-Call trace:
- ctx_sched_out+0x78/0x208
- __perf_install_in_context+0x160/0x248
- remote_function+0x58/0x68
- generic_exec_single+0x100/0x180
- smp_call_function_single+0x174/0x1b8
- perf_install_in_context+0x178/0x188
- perf_event_create_kernel_counter+0x118/0x160
+No reason I can see.  But if you add a parameter to avoid a full reset, then
+the ->enable_dma will be needed in that case.
 
-Fix by calling perf_install_in_context with event->cpu, just like
-perf_event_open
+> 
+>>
+>>>
+>>>> That sounds like a bug to me, no?
+>>>
+>>> Since our controller will meet some strange behaviors if we do
+>>> software reset for all in sdhci_runtime_resume_host(), and try to
+>>> avoid changing the core logic of sdhci_runtime_resume_host() used by
+>>> other hardware controllers, thus I introduced a specific reset ops and
+>>> added some condition to make sure we just do software reset command
+>>> and data lines from runtime suspend state.
+>>
+>> I understand, but perhaps it would become more clear if
+>> sdhci_runtime_resume_host() is re-factored a bit. Maybe the caller can
+>> give it some new parameter to let it decide if a SDHCI_RESET_ALL shall
+>> be done or not.
+> 
+> Yes, sounds reasonable, but need change other host drivers which
+> issued the sdhci_runtime_resume_host().
+> 
+> Adrian, if you also agree with Ulf's suggestion, then I will post new
+> patches to add a parameter to decide the reset mode. Thanks.
 
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
----
-I don't understand why PMUs outside the core are bound to a CPU anyway,
-all this patch does is attempt to satisfy the assumptions made by
-__perf_install_in_context and ctx_sched_out at init time so that lockdep
-no longer complains.
-
-ctx_sched_out asserts ctx->lock which seems to be taken by
-__perf_install_in_context:
-
-	struct perf_event_context *ctx = event->ctx;
-	struct perf_cpu_context *cpuctx = __get_cpu_context(ctx);
-	...
-	raw_spin_lock(&cpuctx->ctx.lock);
-
-The lockdep warning happens when ctx != &cpuctx->ctx which can happen if
-__perf_install_in_context is called on a cpu other than event->cpu.
-
-Found while working on this patch:
-https://patchwork.kernel.org/patch/11056785/
-
- kernel/events/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 026a14541a38..0463c1151bae 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -11272,11 +11272,11 @@ perf_event_create_kernel_counter(struct perf_event_attr *attr, int cpu,
- 	if (!exclusive_event_installable(event, ctx)) {
- 		err = -EBUSY;
- 		goto err_unlock;
- 	}
- 
--	perf_install_in_context(ctx, event, cpu);
-+	perf_install_in_context(ctx, event, event->cpu);
- 	perf_unpin_context(ctx);
- 	mutex_unlock(&ctx->mutex);
- 
- 	return event;
- 
--- 
-2.17.1
+Sounds fine.
 
