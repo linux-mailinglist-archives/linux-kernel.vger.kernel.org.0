@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F271E73CBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:11:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D07FF73D11
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:15:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392081AbfGXT5p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:57:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43262 "EHLO mail.kernel.org"
+        id S2404806AbfGXUOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:14:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392042AbfGXT5j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:57:39 -0400
+        id S2404563AbfGXTzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:55:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBE63206BA;
-        Wed, 24 Jul 2019 19:57:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D1D5205C9;
+        Wed, 24 Jul 2019 19:55:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563998258;
-        bh=rWfuZLF5n7eXxel3NqYl7t1FcRCZ3izVzeftLrha4Io=;
+        s=default; t=1563998151;
+        bh=yiZ9pOZGT5BeYCzC5pEJPnOd5W61unRHudr8ncgMJ2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KKJm9IFvs/IhzvlEkEzXfikdxWKbdfAZbEUkqwRgKRib2VKxsuorZ2lMzZWj41dvs
-         zRoxgSfRgH+nBJOpWcTWOzo59fdiXIui1D3JU2So62JXeUKyJgp366XpmUS5IPc1/8
-         X2cMUk5nVyCTVXC5rABBJbWrFdLRzs4hnIl5Wi/Y=
+        b=lgTdK/QgZuCqqFz2WmjERI+WscFu6VrN//rXNgLO9hIOaV9dZxImFSdCjtxSqEWhz
+         j0IJSNt2JXsSpv3RGNGmQ1vgd6ugEli5+YdIoWJ6tXVO+mIBW0xMPWlpc25eKFHIth
+         O9F7mrY+ao0Zhby4uwdt94BtwiJWn/RL4G4kMowQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.1 260/371] bcache: fix mistaken sysfs entry for io_error counter
-Date:   Wed, 24 Jul 2019 21:20:12 +0200
-Message-Id: <20190724191744.052523503@linuxfoundation.org>
+        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 5.1 265/371] Input: alps - fix a mismatch between a condition check and its comment
+Date:   Wed, 24 Jul 2019 21:20:17 +0200
+Message-Id: <20190724191744.333685619@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -43,45 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+From: Hui Wang <hui.wang@canonical.com>
 
-commit 5461999848e0462c14f306a62923d22de820a59c upstream.
+commit 771a081e44a9baa1991ef011cc453ef425591740 upstream.
 
-In bch_cached_dev_files[] from driver/md/bcache/sysfs.c, sysfs_errors is
-incorrectly inserted in. The correct entry should be sysfs_io_errors.
+In the function alps_is_cs19_trackpoint(), we check if the param[1] is
+in the 0x20~0x2f range, but the code we wrote for this checking is not
+correct:
+(param[1] & 0x20) does not mean param[1] is in the range of 0x20~0x2f,
+it also means the param[1] is in the range of 0x30~0x3f, 0x60~0x6f...
 
-This patch fixes the problem and now I/O errors of cached device can be
-read from /sys/block/bcache<N>/bcache/io_errors.
+Now fix it with a new condition checking ((param[1] & 0xf0) == 0x20).
 
-Fixes: c7b7bd07404c5 ("bcache: add io_disable to struct cached_dev")
-Signed-off-by: Coly Li <colyli@suse.de>
+Fixes: 7e4935ccc323 ("Input: alps - don't handle ALPS cs19 trackpoint-only device")
 Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/bcache/sysfs.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/input/mouse/alps.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -180,7 +180,7 @@ SHOW(__bch_cached_dev)
- 	var_print(writeback_percent);
- 	sysfs_hprint(writeback_rate,
- 		     wb ? atomic_long_read(&dc->writeback_rate.rate) << 9 : 0);
--	sysfs_hprint(io_errors,		atomic_read(&dc->io_errors));
-+	sysfs_printf(io_errors,		"%i", atomic_read(&dc->io_errors));
- 	sysfs_printf(io_error_limit,	"%i", dc->error_limit);
- 	sysfs_printf(io_disable,	"%i", dc->io_disable);
- 	var_print(writeback_rate_update_seconds);
-@@ -464,7 +464,7 @@ static struct attribute *bch_cached_dev_
- 	&sysfs_writeback_rate_p_term_inverse,
- 	&sysfs_writeback_rate_minimum,
- 	&sysfs_writeback_rate_debug,
--	&sysfs_errors,
-+	&sysfs_io_errors,
- 	&sysfs_io_error_limit,
- 	&sysfs_io_disable,
- 	&sysfs_dirty_data,
+--- a/drivers/input/mouse/alps.c
++++ b/drivers/input/mouse/alps.c
+@@ -2879,7 +2879,7 @@ static bool alps_is_cs19_trackpoint(stru
+ 	 * trackpoint-only devices have their variant_ids equal
+ 	 * TP_VARIANT_ALPS and their firmware_ids are in 0x20~0x2f range.
+ 	 */
+-	return param[0] == TP_VARIANT_ALPS && (param[1] & 0x20);
++	return param[0] == TP_VARIANT_ALPS && ((param[1] & 0xf0) == 0x20);
+ }
+ 
+ static int alps_identify(struct psmouse *psmouse, struct alps_data *priv)
 
 
