@@ -2,64 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C0D972912
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 09:31:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 217E57291A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 09:39:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbfGXHbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 03:31:44 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:53470 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbfGXHbo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 03:31:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rK6nQW5CxubGjo+KYKz34q25ReCu2Bwr2lGkque7Bz8=; b=gU+U/zF+i2GFZYvOAUrXovQiK
-        3RNuvInAoa0BGHx7V/s8n0jnQQ7DmfMZDdnAuF0b29eLlfM3LSf+AYoZxmmMboy3Fx+Clniios6fp
-        vk1fquZ5c26VdMn2cbnInDnrzPa9E1iPSwdNdvi+fvwlS4hJk/JTDmnxZKbp9Qny5J8s3G94mBXi1
-        yENc/Kq7FAqXDIeFz2XPv/7YsTFbwztJSqETaIhoW3ZCmVjyePuJH4yzAiTuWxSS/raSvKLBD+Dw0
-        32FcEhSx6VQOdPQD2N2uISYrwE3kOWDnsLXOgLfxYUcPcCv2q0MbuBATeCezWaNpan7Hk9TxT7wCm
-        eoXE3DHfQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hqBkK-0001Tn-Tk; Wed, 24 Jul 2019 07:31:33 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5C2F8201A93D3; Wed, 24 Jul 2019 09:31:30 +0200 (CEST)
-Date:   Wed, 24 Jul 2019 09:31:30 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH] [v2] waitqueue: shut up clang -Wuninitialized warnings
-Message-ID: <20190724073130.GH3402@hirez.programming.kicks-ass.net>
-References: <20190719113638.4189771-1-arnd@arndb.de>
- <20190723105046.GD3402@hirez.programming.kicks-ass.net>
- <CAK8P3a3_sRmHVsEh=+83zR_Q3+Bh9fd+-iiCxt4PU4gkx0HZ7Q@mail.gmail.com>
- <20190723202159.GA79273@archlinux-threadripper>
- <CAKwvOdnbDFkDhCz3VMM_A8D7VZQH5FubJpS0OTHBJJdS-WKPww@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdnbDFkDhCz3VMM_A8D7VZQH5FubJpS0OTHBJJdS-WKPww@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1725999AbfGXHjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 03:39:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38706 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725776AbfGXHjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 03:39:20 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A905E2190F;
+        Wed, 24 Jul 2019 07:39:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563953959;
+        bh=3OKqgzs2jnudJmaJ1fcYoQAJqJWDM8bUh9bJQ45NSkI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hA5wQJB8VlSNHaopfRrW7e8DmkAvgmuY5km09VFj+Yq3nKbkU5r4vaq9IyLnNcTim
+         YnSznD43WXE5G8u+azjQMxtazOvFUZud+1Wtv9MKYQ7rIfGTkgRVoqsctKPR55XHyj
+         wPF1nikOuCz6xxX345efpmjyHjkYjNnQBEJciH/g=
+Date:   Wed, 24 Jul 2019 16:39:14 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     James Morse <james.morse@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Dan Rue <dan.rue@linaro.org>,
+        Matt Hart <matthew.hart@linaro.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Daniel Diaz <daniel.diaz@linaro.org>
+Subject: Re: [PATCH v2 2/4] arm64: unwind: Prohibit probing on
+ return_address()
+Message-Id: <20190724163914.c4a9cea2b5b9df3116e5e694@kernel.org>
+In-Reply-To: <038c4b88-e7ef-aaab-0a79-5d7371719aa5@arm.com>
+References: <156378170297.12011.17385386326930403235.stgit@devnote2>
+        <156378172702.12011.1144595747474511323.stgit@devnote2>
+        <038c4b88-e7ef-aaab-0a79-5d7371719aa5@arm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 01:54:03PM -0700, Nick Desaulniers wrote:
-> Note that pre-clang-9 can be used for LTS x86_64; I don't think
-> CONFIG_JUMP_LABEL was made mandatory for x86 until 4.20 release, IIRC.
-> There's only a small window of non LTS kernels and only for x86 where
-> clang-9+ is really necessary.
+On Tue, 23 Jul 2019 17:04:21 +0100
+James Morse <james.morse@arm.com> wrote:
 
-Given all the code-gen issues we've been finding, I wouldn't want to
-touch a pre-9 clang. Irrespective of wether it builds or not, it's
-absolutely unreliable crap.
+> Hi,
+> 
+> On 22/07/2019 08:48, Masami Hiramatsu wrote:
+> > Prohibit probing on return_address() and subroutines which
+> > is called from return_address(), since the it is invoked from
+> > trace_hardirqs_off() which is also kprobe blacklisted.
+> 
+> (Nits: "which are called" and "since it is")
+
+Thanks!
+
+> 
+> 
+> > diff --git a/arch/arm64/kernel/return_address.c b/arch/arm64/kernel/return_address.c
+> > index b21cba90f82d..7f8a143268b0 100644
+> > --- a/arch/arm64/kernel/return_address.c
+> > +++ b/arch/arm64/kernel/return_address.c
+> > @@ -8,6 +8,7 @@
+> >  
+> >  #include <linux/export.h>
+> >  #include <linux/ftrace.h>
+> > +#include <linux/kprobes.h>
+> >  
+> >  #include <asm/stack_pointer.h>
+> >  #include <asm/stacktrace.h>
+> > @@ -17,7 +18,7 @@ struct return_address_data {
+> >  	void *addr;
+> >  };
+> >  
+> > -static int save_return_addr(struct stackframe *frame, void *d)
+> > +static nokprobe_inline int save_return_addr(struct stackframe *frame, void *d)
+> 
+> This nokprobe_inline ends up as __always_inline if kprobes is enabled.
+> What do we expect the compiler to do with this? save_return_addr is passed as a
+> function-pointer to walk_stackframe()... I don't see how the compiler can inline it!
+
+Oops, that's my mistake. Then it should be NOKPROBE_SYMBOL.
+
+> 
+> This would be needed for on_accessible_stack().
+> Should we cover ftrace_graph_get_ret_stack()?, or is that already in hand?
+
+No, that is OK. It just covers that the functions which are involved in
+the kprobe execution path. ftrace_graph_ret_stack() is out of the debug
+exception handler.
+
+Thank you,
+
+> >  {
+> >  	struct return_address_data *data = d;
+> >  
+> > @@ -52,3 +53,4 @@ void *return_address(unsigned int level)
+> >  		return NULL;
+> >  }
+> >  EXPORT_SYMBOL_GPL(return_address);
+> > +NOKPROBE_SYMBOL(return_address);
+> 
+> 
+> Thanks,
+> 
+> James
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
