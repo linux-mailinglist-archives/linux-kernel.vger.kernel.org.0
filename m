@@ -2,93 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CACB872A46
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:38:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C424572A4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:39:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726482AbfGXIim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 04:38:42 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2712 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726031AbfGXIim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 04:38:42 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 99D59F9D4B22C2A8EC9A;
-        Wed, 24 Jul 2019 16:38:38 +0800 (CST)
-Received: from [127.0.0.1] (10.74.221.148) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Wed, 24 Jul 2019
- 16:38:30 +0800
-From:   Zhangshaokun <zhangshaokun@hisilicon.com>
-Subject: [RFC] performance regression with commit-id<adb03115f459> ("net: get
- rid of an signed integer overflow in ip_idents_reserve()")
-To:     Eric Dumazet <edumazet@google.com>, Jiri Pirko <jiri@resnulli.us>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        "guoyang (C)" <guoyang2@huawei.com>,
-        "zhudacai@hisilicon.com" <zhudacai@hisilicon.com>
-Message-ID: <051e93d4-0206-7416-e639-376b8d2eb98b@hisilicon.com>
-Date:   Wed, 24 Jul 2019 16:38:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.1
+        id S1726621AbfGXIjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 04:39:49 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44785 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbfGXIjs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 04:39:48 -0400
+Received: by mail-pl1-f195.google.com with SMTP id t14so21697533plr.11
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 01:39:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FHqgO2p/z4I2u+XDD6yNn9utWVx0yPtM3/euHmctUQU=;
+        b=PF7bDpOUSvUfcZE50JvweWysDPjyF/Qv/PEVriZozOdZQjP2h7VYVvzXjz0ztERp2C
+         2zIMOZnXV2SuszB/aSRatlvoelfp2hOjXrFKdr30yX7ZqujNkkESGBslr+wTBB3mZR6+
+         MiLBgpdbb1kxn3L1Xd+zPZos5PPh/9GrG2jUQpZYONa7CdGPK8Uz52LtJDFsWRhn55Rs
+         Qk/MuT5PeTXbk6wK0yDPzsjrTYepsbEuAvx+JbrPxjNdcRqCkvXn7N8RWbeKygMpD7yv
+         f5qZ4wlM1X5xe2++lDW0nPxPLrdiqnBPtRpwEf9iJeP+E6JhmRPqYucf4OGXjk9Z/4CR
+         tWwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FHqgO2p/z4I2u+XDD6yNn9utWVx0yPtM3/euHmctUQU=;
+        b=ZedYdZqA+LY0AS9Gt6S2gjbvow6tp0LLl8cevAW6SGWR0QUATusvpBYSdyrnB+vmeN
+         98eJ/LiZDQMaDt1/uGHQj9R+diaCjOcjDTzwUgtkyQrjLSOIt0kOarN/IXLs7IzPduWC
+         t91vbiq5B/U23JIjdVt2L4/yKWLhAd/QI7LTm61Uz8rIVAMawWonZ/oH+dNrB76KCUOa
+         PeUrMVDOrqeJusDVcJlW6HbwuVQd/5P/UoY4DolIjn8GrTrmhV+y4+MiD3j3l9JZXLPj
+         uugM3kCwe5hK+ypmLqTfs5H1EdZndsLvH6DMovt8HYyiidQT1S1KwejpaImTb3fiKuAq
+         vPxg==
+X-Gm-Message-State: APjAAAWenQabWc9RZkd9S/a7CTm4hAkyQCpB5pqnfuh9rRr/LNXXXOAC
+        gttlDoE77IpXyN1/rNaOFQ==
+X-Google-Smtp-Source: APXvYqygTJ317D87I9rtHMsauMlA4/8fZnFWKCpWspKF9OVEpuyQNXlzYsJmw5/VsqljlqCuLFmvWQ==
+X-Received: by 2002:a17:902:9b94:: with SMTP id y20mr84534023plp.260.1563957587766;
+        Wed, 24 Jul 2019 01:39:47 -0700 (PDT)
+Received: from dhcp-128-55.nay.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id g92sm57950183pje.11.2019.07.24.01.39.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 01:39:47 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 16:39:36 +0800
+From:   Pingfan Liu <kernelfans@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     x86@kernel.org, "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Kosina <jkosina@suse.cz>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] smp: force all cpu to boot once under maxcpus option
+Message-ID: <20190724083936.GA3965@dhcp-128-55.nay.redhat.com>
+References: <1562747823-16972-1-git-send-email-kernelfans@gmail.com>
+ <alpine.DEB.2.21.1907221137090.1782@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.74.221.148]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1907221137090.1782@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Jul 22, 2019 at 11:41:29AM +0200, Thomas Gleixner wrote:
+> On Wed, 10 Jul 2019, Pingfan Liu wrote:
+> >  
+> > +static inline bool maxcpus_allowed(unsigned int cpu)
+> > +{
+> > +	/* maxcpus only takes effect during system bootup */
+> > +	if (smp_boot_done)
+> > +		return true;
+> > +	if (num_online_cpus() < setup_max_cpus)
+> > +		return true;
+> > +	/*
+> > +	 * maxcpus should allow cpu to set CR4.MCE asap, otherwise the set may
+> > +	 * be deferred indefinitely.
+> > +	 */
+> > +	if (!per_cpu(cpuhp_state, cpu).booted_once)
+> > +		return true;
+> 
+> As this is a x86 only issue, you cannot inflict this magic on every
+> architecture.
+OK.
+In my developing patch which fixes nr_cpus issue, I takes the following way:
+(I am diverted to other things, have not finished test yet, hope to
+turn back soon.)
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index 362dd89..c009169 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -956,6 +956,87 @@ int common_cpu_up(unsigned int cpu, struct task_struct *idle)
+        return 0;
+ }
 
-I've observed an significant performance regression with the following commit-id <adb03115f459>
-("net: get rid of an signed integer overflow in ip_idents_reserve()").
++void __init bring_capped_cpu_steady(void)
++{
+[...]
++}
++
+ /*
+  * NOTE - on most systems this is a PHYSICAL apic ID, but on multiquad
+  * (ie clustered apic addressing mode), this is a LOGICAL apic ID.
+diff --git a/kernel/smp.c b/kernel/smp.c
+index d155374..b04961c 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -560,6 +560,10 @@ void __init setup_nr_cpu_ids(void)
+        nr_cpu_ids = find_last_bit(cpumask_bits(cpu_possible_mask),NR_CPUS) + 1;
+ }
 
-Here are my test scenes:
-----Server----
-Cmd: iperf3 -s xxx.xxx.xxxx.xxx -p 10000 -i 0 -A 0
-Kenel: 4.19.34
-Server number: 32
-Port: 10000 – 10032
-CPU affinity: 0 – 32
-CPU architecture: aarch64
-NUMA node0 CPU(s): 0-23
-NUMA node1 CPU(s): 24-47
++void __weak bring_capped_cpu_steady(void)
++{
++}
++
+ /* Called by boot processor to activate the rest. */
+ void __init smp_init(void)
+ {
+@@ -579,6 +583,8 @@ void __init smp_init(void)
+                        cpu_up(cpu);
+        }
 
-----Client----
-Cmd: iperf3 -u -c xxx.xxx.xxxx.xxx -p 10000 -l 16 -b 0 -t 0 -i 0 -A 8
-Kenel: 4.19.34
-Client number: 32
-Port: 10000 – 10032
-CPU affinity: 0 – 32
-CPU architecture: aarch64
-NUMA node0 CPU(s): 0-23
-NUMA node1 CPU(s): 24-47
++       /* force cpus capped by nr_cpus option into steady state */
++       bring_capped_cpu_steady();
+        num_nodes = num_online_nodes();
 
-Firstly, With patch <adb03115f459> ("net: get rid of an signed integer overflow in ip_idents_reserve()") ,
-client’s cpu is 100%, and function ip_idents_reserve() cpu usage is very high, but the result is not good.
-03:08:32 AM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
-03:08:33 AM      eth0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-03:08:33 AM      eth1      0.00 3461296.00      0.00 196049.97      0.00      0.00      0.00      0.00
-03:08:33 AM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
 
-Secondly, revert that patch, use atomic_add_return() instead, the result is better, as below:
-03:23:24 AM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
-03:23:25 AM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-03:23:25 AM      eth1      0.00 12834590.00      0.00 726959.20      0.00      0.00      0.00      0.00
-03:23:25 AM      eth0      7.00     11.00      0.40      2.95      0.00      0.00      0.00      0.00
+The initial motivation is to step around percpu area required by cpu hotplug
+framework. But it also provide the abstraction of archs.
 
-Thirdly, atomic is not used in ip_idents_reserve() completely ,while each cpu core allocates its own ID segment,
-Such as: cpu core0 allocate ID 0 – 1023, cpu core1 allocate 1024 – 2047, …,etc
-the result is the best:
-03:27:06 AM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
-03:27:07 AM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
-03:27:07 AM      eth1      0.00 14275505.00      0.00 808573.53      0.00      0.00      0.00      0.00
-03:27:07 AM      eth0      0.00      2.00      0.00      0.18      0.00      0.00      0.00      0.00
+What do you think about resolving maxcpus by the similar abstraction?
 
-Because atomic operation performance is bottleneck when cpu core number increase, Can we revert the patch or
-use ID segment for each cpu core instead?
+> 
+> Aside of that this does not solve the problem at all because smp_init()
+> still does:
+> 
+>         for_each_present_cpu(cpu) {
+>                 if (num_online_cpus() >= setup_max_cpus)
+>                         break;
+Yes, this logic should be removed, then maxcpus_allowed() can take effect. But
+now, it may take a quite different way to resolve it.
 
-Thanks in advance,
-Shaokun
+Thanks for your kindly review.
 
+Regards,
+  Pingfan
+>                 if (!cpu_online(cpu))
+>                         cpu_up(cpu);
+>         }
+> 
+> So the remaining CPUs are not onlined at all.
+> 
+> Thanks,
+> 
+> 	tglx
