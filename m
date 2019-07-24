@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD5D2737E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:24:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C60C73803
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:25:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387920AbfGXTYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:24:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40166 "EHLO mail.kernel.org"
+        id S1729162AbfGXTZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:25:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728933AbfGXTYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:24:08 -0400
+        id S1729140AbfGXTZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:25:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DB10218F0;
-        Wed, 24 Jul 2019 19:24:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6D0C218EA;
+        Wed, 24 Jul 2019 19:25:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996247;
-        bh=Kdb2esTfhVVGQeQlYtgqPeYU5C6rZUsNpOO0RND6b6I=;
+        s=default; t=1563996305;
+        bh=vkubnwGwqggu4gM/JSBjnWe2XoZHpeGUfBMr8usYZYs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gnh0quhpEz7Z+f749+YCp1Ki+LPjfdC8rntfQ0Bnnm1NUQ+tgdN5af/U3ZLt8LkjA
-         FDrT7J9en9pB/DFpNBQzS+wcT5r1H99nkz3iEloKJWRBMowBsgFDeEjqlHwNbBrZJq
-         OY0MFNL7iug7q83bknKEYiFfY6YwoDamJWu4ZHwk=
+        b=FMA5qvigGfmQXY2lPXg44Yy25mn/bWtRPNAPD1ALMt65PCDoGubW7bjBdNwvyk5n9
+         GskZE1IK6DLpI+edncshMz99AyFYRxyFC4M76DqVT+tVKeJidnnH+xF1RawRFCDvTA
+         XjWqhpGCmmdDp64/AMEtZWf+OyBRo5LN3/PUe4M0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jose Abreu <joabreu@synopsys.com>,
-        Joao Pinto <jpinto@synopsys.com>,
+        stable@vger.kernel.org,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 030/413] net: stmmac: dwmac4/5: Clear unused address entries
-Date:   Wed, 24 Jul 2019 21:15:21 +0200
-Message-Id: <20190724191737.673962550@linuxfoundation.org>
+Subject: [PATCH 5.2 033/413] net: mvpp2: cls: Extract the RSS context when parsing the ethtool rule
+Date:   Wed, 24 Jul 2019 21:15:24 +0200
+Message-Id: <20190724191737.956580831@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -47,51 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0620ec6c62a5a07625b65f699adc5d1b90394ee6 ]
+[ Upstream commit c561da68038a738f30eca21456534c2d1872d13d ]
 
-In case we don't use a given address entry we need to clear it because
-it could contain previous values that are no longer valid.
+ethtool_rx_flow_rule_create takes into parameter the ethtool flow spec,
+which doesn't contain the rss context id. We therefore need to extract
+it ourself before parsing the ethtool rule.
 
-Found out while running stmmac selftests.
+The FLOW_RSS flag is only set in info->fs.flow_type, and not
+info->flow_type.
 
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-index 99d772517242..206170d0bf81 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-@@ -443,14 +443,20 @@ static void dwmac4_set_filter(struct mac_device_info *hw,
- 		 * are required
- 		 */
- 		value |= GMAC_PACKET_FILTER_PR;
--	} else if (!netdev_uc_empty(dev)) {
--		int reg = 1;
-+	} else {
- 		struct netdev_hw_addr *ha;
-+		int reg = 1;
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
+index a57d17ab91f0..fb06c0aa620a 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
+@@ -1242,6 +1242,12 @@ int mvpp2_ethtool_cls_rule_ins(struct mvpp2_port *port,
  
- 		netdev_for_each_uc_addr(ha, dev) {
- 			dwmac4_set_umac_addr(hw, ha->addr, reg);
- 			reg++;
- 		}
+ 	input.fs = &info->fs;
+ 
++	/* We need to manually set the rss_ctx, since this info isn't present
++	 * in info->fs
++	 */
++	if (info->fs.flow_type & FLOW_RSS)
++		input.rss_ctx = info->rss_context;
 +
-+		while (reg <= GMAC_MAX_PERFECT_ADDRESSES) {
-+			writel(0, ioaddr + GMAC_ADDR_HIGH(reg));
-+			writel(0, ioaddr + GMAC_ADDR_LOW(reg));
-+			reg++;
-+		}
- 	}
- 
- 	writel(value, ioaddr + GMAC_PACKET_FILTER);
+ 	ethtool_rule = ethtool_rx_flow_rule_create(&input);
+ 	if (IS_ERR(ethtool_rule)) {
+ 		ret = PTR_ERR(ethtool_rule);
 -- 
 2.20.1
 
