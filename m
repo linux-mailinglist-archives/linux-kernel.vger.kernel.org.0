@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03CA572890
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:53:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0328772893
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:53:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfGXGxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 02:53:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39332 "EHLO
+        id S1726586AbfGXGx0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 02:53:26 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39356 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfGXGxU (ORCPT
+        with ESMTP id S1726559AbfGXGxX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 02:53:20 -0400
+        Wed, 24 Jul 2019 02:53:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=igXh/3abv0ooQdkv/Vfc/WSfVB4lkdoSYebCAR1TL48=; b=IDkGONdXpH3tW1oxhx++LkR9Lr
-        WtaFZ+boWB9F31gk5CqaFbhNeFfrtl5YLLAPAezcvPdlRxacMmzCyuUcbJkfsIU6ge7zEVv6VK3Lp
-        BVN8c2sSrD9gXy2zzFgQNQxPeES0fjs+kwg6uO+b6FRTGfvZoI4LaBGXq5SxfAg1diq5NAYBrGEmT
-        LgBCFZZp8wWhbrk+FwzSlyBkPvD4HtkVG7f4VC7cE6HJ/umGb0LSiSUT67UWqJ0MlfM/eAnG+yM66
-        VhwUGjcVxt/otVXADUHsEEIdhJYMPPs8S9yngWBDr8DsSJQqvQUpJqMoQJQ2kuAdZG+rSN7e5CHvH
-        SlT6wdaA==;
+        bh=zG4UEa2GX1Fyu5Yh39Udr4tHubRwjggp9QMy5mzLZno=; b=NeD1DrfqPt1oy2G0vMdRBaqZGV
+        CC4SdQefxYev59DIrDbfQwqxCI+OEzPSDDrmK0L8pVNYjgmpeIX70d26fK/mB9MsKOqyEn2VDh01r
+        1KMgsxxNgJSL9hn/k/UbDA8IT6xBQFfGF1EWdzQg0A9GVIfoRS+3uhQ9kyVPg5vA8kyRUw1L622ne
+        uxUa6B8lYIRt4QEzX3MKh8nzqEeQmRmKUZpR549QMpaIKCX6KiVwC5VuFF8/rLLxq5LlsbU7LucVV
+        YdaemJz96Lh3aCOuT2NNyYezvhJ8HO74amgu3fUNv1Jg/Wz56Fvuf7tI0Ir1iRpDjv1nhHBNj4y81
+        pLxwCmKw==;
 Received: from 089144207240.atnat0016.highway.bob.at ([89.144.207.240] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hqB9J-0004Ko-0z; Wed, 24 Jul 2019 06:53:17 +0000
+        id 1hqB9M-0004LT-GL; Wed, 24 Jul 2019 06:53:21 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
@@ -34,9 +34,9 @@ To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
 Cc:     Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
         nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 5/7] nouveau: return -EBUSY when hmm_range_wait_until_valid fails
-Date:   Wed, 24 Jul 2019 08:52:56 +0200
-Message-Id: <20190724065258.16603-6-hch@lst.de>
+Subject: [PATCH 6/7] mm: remove the legacy hmm_pfn_* APIs
+Date:   Wed, 24 Jul 2019 08:52:57 +0200
+Message-Id: <20190724065258.16603-7-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190724065258.16603-1-hch@lst.de>
 References: <20190724065258.16603-1-hch@lst.de>
@@ -48,29 +48,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--EAGAIN has a magic meaning for non-blocking faults, so don't overload
-it.  Given that the caller doesn't check for specific error codes this
-change is purely cosmetic.
+Switch the one remaining user in nouveau over to its replacement,
+and remove all the wrappers.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
 Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_svm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nouveau_dmem.c |  2 +-
+ include/linux/hmm.h                    | 34 --------------------------
+ 2 files changed, 1 insertion(+), 35 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c b/drivers/gpu/drm/nouveau/nouveau_svm.c
-index a835cebb6d90..545100f7c594 100644
---- a/drivers/gpu/drm/nouveau/nouveau_svm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
-@@ -502,7 +502,7 @@ nouveau_range_fault(struct hmm_mirror *mirror, struct hmm_range *range)
+diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+index 1333220787a1..345c63cb752a 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
++++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+@@ -845,7 +845,7 @@ nouveau_dmem_convert_pfn(struct nouveau_drm *drm,
+ 		struct page *page;
+ 		uint64_t addr;
  
- 	if (!hmm_range_wait_until_valid(range, HMM_RANGE_DEFAULT_TIMEOUT)) {
- 		up_read(&range->vma->vm_mm->mmap_sem);
--		return -EAGAIN;
-+		return -EBUSY;
- 	}
+-		page = hmm_pfn_to_page(range, range->pfns[i]);
++		page = hmm_device_entry_to_page(range, range->pfns[i]);
+ 		if (page == NULL)
+ 			continue;
  
- 	ret = hmm_range_fault(range, true);
+diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+index 7ef56dc18050..9f32586684c9 100644
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -290,40 +290,6 @@ static inline uint64_t hmm_device_entry_from_pfn(const struct hmm_range *range,
+ 		range->flags[HMM_PFN_VALID];
+ }
+ 
+-/*
+- * Old API:
+- * hmm_pfn_to_page()
+- * hmm_pfn_to_pfn()
+- * hmm_pfn_from_page()
+- * hmm_pfn_from_pfn()
+- *
+- * This are the OLD API please use new API, it is here to avoid cross-tree
+- * merge painfullness ie we convert things to new API in stages.
+- */
+-static inline struct page *hmm_pfn_to_page(const struct hmm_range *range,
+-					   uint64_t pfn)
+-{
+-	return hmm_device_entry_to_page(range, pfn);
+-}
+-
+-static inline unsigned long hmm_pfn_to_pfn(const struct hmm_range *range,
+-					   uint64_t pfn)
+-{
+-	return hmm_device_entry_to_pfn(range, pfn);
+-}
+-
+-static inline uint64_t hmm_pfn_from_page(const struct hmm_range *range,
+-					 struct page *page)
+-{
+-	return hmm_device_entry_from_page(range, page);
+-}
+-
+-static inline uint64_t hmm_pfn_from_pfn(const struct hmm_range *range,
+-					unsigned long pfn)
+-{
+-	return hmm_device_entry_from_pfn(range, pfn);
+-}
+-
+ /*
+  * Mirroring: how to synchronize device page table with CPU page table.
+  *
 -- 
 2.20.1
 
