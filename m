@@ -2,63 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0427372852
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:34:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27EBB7283C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:31:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726277AbfGXGeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 02:34:09 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:46164 "EHLO inva020.nxp.com"
+        id S1726067AbfGXGbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 02:31:16 -0400
+Received: from muru.com ([72.249.23.125]:55846 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725900AbfGXGeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 02:34:08 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8121D1A0030;
-        Wed, 24 Jul 2019 08:34:06 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6FEDB1A00B0;
-        Wed, 24 Jul 2019 08:33:59 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 99CF7402D3;
-        Wed, 24 Jul 2019 14:33:50 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        abel.vesa@nxp.com, aisheng.dong@nxp.com, l.stach@pengutronix.de,
-        ping.bai@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] clk: imx: Remove unused function statement
-Date:   Wed, 24 Jul 2019 14:24:35 +0800
-Message-Id: <20190724062435.28074-1-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1725870AbfGXGbP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 02:31:15 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 01D51816A;
+        Wed, 24 Jul 2019 06:31:38 +0000 (UTC)
+Date:   Tue, 23 Jul 2019 23:31:10 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Keerthy <j-keerthy@ti.com>
+Cc:     Suman Anna <s-anna@ti.com>, linux-omap@vger.kernel.org,
+        Jyri Sarha <jsarha@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nishanth Menon <nm@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Roger Quadros <rogerq@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/8] ARM: OMAP2+: Remove unconfigured midlemode for am3
+ lcdc
+Message-ID: <20190724063110.GT5447@atomide.com>
+References: <20190723112811.44381-1-tony@atomide.com>
+ <20190723112811.44381-3-tony@atomide.com>
+ <bcc130a5-f7e0-e182-9f4b-5a48fc3d6e17@ti.com>
+ <52328e14-58b2-2ea1-8b0a-33548a1c6a7a@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <52328e14-58b2-2ea1-8b0a-33548a1c6a7a@ti.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+* Keerthy <j-keerthy@ti.com> [190724 05:50]:
+> 
+> On 24/07/19 12:33 AM, Suman Anna wrote:
+> > + Jyri
+> > 
+> > On 7/23/19 6:28 AM, Tony Lindgren wrote:
+> > > We currently get a warning for lcdc because of a difference
+> > > with dts provided configuration compared to the legacy platform
+> > > data. This is because lcdc has SYSC_HAS_MIDLEMODE configured in
+> > > the platform data without configuring the modes.
+> > 
+> > Hi Tony,
+> > While I understand that you are trying to match the DT data with the
+> > existing legacy data, do you know if there was a reason why this was
+> > omitted in the first place? Should we be really adding the MSTANDBY_
+> > flags and fix up the DTS node accordingly? I tried looking through the
+> > git log, and the initial commit itself didn't add the MSTANDBY_ flags
+> > but used the SYSC_HAS_MIDLEMODE.
 
-imx_register_uart_clocks_hws() function is NOT implemented
-at all, remove it.
+Yes the goal is to get rid of all errors and warnings in dmesg output
+so we can spot the real issues.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk.h | 1 -
- 1 file changed, 1 deletion(-)
+> > Jyri,
+> > Do you know the history?
+> 
+> Tony/Suman,
+> 
+> This patch breaks DS0 on am3.
 
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 9995f2a..f7a389a 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -10,7 +10,6 @@ extern spinlock_t imx_ccm_lock;
- void imx_check_clocks(struct clk *clks[], unsigned int count);
- void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
- void imx_register_uart_clocks(struct clk ** const clks[]);
--void imx_register_uart_clocks_hws(struct clk_hw ** const hws[]);
- void imx_mmdc_mask_handshake(void __iomem *ccm_base, unsigned int chn);
- void imx_unregister_clocks(struct clk *clks[], unsigned int count);
- 
--- 
-2.7.4
+OK thanks for testing. Let's drop this for now, sounds like there is
+some midlemode configuration happening even with no flags set.
 
+Probably the right fix is to configure the usable midlemodes instead
+both for platform data and dts data and then drop the platform data.
+
+Regards,
+
+Tony
+
+
+
+> > > Let's fix the warning by removing SYSC_HAS_MIDLEMODE. Note that
+> > > the am335x TRM lists SYSC_HAS_MIDLEMODE, but it is unused.
+> > 
+> > 
+> > 
+> > > 
+> > > Signed-off-by: Tony Lindgren <tony@atomide.com>
+> > > ---
+> > >   arch/arm/mach-omap2/omap_hwmod_33xx_data.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_data.c
+> > > --- a/arch/arm/mach-omap2/omap_hwmod_33xx_data.c
+> > > +++ b/arch/arm/mach-omap2/omap_hwmod_33xx_data.c
+> > > @@ -231,7 +231,7 @@ static struct omap_hwmod am33xx_control_hwmod = {
+> > >   static struct omap_hwmod_class_sysconfig lcdc_sysc = {
+> > >   	.rev_offs	= 0x0,
+> > >   	.sysc_offs	= 0x54,
+> > > -	.sysc_flags	= (SYSC_HAS_SIDLEMODE | SYSC_HAS_MIDLEMODE),
+> > > +	.sysc_flags	= SYSC_HAS_SIDLEMODE,
+> > >   	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART),
+> > >   	.sysc_fields	= &omap_hwmod_sysc_type2,
+> > >   };
+> > > 
+> > 
