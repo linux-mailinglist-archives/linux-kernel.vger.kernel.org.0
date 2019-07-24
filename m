@@ -2,168 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA00473463
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 18:58:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60B1D73450
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 18:57:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387654AbfGXQ6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 12:58:46 -0400
-Received: from mail-pg1-f201.google.com ([209.85.215.201]:52576 "EHLO
-        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387626AbfGXQ6m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 12:58:42 -0400
-Received: by mail-pg1-f201.google.com with SMTP id h3so28670436pgc.19
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 09:58:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=IGj/M+6U995Y52IjNEaLV6LDl7AzZ6dG3QadQeE37S0=;
-        b=oUJf1bx45jmFQxsX5BUA7N5crPP1ky/I4ydMP3+NZjrKcZ4IYQv4NSrYFZBPh3ba0O
-         KUW1JA/XDot9TQDgD/EvsU9/6KMH52NYJD8iaa4EOdbMpnGsL6uni6HvqR4DMzOwNwio
-         N8yHR4BK5WrbGWJK9M4mePqRz7Wm3KIjGMGXT/W9N81Sxaa5dfxA8oNe7rhc79J2bIPh
-         wGFiZme9haD7UKM+LZj8frc9mP3ygbLlM4Fo9CjVF+6ZEbYfWG3sLl8oOqUnaYmLHL5D
-         xo5t97SRL2RDscENQ7xblfMyvHnihOW0px4qIhxJVR+kZby+J9MPvDefXh/0ONgDkIn6
-         3wKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=IGj/M+6U995Y52IjNEaLV6LDl7AzZ6dG3QadQeE37S0=;
-        b=drdm2zXYo+x7Hei/MSb24UDsb7ZQ29TkUvJ5cW2/XSz2rFkFoPo5d7w4Qye21/RD/g
-         Ry9Qy9c0leV7oBWz1SEFiz3CiDxyajmOL+F8Tw8xebnWMq1FIdfhxBTqI22n1wHo5t9/
-         +091G/1ryEzuIMNhJqQFriRazfO6WuzPEsE/i8RffOkmYb/d4heWmyNCT8Z44vLBL2zy
-         u73udNR6fxpRooJBDkakMcUYrbcAtoFDg5hSk08yDTn/M7IxyMuMVVilPtRyQFTEuqQM
-         paAx57Uj4Ujk6xIDp6JxEKZfetmudHCwGyQMOHUU8i1pfGjHws0TZwSPhQB+o6Ted2PW
-         n20g==
-X-Gm-Message-State: APjAAAVcnub4RH0F19HuNZQ9JGD6SytR8AmQHnUNYnkmoiUWe+YUh2a1
-        W8V2GPFu5HEU5R8lMOFfJ4ncrxSy5sWw
-X-Google-Smtp-Source: APXvYqxbKxLxrhzXjYCucyVFxZ24iwUfubUGnAiPkh3hmQBII0u/pLXrbRWzMfSy+YCD5R9UAeHnyTFZA0Z4
-X-Received: by 2002:a63:1455:: with SMTP id 21mr38502725pgu.116.1563987520966;
- Wed, 24 Jul 2019 09:58:40 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 09:58:03 -0700
-In-Reply-To: <20190724165803.87470-1-brianvv@google.com>
-Message-Id: <20190724165803.87470-7-brianvv@google.com>
-Mime-Version: 1.0
-References: <20190724165803.87470-1-brianvv@google.com>
-X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
-Subject: [PATCH bpf-next 6/6] selftests/bpf: add test to measure performance
- of BPF_MAP_DUMP
-From:   Brian Vazquez <brianvv@google.com>
-To:     Brian Vazquez <brianvv.kernel@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S . Miller" <davem@davemloft.net>
-Cc:     Stanislav Fomichev <sdf@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Petar Penkov <ppenkov@google.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, Brian Vazquez <brianvv@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728208AbfGXQ5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 12:57:13 -0400
+Received: from mga01.intel.com ([192.55.52.88]:29580 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726567AbfGXQ5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 12:57:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 09:57:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
+   d="scan'208";a="193519956"
+Received: from tthayer-hp-z620.an.intel.com (HELO [10.122.105.146]) ([10.122.105.146])
+  by fmsmga004.fm.intel.com with ESMTP; 24 Jul 2019 09:57:12 -0700
+Reply-To: thor.thayer@linux.intel.com
+Subject: Re: [PATCHv2 2/3] fpga: altera-cvp: Preparation for V2 parts.
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     richard.gong@linux.intel.com, agust@denx.de,
+        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1563317287-18834-1-git-send-email-thor.thayer@linux.intel.com>
+ <1563317287-18834-3-git-send-email-thor.thayer@linux.intel.com>
+ <20190722005938.GB2583@archbook>
+ <6e54c0ee-b8ec-4f95-cf81-70aacc82c72e@linux.intel.com>
+ <20190724145704.GB24455@archbox>
+From:   Thor Thayer <thor.thayer@linux.intel.com>
+Message-ID: <b52ea6f3-a547-ebce-88f5-6256501a7e99@linux.intel.com>
+Date:   Wed, 24 Jul 2019 11:59:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190724145704.GB24455@archbox>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This tests compares the amount of time that takes to read an entire
-table of 100K elements on a bpf hashmap using both BPF_MAP_DUMP and
-BPF_MAP_GET_NEXT_KEY + BPF_MAP_LOOKUP_ELEM.
+Hi Moritz,
 
-Signed-off-by: Brian Vazquez <brianvv@google.com>
----
- tools/testing/selftests/bpf/test_maps.c | 65 +++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+On 7/24/19 9:57 AM, Moritz Fischer wrote:
+> On Tue, Jul 23, 2019 at 09:40:51AM -0500, Thor Thayer wrote:
+>> Hi Moritz,
+>>
+>> On 7/21/19 7:59 PM, Moritz Fischer wrote:
+>>> Thor,
+>>>
+>>> On Tue, Jul 16, 2019 at 05:48:06PM -0500, thor.thayer@linux.intel.com wrote:
+>>>> From: Thor Thayer <thor.thayer@linux.intel.com>
+>>>>
+>>>> In preparation for adding newer V2 parts that use a FIFO,
+>>>> reorganize altera_cvp_chk_error() and change the write
+>>>> function to block based.
+>>>> V2 parts have a block size matching the FIFO while older
+>>>> V1 parts write a 32 bit word at a time.
+>>>>
+>>>> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+>>>> ---
+>>>> v2 Remove inline function declaration
+>>>>      Reverse Christmas Tree format for local variables
+>>>> ---
+>>>>    drivers/fpga/altera-cvp.c | 72 ++++++++++++++++++++++++++++++-----------------
+>>>>    1 file changed, 46 insertions(+), 26 deletions(-)
+>>>>
+>>>> diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+>>>> index b78c90580071..37419d6b9915 100644
+>>>> --- a/drivers/fpga/altera-cvp.c
+>>>> +++ b/drivers/fpga/altera-cvp.c
+>>>> @@ -140,6 +140,41 @@ static int altera_cvp_wait_status(struct altera_cvp_conf *conf, u32 status_mask,
+>>>>    	return -ETIMEDOUT;
+>>>>    }
+>>>> +static int altera_cvp_chk_error(struct fpga_manager *mgr, size_t bytes)
+>>>> +{
+>>>> +	struct altera_cvp_conf *conf = mgr->priv;
+>>>> +	u32 val;
+>>>> +
+>>>> +	/* STEP 10 (optional) - check CVP_CONFIG_ERROR flag */
+>>>> +	altera_read_config_dword(conf, VSE_CVP_STATUS, &val);
+>>> Same as in the other email, why can we ignore return values here. I
+>>> think the original code probably did that already.
+>>
+>> Yes, I actually didn't make any changes to this function. You can see I
+>> moved it from below since it is used in the following function.
+>>
+>> I'm not checking the return code from any of the read/write functions since
+>> the original driver didn't. Would you prefer I check and issue a warning?
+> 
+> Not sure a warning would change much here. We should probably look at
+> why it was ok in the first place.
 
-diff --git a/tools/testing/selftests/bpf/test_maps.c b/tools/testing/selftests/bpf/test_maps.c
-index f7ab401399d40..c4593a8904ca6 100644
---- a/tools/testing/selftests/bpf/test_maps.c
-+++ b/tools/testing/selftests/bpf/test_maps.c
-@@ -18,6 +18,7 @@
- #include <sys/socket.h>
- #include <netinet/in.h>
- #include <linux/bpf.h>
-+#include <linux/time64.h>
- 
- #include <bpf/bpf.h>
- #include <bpf/libbpf.h>
-@@ -389,6 +390,69 @@ static void test_hashmap_dump(void)
- 	close(fd);
- }
- 
-+static void test_hashmap_dump_perf(void)
-+{
-+	int fd, i, max_entries = 100000;
-+	uint64_t key, value, next_key;
-+	bool next_key_valid = true;
-+	void *buf;
-+	u32 buf_len, entries;
-+	int j = 0;
-+	int clk_id = CLOCK_MONOTONIC;
-+	struct timespec begin, end;
-+	long long time_spent, dump_time_spent;
-+	double res;
-+	int tests[] = {1, 2, 230, 5000, 73000, 100000, 234567};
-+	int test_len = ARRAY_SIZE(tests);
-+	const int elem_size = sizeof(key) + sizeof(value);
-+
-+	fd = helper_fill_hashmap(max_entries);
-+	// Alloc memory considering the largest buffer
-+	buf = malloc(elem_size * tests[test_len-1]);
-+	assert(buf != NULL);
-+
-+test:
-+	entries = tests[j];
-+	buf_len = elem_size*tests[j];
-+	j++;
-+	clock_gettime(clk_id, &begin);
-+	errno = 0;
-+	i = 0;
-+	while (errno == 0) {
-+		bpf_map_dump(fd, !i ? NULL : &key,
-+				  buf, &buf_len);
-+		if (errno)
-+			break;
-+		if (!i)
-+			key = *((uint64_t *)(buf + buf_len - elem_size));
-+		i += buf_len / elem_size;
-+	}
-+	clock_gettime(clk_id, &end);
-+	assert(i  == max_entries);
-+	dump_time_spent = NSEC_PER_SEC * (end.tv_sec - begin.tv_sec) +
-+			  end.tv_nsec - begin.tv_nsec;
-+	next_key_valid = true;
-+	clock_gettime(clk_id, &begin);
-+	assert(bpf_map_get_next_key(fd, NULL, &key) == 0);
-+	for (i = 0; next_key_valid; i++) {
-+		next_key_valid = bpf_map_get_next_key(fd, &key, &next_key) == 0;
-+		assert(bpf_map_lookup_elem(fd, &key, &value) == 0);
-+		key = next_key;
-+	}
-+	clock_gettime(clk_id, &end);
-+	time_spent = NSEC_PER_SEC * (end.tv_sec - begin.tv_sec) +
-+		     end.tv_nsec - begin.tv_nsec;
-+	res = (1-((double)dump_time_spent/time_spent))*100;
-+	printf("buf_len_%u:\t %llu entry-by-entry: %llu improvement %lf\n",
-+	       entries, dump_time_spent, time_spent, res);
-+	assert(i  == max_entries);
-+
-+	if (j < test_len)
-+		goto test;
-+	free(buf);
-+	close(fd);
-+}
-+
- static void test_hashmap_zero_seed(void)
- {
- 	int i, first, second, old_flags;
-@@ -1758,6 +1822,7 @@ static void run_all_tests(void)
- 	test_hashmap_walk(0, NULL);
- 	test_hashmap_zero_seed();
- 	test_hashmap_dump();
-+	test_hashmap_dump_perf();
- 
- 	test_arraymap(0, NULL);
- 	test_arraymap_percpu(0, NULL);
--- 
-2.22.0.657.g960e92d24f-goog
+A quick grep of the drivers directory shows that an overwhelming 
+majority of pci_read_config_dword() and pci_write_config_dword() calls 
+do not check the return code.
 
+For robustness, I agree with you that checking and returning the return 
+code in this error checking function is important. I will return the 
+error code if the read fails.
+
+It shouldn't be necessary to change the rest of the code though unless 
+you feel strongly about updating the existing codebase.
+
+>>
+>> Thanks for reviewing!
+>>
+>>>> +	if (val & VSE_CVP_STATUS_CFG_ERR) {
+>>>> +		dev_err(&mgr->dev, "CVP_CONFIG_ERROR after %zu bytes!\n",
+>>>> +			bytes);
+>>>> +		return -EPROTO;
+>>>> +	}
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static int altera_cvp_send_block(struct altera_cvp_conf *conf,
+>>>> +				 const u32 *data, size_t len)
+>>>> +{
+>>>> +	u32 mask, words = len / sizeof(u32);
+>>>> +	int i, remainder;
+>>>> +
+>>>> +	for (i = 0; i < words; i++)
+>>>> +		conf->write_data(conf, *data++);
+>>>> +
+>>>> +	/* write up to 3 trailing bytes, if any */
+>>>> +	remainder = len % sizeof(u32);
+>>>> +	if (remainder) {
+>>>> +		mask = BIT(remainder * 8) - 1;
+>>>> +		if (mask)
+>>>> +			conf->write_data(conf, *data & mask);
+>>>> +	}
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>>    static int altera_cvp_teardown(struct fpga_manager *mgr,
+>>>>    			       struct fpga_image_info *info)
+>>>>    {
+>>>> @@ -262,39 +297,29 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
+>>>>    	return 0;
+>>>>    }
+>>>> -static inline int altera_cvp_chk_error(struct fpga_manager *mgr, size_t bytes)
+>>>> -{
+>>>> -	struct altera_cvp_conf *conf = mgr->priv;
+>>>> -	u32 val;
+>>>> -
+>>>> -	/* STEP 10 (optional) - check CVP_CONFIG_ERROR flag */
+>>>> -	altera_read_config_dword(conf, VSE_CVP_STATUS, &val);
+>>>> -	if (val & VSE_CVP_STATUS_CFG_ERR) {
+>>>> -		dev_err(&mgr->dev, "CVP_CONFIG_ERROR after %zu bytes!\n",
+>>>> -			bytes);
+>>>> -		return -EPROTO;
+>>>> -	}
+>>>> -	return 0;
+>>>> -}
+>>>> -
+>>>>    static int altera_cvp_write(struct fpga_manager *mgr, const char *buf,
+>>>>    			    size_t count)
+>>>>    {
+>>>>    	struct altera_cvp_conf *conf = mgr->priv;
+>>>> +	size_t done, remaining, len;
+>>>>    	const u32 *data;
+>>>> -	size_t done, remaining;
+>>>>    	int status = 0;
+>>>> -	u32 mask;
+>>>>    	/* STEP 9 - write 32-bit data from RBF file to CVP data register */
+>>>>    	data = (u32 *)buf;
+>>>>    	remaining = count;
+>>>>    	done = 0;
+>>>> -	while (remaining >= 4) {
+>>>> -		conf->write_data(conf, *data++);
+>>>> -		done += 4;
+>>>> -		remaining -= 4;
+>>>> +	while (remaining) {
+>>>> +		if (remaining >= sizeof(u32))
+>>>> +			len = sizeof(u32);
+>>>> +		else
+>>>> +			len = remaining;
+>>>> +
+>>>> +		altera_cvp_send_block(conf, data, len);
+>>>> +		data++;
+>>>> +		done += len;
+>>>> +		remaining -= len;
+>>>>    		/*
+>>>>    		 * STEP 10 (optional) and STEP 11
+>>>> @@ -312,11 +337,6 @@ static int altera_cvp_write(struct fpga_manager *mgr, const char *buf,
+>>>>    		}
+>>>>    	}
+>>>> -	/* write up to 3 trailing bytes, if any */
+>>>> -	mask = BIT(remaining * 8) - 1;
+>>>> -	if (mask)
+>>>> -		conf->write_data(conf, *data & mask);
+>>>> -
+>>>>    	if (altera_cvp_chkcfg)
+>>>>    		status = altera_cvp_chk_error(mgr, count);
+>>>> -- 
+>>>> 2.7.4
+>>>>
+>>> Cheers,
+>>> Moritz
+>>>
+>>
+> 
+> Moritz
+> 
+Thor
