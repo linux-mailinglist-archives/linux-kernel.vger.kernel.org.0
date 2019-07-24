@@ -2,112 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96CF673B0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:58:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C85073B1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:58:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404641AbfGXT4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:56:24 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:32864 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404628AbfGXT4W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:56:22 -0400
-Received: by mail-io1-f65.google.com with SMTP id z3so92266208iog.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:56:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XZt1VFBsfyDW8nwLopR3h8XPP4tphNg4YLYc8AkW2ho=;
-        b=NEeZ+uUa6lhQAWD9vkktfpJZVl4pMOSxYJSXNt2bByMieaXwfzGB10mfQ6B2Li1wNw
-         T4ZeKK3COOk1QFOqYMlmOLF4sOFI7nhmu+ImME1jtsxAS6J4BoCFBhU62jYMBtSqHVp7
-         P2xLgUNJJoxlvGHXSm6CvOipxxbi6Jik9Btus=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XZt1VFBsfyDW8nwLopR3h8XPP4tphNg4YLYc8AkW2ho=;
-        b=LmbRLUKTaI7yRt/vGIX7YIdMWpKF15qFBCJtKPBrWM5P2xQ+sxP5C9eNF+JmAEI3fM
-         zX3bYC6YyluBihUaumpXcVZt5xBva35kmxGycanhfUXum/xl68rff8CralDRNm+iCGS8
-         prwPzhxZimNdOX0pVtgdExB2iec4JLybaZUCkQ4J9AYezufUdpv05hMPKaK4hmLBuiy5
-         pQV4fPzjkERfXpdqvZaLD9QIJ+mMb3UN8aOZRIYtbwKPmNOceTmT6DBe9t2OUpitiB4x
-         2m/EsD7bPj2plKKA7wAvJh6ym57xGhmj+jx+hVAdrAMFm7BC1GP8SyubG4FGgpo7gYID
-         Uy3A==
-X-Gm-Message-State: APjAAAUGzmveElqnjIsWaMBK6T/VCGPTQt1GqyZ4oR6jONRYME/h0w9g
-        MEhzsFRQQ7ZrD2SJYoiEtRSZ4RSGTS8=
-X-Google-Smtp-Source: APXvYqyJuaBLqCmzYhiiGjaUUiNJ0Ew1rGFY0G4F/tzNqehLmQxAokZ+kpNF4qntd+g4oCI3UfmfkA==
-X-Received: by 2002:a02:13c3:: with SMTP id 186mr85329078jaz.30.1563998181709;
-        Wed, 24 Jul 2019 12:56:21 -0700 (PDT)
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com. [209.85.166.53])
-        by smtp.gmail.com with ESMTPSA id c23sm39411896iod.11.2019.07.24.12.56.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 12:56:21 -0700 (PDT)
-Received: by mail-io1-f53.google.com with SMTP id g20so92183302ioc.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:56:20 -0700 (PDT)
-X-Received: by 2002:a02:c6a9:: with SMTP id o9mr30860288jan.90.1563998180575;
- Wed, 24 Jul 2019 12:56:20 -0700 (PDT)
+        id S2391865AbfGXT47 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:56:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39990 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404721AbfGXT44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:56:56 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D582A330272;
+        Wed, 24 Jul 2019 19:56:55 +0000 (UTC)
+Received: from [10.36.116.35] (ovpn-116-35.ams2.redhat.com [10.36.116.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E7AFB605C3;
+        Wed, 24 Jul 2019 19:56:44 +0000 (UTC)
+Subject: Re: [RFC][Patch v11 2/2] virtio-balloon: page_hinting: reporting to
+ the host
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Nitesh Narayan Lal <nitesh@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, pbonzini@redhat.com, lcapitulino@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com, yang.zhang.wz@gmail.com,
+        riel@surriel.com, dodgen@google.com, konrad.wilk@oracle.com,
+        dhildenb@redhat.com, aarcange@redhat.com,
+        alexander.duyck@gmail.com, john.starks@microsoft.com,
+        dave.hansen@intel.com, mhocko@suse.com
+References: <20190710195158.19640-1-nitesh@redhat.com>
+ <20190710195158.19640-3-nitesh@redhat.com>
+ <20190724153951-mutt-send-email-mst@kernel.org>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <d4f827a5-7914-4f8c-932e-91ef173b65d0@redhat.com>
+Date:   Wed, 24 Jul 2019 21:56:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190723225258.93058-1-mka@chromium.org>
-In-Reply-To: <20190723225258.93058-1-mka@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 24 Jul 2019 12:56:08 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Wk2meLxa6AszjFs=Mfp_wML_7OMsn81FLA5tcdEx=1kg@mail.gmail.com>
-Message-ID: <CAD=FV=Wk2meLxa6AszjFs=Mfp_wML_7OMsn81FLA5tcdEx=1kg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: rockchip: Limit WiFi TX power on rk3288-veyron-jerry
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190724153951-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 24 Jul 2019 19:56:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 24.07.19 21:47, Michael S. Tsirkin wrote:
+> On Wed, Jul 10, 2019 at 03:51:58PM -0400, Nitesh Narayan Lal wrote:
+>> Enables the kernel to negotiate VIRTIO_BALLOON_F_HINTING feature with the
+>> host. If it is available and page_hinting_flag is set to true, page_hinting
+>> is enabled and its callbacks are configured along with the max_pages count
+>> which indicates the maximum number of pages that can be isolated and hinted
+>> at a time. Currently, only free pages of order >= (MAX_ORDER - 2) are
+>> reported. To prevent any false OOM max_pages count is set to 16.
+>>
+>> By default page_hinting feature is enabled and gets loaded as soon
+>> as the virtio-balloon driver is loaded. However, it could be disabled
+>> by writing the page_hinting_flag which is a virtio-balloon parameter.
+>>
+>> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
+>> ---
+>>  drivers/virtio/Kconfig              |  1 +
+>>  drivers/virtio/virtio_balloon.c     | 91 ++++++++++++++++++++++++++++-
+>>  include/uapi/linux/virtio_balloon.h | 11 ++++
+>>  3 files changed, 102 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
+>> index 023fc3bc01c6..dcc0cb4269a5 100644
+>> --- a/drivers/virtio/Kconfig
+>> +++ b/drivers/virtio/Kconfig
+>> @@ -47,6 +47,7 @@ config VIRTIO_BALLOON
+>>  	tristate "Virtio balloon driver"
+>>  	depends on VIRTIO
+>>  	select MEMORY_BALLOON
+>> +	select PAGE_HINTING
+>>  	---help---
+>>  	 This driver supports increasing and decreasing the amount
+>>  	 of memory within a KVM guest.
+>> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+>> index 44339fc87cc7..1fb0eb0b2c20 100644
+>> --- a/drivers/virtio/virtio_balloon.c
+>> +++ b/drivers/virtio/virtio_balloon.c
+>> @@ -18,6 +18,7 @@
+>>  #include <linux/mm.h>
+>>  #include <linux/mount.h>
+>>  #include <linux/magic.h>
+>> +#include <linux/page_hinting.h>
+>>  
+>>  /*
+>>   * Balloon device works in 4K page units.  So each page is pointed to by
+>> @@ -35,6 +36,12 @@
+>>  /* The size of a free page block in bytes */
+>>  #define VIRTIO_BALLOON_FREE_PAGE_SIZE \
+>>  	(1 << (VIRTIO_BALLOON_FREE_PAGE_ORDER + PAGE_SHIFT))
+>> +/* Number of isolated pages to be reported to the host at a time.
+>> + * TODO:
+>> + * 1. Set it via host.
+>> + * 2. Find an optimal value for this.
+>> + */
+>> +#define PAGE_HINTING_MAX_PAGES	16
+>>  
+>>  #ifdef CONFIG_BALLOON_COMPACTION
+>>  static struct vfsmount *balloon_mnt;
+>> @@ -45,6 +52,7 @@ enum virtio_balloon_vq {
+>>  	VIRTIO_BALLOON_VQ_DEFLATE,
+>>  	VIRTIO_BALLOON_VQ_STATS,
+>>  	VIRTIO_BALLOON_VQ_FREE_PAGE,
+>> +	VIRTIO_BALLOON_VQ_HINTING,
+>>  	VIRTIO_BALLOON_VQ_MAX
+>>  };
+>>  
+>> @@ -54,7 +62,8 @@ enum virtio_balloon_config_read {
+>>  
+>>  struct virtio_balloon {
+>>  	struct virtio_device *vdev;
+>> -	struct virtqueue *inflate_vq, *deflate_vq, *stats_vq, *free_page_vq;
+>> +	struct virtqueue *inflate_vq, *deflate_vq, *stats_vq, *free_page_vq,
+>> +			 *hinting_vq;
+>>  
+>>  	/* Balloon's own wq for cpu-intensive work items */
+>>  	struct workqueue_struct *balloon_wq;
+>> @@ -112,6 +121,9 @@ struct virtio_balloon {
+>>  
+>>  	/* To register a shrinker to shrink memory upon memory pressure */
+>>  	struct shrinker shrinker;
+>> +
+>> +	/* Array object pointing at the isolated pages ready for hinting */
+>> +	struct isolated_memory isolated_pages[PAGE_HINTING_MAX_PAGES];
+>>  };
+>>  
+>>  static struct virtio_device_id id_table[] = {
+>> @@ -119,6 +131,66 @@ static struct virtio_device_id id_table[] = {
+>>  	{ 0 },
+>>  };
+>>  
+>> +static struct page_hinting_config page_hinting_conf;
+>> +bool page_hinting_flag = true;
+>> +struct virtio_balloon *hvb;
+>> +module_param(page_hinting_flag, bool, 0444);
+>> +MODULE_PARM_DESC(page_hinting_flag, "Enable page hinting");
+>> +
+>> +static int page_hinting_report(void)
+>> +{
+>> +	struct virtqueue *vq = hvb->hinting_vq;
+>> +	struct scatterlist sg;
+>> +	int err = 0, unused;
+>> +
+>> +	mutex_lock(&hvb->balloon_lock);
+>> +	sg_init_one(&sg, hvb->isolated_pages, sizeof(hvb->isolated_pages[0]) *
+>> +		    PAGE_HINTING_MAX_PAGES);
+>> +	err = virtqueue_add_outbuf(vq, &sg, 1, hvb, GFP_KERNEL);
+> 
+> In Alex's patch, I really like it that he's passing pages as sg
+> entries. IMHO that's both cleaner and allows seamless
+> support for arbitrary page sizes.
+> 
 
-On Tue, Jul 23, 2019 at 3:53 PM Matthias Kaehlcke <mka@chromium.org> wrote:
->
-> The downstream Chrome OS 3.14 kernel for jerry limits WiFi TX power
-> through calibration data in the device tree [1]. Add a DT node for
-> the WiFi chip and use the downstream calibration data.
->
-> Not all calibration data entries have the length specified in the
-> binding (Documentation/devicetree/bindings/net/wireless/marvell-8xxx.txt),
-> however this is the data used by the downstream ('official') kernel
-> and the binding mentions that "the length can vary between hw
-> versions".
->
-> [1] https://crrev.com/c/271237
->
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
->  arch/arm/boot/dts/rk3288-veyron-jerry.dts | 147 ++++++++++++++++++++++
->  1 file changed, 147 insertions(+)
++1
 
-I agree that this matches what's downstream and seems right.
+I especially like passing full addresses and sizes instead of PFNs and
+orders (compared to Alex's v1, where he would pass PFNs and orders).
 
-As you pointed out the bindings are a bit on the sketchy side,
-claiming a certain length in one place but then saying that the length
-depends on the HW version in another place.  I'll also point out that
-the bindings are inconsistent about the name that should be used.
-AKA:
+-- 
 
-marvell,caldata-txpwrlimit-2g
- -vs-
-marvell,caldata_00_txpwrlimit_2g_cfg_set
+Thanks,
 
-...but I think the answer is that it doesn't matter at all from a
-practical point of view.  The code seems to just find everything that
-starts with "marvell,caldata" and send the binary blindly to the WiFi
-card.  Presumably there is enough of a header in the opaque binary
-data that the card can make sense of what it's being sent.
-
-
-So it seems like this is the best we can do given the current state of
-the world.
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+David / dhildenb
