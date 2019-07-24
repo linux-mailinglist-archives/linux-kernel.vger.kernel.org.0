@@ -2,139 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 826DF729EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:25:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 728F4729F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:25:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfGXIZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 04:25:27 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33969 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbfGXIZV (ORCPT
+        id S1726589AbfGXIZf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 04:25:35 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:42818 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726211AbfGXIZd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 04:25:21 -0400
-Received: by mail-wr1-f65.google.com with SMTP id 31so45979414wrm.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 01:25:20 -0700 (PDT)
+        Wed, 24 Jul 2019 04:25:33 -0400
+Received: by mail-io1-f66.google.com with SMTP id e20so57415946iob.9
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 01:25:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HpxCRy2V5Agh4JLerbqys83epZFNSOhcfRgJphFvhIM=;
-        b=x19yNdi/wQM2QHEWsQ8Fml/XsADvHcBE6EJCk5MVdtjRIYLdcz8QxPF6qBAO/K2CdR
-         FPqD88r5piJ1E8YFxjZL6g97vhm37EM9ZEeqHPRtITeuG9dgMFd6OI2rl3kcxyRxGr2/
-         AR5YqqHwRuiTh7exj0tZLBHZKBFwKtKGR3YMgT21+68aAndEk8RQF7rg4NUK2SiKQcHO
-         rRqpGbAwY3EMvnAmAf58IAZZ3pEMM/x10whrww55L/YQ+PzmVafOq5xEQhagdFtY4f7R
-         irg/VdMVaHIJMgs+Tc3kf4xhNgxgrtaUSIa1o0gFgToMLgCzbjz/eaoyeBumRIhB+oEA
-         b5Jg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rthB7TuLsrrexVORz8jX/4Y6bSbkbA/CLCm06dzoX3Q=;
+        b=YVfKR2ERODUww+Ppa6Ui+D9VCr6s4Ik4GFYDy9CFHAScAT3PzbFHqh6SScM2k7blFY
+         qIQGgTQBVZnL/o++BflPx1V0xSWmLSnIVuVs6keND0wK1OJpMtQZ6lFVbgzXOKvBO3ZR
+         hUz03IWbyQgttxi4Y3xBES73lVMq1S/JgqHPAeomYOcjyBepdhBuLr38pJfQZLVcYBcL
+         Q56VvhbWXS6rU1/uPYUA5qDdln3I8rnpA3Qe7uuk7N8sLai12tJMITxKJn+zq+k3s5PZ
+         R7AuqwZifzsQJRbSubOMiNSTCM3Ao93Bbzyk3HOVHZ3VknMMDnfVBNzofk3NuWEF2BRE
+         CD5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HpxCRy2V5Agh4JLerbqys83epZFNSOhcfRgJphFvhIM=;
-        b=FlYvf6jtuTpO6XeM8EilojrfIExJf9otKXMNYqR19AQOdNXzrhr7uN0Dj7XVzqHlPV
-         x8LNHm6rIP3bmOvcW39h7LvQPDJ+SRakHcjN+O6eAw2qiNmhhNi9Fs4/LxbDvuzZtuox
-         1w4Pj1AkND9bChHdYgBxO3IVH6hXVpUSXiBMayIvNKR5G6glwD35yazFOpKefcqxiqOj
-         6OfF2SmAOsP8Y/r0wIY1T7xTFbUBpvh6lDyO/6Raxaq4EZRtykpwNy+iqRSOkSvjngRy
-         nGUSYAKC6q8kTilO1DQ8NzUwk1Ed2omPpM5Wnrd53KG7IuQ1IwpsSe2LN3VeW9cFjERi
-         HHdQ==
-X-Gm-Message-State: APjAAAXMYCMMdhkGBE4iebN7wbrQq4PcS5MMvzM1crbV86JmpHJc3Zyq
-        oCro2yns/xVW++ylmQ3hlwp0Ux5I
-X-Google-Smtp-Source: APXvYqwH9jsfXEOv3fcGiDqEzST6zq9dWSrvlyiiGgXaYsEM7ZSrxfCt9vxBHSk4uEnWLIx49qhpiQ==
-X-Received: by 2002:adf:8bc2:: with SMTP id w2mr3587116wra.7.1563956720281;
-        Wed, 24 Jul 2019 01:25:20 -0700 (PDT)
-Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id z7sm42393880wrh.67.2019.07.24.01.25.19
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 01:25:19 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 7/7] backlight: gpio: use a helper variable for &pdev->dev
-Date:   Wed, 24 Jul 2019 10:25:08 +0200
-Message-Id: <20190724082508.27617-8-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190724082508.27617-1-brgl@bgdev.pl>
-References: <20190724082508.27617-1-brgl@bgdev.pl>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rthB7TuLsrrexVORz8jX/4Y6bSbkbA/CLCm06dzoX3Q=;
+        b=mpTLPDEwol4l1dvCCBUNzYODcDbglaq6o+XzuurNAur9siveQkqcPHcAL76U+purDl
+         c8gmGxvdSiS2eIpUO9vN1KabKsEj8T0oCYO1qgkng8LZTCQ3zrJEkt6AQO8wYeseCpih
+         J6AyxzcUgPstqqhdWdyIRhWTQVplalq8sQeDKwHaLzwMxNwAxNQY8vkQh9jbF2o7BymZ
+         wD5q95uorf8rFyt93bYlKD6p7OKDDIx4gxWb+ZJor7ovbiri5pgQIug6GBnOEzMZqgJE
+         ed3fFZcZGYZanLhAv8QEVffZQybZSLZ5L9lugXTf0bE1kU0LLYvSriJ5RoqjbT1GpxHK
+         OLQA==
+X-Gm-Message-State: APjAAAVQVRjAq57B5fwjCGgwkceg3/kJ1xICV34VR3lcIXMuS/tRFR+X
+        B9lShDodCaiHVKIYJBzErJKEfFnRmETH9Tb0AnpbIg==
+X-Google-Smtp-Source: APXvYqz+ofRXz1OnoH0hWv3X77gZsDjqYbcnA8dpRve1lPmDLdB7KDa+1wUPQZxxs2yEi/Oq616FDj32EerPEwY/ipY=
+X-Received: by 2002:a5e:c241:: with SMTP id w1mr70815812iop.58.1563956732813;
+ Wed, 24 Jul 2019 01:25:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <000000000000edcb3c058e6143d5@google.com>
+In-Reply-To: <000000000000edcb3c058e6143d5@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 24 Jul 2019 10:25:21 +0200
+Message-ID: <CACT4Y+a=phN5-2DCAAEZYit01HoSsfWTyw5CHCtjbPtQ20e4Xg@mail.gmail.com>
+Subject: Re: memory leak in kobject_set_name_vargs (2)
+To:     Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev <netdev@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzbot <syzbot+ad8ca40ecd77896d51e2@syzkaller.appspotmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Wed, Jul 24, 2019 at 1:08 AM syzbot
+<syzbot+ad8ca40ecd77896d51e2@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    3bfe1fc4 Merge tag 'for-5.3/dm-changes-2' of git://git.ker..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=130322afa00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=dcfc65ee492509c6
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ad8ca40ecd77896d51e2
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=135cbed0600000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14dd4e34600000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+ad8ca40ecd77896d51e2@syzkaller.appspotmail.com
 
-Instead of dereferencing pdev each time, use a helper variable for
-the associated device pointer.
++net/ipv6/ip6_vti.c maintainers
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/video/backlight/gpio_backlight.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
-index cd6a75bca9cc..7dc4f90d926b 100644
---- a/drivers/video/backlight/gpio_backlight.c
-+++ b/drivers/video/backlight/gpio_backlight.c
-@@ -54,29 +54,29 @@ static const struct backlight_ops gpio_backlight_ops = {
- 
- static int gpio_backlight_probe(struct platform_device *pdev)
- {
--	struct gpio_backlight_platform_data *pdata =
--		dev_get_platdata(&pdev->dev);
-+	struct device *dev = &pdev->dev;
-+	struct gpio_backlight_platform_data *pdata = dev_get_platdata(dev);
- 	struct backlight_properties props;
- 	struct backlight_device *bl;
- 	struct gpio_backlight *gbl;
- 	enum gpiod_flags flags;
- 	int ret, def_value;
- 
--	gbl = devm_kzalloc(&pdev->dev, sizeof(*gbl), GFP_KERNEL);
-+	gbl = devm_kzalloc(dev, sizeof(*gbl), GFP_KERNEL);
- 	if (gbl == NULL)
- 		return -ENOMEM;
- 
- 	if (pdata)
- 		gbl->fbdev = pdata->fbdev;
- 
--	def_value = device_property_read_bool(&pdev->dev, "default-on");
-+	def_value = device_property_read_bool(dev, "default-on");
- 	flags = def_value ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
- 
--	gbl->gpiod = devm_gpiod_get(&pdev->dev, NULL, flags);
-+	gbl->gpiod = devm_gpiod_get(dev, NULL, flags);
- 	if (IS_ERR(gbl->gpiod)) {
- 		ret = PTR_ERR(gbl->gpiod);
- 		if (ret != -EPROBE_DEFER) {
--			dev_err(&pdev->dev,
-+			dev_err(dev,
- 				"Error: The gpios parameter is missing or invalid.\n");
- 		}
- 		return ret;
-@@ -85,11 +85,10 @@ static int gpio_backlight_probe(struct platform_device *pdev)
- 	memset(&props, 0, sizeof(props));
- 	props.type = BACKLIGHT_RAW;
- 	props.max_brightness = 1;
--	bl = devm_backlight_device_register(&pdev->dev, dev_name(&pdev->dev),
--					&pdev->dev, gbl, &gpio_backlight_ops,
--					&props);
-+	bl = devm_backlight_device_register(dev, dev_name(dev), dev, gbl,
-+					    &gpio_backlight_ops, &props);
- 	if (IS_ERR(bl)) {
--		dev_err(&pdev->dev, "failed to register backlight\n");
-+		dev_err(dev, "failed to register backlight\n");
- 		return PTR_ERR(bl);
- 	}
- 
--- 
-2.21.0
-
+> BUG: memory leak
+> unreferenced object 0xffff88810cc5d860 (size 32):
+>    comm "syz-executor938", pid 7153, jiffies 4294945400 (age 8.020s)
+>    hex dump (first 32 bytes):
+>      69 70 36 5f 76 74 69 31 00 2f 37 31 35 33 00 00  ip6_vti1./7153..
+>      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>    backtrace:
+>      [<000000000800471f>] kmemleak_alloc_recursive
+> /./include/linux/kmemleak.h:43 [inline]
+>      [<000000000800471f>] slab_post_alloc_hook /mm/slab.h:522 [inline]
+>      [<000000000800471f>] slab_alloc /mm/slab.c:3319 [inline]
+>      [<000000000800471f>] __do_kmalloc /mm/slab.c:3653 [inline]
+>      [<000000000800471f>] __kmalloc_track_caller+0x165/0x300 /mm/slab.c:3670
+>      [<000000007a2eef8e>] kstrdup+0x3a/0x70 /mm/util.c:53
+>      [<00000000a309e483>] kstrdup_const+0x48/0x60 /mm/util.c:75
+>      [<00000000cf8dc39b>] kvasprintf_const+0x7e/0xe0 /lib/kasprintf.c:48
+>      [<000000005a964730>] kobject_set_name_vargs+0x40/0xe0 /lib/kobject.c:289
+>      [<00000000e2a9ccdf>] dev_set_name+0x63/0x90 /drivers/base/core.c:1915
+>      [<000000007bc7b1da>] netdev_register_kobject+0x5a/0x1b0
+> /net/core/net-sysfs.c:1727
+>      [<00000000637b4645>] register_netdevice+0x397/0x600 /net/core/dev.c:8723
+>      [<0000000038b21fdc>] vti6_tnl_create2+0x47/0xb0 /net/ipv6/ip6_vti.c:189
+>      [<0000000023231475>] vti6_tnl_create /net/ipv6/ip6_vti.c:229 [inline]
+>      [<0000000023231475>] vti6_locate /net/ipv6/ip6_vti.c:277 [inline]
+>      [<0000000023231475>] vti6_locate+0x244/0x2c0 /net/ipv6/ip6_vti.c:255
+>      [<000000006ebf0a44>] vti6_ioctl+0x17f/0x390 /net/ipv6/ip6_vti.c:802
+>      [<00000000077406fa>] dev_ifsioc+0x324/0x460 /net/core/dev_ioctl.c:322
+>      [<00000000465d817c>] dev_ioctl+0x157/0x45e /net/core/dev_ioctl.c:514
+>      [<00000000e2472af6>] sock_ioctl+0x394/0x480 /net/socket.c:1099
+>      [<0000000024234c3b>] vfs_ioctl /fs/ioctl.c:46 [inline]
+>      [<0000000024234c3b>] file_ioctl /fs/ioctl.c:509 [inline]
+>      [<0000000024234c3b>] do_vfs_ioctl+0x62a/0x810 /fs/ioctl.c:696
+>      [<0000000015b52ca4>] ksys_ioctl+0x86/0xb0 /fs/ioctl.c:713
+>
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000edcb3c058e6143d5%40google.com.
