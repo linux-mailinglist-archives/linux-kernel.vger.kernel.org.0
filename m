@@ -2,67 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8393673CF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:13:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 565C873D34
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:15:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404958AbfGXUNa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:13:30 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:51162 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404887AbfGXUNZ (ORCPT
+        id S2392818AbfGXUPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:15:24 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37296 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387824AbfGXUPV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 16:13:25 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 85A5B15431990;
-        Wed, 24 Jul 2019 13:13:24 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 13:13:24 -0700 (PDT)
-Message-Id: <20190724.131324.1545677795217357026.davem@davemloft.net>
-To:     matorola@gmail.com
-Cc:     ldv@altlinux.org, hch@lst.de, khalid.aziz@oracle.com,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        sparclinux@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/16] sparc64: use the generic get_user_pages_fast code
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <CADxRZqx-jEnm4U8oe=tJf5apbvcMuw5OYZUN8h4G68sXFvDsmQ@mail.gmail.com>
-References: <20190717215956.GA30369@altlinux.org>
-        <20190718.141405.1070121094691581998.davem@davemloft.net>
-        <CADxRZqx-jEnm4U8oe=tJf5apbvcMuw5OYZUN8h4G68sXFvDsmQ@mail.gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 24 Jul 2019 13:13:24 -0700 (PDT)
+        Wed, 24 Jul 2019 16:15:21 -0400
+Received: by mail-io1-f66.google.com with SMTP id q22so92303077iog.4;
+        Wed, 24 Jul 2019 13:15:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=I8CjyViUUMDogLJ5VWVPS6e/PwcUeKuF+6IP3/vGsBs=;
+        b=LpEdL8FVEs2VmF4W0SFWTNmZR6UOR46fTdHShqvbAvKJqBpv6+v2fatbIFsgoCAqvO
+         pcTVPvyIEmcNIHMD6DbH6I1g1JLZy6H5rE7GdEzVVNGRh+E1IcwB/98kAG6nt9LKF6uS
+         Emg0+6LD3GfvYkauPlyCyjRXAiOCqMR6ZsIx/ac4eO5PXM6h8k76m2Ob38q76Gvj5Cba
+         SmLtrpvYIsBQ+1snN5fU3+wtZP6ySonDfWgvgvgWpon325rdnQKhTPXQgUydIbxpKxHM
+         XYM0K+o4/6uMW0O4IXEV79/J6ZCZqQJvDwbqKaH2DfwrWOqUD2CCEN9UbLGZfTYcyrTh
+         g+BA==
+X-Gm-Message-State: APjAAAVr220kpeDT0cwczIQlS2oB8s2AcRkTHEVpuZlnGJ3crWMy72pa
+        FgIL5kCDHtbJAhlCgacBZw==
+X-Google-Smtp-Source: APXvYqybRcRkXoHjkdesxQbBTM2QuHB/KR5mvS2bWaUpVJ+8PZzHrz+31LV30zjboYU8LvifX/teOw==
+X-Received: by 2002:a6b:8e82:: with SMTP id q124mr68424936iod.68.1563999320721;
+        Wed, 24 Jul 2019 13:15:20 -0700 (PDT)
+Received: from localhost ([64.188.179.254])
+        by smtp.gmail.com with ESMTPSA id v10sm41420293iob.43.2019.07.24.13.15.19
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 13:15:20 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 14:15:19 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     yongqiang.niu@mediatek.com
+Cc:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Yongqiang Niu <yongqiang.niu@mediatek.com>
+Subject: Re: [PATCH v4, 02/33] dt-bindings: mediatek: add ovl_2l description
+ for mt8183 display
+Message-ID: <20190724201519.GA18133@bogus>
+References: <1562625253-29254-1-git-send-email-yongqiang.niu@mediatek.com>
+ <1562625253-29254-3-git-send-email-yongqiang.niu@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562625253-29254-3-git-send-email-yongqiang.niu@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anatoly Pugachev <matorola@gmail.com>
-Date: Wed, 24 Jul 2019 22:32:17 +0300
-
-> the first test where it was discovered was done on my test LDOM named
-> ttip, hardware (hypervisor) is T5-2 server, running under Solaris 11.4
-> OS.
-> ttip LDOM is debian sparc64 unstable , so with almost all the latest
-> software (gcc 8.3.0, binutils 2.32.51.20190707-1, debian GLIBC
-> 2.28-10, etc..)
+On Tue, 9 Jul 2019 06:33:42 +0800, <yongqiang.niu@mediatek.com> wrote:
+> From: Yongqiang Niu <yongqiang.niu@mediatek.com>
 > 
-> For another test, i also installed LDOM with oracle sparc linux
-> https://oss.oracle.com/projects/linux-sparc/ , but I've to install a
-> more fresh version of gcc on it first, since system installed gcc 4.4
-> is too old for a git kernel (linux-2.6/Documentation/Changes lists gcc
-> 4.6 as a minimal version), so I choose to install gcc-7.4.0 to /opt/
-> (leaving system installed gcc 4.4 under /usr/bin). Compiled and
-> installed git kernel version, i.e. last tag 5.3.0-rc1 and ran the
-> test. Kernel still produced oops.
+> Update device tree binding documention for the display subsystem for
+> Mediatek MT8183 SOCs
+> 
+> Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> ---
+>  .../bindings/display/mediatek/mediatek,disp.txt    | 27 +++++++++++-----------
+>  1 file changed, 14 insertions(+), 13 deletions(-)
+> 
 
-I suspect, therefore, that we have a miscompile.
-
-Please put your unstripped vmlinux image somewhere so I can take a closer
-look.
-
-Thank you.
+Reviewed-by: Rob Herring <robh@kernel.org>
