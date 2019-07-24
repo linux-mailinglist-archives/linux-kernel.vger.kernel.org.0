@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05E987467D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:53:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FC2E7465C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:51:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404196AbfGYFjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:39:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54118 "EHLO mail.kernel.org"
+        id S2390772AbfGYFls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:41:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404156AbfGYFjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:39:49 -0400
+        id S2404736AbfGYFlo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 01:41:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9670922BF3;
-        Thu, 25 Jul 2019 05:39:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C02622C7D;
+        Thu, 25 Jul 2019 05:41:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564033188;
-        bh=6vHvRQBtyfYp/zt+ZKBcm/GfCCmNfiJ/IJqu3vk8oD4=;
+        s=default; t=1564033304;
+        bh=n0MQC/8XsC7homZ2nSmclkxOg6rP27Bzh8F2sa/T2tI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DO+H+CKOWqhTjWeemV1w3loGNfRVKhU24xcq6k834tkDr+jln96FMf7gm1c3P+Zyg
-         SCZKshGo1JzfsZoniGij1S/Zof7KKnKSOrVZwLP+94t2K/w/WgxobhWEDE/XnGvKKp
-         80/3UtgYuOzDoShve8RKih+JPs9/sTwzS+cqG7QA=
+        b=YkObk3HUyyw+AS8cK5o41rINz6BgyHFVBVcNfhJbiucKtCgP68CnPacd9EHa0GotE
+         EfNWhkhyVOPqY89iqynLkKYZiCxMvZDcaW1txEcajqUUsLPzhTHuH8DSzX4B8FbSfs
+         KssShOBIMrVEJ+La9ZNxYuE/CMgcGMSObfLZiLjU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 120/271] crypto: serpent - mark __serpent_setkey_sbox noinline
-Date:   Wed, 24 Jul 2019 21:19:49 +0200
-Message-Id: <20190724191705.563020760@linuxfoundation.org>
+        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 125/271] bcache: check CACHE_SET_IO_DISABLE bit in bch_journal()
+Date:   Wed, 24 Jul 2019 21:19:54 +0200
+Message-Id: <20190724191705.986718330@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191655.268628197@linuxfoundation.org>
 References: <20190724191655.268628197@linuxfoundation.org>
@@ -45,45 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 473971187d6727609951858c63bf12b0307ef015 ]
+[ Upstream commit 383ff2183ad16a8842d1fbd9dd3e1cbd66813e64 ]
 
-The same bug that gcc hit in the past is apparently now showing
-up with clang, which decides to inline __serpent_setkey_sbox:
+When too many I/O errors happen on cache set and CACHE_SET_IO_DISABLE
+bit is set, bch_journal() may continue to work because the journaling
+bkey might be still in write set yet. The caller of bch_journal() may
+believe the journal still work but the truth is in-memory journal write
+set won't be written into cache device any more. This behavior may
+introduce potential inconsistent metadata status.
 
-crypto/serpent_generic.c:268:5: error: stack frame size of 2112 bytes in function '__serpent_setkey' [-Werror,-Wframe-larger-than=]
+This patch checks CACHE_SET_IO_DISABLE bit at the head of bch_journal(),
+if the bit is set, bch_journal() returns NULL immediately to notice
+caller to know journal does not work.
 
-Marking it 'noinline' reduces the stack usage from 2112 bytes to
-192 and 96 bytes, respectively, and seems to generate more
-useful object code.
-
-Fixes: c871c10e4ea7 ("crypto: serpent - improve __serpent_setkey with UBSAN")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Eric Biggers <ebiggers@kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/serpent_generic.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/md/bcache/journal.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/crypto/serpent_generic.c b/crypto/serpent_generic.c
-index 7c3382facc82..600bd288881d 100644
---- a/crypto/serpent_generic.c
-+++ b/crypto/serpent_generic.c
-@@ -229,7 +229,13 @@
- 	x4 ^= x2;					\
- 	})
+diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
+index f880e5eba8dd..8d4d63b51553 100644
+--- a/drivers/md/bcache/journal.c
++++ b/drivers/md/bcache/journal.c
+@@ -810,6 +810,10 @@ atomic_t *bch_journal(struct cache_set *c,
+ 	struct journal_write *w;
+ 	atomic_t *ret;
  
--static void __serpent_setkey_sbox(u32 r0, u32 r1, u32 r2, u32 r3, u32 r4, u32 *k)
-+/*
-+ * both gcc and clang have misoptimized this function in the past,
-+ * producing horrible object code from spilling temporary variables
-+ * on the stack. Forcing this part out of line avoids that.
-+ */
-+static noinline void __serpent_setkey_sbox(u32 r0, u32 r1, u32 r2,
-+					   u32 r3, u32 r4, u32 *k)
- {
- 	k += 100;
- 	S3(r3, r4, r0, r1, r2); store_and_load_keys(r1, r2, r4, r3, 28, 24);
++	/* No journaling if CACHE_SET_IO_DISABLE set already */
++	if (unlikely(test_bit(CACHE_SET_IO_DISABLE, &c->flags)))
++		return NULL;
++
+ 	if (!CACHE_SYNC(&c->sb))
+ 		return NULL;
+ 
 -- 
 2.20.1
 
