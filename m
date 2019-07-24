@@ -2,140 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB4E9726C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 06:37:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E01BD726E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 06:46:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbfGXEh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 00:37:56 -0400
-Received: from smtprelay0211.hostedemail.com ([216.40.44.211]:39759 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725883AbfGXEhz (ORCPT
+        id S1726472AbfGXEqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 00:46:12 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:50058 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbfGXEqM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 00:37:55 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 09734837F24C;
-        Wed, 24 Jul 2019 04:37:54 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:69:355:379:599:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:1801:2393:2553:2559:2562:2692:2693:2828:3138:3139:3140:3141:3142:3355:3622:3865:3866:3867:3868:3870:3871:3872:4321:4362:4605:5007:6119:7903:7904:8603:10004:10394:10400:10848:11026:11232:11233:11473:11658:11914:12043:12295:12297:12438:12683:12740:12760:12895:13161:13229:13439:14095:14181:14659:14721:21080:21324:21433:21627:21740:21789:30054:30070:30075:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
-X-HE-Tag: girl57_aa862e6d3a45
-X-Filterd-Recvd-Size: 3717
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 24 Jul 2019 04:37:53 +0000 (UTC)
-Message-ID: <f909b4b31f123c7d88535db397a04421077ed0ab.camel@perches.com>
-Subject: Re: [Fwd: [PATCH 1/2] string: Add stracpy and stracpy_pad
- mechanisms]
-From:   Joe Perches <joe@perches.com>
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     cocci <cocci@systeme.lip6.fr>, LKML <linux-kernel@vger.kernel.org>
-Date:   Tue, 23 Jul 2019 21:37:51 -0700
-In-Reply-To: <alpine.DEB.2.21.1907232326360.2539@hadrien>
-References: <7ab8957eaf9b0931a59eff6e2bd8c5169f2f6c41.1563841972.git.joe@perches.com>
-          <66fcdbf607d7d0bea41edb39e5579d63b62b7d84.camel@perches.com>
-          <alpine.DEB.2.21.1907231546090.2551@hadrien>
-          <0f3ba090dfc956f5651e6c7c430abdba94ddcb8b.camel@perches.com>
-          <alpine.DEB.2.21.1907232252260.2539@hadrien>
-         <d5993902fd44ce89915fab94f4db03f5081c3c8e.camel@perches.com>
-         <alpine.DEB.2.21.1907232326360.2539@hadrien>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Wed, 24 Jul 2019 00:46:12 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1hq692-0004Q6-CE; Tue, 23 Jul 2019 19:32:40 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1hq691-0003ye-Le; Tue, 23 Jul 2019 19:32:40 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Steve French <smfrench@gmail.com>
+Cc:     ronnie sahlberg <ronniesahlberg@gmail.com>,
+        Sasha Levin <sashal@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Jeff Layton <jlayton@primarydata.com>,
+        linux-cifs <linux-cifs@vger.kernel.org>
+References: <20190715134655.4076-1-sashal@kernel.org>
+        <20190715134655.4076-39-sashal@kernel.org>
+        <CAN05THSdj8m5g-xG5abYAZ=_PE2xT-RwLtVhKrtxPevJGCSxag@mail.gmail.com>
+        <CAH2r5mu9ncYa1WTHuuMEk3=4TU5-RBH6nBKME4Bm+dntOtORTQ@mail.gmail.com>
+Date:   Tue, 23 Jul 2019 20:32:33 -0500
+In-Reply-To: <CAH2r5mu9ncYa1WTHuuMEk3=4TU5-RBH6nBKME4Bm+dntOtORTQ@mail.gmail.com>
+        (Steve French's message of "Tue, 23 Jul 2019 19:29:10 -0500")
+Message-ID: <87v9vs43pq.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1hq691-0003ye-Le;;;mid=<87v9vs43pq.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19WPNvkH+gWSBLcyA8Qu0HmQ+IFY+GAvQc=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa08.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.8 required=8.0 tests=ALL_TRUSTED,BAYES_00,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,XMGappySubj_01,XMSubLong autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        * -3.0 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+        *      [score: 0.0035]
+        *  0.7 XMSubLong Long Subject
+        *  0.5 XMGappySubj_01 Very gappy subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Steve French <smfrench@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 335 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 4.9 (1.5%), b_tie_ro: 3.3 (1.0%), parse: 1.19
+        (0.4%), extract_message_metadata: 4.6 (1.4%), get_uri_detail_list:
+        1.83 (0.5%), tests_pri_-1000: 4.2 (1.3%), tests_pri_-950: 1.54 (0.5%),
+        tests_pri_-900: 1.18 (0.4%), tests_pri_-90: 23 (6.9%), check_bayes: 21
+        (6.3%), b_tokenize: 5 (1.6%), b_tok_get_all: 7 (2.1%), b_comp_prob:
+        1.96 (0.6%), b_tok_touch_all: 3.2 (1.0%), b_finish: 0.98 (0.3%),
+        tests_pri_0: 276 (82.5%), check_dkim_signature: 0.48 (0.1%),
+        check_dkim_adsp: 3.0 (0.9%), poll_dns_idle: 1.34 (0.4%), tests_pri_10:
+        2.6 (0.8%), tests_pri_500: 7 (2.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH AUTOSEL 5.2 039/249] signal/cifs: Fix cifs_put_tcp_session to call send_sig instead of force_sig
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-07-23 at 23:27 -0500, Julia Lawall wrote:
-> 
-> On Tue, 23 Jul 2019, Joe Perches wrote:
-> 
-> > On Tue, 2019-07-23 at 22:54 -0500, Julia Lawall wrote:
-> > > A seantic patch and the resulting output for the case where the third
-> > > arugument is a constant is attached.  Likewise the resulting output on a
-> > > recent linux-next.
-> > > 
-> > > julia
-> > 
-> > Nice.  Thanks Julia
-> > 
-> > A couple issues:
-> > 
-> > There is a problem with conversions with assignments
-> > of strlcpy() so ideally the cocci script should make sure
-> > any return value was not used before conversion.
-> > 
-> > This is not a provably good conversion:
-> > 
-> > drivers/s390/char/sclp_ftp.c
-> > @@ -114,8 +114,7 @@ static int sclp_ftp_et7(const struct hmc
-> >         sccb->evbuf.mdd.ftp.length = ftp->len;
-> >         sccb->evbuf.mdd.ftp.bufaddr = virt_to_phys(ftp->buf);
-> > 
-> > -       len = strlcpy(sccb->evbuf.mdd.ftp.fident, ftp->fname,
-> > -                     HMCDRV_FTP_FIDENT_MAX);
-> > +       len = stracpy(sccb->evbuf.mdd.ftp.fident, ftp->fname);
-> 
-> Sorry, I don't understand the issue here.  What specifically should I be
-> looking for?
+Steve French <smfrench@gmail.com> writes:
 
-The return value of strlcpy differs from (strscpy or stracpy).
+> Very easy to see what caused the regression with this global change:
+>
+> mount (which launches "cifsd" thread to read the socket)
+> umount (which kills the "cifsd" thread)
+> rmmod   (rmmod now fails since "cifsd" thread is still active)
+>
+> mount launches a thread to read from the socket ("cifsd")
+> umount is supposed to kill that thread (but with the patch
+> "signal/cifs: Fix cifs_put_tcp_session to call send_sig instead of
+> force_sig" that no longer works).  So the regression is that after
+> unmount you still see the "cifsd" thread, and the reason that cifsd
+> thread is still around is that that patch no longer force kills the
+> process (see line 2652 of fs/cifs/connect.c) which regresses module
+> removal.
+>
+> -               force_sig(SIGKILL, task);
+> +               send_sig(SIGKILL, task, 1);
+>
+> The comment in the changeset indicates "The signal SIGKILL can not be
+> ignored" but obviously it can be ignored - at least on 5.3-rc1 it is
+> being ignored.
+>
+> If send_sig(SIGKILL ...) doesn't work and if force_sig(SIGKILL, task)
+> is removed and no longer possible - how do we kill a helper process
+> ...
 
-strlcpy		returns the length of the src string
-str[sa]cpy	returns the length of the src string if it fits in dest
-		or -E2BIG if src is truncated by the size of dest
-		or -E2BIG if dest is 0 length
+I think I see what is happening.  It looks like as well as misuinsg
+force_sig, cifs is also violating the invariant that keeps SIGKILL out
+of the blocked signal set.
 
-Any use of the strlcpy return value should not be converted
-because the logic after an assignment or use of the return value
-can not be assured to have the same behavior.
+For that force_sig will act differently.  I did not consider it because
+that is never supposed to happen.
 
-> > And:
-> > 
-> > I would have expected the bit below to find and convert uses like
-> > 	drivers/hwmon/adc128d818.c:     strlcpy(info->type, "adc128d818", I2C_NAME_SIZE);
-> > but it seems none of those were converted.
-> 
-> OK, thanks.  I will check on it.
+Can someone test this code below and confirm the issue goes away?
 
-Thanks again.
+diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
+index 5d6d44bfe10a..2a782ebc7b65 100644
+--- a/fs/cifs/transport.c
++++ b/fs/cifs/transport.c
+@@ -347,6 +347,7 @@ __smb_send_rqst(struct TCP_Server_Info *server, int num_rqst,
+ 	 */
+ 
+ 	sigfillset(&mask);
++	sigdelset(&mask, SIGKILL);
+ 	sigprocmask(SIG_BLOCK, &mask, &oldmask);
+ 
+ 	/* Generate a rfc1002 marker for SMB2+ */
 
-> julia
-> 
-> > I don't know why.
-> > 
-> > //------------------------------------------
-> > @r1@
-> > struct i1 *e1;
-> > expression e2;
-> > identifier f,i1,i2;
-> > position p;
-> > @@
-> > \(strscpy\|strlcpy\)(e1->f, e2, i2)@p
-> > 
-> > @@
-> > identifier r1.i1,r1.i2;
-> > type T;
-> > @@
-> > struct i1 { ... T i1[i2]; ... }
-> > 
-> > @@
-> > identifier f,i2;
-> > expression e1,e2;
-> > position r1.p;
-> > @@
-> > (
-> > -strscpy
-> > +stracpy
-> > -strlcpy
-> > +stracpy
-> > )(e1->f, e2
-> > -    , i2
-> >   )@p
-> > //------------------------------------------
-> > 
-> > to find
-> > 
-> > 
 
+Eric
