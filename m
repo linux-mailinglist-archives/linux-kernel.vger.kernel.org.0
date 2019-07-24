@@ -2,70 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A238673E16
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:22:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C77FF73E21
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:22:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391207AbfGXUWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:22:14 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40394 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390815AbfGXUWL (ORCPT
+        id S2392556AbfGXUWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:22:41 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45996 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387998AbfGXUWh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 16:22:11 -0400
-Received: by mail-io1-f67.google.com with SMTP id h6so5804918iom.7;
-        Wed, 24 Jul 2019 13:22:10 -0700 (PDT)
+        Wed, 24 Jul 2019 16:22:37 -0400
+Received: by mail-io1-f66.google.com with SMTP id g20so92342410ioc.12
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 13:22:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W7b98j1DYhcpfb7OdCLFp27JFdB3a34V6jagTpBUbfA=;
+        b=emPr0+o12gzDRDVdDGCZkDSc1awT8Sv7j4Y3PHnjX6+BEM8Ev916Ml6Ya5Ixn59rnj
+         bYHRVD4vJpGgnK8uA8ZfT2527Pza1HUFVITP04fOwvVSTVtDbOhp0XyRD+J1U8RCZ7+q
+         cQkjHaLlnu1CLlhPM31Ij364/ILIXnU5UveYQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/30AS3nqkWWu+3IMVyX4v9nQ/uVi14wrBVbKbNIwDH0=;
-        b=ekj0LIeZj9w5dZ1iFJTQMocLGklgKFNFkBXzDwuhI4RB10PYuavh/i6uOI32d86B2C
-         ypTECM/GBXT90NiCeRuCFHbWlUFgCV7VKamtmNBuIEv5+JsQhj1FzUS+O/EMwdCH6dcO
-         P0NYZGuMMILra9O7AV4bXVRtv1zeSEC64XsLkYfbGSn6WO4cwl4Vgj7P/nSUHe5YMaKO
-         9Io15AcVq5ImPVNFW+NzVsDzoYKzwNV8XmLBGFvWyteipR1T/PuH3YVywCZNc/09l7nv
-         kel45+XZXMcJIKx9+AL9K/mP7Uwsp/SZ5vghfH9WbfznN3puV5oUmF6PjSY3kpV+iI5J
-         pTqg==
-X-Gm-Message-State: APjAAAUL+Ou5xExnGsGQUNWjTps4YOw0N88V0Km2aTOWtG1+nr7MEkLB
-        hKhKCqwLnrC8dCiTARBtKg==
-X-Google-Smtp-Source: APXvYqw8/yMFLvKjW7NMwY+ZvPnqeFIopuxH5djPlnJEGbRQVjM6/Fd6l3umrAZVnmBM4ywFQ0VJmA==
-X-Received: by 2002:a02:b395:: with SMTP id p21mr88532316jan.31.1563999730430;
-        Wed, 24 Jul 2019 13:22:10 -0700 (PDT)
-Received: from localhost ([64.188.179.254])
-        by smtp.gmail.com with ESMTPSA id x22sm33617648ioh.87.2019.07.24.13.22.09
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 13:22:09 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 14:22:09 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Eugen.Hristev@microchip.com
-Cc:     wsa@the-dreams.de, peda@axentia.se, mark.rutland@arm.com,
-        Ludovic.Desroches@microchip.com, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, pierre-yves.mordret@st.com,
-        alexandre.belloni@bootlin.com, robh+dt@kernel.org,
-        Nicolas.Ferre@microchip.com, Eugen.Hristev@microchip.com
-Subject: Re: [PATCH v3 1/9] dt-bindings: i2c: at91: add new compatible
-Message-ID: <20190724202209.GA31102@bogus>
-References: <1562678049-17581-1-git-send-email-eugen.hristev@microchip.com>
- <1562678049-17581-2-git-send-email-eugen.hristev@microchip.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W7b98j1DYhcpfb7OdCLFp27JFdB3a34V6jagTpBUbfA=;
+        b=EJhukWEYvjRGds5jeM88kCZslB9biLExDO/bpSnJ/R9nMvC5LjHbn3TR/k3KhOzA5i
+         1vNcyvQCkIX4SEmphGcLio7GBYYznUxAnxB8LiP1Ucm271ON/wRsVMG2Ij6OiRFb3nfX
+         mrdrw5afpMwxgNPsrdcN9l+sQ7YaLXuQoYoBWlolqTjHp4C7hZEu985+MtYe6KrZVf2D
+         GM2Sjorp8J+fV96RD7FNe3lI1hxSrYPtpDRNXB48YaKiiIWSvOA/7PtpG6Hqa0oWt81e
+         KoRcSzPLvlU/s8Sc6q2nMDQIwkyXgqsoyvsal5jKRBJnaYcpILBeAL/yW6c2DarAHdbR
+         82tg==
+X-Gm-Message-State: APjAAAV5cuziJBaADJDDoq3zlX9711cK9aIv/fdBY3ZHPkDcOfONeWxw
+        kedSWt1go5Gi9IIw+Sh0eqr5JCsUNEg=
+X-Google-Smtp-Source: APXvYqwlkv5B3pC1YB3TDlo/J4En9R/atXwgpojRnd0vSAlSZ0ZHU/gIEB8fq4doZe2+F3qTrdAycA==
+X-Received: by 2002:a5d:8253:: with SMTP id n19mr13481383ioo.80.1563999757043;
+        Wed, 24 Jul 2019 13:22:37 -0700 (PDT)
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com. [209.85.166.49])
+        by smtp.gmail.com with ESMTPSA id p10sm64936237iob.54.2019.07.24.13.22.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Jul 2019 13:22:35 -0700 (PDT)
+Received: by mail-io1-f49.google.com with SMTP id m24so92414301ioo.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 13:22:34 -0700 (PDT)
+X-Received: by 2002:a5d:8ccc:: with SMTP id k12mr78564964iot.141.1563999754524;
+ Wed, 24 Jul 2019 13:22:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1562678049-17581-2-git-send-email-eugen.hristev@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190722193939.125578-3-dianders@chromium.org> <20190724113508.47A356021C@smtp.codeaurora.org>
+In-Reply-To: <20190724113508.47A356021C@smtp.codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 24 Jul 2019 13:22:22 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WAsrBV9PzUz1qPzQru+AkOYZ5hsaWdhNYRTNqUfDeOmQ@mail.gmail.com>
+Message-ID: <CAD=FV=WAsrBV9PzUz1qPzQru+AkOYZ5hsaWdhNYRTNqUfDeOmQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] mwifiex: Make use of the new sdio_trigger_replug()
+ API to reset
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Andreas Fenkart <afenkart@gmail.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Amitkumar Karwar <amitkarwar@gmail.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        netdev <netdev@vger.kernel.org>,
+        Avri Altman <avri.altman@wdc.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Xinming Hu <huxinming820@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 9 Jul 2019 13:19:29 +0000, <Eugen.Hristev@microchip.com> wrote:
-> From: Eugen Hristev <eugen.hristev@microchip.com>
-> 
-> Add compatible for new Microchip SoC, sam9x60
-> 
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-> ---
->  Documentation/devicetree/bindings/i2c/i2c-at91.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
+Hi,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On Wed, Jul 24, 2019 at 4:35 AM Kalle Valo <kvalo@codeaurora.org> wrote:
+>
+> Douglas Anderson <dianders@chromium.org> wrote:
+>
+> > As described in the patch ("mmc: core: Add sdio_trigger_replug()
+> > API"), the current mwifiex_sdio_card_reset() is broken in the cases
+> > where we're running Bluetooth on a second SDIO func on the same card
+> > as WiFi.  The problem goes away if we just use the
+> > sdio_trigger_replug() API call.
+> >
+> > NOTE: Even though with this new solution there is less of a reason to
+> > do our work from a workqueue (the unplug / plug mechanism we're using
+> > is possible for a human to perform at any time so the stack is
+> > supposed to handle it without it needing to be called from a special
+> > context), we still need a workqueue because the Marvell reset function
+> > could called from a context where sleeping is invalid and thus we
+> > can't claim the host.  One example is Marvell's wakeup_timer_fn().
+> >
+> > Cc: Andreas Fenkart <afenkart@gmail.com>
+> > Cc: Brian Norris <briannorris@chromium.org>
+> > Fixes: b4336a282db8 ("mwifiex: sdio: reset adapter using mmc_hw_reset")
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > Reviewed-by: Brian Norris <briannorris@chromium.org>
+>
+> I assume this is going via some other tree so I'm dropping this from my
+> queue. If I should apply this please resend once the dependency is in
+> wireless-drivers-next.
+>
+> Patch set to Not Applicable.
+
+Thanks.  For now I'll assume that Ulf will pick it up if/when he is
+happy with patch #1 in this series.  Would you be willing to provide
+your Ack on this patch to make it clear to Ulf you're OK with that?
+
+-Doug
