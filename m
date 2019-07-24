@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41C2E73893
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:31:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17D637388D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:30:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388440AbfGXTa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:30:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51276 "EHLO mail.kernel.org"
+        id S2388398AbfGXTak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:30:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388426AbfGXTax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:30:53 -0400
+        id S2388383AbfGXTah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:30:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 341CB20659;
-        Wed, 24 Jul 2019 19:30:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44A45229F3;
+        Wed, 24 Jul 2019 19:30:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996652;
-        bh=RHgChTb5kJ4u726IVWqaoD99WXZwv8fFPgWtTGxTtps=;
+        s=default; t=1563996635;
+        bh=eCYjIyDM/jcflqiRqencvb4jCEnsdmoqDhxKfRDM8Lo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zzHfEzu6Au+vD9/fuusPV7kNzMtptI80KSdJJWaCOHZGTwtAE1aY/JnnC7GPzruDg
-         M3GzYDNuHdWS5mqBHlJ/Gu71+rjxiDO3e5faH8yWJN5VJvW5LlxPQxSfc8Kl2sUU0W
-         3BQdzJfYN6488jhaDnixkxT4xi0zduw6aFDD9kME=
+        b=aYo5m6hw93R4e2X8S3RH3YpjYnueSvxAXcQNMG8KYwzAmaOaI0wV36U/wk2gTNL8Y
+         ag1xkb26mxUa1ebo2IFeP5CL1adzh3vwW0KAL1bILBg3Nw/ALn4hEJ17+6GU8SHlaS
+         zYuL1WvzFy2FTIWnYo/jWV8J+hs0J3KY4tfdJkpg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nilkanth Ahirrao <anilkanth@jp.adit-jv.com>,
-        Suresh Udipi <sudipi@jp.adit-jv.com>,
-        Jiada Wang <jiada_wang@mentor.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 119/413] ASoC: rsnd: fixup mod ID calculation in rsnd_ctu_probe_
-Date:   Wed, 24 Jul 2019 21:16:50 +0200
-Message-Id: <20190724191743.774552265@linuxfoundation.org>
+Subject: [PATCH 5.2 124/413] net: netsec: initialize tx ring on ndo_open
+Date:   Wed, 24 Jul 2019 21:16:55 +0200
+Message-Id: <20190724191744.034549270@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -48,44 +46,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ac28ec07ae1c5c1e18ed6855eb105a328418da88 ]
+[ Upstream commit 39e3622edeffa63c2871153d8743c5825b139968 ]
 
-commit c16015f36cc1 ("ASoC: rsnd: add .get_id/.get_id_sub")
-introduces rsnd_ctu_id which calcualates and gives
-the main Device id of the CTU by dividing the id by 4.
-rsnd_mod_id uses this interface to get the CTU main
-Device id. But this commit forgets to revert the main
-Device id calcution previously done in rsnd_ctu_probe_
-which also divides the id by 4. This path corrects the
-same to get the correct main Device id.
+Since we changed the Tx ring handling and now depends on bit31 to figure
+out the owner of the descriptor, we should initialize this every time
+the device goes down-up instead of doing it once on driver init. If the
+value is not correctly initialized the device won't have any available
+descriptors
 
-The issue is observered when rsnd_ctu_probe_ is done for CTU1
+Changes since v1:
+- Typo fixes
 
-Fixes: c16015f36cc1 ("ASoC: rsnd: add .get_id/.get_id_sub")
-
-Signed-off-by: Nilkanth Ahirrao <anilkanth@jp.adit-jv.com>
-Signed-off-by: Suresh Udipi <sudipi@jp.adit-jv.com>
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 35e07d234739 ("net: socionext: remove mmio reads on Tx")
+Signed-off-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/sh/rcar/ctu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/socionext/netsec.c | 32 ++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/ctu.c b/sound/soc/sh/rcar/ctu.c
-index 8cb06dab234e..7647b3d4c0ba 100644
---- a/sound/soc/sh/rcar/ctu.c
-+++ b/sound/soc/sh/rcar/ctu.c
-@@ -108,7 +108,7 @@ static int rsnd_ctu_probe_(struct rsnd_mod *mod,
- 			   struct rsnd_dai_stream *io,
- 			   struct rsnd_priv *priv)
+diff --git a/drivers/net/ethernet/socionext/netsec.c b/drivers/net/ethernet/socionext/netsec.c
+index cba5881b2746..a10ef700f16d 100644
+--- a/drivers/net/ethernet/socionext/netsec.c
++++ b/drivers/net/ethernet/socionext/netsec.c
+@@ -1029,7 +1029,6 @@ static void netsec_free_dring(struct netsec_priv *priv, int id)
+ static int netsec_alloc_dring(struct netsec_priv *priv, enum ring_id id)
  {
--	return rsnd_cmd_attach(io, rsnd_mod_id(mod) / 4);
-+	return rsnd_cmd_attach(io, rsnd_mod_id(mod));
+ 	struct netsec_desc_ring *dring = &priv->desc_ring[id];
+-	int i;
+ 
+ 	dring->vaddr = dma_alloc_coherent(priv->dev, DESC_SZ * DESC_NUM,
+ 					  &dring->desc_dma, GFP_KERNEL);
+@@ -1040,19 +1039,6 @@ static int netsec_alloc_dring(struct netsec_priv *priv, enum ring_id id)
+ 	if (!dring->desc)
+ 		goto err;
+ 
+-	if (id == NETSEC_RING_TX) {
+-		for (i = 0; i < DESC_NUM; i++) {
+-			struct netsec_de *de;
+-
+-			de = dring->vaddr + (DESC_SZ * i);
+-			/* de->attr is not going to be accessed by the NIC
+-			 * until netsec_set_tx_de() is called.
+-			 * No need for a dma_wmb() here
+-			 */
+-			de->attr = 1U << NETSEC_TX_SHIFT_OWN_FIELD;
+-		}
+-	}
+-
+ 	return 0;
+ err:
+ 	netsec_free_dring(priv, id);
+@@ -1060,6 +1046,23 @@ static int netsec_alloc_dring(struct netsec_priv *priv, enum ring_id id)
+ 	return -ENOMEM;
  }
  
- static void rsnd_ctu_value_init(struct rsnd_dai_stream *io,
++static void netsec_setup_tx_dring(struct netsec_priv *priv)
++{
++	struct netsec_desc_ring *dring = &priv->desc_ring[NETSEC_RING_TX];
++	int i;
++
++	for (i = 0; i < DESC_NUM; i++) {
++		struct netsec_de *de;
++
++		de = dring->vaddr + (DESC_SZ * i);
++		/* de->attr is not going to be accessed by the NIC
++		 * until netsec_set_tx_de() is called.
++		 * No need for a dma_wmb() here
++		 */
++		de->attr = 1U << NETSEC_TX_SHIFT_OWN_FIELD;
++	}
++}
++
+ static int netsec_setup_rx_dring(struct netsec_priv *priv)
+ {
+ 	struct netsec_desc_ring *dring = &priv->desc_ring[NETSEC_RING_RX];
+@@ -1361,6 +1364,7 @@ static int netsec_netdev_open(struct net_device *ndev)
+ 
+ 	pm_runtime_get_sync(priv->dev);
+ 
++	netsec_setup_tx_dring(priv);
+ 	ret = netsec_setup_rx_dring(priv);
+ 	if (ret) {
+ 		netif_err(priv, probe, priv->ndev,
 -- 
 2.20.1
 
