@@ -2,161 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DAC572953
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 09:56:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D6567295B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 09:59:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbfGXH4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 03:56:55 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39353 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfGXH4y (ORCPT
+        id S1726518AbfGXH74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 03:59:56 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:53437 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbfGXH74 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 03:56:54 -0400
-Received: by mail-wr1-f65.google.com with SMTP id x4so45793315wrt.6;
-        Wed, 24 Jul 2019 00:56:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CWKOul5zWyLvmCqcEFdL6klVQupyTa972P0CGXCFiyo=;
-        b=HsS7ZfMTiCjuA0EPZ+ReU3GePJSQredYd4jUYk6T9eSw5or0YFHI58qK19SCPg87Cd
-         PodmffNoAu+ZyZd1syzNTZY8cPf9Kwd6m1Rrk89eYTToMQKEd1tVqYL1qB1hT7+vSxHe
-         6sTtQFV6zUcoVdDxXJPA0B/j+w3wdIo1Z0fiEJYMd+4RUuw9UuT2+wQiE7RSp6CY0acs
-         I5nqdkcC3s1XAXW/JBwNdunWtqoz33q4kQCBmuIyE210csXY6q12TGvCVpL6b3kxAzEv
-         KCE7E4PDpBYsDiruIy5h9YSYQRWAQmAxj44EjELBDEdFb0DfB87iC22XMYntolXqDs7M
-         TwIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CWKOul5zWyLvmCqcEFdL6klVQupyTa972P0CGXCFiyo=;
-        b=C0/ig37m06vDEUJ4eb3bQHM7BZA5zPkH6TcAPrb24o1TR36XYKsmurPKWT0uNDs186
-         T/5emOx5AdJHrl5gOo0FmQlxsMv2egb0fNRwaFoINCrxvUaF04tU6YIf/tWH4IksOPHp
-         zJ114GXqBtBGJdw/eJb2Uh26jULU+tZMY+iASjIM3HWOoLwauh/LOPJRhojWylU3h1Ct
-         +9Vb3QUmZUwq5Q35N63dTDf7DVz1NwDmUwwnzvIfiXKfv1wc8w70no7lf8nNxG+8d1z6
-         78dd+C8qj+sjEGcFrvz8+o25cCMA7FK3MIL7N/Nd0LlwFomfPpITjNLut8/gYB+P3e9+
-         0zxQ==
-X-Gm-Message-State: APjAAAVbnLvEkg0h76SPoldugm/ml5PPibd1VRPEAvM/JxZgc32o0b9i
-        L5ZUvix9cvditibcn+8Vd5EgcbspICD7gWE5a74=
-X-Google-Smtp-Source: APXvYqz3HVcRTUHwTARLhdDsaaeCmGC91o6UnC25yshx3nImhY6HzZDxOBK6H7v1N346b+TEj1v4R0M50x7JySNR5bM=
-X-Received: by 2002:a5d:50d1:: with SMTP id f17mr34700608wrt.124.1563955012063;
- Wed, 24 Jul 2019 00:56:52 -0700 (PDT)
+        Wed, 24 Jul 2019 03:59:56 -0400
+Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
+        by 156.147.23.51 with ESMTP; 24 Jul 2019 16:59:51 +0900
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
+        by 156.147.1.151 with ESMTP; 24 Jul 2019 16:59:51 +0900
+X-Original-SENDERIP: 10.177.222.33
+X-Original-MAILFROM: byungchul.park@lge.com
+Date:   Wed, 24 Jul 2019 16:58:41 +0900
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Byungchul Park <max.byungchul.park@gmail.com>,
+        rcu <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        kernel-team@lge.com
+Subject: Re: [PATCH] rcu: Make jiffies_till_sched_qs writable
+Message-ID: <20190724075841.GA14712@X58A-UD3R>
+References: <CAEXW_YTcL-nOfJXkChGhvQtqqfSLpAYr327PLu1SmGEEADCevw@mail.gmail.com>
+ <20190719003942.GA28226@X58A-UD3R>
+ <CAEXW_YQij-N2-NFjUQtsmYxVLtWxcQk_Kb16fGBzzPAZtWg+sg@mail.gmail.com>
+ <20190719074329.GY14271@linux.ibm.com>
+ <CANrsvRM7ehvqcPtKMV7RyRCiXwe_R_TsLZiNtxBPY_qnSg2LNQ@mail.gmail.com>
+ <20190719195728.GF14271@linux.ibm.com>
+ <CAEXW_YQADrPRtJW7yJZyROH1_d2yOA7_1HVgm50wxpOC80+=Wg@mail.gmail.com>
+ <20190723110521.GA28883@X58A-UD3R>
+ <20190723134717.GT14271@linux.ibm.com>
+ <20190723165403.GA7239@linux.ibm.com>
 MIME-Version: 1.0
-References: <20190602034429.6888-1-hdanton@sina.com> <20190602105133.GA16948@hmswarspite.think-freely.org>
- <CADvbK_dUDjK3UAF49uo+DZv+QiuEsaMmZeqDwBJ0suRwu4yXJw@mail.gmail.com>
-In-Reply-To: <CADvbK_dUDjK3UAF49uo+DZv+QiuEsaMmZeqDwBJ0suRwu4yXJw@mail.gmail.com>
-From:   Xin Long <lucien.xin@gmail.com>
-Date:   Wed, 24 Jul 2019 15:56:40 +0800
-Message-ID: <CADvbK_ddFyO2iz-QS3bHevHN7Q29VUS4joK3Kxam3Y4tEqHFKA@mail.gmail.com>
-Subject: Re: [PATCH] net: sctp: fix memory leak in sctp_send_reset_streams
-To:     Neil Horman <nhorman@tuxdriver.com>
-Cc:     Hillf Danton <hdanton@sina.com>, linux-sctp@vger.kernel.org,
-        network dev <netdev@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        syzbot <syzbot+6ad9c3bd0a218a2ab41d@syzkaller.appspotmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Vlad Yasevich <vyasevich@gmail.com>,
-        Eric Dumazet <edumazet@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190723165403.GA7239@linux.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 2, 2019 at 9:36 PM Xin Long <lucien.xin@gmail.com> wrote:
->
-> On Sun, Jun 2, 2019 at 6:52 PM Neil Horman <nhorman@tuxdriver.com> wrote:
-> >
-> > On Sun, Jun 02, 2019 at 11:44:29AM +0800, Hillf Danton wrote:
-> > >
-> > > syzbot found the following crash on:
-> > >
-> > > HEAD commit:    036e3431 Merge git://git.kernel.org/pub/scm/linux/kernel/g..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=153cff12a00000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=8f0f63a62bb5b13c
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=6ad9c3bd0a218a2ab41d
-> > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12561c86a00000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15b76fd8a00000
-> > >
-> > > executing program
-> > > executing program
-> > > executing program
-> > > executing program
-> > > executing program
-> > > BUG: memory leak
-> > > unreferenced object 0xffff888123894820 (size 32):
-> > >   comm "syz-executor045", pid 7267, jiffies 4294943559 (age 13.660s)
-> > >   hex dump (first 32 bytes):
-> > >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> > >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> > >   backtrace:
-> > >     [<00000000c7e71c69>] kmemleak_alloc_recursive
-> > > include/linux/kmemleak.h:55 [inline]
-> > >     [<00000000c7e71c69>] slab_post_alloc_hook mm/slab.h:439 [inline]
-> > >     [<00000000c7e71c69>] slab_alloc mm/slab.c:3326 [inline]
-> > >     [<00000000c7e71c69>] __do_kmalloc mm/slab.c:3658 [inline]
-> > >     [<00000000c7e71c69>] __kmalloc+0x161/0x2c0 mm/slab.c:3669
-> > >     [<000000003250ed8e>] kmalloc_array include/linux/slab.h:670 [inline]
-> > >     [<000000003250ed8e>] kcalloc include/linux/slab.h:681 [inline]
-> > >     [<000000003250ed8e>] sctp_send_reset_streams+0x1ab/0x5a0 net/sctp/stream.c:302
-> > >     [<00000000cd899c6e>] sctp_setsockopt_reset_streams net/sctp/socket.c:4314 [inline]
-> > >     [<00000000cd899c6e>] sctp_setsockopt net/sctp/socket.c:4765 [inline]
-> > >     [<00000000cd899c6e>] sctp_setsockopt+0xc23/0x2bf0 net/sctp/socket.c:4608
-> > >     [<00000000ff3a21a2>] sock_common_setsockopt+0x38/0x50 net/core/sock.c:3130
-> > >     [<000000009eb87ae7>] __sys_setsockopt+0x98/0x120 net/socket.c:2078
-> > >     [<00000000e0ede6ca>] __do_sys_setsockopt net/socket.c:2089 [inline]
-> > >     [<00000000e0ede6ca>] __se_sys_setsockopt net/socket.c:2086 [inline]
-> > >     [<00000000e0ede6ca>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2086
-> > >     [<00000000c61155f5>] do_syscall_64+0x76/0x1a0 arch/x86/entry/common.c:301
-> > >     [<00000000e540958c>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > >
-> > >
-> > > It was introduced in commit d570a59c5b5f ("sctp: only allow the out stream
-> > > reset when the stream outq is empty"), in orde to check stream outqs before
-> > > sending SCTP_STRRESET_IN_PROGRESS back to the peer of the stream. EAGAIN is
-> > > returned, however, without the nstr_list slab released, if any outq is found
-> > > to be non empty.
-> > >
-> > > Freeing the slab in question before bailing out fixes it.
-> > >
-> > > Fixes: d570a59c5b5f ("sctp: only allow the out stream reset when the stream outq is empty")
-> > > Reported-by: syzbot <syzbot+6ad9c3bd0a218a2ab41d@syzkaller.appspotmail.com>
-> > > Reported-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-> > > Tested-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-> > > Cc: Xin Long <lucien.xin@gmail.com>
-> > > Cc: Neil Horman <nhorman@tuxdriver.com>
-> > > Cc: Vlad Yasevich <vyasevich@gmail.com>
-> > > Cc: Eric Dumazet <edumazet@google.com>
-> > > Signed-off-by: Hillf Danton <hdanton@sina.com>
-> > > ---
-> > > net/sctp/stream.c | 1 +
-> > > 1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/net/sctp/stream.c b/net/sctp/stream.c
-> > > index 93ed078..d3e2f03 100644
-> > > --- a/net/sctp/stream.c
-> > > +++ b/net/sctp/stream.c
-> > > @@ -310,6 +310,7 @@ int sctp_send_reset_streams(struct sctp_association *asoc,
-> > >
-> > >       if (out && !sctp_stream_outq_is_empty(stream, str_nums, nstr_list)) {
-> > >               retval = -EAGAIN;
-> > > +             kfree(nstr_list);
-> > >               goto out;
-> > >       }
-> > >
-> > > --
-> > >
-> > >
-> > Acked-by: Neil Horman <nhorman@tuxdriver.com>
-> Reviewed-by: Xin Long <lucien.xin@gmail.com>
-This fix is not applied, pls resend it with:
-to = network dev <netdev@vger.kernel.org>
-cc = davem@davemloft.net
-to = linux-sctp@vger.kernel.org
-cc = Neil Horman <nhorman@tuxdriver.com>
-cc = Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+On Tue, Jul 23, 2019 at 09:54:03AM -0700, Paul E. McKenney wrote:
+> On Tue, Jul 23, 2019 at 06:47:17AM -0700, Paul E. McKenney wrote:
+> > On Tue, Jul 23, 2019 at 08:05:21PM +0900, Byungchul Park wrote:
+> > > On Fri, Jul 19, 2019 at 04:33:56PM -0400, Joel Fernandes wrote:
+> > > > On Fri, Jul 19, 2019 at 3:57 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
+> > > > >
+> > > > > On Fri, Jul 19, 2019 at 06:57:58PM +0900, Byungchul Park wrote:
+> > > > > > On Fri, Jul 19, 2019 at 4:43 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
+> > > > > > >
+> > > > > > > On Thu, Jul 18, 2019 at 08:52:52PM -0400, Joel Fernandes wrote:
+> > > > > > > > On Thu, Jul 18, 2019 at 8:40 PM Byungchul Park <byungchul.park@lge.com> wrote:
+> > > > > > > > [snip]
+> > > > > > > > > > - There is a bug in the CPU stopper machinery itself preventing it
+> > > > > > > > > > from scheduling the stopper on Y. Even though Y is not holding up the
+> > > > > > > > > > grace period.
+> > > > > > > > >
+> > > > > > > > > Or any thread on Y is busy with preemption/irq disabled preventing the
+> > > > > > > > > stopper from being scheduled on Y.
+> > > > > > > > >
+> > > > > > > > > Or something is stuck in ttwu() to wake up the stopper on Y due to any
+> > > > > > > > > scheduler locks such as pi_lock or rq->lock or something.
+> > > > > > > > >
+> > > > > > > > > I think what you mentioned can happen easily.
+> > > > > > > > >
+> > > > > > > > > Basically we would need information about preemption/irq disabled
+> > > > > > > > > sections on Y and scheduler's current activity on every cpu at that time.
+> > > > > > > >
+> > > > > > > > I think all that's needed is an NMI backtrace on all CPUs. An ARM we
+> > > > > > > > don't have NMI solutions and only IPI or interrupt based backtrace
+> > > > > > > > works which should at least catch and the preempt disable and softirq
+> > > > > > > > disable cases.
+> > > > > > >
+> > > > > > > True, though people with systems having hundreds of CPUs might not
+> > > > > > > thank you for forcing an NMI backtrace on each of them.  Is it possible
+> > > > > > > to NMI only the ones that are holding up the CPU stopper?
+> > > > > >
+> > > > > > What a good idea! I think it's possible!
+> > > > > >
+> > > > > > But we need to think about the case NMI doesn't work when the
+> > > > > > holding-up was caused by IRQ disabled.
+> > > > > >
+> > > > > > Though it's just around the corner of weekend, I will keep thinking
+> > > > > > on it during weekend!
+> > > > >
+> > > > > Very good!
+> > > > 
+> > > > Me too will think more about it ;-) Agreed with point about 100s of
+> > > > CPUs usecase,
+> > > > 
+> > > > Thanks, have a great weekend,
+> > > 
+> > > BTW, if there's any long code section with irq/preemption disabled, then
+> > > the problem would be not only about RCU stall. And we can also use
+> > > latency tracer or something to detect the bad situation.
+> > > 
+> > > So in this case, sending ipi/nmi to the CPUs where the stoppers cannot
+> > > to be scheduled does not give us additional meaningful information.
+> > > 
+> > > I think Paul started to think about this to solve some real problem. I
+> > > seriously love to help RCU and it's my pleasure to dig deep into kind of
+> > > RCU stuff, but I've yet to define exactly what problem is. Sorry.
+> > > 
+> > > Could you share the real issue? I think you don't have to reproduce it.
+> > > Just sharing the issue that you got inspired from is enough. Then I
+> > > might be able to develop 'how' with Joel! :-) It's our pleasure!
+> > 
+> > It is unfortunately quite intermittent.  I was hoping to find a way
+> > to make it happen more often.  Part of the underlying problem appears
+> > to be lock contention, in that reducing contention made it even more
+> > intermittent.  Which is good in general, but not for exercising the
+> > CPU-stopper issue.
+> > 
+> > But perhaps your hardware will make this happen more readily than does
+> > mine.  The repeat-by is simple, namely run TREE04 on branch "dev" on an
+> > eight-CPU system.  It appear that the number of CPUs used by the test
+> > should match the number available on the system that you are running on,
+> > though perhaps affinity could allow mismatches.
+> > 
+> > So why not try it and see what happens?
+> 
+> And another potential issue causing this is a CONFIG_NO_HZ_FULL=y
+
+I see. This provides more insight into the problem.
+
+Thanks,
+Byungchul
+
+> kernel running in kernel mode (rcutorture on the one hand and callback
+> invocation on the other) for extended periods of time with the scheduling
+> clock disabled.  Just started the tests for this.  They will be running
+> for quite some time, which this week is a good thing.  ;-)
+> 
+> 							Thanx, Paul
