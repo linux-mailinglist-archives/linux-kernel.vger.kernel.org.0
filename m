@@ -2,36 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 598B97388A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C4A1738C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:34:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388386AbfGXTag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:30:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50732 "EHLO mail.kernel.org"
+        id S2388772AbfGXTdF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:33:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388118AbfGXTad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:30:33 -0400
+        id S2388751AbfGXTdB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:33:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADDDC22ADC;
-        Wed, 24 Jul 2019 19:30:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8551820659;
+        Wed, 24 Jul 2019 19:33:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996633;
-        bh=zYbnSIlh1CYPwa/rYl08boDxb02DeloIueOXb7BDvdY=;
+        s=default; t=1563996781;
+        bh=9ji9QypqW4jWQNsf1EAynUSKTtksVznp7CxGOF3dS28=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D0BF4vCP/s+WrRiKoNZTUeezvEjqo0LgwC7R3svXYIACZwKk5pt07MZovs850l2bK
-         kmu9Se/Bo50LlNA2hFcjAGLGsD3znyYiAYSjNwtcLvCfrrzbs8/hec4uC6cpFb5U1I
-         w2HIJGIXFABNCkLrru5cjIX1vSqKMga+jGX8godk=
+        b=bS8+c7SbbiqWhry2m1hNSOGmWKeAzULaxWXdvLaS7I/iTrPWaioeD1RRVgL9ANaMb
+         jSsemFADNMQz3Snr2t4tVChuYfvYFhA6q+H3ws/VaMapPPKQYaR0/0ouLi22mqPzHL
+         /fGppzKBagt5h/Mrk+qiV/WpAzJyEGLutSleYr+o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miaoqing Pan <miaoqing@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
+        <amadeuszx.slawinski@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 162/413] ath10k: fix PCIE device wake up failed
-Date:   Wed, 24 Jul 2019 21:17:33 +0200
-Message-Id: <20190724191746.666996998@linuxfoundation.org>
+Subject: [PATCH 5.2 163/413] ALSA: hdac: Fix codec name after machine driver is unloaded and reloaded
+Date:   Wed, 24 Jul 2019 21:17:34 +0200
+Message-Id: <20190724191746.722753187@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -44,47 +48,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 011d4111c8c602ea829fa4917af1818eb0500a90 ]
+[ Upstream commit 8a5b0177a7f6099ff534a4d9ce72673af5c3cade ]
 
-Observed PCIE device wake up failed after ~120 iterations of
-soft-reboot test. The error message is
-"ath10k_pci 0000:01:00.0: failed to wake up device : -110"
+Currently on each driver reload internal counter is being increased. It
+causes failure to enumerate driver devices, as they have hardcoded:
+.codec_name = "ehdaudio0D2",
+As there is currently no devices with multiple hda codecs and there is
+currently no established way to reliably differentiate, between them,
+always assign bus->idx = 0;
 
-The call trace as below:
-ath10k_pci_probe -> ath10k_pci_force_wake -> ath10k_pci_wake_wait ->
-ath10k_pci_is_awake
+This fixes a problem when we unload and reload machine driver idx gets
+incremented, so .codec_name would've needed to be set to "ehdaudio1D2"
+after first reload and so on.
 
-Once trigger the device to wake up, we will continuously check the RTC
-state until it returns RTC_STATE_V_ON or timeout.
-
-But for QCA99x0 chips, we use wrong value for RTC_STATE_V_ON.
-Occasionally, we get 0x7 on the fist read, we thought as a failure
-case, but actually is the right value, also verified with the spec.
-So fix the issue by changing RTC_STATE_V_ON from 0x5 to 0x7, passed
-~2000 iterations.
-
-Tested HW: QCA9984
-
-Signed-off-by: Miaoqing Pan <miaoqing@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+Acked-by: Takashi Iwai <tiwai@suse.de>
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/hda/ext/hdac_ext_bus.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/hw.c b/drivers/net/wireless/ath/ath10k/hw.c
-index ad082b7d7643..b242085c3c16 100644
---- a/drivers/net/wireless/ath/ath10k/hw.c
-+++ b/drivers/net/wireless/ath/ath10k/hw.c
-@@ -158,7 +158,7 @@ const struct ath10k_hw_values qca6174_values = {
- };
+diff --git a/sound/hda/ext/hdac_ext_bus.c b/sound/hda/ext/hdac_ext_bus.c
+index a3a113ef5d56..4f9f1d2a2ec5 100644
+--- a/sound/hda/ext/hdac_ext_bus.c
++++ b/sound/hda/ext/hdac_ext_bus.c
+@@ -85,7 +85,6 @@ int snd_hdac_ext_bus_init(struct hdac_bus *bus, struct device *dev,
+ 			const struct hdac_ext_bus_ops *ext_ops)
+ {
+ 	int ret;
+-	static int idx;
  
- const struct ath10k_hw_values qca99x0_values = {
--	.rtc_state_val_on		= 5,
-+	.rtc_state_val_on		= 7,
- 	.ce_count			= 12,
- 	.msi_assign_ce_max		= 12,
- 	.num_target_ce_config_wlan	= 10,
+ 	/* check if io ops are provided, if not load the defaults */
+ 	if (io_ops == NULL)
+@@ -96,7 +95,12 @@ int snd_hdac_ext_bus_init(struct hdac_bus *bus, struct device *dev,
+ 		return ret;
+ 
+ 	bus->ext_ops = ext_ops;
+-	bus->idx = idx++;
++	/* FIXME:
++	 * Currently only one bus is supported, if there is device with more
++	 * buses, bus->idx should be greater than 0, but there needs to be a
++	 * reliable way to always assign same number.
++	 */
++	bus->idx = 0;
+ 	bus->cmd_dma_state = true;
+ 
+ 	return 0;
 -- 
 2.20.1
 
