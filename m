@@ -2,80 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D61E73A7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:50:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96CF673B0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:58:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390997AbfGXTup (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:50:45 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37579 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403868AbfGXTuk (ORCPT
+        id S2404641AbfGXT4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:56:24 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:32864 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404628AbfGXT4W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:50:40 -0400
-Received: by mail-pl1-f193.google.com with SMTP id b3so22410251plr.4
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:50:39 -0700 (PDT)
+        Wed, 24 Jul 2019 15:56:22 -0400
+Received: by mail-io1-f65.google.com with SMTP id z3so92266208iog.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:56:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZiS4PVJdcBLmc+EYS5e2UtVsrajNWnABPfKSnbxUUWE=;
-        b=JSCLNoOTRmBImRv/GQp82cRAhKzxYLY6eM7G1SCEaLqJNUKFetrvXnOIT1C3axrrLA
-         okgoAGMPP5MNQoGP/FmGcK/HORz/CzUwB21EwRyomvOIb3GEopbMLxptRnGe4QuXzrnY
-         ErpnH1D5RcxLfbI923kAx+00OdT9rSrt5fzf8=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XZt1VFBsfyDW8nwLopR3h8XPP4tphNg4YLYc8AkW2ho=;
+        b=NEeZ+uUa6lhQAWD9vkktfpJZVl4pMOSxYJSXNt2bByMieaXwfzGB10mfQ6B2Li1wNw
+         T4ZeKK3COOk1QFOqYMlmOLF4sOFI7nhmu+ImME1jtsxAS6J4BoCFBhU62jYMBtSqHVp7
+         P2xLgUNJJoxlvGHXSm6CvOipxxbi6Jik9Btus=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZiS4PVJdcBLmc+EYS5e2UtVsrajNWnABPfKSnbxUUWE=;
-        b=t1FfRN3Ypf1zNFjbW0n63o0qZ6LpFtsx11nN6vsk78ZKJWesWSm+FG48+TTDqnUqWR
-         B5YvUEdwtmyjCG4MoqUNbeYSt2yzq32DjSQoy9D+IwJ4820Qiqjf6qFECmPmbjAjcHtS
-         Ys3VaMwHFDjYkqnc5x6inBP90Lc5oMPX2wamCNB1cMXUagTPdn+qek+GcKAC33SKY+YP
-         PW1n3gEdot3E6JbnNBHoA9Y1V9G1L+6ecx2QyoC0FHeLHDWozOjq6QzSzAGJSH7peqSI
-         ERDwXQKvH14bHa7AvjE55pIyBB75BGUW2gSFjQ9xFmPPsKcBQcrigYahL5ZF41pdJhK4
-         TSdA==
-X-Gm-Message-State: APjAAAVr2qtZSZwJJ0BWJQuzjik7FxUx6UGZNA+V3+z+MJz/ARdD1+Zh
-        lCdYxCXtQUrYpMaAVsPWcDdbxw==
-X-Google-Smtp-Source: APXvYqylEdirCrmQb8nQ/YoDobsHGQHkafXJiR/HRUcSgdyvESCuzkLThZErLZWwsp/leXFInnRyVw==
-X-Received: by 2002:a17:902:a03:: with SMTP id 3mr86200661plo.302.1563997839413;
-        Wed, 24 Jul 2019 12:50:39 -0700 (PDT)
-Received: from google.com ([2620:15c:202:1:534:b7c0:a63c:460c])
-        by smtp.gmail.com with ESMTPSA id y11sm51127550pfb.119.2019.07.24.12.50.38
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 12:50:38 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 12:50:36 -0700
-From:   Brian Norris <briannorris@chromium.org>
-To:     Ganapathi Bhat <gbhat@marvell.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        Xinming Hu <huxinming820@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.de>,
-        Guenter Roeck <linux@roeck-us.net>, stable@vger.kernel.org
-Subject: Re: [PATCH 5.3] mwifiex: fix 802.11n/WPA detection
-Message-ID: <20190724195035.GA241329@google.com>
-References: <20190724194634.205718-1-briannorris@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XZt1VFBsfyDW8nwLopR3h8XPP4tphNg4YLYc8AkW2ho=;
+        b=LmbRLUKTaI7yRt/vGIX7YIdMWpKF15qFBCJtKPBrWM5P2xQ+sxP5C9eNF+JmAEI3fM
+         zX3bYC6YyluBihUaumpXcVZt5xBva35kmxGycanhfUXum/xl68rff8CralDRNm+iCGS8
+         prwPzhxZimNdOX0pVtgdExB2iec4JLybaZUCkQ4J9AYezufUdpv05hMPKaK4hmLBuiy5
+         pQV4fPzjkERfXpdqvZaLD9QIJ+mMb3UN8aOZRIYtbwKPmNOceTmT6DBe9t2OUpitiB4x
+         2m/EsD7bPj2plKKA7wAvJh6ym57xGhmj+jx+hVAdrAMFm7BC1GP8SyubG4FGgpo7gYID
+         Uy3A==
+X-Gm-Message-State: APjAAAUGzmveElqnjIsWaMBK6T/VCGPTQt1GqyZ4oR6jONRYME/h0w9g
+        MEhzsFRQQ7ZrD2SJYoiEtRSZ4RSGTS8=
+X-Google-Smtp-Source: APXvYqyJuaBLqCmzYhiiGjaUUiNJ0Ew1rGFY0G4F/tzNqehLmQxAokZ+kpNF4qntd+g4oCI3UfmfkA==
+X-Received: by 2002:a02:13c3:: with SMTP id 186mr85329078jaz.30.1563998181709;
+        Wed, 24 Jul 2019 12:56:21 -0700 (PDT)
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com. [209.85.166.53])
+        by smtp.gmail.com with ESMTPSA id c23sm39411896iod.11.2019.07.24.12.56.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Jul 2019 12:56:21 -0700 (PDT)
+Received: by mail-io1-f53.google.com with SMTP id g20so92183302ioc.12
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:56:20 -0700 (PDT)
+X-Received: by 2002:a02:c6a9:: with SMTP id o9mr30860288jan.90.1563998180575;
+ Wed, 24 Jul 2019 12:56:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190724194634.205718-1-briannorris@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190723225258.93058-1-mka@chromium.org>
+In-Reply-To: <20190723225258.93058-1-mka@chromium.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 24 Jul 2019 12:56:08 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Wk2meLxa6AszjFs=Mfp_wML_7OMsn81FLA5tcdEx=1kg@mail.gmail.com>
+Message-ID: <CAD=FV=Wk2meLxa6AszjFs=Mfp_wML_7OMsn81FLA5tcdEx=1kg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: rockchip: Limit WiFi TX power on rk3288-veyron-jerry
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 12:46:34PM -0700, Brian Norris wrote:
-> Fixes: 63d7ef36103d ("mwifiex: Don't abort on small, spec-compliant vendor IEs")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+Hi,
 
-To add to this: unfortunately, the above went out to -stable earlier
-this week. So a prompt merging would be appreciated, pending review of
-course.
+On Tue, Jul 23, 2019 at 3:53 PM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> The downstream Chrome OS 3.14 kernel for jerry limits WiFi TX power
+> through calibration data in the device tree [1]. Add a DT node for
+> the WiFi chip and use the downstream calibration data.
+>
+> Not all calibration data entries have the length specified in the
+> binding (Documentation/devicetree/bindings/net/wireless/marvell-8xxx.txt),
+> however this is the data used by the downstream ('official') kernel
+> and the binding mentions that "the length can vary between hw
+> versions".
+>
+> [1] https://crrev.com/c/271237
+>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  arch/arm/boot/dts/rk3288-veyron-jerry.dts | 147 ++++++++++++++++++++++
+>  1 file changed, 147 insertions(+)
 
-Sorry for the breakage.
+I agree that this matches what's downstream and seems right.
 
-/me goes to add another (embarrasingly missing) test case to our WiFi
-test suite.
+As you pointed out the bindings are a bit on the sketchy side,
+claiming a certain length in one place but then saying that the length
+depends on the HW version in another place.  I'll also point out that
+the bindings are inconsistent about the name that should be used.
+AKA:
 
-Brian
+marvell,caldata-txpwrlimit-2g
+ -vs-
+marvell,caldata_00_txpwrlimit_2g_cfg_set
+
+...but I think the answer is that it doesn't matter at all from a
+practical point of view.  The code seems to just find everything that
+starts with "marvell,caldata" and send the binary blindly to the WiFi
+card.  Presumably there is enough of a header in the opaque binary
+data that the card can make sense of what it's being sent.
+
+
+So it seems like this is the best we can do given the current state of
+the world.
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
