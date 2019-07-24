@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF2C174681
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:53:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C867A7468E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:53:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404268AbfGYFkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:40:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54412 "EHLO mail.kernel.org"
+        id S2403979AbfGYFjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:39:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404214AbfGYFkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:40:02 -0400
+        id S2390711AbfGYFjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 01:39:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6150A22BF3;
-        Thu, 25 Jul 2019 05:40:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D7CA22BEB;
+        Thu, 25 Jul 2019 05:39:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564033201;
-        bh=+pnUn9iysnMItf6jUtf0I4u2VkbFirwYM/E2bJ9s8g8=;
+        s=default; t=1564033143;
+        bh=w4us00/9sn9R8EktR5DtQjHif2aVMiSmqh/+yBf/PJM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LFr24DmCheTikzuh5sGfO6tsLioCYhdl3egvIFPykxsuL83coyVTZ4fedSkSlUdFX
-         0Jq4gdDa49kNIRp83vluPpl3mxRdrUBYIoTAJYaVROmKVVgloMRnLY+qSl6sFemPFh
-         7cKQxhZFZhCxSkvyfoMaNHqGj6YdbDT93u24KVRQ=
+        b=b029vZod3uhea48W3YnVmeW9DpaUXry3ImwzceEgHVeWRr+C+Y4VMNMLEB7PM8qSp
+         Ot3A/KmuzUcdSCN31QDzuv12Y1EBzl/gv+sFU+d8YWE7kJFVh4yieYjaXy28R3eJTD
+         Wz0biX+raRHEElmjtvE7p501HgeWha97Oe65DzBg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Eidelman <anton@lightbitslabs.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 087/271] nvme: fix possible io failures when removing multipathed ns
-Date:   Wed, 24 Jul 2019 21:19:16 +0200
-Message-Id: <20190724191702.666019747@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 107/271] x86/build: Add set -e to mkcapflags.sh to delete broken capflags.c
+Date:   Wed, 24 Jul 2019 21:19:36 +0200
+Message-Id: <20190724191704.370118560@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191655.268628197@linuxfoundation.org>
 References: <20190724191655.268628197@linuxfoundation.org>
@@ -44,67 +46,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2181e455612a8db2761eabbf126640552a451e96 ]
+[ Upstream commit bc53d3d777f81385c1bb08b07bd1c06450ecc2c1 ]
 
-When a shared namespace is removed, we call blk_cleanup_queue()
-when the device can still be accessed as the current path and this can
-result in submission to a dying queue. Hence, direct_make_request()
-called by our mpath device may fail (propagating the failure to userspace).
-Instead, we want to failover this I/O to a different path if one exists.
-Thus, before we cleanup the request queue, we make sure that the device is
-cleared from the current path nor it can be selected again as such.
+Without 'set -e', shell scripts continue running even after any
+error occurs. The missed 'set -e' is a typical bug in shell scripting.
 
-Fix this by:
-- clear the ns from the head->list and synchronize rcu to make sure there is
-  no concurrent path search that restores it as the current path
-- clear the mpath current path in order to trigger a subsequent path search
-  and sync srcu to wait for any ongoing request submissions
-- safely continue to namespace removal and blk_cleanup_queue
+For example, when a disk space shortage occurs while this script is
+running, it actually ends up with generating a truncated capflags.c.
 
-Signed-off-by: Anton Eidelman <anton@lightbitslabs.com>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Yet, mkcapflags.sh continues running and exits with 0. So, the build
+system assumes it has succeeded.
+
+It will not be re-generated in the next invocation of Make since its
+timestamp is newer than that of any of the source files.
+
+Add 'set -e' so that any error in this script is caught and propagated
+to the build system.
+
+Since 9c2af1c7377a ("kbuild: add .DELETE_ON_ERROR special target"),
+make automatically deletes the target on any failure. So, the broken
+capflags.c will be deleted automatically.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Link: https://lkml.kernel.org/r/20190625072622.17679-1-yamada.masahiro@socionext.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/core.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/mkcapflags.sh | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index d8869d978c34..e26d1191c5ad 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -3168,6 +3168,14 @@ static void nvme_ns_remove(struct nvme_ns *ns)
- 		return;
+diff --git a/arch/x86/kernel/cpu/mkcapflags.sh b/arch/x86/kernel/cpu/mkcapflags.sh
+index d0dfb892c72f..aed45b8895d5 100644
+--- a/arch/x86/kernel/cpu/mkcapflags.sh
++++ b/arch/x86/kernel/cpu/mkcapflags.sh
+@@ -4,6 +4,8 @@
+ # Generate the x86_cap/bug_flags[] arrays from include/asm/cpufeatures.h
+ #
  
- 	nvme_fault_inject_fini(ns);
++set -e
 +
-+	mutex_lock(&ns->ctrl->subsys->lock);
-+	list_del_rcu(&ns->siblings);
-+	mutex_unlock(&ns->ctrl->subsys->lock);
-+	synchronize_rcu(); /* guarantee not available in head->list */
-+	nvme_mpath_clear_current_path(ns);
-+	synchronize_srcu(&ns->head->srcu); /* wait for concurrent submissions */
-+
- 	if (ns->disk && ns->disk->flags & GENHD_FL_UP) {
- 		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
- 					&nvme_ns_id_attr_group);
-@@ -3179,16 +3187,10 @@ static void nvme_ns_remove(struct nvme_ns *ns)
- 			blk_integrity_unregister(ns->disk);
- 	}
+ IN=$1
+ OUT=$2
  
--	mutex_lock(&ns->ctrl->subsys->lock);
--	list_del_rcu(&ns->siblings);
--	nvme_mpath_clear_current_path(ns);
--	mutex_unlock(&ns->ctrl->subsys->lock);
--
- 	down_write(&ns->ctrl->namespaces_rwsem);
- 	list_del_init(&ns->list);
- 	up_write(&ns->ctrl->namespaces_rwsem);
- 
--	synchronize_srcu(&ns->head->srcu);
- 	nvme_mpath_check_last_path(ns);
- 	nvme_put_ns(ns);
- }
 -- 
 2.20.1
 
