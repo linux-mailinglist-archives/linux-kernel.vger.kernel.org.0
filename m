@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7936373EBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:27:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B70E73EB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:27:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389293AbfGXTgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:36:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35752 "EHLO mail.kernel.org"
+        id S2390189AbfGXU05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:26:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389284AbfGXTgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:36:10 -0400
+        id S2388363AbfGXTgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:36:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96E382238C;
-        Wed, 24 Jul 2019 19:36:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9813214AF;
+        Wed, 24 Jul 2019 19:36:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996969;
-        bh=JyVWWgTru0+hhOtXI5G3CuzzTpgTucTPxwcbyHaOmug=;
+        s=default; t=1563996992;
+        bh=gQ0sO9cXgN/kznbncuXVuL2Tn5qrJBMk4NT5njuP8Pc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jjXRN4/rxsEC4O1MAfBqgpKitfcH5814TzVf1cLJrcSoFy1/ATUxgjfgs5P4tDDCW
-         bGig3ucANeU4vhvoQVN5rAqObohH4tqTA2rbRiqh8qmEQzIR+mR0HuAqcvUZwE+A1B
-         HUX4X3YV5TRzVPYFYffKQhVdzYIdklxx5QPwRX6A=
+        b=eAZbwRxE5GSD35uJulipPZ85je8OoZp1RnpRBYbImuFHTH3wisHTO1rGyYPsVrEt+
+         pnmRdSnQI8GGxucWJWTD+X4RUq6oZBrVtpw2uP+iuzpK1tHIBTASU8/zZloEYO5meL
+         9b0tzVGiusgKU+zNR2KJ5MtMGIfvpu+YTuRIyIyA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 5.2 278/413] cifs: flush before set-info if we have writeable handles
-Date:   Wed, 24 Jul 2019 21:19:29 +0200
-Message-Id: <20190724191756.193439255@linuxfoundation.org>
+        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.2 285/413] bcache: destroy dc->writeback_write_wq if failed to create dc->writeback_thread
+Date:   Wed, 24 Jul 2019 21:19:36 +0200
+Message-Id: <20190724191756.658501267@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -44,61 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Coly Li <colyli@suse.de>
 
-commit aa081859b10c5d8b19f5c525c78883a59d73c2b8 upstream.
+commit f54d801dda14942dbefa00541d10603015b7859c upstream.
 
-Servers can defer destaging any data and updating the mtime until close().
-This means that if we do a setinfo to modify the mtime while other handles
-are open for write the server may overwrite our setinfo timestamps when
-if flushes the file on close() of the writeable handle.
+Commit 9baf30972b55 ("bcache: fix for gc and write-back race") added a
+new work queue dc->writeback_write_wq, but forgot to destroy it in the
+error condition when creating dc->writeback_thread failed.
 
-To solve this we add an explicit flush when the mtime is about to
-be updated.
+This patch destroys dc->writeback_write_wq if kthread_create() returns
+error pointer to dc->writeback_thread, then a memory leak is avoided.
 
-This fixes "cp -p" to preserve mtime when copying a file onto an SMB2 share.
-
-CC: Stable <stable@vger.kernel.org>
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Fixes: 9baf30972b55 ("bcache: fix for gc and write-back race")
+Signed-off-by: Coly Li <colyli@suse.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/inode.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/md/bcache/writeback.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/cifs/inode.c
-+++ b/fs/cifs/inode.c
-@@ -2408,6 +2408,8 @@ cifs_setattr_nounix(struct dentry *diren
- 	struct inode *inode = d_inode(direntry);
- 	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
- 	struct cifsInodeInfo *cifsInode = CIFS_I(inode);
-+	struct cifsFileInfo *wfile;
-+	struct cifs_tcon *tcon;
- 	char *full_path = NULL;
- 	int rc = -EACCES;
- 	__u32 dosattr = 0;
-@@ -2454,6 +2456,20 @@ cifs_setattr_nounix(struct dentry *diren
- 	mapping_set_error(inode->i_mapping, rc);
- 	rc = 0;
- 
-+	if (attrs->ia_valid & ATTR_MTIME) {
-+		rc = cifs_get_writable_file(cifsInode, false, &wfile);
-+		if (!rc) {
-+			tcon = tlink_tcon(wfile->tlink);
-+			rc = tcon->ses->server->ops->flush(xid, tcon, &wfile->fid);
-+			cifsFileInfo_put(wfile);
-+			if (rc)
-+				return rc;
-+		} else if (rc != -EBADF)
-+			return rc;
-+		else
-+			rc = 0;
-+	}
-+
- 	if (attrs->ia_valid & ATTR_SIZE) {
- 		rc = cifs_set_file_size(inode, attrs, xid, full_path);
- 		if (rc != 0)
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -834,6 +834,7 @@ int bch_cached_dev_writeback_start(struc
+ 					      "bcache_writeback");
+ 	if (IS_ERR(dc->writeback_thread)) {
+ 		cached_dev_put(dc);
++		destroy_workqueue(dc->writeback_write_wq);
+ 		return PTR_ERR(dc->writeback_thread);
+ 	}
+ 	dc->writeback_running = true;
 
 
