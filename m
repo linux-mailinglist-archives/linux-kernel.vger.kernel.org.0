@@ -2,302 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEDC97345A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 18:58:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4475E73456
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 18:58:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728354AbfGXQ61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 12:58:27 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33395 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbfGXQ60 (ORCPT
+        id S1728305AbfGXQ6I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 12:58:08 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45050 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbfGXQ6H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 12:58:26 -0400
-Received: by mail-io1-f65.google.com with SMTP id z3so91149672iog.0;
-        Wed, 24 Jul 2019 09:58:26 -0700 (PDT)
+        Wed, 24 Jul 2019 12:58:07 -0400
+Received: by mail-pf1-f194.google.com with SMTP id t16so21224481pfe.11
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 09:58:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:date:message-id:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=wYHYz2CAMv2i0hd4mcN2CYyNrF3b9BU8TFbZbdGIzOs=;
-        b=uY1ehjWR6BNqfQDttxnJ2nwMmBN8h3DMwSIIAOAYu7j+1U9hWxIKRCWsDilAvtulS7
-         jqHJXC90O93P97yw9YGdgSrzEUbp/ZLwkCT8Yc0LOVtg7XtoHzdwigcsAacCSXhT9E6V
-         beqzvXL7IVwvTdXLU3GOtLQearf9QMNAH8y0xURecTQLtawiDMebQFFl5jX3uHtZ+F9c
-         ikP//AaeOHroRE4+hUvKBROEkcq166E16z8wfjtJtzRhaXSVsUpd49066HnG3q72ZGj8
-         LdvAH/t8xfq00R+pV9kgkHyBHNwpH45MFLV/9Our+I1qQxPvHjK9Ty+dkBWr4Kwu2ZzO
-         j4qw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=s7ukXGKCr3sO7fhC6+VXw/YOnCbyLTCvDGXac4+FsVg=;
+        b=ckdL9xNk9dJcvMeNWxqzjoOC3mYV4foWL4DJyqLQFw8MgKbF3FOWuDILcLC05yUvk4
+         02DHiGg33KMa8ao90K2/rfwmP5rnwKrGXT+L8ws73WurUzIUwMaTB6tGyzB8oxG5QyFB
+         Wb49QeLbf/kwxddrww8ssgK9nKGUg+GZV6LSrWxTazlPk885ZXzWQyOw3YCy+4AfDkLZ
+         6bvzJyxt2Bw3/enR0AFOv18JhVtEhvs097B7ELSjcac14aUb3wpLq6Jj24qKj+TvAKIf
+         v+BDPd3si5IlcPCRhh6bf+cypufItFfayAUBMe65pY0ctkzSRHLWlycLt/U1OfCrx7OZ
+         X2Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=wYHYz2CAMv2i0hd4mcN2CYyNrF3b9BU8TFbZbdGIzOs=;
-        b=Tm6vzWa02x4/fs9Y4JaA6t2Wo7/RX1QUQRU1iuOZ2dHTjOI+aQkOY4X0Ytuto1DmIi
-         fdDvQQQt0m65J7CvzHdNX6QQs7YXeq5mUImjKng7IWvGap03RfAD4h1sowJWmZlg/Zzz
-         a1+N45He0BTV3YpcT26hMPRVUJgb/ZqAJ3nF/61Ts4FpsfeqlARwXK5PAE83gEFcR4VJ
-         AU2+eRbleLuf4BA5Jz5zSMoFaPXLBqctVzkBLksXzkVFdRvxPM8H6VzWKeXOc270d0GP
-         3ef3VGkyy24SUwDYFSwnMtbydsxGpxvlOu80+jauMwboqeZW80G70OvSXfy31YUpboxT
-         8CmQ==
-X-Gm-Message-State: APjAAAU6mAomsI5d5ddigFtx2CvNMtlqLI/1TfbwZQn32ekS3DPhYaSR
-        DJNxSdFKzWWI0LkFNvpl+Mg=
-X-Google-Smtp-Source: APXvYqzPsB0WoiSPD7TwB+7/Z6jVYA0qOPZHI3pVrvai/+z0Jj6tq9koz6Gcg9wg+Mxn8dfbkySShA==
-X-Received: by 2002:a6b:ef06:: with SMTP id k6mr4646761ioh.70.1563987505511;
-        Wed, 24 Jul 2019 09:58:25 -0700 (PDT)
-Received: from localhost.localdomain (50-39-177-61.bvtn.or.frontiernet.net. [50.39.177.61])
-        by smtp.gmail.com with ESMTPSA id q13sm42436508ioh.36.2019.07.24.09.58.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 09:58:25 -0700 (PDT)
-Subject: [PATCH v2 1/5] mm: Adjust shuffle code to allow for future
- coalescing
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-To:     nitesh@redhat.com, kvm@vger.kernel.org, david@redhat.com,
-        mst@redhat.com, dave.hansen@intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
-        konrad.wilk@oracle.com, lcapitulino@redhat.com,
-        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
-        dan.j.williams@intel.com, alexander.h.duyck@linux.intel.com
-Date:   Wed, 24 Jul 2019 09:56:16 -0700
-Message-ID: <20190724165615.6685.24289.stgit@localhost.localdomain>
-In-Reply-To: <20190724165158.6685.87228.stgit@localhost.localdomain>
-References: <20190724165158.6685.87228.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=s7ukXGKCr3sO7fhC6+VXw/YOnCbyLTCvDGXac4+FsVg=;
+        b=Jovs02iMocTdvFOfu70p7LkGE0ZMEPqs0spBzrnVLeQOg3/Df28vDhVn3Oh2c3u1k9
+         s4ghc+6DvoeDwPBPJOn9Z3Zu5hLqGPqrEHeY/2H0SSg48fvxnl6wzbmWyCuXJ2STax59
+         nz8wIJhqvOdRpB99irT7BqOL4/SoV68RkQT4mYxtrgNLr4Xjho+kAWqjO2NmqhSjWjoS
+         OcAkrCW7TRoWAM2/LfrUMcT4NGd2es9oGlK4rIPO0mwhucUey5YGNf5nHlzKL5n6T+uC
+         sEySlLmYpuIuVEokpvsByvPySHrr7qn+f1aeghf6UIS4Qjgrx6FyjEDGMmrRNzqyEOsl
+         8zLA==
+X-Gm-Message-State: APjAAAXIU8/B1wGN5DHbnyr0yIiDBagMQt7oBAXq4IIJr1rQ2ytGqntl
+        wKyTmVNt1suV4p/+IeVtMa6zOm4bDyx4RohtHI8ogw==
+X-Google-Smtp-Source: APXvYqwtd/MIlPgj4XQPELXcGFeWZeldRKC4fdCUY5wDDmotUp04bXXgIc6pZ9ZPYLTGlO0mzTbUPH1YGKnGgNfs9y0=
+X-Received: by 2002:a63:2cd1:: with SMTP id s200mr78200867pgs.10.1563987486194;
+ Wed, 24 Jul 2019 09:58:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <alpine.DEB.2.21.1907182223560.1785@nanos.tec.linutronix.de>
+ <20190718205839.GA40219@archlinux-threadripper> <alpine.DEB.2.21.1907190837350.1785@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1907190837350.1785@nanos.tec.linutronix.de>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 24 Jul 2019 09:57:55 -0700
+Message-ID: <CAKwvOdkkaypJPxfaxa_-Q0jtzX4AreNQx8rM7tw9Z78wPfV7fA@mail.gmail.com>
+Subject: Re: x86 - clang / objtool status
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+On Thu, Jul 18, 2019 at 11:39 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> On Thu, 18 Jul 2019, Nathan Chancellor wrote:
+>
+> > Hi Thomas,
+> >
+> > I can't comment on the objtool stuff as it is a bit outside of my area
+> > of expertise (probably going to be my next major learning project) but I
+> > can comment on the other errors.
+> >
+> > On Thu, Jul 18, 2019 at 10:40:09PM +0200, Thomas Gleixner wrote:
+> > >  Build fails with:
+> > >
+> > >   clang-10: error: unknown argument: '-mpreferred-stack-boundary=4'
+> > >   make[5]: *** [linux/scripts/Makefile.build:279: drivers/gpu/drm/amd/amdgpu/../display/dc/dcn20/dcn20_resource.o] Error 1
+> >
+> > Arnd sent a patch for this which has been picked up:
+> > https://lore.kernel.org/lkml/CADnq5_Mm=Fj4AkFtuo+W_295q8r6DY3Sumo7gTG-McUYY=CeVg@mail.gmail.com/
+>
+> Which I applied and now I get:
+>
+> ERROR: "__fixdfsi" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__eqdf2" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__truncdfsf2" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__nedf2" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__floatsidf" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__divdf3" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__adddf3" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__ledf2" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__subdf3" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__muldf3" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__fixunsdfsi" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__floatunsidf" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__extendsfdf2" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__gedf2" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__ltdf2" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__gtdf2" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> ERROR: "__floatdidf" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+> make[2]: *** [/home/tglx/work/kernel/linus/linux/scripts/Makefile.modpost:91: __modpost] Error 1
+>
 
-This patch is meant to move the head/tail adding logic out of the shuffle
-code and into the __free_one_page function since ultimately that is where
-it is really needed anyway. By doing this we should be able to reduce the
-overhead and can consolidate all of the list addition bits in one spot.
-
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
----
- include/linux/mmzone.h |   12 --------
- mm/page_alloc.c        |   70 +++++++++++++++++++++++++++---------------------
- mm/shuffle.c           |   24 ----------------
- mm/shuffle.h           |   32 ++++++++++++++++++++++
- 4 files changed, 71 insertions(+), 67 deletions(-)
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index d77d717c620c..738e9c758135 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -116,18 +116,6 @@ static inline void add_to_free_area_tail(struct page *page, struct free_area *ar
- 	area->nr_free++;
- }
- 
--#ifdef CONFIG_SHUFFLE_PAGE_ALLOCATOR
--/* Used to preserve page allocation order entropy */
--void add_to_free_area_random(struct page *page, struct free_area *area,
--		int migratetype);
--#else
--static inline void add_to_free_area_random(struct page *page,
--		struct free_area *area, int migratetype)
--{
--	add_to_free_area(page, area, migratetype);
--}
--#endif
--
- /* Used for pages which are on another list */
- static inline void move_to_free_area(struct page *page, struct free_area *area,
- 			     int migratetype)
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 272c6de1bf4e..1c4644b6cdc3 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -877,6 +877,36 @@ static inline struct capture_control *task_capc(struct zone *zone)
- #endif /* CONFIG_COMPACTION */
- 
- /*
-+ * If this is not the largest possible page, check if the buddy
-+ * of the next-highest order is free. If it is, it's possible
-+ * that pages are being freed that will coalesce soon. In case,
-+ * that is happening, add the free page to the tail of the list
-+ * so it's less likely to be used soon and more likely to be merged
-+ * as a higher order page
-+ */
-+static inline bool
-+buddy_merge_likely(unsigned long pfn, unsigned long buddy_pfn,
-+		   struct page *page, unsigned int order)
-+{
-+	struct page *higher_page, *higher_buddy;
-+	unsigned long combined_pfn;
-+
-+	if (order >= MAX_ORDER - 2)
-+		return false;
-+
-+	if (!pfn_valid_within(buddy_pfn))
-+		return false;
-+
-+	combined_pfn = buddy_pfn & pfn;
-+	higher_page = page + (combined_pfn - pfn);
-+	buddy_pfn = __find_buddy_pfn(combined_pfn, order + 1);
-+	higher_buddy = higher_page + (buddy_pfn - combined_pfn);
-+
-+	return pfn_valid_within(buddy_pfn) &&
-+	       page_is_buddy(higher_page, higher_buddy, order + 1);
-+}
-+
-+/*
-  * Freeing function for a buddy system allocator.
-  *
-  * The concept of a buddy system is to maintain direct-mapped table
-@@ -905,11 +935,12 @@ static inline void __free_one_page(struct page *page,
- 		struct zone *zone, unsigned int order,
- 		int migratetype)
- {
--	unsigned long combined_pfn;
-+	struct capture_control *capc = task_capc(zone);
- 	unsigned long uninitialized_var(buddy_pfn);
--	struct page *buddy;
-+	unsigned long combined_pfn;
-+	struct free_area *area;
- 	unsigned int max_order;
--	struct capture_control *capc = task_capc(zone);
-+	struct page *buddy;
- 
- 	max_order = min_t(unsigned int, MAX_ORDER, pageblock_order + 1);
- 
-@@ -978,35 +1009,12 @@ static inline void __free_one_page(struct page *page,
- done_merging:
- 	set_page_order(page, order);
- 
--	/*
--	 * If this is not the largest possible page, check if the buddy
--	 * of the next-highest order is free. If it is, it's possible
--	 * that pages are being freed that will coalesce soon. In case,
--	 * that is happening, add the free page to the tail of the list
--	 * so it's less likely to be used soon and more likely to be merged
--	 * as a higher order page
--	 */
--	if ((order < MAX_ORDER-2) && pfn_valid_within(buddy_pfn)
--			&& !is_shuffle_order(order)) {
--		struct page *higher_page, *higher_buddy;
--		combined_pfn = buddy_pfn & pfn;
--		higher_page = page + (combined_pfn - pfn);
--		buddy_pfn = __find_buddy_pfn(combined_pfn, order + 1);
--		higher_buddy = higher_page + (buddy_pfn - combined_pfn);
--		if (pfn_valid_within(buddy_pfn) &&
--		    page_is_buddy(higher_page, higher_buddy, order + 1)) {
--			add_to_free_area_tail(page, &zone->free_area[order],
--					      migratetype);
--			return;
--		}
--	}
--
--	if (is_shuffle_order(order))
--		add_to_free_area_random(page, &zone->free_area[order],
--				migratetype);
-+	area = &zone->free_area[order];
-+	if (is_shuffle_order(order) ? shuffle_add_to_tail() :
-+	    buddy_merge_likely(pfn, buddy_pfn, page, order))
-+		add_to_free_area_tail(page, area, migratetype);
- 	else
--		add_to_free_area(page, &zone->free_area[order], migratetype);
--
-+		add_to_free_area(page, area, migratetype);
- }
- 
- /*
-diff --git a/mm/shuffle.c b/mm/shuffle.c
-index 3ce12481b1dc..55d592e62526 100644
---- a/mm/shuffle.c
-+++ b/mm/shuffle.c
-@@ -4,7 +4,6 @@
- #include <linux/mm.h>
- #include <linux/init.h>
- #include <linux/mmzone.h>
--#include <linux/random.h>
- #include <linux/moduleparam.h>
- #include "internal.h"
- #include "shuffle.h"
-@@ -182,26 +181,3 @@ void __meminit __shuffle_free_memory(pg_data_t *pgdat)
- 	for (z = pgdat->node_zones; z < pgdat->node_zones + MAX_NR_ZONES; z++)
- 		shuffle_zone(z);
- }
--
--void add_to_free_area_random(struct page *page, struct free_area *area,
--		int migratetype)
--{
--	static u64 rand;
--	static u8 rand_bits;
--
--	/*
--	 * The lack of locking is deliberate. If 2 threads race to
--	 * update the rand state it just adds to the entropy.
--	 */
--	if (rand_bits == 0) {
--		rand_bits = 64;
--		rand = get_random_u64();
--	}
--
--	if (rand & 1)
--		add_to_free_area(page, area, migratetype);
--	else
--		add_to_free_area_tail(page, area, migratetype);
--	rand_bits--;
--	rand >>= 1;
--}
-diff --git a/mm/shuffle.h b/mm/shuffle.h
-index 777a257a0d2f..add763cc0995 100644
---- a/mm/shuffle.h
-+++ b/mm/shuffle.h
-@@ -3,6 +3,7 @@
- #ifndef _MM_SHUFFLE_H
- #define _MM_SHUFFLE_H
- #include <linux/jump_label.h>
-+#include <linux/random.h>
- 
- /*
-  * SHUFFLE_ENABLE is called from the command line enabling path, or by
-@@ -43,6 +44,32 @@ static inline bool is_shuffle_order(int order)
- 		return false;
- 	return order >= SHUFFLE_ORDER;
- }
-+
-+static inline bool shuffle_add_to_tail(void)
-+{
-+	static u64 rand;
-+	static u8 rand_bits;
-+	u64 rand_old;
-+
-+	/*
-+	 * The lack of locking is deliberate. If 2 threads race to
-+	 * update the rand state it just adds to the entropy.
-+	 */
-+	if (rand_bits-- == 0) {
-+		rand_bits = 64;
-+		rand = get_random_u64();
-+	}
-+
-+	/*
-+	 * Test highest order bit while shifting our random value. This
-+	 * should result in us testing for the carry flag following the
-+	 * shift.
-+	 */
-+	rand_old = rand;
-+	rand <<= 1;
-+
-+	return rand < rand_old;
-+}
- #else
- static inline void shuffle_free_memory(pg_data_t *pgdat)
- {
-@@ -60,5 +87,10 @@ static inline bool is_shuffle_order(int order)
- {
- 	return false;
- }
-+
-+static inline bool shuffle_add_to_tail(void)
-+{
-+	return false;
-+}
- #endif
- #endif /* _MM_SHUFFLE_H */
-
+Thanks for reminding me to send a v2: https://lkml.org/lkml/2019/7/22/1196
+Sounds like it was picked up yesterday (but I'm not sure the
+maintainer pushed it publicly anywhere yet).
+-- 
+Thanks,
+~Nick Desaulniers
