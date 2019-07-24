@@ -2,195 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81FCF74799
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 08:59:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEDEF747A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 09:01:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387647AbfGYG7c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 02:59:32 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:25963 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729437AbfGYG7Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 02:59:24 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id x6P6w8Nx006728;
-        Thu, 25 Jul 2019 15:58:09 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x6P6w8Nx006728
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1564037890;
-        bh=rOTWfeO8vuZ1f359Pp1TLoial4S0o/dBkWxQEalxU2s=;
+        id S2387680AbfGYHBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 03:01:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34104 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725808AbfGYHBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 03:01:05 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0371B2070B;
+        Thu, 25 Jul 2019 07:01:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564038064;
+        bh=4CfUye+GgQ2gJMBez5GCw03r+W5Lg5lhKAG1QSnvLsg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zpYjjFF9K57RPSta6kfzB6YgIDOrRmjaSxKATtDA3Dk1+rvnGqqKCDSQ8eG4ZHcu5
-         BT407FyNnh30z7qW6tkZBd/fu5bAWbfqCIJuyzQdfWVJW174OvTSjDifIv5JH2Ey4v
-         2rNSlFIzL/zVU79dIILU85dx5FtI0sZ27viORDV4JA1Vkgot/H4JqJYertNN30MCCj
-         7RgHr2ps887GVykeAbc/9iKOmwCiceVuIQlmC6BWcqx2B85Eo8qjN6icu6oQQiDiIR
-         tt6YR1BeWh/4G67kBeN1i5YhZ8qdAK7V3ofDKtsysfGlvt745Z3tI0sXjXXG8XSbG9
-         Zc3XCbplh6VEQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kernel@vger.kernel.org, linux-spdx@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, alsa-devel@alsa-project.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 2/2] treewide: remove SPDX "WITH Linux-syscall-note" from kernel-space headers again
-Date:   Thu, 25 Jul 2019 15:58:02 +0900
-Message-Id: <20190725065802.19896-2-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190725065802.19896-1-yamada.masahiro@socionext.com>
-References: <20190725065802.19896-1-yamada.masahiro@socionext.com>
+        b=sz7jyTkEKYHv9cAcxBMbDFFyk9Vg7lLKUrhtVicOoAyf4BGFbsS/HFB2Myr8wSoMF
+         5oqAHUWN2+iGkSUd5Lw79E78S5Ske2mbT72gE6QBSKdw0pR9diYO/7hsuH0cdYXarb
+         RCpSgpzFhVg7o+BA2oee+4hDc8kzfv779bED68OA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 024/413] media: vpss: fix a potential NULL pointer dereference
+Date:   Wed, 24 Jul 2019 21:15:15 +0200
+Message-Id: <20190724191737.185755747@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
+References: <20190724191735.096702571@linuxfoundation.org>
+User-Agent: quilt/0.66
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "WITH Linux-syscall-note" exception exists for headers exported to
-user space. It is strange to add it to non-exported headers.
+[ Upstream commit e08f0761234def47961d3252eac09ccedfe4c6a0 ]
 
-Commit 687a3e4d8e61 ("treewide: remove SPDX "WITH Linux-syscall-note"
-from kernel-space headers") did cleanups some months ago, but it looks
-like we need to do this periodically.
+In case ioremap fails, the fix returns -ENOMEM to avoid NULL
+pointer dereference.
 
-This patch was generated by the following script:
-
-  git grep -l -e Linux-syscall-note \
-    -- :*.h :^arch/*/include/uapi/asm/*.h :^include/uapi/ :^tools |
-  while read file
-  do
-          sed -i -e 's/(\(GPL-[^[:space:]]*\) WITH Linux-syscall-note)/\1/g' \
-          -e 's/ WITH Linux-syscall-note//g' $file
-  done
-
-I did not commit drivers/staging/android/uapi/ion.h
-This is not currently exported, but somebody may plan to move it to
-include/uapi/ when the time comes. I am not sure. Anyway, it will be
-better to check the license inconsistency in drivers/staging/android/uapi/.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
+ drivers/media/platform/davinci/vpss.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- include/sound/sof/control.h   | 2 +-
- include/sound/sof/dai-intel.h | 2 +-
- include/sound/sof/dai.h       | 2 +-
- include/sound/sof/header.h    | 2 +-
- include/sound/sof/info.h      | 2 +-
- include/sound/sof/pm.h        | 2 +-
- include/sound/sof/stream.h    | 2 +-
- include/sound/sof/topology.h  | 2 +-
- include/sound/sof/trace.h     | 2 +-
- include/sound/sof/xtensa.h    | 2 +-
- samples/vfio-mdev/mdpy-defs.h | 2 +-
- 11 files changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/include/sound/sof/control.h b/include/sound/sof/control.h
-index bded69e696d4..6080ea0facd7 100644
---- a/include/sound/sof/control.h
-+++ b/include/sound/sof/control.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
- /*
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-diff --git a/include/sound/sof/dai-intel.h b/include/sound/sof/dai-intel.h
-index 4bb8ee138ba7..65e4c20e567c 100644
---- a/include/sound/sof/dai-intel.h
-+++ b/include/sound/sof/dai-intel.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
- /*
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-diff --git a/include/sound/sof/dai.h b/include/sound/sof/dai.h
-index 3d174e20aa53..5b8de1b1983c 100644
---- a/include/sound/sof/dai.h
-+++ b/include/sound/sof/dai.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
- /*
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-diff --git a/include/sound/sof/header.h b/include/sound/sof/header.h
-index 12867bbd4372..10f00c08dbb7 100644
---- a/include/sound/sof/header.h
-+++ b/include/sound/sof/header.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
- /*
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-diff --git a/include/sound/sof/info.h b/include/sound/sof/info.h
-index 16528d2b4a50..a9156b4a062c 100644
---- a/include/sound/sof/info.h
-+++ b/include/sound/sof/info.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
- /*
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-diff --git a/include/sound/sof/pm.h b/include/sound/sof/pm.h
-index 8ae3ad45bdf7..003879401d63 100644
---- a/include/sound/sof/pm.h
-+++ b/include/sound/sof/pm.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
- /*
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-diff --git a/include/sound/sof/stream.h b/include/sound/sof/stream.h
-index 643f175cb479..0b71b381b952 100644
---- a/include/sound/sof/stream.h
-+++ b/include/sound/sof/stream.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
- /*
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-diff --git a/include/sound/sof/topology.h b/include/sound/sof/topology.h
-index 41dcabf89899..c47b36240920 100644
---- a/include/sound/sof/topology.h
-+++ b/include/sound/sof/topology.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
- /*
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-diff --git a/include/sound/sof/trace.h b/include/sound/sof/trace.h
-index 9257d5473d97..fda6e8f6ead4 100644
---- a/include/sound/sof/trace.h
-+++ b/include/sound/sof/trace.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
- /*
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-diff --git a/include/sound/sof/xtensa.h b/include/sound/sof/xtensa.h
-index d25c764b10e8..dd53d36b34e1 100644
---- a/include/sound/sof/xtensa.h
-+++ b/include/sound/sof/xtensa.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
- /*
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-diff --git a/samples/vfio-mdev/mdpy-defs.h b/samples/vfio-mdev/mdpy-defs.h
-index 96b3b1b49d34..eb26421b6429 100644
---- a/samples/vfio-mdev/mdpy-defs.h
-+++ b/samples/vfio-mdev/mdpy-defs.h
-@@ -1,4 +1,4 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Simple pci display device.
-  *
+diff --git a/drivers/media/platform/davinci/vpss.c b/drivers/media/platform/davinci/vpss.c
+index 3f079ac1b080..be91b0c7d20b 100644
+--- a/drivers/media/platform/davinci/vpss.c
++++ b/drivers/media/platform/davinci/vpss.c
+@@ -509,6 +509,11 @@ static int __init vpss_init(void)
+ 		return -EBUSY;
+ 
+ 	oper_cfg.vpss_regs_base2 = ioremap(VPSS_CLK_CTRL, 4);
++	if (unlikely(!oper_cfg.vpss_regs_base2)) {
++		release_mem_region(VPSS_CLK_CTRL, 4);
++		return -ENOMEM;
++	}
++
+ 	writel(VPSS_CLK_CTRL_VENCCLKEN |
+ 		     VPSS_CLK_CTRL_DACCLKEN, oper_cfg.vpss_regs_base2);
+ 
 -- 
-2.17.1
+2.20.1
+
+
 
