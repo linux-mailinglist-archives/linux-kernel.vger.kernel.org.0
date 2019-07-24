@@ -2,194 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F2E97304D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 15:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD97D7303E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 15:50:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728136AbfGXNyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 09:54:15 -0400
-Received: from mga11.intel.com ([192.55.52.93]:38562 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726422AbfGXNyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 09:54:15 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 06:54:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
-   d="scan'208";a="321347618"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by orsmga004.jf.intel.com with ESMTP; 24 Jul 2019 06:54:11 -0700
-Date:   Wed, 24 Jul 2019 21:37:14 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, atull@kernel.org,
-        Zhang Yi Z <yi.z.zhang@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>
-Subject: Re: [PATCH v3 03/12] fpga: dfl: pci: enable SRIOV support.
-Message-ID: <20190724133714.GC8463@hao-dev>
-References: <1563857495-26692-1-git-send-email-hao.wu@intel.com>
- <1563857495-26692-4-git-send-email-hao.wu@intel.com>
- <20190724093744.GC29532@kroah.com>
+        id S1727326AbfGXNuq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 09:50:46 -0400
+Received: from mail-qk1-f180.google.com ([209.85.222.180]:34111 "EHLO
+        mail-qk1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbfGXNuq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 09:50:46 -0400
+Received: by mail-qk1-f180.google.com with SMTP id t8so33789258qkt.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 06:50:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=S+B2gVLJtMUBm3asTbNSqVjrt+57LbpLAbR6CL8mWkw=;
+        b=G5aKnd5lbKhLGaFVNOtzXvNL4nqhhQs+wLvTfrZ/N1OcPlpWrm1uxwJsqlY1zpDhPL
+         DI3BDZSGlMw3REAmde+/VtdJ3jJsqjBEpUO7ed4YYcsJm5sHLTKqV5RmdQQTeIYfyiQT
+         Dikc6/cT0s8Yv0n1GK5m130ZKvBR57bT8qDHIRsGfUSOZppcVfGc4/2yl5+79SPgTghO
+         l/0hrQHZLN6W5W2Q6vUvcrtItDanq8mlD/m9qCQvlOX8EITxqbtuQaI02tCl/OPTU5RS
+         2mpDH+0FZYpwvrHukYrF8kIpuJCqRv8PvBN1OgkU7gNGL8kT1ZSV+TG7pAPxK+nMo3Y9
+         gR5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=S+B2gVLJtMUBm3asTbNSqVjrt+57LbpLAbR6CL8mWkw=;
+        b=hCKrvzZmgBgJrZGpJ1AAQuoAs/Ks17nonFOR4BLDQ01Gw3IUHjxOnD+vbrPfvwLwe7
+         RH0FftFMyPFJdvQ3rp7O24l6/p44Mom4QE/SzMNbWnLQdWXS4y/pTXZ9I5Dpf8k2jTZG
+         DxPTfQSBDjipEmuIK3nrsRkuZiHFSpUdSpePe5UyodBG+q5Res6UUEKZRZ9w8xlUfOMd
+         VkxwxHh3bfroirxLYPqhZdcEu0Kr6uagUk79ebNWp6KDniVF4jZ/P7dqyErNcFKMDA6T
+         +TviJHy/0SB1LXD6kaq3x4eK4m5fbmoXmim+sfwoWKGyXCTBahSjOu5XYrVvMyN4Apdm
+         XKag==
+X-Gm-Message-State: APjAAAU7AWrjqjKW2IZqAkRVTP7GGl5Nd/tJ92ymYq9Us4LwhzEIHFib
+        MSNtzozs3LfAN3kPl2nZg7Q=
+X-Google-Smtp-Source: APXvYqzIPx9rKpu0YusLlt4n80Mko6pj8tTZ5Qp4AwVPQrNYlwIxXKZ/t71QQYjgmGw67lAbGluS9A==
+X-Received: by 2002:a37:76c5:: with SMTP id r188mr53736209qkc.394.1563976244860;
+        Wed, 24 Jul 2019 06:50:44 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id f133sm22578426qke.62.2019.07.24.06.50.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 06:50:43 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 68CCC40340; Wed, 24 Jul 2019 10:50:40 -0300 (-03)
+Date:   Wed, 24 Jul 2019 10:50:40 -0300
+To:     Song Liu <songliubraving@fb.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Stephane Eranian <eranian@google.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Michael Petlan <mpetlan@redhat.com>
+Subject: Re: [RFC 00/79] perf tools: Initial libperf separation
+Message-ID: <20190724135040.GA5727@kernel.org>
+References: <20190721112506.12306-1-jolsa@kernel.org>
+ <327EF79F-4573-4387-8DA5-24FFD9EDBBB1@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190724093744.GC29532@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <327EF79F-4573-4387-8DA5-24FFD9EDBBB1@fb.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 11:37:44AM +0200, Greg KH wrote:
-> On Tue, Jul 23, 2019 at 12:51:26PM +0800, Wu Hao wrote:
-> > This patch enables the standard sriov support. It allows user to
-> > enable SRIOV (and VFs), then user could pass through accelerators
-> > (VFs) into virtual machine or use VFs directly in host.
-> > 
-> > Signed-off-by: Zhang Yi Z <yi.z.zhang@intel.com>
-> > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-> > Signed-off-by: Wu Hao <hao.wu@intel.com>
-> > Acked-by: Alan Tull <atull@kernel.org>
-> > Acked-by: Moritz Fischer <mdf@kernel.org>
-> > Signed-off-by: Moritz Fischer <mdf@kernel.org>
-> > ---
-> > v2: remove DRV/MODULE_VERSION modifications.
-> > ---
-> >  drivers/fpga/dfl-pci.c | 39 +++++++++++++++++++++++++++++++++++++++
-> >  drivers/fpga/dfl.c     | 41 +++++++++++++++++++++++++++++++++++++++++
-> >  drivers/fpga/dfl.h     |  1 +
-> >  3 files changed, 81 insertions(+)
-> > 
-> > diff --git a/drivers/fpga/dfl-pci.c b/drivers/fpga/dfl-pci.c
-> > index 66b5720..0e65d81 100644
-> > --- a/drivers/fpga/dfl-pci.c
-> > +++ b/drivers/fpga/dfl-pci.c
-> > @@ -223,8 +223,46 @@ int cci_pci_probe(struct pci_dev *pcidev, const struct pci_device_id *pcidevid)
-> >  	return ret;
-> >  }
-> >  
-> > +static int cci_pci_sriov_configure(struct pci_dev *pcidev, int num_vfs)
-> > +{
-> > +	struct cci_drvdata *drvdata = pci_get_drvdata(pcidev);
-> > +	struct dfl_fpga_cdev *cdev = drvdata->cdev;
-> > +	int ret = 0;
-> > +
-> > +	mutex_lock(&cdev->lock);
-> > +
-> > +	if (!num_vfs) {
-> > +		/*
-> > +		 * disable SRIOV and then put released ports back to default
-> > +		 * PF access mode.
-> > +		 */
-> > +		pci_disable_sriov(pcidev);
-> > +
-> > +		__dfl_fpga_cdev_config_port_vf(cdev, false);
-> > +
-> > +	} else if (cdev->released_port_num == num_vfs) {
-> > +		/*
-> > +		 * only enable SRIOV if cdev has matched released ports, put
-> > +		 * released ports into VF access mode firstly.
-> > +		 */
-> > +		__dfl_fpga_cdev_config_port_vf(cdev, true);
-> > +
-> > +		ret = pci_enable_sriov(pcidev, num_vfs);
-> > +		if (ret)
-> > +			__dfl_fpga_cdev_config_port_vf(cdev, false);
-> > +	} else {
-> > +		ret = -EINVAL;
-> > +	}
-> > +
-> > +	mutex_unlock(&cdev->lock);
-> > +	return ret;
-> > +}
-> > +
-> >  static void cci_pci_remove(struct pci_dev *pcidev)
-> >  {
-> > +	if (dev_is_pf(&pcidev->dev))
-> > +		cci_pci_sriov_configure(pcidev, 0);
-> > +
-> >  	cci_remove_feature_devs(pcidev);
-> >  	pci_disable_pcie_error_reporting(pcidev);
-> >  }
-> > @@ -234,6 +272,7 @@ static void cci_pci_remove(struct pci_dev *pcidev)
-> >  	.id_table = cci_pcie_id_tbl,
-> >  	.probe = cci_pci_probe,
-> >  	.remove = cci_pci_remove,
-> > +	.sriov_configure = cci_pci_sriov_configure,
-> >  };
-> >  
-> >  module_pci_driver(cci_pci_driver);
-> > diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
-> > index e04ed45..c3a8e1d 100644
-> > --- a/drivers/fpga/dfl.c
-> > +++ b/drivers/fpga/dfl.c
-> > @@ -1112,6 +1112,47 @@ int dfl_fpga_cdev_config_port(struct dfl_fpga_cdev *cdev, int port_id,
-> >  }
-> >  EXPORT_SYMBOL_GPL(dfl_fpga_cdev_config_port);
-> >  
-> > +static void config_port_vf(struct device *fme_dev, int port_id, bool is_vf)
-> > +{
-> > +	void __iomem *base;
-> > +	u64 v;
-> > +
-> > +	base = dfl_get_feature_ioaddr_by_id(fme_dev, FME_FEATURE_ID_HEADER);
-> > +
-> > +	v = readq(base + FME_HDR_PORT_OFST(port_id));
-> > +
-> > +	v &= ~FME_PORT_OFST_ACC_CTRL;
-> > +	v |= FIELD_PREP(FME_PORT_OFST_ACC_CTRL,
-> > +			is_vf ? FME_PORT_OFST_ACC_VF : FME_PORT_OFST_ACC_PF);
-> > +
-> > +	writeq(v, base + FME_HDR_PORT_OFST(port_id));
-> > +}
-> > +
-> > +/**
-> > + * __dfl_fpga_cdev_config_port_vf - configure port to VF access mode
-> > + *
-> > + * @cdev: parent container device.
-> > + * @if_vf: true for VF access mode, and false for PF access mode
-> > + *
-> > + * Return: 0 on success, negative error code otherwise.
-> > + *
-> > + * This function is needed in sriov configuration routine. It could be used to
-> > + * configures the released ports access mode to VF or PF.
-> > + * The caller needs to hold lock for protection.
-> > + */
-> > +void __dfl_fpga_cdev_config_port_vf(struct dfl_fpga_cdev *cdev, bool is_vf)
-> > +{
-> > +	struct dfl_feature_platform_data *pdata;
-> > +
-> > +	list_for_each_entry(pdata, &cdev->port_dev_list, node) {
-> > +		if (device_is_registered(&pdata->dev->dev))
-> > +			continue;
-> > +
-> > +		config_port_vf(cdev->fme_dev, pdata->id, is_vf);
-> > +	}
-> > +}
-> > +EXPORT_SYMBOL_GPL(__dfl_fpga_cdev_config_port_vf);
-> 
-> Why are you exporting a function with a leading __?
-> 
-> You are expecting someone else, in who knows what code, to do locking
-> correctly?  If so, and the caller always has to have a local lock, then
-> it's not a big deal, just drop the '__', otherwise if you have to have a
-> specific lock for a specific device, then you have a really complex and
-> probably broken api here :(
+Em Wed, Jul 24, 2019 at 07:42:50AM +0000, Song Liu escreveu:
+> > On Jul 21, 2019, at 4:23 AM, Jiri Olsa <jolsa@kernel.org> wrote:
 
-Yes, I just want to remind the user of this API, caller needs to hold the
-lock to protect the list. I fully agree, it does make sense to make the
-APIs easy to use. I will try to improve this, maybe move the lock inside
-this function, then API user doesn't need to know the details of locking.
+> > we have long term goal to separate some of the perf functionality
+> > into library. This patchset is initial effort on separating some
+> > of the interface.
 
-Thanks a lot for the comments, it really helps.
+> > Currently only the basic counting interface is exported, it allows
+> > to:
+> >  - create cpu/threads maps
+> >  - create evlist/evsel objects
+> >  - add evsel objects into evlist
+> >  - open/close evlist/evsel objects
+> >  - enable/disable events
+> >  - read evsel counts
+ 
+> Based on my understanding, evsel and evlist are abstractions in
+> perf utilities. I think most other tools that use perf UAPIs are 
+> not built based on these abstractions. I looked at a few internal
+> tools. Most of them just uses sys_perf_event_open() and struct 
+> perf_event_attr. I am not sure whether these tools would adopt
+> libperf, as libperf changes their existing concepts/abstractions.
 
-Hao
+Right, and for now we're just trying to have something that is not so
+tied to perf and could possibly be useful outside tools/perf/ when the
+need arises for whatever new tool or pre-existing one.
 
-> 
-> thanks,
-> 
-> greg k-h
+There are features there that may be interesting to use outside perf,
+time will tell.
+
+> > The initial effort was to have total separation of the objects
+> > from perf code, but it showed not to be a good way. The amount
+> > of changed code was too big with high chance for regressions,
+> > mainly because of the code embedding one of the above objects
+> > statically.
+
+> > We took the other approach of sharing the objects/struct details
+> > within the perf and libperf code. This way we can keep perf
+> > functionality without any major changes and the libperf users
+> > are still separated from the object/struct details. We can move
+> > to total libperf's objects separation gradually in future.
+ 
+> I found some duplicated logic between libperf and perf, for 
+> example, perf_evlist__open() and evlist__open(). Do we plan to 
+> merge them in the future? 
+
+He is just slowly moving things to a public libperf while keeping perf
+working, in the end the goal is to have as much stuff that is not
+super specific to some of the existing perf tools
+(tools/perf/builtin-*.c) in libperf as possible.
+
+It is still early in this effort, that is why he is still leaving it in
+tools/perf/lib/ and not in tools/lib/perf/ :-)
+
+- Arnaldo
