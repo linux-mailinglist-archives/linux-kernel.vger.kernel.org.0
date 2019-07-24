@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16A2673FC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:35:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54FDE73FB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:35:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729214AbfGXTZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:25:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42736 "EHLO mail.kernel.org"
+        id S2388086AbfGXT0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:26:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729205AbfGXTZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:25:51 -0400
+        id S1728520AbfGXT0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:26:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0362622387;
-        Wed, 24 Jul 2019 19:25:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC983218EA;
+        Wed, 24 Jul 2019 19:26:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996350;
-        bh=m33R6dhHb2VmmyzYBxUc5e1BtHoU4ndX6Brej0xYZtU=;
+        s=default; t=1563996370;
+        bh=3Xf/8TxSP6B0nYj1zPugHalsqJuC9fbdKprx1zpdIOs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bSyzWraMCquUJUifG44TtAVrQT82SWW7ma8bo9tKyl86eERFuY+Oc4n+s69zU8VPO
-         JKSSdhjG0UYRlZIy2gDEuVvUmhHNxzBoJJFeYyzk2w0WOavFnOXZensjvklOANX+yg
-         o54uvpvy6O/K58PzSII4XOLWwJbnv6kJrSsGdPRI=
+        b=NOtdzoNajXISlX5JFgZB1Chcy9GxaawHZCSU00bVzA7g1/3msSfT98/oLthIYrtiD
+         WeWYuIf+XPeQryL9X9RzO9mSo6hM7SPKBi0EWgrRKm+bbKNzrN7TsH1UmeBNWchs0a
+         bzUC/lButCkALhkZ6/Iu1FJ3eye854f8u8s8+Fj8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 065/413] media: imx7-mipi-csis: Propagate the error if clock enabling fails
-Date:   Wed, 24 Jul 2019 21:15:56 +0200
-Message-Id: <20190724191739.849499604@linuxfoundation.org>
+Subject: [PATCH 5.2 071/413] crypto: inside-secure - do not rely on the hardware last bit for result descriptors
+Date:   Wed, 24 Jul 2019 21:16:02 +0200
+Message-Id: <20190724191740.189970410@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -46,56 +45,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2b393f91c651c16d5c09f5c7aa689e58a79df34e ]
+[ Upstream commit 89332590427235680236b9470e851afc49b3caa1 ]
 
-Currently the return value from clk_bulk_prepare_enable() is checked,
-but it is not propagate it in the case of failure.
+When performing a transformation the hardware is given result
+descriptors to save the result data. Those result descriptors are
+batched using a 'first' and a 'last' bit. There are cases were more
+descriptors than needed are given to the engine, leading to the engine
+only using some of them, and not setting the last bit on the last
+descriptor we gave. This causes issues were the driver and the hardware
+aren't in sync anymore about the number of result descriptors given (as
+the driver do not give a pool of descriptor to use for any
+transformation, but a pool of descriptors to use *per* transformation).
 
-Fix it and also move the error message to the caller of
-mipi_csis_clk_enable().
+This patch fixes it by attaching the number of given result descriptors
+to the requests, and by using this number instead of the 'last' bit
+found on the descriptors to process them.
 
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Reviewed-by: Rui Miguel Silva <rmfrfs@gmail.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/media/imx/imx7-mipi-csis.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ .../crypto/inside-secure/safexcel_cipher.c    | 24 ++++++++++++++-----
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/media/imx/imx7-mipi-csis.c b/drivers/staging/media/imx/imx7-mipi-csis.c
-index 19455f425416..7d7bdfdd852a 100644
---- a/drivers/staging/media/imx/imx7-mipi-csis.c
-+++ b/drivers/staging/media/imx/imx7-mipi-csis.c
-@@ -456,13 +456,9 @@ static void mipi_csis_set_params(struct csi_state *state)
- 			MIPI_CSIS_CMN_CTRL_UPDATE_SHADOW_CTRL);
- }
+diff --git a/drivers/crypto/inside-secure/safexcel_cipher.c b/drivers/crypto/inside-secure/safexcel_cipher.c
+index de4be10b172f..ccacdcf07ffc 100644
+--- a/drivers/crypto/inside-secure/safexcel_cipher.c
++++ b/drivers/crypto/inside-secure/safexcel_cipher.c
+@@ -51,6 +51,8 @@ struct safexcel_cipher_ctx {
  
--static void mipi_csis_clk_enable(struct csi_state *state)
-+static int mipi_csis_clk_enable(struct csi_state *state)
- {
--	int ret;
--
--	ret = clk_bulk_prepare_enable(state->num_clks, state->clks);
--	if (ret < 0)
--		dev_err(state->dev, "failed to enable clocks\n");
-+	return clk_bulk_prepare_enable(state->num_clks, state->clks);
- }
+ struct safexcel_cipher_req {
+ 	enum safexcel_cipher_direction direction;
++	/* Number of result descriptors associated to the request */
++	unsigned int rdescs;
+ 	bool needs_inv;
+ };
  
- static void mipi_csis_clk_disable(struct csi_state *state)
-@@ -973,7 +969,11 @@ static int mipi_csis_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
+@@ -333,7 +335,10 @@ static int safexcel_handle_req_result(struct safexcel_crypto_priv *priv, int rin
  
--	mipi_csis_clk_enable(state);
-+	ret = mipi_csis_clk_enable(state);
-+	if (ret < 0) {
-+		dev_err(state->dev, "failed to enable clocks: %d\n", ret);
-+		return ret;
+ 	*ret = 0;
+ 
+-	do {
++	if (unlikely(!sreq->rdescs))
++		return 0;
++
++	while (sreq->rdescs--) {
+ 		rdesc = safexcel_ring_next_rptr(priv, &priv->ring[ring].rdr);
+ 		if (IS_ERR(rdesc)) {
+ 			dev_err(priv->dev,
+@@ -346,7 +351,7 @@ static int safexcel_handle_req_result(struct safexcel_crypto_priv *priv, int rin
+ 			*ret = safexcel_rdesc_check_errors(priv, rdesc);
+ 
+ 		ndesc++;
+-	} while (!rdesc->last_seg);
 +	}
  
- 	ret = devm_request_irq(dev, state->irq, mipi_csis_irq_handler,
- 			       0, dev_name(dev), state);
+ 	safexcel_complete(priv, ring);
+ 
+@@ -501,6 +506,7 @@ static int safexcel_send_req(struct crypto_async_request *base, int ring,
+ static int safexcel_handle_inv_result(struct safexcel_crypto_priv *priv,
+ 				      int ring,
+ 				      struct crypto_async_request *base,
++				      struct safexcel_cipher_req *sreq,
+ 				      bool *should_complete, int *ret)
+ {
+ 	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(base->tfm);
+@@ -509,7 +515,10 @@ static int safexcel_handle_inv_result(struct safexcel_crypto_priv *priv,
+ 
+ 	*ret = 0;
+ 
+-	do {
++	if (unlikely(!sreq->rdescs))
++		return 0;
++
++	while (sreq->rdescs--) {
+ 		rdesc = safexcel_ring_next_rptr(priv, &priv->ring[ring].rdr);
+ 		if (IS_ERR(rdesc)) {
+ 			dev_err(priv->dev,
+@@ -522,7 +531,7 @@ static int safexcel_handle_inv_result(struct safexcel_crypto_priv *priv,
+ 			*ret = safexcel_rdesc_check_errors(priv, rdesc);
+ 
+ 		ndesc++;
+-	} while (!rdesc->last_seg);
++	}
+ 
+ 	safexcel_complete(priv, ring);
+ 
+@@ -564,7 +573,7 @@ static int safexcel_skcipher_handle_result(struct safexcel_crypto_priv *priv,
+ 
+ 	if (sreq->needs_inv) {
+ 		sreq->needs_inv = false;
+-		err = safexcel_handle_inv_result(priv, ring, async,
++		err = safexcel_handle_inv_result(priv, ring, async, sreq,
+ 						 should_complete, ret);
+ 	} else {
+ 		err = safexcel_handle_req_result(priv, ring, async, req->src,
+@@ -587,7 +596,7 @@ static int safexcel_aead_handle_result(struct safexcel_crypto_priv *priv,
+ 
+ 	if (sreq->needs_inv) {
+ 		sreq->needs_inv = false;
+-		err = safexcel_handle_inv_result(priv, ring, async,
++		err = safexcel_handle_inv_result(priv, ring, async, sreq,
+ 						 should_complete, ret);
+ 	} else {
+ 		err = safexcel_handle_req_result(priv, ring, async, req->src,
+@@ -633,6 +642,8 @@ static int safexcel_skcipher_send(struct crypto_async_request *async, int ring,
+ 		ret = safexcel_send_req(async, ring, sreq, req->src,
+ 					req->dst, req->cryptlen, 0, 0, req->iv,
+ 					commands, results);
++
++	sreq->rdescs = *results;
+ 	return ret;
+ }
+ 
+@@ -655,6 +666,7 @@ static int safexcel_aead_send(struct crypto_async_request *async, int ring,
+ 					req->cryptlen, req->assoclen,
+ 					crypto_aead_authsize(tfm), req->iv,
+ 					commands, results);
++	sreq->rdescs = *results;
+ 	return ret;
+ }
+ 
 -- 
 2.20.1
 
