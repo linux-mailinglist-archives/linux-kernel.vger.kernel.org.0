@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6E2F74004
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:37:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DB8773FDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:36:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387956AbfGXTYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:24:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40784 "EHLO mail.kernel.org"
+        id S2389076AbfGXUfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:35:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729056AbfGXTYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:24:31 -0400
+        id S2388047AbfGXTZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:25:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DD0522387;
-        Wed, 24 Jul 2019 19:24:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 414B9218F0;
+        Wed, 24 Jul 2019 19:25:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996270;
-        bh=/m+OpmSi6461DEttxrd1JK+QUeBO2w8QPWSmaVlv9LE=;
+        s=default; t=1563996336;
+        bh=bxec5w9zV1i7q5BKF/WWYgqOx3tA4v5sBaOkTcJ4HAU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lNL7ToT6nIm2yvcR8GOvvohsgvlrrSk6Ub0PNkViwYD+zP8kTdIakLibDhhvpPuf+
-         pEZNHkUcBEWk7+wqom0DKSW1LmACckyvsnvMHSw3BjjTECqwECBRfPhWTyYax0iqgj
-         acpc4sCKeqh/b45DPWBOW7Ievytkxt8lTDUsxpIk=
+        b=2H0g9pAA5fQVSFwV1j550jk3e4B86I3axfrP1JKucPsS2jIVn1uJm3kT9cxJZNmay
+         MEGZ4caIwMXHbZl9a+0EXZ+Y419xZhujIfRRG6LegBB8kpd9cUWzJXH/kYbdO4uJ4K
+         fFdvLI101gEn+Xmqs5P0uf48fBcFbWXbQfUuC5ZA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brett Creeley <brett.creeley@intel.com>,
-        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Jian Shen <shenjian15@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 032/413] ice: Fix couple of issues in ice_vsi_release
-Date:   Wed, 24 Jul 2019 21:15:23 +0200
-Message-Id: <20190724191737.862012030@linuxfoundation.org>
+Subject: [PATCH 5.2 034/413] net: hns3: initialize CPU reverse mapping
+Date:   Wed, 24 Jul 2019 21:15:25 +0200
+Message-Id: <20190724191738.039776401@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -46,98 +45,173 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit aa6ccf3f2d7042f94c4e91538956ce7051e7856e ]
+[ Upstream commit ffab9691bcb2fe2594f4c38bfceb4d9685b93b87 ]
 
-Currently the driver is calling ice_napi_del() and then
-unregister_netdev(). The call to unregister_netdev() will result in a
-call to ice_stop() and then ice_vsi_close(). This is where we call
-napi_disable() for all the MSI-X vectors. This flow is reversed so make
-the changes to ensure napi_disable() happens prior to napi_del().
+Allocate CPU rmap and add entry for each irq. CPU rmap is
+used in aRFS to get the queue number of the rx completion
+interrupts.
 
-Before calling napi_del() and free_netdev() make sure
-unregister_netdev() was called. This is done by making sure the
-__ICE_DOWN bit is set in the vsi->state for the interested VSI.
+In additional, remove the calling of
+irq_set_affinity_notifier() in hns3_nic_init_irq(), because
+we have registered notifier in irq_cpu_rmap_add() for each
+vector, otherwise it may cause use-after-free issue.
 
-Signed-off-by: Brett Creeley <brett.creeley@intel.com>
-Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Jian Shen <shenjian15@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ice/ice.h      |  1 -
- drivers/net/ethernet/intel/ice/ice_lib.c  | 24 ++++++++++++-----------
- drivers/net/ethernet/intel/ice/ice_main.c |  2 +-
- 3 files changed, 14 insertions(+), 13 deletions(-)
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 77 ++++++++++++-------
+ 1 file changed, 48 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice.h b/drivers/net/ethernet/intel/ice/ice.h
-index 792e6e42030e..754c7080c3fc 100644
---- a/drivers/net/ethernet/intel/ice/ice.h
-+++ b/drivers/net/ethernet/intel/ice/ice.h
-@@ -451,7 +451,6 @@ int ice_set_rss(struct ice_vsi *vsi, u8 *seed, u8 *lut, u16 lut_size);
- int ice_get_rss(struct ice_vsi *vsi, u8 *seed, u8 *lut, u16 lut_size);
- void ice_fill_rss_lut(u8 *lut, u16 rss_table_size, u16 rss_size);
- void ice_print_link_msg(struct ice_vsi *vsi, bool isup);
--void ice_napi_del(struct ice_vsi *vsi);
- #ifdef CONFIG_DCB
- int ice_pf_ena_all_vsi(struct ice_pf *pf, bool locked);
- void ice_pf_dis_all_vsi(struct ice_pf *pf, bool locked);
-diff --git a/drivers/net/ethernet/intel/ice/ice_lib.c b/drivers/net/ethernet/intel/ice/ice_lib.c
-index fbf1eba0cc2a..f14fa51cc704 100644
---- a/drivers/net/ethernet/intel/ice/ice_lib.c
-+++ b/drivers/net/ethernet/intel/ice/ice_lib.c
-@@ -2754,19 +2754,14 @@ int ice_vsi_release(struct ice_vsi *vsi)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index f326805543a4..cd59c0cc636a 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -4,6 +4,9 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/etherdevice.h>
+ #include <linux/interrupt.h>
++#ifdef CONFIG_RFS_ACCEL
++#include <linux/cpu_rmap.h>
++#endif
+ #include <linux/if_vlan.h>
+ #include <linux/ip.h>
+ #include <linux/ipv6.h>
+@@ -79,23 +82,6 @@ static irqreturn_t hns3_irq_handle(int irq, void *vector)
+ 	return IRQ_HANDLED;
+ }
  
- 	if (vsi->type == ICE_VSI_VF)
- 		vf = &pf->vf[vsi->vf_id];
--	/* do not unregister and free netdevs while driver is in the reset
--	 * recovery pending state. Since reset/rebuild happens through PF
--	 * service task workqueue, its not a good idea to unregister netdev
--	 * that is associated to the PF that is running the work queue items
--	 * currently. This is done to avoid check_flush_dependency() warning
--	 * on this wq
-+	/* do not unregister while driver is in the reset recovery pending
-+	 * state. Since reset/rebuild happens through PF service task workqueue,
-+	 * it's not a good idea to unregister netdev that is associated to the
-+	 * PF that is running the work queue items currently. This is done to
-+	 * avoid check_flush_dependency() warning on this wq
- 	 */
--	if (vsi->netdev && !ice_is_reset_in_progress(pf->state)) {
--		ice_napi_del(vsi);
-+	if (vsi->netdev && !ice_is_reset_in_progress(pf->state))
- 		unregister_netdev(vsi->netdev);
--		free_netdev(vsi->netdev);
--		vsi->netdev = NULL;
--	}
+-/* This callback function is used to set affinity changes to the irq affinity
+- * masks when the irq_set_affinity_notifier function is used.
+- */
+-static void hns3_nic_irq_affinity_notify(struct irq_affinity_notify *notify,
+-					 const cpumask_t *mask)
+-{
+-	struct hns3_enet_tqp_vector *tqp_vectors =
+-		container_of(notify, struct hns3_enet_tqp_vector,
+-			     affinity_notify);
+-
+-	tqp_vectors->affinity_mask = *mask;
+-}
+-
+-static void hns3_nic_irq_affinity_release(struct kref *ref)
+-{
+-}
+-
+ static void hns3_nic_uninit_irq(struct hns3_nic_priv *priv)
+ {
+ 	struct hns3_enet_tqp_vector *tqp_vectors;
+@@ -107,8 +93,7 @@ static void hns3_nic_uninit_irq(struct hns3_nic_priv *priv)
+ 		if (tqp_vectors->irq_init_flag != HNS3_VECTOR_INITED)
+ 			continue;
  
- 	if (test_bit(ICE_FLAG_RSS_ENA, pf->flags))
- 		ice_rss_clean(vsi);
-@@ -2799,6 +2794,13 @@ int ice_vsi_release(struct ice_vsi *vsi)
- 	ice_rm_vsi_lan_cfg(vsi->port_info, vsi->idx);
- 	ice_vsi_delete(vsi);
- 	ice_vsi_free_q_vectors(vsi);
+-		/* clear the affinity notifier and affinity mask */
+-		irq_set_affinity_notifier(tqp_vectors->vector_irq, NULL);
++		/* clear the affinity mask */
+ 		irq_set_affinity_hint(tqp_vectors->vector_irq, NULL);
+ 
+ 		/* release the irq resource */
+@@ -161,12 +146,6 @@ static int hns3_nic_init_irq(struct hns3_nic_priv *priv)
+ 			return ret;
+ 		}
+ 
+-		tqp_vectors->affinity_notify.notify =
+-					hns3_nic_irq_affinity_notify;
+-		tqp_vectors->affinity_notify.release =
+-					hns3_nic_irq_affinity_release;
+-		irq_set_affinity_notifier(tqp_vectors->vector_irq,
+-					  &tqp_vectors->affinity_notify);
+ 		irq_set_affinity_hint(tqp_vectors->vector_irq,
+ 				      &tqp_vectors->affinity_mask);
+ 
+@@ -340,6 +319,40 @@ static void hns3_tqp_disable(struct hnae3_queue *tqp)
+ 	hns3_write_dev(tqp, HNS3_RING_EN_REG, rcb_reg);
+ }
+ 
++static void hns3_free_rx_cpu_rmap(struct net_device *netdev)
++{
++#ifdef CONFIG_RFS_ACCEL
++	free_irq_cpu_rmap(netdev->rx_cpu_rmap);
++	netdev->rx_cpu_rmap = NULL;
++#endif
++}
 +
-+	/* make sure unregister_netdev() was called by checking __ICE_DOWN */
-+	if (vsi->netdev && test_bit(__ICE_DOWN, vsi->state)) {
-+		free_netdev(vsi->netdev);
-+		vsi->netdev = NULL;
++static int hns3_set_rx_cpu_rmap(struct net_device *netdev)
++{
++#ifdef CONFIG_RFS_ACCEL
++	struct hns3_nic_priv *priv = netdev_priv(netdev);
++	struct hns3_enet_tqp_vector *tqp_vector;
++	int i, ret;
++
++	if (!netdev->rx_cpu_rmap) {
++		netdev->rx_cpu_rmap = alloc_irq_cpu_rmap(priv->vector_num);
++		if (!netdev->rx_cpu_rmap)
++			return -ENOMEM;
 +	}
 +
- 	ice_vsi_clear_rings(vsi);
- 
- 	ice_vsi_put_qs(vsi);
-diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
-index 7843abf4d44d..dbf3d39ad8b1 100644
---- a/drivers/net/ethernet/intel/ice/ice_main.c
-+++ b/drivers/net/ethernet/intel/ice/ice_main.c
-@@ -1667,7 +1667,7 @@ static int ice_req_irq_msix_misc(struct ice_pf *pf)
-  * ice_napi_del - Remove NAPI handler for the VSI
-  * @vsi: VSI for which NAPI handler is to be removed
-  */
--void ice_napi_del(struct ice_vsi *vsi)
-+static void ice_napi_del(struct ice_vsi *vsi)
++	for (i = 0; i < priv->vector_num; i++) {
++		tqp_vector = &priv->tqp_vector[i];
++		ret = irq_cpu_rmap_add(netdev->rx_cpu_rmap,
++				       tqp_vector->vector_irq);
++		if (ret) {
++			hns3_free_rx_cpu_rmap(netdev);
++			return ret;
++		}
++	}
++#endif
++	return 0;
++}
++
+ static int hns3_nic_net_up(struct net_device *netdev)
  {
- 	int v_idx;
+ 	struct hns3_nic_priv *priv = netdev_priv(netdev);
+@@ -351,11 +364,16 @@ static int hns3_nic_net_up(struct net_device *netdev)
+ 	if (ret)
+ 		return ret;
  
++	/* the device can work without cpu rmap, only aRFS needs it */
++	ret = hns3_set_rx_cpu_rmap(netdev);
++	if (ret)
++		netdev_warn(netdev, "set rx cpu rmap fail, ret=%d!\n", ret);
++
+ 	/* get irq resource for all vectors */
+ 	ret = hns3_nic_init_irq(priv);
+ 	if (ret) {
+ 		netdev_err(netdev, "hns init irq failed! ret=%d\n", ret);
+-		return ret;
++		goto free_rmap;
+ 	}
+ 
+ 	clear_bit(HNS3_NIC_STATE_DOWN, &priv->state);
+@@ -384,7 +402,8 @@ static int hns3_nic_net_up(struct net_device *netdev)
+ 		hns3_vector_disable(&priv->tqp_vector[j]);
+ 
+ 	hns3_nic_uninit_irq(priv);
+-
++free_rmap:
++	hns3_free_rx_cpu_rmap(netdev);
+ 	return ret;
+ }
+ 
+@@ -467,6 +486,8 @@ static void hns3_nic_net_down(struct net_device *netdev)
+ 	if (ops->stop)
+ 		ops->stop(priv->ae_handle);
+ 
++	hns3_free_rx_cpu_rmap(netdev);
++
+ 	/* free irq resources */
+ 	hns3_nic_uninit_irq(priv);
+ 
+@@ -3331,8 +3352,6 @@ static void hns3_nic_uninit_vector_data(struct hns3_nic_priv *priv)
+ 		hns3_free_vector_ring_chain(tqp_vector, &vector_ring_chain);
+ 
+ 		if (tqp_vector->irq_init_flag == HNS3_VECTOR_INITED) {
+-			irq_set_affinity_notifier(tqp_vector->vector_irq,
+-						  NULL);
+ 			irq_set_affinity_hint(tqp_vector->vector_irq, NULL);
+ 			free_irq(tqp_vector->vector_irq, tqp_vector);
+ 			tqp_vector->irq_init_flag = HNS3_VECTOR_NOT_INITED;
 -- 
 2.20.1
 
