@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37B1673ED6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:27:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7569073ED2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:27:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389938AbfGXU1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:27:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60262 "EHLO mail.kernel.org"
+        id S2389822AbfGXU1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:27:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389201AbfGXTf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:35:26 -0400
+        id S2388732AbfGXTff (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:35:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C47B421951;
-        Wed, 24 Jul 2019 19:35:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41B6920659;
+        Wed, 24 Jul 2019 19:35:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996925;
-        bh=4g3R6gamTRzQOqVc+zMXK0Qvwcpv4izx9jeryaWRd/k=;
+        s=default; t=1563996934;
+        bh=fscD1M0kGe5cJAtTte+v+8R2IabriR1KWAiG6awfUMI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BtfoiRHJnAizXLZuButMETl0kn7uqbo9V+E4sI2z7iT7Shh815LUz9gSgKhq1WAFp
-         E+GAB8tF4Sl/XHwKwqMEsY9Gc8tZrSd66QOhW5Jjpb+B60z/6K6thYJY2Efovlt+Ne
-         aORVxJVx0VhKhzcQIqGpMKJtmL/TLA5G91zshUhw=
+        b=fhdl4ZDgZpApnIJm5iThf3DcUpJvmdyJoMLszABo+6I8tj3z/vZD2SyO/Ug4lz7nx
+         7yqf73BNTqHmRC4VY1IshEp/QeCqCJhVMF/GUbz+pXOWtETPbIs8nspDZ3zJsicl2n
+         bBRxsL78X6qzXMI5lSzDvSrSENLPq7qW67mKctl8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Horia Geanta <horia.geanta@nxp.com>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
+        stable@vger.kernel.org, Elena Petrova <lenaptr@google.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.2 264/413] crypto: caam - limit output IV to CBC to work around CTR mode DMA issue
-Date:   Wed, 24 Jul 2019 21:19:15 +0200
-Message-Id: <20190724191755.063425339@linuxfoundation.org>
+Subject: [PATCH 5.2 267/413] crypto: arm64/sha2-ce - correct digest for empty data in finup
+Date:   Wed, 24 Jul 2019 21:19:18 +0200
+Message-Id: <20190724191755.303808871@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -46,78 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Elena Petrova <lenaptr@google.com>
 
-commit ed527b13d800dd515a9e6c582f0a73eca65b2e1b upstream.
+commit 6bd934de1e393466b319d29c4427598fda096c57 upstream.
 
-The CAAM driver currently violates an undocumented and slightly
-controversial requirement imposed by the crypto stack that a buffer
-referred to by the request structure via its virtual address may not
-be modified while any scatterlists passed via the same request
-structure are mapped for inbound DMA.
+The sha256-ce finup implementation for ARM64 produces wrong digest
+for empty input (len=0). Expected: the actual digest, result: initial
+value of SHA internal state. The error is in sha256_ce_finup:
+for empty data `finalize` will be 1, so the code is relying on
+sha2_ce_transform to make the final round. However, in
+sha256_base_do_update, the block function will not be called when
+len == 0.
 
-This may result in errors like
+Fix it by setting finalize to 0 if data is empty.
 
-  alg: aead: decryption failed on test 1 for gcm_base(ctr-aes-caam,ghash-generic): ret=74
-  alg: aead: Failed to load transform for gcm(aes): -2
-
-on non-cache coherent systems, due to the fact that the GCM driver
-passes an IV buffer by virtual address which shares a cacheline with
-the auth_tag buffer passed via a scatterlist, resulting in corruption
-of the auth_tag when the IV is updated while the DMA mapping is live.
-
-Since the IV that is returned to the caller is only valid for CBC mode,
-and given that the in-kernel users of CBC (such as CTS) don't trigger the
-same issue as the GCM driver, let's just disable the output IV generation
-for all modes except CBC for the time being.
-
-Fixes: 854b06f76879 ("crypto: caam - properly set IV after {en,de}crypt")
-Cc: Horia Geanta <horia.geanta@nxp.com>
-Cc: Iuliana Prodan <iuliana.prodan@nxp.com>
-Reported-by: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Horia Geanta <horia.geanta@nxp.com>
+Fixes: 03802f6a80b3a ("crypto: arm64/sha2-ce - move SHA-224/256 ARMv8 implementation to base layer")
+Cc: stable@vger.kernel.org
+Signed-off-by: Elena Petrova <lenaptr@google.com>
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/caam/caamalg.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ arch/arm64/crypto/sha2-ce-glue.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/crypto/caam/caamalg.c
-+++ b/drivers/crypto/caam/caamalg.c
-@@ -999,6 +999,7 @@ static void skcipher_encrypt_done(struct
- 	struct skcipher_request *req = context;
- 	struct skcipher_edesc *edesc;
- 	struct crypto_skcipher *skcipher = crypto_skcipher_reqtfm(req);
-+	struct caam_ctx *ctx = crypto_skcipher_ctx(skcipher);
- 	int ivsize = crypto_skcipher_ivsize(skcipher);
+--- a/arch/arm64/crypto/sha2-ce-glue.c
++++ b/arch/arm64/crypto/sha2-ce-glue.c
+@@ -57,7 +57,7 @@ static int sha256_ce_finup(struct shash_
+ 			   unsigned int len, u8 *out)
+ {
+ 	struct sha256_ce_state *sctx = shash_desc_ctx(desc);
+-	bool finalize = !sctx->sst.count && !(len % SHA256_BLOCK_SIZE);
++	bool finalize = !sctx->sst.count && !(len % SHA256_BLOCK_SIZE) && len;
  
- #ifdef DEBUG
-@@ -1023,9 +1024,9 @@ static void skcipher_encrypt_done(struct
- 
- 	/*
- 	 * The crypto API expects us to set the IV (req->iv) to the last
--	 * ciphertext block. This is used e.g. by the CTS mode.
-+	 * ciphertext block when running in CBC mode.
- 	 */
--	if (ivsize)
-+	if ((ctx->cdata.algtype & OP_ALG_AAI_MASK) == OP_ALG_AAI_CBC)
- 		scatterwalk_map_and_copy(req->iv, req->dst, req->cryptlen -
- 					 ivsize, ivsize, 0);
- 
-@@ -1843,9 +1844,9 @@ static int skcipher_decrypt(struct skcip
- 
- 	/*
- 	 * The crypto API expects us to set the IV (req->iv) to the last
--	 * ciphertext block.
-+	 * ciphertext block when running in CBC mode.
- 	 */
--	if (ivsize)
-+	if ((ctx->cdata.algtype & OP_ALG_AAI_MASK) == OP_ALG_AAI_CBC)
- 		scatterwalk_map_and_copy(req->iv, req->src, req->cryptlen -
- 					 ivsize, ivsize, 0);
- 
+ 	if (!crypto_simd_usable()) {
+ 		if (len)
 
 
