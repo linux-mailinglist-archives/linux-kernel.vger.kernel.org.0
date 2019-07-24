@@ -2,94 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDDBD73033
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 15:49:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F2E97304D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 15:54:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbfGXNtp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 09:49:45 -0400
-Received: from foss.arm.com ([217.140.110.172]:41172 "EHLO foss.arm.com"
+        id S1728136AbfGXNyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 09:54:15 -0400
+Received: from mga11.intel.com ([192.55.52.93]:38562 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726422AbfGXNto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 09:49:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE10E28;
-        Wed, 24 Jul 2019 06:49:43 -0700 (PDT)
-Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 88C793F71A;
-        Wed, 24 Jul 2019 06:49:42 -0700 (PDT)
-Subject: Re: [PATCH] media: staging: ipu3: Enable IOVA API only when IOMMU
- support is enabled
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        YueHaibing <yuehaibing@huawei.com>
-Cc:     devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, hverkuil-cisco@xs4all.nl,
-        digetx@gmail.com, mchehab@kernel.org, yong.zhi@intel.com
-References: <20190722134749.21580-1-yuehaibing@huawei.com>
- <20190724103027.GD21370@paasikivi.fi.intel.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <e48fc180-06cc-eac7-d8ca-9be1699c8677@arm.com>
-Date:   Wed, 24 Jul 2019 14:49:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726422AbfGXNyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 09:54:15 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 06:54:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
+   d="scan'208";a="321347618"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by orsmga004.jf.intel.com with ESMTP; 24 Jul 2019 06:54:11 -0700
+Date:   Wed, 24 Jul 2019 21:37:14 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, atull@kernel.org,
+        Zhang Yi Z <yi.z.zhang@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>
+Subject: Re: [PATCH v3 03/12] fpga: dfl: pci: enable SRIOV support.
+Message-ID: <20190724133714.GC8463@hao-dev>
+References: <1563857495-26692-1-git-send-email-hao.wu@intel.com>
+ <1563857495-26692-4-git-send-email-hao.wu@intel.com>
+ <20190724093744.GC29532@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20190724103027.GD21370@paasikivi.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190724093744.GC29532@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/07/2019 11:30, Sakari Ailus wrote:
-> Hi Yue,
+On Wed, Jul 24, 2019 at 11:37:44AM +0200, Greg KH wrote:
+> On Tue, Jul 23, 2019 at 12:51:26PM +0800, Wu Hao wrote:
+> > This patch enables the standard sriov support. It allows user to
+> > enable SRIOV (and VFs), then user could pass through accelerators
+> > (VFs) into virtual machine or use VFs directly in host.
+> > 
+> > Signed-off-by: Zhang Yi Z <yi.z.zhang@intel.com>
+> > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+> > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> > Acked-by: Alan Tull <atull@kernel.org>
+> > Acked-by: Moritz Fischer <mdf@kernel.org>
+> > Signed-off-by: Moritz Fischer <mdf@kernel.org>
+> > ---
+> > v2: remove DRV/MODULE_VERSION modifications.
+> > ---
+> >  drivers/fpga/dfl-pci.c | 39 +++++++++++++++++++++++++++++++++++++++
+> >  drivers/fpga/dfl.c     | 41 +++++++++++++++++++++++++++++++++++++++++
+> >  drivers/fpga/dfl.h     |  1 +
+> >  3 files changed, 81 insertions(+)
+> > 
+> > diff --git a/drivers/fpga/dfl-pci.c b/drivers/fpga/dfl-pci.c
+> > index 66b5720..0e65d81 100644
+> > --- a/drivers/fpga/dfl-pci.c
+> > +++ b/drivers/fpga/dfl-pci.c
+> > @@ -223,8 +223,46 @@ int cci_pci_probe(struct pci_dev *pcidev, const struct pci_device_id *pcidevid)
+> >  	return ret;
+> >  }
+> >  
+> > +static int cci_pci_sriov_configure(struct pci_dev *pcidev, int num_vfs)
+> > +{
+> > +	struct cci_drvdata *drvdata = pci_get_drvdata(pcidev);
+> > +	struct dfl_fpga_cdev *cdev = drvdata->cdev;
+> > +	int ret = 0;
+> > +
+> > +	mutex_lock(&cdev->lock);
+> > +
+> > +	if (!num_vfs) {
+> > +		/*
+> > +		 * disable SRIOV and then put released ports back to default
+> > +		 * PF access mode.
+> > +		 */
+> > +		pci_disable_sriov(pcidev);
+> > +
+> > +		__dfl_fpga_cdev_config_port_vf(cdev, false);
+> > +
+> > +	} else if (cdev->released_port_num == num_vfs) {
+> > +		/*
+> > +		 * only enable SRIOV if cdev has matched released ports, put
+> > +		 * released ports into VF access mode firstly.
+> > +		 */
+> > +		__dfl_fpga_cdev_config_port_vf(cdev, true);
+> > +
+> > +		ret = pci_enable_sriov(pcidev, num_vfs);
+> > +		if (ret)
+> > +			__dfl_fpga_cdev_config_port_vf(cdev, false);
+> > +	} else {
+> > +		ret = -EINVAL;
+> > +	}
+> > +
+> > +	mutex_unlock(&cdev->lock);
+> > +	return ret;
+> > +}
+> > +
+> >  static void cci_pci_remove(struct pci_dev *pcidev)
+> >  {
+> > +	if (dev_is_pf(&pcidev->dev))
+> > +		cci_pci_sriov_configure(pcidev, 0);
+> > +
+> >  	cci_remove_feature_devs(pcidev);
+> >  	pci_disable_pcie_error_reporting(pcidev);
+> >  }
+> > @@ -234,6 +272,7 @@ static void cci_pci_remove(struct pci_dev *pcidev)
+> >  	.id_table = cci_pcie_id_tbl,
+> >  	.probe = cci_pci_probe,
+> >  	.remove = cci_pci_remove,
+> > +	.sriov_configure = cci_pci_sriov_configure,
+> >  };
+> >  
+> >  module_pci_driver(cci_pci_driver);
+> > diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
+> > index e04ed45..c3a8e1d 100644
+> > --- a/drivers/fpga/dfl.c
+> > +++ b/drivers/fpga/dfl.c
+> > @@ -1112,6 +1112,47 @@ int dfl_fpga_cdev_config_port(struct dfl_fpga_cdev *cdev, int port_id,
+> >  }
+> >  EXPORT_SYMBOL_GPL(dfl_fpga_cdev_config_port);
+> >  
+> > +static void config_port_vf(struct device *fme_dev, int port_id, bool is_vf)
+> > +{
+> > +	void __iomem *base;
+> > +	u64 v;
+> > +
+> > +	base = dfl_get_feature_ioaddr_by_id(fme_dev, FME_FEATURE_ID_HEADER);
+> > +
+> > +	v = readq(base + FME_HDR_PORT_OFST(port_id));
+> > +
+> > +	v &= ~FME_PORT_OFST_ACC_CTRL;
+> > +	v |= FIELD_PREP(FME_PORT_OFST_ACC_CTRL,
+> > +			is_vf ? FME_PORT_OFST_ACC_VF : FME_PORT_OFST_ACC_PF);
+> > +
+> > +	writeq(v, base + FME_HDR_PORT_OFST(port_id));
+> > +}
+> > +
+> > +/**
+> > + * __dfl_fpga_cdev_config_port_vf - configure port to VF access mode
+> > + *
+> > + * @cdev: parent container device.
+> > + * @if_vf: true for VF access mode, and false for PF access mode
+> > + *
+> > + * Return: 0 on success, negative error code otherwise.
+> > + *
+> > + * This function is needed in sriov configuration routine. It could be used to
+> > + * configures the released ports access mode to VF or PF.
+> > + * The caller needs to hold lock for protection.
+> > + */
+> > +void __dfl_fpga_cdev_config_port_vf(struct dfl_fpga_cdev *cdev, bool is_vf)
+> > +{
+> > +	struct dfl_feature_platform_data *pdata;
+> > +
+> > +	list_for_each_entry(pdata, &cdev->port_dev_list, node) {
+> > +		if (device_is_registered(&pdata->dev->dev))
+> > +			continue;
+> > +
+> > +		config_port_vf(cdev->fme_dev, pdata->id, is_vf);
+> > +	}
+> > +}
+> > +EXPORT_SYMBOL_GPL(__dfl_fpga_cdev_config_port_vf);
 > 
-> On Mon, Jul 22, 2019 at 09:47:49PM +0800, YueHaibing wrote:
->> If IOMMU_SUPPORT is not set, ipu3 driver may select IOMMU_IOVA to m.
->> But for many drivers, they use "select IOMMU_IOVA if IOMMU_SUPPORT"
->> in the Kconfig, for example, CONFIG_TEGRA_VDE is set to y but IOMMU_IOVA
->> is m, then the building fails like this:
->>
->> drivers/staging/media/tegra-vde/iommu.o: In function `tegra_vde_iommu_map':
->> iommu.c:(.text+0x41): undefined reference to `alloc_iova'
->> iommu.c:(.text+0x56): undefined reference to `__free_iova'
->>
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Fixes: 7fc7af649ca7 ("media: staging/intel-ipu3: Add imgu top level pci device driver")
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>   drivers/staging/media/ipu3/Kconfig | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/staging/media/ipu3/Kconfig b/drivers/staging/media/ipu3/Kconfig
->> index 4b51c67..b7df18f 100644
->> --- a/drivers/staging/media/ipu3/Kconfig
->> +++ b/drivers/staging/media/ipu3/Kconfig
->> @@ -4,7 +4,7 @@ config VIDEO_IPU3_IMGU
->>   	depends on PCI && VIDEO_V4L2
->>   	depends on MEDIA_CONTROLLER && VIDEO_V4L2_SUBDEV_API
->>   	depends on X86
->> -	select IOMMU_IOVA
->> +	select IOMMU_IOVA if IOMMU_SUPPORT
+> Why are you exporting a function with a leading __?
 > 
-> This doesn't seem right: the ipu3-cio2 driver needs IOMMU_IOVA
-> independently of IOMMU_SUPPORT.
-> 
-> Looking at tegra-vde, it seems to depend on IOMMU_SUPPORT but that's not
-> declared in its Kconfig entry. I wonder if adding that would be the right
-> way to fix this.
-> 
-> Cc'ing the IOMMU list.
+> You are expecting someone else, in who knows what code, to do locking
+> correctly?  If so, and the caller always has to have a local lock, then
+> it's not a big deal, just drop the '__', otherwise if you have to have a
+> specific lock for a specific device, then you have a really complex and
+> probably broken api here :(
 
-Right, I also had the impression that we'd made the IOVA library 
-completely standalone. And what does the IPU3 driver's Kconfig have to 
-do with some *other* driver failing to link anyway?
+Yes, I just want to remind the user of this API, caller needs to hold the
+lock to protect the list. I fully agree, it does make sense to make the
+APIs easy to use. I will try to improve this, maybe move the lock inside
+this function, then API user doesn't need to know the details of locking.
 
-Robin.
+Thanks a lot for the comments, it really helps.
+
+Hao
 
 > 
->>   	select VIDEOBUF2_DMA_SG
->>   	help
->>   	  This is the Video4Linux2 driver for Intel IPU3 image processing unit,
+> thanks,
 > 
+> greg k-h
