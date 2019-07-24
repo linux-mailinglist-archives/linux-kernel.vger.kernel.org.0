@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7649273E31
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:23:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 407AE73E4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:24:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390490AbfGXTnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:43:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45104 "EHLO mail.kernel.org"
+        id S2390293AbfGXTl7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:41:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390462AbfGXTnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:43:07 -0400
+        id S2390275AbfGXTly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:41:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E11A229F4;
-        Wed, 24 Jul 2019 19:43:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E86422ADF;
+        Wed, 24 Jul 2019 19:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997386;
-        bh=IzjadQGVOj+uXoZGqo4UPhonMgPcLs056rrdRIz1HRI=;
+        s=default; t=1563997313;
+        bh=PNUA8Ka9IUNfHS8qrDuTKuvL0ktXVNN/bP8sKm1opR4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DbcsDlF82X71CWOnH686LbT5SaJbSQSdjyWNKiq8bUvPW1GvSklqiejtswtvPvjx0
-         +iz3AdS13dSx0/cV1Z3rIxuj/mia7xKYRPLQ3Y6jb/lRgY8zC/hpIeqVqxuHZcT2e+
-         ersnMy4VP9L5nSi7V0sanSSNupkI3MvABYQpg9xc=
+        b=dn8ouz5tWsotXikrbGiIVGx8Oc2lxNw2J1n0kJHgYXQvmjyYJUAT+rr3368fQ14rq
+         Rsuolym0aj96HaaAtGqmiz67SdZAfjtHT47w0z2mpPpQaXWIkn0YC/n4fhUVUHuBwe
+         OKs7V21g//IntV8rdGzRUKkamIJZHZudE3xwMXrE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
+        stable@vger.kernel.org, Nathan Lynch <nathanl@linux.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.2 392/413] powerpc/powernv: Fix stale iommu table base after VFIO
-Date:   Wed, 24 Jul 2019 21:21:23 +0200
-Message-Id: <20190724191802.899562363@linuxfoundation.org>
+Subject: [PATCH 5.2 394/413] powerpc/pseries: Fix oops in hotplug memory notifier
+Date:   Wed, 24 Jul 2019 21:21:25 +0200
+Message-Id: <20190724191803.205970705@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -43,63 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Kardashevskiy <aik@ozlabs.ru>
+From: Nathan Lynch <nathanl@linux.ibm.com>
 
-commit 5636427d087a55842c1a199dfb839e6545d30e5d upstream.
+commit 0aa82c482ab2ece530a6f44897b63b274bb43c8e upstream.
 
-The powernv platform uses @dma_iommu_ops for non-bypass DMA. These ops
-need an iommu_table pointer which is stored in
-dev->archdata.iommu_table_base. It is initialized during
-pcibios_setup_device() which handles boot time devices. However when a
-device is taken from the system in order to pass it through, the
-default IOMMU table is destroyed but the pointer in a device is not
-updated; also when a device is returned back to the system, a new
-table pointer is not stored in dev->archdata.iommu_table_base either.
-So when a just returned device tries using IOMMU, it crashes on
-accessing stale iommu_table or its members.
+During post-migration device tree updates, we can oops in
+pseries_update_drconf_memory() if the source device tree has an
+ibm,dynamic-memory-v2 property and the destination has a
+ibm,dynamic_memory (v1) property. The notifier processes an "update"
+for the ibm,dynamic-memory property but it's really an add in this
+scenario. So make sure the old property object is there before
+dereferencing it.
 
-This calls set_iommu_table_base() when the default window is created.
-Note it used to be there before but was wrongly removed (see "fixes").
-It did not appear before as these days most devices simply use bypass.
-
-This adds set_iommu_table_base(NULL) when a device is taken from the
-system to make it clear that IOMMU DMA cannot be used past that point.
-
-Fixes: c4e9d3c1e65a ("powerpc/powernv/pseries: Rework device adding to IOMMU groups")
-Cc: stable@vger.kernel.org # v5.0+
-Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Fixes: 2b31e3aec1db ("powerpc/drmem: Add support for ibm, dynamic-memory-v2 property")
+Cc: stable@vger.kernel.org # v4.16+
+Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/pci-ioda.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/powerpc/platforms/pseries/hotplug-memory.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/powerpc/platforms/powernv/pci-ioda.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-@@ -2456,6 +2456,14 @@ static long pnv_pci_ioda2_setup_default_
- 	if (!pnv_iommu_bypass_disabled)
- 		pnv_pci_ioda2_set_bypass(pe, true);
+--- a/arch/powerpc/platforms/pseries/hotplug-memory.c
++++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+@@ -976,6 +976,9 @@ static int pseries_update_drconf_memory(
+ 	if (!memblock_size)
+ 		return -EINVAL;
  
-+	/*
-+	 * Set table base for the case of IOMMU DMA use. Usually this is done
-+	 * from dma_dev_setup() which is not called when a device is returned
-+	 * from VFIO so do it here.
-+	 */
-+	if (pe->pdev)
-+		set_iommu_table_base(&pe->pdev->dev, tbl);
++	if (!pr->old_prop)
++		return 0;
 +
- 	return 0;
- }
- 
-@@ -2543,6 +2551,8 @@ static void pnv_ioda2_take_ownership(str
- 	pnv_pci_ioda2_unset_window(&pe->table_group, 0);
- 	if (pe->pbus)
- 		pnv_ioda_setup_bus_dma(pe, pe->pbus);
-+	else if (pe->pdev)
-+		set_iommu_table_base(&pe->pdev->dev, NULL);
- 	iommu_tce_table_put(tbl);
- }
- 
+ 	p = (__be32 *) pr->old_prop->value;
+ 	if (!p)
+ 		return -EINVAL;
 
 
