@@ -2,105 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B84C748EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 10:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7968F74906
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 10:24:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389395AbfGYIQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 04:16:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59888 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389233AbfGYIQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 04:16:31 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F351820657;
-        Thu, 25 Jul 2019 08:16:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564042590;
-        bh=U5JsQy9M6SP8lvveNoBirJFjzlJL4CpLUxow+e3YRvo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bXA7Rl4m1FdAnDljrSpbxyNrTH2z8iih7Q6dNDIACq/JZ2YEq6oyUBvUr6O4tztZK
-         0C++xAFHag/f4QcJPiuQfC4xCDiH0v4SAqAfBopH46lPyCOKPKYs/Q4YwUtX8nD+SE
-         p5/l8oVtssyFD3TRWXmyN0IPESb1pyg1C8xqZyeE=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     mhiramat@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Dan Rue <dan.rue@linaro.org>,
-        Matt Hart <matthew.hart@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Daniel Diaz <daniel.diaz@linaro.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH v3 4/4] arm64: Remove unneeded rcu_read_lock from debug handlers
-Date:   Thu, 25 Jul 2019 17:16:25 +0900
-Message-Id: <156404258547.2020.3652813018925680357.stgit@devnote2>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <156404254387.2020.886452004489353899.stgit@devnote2>
-References: <156404254387.2020.886452004489353899.stgit@devnote2>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        id S2389493AbfGYIYN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 04:24:13 -0400
+Received: from 45.234.95.151.static.br-cge01.hostzn.com ([45.234.95.151]:56378
+        "EHLO localhost.localdomain" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389405AbfGYIYN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 04:24:13 -0400
+X-Greylist: delayed 35155 seconds by postgrey-1.27 at vger.kernel.org; Thu, 25 Jul 2019 04:24:12 EDT
+Received: from 45.234.95.151.static.br-cge01.hostzn.com (localhost [IPv6:::1])
+        by localhost.localdomain (Postfix) with SMTP id D5F9146E19D
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 18:21:09 -0400 (EDT)
+From:   linux-kernel@vger.kernel.org
+Reply-To: prodawez@armyspy.com
+To:     ec511lrAQlinux-kernel@vger.kernel.org
+Subject: Zdravstvujte! Vas interesuyut klientskie bazy dannyh?
+Message-Id: <20190724222109.D5F9146E19D@localhost.localdomain>
+Date:   Wed, 24 Jul 2019 18:21:09 -0400 (EDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove rcu_read_lock()/rcu_read_unlock() from debug exception
-handlers since we are sure those are not preemptible and
-interrupts are off.
-
-Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- arch/arm64/kernel/debug-monitors.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm64/kernel/debug-monitors.c b/arch/arm64/kernel/debug-monitors.c
-index f8719bd30850..48222a4760c2 100644
---- a/arch/arm64/kernel/debug-monitors.c
-+++ b/arch/arm64/kernel/debug-monitors.c
-@@ -207,16 +207,16 @@ static int call_step_hook(struct pt_regs *regs, unsigned int esr)
- 
- 	list = user_mode(regs) ? &user_step_hook : &kernel_step_hook;
- 
--	rcu_read_lock();
--
-+	/*
-+	 * Since single-step exception disables interrupt, this function is
-+	 * entirely not preemptible, and we can use rcu list safely here.
-+	 */
- 	list_for_each_entry_rcu(hook, list, node)	{
- 		retval = hook->fn(regs, esr);
- 		if (retval == DBG_HOOK_HANDLED)
- 			break;
- 	}
- 
--	rcu_read_unlock();
--
- 	return retval;
- }
- NOKPROBE_SYMBOL(call_step_hook);
-@@ -305,14 +305,16 @@ static int call_break_hook(struct pt_regs *regs, unsigned int esr)
- 
- 	list = user_mode(regs) ? &user_break_hook : &kernel_break_hook;
- 
--	rcu_read_lock();
-+	/*
-+	 * Since brk exception disables interrupt, this function is
-+	 * entirely not preemptible, and we can use rcu list safely here.
-+	 */
- 	list_for_each_entry_rcu(hook, list, node) {
- 		unsigned int comment = esr & ESR_ELx_BRK64_ISS_COMMENT_MASK;
- 
- 		if ((comment & ~hook->mask) == hook->imm)
- 			fn = hook->fn;
- 	}
--	rcu_read_unlock();
- 
- 	return fn ? fn(regs, esr) : DBG_HOOK_ERROR;
- }
-
+Zdravstvujte! Vas interesuyut klientskie bazy dannyh?
