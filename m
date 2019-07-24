@@ -2,102 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E16373615
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:51:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7B3F7361D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:52:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728010AbfGXRvA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 13:51:00 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45582 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfGXRu7 (ORCPT
+        id S1727611AbfGXRwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 13:52:08 -0400
+Received: from gateway31.websitewelcome.com ([192.185.143.51]:18178 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725944AbfGXRwH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 13:50:59 -0400
-Received: by mail-pg1-f193.google.com with SMTP id o13so21575767pgp.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 10:50:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=U7Eune/8zAVuopEZ4znflpHQloi7i3WwOpZdcTKXAtw=;
-        b=faPCG4Icu73tPWhaSKzXXleFM7v0RLQHzpXK/9FqsRtHV0YhT3JkTFBxhJj2JJxhhB
-         R9RCz243EE3JuAt02JRiSSB05PPozCsJKBtgo6U+6x5Z4Cz8ELDXDEHPVWIyVstUlVrA
-         htyhbg7aqrxS9yjqRZrRRUwvLxTpYaSz1R0xFM5U+G9K8z5snfQTAwkKU4/W5XGznxqh
-         2LHp/0rNA8hgzJa6tU4s/MkGpa9tfC+ze3UvF2seaWqaKRE9eKAODH22jiBmtEgmyht/
-         dDU5YoU4GgpMl7YTrQ/6inaURuM79fg23ZHvxyghB109WVgs/oBVk9/ZkhaFhQpReg1G
-         CMcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=U7Eune/8zAVuopEZ4znflpHQloi7i3WwOpZdcTKXAtw=;
-        b=Z/6d+EIFn3iqDAQ3ChIDdoYo3CsbNwz33LrHBuZtqInOSH5XPcqFmqiNTd4fpaV2l/
-         zZN3s9DfpHDuM7EuGMGaG3s2REffeyzlr4+Sj+hWmANpL+2vh423d9Zx3HohwyHcKlEc
-         5IHHDLDXcEI0SmFnTtOvQTMd+ep148nAsmaXlKokCJ8kPB7aEWSkjVJY4DTuXw8BQQ5M
-         X/xxXDItlk0ykLeaKQOiN4lZMT1DoRbamPptf5158RosaQ1iKDbv9EDFcUEgm5ykldvj
-         34wG0+evEOWG7cQOn5ydI2DmFsoE12es2Z5iXVM/BmgR29aJ75Yvr8EnY4VWReRHHTAb
-         BcVA==
-X-Gm-Message-State: APjAAAXxe550NkpbHjggHO6Zex81FdC8D6I5IHJ+PgCScWgdCaFkgOPV
-        2YHbZhjrN84HWRHhb8xZGGI=
-X-Google-Smtp-Source: APXvYqxYg1bPHXo/qNgG9lWQv3PEC9/yMJxShLI9EEzdd+wYcoYvNKFNT8Z6ZwfJZpGtXPRFW4Z6jQ==
-X-Received: by 2002:a63:5945:: with SMTP id j5mr82124622pgm.452.1563990658681;
-        Wed, 24 Jul 2019 10:50:58 -0700 (PDT)
-Received: from [25.171.251.59] ([172.58.27.54])
-        by smtp.gmail.com with ESMTPSA id i6sm50042071pgi.40.2019.07.24.10.50.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 10:50:57 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 19:50:49 +0200
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAHk-=whZPKzbPQftNGFB=iaSZGTSXNkhUASWF2V53MwB+A4zAQ@mail.gmail.com>
-References: <20190724144651.28272-1-christian@brauner.io> <20190724144651.28272-3-christian@brauner.io> <CAHk-=whZPKzbPQftNGFB=iaSZGTSXNkhUASWF2V53MwB+A4zAQ@mail.gmail.com>
+        Wed, 24 Jul 2019 13:52:07 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id B979D56
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:52:04 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id qLQqhloMr90onqLQqheLZR; Wed, 24 Jul 2019 12:52:04 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=RSrN+PMcoh98qQtwwEognyHoc2T7ZoZirz4tY6BRBgI=; b=IOHSZlOAgH6hJR4fh5oxhlyKKZ
+        VhcXaq4oeio2K0v64cWLzVfl8USxaUBj7LA6C8m5/MVMpcl+Fw8hUvsNlsAEef5LNRyHTsKGTkQts
+        VI6FZNumAYjDI/wNQP4WEYRNnN1hn+ApovLXz7gRB1MqsPqiPYnJzMX2T/XtybI76YUJJb2S3aQqH
+        23SAA9MKMdK7hnFl3r0dJ+MyDejYMMgBax7G2jvNUlnzT2y+5ctWaU7sWJIyjuaHw5fg1wCiS/2EA
+        cawOqA1WhuSVwrjtsquZq1+ihz9Au3jQ7k8Fh+uAm4GkTr3eK4/G0BiTYRYhRo8+I2jUG6uITuxKV
+        lB9Q80rg==;
+Received: from cablelink-187-160-61-189.pcs.intercable.net ([187.160.61.189]:50900 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hqLQp-000mes-J4; Wed, 24 Jul 2019 12:52:03 -0500
+Date:   Wed, 24 Jul 2019 12:52:02 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] Input: elantech - mark expected switch fall-through
+Message-ID: <20190724175202.GA9583@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/5] pidfd: add pidfd_wait()
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-CC:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tejun Heo <tj@kernel.org>, David Howells <dhowells@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux API <linux-api@vger.kernel.org>
-From:   Christian Brauner <christian@brauner.io>
-Message-ID: <95CD0533-576F-4B3A-8E80-D3D89967EE2C@brauner.io>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.160.61.189
+X-Source-L: No
+X-Exim-ID: 1hqLQp-000mes-J4
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: cablelink-187-160-61-189.pcs.intercable.net (embeddedor) [187.160.61.189]:50900
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On July 24, 2019 7:45:38 PM GMT+02:00, Linus Torvalds <torvalds@linux-found=
-ation=2Eorg> wrote:
->On Wed, Jul 24, 2019 at 7:47 AM Christian Brauner
-><christian@brauner=2Eio> wrote:
->>
->> This adds the pidfd_wait() syscall=2E
->
->I despise this patch=2E
->
->Why can't this just be a new P_PIDFD flag, and then use
->"waitid(P_PIDFD, pidfd, =2E=2E=2E);"
->
->Yes, yes, yes, I realize that "pidfd" is of type "int", and waitid()
->takes an argument of type pid_t, but it's the same type in the end,
->and it does seem like the whole *point* of "waitid()" is that
->"idtype_t idtype" which tells you what kind of ID you're passing it=2E
->
->               Linus
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-Well in that case we could add P_PIDFD=2E
-But then I would like to _only_ enable it for waitid()=2E How's that sound=
-?
+This patch fixes the following warning:
 
-Christian
+drivers/input/mouse/elantech.c: In function 'elantech_use_host_notify':
+drivers/input/mouse/elantech.c:1843:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   if (dmi_get_bios_year() >= 2018)
+      ^
+drivers/input/mouse/elantech.c:1845:2: note: here
+  default:
+  ^~~~~~~
+
+Warning level 3 was used: -Wimplicit-fallthrough=3
+
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
+
+Notice that -Wimplicit-fallthrough will be globally
+enabled in v5.3.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/input/mouse/elantech.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
+index 73544776a9ed..04fe43440a3c 100644
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1842,6 +1842,7 @@ static bool elantech_use_host_notify(struct psmouse *psmouse,
+ 		/* SMbus implementation is stable since 2018 */
+ 		if (dmi_get_bios_year() >= 2018)
+ 			return true;
++		/* fall through */
+ 	default:
+ 		psmouse_dbg(psmouse,
+ 			    "Ignoring SMBus bus provider %d\n", info->bus);
+-- 
+2.22.0
+
