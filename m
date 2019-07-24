@@ -2,92 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12C267342C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 18:48:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47AF173431
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 18:48:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387724AbfGXQsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 12:48:24 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40445 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387551AbfGXQsY (ORCPT
+        id S2387754AbfGXQsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 12:48:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35140 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387729AbfGXQsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 12:48:24 -0400
-Received: by mail-pl1-f194.google.com with SMTP id a93so22183729pla.7
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 09:48:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gRKAY+MZWKaqd0CuoSyZlDBPmUfGcGm8988bda4hVss=;
-        b=uaGBcyfDCm3TTg2hgJyfh2501WHhM6A8JDweTlaQFVUGuJ6Ekd9vkgtWwjLp2xuYbs
-         w31WEox/uK++rZpnzcVXYQC3Z58XUOEv1IySt81cZPSUZMQcF3MXA+8A4fs7oub651dj
-         FplFBDvJ3JJ/RWNd/FCP9VaI9K9cAUJFyXu/w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gRKAY+MZWKaqd0CuoSyZlDBPmUfGcGm8988bda4hVss=;
-        b=YUi4DX7mY0R4vcAnFUJ6t6GstQ0pvmYlY/4nfVnFRBk3F5Z6hRh1/OcbViQdzycGtP
-         5RMbhMzdUVnFAZA4U7ZIHCreB19XWhLUKneM0zaXGkRraIyNpc7fAAKULLOvPKIf2QaL
-         FiWS86cRt5L5tIA6afQWopEIr0IALtKcN2k6NHLzWjOuLP6Z8SpRKfLWkFFmp1KJfme/
-         y8PGHvUm/lzAyq2N0DrxfEBOx4mdsIK50oHQH9eQ1K5UkUy2UYSafT5z6w5yIZE6RcwF
-         HJN2Th+96h2ajg1G7r+QO2JgpYKsDlLorJ5+n1Bl1AJFYbROaiN18rn6E1r8nNemxTDO
-         HqmA==
-X-Gm-Message-State: APjAAAXhozIipbbYsAuIKv2w8669B7sldkRqob8uv8bBqqXQOgb2xsq7
-        s/9xMSW25lnQWHGxv4FvcnL+ZjsQ
-X-Google-Smtp-Source: APXvYqxmKuaKat7f823FoVvgzFEjTDwsr672WnIYsS6sAhsU7sn7o+WU6yHFNUJVOZCVzd6xfNA0mA==
-X-Received: by 2002:a17:902:9689:: with SMTP id n9mr87959674plp.241.1563986902928;
-        Wed, 24 Jul 2019 09:48:22 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id v7sm4148876pff.87.2019.07.24.09.48.21
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 09:48:22 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian@brauner.io>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH] pidfd: Add warning if exit_state is 0 during notification
-Date:   Wed, 24 Jul 2019 12:48:16 -0400
-Message-Id: <20190724164816.201099-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
+        Wed, 24 Jul 2019 12:48:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=I/I/F1YjxAyAsOp42imqjb1kYs8ytmj9frM5VjUVPfE=; b=s0ehXnmi0V1+yb+A0Jvr2AIv7
+        ZsOfYO/1Sy3Q5td4hQPIpGsFDDdNiMqBF0RsiBcaVOvdeTZxHQKopFmAlaJtPpBwkm+2+/5awYfnF
+        OHYs2+5+penGJ58PhGijbvFcloafasHBikDqujhrY9X8+aqlchkFReL+as89cSjCwTg5t5MqFOUbF
+        uzPcOETWnJsJggsNLgE5ydNHYehIQXP7hMKfa2OCdmhOgJz4QMNyp3CkbODnADH500QeZDBTZbGKY
+        uU19A3xJ6FeL23uQUHtZ+nJHbJBCEj7NAoqxMJeW6t/HyGufvO18N/5rfw52fhMo+ESMi/nF93nE8
+        YTU0DRmhQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hqKRE-0003zz-5d; Wed, 24 Jul 2019 16:48:24 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E881B20288388; Wed, 24 Jul 2019 18:48:21 +0200 (CEST)
+Date:   Wed, 24 Jul 2019 18:48:21 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH] objtool: Improve UACCESS coverage
+Message-ID: <20190724164821.GB31425@hirez.programming.kicks-ass.net>
+References: <alpine.DEB.2.21.1907182223560.1785@nanos.tec.linutronix.de>
+ <20190724023946.yxsz5im22fz4zxrn@treble>
+ <20190724074732.GJ3402@hirez.programming.kicks-ass.net>
+ <20190724125525.kgybu3nnpvwlcz2c@treble>
+ <20190724133516.GB31381@hirez.programming.kicks-ass.net>
+ <20190724141040.GA31425@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190724141040.GA31425@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously a condition got missed where the pidfd waiters are awakened
-before the exit_state gets set. This can result in a missed notification
-[1] and the polling thread waiting forever.
+On Wed, Jul 24, 2019 at 04:10:40PM +0200, Peter Zijlstra wrote:
+> And that most certainly should trigger...
+> 
+> Let me gdb that objtool thing.
 
-It is fixed now, however it would be nice to avoid this kind of issue
-going unnoticed in the future. So just add a warning to catch it in the
-future.
-
-[1] https://lore.kernel.org/lkml/20190717172100.261204-1-joel@joelfernandes.org/
-
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- kernel/signal.c | 1 +
- 1 file changed, 1 insertion(+)
+Subject: objtool: Improve UACCESS coverage
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 91b789dd6e72..349f5a67f100 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -1885,6 +1885,7 @@ static void do_notify_pidfd(struct task_struct *task)
- {
- 	struct pid *pid;
+A clang build reported an (obvious) double CLAC while a GCC build did
+not; it turns out we only re-visit instructions if the first visit was
+with AC=0. If OTOH the first visit was with AC=1, we completely ignore
+any subsequent visit, even when it has AC=0.
+
+Fix this by using a visited mask, instead of boolean and (explicitly)
+mark the AC state.
+
+$ ./objtool check -b --no-fp --retpoline --uaccess ../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o
+../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: .altinstr_replacement+0x22: redundant UACCESS disable
+../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool:   eb_copy_relocations.isra.34()+0xea: (alt)
+../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool:   .altinstr_replacement+0xffffffffffffffff: (branch)
+../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool:   eb_copy_relocations.isra.34()+0xd9: (alt)
+../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool:   eb_copy_relocations.isra.34()+0xb2: (branch)
+../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool:   eb_copy_relocations.isra.34()+0x39: (branch)
+../../defconfig-build/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool:   eb_copy_relocations.isra.34()+0x0: <=== (func)
+
+Reported-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Reported-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ tools/objtool/check.c | 7 ++++---
+ tools/objtool/check.h | 3 ++-
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 5f26620f13f5..176f2f084060 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1946,6 +1946,7 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
+ 	struct alternative *alt;
+ 	struct instruction *insn, *next_insn;
+ 	struct section *sec;
++	u8 visited;
+ 	int ret;
  
-+	WARN_ON(task->exit_state == 0);
- 	pid = task_pid(task);
- 	wake_up_all(&pid->wait_pidfd);
- }
--- 
-2.22.0.657.g960e92d24f-goog
-
+ 	insn = first;
+@@ -1972,12 +1973,12 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
+ 			return 1;
+ 		}
+ 
++		visited = 1 << state.uaccess;
+ 		if (insn->visited) {
+ 			if (!insn->hint && !insn_state_match(insn, &state))
+ 				return 1;
+ 
+-			/* If we were here with AC=0, but now have AC=1, go again */
+-			if (insn->state.uaccess || !state.uaccess)
++			if (insn->visited & visited)
+ 				return 0;
+ 		}
+ 
+@@ -2024,7 +2025,7 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
+ 		} else
+ 			insn->state = state;
+ 
+-		insn->visited = true;
++		insn->visited |= visited;
+ 
+ 		if (!insn->ignore_alts) {
+ 			bool skip_orig = false;
+diff --git a/tools/objtool/check.h b/tools/objtool/check.h
+index b881fafcf55d..6d875ca6fce0 100644
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -33,8 +33,9 @@ struct instruction {
+ 	unsigned int len;
+ 	enum insn_type type;
+ 	unsigned long immediate;
+-	bool alt_group, visited, dead_end, ignore, hint, save, restore, ignore_alts;
++	bool alt_group, dead_end, ignore, hint, save, restore, ignore_alts;
+ 	bool retpoline_safe;
++	u8 visited;
+ 	struct symbol *call_dest;
+ 	struct instruction *jump_dest;
+ 	struct instruction *first_jump_src;
