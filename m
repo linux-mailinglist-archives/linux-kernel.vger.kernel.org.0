@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BD3673901
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:35:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 074F27390D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:36:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388934AbfGXTfu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:35:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34016 "EHLO mail.kernel.org"
+        id S1728743AbfGXTgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:36:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388884AbfGXTft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:35:49 -0400
+        id S2388989AbfGXTgU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:36:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B556A21951;
-        Wed, 24 Jul 2019 19:35:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 668A020659;
+        Wed, 24 Jul 2019 19:36:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996948;
-        bh=61i0o/cbhrmmFoEpZj1dE59plEfYxzY8AsKUoGE7LV0=;
+        s=default; t=1563996979;
+        bh=LOARK0T404+azY1suHxq6Tt9I+LxkICd8FbLI+35sfo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SLaFwUTcbk06LtTuBbRsQP7yTtSBg7dcnGekvFGHp64DkxIqcw39vrF9ZXPHZfwyD
-         A0CFd0uoZwVcRqBYBKqzA23SGsabi07LFQk/HN8BeJL6aFiGJYRTrzIlqmWmFZh7Iw
-         d8L3kD4Bq4VNujSMUKUd7z/i/F57/tuZxcptRQgI=
+        b=KW8aMPEubHhIRyFzKtjGiKYKLO9HsXrUmToEN07lggzidWySsNb8M2scXYu3Nwk/Y
+         NE0KA2dL0S2pSHyQZUKAdhYYl9tjfZ+d7IzGh6MTGdZDG5/+CoO8uc7kwKGqNAc2qX
+         yzjBPVi6cn2FyyJadu1o8ecI0lJ54fnML7d5CCfE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,9 +30,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Finn Thain <fthain@telegraphics.com.au>,
         Stan Johnson <userm57@yahoo.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 5.2 254/413] scsi: NCR5380: Handle PDMA failure reliably
-Date:   Wed, 24 Jul 2019 21:19:05 +0200
-Message-Id: <20190724191754.077822287@linuxfoundation.org>
+Subject: [PATCH 5.2 255/413] Revert "scsi: ncr5380: Increase register polling limit"
+Date:   Wed, 24 Jul 2019 21:19:06 +0200
+Message-Id: <20190724191754.201080120@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -47,16 +47,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Finn Thain <fthain@telegraphics.com.au>
 
-commit f9dfed1c785734b95b08d67600e05d2092508ab0 upstream.
+commit 25fcf94a2fa89dd3e73e965ebb0b38a2a4f72aa4 upstream.
 
-A PDMA error is handled in the core driver by setting the device's 'borken'
-flag and aborting the command. Unfortunately, do_abort() is not
-dependable. Perform a SCSI bus reset instead, to make sure that the command
-fails and gets retried.
+This reverts commit 4822827a69d7cd3bc5a07b7637484ebd2cf88db6.
+
+The purpose of that commit was to suppress a timeout warning message which
+appeared to be caused by target latency. But suppressing the warning is
+undesirable as the warning may indicate a messed up transfer count.
+
+Another problem with that commit is that 15 ms is too long to keep
+interrupts disabled as interrupt latency can cause system clock drift and
+other problems.
 
 Cc: Michael Schmitz <schmitzmic@gmail.com>
-Cc: stable@vger.kernel.org # v4.20+
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Fixes: 4822827a69d7 ("scsi: ncr5380: Increase register polling limit")
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Tested-by: Michael Schmitz <schmitzmic@gmail.com>
@@ -64,23 +69,19 @@ Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/NCR5380.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/scsi/NCR5380.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/NCR5380.c
-+++ b/drivers/scsi/NCR5380.c
-@@ -1761,10 +1761,8 @@ static void NCR5380_information_transfer
- 						scmd_printk(KERN_INFO, cmd,
- 							"switching to slow handshake\n");
- 						cmd->device->borken = 1;
--						sink = 1;
--						do_abort(instance);
--						cmd->result = DID_ERROR << 16;
--						/* XXX - need to source or sink data here, as appropriate */
-+						do_reset(instance);
-+						bus_reset_cleanup(instance);
- 					}
- 				} else {
- 					/* Transfer a small chunk so that the
+--- a/drivers/scsi/NCR5380.h
++++ b/drivers/scsi/NCR5380.h
+@@ -235,7 +235,7 @@ struct NCR5380_cmd {
+ #define NCR5380_PIO_CHUNK_SIZE		256
+ 
+ /* Time limit (ms) to poll registers when IRQs are disabled, e.g. during PDMA */
+-#define NCR5380_REG_POLL_TIME		15
++#define NCR5380_REG_POLL_TIME		10
+ 
+ static inline struct scsi_cmnd *NCR5380_to_scmd(struct NCR5380_cmd *ncmd_ptr)
+ {
 
 
