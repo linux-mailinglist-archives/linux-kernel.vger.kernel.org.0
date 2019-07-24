@@ -2,74 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 288AF73550
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:25:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5915573580
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:28:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbfGXRZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 13:25:18 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36503 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbfGXRZS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 13:25:18 -0400
-Received: by mail-pg1-f196.google.com with SMTP id l21so21556948pgm.3;
-        Wed, 24 Jul 2019 10:25:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=v5o93rppXWOEe1khDbdKPwUWVhMWimUKdS1T4a7dv9A=;
-        b=IFEoXTVgZ4ICjhndw6Yg/eu4xfo/TSctxWBfUswClSV6OJ6k2joYbp2ljUIUS14hRV
-         jC+yWEiBcGQEORnde4IDcsdaLKYxQMzISlPZaqgyw38cUFM4S3FrE+gRTw6CUu98QhLg
-         ezJMqLhRl+Y2QleD+FeaJ/u1HBDF5pG0Ki3UkheZpb1G0N4/mvVj+NPfGRj99XGFz80H
-         CZDPsmfd4pr0d9Fdq7FKWSvzQtPilcj2nuLocSACIGRjta+BuL6BcjJtYzXs3FqRDuM0
-         ZDe1Nyvb8As26aPZnPpjaoa9U+qwxZq6y5RfRO+3jzBxBa99meP9yy37R75p5kfNpSMP
-         dDMw==
-X-Gm-Message-State: APjAAAViAG2DKaROHFTYa5MuO2kXID/zSt4+rjWxVX8wLc2afryDH0f1
-        Jo1Fb8I7OwIBRBr54I3+Shg=
-X-Google-Smtp-Source: APXvYqz8XfN6M40/6fe7BxMTCZJQCCPcbWguJPVyb/SH7u8lYYU33WfbbFpre78nAUrnVv5x6QkoeQ==
-X-Received: by 2002:a17:90a:bd93:: with SMTP id z19mr89794097pjr.49.1563988666568;
-        Wed, 24 Jul 2019 10:17:46 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id t10sm46821994pjr.13.2019.07.24.10.17.45
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 10:17:45 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 1E29A402A1; Wed, 24 Jul 2019 17:17:45 +0000 (UTC)
-Date:   Wed, 24 Jul 2019 17:17:45 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Alexandre Ghiti <alex@ghiti.fr>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH REBASE v4 00/14] Provide generic top-down mmap layout
- functions
-Message-ID: <20190724171745.GX19023@42.do-not-panic.com>
-References: <20190724055850.6232-1-alex@ghiti.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190724055850.6232-1-alex@ghiti.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727935AbfGXR1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 13:27:22 -0400
+Received: from mga01.intel.com ([192.55.52.88]:32492 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726178AbfGXR1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 13:27:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 10:18:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
+   d="scan'208";a="368859086"
+Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.84])
+  by fmsmga005.fm.intel.com with ESMTP; 24 Jul 2019 10:18:18 -0700
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, acme@kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V3 0/8] TopDown metrics support for Icelake
+Date:   Wed, 24 Jul 2019 10:17:45 -0700
+Message-Id: <20190724171753.8087-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Other than the two comments:
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+Icelake has support for measuring the level 1 TopDown metrics
+directly in hardware. This is implemented by an additional METRICS
+register, and a new Fixed Counter 3 that measures pipeline SLOTS.
 
-  Luis
+Four TopDown metric events as separate perf events, which map to
+internal METRICS register, are exposed. They are topdown-retiring,
+topdown-bad-spec, topdown-fe-bound and topdown-be-bound.
+Those events do not exist in hardware, but can be allocated by the
+scheduler. The value of TopDown metric events can be calculated by
+multiplying the METRICS (percentage) register with SLOTS fixed counter.
+
+New in Icelake
+- Do not require generic counters. This allows to collect TopDown always
+  in addition to other events.
+- Measuring TopDown per thread/process instead of only per core
+
+Limitation
+- To get accurate result and avoid reading the METRICS register multiple
+  times, the TopDown metrics events and SLOTS event have to be in the
+  same group.
+- METRICS and SLOTS registers have to be cleared after each read by SW.
+  That is to prevent the lose of precision and a known side effect of
+  METRICS register.
+- Cannot do sampling read SLOTS and TopDown metric events
+
+Please refer SDM Vol3, 18.3.9.3 Performance Metrics for the details of
+TopDown metrics.
+
+Changes since V2:
+- Rebase on top of v5.3-rc1
+
+Key changes since V1:
+- Remove variables for reg_idx and enabled_events[] array.
+  The reg_idx can be calculated by idx in runtime.
+  Using existing active_mask to replace enabled_events.
+- Choose value 47 for the fixed index of BTS.
+- Support OVF_PERF_METRICS overflow bit in PMI handler
+- Drops the caching mechanism and related variables
+  New mechanism is to update all active slots/metrics events for the
+  first slots/metrics events in a group. For each group reading, it
+  still only read the slots/perf_metrics MSR once
+- Disable PMU for read of topdown events to avoid the NMI issue
+- Move RDPMC support to a separate patch
+- Using event=0x00,umask=0x1X for topdown metrics events
+- Drop the patch which add REMOVE transaction
+  We can indicate x86_pmu_stop() by checking
+  (event && !test_bit(event->hw.idx, cpuc->active_mask)),
+  which is a good place to save the slots/metrics MSR value
+
+Andi Kleen (2):
+  perf, tools, stat: Support new per thread TopDown metrics
+  perf, tools: Add documentation for topdown metrics
+
+Kan Liang (6):
+  perf/x86/intel: Set correct mask for TOPDOWN.SLOTS
+  perf/x86/intel: Basic support for metrics counters
+  perf/x86/intel: Support hardware TopDown metrics
+  perf/x86/intel: Support per thread RDPMC TopDown metrics
+  perf/x86/intel: Export TopDown events for Icelake
+  perf/x86/intel: Disable sampling read slots and topdown
+
+ arch/x86/events/core.c                 |  35 ++-
+ arch/x86/events/intel/core.c           | 362 ++++++++++++++++++++++++-
+ arch/x86/events/perf_event.h           |  33 +++
+ arch/x86/include/asm/msr-index.h       |   3 +
+ arch/x86/include/asm/perf_event.h      |  54 +++-
+ include/linux/perf_event.h             |   3 +
+ tools/perf/Documentation/perf-stat.txt |   9 +-
+ tools/perf/Documentation/topdown.txt   | 223 +++++++++++++++
+ tools/perf/builtin-stat.c              |  24 ++
+ tools/perf/util/stat-shadow.c          |  89 ++++++
+ tools/perf/util/stat.c                 |   4 +
+ tools/perf/util/stat.h                 |   8 +
+ 12 files changed, 827 insertions(+), 20 deletions(-)
+ create mode 100644 tools/perf/Documentation/topdown.txt
+
+-- 
+2.17.1
+
