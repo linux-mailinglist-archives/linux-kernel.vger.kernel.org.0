@@ -2,101 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E77672A26
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:33:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CD0872A1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:31:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726463AbfGXIdL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 04:33:11 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41259 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbfGXIdL (ORCPT
+        id S1726385AbfGXIbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 04:31:01 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:33649 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbfGXIbA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 04:33:11 -0400
-Received: by mail-pf1-f193.google.com with SMTP id m30so20576967pff.8
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 01:33:11 -0700 (PDT)
+        Wed, 24 Jul 2019 04:31:00 -0400
+Received: by mail-io1-f67.google.com with SMTP id z3so87863683iog.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 01:31:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=3mpFcJm52vqDHrD294AKdjpEOxw1VpKoEQduQjdZ2L0=;
-        b=aP58wc/2YXAfkX+FuNWDMlnhsNNEHFzP+2c9ml9eyP9dsH8O2zrW8VgKkX0U27kQok
-         5PZkqjYKRV4mtv49n+YdTe545LnKECNwSbDAHqSKQjj+suwiYOvHIOjiJWoxPWoX5n7u
-         Y34+2axR8FY2IfI4L4AAFMlxsdd3ah+OaExm0=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AaokkSIB8T6rCvGVztgZrAXJru2rWZPyc4+sjVG3Rlg=;
+        b=K3qMn/OeMIMWIjZ9ESuP3Mbr2IoaW+ya8WAVIZo7hVgWKsF0wYm4Zs/WY23VkHpiHz
+         MSQiPrS0LExa2cu+qH0917BNNinG4hma4fEuEj+kdN5TQinrpXignDNCLsQpJmuweYbh
+         6IjgBg1BHpDTKB+LYWKwCgHAUjwP1nkunkhPmtgtsZJILj1FNJZwZ4Xs63kGZRh+oba1
+         xuteJ2KnBlW2GP2ukGM6O2WFyOVJpQTI+hdTREb3XE4i6W44X/jKWY0Om1te6XcY7d0b
+         abTSzaWlVNvcp2hucBZx303o5SzyTNvW3qNcMo/BN4bTdm32VK9nUm2gLD3cp6/0DWM9
+         iwOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=3mpFcJm52vqDHrD294AKdjpEOxw1VpKoEQduQjdZ2L0=;
-        b=IPzezY8epFt/NE1W+hUgDwpuuILmd/eSRfrvE9q/4+u60nfJ7EJnWwlctH7qHVgM50
-         KfAFuEU+XUjqfkhO3hHSbZcu7mBPcEz1NFQpxdFWTudrtXQlHepA6MOcZ/jn2yKEZQk1
-         tSoLsHA64nKq4nGotPg46vudkiFPgx6VIgDhxUw6DXtdApF8zAvGuArcKV+XpcPbt2Wu
-         FjQyyonDqBbSGRVT7NhWBBIqyCzbRCzwdWATk8qNDZi/3cwXwFajCM949zqNP15AkLXP
-         Vwm6Hh+gNbqLWPzfSP9srHr2RpZk8XclSV4eXgBc2HxclA2vAxnSZjienXII/bY23vcW
-         0aMA==
-X-Gm-Message-State: APjAAAUjtXDXvyOotUfS5NMz3b+ANp+5/CbWHoEHq3P/kfNhW9rWEvz2
-        uDyM3Lth4jgFG4Qwsnf0wnx+QQ==
-X-Google-Smtp-Source: APXvYqxs7n3SvBSpEfhTxVDDL+ugCuHHYVOhhtmhsxZtMi/aqCqQ5OTABjBfpafmHW8kNT3gZ4b7jQ==
-X-Received: by 2002:a63:4f58:: with SMTP id p24mr16283806pgl.50.1563957190508;
-        Wed, 24 Jul 2019 01:33:10 -0700 (PDT)
-Received: from rayagonda.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id u128sm52437425pfu.48.2019.07.24.01.33.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 24 Jul 2019 01:33:09 -0700 (PDT)
-From:   Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-To:     Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Ray Jui <ray.jui@broadcom.com>,
-        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH v1 1/1] i2c: iproc: Fix i2c master read more than 63 bytes
-Date:   Wed, 24 Jul 2019 13:58:27 +0530
-Message-Id: <1563956907-21255-1-git-send-email-rayagonda.kokatanur@broadcom.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AaokkSIB8T6rCvGVztgZrAXJru2rWZPyc4+sjVG3Rlg=;
+        b=eMs/4QIjKrcbvK+W2DXxo+i8uyic071DaOcCGOM3tzpAdtDzoSMLEzeEm2C4rCPYTN
+         BNueREWSEh2Vg960nQtf3Yemq2vZTV5MOWz5oXcTt7J6auv/h2/wJMz1lt0OnNKM0fLO
+         NQv5R8cJjexh6LOYLIR3OTfKSlw94sO/0XVoYipF10LzD6hax+EK2OfYfcV52h2T2Wfj
+         WbUpwZYexuDAIii8VhA83qfLnxClpbRfpOfSUJPKWCp0j3VfrBFSxC5GYiwG1QA5YUhy
+         4hNJ4WmHWmLWg3LBfZODoCZgZSALfgkWAgYDLVTlwW5nbnZMNIfQOzddrU+gCQUilLWz
+         GLkQ==
+X-Gm-Message-State: APjAAAVoJtdeQS4o4tI6XrlTSkrw/mdfUiFWwa7gaZfr/Ux439udAAb5
+        L78945HukdXLZMAXVZ1u4mfUdmm3MxCAryKLLyOttg==
+X-Google-Smtp-Source: APXvYqxSlDUBj64fQa2XUD/GFRZKvTb+/OT1nJmyxCu9j1MOu5lLRDAbNSt995Cq9Nvar/xA7x1tOCdXOH7MllC/CCs=
+X-Received: by 2002:a6b:b556:: with SMTP id e83mr73258880iof.94.1563957059834;
+ Wed, 24 Jul 2019 01:30:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <0000000000001a51c4058ddcb1b6@google.com> <CACT4Y+ZGwKP+f4esJdx60AywO9b3Y5Bxb4zLtH6EEkaHpP6Zag@mail.gmail.com>
+ <5d37433a832d_3aba2ae4f6ec05bc3a@john-XPS-13-9370.notmuch>
+In-Reply-To: <5d37433a832d_3aba2ae4f6ec05bc3a@john-XPS-13-9370.notmuch>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 24 Jul 2019 10:30:48 +0200
+Message-ID: <CACT4Y+ZbPmRB9T9ZzhE79VnKKD3+ieHeLpaDGRkcQ72nADKH_g@mail.gmail.com>
+Subject: Re: kernel panic: stack is corrupted in pointer
+To:     John Fastabend <john.fastabend@gmail.com>
+Cc:     syzbot <syzbot+79f5f028005a77ecb6bb@syzkaller.appspotmail.com>,
+        bpf <bpf@vger.kernel.org>, David Airlie <airlied@linux.ie>,
+        alexander.deucher@amd.com, amd-gfx@lists.freedesktop.org,
+        Alexei Starovoitov <ast@kernel.org>, christian.koenig@amd.com,
+        Daniel Borkmann <daniel@iogearbox.net>, david1.zhou@amd.com,
+        DRI <dri-devel@lists.freedesktop.org>, leo.liu@amd.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Marco Elver <elver@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use SMBUS_MASTER_DATA_READ.MASTER_RD_STATUS bit to check for RX
-FIFO empty condition because SMBUS_MASTER_FIFO_CONTROL.MASTER_RX_PKT_COUNT
-is not updated for read >= 64 bytes. This fixes the issue when trying to
-read from the I2C slave more than 63 bytes.
+On Tue, Jul 23, 2019 at 7:26 PM John Fastabend <john.fastabend@gmail.com> wrote:
+>
+> Dmitry Vyukov wrote:
+> > On Wed, Jul 17, 2019 at 10:58 AM syzbot
+> > <syzbot+79f5f028005a77ecb6bb@syzkaller.appspotmail.com> wrote:
+> > >
+> > > Hello,
+> > >
+> > > syzbot found the following crash on:
+> > >
+> > > HEAD commit:    1438cde7 Add linux-next specific files for 20190716
+> > > git tree:       linux-next
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=13988058600000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3430a151e1452331
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=79f5f028005a77ecb6bb
+> > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111fc8afa00000
+> >
+> > From the repro it looks like the same bpf stack overflow bug. +John
+> > We need to dup them onto some canonical report for this bug, or this
+> > becomes unmanageable.
+>
+> Fixes in bpf tree should fix this. Hopefully, we will squash this once fixes
+> percolate up.
+>
+> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
 
-Fixes: c24b8d574b7c ("i2c: iproc: Extend I2C read up to 255 bytes")
+Cool! What is the fix?
+We don't need to wait for the fix to percolate up (and then down
+too!). syzbot gracefully handles when a patch is not yet present
+everywhere (it happens all the time).
 
-Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
----
- drivers/i2c/busses/i2c-bcm-iproc.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Btw, this was due to a stack overflow, right? Or something else?
+We are trying to make KASAN configuration detect stack overflows too,
+so that it does not cause havoc next time. But it turns out to be
+non-trivial and our current attempt seems to fail:
+https://groups.google.com/forum/#!topic/kasan-dev/IhYv7QYhLfY
 
-diff --git a/drivers/i2c/busses/i2c-bcm-iproc.c b/drivers/i2c/busses/i2c-bcm-iproc.c
-index 2c7f145..d7fd76b 100644
---- a/drivers/i2c/busses/i2c-bcm-iproc.c
-+++ b/drivers/i2c/busses/i2c-bcm-iproc.c
-@@ -392,16 +392,18 @@ static bool bcm_iproc_i2c_slave_isr(struct bcm_iproc_i2c_dev *iproc_i2c,
- static void bcm_iproc_i2c_read_valid_bytes(struct bcm_iproc_i2c_dev *iproc_i2c)
- {
- 	struct i2c_msg *msg = iproc_i2c->msg;
-+	uint32_t val;
- 
- 	/* Read valid data from RX FIFO */
- 	while (iproc_i2c->rx_bytes < msg->len) {
--		if (!((iproc_i2c_rd_reg(iproc_i2c, M_FIFO_CTRL_OFFSET) >> M_FIFO_RX_CNT_SHIFT)
--		      & M_FIFO_RX_CNT_MASK))
-+		val = iproc_i2c_rd_reg(iproc_i2c, M_RX_OFFSET);
-+
-+		/* rx fifo empty */
-+		if (!((val >> M_RX_STATUS_SHIFT) & M_RX_STATUS_MASK))
- 			break;
- 
- 		msg->buf[iproc_i2c->rx_bytes] =
--			(iproc_i2c_rd_reg(iproc_i2c, M_RX_OFFSET) >>
--			M_RX_DATA_SHIFT) & M_RX_DATA_MASK;
-+			(val >> M_RX_DATA_SHIFT) & M_RX_DATA_MASK;
- 		iproc_i2c->rx_bytes++;
- 	}
- }
--- 
-1.9.1
 
+> > #syz dup: kernel panic: corrupted stack end in dput
+> >
+> > > The bug was bisected to:
+> > >
+> > > commit 96a5d8d4915f3e241ebb48d5decdd110ab9c7dcf
+> > > Author: Leo Liu <leo.liu@amd.com>
+> > > Date:   Fri Jul 13 15:26:28 2018 +0000
+> > >
+> > >      drm/amdgpu: Make sure IB tests flushed after IP resume
+> > >
+> > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14a46200600000
+> > > final crash:    https://syzkaller.appspot.com/x/report.txt?x=16a46200600000
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=12a46200600000
+> > >
+> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > Reported-by: syzbot+79f5f028005a77ecb6bb@syzkaller.appspotmail.com
+> > > Fixes: 96a5d8d4915f ("drm/amdgpu: Make sure IB tests flushed after IP
+> > > resume")
+> > >
+> > > Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in:
+> > > pointer+0x702/0x750 lib/vsprintf.c:2187
+> > > Shutting down cpus with NMI
+> > > Kernel Offset: disabled
+> > >
+> > >
+> > > ---
+> > > This bug is generated by a bot. It may contain errors.
+> > > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > >
+> > > syzbot will keep track of this bug report. See:
+> > > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> > > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> > > syzbot can test patches for this bug, for details see:
+> > > https://goo.gl/tpsmEJ#testing-patches
+>
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/5d37433a832d_3aba2ae4f6ec05bc3a%40john-XPS-13-9370.notmuch.
