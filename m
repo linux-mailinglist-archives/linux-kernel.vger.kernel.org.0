@@ -2,58 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D8617251D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 05:09:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9971372530
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 05:15:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbfGXDJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 23:09:10 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:58569 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725497AbfGXDJK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 23:09:10 -0400
-Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x6O392Oa034697;
-        Wed, 24 Jul 2019 12:09:02 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
- Wed, 24 Jul 2019 12:09:02 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x6O392fX034691
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 24 Jul 2019 12:09:02 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] kexec: Bail out upon SIGKILL when allocating memory.
-To:     Eric Biederman <ebiederm@xmission.com>
-References: <000000000000a861f6058b2699e0@google.com>
- <000000000000c0103a058b2ba0ec@google.com>
- <993c9185-d324-2640-d061-bed2dd18b1f7@I-love.SAKURA.ne.jp>
- <20190724025422.GQ643@sol.localdomain>
-Cc:     syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <21e9b463-7a10-4168-f08c-33653ea32767@i-love.sakura.ne.jp>
-Date:   Wed, 24 Jul 2019 12:09:05 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190724025422.GQ643@sol.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726429AbfGXDPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 23:15:36 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:53972 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725848AbfGXDPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 23:15:36 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B31402000E2;
+        Wed, 24 Jul 2019 05:15:31 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 88AE7200034;
+        Wed, 24 Jul 2019 05:15:25 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CA888402F6;
+        Wed, 24 Jul 2019 11:15:17 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        aisheng.dong@nxp.com, gustavo@embeddedor.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] clk: imx7ulp: Make sure earlycon's clock is enabled
+Date:   Wed, 24 Jul 2019 11:06:00 +0800
+Message-Id: <20190724030600.17839-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/07/24 11:54, Eric Biggers wrote:
-> 
-> What happened to this patch?  This bug is still occurring.
+From: Anson Huang <Anson.Huang@nxp.com>
 
-Andrew Morton added this patch to the -mm tree.
-Should appear in the linux-next tree in a few days.
+Earlycon's clock could be disabled during kernel boot up,
+if earlycon is enabled and its clock is gated, then kernel
+boot up will fail. Make sure earlycon's clock is enabled
+during kernel boot up.
 
-https://marc.info/?l=linux-mm-commits&m=156391134729795&w=2
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-imx7ulp.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
+index 42e4667..2022d9b 100644
+--- a/drivers/clk/imx/clk-imx7ulp.c
++++ b/drivers/clk/imx/clk-imx7ulp.c
+@@ -42,6 +42,19 @@ static const struct clk_div_table ulp_div_table[] = {
+ 	{ .val = 7, .div = 64, },
+ };
+ 
++static const int pcc2_uart_clk_ids[] __initconst = {
++	IMX7ULP_CLK_LPUART4,
++	IMX7ULP_CLK_LPUART5,
++};
++
++static const int pcc3_uart_clk_ids[] __initconst = {
++	IMX7ULP_CLK_LPUART6,
++	IMX7ULP_CLK_LPUART7,
++};
++
++static struct clk **pcc2_uart_clks[ARRAY_SIZE(pcc2_uart_clk_ids) + 1] __initdata;
++static struct clk **pcc3_uart_clks[ARRAY_SIZE(pcc3_uart_clk_ids) + 1] __initdata;
++
+ static void __init imx7ulp_clk_scg1_init(struct device_node *np)
+ {
+ 	struct clk_hw_onecell_data *clk_data;
+@@ -135,6 +148,7 @@ static void __init imx7ulp_clk_pcc2_init(struct device_node *np)
+ 	struct clk_hw_onecell_data *clk_data;
+ 	struct clk_hw **clks;
+ 	void __iomem *base;
++	int i;
+ 
+ 	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_PCC2_END),
+ 			   GFP_KERNEL);
+@@ -173,6 +187,14 @@ static void __init imx7ulp_clk_pcc2_init(struct device_node *np)
+ 	imx_check_clk_hws(clks, clk_data->num);
+ 
+ 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
++
++	for (i = 0; i < ARRAY_SIZE(pcc2_uart_clk_ids); i++) {
++		int index = pcc2_uart_clk_ids[i];
++
++		pcc2_uart_clks[i] = &clks[index]->clk;
++	}
++
++	imx_register_uart_clocks(pcc2_uart_clks);
+ }
+ CLK_OF_DECLARE(imx7ulp_clk_pcc2, "fsl,imx7ulp-pcc2", imx7ulp_clk_pcc2_init);
+ 
+@@ -181,6 +203,7 @@ static void __init imx7ulp_clk_pcc3_init(struct device_node *np)
+ 	struct clk_hw_onecell_data *clk_data;
+ 	struct clk_hw **clks;
+ 	void __iomem *base;
++	int i;
+ 
+ 	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_PCC3_END),
+ 			   GFP_KERNEL);
+@@ -218,6 +241,14 @@ static void __init imx7ulp_clk_pcc3_init(struct device_node *np)
+ 	imx_check_clk_hws(clks, clk_data->num);
+ 
+ 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
++
++	for (i = 0; i < ARRAY_SIZE(pcc3_uart_clk_ids); i++) {
++		int index = pcc3_uart_clk_ids[i];
++
++		pcc3_uart_clks[i] = &clks[index]->clk;
++	}
++
++	imx_register_uart_clocks(pcc3_uart_clks);
+ }
+ CLK_OF_DECLARE(imx7ulp_clk_pcc3, "fsl,imx7ulp-pcc3", imx7ulp_clk_pcc3_init);
+ 
+-- 
+2.7.4
+
