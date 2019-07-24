@@ -2,111 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35EC5735B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:41:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 549B2735B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:43:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387548AbfGXRld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 13:41:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38416 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726323AbfGXRld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 13:41:33 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69D782184B;
-        Wed, 24 Jul 2019 17:41:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563990091;
-        bh=D4bE665nM5LzWcaA4zQvt4ZilfR5RBc9ne4A65LT40E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=t3RZcZtsAIaY8XJWpTiq9Gg0sVvqR/5lWoO/5beJQ6sAXhWbWcE7okoi/rDg9cAbw
-         zAdLqiBqnnEwHxJfwW6+tFDsLAuZ/gwWIaFMYb7wP2TNB4CR17FVYMLRPUluzpultO
-         ciyDP2bElxavp3s70irEN6KalhwNoy2ldGpausrI=
-Date:   Wed, 24 Jul 2019 10:41:29 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Tejun Heo <tj@kernel.org>,
-        Michael Bringmann <mwb@linux.vnet.ibm.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        id S1728122AbfGXRnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 13:43:18 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45512 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727474AbfGXRnS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 13:43:18 -0400
+Received: by mail-pf1-f195.google.com with SMTP id r1so21295949pfq.12
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 10:43:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=j6NIpAzsMcO7sZ0vTNzGF2DuYbeRYnuvh/l2IwKG0Uw=;
+        b=GmCZRa/hEE0OV7HpRBKrMl9lgxb1Q0Ka+gEHXUeNKNKVoh6LjuHvGcYzXiTXCmwl+o
+         wRRkVlo/Y0RlcTqEl3N7P2p7LiSyYmjSipP8zRocQwnmnQ7xAXQOxDoRsPqZtBdZ0QEI
+         SOCZv3uLsVecKNByY3trviY9Ak5iM1lcFO7nDZAitE0w2XyjFa6hLLOf7j+NdttRQ+q3
+         yYZ3qIQ7BF8dyVqlD9z4LnanqVo+PawoeGUbAXodCfNEpDyydF1iCygccrjmLSqFcTbb
+         N3KKj8rzA2dQaFpqh/KV4+oPoysjPPwQq/LzBANakR0kLpvmApO2hVy/yxTCAJBIINxm
+         3H0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=j6NIpAzsMcO7sZ0vTNzGF2DuYbeRYnuvh/l2IwKG0Uw=;
+        b=KT+ZaYPtESp0r70SGRCV9/alZvKyTGtyk4nAldAeWIlP6TG8Cm0F8qoEzjudbiB3cP
+         YQu6vWJvufdUcgC93J4KxHPeDnlGXxvHXWkt8J7utvkaGRkocfJIUNEtIhwtPSzTVPx5
+         VqRfMOYh0g5gmFS3bZEaFIAVfb3h7KvurKQlmXj9AG+kGI1eE8XM7lH8WjAnXgmkXipX
+         qfYol94Ii8L9MmwHtTt6EzxkHXJs3sNiFeStq+JFQswGuGyJ4phsNVLXz3tdrKKEVCVe
+         OPjgiF5PNLT6ZW5EhmVAtG+ZleknGY6m3k5WqgHOHtzPqMn7jSmpU1JpexKmKOq0lRrm
+         vOwA==
+X-Gm-Message-State: APjAAAUQx4JSJAFsWbVObaQvyfuGYWITJCA0xzFG63G7DrHC82GWhTN4
+        0hDNtjql6APQFZotDjfpCMo=
+X-Google-Smtp-Source: APXvYqyzOzhPeh+GdEwAECuBfAlPOZIKs1zQssZJ3KsiOYgu/hJmbUc4PI/LbMHPrJ0s3KzmsoiVwQ==
+X-Received: by 2002:a63:31c1:: with SMTP id x184mr78327780pgx.128.1563990197550;
+        Wed, 24 Jul 2019 10:43:17 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::2:c91a])
+        by smtp.gmail.com with ESMTPSA id u69sm57694267pgu.77.2019.07.24.10.43.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Jul 2019 10:43:16 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 10:43:15 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
         syzbot <syzbot+4d497898effeb1936245@syzkaller.appspotmail.com>,
         Lai Jiangshan <jiangshanlai@gmail.com>,
         LKML <linux-kernel@vger.kernel.org>,
         syzkaller-bugs <syzkaller-bugs@googlegroups.com>
 Subject: Re: linux-next boot error: WARNING: workqueue cpumask: online
  intersect > possible intersect
-Message-ID: <20190724174129.GE213255@gmail.com>
-Mail-Followup-To: Tejun Heo <tj@kernel.org>,
-        Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+4d497898effeb1936245@syzkaller.appspotmail.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Message-ID: <20190724174315.GC569612@devbig004.ftw2.facebook.com>
 References: <000000000000f19676058ab7adc4@google.com>
  <CACT4Y+ZZy5nqduErU8hjKrwThHiybGpwd3QzOviAWftZFZ4d2A@mail.gmail.com>
  <20190611185206.GG3341036@devbig004.ftw2.facebook.com>
  <CACT4Y+ZNTh=t62oj_Y5XyQwjOJp3AWwWi8c-4DrX+jKNCVqzzg@mail.gmail.com>
  <20190723163126.GB23641@gmail.com>
+ <20190724174129.GE213255@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190723163126.GB23641@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190724174129.GE213255@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 09:31:27AM -0700, Eric Biggers wrote:
-> On Tue, Jul 23, 2019 at 10:16:24AM +0200, 'Dmitry Vyukov' via syzkaller-bugs wrote:
-> > On Tue, Jun 11, 2019 at 8:52 PM Tejun Heo <tj@kernel.org> wrote:
-> > >
-> > > Hello,
-> > >
-> > > On Fri, Jun 07, 2019 at 10:45:45AM +0200, Dmitry Vyukov wrote:
-> > > > +workqueue maintainers and Michael who added this WARNING
-> > > >
-> > > > The WARNING was added in 2017, so I guess it's a change somewhere else
-> > > > that triggered it.
-> > > > The WARNING message does not seem to give enough info about the caller
-> > > > (should it be changed to WARN_ONCE to print a stack?). How can be root
-> > > > cause this and unbreak linux-next?
-> > >
-> > > So, during boot, workqueue builds masks of possible cpus of each node
-> > > and stores them on wq_numa_possible_cpumask[] array.  The warning is
-> > > saying that somehow online cpumask of a node became a superset of the
-> > > possible mask, which should never happen.
-> > >
-> > > Dumping all masks in wq_numa_possible_cpumasks[] and cpumask_of_node()
-> > > of each node should show what's going on.
-> > 
-> > This has reached upstream and all subsystem subtrees, now all Linux
-> > trees are boot broken (except for few that still lack behind):
-> > https://syzkaller.appspot.com/upstream
-> > 
-> > No new Linux code is tested by syzbot at this point.
-> > 
+On Wed, Jul 24, 2019 at 10:41:29AM -0700, Eric Biggers wrote:
+> The real boot error "general protection fault in dma_direct_max_mapping_size" is
+> fixed in mainline now.  I believe that unblocks syzbot testing, since it doesn't
+> appear to have been blocked by "WARNING: workqueue cpumask: online intersect >
+> possible intersect" by itself.
 > 
-> AFAICS, what's actually happening is that the boot fails due to a different bug,
-> "general protection fault in dma_direct_max_mapping_size" -- which is a real
-> boot error, not just a warning; see
-> https://lkml.kernel.org/lkml/20190723161425.GA23641@gmail.com/
-> 
-> syzbot then sees "WARNING: workqueue cpumask: online intersect > possible
-> intersect" in the console output prior to that, and uses that as the bug title.
-> 
-> It's not obvious that syzbot would report "WARNING: workqueue cpumask: online
-> intersect > possible intersect" without the real boot error too.
-> 
-> Nevertheless the issue is still there and something needs to be done about it.
-> 
+> Anyway: Tejun and Michael, any other ideas for why "WARNING: workqueue cpumask:
+> online intersect > possible intersect" is still happening?
 
-The real boot error "general protection fault in dma_direct_max_mapping_size" is
-fixed in mainline now.  I believe that unblocks syzbot testing, since it doesn't
-appear to have been blocked by "WARNING: workqueue cpumask: online intersect >
-possible intersect" by itself.
+That code hasn't changed in years.  It gotta be changes in cpumask
+initialization ordering or sth like that.  The easiest way to find the
+culprit would be bisecting.  I can't get to it right now.  Anyone
+interested?
 
-Anyway: Tejun and Michael, any other ideas for why "WARNING: workqueue cpumask:
-online intersect > possible intersect" is still happening?
+Thanks.
 
-- Eric
+-- 
+tejun
