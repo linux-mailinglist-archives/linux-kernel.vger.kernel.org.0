@@ -2,112 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DB437315C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:17:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2A0C73165
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbfGXORC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 10:17:02 -0400
-Received: from mga04.intel.com ([192.55.52.120]:16617 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726855AbfGXORC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 10:17:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 07:17:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
-   d="scan'208";a="169940375"
-Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
-  by fmsmga008.fm.intel.com with ESMTP; 24 Jul 2019 07:17:01 -0700
-Received: from orsmsx160.amr.corp.intel.com (10.22.226.43) by
- ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 24 Jul 2019 07:17:00 -0700
-Received: from orsmsx110.amr.corp.intel.com ([169.254.10.211]) by
- ORSMSX160.amr.corp.intel.com ([169.254.13.251]) with mapi id 14.03.0439.000;
- Wed, 24 Jul 2019 07:17:00 -0700
-From:   "Moore, Robert" <robert.moore@intel.com>
-To:     Qian Cai <cai@lca.pw>, Nick Desaulniers <ndesaulniers@google.com>
-CC:     "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        "Schmauss, Erik" <erik.schmauss@intel.com>,
-        "jkim@freebsd.org" <jkim@freebsd.org>, Len Brown <lenb@kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "devel@acpica.org" <devel@acpica.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] acpica: fix -Wnull-pointer-arithmetic warnings
-Thread-Topic: [PATCH] acpica: fix -Wnull-pointer-arithmetic warnings
-Thread-Index: AQHVPFEYIycQ0k5IUUyXy4NqYzTqpqbP0wgAgAAvDoCACLPGAIABkXSA//+Ut6A=
-Date:   Wed, 24 Jul 2019 14:17:00 +0000
-Message-ID: <94F2FBAB4432B54E8AACC7DFDE6C92E3B96618DB@ORSMSX110.amr.corp.intel.com>
-References: <20190717033807.1207-1-cai@lca.pw>
-         <CAKwvOdmPX2DsUawcA0SzaFacjz==ACcfD8yDsbaS4eP4Es=Wzw@mail.gmail.com>
-         <73A4565B-837B-4E13-8B72-63F69BF408E7@lca.pw>
-         <94F2FBAB4432B54E8AACC7DFDE6C92E3B9661869@ORSMSX110.amr.corp.intel.com>
- <1563975605.11067.8.camel@lca.pw>
-In-Reply-To: <1563975605.11067.8.camel@lca.pw>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjQzMDk3MjEtZGJkZi00NDhkLWE2NjYtNzY3MGNkODBkZDdhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVXE1WTNsUUNTQWJPbTRuU2NKTXJtaUFKQmhaN1NKcEtRcTluTGNpN0dmZW9QaUhKWFd3U2NHbTZJb0Z1WGUzZCJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1728010AbfGXORO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 10:17:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34192 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726287AbfGXORM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 10:17:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 42C0BAFD4;
+        Wed, 24 Jul 2019 14:17:11 +0000 (UTC)
+Date:   Wed, 24 Jul 2019 16:17:10 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     YueHaibing <yuehaibing@huawei.com>, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, vbabka@suse.cz,
+        yang.shi@linux.alibaba.com, jannh@google.com, walken@google.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm/mmap.c: silence variable 'new_start' set but not used
+Message-ID: <20190724141710.GD5584@dhcp22.suse.cz>
+References: <20190724140739.59532-1-yuehaibing@huawei.com>
+ <1563977465.11067.9.camel@lca.pw>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1563977465.11067.9.camel@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBRaWFuIENhaSBbbWFpbHRvOmNh
-aUBsY2EucHddIA0KU2VudDogV2VkbmVzZGF5LCBKdWx5IDI0LCAyMDE5IDY6NDAgQU0NClRvOiBN
-b29yZSwgUm9iZXJ0IDxyb2JlcnQubW9vcmVAaW50ZWwuY29tPjsgTmljayBEZXNhdWxuaWVycyA8
-bmRlc2F1bG5pZXJzQGdvb2dsZS5jb20+DQpDYzogV3lzb2NraSwgUmFmYWVsIEogPHJhZmFlbC5q
-Lnd5c29ja2lAaW50ZWwuY29tPjsgU2NobWF1c3MsIEVyaWsgPGVyaWsuc2NobWF1c3NAaW50ZWwu
-Y29tPjsgamtpbUBmcmVlYnNkLm9yZzsgTGVuIEJyb3duIDxsZW5iQGtlcm5lbC5vcmc+OyBsaW51
-eC1hY3BpQHZnZXIua2VybmVsLm9yZzsgZGV2ZWxAYWNwaWNhLm9yZzsgY2xhbmctYnVpbHQtbGlu
-dXggPGNsYW5nLWJ1aWx0LWxpbnV4QGdvb2dsZWdyb3Vwcy5jb20+OyBMS01MIDxsaW51eC1rZXJu
-ZWxAdmdlci5rZXJuZWwub3JnPg0KU3ViamVjdDogUmU6IFtQQVRDSF0gYWNwaWNhOiBmaXggLVdu
-dWxsLXBvaW50ZXItYXJpdGhtZXRpYyB3YXJuaW5ncw0KDQpPbiBUdWUsIDIwMTktMDctMjMgYXQg
-MjA6NDkgKzAwMDAsIE1vb3JlLCBSb2JlcnQgd3JvdGU6DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBR
-aWFuIENhaSA8Y2FpQGxjYS5wdz4NCj4gPiA+IC0tLQ0KPiA+ID4gaW5jbHVkZS9hY3BpL2FjdHlw
-ZXMuaCB8IDQgKystLQ0KPiA+ID4gMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBk
-ZWxldGlvbnMoLSkNCj4gPiA+IA0KPiA+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvYWNwaS9hY3R5
-cGVzLmggYi9pbmNsdWRlL2FjcGkvYWN0eXBlcy5oIGluZGV4DQo+ID4gPiBhZDY4OTJhMjQwMTUu
-LjI1YjRhMzJkYTE3NyAxMDA2NDQNCj4gPiA+IC0tLSBhL2luY2x1ZGUvYWNwaS9hY3R5cGVzLmgN
-Cj4gPiA+ICsrKyBiL2luY2x1ZGUvYWNwaS9hY3R5cGVzLmgNCj4gPiA+IEBAIC01MDAsMTMgKzUw
-MCwxMyBAQCB0eXBlZGVmIHU2NCBhY3BpX2ludGVnZXI7DQo+ID4gPiANCj4gPiA+ICNkZWZpbmUg
-QUNQSV9DQVNUX1BUUih0LCBwKcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgKCh0ICopIChhY3Bp
-X3VpbnRwdHJfdCkgDQo+ID4gPiAocCkpICNkZWZpbmUgQUNQSV9DQVNUX0lORElSRUNUX1BUUih0
-LCBwKcKgwqDCoMKgKCh0ICoqKSANCj4gPiA+IChhY3BpX3VpbnRwdHJfdCkgKHApKSAtI2RlZmlu
-ZSBBQ1BJX0FERF9QVFIodCwgYSwgYinCoMKgwqDCoMKgwqDCoMKgwqDCoMKgDQo+ID4gPiBBQ1BJ
-X0NBU1RfUFRSICh0LCAoQUNQSV9DQVNUX1BUUiAodTgsIChhKSkgKyAoYWNwaV9zaXplKShiKSkp
-DQo+ID4gPiArI2RlZmluZSBBQ1BJX0FERF9QVFIodCwgYSwgYinCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgQUNQSV9DQVNUX1BUUiAodCwgKGEpICsNCj4gPiA+IChhY3BpX3NpemUpKGIpKQ0KPiANCj4g
-V2UgaGF2ZSBzb21lIHF1ZXN0aW9ucyBjb25jZXJuaW5nIHRoaXMgY2hhbmdlLiBJZiAoYSkgaXMg
-bm90IGNhc3QgdG8gYSANCj4gdTgsIHRoZSBhZGRpdGlvbiB3aWxsIGJlIGluIHdoYXRldmVyIHVu
-aXRzIGFyZSBhcHByb3ByaWF0ZSBmb3IgKGEpIA0KPiBpLmUuLCB0aGUgdHlwZSBvZiAoYSkuIEhv
-d2V2ZXIsIHdlIHdhbnQgQUNQSV9BRERfUFRSIChBbmQgDQo+IEFDUElfU1VCX1BUUikgdG8gc2lt
-cGx5IHBlcmZvcm0gYSBieXRlIGFkZGl0aW9uIG9yIHN1YnRyYWN0aW9uIC0gdGh1cyANCj4gdGhl
-IGNhc3QgdG8gdTguIEkgYmVsaWV2ZSB0aGF0IGlzIHRoZSBvcmlnaW5hbCB0aGlua2luZyBiZWhp
-bmQgdGhlIG1hY3Jvcy4NCg0KSSBwb3N0ZWQgYSB2MiBhIHdoaWxlIGFnbywgYW5kIHNob3VsZCBj
-bGVhciB0aGlzIGNvbmNlcm4uDQoNCk9LIHRoZW4gdGhpcyBjaGFuZ2Ugb25seSBhZmZlY3RzIEFD
-UElfVE9fUE9JTlRFUj8NCg0KKyNkZWZpbmUgQUNQSV9UT19QT0lOVEVSKGkpICAgICAgICAgICAg
-ICBBQ1BJX0NBU1RfUFRSICh2b2lkLCBpKQ0KDQoNCj4gDQo+ID4gPiAjZGVmaW5lIEFDUElfU1VC
-X1BUUih0LCBhLCBiKcKgwqDCoMKgwqDCoMKgwqDCoMKgwqBBQ1BJX0NBU1RfUFRSICh0LCANCj4g
-PiA+IChBQ1BJX0NBU1RfUFRSICh1OCwgKGEpKSAtIChhY3BpX3NpemUpKGIpKSkgI2RlZmluZSAN
-Cj4gPiA+IEFDUElfUFRSX0RJRkYoYSwgYinCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCgoYWNw
-aV9zaXplKSAoQUNQSV9DQVNUX1BUUiAodTgsDQo+ID4gPiAoYSkpIC0gQUNQSV9DQVNUX1BUUiAo
-dTgsIChiKSkpKQ0KPiA+ID4gDQo+ID4gPiAvKiBQb2ludGVyL0ludGVnZXIgdHlwZSBjb252ZXJz
-aW9ucyAqLw0KPiA+ID4gDQo+ID4gPiAtI2RlZmluZSBBQ1BJX1RPX1BPSU5URVIoaSnCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgQUNQSV9BRERfUFRSICh2b2lkLCAodm9pZCANCj4gPiA+ICop
-IDAsDQo+ID4gPiAoYWNwaV9zaXplKSAoaSkpDQo+ID4gPiArI2RlZmluZSBBQ1BJX1RPX1BPSU5U
-RVIoaSnCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgQUNQSV9BRERfUFRSICh2b2lkLCAwLA0K
-PiA+ID4gKGFjcGlfc2l6ZSkgKGkpKQ0KPiA+IA0KPiA+IElJVUMsIHRoZXNlIGFyZSBhZGRpbmcg
-YGlgIHRvIE5VTEwgKG9yICh2b2lkKikwKT8gWCArIDAgPT0gWCA/DQo+ID4gLS0NCj4gPiBUaGFu
-a3MsDQo+ID4gfk5pY2sgRGVzYXVsbmllcnMNCj4gDQo+IA0K
+On Wed 24-07-19 10:11:05, Qian Cai wrote:
+> On Wed, 2019-07-24 at 22:07 +0800, YueHaibing wrote:
+> > 'new_start' is used in is_hugepage_only_range(),
+> > which do nothing in some arch. gcc will warning:
+> > 
+> > mm/mmap.c: In function acct_stack_growth:
+> > mm/mmap.c:2311:16: warning: variable new_start set but not used [-Wunused-but-
+> > set-variable]
+> 
+> Nope. Convert them to inline instead.
+
+Agreed. Obfuscating the code is not really something we want.
+
+> > Reported-by: Hulk Robot <hulkci@huawei.com>
+> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > ---
+> >  mm/mmap.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/mm/mmap.c b/mm/mmap.c
+> > index e2dbed3..56c2a92 100644
+> > --- a/mm/mmap.c
+> > +++ b/mm/mmap.c
+> > @@ -2308,7 +2308,7 @@ static int acct_stack_growth(struct vm_area_struct *vma,
+> >  			     unsigned long size, unsigned long grow)
+> >  {
+> >  	struct mm_struct *mm = vma->vm_mm;
+> > -	unsigned long new_start;
+> > +	unsigned long __maybe_unused new_start;
+> >  
+> >  	/* address space limit tests */
+> >  	if (!may_expand_vm(mm, vma->vm_flags, grow))
+
+-- 
+Michal Hocko
+SUSE Labs
