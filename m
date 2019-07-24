@@ -2,75 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B9D872AF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 11:01:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7543D72AFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 11:01:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbfGXJBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 05:01:07 -0400
-Received: from relay.sw.ru ([185.231.240.75]:42698 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726070AbfGXJBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 05:01:07 -0400
-Received: from [172.16.25.12]
-        by relay.sw.ru with esmtp (Exim 4.92)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1hqD8l-0002uA-D6; Wed, 24 Jul 2019 12:00:51 +0300
-Subject: Re: [PATCH] kmemleak: Increase maximum early log entries to 1000000
-To:     Nicolas Boichat <drinkcat@chromium.org>,
-        Dmitry Vyukov <dvyukov@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Changbin Du <changbin.du@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Catalin Marinas <catalin.marinas@arm.com>
-References: <20190723072605.103456-1-drinkcat@chromium.org>
- <CACT4Y+bi5KkZ8igSeYVxjwtr8t0Vjz55gzWfAu_c8VMAqw0zPA@mail.gmail.com>
- <CANMq1KB8ECeRqNhSWyUf3amAkF7qvAmS3aU6rGNnZ=kUV3LC5Q@mail.gmail.com>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <095e2bc3-9284-e72d-8ed8-e2c6ec3f7c23@virtuozzo.com>
-Date:   Wed, 24 Jul 2019 12:00:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727000AbfGXJBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 05:01:20 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:30480 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726845AbfGXJBR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 05:01:17 -0400
+X-UUID: e67dbddc74e740a39f091c19eced7d67-20190724
+X-UUID: e67dbddc74e740a39f091c19eced7d67-20190724
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <ryder.lee@kernel.org>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 891942373; Wed, 24 Jul 2019 17:01:03 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 24 Jul 2019 17:01:01 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 24 Jul 2019 17:01:01 +0800
+From:   <ryder.lee@kernel.org>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Weijie Gao <weijie.gao@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH 1/2] arm: dts: mt7623: add Mali-450 device node
+Date:   Wed, 24 Jul 2019 17:00:59 +0800
+Message-ID: <af7b5a2e00eb3a4b6262807c378e43afd5f74779.1563867856.git.ryder.lee@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-In-Reply-To: <CANMq1KB8ECeRqNhSWyUf3amAkF7qvAmS3aU6rGNnZ=kUV3LC5Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Ryder Lee <ryder.lee@mediatek.com>
 
+Add a node for Mali-450.
 
-On 7/23/19 11:13 AM, Nicolas Boichat wrote:
-> On Tue, Jul 23, 2019 at 3:46 PM Dmitry Vyukov <dvyukov@google.com> wrote:
->>
->> On Tue, Jul 23, 2019 at 9:26 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
->>>
->>> When KASan is enabled, a lot of memory is allocated early on,
->>> and kmemleak complains (this is on a 4GB RAM system):
->>> kmemleak: Early log buffer exceeded (129846), please increase
->>>   DEBUG_KMEMLEAK_EARLY_LOG_SIZE
->>>
->>> Let's increase the upper limit to 1M entry. That would take up
->>> 160MB of RAM at init (each early_log entry is 160 bytes), but
->>> the memory would later be freed (early_log is __initdata).
->>
->> Interesting. Is it on an arm64 system?
-> 
-> Yes arm64. And this is chromiumos-4.19 tree. I didn't try to track
-> down where these allocations come from...
-> 
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+---
+kmscube as well as X11 EGL tests work fine (use Lima driver).
+---
+ arch/arm/boot/dts/mt7623.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-Is this still a problem in upstream tree? 4.19 doesn't have fed84c785270 ("mm/memblock.c: skip kmemleak for kasan_init()")
+diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
+index a79f0b6c3429..6a9c5afb9a36 100644
+--- a/arch/arm/boot/dts/mt7623.dtsi
++++ b/arch/arm/boot/dts/mt7623.dtsi
+@@ -3,6 +3,7 @@
+  * Copyright (c) 2017-2018 MediaTek Inc.
+  * Author: John Crispin <john@phrozen.org>
+  *	   Sean Wang <sean.wang@mediatek.com>
++ *	   Ryder Lee <ryder.lee@mediatek.com>
+  *
+  */
+ 
+@@ -733,6 +734,30 @@
+ 		#reset-cells = <1>;
+ 	};
+ 
++	mali: gpu@13040000 {
++		compatible = "mediatek,mt7623-mali", "arm,mali-450";
++		reg = <0 0x13040000 0 0x30000>;
++		interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 171 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 172 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 173 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 174 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 175 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 176 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 177 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 178 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 179 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 180 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-names = "gp", "gpmmu", "pp0", "ppmmu0", "pp1",
++				  "ppmmu1", "pp2", "ppmmu2", "pp3", "ppmmu3",
++				  "pp";
++		clocks = <&topckgen CLK_TOP_MMPLL>,
++			 <&g3dsys CLK_G3DSYS_CORE>;
++		clock-names = "bus", "core";
++		power-domains = <&scpsys MT2701_POWER_DOMAIN_MFG>;
++		resets = <&g3dsys MT2701_G3DSYS_CORE_RST>;
++	};
++
+ 	mmsys: syscon@14000000 {
+ 		compatible = "mediatek,mt7623-mmsys",
+ 			     "mediatek,mt2701-mmsys",
+-- 
+2.18.0
 
