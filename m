@@ -2,129 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D693C73D3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:15:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E86F73DB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:19:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392718AbfGXUPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:15:41 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.35]:40758 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391749AbfGXTwk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:52:40 -0400
-X-Greylist: delayed 1414 seconds by postgrey-1.27 at vger.kernel.org; Wed, 24 Jul 2019 15:52:39 EDT
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 8DD10BEFB
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 14:29:04 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id qMwihIvfhiQerqMwihixOu; Wed, 24 Jul 2019 14:29:04 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=m/W0rgsCmtoOnzt1mA4FDPGJhanOVxv0dWFZlQcN8M8=; b=uDBWfruL3NbyOxjd/AwgqcMwuK
-        MmFVbgk36/XVXGl8IkfM8MAEyLFItvjvg7z1fNpy1CsRqibT9kMAXBJRJRhT+vmpArse62BOeI58Y
-        vnLcumn2KQWPxKn8ePdSBWqkP1RiEF+Fs6iQeCLxpvyYaM0zcAcAV05irPNzpU/oqY29dncu6Um40
-        GPhgtMa+hmFL0RCZ+vbRBazFBJol4l1z+/9SteEpTdnrd0McV1T40knX7p8gvQV4gwwSd8vydubAD
-        V84FW4sRjTG16EwjJ4Bu5CmtrkH1Ox1LxGMxuFdPVY3iV9Ly6Xq4Bo2eID4aXUCCKyOkgy+tKHJ62
-        GwuU2uBA==;
-Received: from cablelink-187-160-61-189.pcs.intercable.net ([187.160.61.189]:55046 helo=[192.168.0.8])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hqMwi-001e1T-98; Wed, 24 Jul 2019 14:29:04 -0500
-Subject: Re: [PATCH] Input: elantech - mark expected switch fall-through
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190724175202.GA9583@embeddedor> <20190724192528.GA6859@penguin>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+        id S2392871AbfGXUTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:19:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41280 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726430AbfGXTr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:47:57 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 37F2230C1E37;
+        Wed, 24 Jul 2019 19:47:56 +0000 (UTC)
+Received: from [10.36.116.35] (ovpn-116-35.ams2.redhat.com [10.36.116.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1801918231;
+        Wed, 24 Jul 2019 19:47:24 +0000 (UTC)
+Subject: Re: [PATCH v2 0/5] mm / virtio: Provide support for page hinting
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        kvm@vger.kernel.org, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, yang.zhang.wz@gmail.com,
+        pagupta@redhat.com, riel@surriel.com, konrad.wilk@oracle.com,
+        lcapitulino@redhat.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com,
+        alexander.h.duyck@linux.intel.com
+References: <20190724165158.6685.87228.stgit@localhost.localdomain>
+ <0c520470-4654-cdf2-cf4d-d7c351d25e8b@redhat.com>
+ <f7578309-dd36-bda0-6a30-34a6df21faca@redhat.com>
+ <20190724153003-mutt-send-email-mst@kernel.org>
+From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <2fc127b8-5315-4665-2693-5d85e989033c@embeddedor.com>
-Date:   Wed, 24 Jul 2019 14:29:02 -0500
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <b3279b70-7a64-a456-cbfa-2a5ec3e9468e@redhat.com>
+Date:   Wed, 24 Jul 2019 21:47:24 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20190724192528.GA6859@penguin>
+In-Reply-To: <20190724153003-mutt-send-email-mst@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.160.61.189
-X-Source-L: No
-X-Exim-ID: 1hqMwi-001e1T-98
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: cablelink-187-160-61-189.pcs.intercable.net ([192.168.0.8]) [187.160.61.189]:55046
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 24 Jul 2019 19:47:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
+On 24.07.19 21:31, Michael S. Tsirkin wrote:
+> On Wed, Jul 24, 2019 at 08:41:33PM +0200, David Hildenbrand wrote:
+>> On 24.07.19 20:40, Nitesh Narayan Lal wrote:
+>>>
+>>> On 7/24/19 12:54 PM, Alexander Duyck wrote:
+>>>> This series provides an asynchronous means of hinting to a hypervisor
+>>>> that a guest page is no longer in use and can have the data associated
+>>>> with it dropped. To do this I have implemented functionality that allows
+>>>> for what I am referring to as page hinting
+>>>>
+>>>> The functionality for this is fairly simple. When enabled it will allocate
+>>>> statistics to track the number of hinted pages in a given free area. When
+>>>> the number of free pages exceeds this value plus a high water value,
+>>>> currently 32,
+>>> Shouldn't we configure this to a lower number such as 16?
+>>>>  it will begin performing page hinting which consists of
+>>>> pulling pages off of free list and placing them into a scatter list. The
+>>>> scatterlist is then given to the page hinting device and it will perform
+>>>> the required action to make the pages "hinted", in the case of
+>>>> virtio-balloon this results in the pages being madvised as MADV_DONTNEED
+>>>> and as such they are forced out of the guest. After this they are placed
+>>>> back on the free list, and an additional bit is added if they are not
+>>>> merged indicating that they are a hinted buddy page instead of a standard
+>>>> buddy page. The cycle then repeats with additional non-hinted pages being
+>>>> pulled until the free areas all consist of hinted pages.
+>>>>
+>>>> I am leaving a number of things hard-coded such as limiting the lowest
+>>>> order processed to PAGEBLOCK_ORDER,
+>>> Have you considered making this option configurable at the compile time?
+>>>>  and have left it up to the guest to
+>>>> determine what the limit is on how many pages it wants to allocate to
+>>>> process the hints.
+>>> It might make sense to set the number of pages to be hinted at a time from the
+>>> hypervisor.
+>>>>
+>>>> My primary testing has just been to verify the memory is being freed after
+>>>> allocation by running memhog 79g on a 80g guest and watching the total
+>>>> free memory via /proc/meminfo on the host. With this I have verified most
+>>>> of the memory is freed after each iteration. As far as performance I have
+>>>> been mainly focusing on the will-it-scale/page_fault1 test running with
+>>>> 16 vcpus. With that I have seen at most a 2% difference between the base
+>>>> kernel without these patches and the patches with virtio-balloon disabled.
+>>>> With the patches and virtio-balloon enabled with hinting the results
+>>>> largely depend on the host kernel. On a 3.10 RHEL kernel I saw up to a 2%
+>>>> drop in performance as I approached 16 threads,
+>>> I think this is acceptable.
+>>>>  however on the the lastest
+>>>> linux-next kernel I saw roughly a 4% to 5% improvement in performance for
+>>>> all tests with 8 or more threads. 
+>>> Do you mean that with your patches the will-it-scale/page_fault1 numbers were
+>>> better by 4-5% over an unmodified kernel?
+>>>> I believe the difference seen is due to
+>>>> the overhead for faulting pages back into the guest and zeroing of memory.
+>>> It may also make sense to test these patches with netperf to observe how much
+>>> performance drop it is introducing.
+>>>> Patch 4 is a bit on the large side at about 600 lines of change, however
+>>>> I really didn't see a good way to break it up since each piece feeds into
+>>>> the next. So I couldn't add the statistics by themselves as it didn't
+>>>> really make sense to add them without something that will either read or
+>>>> increment/decrement them, or add the Hinted state without something that
+>>>> would set/unset it. As such I just ended up adding the entire thing as
+>>>> one patch. It makes it a bit bigger but avoids the issues in the previous
+>>>> set where I was referencing things before they had been added.
+>>>>
+>>>> Changes from the RFC:
+>>>> https://lore.kernel.org/lkml/20190530215223.13974.22445.stgit@localhost.localdomain/
+>>>> Moved aeration requested flag out of aerator and into zone->flags.
+>>>> Moved bounary out of free_area and into local variables for aeration.
+>>>> Moved aeration cycle out of interrupt and into workqueue.
+>>>> Left nr_free as total pages instead of splitting it between raw and aerated.
+>>>> Combined size and physical address values in virtio ring into one 64b value.
+>>>>
+>>>> Changes from v1:
+>>>> https://lore.kernel.org/lkml/20190619222922.1231.27432.stgit@localhost.localdomain/
+>>>> Dropped "waste page treatment" in favor of "page hinting"
+>>> We may still have to try and find a better name for virtio-balloon side changes.
+>>> As "FREE_PAGE_HINT" and "PAGE_HINTING" are still confusing.
+>>
+>> We should have named that free page reporting, but that train already
+>> has left.
 > 
-> Thank you for the patch but I already pushed out similar patch.
-> 
+> I think VIRTIO_BALLOON_F_FREE_PAGE_HINT is different and arguably
+> actually does provide hints.
 
-Great. Good to know it's already fixed. :)
+I guess it depends on the point of view (e.g., getting all free pages
+feels more like a report). But I could also live with using the term
+reporting in this context.
 
-Thanks
---
-Gustavo
+We could go ahead and name it all "page reporting", would also work for me.
+
+-- 
+
+Thanks,
+
+David / dhildenb
