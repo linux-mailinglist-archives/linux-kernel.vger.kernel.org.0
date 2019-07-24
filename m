@@ -2,58 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 226157352A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:23:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22C2273528
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:23:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbfGXRX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 13:23:26 -0400
-Received: from mx4.wp.pl ([212.77.101.12]:54010 "EHLO mx4.wp.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727313AbfGXRXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 13:23:25 -0400
-X-Greylist: delayed 478 seconds by postgrey-1.27 at vger.kernel.org; Wed, 24 Jul 2019 13:23:25 EDT
-Received: (wp-smtpd smtp.wp.pl 30481 invoked from network); 24 Jul 2019 19:16:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=1024a;
-          t=1563988604; bh=z41DzGtUFzaWWcpQAVjI+8rAtK/VXbLYrGHn+dMjo3I=;
-          h=From:To:Cc:Subject;
-          b=YeeC3awkT/FVcvjk+fURFqdyv0r3NGECJaqSruBjt2MEMxHyXyddFZaA64nkaxrka
-           0lLpbm0O7VZrCjgigBSnZ19v6fCSXRbOMwIZThg3hxH5pulTydVwW1xI4EtrctTXRp
-           wUor382uyQhCqpSoEE8V8sOX195Tb9e+kJQh7ApQ=
-Received: from 014.152-60-66-biz-static.surewest.net (HELO cakuba.netronome.com) (kubakici@wp.pl@[66.60.152.14])
-          (envelope-sender <kubakici@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <navid.emamdoost@gmail.com>; 24 Jul 2019 19:16:43 +0200
-Date:   Wed, 24 Jul 2019 10:16:36 -0700
-From:   Jakub Kicinski <kubakici@wp.pl>
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     kvalo@codeaurora.org, emamd001@umn.edu, kjlu@umn.edu,
-        smccaman@umn.edu, secalert@redhat.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mt7601u: null check the allocation
-Message-ID: <20190724101636.4699c30a@cakuba.netronome.com>
-In-Reply-To: <20190724141736.29994-1-navid.emamdoost@gmail.com>
-References: <87d0i00z4t.fsf@kamboji.qca.qualcomm.com>
-        <20190724141736.29994-1-navid.emamdoost@gmail.com>
+        id S1728491AbfGXRRS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 13:17:18 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34464 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728453AbfGXRRQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 13:17:16 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id 2CDFB28B603
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>
+Cc:     kernel@collabora.com,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        linux-rockchip@lists.infradead.org,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        fbuergisser@chromium.org, linux-kernel@vger.kernel.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Subject: [PATCH 0/7] hantro: Add RK3399 VP8 decoding support
+Date:   Wed, 24 Jul 2019 14:16:55 -0300
+Message-Id: <20190724171702.9449-1-ezequiel@collabora.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-WP-MailID: fe13a5d9e194338bda75b16965620f67
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 000000A [QTPk]                               
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 24 Jul 2019 09:17:36 -0500, Navid Emamdoost wrote:
-> devm_kzalloc may fail and return NULL. So the null check is needed.
-> 
-> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+This series adds VP8 decoding support on RK3399 SoC.
 
-Ah, I replied to the wrong one..
+I'm including a set of commits from Boris' recent H264 series [1].
+These commits add some helpers that are also useful for RK3399 VP8,
+and at the same time cleanup the driver nicely.
 
-Acked-by: Jakub Kicinski <kubakici@wp.pl>
+Finally, there's a fix by Francois Buergisser from Chromium team.
+
+VP8 and MPEG-2 tested on RK3399 RockPi and RK3288 Rock2 boards.
+
+[1] https://patchwork.kernel.org/cover/11003971/
+
+Boris Brezillon (4):
+  media: hantro: Simplify the controls creation logic
+  media: hantro: Constify the control array
+  media: hantro: Add hantro_get_{src,dst}_buf() helpers
+  media: hantro: Add helpers to prepare/finish a run
+
+Ezequiel Garcia (1):
+  media: hantro: Move VP8 common code
+
+Francois Buergisser (1):
+  media: hantro: Set DMA max segment size
+
+Jeffy Chen (1):
+  media: hantro: Support RK3399 VP8 decoding
+
+ drivers/staging/media/hantro/Makefile         |   1 +
+ drivers/staging/media/hantro/hantro.h         |  15 +-
+ drivers/staging/media/hantro/hantro_drv.c     |  53 +-
+ .../media/hantro/hantro_g1_mpeg2_dec.c        |  14 +-
+ .../staging/media/hantro/hantro_g1_vp8_dec.c  |  34 +-
+ .../staging/media/hantro/hantro_h1_jpeg_enc.c |  11 +-
+ drivers/staging/media/hantro/hantro_hw.h      |   7 +
+ drivers/staging/media/hantro/hantro_vp8.c     |  15 +
+ drivers/staging/media/hantro/rk3399_vpu_hw.c  |  22 +-
+ .../media/hantro/rk3399_vpu_hw_jpeg_enc.c     |  12 +-
+ .../media/hantro/rk3399_vpu_hw_mpeg2_dec.c    |  14 +-
+ .../media/hantro/rk3399_vpu_hw_vp8_dec.c      | 597 ++++++++++++++++++
+ 12 files changed, 711 insertions(+), 84 deletions(-)
+ create mode 100644 drivers/staging/media/hantro/rk3399_vpu_hw_vp8_dec.c
+
+-- 
+2.22.0
+
