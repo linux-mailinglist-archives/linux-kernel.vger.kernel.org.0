@@ -2,128 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E82B9729A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:13:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 653AE72996
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:13:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726277AbfGXINS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 04:13:18 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38085 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbfGXINP (ORCPT
+        id S1726190AbfGXINO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 04:13:14 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:51279 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725826AbfGXINO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 04:13:15 -0400
-Received: by mail-ed1-f66.google.com with SMTP id r12so11512750edo.5
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 01:13:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:cc;
-        bh=+rNRJY68IIsD9nh+g9TvsIleBslPfLPXnzcgzuZEN48=;
-        b=I3P1lO6M7mukJ8KziuxO4lwxZaCAEl58oUX+PO1XCwcZyQwz3JtUDGwgufNide1IPU
-         Q7YNLXYcjqeHdQKGY8/cvpw/sv2h35skgV1k8YlZlW62GNfBPPbi2nnAOeqYJbShHm3v
-         2F0rU4+6x5NgLoN7doN5wb9j0sy1IHdQNCfp9aGSubZjGl9sAGRLy9lZnO6NzIlopx6V
-         RUIjlm5lSh9geksn3AT3RAcweH/lhkcgrj0rPndv/4XXANjOlLSnFo2VDcab+7jus4fg
-         +zCdTioMfVUew0SNjSjaVkFZh4eQItDnlcrwolp7ZBtE4vMSr3/VpMqgYcWfJkk1GGDg
-         bsmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:cc;
-        bh=+rNRJY68IIsD9nh+g9TvsIleBslPfLPXnzcgzuZEN48=;
-        b=tYEJByjbHoaCWu14VLGYPu7DZgt/OI4ZfOcPGYMnIwdZMXH0st4946WHig19H3v31S
-         YEZS89GRnvUPNpeADw12uLzu3Qgj6NvlIqWIN9BJj3zWQBrTHdWs0maJ20CWxiViTD3W
-         T+NP2gIit8g42Hy8uv/iwSXwc8NIlAPQEdL/Yg1ln3pfnNf/cwC4FMmVc4q9RJcGCtTC
-         hU9fMBB6hz1cKtG1nyyUmK38WB6U4ATUNNNewf74PKqXzbsijyMnEfJXnYaCamagzRQ7
-         ViTo1g+0UfeiCDVmrOQHGeWRerwUu+gBrkHpQd+KIYpi1sGJEeqM64MiJRn7zltUzkoB
-         uSAw==
-X-Gm-Message-State: APjAAAUx9p/lI/Nh84BgwO0nSCXvsl/hE9uN4g+yPWVK+qjsrMTJzFu0
-        pPD2p3WH4GSz9z+hxhcF64PWAFhRZCkWI5tmeGc=
-X-Received: by 2002:a05:6402:896:: with SMTP id e22mt65279499edy.202.1563955993753;
- Wed, 24 Jul 2019 01:13:13 -0700 (PDT)
+        Wed, 24 Jul 2019 04:13:14 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id A211B1BE7;
+        Wed, 24 Jul 2019 04:13:12 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Wed, 24 Jul 2019 04:13:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
+        :to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=Z9cu/jAfTLPXGSW6gAaNx3qAdg
+        J+sFyDlgrk5M8Y63Q=; b=k+q7UAhcAM26oYO9hUAagwzL+hrHSR5s1p4h3DUQVf
+        U3oIxLHjx4rde1dUZb3afCorQ47ps3UvIeWll38clz3gIQSrUXZLsTcKduGXhJig
+        M5TDhditvHG6Wpop8EwwNbYeJOnupyh8HCP8xRxD7xR1W4bdWBlh+HnWy14AWr1a
+        ehnYd/38CqNYPW1mhoKfUl+eL3Wu+4+BY5YQgXq+KptsKc2Vi5XE7KfpAnEC7S0n
+        7u12uMdmE7Z+VlUwF/3clczCW9aT8DZDgvBVyEZVgOpT7E1wUXoR3kc0DR6CAO6M
+        ChGbhsmZvMPQGfJ5ueLDxtjr9VYqFbbY7H2CC5W3lUoQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=Z9cu/jAfTLPXGSW6g
+        AaNx3qAdgJ+sFyDlgrk5M8Y63Q=; b=GFIe5u//MOSehrg4pLFa6fzeaefHTTHsC
+        KcE4DtVvZqDdLSceuqsQt74U+Fx+UA3axFB9xLje/Zb6P1GbPk/I4g4I1j561/1r
+        JzAKtd/Ra8UErE38HeG12g3eV73lZy4jnhHUYVIb64bSM0gfwDAUphRHwrYKXtrJ
+        qcXBgtxmr8wPK7lxymd27AgKja3OcGk3WvlTLUm+8pw0XePcfUqVQmuW8hVszxgf
+        J94UMeUPDWMiSyGdSwbJgC5+VrurGAoy2Dr65wseWzAuvVyQ+1rQWo6KnC3C8iIt
+        wWnie7Fzf/Nf5il8bON/iYJWq8WO2hRRaXvbAUjIdQaZKVncbKs5Q==
+X-ME-Sender: <xms:FhM4XdYl6s_v0frgxQfX-eAxBSB57mw8dBAcmK27Bs_7YjhXcUg_pQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrjeelgdduvdelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofgggfestdekredtre
+    dttdenucfhrhhomheptehnughrvgifucflvghffhgvrhihuceorghnughrvgifsegrjhdr
+    ihgurdgruheqnecukfhppedvtddvrdekuddrudekrdeftdenucfrrghrrghmpehmrghilh
+    hfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:FhM4XToB9bhuKD6ybOqqYrcDVYdn-dvk50NL61v-LwO7mQPfIfvx3Q>
+    <xmx:FhM4XcI2RIvOldexMpK96YaIO-5G9jytay0HYhfJ-Ztm1QwL-a8F_A>
+    <xmx:FhM4XWbVBuikG1oH89_lRhBz9FV561KMHpeEQTIfLsvmUBKtopUwqA>
+    <xmx:GBM4XVPmw2y04_DCBD8HGgbOG8QP_NcgdJT1ysI4NMLMBin7QWcMMg>
+Received: from mistburn.au.ibm.com (bh02i525f01.au.ibm.com [202.81.18.30])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 97BA080060;
+        Wed, 24 Jul 2019 04:13:06 -0400 (EDT)
+From:   Andrew Jeffery <andrew@aj.id.au>
+To:     linux-aspeed@lists.ozlabs.org
+Cc:     Andrew Jeffery <andrew@aj.id.au>, lee.jones@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, joel@jms.id.au,
+        linus.walleij@linaro.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH 0/3] ARM: dts: aspeed: Deprecate g[45]-style compatibles
+Date:   Wed, 24 Jul 2019 17:43:10 +0930
+Message-Id: <20190724081313.12934-1-andrew@aj.id.au>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190724060512.23899-1-hslester96@gmail.com>
-In-Reply-To: <20190724060512.23899-1-hslester96@gmail.com>
-From:   Chuhong Yuan <hslester96@gmail.com>
-Date:   Wed, 24 Jul 2019 16:13:03 +0800
-Message-ID: <CANhBUQ0gYF+cF1EjfSA-WVvAKipQHWgkasXN91mphHYsZV+uMQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 0/8] Use dev_get_drvdata where possible
-Cc:     Steffen Klassert <klassert@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jay Cliburn <jcliburn@gmail.com>,
-        Chris Snook <chris.snook@gmail.com>,
-        Rasesh Mody <rmody@marvell.com>,
-        Michael Chan <michael.chan@broadcom.com>,
-        Siva Reddy Kallam <siva.kallam@broadcom.com>,
-        Prashant Sreedharan <prashant@broadcom.com>,
-        GR-Linux-NIC-Dev@marvell.com,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Guo-Fu Tseng <cooldavid@cooldavid.org>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 2:05 PM Chuhong Yuan <hslester96@gmail.com> wrote:
->
-> These patches use dev_get_drvdata instead of
-> using to_pci_dev + pci_get_drvdata to make
-> code simpler where possible.
->
-> Changelog:
->
-> v1 -> v2:
-> - Change pci_set_drvdata to dev_set_drvdata
->   to keep consistency.
->
+Hello,
 
-Hi all,
-I checked the cases which mentioned the consistency
-of get/set_drvdata usages.
-The cases' commit IDs are
-488d040e3a3452a0dceef5d3ec4f61942262f57f
-b77c98780e682fe780d899b91543769d4cf94585
+Joel and I decided that going forward we're not going to name compatibles along
+the lines of SoC generations, so discourage any further attempts by removing
+the remaining instances.
 
-After checking, I think that the consistency problem
-refers to inconsistency between probe and remove.
-But the changes of these patches are not related
-to probe and remove.
+It's probably best if we push the three patches all through one tree rather
+than fragmenting. Is everyone happy if Joel applies them to the aspeed tree?
 
-So I think the previously sent and applied v1 patches
-which do not change pci_set_drvdata to dev_set_drvdata
-are okay.
-Therefore there may be no need to use these v2 patches.
+Cheers,
 
-Regards,
-Chuhong
+Andrew
 
+Andrew Jeffery (3):
+  dts: ARM: aspeed: Migrate away from aspeed,g[45].* compatibles
+  pinctrl: aspeed: Document existence of deprecated compatibles
+  dt-bindings: aspeed: Remove mention of deprecated compatibles
 
-> Chuhong Yuan (8):
->   net: 3com: 3c59x: Use dev_get_drvdata
->   net: atheros: Use dev_get_drvdata
->   net: broadcom: Use dev_get_drvdata
->   e1000e: Use dev_get_drvdata where possible
->   fm10k: Use dev_get_drvdata
->   i40e: Use dev_get_drvdata
->   igb: Use dev_get_drvdata where possible
->   net: jme: Use dev_get_drvdata
->
->  drivers/net/ethernet/3com/3c59x.c               |  8 +++-----
->  drivers/net/ethernet/atheros/alx/main.c         |  8 +++-----
->  drivers/net/ethernet/atheros/atl1c/atl1c_main.c | 10 ++++------
->  drivers/net/ethernet/atheros/atlx/atl1.c        |  8 +++-----
->  drivers/net/ethernet/broadcom/bnx2.c            |  8 +++-----
->  drivers/net/ethernet/broadcom/bnxt/bnxt.c       |  8 +++-----
->  drivers/net/ethernet/broadcom/tg3.c             |  8 +++-----
->  drivers/net/ethernet/intel/e1000e/netdev.c      |  9 ++++-----
->  drivers/net/ethernet/intel/fm10k/fm10k_pci.c    |  6 +++---
->  drivers/net/ethernet/intel/i40e/i40e_main.c     | 10 ++++------
->  drivers/net/ethernet/intel/igb/igb_main.c       |  5 ++---
->  drivers/net/ethernet/jme.c                      |  8 +++-----
->  12 files changed, 38 insertions(+), 58 deletions(-)
->
-> --
-> 2.20.1
->
+ Documentation/devicetree/bindings/mfd/aspeed-scu.txt         | 2 --
+ Documentation/devicetree/bindings/misc/aspeed-p2a-ctrl.txt   | 2 --
+ .../devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.yaml  | 5 +----
+ .../devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml  | 4 +---
+ arch/arm/boot/dts/aspeed-g4.dtsi                             | 2 +-
+ arch/arm/boot/dts/aspeed-g5.dtsi                             | 2 +-
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c                   | 4 ++++
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c                   | 4 ++++
+ 8 files changed, 12 insertions(+), 13 deletions(-)
+
+-- 
+2.20.1
+
