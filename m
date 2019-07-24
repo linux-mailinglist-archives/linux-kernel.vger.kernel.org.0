@@ -2,123 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B638473807
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F75073812
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:26:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729175AbfGXTZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:25:16 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:44113 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727559AbfGXTZG (ORCPT
+        id S1729188AbfGXTZq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:25:46 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43303 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388043AbfGXTZh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:25:06 -0400
-Received: by mail-qk1-f196.google.com with SMTP id d79so34584185qke.11
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:25:06 -0700 (PDT)
+        Wed, 24 Jul 2019 15:25:37 -0400
+Received: by mail-lf1-f65.google.com with SMTP id c19so32727182lfm.10;
+        Wed, 24 Jul 2019 12:25:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=OkPU/CLyukMOj3ZbNY/O7tpHR8CxfiQ425Gxa1fb2JQ=;
-        b=cizJvBvS9LWtQgqD7tHrOnbfUKLn3IKwTexaKlCz0aV8WGl+nqxYE5pseR5xXgl2ZJ
-         m8csupMpr7OwAKhyoW9lBHKDfnN0nYwK9z7/RsX4VX3pqa9PWl3XI5/GUR4dWGbBS/2X
-         l7xDDDeEor3Zjue37hzwItxKtPGOFgmLJ5n/YPHgvOS+Y7TaohrswgfdoQ2xx5ljLnn5
-         gCACdxiqqXuMTz9u7PVtheBQ9dr7K2gpEpuVehHqwNFqED9VeiqZrebhSMSMl/zhVVtH
-         139CJQm906dlJU9cmPZyBRd9LIjBH6vCpXIBSECVQGTTiiTBHHUCo4qXoOTM7WaE9BBS
-         G4Sg==
+        bh=62j7+wSkhUHI/uSOEbsFJlruhr6Za1QWHbaqDgoEVtQ=;
+        b=D/UPHHu/fRcxCNNCrIdrC/33dxO3nj5swxlbIsELJLpjb2uo7H37kp4yGQ5uAHGGtj
+         wLpgAFUMrHa1mZmTO4lu9Bh8EKH50d3EFZ7EjCX3SPIZRUaENr4lQFPThmYTI4fjVwDQ
+         iUE6dcIf/SXrAt9dwzL2DSdMsaVQp4eGs87+rxz1XpaW/abr+DOHGmb+eqv6kzEl8b8O
+         TZwRvz7aAnrDiwX6CHPs0ZhUq4/TzvEKUgH7dqL4Z+JGLo80HvGUBKVl3kJ0ANKU90jr
+         dCL7t8ONpYxKjBd9RuQ9pEFnfomu0WBuKrBZIfDyXXLV/X5254HidEocWQ2+IbuO1ZA6
+         eYFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OkPU/CLyukMOj3ZbNY/O7tpHR8CxfiQ425Gxa1fb2JQ=;
-        b=msa7hLVaEuB2eI8hMXie20tIbydzseQi9UFjac3BuCQbcAKi0taBJym9k1u16GDi5h
-         RJ8+oH+MiYif6syW/ToSH8EIXMDPqVI6WsnXVBwSkC6acCxug0CLHL92mwt+PeTLD9LE
-         Woc4OBNfV+VJ5USF2+qXiNHkLVxx0kENbVdmb67BsHrEkg+LTMYT256aQj38i2Tr93is
-         q11yCt2CX0Z4JgxDiwZFfpcTQ5vQS+5+rpbpKyOEIUlQ9w11TJkYkbLRbk9z1rYrIsKF
-         Q0KDxo+SMZfrZHrjk7BGOyrtKhnbZfHf+BppG/QwphaLdQZvBkXAwusWFJDWMR6iM76M
-         XP2Q==
-X-Gm-Message-State: APjAAAVGLbkD+HY5VzTjjPVqDzag2kKvKba+QE/V4nf5gm3RE6XACNqO
-        CZrY3CfQRReedQM32ROSDw3MBIvH3Ofq+w==
-X-Google-Smtp-Source: APXvYqyhflls5Pd07xc/KaSNWazAfdY/U63489DoRwgjjWJQqGNW++Rr6B+pQE207tw0i/3votp85A==
-X-Received: by 2002:a05:620a:1f4:: with SMTP id x20mr56790548qkn.415.1563996305707;
-        Wed, 24 Jul 2019 12:25:05 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id r40sm29245885qtk.2.2019.07.24.12.25.05
+        bh=62j7+wSkhUHI/uSOEbsFJlruhr6Za1QWHbaqDgoEVtQ=;
+        b=A7kIPOXssOwQoHaO06HPM+jk9HywL73bV1z1nHwS11czdNjX0kfQwwhSSvFGhrD2l1
+         2PgDs08d4Jc9XKWDnACaekbGlchVlR5TwYjgYQK/RJc2VY4ujc6UCVqMUfrFx7w9vS31
+         ufpZmafIvp7baUgZIRj3UK2ZqLQYXsc3p8MqSUQObgP5ka6n0E83bE8bH8R0f1nmG0f2
+         l9psNMpWK9qKzvBxWiodaaa5xixhskykOe646Cg4WK1G3gxPALlr7xco5gZ2TL8S11Zg
+         nJtCiSAZiLK0uG/MdKj2Uw7Cbyn/QY/Bqt/FUjzNDKAVbj7IXdPOL7+GoY5XBApkOZfb
+         COHQ==
+X-Gm-Message-State: APjAAAXHRY1NXkRc6jskE3L9+GUYhJDA9d6HD4YsVJy7aTTIMe5QqJkY
+        33BGJiypb45e8cpmjK7nMPc=
+X-Google-Smtp-Source: APXvYqw7B3oyjIfw1cKuffGMQUDFrbiFo4davqC0Fk4UMrvpLwisAi0F3pd6A8VSflQTS2vwH4V40Q==
+X-Received: by 2002:a19:6e41:: with SMTP id q1mr28989439lfk.20.1563996334490;
+        Wed, 24 Jul 2019 12:25:34 -0700 (PDT)
+Received: from localhost ([188.170.223.67])
+        by smtp.gmail.com with ESMTPSA id k27sm8003487lfm.90.2019.07.24.12.25.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Jul 2019 12:25:05 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hqMsq-0001Uo-Fh; Wed, 24 Jul 2019 16:25:04 -0300
-Date:   Wed, 24 Jul 2019 16:25:04 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Subject: Re: [PATCH v19 11/15] IB/mlx4: untag user pointers in
- mlx4_get_umem_mr
-Message-ID: <20190724192504.GA5716@ziepe.ca>
-References: <cover.1563904656.git.andreyknvl@google.com>
- <7969018013a67ddbbf784ac7afeea5a57b1e2bcb.1563904656.git.andreyknvl@google.com>
+        Wed, 24 Jul 2019 12:25:33 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 22:25:28 +0300
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: elantech - mark expected switch fall-through
+Message-ID: <20190724192528.GA6859@penguin>
+References: <20190724175202.GA9583@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7969018013a67ddbbf784ac7afeea5a57b1e2bcb.1563904656.git.andreyknvl@google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190724175202.GA9583@embeddedor>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 07:58:48PM +0200, Andrey Konovalov wrote:
-> This patch is a part of a series that extends kernel ABI to allow to pass
-> tagged user pointers (with the top byte set to something else other than
-> 0x00) as syscall arguments.
-> 
-> mlx4_get_umem_mr() uses provided user pointers for vma lookups, which can
-> only by done with untagged pointers.
-> 
-> Untag user pointers in this function.
-> 
-> Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> ---
->  drivers/infiniband/hw/mlx4/mr.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+Hi Gustavo,
 
-Applied to rdma-for next, please don't sent it via other trees :)
+On Wed, Jul 24, 2019 at 12:52:02PM -0500, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
+> 
+> This patch fixes the following warning:
+> 
+> drivers/input/mouse/elantech.c: In function 'elantech_use_host_notify':
+> drivers/input/mouse/elantech.c:1843:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    if (dmi_get_bios_year() >= 2018)
+>       ^
+> drivers/input/mouse/elantech.c:1845:2: note: here
+>   default:
+>   ^~~~~~~
 
-Thanks,
-Jason
+Thank you for the patch but I already pushed out similar patch.
+
+Thanks.
+
+-- 
+Dmitry
