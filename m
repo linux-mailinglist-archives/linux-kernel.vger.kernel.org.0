@@ -2,54 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3BF27414C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 00:16:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B4267415D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 00:26:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728879AbfGXWP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 18:15:57 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36445 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726645AbfGXWP5 (ORCPT
+        id S1729250AbfGXW0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 18:26:19 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43133 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726796AbfGXW0S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 18:15:57 -0400
-Received: by mail-lj1-f194.google.com with SMTP id i21so46033965ljj.3;
-        Wed, 24 Jul 2019 15:15:56 -0700 (PDT)
+        Wed, 24 Jul 2019 18:26:18 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y17so21466530ljk.10;
+        Wed, 24 Jul 2019 15:26:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=UBF6bNBt/PemNw217in5S9v8lFOv59SFC9xNcgdoU6Y=;
-        b=s+uv8qpFxE+t54WGQJxNv5PYL7LjIriR64oc1BJyj1009oNYg6lzg+rMYzQQOCEQ/4
-         QMO4FRyZCOuroPUbx/6MBgHUdMdnEQwtfxh2xCc2q4kRbiUdpUyvMegZrChhGGNgJUAy
-         Avf8nJfUygtP6hrUCLBQbNyAPWmEHblYOzgfDrxZOYT4sb7wUIbwDdogK+r6+C7bntd1
-         +4WqbjfwD6gUnOOpW6Dx9tKsZJRXETh89NSOLtFpz6P4uu6xdSRhH1vM8s0lTRrSfEjw
-         GorBm5VsmBWs/7Jx2ZCSLyDT5+kidDNLZJ2dWq9ruL3lc9uDai+Qh4U0qR+mrnSPTidp
-         qRfw==
+        bh=NpDJrirAU6J86zmzabuWEnhe0+gl0qHG+YR8aafVBDI=;
+        b=m2DjP/k7Q2J39wDkWM1klxd+sDq2MGRYC9T2wAYVvYuSlY9BW8xMKQS8U7FukwEB5w
+         oHGaso9Zioery3GBjA/DfjnwtTza9zvpycb315hOrb1RblZ1BlQ5Dk6cnluWvVanCi+/
+         3NPnEkqRhW4ihK9cg89G0kXPWDurIJUeBP6sdbMXXd2r9kpmZ2bpn2vChOIvmbUhoHva
+         d1S9ZMdWoFzbXVBikuXOkr+NormyqgbnpqyObwWocER5kuWIb3wP1Te+STy7O8Tk7DX+
+         zkx0ybVWycWo6Z3m1tKxRwRm1GML+ThIehgf2AHy/yKMOphft7GQyAEKSVB7NkKUxj6T
+         uMvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UBF6bNBt/PemNw217in5S9v8lFOv59SFC9xNcgdoU6Y=;
-        b=fUGyCmD8sMc7BsJPqMr1azO6Hv/2CBZ0CGdOKUeys9APJZBHraNOk1H5mWgFieXks9
-         M9O8YAaS0WtjcoZISEEKTKHLd3dPAFF+M+Csq+/9w03roWcJeaOoJkRaGExL5aM+nGo8
-         J2RgQR+UWcuNre9PAoFPLZKZPoayfKc/qYnVEDJD5wdjCqyt404IFz+Zrn38E1SJ3Ilj
-         gLafZRl4rwCIizadG/5PabG7gs5ex1okVSZqjcl15up/9IjjaAPSvlw20ghgYQaQyx4r
-         yZFX7iQb24eDwlC9hKrRdk6L7Ay+jrlh4B/GqfAR5P6FL/Sfio9OWRCE3Vojw5TJ0gDT
-         6IIA==
-X-Gm-Message-State: APjAAAXPaesB7+s8PpzShWpa6Xr4H84lwzIKA8DoQJRLeqop+Vv4Xr9/
-        2yepAZmDetNvoW49A/X5K9/L8HnN+tUIBKnSJRs=
-X-Google-Smtp-Source: APXvYqwM9LPq8IoQDhPWPLNNHxpyCL3AuIe6TPRs7D3NajHezX5f401oHxVeqFYuSFlyCQnR0SrW8LZ2qREKv7Tmk+o=
-X-Received: by 2002:a2e:9a82:: with SMTP id p2mr45445949lji.64.1564006555385;
- Wed, 24 Jul 2019 15:15:55 -0700 (PDT)
+        bh=NpDJrirAU6J86zmzabuWEnhe0+gl0qHG+YR8aafVBDI=;
+        b=h7EDdknI3RsppATwQLE1BQkSeTR7JLpHqCsYfl53N/TUwSLHZx4q2HrnePronpNtTf
+         VxRfiD/psCkXYmWzkcYk+nim7JTFDN6PvEHmig8dzFJJWXacIGoa7sI/GPE7/Cs5xwrk
+         0CwjsXa5rBoGQyHTyYIz5UJQvaGfDfxY5Nz2sgRijNngwZx9ekB21runesa/9KLG4MzI
+         PeHWK4ODiPzHSyr0aazbhA3TLCLJxG0hF3GS2ZrRvL2mFRanVJjTKmqOonoAxISCur3w
+         dOBXO7wAZSnhJHWJc5Rxh3IWDobH558hwYfKNYPkSHqeJ4RW8uRnG1Ds6iuj8YjTQaeT
+         tTNw==
+X-Gm-Message-State: APjAAAVlg7RSM7QK9xiuvPr0/PU4MyuNBVowiIGUZuQ70lews/A9Uqiz
+        6gftvtQpbxbVVdMGGmb7rgPvzbzhPSTyzDPsWemVQA==
+X-Google-Smtp-Source: APXvYqwioRVRlVoayRFRYTmlYqDLp5RvxXEPtSS2/RMXGEmjjHalEtyvoNJOkEKSC27RM5pkqs5QeGvBcul6NMZsaEo=
+X-Received: by 2002:a2e:1459:: with SMTP id 25mr43207432lju.153.1564007176324;
+ Wed, 24 Jul 2019 15:26:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190724165803.87470-1-brianvv@google.com> <CAPhsuW7PU1PP91e8vD2diwhBAwGJHWu6wAKOoBThT86f4r5OJw@mail.gmail.com>
-In-Reply-To: <CAPhsuW7PU1PP91e8vD2diwhBAwGJHWu6wAKOoBThT86f4r5OJw@mail.gmail.com>
+References: <20190724165803.87470-1-brianvv@google.com> <20190724165803.87470-3-brianvv@google.com>
+ <CAF=yD-+a=t_YizdJpb_Q+zxR7iP-V-EarNsp9tjnFTRBjOtFvA@mail.gmail.com>
+In-Reply-To: <CAF=yD-+a=t_YizdJpb_Q+zxR7iP-V-EarNsp9tjnFTRBjOtFvA@mail.gmail.com>
 From:   Brian Vazquez <brianvv.kernel@gmail.com>
-Date:   Wed, 24 Jul 2019 15:15:44 -0700
-Message-ID: <CABCgpaU3xxX6CMMxD+1knApivtc2jLBHysDXw-0E9bQEL0qC3A@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 0/6] bpf: add BPF_MAP_DUMP command to dump more
+Date:   Wed, 24 Jul 2019 15:26:05 -0700
+Message-ID: <CABCgpaWCLJtDx8kHNiQZneqYZkZ3fzRGnipT5__kmwMhu01g=w@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 2/6] bpf: add BPF_MAP_DUMP command to dump more
  than one entry per call
-To:     Song Liu <liu.song.a23@gmail.com>
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
 Cc:     Brian Vazquez <brianvv@google.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
@@ -57,78 +58,91 @@ Cc:     Brian Vazquez <brianvv@google.com>,
         Stanislav Fomichev <sdf@google.com>,
         Willem de Bruijn <willemb@google.com>,
         Petar Penkov <ppenkov@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>
+        LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 12:20 PM Song Liu <liu.song.a23@gmail.com> wrote:
+On Wed, Jul 24, 2019 at 12:55 PM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
 >
-> On Wed, Jul 24, 2019 at 10:09 AM Brian Vazquez <brianvv@google.com> wrote:
+> On Wed, Jul 24, 2019 at 1:10 PM Brian Vazquez <brianvv@google.com> wrote:
 > >
 > > This introduces a new command to retrieve multiple number of entries
-> > from a bpf map.
-> >
-> > This new command can be executed from the existing BPF syscall as
-> > follows:
-> >
-> > err =  bpf(BPF_MAP_DUMP, union bpf_attr *attr, u32 size)
-> > using attr->dump.map_fd, attr->dump.prev_key, attr->dump.buf,
-> > attr->dump.buf_len
-> > returns zero or negative error, and populates buf and buf_len on
-> > succees
-> >
-> > This implementation is wrapping the existing bpf methods:
+> > from a bpf map, wrapping the existing bpf methods:
 > > map_get_next_key and map_lookup_elem
 > >
-> > Note that this implementation can be extended later to do dump and
-> > delete by extending map_lookup_and_delete_elem (currently it only works
-> > for bpf queue/stack maps) and either use a new flag in map_dump or a new
-> > command map_dump_and_delete.
+> > To start dumping the map from the beginning you must specify NULL as
+> > the prev_key.
 > >
-> > Results show that even with a 1-elem_size buffer, it runs ~40 faster
+> > The new API returns 0 when it successfully copied all the elements
+> > requested or it copied less because there weren't more elements to
+> > retrieved (i.e err == -ENOENT). In last scenario err will be masked to 0.
 >
-> Why is the new command 40% faster with 1-elem_size buffer?
+> I think I understand this, but perhaps it can be explained a bit more
+> concisely without reference to ENOENT and error masking. The function
+> returns the min of the number of requested elements and the number of
+> remaining elements in the map from the given starting point
+> (prev_key).
 
-The test is using a really simple map structure: uint64_t key,val.
-Which makes the lookup_elem logic faster since it doesn't spend too
-much time copying the value. My conclusion with the 40% was that this
-new implementation only needs 1 syscall per elem compare to the 2
-syscalls that we needed with previous implementation so in this
-particular case the number of ops that we are doing is almost halved.
-I did one experiment increasing the value_size (448*64B) and it was
-only 14% faster with 1-elem_size buffer.
+That sounds better to me. Thanks!
 
-> > than the current implementation, improvements of ~85% are reported when
-> > the buffer size is increased, although, after the buffer size is around
-> > 5% of the total number of entries there's no huge difference in
-> > increasing it.
+> > On a successful call buf and buf_len will contain correct data and in
+> > case prev_key was provided (not for the first walk, since prev_key is
+> > NULL) it will contain the last_key copied into the prev_key which will
+> > simplify next call.
 > >
-> > Tested:
-> > Tried different size buffers to handle case where the bulk is bigger, or
-> > the elements to retrieve are less than the existing ones, all runs read
-> > a map of 100K entries. Below are the results(in ns) from the different
-> > runs:
-> >
-> > buf_len_1:       69038725 entry-by-entry: 112384424 improvement
-> > 38.569134
-> > buf_len_2:       40897447 entry-by-entry: 111030546 improvement
-> > 63.165590
-> > buf_len_230:     13652714 entry-by-entry: 111694058 improvement
-> > 87.776687
-> > buf_len_5000:    13576271 entry-by-entry: 111101169 improvement
-> > 87.780263
-> > buf_len_73000:   14694343 entry-by-entry: 111740162 improvement
-> > 86.849542
-> > buf_len_100000:  13745969 entry-by-entry: 114151991 improvement
-> > 87.958187
-> > buf_len_234567:  14329834 entry-by-entry: 114427589 improvement
-> > 87.476941
+> > Only when it can't find a single element it will return -ENOENT meaning
+> > that the map has been entirely walked. When an error is return buf,
+> > buf_len and prev_key shouldn't be read nor used.
 >
-> It took me a while to figure out the meaning of 87.476941. It is probably
-> a good idea to say 87.5% instead.
+> That's common for error handling. No need to state explicitly.
 
-right, will change it in next version.
+ Ack
+
+>
+> > Because maps can be called from userspace and kernel code, this function
+> > can have a scenario where the next_key was found but by the time we
+> > try to retrieve the value the element is not there, in this case the
+> > function continues and tries to get a new next_key value, skipping the
+> > deleted key. If at some point the function find itself trap in a loop,
+> > it will return -EINTR.
+>
+> Good to point this out! I don't think that unbounded continue;
+> statements until an interrupt happens is sufficient. Please bound the
+> number of retries to a low number.
+
+And what would it be a good number? Maybe 3 attempts? And in that case
+what error should be reported?
+>
+> > The function will try to fit as much as possible in the buf provided and
+> > will return -EINVAL if buf_len is smaller than elem_size.
+> >
+> > QUEUE and STACK maps are not supported.
+> >
+> > Note that map_dump doesn't guarantee that reading the entire table is
+> > consistent since this function is always racing with kernel and user code
+> > but the same behaviour is found when the entire table is walked using
+> > the current interfaces: map_get_next_key + map_lookup_elem.
+>
+> > It is also important to note that with  a locked map, the lock is grabbed
+> > for 1 entry at the time, meaning that the returned buf might or might not
+> > be consistent.
+>
+> Would it be informative to signal to the caller if the read was
+> complete and consistent (because the entire table was read while the
+> lock was held)?
+
+Mmm.. not sure how we could signal that to the caller.  But I don't
+think there's a way to know it was consistent (i.e. one element was
+removed in bucket 20 and you are copying the keys in bucket 15, when
+you get to bucket 20 there's no way to know that some entries were
+removed when you traversed them). The lock is held for just 1 single
+entry not the entire table.
+Maybe clarify more that in the commit message?
+
+Thanks for reviewing!
