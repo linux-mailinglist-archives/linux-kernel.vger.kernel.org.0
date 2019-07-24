@@ -2,132 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D46D472D21
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 13:13:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C28C672D26
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 13:13:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbfGXLN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 07:13:28 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39701 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726981AbfGXLNY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 07:13:24 -0400
-Received: by mail-wr1-f68.google.com with SMTP id x4so46493666wrt.6
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 04:13:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NvtrvMV4Nt63Balca848q6E3+ZhiwJtTkFp748N0uOg=;
-        b=KNjXtO5njYFUIck/ozHOGMIWJ6z+FSABuu2c1L59UTM9K87f1GzdoroCF41tDBxyrR
-         7k+3fRTPUuhaq3B9Hijc4O3kz+rsb715JXcHhmvy1cm/35kj00R/EzG/AUcxC0wYxppv
-         iBNLNR0Qu5clqaICWCeBMs7+LCiY7oa2wyFkQ4Nr6JaJiBv0yc9XgOn8jvykpYj4jW3W
-         V7sQmX8uE7OD2tdKkFLBFOh541lVAexffqWUb9dR4X2gRStG/Mh45aD1PUGXtyWMOwnB
-         /9zrSd3j+rQ0U9jRbeOYdTkoQdGX8XweZvzgaNJlPlXtjl8+spgMq1rkvRyuwBZuvav9
-         Bcfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NvtrvMV4Nt63Balca848q6E3+ZhiwJtTkFp748N0uOg=;
-        b=jw4FiWZtPFvS9vNBLXUqanWi8cfDBLrrKBgIYNgpZvEaNfxNIaULdrh5qYiIG+pAXw
-         DMt22QVuMdXeVGOuWSEV80cJ59sMIjMcTDq6EgCdHIxMRC89wp0jTvqK2aVEBEe28LXH
-         qIbqXWDMBb1Xe6oD7GUhfHeBVtp96HPIYd7IfIIJmiM13o8mJWI1m1JkxGXxw2AroAmK
-         A7JORuTE44cEM9YeMCm7bnZcWlNlJW4fbwSEKU2p+XeBzkfPrBi/F5+2K3fos86gjU3R
-         gjLYxYWIochyzIOvaTn1xFCsQeeKYqA4qB5liH7XOLJJx1CGUh1CDoDHWCW0lDS4QhFu
-         DzNQ==
-X-Gm-Message-State: APjAAAWOSKENPyvexum1ZDAgE1EfvFvprl0MsW113kAcIJ5QFKtaC+ii
-        zZHifIN2qOXWwOFKm0AkzS0zbw==
-X-Google-Smtp-Source: APXvYqx/dJQm29UHdXc22ek+l/R3WZ8DvlqPT7fB+ZSBlOpP1Vt6kKQ09cwEg8JrNSUsNUX8cyM6bw==
-X-Received: by 2002:adf:ed4a:: with SMTP id u10mr93203495wro.284.1563966802936;
-        Wed, 24 Jul 2019 04:13:22 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id c30sm80678542wrb.15.2019.07.24.04.13.22
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 04:13:22 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 12:13:20 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v3 6/7] backlight: gpio: remove def_value from struct
- gpio_backlight
-Message-ID: <20190724111320.wqcquhmlylgfkv6f@holly.lan>
-References: <20190724082508.27617-1-brgl@bgdev.pl>
- <20190724082508.27617-7-brgl@bgdev.pl>
+        id S1727631AbfGXLNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 07:13:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38952 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726960AbfGXLNg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 07:13:36 -0400
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CA592190F;
+        Wed, 24 Jul 2019 11:13:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563966814;
+        bh=5/y1hhDYq8XOZKIhQOx1PKrERYltNYVDKnL3158aB6M=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=o63dKY7gmPoLMlPwWmTjsaF0E6vvrfbRChrcIfn1uENGMU4qIVFHms765aBdgaQoN
+         Ek64RM9AUVkKpj1sLpM7xJktKOfK63n46leGLUb2uG2q+mXl4LONpPlesGFf+eu9Dp
+         u85dtwUxPiOiwToAk+we+sdyVkh81jiD17xSiaRo=
+Received: by mail-lf1-f41.google.com with SMTP id h28so31646617lfj.5;
+        Wed, 24 Jul 2019 04:13:34 -0700 (PDT)
+X-Gm-Message-State: APjAAAUMQ3kAPYURZ+kLrqqmnmvt4lHiihO70auywBF2INNDoRSwtsUR
+        YgFLYiV1bg5D+Ogc8MlXRYzUcNsiNpRZQuTBDnM=
+X-Google-Smtp-Source: APXvYqwESEIOvcf70daSpwIqf11GEHlkm1uvDfKQSkJrORyYpKpAECse1JBT3/KtsMH1xOMwAc/+BWP0Hnw8jR6wBh8=
+X-Received: by 2002:a19:48c5:: with SMTP id v188mr37332583lfa.69.1563966812710;
+ Wed, 24 Jul 2019 04:13:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190724082508.27617-7-brgl@bgdev.pl>
-User-Agent: NeoMutt/20180716
+References: <20190722185938.9043-1-linux.amoon@gmail.com> <20190722185938.9043-5-linux.amoon@gmail.com>
+In-Reply-To: <20190722185938.9043-5-linux.amoon@gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 24 Jul 2019 13:13:21 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPeiKP-MfaO4LpQ=iXZn14gM3vwR8U18yLGfhHt6pjvvCA@mail.gmail.com>
+Message-ID: <CAJKOXPeiKP-MfaO4LpQ=iXZn14gM3vwR8U18yLGfhHt6pjvvCA@mail.gmail.com>
+Subject: Re: [RFC/RFT 4/5] phy: exynos5-usbdrd: PIPE3 tune signal
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 10:25:07AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> This field is unused outside of probe(). There's no need to store it.
-> We can make it into a local variable.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+On Mon, 22 Jul 2019 at 20:59, Anand Moon <linux.amoon@gmail.com> wrote:
+>
+> Tune USB3.0 (PIPE3) PHY TX signal for high and supper
+> speed data transfer.
+>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 > ---
->  drivers/video/backlight/gpio_backlight.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
-> index 70882556f047..cd6a75bca9cc 100644
-> --- a/drivers/video/backlight/gpio_backlight.c
-> +++ b/drivers/video/backlight/gpio_backlight.c
-> @@ -21,7 +21,6 @@
->  struct gpio_backlight {
->  	struct device *fbdev;
->  	struct gpio_desc *gpiod;
-> -	int def_value;
->  };
->  
->  static int gpio_backlight_update_status(struct backlight_device *bl)
-> @@ -61,7 +60,7 @@ static int gpio_backlight_probe(struct platform_device *pdev)
->  	struct backlight_device *bl;
->  	struct gpio_backlight *gbl;
->  	enum gpiod_flags flags;
-> -	int ret;
-> +	int ret, def_value;
->  
->  	gbl = devm_kzalloc(&pdev->dev, sizeof(*gbl), GFP_KERNEL);
->  	if (gbl == NULL)
-> @@ -70,8 +69,8 @@ static int gpio_backlight_probe(struct platform_device *pdev)
->  	if (pdata)
->  		gbl->fbdev = pdata->fbdev;
->  
-> -	gbl->def_value = device_property_read_bool(&pdev->dev, "default-on");
-> -	flags = gbl->def_value ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
-> +	def_value = device_property_read_bool(&pdev->dev, "default-on");
-> +	flags = def_value ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
->  
->  	gbl->gpiod = devm_gpiod_get(&pdev->dev, NULL, flags);
->  	if (IS_ERR(gbl->gpiod)) {
-> @@ -94,7 +93,7 @@ static int gpio_backlight_probe(struct platform_device *pdev)
->  		return PTR_ERR(bl);
->  	}
->  
-> -	bl->props.brightness = gbl->def_value;
-> +	bl->props.brightness = def_value;
->  	backlight_update_status(bl);
->  
->  	platform_set_drvdata(pdev, bl);
-> -- 
-> 2.21.0
-> 
+>  drivers/phy/samsung/phy-exynos5-usbdrd.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> index 54a513ca15e4..4f16c4f82ae5 100644
+> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> @@ -124,8 +124,10 @@
+>
+>  #define EXYNOS5_DRD_PHYPARAM1                  0x20
+>
+> -#define PHYPARAM1_PCS_TXDEEMPH_MASK            (0x1f << 0)
+> -#define PHYPARAM1_PCS_TXDEEMPH                 (0x1c)
+> +#define PHYPARAM1_TX0_TERM_OFFSET(x)           __set(x, 30, 26)
+> +#define PHYPARAM1_TX_SWING_FULL(x)             __set(x, 18, 12)
+> +#define PHYPRAAM1_PCS_TX_DEEMPH_6DB(x)         __set(x, 11, 6)
+> +#define PHYPRAAM1_PCS_TX_DEEMPH_3P5DB(x)       __set(x, 5, 0)
+>
+>  #define EXYNOS5_DRD_PHYTERM                    0x24
+>
+> @@ -360,10 +362,16 @@ static void exynos5_usbdrd_pipe3_init(struct exynos5_usbdrd_phy *phy_drd)
+>  {
+>         u32 reg;
+>
+> -       reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM1);
+>         /* Set Tx De-Emphasis level */
+> -       reg &= ~PHYPARAM1_PCS_TXDEEMPH_MASK;
+> -       reg |=  PHYPARAM1_PCS_TXDEEMPH;
+> +       reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM1);
+> +               /* Transmitter Termination Offset */
+> +       reg |=  PHYPARAM1_TX0_TERM_OFFSET(0x5) |
+> +               /* Tx Amplitude (Full Swing mode) */
+> +               PHYPARAM1_TX_SWING_FULL(0x3F) |
+> +               /* Tx De-Emphasis at 6 dB */
+> +               PHYPRAAM1_PCS_TX_DEEMPH_6DB(0x20) |
+> +               /* Tx De-Emphasis at 3.5 dB */
+> +               PHYPRAAM1_PCS_TX_DEEMPH_3P5DB(0x15);
+
+How did you get the value? Why you are changing existing values to default ones?
+
+Best regards,
+Krzysztof
+
+>         writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYPARAM1);
+>
+>         reg = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYTEST);
+> --
+> 2.22.0
+>
