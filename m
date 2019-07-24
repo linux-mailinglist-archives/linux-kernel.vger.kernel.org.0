@@ -2,123 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E8347396C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:40:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4981738A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:31:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389746AbfGXTkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:40:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41124 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389701AbfGXTj7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:39:59 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3DEA21873;
-        Wed, 24 Jul 2019 19:39:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997198;
-        bh=TNEN4tVBwGc9X/GvLocj6+6uJ4UjN+WohHICA3NLRh8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FResXJoIdaVWaaca8NVIh5oEmg8giwEiAdba1JsnrmDjd7tGf4q8FDCrzvqzYQ5cF
-         RxJiCnARm+QRYjwnvqsUsucqE3sQTQK3plvZe/2T9KN8eEYXCOBLDNpI+oFbgehO/P
-         YDTdW19Hv2cJueFAWp5fQtcOAg5f6FNPsxXEe4bQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, Gary Hook <Gary.Hook@amd.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Martin Liska <mliska@suse.cz>,
-        Namhyung Kim <namhyung@kernel.org>, Pu Wen <puwen@hygon.cn>,
-        Stephane Eranian <eranian@google.com>,
-        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 5.2 356/413] perf/x86/amd/uncore: Set the thread mask for F17h L3 PMCs
-Date:   Wed, 24 Jul 2019 21:20:47 +0200
-Message-Id: <20190724191801.160909662@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
-References: <20190724191735.096702571@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2388534AbfGXTbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:31:49 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43772 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388522AbfGXTbo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:31:44 -0400
+Received: by mail-qt1-f195.google.com with SMTP id w17so2351698qto.10;
+        Wed, 24 Jul 2019 12:31:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KEYXRfxDMQpSRlqGw7giHzXrwzZ2wZjC978EK9xyRN8=;
+        b=IW0iJnlwU+6BMKYqPwgjATPX6yxEn+xYUz4mTlOK++buj0vNE9wEj6n7Yrt8oo04S5
+         wPVopwjUos7Dz7G140Un3YHFfOXH8Ap1fzGPJUtNa0kN5lVN+RmsqrazCesSUiOIIoYL
+         dzUy6IzCmseJagRl6IzaRYnXoSAEMwTWaOPZjcqisMcDdLEXfQ6vwXXomW93jCj1DxZq
+         O+s0DuJviB9cM7gwsrLIPGprb2xwxVDHXBhG4C+rxZ6y+qIHLN/fxxW3NrJ9jBA4S9eL
+         EHzPKYi+YHlyBWQ/XEJSghTqoI3fv7lwjxz9eUlhMrtJk/UR9I1p7rply/d0STOXjWz0
+         FRbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KEYXRfxDMQpSRlqGw7giHzXrwzZ2wZjC978EK9xyRN8=;
+        b=Efx3oxCpqjwmEWwTq3OSORHZXexJorHBMaeQt+KYm9b+At2mXauoabaJ4pQeW4Xoqq
+         QfvEeVzIyVPEVwe0JYG2AyMUwO1Wk8c56vwXxNRitWruQsY8VSBTwGNuefnbkxBNE+6w
+         5hblUBHCInwoceUUN3uAJg+rYHGZ84/TOutJ8b80TVOLD+zQm3kDhSL5HHOZ1GD/4tDg
+         rK7OK05jm8J/C1TJOyXk22O2UJGRMqvyta6tTDdp/moLIsbEs8TpjGbRXLq+5wKPAyE7
+         Er0bYXqOmvCypTGfPepryjcrWCeYuGTyWFQqqoaowZE7QNTSRZkHXzYfiH5ZjKyhRFRB
+         NIWQ==
+X-Gm-Message-State: APjAAAW+yw+Shn1Opd7JUY/oVMKJU3iOfJDtE0CCd9f0l8jor+IXH0cp
+        gDRKSfKA/6I032AFyXCvZLEPTzTcf5H0w81B0KEd
+X-Google-Smtp-Source: APXvYqxGbYe1CZBM/SrFvkzjBSGjnnbVZJe2Zqf9jXR0AbM4K+io5m5Hz53gzDF9ngRUORUDeMHA3BNJtGpu9i8++QU=
+X-Received: by 2002:ac8:3908:: with SMTP id s8mr13764090qtb.224.1563996703415;
+ Wed, 24 Jul 2019 12:31:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190724130252.7c29bba9@canb.auug.org.au>
+In-Reply-To: <20190724130252.7c29bba9@canb.auug.org.au>
+From:   Rob Herring <robherring2@gmail.com>
+Date:   Wed, 24 Jul 2019 13:31:30 -0600
+Message-ID: <CAL_JsqKoAG9iu7CfuivtfDXE5Opf8sq8=tRPPWQGT4FPOxiyhw@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the devicetree tree with Linus' tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kim Phillips <kim.phillips@amd.com>
+On Tue, Jul 23, 2019 at 9:02 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> Today's linux-next merge of the devicetree tree got a conflict in:
+>
+>   Documentation/devicetree/bindings/input/sun4i-lradc-keys.txt
+>
+> between commit:
+>
+>   355fb0e54e85 ("dt-bindings: input: sun4i-lradc-keys: Add A64 compatible")
+>
+> from Linus' tree and commit:
+>
+>   3f587b3b77b9 ("dt-bindings: input: Convert Allwinner LRADC to a schema")
+>
+> from the devicetree tree.
+>
+> I fixed it up (I removed the file - the additions from the former
+> have been incorporated into the latter) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-commit 2f217d58a8a086d3399fecce39fb358848e799c4 upstream.
+I've updated my for-next branch to 5.3-rc1, so this should be resolved now.
 
-Fill in the L3 performance event select register ThreadMask
-bitfield, to enable per hardware thread accounting.
-
-Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <stable@vger.kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Gary Hook <Gary.Hook@amd.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Martin Liska <mliska@suse.cz>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Pu Wen <puwen@hygon.cn>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Link: https://lkml.kernel.org/r/20190628215906.4276-2-kim.phillips@amd.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/x86/events/amd/uncore.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
---- a/arch/x86/events/amd/uncore.c
-+++ b/arch/x86/events/amd/uncore.c
-@@ -202,15 +202,22 @@ static int amd_uncore_event_init(struct
- 	hwc->config = event->attr.config & AMD64_RAW_EVENT_MASK_NB;
- 	hwc->idx = -1;
- 
-+	if (event->cpu < 0)
-+		return -EINVAL;
-+
- 	/*
- 	 * SliceMask and ThreadMask need to be set for certain L3 events in
- 	 * Family 17h. For other events, the two fields do not affect the count.
- 	 */
--	if (l3_mask && is_llc_event(event))
--		hwc->config |= (AMD64_L3_SLICE_MASK | AMD64_L3_THREAD_MASK);
-+	if (l3_mask && is_llc_event(event)) {
-+		int thread = 2 * (cpu_data(event->cpu).cpu_core_id % 4);
- 
--	if (event->cpu < 0)
--		return -EINVAL;
-+		if (smp_num_siblings > 1)
-+			thread += cpu_data(event->cpu).apicid & 1;
-+
-+		hwc->config |= (1ULL << (AMD64_L3_THREAD_SHIFT + thread) &
-+				AMD64_L3_THREAD_MASK) | AMD64_L3_SLICE_MASK;
-+	}
- 
- 	uncore = event_to_amd_uncore(event);
- 	if (!uncore)
-
-
+Rob
