@@ -2,158 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E76732A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 17:23:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69C5F732A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 17:21:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbfGXPXc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 11:23:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53138 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725870AbfGXPXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 11:23:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2EF19B02A;
-        Wed, 24 Jul 2019 15:23:30 +0000 (UTC)
-Date:   Wed, 24 Jul 2019 08:23:23 -0700
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     john.stultz@linaro.org, linux-kernel@vger.kernel.org,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH] lib/timerqueue: Rely on rbtree semantics for next timer
-Message-ID: <20190724152323.bojciei3muvfxalm@linux-r8p5>
-References: <20190618204405.27956-1-dave@stgolabs.net>
- <20190723054808.2nwg5pu3z36uxmq6@linux-r8p5>
- <alpine.DEB.2.21.1907230844310.1659@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1907230844310.1659@nanos.tec.linutronix.de>
-User-Agent: NeoMutt/20180323
+        id S1727569AbfGXPVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 11:21:54 -0400
+Received: from mga12.intel.com ([192.55.52.136]:23915 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725870AbfGXPVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 11:21:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 08:21:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
+   d="scan'208";a="345131765"
+Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
+  by orsmga005.jf.intel.com with ESMTP; 24 Jul 2019 08:21:52 -0700
+From:   thor.thayer@linux.intel.com
+To:     marek.vasut@gmail.com, tudor.ambarus@microchip.com,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Thor Thayer <thor.thayer@linux.intel.com>
+Subject: [PATCH] mtd: spi-nor: Fix Cadence QSPI RCU Schedule Stall
+Date:   Wed, 24 Jul 2019 10:23:50 -0500
+Message-Id: <1563981830-12562-1-git-send-email-thor.thayer@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Simplify the timerqueue code by using cached rbtrees and rely on the tree
-leftmost node semantics to get the timer with earliest expiration time.
-This is a drop in conversion, and therefore semantics remain untouched.
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
-The runtime overhead of cached rbtrees is be pretty much the same as the
-current head->next method, noting that when removing the leftmost node,
-a common operation for the timerqueue, the rb_next(leftmost) is O(1) as
-well, so the next timer will either be the right node or its parent.
-Therefore no extra pointer chasing. Finally, the size of the struct
-timerqueue_head remains the same.
+The current Cadence QSPI driver sometimes caused a
+"rcu_sched self-detected stall" while writing large files.
 
-Passes several hours of rcutorture.
+Stall Report:
+'# mtd_debug write /dev/mtd1 0 48816464 blob.img
+[ 1815.454227] rcu: INFO: rcu_sched self-detected stall on CPU
+[ 1815.459789] rcu:     0-....: (2099 ticks this GP) idle=8c6/1/0x40000002
+ softirq=6492/6492 fqs=935
+[ 1815.468442] rcu:      (t=2100 jiffies g=8749 q=247)
+	<snip> (abbreviated backtrace)
+[ 1815.772086] [<c05a3ea0>] (cqspi_exec_flash_cmd) (cqspi_read_reg)
+[ 1815.786203] [<c05a5488>] (cqspi_read_reg) from (read_sr)
+[ 1815.803790] [<c05a0330>] (read_sr) from
+	(spi_nor_wait_till_ready_with_timeout)
+[ 1815.816610] [<c05a182c>] (spi_nor_wait_till_ready_with_timeout) from
+	(spi_nor_write+0x104/0x1d0)
+[ 1815.836791] [<c05a1a44>] (spi_nor_write) from (part_write+0x50/0x58)
+	<snip>
+[ 1815.997961] cadence-qspi ff809000.spi: Flash command execution timed out.
+[ 1816.004733] error -110 reading SR
+file_to_flash: write, size 0x2e8e150, n 0x2e8e150
+write(): Connection timed out
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+This was caused by a tight loop in cqspi_wait_for_bit(). Fix by using
+readl_relaxed_poll_timeout() which sleeps 10us while polling a register.
+
+Fit onto 80 character line by truncating the bool clear parameter
+
+Fixes: 140623410536 ("mtd: spi-nor: Add driver for Cadence Quad SPI Flash Controller")
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
 ---
- include/linux/timerqueue.h | 13 ++++++-------
- lib/timerqueue.c           | 28 +++++++++++-----------------
- 2 files changed, 17 insertions(+), 24 deletions(-)
+ drivers/mtd/spi-nor/cadence-quadspi.c | 19 +++++--------------
+ 1 file changed, 5 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/timerqueue.h b/include/linux/timerqueue.h
-index 78b8cc73f12f..aff122f1062a 100644
---- a/include/linux/timerqueue.h
-+++ b/include/linux/timerqueue.h
-@@ -12,8 +12,7 @@ struct timerqueue_node {
- };
+diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
+index 67f15a1f16fd..7bef63947b29 100644
+--- a/drivers/mtd/spi-nor/cadence-quadspi.c
++++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+@@ -13,6 +13,7 @@
+ #include <linux/errno.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
++#include <linux/iopoll.h>
+ #include <linux/jiffies.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -241,23 +242,13 @@ struct cqspi_driver_platdata {
  
- struct timerqueue_head {
--	struct rb_root head;
--	struct timerqueue_node *next;
-+	struct rb_root_cached rb_root;
- };
+ #define CQSPI_IRQ_STATUS_MASK		0x1FFFF
  
- 
-@@ -29,13 +28,14 @@ extern struct timerqueue_node *timerqueue_iterate_next(
-  *
-  * @head: head of timerqueue
-  *
-- * Returns a pointer to the timer node that has the
-- * earliest expiration time.
-+ * Returns a pointer to the timer node that has the earliest expiration time.
-  */
- static inline
- struct timerqueue_node *timerqueue_getnext(struct timerqueue_head *head)
+-static int cqspi_wait_for_bit(void __iomem *reg, const u32 mask, bool clear)
++static int cqspi_wait_for_bit(void __iomem *reg, const u32 mask, bool clr)
  {
--	return head->next;
-+	struct rb_node *leftmost = rb_first_cached(&head->rb_root);
-+
-+	return rb_entry(leftmost, struct timerqueue_node, node);
- }
+-	unsigned long end = jiffies + msecs_to_jiffies(CQSPI_TIMEOUT_MS);
+ 	u32 val;
  
- static inline void timerqueue_init(struct timerqueue_node *node)
-@@ -45,7 +45,6 @@ static inline void timerqueue_init(struct timerqueue_node *node)
- 
- static inline void timerqueue_init_head(struct timerqueue_head *head)
- {
--	head->head = RB_ROOT;
--	head->next = NULL;
-+	head->rb_root = RB_ROOT_CACHED;
- }
- #endif /* _LINUX_TIMERQUEUE_H */
-diff --git a/lib/timerqueue.c b/lib/timerqueue.c
-index bc7e64df27df..892d2bdc27f0 100644
---- a/lib/timerqueue.c
-+++ b/lib/timerqueue.c
-@@ -26,9 +26,10 @@
-  */
- bool timerqueue_add(struct timerqueue_head *head, struct timerqueue_node *node)
- {
--	struct rb_node **p = &head->head.rb_node;
-+	struct rb_node **p = &head->rb_root.rb_root.rb_node;
- 	struct rb_node *parent = NULL;
--	struct timerqueue_node  *ptr;
-+	struct timerqueue_node *ptr;
-+	bool leftmost = true;
- 
- 	/* Make sure we don't add nodes that are already added */
- 	WARN_ON_ONCE(!RB_EMPTY_NODE(&node->node));
-@@ -38,17 +39,15 @@ bool timerqueue_add(struct timerqueue_head *head, struct timerqueue_node *node)
- 		ptr = rb_entry(parent, struct timerqueue_node, node);
- 		if (node->expires < ptr->expires)
- 			p = &(*p)->rb_left;
--		else
-+		else {
- 			p = &(*p)->rb_right;
-+			leftmost = false;
-+		}
- 	}
- 	rb_link_node(&node->node, parent, p);
--	rb_insert_color(&node->node, &head->head);
-+	rb_insert_color_cached(&node->node, &head->rb_root, leftmost);
- 
--	if (!head->next || node->expires < head->next->expires) {
--		head->next = node;
--		return true;
--	}
--	return false;
-+	return leftmost;
- }
- EXPORT_SYMBOL_GPL(timerqueue_add);
- 
-@@ -65,15 +64,10 @@ bool timerqueue_del(struct timerqueue_head *head, struct timerqueue_node *node)
- {
- 	WARN_ON_ONCE(RB_EMPTY_NODE(&node->node));
- 
--	/* update next pointer */
--	if (head->next == node) {
--		struct rb_node *rbn = rb_next(&node->node);
+-	while (1) {
+-		val = readl(reg);
+-		if (clear)
+-			val = ~val;
+-		val &= mask;
 -
--		head->next = rb_entry_safe(rbn, struct timerqueue_node, node);
+-		if (val == mask)
+-			return 0;
+-
+-		if (time_after(jiffies, end))
+-			return -ETIMEDOUT;
 -	}
--	rb_erase(&node->node, &head->head);
-+	rb_erase_cached(&node->node, &head->rb_root);
- 	RB_CLEAR_NODE(&node->node);
--	return head->next != NULL;
-+
-+	return !RB_EMPTY_ROOT(&head->rb_root.rb_root);
++	return readl_relaxed_poll_timeout(reg, val,
++					  (((clr ? ~val : val) & mask) == mask),
++					  10, CQSPI_TIMEOUT_MS * 1000);
  }
- EXPORT_SYMBOL_GPL(timerqueue_del);
  
+ static bool cqspi_is_idle(struct cqspi_st *cqspi)
 -- 
-2.16.4
+2.7.4
 
