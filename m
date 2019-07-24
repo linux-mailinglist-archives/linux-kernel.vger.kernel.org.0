@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31AB47453E
+	by mail.lfdr.de (Postfix) with ESMTP id ABBF87453F
 	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:40:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404394AbfGYFkb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:40:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54976 "EHLO mail.kernel.org"
+        id S2404425AbfGYFkf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:40:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404369AbfGYFkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:40:25 -0400
+        id S2404401AbfGYFke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 01:40:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 674A522BF3;
-        Thu, 25 Jul 2019 05:40:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61AFD22BEB;
+        Thu, 25 Jul 2019 05:40:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564033224;
-        bh=fEa96WUvN7djOaWvWgooNf0cHcNNqWtnMFlsIyt2W1g=;
+        s=default; t=1564033232;
+        bh=DCYiLzI4rEMjmftj8L1UG2xOIvF/i96YLbPpwOFDYSM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C3g+Yz9yRWwqp/xZYps1Cd1nXT7tmW9TB78pCGB4q6tqOXtyFYtRFfMFtsm0R6mG7
-         A+4Hz/r9bDDPmO3MhlAqbN/LVlGEq256z9y9KJD669xw2ry4hlqsr9EeWdAHkQWS/+
-         QXqtakoogg6B70/bSc9cKlK0ueomX28H9ygu/cVE=
+        b=QLvSUVYuDAcOhJThDQ8FVC0U3DGN9RIgnCJOJ8Uh6Cve1hdEK7hQ8Sq+gYKd/6TNI
+         YLdzCl4H6ukMcuEro6lV+PeJN2n3MLUb9zbSPPmAMAmefH3RebxtHguUEf+11ry1Mk
+         sUWSMDMOcprXH2QWceXXvSjVkbzsSFrKyqf29EHA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org,
+        syzbot+8a3fc6674bbc3978ed4e@syzkaller.appspotmail.com,
+        Phong Tran <tranmanphong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 136/271] perf stat: Make metric event lookup more robust
-Date:   Wed, 24 Jul 2019 21:20:05 +0200
-Message-Id: <20190724191706.868455411@linuxfoundation.org>
+Subject: [PATCH 4.19 139/271] net: usb: asix: init MAC address buffers
+Date:   Wed, 24 Jul 2019 21:20:08 +0200
+Message-Id: <20190724191707.110384753@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191655.268628197@linuxfoundation.org>
 References: <20190724191655.268628197@linuxfoundation.org>
@@ -46,49 +46,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 145c407c808352acd625be793396fd4f33c794f8 ]
+[ Upstream commit 78226f6eaac80bf30256a33a4926c194ceefdf36 ]
 
-After setting up metric groups through the event parser, the metricgroup
-code looks them up again in the event list.
+This is for fixing bug KMSAN: uninit-value in ax88772_bind
 
-Make sure we only look up events that haven't been used by some other
-metric. The data structures currently cannot handle more than one metric
-per event. This avoids problems with multiple events partially
-overlapping.
+Tested by
+https://groups.google.com/d/msg/syzkaller-bugs/aFQurGotng4/eB_HlNhhCwAJ
 
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Link: http://lkml.kernel.org/r/20190624193711.35241-2-andi@firstfloor.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reported-by: syzbot+8a3fc6674bbc3978ed4e@syzkaller.appspotmail.com
+
+syzbot found the following crash on:
+
+HEAD commit:    f75e4cfe kmsan: use kmsan_handle_urb() in urb.c
+git tree:       kmsan
+console output: https://syzkaller.appspot.com/x/log.txt?x=136d720ea00000
+kernel config:
+https://syzkaller.appspot.com/x/.config?x=602468164ccdc30a
+dashboard link:
+https://syzkaller.appspot.com/bug?extid=8a3fc6674bbc3978ed4e
+compiler:       clang version 9.0.0 (/home/glider/llvm/clang
+06d00afa61eef8f7f501ebdb4e8612ea43ec2d78)
+syz repro:
+https://syzkaller.appspot.com/x/repro.syz?x=12788316a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=120359aaa00000
+
+==================================================================
+BUG: KMSAN: uninit-value in is_valid_ether_addr
+include/linux/etherdevice.h:200 [inline]
+BUG: KMSAN: uninit-value in asix_set_netdev_dev_addr
+drivers/net/usb/asix_devices.c:73 [inline]
+BUG: KMSAN: uninit-value in ax88772_bind+0x93d/0x11e0
+drivers/net/usb/asix_devices.c:724
+CPU: 0 PID: 3348 Comm: kworker/0:2 Not tainted 5.1.0+ #1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x191/0x1f0 lib/dump_stack.c:113
+  kmsan_report+0x130/0x2a0 mm/kmsan/kmsan.c:622
+  __msan_warning+0x75/0xe0 mm/kmsan/kmsan_instr.c:310
+  is_valid_ether_addr include/linux/etherdevice.h:200 [inline]
+  asix_set_netdev_dev_addr drivers/net/usb/asix_devices.c:73 [inline]
+  ax88772_bind+0x93d/0x11e0 drivers/net/usb/asix_devices.c:724
+  usbnet_probe+0x10f5/0x3940 drivers/net/usb/usbnet.c:1728
+  usb_probe_interface+0xd66/0x1320 drivers/usb/core/driver.c:361
+  really_probe+0xdae/0x1d80 drivers/base/dd.c:513
+  driver_probe_device+0x1b3/0x4f0 drivers/base/dd.c:671
+  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:778
+  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
+  __device_attach+0x454/0x730 drivers/base/dd.c:844
+  device_initial_probe+0x4a/0x60 drivers/base/dd.c:891
+  bus_probe_device+0x137/0x390 drivers/base/bus.c:514
+  device_add+0x288d/0x30e0 drivers/base/core.c:2106
+  usb_set_configuration+0x30dc/0x3750 drivers/usb/core/message.c:2027
+  generic_probe+0xe7/0x280 drivers/usb/core/generic.c:210
+  usb_probe_device+0x14c/0x200 drivers/usb/core/driver.c:266
+  really_probe+0xdae/0x1d80 drivers/base/dd.c:513
+  driver_probe_device+0x1b3/0x4f0 drivers/base/dd.c:671
+  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:778
+  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
+  __device_attach+0x454/0x730 drivers/base/dd.c:844
+  device_initial_probe+0x4a/0x60 drivers/base/dd.c:891
+  bus_probe_device+0x137/0x390 drivers/base/bus.c:514
+  device_add+0x288d/0x30e0 drivers/base/core.c:2106
+  usb_new_device+0x23e5/0x2ff0 drivers/usb/core/hub.c:2534
+  hub_port_connect drivers/usb/core/hub.c:5089 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+  port_event drivers/usb/core/hub.c:5350 [inline]
+  hub_event+0x48d1/0x7290 drivers/usb/core/hub.c:5432
+  process_one_work+0x1572/0x1f00 kernel/workqueue.c:2269
+  process_scheduled_works kernel/workqueue.c:2331 [inline]
+  worker_thread+0x189c/0x2460 kernel/workqueue.c:2417
+  kthread+0x4b5/0x4f0 kernel/kthread.c:254
+  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
+
+Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/stat-shadow.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/usb/asix_devices.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-index 99990f5f2512..bbb0e042d8e5 100644
---- a/tools/perf/util/stat-shadow.c
-+++ b/tools/perf/util/stat-shadow.c
-@@ -303,7 +303,7 @@ static struct perf_evsel *perf_stat__find_event(struct perf_evlist *evsel_list,
- 	struct perf_evsel *c2;
+diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
+index 3d93993e74da..2eca4168af2f 100644
+--- a/drivers/net/usb/asix_devices.c
++++ b/drivers/net/usb/asix_devices.c
+@@ -238,7 +238,7 @@ static void asix_phy_reset(struct usbnet *dev, unsigned int reset_bits)
+ static int ax88172_bind(struct usbnet *dev, struct usb_interface *intf)
+ {
+ 	int ret = 0;
+-	u8 buf[ETH_ALEN];
++	u8 buf[ETH_ALEN] = {0};
+ 	int i;
+ 	unsigned long gpio_bits = dev->driver_info->data;
  
- 	evlist__for_each_entry (evsel_list, c2) {
--		if (!strcasecmp(c2->name, name))
-+		if (!strcasecmp(c2->name, name) && !c2->collect_stat)
- 			return c2;
- 	}
- 	return NULL;
-@@ -342,7 +342,8 @@ void perf_stat__collect_metric_expr(struct perf_evlist *evsel_list)
- 			if (leader) {
- 				/* Search in group */
- 				for_each_group_member (oc, leader) {
--					if (!strcasecmp(oc->name, metric_names[i])) {
-+					if (!strcasecmp(oc->name, metric_names[i]) &&
-+						!oc->collect_stat) {
- 						found = true;
- 						break;
- 					}
+@@ -689,7 +689,7 @@ static int asix_resume(struct usb_interface *intf)
+ static int ax88772_bind(struct usbnet *dev, struct usb_interface *intf)
+ {
+ 	int ret, i;
+-	u8 buf[ETH_ALEN], chipcode = 0;
++	u8 buf[ETH_ALEN] = {0}, chipcode = 0;
+ 	u32 phyid;
+ 	struct asix_common_private *priv;
+ 
+@@ -1073,7 +1073,7 @@ static const struct net_device_ops ax88178_netdev_ops = {
+ static int ax88178_bind(struct usbnet *dev, struct usb_interface *intf)
+ {
+ 	int ret;
+-	u8 buf[ETH_ALEN];
++	u8 buf[ETH_ALEN] = {0};
+ 
+ 	usbnet_get_endpoints(dev,intf);
+ 
 -- 
 2.20.1
 
