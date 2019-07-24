@@ -2,209 +2,278 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C1FF73FD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:36:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A3AE73FAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:34:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbfGXTZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:25:05 -0400
-Received: from mail-eopbgr50079.outbound.protection.outlook.com ([40.107.5.79]:7230
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727851AbfGXTZC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:25:02 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=F7uGxfgs/g7GgcHNUVhSNeXlSXkvr/U02sphrrFffMR0QwacWW2PQkBwCmaFza2T013jeHCT1A5CKtd1WIA0fxVVIqhVTKH7FGMFtBnF2gmvk87aTy6oworZF5uoWh71v7aGw5/fsCkGb6RkHD7XdGp1Hyuv1nrxvS9upQnxaAuS6QSkqz2vtsVZ6vVZo4qLVnUrGTVJv04HMA4L/sTOzhSNzEcEBrQxRJgBnOr9F+u+AWU7ng9I1tN7zsdoenMeLz6YV9cvnXkDcXxt5KKx0HsbROcTkdQfJ/6mMDbNoDu6E3+dA/klS10RFu9va2CrX+eF2smypSqnpjkGQ08Izg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MjrmE3GsmR2ho+U7J9VRV+W2C0CyLD9RH7+GpX1Qz/w=;
- b=mNru01d53p8JiOSx/M5HAnWiCwK+17zDpMB42gLy3DqmKfxtbVBiTOOf7N3VqZ+yf4EeDvff87z04n1UKH3VV4Vx4Zo4VahcJ5kcBpjE8D1TduRPQDOH9ufAfIUgqUt6YdKeNKVbRsrp9TZEzrY1fKHEBNwxwQDtxFHiRqd1rIVgH7YQfxF1s6TzwMqxUViPHNsOfDR3f7dI6yxRXC6TDGwtF8OQS4HxoNaKJ0GHfCXt6SDFVYuMC3QCPjOYU6qcjaILBWugsZVJgRDCmhpZMNy76av61YW+i5Mt3OVsBUXF1uH1OWDTwVfKnShm4/BHCvndaUC6uuIvCMwyzaKOEw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=mellanox.com;dmarc=pass action=none
- header.from=mellanox.com;dkim=pass header.d=mellanox.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MjrmE3GsmR2ho+U7J9VRV+W2C0CyLD9RH7+GpX1Qz/w=;
- b=KwnI6PJG0+Lq/I7iM8XtNP5xHMIevFZypcBF/oS/rBIuIjaKY/2atKPWRDq3rkl0EzRyutedh1Mu+dbGTyyvaOrf9/+zyO+CfRl8vP1GylaDKgC42bwpQCtV6GdEdw6Vdnro/ZXfhAW5EZpsJxaRAxsgYxw/7A9WpP7Ckf2kP2A=
-Received: from DB6PR0501MB2759.eurprd05.prod.outlook.com (10.172.227.7) by
- DB6PR0501MB2199.eurprd05.prod.outlook.com (10.168.56.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.16; Wed, 24 Jul 2019 19:24:59 +0000
-Received: from DB6PR0501MB2759.eurprd05.prod.outlook.com
- ([fe80::7148:ecd4:3a7f:f3f]) by DB6PR0501MB2759.eurprd05.prod.outlook.com
- ([fe80::7148:ecd4:3a7f:f3f%11]) with mapi id 15.20.2094.011; Wed, 24 Jul 2019
- 19:24:59 +0000
-From:   Saeed Mahameed <saeedm@mellanox.com>
-To:     "tanhuazhong@huawei.com" <tanhuazhong@huawei.com>,
-        "davem@davemloft.net" <davem@davemloft.net>
-CC:     "lipeng321@huawei.com" <lipeng321@huawei.com>,
-        "yisen.zhuang@huawei.com" <yisen.zhuang@huawei.com>,
-        "salil.mehta@huawei.com" <salil.mehta@huawei.com>,
-        "linuxarm@huawei.com" <linuxarm@huawei.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linyunsheng@huawei.com" <linyunsheng@huawei.com>
-Subject: Re: [PATCH net-next 08/11] net: hns3: add interrupt affinity support
- for misc interrupt
-Thread-Topic: [PATCH net-next 08/11] net: hns3: add interrupt affinity support
- for misc interrupt
-Thread-Index: AQHVQc7h8LVK7WWOpUSCTT2iQP99HabaJ1aA
-Date:   Wed, 24 Jul 2019 19:24:59 +0000
-Message-ID: <67b32cdc72c0be03622e78899ac518d807ca7b85.camel@mellanox.com>
-References: <1563938327-9865-1-git-send-email-tanhuazhong@huawei.com>
-         <1563938327-9865-9-git-send-email-tanhuazhong@huawei.com>
-In-Reply-To: <1563938327-9865-9-git-send-email-tanhuazhong@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.32.4 (3.32.4-1.fc30) 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=saeedm@mellanox.com; 
-x-originating-ip: [209.116.155.178]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5730aa67-d255-4c16-d650-08d7106c9e24
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB6PR0501MB2199;
-x-ms-traffictypediagnostic: DB6PR0501MB2199:
-x-microsoft-antispam-prvs: <DB6PR0501MB2199D9D574003669C8DFA3A9BEC60@DB6PR0501MB2199.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4125;
-x-forefront-prvs: 0108A997B2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(39860400002)(366004)(396003)(346002)(199004)(189003)(8676002)(86362001)(478600001)(6436002)(6116002)(91956017)(118296001)(6486002)(110136005)(99286004)(486006)(76176011)(2501003)(54906003)(316002)(68736007)(2906002)(3846002)(4326008)(66066001)(58126008)(6512007)(14454004)(64756008)(53936002)(256004)(186003)(6246003)(76116006)(66446008)(102836004)(5660300002)(305945005)(26005)(25786009)(66476007)(66556008)(8936002)(36756003)(446003)(66946007)(229853002)(7736002)(11346002)(71190400001)(2616005)(6506007)(81156014)(71200400001)(81166006)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0501MB2199;H:DB6PR0501MB2759.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 9mxBNnfR+24nVe+FK5Dj06rQKCkTW0wBVjr4XvlIYNPvwds6zVyDR/d6OO3bEZaGDke5XoFeKVSvtVA30lbAtVENsAjDQ4CNjsqxQYyfM1/9ue7TtRKZ0ly1dyUdCn3lOPEFBqFYeXWlw1xOya4gtBFCTr5iqOWbKRs36RN4GG3ZZk/XbUkB6iaEFZ3fu2ZuGHTjxaI783lN89QgAgidij0CF2G/uuYwoasgeHk4ykEEK0Y9eM6r8ytqvBobcasdxIv9hIMasOYtSsQsnpGqFrlKf+ejp1hxGJpgHRofc5ohuJLCExuG2x2B/CW/cgsqeGkUCchSNiPaDeGaFolaYRm5vAJLYWelcBe841vZ1VZ+bhgDMaubm9rS6QAzSMMax7Q6WGIC2S89NV15JJE9jCgc5xH8nKasXgBb5I86fDw=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B2B326159992EC419960B56371207573@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S2389016AbfGXUek (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:34:40 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:45440 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728132AbfGXT0b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:26:31 -0400
+Received: by mail-qk1-f193.google.com with SMTP id s22so34649079qkj.12
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:26:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=hA+7cXTZvKB0lrb7iuAd//3uxxBDZMaqYXLy6i/gDpw=;
+        b=MZL0TGlgX2GrI5kb0LiPvny/KB7Gve/+LYxXtqi9V1yUL66Xz+8XRV63jW1exW0wP8
+         RqmVyhAFt0Ch62FS5G3vgXuupNb81mvL7T3+/Gavjvc1FNOJzdeKsmgTRI2RBchxVRit
+         P0fC4BSzo2fYsI8sOZsJlMepZbJLEL+y3mcH1BYwrdi32hN+mgpVoUg+w28Myeu38xiD
+         0aCByCNMuY5At+wggSGOJ3qxd7N59NvQYWTimKJHTG/pNVzc9s7QOEx6NA7Cwadxapn/
+         nKsGGwvCCeLsQETcdZfwKNoyTgQ8bRB/tnQ46wkpFar3KUm5qDwT2PGJPfZ1mE9p4srL
+         7adg==
+X-Gm-Message-State: APjAAAXOt9IhtpIU137xjoxjCnzbhnOdz3pNcIbUw5dfreEU+PmOLQik
+        1gEy5IrVJ9vHDHSqeV5+3xSfgw==
+X-Google-Smtp-Source: APXvYqzXX12FV0NR/wa2f9ui/1wQP7z1Ww1JuHGRLxmESSJAT2qlUM8jIdt12JuSwylbDC/TNmifRA==
+X-Received: by 2002:ae9:f017:: with SMTP id l23mr55791769qkg.457.1563996390930;
+        Wed, 24 Jul 2019 12:26:30 -0700 (PDT)
+Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
+        by smtp.gmail.com with ESMTPSA id u1sm26309762qth.21.2019.07.24.12.26.25
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 12:26:30 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 15:26:23 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Nitesh Narayan Lal <nitesh@redhat.com>
+Cc:     Alexander Duyck <alexander.duyck@gmail.com>, kvm@vger.kernel.org,
+        david@redhat.com, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, yang.zhang.wz@gmail.com,
+        pagupta@redhat.com, riel@surriel.com, konrad.wilk@oracle.com,
+        lcapitulino@redhat.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com,
+        alexander.h.duyck@linux.intel.com
+Subject: Re: [PATCH v2 5/5] virtio-balloon: Add support for providing page
+ hints to host
+Message-ID: <20190724152501-mutt-send-email-mst@kernel.org>
+References: <20190724165158.6685.87228.stgit@localhost.localdomain>
+ <20190724170514.6685.17161.stgit@localhost.localdomain>
+ <20190724143902-mutt-send-email-mst@kernel.org>
+ <33e41a02-7a9c-f166-8eb3-50abacb9d2cc@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5730aa67-d255-4c16-d650-08d7106c9e24
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2019 19:24:59.0511
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: saeedm@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0501MB2199
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <33e41a02-7a9c-f166-8eb3-50abacb9d2cc@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE5LTA3LTI0IGF0IDExOjE4ICswODAwLCBIdWF6aG9uZyBUYW4gd3JvdGU6DQo+
-IEZyb206IFl1bnNoZW5nIExpbiA8bGlueXVuc2hlbmdAaHVhd2VpLmNvbT4NCj4gDQo+IFRoZSBt
-aXNjIGludGVycnVwdCBpcyB1c2VkIHRvIHNjaGVkdWxlIHRoZSByZXNldCBhbmQgbWFpbGJveA0K
-PiBzdWJ0YXNrLCBhbmQgYSAxIHNlYyB0aW1lciBpcyB1c2VkIHRvIHNjaGVkdWxlIHRoZSBzZXJ2
-aWNlDQo+IHN1YnRhc2ssIHdoaWNoIGRvZXMgcGVyaW9kaWMgd29yay4NCj4gDQo+IFRoaXMgcGF0
-Y2ggc2V0cyB0aGUgYWJvdmUgdGhyZWUgc3VidGFzaydzIGFmZmluaXR5IHVzaW5nIHRoZQ0KPiBt
-aXNjIGludGVycnVwdCcgYWZmaW5pdHkuDQo+IA0KPiBBbHNvIHRoaXMgcGF0Y2ggc2V0dXBzIGEg
-YWZmaW5pdHkgbm90aWZ5IGZvciBtaXNjIGludGVycnVwdCB0bw0KPiBhbGxvdyB1c2VyIHRvIGNo
-YW5nZSB0aGUgYWJvdmUgdGhyZWUgc3VidGFzaydzIGFmZmluaXR5Lg0KPiANCj4gU2lnbmVkLW9m
-Zi1ieTogWXVuc2hlbmcgTGluIDxsaW55dW5zaGVuZ0BodWF3ZWkuY29tPg0KPiBTaWduZWQtb2Zm
-LWJ5OiBQZW5nIExpIDxsaXBlbmczMjFAaHVhd2VpLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogSHVh
-emhvbmcgVGFuIDx0YW5odWF6aG9uZ0BodWF3ZWkuY29tPg0KPiAtLS0NCj4gIC4uLi9ldGhlcm5l
-dC9oaXNpbGljb24vaG5zMy9obnMzcGYvaGNsZ2VfbWFpbi5jICAgIHwgNTkNCj4gKysrKysrKysr
-KysrKysrKysrKystLQ0KPiAgLi4uL2V0aGVybmV0L2hpc2lsaWNvbi9obnMzL2huczNwZi9oY2xn
-ZV9tYWluLmggICAgfCAgNCArKw0KPiAgMiBmaWxlcyBjaGFuZ2VkLCA1OSBpbnNlcnRpb25zKCsp
-LCA0IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0
-L2hpc2lsaWNvbi9obnMzL2huczNwZi9oY2xnZV9tYWluLmMNCj4gYi9kcml2ZXJzL25ldC9ldGhl
-cm5ldC9oaXNpbGljb24vaG5zMy9obnMzcGYvaGNsZ2VfbWFpbi5jDQo+IGluZGV4IGYzNDUwOTUu
-LmZlNDU5ODYgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2hpc2lsaWNvbi9o
-bnMzL2huczNwZi9oY2xnZV9tYWluLmMNCj4gKysrIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvaGlz
-aWxpY29uL2huczMvaG5zM3BmL2hjbGdlX21haW4uYw0KPiBAQCAtMTI3MCw2ICsxMjcwLDEyIEBA
-IHN0YXRpYyBpbnQgaGNsZ2VfY29uZmlndXJlKHN0cnVjdCBoY2xnZV9kZXYNCj4gKmhkZXYpDQo+
-ICANCj4gIAloY2xnZV9pbml0X2tkdW1wX2tlcm5lbF9jb25maWcoaGRldik7DQo+ICANCj4gKwkv
-KiBTZXQgdGhlIGluaXQgYWZmaW5pdHkgYmFzZWQgb24gcGNpIGZ1bmMgbnVtYmVyICovDQo+ICsJ
-aSA9IGNwdW1hc2tfd2VpZ2h0KGNwdW1hc2tfb2Zfbm9kZShkZXZfdG9fbm9kZSgmaGRldi0+cGRl
-di0NCj4gPmRldikpKTsNCj4gKwlpID0gaSA/IFBDSV9GVU5DKGhkZXYtPnBkZXYtPmRldmZuKSAl
-IGkgOiAwOw0KPiArCWNwdW1hc2tfc2V0X2NwdShjcHVtYXNrX2xvY2FsX3NwcmVhZChpLCBkZXZf
-dG9fbm9kZSgmaGRldi0NCj4gPnBkZXYtPmRldikpLA0KPiArCQkJJmhkZXYtPmFmZmluaXR5X21h
-c2spOw0KPiArDQo+ICAJcmV0dXJuIHJldDsNCj4gIH0NCj4gIA0KPiBAQCAtMjUwMiwxNCArMjUw
-OCwxNiBAQCBzdGF0aWMgdm9pZCBoY2xnZV9tYnhfdGFza19zY2hlZHVsZShzdHJ1Y3QNCj4gaGNs
-Z2VfZGV2ICpoZGV2KQ0KPiAgew0KPiAgCWlmICghdGVzdF9iaXQoSENMR0VfU1RBVEVfQ01EX0RJ
-U0FCTEUsICZoZGV2LT5zdGF0ZSkgJiYNCj4gIAkgICAgIXRlc3RfYW5kX3NldF9iaXQoSENMR0Vf
-U1RBVEVfTUJYX1NFUlZJQ0VfU0NIRUQsICZoZGV2LQ0KPiA+c3RhdGUpKQ0KPiAtCQlzY2hlZHVs
-ZV93b3JrKCZoZGV2LT5tYnhfc2VydmljZV90YXNrKTsNCj4gKwkJcXVldWVfd29ya19vbihjcHVt
-YXNrX2ZpcnN0KCZoZGV2LT5hZmZpbml0eV9tYXNrKSwNCj4gc3lzdGVtX3dxLA0KPiArCQkJICAg
-ICAgJmhkZXYtPm1ieF9zZXJ2aWNlX3Rhc2spOw0KPiAgfQ0KPiAgDQo+ICBzdGF0aWMgdm9pZCBo
-Y2xnZV9yZXNldF90YXNrX3NjaGVkdWxlKHN0cnVjdCBoY2xnZV9kZXYgKmhkZXYpDQo+ICB7DQo+
-ICAJaWYgKCF0ZXN0X2JpdChIQ0xHRV9TVEFURV9SRU1PVklORywgJmhkZXYtPnN0YXRlKSAmJg0K
-PiAgCSAgICAhdGVzdF9hbmRfc2V0X2JpdChIQ0xHRV9TVEFURV9SU1RfU0VSVklDRV9TQ0hFRCwg
-JmhkZXYtDQo+ID5zdGF0ZSkpDQo+IC0JCXNjaGVkdWxlX3dvcmsoJmhkZXYtPnJzdF9zZXJ2aWNl
-X3Rhc2spOw0KPiArCQlxdWV1ZV93b3JrX29uKGNwdW1hc2tfZmlyc3QoJmhkZXYtPmFmZmluaXR5
-X21hc2spLA0KPiBzeXN0ZW1fd3EsDQo+ICsJCQkgICAgICAmaGRldi0+cnN0X3NlcnZpY2VfdGFz
-ayk7DQo+ICB9DQo+ICANCj4gIHN0YXRpYyB2b2lkIGhjbGdlX3Rhc2tfc2NoZWR1bGUoc3RydWN0
-IGhjbGdlX2RldiAqaGRldikNCj4gQEAgLTI1MTcsNyArMjUyNSw4IEBAIHN0YXRpYyB2b2lkIGhj
-bGdlX3Rhc2tfc2NoZWR1bGUoc3RydWN0DQo+IGhjbGdlX2RldiAqaGRldikNCj4gIAlpZiAoIXRl
-c3RfYml0KEhDTEdFX1NUQVRFX0RPV04sICZoZGV2LT5zdGF0ZSkgJiYNCj4gIAkgICAgIXRlc3Rf
-Yml0KEhDTEdFX1NUQVRFX1JFTU9WSU5HLCAmaGRldi0+c3RhdGUpICYmDQo+ICAJICAgICF0ZXN0
-X2FuZF9zZXRfYml0KEhDTEdFX1NUQVRFX1NFUlZJQ0VfU0NIRUQsICZoZGV2LT5zdGF0ZSkpDQo+
-IC0JCSh2b2lkKXNjaGVkdWxlX3dvcmsoJmhkZXYtPnNlcnZpY2VfdGFzayk7DQo+ICsJCXF1ZXVl
-X3dvcmtfb24oY3B1bWFza19maXJzdCgmaGRldi0+YWZmaW5pdHlfbWFzayksDQo+IHN5c3RlbV93
-cSwNCj4gKwkJCSAgICAgICZoZGV2LT5zZXJ2aWNlX3Rhc2spOw0KPiAgfQ0KPiAgDQo+ICBzdGF0
-aWMgaW50IGhjbGdlX2dldF9tYWNfbGlua19zdGF0dXMoc3RydWN0IGhjbGdlX2RldiAqaGRldikN
-Cj4gQEAgLTI5MjEsNiArMjkzMCwzOSBAQCBzdGF0aWMgdm9pZCBoY2xnZV9nZXRfbWlzY192ZWN0
-b3Ioc3RydWN0DQo+IGhjbGdlX2RldiAqaGRldikNCj4gIAloZGV2LT5udW1fbXNpX3VzZWQgKz0g
-MTsNCj4gIH0NCj4gIA0KPiArc3RhdGljIHZvaWQgaGNsZ2VfaXJxX2FmZmluaXR5X25vdGlmeShz
-dHJ1Y3QgaXJxX2FmZmluaXR5X25vdGlmeQ0KPiAqbm90aWZ5LA0KPiArCQkJCSAgICAgIGNvbnN0
-IGNwdW1hc2tfdCAqbWFzaykNCj4gK3sNCj4gKwlzdHJ1Y3QgaGNsZ2VfZGV2ICpoZGV2ID0gY29u
-dGFpbmVyX29mKG5vdGlmeSwgc3RydWN0IGhjbGdlX2RldiwNCj4gKwkJCQkJICAgICAgYWZmaW5p
-dHlfbm90aWZ5KTsNCj4gKw0KPiArCWNwdW1hc2tfY29weSgmaGRldi0+YWZmaW5pdHlfbWFzaywg
-bWFzayk7DQo+ICsJZGVsX3RpbWVyX3N5bmMoJmhkZXYtPnNlcnZpY2VfdGltZXIpOw0KPiArCWhk
-ZXYtPnNlcnZpY2VfdGltZXIuZXhwaXJlcyA9IGppZmZpZXMgKyBIWjsNCj4gKwlhZGRfdGltZXJf
-b24oJmhkZXYtPnNlcnZpY2VfdGltZXIsIGNwdW1hc2tfZmlyc3QoJmhkZXYtDQo+ID5hZmZpbml0
-eV9tYXNrKSk7DQo+ICt9DQoNCkkgZG9uJ3Qgc2VlIGFueSByZWxhdGlvbiBiZXR3ZWVuIHlvdXIg
-bWlzYyBpcnEgdmVjdG9yIGFuZCAmaGRldi0NCj5zZXJ2aWNlX3RpbWVyLCB0byBtZSB0aGlzIGxv
-b2tzIGxpa2UgYW4gYWJ1c2Ugb2YgdGhlIGlycSBhZmZpbml0eSBBUEkNCnRvIGFsbG93IHRoZSB1
-c2VyIHRvIG1vdmUgdGhlIHNlcnZpY2UgdGltZXIgYWZmaW5pdHkuDQoNCj4gKw0KPiArc3RhdGlj
-IHZvaWQgaGNsZ2VfaXJxX2FmZmluaXR5X3JlbGVhc2Uoc3RydWN0IGtyZWYgKnJlZikNCj4gK3sN
-Cj4gK30NCj4gKw0KPiArc3RhdGljIHZvaWQgaGNsZ2VfbWlzY19hZmZpbml0eV9zZXR1cChzdHJ1
-Y3QgaGNsZ2VfZGV2ICpoZGV2KQ0KPiArew0KPiArCWlycV9zZXRfYWZmaW5pdHlfaGludChoZGV2
-LT5taXNjX3ZlY3Rvci52ZWN0b3JfaXJxLA0KPiArCQkJICAgICAgJmhkZXYtPmFmZmluaXR5X21h
-c2spOw0KPiArDQo+ICsJaGRldi0+YWZmaW5pdHlfbm90aWZ5Lm5vdGlmeSA9IGhjbGdlX2lycV9h
-ZmZpbml0eV9ub3RpZnk7DQo+ICsJaGRldi0+YWZmaW5pdHlfbm90aWZ5LnJlbGVhc2UgPSBoY2xn
-ZV9pcnFfYWZmaW5pdHlfcmVsZWFzZTsNCj4gKwlpcnFfc2V0X2FmZmluaXR5X25vdGlmaWVyKGhk
-ZXYtPm1pc2NfdmVjdG9yLnZlY3Rvcl9pcnEsDQo+ICsJCQkJICAmaGRldi0+YWZmaW5pdHlfbm90
-aWZ5KTsNCj4gK30NCj4gKw0KPiArc3RhdGljIHZvaWQgaGNsZ2VfbWlzY19hZmZpbml0eV90ZWFy
-ZG93bihzdHJ1Y3QgaGNsZ2VfZGV2ICpoZGV2KQ0KPiArew0KPiArCWlycV9zZXRfYWZmaW5pdHlf
-bm90aWZpZXIoaGRldi0+bWlzY192ZWN0b3IudmVjdG9yX2lycSwgTlVMTCk7DQo+ICsJaXJxX3Nl
-dF9hZmZpbml0eV9oaW50KGhkZXYtPm1pc2NfdmVjdG9yLnZlY3Rvcl9pcnEsIE5VTEwpOw0KPiAr
-fQ0KPiArDQo+ICBzdGF0aWMgaW50IGhjbGdlX21pc2NfaXJxX2luaXQoc3RydWN0IGhjbGdlX2Rl
-diAqaGRldikNCj4gIHsNCj4gIAlpbnQgcmV0Ow0KPiBAQCAtNjE1MSw3ICs2MTkzLDEwIEBAIHN0
-YXRpYyB2b2lkIGhjbGdlX3NldF90aW1lcl90YXNrKHN0cnVjdA0KPiBobmFlM19oYW5kbGUgKmhh
-bmRsZSwgYm9vbCBlbmFibGUpDQo+ICAJc3RydWN0IGhjbGdlX2RldiAqaGRldiA9IHZwb3J0LT5i
-YWNrOw0KPiAgDQo+ICAJaWYgKGVuYWJsZSkgew0KPiAtCQltb2RfdGltZXIoJmhkZXYtPnNlcnZp
-Y2VfdGltZXIsIGppZmZpZXMgKyBIWik7DQo+ICsJCWRlbF90aW1lcl9zeW5jKCZoZGV2LT5zZXJ2
-aWNlX3RpbWVyKTsNCj4gKwkJaGRldi0+c2VydmljZV90aW1lci5leHBpcmVzID0gamlmZmllcyAr
-IEhaOw0KPiArCQlhZGRfdGltZXJfb24oJmhkZXYtPnNlcnZpY2VfdGltZXIsDQo+ICsJCQkgICAg
-IGNwdW1hc2tfZmlyc3QoJmhkZXYtPmFmZmluaXR5X21hc2spKTsNCj4gIAl9IGVsc2Ugew0KPiAg
-CQlkZWxfdGltZXJfc3luYygmaGRldi0+c2VydmljZV90aW1lcik7DQo+ICAJCWNhbmNlbF93b3Jr
-X3N5bmMoJmhkZXYtPnNlcnZpY2VfdGFzayk7DQo+IEBAIC04ODA5LDYgKzg4NTQsMTEgQEAgc3Rh
-dGljIGludCBoY2xnZV9pbml0X2FlX2RldihzdHJ1Y3QNCj4gaG5hZTNfYWVfZGV2ICphZV9kZXYp
-DQo+ICAJSU5JVF9XT1JLKCZoZGV2LT5yc3Rfc2VydmljZV90YXNrLCBoY2xnZV9yZXNldF9zZXJ2
-aWNlX3Rhc2spOw0KPiAgCUlOSVRfV09SSygmaGRldi0+bWJ4X3NlcnZpY2VfdGFzaywgaGNsZ2Vf
-bWFpbGJveF9zZXJ2aWNlX3Rhc2spOw0KPiAgDQo+ICsJLyogU2V0dXAgYWZmaW5pdHkgYWZ0ZXIg
-c2VydmljZSB0aW1lciBzZXR1cCBiZWNhdXNlDQo+IGFkZF90aW1lcl9vbg0KPiArCSAqIGlzIGNh
-bGxlZCBpbiBhZmZpbml0eSBub3RpZnkuDQo+ICsJICovDQo+ICsJaGNsZ2VfbWlzY19hZmZpbml0
-eV9zZXR1cChoZGV2KTsNCj4gKw0KPiAgCWhjbGdlX2NsZWFyX2FsbF9ldmVudF9jYXVzZShoZGV2
-KTsNCj4gIAloY2xnZV9jbGVhcl9yZXNldHRpbmdfc3RhdGUoaGRldik7DQo+ICANCj4gQEAgLTg5
-NzAsNiArOTAyMCw3IEBAIHN0YXRpYyB2b2lkIGhjbGdlX3VuaW5pdF9hZV9kZXYoc3RydWN0DQo+
-IGhuYWUzX2FlX2RldiAqYWVfZGV2KQ0KPiAgCXN0cnVjdCBoY2xnZV9kZXYgKmhkZXYgPSBhZV9k
-ZXYtPnByaXY7DQo+ICAJc3RydWN0IGhjbGdlX21hYyAqbWFjID0gJmhkZXYtPmh3Lm1hYzsNCj4g
-IA0KPiArCWhjbGdlX21pc2NfYWZmaW5pdHlfdGVhcmRvd24oaGRldik7DQo+ICAJaGNsZ2Vfc3Rh
-dGVfdW5pbml0KGhkZXYpOw0KPiAgDQo+ICAJaWYgKG1hYy0+cGh5ZGV2KQ0KPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvaGlzaWxpY29uL2huczMvaG5zM3BmL2hjbGdlX21haW4u
-aA0KPiBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2hpc2lsaWNvbi9obnMzL2huczNwZi9oY2xnZV9t
-YWluLmgNCj4gaW5kZXggNmExMjI4NS4uMTRkZjIzYyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9u
-ZXQvZXRoZXJuZXQvaGlzaWxpY29uL2huczMvaG5zM3BmL2hjbGdlX21haW4uaA0KPiArKysgYi9k
-cml2ZXJzL25ldC9ldGhlcm5ldC9oaXNpbGljb24vaG5zMy9obnMzcGYvaGNsZ2VfbWFpbi5oDQo+
-IEBAIC04NjQsNiArODY0LDEwIEBAIHN0cnVjdCBoY2xnZV9kZXYgew0KPiAgDQo+ICAJREVDTEFS
-RV9LRklGTyhtYWNfdG5sX2xvZywgc3RydWN0IGhjbGdlX21hY190bmxfc3RhdHMsDQo+ICAJCSAg
-ICAgIEhDTEdFX01BQ19UTkxfTE9HX1NJWkUpOw0KPiArDQo+ICsJLyogYWZmaW5pdHkgbWFzayBh
-bmQgbm90aWZ5IGZvciBtaXNjIGludGVycnVwdCAqLw0KPiArCWNwdW1hc2tfdCBhZmZpbml0eV9t
-YXNrOw0KPiArCXN0cnVjdCBpcnFfYWZmaW5pdHlfbm90aWZ5IGFmZmluaXR5X25vdGlmeTsNCj4g
-IH07DQo+ICANCj4gIC8qIFZQb3J0IGxldmVsIHZsYW4gdGFnIGNvbmZpZ3VyYXRpb24gZm9yIFRY
-IGRpcmVjdGlvbiAqLw0K
+On Wed, Jul 24, 2019 at 03:07:42PM -0400, Nitesh Narayan Lal wrote:
+> 
+> On 7/24/19 3:02 PM, Michael S. Tsirkin wrote:
+> > On Wed, Jul 24, 2019 at 10:05:14AM -0700, Alexander Duyck wrote:
+> >> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> >>
+> >> Add support for the page hinting feature provided by virtio-balloon.
+> >> Hinting differs from the regular balloon functionality in that is is
+> >> much less durable than a standard memory balloon. Instead of creating a
+> >> list of pages that cannot be accessed the pages are only inaccessible
+> >> while they are being indicated to the virtio interface. Once the
+> >> interface has acknowledged them they are placed back into their respective
+> >> free lists and are once again accessible by the guest system.
+> >>
+> >> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> > Looking at the design, it seems that hinted pages can immediately be
+> > reused. I wonder how we can efficiently support this
+> > with kvm when poisoning is in effect. Of course we can just
+> > ignore the poison. However it seems cleaner to
+> > 1. verify page is poisoned with the correct value
+> > 2. fill the page with the correct value on fault
+> Once VIRTIO_BALLOON_F_PAGE_POISON user side support is available.
+> Can't we just use that at the time of initialization?
+
+ATM VIRTIO_BALLOON_F_PAGE_POISON simply avoids freeing the pages at the
+moment.
+
+1+2 above are exactly a way to implement VIRTIO_BALLOON_F_PAGE_POISON
+such that will still bring performance gains.
+
+> > Requirement 2 requires some kind of madvise that
+> > will save the poison e.g. in the VMA.
+> >
+> > Not a blocker for sure ... 
+> >
+> >
+> >> ---
+> >>  drivers/virtio/Kconfig              |    1 +
+> >>  drivers/virtio/virtio_balloon.c     |   47 +++++++++++++++++++++++++++++++++++
+> >>  include/uapi/linux/virtio_balloon.h |    1 +
+> >>  3 files changed, 49 insertions(+)
+> >>
+> >> diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
+> >> index 078615cf2afc..d45556ae1f81 100644
+> >> --- a/drivers/virtio/Kconfig
+> >> +++ b/drivers/virtio/Kconfig
+> >> @@ -58,6 +58,7 @@ config VIRTIO_BALLOON
+> >>  	tristate "Virtio balloon driver"
+> >>  	depends on VIRTIO
+> >>  	select MEMORY_BALLOON
+> >> +	select PAGE_HINTING
+> >>  	---help---
+> >>  	 This driver supports increasing and decreasing the amount
+> >>  	 of memory within a KVM guest.
+> >> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+> >> index 226fbb995fb0..dee9f8f3ad09 100644
+> >> --- a/drivers/virtio/virtio_balloon.c
+> >> +++ b/drivers/virtio/virtio_balloon.c
+> >> @@ -19,6 +19,7 @@
+> >>  #include <linux/mount.h>
+> >>  #include <linux/magic.h>
+> >>  #include <linux/pseudo_fs.h>
+> >> +#include <linux/page_hinting.h>
+> >>  
+> >>  /*
+> >>   * Balloon device works in 4K page units.  So each page is pointed to by
+> >> @@ -27,6 +28,7 @@
+> >>   */
+> >>  #define VIRTIO_BALLOON_PAGES_PER_PAGE (unsigned)(PAGE_SIZE >> VIRTIO_BALLOON_PFN_SHIFT)
+> >>  #define VIRTIO_BALLOON_ARRAY_PFNS_MAX 256
+> >> +#define VIRTIO_BALLOON_ARRAY_HINTS_MAX	32
+> >>  #define VIRTBALLOON_OOM_NOTIFY_PRIORITY 80
+> >>  
+> >>  #define VIRTIO_BALLOON_FREE_PAGE_ALLOC_FLAG (__GFP_NORETRY | __GFP_NOWARN | \
+> >> @@ -46,6 +48,7 @@ enum virtio_balloon_vq {
+> >>  	VIRTIO_BALLOON_VQ_DEFLATE,
+> >>  	VIRTIO_BALLOON_VQ_STATS,
+> >>  	VIRTIO_BALLOON_VQ_FREE_PAGE,
+> >> +	VIRTIO_BALLOON_VQ_HINTING,
+> >>  	VIRTIO_BALLOON_VQ_MAX
+> >>  };
+> >>  
+> >> @@ -113,6 +116,10 @@ struct virtio_balloon {
+> >>  
+> >>  	/* To register a shrinker to shrink memory upon memory pressure */
+> >>  	struct shrinker shrinker;
+> >> +
+> >> +	/* Unused page hinting device */
+> >> +	struct virtqueue *hinting_vq;
+> >> +	struct page_hinting_dev_info ph_dev_info;
+> >>  };
+> >>  
+> >>  static struct virtio_device_id id_table[] = {
+> >> @@ -152,6 +159,22 @@ static void tell_host(struct virtio_balloon *vb, struct virtqueue *vq)
+> >>  
+> >>  }
+> >>  
+> >> +void virtballoon_page_hinting_react(struct page_hinting_dev_info *ph_dev_info,
+> >> +				    unsigned int num_hints)
+> >> +{
+> >> +	struct virtio_balloon *vb =
+> >> +		container_of(ph_dev_info, struct virtio_balloon, ph_dev_info);
+> >> +	struct virtqueue *vq = vb->hinting_vq;
+> >> +	unsigned int unused;
+> >> +
+> >> +	/* We should always be able to add these buffers to an empty queue. */
+> >
+> > can be an out of memory condition, and then ...
+> >
+> >> +	virtqueue_add_inbuf(vq, ph_dev_info->sg, num_hints, vb, GFP_KERNEL);
+> >> +	virtqueue_kick(vq);
+> > ... this will block forever.
+> >
+> >> +	/* When host has read buffer, this completes via balloon_ack */
+> >> +	wait_event(vb->acked, virtqueue_get_buf(vq, &unused));
+> > However below I suggest limiting capacity which will solve
+> > this problem for you.
+> >
+> >
+> >
+> >> +}
+> >> +
+> >>  static void set_page_pfns(struct virtio_balloon *vb,
+> >>  			  __virtio32 pfns[], struct page *page)
+> >>  {
+> >> @@ -476,6 +499,7 @@ static int init_vqs(struct virtio_balloon *vb)
+> >>  	names[VIRTIO_BALLOON_VQ_DEFLATE] = "deflate";
+> >>  	names[VIRTIO_BALLOON_VQ_STATS] = NULL;
+> >>  	names[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
+> >> +	names[VIRTIO_BALLOON_VQ_HINTING] = NULL;
+> >>  
+> >>  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
+> >>  		names[VIRTIO_BALLOON_VQ_STATS] = "stats";
+> >> @@ -487,11 +511,19 @@ static int init_vqs(struct virtio_balloon *vb)
+> >>  		callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
+> >>  	}
+> >>  
+> >> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING)) {
+> >> +		names[VIRTIO_BALLOON_VQ_HINTING] = "hinting_vq";
+> >> +		callbacks[VIRTIO_BALLOON_VQ_HINTING] = balloon_ack;
+> >> +	}
+> >> +
+> >>  	err = vb->vdev->config->find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX,
+> >>  					 vqs, callbacks, names, NULL, NULL);
+> >>  	if (err)
+> >>  		return err;
+> >>  
+> >> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING))
+> >> +		vb->hinting_vq = vqs[VIRTIO_BALLOON_VQ_HINTING];
+> >> +
+> >>  	vb->inflate_vq = vqs[VIRTIO_BALLOON_VQ_INFLATE];
+> >>  	vb->deflate_vq = vqs[VIRTIO_BALLOON_VQ_DEFLATE];
+> >>  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
+> >> @@ -924,12 +956,24 @@ static int virtballoon_probe(struct virtio_device *vdev)
+> >>  		if (err)
+> >>  			goto out_del_balloon_wq;
+> >>  	}
+> >> +
+> >> +	vb->ph_dev_info.react = virtballoon_page_hinting_react;
+> >> +	vb->ph_dev_info.capacity = VIRTIO_BALLOON_ARRAY_HINTS_MAX;
+> > As explained above I think you should limit this by vq size.
+> > Otherwise virtqueue add buf might fail.
+> > In fact by struct spec reading you need to limit it
+> > anyway otherwise it will fail unconditionally.
+> > In practice on most hypervisors it will typically work ...
+> >
+> >> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING)) {
+> >> +		err = page_hinting_startup(&vb->ph_dev_info);
+> >> +		if (err)
+> >> +			goto out_unregister_shrinker;
+> >> +	}
+> >> +
+> >>  	virtio_device_ready(vdev);
+> >>  
+> >>  	if (towards_target(vb))
+> >>  		virtballoon_changed(vdev);
+> >>  	return 0;
+> >>  
+> >> +out_unregister_shrinker:
+> >> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
+> >> +		virtio_balloon_unregister_shrinker(vb);
+> >>  out_del_balloon_wq:
+> >>  	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT))
+> >>  		destroy_workqueue(vb->balloon_wq);
+> >> @@ -958,6 +1002,8 @@ static void virtballoon_remove(struct virtio_device *vdev)
+> >>  {
+> >>  	struct virtio_balloon *vb = vdev->priv;
+> >>  
+> >> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING))
+> >> +		page_hinting_shutdown(&vb->ph_dev_info);
+> >>  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_DEFLATE_ON_OOM))
+> >>  		virtio_balloon_unregister_shrinker(vb);
+> >>  	spin_lock_irq(&vb->stop_update_lock);
+> >> @@ -1027,6 +1073,7 @@ static int virtballoon_validate(struct virtio_device *vdev)
+> >>  	VIRTIO_BALLOON_F_DEFLATE_ON_OOM,
+> >>  	VIRTIO_BALLOON_F_FREE_PAGE_HINT,
+> >>  	VIRTIO_BALLOON_F_PAGE_POISON,
+> >> +	VIRTIO_BALLOON_F_HINTING,
+> >>  };
+> >>  
+> >>  static struct virtio_driver virtio_balloon_driver = {
+> >> diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
+> >> index a1966cd7b677..2b0f62814e22 100644
+> >> --- a/include/uapi/linux/virtio_balloon.h
+> >> +++ b/include/uapi/linux/virtio_balloon.h
+> >> @@ -36,6 +36,7 @@
+> >>  #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM	2 /* Deflate balloon on OOM */
+> >>  #define VIRTIO_BALLOON_F_FREE_PAGE_HINT	3 /* VQ to report free pages */
+> >>  #define VIRTIO_BALLOON_F_PAGE_POISON	4 /* Guest is using page poisoning */
+> >> +#define VIRTIO_BALLOON_F_HINTING	5 /* Page hinting virtqueue */
+> >>  
+> >>  /* Size of a PFN in the balloon interface. */
+> >>  #define VIRTIO_BALLOON_PFN_SHIFT 12
+> -- 
+> Thanks
+> Nitesh
