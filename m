@@ -2,108 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B39C7361F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:52:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D38CF7362A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:55:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbfGXRwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 13:52:17 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44495 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbfGXRwR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 13:52:17 -0400
-Received: by mail-pg1-f193.google.com with SMTP id i18so21592600pgl.11
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 10:52:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=LTjRTgv0sSmtdgDvRAyQuDy9Soq0qaA8z85xb1R02ko=;
-        b=LVjyjijHQHfKDB6TTxxNkMKbqO6LZ3oZ9xr6a+Lk5e9HTmzvFnjYdxJpij+ZfGWRwO
-         Zw2lmgqEgTRRQotlMWUsu3n2j2Vq3MVfj+Ghb4xfgNigDe4VfBSvM+699iujfFLG4hfQ
-         1Bz2Uqco9uS3hLa+qE7rWLO8OSXOsa8pfHZFvlD5+Z6+S47ULGO+utVcPZLVMc0Khg5A
-         B3Vvp3vvJnhGHCPrH7wPWhgWtdjZpMRSsK9KG5AsOEbsr63+Ra2ww8viC308puOrXrC8
-         ft8fq94RETHXmbkgAvaWy5REviRNtrsFGY3WStZNOi8HuaUP+RZnWui5qA1QdSKayO+j
-         tbsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=LTjRTgv0sSmtdgDvRAyQuDy9Soq0qaA8z85xb1R02ko=;
-        b=IsHSwG9Mf+7v5CI8PHIyk1kOZqjLWy37LNvpQOFRU1P1i7VVIPnspsBlaiKy/o4OfZ
-         VyiTnwF52i/p7SwqdQlkIAPbitBop9gPrvUyGMOBTHat9HkSZDgz5yr5Ltlpmdbg85ol
-         hEa+6z+8jcmt0xXpVsrHopnIFj4sxnpYw3QwTYRtFlKnRzCDo78kwKrBCXVMW9r40BEy
-         ZpqOQaIb6ecYgVR1fXrT03H+g7kchidoc7acmGGNOqpOkXoPm6zCgV0K3F0cuXWhOxPm
-         eQKU6h2xmV/m6xk0bp9vSvK1vcuoLOBlTnWQ6TjNy/tGTZNfhidsxkWS1ouEn6r+Nn5H
-         6YjA==
-X-Gm-Message-State: APjAAAXM6oRC0m3TEgfnEd7INS6sBvsZViwAO5nnNfcIEVvP24d1A/9H
-        5wXp+fkHq9WXuXFX8Rjw9UI=
-X-Google-Smtp-Source: APXvYqx7+JaUSwr8oNVFzhmI++HcH6nim4+KpKUYTgfT7PR5Hc6bp0HuElxuSpi3e2JwPJevG2BIaQ==
-X-Received: by 2002:a17:90a:6546:: with SMTP id f6mr42634439pjs.11.1563990736774;
-        Wed, 24 Jul 2019 10:52:16 -0700 (PDT)
-Received: from [25.171.251.59] ([172.58.27.54])
-        by smtp.gmail.com with ESMTPSA id g2sm78654497pfq.88.2019.07.24.10.52.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 10:52:16 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 19:52:08 +0200
-User-Agent: K-9 Mail for Android
-In-Reply-To: <95CD0533-576F-4B3A-8E80-D3D89967EE2C@brauner.io>
-References: <20190724144651.28272-1-christian@brauner.io> <20190724144651.28272-3-christian@brauner.io> <CAHk-=whZPKzbPQftNGFB=iaSZGTSXNkhUASWF2V53MwB+A4zAQ@mail.gmail.com> <95CD0533-576F-4B3A-8E80-D3D89967EE2C@brauner.io>
+        id S1726908AbfGXRzy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 13:55:54 -0400
+Received: from verein.lst.de ([213.95.11.211]:53005 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725851AbfGXRzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 13:55:53 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 4813E68B20; Wed, 24 Jul 2019 19:55:51 +0200 (CEST)
+Date:   Wed, 24 Jul 2019 19:55:51 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, Roger Quadros <rogerq@ti.com>
+Subject: Re: [PATCH 2/2] arm: use swiotlb for bounce buffer on LPAE configs
+Message-ID: <20190724175551.GA13073@lst.de>
+References: <20190709142011.24984-1-hch@lst.de> <20190709142011.24984-3-hch@lst.de> <a447eae1bb46fe753f7a62fb8932e680b79b1635.camel@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/5] pidfd: add pidfd_wait()
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-CC:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tejun Heo <tj@kernel.org>, David Howells <dhowells@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux API <linux-api@vger.kernel.org>
-From:   Christian Brauner <christian@brauner.io>
-Message-ID: <D9BD06E2-576A-4627-8047-0AA86B6CCDA9@brauner.io>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a447eae1bb46fe753f7a62fb8932e680b79b1635.camel@suse.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On July 24, 2019 7:50:49 PM GMT+02:00, Christian Brauner <christian@brauner=
-=2Eio> wrote:
->On July 24, 2019 7:45:38 PM GMT+02:00, Linus Torvalds
-><torvalds@linux-foundation=2Eorg> wrote:
->>On Wed, Jul 24, 2019 at 7:47 AM Christian Brauner
->><christian@brauner=2Eio> wrote:
->>>
->>> This adds the pidfd_wait() syscall=2E
->>
->>I despise this patch=2E
->>
->>Why can't this just be a new P_PIDFD flag, and then use
->>"waitid(P_PIDFD, pidfd, =2E=2E=2E);"
->>
->>Yes, yes, yes, I realize that "pidfd" is of type "int", and waitid()
->>takes an argument of type pid_t, but it's the same type in the end,
->>and it does seem like the whole *point* of "waitid()" is that
->>"idtype_t idtype" which tells you what kind of ID you're passing it=2E
->>
->>               Linus
->
->Well in that case we could add P_PIDFD=2E
->But then I would like to _only_ enable it for waitid()=2E How's that
->sound?
->
->Christian
+On Wed, Jul 24, 2019 at 07:23:50PM +0200, Nicolas Saenz Julienne wrote:
+> Out of curiosity, what is the reason stopping us from using dma-direct/swiotlb
+> instead of arm_dma_ops altogether?
 
-Ah, sorry, just saw that that's what you suggested=2E
-
-Christian
+Nothing fundamental.  We just need to do a very careful piecemeal
+migration as the arm code handles a ot of interesting corner case and
+we need to ensure we don't break that.  I have various WIP patches
+for the easier bits and we can work from there.
