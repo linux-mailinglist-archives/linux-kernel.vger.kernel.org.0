@@ -2,186 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EFCC7242A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 04:02:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF47E72437
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 04:06:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728835AbfGXCCb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 22:02:31 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42091 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728776AbfGXCCa (ORCPT
+        id S1728878AbfGXCGU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 22:06:20 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45934 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726544AbfGXCGU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 22:02:30 -0400
-Received: by mail-pl1-f196.google.com with SMTP id ay6so21353942plb.9;
-        Tue, 23 Jul 2019 19:02:29 -0700 (PDT)
+        Tue, 23 Jul 2019 22:06:20 -0400
+Received: by mail-pg1-f196.google.com with SMTP id o13so20330081pgp.12;
+        Tue, 23 Jul 2019 19:06:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=utzeHdlKnJ8Jsg5KiD3HvsIOK8aNJAUqQomKEkAT0jw=;
-        b=Frn1fSzU7Hs6HFsPjqPEd7iPDyz3Ynjesxlx/brBizTjGTVtSx98hbgnFJg/vcdeJ3
-         U0lKUt11tN9HFrNybfTgt0AvCNUDtP60bWNSRaWyNhAZ2Gq0utpFyf5N1OimCOT5qJ0T
-         i3xvLAM7f8H++QOSmLUmIVGQ8O4vMRW2XvN5WxlNmK2FBIs59D6/HoWZ/cC71JYWHtsk
-         NWEyxTbqMmixzi10djjAmf7drv+oSSjFblR/QL2TzexRmysBxFULMpjEtnF7RXzJW73v
-         +/ODKm6LGGvaKElgXcQj6mtS8mvr8furUMK2L0zOm7y6XSdPeSSPDwh3sjpjNcuWSR9V
-         JFPw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=eUEsu1aJQ43M1dFiRUsIH0xR8QMlq0eMWSMkix2nG/s=;
+        b=SpmUwRuIct58AB5vD4iMiE7f2Wp/E4iU/jQyuqwEp/xyS9ElMer8ikqdVjtrNj3EkT
+         Z42ODOk1Yi6RlKG6jAwgXhbFKJawYA6q1E2S5mKgw37wmAJ0dbIOR/7Ng5qdm6DqkK3p
+         HkACORz9DtEO0gLLCRp1IhH1j4jhb0lfpavqRe5LVPc7fMLq1BxTMGMwkHh/0JN4zpBE
+         6RgXGsITgVOh8i1Vz3e5ucjLC9x6SeWBoWq9ZrUThpLGAtlh52CwWYJdgCXPUWW5BCPb
+         0VhQPINV/CrfaiEP/V8C2z+Vuz7kYTzXGYtIYijCf0VnuoqEtZBJmf39NE3/tVAcZS36
+         gTnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=utzeHdlKnJ8Jsg5KiD3HvsIOK8aNJAUqQomKEkAT0jw=;
-        b=mFmK+3ocSxBFQU6IAXiCtCkvgrLbxMzPugjLEnBohaLibfllybvfNe47YfIoXv5qbS
-         dZ13GqEueO6uuGxqQNDgyChh3rpxx8MGnxCbVIpQI0dK93Ngqf9eXuV2EJMseablBbQ0
-         WBl3Rc08uYaX2Wk9O87DEV548Mrwng/PNwNjYhjAPzF33J6/0A+Ra2WLuk1V2l/cdScb
-         XnmgBIqRgWUgwXx90Nj8PY6UJqKLTGMcESAPjs0R5+od3qQdUhwh+Qi8tKYYfQ3D6twT
-         3bEyYpygi+dDs+CPdWWfFUHUTJyjbyF4lLyeKAmdyi5Ya44dvY6UTAU055m+J9aFjzfi
-         /VeA==
-X-Gm-Message-State: APjAAAXRnHdeQUNvwrCwrUQtf4gOajbPaleIcS0oF6eYMMnXj5MZj2aq
-        M8ycVqKb1/W3h/aus16zy0cEESiEU4gOTuiuNoY=
-X-Google-Smtp-Source: APXvYqyTlL7iex/bgjSHKUXZkR5Q0EHQ0AscX9+V6owz2Wmr2wofhrW2X6+UwfLnyoBVAyomr1SOlaLp7luO+pvX4ew=
-X-Received: by 2002:a17:902:2a68:: with SMTP id i95mr84858089plb.167.1563933749237;
- Tue, 23 Jul 2019 19:02:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=eUEsu1aJQ43M1dFiRUsIH0xR8QMlq0eMWSMkix2nG/s=;
+        b=qXoh1otb4BlWYQ1SUNmO9p8zBC+0DGuGgenlgna8iyeXhuXiyMvpITdBY5yXPyGfV3
+         f4nTREu2Miq6rIi03aFI/2aZSZeRlwvQ7E0cJHsykPjyScSUZT7s8nA0LJg60dfe6lLk
+         GviYKlDZBk12ylzVZeAJPqh6qKBM07DEgOR52U9n4ma71TaaIT24Yt4NL9e6jMQ4DfcX
+         HhC8CsCNLwsZWDdbAIZnlc9Lcc3AG7tlLISsJJvlerLeibUvV6BbasYMJUyjv83+8Wy/
+         7VJcNX2VqzSf74QwOncmJv0hwMsVkdEu3S3+jinT6IQij1S9+Ownwl8IqfaTtwxGjzEk
+         xv3A==
+X-Gm-Message-State: APjAAAVn2SXA8zlxrQ5Me3oMlUrT+s2p58QGecwPsGkSIcDwmdmjcrNR
+        8rL7uy5VzxZWptcF2jX5JiA=
+X-Google-Smtp-Source: APXvYqyCAo/u0tdEDjAYadfSuXMI69XqXtjzYOL2ostY7UBdmnKxDtc1QPd76Njk33ivnhowdAXeYg==
+X-Received: by 2002:a62:1d8f:: with SMTP id d137mr8975675pfd.207.1563933979631;
+        Tue, 23 Jul 2019 19:06:19 -0700 (PDT)
+Received: from debian.net.fpt ([2405:4800:58f7:33d1:2651:be77:cf4e:952])
+        by smtp.gmail.com with ESMTPSA id 65sm48163919pgf.30.2019.07.23.19.06.16
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 23 Jul 2019 19:06:18 -0700 (PDT)
+From:   Phong Tran <tranmanphong@gmail.com>
+To:     syzbot+fd2bd7df88c606eea4ef@syzkaller.appspotmail.com
+Cc:     andreyknvl@google.com, gregkh@linuxfoundation.org, joe@perches.com,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        louis@kragniz.eu, syzkaller-bugs@googlegroups.com,
+        benquike@gmail.com, linux-kernel-mentees@lists.linuxfoundation.org,
+        Phong Tran <tranmanphong@gmail.com>
+Subject: [PATCH] usb: wusbcore: fix unbalanced get/put cluster_id
+Date:   Wed, 24 Jul 2019 09:06:01 +0700
+Message-Id: <20190724020601.15257-1-tranmanphong@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <000000000000d48965058e589a94@google.com>
+References: <000000000000d48965058e589a94@google.com>
 MIME-Version: 1.0
-References: <20190715134655.4076-1-sashal@kernel.org> <20190715134655.4076-39-sashal@kernel.org>
- <CAN05THSdj8m5g-xG5abYAZ=_PE2xT-RwLtVhKrtxPevJGCSxag@mail.gmail.com>
- <CAH2r5mu9ncYa1WTHuuMEk3=4TU5-RBH6nBKME4Bm+dntOtORTQ@mail.gmail.com> <87v9vs43pq.fsf@xmission.com>
-In-Reply-To: <87v9vs43pq.fsf@xmission.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Tue, 23 Jul 2019 21:02:18 -0500
-Message-ID: <CAH2r5mtB=KO+9fxSYQHbjD+0K+5rGL6Q8TSU0_wsHUdqHy1rSw@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.2 039/249] signal/cifs: Fix cifs_put_tcp_session
- to call send_sig instead of force_sig
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     ronnie sahlberg <ronniesahlberg@gmail.com>,
-        Sasha Levin <sashal@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Jeff Layton <jlayton@primarydata.com>,
-        linux-cifs <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 8:32 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> Steve French <smfrench@gmail.com> writes:
->
-> > Very easy to see what caused the regression with this global change:
-> >
-> > mount (which launches "cifsd" thread to read the socket)
-> > umount (which kills the "cifsd" thread)
-> > rmmod   (rmmod now fails since "cifsd" thread is still active)
-> >
-> > mount launches a thread to read from the socket ("cifsd")
-> > umount is supposed to kill that thread (but with the patch
-> > "signal/cifs: Fix cifs_put_tcp_session to call send_sig instead of
-> > force_sig" that no longer works).  So the regression is that after
-> > unmount you still see the "cifsd" thread, and the reason that cifsd
-> > thread is still around is that that patch no longer force kills the
-> > process (see line 2652 of fs/cifs/connect.c) which regresses module
-> > removal.
-> >
-> > -               force_sig(SIGKILL, task);
-> > +               send_sig(SIGKILL, task, 1);
-> >
-> > The comment in the changeset indicates "The signal SIGKILL can not be
-> > ignored" but obviously it can be ignored - at least on 5.3-rc1 it is
-> > being ignored.
-> >
-> > If send_sig(SIGKILL ...) doesn't work and if force_sig(SIGKILL, task)
-> > is removed and no longer possible - how do we kill a helper process
-> > ...
->
-> I think I see what is happening.  It looks like as well as misuinsg
-> force_sig, cifs is also violating the invariant that keeps SIGKILL out
-> of the blocked signal set.
->
-> For that force_sig will act differently.  I did not consider it because
-> that is never supposed to happen.
->
-> Can someone test this code below and confirm the issue goes away?
->
-> diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
-> index 5d6d44bfe10a..2a782ebc7b65 100644
-> --- a/fs/cifs/transport.c
-> +++ b/fs/cifs/transport.c
-> @@ -347,6 +347,7 @@ __smb_send_rqst(struct TCP_Server_Info *server, int num_rqst,
->          */
->
->         sigfillset(&mask);
-> +       sigdelset(&mask, SIGKILL);
->         sigprocmask(SIG_BLOCK, &mask, &oldmask);
->
->         /* Generate a rfc1002 marker for SMB2+ */
->
->
-> Eric
+syzboot reported that
+https://syzkaller.appspot.com/bug?extid=fd2bd7df88c606eea4ef
 
-I just tried your suggestion and it didn't work.   I also tried doing
-a similar thing on the thread we are trying to kills ("cifsd" - ie
-which is blocked in the function cifs_demultiplex_thread waiting to
-read from the socket)
-# git diff -a
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index a4830ced0f98..b73062520a17 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -1104,6 +1104,7 @@ cifs_demultiplex_thread(void *p)
-        struct task_struct *task_to_wake = NULL;
-        struct mid_q_entry *mids[MAX_COMPOUND];
-        char *bufs[MAX_COMPOUND];
-+       sigset_t mask;
+There is not consitency parameter in cluste_id_get/put calling.
+In case of getting the id with result is failure, the wusbhc->cluster_id
+will not be updated and this can not be used for wusb_cluster_id_put().
 
-        current->flags |= PF_MEMALLOC;
-        cifs_dbg(FYI, "Demultiplex PID: %d\n", task_pid_nr(current));
-@@ -1113,6 +1114,8 @@ cifs_demultiplex_thread(void *p)
-                mempool_resize(cifs_req_poolp, length + cifs_min_rcv);
+Tested report
+https://groups.google.com/d/msg/syzkaller-bugs/0znZopp3-9k/oxOrhLkLEgAJ
 
-        set_freezable();
-+       sigfillset(&mask);
-+       sigdelset(&mask, SIGKILL);
-        while (server->tcpStatus != CifsExiting) {
-                if (try_to_freeze())
-                        continue;
+Reported-by: syzbot+fd2bd7df88c606eea4ef@syzkaller.appspotmail.com
 
+Reproduce and gdb got the details:
 
-That also didn't work.     The only thing I have been able to find
-which worked was:
+139		addr = wusb_cluster_id_get();
+(gdb) n
+140		if (addr == 0)
+(gdb) print addr
+$1 = 254 '\376'
+(gdb) n
+142		result = __hwahc_set_cluster_id(hwahc, addr);
+(gdb) print result
+$2 = -71
+(gdb) break wusb_cluster_id_put
+Breakpoint 3 at 0xffffffff836e3f20: file drivers/usb/wusbcore/wusbhc.c, line 384.
+(gdb) s
+Thread 2 hit Breakpoint 3, wusb_cluster_id_put (id=0 '\000') at drivers/usb/wusbcore/wusbhc.c:384
+384		id = 0xff - id;
+(gdb) n
+385		BUG_ON(id >= CLUSTER_IDS);
+(gdb) print id
+$3 = 255 '\377'
 
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index a4830ced0f98..e74f04163fc9 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -1113,6 +1113,7 @@ cifs_demultiplex_thread(void *p)
-                mempool_resize(cifs_req_poolp, length + cifs_min_rcv);
+Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+---
+ drivers/usb/host/hwa-hc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-        set_freezable();
-+      allow_signal(SIGKILL);
-        while (server->tcpStatus != CifsExiting) {
-                if (try_to_freeze())
-                        continue;
-
-
-That fixes the problem ... but ... as Ronnie and others have noted it
-would allow a userspace process to make the mount unusable (all you
-would have to do would be to do a kill -9 of the "cifsd" process from
-some userspace process like bash and the mount would be unusable - so
-this sounds dangerous.
-
-Is there an alternative that, in the process doing the unmount in
-kernel, would allow us to do the equivalent of:
-      "allow_signal(SIGKILL, <the id of the cifsd process>"
-In otherwords, to minimize the risk of some userspace process killing
-cifsd, could we delay enabling allow_signal(SIGKILL) till the unmount
-begins by doing it for a different process (have the unmount process
-enable signals for the cifsd process).   Otherwise is there a way to
-force kill a process from the kernel as we used to do - without
-running the risk of a user space process killing cifsd (which is bad).
-
+diff --git a/drivers/usb/host/hwa-hc.c b/drivers/usb/host/hwa-hc.c
+index 09a8ebd95588..6968b9f2b76b 100644
+--- a/drivers/usb/host/hwa-hc.c
++++ b/drivers/usb/host/hwa-hc.c
+@@ -159,7 +159,7 @@ static int hwahc_op_start(struct usb_hcd *usb_hcd)
+ 	return result;
+ 
+ error_set_cluster_id:
+-	wusb_cluster_id_put(wusbhc->cluster_id);
++	wusb_cluster_id_put(addr);
+ error_cluster_id_get:
+ 	goto out;
+ 
 -- 
-Thanks,
+2.20.1
 
-Steve
