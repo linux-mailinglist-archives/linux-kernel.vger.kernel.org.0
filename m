@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73B7373E0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:22:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD0AC73E27
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:22:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391499AbfGXUWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:22:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47344 "EHLO mail.kernel.org"
+        id S2390535AbfGXTnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:43:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390815AbfGXTo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:44:29 -0400
+        id S2390517AbfGXTnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:43:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BF9D2083B;
-        Wed, 24 Jul 2019 19:44:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A48522ADF;
+        Wed, 24 Jul 2019 19:43:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997468;
-        bh=mA08bsIa9qUiClBl4/jMHshkn1vB+VWZ6+iulIql+V4=;
+        s=default; t=1563997398;
+        bh=x0Otm5+B2/Do0stGHsY8H0ODRlpvuVqoHO8j47jB2O4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rdwHTJQsio7eLb3duxklJC81Ym7O7b5C2Je+eDdF+782/cYFrPUvxtDmvEj641R6b
-         jnF7Bv6OMnUDGhW4fNHAOsgzRwBFqsxkm4E0+Hy2/OqoyoPMd9gkjphTJgI8k4lXJ2
-         hbQSe1+Ur+ehpm9HZgX1ggoRnb4iBYA3e/nj5WL4=
+        b=GZqmSOlM+oXoPVRN3u2MvZZljhQprkaDCZ/Gg8gxdhweEIimnibEPYqwMrk8yLWxl
+         y3b/LstcEAqbm25CXhzkYm46sul6nTJ3EggAlPAlkw3rIszQAhG+lVY3NQlXDWIcDn
+         iZva7NJ7Kydn/VKgG0jFBRfT6kvEERgwBNyS/Epk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alagu Sankar <alagusankar@silex-india.com>,
-        Wen Gong <wgong@codeaurora.org>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Maya Erez <merez@codeaurora.org>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 007/371] ath10k: htt: dont use txdone_fifo with SDIO
-Date:   Wed, 24 Jul 2019 21:15:59 +0200
-Message-Id: <20190724191725.051462693@linuxfoundation.org>
+Subject: [PATCH 5.1 010/371] wil6210: fix potential out-of-bounds read
+Date:   Wed, 24 Jul 2019 21:16:02 +0200
+Message-Id: <20190724191725.268190092@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -45,40 +46,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e2a6b711282a371c5153239e0468a48254f17ca6 ]
+[ Upstream commit bfabdd6997323adbedccb13a3fed1967fb8cf8f5 ]
 
-HTT High Latency (ATH10K_DEV_TYPE_HL) does not use txdone_fifo at all, we don't
-even initialise it by skipping ath10k_htt_tx_alloc_buf() in
-ath10k_htt_tx_start(). Because of this using QCA6174 SDIO
-ath10k_htt_rx_tx_compl_ind() will crash when it accesses unitialised
-txdone_fifo. So skip txdone_fifo when using High Latency mode.
+Notice that *rc* can evaluate to up to 5, include/linux/netdevice.h:
 
-Tested with QCA6174 SDIO with firmware WLAN.RMH.4.4.1-00007-QCARMSWP-1.
+enum gro_result {
+        GRO_MERGED,
+        GRO_MERGED_FREE,
+        GRO_HELD,
+        GRO_NORMAL,
+        GRO_DROP,
+        GRO_CONSUMED,
+};
+typedef enum gro_result gro_result_t;
 
-Co-developed-by: Wen Gong <wgong@codeaurora.org>
-Signed-off-by: Alagu Sankar <alagusankar@silex-india.com>
-Signed-off-by: Wen Gong <wgong@codeaurora.org>
+In case *rc* evaluates to 5, we end up having an out-of-bounds read
+at drivers/net/wireless/ath/wil6210/txrx.c:821:
+
+	wil_dbg_txrx(wil, "Rx complete %d bytes => %s\n",
+		     len, gro_res_str[rc]);
+
+Fix this by adding element "GRO_CONSUMED" to array gro_res_str.
+
+Addresses-Coverity-ID: 1444666 ("Out-of-bounds read")
+Fixes: 194b482b5055 ("wil6210: Debug print GRO Rx result")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Maya Erez <merez@codeaurora.org>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/htt_rx.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/wil6210/txrx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/ath/ath10k/htt_rx.c b/drivers/net/wireless/ath/ath10k/htt_rx.c
-index 1acc622d2183..f22840bbc389 100644
---- a/drivers/net/wireless/ath/ath10k/htt_rx.c
-+++ b/drivers/net/wireless/ath/ath10k/htt_rx.c
-@@ -2277,7 +2277,9 @@ static void ath10k_htt_rx_tx_compl_ind(struct ath10k *ar,
- 		 *  Note that with only one concurrent reader and one concurrent
- 		 *  writer, you don't need extra locking to use these macro.
- 		 */
--		if (!kfifo_put(&htt->txdone_fifo, tx_done)) {
-+		if (ar->bus_param.dev_type == ATH10K_DEV_TYPE_HL) {
-+			ath10k_txrx_tx_unref(htt, &tx_done);
-+		} else if (!kfifo_put(&htt->txdone_fifo, tx_done)) {
- 			ath10k_warn(ar, "txdone fifo overrun, msdu_id %d status %d\n",
- 				    tx_done.msdu_id, tx_done.status);
- 			ath10k_txrx_tx_unref(htt, &tx_done);
+diff --git a/drivers/net/wireless/ath/wil6210/txrx.c b/drivers/net/wireless/ath/wil6210/txrx.c
+index 4ccfd1404458..d74837cce67f 100644
+--- a/drivers/net/wireless/ath/wil6210/txrx.c
++++ b/drivers/net/wireless/ath/wil6210/txrx.c
+@@ -750,6 +750,7 @@ void wil_netif_rx_any(struct sk_buff *skb, struct net_device *ndev)
+ 		[GRO_HELD]		= "GRO_HELD",
+ 		[GRO_NORMAL]		= "GRO_NORMAL",
+ 		[GRO_DROP]		= "GRO_DROP",
++		[GRO_CONSUMED]		= "GRO_CONSUMED",
+ 	};
+ 
+ 	wil->txrx_ops.get_netif_rx_params(skb, &cid, &security);
 -- 
 2.20.1
 
