@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8419973E49
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:23:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DC0D73E45
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:23:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390332AbfGXTmO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:42:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43760 "EHLO mail.kernel.org"
+        id S2390954AbfGXUXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:23:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389972AbfGXTmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:42:11 -0400
+        id S2387897AbfGXTmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:42:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E1E922ADA;
-        Wed, 24 Jul 2019 19:42:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31FEB22ADA;
+        Wed, 24 Jul 2019 19:42:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997329;
-        bh=QiKC/VivQIoxmg3yBRcIcOlipW1TBEmJWn+GEtmyBV0=;
+        s=default; t=1563997350;
+        bh=ikudbIaHF+TQIA27wylt1DWHxq8QWyo2t/AkcsVrBNg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2AXGLQNyopUMLcu29kDY59dq8DMMN3few12QNkpJwj/sxFshbLCsAklL+RJtEqcC4
-         eHz2BLlNFdZIFUglKwU6EOxs1FakbyM3edMDyhM57L9U/GPbf+Cg2jJn+6e5Y58ClD
-         GXIGXCbpGYQoQDYcSGnYoIMBOxlUfWYomIOodIaw=
+        b=PhIrYAVlS4FckuEqxmc0B6Gp1R6WOqOpNRoe6ixbeMGHX7BKpTFKsEVP6vs8/ERjl
+         2xhKMm/sowi3qXob8nN5orbHde9tjPzDWcmeH6kwme1/Ds4UtQsFqXTGzAMuBtLV55
+         5x3ClijA+UWZ47QwcRCgOB43y39mnmiZaugB0Ywk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ammy Yi <ammy.yi@intel.com>
-Subject: [PATCH 5.2 400/413] intel_th: msu: Fix single mode with disabled IOMMU
-Date:   Wed, 24 Jul 2019 21:21:31 +0200
-Message-Id: <20190724191803.455107597@linuxfoundation.org>
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Josef Bacik <jbacik@fb.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.2 406/413] blk-iolatency: clear use_delay when io.latency is set to zero
+Date:   Wed, 24 Jul 2019 21:21:37 +0200
+Message-Id: <20190724191803.688554541@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -45,40 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Tejun Heo <tj@kernel.org>
 
-commit 918b8646497b5dba6ae82d4a7325f01b258972b9 upstream.
+commit 5de0073fcd50cc1f150895a7bb04d3cf8067b1d7 upstream.
 
-Commit 4e0eaf239fb3 ("intel_th: msu: Fix single mode with IOMMU") switched
-the single mode code to use dma mapping pages obtained from the page
-allocator, but with IOMMU disabled, that may lead to using SWIOTLB bounce
-buffers and without additional sync'ing, produces empty trace buffers.
+If use_delay was non-zero when the latency target of a cgroup was set
+to zero, it will stay stuck until io.latency is enabled on the cgroup
+again.  This keeps readahead disabled for the cgroup impacting
+performance negatively.
 
-Fix this by using a DMA32 GFP flag to the page allocation in single mode,
-as the device supports full 32-bit DMA addressing.
-
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Fixes: 4e0eaf239fb3 ("intel_th: msu: Fix single mode with IOMMU")
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reported-by: Ammy Yi <ammy.yi@intel.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190621161930.60785-4-alexander.shishkin@linux.intel.com
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: Josef Bacik <jbacik@fb.com>
+Fixes: d70675121546 ("block: introduce blk-iolatency io controller")
+Cc: stable@vger.kernel.org # v4.19+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/intel_th/msu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/blk-iolatency.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -667,7 +667,7 @@ static int msc_buffer_contig_alloc(struc
- 		goto err_out;
+--- a/block/blk-iolatency.c
++++ b/block/blk-iolatency.c
+@@ -759,8 +759,10 @@ static int iolatency_set_min_lat_nsec(st
  
- 	ret = -ENOMEM;
--	page = alloc_pages(GFP_KERNEL | __GFP_ZERO, order);
-+	page = alloc_pages(GFP_KERNEL | __GFP_ZERO | GFP_DMA32, order);
- 	if (!page)
- 		goto err_free_sgt;
+ 	if (!oldval && val)
+ 		return 1;
+-	if (oldval && !val)
++	if (oldval && !val) {
++		blkcg_clear_delay(blkg);
+ 		return -1;
++	}
+ 	return 0;
+ }
  
 
 
