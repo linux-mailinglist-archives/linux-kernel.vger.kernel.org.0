@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37DAB73974
+	by mail.lfdr.de (Postfix) with ESMTP id A5EA673975
 	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:40:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389995AbfGXTkU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:40:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41452 "EHLO mail.kernel.org"
+        id S2390015AbfGXTkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:40:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389987AbfGXTkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:40:16 -0400
+        id S2389998AbfGXTkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:40:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2B0C217D4;
-        Wed, 24 Jul 2019 19:40:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21A3B21873;
+        Wed, 24 Jul 2019 19:40:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997215;
-        bh=wNsbrJXxDr9cPrwlcNPrlMohbHVPT8bw/5Q5c+XgghM=;
+        s=default; t=1563997220;
+        bh=HgJ7DMTupsGkOUJC4Dvj4bnVJYgIc44/ECxH8u3gty4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i1Rlxd0wxNqXKpVBeT54arvchC15aZsjJ5oMCCNmb569II0Cnir29ydF7ywT0bap6
-         scNFIKEhoiQr4BEjnOjPtlYVaEt+Wl6Gp9fh1FTd3TEScXXX3QG3H2KvBOo/cy2ruY
-         1ki+MA5Yh7zkNkKdMpDQyrqJEzAI0FOOOYQrVlew=
+        b=2ZCjOWznVxhY8rFTLLaZh6c9MWqd71w6xMUUQyajZyIttsYrtbtkP8UX0RsgEl5PM
+         5QzCy8ySf1xU13G+R0+VWYb/xf0EDMkqncxkL0IGj67coYOMhQl5pnnzm/yHAkP7Pk
+         lUqWhP6L5xSZge7OUZAS6BZ6hryVp5Eg0Yeb2cc4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 5.2 361/413] RDMA/srp: Accept again source addresses that do not have a port number
-Date:   Wed, 24 Jul 2019 21:20:52 +0200
-Message-Id: <20190724191801.384912472@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 5.2 363/413] intel_th: pci: Add Ice Lake NNPI support
+Date:   Wed, 24 Jul 2019 21:20:54 +0200
+Message-Id: <20190724191801.468171332@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -43,89 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-commit bcef5b7215681250c4bf8961dfe15e9e4fef97d0 upstream.
+commit 4aa5aed2b6f267592705a526f57518a5d715b769 upstream.
 
-The function srp_parse_in() is used both for parsing source address
-specifications and for target address specifications. Target addresses
-must have a port number. Having to specify a port number for source
-addresses is inconvenient. Make sure that srp_parse_in() supports again
-parsing addresses with no port number.
+This adds Ice Lake NNPI support to the Intel(R) Trace Hub.
 
-Cc: <stable@vger.kernel.org>
-Fixes: c62adb7def71 ("IB/srp: Fix IPv6 address parsing")
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20190621161930.60785-5-alexander.shishkin@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/srp/ib_srp.c |   21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+ drivers/hwtracing/intel_th/pci.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/infiniband/ulp/srp/ib_srp.c
-+++ b/drivers/infiniband/ulp/srp/ib_srp.c
-@@ -3483,13 +3483,14 @@ static const match_table_t srp_opt_token
-  * @net:	   [in]  Network namespace.
-  * @sa:		   [out] Address family, IP address and port number.
-  * @addr_port_str: [in]  IP address and port number.
-+ * @has_port:	   [out] Whether or not @addr_port_str includes a port number.
-  *
-  * Parse the following address formats:
-  * - IPv4: <ip_address>:<port>, e.g. 1.2.3.4:5.
-  * - IPv6: \[<ipv6_address>\]:<port>, e.g. [1::2:3%4]:5.
-  */
- static int srp_parse_in(struct net *net, struct sockaddr_storage *sa,
--			const char *addr_port_str)
-+			const char *addr_port_str, bool *has_port)
- {
- 	char *addr_end, *addr = kstrdup(addr_port_str, GFP_KERNEL);
- 	char *port_str;
-@@ -3498,9 +3499,12 @@ static int srp_parse_in(struct net *net,
- 	if (!addr)
- 		return -ENOMEM;
- 	port_str = strrchr(addr, ':');
--	if (!port_str)
--		return -EINVAL;
--	*port_str++ = '\0';
-+	if (port_str && strchr(port_str, ']'))
-+		port_str = NULL;
-+	if (port_str)
-+		*port_str++ = '\0';
-+	if (has_port)
-+		*has_port = port_str != NULL;
- 	ret = inet_pton_with_scope(net, AF_INET, addr, port_str, sa);
- 	if (ret && addr[0]) {
- 		addr_end = addr + strlen(addr) - 1;
-@@ -3522,6 +3526,7 @@ static int srp_parse_options(struct net
- 	char *p;
- 	substring_t args[MAX_OPT_ARGS];
- 	unsigned long long ull;
-+	bool has_port;
- 	int opt_mask = 0;
- 	int token;
- 	int ret = -EINVAL;
-@@ -3620,7 +3625,8 @@ static int srp_parse_options(struct net
- 				ret = -ENOMEM;
- 				goto out;
- 			}
--			ret = srp_parse_in(net, &target->rdma_cm.src.ss, p);
-+			ret = srp_parse_in(net, &target->rdma_cm.src.ss, p,
-+					   NULL);
- 			if (ret < 0) {
- 				pr_warn("bad source parameter '%s'\n", p);
- 				kfree(p);
-@@ -3636,7 +3642,10 @@ static int srp_parse_options(struct net
- 				ret = -ENOMEM;
- 				goto out;
- 			}
--			ret = srp_parse_in(net, &target->rdma_cm.dst.ss, p);
-+			ret = srp_parse_in(net, &target->rdma_cm.dst.ss, p,
-+					   &has_port);
-+			if (!has_port)
-+				ret = -EINVAL;
- 			if (ret < 0) {
- 				pr_warn("bad dest parameter '%s'\n", p);
- 				kfree(p);
+--- a/drivers/hwtracing/intel_th/pci.c
++++ b/drivers/hwtracing/intel_th/pci.c
+@@ -194,6 +194,11 @@ static const struct pci_device_id intel_
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x02a6),
+ 		.driver_data = (kernel_ulong_t)&intel_th_2x,
+ 	},
++	{
++		/* Ice Lake NNPI */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x45c5),
++		.driver_data = (kernel_ulong_t)&intel_th_2x,
++	},
+ 	{ 0 },
+ };
+ 
 
 
