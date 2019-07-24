@@ -2,111 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CF8D73CD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:12:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8393673CF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:13:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392011AbfGXUMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:12:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37374 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388645AbfGXUMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 16:12:10 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7225E21873;
-        Wed, 24 Jul 2019 20:12:09 +0000 (UTC)
-Date:   Wed, 24 Jul 2019 16:12:07 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "George G. Davis" <george_davis@mentor.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2] tracing: kmem: convert call_site addresses to user
- friendly symbols
-Message-ID: <20190724161207.62f07521@gandalf.local.home>
-In-Reply-To: <1563831780-14888-1-git-send-email-george_davis@mentor.com>
-References: <1563831780-14888-1-git-send-email-george_davis@mentor.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S2404958AbfGXUNa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:13:30 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:51162 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404887AbfGXUNZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 16:13:25 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 85A5B15431990;
+        Wed, 24 Jul 2019 13:13:24 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 13:13:24 -0700 (PDT)
+Message-Id: <20190724.131324.1545677795217357026.davem@davemloft.net>
+To:     matorola@gmail.com
+Cc:     ldv@altlinux.org, hch@lst.de, khalid.aziz@oracle.com,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        sparclinux@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/16] sparc64: use the generic get_user_pages_fast code
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <CADxRZqx-jEnm4U8oe=tJf5apbvcMuw5OYZUN8h4G68sXFvDsmQ@mail.gmail.com>
+References: <20190717215956.GA30369@altlinux.org>
+        <20190718.141405.1070121094691581998.davem@davemloft.net>
+        <CADxRZqx-jEnm4U8oe=tJf5apbvcMuw5OYZUN8h4G68sXFvDsmQ@mail.gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 24 Jul 2019 13:13:24 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Anatoly Pugachev <matorola@gmail.com>
+Date: Wed, 24 Jul 2019 22:32:17 +0300
 
-Hmm, get_maintainers.pl fails to get the people I think should be
-maintaining include/trace/events/kmem.h. 
-
-On Mon, 22 Jul 2019 17:42:59 -0400
-"George G. Davis" <george_davis@mentor.com> wrote:
-
-> While attempting to debug slub freelist pointer corruption bugs
-> caused by a module, I discovered that the kmem call_site addresses are
-> not at all user friendly for modules unless you manage to save a copy
-> of kallsyms for the running kernel beforehand.
+> the first test where it was discovered was done on my test LDOM named
+> ttip, hardware (hypervisor) is T5-2 server, running under Solaris 11.4
+> OS.
+> ttip LDOM is debian sparc64 unstable , so with almost all the latest
+> software (gcc 8.3.0, binutils 2.32.51.20190707-1, debian GLIBC
+> 2.28-10, etc..)
 > 
-> So convert kmem call_site addresses to user friendly symbols which is
-> especially helpful for module callers when you don't have a copy of
-> kallsyms for the running kernel.
-> 
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: George G. Davis <george_davis@mentor.com>
+> For another test, i also installed LDOM with oracle sparc linux
+> https://oss.oracle.com/projects/linux-sparc/ , but I've to install a
+> more fresh version of gcc on it first, since system installed gcc 4.4
+> is too old for a git kernel (linux-2.6/Documentation/Changes lists gcc
+> 4.6 as a minimal version), so I choose to install gcc-7.4.0 to /opt/
+> (leaving system installed gcc 4.4 under /usr/bin). Compiled and
+> installed git kernel version, i.e. last tag 5.3.0-rc1 and ran the
+> test. Kernel still produced oops.
 
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+I suspect, therefore, that we have a miscompile.
 
-I can take this if nobody else does.
+Please put your unstripped vmlinux image somewhere so I can take a closer
+look.
 
--- Steve
-
-
-> ---
-> Change history:
-> v1:
-> - First submission
-> v2:
-> - Fix kbuild test robot issues as suggested by
->   Steven Rostedt.
-> ---
->  include/trace/events/kmem.h | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/trace/events/kmem.h b/include/trace/events/kmem.h
-> index eb57e3037deb..09e1eeb4e44d 100644
-> --- a/include/trace/events/kmem.h
-> +++ b/include/trace/events/kmem.h
-> @@ -35,8 +35,8 @@ DECLARE_EVENT_CLASS(kmem_alloc,
->  		__entry->gfp_flags	= gfp_flags;
->  	),
->  
-> -	TP_printk("call_site=%lx ptr=%p bytes_req=%zu bytes_alloc=%zu gfp_flags=%s",
-> -		__entry->call_site,
-> +	TP_printk("call_site=%pS ptr=%p bytes_req=%zu bytes_alloc=%zu gfp_flags=%s",
-> +		(void *)__entry->call_site,
->  		__entry->ptr,
->  		__entry->bytes_req,
->  		__entry->bytes_alloc,
-> @@ -88,8 +88,8 @@ DECLARE_EVENT_CLASS(kmem_alloc_node,
->  		__entry->node		= node;
->  	),
->  
-> -	TP_printk("call_site=%lx ptr=%p bytes_req=%zu bytes_alloc=%zu gfp_flags=%s node=%d",
-> -		__entry->call_site,
-> +	TP_printk("call_site=%pS ptr=%p bytes_req=%zu bytes_alloc=%zu gfp_flags=%s node=%d",
-> +		(void *)__entry->call_site,
->  		__entry->ptr,
->  		__entry->bytes_req,
->  		__entry->bytes_alloc,
-> @@ -131,7 +131,8 @@ DECLARE_EVENT_CLASS(kmem_free,
->  		__entry->ptr		= ptr;
->  	),
->  
-> -	TP_printk("call_site=%lx ptr=%p", __entry->call_site, __entry->ptr)
-> +	TP_printk("call_site=%pS ptr=%p",
-> +		(void *)__entry->call_site, __entry->ptr)
->  );
->  
->  DEFINE_EVENT(kmem_free, kfree,
-
+Thank you.
