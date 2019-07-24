@@ -2,117 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30DA77342F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 18:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 174357343E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 18:53:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387742AbfGXQs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 12:48:28 -0400
-Received: from mga11.intel.com ([192.55.52.93]:51124 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387729AbfGXQs1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 12:48:27 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 09:48:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
-   d="scan'208";a="369355335"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.165])
-  by fmsmga006.fm.intel.com with ESMTP; 24 Jul 2019 09:48:26 -0700
-Date:   Wed, 24 Jul 2019 09:48:26 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     luferry@163.com
+        id S1727519AbfGXQxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 12:53:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36944 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbfGXQxC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 12:53:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RQ7VaSAzvcmxPLciLsbioYDmZXRLn9Opl2kFM/lOf8s=; b=INhcJGIrrafQFgG1n+wzJ+ETh
+        CVht9cgoNTyHPoepMSFxPV1tflMz66uqrGUV1uR0JfS8GxPDmD8Tggs3qfuRIP4VZf0Tk8NMuXI+p
+        WPIrG1FNQabv6USYtcj7XFsVKZgOkxCro5twe4yhBzQDEfADlcvugKxqgUjk6isNz0ZDzBW9LIH1s
+        825YtCzDNKL2Hv3TTCnpRxyrbkKtHmdTIRMywUQFM72sKCTXHWSY4wcSPMGBqMteAAx/DGyySR8SL
+        GnK20iRtWZ3g3R5QzzC9dMyGYJnm8PvDYaa9nU5cv/fQzitapYiwc0GL5esOqu932hUKpqxFqCGS7
+        PgPAo8obA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hqKVW-00066L-Ko; Wed, 24 Jul 2019 16:52:50 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E3BCB20288388; Wed, 24 Jul 2019 18:52:48 +0200 (CEST)
+Date:   Wed, 24 Jul 2019 18:52:48 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: x86: init x2apic_enabled() once
-Message-ID: <20190724164826.GC25376@linux.intel.com>
-References: <20190723130608.26528-1-luferry@163.com>
+        LKML <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        chris@chris-wilson.co.uk
+Subject: Re: x86 - clang / objtool status
+Message-ID: <20190724165248.GD31381@hirez.programming.kicks-ass.net>
+References: <alpine.DEB.2.21.1907182223560.1785@nanos.tec.linutronix.de>
+ <20190724023946.yxsz5im22fz4zxrn@treble>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190723130608.26528-1-luferry@163.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190724023946.yxsz5im22fz4zxrn@treble>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 09:06:08PM +0800, luferry@163.com wrote:
-> From: luferry <luferry@163.com>
+On Tue, Jul 23, 2019 at 09:43:24PM -0500, Josh Poimboeuf wrote:
+> On Thu, Jul 18, 2019 at 10:40:09PM +0200, Thomas Gleixner wrote:
 > 
-> x2apic_eanbled() costs about 200 cycles
-> when guest trigger halt pretty high, pi ops in hotpath
+> >   drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: .altinstr_replacement+0x86: redundant UACCESS disable
 > 
-> Signed-off-by: luferry <luferry@163.com>
-> ---
->  arch/x86/kvm/vmx/vmx.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
+> Looking at this one, I think I agree with objtool.
 > 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index d98eac371c0a..e17dbf011e47 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -186,6 +186,8 @@ static DEFINE_STATIC_KEY_FALSE(vmx_l1d_should_flush);
->  static DEFINE_STATIC_KEY_FALSE(vmx_l1d_flush_cond);
->  static DEFINE_MUTEX(vmx_l1d_flush_mutex);
->  
-> +static int __read_mostly host_x2apic_enabled;
-> +
->  /* Storage for pre module init parameter parsing */
->  static enum vmx_l1d_flush_state __read_mostly vmentry_l1d_flush_param = VMENTER_L1D_FLUSH_AUTO;
->  
-> @@ -1204,7 +1206,7 @@ static void vmx_vcpu_pi_load(struct kvm_vcpu *vcpu, int cpu)
->  
->  		dest = cpu_physical_id(cpu);
->  
-> -		if (x2apic_enabled())
-> +		if (host_x2apic_enabled)
+> PeterZ, Linus, I know y'all discussed this code a few months ago.
+> 
+> __copy_from_user() already does a CLAC in its error path.  So isn't the
+> user_access_end() redundant for the __copy_from_user() error path?
+> 
+> Untested fix:
 
-Instead of caching x2apic_enabled(), this can be:
+Run this past i915 people, but with the objtool patch I just posted it
+reproduces with GCC and this patch makes it go away.
 
-	if (x2apic_supported() && x2apic_mode)
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-which will get compiled out if CONFIG_X86_X2APIC=n.
-
-It's quite suprising (to me) that 2apic_enabled() reads the MSR in the
-first place, but at a glance the other users of x2apic_enabled() do need
-to query the MSR and/or may be called before x2apic_mode is set.
-
->  			new.ndst = dest;
->  		else
->  			new.ndst = (dest << 8) & 0xFF00;
-> @@ -7151,7 +7153,7 @@ static void __pi_post_block(struct kvm_vcpu *vcpu)
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
+> index 5fae0e50aad0..41dab9ea33cd 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
+> @@ -1628,6 +1628,7 @@ static int check_relocations(const struct drm_i915_gem_exec_object2 *entry)
 >  
->  		dest = cpu_physical_id(vcpu->cpu);
+>  static int eb_copy_relocations(const struct i915_execbuffer *eb)
+>  {
+> +	struct drm_i915_gem_relocation_entry *relocs;
+>  	const unsigned int count = eb->buffer_count;
+>  	unsigned int i;
+>  	int err;
+> @@ -1635,7 +1636,6 @@ static int eb_copy_relocations(const struct i915_execbuffer *eb)
+>  	for (i = 0; i < count; i++) {
+>  		const unsigned int nreloc = eb->exec[i].relocation_count;
+>  		struct drm_i915_gem_relocation_entry __user *urelocs;
+> -		struct drm_i915_gem_relocation_entry *relocs;
+>  		unsigned long size;
+>  		unsigned long copied;
 >  
-> -		if (x2apic_enabled())
-> +		if (host_x2apic_enabled)
->  			new.ndst = dest;
->  		else
->  			new.ndst = (dest << 8) & 0xFF00;
-> @@ -7221,7 +7223,7 @@ static int pi_pre_block(struct kvm_vcpu *vcpu)
->  		 */
->  		dest = cpu_physical_id(vcpu->pre_pcpu);
+> @@ -1663,14 +1663,8 @@ static int eb_copy_relocations(const struct i915_execbuffer *eb)
 >  
-> -		if (x2apic_enabled())
-> +		if (host_x2apic_enabled)
->  			new.ndst = dest;
->  		else
->  			new.ndst = (dest << 8) & 0xFF00;
-> @@ -7804,6 +7806,8 @@ static int __init vmx_init(void)
+>  			if (__copy_from_user((char *)relocs + copied,
+>  					     (char __user *)urelocs + copied,
+> -					     len)) {
+> -end_user:
+> -				user_access_end();
+> -end:
+> -				kvfree(relocs);
+> -				err = -EFAULT;
+> -				goto err;
+> -			}
+> +					     len))
+> +				goto end;
+>  
+>  			copied += len;
+>  		} while (copied < size);
+> @@ -1699,10 +1693,14 @@ static int eb_copy_relocations(const struct i915_execbuffer *eb)
+>  
+>  	return 0;
+>  
+> +end_user:
+> +	user_access_end();
+> +end:
+> +	kvfree(relocs);
+> +	err = -EFAULT;
+>  err:
+>  	while (i--) {
+> -		struct drm_i915_gem_relocation_entry *relocs =
+> -			u64_to_ptr(typeof(*relocs), eb->exec[i].relocs_ptr);
+> +		relocs = u64_to_ptr(typeof(*relocs), eb->exec[i].relocs_ptr);
+>  		if (eb->exec[i].relocation_count)
+>  			kvfree(relocs);
 >  	}
->  #endif
->  
-> +	host_x2apic_enabled = x2apic_enabled();
-> +
->  	r = kvm_init(&vmx_x86_ops, sizeof(struct vcpu_vmx),
->  		     __alignof__(struct vcpu_vmx), THIS_MODULE);
->  	if (r)
-> -- 
-> 2.14.1.40.g8e62ba1
-> 
-> 
