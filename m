@@ -2,67 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4EBB734D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:16:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A748734F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:17:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbfGXRQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 13:16:26 -0400
-Received: from smtprelay0186.hostedemail.com ([216.40.44.186]:45496 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726031AbfGXRQ0 (ORCPT
+        id S1728279AbfGXRQ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 13:16:58 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52827 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728175AbfGXRQ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 13:16:26 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 034D818224D9C;
-        Wed, 24 Jul 2019 17:16:25 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1714:1730:1747:1777:1792:2198:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3350:3622:3867:4321:5007:6642:10004:10400:10848:11026:11232:11473:11657:11658:11914:12043:12296:12297:12438:12555:12740:12760:12895:12986:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21451:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
-X-HE-Tag: brick72_54e3a62085009
-X-Filterd-Recvd-Size: 1951
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf05.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 24 Jul 2019 17:16:23 +0000 (UTC)
-Message-ID: <2a0c5ef5c7e20b190156908991e4c964a501d80a.camel@perches.com>
-Subject: Re: [PATCH 03/12] drm: aspeed_gfx: Fix misuse of GENMASK macro
-From:   Joe Perches <joe@perches.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Wed, 24 Jul 2019 10:16:22 -0700
-In-Reply-To: <cddd7ad7e9f81dec1e86c106f04229d21fc21920.1562734889.git.joe@perches.com>
-References: <cover.1562734889.git.joe@perches.com>
-         <cddd7ad7e9f81dec1e86c106f04229d21fc21920.1562734889.git.joe@perches.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Wed, 24 Jul 2019 13:16:56 -0400
+Received: by mail-wm1-f65.google.com with SMTP id s3so42516427wms.2;
+        Wed, 24 Jul 2019 10:16:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tFaTqUdBSzB8R4SmwVYkKYMxu10gvhixEpWzdUiL5RA=;
+        b=GbQtZPpmr7Z4yMvQnxNd+wONzoC6q1HW4srQROtZieW5QAjxXNh3WaW/vT12jLnJms
+         pjvr+VU843f5VOziLR68Xn7wa5uWpTDXQyVGS5ABjnn3Agws2YL8hwdLTEAQifgL/2Op
+         vW4lbVUlZffBDOGkEpHnayK8hYkRHjnNKepV3vFe6LmZowb2oRyTVjRNASemRvvKJ1Hi
+         PJ2TZP9sEoJZj86R7lfwRUCE2tZWHP66nKN+vIjrxCT83sNz5bUEsh5jN6kJ0+lPifq1
+         qQemrNo6Kul/DTRChxyHsgMjzsuEt6WCHUauPXiO4zCYsPOy1KyhWcNQ1/WpTHEYUT0y
+         n5/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tFaTqUdBSzB8R4SmwVYkKYMxu10gvhixEpWzdUiL5RA=;
+        b=jFoGaQC+wI4dRVIgEbu7nWXV/ZwGCOcMs+NUkWAV6qrEPZWabA/33s9cqwN7gZPAIG
+         0emxO/S4vulEn5L/Awoo0LiICWmKNbIXCzwGSJJdKbVxcfeC+537+OM4ULomyXpFLHB/
+         hjOWU4eVtCGTGsH7YN2Hrhd1a9HX2mqTiXT5AncOIj1f28Belocehs1dR2N77s39SBip
+         sQpXHR9+aKa1iqZqx39rAkJbmpRlN38K5lnjcx759NEgY49hFgusjcMJoIHc0sfw3/tN
+         OKmCsu8EYQHbM8YAJ7qLyALd4Vkx6MZa4+EDVWwp+ITiCU3zZT8fGBW+a0UJxMUHwFQq
+         jrLA==
+X-Gm-Message-State: APjAAAWASJcTF3e9h7anTLeyneGd8IBhkF7w3qmKlAcdBaCvz9mZX1kH
+        aXXIGi4CKLXtCUwMwYezFqhLakuD5Jo=
+X-Google-Smtp-Source: APXvYqwNGYGdsXoSsoWVMsqpiFqsPByMx5twgEVxz1Qstui53GCAqPW2amhUPifjO4sV+cstIDkyEg==
+X-Received: by 2002:a1c:9dc5:: with SMTP id g188mr77103884wme.93.1563988614716;
+        Wed, 24 Jul 2019 10:16:54 -0700 (PDT)
+Received: from localhost.localdomain ([109.126.147.168])
+        by smtp.gmail.com with ESMTPSA id e7sm43753256wmd.0.2019.07.24.10.16.47
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 10:16:54 -0700 (PDT)
+From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
+To:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH 1/1] locks: Fix procfs output for file leases
+Date:   Wed, 24 Jul 2019 20:16:31 +0300
+Message-Id: <68a58eb885e32c1d7be0b4a531709ba2f33a758e.1563988369.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-07-09 at 22:04 -0700, Joe Perches wrote:
-> Arguments are supposed to be ordered high then low.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
->  drivers/gpu/drm/aspeed/aspeed_gfx.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/aspeed/aspeed_gfx.h b/drivers/gpu/drm/aspeed/aspeed_gfx.h
-> index a10358bb61ec..095ea03e5833 100644
-> --- a/drivers/gpu/drm/aspeed/aspeed_gfx.h
-> +++ b/drivers/gpu/drm/aspeed/aspeed_gfx.h
-> @@ -74,7 +74,7 @@ int aspeed_gfx_create_output(struct drm_device *drm);
->  /* CTRL2 */
->  #define CRT_CTRL_DAC_EN			BIT(0)
->  #define CRT_CTRL_VBLANK_LINE(x)		(((x) << 20) & CRT_CTRL_VBLANK_LINE_MASK)
-> -#define CRT_CTRL_VBLANK_LINE_MASK	GENMASK(20, 31)
-> +#define CRT_CTRL_VBLANK_LINE_MASK	GENMASK(31, 20)
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-ping?
+Since commit 778fc546f749c588aa2f ("locks: fix tracking of inprogress
+lease breaks"), leases break don't change @fl_type but modifies
+@fl_flags. However, procfs's part haven't been updated.
 
+Previously, for a breaking lease the target type was printed (see
+target_leasetype()), as returns fcntl(F_GETLEASE). But now it's always
+"READ", as F_UNLCK no longer means "breaking". Unlike the previous
+one, this behaviour don't provide a complete description of the lease.
+
+There are /proc/pid/fdinfo/ outputs for a lease (the same for READ and
+WRITE) breaked by O_WRONLY.
+-- before:
+lock:   1: LEASE  BREAKING  READ  2558 08:03:815793 0 EOF
+-- after:
+lock:   1: LEASE  BREAKING  UNLCK  2558 08:03:815793 0 EOF
+
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ fs/locks.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/locks.c b/fs/locks.c
+index 686eae21daf6..24d1db632f6c 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -2784,10 +2784,10 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+ 			       ? (fl->fl_type & LOCK_WRITE) ? "RW   " : "READ "
+ 			       : (fl->fl_type & LOCK_WRITE) ? "WRITE" : "NONE ");
+ 	} else {
+-		seq_printf(f, "%s ",
+-			       (lease_breaking(fl))
+-			       ? (fl->fl_type == F_UNLCK) ? "UNLCK" : "READ "
+-			       : (fl->fl_type == F_WRLCK) ? "WRITE" : "READ ");
++		int type = IS_LEASE(fl) ? target_leasetype(fl) : fl->fl_type;
++
++		seq_printf(f, "%s ", (type == F_WRLCK) ? "WRITE" :
++				     (type == F_RDLCK) ? "READ" : "UNLCK");
+ 	}
+ 	if (inode) {
+ 		/* userspace relies on this representation of dev_t */
+-- 
+2.22.0
 
