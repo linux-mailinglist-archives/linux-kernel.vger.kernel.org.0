@@ -2,44 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BF6A73621
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:52:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2EFC7361A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:51:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbfGXRwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 13:52:40 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:59926 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbfGXRwj (ORCPT
+        id S1727647AbfGXRvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 13:51:43 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:38456 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbfGXRvm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 13:52:39 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6OHde6B049688;
-        Wed, 24 Jul 2019 17:52:29 GMT
+        Wed, 24 Jul 2019 13:51:42 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6OHdfUU134750;
+        Wed, 24 Jul 2019 17:50:29 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2018-07-02; bh=ijqWqbTQS+mO3BG8eUkyRBif1gJVoINohHHt0HHU2LM=;
- b=tup7p8NclfqJa8HNUqc3r507Q+5d5c4/aRy/NdyxP+wvdiYSD1QTyx+qJ3sVlK2w61oa
- /8aL4/T0MK/QwIQYhZUuPHUZtnMFaHKDwfvodoE3lwcHbZEdeQKrK95iB5wp3dQF4Jjt
- Qrvq2pJrRa4oIqvapHFz0oln13nyP3xnTKqZ2FRosyKvNT3T6FSzEGKNNF2mJ2Ljr1wU
- Rhr6EUlHq8ayFK6cUHVjTHzbplH8Gkry5a3eHkWHJS9P4KjOUjPpZ5NsgUUiseifT0KO
- zqOS7u4WCOMTmfW6V0K8L3f3fWuC379XJ4fwuQaoQhBWryFiL2qLEqdCJokb/HDjCdbP Zg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2tx61by13q-1
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=NX/s/A5OLVDNZD4fNK87u3UpZfdfRBOaB3nXPLcsPas=;
+ b=lkP+47eSi6lNelJK4kH8PvDDkmDI4KwgfHOhbC5Lp/E4hBF1MY44i5mbaW+evRfZPfVk
+ R0E2hYBeVSx9InL7HjrmIAPY9jsoPtf007rUUpbwwU4kMeu5SwrRL/OaqngDPPnDxpRy
+ AejMJlnkqk7kWLvjxvzRIKfTgu0PhLBMNO6svrheEboBLTglFaBcAp8E2cYbg0nGn284
+ JFJedRP7waYMAXMhlD29ywDn9b0RVde89rNmiQn3yImeq7Z8T8QNjtY/7dNVqr76HLnN
+ PdLeHUc6OyBQYDGzt2p6cj94UzzJYNWaB+pds0fvtZPlZ+ppJhobynJmlWoICT2GKsSF 4w== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2tx61by15s-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 24 Jul 2019 17:52:28 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6OHcAo4188438;
+        Wed, 24 Jul 2019 17:50:29 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6OHcEMc018710;
         Wed, 24 Jul 2019 17:50:28 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2tx60y698g-1
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2tx60xv7j9-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Wed, 24 Jul 2019 17:50:28 +0000
 Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6OHoMOj019819;
-        Wed, 24 Jul 2019 17:50:22 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6OHoPsb022353;
+        Wed, 24 Jul 2019 17:50:25 GMT
 Received: from monkey.oracle.com (/71.63.128.209)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 24 Jul 2019 10:50:22 -0700
+        with ESMTP ; Wed, 24 Jul 2019 10:50:25 -0700
 From:   Mike Kravetz <mike.kravetz@oracle.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Hillf Danton <hdanton@sina.com>, Michal Hocko <mhocko@kernel.org>,
@@ -47,10 +48,12 @@ Cc:     Hillf Danton <hdanton@sina.com>, Michal Hocko <mhocko@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [RFC PATCH 0/3] fix hugetlb page allocation stalls
-Date:   Wed, 24 Jul 2019 10:50:11 -0700
-Message-Id: <20190724175014.9935-1-mike.kravetz@oracle.com>
+Subject: [RFC PATCH 1/3] mm, reclaim: make should_continue_reclaim perform dryrun detection
+Date:   Wed, 24 Jul 2019 10:50:12 -0700
+Message-Id: <20190724175014.9935-2-mike.kravetz@oracle.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190724175014.9935-1-mike.kravetz@oracle.com>
+References: <20190724175014.9935-1-mike.kravetz@oracle.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9328 signatures=668685
@@ -69,63 +72,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allocation of hugetlb pages via sysctl or procfs can stall for minutes
-or hours.  A simple example on a two node system with 8GB of memory is
-as follows:
+From: Hillf Danton <hdanton@sina.com>
 
-echo 4096 > /sys/devices/system/node/node1/hugepages/hugepages-2048kB/nr_hugepages
-echo 4096 > /proc/sys/vm/nr_hugepages
+Address the issue of should_continue_reclaim continuing true too often
+for __GFP_RETRY_MAYFAIL attempts when !nr_reclaimed and nr_scanned.
+This could happen during hugetlb page allocation causing stalls for
+minutes or hours.
 
-Obviously, both allocation attempts will fall short of their 8GB goal.
-However, one or both of these commands may stall and not be interruptible.
-The issues were discussed in this thread [1].
+Restructure code so that false will be returned in this case even if
+there are plenty of inactive pages.
 
-This series attempts to address the issues causing the stalls.  There are
-two distinct issues, and an optimization.  For the reclaim and compaction
-issues, suggestions were made to simply remove some existing code.  However,
-the impact of such changes would be hard to address.  This series takes a
-more conservative approach in an attempt to minimally impact existing
-workloads.  The question of which approach is better is debatable, hence the
-RFC designation.  Patches in the series address these issues:
+Need better description from Hillf Danton
+Need SOB from Hillf Danton
+---
+ mm/vmscan.c | 28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
-1) Should_continue_reclaim returns true too often.
-   Michal Hocko suggested removing the special casing for __GFP_RETRY_MAYFAIL
-   in should_continue_reclaim.  This does indeed address the hugetlb
-   allocations, but may impact other users.  Hillf Danton restructured
-   the code in such a way to preserve much of the original semantics.  Hillf's
-   patch also addresses hugetlb allocation issues and is included here.
-
-2) With 1) addressed, should_compact_retry returns true too often.
-   Mel Gorman suggested the removal of the compaction_zonelist_suitable() call.
-   This routine/call was introduced by Michal Hocko for a specific use case.
-   Therefore, removal would likely break that use case.  While examining the
-   reasons for compaction_withdrawn() as in [2], it appears that there are
-   several places where we should be using MIN_COMPACT_COSTLY_PRIORITY instead
-   of MIN_COMPACT_PRIORITY for costly allocations.  This patch makes those
-   changes which also causes more appropriate should_compact_retry behavior
-   for hugetlb allocations.
-
-3) This is simply an optimization of the allocation code for hugetlb pool
-   pages.  After first __GFP_RETRY_MAYFAIL allocation failure on a node,
-   it drops the __GFP_RETRY_MAYFAIL flag.
-
-
-[1] http://lkml.kernel.org/r/d38a095e-dc39-7e82-bb76-2c9247929f07@oracle.com
-[2] http://lkml.kernel.org/r/6377c199-2b9e-e30d-a068-c304d8a3f706@oracle.com
-
-Hillf Danton (1):
-  mm, reclaim: make should_continue_reclaim perform dryrun detection
-
-Mike Kravetz (2):
-  mm, compaction: use MIN_COMPACT_COSTLY_PRIORITY everywhere for costly
-    orders
-  hugetlbfs: don't retry when pool page allocations start to fail
-
- mm/compaction.c | 18 +++++++---
- mm/hugetlb.c    | 87 +++++++++++++++++++++++++++++++++++++++++++------
- mm/vmscan.c     | 28 ++++++++--------
- 3 files changed, 105 insertions(+), 28 deletions(-)
-
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index f4fd02ae233e..484b6b1a954e 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2673,18 +2673,6 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
+ 			return false;
+ 	}
+ 
+-	/*
+-	 * If we have not reclaimed enough pages for compaction and the
+-	 * inactive lists are large enough, continue reclaiming
+-	 */
+-	pages_for_compaction = compact_gap(sc->order);
+-	inactive_lru_pages = node_page_state(pgdat, NR_INACTIVE_FILE);
+-	if (get_nr_swap_pages() > 0)
+-		inactive_lru_pages += node_page_state(pgdat, NR_INACTIVE_ANON);
+-	if (sc->nr_reclaimed < pages_for_compaction &&
+-			inactive_lru_pages > pages_for_compaction)
+-		return true;
+-
+ 	/* If compaction would go ahead or the allocation would succeed, stop */
+ 	for (z = 0; z <= sc->reclaim_idx; z++) {
+ 		struct zone *zone = &pgdat->node_zones[z];
+@@ -2700,7 +2688,21 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
+ 			;
+ 		}
+ 	}
+-	return true;
++
++	/*
++	 * If we have not reclaimed enough pages for compaction and the
++	 * inactive lists are large enough, continue reclaiming
++	 */
++	pages_for_compaction = compact_gap(sc->order);
++	inactive_lru_pages = node_page_state(pgdat, NR_INACTIVE_FILE);
++	if (get_nr_swap_pages() > 0)
++		inactive_lru_pages += node_page_state(pgdat, NR_INACTIVE_ANON);
++
++	return inactive_lru_pages > pages_for_compaction &&
++		/*
++		 * avoid dryrun with plenty of inactive pages
++		 */
++		nr_scanned && nr_reclaimed;
+ }
+ 
+ static bool pgdat_memcg_congested(pg_data_t *pgdat, struct mem_cgroup *memcg)
 -- 
 2.20.1
 
