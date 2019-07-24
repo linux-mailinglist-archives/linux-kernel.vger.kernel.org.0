@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD1377397A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:40:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 009D67397C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:40:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390028AbfGXTkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:40:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41740 "EHLO mail.kernel.org"
+        id S2390057AbfGXTkj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:40:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390010AbfGXTka (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:40:30 -0400
+        id S2390039AbfGXTkg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:40:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDD1B20665;
-        Wed, 24 Jul 2019 19:40:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F246C20665;
+        Wed, 24 Jul 2019 19:40:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997229;
-        bh=hdPiwWOIh86sapnLw0u7XiSoH7Kj3zi5jtTPZLDP9H0=;
+        s=default; t=1563997235;
+        bh=nVQ1M0dbv2cOYIrNGrKn3lrQsBhUZGa8T2INGbV6e4M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xqwklLOxfDDk/iHBwunCY4qXfr5pSJ5H8U4s08P2JE5j5ObzASVNwKDQcQE/WGGa0
-         KjY/AzSP2AhpRO2+LnFJEckupQx2u0TDXCECH5asUCLKUTy3A/VBOoNnLGo9v76TF4
-         zH7FrK/Sykg3rcEVC8fDrFPcnkG7Img8DXvbdAOg=
+        b=DNXxMZmijC15wszZ07g3clv7RkIE8j0cpRLVeBvTeCrDzhYiFjpqs8lacNmk05OcN
+         GnXfcnnZzs2CJBFAokSG+l2cHcA61sjULG/TyseK+MSEjE+0xsDEKf7LsMwIbQ6Nm9
+         ILS99oztSDI/VJozXT4+EXQVuj2JziLjLuwlxZOs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>
-Subject: [PATCH 5.2 366/413] PCI: qcom: Ensure that PERST is asserted for at least 100 ms
-Date:   Wed, 24 Jul 2019 21:20:57 +0200
-Message-Id: <20190724191801.598390481@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.2 368/413] Btrfs: fix data loss after inode eviction, renaming it, and fsync it
+Date:   Wed, 24 Jul 2019 21:20:59 +0200
+Message-Id: <20190724191801.694153432@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -44,49 +43,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Niklas Cassel <niklas.cassel@linaro.org>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 64adde31c8e996a6db6f7a1a4131180e363aa9f2 upstream.
+commit d1d832a0b51dd9570429bb4b81b2a6c1759e681a upstream.
 
-Currently, there is only a 1 ms sleep after asserting PERST.
+When we log an inode, regardless of logging it completely or only that it
+exists, we always update it as logged (logged_trans and last_log_commit
+fields of the inode are updated). This is generally fine and avoids future
+attempts to log it from having to do repeated work that brings no value.
 
-Reading the datasheets for different endpoints, some require PERST to be
-asserted for 10 ms in order for the endpoint to perform a reset, others
-require it to be asserted for 50 ms.
+However, if we write data to a file, then evict its inode after all the
+dealloc was flushed (and ordered extents completed), rename the file and
+fsync it, we end up not logging the new extents, since the rename may
+result in logging that the inode exists in case the parent directory was
+logged before. The following reproducer shows and explains how this can
+happen:
 
-Several SoCs using this driver uses PCIe Mini Card, where we don't know
-what endpoint will be plugged in.
+  $ mkfs.btrfs -f /dev/sdb
+  $ mount /dev/sdb /mnt
 
-The PCI Express Card Electromechanical Specification r2.0, section
-2.2, "PERST# Signal" specifies:
+  $ mkdir /mnt/dir
+  $ touch /mnt/dir/foo
+  $ touch /mnt/dir/bar
 
-"On power up, the deassertion of PERST# is delayed 100 ms (TPVPERL) from
-the power rails achieving specified operating limits."
+  # Do a direct IO write instead of a buffered write because with a
+  # buffered write we would need to make sure dealloc gets flushed and
+  # complete before we do the inode eviction later, and we can not do that
+  # from user space with call to things such as sync(2) since that results
+  # in a transaction commit as well.
+  $ xfs_io -d -c "pwrite -S 0xd3 0 4K" /mnt/dir/bar
 
-Add a sleep of 100 ms before deasserting PERST, in order to ensure that
-we are compliant with the spec.
+  # Keep the directory dir in use while we evict inodes. We want our file
+  # bar's inode to be evicted but we don't want our directory's inode to
+  # be evicted (if it were evicted too, we would not be able to reproduce
+  # the issue since the first fsync below, of file foo, would result in a
+  # transaction commit.
+  $ ( cd /mnt/dir; while true; do :; done ) &
+  $ pid=$!
 
-Fixes: 82a823833f4e ("PCI: qcom: Add Qualcomm PCIe controller driver")
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Stanimir Varbanov <svarbanov@mm-sol.com>
-Cc: stable@vger.kernel.org # 4.5+
+  # Wait a bit to give time for the background process to chdir.
+  $ sleep 0.1
+
+  # Evict all inodes, except the inode for the directory dir because it is
+  # currently in use by our background process.
+  $ echo 2 > /proc/sys/vm/drop_caches
+
+  # fsync file foo, which ends up persisting information about the parent
+  # directory because it is a new inode.
+  $ xfs_io -c fsync /mnt/dir/foo
+
+  # Rename bar, this results in logging that this inode exists (inode item,
+  # names, xattrs) because the parent directory is in the log.
+  $ mv /mnt/dir/bar /mnt/dir/baz
+
+  # Now fsync baz, which ends up doing absolutely nothing because of the
+  # rename operation which logged that the inode exists only.
+  $ xfs_io -c fsync /mnt/dir/baz
+
+  <power failure>
+
+  $ mount /dev/sdb /mnt
+  $ od -t x1 -A d /mnt/dir/baz
+  0000000
+
+    --> Empty file, data we wrote is missing.
+
+Fix this by not updating last_sub_trans of an inode when we are logging
+only that it exists and the inode was not yet logged since it was loaded
+from disk (full_sync bit set), this is enough to make btrfs_inode_in_log()
+return false for this scenario and make us log the inode. The logged_trans
+of the inode is still always setsince that alone is used to track if names
+need to be deleted as part of unlink operations.
+
+Fixes: 257c62e1bce03e ("Btrfs: avoid tree log commit when there are no changes")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/controller/dwc/pcie-qcom.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/btrfs/tree-log.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -178,6 +178,8 @@ static void qcom_ep_reset_assert(struct
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -5420,9 +5420,19 @@ log_extents:
+ 		}
+ 	}
  
- static void qcom_ep_reset_deassert(struct qcom_pcie *pcie)
- {
-+	/* Ensure that PERST has been asserted for at least 100 ms */
-+	msleep(100);
- 	gpiod_set_value_cansleep(pcie->reset, 0);
- 	usleep_range(PERST_DELAY_US, PERST_DELAY_US + 500);
- }
++	/*
++	 * Don't update last_log_commit if we logged that an inode exists after
++	 * it was loaded to memory (full_sync bit set).
++	 * This is to prevent data loss when we do a write to the inode, then
++	 * the inode gets evicted after all delalloc was flushed, then we log
++	 * it exists (due to a rename for example) and then fsync it. This last
++	 * fsync would do nothing (not logging the extents previously written).
++	 */
+ 	spin_lock(&inode->lock);
+ 	inode->logged_trans = trans->transid;
+-	inode->last_log_commit = inode->last_sub_trans;
++	if (inode_only != LOG_INODE_EXISTS ||
++	    !test_bit(BTRFS_INODE_NEEDS_FULL_SYNC, &inode->runtime_flags))
++		inode->last_log_commit = inode->last_sub_trans;
+ 	spin_unlock(&inode->lock);
+ out_unlock:
+ 	mutex_unlock(&inode->log_mutex);
 
 
