@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6343C73C12
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:06:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8725873C8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:09:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392786AbfGXUGC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:06:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57830 "EHLO mail.kernel.org"
+        id S2405028AbfGXT7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:59:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392760AbfGXUF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 16:05:56 -0400
+        id S2405017AbfGXT7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:59:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8078120665;
-        Wed, 24 Jul 2019 20:05:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54855205C9;
+        Wed, 24 Jul 2019 19:59:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563998755;
-        bh=OhSZtjLvVeSkSEdAXWuZWyJWeCmDNXA06ipGKmFqN5E=;
+        s=default; t=1563998383;
+        bh=cD9rrDxEyc0yZkzD6bSEDLpUywUmGpNUOh7GXJ8xpX8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TngG7Rz3RHaZjA5XqV4+rztlb/OIbrJm+X/M6g1Yf0coE1gxGoSrC2RkuYLA0yJmn
-         cIQQvia1n6oOI6PGZT/zoM0WpGdS4gwsmpd4UQ7YiQZDTAabzn3TSyxn2Phe9N1HAo
-         5knNayRBm4Ywj308Ra3PQu3t9oGcZoBQ07AztqCY=
+        b=TUERDJqGXVAoYzfMjVYmfOllo8UBBDp1ZGcwLmr2gCyRVjaPUJ2CVYG4MN4TQ62BC
+         52wu7lgOTwGkzkhGmY/qWhf0kh6MgwyWt4EedgNyM9qN8cyYjaB7pHmtEOatTeBKcG
+         BW0JsYxiikKaICVcK6R/RKzlWXkMKBQUBfISkZGs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>,
-        Helen Koike <helen.koike@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 102/271] media: vimc: cap: check v4l2_fill_pixfmt return value
-Date:   Wed, 24 Jul 2019 21:19:31 +0200
-Message-Id: <20190724191703.965148109@linuxfoundation.org>
+        stable@vger.kernel.org, Joe Perches <joe@perches.com>,
+        Like Xu <like.xu@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.1 305/371] KVM: x86/vPMU: refine kvm_pmu err msg when event creation failed
+Date:   Wed, 24 Jul 2019 21:20:57 +0200
+Message-Id: <20190724191747.164107064@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190724191655.268628197@linuxfoundation.org>
-References: <20190724191655.268628197@linuxfoundation.org>
+In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
+References: <20190724191724.382593077@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,46 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 77ae46e11df5c96bb4582633851f838f5d954df4 ]
+From: Like Xu <like.xu@linux.intel.com>
 
-v4l2_fill_pixfmt() returns -EINVAL if the pixelformat used as parameter is
-invalid or if the user is trying to use a multiplanar format with the
-singleplanar API. Currently, the vimc_cap_try_fmt_vid_cap() returns such
-value, but vimc_cap_s_fmt_vid_cap() is ignoring it. Fix that and returns
-an error value if vimc_cap_try_fmt_vid_cap() has failed.
+commit 6fc3977ccc5d3c22e851f2dce2d3ce2a0a843842 upstream.
 
-Signed-off-by: André Almeida <andrealmeid@collabora.com>
-Suggested-by: Helen Koike <helen.koike@collabora.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+If a perf_event creation fails due to any reason of the host perf
+subsystem, it has no chance to log the corresponding event for guest
+which may cause abnormal sampling data in guest result. In debug mode,
+this message helps to understand the state of vPMC and we may not
+limit the number of occurrences but not in a spamming style.
+
+Suggested-by: Joe Perches <joe@perches.com>
+Signed-off-by: Like Xu <like.xu@linux.intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/media/platform/vimc/vimc-capture.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/kvm/pmu.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/vimc/vimc-capture.c b/drivers/media/platform/vimc/vimc-capture.c
-index 65d657daf66f..8e014cc485f0 100644
---- a/drivers/media/platform/vimc/vimc-capture.c
-+++ b/drivers/media/platform/vimc/vimc-capture.c
-@@ -132,12 +132,15 @@ static int vimc_cap_s_fmt_vid_cap(struct file *file, void *priv,
- 				  struct v4l2_format *f)
- {
- 	struct vimc_cap_device *vcap = video_drvdata(file);
-+	int ret;
+--- a/arch/x86/kvm/pmu.c
++++ b/arch/x86/kvm/pmu.c
+@@ -131,8 +131,8 @@ static void pmc_reprogram_counter(struct
+ 						 intr ? kvm_perf_overflow_intr :
+ 						 kvm_perf_overflow, pmc);
+ 	if (IS_ERR(event)) {
+-		printk_once("kvm_pmu: event creation failed %ld\n",
+-			    PTR_ERR(event));
++		pr_debug_ratelimited("kvm_pmu: event creation failed %ld for pmc->idx = %d\n",
++			    PTR_ERR(event), pmc->idx);
+ 		return;
+ 	}
  
- 	/* Do not change the format while stream is on */
- 	if (vb2_is_busy(&vcap->queue))
- 		return -EBUSY;
- 
--	vimc_cap_try_fmt_vid_cap(file, priv, f);
-+	ret = vimc_cap_try_fmt_vid_cap(file, priv, f);
-+	if (ret)
-+		return ret;
- 
- 	dev_dbg(vcap->dev, "%s: format update: "
- 		"old:%dx%d (0x%x, %d, %d, %d, %d) "
--- 
-2.20.1
-
 
 
