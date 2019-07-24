@@ -2,120 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C733573CF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:13:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BECA473CCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:11:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404592AbfGXT4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:56:06 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46717 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404576AbfGXTz7 (ORCPT
+        id S2392006AbfGXT5a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:57:30 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42713 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391982AbfGXT52 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:55:59 -0400
-Received: by mail-io1-f68.google.com with SMTP id i10so92135426iol.13
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:55:58 -0700 (PDT)
+        Wed, 24 Jul 2019 15:57:28 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q10so21452290pff.9
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 12:57:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1Sco7/Mcnd83BlhtKzamoEr69UcyH5M4+yy+9bnNAKM=;
-        b=KLk0Wv3SBFPzgoA1kbc2bJqn82kEu4H7BRBV9Q6nO9qDFvRPxVr9CjNrioVEjlpM1Y
-         uhq9hWWPqIJ/0sgyTaZ9penAhEgps3wdnKRzoqnlM3l/vpG/K8qQMFs5yCEtPoqbYfLu
-         GZxoYREsayfQsYrPSLhKsLnzGJhdzY10XEpwMhGkIT5Tl6ip66gFt94Ajtoi/KxqVcxj
-         pT6wUXzjSPSEW3Ppr1EY5vH0r8G/DywVyEBvocKdFIiD6eU16sc4zfMedqFfflmRxSIm
-         A9JylbVbRdpg5Sxz1SxweranVQqx0B+l9w+16SZso94edNwK4d/sY7DmKXja4FC3HpxF
-         Xrlg==
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3hIqVIsW0Jzv3qlJGiJ8fmrkQndrI1bOT+U/YKeP91w=;
+        b=G5AjQYftTGGOfdkJsIj3NaLgEDUlZP91m+rouc5jJaPeUxm49PKwX+kPqwAa2V7AnB
+         2eqvQ+C2gczG8vr1SCtVrY3GUttlIvDAlx8ABZeFpls9ipL1G7U6PIwaJPjKNAV7kpmo
+         6jgCzp0OAnxEEm47X0bE/HyhjPo9UxQCuWVvm5eUgAJhqJm+DieWs6iS8XZdj98C4w8g
+         pyFf2gGtyDUzJozXaLHY18a9NtYkX/WqgTkYm6lyaBr5jHE0etxoYdBgamdu3iqzekt7
+         Pz18kON/KoDzsy9GlupQqjI9N13kcAZtWCbaE9YkAgRg1E7P1/e2tdstcOvngir6qOV/
+         NN0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=1Sco7/Mcnd83BlhtKzamoEr69UcyH5M4+yy+9bnNAKM=;
-        b=XUpVe1nxuGTF+lXKKwfKtrNf5RH77Es0xhROQF8NvzhXTJ6fhlbfRe3kNxh1u16uvr
-         MvqExO6PCZEkbeG5miv2Sung/ZtIKpgzToiu3fj1/gLxi5Xgw/O3Zlo5Ks4PvjGatD55
-         uUBQb1GI+lF9c9JFUiOJhMDkss87MaY818IlVVWsFyBtJOzkHUjg0BR1yBadC8UL8KYl
-         L7SYU3dyShlWKbDb+RPU5UCM1VuLwYMlW6Cgltyt0jYqwOyQNoC7CoaoVPLJC8rsqWOT
-         WiOxri99x2FI/nbwcmUG9CZk1GYpsgUmmDcH2CBxHRnWai2aY0QLLDOFJp7COk+8Nvlk
-         iY5g==
-X-Gm-Message-State: APjAAAWUUU6O5BmWB2iALM3XP9hP1ukj1sv07RDvmPQkOEDUDa8cmwTR
-        mp3WdsHxjBIrjqB6rOPYgMur1bygpVA=
-X-Google-Smtp-Source: APXvYqy2v8zWsqu7uQpMunLNvmoxDbBoaEGUJMoqEkxgsFog2kX+6hzkt9Mg9AnrgdQTxLQiErz9gw==
-X-Received: by 2002:a6b:f203:: with SMTP id q3mr29645158ioh.208.1563998158160;
-        Wed, 24 Jul 2019 12:55:58 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id l14sm42949340iob.1.2019.07.24.12.55.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 12:55:57 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-To:     sam@ravnborg.org
-Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
-        secalert@redhat.com, Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/panel: check failure cases in the probe func
-Date:   Wed, 24 Jul 2019 14:55:34 -0500
-Message-Id: <20190724195534.9303-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190724185933.GE22640@ravnborg.org>
-References: <20190724185933.GE22640@ravnborg.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3hIqVIsW0Jzv3qlJGiJ8fmrkQndrI1bOT+U/YKeP91w=;
+        b=uM7iTUrw21/u6wAkMJnznQbP4JGgWj1rtLjGCFuCugvUIQfYixtQzTSfrDAzGKqKt+
+         sE8wUZzKJkdNJ8+AI6motzMFri0CFmHh8zmk0Rj3/ssSludTkGlhTuNsH95ZwThT2q9X
+         L25v9ECOGYE2EwcEN3ymExVTqy67t/nK6phiq7bm454FUoPPzamTL9NXbgHTiUjEuYg7
+         MnAcoPm3Z//e06lb1MEGhZb65WxZk/uj4oY2ODScS/dQiO6xAZC5SF7Az45UGRy1e6NF
+         G2S9pkntBQHWqXBzf7AhoVKxatEHA5Lzg+pq6FV3yx+JO9m6LAFSr+80c6hcMRInA0mg
+         wgGA==
+X-Gm-Message-State: APjAAAX6mZzZUcsdYdBgql5peW5eV1uCEtZvcVtI4gVRy0j631+Khkmv
+        nRRJTwlhisndbGJArGSorhV0nlEl
+X-Google-Smtp-Source: APXvYqzZWQoYs7Fqyx9XIWGApgxx0jM5sfYBQXgu4zGqe1/h6VS9ZqeEJKn7ZZDuvPulVlMjtuT2zA==
+X-Received: by 2002:a63:b64:: with SMTP id a36mr73284058pgl.215.1563998247307;
+        Wed, 24 Jul 2019 12:57:27 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
+        by smtp.gmail.com with ESMTPSA id f88sm46307394pjg.5.2019.07.24.12.57.26
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 12:57:26 -0700 (PDT)
+From:   Mark Salyzyn <salyzyn@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-unionfs@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: [PATCH v10 0/2] overlayfs override_creds=off
+Date:   Wed, 24 Jul 2019 12:57:11 -0700
+Message-Id: <20190724195719.218307-1-salyzyn@android.com>
+X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following function calls may fail and return NULL, so the null check
-is added.
-of_graph_get_next_endpoint
-of_graph_get_remote_port_parent
-of_graph_get_remote_port
+Patch series:
 
-Update: Thanks to Sam Ravnborg, for suggession on the use of goto to avoid
-leaking endpoint.
+overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh
+Add optional __get xattr method paired to __vfs_getxattr
+overlayfs: add __get xattr method
+overlayfs: internal getxattr operations without sepolicy checking
+overlayfs: override_creds=off option bypass creator_cred
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+The first four patches address fundamental security issues that should
+be solved regardless of the override_creds=off feature.
+
+The fifth that adds the feature depends on these other fixes.
+
+By default, all access to the upper, lower and work directories is the
+recorded mounter's MAC and DAC credentials.  The incoming accesses are
+checked against the caller's credentials.
+
+If the principles of least privilege are applied for sepolicy, the
+mounter's credentials might not overlap the credentials of the caller's
+when accessing the overlayfs filesystem.  For example, a file that a
+lower DAC privileged caller can execute, is MAC denied to the
+generally higher DAC privileged mounter, to prevent an attack vector.
+
+We add the option to turn off override_creds in the mount options; all
+subsequent operations after mount on the filesystem will be only the
+caller's credentials.  The module boolean parameter and mount option
+override_creds is also added as a presence check for this "feature",
+existence of /sys/module/overlay/parameters/overlay_creds
+
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: linux-unionfs@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
 ---
- .../gpu/drm/panel/panel-raspberrypi-touchscreen.c   | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+v10:
+- Rebase
+- Return NULL on CAP_DAC_READ_SEARCH
+- Add __get xattr method to solve sepolicy logging issue
+- Drop unnecassary sys_admin sepolicy checking for administrative
+  driver internal xattr functions.
 
-diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-index 28c0620dfe0f..b5b14aa059ea 100644
---- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-+++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-@@ -399,7 +399,13 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
- 
- 	/* Look up the DSI host.  It needs to probe before we do. */
- 	endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
-+	if (!endpoint)
-+		return -ENODEV;
-+
- 	dsi_host_node = of_graph_get_remote_port_parent(endpoint);
-+	if (!dsi_host_node)
-+		goto error;
-+
- 	host = of_find_mipi_dsi_host_by_node(dsi_host_node);
- 	of_node_put(dsi_host_node);
- 	if (!host) {
-@@ -408,6 +414,9 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
- 	}
- 
- 	info.node = of_graph_get_remote_port(endpoint);
-+	if (!info.node)
-+		goto error;
-+
- 	of_node_put(endpoint);
- 
- 	ts->dsi = mipi_dsi_device_register_full(host, &info);
-@@ -428,6 +437,10 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
- 		return ret;
- 
- 	return 0;
-+
-+error:
-+	of_node_put(endpoint);
-+	return -ENODEV;
- }
- 
- static int rpi_touchscreen_remove(struct i2c_client *i2c)
--- 
-2.17.1
+v6:
+- Drop CONFIG_OVERLAY_FS_OVERRIDE_CREDS.
+- Do better with the documentation, drop rationalizations.
+- pr_warn message adjusted to report consequences.
 
+v5:
+- beefed up the caveats in the Documentation
+- Is dependent on
+  "overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh"
+  "overlayfs: check CAP_MKNOD before issuing vfs_whiteout"
+- Added prwarn when override_creds=off
+
+v4:
+- spelling and grammar errors in text
+
+v3:
+- Change name from caller_credentials / creator_credentials to the
+  boolean override_creds.
+- Changed from creator to mounter credentials.
+- Updated and fortified the documentation.
+- Added CONFIG_OVERLAY_FS_OVERRIDE_CREDS
+
+v2:
+- Forward port changed attr to stat, resulting in a build error.
+- altered commit message.
