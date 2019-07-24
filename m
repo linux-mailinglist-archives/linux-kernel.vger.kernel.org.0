@@ -2,116 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ACD3739C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:43:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BBA8739B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:43:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390713AbfGXTnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:43:39 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:48892 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390213AbfGXTng (ORCPT
+        id S2389881AbfGXTnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:43:06 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34091 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390462AbfGXTnD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:43:36 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6OJgYP0083356;
-        Wed, 24 Jul 2019 14:42:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1563997354;
-        bh=AJm71xiQOBjSdWSqksSb6orWtMZCBYh0pcNBwqXoWdQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=kK94ypqr0C9M7sOcw1gFudGjaHNocKLuwvjvdo3NuKOzadWnHKCH0m5/wmXuq59Qi
-         SBk4QiMOx+PAaNg8HjZr/fXwwRu/6ahQMFsWaIeGrhb9aPi9n8yaPkpplOtVdVMdMZ
-         JAf3XTh2E9j1Fh6PGEVYqIQuBk7Se1H0btTuyF8U=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6OJgYke104572
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 24 Jul 2019 14:42:34 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 24
- Jul 2019 14:42:33 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 24 Jul 2019 14:42:33 -0500
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6OJgXvZ096227;
-        Wed, 24 Jul 2019 14:42:33 -0500
-Subject: Re: [PATCH 1/6] dt-bindings: irqchip: Add PRUSS interrupt controller
- bindings
-To:     Rob Herring <robh@kernel.org>
-CC:     Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Tony Lindgren <tony@atomide.com>,
-        "Andrew F. Davis" <afd@ti.com>, Roger Quadros <rogerq@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        David Lechner <david@lechnology.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190708035243.12170-1-s-anna@ti.com>
- <20190708035243.12170-2-s-anna@ti.com> <20190724163419.GA29254@bogus>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <6871c381-9fc6-f6be-6386-f183fcc5546a@ti.com>
-Date:   Wed, 24 Jul 2019 14:42:33 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 24 Jul 2019 15:43:03 -0400
+Received: by mail-ot1-f66.google.com with SMTP id n5so49149379otk.1;
+        Wed, 24 Jul 2019 12:43:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QjSdWDTJogyq8S7mZs7e3CcybE/Qyo4+rR9MEOHtmug=;
+        b=o6HuK98LM2PourpLrfOXA9tnYn/CKdQI2hdLQrkUfzkb1jy6E00k50kTtogJtwlvv2
+         57+lXOamDe30b8BogWXuiJtzUKWcGaJV6sEulXuVmyujuwypbLlkUWQeztRy/gZ05fri
+         rpYo12797NrIwUuayvg+Z4ES91GZ8cBBa8IbQ1jTT3Bg7RFxYzNSIl7vwRhqeYbhq+0M
+         H9F6O+Ekj4pVyD82SnQrijpG1v/GYtQkU3UidTzWXAJFkpesh8y/WJ2Jqfnu2rgDzLum
+         E4VD/T+1+B1OLCrWBhROAXd8QBVFbq5XAdTD6CPrapWuSOZSBBM9dWVUdOTJhNGQozY8
+         mffg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QjSdWDTJogyq8S7mZs7e3CcybE/Qyo4+rR9MEOHtmug=;
+        b=PAePG3mA3YcwPyRksNB4gvjWUw7dxPbUukvPp2v3A9EUO3mKaIXCfzchVPXSzEqWRO
+         Ge8McQGvO8KuznCnJsh6+6STswtAE8/zkvwUkboeq6o0VOcLf35qTXIgNH2jenpXhMXg
+         PlcUFu5P6oRZThiZJCzDCb0cx210KG7gPFCGoti0Du3Dx/eC5JnuyRca+RInp/t31ERi
+         Iao3KxojsuGZZ2gyBhOxCuoaRPuI0++lQFODSwQYDTXYCopIRL/vfWfGISqxVW3Kprl/
+         Is0r41BgZgBQpFFSq0ZEqihEaRDzJO8roa/uKGudaAE5Lp8HLqcXNnIToa2iwllOVDeE
+         UC/w==
+X-Gm-Message-State: APjAAAWXgW/e7Vdig8dLRt4jJUZBMCX7+RoRX/My5L+LFluThzbS8lAd
+        mNR7FQv/ZMt+Eci5M9QgS2h9o86M0+kJHsPYjmw=
+X-Google-Smtp-Source: APXvYqwGZraz9ZuMPAHtLv4av8XeMxMtRcV2ny/mkglBe9Iigbt3FbbIW4gbqH1rL+ysvtoWDs7Yddme7mzuJsK+3f4=
+X-Received: by 2002:a9d:590d:: with SMTP id t13mr2409952oth.281.1563997381856;
+ Wed, 24 Jul 2019 12:43:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190724163419.GA29254@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20190724015411.66525-1-yuehaibing@huawei.com>
+In-Reply-To: <20190724015411.66525-1-yuehaibing@huawei.com>
+From:   Christian Lamparter <chunkeey@gmail.com>
+Date:   Wed, 24 Jul 2019 21:42:48 +0200
+Message-ID: <CAAd0S9BvTfRyUVkQzcczyNkU_oeU5hNdK3KVQzLsU21b4JGNTQ@mail.gmail.com>
+Subject: Re: [PATCH] carl9170: remove set but not used variable 'udev'
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/24/19 11:34 AM, Rob Herring wrote:
-> On Sun, 7 Jul 2019 22:52:38 -0500, Suman Anna wrote:
->> The Programmable Real-Time Unit Subsystem (PRUSS) contains an interrupt
->> controller (INTC) that can handle various system input events and post
->> interrupts back to the device-level initiators. The INTC can support
->> upto 64 input events on most SoCs with individual control configuration
->> and hardware prioritization. These events are mapped onto 10 interrupt
->> lines through two levels of many-to-one mapping support. Different
->> interrupt lines are routed to the individual PRU cores or to the
->> host CPU or to other PRUSS instances.
->>
->> The K3 AM65x and J721E SoCs have the next generation of the PRU-ICSS IP,
->> commonly called ICSSG. The ICSSG interrupt controller on K3 SoCs provide
->> a higher number of host interrupts (20 vs 10) and can handle an increased
->> number of input events (160 vs 64) from various SoC interrupt sources.
->>
->> Add the bindings document for these interrupt controllers on all the
->> applicable SoCs. It covers the OMAP architecture SoCs - AM33xx, AM437x
->> and AM57xx; the Keystone 2 architecture based 66AK2G SoC; the Davinci
->> architecture based OMAPL138 SoCs, and the K3 architecture based AM65x
->> and J721E SoCs.
->>
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> Signed-off-by: Andrew F. Davis <afd@ti.com>
->> Signed-off-by: Roger Quadros <rogerq@ti.com>
->> ---
->> Prior version: https://patchwork.kernel.org/patch/10795771/
->>
->>  .../interrupt-controller/ti,pruss-intc.txt    | 92 +++++++++++++++++++
->>  1 file changed, 92 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.txt
->>
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> 
+On Wed, Jul 24, 2019 at 3:48 AM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> drivers/net/wireless/ath/carl9170/usb.c: In function 'carl9170_usb_disconnect':
+> drivers/net/wireless/ath/carl9170/usb.c:1110:21: warning:
+>  variable 'udev' set but not used [-Wunused-but-set-variable]
+>
+> It is not used, so can be removed.
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+Isn't this the same patch you sent earlier:
 
-Thanks Rob. I am going to submit a v2 with some minor reword changes
-based on couple of comments, but no addition or removal of properties.
-Should I be retaining your Reviewed-by for v2?
+https://patchwork.kernel.org/patch/11027909/
 
-regards
-Suman
+From what I can tell, it's the same but with an extra [-next], I
+remember that I've acked that one
+but your patch now does not have it? Is this an oversight, because I'm
+the maintainer for this
+driver. So, in my opinion at least the "ack" should have some value
+and shouldn't be "ignored".
 
+Look, from what I know, Kalle is not ignoring you, It's just that
+carl9170 is no longer top priority.
+So please be patient. As long as its queued in the patchwork it will
+get considered.
 
+Cheers,
+Christian
+
+>  drivers/net/wireless/ath/carl9170/usb.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/net/wireless/ath/carl9170/usb.c b/drivers/net/wireless/ath/carl9170/usb.c
+> index 99f1897a775d..486957a04bd1 100644
+> --- a/drivers/net/wireless/ath/carl9170/usb.c
+> +++ b/drivers/net/wireless/ath/carl9170/usb.c
+> @@ -1107,12 +1107,10 @@ static int carl9170_usb_probe(struct usb_interface *intf,
+>  static void carl9170_usb_disconnect(struct usb_interface *intf)
+>  {
+>         struct ar9170 *ar = usb_get_intfdata(intf);
+> -       struct usb_device *udev;
+>
+>         if (WARN_ON(!ar))
+>                 return;
+>
+> -       udev = ar->udev;
+>         wait_for_completion(&ar->fw_load_wait);
+>
+>         if (IS_INITIALIZED(ar)) {
+>
+>
+>
