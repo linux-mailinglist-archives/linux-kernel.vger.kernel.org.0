@@ -2,97 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 735D373719
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 20:59:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B86267371E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:00:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728798AbfGXS7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 14:59:38 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:48966 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbfGXS7i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 14:59:38 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728809AbfGXTAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:00:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43992 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725883AbfGXTAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:00:00 -0400
+Received: from localhost.localdomain (unknown [194.230.155.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id C6393804C5;
-        Wed, 24 Jul 2019 20:59:34 +0200 (CEST)
-Date:   Wed, 24 Jul 2019 20:59:33 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
-        secalert@redhat.com, Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/panel: check failure cases in the probe func
-Message-ID: <20190724185933.GE22640@ravnborg.org>
-References: <20190724051700.GA22730@ravnborg.org>
- <20190724144845.4791-1-navid.emamdoost@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190724144845.4791-1-navid.emamdoost@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pGLkceISAAAA:8
-        a=ONRsVvzFGko7FBthncQA:9 a=CjuIK1q_8ugA:10
+        by mail.kernel.org (Postfix) with ESMTPSA id 67A4B206A2;
+        Wed, 24 Jul 2019 18:59:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563994799;
+        bh=l6A5jGNR1HnhxnJetFoPTiR82L5guam3FXGVgAkh2N4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=v9yTgQ8GlV/ZOj6/skGSMDudMVN3qRAoB8hzOutwxq5d+v1b0d1RbmYQPv8NSTFed
+         n72CeaESkWILt9EdcVWSIgHkCWbxxH2g4B4PUsJbNyYQJg5ikPal7ID67ExWzbGeC4
+         JQtTLCLa6a2jLU44bclSdVs+E3sU9ZPQ1NWnua78=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] devfreq: Correct devm_devfreq_remove_device() documentation
+Date:   Wed, 24 Jul 2019 20:59:53 +0200
+Message-Id: <20190724185953.17545-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Navid.
+Correct the documentation for devm_devfreq_remove_device() argument.
 
-Thanks for your patch.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/devfreq/devfreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wed, Jul 24, 2019 at 09:48:44AM -0500, Navid Emamdoost wrote:
-> The following function calls may fail and return NULL, so the null check
-> is added.
-> of_graph_get_next_endpoint
-> of_graph_get_remote_port_parent
-> of_graph_get_remote_port
-> 
-> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-> ---
->  drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-> index 28c0620dfe0f..9484fdb60f68 100644
-> --- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-> +++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-> @@ -399,7 +399,13 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
->  
->  	/* Look up the DSI host.  It needs to probe before we do. */
->  	endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
-> +	if (!endpoint)
-> +		return -ENODEV;
-> +
->  	dsi_host_node = of_graph_get_remote_port_parent(endpoint);
-> +	if (!dsi_host_node)
-> +		return -ENODEV;
-> +
-If we return here we will leak endpoint - a of_node_put() is missing.
-Use goto to rewind the allocations in the bottom of this function.
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 784c08e4f931..446490c9d635 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -867,7 +867,7 @@ EXPORT_SYMBOL_GPL(devfreq_get_devfreq_by_phandle);
+ 
+ /**
+  * devm_devfreq_remove_device() - Resource-managed devfreq_remove_device()
+- * @dev:	the device to add devfreq feature.
++ * @dev:	the device from which to remove devfreq feature.
+  * @devfreq:	the devfreq instance to be removed
+  */
+ void devm_devfreq_remove_device(struct device *dev, struct devfreq *devfreq)
+-- 
+2.17.1
 
->  	host = of_find_mipi_dsi_host_by_node(dsi_host_node);
->  	of_node_put(dsi_host_node);
->  	if (!host) {
-> @@ -408,6 +414,9 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
->  	}
->  
->  	info.node = of_graph_get_remote_port(endpoint);
-> +	if (!info.node)
-> +		return -ENODEV;
-Here we also leak endpoint, but not dsi_host_node as we already did a
-put above.
-
-> +
->  	of_node_put(endpoint);
->  
->  	ts->dsi = mipi_dsi_device_register_full(host, &info);
-
-	Sam
