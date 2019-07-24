@@ -2,102 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E800673D7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43CAD73D4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:16:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728724AbfGXURa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:17:30 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:3155 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729015AbfGXTuL (ORCPT
+        id S2404045AbfGXTv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:51:57 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:47037 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391707AbfGXTvw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:50:11 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d38b6730000>; Wed, 24 Jul 2019 12:50:11 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 24 Jul 2019 12:50:10 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 24 Jul 2019 12:50:10 -0700
-Received: from rcampbell-dev.nvidia.com (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 24 Jul
- 2019 19:50:10 +0000
-Subject: Re: [PATCH 2/2] mm/hmm: make full use of walk_page_range()
-To:     Jason Gunthorpe <jgg@mellanox.com>, Christoph Hellwig <hch@lst.de>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-References: <20190723233016.26403-1-rcampbell@nvidia.com>
- <20190723233016.26403-3-rcampbell@nvidia.com> <20190724065146.GA2061@lst.de>
- <20190724115338.GA30264@mellanox.com>
-X-Nvconfidentiality: public
-From:   Ralph Campbell <rcampbell@nvidia.com>
-Message-ID: <098df586-0713-1aaa-e546-5dc39ec30341@nvidia.com>
-Date:   Wed, 24 Jul 2019 12:50:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 24 Jul 2019 15:51:52 -0400
+Received: by mail-ed1-f65.google.com with SMTP id d4so48167940edr.13;
+        Wed, 24 Jul 2019 12:51:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2p2ZfklHVEaOI9/2iCtD+yerzjFCKwVXOTunjKilUyg=;
+        b=bFoeW529ejuAL1azYCFXDwwZiIKojlT53AEBYIQE493V9F2hmIMpWNNMYMyuedouB6
+         Sfs0q/fXYDTeMHxjBC9GbtUNpcM4en6eXqDvF4577koXwZhd2X7v9WrYl5LrP83rTQxF
+         a0jgfQxns67iKj6MkzBaqU4xi+tKgBQmYCFx/Tqx+cRGcA2h5LJzwhUMurzbBeqtryIq
+         dyruxHxkK6fIJBZP8GQ8JLrVMKKv/TGpGloP8VPiYz3eQAyx/qlFaFkGqL3L9y2i/9D5
+         MbrIySIPL4sGxM9qz07W9sBGzrSQCUc7sT+3+6FBbv/JRJfFjYIPrwa8x1b8vmo5aT/W
+         fz+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2p2ZfklHVEaOI9/2iCtD+yerzjFCKwVXOTunjKilUyg=;
+        b=smN3qBO1sdjsXT7HUfFydkIDbkuAr6/02YufkbaXdu+3XWAzI25KL0vwwtzJr3fTAU
+         k/7uSSMFCKb0zt8o5n+LX9J3IKixEoJ50YvRc6E/l4F/VVz/dNv+ahYI8E6D0wvjPglC
+         lv+VWADLbm82iqoVcZTq2LEeM2guFrX4oS84MJE0VLQvbBhREvl/gObTzbO7HsnWNZNU
+         1fW3ZvPK+GilkEK9oI3Ohb/x/SH1RtYzI/mkZvsAL9tKJjRNcFqev8oH12W6SDN9wrN6
+         LWyksY2hV6Vkk9HZP4wAUT8u3HUzEUpgn63n6TqV2EpsNbU3EolUkk1AL8zcRX+6NZl/
+         hCPw==
+X-Gm-Message-State: APjAAAUOSnUZ40MS/2RdlhswDRNHBSfO4AAyPuUcr2OsTWoyJOx5I81U
+        WnYqgxF2rA+NTIarUEan3H3raaJsNdOaMciVAVs=
+X-Google-Smtp-Source: APXvYqz6lDBsK7IbvQCQQ8DzdG95VM5F+tel/b9fEJ/VBGexchGp+5i3AhySanNozFo55HqE6Gklar0VK6DseEVJEtg=
+X-Received: by 2002:a50:eb8f:: with SMTP id y15mr73599212edr.31.1563997910491;
+ Wed, 24 Jul 2019 12:51:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190724115338.GA30264@mellanox.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1563997811; bh=o1DvH7PppcliFCYzQ16HV/ZAX4qVLsHxUniBpxQa/jY=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=ndoC/wHwyfVcpAyH7LNSBQ5MX2jPUvphaKjtuXWIn8VrEDengx2WT/DuMJm+WRXZ3
-         PiR4+0PG/Pz7ee56d8OyGQsZxJrZ5A2V7MZNvqZFis7ml6ohw5wa2st0Jos9Y5kzNg
-         g7l59/dvj6EoVy3z/aqFWJkaHBONxVgSCLNiVzM1kbOQVnxb90IhOdJwRwq7tIF3Nz
-         VTUbGNfNBtyYlE2MTJQqJo5UKSiGbulBDq2IqNDlhVCGvx3Zaw1r9V4fRXoJzXuuX4
-         XQ0Dj9tUsa6iuS/8rbbUIOWUSVWpCP9NT4pEBjYNLvTsPg7WnHGyQ1yAE8U20LnIxq
-         qc3g1j1fB5DSg==
+References: <20190724165803.87470-1-brianvv@google.com> <20190724165803.87470-5-brianvv@google.com>
+In-Reply-To: <20190724165803.87470-5-brianvv@google.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Wed, 24 Jul 2019 15:51:14 -0400
+Message-ID: <CAF=yD-LgN3-a1LtoN+EffvBYzw+7c29AUy5yVGJ1-iBpS0s2=w@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 4/6] libbpf: support BPF_MAP_DUMP command
+To:     Brian Vazquez <brianvv@google.com>
+Cc:     Brian Vazquez <brianvv.kernel@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stanislav Fomichev <sdf@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Petar Penkov <ppenkov@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jul 24, 2019 at 1:10 PM Brian Vazquez <brianvv@google.com> wrote:
+>
+> Make libbpf aware of new BPF_MAP_DUMP command and add bpf_map_dump and
+> bpf_map_dump_flags to use them from the library.
+>
+> Suggested-by: Stanislav Fomichev <sdf@google.com>
+> Signed-off-by: Brian Vazquez <brianvv@google.com>
+> ---
+>  tools/lib/bpf/bpf.c | 28 ++++++++++++++++++++++++++++
+>  tools/lib/bpf/bpf.h |  4 ++++
+>  2 files changed, 32 insertions(+)
+>
+> diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
+> index c7d7993c44bb0..c1139b7db756a 100644
+> --- a/tools/lib/bpf/bpf.c
+> +++ b/tools/lib/bpf/bpf.c
+> @@ -368,6 +368,34 @@ int bpf_map_update_elem(int fd, const void *key, const void *value,
+>         return sys_bpf(BPF_MAP_UPDATE_ELEM, &attr, sizeof(attr));
+>  }
+>
+> +int bpf_map_dump(int fd, const void *prev_key, void *buf, void *buf_len)
+> +{
+> +       union bpf_attr attr;
+> +
+> +       memset(&attr, 0, sizeof(attr));
+> +       attr.dump.map_fd = fd;
+> +       attr.dump.prev_key = ptr_to_u64(prev_key);
+> +       attr.dump.buf = ptr_to_u64(buf);
+> +       attr.dump.buf_len = ptr_to_u64(buf_len);
+> +
+> +       return sys_bpf(BPF_MAP_DUMP, &attr, sizeof(attr));
+> +}
 
-On 7/24/19 4:53 AM, Jason Gunthorpe wrote:
-> On Wed, Jul 24, 2019 at 08:51:46AM +0200, Christoph Hellwig wrote:
->> On Tue, Jul 23, 2019 at 04:30:16PM -0700, Ralph Campbell wrote:
->>> hmm_range_snapshot() and hmm_range_fault() both call find_vma() and
->>> walk_page_range() in a loop. This is unnecessary duplication since
->>> walk_page_range() calls find_vma() in a loop already.
->>> Simplify hmm_range_snapshot() and hmm_range_fault() by defining a
->>> walk_test() callback function to filter unhandled vmas.
->>
->> I like the approach a lot!
->>
->> But we really need to sort out the duplication between hmm_range_fault
->> and hmm_range_snapshot first, as they are basically the same code.  I
->> have patches here:
->>
->> http://git.infradead.org/users/hch/misc.git/commitdiff/a34ccd30ee8a8a3111d9e91711c12901ed7dea74
->>
->> http://git.infradead.org/users/hch/misc.git/commitdiff/81f442ebac7170815af7770a1efa9c4ab662137e
-> 
-> Yeah, that is a straightforward improvement, maybe Ralph should grab
-> these two as part of his series?
+This can call bpf_map_dump_flags internally to avoid code duplication?
 
-Sure, no problem.
-I'll add them in v2 when I fix the other issues in the series.
-
->> That being said we don't really have any users for the snapshot mode
->> or non-blocking faults, and I don't see any in the immediate pipeline
->> either.
-> 
-> If this code was production ready I'd use it in ODP right away.
-> 
-> When we first create a ODP MR we'd want to snapshot to pre-load the
-> NIC tables with something other than page fault, but not fault
-> anything.
-> 
-> This would be a big performance improvement for ODP.
-> 
-> Jason
-> 
+> +
+> +int bpf_map_dump_flags(int fd, const void *prev_key, void *buf, void *buf_len,
+> +                      __u64 flags)
+> +{
+> +       union bpf_attr attr;
+> +
+> +       memset(&attr, 0, sizeof(attr));
+> +       attr.dump.map_fd = fd;
+> +       attr.dump.prev_key = ptr_to_u64(prev_key);
+> +       attr.dump.buf = ptr_to_u64(buf);
+> +       attr.dump.buf_len = ptr_to_u64(buf_len);
+> +       attr.dump.flags = flags;
+> +
+> +       return sys_bpf(BPF_MAP_DUMP, &attr, sizeof(attr));
+> +}
+> +
