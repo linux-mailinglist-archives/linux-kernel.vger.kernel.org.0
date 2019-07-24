@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3500773B01
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:56:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E293E73B08
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:58:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404584AbfGXT4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:56:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39762 "EHLO mail.kernel.org"
+        id S2391840AbfGXT4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:56:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404552AbfGXTzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:55:50 -0400
+        id S2404605AbfGXT4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:56:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC02D205C9;
-        Wed, 24 Jul 2019 19:55:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B81DC22ADC;
+        Wed, 24 Jul 2019 19:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563998149;
-        bh=+BKNhstZkIim4IgI8aZWRD5EJTEYYGqYqAS97BenvGY=;
+        s=default; t=1563998171;
+        bh=wPeLi7+nqS2I7NrSj3ujATue3ugECmzerkrt/EmeAoY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JvxSsMzTfn1FAvygZ4vCN/mgyE5JZhBPyEoDaLRzTLv+snnUJhx1wVzaLnPRpEk38
-         EIUZqGYosP1x+sHjcX32Hmr9yF3634BbPsem3GEnv2+E7Ib0HMQJHYm2lDDFSxJYXK
-         joWSDhp1rIEwds2F3eaJpqvw+KIxqW7c3qwyLKZc=
+        b=K+P6x2VQqB4l+z9agAxvRv+pFZz2HIgiGiyKYgcmj7ESROMS6MCpbbXBGNd0cDxXg
+         64XpO8lgR/csSAi37r+bmqDhEgeG6BVAknd1VR2xZBeig6V9Qx8kH/XSYbLK/f2RLj
+         2Tmynji7gN2v3zq5vHbzZbAU61UY2mOJCAKtvYI8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Black <dankamongmen@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 5.1 264/371] Input: synaptics - whitelist Lenovo T580 SMBus intertouch
-Date:   Wed, 24 Jul 2019 21:20:16 +0200
-Message-Id: <20190724191744.278851843@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>
+Subject: [PATCH 5.1 271/371] iwlwifi: pcie: fix ALIVE interrupt handling for gen2 devices w/o MSI-X
+Date:   Wed, 24 Jul 2019 21:20:23 +0200
+Message-Id: <20190724191744.703399482@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -43,32 +44,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Black <dankamongmen@gmail.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-commit 1976d7d200c5a32e72293a2ada36b7b7c9d6dd6e upstream.
+commit ec46ae30245ecb41d73f8254613db07c653fb498 upstream.
 
-Adds the Lenovo T580 to the SMBus intertouch list for Synaptics
-touchpads. I've tested with this for a week now, and it seems a great
-improvement. It's also nice to have the complaint gone from dmesg.
+We added code to restock the buffer upon ALIVE interrupt
+when MSI-X is disabled. This was added as part of the context
+info code. This code was added only if the ISR debug level
+is set which is very unlikely to be related.
+Move this code to run even when the ISR debug level is not
+set.
 
-Signed-off-by: Nick Black <dankamongmen@gmail.com>
+Note that gen2 devices work with MSI-X in most cases so that
+this path is seldom used.
+
 Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/synaptics.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/intel/iwlwifi/pcie/rx.c |   34 ++++++++++++---------------
+ 1 file changed, 16 insertions(+), 18 deletions(-)
 
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -179,6 +179,7 @@ static const char * const smbus_pnp_ids[
- 	"LEN0093", /* T480 */
- 	"LEN0096", /* X280 */
- 	"LEN0097", /* X280 -> ALPS trackpoint */
-+	"LEN009b", /* T580 */
- 	"LEN200f", /* T450s */
- 	"LEN2054", /* E480 */
- 	"LEN2055", /* E580 */
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
+@@ -1832,25 +1832,23 @@ irqreturn_t iwl_pcie_irq_handler(int irq
+ 		goto out;
+ 	}
+ 
+-	if (iwl_have_debug_level(IWL_DL_ISR)) {
+-		/* NIC fires this, but we don't use it, redundant with WAKEUP */
+-		if (inta & CSR_INT_BIT_SCD) {
+-			IWL_DEBUG_ISR(trans,
+-				      "Scheduler finished to transmit the frame/frames.\n");
+-			isr_stats->sch++;
+-		}
++	/* NIC fires this, but we don't use it, redundant with WAKEUP */
++	if (inta & CSR_INT_BIT_SCD) {
++		IWL_DEBUG_ISR(trans,
++			      "Scheduler finished to transmit the frame/frames.\n");
++		isr_stats->sch++;
++	}
+ 
+-		/* Alive notification via Rx interrupt will do the real work */
+-		if (inta & CSR_INT_BIT_ALIVE) {
+-			IWL_DEBUG_ISR(trans, "Alive interrupt\n");
+-			isr_stats->alive++;
+-			if (trans->cfg->gen2) {
+-				/*
+-				 * We can restock, since firmware configured
+-				 * the RFH
+-				 */
+-				iwl_pcie_rxmq_restock(trans, trans_pcie->rxq);
+-			}
++	/* Alive notification via Rx interrupt will do the real work */
++	if (inta & CSR_INT_BIT_ALIVE) {
++		IWL_DEBUG_ISR(trans, "Alive interrupt\n");
++		isr_stats->alive++;
++		if (trans->cfg->gen2) {
++			/*
++			 * We can restock, since firmware configured
++			 * the RFH
++			 */
++			iwl_pcie_rxmq_restock(trans, trans_pcie->rxq);
+ 		}
+ 	}
+ 
 
 
