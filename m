@@ -2,101 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6846873170
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:18:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49A637316A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:17:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728179AbfGXOSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 10:18:07 -0400
-Received: from mail-qt1-f175.google.com ([209.85.160.175]:44183 "EHLO
-        mail-qt1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbfGXOSH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 10:18:07 -0400
-Received: by mail-qt1-f175.google.com with SMTP id 44so14604446qtg.11
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 07:18:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=4Z7NceRYmsd4mWj9JDUNB9v0QmsmFhuBmenBnT38Iog=;
-        b=m4xIq3yRVJW0kxd1xSkW/21rcobDF5TddzNVTZ1fwY9hughmP+OlYTaeKcDTy67WG6
-         DBlsIAr/tKJJ8gEfc/jFgXOiT36nCdxnHjD8ugTQNW2aCHNPmdnGmU+cpNpNRQ2xNSB7
-         IQFRtXdNHd8iAVAud2/g1ewOOXj8Im3LJCSwtL6Mx8xoXYR4ikG6cAMzdXfhHQNv8pbs
-         AYbkIgxmlj9jplcT6noutzZUscT+QOH1S7G2SWpEwmTZlRjWcUpielJHDBZfPh60pVvK
-         Q48+IDqr+r3VYCx/+UTTiVSAZj3kiyvkRIBf3Zoftyp1eLKROPVH5dT0S0hnqA45JkcA
-         3/CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=4Z7NceRYmsd4mWj9JDUNB9v0QmsmFhuBmenBnT38Iog=;
-        b=iWECEHFgqOsPE2LBkT9fdspbbMwRx1enH1NvXV+XVS4AxQy8l4IkiaX9POboOl1HBM
-         G94MFx5wFTuovoDkq6QL7Fm6ZvH58C1832V2zxqYSTTuYdYGEH5SmmJjGk18oT2UjNNY
-         aQycRx09EaRuQjZJEHKt+MURSkmzjrSNAS/PvGuLP4R6jdbSa03g/1QYov/I2NGLATR2
-         GfoFVSj2bm9mMaRWS9iA1FEm5V/+q33RdeBOqAEUIzcXvQgfCsYmbtpewPpL4AMPnLvx
-         sxrP6xsBocCgelcvCcH96rS1VAHBA5XKCqG1DKUVuLa2Gpycv3t5C9uOX6v1Dzno79IW
-         MNUQ==
-X-Gm-Message-State: APjAAAVq/3ZhZmMr7dVR0PholFcEuitZXiWcEK3VAU6SrXSasVw6ZNdc
-        ltNNY1llF0bzRorYC5ra8ox6Kho9YbVNOrrzNB6D50js
-X-Google-Smtp-Source: APXvYqx0fQpMpc3+dt/dgtbDwqdkAWPE94gAyxxd02MLjxJqiq/qwdpcg/T+wVNem3jaqcUEpLzjD673gxGuDyqGPdg=
-X-Received: by 2002:a0c:d251:: with SMTP id o17mr60155947qvh.109.1563977885709;
- Wed, 24 Jul 2019 07:18:05 -0700 (PDT)
-MIME-Version: 1.0
-From:   Gilberto Nunes <gilberto.nunes32@gmail.com>
-Date:   Wed, 24 Jul 2019 11:17:29 -0300
-Message-ID: <CAOKSTBs-cHMr7xbJVVUjZ9C3__bY6jZU-_TZ0RmMRMJ3dBk3PA@mail.gmail.com>
-Subject: AMD Drivers
-To:     linux-kernel@vger.kernel.org
+        id S2387421AbfGXORs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 10:17:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34516 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726287AbfGXORs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 10:17:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BF428AE44;
+        Wed, 24 Jul 2019 14:17:46 +0000 (UTC)
+Message-ID: <1563977855.4670.8.camel@suse.com>
+Subject: Re: KASAN: use-after-free Read in usbhid_power
+From:   Oliver Neukum <oneukum@suse.com>
+To:     syzbot <syzbot+ef5de9c4f99c4edb4e49@syzkaller.appspotmail.com>,
+        andreyknvl@google.com, syzkaller-bugs@googlegroups.com,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Date:   Wed, 24 Jul 2019 16:17:35 +0200
+In-Reply-To: <000000000000bb4247058e589a20@google.com>
+References: <000000000000bb4247058e589a20@google.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi there!
+Am Dienstag, den 23.07.2019, 05:48 -0700 schrieb syzbot:
+> 
+> Freed by task 243:
+>   save_stack+0x1b/0x80 /mm/kasan/common.c:71
+>   set_track /mm/kasan/common.c:79 [inline]
+>   __kasan_slab_free+0x130/0x180 /mm/kasan/common.c:451
+>   slab_free_hook /mm/slub.c:1421 [inline]
+>   slab_free_freelist_hook /mm/slub.c:1448 [inline]
+>   slab_free /mm/slub.c:2994 [inline]
+>   kfree+0xd7/0x280 /mm/slub.c:3949
+>   skb_free_head+0x8b/0xa0 /net/core/skbuff.c:588
+>   skb_release_data+0x41f/0x7c0 /net/core/skbuff.c:608
+>   skb_release_all+0x46/0x60 /net/core/skbuff.c:662
+>   __kfree_skb /net/core/skbuff.c:676 [inline]
+>   consume_skb /net/core/skbuff.c:736 [inline]
+>   consume_skb+0xc0/0x2f0 /net/core/skbuff.c:730
+>   skb_free_datagram+0x16/0xf0 /net/core/datagram.c:328
+>   netlink_recvmsg+0x65e/0xea0 /net/netlink/af_netlink.c:2001
+>   sock_recvmsg_nosec /net/socket.c:877 [inline]
+>   sock_recvmsg /net/socket.c:894 [inline]
+>   sock_recvmsg+0xca/0x110 /net/socket.c:890
+>   ___sys_recvmsg+0x271/0x5a0 /net/socket.c:2448
+>   __sys_recvmsg+0xe9/0x1b0 /net/socket.c:2497
+>   do_syscall_64+0xb7/0x560 /arch/x86/entry/common.c:301
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-I am usging Linux mint here 19.1.
-My laptop has the following configuration:
+How reliable is this trace? It seems very likely to me that this bug
+is the same bug as
 
-CPU - AMD A12-9720P RADEON R7, 12 COMPUTE CORES 4C+8G
-GPU - Wani [Radeon R5/R6/R7 Graphics] (amdgpu)
-Network Interface card:
-01:00.1 Ethernet controller: Realtek Semiconductor Co., Ltd.
-RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller (rev 12)
+syzbot <syzbot+ded1794a717e3b235226@syzkaller.appspotmail.com>
+KASAN: use-after-free Read in hidraw_ioctl
 
-When I install kernel 4.18.x or 5.x, the network doesn't work anymore...
-I can loaded the modulo r8169 andr8168.
-I saw enp1s0f1 as well but there's no link at all!
-Even when I fixed the IP none link!
-I cannot ping the network gateway or any other IP inside LAN!
-Right now, I booted my laptop with kernel
-Linux version 5.2.2-050202-generic (kernel@kathleen) (gcc version
-9.1.0 (Ubuntu 9.1.0-9ubuntu2)) #201907231250 SMP Tue Jul 23 12:53:21
-UTC 2019
+which shows a race with disconnect() instead of some networking code,
+which I really cannot fathom.
 
-The system boot slowly, and I have a SSD Samsung, which in kernel
-4.15, boot quickly.
-And there's many errors in dmesg command, like you can see in this pastbin
+	Regards
+		Oliver
 
-https://paste.ubuntu.com/p/YhbjnzYYYh/
-
-The system get stuck for 5 seconds and then the X login screen appears!
-Also, I get this message:
-dmesg | grep stuck
-[   40.231513] watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [kworker/0:1:7]
-[   68.231511] watchdog: BUG: soft lockup - CPU#0 stuck for 21s! [kworker/0:1:7]
-[  104.231513] watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [kworker/0:0:5]
-[  176.239514] watchdog: BUG: soft lockup - CPU#3 stuck for 23s!
-[kworker/3:3:593]
-
-Which make the system freeze for a while and then return to normal!
-Oh! By the way, the network card r8169 are work wonderful!
-
-
-
-Thanks a lot.
----
-Gilberto Nunes Ferreira
-
-(47) 3025-5907
-(47) 99676-7530 - Whatsapp / Telegram
-
-Skype: gilberto.nunes36
