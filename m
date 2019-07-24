@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9FC173936
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:38:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8901973938
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:38:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389552AbfGXTiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:38:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38318 "EHLO mail.kernel.org"
+        id S2389571AbfGXTiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:38:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389540AbfGXTh5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:37:57 -0400
+        id S2389563AbfGXTiF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:38:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3418214AF;
-        Wed, 24 Jul 2019 19:37:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9E1320665;
+        Wed, 24 Jul 2019 19:38:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997075;
-        bh=E67kZ8zzzqTQ5J5MynkC3lzm6IEtSSEy1heumXorpFc=;
+        s=default; t=1563997084;
+        bh=xN7Geh9N/0DPx/OZt3xRqiZ3AUSoyI7pwGHwsyU10/o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ISsVFTIz022oDxhTNmaSzms64zK9liGTAhMVzNSA84z5Zac9jfmfXEaBy/0X08Grq
-         IH/Z4z5nr3BhUU394NYGrOeUC1l+tWyhXiDE1Tl4vGiDNu4YkNOrA5xsxmsSwTJ1Qv
-         EioxYD1kNXbICOgnfas88oO75dD6gdehMrp1eHbg=
+        b=dwWYCvrlPoNmfh+9MnjOkmwtDrbQGJMxjX+BY4VxVIEClWrPusIfa8UOgHBvpA0CK
+         LuwXxHTga8O+YcucgpV9A976sNMIuu4GmO/JwZDSTJzwGeCm77QPs1mnMUUh06CHd9
+         hWcMEQ6V8VCBTXdsKcOmbR1ViXx86mQo+qVu+0+Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Joonas=20Kylm=C3=A4l=C3=A4?= <joonas.kylmala@iki.fi>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 5.2 313/413] kconfig: fix missing choice values in auto.conf
-Date:   Wed, 24 Jul 2019 21:20:04 +0200
-Message-Id: <20190724191758.196717742@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.2 315/413] ALSA: hda - Dont resume forcibly i915 HDMI/DP codec
+Date:   Wed, 24 Jul 2019 21:20:06 +0200
+Message-Id: <20190724191758.376309299@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -44,141 +42,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 8e2442a5f86e1f77b86401fce274a7f622740bc4 upstream.
+commit 4914da2fb0c89205790503f20dfdde854f3afdd8 upstream.
 
-Since commit 00c864f8903d ("kconfig: allow all config targets to write
-auto.conf if missing"), Kconfig creates include/config/auto.conf in the
-defconfig stage when it is missing.
+We apply the codec resume forcibly at system resume callback for
+updating and syncing the jack detection state that may have changed
+during sleeping.  This is, however, superfluous for the codec like
+Intel HDMI/DP, where the jack detection is managed via the audio
+component notification; i.e. the jack state change shall be reported
+sooner or later from the graphics side at mode change.
 
-Joonas Kylmälä reported incorrect auto.conf generation under some
-circumstances.
+This patch changes the codec resume callback to avoid the forcible
+resume conditionally with a new flag, codec->relaxed_resume, for
+reducing the resume time.  The flag is set in the codec probe.
 
-To reproduce it, apply the following diff:
+Although this doesn't fix the entire bug mentioned in the bugzilla
+entry below, it's still a good optimization and some improvements are
+seen.
 
-|  --- a/arch/arm/configs/imx_v6_v7_defconfig
-|  +++ b/arch/arm/configs/imx_v6_v7_defconfig
-|  @@ -345,14 +345,7 @@ CONFIG_USB_CONFIGFS_F_MIDI=y
-|   CONFIG_USB_CONFIGFS_F_HID=y
-|   CONFIG_USB_CONFIGFS_F_UVC=y
-|   CONFIG_USB_CONFIGFS_F_PRINTER=y
-|  -CONFIG_USB_ZERO=m
-|  -CONFIG_USB_AUDIO=m
-|  -CONFIG_USB_ETH=m
-|  -CONFIG_USB_G_NCM=m
-|  -CONFIG_USB_GADGETFS=m
-|  -CONFIG_USB_FUNCTIONFS=m
-|  -CONFIG_USB_MASS_STORAGE=m
-|  -CONFIG_USB_G_SERIAL=m
-|  +CONFIG_USB_FUNCTIONFS=y
-|   CONFIG_MMC=y
-|   CONFIG_MMC_SDHCI=y
-|   CONFIG_MMC_SDHCI_PLTFM=y
-
-And then, run:
-
-$ make ARCH=arm mrproper imx_v6_v7_defconfig
-
-You will see CONFIG_USB_FUNCTIONFS=y is correctly contained in the
-.config, but not in the auto.conf.
-
-Please note drivers/usb/gadget/legacy/Kconfig is included from a choice
-block in drivers/usb/gadget/Kconfig. So USB_FUNCTIONFS is a choice value.
-
-This is probably a similar situation described in commit beaaddb62540
-("kconfig: tests: test defconfig when two choices interact").
-
-When sym_calc_choice() is called, the choice symbol forgets the
-SYMBOL_DEF_USER unless all of its choice values are explicitly set by
-the user.
-
-The choice symbol is given just one chance to recall it because
-set_all_choice_values() is called if SYMBOL_NEED_SET_CHOICE_VALUES
-is set.
-
-When sym_calc_choice() is called again, the choice symbol forgets it
-forever, since SYMBOL_NEED_SET_CHOICE_VALUES is a one-time aid.
-Hence, we cannot call sym_clear_all_valid() again and again.
-
-It is crazy to repeat set and unset of internal flags. However, we
-cannot simply get rid of "sym->flags &= flags | ~SYMBOL_DEF_USER;"
-Doing so would re-introduce the problem solved by commit 5d09598d488f
-("kconfig: fix new choices being skipped upon config update").
-
-To work around the issue, conf_write_autoconf() stopped calling
-sym_clear_all_valid().
-
-conf_write() must be changed accordingly. Currently, it clears
-SYMBOL_WRITE after the symbol is written into the .config file. This
-is needed to prevent it from writing the same symbol multiple times in
-case the symbol is declared in two or more locations. I added the new
-flag SYMBOL_WRITTEN, to track the symbols that have been written.
-
-Anyway, this is a cheesy workaround in order to suppress the issue
-as far as defconfig is concerned.
-
-Handling of choices is totally broken. sym_clear_all_valid() is called
-every time a user touches a symbol from the GUI interface. To reproduce
-it, just add a new symbol drivers/usb/gadget/legacy/Kconfig, then touch
-around unrelated symbols from menuconfig. USB_FUNCTIONFS will disappear
-from the .config file.
-
-I added the Fixes tag since it is more fatal than before. But, this
-has been broken since long long time before, and still it is.
-We should take a closer look to fix this correctly somehow.
-
-Fixes: 00c864f8903d ("kconfig: allow all config targets to write auto.conf if missing")
-Cc: linux-stable <stable@vger.kernel.org> # 4.19+
-Reported-by: Joonas Kylmälä <joonas.kylmala@iki.fi>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Tested-by: Joonas Kylmälä <joonas.kylmala@iki.fi>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201901
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- scripts/kconfig/confdata.c |    7 +++----
- scripts/kconfig/expr.h     |    1 +
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ include/sound/hda_codec.h  |    2 ++
+ sound/pci/hda/hda_codec.c  |    8 ++++++--
+ sound/pci/hda/patch_hdmi.c |    6 +++++-
+ 3 files changed, 13 insertions(+), 3 deletions(-)
 
---- a/scripts/kconfig/confdata.c
-+++ b/scripts/kconfig/confdata.c
-@@ -914,7 +914,8 @@ int conf_write(const char *name)
- 				     "# %s\n"
- 				     "#\n", str);
- 			need_newline = false;
--		} else if (!(sym->flags & SYMBOL_CHOICE)) {
-+		} else if (!(sym->flags & SYMBOL_CHOICE) &&
-+			   !(sym->flags & SYMBOL_WRITTEN)) {
- 			sym_calc_value(sym);
- 			if (!(sym->flags & SYMBOL_WRITE))
- 				goto next;
-@@ -922,7 +923,7 @@ int conf_write(const char *name)
- 				fprintf(out, "\n");
- 				need_newline = false;
- 			}
--			sym->flags &= ~SYMBOL_WRITE;
-+			sym->flags |= SYMBOL_WRITTEN;
- 			conf_write_symbol(out, sym, &kconfig_printer_cb, NULL);
- 		}
+--- a/include/sound/hda_codec.h
++++ b/include/sound/hda_codec.h
+@@ -249,6 +249,8 @@ struct hda_codec {
+ 	unsigned int auto_runtime_pm:1; /* enable automatic codec runtime pm */
+ 	unsigned int force_pin_prefix:1; /* Add location prefix */
+ 	unsigned int link_down_at_suspend:1; /* link down at runtime suspend */
++	unsigned int relaxed_resume:1;	/* don't resume forcibly for jack */
++
+ #ifdef CONFIG_PM
+ 	unsigned long power_on_acct;
+ 	unsigned long power_off_acct;
+--- a/sound/pci/hda/hda_codec.c
++++ b/sound/pci/hda/hda_codec.c
+@@ -2941,15 +2941,19 @@ static int hda_codec_runtime_resume(stru
+ #ifdef CONFIG_PM_SLEEP
+ static int hda_codec_force_resume(struct device *dev)
+ {
++	struct hda_codec *codec = dev_to_hda_codec(dev);
++	bool forced_resume = !codec->relaxed_resume;
+ 	int ret;
  
-@@ -1082,8 +1083,6 @@ int conf_write_autoconf(int overwrite)
- 	if (!overwrite && is_present(autoconf_name))
- 		return 0;
+ 	/* The get/put pair below enforces the runtime resume even if the
+ 	 * device hasn't been used at suspend time.  This trick is needed to
+ 	 * update the jack state change during the sleep.
+ 	 */
+-	pm_runtime_get_noresume(dev);
++	if (forced_resume)
++		pm_runtime_get_noresume(dev);
+ 	ret = pm_runtime_force_resume(dev);
+-	pm_runtime_put(dev);
++	if (forced_resume)
++		pm_runtime_put(dev);
+ 	return ret;
+ }
  
--	sym_clear_all_valid();
--
- 	conf_write_dep("include/config/auto.conf.cmd");
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -2291,8 +2291,10 @@ static void generic_hdmi_free(struct hda
+ 	struct hdmi_spec *spec = codec->spec;
+ 	int pin_idx, pcm_idx;
  
- 	if (conf_touch_deps())
---- a/scripts/kconfig/expr.h
-+++ b/scripts/kconfig/expr.h
-@@ -141,6 +141,7 @@ struct symbol {
- #define SYMBOL_OPTIONAL   0x0100  /* choice is optional - values can be 'n' */
- #define SYMBOL_WRITE      0x0200  /* write symbol to file (KCONFIG_CONFIG) */
- #define SYMBOL_CHANGED    0x0400  /* ? */
-+#define SYMBOL_WRITTEN    0x0800  /* track info to avoid double-write to .config */
- #define SYMBOL_NO_WRITE   0x1000  /* Symbol for internal use only; it will not be written */
- #define SYMBOL_CHECKED    0x2000  /* used during dependency checking */
- #define SYMBOL_WARNED     0x8000  /* warning has been issued */
+-	if (codec_has_acomp(codec))
++	if (codec_has_acomp(codec)) {
+ 		snd_hdac_acomp_register_notifier(&codec->bus->core, NULL);
++		codec->relaxed_resume = 0;
++	}
+ 
+ 	for (pin_idx = 0; pin_idx < spec->num_pins; pin_idx++) {
+ 		struct hdmi_spec_per_pin *per_pin = get_pin(spec, pin_idx);
+@@ -2565,6 +2567,8 @@ static void register_i915_notifier(struc
+ 	spec->drm_audio_ops.pin_eld_notify = intel_pin_eld_notify;
+ 	snd_hdac_acomp_register_notifier(&codec->bus->core,
+ 					&spec->drm_audio_ops);
++	/* no need for forcible resume for jack check thanks to notifier */
++	codec->relaxed_resume = 1;
+ }
+ 
+ /* setup_stream ops override for HSW+ */
 
 
