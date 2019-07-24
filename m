@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F4142739A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:42:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9C14739A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:42:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389965AbfGXTmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:42:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43960 "EHLO mail.kernel.org"
+        id S2390369AbfGXTm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:42:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390344AbfGXTmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:42:19 -0400
+        id S2390360AbfGXTm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:42:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF14B217D4;
-        Wed, 24 Jul 2019 19:42:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBB1522ADA;
+        Wed, 24 Jul 2019 19:42:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997339;
-        bh=k7HusJDUgJunaBFNuyzKP/8EUR1t/9moYa77Naaiwrs=;
+        s=default; t=1563997345;
+        bh=gG5VG+XTA+OvFdThQtGJX+ybh7CaLGuD16nQ0MQYCwA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LvEl3mxsIA2ow4EKXtSLXr2TKxX4HoqqSkjGF2qKQMzrXIAZoTfQAvn0yH7/13f3p
-         J+LLeyMohRecP/flB3DqFqI2CAMt4pGHOVukuGm70doOkjrfIP8mIhEvHocj659Uvr
-         hnoPiCkKm9uvZSgs/iKygyNUxvYYdDAFe1gbDlCI=
+        b=aDq6jt3oCnlroS+TBZR7PWQuBEv8D78cVE/GpOI5I7Yxduc4Bcwy51NzQgXxjS4Pm
+         jDRbMAg1kmMc4Qj0/MBA7wy8QESpIecZz0jflSTomPhfyHOZpB7r3LHmjS+JuHe0jq
+         GSAB2VIYZdnNVujn6EEOlylQOoV0xD1F36F2Hc4Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Lee, Chiasheng" <chiasheng.lee@intel.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Lee@vger.kernel.org
-Subject: [PATCH 5.2 403/413] usb: Handle USB3 remote wakeup for LPM enabled devices correctly
-Date:   Wed, 24 Jul 2019 21:21:34 +0200
-Message-Id: <20190724191803.571898108@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.2 404/413] blk-throttle: fix zero wait time for iops throttled group
+Date:   Wed, 24 Jul 2019 21:21:35 +0200
+Message-Id: <20190724191803.609411516@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -44,59 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lee, Chiasheng <chiasheng.lee@intel.com>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-commit e244c4699f859cf7149b0781b1894c7996a8a1df upstream.
+commit 3a10f999ffd464d01c5a05592a15470a3c4bbc36 upstream.
 
-With Link Power Management (LPM) enabled USB3 links transition to low
-power U1/U2 link states from U0 state automatically.
+After commit 991f61fe7e1d ("Blk-throttle: reduce tail io latency when
+iops limit is enforced") wait time could be zero even if group is
+throttled and cannot issue requests right now. As a result
+throtl_select_dispatch() turns into busy-loop under irq-safe queue
+spinlock.
 
-Current hub code detects USB3 remote wakeups by checking if the software
-state still shows suspended, but the link has transitioned from suspended
-U3 to enabled U0 state.
+Fix is simple: always round up target time to the next throttle slice.
 
-As it takes some time before the hub thread reads the port link state
-after a USB3 wake notification, the link may have transitioned from U0
-to U1/U2, and wake is not detected by hub code.
-
-Fix this by handling U1/U2 states in the same way as U0 in USB3 wakeup
-handling
-
-This patch should be added to stable kernels since 4.13 where LPM was
-kept enabled during suspend/resume
-
-Cc: <stable@vger.kernel.org> # v4.13+
-Signed-off-by: Lee, Chiasheng <chiasheng.lee@intel.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Fixes: 991f61fe7e1d ("Blk-throttle: reduce tail io latency when iops limit is enforced")
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc: stable@vger.kernel.org # v4.19+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/hub.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ block/blk-throttle.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -3617,6 +3617,7 @@ static int hub_handle_remote_wakeup(stru
- 	struct usb_device *hdev;
- 	struct usb_device *udev;
- 	int connect_change = 0;
-+	u16 link_state;
- 	int ret;
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -881,13 +881,10 @@ static bool tg_with_in_iops_limit(struct
+ 	unsigned long jiffy_elapsed, jiffy_wait, jiffy_elapsed_rnd;
+ 	u64 tmp;
  
- 	hdev = hub->hdev;
-@@ -3626,9 +3627,11 @@ static int hub_handle_remote_wakeup(stru
- 			return 0;
- 		usb_clear_port_feature(hdev, port, USB_PORT_FEAT_C_SUSPEND);
- 	} else {
-+		link_state = portstatus & USB_PORT_STAT_LINK_STATE;
- 		if (!udev || udev->state != USB_STATE_SUSPENDED ||
--				 (portstatus & USB_PORT_STAT_LINK_STATE) !=
--				 USB_SS_PORT_LS_U0)
-+				(link_state != USB_SS_PORT_LS_U0 &&
-+				 link_state != USB_SS_PORT_LS_U1 &&
-+				 link_state != USB_SS_PORT_LS_U2))
- 			return 0;
- 	}
+-	jiffy_elapsed = jiffy_elapsed_rnd = jiffies - tg->slice_start[rw];
++	jiffy_elapsed = jiffies - tg->slice_start[rw];
  
+-	/* Slice has just started. Consider one slice interval */
+-	if (!jiffy_elapsed)
+-		jiffy_elapsed_rnd = tg->td->throtl_slice;
+-
+-	jiffy_elapsed_rnd = roundup(jiffy_elapsed_rnd, tg->td->throtl_slice);
++	/* Round up to the next throttle slice, wait time must be nonzero */
++	jiffy_elapsed_rnd = roundup(jiffy_elapsed + 1, tg->td->throtl_slice);
+ 
+ 	/*
+ 	 * jiffy_elapsed_rnd should not be a big value as minimum iops can be
 
 
