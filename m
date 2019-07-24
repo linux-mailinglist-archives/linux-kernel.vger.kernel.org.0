@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C80C73F30
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:30:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5775E73F2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:30:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388523AbfGXTbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:31:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52758 "EHLO mail.kernel.org"
+        id S2389759AbfGXUah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:30:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388508AbfGXTbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:31:40 -0400
+        id S2388528AbfGXTbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:31:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2B20229F4;
-        Wed, 24 Jul 2019 19:31:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB179229F4;
+        Wed, 24 Jul 2019 19:31:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996699;
-        bh=CqXxNtD2vspp+3QgYdEnCTTV27NiT+7gb4tIhi/978E=;
+        s=default; t=1563996705;
+        bh=MdiaGN8UC4Xnttt9famvGIwedDcd4Ji8SrDssBUZnY0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eHSn6HCJ+QcTyPvb8QRnk+NgnVkcnUcVHChikb4S5A7AQTMjjG2N3egf1PNwuCSjP
-         Dc+dyJClkyFQtQ9aDLe58UyLBkQf55I/bNE1eIj0MpA6cZmcnHCplagL3NB/epuQeh
-         DTp/fUvyySLP9wMwzBogFAHbjyFPUMZHvl+r/Xq0=
+        b=Zwk80CoAJ8RGSP1+BVcOr/BHJV8c9R3spC5CZNhPEmZMVw9fIK0bVceFvxVZtLao3
+         kW2o8gKENujb1o4NG3ekmJUrz9mZ5jPhJYzhMPetHwE8q+F99pkcev7UJDZqwIO8zr
+         wva6IpZncwO+lwsj/FnEZDmFosJyZr94TdIbwAkw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Coly Li <colyli@suse.de>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 186/413] bcache: fix return value error in bch_journal_read()
-Date:   Wed, 24 Jul 2019 21:17:57 +0200
-Message-Id: <20190724191748.036726271@linuxfoundation.org>
+Subject: [PATCH 5.2 188/413] bcache: check CACHE_SET_IO_DISABLE bit in bch_journal()
+Date:   Wed, 24 Jul 2019 21:17:59 +0200
+Message-Id: <20190724191748.160983049@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -43,43 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0ae49cb7aa005ed18fe8f4d6ccf73019b78ac7b2 ]
+[ Upstream commit 383ff2183ad16a8842d1fbd9dd3e1cbd66813e64 ]
 
-When everything is OK in bch_journal_read(), finally the return value
-is returned by,
-	return ret;
-which assumes ret will be 0 here. This assumption is wrong when all
-journal buckets as are full and filled with valid journal entries. In
-such cache the last location referencess read_bucket() sets 'ret' to
-1, which means new jset added into jset list. The jset list is list
-'journal' in caller run_cache_set().
+When too many I/O errors happen on cache set and CACHE_SET_IO_DISABLE
+bit is set, bch_journal() may continue to work because the journaling
+bkey might be still in write set yet. The caller of bch_journal() may
+believe the journal still work but the truth is in-memory journal write
+set won't be written into cache device any more. This behavior may
+introduce potential inconsistent metadata status.
 
-Return 1 to run_cache_set() means something wrong and the cache set
-won't start, but indeed everything is OK.
-
-This patch changes the line at end of bch_journal_read() to directly
-return 0 since everything if verything is good. Then a bogus error
-is fixed.
+This patch checks CACHE_SET_IO_DISABLE bit at the head of bch_journal(),
+if the bit is set, bch_journal() returns NULL immediately to notice
+caller to know journal does not work.
 
 Signed-off-by: Coly Li <colyli@suse.de>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/journal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/bcache/journal.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index 12dae9348147..4e5fc05720fc 100644
+index 4e5fc05720fc..54f8886b6177 100644
 --- a/drivers/md/bcache/journal.c
 +++ b/drivers/md/bcache/journal.c
-@@ -268,7 +268,7 @@ int bch_journal_read(struct cache_set *c, struct list_head *list)
- 					    struct journal_replay,
- 					    list)->j.seq;
+@@ -811,6 +811,10 @@ atomic_t *bch_journal(struct cache_set *c,
+ 	struct journal_write *w;
+ 	atomic_t *ret;
  
--	return ret;
-+	return 0;
- #undef read_bucket
- }
++	/* No journaling if CACHE_SET_IO_DISABLE set already */
++	if (unlikely(test_bit(CACHE_SET_IO_DISABLE, &c->flags)))
++		return NULL;
++
+ 	if (!CACHE_SYNC(&c->sb))
+ 		return NULL;
  
 -- 
 2.20.1
