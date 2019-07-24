@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 393BE73E73
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:25:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C69E73E66
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:24:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390700AbfGXUZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:25:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41322 "EHLO mail.kernel.org"
+        id S2390005AbfGXTkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:40:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389643AbfGXTkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:40:08 -0400
+        id S2389592AbfGXTkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:40:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7071214AF;
-        Wed, 24 Jul 2019 19:40:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 450C6214AF;
+        Wed, 24 Jul 2019 19:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997207;
-        bh=XBgt7Fj0ubdFgRqz02xDbvSPfb5+ZUmGEzZj4Ph1/5g=;
+        s=default; t=1563997212;
+        bh=Bo/InIWzF2Z+oXTCu/zsd3Dkx6gyNsZ97JeFWHs8Bwk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IyHd+57VREtcuc8H6k7xmno5KByG6ll2EAeQKyooe7LTajlc1/H/Wra4BCMrUCR4s
-         r5vrAiRgW0hEHu0DZbLrGx5LKKrFGe+Rd6bIuPJLqbCEuMe/brMGUbra+ShrzioOFu
-         4KxiCOjuTrMQaIwFSXrjUUYKKtoCSobefv2P+U3o=
+        b=DDRvVjMcaL7mYxM/lLOMC60o7vj1nTmKTfgs3ycsHm/V8rlkYrLDt3g4lX5GYM70u
+         V1sgKu3kbfn1/JWPB9f3ytzy7JlwHaMN7oSATXRxAdXTgRAOm4uep1pZVDniqLC9gN
+         srHZV+MVz4OTKz55sPCPwmZuFC2k29pRYwHqVC+4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.2 359/413] block: Allow mapping of vmalloc-ed buffers
-Date:   Wed, 24 Jul 2019 21:20:50 +0200
-Message-Id: <20190724191801.296880852@linuxfoundation.org>
+        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.2 360/413] block: Fix potential overflow in blk_report_zones()
+Date:   Wed, 24 Jul 2019 21:20:51 +0200
+Message-Id: <20190724191801.341984023@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -49,104 +45,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Damien Le Moal <damien.lemoal@wdc.com>
 
-commit b4c5875d36178e8df409bdce232f270cac89fafe upstream.
+commit 113ab72ed4794c193509a97d7c6d32a6886e1682 upstream.
 
-To allow the SCSI subsystem scsi_execute_req() function to issue
-requests using large buffers that are better allocated with vmalloc()
-rather than kmalloc(), modify bio_map_kern() to allow passing a buffer
-allocated with vmalloc().
+For large values of the number of zones reported and/or large zone
+sizes, the sector increment calculated with
 
-To do so, detect vmalloc-ed buffers using is_vmalloc_addr(). For
-vmalloc-ed buffers, flush the buffer using flush_kernel_vmap_range(),
-use vmalloc_to_page() instead of virt_to_page() to obtain the pages of
-the buffer, and invalidate the buffer addresses with
-invalidate_kernel_vmap_range() on completion of read BIOs. This last
-point is executed using the function bio_invalidate_vmalloc_pages()
-which is defined only if the architecture defines
-ARCH_HAS_FLUSH_KERNEL_DCACHE_PAGE, that is, if the architecture
-actually needs the invalidation done.
+blk_queue_zone_sectors(q) * n
 
-Fixes: 515ce6061312 ("scsi: sd_zbc: Fix sd_zbc_report_zones() buffer allocation")
+in blk_report_zones() loop can overflow the unsigned int type used for
+the calculation as both "n" and blk_queue_zone_sectors() value are
+unsigned int. E.g. for a device with 256 MB zones (524288 sectors),
+overflow happens with 8192 or more zones reported.
+
+Changing the return type of blk_queue_zone_sectors() to sector_t, fixes
+this problem and avoids overflow problem for all other callers of this
+helper too. The same change is also applied to the bdev_zone_sectors()
+helper.
+
 Fixes: e76239a3748c ("block: add a report_zones method")
 Cc: stable@vger.kernel.org
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/bio.c |   28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ block/blk-zoned.c      |    2 +-
+ include/linux/blkdev.h |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -16,6 +16,7 @@
- #include <linux/workqueue.h>
- #include <linux/cgroup.h>
- #include <linux/blk-cgroup.h>
-+#include <linux/highmem.h>
- 
- #include <trace/events/block.h>
- #include "blk.h"
-@@ -1479,8 +1480,22 @@ void bio_unmap_user(struct bio *bio)
- 	bio_put(bio);
- }
- 
-+static void bio_invalidate_vmalloc_pages(struct bio *bio)
-+{
-+#ifdef ARCH_HAS_FLUSH_KERNEL_DCACHE_PAGE
-+	if (bio->bi_private && !op_is_write(bio_op(bio))) {
-+		unsigned long i, len = 0;
-+
-+		for (i = 0; i < bio->bi_vcnt; i++)
-+			len += bio->bi_io_vec[i].bv_len;
-+		invalidate_kernel_vmap_range(bio->bi_private, len);
-+	}
-+#endif
-+}
-+
- static void bio_map_kern_endio(struct bio *bio)
+--- a/block/blk-zoned.c
++++ b/block/blk-zoned.c
+@@ -70,7 +70,7 @@ EXPORT_SYMBOL_GPL(__blk_req_zone_write_u
+ static inline unsigned int __blkdev_nr_zones(struct request_queue *q,
+ 					     sector_t nr_sectors)
  {
-+	bio_invalidate_vmalloc_pages(bio);
- 	bio_put(bio);
+-	unsigned long zone_sectors = blk_queue_zone_sectors(q);
++	sector_t zone_sectors = blk_queue_zone_sectors(q);
+ 
+ 	return (nr_sectors + zone_sectors - 1) >> ilog2(zone_sectors);
+ }
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -681,7 +681,7 @@ static inline bool blk_queue_is_zoned(st
+ 	}
  }
  
-@@ -1501,6 +1516,8 @@ struct bio *bio_map_kern(struct request_
- 	unsigned long end = (kaddr + len + PAGE_SIZE - 1) >> PAGE_SHIFT;
- 	unsigned long start = kaddr >> PAGE_SHIFT;
- 	const int nr_pages = end - start;
-+	bool is_vmalloc = is_vmalloc_addr(data);
-+	struct page *page;
- 	int offset, i;
- 	struct bio *bio;
+-static inline unsigned int blk_queue_zone_sectors(struct request_queue *q)
++static inline sector_t blk_queue_zone_sectors(struct request_queue *q)
+ {
+ 	return blk_queue_is_zoned(q) ? q->limits.chunk_sectors : 0;
+ }
+@@ -1429,7 +1429,7 @@ static inline bool bdev_is_zoned(struct
+ 	return false;
+ }
  
-@@ -1508,6 +1525,11 @@ struct bio *bio_map_kern(struct request_
- 	if (!bio)
- 		return ERR_PTR(-ENOMEM);
+-static inline unsigned int bdev_zone_sectors(struct block_device *bdev)
++static inline sector_t bdev_zone_sectors(struct block_device *bdev)
+ {
+ 	struct request_queue *q = bdev_get_queue(bdev);
  
-+	if (is_vmalloc) {
-+		flush_kernel_vmap_range(data, len);
-+		bio->bi_private = data;
-+	}
-+
- 	offset = offset_in_page(kaddr);
- 	for (i = 0; i < nr_pages; i++) {
- 		unsigned int bytes = PAGE_SIZE - offset;
-@@ -1518,7 +1540,11 @@ struct bio *bio_map_kern(struct request_
- 		if (bytes > len)
- 			bytes = len;
- 
--		if (bio_add_pc_page(q, bio, virt_to_page(data), bytes,
-+		if (!is_vmalloc)
-+			page = virt_to_page(data);
-+		else
-+			page = vmalloc_to_page(data);
-+		if (bio_add_pc_page(q, bio, page, bytes,
- 				    offset) < bytes) {
- 			/* we don't support partial mappings */
- 			bio_put(bio);
 
 
