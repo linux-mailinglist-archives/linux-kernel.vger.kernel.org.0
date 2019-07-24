@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE58173EEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:28:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FF4D73EA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:26:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727723AbfGXTeY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:34:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56650 "EHLO mail.kernel.org"
+        id S2389463AbfGXTh3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:37:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389082AbfGXTeU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:34:20 -0400
+        id S2389452AbfGXThX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:37:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AC0E229FA;
-        Wed, 24 Jul 2019 19:34:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A556D214AF;
+        Wed, 24 Jul 2019 19:37:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996859;
-        bh=ljmNt4eEh0NMz/9kDFZauAiMqHK2zYTuqsiRF2NsJVg=;
+        s=default; t=1563997043;
+        bh=Hq7xfIPpMVKYh/xEQ7Nzp1ydd1HyY/Vs4u0I5IFpz+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZWfiEYWm/BPjDmWTLkxuqXXSapkwchlNZs5LJrHB+Pqk2+nC7a/0ea4vgz2hmlK+I
-         FaLRkha9v3MJhcfypQzxd9uQvFEYXBgVHm7CR+FyB1Ua1JgZoX+gg+fCO+Kj5D2eg2
-         4+wYeAG7xIPQAJsfFsidh+VAc0AhrQUpTELJks/0=
+        b=zseMg3fB4jGFyyNt7PdamEncoVsqRx5+24NqSe1WB1m6qR9iuocbZscQ/IHVpeZR3
+         5MR/EtlEFCXyf9OTho8iFaaJDeBnTk6AClAm0qjK06+orC0JnC8P15N7gWu5m4P+Um
+         KZS30HezkBAeBbN9VNxdM9CU+t/3b2dhPFdcyZes=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 240/413] gtp: fix use-after-free in gtp_encap_destroy()
-Date:   Wed, 24 Jul 2019 21:18:51 +0200
-Message-Id: <20190724191752.522841774@linuxfoundation.org>
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>
+Subject: [PATCH 5.2 252/413] xen: let alloc_xenballooned_pages() fail if not enough memory free
+Date:   Wed, 24 Jul 2019 21:19:03 +0200
+Message-Id: <20190724191753.800324248@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -44,131 +42,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1788b8569f5de27da09087fa3f6580d2aa04cc75 ]
+From: Juergen Gross <jgross@suse.com>
 
-gtp_encap_destroy() is called twice.
-1. When interface is deleted.
-2. When udp socket is destroyed.
-either gtp->sk0 or gtp->sk1u could be freed by sock_put() in
-gtp_encap_destroy(). so, when gtp_encap_destroy() is called again,
-it would uses freed sk pointer.
+commit a1078e821b605813b63bf6bca414a85f804d5c66 upstream.
 
-patch makes gtp_encap_destroy() to set either gtp->sk0 or gtp->sk1u to
-null. in addition, both gtp->sk0 and gtp->sk1u pointer are protected
-by rtnl_lock. so, rtnl_lock() is added.
+Instead of trying to allocate pages with GFP_USER in
+add_ballooned_pages() check the available free memory via
+si_mem_available(). GFP_USER is far less limiting memory exhaustion
+than the test via si_mem_available().
 
-Test command:
-   gtp-link add gtp1 &
-   killall gtp-link
-   ip link del gtp1
+This will avoid dom0 running out of memory due to excessive foreign
+page mappings especially on ARM and on x86 in PVH mode, as those don't
+have a pre-ballooned area which can be used for foreign mappings.
 
-Splat looks like:
-[   83.182767] BUG: KASAN: use-after-free in __lock_acquire+0x3a20/0x46a0
-[   83.184128] Read of size 8 at addr ffff8880cc7d5360 by task ip/1008
-[   83.185567] CPU: 1 PID: 1008 Comm: ip Not tainted 5.2.0-rc6+ #50
-[   83.188469] Call Trace:
-[ ... ]
-[   83.200126]  lock_acquire+0x141/0x380
-[   83.200575]  ? lock_sock_nested+0x3a/0xf0
-[   83.201069]  _raw_spin_lock_bh+0x38/0x70
-[   83.201551]  ? lock_sock_nested+0x3a/0xf0
-[   83.202044]  lock_sock_nested+0x3a/0xf0
-[   83.202520]  gtp_encap_destroy+0x18/0xe0 [gtp]
-[   83.203065]  gtp_encap_disable.isra.14+0x13/0x50 [gtp]
-[   83.203687]  gtp_dellink+0x56/0x170 [gtp]
-[   83.204190]  rtnl_delete_link+0xb4/0x100
-[ ... ]
-[   83.236513] Allocated by task 976:
-[   83.236925]  save_stack+0x19/0x80
-[   83.237332]  __kasan_kmalloc.constprop.3+0xa0/0xd0
-[   83.237894]  kmem_cache_alloc+0xd8/0x280
-[   83.238360]  sk_prot_alloc.isra.42+0x50/0x200
-[   83.238874]  sk_alloc+0x32/0x940
-[   83.239264]  inet_create+0x283/0xc20
-[   83.239684]  __sock_create+0x2dd/0x540
-[   83.240136]  __sys_socket+0xca/0x1a0
-[   83.240550]  __x64_sys_socket+0x6f/0xb0
-[   83.240998]  do_syscall_64+0x9c/0x450
-[   83.241466]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[   83.242061]
-[   83.242249] Freed by task 0:
-[   83.242616]  save_stack+0x19/0x80
-[   83.243013]  __kasan_slab_free+0x111/0x150
-[   83.243498]  kmem_cache_free+0x89/0x250
-[   83.244444]  __sk_destruct+0x38f/0x5a0
-[   83.245366]  rcu_core+0x7e9/0x1c20
-[   83.245766]  __do_softirq+0x213/0x8fa
+As the normal ballooning suffers from the same problem don't balloon
+down more than si_mem_available() pages in one iteration. At the same
+time limit the default maximum number of retries.
 
-Fixes: 1e3a3abd8b28 ("gtp: make GTP sockets in gtp_newlink optional")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This is part of XSA-300.
+
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/gtp.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ drivers/xen/balloon.c |   16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/gtp.c b/drivers/net/gtp.c
-index b770335c03c1..5615cdb7202c 100644
---- a/drivers/net/gtp.c
-+++ b/drivers/net/gtp.c
-@@ -285,13 +285,17 @@ static int gtp1u_udp_encap_recv(struct gtp_dev *gtp, struct sk_buff *skb)
- 	return gtp_rx(pctx, skb, hdrlen, gtp->role);
- }
+--- a/drivers/xen/balloon.c
++++ b/drivers/xen/balloon.c
+@@ -538,8 +538,15 @@ static void balloon_process(struct work_
+ 				state = reserve_additional_memory();
+ 		}
  
--static void gtp_encap_destroy(struct sock *sk)
-+static void __gtp_encap_destroy(struct sock *sk)
- {
- 	struct gtp_dev *gtp;
- 
- 	lock_sock(sk);
- 	gtp = sk->sk_user_data;
- 	if (gtp) {
-+		if (gtp->sk0 == sk)
-+			gtp->sk0 = NULL;
-+		else
-+			gtp->sk1u = NULL;
- 		udp_sk(sk)->encap_type = 0;
- 		rcu_assign_sk_user_data(sk, NULL);
- 		sock_put(sk);
-@@ -299,12 +303,19 @@ static void gtp_encap_destroy(struct sock *sk)
- 	release_sock(sk);
- }
- 
-+static void gtp_encap_destroy(struct sock *sk)
-+{
-+	rtnl_lock();
-+	__gtp_encap_destroy(sk);
-+	rtnl_unlock();
-+}
+-		if (credit < 0)
+-			state = decrease_reservation(-credit, GFP_BALLOON);
++		if (credit < 0) {
++			long n_pages;
 +
- static void gtp_encap_disable_sock(struct sock *sk)
- {
- 	if (!sk)
- 		return;
++			n_pages = min(-credit, si_mem_available());
++			state = decrease_reservation(n_pages, GFP_BALLOON);
++			if (state == BP_DONE && n_pages != -credit &&
++			    n_pages < totalreserve_pages)
++				state = BP_EAGAIN;
++		}
  
--	gtp_encap_destroy(sk);
-+	__gtp_encap_destroy(sk);
- }
+ 		state = update_schedule(state);
  
- static void gtp_encap_disable(struct gtp_dev *gtp)
-@@ -1043,6 +1054,7 @@ static int gtp_genl_new_pdp(struct sk_buff *skb, struct genl_info *info)
- 		return -EINVAL;
+@@ -578,6 +585,9 @@ static int add_ballooned_pages(int nr_pa
+ 		}
  	}
  
-+	rtnl_lock();
- 	rcu_read_lock();
++	if (si_mem_available() < nr_pages)
++		return -ENOMEM;
++
+ 	st = decrease_reservation(nr_pages, GFP_USER);
+ 	if (st != BP_DONE)
+ 		return -ENOMEM;
+@@ -710,7 +720,7 @@ static int __init balloon_init(void)
+ 	balloon_stats.schedule_delay = 1;
+ 	balloon_stats.max_schedule_delay = 32;
+ 	balloon_stats.retry_count = 1;
+-	balloon_stats.max_retry_count = RETRY_UNLIMITED;
++	balloon_stats.max_retry_count = 4;
  
- 	gtp = gtp_find_dev(sock_net(skb->sk), info->attrs);
-@@ -1067,6 +1079,7 @@ static int gtp_genl_new_pdp(struct sk_buff *skb, struct genl_info *info)
- 
- out_unlock:
- 	rcu_read_unlock();
-+	rtnl_unlock();
- 	return err;
- }
- 
--- 
-2.20.1
-
+ #ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
+ 	set_online_page_callback(&xen_online_page);
 
 
