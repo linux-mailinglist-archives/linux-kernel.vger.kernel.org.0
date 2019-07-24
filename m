@@ -2,88 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25D2273880
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:30:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F283737BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:20:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388285AbfGXTaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:30:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388259AbfGXTaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:30:04 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 948C6218EA;
-        Wed, 24 Jul 2019 19:30:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996604;
-        bh=uBgELbhUqCeoKuc7FME1hWiKsVaU7eEsxO07pSIDEA8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=11Nz0t3gsDgQUQY5MaifKvUgeC69ypbUfZzI8QI5kevU6OeR48aUi0XG/khrYhW4x
-         nDrQ2U9wamNTAQReyF8swCXkxwg5rOmW2dqJAguzKBi19wHb1PklgGxvbRzlApuQP2
-         5jG/F7nR3cjv3RDKsuqAkCkj4IiSeAnmTEi+vUgY=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
-        Ondrej Jirman <megous@megous.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 153/413] net: stmmac: sun8i: force select external PHY when no internal one
-Date:   Wed, 24 Jul 2019 21:17:24 +0200
-Message-Id: <20190724191745.962993931@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
-References: <20190724191735.096702571@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727519AbfGXTUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:20:16 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44607 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725826AbfGXTUQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:20:16 -0400
+Received: by mail-qk1-f195.google.com with SMTP id d79so34572559qke.11;
+        Wed, 24 Jul 2019 12:20:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Jf56Nz05DOfwnERFUQkN8u7zsx4IFXTKejoTcl/rv6g=;
+        b=kRCjPwpl3KV5JZ+jG9MW4RJlkRN421VxJjYbdreISYCOhxnOSwdD3ALzdA46vTmRly
+         b7nqIstNMJQ8CAU19gYGlCqHwmsvkmk1UjR7qooCEt4iAV10ShQ0azpC72pD39vNnuyw
+         5afkxEf2fctjRwkGzb7B1lKceftIqafcwVp1PR7d4PYfUGHL6zbknxbTJ1u+/fugQQQO
+         S2R41s1q5jD1aKjbRJZoPherbeKwf4gyxVXnNxa5E6CyqtACUL4DLzQP6rWZiJ5W+UiS
+         cdZ3IoAO7d2aR5yy0LtprKyxfFDvJvIoqAOBoX+h6zc0t3KdqN9/AXbhVBLEdJSakywZ
+         sYhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Jf56Nz05DOfwnERFUQkN8u7zsx4IFXTKejoTcl/rv6g=;
+        b=nYv/2C/FAZbQ9UysrJ366yOSvWKuqog3yU3yb8IzEEGRVJ/WmYQrPvfaFchK4bn8Yp
+         l513bnQnyocfcLWOINoSXj58ViRT6AD7Z9eL6OXflRW5K4sbcFlACTQVZBovdYh+Ev9W
+         Mqco9WqPDRlf6qcjMO8clOEGxYjTGugvNzsa8DSUVpyjOxO3299b00WmdrWmC90xt//u
+         nKNMqvbb1xE6xPq1j0bfJTOfKaTclSTpmCBWa41XGTzUHyBesMb6m+WRa/YKZbgI5I8r
+         ttHvGD69XkTsMBsqcPVvPipO7cjC0uZGkqLW84kcDYbVOWAagl/OwMw7J4+1ntpQ2/JJ
+         1Uzw==
+X-Gm-Message-State: APjAAAUWbHeoaN8ovk49SU+bjjnSYY1BDZefEG7PxYfkT3hJnYgpJugn
+        QiI9XmQme882WyXYav7WZwWLjXTOcdTMH7Knbo8=
+X-Google-Smtp-Source: APXvYqzU4aF1odzauC1/uuwbOPhg53aT8eaLMEi5QIzUZ//jTHnOwWUL6n9AYED8ykJtlRJ2izUgfx4GAeL/H9YNj14=
+X-Received: by 2002:a37:a854:: with SMTP id r81mr56278918qke.378.1563996015218;
+ Wed, 24 Jul 2019 12:20:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190724165803.87470-1-brianvv@google.com>
+In-Reply-To: <20190724165803.87470-1-brianvv@google.com>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Wed, 24 Jul 2019 12:20:04 -0700
+Message-ID: <CAPhsuW7PU1PP91e8vD2diwhBAwGJHWu6wAKOoBThT86f4r5OJw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/6] bpf: add BPF_MAP_DUMP command to dump more
+ than one entry per call
+To:     Brian Vazquez <brianvv@google.com>
+Cc:     Brian Vazquez <brianvv.kernel@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stanislav Fomichev <sdf@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Petar Penkov <ppenkov@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0fec7e72ae1391bb2d7527efb54fe6ae88acabce ]
+On Wed, Jul 24, 2019 at 10:09 AM Brian Vazquez <brianvv@google.com> wrote:
+>
+> This introduces a new command to retrieve multiple number of entries
+> from a bpf map.
+>
+> This new command can be executed from the existing BPF syscall as
+> follows:
+>
+> err =  bpf(BPF_MAP_DUMP, union bpf_attr *attr, u32 size)
+> using attr->dump.map_fd, attr->dump.prev_key, attr->dump.buf,
+> attr->dump.buf_len
+> returns zero or negative error, and populates buf and buf_len on
+> succees
+>
+> This implementation is wrapping the existing bpf methods:
+> map_get_next_key and map_lookup_elem
+>
+> Note that this implementation can be extended later to do dump and
+> delete by extending map_lookup_and_delete_elem (currently it only works
+> for bpf queue/stack maps) and either use a new flag in map_dump or a new
+> command map_dump_and_delete.
+>
+> Results show that even with a 1-elem_size buffer, it runs ~40 faster
 
-The PHY selection bit also exists on SoCs without an internal PHY; if it's
-set to 1 (internal PHY, default value) then the MAC will not make use of
-any PHY on such SoCs.
+Why is the new command 40% faster with 1-elem_size buffer?
 
-This problem appears when adapting for H6, which has no real internal PHY
-(the "internal PHY" on H6 is not on-die, but on a co-packaged AC200 chip,
-connected via RMII interface at GPIO bank A).
+> than the current implementation, improvements of ~85% are reported when
+> the buffer size is increased, although, after the buffer size is around
+> 5% of the total number of entries there's no huge difference in
+> increasing it.
+>
+> Tested:
+> Tried different size buffers to handle case where the bulk is bigger, or
+> the elements to retrieve are less than the existing ones, all runs read
+> a map of 100K entries. Below are the results(in ns) from the different
+> runs:
+>
+> buf_len_1:       69038725 entry-by-entry: 112384424 improvement
+> 38.569134
+> buf_len_2:       40897447 entry-by-entry: 111030546 improvement
+> 63.165590
+> buf_len_230:     13652714 entry-by-entry: 111694058 improvement
+> 87.776687
+> buf_len_5000:    13576271 entry-by-entry: 111101169 improvement
+> 87.780263
+> buf_len_73000:   14694343 entry-by-entry: 111740162 improvement
+> 86.849542
+> buf_len_100000:  13745969 entry-by-entry: 114151991 improvement
+> 87.958187
+> buf_len_234567:  14329834 entry-by-entry: 114427589 improvement
+> 87.476941
 
-Force the PHY selection bit to 0 when the SOC doesn't have an internal PHY,
-to address the problem of a wrong default value.
+It took me a while to figure out the meaning of 87.476941. It is probably
+a good idea to say 87.5% instead.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Ondrej Jirman <megous@megous.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-index a69c34f605b1..98a15ba8be9f 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-@@ -884,6 +884,11 @@ static int sun8i_dwmac_set_syscon(struct stmmac_priv *priv)
- 		 * address. No need to mask it again.
- 		 */
- 		reg |= 1 << H3_EPHY_ADDR_SHIFT;
-+	} else {
-+		/* For SoCs without internal PHY the PHY selection bit should be
-+		 * set to 0 (external PHY).
-+		 */
-+		reg &= ~H3_EPHY_SELECT;
- 	}
- 
- 	if (!of_property_read_u32(node, "allwinner,tx-delay-ps", &val)) {
--- 
-2.20.1
-
-
-
+Thanks,
+Song
