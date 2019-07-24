@@ -2,94 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 275C572E0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 13:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00E5372E0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 13:48:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727824AbfGXLrF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 07:47:05 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52385 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727128AbfGXLrF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 07:47:05 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id BABA580262; Wed, 24 Jul 2019 13:46:51 +0200 (CEST)
-Date:   Wed, 24 Jul 2019 13:47:02 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     mathieu.poirier@linaro.org, alexander.shishkin@linux.intel.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] coresight: fix typos
-Message-ID: <20190724114702.GB26116@amd>
-References: <20190724100335.GA7373@amd>
- <7ae7157b-1336-f4a6-59a3-b1ac6307bd8d@arm.com>
+        id S1727885AbfGXLr6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 07:47:58 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:40698 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727128AbfGXLr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 07:47:57 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5CE3F10A13D1A8E51729;
+        Wed, 24 Jul 2019 19:47:54 +0800 (CST)
+Received: from [127.0.0.1] (10.133.213.239) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Wed, 24 Jul 2019
+ 19:47:46 +0800
+Subject: Re: [PATCH] RDMA/hns: Fix build error
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+References: <20190723024908.11876-1-yuehaibing@huawei.com>
+ <20190724065443.53068-1-yuehaibing@huawei.com>
+ <20190724113252.GA28493@ziepe.ca>
+CC:     <oulijun@huawei.com>, <xavier.huwei@huawei.com>,
+        <dledford@redhat.com>, <leon@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-rdma@vger.kernel.org>
+From:   Yuehaibing <yuehaibing@huawei.com>
+Message-ID: <1254a3e5-88e9-7d38-b4a2-ca00526ce885@huawei.com>
+Date:   Wed, 24 Jul 2019 19:47:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="R3G7APHDIzY6R/pk"
-Content-Disposition: inline
-In-Reply-To: <7ae7157b-1336-f4a6-59a3-b1ac6307bd8d@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190724113252.GA28493@ziepe.ca>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---R3G7APHDIzY6R/pk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2019/7/24 19:32, Jason Gunthorpe wrote:
+> On Wed, Jul 24, 2019 at 02:54:43PM +0800, YueHaibing wrote:
+>> If INFINIBAND_HNS_HIP08 is selected and HNS3 is m,
+>> but INFINIBAND_HNS is y, building fails:
+>>
+>> drivers/infiniband/hw/hns/hns_roce_hw_v2.o: In function `hns_roce_hw_v2_exit':
+>> hns_roce_hw_v2.c:(.exit.text+0xd): undefined reference to `hnae3_unregister_client'
+>> drivers/infiniband/hw/hns/hns_roce_hw_v2.o: In function `hns_roce_hw_v2_init':
+>> hns_roce_hw_v2.c:(.init.text+0xd): undefined reference to `hnae3_register_client'
+>>
+>> Also if INFINIBAND_HNS_HIP06 is selected and HNS_DSAF
+>> is m, but INFINIBAND_HNS is y, building fails:
+>>
+>> drivers/infiniband/hw/hns/hns_roce_hw_v1.o: In function `hns_roce_v1_reset':
+>> hns_roce_hw_v1.c:(.text+0x39fa): undefined reference to `hns_dsaf_roce_reset'
+>> hns_roce_hw_v1.c:(.text+0x3a25): undefined reference to `hns_dsaf_roce_reset'
+>>
+>> Reported-by: Hulk Robot <hulkci@huawei.com>
+>> Fixes: dd74282df573 ("RDMA/hns: Initialize the PCI device for hip08 RoCE")
+>> Fixes: 08805fdbeb2d ("RDMA/hns: Split hw v1 driver from hns roce driver")
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>>  drivers/infiniband/hw/hns/Kconfig  | 6 +++---
+>>  drivers/infiniband/hw/hns/Makefile | 8 ++------
+>>  2 files changed, 5 insertions(+), 9 deletions(-)
+> 
+> did you test this approach with CONFIG_MODULES=n?
 
-On Wed 2019-07-24 11:36:23, Suzuki K Poulose wrote:
->=20
->=20
-> On 24/07/2019 11:03, Pavel Machek wrote:
-> >
-> >Fix typos in comments.
-> >
-> >Signed-off-by: Pavel Machek <pavel@denx.de>
-> >
-> >diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing=
-/coresight/coresight.c
-> >index 55db77f641..1d66191 100644
-> >--- a/drivers/hwtracing/coresight/coresight.c
-> >+++ b/drivers/hwtracing/coresight/coresight.c
-> >@@ -1001,7 +1001,7 @@ static int coresight_orphan_match(struct device *d=
-ev, void *data)
-> >  	if (!i_csdev->orphan)
-> >  		return 0;
-> >  	/*
-> >-	 * Circle throuch all the connection of that component.  If we find
-> >+	 * Circle through all the connections of that component.  If we find
-> >  	 * an orphan connection whose name matches @csdev, link it.
->=20
-> We have stopped using name to match the csdev and switched to fwnode
-> handles. Please could you update the comment to reflect this, while you a=
-re
-> at it ?
-> Otherwise looks fine to me.
+Yes, I test it, it works now.
 
-I guess best way would be to apply this and then fix up the facts in a
-comment... or feel free to just fix it up. I am not best person to fix
-facts there...
+> 
+> Jason
+> 
+> .
+> 
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---R3G7APHDIzY6R/pk
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl04RTYACgkQMOfwapXb+vJ1FACgr4BSo2yIxKfIP9Y0yZCav2IT
-IE8AoLECqSdWmO2GfVfvl7/0bVwXZPqa
-=RqVT
------END PGP SIGNATURE-----
-
---R3G7APHDIzY6R/pk--
