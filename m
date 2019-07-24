@@ -2,81 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6F7F737DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:23:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 612CF737F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:24:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387847AbfGXTXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:23:43 -0400
-Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:36527 "EHLO
-        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728592AbfGXTXi (ORCPT
+        id S1729088AbfGXTYf convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 24 Jul 2019 15:24:35 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33749 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbfGXTYb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:23:38 -0400
-Received: from xps13 ([83.160.161.190])
-        by smtp-cloud9.xs4all.net with ESMTPSA
-        id qMrLhJkQP0QvJqMrOhAAlA; Wed, 24 Jul 2019 21:23:36 +0200
-Message-ID: <b22cf290b089cb1174ec0fdeb15bdf2e90bf51dc.camel@tiscali.nl>
-Subject: Re: [Intel-gfx] screen freeze with 5.2-rc6 Dell XPS-13 skylake i915
-From:   Paul Bolle <pebolle@tiscali.nl>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Souza, Jose" <jose.souza@intel.com>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "chris@chris-wilson.co.uk" <chris@chris-wilson.co.uk>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Wed, 24 Jul 2019 21:23:31 +0200
-In-Reply-To: <1563398966.3438.5.camel@HansenPartnership.com>
-References: <1561834612.3071.6.camel@HansenPartnership.com>
-         <156283735757.12757.8954391372130933707@skylake-alporthouse-com>
-         <1562875878.2840.0.camel@HansenPartnership.com>
-         <27a5b2ca8cfc79bf617387a363ea7192acc4e1f0.camel@intel.com>
-         <1562876880.2840.12.camel@HansenPartnership.com>
-         <1562882235.13723.1.camel@HansenPartnership.com>
-         <dad073fb4b06cf0abb7ab702a9474b9c443186eb.camel@intel.com>
-         <1562884722.15001.3.camel@HansenPartnership.com>
-         <2c4edfabf49998eb5da3a6adcabc006eb64bfe90.camel@tiscali.nl>
-         <55f4d1c242d684ca2742e8c14613d810a9ee9504.camel@intel.com>
-         <1562888433.2915.0.camel@HansenPartnership.com>
-         <1562941185.3398.1.camel@HansenPartnership.com>
-         <68472c5f390731e170221809a12d88cb3bc6460e.camel@tiscali.nl>
-         <143142cad4a946361a0bf285b6f1701c81096c7b.camel@intel.com>
-         <595d9bc87bf47717c8675eb5b1a1cbb2bc463752.camel@tiscali.nl>
-         <a10f009fc160f05077760ff59cd86a9c99006b39.camel@intel.com>
-         <9ef8fc1ae2c3a9bad588899488a781333af4449a.camel@tiscali.nl>
-         <1563398966.3438.5.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        Wed, 24 Jul 2019 15:24:31 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n9so48256611wru.0;
+        Wed, 24 Jul 2019 12:24:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=lfXxMsdfj3/069jvw/iy7OsZv8+UN7ABTGl62C7QKYA=;
+        b=KLLLaPbbO8eBii32cX5LOLTw947XYtHea0krdZtddLVAbCJq3zgEvX7KZSrvFeFiOn
+         REt/zdFIOh9DOTYmmIClMDgVilFbTKEXSL/L+W7X+QJFQZHN3C8Qax/2lZgRAnnpCUBS
+         Ao8WrJ7/5BebbGC+jobo7W5z9cRz7nPWtvcgF3lY4e2q1388+BQf/y3u0HywZHa3JzEZ
+         Ik7k1prk7lnTrMdtp6EafMdwaaw2wAR8iMTcZLDEKctSAk19vGTDcjnkm5/sHLUorBdP
+         GIW2mSo3ZLDspEQK3ORYLHyotRCrUgXLmulfoC69xJ0vs9lpLMmdeL6bYs4nLJofaCeL
+         p2nA==
+X-Gm-Message-State: APjAAAU/RoLqKcXiSeqKQ3hwto3eCPPZ+KurFnauN7NUGGqGij+Tnc+M
+        1eoISvJ5U+izgM0EZxRwER8=
+X-Google-Smtp-Source: APXvYqxsoh43HV2OpAyo0WN3mesXUKeJis1EeqQpdnzoRNCOZlfiNYz32Xds+Ra9u+/5tu5G/kpe4w==
+X-Received: by 2002:adf:80e6:: with SMTP id 93mr51827758wrl.298.1563996269437;
+        Wed, 24 Jul 2019 12:24:29 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.239])
+        by smtp.googlemail.com with ESMTPSA id o6sm91244088wra.27.2019.07.24.12.24.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 24 Jul 2019 12:24:28 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 21:24:26 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        cw00.choi@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        georgi.djakov@linaro.org, m.szyprowski@samsung.com
+Subject: Re: [RFC PATCH 08/11] arm: dts: exynos: Add parents and
+ #interconnect-cells to Exynos4412
+Message-ID: <20190724192426.GJ14346@kozik-lap>
+References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
+ <CGME20190723122027eucas1p24b1d76e3139f7cc52614d7613ff9ba98@eucas1p2.samsung.com>
+ <20190723122016.30279-9-a.swigon@partner.samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfAak953jrG8+iI+u62M70niCTw5ChlP5YsW2e6m8dc3mQ9x0fFKajOQht3QdhLJaClnveoYliKavy1/mjNjvYgjLgJkltxUqoKdO+uN4o/rhdgecDc7K
- 1lqJTGziXjpIMvuFwlp0VMWNObq5EFKq2jIdr/OvXshg1kMKZAr9H1a7DBcYPx82ZFu4aewwAqVuLxjcZYrDEHDtHwdvOGcxYjP4ntjZ9ieER4eb6PG+tOlA
- YizXsZtaPUnV2QnqvzpyfyFRUHisoqIJpl3bWW4G+tfFqK9uTrAv6EnCCpodZMGU+CvMlmMpMjmfW8FMwWMIDWW0RMaZlmmE2b5KQJ8oQoc=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190723122016.30279-9-a.swigon@partner.samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jose,
+On Tue, Jul 23, 2019 at 02:20:13PM +0200, Artur Świgoń wrote:
+> This patch adds two fields tp the Exynos4412 DTS:
 
-James Bottomley schreef op do 18-07-2019 om 06:29 [+0900]:
-> On Wed, 2019-07-17 at 23:27 +0200, Paul Bolle wrote:
-> > I've just reached a day of uptime with your revert. (The proper
-> > uptime is just a fraction of a day, this being a laptop.) Anyhow, no
-> > screen freezes occurred during this day.
+tp->to
+
+>   - parent: to declare connections between nodes that are not in a
+>     parent-child relation in devfreq;
+
+Is it a standard property?
+The explanation needs some improvement... why are you adding parent to a
+devices which are not child-parent?
+
+Best regards,
+Krzysztof
+
+>   - #interconnect-cells: required by the interconnect framework.
 > 
-> I'm afraid my status is that I'm in Tokyo doing conference
-> presentations (and kernel demos) so I'm a bit reluctant to mess with my
-> setup until I finish everything on Friday, but I will test it after
-> then, promise.
-
-By now I'm testing this for a week (currently on top of 5.2.2). Still no
-freezes whatsoever. 
-
-So what's the status of this revert? Unless this is something pretty obscure
-that for some odd reason only James and I are able to hit it would be nice to
-get this into stable before the main distros switch over to 5.2.y.
-
-Thanks,
-
-
-Paul Bolle
-
+> Please note that #interconnect-cells is always zero and node IDs are not
+> hardcoded anywhere.
+> 
+> Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 +
+>  arch/arm/boot/dts/exynos4412.dtsi               | 9 +++++++++
+>  2 files changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> index ea55f377d17c..bdd61ae86103 100644
+> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> @@ -106,6 +106,7 @@
+>  &bus_leftbus {
+>  	devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
+>  	vdd-supply = <&buck3_reg>;
+> +	parent = <&bus_dmc>;
+>  	status = "okay";
+>  };
+>  
+> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+> index d20db2dfe8e2..a70a671acacd 100644
+> --- a/arch/arm/boot/dts/exynos4412.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412.dtsi
+> @@ -390,6 +390,7 @@
+>  			clocks = <&clock CLK_DIV_DMC>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_dmc_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -398,6 +399,7 @@
+>  			clocks = <&clock CLK_DIV_ACP>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_acp_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -406,6 +408,7 @@
+>  			clocks = <&clock CLK_DIV_C2C>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_dmc_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -459,6 +462,7 @@
+>  			clocks = <&clock CLK_DIV_GDL>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_leftbus_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -467,6 +471,7 @@
+>  			clocks = <&clock CLK_DIV_GDR>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_leftbus_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -475,6 +480,7 @@
+>  			clocks = <&clock CLK_ACLK160>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_display_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -483,6 +489,7 @@
+>  			clocks = <&clock CLK_ACLK133>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_fsys_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -491,6 +498,7 @@
+>  			clocks = <&clock CLK_ACLK100>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_peri_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -499,6 +507,7 @@
+>  			clocks = <&clock CLK_SCLK_MFC>;
+>  			clock-names = "bus";
+>  			operating-points-v2 = <&bus_leftbus_opp_table>;
+> +			#interconnect-cells = <0>;
+>  			status = "disabled";
+>  		};
+>  
+> -- 
+> 2.17.1
+> 
