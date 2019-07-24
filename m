@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F5B73E92
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:25:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 957F873E8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:25:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390014AbfGXUZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:25:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39176 "EHLO mail.kernel.org"
+        id S2389818AbfGXTi6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:38:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389193AbfGXTib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:38:31 -0400
+        id S2389801AbfGXTiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:38:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAB9B20665;
-        Wed, 24 Jul 2019 19:38:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9874C217D4;
+        Wed, 24 Jul 2019 19:38:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997110;
-        bh=x5cBvB+ePUbEneL3+6RDnFsAOd6tOD2Z+cdqbyRCV1o=;
+        s=default; t=1563997134;
+        bh=Z6+ShQJG+hOKLklCzcB3DfvNdkX2JB1PAfPefi98eWg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ICG8CEUQegaYP2wpW83032ZSIWlpDUjZp4HyMZo0zPWCrUfiLbNNYm9BhV+H+HOUR
-         +wMVTvTeJJEbC8/YLZ345On2W5q/XppQvWpb4RyXJ1EtUhsUYZdTHAEMfUZZdhHVMy
-         S18gtYYkwO8mAdFE/yfPBFln+L5Hi40NbOh5+nt0=
+        b=GhD7qR69EqBRLx1loewvCSVo2V5ONu979sG25gp2fe5sIop2NTMlxzvVP7+wMn0GC
+         UR/KWmnFoXIejILeueXVp31CTPOb9uZEBtQUFsBvtgp6WLUILpFEz/PA/zmWdW/7Kf
+         K8exAp6UtGdfRtJv1zG15Z+1XSfxF/xMAEw9HOPY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 5.2 324/413] media: videobuf2-core: Prevent size alignment wrapping buffer size to 0
-Date:   Wed, 24 Jul 2019 21:20:15 +0200
-Message-Id: <20190724191759.052586448@linuxfoundation.org>
+        stable@vger.kernel.org, KarimAllah Ahmed <karahmed@amazon.de>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.2 331/413] KVM: Properly check if "page" is valid in kvm_vcpu_unmap
+Date:   Wed, 24 Jul 2019 21:20:22 +0200
+Message-Id: <20190724191759.523869258@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -45,38 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+From: KarimAllah Ahmed <karahmed@amazon.de>
 
-commit defcdc5d89ced780fb45196d539d6570ec5b1ba5 upstream.
+commit b614c6027896ff9ad6757122e84760d938cab15e upstream.
 
-PAGE_ALIGN() may wrap the buffer size around to 0. Prevent this by
-checking that the aligned value is not smaller than the unaligned one.
+The field "page" is initialized to KVM_UNMAPPED_PAGE when it is not used
+(i.e. when the memory lives outside kernel control). So this check will
+always end up using kunmap even for memremap regions.
 
-Note on backporting to stable: the file used to be under
-drivers/media/v4l2-core, it was moved to the current location after 4.14.
-
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Fixes: e45adf665a53 ("KVM: Introduce a new guest mapping API")
 Cc: stable@vger.kernel.org
-Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/common/videobuf2/videobuf2-core.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ virt/kvm/kvm_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/common/videobuf2/videobuf2-core.c
-+++ b/drivers/media/common/videobuf2/videobuf2-core.c
-@@ -207,6 +207,10 @@ static int __vb2_buf_mem_alloc(struct vb
- 	for (plane = 0; plane < vb->num_planes; ++plane) {
- 		unsigned long size = PAGE_ALIGN(vb->planes[plane].length);
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1790,7 +1790,7 @@ void kvm_vcpu_unmap(struct kvm_vcpu *vcp
+ 	if (!map->hva)
+ 		return;
  
-+		/* Did it wrap around? */
-+		if (size < vb->planes[plane].length)
-+			goto free;
-+
- 		mem_priv = call_ptr_memop(vb, alloc,
- 				q->alloc_devs[plane] ? : q->dev,
- 				q->dma_attrs, size, q->dma_dir, q->gfp_flags);
+-	if (map->page)
++	if (map->page != KVM_UNMAPPED_PAGE)
+ 		kunmap(map->page);
+ #ifdef CONFIG_HAS_IOMEM
+ 	else
 
 
