@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F665738F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:35:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D259738FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:35:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388849AbfGXTdV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:33:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55076 "EHLO mail.kernel.org"
+        id S2389203AbfGXTf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:35:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388834AbfGXTdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:33:19 -0400
+        id S2388852AbfGXTdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:33:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38BF322BEA;
-        Wed, 24 Jul 2019 19:33:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D11EB2238C;
+        Wed, 24 Jul 2019 19:33:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996798;
-        bh=Q1EZqeCQWhCsHZTbAIDBuishbOzwnTWReFcUtB+aeCs=;
+        s=default; t=1563996801;
+        bh=BX83SWqxlR2Q+6R81dSPYHiAW4Em1qQCcn0O2SZTYd4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yfWpeJa4cM1ehjdLoV2hP0LiCyK2Zwq/vDvpoMwhuhfm0TXsLsSS6/U2myQ8liTDK
-         l4bWTUwzM4UR9xWxRgG1RL0tp02KnT23rOTcglO606XC6mHEl57hPoyL3IblSzVq95
-         j5/dJIp97z0FMrKF4zU2sot8gdvKoNVQaMe42n/Y=
+        b=ccY/z40trOJcEW9f/2NisRoevm6uzfECEqID6IF+4IMwuTnFsEO9N9IBr42da7Mr8
+         HEuAsj2gjbo+vaFokKjkLvm3hrGDQq2mcGemdWYuNzPBAiYMPfSoKMWsVJgCu28FUI
+         OQOjdwMmFT8R/YVUhrIV9P6jxMGIx9zxn/e9DdtY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>,
-        syzbot+e5be16aa39ad6e755391@syzkaller.appspotmail.com
-Subject: [PATCH 5.2 221/413] bonding: validate ip header before check IPPROTO_IGMP
-Date:   Wed, 24 Jul 2019 21:18:32 +0200
-Message-Id: <20190724191750.592371357@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 222/413] gpiolib: Fix references to gpiod_[gs]et_*value_cansleep() variants
+Date:   Wed, 24 Jul 2019 21:18:33 +0200
+Message-Id: <20190724191750.708775987@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -48,86 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9d1bc24b52fb8c5d859f9a47084bf1179470e04c ]
+[ Upstream commit 3285170f28a850638794cdfe712eb6d93e51e706 ]
 
-bond_xmit_roundrobin() checks for IGMP packets but it parses
-the IP header even before checking skb->protocol.
+Commit 372e722ea4dd4ca1 ("gpiolib: use descriptors internally") renamed
+the functions to use a "gpiod" prefix, and commit 79a9becda8940deb
+("gpiolib: export descriptor-based GPIO interface") introduced the "raw"
+variants, but both changes forgot to update the comments.
 
-We should validate the IP header with pskb_may_pull() before
-using iph->protocol.
+Readd a similar reference to gpiod_set_value(), which was accidentally
+removed by commit 1e77fc82110ac36f ("gpio: Add missing open drain/source
+handling to gpiod_set_value_cansleep()").
 
-Reported-and-tested-by: syzbot+e5be16aa39ad6e755391@syzkaller.appspotmail.com
-Fixes: a2fd940f4cff ("bonding: fix broken multicast with round-robin mode")
-Cc: Jay Vosburgh <j.vosburgh@gmail.com>
-Cc: Veaceslav Falico <vfalico@gmail.com>
-Cc: Andy Gospodarek <andy@greyhouse.net>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20190701142738.25219-1-geert+renesas@glider.be
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/bonding/bond_main.c | 37 ++++++++++++++++++++-------------
- 1 file changed, 23 insertions(+), 14 deletions(-)
+ drivers/gpio/gpiolib.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index 799fc38c5c34..b0aab3a0a1bf 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -3866,8 +3866,8 @@ static netdev_tx_t bond_xmit_roundrobin(struct sk_buff *skb,
- 					struct net_device *bond_dev)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index be1d1d2f8aaa..bb3104d2eb0c 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3025,7 +3025,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ int gpiod_get_raw_value(const struct gpio_desc *desc)
  {
- 	struct bonding *bond = netdev_priv(bond_dev);
--	struct iphdr *iph = ip_hdr(skb);
- 	struct slave *slave;
-+	int slave_cnt;
- 	u32 slave_id;
- 
- 	/* Start with the curr_active_slave that joined the bond as the
-@@ -3876,23 +3876,32 @@ static netdev_tx_t bond_xmit_roundrobin(struct sk_buff *skb,
- 	 * send the join/membership reports.  The curr_active_slave found
- 	 * will send all of this type of traffic.
- 	 */
--	if (iph->protocol == IPPROTO_IGMP && skb->protocol == htons(ETH_P_IP)) {
--		slave = rcu_dereference(bond->curr_active_slave);
--		if (slave)
--			bond_dev_queue_xmit(bond, skb, slave->dev);
--		else
--			bond_xmit_slave_id(bond, skb, 0);
--	} else {
--		int slave_cnt = READ_ONCE(bond->slave_cnt);
-+	if (skb->protocol == htons(ETH_P_IP)) {
-+		int noff = skb_network_offset(skb);
-+		struct iphdr *iph;
- 
--		if (likely(slave_cnt)) {
--			slave_id = bond_rr_gen_slave_id(bond);
--			bond_xmit_slave_id(bond, skb, slave_id % slave_cnt);
--		} else {
--			bond_tx_drop(bond_dev, skb);
-+		if (unlikely(!pskb_may_pull(skb, noff + sizeof(*iph))))
-+			goto non_igmp;
-+
-+		iph = ip_hdr(skb);
-+		if (iph->protocol == IPPROTO_IGMP) {
-+			slave = rcu_dereference(bond->curr_active_slave);
-+			if (slave)
-+				bond_dev_queue_xmit(bond, skb, slave->dev);
-+			else
-+				bond_xmit_slave_id(bond, skb, 0);
-+			return NETDEV_TX_OK;
- 		}
- 	}
- 
-+non_igmp:
-+	slave_cnt = READ_ONCE(bond->slave_cnt);
-+	if (likely(slave_cnt)) {
-+		slave_id = bond_rr_gen_slave_id(bond);
-+		bond_xmit_slave_id(bond, skb, slave_id % slave_cnt);
-+	} else {
-+		bond_tx_drop(bond_dev, skb);
-+	}
- 	return NETDEV_TX_OK;
+ 	VALIDATE_DESC(desc);
+-	/* Should be using gpio_get_value_cansleep() */
++	/* Should be using gpiod_get_raw_value_cansleep() */
+ 	WARN_ON(desc->gdev->chip->can_sleep);
+ 	return gpiod_get_raw_value_commit(desc);
  }
+@@ -3046,7 +3046,7 @@ int gpiod_get_value(const struct gpio_desc *desc)
+ 	int value;
  
+ 	VALIDATE_DESC(desc);
+-	/* Should be using gpio_get_value_cansleep() */
++	/* Should be using gpiod_get_value_cansleep() */
+ 	WARN_ON(desc->gdev->chip->can_sleep);
+ 
+ 	value = gpiod_get_raw_value_commit(desc);
+@@ -3317,7 +3317,7 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ void gpiod_set_raw_value(struct gpio_desc *desc, int value)
+ {
+ 	VALIDATE_DESC_VOID(desc);
+-	/* Should be using gpiod_set_value_cansleep() */
++	/* Should be using gpiod_set_raw_value_cansleep() */
+ 	WARN_ON(desc->gdev->chip->can_sleep);
+ 	gpiod_set_raw_value_commit(desc, value);
+ }
+@@ -3358,6 +3358,7 @@ static void gpiod_set_value_nocheck(struct gpio_desc *desc, int value)
+ void gpiod_set_value(struct gpio_desc *desc, int value)
+ {
+ 	VALIDATE_DESC_VOID(desc);
++	/* Should be using gpiod_set_value_cansleep() */
+ 	WARN_ON(desc->gdev->chip->can_sleep);
+ 	gpiod_set_value_nocheck(desc, value);
+ }
 -- 
 2.20.1
 
