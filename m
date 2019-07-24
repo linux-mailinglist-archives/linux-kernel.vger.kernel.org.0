@@ -2,225 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 300CB7249D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 04:28:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3375A7245B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 04:22:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387531AbfGXC2S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 22:28:18 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42517 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbfGXC2Q (ORCPT
+        id S1727797AbfGXCWJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 22:22:09 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39988 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726108AbfGXCWJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 22:28:16 -0400
-Received: by mail-pl1-f196.google.com with SMTP id ay6so21376921plb.9;
-        Tue, 23 Jul 2019 19:28:16 -0700 (PDT)
+        Tue, 23 Jul 2019 22:22:09 -0400
+Received: by mail-ot1-f65.google.com with SMTP id s7so131957oth.7
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 19:22:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=xqVxoco4AJJgGaFZFAXObQyUhy/ioBG7r9x/csdj3tQ=;
-        b=YWRqy/EfkCcX1GnFRjoBjpvKgY+TFoBRFMivsBJnWU7VzbYGUfIeDXG2hFhH+4V/XZ
-         riVUhNf7/xsFfL2Jd5GCYrnOEdCHior6fvKaUltlvTN7XWt1DST+6tm3CW1AbIAgL///
-         bpoaSnIza6xcy04tJauSe2K806bp1PztBOEooYKTjUU+2AruPKkAr1XS/npfiOzxNwlH
-         Pfp5CbIFz1rT/5zmj2yUbbsseS2ZTh5+GHrTbnAzghzeyOGBpkPpaUxjIz9tJidfe7zV
-         QlhdSr091Arf2moGDEKLARBEkeU4PBVlRwozrGpF4TnKFQEPCBTKqKp0KCrCgkepFFzB
-         yjiA==
+        bh=DLF4pm4RL0wA5hcVMMrw5NHFRQ2ig5s8he/98rvlGyk=;
+        b=z4hxi5G1bGRKaxWUmoOapIH+np2Z8tsVglNR9ERPddstRiq1j+A8iaNPQj935G+M7h
+         3yqJUpOVU86A4Z0eoouJecKlZXZ7G7dRajE79VKd3RQe8MfNzzist2Eu+WvktxfNhtjN
+         W6SOLeN4cPTx8t1SngtztORzM+JDxOlvVfEAgnvT0AzT4W0Uv0NhiehmCPaUYtXrbf3Z
+         2bRBT9XbxdIKTb9bdhXnNbbZtISNzn4jEJdR1gZmtBUGY+A6RBB1AWn24FS/nzODNjmN
+         K24AURwQG2mM+llYT3GsFwP/sAE/u4iMIS+OfBIesHOQkyFA5U092OEe/HPyjsOXHDdI
+         lTDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=xqVxoco4AJJgGaFZFAXObQyUhy/ioBG7r9x/csdj3tQ=;
-        b=jBgmQZ547ZKbvH5c+i1+MvFIjz4Y5qVefo0IFk+Sjh41VukPEvCVHP/CUtfDUsQm69
-         I4qQASiJgiTof42bM81h95gbXGyFfapzJsI2KwC0c/FG5cmayUYonTdEzyqafrp4JftC
-         2oPYWHfudjKGTsXTD9wtH3PqmdS8Z/f//CRqa7cJi7dh0+hRh0oko1jNTZe5GmIqYyqq
-         jnFC+LvI/hYe3lvjnf33eloJFS66s57MMNPVWnA97CNhgZ0xqNlt8q85txn0gynH5teY
-         Hwu3Poa5Rn3fCEbAqozQIShbW6MOPUAl3iwP/KEcDQrxkkUuGD8mQfYgxw6SNJaoO97h
-         NyJw==
-X-Gm-Message-State: APjAAAWG52VeXisFZUQuNhlcaxJjNwdoJF+PeKu222CIjQfgymbfmAHu
-        yAcpo+WKVMVn44yeAAWsqERXLFNlH7UK6Z7mfSA=
-X-Google-Smtp-Source: APXvYqwLZxaGFOKkRtDkeAhcHkHgK3YqhYBqKS/rRLXRHXL+UeoF4K04+Oyl8V0kc4SnSDIkoQQpVgO8b6PKDCNM2K8=
-X-Received: by 2002:a17:902:2a29:: with SMTP id i38mr84015864plb.46.1563934810078;
- Tue, 23 Jul 2019 19:20:10 -0700 (PDT)
+        bh=DLF4pm4RL0wA5hcVMMrw5NHFRQ2ig5s8he/98rvlGyk=;
+        b=BezeNPYUpuN5RQauy8tKGJkxLiooTBqetXkD3LlzCNRkVMUBb3S3Nv8GdgFg0cLTGK
+         Nyf25VTy5lXhXrldB3D3eyhDSKH1yg89sQ5Qu4igVVM2C9ptcwvjhLVm3NbfH3dNuCWH
+         N5USRYmh3MjK/qfI+o+jz0ZUTkp9txJu0d8TQ/0dmZszhpgkbJJ0UUvD57q86YS6yi2x
+         UCl+9+jeCM2eG9L8mYxEOsyFh8wZNNtyfVWv2bxZWEIcE6qrXduG+bufexGvZmecB1nk
+         jgW+1KOjZxwEGUSV46nMaYNG3551mZ8uX7571WRMH6tBust7RJ1a3ovt0Ye+oH3o3wkM
+         5Iiw==
+X-Gm-Message-State: APjAAAUm9eBDLRDLzDx/sRrvkVfmy+mHnmXwQRWpOJnNmFwxXcXzeb29
+        iX+HGiPOscQGHAPYEMDImH0rCJ8DZZgFDPJDxaURxQ==
+X-Google-Smtp-Source: APXvYqxnOt402L5HhNkgDDvSy4DpF7ukOVhYefdp2TGaYvy/AB0kwedVYo2x2l8D2jCfGB1qH9kpkALSvsj4T0IXBwM=
+X-Received: by 2002:a9d:1718:: with SMTP id i24mr20907922ota.269.1563934928175;
+ Tue, 23 Jul 2019 19:22:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190715134655.4076-1-sashal@kernel.org> <20190715134655.4076-39-sashal@kernel.org>
- <CAN05THSdj8m5g-xG5abYAZ=_PE2xT-RwLtVhKrtxPevJGCSxag@mail.gmail.com>
- <CAH2r5mu9ncYa1WTHuuMEk3=4TU5-RBH6nBKME4Bm+dntOtORTQ@mail.gmail.com>
- <87v9vs43pq.fsf@xmission.com> <CAH2r5mtB=KO+9fxSYQHbjD+0K+5rGL6Q8TSU0_wsHUdqHy1rSw@mail.gmail.com>
-In-Reply-To: <CAH2r5mtB=KO+9fxSYQHbjD+0K+5rGL6Q8TSU0_wsHUdqHy1rSw@mail.gmail.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Tue, 23 Jul 2019 21:19:59 -0500
-Message-ID: <CAH2r5mvF-E6_3YLV02Mj0uSaKgHigV6wwU9LsGC-zFs7JnKa-Q@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.2 039/249] signal/cifs: Fix cifs_put_tcp_session
- to call send_sig instead of force_sig
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     ronnie sahlberg <ronniesahlberg@gmail.com>,
-        Sasha Levin <sashal@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Jeff Layton <jlayton@primarydata.com>,
-        linux-cifs <linux-cifs@vger.kernel.org>
+References: <89c3ef495c367d58ca3abe99a1f82c48f8c08705.1563274904.git.baolin.wang@linaro.org>
+ <CAPDyKFq1y6xVfA=b1ybWvA1+e9h9aSteHAHjBbXvXGVJx95FQA@mail.gmail.com>
+ <CAMz4kuKraOb_o0LFWnqkS7m0Xd3QGrw1P+md0YBNbbbp1967OA@mail.gmail.com> <CAPDyKFpy5JeGZ2w1KJN0ECB6jPG=UTZXbPRjMQQs8+NdK4rxuQ@mail.gmail.com>
+In-Reply-To: <CAPDyKFpy5JeGZ2w1KJN0ECB6jPG=UTZXbPRjMQQs8+NdK4rxuQ@mail.gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Wed, 24 Jul 2019 10:21:56 +0800
+Message-ID: <CAMz4ku+ZTtnJdonZVAPVuvAiGCmCESvM8SbYKjwpNUgE4bO3gA@mail.gmail.com>
+Subject: Re: [PATCH v4] mmc: host: sdhci-sprd: Fix the incorrect soft reset
+ operation when runtime resuming
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pavel noticed I missed a line from the attempt to do a similar patch
-to Eric's suggestion
-(it still didn't work though - although "allow_signal" does albeit is
-possibly dangerous as user space can kill cifsd)
-
-# git diff -a
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index a4830ced0f98..8758dff18c15 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -1104,6 +1104,7 @@ cifs_demultiplex_thread(void *p)
-        struct task_struct *task_to_wake = NULL;
-        struct mid_q_entry *mids[MAX_COMPOUND];
-        char *bufs[MAX_COMPOUND];
-+       sigset_t mask, oldmask;
-
-        current->flags |= PF_MEMALLOC;
-        cifs_dbg(FYI, "Demultiplex PID: %d\n", task_pid_nr(current));
-@@ -1113,6 +1114,9 @@ cifs_demultiplex_thread(void *p)
-                mempool_resize(cifs_req_poolp, length + cifs_min_rcv);
-
-        set_freezable();
-+       sigfillset(&mask);
-+       sigdelset(&mask, SIGKILL);
-+       sigprocmask(SIG_BLOCK, &mask, &oldmask);
-        while (server->tcpStatus != CifsExiting) {
-                if (try_to_freeze())
-                        continue;
-
-On Tue, Jul 23, 2019 at 9:02 PM Steve French <smfrench@gmail.com> wrote:
+On Tue, 23 Jul 2019 at 20:39, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 >
-> On Tue, Jul 23, 2019 at 8:32 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> On Tue, 23 Jul 2019 at 05:05, Baolin Wang <baolin.wang@linaro.org> wrote:
 > >
-> > Steve French <smfrench@gmail.com> writes:
+> > Hi Ulf,
 > >
-> > > Very easy to see what caused the regression with this global change:
+> > On Mon, 22 Jul 2019 at 19:54, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 > > >
-> > > mount (which launches "cifsd" thread to read the socket)
-> > > umount (which kills the "cifsd" thread)
-> > > rmmod   (rmmod now fails since "cifsd" thread is still active)
+> > > On Wed, 17 Jul 2019 at 04:29, Baolin Wang <baolin.wang@linaro.org> wrote:
+> > > >
+> > > > In sdhci_runtime_resume_host() function, we will always do software reset
+> > > > for all, which will cause Spreadtrum host controller work abnormally after
+> > > > resuming.
 > > >
-> > > mount launches a thread to read from the socket ("cifsd")
-> > > umount is supposed to kill that thread (but with the patch
-> > > "signal/cifs: Fix cifs_put_tcp_session to call send_sig instead of
-> > > force_sig" that no longer works).  So the regression is that after
-> > > unmount you still see the "cifsd" thread, and the reason that cifsd
-> > > thread is still around is that that patch no longer force kills the
-> > > process (see line 2652 of fs/cifs/connect.c) which regresses module
-> > > removal.
-> > >
-> > > -               force_sig(SIGKILL, task);
-> > > +               send_sig(SIGKILL, task, 1);
-> > >
-> > > The comment in the changeset indicates "The signal SIGKILL can not be
-> > > ignored" but obviously it can be ignored - at least on 5.3-rc1 it is
-> > > being ignored.
-> > >
-> > > If send_sig(SIGKILL ...) doesn't work and if force_sig(SIGKILL, task)
-> > > is removed and no longer possible - how do we kill a helper process
-> > > ...
+> > > What does "software reset for all" means?
 > >
-> > I think I see what is happening.  It looks like as well as misuinsg
-> > force_sig, cifs is also violating the invariant that keeps SIGKILL out
-> > of the blocked signal set.
-> >
-> > For that force_sig will act differently.  I did not consider it because
-> > that is never supposed to happen.
-> >
-> > Can someone test this code below and confirm the issue goes away?
-> >
-> > diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
-> > index 5d6d44bfe10a..2a782ebc7b65 100644
-> > --- a/fs/cifs/transport.c
-> > +++ b/fs/cifs/transport.c
-> > @@ -347,6 +347,7 @@ __smb_send_rqst(struct TCP_Server_Info *server, int num_rqst,
-> >          */
-> >
-> >         sigfillset(&mask);
-> > +       sigdelset(&mask, SIGKILL);
-> >         sigprocmask(SIG_BLOCK, &mask, &oldmask);
-> >
-> >         /* Generate a rfc1002 marker for SMB2+ */
-> >
-> >
-> > Eric
+> > The SD host controller specification defines 3 types software reset:
+> > software reset for data line, software reset for command line and
+> > software reset for all.
+> > Software reset for all means this reset affects the entire Host
+> > controller except for the card detection circuit.
 >
-> I just tried your suggestion and it didn't work.   I also tried doing
-> a similar thing on the thread we are trying to kills ("cifsd" - ie
-> which is blocked in the function cifs_demultiplex_thread waiting to
-> read from the socket)
-> # git diff -a
-> diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-> index a4830ced0f98..b73062520a17 100644
-> --- a/fs/cifs/connect.c
-> +++ b/fs/cifs/connect.c
-> @@ -1104,6 +1104,7 @@ cifs_demultiplex_thread(void *p)
->         struct task_struct *task_to_wake = NULL;
->         struct mid_q_entry *mids[MAX_COMPOUND];
->         char *bufs[MAX_COMPOUND];
-> +       sigset_t mask;
->
->         current->flags |= PF_MEMALLOC;
->         cifs_dbg(FYI, "Demultiplex PID: %d\n", task_pid_nr(current));
-> @@ -1113,6 +1114,8 @@ cifs_demultiplex_thread(void *p)
->                 mempool_resize(cifs_req_poolp, length + cifs_min_rcv);
->
->         set_freezable();
-> +       sigfillset(&mask);
-> +       sigdelset(&mask, SIGKILL);
->         while (server->tcpStatus != CifsExiting) {
->                 if (try_to_freeze())
->                         continue;
->
->
-> That also didn't work.     The only thing I have been able to find
-> which worked was:
->
-> diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-> index a4830ced0f98..e74f04163fc9 100644
-> --- a/fs/cifs/connect.c
-> +++ b/fs/cifs/connect.c
-> @@ -1113,6 +1113,7 @@ cifs_demultiplex_thread(void *p)
->                 mempool_resize(cifs_req_poolp, length + cifs_min_rcv);
->
->         set_freezable();
-> +      allow_signal(SIGKILL);
->         while (server->tcpStatus != CifsExiting) {
->                 if (try_to_freeze())
->                         continue;
->
->
-> That fixes the problem ... but ... as Ronnie and others have noted it
-> would allow a userspace process to make the mount unusable (all you
-> would have to do would be to do a kill -9 of the "cifsd" process from
-> some userspace process like bash and the mount would be unusable - so
-> this sounds dangerous.
->
-> Is there an alternative that, in the process doing the unmount in
-> kernel, would allow us to do the equivalent of:
->       "allow_signal(SIGKILL, <the id of the cifsd process>"
-> In otherwords, to minimize the risk of some userspace process killing
-> cifsd, could we delay enabling allow_signal(SIGKILL) till the unmount
-> begins by doing it for a different process (have the unmount process
-> enable signals for the cifsd process).   Otherwise is there a way to
-> force kill a process from the kernel as we used to do - without
-> running the risk of a user space process killing cifsd (which is bad).
->
-> --
-> Thanks,
->
-> Steve
+> Thanks for clarifying, please update the changelog accordingly.
 
+Sure, sorry for confusing.
 
+>
+> >
+> > >
+> > > >
+> > > > Thus for Spreadtrum platform that will not power down the SD/eMMC card during
+> > > > runtime suspend, we should not do software reset for all.
+> > >
+> > > Normally, sdhci hosts that enters runtime suspend doesn't power off
+> > > the card (there are some exceptions like PCI variants).
+> >
+> > Yes, same as our controller.
+> >
+> > >
+> > > So, what's so special here and how does the reset come into play? I
+> > > don't see sdhci doing a reset in sdhci_runtime_suspend|resume_host()
+> > > and nor doesn the callback from the sdhci-sprd.c variant doing it.
+> >
+> > In sdhci_runtime_resume_host(), it will issue sdhci_init(host, 0) to
+> > issue software reset for all.
+>
+> Aha, I didn't read the code carefully enough. Apologize for the noise.
+
+No worries :)
+
+> >
+> > >
+> > > > To fix this
+> > > > issue, adding a specific reset operation that adds one condition to validate
+> > > > the power mode to decide if we can do software reset for all or just reset
+> > > > command and data lines.
+> > > >
+> > > > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > > > ---
+> > > > Changess from v3:
+> > > >  - Use ios.power_mode to validate if the card is power down or not.
+> > > >
+> > > > Changes from v2:
+> > > >  - Simplify the sdhci_sprd_reset() by issuing sdhci_reset().
+> > > >
+> > > > Changes from v1:
+> > > >  - Add a specific reset operation instead of changing the core to avoid
+> > > >  affecting other hardware.
+> > > > ---
+> > > >  drivers/mmc/host/sdhci-sprd.c |   19 ++++++++++++++++++-
+> > > >  1 file changed, 18 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
+> > > > index 603a5d9..94f9726 100644
+> > > > --- a/drivers/mmc/host/sdhci-sprd.c
+> > > > +++ b/drivers/mmc/host/sdhci-sprd.c
+> > > > @@ -373,6 +373,23 @@ static unsigned int sdhci_sprd_get_max_timeout_count(struct sdhci_host *host)
+> > > >         return 1 << 31;
+> > > >  }
+> > > >
+> > > > +static void sdhci_sprd_reset(struct sdhci_host *host, u8 mask)
+> > > > +{
+> > > > +       struct mmc_host *mmc = host->mmc;
+> > > > +
+> > > > +       /*
+> > > > +        * When try to reset controller after runtime suspend, we should not
+> > > > +        * reset for all if the SD/eMMC card is not power down, just reset
+> > > > +        * command and data lines instead. Otherwise will meet some strange
+> > > > +        * behaviors for Spreadtrum host controller.
+> > > > +        */
+> > > > +       if (host->runtime_suspended && (mask & SDHCI_RESET_ALL) &&
+> > > > +           mmc->ios.power_mode == MMC_POWER_ON)
+> > > > +               mask = SDHCI_RESET_CMD | SDHCI_RESET_DATA;
+> > >
+> > > Can sdhci_sprd_reset() be called when the host is runtime suspended?
+> >
+> > When host tries to runtime resume in sdhci_runtime_resume_host(), it
+> > will call reset operation to do software reset.
+>
+> Right, I see that now, thanks for clarifying.
+>
+> However, there are still some weird things going on in
+> sdhci_runtime_resume_host(). Like why is host->ops->enable_dma()
+> called first, directly from sdhci_runtime_resume_host(), then again in
+> sdhci_do_reset(), after host->ops->reset() has been called. Looks like
+> the first call to ->enable_dma() doesn't make sense?
+
+I am mot sure, since our host did not supply enable_dma() operation.
+This logic was used by some other hardware and worked well, I am not
+sure if it can reveal some issues if we change the logic here.
+
+Adrian, could you help to explain why we put enable_dma() in front of
+software reset?
+
+>
+> >
+> > > That sounds like a bug to me, no?
+> >
+> > Since our controller will meet some strange behaviors if we do
+> > software reset for all in sdhci_runtime_resume_host(), and try to
+> > avoid changing the core logic of sdhci_runtime_resume_host() used by
+> > other hardware controllers, thus I introduced a specific reset ops and
+> > added some condition to make sure we just do software reset command
+> > and data lines from runtime suspend state.
+>
+> I understand, but perhaps it would become more clear if
+> sdhci_runtime_resume_host() is re-factored a bit. Maybe the caller can
+> give it some new parameter to let it decide if a SDHCI_RESET_ALL shall
+> be done or not.
+
+Yes, sounds reasonable, but need change other host drivers which
+issued the sdhci_runtime_resume_host().
+
+Adrian, if you also agree with Ulf's suggestion, then I will post new
+patches to add a parameter to decide the reset mode. Thanks.
 
 -- 
-Thanks,
-
-Steve
+Baolin Wang
+Best Regards
