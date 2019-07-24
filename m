@@ -2,86 +2,599 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7FB1730EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:04:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B912373071
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:00:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728414AbfGXOEr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 10:04:47 -0400
-Received: from mga07.intel.com ([134.134.136.100]:24682 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726472AbfGXOEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 10:04:47 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP; 24 Jul 2019 07:04:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
-   d="scan'208";a="345110232"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by orsmga005.jf.intel.com with ESMTP; 24 Jul 2019 07:04:44 -0700
-Date:   Wed, 24 Jul 2019 21:47:46 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, atull@kernel.org,
-        Zhang Yi Z <yi.z.zhang@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>
-Subject: Re: [PATCH v3 02/12] fpga: dfl: fme: add
- DFL_FPGA_FME_PORT_RELEASE/ASSIGN ioctl support.
-Message-ID: <20190724134746.GD8463@hao-dev>
-References: <1563857495-26692-1-git-send-email-hao.wu@intel.com>
- <1563857495-26692-3-git-send-email-hao.wu@intel.com>
- <20190724093357.GA29532@kroah.com>
+        id S1728308AbfGXOAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 10:00:19 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:40705 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbfGXOAS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 10:00:18 -0400
+Received: by mail-vs1-f67.google.com with SMTP id a186so29777047vsd.7
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 07:00:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NaHdBALCCZjR8U+ad9l2IMJ9v+TyugpAHKq765/Dh+c=;
+        b=jWCL7XuZzSmBFZP4HBZLxqB0yj4NpnPwGaauTr8j++WldFJN/145oFaq1+gflCfaRU
+         uwspY0Jayf8gzldyPQ2a18kJSgYf2yybdF1xIMZsF5uAUbzc+IWS0jpoefVT5vxITMWY
+         +Fe8USgXwbclJAxVwjPxJZnJ7Si8QQnDWstHgRFPeKKq78AdqFGS5ZMmthB3yV+jN9Iz
+         Ru7lD+b0AMHM2nnRUBb++oO09ilvscXWExuGbOnv/ductvfL7nruZNMnTFcjEYdUWJse
+         noR39nVws61k4/13XO/AnrFMlCVeka6JQG4TbnhnbfjC9rmx5YfV5za7W450JF2GYmYL
+         iDQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NaHdBALCCZjR8U+ad9l2IMJ9v+TyugpAHKq765/Dh+c=;
+        b=LG1wugkeJ0FoBmtzhrb4le7PmRtdBUFbBNgPY0Io0vlPZP0ZIEX9+prfdJJ+pmJPbM
+         +sIeAAyXdPx8H4PD6PpRSCbmG2Bz1u264ethJ6yjlXyUbXiJoIMvLF2t53ry1WFZUGlJ
+         RrOxiy8RiHPtFYife+jsOPp91cg1Qf8HxHSG17QWVdGliYXotHsqQyL6vI+RhZ/w8m98
+         hUZZzOvdgwHcW6z/bJ5VyCaGt9MoGY8f4/593VEIKt3ceEaiXiIxInWYBVkPMrgixx86
+         fuQwL45iNbFfI+BL+KuZ/Unv1gUOulFZmRaYfL2t7qVPTye6Ti/7rtb3XHpvOVzQQI9N
+         mouQ==
+X-Gm-Message-State: APjAAAXiUasARzZBlE/NUtv5tKDbjOtitSAgKtxzpFCqnHJd/yhl1OFY
+        6k5LQmxuJfNNydN4PplxEN3UHkcUM31OsEvNb2+yUA==
+X-Google-Smtp-Source: APXvYqzNdcoBYd2VKU01jJKfCuafOk5ORBz7nxBpjQVbKJnE5WK7eyO6wKhCf1NblQHT/RNTnP81afIiwgXtHFvydyA=
+X-Received: by 2002:a67:ee16:: with SMTP id f22mr51736015vsp.191.1563976817470;
+ Wed, 24 Jul 2019 07:00:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190724093357.GA29532@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <MWHPR16MB14556F1A5D538D7218E5B64F8BC90@MWHPR16MB1455.namprd16.prod.outlook.com>
+In-Reply-To: <MWHPR16MB14556F1A5D538D7218E5B64F8BC90@MWHPR16MB1455.namprd16.prod.outlook.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 24 Jul 2019 15:59:40 +0200
+Message-ID: <CAPDyKFoVX04RQtx3b1Jc5WEFkAr3A=DkN0GRyCwkdSvn6TKSrQ@mail.gmail.com>
+Subject: Re: [PATCH V1 1/1] mmc: sdhci: Fix O2 Host data read/write DLL lock
+ phase shift issue
+To:     "Shirley Her (SC)" <shirley.her@bayhubtech.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Chevron Li (WH)" <chevron.li@bayhubtech.com>,
+        "Xiaoguang Yu (WH)" <xiaoguang.yu@bayhubtech.com>,
+        "Shaper Liu (WH)" <shaper.liu@bayhubtech.com>,
+        "Louis Lu (TP)" <louis.lu@bayhubtech.com>,
+        "Max Huang (SC)" <max.huang@bayhubtech.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 11:33:57AM +0200, Greg KH wrote:
-> On Tue, Jul 23, 2019 at 12:51:25PM +0800, Wu Hao wrote:
-> > +/**
-> > + * dfl_fpga_cdev_config_port - configure a port feature dev
-> > + * @cdev: parent container device.
-> > + * @port_id: id of the port feature device.
-> > + * @release: release port or assign port back.
-> > + *
-> > + * This function allows user to release port platform device or assign it back.
-> > + * e.g. to safely turn one port from PF into VF for PCI device SRIOV support,
-> > + * release port platform device is one necessary step.
-> > + */
-> > +int dfl_fpga_cdev_config_port(struct dfl_fpga_cdev *cdev, int port_id,
-> > +			      bool release)
-> > +{
-> > +	return release ? detach_port_dev(cdev, port_id) :
-> > +			 attach_port_dev(cdev, port_id);
-> > +}
-> > +EXPORT_SYMBOL_GPL(dfl_fpga_cdev_config_port);
-> 
-> That's a horrible api.  Every time you see this call in code, you have
-> to go and look up what "bool" means here.  There's no reason for it.
-> 
-> Just have 2 different functions, one that attaches a port, and one that
-> detaches it.  That way when you read the code that calls this function,
-> you know what it does instantly without having to go look up some api
-> function somewhere else.
-> 
-> Write code for people to read first.  And you are saving nothing here by
-> trying to do two different things in the same exact function.
+On Wed, 17 Jul 2019 at 20:04, Shirley Her (SC)
+<shirley.her@bayhubtech.com> wrote:
+>
+> Fix data read/write error in HS200 mode due to chip DLL lock phase shift.
+>
+>
+>
+> Signed-off-by: Shirley Her <shirley.her@bayhubtech.com
 
-I see, you're right, it saves everybody's time on reading, very important.
-I will fix this and keep it in mind. Thank you.
+Looks like the patch was treated as being in in-correct format,
+probably because of the missing ">" in the email address above.
 
-Hao
+Can you try to repost so the patchtracker accepts it?
 
-> 
-> thanks,
-> 
-> greg k-h
+Kind regards
+Uffe
+
+> ---
+>
+> Change in V1:
+>
+> 1. Add error recovery function to relock the DLL with correct phase
+>
+> 2. Retuning HS200 after DLL locked
+>
+> ---
+>
+> drivers/mmc/host/sdhci-pci-o2micro.c | 154 +++++++++++++++++++++++++++++------
+>
+> drivers/mmc/host/sdhci.h             |   3 +
+>
+> 2 files changed, 133 insertions(+), 24 deletions(-)
+>
+>
+>
+> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
+>
+> index 9dc4548..5a9011e 100644
+>
+> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
+>
+> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+>
+> @@ -51,13 +51,59 @@
+>
+> #define O2_SD_VENDOR_SETTING2      0x1C8
+>
+> #define O2_SD_HW_TUNING_DISABLE               BIT(4)
+>
+> -#define O2_PLL_WDT_CONTROL1         0x1CC
+>
+> +#define O2_PLL_DLL_WDT_CONTROL1               0x1CC
+>
+> #define  O2_PLL_FORCE_ACTIVE             BIT(18)
+>
+> #define  O2_PLL_LOCK_STATUS              BIT(14)
+>
+> #define  O2_PLL_SOFT_RESET  BIT(12)
+>
+> +#define  O2_DLL_LOCK_STATUS            BIT(11)
+>
+>  #define O2_SD_DETECT_SETTING 0x324
+>
+> +u32 dmdn_table[5] = {0x25100000, 0x2B1C0000,
+>
+> +             0x2C1A0000, 0x371B0000, 0x35100000};
+>
+> +static int sdhci_o2_get_cd(struct mmc_host *mmc);
+>
+> +
+>
+> +static void o2_pci_set_baseclk(struct sdhci_pci_chip *chip, u32 value)
+>
+> +{
+>
+> +             u32 scratch_32;
+>
+> +
+>
+> +             pci_read_config_dword(chip->pdev,
+>
+> +                                                   O2_SD_PLL_SETTING, &scratch_32);
+>
+> +
+>
+> +             scratch_32 &= 0x0000FFFF;
+>
+> +             scratch_32 |= value;
+>
+> +
+>
+> +             pci_write_config_dword(chip->pdev,
+>
+> +                                                    O2_SD_PLL_SETTING, scratch_32);
+>
+> +}
+>
+> +
+>
+> +static int sdhci_o2_wait_dll_detect_lock(struct sdhci_host *host)
+>
+> +{
+>
+> +             ktime_t timeout;
+>
+> +             u32 scratch32;
+>
+> +
+>
+> +             mdelay(5);
+>
+> +             scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
+>
+> +             if (!(scratch32 & O2_DLL_LOCK_STATUS)) {
+>
+> +                             pr_warn("%s: DLL is still unlocked after wait 5ms\n",
+>
+> +                                             mmc_hostname(host->mmc));
+>
+> +             }
+>
+> +
+>
+> +             /* Detect 500 ms */
+>
+> +             timeout = ktime_add_ms(ktime_get(), 500);
+>
+> +             while (1) {
+>
+> +                             bool timedout = ktime_after(ktime_get(), timeout);
+>
+> +
+>
+> +                             scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
+>
+> +                             if (!(scratch32 & O2_DLL_LOCK_STATUS))
+>
+> +                                             return 0;
+>
+> +
+>
+> +                             if (timedout)
+>
+> +                                             return 1;
+>
+> +                             udelay(10);
+>
+> +             }
+>
+> +}
+>
+> +
+>
+> static void sdhci_o2_set_tuning_mode(struct sdhci_host *host)
+>
+> {
+>
+>                u16 reg;
+>
+> @@ -95,6 +141,73 @@ static void __sdhci_o2_execute_tuning(struct sdhci_host *host, u32 opcode)
+>
+>                sdhci_reset_tuning(host);
+>
+> }
+>
+> +static int sdhci_o2_error_recovery(struct sdhci_pci_chip *chip,
+>
+> +                                                             struct sdhci_host *host)
+>
+> +{
+>
+> +             int ret = 0;
+>
+> +             u8 scratch_8 = 0;
+>
+> +             u32 scratch_32 = 0;
+>
+> +             /* Disable clock */
+>
+> +             sdhci_writeb(host, 0, SDHCI_CLOCK_CONTROL);
+>
+> +
+>
+> +DLL_ADJUST:
+>
+> +             if (host->dll_adjust_count >= 5) {
+>
+> +                             host->dll_adjust_count = 4;
+>
+> +                             pr_warn("%s: error recovery failed with the dll_adjust_count over max value.\n",
+>
+> +                                             mmc_hostname(host->mmc));
+>
+> +             }
+>
+> +
+>
+> +             /* UnLock WP */
+>
+> +             ret = pci_read_config_byte(chip->pdev,
+>
+> +                                             O2_SD_LOCK_WP, &scratch_8);
+>
+> +             if (ret)
+>
+> +                             return ret;
+>
+> +
+>
+> +             scratch_8 &= 0x7f;
+>
+> +             pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch_8);
+>
+> +
+>
+> +             /* PLL software reset */
+>
+> +             scratch_32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
+>
+> +             scratch_32 |= O2_PLL_SOFT_RESET;
+>
+> +             sdhci_writel(host, scratch_32, O2_PLL_DLL_WDT_CONTROL1);
+>
+> +
+>
+> +             ret = pci_read_config_dword(chip->pdev,
+>
+> +                                                                 O2_SD_FUNC_REG4,
+>
+> +                                                                 &scratch_32);
+>
+> +             /* Enable Base Clk setting change */
+>
+> +             scratch_32 |= O2_SD_FREG4_ENABLE_CLK_SET;
+>
+> +             pci_write_config_dword(chip->pdev, O2_SD_FUNC_REG4, scratch_32);
+>
+> +             o2_pci_set_baseclk(chip, dmdn_table[host->dll_adjust_count]);
+>
+> +
+>
+> +
+>
+> +             /* Enable internal clock */
+>
+> +             scratch_8 = SDHCI_CLOCK_INT_EN;
+>
+> +             sdhci_writeb(host, scratch_8, SDHCI_CLOCK_CONTROL);
+>
+> +
+>
+> +             if (sdhci_o2_get_cd(host->mmc)) {
+>
+> +                             if (sdhci_o2_wait_dll_detect_lock(host)) {
+>
+> +                                             scratch_8 |= SDHCI_CLOCK_CARD_EN;
+>
+> +                                             sdhci_writeb(host, scratch_8, SDHCI_CLOCK_CONTROL);
+>
+> +                                             ret = 1;
+>
+> +                             } else {
+>
+> +
+>
+> +                                             pr_warn("%s: DLL unlocked when dll_adjust_count is %d.\n",
+>
+> +                                             mmc_hostname(host->mmc), host->dll_adjust_count);
+>
+> +                                             host->dll_adjust_count++;
+>
+> +                                             goto DLL_ADJUST;
+>
+> +                             }
+>
+> +             }
+>
+> +
+>
+> +                             /* Lock WP */
+>
+> +             ret = pci_read_config_byte(chip->pdev,
+>
+> +                                                                O2_SD_LOCK_WP, &scratch_8);
+>
+> +             if (ret)
+>
+> +                             return ret;
+>
+> +             scratch_8 |= 0x80;
+>
+> +             pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch_8);
+>
+> +             return ret;
+>
+> +}
+>
+> +
+>
+> static int sdhci_o2_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>
+> {
+>
+>                struct sdhci_host *host = mmc_priv(mmc);
+>
+> @@ -110,6 +223,11 @@ static int sdhci_o2_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>
+>                if (WARN_ON(opcode != MMC_SEND_TUNING_BLOCK_HS200))
+>
+>                                return -EINVAL;
+>
+> +             if (host->dll_adjust_count)
+>
+> +                             sdhci_o2_error_recovery(host->chip, host);
+>
+> +
+>
+> +             host->dll_adjust_count++;
+>
+> +
+>
+>                /*
+>
+>                 * o2 sdhci host didn't support 8bit emmc tuning
+>
+>                 */
+>
+> @@ -131,23 +249,11 @@ static int sdhci_o2_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>
+>                                mmc->ios.bus_width = MMC_BUS_WIDTH_8;
+>
+>                                sdhci_set_bus_width(host, current_bus_width);
+>
+>                }
+>
+> -
+>
+>                host->flags &= ~SDHCI_HS400_TUNING;
+>
+>                return 0;
+>
+> }
+>
+> -static void o2_pci_set_baseclk(struct sdhci_pci_chip *chip, u32 value)
+>
+> -{
+>
+> -              u32 scratch_32;
+>
+> -              pci_read_config_dword(chip->pdev,
+>
+> -                                                    O2_SD_PLL_SETTING, &scratch_32);
+>
+> -
+>
+> -              scratch_32 &= 0x0000FFFF;
+>
+> -              scratch_32 |= value;
+>
+> -              pci_write_config_dword(chip->pdev,
+>
+> -                                                     O2_SD_PLL_SETTING, scratch_32);
+>
+> -}
+>
+>  static void o2_pci_led_enable(struct sdhci_pci_chip *chip)
+>
+> {
+>
+> @@ -316,23 +422,23 @@ static void sdhci_o2_enable_internal_clock(struct sdhci_host *host)
+>
+>                u32 scratch32;
+>
+>                 /* PLL software reset */
+>
+> -              scratch32 = sdhci_readl(host, O2_PLL_WDT_CONTROL1);
+>
+> +             scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
+>
+>                scratch32 |= O2_PLL_SOFT_RESET;
+>
+> -              sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
+>
+> +             sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
+>
+>                udelay(1);
+>
+>                scratch32 &= ~(O2_PLL_SOFT_RESET);
+>
+> -              sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
+>
+> +             sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
+>
+>                 /* PLL force active */
+>
+>                scratch32 |= O2_PLL_FORCE_ACTIVE;
+>
+> -              sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
+>
+> +             sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
+>
+>                 /* Wait max 20 ms */
+>
+>                timeout = ktime_add_ms(ktime_get(), 20);
+>
+>                while (1) {
+>
+>                                bool timedout = ktime_after(ktime_get(), timeout);
+>
+> -                              scratch = sdhci_readw(host, O2_PLL_WDT_CONTROL1);
+>
+> +                             scratch = sdhci_readw(host, O2_PLL_DLL_WDT_CONTROL1);
+>
+>                                if (scratch & O2_PLL_LOCK_STATUS)
+>
+>                                                break;
+>
+>                                if (timedout) {
+>
+> @@ -350,16 +456,16 @@ static void sdhci_o2_enable_internal_clock(struct sdhci_host *host)
+>
+>  out:
+>
+>                /* Cancel PLL force active */
+>
+> -              scratch32 = sdhci_readl(host, O2_PLL_WDT_CONTROL1);
+>
+> +             scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
+>
+>                scratch32 &= ~O2_PLL_FORCE_ACTIVE;
+>
+> -              sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
+>
+> +             sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
+>
+> }
+>
+>  static int sdhci_o2_get_cd(struct mmc_host *mmc)
+>
+> {
+>
+>                struct sdhci_host *host = mmc_priv(mmc);
+>
+> -
+>
+> -              sdhci_o2_enable_internal_clock(host);
+>
+> +             if (!(sdhci_readw(host, O2_PLL_DLL_WDT_CONTROL1) & O2_PLL_LOCK_STATUS))
+>
+> +                             sdhci_o2_enable_internal_clock(host);
+>
+>                 return !!(sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT);
+>
+> }
+>
+> @@ -369,7 +475,7 @@ static void sdhci_o2_enable_clk(struct sdhci_host *host, u16 clk)
+>
+>                /* Enable internal clock */
+>
+>                clk |= SDHCI_CLOCK_INT_EN;
+>
+>                sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+>
+> -
+>
+> +             sdhci_o2_enable_internal_clock(host);
+>
+>                if (sdhci_o2_get_cd(host->mmc)) {
+>
+>                                clk |= SDHCI_CLOCK_CARD_EN;
+>
+>                                sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+>
+> @@ -400,7 +506,7 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
+>
+>                 chip = slot->chip;
+>
+>                host = slot->host;
+>
+> -
+>
+> +             host->chip = chip;
+>
+>                caps = sdhci_readl(host, SDHCI_CAPABILITIES);
+>
+>                 /*
+>
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+>
+> index 89fd965..bc7c720 100644
+>
+> --- a/drivers/mmc/host/sdhci.h
+>
+> +++ b/drivers/mmc/host/sdhci.h
+>
+> @@ -562,6 +562,8 @@ struct sdhci_host {
+>
+>                struct timer_list timer;   /* Timer for timeouts */
+>
+>                struct timer_list data_timer;       /* Timer for data timeouts */
+>
+> +             struct sdhci_pci_chip *chip; /* Store the info of chip */
+>
+> +
+>
+>                u32 caps;                             /* CAPABILITY_0 */
+>
+>                u32 caps1;                           /* CAPABILITY_1 */
+>
+>                bool read_caps;                                /* Capability flags have been read */
+>
+> @@ -588,6 +590,7 @@ struct sdhci_host {
+>
+>                unsigned int                       tuning_count;   /* Timer count for re-tuning */
+>
+>                unsigned int                       tuning_mode;   /* Re-tuning mode supported by host */
+>
+>                unsigned int                       tuning_err;         /* Error code for re-tuning */
+>
+> +             u8 dll_adjust_count;      /* Timer count for dll adjust */
+>
+> #define SDHCI_TUNING_MODE_1         0
+>
+> #define SDHCI_TUNING_MODE_2         1
+>
+> #define SDHCI_TUNING_MODE_3         2
+>
+> --
+>
+> 2.7.4
+>
+>
+>
+>
