@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68C3A74624
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F5DB74569
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:42:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbfGYFt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:49:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59478 "EHLO mail.kernel.org"
+        id S2390834AbfGYFmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:42:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391245AbfGYFoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:44:23 -0400
+        id S2390822AbfGYFmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 01:42:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A837221880;
-        Thu, 25 Jul 2019 05:44:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D63422BF3;
+        Thu, 25 Jul 2019 05:42:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564033462;
-        bh=D1K8Ip+UqvaY6ipT/LuQzAQY4HCUQRu+dh6QqBx6EYc=;
+        s=default; t=1564033340;
+        bh=LOARK0T404+azY1suHxq6Tt9I+LxkICd8FbLI+35sfo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uF7jgyeTAwHGOeaQw805ST86LMc8WZnOqP+HEyq4LAeqR+ZGODkCcUUVUVBZOigBR
-         tADlPRu74utcblj3YaMWEU6PhugUQ+UPoj1eSPICn34ro8XPCXXiocT51TsmmLUNKa
-         HiM2ezkcMn7d002EWPYBnYvJx7fTKNHHybKGxJLE=
+        b=ews6soD0xNoxh++YCH0hLvlPuG7LRgDRkHVx2uYkUk4EtaPT737v7zqCIEmKxazmG
+         +Z+2706XQibs+CxQ5HVOBWlGkvDInj+DY3ZeHQGBLmWxmWA9almUCZpON8DabUjZvY
+         41k+KStn/QU6ZKo1rVsg2VXj7oW8Cp6P5UrCvopw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,9 +30,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Finn Thain <fthain@telegraphics.com.au>,
         Stan Johnson <userm57@yahoo.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 166/271] scsi: NCR5380: Always re-enable reselection interrupt
-Date:   Wed, 24 Jul 2019 21:20:35 +0200
-Message-Id: <20190724191709.396504053@linuxfoundation.org>
+Subject: [PATCH 4.19 167/271] Revert "scsi: ncr5380: Increase register polling limit"
+Date:   Wed, 24 Jul 2019 21:20:36 +0200
+Message-Id: <20190724191709.484438228@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191655.268628197@linuxfoundation.org>
 References: <20190724191655.268628197@linuxfoundation.org>
@@ -47,19 +47,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Finn Thain <fthain@telegraphics.com.au>
 
-commit 57f31326518e98ee4cabf9a04efe00ed57c54147 upstream.
+commit 25fcf94a2fa89dd3e73e965ebb0b38a2a4f72aa4 upstream.
 
-The reselection interrupt gets disabled during selection and must be
-re-enabled when hostdata->connected becomes NULL. If it isn't re-enabled a
-disconnected command may time-out or the target may wedge the bus while
-trying to reselect the host. This can happen after a command is aborted.
+This reverts commit 4822827a69d7cd3bc5a07b7637484ebd2cf88db6.
 
-Fix this by enabling the reselection interrupt in NCR5380_main() after
-calls to NCR5380_select() and NCR5380_information_transfer() return.
+The purpose of that commit was to suppress a timeout warning message which
+appeared to be caused by target latency. But suppressing the warning is
+undesirable as the warning may indicate a messed up transfer count.
+
+Another problem with that commit is that 15 ms is too long to keep
+interrupts disabled as interrupt latency can cause system clock drift and
+other problems.
 
 Cc: Michael Schmitz <schmitzmic@gmail.com>
-Cc: stable@vger.kernel.org # v4.9+
-Fixes: 8b00c3d5d40d ("ncr5380: Implement new eh_abort_handler")
+Cc: stable@vger.kernel.org
+Fixes: 4822827a69d7 ("scsi: ncr5380: Increase register polling limit")
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Tested-by: Michael Schmitz <schmitzmic@gmail.com>
@@ -67,71 +69,19 @@ Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/NCR5380.c |   12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+ drivers/scsi/NCR5380.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/NCR5380.c
-+++ b/drivers/scsi/NCR5380.c
-@@ -710,6 +710,8 @@ static void NCR5380_main(struct work_str
- 			NCR5380_information_transfer(instance);
- 			done = 0;
- 		}
-+		if (!hostdata->connected)
-+			NCR5380_write(SELECT_ENABLE_REG, hostdata->id_mask);
- 		spin_unlock_irq(&hostdata->lock);
- 		if (!done)
- 			cond_resched();
-@@ -1106,8 +1108,6 @@ static struct scsi_cmnd *NCR5380_select(
- 		spin_lock_irq(&hostdata->lock);
- 		NCR5380_write(INITIATOR_COMMAND_REG, ICR_BASE);
- 		NCR5380_reselect(instance);
--		if (!hostdata->connected)
--			NCR5380_write(SELECT_ENABLE_REG, hostdata->id_mask);
- 		shost_printk(KERN_ERR, instance, "reselection after won arbitration?\n");
- 		goto out;
- 	}
-@@ -1115,7 +1115,6 @@ static struct scsi_cmnd *NCR5380_select(
- 	if (err < 0) {
- 		spin_lock_irq(&hostdata->lock);
- 		NCR5380_write(INITIATOR_COMMAND_REG, ICR_BASE);
--		NCR5380_write(SELECT_ENABLE_REG, hostdata->id_mask);
+--- a/drivers/scsi/NCR5380.h
++++ b/drivers/scsi/NCR5380.h
+@@ -235,7 +235,7 @@ struct NCR5380_cmd {
+ #define NCR5380_PIO_CHUNK_SIZE		256
  
- 		/* Can't touch cmd if it has been reclaimed by the scsi ML */
- 		if (!hostdata->selecting)
-@@ -1153,7 +1152,6 @@ static struct scsi_cmnd *NCR5380_select(
- 	if (err < 0) {
- 		shost_printk(KERN_ERR, instance, "select: REQ timeout\n");
- 		NCR5380_write(INITIATOR_COMMAND_REG, ICR_BASE);
--		NCR5380_write(SELECT_ENABLE_REG, hostdata->id_mask);
- 		goto out;
- 	}
- 	if (!hostdata->selecting) {
-@@ -1820,9 +1818,6 @@ static void NCR5380_information_transfer
- 					 */
- 					NCR5380_write(TARGET_COMMAND_REG, 0);
+ /* Time limit (ms) to poll registers when IRQs are disabled, e.g. during PDMA */
+-#define NCR5380_REG_POLL_TIME		15
++#define NCR5380_REG_POLL_TIME		10
  
--					/* Enable reselect interrupts */
--					NCR5380_write(SELECT_ENABLE_REG, hostdata->id_mask);
--
- 					maybe_release_dma_irq(instance);
- 					return;
- 				case MESSAGE_REJECT:
-@@ -1854,8 +1849,6 @@ static void NCR5380_information_transfer
- 					 */
- 					NCR5380_write(TARGET_COMMAND_REG, 0);
- 
--					/* Enable reselect interrupts */
--					NCR5380_write(SELECT_ENABLE_REG, hostdata->id_mask);
- #ifdef SUN3_SCSI_VME
- 					dregs->csr |= CSR_DMA_ENABLE;
- #endif
-@@ -1957,7 +1950,6 @@ static void NCR5380_information_transfer
- 					cmd->result = DID_ERROR << 16;
- 					complete_cmd(instance, cmd);
- 					maybe_release_dma_irq(instance);
--					NCR5380_write(SELECT_ENABLE_REG, hostdata->id_mask);
- 					return;
- 				}
- 				msgout = NOP;
+ static inline struct scsi_cmnd *NCR5380_to_scmd(struct NCR5380_cmd *ncmd_ptr)
+ {
 
 
