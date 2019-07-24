@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE03773DB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:19:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA7FB73DCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:20:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390652AbfGXTr6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:47:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54812 "EHLO mail.kernel.org"
+        id S2391220AbfGXTrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:47:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391323AbfGXTry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:47:54 -0400
+        id S2391174AbfGXTrD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:47:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A732F214AF;
-        Wed, 24 Jul 2019 19:47:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79A4921873;
+        Wed, 24 Jul 2019 19:47:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997673;
-        bh=POqmnfsdjW2YE7RA6gm2zgkT5QX5hLbLBVi5trCiFas=;
+        s=default; t=1563997623;
+        bh=K35cIH3EA1Ft8Qi7ysiiVtejwUxQ3ffPih0OJkln8yc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cJSAivacrz1ERibywTYMhrtF8Bq0FX2+v1BjkHW38UISXnfs34ZCmpPD03Duwiz8T
-         2En0MaA+WXUv6mC8qsp8Qk79QR9OqdTPZKlbwLlYoojxtbP/cNVhgFhEK50j3Hwslb
-         ExjMFWBGfRXuJZul3KjcV392k/Wpx6hcaL/O3mhQ=
+        b=W7zMo4iT4hdqWX9v/dAw6NhY+dbhe917fQ75R6dbU1GTJUUEq2DW84LIyiBQufbqO
+         S+W15RK5ffM82yxYBf5LuIhZCUExfN0L4gv84j+BE1tkwC0BGrzAy3HNK7yo147kYm
+         07KmOq65fs2oZvTMfkvO6Q9qU2T4Lk/rrTtOxhcE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        syzbot+2e1ef9188251d9cc7944@syzkaller.appspotmail.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 077/371] media: uvcvideo: Fix access to uninitialized fields on probe error
-Date:   Wed, 24 Jul 2019 21:17:09 +0200
-Message-Id: <20190724191730.667452864@linuxfoundation.org>
+Subject: [PATCH 5.1 088/371] crypto: testmgr - add some more preemption points
+Date:   Wed, 24 Jul 2019 21:17:20 +0200
+Message-Id: <20190724191731.459718924@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -46,35 +45,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 11a087f484bf15ff65f0a9f277aa5a61fd07ed2a ]
+[ Upstream commit e63e1b0dd0003dc31f73d875907432be3a2abe5d ]
 
-We need to check whether this work we are canceling actually is
-initialized.
+Call cond_resched() after each fuzz test iteration.  This avoids stall
+warnings if fuzz_iterations is set very high for testing purposes.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Reported-by: syzbot+2e1ef9188251d9cc7944@syzkaller.appspotmail.com
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+While we're at it, also call cond_resched() after finishing testing each
+test vector.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/uvc/uvc_ctrl.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ crypto/testmgr.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index 14cff91b7aea..aa021498036a 100644
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -2350,7 +2350,9 @@ void uvc_ctrl_cleanup_device(struct uvc_device *dev)
- 	struct uvc_entity *entity;
- 	unsigned int i;
- 
--	cancel_work_sync(&dev->async_ctrl.work);
-+	/* Can be uninitialized if we are aborting on probe error. */
-+	if (dev->async_ctrl.work.func)
-+		cancel_work_sync(&dev->async_ctrl.work);
- 
- 	/* Free controls and control mappings for all entities. */
- 	list_for_each_entry(entity, &dev->entities, list) {
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index 8386038d67c7..51540dbee23b 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -1050,6 +1050,7 @@ static int test_hash_vec(const char *driver, const struct hash_testvec *vec,
+ 						req, tsgl, hashstate);
+ 			if (err)
+ 				return err;
++			cond_resched();
+ 		}
+ 	}
+ #endif
+@@ -1105,6 +1106,7 @@ static int __alg_test_hash(const struct hash_testvec *vecs,
+ 		err = test_hash_vec(driver, &vecs[i], i, req, tsgl, hashstate);
+ 		if (err)
+ 			goto out;
++		cond_resched();
+ 	}
+ 	err = 0;
+ out:
+@@ -1346,6 +1348,7 @@ static int test_aead_vec(const char *driver, int enc,
+ 						&cfg, req, tsgls);
+ 			if (err)
+ 				return err;
++			cond_resched();
+ 		}
+ 	}
+ #endif
+@@ -1365,6 +1368,7 @@ static int test_aead(const char *driver, int enc,
+ 				    tsgls);
+ 		if (err)
+ 			return err;
++		cond_resched();
+ 	}
+ 	return 0;
+ }
+@@ -1679,6 +1683,7 @@ static int test_skcipher_vec(const char *driver, int enc,
+ 						    &cfg, req, tsgls);
+ 			if (err)
+ 				return err;
++			cond_resched();
+ 		}
+ 	}
+ #endif
+@@ -1698,6 +1703,7 @@ static int test_skcipher(const char *driver, int enc,
+ 					tsgls);
+ 		if (err)
+ 			return err;
++		cond_resched();
+ 	}
+ 	return 0;
+ }
 -- 
 2.20.1
 
