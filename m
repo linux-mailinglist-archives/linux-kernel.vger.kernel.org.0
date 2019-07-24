@@ -2,217 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CD0172A1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:29:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F42272A12
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 10:27:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbfGXI3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 04:29:38 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2746 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725870AbfGXI3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 04:29:38 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 58B05B3F612EF878FD0E;
-        Wed, 24 Jul 2019 16:29:35 +0800 (CST)
-Received: from [127.0.0.1] (10.177.223.23) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 24 Jul 2019
- 16:29:32 +0800
-Subject: Re: [PATCH v12 1/2] mm: page_alloc: introduce
- memblock_next_valid_pfn() (again) for arm64
-To:     Mike Rapoport <rppt@linux.ibm.com>
-CC:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Jia He" <hejianet@gmail.com>, Will Deacon <will@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1563861073-47071-1-git-send-email-guohanjun@huawei.com>
- <1563861073-47071-2-git-send-email-guohanjun@huawei.com>
- <20190723083027.GB4896@rapoport-lnx>
-From:   Hanjun Guo <guohanjun@huawei.com>
-Message-ID: <e4668d2a-23d9-c089-c713-a4a0495e8c9e@huawei.com>
-Date:   Wed, 24 Jul 2019 16:29:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <20190723083027.GB4896@rapoport-lnx>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.223.23]
-X-CFilter-Loop: Reflected
+        id S1726397AbfGXI1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 04:27:39 -0400
+Received: from mga07.intel.com ([134.134.136.100]:6391 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725990AbfGXI1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 04:27:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 01:27:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,302,1559545200"; 
+   d="scan'208,223";a="174812257"
+Received: from ubuntu.bj.intel.com (HELO Ubuntu.\040none\041) ([10.238.154.174])
+  by orsmga006.jf.intel.com with ESMTP; 24 Jul 2019 01:27:35 -0700
+From:   Yunying Sun <yunying.sun@intel.com>
+To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, tglx@linutronix.de, bp@alien8.de,
+        hpa@zytor.com, ak@linux.intel.com, kan.liang@linux.intel.com
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Yunying Sun <yunying.sun@intel.com>
+Subject: [PATCH RESEND] perf/x86/intel: Bit 13 is valid for Icelake MSR_OFFCORE_RSP_x register
+Date:   Wed, 24 Jul 2019 16:29:32 +0800
+Message-Id: <20190724082932.12833-1-yunying.sun@intel.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20190724073911.12177-1-yunying.sun@intel.com>
+References: <20190724073911.12177-1-yunying.sun@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/7/23 16:30, Mike Rapoport wrote:
-> On Tue, Jul 23, 2019 at 01:51:12PM +0800, Hanjun Guo wrote:
->> From: Jia He <hejianet@gmail.com>
->>
->> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
->> where possible") optimized the loop in memmap_init_zone(). But it causes
->> possible panic on x86 due to specific memory mapping on x86_64 which will
->> skip valid pfns as well, so Daniel Vacek reverted it later.
->>
->> But as suggested by Daniel Vacek, it is fine to using memblock to skip
->> gaps and finding next valid frame with CONFIG_HAVE_ARCH_PFN_VALID.
->>
->> Daniel said:
->> "On arm and arm64, memblock is used by default. But generic version of
->> pfn_valid() is based on mem sections and memblock_next_valid_pfn() does
->> not always return the next valid one but skips more resulting in some
->> valid frames to be skipped (as if they were invalid). And that's why
->> kernel was eventually crashing on some !arm machines."
-> 
-> I think that the crash on x86 was not related to CONFIG_HAVE_ARCH_PFN_VALID
-> but rather to the x86 way to setup memblock.  Some of the x86 reserved
-> memory areas were never added to memblock.memory, which makes memblock's
-> view of the physical memory incomplete and that's why
-> memblock_next_valid_pfn() could skip valid PFNs on x86.
+From Intel SDM, bit 13 of Icelake MSR_OFFCORE_RSP_x register is valid for
+counting hardware generated prefetches of L3 cache. But current bitmasks
+in driver takes bit 13 as invalid. Here to fix it.
 
-Thank you for kindly clarify, I will update the patch with your comments
-in next version.
+Before:
+$ perf stat -e cpu/event=0xb7,umask=0x1,config1=0x1bfff/u sleep 3
+ Performance counter stats for 'sleep 3':
+   <not supported>      cpu/event=0xb7,umask=0x1,config1=0x1bfff/u
 
-> 
->> Introduce a new config option CONFIG_HAVE_MEMBLOCK_PFN_VALID and only
->> selected for arm64, using the new config option to guard the
->> memblock_next_valid_pfn().
->  
-> As far as I can tell, the memblock_next_valid_pfn() should work on most
-> architectures and not only on ARM. For sure there is should be no
-> dependency between CONFIG_HAVE_ARCH_PFN_VALID and memblock_next_valid_pfn().
-> 
-> I believe that the configuration option to guard memblock_next_valid_pfn()
-> should be opt-out and that only x86 will require it.
+After:
+$ perf stat -e cpu/event=0xb7,umask=0x1,config1=0x1bfff/u sleep 3
+ Performance counter stats for 'sleep 3':
+             9,293      cpu/event=0xb7,umask=0x1,config1=0x1bfff/u
 
-So how about introduce a configuration option, say, CONFIG_HAVE_ARCH_PFN_INVALID,
-selected by x86 and keep it default unselected for all other architecture?
+Signed-off-by: Yunying Sun <yunying.sun@intel.com>
+---
+ arch/x86/events/intel/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> 
->> This was tested on a HiSilicon Kunpeng920 based ARM64 server, the speedup
->> is pretty impressive for bootmem_init() at boot:
->>
->> with 384G memory,
->> before: 13310ms
->> after:  1415ms
->>
->> with 1T memory,
->> before: 20s
->> after:  2s
->>
->> Suggested-by: Daniel Vacek <neelx@redhat.com>
->> Signed-off-by: Jia He <hejianet@gmail.com>
->> Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
->> ---
->>  arch/arm64/Kconfig     |  1 +
->>  include/linux/mmzone.h |  9 +++++++++
->>  mm/Kconfig             |  3 +++
->>  mm/memblock.c          | 31 +++++++++++++++++++++++++++++++
->>  mm/page_alloc.c        |  4 +++-
->>  5 files changed, 47 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->> index 697ea0510729..058eb26579be 100644
->> --- a/arch/arm64/Kconfig
->> +++ b/arch/arm64/Kconfig
->> @@ -893,6 +893,7 @@ config ARCH_FLATMEM_ENABLE
->>  
->>  config HAVE_ARCH_PFN_VALID
->>  	def_bool y
->> +	select HAVE_MEMBLOCK_PFN_VALID
->>
->>  config HW_PERF_EVENTS
->>  	def_bool y
->> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
->> index 70394cabaf4e..24cb6bdb1759 100644
->> --- a/include/linux/mmzone.h
->> +++ b/include/linux/mmzone.h
->> @@ -1325,6 +1325,10 @@ static inline int pfn_present(unsigned long pfn)
->>  #endif
->>  
->>  #define early_pfn_valid(pfn)	pfn_valid(pfn)
->> +#ifdef CONFIG_HAVE_MEMBLOCK_PFN_VALID
->> +extern unsigned long memblock_next_valid_pfn(unsigned long pfn);
->> +#define next_valid_pfn(pfn)	memblock_next_valid_pfn(pfn)
-> 
-> Please make it 'static inline' and move out of '#ifdef CONFIG_SPARSEMEM'
-
-Will do.
-
-> 
->> +#endif
->>  void sparse_init(void);
->>  #else
->>  #define sparse_init()	do {} while (0)
->> @@ -1347,6 +1351,11 @@ struct mminit_pfnnid_cache {
->>  #define early_pfn_valid(pfn)	(1)
->>  #endif
->>  
->> +/* fallback to default definitions */
->> +#ifndef next_valid_pfn
->> +#define next_valid_pfn(pfn)	(pfn + 1)
-> 
-> static inline as well.
-
-OK.
-
-> 
->> +#endif
->> +
->>  void memory_present(int nid, unsigned long start, unsigned long end);
->>  
->>  /*
->> diff --git a/mm/Kconfig b/mm/Kconfig
->> index f0c76ba47695..c578374b6413 100644
->> --- a/mm/Kconfig
->> +++ b/mm/Kconfig
->> @@ -132,6 +132,9 @@ config HAVE_MEMBLOCK_NODE_MAP
->>  config HAVE_MEMBLOCK_PHYS_MAP
->>  	bool
->>  
->> +config HAVE_MEMBLOCK_PFN_VALID
->> +	bool
->> +
->>  config HAVE_GENERIC_GUP
->>  	bool
->>  
->> diff --git a/mm/memblock.c b/mm/memblock.c
->> index 7d4f61ae666a..d57ba51bb9cd 100644
->> --- a/mm/memblock.c
->> +++ b/mm/memblock.c
->> @@ -1251,6 +1251,37 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
->>  	return 0;
->>  }
->>  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
->> +
->> +#ifdef CONFIG_HAVE_MEMBLOCK_PFN_VALID
->> +unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
->> +{
->> +	struct memblock_type *type = &memblock.memory;
->> +	unsigned int right = type->cnt;
->> +	unsigned int mid, left = 0;
->> +	phys_addr_t addr = PFN_PHYS(++pfn);
->> +
->> +	do {
->> +		mid = (right + left) / 2;
->> +
->> +		if (addr < type->regions[mid].base)
->> +			right = mid;
->> +		else if (addr >= (type->regions[mid].base +
->> +				  type->regions[mid].size))
->> +			left = mid + 1;
->> +		else {
->> +			/* addr is within the region, so pfn is valid */
->> +			return pfn;
->> +		}
->> +	} while (left < right);
->> +
-> 
-> We have memblock_search() for this.
-
-I will update my patch as you suggested.
-
-Thanks
-Hanjun
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 9e911a96972b..b35519cbc8b4 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -263,8 +263,8 @@ static struct event_constraint intel_icl_event_constraints[] = {
+ };
+ 
+ static struct extra_reg intel_icl_extra_regs[] __read_mostly = {
+-	INTEL_UEVENT_EXTRA_REG(0x01b7, MSR_OFFCORE_RSP_0, 0x3fffff9fffull, RSP_0),
+-	INTEL_UEVENT_EXTRA_REG(0x01bb, MSR_OFFCORE_RSP_1, 0x3fffff9fffull, RSP_1),
++	INTEL_UEVENT_EXTRA_REG(0x01b7, MSR_OFFCORE_RSP_0, 0x3fffffbfffull, RSP_0),
++	INTEL_UEVENT_EXTRA_REG(0x01bb, MSR_OFFCORE_RSP_1, 0x3fffffbfffull, RSP_1),
+ 	INTEL_UEVENT_PEBS_LDLAT_EXTRA_REG(0x01cd),
+ 	INTEL_UEVENT_EXTRA_REG(0x01c6, MSR_PEBS_FRONTEND, 0x7fff17, FE),
+ 	EVENT_EXTRA_END
+-- 
+2.17.0
 
