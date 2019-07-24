@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F7E27288F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:53:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03CA572890
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:53:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbfGXGxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 02:53:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39310 "EHLO
+        id S1726555AbfGXGxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 02:53:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39332 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfGXGxR (ORCPT
+        with ESMTP id S1725909AbfGXGxU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 02:53:17 -0400
+        Wed, 24 Jul 2019 02:53:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=OKQjQZNsY1fevItiyMnAbjI1iamy6YdinwRbq9yBGVU=; b=DAL1H9X37yVytHCPB4G34fgHgw
-        f4KZFwd9A4d0cKrfI1i7CUJCG840Ln0mEXPdeYL44trM7bHs9qwiHbF3TxxesmvA1fQZMCVdAGThz
-        xtwIzl+2xTdBFdk13/H3mgXI4jmkC54OsNOAeU/WscWj8k7rXOcn4o1pVkTc+cVJxW81/EkoywxsA
-        mz/Q6TH9iCrd0DdEL67eyjr8RW7uD8RdDPIt7i/GfCybmcD3VJJ7TKRgHPYZeTfjlrdpFVi6sUDnm
-        GaJ9+tkhmgc5dIRddICKPRVHZnbLP5QjyZTFXUc1SXOrAo4nsgnuivXn1T4osetkxmYSwdWjkGwox
-        SwYGjFuQ==;
+        bh=igXh/3abv0ooQdkv/Vfc/WSfVB4lkdoSYebCAR1TL48=; b=IDkGONdXpH3tW1oxhx++LkR9Lr
+        WtaFZ+boWB9F31gk5CqaFbhNeFfrtl5YLLAPAezcvPdlRxacMmzCyuUcbJkfsIU6ge7zEVv6VK3Lp
+        BVN8c2sSrD9gXy2zzFgQNQxPeES0fjs+kwg6uO+b6FRTGfvZoI4LaBGXq5SxfAg1diq5NAYBrGEmT
+        LgBCFZZp8wWhbrk+FwzSlyBkPvD4HtkVG7f4VC7cE6HJ/umGb0LSiSUT67UWqJ0MlfM/eAnG+yM66
+        VhwUGjcVxt/otVXADUHsEEIdhJYMPPs8S9yngWBDr8DsSJQqvQUpJqMoQJQ2kuAdZG+rSN7e5CHvH
+        SlT6wdaA==;
 Received: from 089144207240.atnat0016.highway.bob.at ([89.144.207.240] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hqB9G-0004Jk-1l; Wed, 24 Jul 2019 06:53:14 +0000
+        id 1hqB9J-0004Ko-0z; Wed, 24 Jul 2019 06:53:17 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
@@ -34,9 +34,9 @@ To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
 Cc:     Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
         nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4/7] nouveau: unlock mmap_sem on all errors from nouveau_range_fault
-Date:   Wed, 24 Jul 2019 08:52:55 +0200
-Message-Id: <20190724065258.16603-5-hch@lst.de>
+Subject: [PATCH 5/7] nouveau: return -EBUSY when hmm_range_wait_until_valid fails
+Date:   Wed, 24 Jul 2019 08:52:56 +0200
+Message-Id: <20190724065258.16603-6-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190724065258.16603-1-hch@lst.de>
 References: <20190724065258.16603-1-hch@lst.de>
@@ -48,56 +48,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently nouveau_svm_fault expects nouveau_range_fault to never unlock
-mmap_sem, but the latter unlocks it for a random selection of error
-codes. Fix this up by always unlocking mmap_sem for non-zero return
-values in nouveau_range_fault, and only unlocking it in the caller
-for successful returns.
+-EAGAIN has a magic meaning for non-blocking faults, so don't overload
+it.  Given that the caller doesn't check for specific error codes this
+change is purely cosmetic.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_svm.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_svm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c b/drivers/gpu/drm/nouveau/nouveau_svm.c
-index e3097492b4ad..a835cebb6d90 100644
+index a835cebb6d90..545100f7c594 100644
 --- a/drivers/gpu/drm/nouveau/nouveau_svm.c
 +++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
-@@ -495,8 +495,10 @@ nouveau_range_fault(struct hmm_mirror *mirror, struct hmm_range *range)
- 	ret = hmm_range_register(range, mirror,
- 				 range->start, range->end,
- 				 PAGE_SHIFT);
--	if (ret)
-+	if (ret) {
-+		up_read(&range->vma->vm_mm->mmap_sem);
- 		return (int)ret;
-+	}
+@@ -502,7 +502,7 @@ nouveau_range_fault(struct hmm_mirror *mirror, struct hmm_range *range)
  
  	if (!hmm_range_wait_until_valid(range, HMM_RANGE_DEFAULT_TIMEOUT)) {
  		up_read(&range->vma->vm_mm->mmap_sem);
-@@ -505,10 +507,9 @@ nouveau_range_fault(struct hmm_mirror *mirror, struct hmm_range *range)
+-		return -EAGAIN;
++		return -EBUSY;
+ 	}
  
  	ret = hmm_range_fault(range, true);
- 	if (ret <= 0) {
--		if (ret == -EBUSY || !ret) {
--			up_read(&range->vma->vm_mm->mmap_sem);
-+		if (ret == 0)
- 			ret = -EBUSY;
--		}
-+		up_read(&range->vma->vm_mm->mmap_sem);
- 		hmm_range_unregister(range);
- 		return ret;
- 	}
-@@ -706,8 +707,8 @@ nouveau_svm_fault(struct nvif_notify *notify)
- 						NULL);
- 			svmm->vmm->vmm.object.client->super = false;
- 			mutex_unlock(&svmm->mutex);
-+			up_read(&svmm->mm->mmap_sem);
- 		}
--		up_read(&svmm->mm->mmap_sem);
- 
- 		/* Cancel any faults in the window whose pages didn't manage
- 		 * to keep their valid bit, or stay writeable when required.
 -- 
 2.20.1
 
