@@ -2,74 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2A0C73165
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:17:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6846873170
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:18:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728010AbfGXORO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 10:17:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34192 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726287AbfGXORM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 10:17:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 42C0BAFD4;
-        Wed, 24 Jul 2019 14:17:11 +0000 (UTC)
-Date:   Wed, 24 Jul 2019 16:17:10 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     YueHaibing <yuehaibing@huawei.com>, akpm@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, vbabka@suse.cz,
-        yang.shi@linux.alibaba.com, jannh@google.com, walken@google.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] mm/mmap.c: silence variable 'new_start' set but not used
-Message-ID: <20190724141710.GD5584@dhcp22.suse.cz>
-References: <20190724140739.59532-1-yuehaibing@huawei.com>
- <1563977465.11067.9.camel@lca.pw>
+        id S1728179AbfGXOSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 10:18:07 -0400
+Received: from mail-qt1-f175.google.com ([209.85.160.175]:44183 "EHLO
+        mail-qt1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbfGXOSH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 10:18:07 -0400
+Received: by mail-qt1-f175.google.com with SMTP id 44so14604446qtg.11
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 07:18:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=4Z7NceRYmsd4mWj9JDUNB9v0QmsmFhuBmenBnT38Iog=;
+        b=m4xIq3yRVJW0kxd1xSkW/21rcobDF5TddzNVTZ1fwY9hughmP+OlYTaeKcDTy67WG6
+         DBlsIAr/tKJJ8gEfc/jFgXOiT36nCdxnHjD8ugTQNW2aCHNPmdnGmU+cpNpNRQ2xNSB7
+         IQFRtXdNHd8iAVAud2/g1ewOOXj8Im3LJCSwtL6Mx8xoXYR4ikG6cAMzdXfhHQNv8pbs
+         AYbkIgxmlj9jplcT6noutzZUscT+QOH1S7G2SWpEwmTZlRjWcUpielJHDBZfPh60pVvK
+         Q48+IDqr+r3VYCx/+UTTiVSAZj3kiyvkRIBf3Zoftyp1eLKROPVH5dT0S0hnqA45JkcA
+         3/CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=4Z7NceRYmsd4mWj9JDUNB9v0QmsmFhuBmenBnT38Iog=;
+        b=iWECEHFgqOsPE2LBkT9fdspbbMwRx1enH1NvXV+XVS4AxQy8l4IkiaX9POboOl1HBM
+         G94MFx5wFTuovoDkq6QL7Fm6ZvH58C1832V2zxqYSTTuYdYGEH5SmmJjGk18oT2UjNNY
+         aQycRx09EaRuQjZJEHKt+MURSkmzjrSNAS/PvGuLP4R6jdbSa03g/1QYov/I2NGLATR2
+         GfoFVSj2bm9mMaRWS9iA1FEm5V/+q33RdeBOqAEUIzcXvQgfCsYmbtpewPpL4AMPnLvx
+         sxrP6xsBocCgelcvCcH96rS1VAHBA5XKCqG1DKUVuLa2Gpycv3t5C9uOX6v1Dzno79IW
+         MNUQ==
+X-Gm-Message-State: APjAAAVq/3ZhZmMr7dVR0PholFcEuitZXiWcEK3VAU6SrXSasVw6ZNdc
+        ltNNY1llF0bzRorYC5ra8ox6Kho9YbVNOrrzNB6D50js
+X-Google-Smtp-Source: APXvYqx0fQpMpc3+dt/dgtbDwqdkAWPE94gAyxxd02MLjxJqiq/qwdpcg/T+wVNem3jaqcUEpLzjD673gxGuDyqGPdg=
+X-Received: by 2002:a0c:d251:: with SMTP id o17mr60155947qvh.109.1563977885709;
+ Wed, 24 Jul 2019 07:18:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1563977465.11067.9.camel@lca.pw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Gilberto Nunes <gilberto.nunes32@gmail.com>
+Date:   Wed, 24 Jul 2019 11:17:29 -0300
+Message-ID: <CAOKSTBs-cHMr7xbJVVUjZ9C3__bY6jZU-_TZ0RmMRMJ3dBk3PA@mail.gmail.com>
+Subject: AMD Drivers
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 24-07-19 10:11:05, Qian Cai wrote:
-> On Wed, 2019-07-24 at 22:07 +0800, YueHaibing wrote:
-> > 'new_start' is used in is_hugepage_only_range(),
-> > which do nothing in some arch. gcc will warning:
-> > 
-> > mm/mmap.c: In function acct_stack_growth:
-> > mm/mmap.c:2311:16: warning: variable new_start set but not used [-Wunused-but-
-> > set-variable]
-> 
-> Nope. Convert them to inline instead.
+Hi there!
 
-Agreed. Obfuscating the code is not really something we want.
+I am usging Linux mint here 19.1.
+My laptop has the following configuration:
 
-> > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> > ---
-> >  mm/mmap.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/mmap.c b/mm/mmap.c
-> > index e2dbed3..56c2a92 100644
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -2308,7 +2308,7 @@ static int acct_stack_growth(struct vm_area_struct *vma,
-> >  			     unsigned long size, unsigned long grow)
-> >  {
-> >  	struct mm_struct *mm = vma->vm_mm;
-> > -	unsigned long new_start;
-> > +	unsigned long __maybe_unused new_start;
-> >  
-> >  	/* address space limit tests */
-> >  	if (!may_expand_vm(mm, vma->vm_flags, grow))
+CPU - AMD A12-9720P RADEON R7, 12 COMPUTE CORES 4C+8G
+GPU - Wani [Radeon R5/R6/R7 Graphics] (amdgpu)
+Network Interface card:
+01:00.1 Ethernet controller: Realtek Semiconductor Co., Ltd.
+RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller (rev 12)
 
--- 
-Michal Hocko
-SUSE Labs
+When I install kernel 4.18.x or 5.x, the network doesn't work anymore...
+I can loaded the modulo r8169 andr8168.
+I saw enp1s0f1 as well but there's no link at all!
+Even when I fixed the IP none link!
+I cannot ping the network gateway or any other IP inside LAN!
+Right now, I booted my laptop with kernel
+Linux version 5.2.2-050202-generic (kernel@kathleen) (gcc version
+9.1.0 (Ubuntu 9.1.0-9ubuntu2)) #201907231250 SMP Tue Jul 23 12:53:21
+UTC 2019
+
+The system boot slowly, and I have a SSD Samsung, which in kernel
+4.15, boot quickly.
+And there's many errors in dmesg command, like you can see in this pastbin
+
+https://paste.ubuntu.com/p/YhbjnzYYYh/
+
+The system get stuck for 5 seconds and then the X login screen appears!
+Also, I get this message:
+dmesg | grep stuck
+[   40.231513] watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [kworker/0:1:7]
+[   68.231511] watchdog: BUG: soft lockup - CPU#0 stuck for 21s! [kworker/0:1:7]
+[  104.231513] watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [kworker/0:0:5]
+[  176.239514] watchdog: BUG: soft lockup - CPU#3 stuck for 23s!
+[kworker/3:3:593]
+
+Which make the system freeze for a while and then return to normal!
+Oh! By the way, the network card r8169 are work wonderful!
+
+
+
+Thanks a lot.
+---
+Gilberto Nunes Ferreira
+
+(47) 3025-5907
+(47) 99676-7530 - Whatsapp / Telegram
+
+Skype: gilberto.nunes36
