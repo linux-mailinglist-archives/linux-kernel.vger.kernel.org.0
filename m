@@ -2,90 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEEEF7316C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32F3073174
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:18:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbfGXOR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 10:17:56 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45756 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbfGXORz (ORCPT
+        id S1728232AbfGXOST (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 10:18:19 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33127 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728184AbfGXOSS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 10:17:55 -0400
-Received: by mail-io1-f68.google.com with SMTP id g20so89896576ioc.12;
-        Wed, 24 Jul 2019 07:17:55 -0700 (PDT)
+        Wed, 24 Jul 2019 10:18:18 -0400
+Received: by mail-pf1-f195.google.com with SMTP id g2so21042183pfq.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 07:18:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pl9nO+hunkGocGh4P+3+7RACb7n3AOCHKdRk3PRyj78=;
-        b=d+XNfrK6cC2Wn6gvabfhUWgJIeVpcGO/Uu6+pC4RCQJKyw8+NBSwGR+cTC1MJoLo9U
-         4Bvz3/JgJ93WJZHfxWtpb2r4Os/qZFoXxSYw3p6B+r0VnCJ5SjW7ijFZh9F9rIxVWChe
-         1YId1MFsU/1UthPqnat5tRtc6PS+q3PhlR2GoZC8hu/oMgMA8+5rwLD9B9YLZHqe1zrk
-         KEZfQasCdQdlIbaNNOXHSkTc3gPNsVq5Kc1MDosgLPKRBrKNBcHAEUwZIHHh/7gkQNg1
-         Ap20T3173w8lr1Au0OGiB7k0bVRE+A91zvqCi0Pm3+tsgrshgEtOcxHtklEsIWDwxsaV
-         BSuQ==
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:cc:from:user-agent:date;
+        bh=i6ucO8M1kBwfk/WDeuCHxIoA+2DfAiPuMamyFSvxMIE=;
+        b=TND1gWT+zyPtTrknjApjowmDcsWxhTeFFGQQKuHPjwHM2p+eRGXgyM/jgeho5dZ5b/
+         bLE5zwWspO66n2PXUX4fU3WNEigbELc5ZOvRddO9zVh/AEf6mn610vnp/GjuLr8pjT3r
+         Tl8gh340iXQfZf7V6Z0eW5ED8IBh6e7w7hGeQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=pl9nO+hunkGocGh4P+3+7RACb7n3AOCHKdRk3PRyj78=;
-        b=G800u9F601nF9E/sFWTFyBNQPRqPKJR1kOkB2/a39ntPq7KiAOWg+Hxz5ylH03dyEB
-         BNoT9kh1SH7AVyZnWZi1jSICIurkbk1GaqjcXUzvTDoiSmsz1Pjkyq+uA5agCFTpiVga
-         VRlgtXzrXhou7y73IUSkd54rvxuNGjaC049PH4/BgWlDMRls6BS7uwV5M15YiBsgiosG
-         curpwgTrE18Ip4gsusMZnSZeFlYOG+ACcnMJf5O8TKYumepAEOxrpqXbNIM/bIjkQjWr
-         wpOu10ctBzncgFe/9VntB7iEUMWCGWu1tGshqcSteibdMzDnHcs2y54lyq5HDcYRdVmo
-         8Z2A==
-X-Gm-Message-State: APjAAAU/THL7FxR7XxUluyxNv8Fm5W1hwxydvl74sBoJQSDCBY5T3aMC
-        Gyxq8hi6EFlvapfEWp+ixLg=
-X-Google-Smtp-Source: APXvYqz9OF+x2WTGlu/HH4W5NyZIEwxfrCRlfhLTUcbrr1zQuVHHj1E9ruPCRHw4aSTh73+cpex+cg==
-X-Received: by 2002:a02:6016:: with SMTP id i22mr60556184jac.56.1563977874678;
-        Wed, 24 Jul 2019 07:17:54 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id p25sm37377171iol.48.2019.07.24.07.17.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jul 2019 07:17:53 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-To:     kvalo@codeaurora.org
-Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
-        secalert@redhat.com, Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Jakub Kicinski <kubakici@wp.pl>,
-        "David S. Miller" <davem@davemloft.net>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mt7601u: null check the allocation
-Date:   Wed, 24 Jul 2019 09:17:36 -0500
-Message-Id: <20190724141736.29994-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <87d0i00z4t.fsf@kamboji.qca.qualcomm.com>
-References: <87d0i00z4t.fsf@kamboji.qca.qualcomm.com>
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:cc:from
+         :user-agent:date;
+        bh=i6ucO8M1kBwfk/WDeuCHxIoA+2DfAiPuMamyFSvxMIE=;
+        b=DAnUb5z0gYoXuntmwaeYT8i09HJIsqNzWMAYV7F+9xlYfKRVHNR8pVqi2caC2ZBUPD
+         +kPePlR410q51387dKnSgWe5Q35AECYC92kJo8dmYWTzwVdfkv2HZ7jAz71ZHsvQEqdi
+         L/uFJU+z+T0IEidwgPt41cRyEAMFQ7Ma0EfSnO9DGZ0a39b4UYSbvVjqhASwQyPKKkTg
+         B7AeA02bI4C14pidzw9/AUHDB0+/lUGajQ/BK+7pwnJYvuf7fczxdkNWdgoGS+h5F8e7
+         i6EnWy12DiFWS1XuHnT4sm5FVL+t9EA1CtpO2ZgvX4u+b9mD/G3HwOYmPHZU9ka/gHim
+         UU4w==
+X-Gm-Message-State: APjAAAXx4A3QxNcQVMfTOi4x+jhAG1A+eJvbfYeNFNncQ84ocj5LOwVt
+        wsnKwGe7TV6A/2veN93QJA17Sg==
+X-Google-Smtp-Source: APXvYqwA2DaROWqS6dAgzLQRMlZAOqpPRUpDwwbWaRi5dnx4FVbkt5kHlJYwChON/qwoRaxOY5ouTQ==
+X-Received: by 2002:a17:90a:d151:: with SMTP id t17mr87008292pjw.60.1563977898088;
+        Wed, 24 Jul 2019 07:18:18 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id j20sm44352358pfr.113.2019.07.24.07.18.17
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 07:18:17 -0700 (PDT)
+Message-ID: <5d3868a9.1c69fb81.876aa.ac30@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <8c181f08-559b-5d77-a617-65cfd3d5da55@codeaurora.org>
+References: <1563568344-1274-1-git-send-email-daidavid1@codeaurora.org> <1563568344-1274-2-git-send-email-daidavid1@codeaurora.org> <5d371ce7.1c69fb81.9650.8239@mx.google.com> <8c181f08-559b-5d77-a617-65cfd3d5da55@codeaurora.org>
+Subject: Re: [PATCH 1/2] dt-bindings: interconnect: Update Qualcomm SDM845 DT bindings
+To:     David Dai <daidavid1@codeaurora.org>, bjorn.andersson@linaro.org,
+        georgi.djakov@linaro.org, robh+dt@kernel.org
+Cc:     evgreen@google.com, ilina@codeaurora.org, seansw@qti.qualcomm.com,
+        elder@linaro.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-pm@vger.kernel.org
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 24 Jul 2019 07:18:16 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devm_kzalloc may fail and return NULL. So the null check is needed.
+Quoting David Dai (2019-07-23 14:48:42)
+> On 7/23/2019 7:42 AM, Stephen Boyd wrote:
+> > Quoting David Dai (2019-07-19 13:32:23)
+> >> +- compatible : shall contain only one of the following:
+> >> +                       "qcom,sdm845-bcm-voter",
+> >> +
+> >> +Examples:
+> >> +
+> >> +apps_rsc: rsc@179c0000 {
+> > But there isn't a reg property.
+> I'll change this to the generic example with just apps_rsc: rsc {
+> >
+> >> +       label =3D "apps_rsc";
+> > Is label required?
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
- drivers/net/wireless/mediatek/mt7601u/init.c | 3 +++
- 1 file changed, 3 insertions(+)
+Any answer?
 
-diff --git a/drivers/net/wireless/mediatek/mt7601u/init.c b/drivers/net/wireless/mediatek/mt7601u/init.c
-index 9bfac9f1d47f..cada48800928 100644
---- a/drivers/net/wireless/mediatek/mt7601u/init.c
-+++ b/drivers/net/wireless/mediatek/mt7601u/init.c
-@@ -557,6 +557,9 @@ mt76_init_sband_2g(struct mt7601u_dev *dev)
- {
- 	dev->sband_2g = devm_kzalloc(dev->dev, sizeof(*dev->sband_2g),
- 				     GFP_KERNEL);
-+	if (!dev->sband_2g)
-+		return -ENOMEM;
-+
- 	dev->hw->wiphy->bands[NL80211_BAND_2GHZ] = dev->sband_2g;
- 
- 	WARN_ON(dev->ee->reg.start - 1 + dev->ee->reg.num >
--- 
-2.17.1
+> >
+> >> +       compatible =3D "qcom,rpmh-rsc";
+> >> +
+> >> +       apps_bcm_voter: bcm_voter {
+> >> +               compatible =3D "qcom,sdm845-bcm-voter";
+> >> +       };
+> >> +}
+> >> +
+> >> +disp_rsc: rsc@179d0000 {
+> >> +       label =3D "disp_rsc";
+> >> +       compatible =3D "qcom,rpmh-rsc";
+> >> +
+> >> +       disp_bcm_voter: bcm_voter {
+> >> +               compatible =3D "qcom,sdm845-bcm-voter";
+> >> +       };
+> >> +}
+> >> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,sdm84=
+5.txt b/Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
+> >> index 5c4f1d9..27f9ed9 100644
+> >> --- a/Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
+> >> +++ b/Documentation/devicetree/bindings/interconnect/qcom,sdm845.txt
+[...]
+> >> +
+> >> +mem_noc: interconnect@1380000 {
+> >> +       compatible =3D "qcom,sdm845-mem_noc";
+> >> +       reg =3D <0 0x1380000 0 0x27200>;
+> >> +       #interconnect-cells =3D <1>;
+> >> +       qcom,bcm-voter =3D <&apps_bcm_voter>, <&disp_bcm_voter>;
+> >> +};
+> > How does a consumer target a particular RSC? For example, how can
+> > display decide to use the disp_bcm_voter node from mem_noc here? Maybe
+> > you can add that consumer to the example?
+>=20
+> I was thinking that the association between the bcm voters and the icc=20
+> nodes would be handled by the interconnect provider, and that there=20
+> would be a set of display specific icc nodes with their own unique IDs=20
+> that the consumers could reference. I will mention this as part of the=20
+> description and provide an example.
+>=20
+> Ex: interconnects =3D <&mmss_noc MASTER_MDP0_DISP &mem_noc SLAVE_EBI_DISP=
+>;
+>=20
+
+It looks backwards to me. Don't the consumers want to consume a
+particular RSC, i.e. apps or display RSC, so they can choose where to
+put the bcm vote and then those RSCs want to find MMIO registers for
+mmss_noc or mem_noc that they have to write to tune something else like
+QoS? If the MMIO space is the provider then I'm lost how it can
+differentiate between the RSCs that may be targetting the particular
+NoC.=20
+
+Maybe I've just completely missed something and this is all decided
+already. If so, sorry, I'm just trying to understand.
 
