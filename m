@@ -2,176 +2,399 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A573F732D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 17:35:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D9D0732E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 17:36:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbfGXPe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 11:34:59 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:33098 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726846AbfGXPe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 11:34:59 -0400
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id A977B46866255EF82649;
-        Wed, 24 Jul 2019 16:34:56 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 24 Jul
- 2019 16:34:48 +0100
-Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Rob Landley <rob@landley.net>, <hpa@zytor.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>
-CC:     Mimi Zohar <zohar@linux.ibm.com>, <viro@zeniv.linux.org.uk>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bug-cpio@gnu.org>,
-        <zohar@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>,
-        <dmitry.kasatkin@huawei.com>, <takondra@cisco.com>,
-        <kamensky@cisco.com>, <arnd@arndb.de>, <james.w.mcmechan@gmail.com>
-References: <20190523121803.21638-1-roberto.sassu@huawei.com>
- <cf9d08ca-74c7-c945-5bf9-7c3495907d1e@huawei.com>
- <541e9ea1-024f-5c22-0b58-f8692e6c1eb1@landley.net>
- <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
- <1561909199.3985.33.camel@linux.ibm.com>
- <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
- <1561991485.4067.14.camel@linux.ibm.com>
- <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
-Message-ID: <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
-Date:   Wed, 24 Jul 2019 17:34:53 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S2387664AbfGXPgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 11:36:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41634 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387650AbfGXPgt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 11:36:49 -0400
+Received: from localhost (unknown [171.76.105.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB120206B8;
+        Wed, 24 Jul 2019 15:36:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563982607;
+        bh=MZb2cNvPcA5K9SW9yESKaG6eZC+fZ9IUKkJmqOZP3KU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=daTLFaHPRutwy1XFkLQatUkTqj+yk0WUWpwfjr3DSR5rzTbgHe5ZSddxliA2PSirn
+         tloJD70/csoA6N7HJMDSgwv9IqvCG5oL+URHlHrZ75FLL/TELHGBY/XyEv5TusrHrN
+         rU3YoaQ7qH2Z9nHUfcWnnLzIpKsJl4aeftpm/N3k=
+Date:   Wed, 24 Jul 2019 21:05:33 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: msm8998: Node ordering, address
+ cleanups
+Message-ID: <20190724153533.GP12733@vkoul-mobl.Dlink>
+References: <20190722165823.21539-1-jeffrey.l.hugo@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190722165823.21539-1-jeffrey.l.hugo@gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Is there anything I didn't address in this patch set, that is delaying
-the review? I would appreciate if you can give me a feedback, positive
-or negative.
+On 22-07-19, 09:58, Jeffrey Hugo wrote:
+> DT nodes should be ordered by address, then node name, and finally label.
+> The msm8998 dtsi does not follow this, so clean it up by reordering the
+> nodes.  While we are at it, extend the addresses to be fully 32-bits wide
+> so that ordering is easy to determine when adding new nodes.  Also, two
+> or so nodes had the wrong address value in their node name (did not match
+> the reg property), so fix those up as well.
+> 
+> Hopefully going forward, things can be maintained so that a cleanup like
+> this is not needed.
 
-Thanks a lot!
+lgtm, ideally I would have liked that we reg addresses fixed first and
+then sort the file (remember a patch should do one thing)
 
-Roberto
+But then any cleanup is better to do :) so:
 
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-On 7/15/2019 6:54 PM, Roberto Sassu wrote:
-> Rob, Peter, Arvind, did you have the chance to have a look at this
-> version of the patch set?
 > 
-> Thanks
+> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8998.dtsi | 254 +++++++++++++-------------
+>  1 file changed, 127 insertions(+), 127 deletions(-)
 > 
-> Roberto
-> 
-> 
-> On 7/1/2019 4:31 PM, Mimi Zohar wrote:
->> On Mon, 2019-07-01 at 16:42 +0300, Roberto Sassu wrote:
->>> On 6/30/2019 6:39 PM, Mimi Zohar wrote:
->>>> On Wed, 2019-06-26 at 10:15 +0200, Roberto Sassu wrote:
->>>>> On 6/3/2019 8:32 PM, Rob Landley wrote:
->>>>>> On 6/3/19 4:31 AM, Roberto Sassu wrote:
->>>>>>>> This patch set aims at solving the following use case: appraise 
->>>>>>>> files from
->>>>>>>> the initial ram disk. To do that, IMA checks the signature/hash 
->>>>>>>> from the
->>>>>>>> security.ima xattr. Unfortunately, this use case cannot be 
->>>>>>>> implemented
->>>>>>>> currently, as the CPIO format does not support xattrs.
->>>>>>>>
->>>>>>>> This proposal consists in including file metadata as additional 
->>>>>>>> files named
->>>>>>>> METADATA!!!, for each file added to the ram disk. The CPIO 
->>>>>>>> parser in the
->>>>>>>> kernel recognizes these special files from the file name, and 
->>>>>>>> calls the
->>>>>>>> appropriate parser to add metadata to the previously extracted 
->>>>>>>> file. It has
->>>>>>>> been proposed to use bit 17:16 of the file mode as a way to 
->>>>>>>> recognize files
->>>>>>>> with metadata, but both the kernel and the cpio tool declare the 
->>>>>>>> file mode
->>>>>>>> as unsigned short.
->>>>>>>
->>>>>>> Any opinion on this patch set?
->>>>>>>
->>>>>>> Thanks
->>>>>>>
->>>>>>> Roberto
->>>>>>
->>>>>> Sorry, I've had the window open since you posted it but haven't 
->>>>>> gotten around to
->>>>>> it. I'll try to build it later today.
->>>>>>
->>>>>> It does look interesting, and I have no objections to the basic 
->>>>>> approach. I
->>>>>> should be able to add support to toybox cpio over a weekend once 
->>>>>> I've got the
->>>>>> kernel doing it to test against.
->>>>>
->>>>> Ok.
->>>>>
->>>>> Let me give some instructions so that people can test this patch set.
->>>>>
->>>>> To add xattrs to the ram disk embedded in the kernel it is sufficient
->>>>> to set CONFIG_INITRAMFS_FILE_METADATA="xattr" and
->>>>> CONFIG_INITRAMFS_SOURCE="<file with xattr>" in the kernel 
->>>>> configuration.
->>>>>
->>>>> To add xattrs to the external ram disk, it is necessary to patch cpio:
->>>>>
->>>>> https://github.com/euleros/cpio/commit/531cabc88e9ecdc3231fad6e4856869baa9a91ef 
->>>>>
->>>>> (xattr-v1 branch)
->>>>>
->>>>> and dracut:
->>>>>
->>>>> https://github.com/euleros/dracut/commit/a2dee56ea80495c2c1871bc73186f7b00dc8bf3b 
->>>>>
->>>>> (digest-lists branch)
->>>>>
->>>>> The same modification can be done for mkinitramfs (add '-e xattr' 
->>>>> to the
->>>>> cpio command line).
->>>>>
->>>>> To simplify the test, it would be sufficient to replace only the cpio
->>>>> binary and the dracut script with the modified versions. For 
->>>>> dracut, the
->>>>> patch should be applied to the local dracut (after it has been renamed
->>>>> to dracut.sh).
->>>>>
->>>>> Then, run:
->>>>>
->>>>> dracut -e xattr -I <file with xattr> (add -f to overwrite the ram 
->>>>> disk)
->>>>>
->>>>> Xattrs can be seen by stopping the boot process for example by adding
->>>>> rd.break to the kernel command line.
->>>>
->>>> A simple way of testing, without needing any changes other than the
->>>> kernel patches, is to save the dracut temporary directory by supplying
->>>> "--keep" on the dracut command line, calling
->>>> usr/gen_initramfs_list.sh, followed by usr/gen_init_cpio with the "-e
->>>> xattr" option.
->>>
->>> Alternatively, follow the instructions to create the embedded ram disk
->>> with xattrs, and use the existing external ram disk created with dracut
->>> to check if xattrs are created.
->>
->> True, but this alternative is for those who normally use dracut to
->> create an initramfs, but don't want to update cpio or dracut.
->>
->> Mimi
->>
-> 
+> diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> index c13ed7aeb1e0..4b66a1c588f8 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> @@ -787,14 +787,22 @@
+>  		ranges = <0 0 0 0xffffffff>;
+>  		compatible = "simple-bus";
+>  
+> -		rpm_msg_ram: memory@68000 {
+> +		gcc: clock-controller@100000 {
+> +			compatible = "qcom,gcc-msm8998";
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +			reg = <0x00100000 0xb0000>;
+> +		};
+> +
+> +		rpm_msg_ram: memory@778000 {
+>  			compatible = "qcom,rpm-msg-ram";
+> -			reg = <0x778000 0x7000>;
+> +			reg = <0x00778000 0x7000>;
+>  		};
+>  
+>  		qfprom: qfprom@780000 {
+>  			compatible = "qcom,qfprom";
+> -			reg = <0x780000 0x621c>;
+> +			reg = <0x00780000 0x621c>;
+>  			#address-cells = <1>;
+>  			#size-cells = <1>;
+>  
+> @@ -804,47 +812,10 @@
+>  			};
+>  		};
+>  
+> -		gcc: clock-controller@100000 {
+> -			compatible = "qcom,gcc-msm8998";
+> -			#clock-cells = <1>;
+> -			#reset-cells = <1>;
+> -			#power-domain-cells = <1>;
+> -			reg = <0x100000 0xb0000>;
+> -		};
+> -
+> -		tlmm: pinctrl@3400000 {
+> -			compatible = "qcom,msm8998-pinctrl";
+> -			reg = <0x3400000 0xc00000>;
+> -			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+> -			gpio-controller;
+> -			#gpio-cells = <0x2>;
+> -			interrupt-controller;
+> -			#interrupt-cells = <0x2>;
+> -		};
+> -
+> -		spmi_bus: spmi@800f000 {
+> -			compatible = "qcom,spmi-pmic-arb";
+> -			reg =	<0x800f000 0x1000>,
+> -				<0x8400000 0x1000000>,
+> -				<0x9400000 0x1000000>,
+> -				<0xa400000 0x220000>,
+> -				<0x800a000 0x3000>;
+> -			reg-names = "core", "chnls", "obsrvr", "intr", "cnfg";
+> -			interrupt-names = "periph_irq";
+> -			interrupts = <GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>;
+> -			qcom,ee = <0>;
+> -			qcom,channel = <0>;
+> -			#address-cells = <2>;
+> -			#size-cells = <0>;
+> -			interrupt-controller;
+> -			#interrupt-cells = <4>;
+> -			cell-index = <0>;
+> -		};
+> -
+>  		tsens0: thermal@10ab000 {
+>  			compatible = "qcom,msm8998-tsens", "qcom,tsens-v2";
+> -			reg = <0x10ab000 0x1000>, /* TM */
+> -			      <0x10aa000 0x1000>; /* SROT */
+> +			reg = <0x010ab000 0x1000>, /* TM */
+> +			      <0x010aa000 0x1000>; /* SROT */
+>  
+>  			#qcom,sensors = <14>;
+>  			#thermal-sensor-cells = <1>;
+> @@ -852,8 +823,8 @@
+>  
+>  		tsens1: thermal@10ae000 {
+>  			compatible = "qcom,msm8998-tsens", "qcom,tsens-v2";
+> -			reg = <0x10ae000 0x1000>, /* TM */
+> -			      <0x10ad000 0x1000>; /* SROT */
+> +			reg = <0x010ae000 0x1000>, /* TM */
+> +			      <0x010ad000 0x1000>; /* SROT */
+>  
+>  			#qcom,sensors = <8>;
+>  			#thermal-sensor-cells = <1>;
+> @@ -943,16 +914,107 @@
+>  			};
+>  		};
+>  
+> +		ufshc: ufshc@1da4000 {
+> +			compatible = "qcom,msm8998-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
+> +			reg = <0x01da4000 0x2500>;
+> +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
+> +			phys = <&ufsphy_lanes>;
+> +			phy-names = "ufsphy";
+> +			lanes-per-direction = <2>;
+> +			power-domains = <&gcc UFS_GDSC>;
+> +			#reset-cells = <1>;
+> +
+> +			clock-names =
+> +				"core_clk",
+> +				"bus_aggr_clk",
+> +				"iface_clk",
+> +				"core_clk_unipro",
+> +				"ref_clk",
+> +				"tx_lane0_sync_clk",
+> +				"rx_lane0_sync_clk",
+> +				"rx_lane1_sync_clk";
+> +			clocks =
+> +				<&gcc GCC_UFS_AXI_CLK>,
+> +				<&gcc GCC_AGGRE1_UFS_AXI_CLK>,
+> +				<&gcc GCC_UFS_AHB_CLK>,
+> +				<&gcc GCC_UFS_UNIPRO_CORE_CLK>,
+> +				<&rpmcc RPM_SMD_LN_BB_CLK1>,
+> +				<&gcc GCC_UFS_TX_SYMBOL_0_CLK>,
+> +				<&gcc GCC_UFS_RX_SYMBOL_0_CLK>,
+> +				<&gcc GCC_UFS_RX_SYMBOL_1_CLK>;
+> +			freq-table-hz =
+> +				<50000000 200000000>,
+> +				<0 0>,
+> +				<0 0>,
+> +				<37500000 150000000>,
+> +				<0 0>,
+> +				<0 0>,
+> +				<0 0>,
+> +				<0 0>;
+> +
+> +			resets = <&gcc GCC_UFS_BCR>;
+> +			reset-names = "rst";
+> +		};
+> +
+> +		ufsphy: phy@1da7000 {
+> +			compatible = "qcom,msm8998-qmp-ufs-phy";
+> +			reg = <0x01da7000 0x18c>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+> +
+> +			clock-names =
+> +				"ref",
+> +				"ref_aux";
+> +			clocks =
+> +				<&gcc GCC_UFS_CLKREF_CLK>,
+> +				<&gcc GCC_UFS_PHY_AUX_CLK>;
+> +
+> +			reset-names = "ufsphy";
+> +			resets = <&ufshc 0>;
+> +
+> +			ufsphy_lanes: lanes@1da7400 {
+> +				reg = <0x01da7400 0x128>,
+> +				      <0x01da7600 0x1fc>,
+> +				      <0x01da7c00 0x1dc>,
+> +				      <0x01da7800 0x128>,
+> +				      <0x01da7a00 0x1fc>;
+> +				#phy-cells = <0>;
+> +			};
+> +		};
+> +
+>  		tcsr_mutex_regs: syscon@1f40000 {
+>  			compatible = "syscon";
+> -			reg = <0x1f40000 0x20000>;
+> +			reg = <0x01f40000 0x20000>;
+>  		};
+>  
+> -		apcs_glb: mailbox@9820000 {
+> -			compatible = "qcom,msm8998-apcs-hmss-global";
+> -			reg = <0x17911000 0x1000>;
+> +		tlmm: pinctrl@3400000 {
+> +			compatible = "qcom,msm8998-pinctrl";
+> +			reg = <0x03400000 0xc00000>;
+> +			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells = <0x2>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <0x2>;
+> +		};
+>  
+> -			#mbox-cells = <1>;
+> +		spmi_bus: spmi@800f000 {
+> +			compatible = "qcom,spmi-pmic-arb";
+> +			reg =	<0x0800f000 0x1000>,
+> +				<0x08400000 0x1000000>,
+> +				<0x09400000 0x1000000>,
+> +				<0x0a400000 0x220000>,
+> +				<0x0800a000 0x3000>;
+> +			reg-names = "core", "chnls", "obsrvr", "intr", "cnfg";
+> +			interrupt-names = "periph_irq";
+> +			interrupts = <GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>;
+> +			qcom,ee = <0>;
+> +			qcom,channel = <0>;
+> +			#address-cells = <2>;
+> +			#size-cells = <0>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <4>;
+> +			cell-index = <0>;
+>  		};
+>  
+>  		usb3: usb@a8f8800 {
+> @@ -1044,7 +1106,7 @@
+>  
+>  		sdhc2: sdhci@c0a4900 {
+>  			compatible = "qcom,sdhci-msm-v4";
+> -			reg = <0xc0a4900 0x314>, <0xc0a4000 0x800>;
+> +			reg = <0x0c0a4900 0x314>, <0x0c0a4000 0x800>;
+>  			reg-names = "hc_mem", "core_mem";
+>  
+>  			interrupts = <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
+> @@ -1149,6 +1211,16 @@
+>  			#size-cells = <0>;
+>  		};
+>  
+> +		blsp2_uart1: serial@c1b0000 {
+> +			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+> +			reg = <0x0c1b0000 0x1000>;
+> +			interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&gcc GCC_BLSP2_UART2_APPS_CLK>,
+> +				 <&gcc GCC_BLSP2_AHB_CLK>;
+> +			clock-names = "core", "iface";
+> +			status = "disabled";
+> +		};
+> +
+>  		blsp2_i2c0: i2c@c1b5000 {
+>  			compatible = "qcom,i2c-qup-v2.2.1";
+>  			reg = <0x0c1b5000 0x600>;
+> @@ -1239,14 +1311,11 @@
+>  			#size-cells = <0>;
+>  		};
+>  
+> -		blsp2_uart1: serial@c1b0000 {
+> -			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+> -			reg = <0xc1b0000 0x1000>;
+> -			interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
+> -			clocks = <&gcc GCC_BLSP2_UART2_APPS_CLK>,
+> -				 <&gcc GCC_BLSP2_AHB_CLK>;
+> -			clock-names = "core", "iface";
+> -			status = "disabled";
+> +		apcs_glb: mailbox@17911000 {
+> +			compatible = "qcom,msm8998-apcs-hmss-global";
+> +			reg = <0x17911000 0x1000>;
+> +
+> +			#mbox-cells = <1>;
+>  		};
+>  
+>  		timer@17920000 {
+> @@ -1320,75 +1389,6 @@
+>  			redistributor-stride = <0x0 0x20000>;
+>  			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+>  		};
+> -
+> -		ufshc: ufshc@1da4000 {
+> -			compatible = "qcom,msm8998-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
+> -			reg = <0x01da4000 0x2500>;
+> -			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
+> -			phys = <&ufsphy_lanes>;
+> -			phy-names = "ufsphy";
+> -			lanes-per-direction = <2>;
+> -			power-domains = <&gcc UFS_GDSC>;
+> -			#reset-cells = <1>;
+> -
+> -			clock-names =
+> -				"core_clk",
+> -				"bus_aggr_clk",
+> -				"iface_clk",
+> -				"core_clk_unipro",
+> -				"ref_clk",
+> -				"tx_lane0_sync_clk",
+> -				"rx_lane0_sync_clk",
+> -				"rx_lane1_sync_clk";
+> -			clocks =
+> -				<&gcc GCC_UFS_AXI_CLK>,
+> -				<&gcc GCC_AGGRE1_UFS_AXI_CLK>,
+> -				<&gcc GCC_UFS_AHB_CLK>,
+> -				<&gcc GCC_UFS_UNIPRO_CORE_CLK>,
+> -				<&rpmcc RPM_SMD_LN_BB_CLK1>,
+> -				<&gcc GCC_UFS_TX_SYMBOL_0_CLK>,
+> -				<&gcc GCC_UFS_RX_SYMBOL_0_CLK>,
+> -				<&gcc GCC_UFS_RX_SYMBOL_1_CLK>;
+> -			freq-table-hz =
+> -				<50000000 200000000>,
+> -				<0 0>,
+> -				<0 0>,
+> -				<37500000 150000000>,
+> -				<0 0>,
+> -				<0 0>,
+> -				<0 0>,
+> -				<0 0>;
+> -
+> -			resets = <&gcc GCC_UFS_BCR>;
+> -			reset-names = "rst";
+> -		};
+> -
+> -		ufsphy: phy@1da7000 {
+> -			compatible = "qcom,msm8998-qmp-ufs-phy";
+> -			reg = <0x01da7000 0x18c>;
+> -			#address-cells = <1>;
+> -			#size-cells = <1>;
+> -			ranges;
+> -
+> -			clock-names =
+> -				"ref",
+> -				"ref_aux";
+> -			clocks =
+> -				<&gcc GCC_UFS_CLKREF_CLK>,
+> -				<&gcc GCC_UFS_PHY_AUX_CLK>;
+> -
+> -			reset-names = "ufsphy";
+> -			resets = <&ufshc 0>;
+> -
+> -			ufsphy_lanes: lanes@1da7400 {
+> -				reg = <0x01da7400 0x128>,
+> -				      <0x01da7600 0x1fc>,
+> -				      <0x01da7c00 0x1dc>,
+> -				      <0x01da7800 0x128>,
+> -				      <0x01da7a00 0x1fc>;
+> -				#phy-cells = <0>;
+> -			};
+> -		};
+>  	};
+>  };
+>  
+> -- 
+> 2.17.1
 
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
+~Vinod
