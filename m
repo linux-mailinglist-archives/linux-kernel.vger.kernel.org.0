@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56EB0739CE
+	by mail.lfdr.de (Postfix) with ESMTP id C0A1F739CF
 	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:44:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390718AbfGXTn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:43:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46414 "EHLO mail.kernel.org"
+        id S2390313AbfGXTn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:43:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390064AbfGXTnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:43:52 -0400
+        id S2388211AbfGXTnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:43:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C5F722ADA;
-        Wed, 24 Jul 2019 19:43:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F42F21873;
+        Wed, 24 Jul 2019 19:43:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997431;
-        bh=bJaK2y8fDj1FTi8KvmgjRlVEATUN3kZOzc1QfZTsTQ4=;
+        s=default; t=1563997434;
+        bh=FoaA1YC+rRTjrO05a9bfwU/h/RW7sujYxE3/nZVSiGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2S+XfE8OirsSrSZ3Ayw/CTlM6f9gzl0r0zlb9b679SyheKy6uJlaeL/Pq0UVdpYk5
-         hGZCbhxlVxGf0dh+t+pJH28A7R9ydrruqvMv4EVLoCX5ADx5y0U5W8dkeG8Be574fz
-         /HjpZE7rx1XUKndaZWYyEDgGV48QzvRdCiC23Zb4=
+        b=gCm72RxDyg5EWNHu7pn7J+14uVVnlopyTOFF6Ib8w2a4T912FiWoEDPKpgx9TrVQw
+         SBjgmVN7CNsvXEmfXbyA6owE65+hFW3Nvg6Q7SxTxVLOMuDcBe7zoPKXzDq+galOjP
+         SX0qAGpFJNCmCrd8vgLpHcddr5ujD+p4yyigv1ug=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        syzbot+d454a826e670502484b8@syzkaller.appspotmail.com,
+        Jeremy Sowden <jeremy@azazel.net>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 021/371] regmap: debugfs: Fix memory leak in regmap_debugfs_init
-Date:   Wed, 24 Jul 2019 21:16:13 +0200
-Message-Id: <20190724191726.094079567@linuxfoundation.org>
+Subject: [PATCH 5.1 022/371] batman-adv: fix for leaked TVLV handler.
+Date:   Wed, 24 Jul 2019 21:16:14 +0200
+Message-Id: <20190724191726.164673947@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -45,53 +47,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2899872b627e99b7586fe3b6c9f861da1b4d5072 ]
+[ Upstream commit 17f78dd1bd624a4dd78ed5db3284a63ee807fcc3 ]
 
-As detected by kmemleak running on i.MX6ULL board:
+A handler for BATADV_TVLV_ROAM was being registered when the
+translation-table was initialized, but not unregistered when the
+translation-table was freed.  Unregister it.
 
-nreferenced object 0xd8366600 (size 64):
-  comm "swapper/0", pid 1, jiffies 4294937370 (age 933.220s)
-  hex dump (first 32 bytes):
-    64 75 6d 6d 79 2d 69 6f 6d 75 78 63 2d 67 70 72  dummy-iomuxc-gpr
-    40 32 30 65 34 30 30 30 00 e3 f3 ab fe d1 1b dd  @20e4000........
-  backtrace:
-    [<b0402aec>] kasprintf+0x2c/0x54
-    [<a6fbad2c>] regmap_debugfs_init+0x7c/0x31c
-    [<9c8d91fa>] __regmap_init+0xb5c/0xcf4
-    [<5b1c3d2a>] of_syscon_register+0x164/0x2c4
-    [<596a5d80>] syscon_node_to_regmap+0x64/0x90
-    [<49bd597b>] imx6ul_init_machine+0x34/0xa0
-    [<250a4dac>] customize_machine+0x1c/0x30
-    [<2d19fdaf>] do_one_initcall+0x7c/0x398
-    [<e6084469>] kernel_init_freeable+0x328/0x448
-    [<168c9101>] kernel_init+0x8/0x114
-    [<913268aa>] ret_from_fork+0x14/0x20
-    [<ce7b131a>] 0x0
-
-Root cause is that map->debugfs_name is allocated using kasprintf
-and then the pointer is lost by assigning it other memory address.
-
-Reported-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 122edaa05940 ("batman-adv: tvlv - convert roaming adv packet to use tvlv unicast packets")
+Reported-by: syzbot+d454a826e670502484b8@syzkaller.appspotmail.com
+Signed-off-by: Jeremy Sowden <jeremy@azazel.net>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/regmap/regmap-debugfs.c | 2 ++
+ net/batman-adv/translation-table.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
-index 19eb454f26c3..df2893d4626b 100644
---- a/drivers/base/regmap/regmap-debugfs.c
-+++ b/drivers/base/regmap/regmap-debugfs.c
-@@ -565,6 +565,8 @@ void regmap_debugfs_init(struct regmap *map, const char *name)
- 	}
- 
- 	if (!strcmp(name, "dummy")) {
-+		kfree(map->debugfs_name);
+diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
+index 26c4e2493ddf..abad64eb7dc4 100644
+--- a/net/batman-adv/translation-table.c
++++ b/net/batman-adv/translation-table.c
+@@ -3826,6 +3826,8 @@ static void batadv_tt_purge(struct work_struct *work)
+  */
+ void batadv_tt_free(struct batadv_priv *bat_priv)
+ {
++	batadv_tvlv_handler_unregister(bat_priv, BATADV_TVLV_ROAM, 1);
 +
- 		map->debugfs_name = kasprintf(GFP_KERNEL, "dummy%d",
- 						dummy_index);
- 		name = map->debugfs_name;
+ 	batadv_tvlv_container_unregister(bat_priv, BATADV_TVLV_TT, 1);
+ 	batadv_tvlv_handler_unregister(bat_priv, BATADV_TVLV_TT, 1);
+ 
 -- 
 2.20.1
 
