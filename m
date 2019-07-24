@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13C8373896
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:31:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44EB973899
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:31:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729238AbfGXTbH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:31:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51610 "EHLO mail.kernel.org"
+        id S2388446AbfGXTbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:31:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729004AbfGXTbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:31:04 -0400
+        id S2387625AbfGXTbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:31:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 585882238C;
-        Wed, 24 Jul 2019 19:31:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BC0322ADC;
+        Wed, 24 Jul 2019 19:31:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996663;
-        bh=cosIYsLoDbojTikTTllFASYBvS4Q4wiXY0nvkkX8xGk=;
+        s=default; t=1563996669;
+        bh=pSoYODkGw1XNJJXndGg8c6zsQxwYstfcpwBikoEnivA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MT1x5qNM1O5c1xbEOIwW3cHT72DSBmV7PTuuptR5pM3jcLzXH6HYn8WL97lZUp6Ld
-         HfdTEAM/k8k1BW/22sTAmKnRA2xB/Oulut7akD2WU9usKjEEMX+yIhaxAx+IEJ8Rqb
-         sa4RXi5YIGxB7jk3bizICDUoQkbfaOY0mzy8oYF0=
+        b=ks06ZPJs5kzjXul4y5FKo8wBMINd+JBiC4eJvczTsY0H28rqxH5xltMeFcohjjkDa
+         NUTMQkNtKfTfs+Lu/mre4ErALSwsMiyDwgQqSQjScWoyha/IeBYsoCcwD7BrRV72RD
+         QOLokCwprXvLJj0kJPUQuD5e/K8S4zwG9sOhLRv4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Jian Shen <shenjian15@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 175/413] rslib: Fix handling of of caller provided syndrome
-Date:   Wed, 24 Jul 2019 21:17:46 +0200
-Message-Id: <20190724191747.423104356@linuxfoundation.org>
+Subject: [PATCH 5.2 177/413] net: hns3: restore the MAC autoneg state after reset
+Date:   Wed, 24 Jul 2019 21:17:48 +0200
+Message-Id: <20190724191747.544403271@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -45,44 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ef4d6a8556b637ad27c8c2a2cff1dda3da38e9a9 ]
+[ Upstream commit d736fc6c68a5f76e89a6c2c4100e3678706003a3 ]
 
-Check if the syndrome provided by the caller is zero, and act
-accordingly.
+When doing global reset, the MAC autoneg state of fibre
+port is set to default, which may cause user configuration
+lost. This patch fixes it by restore the MAC autoneg state
+after reset.
 
-Signed-off-by: Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190620141039.9874-6-ferdinand.blomqvist@gmail.com
+Fixes: 22f48e24a23d ("net: hns3: add autoneg and change speed support for fibre port")
+Signed-off-by: Jian Shen <shenjian15@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/reed_solomon/decode_rs.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/lib/reed_solomon/decode_rs.c b/lib/reed_solomon/decode_rs.c
-index 3313bf944ff1..121beb2f0930 100644
---- a/lib/reed_solomon/decode_rs.c
-+++ b/lib/reed_solomon/decode_rs.c
-@@ -42,8 +42,18 @@
- 	BUG_ON(pad < 0 || pad >= nn);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 4d9bcad26f06..645b9b3e0256 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -2389,6 +2389,15 @@ static int hclge_mac_init(struct hclge_dev *hdev)
+ 		return ret;
+ 	}
  
- 	/* Does the caller provide the syndrome ? */
--	if (s != NULL)
--		goto decode;
-+	if (s != NULL) {
-+		for (i = 0; i < nroots; i++) {
-+			/* The syndrome is in index form,
-+			 * so nn represents zero
-+			 */
-+			if (s[i] != nn)
-+				goto decode;
++	if (hdev->hw.mac.support_autoneg) {
++		ret = hclge_set_autoneg_en(hdev, hdev->hw.mac.autoneg);
++		if (ret) {
++			dev_err(&hdev->pdev->dev,
++				"Config mac autoneg fail ret=%d\n", ret);
++			return ret;
 +		}
-+
-+		/* syndrome is zero, no errors to correct  */
-+		return 0;
 +	}
++
+ 	mac->link = 0;
  
- 	/* form the syndromes; i.e., evaluate data(x) at roots of
- 	 * g(x) */
+ 	if (mac->user_fec_mode & BIT(HNAE3_FEC_USER_DEF)) {
 -- 
 2.20.1
 
