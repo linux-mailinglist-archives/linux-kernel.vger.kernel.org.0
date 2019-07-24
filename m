@@ -2,131 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53B4C72EDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 14:29:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B03972ECA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 14:23:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728342AbfGXM3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 08:29:41 -0400
-Received: from mx2.freebsd.org ([96.47.72.81]:60519 "EHLO mx2.freebsd.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726763AbfGXM3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 08:29:38 -0400
-X-Greylist: delayed 354 seconds by postgrey-1.27 at vger.kernel.org; Wed, 24 Jul 2019 08:29:36 EDT
-Received: from mx1.freebsd.org (mx1.freebsd.org [IPv6:2610:1c1:1:606c::19:1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client CN "mx1.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
-        by mx2.freebsd.org (Postfix) with ESMTPS id 58B996BAB9;
-        Wed, 24 Jul 2019 12:23:44 +0000 (UTC)
-        (envelope-from manu@freebsd.org)
-Received: from smtp.freebsd.org (smtp.freebsd.org [96.47.72.83])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         server-signature RSA-PSS (4096 bits)
-         client-signature RSA-PSS (4096 bits) client-digest SHA256)
-        (Client CN "smtp.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
-        by mx1.freebsd.org (Postfix) with ESMTPS id AED8D77C79;
-        Wed, 24 Jul 2019 12:23:43 +0000 (UTC)
-        (envelope-from manu@freebsd.org)
-Received: from localhost.localdomain (ip-9.net-89-3-105.rev.numericable.fr [89.3.105.9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: manu)
-        by smtp.freebsd.org (Postfix) with ESMTPSA id 9E65A2BB04;
-        Wed, 24 Jul 2019 12:23:42 +0000 (UTC)
-        (envelope-from manu@freebsd.org)
-From:   Emmanuel Vadot <manu@freebsd.org>
-To:     bcousson@baylibre.com, tony@atomide.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-omap@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Emmanuel Vadot <manu@freebsd.org>
-Subject: [PATCH 1/1] ARM: dts: am335x: Fix UARTs length
-Date:   Wed, 24 Jul 2019 14:23:29 +0200
-Message-Id: <20190724122329.21231-2-manu@freebsd.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190724122329.21231-1-manu@freebsd.org>
-References: <20190724122329.21231-1-manu@freebsd.org>
+        id S1728325AbfGXMXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 08:23:36 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45986 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727512AbfGXMXg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 08:23:36 -0400
+Received: by mail-pl1-f194.google.com with SMTP id y8so21958584plr.12;
+        Wed, 24 Jul 2019 05:23:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=48E6HSc2L70hlQLRSBeIv+/Db8vjv1Bu/UW8jXrS+U4=;
+        b=M2NrydxgGzbdA1NpgU+GmccIx2rtAZfaW5/PTnf6k4bFLoXu9E6I7yzi8mDNk7O2+L
+         NmE/PlITHEZ/LHV02kSI3E5R8WLqFrgtxKH6q6R9/hyZREojXXk+aAn60WRGIqqFhI1j
+         pwWNiCgWU3ht7GvK+rRF24/3xfoqrE1rW7GTjXblwVTgpGMAtkcqld/pPmuimVrHGIKa
+         5QIIcE5/HvD/kaNTrVn5U5QjlmRC84llpXAu00Kdh52KQB63o5h7Mr06+KSNXYVIdG+T
+         w6wf+rE0xqAOzfZT4ndWwXasR0xMDg987TxzhBaIBAl9QPLKhtqHgCY71HaWYC53glS4
+         Xm8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=48E6HSc2L70hlQLRSBeIv+/Db8vjv1Bu/UW8jXrS+U4=;
+        b=qDonSdslwfWiMfHqG4E6U3FdvMs97LinETLZh1TVHnwxoUeOMbrZemeHoq21lnK+s8
+         jY84xeyNt3R10RT68f9MkJUZ4ojab7D0yBzqNEtJAcA5BjlCWtXJN/P55cW5Ev8+lW57
+         d6ZgL8bd1KGqOu4k4p9nchKTqi5Hob3C7ihOkPM8xLvUqX1WOkmdXg9PLpjnsYBQMciF
+         jdK9m98VZzEwG+wRmxOoG9kPgJgIoYkIdkp3Rkg9htXt5sJQGp4n+2htArABFpYy3wyR
+         u91mefqesXBQp/y1eptZplDk1Dh3GQfVekVo3WziqblO7KNAQv7qb0PDb47CTNh4G63Y
+         gCSQ==
+X-Gm-Message-State: APjAAAUyKoByatY/WTDRv75o1CpFbUbcTF7sj+TII91l000j6e3HD0jz
+        VTQ93+22l/0aR54/ZP8WhP4=
+X-Google-Smtp-Source: APXvYqyV++dF7Y2xCtTuo3l0EnNtBGcrJdWUNyN9cvS5LLSYn0cSjpYTw/jbSWSTUYf/WN5oZxKypg==
+X-Received: by 2002:a17:902:9a85:: with SMTP id w5mr85693188plp.221.1563971015577;
+        Wed, 24 Jul 2019 05:23:35 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
+        by smtp.gmail.com with ESMTPSA id x9sm55087298pfn.177.2019.07.24.05.23.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 05:23:35 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH] spi: dw-pci: Use dev_get_drvdata
+Date:   Wed, 24 Jul 2019 20:23:31 +0800
+Message-Id: <20190724122331.21856-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: AED8D77C79
-X-Spamd-Bar: --
-Authentication-Results: mx1.freebsd.org
-X-Spamd-Result: default: False [-2.94 / 15.00];
-         TAGGED_RCPT(0.00)[dt];
-         local_wl_from(0.00)[freebsd.org];
-         NEURAL_HAM_SHORT(-0.94)[-0.940,0];
-         NEURAL_HAM_MEDIUM(-1.00)[-1.000,0];
-         ASN(0.00)[asn:11403, ipnet:96.47.64.0/20, country:US];
-         NEURAL_HAM_LONG(-1.00)[-1.000,0]
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As seen on the AM335x TRM all the UARTs controller only are 0x1000 in size.
-Fix this in the DTS.
+Instead of using to_pci_dev + pci_get_drvdata,
+use dev_get_drvdata to make code simpler.
 
-Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 ---
- arch/arm/boot/dts/am33xx-l4.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/spi/spi-dw-pci.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/am33xx-l4.dtsi b/arch/arm/boot/dts/am33xx-l4.dtsi
-index ced1a19d5f89..a20b04b72be4 100644
---- a/arch/arm/boot/dts/am33xx-l4.dtsi
-+++ b/arch/arm/boot/dts/am33xx-l4.dtsi
-@@ -185,7 +185,7 @@
- 			uart0: serial@0 {
- 				compatible = "ti,am3352-uart", "ti,omap3-uart";
- 				clock-frequency = <48000000>;
--				reg = <0x0 0x2000>;
-+				reg = <0x0 0x1000>;
- 				interrupts = <72>;
- 				status = "disabled";
- 				dmas = <&edma 26 0>, <&edma 27 0>;
-@@ -934,7 +934,7 @@
- 			uart1: serial@0 {
- 				compatible = "ti,am3352-uart", "ti,omap3-uart";
- 				clock-frequency = <48000000>;
--				reg = <0x0 0x2000>;
-+				reg = <0x0 0x1000>;
- 				interrupts = <73>;
- 				status = "disabled";
- 				dmas = <&edma 28 0>, <&edma 29 0>;
-@@ -966,7 +966,7 @@
- 			uart2: serial@0 {
- 				compatible = "ti,am3352-uart", "ti,omap3-uart";
- 				clock-frequency = <48000000>;
--				reg = <0x0 0x2000>;
-+				reg = <0x0 0x1000>;
- 				interrupts = <74>;
- 				status = "disabled";
- 				dmas = <&edma 30 0>, <&edma 31 0>;
-@@ -1614,7 +1614,7 @@
- 			uart3: serial@0 {
- 				compatible = "ti,am3352-uart", "ti,omap3-uart";
- 				clock-frequency = <48000000>;
--				reg = <0x0 0x2000>;
-+				reg = <0x0 0x1000>;
- 				interrupts = <44>;
- 				status = "disabled";
- 			};
-@@ -1644,7 +1644,7 @@
- 			uart4: serial@0 {
- 				compatible = "ti,am3352-uart", "ti,omap3-uart";
- 				clock-frequency = <48000000>;
--				reg = <0x0 0x2000>;
-+				reg = <0x0 0x1000>;
- 				interrupts = <45>;
- 				status = "disabled";
- 			};
-@@ -1674,7 +1674,7 @@
- 			uart5: serial@0 {
- 				compatible = "ti,am3352-uart", "ti,omap3-uart";
- 				clock-frequency = <48000000>;
--				reg = <0x0 0x2000>;
-+				reg = <0x0 0x1000>;
- 				interrupts = <46>;
- 				status = "disabled";
- 			};
+diff --git a/drivers/spi/spi-dw-pci.c b/drivers/spi/spi-dw-pci.c
+index 9651679ee7f7..c1e2401cace0 100644
+--- a/drivers/spi/spi-dw-pci.c
++++ b/drivers/spi/spi-dw-pci.c
+@@ -98,16 +98,14 @@ static void spi_pci_remove(struct pci_dev *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int spi_suspend(struct device *dev)
+ {
+-	struct pci_dev *pdev = to_pci_dev(dev);
+-	struct dw_spi *dws = pci_get_drvdata(pdev);
++	struct dw_spi *dws = dev_get_drvdata(dev);
+ 
+ 	return dw_spi_suspend_host(dws);
+ }
+ 
+ static int spi_resume(struct device *dev)
+ {
+-	struct pci_dev *pdev = to_pci_dev(dev);
+-	struct dw_spi *dws = pci_get_drvdata(pdev);
++	struct dw_spi *dws = dev_get_drvdata(dev);
+ 
+ 	return dw_spi_resume_host(dws);
+ }
 -- 
-2.22.0
+2.20.1
 
