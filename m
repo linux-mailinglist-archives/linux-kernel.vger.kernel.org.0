@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C867A7468E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:53:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 536ED74698
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:53:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403979AbfGYFjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:39:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53210 "EHLO mail.kernel.org"
+        id S1728901AbfGYFxU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:53:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390711AbfGYFjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:39:04 -0400
+        id S2404088AbfGYFjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 01:39:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D7CA22BEB;
-        Thu, 25 Jul 2019 05:39:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9B3A22BF5;
+        Thu, 25 Jul 2019 05:39:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564033143;
-        bh=w4us00/9sn9R8EktR5DtQjHif2aVMiSmqh/+yBf/PJM=;
+        s=default; t=1564033171;
+        bh=IJzPv0efnX/GIfBHuWqn6Dq8wDNwf2eZFUyHWJ0XkP4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b029vZod3uhea48W3YnVmeW9DpaUXry3ImwzceEgHVeWRr+C+Y4VMNMLEB7PM8qSp
-         Ot3A/KmuzUcdSCN31QDzuv12Y1EBzl/gv+sFU+d8YWE7kJFVh4yieYjaXy28R3eJTD
-         Wz0biX+raRHEElmjtvE7p501HgeWha97Oe65DzBg=
+        b=q+teFw2IWBXjjAJR3qA7XuAaZb6QrS4LLSHiWrM3BkW5b2WClDMtT7scCSAeBg8Dh
+         gPureYb7wlLtnl3vQjRmXBzXT8p6N7poCJME3XXRNh3mKdSeQioaV1c1bkgYz5oYAn
+         Jhcmw16EAMrPcydnLhX4Flie5ETnYJOiR0ThbXEk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 107/271] x86/build: Add set -e to mkcapflags.sh to delete broken capflags.c
-Date:   Wed, 24 Jul 2019 21:19:36 +0200
-Message-Id: <20190724191704.370118560@linuxfoundation.org>
+Subject: [PATCH 4.19 115/271] clocksource/drivers/exynos_mct: Increase priority over ARM arch timer
+Date:   Wed, 24 Jul 2019 21:19:44 +0200
+Message-Id: <20190724191705.092643901@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191655.268628197@linuxfoundation.org>
 References: <20190724191655.268628197@linuxfoundation.org>
@@ -46,50 +47,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit bc53d3d777f81385c1bb08b07bd1c06450ecc2c1 ]
+[ Upstream commit 6282edb72bed5324352522d732080d4c1b9dfed6 ]
 
-Without 'set -e', shell scripts continue running even after any
-error occurs. The missed 'set -e' is a typical bug in shell scripting.
+Exynos SoCs based on CA7/CA15 have 2 timer interfaces: custom Exynos MCT
+(Multi Core Timer) and standard ARM Architected Timers.
 
-For example, when a disk space shortage occurs while this script is
-running, it actually ends up with generating a truncated capflags.c.
+There are use cases, where both timer interfaces are used simultanously.
+One of such examples is using Exynos MCT for the main system timer and
+ARM Architected Timers for the KVM and virtualized guests (KVM requires
+arch timers).
 
-Yet, mkcapflags.sh continues running and exits with 0. So, the build
-system assumes it has succeeded.
+Exynos Multi-Core Timer driver (exynos_mct) must be however started
+before ARM Architected Timers (arch_timer), because they both share some
+common hardware blocks (global system counter) and turning on MCT is
+needed to get ARM Architected Timer working properly.
 
-It will not be re-generated in the next invocation of Make since its
-timestamp is newer than that of any of the source files.
+To ensure selecting Exynos MCT as the main system timer, increase MCT
+timer rating. To ensure proper starting order of both timers during
+suspend/resume cycle, increase MCT hotplug priority over ARM Archictected
+Timers.
 
-Add 'set -e' so that any error in this script is caught and propagated
-to the build system.
-
-Since 9c2af1c7377a ("kbuild: add .DELETE_ON_ERROR special target"),
-make automatically deletes the target on any failure. So, the broken
-capflags.c will be deleted automatically.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Link: https://lkml.kernel.org/r/20190625072622.17679-1-yamada.masahiro@socionext.com
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/mkcapflags.sh | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clocksource/exynos_mct.c | 4 ++--
+ include/linux/cpuhotplug.h       | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/mkcapflags.sh b/arch/x86/kernel/cpu/mkcapflags.sh
-index d0dfb892c72f..aed45b8895d5 100644
---- a/arch/x86/kernel/cpu/mkcapflags.sh
-+++ b/arch/x86/kernel/cpu/mkcapflags.sh
-@@ -4,6 +4,8 @@
- # Generate the x86_cap/bug_flags[] arrays from include/asm/cpufeatures.h
- #
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index d55c30f6981d..aaf5bfa9bd9c 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -211,7 +211,7 @@ static void exynos4_frc_resume(struct clocksource *cs)
  
-+set -e
-+
- IN=$1
- OUT=$2
+ static struct clocksource mct_frc = {
+ 	.name		= "mct-frc",
+-	.rating		= 400,
++	.rating		= 450,	/* use value higher than ARM arch timer */
+ 	.read		= exynos4_frc_read,
+ 	.mask		= CLOCKSOURCE_MASK(32),
+ 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
+@@ -466,7 +466,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
+ 	evt->set_state_oneshot_stopped = set_state_shutdown;
+ 	evt->tick_resume = set_state_shutdown;
+ 	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
+-	evt->rating = 450;
++	evt->rating = 500;	/* use value higher than ARM arch timer */
  
+ 	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
+ 
+diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+index dec0372efe2e..d67c0035165c 100644
+--- a/include/linux/cpuhotplug.h
++++ b/include/linux/cpuhotplug.h
+@@ -116,10 +116,10 @@ enum cpuhp_state {
+ 	CPUHP_AP_PERF_ARM_ACPI_STARTING,
+ 	CPUHP_AP_PERF_ARM_STARTING,
+ 	CPUHP_AP_ARM_L2X0_STARTING,
++	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+ 	CPUHP_AP_ARM_ARCH_TIMER_STARTING,
+ 	CPUHP_AP_ARM_GLOBAL_TIMER_STARTING,
+ 	CPUHP_AP_JCORE_TIMER_STARTING,
+-	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+ 	CPUHP_AP_ARM_TWD_STARTING,
+ 	CPUHP_AP_QCOM_TIMER_STARTING,
+ 	CPUHP_AP_ARMADA_TIMER_STARTING,
 -- 
 2.20.1
 
