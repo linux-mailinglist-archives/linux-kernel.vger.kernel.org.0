@@ -2,50 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89838741A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 00:47:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57A44741B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 00:50:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387949AbfGXWrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 18:47:41 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:53134 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727498AbfGXWrk (ORCPT
+        id S1729582AbfGXWt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 18:49:59 -0400
+Received: from mail-ua1-f74.google.com ([209.85.222.74]:54946 "EHLO
+        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbfGXWt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 18:47:40 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 218E11543C8D7;
-        Wed, 24 Jul 2019 15:47:40 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 15:47:39 -0700 (PDT)
-Message-Id: <20190724.154739.72147269285837223.davem@davemloft.net>
-To:     wsa+renesas@sang-engineering.com
-Cc:     linux-i2c@vger.kernel.org, linux-net-drivers@solarflare.com,
-        ecree@solarflare.com, mhabets@solarflare.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: sfc: falcon: convert to i2c_new_dummy_device
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190722172635.4535-1-wsa+renesas@sang-engineering.com>
-References: <20190722172635.4535-1-wsa+renesas@sang-engineering.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
+        Wed, 24 Jul 2019 18:49:59 -0400
+Received: by mail-ua1-f74.google.com with SMTP id c21so4949894uao.21
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 15:49:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=Fw1C3R9hSasyzIXJTKVtbRAdTF9SVma4v9C5XlFKOn4=;
+        b=b2bsae63RuASUzg2AQusA3JyqxrpIjYnaeOjpr3pxHZPbr+hIn03dVK+6QWaRBfHPK
+         W+oUJIyIc8N3a4ISX2sh+mTCuq2YEWdIy6iT7M8mmbY17kLJMfJiJPx1rZZeaXuViFj6
+         ovilSncNgM5GrruY+Ayb9kScp2iCfPTpfKA4rCtdMdF/ugGF4uspobrE4XjE5CnTUGGg
+         Cp+60mvb2FwRpq6Uno0154Lj/Og4+YhFxiWQQvEameLfEFfnQQGHQ5HIvCQKHfK9Ewsp
+         SDFxsmszwGkP0AMHpLt8a2irpgcPVP6vjGTjDsERmsAlg+ip/7vTMIg0L+qC7BmRMeWN
+         XP5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=Fw1C3R9hSasyzIXJTKVtbRAdTF9SVma4v9C5XlFKOn4=;
+        b=UrsI1Go9iDFeqDVh9pcWFGMM84Yaj96Z8IDnzoo6P3+ngkQNW8EHfl4m3s8gAX+fW8
+         YXcWkWBSUdxo5+C8IpMIEqrrIBuafNP9bB3rrBmPzFqPNU9nVszZEpX7+dutYQpoRQOD
+         6J4V8l8f2ccAL8jgj/MeQGkLJbV52BVUmNvEuX/pKULNDFfe++/PNM+z/LuSoAmlh6ty
+         Nc0d4G+O+ajiCVzRODU9FbpPqyqQrq2mWGgRBlqtKpr2uKdBvae5CJ/YiYyqGfKKwJvu
+         bOjJkd50zoF9EpGobBVhCWykw8PVMB2OGDfaH5h1C7J3B7q5kZXCaJx8HoxZu8fDGFjt
+         kRMA==
+X-Gm-Message-State: APjAAAXgTjR9jhMCkIEhLVAkbBtngp8UDgZ+sPjpOT9mCkSJGvHUT8F2
+        BGShk5Nn16Ou3rlpD/KisgKXzVmT
+X-Google-Smtp-Source: APXvYqwZs2/0SU0N2Sm/CL0l7fjZm5niEN3hNW3PGTYwbQ1S2LcXZV96g8k74zDIWTQFR7c1gTBZv2EY
+X-Received: by 2002:a1f:7383:: with SMTP id o125mr34463923vkc.6.1564008597898;
+ Wed, 24 Jul 2019 15:49:57 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 15:49:52 -0700
+Message-Id: <20190724224954.229540-1-nums@google.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 24 Jul 2019 15:47:40 -0700 (PDT)
+X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
+Subject: [RFC][PATCH 0/2] Perf misaligned address fixes
+From:   Numfor Mbiziwo-Tiapo <nums@google.com>
+To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, songliubraving@fb.com, mbd@fb.com
+Cc:     linux-kernel@vger.kernel.org, irogers@google.com,
+        eranian@google.com, Numfor Mbiziwo-Tiapo <nums@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Mon, 22 Jul 2019 19:26:35 +0200
+These patches are all errors found by running perf test with the
+ubsan (undefined behavior sanitizer version of perf).
 
-> Move from i2c_new_dummy() to i2c_new_dummy_device(). So, we now get an
-> ERRPTR which we use in error handling.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+They are solutions to misaligned address errors caught by ubsan
+but they would break compatibility between perf data files.
 
-Solarflare folks, please review/test.
+To build perf with ubsan run:
+make -C tools/perf USE_CLANG=1 EXTRA_CFLAGS="-fsanitize=undefined"
 
-Thank you.
+Perf will throw errors that have been fixed in these patches
+that have not yet been merged:
+
+https://lore.kernel.org/patchwork/patch/1104065/
+https://lore.kernel.org/patchwork/patch/1104066/
+
+Please feel free to leave comments. 
+
+Numfor Mbiziwo-Tiapo (2):
+  Fix event.c misaligned address error
+  Fix evsel.c misaligned address errors
+
+ tools/perf/util/event.h |  1 +
+ tools/perf/util/evsel.c | 28 ++++++++++++++++------------
+ 2 files changed, 17 insertions(+), 12 deletions(-)
+
+-- 
+2.22.0.657.g960e92d24f-goog
+
