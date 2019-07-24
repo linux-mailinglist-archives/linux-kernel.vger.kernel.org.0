@@ -2,88 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC7AE739B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:42:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ACD3739C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:43:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390430AbfGXTmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:42:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44700 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389203AbfGXTmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:42:51 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DAF920665;
-        Wed, 24 Jul 2019 19:42:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997370;
-        bh=GHmAGkLOrHLzPUBhHXMeYPkixSMgbRwCjktYV+PyNWc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=09ID5DDzGpd4269YO+75JzNPAq5s+d0tIIjj1ndGrUdsEZ4LEvzljHSjU+8DeqkG3
-         397YZ8rbxBsQ2OnqoZZW0uwEyQeoN5nw5zHoKatwfc54GbsRelwX+yBKb6/w46CYkq
-         7Wen/6RNWBw21WquukaRZdwjlV+f/2zApOKdW1xg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 5.2 413/413] dm bufio: fix deadlock with loop device
-Date:   Wed, 24 Jul 2019 21:21:44 +0200
-Message-Id: <20190724191804.013853130@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
-References: <20190724191735.096702571@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2390713AbfGXTnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:43:39 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:48892 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390213AbfGXTng (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:43:36 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6OJgYP0083356;
+        Wed, 24 Jul 2019 14:42:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1563997354;
+        bh=AJm71xiQOBjSdWSqksSb6orWtMZCBYh0pcNBwqXoWdQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=kK94ypqr0C9M7sOcw1gFudGjaHNocKLuwvjvdo3NuKOzadWnHKCH0m5/wmXuq59Qi
+         SBk4QiMOx+PAaNg8HjZr/fXwwRu/6ahQMFsWaIeGrhb9aPi9n8yaPkpplOtVdVMdMZ
+         JAf3XTh2E9j1Fh6PGEVYqIQuBk7Se1H0btTuyF8U=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6OJgYke104572
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 24 Jul 2019 14:42:34 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 24
+ Jul 2019 14:42:33 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 24 Jul 2019 14:42:33 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6OJgXvZ096227;
+        Wed, 24 Jul 2019 14:42:33 -0500
+Subject: Re: [PATCH 1/6] dt-bindings: irqchip: Add PRUSS interrupt controller
+ bindings
+To:     Rob Herring <robh@kernel.org>
+CC:     Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Tony Lindgren <tony@atomide.com>,
+        "Andrew F. Davis" <afd@ti.com>, Roger Quadros <rogerq@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        David Lechner <david@lechnology.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190708035243.12170-1-s-anna@ti.com>
+ <20190708035243.12170-2-s-anna@ti.com> <20190724163419.GA29254@bogus>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <6871c381-9fc6-f6be-6386-f183fcc5546a@ti.com>
+Date:   Wed, 24 Jul 2019 14:42:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190724163419.GA29254@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Junxiao Bi <junxiao.bi@oracle.com>
+On 7/24/19 11:34 AM, Rob Herring wrote:
+> On Sun, 7 Jul 2019 22:52:38 -0500, Suman Anna wrote:
+>> The Programmable Real-Time Unit Subsystem (PRUSS) contains an interrupt
+>> controller (INTC) that can handle various system input events and post
+>> interrupts back to the device-level initiators. The INTC can support
+>> upto 64 input events on most SoCs with individual control configuration
+>> and hardware prioritization. These events are mapped onto 10 interrupt
+>> lines through two levels of many-to-one mapping support. Different
+>> interrupt lines are routed to the individual PRU cores or to the
+>> host CPU or to other PRUSS instances.
+>>
+>> The K3 AM65x and J721E SoCs have the next generation of the PRU-ICSS IP,
+>> commonly called ICSSG. The ICSSG interrupt controller on K3 SoCs provide
+>> a higher number of host interrupts (20 vs 10) and can handle an increased
+>> number of input events (160 vs 64) from various SoC interrupt sources.
+>>
+>> Add the bindings document for these interrupt controllers on all the
+>> applicable SoCs. It covers the OMAP architecture SoCs - AM33xx, AM437x
+>> and AM57xx; the Keystone 2 architecture based 66AK2G SoC; the Davinci
+>> architecture based OMAPL138 SoCs, and the K3 architecture based AM65x
+>> and J721E SoCs.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>> ---
+>> Prior version: https://patchwork.kernel.org/patch/10795771/
+>>
+>>  .../interrupt-controller/ti,pruss-intc.txt    | 92 +++++++++++++++++++
+>>  1 file changed, 92 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.txt
+>>
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
 
-commit bd293d071ffe65e645b4d8104f9d8fe15ea13862 upstream.
+Thanks Rob. I am going to submit a v2 with some minor reword changes
+based on couple of comments, but no addition or removal of properties.
+Should I be retaining your Reviewed-by for v2?
 
-When thin-volume is built on loop device, if available memory is low,
-the following deadlock can be triggered:
-
-One process P1 allocates memory with GFP_FS flag, direct alloc fails,
-memory reclaim invokes memory shrinker in dm_bufio, dm_bufio_shrink_scan()
-runs, mutex dm_bufio_client->lock is acquired, then P1 waits for dm_buffer
-IO to complete in __try_evict_buffer().
-
-But this IO may never complete if issued to an underlying loop device
-that forwards it using direct-IO, which allocates memory using
-GFP_KERNEL (see: do_blockdev_direct_IO()).  If allocation fails, memory
-reclaim will invoke memory shrinker in dm_bufio, dm_bufio_shrink_scan()
-will be invoked, and since the mutex is already held by P1 the loop
-thread will hang, and IO will never complete.  Resulting in ABBA
-deadlock.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/md/dm-bufio.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
---- a/drivers/md/dm-bufio.c
-+++ b/drivers/md/dm-bufio.c
-@@ -1599,9 +1599,7 @@ dm_bufio_shrink_scan(struct shrinker *sh
- 	unsigned long freed;
- 
- 	c = container_of(shrink, struct dm_bufio_client, shrinker);
--	if (sc->gfp_mask & __GFP_FS)
--		dm_bufio_lock(c);
--	else if (!dm_bufio_trylock(c))
-+	if (!dm_bufio_trylock(c))
- 		return SHRINK_STOP;
- 
- 	freed  = __scan(c, sc->nr_to_scan, sc->gfp_mask);
+regards
+Suman
 
 
