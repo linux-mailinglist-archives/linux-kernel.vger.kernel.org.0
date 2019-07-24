@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D0AB73B52
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:59:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 756FC73B60
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:59:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405043AbfGXT6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:58:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45592 "EHLO mail.kernel.org"
+        id S2404647AbfGXT7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:59:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404614AbfGXT6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:58:45 -0400
+        id S2392023AbfGXT7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:59:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F3CB22ADC;
-        Wed, 24 Jul 2019 19:58:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A555221873;
+        Wed, 24 Jul 2019 19:59:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563998324;
-        bh=B5lV7H+VYdRscgK66XEcHYrTZuvSYkuM/YfZm2Pz5GI=;
+        s=default; t=1563998372;
+        bh=LrB+hJ1+bC40bO/7nVV2tlcLtiMmj9KGumerYeppRj0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fOTim199QQT4rd1vyivsEWNYyYyvWPXov3ayabU1cd5UKJwJSePeH/vOKOy1tdnGe
-         aE5po0WKzr31PUpvbTklOYygn8AoHTXd7II10+Lw9K1UqIlLFipKei9yYlzqWx0Gx7
-         Jl78Vdlh3bJ1i62xc+FP73NtQX2IqgAxGmYh8Jzw=
+        b=hJ7FH4f4TZ3oLz6qwI5SVI0PrsgYseX0o7yo9pPEqNCtUTFE51jUwoqbA4Fo+lhGk
+         HcN430HbKlDlMKCVzps4DO+dCbO4AkSdq0xx24n4X5wnidHRJe4Wtyope1QhN/eGzt
+         TTpcL958vhJ5ov0bgsXPulLeVrZp+oupreG6zOs8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liran Alon <liran.alon@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.1 299/371] KVM: nVMX: Always sync GUEST_BNDCFGS when it comes from vmcs01
-Date:   Wed, 24 Jul 2019 21:20:51 +0200
-Message-Id: <20190724191746.796720364@linuxfoundation.org>
+        stable@vger.kernel.org, Xiaoyao Li <xiaoyao.li@linux.intel.com>,
+        Tao Xu <tao3.xu@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>
+Subject: [PATCH 5.1 301/371] KVM: VMX: check CPUID before allowing read/write of IA32_XSS
+Date:   Wed, 24 Jul 2019 21:20:53 +0200
+Message-Id: <20190724191746.921260968@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -44,54 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Wanpeng Li <wanpengli@tencent.com>
 
-commit 3b013a2972d5bc344d6eaa8f24fdfe268211e45f upstream.
+commit 4d763b168e9c5c366b05812c7bba7662e5ea3669 upstream.
 
-If L1 does not set VM_ENTRY_LOAD_BNDCFGS, then L1's BNDCFGS value must
-be propagated to vmcs02 since KVM always runs with VM_ENTRY_LOAD_BNDCFGS
-when MPX is supported.  Because the value effectively comes from vmcs01,
-vmcs02 must be updated even if vmcs12 is clean.
+Raise #GP when guest read/write IA32_XSS, but the CPUID bits
+say that it shouldn't exist.
 
-Fixes: 62cf9bd8118c4 ("KVM: nVMX: Fix emulation of VM_ENTRY_LOAD_BNDCFGS")
+Fixes: 203000993de5 (kvm: vmx: add MSR logic for XSAVES)
+Reported-by: Xiaoyao Li <xiaoyao.li@linux.intel.com>
+Reported-by: Tao Xu <tao3.xu@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
 Cc: stable@vger.kernel.org
-Cc: Liran Alon <liran.alon@oracle.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx/nested.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ arch/x86/kvm/vmx/vmx.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -2243,13 +2243,9 @@ static void prepare_vmcs02_full(struct v
- 
- 	set_cr4_guest_host_mask(vmx);
- 
--	if (kvm_mpx_supported()) {
--		if (vmx->nested.nested_run_pending &&
--			(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_BNDCFGS))
--			vmcs_write64(GUEST_BNDCFGS, vmcs12->guest_bndcfgs);
--		else
--			vmcs_write64(GUEST_BNDCFGS, vmx->nested.vmcs01_guest_bndcfgs);
--	}
-+	if (kvm_mpx_supported() && vmx->nested.nested_run_pending &&
-+	    (vmcs12->vm_entry_controls & VM_ENTRY_LOAD_BNDCFGS))
-+		vmcs_write64(GUEST_BNDCFGS, vmcs12->guest_bndcfgs);
- }
- 
- /*
-@@ -2292,6 +2288,9 @@ static int prepare_vmcs02(struct kvm_vcp
- 		kvm_set_dr(vcpu, 7, vcpu->arch.dr7);
- 		vmcs_write64(GUEST_IA32_DEBUGCTL, vmx->nested.vmcs01_debugctl);
- 	}
-+	if (kvm_mpx_supported() && (!vmx->nested.nested_run_pending ||
-+	    !(vmcs12->vm_entry_controls & VM_ENTRY_LOAD_BNDCFGS)))
-+		vmcs_write64(GUEST_BNDCFGS, vmx->nested.vmcs01_guest_bndcfgs);
- 	vmx_set_rflags(vcpu, vmcs12->guest_rflags);
- 
- 	/* EXCEPTION_BITMAP and CR0_GUEST_HOST_MASK should basically be the
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -1718,7 +1718,10 @@ static int vmx_get_msr(struct kvm_vcpu *
+ 		return vmx_get_vmx_msr(&vmx->nested.msrs, msr_info->index,
+ 				       &msr_info->data);
+ 	case MSR_IA32_XSS:
+-		if (!vmx_xsaves_supported())
++		if (!vmx_xsaves_supported() ||
++		    (!msr_info->host_initiated &&
++		     !(guest_cpuid_has(vcpu, X86_FEATURE_XSAVE) &&
++		       guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))))
+ 			return 1;
+ 		msr_info->data = vcpu->arch.ia32_xss;
+ 		break;
+@@ -1929,7 +1932,10 @@ static int vmx_set_msr(struct kvm_vcpu *
+ 			return 1;
+ 		return vmx_set_vmx_msr(vcpu, msr_index, data);
+ 	case MSR_IA32_XSS:
+-		if (!vmx_xsaves_supported())
++		if (!vmx_xsaves_supported() ||
++		    (!msr_info->host_initiated &&
++		     !(guest_cpuid_has(vcpu, X86_FEATURE_XSAVE) &&
++		       guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))))
+ 			return 1;
+ 		/*
+ 		 * The only supported bit as of Skylake is bit 8, but
 
 
