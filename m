@@ -2,100 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08C3D72E23
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 13:49:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B582272E26
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 13:49:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbfGXLtT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 07:49:19 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:45223 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727570AbfGXLtS (ORCPT
+        id S1728018AbfGXLtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 07:49:41 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51532 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727570AbfGXLtl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 07:49:18 -0400
-Received: by mail-ed1-f65.google.com with SMTP id x19so40928990eda.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 04:49:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ky6MiqknUauxBZH/dFB9V8N7cSZFbXcp813AEssc034=;
-        b=K38QiI9z0UqP/jOGfZgUBdANryYHFccCp4EpAHFXhr18n9XPmRDBNkulDfwEzUlJt6
-         zauV896QRGbFz/vfGhitFSXoEG210dh16UprC6STA5QWoi8Q8/fLuF1A7bYa+L/CtiOG
-         SsKMSUs0mIzX1EFoodnQBTAEIlWL5lIs1EcVw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=Ky6MiqknUauxBZH/dFB9V8N7cSZFbXcp813AEssc034=;
-        b=ngG5Aqyzx848xzEjy+maATLlI+4law/4xw4yzpp1Ff67MdeT+ikd4uF5a7jkXt8auj
-         82wWxznNlwzt9h5RP3VfEkSkR7h+XmELXhCXpT8t9M9N9y4Y0YZDQPp8552J4IqZFh+1
-         yTQ0i0DRgWrrazbU3GJSb9sCNT7pg11WizMNmW9ZMLaXaGQQICCwwflp2qtTurZssYN6
-         UHtYxja/D4vphruKOiZhOdyVgE/yTRUlgWfhbE/vEgQBLQ6TZrmliOJNB+nTizy6bZcp
-         4w3kPtx6UNaaXgpVG1IVGImApnYc7im40o0HSzCUXpaA8AHNNNV1vAiV2xMpcnfTJIQm
-         yAjw==
-X-Gm-Message-State: APjAAAXcyjEZQv7BZ0ECjbKdg1gNL3mjFBQfmLQNZ5NHbXGPLL6kcQjx
-        T6o3SW+Kwpo9KQMf/+FdIms=
-X-Google-Smtp-Source: APXvYqwxJaa6d48jFA2r5dQ4BfamVvHN3hDlPbM+EjOINhA7XXW533p+MIuVnfd7kvr+TWyx1PBo2Q==
-X-Received: by 2002:a17:906:a39a:: with SMTP id k26mr13973104ejz.82.1563968956237;
-        Wed, 24 Jul 2019 04:49:16 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id x11sm9268496eju.26.2019.07.24.04.49.15
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 04:49:15 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 13:49:13 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: [PATCH] MAINTAINERS: handle fbdev changes through drm-misc tree
-Message-ID: <20190724114913.GZ15868@phenom.ffwll.local>
-Mail-Followup-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <CGME20190723143329eucas1p211688de2902dbac72998fda9e694083d@eucas1p2.samsung.com>
- <d449f697-ed25-8a3f-16d5-b981f1a52217@samsung.com>
+        Wed, 24 Jul 2019 07:49:41 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4436E6053D; Wed, 24 Jul 2019 11:49:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1563968980;
+        bh=Apr32KU/6B9aTPa2tfZUiPw1kdiISwzr6gcZw8IeftQ=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=Impj17OplB8isAvlFP+/CakfnYAXi2QXZV6Qio9f6okxmSh03RJ3NkrwNPqv96mGv
+         wzwAUAZ3aewrIs9r6nDT68F+DVm8DFKi3VwpMj1fkmPJHSvPNXB1gPPXgVRkyMAi3g
+         mqwEYpf9qhzg6X/Z1Hp/w6eQ6AYEI6tMU13nWoCU=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AF79960214;
+        Wed, 24 Jul 2019 11:49:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1563968978;
+        bh=Apr32KU/6B9aTPa2tfZUiPw1kdiISwzr6gcZw8IeftQ=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=K4lybffhYJ10/BlwkdUoAzaRQIc6N1THAkohn7DdqgP2PT0ozi2XyuN7rb4rbBnc1
+         tt0bbkjG45WVx8xL0gQMJ+EkUqifNWl5Spy7j2VbQ/WkSaMOzTGC4oQvqzIkcFuY7y
+         b6twOBEfcEgOWWMX1Tocl+vUUejrgzd8QKZcN5TQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AF79960214
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d449f697-ed25-8a3f-16d5-b981f1a52217@samsung.com>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v4 1/2] rtw88: pci: Rearrange the memory usage for skb in
+ RX ISR
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20190711052427.5582-1-jian-hong@endlessm.com>
+References: <20190711052427.5582-1-jian-hong@endlessm.com>
+To:     Jian-Hong Pan <jian-hong@endlessm.com>
+Cc:     Yan-Hsuan Chuang <yhchuang@realtek.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        David Laight <David.Laight@aculab.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux@endlessm.com,
+        Daniel Drake <drake@endlessm.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>, stable@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190724114940.4436E6053D@smtp.codeaurora.org>
+Date:   Wed, 24 Jul 2019 11:49:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 04:33:27PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> fbdev patches will now go to upstream through drm-misc tree (IOW
-> starting with v5.4 merge window fbdev changes will be included in
-> DRM pull request) for improved maintainership and better integration
-> testing. Update MAINTAINERS file accordingly.
-> 
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  MAINTAINERS |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Index: b/MAINTAINERS
-> ===================================================================
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6389,7 +6389,7 @@ FRAMEBUFFER LAYER
->  M:	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->  L:	dri-devel@lists.freedesktop.org
->  L:	linux-fbdev@vger.kernel.org
-> -T:	git git://github.com/bzolnier/linux.git
-> +T:	git git://anongit.freedesktop.org/drm/drm-misc
->  Q:	http://patchwork.kernel.org/project/linux-fbdev/list/
->  S:	Maintained
->  F:	Documentation/fb/
+Jian-Hong Pan <jian-hong@endlessm.com> wrote:
 
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Testing with RTL8822BE hardware, when available memory is low, we
+> frequently see a kernel panic and system freeze.
+> 
+> First, rtw_pci_rx_isr encounters a memory allocation failure (trimmed):
+> 
+> rx routine starvation
+> WARNING: CPU: 7 PID: 9871 at drivers/net/wireless/realtek/rtw88/pci.c:822 rtw_pci_rx_isr.constprop.25+0x35a/0x370 [rtwpci]
+> [ 2356.580313] RIP: 0010:rtw_pci_rx_isr.constprop.25+0x35a/0x370 [rtwpci]
+> 
+> Then we see a variety of different error conditions and kernel panics,
+> such as this one (trimmed):
+> 
+> rtw_pci 0000:02:00.0: pci bus timeout, check dma status
+> skbuff: skb_over_panic: text:00000000091b6e66 len:415 put:415 head:00000000d2880c6f data:000000007a02b1ea tail:0x1df end:0xc0 dev:<NULL>
+> ------------[ cut here ]------------
+> kernel BUG at net/core/skbuff.c:105!
+> invalid opcode: 0000 [#1] SMP NOPTI
+> RIP: 0010:skb_panic+0x43/0x45
+> 
+> When skb allocation fails and the "rx routine starvation" is hit, the
+> function returns immediately without updating the RX ring. At this
+> point, the RX ring may continue referencing an old skb which was already
+> handed off to ieee80211_rx_irqsafe(). When it comes to be used again,
+> bad things happen.
+> 
+> This patch allocates a new, data-sized skb first in RX ISR. After
+> copying the data in, we pass it to the upper layers. However, if skb
+> allocation fails, we effectively drop the frame. In both cases, the
+> original, full size ring skb is reused.
+> 
+> In addition, to fixing the kernel crash, the RX routine should now
+> generally behave better under low memory conditions.
+> 
+> Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=204053
+> Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+> Cc: <stable@vger.kernel.org>
+
+2 patches applied to wireless-drivers-next.git, thanks.
+
+ee6db78f5db9 rtw88: pci: Rearrange the memory usage for skb in RX ISR
+29b68a920f6a rtw88: pci: Use DMA sync instead of remapping in RX ISR
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+https://patchwork.kernel.org/patch/11039275/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
