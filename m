@@ -2,80 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 277E672383
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 02:49:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AE587238D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 03:01:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbfGXAtZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 20:49:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52638 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725863AbfGXAtZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 20:49:25 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D6132253D;
-        Wed, 24 Jul 2019 00:49:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563929364;
-        bh=f1BgHRD07iLgL/RGh4ch0V6HXKB6ToEvnZ787DM64e0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UX3gv9jRpafjJM3CJy7HbkTSbt/ys7gAa35KrwrO23HsfEBMYrs3uAfjIb4Oo+6yl
-         3O8q/Fwca+iHDZkxXpAk9yp7xJCJYGn1Xisup3xheKcnBIvTH8bi6aDN4q+g+ZZWCt
-         5Nf+czS/e/GSOTlPGT7NCihNbmoXCQW/bjYkv0nM=
-Date:   Wed, 24 Jul 2019 08:48:51 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Robin Gong <yibin.gong@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v5 12/15] ARM: dts: imx6ul: add dma support on ecspi
-Message-ID: <20190724004848.GV15632@dragon>
-References: <20190610081753.11422-1-yibin.gong@nxp.com>
- <20190610081753.11422-13-yibin.gong@nxp.com>
- <20190717064204.GA3738@dragon>
- <VE1PR04MB663894FA5BC88B130C70AC0789C70@VE1PR04MB6638.eurprd04.prod.outlook.com>
+        id S1727309AbfGXA6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 20:58:06 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:32918 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725601AbfGXA6F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 20:58:05 -0400
+Received: by mail-qt1-f196.google.com with SMTP id r6so39617964qtt.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 17:58:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=oASs8uYGKSbhcsk738Ru91K1IEqBMwZxngEg6++szx8=;
+        b=LZWjiZpBtpT2bEFO6EUMuDgmX2l5GA3NIJ7uhRtxRtT3kT6m1aQy24Gom1WLWTLBHA
+         mbcbb5Ghnk0kH0giCbvjnCrfq6kB90kehk6ZCl5JK1ziFAU4GF5MpzNG4SPvOpvvh1sY
+         Ys6q/OeoUSJeWet4ylOeMbmMZwPOdDdIlToKDwwGJXpY4dptVxFpCJK7HmfeQ5HwWZPS
+         oxN0l2xC3IekY9R0LacrU333l9Uq3pebzWhvTYqsotUQo6DpCHJ/+ndzf9qNZrtlwUyj
+         iu5HuManAbQJm2gAb2whlSgWtY1/95MCPv42FkL4j31Qob/lGVpX/9IdP7LZVWZMHaHB
+         fwMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=oASs8uYGKSbhcsk738Ru91K1IEqBMwZxngEg6++szx8=;
+        b=B6FmdBKMNfxN98ynw3IeZXb9rQbWWuz/d7bXCJRhN/f6pF09/JtwmfE6ZmCESsnxXW
+         eY1HSftv6eMEX9MyinLMMgJ8WbBNiGizDL5SSVae/sa4NuuJl7rLxV7bSs1mwOWAK9Aq
+         1veeUpSwotlf3f1OtxIDxsQl6Yrmb8bN+r1W7rZEDd+dRXoWgZOIv74qIz3Giw9xyIgM
+         myF5JK5u2Xd72F7l+131PWVUF1RXJNVypQfjw2ROJy9lmMRcMkonk77HIVoJIZf1q1dr
+         NeQMDWaUc/O8JMYlvwOWORA4BAMgoT1hxjMX9SqGvGRORsSyq05luYpWgMVPtqxhHQ2v
+         WKnA==
+X-Gm-Message-State: APjAAAX3rxptBnoLIaKurAdmuE9dNjwMszKRxygkvprLr7wPS1uA4MoM
+        tU7/x7Mv86BP4qVFwOY8+/GyvsVP/omPtpfpr/U=
+X-Google-Smtp-Source: APXvYqwcNmsPPp8085fZAASKJZsAQ3t8jFnX8fmaYib9qDAxnfX0Wj0y2Rk0U2Q0i6+d7tHPu6gkO5twYW8ut9749Zs=
+X-Received: by 2002:ac8:2409:: with SMTP id c9mr55507527qtc.145.1563929884513;
+ Tue, 23 Jul 2019 17:58:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VE1PR04MB663894FA5BC88B130C70AC0789C70@VE1PR04MB6638.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20190711113517.26077-1-axel.lin@ingics.com> <20190723112647.GE5365@sirena.org.uk>
+ <CAFRkauDSbmtGRnE0xvKOKxb=SWOA+03i60Wu-9KHYxh1qFuCEg@mail.gmail.com> <20190723163503.GL5365@sirena.org.uk>
+In-Reply-To: <20190723163503.GL5365@sirena.org.uk>
+From:   Axel Lin <axel.lin@ingics.com>
+Date:   Wed, 24 Jul 2019 08:57:53 +0800
+Message-ID: <CAFRkauBACWC1pcxJe9tJyK4vM2R2BSu2z9sej3GLket3niZg9w@mail.gmail.com>
+Subject: Re: [PATCH RFT] regulator: lp87565: Fix probe failure for "ti,lp87565"
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Keerthy <j-keerthy@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 09:39:38AM +0000, Robin Gong wrote:
-> On 2019-7-17 at 14:42 Shawn Guo <shawnguo@kernel.org> wrote:
-> > On Mon, Jun 10, 2019 at 04:17:50PM +0800, yibin.gong@nxp.com wrote:
-> > > From: Robin Gong <yibin.gong@nxp.com>
-> > >
-> > > Add dma support on ecspi.
-> > >
-> > > Signed-off-by: Robin Gong <yibin.gong@nxp.com>
-> > 
-> > Applied, thanks.
-> Thanks Shawn, but how about other dts patches such as 01/15,02/15?
+Mark Brown <broonie@kernel.org> =E6=96=BC 2019=E5=B9=B47=E6=9C=8824=E6=97=
+=A5 =E9=80=B1=E4=B8=89 =E4=B8=8A=E5=8D=8812:35=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> On Tue, Jul 23, 2019 at 08:28:35PM +0800, Axel Lin wrote:
+> > Mark Brown <broonie@kernel.org> =E6=96=BC 2019=E5=B9=B47=E6=9C=8823=E6=
+=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=887:26=E5=AF=AB=E9=81=93=EF=BC=9A
+> > > On Thu, Jul 11, 2019 at 07:35:17PM +0800, Axel Lin wrote:
+>
+> > > > The "ti,lp87565" compatible string is still in of_lp87565_match_tab=
+le,
+> > > > but current code will return -EINVAL because lp87565->dev_type is u=
+nknown.
+> > > > This was working in earlier kernel versions, so fix it.
+>
+> > > This doesn't seem to apply against current code, please check and
+> > > resend.
+>
+> > I re-generate the patch but the new patch is exactly the same as this o=
+ne.
+> > It can be applied to both Linus and linux-next trees.
+> > Did I miss something?
+>
+> It's a fix so I was trying to apply it on my for-5.3 branch.
 
-I need the authors of the commits being reverted agree on the reverting.
+The commit f3f4363b1239 ("regulator: lp87565: Fix missing break in
+switch statement") from mfd tree has been merged to 5.3-rc1.
+So I'm wondering if the better approach is rebase for-5.3 branch to 5.3-rc1=
+.
+Then you can apply this patch without conflict.
 
-  Sean Nyekjaer <sean.nyekjaer@prevas.dk>
-  Sascha Hauer <s.hauer@pengutronix.de>
+Anyway, I will resend the patch against regulator tree for-5.3.
 
-Shawn
+Regards,
+Axel
