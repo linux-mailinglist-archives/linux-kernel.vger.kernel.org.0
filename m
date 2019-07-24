@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0D3273FEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:36:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DC0C73FE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:36:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbfGXTYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:24:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41062 "EHLO mail.kernel.org"
+        id S2390354AbfGXUgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:36:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729113AbfGXTYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:24:40 -0400
+        id S2388004AbfGXTYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:24:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07D2F21951;
-        Wed, 24 Jul 2019 19:24:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 143F921951;
+        Wed, 24 Jul 2019 19:24:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996279;
-        bh=YdVFeD9iwBhlfqUWMHkADc9hdkdRNv754zqUD2b93yY=;
+        s=default; t=1563996293;
+        bh=JyOwmzys1P/HTssEN1TQGUn5WUnChrmVDD/EuknGGXQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0mFnHh71ZPz+vcTCYegYBnX9KjOeRhvMnOTwOMEf3fc5qlXKCcfueIdOntgwVoUtg
-         UdWGdpSUwgmhwusYlNOedH6AFKbF2RBGMXJk/iLmrxP0K94NH98Ie1W2gydTt28qmC
-         zb3RsltSRj9eM/SHndrMyam40yS9qRsi/LWNhSbw=
+        b=s444G6Ohb/CEKOMatfbnzo+PwP1fDr8rDpFlDJ2N2FBlTf5onh1Rb9EJOAQLMofPP
+         4ToBa/plaUwcPJrmb/kNOxxfAzv0Il8BUYG8Q5nchlcXsGs+236uZ7y/DTbvpvEE5S
+         AmR7Td+j4X266uQjI6igIuPvoXKOVX/ePiS+hjd4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chandan Rajendra <chandan@linux.ibm.com>,
-        Eric Biggers <ebiggers@google.com>,
+        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 043/413] fscrypt: clean up some BUG_ON()s in block encryption/decryption
-Date:   Wed, 24 Jul 2019 21:15:34 +0200
-Message-Id: <20190724191738.663016470@linuxfoundation.org>
+Subject: [PATCH 5.2 048/413] media: saa7164: fix remove_proc_entry warning
+Date:   Wed, 24 Jul 2019 21:15:39 +0200
+Message-Id: <20190724191738.979704618@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -44,67 +45,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit eeacfdc68a104967162dfcba60f53f6f5b62a334 ]
+[ Upstream commit 50710eeefbc1ed25375942aad0c4d1eb4af0f330 ]
 
-Replace some BUG_ON()s with WARN_ON_ONCE() and returning an error code,
-and move the check for len divisible by FS_CRYPTO_BLOCK_SIZE into
-fscrypt_crypt_block() so that it's done for both encryption and
-decryption, not just encryption.
+if saa7164_proc_create() fails, saa7164_fini() will trigger a warning,
 
-Reviewed-by: Chandan Rajendra <chandan@linux.ibm.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+name 'saa7164'
+WARNING: CPU: 1 PID: 6311 at fs/proc/generic.c:672 remove_proc_entry+0x1e8/0x3a0
+  ? remove_proc_entry+0x1e8/0x3a0
+  ? try_stop_module+0x7b/0x240
+  ? proc_readdir+0x70/0x70
+  ? rcu_read_lock_sched_held+0xd7/0x100
+  saa7164_fini+0x13/0x1f [saa7164]
+  __x64_sys_delete_module+0x30c/0x480
+  ? __ia32_sys_delete_module+0x480/0x480
+  ? __x64_sys_clock_gettime+0x11e/0x1c0
+  ? __x64_sys_timer_create+0x1a0/0x1a0
+  ? trace_hardirqs_off_caller+0x40/0x180
+  ? do_syscall_64+0x18/0x450
+  do_syscall_64+0x9f/0x450
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fix it by checking the return of proc_create_single() before
+calling remove_proc_entry().
+
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+[hverkuil-cisco@xs4all.nl: use 0444 instead of S_IRUGO]
+[hverkuil-cisco@xs4all.nl: use pr_info instead of KERN_INFO]
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/crypto/crypto.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/media/pci/saa7164/saa7164-core.c | 33 ++++++++++++++++--------
+ 1 file changed, 22 insertions(+), 11 deletions(-)
 
-diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index 335a362ee446..6f753198eeef 100644
---- a/fs/crypto/crypto.c
-+++ b/fs/crypto/crypto.c
-@@ -154,7 +154,10 @@ int fscrypt_do_page_crypto(const struct inode *inode, fscrypt_direction_t rw,
- 	struct crypto_skcipher *tfm = ci->ci_ctfm;
- 	int res = 0;
+diff --git a/drivers/media/pci/saa7164/saa7164-core.c b/drivers/media/pci/saa7164/saa7164-core.c
+index c594aff92e70..9ae04e18e6c6 100644
+--- a/drivers/media/pci/saa7164/saa7164-core.c
++++ b/drivers/media/pci/saa7164/saa7164-core.c
+@@ -1112,16 +1112,25 @@ static int saa7164_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
  
--	BUG_ON(len == 0);
-+	if (WARN_ON_ONCE(len <= 0))
-+		return -EINVAL;
-+	if (WARN_ON_ONCE(len % FS_CRYPTO_BLOCK_SIZE != 0))
-+		return -EINVAL;
- 
- 	fscrypt_generate_iv(&iv, lblk_num, ci);
- 
-@@ -238,8 +241,6 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
- 	struct page *ciphertext_page = page;
- 	int err;
- 
--	BUG_ON(len % FS_CRYPTO_BLOCK_SIZE != 0);
--
- 	if (inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES) {
- 		/* with inplace-encryption we just encrypt the page */
- 		err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk_num, page,
-@@ -251,7 +252,8 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
- 		return ciphertext_page;
- 	}
- 
--	BUG_ON(!PageLocked(page));
-+	if (WARN_ON_ONCE(!PageLocked(page)))
-+		return ERR_PTR(-EINVAL);
- 
- 	ctx = fscrypt_get_ctx(gfp_flags);
- 	if (IS_ERR(ctx))
-@@ -299,8 +301,9 @@ EXPORT_SYMBOL(fscrypt_encrypt_page);
- int fscrypt_decrypt_page(const struct inode *inode, struct page *page,
- 			unsigned int len, unsigned int offs, u64 lblk_num)
++static struct proc_dir_entry *saa7164_pe;
++
+ static int saa7164_proc_create(void)
  {
--	if (!(inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES))
--		BUG_ON(!PageLocked(page));
-+	if (WARN_ON_ONCE(!PageLocked(page) &&
-+			 !(inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES)))
-+		return -EINVAL;
+-	struct proc_dir_entry *pe;
+-
+-	pe = proc_create_single("saa7164", S_IRUGO, NULL, saa7164_proc_show);
+-	if (!pe)
++	saa7164_pe = proc_create_single("saa7164", 0444, NULL, saa7164_proc_show);
++	if (!saa7164_pe)
+ 		return -ENOMEM;
  
- 	return fscrypt_do_page_crypto(inode, FS_DECRYPT, lblk_num, page, page,
- 				      len, offs, GFP_NOFS);
+ 	return 0;
+ }
++
++static void saa7164_proc_destroy(void)
++{
++	if (saa7164_pe)
++		remove_proc_entry("saa7164", NULL);
++}
++#else
++static int saa7164_proc_create(void) { return 0; }
++static void saa7164_proc_destroy(void) {}
+ #endif
+ 
+ static int saa7164_thread_function(void *data)
+@@ -1493,19 +1502,21 @@ static struct pci_driver saa7164_pci_driver = {
+ 
+ static int __init saa7164_init(void)
+ {
+-	printk(KERN_INFO "saa7164 driver loaded\n");
++	int ret = pci_register_driver(&saa7164_pci_driver);
++
++	if (ret)
++		return ret;
+ 
+-#ifdef CONFIG_PROC_FS
+ 	saa7164_proc_create();
+-#endif
+-	return pci_register_driver(&saa7164_pci_driver);
++
++	pr_info("saa7164 driver loaded\n");
++
++	return 0;
+ }
+ 
+ static void __exit saa7164_fini(void)
+ {
+-#ifdef CONFIG_PROC_FS
+-	remove_proc_entry("saa7164", NULL);
+-#endif
++	saa7164_proc_destroy();
+ 	pci_unregister_driver(&saa7164_pci_driver);
+ }
+ 
 -- 
 2.20.1
 
