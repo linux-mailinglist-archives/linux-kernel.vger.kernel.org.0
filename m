@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8B1A737F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:24:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D347C737C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:23:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbfGXTY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:24:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40652 "EHLO mail.kernel.org"
+        id S1728409AbfGXTXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:23:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729056AbfGXTYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:24:25 -0400
+        id S1726470AbfGXTXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:23:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3625229F3;
-        Wed, 24 Jul 2019 19:24:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 116E5218EA;
+        Wed, 24 Jul 2019 19:23:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996264;
-        bh=U0o0C1aPAvOjwdQ7vLkMsrXoC/6GvrrOfuqwkwg7ouQ=;
+        s=default; t=1563996182;
+        bh=wANQe52zrBRb4Xw+3bw6crTD8mEUNcXjq3SEyZdmO1Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aVNxH4ZkG+pTtRM2MBolC+VQ+IR4Fm2mK5YqKvYae57afcvU0mskh1BEjSCukh+f8
-         FuXCYKQA45oWNy2msaFhqbwYO83HPt9jMQNm9AQvMnsUIXBkQRyJuEqikJMlsmktLz
-         cDV7y6idriL5xjaNV7NQ4e/kDsItPzW7kOrd/eeA=
+        b=DuArbXtUJahLN1vB6bceWEiB9ZeipT3YuQcxJD+SNJhy5ToIVViqJKB6LN4lU0KFV
+         CT0Zeg9DdPmQqqbrjqnWZtCPgehNROPht/dfJnEFS8+HkDFAnnk+4c82p/q56PKoVi
+         VkgzUmiNujSOREFkf261MkCaZN+lPCG0blFHXg8I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Surabhi Vishnoi <svishnoi@codeaurora.org>,
+        stable@vger.kernel.org, Maya Erez <merez@codeaurora.org>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 009/413] ath10k: Fix the wrong value of enums for wmi tlv stats id
-Date:   Wed, 24 Jul 2019 21:15:00 +0200
-Message-Id: <20190724191735.952245370@linuxfoundation.org>
+Subject: [PATCH 5.2 010/413] wil6210: fix missed MISC mbox interrupt
+Date:   Wed, 24 Jul 2019 21:15:01 +0200
+Message-Id: <20190724191736.061205210@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -44,44 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9280f4fc06f44d0b4dc9e831f72d97b3d7cd35d3 ]
+[ Upstream commit 7441be71ba7e07791fd4fa2b07c932dff14ff4d9 ]
 
-The enum value for WMI_TLV_STAT_PDEV, WMI_TLV_STAT_VDEV
-and WMI_TLV_STAT_PEER is wrong, due to which the vdev stats
-are not received from firmware in wmi_update_stats event.
+When MISC interrupt is triggered due to HALP bit, in parallel
+to mbox events handling by the MISC threaded IRQ, new mbox
+interrupt can be missed in the following scenario:
+1. MISC ICR is read in the IRQ handler
+2. Threaded IRQ is completed and all MISC interrupts are unmasked
+3. mbox interrupt is set by FW
+4. HALP is masked
+The mbox interrupt in step 3 can be missed due to constant high level
+of ICM.
+Masking all MISC IRQs instead of masking only HALP bit in step 4
+will guarantee that ICM will drop to 0 and interrupt will be triggered
+once MISC interrupts will be unmasked.
 
-Fix the enum values for above stats to receive all stats
-from firmware in WMI_TLV_UPDATE_STATS_EVENTID.
-
-Tested HW: WCN3990
-Tested FW: WLAN.HL.3.1-00784-QCAHLSWMTPLZ-1
-
-Fixes: f40a307eb92c ("ath10k: Fill rx duration for each peer in fw_stats for WCN3990)
-Signed-off-by: Surabhi Vishnoi <svishnoi@codeaurora.org>
+Signed-off-by: Maya Erez <merez@codeaurora.org>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/wmi.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/wireless/ath/wil6210/interrupt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi.h b/drivers/net/wireless/ath/ath10k/wmi.h
-index e1c40bb69932..12f57f9adbba 100644
---- a/drivers/net/wireless/ath/ath10k/wmi.h
-+++ b/drivers/net/wireless/ath/ath10k/wmi.h
-@@ -4535,9 +4535,10 @@ enum wmi_10_4_stats_id {
- };
- 
- enum wmi_tlv_stats_id {
--	WMI_TLV_STAT_PDEV	= BIT(0),
--	WMI_TLV_STAT_VDEV	= BIT(1),
--	WMI_TLV_STAT_PEER	= BIT(2),
-+	WMI_TLV_STAT_PEER	= BIT(0),
-+	WMI_TLV_STAT_AP		= BIT(1),
-+	WMI_TLV_STAT_PDEV	= BIT(2),
-+	WMI_TLV_STAT_VDEV	= BIT(3),
- 	WMI_TLV_STAT_PEER_EXTD  = BIT(10),
- };
- 
+diff --git a/drivers/net/wireless/ath/wil6210/interrupt.c b/drivers/net/wireless/ath/wil6210/interrupt.c
+index 3f5bd177d55f..e41ba24011d8 100644
+--- a/drivers/net/wireless/ath/wil6210/interrupt.c
++++ b/drivers/net/wireless/ath/wil6210/interrupt.c
+@@ -580,7 +580,7 @@ static irqreturn_t wil6210_irq_misc(int irq, void *cookie)
+ 			/* no need to handle HALP ICRs until next vote */
+ 			wil->halp.handle_icr = false;
+ 			wil_dbg_irq(wil, "irq_misc: HALP IRQ invoked\n");
+-			wil6210_mask_halp(wil);
++			wil6210_mask_irq_misc(wil, true);
+ 			complete(&wil->halp.comp);
+ 		}
+ 	}
 -- 
 2.20.1
 
