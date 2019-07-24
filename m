@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DFB473F48
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:32:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F05273F32
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:30:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389813AbfGXUbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:31:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51894 "EHLO mail.kernel.org"
+        id S2389041AbfGXUao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:30:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388325AbfGXTbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:31:12 -0400
+        id S2388501AbfGXTbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:31:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6377720659;
-        Wed, 24 Jul 2019 19:31:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E6A621951;
+        Wed, 24 Jul 2019 19:31:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996671;
-        bh=Z7z6ZNVQ/aEopwbVD8Am1CrqyHr6ZMa+mZxXvPrDdAU=;
+        s=default; t=1563996696;
+        bh=aPqXeDed3l9oxzwaouHlEQYupd50IJGT37oCZSo7CpA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HYr5C4rNHilbX4kQax77mkO32KNtIxVWUXtRxcJtosZol9GtNFA3EmjVVQ2+zv7s4
-         zSiuxnZBMZDJ8MWlBkSuZLuUsudH9q+tDy/8S7lJjnXjGNz/5UsM97oi5zgD9pnWj4
-         fNliRCbQkSmauB5L4jJpe4etbyf2CpT711MaNxV4=
+        b=lje+LvEoCb8OGE5FWSyE12rGZhu0Ubg8BZULBV5XQ7s/ADF+SOShDtURPFygKca2c
+         GnzdzjP0ng99LuGLyXrQmj/vgck/bG4O9CW2fO0KPdzW4v9QwtXmKFptePj4DAml1K
+         BX0ITjBuEBag1rmypAaBQ8Y94Px5//a5c386QW3k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianbo Liu <jianbol@mellanox.com>,
-        Oz Shlomo <ozsh@mellanox.com>,
-        Eli Britstein <elibr@mellanox.com>,
-        Roi Dayan <roid@mellanox.com>, Mark Bloch <markb@mellanox.com>,
+        stable@vger.kernel.org, Maxim Mikityanskiy <maximmi@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
         Saeed Mahameed <saeedm@mellanox.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 178/413] net/mlx5: Get vport ACL namespace by vport index
-Date:   Wed, 24 Jul 2019 21:17:49 +0200
-Message-Id: <20190724191747.598534516@linuxfoundation.org>
+Subject: [PATCH 5.2 185/413] net/mlx5e: Attach/detach XDP program safely
+Date:   Wed, 24 Jul 2019 21:17:56 +0200
+Message-Id: <20190724191747.985210203@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -47,47 +46,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f53297d67800feb5fafd94abd926c889aefee690 ]
+[ Upstream commit e18953240de8b46360a67090c87ee1ef8160b35d ]
 
-The ingress and egress ACL root namespaces are created per vport and
-stored into arrays. However, the vport number is not the same as the
-index. Passing the array index, instead of vport number, to get the
-correct ingress and egress acl namespace.
+When an XDP program is set, a full reopen of all channels happens in two
+cases:
 
-Fixes: 9b93ab981e3b ("net/mlx5: Separate ingress/egress namespaces for each vport")
-Signed-off-by: Jianbo Liu <jianbol@mellanox.com>
-Reviewed-by: Oz Shlomo <ozsh@mellanox.com>
-Reviewed-by: Eli Britstein <elibr@mellanox.com>
-Reviewed-by: Roi Dayan <roid@mellanox.com>
-Reviewed-by: Mark Bloch <markb@mellanox.com>
+1. When there was no program set, and a new one is being set.
+
+2. When there was a program set, but it's being unset.
+
+The full reopen is necessary, because the channel parameters may change
+if XDP is enabled or disabled. However, it's performed in an unsafe way:
+if the new channels fail to open, the old ones are already closed, and
+the interface goes down. Use the safe way to switch channels instead.
+The same way is already used for other configuration changes.
+
+Signed-off-by: Maxim Mikityanskiy <maximmi@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../net/ethernet/mellanox/mlx5/core/en_main.c | 31 ++++++++++++-------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-index 6a921e24cd5e..acab26b88261 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-@@ -939,7 +939,7 @@ int esw_vport_enable_egress_acl(struct mlx5_eswitch *esw,
- 		  vport->vport, MLX5_CAP_ESW_EGRESS_ACL(dev, log_max_ft_size));
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+index a8e8350b38aa..8db9fdbc03ea 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -4192,8 +4192,6 @@ static int mlx5e_xdp_set(struct net_device *netdev, struct bpf_prog *prog)
+ 	/* no need for full reset when exchanging programs */
+ 	reset = (!priv->channels.params.xdp_prog || !prog);
  
- 	root_ns = mlx5_get_flow_vport_acl_namespace(dev, MLX5_FLOW_NAMESPACE_ESW_EGRESS,
--						    vport->vport);
-+			mlx5_eswitch_vport_num_to_index(esw, vport->vport));
- 	if (!root_ns) {
- 		esw_warn(dev, "Failed to get E-Switch egress flow namespace for vport (%d)\n", vport->vport);
- 		return -EOPNOTSUPP;
-@@ -1057,7 +1057,7 @@ int esw_vport_enable_ingress_acl(struct mlx5_eswitch *esw,
- 		  vport->vport, MLX5_CAP_ESW_INGRESS_ACL(dev, log_max_ft_size));
+-	if (was_opened && reset)
+-		mlx5e_close_locked(netdev);
+ 	if (was_opened && !reset) {
+ 		/* num_channels is invariant here, so we can take the
+ 		 * batched reference right upfront.
+@@ -4205,20 +4203,31 @@ static int mlx5e_xdp_set(struct net_device *netdev, struct bpf_prog *prog)
+ 		}
+ 	}
  
- 	root_ns = mlx5_get_flow_vport_acl_namespace(dev, MLX5_FLOW_NAMESPACE_ESW_INGRESS,
--						    vport->vport);
-+			mlx5_eswitch_vport_num_to_index(esw, vport->vport));
- 	if (!root_ns) {
- 		esw_warn(dev, "Failed to get E-Switch ingress flow namespace for vport (%d)\n", vport->vport);
- 		return -EOPNOTSUPP;
+-	/* exchange programs, extra prog reference we got from caller
+-	 * as long as we don't fail from this point onwards.
+-	 */
+-	old_prog = xchg(&priv->channels.params.xdp_prog, prog);
++	if (was_opened && reset) {
++		struct mlx5e_channels new_channels = {};
++
++		new_channels.params = priv->channels.params;
++		new_channels.params.xdp_prog = prog;
++		mlx5e_set_rq_type(priv->mdev, &new_channels.params);
++		old_prog = priv->channels.params.xdp_prog;
++
++		err = mlx5e_safe_switch_channels(priv, &new_channels, NULL);
++		if (err)
++			goto unlock;
++	} else {
++		/* exchange programs, extra prog reference we got from caller
++		 * as long as we don't fail from this point onwards.
++		 */
++		old_prog = xchg(&priv->channels.params.xdp_prog, prog);
++	}
++
+ 	if (old_prog)
+ 		bpf_prog_put(old_prog);
+ 
+-	if (reset) /* change RQ type according to priv->xdp_prog */
++	if (!was_opened && reset) /* change RQ type according to priv->xdp_prog */
+ 		mlx5e_set_rq_type(priv->mdev, &priv->channels.params);
+ 
+-	if (was_opened && reset)
+-		err = mlx5e_open_locked(netdev);
+-
+-	if (!test_bit(MLX5E_STATE_OPENED, &priv->state) || reset)
++	if (!was_opened || reset)
+ 		goto unlock;
+ 
+ 	/* exchanging programs w/o reset, we update ref counts on behalf
 -- 
 2.20.1
 
