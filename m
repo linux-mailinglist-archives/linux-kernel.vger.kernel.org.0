@@ -2,99 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DC8572820
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:18:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4929B72832
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:27:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726248AbfGXGR7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 02:17:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55090 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbfGXGR6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 02:17:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=1Xa50e3c+n/XgLreEXAZzM1/Dusmqf3jal/tdBSMEUY=; b=gGQOCJFzwPHRaT0Y5VpwBtWJoQ
-        7N90/JQMzvZNdlZpfiJ/+4M5wIFkAFW6SLRu80CqjgQtsuC25Bn72Ra55U98FUrqDgFJii1g2Pk+v
-        XPvWZXVP7/4TvQIWdHMJJsTBcEyaiNbtoPg+JOyeFN2/iHN+j8DiH//YTyjVYst2eZdJNW8GDmmaH
-        1tpuC3lNNf/w0GceJkPRPaBB6JdiZZSZVJOlr+inma1SfS2sXWO/g3eKnofUKFN7B7pQL3769+3TW
-        jCOEK61cTU+A0p4axGitNuC4cMeg/ZDpW3Ry+2Ff0HYkYs0+KxmpPcvICLo1Gula2Bgy/8Zw4ackm
-        7GUAhyFw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hqAb0-0007QP-TP; Wed, 24 Jul 2019 06:17:50 +0000
-Date:   Tue, 23 Jul 2019 23:17:50 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     john.hubbard@gmail.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
-        netdev@vger.kernel.org, samba-technical@lists.samba.org,
-        v9fs-developer@lists.sourceforge.net,
-        virtualization@lists.linux-foundation.org,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 00/12] block/bio, fs: convert put_page() to
- put_user_page*()
-Message-ID: <20190724061750.GA19397@infradead.org>
-References: <20190724042518.14363-1-jhubbard@nvidia.com>
+        id S1726023AbfGXG1a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 02:27:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39774 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725882AbfGXG1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 02:27:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 22667AC94
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 06:27:28 +0000 (UTC)
+Date:   Wed, 24 Jul 2019 08:27:27 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Subject: Re: + mm-oom-avoid-printk-iteration-under-rcu.patch added to -mm tree
+Message-ID: <20190724062727.GA10882@dhcp22.suse.cz>
+References: <20190723231429.b0bmJ%akpm@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190724042518.14363-1-jhubbard@nvidia.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190723231429.b0bmJ%akpm@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 09:25:06PM -0700, john.hubbard@gmail.com wrote:
-> * Store, in the iov_iter, a "came from gup (get_user_pages)" parameter.
->   Then, use the new iov_iter_get_pages_use_gup() to retrieve it when
->   it is time to release the pages. That allows choosing between put_page()
->   and put_user_page*().
+Andrew,
+I've had some concerns wrt. this patch - especially the additional
+complexity - and I have to say I am not convinced that this is really
+needed. Our past experience in this area suggests that more tricky code
+leads to different corner cases. So I am really reluctant to add more
+complexity without any real world reports.
+
+On Tue 23-07-19 16:14:29, Andrew Morton wrote:
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Subject: mm, oom: avoid printk() iteration under RCU
 > 
-> * Pass in one more piece of information to bio_release_pages: a "from_gup"
->   parameter. Similar use as above.
+> Currently dump_tasks() might call printk() for many thousands times under
+> RCU, which might take many minutes for slow consoles.  Therefore, split
+> dump_tasks() into three stages; take a snapshot of possible OOM victim
+> candidates under RCU, dump the snapshot from reschedulable context, and
+> destroy the snapshot.
 > 
-> * Change the block layer, and several file systems, to use
->   put_user_page*().
+> In a future patch, the first stage would be moved to select_bad_process()
+> and the third stage would be moved to after oom_kill_process(), and will
+> simplify refcount handling.
+> 
+> Link: http://lkml.kernel.org/r/1563360901-8277-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Cc: Shakeel Butt <shakeelb@google.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Roman Gushchin <guro@fb.com>
+> Cc: David Rientjes <rientjes@google.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+> 
+>  include/linux/sched.h |    1 
+>  mm/oom_kill.c         |   67 +++++++++++++++++++---------------------
+>  2 files changed, 34 insertions(+), 34 deletions(-)
+> 
+> --- a/include/linux/sched.h~mm-oom-avoid-printk-iteration-under-rcu
+> +++ a/include/linux/sched.h
+> @@ -1246,6 +1246,7 @@ struct task_struct {
+>  #ifdef CONFIG_MMU
+>  	struct task_struct		*oom_reaper_list;
+>  #endif
+> +	struct list_head		oom_victim_list;
+>  #ifdef CONFIG_VMAP_STACK
+>  	struct vm_struct		*stack_vm_area;
+>  #endif
+> --- a/mm/oom_kill.c~mm-oom-avoid-printk-iteration-under-rcu
+> +++ a/mm/oom_kill.c
+> @@ -377,36 +377,13 @@ static void select_bad_process(struct oo
+>  	}
+>  }
+>  
+> -static int dump_task(struct task_struct *p, void *arg)
+> -{
+> -	struct oom_control *oc = arg;
+> -	struct task_struct *task;
+> -
+> -	if (oom_unkillable_task(p))
+> -		return 0;
+>  
+> -	/* p may not have freeable memory in nodemask */
+> -	if (!is_memcg_oom(oc) && !oom_cpuset_eligible(p, oc))
+> -		return 0;
+> -
+> -	task = find_lock_task_mm(p);
+> -	if (!task) {
+> -		/*
+> -		 * This is a kthread or all of p's threads have already
+> -		 * detached their mm's.  There's no need to report
+> -		 * them; they can't be oom killed anyway.
+> -		 */
+> -		return 0;
+> +static int add_candidate_task(struct task_struct *p, void *arg)
+> +{
+> +	if (!oom_unkillable_task(p)) {
+> +		get_task_struct(p);
+> +		list_add_tail(&p->oom_victim_list, (struct list_head *) arg);
+>  	}
+> -
+> -	pr_info("[%7d] %5d %5d %8lu %8lu %8ld %8lu         %5hd %s\n",
+> -		task->pid, from_kuid(&init_user_ns, task_uid(task)),
+> -		task->tgid, task->mm->total_vm, get_mm_rss(task->mm),
+> -		mm_pgtables_bytes(task->mm),
+> -		get_mm_counter(task->mm, MM_SWAPENTS),
+> -		task->signal->oom_score_adj, task->comm);
+> -	task_unlock(task);
+> -
+>  	return 0;
+>  }
+>  
+> @@ -422,19 +399,41 @@ static int dump_task(struct task_struct
+>   */
+>  static void dump_tasks(struct oom_control *oc)
+>  {
+> -	pr_info("Tasks state (memory values in pages):\n");
+> -	pr_info("[  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name\n");
+> +	static LIST_HEAD(list);
+> +	struct task_struct *p;
+> +	struct task_struct *t;
+>  
+>  	if (is_memcg_oom(oc))
+> -		mem_cgroup_scan_tasks(oc->memcg, dump_task, oc);
+> +		mem_cgroup_scan_tasks(oc->memcg, add_candidate_task, &list);
+>  	else {
+> -		struct task_struct *p;
+> -
+>  		rcu_read_lock();
+>  		for_each_process(p)
+> -			dump_task(p, oc);
+> +			add_candidate_task(p, &list);
+>  		rcu_read_unlock();
+>  	}
+> +	pr_info("Tasks state (memory values in pages):\n");
+> +	pr_info("[  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name\n");
+> +	list_for_each_entry(p, &list, oom_victim_list) {
+> +		cond_resched();
+> +		/* p may not have freeable memory in nodemask */
+> +		if (!is_memcg_oom(oc) && !oom_cpuset_eligible(p, oc))
+> +			continue;
+> +		/* All of p's threads might have already detached their mm's. */
+> +		t = find_lock_task_mm(p);
+> +		if (!t)
+> +			continue;
+> +		pr_info("[%7d] %5d %5d %8lu %8lu %8ld %8lu         %5hd %s\n",
+> +			t->pid, from_kuid(&init_user_ns, task_uid(t)),
+> +			t->tgid, t->mm->total_vm, get_mm_rss(t->mm),
+> +			mm_pgtables_bytes(t->mm),
+> +			get_mm_counter(t->mm, MM_SWAPENTS),
+> +			t->signal->oom_score_adj, t->comm);
+> +		task_unlock(t);
+> +	}
+> +	list_for_each_entry_safe(p, t, &list, oom_victim_list) {
+> +		list_del(&p->oom_victim_list);
+> +		put_task_struct(p);
+> +	}
+>  }
+>  
+>  static void dump_oom_summary(struct oom_control *oc, struct task_struct *victim)
+> _
+> 
+> Patches currently in -mm which might be from penguin-kernel@I-love.SAKURA.ne.jp are
+> 
+> mm-oom-avoid-printk-iteration-under-rcu.patch
+> info-task-hung-in-generic_file_write_iter.patch
+> info-task-hung-in-generic_file_write-fix.patch
+> kexec-bail-out-upon-sigkill-when-allocating-memory.patch
 
-I think we can do this in a simple and better way.  We have 5 ITER_*
-types.  Of those ITER_DISCARD as the name suggests never uses pages, so
-we can skip handling it.  ITER_PIPE is rejected іn the direct I/O path,
-which leaves us with three.
-
-Out of those ITER_BVEC needs a user page reference, so we want to call
-put_user_page* on it.  ITER_BVEC always already has page reference,
-which means in the block direct I/O path path we alread don't take
-a page reference.  We should extent that handling to all other calls
-of iov_iter_get_pages / iov_iter_get_pages_alloc.  I think we should
-just reject ITER_KVEC for direct I/O as well as we have no users and
-it is rather pointless.  Alternatively if we see a use for it the
-callers should always have a life page reference anyway (or might
-be on kmalloc memory), so we really should not take a reference either.
-
-In other words:  the only time we should ever have to put a page in
-this patch is when they are user pages.  We'll need to clean up
-various bits of code for that, but that can be done gradually before
-even getting to the actual put_user_pages conversion.
+-- 
+Michal Hocko
+SUSE Labs
