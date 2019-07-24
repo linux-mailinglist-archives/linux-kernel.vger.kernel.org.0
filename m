@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DFCA724E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 04:47:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9999724E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 04:48:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbfGXCr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 22:47:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47020 "EHLO mail.kernel.org"
+        id S1726305AbfGXCr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 22:47:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725827AbfGXCr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 22:47:26 -0400
+        id S1725827AbfGXCr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 22:47:59 -0400
 Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DECAA229ED;
-        Wed, 24 Jul 2019 02:47:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24091229F3;
+        Wed, 24 Jul 2019 02:47:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563936445;
-        bh=wPRzzubrZrDz+qj/h/59SsRf1D5AWLBQkY1RQNmscKo=;
+        s=default; t=1563936478;
+        bh=Xyk3AsVikvm0d2EkCpGJpuwEcB71DFhIMgOaRPVJ7Jg=;
         h=Date:From:To:Cc:Subject:From;
-        b=ThEb3+zcLQwQzEFTHpvcAiUQGb38HOgrg7ghHjwjj7Or/0Gb58nedNST/beVs0FGC
-         s8hxXl04ZxK4OfiT3NGsphJt3a9EXxrBoBCzpkDoDMgiAXBBzPLXE3z4G0csiaDWnd
-         7lwC9clXgRpFEQVFcOr4iq+xeLeaNrSiGU8WnBc4=
-Date:   Tue, 23 Jul 2019 19:47:23 -0700
+        b=VI2yePW3xvp/jq/8fiO+yr6Y95RanNjqp43S+XbBSPOFBmO0X5oP1w/WCL6nwaDi1
+         xfPWacDUn8H0eF1jEYyJhnx/lhGqV410J9ATwkFjTwpCSp+MsX2Uiv85UEvw/oRRz3
+         F7cVo9OHKzR/XpKdYYO0uO00fun72f+W28kYDZo8=
+Date:   Tue, 23 Jul 2019 19:47:56 -0700
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>
+To:     linux-security-module@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
 Cc:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Reminder: 1 open syzbot bug in sound subsystem
-Message-ID: <20190724024723.GI643@sol.localdomain>
-Mail-Followup-To: alsa-devel@alsa-project.org,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Reminder: 1 open syzbot bug in "security/smack" subsystem
+Message-ID: <20190724024756.GJ643@sol.localdomain>
+Mail-Followup-To: linux-security-module@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -46,34 +50,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 to make it better, or if you want it re-generated with the latest status.]
 
 Of the currently open syzbot reports against the upstream kernel, I've manually
-marked 1 of them as possibly being a bug in the sound subsystem.
+marked 1 of them as possibly being a bug in the "security/smack" subsystem.
 
 If you believe this bug is no longer valid, please close the syzbot report by
 sending a '#syz fix', '#syz dup', or '#syz invalid' command in reply to the
 original thread, as explained at https://goo.gl/tpsmEJ#status
 
-If you believe I misattributed this bug to the sound subsystem, please let me
-know, and if possible forward the report to the correct people or mailing list.
+If you believe I misattributed this bug to the "security/smack" subsystem,
+please let me know, and if possible forward the report to the correct people or
+mailing list.
 
 Here is the bug:
 
 --------------------------------------------------------------------------------
-Title:              KASAN: use-after-free Read in wake_up_if_idle
-Last occurred:      131 days ago
-Reported:           267 days ago
-Branches:           Mainline and others
-Dashboard link:     https://syzkaller.appspot.com/bug?id=b1e300cd7b124fc83dd4199d4d1df26310111b0f
-Original thread:    https://lkml.kernel.org/lkml/00000000000066ab7105795f245e@google.com/T/#u
+Title:              possible deadlock in ext4_evict_inode
+Last occurred:      281 days ago
+Reported:           320 days ago
+Branches:           Mainline
+Dashboard link:     https://syzkaller.appspot.com/bug?id=9eda6092f146cb23cb9109f675a2e2cb743ee48b
+Original thread:    https://lkml.kernel.org/lkml/00000000000091615e0575368e33@google.com/T/#u
 
-Unfortunately, this bug does not have a reproducer.
+This bug has a syzkaller reproducer only.
 
-No one replied to the original thread for this bug.
+The original thread for this bug received 2 replies; the last was 320 days ago.
 
 If you fix this bug, please add the following tag to the commit:
-    Reported-by: syzbot+2c1253bc508adef78a7f@syzkaller.appspotmail.com
+    Reported-by: syzbot+0eefc1e06a77d327a056@syzkaller.appspotmail.com
 
 If you send any email or patch for this bug, please consider replying to the
 original thread.  For the git send-email command to use, or tips on how to reply
 if the thread isn't in your mailbox, see the "Reply instructions" at
-https://lkml.kernel.org/r/00000000000066ab7105795f245e@google.com
+https://lkml.kernel.org/r/00000000000091615e0575368e33@google.com
 
