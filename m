@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E293E73B08
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:58:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C39D473B0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:58:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391840AbfGXT4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:56:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40374 "EHLO mail.kernel.org"
+        id S2404341AbfGXT4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:56:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404605AbfGXT4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:56:11 -0400
+        id S2391831AbfGXT4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:56:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B81DC22ADC;
-        Wed, 24 Jul 2019 19:56:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1376C205C9;
+        Wed, 24 Jul 2019 19:56:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563998171;
-        bh=wPeLi7+nqS2I7NrSj3ujATue3ugECmzerkrt/EmeAoY=;
+        s=default; t=1563998174;
+        bh=oMhK2svDNQZluWMPovVKARVEW6yfUn3Wpof1lc/Qgvs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K+P6x2VQqB4l+z9agAxvRv+pFZz2HIgiGiyKYgcmj7ESROMS6MCpbbXBGNd0cDxXg
-         64XpO8lgR/csSAi37r+bmqDhEgeG6BVAknd1VR2xZBeig6V9Qx8kH/XSYbLK/f2RLj
-         2Tmynji7gN2v3zq5vHbzZbAU61UY2mOJCAKtvYI8=
+        b=vkvOGZQH0Bviy9Z0a2lbo+xfs9D8IBuy8w7bIAP3bbGFd/JvlIuRSY1GRLLlhZNib
+         Ro2tONa1Z0op2ctzYwgOiRFXwXmD+a8CWGmuktkX7c02zt7E/vSIjT2r9r2fwYub3w
+         ozH+wuXrrBd7Wqgktezx3cmZ9W9curVoaIL1GcUw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 5.1 271/371] iwlwifi: pcie: fix ALIVE interrupt handling for gen2 devices w/o MSI-X
-Date:   Wed, 24 Jul 2019 21:20:23 +0200
-Message-Id: <20190724191744.703399482@linuxfoundation.org>
+Subject: [PATCH 5.1 272/371] iwlwifi: dont WARN when calling iwl_get_shared_mem_conf with RF-Kill
+Date:   Wed, 24 Jul 2019 21:20:24 +0200
+Message-Id: <20190724191744.800167597@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -46,17 +46,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-commit ec46ae30245ecb41d73f8254613db07c653fb498 upstream.
+commit 0d53cfd0cca3c729a089c39eef0e7d8ae7662974 upstream.
 
-We added code to restock the buffer upon ALIVE interrupt
-when MSI-X is disabled. This was added as part of the context
-info code. This code was added only if the ISR debug level
-is set which is very unlikely to be related.
-Move this code to run even when the ISR debug level is not
-set.
-
-Note that gen2 devices work with MSI-X in most cases so that
-this path is seldom used.
+iwl_mvm_send_cmd returns 0 when the command won't be sent
+because RF-Kill is asserted. Do the same when we call
+iwl_get_shared_mem_conf since it is not sent through
+iwl_mvm_send_cmd but directly calls the transport layer.
 
 Cc: stable@vger.kernel.org
 Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
@@ -64,52 +59,51 @@ Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/rx.c |   34 ++++++++++++---------------
- 1 file changed, 16 insertions(+), 18 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/fw/smem.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-@@ -1832,25 +1832,23 @@ irqreturn_t iwl_pcie_irq_handler(int irq
- 		goto out;
- 	}
+--- a/drivers/net/wireless/intel/iwlwifi/fw/smem.c
++++ b/drivers/net/wireless/intel/iwlwifi/fw/smem.c
+@@ -8,7 +8,7 @@
+  * Copyright(c) 2012 - 2014 Intel Corporation. All rights reserved.
+  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
+  * Copyright(c) 2016 - 2017 Intel Deutschland GmbH
+- * Copyright(c) 2018 Intel Corporation
++ * Copyright(c) 2018 - 2019 Intel Corporation
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of version 2 of the GNU General Public License as
+@@ -31,7 +31,7 @@
+  * Copyright(c) 2012 - 2014 Intel Corporation. All rights reserved.
+  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
+  * Copyright(c) 2016 - 2017 Intel Deutschland GmbH
+- * Copyright(c) 2018 Intel Corporation
++ * Copyright(c) 2018 - 2019 Intel Corporation
+  * All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without
+@@ -134,6 +134,7 @@ void iwl_get_shared_mem_conf(struct iwl_
+ 		.len = { 0, },
+ 	};
+ 	struct iwl_rx_packet *pkt;
++	int ret;
  
--	if (iwl_have_debug_level(IWL_DL_ISR)) {
--		/* NIC fires this, but we don't use it, redundant with WAKEUP */
--		if (inta & CSR_INT_BIT_SCD) {
--			IWL_DEBUG_ISR(trans,
--				      "Scheduler finished to transmit the frame/frames.\n");
--			isr_stats->sch++;
--		}
-+	/* NIC fires this, but we don't use it, redundant with WAKEUP */
-+	if (inta & CSR_INT_BIT_SCD) {
-+		IWL_DEBUG_ISR(trans,
-+			      "Scheduler finished to transmit the frame/frames.\n");
-+		isr_stats->sch++;
+ 	if (fw_has_capa(&fwrt->fw->ucode_capa,
+ 			IWL_UCODE_TLV_CAPA_EXTEND_SHARED_MEM_CFG))
+@@ -141,8 +142,13 @@ void iwl_get_shared_mem_conf(struct iwl_
+ 	else
+ 		cmd.id = SHARED_MEM_CFG;
+ 
+-	if (WARN_ON(iwl_trans_send_cmd(fwrt->trans, &cmd)))
++	ret = iwl_trans_send_cmd(fwrt->trans, &cmd);
++
++	if (ret) {
++		WARN(ret != -ERFKILL,
++		     "Could not send the SMEM command: %d\n", ret);
+ 		return;
 +	}
  
--		/* Alive notification via Rx interrupt will do the real work */
--		if (inta & CSR_INT_BIT_ALIVE) {
--			IWL_DEBUG_ISR(trans, "Alive interrupt\n");
--			isr_stats->alive++;
--			if (trans->cfg->gen2) {
--				/*
--				 * We can restock, since firmware configured
--				 * the RFH
--				 */
--				iwl_pcie_rxmq_restock(trans, trans_pcie->rxq);
--			}
-+	/* Alive notification via Rx interrupt will do the real work */
-+	if (inta & CSR_INT_BIT_ALIVE) {
-+		IWL_DEBUG_ISR(trans, "Alive interrupt\n");
-+		isr_stats->alive++;
-+		if (trans->cfg->gen2) {
-+			/*
-+			 * We can restock, since firmware configured
-+			 * the RFH
-+			 */
-+			iwl_pcie_rxmq_restock(trans, trans_pcie->rxq);
- 		}
- 	}
- 
+ 	pkt = cmd.resp_pkt;
+ 	if (fwrt->trans->cfg->device_family >= IWL_DEVICE_FAMILY_22000)
 
 
