@@ -2,94 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AE587238D
+	by mail.lfdr.de (Postfix) with ESMTP id 73F5A7238E
 	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 03:01:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbfGXA6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 20:58:06 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:32918 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725601AbfGXA6F (ORCPT
+        id S1727959AbfGXA6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 20:58:38 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36510 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725601AbfGXA6h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 20:58:05 -0400
-Received: by mail-qt1-f196.google.com with SMTP id r6so39617964qtt.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 17:58:05 -0700 (PDT)
+        Tue, 23 Jul 2019 20:58:37 -0400
+Received: by mail-pf1-f196.google.com with SMTP id r7so19995753pfl.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 17:58:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=oASs8uYGKSbhcsk738Ru91K1IEqBMwZxngEg6++szx8=;
-        b=LZWjiZpBtpT2bEFO6EUMuDgmX2l5GA3NIJ7uhRtxRtT3kT6m1aQy24Gom1WLWTLBHA
-         mbcbb5Ghnk0kH0giCbvjnCrfq6kB90kehk6ZCl5JK1ziFAU4GF5MpzNG4SPvOpvvh1sY
-         Ys6q/OeoUSJeWet4ylOeMbmMZwPOdDdIlToKDwwGJXpY4dptVxFpCJK7HmfeQ5HwWZPS
-         oxN0l2xC3IekY9R0LacrU333l9Uq3pebzWhvTYqsotUQo6DpCHJ/+ndzf9qNZrtlwUyj
-         iu5HuManAbQJm2gAb2whlSgWtY1/95MCPv42FkL4j31Qob/lGVpX/9IdP7LZVWZMHaHB
-         fwMg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VWRBDptpvGExrL+LyWWAbEmVmW1hvUPL5daLiJ4nWjg=;
+        b=P7r26X8LA2xaGR51pT+9ncHw7KvKkSSF7K6iF+2FowcbqpHFOKjyvQVoo7pzraNduW
+         5kz9RYQ8aJo3w8k8flOPlTLbuuNxlpbs10UEcP4pF18u5sYE48gA0nwCcqeiCFA6j08Z
+         b6LuRaJA0YuhYrPaszZK5M2df9haQgZmtiaZuB5K0niTU1t67B/WnFOBNIgQYGskjEEe
+         wujqW/cZLFMasHm1oVfGuHBDJeBAFHOY6sIeeoRVZn5VlDciYISnvCjMF2HYVcXEyypF
+         G7yFDTC+c6kesjkNddoHqI8I31VweyYtatbBy8niBd9gsNecSMsXasv2vqFhOpV7JQ2a
+         cRqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=oASs8uYGKSbhcsk738Ru91K1IEqBMwZxngEg6++szx8=;
-        b=B6FmdBKMNfxN98ynw3IeZXb9rQbWWuz/d7bXCJRhN/f6pF09/JtwmfE6ZmCESsnxXW
-         eY1HSftv6eMEX9MyinLMMgJ8WbBNiGizDL5SSVae/sa4NuuJl7rLxV7bSs1mwOWAK9Aq
-         1veeUpSwotlf3f1OtxIDxsQl6Yrmb8bN+r1W7rZEDd+dRXoWgZOIv74qIz3Giw9xyIgM
-         myF5JK5u2Xd72F7l+131PWVUF1RXJNVypQfjw2ROJy9lmMRcMkonk77HIVoJIZf1q1dr
-         NeQMDWaUc/O8JMYlvwOWORA4BAMgoT1hxjMX9SqGvGRORsSyq05luYpWgMVPtqxhHQ2v
-         WKnA==
-X-Gm-Message-State: APjAAAX3rxptBnoLIaKurAdmuE9dNjwMszKRxygkvprLr7wPS1uA4MoM
-        tU7/x7Mv86BP4qVFwOY8+/GyvsVP/omPtpfpr/U=
-X-Google-Smtp-Source: APXvYqwcNmsPPp8085fZAASKJZsAQ3t8jFnX8fmaYib9qDAxnfX0Wj0y2Rk0U2Q0i6+d7tHPu6gkO5twYW8ut9749Zs=
-X-Received: by 2002:ac8:2409:: with SMTP id c9mr55507527qtc.145.1563929884513;
- Tue, 23 Jul 2019 17:58:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190711113517.26077-1-axel.lin@ingics.com> <20190723112647.GE5365@sirena.org.uk>
- <CAFRkauDSbmtGRnE0xvKOKxb=SWOA+03i60Wu-9KHYxh1qFuCEg@mail.gmail.com> <20190723163503.GL5365@sirena.org.uk>
-In-Reply-To: <20190723163503.GL5365@sirena.org.uk>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VWRBDptpvGExrL+LyWWAbEmVmW1hvUPL5daLiJ4nWjg=;
+        b=fi1SWTh2inpQK72h/NT67SuUIyFec1r6sRdes3KL15BE3OWt+OL4ohj2dh2MNLX8WU
+         NCg4kgESepbgFPBntuR5xBhY6kDY+49ocnJoKlKyYulq3M04AcDrRoGJz4iHtKhSH/IL
+         VxJ/KGUnsIlI9liz3ANE0Wjdc7fiZLmd1mONj0mt4v1jqQCAuewRTqSRSCAJGjqOhsff
+         suNp7ZkGhGRkAMAMVhj4k+7waWYDh9xNpe45yMue40N3NWTsENX9asNXAjAx4/ss58aU
+         RzORXKPMKj9xqMn62Sf3lc1Y7/G/4CTSjsPdpbf9QEVzVt5oEFpFskOiWLg1FnAdgm77
+         UHUQ==
+X-Gm-Message-State: APjAAAUnxOXMhwG32LKUXQS/LgWfIa1mKQ2cb8mfYCea38YNSPHvuG0K
+        9wNAMkuEeFXuECQGtWUtLzs=
+X-Google-Smtp-Source: APXvYqzfqb20vNtSnlS1tF8gfna4i6ht0Ii4lmD+QWNCOKbd65ee3Pfx/iuPa+DcT1auNw67FFKgAQ==
+X-Received: by 2002:a17:90a:3ae8:: with SMTP id b95mr82886422pjc.68.1563929916628;
+        Tue, 23 Jul 2019 17:58:36 -0700 (PDT)
+Received: from localhost.localdomain (36-239-234-194.dynamic-ip.hinet.net. [36.239.234.194])
+        by smtp.gmail.com with ESMTPSA id 4sm53942530pfc.92.2019.07.23.17.58.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 23 Jul 2019 17:58:35 -0700 (PDT)
 From:   Axel Lin <axel.lin@ingics.com>
-Date:   Wed, 24 Jul 2019 08:57:53 +0800
-Message-ID: <CAFRkauBACWC1pcxJe9tJyK4vM2R2BSu2z9sej3GLket3niZg9w@mail.gmail.com>
-Subject: Re: [PATCH RFT] regulator: lp87565: Fix probe failure for "ti,lp87565"
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Keerthy <j-keerthy@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH RESEND] regulator: lp87565: Fix probe failure for "ti,lp87565"
+Date:   Wed, 24 Jul 2019 08:58:25 +0800
+Message-Id: <20190724005825.28562-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark Brown <broonie@kernel.org> =E6=96=BC 2019=E5=B9=B47=E6=9C=8824=E6=97=
-=A5 =E9=80=B1=E4=B8=89 =E4=B8=8A=E5=8D=8812:35=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On Tue, Jul 23, 2019 at 08:28:35PM +0800, Axel Lin wrote:
-> > Mark Brown <broonie@kernel.org> =E6=96=BC 2019=E5=B9=B47=E6=9C=8823=E6=
-=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=887:26=E5=AF=AB=E9=81=93=EF=BC=9A
-> > > On Thu, Jul 11, 2019 at 07:35:17PM +0800, Axel Lin wrote:
->
-> > > > The "ti,lp87565" compatible string is still in of_lp87565_match_tab=
-le,
-> > > > but current code will return -EINVAL because lp87565->dev_type is u=
-nknown.
-> > > > This was working in earlier kernel versions, so fix it.
->
-> > > This doesn't seem to apply against current code, please check and
-> > > resend.
->
-> > I re-generate the patch but the new patch is exactly the same as this o=
-ne.
-> > It can be applied to both Linus and linux-next trees.
-> > Did I miss something?
->
-> It's a fix so I was trying to apply it on my for-5.3 branch.
+The "ti,lp87565" compatible string is still in of_lp87565_match_table,
+but current code will return -EINVAL because lp87565->dev_type is unknown.
+This was working in earlier kernel versions, so fix it.
 
-The commit f3f4363b1239 ("regulator: lp87565: Fix missing break in
-switch statement") from mfd tree has been merged to 5.3-rc1.
-So I'm wondering if the better approach is rebase for-5.3 branch to 5.3-rc1=
-.
-Then you can apply this patch without conflict.
+Fixes: 7ee63bd74750 ("regulator: lp87565: Add 4-phase lp87561 regulator support")
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+This patch was sent on https://lkml.org/lkml/2019/7/11/203
+This resend re-generate the patch against regulator tree for-5.3 branch.
 
-Anyway, I will resend the patch against regulator tree for-5.3.
+Note there is a conflict with commit f3f4363b1239 on Linus' tree which is merged from mfd tree.
+("regulator: lp87565: Fix missing break in switch statement")
 
-Regards,
-Axel
+ drivers/regulator/lp87565-regulator.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/regulator/lp87565-regulator.c b/drivers/regulator/lp87565-regulator.c
+index 993c11702083..0c440c5e2832 100644
+--- a/drivers/regulator/lp87565-regulator.c
++++ b/drivers/regulator/lp87565-regulator.c
+@@ -163,7 +163,7 @@ static int lp87565_regulator_probe(struct platform_device *pdev)
+ 	struct lp87565 *lp87565 = dev_get_drvdata(pdev->dev.parent);
+ 	struct regulator_config config = { };
+ 	struct regulator_dev *rdev;
+-	int i, min_idx = LP87565_BUCK_0, max_idx = LP87565_BUCK_3;
++	int i, min_idx, max_idx;
+ 
+ 	platform_set_drvdata(pdev, lp87565);
+ 
+@@ -180,10 +180,11 @@ static int lp87565_regulator_probe(struct platform_device *pdev)
+ 	case LP87565_DEVICE_TYPE_LP87561_Q1:
+ 		min_idx = LP87565_BUCK_3210;
+ 		max_idx = LP87565_BUCK_3210;
++		break;
+ 	default:
+-		dev_err(lp87565->dev, "Invalid lp config %d\n",
+-			lp87565->dev_type);
+-		return -EINVAL;
++		min_idx = LP87565_BUCK_0;
++		max_idx = LP87565_BUCK_3;
++		break;
+ 	}
+ 
+ 	for (i = min_idx; i <= max_idx; i++) {
+-- 
+2.20.1
+
