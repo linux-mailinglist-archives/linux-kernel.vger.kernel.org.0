@@ -2,91 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C98273563
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:27:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49D7D73556
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 19:25:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728203AbfGXR1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 13:27:23 -0400
-Received: from mga01.intel.com ([192.55.52.88]:32492 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726714AbfGXR1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 13:27:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 10:18:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
-   d="scan'208";a="368859098"
-Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.84])
-  by fmsmga005.fm.intel.com with ESMTP; 24 Jul 2019 10:18:21 -0700
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, acme@kernel.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
-        alexander.shishkin@linux.intel.com, ak@linux.intel.com,
-        Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V3 1/8] perf/x86/intel: Set correct mask for TOPDOWN.SLOTS
-Date:   Wed, 24 Jul 2019 10:17:46 -0700
-Message-Id: <20190724171753.8087-2-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190724171753.8087-1-kan.liang@linux.intel.com>
-References: <20190724171753.8087-1-kan.liang@linux.intel.com>
+        id S1726949AbfGXRZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 13:25:52 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34642 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbfGXRZw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 13:25:52 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: dafna)
+        with ESMTPSA id B14FE28B60A
+From:   Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+To:     dafna.hirschfeld@collabora.com
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, ezequiel@collabora.com,
+        kernel@collabora.com, Gary Bisson <gary.bisson@boundarydevices.com>
+Subject: [PATCH 1/2] dt-bindings: arm: imx: add imx8mq nitrogen support
+Date:   Wed, 24 Jul 2019 19:17:47 +0200
+Message-Id: <20190724171747.26076-2-dafna.hirschfeld@collabora.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190724171747.26076-1-dafna.hirschfeld@collabora.com>
+References: <20190724171747.26076-1-dafna.hirschfeld@collabora.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+i.MX 8Quad is a quad (4x) Cortex-A53 processor with powerful
+graphic and multimedia features.
+This patch adds Nitrogen8M board support.
 
-TOPDOWN.SLOTS(0x0400) is not a generic event. It is only available on
-fixed counter3.
-
-Don't extend its mask to generic counters.
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
+Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
 ---
- arch/x86/events/intel/core.c      | 6 ++++--
- arch/x86/include/asm/perf_event.h | 5 +++++
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 9e911a96972b..1b2c37ed49db 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -5081,12 +5081,14 @@ __init int intel_pmu_init(void)
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 7294ac36f4c0..728c41ef83bb 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -227,6 +227,12 @@ properties:
+               - fsl,imx8qxp-mek           # i.MX8QXP MEK Board
+           - const: fsl,imx8qxp
  
- 	if (x86_pmu.event_constraints) {
- 		/*
--		 * event on fixed counter2 (REF_CYCLES) only works on this
-+		 * event on fixed counter2 (REF_CYCLES) and
-+		 * fixed counter3 (TOPDOWN.SLOTS) only work on this
- 		 * counter, so do not extend mask to generic counters
- 		 */
- 		for_each_event_constraint(c, x86_pmu.event_constraints) {
- 			if (c->cmask == FIXED_EVENT_FLAGS
--			    && c->idxmsk64 != INTEL_PMC_MSK_FIXED_REF_CYCLES) {
-+			    && c->idxmsk64 != INTEL_PMC_MSK_FIXED_REF_CYCLES
-+			    && c->idxmsk64 != INTEL_PMC_MSK_FIXED_SLOTS) {
- 				c->idxmsk64 |= (1ULL << x86_pmu.num_counters) - 1;
- 			}
- 			c->idxmsk64 &=
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index 1392d5e6e8d6..457d35a75ad3 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -167,6 +167,11 @@ struct x86_pmu_capability {
- #define INTEL_PMC_IDX_FIXED_REF_CYCLES	(INTEL_PMC_IDX_FIXED + 2)
- #define INTEL_PMC_MSK_FIXED_REF_CYCLES	(1ULL << INTEL_PMC_IDX_FIXED_REF_CYCLES)
- 
-+/* TOPDOWN.SLOTS: */
-+#define MSR_ARCH_PERFMON_FIXED_CTR3	0x30c
-+#define INTEL_PMC_IDX_FIXED_SLOTS	(INTEL_PMC_IDX_FIXED + 3)
-+#define INTEL_PMC_MSK_FIXED_SLOTS	(1ULL << INTEL_PMC_IDX_FIXED_SLOTS)
++      - description: i.MX8MQ based Boards
++        items:
++          - enum:
++              - boundary,imx8mq-nitrogen8m           # i.MX8MQ NITROGEN Board
++          - const: fsl,imx8mq
 +
- /*
-  * We model BTS tracing as another fixed-mode PMC.
-  *
+       - description:
+           Freescale Vybrid Platform Device Tree Bindings
+ 
 -- 
-2.17.1
+2.11.0
 
