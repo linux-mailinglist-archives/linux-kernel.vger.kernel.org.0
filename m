@@ -2,123 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9971372530
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 05:15:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8467172520
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 05:10:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726429AbfGXDPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 23 Jul 2019 23:15:36 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:53972 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725848AbfGXDPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 23 Jul 2019 23:15:36 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B31402000E2;
-        Wed, 24 Jul 2019 05:15:31 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 88AE7200034;
-        Wed, 24 Jul 2019 05:15:25 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CA888402F6;
-        Wed, 24 Jul 2019 11:15:17 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        aisheng.dong@nxp.com, gustavo@embeddedor.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] clk: imx7ulp: Make sure earlycon's clock is enabled
-Date:   Wed, 24 Jul 2019 11:06:00 +0800
-Message-Id: <20190724030600.17839-1-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726364AbfGXDKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 23 Jul 2019 23:10:14 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2709 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725468AbfGXDKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 23 Jul 2019 23:10:14 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id CF1FEE77B2783C2E79F0;
+        Wed, 24 Jul 2019 11:10:11 +0800 (CST)
+Received: from [127.0.0.1] (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 24 Jul 2019
+ 11:10:05 +0800
+Subject: Re: [PATCH] RDMA/hns: Fix build error for hip08
+To:     Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
+References: <20190723024908.11876-1-yuehaibing@huawei.com>
+ <20190723074339.GJ5125@mtr-leonro.mtl.com> <20190723123402.GA15357@ziepe.ca>
+ <20190723133540.GM5125@mtr-leonro.mtl.com> <20190723133739.GC15357@ziepe.ca>
+CC:     <oulijun@huawei.com>, <xavier.huwei@huawei.com>,
+        <dledford@redhat.com>, <linux-kernel@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>
+From:   Yuehaibing <yuehaibing@huawei.com>
+Message-ID: <75865ec7-443e-f65a-2221-8fbc57fedb6b@huawei.com>
+Date:   Wed, 24 Jul 2019 11:10:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
+MIME-Version: 1.0
+In-Reply-To: <20190723133739.GC15357@ziepe.ca>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+On 2019/7/23 21:37, Jason Gunthorpe wrote:
+> On Tue, Jul 23, 2019 at 04:35:40PM +0300, Leon Romanovsky wrote:
+>> On Tue, Jul 23, 2019 at 09:34:02AM -0300, Jason Gunthorpe wrote:
+>>> On Tue, Jul 23, 2019 at 10:43:39AM +0300, Leon Romanovsky wrote:
+>>>> On Tue, Jul 23, 2019 at 10:49:08AM +0800, YueHaibing wrote:
+>>>>> If INFINIBAND_HNS_HIP08 is selected and HNS3 is m,
+>>>>> but INFINIBAND_HNS is y, building fails:
+>>>>>
+>>>>> drivers/infiniband/hw/hns/hns_roce_hw_v2.o: In function `hns_roce_hw_v2_exit':
+>>>>> hns_roce_hw_v2.c:(.exit.text+0xd): undefined reference to `hnae3_unregister_client'
+>>>>> drivers/infiniband/hw/hns/hns_roce_hw_v2.o: In function `hns_roce_hw_v2_init':
+>>>>> hns_roce_hw_v2.c:(.init.text+0xd): undefined reference to `hnae3_register_client'
+>>>>
+>>>> It means that you have a problem with header files of your hns3.
+>>>>
+>>>>>
+>>>>> Reported-by: Hulk Robot <hulkci@huawei.com>
+>>>>> Fixes: dd74282df573 ("RDMA/hns: Initialize the PCI device for hip08 RoCE")
+>>>>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>>>>>  drivers/infiniband/hw/hns/Kconfig | 3 ++-
+>>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/infiniband/hw/hns/Kconfig b/drivers/infiniband/hw/hns/Kconfig
+>>>>> index b59da5d..4371c80 100644
+>>>>> +++ b/drivers/infiniband/hw/hns/Kconfig
+>>>>> @@ -23,7 +23,8 @@ config INFINIBAND_HNS_HIP06
+>>>>>
+>>>>>  config INFINIBAND_HNS_HIP08
+>>>>>  	bool "Hisilicon Hip08 Family RoCE support"
+>>>>> -	depends on INFINIBAND_HNS && PCI && HNS3
+>>>>> +	depends on INFINIBAND_HNS && (INFINIBAND_HNS = HNS3)
+>>>>
+>>>> This is wrong.
+>>>
+>>> It is tricky. It is asserting that the IB side is built as a module if
+>>> the ethernet side is a module..
+>>>
+>>> It is kind of a weird pattern as the module config is INFINIBAND_HNS
+>>> and these others are just bool opens what to include, but I think it
+>>> is OK..
+>>
+>> select ???
+> 
+> select doesn't influence module or not any different from depeends
 
-Earlycon's clock could be disabled during kernel boot up,
-if earlycon is enabled and its clock is gated, then kernel
-boot up will fail. Make sure earlycon's clock is enabled
-during kernel boot up.
+Ok, it seems select is a better solution, it allows HNS3 is y while INFINIBAND_HNS is m,
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx7ulp.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Will send v2, Thanks!
 
-diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
-index 42e4667..2022d9b 100644
---- a/drivers/clk/imx/clk-imx7ulp.c
-+++ b/drivers/clk/imx/clk-imx7ulp.c
-@@ -42,6 +42,19 @@ static const struct clk_div_table ulp_div_table[] = {
- 	{ .val = 7, .div = 64, },
- };
- 
-+static const int pcc2_uart_clk_ids[] __initconst = {
-+	IMX7ULP_CLK_LPUART4,
-+	IMX7ULP_CLK_LPUART5,
-+};
-+
-+static const int pcc3_uart_clk_ids[] __initconst = {
-+	IMX7ULP_CLK_LPUART6,
-+	IMX7ULP_CLK_LPUART7,
-+};
-+
-+static struct clk **pcc2_uart_clks[ARRAY_SIZE(pcc2_uart_clk_ids) + 1] __initdata;
-+static struct clk **pcc3_uart_clks[ARRAY_SIZE(pcc3_uart_clk_ids) + 1] __initdata;
-+
- static void __init imx7ulp_clk_scg1_init(struct device_node *np)
- {
- 	struct clk_hw_onecell_data *clk_data;
-@@ -135,6 +148,7 @@ static void __init imx7ulp_clk_pcc2_init(struct device_node *np)
- 	struct clk_hw_onecell_data *clk_data;
- 	struct clk_hw **clks;
- 	void __iomem *base;
-+	int i;
- 
- 	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_PCC2_END),
- 			   GFP_KERNEL);
-@@ -173,6 +187,14 @@ static void __init imx7ulp_clk_pcc2_init(struct device_node *np)
- 	imx_check_clk_hws(clks, clk_data->num);
- 
- 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
-+
-+	for (i = 0; i < ARRAY_SIZE(pcc2_uart_clk_ids); i++) {
-+		int index = pcc2_uart_clk_ids[i];
-+
-+		pcc2_uart_clks[i] = &clks[index]->clk;
-+	}
-+
-+	imx_register_uart_clocks(pcc2_uart_clks);
- }
- CLK_OF_DECLARE(imx7ulp_clk_pcc2, "fsl,imx7ulp-pcc2", imx7ulp_clk_pcc2_init);
- 
-@@ -181,6 +203,7 @@ static void __init imx7ulp_clk_pcc3_init(struct device_node *np)
- 	struct clk_hw_onecell_data *clk_data;
- 	struct clk_hw **clks;
- 	void __iomem *base;
-+	int i;
- 
- 	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_PCC3_END),
- 			   GFP_KERNEL);
-@@ -218,6 +241,14 @@ static void __init imx7ulp_clk_pcc3_init(struct device_node *np)
- 	imx_check_clk_hws(clks, clk_data->num);
- 
- 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
-+
-+	for (i = 0; i < ARRAY_SIZE(pcc3_uart_clk_ids); i++) {
-+		int index = pcc3_uart_clk_ids[i];
-+
-+		pcc3_uart_clks[i] = &clks[index]->clk;
-+	}
-+
-+	imx_register_uart_clocks(pcc3_uart_clks);
- }
- CLK_OF_DECLARE(imx7ulp_clk_pcc3, "fsl,imx7ulp-pcc3", imx7ulp_clk_pcc3_init);
- 
--- 
-2.7.4
+> 
+> Jason
+> 
+> .
+> 
 
