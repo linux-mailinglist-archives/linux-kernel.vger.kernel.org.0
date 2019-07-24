@@ -2,137 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E01BD726E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 06:46:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60298726D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 06:45:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726472AbfGXEqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 00:46:12 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:50058 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbfGXEqM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 00:46:12 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hq692-0004Q6-CE; Tue, 23 Jul 2019 19:32:40 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hq691-0003ye-Le; Tue, 23 Jul 2019 19:32:40 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Steve French <smfrench@gmail.com>
-Cc:     ronnie sahlberg <ronniesahlberg@gmail.com>,
-        Sasha Levin <sashal@kernel.org>,
+        id S1725983AbfGXEpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 00:45:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56502 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725810AbfGXEpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 00:45:20 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 504EC218D4;
+        Wed, 24 Jul 2019 04:45:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563943518;
+        bh=wv1FF9pvLQVimghKv50W0jshATWF3Vl1uxND1wHmmvQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Fe8gxwMET73kpIn0q2RxPcjrc8oMsNmE6r91FEIhiCIUOLiVpuJUK5baRvBcD7+zl
+         w3OMxd7t5t+j+ui74gQE4UuTHxMpDpaRzhqYXhQZS1xAvc95+w6IQGH20xz8hnEZT4
+         Dirk3ycRQ0bSkeKWmMisjyRave5FYaMUJxMquyt4=
+Date:   Tue, 23 Jul 2019 21:45:16 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>
+Cc:     Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        luca abeni <luca.abeni@santannapisa.it>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        syzbot <syzbot+119ba87189432ead09b4@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Jeff Layton <jlayton@primarydata.com>,
-        linux-cifs <linux-cifs@vger.kernel.org>
-References: <20190715134655.4076-1-sashal@kernel.org>
-        <20190715134655.4076-39-sashal@kernel.org>
-        <CAN05THSdj8m5g-xG5abYAZ=_PE2xT-RwLtVhKrtxPevJGCSxag@mail.gmail.com>
-        <CAH2r5mu9ncYa1WTHuuMEk3=4TU5-RBH6nBKME4Bm+dntOtORTQ@mail.gmail.com>
-Date:   Tue, 23 Jul 2019 20:32:33 -0500
-In-Reply-To: <CAH2r5mu9ncYa1WTHuuMEk3=4TU5-RBH6nBKME4Bm+dntOtORTQ@mail.gmail.com>
-        (Steve French's message of "Tue, 23 Jul 2019 19:29:10 -0500")
-Message-ID: <87v9vs43pq.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: WARNING in enqueue_task_dl
+Message-ID: <20190724044516.GA643@sol.localdomain>
+Mail-Followup-To: Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        luca abeni <luca.abeni@santannapisa.it>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        syzbot <syzbot+119ba87189432ead09b4@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        the arch/x86 maintainers <x86@kernel.org>
+References: <000000000000b5e346057af4da06@google.com>
+ <alpine.DEB.2.21.1811190921190.9459@nanos.tec.linutronix.de>
+ <20181119130718.69eddf46@luca64>
+ <20181119125241.GC9761@hirez.programming.kicks-ass.net>
+ <20181119134349.GA2119@localhost.localdomain>
+ <20181119153201.GB2119@localhost.localdomain>
+ <a9d18394-250b-98e4-e66d-57622dbaf247@redhat.com>
+ <CACT4Y+bcug1SpLS6RfpJ8gTVm0vXm_S_1s_BG9n=zrEVdaffFw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1hq691-0003ye-Le;;;mid=<87v9vs43pq.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19WPNvkH+gWSBLcyA8Qu0HmQ+IFY+GAvQc=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa08.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=8.0 tests=ALL_TRUSTED,BAYES_00,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,XMGappySubj_01,XMSubLong autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        * -3.0 BAYES_00 BODY: Bayes spam probability is 0 to 1%
-        *      [score: 0.0035]
-        *  0.7 XMSubLong Long Subject
-        *  0.5 XMGappySubj_01 Very gappy subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Steve French <smfrench@gmail.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 335 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 4.9 (1.5%), b_tie_ro: 3.3 (1.0%), parse: 1.19
-        (0.4%), extract_message_metadata: 4.6 (1.4%), get_uri_detail_list:
-        1.83 (0.5%), tests_pri_-1000: 4.2 (1.3%), tests_pri_-950: 1.54 (0.5%),
-        tests_pri_-900: 1.18 (0.4%), tests_pri_-90: 23 (6.9%), check_bayes: 21
-        (6.3%), b_tokenize: 5 (1.6%), b_tok_get_all: 7 (2.1%), b_comp_prob:
-        1.96 (0.6%), b_tok_touch_all: 3.2 (1.0%), b_finish: 0.98 (0.3%),
-        tests_pri_0: 276 (82.5%), check_dkim_signature: 0.48 (0.1%),
-        check_dkim_adsp: 3.0 (0.9%), poll_dns_idle: 1.34 (0.4%), tests_pri_10:
-        2.6 (0.8%), tests_pri_500: 7 (2.0%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH AUTOSEL 5.2 039/249] signal/cifs: Fix cifs_put_tcp_session to call send_sig instead of force_sig
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+bcug1SpLS6RfpJ8gTVm0vXm_S_1s_BG9n=zrEVdaffFw@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Steve French <smfrench@gmail.com> writes:
+On Thu, Feb 07, 2019 at 10:35:04AM +0100, 'Dmitry Vyukov' via syzkaller-bugs wrote:
+> On Mon, Jan 7, 2019 at 5:19 PM Daniel Bristot de Oliveira
+> <bristot@redhat.com> wrote:
+> >
+> > On 11/19/18 4:32 PM, Juri Lelli wrote:
+> > > From 9326fd2b20269cffef7290bdc5b8173460d3c870 Mon Sep 17 00:00:00 2001
+> > > From: Juri Lelli <juri.lelli@redhat.com>
+> > > Date: Mon, 19 Nov 2018 16:04:42 +0100
+> > > Subject: [PATCH] sched/core: Fix PI boosting between RT and DEADLINE
+> > >
+> > > syzbot reported the following warning:
+> > >
+> > >  WARNING: CPU: 1 PID: 6351 at kernel/sched/deadline.c:628
+> > >  enqueue_task_dl+0x22da/0x38a0 kernel/sched/deadline.c:1504
+> > >  PM: Basic memory bitmaps freed
+> > >  Kernel panic - not syncing: panic_on_warn set ...
+> > >  CPU: 1 PID: 6351 Comm: syz-executor0 Not tainted 4.20.0-rc2+ #338
+> > >  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > >  Google 01/01/2011
+> > >  Call Trace:
+> > >    __dump_stack lib/dump_stack.c:77 [inline]
+> > >    dump_stack+0x244/0x39d lib/dump_stack.c:113
+> > >    panic+0x2ad/0x55c kernel/panic.c:188
+> > >    __warn.cold.8+0x20/0x45 kernel/panic.c:540
+> > >    report_bug+0x254/0x2d0 lib/bug.c:186
+> > >    fixup_bug arch/x86/kernel/traps.c:178 [inline]
+> > >    do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+> > >    do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+> > >    invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
+> > >  RIP: 0010:enqueue_task_dl+0x22da/0x38a0 kernel/sched/deadline.c:1504
+> > >  Code: ff 48 8b 8d c8 fe ff ff 48 c1 e6 2a 4c 8b 9d d0 fe ff ff 8b 95 d8 fe
+> > >  ff ff 48 8b 85 e0 fe ff ff e9 16 e4 ff ff e8 16 d0 ea ff <0f> 0b e9 17 f1
+> > >  ff ff 48 8b bd e8 fe ff ff 4c 89 95 c8 fe ff ff 48
+> > >  RSP: 0018:ffff8881ba39fa18 EFLAGS: 00010002
+> > >  RAX: 0000000000000000 RBX: ffff8881b9d6c000 RCX: ffff8881b9d6c278
+> > >  RDX: ffff8881b9d6c03c RSI: 0000000000000002 RDI: ffff8881daf2d710
+> > >  RBP: ffff8881ba39fb78 R08: 0000000000000001 R09: ffff8881daf00000
+> > >  R10: 0000001a4d4f1987 R11: ffff8881daf2db3b R12: 1ffff11037473f4e
+> > >  R13: ffff8881b9d6c2cc R14: ffff8881daf2ccc0 R15: ffff8881daf2ccc0
+> > >    enqueue_task+0x184/0x390 kernel/sched/core.c:730
+> > >    __sched_setscheduler+0xe99/0x2190 kernel/sched/core.c:4336
+> > >    sched_setattr kernel/sched/core.c:4394 [inline]
+> > >    __do_sys_sched_setattr kernel/sched/core.c:4570 [inline]
+> > >    __se_sys_sched_setattr kernel/sched/core.c:4549 [inline]
+> > >    __x64_sys_sched_setattr+0x1b2/0x2f0 kernel/sched/core.c:4549
+> > >    do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> > >    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > >  RIP: 0033:0x457569
+> > >  Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> > >  48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> > >  ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > >  RSP: 002b:00007f05ce0a2c78 EFLAGS: 00000246 ORIG_RAX: 000000000000013a
+> > >  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
+> > >  RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000000
+> > >  RBP: 000000000072bfa0 R08: 0000000000000000 R09: 0000000000000000
+> > >  R10: 0000000000000000 R11: 0000000000000246 R12: 00007f05ce0a36d4
+> > >  R13: 00000000004c369f R14: 00000000004d5730 R15: 00000000ffffffff
+> > >
+> > > At deadline.c:628 we have:
+> > >
+> > >  623 static inline void setup_new_dl_entity(struct sched_dl_entity *dl_se)
+> > >  624 {
+> > >  625  struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
+> > >  626  struct rq *rq = rq_of_dl_rq(dl_rq);
+> > >  627
+> > >  628  WARN_ON(dl_se->dl_boosted);
+> > >  629  WARN_ON(dl_time_before(rq_clock(rq), dl_se->deadline));
+> > >         [...]
+> > >      }
+> > >
+> > > Which means that setup_new_dl_entity() has been called on a task
+> > > currently boosted. This shouldn't happen though, as setup_new_
+> > > dl_entity() is only called when the 'dynamic' deadline of the new entity
+> > > is in the past w.r.t. rq_clock and boosted tasks shouldn't verify this
+> > > condition.
+> > >
+> > > Digging through PI code I noticed that what above might in fact happen
+> > > if an RT tasks blocks on an rt_mutex hold by a DEADLINE task. In the
+> > > first branch of boosting conditions we check only if a pi_task 'dynamic'
+> > > deadline is earlier than mutex holder's and in this case we set mutex
+> > > holder to be dl_boosted. However, since RT 'dynamic' deadlines are only
+> > > initialized if such tasks get boosted at some point (or if they become
+> > > DEADLINE of course), in general RT 'dynamic' deadlines are usually equal
+> > > to 0 and this verifies the aforementioned condition.
+> > >
+> > > Fix it by checking that the potential donor task is actually (even if
+> > > temporary because in turn boosted) running at DEADLINE priority before
+> > > using its 'dynamic' deadline value.
+> > >
+> > > Reported-by: syzbot+119ba87189432ead09b4@syzkaller.appspotmail.com
+> > > Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+> >
+> > Reviewed-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+> 
+> What happened with this patch? I still don't see it in linux-next.
+> 
+> There is a number of reproducers that involve sched_setattr and lead
+> to dead machines on syzbot:
+> https://syzkaller.appspot.com/bug?id=0b210638616bb68109e9642158d4c0072770ae1c
+> 
 
-> Very easy to see what caused the regression with this global change:
->
-> mount (which launches "cifsd" thread to read the socket)
-> umount (which kills the "cifsd" thread)
-> rmmod   (rmmod now fails since "cifsd" thread is still active)
->
-> mount launches a thread to read from the socket ("cifsd")
-> umount is supposed to kill that thread (but with the patch
-> "signal/cifs: Fix cifs_put_tcp_session to call send_sig instead of
-> force_sig" that no longer works).  So the regression is that after
-> unmount you still see the "cifsd" thread, and the reason that cifsd
-> thread is still around is that that patch no longer force kills the
-> process (see line 2652 of fs/cifs/connect.c) which regresses module
-> removal.
->
-> -               force_sig(SIGKILL, task);
-> +               send_sig(SIGKILL, task, 1);
->
-> The comment in the changeset indicates "The signal SIGKILL can not be
-> ignored" but obviously it can be ignored - at least on 5.3-rc1 it is
-> being ignored.
->
-> If send_sig(SIGKILL ...) doesn't work and if force_sig(SIGKILL, task)
-> is removed and no longer possible - how do we kill a helper process
-> ...
+Ping.  Patch is not applied, and this WARNING is still being hit.
 
-I think I see what is happening.  It looks like as well as misuinsg
-force_sig, cifs is also violating the invariant that keeps SIGKILL out
-of the blocked signal set.
+Also note the bisection result:
 
-For that force_sig will act differently.  I did not consider it because
-that is never supposed to happen.
+	commit 7c80cfc99b7bfdc92cee26f8008859f326f4a37f
+	Author: Peter Zijlstra <peterz@infradead.org>
+	Date: Sat May 6 14:03:17 2017 +0000
 
-Can someone test this code below and confirm the issue goes away?
+	  sched/fair: Clean up calc_cfs_shares()
 
-diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
-index 5d6d44bfe10a..2a782ebc7b65 100644
---- a/fs/cifs/transport.c
-+++ b/fs/cifs/transport.c
-@@ -347,6 +347,7 @@ __smb_send_rqst(struct TCP_Server_Info *server, int num_rqst,
- 	 */
- 
- 	sigfillset(&mask);
-+	sigdelset(&mask, SIGKILL);
- 	sigprocmask(SIG_BLOCK, &mask, &oldmask);
- 
- 	/* Generate a rfc1002 marker for SMB2+ */
-
-
-Eric
+- Eric
