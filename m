@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECFE673F4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:32:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A425273F46
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:32:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728975AbfGXUbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:31:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51448 "EHLO mail.kernel.org"
+        id S2388198AbfGXTbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:31:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388442AbfGXTa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:30:59 -0400
+        id S1729137AbfGXTbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:31:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23239218EA;
-        Wed, 24 Jul 2019 19:30:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E633A20659;
+        Wed, 24 Jul 2019 19:31:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996658;
-        bh=rxnY3wrfDDLzY2Euytksiym4+Ent8PQJYLcAuC5pEYg=;
+        s=default; t=1563996666;
+        bh=ZGjHeyQUMbx1Gh9QwJq9WrZcByKj9BknvPXN3e4fnX0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RNTwYvELR2+v4eqHBz/e24hIWD+JQ76UxtSU6TJRSsuuDhpkFnPXY04En3MFcqsGR
-         xBl5jWtIfkQdOJvkJ7HfH76332v32iWguhJ0i1yL+OUox7YJ5X5UkYGzk1BjLVKjfO
-         ub436rzcLMX8uUvdXP0/j6BopIa4124jhHvb5U3w=
+        b=qXiEzKXRhePGLIzX/DPI0Ez2P/lxpyoaebKzfvCRDlmfZeI11AytuCvGToH59FZVu
+         XX1aSr3qq6uMmvaCb0OXufdbBjOv7W0tYVBg8QWxSA951LUEDmgcA8ACbku/2ZESkS
+         rVgv4nv6+w1LIQgr0mTK9wFEvP4QYHxVjl7c7740=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Georg Waibel <georg.waibel@sensor-technik.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 173/413] rslib: Fix decoding of shortened codes
-Date:   Wed, 24 Jul 2019 21:17:44 +0200
-Message-Id: <20190724191747.314463325@linuxfoundation.org>
+Subject: [PATCH 5.2 176/413] gpio: Fix return value mismatch of function gpiod_get_from_of_node()
+Date:   Wed, 24 Jul 2019 21:17:47 +0200
+Message-Id: <20190724191747.477033721@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -45,42 +47,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2034a42d1747fc1e1eeef2c6f1789c4d0762cb9c ]
+[ Upstream commit 025bf37725f1929542361eef2245df30badf242e ]
 
-The decoding of shortenend codes is broken. It only works as expected if
-there are no erasures.
+In case the requested gpio property is not found in the device tree, some
+callers of gpiod_get_from_of_node() expect a return value of NULL, others
+expect -ENOENT.
+In particular devm_fwnode_get_index_gpiod_from_child() expects -ENOENT.
+Currently it gets a NULL, which breaks the loop that tries all
+gpio_suffixes. The result is that a gpio property is not found, even
+though it is there.
 
-When decoding with erasures, Lambda (the error and erasure locator
-polynomial) is initialized from the given erasure positions. The pad
-parameter is not accounted for by the initialisation code, and hence
-Lambda is initialized from incorrect erasure positions.
+This patch changes gpiod_get_from_of_node() to return -ENOENT instead
+of NULL when the requested gpio property is not found in the device
+tree. Additionally it modifies all calling functions to properly
+evaluate the return value.
 
-The fix is to adjust the erasure positions by the supplied pad.
+Another approach would be to leave the return value of
+gpiod_get_from_of_node() as is and fix the bug in
+devm_fwnode_get_index_gpiod_from_child(). Other callers would still need
+to be reworked. The effort would be the same as with the chosen solution.
 
-Signed-off-by: Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190620141039.9874-3-ferdinand.blomqvist@gmail.com
+Signed-off-by: Georg Waibel <georg.waibel@sensor-technik.de>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/reed_solomon/decode_rs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpiolib.c                 | 6 +-----
+ drivers/regulator/da9211-regulator.c   | 2 ++
+ drivers/regulator/s2mps11.c            | 4 +++-
+ drivers/regulator/s5m8767.c            | 4 +++-
+ drivers/regulator/tps65090-regulator.c | 7 ++++---
+ 5 files changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/lib/reed_solomon/decode_rs.c b/lib/reed_solomon/decode_rs.c
-index 1db74eb098d0..3313bf944ff1 100644
---- a/lib/reed_solomon/decode_rs.c
-+++ b/lib/reed_solomon/decode_rs.c
-@@ -99,9 +99,9 @@
- 	if (no_eras > 0) {
- 		/* Init lambda to be the erasure locator polynomial */
- 		lambda[1] = alpha_to[rs_modnn(rs,
--					      prim * (nn - 1 - eras_pos[0]))];
-+					prim * (nn - 1 - (eras_pos[0] + pad)))];
- 		for (i = 1; i < no_eras; i++) {
--			u = rs_modnn(rs, prim * (nn - 1 - eras_pos[i]));
-+			u = rs_modnn(rs, prim * (nn - 1 - (eras_pos[i] + pad)));
- 			for (j = i + 1; j > 0; j--) {
- 				tmp = index_of[lambda[j - 1]];
- 				if (tmp != nn) {
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e013d417a936..be1d1d2f8aaa 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -4244,8 +4244,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
+  *
+  * Returns:
+  * On successful request the GPIO pin is configured in accordance with
+- * provided @dflags. If the node does not have the requested GPIO
+- * property, NULL is returned.
++ * provided @dflags.
+  *
+  * In case of error an ERR_PTR() is returned.
+  */
+@@ -4267,9 +4266,6 @@ struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
+ 					index, &flags);
+ 
+ 	if (!desc || IS_ERR(desc)) {
+-		/* If it is not there, just return NULL */
+-		if (PTR_ERR(desc) == -ENOENT)
+-			return NULL;
+ 		return desc;
+ 	}
+ 
+diff --git a/drivers/regulator/da9211-regulator.c b/drivers/regulator/da9211-regulator.c
+index da37b4ccd834..0309823d2c72 100644
+--- a/drivers/regulator/da9211-regulator.c
++++ b/drivers/regulator/da9211-regulator.c
+@@ -289,6 +289,8 @@ static struct da9211_pdata *da9211_parse_regulators_dt(
+ 				  0,
+ 				  GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+ 				  "da9211-enable");
++		if (IS_ERR(pdata->gpiod_ren[n]))
++			pdata->gpiod_ren[n] = NULL;
+ 		n++;
+ 	}
+ 
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 134c62db36c5..b518a81f75a3 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -821,7 +821,9 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+ 				0,
+ 				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+ 				"s2mps11-regulator");
+-		if (IS_ERR(gpio[reg])) {
++		if (PTR_ERR(gpio[reg]) == -ENOENT)
++			gpio[reg] = NULL;
++		else if (IS_ERR(gpio[reg])) {
+ 			dev_err(&pdev->dev, "Failed to get control GPIO for %d/%s\n",
+ 				reg, rdata[reg].name);
+ 			continue;
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index bb9d1a083299..6ca27e9d5ef7 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -574,7 +574,9 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
+ 			0,
+ 			GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+ 			"s5m8767");
+-		if (IS_ERR(rdata->ext_control_gpiod))
++		if (PTR_ERR(rdata->ext_control_gpiod) == -ENOENT)
++			rdata->ext_control_gpiod = NULL;
++		else if (IS_ERR(rdata->ext_control_gpiod))
+ 			return PTR_ERR(rdata->ext_control_gpiod);
+ 
+ 		rdata->id = i;
+diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
+index ca39b3d55123..10ea4b5a0f55 100644
+--- a/drivers/regulator/tps65090-regulator.c
++++ b/drivers/regulator/tps65090-regulator.c
+@@ -371,11 +371,12 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
+ 								    "dcdc-ext-control-gpios", 0,
+ 								    gflags,
+ 								    "tps65090");
+-			if (IS_ERR(rpdata->gpiod))
+-				return ERR_CAST(rpdata->gpiod);
+-			if (!rpdata->gpiod)
++			if (PTR_ERR(rpdata->gpiod) == -ENOENT) {
+ 				dev_err(&pdev->dev,
+ 					"could not find DCDC external control GPIO\n");
++				rpdata->gpiod = NULL;
++			} else if (IS_ERR(rpdata->gpiod))
++				return ERR_CAST(rpdata->gpiod);
+ 		}
+ 
+ 		if (of_property_read_u32(tps65090_matches[idx].of_node,
 -- 
 2.20.1
 
