@@ -2,116 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B76367267E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 06:27:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 297E672697
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 06:28:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbfGXE1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 00:27:23 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:43076
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726531AbfGXE1V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 00:27:21 -0400
-X-IronPort-AV: E=Sophos;i="5.64,300,1559512800"; 
-   d="scan'208";a="314532027"
-Received: from c-73-22-29-55.hsd1.il.comcast.net (HELO hadrien) ([73.22.29.55])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 06:27:19 +0200
-Date:   Tue, 23 Jul 2019 23:27:17 -0500 (CDT)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Joe Perches <joe@perches.com>
-cc:     cocci <cocci@systeme.lip6.fr>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [Fwd: [PATCH 1/2] string: Add stracpy and stracpy_pad
- mechanisms]
-In-Reply-To: <d5993902fd44ce89915fab94f4db03f5081c3c8e.camel@perches.com>
-Message-ID: <alpine.DEB.2.21.1907232326360.2539@hadrien>
-References: <7ab8957eaf9b0931a59eff6e2bd8c5169f2f6c41.1563841972.git.joe@perches.com>  <66fcdbf607d7d0bea41edb39e5579d63b62b7d84.camel@perches.com>  <alpine.DEB.2.21.1907231546090.2551@hadrien>  <0f3ba090dfc956f5651e6c7c430abdba94ddcb8b.camel@perches.com> 
- <alpine.DEB.2.21.1907232252260.2539@hadrien> <d5993902fd44ce89915fab94f4db03f5081c3c8e.camel@perches.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1726668AbfGXE2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 00:28:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54026 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726308AbfGXE2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 00:28:38 -0400
+Received: from localhost (unknown [171.76.105.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D26620644;
+        Wed, 24 Jul 2019 04:28:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563942517;
+        bh=LVjAXgGRy9jmEQS3rpJx+i+UAYYnKE8DlDxcS3FljAw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bmGX4dSCWPbgPgQFx2QvWE6KReZAXKtKy62PBO1q2wCh3Uc4gkAAwZyHeEW1ks5xu
+         YK2hKAm3/OEJpuW8ebFOkulNKtM0AS42AL8acHqzCjVwk5c4LkjD7gk0nVwtxCxbE1
+         2NoYSgR+29xlCrBdXgvDZLc0pG1Q+waDaHt9oae8=
+Date:   Wed, 24 Jul 2019 09:57:25 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Vaishali Thakkar <vaishali.thakkar@linaro.org>
+Cc:     agross@kernel.org, david.brown@linaro.org,
+        gregkh@linuxfoundation.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rafael@kernel.org,
+        bjorn.andersson@linaro.org
+Subject: Re: [PATCH v6 4/5] soc: qcom: socinfo: Expose custom attributes
+Message-ID: <20190724042725.GE12733@vkoul-mobl.Dlink>
+References: <20190723223515.27839-1-vaishali.thakkar@linaro.org>
+ <20190723223515.27839-5-vaishali.thakkar@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190723223515.27839-5-vaishali.thakkar@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 24-07-19, 04:05, Vaishali Thakkar wrote:
+> The Qualcomm socinfo provides a number of additional attributes,
+> add these to the socinfo driver and expose them via debugfs
+> functionality.
 
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-On Tue, 23 Jul 2019, Joe Perches wrote:
-
-> On Tue, 2019-07-23 at 22:54 -0500, Julia Lawall wrote:
-> > A seantic patch and the resulting output for the case where the third
-> > arugument is a constant is attached.  Likewise the resulting output on a
-> > recent linux-next.
-> >
-> > julia
->
-> Nice.  Thanks Julia
->
-> A couple issues:
->
-> There is a problem with conversions with assignments
-> of strlcpy() so ideally the cocci script should make sure
-> any return value was not used before conversion.
->
-> This is not a provably good conversion:
->
-> drivers/s390/char/sclp_ftp.c
-> @@ -114,8 +114,7 @@ static int sclp_ftp_et7(const struct hmc
->         sccb->evbuf.mdd.ftp.length = ftp->len;
->         sccb->evbuf.mdd.ftp.bufaddr = virt_to_phys(ftp->buf);
->
-> -       len = strlcpy(sccb->evbuf.mdd.ftp.fident, ftp->fname,
-> -                     HMCDRV_FTP_FIDENT_MAX);
-> +       len = stracpy(sccb->evbuf.mdd.ftp.fident, ftp->fname);
-
-Sorry, I don't understand the issue here.  What specifically should I be
-looking for?
-
->
-> And:
->
-> I would have expected the bit below to find and convert uses like
-> 	drivers/hwmon/adc128d818.c:     strlcpy(info->type, "adc128d818", I2C_NAME_SIZE);
-> but it seems none of those were converted.
-
-OK, thanks.  I will check on it.
-
-julia
-
-> I don't know why.
->
-> //------------------------------------------
-> @r1@
-> struct i1 *e1;
-> expression e2;
-> identifier f,i1,i2;
-> position p;
-> @@
-> \(strscpy\|strlcpy\)(e1->f, e2, i2)@p
->
-> @@
-> identifier r1.i1,r1.i2;
-> type T;
-> @@
-> struct i1 { ... T i1[i2]; ... }
->
-> @@
-> identifier f,i2;
-> expression e1,e2;
-> position r1.p;
-> @@
-> (
-> -strscpy
-> +stracpy
-> |
-> -strlcpy
-> +stracpy
-> )(e1->f, e2
-> -    , i2
->   )@p
-> //------------------------------------------
->
-> to find
->
->
+-- 
+~Vinod
