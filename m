@@ -2,76 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6E5072E35
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 13:52:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5583672E36
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 13:53:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbfGXLwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 07:52:35 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45841 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727492AbfGXLwe (ORCPT
+        id S1727989AbfGXLw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 07:52:57 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53196 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727453AbfGXLw5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 07:52:34 -0400
-Received: by mail-lf1-f65.google.com with SMTP id u10so31730868lfm.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 04:52:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=nsmCzqfW69iZO/gLCj+ghjUAOH/mpjGEv1Nt02P5FPo=;
-        b=n+1tPjBWic4wIhhnQTeVI+/VF+iX5I/yHbS+kM025TcnQ0Esxq6446HZvvOdy5mJ5w
-         ItJ0qh+a1pkyujoVGHswBIG154CO5ZFy+gKpzr0L+b+9Sqw/87/pOywuH6+Xpp6MMFI2
-         8JtuSZf4gHBn+K0QqPApRdae+miR1fIfwxLqz/Ky6ilWSuHK789iBYdQklApanmVybhN
-         OqYMShhvlRiON0jozcO9Ywb3BWT0uhckiMj1gkMDFFTGBaFhUYrCdd/vF8aLPy3S4GyH
-         l7S/TEjJIKpCj00QzNBt6QjEBW9oouG05xYG50Je5hnBQKbM9poAa9rNk3u08gHMrVWZ
-         AUwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=nsmCzqfW69iZO/gLCj+ghjUAOH/mpjGEv1Nt02P5FPo=;
-        b=E/FLXPsw4+I3DDW2gOPgHljMKWFn/A7PQ2KFE42f0RPIcev/Rcfr8141xaQZE8N/pt
-         Gb0batoy+Fzwo0vkddb+1VSreFNGKf4nT11tCRttKs1eqEjC0eerxzRi9oGlY2luWy93
-         hBQxwrrJx+FVd4hX8WrwRGOyKhT/ttM6RNQV5YMH8jAYnKnA7DNguj9B/G4LkiND+4uf
-         WzEXcZyGRbXQXn0IiROmbN7ZLwi+D8JSajV+b0NmZWnDIiydnC25g8lBWyls1S/GtRD4
-         b4P0sdnyxPCytOUH+QqUW0sVPVv9rHoeyVR+e/2u/MzFEa3oJX3MHPH9+auzfouT/tI4
-         s39g==
-X-Gm-Message-State: APjAAAXh93iVFnIq49sszpFKpD9tUHk/9tjXJ2ygpW4qv4PfioMC6CIx
-        tUtxyUFwMGIJj20xJ44L30vM1Byat0joSdfSDjc=
-X-Google-Smtp-Source: APXvYqwg37D0Fu169EhSSHiO2phLgF/MXH+ju8vh+gE1TizFSnmQG+8bS4RevFDjKVil5L3EmKy9nIIhvQnwzDDh15M=
-X-Received: by 2002:ac2:46ef:: with SMTP id q15mr39051139lfo.63.1563969152879;
- Wed, 24 Jul 2019 04:52:32 -0700 (PDT)
+        Wed, 24 Jul 2019 07:52:57 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 26C516053D; Wed, 24 Jul 2019 11:52:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1563969176;
+        bh=UvvwSI4TZC8H4KA2TzQnIlCHIKjrbu/I6okunv1xr64=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=W63iyFKewHRGNxjtMVs/os01jFPH9YjsktdC43OfoEy1NQA75M/hQ/M04UegO6Iz7
+         8nxJ8T6jyoFGb2fX9VMsEHoBt05BBxbbbCmUtY9Et6qzcfz6p5va6YWePxLKkT4Wec
+         O7reSqnvhXe9z0pu25lUiCnz76/6zV90SoVtK8Bk=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3735A60214;
+        Wed, 24 Jul 2019 11:52:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1563969175;
+        bh=UvvwSI4TZC8H4KA2TzQnIlCHIKjrbu/I6okunv1xr64=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=NICTwjL/LD2KsnYZWDom16+DTY290VGBGmN6OJqszuW+dyhu+hBQeGJalsYz6QOWO
+         4OPPRtWBbv0W4k3QA6JhNLdRcnVMJi7sKjhJstszHz4jcwrM57AxJcbwU+bzj5rfM8
+         DNwwVDUJMphYj7X72WXSsyHQdL64xRD9gNlZVRTA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3735A60214
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Received: by 2002:ac2:5e8f:0:0:0:0:0 with HTTP; Wed, 24 Jul 2019 04:52:32
- -0700 (PDT)
-Reply-To: mrsnicolemarois0001@gmail.com
-From:   Nicole Marois <mrjohnmoses8@gmail.com>
-Date:   Wed, 24 Jul 2019 11:52:32 +0000
-Message-ID: <CACkZuE2UO0_57Sg57kv9gyYv0KROZ602qc_aq8EPk7sgVCbWaA@mail.gmail.com>
-Subject: Hello Dear Friend
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] rtlwifi: btcoex: fix issue possible condition with no
+ effect (if == else)
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20190712191535.GA4215@hari-Inspiron-1545>
+References: <20190712191535.GA4215@hari-Inspiron-1545>
+To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Cc:     Ping-Ke Shih <pkshih@realtek.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190724115256.26C516053D@smtp.codeaurora.org>
+Date:   Wed, 24 Jul 2019 11:52:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HELLO  DEAR.
-I=E2=80=99m Mrs. Nicole Maoris a manager in  HSBC  BANK in   Spain  Madrid,=
- I
-am sending  this brief letter  to seek for  your partnership and long
-term relationship, I have an important and urgent  issue I want to
-discuss with you privately about transaction fund  worth the sum of
-$9.5m America dollars left by most of the greedy Asia Kuwait
-politician in our bank here in Spain  Madrid.
+Hariprasad Kelam <hariprasad.kelam@gmail.com> wrote:
 
-If you know that you can invest this fund into profitable business in
-your country by the end we shall have 50%50 share each,  kindly get
-back to me for more detail and procedures .
+> fix below issue reported by coccicheck
+> drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:514:1-3:
+> WARNING: possible condition with no effect (if == else)
+> 
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
 
-Your urgent respond will be highly appreciated
-Awaiting to hear from you asap.
-My Regard.
-Mrs. Nicole Maoris=09
-Phone Number:  +34(62) 768 5146
+Patch applied to wireless-drivers-next.git, thanks.
+
+9a29f7d8476c rtlwifi: btcoex: fix issue possible condition with no effect (if == else)
+
+-- 
+https://patchwork.kernel.org/patch/11042665/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
