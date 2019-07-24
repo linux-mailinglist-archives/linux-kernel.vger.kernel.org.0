@@ -2,123 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19A3C72895
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:54:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3208E728B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:55:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbfGXGx4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 02:53:56 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38647 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfGXGx4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 02:53:56 -0400
-Received: by mail-lj1-f193.google.com with SMTP id r9so43412613ljg.5
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 23:53:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/C6SvXQ+6R/YS6/L/kVntLwubBzK8ruAflHed0nbReY=;
-        b=aLewX3TLaQpEf+jG9eq9DR3rB2kCKnHWJojwSG6hMYifsXBJLDODudPpRS09tpfVA8
-         k0qf8wDdhjVj9/qFMn1TyUVNwLz3iMFztt9kCH4NB59+ZB9e1XPhjA2jlWT4EK4xlH6L
-         HcDzjQqhjYJ3JqYlFX+8m23zc0khbv+Ltlgho=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/C6SvXQ+6R/YS6/L/kVntLwubBzK8ruAflHed0nbReY=;
-        b=otquGURUoMwO5hqKoFdKdOFbZE8EvXswjC5G4cGsYUIFaZF3Swo/EEQINyAZ8LPUAj
-         Q0C3+R2uh42vsnpMy8OqlSKqVuVCRIxASXBrG7EH4uFdviCZ5e+fEQnibXJ1gY9/EtHm
-         R0YXlDc+IiBy5ARR1ludXAneFiZOGrDzo7DNB2Ql19kQcYfs0Mz0tRkzqpcHoPMnjI6w
-         yMNDISxZPOChrMoAzy7Goatr9o2KgP7lNUsFF4UKcoRFHxJYOzfNG4kVSytw3jz9AHZt
-         7q9wvJzmiNBnRSUM2v4xLMMacCt1VtkTZJB99qB0cWDAb8XS2P4wO/Ts5//k+s1fpZbg
-         8hGQ==
-X-Gm-Message-State: APjAAAW5PlvzNlcZBi98GMdN2FEezTpytVdp9V6GFjAf/oXKNcUIOknX
-        rmmicVKUefKLUPp7yWZ5c6c=
-X-Google-Smtp-Source: APXvYqzr9x7DR4WYz7BXPk/LyHKBpDLjCJDWYISOmQ5xhwv78XBLqqnFGP0JqxfK2W5Gk5p9CxqYMQ==
-X-Received: by 2002:a2e:3008:: with SMTP id w8mr42706727ljw.13.1563951234307;
-        Tue, 23 Jul 2019 23:53:54 -0700 (PDT)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id l11sm7812072lfc.18.2019.07.23.23.53.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Jul 2019 23:53:53 -0700 (PDT)
-Subject: Re: [PATCH V2 1/2] string: Add stracpy and stracpy_pad mechanisms
-To:     Joe Perches <joe@perches.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Jonathan Corbet <corbet@lwn.net>, Stephen Kitt <steve@sk2.org>,
-        Kees Cook <keescook@chromium.org>,
-        Nitin Gote <nitin.r.gote@intel.com>, jannh@google.com,
-        kernel-hardening@lists.openwall.com,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <cover.1563889130.git.joe@perches.com>
- <ed4611a4a96057bf8076856560bfbf9b5e95d390.1563889130.git.joe@perches.com>
- <ce1320d8-60df-7c54-2348-6aabac63c24d@rasmusvillemoes.dk>
- <c9ef2b56eaf36c8e5449b751ab6e5971b6b34311.camel@perches.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <dab1b433-93c0-09ab-cceb-3db91b6ef353@rasmusvillemoes.dk>
-Date:   Wed, 24 Jul 2019 08:53:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726461AbfGXGzq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 02:55:46 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60428 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725870AbfGXGzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 02:55:46 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B64D5D0066629F36656E;
+        Wed, 24 Jul 2019 14:55:03 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Wed, 24 Jul 2019
+ 14:54:54 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <oulijun@huawei.com>, <xavier.huwei@huawei.com>,
+        <dledford@redhat.com>, <jgg@ziepe.ca>, <leon@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] RDMA/hns: Fix build error
+Date:   Wed, 24 Jul 2019 14:54:43 +0800
+Message-ID: <20190724065443.53068-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20190723024908.11876-1-yuehaibing@huawei.com>
+References: <20190723024908.11876-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <c9ef2b56eaf36c8e5449b751ab6e5971b6b34311.camel@perches.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/07/2019 17.39, Joe Perches wrote:
-> On Tue, 2019-07-23 at 16:37 +0200, Rasmus Villemoes wrote:
->> On 23/07/2019 15.51, Joe Perches wrote:
->>>
->>> These mechanisms verify that the dest argument is an array of
->>> char or other compatible types like u8 or s8 or equivalent.
->> Sorry, but "compatible types" has a very specific meaning in C, so
->> please don't use that word.
-> 
-> I think you are being overly pedantic here but
-> what wording do you actually suggest?
+If INFINIBAND_HNS_HIP08 is selected and HNS3 is m,
+but INFINIBAND_HNS is y, building fails:
 
-I'd just not support anything other than char[], but if you want,
-perhaps say "related types", or some other informal description.
+drivers/infiniband/hw/hns/hns_roce_hw_v2.o: In function `hns_roce_hw_v2_exit':
+hns_roce_hw_v2.c:(.exit.text+0xd): undefined reference to `hnae3_unregister_client'
+drivers/infiniband/hw/hns/hns_roce_hw_v2.o: In function `hns_roce_hw_v2_init':
+hns_roce_hw_v2.c:(.init.text+0xd): undefined reference to `hnae3_register_client'
 
->>  And yes, the kernel disables -Wpointer-sign,
->> so passing an u8* or s8* when strscpy() expects a char* is silently
->> accepted, but does such code exist?
-> 
-> u8 definitely, s8 I'm not sure.
+Also if INFINIBAND_HNS_HIP06 is selected and HNS_DSAF
+is m, but INFINIBAND_HNS is y, building fails:
 
-Example (i.e. of someone passing an u8* as destination to some string
-copy/formatting function)? I believe you, I'd just like to see the context.
+drivers/infiniband/hw/hns/hns_roce_hw_v1.o: In function `hns_roce_v1_reset':
+hns_roce_hw_v1.c:(.text+0x39fa): undefined reference to `hns_dsaf_roce_reset'
+hns_roce_hw_v1.c:(.text+0x3a25): undefined reference to `hns_dsaf_roce_reset'
 
-> I don't find via grep a use of s8 foo[] = "bar";
-> or "signed char foo[] = "bar";
-> 
-> I don't think it bad to allow it.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: dd74282df573 ("RDMA/hns: Initialize the PCI device for hip08 RoCE")
+Fixes: 08805fdbeb2d ("RDMA/hns: Split hw v1 driver from hns roce driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/infiniband/hw/hns/Kconfig  | 6 +++---
+ drivers/infiniband/hw/hns/Makefile | 8 ++------
+ 2 files changed, 5 insertions(+), 9 deletions(-)
 
-Your patch.
+diff --git a/drivers/infiniband/hw/hns/Kconfig b/drivers/infiniband/hw/hns/Kconfig
+index 8bf847b..5478219 100644
+--- a/drivers/infiniband/hw/hns/Kconfig
++++ b/drivers/infiniband/hw/hns/Kconfig
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config INFINIBAND_HNS
+-	tristate "HNS RoCE Driver"
++	bool "HNS RoCE Driver"
+ 	depends on NET_VENDOR_HISILICON
+ 	depends on ARM64 || (COMPILE_TEST && 64BIT)
+ 	---help---
+@@ -11,7 +11,7 @@ config INFINIBAND_HNS
+ 	  To compile HIP06 or HIP08 driver as module, choose M here.
+ 
+ config INFINIBAND_HNS_HIP06
+-	bool "Hisilicon Hip06 Family RoCE support"
++	tristate "Hisilicon Hip06 Family RoCE support"
+ 	depends on INFINIBAND_HNS && HNS && HNS_DSAF && HNS_ENET
+ 	---help---
+ 	  RoCE driver support for Hisilicon RoCE engine in Hisilicon Hip06 and
+@@ -21,7 +21,7 @@ config INFINIBAND_HNS_HIP06
+ 	  module will be called hns-roce-hw-v1
+ 
+ config INFINIBAND_HNS_HIP08
+-	bool "Hisilicon Hip08 Family RoCE support"
++	tristate "Hisilicon Hip08 Family RoCE support"
+ 	depends on INFINIBAND_HNS && PCI && HNS3
+ 	---help---
+ 	  RoCE driver support for Hisilicon RoCE engine in Hisilicon Hip08 SoC.
+diff --git a/drivers/infiniband/hw/hns/Makefile b/drivers/infiniband/hw/hns/Makefile
+index e105945..449a2d8 100644
+--- a/drivers/infiniband/hw/hns/Makefile
++++ b/drivers/infiniband/hw/hns/Makefile
+@@ -9,12 +9,8 @@ hns-roce-objs := hns_roce_main.o hns_roce_cmd.o hns_roce_pd.o \
+ 	hns_roce_ah.o hns_roce_hem.o hns_roce_mr.o hns_roce_qp.o \
+ 	hns_roce_cq.o hns_roce_alloc.o hns_roce_db.o hns_roce_srq.o hns_roce_restrack.o
+ 
+-ifdef CONFIG_INFINIBAND_HNS_HIP06
+ hns-roce-hw-v1-objs := hns_roce_hw_v1.o $(hns-roce-objs)
+-obj-$(CONFIG_INFINIBAND_HNS) += hns-roce-hw-v1.o
+-endif
++obj-$(CONFIG_INFINIBAND_HNS_HIP06) += hns-roce-hw-v1.o
+ 
+-ifdef CONFIG_INFINIBAND_HNS_HIP08
+ hns-roce-hw-v2-objs := hns_roce_hw_v2.o hns_roce_hw_v2_dfx.o $(hns-roce-objs)
+-obj-$(CONFIG_INFINIBAND_HNS) += hns-roce-hw-v2.o
+-endif
++obj-$(CONFIG_INFINIBAND_HNS_HIP08) += hns-roce-hw-v2.o
+-- 
+2.7.4
 
->> count is just as bad as size in terms of "the expression src might
->> contain that identifier". But there's actually no reason to even declare
->> a local variable, just use ARRAY_SIZE() directly as the third argument
->> to strscpy().
-> 
-> I don't care about that myself.
-> It's a macro local identifier and shadowing in a macro
-> is common.  I'm not a big fan of useless underscores.
 
-shadowing is not the problem. The identifier "count" appearing in one of
-the "dest" or "src" expressions is. For something that's supposed to
-help eliminate bugs, such a hidden footgun seems to be a silly thing to
-include. No need for some hideous triple-underscore variable, just make
-the whole thing
-
-BUILD_BUG_ON(!__same_type())
-strscpy(dst, src, ARRAY_SIZE(dst))
-
-Rasmus
