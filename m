@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4261473F23
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:30:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6800A73F1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:30:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388829AbfGXUaP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:30:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53422 "EHLO mail.kernel.org"
+        id S1726808AbfGXTcR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:32:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388598AbfGXTcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:32:08 -0400
+        id S2388030AbfGXTcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:32:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B54C322ADA;
-        Wed, 24 Jul 2019 19:32:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E66AB2238C;
+        Wed, 24 Jul 2019 19:32:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996728;
-        bh=uq21gVyXFcPi9M0qRBxB/Da7t/O8Rt04ItZp9tsO6ec=;
+        s=default; t=1563996734;
+        bh=OMIEmC5y38l87lwjmF+MWWlsfb57JJMC0HeRUrSKT10=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ohw8KRgRLeFTLyuenYX3tt/7kMKsdg/BAAINdu02C99WaSVpxJlezOdWsbqPRvttP
-         Et1BIixu8g9pGztoiuAuW+kKJ8nEr84jLGmLFBO2uRTxoAhCV0ssC+D/1pOnGcLjv4
-         yiy2pSseNBHrZ7IeREkdqpl2f0gNOsN1WIL9Uaps=
+        b=Y/f6w8Ovk3Lk7WtDXYCwVfrcKS2V5K1hxQAdtSNWBURU41VKTJgQHY7bllAo4o+N3
+         ZMVc+vfFXdLOSJILFsEG9D2Dnqy7o8ApZ6xik0e3yB+XnPTOaDQ6IGYbVsUQMKiqOc
+         0Z9oXJiRE72XoBZLXyULmzH7bWVkfrom5ymFGjxo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dundi Raviteja <dundi@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Alan Winkowski <walan@marvell.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 195/413] ath10k: Fix memory leak in qmi
-Date:   Wed, 24 Jul 2019 21:18:06 +0200
-Message-Id: <20190724191748.568688426@linuxfoundation.org>
+Subject: [PATCH 5.2 197/413] net: mvpp2: prs: Dont override the sign bit in SRAM parser shift
+Date:   Wed, 24 Jul 2019 21:18:08 +0200
+Message-Id: <20190724191748.692416049@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -44,37 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c709df58832c5f575f0255bea4b09ad477fc62ea ]
+[ Upstream commit 8ec3ede559956f8ad58db7b57d25ac724bab69e9 ]
 
-Currently the memory allocated for qmi handle is
-not being freed during de-init which leads to memory leak.
+The Header Parser allows identifying various fields in the packet
+headers, used for various kind of filtering and classification
+steps.
 
-Free the allocated qmi memory in qmi deinit
-to avoid memory leak.
+This is a re-entrant process, where the offset in the packet header
+depends on the previous lookup results. This offset is represented in
+the SRAM results of the TCAM, as a shift to be operated.
 
-Tested HW: WCN3990
-Tested FW: WLAN.HL.3.1-01040-QCAHLSWMTPLZ-1
+This shift can be negative in some cases, such as in IPv6 parsing.
 
-Fixes: fda6fee0001e ("ath10k: add QMI message handshake for wcn3990 client")
-Signed-off-by: Dundi Raviteja <dundi@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+This commit prevents overriding the sign bit when setting the shift
+value, which could cause instabilities when parsing IPv6 flows.
+
+Fixes: 3f518509dedc ("ethernet: Add new driver for Marvell Armada 375 network unit")
+Suggested-by: Alan Winkowski <walan@marvell.com>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/qmi.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/qmi.c b/drivers/net/wireless/ath/ath10k/qmi.c
-index a7bc2c70d076..8f8f717a23ee 100644
---- a/drivers/net/wireless/ath/ath10k/qmi.c
-+++ b/drivers/net/wireless/ath/ath10k/qmi.c
-@@ -1002,6 +1002,7 @@ int ath10k_qmi_deinit(struct ath10k *ar)
- 	qmi_handle_release(&qmi->qmi_hdl);
- 	cancel_work_sync(&qmi->event_work);
- 	destroy_workqueue(qmi->event_wq);
-+	kfree(qmi);
- 	ar_snoc->qmi = NULL;
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
+index ae2240074d8e..5692c6087bbb 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
+@@ -312,7 +312,8 @@ static void mvpp2_prs_sram_shift_set(struct mvpp2_prs_entry *pe, int shift,
+ 	}
  
- 	return 0;
+ 	/* Set value */
+-	pe->sram[MVPP2_BIT_TO_WORD(MVPP2_PRS_SRAM_SHIFT_OFFS)] = shift & MVPP2_PRS_SRAM_SHIFT_MASK;
++	pe->sram[MVPP2_BIT_TO_WORD(MVPP2_PRS_SRAM_SHIFT_OFFS)] |=
++		shift & MVPP2_PRS_SRAM_SHIFT_MASK;
+ 
+ 	/* Reset and set operation */
+ 	mvpp2_prs_sram_bits_clear(pe, MVPP2_PRS_SRAM_OP_SEL_SHIFT_OFFS,
 -- 
 2.20.1
 
