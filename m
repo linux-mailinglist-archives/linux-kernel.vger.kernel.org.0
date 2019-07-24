@@ -2,138 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89C34736F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 20:52:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BD24736FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 20:53:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728509AbfGXSwl convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 24 Jul 2019 14:52:41 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37810 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbfGXSwk (ORCPT
+        id S1728686AbfGXSxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 14:53:08 -0400
+Received: from mail-yw1-f51.google.com ([209.85.161.51]:37242 "EHLO
+        mail-yw1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727778AbfGXSxH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 14:52:40 -0400
-Received: by mail-wm1-f65.google.com with SMTP id f17so42524383wme.2;
-        Wed, 24 Jul 2019 11:52:38 -0700 (PDT)
+        Wed, 24 Jul 2019 14:53:07 -0400
+Received: by mail-yw1-f51.google.com with SMTP id u141so18443414ywe.4
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 11:53:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=QkGoST7w43m8q/Esj90wYrBwrvB8U4NUXNoDEdC9zkw=;
+        b=DfXOAxLjSWi0qh+6acmkUVxhHaotyiTVOkhsQbMCVCLbFTlR2U1M0ODKowJTZJO6bi
+         AY4cPMEmUVjHi/lcQq9q37dCvu2bxLSVO/2Cj8MQSNmWh284hoz1A9kJu5T/rqAxWcA2
+         jq1E8odfVy4B94g+1ICGV53JhdfxUUprY27NbVBtrvAexfQf3KrE8GYJRv90j+EI/68F
+         Nt3i/MnH39+tuaOwo08OPFbdY9meH5zycXj1mSdL06kJEGcaFb6OBltS1Q3K1ZM+3TgE
+         t7kmiIPAvExMNewu7rKRPP8E2uZYbTCErawj37va4v6NHlCBcpqh2cLAXrJiNfJHXoo3
+         cZ9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=3hQEInE7wPS7npsqDdyReFD8+DVG0G6gksarFiD+BUE=;
-        b=p1QXjmSjibShYD8ZOl1TAGs1sAhM/9Y59m8s4PH/SNL0JLri/rNK6Ro6goiffhHlxA
-         2WI7eVxfIJoCI8ZAQIluAteADtY9YRzlyOIaEz+c+1ekoDTtPb2dvn0gYiWMl1aE8qJ3
-         eHnMEI3rjh/pZ3dKWzDBA8nfIF+wFFWxtgOJDAuREd2L4EYW8xGpSGxRUp8bO2XnJChJ
-         vJ0lq7leBZu15G1ecw7uDvbuwY83/J9Z+i7BmVl0ifcWb7Z7UAcNIfBHrS55gEZkGx2U
-         BqyIdDlrz3Xin5KC1U7TrEckWQ/Dw9hSHUPkqlqtTKfCMuNldTNlPnsdPrszjHKQi7YG
-         DjIg==
-X-Gm-Message-State: APjAAAUrbaHUuQcrFfPwL8KrSqmBYOybatflkWMpXNYOk9cnfgustWwj
-        pDTtr0zCbU1KSsCfei1cTbA=
-X-Google-Smtp-Source: APXvYqybZTUdLFKKpdj8xlUt1rpHKS6FMa+wFWKprezrQieSHRxtcvXpOkuvDUOeXbkAfzPmH5YXgQ==
-X-Received: by 2002:a05:600c:10ce:: with SMTP id l14mr73562275wmd.118.1563994357830;
-        Wed, 24 Jul 2019 11:52:37 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.239])
-        by smtp.googlemail.com with ESMTPSA id w24sm37230033wmc.30.2019.07.24.11.52.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Jul 2019 11:52:36 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 20:52:34 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        cw00.choi@samsung.com, myungjoo.ham@samsung.com,
-        inki.dae@samsung.com, sw0312.kim@samsung.com,
-        georgi.djakov@linaro.org, m.szyprowski@samsung.com
-Subject: Re: [RFC PATCH 11/11] drm: exynos: mixer: Add interconnect support
-Message-ID: <20190724185234.GB14346@kozik-lap>
-References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
- <CGME20190723122029eucas1p2915f536d9ef43a7bd043a878a553439f@eucas1p2.samsung.com>
- <20190723122016.30279-12-a.swigon@partner.samsung.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=QkGoST7w43m8q/Esj90wYrBwrvB8U4NUXNoDEdC9zkw=;
+        b=FD8yX9dxSfLHymHlf4J0Dapi65wWp+XnTnyHwKR3vMu4Y7UEJa6A+bLykbTNhpQpyx
+         Owmftn4s+ZyEDwAv+HP+JtUOry6Vh3iNRHIo0593BI7rZg53EJq2w7k1JI58yoGdJEAr
+         02M82AixJsJHXesKJ8iCXZcSLvC+XvcJzVc6n62qQM20os8nyL6zqEAL/6ZgQYuyqBRP
+         mxdrBYURyCFsNfDM1bUo7Ku0PI8UD2z0aY2/3+QnGxy7/IYxiseyILeQNUCh7NaBsC2K
+         1ApIs85+8dVyT2fqqzvpWj8HqQnv9JPmBIrHDU6TseDETWZibWFsXFVVQn8Gk1CMHHYW
+         VPpw==
+X-Gm-Message-State: APjAAAUjHW3K/JLoru7WpSf3ITLx92dut5qCJHfdJxHg8HmAiwJpFW7q
+        vq/4bkus3yhmQzlXfOGwST+Lplk8HEHSAGkLj0M2ew==
+X-Google-Smtp-Source: APXvYqx/tMXLvZEiqYfzJYCs7OOzSaxnEEKNMHX5g5zE3SSvQ73RpFpciwz3aMrVNiSRZv8HDB0OwcO0qWyK+HgZCIU=
+X-Received: by 2002:a0d:dfc4:: with SMTP id i187mr48556986ywe.146.1563994386315;
+ Wed, 24 Jul 2019 11:53:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20190723122016.30279-12-a.swigon@partner.samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190724013813.GB643@sol.localdomain> <63f12327-dd4b-5210-4de2-705af6bc4ba4@gmail.com>
+ <20190724163014.GC673@sol.localdomain> <20190724.111225.2257475150626507655.davem@davemloft.net>
+ <20190724183710.GF213255@gmail.com>
+In-Reply-To: <20190724183710.GF213255@gmail.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Wed, 24 Jul 2019 20:52:54 +0200
+Message-ID: <CANn89iKZcdk-YfqZ-F1toHDLW3Etf5oPR78bXOq0FbjwWyiSMQ@mail.gmail.com>
+Subject: Re: Reminder: 99 open syzbot bugs in net subsystem
+To:     David Miller <davem@davemloft.net>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        netdev <netdev@vger.kernel.org>, Florian Westphal <fw@strlen.de>,
+        i.maximets@samsung.com, Eric Dumazet <edumazet@google.com>,
+        David Ahern <dsahern@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 02:20:16PM +0200, Artur Świgoń wrote:
-> From: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> This patch adds interconnect support to exynos-mixer. Please note that the
-> mixer works the same as before when CONFIG_INTERCONNECT is 'n'.
-> 
-> Co-developed-by: Artur Świgoń <a.swigon@partner.samsung.com>
-> Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_mixer.c | 68 +++++++++++++++++++++++++--
->  1 file changed, 63 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index 7b24338fad3c..fb763854b300 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -13,6 +13,7 @@
->  #include <linux/component.h>
->  #include <linux/delay.h>
->  #include <linux/i2c.h>
-> +#include <linux/interconnect.h>
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
->  #include <linux/kernel.h>
-> @@ -97,6 +98,7 @@ struct mixer_context {
->  	struct exynos_drm_crtc	*crtc;
->  	struct exynos_drm_plane	planes[MIXER_WIN_NR];
->  	unsigned long		flags;
-> +	struct icc_path		*soc_path;
->  
->  	int			irq;
->  	void __iomem		*mixer_regs;
-> @@ -931,6 +933,37 @@ static void mixer_disable_vblank(struct exynos_drm_crtc *crtc)
->  	mixer_reg_writemask(mixer_ctx, MXR_INT_EN, 0, MXR_INT_EN_VSYNC);
->  }
->  
-> +static void mixer_set_memory_bandwidth(struct exynos_drm_crtc *crtc)
-> +{
-> +	struct drm_display_mode *mode = &crtc->base.state->adjusted_mode;
-> +	struct mixer_context *ctx = crtc->ctx;
-> +	unsigned long bw, bandwidth = 0;
-> +	int i, j, sub;
-> +
+On Wed, Jul 24, 2019 at 8:37 PM Eric Biggers <ebiggers@kernel.org> wrote:
 
-Early exit if !ctx->soc_path, no need to figure out the bandwidth.
-Optionally check it before calling mixer_set_memory_bandwidth() - should
-not hurt readability.
+> A huge number of valid open bugs are not being fixed, which is a fact.  We can
+> argue about what words to use to describe this situation, but it doesn't change
+> the situation itself.
+>
+> What is your proposed solution?
 
-> +	for (i = 0; i < MIXER_WIN_NR; i++) {
-> +		struct drm_plane *plane = &ctx->planes[i].base;
-> +		const struct drm_format_info *format;
-> +
-> +		if (plane->state && plane->state->crtc && plane->state->fb) {
-> +			format = plane->state->fb->format;
-> +			bw = mode->hdisplay * mode->vdisplay *
-> +							drm_mode_vrefresh(mode);
-> +			if (mode->flags & DRM_MODE_FLAG_INTERLACE)
-> +				bw /= 2;
-> +			for (j = 0; j < format->num_planes; j++) {
-> +				sub = j ? (format->vsub * format->hsub) : 1;
-> +				bandwidth += format->cpp[j] * bw / sub;
-> +			}
-> +		}
-> +	}
-> +
-> +	/* add 20% safety margin */
-> +	bandwidth = 5UL * bandwidth / 4;
-> +
-> +	pr_info("exynos-mixer: safe bandwidth %ld Bps\n", bandwidth);
+syzbot sends emails, plenty  of them, with many wrong bisection
+results, increasing the noise.
 
-dev_dbg()
+If nobody is interested, I am not sure sending copies of them
+repeatedly will be of any help.
 
-Best regards,
-Krzysztof
-
-
+Maybe a simple monthly reminder with one URL to go to the list of bugs
+would be less intrusive.
