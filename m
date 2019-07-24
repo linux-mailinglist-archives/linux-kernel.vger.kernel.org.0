@@ -2,73 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A90D97324E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:56:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6281E73258
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:57:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387492AbfGXO40 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 10:56:26 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36121 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbfGXO40 (ORCPT
+        id S2387552AbfGXO5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 10:57:08 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42263 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387491AbfGXO5H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 10:56:26 -0400
-Received: by mail-io1-f65.google.com with SMTP id o9so90287382iom.3;
-        Wed, 24 Jul 2019 07:56:25 -0700 (PDT)
+        Wed, 24 Jul 2019 10:57:07 -0400
+Received: by mail-pg1-f194.google.com with SMTP id t132so21356569pgb.9
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 07:57:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3aE+MjGXqdyag2TVbnV9FXwm+spP+OBGssJslmm561I=;
-        b=SMW4Rl8PzGJkM9gZS7wjL6tkB3SPBP4IcjkeqB+WX5CoPzXTDhmEjH7wu8Mzjux0R2
-         hR1NPnjhWWjBBuRThP09CMA0nZ4A8D/IbXjbYhXUUhM2oWKFR/3CP7RSjKRwujqbLwJW
-         +bGvz8s+KJ5/MQDJyFKVpx36ekdeQvTLn52p8myJmz9lQedPhevpde7rxMDgs3CcPMfG
-         sGrHvBhPixUwWAkdZ2ObkTRwcDKe9p+WQ0ULiHTAC0HIye+Lq1OR8QEMZzu/b+y7ELa8
-         pwuhWYOCh+3HS7sJNB6DhSAJiI/BF/Q17k7qDfjT0J2PMs0Wi5fJSN5VWnI/l2C1caQM
-         Ddsg==
-X-Gm-Message-State: APjAAAUGmbp5s+aVk7MJuyA7wJuUcNkNWbHugLVWFFqy28yWUTxlf+G1
-        o78RuAnobnXXFTGvlaIdhA==
-X-Google-Smtp-Source: APXvYqxlveMV1sSzvivUTiDzl1Jd26ULb0CfbzN67a2r/0tk3STwV2602H4eUdIB7uxdvnryu0y5iw==
-X-Received: by 2002:a02:300b:: with SMTP id q11mr87478803jaq.54.1563980185089;
-        Wed, 24 Jul 2019 07:56:25 -0700 (PDT)
-Received: from localhost ([64.188.179.254])
-        by smtp.gmail.com with ESMTPSA id s15sm36464486ioe.88.2019.07.24.07.56.24
+        bh=AST/4O/eq2Sza1xEm2Wbk0z0iSYP50Qycw9UOOMM4qo=;
+        b=KBxC90iyAoStypEtq53h1ZgsVRB8QbKnM2FjyVi6yMiYpqFFXc0MJ8xled8AvJcK5a
+         15U1rKf+BguALth7Q7K27t8mdiVUS5PQHC+Vg2Onbp7vFLCSlLiDEjlgjWzjGr4VDbLY
+         2d0WAiCFSHOIRbRRlLe5S5jDEwe67elEiYIu/5Iad35oHF6YBDYA6IkycFUn4qrz5Xb1
+         +FEKWUlSW2YxFJvCpmRqvU/CtObWsIuUj61+2Ec25IBSAtxEpsnC4N0KCxpaOLV+3zBQ
+         HgtBf9xNh0o6i46MaegmB3bSGV06FIk1WkeUlm4P/e0K6wTLmy77mi6AEDjXVgujPtfr
+         exlA==
+X-Gm-Message-State: APjAAAWBdgqIf+FeNgqU8mM805TEQ2vN8CpPQrUtdaQveGJeTlnhXERs
+        PGj6n9cU2oROCBDw6C7K/Fti0w==
+X-Google-Smtp-Source: APXvYqy63MsFnB5IBu6jUh65OwJobUp6vYiO+zGqqecumVlRqQ8FJ9r/47ZzsvXz4zMNQmoNdUPc7Q==
+X-Received: by 2002:a17:90b:8e:: with SMTP id bb14mr88467368pjb.19.1563980226593;
+        Wed, 24 Jul 2019 07:57:06 -0700 (PDT)
+Received: from localhost ([2601:647:5b80:29f7:1bdd:d748:9a4e:8083])
+        by smtp.gmail.com with ESMTPSA id t8sm51985102pfq.31.2019.07.24.07.57.05
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 07:56:24 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 08:56:23 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        jorge.ramirez-ortiz@linaro.org, bjorn.andersson@linaro.org,
-        ulf.hansson@linaro.org, Niklas Cassel <niklas.cassel@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/13] dt-bindings: cpufreq: qcom-nvmem: Make speedbin
- related properties optional
-Message-ID: <20190724145623.GA9855@bogus>
-References: <20190705095726.21433-1-niklas.cassel@linaro.org>
- <20190705095726.21433-4-niklas.cassel@linaro.org>
+        Wed, 24 Jul 2019 07:57:05 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 07:57:04 -0700
+From:   Moritz Fischer <mdf@kernel.org>
+To:     Thor Thayer <thor.thayer@linux.intel.com>
+Cc:     Moritz Fischer <mdf@kernel.org>, richard.gong@linux.intel.com,
+        agust@denx.de, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 2/3] fpga: altera-cvp: Preparation for V2 parts.
+Message-ID: <20190724145704.GB24455@archbox>
+References: <1563317287-18834-1-git-send-email-thor.thayer@linux.intel.com>
+ <1563317287-18834-3-git-send-email-thor.thayer@linux.intel.com>
+ <20190722005938.GB2583@archbook>
+ <6e54c0ee-b8ec-4f95-cf81-70aacc82c72e@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190705095726.21433-4-niklas.cassel@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <6e54c0ee-b8ec-4f95-cf81-70aacc82c72e@linux.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  5 Jul 2019 11:57:14 +0200, Niklas Cassel wrote:
-> Not all Qualcomm platforms need to care about the speedbin efuse,
-> nor the value blown into the speedbin efuse.
-> Therefore, make the nvmem-cells and opp-supported-hw properties
-> optional.
+On Tue, Jul 23, 2019 at 09:40:51AM -0500, Thor Thayer wrote:
+> Hi Moritz,
 > 
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> ---
->  Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt | 4 ++++
->  1 file changed, 4 insertions(+)
+> On 7/21/19 7:59 PM, Moritz Fischer wrote:
+> > Thor,
+> > 
+> > On Tue, Jul 16, 2019 at 05:48:06PM -0500, thor.thayer@linux.intel.com wrote:
+> > > From: Thor Thayer <thor.thayer@linux.intel.com>
+> > > 
+> > > In preparation for adding newer V2 parts that use a FIFO,
+> > > reorganize altera_cvp_chk_error() and change the write
+> > > function to block based.
+> > > V2 parts have a block size matching the FIFO while older
+> > > V1 parts write a 32 bit word at a time.
+> > > 
+> > > Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+> > > ---
+> > > v2 Remove inline function declaration
+> > >     Reverse Christmas Tree format for local variables
+> > > ---
+> > >   drivers/fpga/altera-cvp.c | 72 ++++++++++++++++++++++++++++++-----------------
+> > >   1 file changed, 46 insertions(+), 26 deletions(-)
+> > > 
+> > > diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+> > > index b78c90580071..37419d6b9915 100644
+> > > --- a/drivers/fpga/altera-cvp.c
+> > > +++ b/drivers/fpga/altera-cvp.c
+> > > @@ -140,6 +140,41 @@ static int altera_cvp_wait_status(struct altera_cvp_conf *conf, u32 status_mask,
+> > >   	return -ETIMEDOUT;
+> > >   }
+> > > +static int altera_cvp_chk_error(struct fpga_manager *mgr, size_t bytes)
+> > > +{
+> > > +	struct altera_cvp_conf *conf = mgr->priv;
+> > > +	u32 val;
+> > > +
+> > > +	/* STEP 10 (optional) - check CVP_CONFIG_ERROR flag */
+> > > +	altera_read_config_dword(conf, VSE_CVP_STATUS, &val);
+> > Same as in the other email, why can we ignore return values here. I
+> > think the original code probably did that already.
+> 
+> Yes, I actually didn't make any changes to this function. You can see I
+> moved it from below since it is used in the following function.
+> 
+> I'm not checking the return code from any of the read/write functions since
+> the original driver didn't. Would you prefer I check and issue a warning?
+
+Not sure a warning would change much here. We should probably look at
+why it was ok in the first place.
+> 
+> Thanks for reviewing!
+> 
+> > > +	if (val & VSE_CVP_STATUS_CFG_ERR) {
+> > > +		dev_err(&mgr->dev, "CVP_CONFIG_ERROR after %zu bytes!\n",
+> > > +			bytes);
+> > > +		return -EPROTO;
+> > > +	}
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int altera_cvp_send_block(struct altera_cvp_conf *conf,
+> > > +				 const u32 *data, size_t len)
+> > > +{
+> > > +	u32 mask, words = len / sizeof(u32);
+> > > +	int i, remainder;
+> > > +
+> > > +	for (i = 0; i < words; i++)
+> > > +		conf->write_data(conf, *data++);
+> > > +
+> > > +	/* write up to 3 trailing bytes, if any */
+> > > +	remainder = len % sizeof(u32);
+> > > +	if (remainder) {
+> > > +		mask = BIT(remainder * 8) - 1;
+> > > +		if (mask)
+> > > +			conf->write_data(conf, *data & mask);
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > >   static int altera_cvp_teardown(struct fpga_manager *mgr,
+> > >   			       struct fpga_image_info *info)
+> > >   {
+> > > @@ -262,39 +297,29 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
+> > >   	return 0;
+> > >   }
+> > > -static inline int altera_cvp_chk_error(struct fpga_manager *mgr, size_t bytes)
+> > > -{
+> > > -	struct altera_cvp_conf *conf = mgr->priv;
+> > > -	u32 val;
+> > > -
+> > > -	/* STEP 10 (optional) - check CVP_CONFIG_ERROR flag */
+> > > -	altera_read_config_dword(conf, VSE_CVP_STATUS, &val);
+> > > -	if (val & VSE_CVP_STATUS_CFG_ERR) {
+> > > -		dev_err(&mgr->dev, "CVP_CONFIG_ERROR after %zu bytes!\n",
+> > > -			bytes);
+> > > -		return -EPROTO;
+> > > -	}
+> > > -	return 0;
+> > > -}
+> > > -
+> > >   static int altera_cvp_write(struct fpga_manager *mgr, const char *buf,
+> > >   			    size_t count)
+> > >   {
+> > >   	struct altera_cvp_conf *conf = mgr->priv;
+> > > +	size_t done, remaining, len;
+> > >   	const u32 *data;
+> > > -	size_t done, remaining;
+> > >   	int status = 0;
+> > > -	u32 mask;
+> > >   	/* STEP 9 - write 32-bit data from RBF file to CVP data register */
+> > >   	data = (u32 *)buf;
+> > >   	remaining = count;
+> > >   	done = 0;
+> > > -	while (remaining >= 4) {
+> > > -		conf->write_data(conf, *data++);
+> > > -		done += 4;
+> > > -		remaining -= 4;
+> > > +	while (remaining) {
+> > > +		if (remaining >= sizeof(u32))
+> > > +			len = sizeof(u32);
+> > > +		else
+> > > +			len = remaining;
+> > > +
+> > > +		altera_cvp_send_block(conf, data, len);
+> > > +		data++;
+> > > +		done += len;
+> > > +		remaining -= len;
+> > >   		/*
+> > >   		 * STEP 10 (optional) and STEP 11
+> > > @@ -312,11 +337,6 @@ static int altera_cvp_write(struct fpga_manager *mgr, const char *buf,
+> > >   		}
+> > >   	}
+> > > -	/* write up to 3 trailing bytes, if any */
+> > > -	mask = BIT(remaining * 8) - 1;
+> > > -	if (mask)
+> > > -		conf->write_data(conf, *data & mask);
+> > > -
+> > >   	if (altera_cvp_chkcfg)
+> > >   		status = altera_cvp_chk_error(mgr, count);
+> > > -- 
+> > > 2.7.4
+> > > 
+> > Cheers,
+> > Moritz
+> > 
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Moritz
