@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13E4673B20
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:58:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BBE573B24
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:58:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404733AbfGXT5B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:57:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41836 "EHLO mail.kernel.org"
+        id S2391889AbfGXT5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:57:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404720AbfGXT44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:56:56 -0400
+        id S2404393AbfGXT5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:57:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3727E205C9;
-        Wed, 24 Jul 2019 19:56:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E93BB205C9;
+        Wed, 24 Jul 2019 19:56:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563998215;
-        bh=W0H73o7ioJ0J6N65ApQZZIr61wewHIOv59D58WZsgt4=;
+        s=default; t=1563998219;
+        bh=8t5QVbCM8xFqk4NuKu5dd9sVDoCfed5xoDeOenDTj5I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hPgUekPhL3abYk2zvT28b4qCta2rWvseNZd5eBXud/gOvohlrieRJKK/GNHSas1OI
-         7lS3STtsKRmB4BX5VgHLIldp1TKg4K9j9luJn7T36Nh1FYqr8eHYFC9Yaj72KBJJ6q
-         hxRkUKgYhitXkDrzbNCdnE0E+3ztIGouMePASaMc=
+        b=ueMjHy1gCEJwA4xJ4gJ/NCPt2bEfoUg2nyS75fVAPJBl2uoPtMsfUVyhycuPWTh4Y
+         WVr2nhqAHURSfgYuEw7FAP0JS+PNzIIh+PWtpdOc3rWIInYuZ6/RMORiZkw+2FrrP/
+         KSS64ZdkSzf8PnZLheznCmVjWhKSLg9ZIy1H6YIo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Soltys <soltys@ziu.info>,
-        Xiao Ni <xni@redhat.com>, Song Liu <songliubraving@fb.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.1 286/371] raid5-cache: Need to do start() part job after adding journal device
-Date:   Wed, 24 Jul 2019 21:20:38 +0200
-Message-Id: <20190724191745.823726802@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+97aae04ce27e39cbfca9@syzkaller.appspotmail.com,
+        syzbot+4c595632b98bb8ffcc66@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.1 287/371] ALSA: seq: Break too long mutex context in the write loop
+Date:   Wed, 24 Jul 2019 21:20:39 +0200
+Message-Id: <20190724191745.902560876@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -44,56 +45,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiao Ni <xni@redhat.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit d9771f5ec46c282d518b453c793635dbdc3a2a94 upstream.
+commit ede34f397ddb063b145b9e7d79c6026f819ded13 upstream.
 
-commit d5d885fd514f ("md: introduce new personality funciton start()")
-splits the init job to two parts. The first part run() does the jobs that
-do not require the md threads. The second part start() does the jobs that
-require the md threads.
+The fix for the racy writes and ioctls to sequencer widened the
+application of client->ioctl_mutex to the whole write loop.  Although
+it does unlock/relock for the lengthy operation like the event dup,
+the loop keeps the ioctl_mutex for the whole time in other
+situations.  This may take quite long time if the user-space would
+give a huge buffer, and this is a likely cause of some weird behavior
+spotted by syzcaller fuzzer.
 
-Now it just does run() in adding new journal device. It needs to do the
-second part start() too.
+This patch puts a simple workaround, just adding a mutex break in the
+loop when a large number of events have been processed.  This
+shouldn't hit any performance drop because the threshold is set high
+enough for usual operations.
 
-Fixes: d5d885fd514f ("md: introduce new personality funciton start()")
-Cc: stable@vger.kernel.org #v4.9+
-Reported-by: Michal Soltys <soltys@ziu.info>
-Signed-off-by: Xiao Ni <xni@redhat.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 7bd800915677 ("ALSA: seq: More protection for concurrent write and ioctl races")
+Reported-by: syzbot+97aae04ce27e39cbfca9@syzkaller.appspotmail.com
+Reported-by: syzbot+4c595632b98bb8ffcc66@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/raid5.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ sound/core/seq/seq_clientmgr.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -7674,7 +7674,7 @@ abort:
- static int raid5_add_disk(struct mddev *mddev, struct md_rdev *rdev)
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -1004,7 +1004,7 @@ static ssize_t snd_seq_write(struct file
  {
- 	struct r5conf *conf = mddev->private;
--	int err = -EEXIST;
-+	int ret, err = -EEXIST;
- 	int disk;
- 	struct disk_info *p;
- 	int first = 0;
-@@ -7689,7 +7689,14 @@ static int raid5_add_disk(struct mddev *
- 		 * The array is in readonly mode if journal is missing, so no
- 		 * write requests running. We should be safe
- 		 */
--		log_init(conf, rdev, false);
-+		ret = log_init(conf, rdev, false);
-+		if (ret)
-+			return ret;
+ 	struct snd_seq_client *client = file->private_data;
+ 	int written = 0, len;
+-	int err;
++	int err, handled;
+ 	struct snd_seq_event event;
+ 
+ 	if (!(snd_seq_file_flags(file) & SNDRV_SEQ_LFLG_OUTPUT))
+@@ -1017,6 +1017,8 @@ static ssize_t snd_seq_write(struct file
+ 	if (!client->accept_output || client->pool == NULL)
+ 		return -ENXIO;
+ 
++ repeat:
++	handled = 0;
+ 	/* allocate the pool now if the pool is not allocated yet */ 
+ 	mutex_lock(&client->ioctl_mutex);
+ 	if (client->pool->size > 0 && !snd_seq_write_pool_allocated(client)) {
+@@ -1076,12 +1078,19 @@ static ssize_t snd_seq_write(struct file
+ 						   0, 0, &client->ioctl_mutex);
+ 		if (err < 0)
+ 			break;
++		handled++;
+ 
+ 	__skip_event:
+ 		/* Update pointers and counts */
+ 		count -= len;
+ 		buf += len;
+ 		written += len;
 +
-+		ret = r5l_start(conf->log);
-+		if (ret)
-+			return ret;
-+
- 		return 0;
++		/* let's have a coffee break if too many events are queued */
++		if (++handled >= 200) {
++			mutex_unlock(&client->ioctl_mutex);
++			goto repeat;
++		}
  	}
- 	if (mddev->recovery_disabled == conf->recovery_disabled)
+ 
+  out:
 
 
