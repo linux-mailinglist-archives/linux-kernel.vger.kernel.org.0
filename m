@@ -2,147 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36F6B73900
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:35:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAEF673914
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:36:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388889AbfGXTfs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:35:48 -0400
-Received: from mga18.intel.com ([134.134.136.126]:56931 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389255AbfGXTfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:35:43 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jul 2019 12:35:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,303,1559545200"; 
-   d="scan'208";a="321437783"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.165])
-  by orsmga004.jf.intel.com with ESMTP; 24 Jul 2019 12:35:42 -0700
-Date:   Wed, 24 Jul 2019 12:35:42 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, bp@alien8.de,
-        josh@joshtriplett.org, luto@kernel.org, kai.huang@intel.com,
-        rientjes@google.com, cedric.xing@intel.com
-Subject: Re: [PATCH v21 08/28] x86/cpu/intel: Detect SGX support and update
- caps appropriately
-Message-ID: <20190724193542.GD25376@linux.intel.com>
-References: <20190713170804.2340-1-jarkko.sakkinen@linux.intel.com>
- <20190713170804.2340-9-jarkko.sakkinen@linux.intel.com>
+        id S2389329AbfGXTgh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:36:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36736 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389113AbfGXTgf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:36:35 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BDEC76063F; Wed, 24 Jul 2019 19:36:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1563996993;
+        bh=6rZFV4H+AtnrEFItZHF83yeAsV8YoILKdR1b4gFLTD0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oYm1pUYmMQEqee4K2snbkxIwLdZKMKnU2ZPM69OR5lDW8bIH6IWxr9WdInRQP7O6C
+         4vLRSH0pHNFexcI4nBZzmGds23jHKFQuAmVMsYZiTihczGihsZszaEMIrbcowJqY2b
+         wuLsVCY2Rsqf+tc+hrcB5J2vDnVK/0dsnRb9wuPo=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3921A605A0;
+        Wed, 24 Jul 2019 19:36:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1563996991;
+        bh=6rZFV4H+AtnrEFItZHF83yeAsV8YoILKdR1b4gFLTD0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OmBT2s8++wGXxO4N8+Dyj8Hi+INE6p4Lu/FR8W5b5iZt0AoxuGShf0IA8G6tdjdJC
+         QRNS+TEllVKYDkuDDbyoZPZtulDxLwreq5FoKvQ7aDNKs7rQjkOrDKIoLNQAkPjbFI
+         cyS92Zs4FeRn3XJ2Tw5Y4IotnQVbkKBpK0fDKKRI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3921A605A0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Wed, 24 Jul 2019 13:36:30 -0600
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, dianders@chromium.org,
+        mkshah@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Subject: Re: [PATCH V2 1/4] drivers: qcom: rpmh-rsc: simplify TCS locking
+Message-ID: <20190724193630.GD18620@codeaurora.org>
+References: <20190722215340.3071-1-ilina@codeaurora.org>
+ <5d375054.1c69fb81.7ce3f.3591@mx.google.com>
+ <20190723192159.GA18620@codeaurora.org>
+ <5d376bb3.1c69fb81.2bb4e.7771@mx.google.com>
+ <20190724145452.GC18620@codeaurora.org>
+ <5d38a430.1c69fb81.6e696.9e6f@mx.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20190713170804.2340-9-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <5d38a430.1c69fb81.6e696.9e6f@mx.google.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 13, 2019 at 08:07:44PM +0300, Jarkko Sakkinen wrote:
->  arch/x86/kernel/cpu/intel.c | 71 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 71 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-> index 8d6d92ebeb54..1503b251d10f 100644
-> --- a/arch/x86/kernel/cpu/intel.c
-> +++ b/arch/x86/kernel/cpu/intel.c
-> @@ -623,6 +623,72 @@ static void detect_tme(struct cpuinfo_x86 *c)
->  	c->x86_phys_bits -= keyid_bits;
->  }
->  
-> +static void __maybe_unused detect_sgx(struct cpuinfo_x86 *c)
-> +{
-> +	unsigned long long fc;
-> +
-> +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
-> +	if (!(fc & FEATURE_CONTROL_LOCKED)) {
-> +		pr_err_once("sgx: The feature control MSR is not locked\n");
-> +		goto err_unsupported;
-> +	}
-> +
-> +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
-> +		pr_err_once("sgx: SGX is not enabled in IA32_FEATURE_CONTROL MSR\n");
-> +		goto err_unsupported;
-> +	}
-> +
-> +	if (!cpu_has(c, X86_FEATURE_SGX1)) {
-> +		pr_err_once("sgx: SGX1 instruction set is not supported\n");
-> +		goto err_unsupported;
-> +	}
-> +
-> +	if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
-> +		pr_info_once("sgx: The launch control MSRs are not writable\n");
-> +		goto err_msrs_rdonly;
-> +	}
-> +
-> +	return;
-> +
-> +err_unsupported:
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX);
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX1);
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX2);
-> +
-> +err_msrs_rdonly:
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
-> +}
-> +
-> +static void init_intel_energy_perf(struct cpuinfo_x86 *c)
-> +{
-> +	u64 epb;
-> +
-> +	/*
-> +	 * Initialize MSR_IA32_ENERGY_PERF_BIAS if not already initialized.
-> +	 * (x86_energy_perf_policy(8) is available to change it at run-time.)
-> +	 */
-> +	if (!cpu_has(c, X86_FEATURE_EPB))
-> +		return;
-> +
-> +	rdmsrl(MSR_IA32_ENERGY_PERF_BIAS, epb);
-> +	if ((epb & 0xF) != ENERGY_PERF_BIAS_PERFORMANCE)
-> +		return;
-> +
-> +	pr_warn_once("ENERGY_PERF_BIAS: Set to 'normal', was 'performance'\n");
-> +	pr_warn_once("ENERGY_PERF_BIAS: View and update with x86_energy_perf_policy(8)\n");
-> +	epb = (epb & ~0xF) | ENERGY_PERF_BIAS_NORMAL;
-> +	wrmsrl(MSR_IA32_ENERGY_PERF_BIAS, epb);
-> +}
-> +
-> +static void intel_bsp_resume(struct cpuinfo_x86 *c)
-> +{
-> +	/*
-> +	 * MSR_IA32_ENERGY_PERF_BIAS is lost across suspend/resume,
-> +	 * so reinitialize it properly like during bootup:
-> +	 */
-> +	init_intel_energy_perf(c);
-> +}
-> +
->  static void init_cpuid_fault(struct cpuinfo_x86 *c)
->  {
->  	u64 msr;
-> @@ -760,6 +826,11 @@ static void init_intel(struct cpuinfo_x86 *c)
->  	if (cpu_has(c, X86_FEATURE_TME))
->  		detect_tme(c);
->  
-> +	if (IS_ENABLED(CONFIG_INTEL_SGX) && cpu_has(c, X86_FEATURE_SGX))
-> +		detect_sgx(c);
-> +
-> +	init_intel_energy_perf(c);
+On Wed, Jul 24 2019 at 12:32 -0600, Stephen Boyd wrote:
+>Quoting Lina Iyer (2019-07-24 07:54:52)
+>> On Tue, Jul 23 2019 at 14:19 -0600, Stephen Boyd wrote:
+>> >Quoting Lina Iyer (2019-07-23 12:21:59)
+>> >> On Tue, Jul 23 2019 at 12:22 -0600, Stephen Boyd wrote:
+>> >> >Can you keep irq saving and restoring in this patch and then remove that
+>> >> >in the next patch with reasoning? It probably isn't safe if the lock is
+>> >> >taken in interrupt context anyway.
+>> >> >
+>> >> Yes, the drv->lock should have been irqsave/irqrestore, but it hasn't
+>> >> been changed by this patch.
+>> >
+>> >It needs to be changed to maintain the irqsaving/restoring of the code.
+>> >
+>> May be I should club this with the following patch. Instead of adding
+>> irqsave and restore to drv->lock and then remvoing them again in the
+>> following patch.
+>>
+>
+>I suspect that gets us back to v1 of this patch series? I'd prefer you
+>just keep the save/restore of irqs in this patch and then remove them
+>later. Or if the order can be the other way, where we remove grabbing
+>the lock in irq context comes first and then consolidate the locks into
+>one it might work.
+>
+Patches 1 and 3 need not be bundled. We can keep them separate to help
+understand the change better.
+This patch order - #2, #1, #3, #4 would work.
 
-All of the energy_perf additions are bogus, looks like a rebase gone wrong.
+--Lina
 
-> +
->  	init_intel_misc_features(c);
->  }
->  
-> -- 
-> 2.20.1
-> 
