@@ -2,36 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B92D73F8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:33:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A84E73F86
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:33:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390685AbfGXUdi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:33:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45776 "EHLO mail.kernel.org"
+        id S2388156AbfGXT17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:27:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728690AbfGXT1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:27:50 -0400
+        id S1728772AbfGXT14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:27:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A62C5218EA;
-        Wed, 24 Jul 2019 19:27:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC440229F3;
+        Wed, 24 Jul 2019 19:27:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996469;
-        bh=S0E1UF06q68jC3495q+jItdIe+mk+gE5PVWPHXe/fOw=;
+        s=default; t=1563996475;
+        bh=m6eIVnmoie5rpim9BfCOEBtVArBAcM30e7faLAeTqdg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jlzz/8gEPdLJZGUegcxQHh+IbFfgO9Oay771K0IM9UG8PEqqRIOCnAQkgr3cfOsh5
-         G4HbM028oHMbf/yNy+rmIUVFLyRPNKFEKzI6uvrole5Ze0irQo0ydARxsHJbPKe7Az
-         a5cEQpXIxjMwTfCbZT0FW5ykh5g3ooHeSOZ0csIg=
+        b=ZNnKWqfAkCzKlYQWtpDRBTCmu2w26OMsqYjq6q7kGng8VvR7wrOlv5z50L6SFNmTa
+         rs5gXe+ZXjOTuBaAI/m70HrfZxn9Eve1yTeFf5Le4SEjlXj2Sv89z+kpVdJMQmizNx
+         /arVUe9azodj5aOiNcrCezdMn+K9oecZMS6IhQ8g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 106/413] blkcg, writeback: dead memcgs shouldnt contribute to writeback ownership arbitration
-Date:   Wed, 24 Jul 2019 21:16:37 +0200
-Message-Id: <20190724191742.860548714@linuxfoundation.org>
+        stable@vger.kernel.org, Jilong Kou <koujilong@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miao Xie <miaoxie@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 108/413] sched/core: Add __sched tag for io_schedule()
+Date:   Wed, 24 Jul 2019 21:16:39 +0200
+Message-Id: <20190724191743.027532780@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -44,52 +50,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6631142229005e1b1c311a09efe9fb3cfdac8559 ]
+[ Upstream commit e3b929b0a184edb35531153c5afcaebb09014f9d ]
 
-wbc_account_io() collects information on cgroup ownership of writeback
-pages to determine which cgroup should own the inode.  Pages can stay
-associated with dead memcgs but we want to avoid attributing IOs to
-dead blkcgs as much as possible as the association is likely to be
-stale.  However, currently, pages associated with dead memcgs
-contribute to the accounting delaying and/or confusing the
-arbitration.
+Non-inline io_schedule() was introduced in:
 
-Fix it by ignoring pages associated with dead memcgs.
+  commit 10ab56434f2f ("sched/core: Separate out io_schedule_prepare() and io_schedule_finish()")
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Keep in line with io_schedule_timeout(), otherwise "/proc/<pid>/wchan" will
+report io_schedule() rather than its callers when waiting for IO.
+
+Reported-by: Jilong Kou <koujilong@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Tejun Heo <tj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miao Xie <miaoxie@huawei.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 10ab56434f2f ("sched/core: Separate out io_schedule_prepare() and io_schedule_finish()")
+Link: https://lkml.kernel.org/r/20190603091338.2695-1-gaoxiang25@huawei.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fs-writeback.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ kernel/sched/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index e41cbe8e81b9..9ebfb1b28430 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -715,6 +715,7 @@ void wbc_detach_inode(struct writeback_control *wbc)
- void wbc_account_io(struct writeback_control *wbc, struct page *page,
- 		    size_t bytes)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 874c427742a9..4d5962232a55 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5123,7 +5123,7 @@ long __sched io_schedule_timeout(long timeout)
+ }
+ EXPORT_SYMBOL(io_schedule_timeout);
+ 
+-void io_schedule(void)
++void __sched io_schedule(void)
  {
-+	struct cgroup_subsys_state *css;
- 	int id;
+ 	int token;
  
- 	/*
-@@ -726,7 +727,12 @@ void wbc_account_io(struct writeback_control *wbc, struct page *page,
- 	if (!wbc->wb)
- 		return;
- 
--	id = mem_cgroup_css_from_page(page)->id;
-+	css = mem_cgroup_css_from_page(page);
-+	/* dead cgroups shouldn't contribute to inode ownership arbitration */
-+	if (!(css->flags & CSS_ONLINE))
-+		return;
-+
-+	id = css->id;
- 
- 	if (id == wbc->wb_id) {
- 		wbc->wb_bytes += bytes;
 -- 
 2.20.1
 
