@@ -2,128 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A15A726D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 06:45:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3DDA726E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 06:48:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726432AbfGXEpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 00:45:52 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34457 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726312AbfGXEps (ORCPT
+        id S1725970AbfGXEs3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 00:48:29 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:45908 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbfGXEs2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 00:45:48 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n9so14312710pgc.1;
-        Tue, 23 Jul 2019 21:45:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zIg1AeRgD/CqkmVywbx+SzJM6fRrXplz7aYhAvptzng=;
-        b=arDVEhmzmwYc0UEKQFalOXDiIHqPt1pV7vU0JUv5mKmQ089wfTwsdopP42Bp86zZ12
-         9WIcbg0FL0S7NcMN8EBa/ZsKL/7UCA0dKCKuCKM+lXn0ABjHzkKf7GbzTzgsqLNlu959
-         x8Wf+GMGeki27TD3sIzrhRYDi+0to0FseWV9eOKqeTdGtNvmAsbUvqbDLALoFmNeN8lC
-         q8qaQ09EwqFPHJ0FosCJ6TkG/MI4KAUit4mNdGB4LeHjfVsf4BvlJpxIDvO5f0c0rcDz
-         cnxHWz5yRd1W3BrSj7Xo/RaJcRj1t3haKXhTaAtTRDrTJ75HdwRRYeQcAOlujCws3i0K
-         8Xcg==
+        Wed, 24 Jul 2019 00:48:28 -0400
+Received: from mail-pg1-f199.google.com ([209.85.215.199])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1hq9CU-0007m6-Ni
+        for linux-kernel@vger.kernel.org; Wed, 24 Jul 2019 04:48:26 +0000
+Received: by mail-pg1-f199.google.com with SMTP id w5so27473949pgs.5
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 21:48:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zIg1AeRgD/CqkmVywbx+SzJM6fRrXplz7aYhAvptzng=;
-        b=EZhE+lrleyRwjQIqZzTR73Gc+axWiq3BPKi+SRd585HhO3rvq37sLDCY/9HhbCETbx
-         BPuEmEcI3234O8YkWQKg3/YUvmusw9Pzq5i8JRe7tBKrpxeswWDdr9rM4i4QjJ4IBxrJ
-         xyZ77tTl2y20nKISNq/6YxAkNeLUfhyDmuhrMK4k2odlYkRQh36cw+YNHAprl9R7rNPU
-         /Zb886M2BLV2APK+p0IQgLF9io7jnBzhi46t4Ar3ZjHWDk0OuqzmKOEhaVM5PdZJCG20
-         I1aWHVgrQ5GDI8kPN1zjW7lW1Nk0O0bWpDf3ROSk8y0XyvTp9FzV/gBlxEwYUSdkILk9
-         DTkQ==
-X-Gm-Message-State: APjAAAWmzGaNnf8mmHc0prQkrNDJDHvTvOrL8ep6hfU48mqX8ta0ApGZ
-        5Y6LhLkYk7fMZorSR/T3TmA=
-X-Google-Smtp-Source: APXvYqxa/GK/rSekD6RsEbqfAEidKg6pPzN0E429BN4FKlNPqtfCT9Yymo4uvci3p2qlK1ysgtHEgw==
-X-Received: by 2002:a17:90a:fa07:: with SMTP id cm7mr83262648pjb.138.1563943547267;
-        Tue, 23 Jul 2019 21:45:47 -0700 (PDT)
-Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id b30sm65685861pfr.117.2019.07.23.21.45.46
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 21:45:46 -0700 (PDT)
-From:   john.hubbard@gmail.com
-X-Google-Original-From: jhubbard@nvidia.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
-        Boaz Harrosh <boaz@plexistor.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ilya Dryomov <idryomov@gmail.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Ming Lei <ming.lei@redhat.com>, Sage Weil <sage@redhat.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        Yan Zheng <zyan@redhat.com>, netdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
-        linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v3 3/3] net/xdp: convert put_page() to put_user_page*()
-Date:   Tue, 23 Jul 2019 21:45:37 -0700
-Message-Id: <20190724044537.10458-4-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190724044537.10458-1-jhubbard@nvidia.com>
-References: <20190724044537.10458-1-jhubbard@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=yfzK+CD5lC0fbY3LJShFWmbhqPkImhOP3cc2stxkE2c=;
+        b=KGguBRisVaLa+qyUYsiug6Eq/5pu93CPrXdm641bcIAApmDIYoQRj47x8wiorwY6am
+         Hx70FeUG3MFtqFKUfA3dkW7ENop5q16miWL0MtUHBjTGIUhYd3ikuZ0+fOPM20T7gqmQ
+         iTDVjo7YLhZDlPhtZMn+V3YJQ01ap486GPXznVqyATGR8SQeMilCnU7d0f9W7LF8IrxI
+         LdmyP7KfSrCCaZjGdthraAYQL7UqXp1hXbs4jW//M5eDy/T0zYpN0RAswX7XKBAMMsve
+         3FlpAkzBpOvHunKZqWkpTH+L9mshliyb1GDaGyI0tiwJHFBytdrnWqZ8sLL4z2B189jN
+         iBhA==
+X-Gm-Message-State: APjAAAXEyXR0SRg7b3UBE06DMyY+RHDQo7zJMnXQVFtcIVLXrQUnGg/l
+        BH57O48gfcSFzgY+zGSYMdfDmInswZXpu3AXogylFo1At2rmumiBxwj7/zFQ7cxI7wRyWJ4SUXo
+        m61uPwhQH22VOafmcWWiTr5AzwY7oQtF15euoapnj5g==
+X-Received: by 2002:a17:90a:ff17:: with SMTP id ce23mr85387746pjb.47.1563943705186;
+        Tue, 23 Jul 2019 21:48:25 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwpPQg9WiyNO1ZuciWHV6XFxN1rkRMp+EjLZh1z8SW7D3P7l0k07rIIMzDqyBTW9T7TfafXjA==
+X-Received: by 2002:a17:90a:ff17:: with SMTP id ce23mr85387728pjb.47.1563943704873;
+        Tue, 23 Jul 2019 21:48:24 -0700 (PDT)
+Received: from 2001-b011-380f-3c20-9d3c-ccd5-c106-ac9d.dynamic-ip6.hinet.net (2001-b011-380f-3c20-9d3c-ccd5-c106-ac9d.dynamic-ip6.hinet.net. [2001:b011:380f:3c20:9d3c:ccd5:c106:ac9d])
+        by smtp.gmail.com with ESMTPSA id k8sm43825030pgm.14.2019.07.23.21.48.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Jul 2019 21:48:24 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: linux-next: build warning after merge of the input-current tree
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <20190724095416.65450cbf@canb.auug.org.au>
+Date:   Wed, 24 Jul 2019 12:48:21 +0800
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <5463D761-FAFB-4BBE-8EE1-95EF1A52F927@canonical.com>
+References: <20190724095416.65450cbf@canb.auug.org.au>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Hubbard <jhubbard@nvidia.com>
+Hi Stephen,
 
-For pages that were retained via get_user_pages*(), release those pages
-via the new put_user_page*() routines, instead of via put_page() or
-release_pages().
+at 07:54, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
-("mm: introduce put_user_page*(), placeholder versions").
+> Hi all,
+>
+> After merging the input-current tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>
+> drivers/input/mouse/elantech.c: In function 'elantech_use_host_notify':
+> drivers/input/mouse/elantech.c:1843:6: warning: this statement may fall  
+> through [-Wimplicit-fallthrough=]
+>    if (dmi_get_bios_year() >= 2018)
+>       ^
+> drivers/input/mouse/elantech.c:1845:2: note: here
+>   default:
+>   ^~~~~~~
+>
+> Introduced by commit
+>
+>   883a2a80f79c ("Input: elantech - enable SMBus on new (2018+) systems")
+>
+> I get these warnings because I am building with -Wimplicit-fallthrough
+> in attempt to catch new additions early.  The gcc warning can be turned
+> off by adding a /* fall through */ comment at the point the fall through
+> happens (assuming that the fall through is intentional).
 
-Cc: Björn Töpel <bjorn.topel@intel.com>
-Cc: Magnus Karlsson <magnus.karlsson@intel.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- net/xdp/xdp_umem.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+Yes the fall through is intentional.
 
-diff --git a/net/xdp/xdp_umem.c b/net/xdp/xdp_umem.c
-index 83de74ca729a..17c4b3d3dc34 100644
---- a/net/xdp/xdp_umem.c
-+++ b/net/xdp/xdp_umem.c
-@@ -166,14 +166,7 @@ void xdp_umem_clear_dev(struct xdp_umem *umem)
- 
- static void xdp_umem_unpin_pages(struct xdp_umem *umem)
- {
--	unsigned int i;
--
--	for (i = 0; i < umem->npgs; i++) {
--		struct page *page = umem->pgs[i];
--
--		set_page_dirty_lock(page);
--		put_page(page);
--	}
-+	put_user_pages_dirty_lock(umem->pgs, umem->npgs, true);
- 
- 	kfree(umem->pgs);
- 	umem->pgs = NULL;
--- 
-2.22.0
+Kai-Heng
+
+>
+> -- 
+> Cheers,
+> Stephen Rothwell
+
 
