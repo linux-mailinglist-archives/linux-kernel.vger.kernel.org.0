@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D259738FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1547738FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:35:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389203AbfGXTf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:35:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55148 "EHLO mail.kernel.org"
+        id S2388730AbfGXTf3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:35:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388852AbfGXTdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:33:21 -0400
+        id S2388927AbfGXTdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:33:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D11EB2238C;
-        Wed, 24 Jul 2019 19:33:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DE3B229F4;
+        Wed, 24 Jul 2019 19:33:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563996801;
-        bh=BX83SWqxlR2Q+6R81dSPYHiAW4Em1qQCcn0O2SZTYd4=;
+        s=default; t=1563996803;
+        bh=Ag/Y4uB+I8AbYtTVHO4ERvH1pTAoGtX+TNBxH7ChFPs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ccY/z40trOJcEW9f/2NisRoevm6uzfECEqID6IF+4IMwuTnFsEO9N9IBr42da7Mr8
-         HEuAsj2gjbo+vaFokKjkLvm3hrGDQq2mcGemdWYuNzPBAiYMPfSoKMWsVJgCu28FUI
-         OQOjdwMmFT8R/YVUhrIV9P6jxMGIx9zxn/e9DdtY=
+        b=lml/9AUr61onDU/eTkilOunP5vaNnnDLJDJ9/wqggZqLCgJRCVlhN/RWoR232nbdx
+         C9UHTPTBLQuZqcp15x6kVrMn4nEGFZOBNOFSpSP0zPUkkPNNAqilrXIZzT6zdvsYPA
+         H2WTNIsFlaA7l+LbWGdK8DAsY3hHJxycN3E2b2sM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Manoj Kumar <Manoj.Kumar3@arm.com>,
+        Robin Murphy <Robin.Murphy@arm.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Will Deacon <will@kernel.org>, Joerg Roedel <jroedel@suse.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 222/413] gpiolib: Fix references to gpiod_[gs]et_*value_cansleep() variants
-Date:   Wed, 24 Jul 2019 21:18:33 +0200
-Message-Id: <20190724191750.708775987@linuxfoundation.org>
+Subject: [PATCH 5.2 223/413] iommu/arm-smmu-v3: Invalidate ATC when detaching a device
+Date:   Wed, 24 Jul 2019 21:18:34 +0200
+Message-Id: <20190724191750.813644164@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
 References: <20190724191735.096702571@linuxfoundation.org>
@@ -45,64 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3285170f28a850638794cdfe712eb6d93e51e706 ]
+[ Upstream commit 8dd8f005bdd45823fc153ef490239558caf6ff20 ]
 
-Commit 372e722ea4dd4ca1 ("gpiolib: use descriptors internally") renamed
-the functions to use a "gpiod" prefix, and commit 79a9becda8940deb
-("gpiolib: export descriptor-based GPIO interface") introduced the "raw"
-variants, but both changes forgot to update the comments.
+We make the invalid assumption in arm_smmu_detach_dev() that the ATC is
+clear after calling pci_disable_ats(). For one thing, only enabling the
+PCIe ATS capability constitutes an implicit invalidation event, so the
+comment was wrong. More importantly, the ATS capability isn't necessarily
+disabled by pci_disable_ats() in a PF, if the associated VFs have ATS
+enabled. Explicitly invalidate all ATC entries in arm_smmu_detach_dev().
+The endpoint cannot form new ATC entries because STE.EATS is clear.
 
-Readd a similar reference to gpiod_set_value(), which was accidentally
-removed by commit 1e77fc82110ac36f ("gpio: Add missing open drain/source
-handling to gpiod_set_value_cansleep()").
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20190701142738.25219-1-geert+renesas@glider.be
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 9ce27afc0830 ("iommu/arm-smmu-v3: Add support for PCI ATS")
+Reported-by: Manoj Kumar <Manoj.Kumar3@arm.com>
+Reported-by: Robin Murphy <Robin.Murphy@arm.com>
+Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Acked-by: Will Deacon <will@kernel.org>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpiolib.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/iommu/arm-smmu-v3.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index be1d1d2f8aaa..bb3104d2eb0c 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3025,7 +3025,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- int gpiod_get_raw_value(const struct gpio_desc *desc)
- {
- 	VALIDATE_DESC(desc);
--	/* Should be using gpio_get_value_cansleep() */
-+	/* Should be using gpiod_get_raw_value_cansleep() */
- 	WARN_ON(desc->gdev->chip->can_sleep);
- 	return gpiod_get_raw_value_commit(desc);
- }
-@@ -3046,7 +3046,7 @@ int gpiod_get_value(const struct gpio_desc *desc)
- 	int value;
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index 4d5a694f02c2..0fee8f7957ec 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -1884,9 +1884,13 @@ static int arm_smmu_enable_ats(struct arm_smmu_master *master)
  
- 	VALIDATE_DESC(desc);
--	/* Should be using gpio_get_value_cansleep() */
-+	/* Should be using gpiod_get_value_cansleep() */
- 	WARN_ON(desc->gdev->chip->can_sleep);
+ static void arm_smmu_disable_ats(struct arm_smmu_master *master)
+ {
++	struct arm_smmu_cmdq_ent cmd;
++
+ 	if (!master->ats_enabled || !dev_is_pci(master->dev))
+ 		return;
  
- 	value = gpiod_get_raw_value_commit(desc);
-@@ -3317,7 +3317,7 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- void gpiod_set_raw_value(struct gpio_desc *desc, int value)
- {
- 	VALIDATE_DESC_VOID(desc);
--	/* Should be using gpiod_set_value_cansleep() */
-+	/* Should be using gpiod_set_raw_value_cansleep() */
- 	WARN_ON(desc->gdev->chip->can_sleep);
- 	gpiod_set_raw_value_commit(desc, value);
++	arm_smmu_atc_inv_to_cmd(0, 0, 0, &cmd);
++	arm_smmu_atc_inv_master(master, &cmd);
+ 	pci_disable_ats(to_pci_dev(master->dev));
+ 	master->ats_enabled = false;
  }
-@@ -3358,6 +3358,7 @@ static void gpiod_set_value_nocheck(struct gpio_desc *desc, int value)
- void gpiod_set_value(struct gpio_desc *desc, int value)
- {
- 	VALIDATE_DESC_VOID(desc);
-+	/* Should be using gpiod_set_value_cansleep() */
- 	WARN_ON(desc->gdev->chip->can_sleep);
- 	gpiod_set_value_nocheck(desc, value);
+@@ -1906,7 +1910,6 @@ static void arm_smmu_detach_dev(struct arm_smmu_master *master)
+ 	master->domain = NULL;
+ 	arm_smmu_install_ste_for_dev(master);
+ 
+-	/* Disabling ATS invalidates all ATC entries */
+ 	arm_smmu_disable_ats(master);
  }
+ 
 -- 
 2.20.1
 
