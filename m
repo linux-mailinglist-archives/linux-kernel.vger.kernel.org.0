@@ -2,74 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAB1373DE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:21:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF16973E06
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:22:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403963AbfGXUUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:20:44 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:44820 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390805AbfGXUUm (ORCPT
+        id S1728946AbfGXUVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:21:24 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:32900 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfGXUVV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 16:20:42 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hqNkZ-00060B-OU; Wed, 24 Jul 2019 22:20:35 +0200
-Date:   Wed, 24 Jul 2019 22:20:34 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Greg KH <gregkh@linuxfoundation.org>
-cc:     "H.J. Lu" <hjl.tools@gmail.com>,
-        Mike Lothian <mike@fireburn.co.uk>,
-        Tom Lendacky <thomas.lendacky@amd.com>, bhe@redhat.com,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, lijiang@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: [PATCH v3 1/2] x86/mm: Identify the end of the kernel area to
- be reserved
-In-Reply-To: <alpine.DEB.2.21.1907242153320.1791@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1907242208590.1791@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1907151118570.1669@nanos.tec.linutronix.de> <alpine.DEB.2.21.1907151140080.1669@nanos.tec.linutronix.de> <CAMe9rOqMqkQ0LNpm25yE_Yt0FKp05WmHOrwc0aRDb53miFKM+w@mail.gmail.com> <20190723130513.GA25290@kroah.com>
- <alpine.DEB.2.21.1907231519430.1659@nanos.tec.linutronix.de> <20190723134454.GA7260@kroah.com> <20190724153416.GA27117@kroah.com> <alpine.DEB.2.21.1907241746010.1791@nanos.tec.linutronix.de> <20190724155735.GC5571@kroah.com> <alpine.DEB.2.21.1907241801320.1791@nanos.tec.linutronix.de>
- <20190724161634.GB10454@kroah.com> <alpine.DEB.2.21.1907242153320.1791@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 24 Jul 2019 16:21:21 -0400
+Received: by mail-io1-f65.google.com with SMTP id z3so92420608iog.0;
+        Wed, 24 Jul 2019 13:21:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RJ9nHyNd7LCl6+mSB0G4S2X04kojrU0TsARgzmq3agw=;
+        b=BNIkH6qp4rBtneav00A8EL89rmsoggKpUyuYQ0vsM5uYaURpwi8w4DypecMZfuCTJw
+         cXQgDBPZWPbtZ+2z2UppAf4Tan/7ZbY3AKCYTt6vgjkLTK9MXLV9YRlY609xqmeMawcs
+         7MPKQiDaOnvOWAsVvWLLKHQYkvwOVByAg1pNOeO7PFad90/wAZY9ZmEQP3KhEXUc1OUP
+         Ktj+p7FRQe+MnTro59nU1W0RSj4CIDgldRCHSqM7HbEcUmd/FghCLZjtfTwZJBUsdbbj
+         SDsLcFBOcnatkOE6ZTa3tWbiz91Zf5Zlp3g1rZZ1KtlWuKaSnaIEs6JqX8XSLqLH3qDi
+         EI4g==
+X-Gm-Message-State: APjAAAUdoMwK8Ci6fUS6OX3VlWhUNSNr+5MUpK+tzqOHugmCpR60k6Lg
+        IDxn/BXDrlXa+VMF6D1t8w==
+X-Google-Smtp-Source: APXvYqwprV5ylAQXl6gUtT7NZHmcnqBWl3IgOcCq5QcBmtI4uojyhvDVa9K+DeOobOHPeGdMYTW9+Q==
+X-Received: by 2002:a5e:8a46:: with SMTP id o6mr45348991iom.36.1563999680305;
+        Wed, 24 Jul 2019 13:21:20 -0700 (PDT)
+Received: from localhost ([64.188.179.254])
+        by smtp.gmail.com with ESMTPSA id r24sm34281026ioc.76.2019.07.24.13.21.19
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 24 Jul 2019 13:21:19 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 14:21:19 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Qii Wang <qii.wang@mediatek.com>
+Cc:     bbrezillon@kernel.org, matthias.bgg@gmail.com,
+        mark.rutland@arm.com, linux-i3c@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        srv_heupstream@mediatek.com, leilk.liu@mediatek.com,
+        liguo.zhang@mediatek.com, xinping.qian@mediatek.com
+Subject: Re: [PATCH v3 1/2] dt-bindings: i3c: Document MediaTek I3C master
+ bindings
+Message-ID: <20190724202119.GA26566@bogus>
+References: <1562677762-24067-1-git-send-email-qii.wang@mediatek.com>
+ <1562677762-24067-2-git-send-email-qii.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562677762-24067-2-git-send-email-qii.wang@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 24 Jul 2019, Thomas Gleixner wrote:
-
-> On Wed, 24 Jul 2019, Greg KH wrote:
-> > On Wed, Jul 24, 2019 at 06:03:41PM +0200, Thomas Gleixner wrote:
-> > > > Gotta love old tool-chains :(
-> > > 
-> > > Oh yes. /me does archaeology to find a VM with old stuff
-> > 
-> > I can provide a binary if you can't find anything.
+On Tue, Jul 09, 2019 at 09:09:21PM +0800, Qii Wang wrote:
+> Document MediaTek I3C master DT bindings.
 > 
-> Found GNU ld (GNU Binutils for Debian) 2.25 and after fiddling with
-> LD_PRELOAD it builds without failure.
+> Signed-off-by: Qii Wang <qii.wang@mediatek.com>
+> ---
+>  .../devicetree/bindings/i3c/mtk,i3c-master.txt     |   48 ++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i3c/mtk,i3c-master.txt
 > 
-> ld.gold from that binutils version dies with a segfault on various files ...
+> diff --git a/Documentation/devicetree/bindings/i3c/mtk,i3c-master.txt b/Documentation/devicetree/bindings/i3c/mtk,i3c-master.txt
+> new file mode 100644
+> index 0000000..d32eda6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/i3c/mtk,i3c-master.txt
+> @@ -0,0 +1,48 @@
+> +Bindings for MediaTek I3C master block
+> +=====================================
+> +
+> +Required properties:
+> +--------------------
+> +- compatible: shall be "mediatek,i3c-master"
 
-Then tried that old ld.bfd with GCC8 and that causes ld.bfd to segfault on
-every other file.
+Needs to be SoC specific.
 
-Copied that config to the clang build directory and it causes the same
-explosions with ld.bfd.
-
-What a time waste...
-
-
-
+> +- reg: physical base address of the controller and apdma base, length of
+> +  memory mapped region.
+> +- reg-names: shall be "main" for master controller and "dma" for apdma.
+> +- interrupts: the interrupt line connected to this I3C master.
+> +- clocks: shall reference the i3c and apdma clocks.
+> +- clock-names: shall include "main" and "dma".
+> +
+> +Mandatory properties defined by the generic binding (see
+> +Documentation/devicetree/bindings/i3c/i3c.txt for more details):
+> +
+> +- #address-cells: shall be set to 3
+> +- #size-cells: shall be set to 0
+> +
+> +Optional properties defined by the generic binding (see
+> +Documentation/devicetree/bindings/i3c/i3c.txt for more details):
+> +
+> +- i2c-scl-hz
+> +- i3c-scl-hz
+> +
+> +I3C device connected on the bus follow the generic description (see
+> +Documentation/devicetree/bindings/i3c/i3c.txt for more details).
+> +
+> +Example:
+> +
+> +	i3c0: i3c@1100d000 {
+> +		compatible = "mediatek,i3c-master";
+> +		reg = <0x1100d000 0x1000>,
+> +		      <0x11000300 0x80>;
+> +		reg-names = "main", "dma";
+> +		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&infracfg CLK_INFRA_I3C0>,
+> +			 <&infracfg CLK_INFRA_AP_DMA>;
+> +		clock-names = "main", "dma";
+> +		#address-cells = <3>;
+> +		#size-cells = <0>;
+> +		i2c-scl-hz = <100000>;
+> +
+> +		nunchuk: nunchuk@52 {
+> +			compatible = "nintendo,nunchuk";
+> +			reg = <0x52 0x0 0x10>;
+> +		};
+> +	};
+> -- 
+> 1.7.9.5
+> 
