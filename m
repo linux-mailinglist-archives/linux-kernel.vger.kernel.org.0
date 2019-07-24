@@ -2,78 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 534E87280D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:12:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 826C372815
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 08:13:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726308AbfGXGMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 02:12:40 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2711 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725945AbfGXGMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 02:12:39 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id DB0DDD7CEC6E4F93575F;
-        Wed, 24 Jul 2019 14:12:36 +0800 (CST)
-Received: from [127.0.0.1] (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 24 Jul 2019
- 14:12:26 +0800
-Subject: Re: [PATCH v2] RDMA/hns: Fix build error for hip08
-To:     <oulijun@huawei.com>, <xavier.huwei@huawei.com>,
-        <dledford@redhat.com>, <jgg@ziepe.ca>, <leon@kernel.org>
-References: <20190723024908.11876-1-yuehaibing@huawei.com>
- <20190724034016.15048-1-yuehaibing@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-rdma@vger.kernel.org>
-From:   Yuehaibing <yuehaibing@huawei.com>
-Message-ID: <a022a386-85cc-aa92-2f50-1b61070d4d2e@huawei.com>
-Date:   Wed, 24 Jul 2019 14:12:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1726386AbfGXGNp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 02:13:45 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:35852 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbfGXGNp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 02:13:45 -0400
+Received: by mail-vs1-f65.google.com with SMTP id y16so30582903vsc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2019 23:13:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=tpQ7KjGA9rveTFum7LugjFyj9R3ZDuR92fvMjPflPJo=;
+        b=WLIcZPB0RGHF3y22J9RiUYiYwmhaqQoxsIaLYlvO91IA7hBpXI5LSnqRKeYQIwWtgj
+         9oPXzNVcgMAt5pt6o7kf4mMEsQhYDl7VhrKavAzTm8ndZ+2LAqhnpLc5InNjptsQ9HvV
+         +Yh7Cz0lliq+zSDEVk/UxdO1rO/NkW5Uc1NDEZ58IsgSDmy0NhC2nThnW4a8+KEX7qh5
+         5Rw6H3+OwBr8HrSGJvm5GvFeebSZ/+L1ELYCRED7FnQOM8QDQeVjCZAMio9kyzgghIJI
+         XfI3CNpgl5GxT0khY4jQQOVoIzma4hHiMsYz/27wS0nKtQqjY/mh0g7H+5tYbxq7eWBK
+         LOmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=tpQ7KjGA9rveTFum7LugjFyj9R3ZDuR92fvMjPflPJo=;
+        b=LxgV7CzteH7bHoMKRAqG/+1EoNg7wadF/82+LyfCnRoqEvNAYQZehfmsN5PcgJDAaX
+         m+s6ZeMpi2DS2y6HOcroUZrBQX4SyeE5Og5hq9qsuxkAUeGqeexS/eu2hMbHuzlZca8y
+         bxh0/tHkMY4fEex51zhhLziB2wVSAoK/qrhQl8k1vvhxoW5v/BMklq4xTRyUB/BV2D0k
+         GzIHtGT727FQ4I672T52hVlYIKq8/Tb+DNtl96LmX7IOJLfwXFNmIOT3uk/RTCpXLMAC
+         iZSPls8jwA9LPhYR4KfKbccvBpEfsfdG29ZknM5YNzeoGF45TJKXZQxR+eP+g1HD5F/f
+         UdjA==
+X-Gm-Message-State: APjAAAWhJRfZQcWlgbGl3FCvV2XpbZuzGVjTf9f2n3Uojm0fGcaVvQYk
+        7G4PM5W2lLjTwIe3ioQEG3Eb6l1nteoGP8I/4xTdVg==
+X-Google-Smtp-Source: APXvYqzdt5e7MQUrV3m0zT2VF6TxbA+RfwZiiMGBr+kbwUgoC0bLitbTQYwZ19uZZ92CFZuSd02w4DN7V8nzv1tws9U=
+X-Received: by 2002:a67:d990:: with SMTP id u16mr51326288vsj.95.1563948823620;
+ Tue, 23 Jul 2019 23:13:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190724034016.15048-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+References: <CAPpJ_edDcaBq+0DocPmS-yYM10B4MkWvBn=f6wwbYdqzSGmp_g@mail.gmail.com>
+ <20190711052427.5582-1-jian-hong@endlessm.com> <CAPpJ_edQRMiBcdB-dTxhti8nK0eX4GPRUOgimzWW1JC3ZZjRHw@mail.gmail.com>
+In-Reply-To: <CAPpJ_edQRMiBcdB-dTxhti8nK0eX4GPRUOgimzWW1JC3ZZjRHw@mail.gmail.com>
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+Date:   Wed, 24 Jul 2019 14:13:06 +0800
+Message-ID: <CAPpJ_efEZxBSwzKvYvhTYT5EUn9hxuGabdG8wkahF8Uex+P9Zw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] rtw88: pci: Rearrange the memory usage for skb in
+ RX ISR
+To:     Yan-Hsuan Chuang <yhchuang@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        David Laight <David.Laight@aculab.com>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     linux-wireless@vger.kernel.org,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Daniel Drake <drake@endlessm.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Jian-Hong Pan <jian-hong@endlessm.com> =E6=96=BC 2019=E5=B9=B47=E6=9C=8811=
+=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=881:28=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> Jian-Hong Pan <jian-hong@endlessm.com> =E6=96=BC 2019=E5=B9=B47=E6=9C=881=
+1=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=881:25=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+> >
+> > Testing with RTL8822BE hardware, when available memory is low, we
+> > frequently see a kernel panic and system freeze.
+> >
+> > First, rtw_pci_rx_isr encounters a memory allocation failure (trimmed):
+> >
+> > rx routine starvation
+> > WARNING: CPU: 7 PID: 9871 at drivers/net/wireless/realtek/rtw88/pci.c:8=
+22 rtw_pci_rx_isr.constprop.25+0x35a/0x370 [rtwpci]
+> > [ 2356.580313] RIP: 0010:rtw_pci_rx_isr.constprop.25+0x35a/0x370 [rtwpc=
+i]
+> >
+> > Then we see a variety of different error conditions and kernel panics,
+> > such as this one (trimmed):
+> >
+> > rtw_pci 0000:02:00.0: pci bus timeout, check dma status
+> > skbuff: skb_over_panic: text:00000000091b6e66 len:415 put:415 head:0000=
+0000d2880c6f data:000000007a02b1ea tail:0x1df end:0xc0 dev:<NULL>
+> > ------------[ cut here ]------------
+> > kernel BUG at net/core/skbuff.c:105!
+> > invalid opcode: 0000 [#1] SMP NOPTI
+> > RIP: 0010:skb_panic+0x43/0x45
+> >
+> > When skb allocation fails and the "rx routine starvation" is hit, the
+> > function returns immediately without updating the RX ring. At this
+> > point, the RX ring may continue referencing an old skb which was alread=
+y
+> > handed off to ieee80211_rx_irqsafe(). When it comes to be used again,
+> > bad things happen.
+> >
+> > This patch allocates a new, data-sized skb first in RX ISR. After
+> > copying the data in, we pass it to the upper layers. However, if skb
+> > allocation fails, we effectively drop the frame. In both cases, the
+> > original, full size ring skb is reused.
+> >
+> > In addition, to fixing the kernel crash, the RX routine should now
+> > generally behave better under low memory conditions.
+> >
+> > Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=3D204053
+> > Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+> > Cc: <stable@vger.kernel.org>
+> > ---
+>
+> Sorry, I forget to place the version difference here.
+>
+> v2:
+>  - Allocate new data-sized skb and put data into it, then pass it to
+>    mac80211. Reuse the original skb in RX ring by DMA sync.
+>  - Modify the commit message.
+>  - Introduce following [PATCH v3 2/2] rtw88: pci: Use DMA sync instead
+>    of remapping in RX ISR.
+>
+> v3:
+>  - Same as v2.
+>
+> v4:
+>  - Fix comment: allocate a new skb for this frame, discard the frame
+> if none available
+>
+> >  drivers/net/wireless/realtek/rtw88/pci.c | 49 +++++++++++-------------
+> >  1 file changed, 22 insertions(+), 27 deletions(-)
+> >
+> > diff --git a/drivers/net/wireless/realtek/rtw88/pci.c b/drivers/net/wir=
+eless/realtek/rtw88/pci.c
+> > index cfe05ba7280d..c415f5e94fed 100644
+> > --- a/drivers/net/wireless/realtek/rtw88/pci.c
+> > +++ b/drivers/net/wireless/realtek/rtw88/pci.c
+> > @@ -763,6 +763,7 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev, =
+struct rtw_pci *rtwpci,
+> >         u32 pkt_offset;
+> >         u32 pkt_desc_sz =3D chip->rx_pkt_desc_sz;
+> >         u32 buf_desc_sz =3D chip->rx_buf_desc_sz;
+> > +       u32 new_len;
+> >         u8 *rx_desc;
+> >         dma_addr_t dma;
+> >
+> > @@ -790,40 +791,34 @@ static void rtw_pci_rx_isr(struct rtw_dev *rtwdev=
+, struct rtw_pci *rtwpci,
+> >                 pkt_offset =3D pkt_desc_sz + pkt_stat.drv_info_sz +
+> >                              pkt_stat.shift;
+> >
+> > -               if (pkt_stat.is_c2h) {
+> > -                       /* keep rx_desc, halmac needs it */
+> > -                       skb_put(skb, pkt_stat.pkt_len + pkt_offset);
+> > +               /* allocate a new skb for this frame,
+> > +                * discard the frame if none available
+> > +                */
+> > +               new_len =3D pkt_stat.pkt_len + pkt_offset;
+> > +               new =3D dev_alloc_skb(new_len);
+> > +               if (WARN_ONCE(!new, "rx routine starvation\n"))
+> > +                       goto next_rp;
+> > +
+> > +               /* put the DMA data including rx_desc from phy to new s=
+kb */
+> > +               skb_put_data(new, skb->data, new_len);
+> >
+> > -                       /* pass offset for further operation */
+> > -                       *((u32 *)skb->cb) =3D pkt_offset;
+> > -                       skb_queue_tail(&rtwdev->c2h_queue, skb);
+> > +               if (pkt_stat.is_c2h) {
+> > +                        /* pass rx_desc & offset for further operation=
+ */
+> > +                       *((u32 *)new->cb) =3D pkt_offset;
+> > +                       skb_queue_tail(&rtwdev->c2h_queue, new);
+> >                         ieee80211_queue_work(rtwdev->hw, &rtwdev->c2h_w=
+ork);
+> >                 } else {
+> > -                       /* remove rx_desc, maybe use skb_pull? */
+> > -                       skb_put(skb, pkt_stat.pkt_len);
+> > -                       skb_reserve(skb, pkt_offset);
+> > -
+> > -                       /* alloc a smaller skb to mac80211 */
+> > -                       new =3D dev_alloc_skb(pkt_stat.pkt_len);
+> > -                       if (!new) {
+> > -                               new =3D skb;
+> > -                       } else {
+> > -                               skb_put_data(new, skb->data, skb->len);
+> > -                               dev_kfree_skb_any(skb);
+> > -                       }
+> > -                       /* TODO: merge into rx.c */
+> > -                       rtw_rx_stats(rtwdev, pkt_stat.vif, skb);
+> > +                       /* remove rx_desc */
+> > +                       skb_pull(new, pkt_offset);
+> > +
+> > +                       rtw_rx_stats(rtwdev, pkt_stat.vif, new);
+> >                         memcpy(new->cb, &rx_status, sizeof(rx_status));
+> >                         ieee80211_rx_irqsafe(rtwdev->hw, new);
+> >                 }
+> >
+> > -               /* skb delivered to mac80211, alloc a new one in rx rin=
+g */
+> > -               new =3D dev_alloc_skb(RTK_PCI_RX_BUF_SIZE);
+> > -               if (WARN(!new, "rx routine starvation\n"))
+> > -                       return;
+> > -
+> > -               ring->buf[cur_rp] =3D new;
+> > -               rtw_pci_reset_rx_desc(rtwdev, new, ring, cur_rp, buf_de=
+sc_sz);
+> > +next_rp:
+> > +               /* new skb delivered to mac80211, re-enable original sk=
+b DMA */
+> > +               rtw_pci_reset_rx_desc(rtwdev, skb, ring, cur_rp, buf_de=
+sc_sz);
+> >
+> >                 /* host read next element in ring */
+> >                 if (++cur_rp >=3D ring->r.len)
+> > --
+> > 2.22.0
+> >
 
-Pls drop this, this cannot fix the issue.
+Gentle ping!  Any comment for this patch set (v4) will be appreciated.
 
-On 2019/7/24 11:40, YueHaibing wrote:
-> If INFINIBAND_HNS_HIP08 is selected and HNS3 is m,
-> but INFINIBAND_HNS is y, building fails:
-> 
-> drivers/infiniband/hw/hns/hns_roce_hw_v2.o: In function `hns_roce_hw_v2_exit':
-> hns_roce_hw_v2.c:(.exit.text+0xd): undefined reference to `hnae3_unregister_client'
-> drivers/infiniband/hw/hns/hns_roce_hw_v2.o: In function `hns_roce_hw_v2_init':
-> hns_roce_hw_v2.c:(.init.text+0xd): undefined reference to `hnae3_register_client'
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Suggested-by: Leon Romanovsky <leon@kernel.org>
-> Fixes: dd74282df573 ("RDMA/hns: Initialize the PCI device for hip08 RoCE")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
-> v2: select HNS3 to fix this
-> ---
->  drivers/infiniband/hw/hns/Kconfig | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/infiniband/hw/hns/Kconfig b/drivers/infiniband/hw/hns/Kconfig
-> index 8bf847b..b9dfac0 100644
-> --- a/drivers/infiniband/hw/hns/Kconfig
-> +++ b/drivers/infiniband/hw/hns/Kconfig
-> @@ -22,7 +22,8 @@ config INFINIBAND_HNS_HIP06
->  
->  config INFINIBAND_HNS_HIP08
->  	bool "Hisilicon Hip08 Family RoCE support"
-> -	depends on INFINIBAND_HNS && PCI && HNS3
-> +	depends on INFINIBAND_HNS && PCI
-> +	select HNS3
->  	---help---
->  	  RoCE driver support for Hisilicon RoCE engine in Hisilicon Hip08 SoC.
->  	  The RoCE engine is a PCI device.
-> 
-
+Jian-Hong Pan
