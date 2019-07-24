@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8C9B73A57
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D70F973A59
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:49:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391466AbfGXTs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:48:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56676 "EHLO mail.kernel.org"
+        id S2391122AbfGXTtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:49:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391449AbfGXTs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:48:57 -0400
+        id S2391477AbfGXTtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:49:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5463021873;
-        Wed, 24 Jul 2019 19:48:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D830205C9;
+        Wed, 24 Jul 2019 19:49:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563997736;
-        bh=S2yVBSm7lPNPpaNzZD2l8y2LHg6bt6MXEaEhLxtaK6o=;
+        s=default; t=1563997742;
+        bh=S4svMKdHuAGeN67O6kmLtk+ZNOQ7EGTIYKVayCpUo8g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o1MIu9+zyB0MVTaunhXEAZklsuyNFwHuNjmYAVjgMTm7f8REfkhIBHMgvupddmqSz
-         9B3bDuxS0Gra3UiI8eqrtSVfRsNKW96VST6Ou5CkAcVLHSP9BWQEqnKMXG06LTwWb8
-         khbOaNKOvfsYQNDaOr7DVjcT3oSUlm+W5oOAKRUM=
+        b=iKAB2kFD4xZOZrKdM8Y9UXA2LGavLlE0p6Bof0rCMpXbl8ivHqc3ldT6sBZCYbbW4
+         R25RTnMnnyK1G6trQVDelcemKet0Xgh34xqsIbXjdNYFrHuSjtIUdS+qloYRYjUeql
+         7p8e5H3q6cmmlw4+7dvkXYdYuyU86LbRF9ur6E8M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 118/371] EDAC/sysfs: Drop device references properly
-Date:   Wed, 24 Jul 2019 21:17:50 +0200
-Message-Id: <20190724191733.704401710@linuxfoundation.org>
+Subject: [PATCH 5.1 128/371] media: s5p-mfc: Make additional clocks optional
+Date:   Wed, 24 Jul 2019 21:18:00 +0200
+Message-Id: <20190724191734.514026555@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
 References: <20190724191724.382593077@linuxfoundation.org>
@@ -43,57 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7adc05d2dc3af95e4e1534841d58f736262142cd ]
+[ Upstream commit e08efef8fe7db87206314c19b341612c719f891a ]
 
-Do put_device() if device_add() fails.
+Since the beginning the second clock ('special', 'sclk') was optional and
+it is not available on some variants of Exynos SoCs (i.e. Exynos5420 with
+v7 of MFC hardware).
 
- [ bp: do device_del() for the successfully created devices in
-   edac_create_csrow_objects(), on the unwind path. ]
+However commit 1bce6fb3edf1 ("[media] s5p-mfc: Rework clock handling")
+made handling of all specified clocks mandatory. This patch restores
+original behavior of the driver and fixes its operation on
+Exynos5420 SoCs.
 
-Signed-off-by: Greg KH <gregkh@linuxfoundation.org>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20190427214925.GE16338@kroah.com
+Fixes: 1bce6fb3edf1 ("[media] s5p-mfc: Rework clock handling")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/edac/edac_mc_sysfs.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/media/platform/s5p-mfc/s5p_mfc_pm.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
-index 464174685589..bf9273437e3f 100644
---- a/drivers/edac/edac_mc_sysfs.c
-+++ b/drivers/edac/edac_mc_sysfs.c
-@@ -443,7 +443,8 @@ static int edac_create_csrow_objects(struct mem_ctl_info *mci)
- 		csrow = mci->csrows[i];
- 		if (!nr_pages_per_csrow(csrow))
- 			continue;
--		put_device(&mci->csrows[i]->dev);
-+
-+		device_del(&mci->csrows[i]->dev);
- 	}
- 
- 	return err;
-@@ -645,9 +646,11 @@ static int edac_create_dimm_object(struct mem_ctl_info *mci,
- 	dev_set_drvdata(&dimm->dev, dimm);
- 	pm_runtime_forbid(&mci->dev);
- 
--	err =  device_add(&dimm->dev);
-+	err = device_add(&dimm->dev);
-+	if (err)
-+		put_device(&dimm->dev);
- 
--	edac_dbg(0, "creating rank/dimm device %s\n", dev_name(&dimm->dev));
-+	edac_dbg(0, "created rank/dimm device %s\n", dev_name(&dimm->dev));
- 
- 	return err;
- }
-@@ -928,6 +931,7 @@ int edac_create_sysfs_mci_device(struct mem_ctl_info *mci,
- 	err = device_add(&mci->dev);
- 	if (err < 0) {
- 		edac_dbg(1, "failure: create device %s\n", dev_name(&mci->dev));
-+		put_device(&mci->dev);
- 		goto out;
- 	}
- 
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
+index eb85cedc5ef3..5e080f32b0e8 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
+@@ -38,6 +38,11 @@ int s5p_mfc_init_pm(struct s5p_mfc_dev *dev)
+ 	for (i = 0; i < pm->num_clocks; i++) {
+ 		pm->clocks[i] = devm_clk_get(pm->device, pm->clk_names[i]);
+ 		if (IS_ERR(pm->clocks[i])) {
++			/* additional clocks are optional */
++			if (i && PTR_ERR(pm->clocks[i]) == -ENOENT) {
++				pm->clocks[i] = NULL;
++				continue;
++			}
+ 			mfc_err("Failed to get clock: %s\n",
+ 				pm->clk_names[i]);
+ 			return PTR_ERR(pm->clocks[i]);
 -- 
 2.20.1
 
