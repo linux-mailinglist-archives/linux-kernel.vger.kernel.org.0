@@ -2,110 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B87E72627
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 06:25:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE78672692
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 06:28:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbfGXEZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 00:25:42 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44293 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbfGXEZj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 00:25:39 -0400
-Received: by mail-pg1-f193.google.com with SMTP id i18so20511859pgl.11;
-        Tue, 23 Jul 2019 21:25:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=I1wDMaqOj/gzGRufAfLYBvs0e80ibIJerHEY6qRx+9Q=;
-        b=AJiRp1Uswxxxj2fjLfbqacoLwH06WJ9mszsK/zlNhFuhNoSLtvKRmhFo9KLI7JLl8B
-         hxIxG1xThvmkqqGsj4H+PIkZgqzG39WvTfqHCYX31eWH9qZ8HHJptRyRkIYZTdhpSSJA
-         nZA7WnB2fukiDrq9dsIiMnZ4oXRSDbx8C0GrWwEoTfJ4nGsrUGvTe9DUv98TbDoHZftU
-         2sPJK+pDMsCNPpAzyI5pMUhaliFeOadZMdLhzw1frV4a114QmQGutmlMg9ocT4gPTziz
-         ZW1wdryUHfhxRuoKX5pPJ1KukLjcZAbAo24BFz30vzwXdEBQHRvTjXN7uylJkrR8anzL
-         2E2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=I1wDMaqOj/gzGRufAfLYBvs0e80ibIJerHEY6qRx+9Q=;
-        b=Nm9JBfyjZZRpKI39U9r5n8J23vF8EW0fqfdDCkmf9aBgUf4hmqu3GV1JHLRrvCjgav
-         7ajV9Wig5bhzAkmozNLVjrsXLNeK8cSpNsOJpvJzi/44SrZEihQxrUi2mrn3lQvXtPCf
-         VaEnVe5ByQDxiaRNmvbS550+6zgctRHVvxOaMsl6dxz8hdXh4b/EYxcU3YY3Ue83ZlMJ
-         XifOgyxu4jw+pMjT1QMjJHrcDvdzPYMDWqpJ5LfUF9NUM2DmpYx9C0aWg8bbgS5IO0eP
-         Zagn/++uqNhC+hRMg5wNk329CJhJ6RsO7IMsuO3mCl/YIE4Ch1W9QMMpuNii6HGlz9AQ
-         SBlQ==
-X-Gm-Message-State: APjAAAVfcaP/BgUygBi+bAdiEZv1tCKB/k4SLrePn+5mLz4Ph4VhxJL7
-        gt3jOXEyc4mAYsIb6M9ll+4=
-X-Google-Smtp-Source: APXvYqwVZxneCPfv2nDeo72FQ4K0Ri4nG9i/Jh52gTbxtuFDM1ER91LNrK6Q0r6xmbSBuioIPNnbSg==
-X-Received: by 2002:a62:38c6:: with SMTP id f189mr9250236pfa.157.1563942338440;
-        Tue, 23 Jul 2019 21:25:38 -0700 (PDT)
-Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id a15sm34153364pgw.3.2019.07.23.21.25.37
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 23 Jul 2019 21:25:38 -0700 (PDT)
-From:   john.hubbard@gmail.com
-X-Google-Original-From: jhubbard@nvidia.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
-        netdev@vger.kernel.org, samba-technical@lists.samba.org,
-        v9fs-developer@lists.sourceforge.net,
-        virtualization@lists.linux-foundation.org,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 12/12] fs/ceph: fix a build warning: returning a value from void function
-Date:   Tue, 23 Jul 2019 21:25:18 -0700
-Message-Id: <20190724042518.14363-13-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190724042518.14363-1-jhubbard@nvidia.com>
-References: <20190724042518.14363-1-jhubbard@nvidia.com>
+        id S1726531AbfGXE2A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 00:28:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53890 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725870AbfGXE17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 00:27:59 -0400
+Received: from localhost (unknown [171.76.105.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0F9220644;
+        Wed, 24 Jul 2019 04:27:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563942478;
+        bh=KcvumDtHGTAbiC6t0H1WAMDH8xJ/VH7jZAdfG7AAQBM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zoNNtjDUONcY4Sphlyp61Nj2+brqPte/LV2VGgFeHpA/TupP81vg3kPtI9IM+8gQi
+         8JH7vV1bs5JzIUrc5unHgNDU/HtA3Js6WtkJG5nKlZ8mKQdoziHeQ14p+o2fFpQ052
+         Kt3RBikdV57DUYj747KQ+ZOmqaNpEL4PE3wxBINU=
+Date:   Wed, 24 Jul 2019 09:56:46 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Vaishali Thakkar <vaishali.thakkar@linaro.org>
+Cc:     agross@kernel.org, david.brown@linaro.org,
+        gregkh@linuxfoundation.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rafael@kernel.org,
+        bjorn.andersson@linaro.org
+Subject: Re: [PATCH v6 1/5] base: soc: Add serial_number attribute to soc
+Message-ID: <20190724042646.GC12733@vkoul-mobl.Dlink>
+References: <20190723223515.27839-1-vaishali.thakkar@linaro.org>
+ <20190723223515.27839-2-vaishali.thakkar@linaro.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190723223515.27839-2-vaishali.thakkar@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Hubbard <jhubbard@nvidia.com>
+On 24-07-19, 04:05, Vaishali Thakkar wrote:
+> From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+> Add new attribute named "serial_number" as a standard interface for
+> user space to acquire the serial number of the device.
+> 
+> For ST-Ericsson SoCs this is exposed by the cryptically named "soc_id"
+> attribute, but this provides a human readable standardized name for this
+> property.
 
-Trivial build warning fix: don't return a value from a function
-whose type is "void".
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- fs/ceph/debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 2eb88ed22993..fa14c8e8761d 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -294,7 +294,7 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
- 
- void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
- {
--	return 0;
-+	return;
- }
- 
- void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
 -- 
-2.22.0
-
+~Vinod
