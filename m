@@ -2,104 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98AD5730CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:03:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 300CB73104
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 16:05:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbfGXODt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 10:03:49 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:50252 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726622AbfGXODs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 10:03:48 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 2CBBFA9AC7F18D8330B1;
-        Wed, 24 Jul 2019 22:03:32 +0800 (CST)
-Received: from [127.0.0.1] (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Wed, 24 Jul 2019
- 22:03:27 +0800
-Subject: Re: [PATCH] media: staging: ipu3: Enable IOVA API only when IOMMU
- support is enabled
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-References: <20190722134749.21580-1-yuehaibing@huawei.com>
- <20190724103027.GD21370@paasikivi.fi.intel.com>
- <e48fc180-06cc-eac7-d8ca-9be1699c8677@arm.com>
-CC:     <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <iommu@lists.linux-foundation.org>, <hverkuil-cisco@xs4all.nl>,
-        <digetx@gmail.com>, <mchehab@kernel.org>, <yong.zhi@intel.com>
-From:   Yuehaibing <yuehaibing@huawei.com>
-Message-ID: <0c08bdae-facc-0f28-0e58-17a65172587a@huawei.com>
-Date:   Wed, 24 Jul 2019 22:03:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1728180AbfGXOFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 10:05:42 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37983 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726276AbfGXOFm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 10:05:42 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9B1A0308FBA6;
+        Wed, 24 Jul 2019 14:05:41 +0000 (UTC)
+Received: from treble (ovpn-122-90.rdu2.redhat.com [10.10.122.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6FE6B600C4;
+        Wed, 24 Jul 2019 14:05:40 +0000 (UTC)
+Date:   Wed, 24 Jul 2019 09:05:33 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: x86 - clang / objtool status
+Message-ID: <20190724140533.yxwbq4mlqzrviaf5@treble>
+References: <alpine.DEB.2.21.1907182223560.1785@nanos.tec.linutronix.de>
+ <20190724023946.yxsz5im22fz4zxrn@treble>
+ <20190724074732.GJ3402@hirez.programming.kicks-ass.net>
+ <20190724125525.kgybu3nnpvwlcz2c@treble>
+ <20190724133516.GB31381@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <e48fc180-06cc-eac7-d8ca-9be1699c8677@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190724133516.GB31381@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 24 Jul 2019 14:05:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/7/24 21:49, Robin Murphy wrote:
-> On 24/07/2019 11:30, Sakari Ailus wrote:
->> Hi Yue,
->>
->> On Mon, Jul 22, 2019 at 09:47:49PM +0800, YueHaibing wrote:
->>> If IOMMU_SUPPORT is not set, ipu3 driver may select IOMMU_IOVA to m.
->>> But for many drivers, they use "select IOMMU_IOVA if IOMMU_SUPPORT"
->>> in the Kconfig, for example, CONFIG_TEGRA_VDE is set to y but IOMMU_IOVA
->>> is m, then the building fails like this:
->>>
->>> drivers/staging/media/tegra-vde/iommu.o: In function `tegra_vde_iommu_map':
->>> iommu.c:(.text+0x41): undefined reference to `alloc_iova'
->>> iommu.c:(.text+0x56): undefined reference to `__free_iova'
->>>
->>> Reported-by: Hulk Robot <hulkci@huawei.com>
->>> Fixes: 7fc7af649ca7 ("media: staging/intel-ipu3: Add imgu top level pci device driver")
->>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->>> ---
->>>   drivers/staging/media/ipu3/Kconfig | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/staging/media/ipu3/Kconfig b/drivers/staging/media/ipu3/Kconfig
->>> index 4b51c67..b7df18f 100644
->>> --- a/drivers/staging/media/ipu3/Kconfig
->>> +++ b/drivers/staging/media/ipu3/Kconfig
->>> @@ -4,7 +4,7 @@ config VIDEO_IPU3_IMGU
->>>       depends on PCI && VIDEO_V4L2
->>>       depends on MEDIA_CONTROLLER && VIDEO_V4L2_SUBDEV_API
->>>       depends on X86
->>> -    select IOMMU_IOVA
->>> +    select IOMMU_IOVA if IOMMU_SUPPORT
->>
->> This doesn't seem right: the ipu3-cio2 driver needs IOMMU_IOVA
->> independently of IOMMU_SUPPORT.
->>
->> Looking at tegra-vde, it seems to depend on IOMMU_SUPPORT but that's not
->> declared in its Kconfig entry. I wonder if adding that would be the right
->> way to fix this.
->>
->> Cc'ing the IOMMU list.
+On Wed, Jul 24, 2019 at 03:35:16PM +0200, Peter Zijlstra wrote:
+> On Wed, Jul 24, 2019 at 07:55:25AM -0500, Josh Poimboeuf wrote:
+> > On Wed, Jul 24, 2019 at 09:47:32AM +0200, Peter Zijlstra wrote:
+> > > On Tue, Jul 23, 2019 at 09:43:24PM -0500, Josh Poimboeuf wrote:
+> > > > On Thu, Jul 18, 2019 at 10:40:09PM +0200, Thomas Gleixner wrote:
+> > > > 
+> > > > >   drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: .altinstr_replacement+0x86: redundant UACCESS disable
+> > > > 
+> > > > Looking at this one, I think I agree with objtool.
+> > > > 
+> > > > PeterZ, Linus, I know y'all discussed this code a few months ago.
+> > > > 
+> > > > __copy_from_user() already does a CLAC in its error path.  So isn't the
+> > > > user_access_end() redundant for the __copy_from_user() error path?
+> > > 
+> > > Hmm, is this a result of your c705cecc8431 ("objtool: Track original function across branches") ?
+> > > 
+> > > I'm thinking it might've 'overlooked' the CLAC in the error path before
+> > > (because it didn't have a related function) and now it sees it and
+> > > worries about it.
+> > > 
+> > > Then again, I'm not seeing this warning on my GCC builds; so what's
+> > > happening?
+> > 
+> > According to the github issue[1] my patch doesn't fix the warning with
+> > Clang.  So questions remain:
 > 
-> Right, I also had the impression that we'd made the IOVA library completely standalone. And what does the IPU3 driver's Kconfig have to do with some *other* driver failing to link anyway?
+> I was thinking your patch resulted in the warning due to the exception
+> code gaining a ->func.
 
-Oh, I misunderstand that IOMMU_IOVA is depend on IOMMU_SUPPORT, thank you for clarification.
+I had the same thought.
 
-I will try to fix this in tegra-vde.
+> But then that doesn't make sense either, because all that lives in
+> copy_user_64.S which is a completely different translation unit.
 
-> 
-> Robin.
-> 
->>
->>>       select VIDEOBUF2_DMA_SG
->>>       help
->>>         This is the Video4Linux2 driver for Intel IPU3 image processing unit,
->>
-> 
-> .
-> 
+Hm?  __copy_from_user() uses raw_copy_from_user() to do the STAC/CLAC in
+a header file for the __builtin_constant_p() case.
 
+> > a) what is objtool actually warning about?
+> 
+> CLAC with AC already clear. Either we do double CLAC at the end, or we
+> do CLAC without having done STAC first.
+> 
+> The issue isn't BAD(tm), as AC clear is the safe state, but it typically
+> indicates confused code flow.
+
+But as I said my patch didn't fix the Clang warning.  Or is there
+another redundant UACCESS disable you know about?
+
+> > b) why doesn't objtool detect the case I found?
+> 
+> With GCC you mean? Yes, that is really really weird.
+
+With both compilers...
+
+> Let me go stare at objdump output for this file (which doesn't build
+> with:
+> 
+>    make O=defconfig-build/ drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o
+> )
+
+-- 
+Josh
