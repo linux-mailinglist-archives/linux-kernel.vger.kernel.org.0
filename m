@@ -2,236 +2,263 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ADEA74047
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1176C74054
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 22:45:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729058AbfGXUns (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 16:43:48 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42273 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728083AbfGXUns (ORCPT
+        id S2387681AbfGXUpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 16:45:21 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:40279 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbfGXUpU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 16:43:48 -0400
-Received: by mail-qt1-f195.google.com with SMTP id h18so46892269qtm.9
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 13:43:47 -0700 (PDT)
+        Wed, 24 Jul 2019 16:45:20 -0400
+Received: by mail-io1-f67.google.com with SMTP id h6so5939602iom.7;
+        Wed, 24 Jul 2019 13:45:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6mbl4cvFr3tkTjHYbLZEhboHXxucjTz00G95IPubTjg=;
-        b=ewNJvaKbAk2VV4o3ujSzmU6NmwqH0Wwugb0LMGsKYFm9zpw5o7Yz/6bHygRpg7VaBN
-         flLuZGy+z4/WlQFQD1XWRh7Pv8KnqUM/zf0aVJnS8ER0AjsWhsOrFwBLYqBPZJ/mWpQG
-         B707Kx2IvzrY1ZH/fZnV9eUbI6EewSQygp6tT9FW27pluM+nm84rGwazcXt0UnPqouIn
-         QkjVcgUO/e1XiqNdP5LQsZEj9FuWyTu07nsRWGOl3rzBoZ5jStNI5chs9xPX2RIdR0dL
-         4oPmQUMd0+VqzhP695ibA6YbuSp1QbxoAhxlxTD7gAwsSyB5XJvl9MVy6Z1lNOsQBWGU
-         qfYA==
-X-Gm-Message-State: APjAAAVO3+5imxjFZiD8XGOdrSIiD6Ux4kPjZu3ULqpOPdBgMNcp8D25
-        xDk1B8sEoBZLw6psjuzeNLSamQ==
-X-Google-Smtp-Source: APXvYqw/Agvw8u+t/A78ymyyv+/eCo+7Y7048LFfCzvyrKDR0GjDoyB+OnJ2DXh8w0hKvdfUxgL4oQ==
-X-Received: by 2002:ac8:6717:: with SMTP id e23mr56079941qtp.27.1564001027399;
-        Wed, 24 Jul 2019 13:43:47 -0700 (PDT)
-Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
-        by smtp.gmail.com with ESMTPSA id b23sm29124888qte.19.2019.07.24.13.43.42
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CCC83gvr3zUqrHBBE2tCcnx8FJnOWLoIpaVrcWkgVNI=;
+        b=U2ZNG6zK9f2rtTaQPLwGUWAUtP8h98dV4Ab9wiPUzwOajJmx6F3jb75OdUDS2xxF6r
+         fbm5FsgpZOXBHduISVm+dPtDetTVVFD5jyHej7seAkeTmYyhc4z3mmyK2CC0Lacz+aAt
+         6NC7BOkUGPYnCo177c6vyahKp2I6zJrc1iMQ9tPPoY3Hm/lxxAIbpcnJ/zwGLv8KNjQf
+         pE8rzyOxmJjC1B0+sf73MkfJ52Y7YIPHm88OKQZJuwhzqQB4ECbWmwt60de+oJweZ2Id
+         DlLUxY437WiGwMSrZrwIKTpXGs/US6MP6xMGbeJNHvOf7rDNYFnlYlbMM2JbdF7Kr4IQ
+         ROUw==
+X-Gm-Message-State: APjAAAUJcFUEDv83Wbef8OZu824RpGdYBB3qCorOCljbOZGy+G4HzdWq
+        x2Ou8+Y3oEAX95BdUcp/Ow==
+X-Google-Smtp-Source: APXvYqzZIXBI6PBNyEYZPD4Zfoy1oC3HcF0imTkHY6VNLfMnea8dJ9IXUk/wVjvDBjbfoxK8Wbqb/Q==
+X-Received: by 2002:a5d:9703:: with SMTP id h3mr11500009iol.152.1564001119366;
+        Wed, 24 Jul 2019 13:45:19 -0700 (PDT)
+Received: from localhost ([64.188.179.254])
+        by smtp.gmail.com with ESMTPSA id m20sm44917837ioh.4.2019.07.24.13.45.18
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 13:43:46 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 16:43:39 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     Alexander Duyck <alexander.duyck@gmail.com>, nitesh@redhat.com,
-        kvm@vger.kernel.org, david@redhat.com, dave.hansen@intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, yang.zhang.wz@gmail.com,
-        pagupta@redhat.com, riel@surriel.com, konrad.wilk@oracle.com,
-        lcapitulino@redhat.com, wei.w.wang@intel.com, aarcange@redhat.com,
-        pbonzini@redhat.com, dan.j.williams@intel.com
-Subject: Re: [PATCH v2 5/5] virtio-balloon: Add support for providing page
- hints to host
-Message-ID: <20190724164255-mutt-send-email-mst@kernel.org>
-References: <20190724165158.6685.87228.stgit@localhost.localdomain>
- <20190724170514.6685.17161.stgit@localhost.localdomain>
- <20190724143902-mutt-send-email-mst@kernel.org>
- <e11ba530cda97d3cc8efaeb105290cfe32db6cba.camel@linux.intel.com>
+        Wed, 24 Jul 2019 13:45:18 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 14:45:18 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Macpaul Lin <macpaul.lin@mediatek.com>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Owen Chen <owen.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        wsd_upstream@mediatek.com, CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 1/8] dt-bindings: clock: mediatek: document clk
+ bindings for Mediatek MT6765 SoC
+Message-ID: <20190724204518.GA6997@bogus>
+References: <1562924653-10056-1-git-send-email-macpaul.lin@mediatek.com>
+ <1562924653-10056-2-git-send-email-macpaul.lin@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e11ba530cda97d3cc8efaeb105290cfe32db6cba.camel@linux.intel.com>
+In-Reply-To: <1562924653-10056-2-git-send-email-macpaul.lin@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 01:37:47PM -0700, Alexander Duyck wrote:
-> On Wed, 2019-07-24 at 15:02 -0400, Michael S. Tsirkin wrote:
-> > On Wed, Jul 24, 2019 at 10:05:14AM -0700, Alexander Duyck wrote:
-> > > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > > 
-> > > Add support for the page hinting feature provided by virtio-balloon.
-> > > Hinting differs from the regular balloon functionality in that is is
-> > > much less durable than a standard memory balloon. Instead of creating a
-> > > list of pages that cannot be accessed the pages are only inaccessible
-> > > while they are being indicated to the virtio interface. Once the
-> > > interface has acknowledged them they are placed back into their respective
-> > > free lists and are once again accessible by the guest system.
-> > > 
-> > > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > 
-> > Looking at the design, it seems that hinted pages can immediately be
-> > reused. I wonder how we can efficiently support this
-> > with kvm when poisoning is in effect. Of course we can just
-> > ignore the poison. However it seems cleaner to
-> > 1. verify page is poisoned with the correct value
-> > 2. fill the page with the correct value on fault
-> > 
-> > Requirement 2 requires some kind of madvise that
-> > will save the poison e.g. in the VMA.
-> > 
-> > Not a blocker for sure ... 
+On Fri, Jul 12, 2019 at 05:43:37PM +0800, Macpaul Lin wrote:
+> From: Mars Cheng <mars.cheng@mediatek.com>
 > 
-> As per our discussion in the other patch I agree that we should either
-> ignore the hint/report if page poisoning is enabled, or page poisoning
-> should result in us poisoning the page when it is faulted back in. I had
-> assumed we were doing the latter, I didn't realize that is was just
-> disabling the free page hinting.
+> This patch adds the binding documentation for apmixedsys, audsys, camsys,
+> imgsys, infracfg, mipi0a, topckgen, vcodecsys
+> 
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> ---
+>  .../arm/mediatek/mediatek,apmixedsys.txt      |  1 +
+>  .../bindings/arm/mediatek/mediatek,audsys.txt |  1 +
+>  .../bindings/arm/mediatek/mediatek,camsys.txt |  1 +
+>  .../bindings/arm/mediatek/mediatek,imgsys.txt |  1 +
+>  .../arm/mediatek/mediatek,infracfg.txt        |  1 +
+>  .../bindings/arm/mediatek/mediatek,mipi0a.txt | 28 +++++++++++++++++++
+>  .../bindings/arm/mediatek/mediatek,mmsys.txt  |  1 +
+>  .../arm/mediatek/mediatek,pericfg.txt         |  1 +
+>  .../arm/mediatek/mediatek,topckgen.txt        |  1 +
+>  .../arm/mediatek/mediatek,vcodecsys.txt       | 27 ++++++++++++++++++
+>  10 files changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mipi0a.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,vcodecsys.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+> index 161e63a6c254..5f2757e0f844 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+> @@ -8,6 +8,7 @@ Required Properties:
+>  - compatible: Should be one of:
+>  	- "mediatek,mt2701-apmixedsys"
+>  	- "mediatek,mt2712-apmixedsys", "syscon"
+> +	- "mediatek,mt6765-apmixedsys", "syscon"
+>  	- "mediatek,mt6797-apmixedsys"
+>  	- "mediatek,mt7622-apmixedsys"
+>  	- "mediatek,mt7623-apmixedsys", "mediatek,mt2701-apmixedsys"
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> index f3cef1a6d95c..243db5275438 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> @@ -7,6 +7,7 @@ Required Properties:
+>  
+>  - compatible: Should be one of:
+>  	- "mediatek,mt2701-audsys", "syscon"
+> +	- "mediatek,mt6765-audsys", "syscon"
+>  	- "mediatek,mt7622-audsys", "syscon"
+>  	- "mediatek,mt7623-audsys", "mediatek,mt2701-audsys", "syscon"
+>  	- "mediatek,mt8183-audiosys", "syscon"
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+> index d8930f64aa98..17acc4c5402c 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+> @@ -6,6 +6,7 @@ The MediaTek camsys controller provides various clocks to the system.
+>  Required Properties:
+>  
+>  - compatible: Should be one of:
+> +	- "mediatek,mt6765-camsys", "syscon"
+>  	- "mediatek,mt8183-camsys", "syscon"
+>  - #clock-cells: Must be 1
+>  
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+> index e3bc4a1e7a6e..4e7b617acfb6 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+> @@ -8,6 +8,7 @@ Required Properties:
+>  - compatible: Should be one of:
+>  	- "mediatek,mt2701-imgsys", "syscon"
+>  	- "mediatek,mt2712-imgsys", "syscon"
+> +	- "mediatek,mt6765-imgsys", "syscon"
+>  	- "mediatek,mt6797-imgsys", "syscon"
+>  	- "mediatek,mt7623-imgsys", "mediatek,mt2701-imgsys", "syscon"
+>  	- "mediatek,mt8173-imgsys", "syscon"
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+> index a90913988d7e..6a6ffb61dd29 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+> @@ -9,6 +9,7 @@ Required Properties:
+>  - compatible: Should be one of:
+>  	- "mediatek,mt2701-infracfg", "syscon"
+>  	- "mediatek,mt2712-infracfg", "syscon"
+> +	- "mediatek,mt6765-infracfg", "syscon"
+>  	- "mediatek,mt6797-infracfg", "syscon"
+>  	- "mediatek,mt7622-infracfg", "syscon"
+>  	- "mediatek,mt7623-infracfg", "mediatek,mt2701-infracfg", "syscon"
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mipi0a.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mipi0a.txt
+> new file mode 100644
+> index 000000000000..49313055e574
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mipi0a.txt
+> @@ -0,0 +1,28 @@
+> +Mediatek mipi0a (mipi_rx_ana_csi0a) controller
+> +============================
+> +
+> +The Mediatek mipi0a controller provides various clocks
+> +to the system.
 
-In fact I see that the latest versions of qemu don't seem to do
-the later either. Need to fix that ASAP...
+Is that all it does?
 
+> +
+> +Required Properties:
+> +
+> +- compatible: Should be one of:
+> +	- "mediatek,mt6765-mipi0a", "syscon"
+> +- #clock-cells: Must be 1
+> +
+> +The mipi0a controller uses the common clk binding from
+> +Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+> +
+> +The mipi0a controller also uses the common power domain from
+> +Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+> +The available power doamins are defined in dt-bindings/power/mt*-power.h.
+> +
+> +Example:
+> +
+> +mipi0a: mipi0a@11c10000 {
 
-> > > ---
-> > >  drivers/virtio/Kconfig              |    1 +
-> > >  drivers/virtio/virtio_balloon.c     |   47 +++++++++++++++++++++++++++++++++++
-> > >  include/uapi/linux/virtio_balloon.h |    1 +
-> > >  3 files changed, 49 insertions(+)
-> > > 
-> > > diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
-> > > index 078615cf2afc..d45556ae1f81 100644
-> > > --- a/drivers/virtio/Kconfig
-> > > +++ b/drivers/virtio/Kconfig
-> > > @@ -58,6 +58,7 @@ config VIRTIO_BALLOON
-> > >  	tristate "Virtio balloon driver"
-> > >  	depends on VIRTIO
-> > >  	select MEMORY_BALLOON
-> > > +	select PAGE_HINTING
-> > >  	---help---
-> > >  	 This driver supports increasing and decreasing the amount
-> > >  	 of memory within a KVM guest.
-> > > diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-> > > index 226fbb995fb0..dee9f8f3ad09 100644
-> > > --- a/drivers/virtio/virtio_balloon.c
-> > > +++ b/drivers/virtio/virtio_balloon.c
-> > > @@ -19,6 +19,7 @@
-> > >  #include <linux/mount.h>
-> > >  #include <linux/magic.h>
-> > >  #include <linux/pseudo_fs.h>
-> > > +#include <linux/page_hinting.h>
-> > >  
-> > >  /*
-> > >   * Balloon device works in 4K page units.  So each page is pointed to by
-> > > @@ -27,6 +28,7 @@
-> > >   */
-> > >  #define VIRTIO_BALLOON_PAGES_PER_PAGE (unsigned)(PAGE_SIZE >> VIRTIO_BALLOON_PFN_SHIFT)
-> > >  #define VIRTIO_BALLOON_ARRAY_PFNS_MAX 256
-> > > +#define VIRTIO_BALLOON_ARRAY_HINTS_MAX	32
-> > >  #define VIRTBALLOON_OOM_NOTIFY_PRIORITY 80
-> > >  
-> > >  #define VIRTIO_BALLOON_FREE_PAGE_ALLOC_FLAG (__GFP_NORETRY | __GFP_NOWARN | \
-> > > @@ -46,6 +48,7 @@ enum virtio_balloon_vq {
-> > >  	VIRTIO_BALLOON_VQ_DEFLATE,
-> > >  	VIRTIO_BALLOON_VQ_STATS,
-> > >  	VIRTIO_BALLOON_VQ_FREE_PAGE,
-> > > +	VIRTIO_BALLOON_VQ_HINTING,
-> > >  	VIRTIO_BALLOON_VQ_MAX
-> > >  };
-> > >  
-> > > @@ -113,6 +116,10 @@ struct virtio_balloon {
-> > >  
-> > >  	/* To register a shrinker to shrink memory upon memory pressure */
-> > >  	struct shrinker shrinker;
-> > > +
-> > > +	/* Unused page hinting device */
-> > > +	struct virtqueue *hinting_vq;
-> > > +	struct page_hinting_dev_info ph_dev_info;
-> > >  };
-> > >  
-> > >  static struct virtio_device_id id_table[] = {
-> > > @@ -152,6 +159,22 @@ static void tell_host(struct virtio_balloon *vb, struct virtqueue *vq)
-> > >  
-> > >  }
-> > >  
-> > > +void virtballoon_page_hinting_react(struct page_hinting_dev_info *ph_dev_info,
-> > > +				    unsigned int num_hints)
-> > > +{
-> > > +	struct virtio_balloon *vb =
-> > > +		container_of(ph_dev_info, struct virtio_balloon, ph_dev_info);
-> > > +	struct virtqueue *vq = vb->hinting_vq;
-> > > +	unsigned int unused;
-> > > +
-> > > +	/* We should always be able to add these buffers to an empty queue. */
-> > 
-> > can be an out of memory condition, and then ...
-> > 
-> > > +	virtqueue_add_inbuf(vq, ph_dev_info->sg, num_hints, vb, GFP_KERNEL);
-> > > +	virtqueue_kick(vq);
-> > 
-> > ... this will block forever.
-> > 
-> > > +	/* When host has read buffer, this completes via balloon_ack */
-> > > +	wait_event(vb->acked, virtqueue_get_buf(vq, &unused));
-> > 
-> > However below I suggest limiting capacity which will solve
-> > this problem for you.
-> 
-> I wasn't aware that virtqueue_add_inbuf actually performed an allocation.
-> 
-> > > +}
-> > > +
-> > >  static void set_page_pfns(struct virtio_balloon *vb,
-> > >  			  __virtio32 pfns[], struct page *page)
-> > >  {
-> > > @@ -476,6 +499,7 @@ static int init_vqs(struct virtio_balloon *vb)
-> > >  	names[VIRTIO_BALLOON_VQ_DEFLATE] = "deflate";
-> > >  	names[VIRTIO_BALLOON_VQ_STATS] = NULL;
-> > >  	names[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
-> > > +	names[VIRTIO_BALLOON_VQ_HINTING] = NULL;
-> > >  
-> > >  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
-> > >  		names[VIRTIO_BALLOON_VQ_STATS] = "stats";
-> > > @@ -487,11 +511,19 @@ static int init_vqs(struct virtio_balloon *vb)
-> > >  		callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
-> > >  	}
-> > >  
-> > > +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING)) {
-> > > +		names[VIRTIO_BALLOON_VQ_HINTING] = "hinting_vq";
-> > > +		callbacks[VIRTIO_BALLOON_VQ_HINTING] = balloon_ack;
-> > > +	}
-> > > +
-> > >  	err = vb->vdev->config->find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX,
-> > >  					 vqs, callbacks, names, NULL, NULL);
-> > >  	if (err)
-> > >  		return err;
-> > >  
-> > > +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING))
-> > > +		vb->hinting_vq = vqs[VIRTIO_BALLOON_VQ_HINTING];
-> > > +
-> > >  	vb->inflate_vq = vqs[VIRTIO_BALLOON_VQ_INFLATE];
-> > >  	vb->deflate_vq = vqs[VIRTIO_BALLOON_VQ_DEFLATE];
-> > >  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
-> > > @@ -924,12 +956,24 @@ static int virtballoon_probe(struct virtio_device *vdev)
-> > >  		if (err)
-> > >  			goto out_del_balloon_wq;
-> > >  	}
-> > > +
-> > > +	vb->ph_dev_info.react = virtballoon_page_hinting_react;
-> > > +	vb->ph_dev_info.capacity = VIRTIO_BALLOON_ARRAY_HINTS_MAX;
-> > 
-> > As explained above I think you should limit this by vq size.
-> > Otherwise virtqueue add buf might fail.
-> > In fact by struct spec reading you need to limit it
-> > anyway otherwise it will fail unconditionally.
-> > In practice on most hypervisors it will typically work ...
-> 
-> So I would just need to query that via the virtqueue_get_vring_size
-> function correct? I could probably just set capacity to the minimum of the
-> HINTS_MAX and that value right?
-> 
+if so, then clock-controller@...
+
+Same question on the next one.
+
+> +	compatible = "mediatek,mt6765-mipi0a", "syscon";
+> +	reg = <0 0x11c10000 0 0x1000>;
+> +	power-domains = <&scpsys MT6765_POWER_DOMAIN_CAM>;
+> +	#clock-cells = <1>;
+> +};
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+> index 545eab717c96..0c7b1698b98e 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+> @@ -8,6 +8,7 @@ Required Properties:
+>  - compatible: Should be one of:
+>  	- "mediatek,mt2701-mmsys", "syscon"
+>  	- "mediatek,mt2712-mmsys", "syscon"
+> +	- "mediatek,mt6765-mmsys", "syscon"
+>  	- "mediatek,mt6797-mmsys", "syscon"
+>  	- "mediatek,mt7623-mmsys", "mediatek,mt2701-mmsys", "syscon"
+>  	- "mediatek,mt8173-mmsys", "syscon"
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
+> index 4c7e478117a0..b49b40741be1 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
+> @@ -9,6 +9,7 @@ Required Properties:
+>  - compatible: Should be one of:
+>  	- "mediatek,mt2701-pericfg", "syscon"
+>  	- "mediatek,mt2712-pericfg", "syscon"
+> +	- "mediatek,mt6765-pericfg", "syscon"
+>  	- "mediatek,mt7622-pericfg", "syscon"
+>  	- "mediatek,mt7623-pericfg", "mediatek,mt2701-pericfg", "syscon"
+>  	- "mediatek,mt7629-pericfg", "syscon"
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+> index a023b8338960..21ad416bfeec 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+> @@ -8,6 +8,7 @@ Required Properties:
+>  - compatible: Should be one of:
+>  	- "mediatek,mt2701-topckgen"
+>  	- "mediatek,mt2712-topckgen", "syscon"
+> +	- "mediatek,mt6765-topckgen", "syscon"
+>  	- "mediatek,mt6797-topckgen"
+>  	- "mediatek,mt7622-topckgen"
+>  	- "mediatek,mt7623-topckgen", "mediatek,mt2701-topckgen"
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vcodecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vcodecsys.txt
+> new file mode 100644
+> index 000000000000..83f7f8634943
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vcodecsys.txt
+> @@ -0,0 +1,27 @@
+> +Mediatek vcodecsys controller
+> +============================
+> +
+> +The Mediatek vcodecsys controller provides various clocks to the system.
+> +
+> +Required Properties:
+> +
+> +- compatible: Should be one of:
+> +	- "mediatek,mt6765-vcodecsys", "syscon"
+> +- #clock-cells: Must be 1
+> +
+> +The vcodecsys controller uses the common clk binding from
+> +Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+> +
+> +The vcodecsys controller also uses the common power domain from
+> +Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
+> +The available power doamins are defined in dt-bindings/power/mt*-power.h.
+> +
+> +Example:
+> +
+> +venc_gcon: venc_gcon@17000000 {
+> +	compatible = "mediatek,mt6765-vcodecsys", "syscon";
+> +	reg = <0 0x17000000 0 0x10000>;
+> +	power-domains = <&scpsys MT6765_POWER_DOMAIN_VCODEC>;
+> +	#clock-cells = <1>;
+> +};
+> -- 
+> 2.18.0
 > 
