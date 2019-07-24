@@ -2,86 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F75073812
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:26:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41C2E73893
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2019 21:31:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729188AbfGXTZq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 15:25:46 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43303 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388043AbfGXTZh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 15:25:37 -0400
-Received: by mail-lf1-f65.google.com with SMTP id c19so32727182lfm.10;
-        Wed, 24 Jul 2019 12:25:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=62j7+wSkhUHI/uSOEbsFJlruhr6Za1QWHbaqDgoEVtQ=;
-        b=D/UPHHu/fRcxCNNCrIdrC/33dxO3nj5swxlbIsELJLpjb2uo7H37kp4yGQ5uAHGGtj
-         wLpgAFUMrHa1mZmTO4lu9Bh8EKH50d3EFZ7EjCX3SPIZRUaENr4lQFPThmYTI4fjVwDQ
-         iUE6dcIf/SXrAt9dwzL2DSdMsaVQp4eGs87+rxz1XpaW/abr+DOHGmb+eqv6kzEl8b8O
-         TZwRvz7aAnrDiwX6CHPs0ZhUq4/TzvEKUgH7dqL4Z+JGLo80HvGUBKVl3kJ0ANKU90jr
-         dCL7t8ONpYxKjBd9RuQ9pEFnfomu0WBuKrBZIfDyXXLV/X5254HidEocWQ2+IbuO1ZA6
-         eYFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=62j7+wSkhUHI/uSOEbsFJlruhr6Za1QWHbaqDgoEVtQ=;
-        b=A7kIPOXssOwQoHaO06HPM+jk9HywL73bV1z1nHwS11czdNjX0kfQwwhSSvFGhrD2l1
-         2PgDs08d4Jc9XKWDnACaekbGlchVlR5TwYjgYQK/RJc2VY4ujc6UCVqMUfrFx7w9vS31
-         ufpZmafIvp7baUgZIRj3UK2ZqLQYXsc3p8MqSUQObgP5ka6n0E83bE8bH8R0f1nmG0f2
-         l9psNMpWK9qKzvBxWiodaaa5xixhskykOe646Cg4WK1G3gxPALlr7xco5gZ2TL8S11Zg
-         nJtCiSAZiLK0uG/MdKj2Uw7Cbyn/QY/Bqt/FUjzNDKAVbj7IXdPOL7+GoY5XBApkOZfb
-         COHQ==
-X-Gm-Message-State: APjAAAXHRY1NXkRc6jskE3L9+GUYhJDA9d6HD4YsVJy7aTTIMe5QqJkY
-        33BGJiypb45e8cpmjK7nMPc=
-X-Google-Smtp-Source: APXvYqw7B3oyjIfw1cKuffGMQUDFrbiFo4davqC0Fk4UMrvpLwisAi0F3pd6A8VSflQTS2vwH4V40Q==
-X-Received: by 2002:a19:6e41:: with SMTP id q1mr28989439lfk.20.1563996334490;
-        Wed, 24 Jul 2019 12:25:34 -0700 (PDT)
-Received: from localhost ([188.170.223.67])
-        by smtp.gmail.com with ESMTPSA id k27sm8003487lfm.90.2019.07.24.12.25.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Jul 2019 12:25:33 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 22:25:28 +0300
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: elantech - mark expected switch fall-through
-Message-ID: <20190724192528.GA6859@penguin>
-References: <20190724175202.GA9583@embeddedor>
+        id S2388440AbfGXTa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 15:30:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388426AbfGXTax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 15:30:53 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 341CB20659;
+        Wed, 24 Jul 2019 19:30:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563996652;
+        bh=RHgChTb5kJ4u726IVWqaoD99WXZwv8fFPgWtTGxTtps=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=zzHfEzu6Au+vD9/fuusPV7kNzMtptI80KSdJJWaCOHZGTwtAE1aY/JnnC7GPzruDg
+         M3GzYDNuHdWS5mqBHlJ/Gu71+rjxiDO3e5faH8yWJN5VJvW5LlxPQxSfc8Kl2sUU0W
+         3BQdzJfYN6488jhaDnixkxT4xi0zduw6aFDD9kME=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Nilkanth Ahirrao <anilkanth@jp.adit-jv.com>,
+        Suresh Udipi <sudipi@jp.adit-jv.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 119/413] ASoC: rsnd: fixup mod ID calculation in rsnd_ctu_probe_
+Date:   Wed, 24 Jul 2019 21:16:50 +0200
+Message-Id: <20190724191743.774552265@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
+References: <20190724191735.096702571@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190724175202.GA9583@embeddedor>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+[ Upstream commit ac28ec07ae1c5c1e18ed6855eb105a328418da88 ]
 
-On Wed, Jul 24, 2019 at 12:52:02PM -0500, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
-> 
-> This patch fixes the following warning:
-> 
-> drivers/input/mouse/elantech.c: In function 'elantech_use_host_notify':
-> drivers/input/mouse/elantech.c:1843:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    if (dmi_get_bios_year() >= 2018)
->       ^
-> drivers/input/mouse/elantech.c:1845:2: note: here
->   default:
->   ^~~~~~~
+commit c16015f36cc1 ("ASoC: rsnd: add .get_id/.get_id_sub")
+introduces rsnd_ctu_id which calcualates and gives
+the main Device id of the CTU by dividing the id by 4.
+rsnd_mod_id uses this interface to get the CTU main
+Device id. But this commit forgets to revert the main
+Device id calcution previously done in rsnd_ctu_probe_
+which also divides the id by 4. This path corrects the
+same to get the correct main Device id.
 
-Thank you for the patch but I already pushed out similar patch.
+The issue is observered when rsnd_ctu_probe_ is done for CTU1
 
-Thanks.
+Fixes: c16015f36cc1 ("ASoC: rsnd: add .get_id/.get_id_sub")
 
+Signed-off-by: Nilkanth Ahirrao <anilkanth@jp.adit-jv.com>
+Signed-off-by: Suresh Udipi <sudipi@jp.adit-jv.com>
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/soc/sh/rcar/ctu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/sh/rcar/ctu.c b/sound/soc/sh/rcar/ctu.c
+index 8cb06dab234e..7647b3d4c0ba 100644
+--- a/sound/soc/sh/rcar/ctu.c
++++ b/sound/soc/sh/rcar/ctu.c
+@@ -108,7 +108,7 @@ static int rsnd_ctu_probe_(struct rsnd_mod *mod,
+ 			   struct rsnd_dai_stream *io,
+ 			   struct rsnd_priv *priv)
+ {
+-	return rsnd_cmd_attach(io, rsnd_mod_id(mod) / 4);
++	return rsnd_cmd_attach(io, rsnd_mod_id(mod));
+ }
+ 
+ static void rsnd_ctu_value_init(struct rsnd_dai_stream *io,
 -- 
-Dmitry
+2.20.1
+
+
+
