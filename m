@@ -2,63 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0AE474B59
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 12:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61F0A74B5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 12:17:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389902AbfGYKQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 06:16:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36280 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbfGYKQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 06:16:31 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EB1B4756;
-        Thu, 25 Jul 2019 10:16:30 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id D97C561F21;
-        Thu, 25 Jul 2019 10:16:27 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 25 Jul 2019 12:16:30 +0200 (CEST)
-Date:   Thu, 25 Jul 2019 12:16:27 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     linux-kernel@vger.kernel.org, arnd@arndb.de, ebiederm@xmission.com,
-        keescook@chromium.org, joel@joelfernandes.org, tglx@linutronix.de,
-        tj@kernel.org, dhowells@redhat.com, jannh@google.com,
-        luto@kernel.org, akpm@linux-foundation.org, cyphar@cyphar.com,
-        torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
-        kernel-team@android.com, linux-api@vger.kernel.org
-Subject: Re: [PATCH 2/5] pidfd: add pidfd_wait()
-Message-ID: <20190725101626.GD4707@redhat.com>
-References: <20190724144651.28272-1-christian@brauner.io>
- <20190724144651.28272-3-christian@brauner.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190724144651.28272-3-christian@brauner.io>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 25 Jul 2019 10:16:31 +0000 (UTC)
+        id S2389995AbfGYKRY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 06:17:24 -0400
+Received: from mail-qt1-f202.google.com ([209.85.160.202]:53689 "EHLO
+        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389964AbfGYKRY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 06:17:24 -0400
+Received: by mail-qt1-f202.google.com with SMTP id h47so44084539qtc.20
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 03:17:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=rXX11AjyQuD935u7SKRoBuP7afkJ+xWzYBIlfHye+X8=;
+        b=b2mAm1/hRFViu1qAaAEr/is+f/ZvFExXE1GC8GPFxXM5Oh3xQjlD+bDi8P4DYJDIMH
+         1vCbJG3/ha9+WnyKjVvqkX4CRYI8hXsooTFW9JMRMkHZbt06bcaLV1UdlZ6WirW6Lrly
+         +lBEV0//qHx1iEW5x8Z1Xc/fmBOQp7ZxpGKH1JErRqEQrqEul4hMwSgldff37XrljF3s
+         QjKhnmtZvneDu4f831lT9fY06YbJe6KvxnmluQr2XvGOOUn0vZVsZcgpWkOW/Qrif/Nb
+         FXW4ToMoPhIX1OaMWTlFi/Sh/2hrwVK1MWV0uLePijkEJDJW4Pj3yidJj7WZLYZX4ICL
+         J75w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=rXX11AjyQuD935u7SKRoBuP7afkJ+xWzYBIlfHye+X8=;
+        b=MCgv7KTNMZAn8nPgQmeF0ejQMeYFxwhKpl1sg/TSRq++jDcHnMSbuiqbzZHX8yMPoi
+         2bSbTxNcul8whVtX3iYo00GyrHrqeJTBX5AYic2hsqrT4x+j7NHjbieiZnYEoC3KFKEu
+         qDEWIaZe/ig5Zx44FlX0HKbc3x01W9pCYlwKF6J2Fzwz8PDniHDed5JoTrtOFWsyw4vP
+         zEtjMeiViq2q6FQ8OGVUEYKEw2868FwZN9YL6Ew7SN8pABm1vUhMLLA7aBauH5FVzBUJ
+         bhqueherzb1th+eWiZDM80uwm6WyixPtvYzKngWAi4NNNwNXCizhw/gxvbr16EenVBnJ
+         lMRA==
+X-Gm-Message-State: APjAAAXlkZG5UBmHfba1x3Cyq/3Cws+H3OCs5jQDW1M1zqYuAKL8PFUS
+        3jFHzGs+Ri7Cgt2hp97GC/9OTwDl5FwP9AhoDi6vpWzNrqtxaGM55t6D6aCUBf5P/o2KyyxqZaR
+        +8CX87+A7y2vgFELg6tRA8f44xDLv1caIGcVSp9VPOToAJsmXwgTWBX5YvScynzTVEzidk0jQ/n
+        Y=
+X-Google-Smtp-Source: APXvYqxBkUx3OB9AnodCJLYXKAqemprxCeJzpAG2HhDupTNgGvR5sdJbJe0flZps2HFHPb8qf3AnWARdOAwZCA==
+X-Received: by 2002:a05:6214:1c5:: with SMTP id c5mr36521290qvt.97.1564049843229;
+ Thu, 25 Jul 2019 03:17:23 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 11:17:04 +0100
+Message-Id: <20190725101705.179924-1-maennich@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
+Subject: [PATCH] coccinelle: api/atomic_as_refcounter: add SPDX License Identifier
+From:   Matthias Maennich <maennich@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org,
+        Matthias Maennich <maennich@google.com>,
+        linux-spdx@vger.kernel.org,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/24, Christian Brauner wrote:
->
-> +SYSCALL_DEFINE6(pidfd_wait, int, pidfd, int __user *, stat_addr,
-> +		siginfo_t __user *, info, struct rusage __user *, ru,
-> +		unsigned int, states, unsigned int, flags)
-> +{
+Add the missing GPLv2 SPDX license identifier.
 
-Oh, I too think that P_PIDFD makes more sense.
+It appears this single file was missing from 7f904d7e1f3e ("treewide:
+Replace GPLv2 boilerplate/reference with SPDX - rule 505"), which
+addressed all other files in scripts/coccinelle. Hence I added
+GPL-2.0-only consitently with the mentioned patch.
 
-and could you explain in the changelog why? I am not arguing and if
-nothing else this is consistent with other pidfd features, but if you
-are parent/debugger you can't hit the problem with pid-reuse, unless
-you races with your sub-threads.
+Cc: linux-spdx@vger.kernel.org
+Cc: Elena Reshetova <elena.reshetova@intel.com>
+Signed-off-by: Matthias Maennich <maennich@google.com>
+---
+ scripts/coccinelle/api/atomic_as_refcounter.cocci | 1 +
+ 1 file changed, 1 insertion(+)
 
-Oleg.
+diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+index 988120e0fd67..0f78d94abc35 100644
+--- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
++++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0-only
+ // Check if refcount_t type and API should be used
+ // instead of atomic_t type when dealing with refcounters
+ //
+-- 
+2.22.0.657.g960e92d24f-goog
 
