@@ -2,122 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4E95753E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:26:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F12B2753E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:26:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390237AbfGYQ0i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:26:38 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33623 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387917AbfGYQ0i (ORCPT
+        id S2390618AbfGYQ0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:26:49 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41306 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390598AbfGYQ0t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:26:38 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PGQRP11078728
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 25 Jul 2019 09:26:27 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PGQRP11078728
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564071987;
-        bh=DcEqRRNdHIaWMrKVMF3sAna3Qm1OkhcgH2BVwUKgk04=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=qPHMmkd3o1p2FtMXsSVsKhfvl17APT2zkna0FVtbuL1/ArWZQjI9CeC+E+xwMWB+N
-         iyPpjASohe7wzWF0qc5iAXNOQ28kIukdqNnbK9mHVfhwtxc14daE3/uPQ9oHt2Jtru
-         bxTqpu8TZbF3p3ifXDAWTcmm62NCoobiq/ZZIJarmePoxUEVIhrIPAS3S1n/C9Hrmo
-         t3fRqgr6/volKNwJNzT7pRE57Gh+qAn3AQpamXO1vFUFCwkSn+yW0kj9DO9DuTEkbT
-         pB3KUAsOBfIU8EJK5u7fmQ5EZpRD8Qdu6eXqzm9GlKAuA9CO6LxP3719XEg407X9Kc
-         SOvoprq4v2nFw==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PGQQfS1078725;
-        Thu, 25 Jul 2019 09:26:26 -0700
-Date:   Thu, 25 Jul 2019 09:26:26 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Qian Cai <tipbot@zytor.com>
-Message-ID: <tip-a1dc0446d64966dc0ae756aebdc449f335742c13@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, cai@lca.pw, tglx@linutronix.de,
-        peterz@infradead.org, mingo@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, cai@lca.pw, hpa@zytor.com,
-          torvalds@linux-foundation.org, mingo@kernel.org,
-          peterz@infradead.org, tglx@linutronix.de
-In-Reply-To: <20190720012319.884-1-cai@lca.pw>
-References: <20190720012319.884-1-cai@lca.pw>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/core: Silence a warning in sched_init()
-Git-Commit-ID: a1dc0446d64966dc0ae756aebdc449f335742c13
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 25 Jul 2019 12:26:49 -0400
+Received: by mail-pg1-f196.google.com with SMTP id x15so12953516pgg.8
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 09:26:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=E85E3sDx7QmmDk1Qya6eXBYlrdWHNfL1kHhjlDR1b/g=;
+        b=nc35E9AiCxeMN6103rkz1HbVehimcAIsRv5kmqeNqFtBzLYzuF5GKi8GybaCFRfkBw
+         GYgFDUxn1tiZXm7chrKpcUqt7R5JlpnRHkXa3MVtg9JXROBE0lleyygvEPEhhm5Uu1eg
+         GX65gtCZw958XOITkmgt9flz9uZzXjFiqfXyo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=E85E3sDx7QmmDk1Qya6eXBYlrdWHNfL1kHhjlDR1b/g=;
+        b=cikbJHZjzguDJV9Q/oFLu4QoteSAIH96IJCQSyVInW8h11tlGskF6otdF+MexlIrkA
+         j8gBoVAvlfF2HS1Kv7r1h38YfKLeS+GKHcGClaMStohjrB0u3q6DRM/IsmXAygfsxbEN
+         x1n6sQs2LcK1QuHztHQnaCRfIR2DrgBHdMJ+1vEPUj5Gyllbr2PRfu/hJjel9fTqpIG/
+         wx/2zsKHu8JeAQuItGo7ceFy+2irrdMfAT5LX1K1IuCk1Cs3JxNBhhAtgmmNblCT94LX
+         XFnginmzXAP3UNFKR0XA+W3Bkk8wZ1AryAlEGxJoUKuT6AJA1Uoe+2EGy4qlM6+UVDW1
+         gEfw==
+X-Gm-Message-State: APjAAAU1G5HTvtL2HoIRRiPb3cQSKFKFANg/+ql8Zf7HY7ud1ROHXtP8
+        D1kIflX55wj0kWFOOcdhp2OmJQ==
+X-Google-Smtp-Source: APXvYqxXCKBHc8/5JBlcotEIfAlJsGQkxesUvB8hvVKuLAmWzu2UryLFWJCi0O9Qp+rvx6/yEIiT3A==
+X-Received: by 2002:a17:90a:f491:: with SMTP id bx17mr95823296pjb.118.1564072008342;
+        Thu, 25 Jul 2019 09:26:48 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id o128sm55953582pfb.42.2019.07.25.09.26.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Jul 2019 09:26:47 -0700 (PDT)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v3 0/5] Add veyron tiger and fievel boards
+Date:   Thu, 25 Jul 2019 09:26:37 -0700
+Message-Id: <20190725162642.250709-1-mka@chromium.org>
+X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a1dc0446d64966dc0ae756aebdc449f335742c13
-Gitweb:     https://git.kernel.org/tip/a1dc0446d64966dc0ae756aebdc449f335742c13
-Author:     Qian Cai <cai@lca.pw>
-AuthorDate: Fri, 19 Jul 2019 21:23:19 -0400
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 25 Jul 2019 15:55:05 +0200
+This series adds device tree files for the veyron tiger and
+fievel boards. It also reorganizes display and backlight
+settings for veyron devices, to avoid duplication.
 
-sched/core: Silence a warning in sched_init()
+Previous versions of the series didn't have a cover letter,
+v2 can be found at
+https://patchwork.kernel.org/project/linux-rockchip/list/?series=144987
 
-Compiling a kernel with both FAIR_GROUP_SCHED=n and RT_GROUP_SCHED=n
-will generate a compiler warning:
+Matthias Kaehlcke (5):
+  ARM: dts: rockchip: move rk3288-veryon display settings into a
+    separate file
+  ARM: dts: rockchip: consolidate veyron panel and backlight settings
+  dt-bindings: ARM: dts: rockchip: Add bindings for
+    rk3288-veyron-{fievel,tiger}
+  ARM: dts: rockchip: add veyron-fievel board
+  ARM: dts: rockchip: add veyron-tiger board
 
-  kernel/sched/core.c: In function 'sched_init':
-  kernel/sched/core.c:5906:32: warning: variable 'ptr' set but not used
+ .../devicetree/bindings/arm/rockchip.yaml     |  30 ++
+ arch/arm/boot/dts/Makefile                    |   2 +
+ .../boot/dts/rk3288-veyron-chromebook.dtsi    | 115 +------
+ arch/arm/boot/dts/rk3288-veyron-edp.dtsi      | 173 ++++++++++
+ arch/arm/boot/dts/rk3288-veyron-fievel.dts    | 299 ++++++++++++++++++
+ arch/arm/boot/dts/rk3288-veyron-jaq.dts       |  55 ----
+ arch/arm/boot/dts/rk3288-veyron-jerry.dts     |  58 ----
+ arch/arm/boot/dts/rk3288-veyron-minnie.dts    |  52 ---
+ arch/arm/boot/dts/rk3288-veyron-pinky.dts     |  17 +
+ arch/arm/boot/dts/rk3288-veyron-speedy.dts    |  58 ----
+ arch/arm/boot/dts/rk3288-veyron-tiger.dts     | 125 ++++++++
+ 11 files changed, 647 insertions(+), 337 deletions(-)
+ create mode 100644 arch/arm/boot/dts/rk3288-veyron-edp.dtsi
+ create mode 100644 arch/arm/boot/dts/rk3288-veyron-fievel.dts
+ create mode 100644 arch/arm/boot/dts/rk3288-veyron-tiger.dts
 
-It is unnecessary to have both "alloc_size" and "ptr", so just combine
-them.
+-- 
+2.22.0.709.g102302147b-goog
 
-Signed-off-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: valentin.schneider@arm.com
-Link: https://lkml.kernel.org/r/20190720012319.884-1-cai@lca.pw
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/core.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 042c736b2b73..46f3ca9e392a 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6430,19 +6430,19 @@ DECLARE_PER_CPU(cpumask_var_t, select_idle_mask);
- 
- void __init sched_init(void)
- {
--	unsigned long alloc_size = 0, ptr;
-+	unsigned long ptr = 0;
- 	int i;
- 
- 	wait_bit_init();
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
--	alloc_size += 2 * nr_cpu_ids * sizeof(void **);
-+	ptr += 2 * nr_cpu_ids * sizeof(void **);
- #endif
- #ifdef CONFIG_RT_GROUP_SCHED
--	alloc_size += 2 * nr_cpu_ids * sizeof(void **);
-+	ptr += 2 * nr_cpu_ids * sizeof(void **);
- #endif
--	if (alloc_size) {
--		ptr = (unsigned long)kzalloc(alloc_size, GFP_NOWAIT);
-+	if (ptr) {
-+		ptr = (unsigned long)kzalloc(ptr, GFP_NOWAIT);
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 		root_task_group.se = (struct sched_entity **)ptr;
