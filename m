@@ -2,94 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2147F755FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 19:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B870875605
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 19:46:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391332AbfGYRo0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 13:44:26 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36417 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388291AbfGYRo0 (ORCPT
+        id S2403766AbfGYRqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 13:46:13 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35217 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbfGYRqN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 13:44:26 -0400
-Received: by mail-pg1-f196.google.com with SMTP id l21so23392117pgm.3;
-        Thu, 25 Jul 2019 10:44:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7+hFw6mo8dhy1omS9HVV0VfweWLThyGPqk2QfKYq4ZU=;
-        b=H0qV8PRhmbegWi5YPtSs+i0ZmRxlyoLvpYoJUmvM9KU87v6d8tOcggo0tK84goVIZu
-         GiLQk7yEnu6lO7FC3eHXF2bT4BCW5TKjmE8vjHwQooNqo/IOLsRdR0teaocYJNmmI+4D
-         cCGiUwSrzGQTuty48IP638/Pi1E579bXekHLt4NmVK5VJfsT2driSWc/elEpRSTBYGsl
-         j2r5Ky3IK8H4b2TJU2x9TOciXbIf9GCgt7GKSSGFe/N7w1oEEDgInsqdU58JH+VwrP29
-         aHOrgxLMvxx0scD2kUi+W6qxnbLtu8cLWSYteTxV+RbEuPfQL6IUGJbeq6loWj+8dHZ7
-         YRpg==
+        Thu, 25 Jul 2019 13:46:13 -0400
+Received: by mail-pf1-f194.google.com with SMTP id u14so23138279pfn.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 10:46:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7+hFw6mo8dhy1omS9HVV0VfweWLThyGPqk2QfKYq4ZU=;
-        b=hJZnXYlyFBt33LQdScOW9znjbU6yAelEEFiqjCfamPFL3wBNARIRTMv2riDzU4LLvr
-         KGU0FpqMVVM8lyH8n//NKOp6Aw/ZegQgZlz6IX+c59JMCdq+NtHqvOupnwD3P/qhTbkD
-         7LA3pdilBEOcxfKGJFKFvPfjAwTXBDJ7zM2nACynO8McjBRYMvCbF7KG7YYRhB9ZBbbh
-         TYtKoj6QWE0787x90L68HoFGoniBqOVW6PQMtV2ShbKrRnDwsXxVudJ6ELHM4bSDx7up
-         9x2HC94ExgFhhjP+gzjbSOHxMdlyxK5Wlyg48VP6Wb/OPFgshwQE8P1l/9NZAg296Mz3
-         jkHg==
-X-Gm-Message-State: APjAAAVYC65RuNJXoLXWCjyzzXykYJ8gt20qyuYA0Csa3MKs6xqdPDpC
-        sdYT0nPwUNrCy8RkmH1PJ1QXHt9BjY2KZhJcnfABWQiIRsE=
-X-Google-Smtp-Source: APXvYqwlg7+rlIdaeVC3yQn1x571GTXmdJNlaBhqYAnDrq6lxpG7uy2bk/2gSfXMtbrz5Oz6TES072Y7A4293M7QT3Y=
-X-Received: by 2002:a63:1020:: with SMTP id f32mr57898657pgl.203.1564076665322;
- Thu, 25 Jul 2019 10:44:25 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KIEUujZBBpPF2FsXK/3C/Ifc337XmCaBCcdUOmfolVM=;
+        b=lAhWb3i3Y4usQSkq4mmBtnzbbrP2F4WFmU1kMV4F9bgGpDsfj0YxOJMQxuTmkubjr7
+         7ceoR6UgAeimSxQ0s+0DvfMN66fPiH6aLiGY5Ey0BNqQVgdCISrpdPGN1IK0lx6Qs1/4
+         BhvHcySSDQ4BeaB8axJDmZL/KIL34k5+eaCkOpX9inbzHapHESr2Bl5Z8Z8UN/FYs993
+         rQYa+H51+FTKuak39+qJ5N+EGMxayigoopNHqGAPNVT0kR0NZmnmFrQddxBMun7nNBV1
+         PGJej/kQtxLTMdI/lvMNqVAC6pcHslLD/qpsC5Nig2pnHl5TTQqyrt/KL8eam6ExjJfW
+         eB6g==
+X-Gm-Message-State: APjAAAVVk60yKdw7JQ+e94APqDgQbYk+Nu8EeRyAhzkWkCDae+DU+6o/
+        hi5DCJYS0nsTaPET4jD1mltp/E6PDds=
+X-Google-Smtp-Source: APXvYqwSgDnD1dC3KbPIQcEuvMPLs/vPwaApQYOvM2klOHt+mpbLAUeYmQKwYs6mjiWOn6eosqC/ZA==
+X-Received: by 2002:a17:90a:380d:: with SMTP id w13mr92156981pjb.138.1564076771845;
+        Thu, 25 Jul 2019 10:46:11 -0700 (PDT)
+Received: from localhost ([2601:647:5b80:29f7:1bdd:d748:9a4e:8083])
+        by smtp.gmail.com with ESMTPSA id 67sm9996001pfd.177.2019.07.25.10.46.10
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 25 Jul 2019 10:46:10 -0700 (PDT)
+From:   Moritz Fischer <mdf@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-fpga@vger.kernel.org, gregkh@linuxfoundation.org,
+        Moritz Fischer <mdf@kernel.org>
+Subject: [PATCH] MAINTAINERS: Move linux-fpga tree to new location
+Date:   Thu, 25 Jul 2019 10:45:17 -0700
+Message-Id: <20190725174517.10516-1-mdf@kernel.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20190710053326.26247-1-kai.heng.feng@canonical.com>
-In-Reply-To: <20190710053326.26247-1-kai.heng.feng@canonical.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 25 Jul 2019 20:44:13 +0300
-Message-ID: <CAHp75VdO01EmsYXPjXdjyzqa4vvs26H3yJ0C+fhxmY1hrgg+Xg@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: hp_accel: Add support for HP ZBook 17 G5
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     Eric Piel <eric.piel@tremplin-utc.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 8:33 AM Kai-Heng Feng
-<kai.heng.feng@canonical.com> wrote:
->
-> HP ZBook 17 G5 needs a non-standard mapping, x_inverted.
->
+Move the linux-fpga tree to new location at:
+ git://git.kernel.org/pub/scm/linux/kernel/git/mdf/linux-fpga.git
 
-Pushed to my review and testing queue, thanks!
+Signed-off-by: Moritz Fischer <mdf@kernel.org>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
->  drivers/platform/x86/hp_accel.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/platform/x86/hp_accel.c b/drivers/platform/x86/hp_accel.c
-> index f61b8a176e20..cfc0e36a7a5e 100644
-> --- a/drivers/platform/x86/hp_accel.c
-> +++ b/drivers/platform/x86/hp_accel.c
-> @@ -239,6 +239,7 @@ static const struct dmi_system_id lis3lv02d_dmi_ids[] = {
->         AXIS_DMI_MATCH("HPB64xx", "HP EliteBook 84", xy_swap),
->         AXIS_DMI_MATCH("HPB65xx", "HP ProBook 65", x_inverted),
->         AXIS_DMI_MATCH("HPZBook15", "HP ZBook 15", x_inverted),
-> +       AXIS_DMI_MATCH("HPZBook17G5", "HP ZBook 17 G5", x_inverted),
->         AXIS_DMI_MATCH("HPZBook17", "HP ZBook 17", xy_swap_yz_inverted),
->         { NULL, }
->  /* Laptop models without axis info (yet):
-> --
-> 2.17.1
->
-
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 783569e3c4b4..c3b5e3dbc74e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6339,7 +6339,7 @@ FPGA MANAGER FRAMEWORK
+ M:	Moritz Fischer <mdf@kernel.org>
+ L:	linux-fpga@vger.kernel.org
+ S:	Maintained
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/atull/linux-fpga.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mdf/linux-fpga.git
+ Q:	http://patchwork.kernel.org/project/linux-fpga/list/
+ F:	Documentation/fpga/
+ F:	Documentation/driver-api/fpga/
 -- 
-With Best Regards,
-Andy Shevchenko
+2.22.0
+
