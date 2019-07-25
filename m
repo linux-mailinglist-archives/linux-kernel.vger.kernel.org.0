@@ -2,102 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8292A74A10
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 11:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D2D474A17
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 11:39:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390588AbfGYJht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 05:37:49 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45794 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727600AbfGYJht (ORCPT
+        id S2390645AbfGYJjf convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 25 Jul 2019 05:39:35 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:34511 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387533AbfGYJjf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 05:37:49 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hqaC3-0002BV-8U; Thu, 25 Jul 2019 11:37:47 +0200
-Date:   Thu, 25 Jul 2019 11:37:46 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Rui Salvaterra <rsalvaterra@gmail.com>
-cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Daniel Drake <drake@endlessm.com>
-Subject: Re: [BUG] Linux 5.3-rc1: timer problem on x86-64 (Pentium D)
-In-Reply-To: <CALjTZvb6aiUEgLN9BxOxBZCBXHoFxOx4TpBxkRQbZjgCna4WUA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1907251127430.1791@nanos.tec.linutronix.de>
-References: <CALjTZvbrS3dGrTrMMkGRkk=hRL38rrGiYTZ4REX9rJ0T+wcGoQ@mail.gmail.com> <alpine.DEB.2.21.1907241257240.1791@nanos.tec.linutronix.de> <CALjTZvZtu8sSycu2soSXCEP1yZiVNFKkxs4JY_puFahwFuuRcQ@mail.gmail.com> <alpine.DEB.2.21.1907250810530.1791@nanos.tec.linutronix.de>
- <CALjTZvb6aiUEgLN9BxOxBZCBXHoFxOx4TpBxkRQbZjgCna4WUA@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323329-442860888-1564047204=:1791"
-Content-ID: <alpine.DEB.2.21.1907251135370.1791@nanos.tec.linutronix.de>
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Thu, 25 Jul 2019 05:39:35 -0400
+Received: from marcel-macbook.fritz.box (p5B3D2BA7.dip0.t-ipconnect.de [91.61.43.167])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 178D5CED29;
+        Thu, 25 Jul 2019 11:48:10 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH] net: bluetooth: hci_sock: Fix a possible null-pointer
+ dereference in hci_mgmt_cmd()
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20190725092253.15912-1-baijiaju1990@gmail.com>
+Date:   Thu, 25 Jul 2019 11:39:32 +0200
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <BC138E23-E2FE-450E-B33E-1AD846D14687@holtmann.org>
+References: <20190725092253.15912-1-baijiaju1990@gmail.com>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Jia-Ju,
 
---8323329-442860888-1564047204=:1791
-Content-Type: text/plain; CHARSET=UTF-8
-Content-Transfer-Encoding: 8BIT
-Content-ID: <alpine.DEB.2.21.1907251135371.1791@nanos.tec.linutronix.de>
-
-Rui,
-
-On Thu, 25 Jul 2019, Rui Salvaterra wrote:
-> On Thu, 25 Jul 2019 at 07:28, Thomas Gleixner <tglx@linutronix.de> wrote:
-> >
-> > The only reason I can think of is that the HPET on that machine has a weird
-> > register state (it's not advertised by the BIOS ... )
-> >
-> > But that does not explain the boot failure completely. If the HPET is not
-> > available then the kernel should automatically do the right thing and fall
-> > back to something else.
+> In hci_mgmt_cmd(), there is an if statement on line 1570 to check
+> whether hdev is NULL:
+>    if (hdev && chan->hdev_init)
 > 
-> This may be a useful data point, the relevant part of the dmesg on a
-> pristine 5.3-rc1 with clocksource=jiffies:
-
-Duh. Yes, this explains it nicely.
-
-> [    1.123548] clocksource: timekeeping watchdog on CPU1: Marking
-> clocksource 'tsc-early' as unstable because the skew is too large:
-> [    1.123552] clocksource:                       'hpet' wd_now: 33
-> wd_last: 33 mask: ffffffff
-
-The HPET counter check succeeded, but the early enable and the following
-reconfiguration confused it completely. So the HPET is not counting:
-
-	'hpet' wd_now: 33 wd_last: 33 mask: ffffffff
-
-Which is a full explanation for the boot fail because if the counter is not
-working then the HPET timer is not expiring and the early boot is waiting
-for HPET to fire forever.
-
-> > Then boot these kernels with 'hpet=disable' on the command line and see
-> > whether they come up. If so please provide the same output.
+> When hdev is NULL, it is used on line 1575:
+>    err = handler->func(sk, hdev, cp, len);
 > 
-> Fortunately (as I'm doing this remotely) they did come up.
-> With hpet=disabled…
+> Some called functions of handler->func use hdev, such as:
+> set_appearance(), add_device() and remove_device() in mgmt.c.
 > 
-> Linux 5.2:
-> available_clocksource: tsc acpi_pm
-> current_clocksource: tsc
+> Thus, a possible null-pointer dereference may occur.
 > 
-> Linux 5.3-rc1 patched:
-> available_clocksource: tsc acpi_pm
-> current_clocksource: tsc
+> To fix this bug, hdev is checked before calling handler->func().
+> 
+> This bug is found by a static analysis tool STCheck written by us.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+> net/bluetooth/hci_sock.c | 11 ++++++-----
+> 1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/net/bluetooth/hci_sock.c b/net/bluetooth/hci_sock.c
+> index d32077b28433..18ea1e47ea48 100644
+> --- a/net/bluetooth/hci_sock.c
+> +++ b/net/bluetooth/hci_sock.c
+> @@ -1570,11 +1570,12 @@ static int hci_mgmt_cmd(struct hci_mgmt_chan *chan, struct sock *sk,
+> 	if (hdev && chan->hdev_init)
+> 		chan->hdev_init(sk, hdev);
+> 
+> -	cp = buf + sizeof(*hdr);
+> -
+> -	err = handler->func(sk, hdev, cp, len);
+> -	if (err < 0)
+> -		goto done;
+> +	if (hdev) {
+> +		cp = buf + sizeof(*hdr);
+> +		err = handler->func(sk, hdev, cp, len);
+> +		if (err < 0)
+> +			goto done;
+> +	}
+> 
+> 	err = msglen;
 
-That's consistent with the above. 5.3-rc1 unpatched would of course boot as
-well with hpet=disable now that we know the root cause.
+have you evaluated the statement above:
 
-I'll write a changelog and route it to Linus for -rc2.
+        no_hdev = (handler->flags & HCI_MGMT_NO_HDEV);                           
+        if (no_hdev != !hdev) {                                                  
+                err = mgmt_cmd_status(sk, index, opcode,                         
+                                      MGMT_STATUS_INVALID_INDEX);                
+                goto done;                                                       
+        }
 
-Thanks a lot for debugging this and providing all the information!
+I think that code is just overly complex and can be simplified, but I doubt you get to the situation where hdev is NULL for any function that requires it. Only the handler->func marked with HCI_MGMT_NO_HDEV will get hdev == NULL and these are not using it.
 
-       tglx
---8323329-442860888-1564047204=:1791--
+So we might can make this easier code to really check the index != MGMT_INDEX_NONE check above to cover all cases to ensure that hdev is either valid or set to NULL before proceeding any further.
+
+And since we have a full set of unit tests in tools/mgmt-tester, I assume we would have had a chance to catch an issue like this. But we can add a test case to it to explicitly call the functions with either MGMT_INDEX_NONE used or not.
+
+Regards
+
+Marcel
+
