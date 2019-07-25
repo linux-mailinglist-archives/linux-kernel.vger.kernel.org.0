@@ -2,132 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED2DD75991
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 23:28:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAAE075975
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 23:25:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbfGYV1l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 17:27:41 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:57132 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbfGYV1k (ORCPT
+        id S1726716AbfGYVZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 17:25:37 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:33405 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726655AbfGYVZh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 17:27:40 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6PLNlSL028676;
-        Thu, 25 Jul 2019 21:27:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=Fwy/EMQNobs66xY3K+vm94ekcwWHInFiiLrIHkn1i9Q=;
- b=w9M8s9Byznyl31h9F7usbjkdTMlsEke2aaRTyNwlmgcJ5JiqaoIGr28eCCdCtrBHGC33
- JY1dScXra5KA04LtdLXC1TNNZsfdolr0SAGXyOPbS72BQy52WmQEdAVqXS1x+B97AaXy
- BZ5OCf3ughPnwPp1b3Im4Ol/MMfMGlG77fbTOJH97q4M9KNNxir8CqwUqO14nqOmvfxN
- 3xZu9ynBOHKsrU76iik9HyTlh2Ph3ZXBLg0mto/IYz+45C2fJiXBoV3Mj2F2LAHwatwr
- fM8zmCFHO6dDwtvjh6NYZ/Hb3xviCjeHgKKth0T/GowvGXuLbKfaBRO6XN5AbaPYvejE lA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2tx61c6mr3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Jul 2019 21:27:27 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6PLNCXq043416;
-        Thu, 25 Jul 2019 21:25:27 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2tycv77v4m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Jul 2019 21:25:26 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6PLPOdf030904;
-        Thu, 25 Jul 2019 21:25:26 GMT
-Received: from localhost.localdomain (/73.60.114.248)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 25 Jul 2019 14:25:23 -0700
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [RFC 9/9] padata: remove cpu_index from the parallel_queue
-Date:   Thu, 25 Jul 2019 17:25:05 -0400
-Message-Id: <20190725212505.15055-10-daniel.m.jordan@oracle.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190725212505.15055-1-daniel.m.jordan@oracle.com>
-References: <20190725212505.15055-1-daniel.m.jordan@oracle.com>
+        Thu, 25 Jul 2019 17:25:37 -0400
+Received: by mail-io1-f66.google.com with SMTP id z3so100433594iog.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 14:25:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
+        bh=0OE6CkyrftBD3Ku7P1YRVsn9jYbz8x68WmGWVUa6hzY=;
+        b=AWXlfRnEtLM74XglQGEkne+2wpRMQ3s+jTBHVl27BvwSaVklVPQBOEl+vVl2AOmA5q
+         qv9xXCge4s0vMUla2SYNdU3WfUuDpFqt6iVunAkr8kVIuSSqBhDFCulVS6VMtoNBW2nW
+         a3G2ZcfFBZNVDiJHDGaVNLBfRDN7Awy4HmWGgAy3K0bwPm+wqk1zOeXXbb/TXMI5b+i0
+         DnvM6BNfb/FAc68JxHuQRI2poAaDUJAcgX3JFh0zp6NFcq0rNvNxGTWgwNBKhLE/Hkyp
+         MdU+cjP7xzKxethms3zDzEPZwpyPFzGC5cDQqCSu2QqadqaB+iA26yhrhCOZ+AgVap5e
+         mmmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
+         :mime-version;
+        bh=0OE6CkyrftBD3Ku7P1YRVsn9jYbz8x68WmGWVUa6hzY=;
+        b=pyf0wpPJc06w0ZDsbgK8pmLie3grkylxPr31668BDZNxr0HQTn/hjttCgTNIrnq910
+         uAcV/LNLQqULjmEc4kvYKRIYpmcOiC92uTMMPej45B++DCTFEhsstwoBk9TPeyTN3JVj
+         v4/8dIy+VoZxyHbURCOZQH+ZNJNFc5roxVqBcwo0UD96MbfdEHpeXQ6LtylSjZCKY3by
+         u9Luv5uW0NoVfyjE2AqgYhneNBmhSoIq2TnMnItM6iQVa48jP7i6fmqMIiAHbS5qj0Z0
+         nPFQgavw4SXYfOI5zIbQOhGTvakcKKog+deRiwOwEO0+tYRtOC7s1pdDiNJWIQLbN3wR
+         dX/w==
+X-Gm-Message-State: APjAAAXyhVMcQhwzxohC8Bhqlw8/oFhOEpWkHMLTT7JZathwYdaA9gLL
+        KrN37FKsoBot2cFAZruWfoyyxQ==
+X-Google-Smtp-Source: APXvYqyXby2GabhLGrmfNxGRSjjzbJ/o7K20JIc5pwz0S+rpYgbr6bHq19jJS94ZBSI/g1gq1f+w5w==
+X-Received: by 2002:a6b:b556:: with SMTP id e83mr81812981iof.94.1564089936348;
+        Thu, 25 Jul 2019 14:25:36 -0700 (PDT)
+Received: from localhost (67-0-24-96.albq.qwest.net. [67.0.24.96])
+        by smtp.gmail.com with ESMTPSA id s2sm36154569ioj.8.2019.07.25.14.25.35
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 25 Jul 2019 14:25:35 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 14:25:34 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     bhelgaas@google.com
+cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Subject: [PATCH] pci: Kconfig: select PCI_MSI_IRQ_DOMAIN by default on
+ RISC-V
+Message-ID: <alpine.DEB.2.21.9999.1907251422040.32766@viisi.sifive.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9329 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1907250257
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9329 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1907250257
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the removal of the ENODATA case from padata_get_next, the cpu_index
-field is no longer useful, so it can go away.
 
-Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+This is part of adding support for RISC-V systems with PCIe host 
+controllers that support message-signaled interrupts.
+
+Signed-off-by: Wesley Terpstra <wesley@sifive.com>
+[paul.walmsley@sifive.com: wrote patch description; split this
+ patch from the arch/riscv patch]
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
 ---
- include/linux/padata.h |  2 --
- kernel/padata.c        | 13 ++-----------
- 2 files changed, 2 insertions(+), 13 deletions(-)
+ drivers/pci/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/padata.h b/include/linux/padata.h
-index cc420064186f..a39c7b9cec3c 100644
---- a/include/linux/padata.h
-+++ b/include/linux/padata.h
-@@ -75,14 +75,12 @@ struct padata_serial_queue {
-  * @swork: work struct for serialization.
-  * @work: work struct for parallelization.
-  * @num_obj: Number of objects that are processed by this cpu.
-- * @cpu_index: Index of the cpu.
-  */
- struct padata_parallel_queue {
-        struct padata_list    parallel;
-        struct padata_list    reorder;
-        struct work_struct    work;
-        atomic_t              num_obj;
--       int                   cpu_index;
- };
+diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
+index 2ab92409210a..beb3408a0272 100644
+--- a/drivers/pci/Kconfig
++++ b/drivers/pci/Kconfig
+@@ -52,7 +52,7 @@ config PCI_MSI
+ 	   If you don't know what to do here, say Y.
  
- /**
-diff --git a/kernel/padata.c b/kernel/padata.c
-index 09a7dbdd9678..b5236fd84c45 100644
---- a/kernel/padata.c
-+++ b/kernel/padata.c
-@@ -399,21 +399,12 @@ static void padata_init_squeues(struct parallel_data *pd)
- /* Initialize all percpu queues used by parallel workers */
- static void padata_init_pqueues(struct parallel_data *pd)
- {
--	int cpu_index, cpu;
-+	int cpu;
- 	struct padata_parallel_queue *pqueue;
- 
--	cpu_index = 0;
--	for_each_possible_cpu(cpu) {
-+	for_each_cpu(cpu, pd->cpumask.pcpu) {
- 		pqueue = per_cpu_ptr(pd->pqueue, cpu);
- 
--		if (!cpumask_test_cpu(cpu, pd->cpumask.pcpu)) {
--			pqueue->cpu_index = -1;
--			continue;
--		}
--
--		pqueue->cpu_index = cpu_index;
--		cpu_index++;
--
- 		__padata_list_init(&pqueue->reorder);
- 		__padata_list_init(&pqueue->parallel);
- 		INIT_WORK(&pqueue->work, padata_parallel_worker);
--- 
-2.22.0
-
+ config PCI_MSI_IRQ_DOMAIN
+-	def_bool ARC || ARM || ARM64 || X86
++	def_bool ARC || ARM || ARM64 || X86 || RISCV
+ 	depends on PCI_MSI
+ 	select GENERIC_MSI_IRQ_DOMAIN
