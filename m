@@ -2,89 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9880074CCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 13:18:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 811B074CBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 13:17:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404003AbfGYLSX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 07:18:23 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:27299 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403940AbfGYLSX (ORCPT
+        id S2403909AbfGYLRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 07:17:46 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42952 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403888AbfGYLRp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 07:18:23 -0400
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x6PBHwWF009905;
-        Thu, 25 Jul 2019 20:17:58 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x6PBHwWF009905
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1564053478;
-        bh=O99g3Q92gg15AVvJroWDS691IzdWx4FzeR+mRv04QGU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=k7AKJfvT1vp+mEb24/fVQdxbQh+Am+/duUmK4cEfMp/Wk5fD5S5JgFn1u6o+q2h7T
-         vgOWUxseNf9Xb4rK/VJrjj50hFFYi9ouQH04nKCgrZeZorbPMiFIacxufxDhw/7WSE
-         uy/9/aDfS4uO6j9APQObmH8Z5AnTluPcMGtN/tg1iDYTTlVLhQu8Gd1fT0pIovCzET
-         j5MPIsRiIzpXMOs8qJ9rOL7Na4wL+0913MwFK4344KdhrgO9o9XEuigK3e+4B3xxda
-         BydSudCMqbrsvDP0SGgAMyjGqo+Rj1qagmWWuh26dlXISawG2epuIUMmE7IeNwrcEd
-         xmjoSa4Hh13lg==
-X-Nifty-SrcIP: [209.85.217.47]
-Received: by mail-vs1-f47.google.com with SMTP id 2so33420957vso.8;
-        Thu, 25 Jul 2019 04:17:58 -0700 (PDT)
-X-Gm-Message-State: APjAAAWmI9wIzQHkkARTHvkPTaGm/2eWKigMarZKqAXmMjxe+XuxORmW
-        oTKSCKvWT4Kuk9mF3GYf4ZThjCoyEPsCLjk5OgE=
-X-Google-Smtp-Source: APXvYqx210g/x+mN1qIDcqKttYDPVJy8/xhLB8dcLLlGrZ0UyGcV7aFyeOxz1KL+5IklRsyYam3rr6gAuZ0GvNSVnr0=
-X-Received: by 2002:a67:d46:: with SMTP id 67mr55994217vsn.181.1564053477415;
- Thu, 25 Jul 2019 04:17:57 -0700 (PDT)
+        Thu, 25 Jul 2019 07:17:45 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t132so22874257pgb.9
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 04:17:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ceQemw0wuGQ3uiCqTlyBUwO60vemC2ljY3rBL1bAUvc=;
+        b=PFlEvXsHYv4lFKGCCfXZ2BH9B+e/+FJBGpnFm58EL07XzmLkrfPE7grKe+lK7OJ+3q
+         abjryupEyT3OpTe6vXeYbGcL1BUr5elNwdNVi9kwG5uLVwrmRNAlILwAOBEDWE3BDhoL
+         wa/mA/jPR9b/azqkL/67D+Mm2vUNeUnKTr67F6b6zVcvZzUWDrGmaUvbPo48izoM48MU
+         N0VWZj0yxfEFkbETpli1M4tpWnMK/JyQnFJyyMLRYouRu9gpM1Vf3XJFNTnOwCnTu9Ld
+         itsx5ZgymWeM6DKM8q2cX7rBLN4FseRE3aGipc8TJcBEDMtdp1GaAUz+JB2Q86Y09iS0
+         iOkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ceQemw0wuGQ3uiCqTlyBUwO60vemC2ljY3rBL1bAUvc=;
+        b=ntkU+OfoJV1GoRVFj1h1UWPTynWcQ+tA4QKo8IM/MwJ9/ImQs1sW8BbB0a4/Shyu7c
+         XGjnAPw4h7v3N8YCR9dd0IlHMPZtIF27Q+3FyeXkNqyymUzIQXUef+ME6jKDJg5cnXfl
+         UF2ojIkLPKJDN13S+iox2KjA/NibLh/nRSWz6d2CWSpYsHCrjUYmYAByuMzQeVNhCuKw
+         jJW52CmNQffJles+L+NlJRZiVI5Knmxwcrf9/euSBUFlOPJVrcNKT3tZJQgLYFB3L2WD
+         U22srQzzsaLhI5NOb31d089pu9pSR/vePfKym8IVvChsDteyf5GNBfvKErRR9TS0ZHTP
+         M5GQ==
+X-Gm-Message-State: APjAAAVTDhqiJbem6VyVOlfWbiAm8ZKkYJ6dozsghlWeJ2DnYZLlKxZw
+        Yd2OD/5dtipee19NyzIVRvMfjw+GdOYBNm+IoIDpC9uUIQ0=
+X-Google-Smtp-Source: APXvYqzUlCi07nILNklNsNS4HJ/lH+Efr4GjVTNZTHkDEiuYwLiGivIelhkfNGv3x1TCnih2kaTB3NQT1G7052KvmkQ=
+X-Received: by 2002:a17:90a:a116:: with SMTP id s22mr91662102pjp.47.1564053464334;
+ Thu, 25 Jul 2019 04:17:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190725080513.4071-1-yamada.masahiro@socionext.com> <20190725111256.GA30958@kroah.com>
-In-Reply-To: <20190725111256.GA30958@kroah.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 25 Jul 2019 20:17:21 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATcRXT8ptGpPhc4kods65AQsRbz2wmnq5=df35S2aWn7w@mail.gmail.com>
-Message-ID: <CAK7LNATcRXT8ptGpPhc4kods65AQsRbz2wmnq5=df35S2aWn7w@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: detect missing "WITH Linux-syscall-note" for uapi headers
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <cover.1563904656.git.andreyknvl@google.com> <7969018013a67ddbbf784ac7afeea5a57b1e2bcb.1563904656.git.andreyknvl@google.com>
+ <20190724192504.GA5716@ziepe.ca>
+In-Reply-To: <20190724192504.GA5716@ziepe.ca>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Thu, 25 Jul 2019 13:17:32 +0200
+Message-ID: <CAAeHK+x5JFgkLLzhrkQBfa78pkyQXLhgOfXOGuHK=AfwFLHntg@mail.gmail.com>
+Subject: Re: [PATCH v19 11/15] IB/mlx4: untag user pointers in mlx4_get_umem_mr
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        kvm@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 8:13 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+On Wed, Jul 24, 2019 at 9:25 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
 >
-> On Thu, Jul 25, 2019 at 05:05:13PM +0900, Masahiro Yamada wrote:
-> > UAPI headers licensed under GPL are supposed to have exception
-> > "WITH Linux-syscall-note" so that they can be included into non-GPL
-> > user space application code.
+> On Tue, Jul 23, 2019 at 07:58:48PM +0200, Andrey Konovalov wrote:
+> > This patch is a part of a series that extends kernel ABI to allow to pass
+> > tagged user pointers (with the top byte set to something else other than
+> > 0x00) as syscall arguments.
 > >
-> > Unfortunately, people often miss to add it. Break 'make headers'
-> > when any of exported headers lacks the exception note so that the
-> > 0-day bot can easily catch it.
+> > mlx4_get_umem_mr() uses provided user pointers for vma lookups, which can
+> > only by done with untagged pointers.
 > >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > Untag user pointers in this function.
+> >
+> > Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+> > Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 > > ---
-> >
-> > This patch depends on the following:
-> >
-> > https://lore.kernel.org/patchwork/patch/1105289/
-> >
-> > I will turn on the error after all headers are fixed.
+> >  drivers/infiniband/hw/mlx4/mr.c | 7 ++++---
+> >  1 file changed, 4 insertions(+), 3 deletions(-)
 >
-> I've taken the dependancy here in the spdx tree and will send it to
-> Linus for 5.3-rc2.
+> Applied to rdma-for next, please don't sent it via other trees :)
 
-Thanks!
+Sure, thanks!
 
->  I can also take this now through that tree, or you
-> can add it to yours afterward, which ever is easier for you.
-
-I will create a branch on top 5.3-rc2
-and queue this patch by myself.
-
-Thank you.
-
-
--- 
-Best Regards
-Masahiro Yamada
+>
+> Thanks,
+> Jason
