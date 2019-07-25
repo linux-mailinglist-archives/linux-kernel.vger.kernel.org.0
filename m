@@ -2,52 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54E4A753C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:21:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9996753C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:22:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390328AbfGYQVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:21:41 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38227 "EHLO
+        id S2390387AbfGYQWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:22:25 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34375 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389270AbfGYQVl (ORCPT
+        with ESMTP id S2388971AbfGYQWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:21:41 -0400
+        Thu, 25 Jul 2019 12:22:24 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PGLEVd1076251
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PGLxI01076400
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 25 Jul 2019 09:21:14 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PGLEVd1076251
+        Thu, 25 Jul 2019 09:21:59 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PGLxI01076400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564071675;
-        bh=cB9y3PKjHJf+huh/27TkLzlTxt9Hu4k/FtdI8pyOZ6E=;
+        s=2019071901; t=1564071719;
+        bh=QXOXO9wq4aev/cbpwXbEdrVvuV4twTGcbRXaVH2AxoU=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=nsvkcERT34a4HhTO7yIyESkDe4zdWO5FpObrSBN467m/H8f95RdqZouJveqLL9Vtd
-         7DtazP+6vDXFXDGZbHBncqpAz2ICeVlwXL6z9dAbypb3ziNzjuguoHF6EgRpEUzduJ
-         QNYdsFK2FQQA7IljWVPNLywnpt6UyeQWCPu7q3fUr6SnptQ2r8D6pH79MGKULxAUeQ
-         ZKb6ee5IIxBoXsxMfHW+TNjAWSnK9qT3hoadcOZWSv6uz55CIBDL5fvf5Lb+FZCNOV
-         r9D+Yp1qDp+rf+fvRim+WSTk4B5h24J0BG7i9WF0TYMybTOfMKDB/DOBvev/CpGLKb
-         ahbvAJ2ZQsvEg==
+        b=BLnRdG+ljfNmUt1LU427KJWCAwUEPuWWOY+7SapLihk2V4VKgkfKvCX8RM4feWfBG
+         lailTTW8LquR4mXg62u4E3pu8hs+lCqa/5vXQOUufSaMYa6aHTd0834NRu2NmDy9dm
+         muEFMB/9GM/ReZPiCZhoSKGCUjWu78NJqIvV3nxNV+UVGAQwC2eGY+Ir1v/MoLk4JY
+         GhZ1kiVFSPmqARJPdhMtMUCoPyo9xdcI+FGnb749R2vFGwdUQKcD1gA6BQm515LwGq
+         MO2mVxOW/zq5e0jgft3cc/HH3X5UMAFJFqkRG9DH4qSHwNMBKHwpiXv3YATME5dOwH
+         FNFHZpglr10uw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PGLDGg1076243;
-        Thu, 25 Jul 2019 09:21:13 -0700
-Date:   Thu, 25 Jul 2019 09:21:13 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PGLw7l1076397;
+        Thu, 25 Jul 2019 09:21:58 -0700
+Date:   Thu, 25 Jul 2019 09:21:58 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
-Message-ID: <tip-f9a25f776d780bfa3279f0b6e5f5cf3224997976@git.kernel.org>
-Cc:     peterz@infradead.org, hpa@zytor.com, juri.lelli@redhat.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
-        torvalds@linux-foundation.org, mathieu.poirier@linaro.org,
-        dietmar.eggemann@arm.com
-Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
-          tglx@linutronix.de, torvalds@linux-foundation.org,
-          mathieu.poirier@linaro.org, dietmar.eggemann@arm.com,
-          peterz@infradead.org, hpa@zytor.com, juri.lelli@redhat.com
-In-Reply-To: <20190719140000.31694-4-juri.lelli@redhat.com>
-References: <20190719140000.31694-4-juri.lelli@redhat.com>
+From:   tip-bot for Juri Lelli <tipbot@zytor.com>
+Message-ID: <tip-59d06cea1198d665ba11f7e8c5f45b00ff2e4812@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        juri.lelli@redhat.com, peterz@infradead.org,
+        torvalds@linux-foundation.org, dietmar.eggemann@arm.com,
+        tglx@linutronix.de, hpa@zytor.com
+Reply-To: tglx@linutronix.de, dietmar.eggemann@arm.com, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+          peterz@infradead.org, juri.lelli@redhat.com, mingo@kernel.org
+In-Reply-To: <20190719140000.31694-5-juri.lelli@redhat.com>
+References: <20190719140000.31694-5-juri.lelli@redhat.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] cpusets: Rebuild root domain deadline accounting
- information
-Git-Commit-ID: f9a25f776d780bfa3279f0b6e5f5cf3224997976
+Subject: [tip:sched/core] sched/deadline: Fix bandwidth accounting at all
+ levels after offline migration
+Git-Commit-ID: 59d06cea1198d665ba11f7e8c5f45b00ff2e4812
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -65,28 +64,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f9a25f776d780bfa3279f0b6e5f5cf3224997976
-Gitweb:     https://git.kernel.org/tip/f9a25f776d780bfa3279f0b6e5f5cf3224997976
-Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
-AuthorDate: Fri, 19 Jul 2019 15:59:55 +0200
+Commit-ID:  59d06cea1198d665ba11f7e8c5f45b00ff2e4812
+Gitweb:     https://git.kernel.org/tip/59d06cea1198d665ba11f7e8c5f45b00ff2e4812
+Author:     Juri Lelli <juri.lelli@redhat.com>
+AuthorDate: Fri, 19 Jul 2019 15:59:56 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 25 Jul 2019 15:55:01 +0200
+CommitDate: Thu, 25 Jul 2019 15:55:02 +0200
 
-cpusets: Rebuild root domain deadline accounting information
+sched/deadline: Fix bandwidth accounting at all levels after offline migration
 
-When the topology of root domains is modified by CPUset or CPUhotplug
-operations information about the current deadline bandwidth held in the
-root domain is lost.
+If a task happens to be throttled while the CPU it was running on gets
+hotplugged off, the bandwidth associated with the task is not correctly
+migrated with it when the replenishment timer fires (offline_migration).
 
-This patch addresses the issue by recalculating the lost deadline
-bandwidth information by circling through the deadline tasks held in
-CPUsets and adding their current load to the root domain they are
-associated with.
+Fix things up, for this_bw, running_bw and total_bw, when replenishment
+timer fires and task is migrated (dl_task_offline_migration()).
 
 Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-[ Various additional modifications. ]
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
@@ -96,245 +91,64 @@ Cc: claudio@evidence.eu.com
 Cc: lizefan@huawei.com
 Cc: longman@redhat.com
 Cc: luca.abeni@santannapisa.it
+Cc: mathieu.poirier@linaro.org
 Cc: rostedt@goodmis.org
 Cc: tj@kernel.org
 Cc: tommaso.cucinotta@santannapisa.it
-Link: https://lkml.kernel.org/r/20190719140000.31694-4-juri.lelli@redhat.com
+Link: https://lkml.kernel.org/r/20190719140000.31694-5-juri.lelli@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/cgroup.h         |  1 +
- include/linux/sched.h          |  5 ++++
- include/linux/sched/deadline.h |  8 ++++++
- kernel/cgroup/cgroup.c         |  2 +-
- kernel/cgroup/cpuset.c         | 64 +++++++++++++++++++++++++++++++++++++++++-
- kernel/sched/deadline.c        | 30 ++++++++++++++++++++
- kernel/sched/sched.h           |  3 --
- kernel/sched/topology.c        | 13 ++++++++-
- 8 files changed, 120 insertions(+), 6 deletions(-)
+ kernel/sched/deadline.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
-index f6b048902d6c..3ba3e6da13a6 100644
---- a/include/linux/cgroup.h
-+++ b/include/linux/cgroup.h
-@@ -150,6 +150,7 @@ struct task_struct *cgroup_taskset_first(struct cgroup_taskset *tset,
- struct task_struct *cgroup_taskset_next(struct cgroup_taskset *tset,
- 					struct cgroup_subsys_state **dst_cssp);
- 
-+void cgroup_enable_task_cg_lists(void);
- void css_task_iter_start(struct cgroup_subsys_state *css, unsigned int flags,
- 			 struct css_task_iter *it);
- struct task_struct *css_task_iter_next(struct css_task_iter *it);
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 9f51932bd543..b94ad92dfbe6 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -295,6 +295,11 @@ enum uclamp_id {
- 	UCLAMP_CNT
- };
- 
-+#ifdef CONFIG_SMP
-+extern struct root_domain def_root_domain;
-+extern struct mutex sched_domains_mutex;
-+#endif
-+
- struct sched_info {
- #ifdef CONFIG_SCHED_INFO
- 	/* Cumulative counters: */
-diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
-index 0cb034331cbb..1aff00b65f3c 100644
---- a/include/linux/sched/deadline.h
-+++ b/include/linux/sched/deadline.h
-@@ -24,3 +24,11 @@ static inline bool dl_time_before(u64 a, u64 b)
- {
- 	return (s64)(a - b) < 0;
- }
-+
-+#ifdef CONFIG_SMP
-+
-+struct root_domain;
-+extern void dl_add_task_root_domain(struct task_struct *p);
-+extern void dl_clear_root_domain(struct root_domain *rd);
-+
-+#endif /* CONFIG_SMP */
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 753afbca549f..4b5bc452176c 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -1891,7 +1891,7 @@ static int cgroup_reconfigure(struct fs_context *fc)
-  */
- static bool use_task_css_set_links __read_mostly;
- 
--static void cgroup_enable_task_cg_lists(void)
-+void cgroup_enable_task_cg_lists(void)
- {
- 	struct task_struct *p, *g;
- 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 5aa37531ce76..846cbdb68566 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -45,6 +45,7 @@
- #include <linux/proc_fs.h>
- #include <linux/rcupdate.h>
- #include <linux/sched.h>
-+#include <linux/sched/deadline.h>
- #include <linux/sched/mm.h>
- #include <linux/sched/task.h>
- #include <linux/seq_file.h>
-@@ -894,6 +895,67 @@ done:
- 	return ndoms;
- }
- 
-+static void update_tasks_root_domain(struct cpuset *cs)
-+{
-+	struct css_task_iter it;
-+	struct task_struct *task;
-+
-+	css_task_iter_start(&cs->css, 0, &it);
-+
-+	while ((task = css_task_iter_next(&it)))
-+		dl_add_task_root_domain(task);
-+
-+	css_task_iter_end(&it);
-+}
-+
-+static void rebuild_root_domains(void)
-+{
-+	struct cpuset *cs = NULL;
-+	struct cgroup_subsys_state *pos_css;
-+
-+	lockdep_assert_held(&cpuset_mutex);
-+	lockdep_assert_cpus_held();
-+	lockdep_assert_held(&sched_domains_mutex);
-+
-+	cgroup_enable_task_cg_lists();
-+
-+	rcu_read_lock();
-+
-+	/*
-+	 * Clear default root domain DL accounting, it will be computed again
-+	 * if a task belongs to it.
-+	 */
-+	dl_clear_root_domain(&def_root_domain);
-+
-+	cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
-+
-+		if (cpumask_empty(cs->effective_cpus)) {
-+			pos_css = css_rightmost_descendant(pos_css);
-+			continue;
-+		}
-+
-+		css_get(&cs->css);
-+
-+		rcu_read_unlock();
-+
-+		update_tasks_root_domain(cs);
-+
-+		rcu_read_lock();
-+		css_put(&cs->css);
-+	}
-+	rcu_read_unlock();
-+}
-+
-+static void
-+partition_and_rebuild_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
-+				    struct sched_domain_attr *dattr_new)
-+{
-+	mutex_lock(&sched_domains_mutex);
-+	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
-+	rebuild_root_domains();
-+	mutex_unlock(&sched_domains_mutex);
-+}
-+
- /*
-  * Rebuild scheduler domains.
-  *
-@@ -931,7 +993,7 @@ static void rebuild_sched_domains_locked(void)
- 	ndoms = generate_sched_domains(&doms, &attr);
- 
- 	/* Have scheduler rebuild the domains */
--	partition_sched_domains(ndoms, doms, attr);
-+	partition_and_rebuild_sched_domains(ndoms, doms, attr);
- out:
- 	put_online_cpus();
- }
 diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index ef5b9f6b1d42..0f9d2180be23 100644
+index 0f9d2180be23..039dde2b1dac 100644
 --- a/kernel/sched/deadline.c
 +++ b/kernel/sched/deadline.c
-@@ -2283,6 +2283,36 @@ void __init init_sched_dl_class(void)
- 					GFP_KERNEL, cpu_to_node(i));
- }
- 
-+void dl_add_task_root_domain(struct task_struct *p)
-+{
-+	struct rq_flags rf;
-+	struct rq *rq;
+@@ -529,6 +529,7 @@ static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq);
+ static struct rq *dl_task_offline_migration(struct rq *rq, struct task_struct *p)
+ {
+ 	struct rq *later_rq = NULL;
 +	struct dl_bw *dl_b;
+ 
+ 	later_rq = find_lock_later_rq(p, rq);
+ 	if (!later_rq) {
+@@ -557,6 +558,38 @@ static struct rq *dl_task_offline_migration(struct rq *rq, struct task_struct *p
+ 		double_lock_balance(rq, later_rq);
+ 	}
+ 
++	if (p->dl.dl_non_contending || p->dl.dl_throttled) {
++		/*
++		 * Inactive timer is armed (or callback is running, but
++		 * waiting for us to release rq locks). In any case, when it
++		 * will fire (or continue), it will see running_bw of this
++		 * task migrated to later_rq (and correctly handle it).
++		 */
++		sub_running_bw(&p->dl, &rq->dl);
++		sub_rq_bw(&p->dl, &rq->dl);
 +
-+	rq = task_rq_lock(p, &rf);
-+	if (!dl_task(p))
-+		goto unlock;
++		add_rq_bw(&p->dl, &later_rq->dl);
++		add_running_bw(&p->dl, &later_rq->dl);
++	} else {
++		sub_rq_bw(&p->dl, &rq->dl);
++		add_rq_bw(&p->dl, &later_rq->dl);
++	}
 +
++	/*
++	 * And we finally need to fixup root_domain(s) bandwidth accounting,
++	 * since p is still hanging out in the old (now moved to default) root
++	 * domain.
++	 */
 +	dl_b = &rq->rd->dl_bw;
 +	raw_spin_lock(&dl_b->lock);
-+
-+	__dl_add(dl_b, p->dl.dl_bw, cpumask_weight(rq->rd->span));
-+
++	__dl_sub(dl_b, p->dl.dl_bw, cpumask_weight(rq->rd->span));
 +	raw_spin_unlock(&dl_b->lock);
 +
-+unlock:
-+	task_rq_unlock(rq, p, &rf);
-+}
++	dl_b = &later_rq->rd->dl_bw;
++	raw_spin_lock(&dl_b->lock);
++	__dl_add(dl_b, p->dl.dl_bw, cpumask_weight(later_rq->rd->span));
++	raw_spin_unlock(&dl_b->lock);
 +
-+void dl_clear_root_domain(struct root_domain *rd)
-+{
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&rd->dl_bw.lock, flags);
-+	rd->dl_bw.total_bw = 0;
-+	raw_spin_unlock_irqrestore(&rd->dl_bw.lock, flags);
-+}
-+
- #endif /* CONFIG_SMP */
+ 	set_task_cpu(p, later_rq->cpu);
+ 	double_unlock_balance(later_rq, rq);
  
- static void switched_from_dl(struct rq *rq, struct task_struct *p)
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 16126efd14ed..7583faddba33 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -778,9 +778,6 @@ struct root_domain {
- 	struct perf_domain __rcu *pd;
- };
- 
--extern struct root_domain def_root_domain;
--extern struct mutex sched_domains_mutex;
--
- extern void init_defrootdomain(void);
- extern int sched_init_domains(const struct cpumask *cpu_map);
- extern void rq_attach_root(struct rq *rq, struct root_domain *rd);
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 5a174ae6ecf3..8f83e8e3ea9a 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -2203,8 +2203,19 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
- 	for (i = 0; i < ndoms_cur; i++) {
- 		for (j = 0; j < n && !new_topology; j++) {
- 			if (cpumask_equal(doms_cur[i], doms_new[j]) &&
--			    dattrs_equal(dattr_cur, i, dattr_new, j))
-+			    dattrs_equal(dattr_cur, i, dattr_new, j)) {
-+				struct root_domain *rd;
-+
-+				/*
-+				 * This domain won't be destroyed and as such
-+				 * its dl_bw->total_bw needs to be cleared.  It
-+				 * will be recomputed in function
-+				 * update_tasks_root_domain().
-+				 */
-+				rd = cpu_rq(cpumask_any(doms_cur[i]))->rd;
-+				dl_clear_root_domain(rd);
- 				goto match1;
-+			}
- 		}
- 		/* No match - a current sched domain not in new doms_new[] */
- 		detach_destroy_domains(doms_cur[i]);
