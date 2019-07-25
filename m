@@ -2,284 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2BAC74A83
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 11:55:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EE1274B08
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 12:04:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390831AbfGYJzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 05:55:47 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:47872 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729271AbfGYJzp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 05:55:45 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190725095542epoutp031b8cfe1801fccaca41bf13ccd5c91e20~0ndzW5FPg2080620806epoutp03f
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 09:55:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190725095542epoutp031b8cfe1801fccaca41bf13ccd5c91e20~0ndzW5FPg2080620806epoutp03f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1564048542;
-        bh=APvyhy0eQAA2wXp8WTSoXGWXI9/At5nyAp+5gePsgVg=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=h29K8wMHJjYi+fuUrkwfTfFMLgzeOV52qOxzjXWKSsnMJrADIsNojY5pZWFLpkVCh
-         StoScMhnOUGugLejS72qOZp0f2ch+GHsv8oJlIs91Mbm7wLD5QgOGftC7/lA1UrkXt
-         5jBkEm65QeP9piuf1D2JSzmTjGAHWXiD4U/4gDFs=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190725095541epcas1p23ae99ffd69957e3dd1bbbd877aacb535~0ndytmimj0831308313epcas1p2C;
-        Thu, 25 Jul 2019 09:55:41 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.157]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 45vSJW2gBtzMqYkY; Thu, 25 Jul
-        2019 09:55:39 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        15.22.04075.B9C793D5; Thu, 25 Jul 2019 18:55:39 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20190725095538epcas1p323a4e0d70b4a906ffb5927b2e43dc00f~0ndwDjd_B0042800428epcas1p3T;
-        Thu, 25 Jul 2019 09:55:38 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190725095538epsmtrp2fc287fb53405ebd9e0d5370c0341322b~0ndv-668u1824718247epsmtrp2a;
-        Thu, 25 Jul 2019 09:55:38 +0000 (GMT)
-X-AuditID: b6c32a36-b49ff70000000feb-5f-5d397c9baee1
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F9.7C.03706.A9C793D5; Thu, 25 Jul 2019 18:55:38 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190725095538epsmtip2f38872b5e416bf14678ccd1a705babdf~0ndvtvIEv1344113441epsmtip26;
-        Thu, 25 Jul 2019 09:55:38 +0000 (GMT)
-Subject: Re: [PATCH v3 1/5] devfreq: exynos-bus: correct clock enable
- sequence
-To:     k.konieczny@partner.samsung.com
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <9c29db92-2452-0ff3-3ffa-d861e4327bc9@samsung.com>
-Date:   Thu, 25 Jul 2019 18:58:43 +0900
+        id S1728677AbfGYKEM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 06:04:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58932 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725852AbfGYKEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 06:04:11 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F16C885543;
+        Thu, 25 Jul 2019 10:04:10 +0000 (UTC)
+Received: from [10.36.117.212] (ovpn-117-212.ams2.redhat.com [10.36.117.212])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E463410027BE;
+        Thu, 25 Jul 2019 10:04:08 +0000 (UTC)
+Subject: Re: [PATCH v2 2/5] mm,memory_hotplug: Introduce MHP_VMEMMAP_FLAGS
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190625075227.15193-1-osalvador@suse.de>
+ <20190625075227.15193-3-osalvador@suse.de>
+ <CAPcyv4hvu+wp4tJJNW70jp2G_rNabyvzGMvDTS3PzkDCAFztYg@mail.gmail.com>
+ <20190725092751.GA15964@linux>
+ <71a30086-b093-48a4-389f-7e407898718f@redhat.com>
+ <20190725094030.GA16069@linux>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <6410dd7d-bc9c-1ca2-6cb7-d51b059be388@redhat.com>
+Date:   Thu, 25 Jul 2019 12:04:08 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20190719150535.15501-2-k.konieczny@partner.samsung.com>
+In-Reply-To: <20190725094030.GA16069@linux>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIJsWRmVeSWpSXmKPExsWy7bCmge7sGstYg/0XRCw2zljPajH/yDlW
-        i759/xkt+h+/ZrY4f34Du8XZpjfsFpseX2O1uLxrDpvF594jjBYzzu9jslh75C67xdLrF5ks
-        bjeuYLN48+Msk0Xr3iPsFv+ubWSx2PzgGJuDoMeaeWsYPTat6mTz2Lyk3uPguz1MHn1bVjF6
-        HL+xncnj8ya5APaobJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUX
-        nwBdt8wcoA+UFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQWWBXrFibnFpXnpesn5
-        uVaGBgZGpkCFCdkZ/S9XMxVcU6n4e/YqUwPjZZkuRg4OCQETiQ+T5bsYuTiEBHYwSix5eZYV
-        wvnEKDHxyzZmCOcbo0T/1MVAGU6wjjmrVzBCJPYySrw+fxzKec8o8f7fU7AqYYEAiV8LtjKB
-        2CICyhKT700HG8UscJlFYtqjSWBFbAJaEvtf3GADsfkFFCWu/njMCGLzCthJ7H61BizOIqAq
-        0bLmK9ggUYEIiU8PDrNC1AhKnJz5hAXE5hRwlfi/FGIxs4C4xK0n85kgbHmJ5q2zwRZLCJxj
-        l9je3Qz1g4vEvHkwtrDEq+Nb2CFsKYnP7/ayQdjVEitPHmGDaO5glNiy/wJUg7HE/qWTmUDB
-        xyygKbF+lz5EWFFi5++5jBCL+STefe1hhYQwr0RHmxBEibLE5Qd3mSBsSYnF7Z1sExiVZiF5
-        ZxaSF2YheWEWwrIFjCyrGMVSC4pz01OLDQuMkKN7EyM4eWuZ7WBcdM7nEKMAB6MSDy9HkkWs
-        EGtiWXFl7iFGCQ5mJRHewAazWCHelMTKqtSi/Pii0pzU4kOMpsDQnsgsJZqcD8wseSXxhqZG
-        xsbGFiaGZqaGhkrivAt/AM0RSE8sSc1OTS1ILYLpY+LglGpglGZ5qzav4bVdHE9+2RHfqdcs
-        P/X85C35yV7r8cS9e59A0uRDG3gld9d++KvwrY3nV+uUytJczkK/v8/+rhVl27Yg7PPFPRll
-        xb47uBbqPih2TgizOudXxF0ft8utrcFzwdQtsqssDx/mlTsZdNat02Kuk3bx7VC9LOkvZ6M7
-        U6/809i+yyZZiaU4I9FQi7moOBEAFCo0ovQDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsWy7bCSvO6sGstYgy/PNC02zljPajH/yDlW
-        i759/xkt+h+/ZrY4f34Du8XZpjfsFpseX2O1uLxrDpvF594jjBYzzu9jslh75C67xdLrF5ks
-        bjeuYLN48+Msk0Xr3iPsFv+ubWSx2PzgGJuDoMeaeWsYPTat6mTz2Lyk3uPguz1MHn1bVjF6
-        HL+xncnj8ya5APYoLpuU1JzMstQifbsEroz+l6uZCq6pVPw9e5WpgfGyTBcjJ4eEgInEnNUr
-        GLsYuTiEBHYzSrxd38oKkZCUmHbxKHMXIweQLSxx+HAxRM1bRonfy2Yxg9QIC/hJ3JryF6xe
-        REBZYvK96cwgRcwCV1kkzm+cwwbRcZlRYumt+ewgVWwCWhL7X9xgA7H5BRQlrv54zAhi8wrY
-        Sex+tQYsziKgKtGy5isTiC0qECFxeMcsqBpBiZMzn7CA2JwCrhL/lz4F28wsoC7xZ94lZghb
-        XOLWk/lMELa8RPPW2cwTGIVnIWmfhaRlFpKWWUhaFjCyrGKUTC0ozk3PLTYsMMxLLdcrTswt
-        Ls1L10vOz93ECI5jLc0djJeXxB9iFOBgVOLh3RBvESvEmlhWXJl7iFGCg1lJhDewwSxWiDcl
-        sbIqtSg/vqg0J7X4EKM0B4uSOO/TvGORQgLpiSWp2ampBalFMFkmDk6pBkauuJ+VcxmmnDwX
-        w/aWc1G75f1F/YzuHxVSxHK2FCmrea0/W7TwbvPB5SVPKn+ILHa7wMt77tGLwD1Gk1UrPC8U
-        eu6OPeZ7f4VRqGZ98aHzzG75yzLy38ka6Hpvfu67dcd32asffl1aYhprkXdYSmm9yWnBDbe+
-        /Ky3Eqo6n/hM+431tDMTbT8rsRRnJBpqMRcVJwIAF0CQiN8CAAA=
-X-CMS-MailID: 20190725095538epcas1p323a4e0d70b4a906ffb5927b2e43dc00f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190719150553eucas1p1665462f3fc0e06fc9c082e258be3a851
-References: <20190719150535.15501-1-k.konieczny@partner.samsung.com>
-        <CGME20190719150553eucas1p1665462f3fc0e06fc9c082e258be3a851@eucas1p1.samsung.com>
-        <20190719150535.15501-2-k.konieczny@partner.samsung.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 25 Jul 2019 10:04:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kamil,
+On 25.07.19 11:40, Oscar Salvador wrote:
+> On Thu, Jul 25, 2019 at 11:30:23AM +0200, David Hildenbrand wrote:
+>> On 25.07.19 11:27, Oscar Salvador wrote:
+>>> On Wed, Jul 24, 2019 at 01:11:52PM -0700, Dan Williams wrote:
+>>>> On Tue, Jun 25, 2019 at 12:53 AM Oscar Salvador <osalvador@suse.de> wrote:
+>>>>>
+>>>>> This patch introduces MHP_MEMMAP_DEVICE and MHP_MEMMAP_MEMBLOCK flags,
+>>>>> and prepares the callers that add memory to take a "flags" parameter.
+>>>>> This "flags" parameter will be evaluated later on in Patch#3
+>>>>> to init mhp_restrictions struct.
+>>>>>
+>>>>> The callers are:
+>>>>>
+>>>>> add_memory
+>>>>> __add_memory
+>>>>> add_memory_resource
+>>>>>
+>>>>> Unfortunately, we do not have a single entry point to add memory, as depending
+>>>>> on the requisites of the caller, they want to hook up in different places,
+>>>>> (e.g: Xen reserve_additional_memory()), so we have to spread the parameter
+>>>>> in the three callers.
+>>>>>
+>>>>> The flags are either MHP_MEMMAP_DEVICE or MHP_MEMMAP_MEMBLOCK, and only differ
+>>>>> in the way they allocate vmemmap pages within the memory blocks.
+>>>>>
+>>>>> MHP_MEMMAP_MEMBLOCK:
+>>>>>         - With this flag, we will allocate vmemmap pages in each memory block.
+>>>>>           This means that if we hot-add a range that spans multiple memory blocks,
+>>>>>           we will use the beginning of each memory block for the vmemmap pages.
+>>>>>           This strategy is good for cases where the caller wants the flexiblity
+>>>>>           to hot-remove memory in a different granularity than when it was added.
+>>>>>
+>>>>>           E.g:
+>>>>>                 We allocate a range (x,y], that spans 3 memory blocks, and given
+>>>>>                 memory block size = 128MB.
+>>>>>                 [memblock#0  ]
+>>>>>                 [0 - 511 pfns      ] - vmemmaps for section#0
+>>>>>                 [512 - 32767 pfns  ] - normal memory
+>>>>>
+>>>>>                 [memblock#1 ]
+>>>>>                 [32768 - 33279 pfns] - vmemmaps for section#1
+>>>>>                 [33280 - 65535 pfns] - normal memory
+>>>>>
+>>>>>                 [memblock#2 ]
+>>>>>                 [65536 - 66047 pfns] - vmemmap for section#2
+>>>>>                 [66048 - 98304 pfns] - normal memory
+>>>>>
+>>>>> MHP_MEMMAP_DEVICE:
+>>>>>         - With this flag, we will store all vmemmap pages at the beginning of
+>>>>>           hot-added memory.
+>>>>>
+>>>>>           E.g:
+>>>>>                 We allocate a range (x,y], that spans 3 memory blocks, and given
+>>>>>                 memory block size = 128MB.
+>>>>>                 [memblock #0 ]
+>>>>>                 [0 - 1533 pfns    ] - vmemmap for section#{0-2}
+>>>>>                 [1534 - 98304 pfns] - normal memory
+>>>>>
+>>>>> When using larger memory blocks (1GB or 2GB), the principle is the same.
+>>>>>
+>>>>> Of course, MHP_MEMMAP_DEVICE is nicer when it comes to have a large contigous
+>>>>> area, while MHP_MEMMAP_MEMBLOCK allows us to have flexibility when removing the
+>>>>> memory.
+>>>>
+>>>> Concept and patch looks good to me, but I don't quite like the
+>>>> proliferation of the _DEVICE naming, in theory it need not necessarily
+>>>> be ZONE_DEVICE that is the only user of that flag. I also think it
+>>>> might be useful to assign a flag for the default 'allocate from RAM'
+>>>> case, just so the code is explicit. So, how about:
+>>>
+>>> Well, MHP_MEMMAP_DEVICE is not tied to ZONE_DEVICE.
+>>> MHP_MEMMAP_DEVICE was chosen to make a difference between:
+>>>
+>>>  * allocate memmap pages for the whole memory-device
+>>>  * allocate memmap pages on each memoryblock that this memory-device spans
+>>
+>> I agree that DEVICE is misleading here, you are assuming a one-to-one
+>> mapping between a device and add_memory(). You are actually taliing
+>> about "allocate a single chunk of mmap pages for the whole memory range
+>> that is added - which could consist of multiple memory blocks".
+> 
+> Well, I could not come up with a better name.
+> 
+> MHP_MEMMAP_ALL?
+> MHP_MEMMAP_WHOLE?
 
-On 19. 7. 20. 오전 12:05, k.konieczny@partner.samsung.com wrote:
-> Regulators should be enabled before clocks to avoid h/w hang. This
-> require change in exynos_bus_probe() to move exynos_bus_parse_of()
-> after exynos_bus_parent_parse_of() and change in enabling sequence
-> of regulator and clock in exynos_bus_parse_of(). Similar change is
-> needed in exynos_bus_exit() where clock should be disabled first.
-> 
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> ---
-> This patch is new to this series.
-> 
-> ---
->  drivers/devfreq/exynos-bus.c | 58 ++++++++++++++++++++----------------
->  1 file changed, 32 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-> index 486cc5b422f1..f391044aa39d 100644
-> --- a/drivers/devfreq/exynos-bus.c
-> +++ b/drivers/devfreq/exynos-bus.c
-> @@ -194,11 +194,11 @@ static void exynos_bus_exit(struct device *dev)
->  	if (ret < 0)
->  		dev_warn(dev, "failed to disable the devfreq-event devices\n");
->  
-> +	clk_disable_unprepare(bus->clk);
->  	if (bus->regulator)
->  		regulator_disable(bus->regulator);
->  
->  	dev_pm_opp_of_remove_table(dev);
-> -	clk_disable_unprepare(bus->clk);
->  }
->  
->  /*
-> @@ -326,8 +326,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
->  	return ret;
->  }
->  
-> -static int exynos_bus_parse_of(struct device_node *np,
-> -			      struct exynos_bus *bus)
-> +static int exynos_bus_parse_of(struct exynos_bus *bus)
->  {
->  	struct device *dev = bus->dev;
->  	struct dev_pm_opp *opp;
-> @@ -341,36 +340,35 @@ static int exynos_bus_parse_of(struct device_node *np,
->  		return PTR_ERR(bus->clk);
->  	}
->  
-> -	ret = clk_prepare_enable(bus->clk);
-> +	/* Get the freq and voltage from OPP table to scale the bus freq */
-> +	ret = dev_pm_opp_of_add_table(dev);
->  	if (ret < 0) {
-> -		dev_err(dev, "failed to get enable clock\n");
-> +		dev_err(dev, "failed to get OPP table\n");
->  		return ret;
->  	}
->  
-> -	/* Get the freq and voltage from OPP table to scale the bus freq */
-> -	ret = dev_pm_opp_of_add_table(dev);
-> +	ret = clk_prepare_enable(bus->clk);
->  	if (ret < 0) {
-> -		dev_err(dev, "failed to get OPP table\n");
-> +		dev_err(dev, "failed to enable clock\n");
->  		goto err_clk;
->  	}
-> -
->  	rate = clk_get_rate(bus->clk);
->  
->  	opp = devfreq_recommended_opp(dev, &rate, 0);
->  	if (IS_ERR(opp)) {
->  		dev_err(dev, "failed to find dev_pm_opp\n");
->  		ret = PTR_ERR(opp);
-> -		goto err_opp;
-> +		goto err;
->  	}
->  	bus->curr_freq = dev_pm_opp_get_freq(opp);
->  	dev_pm_opp_put(opp);
->  
->  	return 0;
->  
-> -err_opp:
-> -	dev_pm_opp_of_remove_table(dev);
-> -err_clk:
-> +err:
->  	clk_disable_unprepare(bus->clk);
-> +err_clk:
-> +	dev_pm_opp_of_remove_table(dev);
->  
->  	return ret;
->  }
-> @@ -386,6 +384,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
->  	struct exynos_bus *bus;
->  	int ret, max_state;
->  	unsigned long min_freq, max_freq;
-> +	bool passive = false;
->  
->  	if (!np) {
->  		dev_err(dev, "failed to find devicetree node\n");
-> @@ -399,27 +398,31 @@ static int exynos_bus_probe(struct platform_device *pdev)
->  	bus->dev = &pdev->dev;
->  	platform_set_drvdata(pdev, bus);
->  
-> -	/* Parse the device-tree to get the resource information */
-> -	ret = exynos_bus_parse_of(np, bus);
-> -	if (ret < 0)
-> -		return ret;
-> -
->  	profile = devm_kzalloc(dev, sizeof(*profile), GFP_KERNEL);
-> -	if (!profile) {
-> -		ret = -ENOMEM;
-> -		goto err;
-> -	}
-> +	if (!profile)
-> +		return -ENOMEM;
->  
->  	node = of_parse_phandle(dev->of_node, "devfreq", 0);
->  	if (node) {
->  		of_node_put(node);
-> -		goto passive;
-> +		passive = true;
->  	} else {
->  		ret = exynos_bus_parent_parse_of(np, bus);
-> +		if (ret < 0)
-> +			return ret;
->  	}
->  
-> -	if (ret < 0)
-> -		goto err;
-> +	/* Parse the device-tree to get the resource information */
-> +	ret = exynos_bus_parse_of(bus);
-> +	if (ret < 0) {
-> +		if (!passive)
-> +			regulator_disable(bus->regulator);
-> +
-> +		return ret;
-> +	}
-> +
-> +	if (passive)
-> +		goto passive;
->  
->  	/* Initialize the struct profile and governor data for parent device */
->  	profile->polling_ms = 50;
-> @@ -508,8 +511,11 @@ static int exynos_bus_probe(struct platform_device *pdev)
->  	return 0;
->  
->  err:
-> -	dev_pm_opp_of_remove_table(dev);
->  	clk_disable_unprepare(bus->clk);
-> +	if (!passive)
-> +		regulator_disable(bus->regulator);
-> +
-> +	dev_pm_opp_of_remove_table(dev);
->  
->  	return ret;
->  }
-> 
+As I said somewhere already (as far as I recall), one mode would be
+sufficient. If you want per memblock, add the memory in memblock
+granularity.
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+So having a MHP_MEMMAP_ON_MEMORY that allocates it in one chunk would be
+sufficient for the current use cases (DIMMs, Hyper-V).
+
+MHP_MEMMAP_ON_MEMORY: Allocate the memmap for the added memory in one
+chunk from the beginning of the added memory. This piece of memory will
+be accessed and used even before the memory is onlined.
+
+Of course, if we want to make it configurable (e.g., for ACPI) it would
+be a different story. But for now this isn't really needed as far as I
+can tell.
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+
+Thanks,
+
+David / dhildenb
