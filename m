@@ -2,299 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D250745F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:48:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 689507460F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:49:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728625AbfGYFr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:47:57 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:59746 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391475AbfGYFqv (ORCPT
+        id S2405348AbfGYFso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:48:44 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:42659 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726312AbfGYFsi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:46:51 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6P5ha6R195564;
-        Thu, 25 Jul 2019 05:46:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=O4N6qo0H8+pxgThdRlquGYN/8UdP1TMUlHR6Uew3RGM=;
- b=kcP3nyGbdvfWXEAo2NKmUD36GUr+SUWp0ujQP6SQBvWfDacDVXdAEqMbbdk3f+2/LIpB
- FuFGiEmZNVP77a33FZ8RexCDazhGl6/coROWJaHWUqRdEHZo4OnuUX4Uyj5OnRDLWfjH
- bPB0cc8lDhDYJwzATLR+Wi9yMTf6YV+28gu6CUPyEZ/p0rpIazFji09KQtmO/mkpUrDs
- UAg1vhZxGQ45a5w6LKqrAls8DT2OqIWSJl8Mpsv04pdiFuIj++9iQcRV1uXeohUNTDIc
- Tlh8TzxOeks5E0tMZHd+x+FCrFcT6N9gnebeyUyjPU0xEXs0zZik/401xIwrw+5oOTsU Ww== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2tx61c1g8m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Jul 2019 05:46:45 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6P5h7nE110767;
-        Thu, 25 Jul 2019 05:46:44 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2tx60xm1wa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Jul 2019 05:46:44 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6P5khWC020893;
-        Thu, 25 Jul 2019 05:46:43 GMT
-Received: from [10.159.158.5] (/10.159.158.5)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 24 Jul 2019 22:46:42 -0700
-Subject: Re: [PATCH v2 1/1] mm/memory-failure: Poison read receives SIGKILL
- instead of SIGBUS if mmaped more than once
-To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
-References: <1564007603-9655-1-git-send-email-jane.chu@oracle.com>
- <1564007603-9655-2-git-send-email-jane.chu@oracle.com>
- <20190724234318.GA21820@hori.linux.bs1.fc.nec.co.jp>
-From:   Jane Chu <jane.chu@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <3fa73abd-225c-cc71-719d-7ee296867ad4@oracle.com>
-Date:   Wed, 24 Jul 2019 22:46:31 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 25 Jul 2019 01:48:38 -0400
+Received: by mail-yw1-f65.google.com with SMTP id z63so18881623ywz.9;
+        Wed, 24 Jul 2019 22:48:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ydVv4zA+/+sIts4hNM+2vqi1osfpHO63Y+XbeZJumzQ=;
+        b=eMmatGNUa8boqLelfvO399Vaw7UDGMefdLOheQGuVFAtZRiS+0hM3D/WhDoEBh7LZF
+         5zqXwfBghsOS06xidCuUA6APv+qHY+sSnZZNDlzZJWYrqf2BiYXctFNS/yxmY711PtFG
+         IWgFWDmnuUgGwasEeMpv9eA7sjmLOJHA2+crDowIEgTLQsHo6Ekx92AUXEm1u5Yr8+mg
+         ihfj4O2KXWlwFHMo0sRA2CW8SrZoUoBYwhGbparm9CvKSMF2iW0vlVQXgK71q3PjawsP
+         WzXjORimQKp2Yw9LTumnIs2xfI9AKyZDG0NKck4F89IqTHwsYryJ4g1kLPlWo3UVAHEL
+         5bZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ydVv4zA+/+sIts4hNM+2vqi1osfpHO63Y+XbeZJumzQ=;
+        b=kWZ0w7Czdt0yKWQsq+n1drCBXjgia9VgR9YEUK0PH4VxLQD83RrqtsbHQyeZv+z9fd
+         cYFxth9WMj9q+WbqQ+jD91gk8b1xc1lIU87/+6v0HfOEO2qLVRX97VmUSrgJifppHiJD
+         EmSps3PYNTd9kph5MPApJifpyON+p3PJo6CbwSG3czcS8irJMNKN54z0b0ScIYellM+B
+         IojP6Kp/s1SQzD9WKreyB1DITXSYJaFZRyfziGknVIJMQxUnH0hZJogA9q55XuNWdaIy
+         Tb3LPQ5OrzJgA0SRk9beUb+S+9M/S/ubIBboySmetqW69lJ2PuZe6LNbPdyfj1TDpc7B
+         +KAA==
+X-Gm-Message-State: APjAAAWVWPLXs2jrZjOOnhqZ158CN5eza3/nXbqz1IBki//JXzeIo82n
+        5oVBDCxd8+oYaXDNxRYZWWunrHyaR4XhaGV3PDU=
+X-Google-Smtp-Source: APXvYqwCWRfdEVOKSFGgonpy6tDpp/BmVqyzmoFoc2iB9nt8WEi3TpUUme9/UMcfFea8WSzFjJ6AXqz2ZkRNyM9GVXc=
+X-Received: by 2002:a81:13d4:: with SMTP id 203mr52608843ywt.181.1564033717094;
+ Wed, 24 Jul 2019 22:48:37 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190724234318.GA21820@hori.linux.bs1.fc.nec.co.jp>
-Content-Type: text/plain; charset=iso-2022-jp; format=flowed; delsp=yes
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9328 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1907250068
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9328 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1907250068
+References: <20190724195719.218307-1-salyzyn@android.com> <20190724195719.218307-4-salyzyn@android.com>
+In-Reply-To: <20190724195719.218307-4-salyzyn@android.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 25 Jul 2019 08:48:26 +0300
+Message-ID: <CAOQ4uxjizC1RhmLe3qmfASk2M-Y+QEiyLL1yJXa4zXAEby7Tig@mail.gmail.com>
+Subject: Re: [PATCH v10 3/5] overlayfs: add __get xattr method
+To:     Mark Salyzyn <salyzyn@android.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-team@android.com, Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jul 24, 2019 at 10:57 PM Mark Salyzyn <salyzyn@android.com> wrote:
+>
+> Because of the overlayfs getxattr recursion, the incoming inode fails
+> to update the selinux sid resulting in avc denials being reported
+> against a target context of u:object_r:unlabeled:s0.
+
+This description is too brief for me to understand the root problem.
+What's wring with the overlayfs getxattr recursion w.r.t the selinux
+security model?
+
+Please give an example of your unprivileged mounter use case
+to explain.
+
+CC Vivek because I could really never understand all this.
+
+>
+> Solution is to add a _get xattr method that calls the __vfs_getxattr
+> handler so that the context can be read in, rather than being denied
+> with an -EACCES when vfs_getxattr handler is called.
+>
+> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Stephen Smalley <sds@tycho.nsa.gov>
+> Cc: linux-unionfs@vger.kernel.org
+> Cc: linux-doc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: kernel-team@android.com
+> ---
+> v10 - added to patch series
+> ---
+>  fs/overlayfs/inode.c     | 15 +++++++++++++++
+>  fs/overlayfs/overlayfs.h |  2 ++
+>  fs/overlayfs/super.c     | 18 ++++++++++++++++++
+>  3 files changed, 35 insertions(+)
+>
+> diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+> index 7663aeb85fa3..d3b53849615c 100644
+> --- a/fs/overlayfs/inode.c
+> +++ b/fs/overlayfs/inode.c
+> @@ -362,6 +362,21 @@ int ovl_xattr_set(struct dentry *dentry, struct inode *inode, const char *name,
+>         return err;
+>  }
+>
+> +int __ovl_xattr_get(struct dentry *dentry, struct inode *inode,
+> +                   const char *name, void *value, size_t size)
+> +{
+> +       ssize_t res;
+> +       const struct cred *old_cred;
+> +       struct dentry *realdentry =
+> +               ovl_i_dentry_upper(inode) ?: ovl_dentry_lower(dentry);
+> +
+> +       old_cred = ovl_override_creds(dentry->d_sb);
+> +       res = __vfs_getxattr(realdentry, d_inode(realdentry), name, value,
+> +                            size);
+> +       ovl_revert_creds(old_cred);
+> +       return res;
+> +}
+> +
+>  int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char *name,
+>                   void *value, size_t size)
+>  {
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index 6934bcf030f0..73a02a263fbc 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -357,6 +357,8 @@ int ovl_xattr_set(struct dentry *dentry, struct inode *inode, const char *name,
+>                   const void *value, size_t size, int flags);
+>  int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char *name,
+>                   void *value, size_t size);
+> +int __ovl_xattr_get(struct dentry *dentry, struct inode *inode,
+> +                   const char *name, void *value, size_t size);
+>  ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size);
+>  struct posix_acl *ovl_get_acl(struct inode *inode, int type);
+>  int ovl_update_time(struct inode *inode, struct timespec64 *ts, int flags);
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index b368e2e102fa..82e1130de206 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -859,6 +859,14 @@ ovl_posix_acl_xattr_get(const struct xattr_handler *handler,
+>         return ovl_xattr_get(dentry, inode, handler->name, buffer, size);
+>  }
+>
+> +static int __maybe_unused
+> +__ovl_posix_acl_xattr_get(const struct xattr_handler *handler,
+> +                         struct dentry *dentry, struct inode *inode,
+> +                         const char *name, void *buffer, size_t size)
+> +{
+> +       return __ovl_xattr_get(dentry, inode, handler->name, buffer, size);
+> +}
+> +
+>  static int __maybe_unused
+>  ovl_posix_acl_xattr_set(const struct xattr_handler *handler,
+>                         struct dentry *dentry, struct inode *inode,
+> @@ -939,6 +947,13 @@ static int ovl_other_xattr_get(const struct xattr_handler *handler,
+>         return ovl_xattr_get(dentry, inode, name, buffer, size);
+>  }
+>
+> +static int __ovl_other_xattr_get(const struct xattr_handler *handler,
+> +                                struct dentry *dentry, struct inode *inode,
+> +                                const char *name, void *buffer, size_t size)
+> +{
+> +       return __ovl_xattr_get(dentry, inode, name, buffer, size);
+> +}
+> +
+>  static int ovl_other_xattr_set(const struct xattr_handler *handler,
+>                                struct dentry *dentry, struct inode *inode,
+>                                const char *name, const void *value,
+> @@ -952,6 +967,7 @@ ovl_posix_acl_access_xattr_handler = {
+>         .name = XATTR_NAME_POSIX_ACL_ACCESS,
+>         .flags = ACL_TYPE_ACCESS,
+>         .get = ovl_posix_acl_xattr_get,
+> +       .__get = __ovl_posix_acl_xattr_get,
+>         .set = ovl_posix_acl_xattr_set,
+>  };
+>
+> @@ -960,6 +976,7 @@ ovl_posix_acl_default_xattr_handler = {
+>         .name = XATTR_NAME_POSIX_ACL_DEFAULT,
+>         .flags = ACL_TYPE_DEFAULT,
+>         .get = ovl_posix_acl_xattr_get,
+> +       .__get = __ovl_posix_acl_xattr_get,
+>         .set = ovl_posix_acl_xattr_set,
+>  };
+>
+> @@ -972,6 +989,7 @@ static const struct xattr_handler ovl_own_xattr_handler = {
+>  static const struct xattr_handler ovl_other_xattr_handler = {
+>         .prefix = "", /* catch all */
+>         .get = ovl_other_xattr_get,
+> +       .__get = __ovl_other_xattr_get,
+>         .set = ovl_other_xattr_set,
+>  };
+>
 
 
-On 7/24/2019 4:43 PM, Naoya Horiguchi wrote:
-> On Wed, Jul 24, 2019 at 04:33:23PM -0600, Jane Chu wrote:
->> Mmap /dev/dax more than once, then read the poison location using address
->> from one of the mappings. The other mappings due to not having the page
->> mapped in will cause SIGKILLs delivered to the process. SIGKILL succeeds
->> over SIGBUS, so user process looses the opportunity to handle the UE.
->>
->> Although one may add MAP_POPULATE to mmap(2) to work around the issue,
->> MAP_POPULATE makes mapping 128GB of pmem several magnitudes slower, so
->> isn't always an option.
->>
->> Details -
->>
->> ndctl inject-error --block=10 --count=1 namespace6.0
->>
->> ./read_poison -x dax6.0 -o 5120 -m 2
->> mmaped address 0x7f5bb6600000
->> mmaped address 0x7f3cf3600000
->> doing local read at address 0x7f3cf3601400
->> Killed
->>
->> Console messages in instrumented kernel -
->>
->> mce: Uncorrected hardware memory error in user-access at edbe201400
->> Memory failure: tk->addr = 7f5bb6601000
->> Memory failure: address edbe201: call dev_pagemap_mapping_shift
->> dev_pagemap_mapping_shift: page edbe201: no PUD
->> Memory failure: tk->size_shift == 0
->> Memory failure: Unable to find user space address edbe201 in read_poison
->> Memory failure: tk->addr = 7f3cf3601000
->> Memory failure: address edbe201: call dev_pagemap_mapping_shift
->> Memory failure: tk->size_shift = 21
->> Memory failure: 0xedbe201: forcibly killing read_poison:22434 because of failure to unmap corrupted page
->>    => to deliver SIGKILL
->> Memory failure: 0xedbe201: Killing read_poison:22434 due to hardware memory corruption
->>    => to deliver SIGBUS
->>
->> Signed-off-by: Jane Chu <jane.chu@oracle.com>
->> Suggested-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
->> ---
->>   mm/memory-failure.c | 62 ++++++++++++++++++++++-------------------------------
->>   1 file changed, 26 insertions(+), 36 deletions(-)
->>
->> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->> index d9cc660..bd4db33 100644
->> --- a/mm/memory-failure.c
->> +++ b/mm/memory-failure.c
->> @@ -199,7 +199,6 @@ struct to_kill {
->>   	struct task_struct *tsk;
->>   	unsigned long addr;
->>   	short size_shift;
->> -	char addr_valid;
->>   };
->>   
->>   /*
->> @@ -304,43 +303,43 @@ static unsigned long dev_pagemap_mapping_shift(struct page *page,
->>   /*
->>    * Schedule a process for later kill.
->>    * Uses GFP_ATOMIC allocations to avoid potential recursions in the VM.
->> - * TBD would GFP_NOIO be enough?
->>    */
->>   static void add_to_kill(struct task_struct *tsk, struct page *p,
->>   		       struct vm_area_struct *vma,
->> -		       struct list_head *to_kill,
->> -		       struct to_kill **tkc)
->> +		       struct list_head *to_kill)
->>   {
->>   	struct to_kill *tk;
->>   
->> -	if (*tkc) {
->> -		tk = *tkc;
->> -		*tkc = NULL;
->> -	} else {
->> -		tk = kmalloc(sizeof(struct to_kill), GFP_ATOMIC);
->> -		if (!tk) {
->> -			pr_err("Memory failure: Out of memory while machine check handling\n");
->> -			return;
->> -		}
->> +	tk = kmalloc(sizeof(struct to_kill), GFP_ATOMIC);
->> +	if (!tk) {
->> +		pr_err("Memory failure: Out of memory while machine check handling\n");
->> +		return;
-> 
-> As Dan pointed out, the cleanup part can be delivered as a separate patch.
+Not very professional of me to comment on the proposed solution
+without understanding the problem, but my nose says this cannot
+be the right solution and if it is, then you better find a much better
+name for the API then __get() and document it properly.
 
-My bad, will take care splitting up the patch.
-
-> 
->>   	}
->> +
->>   	tk->addr = page_address_in_vma(p, vma);
->> -	tk->addr_valid = 1;
->>   	if (is_zone_device_page(p))
->>   		tk->size_shift = dev_pagemap_mapping_shift(p, vma);
->>   	else
->>   		tk->size_shift = compound_order(compound_head(p)) + PAGE_SHIFT;
->>   
->>   	/*
->> -	 * In theory we don't have to kill when the page was
->> -	 * munmaped. But it could be also a mremap. Since that's
->> -	 * likely very rare kill anyways just out of paranoia, but use
->> -	 * a SIGKILL because the error is not contained anymore.
->> +	 * Send SIGKILL if "tk->addr == -EFAULT". Also, as
->> +	 * "tk->size_shift" is always non-zero for !is_zone_device_page(),
->> +	 * so "tk->size_shift == 0" effectively checks no mapping on
->> +	 * ZONE_DEVICE. Indeed, when a devdax page is mmapped N times
->> +	 * to a process' address space, it's possible not all N VMAs
->> +	 * contain mappings for the page, but at least one VMA does.
->> +	 * Only deliver SIGBUS with payload derived from the VMA that
->> +	 * has a mapping for the page.
-> 
-> OK, so SIGBUSs are sent M times (where M is the number of mappings
-> for the page). Then I'm convinced that we need "else if" block below.
-
-Yes. I run read_poison that mmaps /dev/dax 4 times with MAPS_POPULATE flag
-set, so the kernel attempted sending SIGBUS 4 times.
-One time, while the poison was consumed at uaddr[1] (2nd mmap), but the
-SIGBUS payload indicated the si_addr was uaddr[3] (4th mmap).
-
-thanks!
--jane
-
-
-> 
-> Thanks,
-> Naoya Horiguchi
-> 
->>   	 */
->> -	if (tk->addr == -EFAULT || tk->size_shift == 0) {
->> +	if (tk->addr == -EFAULT) {
->>   		pr_info("Memory failure: Unable to find user space address %lx in %s\n",
->>   			page_to_pfn(p), tsk->comm);
->> -		tk->addr_valid = 0;
->> +	} else if (tk->size_shift == 0) {
->> +		kfree(tk);
->> +		return;
->>   	}
->> +
->>   	get_task_struct(tsk);
->>   	tk->tsk = tsk;
->>   	list_add_tail(&tk->nd, to_kill);
->> @@ -366,7 +365,7 @@ static void kill_procs(struct list_head *to_kill, int forcekill, bool fail,
->>   			 * make sure the process doesn't catch the
->>   			 * signal and then access the memory. Just kill it.
->>   			 */
->> -			if (fail || tk->addr_valid == 0) {
->> +			if (fail || tk->addr == -EFAULT) {
->>   				pr_err("Memory failure: %#lx: forcibly killing %s:%d because of failure to unmap corrupted page\n",
->>   				       pfn, tk->tsk->comm, tk->tsk->pid);
->>   				do_send_sig_info(SIGKILL, SEND_SIG_PRIV,
->> @@ -432,7 +431,7 @@ static struct task_struct *task_early_kill(struct task_struct *tsk,
->>    * Collect processes when the error hit an anonymous page.
->>    */
->>   static void collect_procs_anon(struct page *page, struct list_head *to_kill,
->> -			      struct to_kill **tkc, int force_early)
->> +				int force_early)
->>   {
->>   	struct vm_area_struct *vma;
->>   	struct task_struct *tsk;
->> @@ -457,7 +456,7 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
->>   			if (!page_mapped_in_vma(page, vma))
->>   				continue;
->>   			if (vma->vm_mm == t->mm)
->> -				add_to_kill(t, page, vma, to_kill, tkc);
->> +				add_to_kill(t, page, vma, to_kill);
->>   		}
->>   	}
->>   	read_unlock(&tasklist_lock);
->> @@ -468,7 +467,7 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
->>    * Collect processes when the error hit a file mapped page.
->>    */
->>   static void collect_procs_file(struct page *page, struct list_head *to_kill,
->> -			      struct to_kill **tkc, int force_early)
->> +				int force_early)
->>   {
->>   	struct vm_area_struct *vma;
->>   	struct task_struct *tsk;
->> @@ -492,7 +491,7 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
->>   			 * to be informed of all such data corruptions.
->>   			 */
->>   			if (vma->vm_mm == t->mm)
->> -				add_to_kill(t, page, vma, to_kill, tkc);
->> +				add_to_kill(t, page, vma, to_kill);
->>   		}
->>   	}
->>   	read_unlock(&tasklist_lock);
->> @@ -501,26 +500,17 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
->>   
->>   /*
->>    * Collect the processes who have the corrupted page mapped to kill.
->> - * This is done in two steps for locking reasons.
->> - * First preallocate one tokill structure outside the spin locks,
->> - * so that we can kill at least one process reasonably reliable.
->>    */
->>   static void collect_procs(struct page *page, struct list_head *tokill,
->>   				int force_early)
->>   {
->> -	struct to_kill *tk;
->> -
->>   	if (!page->mapping)
->>   		return;
->>   
->> -	tk = kmalloc(sizeof(struct to_kill), GFP_NOIO);
->> -	if (!tk)
->> -		return;
->>   	if (PageAnon(page))
->> -		collect_procs_anon(page, tokill, &tk, force_early);
->> +		collect_procs_anon(page, tokill, force_early);
->>   	else
->> -		collect_procs_file(page, tokill, &tk, force_early);
->> -	kfree(tk);
->> +		collect_procs_file(page, tokill, force_early);
->>   }
->>   
->>   static const char *action_name[] = {
->> -- 
->> 1.8.3.1
->>
->>
+Thanks,
+Amir.
