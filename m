@@ -2,84 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 902C174CAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 13:16:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BE4874CB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 13:16:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391689AbfGYLP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 07:15:57 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41680 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388791AbfGYLP4 (ORCPT
+        id S2391716AbfGYLQd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 07:16:33 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37862 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388479AbfGYLQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 07:15:56 -0400
-Received: by mail-lf1-f68.google.com with SMTP id 62so29371169lfa.8;
-        Thu, 25 Jul 2019 04:15:55 -0700 (PDT)
+        Thu, 25 Jul 2019 07:16:33 -0400
+Received: by mail-lf1-f65.google.com with SMTP id c9so34202265lfh.4
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 04:16:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QstKujjss/0DVnYAF/0TqP63JHZfB86wUYC2n+CaVaw=;
-        b=sezAG8uN4ojmh3KX81i1yVQrYSLC3CO86FTiakafuU/O4OR/mAhXKmyIRLIwOPSWBN
-         gwfnZ9xQNuo3CdKoQEareQCWp+6CRxX5F2Dol1OY42Il+hKQMEFTY6FvDgUDqml3ODEV
-         lN4rcwJklFe1PhU1o7KRt8RRc+FXrUHbNLbElhkWnTh4bcbK1SHAZuEwn4/v/ll1xjFU
-         72insAs7hQt3uSKXkZJIAMcobzxMSEqc5E7I3ND6FQR9Wm398NxHKnexAzk9tWo9J0FZ
-         pyDUkFVxsRWJ0l2PFXAYdIpI7dOCcC17m1Sr5XM+9UZ3+YkcMiSqtWk8mRT2ZEmfm+Fg
-         tM6g==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=0U3JNBmNGYy0aqS1fsdwYku9ZRDxCCZwgG78ptzr3/s=;
+        b=sPTFxew2HVdu5JYRV5YO/NUgdrasvKQ+2+/g+OQiWM2wL6nRSGlCQdjNlv1qdjFNwI
+         nVadL2bFBk8wbP2jGGsefYXpmS8Xw2647+VU+WAklkXrHqbX3KjgeISof/YsyX8QRRFk
+         wqTB+ipAZ0PL6X20wB2XEuyKPU3oDVcmZDYFu1qPNIuFCAq5JahdkrYK2ct3wVY6FlA3
+         ffAVw9/DVvSNcO1RJv7qlBl4cBle25tgkCZaR1k9379tRO4UqLbk5Lv5FDq65yaPRE9z
+         PuI4h7yCkEBODiN8cnW468URr2Jl/l8/zcHo3tGkx5Kmab4NT6kafF1zLKRA6wJBQZXz
+         s+tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QstKujjss/0DVnYAF/0TqP63JHZfB86wUYC2n+CaVaw=;
-        b=g2H0dZ0yGWOEgilI29rmciABP3h+O60bECRO7maE+sox2WPOibOmZSrT2NijAwIaGh
-         rC/k2tmn8vmO5BWkzP7zK9yQGlU7FYs6QHN+E/bAaPfn75sVy/paU5BEfBMeY9lIoOLZ
-         JUDNWt9o8dV4Cjg5yt8CXB1uzZGkFEDCm4EjRrEaD2UXJw7AsLypGUYJHc3OLgQs8VW6
-         YFcvNOQp/o6N8CbQwDuPHGCgWs0pGsqEmAHKQ8F68o9Dpk60RoRAIW6+Ut1PtPwfwEUb
-         nqa41TByOAbrOBbTO8blExuYw05FVV7zyahfHARnYE8djruaMVYszs8VuA3MugKw2pNs
-         iYDw==
-X-Gm-Message-State: APjAAAWnfk0oDTdQo6Ds2XlMQ9+vZYmz26f7aeXEu1HMSSoK01TkJDGw
-        Ya5dj37AhU2IWcs7J74nXqdwwZMt
-X-Google-Smtp-Source: APXvYqxBsw9k0EPJMZuZ6kkrUZKHfpWXsS5Z9fW12Fq/E9YP//RrhuxJ/z7QKwu0EOoxlkL9yqA+WA==
-X-Received: by 2002:a19:2297:: with SMTP id i145mr40440899lfi.97.1564053354293;
-        Thu, 25 Jul 2019 04:15:54 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.googlemail.com with ESMTPSA id c19sm7380178lfi.39.2019.07.25.04.15.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 04:15:53 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] soc/tegra: pmc: Query PCLK clock rate at probe
- time
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190723023511.24542-1-digetx@gmail.com>
- <20190725093644.GJ12715@pdeschrijver-desktop.Nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <f7879942-0875-1f27-5870-3f8414c2148d@gmail.com>
-Date:   Thu, 25 Jul 2019 14:15:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=0U3JNBmNGYy0aqS1fsdwYku9ZRDxCCZwgG78ptzr3/s=;
+        b=STJYYUZs7LIZQJOgiTIiVa1jf5KqxKmqXUKXlUDKgS0KljTomySAFUH4tCQqB/pslD
+         Eo2jsGVMssGpyeU1Dz1MW7uI0p5fDP8Dk3+NRQUU2X/XrQWNMCmteME/yxUe6VhvhMVN
+         yauNm65uc4msvIuUoGZ0cYOlvt+Uo/ded9AjJDCE5mS2Smf6uVFclDzXll1ozsYrnE6J
+         jyDt6MTrVP+s5fBR8TRleT89DPGQIEoAEdaWCjAxSGbnJVOXHhOrWRE0h1VpiOEusMPL
+         F012mL+AMDESKgrrgTVH9m5JWXmSAnTxVmi8SwgjGpadixZ+5r4fKQjRzNSxasPt4mxK
+         PBmw==
+X-Gm-Message-State: APjAAAW6E2n/a7mYq26EA1CmNK2bV3NkACMw4jf6CcPXY8fYxcU3BXTb
+        ICC9EaIDMcwJHHSE47Uvvqbw6+aL3O+6NS3EUd3SNg==
+X-Google-Smtp-Source: APXvYqz5PSnz2vtWF1fvHXLKMELKN6t99rqUeay6/XuKtapo4XVBKVhmMFaoEsJ4IbsO3WUWJ9kwszBYIGRHqcGtcL4=
+X-Received: by 2002:a19:c514:: with SMTP id w20mr41342873lfe.182.1564053390533;
+ Thu, 25 Jul 2019 04:16:30 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190725093644.GJ12715@pdeschrijver-desktop.Nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190724191735.096702571@linuxfoundation.org>
+In-Reply-To: <20190724191735.096702571@linuxfoundation.org>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Thu, 25 Jul 2019 13:16:19 +0200
+Message-ID: <CADYN=9+WLxhmqX3JNL_s-kWSN97G=8WhD=TF=uAuKecJnKcj_Q@mail.gmail.com>
+Subject: Re: [PATCH 5.2 000/413] 5.2.3-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        sean.j.christopherson@intel.com, wanpengli@tencent.com,
+        jmattson@google.com
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, ben.hutchings@codethink.co.uk,
+        stable@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, linux@roeck-us.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-25.07.2019 12:36, Peter De Schrijver пишет:
-> On Tue, Jul 23, 2019 at 05:35:10AM +0300, Dmitry Osipenko wrote:
->> The PCLK clock is running off SCLK, which is a critical clock that is
->> very unlikely to randomly change its rate. It's also a bit clumsy (and
->> apparently incorrect) to query the clock's rate with interrupts being
->> disabled because clk_get_rate() takes a mutex and that's the case during
->> suspend/cpuidle entering.
->>
-> 
-> SCLK and PCLK certainly can change rate at runtime, although the code to
-> handle this hasn't reached upstream yet.
+On Wed, 24 Jul 2019 at 21:25, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.2.3 release.
+> There are 413 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri 26 Jul 2019 07:13:35 PM UTC.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.2.3-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.2.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Okay, maybe this patch is indeed not very worthwhile then. I'm leaving
-it up to you, guys, to decide.
+Results from Linaro=E2=80=99s test farm.
+Regressions detected.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 5.2.3-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-5.2.y
+git commit: db628fe0e67ff8c66e8c6ba76e5e4becfa75fe21
+git describe: v5.2.2-414-gdb628fe0e67f
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.2-oe/bui=
+ld/v5.2.2-414-gdb628fe0e67f
+
+Regressions (compared to build v5.2.2)
+------------------------------------------------------------------------
+
+x86:
+  kvm-unit-tests:
+    * vmx
+
+
+TESTNAME=3Dvmx TIMEOUT=3D90s ACCEL=3D ./x86/run x86/vmx.flat -smp 1 -cpu
+host,+vmx -append \"-exit_monitor_from_l2_test -ept_access* -vmx_smp*
+-vmx_vmcs_shadow_test\"
+[  155.670748] kvm [6062]: vcpu0, guest rIP: 0x4050cb
+kvm_set_msr_common: MSR_IA32_DEBUGCTLMSR 0x1, nop
+[  155.681027] kvm [6062]: vcpu0, guest rIP: 0x408911
+kvm_set_msr_common: MSR_IA32_DEBUGCTLMSR 0x3, nop
+[  155.690749] kvm [6062]: vcpu0, guest rIP: 0x40bb39
+kvm_set_msr_common: MSR_IA32_DEBUGCTLMSR 0x1, nop
+[  155.700595] kvm [6062]: vcpu0, guest rIP: 0x4089b2
+kvm_set_msr_common: MSR_IA32_DEBUGCTLMSR 0x3, nop
+[  158.349308] nested_vmx_exit_reflected failed vm entry 7
+[  158.363737] nested_vmx_exit_reflected failed vm entry 7
+[  158.378010] nested_vmx_exit_reflected failed vm entry 7
+[  158.392480] nested_vmx_exit_reflected failed vm entry 7
+[  158.406920] nested_vmx_exit_reflected failed vm entry 7
+[  158.421390] nested_vmx_exit_reflected failed vm entry 7
+[  158.435795] nested_vmx_exit_reflected failed vm entry 7
+[  158.450276] nested_vmx_exit_reflected failed vm entry 7
+[  158.464674] nested_vmx_exit_reflected failed vm entry 7
+[  158.479030] nested_vmx_exit_reflected failed vm entry 7
+[  161.044379] set kvm_intel.dump_invalid_vmcs=3D1 to dump internal KVM sta=
+te.
+FAIL vmx (timeout; duration=3D90s)
+
+kernel-config: http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/inte=
+l-corei7-64/lkft/linux-stable-rc-5.2/14/config
+Full log: https://lkft.validation.linaro.org/scheduler/job/836289#L1597
+
+No fixes (compared to build v5.2.2)
+
+Ran 22506 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c
+- hi6220-hikey
+- i386
+- juno-r2
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15
+- x86
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libgpiod
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* network-basic-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* ltp-fs-tests
+* ltp-open-posix-tests
+* kvm-unit-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
