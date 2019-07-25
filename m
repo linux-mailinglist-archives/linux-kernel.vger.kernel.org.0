@@ -2,89 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A6FE742A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 02:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AA16742B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 02:54:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388158AbfGYAo0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 20:44:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51188 "EHLO mail.kernel.org"
+        id S2387847AbfGYAyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 20:54:18 -0400
+Received: from ozlabs.org ([203.11.71.1]:60979 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387421AbfGYAoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 20:44:25 -0400
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728030AbfGYAyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 20:54:17 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 251A921901;
-        Thu, 25 Jul 2019 00:44:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564015464;
-        bh=BnJm16XIJ4U5h0/wFfNFjUiyQUQlm05rCuTqzXG01x0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=DTMevEAy6MsZBxplreEMB+bJxmKA1GsWpZtLmWP6cVbMq2QKKqVCfOMcytQ8gUcHi
-         2JRtFP16ImDGp/MasraDgzI0X9ruqK1X25hWfedDjzH+kLP0i3V4/xHmTmNp9rmAY5
-         OHff/q50Keh8KHkK1MMdNgOMrgVrKIzoTZZ1Fr0Y=
-Date:   Wed, 24 Jul 2019 17:44:23 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
-        mgorman@techsingularity.net, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [v4 PATCH 2/2] mm: mempolicy: handle vma with unmovable pages
- mapped correctly in mbind
-Message-Id: <20190724174423.1826c92f72ce9c815ebc72d9@linux-foundation.org>
-In-Reply-To: <6aeca7cf-d9da-95cc-e6dc-a10c2978c523@suse.cz>
-References: <1563556862-54056-1-git-send-email-yang.shi@linux.alibaba.com>
-        <1563556862-54056-3-git-send-email-yang.shi@linux.alibaba.com>
-        <6c948a96-7af1-c0d2-b3df-5fe613284d4f@suse.cz>
-        <20190722180231.b7abbe8bdb046d725bdd9e6b@linux-foundation.org>
-        <a9b8cae7-4bca-3c98-99f9-6b92de7e5909@linux.alibaba.com>
-        <6aeca7cf-d9da-95cc-e6dc-a10c2978c523@suse.cz>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45vDHp4W94z9s4Y;
+        Thu, 25 Jul 2019 10:54:14 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1564016055;
+        bh=CtDpK/eCs/XjTXFGpNFgiwbr9oNlBKo8wVNVvbRB6RI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=VBIC7XlqnSHdMyIIuGNivnGuXnfJWFajwdHlgO//aGD1xLRONkRV/spARLsVyIovs
+         +y2dds7JTAPFgiQMCrPiOSpwcULCglo+iAK/paQGB8GonywJEfM2wb31nOupJBc1yf
+         fcHvUxhzlWlrkbSPFFo/04ivlvj/XWfJw9Bpi5cyS1tJL7QPTpgdDkntbUa6uVp5vY
+         HTmzQFuOi0rok8UR57LVwFHR1sW2UnVQCoLDbVesZMEmJpkguNsOOrAg3EfIfnvK0b
+         IRbGn+uM/S+zDb48Jm+OoGlRcN2MsqPEfABfsUksrvX7KNL50IN/Ub6hNKhU70oOOj
+         cxRWgcMqnd6og==
+Date:   Thu, 25 Jul 2019 10:54:13 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Benjamin Poirier <bpoirier@suse.com>
+Subject: linux-next: manual merge of the net-next tree with the jc_docs tree
+Message-ID: <20190725105413.2e79aedb@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/l=4b07mKDfUHi57GHTS8hni";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 24 Jul 2019 10:19:34 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
+--Sig_/l=4b07mKDfUHi57GHTS8hni
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On 7/23/19 7:35 AM, Yang Shi wrote:
-> > 
-> > 
-> > On 7/22/19 6:02 PM, Andrew Morton wrote:
-> >> On Mon, 22 Jul 2019 09:25:09 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
-> >>
-> >>>> since there may be pages off LRU temporarily.  We should migrate other
-> >>>> pages if MPOL_MF_MOVE* is specified.  Set has_unmovable flag if some
-> >>>> paged could not be not moved, then return -EIO for mbind() eventually.
-> >>>>
-> >>>> With this change the above test would return -EIO as expected.
-> >>>>
-> >>>> Cc: Vlastimil Babka <vbabka@suse.cz>
-> >>>> Cc: Michal Hocko <mhocko@suse.com>
-> >>>> Cc: Mel Gorman <mgorman@techsingularity.net>
-> >>>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> >>> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-> >> Thanks.
-> >>
-> >> I'm a bit surprised that this doesn't have a cc:stable.  Did we
-> >> consider that?
-> > 
-> > The VM_BUG just happens on 4.9, and it is enabled only by CONFIG_VM. For 
-> > post-4.9 kernel, this fixes the semantics of mbind which should be not a 
-> > regression IMHO.
-> 
-> 4.9 is a LTS kernel, so perhaps worth trying?
-> 
+Hi all,
 
-OK, I'll add cc:stable to 
+Today's linux-next merge of the net-next tree got a conflict in:
 
-mm-mempolicy-make-the-behavior-consistent-when-mpol_mf_move-and-mpol_mf_strict-were-specified.patch
+  Documentation/PCI/pci-error-recovery.rst
 
-and
+between commit:
 
-mm-mempolicy-handle-vma-with-unmovable-pages-mapped-correctly-in-mbind.patch
+  4d2e26a38fbc ("docs: powerpc: convert docs to ReST and rename to *.rst")
 
-Do we have a Fixes: for these patches?
+from the jc_docs tree and commit:
+
+  955315b0dc8c ("qlge: Move drivers/net/ethernet/qlogic/qlge/ to drivers/st=
+aging/qlge/")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/PCI/pci-error-recovery.rst
+index e5d450df06b4,7e30f43a9659..000000000000
+--- a/Documentation/PCI/pci-error-recovery.rst
++++ b/Documentation/PCI/pci-error-recovery.rst
+@@@ -421,7 -421,3 +421,6 @@@ That is, the recovery API only require
+     - drivers/net/ixgbe
+     - drivers/net/cxgb3
+     - drivers/net/s2io.c
+-    - drivers/net/qlge
+ +
+ +The End
+ +-------
+
+--Sig_/l=4b07mKDfUHi57GHTS8hni
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl04/bUACgkQAVBC80lX
+0GxFGQf/bZ+grLWvDeYd53dLGX5+i4C25MERID0fBWLYuktsEwnK2HLIFL7aQZnw
+j/aid9hWbdLpdvTNystisGwCT6FUd0yBbHoJKQvGnBSiUhDhnhluinfKA29vVvEp
+vIbW5wgieJNDmTKfJdM+NVBnz/rw1KTDNrS6HjztdGdNiExKeDLAhFhd+1ErDu+7
+8IjD7mSyL/PPv1iKi6fbwxe5f/D20s7czrv8iJ/Po6QmMWlPVUBQiOo+29b5EPHh
+e0zXiTwHHBy1aujh4mvWxWwvE+XVFFonUCSmDF/bKxPbFkLyYNbZIfNqPTz2HxtQ
+id0l82+ffhR2imnGGBABWyN8Bbs2KA==
+=lkdQ
+-----END PGP SIGNATURE-----
+
+--Sig_/l=4b07mKDfUHi57GHTS8hni--
