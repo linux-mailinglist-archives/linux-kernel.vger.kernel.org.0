@@ -2,311 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 870EC74425
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 05:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30FBD74420
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 05:51:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390176AbfGYDx6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 23:53:58 -0400
-Received: from vserver.gregn.net ([174.136.110.154]:43722 "EHLO
-        vserver.gregn.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbfGYDx6 (ORCPT
+        id S2390147AbfGYDvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 23:51:40 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:48771 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389014AbfGYDvj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 23:53:58 -0400
-Received: from vbox.gregn.net (71-32-121-108.eugn.qwest.net [71.32.121.108])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by vserver.gregn.net (Postfix) with ESMTPSA id F184B1D9C;
-        Wed, 24 Jul 2019 20:56:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=gregn.net; s=default;
-        t=1564026972; bh=Wql5eshMl2AYvQZTOGpiy3Xh++MGNGtCT7I1w3YaCuo=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=HB5lFApA0rThrYQuhbPZ3D5+q9Ad0SrBWBXl1I0IF4LReTM1s+CtXf651QvLC6X2A
-         kGpWSF3WBVRjaQtm83VtFewMsY9fcLC31Y/1g4hFxdLDtS5NFJ2TKQWOHYq1rfIuMr
-         7l1RbcVKmVjcTMO5gvAp9B03tcXqCl9JHUUDwHNJF26+6M2hXX53NvQTWD16w7agNL
-         ycTw0TMdzpHtGWDspCrM2806Tp4rm0EtN6Gpe90kxft7me/nbWJW3aSfPRT756pc6q
-         FS18GpzmyMgwSTil29PnRYR1GR5QSQXWCGiowZDLkwcjzTxhI8pIjrKK61Jf2Q+vAU
-         ISs6zWOYOMqqw==
-Received: from greg by vbox.gregn.net with local (Exim 4.84_2)
-        (envelope-from <greg@gregn.net>)
-        id 1hqUpE-0006IN-QC; Wed, 24 Jul 2019 20:53:53 -0700
-Date:   Wed, 24 Jul 2019 20:53:52 -0700
-From:   Gregory Nowak <greg@gregn.net>
-To:     Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        speakup@linux-speakup.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Okash Khawaja <okash.khawaja@gmail.com>,
-        devel@driverdev.osuosl.org, Kirk Reiser <kirk@reisers.ca>,
-        Simon Dickson <simonhdickson@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Christopher Brannon <chris@the-brannons.com>
-Subject: Re: [HELP REQUESTED from the community] Was: Staging status of
- speakup
-Message-ID: <20190725035352.GA7717@gregn.net>
-References: <20190315130035.6a8f16e9@narunkot>
- <20190316031831.GA2499@kroah.com>
- <20190706200857.22918345@narunkot>
- <20190707065710.GA5560@kroah.com>
- <20190712083819.GA8862@kroah.com>
- <20190712092319.wmke4i7zqzr26tly@function>
- <20190713004623.GA9159@gregn.net>
+        Wed, 24 Jul 2019 23:51:39 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190725035136epoutp0371865c4f81451bed9efdfcbfda5afd80~0if5TNPkV1301313013epoutp03B
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 03:51:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190725035136epoutp0371865c4f81451bed9efdfcbfda5afd80~0if5TNPkV1301313013epoutp03B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1564026696;
+        bh=qTrI9+HWCJEJXvAm5+OfcfASWfk5axEuKDIGAGVkh2U=;
+        h=Subject:To:From:Date:In-Reply-To:References:From;
+        b=oblSu7qvVOZjh2leOL48MJJR0covdZqPFb40j6rpDkaivk3lZQoUZ8U/TTQlCd4oH
+         y3+++4b+z7Oh/u6ihNKCwbzSBjtE06oP6u7+SvOjQHTLswAY79g+Qo4gC0lo1rjbfZ
+         LOFlLNJwLiFJ2wvIwCpJCI4ckxVG+WJOZPI1AU1U=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20190725035135epcas1p33010efd4a7bdbd71d5e889f9129b67b1~0if4vntQ02588825888epcas1p3R;
+        Thu, 25 Jul 2019 03:51:35 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 45vJDQ0NFLzMqYkR; Thu, 25 Jul
+        2019 03:51:34 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5B.E5.04066.547293D5; Thu, 25 Jul 2019 12:51:34 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190725035132epcas1p1ae2e5efb3a8e49abeb5606a81ba41cf4~0if2YaG_K2180421804epcas1p13;
+        Thu, 25 Jul 2019 03:51:32 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190725035132epsmtrp19a6b04ec17ea92ae98733f8ecec45a26~0if2XuXoN1215612156epsmtrp1M;
+        Thu, 25 Jul 2019 03:51:32 +0000 (GMT)
+X-AuditID: b6c32a37-e3fff70000000fe2-7e-5d3927452dfd
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A3.01.03638.447293D5; Thu, 25 Jul 2019 12:51:32 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190725035132epsmtip2aefeaa6e44b2af2528327a2769b385e8~0if2OJqEL2652426524epsmtip2C;
+        Thu, 25 Jul 2019 03:51:32 +0000 (GMT)
+Subject: Re: [PATCH] devfreq: Correct devm_devfreq_remove_device()
+ documentation
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <4006b5d7-7256-43af-d9ec-a9c8373d9f34@samsung.com>
+Date:   Thu, 25 Jul 2019 12:54:52 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190713004623.GA9159@gregn.net>
-X-PGP-Key: http://www.gregn.net/pubkey.asc
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Virus-Scanned: clamav-milter 0.100.3 at vserver
-X-Virus-Status: Clean
+In-Reply-To: <20190724185953.17545-1-krzk@kernel.org>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEJsWRmVeSWpSXmKPExsWy7bCmrq6bumWswd0JTBbnz29gtzjb9Ibd
+        4vKuOWwWn3uPMFrcblzB5sDqsWlVJ5tH35ZVjB6fN8kFMEdl22SkJqakFimk5iXnp2Tmpdsq
+        eQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYArVRSKEvMKQUKBSQWFyvp29kU5ZeWpCpk
+        5BeX2CqlFqTkFFgW6BUn5haX5qXrJefnWhkaGBiZAhUmZGe0nT/NWvCcveLGVYsGxv1sXYyc
+        HBICJhLz2m8ydTFycQgJ7GCU2D7rCTOE84lR4sikJhYI5xujxJbP29hhWp5OfMIGkdjLKLFm
+        2xGolveMEhvPfQcbLCwQJHH0yD52kISIwE5GibbuC8wgCTYBLYn9L26AFfELKEpc/fGYEcTm
+        FbCTOHf5K1icRUBVYt6iiUwgtqhAhMSnB4dZIWoEJU7OfMICYnMKmEqcenQGrIZZQFzi1pP5
+        ULa8RPPW2WAXSQgcYJPY+mAxC8TdLhJPN3+BeltY4tXxLVD/SEm87G+DsqslVp48wgbR3AH0
+        9P4LrBAJY4n9SycDbeAA2qApsX6XPkRYUWLn77mMEIv5JN597WEFKZEQ4JXoaBOCKFGWuPzg
+        LhOELSmxuL0T6gQPiZk/37BOYFScheS1WUjemYXknVkIixcwsqxiFEstKM5NTy02LDBGju5N
+        jOD0qGW+g3HDOZ9DjAIcjEo8vBxJFrFCrIllxZW5hxglOJiVRHgDG8xihXhTEiurUovy44tK
+        c1KLDzGaAkN+IrOUaHI+MHXnlcQbmhoZGxtbmBiamRoaKonzLvwBNEcgPbEkNTs1tSC1CKaP
+        iYNTqoGxRKRwev4Krm/l15eJVO/ITfl2do/9Sz0bQdsFdbrrNJc1T/vzZtuj4qc6QkUSJ2/t
+        3s0pc6alMfvqzR25k3cbZ73IMHi1ujDN2mnb0bhdntnyb50YpywIWxvmmiPDG1FU+ybzWtX1
+        Pw0z2/5HHGr3PTAx+srhzcLBX2dwPWd5Ws96sPGs2rcjSizFGYmGWsxFxYkAVtt6BaUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPLMWRmVeSWpSXmKPExsWy7bCSvK6LumWswY1dBhbnz29gtzjb9Ibd
+        4vKuOWwWn3uPMFrcblzB5sDqsWlVJ5tH35ZVjB6fN8kFMEdx2aSk5mSWpRbp2yVwZbSdP81a
+        8Jy94sZViwbG/WxdjJwcEgImEk8nPgGyuTiEBHYzSux6fZwJIiEpMe3iUeYuRg4gW1ji8OFi
+        iJq3jBLLtnxiB6kRFgiSOHpkHztIQgSk+cvhTmaQhJBAB6PEmuNgNpuAlsT+FzfAtvELKEpc
+        /fGYEcTmFbCTOHf5K1icRUBVYt6iiWCLRQUiJA7vmAVVIyhxcuYTFhCbU8BU4tSjM2A1zALq
+        En/mXWKGsMUlbj2ZDxWXl2jeOpt5AqPQLCTts5C0zELSMgtJywJGllWMkqkFxbnpucWGBUZ5
+        qeV6xYm5xaV56XrJ+bmbGMHRoKW1g/HEifhDjAIcjEo8vBxJFrFCrIllxZW5hxglOJiVRHgD
+        G8xihXhTEiurUovy44tKc1KLDzFKc7AoifPK5x+LFBJITyxJzU5NLUgtgskycXBKNTDyVBir
+        as0qLz7L+Pev0xYfnstKszex62p8Ft+bbh9ULcA9y3WPr6NW4o+4a5Z5Ek8/nFiY4NJ+tcmP
+        c+u8dzPnsM7dYRe/ueBPgvNtt+ryGba3rq7g++Jiv2eO16ZojsNSbhPllBbeqD569dJ39dVc
+        LL2Wxz/vY55RlbT01D82pwf/dDXufO9QYinOSDTUYi4qTgQAX9Quh4ICAAA=
+X-CMS-MailID: 20190725035132epcas1p1ae2e5efb3a8e49abeb5606a81ba41cf4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190724190003epcas4p29fa01d9bedd3b663c3bd10a68b52b778
+References: <CGME20190724190003epcas4p29fa01d9bedd3b663c3bd10a68b52b778@epcas4p2.samsung.com>
+        <20190724185953.17545-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 12, 2019 at 05:46:23PM -0700, Gregory Nowak wrote:
-> On Fri, Jul 12, 2019 at 11:23:19AM +0200, Samuel Thibault wrote:
-> > Hello,
-> > 
-> > To readers of the linux-speakup: could you help on this so we can get
-> > Speakup in mainline?  Neither Okash or I completely know what user
-> > consequences the files in /sys/accessibility/speakup/ have, so could
-> > people give brief explanations for each file (something like 3-6 lines
-> > of explanation)?
+On 19. 7. 25. 오전 3:59, Krzysztof Kozlowski wrote:
+> Correct the documentation for devm_devfreq_remove_device() argument.
 > 
-> I have a recollection of documenting most of this on the speakup list
-> in response to a similar query a number of years ago. Unfortunately,
-> the speakup mailing list archives aren't easily searchable, and I
-> don't have a local copy of that mail.
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/devfreq/devfreq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Kirk, doing grep with a few of the file names in
-> /sys/accessibility/speakup against the list's mbox file archive should
-> find that message if it's in fact there. If you can please find it,
-> and post the date when it was sent, we can provide a URL to that
-> thread as a starting point. If my recollection is wrong, and such a
-> message isn't in the archives, I'll write up what I know about.
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index 784c08e4f931..446490c9d635 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -867,7 +867,7 @@ EXPORT_SYMBOL_GPL(devfreq_get_devfreq_by_phandle);
+>  
+>  /**
+>   * devm_devfreq_remove_device() - Resource-managed devfreq_remove_device()
+> - * @dev:	the device to add devfreq feature.
+> + * @dev:	the device from which to remove devfreq feature.
+>   * @devfreq:	the devfreq instance to be removed
+>   */
+>  void devm_devfreq_remove_device(struct device *dev, struct devfreq *devfreq)
+> 
 
-I've located the message I was thinking of in the archives, but that
-describes some speakup key commands, not
-/sys/accessibility/speakup. So, here's what I know, and hopefully
-someone else can fill in the rest.
-
-attrib_bleep
-Beeps the PC speaker when there is an attribute change such as
-foreground or background color when using speakup review commands. One
-= on, zero = off. I'm not currently at a machine with a working PC
-speaker, so can't test this right now.
-
-bell_pos
-As far as I know, this works much like a typewriter bell. If for
-example 72 is echoed to bell_pos, it will beep the PC speaker when
-typing on a line past character 72. Again, no PC speaker at the moment
-here, so can't actually test this.
-
-bleeps
-Not 100% sure, but I believe this controls whether one hears beeps
-through the PC speaker when using speakup's review commands. If no one
-jumps in on this, I'll experiment when at a machine with a working PC
-speaker, and will reply back with details.
-
-bleep_time
-Again, not 100% sure, but I believe this controls the duration of the
-PC speaker beeps speakup produces. I'm not sure of the units this is
-in either, possibly jiffys. I'll come back with more details on this
-one if no one else does.
-
-cursor_time
-Don't know.
-
-delimiters
-Don't know. I've tried echoing various characters to this and looking
-for differences when reviewing the screen, but no luck.
-
-ex_num
-Don't know.
-
-key_echo
-Controls if speakup speaks keys when they are typed. One = on, zero =
-off or don't echo keys.
-
-keymap
-I believe this is the currently active kernel keymap. I'm not sure of
-the format, probably what dumpkeys(1) and showkey(1) use. Echoing
-different values here should allow for remapping speakup's review
-commands besides remapping the keyboard as a whole.
-
-no_interrupt
-Controls if typing interrupts output from speakup. With no_interrupt
-set to zero, typing on the keyboard will interrupt speakup if for
-example the say screen command is used before the entire screen is
-read. With no_interrupt set to one, if the say screen command is used,
-and one then types on the keyboard, speakup will continue to say the
-whole screen regardless until it finishes.
-
-punc_all
-This is a list of all the punctuation speakup should speak when
-punc_level is set to four.
-
-punc_level
-Controls the level of punctuation spoken as the screen is displayed,
-not reviewed. Levels range from zero no punctuation, to four, all
-punctuation. As far as I can tell, one corresponds to punc_some, two
-corresponds to punc_most, and three as well as four seem to both
-correspond to punc_all, though I do stand to be corrected. I am using
-the soft synthesizer driver, so it is possible that some hardware
-synthesizers have different levels each corresponding to three and four
-for punc_level. Also note that if punc_level is set to zero, and
-key_echo is set to one, typed punctuation is still spoken as it is
-typed.
-
-punc_most
-This is a list of all the punctuation speakup should speak when
-punc_level is set to two.
-
-punc_some
-This is a list of all the punctuation speakup should speak when
-punc_level is set to one.
-
-reading_punc
-Almost the same as punc_level, the differences being that reading_punc controls
-the level of punctuation when reviewing the screen with speakup's
-screen review commands. The other difference is that reading_punc set
-to three speaks punc_all, and reading_punc set to four speaks all
-punctuation, including spaces.
-
-repeats
-a list of characters speakup repeats. Normally, when there are
-more than three characters in a row, speakup just reads three of those
-characters. For example, "......" would be read as dot, dot, dot. If a
-. is added to the list of characters in repeats, "......" would be
-read as dot, dot, dot, times six.
-
-say_control
-If set to one, speakup speaks shift, alt and control when those keys are
-pressed. Perhaps more keys are spoken, but those three are the ones I
-found. If say_control is set to zero, shift, ctrl, and alt are not
-spoken when they are pressed.
-
-say_word_ctl
-Don't know.
-
-silent
-Don't know.
-
-spell_delay
-As far as I can tell, this controls how fast a word is spelled when
-speakup's say word review command is pressed twice quickly to speak
-the current word being reviewed. Zero just speaks the letters one
-after another, while values one through four seem to introduce more of
-a pause between the spelling of each letter by speakup.
-
-synth
-Gets or sets the synthesizer driver currently in use. Reading synth
-returns the synthesizer driver currently in use. Writing synth
-switches to the given synthesizer driver, provided it is either built
-into the kernel, or already loaded as a module.
-
-synth_direct
-Sends whatever is written to synth_direct
-directly to the speech synthesizer in use, bypassing speakup. This
-could be used to make the synthesizer speak a string, or to send
-control sequences to the synthesizer to change how the synthesizer
-behaves.
-
-version
-Reading version returns the version of speakup, and the version of the
-synthesizer driver currently in use.
-
-Synthesizer Driver Parameters
-In /sys/accessibility/speakup is a directory corresponding to the
-synthesizer driver currently in use (E.G) soft for the soft
-driver. This directory contains files which control the speech
-synthesizer itself, as opposed to controlling the speakup screen
-reader. As far as I know, the parameters in this directory have the
-same names and functions across all supported synthesizers. Also as
-far as I know, the range of values for freq, pitch, rate, and vol is
-the same for all supported synthesizers,
-with the given range being internally mapped by the driver to more or
-less fit the range of values supported for a given parameter by the
-individual synthesizer. I will below describe the values and
-parameters for the soft synthesizer, which I believe is the
-synthesizer currently most commonly in use.
-
-caps_start
-I believe this is the string that is sent to the synthesizer to cause
-it to start speaking uppercase letters. For the soft synthesizer and
-most others, this causes the pitch of the voice to rise above the
-currently set pitch.
-
-caps_stop
-I believe this is the string sent to the synthesizer to cause it to
-stop speaking uppercase letters. In the case of the soft synthesizer
-and most others, this returns the pitch of the voice down to the
-currently set pitch.
-
-delay_time
-Don't know.
-
-direct
-Controls if punctuation is spoken by speakup, or by the
-synthesizer. For example, speakup speaks ">" as "greater", while the
-espeak synthesizer used by the soft driver speaks "greater than". Zero
-lets speakup speak the punctuation. One lets the synthesizer itself
-speak punctuation.
-
-freq
-Gets or sets the frequency of the speech synthesizer. Range is 0-9.
-
-full_time
-Don't know.
-
-jiffy_delta
-As far as I know, this controls how many jiffys the kernel gives to
-the synthesizer. I seem to recall Kirk saying that setting this too
-high can make a system unstable, or even crash it.
-
-pitch
-Gets or sets the pitch of the synthesizer. The range is 0-9.
-
-punct
-Gets or sets the amount of punctuation spoken by the synthesizer. The
-range for the soft driver seems to be 0-2. I'm not exactly sure how
-this relates to speakup's punc_level, or reading_punc
-
-rate
-Gets or sets the rate of the synthesizer. Range is from zero slowest,
-to nine fastest.
-
-tone
-Gets or sets the tone of the speech synthesizer. The range for the
-soft driver seems to be 0-2. This seems to make no difference if using
-espeak and the espeakup connector. I'm not sure even if espeakup
-supports different tonalities.
-
-trigger_time
-Don't know.
-
-voice
-Gets or sets the voice used by the synthesizer if the synthesizer can
-speak in more than one voice. The range for the soft driver is
-0-7. Note that while espeak supports multiple voices, this parameter
-will not set the voice when the espeakup connector is used between
-speakup and espeak.
-
-vol
-Gets or sets the volume of the speech synthesizer. Range is 0-9, with
-zero being the softest, and nine being the loudest.
-
-Additions, clarifications, and corrections are welcome and
-appreciated.
-
-Greg
-
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 -- 
-web site: http://www.gregn.net
-gpg public key: http://www.gregn.net/pubkey.asc
-skype: gregn1
-(authorization required, add me to your contacts list first)
-If we haven't been in touch before, e-mail me before adding me to your contacts.
-
---
-Free domains: http://www.eu.org/ or mail dns-manager@EU.org
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
