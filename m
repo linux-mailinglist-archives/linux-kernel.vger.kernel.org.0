@@ -2,219 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A79A9753DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:25:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79F58753E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:25:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390529AbfGYQZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S2390503AbfGYQZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 25 Jul 2019 12:25:20 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42903 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387697AbfGYQZT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mail.kernel.org ([198.145.29.99]:48546 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387677AbfGYQZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 25 Jul 2019 12:25:19 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PGOubb1078518
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 25 Jul 2019 09:24:56 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PGOubb1078518
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564071897;
-        bh=7Z/U/sV1DlY/6wWREagcbYMxViQaNouXlbPQ0OFaT/I=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=lMw9ynBlnLVSRlVFqkBmUlMlonEr44l9U3NJmKyXITpHSbZN5qJUbOiEBOb5KY/nM
-         FV3bENJZS/ru3xZrrF9PdxmzwG1Q/qRO2rzjdXjxVIbY/PKmxDiHXxdVeLBoRwpEyh
-         WmCWuVorqojo/G/Iwb/oWwRsYz1EfwVKt2eXJYddCVOD8IGUvx07OdOlfV7GHlsY8z
-         hkVxGw93YFrDWbAJwCnzZuU98WN220mLnwqACVQOvHfYhy7VOKgZtB8CHRzs+L/ERj
-         0YKQtNoX7UNqWzqDq1kyQgPMos1FNEH6sUXjjr3up9uvzlvl90v9sBfZjWhKmLASE2
-         lASm0Hf0Fbbag==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PGOtBT1078515;
-        Thu, 25 Jul 2019 09:24:55 -0700
-Date:   Thu, 25 Jul 2019 09:24:55 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Juri Lelli <tipbot@zytor.com>
-Message-ID: <tip-710da3c8ea7dfbd327920afd3831d8c82c42789d@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, hpa@zytor.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        juri.lelli@redhat.com, dietmar.eggemann@arm.com
-Reply-To: hpa@zytor.com, torvalds@linux-foundation.org,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          mingo@kernel.org, peterz@infradead.org, juri.lelli@redhat.com,
-          dietmar.eggemann@arm.com
-In-Reply-To: <20190719140000.31694-9-juri.lelli@redhat.com>
-References: <20190719140000.31694-9-juri.lelli@redhat.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/core: Prevent race condition between cpuset
- and __sched_setscheduler()
-Git-Commit-ID: 710da3c8ea7dfbd327920afd3831d8c82c42789d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Subject: Re: [GIT PULL] ktest: Fix some typos in config-bisect.pl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564071918;
+        bh=3LH01SBWhzp8lTHtgUqSeEpR+jY+FtOs7mMAkGQMU9s=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=s/aC2bf8iBfHDvQtvsWB16fA7c6WIX67h/xD0re24JCTwKilukF7/cvoiCulM+BuR
+         oNFQLQnmUFHrR9Kxtn5KVgOfLB+q/9yuBMClieeaDb/bbk7h9uyaaZqwmZWjzpD2G5
+         Qu2QTY+hr79d3Pmh5zAsYFVA/GMO2NJKbfQcRHrY=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190724154711.2698f244@gandalf.local.home>
+References: <20190724154711.2698f244@gandalf.local.home>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190724154711.2698f244@gandalf.local.home>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git
+ ktest-v5.3
+X-PR-Tracked-Commit-Id: aecea57f84b0586b62c010bea946468d77f6bf0f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: da3cc2e6f168fd52630892f4672f2f26bd217198
+Message-Id: <156407191874.26857.545577017149394846.pr-tracker-bot@kernel.org>
+Date:   Thu, 25 Jul 2019 16:25:18 +0000
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Masanari Iida <standby24x7@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  710da3c8ea7dfbd327920afd3831d8c82c42789d
-Gitweb:     https://git.kernel.org/tip/710da3c8ea7dfbd327920afd3831d8c82c42789d
-Author:     Juri Lelli <juri.lelli@redhat.com>
-AuthorDate: Fri, 19 Jul 2019 16:00:00 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 25 Jul 2019 15:55:04 +0200
+The pull request you sent on Wed, 24 Jul 2019 15:47:11 -0400:
 
-sched/core: Prevent race condition between cpuset and __sched_setscheduler()
+> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git ktest-v5.3
 
-No synchronisation mechanism exists between the cpuset subsystem and
-calls to function __sched_setscheduler(). As such, it is possible that
-new root domains are created on the cpuset side while a deadline
-acceptance test is carried out in __sched_setscheduler(), leading to a
-potential oversell of CPU bandwidth.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/da3cc2e6f168fd52630892f4672f2f26bd217198
 
-Grab cpuset_rwsem read lock from core scheduler, so to prevent
-situations such as the one described above from happening.
+Thank you!
 
-The only exception is normalize_rt_tasks() which needs to work under
-tasklist_lock and can't therefore grab cpuset_rwsem. We are fine with
-this, as this function is only called by sysrq and, if that gets
-triggered, DEADLINE guarantees are already gone out of the window
-anyway.
-
-Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bristot@redhat.com
-Cc: claudio@evidence.eu.com
-Cc: lizefan@huawei.com
-Cc: longman@redhat.com
-Cc: luca.abeni@santannapisa.it
-Cc: mathieu.poirier@linaro.org
-Cc: rostedt@goodmis.org
-Cc: tj@kernel.org
-Cc: tommaso.cucinotta@santannapisa.it
-Link: https://lkml.kernel.org/r/20190719140000.31694-9-juri.lelli@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- include/linux/cpuset.h |  5 +++++
- kernel/cgroup/cpuset.c | 11 +++++++++++
- kernel/sched/core.c    | 20 +++++++++++++++++---
- 3 files changed, 33 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-index 7f1478c26a33..04c20de66afc 100644
---- a/include/linux/cpuset.h
-+++ b/include/linux/cpuset.h
-@@ -55,6 +55,8 @@ extern void cpuset_init_smp(void);
- extern void cpuset_force_rebuild(void);
- extern void cpuset_update_active_cpus(void);
- extern void cpuset_wait_for_hotplug(void);
-+extern void cpuset_read_lock(void);
-+extern void cpuset_read_unlock(void);
- extern void cpuset_cpus_allowed(struct task_struct *p, struct cpumask *mask);
- extern void cpuset_cpus_allowed_fallback(struct task_struct *p);
- extern nodemask_t cpuset_mems_allowed(struct task_struct *p);
-@@ -176,6 +178,9 @@ static inline void cpuset_update_active_cpus(void)
- 
- static inline void cpuset_wait_for_hotplug(void) { }
- 
-+static inline void cpuset_read_lock(void) { }
-+static inline void cpuset_read_unlock(void) { }
-+
- static inline void cpuset_cpus_allowed(struct task_struct *p,
- 				       struct cpumask *mask)
- {
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 5c5014caa23c..c52bc91f882b 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -334,6 +334,17 @@ static struct cpuset top_cpuset = {
-  */
- 
- DEFINE_STATIC_PERCPU_RWSEM(cpuset_rwsem);
-+
-+void cpuset_read_lock(void)
-+{
-+	percpu_down_read(&cpuset_rwsem);
-+}
-+
-+void cpuset_read_unlock(void)
-+{
-+	percpu_up_read(&cpuset_rwsem);
-+}
-+
- static DEFINE_SPINLOCK(callback_lock);
- 
- static struct workqueue_struct *cpuset_migrate_mm_wq;
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 1af3d2dc6b29..1bceb22dac18 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4698,6 +4698,9 @@ recheck:
- 			return retval;
- 	}
- 
-+	if (pi)
-+		cpuset_read_lock();
-+
- 	/*
- 	 * Make sure no PI-waiters arrive (or leave) while we are
- 	 * changing the priority of the task:
-@@ -4772,6 +4775,8 @@ change:
- 	if (unlikely(oldpolicy != -1 && oldpolicy != p->policy)) {
- 		policy = oldpolicy = -1;
- 		task_rq_unlock(rq, p, &rf);
-+		if (pi)
-+			cpuset_read_unlock();
- 		goto recheck;
- 	}
- 
-@@ -4832,8 +4837,10 @@ change:
- 	preempt_disable();
- 	task_rq_unlock(rq, p, &rf);
- 
--	if (pi)
-+	if (pi) {
-+		cpuset_read_unlock();
- 		rt_mutex_adjust_pi(p);
-+	}
- 
- 	/* Run balance callbacks after we've adjusted the PI chain: */
- 	balance_callback(rq);
-@@ -4843,6 +4850,8 @@ change:
- 
- unlock:
- 	task_rq_unlock(rq, p, &rf);
-+	if (pi)
-+		cpuset_read_unlock();
- 	return retval;
- }
- 
-@@ -4927,10 +4936,15 @@ do_sched_setscheduler(pid_t pid, int policy, struct sched_param __user *param)
- 	rcu_read_lock();
- 	retval = -ESRCH;
- 	p = find_process_by_pid(pid);
--	if (p != NULL)
--		retval = sched_setscheduler(p, policy, &lparam);
-+	if (likely(p))
-+		get_task_struct(p);
- 	rcu_read_unlock();
- 
-+	if (likely(p)) {
-+		retval = sched_setscheduler(p, policy, &lparam);
-+		put_task_struct(p);
-+	}
-+
- 	return retval;
- }
- 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
