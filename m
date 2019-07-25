@@ -2,165 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9443B74A15
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 11:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E02E74A0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 11:37:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390612AbfGYJjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 05:39:07 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:15441 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387533AbfGYJjH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 05:39:07 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d3978b90005>; Thu, 25 Jul 2019 02:39:05 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 25 Jul 2019 02:39:04 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 25 Jul 2019 02:39:04 -0700
-Received: from tbergstrom-lnx.Nvidia.com (172.20.13.39) by
- HQMAIL107.nvidia.com (172.20.187.13) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3; Thu, 25 Jul 2019 09:36:47 +0000
-Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
-        id 0DD6B4286D; Thu, 25 Jul 2019 12:36:45 +0300 (EEST)
-Date:   Thu, 25 Jul 2019 12:36:45 +0300
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-CC:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] soc/tegra: pmc: Query PCLK clock rate at probe
- time
-Message-ID: <20190725093644.GJ12715@pdeschrijver-desktop.Nvidia.com>
-References: <20190723023511.24542-1-digetx@gmail.com>
+        id S2388966AbfGYJhT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 05:37:19 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:43655 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725808AbfGYJhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 05:37:19 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45vRvH2DVYz9s8m;
+        Thu, 25 Jul 2019 19:37:14 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1564047435;
+        bh=7RiHInY7DFEoGXyuXyrZaDPTm271sEh+0+BO/eN/XyY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=TGj+UyFXQ3lkHKGajD69PjX7WCQCPKkIk/yGkk7uZud5Hrr76VGjffAGiQ0h0NPl0
+         8MdBtGc/fVBaYwCO1E6bmliRXkAf0xEDOYLGYos6+x9oDpE69tupZJ6pFYKegaJinc
+         Tg5cjhweylGo40M8YfguNvxcOuzvepF7Stx7mAHpzjAwxuAOO18IBRu4J7jPE6aj0j
+         xY4RVPhWVdKpX4aUEbAYphRSAapeeeAtw5yDqEtVQRhhE7DiYw8FiJKkwGVVsrj0wu
+         KHgHI6+0HTXFa7DqrY+UubwTY3CAQqtvGJHeKyDwwMHXiqPXpLQHhuwG7l4cUmOaVB
+         D38GnGGETjH3A==
+Date:   Thu, 25 Jul 2019 19:37:05 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: linux-next: build failure after merge of the net-next tree
+Message-ID: <20190725193647.388c149b@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190723023511.24542-1-digetx@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564047545; bh=z/b91Cml6zDC1P2RGluPj308VR8sVHX0e0iaWNpGUCs=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=fPKwjp/lRhsKdu+dBZO6pu8ZZPEt5vCY9FkwWVxvN4RWBwU0Id0Anbl/+gCFgNfSQ
-         Abm09WhkGCW4pJZKM9JoEd74VuxajQDQ1VKMMtXOXwrGoDR5uIcx5uFGSaoVyHZjKR
-         bMh01N4dO0qp6hGp5bTjZ0m9Cr5cDKDd4lTZYGENZmMVKD9vpw3OCNlxguNOWDUVOo
-         65+eG+Xonm9gV3qd+wAQBUrfJOkVCcNugt7I1NuNXXEG5VGhCe5A/1I2rpvVXZXlsx
-         hMMVjKAadz9ZPNPsXPGgwxQmp7PRNkCjnh1MILJVatPox8hfkWZlSwq82osKtjETR9
-         DCkkxL21RYsgQ==
+Content-Type: multipart/signed; boundary="Sig_/N52ruag=7bLPa+bY2JH2LKG";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 05:35:10AM +0300, Dmitry Osipenko wrote:
-> The PCLK clock is running off SCLK, which is a critical clock that is
-> very unlikely to randomly change its rate. It's also a bit clumsy (and
-> apparently incorrect) to query the clock's rate with interrupts being
-> disabled because clk_get_rate() takes a mutex and that's the case during
-> suspend/cpuidle entering.
-> 
+--Sig_/N52ruag=7bLPa+bY2JH2LKG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-SCLK and PCLK certainly can change rate at runtime, although the code to
-handle this hasn't reached upstream yet.
+Hi all,
 
-Peter.
+After merging the net-next tree, today's linux-next build (mips
+cavium_octeon_defconfig) failed like this:
 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
-> 
-> Changelog:
-> 
-> v2: Addressed review comments that were made by Jon Hunter to v1 by
->     not moving the memory barrier, replacing one missed clk_get_rate()
->     with pmc->rate, handling possible clk_get_rate() error on probe and
->     slightly adjusting the commits message.
-> 
->  drivers/soc/tegra/pmc.c | 34 ++++++++++++++++------------------
->  1 file changed, 16 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 9f9c1c677cf4..aba3396b2e73 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -1192,7 +1192,7 @@ static int tegra_io_pad_prepare(struct tegra_pmc *pmc, enum tegra_io_pad id,
->  		return err;
->  
->  	if (pmc->clk) {
-> -		rate = clk_get_rate(pmc->clk);
-> +		rate = pmc->rate;
->  		if (!rate) {
->  			dev_err(pmc->dev, "failed to get clock rate\n");
->  			return -ENODEV;
-> @@ -1433,6 +1433,7 @@ void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode)
->  void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
->  {
->  	unsigned long long rate = 0;
-> +	u64 ticks;
->  	u32 value;
->  
->  	switch (mode) {
-> @@ -1441,31 +1442,22 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
->  		break;
->  
->  	case TEGRA_SUSPEND_LP2:
-> -		rate = clk_get_rate(pmc->clk);
-> +		rate = pmc->rate;
->  		break;
->  
->  	default:
->  		break;
->  	}
->  
-> -	if (WARN_ON_ONCE(rate == 0))
-> -		rate = 100000000;
-> +	ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
-> +	do_div(ticks, USEC_PER_SEC);
-> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
->  
-> -	if (rate != pmc->rate) {
-> -		u64 ticks;
-> +	ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
-> +	do_div(ticks, USEC_PER_SEC);
-> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
->  
-> -		ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
-> -		do_div(ticks, USEC_PER_SEC);
-> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
-> -
-> -		ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
-> -		do_div(ticks, USEC_PER_SEC);
-> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
-> -
-> -		wmb();
-> -
-> -		pmc->rate = rate;
-> -	}
-> +	wmb();
->  
->  	value = tegra_pmc_readl(pmc, PMC_CNTRL);
->  	value &= ~PMC_CNTRL_SIDE_EFFECT_LP0;
-> @@ -2082,8 +2074,14 @@ static int tegra_pmc_probe(struct platform_device *pdev)
->  		pmc->clk = NULL;
->  	}
->  
-> +	pmc->rate = clk_get_rate(pmc->clk);
->  	pmc->dev = &pdev->dev;
->  
-> +	if (!pmc->rate) {
-> +		dev_err(&pdev->dev, "failed to get pclk rate\n");
-> +		pmc->rate = 100000000;
-> +	}
-> +
->  	tegra_pmc_init(pmc);
->  
->  	tegra_pmc_init_tsense_reset(pmc);
-> -- 
-> 2.22.0
-> 
+drivers/staging/octeon/ethernet-tx.c:287:23: error: implicit declaration of=
+ function 'skb_drag_size'; did you mean 'skb_frag_size'? [-Werror=3Dimplici=
+t-function-declaration]
+
+Caused by commit
+
+  92493a2f8a8d ("Build fixes for skb_frag_size conversion")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/N52ruag=7bLPa+bY2JH2LKG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl05eEEACgkQAVBC80lX
+0GxEuQf8D8J95ArpVOssGYWkAXI4kje9KKTdgcPQbOQo95octSRGnr6TE0vd+zcZ
+FpevIgM6HBv/LjsIg6YBV/awwpx8XxbwbSTwWcQ+a7uhSUH3fyaS6+iON9OK+kHG
+SP+TpRO1IRe/DQyXE5qO8ct23WUARyVfhuu3vD6HXiZdY7Bdm789hMrUnW3PUcVI
+WTVK1wsED1yNnucH7Vuym8fyFecuvdx1KyBtRwWo6N1Oit4NpJ+vukfWif+WV8iS
+5A6rRAU4jDQaMdN3WZPtP5GlPMBokMzdRvDQ1Aiovpf/+B6pXZaGcDRJ6qfEbNQe
+qUXVUw26dhhjhuqvplbDYZqhqqqKsQ==
+=vyep
+-----END PGP SIGNATURE-----
+
+--Sig_/N52ruag=7bLPa+bY2JH2LKG--
