@@ -2,238 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3B5874E5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 14:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71F2E74E64
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 14:44:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388782AbfGYMoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 08:44:12 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41688 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387824AbfGYMoM (ORCPT
+        id S2388998AbfGYMoW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 08:44:22 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38944 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388964AbfGYMoV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 08:44:12 -0400
-Received: by mail-lf1-f65.google.com with SMTP id 62so29561915lfa.8;
-        Thu, 25 Jul 2019 05:44:09 -0700 (PDT)
+        Thu, 25 Jul 2019 08:44:21 -0400
+Received: by mail-wm1-f67.google.com with SMTP id u25so34259485wmc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 05:44:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=eknW/TOhMypD0xkCLP+fL/Yr6TV2yqEhmiGmkOzq3EY=;
-        b=SGrHQnGamBfhL9h2LIZhaX7f9KvB10ttFxb277iUL+BvpuX19DWhTckbrOHBS4+bB+
-         m9YetynEB8y7ypr4B8nFLVAGyapGKxWjoZxUPkuSEeDirKOx+jYujLjma9zqPA4jRlS3
-         GqwZ7gFTVqcgMYaMp5hSI+XykjFFYKDAt78k+JUDX26g+tebTeWpVj7PKL3tuV7FVjHN
-         JuE8XfOXKZUJ/QTUpnBfsy4KGo+SEGF8wT74VSYK0JXj9TD9qMCge0cJS9XqIsPcrFd7
-         r8QfBLlVMx5sLRIa7z3M/0UhksbtUTCZ/ao0mZ7+K907kG9CK9zFquLPd5PxSCf8UdbU
-         grbA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=b4dDvUYUcaoedc7hESwQnb90HFz1PUes4aKbZ6RFIAI=;
+        b=qL7vPBlK/NHpG6iycR8FLizvf8abUgpmI4yWcLO/wCtRtkNGDJ+soLR78PZAbWyA6q
+         8yV8W8GlayV9AAi8ufsdR9vvtyZ2ev6tpVkQ/CwtVUSgYmJuxVOd88T2WKyUW1FTy8FY
+         QLb4vVbp0V3nPa3O76E71goPwejCMBU+rHbOTJGhHtlcsMyrIsSyg9fSAntZk3GnJu7m
+         H/ROJJ4G+y5EhMruULrt4+xc3jwgJRlNMD08Lb3yi0WqWKlf9KpqbeU0/WRVzh/wArKc
+         eCsvTTyJSWjx0yTIWt8FxdRdLLJA555VrbV0JzN6k3tFgSCln3HPTO7KaM9oDrBNEiRN
+         wUJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=eknW/TOhMypD0xkCLP+fL/Yr6TV2yqEhmiGmkOzq3EY=;
-        b=mfTzABfxm8CpRRZbTq1wgaJ85AiA/btb6CDHTVLj03ucLhZVkcRTJ1s8s3/6sgsHU8
-         0TdKoaxbyEBLAnVH66usqEuCBtvOfXq3EBHYp49w3w/6ac+yROVlr8iwAgW78x6yLM7x
-         qdomT6yrbCfCjndaoC/kdkriaMD3WcCse5NXsR93fF/RGWEoQlL5r7ScqrJ++bW8CTHP
-         JVJTVwkQ00zO+V9ioJHi8Koywc7OJwFWlwWqBUEitQkn+uM7fQDMO6D7wVBB2/pdPu2B
-         gnePJJLy/bmB1t5F5eqVFwPbj+AUekWlt2c672DCJmX3LMnsJ5M3cnMmc0QDixGXLCFC
-         GOTQ==
-X-Gm-Message-State: APjAAAVsMZmJPDOmCPg6Rhp77vtzy/eIA2GjsiouLt/XgUK6VoxuScod
-        QpMsbKio7TvVtlptZc9KtkHvclMbTuHsWkPwmF8=
-X-Google-Smtp-Source: APXvYqwpmD94AweNs5qa5XTy4hbRxs01Hq1+o+UpAxFYnCbprWQUIs8wQla3LFmrbYj8sb8whiJOm8JPZnPJaxTAFyo=
-X-Received: by 2002:a19:7f17:: with SMTP id a23mr44348217lfd.49.1564058649021;
- Thu, 25 Jul 2019 05:44:09 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=b4dDvUYUcaoedc7hESwQnb90HFz1PUes4aKbZ6RFIAI=;
+        b=rQpAmR/dJcgLKBMq31SDU2fWsh4HUxziiavYH3Qt2jZz/xEz1dRAiCZ//eCu1KhbPL
+         /3q48M8L6gyhixoz8sUAgfJUSaiO6Q4KgxTwAgTpao1TI2ul6Msv+FSFCvACTGs0c+bD
+         Ey3PjA8zEu2+xX/NXIblaC3D94vdiM1/VkWVE4sN2LffP66l0+YOIDl6vK+QRCC/xLty
+         mPUfwBRtSY34zrmEes76WHDuGWAnMhcItXq0VV7dalipKAfgoDZ4I3UW/8kvTk99INhq
+         yg3zSks72ywzrvb8uan6r+6f3cyLWDPTdfBjp6fDA+Z8MbnwKdvBdQaUiWaHTYirrhTJ
+         9e9A==
+X-Gm-Message-State: APjAAAUgEVgZY944/mgZ0CuIYMxuxgyhZdj1wymNgMuk+b+ITiH+FzrM
+        MKhwTn0batk4J1jkaGyPJDBarA==
+X-Google-Smtp-Source: APXvYqzEY7p6szi6Fgq7aooYpYSyCQ5B1QdXU+zpKCgz2y49Djc7L4JnFgX3xHviFk7Zg4ULnMyw4Q==
+X-Received: by 2002:a1c:96c7:: with SMTP id y190mr73668487wmd.87.1564058659005;
+        Thu, 25 Jul 2019 05:44:19 -0700 (PDT)
+Received: from dell ([2.27.35.164])
+        by smtp.gmail.com with ESMTPSA id u1sm44979830wml.14.2019.07.25.05.44.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Jul 2019 05:44:18 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 13:44:08 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Sekhar Nori <nsekhar@ti.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [RESEND] mfd: davinci_voicecodec: remove pointless
+ #include
+Message-ID: <20190725124408.GK23883@dell>
+References: <20190722114725.3398694-1-arnd@arndb.de>
 MIME-Version: 1.0
-References: <CGME20190723122022eucas1p1266d90873d564894bd852c20140f8474@eucas1p1.samsung.com>
- <20190723122016.30279-1-a.swigon@partner.samsung.com> <20190723122016.30279-2-a.swigon@partner.samsung.com>
-In-Reply-To: <20190723122016.30279-2-a.swigon@partner.samsung.com>
-Reply-To: cwchoi00@gmail.com
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-Date:   Thu, 25 Jul 2019 21:43:31 +0900
-Message-ID: <CAGTfZH0JE0PmiCHaT3vMrDaP0-8eZ3afyHy_zT9aFmMOGNTR8g@mail.gmail.com>
-Subject: Re: [RFC PATCH 01/11] devfreq: exynos-bus: Extract exynos_bus_profile_init()
-To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        georgi.djakov@linaro.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190722114725.3398694-1-arnd@arndb.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2019=EB=85=84 7=EC=9B=94 24=EC=9D=BC (=EC=88=98) =EC=98=A4=EC=A0=84 8:09, A=
-rtur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>=EB=8B=98=EC=9D=B4 =EC=
-=9E=91=EC=84=B1:
->
-> This patch adds a new static function, exynos_bus_profile_init(), extract=
-ed
-> from exynos_bus_probe().
->
-> Signed-off-by: Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>
+On Mon, 22 Jul 2019, Arnd Bergmann wrote:
+
+> When building davinci as multiplatform, we get a build error
+> in this file:
+> 
+> drivers/mfd/davinci_voicecodec.c:22:10: fatal error: 'mach/hardware.h' file not found
+> 
+> The header is only used to access the io_v2p() macro, but the
+> result is already known because that comes from the resource
+> a little bit earlier.
+> 
+> Acked-by: Sekhar Nori <nsekhar@ti.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/devfreq/exynos-bus.c | 106 ++++++++++++++++++++---------------
->  1 file changed, 60 insertions(+), 46 deletions(-)
->
-> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-> index d9f377912c10..d8f1efaf2d49 100644
-> --- a/drivers/devfreq/exynos-bus.c
-> +++ b/drivers/devfreq/exynos-bus.c
-> @@ -372,12 +372,69 @@ static int exynos_bus_parse_of(struct device_node *=
-np,
->         return ret;
->  }
->
-> +static int exynos_bus_profile_init(struct exynos_bus *bus,
-> +                                  struct devfreq_dev_profile *profile)
-> +{
-> +       struct device *dev =3D bus->dev;
-> +       struct devfreq_simple_ondemand_data *ondemand_data;
-> +       int ret;
-> +
-> +       /* Initialize the struct profile and governor data for parent dev=
-ice */
-> +       profile->polling_ms =3D 50;
-> +       profile->target =3D exynos_bus_target;
-> +       profile->get_dev_status =3D exynos_bus_get_dev_status;
-> +       profile->exit =3D exynos_bus_exit;
-> +
-> +       ondemand_data =3D devm_kzalloc(dev, sizeof(*ondemand_data), GFP_K=
-ERNEL);
-> +       if (!ondemand_data) {
-> +               ret =3D -ENOMEM;
-> +               goto err;
-> +       }
-> +       ondemand_data->upthreshold =3D 40;
-> +       ondemand_data->downdifferential =3D 5;
-> +
-> +       /* Add devfreq device to monitor and handle the exynos bus */
-> +       bus->devfreq =3D devm_devfreq_add_device(dev, profile,
-> +                                               DEVFREQ_GOV_SIMPLE_ONDEMA=
-ND,
-> +                                               ondemand_data);
-> +       if (IS_ERR(bus->devfreq)) {
-> +               dev_err(dev, "failed to add devfreq device\n");
-> +               ret =3D PTR_ERR(bus->devfreq);
-> +               goto err;
-> +       }
-> +
-> +       /* Register opp_notifier to catch the change of OPP  */
-> +       ret =3D devm_devfreq_register_opp_notifier(dev, bus->devfreq);
-> +       if (ret < 0) {
-> +               dev_err(dev, "failed to register opp notifier\n");
-> +               goto err;
-> +       }
-> +
-> +       /*
-> +        * Enable devfreq-event to get raw data which is used to determin=
-e
-> +        * current bus load.
-> +        */
-> +       ret =3D exynos_bus_enable_edev(bus);
-> +       if (ret < 0) {
-> +               dev_err(dev, "failed to enable devfreq-event devices\n");
-> +               goto err;
-> +       }
-> +
-> +       ret =3D exynos_bus_set_event(bus);
-> +       if (ret < 0) {
-> +               dev_err(dev, "failed to set event to devfreq-event device=
-s\n");
-> +               goto err;
-> +       }
-> +
-> +err:
-> +       return ret;
-> +}
-> +
->  static int exynos_bus_probe(struct platform_device *pdev)
->  {
->         struct device *dev =3D &pdev->dev;
->         struct device_node *np =3D dev->of_node, *node;
->         struct devfreq_dev_profile *profile;
-> -       struct devfreq_simple_ondemand_data *ondemand_data;
->         struct devfreq_passive_data *passive_data;
->         struct devfreq *parent_devfreq;
->         struct exynos_bus *bus;
-> @@ -418,52 +475,9 @@ static int exynos_bus_probe(struct platform_device *=
-pdev)
->         if (ret < 0)
->                 goto err;
->
-> -       /* Initialize the struct profile and governor data for parent dev=
-ice */
-> -       profile->polling_ms =3D 50;
-> -       profile->target =3D exynos_bus_target;
-> -       profile->get_dev_status =3D exynos_bus_get_dev_status;
-> -       profile->exit =3D exynos_bus_exit;
-> -
-> -       ondemand_data =3D devm_kzalloc(dev, sizeof(*ondemand_data), GFP_K=
-ERNEL);
-> -       if (!ondemand_data) {
-> -               ret =3D -ENOMEM;
-> +       ret =3D exynos_bus_profile_init(bus, profile);
-> +       if (ret < 0)
->                 goto err;
-> -       }
-> -       ondemand_data->upthreshold =3D 40;
-> -       ondemand_data->downdifferential =3D 5;
-> -
-> -       /* Add devfreq device to monitor and handle the exynos bus */
-> -       bus->devfreq =3D devm_devfreq_add_device(dev, profile,
-> -                                               DEVFREQ_GOV_SIMPLE_ONDEMA=
-ND,
-> -                                               ondemand_data);
-> -       if (IS_ERR(bus->devfreq)) {
-> -               dev_err(dev, "failed to add devfreq device\n");
-> -               ret =3D PTR_ERR(bus->devfreq);
-> -               goto err;
-> -       }
-> -
-> -       /* Register opp_notifier to catch the change of OPP  */
-> -       ret =3D devm_devfreq_register_opp_notifier(dev, bus->devfreq);
-> -       if (ret < 0) {
-> -               dev_err(dev, "failed to register opp notifier\n");
-> -               goto err;
-> -       }
-> -
-> -       /*
-> -        * Enable devfreq-event to get raw data which is used to determin=
-e
-> -        * current bus load.
-> -        */
-> -       ret =3D exynos_bus_enable_edev(bus);
-> -       if (ret < 0) {
-> -               dev_err(dev, "failed to enable devfreq-event devices\n");
-> -               goto err;
-> -       }
-> -
-> -       ret =3D exynos_bus_set_event(bus);
-> -       if (ret < 0) {
-> -               dev_err(dev, "failed to set event to devfreq-event device=
-s\n");
-> -               goto err;
-> -       }
->
->         goto out;
->  passive:
-> --
-> 2.17.1
->
+> I sent this in June, but it did not get picked up into the mfd
+> tree. Sending the same one again in case it got lost.
+> ---
+>  drivers/mfd/davinci_voicecodec.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 
-NACK.
+Applied, thanks.
 
-It has not any benefit and I don't understand reason why it is necessary.
-I don't agree. Please drop it.
-
---=20
-Best Regards,
-Chanwoo Choi
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
