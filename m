@@ -2,129 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D471075882
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 22:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E554E7588E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 22:02:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbfGYUAg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 16:00:36 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38990 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfGYUAf (ORCPT
+        id S1726621AbfGYUCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 16:02:32 -0400
+Received: from retiisi.org.uk ([95.216.213.190]:37126 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726115AbfGYUCb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 16:00:35 -0400
-Received: by mail-pg1-f193.google.com with SMTP id u17so23553676pgi.6
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 13:00:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=czhvpuMA3newxUE1Ok0eyKdEKMeSe/BMrFd/BkJbH88=;
-        b=VFAYa7L009E7Uphizuk8EUTkPs3Kp07Ow0349Bvlb5HNDgpvBrzunrXj9n7hha+kMS
-         bUM5MSI0W1TI2wdDk/dt+iOAY/2LqMW2igW+v6EdmydphptD2J677zHoPzFb2KTmBouE
-         B/nckqeeuspAcsyRQBtXmWSYaDMekv/0MycuA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=czhvpuMA3newxUE1Ok0eyKdEKMeSe/BMrFd/BkJbH88=;
-        b=sDznEKZvpgdXW2AqmWTWjr2MYuMS7P5cD6c9QQS7fyHS6OFecYwzfXivV9pi5PoZDU
-         CXmR3LKXyW16fcLtAyOlqy5PmRDpDY7+GC8Jp5NKJi905mPDoJq8HZS8i7DT0p1+++RP
-         xE6XkJe7KDV2bCozIKYLVPX1IaebhD7oRSzdVORx3U9cSlxjQ8sCzaG80EhdKDDfzFGK
-         44GUIac+XsVr2EkdApyXneOUDMz4ku9fIxCp7mL1YlSm6bMVnh5KndnHTsInYJyId9Om
-         M9yqU3bMxpMVdDSjMqynHXNFmmMVUK4WA89tvzMkW0FQrJkx+6J4oUlaFukdaMmpTRz9
-         eLpg==
-X-Gm-Message-State: APjAAAWMEWRoxBCDAk+5Gyhciql2RZon96ILHcCbJAXBOnWFykki7m05
-        XcfmkynflVEdAjISWGB+hZRsQg==
-X-Google-Smtp-Source: APXvYqxpPEGm+2UHeZbjVl2jSdGpMi/b2Xe2soYfLXU2pENpqL6KqScEe4kJzeeCzenWEThRkjVa+g==
-X-Received: by 2002:aa7:9713:: with SMTP id a19mr465671pfg.64.1564084835161;
-        Thu, 25 Jul 2019 13:00:35 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id j1sm75405528pgl.12.2019.07.25.13.00.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Jul 2019 13:00:34 -0700 (PDT)
-Date:   Thu, 25 Jul 2019 13:00:33 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Alexandre Ghiti <alex@ghiti.fr>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Paul Burton <paul.burton@mips.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Hogan <jhogan@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH REBASE v4 11/14] mips: Adjust brk randomization offset to
- fit generic version
-Message-ID: <201907251259.09E0101@keescook>
-References: <20190724055850.6232-1-alex@ghiti.fr>
- <20190724055850.6232-12-alex@ghiti.fr>
- <1ba4061a-c026-3b9e-cd91-3ed3a26fce1b@ghiti.fr>
+        Thu, 25 Jul 2019 16:02:31 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id D7633634C87;
+        Thu, 25 Jul 2019 23:02:11 +0300 (EEST)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1hqjwJ-0001Ev-7L; Thu, 25 Jul 2019 23:02:11 +0300
+Date:   Thu, 25 Jul 2019 23:02:11 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Luis de Oliveira <Luis.Oliveira@synopsys.com>
+Cc:     "mchehab@kernel.org" <mchehab@kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>
+Subject: Re: [v4 1/6] dt-bindings: media: Document bindings for DW MIPI CSI-2
+ Host
+Message-ID: <20190725200211.GK1263@valkosipuli.retiisi.org.uk>
+References: <1560280855-18085-1-git-send-email-luis.oliveira@synopsys.com>
+ <1560280855-18085-2-git-send-email-luis.oliveira@synopsys.com>
+ <20190628141326.swgl3kg4fj5pmlqx@valkosipuli.retiisi.org.uk>
+ <MN2PR12MB37109D7AADCE4823CB458CB9CBF60@MN2PR12MB3710.namprd12.prod.outlook.com>
+ <20190709182500.3x544axnrgy72aje@valkosipuli.retiisi.org.uk>
+ <MN2PR12MB371026A6547B449EEC0439B1CBF00@MN2PR12MB3710.namprd12.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1ba4061a-c026-3b9e-cd91-3ed3a26fce1b@ghiti.fr>
+In-Reply-To: <MN2PR12MB371026A6547B449EEC0439B1CBF00@MN2PR12MB3710.namprd12.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 08:22:06AM +0200, Alexandre Ghiti wrote:
-> On 7/24/19 7:58 AM, Alexandre Ghiti wrote:
-> > This commit simply bumps up to 32MB and 1GB the random offset
-> > of brk, compared to 8MB and 256MB, for 32bit and 64bit respectively.
-> > 
-> > Suggested-by: Kees Cook <keescook@chromium.org>
-> > Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > ---
-> >   arch/mips/mm/mmap.c | 7 ++++---
-> >   1 file changed, 4 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/arch/mips/mm/mmap.c b/arch/mips/mm/mmap.c
-> > index a7e84b2e71d7..faa5aa615389 100644
-> > --- a/arch/mips/mm/mmap.c
-> > +++ b/arch/mips/mm/mmap.c
-> > @@ -16,6 +16,7 @@
-> >   #include <linux/random.h>
-> >   #include <linux/sched/signal.h>
-> >   #include <linux/sched/mm.h>
-> > +#include <linux/sizes.h>
-> >   unsigned long shm_align_mask = PAGE_SIZE - 1;	/* Sane caches */
-> >   EXPORT_SYMBOL(shm_align_mask);
-> > @@ -189,11 +190,11 @@ static inline unsigned long brk_rnd(void)
-> >   	unsigned long rnd = get_random_long();
-> >   	rnd = rnd << PAGE_SHIFT;
-> > -	/* 8MB for 32bit, 256MB for 64bit */
-> > +	/* 32MB for 32bit, 1GB for 64bit */
-> >   	if (TASK_IS_32BIT_ADDR)
-> > -		rnd = rnd & 0x7ffffful;
-> > +		rnd = rnd & SZ_32M;
-> >   	else
-> > -		rnd = rnd & 0xffffffful;
-> > +		rnd = rnd & SZ_1G;
-> >   	return rnd;
-> >   }
-> 
-> Hi Andrew,
-> 
-> I have just noticed that this patch is wrong, do you want me to send
-> another version of the entire series or is the following diff enough ?
-> This mistake gets fixed anyway in patch 13/14 when it gets merged with the
-> generic version.
+Hi Luis,
 
-While I can't speak for Andrew, I'd say, since you've got Paul and
-Luis's Acks to add now, I'd say go ahead and respin with the fix and the
-Acks added.
+On Wed, Jul 10, 2019 at 10:20:55AM +0000, Luis de Oliveira wrote:
+> Hi Sakari,
+> 
+> From: Sakari Ailus <sakari.ailus@iki.fi>
+> Date: Tue, Jul 09, 2019 at 19:25:00
+> 
+> > Hi Luis,
+> > 
+> > On Mon, Jul 08, 2019 at 03:21:50PM +0000, Luis de Oliveira wrote:
+> > > Hi Sakari,
+> > > 
+> > > Thank you for your feedback.
+> > > I have my comments inline.
+> > > 
+> > > From: Sakari Ailus <sakari.ailus@iki.fi>
+> > > Date: Fri, Jun 28, 2019 at 15:13:26
+> > > 
+> > > > Hi Luis,
+> > > > 
+> > > > Thank you for the patchset.
+> > > > 
+> > > > On Tue, Jun 11, 2019 at 09:20:50PM +0200, Luis Oliveira wrote:
+> > > > > From: Luis Oliveira <lolivei@synopsys.com>
+> > > > > 
+> > > > > Add bindings for Synopsys DesignWare MIPI CSI-2 host.
+> > > > > 
+> > > > > Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
+> > > > > ---
+> > > > > Changelog
+> > > > > v3-v4
+> > > > > - remove "plat" from the block name @rob @laurent
+> > > > > - remove "phy-names" when single-entry @rob
+> > > > > - remove "snps,output-type" -> went to the driver config @laurent
+> > > > > 
+> > > > >  .../devicetree/bindings/media/snps,dw-csi.txt      | 41 ++++++++++++++++++++++
+> > > > >  1 file changed, 41 insertions(+)
+> > > > >  create mode 100644 Documentation/devicetree/bindings/media/snps,dw-csi.txt
+> > > > > 
+> > > > > diff --git a/Documentation/devicetree/bindings/media/snps,dw-csi.txt b/Documentation/devicetree/bindings/media/snps,dw-csi.txt
+> > > > > new file mode 100644
+> > > > > index 0000000..613b7f9
+> > > > > --- /dev/null
+> > > > > +++ b/Documentation/devicetree/bindings/media/snps,dw-csi.txt
+> > > > > @@ -0,0 +1,41 @@
+> > > > > +Synopsys DesignWare CSI-2 Host controller
+> > > > > +
+> > > > > +Description
+> > > > > +-----------
+> > > > > +
+> > > > > +This HW block is used to receive image coming from an MIPI CSI-2 compatible
+> > > > > +camera.
+> > > > > +
+> > > > > +Required properties:
+> > > > > +- compatible		: shall be "snps,dw-csi"
+> > > > > +- reg			: physical base address and size of the device memory
+> > > > > +			  mapped registers;
+> > > > > +- interrupts		: DW CSI-2 Host interrupts
+> > > > > +- phys			: List of one PHY specifier (as defined in
+> > > > > +			  Documentation/devicetree/bindings/phy/phy-bindings.txt).
+> > > > > +			  This PHY is a MIPI DPHY working in RX mode.
+> > > > > +- resets		: Reference to a reset controller (optional)
+> > > > > +
+> > > > > +The per-board settings:
+> > > > > + - port sub-node describing a single endpoint connected to the camera as
+> > > > > +   described in video-interfaces.txt[1].
+> > > > 
+> > > > Which endpoint properties in video-interfaces.txt are relevant for the
+> > > > hardware? Which values may they have?
+> > > > 
+> > > 
+> > > Currently I'm using only two properties "data-lanes" and "bus-width", but 
+> > > I have plans to add blanking info also.
+> > > I will add more info.
+> > 
+> > Isn't blanking defined by what the transmitter seneds? Or do you have
+> > hardware limitations on the receiver side?
+> > 
+> 
+> When we use this IP in prototyping we configure blanking at the receiver 
+> side.
+> Some cameras don't have blanking configuration capabilities so we 
+> configure it on the RX side.
 
-I'm really looking forward to this cleanup! Thanks again for working on
-it. :)
+I haven't come across a CSI-2 connected camera without some kind of
+blanking configuration capabilities. Even if there was one, you couldn't
+configure blanking from the receiver side.
+
+Please document that the data-lanes property is required, and which values
+are possible.
+
+> 
+> > I've only heard of one such case before, and it was a very old parallel
+> > receiver.
+> > 
+> > If you have a CSI-2 receiver, bus-width isn't relevant --- it's for paralle
+> > interfaces only. Please add data-lanes to required endpoint properties.
+> > 
+> 
+> I used bus-width property in the Synopsys IPI (Image Pixel Interface) 
+> that enables direct video stream access.
+> This interface is an output that can be 16-bit or 48-bit, that's why I 
+> used bus-width property.
+
+Does this device write the image data to system memory, or is it another
+device? If there's another one, then you should probably have another port
+to describe that connection.
 
 -- 
-Kees Cook
+Kind regards,
+
+Sakari Ailus
