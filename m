@@ -2,77 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C806475A18
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 00:03:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 615D775A34
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 00:04:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfGYWDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 18:03:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35710 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726723AbfGYWDG (ORCPT
+        id S1727169AbfGYWDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 18:03:36 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47744 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727109AbfGYWDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 18:03:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Z6RYngi3cJJjtiTM0pcFs8c1UrVLGOUye1Guqo9Ye98=; b=ABdMJ/MzOxf5WQbmFkAZaxpyi
-        odM/o9V2QsyOs2V6Qibnt/LaE7TxI0D+PhKQ/pTCnE33ld5nWtnGgFNaL5wXY/eb6cMCj1cjsvHQ5
-        6PYC27o5vuSD7ZLaj02Bt0h66ZeR5ld1OYHiDGCPQmJw7pn6WZPXhDuOxBmk18J11QFBkstHWtT+3
-        gB5ZYi5O4tXzUhYb7A2HDVRwaEi6TflhJOGZXOR5/ZIqQLYthI2eoV+aeHn1qOLpV4YX5SRkiGfLU
-        cAhHedU6YJgU9qno/BQtQnjP+jf3RDgYsV8DTLA27h4ZKC1LRQuHi0TA0aR5MMBNd9DskpS+wHMru
-        Mw5qWtpaA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hqlpF-0002UC-Ry; Thu, 25 Jul 2019 22:03:02 +0000
-Subject: Re: mmotm 2019-07-24-21-39 uploaded (mm/memcontrol)
-To:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Chris Down <chris@chrisdown.name>
-References: <20190725044010.4tE0dhrji%akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <4831a203-8853-27d7-1996-280d34ea824f@infradead.org>
-Date:   Thu, 25 Jul 2019 15:02:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thu, 25 Jul 2019 18:03:35 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hqlpe-0005hx-JB; Fri, 26 Jul 2019 00:03:26 +0200
+Date:   Fri, 26 Jul 2019 00:03:25 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     hpa@zytor.com
+cc:     John Hubbard <jhubbard@nvidia.com>, john.hubbard@gmail.com,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] x86/boot: clear some fields explicitly
+In-Reply-To: <3DFA2707-89A6-4DD2-8DFB-0C2D1ABA1B3C@zytor.com>
+Message-ID: <alpine.DEB.2.21.1907252358240.1791@nanos.tec.linutronix.de>
+References: <20190724231528.32381-1-jhubbard@nvidia.com> <20190724231528.32381-2-jhubbard@nvidia.com> <B7DC31CA-E378-445A-A937-1B99490C77B4@zytor.com> <alpine.DEB.2.21.1907250848050.1791@nanos.tec.linutronix.de> <345add60-de4a-73b1-0445-127738c268b4@nvidia.com>
+ <alpine.DEB.2.21.1907252343180.1791@nanos.tec.linutronix.de> <3DFA2707-89A6-4DD2-8DFB-0C2D1ABA1B3C@zytor.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190725044010.4tE0dhrji%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/24/19 9:40 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2019-07-24-21-39 has been uploaded to
+On Thu, 25 Jul 2019, hpa@zytor.com wrote:
+> On July 25, 2019 2:48:30 PM PDT, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > 
+> > But seriously I think it's not completely insane what they are doing
+> > and the table based approach is definitely more readable and maintainable
+> > than the existing stuff.
 > 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (5.x
-> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> http://ozlabs.org/~akpm/mmotm/series
-> 
+> Doing this table based does seem like a good idea.
 
-on i386:
+The question is whether we use a 'toclear' table or a 'preserve' table. I'd
+argue that the 'preserve' approach is saner.
 
-ld: mm/memcontrol.o: in function `mem_cgroup_handle_over_high':
-memcontrol.c:(.text+0x6235): undefined reference to `__udivdi3'
+> Sent from my Android device with K-9 Mail. Please excuse my brevity.
 
+I surely excuse the brevity, but the formatting mess which that brevity app
+creates is not excusable.
 
--- 
-~Randy
+Thanks,
+
+	tglx
+---
+Sent from a sane mail client. Nothing to excuse here. All failures are intentional.
+
