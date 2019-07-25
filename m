@@ -2,109 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97BB0754E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 19:00:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34898754FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 19:01:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391061AbfGYRAN convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 25 Jul 2019 13:00:13 -0400
-Received: from mail-ot1-f53.google.com ([209.85.210.53]:42023 "EHLO
-        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390569AbfGYRAL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 13:00:11 -0400
-Received: by mail-ot1-f53.google.com with SMTP id l15so52362955otn.9;
-        Thu, 25 Jul 2019 10:00:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=nu/6Jl+HBxw+VOc7p7gwAZO2Ah9nif6btTNqwzyXHtE=;
-        b=O+R17amnJVwwSrN2r/mXQM1Ffb1NEvNztBmT7KJ903OZGDe52Ubo1xMK3rS37YZxl3
-         DPLogO/0u/H6kihu7SIuPGQ2oXPwE3KzSyJGU55yuYnSG9lXlRH1sadVf/DvT+Q0PXe/
-         tLGmMdt1mwoPqCfiv3R/qtrM+lQ0YgcttVVHzwK+mRxQWSgKgUH3UKiMgdmv/Vr5zZ7L
-         DqH6eYZ5Cu/2uxrhdpQULs8inSPtrhblWcrti9JPlQfkDPYf/JPq2CLmT1L4CW6sIqWL
-         pYxoT+TDL7B8bnIOnWKwrnRGyax0K/rAB+fyaDsoq/R3rUMRiAD14kW99kEoE64jDVeV
-         a51w==
-X-Gm-Message-State: APjAAAWeJS90Wy8S/KZidW3CebPKmLqMjNNfFGwGUs/ZHJ+VMu5zgOBl
-        zNCFwlmgzxOF6zWg83vsJH8jhpOoTmz8FxsoiCY=
-X-Google-Smtp-Source: APXvYqzMgHXa1Gkf/c/ovl2wHUVQ2oCDhTGepbQxnE05RSibxMVYVgLmVpuyMF6RzbOdNMUmQ/gQHjcIFBrqMNisrZo=
-X-Received: by 2002:a05:6830:1516:: with SMTP id k22mr61254051otp.189.1564074010668;
- Thu, 25 Jul 2019 10:00:10 -0700 (PDT)
+        id S1729678AbfGYRBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 13:01:00 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:43902 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726390AbfGYRA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 13:00:59 -0400
+Received: from nazgul.tnic (87-126-252-198.ip.btc-net.bg [87.126.252.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6EC361EC02FF;
+        Thu, 25 Jul 2019 19:00:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1564074058;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=0dQmHOiTdZL04G/QdMjwXsWVRHfejPCN+tYWIEBHVzM=;
+        b=Ic1pqbSM7/cbHB7Cfoqe3dUrLJk+JFguJLc24ZD8/D5NRgh/raq1E/cg/DDlXUDCMIdpLj
+        IzmS7/iD70zk5RC2xOh9wZ5F/tOV2DvYJKaEvNATebtZByXxwf6BHZlDHPXfA95EL/MfOo
+        9fxvl5gm4TAxzUqw/SEG+YiKzUE4taY=
+Date:   Thu, 25 Jul 2019 19:00:50 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Edac Mailing List <linux-edac@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tony Luck <tony.luck@intel.com>
+Subject: Re: [PATCH] MAINTAINERS: update EDAC entry to reflect current tree
+ and maintainers
+Message-ID: <20190725170050.GA27348@nazgul.tnic>
+References: <1eb2d09e58500bef18428e2b3f52b54d3cd707d5.1564071419.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
-References: <2332799.izEFUvJP67@kreacher> <E62786E4-5DA9-4542-899A-658D0E021190@canonical.com>
-In-Reply-To: <E62786E4-5DA9-4542-899A-658D0E021190@canonical.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 25 Jul 2019 18:59:59 +0200
-Message-ID: <CAJZ5v0h++56je0z_3f9K9g3qtZMcquKC=7Ew+fmu6+KjCsjMWA@mail.gmail.com>
-Subject: Re: [Regression] Commit "nvme/pci: Use host managed power state for
- suspend" has problems
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Keith Busch <keith.busch@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme <linux-nvme@lists.infradead.org>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1eb2d09e58500bef18428e2b3f52b54d3cd707d5.1564071419.git.mchehab+samsung@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 4:02 PM Kai-Heng Feng
-<kai.heng.feng@canonical.com> wrote:
->
-> Hi Rafael,
->
-> at 17:51, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> > Hi Keith,
-> >
-> > Unfortunately,
-> >
-> > commit d916b1be94b6dc8d293abed2451f3062f6af7551
-> > Author: Keith Busch <keith.busch@intel.com>
-> > Date:   Thu May 23 09:27:35 2019 -0600
-> >
-> >     nvme-pci: use host managed power state for suspend
-> >
-> > doesn't universally improve things.  In fact, in some cases it makes
-> > things worse.
-> >
-> > For example, on the Dell XPS13 9380 I have here it prevents the processor
-> > package
-> > from reaching idle states deeper than PC2 in suspend-to-idle (which, of
-> > course, also
-> > prevents the SoC from reaching any kind of S0ix).
-> >
-> > That can be readily explained too.  Namely, with the commit above the
-> > NVMe device
-> > stays in D0 over suspend/resume, so the root port it is connected to also
-> > has to stay in
-> > D0 and that "blocks" package C-states deeper than PC2.
-> >
-> > In order for the root port to be able to go to D3, the device connected
-> > to it also needs
-> > to go into D3, so it looks like (at least on this particular machine, but
-> > maybe in
-> > general), both D3 and the NVMe-specific PM are needed.
-> >
-> > I'm not sure what to do here, because evidently there are systems where
-> > that commit
-> > helps.  I was thinking about adding a module option allowing the user to
-> > override the
-> > default behavior which in turn should be compatible with 5.2 and earlier
-> > kernels.
->
-> I just briefly tested s2i on XPS 9370, and the power meter shows a 0.8~0.9W
-> power consumption so at least I don’t see the issue on XPS 9370.
+On Thu, Jul 25, 2019 at 12:17:35PM -0400, Mauro Carvalho Chehab wrote:
+> Tony will start to officially maintain EDAC trees. Also, we'll
+> be using a single tree for the EDAC development.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  MAINTAINERS | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 783569e3c4b4..7c22905b5aba 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5781,10 +5781,10 @@ F:	drivers/edac/thunderx_edac*
+>  EDAC-CORE
+>  M:	Borislav Petkov <bp@alien8.de>
+>  M:	Mauro Carvalho Chehab <mchehab@kernel.org>
+> +M:	Tony Luck <tony.luck@intel.com>
+>  R:	James Morse <james.morse@arm.com>
+>  L:	linux-edac@vger.kernel.org
+> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git for-next
+> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-edac.git linux_next
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git edac-for-next
+>  S:	Supported
+>  F:	Documentation/admin-guide/ras.rst
+>  F:	Documentation/driver-api/edac.rst
+> -- 
 
-It works for me on a XPS13 9360 too, only the 9380 is problematic.
+Acked-by: Borislav Petkov <bp@suse.de>
 
-> Can you please provide the output of `nvme id-ctrl /dev/nvme*` and I’ll
-> test the NVMe controller on XPS 9380.
+-- 
+Regards/Gruss,
+    Boris.
 
-I'll reply to Keith with that later.
+ECO tip #101: Trim your mails when you reply.
+--
