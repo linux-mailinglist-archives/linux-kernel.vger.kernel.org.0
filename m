@@ -2,111 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 715C7751B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE52E751BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:48:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbfGYOss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 10:48:48 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:46968 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727437AbfGYOss (ORCPT
+        id S1729193AbfGYOs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 10:48:56 -0400
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:45108 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728984AbfGYOsz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 10:48:48 -0400
-Received: from mail-pf1-f200.google.com ([209.85.210.200])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1hqf30-0005yd-JK
-        for linux-kernel@vger.kernel.org; Thu, 25 Jul 2019 14:48:46 +0000
-Received: by mail-pf1-f200.google.com with SMTP id i2so31031868pfe.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 07:48:46 -0700 (PDT)
+        Thu, 25 Jul 2019 10:48:55 -0400
+Received: by mail-vk1-f194.google.com with SMTP id e83so10089834vke.12
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 07:48:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=CHAn8ln3MQs7dcW7B31n6Am+l3w6Dh72y4QwrHYZAjk=;
+        b=pUctgbS74Cz1qEEJ+vAQEg7ZdYhhlXOiRJIoo5kdV9/vHMF0++Lg/WjSHtovtVQ7AU
+         W1pJKuyk7zeqZyNd3uFlk+1RB4AIdqxBCCWHLthL1heYFows4Vy3uZ4gIHIQ3lw79nhZ
+         y8TUIq7JiqKgPgjw1KsZ1ugmIZABF0kZ/hVc3gaIh6KEuE+gommOuiYq/qftYn9Bf2Nu
+         CncQ3OS0VrR45TIVIPMC/qwS51h2uda9Yo3+Z5dHfUutjn1ksRsyPi/p7h+Mvhz5YivN
+         H39Bn3H2x5qswVtg6S8otz4CpmypojN83jjBvqmszNcP/9g0l1d6S8l3A3XL2Umbp5Ph
+         blEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=L8TSu/J/AdGKl6bLer7RllEWvDobiC6YHiBN2E8KIEk=;
-        b=oT/c7QLbZgB2qlbp/vID6L6ICH/x/8d361x/D/TQCxUwFQCPJDOzr3/jPx+VRoqStR
-         TWdzzB6OymbA0aFI6XtKCOAK/YrkL/brTtUinG8wD/etL/yr7lvq9upDv6GzRjZBpuba
-         qNkB1EfyoeiJA9dSka93m3UIGERrH7eNpXTaBsPhpdzCd38UairyOSfeo4y+3bLSjsbo
-         jo9YTnI2uzpAdU2eUJkdGBqTps4hlb9JtdPU8anJnwDBYOyuKcfmWCDgS6EPGAAVYpAa
-         3zkW1depI36iGn5SknEAlbNUaZ3CgC+wBJdbK57qkUg9j/8Z+/BtnlMWfgcRBVTjTFc+
-         08jg==
-X-Gm-Message-State: APjAAAUM2Dt7aO6ppJ3dri49KYGjEbwxxC/lP39UbE1R9eY5I1VRyk2d
-        R14XXi3kxRdj1Rml2+J9RDhfJ+b0234/5j9C6kOAZbAR9L5xXekEugOyfnVqXcqz0mysEfMhUEx
-        zM5/obdXGTaFG7mbjNxAezahh+2oCntgnXJcmJ9vGyg==
-X-Received: by 2002:a17:90a:fa18:: with SMTP id cm24mr90826099pjb.120.1564066124979;
-        Thu, 25 Jul 2019 07:48:44 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqw+RocIAB96bC6X+oFDDNSsZzVfifLEi0IB/t8xIP+CytFrvp+42/dz87PH2bFD6ICwoSl9Wg==
-X-Received: by 2002:a17:90a:fa18:: with SMTP id cm24mr90826077pjb.120.1564066124658;
-        Thu, 25 Jul 2019 07:48:44 -0700 (PDT)
-Received: from 2001-b011-380f-3c20-0160-ac1c-9209-b8ff.dynamic-ip6.hinet.net (2001-b011-380f-3c20-0160-ac1c-9209-b8ff.dynamic-ip6.hinet.net. [2001:b011:380f:3c20:160:ac1c:9209:b8ff])
-        by smtp.gmail.com with ESMTPSA id w4sm67258918pfn.144.2019.07.25.07.48.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 07:48:44 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH] staging: rtl8723bs: Disable procfs debugging by default
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <20190725075503.GA16693@kroah.com>
-Date:   Thu, 25 Jul 2019 22:48:42 +0800
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <83A2CB3F-B0C4-43C6-A3A6-B6E8B440BECC@canonical.com>
-References: <20190718092522.17748-1-kai.heng.feng@canonical.com>
- <20190725075503.GA16693@kroah.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-X-Mailer: Apple Mail (2.3445.104.11)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=CHAn8ln3MQs7dcW7B31n6Am+l3w6Dh72y4QwrHYZAjk=;
+        b=VxBia2n256dz/w3qxSrkrjBY1kKkNnkNCxKpyRCdh4BU0weBRP/yUnSVUaJIJ8BXYO
+         +DpwH505FvZHZWZp2Hw9TCcMsBv1YuqjXp3cpDSjlwNz98kN5ggObs0sqfcjPGhEzNt1
+         4vFVUxMDykGWLbBgasjnaDPI17sodwsTGILG68ocXLWbjmvFRCPxe7NCU6YrfvPg4DJy
+         qapsjSJONLm2sI1esH3cC/iCj/867boGkVqsaXP1ILZgq7qGo9xVt3hl4RhKnMmM1U0v
+         67RULS2s4EneIiFOJhWHTQYoe43bvFmjXSpZq/rOzgtO/0Q83PKhxAFgZCj/qcA82JPA
+         t+eA==
+X-Gm-Message-State: APjAAAWyK5KiPNTeirTJ74Vu1n+McNkJ0GnbrfRoAFa457Oso0tbDzgz
+        frDJufxUr9vabRgWPLZLPQxQJOuhyWm/TM2qBlY=
+X-Google-Smtp-Source: APXvYqzAnMzKI1F9biguLO2QqF+U05HpWzDjMWtkOWTPV5BNHajKSJvTZr+vszZ0YfoJNnOQabxQIdls9flfpcV/rjg=
+X-Received: by 2002:a1f:9f06:: with SMTP id i6mr34507338vke.52.1564066134559;
+ Thu, 25 Jul 2019 07:48:54 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ab0:57:0:0:0:0:0 with HTTP; Thu, 25 Jul 2019 07:48:54 -0700 (PDT)
+Reply-To: yesben300@gmail.com
+From:   OMARU KABORE <ksanduru2040@gmail.com>
+Date:   Thu, 25 Jul 2019 15:48:54 +0100
+Message-ID: <CAEnSmYsOhDWXjPUptiW-gTuuNE3REucThqzpOFJeUOMxUdz00A@mail.gmail.com>
+Subject: THIS IS LEGITIMATE AND GENUINE TRANSACTION
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 15:55, Greg KH <gregkh@linuxfoundation.org> wrote:
-
-> On Thu, Jul 18, 2019 at 05:25:22PM +0800, Kai-Heng Feng wrote:
->> The procfs provides many useful information for debugging, but it may be
->> too much for normal usage, routines like proc_get_sec_info() reports
->> various security related information.
->>
->> So disable it by defaultl.
->>
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
->>  drivers/staging/rtl8723bs/include/autoconf.h | 4 ----
->>  1 file changed, 4 deletions(-)
->>
->> diff --git a/drivers/staging/rtl8723bs/include/autoconf.h  
->> b/drivers/staging/rtl8723bs/include/autoconf.h
->> index 196aca3aed7b..8f4c1e734473 100644
->> --- a/drivers/staging/rtl8723bs/include/autoconf.h
->> +++ b/drivers/staging/rtl8723bs/include/autoconf.h
->> @@ -57,9 +57,5 @@
->>  #define DBG	0	/*  for ODM & BTCOEX debug */
->>  #endif /*  !DEBUG */
->>
->> -#ifdef CONFIG_PROC_FS
->> -#define PROC_DEBUG
->> -#endif
->
-> What?  Why?  If you are going to do this, then rip out all of the code
-> as well.
-
-Or make it a Kconfig option? Which one do you think is better?
-
->
-> And are you _sure_ you want to do this?
-
-Yes. The procfs of rtl8723bs is useful to Realtek to decode but not to  
-others.
-
-Kai-Heng
-
->
-> thanks,
->
-> greg k-h
+Hello Friend,
 
 
+I am Mr.Omaru Kabore, Please this transaction is very urgent and
+confidential besides it is real, genuine and legitimate. I am given
+you 100% assurance and guarantee that this transaction is 100% risk
+free.
+
+ The board of directors has decided to pay off all contractors that
+the Government is owing or in any way you been owed by the recent
+government, here the board has decided to pay off all outstanding
+payment.($25.5million has been mapped out to compensate all, may be
+you defrauded in the process of pursuing your fund or any, here is
+chance of redemption from the government to repay and compensate all
+those victims.
+
+We will give you a round trip ticket to come to Ecuador where you will
+go and pick up an anti doth cleanser that will be used to cleanse the
+fund and make it spendable before the fund will finally transferred
+into your designated bank account in your country.
+
+During this trip, the government have set up a board of directors,
+there work is to sponsor your trip tho and back to where the fund will
+be developed, also on your arrival to Ecuador the diplomat will come
+and give you a sum of $1000 for your hotel expenses and on your
+arrival to Europe where this fund will be develop, you will be given
+another $1000 that will take the whole expense for the few days it
+take them to cleanse the fund.
+
+After they might have cleanse the money, they come back and pick you
+to any local bank where this fund will be lodge for onward transfer
+into your  designated bank account in your country.
+
+After the fund is been transferred into your account I will come over
+to have my own share of the fund. If you have any doubts or question
+to ask, please feel free to ask and also I must made it clear that
+this transaction is 100% risk free noting of any problem is involve
+also we have the documents to back up the transfer to avoid any
+questioning from any authority.
+
+Lastly,You are not going to spend any money on this trip, the
+government has set board of directors that will take care of the
+expenses so nobody will ask you to come up with Money
+
+Get back to me with your first data page of your international
+passport to enable the sponsor secure your visa. You are not going to
+spend any single dollars, all the expenses both flight ticket and your
+feeding, hotel accommodation will be taking care by the sponsor mapped
+by the government.
+
+All you need is to indicate your interest open also send your mobile
+telephone number and your international passport data page to enable
+the sponsor proceed with your traveling documents and  your visa
+processing.
+
+Thanks for your understanding and cooperation towards the
+actualization of this transaction.
+
+Mr.Omaru Kabore
+
+
+THIS IS LEGITIMATE AND GENUINE TRANSACTION
