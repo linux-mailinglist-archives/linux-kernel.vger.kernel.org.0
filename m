@@ -2,80 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A788D74775
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 08:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A81174794
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 08:59:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728592AbfGYGrC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 02:47:02 -0400
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:58201 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725808AbfGYGrC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 02:47:02 -0400
-Received: from [192.168.2.10] ([46.9.232.237])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id qXWchBe9YLqASqXWfhRkfQ; Thu, 25 Jul 2019 08:47:00 +0200
-Subject: Re: [PATCH 11/12] staging: media: cedrus: Fix misuse of GENMASK macro
-To:     Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <cover.1562734889.git.joe@perches.com>
- <cd543a5f26b031a0bbd3baa55e1f15813f59f107.1562734889.git.joe@perches.com>
- <be536d37a3b58557cdacd33943915d397bcb5037.camel@perches.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <14f2eda2-9f39-0b7c-fabc-bd860efae23a@xs4all.nl>
-Date:   Thu, 25 Jul 2019 08:46:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1729188AbfGYG7O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 02:59:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33136 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726479AbfGYG7N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 02:59:13 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E01E12070B;
+        Thu, 25 Jul 2019 06:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564037953;
+        bh=uQuQ96hVzj6wwcH5JvjI2+Q5onAAbFJiJ6TWsAXNvWg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nG572jkH/2I9ooGy82VphpyM/IcVtwRZqH3fCLtpnFXuMT7L3OnVFMFMLuC9hG7HE
+         ux6yXy/e6aUqdbcVwMeJI1i2pjCe1DdxZaFg+vdJAp2UsRyqWWSsC1+vWyU7BFvWGC
+         B/Cz+xHq1wJYe/1Nljny0kpMm2zvvGKvlKmWYX6U=
+Date:   Thu, 25 Jul 2019 08:20:21 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Steve French <smfrench@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Jeff Layton <jlayton@poochiereds.net>
+Subject: Re: [PATCH 5.2 038/413] signal/cifs: Fix cifs_put_tcp_session to
+ call send_sig instead of force_sig
+Message-ID: <20190725062021.GC31256@kroah.com>
+References: <20190724191735.096702571@linuxfoundation.org>
+ <20190724191738.345725184@linuxfoundation.org>
+ <CAH2r5msp4h4+gR6MC0ciO7X9w8cTWh5DD_W1teWpxHfooc5tsA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <be536d37a3b58557cdacd33943915d397bcb5037.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfBXVwhl7PyoGh7Hlw1FjrXvvJ1p514+omG88Y0Ob0C09kM/d1f/mQGakj+OLgifwvX9PflPPcNJWHsoNYwl6JxwVW6J1UV/ys10YpJcPHIckkKGi6yhP
- 83U5TMAFLTRrRJe6Z2qGSUdmtYfkQQylHN2QlFKssXAaOwDEis2rZFcC6cQWYrk1ToI4dbUKjkdav7CTywVts7Z6so1iDdjnk1EONG992bLeEooJCjEvTweD
- 78k+5+lM1XZc8fNHkf4DBeOlZ9s1HrA8hsI3voVAROqqS/FPCqKWyD3JCCHQG381m5a1uA2uMRI/XVnmN+qO8Wz0QAELKHeFbnTXuJK6PlaXNHmPOziJ4WQL
- nHXevkefPT8O9A4yEjCR/b17LIr87mztD5PwMaK8SmnVWn6vzCNDRusl4y9xnbxp2Lr6BR+H7/TQzvNH13J2eBfiOdJ6CBidXzKBN6noOCuHaILCovDaB0qX
- 0XRyTfThgl3XjTG6iqj3arhOshgqkwYHkVgNFKXvDQOzoHmEz8SOujjpj/umUQyX/X2uioog8uoVQxJC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAH2r5msp4h4+gR6MC0ciO7X9w8cTWh5DD_W1teWpxHfooc5tsA@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/24/19 7:09 PM, Joe Perches wrote:
-> On Tue, 2019-07-09 at 22:04 -0700, Joe Perches wrote:
->> Arguments are supposed to be ordered high then low.
->>
->> Signed-off-by: Joe Perches <joe@perches.com>
->> ---
->>  drivers/staging/media/sunxi/cedrus/cedrus_regs.h | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h b/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
->> index 3e9931416e45..ddd29788d685 100644
->> --- a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
->> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
->> @@ -110,7 +110,7 @@
->>  #define VE_DEC_MPEG_MBADDR			(VE_ENGINE_DEC_MPEG + 0x10)
->>  
->>  #define VE_DEC_MPEG_MBADDR_X(w)			(((w) << 8) & GENMASK(15, 8))
->> -#define VE_DEC_MPEG_MBADDR_Y(h)			(((h) << 0) & GENMASK(0, 7))
->> +#define VE_DEC_MPEG_MBADDR_Y(h)			(((h) << 0) & GENMASK(7, 0))
->>  
->>  #define VE_DEC_MPEG_CTRL			(VE_ENGINE_DEC_MPEG + 0x14)
+On Wed, Jul 24, 2019 at 03:49:32PM -0500, Steve French wrote:
+> Note that this patch causes a regression (removing cifs module fails,
+> due to unmount leaking a thread with this change).
 > 
-> Greg?  ping?
->  
-> 
+> We are testing a workaround to cifs.ko which would be needed if this
+> patch were to be backported.
 
-It's actually me and I'm about to pick this one up and make a PR for Mauro.
+I've now dropped this from all of the stable queues.  If you all figure
+this out, please let us know and we will be glad to queue this up, along
+with the fix.
 
-Regards,
+thanks,
 
-	Hans
+greg k-h
