@@ -2,88 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 972AD7541D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:33:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 568FD7541E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:34:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729341AbfGYQdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:33:31 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38659 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729288AbfGYQdb (ORCPT
+        id S1729361AbfGYQeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:34:09 -0400
+Received: from sonic312-24.consmr.mail.ne1.yahoo.com ([66.163.191.205]:35104
+        "EHLO sonic312-24.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729288AbfGYQeJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:33:31 -0400
-Received: by mail-pl1-f194.google.com with SMTP id az7so23600636plb.5;
-        Thu, 25 Jul 2019 09:33:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=fWyae0jUTAF4x+yTTmMwdWy55jpYm4id2Z4h6uyhbMw=;
-        b=SpsO+BbYEdwHYVZc1i1GI0ksxX4pfVrpjDdQeO48qo7O6BqqcIX3kL5Xv82/T4iVKf
-         llk2JqaPSRzpRSq9B5f1m9rlkqvn7P+vQKDzqVY5NjxB6EQpZw9sb688ZS9gT8HxyhbF
-         VJSDabUUafSGREfR+QYuAbgtV8Ytwdp1uj00YiXnS68yM23MDB7Zrb32ks+0w2P6deeT
-         T1z8hwv2pLvcJH32nrSzBteRvXUwsTtqhu+MNH6qT9NJwpnVdBJ7tfZawJYyRbmGU1Yc
-         Q0aZOzqnnr441ytU4wiMSrK9pwKotd80ibMjxm+DmmXUyFTf0OZ1v/5iab1Q7Qx5MRQd
-         kkPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=fWyae0jUTAF4x+yTTmMwdWy55jpYm4id2Z4h6uyhbMw=;
-        b=YQt1FIy8z9WvgHDPu/IU1fXPlGqNse7ouX1jRHYlPH+tI4r8vAiz+GdO94chjXbZzl
-         XDmyPoMWGlKoDKx8R8cqLsHLFBhMs7kLuAP5kAidlashj8j6o5RIZv1aiu2Ho2yrNcAt
-         pDGjyGJ5R7vXjlo6SvJHxAUwyguNvpab78FhDHC0wft7cSNHcCTkdW+WcgKKkCs3xQnj
-         yaAHo3PX07UflvjK0mUL9U6Z7A7OulMKcwOd1CZwQ8rABVSSmTc8kS9MiWG9wwZ8kZDc
-         aKa/hQdQkwNtzzvWPSOxbaMqpFHdT4uyiF5kPiguEAJIcO4tAmjqo8vmqL/Dc+1CAlI+
-         1IEw==
-X-Gm-Message-State: APjAAAWojnlYmwNSCHlR8LQFlJBIG7zw0XOVpDjMjmdZc2GQUpVy4sjL
-        bQtFz+t0RI+rCO7rBxI60+g=
-X-Google-Smtp-Source: APXvYqzfVcMfDfERWDYvingdE+UxhlPApARaZyeBgAP9HeQ2JtHcCTKSSqpBq3wc0/MYmFpHeluJ7w==
-X-Received: by 2002:a17:902:ac85:: with SMTP id h5mr92835129plr.198.1564072410911;
-        Thu, 25 Jul 2019 09:33:30 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id e189sm25305383pgc.15.2019.07.25.09.33.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 09:33:29 -0700 (PDT)
-Date:   Thu, 25 Jul 2019 09:33:29 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.1 000/371] 5.1.20-stable review
-Message-ID: <20190725163329.GA11220@roeck-us.net>
-References: <20190724191724.382593077@linuxfoundation.org>
+        Thu, 25 Jul 2019 12:34:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1564072448; bh=A1UGk6bgvVU0igLO712Yqx+eV+DhLn5JWD7EaLQraxE=; h=Date:From:Reply-To:Subject:From:Subject; b=VdTyaxgN+zR4UPh5ZnQvWbFgbhi0GuR3CknrUSTEwr/TxD2iCx+uFMIidy/F/kpGGrNL6x3yzPdlcxRiWOv63af+5E1jSFWsbpwP7b8F4dAn/QWpvZKtO4yE+0pH24JBCoewHBXPgo2/VVjNI4Ui/zCiva7gGR/V+T7zgFfasbT6HYoM/N11ANH+tKZEbi5OUqG5MPBSoREAqtj+/5pWdD943ZwJMRsMH2cT8RaGR2tBjjPKueRBH4sH0vK5hzg7ScY+Fc6tp+1RkmapV84zhtiP66hABF7n+Npb9cRYqQtWAJyuVCCEUzMFXVwDwvGu6Hr6uLU3shq4xoJ/tQtNaA==
+X-YMail-OSG: gSv.ENYVM1mI5OQ6TDMeTvesw9Pw2jVgp7_GJVVQrZpqVCt46_p3Q_3XhpBpuke
+ 0oBNcIb1ROGYepGfkvF8J8qh2rmYjzBue77N4GdmVYVV3ExL29Tt01gU4fs5d.MohmhiCgEZP1Zl
+ gOxwDuJxXvK.r9M5r_5xwtSHF74uxvT1VNZG7F07g2NgAG87XP7j3k5CaacQs6hPP_8ByOuOtDD4
+ fp.P1EYTHT8VP2Rf9saG1tUuBb5obvryEYDrNo8v6qO3Mny8qmjoUwQJntWkXYBMuWN9Kd9zKqnI
+ wLG_8ub73B2b89v4eVy6E1Ay1KYHrHUZQybmsKaJieMqaJbUZL2JMWH9pspX9vn.SJWExIk5KQQ0
+ .skJzINmuQxqkWTfhzqd8KCVq56Sywr8yXik1IuUyFog.T8s3zOIBvntyzxEf4c9crqF_sEXamJR
+ QNuOAVl9ero1Da5hbWtO1RjCxuTvXoOWNWFUWX5Hl9aEWIwJGbOC4fp08xiQa00M2IL2rHDHt.o2
+ R1eNWZOWkjqM_7aANc128ljwXBHGt170AUSaXLubAvuX3SZeUstXlD24aFvMceRvMCsj_X_JbmtH
+ Io18Q2lg585YcXyEmvIMEChThhX5KOLMUdwAO6P2fd6g1VuDZSPs43MuNOGVnCB_O_wOPtnDJDKN
+ VEdtg9UxKy4k5nv75RocXBLAyTLRKUDSDAKq73o1EIzRzLYBk5o.gMgvu93eckBu2cetVSC_JnQ1
+ Z2VjHcOuLRNB9URiqocinASvMey.qj3TCkS3A_V_1GqCwGQk5uVIH86bpez85GkSZXnzkpSMAjmO
+ kmMq1SNUL8akIS.jQa6L9nJZoUviF0DYMJKunATvV.9NpKfMIDExx3j03IjiExr7FmRg1BDSrNBP
+ qgGCKrKCxo7owAh2rgJk9M8CLkGqyI59vquPdxFZdU1aRzqpact9fLN4z1MeMj0y3WwZb5Xfx7gO
+ X06cC73YP0t0jVxLuOu1sqJ_kfn6fy342efOIilm57B8wupB.psOMM1Vmwy_BQy3ZWVm7UwcJzv2
+ 0016JLrpB16vh1fay_pANkzvFPxNOaHD2Ju1DNQKI.ugmSwtXBFdDDvTrav6F2fuj6K.wDoBL.J9
+ lj2YTzd7rwrCe7HaIRdiNPw.aJ9S5bifOuIBdex61ltE2s.V4XOtbRiuFPtdhZhRkc0Y5T24.dtk
+ gRBOejcdbA.7bBC_IMaXigb3KyCxcEUt99T7gawkH7u5WIWID86s-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Thu, 25 Jul 2019 16:34:08 +0000
+Date:   Thu, 25 Jul 2019 16:34:05 +0000 (UTC)
+From:   Ayesha Al-Qaddafi <aishagaddafi1056@gmail.com>
+Reply-To: aishagaddafi1056@gmail.com
+Message-ID: <142321729.959648.1564072445069@mail.yahoo.com>
+Subject: Investment offer,
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 09:15:52PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.1.20 release.
-> There are 371 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri 26 Jul 2019 07:13:35 PM UTC.
-> Anything received after that time might be too late.
-> 
+Dear Friend,
 
-Building powerpc:defconfig ... failed
-Building powerpc:allmodconfig ... failed
+ It=E2=80=99s my pleasure to contact you through this media as i am in need=
+ of your urgent assistance. My names are Mrs. Ayesha Al-Qaddafi a single Mo=
+ther and a Widow with three Children. I am the only biological Daughter of =
+late Libyan President (Late Colonel Muammar Al-Qaddafi).
 
-arch/powerpc/kernel/prom_init.c: In function ‘early_cmdline_parse’:
-arch/powerpc/kernel/prom_init.c:689:8: error: implicit declaration of function ‘prom_strstr’
+I have an investment funds worth Twenty Eight Million Four Hundred Thousand=
+ United State Dollar ($28.400.000.00) and i need an investment Manager/Part=
+ner and because of the asylum status i will authorize you the ownership of =
+the funds, however, I am interested in for the investment project assistanc=
+e in your country, may be from there, we can build a business relationship =
+in the near future.
 
-plus several qemu tests failing to build for the same reason.
+I am willing to negotiate investment/business profit sharing ratio with you=
+ base on the future investment earning profits. If you are willing to handl=
+e this project kindly reply urgent to enable me provide you more informatio=
+n about the investment funds. Your Urgent Reply Will Be Appreciated.
 
-Guenter
+Best Regards
+Mrs Ayesha Al-Qaddafi.
