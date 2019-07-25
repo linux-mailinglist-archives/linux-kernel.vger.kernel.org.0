@@ -2,104 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFB0974374
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 04:52:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78B767438C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 04:58:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389425AbfGYCwl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 22:52:41 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:35269 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388165AbfGYCwk (ORCPT
+        id S2389504AbfGYC6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 22:58:54 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37690 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389248AbfGYC6y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 22:52:40 -0400
-Received: by mail-qk1-f195.google.com with SMTP id r21so35417698qke.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 19:52:40 -0700 (PDT)
+        Wed, 24 Jul 2019 22:58:54 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 19so21928926pfa.4
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 19:58:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TYbaU/RcXXoDnrZeMQ94CuW6JxA4bBgoJMHBj+E8c3U=;
-        b=VWLm7pb1QP2B0tihwP9USNElFOTjEp6/v4Hd70rru6K+fpcBLvsEDPhud9KTe7tp1C
-         gOYRrkbY5+tRQ2nBFGxx4CHJMbUfjVlQcbyTAYX2Zp31qb6KjaBAMSvULqFBUzF8Kb53
-         /HA80hSPJspYIH/79t0OEPIUrlEg+sessZKds=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=K0weWVGXZjkvj8mXma8Dpnxrjjl3kZYS+QAphCpV/Js=;
+        b=i2UY4eJwQFs3tYiMrQYRnZmJPTDMTzK1Ti9myZX4gnA3WJb98B9whPZhbo6nUhB/KE
+         ffRcks6RmvOKz+/BkGel6WlQrhwZQxC4K9q6o787vkSqrlzpnPX/+WaBTh9/mFt5v819
+         z7DJuSSQf4FYkjbMBzvBctYzRBcJDoCZwiIfgSKTb+Lnym5O8xZG+2wZwrzZXzmvsgKZ
+         X9aiR7+XjkTLKuVlvkz45TUu49boMgO5mIA+kyADfiB300LAggL0GEXmGjoEBj7oalLt
+         iflLxPC9Vti0t8EsxBd0DcOV9wIdjgQipFM5DMylDWC++nAj1B68w6tIz2CfEYJU9ZJl
+         k5Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TYbaU/RcXXoDnrZeMQ94CuW6JxA4bBgoJMHBj+E8c3U=;
-        b=TnejBTZYubFC8vVS7xuFj9vu1ClD+66Whurk3NJ0X+LUH6N/tAiXYOUMQFBFF+/EuX
-         DwEUpeHMa4iT0dA0oKnzNXVH4Go8mg4erN4Lr7FTud9qnBEavf/4qRtwfu91u07W9Z2e
-         bXmGckxvWu+9oNSJm4Sfe9f/1pLjpM4DV5pF7ZwNjBDRE4qiPCo+OkQGFDT3zNzgI9tt
-         M1z9Bsckb8ojUy5SwpGWX+VZd24CaKGUUzmXVdUx7GBKeRzUzM1Ng4yspSZ4h3hDjT13
-         X4CFP0T1H0+gR82sP7C1fxrNZahXxaeJ0kpSLKVGRD6XpUBcljzTqMHdOpFroezNUH9V
-         SS0w==
-X-Gm-Message-State: APjAAAWh/PAe1NO94H9P3cpKnt0FDhQzP/lN2aVZ/w/pOE51bkmm0F9A
-        lzBZy3j4vM4eeVSpSMFkFO26Mgzi8J15hjdL64A=
-X-Google-Smtp-Source: APXvYqyM3sqW/iwNxySOMbv+KfAtuOilJ1tOA6mmxNVc4AhyblxyzikTIraPFFcFyT9J6TSPJ9ksANxa4ctyvg2uzs8=
-X-Received: by 2002:a37:a1d6:: with SMTP id k205mr56474155qke.171.1564023159729;
- Wed, 24 Jul 2019 19:52:39 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=K0weWVGXZjkvj8mXma8Dpnxrjjl3kZYS+QAphCpV/Js=;
+        b=HSsW/Hev2r7g7ETdM85fLbtQ3xPgDND7rlXPc3vkE0Flix528nxR9krZSrC0Oh2rMS
+         VUb3EBAbWnIG3QNXbYSc3b8QxYNZuHWMrreqjSnwszlLS35nLdpg2Zs3HoXi/iNbFRbF
+         Ww+prWMQ1vayi4n/1eEdno96pve43uiloQMfwWk79kc0iM9xWx0pCRspcwCRnU/MEKRg
+         WRMrNx3dTlYW6uuY8RXyQREGhXfZlhTsl7JHiQkKNxNTNFi74Xa2aJk9x4F2824VPe6c
+         jyDpNz137enfK/wWEmw2g0EHQSm9176j9QI/w18X5Wa77afDmpnXjFKk89FrKBniq4WW
+         hdIw==
+X-Gm-Message-State: APjAAAWvgrJkHXMfIFaAzTBsIoaWNZzLgdHb829h8RreeVfEY3Dx8k+g
+        SNmzfMLTivSEVtmpn7YTXpb7Ww==
+X-Google-Smtp-Source: APXvYqyWzdD1gl9CklGAM5HgrGjIaVpp1C8jVT6frK+CFL+QwAeR92Y86iKbLOvFyl7IftGjZGE57A==
+X-Received: by 2002:a63:f456:: with SMTP id p22mr8471318pgk.45.1564023533373;
+        Wed, 24 Jul 2019 19:58:53 -0700 (PDT)
+Received: from localhost ([122.172.28.117])
+        by smtp.gmail.com with ESMTPSA id k6sm57336209pfi.12.2019.07.24.19.58.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Jul 2019 19:58:51 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 08:28:49 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/5] OPP: Add function to look up required OPP's for a
+ given OPP
+Message-ID: <20190725025849.y2xyxmqmgorrny6k@vireshk-i7>
+References: <20190717222340.137578-1-saravanak@google.com>
+ <20190717222340.137578-3-saravanak@google.com>
+ <20190723095316.t5ltprixxd5veuj7@vireshk-i7>
+ <CAGETcx-r6fZH0xYea-YXyXDwe33pimtfNerLzzBn4UHT2qQVvA@mail.gmail.com>
 MIME-Version: 1.0
-References: <cover.1562734889.git.joe@perches.com> <cddd7ad7e9f81dec1e86c106f04229d21fc21920.1562734889.git.joe@perches.com>
- <2a0c5ef5c7e20b190156908991e4c964a501d80a.camel@perches.com>
- <4f6709f8-381f-415c-8569-798b074b66c5@www.fastmail.com> <4e5bc8d61436024a30a8fb6a1516e29e23a75ede.camel@perches.com>
-In-Reply-To: <4e5bc8d61436024a30a8fb6a1516e29e23a75ede.camel@perches.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Thu, 25 Jul 2019 02:52:27 +0000
-Message-ID: <CACPK8Xd3+iwkuw-Ofwf+Hy1Ez5-1pBvnk_G4xT72ZQdOVd7Sag@mail.gmail.com>
-Subject: Re: [PATCH 03/12] drm: aspeed_gfx: Fix misuse of GENMASK macro
-To:     Joe Perches <joe@perches.com>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-aspeed@lists.ozlabs.org,
-        dri-devel@lists.freedesktop.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGETcx-r6fZH0xYea-YXyXDwe33pimtfNerLzzBn4UHT2qQVvA@mail.gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 25 Jul 2019 at 01:18, Joe Perches <joe@perches.com> wrote:
->
-> On Thu, 2019-07-25 at 10:40 +0930, Andrew Jeffery wrote:
+On 23-07-19, 17:23, Saravana Kannan wrote:
+> On Tue, Jul 23, 2019 at 2:53 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
 > >
-> > On Thu, 25 Jul 2019, at 02:46, Joe Perches wrote:
-> > > On Tue, 2019-07-09 at 22:04 -0700, Joe Perches wrote:
-> > > > Arguments are supposed to be ordered high then low.
-> > > >
-> > > > Signed-off-by: Joe Perches <joe@perches.com>
-> > > > ---
-> > > >  drivers/gpu/drm/aspeed/aspeed_gfx.h | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/aspeed/aspeed_gfx.h b/drivers/gpu/drm/aspeed/aspeed_gfx.h
-> > > > index a10358bb61ec..095ea03e5833 100644
-> > > > --- a/drivers/gpu/drm/aspeed/aspeed_gfx.h
-> > > > +++ b/drivers/gpu/drm/aspeed/aspeed_gfx.h
-> > > > @@ -74,7 +74,7 @@ int aspeed_gfx_create_output(struct drm_device *drm);
-> > > >  /* CTRL2 */
-> > > >  #define CRT_CTRL_DAC_EN                  BIT(0)
-> > > >  #define CRT_CTRL_VBLANK_LINE(x)          (((x) << 20) & CRT_CTRL_VBLANK_LINE_MASK)
-> > > > -#define CRT_CTRL_VBLANK_LINE_MASK        GENMASK(20, 31)
-> > > > +#define CRT_CTRL_VBLANK_LINE_MASK        GENMASK(31, 20)
+> > On 17-07-19, 15:23, Saravana Kannan wrote:
+> > > Add a function that allows looking up required OPPs given a source OPP
+> > > table, destination OPP table and the source OPP.
+> > >
+> > > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> > > ---
+> > >  drivers/opp/core.c     | 54 ++++++++++++++++++++++++++++++++++++++++++
+> > >  include/linux/pm_opp.h | 11 +++++++++
+> > >  2 files changed, 65 insertions(+)
+> > >
+> > > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> > > index 438fcd134d93..72c055a3f6b7 100644
+> > > --- a/drivers/opp/core.c
+> > > +++ b/drivers/opp/core.c
+> > > @@ -1883,6 +1883,60 @@ void dev_pm_opp_detach_genpd(struct opp_table *opp_table)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(dev_pm_opp_detach_genpd);
+> > >
+> > > +/**
+> > > + * dev_pm_opp_xlate_opp() - Find required OPP for src_table OPP.
+> > > + * @src_table: OPP table which has dst_table as one of its required OPP table.
+> > > + * @dst_table: Required OPP table of the src_table.
+> > > + * @pstate: OPP of the src_table.
 > >
-> > Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
->
-> This hardly needs a review, it needs to be applied.
-> There's a nominal git tree for aspeed here:
->
-> T:      git git://git.kernel.org/pub/scm/linux/kernel/git/joel/aspeed.git
->
-> But who's going to do apply this?
+> > You should use @ before parameters in the comments as well ? Just like
+> > you did that below.
+> 
+> And I should probably be deleting the @pstate phantom parameter :)
+> 
+> > > + *
+> > > + * This function returns the OPP (present in @dst_table) pointed out by the
+> > > + * "required-opps" property of the OPP (present in @src_table).
+> > > + *
+> > > + * The callers are required to call dev_pm_opp_put() for the returned OPP after
+> > > + * use.
+> > > + *
+> > > + * Return: destination table OPP on success, otherwise NULL on errors.
+> > > + */
+> > > +struct dev_pm_opp *dev_pm_opp_xlate_opp(struct opp_table *src_table,
+> >
+> > Please name it dev_pm_opp_xlate_required_opp().
+> 
+> Ok
+> 
+> >
+> > > +                                     struct opp_table *dst_table,
+> > > +                                     struct dev_pm_opp *src_opp)
+> > > +{
+> > > +     struct dev_pm_opp *opp, *dest_opp = NULL;
+> > > +     int i;
+> > > +
+> > > +     if (!src_table || !dst_table || !src_opp)
+> > > +             return NULL;
+> > > +
+> > > +     for (i = 0; i < src_table->required_opp_count; i++) {
+> > > +             if (src_table->required_opp_tables[i]->np == dst_table->np)
+> >
+> > Why can't we just compare the table pointers instead ? Yeah, I know
+> > that's how I wrote that in the other xlate function, but I am confused
+> > now :)
+> 
+> I almost said "not sure. Let me just compare pointers".
+> I think (not sure) it has to do with the same OPP table being used to
+> create multiple OPP table copies if the "shared OPP table" flag isn't
+> set?
+> Can you confirm if this makes sense? If so, I can add a comment patch
+> that adds comments to the existing code and then copies it into this
+> function in this patch.
 
-This is a DRM patch, so it goes through the DRM tree. I am a
-co-maintainer there and can apply it once I remember how to drive the
-tools.
+Right, that was the reason but we also need to fix ...
 
-(FYI, this macro is not used by the current driver).
+> > > +                     break;
+> > > +     }
+> > > +
+> > > +     if (unlikely(i == src_table->required_opp_count)) {
+> > > +             pr_err("%s: Couldn't find matching OPP table (%p: %p)\n",
+> > > +                    __func__, src_table, dst_table);
+> > > +             return NULL;
+> > > +     }
+> > > +
+> > > +     mutex_lock(&src_table->lock);
+> > > +
+> > > +     list_for_each_entry(opp, &src_table->opp_list, node) {
+> > > +             if (opp == src_opp) {
 
-Cheers,
+... this as well. We must be comparing node pointers here as well.
 
-Joel
+> > > +                     dest_opp = opp->required_opps[i];
+> > > +                     dev_pm_opp_get(dest_opp);
+> > > +                     goto unlock;
+> > > +             }
+> > > +     }
+> > > +
+> > > +     pr_err("%s: Couldn't find matching OPP (%p: %p)\n", __func__, src_table,
+> > > +            dst_table);
+> > > +
+> > > +unlock:
+> > > +     mutex_unlock(&src_table->lock);
+> > > +
+> > > +     return dest_opp;
+> > > +}
+> > > +
+> > >  /**
+> > >   * dev_pm_opp_xlate_performance_state() - Find required OPP's pstate for src_table.
+> > >   * @src_table: OPP table which has dst_table as one of its required OPP table.
+> > > diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+> > > index af5021f27cb7..36f52b9cf24a 100644
+> > > --- a/include/linux/pm_opp.h
+> > > +++ b/include/linux/pm_opp.h
+> > > @@ -131,6 +131,9 @@ void dev_pm_opp_unregister_set_opp_helper(struct opp_table *opp_table);
+> > >  struct opp_table *dev_pm_opp_attach_genpd(struct device *dev, const char **names);
+> > >  void dev_pm_opp_detach_genpd(struct opp_table *opp_table);
+> > >  int dev_pm_opp_xlate_performance_state(struct opp_table *src_table, struct opp_table *dst_table, unsigned int pstate);
+> > > +struct dev_pm_opp *dev_pm_opp_xlate_opp(struct opp_table *src_table,
+> > > +                                     struct opp_table *dst_table,
+> > > +                                     struct dev_pm_opp *src_opp);
+> > >  int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq);
+> > >  int dev_pm_opp_set_sharing_cpus(struct device *cpu_dev, const struct cpumask *cpumask);
+> > >  int dev_pm_opp_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask);
+> > > @@ -304,6 +307,14 @@ static inline int dev_pm_opp_xlate_performance_state(struct opp_table *src_table
+> > >       return -ENOTSUPP;
+> > >  }
+> > >
+> > > +static inline struct dev_pm_opp *dev_pm_opp_xlate_opp(
+> > > +                                             struct opp_table *src_table,
+> > > +                                             struct opp_table *dst_table,
+> > > +                                             struct dev_pm_opp *src_opp)
+> > > +{
+> > > +     return NULL;
+> > > +}
+> > > +
+> >
+> > Keep the order of declaring routines same, so this goes before the
+> > other xlate routine.
+> 
+> Will do.
+> 
+> -Saravana
+> 
+> > >  static inline int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
+> > >  {
+> > >       return -ENOTSUPP;
+> > > --
+> > > 2.22.0.510.g264f2c817a-goog
+> >
+> > --
+> > viresh
+
+-- 
+viresh
