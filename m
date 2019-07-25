@@ -2,99 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A8DB74C2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 12:51:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ECB874C40
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 12:55:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388255AbfGYKvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 06:51:17 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38896 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728232AbfGYKvQ (ORCPT
+        id S2388827AbfGYKzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 06:55:35 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60333 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728710AbfGYKzf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 06:51:16 -0400
-Received: by mail-wr1-f66.google.com with SMTP id g17so50265698wrr.5
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 03:51:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=aFZmX9sNgpkpsOgJa93uhuROSagbLyOEgd3pn80ckbM=;
-        b=P2hgN96Nz+x7siCD6pHNjp+/b6oSwNyXTJfpDUNuhQ7kkvEOItehsO+gm9XjSFAYMS
-         SSku6PLqJyIrtdF/lPMnxI0A8eazV9qRS8UfwDObiz1gVElYeSNV4Bk2hfaZ/gjSs2+g
-         kIt3woG1hJ44Cc0dffmzBfwvCLfCRzZYoV/zxuZ3RE4S4Vq32ugoFPwez5H+PitNrRrF
-         +DbNQEXccVSQ/Efy7b5bJe0nW1/Pk8Sfz2UQgrsgecDc3Ue5LKC9AfyimV4Q5r4flQWd
-         UXKc7pdwfEcguD9BBxL5xn9DzJ1lOroUT96P3kjxZHGjRHnA96NDYFhZlJv10Bb9uCUq
-         oVyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=aFZmX9sNgpkpsOgJa93uhuROSagbLyOEgd3pn80ckbM=;
-        b=HqWv2GgDA+OJd63hnk5o94VgQqa7MiHJjRKW5QnheAFEOA6BzYtg7dVovV27gUayMb
-         5FqYrA4uVMcLiONxEWvhBM5TuFK+atmvay2jGD/qlY/ukz7wUo3Bj67BLctThOS+sD1O
-         2S28jlgcbMLNyrJGVtgPh1yp5+1iDamCn459JA4Gw/Kq6q5XXM8y6h+Jxdfg4y0lx8Nt
-         Q7AD/8FOPVNSonjTSbC+jVnaCBUaVjdeRmujcrEHuGCxfNO9G/U0qoiZtJ3StwvBej60
-         xhNRc4JCL1jsqfqQXbhuz7G9Ub5IHsrW6wAqxBcfwbq6uEriR5HxFfnnvLDOaQNEEn2x
-         icSg==
-X-Gm-Message-State: APjAAAU2WuJRWvEI81beCir5URqJ+AIN30PvT5dcpcD8FULnwO0TRkSE
-        W9yWIxTOVGGkf19qryLKXA4CvQ==
-X-Google-Smtp-Source: APXvYqw2Th0YoM1U1HmCt0CXrb7KEvK5m/AFvQZ68lol1gQyYFZSUG4hb8qmZx94AaP7f7bj+hGRGg==
-X-Received: by 2002:adf:cd04:: with SMTP id w4mr43823285wrm.230.1564051874593;
-        Thu, 25 Jul 2019 03:51:14 -0700 (PDT)
-Received: from dell ([2.27.35.164])
-        by smtp.gmail.com with ESMTPSA id 2sm64378105wrn.29.2019.07.25.03.51.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Jul 2019 03:51:14 -0700 (PDT)
-Date:   Thu, 25 Jul 2019 11:51:03 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        rafael@kernel.org, Thor Thayer <thor.thayer@linux.intel.com>
-Subject: Re: [PATCH v2 23/28] drivers: Introduce
- driver_find_device_by_of_node() helper
-Message-ID: <20190725105103.GB6164@dell>
-References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
- <1560534863-15115-24-git-send-email-suzuki.poulose@arm.com>
+        Thu, 25 Jul 2019 06:55:35 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PAtH0n968013
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 25 Jul 2019 03:55:17 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PAtH0n968013
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564052117;
+        bh=WfrP/i4bTQGAma/Qr181evUxuhN3iZ+FHHT7WBq9K6k=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=lEXpT6ie/f+/dRTFdFOhXubTGbLg02qJyBevjsNVhwV0Rwv7JCLRYCnYWT9p+8wJ9
+         mVtv2hL5FqJTTpvHetb0cQBhVeBs4hxkGukmpEn40317FU+FUxx6fccptXWiov2PGa
+         Ztt0GqgIpJZwljMKKl8gZtYwAJq586rDQBrINR88OiUE5Ba6NJZJN5pMLbfeseCPyg
+         YFvfVfG/wufyIF/IEFMcpzmyfEZm5sRUShoE2m5arR+n0fhyJfZSqYpsASiCWSlZnt
+         1QBwH2fXdCTuuua2qmlf1c4E/yK9s5b71EuW0aoPfbkTOO0Zj7G0FWDmoug+OwxiW1
+         iyngwtUZZFjJQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PAtGGI968010;
+        Thu, 25 Jul 2019 03:55:16 -0700
+Date:   Thu, 25 Jul 2019 03:55:16 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Zhenzhong Duan <tipbot@zytor.com>
+Message-ID: <tip-517c3ba00916383af6411aec99442c307c23f684@git.kernel.org>
+Cc:     tglx@linutronix.de, mingo@kernel.org, zhenzhong.duan@oracle.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, zhenzhong.duan@oracle.com,
+          hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org
+In-Reply-To: <1564022349-17338-1-git-send-email-zhenzhong.duan@oracle.com>
+References: <1564022349-17338-1-git-send-email-zhenzhong.duan@oracle.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/speculation/mds: Apply more accurate check on
+ hypervisor platform
+Git-Commit-ID: 517c3ba00916383af6411aec99442c307c23f684
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1560534863-15115-24-git-send-email-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Jun 2019, Suzuki K Poulose wrote:
+Commit-ID:  517c3ba00916383af6411aec99442c307c23f684
+Gitweb:     https://git.kernel.org/tip/517c3ba00916383af6411aec99442c307c23f684
+Author:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+AuthorDate: Thu, 25 Jul 2019 10:39:09 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 25 Jul 2019 12:51:55 +0200
 
-> Add a wrapper to driver_find_device() to search for a device
-> by the of_node pointer, reusing the generic match function.
-> Also convert the existing users to make use of the new helper.
-> 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Thor Thayer <thor.thayer@linux.intel.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Acked-by: Thor Thayer <thor.thayer@linux.intel.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  drivers/amba/tegra-ahb.c    | 11 +----------
->  drivers/mfd/altera-sysmgr.c | 14 ++------------
->  include/linux/device.h      | 13 +++++++++++++
->  3 files changed, 16 insertions(+), 22 deletions(-)
+x86/speculation/mds: Apply more accurate check on hypervisor platform
 
-Looks good to me.  For the MFD part.
+X86_HYPER_NATIVE isn't accurate for checking if running on native platform,
+e.g. CONFIG_HYPERVISOR_GUEST isn't set or "nopv" is enabled.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Checking the CPU feature bit X86_FEATURE_HYPERVISOR to determine if it's
+running on native platform is more accurate.
 
-What is the merge plan?
+This still doesn't cover the platforms on which X86_FEATURE_HYPERVISOR is
+unsupported, e.g. VMware, but there is nothing which can be done about this
+scenario.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Fixes: 8a4b06d391b0 ("x86/speculation/mds: Add sysfs reporting for MDS")
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/1564022349-17338-1-git-send-email-zhenzhong.duan@oracle.com
+---
+ arch/x86/kernel/cpu/bugs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 66ca906aa790..801ecd1c3fd5 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1226,7 +1226,7 @@ static ssize_t l1tf_show_state(char *buf)
+ 
+ static ssize_t mds_show_state(char *buf)
+ {
+-	if (!hypervisor_is_type(X86_HYPER_NATIVE)) {
++	if (boot_cpu_has(X86_FEATURE_HYPERVISOR)) {
+ 		return sprintf(buf, "%s; SMT Host state unknown\n",
+ 			       mds_strings[mds_mitigation]);
+ 	}
