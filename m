@@ -2,59 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F8BD7500C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:48:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4165075011
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:49:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390571AbfGYNsg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:48:36 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:54090 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389122AbfGYNsg (ORCPT
+        id S2390748AbfGYNtP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:49:15 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:36561 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390515AbfGYNtP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:48:36 -0400
-X-IronPort-AV: E=Sophos;i="5.64,306,1559512800"; 
-   d="scan'208";a="393302470"
-Received: from c-73-22-29-55.hsd1.il.comcast.net (HELO hadrien) ([73.22.29.55])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 15:48:32 +0200
-Date:   Thu, 25 Jul 2019 08:48:30 -0500 (CDT)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Markus Elfring <Markus.Elfring@web.de>
-cc:     cocci@systeme.lip6.fr, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        David Laight <David.Laight@ACULAB.COM>,
-        Joe Perches <joe@perches.com>
-Subject: Re: [PATCH 1/2] string: Add stracpy and stracpy_pad mechanisms
-In-Reply-To: <7e489aa8-95ea-b3b0-9023-ba284212977f@web.de>
-Message-ID: <alpine.DEB.2.21.1907250847440.2555@hadrien>
-References: <alpine.DEB.2.21.1907242040490.10108@hadrien> <7e489aa8-95ea-b3b0-9023-ba284212977f@web.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 25 Jul 2019 09:49:15 -0400
+Received: by mail-yb1-f194.google.com with SMTP id d9so12088338ybf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 06:49:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+94dksNMcufTeD/gyuUattLxpQAoVrZBBEnx6NzwFI8=;
+        b=igwlp1jjMjzAEk8NRn0H5RDYphkcWR6yJ2kmjtXjspl/BBg41z7oa2nDhRSfy9sosJ
+         TpW/84vSFYnbJbxDU5/bVkAoqDFU2nES1vtt1Wm8iH4WEzQuFgawY6ddeO7JZEI5P3j0
+         1EV4KfGrwCfJjlke104b3pme0tBDfKJgovzggLxwjSN1mk3CPDWpgUKlNycor5Juxii7
+         b7LZ3RVbvvdV5pg80c0Ia75qccs+K/9YEoPwVTQO0tpstlttM6wo4dCZLxJsubbsiztv
+         o3jc1JRLjkl+Y+x4zBBuEXGcKReNCQQUaFUYk659QHdnLHv3n3eUfOQeK82Yw7VBK3E/
+         OYkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+94dksNMcufTeD/gyuUattLxpQAoVrZBBEnx6NzwFI8=;
+        b=BT2XECr8CqTuhUv4eXq7s9v2nVF28Aq8oYjhxofpkqzgXsysVB6JhOl410zoUCC0JL
+         smzVNr/NP15tBtx17LvRmjbh8ggRRvrDLCz10E93FEIHE1Iozp29v5KYK1cnppvHybJQ
+         FiLYQ/G8+1BENk3ssKOisbJWRzz3xqkG7SmV4i4XM8+Wz6l3Z3/Pv62tntK/UXLC0UCy
+         vD+wHf29xUMLCVaFSBgJC3uTtb0TTHF+jK66NmmSm0skIMq/5yrLDuhBdi3rUMYpU4WJ
+         dTrOlPSYgj08vDyJaDf1RV9cheRg+jHn5AgXhrskegjukUdbl/p0GaK9tWm6EB0JXV27
+         dWFg==
+X-Gm-Message-State: APjAAAXkVhJV1Bf2r9PoVNB7/EaR60CkDYGX8xEMWkr2QONWVU55I7R1
+        9KSH8Eq68ngMmUxkUEIU7c49y8oX
+X-Google-Smtp-Source: APXvYqyguZ45AzSFpcwWFhs3OcwoWTG8JmIslBN5LYLTa+WpeZ4q/grsKE8Sx3XG2k/2XTgX47wL/A==
+X-Received: by 2002:a25:397:: with SMTP id 145mr54540161ybd.469.1564062553865;
+        Thu, 25 Jul 2019 06:49:13 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id l4sm9960651ywa.58.2019.07.25.06.49.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Jul 2019 06:49:13 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id s41so15796235ybe.12
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 06:49:12 -0700 (PDT)
+X-Received: by 2002:a25:2516:: with SMTP id l22mr21764852ybl.441.1564062552540;
+ Thu, 25 Jul 2019 06:49:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <1564024076-13764-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+ <1564024076-13764-2-git-send-email-yanhaishuang@cmss.chinamobile.com>
+In-Reply-To: <1564024076-13764-2-git-send-email-yanhaishuang@cmss.chinamobile.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Thu, 25 Jul 2019 09:48:32 -0400
+X-Gmail-Original-Message-ID: <CA+FuTSfqMRtbJFPiAGyPKpoKjxcVQp_YYXD5Xtj0bHmSQBMpkQ@mail.gmail.com>
+Message-ID: <CA+FuTSfqMRtbJFPiAGyPKpoKjxcVQp_YYXD5Xtj0bHmSQBMpkQ@mail.gmail.com>
+Subject: Re: [PATCH] ipip: validate header length in ipip_tunnel_xmit
+To:     Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Network Development <netdev@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Thu, 25 Jul 2019, Markus Elfring wrote:
-
-> > @r@
-> > identifier f,i1,i2;
-> > struct i1 e1;
-> > expression e2;
-> > position p;
-> > @@
-> > \(strscpy\|strlcpy\)(e1.f, e2, i2)@p
+On Wed, Jul 24, 2019 at 11:09 PM Haishuang Yan
+<yanhaishuang@cmss.chinamobile.com> wrote:
 >
-> I have got the impression that the replacement can work also
-> without an inherited position variable at the end.
-> How do you think about to omit this SmPL rule then?
->
-> Can it be nicer to reduce duplicate SmPL code a bit?
+> We need the same checks introduced by commit cb9f1b783850
+> ("ip: validate header length on virtual device xmit") for
+> ipip tunnel.
 
-Huh?  Rule 2 is important, to ensure that ths size is correct.  Without
-rule 1, how can rule 2 be checked?
+Fixes: cb9f1b783850b ("ip: validate header length on virtual device xmit")
 
-julia
+> Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+
+Good catch. reg_vif_xmit in net/ipv4/ipmr.c probably also needs it.
+All other ndo_start_xmit under net/ipv4 and net/ipv6 have this check
+as of the above commit.
