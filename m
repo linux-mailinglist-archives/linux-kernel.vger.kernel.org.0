@@ -2,141 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E527674CB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 13:17:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9880074CCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 13:18:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391726AbfGYLRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 07:17:10 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:53548 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388479AbfGYLRJ (ORCPT
+        id S2404003AbfGYLSX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 07:18:23 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:27299 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403940AbfGYLSX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 07:17:09 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6PBGKKY029109;
-        Thu, 25 Jul 2019 13:16:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=0lUCfEK3ONxg/NNCAgs3L5jocem76yi9BMRZQfOjHd8=;
- b=g6aBzlx7Y1CVz3yBYoHW1xxxNxME/UDCiStUnlGjRhsSgI7bvyFBjW8FB3wcLdmrn3vz
- U2J7wnY4KUQlV5VBdpvS10TpiOxVof2XFfk4EbPYBjPOF4SKu39HtaGv+LQGxGKpS+Yt
- BBqT8W3tARzEbisvSkYqvoyirPYOSAye/Us9g/sXuYoIgCUCORQtx86d4lXpg9rhk4Lw
- 1JBEft1YrX7uMXGGYl9Jq/5TqDd8rCCqKOkHIzENSaMlaeFGnIXZevOPhAzRoPPEa9g4
- wKcJLNdnjawSPsZ/ZfiovRzdS/5LDNEXd24lDmRtAp3yOKJYu2iXS1J+g/G9yrZioZ82 Eg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2tx6083kb5-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 25 Jul 2019 13:16:58 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CE3FC31;
-        Thu, 25 Jul 2019 11:16:57 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AB4142AC2;
-        Thu, 25 Jul 2019 11:16:57 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 25 Jul
- 2019 13:16:57 +0200
-Received: from localhost (10.201.20.5) by Webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 25 Jul 2019 13:16:56 +0200
-From:   Amelie Delaunay <amelie.delaunay@st.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH] pinctrl: stmfx: update pinconf settings
-Date:   Thu, 25 Jul 2019 13:16:56 +0200
-Message-ID: <1564053416-32192-1-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 25 Jul 2019 07:18:23 -0400
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x6PBHwWF009905;
+        Thu, 25 Jul 2019 20:17:58 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x6PBHwWF009905
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1564053478;
+        bh=O99g3Q92gg15AVvJroWDS691IzdWx4FzeR+mRv04QGU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=k7AKJfvT1vp+mEb24/fVQdxbQh+Am+/duUmK4cEfMp/Wk5fD5S5JgFn1u6o+q2h7T
+         vgOWUxseNf9Xb4rK/VJrjj50hFFYi9ouQH04nKCgrZeZorbPMiFIacxufxDhw/7WSE
+         uy/9/aDfS4uO6j9APQObmH8Z5AnTluPcMGtN/tg1iDYTTlVLhQu8Gd1fT0pIovCzET
+         j5MPIsRiIzpXMOs8qJ9rOL7Na4wL+0913MwFK4344KdhrgO9o9XEuigK3e+4B3xxda
+         BydSudCMqbrsvDP0SGgAMyjGqo+Rj1qagmWWuh26dlXISawG2epuIUMmE7IeNwrcEd
+         xmjoSa4Hh13lg==
+X-Nifty-SrcIP: [209.85.217.47]
+Received: by mail-vs1-f47.google.com with SMTP id 2so33420957vso.8;
+        Thu, 25 Jul 2019 04:17:58 -0700 (PDT)
+X-Gm-Message-State: APjAAAWmI9wIzQHkkARTHvkPTaGm/2eWKigMarZKqAXmMjxe+XuxORmW
+        oTKSCKvWT4Kuk9mF3GYf4ZThjCoyEPsCLjk5OgE=
+X-Google-Smtp-Source: APXvYqx210g/x+mN1qIDcqKttYDPVJy8/xhLB8dcLLlGrZ0UyGcV7aFyeOxz1KL+5IklRsyYam3rr6gAuZ0GvNSVnr0=
+X-Received: by 2002:a67:d46:: with SMTP id 67mr55994217vsn.181.1564053477415;
+ Thu, 25 Jul 2019 04:17:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-25_04:,,
- signatures=0
+References: <20190725080513.4071-1-yamada.masahiro@socionext.com> <20190725111256.GA30958@kroah.com>
+In-Reply-To: <20190725111256.GA30958@kroah.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 25 Jul 2019 20:17:21 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATcRXT8ptGpPhc4kods65AQsRbz2wmnq5=df35S2aWn7w@mail.gmail.com>
+Message-ID: <CAK7LNATcRXT8ptGpPhc4kods65AQsRbz2wmnq5=df35S2aWn7w@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: detect missing "WITH Linux-syscall-note" for uapi headers
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Torgue <alexandre.torgue@st.com>
+On Thu, Jul 25, 2019 at 8:13 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Jul 25, 2019 at 05:05:13PM +0900, Masahiro Yamada wrote:
+> > UAPI headers licensed under GPL are supposed to have exception
+> > "WITH Linux-syscall-note" so that they can be included into non-GPL
+> > user space application code.
+> >
+> > Unfortunately, people often miss to add it. Break 'make headers'
+> > when any of exported headers lacks the exception note so that the
+> > 0-day bot can easily catch it.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> > This patch depends on the following:
+> >
+> > https://lore.kernel.org/patchwork/patch/1105289/
+> >
+> > I will turn on the error after all headers are fixed.
+>
+> I've taken the dependancy here in the spdx tree and will send it to
+> Linus for 5.3-rc2.
 
-According to the following tab (coming from STMFX datasheet), updates
-have to done in stmfx_pinconf_set function:
+Thanks!
 
--"type" has to be set when "bias" is configured as "pull-up or pull-down"
--PIN_CONFIG_DRIVE_PUSH_PULL should only be used when gpio is configured as
- output. There is so no need to check direction.
+>  I can also take this now through that tree, or you
+> can add it to yours afterward, which ever is easier for you.
 
-DIR | TYPE | PUPD | MFX GPIO configuration
-----|------|------|---------------------------------------------------
-1   | 1    | 1    | OUTPUT open drain with internal pull-up resistor
-----|------|------|---------------------------------------------------
-1   | 1    | 0    | OUTPUT open drain with internal pull-down resistor
-----|------|------|---------------------------------------------------
-1   | 0    | 0/1  | OUTPUT push pull no pull
-----|------|------|---------------------------------------------------
-0   | 1    | 1    | INPUT with internal pull-up resistor
-----|------|------|---------------------------------------------------
-0   | 1    | 0    | INPUT with internal pull-down resistor
-----|------|------|---------------------------------------------------
-0   | 0    | 1    | INPUT floating
-----|------|------|---------------------------------------------------
-0   | 0    | 0    | analog (GPIO not used, default setting)
+I will create a branch on top 5.3-rc2
+and queue this patch by myself.
 
-Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
----
- drivers/pinctrl/pinctrl-stmfx.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Thank you.
 
-diff --git a/drivers/pinctrl/pinctrl-stmfx.c b/drivers/pinctrl/pinctrl-stmfx.c
-index d3332da..31b6e51 100644
---- a/drivers/pinctrl/pinctrl-stmfx.c
-+++ b/drivers/pinctrl/pinctrl-stmfx.c
-@@ -296,29 +296,29 @@ static int stmfx_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 		switch (param) {
- 		case PIN_CONFIG_BIAS_PULL_PIN_DEFAULT:
- 		case PIN_CONFIG_BIAS_DISABLE:
-+		case PIN_CONFIG_DRIVE_PUSH_PULL:
-+			ret = stmfx_pinconf_set_type(pctl, pin, 0);
-+			if (ret)
-+				return ret;
-+			break;
- 		case PIN_CONFIG_BIAS_PULL_DOWN:
-+			ret = stmfx_pinconf_set_type(pctl, pin, 1);
-+			if (ret)
-+				return ret;
- 			ret = stmfx_pinconf_set_pupd(pctl, pin, 0);
- 			if (ret)
- 				return ret;
- 			break;
- 		case PIN_CONFIG_BIAS_PULL_UP:
--			ret = stmfx_pinconf_set_pupd(pctl, pin, 1);
-+			ret = stmfx_pinconf_set_type(pctl, pin, 1);
- 			if (ret)
- 				return ret;
--			break;
--		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
--			if (!dir)
--				ret = stmfx_pinconf_set_type(pctl, pin, 1);
--			else
--				ret = stmfx_pinconf_set_type(pctl, pin, 0);
-+			ret = stmfx_pinconf_set_pupd(pctl, pin, 1);
- 			if (ret)
- 				return ret;
- 			break;
--		case PIN_CONFIG_DRIVE_PUSH_PULL:
--			if (!dir)
--				ret = stmfx_pinconf_set_type(pctl, pin, 0);
--			else
--				ret = stmfx_pinconf_set_type(pctl, pin, 1);
-+		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+			ret = stmfx_pinconf_set_type(pctl, pin, 1);
- 			if (ret)
- 				return ret;
- 			break;
+
 -- 
-2.7.4
-
+Best Regards
+Masahiro Yamada
