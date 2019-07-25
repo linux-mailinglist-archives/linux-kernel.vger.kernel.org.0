@@ -2,101 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA3D9744C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:12:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C016D744C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:17:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390485AbfGYFMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:12:05 -0400
-Received: from gofer.mess.org ([88.97.38.141]:34441 "EHLO gofer.mess.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390362AbfGYFME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:12:04 -0400
-Received: by gofer.mess.org (Postfix, from userid 1000)
-        id AFB1C60474; Thu, 25 Jul 2019 06:12:02 +0100 (BST)
-Date:   Thu, 25 Jul 2019 06:12:02 +0100
-From:   Sean Young <sean@mess.org>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] media: ir-kbd-i2c: prevent potential NULL pointer
- access
-Message-ID: <20190725051202.o47mz4unbn63z6uk@gofer.mess.org>
-References: <20190722172632.4402-1-wsa+renesas@sang-engineering.com>
- <20190722172632.4402-2-wsa+renesas@sang-engineering.com>
+        id S2390518AbfGYFRr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:17:47 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42793 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390368AbfGYFRr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 01:17:47 -0400
+Received: by mail-pg1-f196.google.com with SMTP id t132so22371714pgb.9
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 22:17:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/u83+hQ1QJSZQhZrXmEUjb2K6ijc3Xy3tbFtshDxhfA=;
+        b=DLPjA6ebSqQMnWFq4JJNbgskYTCbvMXOTpeb8SzA8dD4lhEAgVdGspxIw+UuL7XB8h
+         Gv4P7+W73rim2Ym3ir6uigy++MwBE7jbkrV+NBR0y87WvSD8U9kKhEZCh7kngp+1mzoj
+         GZXUawj94hGsKbTlIbluVoxHyEigED8f5YqicUEqymMAO/V2uMTGGTDrLusi4YjnEb85
+         8iGdPO6D9jhR9M5yCZ1AK5Lnw2YT6ti5IUvLqL7JwX7xlv/HWIEFJpuOqk1LNDlXq9w7
+         BqJMbrNM5/+c+kNO7xfx9wIkPkoybKFjTYoCW7g2pIbEbA8JALpEZjFLLk486+T0gBb/
+         wrYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/u83+hQ1QJSZQhZrXmEUjb2K6ijc3Xy3tbFtshDxhfA=;
+        b=sWxrrgeFg3XROm2mnp74Rmq80FTnb7fxZzvthC60WVNGR8jjLvvkURp8deJxmdVVZ+
+         Xe0ShbY8h00rsZQzXOtv2OWt0emaZb+5cUg8tvuD/BeCs6XETcG+gdL3W0jUuXluHf+M
+         Qd+9zKt3u7Brq6cjk7fXggkCLQIzh4WlkV6khwNzExjUaJ8i5VWRrpJcmMhvuJOSpLlq
+         bd3+RJf0N2OMyQZHxDiF+RfTvjGInTOsXxPNrEGu48uWOAxlCfS9fCQbT6WV7oEK04VF
+         EF9cMSeF0oaUdoZIznIHEJRpD9ZkpgDDVMzTixIQ9nBI+mhhOrq0iZD74PUdkP2h0MP9
+         0TFA==
+X-Gm-Message-State: APjAAAVBsh1w5zek8GEnpOo7nfNJYWMS0GGfwrh6BjPTwkviOWwrX3Da
+        mDK1K8FnSy8Oefy7CZylEOyJkg==
+X-Google-Smtp-Source: APXvYqwRgHw22t1Ez3v6HGsA4DNuKmxxcEJSqzfywoFPkhctAPIvI9uRybfdTAWZi5/HEcfLafSq2g==
+X-Received: by 2002:aa7:8b55:: with SMTP id i21mr14861350pfd.155.1564031866108;
+        Wed, 24 Jul 2019 22:17:46 -0700 (PDT)
+Received: from localhost ([122.172.28.117])
+        by smtp.gmail.com with ESMTPSA id b37sm77297543pjc.15.2019.07.24.22.17.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Jul 2019 22:17:44 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 10:47:42 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 3/5] OPP: Improve require-opps linking
+Message-ID: <20190725051742.mn54pi722txkpddg@vireshk-i7>
+References: <20190717222340.137578-1-saravanak@google.com>
+ <20190717222340.137578-4-saravanak@google.com>
+ <20190723102842.t2s45zzylsjuccm4@vireshk-i7>
+ <CAGETcx-6M9Ts8tfMf6aA8GjMyzK5sOLr069ZCxTG7RHMFPLzHw@mail.gmail.com>
+ <20190725030712.lx3cjogo5r7kc262@vireshk-i7>
+ <CAGETcx8QTs2Dqqppb_gwiUa2fte92K_q+B+j_CreRgqU52L7EA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190722172632.4402-2-wsa+renesas@sang-engineering.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAGETcx8QTs2Dqqppb_gwiUa2fte92K_q+B+j_CreRgqU52L7EA@mail.gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 07:26:31PM +0200, Wolfram Sang wrote:
-> i2c_new_dummy() can fail returning a NULL pointer. The code does not
-> bail out in this case and the returned pointer is blindly used.
-
-I don't see how. The existing code tries to set up the tx part; if
-i2c_new_dummy() return NULL then the rcdev is registered without tx,
-and tx_c is never used.
-
-> Convert
-> to devm_i2c_new_dummy_device() which returns an ERR_PTR and also bail
-> out when failing the validity check.
-
-Possibly I was being overly cautious with not bailing out if tx can't
-be registered; moving to devm is probably a good idea. However the
-commit message is misleading, because the existing code has no
-NULL pointer access.
-
-Sean
-
+On 24-07-19, 21:09, Saravana Kannan wrote:
+> On Wed, Jul 24, 2019 at 8:07 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > We should be doing this whenever a new OPP table is created, and see
+> > if someone else was waiting for this OPP table to come alive.
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  drivers/media/i2c/ir-kbd-i2c.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
+> Searching the global OPP table list seems a ton more wasteful than
+> doing the lazy linking. I'd rather not do this.
+
+We can see how best to optimize that, but it will be done only once
+while a new OPP table is created and putting stress there is the right
+thing to do IMO. And doing anything like that in a place like
+opp-set-rate is the worst one. It will be a bad choice by design if
+you ask me and so I am very much against that.
+
+> > Also we
+> > must make sure that we do this linking only if the new OPP table has
+> > its own required-opps links fixed, otherwise delay further.
 > 
-> diff --git a/drivers/media/i2c/ir-kbd-i2c.c b/drivers/media/i2c/ir-kbd-i2c.c
-> index 876d7587a1da..f46717052efc 100644
-> --- a/drivers/media/i2c/ir-kbd-i2c.c
-> +++ b/drivers/media/i2c/ir-kbd-i2c.c
-> @@ -885,9 +885,12 @@ static int ir_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  	INIT_DELAYED_WORK(&ir->work, ir_work);
->  
->  	if (probe_tx) {
-> -		ir->tx_c = i2c_new_dummy(client->adapter, 0x70);
-> -		if (!ir->tx_c) {
-> +		ir->tx_c = devm_i2c_new_dummy_device(&client->dev,
-> +						     client->adapter, 0x70);
-> +		if (IS_ERR(ir->tx_c)) {
->  			dev_err(&client->dev, "failed to setup tx i2c address");
-> +			err = PTR_ERR(ir->tx_c);
-> +			goto err_out_free;
->  		} else if (!zilog_init(ir)) {
->  			ir->carrier = 38000;
->  			ir->duty_cycle = 40;
-> @@ -904,9 +907,6 @@ static int ir_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  	return 0;
->  
->   err_out_free:
-> -	if (ir->tx_c)
-> -		i2c_unregister_device(ir->tx_c);
-> -
->  	/* Only frees rc if it were allocated internally */
->  	rc_free_device(rc);
->  	return err;
-> @@ -919,9 +919,6 @@ static int ir_remove(struct i2c_client *client)
->  	/* kill outstanding polls */
->  	cancel_delayed_work_sync(&ir->work);
->  
-> -	if (ir->tx_c)
-> -		i2c_unregister_device(ir->tx_c);
-> -
->  	/* unregister device */
->  	rc_unregister_device(ir->rc);
->  
-> -- 
-> 2.20.1
+> This can be done. Although even without doing that, this patch is
+> making things better by not failing silently like it does today? Can I
+> do this later as a separate patch set series?
+
+I would like this to get fixed now in a proper way, there is no hurry
+for a quick fix currently. No band-aids please.
+
+> > Even then I don't want to add these checks to those places. For the
+> > opp-set-rate routine, add another flag to the OPP table which
+> > indicates if we are ready to do dvfs or not and mark it true only
+> > after the required-opps are all set.
+> 
+> Honestly, this seems like extra memory and micro optimization without
+> any data to back it.
+
+Again, opp-set-rate isn't supposed to do something like this. It
+shouldn't handle initializations of things, that is broken design.
+
+> Show me data that checking all these table
+> pointers is noticeably slower than what I'm doing. What's the max
+> "required tables count" you've seen in upstream so far?
+
+Running anything extra (specially some initialization stuff) in
+opp-set-rate is wrong as per me and as a Maintainer of the OPP core it
+is my responsibility to not allow such things to happen.
+
+> I'd even argue that doing it the way I do might actually reduce the
+> cache misses/warm the cache because those pointers are going to be
+> searched/used right after anyway.
+
+So you want to make the cache hot with data, by running some code at a
+place where it is not required to be run really, and the fact that
+most of the data cached may not get used anyway ? And that is an
+improvement somehow ?
+
+-- 
+viresh
