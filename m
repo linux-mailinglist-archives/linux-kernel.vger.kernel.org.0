@@ -2,76 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3734C758BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 22:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21545758CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 22:23:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726665AbfGYUVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 16:21:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:19700 "EHLO mx1.redhat.com"
+        id S1726559AbfGYUXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 16:23:10 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:39448 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726166AbfGYUVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 16:21:17 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8A9D73086262;
-        Thu, 25 Jul 2019 20:21:17 +0000 (UTC)
-Received: from treble (ovpn-122-90.rdu2.redhat.com [10.10.122.90])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 53BCB6712C;
-        Thu, 25 Jul 2019 20:21:16 +0000 (UTC)
-Date:   Thu, 25 Jul 2019 15:21:14 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Sedat Dilek <sedat.dilek@gmail.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/2] drm/i915: Remove redundant user_access_end() from
- __copy_from_user() error path
-Message-ID: <20190725202114.hxwnnu4sihus53ci@treble>
-References: <cover.1564007838.git.jpoimboe@redhat.com>
- <523b910e41a5cf856ee338b78ee36941034be142.1564007838.git.jpoimboe@redhat.com>
- <CA+icZUUb0XVhYq6Y590UyKxEyvzP7_LWU6WZW6bi7tEu6=RzuQ@mail.gmail.com>
+        id S1725923AbfGYUXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 16:23:09 -0400
+Received: from d57e23da.static.ziggozakelijk.nl ([213.126.35.218] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hqkGX-0001vF-QE; Thu, 25 Jul 2019 22:23:05 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] ARM: dts: rockchip: Limit WiFi TX power on rk3288-veyron-jerry
+Date:   Thu, 25 Jul 2019 22:23:04 +0200
+Message-ID: <2130412.AuREfPFnmH@phil>
+In-Reply-To: <20190723225258.93058-1-mka@chromium.org>
+References: <20190723225258.93058-1-mka@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CA+icZUUb0XVhYq6Y590UyKxEyvzP7_LWU6WZW6bi7tEu6=RzuQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 25 Jul 2019 20:21:17 +0000 (UTC)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 08:10:49AM +0200, Sedat Dilek wrote:
-> On Thu, Jul 25, 2019 at 12:48 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> >
-> > Objtool reports:
-> >
-> >   drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: .altinstr_replacement+0x36: redundant UACCESS disable
-> >
-> > __copy_from_user() already does both STAC and CLAC, so the
-> > user_access_end() in its error path adds an extra unnecessary CLAC.
-> >
-> > Fixes: 0b2c8f8b6b0c ("i915: fix missing user_access_end() in page fault exception case")
-> > Reported-by: Thomas Gleixner <tglx@linutronix.de>
-> > Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/617
-> > Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Am Mittwoch, 24. Juli 2019, 00:52:58 CEST schrieb Matthias Kaehlcke:
+> The downstream Chrome OS 3.14 kernel for jerry limits WiFi TX power
+> through calibration data in the device tree [1]. Add a DT node for
+> the WiFi chip and use the downstream calibration data.
 > 
-> Just for the records and ensuing ages:
+> Not all calibration data entries have the length specified in the
+> binding (Documentation/devicetree/bindings/net/wireless/marvell-8xxx.txt),
+> however this is the data used by the downstream ('official') kernel
+> and the binding mentions that "the length can vary between hw
+> versions".
 > 
-> Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+> [1] https://crrev.com/c/271237
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  arch/arm/boot/dts/rk3288-veyron-jerry.dts | 147 ++++++++++++++++++++++
+>  1 file changed, 147 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/rk3288-veyron-jerry.dts b/arch/arm/boot/dts/rk3288-veyron-jerry.dts
+> index b1613af83d5d..2d0d5a4603ba 100644
+> --- a/arch/arm/boot/dts/rk3288-veyron-jerry.dts
+> +++ b/arch/arm/boot/dts/rk3288-veyron-jerry.dts
+> @@ -82,6 +82,153 @@
+>  	};
+>  };
+>  
+> +&sdio0 {
 
-Thanks Sedat.  Since the objtool fix already got merged separately I'll
-resend this patch to the drm folks.
+added #address-cells = <1> and #size-cells = <0> here
+as it was creating dtc warnings due to the reg=1 below
 
--- 
-Josh
+> +	mwifiex: wifi@1 {
+> +		compatible = "marvell,sd8897";
+> +		reg = <1>;
+> +		status = "okay";
+
+dropped status ... okay is the default and the wifi node only was
+added to this board, not before.
+
+and applied for 5.4
+
+Thanks
+Heiko
+
+
