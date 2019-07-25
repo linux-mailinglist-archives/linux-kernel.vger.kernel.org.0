@@ -2,96 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CBC575050
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:57:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A6075072
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:00:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404093AbfGYN5t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:57:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39800 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727498AbfGYN5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:57:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A79ACAFCE;
-        Thu, 25 Jul 2019 13:57:47 +0000 (UTC)
-Date:   Thu, 25 Jul 2019 15:57:47 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-acpi@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH v1] ACPI / scan: Acquire device_hotplug_lock in
- acpi_scan_init()
-Message-ID: <20190725135747.GB3582@dhcp22.suse.cz>
-References: <20190724143017.12841-1-david@redhat.com>
- <20190725125636.GA3582@dhcp22.suse.cz>
- <6dc566c2-faf6-565d-4ef1-2ac3a366bc76@redhat.com>
+        id S2391007AbfGYN7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:59:38 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:58230 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404170AbfGYN6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 09:58:39 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 78CA72001A5;
+        Thu, 25 Jul 2019 15:58:36 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6A819200053;
+        Thu, 25 Jul 2019 15:58:36 +0200 (CEST)
+Received: from lorenz.ea.freescale.net (lorenz.ea.freescale.net [10.171.71.5])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 0BC39205E8;
+        Thu, 25 Jul 2019 15:58:36 +0200 (CEST)
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-imx <linux-imx@nxp.com>
+Subject: [PATCH v3 00/14] crypto: caam - fixes for kernel v5.3
+Date:   Thu, 25 Jul 2019 16:58:12 +0300
+Message-Id: <1564063106-9552-1-git-send-email-iuliana.prodan@nxp.com>
+X-Mailer: git-send-email 2.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6dc566c2-faf6-565d-4ef1-2ac3a366bc76@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 25-07-19 15:05:02, David Hildenbrand wrote:
-> On 25.07.19 14:56, Michal Hocko wrote:
-> > On Wed 24-07-19 16:30:17, David Hildenbrand wrote:
-> >> We end up calling __add_memory() without the device hotplug lock held.
-> >> (I used a local patch to assert in __add_memory() that the
-> >>  device_hotplug_lock is held - I might upstream that as well soon)
-> >>
-> >> [   26.771684]        create_memory_block_devices+0xa4/0x140
-> >> [   26.772952]        add_memory_resource+0xde/0x200
-> >> [   26.773987]        __add_memory+0x6e/0xa0
-> >> [   26.775161]        acpi_memory_device_add+0x149/0x2b0
-> >> [   26.776263]        acpi_bus_attach+0xf1/0x1f0
-> >> [   26.777247]        acpi_bus_attach+0x66/0x1f0
-> >> [   26.778268]        acpi_bus_attach+0x66/0x1f0
-> >> [   26.779073]        acpi_bus_attach+0x66/0x1f0
-> >> [   26.780143]        acpi_bus_scan+0x3e/0x90
-> >> [   26.780844]        acpi_scan_init+0x109/0x257
-> >> [   26.781638]        acpi_init+0x2ab/0x30d
-> >> [   26.782248]        do_one_initcall+0x58/0x2cf
-> >> [   26.783181]        kernel_init_freeable+0x1bd/0x247
-> >> [   26.784345]        kernel_init+0x5/0xf1
-> >> [   26.785314]        ret_from_fork+0x3a/0x50
-> >>
-> >> So perform the locking just like in acpi_device_hotplug().
-> > 
-> > While playing with the device_hotplug_lock, can we actually document
-> > what it is protecting please? I have a bad feeling that we are adding
-> > this lock just because some other code path does rather than with a good
-> > idea why it is needed. This patch just confirms that. What exactly does
-> > the lock protect from here in an early boot stage.
-> 
-> We have plenty of documentation already
-> 
-> mm/memory_hotplug.c
-> 
-> git grep -C5 device_hotplug mm/memory_hotplug.c
-> 
-> Also see
-> 
-> Documentation/core-api/memory-hotplug.rst
+The series solves:
+- the failures found with fuzz testing;
+- resources clean-up on caampkc/caamrng exit path.
 
-OK, fair enough. I was more pointing to a documentation right there
-where the lock is declared because that is the place where people
-usually check for documentation. The core-api documentation looks quite
-nice. And based on that doc it seems that this patch is actually not
-needed because neither the online/offline or cpu hotplug should be
-possible that early unless I am missing something.
+The first 10 patches solve the issues found with
+CONFIG_CRYPTO_MANAGER_EXTRA_TESTS enabled.
+They modify the drivers to provide a valid error (and not the hardware
+error ID) to the user, via completion callbacks.
+They check key length, assoclen, authsize and input size to solve the
+fuzz tests that expect -EINVAL to be returned when these values are
+not valid.
 
-> Regarding the early stage: primarily lockdep as I mentioned.
+The next 4 patches check the algorithm registration for caampkc
+module and unregister it only if the registration was successful.
+Also, on caampkc/caamrng, the exit point function is executed only if the
+registration was successful to avoid double freeing of resources in case
+the initialization function failed.
 
-Could you add a lockdep splat that would be fixed by this patch to the
-changelog for reference?
+This patch depends on series:
+https://patchwork.kernel.org/project/linux-crypto/list/?series=150651
+
+Changes since v2:
+- use helper functions from crypto API, to validate the inputs;
+- update rfc4106 shared descriptor with the erratum workaround;
+- fix MDHA key derivation for CAAM with era < 6;
+- remove check for keylen < 4, since is included in check_aes_keylen.
+
+Horia Geantă (5):
+  crypto: caam/qi - fix error handling in ERN handler
+  crypto: caam - fix return code in completion callbacks
+  crypto: caam - update IV only when crypto operation succeeds
+  crypto: caam - keep both virtual and dma key addresses
+  crypto: caam - fix MDHA key derivation for certain user key lengths
+
+Iuliana Prodan (9):
+  crypto: caam - check key length
+  crypto: caam - check authsize
+  crypto: caam - check assoclen
+  crypto: caam - check zero-length input
+  crypto: caam - update rfc4106 sh desc to support zero length input
+  crypto: caam - free resources in case caam_rng registration failed
+  crypto: caam - execute module exit point only if necessary
+  crypto: caam - unregister algorithm only if the registration succeeded
+  crypto: caam - change return value in case CAAM has no MDHA
+
+ drivers/crypto/caam/Kconfig         |   2 +
+ drivers/crypto/caam/caamalg.c       | 227 +++++++++++++++----------
+ drivers/crypto/caam/caamalg_desc.c  |  45 +++--
+ drivers/crypto/caam/caamalg_desc.h  |   2 +-
+ drivers/crypto/caam/caamalg_qi.c    | 223 +++++++++++++++----------
+ drivers/crypto/caam/caamalg_qi2.c   | 320 +++++++++++++++++++++++-------------
+ drivers/crypto/caam/caamhash.c      | 114 ++++++++-----
+ drivers/crypto/caam/caamhash_desc.c |   5 +-
+ drivers/crypto/caam/caamhash_desc.h |   2 +-
+ drivers/crypto/caam/caampkc.c       |  80 ++++++---
+ drivers/crypto/caam/caamrng.c       |  17 +-
+ drivers/crypto/caam/desc_constr.h   |  34 ++--
+ drivers/crypto/caam/error.c         |  61 ++++---
+ drivers/crypto/caam/error.h         |   2 +-
+ drivers/crypto/caam/key_gen.c       |  14 +-
+ drivers/crypto/caam/qi.c            |  10 +-
+ drivers/crypto/caam/regs.h          |   1 +
+ 17 files changed, 745 insertions(+), 414 deletions(-)
 
 -- 
-Michal Hocko
-SUSE Labs
+2.1.0
+
