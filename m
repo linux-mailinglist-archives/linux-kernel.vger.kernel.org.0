@@ -2,84 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90A2475A81
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 00:19:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E90CA75A95
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 00:19:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbfGYWTD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 18:19:03 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38204 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726757AbfGYWTB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 18:19:01 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f5so14890116pgu.5;
-        Thu, 25 Jul 2019 15:19:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+wQa5fLhOl8wnCVHYW83kZDULRwf5iT88UNwiIbICr4=;
-        b=OgN0KMqMt0z9md93d6ScBjRyrYybTlKgQG++WP118jaOk3dZHH23jjlN+Oa9oKHDzV
-         OBGuKLmaPsxEMOq86zSX4TWISokoHI1DSg5Y+jMNNOZdktf5WciR+91MCKBAcJ5UQapD
-         dj7FR8JPf5UOi8W4vHh4Cw2uuFr/Pht3V6bmo/hc+mKLwnBzlmcnK9bljXeLORfPZhZd
-         AXES4EVs7pmH0qBFVv1yAmDKdHzyMVHAsRvqOMwKtKrGQU4HXfsZCxX6J5K6WgWvfcz4
-         nJkLgbfR6Sg6jAqWVj1ngScFxTRxbwhD6YCh4nCLujJcwxANbp6U5lqUy9+FR98QuH5z
-         oioQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+wQa5fLhOl8wnCVHYW83kZDULRwf5iT88UNwiIbICr4=;
-        b=hV6Q3aGwZT+/rmrrNMZdxIWbW3uW+6OFTWyzbutGplMYCRfEWsquSnOdFqVVHeI/Ml
-         p05C/xNh9KsVPS7YOCRdm1TqpaUFsBTf5prx3dBupuWqVvwNqwvQUFZ7SUqWBzmDrDMl
-         SzciyYueSp2jeIGvUp49Qyw3p7+KAoHeA23lMgSdx4TmNLrZTqPI7UvvwnsjoYRCJTQl
-         O0uw7z4206aJ+ZQ5zxqOuC5Q3Z1i8YITyt1NvoB0nW7mLDCckddpCGIvSDPfsD1xPr01
-         0TxHhmPol3CaIHMOhQf/5ugoV4Ztal6QMIvtwBEONIMX3cKTwKgTSR3OyJQ9eYF76KWs
-         uTSQ==
-X-Gm-Message-State: APjAAAWfUeBPm7/l1cP4KGfJl2sK8Hu99UDp37C8wpdbdKaPhQqqCnhc
-        rzzru+sE/z9CcOlDA8Z34YM=
-X-Google-Smtp-Source: APXvYqznsrBakBi4F82lF4e+Jg00DDvrmT+k9b+BcBBn7Isxj72GXeVusEHD/J0rN5W/nlmZtfnx1w==
-X-Received: by 2002:a65:4b8b:: with SMTP id t11mr87905731pgq.130.1564093141437;
-        Thu, 25 Jul 2019 15:19:01 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id v18sm46030226pgl.87.2019.07.25.15.19.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 15:19:00 -0700 (PDT)
-Date:   Thu, 25 Jul 2019 15:19:00 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.1 000/371] 5.1.20-stable review
-Message-ID: <20190725221859.GA31733@roeck-us.net>
-References: <20190724191724.382593077@linuxfoundation.org>
+        id S1727265AbfGYWTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 18:19:41 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:40234 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727232AbfGYWTk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 18:19:40 -0400
+Received: from d57e23da.static.ziggozakelijk.nl ([213.126.35.218] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hqm5F-0002LK-D0; Fri, 26 Jul 2019 00:19:33 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Justin Swartz <justin.swartz@risingedge.co.za>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] ARM: dts: add device tree for Mecer Xtreme Mini S6
+Date:   Fri, 26 Jul 2019 00:19:32 +0200
+Message-ID: <1618985.EOrKlNyPW4@phil>
+In-Reply-To: <20190616204746.21001-1-justin.swartz@risingedge.co.za>
+References: <20190616204746.21001-1-justin.swartz@risingedge.co.za>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 09:15:52PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.1.20 release.
-> There are 371 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi Justin,
+
+Am Sonntag, 16. Juni 2019, 22:47:45 CEST schrieb Justin Swartz:
+> The Mecer Xtreme Mini S6 features a Rockchip RK3229 SoC,
+> 1GB DDR3 RAM, 8GB eMMC, MicroSD port, 10/100Mbps Ethernet,
+> Realtek 8723BS WLAN module, 2 x USB 2.0 ports, HDMI output,
+> and S/PDIF output.
 > 
-> Responses should be made by Fri 26 Jul 2019 07:13:35 PM UTC.
-> Anything received after that time might be too late.
+> Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
+> ---
+
+please add an entry to Documentation/devicetree/bindings/arm/rockchip.yaml
+for your board and if necessary also a vendor-prefix to
+Documentation/devicetree/bindings/vendor-prefixes.(yaml?)
+
+See below.
+
+>  arch/arm/boot/dts/Makefile        |   1 +
+>  arch/arm/boot/dts/rk3229-xms6.dts | 286 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 287 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/rk3229-xms6.dts
 > 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index dab2914fa293..6fbd7c304f62 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -902,6 +902,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+>  	rk3188-radxarock.dtb \
+>  	rk3228-evb.dtb \
+>  	rk3229-evb.dtb \
+> +	rk3229-xms6.dtb \
+>  	rk3288-evb-act8846.dtb \
+>  	rk3288-evb-rk808.dtb \
+>  	rk3288-fennec.dtb \
+> diff --git a/arch/arm/boot/dts/rk3229-xms6.dts b/arch/arm/boot/dts/rk3229-xms6.dts
+> new file mode 100644
+> index 000000000000..9b666fa66292
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/rk3229-xms6.dts
+> @@ -0,0 +1,286 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/input/input.h>
+> +#include "rk3229.dtsi"
+> +
+> +/ {
+> +	model = "Rockchip RK3229 (Mecer Xtreme Mini S6)";
+> +	compatible = "rockchip,rk3229-xms6", "rockchip,rk3229";
 
-For v5.1.19-370-gfb6ea525ffcf:
+mode = "Mecer Xtreme Mini S6";
+compatible = "mecer,xms6", "rockchip,rk3229";
 
-Build results:
-	total: 159 pass: 159 fail: 0
-Qemu test results:
-	total: 364 pass: 364 fail: 0
+(and as written above, add a vendor-prefix for mecer)
 
-Guenter
+...
+
+> +&cpu0 {
+> +	clock-frequency = <1464000000>;
+
+not sure I understand the reasoning here.
+There seems to be a regulator defined, so the cpu cores should
+have operating points defined to allow them to switch between
+different frequencies as needed.
+
+> +	cpu-supply = <&vdd_arm>;
+> +};
+> +
+> +&cpu1 {
+> +	clock-frequency = <1464000000>;
+> +	cpu-supply = <&vdd_arm>;
+> +};
+> +
+> +&cpu2 {
+> +	clock-frequency = <1464000000>;
+> +	cpu-supply = <&vdd_arm>;
+> +};
+> +
+> +&cpu3 {
+> +	clock-frequency = <1464000000>;
+> +	cpu-supply = <&vdd_arm>;
+> +};
+> +
+> +&vop {
+
+please sort the &node-references alphabetically.
+
+
+Heiko
+
+
