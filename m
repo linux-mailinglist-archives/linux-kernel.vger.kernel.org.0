@@ -2,82 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 380B57536E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:01:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1F3575375
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:02:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389838AbfGYQBJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:01:09 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:38186 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387874AbfGYQBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:01:08 -0400
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hqgAp-00081n-6V; Thu, 25 Jul 2019 10:00:56 -0600
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Eric Pilmore <epilmore@gigaio.com>,
-        Stephen Bates <sbates@raithlin.com>
-References: <20190722230859.5436-1-logang@deltatee.com>
- <20190722230859.5436-15-logang@deltatee.com> <20190724063235.GC1804@lst.de>
- <57e8fc1a-de70-fb65-5ef1-ffa2b95c73a6@deltatee.com>
- <20190725115038.GC31065@lst.de>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <3d5400df-f109-9ffa-3e79-8f6bb8d7de34@deltatee.com>
-Date:   Thu, 25 Jul 2019 10:00:54 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190725115038.GC31065@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: sbates@raithlin.com, epilmore@gigaio.com, dan.j.williams@intel.com, axboe@fb.com, kbusch@kernel.org, sagi@grimberg.me, jgg@mellanox.com, Christian.Koenig@amd.com, bhelgaas@google.com, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH 14/14] PCI/P2PDMA: Introduce pci_p2pdma_[un]map_resource()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S2388754AbfGYQCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:02:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50024 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388340AbfGYQCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 12:02:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EE14BAFC6;
+        Thu, 25 Jul 2019 16:02:14 +0000 (UTC)
+From:   Oscar Salvador <osalvador@suse.de>
+To:     akpm@linux-foundation.org
+Cc:     dan.j.williams@intel.com, david@redhat.com,
+        pasha.tatashin@soleen.com, mhocko@suse.com,
+        anshuman.khandual@arm.com, Jonathan.Cameron@huawei.com,
+        vbabka@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH v3 0/5] Allocate memmap from hotadded memory
+Date:   Thu, 25 Jul 2019 18:02:02 +0200
+Message-Id: <20190725160207.19579-1-osalvador@suse.de>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Here we go with v3.
 
+v3 -> v2:
+        * Rewrite about vmemmap pages handling.
+          Prior to this version, I was (ab)using hugepages fields
+          from struct page, while here I am officially adding a new
+          sub-page type with the fields I need.
 
-On 2019-07-25 5:50 a.m., Christoph Hellwig wrote:
-> On Wed, Jul 24, 2019 at 10:06:22AM -0600, Logan Gunthorpe wrote:
->> Yes. This is the downside of dealing only with a phys_addr_t: we have to
->> look up against it. Unfortunately, I believe it's possible for different
->> BARs on a device to be in different windows, so something like this is
->> necessary unless we already know the BAR the phys_addr_t belongs to. It
->> might probably be sped up a bit by storing the offsets of each bar
->> instead of looping through all the bridge windows, but I don't think it
->> will get you *that* much.
->>
->> As this is an example with no users, the answer here will really depend
->> on what the use-case is doing. If they can lookup, ahead of time, the
->> mapping type and offset then they don't have to do this work on the hot
->> path and it means that pci_p2pdma_map_resource() is simply not a
->> suitable API.
-> 
-> Ok.  So lets just keep this out as an RFC and don't merge it until an
-> actual concrete user shows up.
+        * Drop MHP_MEMMAP_{MEMBLOCK,DEVICE} in favor of MHP_MEMMAP_ON_MEMORY.
+          While I am still not 100% if this the right decision, and while I
+          still see some gaining in having MHP_MEMMAP_{MEMBLOCK,DEVICE},
+          having only one flag ease the code.
+          If the user wants to allocate memmaps per memblock, it'll
+          have to call add_memory() variants with memory-block granularity.
 
+          If we happen to have a more clear usecase MHP_MEMMAP_MEMBLOCK
+          flag in the future, so user does not have to bother about the way
+          it calls add_memory() variants, but only pass a flag, we can add it.
+          Actually, I already had the code, so add it in the future is going to be
+          easy.
 
-Yup, that was my intention and I mentioned that in the commit message.
+        * Granularity check when hot-removing memory.
+          Just checking that the granularity is the same.
 
-Logan
+[Testing]
+
+ - x86_64: small and large memblocks (128MB, 1G and 2G)
+
+So far, only acpi memory hotplug uses the new flag.
+The other callers can be changed depending on their needs.
+
+[Coverletter]
+
+This is another step to make memory hotplug more usable. The primary
+goal of this patchset is to reduce memory overhead of the hot-added
+memory (at least for SPARSEMEM_VMEMMAP memory model). The current way we use
+to populate memmap (struct page array) has two main drawbacks:
+
+a) it consumes an additional memory until the hotadded memory itself is
+   onlined and
+b) memmap might end up on a different numa node which is especially true
+   for movable_node configuration.
+
+a) it is a problem especially for memory hotplug based memory "ballooning"
+   solutions when the delay between physical memory hotplug and the
+   onlining can lead to OOM and that led to introduction of hacks like auto
+   onlining (see 31bc3858ea3e ("memory-hotplug: add automatic onlining
+   policy for the newly added memory")).
+
+b) can have performance drawbacks.
+
+One way to mitigate all these issues is to simply allocate memmap array
+(which is the largest memory footprint of the physical memory hotplug)
+from the hot-added memory itself. SPARSEMEM_VMEMMAP memory model allows
+us to map any pfn range so the memory doesn't need to be online to be
+usable for the array. See patch 3 for more details.
+This feature is only usable when CONFIG_SPARSEMEM_VMEMMAP is set.
+
+[Overall design]:
+
+Implementation wise we reuse vmem_altmap infrastructure to override
+the default allocator used by vmemap_populate. Once the memmap is
+allocated we need a way to mark altmap pfns used for the allocation.
+If MHP_MEMMAP_ON_MEMORY flag was passed, we set up the layout of the
+altmap structure at the beginning of __add_pages(), and then we call
+mark_vmemmap_pages().
+
+MHP_MEMMAP_ON_MEMORY flag parameter will specify to allocate memmaps
+from the hot-added range.
+If callers wants memmaps to be allocated per memory block, it will
+have to call add_memory() variants in memory-block granularity
+spanning the whole range, while if it wants to allocate memmaps
+per whole memory range, just one call will do.
+
+Want to add 384MB (3 sections, 3 memory-blocks)
+e.g:
+
+add_memory(0x1000, size_memory_block);
+add_memory(0x2000, size_memory_block);
+add_memory(0x3000, size_memory_block);
+
+or
+
+add_memory(0x1000, size_memory_block * 3);
+
+One thing worth mention is that vmemmap pages residing in movable memory is not a
+show-stopper for that memory to be offlined/migrated away.
+Vmemmap pages are just ignored in that case and they stick around until sections
+referred by those vmemmap pages are hot-removed.
+
+Oscar Salvador (5):
+  mm,memory_hotplug: Introduce MHP_MEMMAP_ON_MEMORY
+  mm: Introduce a new Vmemmap page-type
+  mm,sparse: Add SECTION_USE_VMEMMAP flag
+  mm,memory_hotplug: Allocate memmap from the added memory range for
+    sparse-vmemmap
+  mm,memory_hotplug: Allow userspace to enable/disable vmemmap
+
+ arch/powerpc/mm/init_64.c      |   7 ++
+ arch/s390/mm/init.c            |   6 ++
+ arch/x86/mm/init_64.c          |  10 +++
+ drivers/acpi/acpi_memhotplug.c |   3 +-
+ drivers/base/memory.c          |  35 +++++++++-
+ drivers/dax/kmem.c             |   2 +-
+ drivers/hv/hv_balloon.c        |   2 +-
+ drivers/s390/char/sclp_cmd.c   |   2 +-
+ drivers/xen/balloon.c          |   2 +-
+ include/linux/memory_hotplug.h |  37 ++++++++--
+ include/linux/memremap.h       |   2 +-
+ include/linux/mm.h             |  17 +++++
+ include/linux/mm_types.h       |   5 ++
+ include/linux/mmzone.h         |   8 ++-
+ include/linux/page-flags.h     |  19 +++++
+ mm/compaction.c                |   7 ++
+ mm/memory_hotplug.c            | 153 +++++++++++++++++++++++++++++++++++++----
+ mm/page_alloc.c                |  26 ++++++-
+ mm/page_isolation.c            |  14 +++-
+ mm/sparse.c                    | 116 ++++++++++++++++++++++++++++++-
+ 20 files changed, 441 insertions(+), 32 deletions(-)
+
+-- 
+2.12.3
+
