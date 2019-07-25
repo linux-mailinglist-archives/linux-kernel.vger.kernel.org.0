@@ -2,48 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63C5475452
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:41:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFA1C7545F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:42:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390713AbfGYQly (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:41:54 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52641 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390122AbfGYQlv (ORCPT
+        id S2390776AbfGYQmz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:42:55 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51381 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388686AbfGYQmy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:41:51 -0400
-Received: by mail-wm1-f67.google.com with SMTP id s3so45583525wms.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 09:41:49 -0700 (PDT)
+        Thu, 25 Jul 2019 12:42:54 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 207so45605887wma.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 09:42:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+f39f/vO7ZpFkzWKsXEJhzhzg/ZN6DlIsY5Iay+VBRo=;
-        b=IHCyozkde+ytJLKhfQMkszxOmHnGneR2mvRfOV6tDxq4ijNpl9VuEkwgdp0Zjk6/8F
-         U15HoKeaPblJHeJ4JLTUtlWG3qZRyJrZe4LrFE9t95EA81B0m9VDRIxnIjttJsH1wh38
-         yqdF8FT4Fzj4LszxG5XiQ83RejOR0HLWgIthwdNmod6oT6VyJ+w9wwS2qUCNtufRJXue
-         Rx82NEhvzoRnPPaY5Wb3znOhz6Y/DMXCyV3CZmrVbfZ5i7T2IOm1IOBdhMR0YawEdfwM
-         zyNnufZilfWFW93T2lxTmn5kNwaFc5N2aauf/WDY7uubS8QrPHfcaCaoIEsi3N8KCD0P
-         HQBw==
+        h=from:to:cc:subject:date:message-id;
+        bh=SGJmBKcUqMKvR6yeTOTPyisPIWw/oGZVjBLHI0+zcGw=;
+        b=KBrW3Ij5aUwDiRAJ6GdXeNunBAkqSMTT/1zew7s3LvqOT9kGlohsMF+iVKBf9QMyOy
+         7erUqMglmdsQuxcBSrZANcdrZ1yE19tfjAY35s6J64CfX2jtNzUy5GL+UP5zfMr13CZr
+         oTwIP7c+juJvDLeCSTcPhDGOo5ooqpyGEwBXOo4leugbE0kWSWA5pvS4ssQFqMdk+bH9
+         eFJHOhsyHSbIaNPaoBoDoGDMripnCeDSm2EP6skBs4D860iUXnEvBr1P/9lxgQzjHQ2n
+         puVV5XKuCYCpE6ckW71Sv1wsjgLBTq3fetwYWQ39osRHeCI9b+O3Ammm/xCJ+uc0JRg1
+         dbBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=+f39f/vO7ZpFkzWKsXEJhzhzg/ZN6DlIsY5Iay+VBRo=;
-        b=k6Y/chCXb3O6nTbIvnfKax53DeYSm3A79Ncxx5jq9bFyJrE05i+vjrEyRGPqasdDCa
-         fJNdVTtIy9bpbGv7Xp+yyerSv4zCobnX8jpbdgD4tF62YYRaxA7c8Csnkec38x4FeXF0
-         EOiQ1UMUndXj30fM1aC3DfbgsaE2rfbSiwEhXezbaTilMZcaEPsQIwEozcxxx2pn/KT/
-         Eo6iJVTyomk+38DizybVvn7holLUDHHChbOY+iIXaTiQZwXmZXsWgwxfF8+NMuVEkQcr
-         I6cPkW5JdsVH6CD6YvJNC2Sy/ZGCBC6EzNNnnWW4V5cNf8Kl4N+gAOQyx5c79d4q1wDl
-         oLyw==
-X-Gm-Message-State: APjAAAU+W2TQG0OK/bJR5aj9cI6rHjgnRri3lyGRAddURAAQvdi/Dh/G
-        mJakJb13Znwo321d5uUSSLPp/Q==
-X-Google-Smtp-Source: APXvYqz/s0HiKXCfYYD11qWyMW5+Fd+3jNPmLiQI9zMZCekWeIA+GJsfHZXk0TGUc4QAlZy0QGeAjA==
-X-Received: by 2002:a1c:3c04:: with SMTP id j4mr75775556wma.37.1564072908969;
-        Thu, 25 Jul 2019 09:41:48 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=SGJmBKcUqMKvR6yeTOTPyisPIWw/oGZVjBLHI0+zcGw=;
+        b=CqicprxUUvDs/ckmIU/UQQRYZbAIuMoICwzMsHsnz2YTkYUGVX6+qv6ghDoCn0l8EF
+         cTQZH2B/ONmXuuIDgCrllLlq7KgqFWRIVkooMhuDnI/idWl3AePDXDonZpbeugalWXcs
+         VVjovQSGfNz6oRPOX5JknJiDhuDzpN/l+/LGbYrcRjMgDnkHn0pcvglQ0tnf+n4lkxS4
+         chceRAIzgurKg88ZcFkJOLmftYR/zUJhm4C2P2RY3Cvz6gAPxdhz7HlnfDYWOoIxngaB
+         2HYKenGx/Gx1DniRWyaXzFsnShmSrkfpr10VTriKdOArTf2TmZlkGWhHc0MLBEKfSquG
+         JsjQ==
+X-Gm-Message-State: APjAAAW5jdJ+5hzVUsR3Ams2XlAJhyeDSetqIdRQpN4RmaVU43CFk4B/
+        onUP2tW22lXHlFWimncrQ3Mv0Q==
+X-Google-Smtp-Source: APXvYqxlREV45hHUfVDk1Y22GCYG2j0m/duTrCeHlsvTz6wQQ10qi4zHPhIAryaEEmTtj9/oEill3Q==
+X-Received: by 2002:a1c:a1c1:: with SMTP id k184mr83257469wme.81.1564072972458;
+        Thu, 25 Jul 2019 09:42:52 -0700 (PDT)
 Received: from pop-os.baylibre.local ([2a01:e35:8ad2:2cb0:2dbb:fac9:5ec0:e3ef])
-        by smtp.googlemail.com with ESMTPSA id y16sm102488858wrg.85.2019.07.25.09.41.47
+        by smtp.googlemail.com with ESMTPSA id 91sm103031727wrp.3.2019.07.25.09.42.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 09:41:48 -0700 (PDT)
+        Thu, 25 Jul 2019 09:42:51 -0700 (PDT)
 From:   Alexandre Mergnat <amergnat@baylibre.com>
 To:     jbrunet@baylibre.com
 Cc:     khilman@baylibre.com, sboyd@kernel.org, narmstrong@baylibre.com,
@@ -52,135 +51,61 @@ Cc:     khilman@baylibre.com, sboyd@kernel.org, narmstrong@baylibre.com,
         linux-arm-kernel@lists.infradead.org,
         baylibre-upstreaming@groups.io,
         Alexandre Mergnat <amergnat@baylibre.com>
-Subject: [PATCH v2 4/4] clk: meson: remove ao input bypass clocks
-Date:   Thu, 25 Jul 2019 18:41:26 +0200
-Message-Id: <20190725164126.27919-5-amergnat@baylibre.com>
+Subject: [PATCH v2 0/8] clk: meson: ee: use the new parent description method
+Date:   Thu, 25 Jul 2019 18:42:30 +0200
+Message-Id: <20190725164238.27991-1-amergnat@baylibre.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190725164126.27919-1-amergnat@baylibre.com>
-References: <20190725164126.27919-1-amergnat@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During probe, bypass clocks (i.e. ao-in-xtal) are made from device-tree
-inputs to provide input clocks which can be access through global name.
-The cons of this method are the duplicated clocks, means more string
-comparison.
+Meson SoCs clock controllers use the string comparison method to describe
+parent relation between the clocks, which is not optimized.
 
-Specify parent directly with device-tree clock name.
+Its also use bypass clock made from device-tree clock to provide an input
+clock which can be access through global name, but it still not optimal.
 
-Function to regiter bypass clocks is removed.
+A recent patch [0] allows parents to be directly specified with
+device-tree clock name or without string names from localy declared clocks.
 
-Input parameters from meson aoclk data structure are deprecated and then
-deleted since all aoclk files are migrated.
+This patchset replaces clock string names by clock pointers (as possible),
+removes bypass clocks and uses directly device-tree clock names in parent
+assignment.
 
-Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
----
- drivers/clk/meson/Kconfig       |  1 -
- drivers/clk/meson/meson-aoclk.c | 37 ---------------------------------
- drivers/clk/meson/meson-aoclk.h |  8 -------
- 3 files changed, 46 deletions(-)
+Tested on GXL, GXBB, Meson8b, AXG SoCs by comparing the clock summary
+(orphan too) before and after migration.
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index ee0b84b6b329..178ee72ba4bc 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -33,7 +33,6 @@ config COMMON_CLK_MESON_VID_PLL_DIV
- config COMMON_CLK_MESON_AO_CLKC
- 	tristate
- 	select COMMON_CLK_MESON_REGMAP
--	select COMMON_CLK_MESON_INPUT
- 	select RESET_CONTROLLER
- 
- config COMMON_CLK_MESON_EE_CLKC
-diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
-index b67951909e04..bf8bea675d24 100644
---- a/drivers/clk/meson/meson-aoclk.c
-+++ b/drivers/clk/meson/meson-aoclk.c
-@@ -17,8 +17,6 @@
- #include <linux/slab.h>
- #include "meson-aoclk.h"
- 
--#include "clk-input.h"
--
- static int meson_aoclk_do_reset(struct reset_controller_dev *rcdev,
- 			       unsigned long id)
- {
-@@ -33,37 +31,6 @@ static const struct reset_control_ops meson_aoclk_reset_ops = {
- 	.reset = meson_aoclk_do_reset,
- };
- 
--static int meson_aoclkc_register_inputs(struct device *dev,
--					struct meson_aoclk_data *data)
--{
--	struct clk_hw *hw;
--	char *str;
--	int i;
--
--	for (i = 0; i < data->num_inputs; i++) {
--		const struct meson_aoclk_input *in = &data->inputs[i];
--
--		str = kasprintf(GFP_KERNEL, "%s%s", data->input_prefix,
--				in->name);
--		if (!str)
--			return -ENOMEM;
--
--		hw = meson_clk_hw_register_input(dev, in->name, str, 0);
--		kfree(str);
--
--		if (IS_ERR(hw)) {
--			if (!in->required && PTR_ERR(hw) == -ENOENT)
--				continue;
--			else if (PTR_ERR(hw) != -EPROBE_DEFER)
--				dev_err(dev, "failed to register input %s\n",
--					in->name);
--			return PTR_ERR(hw);
--		}
--	}
--
--	return 0;
--}
--
- int meson_aoclkc_probe(struct platform_device *pdev)
- {
- 	struct meson_aoclk_reset_controller *rstc;
-@@ -86,10 +53,6 @@ int meson_aoclkc_probe(struct platform_device *pdev)
- 		return PTR_ERR(regmap);
- 	}
- 
--	ret = meson_aoclkc_register_inputs(dev, data);
--	if (ret)
--		return ret;
--
- 	/* Reset Controller */
- 	rstc->data = data;
- 	rstc->regmap = regmap;
-diff --git a/drivers/clk/meson/meson-aoclk.h b/drivers/clk/meson/meson-aoclk.h
-index 999cde3868f7..605b43855a69 100644
---- a/drivers/clk/meson/meson-aoclk.h
-+++ b/drivers/clk/meson/meson-aoclk.h
-@@ -18,20 +18,12 @@
- 
- #include "clk-regmap.h"
- 
--struct meson_aoclk_input {
--	const char *name;
--	bool required;
--};
--
- struct meson_aoclk_data {
- 	const unsigned int			reset_reg;
- 	const int				num_reset;
- 	const unsigned int			*reset;
- 	const int				num_clks;
- 	struct clk_regmap			**clks;
--	const int				num_inputs;
--	const struct meson_aoclk_input		*inputs;
--	const char				*input_prefix;
- 	const struct clk_hw_onecell_data	*hw_data;
- };
- 
+[0] commit fc0c209c147f ("clk: Allow parents to be specified without string names")
+
+Change since v1:
+- Improve comments in gxbb, g12a and meson8b files
+
+Alexandre Mergnat (8):
+  clk: meson: g12a: move clock declaration to dependency order
+  clk: meson: g12a: migrate to the new parent description method
+  clk: meson: gxbb: migrate to the new parent description method
+  clk: meson: axg: migrate to the new parent description method
+  clk: meson: meson8b: migrate to the new parent description method
+  clk: meson: clk-regmap: migrate to new parent description method
+  clk: meson: remove ee input bypass clocks
+  clk: meson: remove clk input helper
+
+ drivers/clk/meson/Kconfig       |    4 -
+ drivers/clk/meson/Makefile      |    1 -
+ drivers/clk/meson/axg.c         |  207 ++++--
+ drivers/clk/meson/clk-input.c   |   49 --
+ drivers/clk/meson/clk-input.h   |   19 -
+ drivers/clk/meson/clk-regmap.h  |   12 +-
+ drivers/clk/meson/g12a.c        | 1093 ++++++++++++++++++++-----------
+ drivers/clk/meson/gxbb.c        |  657 +++++++++++++------
+ drivers/clk/meson/meson-eeclk.c |   10 -
+ drivers/clk/meson/meson-eeclk.h |    2 -
+ drivers/clk/meson/meson8b.c     |  710 ++++++++++++++------
+ 11 files changed, 1805 insertions(+), 959 deletions(-)
+ delete mode 100644 drivers/clk/meson/clk-input.c
+ delete mode 100644 drivers/clk/meson/clk-input.h
+
 -- 
 2.17.1
 
