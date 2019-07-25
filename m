@@ -2,88 +2,326 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9EA874C17
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 12:47:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D6B474C42
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 12:55:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728874AbfGYKrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 06:47:00 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51525 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728273AbfGYKqv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 06:46:51 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 207so44536647wma.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 03:46:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rT2+tyA6pTmguoDJ8MW+YlSOOFSIN1Vu53Mbq2U4pRc=;
-        b=qD5kydrjEiwF8J2SB6Em6kQNHe5UR5fdcBNc/U97WCxedMomw0g5582ZHsmCzl+WYd
-         BjbefYiMUO6QIEvKROvpMji84nFAp0M5GuDxixbvlIjjMAS9zsxGPCpiYZFAsezyX5i9
-         UXutTiyBQ5VpKjgfC9nt7zD8Tn57Ben1/xhixn4bQU9VMhTcBcceg/8xfYzVYs8iKSgH
-         89co/iLyp31x74QkNqoYiEACrOzMrm2b2Lru+w2RsGsyBKmIohKXVQDVMi2ND6G2Y6aJ
-         CFUH9Uy5f7w6NW4Hpw90innzqS3OQ5nXDZtZpHrOApAprFYqMgubhp62+R01Cu0YqshP
-         D65Q==
-X-Gm-Message-State: APjAAAVmRmYACe2iQqiznU0knCOv0urFu8U7CQMxIYxMM9WeZN0epCBU
-        gFVI/gRr9oUm0YWs6CUl4nQ4zA==
-X-Google-Smtp-Source: APXvYqwTcecpPSHGjHuXabH4BPu7LoiVzTbv2SdE24oH8xT1yDoFoSRpS5PQy97iHgQ88CuC5+fdjQ==
-X-Received: by 2002:a7b:c7cb:: with SMTP id z11mr72257839wmk.24.1564051609799;
-        Thu, 25 Jul 2019 03:46:49 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id f204sm72042696wme.18.2019.07.25.03.46.48
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 25 Jul 2019 03:46:49 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     stable@vger.kernel.org
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH stable-4.19 2/2] KVM: nVMX: Clear pending KVM_REQ_GET_VMCS12_PAGES when leaving nested
-Date:   Thu, 25 Jul 2019 12:46:45 +0200
-Message-Id: <20190725104645.30642-3-vkuznets@redhat.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190725104645.30642-1-vkuznets@redhat.com>
-References: <20190725104645.30642-1-vkuznets@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S2389609AbfGYKz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 06:55:56 -0400
+Received: from debian-2.covici.com ([172.104.21.222]:57656 "EHLO covici.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728710AbfGYKzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 06:55:55 -0400
+Received: from ccs.covici.com (ccs.covici.com [70.109.53.110])
+        (authenticated bits=0)
+        by covici.com (8.15.2/8.15.2/Debian-8) with ESMTPSA id x6PAfsYh003045
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Jul 2019 06:42:11 -0400
+Received: from ccs.covici.com (localhost [127.0.0.1])
+        by ccs.covici.com (8.15.2/8.14.9) with ESMTPS id x6PAfgT5029755
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Jul 2019 06:41:43 -0400
+Received: (from covici@localhost)
+        by ccs.covici.com (8.15.2/8.13.7/Submit) id x6PAfgWu029754;
+        Thu, 25 Jul 2019 06:41:42 -0400
+Date:   Thu, 25 Jul 2019 06:41:42 -0400
+Message-ID: <m3tvbacs61.wl-covici@ccs.covici.com>
+From:   John Covici <covici@ccs.covici.com>
+To:     "Speakup is a screen review system for Linux." 
+        <speakup@linux-speakup.org>
+Cc:     Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Okash Khawaja <okash.khawaja@gmail.com>,
+        devel@driverdev.osuosl.org, Kirk Reiser <kirk@reisers.ca>,
+        Simon Dickson <simonhdickson@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Christopher Brannon <chris@the-brannons.com>
+Subject: Re: [HELP REQUESTED from the community] Was: Staging status of speakup
+In-Reply-To: <20190725035352.GA7717@gregn.net>
+References: <20190315130035.6a8f16e9@narunkot>
+        <20190316031831.GA2499@kroah.com>
+        <20190706200857.22918345@narunkot>
+        <20190707065710.GA5560@kroah.com>
+        <20190712083819.GA8862@kroah.com>
+        <20190712092319.wmke4i7zqzr26tly@function>
+        <20190713004623.GA9159@gregn.net>
+        <20190725035352.GA7717@gregn.net>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL/10.8 EasyPG/1.0.0 Emacs/26
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Reply-To: covici@ccs.covici.com
+Organization: Covici Computer Systems
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+the cursor_time option (I think) controls a cursor delay when you do
+the arrow keys.    I think the delimiters are what delimit a word fr
+speakup, I changed it to space only, so it would work better for me.
 
-[ Upstream commit cf64527bb33f6cec2ed50f89182fc4688d0056b6 ]
-
-Letting this pend may cause nested_get_vmcs12_pages to run against an
-invalid state, corrupting the effective vmcs of L1.
-
-This was triggerable in QEMU after a guest corruption in L2, followed by
-a L1 reset.
-
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Reviewed-by: Liran Alon <liran.alon@oracle.com>
-Cc: stable@vger.kernel.org
-Fixes: 7f7f1ba33cf2 ("KVM: x86: do not load vmcs12 pages while still in SMM")
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/vmx.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 880bc36a0d5d..4cf16378dffe 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -8490,6 +8490,8 @@ static void free_nested(struct vcpu_vmx *vmx)
- 	if (!vmx->nested.vmxon && !vmx->nested.smm.vmxon)
- 		return;
  
-+	kvm_clear_request(KVM_REQ_GET_VMCS12_PAGES, &vmx->vcpu);
-+
- 	hrtimer_cancel(&vmx->nested.preemption_timer);
- 	vmx->nested.vmxon = false;
- 	vmx->nested.smm.vmxon = false;
--- 
-2.20.1
+On Wed, 24 Jul 2019 23:53:52 -0400,
+Gregory Nowak wrote:
+> 
+> On Fri, Jul 12, 2019 at 05:46:23PM -0700, Gregory Nowak wrote:
+> > On Fri, Jul 12, 2019 at 11:23:19AM +0200, Samuel Thibault wrote:
+> > > Hello,
+> > > 
+> > > To readers of the linux-speakup: could you help on this so we can get
+> > > Speakup in mainline?  Neither Okash or I completely know what user
+> > > consequences the files in /sys/accessibility/speakup/ have, so could
+> > > people give brief explanations for each file (something like 3-6 lines
+> > > of explanation)?
+> > 
+> > I have a recollection of documenting most of this on the speakup list
+> > in response to a similar query a number of years ago. Unfortunately,
+> > the speakup mailing list archives aren't easily searchable, and I
+> > don't have a local copy of that mail.
+> > 
+> > Kirk, doing grep with a few of the file names in
+> > /sys/accessibility/speakup against the list's mbox file archive should
+> > find that message if it's in fact there. If you can please find it,
+> > and post the date when it was sent, we can provide a URL to that
+> > thread as a starting point. If my recollection is wrong, and such a
+> > message isn't in the archives, I'll write up what I know about.
+> 
+> I've located the message I was thinking of in the archives, but that
+> describes some speakup key commands, not
+> /sys/accessibility/speakup. So, here's what I know, and hopefully
+> someone else can fill in the rest.
+> 
+> attrib_bleep
+> Beeps the PC speaker when there is an attribute change such as
+> foreground or background color when using speakup review commands. One
+> = on, zero = off. I'm not currently at a machine with a working PC
+> speaker, so can't test this right now.
+> 
+> bell_pos
+> As far as I know, this works much like a typewriter bell. If for
+> example 72 is echoed to bell_pos, it will beep the PC speaker when
+> typing on a line past character 72. Again, no PC speaker at the moment
+> here, so can't actually test this.
+> 
+> bleeps
+> Not 100% sure, but I believe this controls whether one hears beeps
+> through the PC speaker when using speakup's review commands. If no one
+> jumps in on this, I'll experiment when at a machine with a working PC
+> speaker, and will reply back with details.
+> 
+> bleep_time
+> Again, not 100% sure, but I believe this controls the duration of the
+> PC speaker beeps speakup produces. I'm not sure of the units this is
+> in either, possibly jiffys. I'll come back with more details on this
+> one if no one else does.
+> 
+> cursor_time
+> Don't know.
+> 
+> delimiters
+> Don't know. I've tried echoing various characters to this and looking
+> for differences when reviewing the screen, but no luck.
+> 
+> ex_num
+> Don't know.
+> 
+> key_echo
+> Controls if speakup speaks keys when they are typed. One = on, zero =
+> off or don't echo keys.
+> 
+> keymap
+> I believe this is the currently active kernel keymap. I'm not sure of
+> the format, probably what dumpkeys(1) and showkey(1) use. Echoing
+> different values here should allow for remapping speakup's review
+> commands besides remapping the keyboard as a whole.
+> 
+> no_interrupt
+> Controls if typing interrupts output from speakup. With no_interrupt
+> set to zero, typing on the keyboard will interrupt speakup if for
+> example the say screen command is used before the entire screen is
+> read. With no_interrupt set to one, if the say screen command is used,
+> and one then types on the keyboard, speakup will continue to say the
+> whole screen regardless until it finishes.
+> 
+> punc_all
+> This is a list of all the punctuation speakup should speak when
+> punc_level is set to four.
+> 
+> punc_level
+> Controls the level of punctuation spoken as the screen is displayed,
+> not reviewed. Levels range from zero no punctuation, to four, all
+> punctuation. As far as I can tell, one corresponds to punc_some, two
+> corresponds to punc_most, and three as well as four seem to both
+> correspond to punc_all, though I do stand to be corrected. I am using
+> the soft synthesizer driver, so it is possible that some hardware
+> synthesizers have different levels each corresponding to three and four
+> for punc_level. Also note that if punc_level is set to zero, and
+> key_echo is set to one, typed punctuation is still spoken as it is
+> typed.
+> 
+> punc_most
+> This is a list of all the punctuation speakup should speak when
+> punc_level is set to two.
+> 
+> punc_some
+> This is a list of all the punctuation speakup should speak when
+> punc_level is set to one.
+> 
+> reading_punc
+> Almost the same as punc_level, the differences being that reading_punc controls
+> the level of punctuation when reviewing the screen with speakup's
+> screen review commands. The other difference is that reading_punc set
+> to three speaks punc_all, and reading_punc set to four speaks all
+> punctuation, including spaces.
+> 
+> repeats
+> a list of characters speakup repeats. Normally, when there are
+> more than three characters in a row, speakup just reads three of those
+> characters. For example, "......" would be read as dot, dot, dot. If a
+> . is added to the list of characters in repeats, "......" would be
+> read as dot, dot, dot, times six.
+> 
+> say_control
+> If set to one, speakup speaks shift, alt and control when those keys are
+> pressed. Perhaps more keys are spoken, but those three are the ones I
+> found. If say_control is set to zero, shift, ctrl, and alt are not
+> spoken when they are pressed.
+> 
+> say_word_ctl
+> Don't know.
+> 
+> silent
+> Don't know.
+> 
+> spell_delay
+> As far as I can tell, this controls how fast a word is spelled when
+> speakup's say word review command is pressed twice quickly to speak
+> the current word being reviewed. Zero just speaks the letters one
+> after another, while values one through four seem to introduce more of
+> a pause between the spelling of each letter by speakup.
+> 
+> synth
+> Gets or sets the synthesizer driver currently in use. Reading synth
+> returns the synthesizer driver currently in use. Writing synth
+> switches to the given synthesizer driver, provided it is either built
+> into the kernel, or already loaded as a module.
+> 
+> synth_direct
+> Sends whatever is written to synth_direct
+> directly to the speech synthesizer in use, bypassing speakup. This
+> could be used to make the synthesizer speak a string, or to send
+> control sequences to the synthesizer to change how the synthesizer
+> behaves.
+> 
+> version
+> Reading version returns the version of speakup, and the version of the
+> synthesizer driver currently in use.
+> 
+> Synthesizer Driver Parameters
+> In /sys/accessibility/speakup is a directory corresponding to the
+> synthesizer driver currently in use (E.G) soft for the soft
+> driver. This directory contains files which control the speech
+> synthesizer itself, as opposed to controlling the speakup screen
+> reader. As far as I know, the parameters in this directory have the
+> same names and functions across all supported synthesizers. Also as
+> far as I know, the range of values for freq, pitch, rate, and vol is
+> the same for all supported synthesizers,
+> with the given range being internally mapped by the driver to more or
+> less fit the range of values supported for a given parameter by the
+> individual synthesizer. I will below describe the values and
+> parameters for the soft synthesizer, which I believe is the
+> synthesizer currently most commonly in use.
+> 
+> caps_start
+> I believe this is the string that is sent to the synthesizer to cause
+> it to start speaking uppercase letters. For the soft synthesizer and
+> most others, this causes the pitch of the voice to rise above the
+> currently set pitch.
+> 
+> caps_stop
+> I believe this is the string sent to the synthesizer to cause it to
+> stop speaking uppercase letters. In the case of the soft synthesizer
+> and most others, this returns the pitch of the voice down to the
+> currently set pitch.
+> 
+> delay_time
+> Don't know.
+> 
+> direct
+> Controls if punctuation is spoken by speakup, or by the
+> synthesizer. For example, speakup speaks ">" as "greater", while the
+> espeak synthesizer used by the soft driver speaks "greater than". Zero
+> lets speakup speak the punctuation. One lets the synthesizer itself
+> speak punctuation.
+> 
+> freq
+> Gets or sets the frequency of the speech synthesizer. Range is 0-9.
+> 
+> full_time
+> Don't know.
+> 
+> jiffy_delta
+> As far as I know, this controls how many jiffys the kernel gives to
+> the synthesizer. I seem to recall Kirk saying that setting this too
+> high can make a system unstable, or even crash it.
+> 
+> pitch
+> Gets or sets the pitch of the synthesizer. The range is 0-9.
+> 
+> punct
+> Gets or sets the amount of punctuation spoken by the synthesizer. The
+> range for the soft driver seems to be 0-2. I'm not exactly sure how
+> this relates to speakup's punc_level, or reading_punc
+> 
+> rate
+> Gets or sets the rate of the synthesizer. Range is from zero slowest,
+> to nine fastest.
+> 
+> tone
+> Gets or sets the tone of the speech synthesizer. The range for the
+> soft driver seems to be 0-2. This seems to make no difference if using
+> espeak and the espeakup connector. I'm not sure even if espeakup
+> supports different tonalities.
+> 
+> trigger_time
+> Don't know.
+> 
+> voice
+> Gets or sets the voice used by the synthesizer if the synthesizer can
+> speak in more than one voice. The range for the soft driver is
+> 0-7. Note that while espeak supports multiple voices, this parameter
+> will not set the voice when the espeakup connector is used between
+> speakup and espeak.
+> 
+> vol
+> Gets or sets the volume of the speech synthesizer. Range is 0-9, with
+> zero being the softest, and nine being the loudest.
+> 
+> Additions, clarifications, and corrections are welcome and
+> appreciated.
+> 
+> Greg
+> 
+> 
+> -- 
+> web site: http://www.gregn.net
+> gpg public key: http://www.gregn.net/pubkey.asc
+> skype: gregn1
+> (authorization required, add me to your contacts list first)
+> If we haven't been in touch before, e-mail me before adding me to your contacts.
+> 
+> --
+> Free domains: http://www.eu.org/ or mail dns-manager@EU.org
+> _______________________________________________
+> Speakup mailing list
+> Speakup@linux-speakup.org
+> http://linux-speakup.org/cgi-bin/mailman/listinfo/speakup
 
+-- 
+Your life is like a penny.  You're going to lose it.  The question is:
+How do
+you spend it?
+
+         John Covici wb2una
+         covici@ccs.covici.com
