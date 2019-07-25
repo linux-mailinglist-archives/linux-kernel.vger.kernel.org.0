@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C5FC75B82
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 01:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A831075B5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 01:41:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbfGYXnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 19:43:10 -0400
+        id S1727380AbfGYXla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 19:41:30 -0400
 Received: from mga06.intel.com ([134.134.136.31]:51808 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727339AbfGYXlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 19:41:25 -0400
+        id S1727300AbfGYXl1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 19:41:27 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 16:41:25 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 16:41:27 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,308,1559545200"; 
-   d="scan'208";a="369874722"
+   d="scan'208";a="369874729"
 Received: from amrutaku-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.255.230.75])
-  by fmsmga006.fm.intel.com with ESMTP; 25 Jul 2019 16:41:24 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 25 Jul 2019 16:41:25 -0700
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -27,9 +27,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [RFC PATCH 17/40] soundwire: bus: use runtime_pm_get_sync/pm when enabled
-Date:   Thu, 25 Jul 2019 18:40:09 -0500
-Message-Id: <20190725234032.21152-18-pierre-louis.bossart@linux.intel.com>
+Subject: [RFC PATCH 18/40] soundwire: bus: split handling of Device0 events
+Date:   Thu, 25 Jul 2019 18:40:10 -0500
+Message-Id: <20190725234032.21152-19-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
 References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
@@ -40,62 +40,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not all platforms support runtime_pm for now, let's use runtime_pm
-only when enabled.
+Assigning a device number to a Slave will result in additional events
+when it reports its status in a PING frame. There is no point in
+dealing with all the other devices in a loop, this can be done when a
+non-device0 event happens.
 
-Suggested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/bus.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ drivers/soundwire/bus.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
-index 5ad4109dc72f..0a45dc5713df 100644
+index 0a45dc5713df..bca378806d00 100644
 --- a/drivers/soundwire/bus.c
 +++ b/drivers/soundwire/bus.c
-@@ -332,12 +332,16 @@ int sdw_nread(struct sdw_slave *slave, u32 addr, size_t count, u8 *val)
- 	if (ret < 0)
- 		return ret;
+@@ -985,6 +985,11 @@ int sdw_handle_slave_status(struct sdw_bus *bus,
+ 		ret = sdw_program_device_num(bus);
+ 		if (ret)
+ 			dev_err(bus->dev, "Slave attach failed: %d\n", ret);
++		/*
++		 * programming a device number will have side effects,
++		 * so we deal with other devices at a later time
++		 */
++		return ret;
+ 	}
  
--	ret = pm_runtime_get_sync(slave->bus->dev);
--	if (ret < 0)
--		return ret;
-+	if (pm_runtime_enabled(slave->bus->dev)) {
-+		ret = pm_runtime_get_sync(slave->bus->dev);
-+		if (ret < 0)
-+			return ret;
-+	}
- 
- 	ret = sdw_transfer(slave->bus, &msg);
--	pm_runtime_put(slave->bus->dev);
-+
-+	if (pm_runtime_enabled(slave->bus->dev))
-+		pm_runtime_put(slave->bus->dev);
- 
- 	return ret;
- }
-@@ -359,13 +363,16 @@ int sdw_nwrite(struct sdw_slave *slave, u32 addr, size_t count, u8 *val)
- 			   slave->dev_num, SDW_MSG_FLAG_WRITE, val);
- 	if (ret < 0)
- 		return ret;
--
--	ret = pm_runtime_get_sync(slave->bus->dev);
--	if (ret < 0)
--		return ret;
-+	if (pm_runtime_enabled(slave->bus->dev)) {
-+		ret = pm_runtime_get_sync(slave->bus->dev);
-+		if (ret < 0)
-+			return ret;
-+	}
- 
- 	ret = sdw_transfer(slave->bus, &msg);
--	pm_runtime_put(slave->bus->dev);
-+
-+	if (pm_runtime_enabled(slave->bus->dev))
-+		pm_runtime_put(slave->bus->dev);
- 
- 	return ret;
- }
+ 	/* Continue to check other slave statuses */
 -- 
 2.20.1
 
