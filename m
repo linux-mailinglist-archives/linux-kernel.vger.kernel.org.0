@@ -2,47 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D09475711
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 20:38:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D85DB7571B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 20:40:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbfGYSiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 14:38:05 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:37030 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbfGYSiF (ORCPT
+        id S1726262AbfGYSkC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 14:40:02 -0400
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:29362 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbfGYSkC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 14:38:05 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 95E59143750EB;
-        Thu, 25 Jul 2019 11:38:04 -0700 (PDT)
-Date:   Thu, 25 Jul 2019 11:38:04 -0700 (PDT)
-Message-Id: <20190725.113804.1819709229869319575.davem@davemloft.net>
-To:     dingxiang@cmss.chinamobile.com
-Cc:     richardcochran@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ptp: ptp_dte: remove redundant dev_err message
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1563872045-3692-1-git-send-email-dingxiang@cmss.chinamobile.com>
-References: <1563872045-3692-1-git-send-email-dingxiang@cmss.chinamobile.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 25 Jul 2019 11:38:04 -0700 (PDT)
+        Thu, 25 Jul 2019 14:40:02 -0400
+Received: from localhost.localdomain ([92.140.204.221])
+        by mwinf5d13 with ME
+        id h6fu2000Y4n7eLC036fwcM; Thu, 25 Jul 2019 20:40:00 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 25 Jul 2019 20:40:00 +0200
+X-ME-IP: 92.140.204.221
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     gregkh@linuxfoundation.org, nishadkamdar@gmail.com
+Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] Staging: fbtft: Fix some typo. pdc8544 --> pcd8544
+Date:   Thu, 25 Jul 2019 20:38:56 +0200
+Message-Id: <20190725183856.17616-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ding Xiang <dingxiang@cmss.chinamobile.com>
-Date: Tue, 23 Jul 2019 16:54:05 +0800
+The driver is related to 'pcd8544'.
+However, 2 strings are about pdc8544 (c and d switched)
+Fix it.
 
-> devm_ioremap_resource already contains error message, so remove
-> the redundant dev_err message
-> 
-> Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is only theorical. It is based on the fact that a part of the
+filename (i.e. pcd8544) looks misspelled in the file itself.
+I don't know the implication of FBTFT_REGISTER_DRIVER and MODULE_ALIAS and
+if additional adjustments are needed.
+---
+ drivers/staging/fbtft/fb_pcd8544.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to net-next.
+diff --git a/drivers/staging/fbtft/fb_pcd8544.c b/drivers/staging/fbtft/fb_pcd8544.c
+index ad49973ad594..08f8a4bb8772 100644
+--- a/drivers/staging/fbtft/fb_pcd8544.c
++++ b/drivers/staging/fbtft/fb_pcd8544.c
+@@ -157,10 +157,10 @@ static struct fbtft_display display = {
+ 	.backlight = 1,
+ };
+ 
+-FBTFT_REGISTER_DRIVER(DRVNAME, "philips,pdc8544", &display);
++FBTFT_REGISTER_DRIVER(DRVNAME, "philips,pcd8544", &display);
+ 
+ MODULE_ALIAS("spi:" DRVNAME);
+-MODULE_ALIAS("spi:pdc8544");
++MODULE_ALIAS("spi:pcd8544");
+ 
+ MODULE_DESCRIPTION("FB driver for the PCD8544 LCD Controller");
+ MODULE_AUTHOR("Noralf Tronnes");
+-- 
+2.20.1
+
