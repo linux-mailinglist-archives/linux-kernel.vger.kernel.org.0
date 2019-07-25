@@ -2,91 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D732D75993
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 23:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6083D759A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 23:32:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbfGYV2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 17:28:09 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43684 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726779AbfGYV2J (ORCPT
+        id S1726759AbfGYVbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 17:31:04 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34877 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726447AbfGYVbE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 17:28:09 -0400
-Received: by mail-io1-f67.google.com with SMTP id k20so100341370ios.10
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 14:28:08 -0700 (PDT)
+        Thu, 25 Jul 2019 17:31:04 -0400
+Received: by mail-pl1-f193.google.com with SMTP id w24so23890210plp.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 14:31:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
-        bh=3RH1zSlyd07j64FiG6c56vosTfF67VZPnHTjO5XPI6w=;
-        b=EOZ/BMGIWOdAj5Vnd3MYOVEz3cefj8pjrEdXl5iPoQCB2A7GPF+woWHVnm8k9xigez
-         g3xjAsmtfn7Z95N8JtEYM19jcXGgmOmAF/TMVLY81K++RkiZhRJxxw6z/Zi6cj0P2crZ
-         6jbUWGZ0OGzThcxAVxOLtSlRgAOUkMhWP5n8DdY7wDDGBMVTmsrv3aXCP8nX2TpQFMFO
-         t+6JzAzXDmpSUtQMjbRfX9qtceI7QH1nY00yBmhS5Avtu1VLBBkKzAkphHjSLBDzmiyR
-         R/+U6LN++pbSDZBytpZoLkKkmY9FfQNPqxVckN+KnwzUnC5NqJeLQsrxYS4y9Tp+TRrB
-         1fVA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mfaBZ71hrJPdlZeMC578OQz4LN6coQODfHCSFL4DY30=;
+        b=L1PQzO25HSmegQlGogBRTDRVTJihGQ8nW9Pn1vU/pcEljVrJpCDHdb5G5+wUOZRaji
+         zXIIf53eCREsVmf57JKSXVPPLdRqtrwWoKl74voeX8/y2vPEEjikuw990cW8pTWz42n3
+         ABhie+Ty3rfGMfWkgYDzV8jMxGv16NOkmEN3RYHdennsIIwff6Z3ZxELWILi6yjguG51
+         EDfK+J1awSDH2gdNIicNi7/QO22SW1WjMemBbfQb+Qy6tBUGqaqNEO5LyOMHRj8dwaxK
+         OgaNX6VSDa5tUrSrABbZy9yBQmccK4Hs8OK2TQ3ZC78A1yP4XhW9aJYEbXDQnsQXinQb
+         Etyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
-         :mime-version;
-        bh=3RH1zSlyd07j64FiG6c56vosTfF67VZPnHTjO5XPI6w=;
-        b=YBZieXEwtLat4A3COlfYSf+S6FHFwDMuuaGnfQp4LV043Vc7YXXOtGwozPiMneVJ4t
-         D4EKYlT9NaWOZrC5XYXo5APj9HAE69X8yTTOAC5KsD2iHhrwGX2LXgBFq1I2n2vUhIR/
-         QxqJKFl51Hrb+2znFrFaj1mZyprrCxtRkiJk2P9ntWyW3rzV5KwGZWRcQbSvU1baqtu1
-         sYNt9ybGBCq6KXdkHKZ6Fgnn2S3DZg1W1+7bzhDwA13D9pPyR1qmRyazfBatUBgTQy2U
-         rPllvSRvNw0bEZqlQk2n70evLUyrfHhxEvzFOyWK/Bk27vMQUeKYI4YB2m8y5+0QfA5f
-         Tehw==
-X-Gm-Message-State: APjAAAXfs9VouXAK2Qgc4OPNe1tU66PCm5SFgzPS6MG61Nw/4CnVPI+r
-        6z6rCDtUBe/KUAlI/2PV7Z5hww==
-X-Google-Smtp-Source: APXvYqwcgbG8zch7ZKO4A5O8SJtdUcK7Nhlw2/y/EAEaxhmIHdnGrBKmHWDCbVWOWssqVb37HE40xg==
-X-Received: by 2002:a5d:8c81:: with SMTP id g1mr18868186ion.239.1564090088618;
-        Thu, 25 Jul 2019 14:28:08 -0700 (PDT)
-Received: from localhost (67-0-24-96.albq.qwest.net. [67.0.24.96])
-        by smtp.gmail.com with ESMTPSA id t14sm41996376ioi.60.2019.07.25.14.28.08
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 25 Jul 2019 14:28:08 -0700 (PDT)
-Date:   Thu, 25 Jul 2019 14:28:07 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     bhelgaas@google.com
-cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org, wesley@sifive.com
-Subject: [PATCH v2] pci: Kconfig: select PCI_MSI_IRQ_DOMAIN by default on
- RISC-V
-Message-ID: <alpine.DEB.2.21.9999.1907251426450.32766@viisi.sifive.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mfaBZ71hrJPdlZeMC578OQz4LN6coQODfHCSFL4DY30=;
+        b=d8TjaAGTBthAF3HwmHpkML6Dfrh/a2qeQ7zSsgYP51mkjKZ4EGLZi8cn7jb07MD3QT
+         8aQfha57RL/oJKjMODaAKVXZhBTEjvIdtcMbUIqkOBMzlc0/t5A/20+GyOc3StZ+LKg2
+         nVUcjFqiO1vcwUXSfI3em9A9QavtKWtpGgyTSMTEA+pzRVV3pNFBECCqzxENPKsDkyQj
+         ppCYJhgV7PK/IE86VPIlYpk97Wj18doYsEwanVBkpto90Sr1iDWJLR+QAJ13CRMAPHJu
+         p6TiqKeqXUGvvTj/MjXGMZWrFk6Wp/qok9cQK9Pxf3nYZOyrIxM67N7SBeiIKRU9pEfL
+         CnMQ==
+X-Gm-Message-State: APjAAAXjdwLICrXDSjFpksnkIKQKqLLBT38BhejuTSDGLzkSvl6296a2
+        N941CvDI2q3bY+SBQizrFnUKJe4Qx86rnEF1DLzsEg==
+X-Google-Smtp-Source: APXvYqzjunthGBlYQvAXo+D4K5dU893NIP2cgPdwJ1VeZyB0ObEP3a74b4CPfy0ldYRUMBT3J8r5CPg4PIfODOfyOYc=
+X-Received: by 2002:a17:902:b944:: with SMTP id h4mr16697787pls.179.1564090262638;
+ Thu, 25 Jul 2019 14:31:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <a5864549-40c3-badd-8c41-d5b7bf3c4f3c@c-s.fr> <20190709064952.GA40851@archlinux-threadripper>
+ <20190719032456.GA14108@archlinux-threadripper> <20190719152303.GA20882@gate.crashing.org>
+ <20190719160455.GA12420@archlinux-threadripper> <20190721075846.GA97701@archlinux-threadripper>
+ <20190721180150.GN20882@gate.crashing.org> <20190722024140.GA55142@archlinux-threadripper>
+ <20190722061940.GZ20882@gate.crashing.org> <CAKwvOd=KRVsFkT8dLFoitky9OF8tKmbn00-OPi6kBygyx4QwHg@mail.gmail.com>
+ <20190722175817.GE20882@gate.crashing.org>
+In-Reply-To: <20190722175817.GE20882@gate.crashing.org>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 25 Jul 2019 14:30:51 -0700
+Message-ID: <CAKwvOdkzBt=tTk+26dp+QsCStMUJ0_v5Mpjy2TOXPw1mu71itg@mail.gmail.com>
+Subject: Re: [PATCH v2] powerpc: slightly improve cache helpers
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        James Y Knight <jyknight@google.com>,
+        Joel Stanley <joel@jms.id.au>, dja@axtens.net
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wesley Terpstra <wesley@sifive.com>
+On Mon, Jul 22, 2019 at 10:58 AM Segher Boessenkool
+<segher@kernel.crashing.org> wrote:
+>
+> On Mon, Jul 22, 2019 at 10:21:07AM -0700, Nick Desaulniers wrote:
+> > On Sun, Jul 21, 2019 at 11:19 PM Segher Boessenkool
+> > <segher@kernel.crashing.org> wrote:
+> > > On Sun, Jul 21, 2019 at 07:41:40PM -0700, Nathan Chancellor wrote:
+> > > > On Sun, Jul 21, 2019 at 01:01:50PM -0500, Segher Boessenkool wrote:
+> > > > > On Sun, Jul 21, 2019 at 12:58:46AM -0700, Nathan Chancellor wrote:
+> > > > > > 0000017c clear_user_page:
+> > > > > >      17c: 94 21 ff f0                     stwu 1, -16(1)
+> > > > > >      180: 38 80 00 80                     li 4, 128
+> > > > > >      184: 38 63 ff e0                     addi 3, 3, -32
+> > > > > >      188: 7c 89 03 a6                     mtctr 4
+> > > > > >      18c: 38 81 00 0f                     addi 4, 1, 15
+> > > > > >      190: 8c c3 00 20                     lbzu 6, 32(3)
+> > > > > >      194: 98 c1 00 0f                     stb 6, 15(1)
+> > > > > >      198: 7c 00 27 ec                     dcbz 0, 4
+> > > > > >      19c: 42 00 ff f4                     bdnz .+65524
+> > > > >
+> > > > > Uh, yeah, well, I have no idea what clang tried here, but that won't
+> > > > > work.  It's copying a byte from each target cache line to the stack,
+> > > > > and then does clears the cache line containing that byte on the stack.
+> > > > >
+> > > > > I *guess* this is about "Z" and not about "%y", but you'll have to ask
+> > > > > the clang people.
+> > > > >
+> > > > > Or it may be that they do not treat inline asm operands as lvalues
+> > > > > properly?  That rings some bells.  Yeah that looks like it.
+> > >
+> > > The code is
+> > >   __asm__ __volatile__ ("dcbz %y0" : : "Z"(*(u8 *)addr) : "memory");
+> > >
+> > > so yeah it looks like clang took that  *(u8 *)addr  as rvalue, and
+> > > stored that in stack, and then used *that* as memory.
+> >
+> > What's the %y modifier supposed to mean here?
+>
+> It prints a memory address for an indexed operand.
+>
+> If you write just "%0" it prints addresses that are a single register
+> as "0(r3)" instead of "0,r3".  Some instructions do not allow offset
+> form.
+>
+> > addr is in the list of
+> > inputs, so what's wrong with using it as an rvalue?
+>
+> It seems to use *(u8 *)addr as rvalue.  Asm operands are lvalues.  It
+> matters a lot for memory operands.
 
-This is part of adding support for RISC-V systems with PCIe host 
-controllers that support message-signaled interrupts.
+Hmm...not sure that's specified behavior.  Anyways, I've filed:
+https://bugs.llvm.org/show_bug.cgi?id=42762
+to see if folks more familiar with LLVM's ppc backend have some more thoughts.
 
-Signed-off-by: Wesley Terpstra <wesley@sifive.com>
-[paul.walmsley@sifive.com: wrote patch description; split this
- patch from the arch/riscv patch]
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
----
- drivers/pci/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-index 2ab92409210a..beb3408a0272 100644
---- a/drivers/pci/Kconfig
-+++ b/drivers/pci/Kconfig
-@@ -52,7 +52,7 @@ config PCI_MSI
- 	   If you don't know what to do here, say Y.
- 
- config PCI_MSI_IRQ_DOMAIN
--	def_bool ARC || ARM || ARM64 || X86
-+	def_bool ARC || ARM || ARM64 || X86 || RISCV
- 	depends on PCI_MSI
- 	select GENERIC_MSI_IRQ_DOMAIN
- 
+I recommend considering reverting commit 6c5875843b87 ("powerpc:
+slightly improve cache helpers") until the issue is resolved in clang,
+otherwise I'll probably just turn off our CI builds of PPC32 for the
+time being.
 -- 
-2.22.0
-
+Thanks,
+~Nick Desaulniers
