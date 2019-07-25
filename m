@@ -2,79 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86EB87486A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 09:46:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A150974868
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 09:46:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388462AbfGYHqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 03:46:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55184 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388187AbfGYHqo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 03:46:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=slTSqFCIhfxn5wYzIqGB9W4Rnj3J8ckOZ2kpLbw/Uss=; b=mlck0tH+lI0sDx9hkCz586My5
-        P0uBKxF8i6WTlmp1DR55rTIFLF+dFhswORO1Sg8FKinGbI4rb21G//nN3GAdW7t8JN349/0nWdzgM
-        ivnJ9VeS7Z2M/HxPxvnjThW+B+Jk+06Oc3aGtJgJJaCFJu1ewtkK8AuLZ0dIhR5xMDkRLtRmCRGdp
-        UF4MGyQhsUz91TQvzeiR0DhAVsg8Em79YQ4VSxrB9YICyKo8GUj3aFG6sCNwi3n37SLVvVUtMMna6
-        WCYnmuw5ba7lZJmcyhRbcSVNNsCzPWlAZAjvfuKpDSUXudePzhPI7z0ttuH7RTKUDSfNfUcKx3R1G
-        BFPHzOOyA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hqYSP-00011D-Ak; Thu, 25 Jul 2019 07:46:33 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BBD12202674D6; Thu, 25 Jul 2019 09:46:31 +0200 (CEST)
-Date:   Thu, 25 Jul 2019 09:46:31 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: Re: [PATCH] perf/x86: Apply more accurate check on hypervisor
- platform
-Message-ID: <20190725074631.GF31381@hirez.programming.kicks-ass.net>
-References: <1564022366-18293-1-git-send-email-zhenzhong.duan@oracle.com>
+        id S2388437AbfGYHqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 03:46:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52248 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388187AbfGYHqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 03:46:39 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 727952081B;
+        Thu, 25 Jul 2019 07:46:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564040797;
+        bh=4UcEQNmlJvi9gGhfQJufu+mVSE9Yfv6XMx4Zl1E3xJc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=velcbiV1Wy/WrI//kr6s+Z4iop+NiwHmNkPl/NPAOSBXjfLXcnUF03lIE5FQ+nGOl
+         Zm1qmFvGNR0CqIiByLLBJjaGlw86qt4T/3foSXAIO80HGhsLDLYxragd68iJeRVWg0
+         e/VP1qAQVs9nypLg06ZnCBFTK5hbGnoJo/MMwtS8=
+Date:   Thu, 25 Jul 2019 09:46:34 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Bharath Vedartham <linux.bhar@gmail.com>
+Cc:     ira.weiny@intel.com, jglisse@redhat.com,
+        Matt.Sickler@daktronics.com, jhubbard@nvidia.com,
+        devel@driverdev.osuosl.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] staging: kpc2000: Convert put_page to put_user_page*()
+Message-ID: <20190725074634.GB15090@kroah.com>
+References: <20190720173214.GA4250@bharath12345-Inspiron-5559>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1564022366-18293-1-git-send-email-zhenzhong.duan@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190720173214.GA4250@bharath12345-Inspiron-5559>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 10:39:26AM +0800, Zhenzhong Duan wrote:
-> check_msr is used to fix a bug report in guest where KVM doesn't support
-> LBR MSR and cause #GP.
+On Sat, Jul 20, 2019 at 11:02:14PM +0530, Bharath Vedartham wrote:
+> For pages that were retained via get_user_pages*(), release those pages
+> via the new put_user_page*() routines, instead of via put_page().
 > 
-> The msr check is bypassed on real HW to workaround a false failure,
-> see commit d0e1a507bdc7 ("perf/x86/intel: Disable check_msr for real HW")
-> 
-> When running a guest with CONFIG_HYPERVISOR_GUEST not set or "nopv"
-> enabled, current check isn't enough and #GP could trigger.
-> 
-> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Jiri Olsa <jolsa@redhat.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Juergen Gross <jgross@suse.com>
-> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d ("mm: introduce put_user_page*(), placeholder versions").
 
-Thanks!
+Please line-wrap this line.
+
+> 
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: Jérôme Glisse <jglisse@redhat.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Matt Sickler <Matt.Sickler@daktronics.com>
+> Cc: devel@driverdev.osuosl.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+> ---
+> Changes since v1
+>        - Improved changelog by John's suggestion.
+>        - Moved logic to dirty pages below sg_dma_unmap
+>        and removed PageReserved check.
+> Changes since v2
+>        - Added back PageResevered check as suggested by John Hubbard.
+> Changes since v3
+>        - Changed the commit log as suggested by John.
+>        - Added John's Reviewed-By tag
+> 
+> ---
+>  drivers/staging/kpc2000/kpc_dma/fileops.c | 17 ++++++-----------
+>  1 file changed, 6 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/staging/kpc2000/kpc_dma/fileops.c b/drivers/staging/kpc2000/kpc_dma/fileops.c
+> index 6166587..75ad263 100644
+> --- a/drivers/staging/kpc2000/kpc_dma/fileops.c
+> +++ b/drivers/staging/kpc2000/kpc_dma/fileops.c
+> @@ -198,9 +198,7 @@ int  kpc_dma_transfer(struct dev_private_data *priv, struct kiocb *kcb, unsigned
+>  	sg_free_table(&acd->sgt);
+>   err_dma_map_sg:
+>   err_alloc_sg_table:
+> -	for (i = 0 ; i < acd->page_count ; i++){
+> -		put_page(acd->user_pages[i]);
+> -	}
+> +	put_user_pages(acd->user_pages, acd->page_count);
+>   err_get_user_pages:
+>  	kfree(acd->user_pages);
+>   err_alloc_userpages:
+> @@ -221,16 +219,13 @@ void  transfer_complete_cb(struct aio_cb_data *acd, size_t xfr_count, u32 flags)
+>  	
+>  	dev_dbg(&acd->ldev->pldev->dev, "transfer_complete_cb(acd = [%p])\n", acd);
+>  	
+> -	for (i = 0 ; i < acd->page_count ; i++){
+> -		if (!PageReserved(acd->user_pages[i])){
+> -			set_page_dirty(acd->user_pages[i]);
+> -		}
+> -	}
+> -	
+>  	dma_unmap_sg(&acd->ldev->pldev->dev, acd->sgt.sgl, acd->sgt.nents, acd->ldev->dir);
+>  	
+> -	for (i = 0 ; i < acd->page_count ; i++){
+> -		put_page(acd->user_pages[i]);
+> +	for (i = 0; i < acd->page_count; i++) {
+> +		if (!PageReserved(acd->user_pages[i]))
+> +			put_user_pages_dirty(&acd->user_pages[i], 1);
+> +		else
+> +			put_user_page(acd->user_pages[i]);
+>  	}
+>  	
+>  	sg_free_table(&acd->sgt);
+> -- 
+> 2.7.4
+
+This patch can not be applied at all :(
+
+Can you redo it against the latest staging-next branch and resend?
+
+thanks,
+
+greg k-h
