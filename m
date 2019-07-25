@@ -2,88 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE2EF751E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:55:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E970751D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:52:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388676AbfGYOzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 10:55:05 -0400
-Received: from mga02.intel.com ([134.134.136.20]:21779 "EHLO mga02.intel.com"
+        id S2388579AbfGYOwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 10:52:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388424AbfGYOzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 10:55:04 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 07:55:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,307,1559545200"; 
-   d="scan'208";a="177989924"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by FMSMGA003.fm.intel.com with ESMTP; 25 Jul 2019 07:55:03 -0700
-Date:   Thu, 25 Jul 2019 08:52:10 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     "Busch, Keith" <keith.busch@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Kai Heng Feng <kai.heng.feng@canonical.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [Regression] Commit "nvme/pci: Use host managed power state for
- suspend" has problems
-Message-ID: <20190725145209.GA6949@localhost.localdomain>
-References: <2332799.izEFUvJP67@kreacher>
+        id S2387646AbfGYOwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 10:52:53 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B4E421734;
+        Thu, 25 Jul 2019 14:52:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564066372;
+        bh=UiAPxBMDA0i/iMkH2fdA0nFfj4Rn3c8p0jAXHIvZ0og=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qI7UPyLJQ98A3zSspuu8RTVksaDq1QaMKEkkw7btW+Aj4OCcSqpUxLcys6FN/ctNf
+         ZxrqUa+qWaSzdtNjYKLdto+bbh0+HjEuSAbH4vhDNqyhcp92mdZ7sGuW6Ucol5y1Ds
+         zmVnX+Gywp1MH4/lE9cQ3GEbGP6Cb/cQusPgDVmo=
+Date:   Thu, 25 Jul 2019 16:52:49 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8723bs: Disable procfs debugging by default
+Message-ID: <20190725145249.GA32271@kroah.com>
+References: <20190718092522.17748-1-kai.heng.feng@canonical.com>
+ <20190725075503.GA16693@kroah.com>
+ <83A2CB3F-B0C4-43C6-A3A6-B6E8B440BECC@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2332799.izEFUvJP67@kreacher>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <83A2CB3F-B0C4-43C6-A3A6-B6E8B440BECC@canonical.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 02:51:41AM -0700, Rafael J. Wysocki wrote:
-> Hi Keith,
+On Thu, Jul 25, 2019 at 10:48:42PM +0800, Kai-Heng Feng wrote:
+> at 15:55, Greg KH <gregkh@linuxfoundation.org> wrote:
 > 
-> Unfortunately,
+> > On Thu, Jul 18, 2019 at 05:25:22PM +0800, Kai-Heng Feng wrote:
+> > > The procfs provides many useful information for debugging, but it may be
+> > > too much for normal usage, routines like proc_get_sec_info() reports
+> > > various security related information.
+> > > 
+> > > So disable it by defaultl.
+> > > 
+> > > Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> > > ---
+> > >  drivers/staging/rtl8723bs/include/autoconf.h | 4 ----
+> > >  1 file changed, 4 deletions(-)
+> > > 
+> > > diff --git a/drivers/staging/rtl8723bs/include/autoconf.h
+> > > b/drivers/staging/rtl8723bs/include/autoconf.h
+> > > index 196aca3aed7b..8f4c1e734473 100644
+> > > --- a/drivers/staging/rtl8723bs/include/autoconf.h
+> > > +++ b/drivers/staging/rtl8723bs/include/autoconf.h
+> > > @@ -57,9 +57,5 @@
+> > >  #define DBG	0	/*  for ODM & BTCOEX debug */
+> > >  #endif /*  !DEBUG */
+> > > 
+> > > -#ifdef CONFIG_PROC_FS
+> > > -#define PROC_DEBUG
+> > > -#endif
+> > 
+> > What?  Why?  If you are going to do this, then rip out all of the code
+> > as well.
 > 
-> commit d916b1be94b6dc8d293abed2451f3062f6af7551
-> Author: Keith Busch <keith.busch@intel.com>
-> Date:   Thu May 23 09:27:35 2019 -0600
-> 
->     nvme-pci: use host managed power state for suspend
-> 
-> doesn't universally improve things.  In fact, in some cases it makes things worse.
-> 
-> For example, on the Dell XPS13 9380 I have here it prevents the processor package
-> from reaching idle states deeper than PC2 in suspend-to-idle (which, of course, also
-> prevents the SoC from reaching any kind of S0ix).
-> 
-> That can be readily explained too.  Namely, with the commit above the NVMe device
-> stays in D0 over suspend/resume, so the root port it is connected to also has to stay in
-> D0 and that "blocks" package C-states deeper than PC2.
-> 
-> In order for the root port to be able to go to D3, the device connected to it also needs
-> to go into D3, so it looks like (at least on this particular machine, but maybe in
-> general), both D3 and the NVMe-specific PM are needed.
-> 
-> I'm not sure what to do here, because evidently there are systems where that commit
-> helps.  I was thinking about adding a module option allowing the user to override the
-> default behavior which in turn should be compatible with 5.2 and earlier kernels.
+> Or make it a Kconfig option? Which one do you think is better?
 
-Darn, that's too bad. I don't think we can improve one thing at the
-expense of another, so unless we find an acceptable criteria to select
-what low power mode to use, I would be inclined to support a revert or
-a kernel option to default to the previous behavior.
+No new config options please.
 
-One thing we might check before using NVMe power states is if the lowest
-PS is non-operational with MP below some threshold. What does your device
-report for:
+> > And are you _sure_ you want to do this?
+> 
+> Yes. The procfs of rtl8723bs is useful to Realtek to decode but not to
+> others.
 
-  nvme id-ctrl /dev/nvme0
+If no one else needs this, then rip out all of the code that uses it,
+not just the single #define.
 
-?
+thanks,
+
+greg k-h
