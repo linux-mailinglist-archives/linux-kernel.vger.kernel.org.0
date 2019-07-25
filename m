@@ -2,63 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 615D775A34
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 00:04:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0F1A75A6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 00:10:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727169AbfGYWDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 18:03:36 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47744 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727109AbfGYWDf (ORCPT
+        id S1726693AbfGYWK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 18:10:28 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39619 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbfGYWK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 18:03:35 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hqlpe-0005hx-JB; Fri, 26 Jul 2019 00:03:26 +0200
-Date:   Fri, 26 Jul 2019 00:03:25 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     hpa@zytor.com
-cc:     John Hubbard <jhubbard@nvidia.com>, john.hubbard@gmail.com,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] x86/boot: clear some fields explicitly
-In-Reply-To: <3DFA2707-89A6-4DD2-8DFB-0C2D1ABA1B3C@zytor.com>
-Message-ID: <alpine.DEB.2.21.1907252358240.1791@nanos.tec.linutronix.de>
-References: <20190724231528.32381-1-jhubbard@nvidia.com> <20190724231528.32381-2-jhubbard@nvidia.com> <B7DC31CA-E378-445A-A937-1B99490C77B4@zytor.com> <alpine.DEB.2.21.1907250848050.1791@nanos.tec.linutronix.de> <345add60-de4a-73b1-0445-127738c268b4@nvidia.com>
- <alpine.DEB.2.21.1907252343180.1791@nanos.tec.linutronix.de> <3DFA2707-89A6-4DD2-8DFB-0C2D1ABA1B3C@zytor.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 25 Jul 2019 18:10:28 -0400
+Received: by mail-wm1-f67.google.com with SMTP id u25so35656971wmc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 15:10:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/efOnDxSbGdN0Bdr5SzMCIHE/dK0Kshq+Eu+fKkpIAI=;
+        b=rw1A7ETnj0f3jlwv/KW+00iHv3hfARoZ/j4wtp9K1VTy1V9jyUWJlQdLTCk3gBi4ST
+         lukFTRBObwAuqISQQcxViKjUKeTKZNwuwJ/CJZEOw5nx0DWYqWs/5lsMW54P3jC8M82B
+         kjLEYO2awF/tnHxnqj5SWn9fkBbbMjJtcGhcLzRfJzqNgDzjc9O97sZ9qtUjtdiqqauP
+         cyrR4SiL0UuYhvTBV3cUe0s12qfu8j39HcpzqQjrtmlTD4ceJdTnlV87hEsVprPhdcjK
+         g1SWLZNU2i0HgtUMXMeGRrD9JJVg5oVK33KWY6lftpqtfajFRzF27zNJpu3PnWCUBXqG
+         tHFw==
+X-Gm-Message-State: APjAAAXHZGpDSU8ewrQ4NMx/C3JZbaJ6aeNuEZ+i5QYZaI/7JWer/xbS
+        wtCYtVPHy7yXSthxE0qe8LuWiA==
+X-Google-Smtp-Source: APXvYqxuCBM42nA2ri+2nQ+IFiLkfFjMyzd5RxP94/5hxtMLT55P9FoKuk7obZIVITd21utAuKT30g==
+X-Received: by 2002:a1c:a1c1:: with SMTP id k184mr84016054wme.81.1564092625944;
+        Thu, 25 Jul 2019 15:10:25 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:cc23:f353:392:d2ee? ([2001:b07:6468:f312:cc23:f353:392:d2ee])
+        by smtp.gmail.com with ESMTPSA id 15sm35602094wmk.34.2019.07.25.15.10.24
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Jul 2019 15:10:25 -0700 (PDT)
+Subject: Re: [PATCH 5.2 000/413] 5.2.3-stable review
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        wanpengli@tencent.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        patches@kernelci.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>, jmattson@google.com
+References: <20190725113437.GA27429@kroah.com>
+ <230a5b34-d23e-8318-0b1f-d23ada7318e0@redhat.com>
+ <CA+G9fYsWdmboyquZ=Bs3tkTwRFTzd1yuL0_EVpHOecNi4E_stA@mail.gmail.com>
+ <20190725160939.GC18612@linux.intel.com>
+ <33f1cfaa-525d-996a-4977-fda32dc368ee@redhat.com>
+ <20190725162053.GD18612@linux.intel.com>
+ <7bc207e0-0812-e41a-bfd5-e3fbfd43f242@redhat.com>
+ <20190725163946.xt2p3pvxwuabzojj@xps.therub.org>
+ <3e55414d-cb4f-8f3f-a359-e374b6298715@redhat.com>
+ <20190725201933.aiqh6oj7bacdwact@xps.therub.org>
+ <20190725205701.GF18612@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <dc5ff4ed-c6dd-74ea-03ae-4f65c5d58073@redhat.com>
+Date:   Fri, 26 Jul 2019 00:10:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20190725205701.GF18612@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 25 Jul 2019, hpa@zytor.com wrote:
-> On July 25, 2019 2:48:30 PM PDT, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > 
-> > But seriously I think it's not completely insane what they are doing
-> > and the table based approach is definitely more readable and maintainable
-> > than the existing stuff.
+On 25/07/19 22:57, Sean Christopherson wrote:
+> On Thu, Jul 25, 2019 at 03:19:33PM -0500, Dan Rue wrote:
+>> I would still prefer to run the latest tests against all kernel versions
+>> (but better control when we upgrade it). Like I said, we can handle
+>> expected failures, and it would even help to validate backports for
+>> fixes that do get backported. I'm afraid on your behalf that snapping
+>> (and maintaining) branches per kernel branch is going to be a lot to
+>> manage.
 > 
-> Doing this table based does seem like a good idea.
+> Having the branches would be beneficial for kernel developers as well,
+> e.g. on multiple occasions I've spent time hunting down non-existent KVM
+> bugs, only to realize my base kernel was stale with respect to kvm-unit-tests.
+> 
+> My thought was to have a mostly-unmaintained branch for each major kernel
+> version, e.g. snapshot a working version of kvm_unit_tests when the KVM
+> pull request for the merge window is sent, and for the most part leave it
+> at that.  I don't think it would introduce much overhead, but then again,
+> I'm not the person who would be maintaining this :-)
+> 
 
-The question is whether we use a 'toclear' table or a 'preserve' table. I'd
-argue that the 'preserve' approach is saner.
+Yes, I agree.  Stable backports that have fixes in kvm-unit-tests are
+relatively rare, so the branch would hardly move after a release is cut.
 
-> Sent from my Android device with K-9 Mail. Please excuse my brevity.
-
-I surely excuse the brevity, but the formatting mess which that brevity app
-creates is not excusable.
-
-Thanks,
-
-	tglx
----
-Sent from a sane mail client. Nothing to excuse here. All failures are intentional.
-
+Paolo
