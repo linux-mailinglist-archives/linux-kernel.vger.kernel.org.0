@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00912750A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:10:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CCA5750A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:11:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387670AbfGYOK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 10:10:26 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43537 "EHLO
+        id S2387831AbfGYOLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 10:11:05 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36161 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387551AbfGYOKZ (ORCPT
+        with ESMTP id S1725981AbfGYOLF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 10:10:25 -0400
+        Thu, 25 Jul 2019 10:11:05 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PEAA0T1034455
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PEArq81034540
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 25 Jul 2019 07:10:10 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PEAA0T1034455
+        Thu, 25 Jul 2019 07:10:53 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PEArq81034540
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564063810;
-        bh=wDu+dk/cAqPch7gPml/O3THYEPTwUlxjV8lvrRGyTLk=;
+        s=2019071901; t=1564063854;
+        bh=VIjob6QcoYjrHAJEZvnl4ZsoJePfG2zbZcbN7bPPphQ=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=282jotNiEriB7YTY7TL90x4+cdjgHNW7AEnEzXb/UbZvRPyj0Eszjeb3nP5k76NAy
-         s5r2zDq3d0Vqj/9uY5oBOhO2d8G2qhwt5c9zEB7bbzDhyE3aq51GdYuuRNBNZySTLK
-         NxAv/3COtUpKT7n/Ko50M/FcP1c2lUSSRpLyQcVB6WNz5Wl1LyuZj4cRnIc2KgXg/y
-         ySxzocUQA+WUQVcMjT4Ztzo5SPjOnTaoRHL93kGt9MD0paO9x/crx/jYBB370DSI54
-         cDnNERBEvX1OdOdOFf0G/sdNKWRZwBIMDrIEr6Xuy4LpAXSKC1W/KSm3vMjHW3DjpG
-         YM/klSSEvkPaA==
+        b=xONBX0jvayVomc5DhBrc5+/6g+I/uBgzLdUw2bQcxQH/N2KzTgla+Kg6jvTZAbY3J
+         JJsq7FGvyGqxVrxWZ3iZtJsNzbF+xbG4HoMNHOeAQtC38WjRsmQSx/RSSVuHNFw0Io
+         r84Y2bG8Fhh+bTEm6rPb4hALcY3qur58zfiOhIm6TP57uEZkeqd55irK/U7M96Z2sC
+         4Ucfuwmg3vvgTYcoLeHWhcaBnQL1aXfOMPw19kS3q77gPczBeQBAFq5dA8h9W1US0M
+         QrFPHSWFUuC7112l/Yyfv61vsZjKGBPeUuEj/6yjnTgCt3GTV4cahb8Gfqybjv3IEA
+         sjbc9JDLrhE+w==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PEA9nl1034452;
-        Thu, 25 Jul 2019 07:10:09 -0700
-Date:   Thu, 25 Jul 2019 07:10:09 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PEAr0f1034536;
+        Thu, 25 Jul 2019 07:10:53 -0700
+Date:   Thu, 25 Jul 2019 07:10:53 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-e797bda3fd29137f6c151dfa10ea6a61c17895ce@git.kernel.org>
-Cc:     peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org
-Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-          tglx@linutronix.de, peterz@infradead.org
-In-Reply-To: <20190722105219.818822855@linutronix.de>
-References: <20190722105219.818822855@linutronix.de>
+Message-ID: <tip-b9fa6442f7043e2cdd247905d4f3b80f2e9605cb@git.kernel.org>
+Cc:     hpa@zytor.com, mingo@kernel.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com,
+          mingo@kernel.org, peterz@infradead.org
+In-Reply-To: <20190722105220.585449120@linutronix.de>
+References: <20190722105220.585449120@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:smp/hotplug] smp/hotplug: Track booted once CPUs in a cpumask
-Git-Commit-ID: e797bda3fd29137f6c151dfa10ea6a61c17895ce
+Subject: [tip:smp/hotplug] cpumask: Implement cpumask_or_equal()
+Git-Commit-ID: b9fa6442f7043e2cdd247905d4f3b80f2e9605cb
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,96 +60,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e797bda3fd29137f6c151dfa10ea6a61c17895ce
-Gitweb:     https://git.kernel.org/tip/e797bda3fd29137f6c151dfa10ea6a61c17895ce
+Commit-ID:  b9fa6442f7043e2cdd247905d4f3b80f2e9605cb
+Gitweb:     https://git.kernel.org/tip/b9fa6442f7043e2cdd247905d4f3b80f2e9605cb
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Mon, 22 Jul 2019 20:47:16 +0200
+AuthorDate: Mon, 22 Jul 2019 20:47:24 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Thu, 25 Jul 2019 15:47:37 +0200
 
-smp/hotplug: Track booted once CPUs in a cpumask
+cpumask: Implement cpumask_or_equal()
 
-The booted once information which is required to deal with the MCE
-broadcast issue on X86 correctly is stored in the per cpu hotplug state,
-which is perfectly fine for the intended purpose.
+The IPI code of x86 needs to evaluate whether the target cpumask is equal
+to the cpu_online_mask or equal except for the calling CPU.
 
-X86 needs that information for supporting NMI broadcasting via shortcuts,
-but retrieving it from per cpu data is cumbersome.
+To replace the current implementation which requires the usage of a
+temporary cpumask, which might involve allocations, add a new function
+which compares a cpumask to the result of two other cpumasks which are
+or'ed together before comparison.
 
-Move it to a cpumask so the information can be checked against the
-cpu_present_mask quickly.
-
-No functional change intended.
+This allows to make the required decision in one go and the calling code
+then can check for the calling CPU being set in the target mask with
+cpumask_test_cpu().
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20190722105219.818822855@linutronix.de
+Link: https://lkml.kernel.org/r/20190722105220.585449120@linutronix.de
 
 ---
- include/linux/cpumask.h |  2 ++
- kernel/cpu.c            | 11 +++++++----
- 2 files changed, 9 insertions(+), 4 deletions(-)
+ include/linux/bitmap.h  | 23 +++++++++++++++++++++++
+ include/linux/cpumask.h | 14 ++++++++++++++
+ lib/bitmap.c            | 20 ++++++++++++++++++++
+ 3 files changed, 57 insertions(+)
 
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index f58e97446abc..90528f12bdfa 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -120,6 +120,10 @@ extern int __bitmap_empty(const unsigned long *bitmap, unsigned int nbits);
+ extern int __bitmap_full(const unsigned long *bitmap, unsigned int nbits);
+ extern int __bitmap_equal(const unsigned long *bitmap1,
+ 			  const unsigned long *bitmap2, unsigned int nbits);
++extern bool __pure __bitmap_or_equal(const unsigned long *src1,
++				     const unsigned long *src2,
++				     const unsigned long *src3,
++				     unsigned int nbits);
+ extern void __bitmap_complement(unsigned long *dst, const unsigned long *src,
+ 			unsigned int nbits);
+ extern void __bitmap_shift_right(unsigned long *dst, const unsigned long *src,
+@@ -321,6 +325,25 @@ static inline int bitmap_equal(const unsigned long *src1,
+ 	return __bitmap_equal(src1, src2, nbits);
+ }
+ 
++/**
++ * bitmap_or_equal - Check whether the or of two bitnaps is equal to a third
++ * @src1:	Pointer to bitmap 1
++ * @src2:	Pointer to bitmap 2 will be or'ed with bitmap 1
++ * @src3:	Pointer to bitmap 3. Compare to the result of *@src1 | *@src2
++ *
++ * Returns: True if (*@src1 | *@src2) == *@src3, false otherwise
++ */
++static inline bool bitmap_or_equal(const unsigned long *src1,
++				   const unsigned long *src2,
++				   const unsigned long *src3,
++				   unsigned int nbits)
++{
++	if (!small_const_nbits(nbits))
++		return __bitmap_or_equal(src1, src2, src3, nbits);
++
++	return !(((*src1 | *src2) ^ *src3) & BITMAP_LAST_WORD_MASK(nbits));
++}
++
+ static inline int bitmap_intersects(const unsigned long *src1,
+ 			const unsigned long *src2, unsigned int nbits)
+ {
 diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-index 21755471b1c3..693124900f0a 100644
+index 693124900f0a..0c7db5efe66c 100644
 --- a/include/linux/cpumask.h
 +++ b/include/linux/cpumask.h
-@@ -115,6 +115,8 @@ extern struct cpumask __cpu_active_mask;
- #define cpu_active(cpu)		((cpu) == 0)
- #endif
- 
-+extern cpumask_t cpus_booted_once_mask;
-+
- static inline void cpu_max_bits_warn(unsigned int cpu, unsigned int bits)
- {
- #ifdef CONFIG_DEBUG_PER_CPU_MAPS
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index e84c0873559e..05778e32674a 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -62,7 +62,6 @@ struct cpuhp_cpu_state {
- 	bool			rollback;
- 	bool			single;
- 	bool			bringup;
--	bool			booted_once;
- 	struct hlist_node	*node;
- 	struct hlist_node	*last;
- 	enum cpuhp_state	cb_state;
-@@ -76,6 +75,10 @@ static DEFINE_PER_CPU(struct cpuhp_cpu_state, cpuhp_state) = {
- 	.fail = CPUHP_INVALID,
- };
- 
-+#ifdef CONFIG_SMP
-+cpumask_t cpus_booted_once_mask;
-+#endif
-+
- #if defined(CONFIG_LOCKDEP) && defined(CONFIG_SMP)
- static struct lockdep_map cpuhp_state_up_map =
- 	STATIC_LOCKDEP_MAP_INIT("cpuhp_state-up", &cpuhp_state_up_map);
-@@ -433,7 +436,7 @@ static inline bool cpu_smt_allowed(unsigned int cpu)
- 	 * CPU. Otherwise, a broadacasted MCE observing CR4.MCE=0b on any
- 	 * core will shutdown the machine.
- 	 */
--	return !per_cpu(cpuhp_state, cpu).booted_once;
-+	return !cpumask_test_cpu(cpu, &cpus_booted_once_mask);
+@@ -475,6 +475,20 @@ static inline bool cpumask_equal(const struct cpumask *src1p,
+ 						 nr_cpumask_bits);
  }
- #else
- static inline bool cpu_smt_allowed(unsigned int cpu) { return true; }
-@@ -1066,7 +1069,7 @@ void notify_cpu_starting(unsigned int cpu)
- 	int ret;
  
- 	rcu_cpu_starting(cpu);	/* Enables RCU usage on this CPU. */
--	st->booted_once = true;
-+	cpumask_set_cpu(cpu, &cpus_booted_once_mask);
- 	while (st->state < target) {
- 		st->state++;
- 		ret = cpuhp_invoke_callback(cpu, st->state, true, NULL, NULL);
-@@ -2334,7 +2337,7 @@ void __init boot_cpu_init(void)
- void __init boot_cpu_hotplug_init(void)
- {
- #ifdef CONFIG_SMP
--	this_cpu_write(cpuhp_state.booted_once, true);
-+	cpumask_set_cpu(smp_processor_id(), &cpus_booted_once_mask);
- #endif
- 	this_cpu_write(cpuhp_state.state, CPUHP_ONLINE);
++/**
++ * cpumask_or_equal - *src1p | *src2p == *src3p
++ * @src1p: the first input
++ * @src2p: the second input
++ * @src3p: the third input
++ */
++static inline bool cpumask_or_equal(const struct cpumask *src1p,
++				    const struct cpumask *src2p,
++				    const struct cpumask *src3p)
++{
++	return bitmap_or_equal(cpumask_bits(src1p), cpumask_bits(src2p),
++			       cpumask_bits(src3p), nr_cpumask_bits);
++}
++
+ /**
+  * cpumask_intersects - (*src1p & *src2p) != 0
+  * @src1p: the first input
+diff --git a/lib/bitmap.c b/lib/bitmap.c
+index bbe2589e8497..f9e834841e94 100644
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -59,6 +59,26 @@ int __bitmap_equal(const unsigned long *bitmap1,
  }
+ EXPORT_SYMBOL(__bitmap_equal);
+ 
++bool __bitmap_or_equal(const unsigned long *bitmap1,
++		       const unsigned long *bitmap2,
++		       const unsigned long *bitmap3,
++		       unsigned int bits)
++{
++	unsigned int k, lim = bits / BITS_PER_LONG;
++	unsigned long tmp;
++
++	for (k = 0; k < lim; ++k) {
++		if ((bitmap1[k] | bitmap2[k]) != bitmap3[k])
++			return false;
++	}
++
++	if (!(bits % BITS_PER_LONG))
++		return true;
++
++	tmp = (bitmap1[k] | bitmap2[k]) ^ bitmap3[k];
++	return (tmp & BITMAP_LAST_WORD_MASK(bits)) == 0;
++}
++
+ void __bitmap_complement(unsigned long *dst, const unsigned long *src, unsigned int bits)
+ {
+ 	unsigned int k, lim = BITS_TO_LONGS(bits);
