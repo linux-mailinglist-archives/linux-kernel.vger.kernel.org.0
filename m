@@ -2,170 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE68274F5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:27:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3419574F75
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:29:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728336AbfGYN10 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:27:26 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36224 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbfGYN10 (ORCPT
+        id S2387436AbfGYN3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:29:40 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:44675 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbfGYN3k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:27:26 -0400
-Received: by mail-lf1-f68.google.com with SMTP id q26so34570026lfc.3;
-        Thu, 25 Jul 2019 06:27:24 -0700 (PDT)
+        Thu, 25 Jul 2019 09:29:40 -0400
+Received: by mail-yb1-f196.google.com with SMTP id a14so18478255ybm.11;
+        Thu, 25 Jul 2019 06:29:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=WXiBayTqTdkKTq09rjY6tipJqJtsUSTf9qvOhgtptXE=;
-        b=l61Pt9f2xC+aDtypRt0x2wON8TQwif0kEQaB9wG4yMNYHVMH1B56FKjgcRsrZ0faFe
-         3GPlEaprv7OncIBA5s1Q6ImyRuZk3GXPShB9sE1juXK0z8yUwR8pPeC5l1WP9dWUPafi
-         Ed/34bGH+qMk1dUj3ViF+UCHnhe6jLJ/mA5UOdxt4r+fMOWRXX6s8EhNBRJBisWWy3j0
-         +pbOkjPCzOqgohgd3/NWnJ7UluS8cZQ0/Vkrz6RUUz4YOgdztrfBgkGGz91I6PW/0o1d
-         DIuFSkZ2HBg61DLk/SG1shV9emIytsU40xnOcaY8vMyvbw+tB6Cy97HfuGXZRpvtsz5T
-         BZLw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NVu+S23Gv1yOG6EQW2R8cxaCUo15rcMvxts6vU6HpEM=;
+        b=Z6YactpJLSqzGorrC5H61mi+l2QDXmU1tZuYDEI4NstQVWsVHXQIMtHqQoictB+Azy
+         ikHoEzDoCHZLvq4Z8h4Dd1NWOVVPmB72iN0V9akY4Qc87f3pMAbqYEs6o7o+OOfoUsMl
+         ihbURjjk8nvW64kY3mt3oqHZlPI0pD7dpOi8O+14EY2Mo9atEheCddRoMN/VjabuPuHK
+         z8MlICk2z7UgWItSjhRpppOTgU7LJ4bm/TPw5BZr0Dn4iG9SInOI+wNw09lwqf1wiJk2
+         n4bDsOx/ZY0yPuwCDU7NxFlQmCLMSvjnb+JDn7e/oH/VNjQbkh6QfW/0GW1SUClqd9G7
+         RARQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=WXiBayTqTdkKTq09rjY6tipJqJtsUSTf9qvOhgtptXE=;
-        b=sXMbfjpwSr+TrNmHbAdSa6NqU5I1QHwYP9cA7FojopfxGpogvlPlD06yRgGWwb7x0x
-         i0+vE87qgXvUKlsXvlkE58AhH/TKjnD+fbau/3YVSdxrM0nUnrBDp0likQXP7HcxkMhM
-         qLsf2J3MK5BbG1NW0c2HmMgBrQN2SSoaWgZxcYiNEtoLKm7mEqeNUACZHDHmNKiS43an
-         O4tLUa+uak1hKFTzlqBePYjjXZXJt6LjRrw6AS2DogxNteVwDzcwWaX5FEhYt/QY6/6d
-         lxJXkIOhP4gTogtYu8/zk9eWUqAuMTEqhb/s3uH2ry/xzL0QcQo/WnpXYF5h8hp9i3E7
-         JyVw==
-X-Gm-Message-State: APjAAAWKmaRl6FgK7Vp/9xEcZw1LQoa6+2NXsIFKk0lxhyXeJIYXp2ib
-        PX0dDW3qnJeG93NAcLmxCA8htcVmO4yRA4CK6r0u+5tFWW4=
-X-Google-Smtp-Source: APXvYqw4Ed1+h8H7qf66p3bgbVK3gmUySWTmYzoU/O47r6Wa7RjMhhccNUNPE6lXOnU4XDyXX1GQMhICP//rsdR1lZc=
-X-Received: by 2002:ac2:47e8:: with SMTP id b8mr25974255lfp.84.1564059772302;
- Thu, 25 Jul 2019 06:02:52 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NVu+S23Gv1yOG6EQW2R8cxaCUo15rcMvxts6vU6HpEM=;
+        b=AkIpYmVqpip7yj/jkhInpMP1JFIJlPiQrR10p34/FwIrvsuW3YpHgewAZDlWc8Z/5p
+         vBF+IIMSVmlBATPjRkoy+B5oVFm1WFpvGMWjNv/Mm+fyD/aXSHLphB+yel/ZHoNrtwo8
+         k9RAi9GYfpLx45XNi5V7s+h6aGHAwMHKEyL0qRdIk9mCWbWroKAjjPEOqadmAhrGRqCL
+         VVYISplBQkwJc4yyfzxgMoDgdxOcwsbDeuqaIHVaz/Dit7uTWtL4+jKU51lpmmY0NT3j
+         Fl1OIXQ/EXXfXiPrfwL4gRcn5yoagxZy0AjcbM2Mb1V1y7mixDjQUD3pJIyH2jOU4rTN
+         BZOQ==
+X-Gm-Message-State: APjAAAXw8ocBlElBteBbJxx7VfynSA5tmDf6OIXaSkkefLkF/ZxuUl+4
+        SgvVeg/s/miRUrUZ5gIhEs1ajhO1wIoGk9eGstY=
+X-Google-Smtp-Source: APXvYqz7f1Ci0npqtyBiHcAFyrc/Uu1/8h6eibamhHeSo/YFbsxEEaq9E+39K305A1gpp77D8WQiAhCH6Xt1m1ZVsGE=
+X-Received: by 2002:a25:aaea:: with SMTP id t97mr52207466ybi.126.1564059845729;
+ Thu, 25 Jul 2019 06:04:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <CGME20190723122024eucas1p1ff060d072132bfbc8a8a1d10fa1f90f8@eucas1p1.samsung.com>
- <20190723122016.30279-1-a.swigon@partner.samsung.com> <20190723122016.30279-4-a.swigon@partner.samsung.com>
- <CAGTfZH09n9UOLMwNrCvcdeRCHYFO4TiB-YG2rMVuxA4bxuLCVw@mail.gmail.com>
-In-Reply-To: <CAGTfZH09n9UOLMwNrCvcdeRCHYFO4TiB-YG2rMVuxA4bxuLCVw@mail.gmail.com>
-Reply-To: cwchoi00@gmail.com
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-Date:   Thu, 25 Jul 2019 22:02:14 +0900
-Message-ID: <CAGTfZH2pPh5VVQuHV1d_8Wj1N3TPAh6w4KUkQtssBhEdPgQiuA@mail.gmail.com>
-Subject: Re: [RFC PATCH 03/11] devfreq: exynos-bus: Change goto-based logic to
- if-else logic
-To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        georgi.djakov@linaro.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20190725085732.15674-1-baijiaju1990@gmail.com>
+In-Reply-To: <20190725085732.15674-1-baijiaju1990@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 25 Jul 2019 16:03:54 +0300
+Message-ID: <CAOQ4uxg1f3rgnc4sitF82FMftROHkubk+3s9=v1Bf47m-zVYBw@mail.gmail.com>
+Subject: Re: [PATCH] fs: overlayfs: Fix a possible null-pointer dereference in ovl_free_fs()
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2019=EB=85=84 7=EC=9B=94 25=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 9:56, C=
-hanwoo Choi <cwchoi00@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+On Thu, Jul 25, 2019 at 3:48 PM Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
 >
-> 2019=EB=85=84 7=EC=9B=94 24=EC=9D=BC (=EC=88=98) =EC=98=A4=EC=A0=84 8:08,=
- Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>=EB=8B=98=EC=9D=B4 =
-=EC=9E=91=EC=84=B1:
-> >
-> > This patch improves code readability by changing the following construc=
-t:
-> >
-> > >    if (cond)
-> > >        goto passive;
-> > >    foo();
-> > >    goto out;
-> > >passive:
-> > >    bar();
-> > >out:
-> >
-> > into this:
-> >
-> > >    if (cond)
-> > >        bar();
-> > >    else
-> > >        foo();
-> >
-> > Signed-off-by: Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>
-> > ---
-> >  drivers/devfreq/exynos-bus.c | 24 +++++++++---------------
-> >  1 file changed, 9 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.=
-c
-> > index cf6f6cbd0f55..4bb83b945bf7 100644
-> > --- a/drivers/devfreq/exynos-bus.c
-> > +++ b/drivers/devfreq/exynos-bus.c
-> > @@ -505,25 +505,19 @@ static int exynos_bus_probe(struct platform_devic=
-e *pdev)
-> >         node =3D of_parse_phandle(dev->of_node, "devfreq", 0);
-> >         if (node) {
-> >                 of_node_put(node);
-> > -               goto passive;
-> > +               ret =3D exynos_bus_profile_init_passive(bus, profile);
-> > +               if (ret < 0)
-> > +                       goto err;
-> >         } else {
-> >                 ret =3D exynos_bus_parent_parse_of(np, bus);
-> > +               if (ret < 0)
-> > +                       goto err;
-> > +
-> > +               ret =3D exynos_bus_profile_init(bus, profile);
-> > +               if (ret < 0)
-> > +                       goto err;
-> >         }
-> >
-> > -       if (ret < 0)
-> > -               goto err;
-> > -
-> > -       ret =3D exynos_bus_profile_init(bus, profile);
-> > -       if (ret < 0)
-> > -               goto err;
-> > -
-> > -       goto out;
-> > -passive:
-> > -       ret =3D exynos_bus_profile_init_passive(bus, profile);
-> > -       if (ret < 0)
-> > -               goto err;
-> > -
-> > -out:
-> >         max_state =3D bus->devfreq->profile->max_state;
-> >         min_freq =3D (bus->devfreq->profile->freq_table[0] / 1000);
-> >         max_freq =3D (bus->devfreq->profile->freq_table[max_state - 1] =
-/ 1000);
-> > --
-> > 2.17.1
-> >
+> In ovl_fill_super(), there is an if statement on line 1607 to check
+> whether ofs->upper_mnt is NULL:
+>     if (!ofs->upper_mnt)
 >
-> It seems more simple than before.
-> Instead, please merge patch1/2/3 to one patch. and drop the patch4.
-
-But, I think that you better to drop the cleanup patch from this series
-because the series[1] touch the exynos-bus.c driver for coupled regulator.
-[1] https://www.spinics.net/lists/arm-kernel/msg741971.html
-
-I recommend that you send the cleanup patch with my comment
-either after reviewing the Kamil's patch[1] or rebase this series base
-on patch[1].
-
+> When ofs->upper_mnt is NULL and d_make_root() on line 1654 fails,
+> ovl_free_fs() on line 1683 is executed.
+> In ovl_free_fs(), ofs->upper_mnt is used on line 224:
+>     ovl_inuse_unlock(ofs->upper_mnt->mnt_root);
 >
+> Thus, a possible null-pointer dereference may occur.
+>
+> To fix this bug, ofs->upper_mnt is checked before being used in
+> ovl_free_fs().
+>
+> This bug is found by a static analysis tool STCheck written by us.
+>
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  fs/overlayfs/super.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index b368e2e102fa..1d7c3d280834 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -220,7 +220,7 @@ static void ovl_free_fs(struct ovl_fs *ofs)
+>         if (ofs->workdir_locked)
+>                 ovl_inuse_unlock(ofs->workbasedir);
+>         dput(ofs->workbasedir);
+> -       if (ofs->upperdir_locked)
+> +       if (ofs->upperdir_locked && ofs->upper_mnt)
+>                 ovl_inuse_unlock(ofs->upper_mnt->mnt_root);
+>         mntput(ofs->upper_mnt);
+>         for (i = 0; i < ofs->numlower; i++) {
 > --
-> Best Regards,
-> Chanwoo Choi
 
+Can you teach STCheck to know that if upperdir_locked is only set this way:
+        ofs->upper_mnt = upper_mnt;
 
+        err = -EBUSY;
+        if (ovl_inuse_trylock(ofs->upper_mnt->mnt_root)) {
+                ofs->upperdir_locked = true;
 
---=20
-Best Regards,
-Chanwoo Choi
+Then upperdir_locked implies ofs->upper_mnt != NULL?
+
+Whether or not this patch should be applied is not my call,
+but the title "possible null-pointer dereference" is certainly not true.
+
+Thanks,
+Amir.
