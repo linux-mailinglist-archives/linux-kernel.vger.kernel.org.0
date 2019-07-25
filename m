@@ -2,151 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2048F75330
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 17:50:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14B2F75333
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 17:50:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728698AbfGYPuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 11:50:09 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:32819 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726692AbfGYPuJ (ORCPT
+        id S2389605AbfGYPuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 11:50:32 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:42954 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389567AbfGYPu3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 11:50:09 -0400
-Received: by mail-qt1-f194.google.com with SMTP id r6so45324519qtt.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 08:50:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KtvrTY7GxQUsdUWTdAPxoL6H/V/oQ7yIjHbktZQGDCk=;
-        b=T9heSwDOqu1siYRpHwNiDCSodaBYxU3vU2eY0qR34TMSyXqxOh06QhZT2zxs0ENoG3
-         N2gEx6WK2FzqPKPLYmraD6D1nPL0D+mvBZXmhI/Z1W7DJtg0FOY1DBbs6j59q671QRYo
-         MiH7XkWCjdyhjCwclGWzbW6hjFIlux+tTvf1ebcqn/W+CbJBoKrWSGRbQLzUBid8hN9n
-         KPlOqqEffYC2LWg+I/NbpkkmXQ1H07kuGZ8B6a+rj7CvKKq6Y92aDWZ9mb3yUzva2uzC
-         X+r2oD0aZy/Qugb2GyLDa1OhGdSbaUT7IsQc+l9x6cHvlSTXPPOsg1zlNB2wERjir+6T
-         NKNw==
+        Thu, 25 Jul 2019 11:50:29 -0400
+Received: by mail-ed1-f65.google.com with SMTP id v15so50689968eds.9
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 08:50:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KtvrTY7GxQUsdUWTdAPxoL6H/V/oQ7yIjHbktZQGDCk=;
-        b=UF3bxLQFrsaNq9u6GT4eytlXJeTWx6Tvk507suspieniRX1aBdwIo2hjzVoAZdZRFq
-         ZtvpWKQPHsDCPzFxATwhFoxrrI93bWsQbbBqiPwu6H5+5HruXy5od13ZRN1SrWaiEz0Y
-         BXlQ2TTHHhMBirxLUmOjkk4U82BhvAOHZZWZXxuTyDDtarvS9uL2W4a1yVLBgy7ezktm
-         FclwdG1Gtf0ApPy3jMyJ1ITGUKB0vuviXQgcrQOQoQoLfzkQ+9FlXKnAOXQFDc7w16qd
-         jTZCMKsKBpXbOzVc1l/lVJKzpfVhLkOqqyOZmOzc58+emwhk+9lH8+HpFlM1kT1lQgtc
-         tdqQ==
-X-Gm-Message-State: APjAAAUZ8Bb9IWclEYDkfK3Lev+cL1txXDA6s8zJoq1ciQdcp1hVv5zj
-        ur19SV75VGUOrcnDLCPa9s2MMg==
-X-Google-Smtp-Source: APXvYqzjuj7N05pz4uuT4yLODVJZ4OYaCUUWn62Qni2ysyUSpERMDF7EzFjQKc0ShE9ugDe7LLtgMQ==
-X-Received: by 2002:ac8:1c42:: with SMTP id j2mr62457987qtk.68.1564069808139;
-        Thu, 25 Jul 2019 08:50:08 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id g3sm21898563qke.105.2019.07.25.08.50.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 08:50:07 -0700 (PDT)
-Message-ID: <1564069805.11067.20.camel@lca.pw>
-Subject: Re: [PATCH v2] writeback: fix -Wstringop-truncation warnings
-From:   Qian Cai <cai@lca.pw>
-To:     David Laight <David.Laight@ACULAB.COM>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Cc:     "tobin@kernel.org" <tobin@kernel.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "dchinner@redhat.com" <dchinner@redhat.com>,
-        "fengguang.wu@intel.com" <fengguang.wu@intel.com>,
-        "jack@suse.cz" <jack@suse.cz>, "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Thu, 25 Jul 2019 11:50:05 -0400
-In-Reply-To: <4017a4af4b0e4b96a6d7ed66afe18120@AcuMS.aculab.com>
-References: <1564065511-13206-1-git-send-email-cai@lca.pw>
-         <4017a4af4b0e4b96a6d7ed66afe18120@AcuMS.aculab.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NPzRI+wHt7J9VSEK+V9e/axuse6c4lCMrXpMW5Fy2u4=;
+        b=eIdcFfNPjZL8M4O3yc15+0rdop9Jm0TWojPnzcKdiRNl+ZCI7ViUYSVy93v7g8OHSU
+         qgMImb8IQZmQf3QaLeoGfzxuFz2yjzZDMLQW2gqtSg867/wE92W8iGnETBV3m3ckGFHR
+         iI734q9h3eF5do3GG6stzjeSR16l4suVw7N+nKgAuv/cXz97A6vuLxr3afLgk9bPrcZY
+         e0vwCvMD8MX5lddwhEbW4rQH+FA+YK9d8ZG5QtYsZIaaRG+5TyVh09ap2tutPUhleIFj
+         XPuvce54TXJ8B/Q/hPbyufV+jFa8Ai7ItMWfU6wiKU6U5nHHb2x4xkGLs0UnzYzAYKWq
+         rjAQ==
+X-Gm-Message-State: APjAAAX8xVrB2F7hViHl/zsqDR7lBKBcnEJG3fgo6ptPtMxTN0nMVqH3
+        AbU2bOzpluxiL5429qNzfoiuQw==
+X-Google-Smtp-Source: APXvYqyJU8oVrk49qxZH287prK1CTBmO3Yowj/vCqJS3SxCAHQCfdEXMkcGgABpZqhmIOx0MikzSeQ==
+X-Received: by 2002:a17:906:edd7:: with SMTP id sb23mr68347517ejb.309.1564069827634;
+        Thu, 25 Jul 2019 08:50:27 -0700 (PDT)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id gz5sm9840869ejb.21.2019.07.25.08.50.25
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Jul 2019 08:50:27 -0700 (PDT)
+Subject: Re: [Regression] 5.3-rc1: hid_llogitech_dj does not work
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org
+References: <CAHk-=wjm7FQxdF=RKa8Xe23CLNNpbGDOACewgo8e-hwDJ8TyQg@mail.gmail.com>
+ <2480108.bWkXKoXas6@kreacher>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <1dddedba-ca02-1014-36e0-ba4e3631f28b@redhat.com>
+Date:   Thu, 25 Jul 2019 17:50:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <2480108.bWkXKoXas6@kreacher>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-07-25 at 15:04 +0000, David Laight wrote:
-> From: Qian Cai
-> > Sent: 25 July 2019 15:39
-> > 
-> > There are many of those warnings.
-> > 
-> > In file included from ./arch/powerpc/include/asm/paca.h:15,
-> >                  from ./arch/powerpc/include/asm/current.h:13,
-> >                  from ./include/linux/thread_info.h:21,
-> >                  from ./include/asm-generic/preempt.h:5,
-> >                  from ./arch/powerpc/include/generated/asm/preempt.h:1,
-> >                  from ./include/linux/preempt.h:78,
-> >                  from ./include/linux/spinlock.h:51,
-> >                  from fs/fs-writeback.c:19:
-> > In function 'strncpy',
-> >     inlined from 'perf_trace_writeback_page_template' at
-> > ./include/trace/events/writeback.h:56:1:
-> > ./include/linux/string.h:260:9: warning: '__builtin_strncpy' specified
-> > bound 32 equals destination size [-Wstringop-truncation]
-> >   return __builtin_strncpy(p, q, size);
-> >          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > 
-> > Fix it by using the new strscpy_pad() which was introduced in the
-> > commit 458a3bf82df4 ("lib/string: Add strscpy_pad() function") and will
-> > always be NUL-terminated instead of strncpy(). Also, changes strlcpy()
-> > to use strscpy_pad() in this file for consistency.
-> > 
-> > Fixes: 455b2864686d ("writeback: Initial tracing support")
-> > Fixes: 028c2dd184c0 ("writeback: Add tracing to balance_dirty_pages")
-> > Fixes: e84d0a4f8e39 ("writeback: trace event writeback_queue_io")
-> > Fixes: b48c104d2211 ("writeback: trace event bdi_dirty_ratelimit")
-> > Fixes: cc1676d917f3 ("writeback: Move requeueing when I_SYNC set to
-> > writeback_sb_inodes()")
-> > Fixes: 9fb0a7da0c52 ("writeback: add more tracepoints")
-> > Signed-off-by: Qian Cai <cai@lca.pw>
-> > ---
-> > 
-> > v2: Use strscpy_pad() to address the possible data leaking concern from
-> > Steve [1].
-> >     Replace strlcpy() as well for consistency.
-> > 
-> > [1] https://lore.kernel.org/lkml/20190716170339.1c44719d@gandalf.local.home/
-> > 
-> >  include/trace/events/writeback.h | 39 +++++++++++++++++++++--------------
-> > ----
-> >  1 file changed, 21 insertions(+), 18 deletions(-)
-> > 
-> > diff --git a/include/trace/events/writeback.h
-> > b/include/trace/events/writeback.h
-> > index aa7f3aeac740..41092d63a8de 100644
-> > --- a/include/trace/events/writeback.h
-> > +++ b/include/trace/events/writeback.h
-> > @@ -66,8 +66,10 @@
-> >  	),
-> > 
-> >  	TP_fast_assign(
-> > -		strncpy(__entry->name,
-> > -			mapping ? dev_name(inode_to_bdi(mapping->host)-
-> > >dev) : "(unknown)", 32);
-> > +		strscpy_pad(__entry->name,
-> > +			    mapping ?
-> > +			    dev_name(inode_to_bdi(mapping->host)->dev) :
-> > +			    "(unknown)", 32);
+Hi Rafael,
+
+On 25-07-19 12:07, Rafael J. Wysocki wrote:
+> Hi Hans,
 > 
-> Shouldn't the 32 be 'sizeof (something)' ??
-
-Maybe could do a sizeof(__entry->name) as it is defined as,
-
-	TP_STRUCT__entry (
-		__array(char, name, 32)
-		__field(unsigned long, ino)
-		__field(pgoff_t, index)
-
-But, that might be a follow-up patch and does not seem belong here.
-
+> This is similar to a problem I reported some time ago:
 > 
-> Oh, and a horrid line break.
+> https://lore.kernel.org/lkml/2268131.Lc39eCoc3j@kreacher/
+> 
+> and the device affected by it is the same.
+> 
+> The symptom is simply that the mouse just doesn't work (no reaction).  If I do
+> "rmmod hid_llogitech_dj", it says "Killed", but the module does go away and
+> the mouse starts to work (through the generic code I suppose), but then
+> the machine hangs on attempts to suspend (nasty).
+> 
+> Reverting all of the hid_llogitech_dj changes between 5.2 and 5.3-rc1:
+> 
+> dbcbabf7da92 HID: logitech-dj: fix return value of logi_dj_recv_query_hidpp_devices
+> 39d21e7e0043 HID: logitech-dj: make const array template static
+> 423dfbc362b7 HID: logitech-dj: Add usb-id for the 27MHz MX3000 receiver
+> 
+> helps here, but the first two don't really look like they can make any difference,
+> so I guess I'm an unlucky owner of a MX3000 that doesn't quite work as expected.
+> 
+> Any help will be appreciated. :-)
 
-That line is too long needs to break up. Open up to suggestions though.
+Actually we received another bug report about this and the reporter there
+has come up with a patch with points to
+
+dbcbabf7da92 HID: logitech-dj: fix return value of logi_dj_recv_query_hidpp_devices
+
+Being the culprit, can you try just reverting that one?
+
+I will take a closer look at this soonish.
+
+Thank & Regards,
+
+Hans
