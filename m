@@ -2,74 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 588AB74B45
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 12:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B338E74B50
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 12:15:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389351AbfGYKNb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 06:13:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35746 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387531AbfGYKNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 06:13:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DF2CBAEAC;
-        Thu, 25 Jul 2019 10:13:29 +0000 (UTC)
-Date:   Thu, 25 Jul 2019 12:13:27 +0200
-From:   Oscar Salvador <osalvador@suse.de>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/5] mm,memory_hotplug: Introduce MHP_VMEMMAP_FLAGS
-Message-ID: <20190725101322.GA16385@linux>
-References: <20190625075227.15193-1-osalvador@suse.de>
- <20190625075227.15193-3-osalvador@suse.de>
- <CAPcyv4hvu+wp4tJJNW70jp2G_rNabyvzGMvDTS3PzkDCAFztYg@mail.gmail.com>
- <20190725092751.GA15964@linux>
- <71a30086-b093-48a4-389f-7e407898718f@redhat.com>
- <20190725094030.GA16069@linux>
- <6410dd7d-bc9c-1ca2-6cb7-d51b059be388@redhat.com>
+        id S2389597AbfGYKPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 06:15:03 -0400
+Received: from foss.arm.com ([217.140.110.172]:54824 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389418AbfGYKPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 06:15:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A82F28;
+        Thu, 25 Jul 2019 03:15:02 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD3273F694;
+        Thu, 25 Jul 2019 03:15:00 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 11:14:58 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Marco Elver <elver@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Daniel Axtens <dja@axtens.net>
+Subject: Re: [PATCH 1/2] kernel/fork: Add support for stack-end guard page
+Message-ID: <20190725101458.GC14347@lakrids.cambridge.arm.com>
+References: <20190719132818.40258-1-elver@google.com>
+ <20190723164115.GB56959@lakrids.cambridge.arm.com>
+ <CACT4Y+Y47_030eX-JiE1hFCyP5RiuTCSLZNKpTjuHwA5jQJ3+w@mail.gmail.com>
+ <20190724112101.GB2624@lakrids.cambridge.arm.com>
+ <CACT4Y+Zai+4VwNXS_a417M2m0DbtNhjTVdYga178ZDkvNnP4CQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6410dd7d-bc9c-1ca2-6cb7-d51b059be388@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CACT4Y+Zai+4VwNXS_a417M2m0DbtNhjTVdYga178ZDkvNnP4CQ@mail.gmail.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 12:04:08PM +0200, David Hildenbrand wrote:
-> As I said somewhere already (as far as I recall), one mode would be
-> sufficient. If you want per memblock, add the memory in memblock
-> granularity.
+On Thu, Jul 25, 2019 at 09:53:08AM +0200, Dmitry Vyukov wrote:
+> On Wed, Jul 24, 2019 at 1:21 PM Mark Rutland <mark.rutland@arm.com> wrote:
+> >
+> > On Wed, Jul 24, 2019 at 11:11:49AM +0200, Dmitry Vyukov wrote:
+> > > On Tue, Jul 23, 2019 at 6:41 PM Mark Rutland <mark.rutland@arm.com> wrote:
+> > > >
+> > > > On Fri, Jul 19, 2019 at 03:28:17PM +0200, Marco Elver wrote:
+> > > > > Enabling STACK_GUARD_PAGE helps catching kernel stack overflows immediately
+> > > > > rather than causing difficult-to-diagnose corruption. Note that, unlike
+> > > > > virtually-mapped kernel stacks, this will effectively waste an entire page of
+> > > > > memory; however, this feature may provide extra protection in cases that cannot
+> > > > > use virtually-mapped kernel stacks, at the cost of a page.
+> > > > >
+> > > > > The motivation for this patch is that KASAN cannot use virtually-mapped kernel
+> > > > > stacks to detect stack overflows. An alternative would be implementing support
+> > > > > for vmapped stacks in KASAN, but would add significant extra complexity.
+> > > >
+> > > > Do we have an idea as to how much additional complexity?
+> > >
+> > > We would need to map/unmap shadow for vmalloc region on stack
+> > > allocation/deallocation. We may need to track shadow pages that cover
+> > > both stack and an unused memory, or 2 different stacks, which are
+> > > mapped/unmapped at different times. This may have some concurrency
+> > > concerns.  Not sure what about page tables for other CPU, I've seen
+> > > some code that updates pages tables for vmalloc region lazily on page
+> > > faults. Not sure what about TLBs. Probably also some problems that I
+> > > can't thought about now.
+> >
+> > Ok. So this looks big, we this hasn't been prototyped, so we don't have
+> > a concrete idea. I agree that concurrency is likely to be painful. :)
+
+> FTR, Daniel just mailed:
 > 
-> So having a MHP_MEMMAP_ON_MEMORY that allocates it in one chunk would be
-> sufficient for the current use cases (DIMMs, Hyper-V).
-> 
-> MHP_MEMMAP_ON_MEMORY: Allocate the memmap for the added memory in one
-> chunk from the beginning of the added memory. This piece of memory will
-> be accessed and used even before the memory is onlined.
+> [PATCH 0/3] kasan: support backing vmalloc space with real shadow memory
+> https://groups.google.com/forum/#!topic/kasan-dev/YuwLGJYPB4I
+> Which presumably will supersede this.
 
-This is what I had in my early versions of the patchset, but I do remember
-that Michal suggested to let the caller specify if it wants the memmaps
-to be allocated per memblock, or per whole-range.
+Neat!
 
-I still think it makes somse sense, you can just pass a large chunk
-(spanning multiple memory-blocks) at once and yet specify to allocate
-it per memory-blocks.
+I'll try to follow that, (and thanks for the Cc there), but I'm not on
+any of the lists it went to. IMO it would be nice if subsequent versions
+would be Cc'd to LKML, if that's possible. :)
 
-Of course, I also agree that having only one mode would ease things
-(not that much as v3 does not suppose that difference wrt. range vs
-memory-block).
-
--- 
-Oscar Salvador
-SUSE L3
+Thanks,
+Mark.
