@@ -2,111 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3419574F75
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0517174F13
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:20:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387436AbfGYN3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:29:40 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:44675 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbfGYN3k (ORCPT
+        id S2390012AbfGYNUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:20:38 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50764 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387789AbfGYNUh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:29:40 -0400
-Received: by mail-yb1-f196.google.com with SMTP id a14so18478255ybm.11;
-        Thu, 25 Jul 2019 06:29:39 -0700 (PDT)
+        Thu, 25 Jul 2019 09:20:37 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v15so45007898wml.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 06:20:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NVu+S23Gv1yOG6EQW2R8cxaCUo15rcMvxts6vU6HpEM=;
-        b=Z6YactpJLSqzGorrC5H61mi+l2QDXmU1tZuYDEI4NstQVWsVHXQIMtHqQoictB+Azy
-         ikHoEzDoCHZLvq4Z8h4Dd1NWOVVPmB72iN0V9akY4Qc87f3pMAbqYEs6o7o+OOfoUsMl
-         ihbURjjk8nvW64kY3mt3oqHZlPI0pD7dpOi8O+14EY2Mo9atEheCddRoMN/VjabuPuHK
-         z8MlICk2z7UgWItSjhRpppOTgU7LJ4bm/TPw5BZr0Dn4iG9SInOI+wNw09lwqf1wiJk2
-         n4bDsOx/ZY0yPuwCDU7NxFlQmCLMSvjnb+JDn7e/oH/VNjQbkh6QfW/0GW1SUClqd9G7
-         RARQ==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UlHPQbgyQYfGZ3NYNuBRx+Lr52kdbe694moegnICIVc=;
+        b=NifUXO46j7w7Famst0qSTWA+/NAM63+P3EEYOVDutdfzQG+lK0vxeP1W9KJl2ETjQ7
+         JYP0quRtoQLFtAnCn7C6Pc3FPDxtA/BAwt2L8CF4rT2eLsfFPOexvuzSo5aEgUenXEKF
+         0xJD1ZPaQUgYskYoku7SCxlDucpHqt4XuP4VpktEH/xgT+qb9NxNwqJ6vKAo+oM+K7qJ
+         p4pv+z98jk9nWshsZwikW5iH3QZiYecYIXm8id5dC6AdA6RFNy94z/9qQA1s7rRTS9S7
+         o0jU6sDTrVHcIz8qEpotKPocMOYRC8+R1o2j3d6Xj22b4M+z7IhWR0RELbV6dSxIxFfI
+         Ojmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NVu+S23Gv1yOG6EQW2R8cxaCUo15rcMvxts6vU6HpEM=;
-        b=AkIpYmVqpip7yj/jkhInpMP1JFIJlPiQrR10p34/FwIrvsuW3YpHgewAZDlWc8Z/5p
-         vBF+IIMSVmlBATPjRkoy+B5oVFm1WFpvGMWjNv/Mm+fyD/aXSHLphB+yel/ZHoNrtwo8
-         k9RAi9GYfpLx45XNi5V7s+h6aGHAwMHKEyL0qRdIk9mCWbWroKAjjPEOqadmAhrGRqCL
-         VVYISplBQkwJc4yyfzxgMoDgdxOcwsbDeuqaIHVaz/Dit7uTWtL4+jKU51lpmmY0NT3j
-         Fl1OIXQ/EXXfXiPrfwL4gRcn5yoagxZy0AjcbM2Mb1V1y7mixDjQUD3pJIyH2jOU4rTN
-         BZOQ==
-X-Gm-Message-State: APjAAAXw8ocBlElBteBbJxx7VfynSA5tmDf6OIXaSkkefLkF/ZxuUl+4
-        SgvVeg/s/miRUrUZ5gIhEs1ajhO1wIoGk9eGstY=
-X-Google-Smtp-Source: APXvYqz7f1Ci0npqtyBiHcAFyrc/Uu1/8h6eibamhHeSo/YFbsxEEaq9E+39K305A1gpp77D8WQiAhCH6Xt1m1ZVsGE=
-X-Received: by 2002:a25:aaea:: with SMTP id t97mr52207466ybi.126.1564059845729;
- Thu, 25 Jul 2019 06:04:05 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UlHPQbgyQYfGZ3NYNuBRx+Lr52kdbe694moegnICIVc=;
+        b=JZBKJek9Jgwxh6Icy97dyrgk6pISFvfAyV+OSRhaGvORsSm2wIhTzP0z6X8UBb27LK
+         z56drvVe4T/WpfiZXcjOu7GSNjM8KMi5h3PhO8lh5SYyhBenVlZNBp5rL9qZ08Xd5Sb3
+         diyurzuFnP73vktRdVL6j0tRW9SUm0NXuKiuoLNozZ16qXvIMOeb8Qbad82ZFyNbSAtZ
+         tv9OD52DAQkXhtv1KyBbwupOoxffRxZvQaqe+SNU6UP8wXveVoTjHtL6FCoEGl7yNMhj
+         im2AN02eYk7eBTyZYrkG5CrhVaZ4Vguo8KjlqQmPi9wMyvn+eh1ve5JRpCj3Pt4+p+1G
+         lNJQ==
+X-Gm-Message-State: APjAAAXdh4ZBwa/k1mYzuVbZ8eZi0NToKpSasTjg2gj13nla6aSjW9nH
+        RluZQg9AK04TPZeXgmymKCrsTzFx
+X-Google-Smtp-Source: APXvYqwY8Li4ENYOTTDLqaDLIZqrJmGdo/DsVkKI6zl4K5u/ERvtsF3kWAQdjUnv/c82L9w7qWyNag==
+X-Received: by 2002:a05:600c:204c:: with SMTP id p12mr79503703wmg.121.1564060382076;
+        Thu, 25 Jul 2019 06:13:02 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id z7sm47119735wrh.67.2019.07.25.06.13.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 25 Jul 2019 06:13:01 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Lechner <david@lechnology.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 0/5] ARM: make DaVinci part of the ARM v5 multiplatform build
+Date:   Thu, 25 Jul 2019 15:12:52 +0200
+Message-Id: <20190725131257.6142-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190725085732.15674-1-baijiaju1990@gmail.com>
-In-Reply-To: <20190725085732.15674-1-baijiaju1990@gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 25 Jul 2019 16:03:54 +0300
-Message-ID: <CAOQ4uxg1f3rgnc4sitF82FMftROHkubk+3s9=v1Bf47m-zVYBw@mail.gmail.com>
-Subject: Re: [PATCH] fs: overlayfs: Fix a possible null-pointer dereference in ovl_free_fs()
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 3:48 PM Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
->
-> In ovl_fill_super(), there is an if statement on line 1607 to check
-> whether ofs->upper_mnt is NULL:
->     if (!ofs->upper_mnt)
->
-> When ofs->upper_mnt is NULL and d_make_root() on line 1654 fails,
-> ovl_free_fs() on line 1683 is executed.
-> In ovl_free_fs(), ofs->upper_mnt is used on line 224:
->     ovl_inuse_unlock(ofs->upper_mnt->mnt_root);
->
-> Thus, a possible null-pointer dereference may occur.
->
-> To fix this bug, ofs->upper_mnt is checked before being used in
-> ovl_free_fs().
->
-> This bug is found by a static analysis tool STCheck written by us.
->
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->  fs/overlayfs/super.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index b368e2e102fa..1d7c3d280834 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -220,7 +220,7 @@ static void ovl_free_fs(struct ovl_fs *ofs)
->         if (ofs->workdir_locked)
->                 ovl_inuse_unlock(ofs->workbasedir);
->         dput(ofs->workbasedir);
-> -       if (ofs->upperdir_locked)
-> +       if (ofs->upperdir_locked && ofs->upper_mnt)
->                 ovl_inuse_unlock(ofs->upper_mnt->mnt_root);
->         mntput(ofs->upper_mnt);
->         for (i = 0; i < ofs->numlower; i++) {
-> --
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Can you teach STCheck to know that if upperdir_locked is only set this way:
-        ofs->upper_mnt = upper_mnt;
+This series makes DaVinci part of the multiplatform build for ARM v5.
 
-        err = -EBUSY;
-        if (ovl_inuse_trylock(ofs->upper_mnt->mnt_root)) {
-                ofs->upperdir_locked = true;
+First three patches fix build errors spotted and fixed by Arnd with v1.
 
-Then upperdir_locked implies ofs->upper_mnt != NULL?
+The fourth patch adds necessary bits and pieces for davinci to support
+multiplatform build and the last one actually adds all davinci boards
+to multi_v5_defconfig.
 
-Whether or not this patch should be applied is not my call,
-but the title "possible null-pointer dereference" is certainly not true.
+Tested on da850-lcdk with both multi_v5 as well as davinci_all defconfigs.
 
-Thanks,
-Amir.
+v1 -> v2:
+- added patches from Arnd that fix build errors spotted when building
+  random configurations (much appreciated)
+- rebased on top of v5.3-rc1
+
+Arnd Bergmann (3):
+  staging: media/davinci_vpfe: fix pinmux setup compilation
+  media: davinci-vpbe: remove obsolete includes
+  davinci: fix sleep.S build error on ARMv4
+
+Bartosz Golaszewski (2):
+  ARM: davinci: support multiplatform build for ARM v5
+  ARM: multi_v5_defconfig: make DaVinci part of the ARM v5 multiplatform
+    build
+
+ arch/arm/Kconfig                              | 21 -------------------
+ arch/arm/configs/davinci_all_defconfig        |  5 +++++
+ arch/arm/configs/multi_v5_defconfig           | 12 +++++++++++
+ arch/arm/mach-davinci/Kconfig                 | 17 +++++++++++----
+ arch/arm/mach-davinci/Makefile                |  2 ++
+ arch/arm/mach-davinci/sleep.S                 |  1 +
+ drivers/media/platform/davinci/vpbe_display.c |  4 ----
+ drivers/media/platform/davinci/vpbe_osd.c     |  5 -----
+ drivers/media/platform/davinci/vpbe_venc.c    |  5 -----
+ drivers/staging/media/davinci_vpfe/Makefile   |  5 -----
+ .../staging/media/davinci_vpfe/dm365_isif.c   |  8 +++----
+ .../staging/media/davinci_vpfe/dm365_isif.h   |  2 --
+ drivers/staging/media/davinci_vpfe/vpfe.h     |  2 ++
+ 13 files changed, 38 insertions(+), 51 deletions(-)
+
+-- 
+2.21.0
+
