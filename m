@@ -2,99 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 607AA754AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:53:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14E77754A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:52:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729629AbfGYQxf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:53:35 -0400
-Received: from mga18.intel.com ([134.134.136.126]:26370 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729083AbfGYQxc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:53:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 09:53:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,307,1559545200"; 
-   d="scan'208";a="164237571"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga008.jf.intel.com with ESMTP; 25 Jul 2019 09:53:30 -0700
-Date:   Thu, 25 Jul 2019 10:50:37 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     "sathyanarayanan.kuppuswamy@linux.intel.com" 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc:     "bhelgaas@google.com" <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Busch, Keith" <keith.busch@intel.com>
-Subject: Re: [PATCH v5 8/9] PCI/DPC: Add support for DPC recovery on
- NON_FATAL errors
-Message-ID: <20190725165037.GA7055@localhost.localdomain>
-References: <cover.1563912591.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <211d4bf8f856c6aa5454751e25ab5c90970960ff.1563912591.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+        id S2387731AbfGYQwJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:52:09 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33905 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729083AbfGYQwJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 12:52:09 -0400
+Received: by mail-wm1-f65.google.com with SMTP id w9so36178260wmd.1;
+        Thu, 25 Jul 2019 09:52:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sWSygQdm+2XmycE+O6VucDWGigtecSiZnncaGKMjkHM=;
+        b=h0PmMI87pjPD6bIKYHl7XZq04v3y53ThQBkNPVZS32qSUr5Y533PVjoAooDS2AcKja
+         2J/G8auAeuajC+PGSnxj7b8JWGuPTWV9naLPfKNA4Pn2uUO5Di3v0sisILZhwnFlifsY
+         Lfbt9RDXVxOb8KjCq7QpGFla0w15030htNX5DCxU3U8RGLq1Dk5Hhp2iHSMy+WK5qzqJ
+         IPx5pExCWNJ0x7hYuEcbGjRJ76jirx9Gnin3ltAJTEV6Wb8Rf3NAEEkophry1Kyh5Lv5
+         VUtZgsY2KVrz9Z6qn6FbBTOypabZlRXHtTU1r7OUfD1R/QuekWwOAdMkQITLYviU1ksj
+         Z9mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sWSygQdm+2XmycE+O6VucDWGigtecSiZnncaGKMjkHM=;
+        b=sRfZyF2A71bwTxN9LIDz/AIRMLupc2/kHaq1XVM46tXmqkgR3wEtq6/2OTOQpIbr4j
+         0W6FMM1Gw3aeK9Bwl7Goze/k7dZcTgrX0NgYQkqx/plIz5KavfBJtymqOYhZaPTNxxz4
+         WR2OqczJIYYVolAQ6HLA/xr35W3dtt2INvAK8ALcFXozhg5B6CWcvOQ7zLla5sDeEN3D
+         NL3bP81mvne+zNFNNVkS7PM2ZrTowNo+WLBosxjG/GLGUArFZJJYzsN2l8f5H2jV5/06
+         gRhl6s3sLN4f6Yxak/oCuE6y5FHt6Lj3fKQPSm0KefpkCAPnUOWx+LqeGyhZN7VNQUi6
+         vKvA==
+X-Gm-Message-State: APjAAAUMlWqbq+Z4FsWvzaVStyYFhVWSF7STKCvQpRkIqsl7mhPTkGl0
+        MQgOTJZDTVI5e8rTHFtAz+4=
+X-Google-Smtp-Source: APXvYqxaycTYba1gOrWwz+loGROxW7Jq9KJDF1gL3kfJR64BIuHPgoCqnk0ZMxbkASgP703V1bB2yQ==
+X-Received: by 2002:a1c:a686:: with SMTP id p128mr17812705wme.130.1564073526252;
+        Thu, 25 Jul 2019 09:52:06 -0700 (PDT)
+Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
+        by smtp.gmail.com with ESMTPSA id g131sm34894700wmf.37.2019.07.25.09.52.05
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 25 Jul 2019 09:52:05 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 09:52:04 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Peter Smith <peter.smith@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] kbuild: Check for unknown options with cc-option and
+ clang in Kbuild
+Message-ID: <20190725165204.GA80773@archlinux-threadripper>
+References: <20190724235030.131144-1-swboyd@chromium.org>
+ <20190725051857.GA53904@archlinux-threadripper>
+ <5d39cda7.1c69fb81.6e01c.0e70@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <211d4bf8f856c6aa5454751e25ab5c90970960ff.1563912591.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <5d39cda7.1c69fb81.6e01c.0e70@mx.google.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 01:21:50PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
-> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+On Thu, Jul 25, 2019 at 08:41:25AM -0700, Stephen Boyd wrote:
+> Quoting Nathan Chancellor (2019-07-24 22:18:57)
+> > Hi Stephen,
+> > 
+> > Was the second Kbuild in the subject line supposed to be Kconfig?
 > 
-> Currently, in native mode, DPC driver is configured to trigger DPC only
-> for FATAL errors and hence it only supports port recovery for FATAL
-> errors. But with Error Disconnect Recover (EDR) support, DPC
-> configuration is done by firmware, and hence we should expect DPC
-> triggered for both FATAL/NON-FATAL errors. So add support for DPC
-> recovery with NON-FATAL errors.
+> Sure. I'll change it to Kconfig.
 > 
-> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> ---
->  drivers/pci/pcie/dpc.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
+> > 
+> > On Wed, Jul 24, 2019 at 04:50:30PM -0700, Stephen Boyd wrote:
+> > > If the particular version of clang a user has doesn't enable
+> > > -Werror=unknown-warning-option by default, even though it is the
+> > > default[1], then make sure to pass the option to the Kconfig cc-option
+> > 
+> > Hmmm interesting, I did not even know that was possible... Is that a
+> > clang configuration option or an out of tree patch? Looks like it has
+> > been on by default since clang 3.2: https://godbolt.org/z/mOmusu
 > 
-> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-> index 6e350149d793..5d328812aea9 100644
-> --- a/drivers/pci/pcie/dpc.c
-> +++ b/drivers/pci/pcie/dpc.c
-> @@ -267,15 +267,20 @@ static void dpc_process_error(struct dpc_dev *dpc)
->  	/* show RP PIO error detail information */
->  	if (dpc->rp_extensions && reason == 3 && ext_reason == 0)
->  		dpc_process_rp_pio_error(dpc);
-> -	else if (reason == 0 &&
-> +	else if (reason <= 2 &&
->  		 dpc_get_aer_uncorrect_severity(pdev, &info) &&
->  		 aer_get_device_error_info(pdev, &info)) {
->  		aer_print_error(pdev, &info);
->  		pci_cleanup_aer_uncorrect_error_status(pdev);
-> -		pci_aer_clear_fatal_status(pdev);
-> +		if (reason != 1)
-> +			pci_aer_clear_fatal_status(pdev);
+> I asked and it turns out that we force this flag off in the ChromeOS
+> toolchain so that we can compile the multitude of packages in our system
+> that assume various GCC specific warning flags. I guess this is easier
+> than patching all the Makefiles out there.
 
-I'm not quite sure I understand the above. If the reason is 1 or 2,
-then the DSP received an error message from something downstream. In
-otherwords, the port was notified an error occured somewhere, but it
-was not the device that detected that error, so we should not expect
-aer_print_error on that device to show anything useful. Right?
+Ah, that makes sense. I forget that most versions of clang have to
+compile thousands of packages and such.
 
->  	}
->  
-> -	/* We configure DPC so it only triggers on ERR_FATAL */
-> +	/*
-> +	 * Irrespective of whether the DPC event is triggered by
-> +	 * ERR_FATAL or ERR_NONFATAL, since the link is already down,
-> +	 * use the FATAL error recovery path for both cases.
-> +	 */
->  	pcie_do_recovery(pdev, pci_channel_io_frozen, PCIE_PORT_SERVICE_DPC);
->  }
->  
-> -- 
-> 2.21.0
 > 
+> > 
+> > > command so that testing options from Kconfig files works properly.
+> > > Otherwise, depending on the default values setup in the clang toolchain
+> > > we will silently assume options such as -Wmaybe-uninitialized are
+> > > supported by clang, when they really aren't.
+> > > 
+> > > This issue only started happening for me once commit 589834b3a009
+> > > ("kbuild: Add -Werror=unknown-warning-option to CLANG_FLAGS") was
+> > > applied on top of commit b303c6df80c9 ("kbuild: compute false-positive
+> > > -Wmaybe-uninitialized cases in Kconfig"). This leads kbuild to try and
+> > 
+> > Prior to 589834b3a009, how did cc-option work at all if
+> > -Wunknown-warning-option wasn't enabled by default? I assume that clang
+> > would just eat any unknown flags while returning zero so it looked like
+> > the flag was supported?
+> 
+> Yes. But just warning options?
+> 
+> > 
+> > > test for the existence of the -Wmaybe-uninitialized flag with the
+> > > cc-option command in scripts/Kconfig.include, and it doesn't see an
+> > > error returned from the option test so it sets the config value to Y.
+> > 
+> > It might be worth explicitly saying somewhere in here that clang will
+> > not error on unknown flags without -Werror + -Wunknown-warning-option.
+> 
+> I think it warns on unknown flags, just not unknown warning options
+> (-Wfoo), so I didn't mention this.
+
+Ah right, duh (it's in the name of the option...), sorry wasn't
+thinking.
+
+> 
+> > 
+> > > Then the makefile tries to pass the unknown option on the command line
+> > > and -Werror=unknown-warning-option catches the invalid option and breaks
+> > > the build.
+> > > 
+> > > Note: this doesn't change the cc-option tests in Makefiles, because
+> > > those use a different rule that includes KBUILD_CFLAGS by default, and
+> > > the KBUILD_CFLAGS already has -Werror=unknown-warning-option. Thanks to
+> > > Doug for pointing out the different rule.
+> > > 
+> > > [1] https://clang.llvm.org/docs/DiagnosticsReference.html#wunknown-warning-option
+> > > Cc: Peter Smith <peter.smith@linaro.org>
+> > > Cc: Nathan Chancellor <natechancellor@gmail.com>
+> > > Cc: Nick Desaulniers <ndesaulniers@google.com>
+> > > Cc: Douglas Anderson <dianders@chromium.org>
+> > > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> > > 
+> > > Change-Id: I3bb69d45bb062d1306acbf19bc0adfb60f706442
+> > 
+> > I assume that shouldn't be there?
+> > 
+> > Overall, seems okay to me (took me a sec to understand the bug,
+> > certainly a very specific one). It might make sense to explicitly add
+> > somewhere in the commit message that this syncs cc-option behavior
+> > between Kconfig and Kbuild as a whole, as I didn't understand that at
+> > first. Thanks for the triage and sorry for the breakage!
+> > 
+> > Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+> 
+> I reworded the commit text a bit now and I'll resend it soon. Thanks for
+> the review.
+> 
+
+Cheers,
+Nathan
