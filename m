@@ -2,133 +2,279 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEFF774D60
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 13:45:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2382774D66
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 13:47:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391235AbfGYLoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 07:44:55 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:1744 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387927AbfGYLoz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 07:44:55 -0400
-Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
-  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="Tudor.Ambarus@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa2.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
-  envelope-from="Tudor.Ambarus@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa2.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: xYS69BO8PuG8b6Ytcp2MEbTafUubRJsBYFYT3IKUmxufk8itZdxZdgSla/k1TnNiLULXFPJ86k
- oAcI+N/To198Y9XmURQDTo9ISt3rIX4JAk+lV7MYWcVAKNdnFe6jFBVxp0KGjabxuF/MZ7I1Cb
- 5dKqEElCvAUvIGZO7wK4Ic/STpZO2YDrZXM1SEGpY5mB6IEydhPQHW9fLzmiIjNNRZKwjFxhr4
- Ob2Klb/at+lNmjA8CY572RxwR+1NaZgXjNrL1S7QPp3QEjB6RMZXXRaPsV/A+fDmZSikcIslzP
- G4c=
-X-IronPort-AV: E=Sophos;i="5.64,306,1559545200"; 
-   d="scan'208";a="42717251"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 25 Jul 2019 04:44:54 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
- chn-vm-ex03.mchp-main.com (10.10.87.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 25 Jul 2019 04:44:53 -0700
-Received: from NAM04-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5 via Frontend
- Transport; Thu, 25 Jul 2019 04:44:53 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XWLN0Cubq2IJMd8fom8GkpijnHd8KIxeMORbxNoS+nAmF2WWqSRh801aTPyAVQH1DVo7+zNjrN/9FNWleFzZi9SVXedn3Y+0K19KlSDfj8bVteWUeksuluHvoy+8h5devCdqgd0RFaOpRr1Dw3owSpyueByBZECtpzfPBT+Kf50keqNmtb+WnJZkSNQ6vgZTZbYSZPg04HrEk+61E+ClIPgkYgZjRx3DUyJPq10XHcWf5nBWBldWK9xpV1uFCaWpoBQKoAOXoV8lEGtO57beO52D7GFHgfz2U/P9BVr5GTgcTfLtkp82kDsHdyhXPyWC8Loxq0bGEsFBA8Bs3O/CnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zkIu4mvajccoXK948aemzhJN8murMFj1qsVf+J+2pOg=;
- b=aHERi80S/ptVebIX2X657rhN+xyQrjKGQwGvHZVMDFaz7KLWbvJUFWVAPVGHenSPHBV+/x2x9o0fnCQzObCglasS9iiE8M2ha2KICRYgrdg8BylSdC6+0LYrC2+RYqGYZkUodZUkpmPYHUm6rD4qEuhkZm0cbP9GZ3u32JrZth9xvdr2ZDTWx6iY8841Q2xd7qs5igDF9C2v2IMeg0lXXTakCNIxDTcGP/chISiux1/byEzatUSwijWEffVEtsbPZQ1crq2O30PZLNmj6I+FYt8xPl878R0U3M7wsL5VCwK8hlVCcmAlQNLE0JjEnx1zCtSzTWRlhisng8F7KneGYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=microchip.com;dmarc=pass action=none
- header.from=microchip.com;dkim=pass header.d=microchip.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zkIu4mvajccoXK948aemzhJN8murMFj1qsVf+J+2pOg=;
- b=wCsufhh0bCNEsTMNloDloiP0MjqRI0OdiYvIxAi01ua0UK9Mxq0lk2Veo22OnMf08+5pTjJZ5Bbi3SsdE5XcaJ+m20IIn+fa3fGawx70VVKSFRO+Hbuuu3fGLi4EUthn6/Qcr8n+bXLb6YrJSpcBLqOucjbGGE8B6B4sgEg8zVo=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.98.146) by
- BN6PR11MB4018.namprd11.prod.outlook.com (10.255.129.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2115.10; Thu, 25 Jul 2019 11:44:52 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::3161:92ff:d26c:8b66]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::3161:92ff:d26c:8b66%7]) with mapi id 15.20.2094.013; Thu, 25 Jul 2019
- 11:44:52 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <vigneshr@ti.com>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
-        <marek.vasut@gmail.com>
-CC:     <bbrezillon@kernel.org>, <yogeshnarayan.gaur@nxp.com>,
-        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>
-Subject: Re: [PATCH v2 1/2] mtd: spi-nor: Move m25p80 code in spi-nor.c
-Thread-Topic: [PATCH v2 1/2] mtd: spi-nor: Move m25p80 code in spi-nor.c
-Thread-Index: AQHVPtFNjfEG9DN44ESnRp+H/g0b8qbbN92AgAAHOoA=
-Date:   Thu, 25 Jul 2019 11:44:52 +0000
-Message-ID: <b60adcf5-e85b-875a-c041-6bff1cade296@microchip.com>
-References: <20190720080023.5279-1-vigneshr@ti.com>
- <20190720080023.5279-2-vigneshr@ti.com>
- <f6410e21-18c3-9733-4ea5-13eb26ad6169@microchip.com>
-In-Reply-To: <f6410e21-18c3-9733-4ea5-13eb26ad6169@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR08CA0106.eurprd08.prod.outlook.com
- (2603:10a6:800:d3::32) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:101::18)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 108fc523-07df-4f23-bc95-08d710f5814d
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN6PR11MB4018;
-x-ms-traffictypediagnostic: BN6PR11MB4018:
-x-microsoft-antispam-prvs: <BN6PR11MB4018DC513D8D27676999393DF0C10@BN6PR11MB4018.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4125;
-x-forefront-prvs: 0109D382B0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(366004)(376002)(346002)(39860400002)(199004)(189003)(3846002)(2616005)(110136005)(54906003)(6116002)(316002)(446003)(31686004)(36756003)(4744005)(99286004)(52116002)(76176011)(256004)(71200400001)(71190400001)(486006)(64756008)(186003)(2201001)(476003)(81156014)(81166006)(68736007)(8936002)(8676002)(66066001)(386003)(6506007)(86362001)(53936002)(6436002)(478600001)(66476007)(66446008)(14454004)(66556008)(6486002)(229853002)(7736002)(66946007)(26005)(6246003)(305945005)(2501003)(5660300002)(4326008)(6512007)(31696002)(102836004)(25786009)(2906002)(53546011)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB4018;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: yJigpJlTGRRurJgF4uWQUNjdXHNFx1B2w5woumwTtI1fI/1mqF86/LObWfxIRk5TzEuIqTXk3tJzEmmNX566QaTgCDk4llaBJaotSL04z9vZulJFiTSbLh/vyMsAg1BA08C831xhqWEwvBnDCttos9LPSrVUEIPLmveCN77yfWZ2LTb58HJSmWbDyHKAyFAF6Wh8A9cd3HstLiu+haLjDkUWSu7qKN3zHaiLb/RnxDx8Og9d/NbFkr1+ttXJXhvq8w64ZC3AxH22dci3KNDA7HECEaqhKN+9uC9HIGe0ZC+qWGqG5uNCxlmLH6f6y+y8XN9l8Re13mVRElb5MmWaDWrd64z++0wYr5u7HY0DW5W2pTdvee9XSJVFcovXGA8imMXZxctejl7v46lIFugEud+xejfUx8rnh42wjI3wed8=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7AF77D3742602449AFF30BC901B41BC2@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S2404223AbfGYLrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 07:47:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50186 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387517AbfGYLrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 07:47:17 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A0DB4C0BB29E;
+        Thu, 25 Jul 2019 11:47:16 +0000 (UTC)
+Received: from [10.18.17.163] (dhcp-17-163.bos.redhat.com [10.18.17.163])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5E76F61F21;
+        Thu, 25 Jul 2019 11:46:57 +0000 (UTC)
+Subject: Re: [PATCH v2 4/5] mm: Introduce Hinted pages
+To:     David Hildenbrand <david@redhat.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        kvm@vger.kernel.org, mst@redhat.com, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org
+Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
+        konrad.wilk@oracle.com, lcapitulino@redhat.com,
+        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
+        dan.j.williams@intel.com, Matthew Wilcox <willy@infradead.org>
+References: <20190724165158.6685.87228.stgit@localhost.localdomain>
+ <20190724170259.6685.18028.stgit@localhost.localdomain>
+ <a9f52894-52df-cd0c-86ac-eea9fbe96e34@redhat.com>
+From:   Nitesh Narayan Lal <nitesh@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ VujM7c/b4pps
+Organization: Red Hat Inc,
+Message-ID: <227bf405-a924-a8de-3f58-f7799f1ba7a1@redhat.com>
+Date:   Thu, 25 Jul 2019 07:46:56 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 108fc523-07df-4f23-bc95-08d710f5814d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jul 2019 11:44:52.2740
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tudor.ambarus@microchip.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB4018
+In-Reply-To: <a9f52894-52df-cd0c-86ac-eea9fbe96e34@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 25 Jul 2019 11:47:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDA3LzI1LzIwMTkgMDI6MTkgUE0sIFR1ZG9yLkFtYmFydXNAbWljcm9jaGlwLmNvbSB3
-cm90ZToNCj4gc3RhdGljIGludCBzcGlfbm9yX3NwaW1lbV94ZmVyX3JlZyhzdHJ1Y3Qgc3BpX25v
-ciAqbm9yLCBzdHJ1Y3Qgc3BpX21lbV9vcCAqb3ApDQo+IHsNCj4gCWlmICghb3AgfHwgKG9wLT5k
-YXRhLm5ieXRlcyAmJiAhbm9yLT5jbWRfYnVmKSkNCg0KIW5vci0+Y21kX2J1ZiBjYW4ndCBiZSBO
-VUxMLCB3ZSBjYW4gZ2V0IHJpZCBvZiB0aGlzIGNoZWNrIHRvbywgYW5kIHVzZQ0Kc3BpX21lbV9l
-eGVjX29wKCkgZGlyZWN0bHkgd2hlbiBpbnRlcmFjdGluZyB3aXRoIHJlZ2lzdGVycy4NCg0KPiAJ
-CXJldHVybiAtRUlOVkFMOw0KPiANCj4gCXJldHVybiBzcGlfbWVtX2V4ZWNfb3Aobm9yLT5zcGlt
-ZW0sIG9wKTsNCj4gfQ0K
+
+On 7/25/19 4:53 AM, David Hildenbrand wrote:
+> On 24.07.19 19:03, Alexander Duyck wrote:
+>> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+>>
+>> In order to pave the way for free page hinting in virtualized environments
+>> we will need a way to get pages out of the free lists and identify those
+>> pages after they have been returned. To accomplish this, this patch adds
+>> the concept of a Hinted Buddy, which is essentially meant to just be the
+>> Offline page type used in conjunction with the Buddy page type.
+>>
+>> It adds a set of pointers we shall call "boundary" which represents the
+>> upper boundary between the unhinted and hinted pages. The general idea is
+>> that in order for a page to cross from one side of the boundary to the
+>> other it will need to go through the hinting process. Ultimately a
+>> free_list has been fully processed when the boundary has been moved from
+>> the tail all they way up to occupying the first entry in the list.
+>>
+>> Doing this we should be able to make certain that we keep the hinted
+>> pages as one contiguous block in each free list. This will allow us to
+>> efficiently manipulate the free lists whenever we need to go in and start
+>> sending hints to the hypervisor that there are new pages that have been
+>> freed and are no longer in use.
+>>
+>> An added advantage to this approach is that we should be reducing the
+>> overall memory footprint of the guest as it will be more likely to recycle
+>> warm pages versus trying to allocate the hinted pages that were likely
+>> evicted from the guest memory.
+>>
+>> Since we will only be hinting one zone at a time we keep the boundary
+>> limited to being defined for just the zone we are currently placing hinted
+>> pages into. Doing this we can keep the number of additional pointers needed
+>> quite small. To flag that the boundaries are in place we use a single bit
+>> in the zone to indicate that hinting and the boundaries are active.
+>>
+>> The determination of when to start hinting is based on the tracking of the
+>> number of free pages in a given area versus the number of hinted pages in
+>> that area. We keep track of the number of hinted pages per free_area in a
+>> separate zone specific area. We do this to avoid modifying the free_area
+>> structure as this can lead to false sharing for the highest order with the
+>> zone lock which leads to a noticeable performance degradation.
+>>
+>> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+>> ---
+>>  include/linux/mmzone.h       |   40 +++++-
+>>  include/linux/page-flags.h   |    8 +
+>>  include/linux/page_hinting.h |  139 ++++++++++++++++++++
+>>  mm/Kconfig                   |    5 +
+>>  mm/Makefile                  |    1 
+>>  mm/memory_hotplug.c          |    1 
+>>  mm/page_alloc.c              |  136 ++++++++++++++++++-
+>>  mm/page_hinting.c            |  298 ++++++++++++++++++++++++++++++++++++++++++
+>>  8 files changed, 620 insertions(+), 8 deletions(-)
+>>  create mode 100644 include/linux/page_hinting.h
+>>  create mode 100644 mm/page_hinting.c
+>>
+>> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+>> index f0c68b6b6154..42bdebb20484 100644
+>> --- a/include/linux/mmzone.h
+>> +++ b/include/linux/mmzone.h
+>> @@ -460,6 +460,14 @@ struct zone {
+>>  	seqlock_t		span_seqlock;
+>>  #endif
+>>  
+>> +#ifdef CONFIG_PAGE_HINTING
+>> +	/*
+>> +	 * Pointer to hinted page tracking statistics array. The size of
+>> +	 * the array is MAX_ORDER - PAGE_HINTING_MIN_ORDER. NULL when
+>> +	 * page hinting is not present.
+>> +	 */
+>> +	unsigned long		*hinted_pages;
+>> +#endif
+>>  	int initialized;
+>>  
+>>  	/* Write-intensive fields used from the page allocator */
+>> @@ -535,6 +543,14 @@ enum zone_flags {
+>>  	ZONE_BOOSTED_WATERMARK,		/* zone recently boosted watermarks.
+>>  					 * Cleared when kswapd is woken.
+>>  					 */
+>> +	ZONE_PAGE_HINTING_REQUESTED,	/* zone enabled page hinting and has
+>> +					 * requested flushing the data out of
+>> +					 * higher order pages.
+>> +					 */
+>> +	ZONE_PAGE_HINTING_ACTIVE,	/* zone enabled page hinting and is
+>> +					 * activly flushing the data out of
+>> +					 * higher order pages.
+>> +					 */
+>>  };
+>>  
+>>  static inline unsigned long zone_managed_pages(struct zone *zone)
+>> @@ -755,6 +771,8 @@ static inline bool pgdat_is_empty(pg_data_t *pgdat)
+>>  	return !pgdat->node_start_pfn && !pgdat->node_spanned_pages;
+>>  }
+>>  
+>> +#include <linux/page_hinting.h>
+>> +
+>>  /* Used for pages not on another list */
+>>  static inline void add_to_free_list(struct page *page, struct zone *zone,
+>>  				    unsigned int order, int migratetype)
+>> @@ -769,10 +787,16 @@ static inline void add_to_free_list(struct page *page, struct zone *zone,
+>>  static inline void add_to_free_list_tail(struct page *page, struct zone *zone,
+>>  					 unsigned int order, int migratetype)
+>>  {
+>> -	struct free_area *area = &zone->free_area[order];
+>> +	struct list_head *tail = get_unhinted_tail(zone, order, migratetype);
+>>  
+>> -	list_add_tail(&page->lru, &area->free_list[migratetype]);
+>> -	area->nr_free++;
+>> +	/*
+>> +	 * To prevent the unhinted pages from being interleaved with the
+>> +	 * hinted ones while we are actively processing pages we will use
+>> +	 * the head of the hinted pages to determine the tail of the free
+>> +	 * list.
+>> +	 */
+>> +	list_add_tail(&page->lru, tail);
+>> +	zone->free_area[order].nr_free++;
+>>  }
+>>  
+>>  /* Used for pages which are on another list */
+>> @@ -781,12 +805,22 @@ static inline void move_to_free_list(struct page *page, struct zone *zone,
+>>  {
+>>  	struct free_area *area = &zone->free_area[order];
+>>  
+>> +	/*
+>> +	 * Clear Hinted flag, if present, to avoid placing hinted pages
+>> +	 * at the top of the free_list. It is cheaper to just process this
+>> +	 * page again, then have to walk around a page that is already hinted.
+>> +	 */
+>> +	clear_page_hinted(page, zone);
+>> +
+>>  	list_move(&page->lru, &area->free_list[migratetype]);
+>>  }
+>>  
+>>  static inline void del_page_from_free_list(struct page *page, struct zone *zone,
+>>  					   unsigned int order)
+>>  {
+>> +	/* Clear Hinted flag, if present, before clearing the Buddy flag */
+>> +	clear_page_hinted(page, zone);
+>> +
+>>  	list_del(&page->lru);
+>>  	__ClearPageBuddy(page);
+>>  	set_page_private(page, 0);
+>> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+>> index b848517da64c..b753dbf673cb 100644
+>> --- a/include/linux/page-flags.h
+>> +++ b/include/linux/page-flags.h
+>> @@ -745,6 +745,14 @@ static inline int page_has_type(struct page *page)
+>>  PAGE_TYPE_OPS(Offline, offline)
+>>  
+>>  /*
+>> + * PageHinted() is an alias for Offline, however it is not meant to be an
+>> + * exclusive value. It should be combined with PageBuddy() when seen as it
+>> + * is meant to indicate that the page has been scrubbed while waiting in
+>> + * the buddy system.
+>> + */
+>> +PAGE_TYPE_OPS(Hinted, offline)
+>
+> CCing Matthew
+>
+> I am still not sure if I like the idea of having two page types at a time.
+>
+> 1. Once we run out of page type bits (which can happen easily looking at
+> it getting more and more user - e.g., maybe for vmmap pages soon), we
+> might want to convert again back to a value-based, not bit-based type
+> detection. This will certainly make this switch harder.
+>
+> 2. It will complicate the kexec/kdump handling. I assume it can be fixed
+> some way - e.g., making the elf interface aware of the exact notion of
+> page type bits compared to mapcount values we have right now (e.g.,
+> PAGE_BUDDY_MAPCOUNT_VALUE). Not addressed in this series yet.
+>
+>
+> Can't we reuse one of the traditional page flags for that, not used
+> along with buddy pages? E.g., PG_dirty: Pages that were not hinted yet
+> are dirty.
+
+Will it not conflict with the regular use case of PG_dirty bit somehow?
+
+
+> Matthew, what's your take?
+>
+-- 
+Thanks
+Nitesh
