@@ -2,112 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A8E674BB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 12:36:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CCBD74BBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 12:39:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbfGYKgG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 06:36:06 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:36027 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbfGYKgF (ORCPT
+        id S2387503AbfGYKi6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 06:38:58 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:52122 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbfGYKi5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 06:36:05 -0400
-Received: by mail-ed1-f66.google.com with SMTP id k21so49799332edq.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 03:36:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AQ5eu5T8bd0iWq+deSWzM6tglKfb1SWMy/MM2LiEz9k=;
-        b=XBPmLfnVwr/7eur+UqagLpzPfTEI471X0hzeJK9kCbJAYEWipu0LJvkDzCeGw8ygdH
-         N0LbUzRcwqwpW4PkvXZSNqJLEtdRryxKefvoOJ5/1nkdJ3ssKK4pMCF8ie3VP5EyIcvW
-         qT4xEDSkaG0gpqe8ynZmtAGOqWGkzjET5sTPd1sePdTUWmeJCHW0c4q7XjeoTBxE1TCw
-         FqZ/6uDuNTh84nBe/Go36ZbeTuRH49e4nuvpqWAq/qDhNrkgLecNKAPqZNG76sMs2gKd
-         FriQ7L+r2ADxbF0J2tv2yD/7Q63e1VsLb23eVr8B4E4KNQTRqAUsagO+a12ethB1k81D
-         BYSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AQ5eu5T8bd0iWq+deSWzM6tglKfb1SWMy/MM2LiEz9k=;
-        b=ZeSt0xoQ+ro2eN72me40pxpT7NTLHe91zfDGQ8GykNSsKE8X4URNXjatvyAqcrJhIa
-         YZj9SGGXdrLl5+IIUdZnf+TmIRphlp/HEjkB9eRpR6hxEuCio06BegBmTDzHAUEKgQut
-         FqweGu06582QJj6hcTP6UyXt2nrGNvHz4N7NDsybDAd/nvPV68z7VUks7ec8/v6TPQI6
-         R+ufJQ3Is8Q9eb6rL26287ZYUL0Hnfe31ThHGr26E0bZxSGnVkP76M3rBFdfgKh/Zgjz
-         yiondpVrQMBXSGTS/Uk2rdje+xFYWZk1mZ5ygFReKBWaZcXNVHRuanx5WKuMoWUQtX1N
-         85mw==
-X-Gm-Message-State: APjAAAVIgdvbP32NneDsgZjlX8ejn3dkyX6YnLIfqve+gb7kxHc9jJXT
-        sk4JIXCsVePmSW0jmB+K2sM=
-X-Google-Smtp-Source: APXvYqwr0w96C9E3KmMEQ1OaEoayIkDJj63yxWm9LwY9XRCEcwx3aktseA/PBCJGJp0r84595ZeTFQ==
-X-Received: by 2002:a50:f410:: with SMTP id r16mr76790306edm.120.1564050964343;
-        Thu, 25 Jul 2019 03:36:04 -0700 (PDT)
-Received: from brauner.io (ip5b40f7ec.dynamic.kabel-deutschland.de. [91.64.247.236])
-        by smtp.gmail.com with ESMTPSA id p15sm7737732ejr.1.2019.07.25.03.36.03
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 25 Jul 2019 03:36:03 -0700 (PDT)
-Date:   Thu, 25 Jul 2019 12:36:02 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Jann Horn <jannh@google.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tejun Heo <tj@kernel.org>, David Howells <dhowells@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
+        Thu, 25 Jul 2019 06:38:57 -0400
+Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x6PAcHRM014383;
+        Thu, 25 Jul 2019 19:38:17 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
+ Thu, 25 Jul 2019 19:38:17 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x6PAcH6I014372
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Thu, 25 Jul 2019 19:38:17 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] hung_task: Allow printing warnings every check interval
+To:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        kernel-team <kernel-team@android.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH 4/5] pidfd: add CLONE_WAIT_PID
-Message-ID: <20190725103601.4ck4bpsdsgcpdknt@brauner.io>
-References: <20190724144651.28272-1-christian@brauner.io>
- <20190724144651.28272-5-christian@brauner.io>
- <CAG48ez3nuY__qvctoOnX7mQbjjP4chEs4K-OPxSQficiPLS18w@mail.gmail.com>
- <CFB4D39F-24B9-4AD9-B19C-E2D14D38A808@brauner.io>
- <CAG48ez1vd4Yhd3DqHVjTWM-N0MaNnX9n8MNV7MEyU5m3XDu+kQ@mail.gmail.com>
- <20190725103048.GE4707@redhat.com>
+        Dmitry Vyukov <dvyukov@google.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Vasiliy Khoruzhick <vasilykh@arista.com>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20190724170249.9644-1-dima@arista.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <2964b430-63d6-e172-84e2-cb269cf43443@i-love.sakura.ne.jp>
+Date:   Thu, 25 Jul 2019 19:38:13 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190724170249.9644-1-dima@arista.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190725103048.GE4707@redhat.com>
-User-Agent: NeoMutt/20180716
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 12:30:48PM +0200, Oleg Nesterov wrote:
-> On 07/24, Jann Horn wrote:
-> >
-> > --- a/kernel/fork.c
-> > +++ b/kernel/fork.c
-> > @@ -1902,6 +1902,10 @@ static __latent_entropy struct task_struct *copy_process(
-> >         delayacct_tsk_init(p);  /* Must remain after dup_task_struct() */
-> >         p->flags &= ~(PF_SUPERPRIV | PF_WQ_WORKER | PF_IDLE);
-> >         p->flags |= PF_FORKNOEXEC;
-> > +       if (!(clone_flags & CLONE_THREAD))
-> > +               p->flags &= ~PF_PF_WAIT_PID;
-> > +       if (clone_flags & CLONE_WAIT_PID)
-> > +               p->flags |= PF_PF_WAIT_PID;
+On 2019/07/25 2:02, Dmitry Safonov wrote:
+> Hung task detector has one timeout and has two associated actions on it:
+> - issuing warnings with names and stacks of blocked tasks
+> - panic()
 > 
-> agreed, but then the "if (!thread_group_leader(tsk))" block in de_thread()
-> should also copy PF_PF_WAIT_PID.
-> 
-> > An alternative would be to not use p->flags at all, but instead make
-> > this a property of the signal_struct - since the property is shared by
-> > all threads, that might make more sense?
-> 
-> I tend to agree.
+> We want switches to panic (and reboot) if there's a task
+> in uninterruptible sleep for some minutes - at that moment something
+> ugly has happened and the box needs a reboot.
+> But we also want to detect conditions that are "out of range"
+> or approaching the point of failure. Under such conditions we want
+> to issue an "early warning" of an impending failure, minutes before
+> the switch is going to panic.
 
-Hm, ok. That's two people that prefer to make this a flag in
-signal_struct. Ok, let me adapt the patch.
+Can't we do it by extending sysctl_hung_task_panic to accept values larger
+than 1, and decrease by one when at least one thread was reported by each
+check_hung_uninterruptible_tasks() check, and call panic() when
+sysctl_hung_task_panic reached to 0 (or maybe 1 is simpler) ?
 
-Thanks!
-Christian
+Hmm, might have the same problem regarding how/when to reset the counter.
+If some userspace process can reset the counter, such process can trigger
+SysRq-c when some period expired...
+
+> It seems rather easy to add printing tasks and their stacks for
+> notification and debugging purposes into hung task detector without
+> complicating the code or major cost (prints are with KERN_INFO loglevel
+> and so don't go on console, only into dmesg log).
+
+Well, I don't think so. Might be noisy for systems without "quiet" kernel
+command line option, and we can't pass KERN_DEBUG to e.g. sched_show_task()...
+
