@@ -2,93 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 588EB74FB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:38:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED8F174FC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:40:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389481AbfGYNiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:38:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47440 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387959AbfGYNix (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:38:53 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 791B92238C;
-        Thu, 25 Jul 2019 13:38:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564061933;
-        bh=jlsOsLLZzXiGnKWyHRln4ewYE4NqswfShzMVdsaJ5nM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YOxSG8MN51AA/XDSj9b/sEo4PEpqypukfdcgUkrd8+BG/egBOOQlspkazTPJLMnpu
-         tqpdLl2QV1lDHi+uW19iEd80z5iMPSAEJnJs20zyqTiPFo6s6/s901fRwAoBV1Rh2P
-         bBBFWV86uWwo0cJ7aLh4s2xTJ+XUtXQk7DHyyvkw=
-Date:   Thu, 25 Jul 2019 15:38:50 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     junxiao.chang@intel.com
-Cc:     linux-kernel@vger.kernel.org, rafael@kernel.org, lili.li@intel.com
-Subject: Re: [PATCH] platform: release resource itself instead of resource
- tree
-Message-ID: <20190725133850.GB11115@kroah.com>
-References: <1556173458-9318-1-git-send-email-junxiao.chang@intel.com>
+        id S2389586AbfGYNkC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:40:02 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:46789 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389523AbfGYNkB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 09:40:01 -0400
+Received: by mail-yw1-f68.google.com with SMTP id z197so19242339ywd.13
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 06:40:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9lpEIpCXHFfNmFCZkOjPjl+kYtFsIolKVOJaYVjNOcQ=;
+        b=pClRb23DEELadcP2hvlaLTNBN9yBrISbS5y+2Sy58VGj4Na8t28OTw/3TBQxSeKiGa
+         ya/pMORmmEz8ivB9+l0x9g+WjZdQpqbyWpPuVjw78499uHVw+bJFxkYRu0MRjvQxcoqG
+         ttIEHjWh5R85T1aAoaUjRzo236BGJ9Gl2NMSilykUIVINmhDuhX8oCAhtlfWhLYzsI6c
+         f6g43kIRS45FZ/q9owmTbNtyaBVbijlHYeSrZRY+MaHzS9r8LMV6QPc/F6pud16pN7gH
+         O03xcv5jrziakvliPeRdtuDU0qkVKSERW+WK0HBkkPxeJQbNlVTC+lyZg+RegmnXrEqV
+         BO+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9lpEIpCXHFfNmFCZkOjPjl+kYtFsIolKVOJaYVjNOcQ=;
+        b=M1rXHSB2+yX7Qj8gFqK1KqdMdDme020fINwgRgVxu9AwbffT7fHsFR1JQkjNRqpt8H
+         wOWo9LMQ3LvH63uju44EE0dJ2o7fSuRxeMMSV/W5nPxJExug7ni9jMdgrFI3lVMJTxdx
+         D7DfSaw8OqMBWxycjnLLbpCKvmTk9cp6mX/beXPM80lnugZDyo/EiSi1eMLNLwsw53Gp
+         4MJOVdHTZjIqynTf3L2ZFxF5CYuibT3beprFWZ4/oHRYVNGN4KMQ2AELCKhVJpWdLBXy
+         p/y71OQzhPq21GVFZ4J3baW+iSbN+QHdHHh77oNiHypoHVqjdzGl6Vm8qqIqsZ5kN72r
+         mYRA==
+X-Gm-Message-State: APjAAAWAdgvV1so4oH+BPxPNcMqhVUFRpMN+vMN+NLmKKF0lCBwoKWFP
+        C/T/brgJM2/hvyEx1YrSmR/8mYu0EfNoT3PSI8rqJw==
+X-Google-Smtp-Source: APXvYqwd3ANdyuU4S5oyUK8fV7stI4swqyK5QqzOFTOJPMGNzaeJPgrXe08Y8mGViXoInWrGAq7qVh1nEqKY+yR2k2U=
+X-Received: by 2002:a81:30c9:: with SMTP id w192mr52641306yww.371.1564062000403;
+ Thu, 25 Jul 2019 06:40:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1556173458-9318-1-git-send-email-junxiao.chang@intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <1564043102-25298-1-git-send-email-rtresidd@electromag.com.au>
+In-Reply-To: <1564043102-25298-1-git-send-email-rtresidd@electromag.com.au>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Thu, 25 Jul 2019 06:39:48 -0700
+Message-ID: <CABXOdTdz=+P-HXaUbGAuLBjNE1GA0C8o4OPmF996DOrXxkQJAg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] power/supply/sbs-battery: Fix confusing battery
+ status when idle or empty
+To:     Richard Tresidder <rtresidd@electromag.com.au>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Nick Crews <ncrews@chromium.org>, andrew.smirnov@gmail.com,
+        Guenter Roeck <groeck@chromium.org>, david@lechnology.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rfontana@redhat.com, allison@lohutok.net, baolin.wang@linaro.org,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 25, 2019 at 02:24:18PM +0800, junxiao.chang@intel.com wrote:
-> From: Junxiao Chang <junxiao.chang@intel.com>
-> 
-> When platform device is deleted or there is error in adding
-> device, platform device resources should be released. Currently
-> API release_resource is used to release platform device resources.
-> However, this API releases not only platform resource itself but
-> also its child resources. It might release resources which are
-> still in use. Calling remove_resource only releases current
-> resource itself, not resource tree, it moves its child resources
-> to up level.
+On Thu, Jul 25, 2019 at 1:25 AM Richard Tresidder
+<rtresidd@electromag.com.au> wrote:
+>
+> When a battery or batteries in a system are in parallel then one or more
+> may not be providing any current to the system.
+> This fixes an incorrect
+> status indication of FULL for the battery simply because it wasn't
+> discharging at that point in time.
+> The battery will now be flagged as IDLE.
+> Have also added the additional check for the battery FULL DISCHARGED flag
+> which will now flag a status of EMPTY.
+>
+> Signed-off-by: Richard Tresidder <rtresidd@electromag.com.au>
+> ---
+>
+> Notes:
+>     power/supply/sbs-battery: Fix confusing battery status when idle or empty
+>
+>     When a battery or batteries in a system are in parallel then one or more
+>     may not be providing any current to the system.
+>     This fixes an incorrect
+>     status indication of FULL for the battery simply because it wasn't
+>     discharging at that point in time.
+>     The battery will now be flagged as IDLE.
+>     Have also added the additional check for the battery FULL DISCHARGED flag
+>     which will now flag a status of EMPTY.
+>
+>  drivers/power/supply/power_supply_sysfs.c |  3 ++-
+>  drivers/power/supply/sbs-battery.c        | 28 ++++++++++++++--------------
+>  include/linux/power_supply.h              |  2 ++
+>  3 files changed, 18 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
+> index ce6671c..68ec49d 100644
+> --- a/drivers/power/supply/power_supply_sysfs.c
+> +++ b/drivers/power/supply/power_supply_sysfs.c
+> @@ -51,7 +51,8 @@
+>  };
+>
+>  static const char * const power_supply_status_text[] = {
+> -       "Unknown", "Charging", "Discharging", "Not charging", "Full"
+> +       "Unknown", "Charging", "Discharging", "Not charging", "Full",
+> +       "Empty", "Idle"
+>  };
+>
+>  static const char * const power_supply_charge_type_text[] = {
+> diff --git a/drivers/power/supply/sbs-battery.c b/drivers/power/supply/sbs-battery.c
+> index ea8ba3e..e6c636c 100644
+> --- a/drivers/power/supply/sbs-battery.c
+> +++ b/drivers/power/supply/sbs-battery.c
+> @@ -294,14 +294,10 @@ static int sbs_status_correct(struct i2c_client *client, int *intval)
+>
+>         ret = (s16)ret;
+>
+> -       /* Not drawing current means full (cannot be not charging) */
+> -       if (ret == 0)
+> -               *intval = POWER_SUPPLY_STATUS_FULL;
+> -
+> -       if (*intval == POWER_SUPPLY_STATUS_FULL) {
+> -               /* Drawing or providing current when full */
+> -               if (ret > 0)
+> -                       *intval = POWER_SUPPLY_STATUS_CHARGING;
+> +       if (*intval == POWER_SUPPLY_STATUS_DISCHARGING) {
+> +               /* Charging indicator not set in battery */
+> +               if (ret == 0)
+> +                       *intval = POWER_SUPPLY_STATUS_IDLE;
 
-But shouldn't the parent device not get removed until all of the
-children are removed?  What is causing this "inversion" to happen?
+But doesn't the above already indicate that it _is_ discharging ?
 
-> 
-> For example, platform device 1 and device 2 are registered, then only
-> device 1 is unregistered in below code:
-> 
->   ...
->   // Register platform test device 1, resource 0xfed1a000 ~ 0xfed1afff
->   pdev1 = platform_device_register_full(&pdevinfo1);
-> 
->   // Register platform test device 2, resource 0xfed1a200 ~ 0xfed1a2ff
->   pdev2 = platform_device_register_full(&pdevinfo2);
-> 
->   // Now platform device 2 resource should be device 1 resource's child
-> 
->   // Unregister device 1 only
->   platform_device_unregister(pdev1);
->   ...
+>                 else if (ret < 0)
+>                         *intval = POWER_SUPPLY_STATUS_DISCHARGING;
 
-Don't do that.  :)
+This doesn't make sense. *intval is already set to
+POWER_SUPPLY_STATUS_DISCHARGING
+in this situation.
 
-You created this mess of platform devices, so you need to keep track of
-them.
-
-
-> Platform device 2 resource will be released as well because its
-> parent resource(device 1's resource) is released, this is not expected.
-> If using API remove_resource, device 2 resource will not be released.
-> 
-> This change fixed an intel pmc platform device resource issue when
-> intel pmc ipc kernel module is inserted/removed for twice.
-
-Why not fix that kernel module instead?  It seems like that is the real
-problem here, not a driver core issue.
-
-thanks,
-
-greg k-h
+>         }
+> @@ -424,10 +420,12 @@ static int sbs_get_battery_property(struct i2c_client *client,
+>
+>                 if (ret & BATTERY_FULL_CHARGED)
+>                         val->intval = POWER_SUPPLY_STATUS_FULL;
+> -               else if (ret & BATTERY_DISCHARGING)
+> -                       val->intval = POWER_SUPPLY_STATUS_DISCHARGING;
+> -               else
+> +               else if (ret & BATTERY_FULL_DISCHARGED)
+> +                       val->intval = POWER_SUPPLY_STATUS_EMPTY;
+> +               else if (!(ret & BATTERY_DISCHARGING))
+>                         val->intval = POWER_SUPPLY_STATUS_CHARGING;
+> +               else
+> +                       val->intval = POWER_SUPPLY_STATUS_DISCHARGING;
+>
+>                 sbs_status_correct(client, &val->intval);
+>
+> @@ -781,10 +779,12 @@ static void sbs_delayed_work(struct work_struct *work)
+>
+>         if (ret & BATTERY_FULL_CHARGED)
+>                 ret = POWER_SUPPLY_STATUS_FULL;
+> -       else if (ret & BATTERY_DISCHARGING)
+> -               ret = POWER_SUPPLY_STATUS_DISCHARGING;
+> -       else
+> +       else if (ret & BATTERY_FULL_DISCHARGED)
+> +               ret = POWER_SUPPLY_STATUS_EMPTY;
+> +       else if (!(ret & BATTERY_DISCHARGING))
+>                 ret = POWER_SUPPLY_STATUS_CHARGING;
+> +       else
+> +               ret = POWER_SUPPLY_STATUS_DISCHARGING;
+>
+>         sbs_status_correct(chip->client, &ret);
+>
+> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+> index 28413f7..c9f3347 100644
+> --- a/include/linux/power_supply.h
+> +++ b/include/linux/power_supply.h
+> @@ -37,6 +37,8 @@ enum {
+>         POWER_SUPPLY_STATUS_DISCHARGING,
+>         POWER_SUPPLY_STATUS_NOT_CHARGING,
+>         POWER_SUPPLY_STATUS_FULL,
+> +       POWER_SUPPLY_STATUS_EMPTY,
+> +       POWER_SUPPLY_STATUS_IDLE,
+>  };
+>
+>  /* What algorithm is the charger using? */
+> --
+> 1.8.3.1
+>
