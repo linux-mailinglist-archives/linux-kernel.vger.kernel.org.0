@@ -2,131 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 750B474CA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 13:15:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E361274CAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 13:16:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391677AbfGYLPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 07:15:08 -0400
-Received: from esa01.kjsl.com ([198.137.202.87]:30969 "EHLO esa01.kjsl.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388791AbfGYLPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 07:15:07 -0400
-Received: from unknown (HELO people.danlj.org) ([IPv6:2607:7c80:54:5:7609:68e3:940d:b47c])
-  by esa01.kjsl.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 11:15:06 +0000
-Received: from people.danlj.org (localhost [127.0.0.1])
-        by people.danlj.org (8.14.7/8.14.7) with ESMTP id x6PBF5PJ008672
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 25 Jul 2019 07:15:05 -0400
-Received: (from johnsonm@localhost)
-        by people.danlj.org (8.14.7/8.15.2/Submit) id x6PBF4XX008671;
-        Thu, 25 Jul 2019 07:15:04 -0400
-Date:   Thu, 25 Jul 2019 07:15:04 -0400
-From:   "Michael K. Johnson" <johnsonm@danlj.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Ben Chuang <ben.chuang@genesyslogic.com.tw>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mmc: sdhci: Add PLL Enable support to internal clock
- setup
-Message-ID: <20190725111504.GA8647@people.danlj.org>
-References: <20190717023951.5064-1-ben.chuang@genesyslogic.com.tw>
- <CAPDyKFqgTnudMumvrCJqi8FDfNNUU5AedP3hV=hwO1roG336Hw@mail.gmail.com>
+        id S2391705AbfGYLQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 07:16:01 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39792 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391692AbfGYLQA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 07:16:00 -0400
+Received: by mail-wm1-f66.google.com with SMTP id u25so34007285wmc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 04:15:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=QF+7Jm8pJkonsuJf5bcYYdklp7SuR7E7WLX/qpmLIMY=;
+        b=JPcCwXhG2xYcAxickSomrOJkvgTBB5DjGLN3ImW41oQin65O47uBJez5y6QHqPi4CR
+         R7p/PX3cBDvjHCCXcAM73DTDSepGGTQQ2CN2Mn3M7v7z93rwWzHrKJCmJY9wOEvBDKq2
+         NpiyRbMo36jxYlVEKnTElXwIE0Y6sqOOKYRQcc+CbQLpWYGGyF1vhlYKPIneuigp7lER
+         g/uEtUrvKDd1sm7FXHFVMcoPSdQ6TQYr3xRhUnqsEI0ABKQ9ZgKAV5U2smgQQPt2O5M5
+         Inroyadx6ibMupV0tHIR/8R1NUETYkUXGcS33jsQ20wFt42RB7EmtkbcaAmdRw7W/QHJ
+         31MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=QF+7Jm8pJkonsuJf5bcYYdklp7SuR7E7WLX/qpmLIMY=;
+        b=uV08aZbslFCL+Yh1hlZlacWY/RMrAU8YxBlXedBphaSEgXINqjMDaCvqz2Vh3yyFzd
+         ReKr6EGmF+M8PB4CxgjX23+BQShZhl4ZByZn10PY6tL37IDrW2oesdqduYVOrc2pZ/kQ
+         YcFpoROLIdjlR7kF5gR8dgPnlLzhZh4THnZBqLCpJ1/uyVz1iwWaI3kNXBopujL2ZhIF
+         Bm0yvy33NqlmPKAb0vtC66k7+1MSXurXki8Oqd+sPdlK8TxzhEOUrs78fQCiuXos74EL
+         utSu+I6k1nDTAJ51Hco/9r3JWWT9uspnvkvNuU8moEJ0WxlD1fPW/Cm7fUW5nlA8FMjf
+         pDpQ==
+X-Gm-Message-State: APjAAAXR915A/H3r+xLyLGVbohlAw6ZqbeDO3rUktgOKTkjYWuFCworT
+        fLBekfRuwYaVT7NINQ0CJ1ezaA==
+X-Google-Smtp-Source: APXvYqwHJQvJFZHzw1frET7Zmr1qdyEsn845eWjpbVigiDXyd3xqohC1yA+q2+bnBWLbG0Uze50N5Q==
+X-Received: by 2002:a1c:3c04:: with SMTP id j4mr74612867wma.37.1564053358224;
+        Thu, 25 Jul 2019 04:15:58 -0700 (PDT)
+Received: from dell ([2.27.35.164])
+        by smtp.gmail.com with ESMTPSA id y16sm100988574wrg.85.2019.07.25.04.15.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Jul 2019 04:15:57 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 12:15:41 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v3 0/4] backlight: Expose brightness curve type through
+ sysfs
+Message-ID: <20190725111541.GA23883@dell>
+References: <20190709190007.91260-1-mka@chromium.org>
+ <20190722235926.GA250418@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAPDyKFqgTnudMumvrCJqi8FDfNNUU5AedP3hV=hwO1roG336Hw@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190722235926.GA250418@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Working around Ben's SMTP server noise, responding on his behalf...)
+On Mon, 22 Jul 2019, Matthias Kaehlcke wrote:
 
-On Wed, Jul 24, 2019 at 09:19:30AM +0200, Ulf Hansson wrote:
-> This looks like it could be changed to an usleep_range(), perhaps an
-> additional change on top?
-...
-> Ditto.
-
-In both cases yes, changed.
-
-> > +       mdelay(1);
+> On Tue, Jul 09, 2019 at 12:00:03PM -0700, Matthias Kaehlcke wrote:
+> > Backlight brightness curves can have different shapes. The two main
+> > types are linear and non-linear curves. The human eye doesn't
+> > perceive linearly increasing/decreasing brightness as linear (see
+> > also 88ba95bedb79 "backlight: pwm_bl: Compute brightness of LED
+> > linearly to human eye"), hence many backlights use non-linear (often
+> > logarithmic) brightness curves. The type of curve is currently opaque
+> > to userspace, so userspace often relies on more or less reliable
+> > heuristics (like the number of brightness levels) to decide whether
+> > to treat a backlight device as linear or non-linear.
+> > 
+> > Export the type of the brightness curve via a new sysfs attribute.
+> > 
+> > Matthias Kaehlcke (4):
+> >   MAINTAINERS: Add entry for stable backlight sysfs ABI documentation
+> >   backlight: Expose brightness curve type through sysfs
+> >   backlight: pwm_bl: Set scale type for CIE 1931 curves
+> >   backlight: pwm_bl: Set scale type for brightness curves specified in
+> >     the DT
+> > 
+> >  .../ABI/testing/sysfs-class-backlight         | 26 ++++++++++++++
+> >  MAINTAINERS                                   |  2 ++
+> >  drivers/video/backlight/backlight.c           | 19 ++++++++++
+> >  drivers/video/backlight/pwm_bl.c              | 35 ++++++++++++++++++-
+> >  include/linux/backlight.h                     |  8 +++++
+> >  5 files changed, 89 insertions(+), 1 deletion(-)
+> >  create mode 100644 Documentation/ABI/testing/sysfs-class-backlight
 > 
-> This is new, maybe add a comment and change to usleep_range().
+> ping, any comments on v3?
 
-Entirely removed.
+Looks like PATCH 2/4 still needs seeing to.
 
-New patch attached for any further review, I can re-send the patchset
-properly without the notice for merge when you're happy with it.
-
-
-The GL9750 and GL9755 chipsets, and possibly others, require PLL Enable
-setup as part of the internal clock setup as described in 3.2.1 Internal
-Clock Setup Sequence of SD Host Controller Simplified Specification
-Version 4.20.  This changes the timeouts to the new specification of
-150ms for each step and is documented as safe for "prior versions which
-do not support PLL Enable."
-
-Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-Co-developed-by: Michael K Johnson <johnsonm@danlj.org>
-Signed-off-by: Michael K Johnson <johnsonm@danlj.org>
-
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 59acf8e3331e..14957578bf2e 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1636,8 +1636,8 @@ void sdhci_enable_clk(struct sdhci_host *host, u16 clk)
- 	clk |= SDHCI_CLOCK_INT_EN;
- 	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
- 
--	/* Wait max 20 ms */
--	timeout = ktime_add_ms(ktime_get(), 20);
-+	/* Wait max 150 ms */
-+	timeout = ktime_add_ms(ktime_get(), 150);
- 	while (1) {
- 		bool timedout = ktime_after(ktime_get(), timeout);
- 
-@@ -1650,7 +1650,28 @@ void sdhci_enable_clk(struct sdhci_host *host, u16 clk)
- 			sdhci_dumpregs(host);
- 			return;
- 		}
--		udelay(10);
-+		usleep_range(10,15);
-+	}
-+
-+	clk |= SDHCI_CLOCK_PLL_EN;
-+	clk &= ~SDHCI_CLOCK_INT_STABLE;
-+	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-+
-+	/* Wait max 150 ms */
-+	timeout = ktime_add_ms(ktime_get(), 150);
-+	while (1) {
-+		bool timedout = ktime_after(ktime_get(), timeout);
-+
-+		clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-+		if (clk & SDHCI_CLOCK_INT_STABLE)
-+			break;
-+		if (timedout) {
-+			pr_err("%s: PLL clock never stabilised.\n",
-+			       mmc_hostname(host->mmc));
-+			sdhci_dumpregs(host);
-+			return;
-+		}
-+		usleep_range(10,15);
- 	}
- 
- 	clk |= SDHCI_CLOCK_CARD_EN;
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index 199712e7adbb..72601a4d2e95 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -114,6 +114,7 @@
- #define  SDHCI_DIV_HI_MASK	0x300
- #define  SDHCI_PROG_CLOCK_MODE	0x0020
- #define  SDHCI_CLOCK_CARD_EN	0x0004
-+#define  SDHCI_CLOCK_PLL_EN	0x0008
- #define  SDHCI_CLOCK_INT_STABLE	0x0002
- #define  SDHCI_CLOCK_INT_EN	0x0001
- 
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
