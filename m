@@ -2,85 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3949754AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:53:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1984754AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:53:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729647AbfGYQxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:53:39 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45656 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729632AbfGYQxi (ORCPT
+        id S1729601AbfGYQxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:53:31 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41290 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729083AbfGYQxb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:53:38 -0400
-Received: by mail-io1-f68.google.com with SMTP id g20so98668892ioc.12
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 09:53:37 -0700 (PDT)
+        Thu, 25 Jul 2019 12:53:31 -0400
+Received: by mail-pl1-f195.google.com with SMTP id m9so23538336pls.8;
+        Thu, 25 Jul 2019 09:53:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kolA9oGTMt2kJuYg8zC6oRG5UHIMOnhc3kiBOYsRrZA=;
-        b=IPSevJy2liwkLBHgCIP++Od2vm8pxaK7qAFqKLBz212Z655uA/9ROOg+s5IaImVzfs
-         mp32U3H4iTgV7TrIOZ+ToG924T9y/qluKpRZOuijot3YOobPniwSFgN0j+k3iBv5Ur+V
-         vqSmZD4y6I1UTcz6Rz2aS0nGWj9Ge5ijQbM4c=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=In7FvxuJSL3nD+oAuTVZBinyIAwT8H4rTKstMSgDT6k=;
+        b=Ir8ythaTdYfmhG6ThebrvPMDl6Or+u2JFZT2YGgHeTyemmRXmccljqmFK4CYCsFVu4
+         b0obGx93qGpsIIm5LIyXE6vG7aOY/mtqok+8OuZbnEuUJQgD8kVZ4cOWX0Fbc/EK5b7U
+         cBLe1gONSrxZDK4rSdj2iqlQqvWzc7bL+PwOJ06TTJIoFZ8/51euqd/vjVH5WMdfHGPa
+         WEkR5xccCYN6KFevS0FdvtROl0rzmIujbWB63A0oDjuFhPOAOPpN4cmGihpjABbdeRUl
+         2mU/YhQ7YtU+bSdUiEcCqXr6uP0dII213cspLlDHHvkg7ShzRQdV/mwu6N8XaGDHL7fQ
+         fO0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kolA9oGTMt2kJuYg8zC6oRG5UHIMOnhc3kiBOYsRrZA=;
-        b=PRJTqCOn7jk2msRlPGQnJBs/Rj+PDa4LjtFfMyO0ehyELUpuln0BRNkjRNKiyyXC4k
-         OOycQSn2AKXWG+dyCOqWpBzg2GuaWcBsIWmKCOzqzNkntJvqcQtVqLPIp2DfACYDUmeQ
-         j9iuF3SaqM0dSN5vugHZ19rp4Cy3EBcZr+qF2OHTElPzKGYL4D0yIoUZFB5Tbtumzerc
-         R8FpzJhy+8Mf+no/LMLd06ZxBt+o5dqppy1Xo33GhTOK/afAh1QLbU7za7jRjC9xF3Yh
-         dQ9C4NYfu8oKJVV1hkUe9W5MEmnFMsZXdsOtUAK8UKtSDP/aqJM6IKZ8JpDfgtANrcps
-         r4XA==
-X-Gm-Message-State: APjAAAVJTHCXnUVMLBmCb6PMV7WA8TQPcE+q+k2G5hHzrkh2RGMl4Cls
-        XP2XSH2KxClOc/UkSUPcm19k3BuT+EQ=
-X-Google-Smtp-Source: APXvYqxaShSLAt4ormEWtgbFebRI8U4c/SNZJjL4Ts+VlwGJAGd3k56cbD2uVUzfF3D4lszRRPsukA==
-X-Received: by 2002:a05:6602:104:: with SMTP id s4mr80700922iot.200.1564073616787;
-        Thu, 25 Jul 2019 09:53:36 -0700 (PDT)
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com. [209.85.166.53])
-        by smtp.gmail.com with ESMTPSA id j23sm40217836ioo.6.2019.07.25.09.53.35
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 09:53:36 -0700 (PDT)
-Received: by mail-io1-f53.google.com with SMTP id e20so68301358iob.9
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 09:53:35 -0700 (PDT)
-X-Received: by 2002:a5e:c241:: with SMTP id w1mr77963588iop.58.1564073615649;
- Thu, 25 Jul 2019 09:53:35 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=In7FvxuJSL3nD+oAuTVZBinyIAwT8H4rTKstMSgDT6k=;
+        b=cNv3uSi9tgsU47D2rxN6/WsZKQ+HeT5tzK0z9CefUJ/TQrd4Ir0eTVAVX4k+l0E8tu
+         ojxt6zlEwII+JwaLLAvJgor8sK88IKu/8I9L7pPxKjHOz6Tt1sJNE+dLwsnISV1zcFOk
+         DqT44kz6ZS+epH5alhpdVK5CY6XbyNcakj49LqArJSSYJoqkCVTMriPIAjoz/CXI8Kl6
+         5/zmWujTZlOscND+UwRcL6cP+Ly3qnsQAH3mfS9U9L54dYAQ+8dsvqq/2g2ARVf61Eth
+         7ddwdWeu5zgMv2shg/e7yfhHO065q6Sa/gw3X9mt23ohqF6iSKM8ghKapCakBqFDt/g+
+         KYzA==
+X-Gm-Message-State: APjAAAW62aKSGLBwE/U26h9ueqbFDlq6kP8X40XO9UUU2AzlhLHfmGlV
+        wXv8lyk69UcVvzPBX6rK9SU=
+X-Google-Smtp-Source: APXvYqyGN37PGpgWry3wj5md3YEsS6cW6xq7SrPkHtyUxnRKecWuxvpMKzZuTLCreZ2GPKr2WEy9uQ==
+X-Received: by 2002:a17:902:f216:: with SMTP id gn22mr89782294plb.118.1564073610528;
+        Thu, 25 Jul 2019 09:53:30 -0700 (PDT)
+Received: from localhost ([123.213.206.190])
+        by smtp.gmail.com with ESMTPSA id i15sm54516319pfd.160.2019.07.25.09.53.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Jul 2019 09:53:29 -0700 (PDT)
+Date:   Fri, 26 Jul 2019 01:53:27 +0900
+From:   Minwoo Im <minwoo.im.dev@gmail.com>
+To:     Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+Cc:     Hannes Reinecke <hare@suse.de>, minwoo.im@samsung.com,
+        "sathya.prakash@broadcom.com" <sathya.prakash@broadcom.com>,
+        "suganath-prabu.subramani@broadcom.com" 
+        <suganath-prabu.subramani@broadcom.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "MPT-FusionLinux.pdl@broadcom.com" <MPT-FusionLinux.pdl@broadcom.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Euihyeok Kwon <eh81.kwon@samsung.com>,
+        Sarah Cho <sohyeon.jo@samsung.com>,
+        Sanggwan Lee <sanggwan.lee@samsung.com>,
+        Gyeongmin Nam <gm.nam@samsung.com>,
+        Sungjun Park <sj1228.park@samsung.com>,
+        Minwoo Im <minwoo.im.dev@gmail.com>
+Subject: Re: [PATCH V2] mpt3sas: support target smid for [abort|query] task
+Message-ID: <20190725165327.GA3081@minwoo-desktop>
+References: <CGME20190714034415epcms2p25f9787cb71993a30f58524d2f355b543@epcms2p2>
+ <20190714034415epcms2p25f9787cb71993a30f58524d2f355b543@epcms2p2>
+ <860cc8cf-6419-c649-b2d9-19b82f6ebc99@suse.de>
+ <CAK=zhgocY3Ute_6RiowaWsOROx3+Nzq6+WvkobmR_SB0Rt9_1g@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190725162642.250709-1-mka@chromium.org> <20190725162642.250709-4-mka@chromium.org>
-In-Reply-To: <20190725162642.250709-4-mka@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 25 Jul 2019 09:53:23 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VZur9gPvUnRtdwieqkjMxx1nOabaRXjMsQ7hZwgNVE5Q@mail.gmail.com>
-Message-ID: <CAD=FV=VZur9gPvUnRtdwieqkjMxx1nOabaRXjMsQ7hZwgNVE5Q@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] dt-bindings: ARM: dts: rockchip: Add bindings for rk3288-veyron-{fievel,tiger}
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAK=zhgocY3Ute_6RiowaWsOROx3+Nzq6+WvkobmR_SB0Rt9_1g@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 19-07-23 16:57:49, Sreekanth Reddy wrote:
+> On Mon, Jul 15, 2019 at 11:43 AM Hannes Reinecke <hare@suse.de> wrote:
+> > I think this is fundamentally wrong.
+> > ABORT_TASK is used to abort a single task, which of course has to be
+> > known beforehand. If you don't know the task, what exactly do you hope
+> > to achieve here? Aborting random I/O?
+> > Or, even worse, aborting I/O the driver uses internally and corrupt the
+> > internal workflow of the driver?
+> >
+> > We should simply disallow any ABORT TASK from userspace if the TaskMID
+> > is zero. And I would even argue to disabllow ABORT TASK from userspace
+> > completely, as the smid is never relayed to userland, and as such the
+> > user cannot know which task should be aborted.
+> 
+> Hannes,
+> 
+> This interface was added long time back in mpt2sas driver and I don't
+> have exact reason of adding this interface at that time.
+> But I know that this interface is still used by BRCM test team & few
+> customers only for some functionality and regression testing.
 
-On Thu, Jul 25, 2019 at 9:27 AM Matthias Kaehlcke <mka@chromium.org> wrote:
->
-> Fievel is a Chromebox and Tiger a Chromebase with a 10" display and
-> touchscreen. Tiger and Fievel are based on the same board.
->
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> Changes in v3:
-> - patch added to the series
-> ---
->  .../devicetree/bindings/arm/rockchip.yaml     | 30 +++++++++++++++++++
->  1 file changed, 30 insertions(+)
+Sreekanth, and Hannes,
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Could you please give some review points on this?
+
+Thanks,
