@@ -2,132 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFA2E74E61
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 14:44:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E066074E65
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 14:44:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388952AbfGYMoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 08:44:15 -0400
-Received: from foss.arm.com ([217.140.110.172]:56502 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387824AbfGYMoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 08:44:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7ACC728;
-        Thu, 25 Jul 2019 05:44:14 -0700 (PDT)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BAE2E3F71F;
-        Thu, 25 Jul 2019 05:44:12 -0700 (PDT)
-Subject: Re: [PATCH 1/1] efi: cper: print AER info of PCIe fatal error
-To:     Xiaofei Tan <tanxiaofei@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-efi@vger.kernel.org, rjw@rjwysocki.net, lenb@kernel.org,
-        tony.luck@intel.com, bp@alien8.de, ying.huang@intel.com,
-        ross.lagerwall@citrix.com, ard.biesheuvel@linaro.org,
-        lance.ortiz@hp.com
-References: <1562898017-27166-1-git-send-email-tanxiaofei@huawei.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <e596aec8-1239-0a46-39cf-e682fada9945@arm.com>
-Date:   Thu, 25 Jul 2019 13:44:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2389054AbfGYMoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 08:44:32 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45222 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387824AbfGYMoc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 08:44:32 -0400
+Received: by mail-pg1-f194.google.com with SMTP id o13so22981568pgp.12
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 05:44:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YtTD1zW4DFFiIXNHW0lcZtx2P/QwbKs4fO50xTY7/Rw=;
+        b=M/Voi5AdNRJuu0f0xVFvWhBGojmOjd9MpiuUS35IZonb5vauyAmAVyzUK52ayLrBN3
+         SgiKz3juyYSfNnGjkkTgz45hx6I04HFDTNBTt5UcmCB10eN9SXlRz8/eDLc4EkW0+xea
+         qo1zB+JSSfmtRWicQU+daV9QinrXpqhhLHr+xUIW8CaIOt43tAjHH7qysSd5oYOW6T9T
+         2yf1t8gNceqUK0rD0LtilyNSrWzlAtQOEy8VPDKVPXoW7btTLsu5WKhZLl21/LpxSyWd
+         7/BEc0333JvmoowXxOmujyOVAzCT4EcfNujLbgdwtJxCnHFPG6L1VN/dvmBYNBtSVDVa
+         BKGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YtTD1zW4DFFiIXNHW0lcZtx2P/QwbKs4fO50xTY7/Rw=;
+        b=Qs4thdMWMt8yDNqKx9mAMqhL5kV4/xFRzOEj7xOQFl2Ln8ii2fwioCqEs10gcWInm1
+         Ef9uCM/BdRTsetjeRC6K57QBygSTz0DHmsRF2vq5TvO7N1/u10lu6o62KGFHPGG01OBH
+         jQXtF8sLLnpvAtIqwX16TQqhWKC6pW3SrZfjtnjK4uE2E47tB/JAhMucnsZXRkA4ue+s
+         gsFCPIKqrd53gwk+yErYVwLHQQqbuEtz7dR/vTYMfoIE+9UR+WWkMUuFUpDd+65yEg9u
+         ayul3Tth0kuCeimn+Mys9Q70FPf0kU+/aIEHSLykyy+qAtFL/wxq95JHmREca7zsa7e0
+         d5eQ==
+X-Gm-Message-State: APjAAAWr4lWRTHUZ0+2UI5wAtvwACj12Yyh272gxgD/BIVLR2tQfEuQZ
+        73tql6b1Ad8+vvb/03qNilE=
+X-Google-Smtp-Source: APXvYqw8t1BcANx6QWJK3Ufj5nZnJSHUkXSuUFta0coSy0Mzsvx9vA+JC+8xkN6Rom4g6ZLvZYhrkg==
+X-Received: by 2002:aa7:8b11:: with SMTP id f17mr16520924pfd.19.1564058671500;
+        Thu, 25 Jul 2019 05:44:31 -0700 (PDT)
+Received: from bharath12345-Inspiron-5559 ([103.110.42.34])
+        by smtp.gmail.com with ESMTPSA id 195sm86924983pfu.75.2019.07.25.05.44.30
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 25 Jul 2019 05:44:30 -0700 (PDT)
+From:   Bharath Vedartham <linux.bhar@gmail.com>
+To:     gregkh@linuxfoundation.org, Matt.Sickler@daktronics.com
+Cc:     Bharath Vedartham <linux.bhar@gmail.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH v4] staging: kpc2000: Convert put_page() to put_user_page*()
+Date:   Thu, 25 Jul 2019 18:14:18 +0530
+Message-Id: <1564058658-3551-1-git-send-email-linux.bhar@gmail.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <1562898017-27166-1-git-send-email-tanxiaofei@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+For pages that were retained via get_user_pages*(), release those pages
+via the new put_user_page*() routines, instead of via put_page().
 
-On 12/07/2019 03:20, Xiaofei Tan wrote:
-> AER info of PCIe fatal error is not printed in the current driver.
-> Because APEI driver will panic directly for fatal error, and can't
-> run to the place of printing AER info.
-> 
-> An example log is as following:
-> [ 3157.655028] {763}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 11
-> [ 3157.663610] {763}[Hardware Error]: event severity: fatal
-> [ 3157.663612] {763}[Hardware Error]:  Error 0, type: fatal
-> [ 3157.663614] {763}[Hardware Error]:   section_type: PCIe error
-> [ 3157.680328] {763}[Hardware Error]:   port_type: 0, PCIe end point
-> [ 3157.680329] {763}[Hardware Error]:   version: 4.0
-> [ 3157.680332] {763}[Hardware Error]:   command: 0x0000, status: 0x0010
-> [ 3157.698757] {763}[Hardware Error]:   device_id: 0000:82:00.0
-> [ 3157.698758] {763}[Hardware Error]:   slot: 0
-> [ 3157.698759] {763}[Hardware Error]:   secondary_bus: 0x00
-> [ 3157.698760] {763}[Hardware Error]:   vendor_id: 0x8086, device_id: 0x10fb
-> [ 3157.698761] {763}[Hardware Error]:   class_code: 000002
-> [ 3157.698825] Kernel panic - not syncing: Fatal hardware error!
-> 
-> This issue was imported by the patch, '37448adfc7ce ("aerdrv: Move
-> cper_print_aer() call out of interrupt context")'. To fix this issue,
-> this patch adds print of AER info in cper_print_pcie() for fatal error.
-> 
-> Here is the example log after this patch applied:
-> [ 7032.893566] {24}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 10
-> [ 7032.901965] {24}[Hardware Error]: event severity: fatal
-> [ 7032.907166] {24}[Hardware Error]:  Error 0, type: fatal
-> [ 7032.912366] {24}[Hardware Error]:   section_type: PCIe error
-> [ 7032.917998] {24}[Hardware Error]:   port_type: 0, PCIe end point
-> [ 7032.923974] {24}[Hardware Error]:   version: 4.0
-> [ 7032.928569] {24}[Hardware Error]:   command: 0x0546, status: 0x4010
-> [ 7032.934806] {24}[Hardware Error]:   device_id: 0000:01:00.0
-> [ 7032.940352] {24}[Hardware Error]:   slot: 0
-> [ 7032.944514] {24}[Hardware Error]:   secondary_bus: 0x00
-> [ 7032.949714] {24}[Hardware Error]:   vendor_id: 0x15b3, device_id: 0x1019
-> [ 7032.956381] {24}[Hardware Error]:   class_code: 000002
-> [ 7032.961495] {24}[Hardware Error]:   aer_uncor_status: 0x00040000, aer_uncor_mask: 0x00000000
-> [ 7032.969891] {24}[Hardware Error]:   aer_uncor_severity: 0x00062010
-> [ 7032.976042] {24}[Hardware Error]:   TLP Header: 000000c0 01010000 00000001 00000000
-> [ 7032.983663] Kernel panic - not syncing: Fatal hardware error!
+This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+("mm: introduce put_user_page*(), placeholder versions").
 
-> Fixes: 37448adfc7ce ("aerdrv: Move cper_print_aer() call out of
-> interrupt context")
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Matt Sickler <Matt.Sickler@daktronics.com>
+Cc: devel@driverdev.osuosl.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+---
+Changes since v1
+        - Improved changelog by John's suggestion.
+        - Moved logic to dirty pages below sg_dma_unmap
+         and removed PageReserved check.
+Changes since v2
+        - Added back PageResevered check as
+        suggested by John Hubbard.
+Changes since v3
+        - Changed the changelog as suggested by John.
+        - Added John's Reviewed-By tag.
+Changes since v4
+        - Rebased the patch on the staging tree.
+        - Improved commit log by fixing a line wrap.
+---
+ drivers/staging/kpc2000/kpc_dma/fileops.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-(Please put this all on one line)
+diff --git a/drivers/staging/kpc2000/kpc_dma/fileops.c b/drivers/staging/kpc2000/kpc_dma/fileops.c
+index 48ca88b..f15e292 100644
+--- a/drivers/staging/kpc2000/kpc_dma/fileops.c
++++ b/drivers/staging/kpc2000/kpc_dma/fileops.c
+@@ -190,9 +190,7 @@ static int kpc_dma_transfer(struct dev_private_data *priv,
+ 	sg_free_table(&acd->sgt);
+  err_dma_map_sg:
+  err_alloc_sg_table:
+-	for (i = 0 ; i < acd->page_count ; i++) {
+-		put_page(acd->user_pages[i]);
+-	}
++	put_user_pages(acd->user_pages, acd->page_count);
+  err_get_user_pages:
+ 	kfree(acd->user_pages);
+  err_alloc_userpages:
+@@ -211,16 +209,13 @@ void  transfer_complete_cb(struct aio_cb_data *acd, size_t xfr_count, u32 flags)
+ 	BUG_ON(acd->ldev == NULL);
+ 	BUG_ON(acd->ldev->pldev == NULL);
+ 
+-	for (i = 0 ; i < acd->page_count ; i++) {
+-		if (!PageReserved(acd->user_pages[i])) {
+-			set_page_dirty(acd->user_pages[i]);
+-		}
+-	}
+-
+ 	dma_unmap_sg(&acd->ldev->pldev->dev, acd->sgt.sgl, acd->sgt.nents, acd->ldev->dir);
+ 
+-	for (i = 0 ; i < acd->page_count ; i++) {
+-		put_page(acd->user_pages[i]);
++	for (i = 0; i < acd->page_count; i++) {
++		if (!PageReserved(acd->user_pages[i]))
++			put_user_pages_dirty(&acd->user_pages[i], 1);
++		else
++			put_user_page(acd->user_pages[i]);
+ 	}
+ 
+ 	sg_free_table(&acd->sgt);
+-- 
+2.7.4
 
-
-> diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
-> index 8fa977c..bf8600d 100644
-> --- a/drivers/firmware/efi/cper.c
-> +++ b/drivers/firmware/efi/cper.c
-> @@ -390,6 +390,19 @@ static void cper_print_pcie(const char *pfx, const struct cper_sec_pcie *pcie,
->  		printk(
->  	"%s""bridge: secondary_status: 0x%04x, control: 0x%04x\n",
->  	pfx, pcie->bridge.secondary_status, pcie->bridge.control);
-
-It may be worth a comment explaining why we only do this for fatal errors. Something like:
-| /* Fatal errors call __ghes_panic() before the AER handler gets to print this */
-
-
-> +	if (pcie->validation_bits & CPER_PCIE_VALID_AER_INFO &&
-> +	    gdata->error_severity & CPER_SEV_FATAL) {
-> +		struct aer_capability_regs *aer;
-> +
-> +		aer = (struct aer_capability_regs *)pcie->aer_info;
-> +		printk("%saer_uncor_status: 0x%08x, aer_uncor_mask: 0x%08x\n",
-
-The convention in the rest of the file is for the prefix format string to be separate. i.e:
-| "%s""aer_uncor_status: ..."
-
-Could it be the same for consistency?
-
-> +		       pfx, aer->uncor_status, aer->uncor_mask);
-> +		printk("%saer_uncor_severity: 0x%08x\n",
-> +		       pfx, aer->uncor_severity);
-> +		printk("%sTLP Header: %08x %08x %08x %08x\n", pfx,
-> +		       aer->header_log.dw0, aer->header_log.dw1,
-> +		       aer->header_log.dw2, aer->header_log.dw3);
-> +	}
->  }
-
-Regardless,
-Reviewed-by; James Morse <james.morse@arm.com>
-
-
-Thanks,
-
-James
