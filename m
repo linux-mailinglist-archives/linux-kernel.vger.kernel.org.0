@@ -2,82 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36F007526B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 17:19:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13FEA75263
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 17:18:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389156AbfGYPTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 11:19:19 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:57000 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388736AbfGYPTT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 11:19:19 -0400
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id x6PFJ2Cm028409;
-        Fri, 26 Jul 2019 00:19:02 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x6PFJ2Cm028409
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1564067943;
-        bh=ybYKBy2jy2mNaj9dapjCxjrjOczwrfBem/VG0oV9nbc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=RPWbux+yjMepS0eHBsNLg6KHVJNe8nyxRgAyeUBrPLRd3lkQ70KNqeCAl4/SFU1rA
-         KqBCIJnmWTt2dzLfUOdXeqg+NBM9I3lI8V+DKpydh+IeSPY5DNQ5WiA4bUBUSLIEkt
-         CwCTwUmJ/5Nte6KSXD0BHkytFeq93XGtPvEC8kcmddSm6NmhCaqhVNgH28OM66ukCr
-         lLHl4P5+M38HUeaBBTMOTcOcN9ExEtQDRXnM8pW4pA5bnQZzg00ryltINj4ovvWtKJ
-         oVvWb/xneF1qbgFz9QMY5BMTL9S8MZrPnS+NV0+3zfI6zHcHYFLOddfge1s6iJs6oe
-         p7abfWuOYSYfA==
-X-Nifty-SrcIP: [209.85.222.49]
-Received: by mail-ua1-f49.google.com with SMTP id j8so19975307uan.6;
-        Thu, 25 Jul 2019 08:19:02 -0700 (PDT)
-X-Gm-Message-State: APjAAAWG2hHadUBZSQoluo44Dern+wLF9J+iIOtiPh5fXNhrhPOBRKch
-        fia/qU5R4gKWuy7KXLSaniPkmUGLIChPUQFHcr0=
-X-Google-Smtp-Source: APXvYqzREwsVdqY9MpRLTcsyv3GQ7mTlG0gkpVTsr5J+UESJVcs/+a1yYujSjrS2p7W2Tw/dNRFWb+R1W2ZTVW6lnTQ=
-X-Received: by 2002:ab0:5ea6:: with SMTP id y38mr56716853uag.40.1564067941791;
- Thu, 25 Jul 2019 08:19:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190717061800.10018-1-yamada.masahiro@socionext.com>
- <20190717061800.10018-8-yamada.masahiro@socionext.com> <230d2ca1-19cd-b60e-1b1b-6d7413eea9e2@siemens.com>
-In-Reply-To: <230d2ca1-19cd-b60e-1b1b-6d7413eea9e2@siemens.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 26 Jul 2019 00:18:12 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARu--p-tiJA2RGM5_KSQPSeo6-pkp-4GRd2AwM_1dtD7Q@mail.gmail.com>
-Message-ID: <CAK7LNARu--p-tiJA2RGM5_KSQPSeo6-pkp-4GRd2AwM_1dtD7Q@mail.gmail.com>
-Subject: Re: [PATCH v3 07/12] kbuild: modpost: read modules.order instead of $(MODVERDIR)/*.mod
-To:     Jan Kiszka <jan.kiszka@siemens.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S2389107AbfGYPSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 11:18:34 -0400
+Received: from verein.lst.de ([213.95.11.211]:36197 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389047AbfGYPSd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 11:18:33 -0400
+Received: by verein.lst.de (Postfix, from userid 2005)
+        id DC20968B02; Thu, 25 Jul 2019 17:18:29 +0200 (CEST)
+From:   Torsten Duwe <duwe@lst.de>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Harald Geyer <harald@ccbib.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190722150414.9F97668B20@verein.lst.de>
+Subject: [PATCH v3 6a/7] dt-bindings: Add ANX6345 DP/eDP transmitter binding
+Message-Id: <20190725151829.DC20968B02@verein.lst.de>
+Date:   Thu, 25 Jul 2019 17:18:29 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jan,
+The anx6345 is an ultra-low power DisplayPort/eDP transmitter designed
+for portable devices.
 
-On Thu, Jul 25, 2019 at 5:39 PM Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> >
->
-> This affects also external modules builds: I have patterns here that do
->
-> [Makefile]
-> subdir-y := some-module
->
-> [some-module/Makefile]
-> obj-m := some-module.o
->
-> and since this patch, the final some-module.ko is no longer built. Am I missing
-> something in the kbuild makefiles, or is this a regression?
+Add a binding document for it.
 
-Thanks for the report.
-Interesting. I have never imagined that Makefiles were written like that.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Torsten Duwe <duwe@suse.de>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ .../devicetree/bindings/display/bridge/anx6345.yaml |   90 ++++++++++
+ 1 file changed, 90 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/anx6345.yaml
 
-I just wrote a fix-up, but I have not determined to apply it.
-https://patchwork.kernel.org/patch/11059033/
-
-It is easy to fixup your Makefile, though.
-
---
-Best Regards
-Masahiro Yamada
+diff --git a/Documentation/devicetree/bindings/display/bridge/anx6345.yaml b/Documentation/devicetree/bindings/display/bridge/anx6345.yaml
+new file mode 100644
+index 000000000000..0af092d101c5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/anx6345.yaml
+@@ -0,0 +1,90 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/bridge/anx6345.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Analogix ANX6345 eDP Transmitter Device Tree Bindings
++
++maintainers:
++  - Torsten Duwe <duwe@lst.de>
++
++description: |
++  The ANX6345 is an ultra-low power Full-HD eDP transmitter designed for
++  portable devices.
++
++properties:
++  compatible:
++    const: analogix,anx6345
++
++  reg:
++    maxItems: 1
++    description: I2C address of the device
++
++  reset-gpios:
++    maxItems: 1
++    description: active low GPIO to use for reset
++
++  dvdd12-supply:
++    maxItems: 1
++    description: Regulator for 1.2V digital core power.
++    $ref: /schemas/types.yaml#/definitions/phandle
++
++  dvdd25-supply:
++    maxItems: 1
++    description: Regulator for 2.5V digital core power.
++    $ref: /schemas/types.yaml#/definitions/phandle
++
++  ports:
++    type: object
++    minItems: 1
++    maxItems: 2
++    description: |
++      Video port 0 for LVTTL input,
++      Video port 1 for eDP output (panel or connector)
++      using the DT bindings defined in
++      Documentation/devicetree/bindings/media/video-interfaces.txt
++
++required:
++  - compatible
++  - reg
++  - reset-gpios
++  - dvdd12-supply
++  - dvdd25-supply
++  - ports
++
++examples:
++ - |
++  anx6345: anx6345@38 {
++      compatible = "analogix,anx6345";
++      reg = <0x38>;
++      reset-gpios = <&pio 3 24 GPIO_ACTIVE_LOW>; /* PD24 */
++      dvdd25-supply = <&reg_dldo2>;
++      dvdd12-supply = <&reg_fldo1>;
++
++      ports {
++          #address-cells = <1>;
++          #size-cells = <0>;
++
++          anx6345_in: port@0 {
++              #address-cells = <1>;
++              #size-cells = <0>;
++              reg = <0>;
++              anx6345_in_tcon0: endpoint@0 {
++                  reg = <0>;
++                  remote-endpoint = <&tcon0_out_anx6345>;
++              };
++          };
++
++          anx6345_out: port@1 {
++              #address-cells = <1>;
++              #size-cells = <0>;
++              reg = <1>;
++
++              anx6345_out_panel: endpoint@0 {
++                  reg = <0>;
++                  remote-endpoint = <&panel_in_edp>;
++              };
++          };
++      };
++  };
