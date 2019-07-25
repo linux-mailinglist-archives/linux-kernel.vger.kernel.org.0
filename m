@@ -2,185 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D20077546A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:43:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 135B075483
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:46:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390921AbfGYQnN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:43:13 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37806 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390869AbfGYQnJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:43:09 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n9so26415978wrr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 09:43:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=BuoDlpPb1vre+s0M4n7UQuzVeVmwTbnqlEv8lDT4UWI=;
-        b=k4OX4HGImt6xJlUN6U2THTvrSVKuSh9FSo+O95Rlh5GKBhaTqsoufUxODGokpDbNy7
-         p/DH7+UZgOrr37x9eVV7qAgknaolCqsA0K4TxkHGApyhLMUkTdZm4pELHy+R3Tf6tLFO
-         hppZsemHCX2UyAHXLQpmSfWlPsmZrFkFj+PukmvDNdXkEYWyMjV2eGyI4BtfBE3FDcjI
-         rARknSq9seZ53bOmA3HD7tQQNkYniZTYGAs1yjDm4jhbxOpplAxW6KpdG/ly9y6E/K1/
-         cffygjbxWExgDOYzK2WScKYqVUhNb+8rlIjR58rqQvwidazqKDQLz/sjLdjqSPkJAOpP
-         V6Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=BuoDlpPb1vre+s0M4n7UQuzVeVmwTbnqlEv8lDT4UWI=;
-        b=KJk+ZZXVXUjcFYngGFSDIN+Cc08EcL9FkpQKCsrb1CsGWq/p87Ndu+kT+lljaMs0D/
-         2RlNRmsLHtNbWVYHChDbgl7EjVaoplqlHYrBIUfS7pe+8H3a5I8VvJPPjShDzJvqCiAW
-         v8EjUwhzXwnocVPAUq0cj1CZIllDrYx1UZWZ83r6wjS0srmw5BN53Vx4tXQ+AwXTDGRt
-         R6i92fKoYsSX8JCnAA+KsJEB9ag+a9IfBt+iV/oaeR4jGxWiK/YvlGCT7/aEqROZGQFR
-         ZMRLljbrUVN1KPgagVHRCVUHD1gflwTSbtB0Q8593bKDwimY6RCjOxuCU4ydR8LI0yJD
-         J3oQ==
-X-Gm-Message-State: APjAAAVyivaVwjBrwv6M608S4BlHe/PgIZXVRWoirr2l6ASt8DWDJwTV
-        FsQ/0FYeHmSGxLE4F3p4GoacFQ==
-X-Google-Smtp-Source: APXvYqyqEGwWoPn3HegjruZUySUlT+U/WLjOjEXs2C6Mm+iF/93A1j0eOnV5Nv0nkLc8sV6thc7lsQ==
-X-Received: by 2002:a5d:564e:: with SMTP id j14mr93443861wrw.1.1564072987152;
-        Thu, 25 Jul 2019 09:43:07 -0700 (PDT)
-Received: from pop-os.baylibre.local ([2a01:e35:8ad2:2cb0:2dbb:fac9:5ec0:e3ef])
-        by smtp.googlemail.com with ESMTPSA id 91sm103031727wrp.3.2019.07.25.09.43.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 09:43:06 -0700 (PDT)
-From:   Alexandre Mergnat <amergnat@baylibre.com>
-To:     jbrunet@baylibre.com
-Cc:     khilman@baylibre.com, sboyd@kernel.org, narmstrong@baylibre.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        baylibre-upstreaming@groups.io,
-        Alexandre Mergnat <amergnat@baylibre.com>
-Subject: [PATCH v2 8/8] clk: meson: remove clk input helper
-Date:   Thu, 25 Jul 2019 18:42:38 +0200
-Message-Id: <20190725164238.27991-9-amergnat@baylibre.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190725164238.27991-1-amergnat@baylibre.com>
-References: <20190725164238.27991-1-amergnat@baylibre.com>
+        id S2387525AbfGYQqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:46:12 -0400
+Received: from mga04.intel.com ([192.55.52.120]:33320 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726781AbfGYQqL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 12:46:11 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 09:46:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,307,1559545200"; 
+   d="scan'208";a="171862867"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.165])
+  by fmsmga007.fm.intel.com with ESMTP; 25 Jul 2019 09:46:11 -0700
+Date:   Thu, 25 Jul 2019 09:46:11 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        wanpengli@tencent.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        patches@kernelci.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>, jmattson@google.com
+Subject: Re: [PATCH 5.2 000/413] 5.2.3-stable review
+Message-ID: <20190725164610.GE18612@linux.intel.com>
+References: <20190724191735.096702571@linuxfoundation.org>
+ <CADYN=9+WLxhmqX3JNL_s-kWSN97G=8WhD=TF=uAuKecJnKcj_Q@mail.gmail.com>
+ <20190725113437.GA27429@kroah.com>
+ <230a5b34-d23e-8318-0b1f-d23ada7318e0@redhat.com>
+ <CA+G9fYsWdmboyquZ=Bs3tkTwRFTzd1yuL0_EVpHOecNi4E_stA@mail.gmail.com>
+ <20190725160939.GC18612@linux.intel.com>
+ <33f1cfaa-525d-996a-4977-fda32dc368ee@redhat.com>
+ <20190725162053.GD18612@linux.intel.com>
+ <7bc207e0-0812-e41a-bfd5-e3fbfd43f242@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7bc207e0-0812-e41a-bfd5-e3fbfd43f242@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The clk input function which allows clock controllers to register a bypass
-clock from a clock producer is no longer needed anymore since meson clock
-controllers have migrated to a new parent allocation method.
+On Thu, Jul 25, 2019 at 06:30:10PM +0200, Paolo Bonzini wrote:
+> On 25/07/19 18:20, Sean Christopherson wrote:
+> > On Thu, Jul 25, 2019 at 06:10:37PM +0200, Paolo Bonzini wrote:
+> >> On 25/07/19 18:09, Sean Christopherson wrote:
+> >>>> This investigation confirms it is a new test code failure on stable-rc 5.2.3
+> >>> No, it only confirms that kvm-unit-tests/master fails on 5.2.*.  To confirm
+> >>> a new failure in 5.2.3 you would need to show a test that passes on 5.2.2
+> >>> and fails on 5.2.3.
+> >>
+> >> I think he meant "a failure in new test code". :)
+> > 
+> > Ah, that does appear to be the case.  So just to be clear, we're good, right?
+> 
+> Yes.  I'm happy to gather ideas on how to avoid this (i.e. 1) if a
+> submodule would be useful; 2) where to stick it).
 
-Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
----
- drivers/clk/meson/Kconfig     |  3 ---
- drivers/clk/meson/Makefile    |  1 -
- drivers/clk/meson/clk-input.c | 49 -----------------------------------
- drivers/clk/meson/clk-input.h | 19 --------------
- 4 files changed, 72 deletions(-)
- delete mode 100644 drivers/clk/meson/clk-input.c
- delete mode 100644 drivers/clk/meson/clk-input.h
-
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 72a37572501f..500be0b0d473 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -1,7 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
--config COMMON_CLK_MESON_INPUT
--	tristate
--
- config COMMON_CLK_MESON_REGMAP
- 	tristate
- 	select REGMAP
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index bc35a4efd6b7..f09d83dc3d60 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -4,7 +4,6 @@
- obj-$(CONFIG_COMMON_CLK_MESON_AO_CLKC) += meson-aoclk.o
- obj-$(CONFIG_COMMON_CLK_MESON_DUALDIV) += clk-dualdiv.o
- obj-$(CONFIG_COMMON_CLK_MESON_EE_CLKC) += meson-eeclk.o
--obj-$(CONFIG_COMMON_CLK_MESON_INPUT) += clk-input.o
- obj-$(CONFIG_COMMON_CLK_MESON_MPLL) += clk-mpll.o
- obj-$(CONFIG_COMMON_CLK_MESON_PHASE) += clk-phase.o
- obj-$(CONFIG_COMMON_CLK_MESON_PLL) += clk-pll.o
-diff --git a/drivers/clk/meson/clk-input.c b/drivers/clk/meson/clk-input.c
-deleted file mode 100644
-index 086226e9dba6..000000000000
---- a/drivers/clk/meson/clk-input.c
-+++ /dev/null
-@@ -1,49 +0,0 @@
--// SPDX-License-Identifier: (GPL-2.0 OR MIT)
--/*
-- * Copyright (c) 2018 BayLibre, SAS.
-- * Author: Jerome Brunet <jbrunet@baylibre.com>
-- */
--
--#include <linux/clk.h>
--#include <linux/clk-provider.h>
--#include <linux/device.h>
--#include <linux/module.h>
--#include "clk-input.h"
--
--static const struct clk_ops meson_clk_no_ops = {};
--
--struct clk_hw *meson_clk_hw_register_input(struct device *dev,
--					   const char *of_name,
--					   const char *clk_name,
--					   unsigned long flags)
--{
--	struct clk *parent_clk = devm_clk_get(dev, of_name);
--	struct clk_init_data init;
--	const char *parent_name;
--	struct clk_hw *hw;
--	int ret;
--
--	if (IS_ERR(parent_clk))
--		return (struct clk_hw *)parent_clk;
--
--	hw = devm_kzalloc(dev, sizeof(*hw), GFP_KERNEL);
--	if (!hw)
--		return ERR_PTR(-ENOMEM);
--
--	parent_name = __clk_get_name(parent_clk);
--	init.name = clk_name;
--	init.ops = &meson_clk_no_ops;
--	init.flags = flags;
--	init.parent_names = &parent_name;
--	init.num_parents = 1;
--	hw->init = &init;
--
--	ret = devm_clk_hw_register(dev, hw);
--
--	return ret ? ERR_PTR(ret) : hw;
--}
--EXPORT_SYMBOL_GPL(meson_clk_hw_register_input);
--
--MODULE_DESCRIPTION("Amlogic clock input helper");
--MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
--MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/meson/clk-input.h b/drivers/clk/meson/clk-input.h
-deleted file mode 100644
-index 4a541b9685a6..000000000000
---- a/drivers/clk/meson/clk-input.h
-+++ /dev/null
-@@ -1,19 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/*
-- * Copyright (c) 2019 BayLibre, SAS.
-- * Author: Jerome Brunet <jbrunet@baylibre.com>
-- */
--
--#ifndef __MESON_CLK_INPUT_H
--#define __MESON_CLK_INPUT_H
--
--#include <linux/clk-provider.h>
--
--struct device;
--
--struct clk_hw *meson_clk_hw_register_input(struct device *dev,
--					   const char *of_name,
--					   const char *clk_name,
--					   unsigned long flags);
--
--#endif /* __MESON_CLK_INPUT_H */
--- 
-2.17.1
-
+As a starting point, what about adding "stable" branches for each kernel
+release to kvm-unit-tests, e.g. linux-5.2.y?  I assume we'd need something
+similar for the submodules anyways.
