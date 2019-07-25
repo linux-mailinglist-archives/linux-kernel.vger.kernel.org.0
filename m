@@ -2,100 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 566CF75163
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:38:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CA5A75166
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:39:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387567AbfGYOi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 10:38:57 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44006 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbfGYOi4 (ORCPT
+        id S1729157AbfGYOj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 10:39:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53152 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726736AbfGYOj1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 10:38:56 -0400
-Received: by mail-pf1-f196.google.com with SMTP id i189so22870196pfg.10
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 07:38:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=dM0tavbTao+XHLEjp4zxGd1Wc/gjo0u4n5AfPPLxYxY=;
-        b=qW9lqXmWOxkhdiOYGKrIWBHJs6675m6ojicr27ola+XCc/laXgrTsFw66srMTfptKM
-         E79JHYUrgD0swB3l5aRCQD23i2Yw2BoCoSowYMi0YrTZ439hPJPdYEpr+IPidFY7bJ6w
-         pYFJoxehPvvEcBRzxjNtLlvrWBiePB0+ymsj/T7HaZBy/uLx765/XOGY8lMSK+q1l0vj
-         2Tg3XPrMqO++R7wch3UgVTEumv9q1vy/A7yceOCUX3sSgckKX3VdA/enhcH4mOqaTvj5
-         3sHr+pvZlJx5Ev1BtEhINmnp3Q8GES5JIb0iUg15mcxR6OZc0CGwqWYCVo6sw3ar6rfF
-         lCug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=dM0tavbTao+XHLEjp4zxGd1Wc/gjo0u4n5AfPPLxYxY=;
-        b=LMDWpnPm8O7GxEWc8z6GIvMUdzuXR/SyWTgwIrc6Fva8Ijo1+wSwBah8Ba5gVt3pbC
-         EnPcuBV31/Q47YfGqV+uU9KqsE6kbX6KBTFNy5ynbpiyV8YYSp1KPvc+0v8wWxPGQS3/
-         hERPD/aWktwmfXbxdNna8eyyb4PZgcQ0OtrVJrOEpxfZtbx8pf+nc18Fg4pTQd4obiUl
-         8pSQHIZPEpkdeGpNCpbkU6p8jG7AdvWBJM7fhqId7d0uIGa0kFmabTBEFiErZbE8v/7x
-         CqhFrEUD1aXDHQdKCMbzhgf06misf6pUW90sWbdFN3toe8GeqdqZwm4BE9tYOkKn3ijG
-         TL3A==
-X-Gm-Message-State: APjAAAXXcLP3cxR90D3meHShT8rc3IhMXd2B2ilKrCG/bhIxVg3/yFIr
-        i9oKePE1RwTUwAohyX+gVxo=
-X-Google-Smtp-Source: APXvYqxbW1kdSdI2g5El3DdDVDtndVrRVVH5xAYU7zqmtvAOT6CVSwyux9F/5Aztl1fxRRkV7d9XhQ==
-X-Received: by 2002:a63:c44c:: with SMTP id m12mr48061734pgg.396.1564065536100;
-        Thu, 25 Jul 2019 07:38:56 -0700 (PDT)
-Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
-        by smtp.googlemail.com with ESMTPSA id z4sm39432142pgp.80.2019.07.25.07.38.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 07:38:55 -0700 (PDT)
-Subject: Re: [PATCH v10 5/5] overlayfs: override_creds=off option bypass
- creator_cred
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-team@android.com, Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-doc@vger.kernel.org
-References: <20190724195719.218307-1-salyzyn@android.com>
- <20190724195719.218307-6-salyzyn@android.com>
- <CAOQ4uxim8zZN5YHZs2OJz5A=3B0U10wyf371yadpe2B7hA8pZw@mail.gmail.com>
-From:   Mark Salyzyn <salyzyn@android.com>
-Message-ID: <9acceab1-86af-758a-ec00-8f6d33f3da87@android.com>
-Date:   Thu, 25 Jul 2019 07:38:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thu, 25 Jul 2019 10:39:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=38kZYSDy3zC5/h/SWKUk1efaWYIuv6kOUF9lD42ddaQ=; b=SVrTjodeLNK7q0jCMYEkBveo4
+        Zu8/xuN291RTd2NCB0e0+OKyqdrkLflFyiEomdig7SwNxjlQDVAFmlQ2jeu20983UVJf83F2NB1eA
+        5GNZIlel3ONkkxUoEQSUm6JN7E1HklNo+yop3vUZEmV775yV+YPo6NKgu6tqVvjKADkkdeAlwDaXg
+        qxc/MJUpLs89zfDsR86K96FcPpSsvxoeEJxChdYwnoF/UzBTxasoFp/jNygj7PyXRonQta/gM89q8
+        fPQ7GNopogRdlK47Z+dQF7P0aVZ8Oq5puPimr1TAo1+SQaiNFVfNa2j0J3pcmRuzNBLX+Y7aLOjNj
+        7aDrkIKmg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hqett-0001f5-5B; Thu, 25 Jul 2019 14:39:21 +0000
+Date:   Thu, 25 Jul 2019 07:39:21 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <Mark.Brown@arm.com>,
+        Steven Price <Steven.Price@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC] mm/pgtable/debug: Add test validating architecture page
+ table helpers
+Message-ID: <20190725143920.GW363@bombadil.infradead.org>
+References: <1564037723-26676-1-git-send-email-anshuman.khandual@arm.com>
+ <1564037723-26676-2-git-send-email-anshuman.khandual@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxim8zZN5YHZs2OJz5A=3B0U10wyf371yadpe2B7hA8pZw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1564037723-26676-2-git-send-email-anshuman.khandual@arm.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/24/19 11:14 PM, Amir Goldstein wrote:
->> +void ovl_revert_creds(const struct cred *old_cred)
->> +{
->> +       if (old_cred)
->> +               revert_creds(old_cred);
->> +}
->> +
-> Mark,
->
-> Not sure if you have seen my "shutdown" patches:
-> https://lore.kernel.org/linux-fsdevel/20190715133839.9878-4-amir73il@gmail.com/
+On Thu, Jul 25, 2019 at 12:25:23PM +0530, Anshuman Khandual wrote:
+> This adds a test module which will validate architecture page table helpers
+> and accessors regarding compliance with generic MM semantics expectations.
+> This will help various architectures in validating changes to the existing
+> page table helpers or addition of new ones.
 
-Good to know!
+I think this is a really good idea.
 
->
-> I am fine with this patch, but would like to request that you add @sb arg
-> to the ovl_revert_creds() helper, so it is more useful for other things in the
-> future that scope the underlying layers access (like shutdown).
+>  lib/Kconfig.debug       |  14 +++
+>  lib/Makefile            |   1 +
+>  lib/test_arch_pgtable.c | 290 ++++++++++++++++++++++++++++++++++++++++++++++++
 
-Will respin and retest.
+Is this the right place for it?  I worry that lib/ is going to get overloaded
+with test code, and this feels more like mm/ test code.
 
--- Mark
+> +#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE
+> +static void pmd_basic_tests(void)
+> +{
+> +	pmd_t pmd;
+> +
+> +	pmd = mk_pmd(page, prot);
+
+But 'page' isn't necessarily PMD-aligned.  I don't think we can rely on
+architectures doing the right thing if asked to make a PMD for a randomly
+aligned page.
+
+How about finding the physical address of something like kernel_init(),
+and using the corresponding pte/pmd/pud/p4d/pgd that encompasses that
+address?  It's also better to pass in the pfn/page rather than using global
+variables to communicate to the test functions.
+
+> +	/*
+> +	 * A huge page does not point to next level page table
+> +	 * entry. Hence this must qualify as pmd_bad().
+> +	 */
+> +	WARN_ON(!pmd_bad(pmd_mkhuge(pmd)));
+
+I didn't know that rule.  This is helpful because it gives us somewhere
+to document all these tricksy little rules.
+
+> +#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
+> +static void pud_basic_tests(void)
+
+Is this the right ifdef?
 
