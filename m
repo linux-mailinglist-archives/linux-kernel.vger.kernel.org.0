@@ -2,71 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E53DD7538E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:09:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD9E475394
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:09:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729214AbfGYQJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:09:11 -0400
-Received: from foss.arm.com ([217.140.110.172]:60288 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726087AbfGYQJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:09:10 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20645174E;
-        Thu, 25 Jul 2019 09:09:10 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4BCDE3F71A;
-        Thu, 25 Jul 2019 09:09:08 -0700 (PDT)
-Date:   Thu, 25 Jul 2019 17:08:59 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Daniel Axtens <dja@axtens.net>
-Cc:     Dmitry Vyukov <dvyukov@google.com>, Marco Elver <elver@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Subject: Re: [PATCH 1/2] kernel/fork: Add support for stack-end guard page
-Message-ID: <20190725160859.GA22830@lakrids.cambridge.arm.com>
-References: <20190719132818.40258-1-elver@google.com>
- <20190723164115.GB56959@lakrids.cambridge.arm.com>
- <CACT4Y+Y47_030eX-JiE1hFCyP5RiuTCSLZNKpTjuHwA5jQJ3+w@mail.gmail.com>
- <20190724112101.GB2624@lakrids.cambridge.arm.com>
- <CACT4Y+Zai+4VwNXS_a417M2m0DbtNhjTVdYga178ZDkvNnP4CQ@mail.gmail.com>
- <20190725101458.GC14347@lakrids.cambridge.arm.com>
- <87r26egn8t.fsf@dja-thinkpad.axtens.net>
+        id S2390000AbfGYQJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:09:45 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50457 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389618AbfGYQJn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 12:09:43 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PG9OeX1073997
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 25 Jul 2019 09:09:24 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PG9OeX1073997
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564070965;
+        bh=9SG7t/RY018saHj3Z1m4ZVOailUC1xrgcrB5xVaf+Hg=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=u8MhPja8rUqGbbPrt0vFgWJbo2rPzCZ4Crew2zA+00w2KdhK5w4eGcYyqx+Tt63zf
+         WgDUHX0lQ+2lOFifbhqWIY5Q1Kr/H/6/V2JenILYAmOuZc7GY4qOwGVGSLiJ+htjoP
+         cTu8PWYTZbbGfKDt6odzPm0WW7/3DAqaHUx8NAd5Gvm/hy5KCS5vDqwJ49oYYNOoQU
+         h5r4Tv0CcTfIdhaD5SQbPGsZgjTs/11puwwww1c0LFd6cFQP3JgnJ0C+h49su8MQ4y
+         2vaAP+KWDpcKoTQbtD+7zIfEEeJRqkdnu7BlAAi3ZJCd8IeAB6KyLd7Fl10ksdSnSp
+         VdaH0YmNGDtMg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PG9Ofm1073994;
+        Thu, 25 Jul 2019 09:09:24 -0700
+Date:   Thu, 25 Jul 2019 09:09:24 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Bart Van Assche <tipbot@zytor.com>
+Message-ID: <tip-a2970421640bd9b6a78f2685d7750a791abdfd4e@git.kernel.org>
+Cc:     mingo@kernel.org, will.deacon@arm.com, bvanassche@acm.org,
+        linux-kernel@vger.kernel.org, longman@redhat.com,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        peterz@infradead.org, hpa@zytor.com
+Reply-To: longman@redhat.com, tglx@linutronix.de,
+          torvalds@linux-foundation.org, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, bvanassche@acm.org,
+          will.deacon@arm.com, hpa@zytor.com, peterz@infradead.org
+In-Reply-To: <20190722182443.216015-3-bvanassche@acm.org>
+References: <20190722182443.216015-3-bvanassche@acm.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] stacktrace: Constify 'entries' arguments
+Git-Commit-ID: a2970421640bd9b6a78f2685d7750a791abdfd4e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <87r26egn8t.fsf@dja-thinkpad.axtens.net>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 01:14:26AM +1000, Daniel Axtens wrote:
-> Mark Rutland <mark.rutland@arm.com> writes:
-> > On Thu, Jul 25, 2019 at 09:53:08AM +0200, Dmitry Vyukov wrote:
-> >> FTR, Daniel just mailed:
-> >> 
-> >> [PATCH 0/3] kasan: support backing vmalloc space with real shadow memory
-> >> https://groups.google.com/forum/#!topic/kasan-dev/YuwLGJYPB4I
-> >> Which presumably will supersede this.
-> >
-> > Neat!
-> >
-> > I'll try to follow that, (and thanks for the Cc there), but I'm not on
-> > any of the lists it went to. IMO it would be nice if subsequent versions
-> > would be Cc'd to LKML, if that's possible. :)
-> 
-> Will do - apologies for the oversight.
+Commit-ID:  a2970421640bd9b6a78f2685d7750a791abdfd4e
+Gitweb:     https://git.kernel.org/tip/a2970421640bd9b6a78f2685d7750a791abdfd4e
+Author:     Bart Van Assche <bvanassche@acm.org>
+AuthorDate: Mon, 22 Jul 2019 11:24:41 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 25 Jul 2019 15:43:26 +0200
 
-Nothing to apologize for, and thanks in advance!
+stacktrace: Constify 'entries' arguments
 
-Mark.
+Make it clear to humans and to the compiler that the stack trace
+('entries') arguments are not modified.
+
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Link: https://lkml.kernel.org/r/20190722182443.216015-3-bvanassche@acm.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ include/linux/stacktrace.h | 4 ++--
+ kernel/stacktrace.c        | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/stacktrace.h b/include/linux/stacktrace.h
+index f0cfd12cb45e..83bd8cb475d7 100644
+--- a/include/linux/stacktrace.h
++++ b/include/linux/stacktrace.h
+@@ -9,9 +9,9 @@ struct task_struct;
+ struct pt_regs;
+ 
+ #ifdef CONFIG_STACKTRACE
+-void stack_trace_print(unsigned long *trace, unsigned int nr_entries,
++void stack_trace_print(const unsigned long *trace, unsigned int nr_entries,
+ 		       int spaces);
+-int stack_trace_snprint(char *buf, size_t size, unsigned long *entries,
++int stack_trace_snprint(char *buf, size_t size, const unsigned long *entries,
+ 			unsigned int nr_entries, int spaces);
+ unsigned int stack_trace_save(unsigned long *store, unsigned int size,
+ 			      unsigned int skipnr);
+diff --git a/kernel/stacktrace.c b/kernel/stacktrace.c
+index f5440abb7532..6d1f68b7e528 100644
+--- a/kernel/stacktrace.c
++++ b/kernel/stacktrace.c
+@@ -20,7 +20,7 @@
+  * @nr_entries:	Number of entries in the storage array
+  * @spaces:	Number of leading spaces to print
+  */
+-void stack_trace_print(unsigned long *entries, unsigned int nr_entries,
++void stack_trace_print(const unsigned long *entries, unsigned int nr_entries,
+ 		       int spaces)
+ {
+ 	unsigned int i;
+@@ -43,7 +43,7 @@ EXPORT_SYMBOL_GPL(stack_trace_print);
+  *
+  * Return: Number of bytes printed.
+  */
+-int stack_trace_snprint(char *buf, size_t size, unsigned long *entries,
++int stack_trace_snprint(char *buf, size_t size, const unsigned long *entries,
+ 			unsigned int nr_entries, int spaces)
+ {
+ 	unsigned int generated, i, total = 0;
