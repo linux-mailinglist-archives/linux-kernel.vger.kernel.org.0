@@ -2,140 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E7975377
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:02:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 949827537F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:04:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389883AbfGYQC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:02:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50152 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388760AbfGYQCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:02:18 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AEB8DAFFB;
-        Thu, 25 Jul 2019 16:02:17 +0000 (UTC)
-From:   Oscar Salvador <osalvador@suse.de>
-To:     akpm@linux-foundation.org
-Cc:     dan.j.williams@intel.com, david@redhat.com,
-        pasha.tatashin@soleen.com, mhocko@suse.com,
-        anshuman.khandual@arm.com, Jonathan.Cameron@huawei.com,
-        vbabka@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v3 5/5] mm,memory_hotplug: Allow userspace to enable/disable vmemmap
-Date:   Thu, 25 Jul 2019 18:02:07 +0200
-Message-Id: <20190725160207.19579-6-osalvador@suse.de>
-X-Mailer: git-send-email 2.13.7
-In-Reply-To: <20190725160207.19579-1-osalvador@suse.de>
-References: <20190725160207.19579-1-osalvador@suse.de>
+        id S2389183AbfGYQEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:04:09 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48051 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388481AbfGYQEJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 12:04:09 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PG3RIM1071304
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 25 Jul 2019 09:03:27 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PG3RIM1071304
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564070608;
+        bh=A2BsfU+o5G861v52udO74SU0jEv17wo3QrmMOENtt5c=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=zQpxCGRUVOg8hAlv+h5QNII9ja+fUS1rUoHFeUc7ceQRGtK/nTT6XEIJ+CsFroIyj
+         yF0OrcsxXGRGRzdKBisbEPLqjTnP+7U+SjFXMEsph/IWrxmB0ZeWqbfgzv+eHI19pC
+         OH/tsnhEwz+Z+T7WToymS7vxn9STHQuEJP7myscbVei0t8rOeK7Q6g6i+hMn5dKjEE
+         pSkt/1UhzXJkP4Yx75V8SUKi4hvN28kJhLz/WpMosyQawqIiWjzZjhu/1uj2vGFLcx
+         1lUgN+cgcCLuHI7GKLmA26i4f9Tlhjb9urkLnS1F1u7FnQmHiOq0vtNRSRJslJGnPC
+         GtUqgI1JVXn2Q==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PG3QZP1071300;
+        Thu, 25 Jul 2019 09:03:26 -0700
+Date:   Thu, 25 Jul 2019 09:03:26 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnd Bergmann <tipbot@zytor.com>
+Message-ID: <tip-68037aa78208f34bda4e5cd76c357f718b838cbb@git.kernel.org>
+Cc:     cai@lca.pw, akpm@linux-foundation.org, will@kernel.org,
+        tglx@linutronix.de, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
+        bvanassche@acm.org, arnd@arndb.de, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, will.deacon@arm.com,
+        torvalds@linux-foundation.org, hpa@zytor.com, longman@redhat.com,
+        duyuyang@gmail.com
+Reply-To: will@kernel.org, paulmck@linux.vnet.ibm.com, mingo@kernel.org,
+          tglx@linutronix.de, akpm@linux-foundation.org, cai@lca.pw,
+          hpa@zytor.com, torvalds@linux-foundation.org, duyuyang@gmail.com,
+          longman@redhat.com, arnd@arndb.de, bvanassche@acm.org,
+          will.deacon@arm.com, peterz@infradead.org,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20190715092809.736834-1-arnd@arndb.de>
+References: <20190715092809.736834-1-arnd@arndb.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] locking/lockdep: Hide unused 'class' variable
+Git-Commit-ID: 68037aa78208f34bda4e5cd76c357f718b838cbb
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=1.8 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Level: *
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems that we have some users out there that want to expose all
-hotpluggable memory to userspace, so this implements a toggling mechanism
-for those users who want to disable it.
+Commit-ID:  68037aa78208f34bda4e5cd76c357f718b838cbb
+Gitweb:     https://git.kernel.org/tip/68037aa78208f34bda4e5cd76c357f718b838cbb
+Author:     Arnd Bergmann <arnd@arndb.de>
+AuthorDate: Mon, 15 Jul 2019 11:27:49 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 25 Jul 2019 15:39:25 +0200
 
-By default, vmemmap pages mechanism is enabled.
+locking/lockdep: Hide unused 'class' variable
 
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
+The usage is now hidden in an #ifdef, so we need to move
+the variable itself in there as well to avoid this warning:
+
+  kernel/locking/lockdep_proc.c:203:21: error: unused variable 'class' [-Werror,-Wunused-variable]
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Bart Van Assche <bvanassche@acm.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Qian Cai <cai@lca.pw>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Yuyang Du <duyuyang@gmail.com>
+Cc: frederic@kernel.org
+Fixes: 68d41d8c94a3 ("locking/lockdep: Fix lock used or unused stats error")
+Link: https://lkml.kernel.org/r/20190715092809.736834-1-arnd@arndb.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/base/memory.c          | 33 +++++++++++++++++++++++++++++++++
- include/linux/memory_hotplug.h |  3 +++
- mm/memory_hotplug.c            |  7 +++++++
- 3 files changed, 43 insertions(+)
+ kernel/locking/lockdep_proc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index d30d0f6c8ad0..5ec6b80de9dd 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -578,6 +578,35 @@ static DEVICE_ATTR_WO(soft_offline_page);
- static DEVICE_ATTR_WO(hard_offline_page);
- #endif
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+index 65b6a1600c8f..bda006f8a88b 100644
+--- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -200,7 +200,6 @@ static void lockdep_stats_debug_show(struct seq_file *m)
  
-+#ifdef CONFIG_SPARSEMEM_VMEMMAP
-+static ssize_t vmemmap_hotplug_show(struct device *dev,
-+				    struct device_attribute *attr, char *buf)
-+{
-+	if (vmemmap_enabled)
-+		return sprintf(buf, "enabled\n");
-+	else
-+		return sprintf(buf, "disabled\n");
-+}
-+
-+static ssize_t vmemmap_hotplug_store(struct device *dev,
-+			   struct device_attribute *attr,
-+			   const char *buf, size_t count)
-+{
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (sysfs_streq(buf, "enable"))
-+		vmemmap_enabled = true;
-+	else if (sysfs_streq(buf, "disable"))
-+		vmemmap_enabled = false;
-+	else
-+		return -EINVAL;
-+
-+	return count;
-+}
-+static DEVICE_ATTR_RW(vmemmap_hotplug);
-+#endif
-+
- /*
-  * Note that phys_device is optional.  It is here to allow for
-  * differentiation between which *physical* devices each
-@@ -794,6 +823,10 @@ static struct attribute *memory_root_attrs[] = {
- 	&dev_attr_hard_offline_page.attr,
- #endif
+ static int lockdep_stats_show(struct seq_file *m, void *v)
+ {
+-	struct lock_class *class;
+ 	unsigned long nr_unused = 0, nr_uncategorized = 0,
+ 		      nr_irq_safe = 0, nr_irq_unsafe = 0,
+ 		      nr_softirq_safe = 0, nr_softirq_unsafe = 0,
+@@ -211,6 +210,8 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
+ 		      sum_forward_deps = 0;
  
-+#ifdef CONFIG_SPARSEMEM_VMEMMAP
-+	&dev_attr_vmemmap_hotplug.attr,
-+#endif
+ #ifdef CONFIG_PROVE_LOCKING
++	struct lock_class *class;
 +
- 	&dev_attr_block_size_bytes.attr,
- 	&dev_attr_auto_online_blocks.attr,
- 	NULL
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index e1e8abf22a80..03d227d13301 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -134,6 +134,9 @@ extern int arch_add_memory(int nid, u64 start, u64 size,
- 			struct mhp_restrictions *restrictions);
- extern u64 max_mem_size;
+ 	list_for_each_entry(class, &all_lock_classes, lock_entry) {
  
-+#ifdef CONFIG_SPARSEMEM_VMEMMAP
-+extern bool vmemmap_enabled;
-+#endif
- extern bool memhp_auto_online;
- /* If movable_node boot option specified */
- extern bool movable_node_enabled;
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 09d41339cd11..5ffe5375b87c 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -68,6 +68,10 @@ void put_online_mems(void)
- 
- bool movable_node_enabled = false;
- 
-+#ifdef CONFIG_SPARSEMEM_VMEMMAP
-+bool vmemmap_enabled __read_mostly = true;
-+#endif
-+
- #ifndef CONFIG_MEMORY_HOTPLUG_DEFAULT_ONLINE
- bool memhp_auto_online;
- #else
-@@ -1108,6 +1112,9 @@ static unsigned long mhp_check_flags(unsigned long flags)
- 	if (!flags)
- 		return 0;
- 
-+	if (!vmemmap_enabled)
-+		return 0;
-+
- 	if (flags != MHP_MEMMAP_ON_MEMORY) {
- 		WARN(1, "Wrong flags value (%lx). Ignoring flags.\n", flags);
- 		return 0;
--- 
-2.12.3
-
+ 		if (class->usage_mask == 0)
