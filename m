@@ -2,170 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47E7E74D5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 13:44:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 612A074D5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 13:44:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404246AbfGYLoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 07:44:20 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:1693 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404217AbfGYLoP (ORCPT
+        id S2404203AbfGYLoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 07:44:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52536 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388154AbfGYLoK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 07:44:15 -0400
-Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
-  Horatiu.Vultur@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
-  envelope-from="Horatiu.Vultur@microchip.com";
-  x-sender="Horatiu.Vultur@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa2.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
-  envelope-from="Horatiu.Vultur@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa2.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Horatiu.Vultur@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: tjjT0rz37UZLBn76k8jrHlulkDry/YlLFIAycfBfRZruaDmySPMebHeqpByVJ72bNVlSFRm948
- 4nj+3SgjitcEmBD1/qmxqzREeENLliSHOY5LO8GSmvvs/oJSMxwDnCWil3u0y3+ZsoDhRZ4za3
- cCh9fnRU2jdLZ6XPjoXXdRBOIHj/hWFlFV1fRUexLfaFDbFwzitboiHW5vOvgOUkeGqlwMBPQ0
- Grv9/zDFOaC+5ApRSwuYwEJYgpPlXAKQLJBRubUsvJBTo4NV0nIX63VZty5UtIMu7EtnzVkLT+
- 2vQ=
-X-IronPort-AV: E=Sophos;i="5.64,306,1559545200"; 
-   d="scan'208";a="42717160"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 25 Jul 2019 04:44:14 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
- chn-vm-ex03.mchp-main.com (10.10.87.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 25 Jul 2019 04:44:13 -0700
-Received: from soft-dev3.microsemi.net (10.10.85.251) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Thu, 25 Jul 2019 04:44:11 -0700
-From:   Horatiu Vultur <horatiu.vultur@microchip.com>
-To:     <roopa@cumulusnetworks.com>, <nikolay@cumulusnetworks.com>,
-        <davem@davemloft.net>, <bridge@lists.linux-foundation.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <allan.nielsen@microchip.com>
-CC:     Horatiu Vultur <horatiu.vultur@microchip.com>
-Subject: [PATCH] net: bridge: Allow bridge to joing multicast groups
-Date:   Thu, 25 Jul 2019 13:44:04 +0200
-Message-ID: <1564055044-27593-1-git-send-email-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 25 Jul 2019 07:44:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=i19VkmUA/JjV1baDqjaCUFBUl3HEhx06QA8y1Sjqx2Y=; b=FY1NJT9VDEPZNIxz3Cx6zp8eE
+        AkhT6C4nMXH4+xI8bgTRfVlXBfYv/c4iwNpHN7E14TH/fPjMP23dDVpoW5UoQPGUloknxIVUUiKf/
+        5fAhay9ppAQSPw3QccU0LY31rX1wQtRKb3rscJqLglpgxytDWRZBWANdnLWRFwdLLt5Jwe778enkK
+        UB5erxDzKrkcWYDPYUpcOZxRq5z90AuZZk4n7oaw7YuwZyvaX+SXFbpbrf1ORsKcJORe0F1sXNt1q
+        OWuhktmc6pQaocLPV9QXGyClV2YzweTCDwCV+dV/bN/4ENX6+kOaEK37+gLGnLUzTjCIJ/IwcDaco
+        lUlZavJuQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hqcAK-0000R5-94; Thu, 25 Jul 2019 11:44:08 +0000
+Date:   Thu, 25 Jul 2019 04:44:08 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+        huang ying <huang.ying.caritas@gmail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org
+Subject: Re: kernel BUG at mm/swap_state.c:170!
+Message-ID: <20190725114408.GV363@bombadil.infradead.org>
+References: <CABXGCsN9mYmBD-4GaaeW_NrDu+FDXLzr_6x+XNxfmFV6QkYCDg@mail.gmail.com>
+ <CAC=cRTMz5S636Wfqdn3UGbzwzJ+v_M46_juSfoouRLS1H62orQ@mail.gmail.com>
+ <CABXGCsOo-4CJicvTQm4jF4iDSqM8ic+0+HEEqP+632KfCntU+w@mail.gmail.com>
+ <878ssqbj56.fsf@yhuang-dev.intel.com>
+ <CABXGCsOhimxC17j=jApoty-o1roRhKYoe+oiqDZ3c1s2r3QxFw@mail.gmail.com>
+ <87zhl59w2t.fsf@yhuang-dev.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zhl59w2t.fsf@yhuang-dev.intel.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no way to configure the bridge, to receive only specific link
-layer multicast addresses. From the description of the command 'bridge
-fdb append' is supposed to do that, but there was no way to notify the
-network driver that the bridge joined a group, because LLADDR was added
-to the unicast netdev_hw_addr_list.
+On Tue, Jul 23, 2019 at 01:08:42PM +0800, Huang, Ying wrote:
+> @@ -2489,6 +2491,14 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+>  	/* complete memcg works before add pages to LRU */
+>  	mem_cgroup_split_huge_fixup(head);
+>  
+> +	if (PageAnon(head) && PageSwapCache(head)) {
+> +		swp_entry_t entry = { .val = page_private(head) };
+> +
+> +		offset = swp_offset(entry);
+> +		swap_cache = swap_address_space(entry);
+> +		xa_lock(&swap_cache->i_pages);
+> +	}
+> +
+>  	for (i = HPAGE_PMD_NR - 1; i >= 1; i--) {
+>  		__split_huge_page_tail(head, i, lruvec, list);
+>  		/* Some pages can be beyond i_size: drop them from page cache */
+> @@ -2501,6 +2511,9 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+>  		} else if (!PageAnon(page)) {
+>  			__xa_store(&head->mapping->i_pages, head[i].index,
+>  					head + i, 0);
+> +		} else if (swap_cache) {
+> +			__xa_store(&swap_cache->i_pages, offset + i,
+> +				   head + i, 0);
 
-Therefore update fdb_add_entry to check if the NLM_F_APPEND flag is set
-and if the source is NULL, which represent the bridge itself. Then add
-address to multicast netdev_hw_addr_list for each bridge interfaces.
-And then the .ndo_set_rx_mode function on the driver is called. To notify
-the driver that the list of multicast mac addresses changed.
-
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- net/bridge/br_fdb.c | 49 ++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 46 insertions(+), 3 deletions(-)
-
-diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
-index b1d3248..d93746d 100644
---- a/net/bridge/br_fdb.c
-+++ b/net/bridge/br_fdb.c
-@@ -175,6 +175,29 @@ static void fdb_add_hw_addr(struct net_bridge *br, const unsigned char *addr)
- 	}
- }
- 
-+static void fdb_add_hw_maddr(struct net_bridge *br, const unsigned char *addr)
-+{
-+	int err;
-+	struct net_bridge_port *p;
-+
-+	ASSERT_RTNL();
-+
-+	list_for_each_entry(p, &br->port_list, list) {
-+		if (!br_promisc_port(p)) {
-+			err = dev_mc_add(p->dev, addr);
-+			if (err)
-+				goto undo;
-+		}
-+	}
-+
-+	return;
-+undo:
-+	list_for_each_entry_continue_reverse(p, &br->port_list, list) {
-+		if (!br_promisc_port(p))
-+			dev_mc_del(p->dev, addr);
-+	}
-+}
-+
- /* When a static FDB entry is deleted, the HW address from that entry is
-  * also removed from the bridge private HW address list and updates all
-  * the ports with needed information.
-@@ -192,13 +215,27 @@ static void fdb_del_hw_addr(struct net_bridge *br, const unsigned char *addr)
- 	}
- }
- 
-+static void fdb_del_hw_maddr(struct net_bridge *br, const unsigned char *addr)
-+{
-+	struct net_bridge_port *p;
-+
-+	ASSERT_RTNL();
-+
-+	list_for_each_entry(p, &br->port_list, list) {
-+		if (!br_promisc_port(p))
-+			dev_mc_del(p->dev, addr);
-+	}
-+}
-+
- static void fdb_delete(struct net_bridge *br, struct net_bridge_fdb_entry *f,
- 		       bool swdev_notify)
- {
- 	trace_fdb_delete(br, f);
- 
--	if (f->is_static)
-+	if (f->is_static) {
- 		fdb_del_hw_addr(br, f->key.addr.addr);
-+		fdb_del_hw_maddr(br, f->key.addr.addr);
-+	}
- 
- 	hlist_del_init_rcu(&f->fdb_node);
- 	rhashtable_remove_fast(&br->fdb_hash_tbl, &f->rhnode,
-@@ -843,13 +880,19 @@ static int fdb_add_entry(struct net_bridge *br, struct net_bridge_port *source,
- 			fdb->is_local = 1;
- 			if (!fdb->is_static) {
- 				fdb->is_static = 1;
--				fdb_add_hw_addr(br, addr);
-+				if (flags & NLM_F_APPEND && !source)
-+					fdb_add_hw_maddr(br, addr);
-+				else
-+					fdb_add_hw_addr(br, addr);
- 			}
- 		} else if (state & NUD_NOARP) {
- 			fdb->is_local = 0;
- 			if (!fdb->is_static) {
- 				fdb->is_static = 1;
--				fdb_add_hw_addr(br, addr);
-+				if (flags & NLM_F_APPEND && !source)
-+					fdb_add_hw_maddr(br, addr);
-+				else
-+					fdb_add_hw_addr(br, addr);
- 			}
- 		} else {
- 			fdb->is_local = 0;
--- 
-2.7.4
+I tried something along these lines (though I think I messed up the offset
+calculation which is why it wasn't working for me).  My other concern
+was with the case where SWAPFILE_CLUSTER was less than HPAGE_PMD_NR.
+Don't we need to drop the lock and look up a new swap_cache if offset >=
+SWAPFILE_CLUSTER?
 
