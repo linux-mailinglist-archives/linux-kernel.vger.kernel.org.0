@@ -2,100 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBFE97510E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EB5775108
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:26:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388268AbfGYO0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 10:26:25 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:35188 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727937AbfGYO0Y (ORCPT
+        id S2388254AbfGYO0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 10:26:11 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36223 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727937AbfGYO0I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 10:26:24 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6PEPqXp117924;
-        Thu, 25 Jul 2019 09:25:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1564064752;
-        bh=zz+4xc5f556ik5dVIHkOBcpiQhkWRlNhJiib+8wLNDI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=i+C6MOf2C+7Ox6ak0GFOM3KZf2HLv2JdwWowGGpw+dStFh3oI9YR29IsZmMcKGJ16
-         55xzh94E3MaN9HD/A3tuOnkgZzSxuozxGm0NTYUMknyRake0JaerdMNii1T6ymAUe5
-         +TfCzJqEuH4pYmTq43p5uTgnQ3GWvObrtEWtR+eg=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6PEPqDK099670
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 25 Jul 2019 09:25:52 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 25
- Jul 2019 09:25:52 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 25 Jul 2019 09:25:52 -0500
-Received: from [10.250.86.29] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6PEPobU051141;
-        Thu, 25 Jul 2019 09:25:51 -0500
-Subject: Re: [PATCH v6 4/5] dma-buf: heaps: Add CMA heap to dmabuf heaps
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        Pratik Patel <pratikp@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        Vincent Donnefort <Vincent.Donnefort@arm.com>,
-        Sudipto Paul <Sudipto.Paul@arm.com>,
-        Xu YiPing <xuyiping@hisilicon.com>,
-        "Chenfeng (puck)" <puck.chen@hisilicon.com>,
-        butao <butao@hisilicon.com>,
-        "Xiaqing (A)" <saberlily.xia@hisilicon.com>,
-        Yudongbin <yudongbin@hisilicon.com>,
-        Chenbo Feng <fengc@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-References: <20190624194908.121273-1-john.stultz@linaro.org>
- <20190624194908.121273-5-john.stultz@linaro.org>
- <20190718100840.GB19666@infradead.org>
- <CALAqxLWLx_tHVjZqrSNWfQ_M2RGGqh4qth3hi9GGRdSPov-gcw@mail.gmail.com>
- <20190724065958.GC16225@infradead.org>
- <8e6f8e4f-20fc-1f1f-2228-f4fd7c7c5c1f@ti.com>
- <20190725125014.GD20286@infradead.org>
- <0eae0024-1fdf-bd06-a8ff-1a41f0af3c69@ti.com>
- <20190725140448.GA25010@infradead.org>
- <8e2ec315-5d18-68b2-8cb5-2bfb8a116d1b@ti.com>
- <20190725141144.GA14609@infradead.org>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <b2170efd-df80-b54b-9ffe-8183befe5e00@ti.com>
-Date:   Thu, 25 Jul 2019 10:25:50 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 25 Jul 2019 10:26:08 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PEPuWs1039798
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 25 Jul 2019 07:25:56 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PEPuWs1039798
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564064757;
+        bh=tgOl5N4aEb+8XnWIB5jv+tEA6WZGbn7gWW30Ye2FDwk=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=YymD+MoNIyXVpe32mLEpq7RSrESL/ROxvqTl3bS8vzxW0wftNM7ZqDtCA3/16ABD+
+         6uFJpca7xkcJSzmNr/ExIx0RlLKyDr79T4ZnwTjk68kwLIBoJsGKa4TfRRCA9QJLHU
+         zf07djvn+lFf1OMozsxgUSAr8tfSTsl6WIj6VY+Slp4iBsalE1zaViTSfVr6FfvTUw
+         QmID13IdRTyMMsHSzri3AHLf8Nni8E4doLlLvdMHCWpZpmrum5hS/ese4hCrSYkWgP
+         BYeYakpGI+UHwUjjq4N6snszHh1x4pJGhaq/3ke7wXevkYTosUwz0ZEnrgTnFwyfZJ
+         OS2t6Ae/rql4A==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PEPt9w1039795;
+        Thu, 25 Jul 2019 07:25:55 -0700
+Date:   Thu, 25 Jul 2019 07:25:55 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-ba77b2a02e0099ab0021bc3169b8f674c6be19f0@git.kernel.org>
+Cc:     mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, peterz@infradead.org
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com,
+          peterz@infradead.org, mingo@kernel.org
+In-Reply-To: <20190722105219.526508168@linutronix.de>
+References: <20190722105219.526508168@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/apic] x86/apic: Move apic_flat_64 header into apic
+ directory
+Git-Commit-ID: ba77b2a02e0099ab0021bc3169b8f674c6be19f0
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20190725141144.GA14609@infradead.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/25/19 10:11 AM, Christoph Hellwig wrote:
-> On Thu, Jul 25, 2019 at 10:10:08AM -0400, Andrew F. Davis wrote:
->> Pages yes, but not "normal" pages from the kernel managed area.
->> page_to_pfn() will return bad values on the pages returned by this
->> allocator and so will any of the kernel sync/map functions. Therefor
->> those operations cannot be common and need special per-heap handling.
-> 
-> Well, that means this thing is buggy and abuses the scatterlist API
-> and we can't merge it anyway, so it is irrelevant.
-> 
+Commit-ID:  ba77b2a02e0099ab0021bc3169b8f674c6be19f0
+Gitweb:     https://git.kernel.org/tip/ba77b2a02e0099ab0021bc3169b8f674c6be19f0
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Mon, 22 Jul 2019 20:47:13 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 25 Jul 2019 16:11:58 +0200
 
-Since when do scatterlists need to only have kernel virtual backed
-memory pages? Device memory is stored in scatterlists and
-dma_sync_sg_for_* would fail just the same when the cache ops were
-attempted.
+x86/apic: Move apic_flat_64 header into apic directory
+
+Only used locally.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20190722105219.526508168@linutronix.de
+
+---
+ arch/x86/kernel/apic/apic_flat_64.c                  | 2 +-
+ arch/x86/{include/asm => kernel/apic}/apic_flat_64.h | 0
+ arch/x86/kernel/apic/apic_numachip.c                 | 2 +-
+ 3 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/apic/apic_flat_64.c b/arch/x86/kernel/apic/apic_flat_64.c
+index a38b1ecc018d..cfee2e546531 100644
+--- a/arch/x86/kernel/apic/apic_flat_64.c
++++ b/arch/x86/kernel/apic/apic_flat_64.c
+@@ -13,9 +13,9 @@
+ #include <linux/acpi.h>
+ 
+ #include <asm/jailhouse_para.h>
+-#include <asm/apic_flat_64.h>
+ #include <asm/apic.h>
+ 
++#include "apic_flat_64.h"
+ #include "ipi.h"
+ 
+ static struct apic apic_physflat;
+diff --git a/arch/x86/include/asm/apic_flat_64.h b/arch/x86/kernel/apic/apic_flat_64.h
+similarity index 100%
+rename from arch/x86/include/asm/apic_flat_64.h
+rename to arch/x86/kernel/apic/apic_flat_64.h
+diff --git a/arch/x86/kernel/apic/apic_numachip.c b/arch/x86/kernel/apic/apic_numachip.c
+index 7d4c00f4e984..09ec9ffb268e 100644
+--- a/arch/x86/kernel/apic/apic_numachip.c
++++ b/arch/x86/kernel/apic/apic_numachip.c
+@@ -16,9 +16,9 @@
+ #include <asm/numachip/numachip.h>
+ #include <asm/numachip/numachip_csr.h>
+ 
+-#include <asm/apic_flat_64.h>
+ #include <asm/pgtable.h>
+ 
++#include "apic_flat_64.h"
+ #include "ipi.h"
+ 
+ u8 numachip_system __read_mostly;
