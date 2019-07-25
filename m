@@ -2,56 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 790B675B36
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 01:26:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C41875B3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 01:28:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbfGYX0H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 19:26:07 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:47002 "EHLO
+        id S1726985AbfGYX2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 19:28:04 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41110 "EHLO
         mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726822AbfGYX0H (ORCPT
+        with ESMTP id S1726870AbfGYX2E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 19:26:07 -0400
-Received: by mail-lf1-f65.google.com with SMTP id z15so31473951lfh.13;
-        Thu, 25 Jul 2019 16:26:05 -0700 (PDT)
+        Thu, 25 Jul 2019 19:28:04 -0400
+Received: by mail-lf1-f65.google.com with SMTP id 62so30879284lfa.8;
+        Thu, 25 Jul 2019 16:28:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=9l3baTsqWUqUoLsmlugit8t4Kk96ZWT3/jwqQOX2+aM=;
-        b=M22/OEs3jSuHhxuGfvjid3m6tR0t3Rv1gyvbMFbTdjzpPbX4zLaNv7tL4aaBpb/1hm
-         m+7eZBTvMaCWebMUDMOSYHBdbBZBq3M+x9gl3Rr2cpj4F7lL3hUZJKWoJD1xpdUxcqQI
-         aCBZ6oJm/MVTGh2WA3JL/n9Adb1tBYG1aO+4iKNzpGmMSmXzXkq5BRg8jb4Hx/ZrfwVf
-         a5hJK2iAGvChJrbOrcBI9Uxp9SHPmbk/UA7iGElyxjjHKsmTewSbnETvKTUzJ+wac3+6
-         8ZZnLMRfgE6lM9ozd9c7wiSFheu2Sc06uvOgLtHuE/JwCb4T4Ew3zkRkZihlbWXTeA1G
-         4YsA==
+        bh=IvQXzyeCa3p3byzTKli2BP4z8dHBMqmq8NdHFvVh0U8=;
+        b=hc0q+KhAY1GRDsuGFoP13QGQ0nPLcs7EGSQZzF/lWDFSSuQkONUofveTolVejME0tq
+         +X47CHVvzb91H8m2pkKFBUSmPAU60WtxJgFQEreRcffGWG2DmJfNYEAs2J1vJELGFohJ
+         yz73EspzniZo5zvmvEU5QHTdnkiNeIDP54MhZQMLirGTP22nea/hhVKtaqIkh4C8e/lN
+         CF8sBkCAlRYgVFydqet9ya9LtCmwpe5a7sgIdJftZbZbknnZUR6+gC8YUlT3LPZiCx81
+         X6t0Ao9YDe2U7t9biE3XjZhJ62b7Pgb1MfXZFrVKAXr5VBCrD1pnaEKKLqbsMli6VHoP
+         Gi9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=9l3baTsqWUqUoLsmlugit8t4Kk96ZWT3/jwqQOX2+aM=;
-        b=mQj6Jt0Ucpc+iwIfn61jpnm2zQyw6Xvjs7Szawwz3Ag9YmaWfJI9CuYZZ/ZHiT9n67
-         idsJ1DuhVGGwrwuc9HiA0Jzm187U67r2mGdu8zF4EajGuteoBuptlAnEJXtTIa+m2qAZ
-         nggmtK+3tKfF9ggyUUTgMnyrrCd1MrJX7JhmJIwrAQ8wZ9C7U81vTXlal0Pfytr/NtgE
-         5UxuyyVDqqgiQorHA8Bma4GRSUX5ouZ//8k3RlJ0yLUc2iAHTCUAHssB9PrmzTaBoGHM
-         +LVJV2NQJ/o0XT1dn1d7JydApAK/6bQ4VgzBhNanzbwuhNrKJ+exp0YZEXdT9cHaagtT
-         EgkQ==
-X-Gm-Message-State: APjAAAWAFnHNnssPu7tdH/1SRqUxNchOIg7rctUzvQTbej/8Hr2RTZc0
-        +HksYerOtwCsKAj3CxlbCLkh0qqxVEVJ9wPWhFk=
-X-Google-Smtp-Source: APXvYqxCZuHwcONq22zcljkmr7iT8iGQQQa8JIdlK9raO9TTtd3P9XwdESY0pGx6lC3boLAXhcsdZMpqLIzigttHn+k=
-X-Received: by 2002:a05:6512:21c:: with SMTP id a28mr2351025lfo.14.1564097165009;
- Thu, 25 Jul 2019 16:26:05 -0700 (PDT)
+        bh=IvQXzyeCa3p3byzTKli2BP4z8dHBMqmq8NdHFvVh0U8=;
+        b=aF0uTNDG1yvqjos8lvg39A9kbvjQVTcEjaBzi+jG0SooqUyikzHKtXrifGpOG5GFgP
+         jSYxzNlT3zG79ZFpq+5FJdVzqX6W9tN97nBMETA+WTUwoVukloXyG4ntMVTwB8ub+8Mc
+         n2g6aT8vUPeiC2YJ4+53YTsjroflvujvj56NUWFoBtW+jpg5Z9QphFCDudXxSbrHadZs
+         j4Q6RTFOvjZN8v3EYtmhGIBbX7Z/2xT1MkLU4/qX/2CPk05+66LtHzsERbb5r+vyogSB
+         PNWr9xRXLrLnwAcEn7IvhrQSKY5IxNT0x22DQdCUP345lELw1AlOHoI/x4OAeCr1ccK5
+         bNbA==
+X-Gm-Message-State: APjAAAWDgq+k5eehZOpt4fTmmq40SuK2tRr9PmpaiTyLQWv9uMK9c21+
+        BZe4hzvyh/mLA9uIaug4DiHfSuZZZnAdaFNCOWA=
+X-Google-Smtp-Source: APXvYqwvvhfAjdJijFNp+iGRcHsIzZ7JbiZ1gfiM9Gp9IzOtUIqtGmCW2TJUHg5F214INMamEyCizCrxRRfVgbqIFYs=
+X-Received: by 2002:a05:6512:288:: with SMTP id j8mr46403495lfp.181.1564097282215;
+ Thu, 25 Jul 2019 16:28:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190724165803.87470-1-brianvv@google.com> <20190724165803.87470-3-brianvv@google.com>
- <CAPhsuW4HPjXE+zZGmPM9GVPgnVieRr0WOuXfM0W6ec3SB4imDw@mail.gmail.com>
- <CABCgpaXz4hO=iGoswdqYBECWE5eu2AdUgms=hyfKnqz7E+ZgNg@mail.gmail.com> <CAPhsuW5NzzeDmNmgqRh0kwHnoQfaD90L44NJ9AbydG_tGJkKiQ@mail.gmail.com>
-In-Reply-To: <CAPhsuW5NzzeDmNmgqRh0kwHnoQfaD90L44NJ9AbydG_tGJkKiQ@mail.gmail.com>
+References: <20190724165803.87470-1-brianvv@google.com> <20190724165803.87470-4-brianvv@google.com>
+ <CAEf4BzaCUBA40DKUYm6rSa0v-jQMK7aPu867oYkZhfZGB4wiSA@mail.gmail.com>
+In-Reply-To: <CAEf4BzaCUBA40DKUYm6rSa0v-jQMK7aPu867oYkZhfZGB4wiSA@mail.gmail.com>
 From:   Brian Vazquez <brianvv.kernel@gmail.com>
-Date:   Thu, 25 Jul 2019 16:25:53 -0700
-Message-ID: <CABCgpaV7mj5DhFqh44rUNVj5XMAyP+n79LrMobW_=DfvEaS4BQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 2/6] bpf: add BPF_MAP_DUMP command to dump more
- than one entry per call
-To:     Song Liu <liu.song.a23@gmail.com>
+Date:   Thu, 25 Jul 2019 16:27:51 -0700
+Message-ID: <CABCgpaVVO=6yRDpgs9wqsb7uj8qOw-X1xL16eEqCtiJh0B77dg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 3/6] bpf: keep bpf.h in sync with tools/
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
 Cc:     Brian Vazquez <brianvv@google.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
@@ -67,52 +65,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > If prev_key is deleted before map_get_next_key(), we get the first key
-> > > again. This is pretty weird.
+On Wed, Jul 24, 2019 at 4:10 PM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Wed, Jul 24, 2019 at 10:10 AM Brian Vazquez <brianvv@google.com> wrote:
 > >
-> > Yes, I know. But note that the current scenario happens even for the
-> > old interface (imagine you are walking a map from userspace and you
-> > tried get_next_key the prev_key was removed, you will start again from
-> > the beginning without noticing it).
-> > I tried to sent a patch in the past but I was missing some context:
-> > before NULL was used to get the very first_key the interface relied in
-> > a random (non existent) key to retrieve the first_key in the map, and
-> > I was told what we still have to support that scenario.
+> > Adds bpf_attr.dump structure to libbpf.
+> >
+> > Suggested-by: Stanislav Fomichev <sdf@google.com>
+> > Signed-off-by: Brian Vazquez <brianvv@google.com>
+> > ---
+> >  tools/include/uapi/linux/bpf.h | 9 +++++++++
+> >  tools/lib/bpf/libbpf.map       | 2 ++
+> >  2 files changed, 11 insertions(+)
+> >
+> > diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+> > index 4e455018da65f..e127f16e4e932 100644
+> > --- a/tools/include/uapi/linux/bpf.h
+> > +++ b/tools/include/uapi/linux/bpf.h
+> > @@ -106,6 +106,7 @@ enum bpf_cmd {
+> >         BPF_TASK_FD_QUERY,
+> >         BPF_MAP_LOOKUP_AND_DELETE_ELEM,
+> >         BPF_MAP_FREEZE,
+> > +       BPF_MAP_DUMP,
+> >  };
+> >
+> >  enum bpf_map_type {
+> > @@ -388,6 +389,14 @@ union bpf_attr {
+> >                 __u64           flags;
+> >         };
+> >
+> > +       struct { /* struct used by BPF_MAP_DUMP command */
+> > +               __aligned_u64   prev_key;
+> > +               __aligned_u64   buf;
+> > +               __aligned_u64   buf_len; /* input/output: len of buf */
+> > +               __u64           flags;
+> > +               __u32           map_fd;
+> > +       } dump;
+> > +
+> >         struct { /* anonymous struct used by BPF_PROG_LOAD command */
+> >                 __u32           prog_type;      /* one of enum bpf_prog_type */
+> >                 __u32           insn_cnt;
+> > diff --git a/tools/lib/bpf/libbpf.map b/tools/lib/bpf/libbpf.map
+> > index f9d316e873d8d..cac3723d5c45c 100644
+> > --- a/tools/lib/bpf/libbpf.map
+> > +++ b/tools/lib/bpf/libbpf.map
+> > @@ -183,4 +183,6 @@ LIBBPF_0.0.4 {
 >
-> BPF_MAP_DUMP is slightly different, as you may return the first key
-> multiple times in the same call. Also, BPF_MAP_DUMP is new, so we
-> don't have to support legacy scenarios.
+> LIBBPF_0.0.4 is closed, this needs to go into LIBBPF_0.0.5.
+
+Sorry my bad, I didn't closely look at the rebase so this got it wrong.
+
 >
-> Since BPF_MAP_DUMP keeps a list of elements. It is possible to try
-> to look up previous keys. Would something down this direction work?
+> >                 perf_buffer__new;
+> >                 perf_buffer__new_raw;
+> >                 perf_buffer__poll;
+> > +               bpf_map_dump;
+> > +               bpf_map_dump_flags;
+>
+> As the general rule, please keep those lists of functions in alphabetical order.
 
-I've been thinking about it and I think first we need a way to detect
-that since key was not present we got the first_key instead:
+right.
 
-- One solution I had in mind was to explicitly asked for the first key
-with map_get_next_key(map, NULL, first_key) and while walking the map
-check that map_get_next_key(map, prev_key, key) doesn't return the
-same key. This could be done using memcmp.
-- Discussing with Stan, he mentioned that another option is to support
-a flag in map_get_next_key to let it know that we want an error
-instead of the first_key.
-
-After detecting the problem we also need to define what we want to do,
-here some options:
-
-a) Return the error to the caller
-b) Try with previous keys if any (which be limited to the keys that we
-have traversed so far in this dump call)
-c) continue with next entries in the map. array is easy just get the
-next valid key (starting on i+1), but hmap might be difficult since
-starting on the next bucket could potentially skip some keys that were
-concurrently added to the same bucket where key used to be, and
-starting on the same bucket could lead us to return repeated elements.
-
-Or maybe we could support those 3 cases via flags and let the caller
-decide which one to use?
-
-Let me know what are your thoughts.
-
-Thanks,
-Brian
+I will fix it in next version, thanks for reviewing it!
