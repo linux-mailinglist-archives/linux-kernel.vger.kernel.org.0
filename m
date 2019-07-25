@@ -2,147 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DFFC75266
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 17:18:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ACB875276
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 17:21:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389148AbfGYPS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 11:18:57 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46914 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388736AbfGYPS4 (ORCPT
+        id S2389155AbfGYPU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 11:20:58 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44416 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388270AbfGYPU6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 11:18:56 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3CE77607DE; Thu, 25 Jul 2019 15:18:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564067935;
-        bh=hnHhbe9q2IRKMtnzCZ2ig0RS/AUD9YxThPnuMNlk9D8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=By2gD602wfGFKF5ttG1fS+NbvbHMmWaPI1sqfQ/NTN5FVQR8M0A/sRZFNOrqPSTgk
-         pcgvoVbrPbEJxxxPn0h+MrVXJaMWP32Zn7elvYxPJ724rVNtge4N+PO5m74WsUDiVE
-         wvxeLJkSmojIkK9x9VnIRVXAqbBrjFcRbhWsXGNY=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 15C5060312;
-        Thu, 25 Jul 2019 15:18:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564067934;
-        bh=hnHhbe9q2IRKMtnzCZ2ig0RS/AUD9YxThPnuMNlk9D8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YfAfVEyfyjHOH1K+e7WFQFs8oC4PxsyySdDgQxFsrZMPwEbKeSJAgETfScZ0dIa7V
-         K6ins/go/UOKVqrCBpwt5hzK3dFSPpUOf7+t9RtmiTjFmCJY1XMadJC0MV+9wTSDsz
-         A5vgV0iFLyRawDjGwXQhqn1HGJe0NeMNigtnIIsI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 15C5060312
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Thu, 25 Jul 2019 09:18:51 -0600
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>, mkshah@codeaurora.org
-Subject: Re: [PATCH V2 2/4] drivers: qcom: rpmh-rsc: avoid locking in the
- interrupt handler
-Message-ID: <20190725151851.GG18620@codeaurora.org>
-References: <20190722215340.3071-1-ilina@codeaurora.org>
- <20190722215340.3071-2-ilina@codeaurora.org>
- <5d3769df.1c69fb81.55d03.aa33@mx.google.com>
- <20190724145251.GB18620@codeaurora.org>
- <5d38b38e.1c69fb81.e8e5d.035b@mx.google.com>
- <20190724203610.GE18620@codeaurora.org>
- <CAD=FV=UYj55m99EcQXmkYhs257A46x8DaarE0DC-GRF_3dY3-Q@mail.gmail.com>
+        Thu, 25 Jul 2019 11:20:58 -0400
+Received: by mail-lf1-f67.google.com with SMTP id r15so17821562lfm.11;
+        Thu, 25 Jul 2019 08:20:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LDW/FJUrsVu6k7T07Pr+H7tkQH/WLpxDim2Ftq6lvk8=;
+        b=B6ZsRsEqN8Zh0idaADwGb4x9RAwcSBnpeuKnZayoZHOJrUb+l0bvaz9a1VFzJ72+2v
+         HF2QuqbQRC45Nn78C1FMVW/SfrftgrfYkxDchUL8TyFqzJRrh+M3gA8Mnc8rUdk3PRk6
+         WkfnYbT7/H7YnC7q10pvBQ1iU5sfLH5R/khQxmDf2wqyQ+rrXa06D2u8sait/Bsl8J2d
+         LiGwyGn13EuwR6yDjVnzdVijr2rbRiCgI/91wO5fsWjLq1Exx79GgeHzY+jNTgRRIvWa
+         z5u5Ps3PMrYon6ql0eGzYusvSnS9O1PEWarfXBQeqTyuw1s7g8pWTk9217SNl18gvGPZ
+         0OAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LDW/FJUrsVu6k7T07Pr+H7tkQH/WLpxDim2Ftq6lvk8=;
+        b=CZi6yZVafb1UquIPuW2mRhAasU+om3xLifI367M5Rh7u2E35o5ip0VaxvEl6G/N+6M
+         AP3OGk0QPhusgu0qrjW/iCdKtV4gZOrA6yZ5mvsGDDkC0dzQd+Nxb25q4SoTqnJ7JRL0
+         PMDJHhb/wdIdIZTPUCmUvjdIYq3EuqjQXAPnQN8l3W1A0GE6NHPpRycD+tgFIYwlncJ1
+         jXTZNPqHFBHIgoek/l3Js899mBnsu94v38zSFGW75xff0O2fufRA333BkqLMGE8nFqWX
+         DZmssijrONDVZRK/SLnRnr10mUYu9CrJzc7KJ0byApJXX777OJDdhqUZkMe6soZHsuP6
+         WELA==
+X-Gm-Message-State: APjAAAW6A03M+JiKsnj6UuN6AMwWNWfWVh3L6/cXOuZCz7BaSZV74K0V
+        BLbjbicWuXe1bmG0O0YxOyQ=
+X-Google-Smtp-Source: APXvYqx8YvOPn9GvdCLiMGAu2EV1xlTrSrVOqxrRUY0MeAQA7lrEb0GBpmSEvYLU+kVIhM8L4WbOgQ==
+X-Received: by 2002:ac2:482d:: with SMTP id 13mr30015249lft.132.1564068056133;
+        Thu, 25 Jul 2019 08:20:56 -0700 (PDT)
+Received: from localhost.localdomain (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.gmail.com with ESMTPSA id e87sm10452281ljf.54.2019.07.25.08.20.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Jul 2019 08:20:55 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] Support regulators coupling on NVIDIA Tegra20/30
+Date:   Thu, 25 Jul 2019 18:18:29 +0300
+Message-Id: <20190725151832.9802-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=UYj55m99EcQXmkYhs257A46x8DaarE0DC-GRF_3dY3-Q@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24 2019 at 17:28 -0600, Doug Anderson wrote:
->Hi,
->
->On Wed, Jul 24, 2019 at 1:36 PM Lina Iyer <ilina@codeaurora.org> wrote:
->>
->> On Wed, Jul 24 2019 at 13:38 -0600, Stephen Boyd wrote:
->> >Quoting Lina Iyer (2019-07-24 07:52:51)
->> >> On Tue, Jul 23 2019 at 14:11 -0600, Stephen Boyd wrote:
->> >> >Quoting Lina Iyer (2019-07-22 14:53:38)
->> >> >> Avoid locking in the interrupt context to improve latency. Since we
->> >> >> don't lock in the interrupt context, it is possible that we now could
->> >> >> race with the DRV_CONTROL register that writes the enable register and
->> >> >> cleared by the interrupt handler. For fire-n-forget requests, the
->> >> >> interrupt may be raised as soon as the TCS is triggered and the IRQ
->> >> >> handler may clear the enable bit before the DRV_CONTROL is read back.
->> >> >>
->> >> >> Use the non-sync variant when enabling the TCS register to avoid reading
->> >> >> back a value that may been cleared because the interrupt handler ran
->> >> >> immediately after triggering the TCS.
->> >> >>
->> >> >> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
->> >> >> ---
->> >> >
->> >> >I have to read this patch carefully. The commit text isn't convincing me
->> >> >that it is actually safe to make this change. It mostly talks about the
->> >> >performance improvements and how we need to fix __tcs_trigger(), which
->> >> >is good, but I was hoping to be convinced that not grabbing the lock
->> >> >here is safe.
->> >> >
->> >> >How do we ensure that drv->tcs_in_use is cleared before we call
->> >> >tcs_write() and try to look for a free bit? Isn't it possible that we'll
->> >> >get into a situation where the bitmap is all used up but the hardware
->> >> >has just received an interrupt and is going to clear out a bit and then
->> >> >an rpmh write fails with -EBUSY?
->> >> >
->> >> If we have a situation where there are no available free bits, we retry
->> >> and that is part of the function. Since we have only 2 TCSes avaialble
->> >> to write to the hardware and there could be multiple requests coming in,
->> >> it is a very common situation. We try and acquire the drv->lock and if
->> >> there are free TCS available and if available mark them busy and send
->> >> our requests. If there are none available, we keep retrying.
->> >>
->> >
->> >Ok. I wonder if we need some sort of barriers here too, like an
->> >smp_mb__after_atomic()? That way we can make sure that the write to
->> >clear the bit is seen by another CPU that could be spinning forever
->> >waiting for that bit to be cleared? Before this change the spinlock
->> >would be guaranteed to make these barriers for us, but now that doesn't
->> >seem to be the case. I really hope that this whole thing can be changed
->> >to be a mutex though, in which case we can use the bit_wait() API, etc.
->> >to put tasks to sleep while RPMh is processing things.
->> >
->> We have drivers that want to send requests in atomic contexts and
->> therefore mutex locks would not work.
->
->Jumping in without reading all the context, but I saw this fly by and
->it seemed odd.  If I'm way off base then please ignore...
->
->Can you give more details?  Why are these drivers in atomic contexts?
->If they are in atomic contexts because they are running in the context
->of an interrupt then your next patch in the series isn't so correct.
->
->Also: when people submit requests in atomic context are they always
->submitting an asynchronous request?  In that case we could
->(presumably) just use a spinlock to protect the queue of async
->requests and a mutex for everything else?
-Yes, drivers only make async requests in interrupt contexts. They cannot
-use the sync variants. The async and sync variants are streamlined into
-the same code path. Hence the use of spinlocks instead of mutexes
-through the critical path.
+Hello,
 
---Lina
+The voltage regulators need to be coupled on NVIDIA Tegra20 and Tegra30
+SoCs in order to provide voltage scaling functionality in a generic way.
+All necessary regulator-core patches that added support for the regulators
+coupling are already have been merge into mainline kernel. This series
+adds customized voltage couplers for Tegra20/30 SoCs, paving the way for
+a refined CPUFreq driver that will utilize voltage scaling and other neat
+features. This is a resend of a leftover patches from a previous series
+[1] that was partially applied by Mark Brown. Please review, thanks in
+advance!
+
+[1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=115626
+
+Changelog:
+
+v2: - Some days ago OPP framework got a change that makes CPU regulator
+      to be enabled at the time of CPUFreq's driver initializing OPPs.
+      In a result the CPU's voltage is dropped to a minimum value on
+      CPUFreq's setting up because there are no consumers at the time
+      of regulator's enabling, thus CPU is getting into a big trouble.
+      This problem is now resolved in the couplers code by assuming
+      that min_uV=current_uV for CPU's regulator if it doesn't have
+      any active consumers.
+
+Dmitry Osipenko (3):
+  dt-bindings: regulator: Document regulators coupling of NVIDIA
+    Tegra20/30 SoCs
+  soc/tegra: regulators: Add regulators coupler for Tegra20
+  soc/tegra: regulators: Add regulators coupler for Tegra30
+
+ .../nvidia,tegra-regulators-coupling.txt      |  65 ++++
+ drivers/soc/tegra/Kconfig                     |  10 +
+ drivers/soc/tegra/Makefile                    |   2 +
+ drivers/soc/tegra/regulators-tegra20.c        | 364 ++++++++++++++++++
+ drivers/soc/tegra/regulators-tegra30.c        | 316 +++++++++++++++
+ 5 files changed, 757 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/nvidia,tegra-regulators-coupling.txt
+ create mode 100644 drivers/soc/tegra/regulators-tegra20.c
+ create mode 100644 drivers/soc/tegra/regulators-tegra30.c
+
+-- 
+2.22.0
 
