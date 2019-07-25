@@ -2,134 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A09BA753C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:22:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 459E4753CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:22:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389506AbfGYQWD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:22:03 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44421 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389270AbfGYQWD (ORCPT
+        id S2390393AbfGYQWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:22:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:32838 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388971AbfGYQWk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:22:03 -0400
-Received: by mail-pg1-f195.google.com with SMTP id i18so23294959pgl.11
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 09:22:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=u6QQcRyveiHvf3n/ThuMriSU0sNCDtWoFYIj3lHyjPc=;
-        b=CpMliZ0FSoXb2RETeJwlRkpfpP5ANESfneRGLLoUYWt72jPPZjT01/XXtyIWKYQi2I
-         /vPr5aa55CowmdBKdDmZnp+kKidKGuV4Rz1QOlFCt+igK4RjI3L0uxdD+7xIAhdiz/yY
-         FqoY3lkXfPDRHfPYU3kh2DQbLeZN17iu7WFvXdsGVEGP7LV9vFzqes+jUwLT2wKZg6wR
-         d5QDB2K6qcNahCZsuEU1+7rAQN87MIMj+Vvw7dv4CnsMzkrS/FC9xoWPyyYK4RwmOkr+
-         1H75dc+nwx09lB0/w+WwmsXf7kRoeVS00KYk9831vCwtwPt8NyRBH3RpSy9cv826fGJ9
-         kkRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=u6QQcRyveiHvf3n/ThuMriSU0sNCDtWoFYIj3lHyjPc=;
-        b=IBagNmoOMAVIbwcX1ebqOhqrTMzNXjw1HJcXPHb/lwHa321zg855ZOloJWdTcWI95A
-         1pmpTfjpe86BrZPdW6Lsnsx0ixxth60P5/0jDCYuUNY6fdI40Rfw3BpYzML2NaoG18uO
-         4HmZ/QyDpD+N+T0BtjZAsH1xw7CMxpZMNDADqy7rxrXAIzqpwFpo06wsHJC43oaagU21
-         tHTKsC5o2RN3T5xWGaTCnYSIXe/mcNuy7PDX4rsdHnPGS2z2B3aS/Q29gAcEvD6vI2dD
-         ZXAng671PXG8pnDCKfNHeBJUTYUTVZImGS3QUh5slcQeyAC54qcvr0FwdsBAPLOaIVyE
-         H/pA==
-X-Gm-Message-State: APjAAAVzfIl0nZog/vUImS3y7txJ9tBrLhsAyzXGzLfGAA+I30ytk9jv
-        gfGPtfJjEAPPmwdd55hD4dc=
-X-Google-Smtp-Source: APXvYqyDYkqZYK92OGiQNqG44X4PD+TGUbMCsizfqySvfVVpij6rSdgZ97tMI46WWzy0xO2+627wDw==
-X-Received: by 2002:a65:4103:: with SMTP id w3mr71316031pgp.1.1564071722348;
-        Thu, 25 Jul 2019 09:22:02 -0700 (PDT)
-Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:5404:91ba:59dc:9400])
-        by smtp.googlemail.com with ESMTPSA id z19sm43072163pgv.35.2019.07.25.09.22.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 09:22:01 -0700 (PDT)
-Subject: Re: [PATCH v10 3/5] overlayfs: add __get xattr method
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-team@android.com, Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-doc@vger.kernel.org
-References: <20190724195719.218307-1-salyzyn@android.com>
- <20190724195719.218307-4-salyzyn@android.com>
- <CAOQ4uxjizC1RhmLe3qmfASk2M-Y+QEiyLL1yJXa4zXAEby7Tig@mail.gmail.com>
- <af254162-10bf-1fc5-2286-8d002a287400@android.com>
- <CAOQ4uxi5S9HTx+wR1U_8vQ-6nyCozykWBZbZwiHhnXBGhXRz8Q@mail.gmail.com>
-From:   Mark Salyzyn <salyzyn@android.com>
-Message-ID: <35b70147-25ad-4c29-3972-418ebee5e7b8@android.com>
-Date:   Thu, 25 Jul 2019 09:22:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thu, 25 Jul 2019 12:22:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jmxq7cUH+5nrEr7J45H3lQqJP+cVdwe0XIslgATjMww=; b=qao610lA7li0A6DLNca9Jd/9R
+        0cMhCxxeQZZmf0ivJrFAhVZsSVfS957oa2EXoGSGnwsxPj/yIBWDIQOUoWIuA9CngUgAMlyfZukP8
+        ptet1sLz2z5kpWhQs9N33WkWwNKgwIFyxxAN5rfBpiOoY9TFOpZ13WOkUPT4Mcq/TKpsdHtsm0EW/
+        G3M7n8cALjW/XVtN5QhPeDNuxEytgPYQU+DU79fgl10kWQF4IHEpi1jWvZRGIsX/XKgtieOfg2O11
+        DLffj/fs0TjGnsjuS6eneugp8cKWa4P7kNCCoNDNZbW4mE9jr63Dcg0So8GEMAxx3CoM4TnUTf4vr
+        J05edpcKw==;
+Received: from [179.95.31.157] (helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hqgVo-0001QW-C5; Thu, 25 Jul 2019 16:22:36 +0000
+Date:   Thu, 25 Jul 2019 13:22:30 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        kernel@collabora.com,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        linux-rockchip@lists.infradead.org,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        fbuergisser@chromium.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] media: hantro: Move VP8 common code
+Message-ID: <20190725132230.6e7f0c22@coco.lan>
+In-Reply-To: <20190725141756.2518-7-ezequiel@collabora.com>
+References: <20190725141756.2518-1-ezequiel@collabora.com>
+        <20190725141756.2518-7-ezequiel@collabora.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxi5S9HTx+wR1U_8vQ-6nyCozykWBZbZwiHhnXBGhXRz8Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/25/19 8:43 AM, Amir Goldstein wrote:
-> On Thu, Jul 25, 2019 at 6:03 PM Mark Salyzyn <salyzyn@android.com> wrote:
->> On 7/24/19 10:48 PM, Amir Goldstein wrote:
->>> On Wed, Jul 24, 2019 at 10:57 PM Mark Salyzyn <salyzyn@android.com> wrote:
->>>> Because of the overlayfs getxattr recursion, the incoming inode fails
->>>> to update the selinux sid resulting in avc denials being reported
->>>> against a target context of u:object_r:unlabeled:s0.
->>> This description is too brief for me to understand the root problem.
->>> What's wring with the overlayfs getxattr recursion w.r.t the selinux
->>> security model?
->> __vfs_getxattr (the way the security layer acquires the target sid
->> without recursing back to security to check the access permissions)
->> calls get xattr method, which in overlayfs calls vfs_getxattr on the
->> lower layer (which then recurses back to security to check permissions)
->> and reports back -EACCES if there was a denial (which is OK) and _no_
->> sid copied to caller's inode security data, bubbles back to the security
->> layer caller, which reports an invalid avc: message for
->> u:object_r:unlabeled:s0 (the uninitialized sid instead of the sid for
->> the lower filesystem target). The blocked access is 100% valid, it is
->> supposed to be blocked. This does however result in a cosmetic issue
->> that makes it impossible to use audit2allow to construct a rule that
->> would be usable to fix the access problem.
->>
-> Ahhh you are talking about getting the security.selinux.* xattrs?
-> I was under the impression (Vivek please correct me if I wrong)
-> that overlayfs objects cannot have individual security labels and
+Em Thu, 25 Jul 2019 11:17:55 -0300
+Ezequiel Garcia <ezequiel@collabora.com> escreveu:
 
-They can, and we _need_ them for Android's use cases, upper and lower 
-filesystems.
+> In order to introduce support for RK3399 VP8 decoding,
+> move some common VP8 code. This will be reused by
+> the RK3399 implementation, reducing code duplication.
+> 
+> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+> ---
+>  .../staging/media/hantro/hantro_g1_vp8_dec.c    | 17 -----------------
+>  drivers/staging/media/hantro/hantro_hw.h        |  4 ++++
+>  drivers/staging/media/hantro/hantro_vp8.c       | 15 +++++++++++++++
+>  3 files changed, 19 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/staging/media/hantro/hantro_g1_vp8_dec.c b/drivers/staging/media/hantro/hantro_g1_vp8_dec.c
+> index cd1fbd3a0d5f..181e2f76d8cb 100644
+> --- a/drivers/staging/media/hantro/hantro_g1_vp8_dec.c
+> +++ b/drivers/staging/media/hantro/hantro_g1_vp8_dec.c
+> @@ -16,8 +16,6 @@
+>  #include "hantro.h"
+>  #include "hantro_g1_regs.h"
+>  
+> -#define DEC_8190_ALIGN_MASK	0x07U
+> -
+>  /* DCT partition base address regs */
+>  static const struct hantro_reg vp8_dec_dct_base[8] = {
+>  	{ G1_REG_ADDR_STR, 0, 0xffffffff },
+> @@ -131,21 +129,6 @@ static const struct hantro_reg vp8_dec_pred_bc_tap[8][4] = {
+>  	},
+>  };
+>  
+> -/*
+> - * filter taps taken to 7-bit precision,
+> - * reference RFC6386#Page-16, filters[8][6]
+> - */
+> -static const u32 vp8_dec_mc_filter[8][6] = {
+> -	{ 0, 0, 128, 0, 0, 0 },
+> -	{ 0, -6, 123, 12, -1, 0 },
+> -	{ 2, -11, 108, 36, -8, 1 },
+> -	{ 0, -9, 93, 50, -6, 0 },
+> -	{ 3, -16, 77, 77, -16, 3 },
+> -	{ 0, -6, 50, 93, -9, 0 },
+> -	{ 1, -8, 36, 108, -11, 2 },
+> -	{ 0, -1, 12, 123, -6, 0 }
+> -};
+> -
+>  /*
+>   * Set loop filters
+>   */
+> diff --git a/drivers/staging/media/hantro/hantro_hw.h b/drivers/staging/media/hantro/hantro_hw.h
+> index 34ef24e3a9ef..185e27d47e47 100644
+> --- a/drivers/staging/media/hantro/hantro_hw.h
+> +++ b/drivers/staging/media/hantro/hantro_hw.h
+> @@ -15,6 +15,8 @@
+>  #include <media/vp8-ctrls.h>
+>  #include <media/videobuf2-core.h>
+>  
+> +#define DEC_8190_ALIGN_MASK	0x07U
+> +
+>  struct hantro_dev;
+>  struct hantro_ctx;
+>  struct hantro_buf;
+> @@ -93,6 +95,8 @@ extern const struct hantro_variant rk3399_vpu_variant;
+>  extern const struct hantro_variant rk3328_vpu_variant;
+>  extern const struct hantro_variant rk3288_vpu_variant;
+>  
+> +extern const u32 vp8_dec_mc_filter[8][6];
 
-Some (most?) union filesystems (like Android's sdcardfs) set sepolicy 
-from the mount options, we did not need this adjustment there of course.
+Please don't do that, as a symbol like that can easily cause
+namespace clashes in the future. For all exported symbols,
+please prepend the driver name, like:
 
-> the only way to label overlayfs objects is by mount options on the
-> entire mount? Or is this just for lower layer objects?
->
-> Anyway, the API I would go for is adding a @flags argument to
-> get() which can take XATTR_NOSECURITY akin to
-> FMODE_NONOTIFY, GFP_NOFS, meant to avoid recursions.
+	hantro_vp8_dec_mc_filter
 
-I do like it better (with the following 7 stages of grief below), best 
-for the future.
+Regards,
+Mauro
 
-The change in this handler's API will affect all filesystem drivers 
-(well, my change affects the ABI, so it is not as-if I saved the world 
-from a module recompile) touching all filesystem sources with an even 
-larger audience of stakeholders. Larger audience of stakeholders, the 
-harder to get the change in ;-/. This is also concerning since I would 
-like this change to go to stable 4.4, 4.9, 4.14 and 4.19 where this 
-regression got introduced. I can either craft specific stable patches or 
-just let it go and deal with them in the android-common distributions 
-rather than seeking stable merged down. ABI/API breaks are a problem for 
-stable anyway ...
 
--- Mark
+> +
+>  void hantro_watchdog(struct work_struct *work);
+>  void hantro_run(struct hantro_ctx *ctx);
+>  void hantro_irq_done(struct hantro_dev *vpu, unsigned int bytesused,
+> diff --git a/drivers/staging/media/hantro/hantro_vp8.c b/drivers/staging/media/hantro/hantro_vp8.c
+> index 66c45335d871..be5cb01d1309 100644
+> --- a/drivers/staging/media/hantro/hantro_vp8.c
+> +++ b/drivers/staging/media/hantro/hantro_vp8.c
+> @@ -31,6 +31,21 @@ struct vp8_prob_tbl_packed {
+>  	u8 padding3[96];
+>  };
+>  
+> +/*
+> + * filter taps taken to 7-bit precision,
+> + * reference RFC6386#Page-16, filters[8][6]
+> + */
+> +const u32 vp8_dec_mc_filter[8][6] = {
+> +	{ 0, 0, 128, 0, 0, 0 },
+> +	{ 0, -6, 123, 12, -1, 0 },
+> +	{ 2, -11, 108, 36, -8, 1 },
+> +	{ 0, -9, 93, 50, -6, 0 },
+> +	{ 3, -16, 77, 77, -16, 3 },
+> +	{ 0, -6, 50, 93, -9, 0 },
+> +	{ 1, -8, 36, 108, -11, 2 },
+> +	{ 0, -1, 12, 123, -6, 0 }
+> +};
+> +
+>  void hantro_vp8_prob_update(struct hantro_ctx *ctx,
+>  			    const struct v4l2_ctrl_vp8_frame_header *hdr)
+>  {
 
+
+
+Thanks,
+Mauro
