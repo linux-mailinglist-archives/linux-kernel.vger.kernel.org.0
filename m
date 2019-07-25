@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDEF57539D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:12:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69EB9753A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:13:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390042AbfGYQMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:12:38 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57723 "EHLO
+        id S2390089AbfGYQNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:13:25 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40389 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389184AbfGYQMi (ORCPT
+        with ESMTP id S2389184AbfGYQNX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:12:38 -0400
+        Thu, 25 Jul 2019 12:13:23 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PGCOZ81074569
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PGD9R71074627
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 25 Jul 2019 09:12:24 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PGCOZ81074569
+        Thu, 25 Jul 2019 09:13:09 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PGD9R71074627
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564071145;
-        bh=/PxKEBEMgFwjssVT3ItBw1e8n4z5gTVNDoJCXf0gjvI=;
+        s=2019071901; t=1564071189;
+        bh=Sej3E0zuNeW6aNXfOe8nX4J0oZkJD6yalWbXZthvR9A=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=fD9EKVfFZktGaQl/5hBFPY2Gb5/84Q4Xvxx+41P+aTc5iRM7G9YscEOoBe+Fgdu2a
-         xeSHI+kHPUlQXCshCM6iiFafMWWQn/81IU1m0h7SNYoUo6uJpiyVdwg9pe9hIQrSOA
-         IPaJ4123C618phtE4moSPao63f2GLZB0JOdCH3tsbtdKRBCMkNM+8lVpK7lViOOp75
-         ry9lhO3q17QmH1ewfSo5K/kEuNGieTu7KFa8jmMGTqjRB1CaHtHM66uZBKPZtQPpkl
-         gs0umyWoHQ+/lUrUm0TGjal26oDKBglFV6OCwkeIkQBZe9WD2MX2UfPIZ0UIsAUxhg
-         Pa67jkLVx2SzA==
+        b=zil7vD52l8XN9bVe4DnfFqw4Nh8SzSa2sh2VFNFRiO21XgJHaI7dOCYo1kMrUlMyJ
+         GToo4PmYbN2oo5t3/Az6NPDt9hewFk0UtaXhMYpaWrvNZqx1HCslELRcy873b8vW+O
+         DNpvLs03thwbsLN2r5IQ+Zl1aWpEa/idTACmfvfKhbgj2qaqkt+Ao1WvmunwKaxyzh
+         iBdCFSKHcDsdbPNMiXGR4seHFvvXfgacI2t97YSXAmhFRYmGvO5CN+kBSB1Jqb0kTr
+         3FUWb3GSEyAOoamC0J4IGsaexR/a0LBJW1w1xWVpgNbaQpNrsyySmSXM9cXpsRMWTm
+         6XY9hD2b8rj2g==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PGCORg1074566;
-        Thu, 25 Jul 2019 09:12:24 -0700
-Date:   Thu, 25 Jul 2019 09:12:24 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PGD8uD1074624;
+        Thu, 25 Jul 2019 09:13:08 -0700
+Date:   Thu, 25 Jul 2019 09:13:08 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Valentin Schneider <tipbot@zytor.com>
-Message-ID: <tip-b34920d4ce6e6fc9424c20a4be98676eb543122f@git.kernel.org>
-Cc:     peterz@infradead.org, mingo@kernel.org, hpa@zytor.com,
-        valentin.schneider@arm.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: mingo@kernel.org, peterz@infradead.org, hpa@zytor.com,
-          valentin.schneider@arm.com, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, torvalds@linux-foundation.org
-In-Reply-To: <20190715102508.32434-3-valentin.schneider@arm.com>
-References: <20190715102508.32434-3-valentin.schneider@arm.com>
+Message-ID: <tip-9434f9f5d117302cc7ddf038e7879f6871dc7a81@git.kernel.org>
+Cc:     valentin.schneider@arm.com, mingo@kernel.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, peterz@infradead.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Reply-To: valentin.schneider@arm.com, tglx@linutronix.de, mingo@kernel.org,
+          hpa@zytor.com, peterz@infradead.org,
+          torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20190715102508.32434-4-valentin.schneider@arm.com>
+References: <20190715102508.32434-4-valentin.schneider@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/fair: Move task_numa_work() init to
- init_numa_balancing()
-Git-Commit-ID: b34920d4ce6e6fc9424c20a4be98676eb543122f
+Subject: [tip:sched/core] sched/fair: Change task_numa_work() storage to
+ static
+Git-Commit-ID: 9434f9f5d117302cc7ddf038e7879f6871dc7a81
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,72 +63,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b34920d4ce6e6fc9424c20a4be98676eb543122f
-Gitweb:     https://git.kernel.org/tip/b34920d4ce6e6fc9424c20a4be98676eb543122f
+Commit-ID:  9434f9f5d117302cc7ddf038e7879f6871dc7a81
+Gitweb:     https://git.kernel.org/tip/9434f9f5d117302cc7ddf038e7879f6871dc7a81
 Author:     Valentin Schneider <valentin.schneider@arm.com>
-AuthorDate: Mon, 15 Jul 2019 11:25:07 +0100
+AuthorDate: Mon, 15 Jul 2019 11:25:08 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 25 Jul 2019 15:51:51 +0200
+CommitDate: Thu, 25 Jul 2019 15:51:52 +0200
 
-sched/fair: Move task_numa_work() init to init_numa_balancing()
+sched/fair: Change task_numa_work() storage to static
 
-We only need to set the callback_head worker function once, do it
-during sched_fork().
+There are no callers outside of fair.c.
 
-While at it, move the comment regarding double task_work addition to
-init_numa_balancing(), since the double add sentinel is first set there.
-
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: mgorman@suse.de
 Cc: riel@surriel.com
-Link: https://lkml.kernel.org/r/20190715102508.32434-3-valentin.schneider@arm.com
+Link: https://lkml.kernel.org/r/20190715102508.32434-4-valentin.schneider@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/fair.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ kernel/sched/fair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index f0c488015649..fd391fc00ed8 100644
+index fd391fc00ed8..b5546a15206c 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -2495,7 +2495,7 @@ void task_numa_work(struct callback_head *work)
- 
- 	SCHED_WARN_ON(p != container_of(work, struct task_struct, numa_work));
- 
--	work->next = work; /* protect against double add */
-+	work->next = work;
- 	/*
- 	 * Who cares about NUMA placement when they're dying.
- 	 *
-@@ -2639,12 +2639,15 @@ void init_numa_balancing(unsigned long clone_flags, struct task_struct *p)
- 	p->node_stamp			= 0;
- 	p->numa_scan_seq		= mm ? mm->numa_scan_seq : 0;
- 	p->numa_scan_period		= sysctl_numa_balancing_scan_delay;
-+	/* Protect against double add, see task_tick_numa and task_numa_work */
- 	p->numa_work.next		= &p->numa_work;
- 	p->numa_faults			= NULL;
- 	RCU_INIT_POINTER(p->numa_group, NULL);
- 	p->last_task_numa_placement	= 0;
- 	p->last_sum_exec_runtime	= 0;
- 
-+	init_task_work(&p->numa_work, task_numa_work);
-+
- 	/* New address space, reset the preferred nid */
- 	if (!(clone_flags & CLONE_VM)) {
- 		p->numa_preferred_nid = NUMA_NO_NODE;
-@@ -2693,10 +2696,8 @@ static void task_tick_numa(struct rq *rq, struct task_struct *curr)
- 			curr->numa_scan_period = task_scan_start(curr);
- 		curr->node_stamp += period;
- 
--		if (!time_before(jiffies, curr->mm->numa_next_scan)) {
--			init_task_work(work, task_numa_work); /* TODO: move this into sched_fork() */
-+		if (!time_before(jiffies, curr->mm->numa_next_scan))
- 			task_work_add(curr, work, true);
--		}
- 	}
- }
- 
+@@ -2482,7 +2482,7 @@ static void reset_ptenuma_scan(struct task_struct *p)
+  * The expensive part of numa migration is done from task_work context.
+  * Triggered from task_tick_numa().
+  */
+-void task_numa_work(struct callback_head *work)
++static void task_numa_work(struct callback_head *work)
+ {
+ 	unsigned long migrate, next_scan, now = jiffies;
+ 	struct task_struct *p = current;
