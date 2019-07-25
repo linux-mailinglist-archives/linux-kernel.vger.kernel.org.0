@@ -2,200 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6166675141
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:33:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A16AC7513F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:33:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728837AbfGYOdi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 10:33:38 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39227 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728420AbfGYOdg (ORCPT
+        id S1728695AbfGYOdc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 10:33:32 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:46382 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728420AbfGYOdc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 10:33:36 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PEXPUo1041320
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 25 Jul 2019 07:33:25 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PEXPUo1041320
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564065206;
-        bh=Aaj0vWujqzqpFjmQS3JzUmdNp9XlQRB0IiBuxqP3Cps=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=ICHURx0M+1yVLOYU8z4XN1MKY/CScKDCx7Q3oJSEfG9MElgU9NnbE57RDGcFWbuqF
-         meqiCkcJyOLOCmRcGEhs0EanfNeb8jKscCkmYqBg26N3ZCMkuRfXBKF9moSjlXW7kg
-         UawtDeWSvSjG7NDyEUfXfKvs414TeeP65eemDUt0DAdj2BgTCNVofuRS8/ykNbxUTo
-         uGj7Qh6f05/NBtX0C6SOgAdMDoHq9YmIT15SJ0mSsoUl1cuFcC5ye2ef1sSEC6MpUw
-         dmW8Nf/akYpRWyBsuZrax6BQwIlWjd+G8DBKC7LXEVxDcG72pDU+uwP7OjuJrcjeHP
-         OdvrLOe3c9+fA==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PEXPH11041317;
-        Thu, 25 Jul 2019 07:33:25 -0700
-Date:   Thu, 25 Jul 2019 07:33:25 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-d0a7166bc7ac4feac5c482ebe8b2417aa3302ef4@git.kernel.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        peterz@infradead.org, tglx@linutronix.de
-Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-          peterz@infradead.org, tglx@linutronix.de
-In-Reply-To: <20190722105220.677835995@linutronix.de>
-References: <20190722105220.677835995@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/apic] x86/smp: Move smp_function_call implementations into
- IPI code
-Git-Commit-ID: d0a7166bc7ac4feac5c482ebe8b2417aa3302ef4
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 25 Jul 2019 10:33:32 -0400
+Received: by mail-qk1-f195.google.com with SMTP id r4so36493599qkm.13
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 07:33:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=eKIsWU0npz6No63lujiEyyyNu0/XoWzsuOpOvxmHals=;
+        b=oHNZExrsfy++Oe6sHb9J8h3fI8605XTvBLn9PEPqYT+HSOR3yzVaP9SL/3YRHkku3A
+         9lSs6qTJqc++k7f7Cu28vTpdS6jffiGJ7xtyMJ8/EYnZFMebF45GR7wJ/eT50+nfv3n/
+         Tc3ENf6XmTFsX7vv8Q8PIekm+3F3ixW1BBDEcHYPjh/6hpsrSdWFJcJpiChv+RN3M1Ed
+         Z0edKyg3e/m+hMNe224cmn1f/9dsMRQQaUwlmm6liaFsEFKgc/KeMqIu2lq9aOBcn5wA
+         PFfW8L4pSlV0gyZHNrEe7NmtvltSdOKZKogS7CJ/1AGTxOAZfTAOS6pd9rpNJP3rDK3o
+         uxmQ==
+X-Gm-Message-State: APjAAAWDtPVMLtNGdv1uxcYuxYkPHcOVh39TmGoPiI97XKWW3oAoeZiY
+        uC+YZHdLbWTROM7BV8ZoLNVVmw==
+X-Google-Smtp-Source: APXvYqxuymRMR9PwjI/MnexZedK5auF5DqZvwLEybKqYcN9R+eg3mxGigkrHVwcv5rKEoznlC3TDrw==
+X-Received: by 2002:a37:a40f:: with SMTP id n15mr55380902qke.19.1564065211618;
+        Thu, 25 Jul 2019 07:33:31 -0700 (PDT)
+Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
+        by smtp.gmail.com with ESMTPSA id j8sm21970801qki.85.2019.07.25.07.33.28
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 25 Jul 2019 07:33:30 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 10:33:25 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Fam Zheng <zhengfeiran@bytedance.com>
+Cc:     Fei Li <lifei.shirley@bytedance.com>, linux-kernel@vger.kernel.org,
+        Jason Wang <jasowang@redhat.com>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: Re: [External Email] Re: [PATCH 1/2] virtio-mmio: Process vrings
+ more proactively
+Message-ID: <20190725103238-mutt-send-email-mst@kernel.org>
+References: <20190719133135.32418-1-lifei.shirley@bytedance.com>
+ <20190719133135.32418-2-lifei.shirley@bytedance.com>
+ <20190719111440-mutt-send-email-mst@kernel.org>
+ <5b29804b-528b-61bd-1ab6-4e442d360cf9@bytedance.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <5b29804b-528b-61bd-1ab6-4e442d360cf9@bytedance.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d0a7166bc7ac4feac5c482ebe8b2417aa3302ef4
-Gitweb:     https://git.kernel.org/tip/d0a7166bc7ac4feac5c482ebe8b2417aa3302ef4
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Mon, 22 Jul 2019 20:47:25 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 25 Jul 2019 16:12:01 +0200
+On Mon, Jul 22, 2019 at 10:28:30AM +0800, Fam Zheng wrote:
+> 
+> On 7/19/19 11:17 PM, Michael S. Tsirkin wrote:
+> > On Fri, Jul 19, 2019 at 09:31:34PM +0800, Fei Li wrote:
+> > > From: Fam Zheng <zhengfeiran@bytedance.com>
+> > > 
+> > > This allows the backend to _not_ trap mmio read of the status register
+> > > after injecting IRQ in the data path, which can improve the performance
+> > > significantly by avoiding a vmexit for each interrupt.
+> > > 
+> > > More importantly it also makes it possible for Firecracker to hook up
+> > > virtio-mmio with vhost-net, in which case there isn't a way to implement
+> > > proper status register handling.
+> > > 
+> > > For a complete backend that does set either INT_CONFIG bit or INT_VRING
+> > > bit upon generating irq, what happens hasn't changed.
+> > > 
+> > > Signed-off-by: Fam Zheng <zhengfeiran@bytedance.com>
+> > This has a side effect of skipping vring callbacks
+> > if they trigger at the same time with a config
+> > interrupt.
+> > I don't see why this is safe.
+> 
+> Good point! I think the block can be moved out from the else block and run
+> unconditionally then.
+> 
+> Fam
 
-x86/smp: Move smp_function_call implementations into IPI code
 
-Move it where it belongs. That allows to keep all the shorthand logic in
-one place.
+Won't same callback run from multiple irq handlers then?
+Running multiple vring callbacks at the same time isn't
+a good idea either.
 
-No functional change.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20190722105220.677835995@linutronix.de
-
----
- arch/x86/include/asm/smp.h |  1 +
- arch/x86/kernel/apic/ipi.c | 40 ++++++++++++++++++++++++++++++++++++++++
- arch/x86/kernel/smp.c      | 40 ----------------------------------------
- 3 files changed, 41 insertions(+), 40 deletions(-)
-
-diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-index e1356a3b8223..e15f364efbcc 100644
---- a/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -143,6 +143,7 @@ void play_dead_common(void);
- void wbinvd_on_cpu(int cpu);
- int wbinvd_on_all_cpus(void);
- 
-+void native_smp_send_reschedule(int cpu);
- void native_send_call_func_ipi(const struct cpumask *mask);
- void native_send_call_func_single_ipi(int cpu);
- void x86_idle_thread_init(unsigned int cpu, struct task_struct *idle);
-diff --git a/arch/x86/kernel/apic/ipi.c b/arch/x86/kernel/apic/ipi.c
-index f53de3e0145e..eaac65bf58f0 100644
---- a/arch/x86/kernel/apic/ipi.c
-+++ b/arch/x86/kernel/apic/ipi.c
-@@ -62,6 +62,46 @@ void apic_send_IPI_allbutself(unsigned int vector)
- 		apic->send_IPI_mask_allbutself(cpu_online_mask, vector);
- }
- 
-+/*
-+ * Send a 'reschedule' IPI to another CPU. It goes straight through and
-+ * wastes no time serializing anything. Worst case is that we lose a
-+ * reschedule ...
-+ */
-+void native_smp_send_reschedule(int cpu)
-+{
-+	if (unlikely(cpu_is_offline(cpu))) {
-+		WARN(1, "sched: Unexpected reschedule of offline CPU#%d!\n", cpu);
-+		return;
-+	}
-+	apic->send_IPI(cpu, RESCHEDULE_VECTOR);
-+}
-+
-+void native_send_call_func_single_ipi(int cpu)
-+{
-+	apic->send_IPI(cpu, CALL_FUNCTION_SINGLE_VECTOR);
-+}
-+
-+void native_send_call_func_ipi(const struct cpumask *mask)
-+{
-+	cpumask_var_t allbutself;
-+
-+	if (!alloc_cpumask_var(&allbutself, GFP_ATOMIC)) {
-+		apic->send_IPI_mask(mask, CALL_FUNCTION_VECTOR);
-+		return;
-+	}
-+
-+	cpumask_copy(allbutself, cpu_online_mask);
-+	__cpumask_clear_cpu(smp_processor_id(), allbutself);
-+
-+	if (cpumask_equal(mask, allbutself) &&
-+	    cpumask_equal(cpu_online_mask, cpu_callout_mask))
-+		apic->send_IPI_allbutself(CALL_FUNCTION_VECTOR);
-+	else
-+		apic->send_IPI_mask(mask, CALL_FUNCTION_VECTOR);
-+
-+	free_cpumask_var(allbutself);
-+}
-+
- #endif /* CONFIG_SMP */
- 
- static inline int __prepare_ICR2(unsigned int mask)
-diff --git a/arch/x86/kernel/smp.c b/arch/x86/kernel/smp.c
-index b8ad1876a081..b8d4e9c3c070 100644
---- a/arch/x86/kernel/smp.c
-+++ b/arch/x86/kernel/smp.c
-@@ -115,46 +115,6 @@
- static atomic_t stopping_cpu = ATOMIC_INIT(-1);
- static bool smp_no_nmi_ipi = false;
- 
--/*
-- * this function sends a 'reschedule' IPI to another CPU.
-- * it goes straight through and wastes no time serializing
-- * anything. Worst case is that we lose a reschedule ...
-- */
--static void native_smp_send_reschedule(int cpu)
--{
--	if (unlikely(cpu_is_offline(cpu))) {
--		WARN(1, "sched: Unexpected reschedule of offline CPU#%d!\n", cpu);
--		return;
--	}
--	apic->send_IPI(cpu, RESCHEDULE_VECTOR);
--}
--
--void native_send_call_func_single_ipi(int cpu)
--{
--	apic->send_IPI(cpu, CALL_FUNCTION_SINGLE_VECTOR);
--}
--
--void native_send_call_func_ipi(const struct cpumask *mask)
--{
--	cpumask_var_t allbutself;
--
--	if (!alloc_cpumask_var(&allbutself, GFP_ATOMIC)) {
--		apic->send_IPI_mask(mask, CALL_FUNCTION_VECTOR);
--		return;
--	}
--
--	cpumask_copy(allbutself, cpu_online_mask);
--	__cpumask_clear_cpu(smp_processor_id(), allbutself);
--
--	if (cpumask_equal(mask, allbutself) &&
--	    cpumask_equal(cpu_online_mask, cpu_callout_mask))
--		apic->send_IPI_allbutself(CALL_FUNCTION_VECTOR);
--	else
--		apic->send_IPI_mask(mask, CALL_FUNCTION_VECTOR);
--
--	free_cpumask_var(allbutself);
--}
--
- static int smp_stop_nmi_callback(unsigned int val, struct pt_regs *regs)
- {
- 	/* We are registered on stopping cpu too, avoid spurious NMI */
+> 
+> > 
+> > 
+> > > ---
+> > >   drivers/virtio/virtio_mmio.c | 4 +---
+> > >   1 file changed, 1 insertion(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
+> > > index e09edb5c5e06..9b42502b2204 100644
+> > > --- a/drivers/virtio/virtio_mmio.c
+> > > +++ b/drivers/virtio/virtio_mmio.c
+> > > @@ -295,9 +295,7 @@ static irqreturn_t vm_interrupt(int irq, void *opaque)
+> > >   	if (unlikely(status & VIRTIO_MMIO_INT_CONFIG)) {
+> > >   		virtio_config_changed(&vm_dev->vdev);
+> > >   		ret = IRQ_HANDLED;
+> > > -	}
+> > > -
+> > > -	if (likely(status & VIRTIO_MMIO_INT_VRING)) {
+> > > +	} else {
+> > >   		spin_lock_irqsave(&vm_dev->lock, flags);
+> > >   		list_for_each_entry(info, &vm_dev->virtqueues, node)
+> > >   			ret |= vring_interrupt(irq, info->vq);
+> > > -- 
+> > > 2.11.0
