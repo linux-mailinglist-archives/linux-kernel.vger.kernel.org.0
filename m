@@ -2,116 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD71874DBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 14:06:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 715A574DC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 14:08:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbfGYMGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 08:06:07 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42115 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbfGYMGH (ORCPT
+        id S1728546AbfGYMIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 08:08:09 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:42126 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbfGYMIH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 08:06:07 -0400
-Received: by mail-wr1-f66.google.com with SMTP id x1so584855wrr.9
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 05:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=QrZnAj55GJc2DX6oG5oAtaMU4bSEqiLtxAoqbHsBW6U=;
-        b=Nj+0T5bs0d2ufZh1I08Rd4bGQokn2WEvSLQX+2AJ7s+UB3f9RiKMpd8q7mXlGJ5Avl
-         vFcQwnzFB2vmGE+nstAcIOEevpTqhsk9Ijq0QTEaGjX4iznBhWaW5Vn88nfnaGvrG3cc
-         vqvD+TpluBbMnlSomn821rTVwAzQMFwZYdL/wpEjFAtNp0SL4oTPmA9d3tLvEEVPitS+
-         Szrr8RjNC78tK/OYj+aYnFmYbADlXqJXX5KXgHIxCa4zEzywuQHW3XBPtXmUwYQ4s7dU
-         eIlGXALAJh8y9W2giQe6DTlNpw0TsBnCM4O2ia2fXmuL29Ywnl4zDFzAEbxMuJ1O9gbb
-         MCgg==
+        Thu, 25 Jul 2019 08:08:07 -0400
+Received: by mail-io1-f71.google.com with SMTP id f22so54651759ioj.9
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 05:08:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=QrZnAj55GJc2DX6oG5oAtaMU4bSEqiLtxAoqbHsBW6U=;
-        b=H9xMlazOboUjR1u06TzYoXRR/7frqNuRQUbQdOep0YFN/r35AUr3Hoj3yvPTVhJ2yT
-         IAUYNWmkH6q3Iz9rtXyC01xs+e2NaG6vpH+KblsY1Rw7lV0YOTA+YuotBZ7r3vlWC0YV
-         H+HaRT9AMSI849/9k/uHkrLR5JSyh2s6+4iVjrz1nlOAmnMZZbA5waQ6t5f1ZQj/8YPN
-         JApnTlujc4GnAlb3BvrSdjT5/kInA3yA92Cz/A/xEenkCgaEmGQQOk2TiLghVU3TmO8N
-         1aIftl59wBwM/74LEyoblVSoHUmnLgwct9pVFRl/W+EzHoVxtVZ8p1x1wfAgn7/JRrNq
-         xQxg==
-X-Gm-Message-State: APjAAAVNPzU59nMrYq+cuLRIm863Zcn/OiU0K1ggZ9mYqt+viQ50MDUQ
-        2uy+9nqkF21sBVurY6DPlo7euw==
-X-Google-Smtp-Source: APXvYqz5cejIS4t0SsogpN4XZMgzduvjw6mlihzrhym3PGwkVtCxXJ0tVe2LrtC3tMsHhpgVO8oZDw==
-X-Received: by 2002:a5d:4a49:: with SMTP id v9mr92906851wrs.44.1564056365397;
-        Thu, 25 Jul 2019 05:06:05 -0700 (PDT)
-Received: from dell ([2.27.35.164])
-        by smtp.gmail.com with ESMTPSA id r11sm62286536wre.14.2019.07.25.05.05.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Jul 2019 05:06:04 -0700 (PDT)
-Date:   Thu, 25 Jul 2019 13:05:54 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        jarkko.nikula@linux.intel.com, mika.westerberg@linux.intel.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: intel-lpss: Remove D3cold delay
-Message-ID: <20190725120554.GE23883@dell>
-References: <20190705045503.13379-1-kai.heng.feng@canonical.com>
- <20190709114647.GX9224@smile.fi.intel.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=P3zakTim0o/92942Qn+47VXCBatg5fpoe0zlX85bt+o=;
+        b=LksC8CtH+1+o6CtWY6qva3fqrqhemQfY2Rr64gWY6vX6s/hXrlQjVd86HPylmLVZ9y
+         GhOEsVvJCTV8nwSeaL9kjYzlWCycDhdTHwd0OwvC/ocImKFqem4RitzDtx63iyRg5y7w
+         cAnViVV0izjexD4S7y2B2+859MArBI1tKoD6gvx+uGDD8QXqeJbGwDSPj8NZb2s1ok+W
+         pkZsd6CZz+1qoUhN9w3s+ehGITZf+gJqwSc6qFkJYO71KGor1UqYemnH3H8hG6X7xDQv
+         U1FMCge/wPN+Gx30EGFSbA5zII3Fl+AD8sw0KpbenTeEKYnxzqIFOh4J4xkLLcZh0mzO
+         NKxQ==
+X-Gm-Message-State: APjAAAWx1lOEsQdf0atJ0CPuxE91EEs4ELJE5aECgyDqXgzrTsf8jtRJ
+        zWEw7iIalwum2kGQLuT1p6oRhJUtLvCq1d+C83k8l/e+vweL
+X-Google-Smtp-Source: APXvYqwyVzoOp3uv82a3oLNcEi2ls4DHAb+hAVdoO2K/8JhUZXvO+XjDqzMESz0hmiILk74c7uYXnqA4LwilTIECgu+dBq20F9fQ
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190709114647.GX9224@smile.fi.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Received: by 2002:a02:c95a:: with SMTP id u26mr87244306jao.15.1564056485936;
+ Thu, 25 Jul 2019 05:08:05 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 05:08:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000040d299058e8047c2@google.com>
+Subject: general protection fault in holtek_kbd_input_event
+From:   syzbot <syzbot+965152643a75a56737be@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
+        jikos@kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 09 Jul 2019, Andy Shevchenko wrote:
+Hello,
 
-> On Fri, Jul 05, 2019 at 12:55:03PM +0800, Kai-Heng Feng wrote:
-> > Goodix touchpad may drop its first couple input events when
-> > i2c-designware-platdrv and intel-lpss it connects to took too long to
-> > runtime resume from runtime suspended state.
-> > 
-> > This issue happens becuase the touchpad has a rather small buffer to
-> > store up to 13 input events, so if the host doesn't read those events in
-> > time (i.e. runtime resume takes too long), events are dropped from the
-> > touchpad's buffer.
-> > 
-> > The bottleneck is D3cold delay it waits when transitioning from D3cold
-> > to D0, hence remove the delay to make the resume faster. I've tested
-> > some systems with intel-lpss and haven't seen any regression.
-> 
-> Thank you for the patch. I took it to our internal testing and will tell
-> the result within couple of weeks.
+syzbot found the following crash on:
 
-Any news?
+HEAD commit:    6a3599ce usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=14e6d3d0600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=700ca426ab83faae
+dashboard link: https://syzkaller.appspot.com/bug?extid=965152643a75a56737be
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1663f8cc600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=145f2978600000
 
-> > Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202683
-> > Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> > ---
-> >  drivers/mfd/intel-lpss-pci.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/mfd/intel-lpss-pci.c b/drivers/mfd/intel-lpss-pci.c
-> > index aed2c0447966..3c271b14e7c6 100644
-> > --- a/drivers/mfd/intel-lpss-pci.c
-> > +++ b/drivers/mfd/intel-lpss-pci.c
-> > @@ -35,6 +35,8 @@ static int intel_lpss_pci_probe(struct pci_dev *pdev,
-> >  	info->mem = &pdev->resource[0];
-> >  	info->irq = pdev->irq;
-> >  
-> > +	pdev->d3cold_delay = 0;
-> > +
-> >  	/* Probably it is enough to set this for iDMA capable devices only */
-> >  	pci_set_master(pdev);
-> >  	pci_try_set_mwi(pdev);
-> 
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+965152643a75a56737be@syzkaller.appspotmail.com
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+CPU: 0 PID: 9738 Comm: syz-executor849 Not tainted 5.2.0-rc6+ #15
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:usb_get_intfdata include/linux/usb.h:265 [inline]
+RIP: 0010:holtek_kbd_input_event+0xb7/0x1a0 drivers/hid/hid-holtek-kbd.c:127
+Code: 48 8b 7b 40 31 f6 48 81 ef a0 00 00 00 e8 c1 7b ee fe 48 ba 00 00 00  
+00 00 fc ff df 48 8d b8 a8 00 00 00 48 89 f9 48 c1 e9 03 <80> 3c 11 00 0f  
+85 ab 00 00 00 48 8b 98 a8 00 00 00 48 b8 00 00 00
+RSP: 0018:ffff8881ce297af8 EFLAGS: 00010002
+RAX: 0000000000000000 RBX: ffff8881d530bbb0 RCX: 0000000000000015
+RDX: dffffc0000000000 RSI: ffffffff8345640b RDI: 00000000000000a8
+RBP: 0000000000000014 R08: ffff8881d1be1800 R09: ffffed103b646748
+R10: ffffed103b646747 R11: ffff8881db233a3b R12: 0000000000000000
+R13: 0000000000000004 R14: ffffffff8456e680 R15: 0000000000000003
+FS:  00007f9ebaadb700(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f646c43c000 CR3: 00000001ce2a8000 CR4: 00000000001406f0
+Call Trace:
+  input_handle_event+0x6a9/0x11c0 drivers/input/input.c:374
+  input_inject_event+0x270/0x304 drivers/input/input.c:462
+  evdev_do_ioctl drivers/input/evdev.c:1102 [inline]
+  evdev_ioctl_handler+0x6c4/0x19b0 drivers/input/evdev.c:1303
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xcda/0x12e0 fs/ioctl.c:696
+  ksys_ioctl+0x9b/0xc0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:718
+  do_syscall_64+0xb7/0x560 arch/x86/entry/common.c:301
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x44e599
+Code: e8 3c e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb ca fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f9ebaadace8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000006e0c28 RCX: 000000000044e599
+RDX: 0000000020000040 RSI: 0000000040084503 RDI: 0000000000000004
+RBP: 00000000006e0c20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006e0c2c
+R13: 00007ffe21581f9f R14: 00007f9ebaadb9c0 R15: 0000000000000000
+Modules linked in:
+---[ end trace 48abaec9fafcd397 ]---
+RIP: 0010:usb_get_intfdata include/linux/usb.h:265 [inline]
+RIP: 0010:holtek_kbd_input_event+0xb7/0x1a0 drivers/hid/hid-holtek-kbd.c:127
+Code: 48 8b 7b 40 31 f6 48 81 ef a0 00 00 00 e8 c1 7b ee fe 48 ba 00 00 00  
+00 00 fc ff df 48 8d b8 a8 00 00 00 48 89 f9 48 c1 e9 03 <80> 3c 11 00 0f  
+85 ab 00 00 00 48 8b 98 a8 00 00 00 48 b8 00 00 00
+RSP: 0018:ffff8881ce297af8 EFLAGS: 00010002
+RAX: 0000000000000000 RBX: ffff8881d530bbb0 RCX: 0000000000000015
+RDX: dffffc0000000000 RSI: ffffffff8345640b RDI: 00000000000000a8
+RBP: 0000000000000014 R08: ffff8881d1be1800 R09: ffffed103b646748
+R10: ffffed103b646747 R11: ffff8881db233a3b R12: 0000000000000000
+R13: 0000000000000004 R14: ffffffff8456e680 R15: 0000000000000003
+FS:  00007f9ebaadb700(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f646c43c000 CR3: 00000001ce2a8000 CR4: 00000000001406f0
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
