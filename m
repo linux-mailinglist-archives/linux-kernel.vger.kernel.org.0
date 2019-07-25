@@ -2,148 +2,330 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41F13746E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 08:11:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BF81746FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 08:17:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729187AbfGYGLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 02:11:03 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35194 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbfGYGLC (ORCPT
+        id S1728469AbfGYGRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 02:17:10 -0400
+Received: from pta-smg1.csir.co.za ([146.64.81.180]:64555 "EHLO
+        pta-smg1.csir.co.za" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727455AbfGYGRK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 02:11:02 -0400
-Received: by mail-wm1-f67.google.com with SMTP id l2so43519924wmg.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 23:11:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=PrghChsOVRMfwpij53eGz1Wi4A+tfqIRi6hI1nWFnrs=;
-        b=lk084PCHVWG0QmdJFBK7xJ5eyDsEkncFxo9Oq+bv+IOWm50mH1ZzmeoVYcb/NNqY1R
-         y/djFuTEdHL/KpOaB94EtFeGAO1aYvy5F/2UCuF6ihERVvJ2GMhh7I21lSu1uT5vlfR7
-         T7Z/I6IgYmzDT6TaMoHi/TsXXyOEwHP0jsfEG3TipjgxY4+I5qtvOKt5Tl8PBFGgVJPV
-         EOI7gAF63fXN8L1FCFGuu1t5OS+kawjXBZWVqb4sLbASIrr8jhXYQbSGVEdd1aOWoVDw
-         AtSU/XCwNdjmOQuf4hDhvli60+FtOhGKT+JqbfknmS0tkx6T2iZoS+C053e22yTRmGwg
-         nwkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=PrghChsOVRMfwpij53eGz1Wi4A+tfqIRi6hI1nWFnrs=;
-        b=ESeUP/wJjkpb99Ws7uf3OkDLxKcryq0bYgH75oCU7b0JmXtRaxVd2XKcaLIlUhHqJR
-         5xk0DQephrBARBVenSlJDnLR/B84dXjBcxVjJQObaUKmUF4K+c8j4d/f93RJiyL9Vwc8
-         7pY1ahsOO2QDWk3yXM29kKwnm607DyWUvEfZPSwJbsWn7ZRjraaIhJMQs36fe/AsbKYl
-         thvLf7SwWweW8APSofBMPL33GDWGkgA8JrU6nSO5fBavPHifRayIxbzOPKc7k4gQIUzC
-         0+086eoXD+9xCcTI7MwPIfFWqUMbOjKNX2sIVGkCBQfaz3H1+/3V0RoB+X0GSDND97eL
-         fjCw==
-X-Gm-Message-State: APjAAAWl7txfwAtUYeskWlVBbphbTt1HjUCi+z66aCz0r//YJdZmJ2H0
-        iJKZW6+PWYI4h38Sd59gzwM3iLlFWyj0cLuXjWw=
-X-Google-Smtp-Source: APXvYqzZwwybCGBYVG5TI+PriV3WnuQHbWVWVfMcrMJWzo7fSM2WdyrPby63rMixcgtJ1oxuCf+jYx0k7QLBLzKVMQA=
-X-Received: by 2002:a05:600c:225a:: with SMTP id a26mr81600428wmm.81.1564035060177;
- Wed, 24 Jul 2019 23:11:00 -0700 (PDT)
+        Thu, 25 Jul 2019 02:17:10 -0400
+X-Greylist: delayed 358 seconds by postgrey-1.27 at vger.kernel.org; Thu, 25 Jul 2019 02:17:07 EDT
+Received: from pta-smg1.csir.co.za (localhost.localdomain [127.0.0.1])
+        by localhost (Email Security Appliance) with SMTP id 9F8222979437_D3947F9B;
+        Thu, 25 Jul 2019 06:11:05 +0000 (GMT)
+Received: from willempc.meraka.csir.co.za (unknown [146.64.217.138])
+        by pta-smg1.csir.co.za (Sophos Email Appliance) with ESMTP id 228D22978B73_D3947F9F;
+        Thu, 25 Jul 2019 06:11:05 +0000 (GMT)
+Received: from [127.0.0.1] (helo=localhost)
+        by willempc.meraka.csir.co.za with esmtp (Exim 4.90_1)
+        (envelope-from <wvdwalt@csir.co.za>)
+        id 1hqWy0-0002Y8-VE; Thu, 25 Jul 2019 08:11:05 +0200
+Date:   Thu, 25 Jul 2019 08:11:04 +0200 (SAST)
+From:   Willem van der Walt <wvdwalt@csir.co.za>
+X-X-Sender: wvdwalt@willempc.meraka.csir.co.za
+To:     "Speakup is a screen review system for Linux." 
+        <speakup@linux-speakup.org>
+cc:     Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Okash Khawaja <okash.khawaja@gmail.com>,
+        devel@driverdev.osuosl.org, Kirk Reiser <kirk@reisers.ca>,
+        Simon Dickson <simonhdickson@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Christopher Brannon <chris@the-brannons.com>
+Subject: Re: [HELP REQUESTED from the community] Was: Staging status of
+ speakup
+In-Reply-To: <20190725035352.GA7717@gregn.net>
+Message-ID: <alpine.DEB.2.21.1.1907250724490.6623@willempc.meraka.csir.co.za>
+References: <20190315130035.6a8f16e9@narunkot> <20190316031831.GA2499@kroah.com> <20190706200857.22918345@narunkot> <20190707065710.GA5560@kroah.com> <20190712083819.GA8862@kroah.com> <20190712092319.wmke4i7zqzr26tly@function> <20190713004623.GA9159@gregn.net>
+ <20190725035352.GA7717@gregn.net>
+User-Agent: Alpine 2.21.1 (DEB 211 2017-05-04)
 MIME-Version: 1.0
-References: <cover.1564007838.git.jpoimboe@redhat.com> <523b910e41a5cf856ee338b78ee36941034be142.1564007838.git.jpoimboe@redhat.com>
-In-Reply-To: <523b910e41a5cf856ee338b78ee36941034be142.1564007838.git.jpoimboe@redhat.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Thu, 25 Jul 2019 08:10:49 +0200
-Message-ID: <CA+icZUUb0XVhYq6Y590UyKxEyvzP7_LWU6WZW6bi7tEu6=RzuQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] drm/i915: Remove redundant user_access_end() from
- __copy_from_user() error path
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-SASI-RCODE: 200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 12:48 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
->
-> Objtool reports:
->
->   drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: .altinstr_replacement+0x36: redundant UACCESS disable
->
-> __copy_from_user() already does both STAC and CLAC, so the
-> user_access_end() in its error path adds an extra unnecessary CLAC.
->
-> Fixes: 0b2c8f8b6b0c ("i915: fix missing user_access_end() in page fault exception case")
-> Reported-by: Thomas Gleixner <tglx@linutronix.de>
-> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-> Link: https://github.com/ClangBuiltLinux/linux/issues/617
-> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Hi,
+I have added a few things inline in Greg's message, mainly regarding the 
+bleeps and cursor_time.
+FWIW, Willem
 
-Just for the records and ensuing ages:
+On Wed, 24 Jul 2019, Gregory Nowak wrote:
 
-Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+> [The e-mail server of the sender could not be verified (SPF Record)]
+>
+> On Fri, Jul 12, 2019 at 05:46:23PM -0700, Gregory Nowak wrote:
+>> On Fri, Jul 12, 2019 at 11:23:19AM +0200, Samuel Thibault wrote:
+>>> Hello,
+>>>
+>>> To readers of the linux-speakup: could you help on this so we can get
+>>> Speakup in mainline?  Neither Okash or I completely know what user
+>>> consequences the files in /sys/accessibility/speakup/ have, so could
+>>> people give brief explanations for each file (something like 3-6 lines
+>>> of explanation)?
+>>
+>> I have a recollection of documenting most of this on the speakup list
+>> in response to a similar query a number of years ago. Unfortunately,
+>> the speakup mailing list archives aren't easily searchable, and I
+>> don't have a local copy of that mail.
+>>
+>> Kirk, doing grep with a few of the file names in
+>> /sys/accessibility/speakup against the list's mbox file archive should
+>> find that message if it's in fact there. If you can please find it,
+>> and post the date when it was sent, we can provide a URL to that
+>> thread as a starting point. If my recollection is wrong, and such a
+>> message isn't in the archives, I'll write up what I know about.
+>
+> I've located the message I was thinking of in the archives, but that
+> describes some speakup key commands, not
+> /sys/accessibility/speakup. So, here's what I know, and hopefully
+> someone else can fill in the rest.
+>
+> attrib_bleep
+> Beeps the PC speaker when there is an attribute change such as
+> foreground or background color when using speakup review commands. One
+> = on, zero = off. I'm not currently at a machine with a working PC
+> speaker, so can't test this right now.
+>
+> bell_pos
+> As far as I know, this works much like a typewriter bell. If for
+> example 72 is echoed to bell_pos, it will beep the PC speaker when
+> typing on a line past character 72. Again, no PC speaker at the moment
+> here, so can't actually test this.
+Yes, it works as you  say, a verry short beep happens at the echoed 
+position.
+>
+> bleeps
+> Not 100% sure, but I believe this controls whether one hears beeps
+> through the PC speaker when using speakup's review commands. If no one
+> jumps in on this, I'll experiment when at a machine with a working PC
+> speaker, and will reply back with details.
+>
+Yes, when 0 is echoed to /sys/accessibility/speakup/bleeps, review beeps 
+stop. the default seem to be 3, so I suppose it controls more than just on 
+or off. When set to zero, the bell still sounds when, e.g. in a terminal 
+at a bash prompt, one press backspace.
+  > bleep_time
+> Again, not 100% sure, but I believe this controls the duration of the
+> PC speaker beeps speakup produces. I'm not sure of the units this is
+> in either, possibly jiffys. I'll come back with more details on this
+> one if no one else does.
+Yes, it seems to control the time as you say, verry small units though.
+It was 30 and I could set it to 180, but  not 360. At 180, the bleeps are 
+clearly a little longer, but not much.
 
-> ---
->  .../gpu/drm/i915/gem/i915_gem_execbuffer.c    | 20 +++++++++----------
->  1 file changed, 9 insertions(+), 11 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
-> index 5fae0e50aad0..41dab9ea33cd 100644
-> --- a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
-> +++ b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
-> @@ -1628,6 +1628,7 @@ static int check_relocations(const struct drm_i915_gem_exec_object2 *entry)
+> cursor_time
+> Don't know.
+As far as I know, one can set cursor_time to a higher value when working 
+e.g. over a slow connection.
+When a connection is very slow, with the default setting, when moving with 
+the arrows, or backspacing etc. speakup says the incorrect characters.
+I am not 100% sure though, but seem to recall having used such a setting 
+in the past when working over dialup.
+
 >
->  static int eb_copy_relocations(const struct i915_execbuffer *eb)
->  {
-> +       struct drm_i915_gem_relocation_entry *relocs;
->         const unsigned int count = eb->buffer_count;
->         unsigned int i;
->         int err;
-> @@ -1635,7 +1636,6 @@ static int eb_copy_relocations(const struct i915_execbuffer *eb)
->         for (i = 0; i < count; i++) {
->                 const unsigned int nreloc = eb->exec[i].relocation_count;
->                 struct drm_i915_gem_relocation_entry __user *urelocs;
-> -               struct drm_i915_gem_relocation_entry *relocs;
->                 unsigned long size;
->                 unsigned long copied;
+> delimiters
+> Don't know. I've tried echoing various characters to this and looking
+> for differences when reviewing the screen, but no luck.
 >
-> @@ -1663,14 +1663,8 @@ static int eb_copy_relocations(const struct i915_execbuffer *eb)
+> ex_num
+> Don't know.
 >
->                         if (__copy_from_user((char *)relocs + copied,
->                                              (char __user *)urelocs + copied,
-> -                                            len)) {
-> -end_user:
-> -                               user_access_end();
-> -end:
-> -                               kvfree(relocs);
-> -                               err = -EFAULT;
-> -                               goto err;
-> -                       }
-> +                                            len))
-> +                               goto end;
+> key_echo
+> Controls if speakup speaks keys when they are typed. One = on, zero =
+> off or don't echo keys.
 >
->                         copied += len;
->                 } while (copied < size);
-> @@ -1699,10 +1693,14 @@ static int eb_copy_relocations(const struct i915_execbuffer *eb)
+> keymap
+> I believe this is the currently active kernel keymap. I'm not sure of
+> the format, probably what dumpkeys(1) and showkey(1) use. Echoing
+> different values here should allow for remapping speakup's review
+> commands besides remapping the keyboard as a whole.
 >
->         return 0;
+> no_interrupt
+> Controls if typing interrupts output from speakup. With no_interrupt
+> set to zero, typing on the keyboard will interrupt speakup if for
+> example the say screen command is used before the entire screen is
+> read. With no_interrupt set to one, if the say screen command is used,
+> and one then types on the keyboard, speakup will continue to say the
+> whole screen regardless until it finishes.
 >
-> +end_user:
-> +       user_access_end();
-> +end:
-> +       kvfree(relocs);
-> +       err = -EFAULT;
->  err:
->         while (i--) {
-> -               struct drm_i915_gem_relocation_entry *relocs =
-> -                       u64_to_ptr(typeof(*relocs), eb->exec[i].relocs_ptr);
-> +               relocs = u64_to_ptr(typeof(*relocs), eb->exec[i].relocs_ptr);
->                 if (eb->exec[i].relocation_count)
->                         kvfree(relocs);
->         }
+> punc_all
+> This is a list of all the punctuation speakup should speak when
+> punc_level is set to four.
+>
+> punc_level
+> Controls the level of punctuation spoken as the screen is displayed,
+> not reviewed. Levels range from zero no punctuation, to four, all
+> punctuation. As far as I can tell, one corresponds to punc_some, two
+> corresponds to punc_most, and three as well as four seem to both
+> correspond to punc_all, though I do stand to be corrected. I am using
+> the soft synthesizer driver, so it is possible that some hardware
+> synthesizers have different levels each corresponding to three and four
+> for punc_level. Also note that if punc_level is set to zero, and
+> key_echo is set to one, typed punctuation is still spoken as it is
+> typed.
+>
+> punc_most
+> This is a list of all the punctuation speakup should speak when
+> punc_level is set to two.
+>
+> punc_some
+> This is a list of all the punctuation speakup should speak when
+> punc_level is set to one.
+>
+> reading_punc
+> Almost the same as punc_level, the differences being that reading_punc controls
+> the level of punctuation when reviewing the screen with speakup's
+> screen review commands. The other difference is that reading_punc set
+> to three speaks punc_all, and reading_punc set to four speaks all
+> punctuation, including spaces.
+>
+> repeats
+> a list of characters speakup repeats. Normally, when there are
+> more than three characters in a row, speakup just reads three of those
+> characters. For example, "......" would be read as dot, dot, dot. If a
+> . is added to the list of characters in repeats, "......" would be
+> read as dot, dot, dot, times six.
+>
+> say_control
+> If set to one, speakup speaks shift, alt and control when those keys are
+> pressed. Perhaps more keys are spoken, but those three are the ones I
+> found. If say_control is set to zero, shift, ctrl, and alt are not
+> spoken when they are pressed.
+>
+> say_word_ctl
+> Don't know.
+>
+> silent
+> Don't know.
+>
+> spell_delay
+> As far as I can tell, this controls how fast a word is spelled when
+> speakup's say word review command is pressed twice quickly to speak
+> the current word being reviewed. Zero just speaks the letters one
+> after another, while values one through four seem to introduce more of
+> a pause between the spelling of each letter by speakup.
+>
+> synth
+> Gets or sets the synthesizer driver currently in use. Reading synth
+> returns the synthesizer driver currently in use. Writing synth
+> switches to the given synthesizer driver, provided it is either built
+> into the kernel, or already loaded as a module.
+>
+> synth_direct
+> Sends whatever is written to synth_direct
+> directly to the speech synthesizer in use, bypassing speakup. This
+> could be used to make the synthesizer speak a string, or to send
+> control sequences to the synthesizer to change how the synthesizer
+> behaves.
+>
+> version
+> Reading version returns the version of speakup, and the version of the
+> synthesizer driver currently in use.
+>
+> Synthesizer Driver Parameters
+> In /sys/accessibility/speakup is a directory corresponding to the
+> synthesizer driver currently in use (E.G) soft for the soft
+> driver. This directory contains files which control the speech
+> synthesizer itself, as opposed to controlling the speakup screen
+> reader. As far as I know, the parameters in this directory have the
+> same names and functions across all supported synthesizers. Also as
+> far as I know, the range of values for freq, pitch, rate, and vol is
+> the same for all supported synthesizers,
+> with the given range being internally mapped by the driver to more or
+> less fit the range of values supported for a given parameter by the
+> individual synthesizer. I will below describe the values and
+> parameters for the soft synthesizer, which I believe is the
+> synthesizer currently most commonly in use.
+>
+> caps_start
+> I believe this is the string that is sent to the synthesizer to cause
+> it to start speaking uppercase letters. For the soft synthesizer and
+> most others, this causes the pitch of the voice to rise above the
+> currently set pitch.
+>
+> caps_stop
+> I believe this is the string sent to the synthesizer to cause it to
+> stop speaking uppercase letters. In the case of the soft synthesizer
+> and most others, this returns the pitch of the voice down to the
+> currently set pitch.
+>
+> delay_time
+> Don't know.
+>
+> direct
+> Controls if punctuation is spoken by speakup, or by the
+> synthesizer. For example, speakup speaks ">" as "greater", while the
+> espeak synthesizer used by the soft driver speaks "greater than". Zero
+> lets speakup speak the punctuation. One lets the synthesizer itself
+> speak punctuation.
+>
+> freq
+> Gets or sets the frequency of the speech synthesizer. Range is 0-9.
+>
+> full_time
+> Don't know.
+>
+> jiffy_delta
+> As far as I know, this controls how many jiffys the kernel gives to
+> the synthesizer. I seem to recall Kirk saying that setting this too
+> high can make a system unstable, or even crash it.
+>
+> pitch
+> Gets or sets the pitch of the synthesizer. The range is 0-9.
+>
+> punct
+> Gets or sets the amount of punctuation spoken by the synthesizer. The
+> range for the soft driver seems to be 0-2. I'm not exactly sure how
+> this relates to speakup's punc_level, or reading_punc
+>
+> rate
+> Gets or sets the rate of the synthesizer. Range is from zero slowest,
+> to nine fastest.
+>
+> tone
+> Gets or sets the tone of the speech synthesizer. The range for the
+> soft driver seems to be 0-2. This seems to make no difference if using
+> espeak and the espeakup connector. I'm not sure even if espeakup
+> supports different tonalities.
+>
+> trigger_time
+> Don't know.
+>
+> voice
+> Gets or sets the voice used by the synthesizer if the synthesizer can
+> speak in more than one voice. The range for the soft driver is
+> 0-7. Note that while espeak supports multiple voices, this parameter
+> will not set the voice when the espeakup connector is used between
+> speakup and espeak.
+>
+> vol
+> Gets or sets the volume of the speech synthesizer. Range is 0-9, with
+> zero being the softest, and nine being the loudest.
+>
+> Additions, clarifications, and corrections are welcome and
+> appreciated.
+>
+> Greg
+>
+>
+> -- 
+> web site: http://www.gregn.net
+> gpg public key: http://www.gregn.net/pubkey.asc
+> skype: gregn1
+> (authorization required, add me to your contacts list first)
+> If we haven't been in touch before, e-mail me before adding me to your contacts.
+>
 > --
-> 2.20.1
+> Free domains: http://www.eu.org/ or mail dns-manager@EU.org
+> _______________________________________________
+> Speakup mailing list
+> Speakup@linux-speakup.org
+> http://linux-speakup.org/cgi-bin/mailman/listinfo/speakup
 >
