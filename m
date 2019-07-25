@@ -2,69 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2910B75053
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C1937505E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:59:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729040AbfGYN6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:58:44 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:49066 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728459AbfGYN6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:58:43 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EF1EA1A071B;
-        Thu, 25 Jul 2019 15:58:41 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E35C71A0709;
-        Thu, 25 Jul 2019 15:58:41 +0200 (CEST)
-Received: from lorenz.ea.freescale.net (lorenz.ea.freescale.net [10.171.71.5])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 8CEB6205EE;
-        Thu, 25 Jul 2019 15:58:41 +0200 (CEST)
-From:   Iuliana Prodan <iuliana.prodan@nxp.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-imx <linux-imx@nxp.com>
-Subject: [PATCH v3 14/14] crypto: caam - change return value in case CAAM has no MDHA
-Date:   Thu, 25 Jul 2019 16:58:26 +0300
-Message-Id: <1564063106-9552-15-git-send-email-iuliana.prodan@nxp.com>
-X-Mailer: git-send-email 2.1.0
-In-Reply-To: <1564063106-9552-1-git-send-email-iuliana.prodan@nxp.com>
-References: <1564063106-9552-1-git-send-email-iuliana.prodan@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2404511AbfGYN7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:59:06 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:55024 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2404488AbfGYN7C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 09:59:02 -0400
+X-IronPort-AV: E=Sophos;i="5.64,306,1559512800"; 
+   d="scan'208";a="393304252"
+Received: from c-73-22-29-55.hsd1.il.comcast.net (HELO hadrien) ([73.22.29.55])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 15:59:00 +0200
+Date:   Thu, 25 Jul 2019 08:58:58 -0500 (CDT)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Joe Perches <joe@perches.com>
+cc:     David Laight <David.Laight@ACULAB.COM>,
+        cocci <cocci@systeme.lip6.fr>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [Fwd: [PATCH 1/2] string: Add stracpy and stracpy_pad
+ mechanisms]
+In-Reply-To: <a0e892c3522f4df2991119a2a30cd62ec14c76cc.camel@perches.com>
+Message-ID: <alpine.DEB.2.21.1907250856450.2555@hadrien>
+References: <7ab8957eaf9b0931a59eff6e2bd8c5169f2f6c41.1563841972.git.joe@perches.com>   <66fcdbf607d7d0bea41edb39e5579d63b62b7d84.camel@perches.com>   <alpine.DEB.2.21.1907231546090.2551@hadrien>   <0f3ba090dfc956f5651e6c7c430abdba94ddcb8b.camel@perches.com>
+   <alpine.DEB.2.21.1907232252260.2539@hadrien>   <d5993902fd44ce89915fab94f4db03f5081c3c8e.camel@perches.com>   <alpine.DEB.2.21.1907232326360.2539@hadrien>   <f909b4b31f123c7d88535db397a04421077ed0ab.camel@perches.com>   <563222fbfdbb44daa98078db9d404972@AcuMS.aculab.com>
+  <d2b2b528b9f296dfeb1d92554be024245abd678e.camel@perches.com>  <alpine.DEB.2.21.1907242040490.10108@hadrien> <a0e892c3522f4df2991119a2a30cd62ec14c76cc.camel@perches.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To be consistent with other CAAM modules, caamhash should return 0
-instead of -ENODEV in case CAAM has no MDHA.
 
-Based on commit 1b46c90c8e00 ("crypto: caam - convert top level drivers to libraries")
-the value returned by entry point is never checked and
-the exit point is always executed.
 
-Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-Reviewed-by: Horia Geanta <horia.geanta@nxp.com>
----
- drivers/crypto/caam/caamhash.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, 25 Jul 2019, Joe Perches wrote:
 
-diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhash.c
-index 7147190..3a1dfd2 100644
---- a/drivers/crypto/caam/caamhash.c
-+++ b/drivers/crypto/caam/caamhash.c
-@@ -2007,7 +2007,7 @@ int caam_algapi_hash_init(struct device *ctrldev)
- 	 * is not present.
- 	 */
- 	if (!md_inst)
--		return -ENODEV;
-+		return 0;
- 
- 	/* Limit digest size based on LP256 */
- 	if (md_vid == CHA_VER_VID_MD_LP256)
--- 
-2.1.0
+> On Wed, 2019-07-24 at 20:42 -0500, Julia Lawall wrote:
+> > New version.  I check for non-use of the return value of strlcpy and
+> > address some issues that affected the matching of the case where the first
+> > argument involves a pointer dereference.  Actually, an isomorphism now
+> > takes care of that case, so it doesn't show up in the semantic patch
+> > explicitly any more.
+> >
+> > julia
+>
+> Nice x 2, thanks again.
 
+Not quite nice due to the ignoring of rule 2 noticed by Markus.  There is
+actually currently no guarantee that the size is right.  I'm testing a new
+version.
+
+>
+> More comments:
+>
+> @@
+> identifier f,i2,i1;
+> struct i1 e1;
+> expression e2;
+> local idexpression x;
+> position r.p;
+> @@
+> (
+> -x = strlcpy
+> +stracpy
+>   (e1.f, e2
+> -    , i2
+>   )@p;
+>   ... when != x
+>
+> Just for completeness and correctness, as I at
+> least don't find an existing use:
+>
+> Perhaps this "x =" should also include += and +
+> and the various other operators that are possible
+> or does SmPL grammar already do that?
+
+I could do this.  One might though think that if someone went to the
+trouble of computing +=, these would be cases that we don't want to
+change?  Still, it's not problem to add all assignment operators.
+
+> Also, it might be nice to include the trivial
+> conversion with sizeof(e1) and ARRAY_SIZE(e1)
+> so a single script could be run over the kernel.
+
+Sure, I'll do that when all this is working.  I didn't want those results
+to drown out these ones.
+
+thanks,
+julia
+
+>
+> I'll see about adding that and try it myself
+> so an automated conversion should be possible.
+>
+>
+>
