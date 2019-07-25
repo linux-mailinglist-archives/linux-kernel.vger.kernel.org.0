@@ -2,137 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E77E5744C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:11:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9C2F744C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:12:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390463AbfGYFL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:11:57 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:33823 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390362AbfGYFL4 (ORCPT
+        id S2390501AbfGYFMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:12:09 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38849 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390362AbfGYFMI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:11:56 -0400
-Received: by mail-qk1-f194.google.com with SMTP id t8so35544521qkt.1;
-        Wed, 24 Jul 2019 22:11:56 -0700 (PDT)
+        Thu, 25 Jul 2019 01:12:08 -0400
+Received: by mail-pf1-f195.google.com with SMTP id y15so22097598pfn.5
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 22:12:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=qXMolS9bi6Wza6wvHtLWXxXOh2ThsYL/tKKpIPkYlnY=;
-        b=j77QlnQBhDzQa7ggtdsAkn6iRGcUqjJ+yVNMwrZNTJVQO43sCpBSeHKw2e3FO3AGU8
-         oNX7Vm11+oypNa2jjstEX22YWbEfaLsAopIyb/BrhPxVqbCajikwGRcn9qupyj+K4L28
-         9UuNLJMBlXYS9x2LIYO2cL1kNCBjPBM02U1DtPBhOitKuoy3OMHVawth0XlfyrJW5O5Y
-         SmkdwmWuXcLgngy9OTd+cNjIV3KV9OFrcvdUWuaPbV+22jj771SdSpNqGR5GdQcM6bJu
-         1o9MUdYtHN0FI9M2qP8e5kdPudjkbyTobxm4H0l7NXD22fqWqPskAhqF6jT8bmhBmfHc
-         e3Cw==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KSVES4Di2vK/QdofzjdERnWb+kHxNc5zqBfVZ7xWzIg=;
+        b=ExyQTREpJfPmp7vJJ2Y1yGisU8EG2uYGosxo5RZHBLokzfppj53F61F1dorQZkWp4L
+         1u86lScc0D9LhTdytlPOQoxRM6tw17QDqBS2daquIH4r/ZiHEgkp5YC4rNfWJ7q0nEYZ
+         jBQySMe9zOntgtD8mgrOdqsUitUnzzhex3OyfDVVQ4FDOazw5yPVqSQSFA6GVai0TVAg
+         vS7ToBS9H80ao1cVZiEbreO1AypmHBqcHzVsDbI7WHPG5Tg+xrl6J5fStZkg4X02FJzr
+         J9WrD4s8anQnCFv8ON43mpqzu5no7Lmk9m9UdgdG6IaKHG36YrWvYEo7GwbroRraM//A
+         tLXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=qXMolS9bi6Wza6wvHtLWXxXOh2ThsYL/tKKpIPkYlnY=;
-        b=FKbnrYaPISYm6G6aD+NMlqb7iDUH9skZ914txmp9T2OtamZc4sIbswKYonfrOVr9vK
-         fOX5ogEk+Y5e7gq3XG8l2eRIVPvsSJoDCn3tvw33cFGH/YeTDqJ/2Qos7Fs9/I1LeR/p
-         CphHA1KFqxFS2HWxzbECCveuAwl6uWS/cl73c/cAh1LbU6mRf/Mw2HZP7b4MPHrWhrBz
-         lCC8q6cTZykk2q3BN9a9wSmGwq1xKrf867ZOOli3c50IJTiSOs7fN31jc4iueFpoHY4Y
-         YLIxZkAdJGTQSiIDmf2qHgBI9+19SmSsk5w5YDpIWQSawHwv2mIu7Rq0pbc0wnWwD/aY
-         HxLg==
-X-Gm-Message-State: APjAAAXtNXukucogOfZBNCMq8Q82IyGE0y8P0hUhVPB3LmCeH+mcPV4z
-        HJ1d2jGoXyKsrff4DT7Ti3s=
-X-Google-Smtp-Source: APXvYqxuEiqi2anKU0KbYoV5cw1U3bHSXHVGdLI0p26Ch6MD+vpL9CtLOI0QeYdINaqTZrs7Fdprtg==
-X-Received: by 2002:a37:ef03:: with SMTP id j3mr10232314qkk.233.1564031515675;
-        Wed, 24 Jul 2019 22:11:55 -0700 (PDT)
-Received: from AzureHyper-V.3xjlci4r0w3u5g13o212qxlisd.bx.internal.cloudapp.net ([13.68.195.119])
-        by smtp.gmail.com with ESMTPSA id j61sm21664353qte.47.2019.07.24.22.11.54
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KSVES4Di2vK/QdofzjdERnWb+kHxNc5zqBfVZ7xWzIg=;
+        b=Pjb+o2fBZyJBXbJAjcJmNqbx086oxayxe4mRZqVR+6tQThDj5KLtV8bC+CgsS1JFnl
+         dMNBzxdXwGX2333dZtI5Ru+D8qYo/uDTChsWK1kI6ulqN4gdlAKlUnexS1ff+1sGE3xG
+         x58ldmZnn3VwSf+TY7d46sRXzc5iUAvsetf0W8H4w1GAhSNWR7o01/CjtdSDyQPTzuky
+         edWhJg6izO/HLDbInVUJrXmpqatKpmccs3x1hKxnLnvzq8Rdi+cuqhcsdbMjO+6MF/Yh
+         Rz2qZYQ7VOkbKM4n37YcgYtUBodAF7uKu4+4POO978xWTlX+ASTrYouNEizkmGQCUMoQ
+         hElw==
+X-Gm-Message-State: APjAAAWDcMwhbkO+QPjHobge509QXU6G79Jwznqh5Xx9IgGAE7lhYicl
+        r+vcgtjL2QZ0ATo2UbVUezI=
+X-Google-Smtp-Source: APXvYqxKwc0wBeIkkfcXVdrRwVawpYOlqn58OtEpJPbVKg5TevIqJAnENN5egvEYfpctwul3xCGz2Q==
+X-Received: by 2002:a17:90a:b104:: with SMTP id z4mr90704862pjq.102.1564031527596;
+        Wed, 24 Jul 2019 22:12:07 -0700 (PDT)
+Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
+        by smtp.gmail.com with ESMTPSA id g2sm62427425pfb.95.2019.07.24.22.12.03
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 22:11:54 -0700 (PDT)
-From:   Himadri Pandya <himadrispandya@gmail.com>
-X-Google-Original-From: Himadri Pandya <himadri18.07@gmail.com>
-To:     mikelley@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
-        sthemmin@microsoft.com, sashal@kernel.org, davem@davemloft.net
-Cc:     linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Himadri Pandya <himadri18.07@gmail.com>
-Subject: [PATCH] hv_sock: use HV_HYP_PAGE_SIZE instead of PAGE_SIZE_4K
-Date:   Thu, 25 Jul 2019 05:11:25 +0000
-Message-Id: <20190725051125.10605-1-himadri18.07@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 24 Jul 2019 22:12:06 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 14:12:00 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Yu Zhao <yuzhao@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peng Fan <peng.fan@nxp.com>, Ira Weiny <ira.weiny@intel.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: replace list_move_tail() with
+ add_page_to_lru_list_tail()
+Message-ID: <20190725051200.GA65392@google.com>
+References: <20190716212436.7137-1-yuzhao@google.com>
+ <20190724193249.00875235c4fa2495e0098451@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190724193249.00875235c4fa2495e0098451@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Older windows hosts require the hv_sock ring buffer to be defined
-using 4K pages. This was achieved by using the symbol PAGE_SIZE_4K
-defined specifically for this purpose. But now we have a new symbol
-HV_HYP_PAGE_SIZE defined in hyperv-tlfs which can be used for this.
+Hi Andrew,
 
-This patch removes the definition of symbol PAGE_SIZE_4K and replaces
-its usage with the symbol HV_HYP_PAGE_SIZE. This patch also aligns
-sndbuf and rcvbuf to hyper-v specific page size using HV_HYP_PAGE_SIZE
-instead of the guest page size(PAGE_SIZE) as hyper-v expects the page
-size to be 4K and it might not be the case on ARM64 architecture.
+On Wed, Jul 24, 2019 at 07:32:49PM -0700, Andrew Morton wrote:
+> On Tue, 16 Jul 2019 15:24:36 -0600 Yu Zhao <yuzhao@google.com> wrote:
+> 
+> > This is a cleanup patch that replaces two historical uses of
+> > list_move_tail() with relatively recent add_page_to_lru_list_tail().
+> > 
+> 
+> Looks OK to me.
+> 
+> > --- a/mm/swap.c
+> > +++ b/mm/swap.c
+> > @@ -515,7 +515,6 @@ static void lru_deactivate_file_fn(struct page *page, struct lruvec *lruvec,
+> >  	del_page_from_lru_list(page, lruvec, lru + active);
+> >  	ClearPageActive(page);
+> >  	ClearPageReferenced(page);
+> > -	add_page_to_lru_list(page, lruvec, lru);
+> >  
+> >  	if (PageWriteback(page) || PageDirty(page)) {
+> >  		/*
+> > @@ -523,13 +522,14 @@ static void lru_deactivate_file_fn(struct page *page, struct lruvec *lruvec,
+> >  		 * It can make readahead confusing.  But race window
+> >  		 * is _really_ small and  it's non-critical problem.
+> >  		 */
+> > +		add_page_to_lru_list(page, lruvec, lru);
+> >  		SetPageReclaim(page);
+> >  	} else {
+> >  		/*
+> >  		 * The page's writeback ends up during pagevec
+> >  		 * We moves tha page into tail of inactive.
+> >  		 */
+> 
+> That comment is really hard to follow.  Minchan, can you please explain
+> the first sentence?
 
-Signed-off-by: Himadri Pandya <himadri18.07@gmail.com>
----
- net/vmw_vsock/hyperv_transport.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+It meant "normal deactivation from the pagevec full". The sentence is
+very odd to me, too. ;-( 
+Let's remove the weird comment in this chance.
 
-diff --git a/net/vmw_vsock/hyperv_transport.c b/net/vmw_vsock/hyperv_transport.c
-index f2084e3f7aa4..ecb5d72d8010 100644
---- a/net/vmw_vsock/hyperv_transport.c
-+++ b/net/vmw_vsock/hyperv_transport.c
-@@ -13,15 +13,16 @@
- #include <linux/hyperv.h>
- #include <net/sock.h>
- #include <net/af_vsock.h>
-+#include <asm/hyperv-tlfs.h>
- 
- /* Older (VMBUS version 'VERSION_WIN10' or before) Windows hosts have some
-- * stricter requirements on the hv_sock ring buffer size of six 4K pages. Newer
-- * hosts don't have this limitation; but, keep the defaults the same for compat.
-+ * stricter requirements on the hv_sock ring buffer size of six 4K pages.
-+ * hyperv-tlfs defines HV_HYP_PAGE_SIZE as 4K. Newer hosts don't have this
-+ * limitation; but, keep the defaults the same for compat.
-  */
--#define PAGE_SIZE_4K		4096
--#define RINGBUFFER_HVS_RCV_SIZE (PAGE_SIZE_4K * 6)
--#define RINGBUFFER_HVS_SND_SIZE (PAGE_SIZE_4K * 6)
--#define RINGBUFFER_HVS_MAX_SIZE (PAGE_SIZE_4K * 64)
-+#define RINGBUFFER_HVS_RCV_SIZE (HV_HYP_PAGE_SIZE * 6)
-+#define RINGBUFFER_HVS_SND_SIZE (HV_HYP_PAGE_SIZE * 6)
-+#define RINGBUFFER_HVS_MAX_SIZE (HV_HYP_PAGE_SIZE * 64)
- 
- /* The MTU is 16KB per the host side's design */
- #define HVS_MTU_SIZE		(1024 * 16)
-@@ -54,7 +55,7 @@ struct hvs_recv_buf {
-  * ringbuffer APIs that allow us to directly copy data from userspace buffer
-  * to VMBus ringbuffer.
-  */
--#define HVS_SEND_BUF_SIZE (PAGE_SIZE_4K - sizeof(struct vmpipe_proto_header))
-+#define HVS_SEND_BUF_SIZE (HV_HYP_PAGE_SIZE - sizeof(struct vmpipe_proto_header))
- 
- struct hvs_send_buf {
- 	/* The header before the payload data */
-@@ -388,10 +389,10 @@ static void hvs_open_connection(struct vmbus_channel *chan)
- 	} else {
- 		sndbuf = max_t(int, sk->sk_sndbuf, RINGBUFFER_HVS_SND_SIZE);
- 		sndbuf = min_t(int, sndbuf, RINGBUFFER_HVS_MAX_SIZE);
--		sndbuf = ALIGN(sndbuf, PAGE_SIZE);
-+		sndbuf = ALIGN(sndbuf, HV_HYP_PAGE_SIZE);
- 		rcvbuf = max_t(int, sk->sk_rcvbuf, RINGBUFFER_HVS_RCV_SIZE);
- 		rcvbuf = min_t(int, rcvbuf, RINGBUFFER_HVS_MAX_SIZE);
--		rcvbuf = ALIGN(rcvbuf, PAGE_SIZE);
-+		rcvbuf = ALIGN(rcvbuf, HV_HYP_PAGE_SIZE);
- 	}
- 
- 	ret = vmbus_open(chan, sndbuf, rcvbuf, NULL, 0, hvs_channel_cb,
-@@ -662,7 +663,7 @@ static ssize_t hvs_stream_enqueue(struct vsock_sock *vsk, struct msghdr *msg,
- 	ssize_t ret = 0;
- 	ssize_t bytes_written = 0;
- 
--	BUILD_BUG_ON(sizeof(*send_buf) != PAGE_SIZE_4K);
-+	BUILD_BUG_ON(sizeof(*send_buf) != HV_HYP_PAGE_SIZE);
- 
- 	send_buf = kmalloc(sizeof(*send_buf), GFP_KERNEL);
- 	if (!send_buf)
--- 
-2.17.1
+Thanks.
 
