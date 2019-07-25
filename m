@@ -2,63 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D787751F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:58:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDB0C751EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:57:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388770AbfGYO62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 10:58:28 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2757 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387834AbfGYO61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 10:58:27 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 4B80EB1E2C5037A78C66;
-        Thu, 25 Jul 2019 22:58:22 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Thu, 25 Jul 2019
- 22:58:11 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <jikos@kernel.org>, <benjamin.tissoires@redhat.com>,
-        <hdegoede@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] HID: logitech-dj: Fix check of logi_dj_recv_query_paired_devices()
-Date:   Thu, 25 Jul 2019 22:57:19 +0800
-Message-ID: <20190725145719.8344-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S2388723AbfGYO5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 10:57:38 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:36026 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387834AbfGYO5h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 10:57:37 -0400
+Received: by mail-qk1-f193.google.com with SMTP id g18so36625052qkl.3;
+        Thu, 25 Jul 2019 07:57:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/sZ3dfUSQ6KnBW/7AX8FrL1hyAhE5ay1aT0trt9B7DQ=;
+        b=gMcWXMUYrvRjARggA/D9a+QetJxb3fRuLUIzAIadsP0+faSpat0+gtwxw91zyllR+b
+         MJ234saxngJhlgOSqxyxxqBnJZWV/IALMs/675i4WjXuSzud/p4YSQLR+XKNjUcXVhe9
+         mYw+cSE33c0G7JNwovaQgXYXEr3cbaNR3FnDZ25XBk2chCIzWjiKHXhgceHfQNYjdTPi
+         o3BOlcmAKLVoeYJh7sXmjwBWH5WeKZ6KykDA/ztL/iE5j+0ADsp/YmQaMfqOQbFRFTlp
+         cTdjrSoFpGxcSZosVO75s0gYOvt7vOzE/Zy2iZCTOOc5EIVdK+yAGSL0F/MpBJbh9qvh
+         QijQ==
+X-Gm-Message-State: APjAAAUw3q9GAMsxbzLupDk5nUJFQvgo1B59twMadqV91Q4uIsDWtw61
+        u+ey67UBvHW/ldjLS7OXY+v9mvinDa55LviaUBk=
+X-Google-Smtp-Source: APXvYqz+NXd6vVM9HrUlkLjGG9pqAy+X64YcVWOLrp5ORl3jhLSD3n/NzhHjZFyzH8nnubMnpOYx6hSeDedJ4OqRXBw=
+X-Received: by 2002:a37:5f45:: with SMTP id t66mr59680105qkb.286.1564066656770;
+ Thu, 25 Jul 2019 07:57:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+References: <20190725131257.6142-1-brgl@bgdev.pl>
+In-Reply-To: <20190725131257.6142-1-brgl@bgdev.pl>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 25 Jul 2019 16:57:20 +0200
+Message-ID: <CAK8P3a1FXyRRi5q48h-=egFjgoRJvy6_zuO9MQaAOMA-bsJKRA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] ARM: make DaVinci part of the ARM v5 multiplatform build
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In delayedwork_callback(), logi_dj_recv_query_paired_devices
-may return positive value while success now, so check it
-correctly.
+On Thu, Jul 25, 2019 at 3:13 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> This series makes DaVinci part of the multiplatform build for ARM v5.
+>
+> First three patches fix build errors spotted and fixed by Arnd with v1.
+>
+> The fourth patch adds necessary bits and pieces for davinci to support
+> multiplatform build and the last one actually adds all davinci boards
+> to multi_v5_defconfig.
+>
+> Tested on da850-lcdk with both multi_v5 as well as davinci_all defconfigs.
+>
+> v1 -> v2:
+> - added patches from Arnd that fix build errors spotted when building
+>   random configurations (much appreciated)
+> - rebased on top of v5.3-rc1
 
-Fixes: dbcbabf7da92 ("HID: logitech-dj: fix return value of logi_dj_recv_query_hidpp_devices")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/hid/hid-logitech-dj.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
-index 8cdf373..bf6b289 100644
---- a/drivers/hid/hid-logitech-dj.c
-+++ b/drivers/hid/hid-logitech-dj.c
-@@ -793,7 +793,7 @@ static void delayedwork_callback(struct work_struct *work)
- 		break;
- 	case WORKITEM_TYPE_UNKNOWN:
- 		retval = logi_dj_recv_query_paired_devices(djrcv_dev);
--		if (retval) {
-+		if (retval < 0) {
- 			hid_err(djrcv_dev->hidpp, "%s: logi_dj_recv_query_paired_devices error: %d\n",
- 				__func__, retval);
- 		}
--- 
-2.7.4
+> Arnd Bergmann (3):
+> staging: media/davinci_vpfe: fix pinmux setup compilation
+>  media: davinci-vpbe: remove obsolete includes
+>  davinci: fix sleep.S build error on ARMv4
+>
+> Bartosz Golaszewski (2):
+>  ARM: davinci: support multiplatform build for ARM v5
+>  ARM: multi_v5_defconfig: make DaVinci part of the ARM v5 multiplatform build
 
 
+Thanks a lot for reposting the series!
+
+I wonder how we shoud deal with the dependencies now that the two media
+patches got merged in the linux-media tree.
+
+It would be tempting to just merge the arch/arm/ changes, but that creates
+a bisection problem when the vpbe driver is enabled. I don't care
+about the staging driver really as that one is broken anyway, but including
+the "media: davinci-vpbe: remove obsolete includes" fix would be better
+here.
+
+Mauro, any idea for how to handle that? Should we apply an identical
+patch to the davinci tree, or maybe only have it the ARM tree and you
+drop it from your tree (I don't know if you have a rule against rebasing).
+Sorry for not coordinating with Bartosz before I sent the patch again
+earlier this week.
+
+
+      Arnd
