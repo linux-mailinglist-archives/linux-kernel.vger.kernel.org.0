@@ -2,48 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 815D375152
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:36:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EE8C75157
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:37:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728997AbfGYOgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 10:36:35 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36241 "EHLO
+        id S1729077AbfGYOhT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 10:37:19 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54213 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727322AbfGYOgf (ORCPT
+        with ESMTP id S1729056AbfGYOhT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 10:36:35 -0400
+        Thu, 25 Jul 2019 10:37:19 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PEaL3P1041913
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PEb5mL1041989
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 25 Jul 2019 07:36:21 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PEaL3P1041913
+        Thu, 25 Jul 2019 07:37:06 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PEb5mL1041989
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564065382;
-        bh=qhgFm+stInfnzDs+bAC0oJ71+oVPFsEfCxYmASJm62E=;
+        s=2019071901; t=1564065426;
+        bh=u9lxvqAFP1MFrDEx8AitCxDJoiaz7jD7cA5B1dM0L4I=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=TJORIaNvo5L1j8I8W9cu0k4ozV9xbJ5xYJQ93LC8OrhA2CkqvcZ0X9Y4HUUAxAEWx
-         OUT7vL8IlywLzO/8U+nnEGgxbWTXKr0IJfyd6jjavGjObtuILp5ryWA1ywZiyhuvkS
-         oqk4lwqYNSzfEs+kTCtZw0fHUfFyavQup+IHqvJgHGnNx90qIMwpmt9ZEBcwsu/I/J
-         cQDfF2/vMj/qvAgxZBtibeX3kQfr7FXsbBgcxu1H1yqf1nQi6XjWONNgU16hNen49Z
-         8/S8bgubsBwaAUv3B05mRU6SFU1YubKGbcvNH2YUCkvdkFlq33LWjU42+w4Jtbd0RC
-         aEHwlqnkF0XnQ==
+        b=F8Fcu2KBtPmilh4JvAdB9g/WXSAuHkhODL1mhydGunOm1hGvKDHp0A71GpgJqi7rR
+         Wz/5nCAdH4D+HII57K8O4x42Qgy3aG7ZSiJj6C/cYfhWt8CspofzUNxomM5S9iHomI
+         s40eRfVLnSPjSmiC+ito1j3U+/nk0bqFdGsRGKFBHqP3ilqoImZioNbaZooqG0sqcg
+         jdHgypIlTCBLNvf3GdPw8d3pMZkPsCTZHBpCxp0ccj3cRqntMBPPkmuuFrp6Hjfytc
+         iANlZYfEaWQ5wtDKHd8JEngrEBHrDzwTs1OMhKUPbD76V5Ce8/07sgL9jKQIvVRRP8
+         s+7ydq/lshorA==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PEaLAB1041910;
-        Thu, 25 Jul 2019 07:36:21 -0700
-Date:   Thu, 25 Jul 2019 07:36:21 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PEb5Kn1041986;
+        Thu, 25 Jul 2019 07:37:05 -0700
+Date:   Thu, 25 Jul 2019 07:37:05 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-2510d09e9dabc265341f164e0b45b2dfdcb7ef36@git.kernel.org>
-Cc:     hpa@zytor.com, peterz@infradead.org, mingo@kernel.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org
-Reply-To: hpa@zytor.com, peterz@infradead.org, mingo@kernel.org,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org
-In-Reply-To: <20190722105221.042964120@linutronix.de>
-References: <20190722105221.042964120@linutronix.de>
+Message-ID: <tip-43931d350f30c6cd8c2f498d54ef7d65750abc92@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, peterz@infradead.org,
+        hpa@zytor.com, linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com,
+          peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org
+In-Reply-To: <20190722105221.134696837@linutronix.de>
+References: <20190722105221.134696837@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/apic] x86/apic/flat64: Remove the IPI shorthand decision
- logic
-Git-Commit-ID: 2510d09e9dabc265341f164e0b45b2dfdcb7ef36
+Subject: [tip:x86/apic] x86/apic/x2apic: Implement IPI shorthands support
+Git-Commit-ID: 43931d350f30c6cd8c2f498d54ef7d65750abc92
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,143 +60,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2510d09e9dabc265341f164e0b45b2dfdcb7ef36
-Gitweb:     https://git.kernel.org/tip/2510d09e9dabc265341f164e0b45b2dfdcb7ef36
+Commit-ID:  43931d350f30c6cd8c2f498d54ef7d65750abc92
+Gitweb:     https://git.kernel.org/tip/43931d350f30c6cd8c2f498d54ef7d65750abc92
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Mon, 22 Jul 2019 20:47:29 +0200
+AuthorDate: Mon, 22 Jul 2019 20:47:30 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Thu, 25 Jul 2019 16:12:02 +0200
 
-x86/apic/flat64: Remove the IPI shorthand decision logic
+x86/apic/x2apic: Implement IPI shorthands support
 
 All callers of apic->send_IPI_all() and apic->send_IPI_allbutself() contain
 the decision logic for shorthand invocation already and invoke
 send_IPI_mask() if the prereqisites are not satisfied.
 
-Remove the now redundant decision logic in the APIC code and the duplicate
-helper in probe_64.c.
+Implement shorthand support for x2apic.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20190722105221.042964120@linutronix.de
+Link: https://lkml.kernel.org/r/20190722105221.134696837@linutronix.de
 
 ---
- arch/x86/include/asm/apic.h         |  4 ---
- arch/x86/kernel/apic/apic_flat_64.c | 49 +++++--------------------------------
- arch/x86/kernel/apic/probe_64.c     |  7 ------
- 3 files changed, 6 insertions(+), 54 deletions(-)
+ arch/x86/kernel/apic/local.h          |  1 +
+ arch/x86/kernel/apic/x2apic_cluster.c |  4 ++--
+ arch/x86/kernel/apic/x2apic_phys.c    | 12 ++++++++++--
+ 3 files changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
-index de86c6c15228..2ebc17d9c72c 100644
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -468,10 +468,6 @@ static inline unsigned default_get_apic_id(unsigned long x)
- #define TRAMPOLINE_PHYS_LOW		0x467
- #define TRAMPOLINE_PHYS_HIGH		0x469
+diff --git a/arch/x86/kernel/apic/local.h b/arch/x86/kernel/apic/local.h
+index 69ba777cef98..04797f05ce94 100644
+--- a/arch/x86/kernel/apic/local.h
++++ b/arch/x86/kernel/apic/local.h
+@@ -23,6 +23,7 @@ unsigned int x2apic_get_apic_id(unsigned long id);
+ u32 x2apic_set_apic_id(unsigned int id);
+ int x2apic_phys_pkg_id(int initial_apicid, int index_msb);
+ void x2apic_send_IPI_self(int vector);
++void __x2apic_send_IPI_shorthand(int vector, u32 which);
  
--#ifdef CONFIG_X86_64
--extern void apic_send_IPI_self(int vector);
--#endif
--
- extern void generic_bigsmp_probe(void);
+ /* IPI */
  
- #ifdef CONFIG_X86_LOCAL_APIC
-diff --git a/arch/x86/kernel/apic/apic_flat_64.c b/arch/x86/kernel/apic/apic_flat_64.c
-index 004611a44962..7862b152a052 100644
---- a/arch/x86/kernel/apic/apic_flat_64.c
-+++ b/arch/x86/kernel/apic/apic_flat_64.c
-@@ -76,33 +76,6 @@ flat_send_IPI_mask_allbutself(const struct cpumask *cpumask, int vector)
- 	_flat_send_IPI_mask(mask, vector);
+diff --git a/arch/x86/kernel/apic/x2apic_cluster.c b/arch/x86/kernel/apic/x2apic_cluster.c
+index d0a13c88f777..45e92cba92f5 100644
+--- a/arch/x86/kernel/apic/x2apic_cluster.c
++++ b/arch/x86/kernel/apic/x2apic_cluster.c
+@@ -82,12 +82,12 @@ x2apic_send_IPI_mask_allbutself(const struct cpumask *mask, int vector)
+ 
+ static void x2apic_send_IPI_allbutself(int vector)
+ {
+-	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLBUT);
++	__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLBUT);
  }
  
--static void flat_send_IPI_allbutself(int vector)
--{
--	int cpu = smp_processor_id();
--
--	if (IS_ENABLED(CONFIG_HOTPLUG_CPU) || vector == NMI_VECTOR) {
--		if (!cpumask_equal(cpu_online_mask, cpumask_of(cpu))) {
--			unsigned long mask = cpumask_bits(cpu_online_mask)[0];
--
--			if (cpu < BITS_PER_LONG)
--				__clear_bit(cpu, &mask);
--
--			_flat_send_IPI_mask(mask, vector);
--		}
--	} else if (num_online_cpus() > 1) {
--		__default_send_IPI_shortcut(APIC_DEST_ALLBUT, vector);
--	}
--}
--
--static void flat_send_IPI_all(int vector)
--{
--	if (vector == NMI_VECTOR) {
--		flat_send_IPI_mask(cpu_online_mask, vector);
--	} else {
--		__default_send_IPI_shortcut(APIC_DEST_ALLINC, vector);
--	}
--}
--
- static unsigned int flat_get_apic_id(unsigned long x)
+ static void x2apic_send_IPI_all(int vector)
  {
- 	return (x >> 24) & 0xFF;
-@@ -164,9 +137,9 @@ static struct apic apic_flat __ro_after_init = {
- 	.send_IPI			= default_send_IPI_single,
- 	.send_IPI_mask			= flat_send_IPI_mask,
- 	.send_IPI_mask_allbutself	= flat_send_IPI_mask_allbutself,
--	.send_IPI_allbutself		= flat_send_IPI_allbutself,
--	.send_IPI_all			= flat_send_IPI_all,
--	.send_IPI_self			= apic_send_IPI_self,
-+	.send_IPI_allbutself		= default_send_IPI_allbutself,
-+	.send_IPI_all			= default_send_IPI_all,
-+	.send_IPI_self			= default_send_IPI_self,
- 
- 	.inquire_remote_apic		= default_inquire_remote_apic,
- 
-@@ -216,16 +189,6 @@ static void physflat_init_apic_ldr(void)
- 	 */
+-	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLINC);
++	__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLINC);
  }
  
--static void physflat_send_IPI_allbutself(int vector)
--{
--	default_send_IPI_mask_allbutself_phys(cpu_online_mask, vector);
--}
--
--static void physflat_send_IPI_all(int vector)
--{
--	default_send_IPI_mask_sequence_phys(cpu_online_mask, vector);
--}
--
- static int physflat_probe(void)
+ static u32 x2apic_calc_apicid(unsigned int cpu)
+diff --git a/arch/x86/kernel/apic/x2apic_phys.c b/arch/x86/kernel/apic/x2apic_phys.c
+index 5d50e1f9d4bf..bc9693841353 100644
+--- a/arch/x86/kernel/apic/x2apic_phys.c
++++ b/arch/x86/kernel/apic/x2apic_phys.c
+@@ -75,12 +75,12 @@ static void
+ 
+ static void x2apic_send_IPI_allbutself(int vector)
  {
- 	if (apic == &apic_physflat || num_possible_cpus() > 8 ||
-@@ -267,9 +230,9 @@ static struct apic apic_physflat __ro_after_init = {
- 	.send_IPI			= default_send_IPI_single_phys,
- 	.send_IPI_mask			= default_send_IPI_mask_sequence_phys,
- 	.send_IPI_mask_allbutself	= default_send_IPI_mask_allbutself_phys,
--	.send_IPI_allbutself		= physflat_send_IPI_allbutself,
--	.send_IPI_all			= physflat_send_IPI_all,
--	.send_IPI_self			= apic_send_IPI_self,
-+	.send_IPI_allbutself		= default_send_IPI_allbutself,
-+	.send_IPI_all			= default_send_IPI_all,
-+	.send_IPI_self			= default_send_IPI_self,
- 
- 	.inquire_remote_apic		= default_inquire_remote_apic,
- 
-diff --git a/arch/x86/kernel/apic/probe_64.c b/arch/x86/kernel/apic/probe_64.c
-index fb457b540e78..29f0e0984557 100644
---- a/arch/x86/kernel/apic/probe_64.c
-+++ b/arch/x86/kernel/apic/probe_64.c
-@@ -36,13 +36,6 @@ void __init default_setup_apic_routing(void)
- 		x86_platform.apic_post_init();
+-	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLBUT);
++	__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLBUT);
  }
  
--/* Same for both flat and physical. */
--
--void apic_send_IPI_self(int vector)
--{
--	__default_send_IPI_shortcut(APIC_DEST_SELF, vector);
--}
--
- int __init default_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
+ static void x2apic_send_IPI_all(int vector)
  {
- 	struct apic **drv;
+-	__x2apic_send_IPI_mask(cpu_online_mask, vector, APIC_DEST_ALLINC);
++	__x2apic_send_IPI_shorthand(vector, APIC_DEST_ALLINC);
+ }
+ 
+ static void init_x2apic_ldr(void)
+@@ -112,6 +112,14 @@ void __x2apic_send_IPI_dest(unsigned int apicid, int vector, unsigned int dest)
+ 	native_x2apic_icr_write(cfg, apicid);
+ }
+ 
++void __x2apic_send_IPI_shorthand(int vector, u32 which)
++{
++	unsigned long cfg = __prepare_ICR(which, vector, 0);
++
++	x2apic_wrmsr_fence();
++	native_x2apic_icr_write(cfg, 0);
++}
++
+ unsigned int x2apic_get_apic_id(unsigned long id)
+ {
+ 	return id;
