@@ -2,88 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CCF075630
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 19:50:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B4A875645
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 19:53:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730022AbfGYRuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 13:50:18 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:37712 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbfGYRuR (ORCPT
+        id S1730080AbfGYRxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 13:53:08 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44487 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727100AbfGYRxI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 13:50:17 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6PHneBn053659;
-        Thu, 25 Jul 2019 17:50:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
- subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=T/6UXjTIk4O6K3Oj5xQH/Mu3o8xx8bGvbsb/pf1PMMc=;
- b=2A7zoUHoRPgAh3r0/WGbCARKwST+kryKnKc+P3fESgFE0rH9dONDOBUUp7u3ZRqfjMYO
- nPluHEhkjL7ZyeVgWizFphXdKdTak1Bel2iUGJXf6T2xYsKVGyVKGzyWQOpOmtlrWwW3
- daoI+fMbtcntIVy5vUUMVibm7yZ4ahOXDIHwc5yCBBdkt5XX/l6dsXAsxKNQVsMYjF2X
- xPuJzLkMwVbOD+TFk/opsQCs2HoGUb7uL9qox9OjwZTFmFSvAFRmiP5zXA6ZUsUt/ITY
- lk8q0AEEiMIQXXss/G2KppwjXI13ZJTErDnNkzUan1ClyNXeR305j5A6pUVAjHlIrcre SQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2tx61c5n98-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Jul 2019 17:50:15 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6PHgdxV074027;
-        Thu, 25 Jul 2019 17:50:15 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2tx60xy602-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Jul 2019 17:50:14 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6PHoEf5007397;
-        Thu, 25 Jul 2019 17:50:14 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 25 Jul 2019 10:50:14 -0700
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 99CF06A0133; Thu, 25 Jul 2019 13:52:07 -0400 (EDT)
-Date:   Thu, 25 Jul 2019 13:52:07 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] (ibft) for-linus-5.3
-Message-ID: <20190725175207.GC11606@char.us.oracle.com>
+        Thu, 25 Jul 2019 13:53:08 -0400
+Received: by mail-pf1-f195.google.com with SMTP id t16so23097711pfe.11
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 10:53:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=x+3BFyzp7D/vPI4eYVBwW0OZVm0O0+MUXJZpdTJS7yk=;
+        b=ciww8qYZU3JjNb3Aq1dK4VO+0r3eFfGv8fv2UUIvYZfMGK/O9pj4NkBvbJ4pIGLiHT
+         Nhlo0mKTPWNZP0AJC2tLZR5vrGSYghGKPaD6s92SU67gaD0wGJ/fjnQmlsDKoInfmwFf
+         s4+5ZPv7SkM86xKq4fpaeq/pW2npHzZ/GWtag=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=x+3BFyzp7D/vPI4eYVBwW0OZVm0O0+MUXJZpdTJS7yk=;
+        b=LChwa0X9RVk3N/r2ll2rsqiVNr/x+h33U7xzvdL8WsSp0O43GTpjk+rUtY7M7bnAFb
+         B/xFLxD3EDIeaz6UxgyXpyI/Sx2gxEyGt+37Oeor3jsrgLhBx/wIlHQtaCc2yLvgw+Im
+         kd2ZMVFX5+AAgVftrHRm0IjeWWy8gX6EZo04e9KWQzKoPWqy5ig06q3syVBuolVste6c
+         J/R0YnqSXlNsR8KA/KtmyvHhRUzeN40co/ddY4SvleLdvGZxNI3RDofKDjwbJNrIYzDz
+         tCf8m5tDZFAUhXim0pQ+ZqXFvgbNMRE50fVPoiQXWN9qsKY4gCz9TlZ//RhLzsdhLRca
+         o5tg==
+X-Gm-Message-State: APjAAAXx5+L4RhBZbxrpERX1jrqA9tV9D6sJQ2aoTqsh2h9pFFxHvLW8
+        u0VMokHsbdYbZRduKEAuBD+r8Q==
+X-Google-Smtp-Source: APXvYqzUxAOwJ6wOw4ygsDnCgRPH1p4MKEK+ioEao6peJecQrhFdUdXjMC+z7alvRtjH+qI16qh7/g==
+X-Received: by 2002:a62:87c8:: with SMTP id i191mr17939790pfe.133.1564077187553;
+        Thu, 25 Jul 2019 10:53:07 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id s43sm64364749pjb.10.2019.07.25.10.53.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Jul 2019 10:53:06 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 10:52:58 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [RFC] dt-bindings: net: phy: Add subnode for LED configuration
+Message-ID: <20190725175258.GE250418@google.com>
+References: <20190722223741.113347-1-mka@chromium.org>
+ <20190724180430.GB28488@lunn.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9329 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1907250209
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9329 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1907250210
+In-Reply-To: <20190724180430.GB28488@lunn.ch>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Andrew,
 
-Hey Linus,
+On Wed, Jul 24, 2019 at 08:04:30PM +0200, Andrew Lunn wrote:
+> On Mon, Jul 22, 2019 at 03:37:41PM -0700, Matthias Kaehlcke wrote:
+> > The LED behavior of some Ethernet PHYs is configurable. Add an
+> > optional 'leds' subnode with a child node for each LED to be
+> > configured. The binding aims to be compatible with the common
+> > LED binding (see devicetree/bindings/leds/common.txt).
+> > 
+> > A LED can be configured to be 'on' when a link with a certain speed
+> > is active, or to blink on RX/TX activity. For the configuration to
+> > be effective it needs to be supported by the hardware and the
+> > corresponding PHY driver.
+> > 
+> > Suggested-by: Andrew Lunn <andrew@lunn.ch>
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> > This RFC is a follow up of the discussion on "[PATCH v2 6/7]
+> > dt-bindings: net: realtek: Add property to configure LED mode"
+> > (https://lore.kernel.org/patchwork/patch/1097185/).
+> > 
+> > For now posting as RFC to get a basic agreement on the bindings
+> > before proceding with the implementation in phylib and a specific
+> > driver.
+> > ---
+> >  Documentation/devicetree/bindings/net/phy.txt | 33 +++++++++++++++++++
+> >  1 file changed, 33 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/phy.txt b/Documentation/devicetree/bindings/net/phy.txt
+> > index 9b9e5b1765dd..ad495d3abbbb 100644
+> > --- a/Documentation/devicetree/bindings/net/phy.txt
+> > +++ b/Documentation/devicetree/bindings/net/phy.txt
+> > @@ -46,6 +46,25 @@ Optional Properties:
+> >    Mark the corresponding energy efficient ethernet mode as broken and
+> >    request the ethernet to stop advertising it.
+> >  
+> > +- leds: A sub-node which is a container of only LED nodes. Each child
+> > +    node represents a PHY LED.
+> > +
+> > +  Required properties for LED child nodes:
+> > +  - reg: The ID number of the LED, typically corresponds to a hardware ID.
+> > +
+> > +  Optional properties for child nodes:
+> > +  - label: The label for this LED. If omitted, the label is taken from the node
+> > +    name (excluding the unit address). It has to uniquely identify a device,
+> > +    i.e. no other LED class device can be assigned the same label.
+> 
+> Hi Matthias
+> 
+> I've thought about label a bit more. 
+> 
+> > +			label = "ethphy0:left:green";
+> 
+> We need to be careful with names here. systemd etc renames
+> interfaces. ethphy0 could in fact be connected to enp3s0, or eth0
+> might get renamed to eth1, etc. So i think we should avoid things like
+> ethphy0.
 
-Please git pull the following branch which is a tiny bit late (patch
-was posted furing merge window and I wanted to wait until rc1):
+Agreed, this could be problematic.
 
+> Also, i'm not sure we actually need a label, at least not to
+> start with.Do we have any way to expose it to the user?
 
-git://git.kernel.org/pub/scm/linux/kernel/git/konrad/ibft.git for-linus-5.3
+As of now I don't plan to expose the label to userspace by the PHY
+driver/framework itself.
 
-which has one tiny fix to enable iSCSI IBFT to be compiled under ARM.
+From my side we can omit the label for now and add it later if needed.
 
-Thank you.
+> If we do ever make it part of the generic LED framework, we can then
+> use the label. At that point, i would probably combine the label with
+> the interface name in a dynamic way to avoid issues like this.
 
- drivers/firmware/Kconfig      | 5 +++--
- drivers/firmware/iscsi_ibft.c | 4 ++++
- 2 files changed, 7 insertions(+), 2 deletions(-)
+Sounds good.
 
-Thomas Tai (1):
-      iscsi_ibft: make ISCSI_IBFT dependson ACPI instead of ISCSI_IBFT_FIND
+Thanks
 
+Matthias
