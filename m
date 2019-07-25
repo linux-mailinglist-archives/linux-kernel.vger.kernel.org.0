@@ -2,78 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F9F27586B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 21:54:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF3C975872
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 21:56:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbfGYTyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 15:54:23 -0400
-Received: from mga07.intel.com ([134.134.136.100]:62331 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725923AbfGYTyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 15:54:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 12:54:22 -0700
-X-IronPort-AV: E=Sophos;i="5.64,307,1559545200"; 
-   d="scan'208";a="175354533"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 12:54:21 -0700
-Message-ID: <0530d9d32a7316adee62e067cb0fb8048f97da84.camel@linux.intel.com>
-Subject: Re: [PATCH v2 5/5] virtio-balloon: Add support for providing page
- hints to host
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Nitesh Narayan Lal <nitesh@redhat.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        kvm@vger.kernel.org, david@redhat.com, mst@redhat.com,
-        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org
-Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
-        konrad.wilk@oracle.com, lcapitulino@redhat.com,
-        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
-        dan.j.williams@intel.com
-Date:   Thu, 25 Jul 2019 12:54:21 -0700
-In-Reply-To: <fc99b28d-2efd-cd05-59e4-99f35bd37cac@redhat.com>
-References: <20190724165158.6685.87228.stgit@localhost.localdomain>
-         <20190724170514.6685.17161.stgit@localhost.localdomain>
-         <fc99b28d-2efd-cd05-59e4-99f35bd37cac@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        id S1726490AbfGYT4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 15:56:39 -0400
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:38835 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726126AbfGYT4i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 15:56:38 -0400
+Received: by mail-wr1-f47.google.com with SMTP id g17so52026723wrr.5;
+        Thu, 25 Jul 2019 12:56:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=FCMWQXps57iJ9hRjIRfg44PssDq4iyaMxzlx0pazmN4=;
+        b=QY9Y1Ck908tpG9DhsRzPGxdMho0MuCdmqfty7Kr8P9jA2ugJ70ErXff28QerNIp7vK
+         HXw/LJ4JYsXdzpDr0XkC8wCZ4B6DYKvit8pMXG2nqH9NiBUTBGL4prGq/NGUd5gOiiMh
+         FAJ45yPupn0jVL3mHLMznxOEDcOyhRiJajAQ03UFyQ1aYmsb1mTANrVRk2bJWbP5WiRj
+         y2IXP8Lkp0CMZlQYHxpHu01aKUuGntPUxd8GiYbMbr07zE58Ior8G+EVa8nSRgWIIcHm
+         z7hVPcbWdB++qeFIRnCkCLhTB7KGL5a0OFCdnVcehwEBKtIxrKHyiD2piFPUHf9kfZ24
+         LTyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=FCMWQXps57iJ9hRjIRfg44PssDq4iyaMxzlx0pazmN4=;
+        b=pPD1MGYIme1BHUSPczDAAWLTcLPbxWATDwwhYufNEat5adcPXt+PYPH+bmJ22AsQh6
+         A58a+k/AN3+FKkc0PFzbd1Yl5kkeKWltBOsg1woJvU78rQiSsVNPZ4rSjqoeawSi4uHn
+         SxraQe/frCxytjunbyv9JkHv1AFvpRZVeFx43INC+IYmdwOHXduwHGjKjtgVhrt68qdK
+         +Bg3CGvfj2ah84jbv6p+G6BXVeWmMta5rPbi+dCsEMYo+63A0gHVCjdWNkuqi+1ialg+
+         j5wgC4eVWDJTtS/BH9wLmO6IIz0w/SOPMoCwed2ytsJhIo1JKqcXAIkOgdHbL2g0bDxk
+         60Uw==
+X-Gm-Message-State: APjAAAUfCNpmXnXftbaAd+EtCAyZK4kMyuBmeAj7oZ/mHc2wKwawcgfD
+        bfSh5h8ju9V9Rq2Pdoy4QzBHhVI=
+X-Google-Smtp-Source: APXvYqw2hxOXNQbNANt+fBNUe9CAESS1rA4VG/7mmizYy6r2daz2/LqONbGGc0TfUlnxulJ+RItX6w==
+X-Received: by 2002:adf:dd01:: with SMTP id a1mr7273514wrm.12.1564084596367;
+        Thu, 25 Jul 2019 12:56:36 -0700 (PDT)
+Received: from avx2 ([46.53.248.55])
+        by smtp.gmail.com with ESMTPSA id f7sm50225925wrv.38.2019.07.25.12.56.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Jul 2019 12:56:35 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 22:56:33 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: .h.s files spam
+Message-ID: <20190725195633.GA15202@avx2>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-07-25 at 13:42 -0400, Nitesh Narayan Lal wrote:
-> On 7/24/19 1:05 PM, Alexander Duyck wrote:
-> > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > 
-> > 
+What are these files for?
 
-<snip>
+	$ cat ../obj/include/linux/kernel.h.s
+        .file   "null"
+        .text
+        .ident  "GCC: (Gentoo 9.1.0-r1 p1.1) 9.1.0"
+        .section        .note.GNU-stack,"",@progbits
 
-> > @@ -924,12 +956,24 @@ static int virtballoon_probe(struct virtio_device *vdev)
-> >  		if (err)
-> >  			goto out_del_balloon_wq;
-> >  	}
-> > +
-> > +	vb->ph_dev_info.react = virtballoon_page_hinting_react;
-> > +	vb->ph_dev_info.capacity = VIRTIO_BALLOON_ARRAY_HINTS_MAX;
-> > +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING)) {
-> > +		err = page_hinting_startup(&vb->ph_dev_info);
-> > +		if (err)
-> > +			goto out_unregister_shrinker;
-> > +	}
-> Any reason why you have kept vb->ph_dev_info.react & vb->ph_dev_info.capacity
-> initialization outside the feature check?
+	$ find ../obj/ -type f -name '*.s' | wc -l
+	4047
 
-I just had them on the outside because it didn't really matter if I
-initialized them or not if the feature was not present. So I just
-defaulted to initializing them in all cases.
-
-Since I will be updating capacity to be based on the size of the hinting
-queue in the next patch set I will move capacity initialization inside of
-the check.
-
+It is "allyesconfig" in case someone is going to reproduce it.
