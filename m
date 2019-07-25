@@ -2,70 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A04FC74FAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45D3974F9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:35:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389329AbfGYNhx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:37:53 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:2488 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387959AbfGYNhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:37:53 -0400
-Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.57])
-        by Forcepoint Email with ESMTP id 5CB8B7FCA28AA3ECAB45;
-        Thu, 25 Jul 2019 21:37:50 +0800 (CST)
-Received: from dggeme760-chm.china.huawei.com (10.3.19.106) by
- DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 25 Jul 2019 21:37:49 +0800
-Received: from [127.0.0.1] (10.57.37.248) by dggeme760-chm.china.huawei.com
- (10.3.19.106) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 25
- Jul 2019 21:37:49 +0800
-Subject: Re: [PATCH net] net: hns: fix LED configuration for marvell phy
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     David Miller <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <shiju.jose@huawei.com>
-References: <1563775152-21369-1-git-send-email-liuyonglong@huawei.com>
- <20190722.181906.2225538844348045066.davem@davemloft.net>
- <72061222-411f-a58c-5873-ad873394cdb5@huawei.com>
- <20190725042829.GB14276@lunn.ch>
- <8017d9ff-2991-f94f-e611-4d1bac12e93b@huawei.com>
- <20190725130807.GB21952@lunn.ch>
-From:   liuyonglong <liuyonglong@huawei.com>
-Message-ID: <908373a2-68cd-51c4-df11-499c49d80ae3@huawei.com>
-Date:   Thu, 25 Jul 2019 21:37:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S2388334AbfGYNfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:35:47 -0400
+Received: from foss.arm.com ([217.140.110.172]:57464 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728133AbfGYNfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 09:35:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7ADF328;
+        Thu, 25 Jul 2019 06:35:44 -0700 (PDT)
+Received: from [10.37.10.14] (unknown [10.37.10.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 95DF03F71F;
+        Thu, 25 Jul 2019 06:35:43 -0700 (PDT)
+Subject: Re: [PATCH v2 23/28] drivers: Introduce
+ driver_find_device_by_of_node() helper
+To:     lee.jones@linaro.org
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        rafael@kernel.org, thor.thayer@linux.intel.com
+References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
+ <1560534863-15115-24-git-send-email-suzuki.poulose@arm.com>
+ <20190725105103.GB6164@dell>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <fc40ac7f-3df3-ce30-a4ba-1698f976d239@arm.com>
+Date:   Thu, 25 Jul 2019 14:38:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190725130807.GB21952@lunn.ch>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190725105103.GB6164@dell>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.37.248]
-X-ClientProxiedBy: dggeme704-chm.china.huawei.com (10.1.199.100) To
- dggeme760-chm.china.huawei.com (10.3.19.106)
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Lee
 
+On 07/25/2019 11:51 AM, Lee Jones wrote:
+> On Fri, 14 Jun 2019, Suzuki K Poulose wrote:
+> 
+>> Add a wrapper to driver_find_device() to search for a device
+>> by the of_node pointer, reusing the generic match function.
+>> Also convert the existing users to make use of the new helper.
+>>
+>> Cc: Lee Jones <lee.jones@linaro.org>
+>> Cc: Thor Thayer <thor.thayer@linux.intel.com>
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+>> Acked-by: Thor Thayer <thor.thayer@linux.intel.com>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>>   drivers/amba/tegra-ahb.c    | 11 +----------
+>>   drivers/mfd/altera-sysmgr.c | 14 ++------------
+>>   include/linux/device.h      | 13 +++++++++++++
+>>   3 files changed, 16 insertions(+), 22 deletions(-)
+> 
+> Looks good to me.  For the MFD part.
+> 
+> For my own reference:
+>    Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-On 2019/7/25 21:08, Andrew Lunn wrote:
->> You are discussing about the DT configuration, is Matthias Kaehlcke's work
->> also provide a generic way to configure PHY LEDS using ACPI?
+Thanks ! Btw, v3 has been posted based on 5.3-rc1. You are
+in Cc for that.
+
 > 
-> In general, you should be able to use the same properties in ACPI as
-> DT. If the device_property_read_X() API is used, it will try both ACPI
-> and OF to get the property.
-> 
->     Andrew
-> 
-> .
+> What is the merge plan?
 > 
 
-OK, thanks very much!
+With v3, it looks more sensible to merge the patch via Greg's tree.
+
+Suzuki
 
