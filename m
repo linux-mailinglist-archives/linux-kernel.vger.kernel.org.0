@@ -2,66 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E547F759E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 23:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21A77759E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 23:56:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbfGYVzv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 17:55:51 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47696 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726715AbfGYVzv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 17:55:51 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hqliE-0005aT-2m; Thu, 25 Jul 2019 23:55:46 +0200
-Date:   Thu, 25 Jul 2019 23:55:45 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] drm/i915: Remove redundant user_access_end() from
- __copy_from_user() error path
-In-Reply-To: <51a4155c5bc2ca847a9cbe85c1c11918bb193141.1564086017.git.jpoimboe@redhat.com>
-Message-ID: <alpine.DEB.2.21.1907252355150.1791@nanos.tec.linutronix.de>
-References: <51a4155c5bc2ca847a9cbe85c1c11918bb193141.1564086017.git.jpoimboe@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1726888AbfGYV4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 17:56:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44388 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726823AbfGYV4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 17:56:04 -0400
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B379A229F9;
+        Thu, 25 Jul 2019 21:56:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564091763;
+        bh=WiwQMRx4WG4irtjjyTFzZAkKpzMmVmnL5fSYWsS5oLM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=14MaIIpVNUHnvzAOUCW5ZR/5bwcop0S2xY27mFvq3/qsZm+vSzwUAs10bFXZwUnuL
+         po2rTYzJQh4Dnrpv0GkxY14BfE/MlFy1gGcsxroPPtkAhf0PYfKrOSBbVSYOMiGCI0
+         gJbTJqBhr3ZHr3rQ6XMPXka0CYWsAUF/tE6Ksszg=
+Received: by mail-qt1-f174.google.com with SMTP id r6so46410341qtt.0;
+        Thu, 25 Jul 2019 14:56:03 -0700 (PDT)
+X-Gm-Message-State: APjAAAXon4LyUkhxjBTTiEaRqkIjhvUqsQQTjYpL5UNnVAFLCz+Jxwkp
+        uCsY2yFKz/a260dCCt2QCqP2bQZTAHWRQ0Vcvg==
+X-Google-Smtp-Source: APXvYqzF61IC2gKg1BZyzb1/vH+EPSCY6cxEFKqEgw9YGCFhz0ulGpiVU0Gotc4hMXY95huXyZdROY3xW380kjkgT34=
+X-Received: by 2002:a0c:b786:: with SMTP id l6mr65421386qve.148.1564091762902;
+ Thu, 25 Jul 2019 14:56:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20190712064206.48249-1-ran.wang_1@nxp.com> <20190724204222.GA1234@bogus>
+ <DB8PR04MB6826B4479A5A67A66025E89CF1C10@DB8PR04MB6826.eurprd04.prod.outlook.com>
+In-Reply-To: <DB8PR04MB6826B4479A5A67A66025E89CF1C10@DB8PR04MB6826.eurprd04.prod.outlook.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 25 Jul 2019 15:55:51 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKd=+0kXyUJkTZezMfcv-SQznzefi_0J0VjdsXcP8qZ5w@mail.gmail.com>
+Message-ID: <CAL_JsqKd=+0kXyUJkTZezMfcv-SQznzefi_0J0VjdsXcP8qZ5w@mail.gmail.com>
+Subject: Re: [PATCH V2 1/2] usb: dwc3: Add node to update cache type setting
+To:     Ran Wang <ran.wang_1@nxp.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 25 Jul 2019, Josh Poimboeuf wrote:
+On Wed, Jul 24, 2019 at 8:29 PM Ran Wang <ran.wang_1@nxp.com> wrote:
+>
+> Hi Rob,
+>
+> On Thursday, July 25, 2019 04:42 Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Fri, Jul 12, 2019 at 02:42:05PM +0800, Ran Wang wrote:
+> > > Some Layerscape paltforms (such as LS1088A, LS2088A, etc) encounter
+> > > USB detect failues when adding dma-coherent to DWC3 node. This is
+> > > because the HW default cache type configuration of those SoC are not
+> > > right, need to be updated in DTS.
+> > >
+> > > Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+> > > ---
+> > > Change in v2:
+> > >     - New file.
+> > >
+> > >  Documentation/devicetree/bindings/usb/dwc3.txt | 43
+> > > ++++++++++++++++++++++++++
+> > >  1 file changed, 43 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt
+> > > b/Documentation/devicetree/bindings/usb/dwc3.txt
+> > > index 8e5265e..7bc1cef 100644
+> > > --- a/Documentation/devicetree/bindings/usb/dwc3.txt
+> > > +++ b/Documentation/devicetree/bindings/usb/dwc3.txt
+> > > @@ -110,6 +110,43 @@ Optional properties:
+> > >   - in addition all properties from usb-xhci.txt from the current directory are
+> > >     supported as well
+> > >
+> > > +* Cache type nodes (optional)
+> > > +
+> > > +The Cache type node is used to tell how to configure cache type on 4
+> > > +different transfer types: Data Read, Desc Read, Data Write and Desc
+> > > +write. For each treasfer type, controller has a 4-bit register field
+> > > +to enable different cache type. Quoted from DWC3 data book Table 6-5
+> > Cache Type Bit Assignments:
+> > > +----------------------------------------------------------------
+> > > +MBUS_TYPE| bit[3]       |bit[2]       |bit[1]     |bit[0]
+> > > +----------------------------------------------------------------
+> > > +AHB      |Cacheable     |Bufferable   |Privilegge |Data
+> > > +AXI3     |Write Allocate|Read Allocate|Cacheable  |Bufferable
+> > > +AXI4     |Allocate Other|Allocate     |Modifiable |Bufferable
+> > > +AXI4     |Other Allocate|Allocate     |Modifiable |Bufferable
+> > > +Native   |Same as AXI   |Same as AXI  |Same as AXI|Same as AXI
+> > > +----------------------------------------------------------------
+> > > +Note: The AHB, AXI3, AXI4, and PCIe busses use different names for
+> > > +certain signals, which have the same meaning:
+> > > +  Bufferable = Posted
+> > > +  Cacheable = Modifiable = Snoop (negation of No Snoop)
+> >
+> > This should all be implied from the SoC specific compatible strings.
+>
+> Did you mean I could implement a soc driver which can be matched by compatible of 'fsl,ls1088a-dwc3' which will pass known bus type to DWC3 driver? If yes, how to pass?
 
-> Objtool reports:
-> 
->   drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: .altinstr_replacement+0x36: redundant UACCESS disable
-> 
-> __copy_from_user() already does both STAC and CLAC, so the
-> user_access_end() in its error path adds an extra unnecessary CLAC.
-> 
-> Fixes: 0b2c8f8b6b0c ("i915: fix missing user_access_end() in page fault exception case")
-> Reported-by: Thomas Gleixner <tglx@linutronix.de>
-> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-> Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-> Link: https://github.com/ClangBuiltLinux/linux/issues/617
-> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Yes. The DT match table can have data associated with that compatible
+string. Beyond that, I'm not really familiar with the DWC3 driver.
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-
+Rob
