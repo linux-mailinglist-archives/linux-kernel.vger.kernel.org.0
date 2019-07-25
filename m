@@ -2,273 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1761753D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:24:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8578753D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:23:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390452AbfGYQX6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:23:58 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39671 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390430AbfGYQXw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390435AbfGYQXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 25 Jul 2019 12:23:52 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PGNQea1076555
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 25 Jul 2019 09:23:26 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PGNQea1076555
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564071807;
-        bh=4XZbGy6of/HK5BX4PpB9l0JZ8HH9PgSQCcAWgoR/oPs=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=gQ/TIyvMCY8FbwchVZi085Pb8HLQpwPl12xgF76p+tecVWSHop64VOWuUTxg18R1f
-         pJSrEGZ1mJgnrcYbJRtC0GwYgMeuUV/vO6uNMrOkhVKAwhnj31VhmPu9bi5G2fZO/y
-         2S0Ivu6HTseeZrnrel5LoRX2GfdNf5MbBwfZGRwI8dcLrB2dFo6LC+dI9JTec4okDu
-         A6wbswtTWZmklCQ8NM/sUWRyTDj/CXWenSWBz9tTVgHMI6EVKvoQL7486rNjo5HRCG
-         pPsDlpus2+zRhqN4HubjDbIZSaKO/3j9BEEYEwqU89dA7/jUczrJtpenudZVN55GfY
-         A6XsIxrp+VzyQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PGNQ1M1076552;
-        Thu, 25 Jul 2019 09:23:26 -0700
-Date:   Thu, 25 Jul 2019 09:23:26 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Juri Lelli <tipbot@zytor.com>
-Message-ID: <tip-d74b27d63a8bebe2fe634944e4ebdc7b10db7a39@git.kernel.org>
-Cc:     juri.lelli@redhat.com, linux-kernel@vger.kernel.org,
-        dietmar.eggemann@arm.com, mingo@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        peterz@infradead.org
-Reply-To: torvalds@linux-foundation.org, peterz@infradead.org,
-          mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-          juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20190719140000.31694-7-juri.lelli@redhat.com>
-References: <20190719140000.31694-7-juri.lelli@redhat.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] cgroup/cpuset: Change cpuset_rwsem and hotplug
- lock order
-Git-Commit-ID: d74b27d63a8bebe2fe634944e4ebdc7b10db7a39
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47764 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389479AbfGYQXv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 12:23:51 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190725162349euoutp0122096b1b17d605cf047e383268cea464~0swrAnxTm3239532395euoutp01-
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 16:23:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190725162349euoutp0122096b1b17d605cf047e383268cea464~0swrAnxTm3239532395euoutp01-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1564071829;
+        bh=VcdlZyKrQCdgkYUt20ZBw2/TUXd1x62JJBXr6EHpia8=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=XvNiJPnR4xylIsj9T2NATRQ2lcH0fM8lr9CVTXhzw4VUMrYhSsiO7IbPuueFrHpU5
+         yU0ipTKi81vTWARn2GpTEMpfVE13c1mSWD+N4WZDx10h8htD9dI+9sLMRDHqZtjNrj
+         FkifOq9e/gJ4ync6ko/sksv1UPjhChQlQ5oAAIJg=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190725162348eucas1p2d04c89a2846f8586af7949b4a13942de~0swqMOc8H1109611096eucas1p2u;
+        Thu, 25 Jul 2019 16:23:48 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id CB.B0.04298.497D93D5; Thu, 25
+        Jul 2019 17:23:48 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190725162347eucas1p15f983918e07b912c4a00fefd0c2a5d8e~0swpaXOGQ3041930419eucas1p1N;
+        Thu, 25 Jul 2019 16:23:47 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190725162347eusmtrp29900cce149672f61a0bdef0c8a88c966~0swpMPzBg1648516485eusmtrp2B;
+        Thu, 25 Jul 2019 16:23:47 +0000 (GMT)
+X-AuditID: cbfec7f2-f2dff700000010ca-4a-5d39d7949571
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 04.46.04146.397D93D5; Thu, 25
+        Jul 2019 17:23:47 +0100 (BST)
+Received: from [106.120.51.20] (unknown [106.120.51.20]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190725162346eusmtip1ad4b284580c6a68ae2f63e50c9027790~0swoSc50i3163931639eusmtip1Z;
+        Thu, 25 Jul 2019 16:23:46 +0000 (GMT)
+Subject: Re: [PATCH v4 3/5] drivers: devfreq: events: extend events by type
+ of counted data
+To:     Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, myungjoo.ham@samsung.com
+Cc:     b.zolnierkie@samsung.com, krzk@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, kyungmin.park@samsung.com,
+        m.szyprowski@samsung.com, s.nawrocki@samsung.com, kgene@kernel.org,
+        willy.mh.wolff.ml@gmail.com
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+Message-ID: <6ad9882f-10c8-3708-1a06-ee712bb1c66d@partner.samsung.com>
+Date:   Thu, 25 Jul 2019 18:23:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.7.1
 MIME-Version: 1.0
+In-Reply-To: <15375017-2e82-7df8-344c-a9c41d61331c@samsung.com>
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUxNYRz23nPPR62bt9vl/pav7W6+MoWZvcXCmF0zk41NaJx0VtG9ck9F
+        MepaoUkWI5eUj3aTS0la5aN2Sx8aUeO2SJSWUkJl+aNyTyfTf8/v+T2/93me7eUodQvtxUUY
+        owWTkY/UMa7K4uo/rxZfdPgFL+kdciMPMvJp4hjsoklW1SuapHV8o0hDQwFLXpp7WVLY8Y4m
+        TWXXGDKQWoVIRsMzBblX1cqSHMcbBXmfmMuQpKdVLKnsPUWT37XtaA3W267bkL7U0srqC/PO
+        MPqHt0/ozxXlIf1A4exAZqfrqlAhMiJWMPkG7HUNz347wkT10EfOfL7OJKA6ZQpy4QAvh/vW
+        fFrCapyLYKxek4JcnXgQwdBwJyMPAwjuVA8r/l1YKzJpeWF1XlQUK+ShD4G97SabgjjOEwdD
+        8t0VEq/BnQjuljeOX1DYgcBm7kKSiME+UJJ3SHpVhTfAyR/9jISVeC587LYgCU/DO6CpqAzJ
+        Gg+ou/JlPLcLXg0D5u/jPIW10PIlSyHjOXDy0VVK8gKcyEFTcRIrx14Pj5+PUjL2hJ6aogl+
+        JoyVZk1UEyEh9QaS8THoSMuc0KyEypo3tJSZwgshv8xXptdCdlq7UqIBu0Nzn4ccwR3Siy9T
+        Mq2C08lqWb0Ais6+njCaDlbbJfY80lkmFbNMKmOZVMby3zcbKfOQVogRDWGCuNQoHPYReYMY
+        Ywzz2XfQUIicP65+tOZXCRpqDLEjzCGdm+q11S9YTfOxYpzBjoCjdBrVoxInpQrl4+IF08E9
+        pphIQbSjGZxSp1UdnfJplxqH8dHCAUGIEkz/tgrOxSsBKWILzP7mW6eGDLVNbcs0tqRA//m6
+        dZqYn2h3+dX4oEOVLr3Lkrqzm895b2mclfBk3sUdiVvdlrQmB9pyRjxSL3uHdH5e2B6/sV67
+        6OuwNkAZdDx4/3Kv0Nqv6ezmvRdyjHxqzpQX27dtCijwTY7a3t96b2pG5gfU3jUYKJTW7Eyx
+        x+qUYji/1JsyifxfdPWf8m0DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAIsWRmVeSWpSXmKPExsVy+t/xu7qTr1vGGnS3iFpsnLGe1eL6l+es
+        FvOPnGO16H/8mtni/PkN7BZnm96wW2x6fI3V4vKuOWwWn3uPMFrMOL+PyWLtkbvsFkuvX2Sy
+        uN24gs2ide8RdovDb9pZLb6deMToIOCxZt4aRo+ds+6ye2xa1cnmsXlJvUffllWMHp83yQWw
+        RenZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunbJehlLLj6
+        l63gFWtF58N5bA2MJ1m6GDk5JARMJJYfmMvaxcjFISSwlFFi85XfTBAJMYlJ+7azQ9jCEn+u
+        dbFBFL1mlJj+YikzSEJYIFai6dJlsG4RgaeMEmt/NoJVMQtcZ5Q4O3EG1NzdTBJN02YDLeTg
+        YBPQk9ixqhCkm1fATaL5w3s2EJtFQFXi3stZjCC2qECERF/bbDaIGkGJkzOfgN3KKWAv8bnp
+        HVgNs4CZxLzND5khbHGJW0/mM0HY8hLNW2czT2AUmoWkfRaSlllIWmYhaVnAyLKKUSS1tDg3
+        PbfYUK84Mbe4NC9dLzk/dxMjMLa3Hfu5eQfjpY3BhxgFOBiVeHgvLLeMFWJNLCuuzD3EKMHB
+        rCTCu3UHUIg3JbGyKrUoP76oNCe1+BCjKdBzE5mlRJPzgWknryTe0NTQ3MLS0NzY3NjMQkmc
+        t0PgYIyQQHpiSWp2ampBahFMHxMHp1QDY9eTWw+lP0oWdmaYvVpSceM3+y2O6M+LLNbJptz8
+        4HXJ5oVg+7MzhSHLheIO/OCUtxAtyt/aoyf02slkKzP3Ac+LNZ/irJ5uf7pV+7Fam/6d858M
+        sjbtstzQffKQ3cmHGZOKFzPM2fOz+2/J3ivSN3xrDmbGTDb+5FYUkShluOnc4tNuld83rVJi
+        Kc5INNRiLipOBAC0EGq+AwMAAA==
+X-CMS-MailID: 20190725162347eucas1p15f983918e07b912c4a00fefd0c2a5d8e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190605091303eucas1p27177d349e0f2bd37bf582dbd7266321a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190605091303eucas1p27177d349e0f2bd37bf582dbd7266321a
+References: <20190605091236.24263-1-l.luba@partner.samsung.com>
+        <CGME20190605091303eucas1p27177d349e0f2bd37bf582dbd7266321a@eucas1p2.samsung.com>
+        <20190605091236.24263-4-l.luba@partner.samsung.com>
+        <37af143f-a585-a28a-a36f-2ed25c5b6d3b@partner.samsung.com>
+        <15375017-2e82-7df8-344c-a9c41d61331c@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d74b27d63a8bebe2fe634944e4ebdc7b10db7a39
-Gitweb:     https://git.kernel.org/tip/d74b27d63a8bebe2fe634944e4ebdc7b10db7a39
-Author:     Juri Lelli <juri.lelli@redhat.com>
-AuthorDate: Fri, 19 Jul 2019 15:59:58 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 25 Jul 2019 15:55:03 +0200
+Hi Chanwoo,
 
-cgroup/cpuset: Change cpuset_rwsem and hotplug lock order
+On 7/24/19 12:24 PM, Chanwoo Choi wrote:
+> Hi Lukasz,
+> 
+> On 19. 7. 24. 오후 7:15, Lukasz Luba wrote:
+>> Hi Chanwoo,
+>>
+>> Could you have a look a this patch, please?
+>> This patch has been rewritten accorifing to your suggestion.
+>> Krzysztof tried to apply 5/5 DT patch on his current branch,
+>> but it is missing earlier stuff.
+>> The other patches have needed ACKs so could go through devfreq tree
+>> probably, but this one left.
+> 
+> Sorry for the late reply. It looks good to me.
+> 
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Thank you for the ACK.
 
-cpuset_rwsem is going to be acquired from sched_setscheduler() with a
-following patch. There are however paths (e.g., spawn_ksoftirqd) in
-which sched_scheduler() is eventually called while holding hotplug lock;
-this creates a dependecy between hotplug lock (to be always acquired
-first) and cpuset_rwsem (to be always acquired after hotplug lock).
+MyungJoo could you take the patches (apart from 5/5 which will be in
+Krzysztof's tree probably) through devfreq tree, please?
 
-Fix paths which currently take the two locks in the wrong order (after
-a following patch is applied).
-
-Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bristot@redhat.com
-Cc: claudio@evidence.eu.com
-Cc: lizefan@huawei.com
-Cc: longman@redhat.com
-Cc: luca.abeni@santannapisa.it
-Cc: mathieu.poirier@linaro.org
-Cc: rostedt@goodmis.org
-Cc: tj@kernel.org
-Cc: tommaso.cucinotta@santannapisa.it
-Link: https://lkml.kernel.org/r/20190719140000.31694-7-juri.lelli@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- include/linux/cpuset.h |  8 ++++----
- kernel/cgroup/cpuset.c | 22 +++++++++++++++++-----
- 2 files changed, 21 insertions(+), 9 deletions(-)
-
-diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-index 934633a05d20..7f1478c26a33 100644
---- a/include/linux/cpuset.h
-+++ b/include/linux/cpuset.h
-@@ -40,14 +40,14 @@ static inline bool cpusets_enabled(void)
- 
- static inline void cpuset_inc(void)
- {
--	static_branch_inc(&cpusets_pre_enable_key);
--	static_branch_inc(&cpusets_enabled_key);
-+	static_branch_inc_cpuslocked(&cpusets_pre_enable_key);
-+	static_branch_inc_cpuslocked(&cpusets_enabled_key);
- }
- 
- static inline void cpuset_dec(void)
- {
--	static_branch_dec(&cpusets_enabled_key);
--	static_branch_dec(&cpusets_pre_enable_key);
-+	static_branch_dec_cpuslocked(&cpusets_enabled_key);
-+	static_branch_dec_cpuslocked(&cpusets_pre_enable_key);
- }
- 
- extern int cpuset_init(void);
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index e1a8d168c5e9..5c5014caa23c 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -973,8 +973,8 @@ static void rebuild_sched_domains_locked(void)
- 	cpumask_var_t *doms;
- 	int ndoms;
- 
-+	lockdep_assert_cpus_held();
- 	percpu_rwsem_assert_held(&cpuset_rwsem);
--	get_online_cpus();
- 
- 	/*
- 	 * We have raced with CPU hotplug. Don't do anything to avoid
-@@ -983,19 +983,17 @@ static void rebuild_sched_domains_locked(void)
- 	 */
- 	if (!top_cpuset.nr_subparts_cpus &&
- 	    !cpumask_equal(top_cpuset.effective_cpus, cpu_active_mask))
--		goto out;
-+		return;
- 
- 	if (top_cpuset.nr_subparts_cpus &&
- 	   !cpumask_subset(top_cpuset.effective_cpus, cpu_active_mask))
--		goto out;
-+		return;
- 
- 	/* Generate domain masks and attrs */
- 	ndoms = generate_sched_domains(&doms, &attr);
- 
- 	/* Have scheduler rebuild the domains */
- 	partition_and_rebuild_sched_domains(ndoms, doms, attr);
--out:
--	put_online_cpus();
- }
- #else /* !CONFIG_SMP */
- static void rebuild_sched_domains_locked(void)
-@@ -1005,9 +1003,11 @@ static void rebuild_sched_domains_locked(void)
- 
- void rebuild_sched_domains(void)
- {
-+	get_online_cpus();
- 	percpu_down_write(&cpuset_rwsem);
- 	rebuild_sched_domains_locked();
- 	percpu_up_write(&cpuset_rwsem);
-+	put_online_cpus();
- }
- 
- /**
-@@ -2245,6 +2245,7 @@ static int cpuset_write_u64(struct cgroup_subsys_state *css, struct cftype *cft,
- 	cpuset_filetype_t type = cft->private;
- 	int retval = 0;
- 
-+	get_online_cpus();
- 	percpu_down_write(&cpuset_rwsem);
- 	if (!is_cpuset_online(cs)) {
- 		retval = -ENODEV;
-@@ -2282,6 +2283,7 @@ static int cpuset_write_u64(struct cgroup_subsys_state *css, struct cftype *cft,
- 	}
- out_unlock:
- 	percpu_up_write(&cpuset_rwsem);
-+	put_online_cpus();
- 	return retval;
- }
- 
-@@ -2292,6 +2294,7 @@ static int cpuset_write_s64(struct cgroup_subsys_state *css, struct cftype *cft,
- 	cpuset_filetype_t type = cft->private;
- 	int retval = -ENODEV;
- 
-+	get_online_cpus();
- 	percpu_down_write(&cpuset_rwsem);
- 	if (!is_cpuset_online(cs))
- 		goto out_unlock;
-@@ -2306,6 +2309,7 @@ static int cpuset_write_s64(struct cgroup_subsys_state *css, struct cftype *cft,
- 	}
- out_unlock:
- 	percpu_up_write(&cpuset_rwsem);
-+	put_online_cpus();
- 	return retval;
- }
- 
-@@ -2344,6 +2348,7 @@ static ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
- 	kernfs_break_active_protection(of->kn);
- 	flush_work(&cpuset_hotplug_work);
- 
-+	get_online_cpus();
- 	percpu_down_write(&cpuset_rwsem);
- 	if (!is_cpuset_online(cs))
- 		goto out_unlock;
-@@ -2369,6 +2374,7 @@ static ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
- 	free_cpuset(trialcs);
- out_unlock:
- 	percpu_up_write(&cpuset_rwsem);
-+	put_online_cpus();
- 	kernfs_unbreak_active_protection(of->kn);
- 	css_put(&cs->css);
- 	flush_workqueue(cpuset_migrate_mm_wq);
-@@ -2499,6 +2505,7 @@ static ssize_t sched_partition_write(struct kernfs_open_file *of, char *buf,
- 		return -EINVAL;
- 
- 	css_get(&cs->css);
-+	get_online_cpus();
- 	percpu_down_write(&cpuset_rwsem);
- 	if (!is_cpuset_online(cs))
- 		goto out_unlock;
-@@ -2506,6 +2513,7 @@ static ssize_t sched_partition_write(struct kernfs_open_file *of, char *buf,
- 	retval = update_prstate(cs, val);
- out_unlock:
- 	percpu_up_write(&cpuset_rwsem);
-+	put_online_cpus();
- 	css_put(&cs->css);
- 	return retval ?: nbytes;
- }
-@@ -2711,6 +2719,7 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
- 	if (!parent)
- 		return 0;
- 
-+	get_online_cpus();
- 	percpu_down_write(&cpuset_rwsem);
- 
- 	set_bit(CS_ONLINE, &cs->flags);
-@@ -2763,6 +2772,7 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
- 	spin_unlock_irq(&callback_lock);
- out_unlock:
- 	percpu_up_write(&cpuset_rwsem);
-+	put_online_cpus();
- 	return 0;
- }
- 
-@@ -2781,6 +2791,7 @@ static void cpuset_css_offline(struct cgroup_subsys_state *css)
- {
- 	struct cpuset *cs = css_cs(css);
- 
-+	get_online_cpus();
- 	percpu_down_write(&cpuset_rwsem);
- 
- 	if (is_partition_root(cs))
-@@ -2801,6 +2812,7 @@ static void cpuset_css_offline(struct cgroup_subsys_state *css)
- 	clear_bit(CS_ONLINE, &cs->flags);
- 
- 	percpu_up_write(&cpuset_rwsem);
-+	put_online_cpus();
- }
- 
- static void cpuset_css_free(struct cgroup_subsys_state *css)
+Regards,
+Lukasz
